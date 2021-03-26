@@ -1,17 +1,23 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import dva from 'dva';
+import createHistory from 'history/createBrowserHistory';
+import './global.less';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// 1. Initialize
+const app = dva({
+  history: createHistory(),
+});
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// 2. Plugins
+// app.use({});
+
+// 3. Model
+app.model(require('./models/app').default);
+
+// 4. Router
+app.router(require('./utils/router').default);
+
+// 5. Start
+const App = app.start();
+
+ReactDOM.render(<App />, document.getElementById('root'));
