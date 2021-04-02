@@ -1,23 +1,27 @@
 import ReactDOM from 'react-dom';
-import dva from 'dva';
-import createHistory from 'history/createBrowserHistory';
+import dva from '@/utils/dva';
+import { createBrowserHistory } from 'history';
+import Portal from '@/components/Portal/Portal';
+import appModel from '@/models/app';
 import './global.less';
 
-// 1. Initialize
+// 1. 初始化Dva对象
 const app = dva({
-  history: createHistory(),
+  history: createBrowserHistory(),
 });
 
-// 2. Plugins
+// 2. 注册插件
 // app.use({});
 
-// 3. Model
-app.model(require('./models/app').default);
+// 3. 注册 Model
+app.model(appModel);
 
-// 4. Router
-app.router(require('./utils/router').default);
+// 4. 启动
+const DvaProvider = app.create();
 
-// 5. Start
-const App = app.start();
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <DvaProvider>
+    <Portal />
+  </DvaProvider>,
+  document.getElementById('root'),
+);

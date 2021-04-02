@@ -2,8 +2,21 @@
   "name": "wcs-gui-assembly",
   "version": "0.1.0",
   "private": true,
+  "scripts": {
+    "start": " node scripts/start.js",
+    "build": "node scripts/build.js",
+    "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
+    "lint-staged": "lint-staged",
+    "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src && npm run lint:style",
+    "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
+    "lint:prettier": "check-prettier lint",
+    "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
+    "prettier": "prettier -c --write \"**/*\""
+  },
   "dependencies": {
     "@babel/core": "7.12.3",
+    "@babel/plugin-proposal-decorators": "^7.13.5",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@svgr/webpack": "5.5.0",
     "@typescript-eslint/eslint-plugin": "^4.5.0",
@@ -24,7 +37,9 @@
     "dotenv": "8.2.0",
     "dotenv-expand": "5.1.0",
     "dva": "^2.4.1",
+    "dva-core": "^2.0.4",
     "eslint": "^7.11.0",
+    "eslint-config-google": "^0.14.0",
     "eslint-config-react-app": "^6.0.0",
     "eslint-plugin-flowtype": "^5.2.0",
     "eslint-plugin-import": "^2.22.1",
@@ -60,7 +75,9 @@
     "react-dev-utils": "^11.0.3",
     "react-dom": "^17.0.2",
     "react-intl-universal": "^2.4.3",
+    "react-redux": "^7.2.3",
     "react-refresh": "^0.8.3",
+    "react-router-dom": "^5.2.0",
     "resolve": "1.18.1",
     "resolve-url-loader": "^3.1.2",
     "semver": "7.3.2",
@@ -75,18 +92,6 @@
     "webpack-dev-server": "3.11.1",
     "webpack-manifest-plugin": "2.2.0",
     "workbox-webpack-plugin": "5.1.4"
-  },
-  "scripts": {
-    "start": "node scripts/start.js",
-    "build": "node scripts/build.js",
-    "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
-    "lint-staged": "lint-staged",
-    "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src && npm run lint:style",
-    "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
-    "lint:prettier": "check-prettier lint",
-    "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
-    "prettier": "prettier -c --write \"**/*\""
   },
   "husky": {
     "hooks": {
@@ -113,8 +118,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "webpack-bundle-analyzer": "^4.4.0"
   }
 }

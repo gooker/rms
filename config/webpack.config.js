@@ -425,7 +425,7 @@ module.exports = function (webpackEnv) {
       new ModuleNotFoundPlugin(paths.appPath),
       new webpack.DefinePlugin(env.stringified),
 
-      isEnvDevelopment && new BundleAnalyzerPlugin(),
+      // isEnvDevelopment && new BundleAnalyzerPlugin(),
 
       isEnvDevelopment &&
         shouldUseReactRefresh &&
