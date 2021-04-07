@@ -9,8 +9,8 @@ export default {
   namespace: 'app',
 
   state: {
-    globalLocale: 'en-US',
-    antdLocale: enUS,
+    globalLocale: 'zh-CN',
+    antdLocale: zhCN,
   },
 
   effects: {

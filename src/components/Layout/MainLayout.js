@@ -1,15 +1,11 @@
 import React from 'react';
-import { Layout, Menu } from 'antd';
-import {
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import { Layout } from 'antd';
+import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import LayoutSider from '@/components/Sider/Sider';
+import LayoutContent from '@/components/Content/Content';
 import './mainLayout.less';
 
-const { Header, Content, Sider } = Layout;
+const { Header } = Layout;
 
 class MainLayout extends React.Component {
   state = {
@@ -23,46 +19,25 @@ class MainLayout extends React.Component {
   };
 
   render() {
+    const { collapsed } = this.state;
     //   不从Iframe加载
     if (window.self === window.parent) {
       return (
-        <Layout className='main-layout'>
-          <Sider trigger={null} collapsible collapsed={this.state.collapsed}>
-            <div className="logo" />
-            <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
-              <Menu.Item key="1" icon={<UserOutlined />}>
-                nav 1
-              </Menu.Item>
-              <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                nav 2
-              </Menu.Item>
-              <Menu.Item key="3" icon={<UploadOutlined />}>
-                nav 3
-              </Menu.Item>
-            </Menu>
-          </Sider>
+        <Layout className="main-layout">
+          <LayoutSider collapsed={collapsed} />
           <Layout className="site-layout">
             <Header className="site-layout-background" style={{ padding: 0 }}>
-              {React.createElement(this.state.collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
+              {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
                 className: 'trigger',
                 onClick: this.toggle,
               })}
             </Header>
-            <Content
-              className="site-layout-background"
-              style={{
-                margin: '24px 16px',
-                padding: 24,
-                minHeight: 280,
-              }}
-            >
-              Content
-            </Content>
+            <LayoutContent />
           </Layout>
         </Layout>
       );
     }
-    return <span>1111</span>;
+    return <LayoutContent />;
   }
 }
 export default MainLayout;

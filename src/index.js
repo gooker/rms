@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import dva from '@/utils/dva';
+import { HashRouter as Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import Portal from '@/components/Portal/Portal';
 import appModel from '@/models/app';
@@ -21,7 +22,9 @@ const DvaProvider = app.create();
 
 ReactDOM.render(
   <DvaProvider>
-    <Portal />
+    <Router basename="/">
+      <Portal />
+    </Router>
   </DvaProvider>,
   document.getElementById('root'),
 );

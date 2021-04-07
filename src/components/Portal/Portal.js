@@ -24,7 +24,7 @@ class Portal extends Component {
       'zh-CN': require('@/locales/zh-CN').default,
     };
 
-    intl.init({ currentLocale: 'en-US', locales }).then(() => {
+    intl.init({ currentLocale: 'zh-CN', locales }).then(() => {
       this.setState({ initDone: true });
     });
   }
