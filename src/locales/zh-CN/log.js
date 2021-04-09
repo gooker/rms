@@ -1,0 +1,23 @@
+export default {
+  'app.log.Offline': '离线',
+  'app.log.createTime': '创建时间',
+  'app.log.deleteFiles': '确定要删除以下文件吗',
+  'app.log.disabled': '维护中',
+  'app.log.download': '下载',
+  'app.log.fail': '失败',
+  'app.log.fileName': '文件名称',
+  'app.log.generateLog': '生成日志',
+  'app.log.generated': '已生成',
+  'app.log.inGeneration': '生成中',
+  'app.log.selectFileName': '请选择文件名称',
+  'app.log.selectRobot': '请选择小车',
+  'app.log.unknown': '未知',
+  'app.log.upgrading': '升级中',
+
+  'app.meteData.date': '时间',
+  'app.meteData.loading': '导出可能需要几分钟时间，请耐心等待...',
+  'app.meteData.rules1': '日期范围应在7天之内',
+  'app.meteData.rules2': '日期范围不能为空',
+  'app.metedata.robotIdplaceholder': '请选择小车ID',
+  'app.metedata.vehicleOffsetRawData': '小车偏移数据',
+};

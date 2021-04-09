@@ -1,5 +1,6 @@
 module.exports = {
-  extends: [require.resolve('@umijs/fabric/dist/eslint')],
+  "extends": ["react-app", "plugin:jsx-a11y/recommended"],
+  "plugins": ["jsx-a11y"]
   rules: {
     'new-cap': 0,
     'no-underscore-dangle': 0,
