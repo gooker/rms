@@ -10,6 +10,9 @@ export default {
   'app.common.status': '状态',
   'app.common.position': '位置',
   'app.common.angle': '角度',
+  'app.common.sectionId': '区域ID',
+  'app.common.true': '是',
+  'app.common.false': '否',
 
   // direction --
   'app.direction': '方向',
@@ -26,6 +29,7 @@ export default {
   'app.button.delete': '删除',
   'app.button.confirm': '确认',
   'app.button.cancel': '取消',
+  'app.button.close': '关闭',
   'app.button.save': '保存',
   'app.button.operation': '操作',
   'app.button.refresh': '刷新',
@@ -50,7 +54,7 @@ export default {
   // Pod --
   'app.pod': '货架',
   'app.pod.id': '货架ID',
-  'app.pod.podDirection': '货架面',
+  'app.pod.direction': '货架面',
   'app.pod.side.A': 'A',
   'app.pod.side.B': 'B',
   'app.pod.side.C': 'C',
@@ -67,9 +71,9 @@ export default {
   'app.task.action': '任务细节',
   'app.task.step': '任务步骤',
   'app.task.flow': '任务流程',
-  'app.task.hsitory': '历史任务',
+  'app.task.history': '历史任务',
   'app.task.path': '任务路径',
   'app.task.detail': '任务详情',
-  'app.task.information': '任务数据',
+  'app.task.info': '任务数据',
   'app.task.record': '任务记录',
 };

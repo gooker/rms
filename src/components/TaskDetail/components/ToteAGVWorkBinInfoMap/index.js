@@ -1,0 +1,63 @@
+import React, { memo } from 'react';
+import find from 'lodash/find';
+import { Table } from 'antd';
+import intl from 'react-intl-universal';
+import { FormattedMessage } from '@/utils/Lang';
+
+const TaskQueueTaskExpanderRow = memo(function TaskQueueTaskExpanderRow(props) {
+  const { toteAGVTaskActionDTOS, toteTaskList } = props;
+  let temps = [];
+  if (toteAGVTaskActionDTOS) {
+    temps = toteAGVTaskActionDTOS.map((record) => {
+      const obj = find(toteTaskList, (toteTask) => {
+        return toteTask.binCode === record.binCode;
+      });
+      return {
+        toteAGVTaskActionType: record.toteAGVTaskActionType,
+        binCode: record.binCode,
+        toteCode: record.toteInfoDTO != null ? record.toteInfoDTO.toteCode : '',
+        ...obj,
+      };
+    });
+  }
+
+  const end = temps;
+  const renderNode = () => {
+    const columns = [
+      {
+        title: intl.formatMessage({ id: 'app.taskDetail.layers' }),
+        dataIndex: 'toteAgvlayer',
+        render: (text) => {
+          if (text === 0) {
+            return <FormattedMessage id="app.podManager.toteBinAtHolding" />;
+          }
+          return <span>{text}</span>;
+        },
+      },
+      {
+        title: intl.formatMessage({ id: 'app.taskDetail.action' }),
+        dataIndex: 'toteAGVTaskActionType',
+        align: 'center',
+      },
+      {
+        title: intl.formatMessage({ id: 'app.taskDetail.toteCode' }),
+        dataIndex: 'toteCode',
+        align: 'center',
+      },
+      {
+        title: intl.formatMessage({ id: 'app.taskDetail.binCode' }),
+        dataIndex: 'binCode',
+        align: 'center',
+      },
+    ];
+    return <Table dataSource={temps.reverse()} pagination={false} columns={columns} />;
+  };
+
+  return (
+    <div>
+      <div style={{ width: 800 }}>{renderNode(end)}</div>
+    </div>
+  );
+});
+
+export default TaskQueueTaskExpanderRow;

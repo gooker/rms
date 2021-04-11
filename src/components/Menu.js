@@ -13,13 +13,15 @@ const Sider = () => {
   const [selectedKeys, setSelectedKeys] = useState([]);
 
   useEffect(() => {
-    // 提取当前展开的菜单节点
-    const openKey = extractOpenKey();
-    setOpenKeys([openKey]);
+    setTimeout(() => {
+      // 提取当前展开的菜单节点
+      const openKey = extractOpenKey();
+      setOpenKeys([openKey]);
 
-    // 提取当前选中的菜单项
-    const selectedKey = window.location.href.split('#')[1];
-    setSelectedKeys([selectedKey]);
+      // 提取当前选中的菜单项
+      const selectedKey = window.location.href.split('#')[1];
+      setSelectedKeys([selectedKey]);
+    });
   }, []);
 
   const extractOpenKey = () => {
@@ -45,6 +47,10 @@ const Sider = () => {
     setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
   };
 
+  const onSelectMenuItem = ({ item, key, keyPath, selectedKeys, domEvent }) => {
+    setSelectedKeys(selectedKeys);
+  };
+
   const renderMenuItem = (name, routes) => {
     return routes.map(({ path, name: childName }) => (
       <Menu.Item key={path}>
@@ -62,6 +68,7 @@ const Sider = () => {
       openKeys={openKeys}
       selectedKeys={selectedKeys}
       onOpenChange={onOpenChange}
+      onSelect={onSelectMenuItem}
       style={{ width: '100%' }}
     >
       {routerData.map(({ name, icon, routes }) => (

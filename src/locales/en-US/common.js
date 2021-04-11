@@ -10,6 +10,9 @@ export default {
   'app.common.status': 'Status',
   'app.common.position': 'Position',
   'app.common.angle': 'Angle',
+  'app.common.sectionId': 'Section Id',
+  'app.common.true': 'true',
+  'app.common.false': 'False',
 
   // direction --
   'app.direction': 'Direction',
@@ -26,6 +29,7 @@ export default {
   'app.button.delete': 'Delete',
   'app.button.confirm': 'Confirm',
   'app.button.cancel': 'Cancel',
+  'app.button.close': 'Close',
   'app.button.save': 'Save',
   'app.button.operation': 'Operate',
   'app.button.refresh': 'Refresh',
@@ -50,7 +54,7 @@ export default {
   // Pod --
   'app.pod': 'Pod',
   'app.pod.id': 'Pod ID',
-  'app.pod.podDirection': 'Pod Direction',
+  'app.pod.direction': 'Pod Direction',
 
   // Cell --
   'app.cellId': 'Cell ID',
@@ -62,9 +66,9 @@ export default {
   'app.task.type': 'Task Type',
   'app.task.action': 'Task Action',
   'app.task.flow': 'Task Flow',
-  'app.task.hsitory': 'Task History',
+  'app.task.history': 'Task History',
   'app.task.path': 'Task Path',
   'app.task.detail': 'Task Detail',
-  'app.task.information': 'Task Data',
+  'app.task.info': 'Task Data',
   'app.task.record': 'Task Record',
 };
