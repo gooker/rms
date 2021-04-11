@@ -7,7 +7,7 @@ import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
 import Config from '@/config/config';
 
-const { red, green } = dictionary()['color'];
+const { red, green } = dictionary('color', 'all');
 
 const NameSpace = Config.nameSpace.LatentLifting;
 const TaskAgvType = Config.AGVType.Sorter;

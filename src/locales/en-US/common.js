@@ -13,6 +13,7 @@ export default {
   'app.common.sectionId': 'Section Id',
   'app.common.true': 'true',
   'app.common.false': 'False',
+  'app.common.noRecord': 'No Record',
 
   // direction --
   'app.direction': 'Direction',
@@ -50,6 +51,10 @@ export default {
   'app.agv.id': 'AGV ID',
   'app.agv.type': 'AGV Type',
   'app.agv.status': 'AGV Status',
+  'app.agv.direction.top': 'Up',
+  'app.agv.direction.right': 'Right',
+  'app.agv.direction.bottom': 'Down',
+  'app.agv.direction.left': 'Left',
 
   // Pod --
   'app.pod': 'Pod',

@@ -13,6 +13,7 @@ export default {
   'app.common.sectionId': '区域ID',
   'app.common.true': '是',
   'app.common.false': '否',
+  'app.common.noRecord': '无记录',
 
   // direction --
   'app.direction': '方向',
@@ -50,6 +51,10 @@ export default {
   'app.agv.id': '小车ID',
   'app.agv.type': '小车类型',
   'app.agv.status': '小车状态',
+  'app.agv.direction.top': '朝上',
+  'app.agv.direction.right': '朝右',
+  'app.agv.direction.bottom': '朝下',
+  'app.agv.direction.left': '朝左',
 
   // Pod --
   'app.pod': '货架',

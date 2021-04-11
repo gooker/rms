@@ -10,7 +10,7 @@ import { adjustModalWidth } from '@/utils/utils';
 import dictionary from '@/utils/Dictionary';
 import { hasPermission } from '@/utils/Permission';
 
-const { red } = dictionary('color', 'all;');
+const { red } = dictionary('color', 'all');
 const { confirm } = Modal;
 
 @connect(({ task }) => ({ task }))
