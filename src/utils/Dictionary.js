@@ -7,9 +7,9 @@ const dictionaryDataSource = {
   },
   podDirection: {
     0: 'app.pod.side.A',
-    1: 'app.pod.side.B',
-    2: 'app.pod.side.C',
-    3: 'app.pod.side.D',
+    90: 'app.pod.side.B',
+    180: 'app.pod.side.C',
+    270: 'app.pod.side.D',
   },
   agvUpgradeStatus: {
     0: 'app.firmware.upgradeSuccess',

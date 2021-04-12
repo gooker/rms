@@ -1,12 +1,11 @@
 import React, { PureComponent, createRef } from 'react';
 import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import intl from 'react-intl-universal';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import ErrorList from './components/ErrorList';
-import { FormattedMessage } from '@/utils/Lang';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import Config from '@/config/config';
 import styles from '@/common.module.less';
@@ -36,19 +35,19 @@ class TaskDetail extends PureComponent {
     if (text != null && text !== '') {
       const key = Dictionary('taskStatus', [text]);
       if (text === 'New') {
-        return <Badge status={taskStatusMap[0]} text={intl.formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[0]} text={formatMessage({ id: key })} />;
       }
       if (text === 'Executing') {
-        return <Badge status={taskStatusMap[1]} text={intl.formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[1]} text={formatMessage({ id: key })} />;
       }
       if (text === 'Finished') {
-        return <Badge status={taskStatusMap[2]} text={intl.formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[2]} text={formatMessage({ id: key })} />;
       }
       if (text === 'Error') {
-        return <Badge status={taskStatusMap[3]} text={intl.formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[3]} text={formatMessage({ id: key })} />;
       }
       if (text === 'Cancel') {
-        return <Badge status={taskStatusMap[4]} text={intl.formatMessage({ id: key })} />;
+        return <Badge status={taskStatusMap[4]} text={formatMessage({ id: key })} />;
       }
     } else {
       return null;
@@ -148,12 +147,12 @@ class TaskDetail extends PureComponent {
                 <div>
                   <div>
                     <Permission id="/map/monitor/taskDetail/taskDetail/reset">
-                      {intl.formatMessage({ id: 'app.activity.detailActionTip1' })}
+                      {formatMessage({ id: 'app.activity.detailActionTip1' })}
                     </Permission>
                   </div>
                   <div>
                     <Permission id="/map/monitor/taskDetail/taskDetail/repeat">
-                      {intl.formatMessage({ id: 'app.activity.detailActionTip2' })}
+                      {formatMessage({ id: 'app.activity.detailActionTip2' })}
                     </Permission>
                   </div>
                 </div>
@@ -216,7 +215,7 @@ class TaskDetail extends PureComponent {
                     title={<FormattedMessage id="app.task.type" />}
                     content={
                       <span>
-                        {intl.formatMessage({
+                        {formatMessage({
                           id: Dictionary('agvTaskType', [detailInfo.type]),
                         })}
                       </span>
@@ -244,7 +243,7 @@ class TaskDetail extends PureComponent {
                 {currentType === Config.AGVType.LatentLifting && (
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<span>{intl.formatMessage({ id: 'app.pod.id' })}</span>}
+                      title={<span>{formatMessage({ id: 'app.pod.id' })}</span>}
                       content={<span>{detailInfo.podId}</span>}
                     />
                   </Col>
@@ -256,7 +255,7 @@ class TaskDetail extends PureComponent {
             {(detailInfo.toteAGVWorkBinInfoMap || detailInfo.toteAGVTaskActionDTOS) && (
               <div>
                 <Divider orientation="left">
-                  {intl.formatMessage({ id: 'app.taskDetail.realTime' })}
+                  {formatMessage({ id: 'app.taskDetail.realTime' })}
                 </Divider>
                 <ToteAGVWorkBinInfoMap {...detailInfo} />
               </div>
@@ -266,7 +265,7 @@ class TaskDetail extends PureComponent {
             {detailInfo.toteHoldingCode && (
               <div>
                 <Divider orientation="left">
-                  {intl.formatMessage({ id: 'app.taskDetail.confirmHugTote' })}
+                  {formatMessage({ id: 'app.taskDetail.confirmHugTote' })}
                 </Divider>
                 <div style={{ display: 'flex', width: '30%' }}>
                   <Input defaultValue={detailInfo.toteHoldingCode} ref={this.toteHoldingInput} />
@@ -282,7 +281,7 @@ class TaskDetail extends PureComponent {
               <Permission id="/map/monitor/taskDetail/taskDetail/errorRecord">
                 <div>
                   <Divider orientation="left">
-                    {intl.formatMessage({ id: 'app.taskDetail.errorRecord' })}
+                    {formatMessage({ id: 'app.taskDetail.errorRecord' })}
                   </Divider>
                   <ErrorList agvErrorList={errorTaskList} errorCodes={errorCodes} />
                 </div>
@@ -302,8 +301,8 @@ class TaskDetail extends PureComponent {
                       content={
                         detailInfo.workStationDirection && (
                           <>
-                            {intl.formatMessage({ id: 'app.taskDetail.stopPoints' })}
-                            {intl.formatMessage({
+                            {formatMessage({ id: 'app.taskDetail.stopPoints' })}
+                            {formatMessage({
                               id: Dictionary('chargerDirection', [detailInfo.workStationDirection]),
                             })}
                           </>
@@ -322,7 +321,7 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.pod.direction" />}
                       content={
                         <>
-                          {intl.formatMessage({
+                          {formatMessage({
                             id: Dictionary('podDirection', [detailInfo.podAngle]),
                             defaultValue: detailInfo.podAngle,
                           })}
@@ -337,8 +336,8 @@ class TaskDetail extends PureComponent {
                         <>
                           {detailInfo.isReleased != null
                             ? detailInfo.isReleased
-                              ? `${intl.formatMessage({ id: 'app.common.true' })}`
-                              : `${intl.formatMessage({ id: 'app.common.false' })}`
+                              ? `${formatMessage({ id: 'app.common.true' })}`
+                              : `${formatMessage({ id: 'app.common.false' })}`
                             : null}
                         </>
                       }
@@ -361,8 +360,8 @@ class TaskDetail extends PureComponent {
                       content={
                         detailInfo.workStationDirection != null ? (
                           <>
-                            {intl.formatMessage({ id: 'app.taskDetail.stopPoints' })}
-                            {intl.formatMessage({
+                            {formatMessage({ id: 'app.taskDetail.stopPoints' })}
+                            {formatMessage({
                               id: Dictionary('chargerDirection', [detailInfo.workStationDirection]),
                             })}
                           </>
@@ -385,7 +384,7 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.pod.direction" />}
                       content={
                         <>
-                          {intl.formatMessage({
+                          {formatMessage({
                             id: Dictionary('podDirection', [detailInfo.podAngle]),
                             defaultValue: detailInfo.podAngle,
                           })}
@@ -401,8 +400,8 @@ class TaskDetail extends PureComponent {
                           <>
                             {detailInfo.isReleased != null
                               ? detailInfo.isReleased
-                                ? `${intl.formatMessage({ id: 'app.common.true' })}`
-                                : `${intl.formatMessage({ id: 'app.common.false' })}`
+                                ? `${formatMessage({ id: 'app.common.true' })}`
+                                : `${formatMessage({ id: 'app.common.false' })}`
                               : null}
                           </>
                         }

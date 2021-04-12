@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Row, Form, Steps, Divider, Tooltip } from 'antd';
-import intl from 'react-intl-universal';
+import { formatMessage } from '@/utils/Lang';
 import {
   MehOutlined,
   LoadingOutlined,
@@ -47,13 +47,13 @@ class AgvTaskSteps extends PureComponent {
       <Form style={{ marginTop: 20 }} layout={'vertical'}>
         {/* 预计完成时间 */}
         {records.predictEndTime && (
-          <div style={{ color: 'rgba(0, 0, 0, 0.85', marginBottom: 15 }}>{`${intl.formatMessage({
+          <div style={{ color: 'rgba(0, 0, 0, 0.85', marginBottom: 15 }}>{`${formatMessage({
             id: 'app.taskDetail.finishTime',
           })} ${parseInt(records.predictEndTime / 1000, 10)}s`}</div>
         )}
 
         {/* 操作时间 */}
-        <Form.Item label={`${intl.formatMessage({ id: 'app.taskDetail.operatingTime' })}:`}>
+        <Form.Item label={`${formatMessage({ id: 'app.taskDetail.operatingTime' })}:`}>
           <Steps current={current}>
             <Step
               title={'NEW'}
@@ -80,7 +80,7 @@ class AgvTaskSteps extends PureComponent {
         </Form.Item>
 
         {/* 任务步骤 */}
-        <Form.Item label={`${intl.formatMessage({ id: 'app.taskDetail.taskSteps' })}:`}>
+        <Form.Item label={`${formatMessage({ id: 'app.task.step' })}:`}>
           <Row>
             <RenderAgvTaskActions currentType={robotType} taskActions={records.taskActions} />
           </Row>

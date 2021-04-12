@@ -1,8 +1,7 @@
 import React, { memo } from 'react';
 import find from 'lodash/find';
 import { Table } from 'antd';
-import intl from 'react-intl-universal';
-import { FormattedMessage } from '@/utils/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 
 const TaskQueueTaskExpanderRow = memo(function TaskQueueTaskExpanderRow(props) {
   const { toteAGVTaskActionDTOS, toteTaskList } = props;
@@ -25,7 +24,7 @@ const TaskQueueTaskExpanderRow = memo(function TaskQueueTaskExpanderRow(props) {
   const renderNode = () => {
     const columns = [
       {
-        title: intl.formatMessage({ id: 'app.taskDetail.layers' }),
+        title: formatMessage({ id: 'app.taskDetail.layers' }),
         dataIndex: 'toteAgvlayer',
         render: (text) => {
           if (text === 0) {
@@ -35,17 +34,17 @@ const TaskQueueTaskExpanderRow = memo(function TaskQueueTaskExpanderRow(props) {
         },
       },
       {
-        title: intl.formatMessage({ id: 'app.taskDetail.action' }),
+        title: formatMessage({ id: 'app.taskDetail.action' }),
         dataIndex: 'toteAGVTaskActionType',
         align: 'center',
       },
       {
-        title: intl.formatMessage({ id: 'app.taskDetail.toteCode' }),
+        title: formatMessage({ id: 'app.taskDetail.toteCode' }),
         dataIndex: 'toteCode',
         align: 'center',
       },
       {
-        title: intl.formatMessage({ id: 'app.taskDetail.binCode' }),
+        title: formatMessage({ id: 'app.taskDetail.binCode' }),
         dataIndex: 'binCode',
         align: 'center',
       },

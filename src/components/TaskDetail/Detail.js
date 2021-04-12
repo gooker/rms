@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
 import { connect } from '@/utils/dva';
-import intl from 'react-intl-universal';
+import { formatMessage } from '@/utils/Lang';
 import AgvTaskSteps from './components/AgvTaskSteps';
 import AgvTaskHistory from './components/AgvTaskHistorys';
 import DetailInfo from './components/DetailInfo';
@@ -29,24 +29,24 @@ class Detail extends PureComponent {
     confirm({
       title: (
         <span>
-          {intl.formatMessage({ id: 'app.taskDetail.makeSure' })}
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
           <span style={{ color: 'red', margin: '0px 10px' }}>
-            {intl.formatMessage({ id: 'app.taskDetail.retransmission' })}
+            {formatMessage({ id: 'app.taskDetail.retransmission' })}
           </span>
-          {intl.formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.taskDetail.task' })}
         </span>
       ),
       content: (
         <div>
-          <span>{intl.formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+          <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
           <span style={{ marginRight: 10 }}>{taskId}</span>
         </div>
       ),
       onOk() {
         dispatch({ type: 'task/fetchRestartTask', payload: { sectionId, taskId } });
       },
-      okText: intl.formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: intl.formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.taskDetail.sure' }),
+      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
     });
   };
 
@@ -56,24 +56,24 @@ class Detail extends PureComponent {
     confirm({
       title: (
         <span>
-          {intl.formatMessage({ id: 'app.taskDetail.makeSure' })}
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
           <span style={{ color: 'red', margin: '0px 10px' }}>
-            {intl.formatMessage({ id: 'app.taskDetail.restore' })}
+            {formatMessage({ id: 'app.taskDetail.restore' })}
           </span>
-          {intl.formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.taskDetail.task' })}
         </span>
       ),
       content: (
         <div>
-          <span>{intl.formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+          <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
           <span style={{ marginRight: 10 }}>{taskId}</span>
         </div>
       ),
       onOk() {
         dispatch({ type: 'task/fetchRestoreTask', payload: { sectionId, taskId } });
       },
-      okText: intl.formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: intl.formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.taskDetail.sure' }),
+      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
     });
   };
 
@@ -83,22 +83,22 @@ class Detail extends PureComponent {
     confirm({
       title: (
         <span>
-          {intl.formatMessage({ id: 'app.taskDetail.makeSure' })}
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
           <span
             style={{
               color: 'red',
               margin: '0px 10px',
             }}
           >
-            {intl.formatMessage({ id: 'app.taskDetail.redo' })}
+            {formatMessage({ id: 'app.taskDetail.redo' })}
           </span>
-          {intl.formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.taskDetail.task' })}
         </span>
       ),
       content: (
         <div>
           <div>
-            <span>{intl.formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+            <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
             <span style={{ marginRight: 10 }}>{taskId}</span>
           </div>
           <div>
@@ -108,7 +108,7 @@ class Detail extends PureComponent {
                 color: red,
               }}
             >
-              {intl.formatMessage({ id: 'app.taskDetail.makeSureRobotNotLoadedPodBeforeRedoing' })}
+              {formatMessage({ id: 'app.taskDetail.makeSureRobotNotLoadedPodBeforeRedoing' })}
             </span>
           </div>
         </div>
@@ -116,8 +116,8 @@ class Detail extends PureComponent {
       onOk() {
         dispatch({ type: 'task/fetchResetTask', payload: { sectionId, taskId } });
       },
-      okText: intl.formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: intl.formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.taskDetail.sure' }),
+      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
     });
   };
 
@@ -127,24 +127,24 @@ class Detail extends PureComponent {
     confirm({
       title: (
         <span>
-          {intl.formatMessage({ id: 'app.taskDetail.makeSure' })}
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
           <span style={{ color: 'red', margin: '0px 10px' }}>
-            {intl.formatMessage({ id: 'app.taskDetail.cancel' })}
+            {formatMessage({ id: 'app.taskDetail.cancel' })}
           </span>
-          {intl.formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.taskDetail.task' })}
         </span>
       ),
       content: (
         <div>
-          <span>{intl.formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+          <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
           <span style={{ marginRight: 10 }}>{taskId}</span>
         </div>
       ),
       onOk() {
         dispatch({ type: 'task/fetchCancelTask', payload: { sectionId, taskId } });
       },
-      okText: intl.formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: intl.formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.taskDetail.sure' }),
+      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
     });
   };
 
@@ -152,7 +152,7 @@ class Detail extends PureComponent {
   confirmToteHolding = (sectionId, taskId, holdingTote) => {
     const { dispatch } = this.props;
     confirm({
-      title: intl.formatMessage({ id: 'app.taskDetail.confirmToteHolding' }),
+      title: formatMessage({ id: 'app.taskDetail.confirmToteHolding' }),
       content: <span style={{ fontSize: '15px', color: 'red' }}>{holdingTote}</span>,
       onOk() {
         dispatch({
@@ -160,8 +160,8 @@ class Detail extends PureComponent {
           payload: { sectionId, taskId, holdingTote },
         });
       },
-      okText: intl.formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: intl.formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.taskDetail.sure' }),
+      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
     });
   };
 
@@ -186,7 +186,7 @@ class Detail extends PureComponent {
             <Tabs defaultActiveKey="a">
               {/** ******* 任务详情 ******** */}
               {hasPermission('/map/monitor/taskDetail/taskDetail') && (
-                <Tabs.TabPane tab={intl.formatMessage({ id: 'app.task.detail' })} key="a">
+                <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
                   <TaskDetail
                     currentType={taskAgvType}
                     errorTaskList={singleErrorTask}
@@ -204,7 +204,7 @@ class Detail extends PureComponent {
 
               {/** ******* 任务路径 ******** */}
               {hasPermission('/map/monitor/taskDetail/taskPath') && (
-                <Tabs.TabPane tab={intl.formatMessage({ id: 'app.task.path' })} key="b">
+                <Tabs.TabPane tab={formatMessage({ id: 'app.task.path' })} key="b">
                   {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTasks ? (
                     <AgvTaskSteps
                       robotType={taskAgvType}
@@ -218,7 +218,7 @@ class Detail extends PureComponent {
 
               {/** ******* 历史任务 ******** */}
               {hasPermission('/map/monitor/taskDetail/historyRecord') && (
-                <Tabs.TabPane key="c" tab={intl.formatMessage({ id: 'app.task.record' })}>
+                <Tabs.TabPane key="c" tab={formatMessage({ id: 'app.task.record' })}>
                   <Col span={24}>
                     {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTaskHistorys ? (
                       <Card bordered={false}>

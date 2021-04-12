@@ -7,7 +7,7 @@ import {
   FrownOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import intl from 'react-intl-universal';
+import { formatMessage } from '@/utils/Lang';
 import RenderAgvTaskActions from '../AgvTaskSteps/RenderAgvTaskActions';
 
 const Step = Steps.Step;
@@ -31,7 +31,7 @@ class AgvTaskHistory extends PureComponent {
   renderDescription = (records) => {
     return (
       <Form style={{ width: '100%', marginBottom: 20 }} layout={'vertical'}>
-        <Form.Item label={intl.formatMessage({ id: 'app.taskDetail.taskSteps' })}>
+        <Form.Item label={formatMessage({ id: 'app.task.step' })}>
           <Row>
             {<RenderAgvTaskActions taskActions={records} currentType={this.props.currentType} />}
           </Row>

@@ -18,7 +18,7 @@ export default class ExecutionQueue extends React.Component {
       {
         title: formatMessage({ id: 'app.task.id' }),
         dataIndex: 'taskId',
-        width: 180,
+        width: 150,
         align: 'center',
         render: (text) => {
           return (
@@ -46,20 +46,14 @@ export default class ExecutionQueue extends React.Component {
         title: formatMessage({ id: 'app.task.type' }),
         dataIndex: 'agvTaskType',
         align: 'center',
-        width: 200,
+        width: 150,
         render: (text) => <span>{formatMessage({ id: dictionary('agvTaskType', text) })}</span>,
-      },
-      {
-        title: formatMessage({ id: 'app.pod.id' }),
-        dataIndex: 'podId',
-        align: 'center',
-        width: 120,
       },
       {
         title: formatMessage({ id: 'app.executionQ.isReleased' }),
         dataIndex: 'isReleased',
         align: 'center',
-        width: 160,
+        width: 150,
         render: (text) => {
           if (text) {
             return (
@@ -80,7 +74,7 @@ export default class ExecutionQueue extends React.Component {
         title: formatMessage({ id: 'app.agv' }),
         dataIndex: 'currentRobotId',
         align: 'center',
-        width: 110,
+        width: 100,
         render: (text) => {
           return <span className={commonStyles.textLinks}>{text}</span>;
         },
@@ -89,25 +83,19 @@ export default class ExecutionQueue extends React.Component {
         title: formatMessage({ id: 'app.executionQ.target' }),
         dataIndex: 'targetCellId',
         align: 'center',
-        width: 130,
-      },
-      {
-        title: formatMessage({ id: 'app.executionQ.store' }),
-        dataIndex: 'storeCellIds',
-        align: 'center',
-        width: 110,
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.executionQ.chargerHardwareId' }),
         dataIndex: 'chargerHardwareId',
         align: 'center',
-        width: 160,
+        width: 120,
       },
       {
         title: formatMessage({ id: 'app.executionQ.chargerDirection' }),
         dataIndex: 'chargerDirection',
         align: 'center',
-        width: 110,
+        width: 100,
         render: (text) => {
           if (text != null) {
             return formatMessage({ id: dictionary('chargerDirection', text) });
@@ -120,13 +108,13 @@ export default class ExecutionQueue extends React.Component {
         title: formatMessage({ id: 'app.executionQ.chargerCellId' }),
         dataIndex: 'chargerCellId',
         align: 'center',
-        width: 130,
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.executionQ.createTime' }),
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
-        width: 160,
+        width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
@@ -141,7 +129,7 @@ export default class ExecutionQueue extends React.Component {
         title: formatMessage({ id: 'app.executionQ.lastExecutedTimestamp' }),
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
-        width: 160,
+        width: 200,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
@@ -156,31 +144,31 @@ export default class ExecutionQueue extends React.Component {
         title: formatMessage({ id: 'app.executionQ.triedTimes' }),
         dataIndex: 'triedTimes',
         align: 'center',
-        width: 110,
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.executionQ.executeMax' }),
         dataIndex: 'executeMaxTry',
         align: 'center',
-        width: 190,
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.executionQ.delayMS' }),
         dataIndex: 'delayMS',
         align: 'center',
-        width: 110,
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.executionQ.currentStep' }),
         dataIndex: 'currentStepId',
         align: 'center',
-        width: 110,
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.executionQ.executionState' }),
         dataIndex: 'isExecuted',
         align: 'center',
-        width: 150,
+        width: 200,
         render: (text) => {
           if (text) {
             return <span>{formatMessage({ id: 'app.executionQ.executed' })}</span>;
@@ -192,7 +180,24 @@ export default class ExecutionQueue extends React.Component {
     ];
   };
 
+  filterDataSource = (dataSource = [], filterValue) => {
+    return dataSource.filter((item) => {
+      const targetCellId = `${item.targetCellId}`;
+      return (
+        item.taskId?.includes(filterValue) ||
+        item.currentRobotId?.includes(filterValue) ||
+        targetCellId?.includes(filterValue)
+      );
+    });
+  };
+
   render() {
-    return <ExecutionQueueComponent getColumn={this.getColumn} nameSpace={NameSpace} />;
+    return (
+      <ExecutionQueueComponent
+        getColumn={this.getColumn}
+        nameSpace={NameSpace}
+        filter={this.filterDataSource}
+      />
+    );
   }
 }

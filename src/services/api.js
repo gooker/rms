@@ -7,6 +7,14 @@ export async function fetchExecutingTaskList(namespace, params) {
   });
 }
 
+// 删除执行队列任务
+export async function deleteExecutionQTasks(namespace, params) {
+  return request(`/${namespace}/redis/batchDeleteExecutingTask`, {
+    method: `POST`,
+    data: params,
+  });
+}
+
 // 任务相关
 export async function fetchTaskDetailByTaskId(namespace, params) {
   return request(`/${namespace}/agv-task/agvTaskDetail`, {

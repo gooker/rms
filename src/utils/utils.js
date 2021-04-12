@@ -1,6 +1,5 @@
 import { message } from 'antd';
-// import { history } from 'react-router-dom';
-import intl from 'react-intl-universal';
+import { formatMessage } from '@/utils/Lang';
 import moment from 'moment-timezone';
 import requestAPI from '@/utils/requestAPI';
 
@@ -9,17 +8,14 @@ export function getDomainNameByUrl(url) {
   const apis = requestAPI();
   const array = url.split('/');
   if (array.length < 2) {
-    message.error(intl.formatMessage({ id: 'app.request.addressError' }));
+    message.error(formatMessage({ id: 'app.request.addressError' }));
     return url;
   }
   if (apis && array[1] != null && apis[array[1]] != null) {
     return `${apis[array[1]]}${url}`;
   }
 
-  const messageContent = intl.formatMessage(
-    { id: 'app.require.namespace' },
-    { namespace: array[1] },
-  );
+  const messageContent = formatMessage({ id: 'app.require.namespace' }, { namespace: array[1] });
   return { code: '-1', data: null, message: messageContent };
 }
 
@@ -31,12 +27,12 @@ export function isStandardApiResponse(response) {
   );
 }
 
-export function dealResponse(response, notification, messageInfo) {
+export function dealResponse(response, notification, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
   if (response && response.code === '-1') {
     const { data, message: errorMessage } = response;
-    const defaultMessage = intl.formatMessage({ id: 'app.common.systemError' });
-    message.error(errorMessage || defaultMessage);
+    const defaultMessage = formatMessage({ id: 'app.common.systemError' });
+    message.error(errorMessage || failedMessage || defaultMessage);
     if (data === 'logout') {
       // history.push('/login');
     }
@@ -45,7 +41,7 @@ export function dealResponse(response, notification, messageInfo) {
 
   // 正常请求后返回false, 表示当前请求无错误
   notification &&
-    message.success(messageInfo || intl.formatMessage({ id: 'app.common.operationFinish' }));
+    message.success(successMessage || formatMessage({ id: 'app.common.operationFinish' }));
   return false;
 }
 
@@ -108,15 +104,16 @@ export function adjustModalWidth() {
   return width >= maxWidth ? maxWidth : width;
 }
 
-export function getContentHeight() {
-  const layoutContentDOM = document.getElementById('layoutContent');
-  return layoutContentDOM?.offsetHeight ?? 0;
-}
-
 export function isNull(value) {
   return value === null || value === undefined;
 }
 
 export function isStrictNull(value) {
   return value === null || value === undefined || value === '';
+}
+
+export function getContentHeight() {
+  const layoutContentDOM = document.getElementById('layoutContent');
+  const layoutContentDOMRect = layoutContentDOM.getBoundingClientRect();
+  return document.body.offsetHeight - layoutContentDOMRect.top;
 }

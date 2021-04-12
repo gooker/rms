@@ -1,8 +1,11 @@
 import intl from 'react-intl-universal';
 
 export const formatMessage = ({ id }, values) => {
-  const content = intl.get(id, values);
-  return content || id;
+  if (id) {
+    const content = intl.get(id, values);
+    return content || id;
+  }
+  return '###';
 };
 
 export function FormattedMessage(props) {

@@ -1,25 +1,27 @@
 import React, { Component } from 'react';
-import { Form, Table, Row, Button, Input, Modal } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { fetchExecutingTaskList } from '@/services/api';
 import { connect } from '@/utils/dva';
-import { getContentHeight } from '@/utils/utils';
+import { Form, Table, Row, Button, Input, Modal, message } from 'antd';
+import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
+import { dealResponse, getContentHeight } from '@/utils/utils';
 import { debounce } from 'lodash';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
 
-const TableToolHeight = 56;
 @connect()
 class ExecutionQueue extends Component {
   state = {
+    filterValue: '',
+
     dataSource: [],
     selectedRow: [],
     selectedRowKeys: [],
 
-    filterValue: '',
     loading: false,
+    deleteLoading: false,
+
     pageHeight: getContentHeight(),
   };
 
@@ -31,15 +33,6 @@ class ExecutionQueue extends Component {
   componentWillUnmount() {
     this.resizeObserver.disconnect();
   }
-
-  getData = async () => {
-    const { nameSpace } = this.props;
-    const sectionId = window.localStorage.getItem('sectionId');
-    this.setState({ loading: true });
-    const response = await fetchExecutingTaskList(nameSpace, sectionId);
-    const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
-    this.setState({ dataSource, loading: false });
-  };
 
   observeContentsSizeChange = () => {
     const _this = this;
@@ -53,6 +46,51 @@ class ExecutionQueue extends Component {
     this.resizeObserver.observe(document.getElementById('layoutContent'));
   };
 
+  getData = async () => {
+    const { nameSpace } = this.props;
+    const sectionId = window.localStorage.getItem('sectionId');
+    this.setState({ loading: true });
+    const response = await fetchExecutingTaskList(nameSpace, sectionId);
+    if (!dealResponse(response)) {
+      const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
+      this.setState({ dataSource, loading: false });
+    }
+  };
+
+  deleteQueueTasks = () => {
+    const _this = this;
+    const { selectedRow, dataSource } = this.state;
+    const { nameSpace } = this.props;
+    const sectionId = window.localStorage.getItem('sectionId');
+    const taskIdList = selectedRow.map((record) => record.taskId);
+    const requestParam = { sectionId, taskIdList };
+
+    confirm({
+      title: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
+      onOk: async () => {
+        _this.setState({ deleteLoading: true });
+        const response = await deleteExecutionQTasks(nameSpace, requestParam);
+        if (
+          !dealResponse(
+            response,
+            true,
+            formatMessage({ id: 'app.executionQ.deleteTaskSuccess' }),
+            formatMessage({ id: 'app.executionQ.deleteTaskFail' }),
+          )
+        ) {
+          // 这里不重复请求后台，手动对原数据进行处理
+          const newDataSource = dataSource.filter((item) => !taskIdList.includes(item.taskId));
+          _this.setState({
+            deleteLoading: false,
+            dataSource: newDataSource,
+            selectedRow: [],
+            selectedRowKeys: [],
+          });
+        }
+      },
+    });
+  };
+
   onSelectChange = (selectedRowKeys, selectedRow) => {
     this.setState({ selectedRowKeys, selectedRow });
   };
@@ -60,39 +98,36 @@ class ExecutionQueue extends Component {
   filterTableList = () => {
     const { dataSource, filterValue } = this.state;
     const { filter } = this.props;
-    if (filter && typeof filter === 'function') {
+    if (filterValue && filter && typeof filter === 'function') {
       return filter(dataSource, filterValue);
     }
     return dataSource;
   };
 
-  deleteQueueTasks = () => {
-    const _this = this;
-    confirm({
-      title: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
-      onOk: () => {
-        //
-      },
-    });
-  };
-
   render() {
-    const { loading, selectedRowKeys, pageHeight } = this.state;
+    const { loading, deleteLoading, selectedRowKeys, filterValue, pageHeight } = this.state;
     const { dispatch, getColumn } = this.props;
     return (
-      <div style={{ height: pageHeight }} className={commonStyles.pageWrapper}>
+      <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
         <Row>
           <Row>
             <Button
+              loading={deleteLoading}
               style={{ marginRight: 20 }}
               icon={<DeleteOutlined />}
               onClick={this.deleteQueueTasks}
               disabled={selectedRowKeys.length === 0}
             >
+              {' '}
               <FormattedMessage id="app.button.delete" />
             </Button>
             <Form.Item label={formatMessage({ id: 'app.executionQ.retrieval' })}>
-              <Input />
+              <Input
+                value={filterValue}
+                onChange={(event) => {
+                  this.setState({ filterValue: event.target.value });
+                }}
+              />
             </Form.Item>
           </Row>
           <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">
@@ -102,16 +137,18 @@ class ExecutionQueue extends Component {
             </Button>
           </Row>
         </Row>
-        <div
-          style={{ height: pageHeight - TableToolHeight - 48 }}
-          className={commonStyles.tableWrapper}
-        >
+        <div className={commonStyles.tableWrapper}>
           <Table
             loading={loading}
             columns={getColumn(dispatch)}
             dataSource={this.filterTableList()}
-            scroll={{ x: 2450, y: 500 }}
-            pagination={false}
+            scroll={{ x: 'max-content' }}
+            pagination={{
+              responsive: true,
+              defaultPageSize: 20,
+              showTotal: (total) =>
+                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+            }}
             rowSelection={{
               selectedRowKeys,
               onChange: this.onSelectChange,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Col, Row } from 'antd';
-import intl from 'react-intl-universal';
+import { formatMessage } from '@/utils/Lang';
 import ErrorCodeFault from './ErrorCodeFault';
 import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
@@ -30,13 +30,13 @@ const ErrorList = React.memo((props) => {
         <>
           <Col span={12}>
             <DescriptionItem
-              title={keyName.preData || intl.formatMessage({ id: 'app.taskDetail.Additional1' })}
+              title={keyName.preData || formatMessage({ id: 'app.taskDetail.Additional1' })}
               content={record.preData}
             />
           </Col>
           <Col span={12}>
             <DescriptionItem
-              title={keyName.curData || intl.formatMessage({ id: 'app.taskDetail.Additional2' })}
+              title={keyName.curData || formatMessage({ id: 'app.taskDetail.Additional2' })}
               content={record.curData}
             />
           </Col>
@@ -47,17 +47,17 @@ const ErrorList = React.memo((props) => {
       <Row key={record.uniqueKey}>
         <Col span={12}>
           <DescriptionItem
-            title={<span>{intl.formatMessage({ id: 'app.taskDetail.firstTime' })}</span>}
+            title={<span>{formatMessage({ id: 'app.taskDetail.firstTime' })}</span>}
             content={<span>{dateFormat(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>}
           />
         </Col>
         <Col span={12}>
           <DescriptionItem
-            title={<span>{intl.formatMessage({ id: 'app.taskDetail.reports' })}</span>}
+            title={<span>{formatMessage({ id: 'app.taskDetail.reports' })}</span>}
             content={
               <span>
                 {record.count}
-                {intl.formatMessage({ id: 'app.taskDetail.number' })}
+                {formatMessage({ id: 'app.taskDetail.number' })}
               </span>
             }
           />
@@ -69,7 +69,7 @@ const ErrorList = React.memo((props) => {
         {record.agvErrorType === 'SOFTWARE_ERR0R' && (
           <Col span={24}>
             <DescriptionItem
-              title={<span>{intl.formatMessage({ id: 'app.taskDetail.errorMessage' })}</span>}
+              title={<span>{formatMessage({ id: 'app.taskDetail.errorMessage' })}</span>}
               content={<span>{record.errorContent}</span>}
             />
           </Col>
