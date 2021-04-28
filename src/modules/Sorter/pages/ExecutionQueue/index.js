@@ -9,7 +9,7 @@ import Config from '@/config/config';
 
 const { red, green } = dictionary('color', 'all');
 
-const NameSpace = Config.nameSpace.LatentLifting;
+const NameSpace = Config.nameSpace.Sorter;
 const TaskAgvType = Config.AGVType.Sorter;
 
 export default class ExecutionQueue extends React.Component {
@@ -194,9 +194,10 @@ export default class ExecutionQueue extends React.Component {
   render() {
     return (
       <ExecutionQueueComponent
-        getColumn={this.getColumn}
-        nameSpace={NameSpace}
-        filter={this.filterDataSource}
+        getColumn={this.getColumn} // 提供表格列数据
+        nameSpace={NameSpace} // 标记当前页面的车型
+        filter={this.filterDataSource} // 数据筛选逻辑
+        delete={true} // 标记该页面是否允许执行删除操作
       />
     );
   }

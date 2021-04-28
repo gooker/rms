@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Form, Table, Row, Button, Input, Modal, message } from 'antd';
+import { Form, Table, Row, Button, Input, Modal } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';

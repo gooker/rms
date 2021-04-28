@@ -3,6 +3,7 @@ import agv from './en-US/agv';
 import chargerManagement from './en-US/chargerManagement';
 import common from './en-US/common';
 import executionQ from './en-US/executionQ';
+import taskQueue from './en-US/taskQueue';
 import fault from './en-US/fault';
 import firmwareUpgrade from './en-US/firmwareUpgrade';
 import lock from './en-US/lock';
@@ -20,6 +21,7 @@ export default {
   ...chargerManagement,
   ...common,
   ...executionQ,
+  ...taskQueue,
   ...fault,
   ...firmwareUpgrade,
   ...lock,

@@ -56,6 +56,7 @@ const request = async (requestUrl, payload) => {
   const option = {
     method,
     errorHandler,
+    getResponse: true,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
@@ -77,15 +78,25 @@ const request = async (requestUrl, payload) => {
     option.data = data;
   }
 
-  const response = await umiRequest(url, option);
-  // SSO API 成功返回的结果没有按照标准返回格式; 发生错误时只会返回: {code:'-1', message:'失败'}
-  if (response.code === '-1') {
-    return { ...response, data: null };
+  const responseEntity = await umiRequest(url, option);
+  if (isStandardApiResponse(responseEntity)) {
+    // catch error response
+    return responseEntity;
   }
-  if (isStandardApiResponse(response)) {
-    return response.data;
+
+  const { data: responseData, response } = responseEntity;
+  // 缓存当地时区数据
+  if (response && response.headers) {
+    const timeZone = response.headers.get('TIME-ZONE');
+    if (timeZone != null) {
+      sessionStorage.setItem('timeZone', timeZone);
+    }
   }
-  return response;
+
+  if (isStandardApiResponse(responseData)) {
+    return responseData.data;
+  }
+  return responseData;
 };
 
 export default request;
