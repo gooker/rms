@@ -28,7 +28,7 @@ export async function fetchTaskQueueList(namespace, params) {
 export async function deleteTaskQueueItems(namespace, params) {
   return request(`/${namespace}/redis/batchDeletePipeLineTask`, {
     method: `POST`,
-    body: params,
+    data: params,
   });
 }
 
@@ -44,6 +44,23 @@ export async function fetchUpdateTaskPriority(namespace, params) {
   return request(`/${namespace}/redis/batchUpdatePipeLineTaskPriority`, {
     method: 'POST',
     body: params,
+  });
+}
+
+// ************************************** 任务查询 ************************************** //
+// 查询当前区域小车任务列表
+export async function fetchTaskListByParams(namespace, params) {
+  return request(`/${namespace}/api/agvTask`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 取消小车任务
+export async function fetchBatchCancelTask(namespace, params) {
+  return request(`/${namespace}/agv-task/batchCancelTask`, {
+    method: 'POST',
+    data: params,
   });
 }
 

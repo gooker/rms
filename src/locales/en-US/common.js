@@ -76,4 +76,8 @@ export default {
   'app.task.detail': 'Task Detail',
   'app.task.info': 'Task Data',
   'app.task.record': 'Task Record',
+
+  'app.taskAction.cancel.confirm': 'Are you sure cancelling the selection task(s)?',
+  'app.taskAction.cancel.success': 'Cancelling task successfully',
+  'app.taskAction.cancel.fail': 'Failed to cancel task',
 };

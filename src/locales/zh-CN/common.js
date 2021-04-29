@@ -81,4 +81,8 @@ export default {
   'app.task.detail': '任务详情',
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
+
+  'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
+  'app.taskAction.cancel.success': '取消任务成功',
+  'app.taskAction.cancel.fail': '取消任务失败',
 };

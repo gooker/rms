@@ -94,6 +94,9 @@ const request = async (requestUrl, payload) => {
   }
 
   if (isStandardApiResponse(responseData)) {
+    if (responseData.code === '-1') {
+      return responseData;
+    }
     return responseData.data;
   }
   return responseData;
