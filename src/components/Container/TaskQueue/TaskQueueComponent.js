@@ -162,7 +162,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.standByAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#0092FF' }}>
-                <FormattedMessage id={'app.car.standby'} />
+                <FormattedMessage id={'app.agv.standby'} />
               </span>
             </Badge>
             <Badge

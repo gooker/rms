@@ -1,3 +1,4 @@
+// 已优化
 export default {
   'app.taskQueue.appointedAgv': 'AGV',
   'app.taskQueue.appointedTarget': 'Destination',

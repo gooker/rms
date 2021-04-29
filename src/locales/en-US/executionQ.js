@@ -1,3 +1,4 @@
+// 已优化
 export default {
   'app.executionQ.chargerCellId': 'Charger CellId',
   'app.executionQ.chargerDirection': 'Charging Direction',

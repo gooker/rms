@@ -13,7 +13,7 @@ const { red, green } = dictionary('color', 'all');
 const NameSpace = Config.nameSpace.Sorter;
 const TaskAgvType = Config.AGVType.Sorter;
 
-export default class TaskQueue extends React.Component {
+export default class TaskQueue extends React.PureComponent {
   searchInput = React.createRef();
 
   getColumn = (checkDetail) => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import ExecutionQueueComponent from '@/components/Container/ExecutionQueue';
+import ExecutionQueueComponent from '@/components/Container/ExecutionQueueComponent';
 import { formatMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
@@ -12,8 +12,8 @@ const { red, green } = dictionary('color', 'all');
 const NameSpace = Config.nameSpace.Sorter;
 const TaskAgvType = Config.AGVType.Sorter;
 
-export default class ExecutionQueue extends React.Component {
-  getColumn = (dispatch) => {
+export default class ExecutionQueue extends React.PureComponent {
+  getColumn = (checkTaskDetail) => {
     return [
       {
         title: formatMessage({ id: 'app.task.id' }),
@@ -26,14 +26,7 @@ export default class ExecutionQueue extends React.Component {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  dispatch({
-                    type: 'task/fetchTaskDetailByTaskId',
-                    payload: {
-                      taskId: text,
-                      taskAgvType: TaskAgvType,
-                      nameSpace: NameSpace,
-                    },
-                  });
+                  checkTaskDetail(text, TaskAgvType, NameSpace);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}

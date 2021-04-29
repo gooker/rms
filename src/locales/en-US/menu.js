@@ -6,12 +6,12 @@ export default {
   'menu.controlCenter.taskManger': 'Task Query',
   'menu.controlCenter.taskQueue': 'Task Pending Queue',
 
-  'menu.car': 'AGV Management',
-  'menu.car.activityLogging': 'AGV Monitor',
-  'menu.car.batchFirmwareUpgrade': 'Batch Upgrading',
-  'menu.car.carManger': 'AGV List',
-  'menu.car.firmwareUpgrade': 'Firmware upgrade',
-  'menu.car.loggerDownLoad': 'Log DownLoad',
+  'menu.agv': 'AGV Management',
+  'menu.agv.agvList': 'AGV List',
+  'menu.agv.activityLogging': 'AGV Monitor',
+  'menu.agv.firmwareUpgrade': 'Firmware upgrade',
+  'menu.agv.batchFirmwareUpgrade': 'Batch Upgrading',
+  'menu.agv.loggerDownLoad': 'Log DownLoad',
 
   'menu.faultManger': 'Error Management',
   'menu.faultManger.faultDefinition': 'Error Definition',

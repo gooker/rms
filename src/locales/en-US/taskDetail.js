@@ -1,3 +1,4 @@
+// 已优化
 export default {
   'app.taskDetail.finishTime': 'Estimated finish time:',
   'app.taskDetail.historyRecord': 'History Record',

@@ -51,11 +51,16 @@ export default {
   'app.agv.id': '小车ID',
   'app.agv.type': '小车类型',
   'app.agv.status': '小车状态',
+  'app.agv.direction': '小车方向',
   'app.agv.direction.top': '朝上',
   'app.agv.direction.right': '朝右',
   'app.agv.direction.bottom': '朝下',
   'app.agv.direction.left': '朝左',
   'app.agv.getListFail': '获取小车列表失败',
+  'app.agv.on': '已开启',
+  'app.agv.off': '未开启',
+  'app.agv.turnOff': '关闭',
+  'app.agv.turnOn': '开启',
 
   // Pod --
   'app.pod': '货架',

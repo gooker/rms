@@ -6,12 +6,12 @@ export default {
   'menu.controlCenter.executionQueue': '执行队列',
   'menu.controlCenter.taskQueue': '等待队列',
 
-  'menu.car': 'AGV管理',
-  'menu.car.carManger': 'AGV列表',
-  'menu.car.firmwareUpgrade': '固件升级',
-  'menu.car.loggerDownLoad': '日志下载',
-  'menu.car.activityLogging': '小车监控',
-  'menu.car.batchFirmwareUpgrade': '批量升级',
+  'menu.agv': 'AGV管理',
+  'menu.agv.agvList': 'AGV列表',
+  'menu.agv.activityLogging': '小车监控',
+  'menu.agv.firmwareUpgrade': '固件升级',
+  'menu.agv.batchFirmwareUpgrade': '批量升级',
+  'menu.agv.loggerDownLoad': '日志下载',
 
   'menu.faultManger': '故障管理',
   'menu.faultManger.faultInfo': '故障信息',

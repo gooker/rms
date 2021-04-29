@@ -1,10 +1,5 @@
 import Loadable from '@/utils/Loadable';
 
-// 异步加载组件
-const ExecutionQueue = Loadable(() => import('@/modules/Sorter/pages/ExecutionQueue'));
-const TaskQueue = Loadable(() => import('@/modules/Sorter/pages/TaskQueue'));
-const TaskLibrary = Loadable(() => import('@/modules/Sorter/pages/TaskLibrary'));
-
 export default [
   {
     name: 'controlCenter',
@@ -13,47 +8,47 @@ export default [
       {
         path: '/sorter/center/executionQueue',
         name: 'executionQueue',
-        component: ExecutionQueue,
+        component: Loadable(() => import('@/modules/Sorter/pages/ExecutionQueue')),
       },
       {
         path: '/sorter/center/taskQueue',
         name: 'taskQueue',
-        component: TaskQueue,
+        component: Loadable(() => import('@/modules/Sorter/pages/TaskQueue')),
       },
       {
         path: '/sorter/center/taskManger',
         name: 'taskManger',
-        component: TaskLibrary,
+        component: Loadable(() => import('@/modules/Sorter/pages/TaskLibrary')),
       },
     ],
   },
   {
-    name: 'car',
+    name: 'agv',
     icon: 'car',
     routes: [
       {
-        path: '/sorter/car/carManger',
-        name: 'carManger',
-        component: '/CarManger/CarList',
+        path: '/sorter/agv/agvList',
+        name: 'agvList',
+        component: Loadable(() => import('@/modules/Sorter/pages/AgvList')),
       },
       {
-        path: '/sorter/car/activityLogging',
+        path: '/sorter/agv/activityLogging',
         name: 'activityLogging',
         component: '/ControlCenter/ActivityLogging',
       },
       {
-        path: '/sorter/car/batchFirmwareUpgrade',
+        path: '/sorter/agv/batchFirmwareUpgrade',
         name: 'batchFirmwareUpgrade',
         component: '/CarManger/BatchFirmware',
       },
       {
-        path: '/sorter/car/firmwareUpgrade',
+        path: '/sorter/agv/firmwareUpgrade',
         name: 'firmwareUpgrade',
         component: '/CarManger/FirmwarUpdate',
         hideInMenu: true,
       },
       {
-        path: '/sorter/car/loggerDownLoad',
+        path: '/sorter/agv/loggerDownLoad',
         name: 'loggerDownLoad',
         component: '/CarManger/LoggerDownLoad',
       },

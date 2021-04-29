@@ -12,7 +12,7 @@ const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
 const NameSpace = Config.nameSpace.Sorter;
 const TaskAgvType = Config.AGVType.Sorter;
 
-export default class TaskLibrary extends React.Component {
+export default class TaskLibrary extends React.PureComponent {
   getColumn = (checkDetail) => {
     return [
       {

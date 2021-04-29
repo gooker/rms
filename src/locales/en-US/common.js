@@ -51,11 +51,16 @@ export default {
   'app.agv.id': 'AGV ID',
   'app.agv.type': 'AGV Type',
   'app.agv.status': 'AGV Status',
+  'app.agv.direction': 'AGV Direction',
   'app.agv.direction.top': 'Up',
   'app.agv.direction.right': 'Right',
   'app.agv.direction.bottom': 'Down',
   'app.agv.direction.left': 'Left',
   'app.agv.getListFail': 'Failed to fetch AGV list',
+  'app.agv.on': 'ON',
+  'app.agv.off': 'OFF',
+  'app.agv.turnOff': 'Turn Off',
+  'app.agv.turnOn': 'Turn On',
 
   // Pod --
   'app.pod': 'Pod',

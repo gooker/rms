@@ -140,7 +140,7 @@ function dictionary(namespace, key) {
       return '';
     }
   } else {
-    return '';
+    return dictionaryDataSource;
   }
 }
 

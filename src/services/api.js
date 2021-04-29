@@ -71,6 +71,30 @@ export async function fetchAgvList(namespace, sectionId) {
   });
 }
 
+// ************************************** 小车列表  ************************************** //
+// 请求小车的硬件状态
+export async function fetchAgvHardwareInfoById(namespace, params) {
+  return request(`/${namespace}/agv/agvHardware/${params.sectionId}/${params.agvId}`, {
+    method: `GET`,
+  });
+}
+
+// 请求删除小车(批量)
+export async function fetchDeleteAgvList(namespace, params) {
+  return request(`/${namespace}/agv/deleteAgv`, {
+    method: `POST`,
+    body: params,
+  });
+}
+
+// 小车移出地图
+export async function fetchMoveoutAGVs(namespace, params) {
+  return request(`/${namespace}/agv/robotRemoveFromMap`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
 // ************************************** 任务详情弹窗  ************************************** //
 // 获取任务详情数据
 export async function fetchTaskDetailByTaskId(namespace, params) {

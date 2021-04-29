@@ -4,14 +4,14 @@ import { Form, Table, Row, Button, Input, Modal } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
-import { dealResponse, getContentHeight } from '@/utils/utils';
+import { dealResponse } from '@/utils/utils';
 import TablePageHOC from '@/components/TablePageHOC';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
 
 @connect()
-class ExecutionQueue extends Component {
+class ExecutionQueueComponent extends Component {
   state = {
     filterValue: '',
 
@@ -22,7 +22,7 @@ class ExecutionQueue extends Component {
     loading: false,
     deleteLoading: false,
 
-    pageHeight: getContentHeight(),
+    pageHeight: 0,
   };
 
   componentDidMount() {
@@ -78,6 +78,14 @@ class ExecutionQueue extends Component {
     this.setState({ selectedRowKeys, selectedRow });
   };
 
+  checkTaskDetail = (taskId, taskAgvType, nameSpace) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'task/fetchTaskDetailByTaskId',
+      payload: { taskId, taskAgvType, nameSpace },
+    });
+  };
+
   filterTableList = () => {
     const { dataSource, filterValue } = this.state;
     const { filter } = this.props;
@@ -89,7 +97,7 @@ class ExecutionQueue extends Component {
 
   render() {
     const { loading, deleteLoading, selectedRowKeys, filterValue } = this.state;
-    const { dispatch, getColumn, pageHeight } = this.props;
+    const { getColumn, pageHeight } = this.props;
     return (
       <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
         <Row>
@@ -123,7 +131,7 @@ class ExecutionQueue extends Component {
         <div className={commonStyles.tableWrapper}>
           <Table
             loading={loading}
-            columns={getColumn(dispatch)}
+            columns={getColumn(this.checkTaskDetail)}
             dataSource={this.filterTableList()}
             scroll={{ x: 'max-content' }}
             pagination={{
@@ -142,4 +150,4 @@ class ExecutionQueue extends Component {
     );
   }
 }
-export default TablePageHOC(ExecutionQueue);
+export default TablePageHOC(ExecutionQueueComponent);
