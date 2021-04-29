@@ -9,7 +9,7 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const TaskSearch = (props) => {
-  const { search } = props;
+  const { search, agvList } = props;
 
   const [form] = Form.useForm();
 
@@ -42,7 +42,13 @@ const TaskSearch = (props) => {
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={8}>
           <Form.Item name={'agvId'} label={formatMessage({ id: 'app.agv.id' })}>
-            <Select allowClear showSearch />
+            <Select allowClear showSearch>
+              {agvList.map((agvId) => (
+                <Option key={agvId} value={agvId}>
+                  {agvId}
+                </Option>
+              ))}
+            </Select>
           </Form.Item>
         </Col>
         <Col span={8}>

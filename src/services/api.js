@@ -64,6 +64,13 @@ export async function fetchBatchCancelTask(namespace, params) {
   });
 }
 
+// 获取小车列表
+export async function fetchAgvList(namespace, sectionId) {
+  return request(`/${namespace}/agv/${sectionId}`, {
+    method: 'GET',
+  });
+}
+
 // ************************************** 任务详情弹窗  ************************************** //
 // 获取任务详情数据
 export async function fetchTaskDetailByTaskId(namespace, params) {

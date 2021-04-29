@@ -55,6 +55,7 @@ export default {
   'app.agv.direction.right': 'Right',
   'app.agv.direction.bottom': 'Down',
   'app.agv.direction.left': 'Left',
+  'app.agv.getListFail': 'Failed to fetch AGV list',
 
   // Pod --
   'app.pod': 'Pod',
@@ -77,6 +78,7 @@ export default {
   'app.task.info': 'Task Data',
   'app.task.record': 'Task Record',
 
+  // Task Action
   'app.taskAction.cancel.confirm': 'Are you sure cancelling the selection task(s)?',
   'app.taskAction.cancel.success': 'Cancelling task successfully',
   'app.taskAction.cancel.fail': 'Failed to cancel task',

@@ -4,7 +4,7 @@ import { Button, message, Row, Modal, Table } from 'antd';
 import { debounce } from 'lodash';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { fetchTaskListByParams, fetchBatchCancelTask } from '@/services/api';
+import { fetchTaskListByParams, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import { dealResponse, getContentHeight } from '@/utils/utils';
 import TaskSearch from './TaskSearch';
 import commonStyles from '@/common.module.less';
@@ -21,13 +21,17 @@ class TaskLibraryComponent extends Component {
     selectedRows: [],
     selectedRowKeys: [],
 
+    agvList: [],
     dataSource: [],
     page: { currentPage: 1, size: 10, totalElements: 0 },
   };
 
   componentDidMount() {
     this.observeContentsSizeChange();
-    this.setState({ pageHeight: getContentHeight() }, this.getData);
+    this.setState({ pageHeight: getContentHeight() }, () => {
+      this.getData();
+      this.getAgvList();
+    });
   }
 
   componentWillUnmount() {
@@ -78,6 +82,18 @@ class TaskLibraryComponent extends Component {
     });
   };
 
+  getAgvList = async () => {
+    const { nameSpace } = this.props;
+    const sectionId = window.localStorage.getItem('sectionId');
+    const response = await fetchAgvList(nameSpace, sectionId);
+
+    if (dealResponse(response)) {
+      message.error(formatMessage({ id: 'app.agv.getListFail' }));
+    } else {
+      this.setState({ agvList: response });
+    }
+  };
+
   //任务详情
   checkDetail = (taskId, taskAgvType, nameSpace) => {
     const { dispatch } = this.props;
@@ -116,7 +132,7 @@ class TaskLibraryComponent extends Component {
   };
 
   render() {
-    const { loading, selectedRowKeys, dataSource, pageHeight, page } = this.state;
+    const { loading, selectedRowKeys, agvList, dataSource, pageHeight, page } = this.state;
     const { cancel, getColumn } = this.props;
     const rowSelection = { selectedRowKeys, onChange: this.rowSelectChange };
     const pagination = {
@@ -127,7 +143,7 @@ class TaskLibraryComponent extends Component {
     };
     return (
       <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
-        <TaskSearch search={this.getData} />
+        <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
 
         {/* 控制是否可以执行取消任务操作 */}
         {cancel && (

@@ -55,6 +55,7 @@ export default {
   'app.agv.direction.right': '朝右',
   'app.agv.direction.bottom': '朝下',
   'app.agv.direction.left': '朝左',
+  'app.agv.getListFail': '获取小车列表失败',
 
   // Pod --
   'app.pod': '货架',
@@ -82,6 +83,7 @@ export default {
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
 
+  // Task Action
   'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
   'app.taskAction.cancel.success': '取消任务成功',
   'app.taskAction.cancel.fail': '取消任务失败',
