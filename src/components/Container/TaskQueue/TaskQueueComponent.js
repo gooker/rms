@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { debounce } from 'lodash';
 import { Form, Table, Badge, Row, Button, Modal, message } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
@@ -11,7 +10,8 @@ import {
   fetchUpdateTaskPriority,
 } from '@/services/api';
 import { dealResponse, getContentHeight } from '@/utils/utils';
-import UpdateTaskPriority from '../UpdateTaskPriority/UpdateTaskPriority';
+import UpdateTaskPriority from '../../UpdateTaskPriority/UpdateTaskPriority';
+import TablePageHOC from '@/components/TablePageHOC';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -34,25 +34,8 @@ class TaskQueueComponent extends Component {
   };
 
   componentDidMount() {
-    this.observeContentsSizeChange();
     this.setState({ pageHeight: getContentHeight() }, this.getData);
   }
-
-  componentWillUnmount() {
-    this.resizeObserver.disconnect();
-  }
-
-  observeContentsSizeChange = () => {
-    const _this = this;
-    this.resizeObserver = new ResizeObserver(
-      debounce((entries) => {
-        const { contentRect } = entries[0];
-        const height = contentRect?.height ?? getContentHeight();
-        _this.setState({ pageHeight: height });
-      }, 200),
-    );
-    this.resizeObserver.observe(document.getElementById('layoutContent'));
-  };
 
   getData = async () => {
     const { nameSpace } = this.props;
@@ -283,4 +266,4 @@ class TaskQueueComponent extends Component {
     );
   }
 }
-export default TaskQueueComponent;
+export default TablePageHOC(TaskQueueComponent);

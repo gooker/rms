@@ -5,7 +5,7 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
 import Config from '@/config/config';
-import TaskLibraryComponent from '@/components/TaskLibrary/TaskLibraryComponent';
+import TaskLibraryComponent from '@/components/Container/TaskLibrary/TaskLibraryComponent';
 import commonStyles from '@/common.module.less';
 
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];

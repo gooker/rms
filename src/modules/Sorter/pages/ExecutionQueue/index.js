@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import ExecutionQueueComponent from '@/components/ExecutionQueue';
+import ExecutionQueueComponent from '@/components/Container/ExecutionQueue';
 import { formatMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';

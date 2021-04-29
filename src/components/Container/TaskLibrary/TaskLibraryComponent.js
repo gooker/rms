@@ -1,18 +1,17 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, message, Row, Modal, Table } from 'antd';
-import { debounce } from 'lodash';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchTaskListByParams, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
-import { dealResponse, getContentHeight } from '@/utils/utils';
+import { dealResponse } from '@/utils/utils';
 import TaskSearch from './TaskSearch';
+import TablePageHOC from '@/components/TablePageHOC';
 import commonStyles from '@/common.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {
   state = {
-    pageHeight: 0,
     formValues: {}, // 保存查询表单的值
 
     loading: false,
@@ -27,28 +26,9 @@ class TaskLibraryComponent extends Component {
   };
 
   componentDidMount() {
-    this.observeContentsSizeChange();
-    this.setState({ pageHeight: getContentHeight() }, () => {
-      this.getData();
-      this.getAgvList();
-    });
+    this.getData();
+    this.getAgvList();
   }
-
-  componentWillUnmount() {
-    this.resizeObserver.disconnect();
-  }
-
-  observeContentsSizeChange = () => {
-    const _this = this;
-    this.resizeObserver = new ResizeObserver(
-      debounce((entries) => {
-        const { contentRect } = entries[0];
-        const height = contentRect?.height ?? getContentHeight();
-        _this.setState({ pageHeight: height });
-      }, 200),
-    );
-    this.resizeObserver.observe(document.getElementById('layoutContent'));
-  };
 
   getData = async (values = {}) => {
     const { nameSpace } = this.props;
@@ -132,8 +112,8 @@ class TaskLibraryComponent extends Component {
   };
 
   render() {
-    const { loading, selectedRowKeys, agvList, dataSource, pageHeight, page } = this.state;
-    const { cancel, getColumn } = this.props;
+    const { loading, selectedRowKeys, agvList, dataSource, page } = this.state;
+    const { cancel, getColumn, pageHeight } = this.props;
     const rowSelection = { selectedRowKeys, onChange: this.rowSelectChange };
     const pagination = {
       current: page.currentPage,
@@ -170,4 +150,4 @@ class TaskLibraryComponent extends Component {
     );
   }
 }
-export default TaskLibraryComponent;
+export default TablePageHOC(TaskLibraryComponent);

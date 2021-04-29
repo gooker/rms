@@ -5,7 +5,7 @@ import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
 import { dealResponse, getContentHeight } from '@/utils/utils';
-import { debounce } from 'lodash';
+import TablePageHOC from '@/components/TablePageHOC';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
@@ -26,25 +26,8 @@ class ExecutionQueue extends Component {
   };
 
   componentDidMount() {
-    this.observeContentsSizeChange();
     this.getData();
   }
-
-  componentWillUnmount() {
-    this.resizeObserver.disconnect();
-  }
-
-  observeContentsSizeChange = () => {
-    const _this = this;
-    this.resizeObserver = new ResizeObserver(
-      debounce((entries) => {
-        const { contentRect } = entries[0];
-        const height = contentRect?.height ?? getContentHeight();
-        _this.setState({ pageHeight: height });
-      }, 200),
-    );
-    this.resizeObserver.observe(document.getElementById('layoutContent'));
-  };
 
   getData = async () => {
     const { nameSpace } = this.props;
@@ -105,8 +88,8 @@ class ExecutionQueue extends Component {
   };
 
   render() {
-    const { loading, deleteLoading, selectedRowKeys, filterValue, pageHeight } = this.state;
-    const { dispatch, getColumn } = this.props;
+    const { loading, deleteLoading, selectedRowKeys, filterValue } = this.state;
+    const { dispatch, getColumn, pageHeight } = this.props;
     return (
       <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
         <Row>
@@ -159,4 +142,4 @@ class ExecutionQueue extends Component {
     );
   }
 }
-export default ExecutionQueue;
+export default TablePageHOC(ExecutionQueue);

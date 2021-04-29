@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, Popover, Button, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import TaskQueueComponent from '@/components/TaskQueue/TaskQueueComponent';
+import TaskQueueComponent from '@/components/Container/TaskQueue/TaskQueueComponent';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
@@ -10,7 +10,7 @@ import Config from '@/config/config';
 
 const { red, green } = dictionary('color', 'all');
 
-const NameSpace = Config.nameSpace.LatentLifting;
+const NameSpace = Config.nameSpace.Sorter;
 const TaskAgvType = Config.AGVType.Sorter;
 
 export default class TaskQueue extends React.Component {

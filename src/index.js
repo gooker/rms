@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import dva from '@/utils/dva';
 import { HashRouter as Router } from 'react-router-dom';
-import Portal from '@/components/Portal/Portal';
+import Portal from '@/components/Container/Portal/Portal';
 import appModel from '@/models/app';
 import taskModel from '@/models/task';
 import './global.less';
