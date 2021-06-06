@@ -1,21 +1,22 @@
 const { join } = require('path');
-const { writeFile, mkdirSync, exists } = require('fs');
 const babelTransForm = require('./babelTransForm');
+const { readdirSync, writeFile, mkdirSync, exists } = require('fs');
 
-const pageRouter = babelTransForm(join(__dirname, '../', 'config/router.config.js'));
-const menu = babelTransForm(join(__dirname, '../', 'src/locales/zh-CN/menu.js'));
-const packageInfo = babelTransForm(join(__dirname, '../', './package.json'));
-const permissionInfo = babelTransForm(join(__dirname, '../', 'src/PermissionInfo'));
-const distDirection = join(__dirname, '../', 'dist');
+const distFolderPath = babelTransForm(join(__dirname, '../', 'dist'));
+const routeFolderPath = babelTransForm(join(__dirname, '../', 'src/config/router'));
+const packageFilePath = babelTransForm(join(__dirname, '../', './package.json'));
+const menuI18nFilePath = babelTransForm(join(__dirname, '../', 'src/locales/zh-CN/menu.js'));
+const permissionInfoFilePath = babelTransForm(join(__dirname, '../', 'src/config/PermissionInfo'));
 
 const permissionInfoMap = {};
-permissionInfo.default.forEach(record => {
+require(permissionInfoFilePath).default.forEach((record) => {
   permissionInfoMap[record.page] = record;
 });
 
-const getPageTree = function(array, parentName) {
+// 生成菜单树
+const getPageTree = function (array, parentName) {
   const result = [];
-  array.forEach(record => {
+  array.forEach((record) => {
     if ((record.routes || record.component) && record.path) {
       const obj = {};
       obj.key = record.path;
@@ -37,10 +38,10 @@ const getPageTree = function(array, parentName) {
   });
   return result;
 };
-
-const AuthorityTree = function(array, parentName, appCode) {
+// 生成权限树
+const AuthorityTree = function (array, parentName, appCode) {
   const result = [];
-  array.forEach(record => {
+  array.forEach((record) => {
     if ((record.routes || record.component) && record.path) {
       const obj = {};
       obj.key = appCode + record.path;
@@ -59,7 +60,7 @@ const AuthorityTree = function(array, parentName, appCode) {
           obj.children = [];
         }
         if (permissionInfoMap[record.path].children != null) {
-          permissionInfoMap[record.path].children.forEach(record => {
+          permissionInfoMap[record.path].children.forEach((record) => {
             obj.children.push(record);
           });
         } else {
@@ -72,38 +73,41 @@ const AuthorityTree = function(array, parentName, appCode) {
   return result;
 };
 
-if (pageRouter.default && Array.isArray(pageRouter.default)) {
-  let menu = [];
-  let authTree = [];
+const files = readdirSync(routeFolderPath);
+console.log(files);
 
-  pageRouter.default.forEach(router => {
-    const subMenu = getPageTree(router.routes);
-    menu.push(...subMenu);
-  });
-
-  pageRouter.default.forEach(router => {
-    const subAuthTree = AuthorityTree(router.routes, null, packageInfo.appCode);
-    authTree.push(...subAuthTree);
-  });
-
-  const info = {
-    appCode: packageInfo.appCode,
-    version: packageInfo.version,
-    moduleType: packageInfo.moduleType,
-    moduleName: packageInfo.name,
-    baseContext: packageInfo.baseContext,
-    menu,
-    authTree,
-  };
-
-  exists(distDirection, function(exists) {
-    if (!exists) {
-      mkdirSync(distDirection);
-    }
-    writeFile(`${distDirection}/appInfo.json`, JSON.stringify(info, null, 2), error => {
-      if (error) {
-        throw error;
-      }
-    });
-  });
-}
+// if (pageRouter.default && Array.isArray(pageRouter.default)) {
+//   let menu = [];
+//   let authTree = [];
+//
+//   pageRouter.default.forEach((router) => {
+//     const subMenu = getPageTree(router.routes);
+//     menu.push(...subMenu);
+//   });
+//
+//   pageRouter.default.forEach((router) => {
+//     const subAuthTree = AuthorityTree(router.routes, null, packageInfo.appCode);
+//     authTree.push(...subAuthTree);
+//   });
+//
+//   const info = {
+//     appCode: packageInfo.appCode,
+//     version: packageInfo.version,
+//     moduleType: packageInfo.moduleType,
+//     moduleName: packageInfo.name,
+//     baseContext: packageInfo.baseContext,
+//     menu,
+//     authTree,
+//   };
+//
+//   exists(distFolderPath, function (exists) {
+//     if (!exists) {
+//       mkdirSync(distFolderPath);
+//     }
+//     writeFile(`${distFolderPath}/appInfo.json`, JSON.stringify(info, null, 2), (error) => {
+//       if (error) {
+//         throw error;
+//       }
+//     });
+//   });
+// }

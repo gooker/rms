@@ -14,6 +14,8 @@ export default {
   'app.common.true': '是',
   'app.common.false': '否',
   'app.common.noRecord': '无记录',
+  'app.common.null': '空',
+  'app.common.Error': '错误',
 
   // direction --
   'app.direction': '方向',
@@ -45,22 +47,29 @@ export default {
   'app.button.past': '粘贴',
   'app.button.export': '导出',
   'app.button.import': '导入',
+  'app.button.turnOff': '关闭',
+  'app.button.turnOn': '开启',
 
   // AGV --
   'app.agv': '小车',
   'app.agv.id': '小车ID',
   'app.agv.type': '小车类型',
   'app.agv.status': '小车状态',
-  'app.agv.direction': '小车方向',
+  'app.agv.on': '已开启',
+  'app.agv.off': '未开启',
+  'app.agv.direction': '车头方向',
   'app.agv.direction.top': '朝上',
   'app.agv.direction.right': '朝右',
   'app.agv.direction.bottom': '朝下',
   'app.agv.direction.left': '朝左',
+  'app.agv.direction.no': '不存在',
+
+  'app.agv.taskRecord': '小车任务记录',
+  'app.agv.errorRecord': '小车错误记录',
+  'app.activity.realTimeAgvState': '小车实时状态',
+  'app.activity.agvHardwareState': '小车硬件信息',
+
   'app.agv.getListFail': '获取小车列表失败',
-  'app.agv.on': '已开启',
-  'app.agv.off': '未开启',
-  'app.agv.turnOff': '关闭',
-  'app.agv.turnOn': '开启',
 
   // Pod --
   'app.pod': '货架',
@@ -77,8 +86,6 @@ export default {
   // Task
   'app.task': '任务',
   'app.task.id': '任务ID',
-  'app.task.status': '任务状态',
-  'app.task.type': '任务类型',
   'app.task.action': '任务细节',
   'app.task.step': '任务步骤',
   'app.task.flow': '任务流程',
@@ -87,9 +94,19 @@ export default {
   'app.task.detail': '任务详情',
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
+  'app.task.type': '任务类型',
+  'app.task.status': '任务状态',
+  'app.task.status.TaskNew': '新建',
+  'app.task.status.TaskExecuting': '执行中',
+  'app.task.status.TaskFinished': '已完成',
+  'app.task.status.TaskCancel': '已取消',
+  'app.task.status.TaskError': '失败',
 
   // Task Action
   'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
   'app.taskAction.cancel.success': '取消任务成功',
   'app.taskAction.cancel.fail': '取消任务失败',
+
+  //  Required
+  'app.required.agvID': '请选择小车ID',
 };
