@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
-import { Form, Table, Row, Col, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
+import { Table, Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchAgvList, fetchDeleteAgvList, fetchMoveoutAGVs } from '@/services/api';
 import { dealResponse, isNull, exportAgvModuleInfo, exportAgvInfo } from '@/utils/utils';
+import LabelComponent from '@/components/LabelComponent';
 import dictionary from '@/utils/Dictionary';
-import TablePageHOC from '@/components/TablePageHOC';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
@@ -128,113 +129,98 @@ class AgvListComponent extends Component {
 
   render() {
     const { loading, agvList, selectedRowKeys } = this.state;
-    const { getColumn, pageHeight } = this.props;
+    const { getColumn } = this.props;
     return (
-      <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
-        <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-          <div style={{ flex: 10, display: 'flex' }}>
-            <div style={{ marginRight: '24px' }}>
-              <Button disabled={selectedRowKeys.length === 0} onClick={this.deleteAgv}>
-                <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+      <TablePageWrapper>
+        <Row>
+          <Row className={commonStyles.tableToolLeft}>
+            <Button disabled={selectedRowKeys.length === 0} onClick={this.deleteAgv}>
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+            </Button>
+            <Button disabled={selectedRowKeys.length === 0} onClick={this.moveOutAgv}>
+              <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
+            </Button>
+            <Dropdown
+              overlay={
+                <Menu
+                  onClick={({ key }) => {
+                    if (key === 'hardware') {
+                      this.exportAgvHardwareInfo();
+                    } else {
+                      this.exportAgvInfo();
+                    }
+                  }}
+                >
+                  <Menu.Item key="hardware">
+                    {formatMessage({ id: 'app.agv.exportHardwareInfo' })}
+                  </Menu.Item>
+                  <Menu.Item key="carInfo">
+                    {formatMessage({ id: 'app.agv.exportAgvInfo' })}
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <Button>
+                {formatMessage({ id: 'app.agv.infoExport' })}
+                <DownOutlined />
               </Button>
-            </div>
-            <div style={{ marginRight: '24px' }}>
-              <Button disabled={selectedRowKeys.length === 0} onClick={this.moveOutAgv}>
-                <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
-              </Button>
-            </div>
-            <div style={{ marginRight: '24px' }}>
-              <Dropdown
-                overlay={
-                  <Menu
-                    onClick={({ key }) => {
-                      if (key === 'hardware') {
-                        this.exportAgvHardwareInfo();
-                      } else {
-                        this.exportAgvInfo();
-                      }
-                    }}
-                  >
-                    <Menu.Item key="hardware">
-                      {formatMessage({ id: 'app.agv.exportHardwareInfo' })}
-                    </Menu.Item>
-                    <Menu.Item key="carInfo">
-                      {formatMessage({ id: 'app.agv.exportAgvInfo' })}
-                    </Menu.Item>
-                  </Menu>
-                }
+            </Dropdown>
+            <LabelComponent label={formatMessage({ id: 'app.agv.id' })} width={300}>
+              <Select
+                allowClear
+                showSearch
+                mode="multiple"
+                maxTagCount={4}
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  this.setState({ searchAgvId: value });
+                }}
               >
-                <Button>
-                  {formatMessage({ id: 'app.agv.infoExport' })}
-                  <DownOutlined />
-                </Button>
-              </Dropdown>
-            </div>
-            <Row style={{ width: 730 }} gutter={24}>
-              <Col span={10}>
-                <Form.Item label={formatMessage({ id: 'app.agv.id' })}>
-                  <Select
-                    allowClear
-                    showSearch
-                    mode="multiple"
-                    maxTagCount={4}
-                    style={{ width: '100%' }}
-                    onChange={(value) => {
-                      this.setState({ searchAgvId: value });
-                    }}
-                  >
-                    {agvList.map(({ robotId }) => (
-                      <Select.Option key={robotId} value={robotId}>
-                        {robotId}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={14}>
-                <Form.Item label={formatMessage({ id: 'app.agv.status' })}>
-                  <Select
-                    allowClear
-                    mode="multiple"
-                    maxTagCount={3}
-                    style={{ width: '100%' }}
-                    onChange={(value) => {
-                      this.setState({ searchAgvState: value });
-                    }}
-                  >
-                    {this.renderAgvStateFilter()}
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-          </div>
-          <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                {agvList.map(({ robotId }) => (
+                  <Select.Option key={robotId} value={robotId}>
+                    {robotId}
+                  </Select.Option>
+                ))}
+              </Select>
+            </LabelComponent>
+            <LabelComponent label={formatMessage({ id: 'app.agv.status' })} width={300}>
+              <Select
+                allowClear
+                mode="multiple"
+                maxTagCount={3}
+                style={{ width: '100%' }}
+                onChange={(value) => {
+                  this.setState({ searchAgvState: value });
+                }}
+              >
+                {this.renderAgvStateFilter()}
+              </Select>
+            </LabelComponent>
+          </Row>
+          <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
             <Button type="primary" onClick={this.search}>
               <RedoOutlined />
               <FormattedMessage id="app.button.refresh" />
             </Button>
-          </div>
-        </div>
-        <div className={commonStyles.tableWrapper}>
-          <Table
-            loading={loading}
-            columns={getColumn(this.checkAgvDetail)}
-            dataSource={this.filterData()}
-            scroll={{ x: 'max-content' }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 20,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-            }}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: this.onSelectChange,
-            }}
-          />
-        </div>
-      </div>
+          </Row>
+        </Row>
+        <Table
+          loading={loading}
+          columns={getColumn(this.checkAgvDetail)}
+          dataSource={this.filterData()}
+          scroll={{ x: 'max-content' }}
+          pagination={{
+            responsive: true,
+            defaultPageSize: 20,
+            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+          }}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+          }}
+        />
+      </TablePageWrapper>
     );
   }
 }
-export default TablePageHOC(AgvListComponent);
+export default AgvListComponent;

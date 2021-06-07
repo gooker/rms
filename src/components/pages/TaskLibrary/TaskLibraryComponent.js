@@ -1,13 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Row, Modal, Table } from 'antd';
+import { Button, message, Modal, Table } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchTaskListByParams, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse } from '@/utils/utils';
 import TaskSearch from './TaskSearch';
-import TablePageHOC from '@/components/TablePageHOC';
-import commonStyles from '@/common.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {
@@ -113,41 +112,34 @@ class TaskLibraryComponent extends Component {
 
   render() {
     const { loading, selectedRowKeys, agvList, dataSource, page } = this.state;
-    const { cancel, getColumn, pageHeight } = this.props;
-    const rowSelection = { selectedRowKeys, onChange: this.rowSelectChange };
-    const pagination = {
-      current: page.currentPage,
-      pageSize: page.size,
-      total: page.totalElements || 0,
-      showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-    };
+    const { cancel, getColumn } = this.props;
     return (
-      <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
-        <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
-
-        {/* 控制是否可以执行取消任务操作 */}
-        {cancel && (
-          <Row style={{ marginBottom: 15 }}>
+      <TablePageWrapper>
+        <div>
+          <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
+          {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.openCancelTaskConfirm}>
               <FormattedMessage id={'app.taskDetail.cancelTask'} />
             </Button>
-          </Row>
-        )}
-
-        <div className={commonStyles.tableWrapper}>
-          <Table
-            loading={loading}
-            scroll={{ x: 1400 }}
-            rowSelection={rowSelection}
-            rowKey={(record) => record.taskId}
-            dataSource={dataSource}
-            columns={getColumn(this.checkDetail)}
-            pagination={pagination}
-            onChange={this.handleTableChange}
-          />
+          )}
         </div>
-      </div>
+        <Table
+          loading={loading}
+          scroll={{ x: 'max-content' }}
+          rowKey={(record) => record.taskId}
+          dataSource={dataSource}
+          columns={getColumn(this.checkDetail)}
+          rowSelection={{ selectedRowKeys, onChange: this.rowSelectChange }}
+          pagination={{
+            current: page.currentPage,
+            pageSize: page.size,
+            total: page.totalElements || 0,
+            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+          }}
+          onChange={this.handleTableChange}
+        />
+      </TablePageWrapper>
     );
   }
 }
-export default TablePageHOC(TaskLibraryComponent);
+export default TaskLibraryComponent;

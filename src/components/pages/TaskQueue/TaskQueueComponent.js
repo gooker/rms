@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Form, Table, Badge, Row, Button, Modal, message } from 'antd';
+import { Table, Badge, Row, Button, Modal, message } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -9,9 +9,9 @@ import {
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
 } from '@/services/api';
-import { dealResponse, getContentHeight } from '@/utils/utils';
+import { dealResponse } from '@/utils/utils';
 import UpdateTaskPriority from './components/UpdateTaskPriority/UpdateTaskPriority';
-import TablePageHOC from '@/components/TablePageHOC';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -29,12 +29,10 @@ class TaskQueueComponent extends Component {
     loading: false,
     deleteLoading: false,
     priorityVisible: false,
-
-    pageHeight: 0,
   };
 
   componentDidMount() {
-    this.setState({ pageHeight: getContentHeight() }, this.getData);
+    this.getData;
   }
 
   getData = async () => {
@@ -134,80 +132,77 @@ class TaskQueueComponent extends Component {
   };
 
   render() {
-    const { loading, pageHeight, dataSource, deleteLoading, selectedRowKeys, agvOverallStatus } =
-      this.state;
+    const { loading, dataSource, deleteLoading, selectedRowKeys, agvOverallStatus } = this.state;
     const { getColumn } = this.props;
     return (
-      <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
-        <Row className={taskQueueStyles.agvStatusBadgeContainer}>
-          <Badge
-            showZero
-            style={{ background: '#7ac143' }}
-            count={agvOverallStatus.availableAgvNumber || 0}
-          >
-            <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#7ac143' }}>
-              <FormattedMessage id={'app.taskQueue.availableCar'} />
-            </span>
-          </Badge>
-          <Badge
-            showZero
-            style={{ background: '#0092FF' }}
-            count={agvOverallStatus.standByAgvNumber || 0}
-          >
-            <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#0092FF' }}>
-              <FormattedMessage id={'app.agv.standby'} />
-            </span>
-          </Badge>
-          <Badge
-            showZero
-            style={{ background: '#2F8949' }}
-            count={agvOverallStatus.workAgvNumber || 0}
-          >
-            <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#2F8949' }}>
-              <FormattedMessage id={'app.activity.TaskExecuting'} />
-            </span>
-          </Badge>
-          <Badge
-            showZero
-            style={{ background: '#eba954' }}
-            count={agvOverallStatus.chargerAgvNumber || 0}
-          >
-            <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#eba954' }}>
-              <FormattedMessage id={'app.activity.Charging'} />
-            </span>
-          </Badge>
-          <Badge
-            showZero
-            style={{ background: '#fe5000' }}
-            count={agvOverallStatus.lowerBatteryAgvNumber || 0}
-          >
-            <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#fe5000' }}>
-              <FormattedMessage id={'app.activity.lowPower'} />
-            </span>
-          </Badge>
-          <Badge
-            showZero
-            style={{ background: '#9E9E9E' }}
-            count={agvOverallStatus.offlineAgvNumber || 0}
-          >
-            <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#9E9E9E' }}>
-              <FormattedMessage id={'app.firmware.Offline'} />
-            </span>
-          </Badge>
-        </Row>
-        <Row>
-          <Row>
-            <Button
-              loading={deleteLoading}
-              style={{ marginRight: 20 }}
-              icon={<DeleteOutlined />}
-              onClick={this.deleteQueueTasks}
-              disabled={selectedRowKeys.length === 0}
+      <TablePageWrapper>
+        <div>
+          <Row className={taskQueueStyles.agvStatusBadgeContainer}>
+            <Badge
+              showZero
+              style={{ background: '#7ac143' }}
+              count={agvOverallStatus.availableAgvNumber || 0}
             >
-              {' '}
-              <FormattedMessage id="app.button.delete" />
-            </Button>
-            <Form.Item>
+              <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#7ac143' }}>
+                <FormattedMessage id={'app.taskQueue.availableCar'} />
+              </span>
+            </Badge>
+            <Badge
+              showZero
+              style={{ background: '#0092FF' }}
+              count={agvOverallStatus.standByAgvNumber || 0}
+            >
+              <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#0092FF' }}>
+                <FormattedMessage id={'app.agv.standby'} />
+              </span>
+            </Badge>
+            <Badge
+              showZero
+              style={{ background: '#2F8949' }}
+              count={agvOverallStatus.workAgvNumber || 0}
+            >
+              <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#2F8949' }}>
+                <FormattedMessage id={'app.activity.TaskExecuting'} />
+              </span>
+            </Badge>
+            <Badge
+              showZero
+              style={{ background: '#eba954' }}
+              count={agvOverallStatus.chargerAgvNumber || 0}
+            >
+              <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#eba954' }}>
+                <FormattedMessage id={'app.activity.Charging'} />
+              </span>
+            </Badge>
+            <Badge
+              showZero
+              style={{ background: '#fe5000' }}
+              count={agvOverallStatus.lowerBatteryAgvNumber || 0}
+            >
+              <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#fe5000' }}>
+                <FormattedMessage id={'app.activity.lowPower'} />
+              </span>
+            </Badge>
+            <Badge
+              showZero
+              style={{ background: '#9E9E9E' }}
+              count={agvOverallStatus.offlineAgvNumber || 0}
+            >
+              <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#9E9E9E' }}>
+                <FormattedMessage id={'app.firmware.Offline'} />
+              </span>
+            </Badge>
+          </Row>
+          <Row>
+            <Row className={commonStyles.tableToolLeft}>
+              <Button
+                loading={deleteLoading}
+                icon={<DeleteOutlined />}
+                onClick={this.deleteQueueTasks}
+                disabled={selectedRowKeys.length === 0}
+              >
+                <FormattedMessage id="app.button.delete" />
+              </Button>
               <Button
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
@@ -216,33 +211,30 @@ class TaskQueueComponent extends Component {
               >
                 <FormattedMessage id="app.taskQueue.renice" />
               </Button>
-            </Form.Item>
+            </Row>
+            <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">
+              <Button type="primary" onClick={this.getData}>
+                <RedoOutlined />
+                <FormattedMessage id="app.button.refresh" />
+              </Button>
+            </Row>
           </Row>
-          <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">
-            <Button type="primary" onClick={this.getData}>
-              <RedoOutlined />
-              <FormattedMessage id="app.button.refresh" />
-            </Button>
-          </Row>
-        </Row>
-        <div className={commonStyles.tableWrapper}>
-          <Table
-            loading={loading}
-            columns={getColumn(this.checkDetail)}
-            dataSource={dataSource}
-            scroll={{ x: 'max-content' }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 20,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-            }}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: this.onSelectChange,
-            }}
-          />
         </div>
+        <Table
+          loading={loading}
+          columns={getColumn(this.checkDetail)}
+          dataSource={dataSource}
+          scroll={{ x: 'max-content' }}
+          pagination={{
+            responsive: true,
+            defaultPageSize: 20,
+            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+          }}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+          }}
+        />
 
         {/*************************调整优先级****************************/}
         <UpdateTaskPriority
@@ -253,8 +245,8 @@ class TaskQueueComponent extends Component {
             this.switchTaskPriorityModal(false);
           }}
         />
-      </div>
+      </TablePageWrapper>
     );
   }
 }
-export default TablePageHOC(TaskQueueComponent);
+export default TaskQueueComponent;

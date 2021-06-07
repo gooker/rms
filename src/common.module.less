@@ -1,9 +1,5 @@
-.textLinks {
-  color: #1890ff;
-  cursor: pointer;
-}
-
-.pageWrapper {
+// 表格页面样式
+.tablePageWrapper {
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
@@ -48,6 +44,34 @@
       }
     }
   }
+}
+
+.tableToolLeft > div:not(:first-child) {
+  margin-left: 20px;
+}
+.tableToolLeft > span:not(:first-child) {
+  margin-left: 20px;
+}
+.tableToolLeft > button:not(:first-child) {
+  margin-left: 20px;
+}
+// 表格页面样式 --- end
+
+// Flex
+flexRow {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+flexColumn {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+// Flex --- end
+.textLinks {
+  color: #1890ff;
+  cursor: pointer;
 }
 
 .descriptionItem {

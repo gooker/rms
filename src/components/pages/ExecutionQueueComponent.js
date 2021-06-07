@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Form, Table, Row, Button, Input, Modal } from 'antd';
+import { Table, Row, Button, Input, Modal } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
 import { dealResponse } from '@/utils/utils';
-import TablePageHOC from '@/components/TablePageHOC';
+import LabelComponent from '@/components/LabelComponent';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
@@ -97,57 +98,52 @@ class ExecutionQueueComponent extends Component {
 
   render() {
     const { loading, deleteLoading, selectedRowKeys, filterValue } = this.state;
-    const { getColumn, pageHeight } = this.props;
+    const { getColumn } = this.props;
     return (
-      <div className={commonStyles.pageWrapper} style={{ height: pageHeight }}>
+      <TablePageWrapper>
         <Row>
-          <Row>
+          <Row className={commonStyles.tableToolLeft}>
             <Button
               loading={deleteLoading}
-              style={{ marginRight: 20 }}
               icon={<DeleteOutlined />}
               onClick={this.deleteQueueTasks}
               disabled={selectedRowKeys.length === 0}
             >
-              {' '}
               <FormattedMessage id="app.button.delete" />
             </Button>
-            <Form.Item label={formatMessage({ id: 'app.executionQ.retrieval' })}>
+            <LabelComponent label={formatMessage({ id: 'app.executionQ.retrieval' })} width={250}>
               <Input
                 value={filterValue}
                 onChange={(event) => {
                   this.setState({ filterValue: event.target.value });
                 }}
               />
-            </Form.Item>
+            </LabelComponent>
           </Row>
-          <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">
+          <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
             <Button type="primary" onClick={this.getData}>
               <RedoOutlined />
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </Row>
         </Row>
-        <div className={commonStyles.tableWrapper}>
-          <Table
-            loading={loading}
-            columns={getColumn(this.checkTaskDetail)}
-            dataSource={this.filterTableList()}
-            scroll={{ x: 'max-content' }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 20,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-            }}
-            rowSelection={{
-              selectedRowKeys,
-              onChange: this.onSelectChange,
-            }}
-          />
-        </div>
-      </div>
+        <Table
+          loading={loading}
+          columns={getColumn(this.checkTaskDetail)}
+          dataSource={this.filterTableList()}
+          scroll={{ x: 'max-content' }}
+          pagination={{
+            responsive: true,
+            defaultPageSize: 20,
+            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+          }}
+          rowSelection={{
+            selectedRowKeys,
+            onChange: this.onSelectChange,
+          }}
+        />
+      </TablePageWrapper>
     );
   }
 }
-export default TablePageHOC(ExecutionQueueComponent);
+export default ExecutionQueueComponent;

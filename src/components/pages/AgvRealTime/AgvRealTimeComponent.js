@@ -40,7 +40,7 @@ class AgvRealTimeComponent extends React.Component {
     const { agvType } = this.props;
 
     return (
-      <div className={commonStyles.pageWrapper}>
+      <div className={commonStyles.tablePageWrapper}>
         <Row>
           <Col style={{ width: '222px', marginRight: 24 }}>
             <Form.Item label={formatMessage({ id: 'app.agv.id' })}>
