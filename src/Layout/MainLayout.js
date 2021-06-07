@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
-import LayoutSider from '@/components/Sider/Sider';
+import LayoutSider from '@/packages/Portal/components/Sider';
 import LayoutContent from '@/components/pages/Content/Content';
 import './mainLayout.less';
 

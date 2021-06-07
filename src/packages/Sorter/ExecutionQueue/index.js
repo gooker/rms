@@ -5,12 +5,9 @@ import { formatMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
-import Config from '@/config/config';
+import { AGVType } from '@/config/config';
 
 const { red, green } = dictionary('color', 'all');
-
-const NameSpace = Config.nameSpace.Sorter;
-const TaskAgvType = Config.AGVType.Sorter;
 
 export default class ExecutionQueue extends React.PureComponent {
   getColumn = (checkTaskDetail) => {
@@ -26,7 +23,7 @@ export default class ExecutionQueue extends React.PureComponent {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkTaskDetail(text, TaskAgvType, NameSpace);
+                  checkTaskDetail(text, AGVType.Sorter);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -188,7 +185,7 @@ export default class ExecutionQueue extends React.PureComponent {
     return (
       <ExecutionQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
-        nameSpace={NameSpace} // 标记当前页面的车型
+        agvType={AGVType.Sorter} // 标记当前页面的车型
         filter={this.filterDataSource} // 数据筛选逻辑
         delete={true} // 标记该页面是否允许执行删除操作
       />

@@ -39,7 +39,6 @@ const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
 const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
 
 const swSrc = paths.swSrc;
-const useTypeScript = fs.existsSync(paths.appTsConfig);
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -243,7 +242,7 @@ module.exports = function (webpackEnv) {
       modules: ['node_modules', paths.appNodeModules].concat(modules.additionalModulePaths || []),
       extensions: paths.moduleFileExtensions
         .map((ext) => `.${ext}`)
-        .filter((ext) => useTypeScript || !ext.includes('ts')),
+        .filter((ext) => !ext.includes('ts')),
       alias: {
         // Allows for better profiling with ReactDevTools
         ...(isEnvProductionProfile && {
@@ -474,30 +473,6 @@ module.exports = function (webpackEnv) {
           dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
           exclude: [/\.map$/, /asset-manifest\.json$/, /LICENSE/],
           maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        }),
-
-      useTypeScript &&
-        new ForkTsCheckerWebpackPlugin({
-          typescript: resolve.sync('typescript', {
-            basedir: paths.appNodeModules,
-          }),
-          async: isEnvDevelopment,
-          checkSyntacticErrors: true,
-          resolveModuleNameModule: process.versions.pnp ? `${__dirname}/pnpTs.js` : undefined,
-          resolveTypeReferenceDirectiveModule: process.versions.pnp
-            ? `${__dirname}/pnpTs.js`
-            : undefined,
-          tsconfig: paths.appTsConfig,
-          reportFiles: [
-            '../**/src/**/*.{ts,tsx}',
-            '**/src/**/*.{ts,tsx}',
-            '!**/src/**/__tests__/**',
-            '!**/src/**/?(*.)(spec|test).*',
-            '!**/src/setupProxy.*',
-            '!**/src/setupTests.*',
-          ],
-          silent: true,
-          formatter: isEnvProduction ? typescriptFormatter : undefined,
         }),
 
       !disableESLintPlugin &&

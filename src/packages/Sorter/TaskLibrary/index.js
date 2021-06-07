@@ -4,14 +4,11 @@ import { InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
-import Config from '@/config/config';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
 import commonStyles from '@/common.module.less';
+import { AGVType } from '@/config/config';
 
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
-const NameSpace = Config.nameSpace.Sorter;
-const TaskAgvType = Config.AGVType.Sorter;
-
 export default class TaskLibrary extends React.PureComponent {
   getColumn = (checkDetail) => {
     return [
@@ -26,7 +23,7 @@ export default class TaskLibrary extends React.PureComponent {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkDetail(text, TaskAgvType, NameSpace);
+                  checkDetail(text, AGVType.Sorter);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -128,7 +125,7 @@ export default class TaskLibrary extends React.PureComponent {
             <Button
               type="link"
               onClick={() => {
-                checkDetail(taskId, TaskAgvType, NameSpace);
+                checkDetail(taskId, AGVType.Sorter);
               }}
               icon={<InfoOutlined />}
             >
@@ -144,7 +141,7 @@ export default class TaskLibrary extends React.PureComponent {
     return (
       <TaskLibraryComponent
         getColumn={this.getColumn} // 提供表格列数据
-        nameSpace={NameSpace} // 标记当前页面的车型
+        agvType={AGVType.Sorter} // 标记当前页面的车型
         cancel={true} // 标记该页面是否允许执行取消操作
       />
     );

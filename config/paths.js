@@ -52,7 +52,6 @@ const resolveModule = (resolveFn, filePath) => {
 
 // config after eject: we're in ./config/
 module.exports = {
-  dotenv: resolveApp('.env'),
   appPath: resolveApp('.'),
   appBuild: resolveApp(buildPath),
   appPublic: resolveApp('public'),
@@ -61,7 +60,6 @@ module.exports = {
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('src'),
   appModules: resolveApp('src/modules'),
-  appTsConfig: resolveApp('tsconfig.json'),
   appJsConfig: resolveApp('jsconfig.json'),
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'src/setupTests'),

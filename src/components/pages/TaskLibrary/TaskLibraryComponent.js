@@ -31,7 +31,7 @@ class TaskLibraryComponent extends Component {
   }
 
   getData = async (values = {}) => {
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const {
       page: { currentPage, size },
     } = this.state;
@@ -48,7 +48,7 @@ class TaskLibraryComponent extends Component {
 
     const sectionId = window.localStorage.getItem('sectionId');
     const params = { sectionId, current: currentPage, size, ...requestValues };
-    const response = await fetchTaskListByParams(nameSpace, params);
+    const response = await fetchTaskListByParams(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
       this.setState({ loading: false, dataSource: list, page });
@@ -63,9 +63,9 @@ class TaskLibraryComponent extends Component {
   };
 
   getAgvList = async () => {
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
-    const response = await fetchAgvList(nameSpace, sectionId);
+    const response = await fetchAgvList(agvType, sectionId);
 
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.agv.getListFail' }));
@@ -75,11 +75,11 @@ class TaskLibraryComponent extends Component {
   };
 
   //任务详情
-  checkDetail = (taskId, taskAgvType, nameSpace) => {
+  checkDetail = (taskId, taskAgvType, agvType) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType, nameSpace },
+      payload: { taskId, taskAgvType, agvType },
     }).then(this.getData);
   };
 
@@ -94,13 +94,13 @@ class TaskLibraryComponent extends Component {
 
   cancelTask = async () => {
     const { selectedRows } = this.state;
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
 
     const requestBody = {
       sectionId: window.localStorage.getItem('sectionId'),
       taskIds: selectedRows.map((record) => record.taskId),
     };
-    const response = await fetchBatchCancelTask(nameSpace, requestBody);
+    const response = await fetchBatchCancelTask(agvType, requestBody);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.taskAction.cancel.success' }));
       this.setState({ selectedRowKeys: [], selectedRows: [] }, this.getData);

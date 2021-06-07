@@ -9,7 +9,6 @@ import TablePageHOC from '@/components/TablePageHOC';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
-
 class AgvListComponent extends Component {
   state = {
     loading: false,
@@ -28,10 +27,10 @@ class AgvListComponent extends Component {
   }
 
   getData = async () => {
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
-    const response = await fetchAgvList(nameSpace, sectionId);
+    const response = await fetchAgvList(agvType, sectionId);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.agv.getListFail' }));
     } else {
@@ -64,13 +63,13 @@ class AgvListComponent extends Component {
   deleteAgv = () => {
     const _this = this;
     const { selectedRows } = this.state;
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const agvIds = selectedRows.map(({ robotId }) => robotId);
     confirm({
       title: formatMessage({ id: 'app.common.systemHint' }),
       content: formatMessage({ id: 'app.agv.delete.confirm' }),
       onOk: async () => {
-        const response = await fetchDeleteAgvList(nameSpace, {
+        const response = await fetchDeleteAgvList(agvType, {
           sectionId: window.localStorage.getItem('sectionId'),
           agvIdList: agvIds,
         });
@@ -88,13 +87,13 @@ class AgvListComponent extends Component {
   moveOutAgv = () => {
     const _this = this;
     const { selectedRows } = this.state;
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const agvIds = selectedRows.map(({ robotId }) => robotId);
     confirm({
       title: formatMessage({ id: 'app.common.systemHint' }),
       content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
       onOk: async () => {
-        const response = await fetchMoveoutAGVs(nameSpace, agvIds);
+        const response = await fetchMoveoutAGVs(agvType, agvIds);
         if (dealResponse(response)) {
           message.error(formatMessage({ id: 'app.agv.moveOut.failed' }));
         } else {
@@ -108,9 +107,9 @@ class AgvListComponent extends Component {
 
   exportAgvHardwareInfo = async () => {
     const { agvList } = this.state;
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     this.setState({ loading: true });
-    await exportAgvModuleInfo(nameSpace, agvList);
+    await exportAgvModuleInfo(agvType, agvList);
     this.setState({ loading: false });
   };
 

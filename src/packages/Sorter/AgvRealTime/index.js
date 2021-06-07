@@ -1,13 +1,11 @@
 import React from 'react';
 import AgvRealTimeComponent from '@/components/pages/AgvRealTime/AgvRealTimeComponent';
-import Config from '@/config/config';
+import { AGVType } from '@/config/config';
 
-const NameSpace = Config.nameSpace.Sorter;
-const TaskAgvType = Config.AGVType.Sorter;
-
+const TaskAgvType = AGVType.Sorter;
 class AgvRealTime extends React.Component {
   render() {
-    return <AgvRealTimeComponent nameSpace={NameSpace} />;
+    return <AgvRealTimeComponent agvType={TaskAgvType} />;
   }
 }
 export default AgvRealTime;

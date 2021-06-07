@@ -8,17 +8,17 @@ export default [
       {
         path: '/sorter/center/executionQueue',
         name: 'executionQueue',
-        component: Loadable(() => import('@/packages/Sorter/pages/ExecutionQueue')),
+        component: Loadable(() => import('@/packages/Sorter/ExecutionQueue')),
       },
       {
         path: '/sorter/center/taskQueue',
         name: 'taskQueue',
-        component: Loadable(() => import('@/packages/Sorter/pages/TaskQueue')),
+        component: Loadable(() => import('@/packages/Sorter/TaskQueue')),
       },
       {
         path: '/sorter/center/taskManger',
         name: 'taskManger',
-        component: Loadable(() => import('@/packages/Sorter/pages/TaskLibrary')),
+        component: Loadable(() => import('@/packages/Sorter/TaskLibrary')),
       },
     ],
   },
@@ -34,17 +34,17 @@ export default [
       {
         path: '/sorter/agv/agvRealTime',
         name: 'agvRealTime',
-        component: Loadable(() => import('@/packages/Sorter/pages/AgvRealTime')),
+        component: Loadable(() => import('@/packages/Sorter/AgvRealTime')),
       },
       {
         path: '/sorter/agv/firmwareUpgrade',
         name: 'firmwareUpgrade',
-        component: Loadable(() => import('@/packages/Sorter/pages/FirmwareUpgrade')),
+        component: Loadable(() => import('@/packages/Sorter/FirmwareUpgrade')),
       },
       {
         path: '/sorter/agv/logDownLoad',
         name: 'logDownLoad',
-        component: Loadable(() => import('@/packages/Sorter/pages/LogDownLoad')),
+        component: Loadable(() => import('@/packages/Sorter/LogDownLoad')),
       },
     ],
   },
@@ -56,12 +56,12 @@ export default [
       {
         path: '/sorter/faultManger/faultList',
         name: 'faultList',
-        component: Loadable(() => import('@/packages/Sorter/pages/FaultList')),
+        component: Loadable(() => import('@/packages/Sorter/FaultList')),
       },
       {
         path: '/sorter/faultManger/faultDefinition',
         name: 'faultDefinition',
-        component: Loadable(() => import('@/packages/Sorter/pages/FaultDefinition')),
+        component: Loadable(() => import('@/packages/Sorter/FaultDefinition')),
       },
     ],
   },
@@ -72,22 +72,22 @@ export default [
       {
         path: '/sorter/formManger/reportCenter',
         name: 'reportCenter',
-        component: Loadable(() => import('@/packages/Sorter/pages/ReportCenter')),
+        component: Loadable(() => import('@/packages/Sorter/ReportCenter')),
       },
       {
         path: '/sorter/formManger/taskKpi',
         name: 'taskKpi',
-        component: Loadable(() => import('@/packages/Sorter/pages/TaskKpi')),
+        component: Loadable(() => import('@/packages/Sorter/TaskKpi')),
       },
       {
         path: '/sorter/formManger/waitingKpi',
         name: 'waitingKpi',
-        component: Loadable(() => import('@/packages/Sorter/pages/WaitingKpi')),
+        component: Loadable(() => import('@/packages/Sorter/WaitingKpi')),
       },
       {
         path: '/sorter/formManger/metadata',
         name: 'metadata',
-        component: Loadable(() => import('@/packages/Sorter/pages/Metadata')),
+        component: Loadable(() => import('@/packages/Sorter/Metadata')),
       },
     ],
   },
@@ -98,12 +98,12 @@ export default [
       {
         path: '/sorter/system/systemParamsManager',
         name: 'systemParamsManager',
-        component: Loadable(() => import('@/packages/Sorter/pages/SystemParamsManager')),
+        component: Loadable(() => import('@/packages/Sorter/SystemParamsManager')),
       },
       {
         path: '/sorter/system/chargerManageMents',
         name: 'chargeManagement',
-        component: Loadable(() => import('@/packages/Sorter/pages/ChargeManagement')),
+        component: Loadable(() => import('@/packages/Sorter/ChargeManagement')),
       },
     ],
   },

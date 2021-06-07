@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Row, Divider, Rate, Modal, Badge, Button } from 'antd';
 import { FormattedMessage, formatMessage } from '@/utils/Lang';
-import taskQueueStyles from '../pages/TaskQueue/taskQueue.module.less';
+import taskQueueStyles from '@/components/pages/TaskQueue/taskQueue.module.less';
 import updateTaskPriorityStyles from './updateTaskPriority.module.less';
 
 const UpdateTaskPriority = (props) => {

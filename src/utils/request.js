@@ -1,10 +1,6 @@
-/**
- * request 网络请求工具
- * 更详细的 api 文档: https://github.com/umijs/umi-request
- */
-import umiRequest from 'umi-request';
+import axios from 'axios';
 import { formatMessage } from '@/utils/Lang';
-import { getDomainNameByUrl, isStandardApiResponse, postMessageToParent } from '@/utils/utils';
+import { getDomainNameByUrl, isStandardApiResponse } from '@/utils/utils';
 
 // 异常处理程序
 const errorHandler = (error) => {
@@ -26,45 +22,42 @@ const errorHandler = (error) => {
     504: formatMessage({ id: 'app.request.504' }),
   };
 
-  let messageContent = 'Unrecognized Error';
+  let messageContent = error.message || 'Unrecognized Error';
   const response = error.response;
-  if (response === null) {
+  if (!response) {
     if (error.message === 'Failed to fetch') {
       messageContent = formatMessage({ id: 'app.tip.failed.fetch' }, { url: error.request.url });
     }
+    return { code: '-1', data: null, message: messageContent };
   }
-  if (response instanceof Response) {
-    const { status } = response;
-    const statusMessage = codeMessage[status];
-    messageContent = statusMessage || messageContent;
 
-    // 通知 Portal 登出
-    if (status === 401) {
-      postMessageToParent('logout', null);
-    }
-  }
+  const { status } = response;
+  const statusMessage = codeMessage[status];
+  messageContent = statusMessage || messageContent;
+
   return { code: '-1', data: null, message: messageContent };
 };
 
 const request = async (requestUrl, payload) => {
-  const { data, method, headers } = payload;
+  const { data, method, headers = {} } = payload;
   const localStorageToken = window.localStorage.getItem('Authorization');
   const url = getDomainNameByUrl(requestUrl);
-  if (url.code) {
-    return url;
-  }
   const option = {
+    url,
     method,
-    errorHandler,
-    getResponse: true,
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json; charset=utf-8',
       Authorization: `Bearer ${localStorageToken}`,
-      sectionId: window.localStorage.getItem('sectionId'),
       ...headers,
     },
   };
+  if (headers.sectionId === undefined) {
+    option.headers.sectionId = window.localStorage.getItem('sectionId');
+  }
+  if (headers.responseType === 'blob') {
+    option.responseType = 'arraybuffer';
+  }
 
   // I18n请求不需要带section头
   if (requestUrl === '/translation/getTranslationByParam') {
@@ -78,19 +71,37 @@ const request = async (requestUrl, payload) => {
     option.data = data;
   }
 
-  const responseEntity = await umiRequest(url, option);
+  let responseEntity;
+  try {
+    responseEntity = await axios(option);
+  } catch (error) {
+    responseEntity = errorHandler(error);
+  }
+
+  // 如果catch到错误就会直接走这个分支
   if (isStandardApiResponse(responseEntity)) {
-    // catch error response
     return responseEntity;
   }
 
-  const { data: responseData, response } = responseEntity;
+  const { data: responseData, headers: responseHeader } = responseEntity;
+  // 返回''表示未查询到, code默认为2
+  if (responseData === '') {
+    return { code: '2', data: null, message: null };
+  }
+  // 判断是否是文件流
+  if (responseHeader['content-type'] === 'application/octet-stream') {
+    const blob = new Blob([responseData], { type: 'application/zip' });
+    const downloadLink = document.createElement('a');
+    downloadLink.download = decodeURI(responseHeader.filename);
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.click();
+    URL.revokeObjectURL(downloadLink.href);
+  }
+
   // 缓存当地时区数据
-  if (response && response.headers) {
-    const timeZone = response.headers.get('TIME-ZONE');
-    if (timeZone != null) {
-      sessionStorage.setItem('timeZone', timeZone);
-    }
+  if (responseHeader) {
+    const timeZone = responseHeader['time-zone'];
+    sessionStorage.setItem('timeZone', timeZone);
   }
 
   if (isStandardApiResponse(responseData)) {

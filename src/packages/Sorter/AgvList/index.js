@@ -5,10 +5,9 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat, getSuffix } from '@/utils/utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
-import { nameSpace } from '@/config/config';
+import { AGVType } from '@/config/config';
 
 const { red, green, yellow, blue, cyan, gray } = dictionary()['color'];
-const NameSpace = nameSpace.Sorter;
 
 export default class AgvList extends React.PureComponent {
   getColumn = (checkAgvDetail) => {
@@ -234,7 +233,7 @@ export default class AgvList extends React.PureComponent {
     return (
       <AgvListComponent
         getColumn={this.getColumn}
-        nameSpace={NameSpace}
+        agvType={AGVType.Sorter}
         delete={true} // 是否可以删除小车
         moveOut={true} // 是否可以将小车移出地图
       />

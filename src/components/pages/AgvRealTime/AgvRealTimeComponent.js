@@ -25,9 +25,9 @@ class AgvRealTimeComponent extends React.Component {
   }
 
   getAgvList = async () => {
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
-    const response = await fetchAgvList(nameSpace, sectionId);
+    const response = await fetchAgvList(agvType, sectionId);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.agv.getListFail' }));
     } else {
@@ -37,7 +37,7 @@ class AgvRealTimeComponent extends React.Component {
 
   render() {
     const { agvList, agvInView } = this.state;
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
 
     return (
       <div className={commonStyles.pageWrapper}>
@@ -72,23 +72,23 @@ class AgvRealTimeComponent extends React.Component {
                 key="realTime"
                 tab={<FormattedMessage id={'app.activity.realTimeAgvState'} />}
               >
-                <RealTimeTab nameSpace={nameSpace} />
+                <RealTimeTab agvType={agvType} />
               </TabPane>
               <TabPane
                 key="hardWare"
                 tab={<FormattedMessage id={'app.activity.agvHardwareState'} />}
               >
-                <HardwareTab nameSpace={nameSpace} />
+                <HardwareTab agvType={agvType} />
               </TabPane>
             </Tabs>
           </Col>
           <Col className={agvRealTimeComponentStyles.tabContainer}>
             <Tabs defaultActiveKey="taskRecord">
               <TabPane key="taskRecord" tab={<FormattedMessage id={'app.agv.taskRecord'} />}>
-                <TaskRecordTab nameSpace={nameSpace} />
+                <TaskRecordTab agvType={agvType} />
               </TabPane>
               <TabPane key="errorRecord" tab={<FormattedMessage id={'app.agv.errorRecord'} />}>
-                <ErrorRecordTab nameSpace={nameSpace} />
+                <ErrorRecordTab agvType={agvType} />
               </TabPane>
             </Tabs>
           </Col>

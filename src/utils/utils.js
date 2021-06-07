@@ -9,7 +9,6 @@ import { Parser } from 'json2csv';
 import { split } from 'lodash';
 import dictionary from '@/utils/Dictionary';
 
-// 拼接完整URL
 export function getDomainNameByUrl(url) {
   const apis = requestAPI();
   const array = url.split('/');
@@ -49,10 +48,6 @@ export function dealResponse(response, notification, successMessage, failedMessa
   notification &&
     message.success(successMessage || formatMessage({ id: 'app.common.operationFinish' }));
   return false;
-}
-
-export function postMessageToParent(type, payload) {
-  window.parent.postMessage({ type, payload }, '*');
 }
 
 export function dateFormat(value, type) {

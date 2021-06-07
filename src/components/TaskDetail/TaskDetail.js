@@ -7,7 +7,7 @@ import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import ErrorList from './components/ErrorList';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
-import Config from '@/config/config';
+import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
 
 const colProps = { lg: 8, sm: 12 };
@@ -240,7 +240,7 @@ class TaskDetail extends PureComponent {
                     content={<span>{detailInfo.currentRobotId}</span>}
                   />
                 </Col>
-                {currentType === Config.AGVType.LatentLifting && (
+                {currentType === AGVType.LatentLifting && (
                   <Col {...colProps}>
                     <DescriptionItem
                       title={<span>{formatMessage({ id: 'app.pod.id' })}</span>}

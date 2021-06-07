@@ -30,10 +30,10 @@ class ExecutionQueueComponent extends Component {
   }
 
   getData = async () => {
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
-    const response = await fetchExecutingTaskList(nameSpace, sectionId);
+    const response = await fetchExecutingTaskList(agvType, sectionId);
     if (!dealResponse(response)) {
       const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
       this.setState({ dataSource, loading: false });
@@ -43,7 +43,7 @@ class ExecutionQueueComponent extends Component {
   deleteQueueTasks = () => {
     const _this = this;
     const { selectedRow, dataSource } = this.state;
-    const { nameSpace } = this.props;
+    const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
@@ -52,7 +52,7 @@ class ExecutionQueueComponent extends Component {
       title: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
-        const response = await deleteExecutionQTasks(nameSpace, requestParam);
+        const response = await deleteExecutionQTasks(agvType, requestParam);
         if (
           !dealResponse(
             response,
@@ -78,11 +78,11 @@ class ExecutionQueueComponent extends Component {
     this.setState({ selectedRowKeys, selectedRow });
   };
 
-  checkTaskDetail = (taskId, taskAgvType, nameSpace) => {
+  checkTaskDetail = (taskId, taskAgvType, agvType) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType, nameSpace },
+      payload: { taskId, taskAgvType, agvType },
     });
   };
 
