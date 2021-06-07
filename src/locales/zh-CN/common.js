@@ -66,7 +66,7 @@ export default {
 
   'app.agv.taskRecord': '小车任务记录',
   'app.agv.errorRecord': '小车错误记录',
-  'app.activity.realTimeAgvState': '小车实时状态',
+  'app.activity.realTimeAgvState': '小车实时信息',
   'app.activity.agvHardwareState': '小车硬件信息',
 
   'app.agv.getListFail': '获取小车列表失败',

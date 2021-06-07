@@ -1,15 +1,16 @@
 import React from 'react';
-import { Row, Col, Tabs, Form, Button, Select, message } from 'antd';
+import { Row, Col, Tabs, Button, Select, message } from 'antd';
+import { FileTextOutlined, AndroidOutlined, WarningOutlined, AimOutlined } from '@ant-design/icons';
+import { FormattedMessage, formatMessage } from '@/utils/Lang';
+import LabelComponent from '@/components/LabelComponent';
 import { dealResponse } from '@/utils/utils';
 import { fetchAgvList } from '@/services/api';
-import { FormattedMessage, formatMessage } from '@/utils/Lang';
+import commonStyles from '@/common.module.less';
 import RealTimeTab from './RealTimeTab';
 import HardwareTab from './HardwareTab';
 import TaskRecordTab from './TaskRecordTab';
 import ErrorRecordTab from './ErrorRecordTab';
-
-import agvRealTimeComponentStyles from './agvRealTimeComponent.module.less';
-import commonStyles from '@/common.module.less';
+import agvRealTimeComponentStyles from './index.module.less';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -41,42 +42,49 @@ class AgvRealTimeComponent extends React.Component {
 
     return (
       <div className={commonStyles.tablePageWrapper}>
-        <Row>
-          <Col style={{ width: '222px', marginRight: 24 }}>
-            <Form.Item label={formatMessage({ id: 'app.agv.id' })}>
-              <Select
-                showSearch
-                value={agvInView}
-                onChange={(agvId) => {
-                  this.setState({ agvInView: agvId });
-                }}
-              >
-                {agvList.map(({ robotId }) => (
-                  <Option key={robotId} value={robotId}>
-                    {robotId}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col>
-            <Button type={'primary'}>
-              <FormattedMessage id={'app.button.check'} />
-            </Button>
-          </Col>
+        <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 20 }}>
+          <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
+            <Select
+              showSearch
+              value={agvInView}
+              style={{ width: '100%' }}
+              onChange={(agvId) => {
+                this.setState({ agvInView: agvId });
+              }}
+            >
+              {agvList.map(({ robotId }) => (
+                <Option key={robotId} value={robotId}>
+                  {robotId}
+                </Option>
+              ))}
+            </Select>
+          </LabelComponent>
+          <Button type={'primary'}>
+            <FormattedMessage id={'app.button.check'} />
+          </Button>
         </Row>
         <Row style={{ flex: 1 }} justify={'space-between'}>
           <Col className={agvRealTimeComponentStyles.tabContainer}>
             <Tabs defaultActiveKey="realTime">
               <TabPane
                 key="realTime"
-                tab={<FormattedMessage id={'app.activity.realTimeAgvState'} />}
+                tab={
+                  <span>
+                    <AimOutlined />
+                    <FormattedMessage id={'app.activity.realTimeAgvState'} />
+                  </span>
+                }
               >
                 <RealTimeTab agvType={agvType} />
               </TabPane>
               <TabPane
                 key="hardWare"
-                tab={<FormattedMessage id={'app.activity.agvHardwareState'} />}
+                tab={
+                  <span>
+                    <AndroidOutlined />
+                    <FormattedMessage id={'app.activity.agvHardwareState'} />
+                  </span>
+                }
               >
                 <HardwareTab agvType={agvType} />
               </TabPane>
@@ -84,10 +92,26 @@ class AgvRealTimeComponent extends React.Component {
           </Col>
           <Col className={agvRealTimeComponentStyles.tabContainer}>
             <Tabs defaultActiveKey="taskRecord">
-              <TabPane key="taskRecord" tab={<FormattedMessage id={'app.agv.taskRecord'} />}>
+              <TabPane
+                key="taskRecord"
+                tab={
+                  <span>
+                    <FileTextOutlined />
+                    <FormattedMessage id={'app.agv.taskRecord'} />
+                  </span>
+                }
+              >
                 <TaskRecordTab agvType={agvType} />
               </TabPane>
-              <TabPane key="errorRecord" tab={<FormattedMessage id={'app.agv.errorRecord'} />}>
+              <TabPane
+                key="errorRecord"
+                tab={
+                  <span>
+                    <WarningOutlined />
+                    <FormattedMessage id={'app.agv.errorRecord'} />
+                  </span>
+                }
+              >
                 <ErrorRecordTab agvType={agvType} />
               </TabPane>
             </Tabs>
