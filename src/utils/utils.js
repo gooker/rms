@@ -1,12 +1,11 @@
 import { message } from 'antd';
+import XLSX from 'xlsx';
+import { Parser } from 'json2csv';
+import split from 'lodash/split';
 import moment from 'moment-timezone';
 import requestAPI from '@/utils/requestAPI';
 import { formatMessage } from '@/utils/Lang';
 import { fetchAgvHardwareInfoById } from '@/services/api';
-
-import XLSX from 'xlsx';
-import { Parser } from 'json2csv';
-import { split } from 'lodash';
 import dictionary from '@/utils/Dictionary';
 
 export function getDomainNameByUrl(url) {

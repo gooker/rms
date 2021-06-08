@@ -3,7 +3,7 @@ import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import MenuIcon from '@/config/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import routerData from '@/config/router';
 
 const { SubMenu } = Menu;

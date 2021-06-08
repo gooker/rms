@@ -1,15 +1,44 @@
-import TablePageHOC from '@/components/TablePageHOC';
+import React from 'react';
+import { getContentHeight } from '@/utils/utils';
+import debounce from 'lodash/debounce';
 import commonStyles from '@/common.module.less';
 
-const TablePageWrapper = (props) => {
-  const { children, pageHeight } = props;
-  const [tool, table, ...restChildren] = children;
-  return (
-    <div className={commonStyles.tablePageWrapper} style={{ height: pageHeight }}>
-      <div style={{ marginBottom: 20 }}>{tool}</div>
-      <div className={commonStyles.tableWrapper}>{table}</div>
-      <div>{restChildren}</div>
-    </div>
-  );
-};
-export default TablePageHOC(TablePageWrapper);
+class TablePageWrapper extends React.Component {
+  state = {
+    pageHeight: 0,
+  };
+
+  componentDidMount() {
+    this.observeContentsSizeChange();
+    this.setState({ pageHeight: getContentHeight() });
+  }
+
+  componentWillUnmount() {
+    this.resizeObserver.disconnect();
+  }
+
+  observeContentsSizeChange = () => {
+    const _this = this;
+    this.resizeObserver = new ResizeObserver(
+      debounce((entries) => {
+        const { contentRect } = entries[0];
+        const height = contentRect?.height ?? getContentHeight();
+        _this.setState({ pageHeight: height });
+      }, 200),
+    );
+    this.resizeObserver.observe(document.getElementById('layoutContent'));
+  };
+
+  render() {
+    const { pageHeight } = this.state;
+    const [tool, table, ...restChildren] = this.props.children;
+    return (
+      <div className={commonStyles.tablePageWrapper} style={{ height: pageHeight }}>
+        <div style={{ marginBottom: 20 }}>{tool}</div>
+        <div className={commonStyles.tableWrapper}>{table}</div>
+        <div>{restChildren}</div>
+      </div>
+    );
+  }
+}
+export default TablePageWrapper;

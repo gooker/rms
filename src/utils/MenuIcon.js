@@ -21,7 +21,7 @@ import {
   InboxOutlined,
   ReadOutlined,
 } from '@ant-design/icons';
-import IconFont from '@/components/ExtraIcon/ExtraIcon';
+import IconFont from '@/utils/ExtraIcon';
 
 export default {
   'icon-task': <IconFont type="icon-task" />,

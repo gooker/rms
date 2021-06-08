@@ -250,7 +250,6 @@ module.exports = function (webpackEnv) {
           'scheduler/tracing': 'scheduler/tracing-profiling',
         }),
         '@': paths.appSrc,
-        '@modules': paths.appModules,
         ...(modules.webpackAliases || {}),
       },
       plugins: [
@@ -427,7 +426,7 @@ module.exports = function (webpackEnv) {
       new ModuleNotFoundPlugin(paths.appPath),
       new webpack.DefinePlugin(env.stringified),
 
-      // isEnvDevelopment && new BundleAnalyzerPlugin(),
+      isEnvDevelopment && new BundleAnalyzerPlugin(),
 
       isEnvDevelopment &&
         shouldUseReactRefresh &&

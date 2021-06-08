@@ -19,8 +19,7 @@ function getAuthorityKeys() {
 
 export const hasPermission = (key) => {
   const AuthorityKeys = getAuthorityKeys();
-  // return AuthorityKeys[key] !== undefined;
-  return true;
+  return AuthorityKeys[key] !== undefined;
 };
 
 export class Permission extends React.PureComponent {
@@ -63,8 +62,6 @@ export class Permission extends React.PureComponent {
     if (renderChildren) {
       return children;
     }
-
-    // return <></>;
-    return children;
+    return <></>;
   }
 }
