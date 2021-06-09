@@ -17,7 +17,6 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
@@ -26,19 +25,17 @@ const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
 const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
 const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-
 const postcssNormalize = require('postcss-normalize');
-const appPackageJson = require(paths.appPackageJson);
-const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 const webpackDevClientEntry = require.resolve('react-dev-utils/webpackHotDevClient');
 const reactRefreshOverlayEntry = require.resolve('react-dev-utils/refreshOverlayInterop');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const appPackageJson = require(paths.appPackageJson);
+
+const shouldUseSourceMap = process.env.GENERATE_SOURCEMAP !== 'false';
 const shouldInlineRuntimeChunk = process.env.INLINE_RUNTIME_CHUNK !== 'false';
 const emitErrorsAsWarnings = process.env.ESLINT_NO_DEV_ERRORS === 'true';
 const disableESLintPlugin = process.env.DISABLE_ESLINT_PLUGIN === 'true';
 const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
-
-const swSrc = paths.swSrc;
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -59,7 +56,7 @@ const hasJsxRuntime = (() => {
 })();
 
 // 创建 webpack 配置信息入口
-module.exports = function (webpackEnv) {
+module.exports = function (webpackEnv, useAnalyzer) {
   const isEnvDevelopment = webpackEnv === 'development';
   const isEnvProduction = webpackEnv === 'production';
 
@@ -123,43 +120,32 @@ module.exports = function (webpackEnv) {
         ? 'source-map'
         : false
       : isEnvDevelopment && 'cheap-module-source-map',
+
     entry:
       isEnvDevelopment && !shouldUseReactRefresh
         ? [webpackDevClientEntry, paths.appIndexJs]
         : paths.appIndexJs,
 
     output: {
-      // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
-      // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isEnvDevelopment,
-      // There will be one main bundle, and one file per asynchronous chunk.
-      // In development, it does not produce real files.
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
         : isEnvDevelopment && 'static/js/bundle.js',
       // TODO: remove this when upgrading to webpack 5
       futureEmitAssets: true,
-      // There are also additional JS chunk files if you use code splitting.
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
         : isEnvDevelopment && 'static/js/[name].chunk.js',
-      // webpack uses `publicPath` to determine where the app is being served from.
-      // It requires a trailing slash, or the file assets will get an incorrect path.
-      // We inferred the "public path" (such as / or /my-project) from homepage.
       publicPath: paths.publicUrlOrPath,
-      // Point sourcemap entries to original disk location (format as URL on Windows)
       devtoolModuleFilenameTemplate: isEnvProduction
         ? (info) => path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
         : isEnvDevelopment &&
           ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
-      // Prevents conflicts when multiple webpack runtimes (from different apps)
-      // are used on the same page.
       jsonpFunction: `webpackJsonp${appPackageJson.name}`,
-      // this defaults to 'window', but by setting it to 'this' then
-      // module chunks which are built will work in web workers as well.
       globalObject: 'this',
     },
+
     optimization: {
       minimize: isEnvProduction,
       minimizer: [
@@ -238,13 +224,13 @@ module.exports = function (webpackEnv) {
         name: (entrypoint) => `runtime-${entrypoint.name}`,
       },
     },
+
     resolve: {
       modules: ['node_modules', paths.appNodeModules].concat(modules.additionalModulePaths || []),
       extensions: paths.moduleFileExtensions
         .map((ext) => `.${ext}`)
         .filter((ext) => !ext.includes('ts')),
       alias: {
-        // Allows for better profiling with ReactDevTools
         ...(isEnvProductionProfile && {
           'react-dom$': 'react-dom/profiling',
           'scheduler/tracing': 'scheduler/tracing-profiling',
@@ -257,9 +243,11 @@ module.exports = function (webpackEnv) {
         new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson, reactRefreshOverlayEntry]),
       ],
     },
+
     resolveLoader: {
       plugins: [PnpWebpackPlugin.moduleLoader(module)],
     },
+
     module: {
       strictExportPresence: true,
       rules: [
@@ -284,7 +272,7 @@ module.exports = function (webpackEnv) {
               },
             },
             {
-              test: /\.(js|mjs|jsx|ts|tsx)$/,
+              test: /\.(js|jsx)$/,
               include: paths.appSrc,
               loader: require.resolve('babel-loader'),
               options: {
@@ -299,6 +287,7 @@ module.exports = function (webpackEnv) {
                 ],
 
                 plugins: [
+                  'lodash',
                   [
                     require.resolve('babel-plugin-named-asset-import'),
                     {
@@ -392,6 +381,16 @@ module.exports = function (webpackEnv) {
     },
 
     plugins: [
+      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
+      new ModuleNotFoundPlugin(paths.appPath),
+      new webpack.DefinePlugin(env.stringified),
+      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+
+      useAnalyzer && new BundleAnalyzerPlugin(),
+      isEnvDevelopment && new CaseSensitivePathsPlugin(),
+      isEnvDevelopment && new WatchMissingNodeModulesPlugin(paths.appNodeModules),
+      isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+
       new HtmlWebpackPlugin(
         Object.assign(
           {},
@@ -422,12 +421,6 @@ module.exports = function (webpackEnv) {
         shouldInlineRuntimeChunk &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+[.]js/]),
 
-      new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
-      new ModuleNotFoundPlugin(paths.appPath),
-      new webpack.DefinePlugin(env.stringified),
-
-      isEnvDevelopment && new BundleAnalyzerPlugin(),
-
       isEnvDevelopment &&
         shouldUseReactRefresh &&
         new ReactRefreshWebpackPlugin({
@@ -438,8 +431,6 @@ module.exports = function (webpackEnv) {
           },
         }),
 
-      isEnvDevelopment && new CaseSensitivePathsPlugin(),
-      isEnvDevelopment && new WatchMissingNodeModulesPlugin(paths.appNodeModules),
       isEnvProduction &&
         new MiniCssExtractPlugin({
           filename: 'static/css/[name].[contenthash:8].css',
@@ -463,17 +454,6 @@ module.exports = function (webpackEnv) {
         },
       }),
 
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-
-      isEnvProduction &&
-        fs.existsSync(swSrc) &&
-        new WorkboxWebpackPlugin.InjectManifest({
-          swSrc,
-          dontCacheBustURLsMatching: /\.[0-9a-f]{8}\./,
-          exclude: [/\.map$/, /asset-manifest\.json$/, /LICENSE/],
-          maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-        }),
-
       !disableESLintPlugin &&
         new ESLintPlugin({
           extensions: ['js', 'mjs', 'jsx', 'ts', 'tsx'],
@@ -494,8 +474,6 @@ module.exports = function (webpackEnv) {
             },
           },
         }),
-
-      isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
     ].filter(Boolean),
 
     node: {

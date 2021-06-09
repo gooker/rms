@@ -5,11 +5,12 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "analyzer": "node scripts/build.js --analyzer",
     "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
     "lint-staged": "lint-staged",
-    "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint --fix --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src && npm run lint:style",
-    "lint:js": "eslint --cache --ext .js,.jsx,.ts,.tsx --format=pretty ./src",
+    "lint-staged:js": "eslint --ext .js",
+    "lint:fix": "eslint --fix --cache --ext .js --format=pretty ./src && npm run lint:style",
+    "lint:js": "eslint --cache --ext .js --format=pretty ./src",
     "lint:prettier": "check-prettier lint",
     "lint:style": "stylelint --fix \"src/**/*.less\" --syntax less",
     "prettier": "prettier -c --write \"**/*\""
@@ -26,6 +27,7 @@
     "babel-eslint": "^10.1.0",
     "babel-loader": "8.1.0",
     "babel-plugin-import": "^1.13.3",
+    "babel-plugin-lodash": "^3.3.4",
     "babel-plugin-named-asset-import": "^0.3.7",
     "babel-preset-react-app": "^10.0.0",
     "bfj": "^7.0.2",
@@ -86,7 +88,6 @@
     "webpack-bundle-analyzer": "^4.4.0",
     "webpack-dev-server": "3.11.1",
     "webpack-manifest-plugin": "2.2.0",
-    "workbox-webpack-plugin": "5.1.4",
     "xlsx": "^0.16.9"
   },
   "husky": {

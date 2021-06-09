@@ -1,7 +1,7 @@
 import { message } from 'antd';
 import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
-import split from 'lodash/split';
+import { split } from 'lodash';
 import moment from 'moment-timezone';
 import requestAPI from '@/utils/requestAPI';
 import { formatMessage } from '@/utils/Lang';

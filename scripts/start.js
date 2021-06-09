@@ -12,9 +12,6 @@ process.on('unhandledRejection', (err) => {
   throw err;
 });
 
-// Ensure environment variables are read.
-require('../config/env');
-
 const fs = require('fs');
 const chalk = require('react-dev-utils/chalk');
 const webpack = require('webpack');
@@ -47,18 +44,13 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
 const DEFAULT_PORT = parseInt(process.env.PORT, 10);
 const HOST = process.env.HOST || '0.0.0.0';
 
-// We require that you explicitly set browsers and do not fall back to
-// browserslist defaults.
 const { checkBrowsers } = require('react-dev-utils/browsersHelper');
 checkBrowsers(paths.appPath, isInteractive)
   .then(() => {
-    // We attempt to use the default port but if it is busy, we offer the user to
-    // run on a different port. `choosePort()` Promise resolves to the next free port.
     return choosePort(HOST, DEFAULT_PORT);
   })
   .then((port) => {
     if (port == null) {
-      // We have not found a port.
       return;
     }
 
