@@ -3,9 +3,9 @@ import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
-import { dateFormat, getSuffix } from '@/utils/utils';
+import { dateFormat, getSuffix } from '@/utils/Utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
-import { AGVType } from '@/config/config';
+import { AGVType } from '@/config/Config';
 
 const { red, green, yellow, blue, cyan, gray } = dictionary()['color'];
 

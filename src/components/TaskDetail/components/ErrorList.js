@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Col, Row } from 'antd';
 import { formatMessage } from '@/utils/Lang';
 import ErrorCodeFault from './ErrorCodeFault';
-import { dateFormat } from '@/utils/utils';
+import { dateFormat } from '@/utils/Utils';
 import commonStyles from '@/common.module.less';
 import styles from '../CenterOs.module.less';
 

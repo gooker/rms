@@ -3,7 +3,7 @@ import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
 import moment from 'moment-timezone';
-import requestAPI from '@/utils/requestAPI';
+import requestAPI from '@/utils/RequestAPI';
 import { formatMessage } from '@/utils/Lang';
 import { fetchAgvHardwareInfoById } from '@/services/api';
 import dictionary from '@/utils/Dictionary';

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { formatMessage } from '@/utils/Lang';
-import { getDomainNameByUrl, isStandardApiResponse } from '@/utils/utils';
+import { getDomainNameByUrl, isStandardApiResponse } from '@/utils/Utils';
 
 // 异常处理程序
 const errorHandler = (error) => {

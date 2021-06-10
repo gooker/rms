@@ -1,3 +1,7 @@
+export const WorldScreenRatio = 1.2;
+export const CellWidth = 100;
+export const CellHeight = 100;
+
 // 小车类型
 export const AGVType = {
   LatentLifting: 'LatentLifting',

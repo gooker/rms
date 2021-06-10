@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ConfigProvider } from 'antd';
 import intl from 'react-intl-universal';
 import MainLayout from '@/layout/MainLayout';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/Dva';
 
 // Portal组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
 @connect(({ app }) => ({ antdLocale: app.antdLocale }))

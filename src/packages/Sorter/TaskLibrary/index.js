@@ -3,10 +3,10 @@ import { Badge, Button, Tooltip } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/utils';
+import { dateFormat } from '@/utils/Utils';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
 import commonStyles from '@/common.module.less';
-import { AGVType } from '@/config/config';
+import { AGVType } from '@/config/Config';
 
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
 export default class TaskLibrary extends React.PureComponent {

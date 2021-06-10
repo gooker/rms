@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/Dva';
 import { Button, message, Modal, Table } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchTaskListByParams, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/Utils';
 import TaskSearch from './TaskSearch';
 
 @connect()

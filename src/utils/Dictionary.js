@@ -21,7 +21,6 @@ const dictionaryDataSource = {
     1: 'app.firmware.uploading',
     2: 'app.firmware.uploadFailure',
   },
-
   taskStatus: {
     New: 'app.activity.TaskNew',
     Executing: 'app.activity.TaskExecuting',

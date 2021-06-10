@@ -6,7 +6,7 @@ import {
   fetchRestoreTask,
   fetchAgvErrorRecord,
 } from '@/services/api';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/Utils';
 
 export default {
   namespace: 'task',

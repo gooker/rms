@@ -1,6 +1,6 @@
 import React from 'react';
 import AgvRealTimeComponent from '@/components/pages/AgvRealTime/AgvRealTimeComponent';
-import { AGVType } from '@/config/config';
+import { AGVType } from '@/config/Config';
 
 const TaskAgvType = AGVType.Sorter;
 class AgvRealTime extends React.Component {

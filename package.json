@@ -62,6 +62,8 @@
     "moment": "^2.29.1",
     "moment-timezone": "^0.5.33",
     "optimize-css-assets-webpack-plugin": "5.0.4",
+    "pixi-viewport": "^4.31.0",
+    "pixi.js": "^6.0.4",
     "pnp-webpack-plugin": "1.6.4",
     "postcss-flexbugs-fixes": "4.2.1",
     "postcss-loader": "3.0.0",

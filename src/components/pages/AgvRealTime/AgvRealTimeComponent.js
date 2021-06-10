@@ -3,7 +3,7 @@ import { Row, Col, Tabs, Button, Select, message } from 'antd';
 import { FileTextOutlined, AndroidOutlined, WarningOutlined, AimOutlined } from '@ant-design/icons';
 import { FormattedMessage, formatMessage } from '@/utils/Lang';
 import LabelComponent from '@/components/LabelComponent';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/Utils';
 import { fetchAgvList } from '@/services/api';
 import commonStyles from '@/common.module.less';
 import RealTimeTab from './RealTimeTab';

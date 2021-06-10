@@ -1,5 +1,5 @@
-import request from '@/utils/request';
-import { NameSpace } from '@/config/config';
+import request from '@/utils/Request';
+import { NameSpace } from '@/config/Config';
 
 // ************************************** 执行队列  ************************************** //
 // 获取执行队列数据
