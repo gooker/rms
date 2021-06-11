@@ -1,12 +1,12 @@
-import { message } from 'antd';
+import { message, Tag } from 'antd';
 import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
 import moment from 'moment-timezone';
 import requestAPI from '@/utils/RequestAPI';
-import { formatMessage } from '@/utils/Lang';
-import { fetchAgvHardwareInfoById } from '@/services/api';
-import dictionary from '@/utils/Dictionary';
+import { formatMessage } from '@/components/Lang';
+import { fetchAgvHardwareInfo } from '@/services/api';
+import Dictionary from '@/utils/Dictionary';
 
 export function getDomainNameByUrl(url) {
   const apis = requestAPI();
@@ -169,7 +169,7 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
     for (let index = 0; index < agvList.length; index++) {
       const element = agvList[index];
       const { robotId, sectionId } = element;
-      const response = await fetchAgvHardwareInfoById(nameSpace, { agvId: robotId, sectionId });
+      const response = await fetchAgvHardwareInfo(nameSpace, { agvId: robotId, sectionId });
       if (dealResponse(response)) {
         continue;
       }
@@ -236,7 +236,7 @@ export function exportAgvInfo(agvList) {
       {
         label: formatMessage({ id: 'app.agv.direction' }),
         value: (row) => {
-          return formatMessage({ id: dictionary('agvDirection', row.currentDirection) });
+          return formatMessage({ id: Dictionary('agvDirection', row.currentDirection) });
         },
       },
       {
@@ -276,7 +276,7 @@ export function exportAgvInfo(agvList) {
         label: formatMessage({ id: 'app.agv.state' }),
         value: (row) => {
           const { agvStatus } = row;
-          const key = dictionary('agvStatus', [agvStatus]);
+          const key = Dictionary('agvStatus', [agvStatus]);
           return formatMessage({ id: key });
         },
       },
@@ -299,7 +299,7 @@ export function exportAgvInfo(agvList) {
       {
         label: formatMessage({ id: 'app.agv.batteryType' }),
         value: (row) => {
-          return formatMessage({ id: dictionary('batteryType', row.batteryType) });
+          return formatMessage({ id: Dictionary('batteryType', row.batteryType) });
         },
       },
       {
@@ -324,4 +324,38 @@ export function exportAgvInfo(agvList) {
       reject(e);
     }
   });
+}
+
+// 根据angle获取方向描述
+export function getDirectionLocale(angle) {
+  if (isNull(angle)) {
+    return <span style={{ color: 'red' }}>{formatMessage({ id: 'app.common.noRecord' })}</span>;
+  }
+  if ([0, 90, 180, 270].includes(angle)) {
+    return formatMessage({ id: Dictionary('agvDirection', angle) });
+  } else {
+    return `${angle}°`;
+  }
+}
+
+const { red, green, yellow, blue, cyan, gray } = Dictionary('color');
+export function renderAgvStatus(agvStatus) {
+  if (agvStatus != null) {
+    const key = Dictionary('agvStatus', agvStatus);
+    if (agvStatus === 'Offline') {
+      return <Tag color={gray}>{formatMessage({ id: key })}</Tag>;
+    } else if (agvStatus === 'StandBy') {
+      return <Tag color={blue}>{formatMessage({ id: key })}</Tag>;
+    } else if (agvStatus === 'Working') {
+      return <Tag color={green}>{formatMessage({ id: key })}</Tag>;
+    } else if (agvStatus === 'Charging') {
+      return <Tag color={yellow}>{formatMessage({ id: key })}</Tag>;
+    } else if (agvStatus === 'Error') {
+      return <Tag color={red}>{formatMessage({ id: key })}</Tag>;
+    } else if (agvStatus === 'Connecting') {
+      return <Tag color={cyan}>{formatMessage({ id: key })}</Tag>;
+    }
+  } else {
+    return null;
+  }
 }

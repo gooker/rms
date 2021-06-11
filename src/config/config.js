@@ -12,7 +12,7 @@ export const AGVType = {
 
 // 各类车型的API namespace
 export const NameSpace = {
-  Mixrobot: 'coordinator',
+  Coordinator: 'coordinator',
   LatentLifting: 'latent-lifting',
   Tote: 'tote',
   Forklift: 'forklift',

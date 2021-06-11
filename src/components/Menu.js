@@ -2,7 +2,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
 import MenuIcon from '@/utils/MenuIcon';
 import routerData from '@/config/router';
 

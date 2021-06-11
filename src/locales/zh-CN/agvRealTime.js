@@ -1,24 +1,5 @@
-// 小车实时状态信息相关 Done
+// 小车监控页面
 export default {
-  'app.activity.Connecting': '连接中',
-  'app.activity.StandBy': '待命',
-  'app.activity.Working': '执行任务',
-  'app.activity.Charging': '充电中',
-  'app.activity.Offline': '离线',
-  'app.activity.lowPower': '低电量',
-
-  'app.hardWareStatus.Charge': '充电',
-  'app.hardWareStatus.SleepDueToFailure': '因故障进入休眠状态',
-  'app.hardWareStatus.decline': '下降',
-  'app.hardWareStatus.fault': '故障状态',
-  'app.hardWareStatus.jacking': '顶升状态',
-  'app.hardWareStatus.lowPowerConsumption': '低功耗',
-  'app.hardWareStatus.rotatingRack': '旋转货架',
-  'app.hardWareStatus.scanShelf': '扫描货架',
-  'app.hardWareStatus.standBy': '空闲',
-  'app.hardWareStatus.straightLine': '直行',
-  'app.hardWareStatus.turn': '转弯',
-
   // 维护相关
   'app.activity.maintain': '维护',
   'app.activity.cancelMaintenance': '取消维护',
@@ -38,19 +19,6 @@ export default {
   'app.activity.liftingStatus': '顶升状态',
   'app.activity.modelInfo': '模块信息',
   'app.activity.distanceFromLastCell': '当前位置距上个码距离',
-
-  // 小车电池信息区域
-  'app.activity.battery': '电池电量',
-  'app.activity.batteryTemperature': '电池温度',
-  'app.activity.chargingCount': '充电次数',
-  'app.activity.batteryCurrent': '电池电流',
-  'app.activity.currentBatteryVoltage': '当前电压',
-  'app.activity.batteryCapacity': '电池容量',
-  'app.activity.workTime': '运行时长',
-
-  // 小车硬件信息Tab
-  'app.activity.ip': 'IP',
-  'app.activity.port': '端口号',
   'app.activity.clusterIndex': '服务器标识',
   'app.activity.createDate': '加入时间',
   'app.activity.manualMode': '手动模式',
@@ -62,6 +30,28 @@ export default {
   'app.activity.lockedTargetCells': '锁定目标点',
   'app.activity.lockedTemporaryCells': '临时不可走点',
   'app.activity.resetTip': '尝试将小车的状态变为空闲，如果有任务绑定，任务将变成错误状态',
+
+  // 小车硬件信息Tab
+  'app.hardWareStatus.Charge': '充电',
+  'app.hardWareStatus.SleepDueToFailure': '因故障进入休眠状态',
+  'app.hardWareStatus.decline': '下降',
+  'app.hardWareStatus.fault': '故障状态',
+  'app.hardWareStatus.jacking': '顶升状态',
+  'app.hardWareStatus.lowPowerConsumption': '低功耗',
+  'app.hardWareStatus.rotatingRack': '旋转货架',
+  'app.hardWareStatus.scanShelf': '扫描货架',
+  'app.hardWareStatus.standBy': '空闲',
+  'app.hardWareStatus.straightLine': '直行',
+  'app.hardWareStatus.turn': '转弯',
+
+  // 小车电池信息区域
+  'app.activity.battery': '电池电量',
+  'app.activity.batteryTemperature': '电池温度',
+  'app.activity.chargingCount': '充电次数',
+  'app.activity.batteryCurrent': '电池电流',
+  'app.activity.currentBatteryVoltage': '当前电压',
+  'app.activity.batteryCapacity': '电池容量',
+  'app.activity.workTime': '运行时长',
 
   // 小车任务记录Tab
   'app.activity.searchTime': '查询时间',

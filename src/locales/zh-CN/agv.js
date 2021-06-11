@@ -1,5 +1,5 @@
+// 小车列表
 export default {
-  // 小车列表
   'app.agv.addingTime': '加入时间',
   'app.agv.battery': '电量',
   'app.agv.batteryType': '电池类型',

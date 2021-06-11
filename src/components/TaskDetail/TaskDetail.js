@@ -1,7 +1,7 @@
 import React, { PureComponent, createRef } from 'react';
 import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
 import { dateFormat } from '@/utils/Utils';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';

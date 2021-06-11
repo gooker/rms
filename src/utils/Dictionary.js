@@ -1,4 +1,12 @@
-const dictionaryDataSource = {
+import { isNull } from './Utils';
+
+const DictionaryDataSource = {
+  agvDirection: {
+    0: 'app.agv.direction.top',
+    90: 'app.agv.direction.right',
+    180: 'app.agv.direction.bottom',
+    270: 'app.agv.direction.left',
+  },
   chargerDirection: {
     0: 'app.direction.top',
     1: 'app.direction.right',
@@ -36,25 +44,6 @@ const dictionaryDataSource = {
     Error: 'app.activity.Error',
     Connecting: 'app.activity.Connecting',
   },
-  agvDirection: {
-    0: 'app.agv.direction.top',
-    1: 'app.agv.direction.right',
-    2: 'app.agv.direction.bottom',
-    3: 'app.agv.direction.left',
-    4: 'app.common.noRecord',
-  },
-  agvTaskType: {
-    EMPTY_RUN: 'app.activity.EMPTY_RUN',
-    CARRY_POD_TO_STATION: 'app.activity.CARRY_POD_TO_STATION',
-    CHARGE_RUN: 'app.activity.CHARGE_RUN',
-    REST_UNDER_POD: 'app.activity.REST_UNDER_POD',
-    CARRY_POD_TO_CELL: 'app.activity.CARRY_POD_TO_CELL',
-    HEARVY_CARRY_POD_TO_STORE: 'app.activity.HEARVY_CARRY_POD_TO_STORE',
-    RUN_TO_SAFETY_AREA: 'app.activity.RUN_TO_SAFETY_AREA',
-    SUPER_CARRY_POD_TO_CELL: 'app.activity.SUPER_CARRY_POD_TO_CELL',
-    FROCK_CARRY_TO_CELL: 'app.activity.FROCK_CARRY_TO_CELL',
-    ROLLER_CARRY_TO_CELL: 'app.activity.ROLLER_CARRY_TO_CELL',
-  },
   color: {
     red: '#f5222d',
     blue: '#1890FF',
@@ -64,15 +53,6 @@ const dictionaryDataSource = {
     pink: '#ce2a7d',
     gray: '#b3b2b2',
     cyan: '#13c2c2',
-  },
-
-  detailWidth: {
-    'screen-xs': 500,
-    'screen-sm': 600,
-    'screen-md': 700,
-    'screen-lg': 900,
-    'screen-xl': 1150,
-    'screen-xxl': 1300,
   },
   hardWareStatus: {
     0: 'app.hardWareStatus.standBy',
@@ -87,7 +67,6 @@ const dictionaryDataSource = {
     254: 'app.hardWareStatus.SleepDueToFailure',
     255: 'app.hardWareStatus.fault',
   },
-
   errorType: {
     0: 'app.MCUAndHardware',
     2: 'app.NavigationQRCode',
@@ -116,8 +95,6 @@ const dictionaryDataSource = {
     type: 'form.taskType',
     taskStatus: 'form.taskStatus',
   },
-
-  // syslog.txt/syslog1.old/syslog2.old/syslog3.old
   uploadFilesName: [
     { name: 'syslog.txt' },
     { name: 'syslog1.old' },
@@ -129,17 +106,17 @@ const dictionaryDataSource = {
 
 function dictionary(namespace, key) {
   if (namespace) {
-    const obj = dictionaryDataSource[namespace];
-    if (key) {
+    const namespaceData = DictionaryDataSource[namespace];
+    if (!isNull(key)) {
       if (key === 'all') {
-        return obj;
+        return namespaceData;
       }
-      return obj[key];
+      return namespaceData[key];
     } else {
       return '';
     }
   } else {
-    return dictionaryDataSource;
+    return DictionaryDataSource;
   }
 }
 

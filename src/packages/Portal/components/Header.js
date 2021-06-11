@@ -1,7 +1,7 @@
 import React from 'react';
 import { Radio } from 'antd';
 import { connect } from '@/utils/Dva';
-import { FormattedMessage } from '@/utils/Lang';
+import { FormattedMessage } from '@/components/Lang';
 
 @connect(({ app }) => ({
   globalLocale: app.globalLocale,

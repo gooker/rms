@@ -18,6 +18,7 @@ module.exports = {
     'no-lonely-if': 0,
     'no-nested-ternary': 0,
     'no-unused-expressions': 0,
+    'no-unused-vars': 2,
     'no-template-curly-in-string': 0,
     'import/no-dynamic-require': 0,
     'import/no-anonymous-default-export': 0,

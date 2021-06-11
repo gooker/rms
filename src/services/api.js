@@ -48,23 +48,7 @@ export async function fetchUpdateTaskPriority(agvType, params) {
   });
 }
 
-// ************************************** 任务查询 ************************************** //
-// 查询当前区域小车任务列表
-export async function fetchTaskListByParams(agvType, params) {
-  return request(`/${NameSpace[agvType]}/api/agvTask`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 取消小车任务
-export async function fetchBatchCancelTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/batchCancelTask`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
+// ************************************** 小车相关  ************************************** //
 // 获取小车列表
 export async function fetchAgvList(agvType, sectionId) {
   return request(`/${NameSpace[agvType]}/agv/${sectionId}`, {
@@ -72,9 +56,22 @@ export async function fetchAgvList(agvType, sectionId) {
   });
 }
 
-// ************************************** 小车列表  ************************************** //
+// 请求WCS端小车实时信息
+export async function fetchAgvInfo(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv/${params.sectionId}/${params.agvId}`, {
+    method: `GET`,
+  });
+}
+
+// 请求Coordinator端小车实时信息
+export async function fetchCoordAgvInfo(agvId) {
+  return request(`/${NameSpace.Coordinator}/traffic/getAGV/${agvId}`, {
+    method: `GET`,
+  });
+}
+
 // 请求小车的硬件状态
-export async function fetchAgvHardwareInfoById(agvType, params) {
+export async function fetchAgvHardwareInfo(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.agvId}`, {
     method: `GET`,
   });
@@ -96,11 +93,35 @@ export async function fetchMoveoutAGVs(agvType, params) {
   });
 }
 
-// ************************************** 任务详情弹窗  ************************************** //
+// ************************************** 任务查询 ************************************** //
+// 查询当前区域小车任务列表
+export async function fetchAgvTaskList(agvType, params) {
+  return request(`/${NameSpace[agvType]}/api/agvTask`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 // 获取任务详情数据
 export async function fetchTaskDetailByTaskId(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv-task/agvTaskDetail`, {
     method: `GET`,
+    data: params,
+  });
+}
+
+//请求小车错误日志
+export async function fetchAgvErrorRecord(agvType, params) {
+  return request(`/${NameSpace[agvType]}/api/agvErrorRecord`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 请求取消任务
+export async function fetchBatchCancelTask(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv-task/batchCancelTask`, {
+    method: 'POST',
     data: params,
   });
 }
@@ -133,14 +154,6 @@ export async function fetchCancelTask(agvType, params) {
 export async function fetchRestoreTask(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv-task/action/restoreTask`, {
     method: `GET`,
-    data: params,
-  });
-}
-
-//请求小车错误日志
-export async function fetchAgvErrorRecord(agvType, params) {
-  return request(`/${NameSpace[agvType]}/api/agvErrorRecord`, {
-    method: 'POST',
     data: params,
   });
 }

@@ -1,14 +1,11 @@
 import React from 'react';
 import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import dictionary from '@/utils/Dictionary';
-import { dateFormat, getSuffix } from '@/utils/Utils';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/Utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
+import dictionary from '@/utils/Dictionary';
 import { AGVType } from '@/config/Config';
-
-const { red, green, yellow, blue, cyan, gray } = dictionary()['color'];
-
 export default class AgvList extends React.PureComponent {
   getColumn = (checkAgvDetail) => {
     return [
@@ -26,13 +23,13 @@ export default class AgvList extends React.PureComponent {
         width: 100,
       },
       {
-        title: formatMessage({ id: 'app.activity.ip' }),
+        title: formatMessage({ id: 'app.agv.ip' }),
         dataIndex: 'ip',
         align: 'center',
         width: 150,
       },
       {
-        title: formatMessage({ id: 'app.activity.port' }),
+        title: formatMessage({ id: 'app.agv.port' }),
         dataIndex: 'port',
         align: 'center',
         width: 100,
@@ -48,14 +45,7 @@ export default class AgvList extends React.PureComponent {
         dataIndex: 'currentDirection',
         align: 'center',
         width: 100,
-        ListCardRender: true,
-        render: (text) => {
-          if (text != null) {
-            return <span>{formatMessage({ id: dictionary('agvDirection', text) })}</span>;
-          } else {
-            return null;
-          }
-        },
+        render: (text) => getDirectionLocale(text),
       },
       {
         title: formatMessage({ id: 'app.agv.addingTime' }),
@@ -129,26 +119,7 @@ export default class AgvList extends React.PureComponent {
         dataIndex: 'agvStatus',
         align: 'center',
         ListCardRender: true,
-        render: (text) => {
-          if (text != null) {
-            const key = dictionary('agvStatus', [text]);
-            if (text === 'Offline') {
-              return <Tag color={gray}>{formatMessage({ id: key })}</Tag>;
-            } else if (text === 'StandBy') {
-              return <Tag color={blue}>{formatMessage({ id: key })}</Tag>;
-            } else if (text === 'Working') {
-              return <Tag color={green}>{formatMessage({ id: key })}</Tag>;
-            } else if (text === 'Charging') {
-              return <Tag color={yellow}>{formatMessage({ id: key })}</Tag>;
-            } else if (text === 'Error') {
-              return <Tag color={red}>{formatMessage({ id: key })}</Tag>;
-            } else if (text === 'Connecting') {
-              return <Tag color={cyan}>{formatMessage({ id: key })}</Tag>;
-            }
-          } else {
-            return null;
-          }
-        },
+        render: (agvStatus) => renderAgvStatus(agvStatus),
       },
       {
         title: formatMessage({ id: 'app.agv.battery' }),
@@ -207,6 +178,7 @@ export default class AgvList extends React.PureComponent {
         width: 150,
         align: 'center',
         dataIndex: 'maxChargingCurrent',
+        render: (text) => <Badge status="success" text={getSuffix(text, ' A')} />,
       },
       {
         title: formatMessage({ id: 'app.button.operation' }),

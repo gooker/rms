@@ -1,10 +1,22 @@
 import React from 'react';
 import { Row, Col, Tabs, Button, Select, message } from 'antd';
-import { FileTextOutlined, AndroidOutlined, WarningOutlined, AimOutlined } from '@ant-design/icons';
-import { FormattedMessage, formatMessage } from '@/utils/Lang';
+import {
+  FileTextOutlined,
+  AndroidOutlined,
+  WarningOutlined,
+  AimOutlined,
+  SearchOutlined,
+} from '@ant-design/icons';
+import { FormattedMessage, formatMessage } from '@/components/Lang';
 import LabelComponent from '@/components/LabelComponent';
 import { dealResponse } from '@/utils/Utils';
-import { fetchAgvList } from '@/services/api';
+import {
+  fetchAgvList,
+  fetchAgvInfo,
+  fetchAgvHardwareInfo,
+  fetchAgvTaskList,
+  fetchAgvErrorRecord,
+} from '@/services/api';
 import commonStyles from '@/common.module.less';
 import RealTimeTab from './RealTimeTab';
 import HardwareTab from './HardwareTab';
@@ -17,15 +29,22 @@ const { TabPane } = Tabs;
 
 class AgvRealTimeComponent extends React.Component {
   state = {
-    agvInView: null, // 标记正在查看的小车ID
     agvList: [],
+
+    agvId: null,
+    agvRealtimeData: null,
+    agvHardware: null,
+    agvTask: null,
+    agvErrorRecord: null,
+
+    isFetching: false,
   };
 
   componentDidMount() {
-    this.getAgvList();
+    this.fetchAgvList();
   }
 
-  getAgvList = async () => {
+  fetchAgvList = async () => {
     const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     const response = await fetchAgvList(agvType, sectionId);
@@ -36,8 +55,33 @@ class AgvRealTimeComponent extends React.Component {
     }
   };
 
+  // 获取小车软件信息、
+  fetchAgvMultivariateData = async () => {
+    const { agvId } = this.state;
+    const { agvType } = this.props;
+    this.setState({ isFetching: true });
+    const [agvRealtimeData, agvHardware, agvTask, agvErrorRecord] = await Promise.all([
+      fetchAgvInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
+      fetchAgvHardwareInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
+      fetchAgvTaskList(agvType, {
+        sectionId: window.localStorage.getItem('sectionId'),
+        agvId,
+        current: 1,
+        size: 6,
+      }),
+      fetchAgvErrorRecord(agvType, {
+        sectionId: window.localStorage.getItem('sectionId'),
+        agvId,
+        current: 1,
+        size: 3,
+      }),
+    ]);
+    this.setState({ isFetching: false, agvRealtimeData, agvHardware, agvTask, agvErrorRecord });
+  };
+
   render() {
-    const { agvList, agvInView } = this.state;
+    const { agvId, agvList, isFetching } = this.state;
+    const { agvRealtimeData, agvHardware, agvTask, agvErrorRecord } = this.state;
     const { agvType } = this.props;
 
     return (
@@ -46,10 +90,10 @@ class AgvRealTimeComponent extends React.Component {
           <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
             <Select
               showSearch
-              value={agvInView}
+              value={agvId}
               style={{ width: '100%' }}
               onChange={(agvId) => {
-                this.setState({ agvInView: agvId });
+                this.setState({ agvId });
               }}
             >
               {agvList.map(({ robotId }) => (
@@ -59,8 +103,13 @@ class AgvRealTimeComponent extends React.Component {
               ))}
             </Select>
           </LabelComponent>
-          <Button type={'primary'}>
-            <FormattedMessage id={'app.button.check'} />
+          <Button
+            type={'primary'}
+            disabled={!agvId}
+            loading={isFetching}
+            onClick={this.fetchAgvMultivariateData}
+          >
+            <SearchOutlined /> <FormattedMessage id={'app.button.check'} />
           </Button>
         </Row>
         <Row style={{ flex: 1 }} justify={'space-between'}>
@@ -75,7 +124,7 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                <RealTimeTab agvType={agvType} />
+                <RealTimeTab agvType={agvType} data={agvRealtimeData ?? {}} />
               </TabPane>
               <TabPane
                 key="hardWare"
@@ -86,7 +135,7 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                <HardwareTab agvType={agvType} />
+                <HardwareTab agvType={agvType} data={agvHardware} />
               </TabPane>
             </Tabs>
           </Col>
@@ -101,7 +150,7 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                <TaskRecordTab agvType={agvType} />
+                <TaskRecordTab agvType={agvType} data={agvTask} />
               </TabPane>
               <TabPane
                 key="errorRecord"
@@ -112,7 +161,7 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                <ErrorRecordTab agvType={agvType} />
+                <ErrorRecordTab agvType={agvType} data={agvErrorRecord} />
               </TabPane>
             </Tabs>
           </Col>

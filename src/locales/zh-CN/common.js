@@ -38,8 +38,6 @@ export default {
   'app.button.refresh': '刷新',
   'app.button.submit': '提交',
   'app.button.return': '返回',
-  'app.button.yes': '是',
-  'app.button.no': '否',
   'app.button.check': '查看',
   'app.button.search': '搜索',
   'app.button.reset': '重置',
@@ -53,6 +51,8 @@ export default {
   // AGV --
   'app.agv': '小车',
   'app.agv.id': '小车ID',
+  'app.agv.ip': 'IP',
+  'app.agv.port': '端口号',
   'app.agv.type': '小车类型',
   'app.agv.status': '小车状态',
   'app.agv.on': '已开启',
@@ -62,7 +62,6 @@ export default {
   'app.agv.direction.right': '朝右',
   'app.agv.direction.bottom': '朝下',
   'app.agv.direction.left': '朝左',
-  'app.agv.direction.no': '不存在',
 
   'app.agv.taskRecord': '小车任务记录',
   'app.agv.errorRecord': '小车错误记录',

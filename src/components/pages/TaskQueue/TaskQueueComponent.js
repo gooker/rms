@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/Dva';
 import { Table, Badge, Row, Button, Modal, message } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
 import {
   fetchTaskQueueList,
   deleteTaskQueueItems,

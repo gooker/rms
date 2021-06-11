@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/Dva';
 import { Button, message, Modal, Table } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { fetchTaskListByParams, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
+import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse } from '@/utils/Utils';
 import TaskSearch from './TaskSearch';
@@ -47,7 +47,7 @@ class TaskLibraryComponent extends Component {
 
     const sectionId = window.localStorage.getItem('sectionId');
     const params = { sectionId, current: currentPage, size, ...requestValues };
-    const response = await fetchTaskListByParams(agvType, params);
+    const response = await fetchAgvTaskList(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
       this.setState({ loading: false, dataSource: list, page });

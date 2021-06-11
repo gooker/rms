@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Row, Form, Steps, Divider, Tooltip } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/components/Lang';
 import {
   MehOutlined,
   LoadingOutlined,

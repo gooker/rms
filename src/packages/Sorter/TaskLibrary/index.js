@@ -1,7 +1,7 @@
 import React from 'react';
 import { Badge, Button, Tooltip } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
 import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/Utils';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
