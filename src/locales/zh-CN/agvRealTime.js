@@ -1,16 +1,7 @@
 // 小车监控页面
 export default {
-  // 维护相关
-  'app.activity.maintain': '维护',
-  'app.activity.cancelMaintenance': '取消维护',
-  'app.activity.maintainTip': '进入维护状态后,小车将不再被分配新的任务',
-  'app.activity.cancelMaintenanceTip': '进入维护状态后,小车将不再被分配新的任务',
-  'app.activity.maintenance': '维护中',
-  'app.activity.unMaintenance': '未维护',
-  'app.activity.maintenanceArea': '维护区域',
-  'app.activity.maintenanceState': '维护状态',
-
   // 小车实时信息Tab
+  'app.activity.realTimeAgvState': '小车实时信息',
   'app.activity.upTime': '开机时间',
   'app.activity.theta': '惯导角度',
   'app.activity.leftCodec': '左编码器值',
@@ -32,6 +23,7 @@ export default {
   'app.activity.resetTip': '尝试将小车的状态变为空闲，如果有任务绑定，任务将变成错误状态',
 
   // 小车硬件信息Tab
+  'app.activity.agvHardwareState': '小车硬件信息',
   'app.hardWareStatus.Charge': '充电',
   'app.hardWareStatus.SleepDueToFailure': '因故障进入休眠状态',
   'app.hardWareStatus.decline': '下降',
@@ -54,7 +46,21 @@ export default {
   'app.activity.workTime': '运行时长',
 
   // 小车任务记录Tab
+  'app.agv.taskRecord': '小车任务记录',
   'app.activity.searchTime': '查询时间',
+
+  // 小车错误记录
+  'app.agv.errorRecord': '小车错误记录',
+
+  // 维护相关
+  'app.activity.maintain': '维护',
+  'app.activity.cancelMaintenance': '取消维护',
+  'app.activity.maintainTip': '进入维护状态后,小车将不再被分配新的任务',
+  'app.activity.cancelMaintenanceTip': '进入维护状态后,小车将不再被分配新的任务',
+  'app.activity.maintenance': '维护中',
+  'app.activity.unMaintenance': '未维护',
+  'app.activity.maintenanceArea': '维护区域',
+  'app.activity.maintenanceState': '维护状态',
 
   // 其他
   'app.activity.redoTip': '重做:任务重新开始，重新分配车辆',

@@ -35,7 +35,7 @@ export default class AgvList extends React.PureComponent {
         width: 100,
       },
       {
-        title: formatMessage({ id: 'app.agv.position' }),
+        title: formatMessage({ id: 'app.common.position' }),
         dataIndex: 'currentCellId',
         align: 'center',
         width: 100,

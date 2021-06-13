@@ -3,12 +3,12 @@ import { Tooltip, Popover, Button, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
-import dictionary from '@/utils/Dictionary';
+import Dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/Utils';
-import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/Config';
+import commonStyles from '@/common.module.less';
 
-const { red, green } = dictionary('color', 'all');
+const { red, green } = Dictionary('color');
 
 export default class TaskQueue extends React.PureComponent {
   searchInput = React.createRef();
@@ -18,8 +18,8 @@ export default class TaskQueue extends React.PureComponent {
       {
         title: formatMessage({ id: 'app.task.id' }),
         dataIndex: 'taskId',
-        width: 120,
         align: 'center',
+        width: 200,
         ...this.getColumnSearchProps('taskId', (value, record) =>
           record['taskId'].toString().toLowerCase().includes(value.toLowerCase()),
         ),
@@ -43,15 +43,15 @@ export default class TaskQueue extends React.PureComponent {
         dataIndex: 'agvTaskType',
         align: 'center',
         width: 150,
-        render: (text) => <span>{formatMessage({ id: dictionary('agvTaskType', text) })}</span>,
-        filters: this.renderFilters(dictionary('agvTaskType', 'all')),
-        onFilter: (value, record) => record.agvTaskType.includes(value),
+        render: (taskType) => formatMessage({ id: `app.taskType.${taskType}` }),
+        // filters: this.renderFilters(Dictionary('agvTaskType')),
+        // onFilter: (value, record) => record.agvTaskType.includes(value),
       },
       {
         title: formatMessage({ id: 'app.pod.id' }),
         dataIndex: 'podId',
         align: 'center',
-        width: '8%',
+        width: 150,
         ...this.getColumnSearchProps('podId'),
         render: (text, record) => {
           if (record.isLockPod) {
@@ -65,7 +65,7 @@ export default class TaskQueue extends React.PureComponent {
         title: formatMessage({ id: 'app.taskQueue.appointedTarget' }),
         dataIndex: 'targetCellId',
         align: 'center',
-        width: '8%',
+        width: 150,
         ...this.getColumnSearchProps('targetCellId'),
         render: (text, record) => {
           if (record.isLockTargetCell == null) {
@@ -82,7 +82,7 @@ export default class TaskQueue extends React.PureComponent {
         title: formatMessage({ id: 'app.taskQueue.appointedAgv' }),
         dataIndex: 'appointedAGVId',
         align: 'center',
-        width: '8%',
+        width: 150,
         ...this.getColumnSearchProps('appointedAGVId'),
         render: (text, record) => {
           if (record.isLockAGV) {
@@ -96,7 +96,7 @@ export default class TaskQueue extends React.PureComponent {
         title: formatMessage({ id: 'app.taskQueue.priority' }),
         dataIndex: 'jobPriority',
         align: 'center',
-        width: '8%',
+        width: 150,
         sorter: (a, b) => a.jobPriority - b.jobPriority,
         ...this.getColumnSearchProps('jobPriority'),
         render: (text) => <span>{text}</span>,
@@ -105,7 +105,7 @@ export default class TaskQueue extends React.PureComponent {
         title: formatMessage({ id: 'app.taskQueue.createTime' }),
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
-        width: '10%',
+        width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
@@ -118,7 +118,7 @@ export default class TaskQueue extends React.PureComponent {
         title: formatMessage({ id: 'app.taskQueue.lastExecutedTimestamp' }),
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
-        width: '10%',
+        width: 150,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
@@ -131,7 +131,7 @@ export default class TaskQueue extends React.PureComponent {
         title: formatMessage({ id: 'app.taskQueue.triedTimes' }),
         dataIndex: 'triedTimes',
         align: 'center',
-        width: '10%',
+        width: 150,
         sorter: (a, b) => a.triedTimes - b.triedTimes,
       },
       {
@@ -139,7 +139,7 @@ export default class TaskQueue extends React.PureComponent {
         dataIndex: 'prepareFailedReason',
         align: 'center',
         fixed: 'right',
-        width: 250,
+        width: 200,
         render: (text) => {
           if (text) {
             if (text.length > 18) {

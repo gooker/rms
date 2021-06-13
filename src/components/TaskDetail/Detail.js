@@ -7,10 +7,10 @@ import AgvTaskHistory from './components/AgvTaskHistorys';
 import DetailInfo from './components/DetailInfo';
 import TaskDetail from './TaskDetail';
 import { adjustModalWidth } from '@/utils/Utils';
-import dictionary from '@/utils/Dictionary';
+import Dictionary from '@/utils/Dictionary';
 import { hasPermission } from '@/utils/Permission';
 
-const { red } = dictionary('color', 'all');
+const { red } = Dictionary('color');
 const { confirm } = Modal;
 
 @connect(({ task }) => ({ task }))

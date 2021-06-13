@@ -28,25 +28,25 @@ export default {
   // Button --
   'app.button.add': '新增',
   'app.button.edit': '编辑',
-  'app.button.update': '更新',
-  'app.button.delete': '删除',
-  'app.button.confirm': '确认',
-  'app.button.cancel': '取消',
-  'app.button.close': '关闭',
   'app.button.save': '保存',
-  'app.button.operation': '操作',
-  'app.button.refresh': '刷新',
-  'app.button.submit': '提交',
-  'app.button.return': '返回',
-  'app.button.check': '查看',
-  'app.button.search': '搜索',
-  'app.button.reset': '重置',
   'app.button.copy': '复制',
   'app.button.past': '粘贴',
+  'app.button.close': '关闭',
+  'app.button.check': '查看',
+  'app.button.reset': '重置',
+  'app.button.update': '更新',
+  'app.button.delete': '删除',
+  'app.button.cancel': '取消',
+  'app.button.submit': '提交',
+  'app.button.return': '返回',
+  'app.button.search': '搜索',
   'app.button.export': '导出',
   'app.button.import': '导入',
-  'app.button.turnOff': '关闭',
   'app.button.turnOn': '开启',
+  'app.button.confirm': '确认',
+  'app.button.refresh': '刷新',
+  'app.button.turnOff': '关闭',
+  'app.button.operation': '操作',
 
   // AGV --
   'app.agv': '小车',
@@ -57,20 +57,29 @@ export default {
   'app.agv.status': '小车状态',
   'app.agv.on': '已开启',
   'app.agv.off': '未开启',
+
   'app.agv.direction': '车头方向',
   'app.agv.direction.top': '朝上',
   'app.agv.direction.right': '朝右',
   'app.agv.direction.bottom': '朝下',
   'app.agv.direction.left': '朝左',
 
-  'app.agv.taskRecord': '小车任务记录',
-  'app.agv.errorRecord': '小车错误记录',
-  'app.activity.realTimeAgvState': '小车实时信息',
-  'app.activity.agvHardwareState': '小车硬件信息',
+  'app.agvState.available': '可用',
+  'app.agvState.StandBy': '待命',
+  'app.agvState.Working': '任务中',
+  'app.agvState.Charging': '充电中',
+  'app.agvState.Offline': '离线',
+  'app.agvState.Error': '错误',
+  'app.agvState.Connecting': '连接中',
 
-  'app.agv.getListFail': '获取小车列表失败',
+  // Battery
+  'app.battery.full': '充足',
+  'app.battery.good': '良好',
+  'app.battery.normal': '一般',
+  'app.battery.low': '低电量',
+  'app.battery.danger': '馈电',
 
-  // Pod --
+  // Pod
   'app.pod': '货架',
   'app.pod.id': '货架ID',
   'app.pod.direction': '货架面',
@@ -79,7 +88,7 @@ export default {
   'app.pod.side.C': 'C',
   'app.pod.side.D': 'D',
 
-  // Cell --
+  // Cell
   'app.cellId': '点位',
 
   // Task
@@ -94,18 +103,18 @@ export default {
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
   'app.task.type': '任务类型',
-  'app.task.status': '任务状态',
-  'app.task.status.TaskNew': '新建',
-  'app.task.status.TaskExecuting': '执行中',
-  'app.task.status.TaskFinished': '已完成',
-  'app.task.status.TaskCancel': '已取消',
-  'app.task.status.TaskError': '失败',
+  'app.task.state': '任务状态',
 
-  // Task Action
+  'app.taskStatus.New': '新建',
+  'app.taskStatus.Executing': '执行中',
+  'app.taskStatus.Finished': '已完成',
+  'app.taskStatus.Cancel': '已取消',
+  'app.taskStatus.Error': '失败',
+
+  // Common Tip
+  'app.required.agvId': '请选择小车ID',
+  'app.tip.getListFail': '获取小车列表失败',
   'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
   'app.taskAction.cancel.success': '取消任务成功',
   'app.taskAction.cancel.fail': '取消任务失败',
-
-  //  Required
-  'app.required.agvID': '请选择小车ID',
 };

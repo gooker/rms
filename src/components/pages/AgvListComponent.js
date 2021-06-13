@@ -5,7 +5,7 @@ import { formatMessage, FormattedMessage } from '@/components/Lang';
 import { fetchAgvList, fetchDeleteAgvList, fetchMoveoutAGVs } from '@/services/api';
 import { dealResponse, isNull, exportAgvModuleInfo, exportAgvInfo } from '@/utils/Utils';
 import LabelComponent from '@/components/LabelComponent';
-import dictionary from '@/utils/Dictionary';
+import Dictionary from '@/utils/Dictionary';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 
@@ -53,7 +53,7 @@ class AgvListComponent extends Component {
   };
 
   renderAgvStateFilter = () => {
-    const agvStates = dictionary('agvStatus', 'all');
+    const agvStates = Dictionary('agvState');
     return Object.keys(agvStates).map((item) => (
       <Select.Option key={item} value={item}>
         <FormattedMessage id={agvStates[item]} />

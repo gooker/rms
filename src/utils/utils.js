@@ -7,6 +7,7 @@ import requestAPI from '@/utils/RequestAPI';
 import { formatMessage } from '@/components/Lang';
 import { fetchAgvHardwareInfo } from '@/services/api';
 import Dictionary from '@/utils/Dictionary';
+import { AgvStateColor } from '@/consts';
 
 export function getDomainNameByUrl(url) {
   const apis = requestAPI();
@@ -230,7 +231,7 @@ export function exportAgvInfo(agvList) {
         value: 'port',
       },
       {
-        label: formatMessage({ id: 'app.agv.position' }),
+        label: formatMessage({ id: 'app.common.position' }),
         value: 'currentCellId',
       },
       {
@@ -276,7 +277,7 @@ export function exportAgvInfo(agvList) {
         label: formatMessage({ id: 'app.agv.state' }),
         value: (row) => {
           const { agvStatus } = row;
-          const key = Dictionary('agvStatus', [agvStatus]);
+          const key = Dictionary('agvState', agvStatus);
           return formatMessage({ id: key });
         },
       },
@@ -338,23 +339,12 @@ export function getDirectionLocale(angle) {
   }
 }
 
-const { red, green, yellow, blue, cyan, gray } = Dictionary('color');
 export function renderAgvStatus(agvStatus) {
   if (agvStatus != null) {
-    const key = Dictionary('agvStatus', agvStatus);
-    if (agvStatus === 'Offline') {
-      return <Tag color={gray}>{formatMessage({ id: key })}</Tag>;
-    } else if (agvStatus === 'StandBy') {
-      return <Tag color={blue}>{formatMessage({ id: key })}</Tag>;
-    } else if (agvStatus === 'Working') {
-      return <Tag color={green}>{formatMessage({ id: key })}</Tag>;
-    } else if (agvStatus === 'Charging') {
-      return <Tag color={yellow}>{formatMessage({ id: key })}</Tag>;
-    } else if (agvStatus === 'Error') {
-      return <Tag color={red}>{formatMessage({ id: key })}</Tag>;
-    } else if (agvStatus === 'Connecting') {
-      return <Tag color={cyan}>{formatMessage({ id: key })}</Tag>;
-    }
+    const agvStateMap = Dictionary('agvState');
+    return (
+      <Tag color={AgvStateColor[agvStatus]}>{formatMessage({ id: agvStateMap[agvStatus] })}</Tag>
+    );
   } else {
     return null;
   }

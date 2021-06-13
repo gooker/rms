@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/Dva';
 import { Table, Badge, Row, Button, Modal, message } from 'antd';
-import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
+import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
 import {
   fetchTaskQueueList,
@@ -32,7 +32,7 @@ class TaskQueueComponent extends Component {
   };
 
   componentDidMount() {
-    this.getData;
+    this.getData();
   }
 
   getData = async () => {
@@ -144,7 +144,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.availableAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#7ac143' }}>
-                <FormattedMessage id={'app.taskQueue.availableCar'} />
+                <FormattedMessage id={'app.agvState.available'} />
               </span>
             </Badge>
             <Badge
@@ -153,7 +153,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.standByAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#0092FF' }}>
-                <FormattedMessage id={'app.agv.standby'} />
+                <FormattedMessage id={'app.agvState.StandBy'} />
               </span>
             </Badge>
             <Badge
@@ -162,7 +162,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.workAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#2F8949' }}>
-                <FormattedMessage id={'app.activity.TaskExecuting'} />
+                <FormattedMessage id={'app.agvState.Working'} />
               </span>
             </Badge>
             <Badge
@@ -171,7 +171,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.chargerAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#eba954' }}>
-                <FormattedMessage id={'app.activity.Charging'} />
+                <FormattedMessage id={'app.agvState.Charging'} />
               </span>
             </Badge>
             <Badge
@@ -180,7 +180,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.lowerBatteryAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#fe5000' }}>
-                <FormattedMessage id={'app.activity.lowPower'} />
+                <FormattedMessage id={'app.battery.low'} />
               </span>
             </Badge>
             <Badge
@@ -189,7 +189,7 @@ class TaskQueueComponent extends Component {
               count={agvOverallStatus.offlineAgvNumber || 0}
             >
               <span className={taskQueueStyles.agvStatusBadge} style={{ background: '#9E9E9E' }}>
-                <FormattedMessage id={'app.firmware.Offline'} />
+                <FormattedMessage id={'app.agvState.Offline'} />
               </span>
             </Badge>
           </Row>
@@ -197,11 +197,10 @@ class TaskQueueComponent extends Component {
             <Row className={commonStyles.tableToolLeft}>
               <Button
                 loading={deleteLoading}
-                icon={<DeleteOutlined />}
                 onClick={this.deleteQueueTasks}
                 disabled={selectedRowKeys.length === 0}
               >
-                <FormattedMessage id="app.button.delete" />
+                <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
               </Button>
               <Button
                 disabled={selectedRowKeys.length === 0}
@@ -209,7 +208,7 @@ class TaskQueueComponent extends Component {
                   this.switchTaskPriorityModal(true);
                 }}
               >
-                <FormattedMessage id="app.taskQueue.renice" />
+                <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.renice" />
               </Button>
             </Row>
             <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">

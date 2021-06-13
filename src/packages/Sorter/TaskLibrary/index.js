@@ -2,13 +2,12 @@ import React from 'react';
 import { Badge, Button, Tooltip } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
-import dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/Utils';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/Config';
+import { TaskStateBageType } from '@/consts';
 
-const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
 export default class TaskLibrary extends React.PureComponent {
   getColumn = (checkDetail) => {
     return [
@@ -43,36 +42,21 @@ export default class TaskLibrary extends React.PureComponent {
         dataIndex: 'type',
         align: 'center',
         width: 150,
-        render: (text) => {
-          if (text != null) {
-            const key = dictionary('agvTaskType', [text]);
-            if (key) {
-              return <FormattedMessage id={key} />;
-            } else {
-              return <span>{key}</span>;
-            }
-          }
-        },
+        render: (text) => <FormattedMessage id={`app.taskType.${text}`} />,
       },
       {
-        title: formatMessage({ id: 'app.task.status' }),
+        title: formatMessage({ id: 'app.task.state' }),
         dataIndex: 'taskStatus',
         align: 'center',
         width: 120,
         render: (text) => {
           if (text != null) {
-            const key = dictionary('taskStatus', [text]);
-            if (text === 'New') {
-              return <Badge status={taskStatusMap[0]} text={formatMessage({ id: key })} />;
-            } else if (text === 'Executing') {
-              return <Badge status={taskStatusMap[1]} text={formatMessage({ id: key })} />;
-            } else if (text === 'Finished') {
-              return <Badge status={taskStatusMap[2]} text={formatMessage({ id: key })} />;
-            } else if (text === 'Error') {
-              return <Badge status={taskStatusMap[3]} text={formatMessage({ id: key })} />;
-            } else if (text === 'Cancel') {
-              return <Badge status={taskStatusMap[4]} text={formatMessage({ id: key })} />;
-            }
+            return (
+              <Badge
+                status={TaskStateBageType[text]}
+                text={formatMessage({ id: `app.taskStatus.${text}` })}
+              />
+            );
           } else {
             return <FormattedMessage id="app.taskDetail.notAvailable" />;
           }

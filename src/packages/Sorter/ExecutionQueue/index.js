@@ -1,13 +1,13 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/ExecutionQueueComponent';
-import { formatMessage } from '@/components/Lang';
-import dictionary from '@/utils/Dictionary';
+import { formatMessage, FormattedMessage } from '@/components/Lang';
+import Dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/Utils';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/Config';
 
-const { red, green } = dictionary('color', 'all');
+const { red, green } = Dictionary('color');
 
 export default class ExecutionQueue extends React.PureComponent {
   getColumn = (checkTaskDetail) => {
@@ -37,7 +37,7 @@ export default class ExecutionQueue extends React.PureComponent {
         dataIndex: 'agvTaskType',
         align: 'center',
         width: 150,
-        render: (text) => <span>{formatMessage({ id: dictionary('agvTaskType', text) })}</span>,
+        render: (text) => <FormattedMessage id={`app.taskType.${text}`} />,
       },
       {
         title: formatMessage({ id: 'app.executionQ.isReleased' }),
@@ -88,7 +88,7 @@ export default class ExecutionQueue extends React.PureComponent {
         width: 100,
         render: (text) => {
           if (text != null) {
-            return formatMessage({ id: dictionary('chargerDirection', text) });
+            return formatMessage({ id: Dictionary('chargerDirection', text) });
           } else {
             return null;
           }

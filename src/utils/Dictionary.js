@@ -1,49 +1,47 @@
 import { isNull } from './Utils';
 
 const DictionaryDataSource = {
+  // 小车状态
+  agvState: {
+    Offline: 'app.agvState.Offline',
+    StandBy: 'app.agvState.StandBy',
+    Working: 'app.agvState.Working',
+    Charging: 'app.agvState.Charging',
+    Error: 'app.agvState.Error',
+    Connecting: 'app.agvState.Connecting',
+  },
+
+  // 小车方向
   agvDirection: {
     0: 'app.agv.direction.top',
     90: 'app.agv.direction.right',
     180: 'app.agv.direction.bottom',
     270: 'app.agv.direction.left',
   },
-  chargerDirection: {
-    0: 'app.direction.top',
-    1: 'app.direction.right',
-    2: 'app.direction.bottom',
-    3: 'app.direction.left',
-  },
+
+
+  // 货架方向
   podDirection: {
     0: 'app.pod.side.A',
     90: 'app.pod.side.B',
     180: 'app.pod.side.C',
     270: 'app.pod.side.D',
   },
+
+  // 小车升级
   agvUpgradeStatus: {
     0: 'app.firmware.upgradeSuccess',
     1: 'app.firmware.upgrading',
     2: 'app.firmware.upgradeFailure',
   },
+
+  // 小车固件长传
   agvUploadStatus: {
     0: 'app.firmware.uploadSuccess',
     1: 'app.firmware.uploading',
     2: 'app.firmware.uploadFailure',
   },
-  taskStatus: {
-    New: 'app.activity.TaskNew',
-    Executing: 'app.activity.TaskExecuting',
-    Finished: 'app.activity.TaskFinished',
-    Error: 'app.activity.TaskError',
-    Cancel: 'app.activity.TaskCancel',
-  },
-  agvStatus: {
-    Offline: 'app.activity.Offline',
-    StandBy: 'app.activity.StandBy',
-    Working: 'app.activity.Working',
-    Charging: 'app.activity.Charging',
-    Error: 'app.activity.Error',
-    Connecting: 'app.activity.Connecting',
-  },
+
   color: {
     red: '#f5222d',
     blue: '#1890FF',
@@ -54,6 +52,8 @@ const DictionaryDataSource = {
     gray: '#b3b2b2',
     cyan: '#13c2c2',
   },
+
+  // 固件状态
   hardWareStatus: {
     0: 'app.hardWareStatus.standBy',
     1: 'app.hardWareStatus.straightLine',
@@ -67,17 +67,8 @@ const DictionaryDataSource = {
     254: 'app.hardWareStatus.SleepDueToFailure',
     255: 'app.hardWareStatus.fault',
   },
-  errorType: {
-    0: 'app.MCUAndHardware',
-    2: 'app.NavigationQRCode',
-    3: 'app.ObstacleAvoidanceAndSafety',
-    4: 'app.Sensor',
-    5: 'app.InsModule',
-    6: 'app.MotorModule',
-    7: 'app.BatteryModule',
-    8: 'app.WIFI',
-    9: 'app.Charge',
-  },
+
+  // 电池类型
   batteryType: {
     1: 'app.batteryType.enumeration1', //Lithium iron phosphate
     2: 'app.batteryType.enumeration2', //Latent vehicle (lithium ternary)
@@ -85,39 +76,19 @@ const DictionaryDataSource = {
     4: 'app.batteryType.enumeration4', //Sorting car (lithium iron phosphate)
     5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin robot (lithium iron phosphate)
   },
-  formTableElements: {
-    agvId: 'form.robotId',
-    currentRobotId: 'form.robotId',
-    count: 'app.formTableElements.count',
-    createTime: 'app.system.createDate',
-    errorDefinition_level: 'app.faultDefinition.errorLevel',
-    errorCode: 'app.faultInfo.errorCode',
-    type: 'form.taskType',
-    taskStatus: 'form.taskStatus',
-  },
-  uploadFilesName: [
-    { name: 'syslog.txt' },
-    { name: 'syslog1.old' },
-    { name: 'syslog2.old' },
-    { name: 'syslog3.old' },
-    { name: 'config.txt' },
-  ],
 };
 
-function dictionary(namespace, key) {
+function Dictionary(namespace, key) {
   if (namespace) {
     const namespaceData = DictionaryDataSource[namespace];
-    if (!isNull(key)) {
-      if (key === 'all') {
-        return namespaceData;
-      }
-      return namespaceData[key];
+    if (isNull(key)) {
+      return namespaceData;
     } else {
-      return '';
+      return namespaceData[key];
     }
   } else {
     return DictionaryDataSource;
   }
 }
 
-export default dictionary;
+export default Dictionary;

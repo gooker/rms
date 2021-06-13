@@ -36,6 +36,7 @@ export default class PixiBuilder {
       divWheel: document.getElementById('pixi'),
       interaction: this.renderer.plugins.interaction,
     });
+    this.viewport.fitWorld(false);
     this.viewport.sortableChildren = true;
     this.viewport.on('moved', this.refresh);
 
@@ -119,9 +120,9 @@ export default class PixiBuilder {
       const worldWidth = elementsWidth * WorldScreenRatio;
       const worldHeight = elementsHeight * WorldScreenRatio;
 
-      // 获取最适合的Zoom数值
-      const zoomValue = this.viewport.findFitHeight(worldWidth, worldHeight);
-      this.viewport.setZoom(zoomValue);
+      this.viewport.worldWidth = worldWidth;
+      this.viewport.worldHeight = worldHeight;
+      this.viewport.fitWorld(false);
       this.viewport.moveCenter(minX + elementsWidth / 2, minY + elementsHeight / 2);
     }
   }

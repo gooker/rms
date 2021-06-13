@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Popover } from 'antd';
 import Dictionary from '@/utils/Dictionary';
 
-const { red } = Dictionary('color', 'all');
+const { red } = Dictionary('color');
 
 /**
  *  level 1 || leve2  --> blue

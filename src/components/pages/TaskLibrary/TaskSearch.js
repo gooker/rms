@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import { FormattedMessage, formatMessage } from '@/components/Lang';
-import dictionary from '@/utils/Dictionary';
+import Dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/Utils';
 
 const { RangePicker } = DatePicker;
@@ -26,7 +26,7 @@ const TaskSearch = (props) => {
   }
 
   function renderAgvTaskTypeOption() {
-    const toteAgvTaskType = dictionary('agvTaskType', 'all');
+    const toteAgvTaskType = Dictionary('agvTaskType');
     const options = [];
     for (const key in toteAgvTaskType) {
       if (toteAgvTaskType.hasOwnProperty(key)) {
@@ -57,7 +57,7 @@ const TaskSearch = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.status' })}>
+          <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.state' })}>
             <Select mode="multiple" allowClear>
               <Option key="New" value="New">
                 <FormattedMessage id="app.activity.TaskNew" />

@@ -33,7 +33,7 @@ class TaskDetail extends PureComponent {
   // 渲染任务状态
   renderStatus = (text) => {
     if (text != null && text !== '') {
-      const key = Dictionary('taskStatus', [text]);
+      const key = Dictionary('taskStatus', text);
       if (text === 'New') {
         return <Badge status={taskStatusMap[0]} text={formatMessage({ id: key })} />;
       }
@@ -224,7 +224,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.task.status" />}
+                    title={<FormattedMessage id="app.task.state" />}
                     content={this.renderStatus(detailInfo.taskStatus)}
                   />
                 </Col>

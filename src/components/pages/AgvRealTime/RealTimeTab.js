@@ -90,7 +90,7 @@ const RealTimeTab = (props) => {
           {data?.mongodbAGV?.port}
         </LabelComponent>
         {/* 位置 */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.position' })}>
+        <LabelComponent label={formatMessage({ id: 'app.common.position' })}>
           {data?.mongodbAGV?.currentCellId}
         </LabelComponent>
         {/* 车头方向 */}

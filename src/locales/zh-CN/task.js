@@ -38,6 +38,7 @@ export default {
   'app.taskQueue.triedTimes': '累计次数',
   'app.taskQueue.updateTaskPriority': '修改任务优先级操作成功',
   'app.taskQueue.updateTaskPriority.failed': '修改任务优先级操作失败',
+  'app.taskQueue.renice': '调整优先级',
 
   //  任务详情
   'app.taskDetail.finishTime': '预计完成时间:',
