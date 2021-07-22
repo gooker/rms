@@ -2,12 +2,12 @@ import React, { PureComponent, createRef } from 'react';
 import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
-import { dateFormat } from '@/utils/Utils';
+import { dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import ErrorList from './components/ErrorList';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
-import { AGVType } from '@/config/Config';
+import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
 
 const colProps = { lg: 8, sm: 12 };

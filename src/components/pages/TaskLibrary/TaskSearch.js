@@ -3,7 +3,7 @@ import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import { FormattedMessage, formatMessage } from '@/components/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/Utils';
+import { dateFormat } from '@/utils/utils';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;

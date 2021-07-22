@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/Dva';
+import { connect } from '@/utils/dva';
 import { Table, Badge, Row, Button, Modal, message } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
@@ -9,7 +9,7 @@ import {
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
 } from '@/services/api';
-import { dealResponse } from '@/utils/Utils';
+import { dealResponse } from '@/utils/utils';
 import UpdateTaskPriority from './components/UpdateTaskPriority/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import taskQueueStyles from './taskQueue.module.less';

@@ -1,4 +1,4 @@
-import { AGVType } from '@/config/Config';
+import { AGVType } from '@/config/config';
 // 小车状态颜色
 export const AgvStateColor = {
   available: '#7ac143',

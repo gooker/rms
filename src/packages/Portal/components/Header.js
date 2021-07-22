@@ -1,6 +1,6 @@
 import React from 'react';
 import { Radio } from 'antd';
-import { connect } from '@/utils/Dva';
+import { connect } from '@/utils/dva';
 import { FormattedMessage } from '@/components/Lang';
 
 @connect(({ app }) => ({

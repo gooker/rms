@@ -3,9 +3,9 @@ import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/ExecutionQueueComponent';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/Utils';
+import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
-import { AGVType } from '@/config/Config';
+import { AGVType } from '@/config/config';
 
 const { red, green } = Dictionary('color');
 

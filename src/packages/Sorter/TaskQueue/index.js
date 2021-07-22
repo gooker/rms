@@ -4,8 +4,8 @@ import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/Utils';
-import { AGVType } from '@/config/Config';
+import { dateFormat } from '@/utils/utils';
+import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
 const { red, green } = Dictionary('color');

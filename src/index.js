@@ -1,5 +1,5 @@
 import ReactDOM from 'react-dom';
-import dva from '@/utils/Dva';
+import dva from '@/utils/dva';
 import { HashRouter as Router } from 'react-router-dom';
 import Portal from '@/components/pages/Portal/Portal';
 import appModel from '@/models/app';

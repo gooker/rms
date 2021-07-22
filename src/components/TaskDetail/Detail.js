@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
-import { connect } from '@/utils/Dva';
+import { connect } from '@/utils/dva';
 import { formatMessage } from '@/components/Lang';
 import AgvTaskSteps from './components/AgvTaskSteps';
 import AgvTaskHistory from './components/AgvTaskHistorys';
 import DetailInfo from './components/DetailInfo';
 import TaskDetail from './TaskDetail';
-import { adjustModalWidth } from '@/utils/Utils';
+import { adjustModalWidth } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import { hasPermission } from '@/utils/Permission';
 

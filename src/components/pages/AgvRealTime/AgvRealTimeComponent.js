@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { FormattedMessage, formatMessage } from '@/components/Lang';
 import LabelComponent from '@/components/LabelComponent';
-import { dealResponse } from '@/utils/Utils';
+import { dealResponse } from '@/utils/utils';
 import {
   fetchAgvList,
   fetchAgvInfo,

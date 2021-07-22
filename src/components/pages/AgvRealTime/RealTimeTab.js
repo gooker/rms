@@ -2,8 +2,8 @@ import React from 'react';
 import { Row, Col, Tag } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
-import { getDirectionLocale, renderAgvStatus, dateFormat } from '@/utils/Utils';
-import Dictionary from '@/utils/Dictionary';
+import { getDirectionLocale, renderAgvStatus, dateFormat } from '@/utils/utils';
+// import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent';
 
 const RealTimeTab = (props) => {

@@ -2,10 +2,10 @@ import React from 'react';
 import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
-import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/Utils';
+import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
 import dictionary from '@/utils/Dictionary';
-import { AGVType } from '@/config/Config';
+import { AGVType } from '@/config/config';
 export default class AgvList extends React.PureComponent {
   getColumn = (checkAgvDetail) => {
     return [

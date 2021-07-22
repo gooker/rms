@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Simple } from '@/libs/simple';
 import { Viewport } from 'pixi-viewport';
 import { uniq, sortBy } from 'lodash';
-import { CellHeight, CellWidth, WorldScreenRatio } from '@/config/Config';
+import { CellHeight, CellWidth, WorldScreenRatio } from '@/config/config';
 
 export default class PixiBuilder {
   constructor(width, height) {

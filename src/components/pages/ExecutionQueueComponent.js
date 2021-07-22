@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/Dva';
+import { connect } from '@/utils/dva';
 import { Table, Row, Button, Input, Modal } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/components/Lang';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
-import { dealResponse } from '@/utils/Utils';
+import { dealResponse } from '@/utils/utils';
 import LabelComponent from '@/components/LabelComponent';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';

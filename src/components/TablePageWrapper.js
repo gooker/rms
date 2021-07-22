@@ -1,5 +1,5 @@
 import React from 'react';
-import { getContentHeight } from '@/utils/Utils';
+import { getContentHeight } from '@/utils/utils';
 import { debounce } from 'lodash';
 import commonStyles from '@/common.module.less';
 
