@@ -1,7 +1,7 @@
 const LabelComponent = (props) => {
   const { label, children, width = 250 } = props;
   return (
-    <div style={{ width, display: 'flex' }}>
+    <div style={{ width, display: 'flex' ,marginBottom:15}}>
       <span style={{ display: 'flex', alignItems: 'center' }}>{label}:</span>
       <div style={{ flex: 1, marginLeft: 10 }}>{children}</div>
     </div>

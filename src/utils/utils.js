@@ -349,3 +349,15 @@ export function renderAgvStatus(agvStatus) {
     return null;
   }
 }
+
+export function getDay(mss) {
+  mss = mss * 1000;
+  let days = parseInt(mss / (1000 * 60 * 60 * 24));
+  let hours = (mss % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+  let minutes = (mss % (1000 * 60 * 60)) / (1000 * 60);
+  return {
+    days: parseInt(days),
+    hours: parseInt(hours),
+    minutes: parseInt(minutes),
+  };
+}

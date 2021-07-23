@@ -9,6 +9,7 @@ const DictionaryDataSource = {
     Charging: 'app.agvState.Charging',
     Error: 'app.agvState.Error',
     Connecting: 'app.agvState.Connecting',
+    Waiting:'app.agvState.Waiting'
   },
 
   // 小车方向
@@ -75,6 +76,44 @@ const DictionaryDataSource = {
     3: 'app.batteryType.enumeration3',
     4: 'app.batteryType.enumeration4', //Sorting car (lithium iron phosphate)
     5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin robot (lithium iron phosphate)
+  },
+  agvTaskType: {
+    // 潜伏车
+    EMPTY_RUN: 'app.activity.EMPTY_RUN',
+    CHARGE_RUN: 'app.activity.CHARGE_RUN',
+    REST_UNDER_POD: 'app.activity.REST_UNDER_POD',
+    CARRY_POD_TO_CELL: 'app.activity.CARRY_POD_TO_CELL',
+    RUN_TO_SAFETY_AREA: 'app.activity.RUN_TO_SAFETY_AREA',
+    CARRY_POD_TO_STATION: 'app.activity.CARRY_POD_TO_STATION',
+    SUPER_CARRY_POD_TO_CELL: 'app.activity.SUPER_CARRY_POD_TO_CELL',
+    HEARVY_CARRY_POD_TO_STORE: 'app.activity.HEARVY_CARRY_POD_TO_STORE',
+    FROCK_CARRY_TO_CELL: 'app.activity.FROCK_CARRY_TO_CELL',
+    ROLLER_CARRY_TO_CELL: 'app.activity.ROLLER_CARRY_TO_CELL',
+
+    // 料箱
+    TOTE_PUT: 'app.activity.TOTE_PUT',
+    TOTE_CARRY: 'app.activity.TOTE_CARRY',
+    TOTE_EMPTY_RUN: 'app.activity.EMPTY_RUN',
+    TOTE_CHARGE_RUN: 'app.activity.CHARGE_RUN',
+    TOTE_ROLLER_PUT: 'app.activity.TOTE_ROLLER_PUT',
+    TOTE_NONE_CARRY: 'app.activity.TOTE_NONE_CARRY',
+    TOTE_STATION_CARRY: 'app.activity.TOTE_STATION_CARRY',
+    TOTE_TO_WORK_STATION: 'app.activity.CARRY_POD_TO_STATION',
+    TOTE_REST_ON_REST_CELL: 'app.activity.TOTE_REST_ON_REST_CELL',
+    TOTE_RUN_TO_SAFETY_AREA: 'app.activity.TOTE_RUN_TO_SAFETY_AREA',
+    TOTE_TO_ROLLER_WORK_STATION: 'app.activity.TOTE_TO_ROLLER_WORK_STATION',
+    TOTE_TO_NONE_ROLLER_WORK_STATION: 'app.activity.TOTE_TO_NONE_ROLLER_WORK_STATION',
+    TOTE_TO_FACTORY_ROLLER_WORK_STATION: 'app.activity.TOTE_TO_FACTORY_ROLLER_WORK_STATION',
+    TOTE_ULTRARED_EMPTY_RUN: 'app.activity.EMPTY_RUN',
+    TOTE_ULTRARED_CHARGE_RUN: 'app.activity.CHARGE_RUN',
+    TOTE_ULTRARED_REST_ON_REST_CELL: 'app.activity.TOTE_REST_ON_REST_CELL',
+    TOTE_ULTRARED_POOL_CARRY: 'app.activity.TOTE_ULTRARED_POOL_CARRY',
+
+    // 叉车
+    FORK_EMPTY_RUN: 'app.activity.EMPTY_RUN',
+    FORK_CHARGE_RUN: 'app.activity.CHARGE_RUN',
+    FORK_REST_ON_REST_CELL: 'app.activity.REST_UNDER_POD',
+    FORK_POD_TO_TARGET: 'app.activity.FORK_POD_TO_TARGET',
   },
 };
 

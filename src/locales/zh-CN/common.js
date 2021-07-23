@@ -71,6 +71,7 @@ export default {
   'app.agvState.Offline': '离线',
   'app.agvState.Error': '错误',
   'app.agvState.Connecting': '连接中',
+  'app.agvState.Waiting': '等待',
 
   // Battery
   'app.battery.full': '充足',
@@ -117,4 +118,10 @@ export default {
   'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
   'app.taskAction.cancel.success': '取消任务成功',
   'app.taskAction.cancel.fail': '取消任务失败',
+
+
+  // times
+  'app.common.day': '天',
+  'app.common.hours': '时',
+  'app.common.minutes': '分',
 };
