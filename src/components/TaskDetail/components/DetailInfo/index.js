@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Row, Button } from 'antd';
-import { FormattedMessage } from '@/components/Lang';
+import { FormattedMessage } from '@/utils/Lang';
 
 export default class DetailInfo extends Component {
   render() {

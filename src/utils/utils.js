@@ -4,7 +4,7 @@ import { Parser } from 'json2csv';
 import { split } from 'lodash';
 import moment from 'moment-timezone';
 import requestAPI from '@/utils/requestAPI';
-import { formatMessage } from '@/components/Lang';
+import { formatMessage } from '@/utils/Lang';
 import { fetchAgvHardwareInfo } from '@/services/api';
 import Dictionary from '@/utils/Dictionary';
 import { AgvStateColor } from '@/consts';

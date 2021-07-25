@@ -1,7 +1,7 @@
 import React from 'react';
 import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getDirectionLocale, renderAgvStatus, dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent';

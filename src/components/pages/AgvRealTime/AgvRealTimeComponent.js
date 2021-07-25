@@ -7,7 +7,7 @@ import {
   AimOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { FormattedMessage, formatMessage } from '@/components/Lang';
+import { FormattedMessage, formatMessage } from '@/utils/Lang';
 import LabelComponent from '@/components/LabelComponent';
 import { dealResponse } from '@/utils/utils';
 import {

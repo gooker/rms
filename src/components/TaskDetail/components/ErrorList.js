@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Col, Row } from 'antd';
-import { formatMessage } from '@/components/Lang';
+import { formatMessage } from '@/utils/Lang';
 import ErrorCodeFault from './ErrorCodeFault';
 import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
