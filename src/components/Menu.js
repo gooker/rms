@@ -4,7 +4,7 @@ import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
-import routerData from '@/config/router';
+import { Sorter } from '@/config/router';
 
 const { SubMenu } = Menu;
 
@@ -27,8 +27,8 @@ const Sider = () => {
   const extractOpenKey = () => {
     let openKey;
     const selectedKey = window.location.href.split('#')[1];
-    for (let index = 0; index < routerData.length; index++) {
-      const { name, routes } = routerData[index];
+    for (let index = 0; index < Sorter.length; index++) {
+      const { name, routes } = Sorter[index];
       for (let index2 = 0; index2 < routes.length; index2++) {
         if (routes[index2].path === selectedKey) {
           openKey = name;
@@ -71,7 +71,7 @@ const Sider = () => {
       onSelect={onSelectMenuItem}
       style={{ width: '100%' }}
     >
-      {routerData.map(({ name, icon, routes }) => (
+      {Sorter.map(({ name, icon, routes }) => (
         <SubMenu key={name} title={formatMessage({ id: `menu.${name}` })} icon={MenuIcon[icon]}>
           {renderMenuItem(name, routes)}
         </SubMenu>
@@ -79,5 +79,4 @@ const Sider = () => {
     </Menu>
   );
 };
-
 export default memo(Sider);
