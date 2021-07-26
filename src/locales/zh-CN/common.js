@@ -72,6 +72,12 @@ export default {
   'app.agvState.Error': '错误',
   'app.agvState.Connecting': '连接中',
   'app.agvState.Waiting': '等待',
+  'app.activity.StandBy': '待命',
+  'app.activity.TaskError': '失败',
+  'app.activity.TaskExecuting': '执行中',
+  'app.activity.TaskFinished': '已完成',
+  'app.activity.TaskNew': '新建',
+  'app.activity.Working': '执行任务',
 
   // Battery
   'app.battery.full': '充足',

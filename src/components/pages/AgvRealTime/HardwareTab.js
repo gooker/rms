@@ -11,10 +11,8 @@ const HardwareTab = (props) => {
   const { agvType, data } = props;
   console.log(agvType, data);
 
-  function renderCreateTime() {
-    if (data.createTime) {
-      return dateFormat(data.createTime).format('YYYY-MM-DD HH:mm:ss');
-    }
+  function renderCreateTime(time) {
+    return dateFormat(time).format('YYYY-MM-DD HH:mm:ss');
   }
 
   function getModeldata(record) {
@@ -184,7 +182,7 @@ const HardwareTab = (props) => {
         />
 
         <LabelComponent
-          label={formatMessage({ id: 'app.activity.batteryTemperatureOne' })}
+          label={formatMessage({ id: 'app.activity.batteryTemperatureTwo' })}
           children={
             <div className={styles.spanRight}>
               {data && data.batteryTemperatureTwo
@@ -197,27 +195,34 @@ const HardwareTab = (props) => {
           }
         />
 
-
-        <LabelComponent label={formatMessage({ id: 'app.agv.port' })}>
-          {data?.lastFullChargeTime}
+        <LabelComponent label={formatMessage({ id: 'app.agv.lastFullChargeTime' })}>
+          {data && data.lastFullChargeTime ? renderCreateTime(data.lastFullChargeTime) : null}
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.common.position' })}>
-          {data?.chargeTimesSinceLastFullCharge}
-        </LabelComponent>
-        <LabelComponent label={formatMessage({ id: 'app.common.position' })}>
-          {data?.currentCoefficient}
-        </LabelComponent>
+        <LabelComponent
+          label={formatMessage({ id: 'app.agv.currentCoefficient' })}
+          children={
+            <div className={styles.spanRight}>
+              {data && data.currentCoefficient
+                ? getSuffix(data.currentCoefficient, '°C', {
+                    className: styles.main,
+                    style: { color: batteryTemperatureColor(data.currentCoefficient) },
+                  })
+                : null}
+            </div>
+          }
+        ></LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
           {data && data.batteryVoltage ? getSuffix(data.batteryVoltage / 1000, 'V') : null}
         </LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.taskDetail.createTime' })}>
-          {data && data.createTime ? renderCreateTime() : null}
+          {data && data.createTime ? renderCreateTime(data.createTime) : null}
         </LabelComponent>
-
-      
+        <LabelComponent label={formatMessage({ id: 'app.taskDetail.createdByUser' })}>
+          {data?.createdByUser}
+        </LabelComponent>
       </Col>
 
       <Col span={12}>
@@ -286,10 +291,6 @@ const HardwareTab = (props) => {
 
         <LabelComponent label={formatMessage({ id: 'app.activity.theta' })}>
           {data && data.theta ? getSuffix(data.theta, '°') : null}
-        </LabelComponent>
-
-        <LabelComponent label={formatMessage({ id: 'app.taskDetail.createdByUser' })}>
-          {data?.createdByUser}
         </LabelComponent>
       </Col>
     </Row>

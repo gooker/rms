@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from '@/utils/dva';
 import { Row, Col, Tabs, Button, Select, message } from 'antd';
 import {
   FileTextOutlined,
@@ -22,11 +23,12 @@ import RealTimeTab from './RealTimeTab';
 import HardwareTab from './HardwareTab';
 import TaskRecordTab from './TaskRecordTab';
 import ErrorRecordTab from './ErrorRecordTab';
+import AGVActivityForm from './AGVActivityForm';
 import agvRealTimeComponentStyles from './index.module.less';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
-
+@connect()
 class AgvRealTimeComponent extends React.Component {
   state = {
     agvList: [],
@@ -37,6 +39,7 @@ class AgvRealTimeComponent extends React.Component {
     agvTask: null,
     agvErrorRecord: null,
 
+    taskSearchParams: {},
     isFetching: false,
   };
 
@@ -79,6 +82,39 @@ class AgvRealTimeComponent extends React.Component {
     this.setState({ isFetching: false, agvRealtimeData, agvHardware, agvTask, agvErrorRecord });
   };
 
+  taskOnDetail = (taskId,taskAgvType ) => {
+    const { dispatch ,agvType:nameSpace} = this.props;
+    dispatch({
+      type: 'task/fetchTaskDetailByTaskId',
+      payload: { taskId ,taskAgvType, nameSpace },
+    }).then(() => {
+      // this.search();
+    });
+  };
+ 
+  // 分页 获取记录
+  getRecords=async (type,params)=>{
+    const { agvId } = this.state;
+    const { agvType } = this.props;
+    if(type==='record'){
+      const recordsData = await fetchAgvTaskList(agvType, {
+        sectionId: window.localStorage.getItem('sectionId'),
+        agvId,
+        ...params
+      });
+      this.setState({ isFetching: false, agvTask:recordsData });
+    }else{
+      const errorData =fetchAgvErrorRecord(agvType, {
+        sectionId: window.localStorage.getItem('sectionId'),
+        agvId,
+        current: 1,
+        size: 3,
+      });
+      this.setState({ isFetching: false, agvErrorRecord:errorData});
+    }
+
+  }
+
   render() {
     const { agvId, agvList, isFetching } = this.state;
     const { agvRealtimeData, agvHardware, agvTask, agvErrorRecord } = this.state;
@@ -114,6 +150,7 @@ class AgvRealTimeComponent extends React.Component {
         </Row>
         <Row style={{ flex: 1 }} justify={'space-between'}>
           <Col className={agvRealTimeComponentStyles.tabContainer}>
+            {/* 小车实时信息 */}
             <Tabs defaultActiveKey="realTime">
               <TabPane
                 key="realTime"
@@ -126,6 +163,8 @@ class AgvRealTimeComponent extends React.Component {
               >
                 <RealTimeTab agvType={agvType} data={agvRealtimeData ?? {}} />
               </TabPane>
+
+              {/* 小车硬件信息 */}
               <TabPane
                 key="hardWare"
                 tab={
@@ -141,6 +180,7 @@ class AgvRealTimeComponent extends React.Component {
           </Col>
           <Col className={agvRealTimeComponentStyles.tabContainer}>
             <Tabs defaultActiveKey="taskRecord">
+              {/* 小车任务记录 */}
               <TabPane
                 key="taskRecord"
                 tab={
@@ -150,8 +190,21 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                <TaskRecordTab agvType={agvType} data={agvTask} />
+                  <AGVActivityForm
+                    onChange={value =>this.setState({ taskSearchParams: value }, this.flash) }
+                    mode={'expanded'}
+                  />
+                <TaskRecordTab 
+                agvType={agvType} 
+                data={agvTask} 
+                pageOnchange={value => {
+                     this.getRecords('record',value);
+                }}
+                onDetail={this.taskOnDetail}
+                />
               </TabPane>
+
+              {/* 小车错误记录 */}
               <TabPane
                 key="errorRecord"
                 tab={
@@ -161,6 +214,10 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
+                  <AGVActivityForm
+                    onChange={value =>this.setState({ taskSearchParams: value }, this.flash) }
+                    mode={'unexpanded'}
+                  />
                 <ErrorRecordTab agvType={agvType} data={agvErrorRecord} />
               </TabPane>
             </Tabs>

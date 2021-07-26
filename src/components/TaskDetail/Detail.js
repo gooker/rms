@@ -185,7 +185,7 @@ class Detail extends PureComponent {
           <Spin spinning={loadingTaskDetail}>
             <Tabs defaultActiveKey="a">
               {/** ******* 任务详情 ******** */}
-              {hasPermission('/map/monitor/taskDetail/taskDetail') && (
+              {!hasPermission('/map/monitor/taskDetail/taskDetail') && (
                 <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
                   <TaskDetail
                     currentType={taskAgvType}
@@ -203,7 +203,7 @@ class Detail extends PureComponent {
               )}
 
               {/** ******* 任务路径 ******** */}
-              {hasPermission('/map/monitor/taskDetail/taskPath') && (
+              {!hasPermission('/map/monitor/taskDetail/taskPath') && (
                 <Tabs.TabPane tab={formatMessage({ id: 'app.task.path' })} key="b">
                   {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTasks ? (
                     <AgvTaskSteps
@@ -217,7 +217,7 @@ class Detail extends PureComponent {
               )}
 
               {/** ******* 历史任务 ******** */}
-              {hasPermission('/map/monitor/taskDetail/historyRecord') && (
+              {!hasPermission('/map/monitor/taskDetail/historyRecord') && (
                 <Tabs.TabPane key="c" tab={formatMessage({ id: 'app.task.record' })}>
                   <Col span={24}>
                     {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTaskHistorys ? (
