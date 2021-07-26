@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, DatePicker, Col, Select, Row, Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 // import style from './index.module.less';

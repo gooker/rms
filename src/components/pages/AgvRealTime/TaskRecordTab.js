@@ -7,7 +7,7 @@ import {
   CloseCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { formatMessage } from '@/components/Lang';
+import { formatMessage } from '@/utils/Lang';
 import { dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import styles from './index.module.less';
