@@ -2,14 +2,33 @@ import { isNull } from './utils';
 
 const DictionaryDataSource = {
   // 小车状态
-  agvState: {
-    Offline: 'app.agvState.Offline',
-    StandBy: 'app.agvState.StandBy',
-    Working: 'app.agvState.Working',
-    Charging: 'app.agvState.Charging',
-    Error: 'app.agvState.Error',
-    Connecting: 'app.agvState.Connecting',
-    Waiting:'app.agvState.Waiting'
+  agvStatus: {
+    Error: 'app.activity.Error',
+    Offline: 'app.activity.Offline',
+    StandBy: 'app.activity.StandBy',
+    Working: 'app.activity.Working',
+    Charging: 'app.activity.Charging',
+    Connecting: 'app.activity.Connecting',
+  },
+
+  // 充电桩状态
+  chargerStatus: {
+    ERROR: 'app.chargeManger.ERROR',
+    OFFLINE: 'app.chargeManger.OFFLINE',
+    ASSIGNED: 'app.chargeManger.ASSIGNED',
+    CHARGING: 'app.chargeManger.CHARGING',
+    AVAILABLE: 'app.chargeManger.AVAILABLE',
+    CONNECTED: 'app.chargeManger.CONNECTED',
+    CONNECTING: 'app.chargeManger.CONNECTING',
+  },
+
+  // 任务状态
+  taskStatus: {
+    New: 'app.taskStatus.New',
+    Executing: 'app.taskStatus.Executing',
+    Finished: 'app.taskStatus.Finished',
+    Error: 'app.taskStatus.Error',
+    Cancel: 'app.taskStatus.Cancel',
   },
 
   // 小车方向
@@ -20,53 +39,12 @@ const DictionaryDataSource = {
     270: 'app.agv.direction.left',
   },
 
-
   // 货架方向
   podDirection: {
     0: 'app.pod.side.A',
     90: 'app.pod.side.B',
     180: 'app.pod.side.C',
     270: 'app.pod.side.D',
-  },
-
-  // 小车升级
-  agvUpgradeStatus: {
-    0: 'app.firmware.upgradeSuccess',
-    1: 'app.firmware.upgrading',
-    2: 'app.firmware.upgradeFailure',
-  },
-
-  // 小车固件长传
-  agvUploadStatus: {
-    0: 'app.firmware.uploadSuccess',
-    1: 'app.firmware.uploading',
-    2: 'app.firmware.uploadFailure',
-  },
-
-  color: {
-    red: '#f5222d',
-    blue: '#1890FF',
-    green: '#2FC25B',
-    yellow: 'rgb(255, 205, 54)',
-    purple: '#9e2ace',
-    pink: '#ce2a7d',
-    gray: '#b3b2b2',
-    cyan: '#13c2c2',
-  },
-
-  // 固件状态
-  hardWareStatus: {
-    0: 'app.hardWareStatus.standBy',
-    1: 'app.hardWareStatus.straightLine',
-    2: 'app.hardWareStatus.scanShelf',
-    3: 'app.hardWareStatus.turn',
-    4: 'app.hardWareStatus.jacking',
-    5: 'app.hardWareStatus.decline',
-    6: 'app.hardWareStatus.rotatingRack',
-    7: 'app.hardWareStatus.Charge',
-    8: 'app.hardWareStatus.lowPowerConsumption',
-    254: 'app.hardWareStatus.SleepDueToFailure',
-    255: 'app.hardWareStatus.fault',
   },
 
   // 电池类型
@@ -77,50 +55,57 @@ const DictionaryDataSource = {
     4: 'app.batteryType.enumeration4', //Sorting car (lithium iron phosphate)
     5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin robot (lithium iron phosphate)
   },
+
+  // 任务类型
   agvTaskType: {
     // 潜伏车
-    EMPTY_RUN: 'app.activity.EMPTY_RUN',
-    CHARGE_RUN: 'app.activity.CHARGE_RUN',
-    REST_UNDER_POD: 'app.activity.REST_UNDER_POD',
-    CARRY_POD_TO_CELL: 'app.activity.CARRY_POD_TO_CELL',
-    RUN_TO_SAFETY_AREA: 'app.activity.RUN_TO_SAFETY_AREA',
-    CARRY_POD_TO_STATION: 'app.activity.CARRY_POD_TO_STATION',
-    SUPER_CARRY_POD_TO_CELL: 'app.activity.SUPER_CARRY_POD_TO_CELL',
-    HEARVY_CARRY_POD_TO_STORE: 'app.activity.HEARVY_CARRY_POD_TO_STORE',
-    FROCK_CARRY_TO_CELL: 'app.activity.FROCK_CARRY_TO_CELL',
-    ROLLER_CARRY_TO_CELL: 'app.activity.ROLLER_CARRY_TO_CELL',
+    EMPTY_RUN: 'app.taskType.EMPTY_RUN',
+    CHARGE_RUN: 'app.taskType.CHARGE_RUN',
+    REST_UNDER_POD: 'app.taskType.REST_UNDER_POD',
+    CARRY_POD_TO_CELL: 'app.taskType.CARRY_POD_TO_CELL',
+    RUN_TO_SAFETY_AREA: 'app.taskType.RUN_TO_SAFETY_AREA',
+    CARRY_POD_TO_STATION: 'app.taskType.CARRY_POD_TO_STATION',
+    SUPER_CARRY_POD_TO_CELL: 'app.taskType.SUPER_CARRY_POD_TO_CELL',
+    HEARVY_CARRY_POD_TO_STORE: 'app.taskType.HEARVY_CARRY_POD_TO_STORE',
+    FROCK_CARRY_TO_CELL: 'app.taskType.FROCK_CARRY_TO_CELL',
+    ROLLER_CARRY_TO_CELL: 'app.taskType.ROLLER_CARRY_TO_CELL',
 
     // 料箱
-    TOTE_PUT: 'app.activity.TOTE_PUT',
-    TOTE_CARRY: 'app.activity.TOTE_CARRY',
-    TOTE_EMPTY_RUN: 'app.activity.EMPTY_RUN',
-    TOTE_CHARGE_RUN: 'app.activity.CHARGE_RUN',
-    TOTE_ROLLER_PUT: 'app.activity.TOTE_ROLLER_PUT',
-    TOTE_NONE_CARRY: 'app.activity.TOTE_NONE_CARRY',
-    TOTE_STATION_CARRY: 'app.activity.TOTE_STATION_CARRY',
-    TOTE_TO_WORK_STATION: 'app.activity.CARRY_POD_TO_STATION',
-    TOTE_REST_ON_REST_CELL: 'app.activity.TOTE_REST_ON_REST_CELL',
-    TOTE_RUN_TO_SAFETY_AREA: 'app.activity.TOTE_RUN_TO_SAFETY_AREA',
-    TOTE_TO_ROLLER_WORK_STATION: 'app.activity.TOTE_TO_ROLLER_WORK_STATION',
-    TOTE_TO_NONE_ROLLER_WORK_STATION: 'app.activity.TOTE_TO_NONE_ROLLER_WORK_STATION',
-    TOTE_TO_FACTORY_ROLLER_WORK_STATION: 'app.activity.TOTE_TO_FACTORY_ROLLER_WORK_STATION',
-    TOTE_ULTRARED_EMPTY_RUN: 'app.activity.EMPTY_RUN',
-    TOTE_ULTRARED_CHARGE_RUN: 'app.activity.CHARGE_RUN',
-    TOTE_ULTRARED_REST_ON_REST_CELL: 'app.activity.TOTE_REST_ON_REST_CELL',
-    TOTE_ULTRARED_POOL_CARRY: 'app.activity.TOTE_ULTRARED_POOL_CARRY',
+    TOTE_PUT: 'app.taskType.TOTE_PUT',
+    TOTE_CARRY: 'app.taskType.TOTE_CARRY',
+    TOTE_EMPTY_RUN: 'app.taskType.EMPTY_RUN',
+    TOTE_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
+    TOTE_ROLLER_PUT: 'app.taskType.TOTE_ROLLER_PUT',
+    TOTE_NONE_CARRY: 'app.taskType.TOTE_NONE_CARRY',
+    TOTE_STATION_CARRY: 'app.taskType.TOTE_STATION_CARRY',
+    TOTE_TO_WORK_STATION: 'app.taskType.CARRY_POD_TO_STATION',
+    TOTE_REST_ON_REST_CELL: 'app.taskType.TOTE_REST_ON_REST_CELL',
+    TOTE_RUN_TO_SAFETY_AREA: 'app.taskType.TOTE_RUN_TO_SAFETY_AREA',
+    TOTE_TO_ROLLER_WORK_STATION: 'app.taskType.TOTE_TO_ROLLER_WORK_STATION',
+    TOTE_TO_NONE_ROLLER_WORK_STATION: 'app.taskType.TOTE_TO_NONE_ROLLER_WORK_STATION',
+    TOTE_TO_FACTORY_ROLLER_WORK_STATION: 'app.taskType.TOTE_TO_FACTORY_ROLLER_WORK_STATION',
+    TOTE_ULTRARED_EMPTY_RUN: 'app.taskType.EMPTY_RUN',
+    TOTE_ULTRARED_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
+    TOTE_ULTRARED_REST_ON_REST_CELL: 'app.taskType.TOTE_REST_ON_REST_CELL',
+    TOTE_ULTRARED_POOL_CARRY: 'app.taskType.TOTE_ULTRARED_POOL_CARRY',
 
     // 叉车
-    FORK_EMPTY_RUN: 'app.activity.EMPTY_RUN',
-    FORK_CHARGE_RUN: 'app.activity.CHARGE_RUN',
-    FORK_REST_ON_REST_CELL: 'app.activity.REST_UNDER_POD',
-    FORK_POD_TO_TARGET: 'app.activity.FORK_POD_TO_TARGET',
+    FORK_EMPTY_RUN: 'app.taskType.EMPTY_RUN',
+    FORK_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
+    FORK_REST_ON_REST_CELL: 'app.taskType.REST_UNDER_POD',
+    FORK_POD_TO_TARGET: 'app.taskType.FORK_POD_TO_TARGET',
   },
-  taskStatus: {
-    New: 'app.taskStatus.New',
-    Executing: 'app.taskStatus.Executing',
-    Finished: 'app.taskStatus.Finished',
-    Error: 'app.taskStatus.Error',
-    Cancel: 'app.taskStatus.Cancel',
+
+  // 业务颜色
+  color: {
+    red: '#f5222d',
+    blue: '#1890FF',
+    green: '#2FC25B',
+    yellow: 'rgb(255, 205, 54)',
+    purple: '#9e2ace',
+    pink: '#ce2a7d',
+    gray: '#b3b2b2',
+    cyan: '#13c2c2',
   },
 };
 
@@ -136,5 +121,4 @@ function Dictionary(namespace, key) {
     return DictionaryDataSource;
   }
 }
-
 export default Dictionary;
