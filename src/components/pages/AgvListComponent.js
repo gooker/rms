@@ -53,7 +53,7 @@ class AgvListComponent extends Component {
   };
 
   renderAgvStateFilter = () => {
-    const agvStates = Dictionary('agvState');
+    const agvStates = Dictionary('agvStatus');
     return Object.keys(agvStates).map((item) => (
       <Select.Option key={item} value={item}>
         <FormattedMessage id={agvStates[item]} />

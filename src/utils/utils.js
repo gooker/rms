@@ -277,7 +277,7 @@ export function exportAgvInfo(agvList) {
         label: formatMessage({ id: 'app.agv.state' }),
         value: (row) => {
           const { agvStatus } = row;
-          const key = Dictionary('agvState', agvStatus);
+          const key = Dictionary('agvStatus', agvStatus);
           return formatMessage({ id: key });
         },
       },
@@ -341,7 +341,7 @@ export function getDirectionLocale(angle) {
 
 export function renderAgvStatus(agvStatus) {
   if (agvStatus != null) {
-    const agvStateMap = Dictionary('agvState');
+    const agvStateMap = Dictionary('agvStatus');
     return (
       <Tag color={AgvStateColor[agvStatus]}>{formatMessage({ id: agvStateMap[agvStatus] })}</Tag>
     );
