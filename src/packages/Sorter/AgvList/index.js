@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
 import dictionary from '@/utils/Dictionary';

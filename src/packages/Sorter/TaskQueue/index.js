@@ -2,7 +2,7 @@ import React from 'react';
 import { Tooltip, Popover, Button, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
-import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
 import { AGVType } from '@/config/config';

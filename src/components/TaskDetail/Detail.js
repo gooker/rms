@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
 import { connect } from '@/utils/dva';
-import { formatMessage } from '@/components/Lang';
+import { formatMessage } from '@/utils/Lang';
 import AgvTaskSteps from './components/AgvTaskSteps';
 import AgvTaskHistory from './components/AgvTaskHistorys';
 import DetailInfo from './components/DetailInfo';

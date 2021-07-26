@@ -2,12 +2,12 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Detail from '@/components/TaskDetail/Detail';
-import PageRouteData from '@/config/router';
+import { Sorter } from '@/config/router';
 
 export default class Content extends React.PureComponent {
   createRoutesByRequire = () => {
     const result = [];
-    PageRouteData.forEach(({ routes }) => {
+    Sorter.forEach(({ routes }) => {
       routes.forEach(({ path, component }) => {
         result.push({ path, component });
       });

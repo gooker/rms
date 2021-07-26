@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, message, Modal, Table } from 'antd';
-import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';

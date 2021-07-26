@@ -1,4 +1,3 @@
-import { AGVType } from '@/config/config';
 // 小车状态颜色
 export const AgvStateColor = {
   available: '#7ac143',
@@ -17,13 +16,4 @@ export const TaskStateBageType = {
   Finished: 'success',
   Error: 'error',
   Cancel: 'default',
-};
-
-// 任务类型
-export const AgvTaskType = {
-  common: {},
-  [AGVType.LatentLifting]: {},
-  [AGVType.Tote]: {},
-  [AGVType.ForkLifting]: {},
-  [AGVType.Sorter]: {},
 };

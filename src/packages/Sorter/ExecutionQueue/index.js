@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/ExecutionQueueComponent';
-import { formatMessage, FormattedMessage } from '@/components/Lang';
+import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';

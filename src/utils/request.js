@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { formatMessage } from '@/components/Lang';
+import { formatMessage } from '@/utils/Lang';
 import { getDomainNameByUrl, isStandardApiResponse } from '@/utils/utils';
 
 // 异常处理程序

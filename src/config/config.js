@@ -1,3 +1,4 @@
+// PIXI 渲染参数
 export const WorldScreenRatio = 1.2;
 export const CellWidth = 100;
 export const CellHeight = 100;
