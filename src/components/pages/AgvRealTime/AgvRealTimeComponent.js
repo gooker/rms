@@ -39,7 +39,8 @@ class AgvRealTimeComponent extends React.Component {
     agvTask: null,
     agvErrorRecord: null,
 
-    taskSearchParams: {},
+    recordSearchParams: {},
+    errorSearchParams: {},
     isFetching: false,
   };
 
@@ -82,38 +83,52 @@ class AgvRealTimeComponent extends React.Component {
     this.setState({ isFetching: false, agvRealtimeData, agvHardware, agvTask, agvErrorRecord });
   };
 
-  taskOnDetail = (taskId,taskAgvType ) => {
-    const { dispatch ,agvType:nameSpace} = this.props;
+  taskOnDetail = (taskId, taskAgvType) => {
+    const { dispatch, agvType: nameSpace } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId ,taskAgvType, nameSpace },
-    }).then(() => {
-      // this.search();
-    });
+      payload: { taskId, taskAgvType, nameSpace },
+    }).then(() => {});
   };
- 
+
   // 分页 获取记录
-  getRecords=async (type,params)=>{
-    const { agvId } = this.state;
+  getRecords = async (type, params) => {
+    const { agvId, recordSearchParams, errorSearchParams } = this.state;
     const { agvType } = this.props;
-    if(type==='record'){
+    if (type === 'record') {
+      const page = params
+        ? params
+        : {
+            current: 1,
+            size: 6,
+          };
       const recordsData = await fetchAgvTaskList(agvType, {
         sectionId: window.localStorage.getItem('sectionId'),
         agvId,
-        ...params
+        ...page,
+        ...recordSearchParams,
       });
-      this.setState({ isFetching: false, agvTask:recordsData });
-    }else{
-      const errorData =fetchAgvErrorRecord(agvType, {
+      if (!dealResponse(recordsData)) {
+        this.setState({ isFetching: false, agvTask: recordsData });
+      }
+    } else {
+      const page = params
+        ? params
+        : {
+            current: 1,
+            size: 3,
+          };
+      const errorData = await fetchAgvErrorRecord(agvType, {
         sectionId: window.localStorage.getItem('sectionId'),
         agvId,
-        current: 1,
-        size: 3,
+        ...page,
+        ...errorSearchParams,
       });
-      this.setState({ isFetching: false, agvErrorRecord:errorData});
+      if (!dealResponse(errorData)) {
+        this.setState({ isFetching: false, agvErrorRecord: errorData });
+      }
     }
-
-  }
+  };
 
   render() {
     const { agvId, agvList, isFetching } = this.state;
@@ -190,17 +205,27 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                  <AGVActivityForm
-                    onChange={value =>this.setState({ taskSearchParams: value }, this.flash) }
-                    mode={'expanded'}
-                  />
-                <TaskRecordTab 
-                agvType={agvType} 
-                data={agvTask} 
-                pageOnchange={value => {
-                     this.getRecords('record',value);
-                }}
-                onDetail={this.taskOnDetail}
+                  <Row>
+                    <Col span={22}>
+                    <AGVActivityForm
+                      onChange={(value) =>
+                        this.setState({ recordSearchParams: value }, () =>
+                          this.getRecords('record'),
+                        )
+                      }
+                      mode={'expanded'}
+                    />
+                    </Col>
+
+                  </Row>
+
+                <TaskRecordTab
+                  agvType={agvType}
+                  data={agvTask}
+                  pageOnchange={(value) => {
+                    this.getRecords('record', value);
+                  }}
+                  onDetail={this.taskOnDetail}
                 />
               </TabPane>
 
@@ -214,11 +239,20 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                  <AGVActivityForm
-                    onChange={value =>this.setState({ taskSearchParams: value }, this.flash) }
-                    mode={'unexpanded'}
-                  />
-                <ErrorRecordTab agvType={agvType} data={agvErrorRecord} />
+                <AGVActivityForm
+                  onChange={(value) =>
+                    this.setState({ errorSearchParams: value }, () => this.getRecords('error'))
+                  }
+                  mode={'unexpanded'}
+                />
+                <ErrorRecordTab
+                  agvType={agvType}
+                  data={agvErrorRecord}
+                  pageOnchange={(value) => {
+                    this.getRecords('error', value);
+                  }}
+                  onDetail={this.taskOnDetail}
+                />
               </TabPane>
             </Tabs>
           </Col>
