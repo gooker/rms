@@ -9,7 +9,6 @@ import ErrorList from './components/ErrorList';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
-
 const colProps = { lg: 8, sm: 12 };
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
 const DescriptionItem = ({ title, content }) => (

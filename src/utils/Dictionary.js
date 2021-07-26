@@ -115,6 +115,13 @@ const DictionaryDataSource = {
     FORK_REST_ON_REST_CELL: 'app.activity.REST_UNDER_POD',
     FORK_POD_TO_TARGET: 'app.activity.FORK_POD_TO_TARGET',
   },
+  taskStatus: {
+    New: 'app.taskStatus.New',
+    Executing: 'app.taskStatus.Executing',
+    Finished: 'app.taskStatus.Finished',
+    Error: 'app.taskStatus.Error',
+    Cancel: 'app.taskStatus.Cancel',
+  },
 };
 
 function Dictionary(namespace, key) {
