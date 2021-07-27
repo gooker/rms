@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, Col, Row } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage,FormattedMessage } from '@/utils/Lang';
 import ErrorCodeFault from './ErrorCodeFault';
 import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
@@ -16,7 +16,7 @@ const DescriptionItem = ({ title, content, style }) => (
 const ErrorList = React.memo((props) => {
   const { agvErrorList } = props;
   const renderDescription = (record) => {
-    const { errorCodes } = props;
+    const {onDetail, errorCodes } = props;
     const keyName = {};
     const extraData = () => {
       if (record.agvErrorType === 'SOFTWARE_ERR0R') {
@@ -45,6 +45,27 @@ const ErrorList = React.memo((props) => {
     };
     return (
       <Row key={record.uniqueKey}>
+         <Col span={12}>
+          {onDetail ? (
+            <DescriptionItem
+              title={
+                <span>
+                  <FormattedMessage id="app.task.id" />
+                </span>
+              }
+              content={
+                <span
+                  onClick={() => {
+                    onDetail(record.taskId);
+                  }}
+                  className={styles.tableBarDouble}
+                >
+                  {record.taskId}
+                </span>
+              }
+            />
+          ) : null}
+        </Col>
         <Col span={12}>
           <DescriptionItem
             title={<span>{formatMessage({ id: 'app.taskDetail.firstTime' })}</span>}
@@ -90,7 +111,7 @@ const ErrorList = React.memo((props) => {
   };
 
   return (
-    <div className={styles.element}>
+    <div style={{width:'100%'}}>
       <List
         dataSource={agvErrorList}
         renderItem={(item) => (

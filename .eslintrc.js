@@ -25,6 +25,8 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 0,
 
     'no-unused-vars': 1,
+    'no-debugger': 2,
+    'no-console': 1,
     // 'react-hooks/exhaustive-deps': 1,
   },
 };

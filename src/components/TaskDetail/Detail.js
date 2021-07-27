@@ -38,7 +38,7 @@ class Detail extends PureComponent {
       ),
       content: (
         <div>
-          <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+          <span>{formatMessage({ id: 'app.task.id' })}:</span>
           <span style={{ marginRight: 10 }}>{taskId}</span>
         </div>
       ),
@@ -65,7 +65,7 @@ class Detail extends PureComponent {
       ),
       content: (
         <div>
-          <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+          <span>{formatMessage({ id: 'app.task.id' })}:</span>
           <span style={{ marginRight: 10 }}>{taskId}</span>
         </div>
       ),
@@ -98,7 +98,7 @@ class Detail extends PureComponent {
       content: (
         <div>
           <div>
-            <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+            <span>{formatMessage({ id: 'app.task.id' })}:</span>
             <span style={{ marginRight: 10 }}>{taskId}</span>
           </div>
           <div>
@@ -136,7 +136,7 @@ class Detail extends PureComponent {
       ),
       content: (
         <div>
-          <span>{formatMessage({ id: 'app.taskDetail.taskId' })}:</span>
+          <span>{formatMessage({ id: 'app.task.id' })}:</span>
           <span style={{ marginRight: 10 }}>{taskId}</span>
         </div>
       ),
