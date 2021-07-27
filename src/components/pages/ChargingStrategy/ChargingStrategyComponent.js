@@ -1,10 +1,11 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Tabs, Spin } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
+import classnames from 'classnames';
 import ChargingStrategyForm from './ChargingStrategyForm';
-import { getIdleHoursBySectionId, getChargeStrategy } from '@/services/api';
-import { hasPermission } from '@/utils/Permission';
+import { fetchGetCurrentChargerType, getChargeStrategy } from '@/services/api';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { hasPermission } from '@/utils/Permission';
 import commonStyles from '@/common.module.less';
 import styles from './chargingStrategy.module.less';
 
@@ -19,36 +20,36 @@ const ChargingStrategyComponent = (prop) => {
   const [chargeStrategy, setChargeStrategy] = useState(null);
 
   useEffect(() => {
-    getCurrentStatus();
-    getChargingStrategy();
+    refresh();
   }, []);
 
-  async function getCurrentStatus() {
+  async function refresh() {
     setSpinning(true);
-    const response = await getIdleHoursBySectionId(agvType);
-    setStatus(response === 'Normal');
-    setSpinning(false);
-  }
-
-  async function getChargingStrategy() {
-    setSpinning(true);
-    const response = await getChargeStrategy(agvType, activeKey);
-    setChargeStrategy(response);
+    try {
+      const [currentStatus, currentStrategy] = await Promise.all([
+        fetchGetCurrentChargerType(agvType),
+        getChargeStrategy(agvType, activeKey),
+      ]);
+      setStatus(currentStatus === 'Normal');
+      setChargeStrategy(currentStrategy);
+    } catch (error) {
+      //
+    }
     setSpinning(false);
   }
 
   function renderTabToolBar() {
     return (
-      <div className={styles.tabToolBar} onClick={getCurrentStatus}>
+      <div className={styles.tabToolBar} onClick={refresh}>
         {spinning ? <Spin /> : <RedoOutlined />}
         <span>
-          <FormattedMessage id="app.chargeManger.currentStatus" />:
+          <FormattedMessage id="app.chargeStrategy.currentStatus" />:
         </span>
-        <span style={{ marginLeft: 5, zoom: 1.5 }}>
+        <span style={{ marginLeft: 5, zoom: 1.5, color: '#2FC25B' }}>
           {status ? (
-            <FormattedMessage id="app.chargeManger.normal" />
+            <FormattedMessage id="app.chargeStrategy.normal" />
           ) : (
-            <FormattedMessage id="app.chargeManger.idleHours" />
+            <FormattedMessage id="app.chargeStrategy.idleHours" />
           )}
         </span>
       </div>
@@ -56,20 +57,21 @@ const ChargingStrategyComponent = (prop) => {
   }
 
   return (
-    <div className={commonStyles.globalPageStyle}>
+    <div className={classnames(commonStyles.globalPageStyle, styles.chargerStrategy)}>
       <Tabs
+        animated
         activeKey={activeKey}
         tabBarExtraContent={renderTabToolBar()}
         onChange={(key) => {
           setActiveKey(key);
         }}
       >
-        <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeManger.normal' })}>
-          <ChargingStrategyForm />
+        <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeStrategy.normal' })}>
+          <ChargingStrategyForm type="Normal" data={chargeStrategy} />
         </TabPane>
         {hasPermission('/system/chargerManageMents/idle') ? (
-          <TabPane key="Idlehours" tab={formatMessage({ id: 'app.chargeManger.idleHours' })}>
-            <span>222</span>
+          <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="Idlehours">
+            <ChargingStrategyForm type="IdleHours" data={chargeStrategy} />
           </TabPane>
         ) : null}
       </Tabs>

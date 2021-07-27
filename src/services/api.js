@@ -167,14 +167,21 @@ export async function fetchRestoreTask(agvType, params) {
 }
 
 // ************************************** 充电策略 ************************************** //
-//查询充电策略
+// 查询充电策略
 export async function getChargeStrategy(agvType, type) {
   const sectionId = window.localStorage.getItem('sectionId');
   return request(`/${NameSpace[agvType]}/charger/getChargingStrategy/${sectionId}/${type}`, {
     method: 'GET',
   });
 }
-//保存充电策略
+// 获取当前状态
+export async function fetchGetCurrentChargerType(agvType) {
+  const sectionId = window.localStorage.getItem('sectionId');
+  return request(`/${NameSpace[agvType]}/charger/getCurrentChargerType?sectionId=${sectionId}`, {
+    method: 'GET',
+  });
+}
+// 保存充电策略
 export async function saveChargeStrategy(agvType, params) {
   return request(`/${NameSpace[agvType]}/charger/updateChargingStrategy`, {
     method: `POST`,

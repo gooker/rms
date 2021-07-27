@@ -6,7 +6,7 @@ import styles from './battery.module.less';
 const { red, green, yellow } = Dictionary('color');
 
 const BatteryCharge = (props) => {
-  const { value, onChange, declineValue, increaseValue } = props;
+  const { value, onChange } = props;
 
   let backgroundColor = '#FFF';
   if (parseInt(value) > 50) {
@@ -22,10 +22,16 @@ const BatteryCharge = (props) => {
       <div className={styles.mainBody}>
         <div className={styles.contact} />
         <div className={styles.cylinder}>
-          <div className={styles.electricity} style={{ background: backgroundColor }} />
+          <span className={styles.electricityNumber}>{`${value}%`}</span>
+          <div
+            className={styles.electricity}
+            style={{ background: backgroundColor, height: `${value}%` }}
+          />
         </div>
       </div>
-      <div>1111</div>
+      <div className={styles.slider}>
+        <Slider vertical value={value} onChange={onChange} tooltipVisible={false} />
+      </div>
     </div>
   );
 };
