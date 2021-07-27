@@ -1,7 +1,12 @@
 import React from 'react';
+import SystemParamsComponent from '@/components/pages/SystemParamsManager/SystemParamsComponent';
+import { AGVType } from '@/config/config';
 
-export default class SystemParamsManager extends React.Component {
+const TaskAgvType = AGVType.Sorter;
+class AgvRealTime extends React.Component {
   render() {
-    return <span>SystemParamsManager</span>;
+    return <SystemParamsComponent agvType={TaskAgvType} />;
   }
 }
+export default AgvRealTime;
+
