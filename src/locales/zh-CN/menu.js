@@ -23,7 +23,6 @@ export default {
   'menu.formManger.metadata': '原始数据',
 
   'menu.system': '系统管理',
-  'menu.system.Timezone': '时区设置',
-  'menu.system.chargeManagement': '充电策略',
+  'menu.system.chargingStrategy': '充电策略',
   'menu.system.systemParamsManager': '参数列表',
 };

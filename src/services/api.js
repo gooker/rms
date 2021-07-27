@@ -1,6 +1,14 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
+// ************************************** 用户管理  ************************************** //
+//获取当前登陆对象
+export async function getCurrentUser() {
+  return request('/sso/user/getUser', {
+    method: 'GET',
+  });
+}
+
 // ************************************** 执行队列  ************************************** //
 // 获取执行队列数据
 export async function fetchExecutingTaskList(agvType, params) {
@@ -155,5 +163,46 @@ export async function fetchRestoreTask(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv-task/action/restoreTask`, {
     method: `GET`,
     data: params,
+  });
+}
+
+// ************************************** 充电策略 ************************************** //
+//查询充电策略
+export async function getChargeStrategy(agvType, type) {
+  const sectionId = window.localStorage.getItem('sectionId');
+  return request(`/${NameSpace[agvType]}/charger/getChargingStrategy/${sectionId}/${type}`, {
+    method: 'GET',
+  });
+}
+//保存充电策略
+export async function saveChargeStrategy(agvType, params) {
+  return request(`/${NameSpace[agvType]}/charger/updateChargingStrategy`, {
+    method: `POST`,
+    body: params,
+  });
+}
+// 默认充电策略
+export async function getDefaultChargingStrategy(agvType) {
+  return request(`/${NameSpace[agvType]}/charger/getDefaultChargingStrategy`, {
+    method: 'GET',
+  });
+}
+export async function saveFreeTimeRule(agvType, params) {
+  return request(`/${NameSpace[agvType]}/charger/updateIdleHours`, {
+    method: 'POST',
+    body: params,
+  });
+}
+export async function getIdleHoursBySectionId(agvType) {
+  const sectionId = window.localStorage.getItem('sectionId');
+  return request(`/${NameSpace[agvType]}/charger/getIdleHoursBySectionId?sectionId=${sectionId}`, {
+    method: 'GET',
+  });
+}
+
+export async function getCurrentChargerType(agvType) {
+  const sectionId = window.localStorage.getItem('sectionId');
+  return request(`/${NameSpace[agvType]}/charger/getCurrentChargerType?sectionId=${sectionId}`, {
+    method: 'GET',
   });
 }

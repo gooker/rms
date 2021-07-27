@@ -1,9 +1,5 @@
-'use strict';
-
-const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
-const resolve = require('resolve');
 const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
@@ -18,12 +14,9 @@ const safePostCssParser = require('postcss-safe-parser');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ModuleNotFoundPlugin = require('react-dev-utils/ModuleNotFoundPlugin');
-const ForkTsCheckerWebpackPlugin = require('react-dev-utils/ForkTsCheckerWebpackPlugin');
-const typescriptFormatter = require('react-dev-utils/typescriptFormatter');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const postcssNormalize = require('postcss-normalize');
 const webpackDevClientEntry = require.resolve('react-dev-utils/webpackHotDevClient');
@@ -105,6 +98,7 @@ module.exports = function (webpackEnv, useAnalyzer) {
           loader: require.resolve(preProcessor),
           options: {
             sourceMap: true,
+            javascriptEnabled: true, //less - javascriptEnabled
           },
         },
       );
@@ -238,10 +232,7 @@ module.exports = function (webpackEnv, useAnalyzer) {
         '@': paths.appSrc,
         ...(modules.webpackAliases || {}),
       },
-      plugins: [
-        PnpWebpackPlugin,
-        new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson, reactRefreshOverlayEntry]),
-      ],
+      plugins: [PnpWebpackPlugin],
     },
 
     resolveLoader: {
@@ -324,6 +315,8 @@ module.exports = function (webpackEnv, useAnalyzer) {
                 inputSourceMap: shouldUseSourceMap,
               },
             },
+
+            // css
             {
               test: cssRegex,
               exclude: cssModuleRegex,
@@ -343,12 +336,14 @@ module.exports = function (webpackEnv, useAnalyzer) {
                 },
               }),
             },
+
+            // less
             {
               test: lessRegex,
               exclude: lessModuleRegex,
               use: getStyleLoaders(
                 {
-                  importLoaders: 2,
+                  importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                 },
                 'less-loader',
@@ -359,7 +354,7 @@ module.exports = function (webpackEnv, useAnalyzer) {
               test: lessModuleRegex,
               use: getStyleLoaders(
                 {
-                  importLoaders: 2,
+                  importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                   modules: {
                     localIdentName: '[name]-[local]-[hash:5]',
@@ -368,6 +363,8 @@ module.exports = function (webpackEnv, useAnalyzer) {
                 'less-loader',
               ),
             },
+
+            // file
             {
               loader: require.resolve('file-loader'),
               exclude: [/\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],

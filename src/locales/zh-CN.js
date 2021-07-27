@@ -6,7 +6,7 @@ import request from './zh-CN/request';
 import taskType from './zh-CN/taskType';
 import enumerate from './zh-CN/enumerate';
 import agvRealTime from './zh-CN/agvRealTime';
-import chargerMange from './zh-CN/chargerMange';
+import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
 
 export default {
@@ -18,6 +18,6 @@ export default {
   ...taskType,
   ...enumerate,
   ...agvRealTime,
-  ...chargerMange,
+  ...chargingStrategy,
   ...systemParameters,
 };

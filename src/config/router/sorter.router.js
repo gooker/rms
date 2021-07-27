@@ -101,9 +101,9 @@ export default [
         component: Loadable(() => import('@/packages/Sorter/SystemParamsManager')),
       },
       {
-        path: '/sorter/system/chargerManageMents',
-        name: 'chargeManagement',
-        component: Loadable(() => import('@/packages/Sorter/ChargeManagement')),
+        path: '/sorter/system/chargingStrategy',
+        name: 'chargingStrategy',
+        component: Loadable(() => import('@/packages/Sorter/ChargingStrategy')),
       },
     ],
   },
