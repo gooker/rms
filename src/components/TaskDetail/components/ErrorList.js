@@ -50,7 +50,7 @@ const ErrorList = React.memo((props) => {
             <DescriptionItem
               title={
                 <span>
-                  <FormattedMessage id="app.taskDetail.taskId" />
+                  <FormattedMessage id="app.task.id" />
                 </span>
               }
               content={

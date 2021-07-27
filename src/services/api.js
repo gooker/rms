@@ -157,3 +157,19 @@ export async function fetchRestoreTask(agvType, params) {
     data: params,
   });
 }
+
+
+//// 获取参数模版
+export async function fetchSystemParamFormData(agvType) {
+  return request(`/${NameSpace[agvType]}/formTemplate/getFormTemplate`, {
+    method: 'GET',
+  });
+}
+
+//// 更新系统参数
+export async function updateSystemParams(agvType,params) {
+  return request(`/${NameSpace[agvType]}/formTemplate/updateFormTemplateValue`, {
+    method: 'POST',
+    body: params,
+  });
+}

@@ -72,7 +72,7 @@ const TaskSearch = (props) => {
                 <FormattedMessage id="app.activity.TaskError" />
               </Option>
               <Option key="Cancel" value="Cancel">
-                <FormattedMessage id="app.activity.TaskCancel" />
+                <FormattedMessage id="app.button.cancel" />
               </Option>
             </Select>
           </Form.Item>
