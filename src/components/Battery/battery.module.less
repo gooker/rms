@@ -1,5 +1,7 @@
 .battery {
+  display: flex;
   width: 100%;
+  min-width: 140px;
   height: 100%;
 }
 
@@ -19,14 +21,38 @@
 
 .cylinder {
   position: relative;
-  flex: 1;
+  display: flex;
+  flex: 1 1;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 2px 2px;
   border: 1px solid #000;
   border-radius: 3px;
 }
 
 .electricity {
+  width: 100%;
+  background: rgb(245, 34, 45);
+  border-radius: 3px;
+}
+
+.electricityNumber {
   position: absolute;
+  top: 48%;
+  color: rgb(81, 81, 81);
+  font-size: 18px;
 }
 
 .slider {
+  display: flex;
+  flex-flow: column nowrap;
+  margin-left: 10px;
+  padding-top: 6px;
+
+  button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+  }
 }
