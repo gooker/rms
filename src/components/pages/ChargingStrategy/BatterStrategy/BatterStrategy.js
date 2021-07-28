@@ -3,7 +3,6 @@ import { Button, Tooltip, Slider } from 'antd';
 import { MinusOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import Battery from '@/components/Battery/Battery';
 import styles from './batteryStrategy.module.less';
-import { getSuffix } from '@/utils/utils';
 
 const ButtonGroup = Button.Group;
 

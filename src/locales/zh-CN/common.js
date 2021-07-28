@@ -125,6 +125,14 @@ export default {
   'app.taskAction.cancel.success': '取消任务成功',
   'app.taskAction.cancel.fail': '取消任务失败',
 
+  // 充电桩状态
+  'app.chargeManger.ERROR': '错误',
+  'app.chargeManger.OFFLINE': '离线',
+  'app.chargeManger.AVAILABLE': '可用',
+  'app.chargeManger.ASSIGNED': '已分配',
+  'app.chargeManger.CHARGING': '充电中',
+  'app.chargeManger.CONNECTING': '对接中',
+  'app.chargeManger.CONNECTED': '对接成功',
 
   // times
   'app.common.day': '天',

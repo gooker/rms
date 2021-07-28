@@ -1,14 +1,5 @@
+// 充电策略
 export default {
-  // 充电桩状态
-  'app.chargeManger.ERROR': '错误',
-  'app.chargeManger.OFFLINE': '离线',
-  'app.chargeManger.AVAILABLE': '可用',
-  'app.chargeManger.ASSIGNED': '已分配',
-  'app.chargeManger.CHARGING': '充电中',
-  'app.chargeManger.CONNECTING': '对接中',
-  'app.chargeManger.CONNECTED': '对接成功',
-
-  // 充电策略
   'app.chargeStrategy.currentStatus': '当前状态',
   'app.chargeStrategy.normal': '标准',
   'app.chargeStrategy.idleHours': '闲时',
@@ -56,4 +47,15 @@ export default {
 
   'app.chargeStrategy.defaultConfig': '默认配置',
   'app.chargeStrategy.recommendedConfigOfLithiumIron': '锂电推荐配置',
+
+  'app.chargeStrategy.save.success': '保存充电策略成功',
+  'app.chargeStrategy.save.failed': '保存充电策略失败',
+
+  // 闲时充电策略
+  'app.chargeStrategy.past': '过去',
+  'app.chargeStrategy.minute': '分钟',
+  'app.chargeStrategy.percentageOfFreeAgv': '空闲车占比',
+  'app.chargeStrategy.idleTimeRangeTip': '允许时间段(默认任何时间段)',
+  'app.chargeStrategy.idle.save.success': '闲时策略保存成功',
+  'app.chargeStrategy.idle.save.failed': '闲时策略保存失败',
 };

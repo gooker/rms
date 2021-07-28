@@ -1,13 +1,15 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Tabs, Spin } from 'antd';
+import { Tabs, Spin, Modal } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import ChargingStrategyForm from './ChargingStrategyForm';
-import { fetchGetCurrentChargerType, getChargeStrategy } from '@/services/api';
+import IdleChargingStrategy from './IdleChargingStrategy';
+import { getCurrentChargerType, getChargeStrategy } from '@/services/api';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { hasPermission } from '@/utils/Permission';
 import commonStyles from '@/common.module.less';
 import styles from './chargingStrategy.module.less';
+import { dealResponse } from '@/utils/utils';
 
 const { TabPane } = Tabs;
 
@@ -15,6 +17,7 @@ const ChargingStrategyComponent = (prop) => {
   const { agvType } = prop;
 
   const [spinning, setSpinning] = useState(false);
+  const [idleChargingStrategyVisible, setIdleChargingStrategyVisible] = useState(false);
   const [status, setStatus] = useState(false);
   const [activeKey, setActiveKey] = useState('Normal');
   const [chargeStrategy, setChargeStrategy] = useState(null);
@@ -27,7 +30,7 @@ const ChargingStrategyComponent = (prop) => {
     setSpinning(true);
     try {
       const [currentStatus, currentStrategy] = await Promise.all([
-        fetchGetCurrentChargerType(agvType),
+        getCurrentChargerType(agvType),
         getChargeStrategy(agvType, activeKey),
       ]);
       setStatus(currentStatus === 'Normal');
@@ -56,25 +59,54 @@ const ChargingStrategyComponent = (prop) => {
     );
   }
 
+  async function switchTab(key) {
+    setActiveKey(key);
+    const currentStrategy = await getChargeStrategy(agvType, key);
+    if (!dealResponse(currentStrategy)) {
+      setChargeStrategy(currentStrategy);
+    }
+  }
+
   return (
     <div className={classnames(commonStyles.globalPageStyle, styles.chargerStrategy)}>
       <Tabs
         animated
         activeKey={activeKey}
         tabBarExtraContent={renderTabToolBar()}
-        onChange={(key) => {
-          setActiveKey(key);
-        }}
+        onChange={switchTab}
       >
         <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeStrategy.normal' })}>
-          <ChargingStrategyForm type="Normal" data={chargeStrategy} />
+          <ChargingStrategyForm type="Normal" agvType={agvType} data={chargeStrategy} />
         </TabPane>
         {hasPermission('/system/chargerManageMents/idle') ? (
-          <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="Idlehours">
-            <ChargingStrategyForm type="IdleHours" data={chargeStrategy} />
+          <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="IdleHours">
+            <ChargingStrategyForm
+              type="IdleHours"
+              agvType={agvType}
+              data={chargeStrategy}
+              openIdle={setIdleChargingStrategyVisible}
+            />
           </TabPane>
         ) : null}
       </Tabs>
+
+      {/* 闲时策略 */}
+      <Modal
+        width={800}
+        footer={null}
+        destroyOnClose
+        visible={idleChargingStrategyVisible}
+        onCancel={() => {
+          setIdleChargingStrategyVisible(false);
+        }}
+      >
+        <IdleChargingStrategy
+          agvType={agvType}
+          onCancel={() => {
+            setIdleChargingStrategyVisible(false);
+          }}
+        />
+      </Modal>
     </div>
   );
 };

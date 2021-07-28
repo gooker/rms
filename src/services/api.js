@@ -52,7 +52,7 @@ export async function fetchAgvOverallStatus(agvType, params) {
 export async function fetchUpdateTaskPriority(agvType, params) {
   return request(`/${NameSpace[agvType]}/redis/batchUpdatePipeLineTaskPriority`, {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 
@@ -89,7 +89,7 @@ export async function fetchAgvHardwareInfo(agvType, params) {
 export async function fetchDeleteAgvList(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv/deleteAgv`, {
     method: `POST`,
-    body: params,
+    data: params,
   });
 }
 
@@ -97,7 +97,7 @@ export async function fetchDeleteAgvList(agvType, params) {
 export async function fetchMoveoutAGVs(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv/robotRemoveFromMap`, {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 
@@ -175,9 +175,8 @@ export async function getChargeStrategy(agvType, type) {
   });
 }
 // 获取当前状态
-export async function fetchGetCurrentChargerType(agvType) {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[agvType]}/charger/getCurrentChargerType?sectionId=${sectionId}`, {
+export async function getCurrentChargerType(agvType) {
+  return request(`/${NameSpace[agvType]}/charger/getCurrentChargerType`, {
     method: 'GET',
   });
 }
@@ -185,7 +184,7 @@ export async function fetchGetCurrentChargerType(agvType) {
 export async function saveChargeStrategy(agvType, params) {
   return request(`/${NameSpace[agvType]}/charger/updateChargingStrategy`, {
     method: `POST`,
-    body: params,
+    data: params,
   });
 }
 // 默认充电策略
@@ -194,10 +193,17 @@ export async function getDefaultChargingStrategy(agvType) {
     method: 'GET',
   });
 }
-export async function saveFreeTimeRule(agvType, params) {
+// 保存闲时充电策略
+export async function saveIdleChargingStrategy(agvType, params) {
   return request(`/${NameSpace[agvType]}/charger/updateIdleHours`, {
     method: 'POST',
-    body: params,
+    data: params,
+  });
+}
+// 获取已配置的闲时充电策略信息
+export async function getIdleHoursBySectionId(agvType) {
+  return request(`/${NameSpace[agvType]}/charger/getIdleHoursBySectionId`, {
+    method: 'GET',
   });
 }
 
@@ -212,19 +218,6 @@ export async function fetchSystemParamFormData(agvType) {
 export async function updateSystemParams(agvType, params) {
   return request(`/${NameSpace[agvType]}/formTemplate/updateFormTemplateValue`, {
     method: 'POST',
-    body: params,
-  });
-}
-export async function getIdleHoursBySectionId(agvType) {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[agvType]}/charger/getIdleHoursBySectionId?sectionId=${sectionId}`, {
-    method: 'GET',
-  });
-}
-
-export async function getCurrentChargerType(agvType) {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[agvType]}/charger/getCurrentChargerType?sectionId=${sectionId}`, {
-    method: 'GET',
+    data: params,
   });
 }

@@ -1,54 +1,102 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Button, Input, Card, Tooltip } from 'antd';
+import { Row, Col, Button, Input, Card, Tooltip, message } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
+import { getDefaultChargingStrategy, saveChargeStrategy } from '@/services/api';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import BatterStrategy from './BatterStrategy/BatterStrategy';
 import { hasPermission, Permission } from '@/utils/Permission';
 import styles from './chargingStrategy.module.less';
+import { dealResponse } from '@/utils/utils';
 
 const PanelHeight = 400; // 表单行的高度
 const ChargingStrategyForm = (props) => {
-  const { type, data } = props;
+  const { agvType, type, data, openIdle } = props;
 
-  const [paramsId, setParamsId] = useState(null);
-  const [startBattery, setStartBattery] = useState(0); //起始电量
-  const [startVoltage, setStartVoltage] = useState(35); // 起始电压
-  const [endBattery, setEndBattery] = useState(0); //终止电量
-  const [endVoltage, setEndVoltage] = useState(35); //终止电压
-  const [fullBattery, setFullBattery] = useState(0); //满充电量
-  const [fullVoltage, setFullVoltage] = useState(35); //满充电压
-  const [lowestBattery, setLowestBattery] = useState(0); //最低电量
-  const [lowestVoltage, setLowestVoltage] = useState(35); //最低电压
-  const [lowBatteryWarning, setLowBatteryWarning] = useState(0); //低电量报警
-  const [replaceablePower, setReplaceablePower] = useState(0); //可换充电量
-  const [fullChargingDuration, setFullChargingDuration] = useState(null); //两次满充时间间隔
-  const [normalChargingMaxTimes, setNormalChargingMaxTimes] = useState(null); //普通充电最大连续次数
-  const [minChargeTime, setMinChargeTime] = useState(null); //最短充电时间
-  const [cancelChargeAndReceiveTask, setCancelChargeAndReceiveTask] = useState(null); //最短充电时间
+  const [strategyId, setStrategyId] = useState(null);
+  const [robotChargingBatteryMinValue, setChargingBatteryMinValue] = useState(0); //起始电量
+  const [robotChargingVoltageMinValue, setChargingVoltageMinValue] = useState(35); // 起始电压
+  const [robotChargingBatteryMaxValue, setChargingBatteryMaxValue] = useState(0); //终止电量
+  const [robotChargingVoltageMaxValue, setChargingVoltageMaxValue] = useState(35); //终止电压
+  const [robotFullChargingBatteryMaxValue, setFullChargingBatteryMaxValue] = useState(0); //满充电量
+  const [robotFullChargingVoltageMaxValue, setFullChargingVoltageMaxValue] = useState(35); //满充电压
+  const [robotTaskAcceptableBatteryMinValue, setTaskAcceptableBatteryMinValue] = useState(0); //最低电量
+  const [robotTaskAcceptableVoltageMinValue, setTaskAcceptableVoltageMinValue] = useState(35); //最低电压
+  const [robotChargingBatteryWarningValue, setChargingBatteryWarningValue] = useState(0); //低电量报警
+  const [robotChargingBatteryRunnableValue, setChargingBatteryRunnableValue] = useState(0); //可换充电量
+  const [robotFullChargingDuration, setFullChargingDuration] = useState(null); //两次满充时间间隔
+  const [robotNormalChargingMaxTimes, setNormalChargingMaxTimes] = useState(null); //普通充电最大连续次数
+  const [agvMinChargingTime, setMinChargingTime] = useState(null); //最短充电时间
+  const [robotCancelChargerAndReceiveTaskBattery, setCancelChargerAndReceiveTaskBattery] =
+    useState(null); //最短充电时间
 
   useEffect(() => {
-    setParamsId(data?.id || null);
-    setStartBattery(data?.robotChargingBatteryMinValue || 0);
-    setStartVoltage(data ? parseFloat(data.robotChargingVoltageMinValue / 1000) : 35);
-    setEndBattery(data?.robotChargingBatteryMaxValue || 0);
-    setEndVoltage(data ? parseFloat(data.robotChargingVoltageMaxValue / 1000) : 35);
-    setFullBattery(data?.robotFullChargingBatteryMaxValue || 0);
-    setFullVoltage(data ? parseFloat(data.robotFullChargingVoltageMaxValue / 1000) : 35);
-    setLowestBattery(data?.robotTaskAcceptableBatteryMinValue || 0);
-    setLowestVoltage(data ? parseFloat(data.robotTaskAcceptableVoltageMinValue / 1000) : 35);
-    setLowBatteryWarning(data?.robotChargingBatteryWarningValue || 0);
-    setReplaceablePower(data?.robotChargingBatteryRunnableValue);
-    setFullChargingDuration(data?.robotFullChargingDuration);
-    setNormalChargingMaxTimes(data?.robotNormalChargingMaxTimes);
-    setMinChargeTime(data?.agvMinChargingTime);
-    setCancelChargeAndReceiveTask(data?.robotCancelChargerAndReceiveTaskBattery || 0);
+    refreshState(data);
   }, [data]);
 
-  function configDefaultValue() {}
+  async function configDefaultValue() {
+    const response = await getDefaultChargingStrategy();
+    if (!dealResponse(response)) {
+      refreshState(response);
+    }
+  }
 
-  function configRecommendValue() {}
+  function configRecommendValue() {
+    setChargingVoltageMinValue(46.5);
+    setFullChargingVoltageMaxValue(53.5);
+    setFullChargingBatteryMaxValue(99);
+  }
 
-  function saveChargerStrategy() {}
+  function refreshState(data) {
+    setStrategyId(data?.id || null);
+    setChargingBatteryMinValue(data?.robotChargingBatteryMinValue || 0);
+    setChargingVoltageMinValue(data ? parseFloat(data.robotChargingVoltageMinValue / 1000) : 35);
+    setChargingBatteryMaxValue(data?.robotChargingBatteryMaxValue || 0);
+    setChargingVoltageMaxValue(data ? parseFloat(data.robotChargingVoltageMaxValue / 1000) : 35);
+    setFullChargingBatteryMaxValue(data?.robotFullChargingBatteryMaxValue || 0);
+    setFullChargingVoltageMaxValue(
+      data ? parseFloat(data.robotFullChargingVoltageMaxValue / 1000) : 35,
+    );
+    setTaskAcceptableBatteryMinValue(data?.robotTaskAcceptableBatteryMinValue || 0);
+    setTaskAcceptableVoltageMinValue(
+      data ? parseFloat(data.robotTaskAcceptableVoltageMinValue / 1000) : 35,
+    );
+    setChargingBatteryWarningValue(data?.robotChargingBatteryWarningValue || 0);
+    setChargingBatteryRunnableValue(data?.robotChargingBatteryRunnableValue);
+    setFullChargingDuration(data?.robotFullChargingDuration);
+    setNormalChargingMaxTimes(data?.robotNormalChargingMaxTimes);
+    setMinChargingTime(data?.agvMinChargingTime);
+    setCancelChargerAndReceiveTaskBattery(data?.robotCancelChargerAndReceiveTaskBattery || 0);
+  }
+
+  async function saveChargerStrategy() {
+    const sectionId = window.localStorage.getItem('sectionId');
+    const params = {
+      type,
+      sectionId: sectionId,
+      id: strategyId,
+      agvMinChargingTime,
+      robotFullChargingDuration,
+      robotNormalChargingMaxTimes,
+      robotChargingBatteryMinValue,
+      robotChargingBatteryMaxValue,
+      robotChargingBatteryWarningValue,
+      robotFullChargingBatteryMaxValue,
+      robotChargingBatteryRunnableValue,
+      robotTaskAcceptableBatteryMinValue,
+      robotCancelChargerAndReceiveTaskBattery,
+      robotChargingVoltageMinValue: parseInt(robotChargingVoltageMinValue * 1000),
+      robotChargingVoltageMaxValue: parseInt(robotChargingVoltageMaxValue * 1000),
+      robotFullChargingVoltageMaxValue: parseInt(robotFullChargingVoltageMaxValue * 1000),
+      robotTaskAcceptableVoltageMinValue: parseInt(robotTaskAcceptableVoltageMinValue * 1000),
+    };
+
+    const response = await saveChargeStrategy(agvType, params);
+    if (dealResponse(response)) {
+      message.error(formatMessage({ id: 'app.chargeStrategy.save.failed' }));
+    } else {
+      message.success(formatMessage({ id: 'app.chargeStrategy.save.success' }));
+    }
+  }
 
   return (
     <div>
@@ -61,8 +109,7 @@ const ChargingStrategyForm = (props) => {
           hasPermission('/system/chargerManageMents/idle/configIdle') && (
             <Button
               onClick={() => {
-                const { openFreeRules } = this.props;
-                openFreeRules && openFreeRules();
+                openIdle(true);
               }}
             >
               <FormattedMessage id="app.chargeStrategy.idleHoursRules" />
@@ -81,16 +128,16 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.initialPowerTip',
                     }),
-                    value: startBattery,
-                    onChange: setStartBattery,
+                    value: robotChargingBatteryMinValue,
+                    onChange: setChargingBatteryMinValue,
                   }}
                   voltage={{
                     title: formatMessage({ id: 'app.chargeStrategy.startingVoltage' }),
                     tip: formatMessage({
                       id: 'app.chargeStrategy.startingVoltageTip',
                     }),
-                    value: startVoltage,
-                    onChange: setStartVoltage,
+                    value: robotChargingVoltageMinValue,
+                    onChange: setChargingVoltageMinValue,
                   }}
                 />
               </Col>
@@ -102,16 +149,16 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.terminationOfPowerTip',
                     }),
-                    value: endBattery,
-                    onChange: setEndBattery,
+                    value: robotChargingBatteryMaxValue,
+                    onChange: setChargingBatteryMaxValue,
                   }}
                   voltage={{
                     title: formatMessage({ id: 'app.chargeStrategy.terminationVoltage' }),
                     tip: formatMessage({
                       id: 'app.chargeStrategy.terminationVoltageTip',
                     }),
-                    value: endVoltage,
-                    onChange: setEndVoltage,
+                    value: robotChargingVoltageMaxValue,
+                    onChange: setChargingVoltageMaxValue,
                   }}
                 />
               </Col>
@@ -123,12 +170,14 @@ const ChargingStrategyForm = (props) => {
                 {/* 可换充电量 */}
                 <BatterStrategy
                   electricity={{
-                    title: formatMessage({ id: 'app.chargeStrategy.replaceablePower' }),
+                    title: formatMessage({
+                      id: 'app.chargeStrategy.replaceablePower',
+                    }),
                     tip: formatMessage({
                       id: 'app.chargeStrategy.replaceablePowerTip',
                     }),
-                    value: replaceablePower,
-                    onChange: setReplaceablePower,
+                    value: robotChargingBatteryRunnableValue,
+                    onChange: setChargingBatteryRunnableValue,
                   }}
                 />
               </Col>
@@ -141,8 +190,8 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.lowPowerWarningTip',
                       }),
-                      value: lowBatteryWarning,
-                      onChange: setLowBatteryWarning,
+                      value: robotChargingBatteryWarningValue,
+                      onChange: setChargingBatteryWarningValue,
                     }}
                   />
                 ) : null}
@@ -166,16 +215,16 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.fullChargePowerTip',
                       }),
-                      value: fullBattery,
-                      onChange: setFullBattery,
+                      value: robotFullChargingBatteryMaxValue,
+                      onChange: setFullChargingBatteryMaxValue,
                     }}
                     voltage={{
                       title: formatMessage({ id: 'app.chargeStrategy.fullChargeVoltage' }),
                       tip: formatMessage({
                         id: 'app.chargeStrategy.fullChargeVoltageTip',
                       }),
-                      value: fullVoltage,
-                      onChange: setFullVoltage,
+                      value: robotFullChargingVoltageMaxValue,
+                      onChange: setFullChargingVoltageMaxValue,
                     }}
                   />
                 </Col>
@@ -192,7 +241,7 @@ const ChargingStrategyForm = (props) => {
                       <InfoCircleOutlined />
                     </Tooltip>
                     <Input
-                      value={fullChargingDuration}
+                      value={robotFullChargingDuration}
                       style={{ marginTop: 5 }}
                       addonAfter={formatMessage({ id: 'app.common.day' })}
                       onChange={(ev) => {
@@ -213,7 +262,7 @@ const ChargingStrategyForm = (props) => {
                     </Tooltip>
                     <Input
                       style={{ marginTop: 5 }}
-                      value={normalChargingMaxTimes}
+                      value={robotNormalChargingMaxTimes}
                       addonAfter={formatMessage({ id: 'app.common.day' })}
                       onChange={(ev) => {
                         setNormalChargingMaxTimes(ev.target.value);
@@ -238,16 +287,16 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.minimumPowerTip',
                       }),
-                      value: lowestBattery,
-                      onChange: setLowestBattery,
+                      value: robotTaskAcceptableBatteryMinValue,
+                      onChange: setTaskAcceptableBatteryMinValue,
                     }}
                     voltage={{
                       title: formatMessage({ id: 'app.chargeStrategy.minimumVoltage' }),
                       tip: formatMessage({
                         id: 'app.chargeStrategy.minimumVoltageTip',
                       }),
-                      value: lowestVoltage,
-                      onChange: setLowestVoltage,
+                      value: robotTaskAcceptableVoltageMinValue,
+                      onChange: setTaskAcceptableVoltageMinValue,
                     }}
                   />
                 </Col>
@@ -264,11 +313,11 @@ const ChargingStrategyForm = (props) => {
                       <InfoCircleOutlined />
                     </Tooltip>
                     <Input
-                      value={minChargeTime}
+                      value={agvMinChargingTime}
                       style={{ marginTop: 5 }}
                       addonAfter={formatMessage({ id: 'app.common.day' })}
                       onChange={(ev) => {
-                        setMinChargeTime(ev.target.value);
+                        setMinChargingTime(ev.target.value);
                       }}
                     />
                   </div>
@@ -284,7 +333,9 @@ const ChargingStrategyForm = (props) => {
         <div style={{ display: 'flex' }}>
           <div className={styles.panelCardNoBoder} style={{ marginRight: 5 }}>
             <Card
-              title={formatMessage({ id: 'app.chargeStrategy.cancelChargeAndReceiveTask' })}
+              title={formatMessage({
+                id: 'app.chargeStrategy.cancelChargeAndReceiveTask',
+              })}
               bordered={false}
             >
               <Row gutter={30} style={{ width: '100%', height: PanelHeight }}>
@@ -295,8 +346,8 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.cancelChargerAndReceiveTaskTip',
                       }),
-                      value: cancelChargeAndReceiveTask,
-                      onChange: setCancelChargeAndReceiveTask,
+                      value: robotCancelChargerAndReceiveTaskBattery,
+                      onChange: setCancelChargerAndReceiveTaskBattery,
                     }}
                   />
                 </Col>

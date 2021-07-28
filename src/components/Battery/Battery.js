@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Slider, Button } from 'antd';
+import { Slider } from 'antd';
 import Dictionary from '@/utils/Dictionary';
 import styles from './battery.module.less';
 
