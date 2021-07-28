@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Spin } from 'antd';
 import { dealResponse } from '@/utils/utils';
+import { formatMessage } from '@/utils/Lang';
 import SystemParams from '@/components/SystemParams';
 import { fetchSystemParamFormData, updateSystemParams } from '@/services/api';
 
@@ -27,12 +28,12 @@ export default class SystemParamsManager extends Component {
     this.setState({ spinning: false });
   };
 
-  submit = (value) => {
-    updateSystemParams(value).then((res) => {
-      if (!dealResponse(res, 1, '更新成功')) {
+  submit =async (value) => {
+    const { agvType } = this.props;
+    const responseData= await  updateSystemParams(agvType,value);
+      if (!dealResponse(responseData, 1, formatMessage({ id: 'app.common.operationFinish' }))) {
         this.getData();
       }
-    });
   };
 
   render() {

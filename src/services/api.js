@@ -205,7 +205,7 @@ export async function fetchSystemParamFormData(agvType) {
 export async function updateSystemParams(agvType, params) {
   return request(`/${NameSpace[agvType]}/formTemplate/updateFormTemplateValue`, {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 export async function getIdleHoursBySectionId(agvType) {

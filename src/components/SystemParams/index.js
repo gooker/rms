@@ -333,7 +333,7 @@ class SystemParams extends Component {
       })
       .catch((error) => {
         this.handleError(error);
-        message.warn('表单未完成, 请检查必填项');
+        message.warn(<FormattedMessage id={'app.systemParameters.checkeRequiredFields'} />);
       });
   };
 
