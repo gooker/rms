@@ -3,11 +3,11 @@
   padding: 10px 20px;
   border: 1px dashed #ccc;
   border-radius: 5px;
+  overflow-y: scroll;
+  box-sizing: border-box;
 }
 
 // RealTimeTab.js
-.realTimeContainer {
-}
 
 .tableBar {
   cursor: pointer;
@@ -25,4 +25,14 @@
   margin-left: 4
  }
  .element::-webkit-scrollbar { width: 0 !important }
+
+ .textRight{
+  display: inline-block;
+  flex-grow: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: right;
+  vertical-align: middle;
+ }
 

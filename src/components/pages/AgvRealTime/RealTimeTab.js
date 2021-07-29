@@ -4,12 +4,11 @@ import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getDirectionLocale, renderAgvStatus, dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
-import LabelComponent from '@/components/LabelComponent';
+import LabelComponent from '@/components/LabelColComponent.js';
 import styles from './index.module.less';
 
 const RealTimeTab = (props) => {
-  const { agvType, data } = props;
-  console.log(agvType, data);
+  const { data } = props;
 
   function renderCompare(origin, compare, format) {
     if (origin == null && compare == null) {

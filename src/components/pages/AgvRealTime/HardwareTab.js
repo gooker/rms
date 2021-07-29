@@ -8,8 +8,7 @@ import LabelComponent from '@/components/LabelComponent';
 import styles from './index.module.less';
 
 const HardwareTab = (props) => {
-  const { agvType, data } = props;
-  console.log(agvType, data);
+  const { data } = props;
 
   function renderCreateTime(time) {
     return dateFormat(time).format('YYYY-MM-DD HH:mm:ss');

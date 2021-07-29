@@ -33,7 +33,7 @@ class AGVActivityForm extends Component {
         <Form
           layout="inline"
           onValuesChange={this.onValuesChange}
-          style={{ display: 'block', width: '100%', padding: 0 }}
+          style={{width: '100%', padding: 0,display:"block" }}
         >
           {mode === 'unexpanded' ? (
             <Row style={{ padding: '12px 16px' }}>
@@ -81,7 +81,6 @@ class AGVActivityForm extends Component {
                     <Col span={12}>
                       <Form.Item
                         label={formatMessage({ id: 'app.task.type' })}
-                        style={{ width: '100%' }}
                         name="agvTaskType"
                         initialValue={defaultValue ? defaultValue.agvTaskType : []}
                       >
@@ -90,7 +89,6 @@ class AGVActivityForm extends Component {
                           allowClear
                           maxTagTextLength={2}
                           maxTagCount={1}
-                          style={{ width: '230px' }}
                           options={(function () {
                             const data = [];
                             const toteAgvTaskType = Dictionary('agvTaskType');
@@ -117,7 +115,6 @@ class AGVActivityForm extends Component {
                         initialValue={defaultValue ? defaultValue.activitySearchParams : []}
                       >
                         <Select
-                          style={{ width: '230px' }}
                           mode="multiple"
                           allowClear
                           maxTagTextLength={2}

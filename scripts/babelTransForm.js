@@ -1,5 +1,5 @@
 require('babel-register')({
-  presets: ['es2015'],
+  presets: ['@babel/preset-es2015'],
   plugins: ['transform-object-rest-spread'],
 });
 module.exports = function(path) {
