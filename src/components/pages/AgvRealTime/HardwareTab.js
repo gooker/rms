@@ -100,6 +100,10 @@ const HardwareTab = (props) => {
           {data && data.battery != null ? getSuffix(parseInt(data.battery), '%') : null}
         </LabelComponent>
 
+        <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
+          {data && data.batteryVoltage ? getSuffix(data.batteryVoltage / 1000, 'V') : null}
+        </LabelComponent>
+
         <LabelComponent
           label={formatMessage({ id: 'app.activity.batteryStatus' })}
           children={
@@ -212,9 +216,7 @@ const HardwareTab = (props) => {
           }
         ></LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
-          {data && data.batteryVoltage ? getSuffix(data.batteryVoltage / 1000, 'V') : null}
-        </LabelComponent>
+        
 
         <LabelComponent label={formatMessage({ id: 'app.taskDetail.createTime' })}>
           {data && data.createTime ? renderCreateTime(data.createTime) : null}
@@ -225,9 +227,7 @@ const HardwareTab = (props) => {
       </Col>
 
       <Col span={12}>
-        <LabelComponent label={formatMessage({ id: 'app.activity.distanceFromLastCell' })}>
-          {data && data.distanceFromLastCell ? getSuffix(data.distanceFromLastCell, 'mm') : null}
-        </LabelComponent>
+       
 
         <LabelComponent
           label={<FormattedMessage id="app.common.status" />}
@@ -257,6 +257,9 @@ const HardwareTab = (props) => {
         <LabelComponent label={formatMessage({ id: 'app.activity.modelInfo' })}>
           {data && data.moduledataList ? getModeldata(data.moduledataList) : null}
         </LabelComponent>
+        <LabelComponent label={formatMessage({ id: 'app.activity.theta' })}>
+          {data && data.theta ? getSuffix(data.theta, '°') : null}
+        </LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.pod.id' })}>{data?.podId}</LabelComponent>
 
@@ -283,13 +286,15 @@ const HardwareTab = (props) => {
         <LabelComponent label={formatMessage({ id: 'app.activity.upMotorTemperature' })}>
           {data?.upMotorTemperature}
         </LabelComponent>
+       
 
         <LabelComponent label={formatMessage({ id: 'app.agv.sensorStatusFlag' })}>
           {data?.sensorStatus}
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.activity.theta' })}>
-          {data && data.theta ? getSuffix(data.theta, '°') : null}
+      
+        <LabelComponent label={formatMessage({ id: 'app.activity.distanceFromLastCell' })}>
+          {data && data.distanceFromLastCell ? getSuffix(data.distanceFromLastCell, 'mm') : null}
         </LabelComponent>
       </Col>
     </Row>

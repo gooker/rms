@@ -77,7 +77,7 @@ class TaskRecordTab extends PureComponent {
         <Col span={24} style={{ minHeight: 550,marginTop:15 }}>
           <Row>
             {data ? (
-              <Timeline style={{ width: '70%' }} mode="alternate">
+              <Timeline style={{ width: '78%' }} mode="alternate">
                 {this.renderTimeline(data.list || [])}
               </Timeline>
             ) : (

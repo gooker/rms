@@ -5,10 +5,10 @@ const LabelColComponent = (props) => {
   const { label, children} = props;
   return (
     <Row style={{marginBottom:15}}>
-      <Col span={7}  className={styles.textRight}>
+      <Col span={12}  className={styles.textRight}>
          <span >{label}:</span>
       </Col>
-      <Col span={17} >
+      <Col span={12} >
       <div style={{ flex: 1, marginLeft: 10 }}>{children}</div>
       </Col>
 
