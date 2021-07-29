@@ -2,6 +2,7 @@
   "name": "wcs-gui-assembly",
   "version": "0.1.0",
   "private": true,
+  "main": "index.js",
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
@@ -17,9 +18,9 @@
   },
   "dependencies": {
     "@ant-design/icons": "^4.6.2",
-    "@babel/core": "7.12.3",
-    "@babel/plugin-proposal-decorators": "^7.13.5",
-    "@babel/runtime": "^7.14.8",
+    "@babel/core": "^7.14.8",
+    "@babel/plugin-proposal-decorators": "^7.14.5",
+    "@babel/register": "^7.14.5",
     "@pmmmwh/react-refresh-webpack-plugin": "0.4.3",
     "@svgr/webpack": "5.5.0",
     "@umijs/fabric": "^2.5.7",
@@ -119,20 +120,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.14.8",
-    "@babel/core": "^7.12.3",
-    "@babel/node": "^7.14.7",
-    "@babel/plugin-proposal-class-properties": "^7.14.5",
-    "@babel/plugin-transform-classes": "^7.14.5",
-    "@babel/plugin-transform-runtime": "^7.14.5",
-    "@babel/preset-env": "^7.14.8",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
-    "babel-loader": "^8.1.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-register": "^6.26.0",
-    "browserify": "^17.0.0"
   }
 }

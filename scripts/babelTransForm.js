@@ -1,7 +1,9 @@
-require('babel-register')({
-  presets: ['@babel/preset-es2015'],
-  plugins: ['transform-object-rest-spread'],
+require('@babel/register')({
+  extends: './.babelrc',
+  ignore: [],
 });
-module.exports = function(path) {
+process.env.NODE_ENV = 'development';
+process.env.BABEL_ENV = 'development';
+module.exports = function (path) {
   return require(path);
 };
