@@ -123,7 +123,7 @@ nt-docker-images-build-staging:
     - /^nt-docker-release-.*$/
 
 docker-images-build-staging:
-  image: reg.mushiny.com/library/node:alpine
+  image: node:10.16-alpine
   stage: build
   tags:
     - production-group-to-dev-k8s-1-14-3
