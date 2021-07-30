@@ -35,6 +35,11 @@ const errorHandler = (error) => {
   const statusMessage = codeMessage[status];
   messageContent = statusMessage || messageContent;
 
+  // 通知 Portal 登出
+  if (status === 401) {
+    window.parent.postMessage({ type: 'logout', payload: null }, '*');
+  }
+
   return { code: '-1', data: null, message: messageContent };
 };
 
