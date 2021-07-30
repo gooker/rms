@@ -14,6 +14,7 @@ class Header extends React.Component {
   };
 
   render() {
+    const { globalLocale } = this.props;
     return (
       <div>
         <span style={{ marginRight: 16 }}>

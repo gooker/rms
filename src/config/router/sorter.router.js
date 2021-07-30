@@ -1,5 +1,3 @@
-import Loadable from '@/utils/Loadable';
-
 export default [
   {
     name: 'controlCenter',
@@ -8,17 +6,17 @@ export default [
       {
         path: '/sorter/center/executionQueue',
         name: 'executionQueue',
-        component: Loadable(() => import('@/packages/Sorter/ExecutionQueue')),
+        component: '/Sorter/ExecutionQueue',
       },
       {
         path: '/sorter/center/taskQueue',
         name: 'taskQueue',
-        component: Loadable(() => import('@/packages/Sorter/TaskQueue')),
+        component: '/Sorter/TaskQueue',
       },
       {
         path: '/sorter/center/taskManger',
         name: 'taskManger',
-        component: Loadable(() => import('@/packages/Sorter/TaskLibrary')),
+        component: '/Sorter/TaskLibrary',
       },
     ],
   },
@@ -29,22 +27,22 @@ export default [
       {
         path: '/sorter/agv/agvList',
         name: 'agvList',
-        component: Loadable(() => import('@/packages/Sorter/AgvList')),
+        component: '/Sorter/AgvList',
       },
       {
         path: '/sorter/agv/agvRealTime',
         name: 'agvRealTime',
-        component: Loadable(() => import('@/packages/Sorter/AgvRealTime')),
+        component: '/Sorter/AgvRealTime',
       },
       // {
       //   path: '/sorter/agv/firmwareUpgrade',
       //   name: 'firmwareUpgrade',
-      //   component: Loadable(() => import('@/packages/Sorter/FirmwareUpgrade')),
+      //   component: /Sorter/FirmwareUpgrade,
       // },
       // {
       //   path: '/sorter/agv/logDownLoad',
       //   name: 'logDownLoad',
-      //   component: Loadable(() => import('@/packages/Sorter/LogDownLoad')),
+      //   component: /Sorter/LogDownLoad,
       // },
     ],
   },
@@ -56,12 +54,12 @@ export default [
   //     {
   //       path: '/sorter/faultManger/faultList',
   //       name: 'faultList',
-  //       component: Loadable(() => import('@/packages/Sorter/FaultList')),
+  //       component: /Sorter/FaultList,
   //     },
   //     {
   //       path: '/sorter/faultManger/faultDefinition',
   //       name: 'faultDefinition',
-  //       component: Loadable(() => import('@/packages/Sorter/FaultDefinition')),
+  //       component: /Sorter/FaultDefinition,
   //     },
   //   ],
   // },
@@ -72,22 +70,22 @@ export default [
   //     {
   //       path: '/sorter/formManger/reportCenter',
   //       name: 'reportCenter',
-  //       component: Loadable(() => import('@/packages/Sorter/ReportCenter')),
+  //       component: /Sorter/ReportCenter,
   //     },
   //     {
   //       path: '/sorter/formManger/taskKpi',
   //       name: 'taskKpi',
-  //       component: Loadable(() => import('@/packages/Sorter/TaskKpi')),
+  //       component: /Sorter/TaskKpi,
   //     },
   //     {
   //       path: '/sorter/formManger/waitingKpi',
   //       name: 'waitingKpi',
-  //       component: Loadable(() => import('@/packages/Sorter/WaitingKpi')),
+  //       component: /Sorter/WaitingKpi,
   //     },
   //     {
   //       path: '/sorter/formManger/metadata',
   //       name: 'metadata',
-  //       component: Loadable(() => import('@/packages/Sorter/Metadata')),
+  //       component:/Sorter/Metadata,
   //     },
   //   ],
   // },
@@ -98,12 +96,12 @@ export default [
       {
         path: '/sorter/system/systemParamsManager',
         name: 'systemParamsManager',
-        component: Loadable(() => import('@/packages/Sorter/SystemParamsManager')),
+        component: '/Sorter/SystemParamsManager',
       },
       {
         path: '/sorter/system/chargingStrategy',
         name: 'chargingStrategy',
-        component: Loadable(() => import('@/packages/Sorter/ChargingStrategy')),
+        component: '/Sorter/ChargingStrategy',
       },
     ],
   },
