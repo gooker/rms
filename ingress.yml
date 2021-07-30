@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: __CI_BUILD_REF_SLUG__-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+#    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  tls:
+  - hosts:
+    - _LV2_DOMAIN_NAME_.mushiny.com
+    secretName: mushiny-secret
+  rules:
+  - host: _LV2_DOMAIN_NAME_.mushiny.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: __CI_BUILD_REF_SLUG__-service
+          servicePort: 80

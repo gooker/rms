@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: __CI_BUILD_REF_SLUG__-service
+spec:
+  selector:
+    app: __CI_BUILD_REF_SLUG__
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

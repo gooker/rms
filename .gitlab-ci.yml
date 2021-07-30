@@ -1,0 +1,269 @@
+image: 172.31.2.100:5000/docker:latest
+
+variables:
+  MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
+  DOCKER_DRIVER: overlay
+  WCS_GUI_PROJECT_NAME: wcs-gui-assembly
+  CONTAINER_TEST_IMAGE: 172.31.2.100:5000/mushiny/$WCS_GUI_PROJECT_NAME:$CI_COMMIT_REF_NAME
+  CONTAINER_PROD_TEST_IMAGE: 172.31.2.100:5000/mushiny/${WCS_GUI_PROJECT_NAME}-prod:$CI_COMMIT_REF_NAME
+  CONTAINER_NEW_PROD_TEST_IMAGE: 172.31.2.100:5000/mushiny/${WCS_GUI_PROJECT_NAME}-new-prod:$CI_COMMIT_REF_NAME
+  CONTAINER_AU_PROD_TEST_IMAGE: 10.195.6.197:5000/mushiny/${WCS_GUI_PROJECT_NAME}-au-prod:$CI_COMMIT_REF_NAME
+  CONTAINER_RELEASE_IMAGE: 172.31.2.100:5000/mushiny/$WCS_GUI_PROJECT_NAME:latest
+  CONTAINER_PROD_RELEASE_IMAGE: 172.31.2.100:5000/mushiny/${WCS_GUI_PROJECT_NAME}-prod:latest
+  CONTAINER_NEW_PROD_RELEASE_IMAGE: 172.31.2.100:5000/mushiny/${WCS_GUI_PROJECT_NAME}-new-prod:latest
+  CONTAINER_AU_PROD_RELEASE_IMAGE: 10.195.6.197:5000/mushiny/${WCS_GUI_PROJECT_NAME}-au-prod:latest
+
+#  mushiny/$CI_REGISTRY_IMAGE:latest
+  CONTAINER_NAME: ui-v8
+#  KUBERNETES_NAMESPACE_OVERWRITE: ci-${WCS_GUI_PROJECT_NAME}
+  DOCKER_HOST: tcp://localhost:2375
+
+#变量参考 http://www.ttlsa.com/auto/gitlab-cicd-variables-zh-document/
+
+before_script:
+#  - docker login -u "gitlab-ci-token" -p $CI_BUILD_TOKEN $CI_REGISTRY
+
+stages:
+  - build
+#  - test
+  - package
+  - release
+  - deploy
+
+#  - build
+##  - release
+#  - deploy
+
+
+local-build-staging:
+  image: 172.31.2.100:5000/node_lftp:alpine
+  stage: build
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  #  before_script:
+  #    - apk update
+  #    - apk gzip
+  #  before_script:
+  #    - apk update
+  #    - apk add lftp
+  #    - apk add openssh
+  script:
+    - node -v
+    - npm -v
+    - npm config get cache
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm config set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs/
+    - npm config set gifsicle_cdnurl https://npm.taobao.org/mirrors/gifsicle-bin/
+    - npm install cnpm -g
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - "mybuild_version=\"$(cat package.json | grep version | grep -v versions | awk -F: '{ print $2 }' | sed 's/[ \",]//g')\""
+    - echo  $mybuild_version $mybuild_date
+    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    #    - zip maptool.zip dist
+    - cp version.txt dist/
+    - tar -zcv -f Portal-GUI-${mybuild_version}.tar.gz dist/
+    - cp Portal-GUI-${mybuild_version}.tar.gz tmp_build/
+    - cp version.txt tmp_build/
+    - full_folder=/data/build/2.4GE/Portal-GUI/$mybuild_version/$mybuild_date/
+    - echo $full_folder
+    - lftp -e "debug; set sftp:auto-confirm yes;set ssl:verify-certificate no;set ftp:ssl-allow false; set ssl:check-hostname false; open -u release_account,$sftp_password sftp://172.31.10.146:22; mirror -R -p --verbose=3 tmp_build/ $full_folder; quit"
+
+  #    - mvn help:effective-settings
+  #  cache:
+  #    paths:
+  #      - /cache_mvn_repo/
+  artifacts:
+    paths:
+      - WCS-GUI.tar.gz
+      - version.txt
+    expire_in: 20 minutes
+  only:
+    - /^local-release-.*$/
+
+nt-docker-images-build-staging:
+#  image: reg.mushiny.com/library/node:alpine
+  stage: build
+  tags:
+    - prod_group_nt_node2
+  script:
+    - node -v
+    - npm -v
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - "mybuild_version=\"$(cat package.json | grep version | grep -v versions | awk -F: '{ print $2 }' | sed 's/[ \",]//g')\""
+    - echo  $mybuild_version $mybuild_date
+    #    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    - cp version.txt dist/
+    - cp -r dist docker_image/
+    - docker_name_version=reg.mushiny.com/mushiny/portal-gui:${mybuild_version}
+    - echo ${docker_name_version}
+    - unset DOCKER_HOST
+    - docker build -t ${docker_name_version} docker_image/
+    - docker login -u ${MUSHINY_DOCKER_REG_USER} -p ${MUSHINY_DOCKER_REG_PASSWORD} reg.mushiny.com
+    - docker push ${docker_name_version}
+#  cache:
+#    key: $CI_COMMIT_REF_SLUG
+#    paths:
+#      - node_modules/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 20 minutes
+  only:
+    - /^nt-docker-release-.*$/
+
+docker-images-build-staging:
+  image: reg.mushiny.com/library/node:alpine
+  stage: build
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  script:
+    - node -v
+    - npm -v
+    - npm config get cache
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm config set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs/
+    - npm config set gifsicle_cdnurl https://npm.taobao.org/mirrors/gifsicle-bin/
+    - npm install cnpm -g
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - "mybuild_version=\"$(cat package.json | grep version | grep -v versions | awk -F: '{ print $2 }' | sed 's/[ \",]//g')\""
+    - echo  $mybuild_version $mybuild_date
+#    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    - cp version.txt dist/
+
+  cache:
+    key: $CI_COMMIT_REF_SLUG
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 20 minutes
+  only:
+    - /^docker-release-.*$/
+
+docker-images-package-staging:
+  image: reg.mushiny.com/library/docker_18_05ce_jdk8_maven3_5_4:latest
+  stage: package
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  services:
+    - name: docker:dind
+      entrypoint: ["dockerd-entrypoint.sh"]
+
+  script:
+    - "mybuild_version=\"$(cat dist/version.txt | grep version | awk -F: '{ print $2 }')\""
+    - cp -r dist docker_image/
+    - docker_name_version=reg.mushiny.com/mushiny/portal-gui:${mybuild_version}
+    - echo ${docker_name_version}
+    - docker build -t ${docker_name_version} docker_image/
+    - docker login -u ${MUSHINY_DOCKER_REG_USER} -p ${MUSHINY_DOCKER_REG_PASSWORD} reg.mushiny.com
+    - docker push ${docker_name_version}
+  only:
+    - /^docker-release-.*$/
+
+
+docker-build-staging:
+  image: 172.31.2.100:5000/node:alpine
+  stage: build
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  script:
+    - node -v
+    - npm -v
+    - npm config get cache
+    - npm config set registry https://registry.npm.taobao.org
+    - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
+    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    - npm config set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs/
+    - npm config set gifsicle_cdnurl https://npm.taobao.org/mirrors/gifsicle-bin/
+    - npm install cnpm -g
+    - cnpm install
+    - npm run build
+#    - sed -i "s|SSO_API|https://sso-api-dev.mushiny.com|" dist/config.js
+#    - sed -i "s|TRANSLATOR_API|https://translation-api-dev.mushiny.com|" dist/config.js
+
+#  cache:
+#    key: $CI_COMMIT_REF_SLUG
+#    paths:
+#    - node_modules/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 20 minutes
+  only:
+    - dev
+
+package-staging:
+  stage: package
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  services:
+    - name: docker:dind
+      entrypoint: ["dockerd-entrypoint.sh","--insecure-registry=172.31.2.100:5000"]
+
+  script:
+    - docker build -t $CONTAINER_TEST_IMAGE ./
+    - docker push $CONTAINER_TEST_IMAGE
+  only:
+    - dev
+
+release-image-staging:
+  stage: release
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  services:
+    - name: docker:dind
+      entrypoint: ["dockerd-entrypoint.sh","--insecure-registry=172.31.2.100:5000"]
+  script:
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker tag $CONTAINER_TEST_IMAGE $CONTAINER_RELEASE_IMAGE
+    - sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+    - apk add curl
+    - sh clean_old_image.sh 172.31.2.100 5000 $WCS_GUI_PROJECT_NAME latest
+    - docker push $CONTAINER_RELEASE_IMAGE
+  only:
+    - dev
+
+deploy-staging:
+  image: 172.31.2.100:5000/lachlanevenson/k8s-kubectl:latest
+  tags:
+    - production-group-to-dev-k8s-1-14-3
+  stage: deploy
+  environment:
+    name: staging
+    url: https://wms-dev.mushiny.com/
+  only:
+    - dev
+  script:
+    - kubectl version
+    - sed -i "s/__CI_BUILD_REF_SLUG__/${WCS_GUI_PROJECT_NAME}/" deployment.yml ingress.yml service.yml
+    - sed -i "s/_LV2_DOMAIN_NAME_/wcs-gui-all-dev/" ingress.yml
+    - |
+      if kubectl apply -f deployment.yml  --namespace staging | grep -q unchanged; then
+          echo "=> Patching deployment to force image update."
+          kubectl patch  --namespace staging -f deployment.yml -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"ci-last-updated\":\"$(date +'%s')\"}}}}}"
+      else
+          echo "=> Deployment apply has changed the object, no need to force image update."
+      fi
+    - kubectl apply -f deployment.yml --namespace staging
+    - kubectl apply -f service.yml --namespace staging
+    - kubectl apply -f ingress.yml --namespace staging
+    - kubectl rollout status -f deployment.yml --namespace staging
+    - kubectl get all,ing -l app=${WCS_GUI_PROJECT_NAME}

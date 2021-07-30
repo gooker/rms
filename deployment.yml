@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: __CI_BUILD_REF_SLUG__
+#  namespace: staging
+spec:
+  replicas: 2
+  revisionHistoryLimit: 1
+  template:
+    metadata:
+      labels:
+        app: __CI_BUILD_REF_SLUG__
+    spec:
+      containers:
+      - name: __CI_BUILD_REF_SLUG__
+        image: 172.31.2.100:5000/mushiny/__CI_BUILD_REF_SLUG__:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
