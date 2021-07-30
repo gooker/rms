@@ -18,6 +18,10 @@ class MainLayout extends React.Component {
     });
   };
 
+  componentDidMount(){
+   window.parent.postMessage({ type:'appReady', payload:'Sorter-WCS-GUI' }, '*');
+  }
+
   render() {
     const { collapsed } = this.state;
     //   不从Iframe加载

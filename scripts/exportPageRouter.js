@@ -22,7 +22,7 @@ const getPageTree = function (array, parentName) {
   array.forEach((record) => {
     if ((record.routes || record.component) && record.name) {
       const obj = {};
-      obj.key = record.path || record.name;
+      obj.key = record.path || `/${record.name}`;
       let name = 'menu.' + record.name;
       if (parentName != null) {
         name = parentName + '.' + record.name;
@@ -47,7 +47,7 @@ const AuthorityTree = function (array, parentName, appCode) {
   array.forEach((record) => {
     if ((record.routes || record.component) && record.name) {
       const obj = {};
-      obj.key = appCode + (record.path || record.name);
+      obj.key = appCode + (record.path || `/${record.name}`);
       let name = 'menu.' + record.name;
       if (parentName != null) {
         name = parentName + '.' + record.name;
