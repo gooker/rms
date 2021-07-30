@@ -2,6 +2,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Detail from '@/components/TaskDetail/Detail';
+import Loadable from '@/utils/Loadable';
 import { Sorter } from '@/config/router';
 
 export default class Content extends React.PureComponent {
@@ -22,7 +23,13 @@ export default class Content extends React.PureComponent {
         <Switch>
           <Route exact path="/" render={() => <Redirect to="/sorter/center/executionQueue" />} />
           {routesData.map(({ path, component }) => (
-            <Route key={path} exact path={path} component={component} />
+            <Route
+              exact
+              key={path}
+              path={path}
+              // TIP: Loadable 参数不支持变量, 只支持字符串或者字符串模板
+              component={Loadable(() => import(`@/packages${component}`))}
+            />
           ))}
           <Route path="*">404</Route>
         </Switch>
