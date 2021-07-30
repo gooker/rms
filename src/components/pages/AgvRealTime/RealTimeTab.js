@@ -1,10 +1,10 @@
 import React from 'react';
-import { Row, Col, Tag, Popover, Button } from 'antd';
+import { Row, Col, Tag, Popover, Button,Descriptions } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getDirectionLocale, renderAgvStatus, dateFormat } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
-import LabelComponent from '@/components/LabelColComponent.js';
+import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';
 
 const RealTimeTab = (props) => {
@@ -163,6 +163,14 @@ const RealTimeTab = (props) => {
         <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
           {data?.mongodbAGV?.robotId}
         </LabelComponent>
+         {/* IP */}
+         <LabelComponent label={formatMessage({ id: 'app.agv.ip' })}>
+          {data?.mongodbAGV?.ip}
+        </LabelComponent>
+         {/* 端口号 */}
+         <LabelComponent label={formatMessage({ id: 'app.agv.port' })}>
+          {data?.mongodbAGV?.port}
+        </LabelComponent>
 
         {/* 小车类型 */}
         <LabelComponent label={formatMessage({ id: 'app.agv.type' })}>
@@ -172,14 +180,8 @@ const RealTimeTab = (props) => {
         <LabelComponent label={formatMessage({ id: 'app.agv.serverIdentity' })}>
           {data?.mongodbAGV?.clusterIndex}
         </LabelComponent>
-        {/* IP */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.ip' })}>
-          {data?.mongodbAGV?.ip}
-        </LabelComponent>
-        {/* 端口号 */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.port' })}>
-          {data?.mongodbAGV?.port}
-        </LabelComponent>
+       
+       
         {/* 车头方向 所在位置 */}
         <LabelComponent label={formatMessage({ id: 'app.agv.currentCellId' })}>
           {renderAgvDirection()}
@@ -200,14 +202,26 @@ const RealTimeTab = (props) => {
         <LabelComponent label={formatMessage({ id: 'app.agv.manualMode' })}>
           {renderManualMode()}
         </LabelComponent>
+        <LabelComponent
+          label={<FormattedMessage id="app.task.type" />} 
+          children={
+            <span>
+              {data?.redisAGV?.currentTaskType &&
+                formatMessage({
+                  id: Dictionary('agvTaskType', data.redisAGV.currentTaskType),
+                })}
+            </span>
+          }
+        />
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
-          {data?.mongodbAGV?.battery}
-        </LabelComponent>
+       
       </Col>
       <Col span={12}>
         <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
           {data?.mongodbAGV?.batteryVoltage}
+        </LabelComponent>
+        <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
+          {data?.mongodbAGV?.battery}
         </LabelComponent>
         {/* 当前速度 */}
         <LabelComponent label={formatMessage({ id: 'app.agv.speed' })}>
@@ -218,16 +232,11 @@ const RealTimeTab = (props) => {
           {renderManualMode()}
         </LabelComponent>
 
-        <LabelComponent
-          label={<FormattedMessage id="app.task.type" />}
-          children={
-            <span>
-              {data?.redisAGV?.currentTaskType &&
-                formatMessage({
-                  id: Dictionary('agvTaskType', data.redisAGV.currentTaskType),
-                })}
-            </span>
-          }
+         {/************上方货架************/}
+
+         <LabelComponent
+          label={<FormattedMessage id="app.activity.lockedPod" />}
+          children={data.redisAGV && data.redisAGV.lockedPodId ? renderAbovePodContent() : null}
         />
 
         <LabelComponent
@@ -286,12 +295,7 @@ const RealTimeTab = (props) => {
             </span>
           }
         />
-        {/************上方货架************/}
-
-        <LabelComponent
-          label={<FormattedMessage id="app.activity.lockedPod" />}
-          children={data.redisAGV && data.redisAGV.lockedPodId ? renderAbovePodContent() : null}
-        />
+       
         {/************绑定充电桩************/}
 
         <LabelComponent
@@ -308,6 +312,16 @@ const RealTimeTab = (props) => {
                   {data.redisAGV.lockedChargerId}
                 </span>
               </span>
+            ) : null
+          }
+        />
+         {/************锁定目标点************/}
+
+         <LabelComponent
+          label={<FormattedMessage id="app.activity.lockedTargetCells" />}
+          children={
+            data?.redisAGV?.lockedTargetCells && data?.redisAGV?.lockedTargetCells.length > 0 ? (
+              <span>{renderArray(data.redisAGV.lockedTargetCells)}</span>
             ) : null
           }
         />
@@ -328,18 +342,39 @@ const RealTimeTab = (props) => {
           }
         />
 
-        {/************锁定目标点************/}
-
-        <LabelComponent
-          label={<FormattedMessage id="app.activity.lockedTargetCells" />}
-          children={
-            data?.redisAGV?.lockedTargetCells && data?.redisAGV?.lockedTargetCells.length > 0 ? (
-              <span>{renderArray(data.redisAGV.lockedTargetCells)}</span>
-            ) : null
-          }
-        />
+       
       </Col>
+
+      <Descriptions title="User Info" column={2}>
+    <Descriptions.Item label="任务ID:">
+      <span style={{color:'red'}}>23</span>
+    </Descriptions.Item>
+    <Descriptions.Item label="已举升货架:" contentStyle={{color:'pink'}}>1810000000</Descriptions.Item>
+    <Descriptions.Item label="举升货架朝向:">498</Descriptions.Item>
+    <Descriptions.Item label="锁定目标点" span={2}>
+
+    </Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
+  </Descriptions>,
+
     </Row>
+
   );
 };
 
