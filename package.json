@@ -2,6 +2,8 @@
   "name": "wcs-gui-assembly",
   "version": "0.1.0",
   "private": true,
+  "appCode": "sorter",
+  "baseContext": "sorter",
   "main": "index.js",
   "scripts": {
     "start": "node scripts/start.js",

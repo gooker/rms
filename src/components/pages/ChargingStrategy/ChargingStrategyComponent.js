@@ -24,6 +24,7 @@ const ChargingStrategyComponent = (prop) => {
 
   useEffect(() => {
     refresh();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function refresh() {

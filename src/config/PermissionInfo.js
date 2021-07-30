@@ -1,6 +1,6 @@
 const PermissionInfo = [
     {
-        page: '/center/executionQueue', //执行队列
+        page: '/sorter/center/executionQueue', //执行队列
         children: [
           {
             key: '/center/executionQueue/sorter/delete',
@@ -9,7 +9,7 @@ const PermissionInfo = [
         ],
       },
       {
-        page: '/center/taskQueue', //等待
+        page: '/sorter/center/taskQueue', //等待
         children: [
           {
             key: '/center/taskQueue/sorter/delete',
@@ -22,7 +22,7 @@ const PermissionInfo = [
         ],
       },
       {
-        page: '/center/taskManger', //任务查询
+        page: '/sorter/center/taskManger', //任务查询
         children: [
           {
             key: '/center/taskManger/sorter/cancel',

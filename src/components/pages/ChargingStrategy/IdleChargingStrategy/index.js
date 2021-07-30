@@ -38,6 +38,7 @@ const IdleChargingStrategy = (props) => {
         form.setFieldsValue({ idleHoursQuantumDTOS: fieldsValue || [] });
       }
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function submit() {

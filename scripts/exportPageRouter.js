@@ -1,26 +1,28 @@
 const { join } = require('path');
 const babelTransForm = require('./babelTransForm');
-const {writeFile, mkdirSync, exists } = require('fs');
+const { writeFile, mkdirSync, exists } = require('fs');
 
 const distFolderPath = join(__dirname, '../', 'dist');
-const routeFolderPath = babelTransForm(join(__dirname, '../', 'src/config/router/sorter.router.js'));
+const routeFolderPath = babelTransForm(
+  join(__dirname, '../', 'src/config/router/sorter.router.js'),
+);
 const packageInfo = babelTransForm(join(__dirname, '../', './package.json'));
 const menu = babelTransForm(join(__dirname, '../', 'src/locales/zh-CN/menu.js'));
-const permissionInfoFilePath = babelTransForm(join(__dirname, '../', 'src/config/PermissionInfo')) ;
+const permissionInfoFilePath = babelTransForm(join(__dirname, '../', 'src/config/PermissionInfo'));
 
 const permissionInfoMap = {};
-permissionInfoFilePath && permissionInfoFilePath.default.forEach((record) => {
-  permissionInfoMap[record.page] = record;
-});
-
+permissionInfoFilePath &&
+  permissionInfoFilePath.default.forEach((record) => {
+    permissionInfoMap[record.page] = record;
+  });
 
 // 生成菜单树
 const getPageTree = function (array, parentName) {
   const result = [];
   array.forEach((record) => {
-    if ((record.routes || record.component) && record.path) {
+    if ((record.routes || record.component) && record.name) {
       const obj = {};
-      obj.key = record.path;
+      obj.key = record.path || record.name;
       let name = 'menu.' + record.name;
       if (parentName != null) {
         name = parentName + '.' + record.name;
@@ -43,9 +45,9 @@ const getPageTree = function (array, parentName) {
 const AuthorityTree = function (array, parentName, appCode) {
   const result = [];
   array.forEach((record) => {
-    if ((record.routes || record.component) && record.path) {
+    if ((record.routes || record.component) && record.name) {
       const obj = {};
-      obj.key = appCode + record.path;
+      obj.key = appCode + (record.path || record.name);
       let name = 'menu.' + record.name;
       if (parentName != null) {
         name = parentName + '.' + record.name;
@@ -56,7 +58,7 @@ const AuthorityTree = function (array, parentName, appCode) {
       if (record.routes) {
         obj.children = AuthorityTree(record.routes, name, appCode);
       }
-      if (permissionInfoMap[record.path] != null) {
+      if (record.path && permissionInfoMap[record.path] != null) {
         if (obj.children == null) {
           obj.children = [];
         }
@@ -74,20 +76,24 @@ const AuthorityTree = function (array, parentName, appCode) {
   return result;
 };
 
-
 if (routeFolderPath.default && Array.isArray(routeFolderPath.default)) {
   let menu = [];
   let authTree = [];
 
-  routeFolderPath.default.forEach((router) => {
-    const subMenu = getPageTree(router.routes);
-    menu.push(...subMenu);
-  });
+  // routeFolderPath.default.forEach((router) => {
+  //   const subMenu = getPageTree(router.routes);
+  //   menu.push(...subMenu);
+  // });
+  // routeFolderPath.default.forEach((router) => {
+  //   const subAuthTree = AuthorityTree(router.routes, null, packageInfo.appCode);
+  //   authTree.push(...subAuthTree);
+  // });
 
-  routeFolderPath.default.forEach((router) => {
-    const subAuthTree = AuthorityTree(router.routes, null, packageInfo.appCode);
-    authTree.push(...subAuthTree);
-  });
+  const subMenu = getPageTree(routeFolderPath.default);
+  menu.push(...subMenu);
+
+  const subAuthTree = AuthorityTree(routeFolderPath.default, null, packageInfo.appCode);
+  authTree.push(...subAuthTree);
 
   const info = {
     appCode: packageInfo.appCode,
