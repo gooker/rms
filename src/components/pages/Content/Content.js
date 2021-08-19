@@ -3,14 +3,19 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
-import { Sorter } from '@/config/router';
-
+import allMouduleRouter from '@/config/router';
 export default class Content extends React.PureComponent {
   createRoutesByRequire = () => {
     const result = [];
-    Sorter.forEach(({ routes }) => {
-      routes.forEach(({ path, component }) => {
-        result.push({ path, component });
+    Object.values(allMouduleRouter).forEach((item) => {
+      item.forEach(({ routes, path, component }) => {
+        if (routes) {
+          routes.forEach(({ path, component }) => {
+            result.push({ path, component });
+          });
+        } else {
+          result.push({ path, component });
+        }
       });
     });
     return result;

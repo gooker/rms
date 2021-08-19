@@ -1,3 +1,26 @@
 export default {
-    'app.systemParameters.checkeRequiredFields':'表单未完成, 请检查必填项'
+    'app.systemParameters.checkeRequiredFields':'表单未完成, 请检查必填项',
+
+    'app.languageManage.application': '应用',
+    'app.languageManage.displayMode': '显示模式',
+    'app.languageManage.merge': '合并',
+    'app.languageManage.standard': '标准模式',
+    'app.languageManage.custom': '自定义模式',
+
+    'app.languageManage.save': '保存',
+    'app.languageManage.import': '导入',
+    'app.languageManage.export': '导出',
+    'app.languageManage.add': '新增',
+    'app.languageManage.delete': '删除',
+    'app.languageManage.translation': '翻译',
+    'app.languageManage.unsaved': '未保存',
+    'app.languageManage.search': '搜索',
+    'app.languageManage.enterSearchKeywords': '输入搜索关键字',
+    'app.languageManage.onlyShowMissing': '仅显示缺少翻译的条目',
+    'app.languageManage.total': '总计',
+    'app.languageManage.translateFile': '翻译文件',
+    'app.languageManage.chineseNumber': '中文数',
+    'app.languageManage.englishNumber': '英文数',
+    'app.languageManage.status': '状态',
+    'app.languageManage.language': '语言',
 };

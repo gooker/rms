@@ -25,4 +25,6 @@ export default {
   'menu.system': '系统管理',
   'menu.system.chargingStrategy': '充电策略',
   'menu.system.systemParamsManager': '参数列表',
+
+  'menu.languageManage':'翻译管理'
 };
