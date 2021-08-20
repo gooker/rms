@@ -2,7 +2,7 @@ export default [
     {
       path:'/languageManage',
       name: 'languageManage',
-      component: '/Sorter/LanguageManage',
+      component: '/Translator/LanguageManage',
       icon: 'global',
     }
   ];

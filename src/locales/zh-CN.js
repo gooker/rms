@@ -8,6 +8,7 @@ import enumerate from './zh-CN/enumerate';
 import agvRealTime from './zh-CN/agvRealTime';
 import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
+import translator from './zh-CN/Translator/translator';
 
 export default {
   ...menu,
@@ -20,4 +21,5 @@ export default {
   ...agvRealTime,
   ...chargingStrategy,
   ...systemParameters,
+  ...translator
 };

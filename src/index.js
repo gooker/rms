@@ -21,37 +21,11 @@ app.model(taskModel);
 const DvaProvider = app.create();
 
 //   不从Iframe加载
-if (window.self === window.parent) {
   ReactDOM.render(
     <DvaProvider>
-      <Router basename="/sorter">
+      <Router>
         <Portal />
       </Router>
     </DvaProvider>,
     document.getElementById('root'),
   );
-} else {
-  window.addEventListener('message', (event) => {
-    if (window.location.origin !== event.data.origin) {
-      if (event.data.type === 'init') {
-        const { token, nameSpacesInfo, grantedAPP, language, locales, sectionId } = event.data;
-        window.localStorage.setItem('language', language);
-        window.localStorage.setItem('sectionId', sectionId);
-        window.localStorage.setItem('Authorization', token);
-        window.localStorage.setItem('grantedAPP', JSON.stringify(grantedAPP));
-        window.localStorage.setItem('nameSpacesInfo', JSON.stringify(nameSpacesInfo));
-        const localLocales = JSON.parse(locales);
-
-        // TODO: 国际化
-        ReactDOM.render(
-          <DvaProvider>
-            <Router basename="/sorter">
-              <Portal />
-            </Router>
-          </DvaProvider>,
-          document.getElementById('root'),
-        );
-      }
-    }
-  });
-}

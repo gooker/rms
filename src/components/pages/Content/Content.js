@@ -26,7 +26,6 @@ export default class Content extends React.PureComponent {
     return (
       <div id={'layoutContent'} style={{ height: '100%', width: '100%' }}>
         <Switch>
-          <Route exact path="/" render={() => <Redirect to="/sorter/center/executionQueue" />} />
           {routesData.map(({ path, component }) => (
             <Route
               exact
