@@ -1,6 +1,6 @@
 // 所有模块的路由全在此注册
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
 import allMouduleRouter from '@/config/router';
