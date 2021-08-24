@@ -36,7 +36,7 @@ const getColWidth = (columns) => {
       }
     })
     .map((record) => {
-      return record * 0.74;
+      return record * 0.84;
     });
 };
 

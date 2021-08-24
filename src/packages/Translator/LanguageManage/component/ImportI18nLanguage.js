@@ -3,7 +3,7 @@ import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { FormattedMessage } from '@/utils/Lang';
 import XLSX from 'xlsx';
-import { forIn } from 'lodash';
+// import { forIn } from 'lodash';
 
 const Dragger = Upload.Dragger;
 
@@ -50,18 +50,24 @@ export default class ImportI18nLanguage extends Component {
             const sheet1Name = wb.SheetNames[0];
             const sheet1 = wb.Sheets[sheet1Name];
             const languageList = XLSX.utils.sheet_to_json(sheet1);
-            const languageMap = {};
-            languageList.map((record) => {
-              forIn(record, (value, key) => {
-                const languageKey = record['languageKey'];
-                if (key !== 'languageKey') {
-                  if (languageMap[key] == null) {
-                    languageMap[key] = {};
-                  }
-                  languageMap[key][languageKey] = value;
-                }
-              });
+            let languageMap ={}
+            languageList.map((record)=>{
+                const {languageKey,...item}=record;
+               if(languageKey) {
+                languageMap[record["languageKey"]]=item
+               } 
             });
+            // languageList.map((record) => {
+            //   forIn(record, (value, key) => {
+            //     const languageKey = record['languageKey'];
+            //     if (key !== 'languageKey') {
+            //       if (languageMap[key] == null) {
+            //         languageMap[key] = {};
+            //       }
+            //       languageMap[key][languageKey] = value;
+            //     }
+            //   });
+            // });
             onChange(languageMap);
           };
           reader.readAsBinaryString(file);

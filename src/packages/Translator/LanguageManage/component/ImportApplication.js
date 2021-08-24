@@ -75,7 +75,7 @@ export default class ImportApplication extends Component {
             name="languages"
             rules={[{ required: true }]}
           >
-            <ImportI18nLanguage accept={'.xlsx'} />
+            <ImportI18nLanguage accept={'.xlsx,.xls'} />
           </Form.Item>
           <Button
             style={{ margin: '70px 0 0 330px' }}

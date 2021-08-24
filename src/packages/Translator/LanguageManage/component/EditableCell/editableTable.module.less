@@ -1,0 +1,27 @@
+.editableTable {
+  :global {
+    .ant-table-wrapper {
+      table > thead > tr > th {
+        height: 55px;
+        padding: 4px;
+      }
+
+      table > tbody > tr > td {
+        height: 55px;
+        padding: 4px;
+      }
+    }
+
+    .ant-table-tbody > tr.ant-table-row:hover > td {
+      background: #fff;
+    }
+  }
+}
+
+.tableCell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  outline: none;
+}

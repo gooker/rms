@@ -20,7 +20,9 @@ import {
   AppstoreAddOutlined,
   DownOutlined,
 } from '@ant-design/icons';
+import classnames from 'classnames';
 import XLSX from 'xlsx';
+import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
 import { formatMessage } from '@/utils/Lang';
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import { addSysLang, getSysLang, getApplications } from '@/services/translator';
@@ -28,7 +30,7 @@ import ExcelTable from './component/ExcelTable.js';
 import AddSysLang from './component/AddSysLang.js';
 import ImportApplication from './component/ImportApplication';
 import commonStyles from '@/common.module.less';
-import { sortBy, cloneDeep, forIn } from 'lodash';
+import styles from './translator.module.less';
 
 const { Item: FormItem } = Form;
 const modalWidth = adjustModalWidth() * 0.6;
@@ -53,7 +55,7 @@ class LanguageManage extends React.Component {
     ],
     imporVisible: false,
     addLangVisible: false,
-    showLanguage: ['zh-CN', 'en-US'],
+    showLanguage: ['zh-CN', 'en-US','ko-KR','vi-VN'],
     allLanguage: [
       {
         type: 'zh-CN',
@@ -211,7 +213,6 @@ class LanguageManage extends React.Component {
       return {
         ...record_,
         ...record_.languageMap,
-        uniqueKey: index,
       };
     });
     return showData_;
@@ -259,7 +260,7 @@ class LanguageManage extends React.Component {
     return result;
   };
 
-  //
+  //导出
   exportExecl = (type) => {
     const { standardData, customData, mergeData, appCode } = this.state;
     const { key } = type;
@@ -276,6 +277,7 @@ class LanguageManage extends React.Component {
       standard: formatMessage({ id: 'translator.languageManage.standard' }),
       custom: formatMessage({ id: 'translator.languageManage.custom' }),
     };
+    // todo 手动新增的语言 此时languageMap没有此key???
     const data_ = allShowData.map((record) => {
       return {
         languageKey: record.languageKey,
@@ -290,10 +292,26 @@ class LanguageManage extends React.Component {
 
   // 导入
   importApplicate = (data) => {
-    const obj = {};
+    const notEqual = {};
+    const currentObj = {};
     const { standardData } = this.state;
     standardData.map((record) => {
-      obj[record.languageKey] = record.languageMap;
+      currentObj[record.languageKey] = record.languageMap;
+    });
+    // 找到不同的
+    const importObj = data.languages;
+    // 1.导入的数据 找到之前不存在的key
+    forIn(importObj, (value, key) => {
+      // 源数据存在key
+      if (currentObj[key]) {
+        // 1.改变 2.没改变
+        if (!isEqual(currentObj[key], value)) {
+          notEqual[key] = importObj[key];
+        }
+      } else {
+        // 源数据不存在 一定是新增的
+        notEqual[key] = value;
+      }
     });
   };
 
@@ -326,8 +344,8 @@ class LanguageManage extends React.Component {
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
-      <div className={commonStyles.globalPageStyle}>
-        <div>
+      <div className={classnames(commonStyles.globalPageStyle, styles.translator)}>
+        <>
           <Row>
             <Col>
               <FormItem
@@ -376,9 +394,10 @@ class LanguageManage extends React.Component {
             </Col>
           </Row>
           <Row>
-            <Col span={4}>
+            <Col>
               <FormItem label={formatMessage({ id: 'translator.languageManage.application' })}>
                 <Select
+                   style={{width:'190px'}}
                   value={appCode}
                   onChange={this.handleApplication}
                   dropdownRender={(menu) => (
@@ -387,7 +406,7 @@ class LanguageManage extends React.Component {
                       <Divider style={{ margin: '4px 0' }} />
                       <div style={{ display: 'flex', flexWrap: 'nowrap' }}>
                         <Button
-                          style={{ marginLeft: 'auto', textAlign: 'right' }}
+                          style={{ margin: '0 auto', textAlign: 'center' }}
                           type="link"
                           icon={<AppstoreAddOutlined />}
                           onClick={() => {
@@ -409,30 +428,7 @@ class LanguageManage extends React.Component {
               </FormItem>
             </Col>
 
-            <Col flex="none" offset={1}>
-              <FormItem label={formatMessage({ id: 'app.button.search' })}>
-                <Input
-                  allowClear
-                  placeholder={formatMessage({
-                    id: 'translator.languageManage.enterSearchKeywords',
-                  })}
-                  onChange={({ target: { value } }) => {
-                    this.setState({ filterValue: value }, this.generateFilterLanguage);
-                  }}
-                />
-              </FormItem>
-            </Col>
-            <Col offset={1}>
-              <Checkbox
-                value={toggle}
-                onChange={({ target: { checked } }) => {
-                  this.setState({ toggle: checked }, this.generateFilterLanguage);
-                }}
-              >
-                {formatMessage({ id: 'translator.languageManage.onlyShowMissing' })}
-              </Checkbox>
-            </Col>
-            <Col flex="auto" className={commonStyles.textRight}>
+            <Col flex="auto">
               <Button
                 style={{ margin: '0 20px 0 20px' }}
                 icon={<ImportOutlined />}
@@ -468,7 +464,7 @@ class LanguageManage extends React.Component {
 
               <Button
                 style={{ marginLeft: 20 }}
-                disabled={isNull(appCode)}
+                disabled={isNull(appCode) && editList.length === 0}
                 type="primary"
                 onClick={() => {
                   const { dispatch } = this.props;
@@ -487,8 +483,34 @@ class LanguageManage extends React.Component {
               </Button>
             </Col>
           </Row>
-        </div>
-        <div style={{ marginTop: 20 }}>
+          <Row>
+            <Col>
+              <FormItem label={formatMessage({ id: 'app.button.search' })}>
+                <Input
+                  allowClear
+                  placeholder={formatMessage({
+                    id: 'translator.languageManage.enterSearchKeywords',
+                  })}
+                  onChange={({ target: { value } }) => {
+                    this.setState({ filterValue: value }, this.generateFilterLanguage);
+                  }}
+                />
+              </FormItem>
+            </Col>
+            <Col offset={1}>
+              <Checkbox
+                value={toggle}
+                onChange={({ target: { checked } }) => {
+                  this.setState({ toggle: checked }, this.generateFilterLanguage);
+                }}
+              >
+                {formatMessage({ id: 'translator.languageManage.onlyShowMissing' })}
+              </Checkbox>
+            </Col>
+          </Row>
+        </>
+        <Divider></Divider>
+        <>
           <Row>
             <Col>
               <FormItem
@@ -526,13 +548,14 @@ class LanguageManage extends React.Component {
                 } else {
                   currentlist = { ...editList, ...newDatasource };
                 }
+                // console.log('edit', currentlist);
                 this.setState({
                   editList: currentlist,
                 });
               }}
             />
           </Row>
-        </div>
+        </>
 
         {/*新增语言  */}
         <Modal
