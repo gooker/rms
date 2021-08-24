@@ -1,7 +1,8 @@
 import SorterRouter from './sorter.router';
 import TranslatorRouter from './i18n.router';
+import { AppCode } from '@/config/config';
 
 export default {
-  I18N: TranslatorRouter,
-  Sorter: SorterRouter,
+  [AppCode.I18N]: TranslatorRouter,
+  [AppCode.Sorter]: SorterRouter,
 };

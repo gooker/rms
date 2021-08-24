@@ -11,24 +11,24 @@ export const AGVType = {
   Sorter: 'Sorter',
 };
 
-// 模块编码
+// 前端模块编码
 export const AppCode = {
   Mixrobot: 'Mixrobot',
-  LatentLifting: 'LatentLifting',
-  Tote: 'Tote',
-  ForkLifting: 'ForkLifting',
-  Sorter: 'Sorter',
   SSO: 'SSO',
   I18N: 'I18N',
+  [AGVType.LatentLifting]: 'LatentLifting',
+  [AGVType.Tote]: 'Tote',
+  [AGVType.ForkLifting]: 'ForkLifting',
+  [AGVType.Sorter]: 'Sorter',
 };
 
 // 各类车型的API namespace
 export const NameSpace = {
-  Coordinator: 'coordinator',
-  SSO: 'sso',
+  [AppCode.Mixrobot]: 'coordinator',
+  [AppCode.SSO]: 'sso',
+  [AppCode.I18N]: 'translation',
   [AGVType.LatentLifting]: 'latent-lifting',
   [AGVType.Tote]: 'tote',
   [AGVType.ForkLifting]: 'forklift',
-  [AGVType.Sorter]: 'sorter',
   [AGVType.Sorter]: 'sorter',
 };

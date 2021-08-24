@@ -1,9 +1,8 @@
 export default [
-    {
-      path:'/languageManage',
-      name: 'languageManage',
-      component: '/Translator/LanguageManage',
-      icon: 'global',
-    }
-  ];
-  
+  {
+    path: '/i18n/languageManage',
+    name: 'languageManage',
+    component: '/Translator/LanguageManage',
+    icon: 'global',
+  },
+];

@@ -3,7 +3,8 @@ import { Table, Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchAgvList, fetchDeleteAgvList, fetchMoveoutAGVs } from '@/services/api';
-import { dealResponse, isNull, exportAgvModuleInfo, exportAgvInfo } from '@/utils/utils';
+import { dealResponse, isNull } from '@/utils/utils';
+import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtils';
 import LabelComponent from '@/components/LabelComponent';
 import Dictionary from '@/utils/Dictionary';
 import TablePageWrapper from '@/components/TablePageWrapper';
