@@ -4,17 +4,17 @@ export default [
     icon: 'icon-task',
     routes: [
       {
-        path: '/center/executionQueue',
+        path: '/sorter/center/executionQueue',
         name: 'executionQueue',
         component: '/Sorter/ExecutionQueue',
       },
       {
-        path: '/center/taskQueue',
+        path: '/sorter/center/taskQueue',
         name: 'taskQueue',
         component: '/Sorter/TaskQueue',
       },
       {
-        path: '/center/taskManger',
+        path: '/sorter/center/taskManger',
         name: 'taskManger',
         component: '/Sorter/TaskLibrary',
       },
@@ -25,22 +25,22 @@ export default [
     icon: 'car',
     routes: [
       {
-        path: '/agv/agvList',
+        path: '/sorter/agv/agvList',
         name: 'agvList',
         component: '/Sorter/AgvList',
       },
       {
-        path: '/agv/agvRealTime',
+        path: '/sorter/agv/agvRealTime',
         name: 'agvRealTime',
         component: '/Sorter/AgvRealTime',
       },
       // {
-      //   path: '/agv/firmwareUpgrade',
+      //   path: '/sorter/agv/firmwareUpgrade',
       //   name: 'firmwareUpgrade',
       //   component: /Sorter/FirmwareUpgrade,
       // },
       // {
-      //   path: '/agv/logDownLoad',
+      //   path: '/sorter/agv/logDownLoad',
       //   name: 'logDownLoad',
       //   component: /Sorter/LogDownLoad,
       // },
@@ -52,12 +52,12 @@ export default [
   //   name: 'faultManger',
   //   routes: [
   //     {
-  //       path: '/faultManger/faultList',
+  //       path: '/sorter/faultManger/faultList',
   //       name: 'faultList',
   //       component: /Sorter/FaultList,
   //     },
   //     {
-  //       path: '/faultManger/faultDefinition',
+  //       path: '/sorter/faultManger/faultDefinition',
   //       name: 'faultDefinition',
   //       component: /Sorter/FaultDefinition,
   //     },
@@ -68,22 +68,22 @@ export default [
   //   name: 'formManger',
   //   routes: [
   //     {
-  //       path: '/formManger/reportCenter',
+  //       path: '/sorter/formManger/reportCenter',
   //       name: 'reportCenter',
   //       component: /Sorter/ReportCenter,
   //     },
   //     {
-  //       path: '/formManger/taskKpi',
+  //       path: '/sorter/formManger/taskKpi',
   //       name: 'taskKpi',
   //       component: /Sorter/TaskKpi,
   //     },
   //     {
-  //       path: '/formManger/waitingKpi',
+  //       path: '/sorter/formManger/waitingKpi',
   //       name: 'waitingKpi',
   //       component: /Sorter/WaitingKpi,
   //     },
   //     {
-  //       path: '/formManger/metadata',
+  //       path: '/sorter/formManger/metadata',
   //       name: 'metadata',
   //       component:/Sorter/Metadata,
   //     },
@@ -94,12 +94,12 @@ export default [
     icon: 'setting',
     routes: [
       {
-        path: '/system/systemParamsManager',
+        path: '/sorter/system/systemParamsManager',
         name: 'systemParamsManager',
         component: '/Sorter/SystemParamsManager',
       },
       {
-        path: '/system/chargingStrategy',
+        path: '/sorter/system/chargingStrategy',
         name: 'chargingStrategy',
         component: '/Sorter/ChargingStrategy',
       },
