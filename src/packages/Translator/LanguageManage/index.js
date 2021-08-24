@@ -29,7 +29,6 @@ import AddSysLang from './component/AddSysLang.js';
 import ImportApplication from './component/ImportApplication';
 import commonStyles from '@/common.module.less';
 import _ from 'lodash';
-// import styles from './translator.module.less';
 
 const { Item: FormItem } = Form;
 const modalWidth = adjustModalWidth() * 0.6;
@@ -107,6 +106,9 @@ class LanguageManage extends React.Component {
         },
       ],
     },
+    standardData: [],
+    customData: [],
+    mergeData: [],
     editList: {},
     filterValue: null,
     toggle: false,
@@ -115,7 +117,30 @@ class LanguageManage extends React.Component {
   componentDidMount() {
     // this.getSysLanguage();
     // this.getSysApplications();
-    // 处理数据 
+    // 处理3种状态的初始化数据
+    const { dataList } = this.state;
+    const standardData = dataList['standard'];
+    const customData = dataList['custom'];
+    const mergeData = [...standardData].map((item) => {
+      let item_ = { ...item };
+      const record_ = customData.filter((record) => item_.languageKey === record.languageKey);
+      if (record_.length > 0) {
+        item_ = record_[0];
+      }
+      return item_;
+    });
+
+    this.setState({
+      standardData: _.sortBy(standardData, (o) => {
+        return o.languageKey;
+      }),
+      customData: _.sortBy(customData, (o) => {
+        return o.languageKey;
+      }),
+      mergeData: _.sortBy(mergeData, (o) => {
+        return o.languageKey;
+      }),
+    });
   }
 
   onModeChange = (e) => {
@@ -167,7 +192,7 @@ class LanguageManage extends React.Component {
         columns.push({
           title: record,
           dataIndex: record,
-          readOnly: displayMode === 'standard' ? true : false,
+          readOnly: displayMode === 'merge' ? false : true,
         });
       });
     }
@@ -175,31 +200,23 @@ class LanguageManage extends React.Component {
   };
 
   generateData = () => {
-    const { displayMode, dataList, editList } = this.state;
-    const deepList = _.cloneDeep(dataList);
-    let currentData = [];
+    const { displayMode, standardData, customData, mergeData, editList } = this.state;
+    let allShowData = [];
     if (displayMode === 'merge') {
-      const standard = deepList['standard'];
-      const custom = deepList['custom'];
-      currentData = standard.map((item) => {
-        const item_ = { ...item };
-        return _.assign(
-          item_,
-          custom.find((record) => {
-            return record && item_.languageKey === record.languageKey;
-          }),
-        );
-      });
+      allShowData = mergeData;
+    } else if (displayMode === 'standard') {
+      allShowData = standardData;
     } else {
-      currentData = deepList[displayMode];
+      allShowData = customData;
     }
-    const data_ = _.sortBy(currentData, (o) => {
-      return o.languageKey;
-    });
 
-    const allLanguage = data_.map((record, index) => {
-      let record_ = record;
-      if (editList && editList[record.languageKey] && displayMode !== 'standard') {
+    const showData_ = _.cloneDeep(allShowData).map((record, index) => {
+      let record_ = { ...record };
+      if (
+        displayMode === 'merge' &&
+        editList &&
+        Object.keys(editList).includes(record.languageKey)
+      ) {
         record_ = editList[record.languageKey];
       }
 
@@ -209,12 +226,13 @@ class LanguageManage extends React.Component {
         uniqueKey: index,
       };
     });
-    return allLanguage;
+    return showData_;
   };
 
   // 语种变化 应用变化 搜索 最后都调用此放大
   generateFilterLanguage = () => {
     const dataSorce = this.generateData();
+
     const { filterValue, showLanguage, toggle } = this.state;
     const obj = {};
     this.generateColumns().map((record) => {
@@ -254,7 +272,6 @@ class LanguageManage extends React.Component {
   };
 
   submitLanguage = async (value) => {
-    console.log(value);
     const response = await addSysLang(value);
     if (!dealResponse(response)) {
       this.getSysLanguage();
@@ -279,9 +296,9 @@ class LanguageManage extends React.Component {
       imporVisible,
       toggle,
       editList,
+      mergeData,
     } = this.state;
-    let filterLanguage = [];
-    filterLanguage = this.generateFilterLanguage();
+    const filterLanguage = this.generateFilterLanguage() || [];
     return (
       <div className={commonStyles.globalPageStyle}>
         <Card>
@@ -326,7 +343,9 @@ class LanguageManage extends React.Component {
                   this.setState({ showLocalUpdateHistroy: true });
                 }}
               >
-                {formatMessage({ id: 'translator.languageManage.unsaved' })}:
+                {`${formatMessage({ id: 'translator.languageManage.unsaved' })} :
+                   ${Object.keys(editList).length}
+                  `}
               </Button>
             </Col>
           </Row>
@@ -471,11 +490,18 @@ class LanguageManage extends React.Component {
               uniqueKey={'languageKey'}
               dataSource={filterLanguage}
               columns={this.generateColumns()}
-              onChange={(newDatasource) => {
+              mergeData={mergeData}
+              onChange={(newDatasource, flag) => {
                 // 应该全部比较 全不同才是对的
-                const currentlist = { ...editList, ...newDatasource };
+                const key = Object.keys(newDatasource);
+                let currentlist = { ...editList };
+                if (flag && key) {
+                  delete currentlist[key[0]];
+                } else {
+                  currentlist = { ...editList, ...newDatasource };
+                }
                 this.setState({
-                  editList: { ...editList, ...newDatasource },
+                  editList: currentlist,
                 });
               }}
             />

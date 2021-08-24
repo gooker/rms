@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Radio, Button, Select } from 'antd';
 import { formatMessage } from '@/utils/Lang';
-import ImportI18nLanguage from './ImportI18nLanguage'
+import ImportI18nLanguage from './ImportI18nLanguage';
 
 const formItemLayout = {
   labelCol: {
@@ -58,8 +58,7 @@ export default class ImportApplication extends Component {
             name="displayMode"
             label={formatMessage({ id: 'translator.languageManage.displayMode' })}
             initialValue={displayMode}
-            rules={[{ required: true }]
-          }
+            rules={[{ required: true }]}
           >
             <Radio.Group onChange={this.onModeChange}>
               <Radio value="standard">
@@ -71,12 +70,12 @@ export default class ImportApplication extends Component {
             </Radio.Group>
           </Form.Item>
 
-          <Form.Item 
-          label={formatMessage({ id: "translator.languageManage.langFile"})} 
-              name='languages'
-               rules={[{ required: true}]} 
+          <Form.Item
+            label={formatMessage({ id: 'translator.languageManage.langFile' })}
+            name="languages"
+            rules={[{ required: true }]}
           >
-            <ImportI18nLanguage accept={'.xlsx'}/>
+            <ImportI18nLanguage accept={'.xlsx'} />
           </Form.Item>
           <Button
             style={{ margin: '70px 0 0 330px' }}

@@ -12,7 +12,6 @@ export default class ImportI18nLanguage extends Component {
         fileList:[],
     }   
   render() {
-      const {fileList}=this.state;
     const { accept,analyzeFunction, remove, onChange, styles = {} } = this.props;
     const props = {
       name: 'file',
@@ -47,7 +46,6 @@ export default class ImportI18nLanguage extends Component {
         }
 
         if (onChange) {
-            debugger
           const reader = new FileReader();
 
           reader.onload = function (evt) {
