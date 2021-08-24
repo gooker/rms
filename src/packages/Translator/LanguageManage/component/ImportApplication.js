@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Form, Radio, Button, Select } from 'antd';
 import { formatMessage } from '@/utils/Lang';
+import ImportI18nLanguage from './ImportI18nLanguage'
 
 const formItemLayout = {
   labelCol: {
@@ -13,7 +14,16 @@ const formItemLayout = {
 
 export default class ImportApplication extends Component {
   formRef = React.createRef();
-  
+  state = {
+    displayMode: 'standard',
+  };
+
+  onModeChange = (e) => {
+    this.setState({
+      displayMode: e.target.value,
+    });
+  };
+
   onSubmitApplicate = () => {
     const { validateFields } = this.formRef.current;
     const { onAddApplicate } = this.props;
@@ -23,17 +33,56 @@ export default class ImportApplication extends Component {
   };
 
   render() {
+    const { appList, appCode } = this.props;
+    const { displayMode } = this.state;
     return (
       <div>
         <Form {...formItemLayout} ref={this.formRef}>
           <Form.Item
-            name="type"
-            label={formatMessage({ id: 'translator.languageManage.langtype' })}
-            rules={[{ required: true, validator: this.typeValidator }]}
+            name="appCode"
+            label={formatMessage({ id: 'translator.languageManage.application' })}
+            initialValue={appCode}
+            rules={[{ required: true }]}
           >
-            <Input />
+            <Select disabled={true}>
+              {appList.map((record) => {
+                return (
+                  <Select.Option key={record.code} value={record.code}>
+                    {record.name}
+                  </Select.Option>
+                );
+              })}
+            </Select>
           </Form.Item>
-          <Button style={{ margin: '70px 0 0 330px' }} onClick={this.onSubmitApplicate} type="primary">
+          <Form.Item
+            name="displayMode"
+            label={formatMessage({ id: 'translator.languageManage.displayMode' })}
+            initialValue={displayMode}
+            rules={[{ required: true }]
+          }
+          >
+            <Radio.Group onChange={this.onModeChange}>
+              <Radio value="standard">
+                {formatMessage({ id: 'translator.languageManage.standard' })}
+              </Radio>
+              <Radio value="custom">
+                {formatMessage({ id: 'translator.languageManage.custom' })}
+              </Radio>
+            </Radio.Group>
+          </Form.Item>
+
+          <Form.Item 
+          label={formatMessage({ id: "translator.languageManage.langFile"})} 
+              name='languages'
+               rules={[{ required: true}]} 
+          >
+            <ImportI18nLanguage accept={'.xlsx'}/>
+          </Form.Item>
+          <Button
+            style={{ margin: '70px 0 0 330px' }}
+            onClick={this.onSubmitApplicate}
+            type="primary"
+          >
             {formatMessage({ id: 'app.button.save' })}
           </Button>
         </Form>

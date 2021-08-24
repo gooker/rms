@@ -11,6 +11,7 @@ export default {
     'translator.languageManage.addlanguage': '新增语言',
     'translator.languageManage.addapplication': '新增应用',
     'translator.languageManage.langtype': '语种类型',
+    'translator.languageManage.langFile': '文件',
     'translator.languageManage.langname': '名称',
     'translator.languageManage.langtypeValidate': '只能是字母 下划线',
 }

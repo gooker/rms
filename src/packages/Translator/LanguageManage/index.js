@@ -22,15 +22,18 @@ import {
   DownOutlined,
 } from '@ant-design/icons';
 import { formatMessage } from '@/utils/Lang';
-import { dealResponse, isNull, adjustModalWidth } from '@/utils/utils';
+import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import { addSysLang, getSysLang, getApplications } from '@/services/translator';
+import ExcelTable from './component/ExcelTable.js';
 import AddSysLang from './component/AddSysLang.js';
 import ImportApplication from './component/ImportApplication';
 import commonStyles from '@/common.module.less';
+import _ from 'lodash';
 // import styles from './translator.module.less';
 
 const { Item: FormItem } = Form;
 const modalWidth = adjustModalWidth() * 0.6;
+
 class LanguageManage extends React.Component {
   state = {
     displayMode: 'merge',
@@ -51,7 +54,7 @@ class LanguageManage extends React.Component {
     ],
     imporVisible: false,
     addLangVisible: false,
-    showLanguage: [],
+    showLanguage: ['zh-CN', 'en-US'],
     allLanguage: [
       {
         type: 'zh-CN',
@@ -70,11 +73,49 @@ class LanguageManage extends React.Component {
         name: 'vi-VN',
       },
     ],
+    dataList: {
+      standard: [
+        {
+          languageKey: 'wcs.wcsException.task.redoErrorStatusError',
+          languageMap: {
+            'en-US': 'Tasks is neither cancelled nor completed and cannot be redone',
+            'ko-KR': '작업은 취소도 아니고, 완성된 상태도 아니므로, 다시 할 수 없다',
+            'vi-VN':
+              'Nhiệm vụ không bị hủy bỏ cũng không được hoàn thành và không thể được thực hiện lại',
+            'zh-CN': '任务既不是取消,也不是完成状态，不能重做',
+          },
+        },
+        {
+          languageKey: 'wcs.agvErrorDefinition.7002.errorName',
+          languageMap: {
+            'zh-CN': '电量异常',
+            'en-US': 'Battery Level Abnormal',
+            'ko-KR': '전기량 이상',
+            'vi-VN': 'Mức Pin bất thường',
+          },
+        },
+      ],
+      custom: [
+        {
+          languageKey: 'wcs.wcsException.task.redoErrorStatusError',
+          languageMap: {
+            'en-US': 'Tasks is neithe',
+            'ko-KR': '작업은 취소도 아',
+            'vi-VN': 'Nhiệm vụ không bị hủy',
+            'zh-CN': '任务既',
+          },
+        },
+      ],
+    },
+    editList: {},
+    filterValue: null,
+    toggle: false,
   };
 
   componentDidMount() {
     // this.getSysLanguage();
     // this.getSysApplications();
+    // 处理数据 
   }
 
   onModeChange = (e) => {
@@ -99,6 +140,119 @@ class LanguageManage extends React.Component {
     }
   };
 
+  getDifferenceObj = (object, base) => {
+    function changes(object, base) {
+      return _.transform(object, function (result, value, key) {
+        if (!_.isEqual(value, base[key])) {
+          result[key] =
+            _.isObject(value) && _.isObject(base[key]) ? changes(value, base[key]) : value;
+        }
+      });
+    }
+    return changes(object, base);
+  };
+
+  generateColumns = () => {
+    const { showLanguage, displayMode } = this.state;
+    const columns = [
+      {
+        title: 'KEY',
+        width: 0.3,
+        dataIndex: 'languageKey',
+        readOnly: true,
+      },
+    ];
+    if (showLanguage.length !== 0) {
+      showLanguage.map((record) => {
+        columns.push({
+          title: record,
+          dataIndex: record,
+          readOnly: displayMode === 'standard' ? true : false,
+        });
+      });
+    }
+    return columns;
+  };
+
+  generateData = () => {
+    const { displayMode, dataList, editList } = this.state;
+    const deepList = _.cloneDeep(dataList);
+    let currentData = [];
+    if (displayMode === 'merge') {
+      const standard = deepList['standard'];
+      const custom = deepList['custom'];
+      currentData = standard.map((item) => {
+        const item_ = { ...item };
+        return _.assign(
+          item_,
+          custom.find((record) => {
+            return record && item_.languageKey === record.languageKey;
+          }),
+        );
+      });
+    } else {
+      currentData = deepList[displayMode];
+    }
+    const data_ = _.sortBy(currentData, (o) => {
+      return o.languageKey;
+    });
+
+    const allLanguage = data_.map((record, index) => {
+      let record_ = record;
+      if (editList && editList[record.languageKey] && displayMode !== 'standard') {
+        record_ = editList[record.languageKey];
+      }
+
+      return {
+        ...record_,
+        ...record_.languageMap,
+        uniqueKey: index,
+      };
+    });
+    return allLanguage;
+  };
+
+  // 语种变化 应用变化 搜索 最后都调用此放大
+  generateFilterLanguage = () => {
+    const dataSorce = this.generateData();
+    const { filterValue, showLanguage, toggle } = this.state;
+    const obj = {};
+    this.generateColumns().map((record) => {
+      if (record.dataIndex) {
+        obj[record.dataIndex] = true;
+      }
+    });
+    let result = [];
+    if (!isStrictNull(filterValue) && !isStrictNull(filterValue.trim())) {
+      result = dataSorce.filter((record) => {
+        let flag = false;
+        _.forIn(record, (value, key) => {
+          if (obj[key]) {
+            if (value.toLocaleUpperCase().indexOf(filterValue.trim().toLocaleUpperCase()) !== -1) {
+              flag = true;
+            }
+          }
+        });
+        return flag;
+      });
+    } else {
+      result = dataSorce;
+    }
+    if (toggle) {
+      result = result.filter((record) => {
+        let flag = false;
+        for (let index = 0; index < showLanguage.length; index++) {
+          const element = showLanguage[index];
+          if (isStrictNull(record[element])) {
+            flag = true;
+          }
+        }
+        return flag;
+      });
+    }
+    return result;
+  };
+
   submitLanguage = async (value) => {
     console.log(value);
     const response = await addSysLang(value);
@@ -116,7 +270,18 @@ class LanguageManage extends React.Component {
   };
 
   render() {
-    const { showLanguage, allLanguage, appCode, appList, displayMode, imporVisible } = this.state;
+    const {
+      showLanguage,
+      allLanguage,
+      appCode,
+      appList,
+      displayMode,
+      imporVisible,
+      toggle,
+      editList,
+    } = this.state;
+    let filterLanguage = [];
+    filterLanguage = this.generateFilterLanguage();
     return (
       <div className={commonStyles.globalPageStyle}>
         <Card>
@@ -214,7 +379,7 @@ class LanguageManage extends React.Component {
             </Col>
             <Col offset={1}>
               <Checkbox
-                value="0"
+                value={toggle}
                 onChange={({ target: { checked } }) => {
                   this.setState({ toggle: checked }, this.generateFilterLanguage);
                 }}
@@ -300,10 +465,21 @@ class LanguageManage extends React.Component {
             </Col>
           </Row>
 
-          <p>Card content</p>
-          <p>Card content</p>
-          <p>Card content</p>
-          <p>Card content</p>
+          <Row style={{ marginTop: 5 }}>
+            <ExcelTable
+              loading={false}
+              uniqueKey={'languageKey'}
+              dataSource={filterLanguage}
+              columns={this.generateColumns()}
+              onChange={(newDatasource) => {
+                // 应该全部比较 全不同才是对的
+                const currentlist = { ...editList, ...newDatasource };
+                this.setState({
+                  editList: { ...editList, ...newDatasource },
+                });
+              }}
+            />
+          </Row>
         </Card>
 
         {/*新增语言  */}
@@ -334,7 +510,7 @@ class LanguageManage extends React.Component {
             });
           }}
         >
-          <ImportApplication />
+          <ImportApplication appList={appList} appCode={appCode} />
         </Modal>
       </div>
     );

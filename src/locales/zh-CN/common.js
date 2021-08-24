@@ -138,4 +138,7 @@ export default {
   'app.common.day': '天',
   'app.common.hours': '时',
   'app.common.minutes': '分',
+
+  //
+  'app.commom.upload.dragUploadedFileToThisArea': '将上传的文件单击或拖拽到此区域',
 };
