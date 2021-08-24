@@ -1,17 +1,20 @@
 import React, { Component } from 'react';
 import 'handsontable/dist/handsontable.full.css';
 import { HotTable } from '@handsontable/react';
-import _ from 'lodash';
+import { isEqual, map } from 'lodash';
+import { Empty } from 'antd';
+
 const width = document.body.clientWidth * 0.9;
+const height = document.body.clientHeight - 376;
 
 const getHeader = (columns) => {
-  const excelHeader = _.map(columns, (record) => {
+  const excelHeader = map(columns, (record) => {
     return record.title;
   });
   return excelHeader;
 };
 const getColumns = (columns, data) => {
-  return _.map(columns, (record) => {
+  return map(columns, (record) => {
     return {
       data: record.dataIndex,
       readOnly: record.readOnly,
@@ -45,18 +48,16 @@ export default class ExcelTable extends Component {
         <HotTable
           licenseKey={'non-commercial-and-evaluation'}
           data={dataSource}
-          colHeaders={true}
           rowHeaders={true}
           width={width}
+          height={height}
           columns={getColumns(columns, editList)}
-          // eslint-disable-next-line react/jsx-no-duplicate-props
           colHeaders={getHeader(columns)}
           colWidths={getColWidth(columns)}
           autoColumnSize={true}
-          height="600"
-          manualColumnMove={true}
+          manualColumnMove={false}
           manualRowMove={true}
-          manualRowResize={true}
+          manualRowResize={false}
           afterChange={(changes) => {
             if (changes != null && onChange) {
               const result = {};
@@ -72,7 +73,7 @@ export default class ExcelTable extends Component {
                   result[key] = currentValue;
                   const originalRow = mergeData.find((item) => item.languageKey === key);
                   if (originalRow) {
-                    flag = _.isEqual(currentValue.languageMap, originalRow.languageMap);
+                    flag = isEqual(currentValue.languageMap, originalRow.languageMap);
                   }
                 }
               });
@@ -82,6 +83,9 @@ export default class ExcelTable extends Component {
             return true;
           }}
         />
+        {dataSource.length === 0 ? (
+          <Empty style={{ position: 'absolute', margin: '0 auto', top: '50%', left: '45%' }} />
+        ) : null}
       </>
     );
   }

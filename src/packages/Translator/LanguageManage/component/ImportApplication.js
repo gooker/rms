@@ -26,9 +26,9 @@ export default class ImportApplication extends Component {
 
   onSubmitApplicate = () => {
     const { validateFields } = this.formRef.current;
-    const { onAddApplicate } = this.props;
+    const { importApplicate } = this.props;
     validateFields().then((allValues) => {
-      onAddApplicate(allValues);
+      importApplicate(allValues);
     });
   };
 

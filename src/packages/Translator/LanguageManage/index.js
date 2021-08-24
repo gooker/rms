@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Row,
   Col,
-  Card,
   Form,
   Select,
   Button,
@@ -21,6 +20,7 @@ import {
   AppstoreAddOutlined,
   DownOutlined,
 } from '@ant-design/icons';
+import XLSX from 'xlsx';
 import { formatMessage } from '@/utils/Lang';
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import { addSysLang, getSysLang, getApplications } from '@/services/translator';
@@ -28,7 +28,7 @@ import ExcelTable from './component/ExcelTable.js';
 import AddSysLang from './component/AddSysLang.js';
 import ImportApplication from './component/ImportApplication';
 import commonStyles from '@/common.module.less';
-import _ from 'lodash';
+import { sortBy, cloneDeep, forIn } from 'lodash';
 
 const { Item: FormItem } = Form;
 const modalWidth = adjustModalWidth() * 0.6;
@@ -131,13 +131,13 @@ class LanguageManage extends React.Component {
     });
 
     this.setState({
-      standardData: _.sortBy(standardData, (o) => {
+      standardData: sortBy(standardData, (o) => {
         return o.languageKey;
       }),
-      customData: _.sortBy(customData, (o) => {
+      customData: sortBy(customData, (o) => {
         return o.languageKey;
       }),
-      mergeData: _.sortBy(mergeData, (o) => {
+      mergeData: sortBy(mergeData, (o) => {
         return o.languageKey;
       }),
     });
@@ -163,18 +163,6 @@ class LanguageManage extends React.Component {
     if (!dealResponse(moduleData)) {
       this.setState({ appList: moduleData });
     }
-  };
-
-  getDifferenceObj = (object, base) => {
-    function changes(object, base) {
-      return _.transform(object, function (result, value, key) {
-        if (!_.isEqual(value, base[key])) {
-          result[key] =
-            _.isObject(value) && _.isObject(base[key]) ? changes(value, base[key]) : value;
-        }
-      });
-    }
-    return changes(object, base);
   };
 
   generateColumns = () => {
@@ -210,7 +198,7 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
 
-    const showData_ = _.cloneDeep(allShowData).map((record, index) => {
+    const showData_ = cloneDeep(allShowData).map((record, index) => {
       let record_ = { ...record };
       if (
         displayMode === 'merge' &&
@@ -244,7 +232,7 @@ class LanguageManage extends React.Component {
     if (!isStrictNull(filterValue) && !isStrictNull(filterValue.trim())) {
       result = dataSorce.filter((record) => {
         let flag = false;
-        _.forIn(record, (value, key) => {
+        forIn(record, (value, key) => {
           if (obj[key]) {
             if (value.toLocaleUpperCase().indexOf(filterValue.trim().toLocaleUpperCase()) !== -1) {
               flag = true;
@@ -269,6 +257,44 @@ class LanguageManage extends React.Component {
       });
     }
     return result;
+  };
+
+  //
+  exportExecl = (type) => {
+    const { standardData, customData, mergeData, appCode } = this.state;
+    const { key } = type;
+    let allShowData = [];
+    if (key === 'merge') {
+      allShowData = mergeData;
+    } else if (key === 'standard') {
+      allShowData = standardData;
+    } else {
+      allShowData = customData;
+    }
+    const modeText = {
+      merge: formatMessage({ id: 'translator.languageManage.merge' }),
+      standard: formatMessage({ id: 'translator.languageManage.standard' }),
+      custom: formatMessage({ id: 'translator.languageManage.custom' }),
+    };
+    const data_ = allShowData.map((record) => {
+      return {
+        languageKey: record.languageKey,
+        ...record.languageMap,
+      };
+    });
+    const ws = XLSX.utils.json_to_sheet(data_); /* 新建空workbook，然后加入worksheet */
+    const wb = XLSX.utils.book_new(); /*新建book*/
+    XLSX.utils.book_append_sheet(wb, ws, 'People'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
+    XLSX.writeFile(wb, `${modeText[key]}语言文件包-${appCode}.xlsx`); /*写文件(book,xlsx文件名称)*/
+  };
+
+  // 导入
+  importApplicate = (data) => {
+    const obj = {};
+    const { standardData } = this.state;
+    standardData.map((record) => {
+      obj[record.languageKey] = record.languageMap;
+    });
   };
 
   submitLanguage = async (value) => {
@@ -301,7 +327,7 @@ class LanguageManage extends React.Component {
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
       <div className={commonStyles.globalPageStyle}>
-        <Card>
+        <div>
           <Row>
             <Col>
               <FormItem
@@ -422,7 +448,7 @@ class LanguageManage extends React.Component {
               <Dropdown
                 disabled={isNull(appCode)}
                 overlay={
-                  <Menu onClick={this.export}>
+                  <Menu onClick={this.exportExecl}>
                     <Menu.Item key="standard">
                       {formatMessage({ id: 'translator.languageManage.standard' })}
                     </Menu.Item>
@@ -461,8 +487,8 @@ class LanguageManage extends React.Component {
               </Button>
             </Col>
           </Row>
-        </Card>
-        <Card style={{ marginTop: 20 }}>
+        </div>
+        <div style={{ marginTop: 20 }}>
           <Row>
             <Col>
               <FormItem
@@ -506,7 +532,7 @@ class LanguageManage extends React.Component {
               }}
             />
           </Row>
-        </Card>
+        </div>
 
         {/*新增语言  */}
         <Modal
@@ -536,7 +562,11 @@ class LanguageManage extends React.Component {
             });
           }}
         >
-          <ImportApplication appList={appList} appCode={appCode} />
+          <ImportApplication
+            appList={appList}
+            appCode={appCode}
+            importApplicate={this.importApplicate}
+          />
         </Modal>
       </div>
     );
