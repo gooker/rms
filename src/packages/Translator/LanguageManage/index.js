@@ -19,15 +19,22 @@ import {
   ExportOutlined,
   AppstoreAddOutlined,
   DownOutlined,
+  ExclamationCircleOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
 import XLSX from 'xlsx';
 import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
 import { formatMessage } from '@/utils/Lang';
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
-import { addSysLang, getSysLang, getApplications } from '@/services/translator';
+import {
+  addSysLang,
+  getSysLang,
+  getApplications,
+  getTranslationBycode,
+} from '@/services/translator';
 import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLang from './component/AddSysLang.js';
+import AddApplication from './component/AddApplication';
 import ImportApplication from './component/ImportApplication';
 import UpdateEditListModal from './component/UpdateEditListModal';
 import commonStyles from '@/common.module.less';
@@ -54,8 +61,10 @@ class LanguageManage extends React.Component {
         name: 'Map-Tool',
       },
     ],
+    loading:false,
     imporVisible: false,
     addLangVisible: false,
+    addAppVisbible:false,
     showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
     allLanguage: [
       {
@@ -156,30 +165,9 @@ class LanguageManage extends React.Component {
   componentDidMount() {
     // this.getSysLanguage();
     // this.getSysApplications();
-    // 处理3种状态的初始化数据
-    const { dataList } = this.state;
-    const standardData = dataList['standard'];
-    const customData = dataList['custom'];
-    const mergeData = [...standardData].map((item) => {
-      let item_ = { ...item };
-      const record_ = customData.filter((record) => item_.languageKey === record.languageKey);
-      if (record_.length > 0) {
-        item_ = record_[0];
-      }
-      return item_;
-    });
 
-    this.setState({
-      standardData: sortBy(standardData, (o) => {
-        return o.languageKey;
-      }),
-      customData: sortBy(customData, (o) => {
-        return o.languageKey;
-      }),
-      mergeData: sortBy(mergeData, (o) => {
-        return o.languageKey;
-      }),
-    });
+    // 处理3种状态的初始化数据 暂时放在这里 有接口的时候 应该是调完list 处理的 todo 之后要去掉
+    this.getStansardAndCsutomData();
   }
 
   onModeChange = (e) => {
@@ -202,6 +190,65 @@ class LanguageManage extends React.Component {
     if (!dealResponse(moduleData)) {
       this.setState({ appList: moduleData });
     }
+  };
+
+  // 获取翻译内容-list
+  getTranslateList = async () => {
+    const { appCode } = this.state;
+    this.setState({ loading: true });
+    const list = await getTranslationBycode({ appCode: appCode });
+    if (!dealResponse(list)) {
+      // 拿到的数据处理
+      this.setState({ dataList: list });
+    }
+    this.getStansardAndCsutomData();
+  };
+
+  getStansardAndCsutomData = () => {
+    const { dataList, allLanguage } = this.state;
+    // allLanguage.push({
+    //   type: 'hahah',
+    // });
+    // console.time('sum');
+    const standardData = [...dataList['standard']].map((stItem) => {
+      forIn(allLanguage, ({ type }) => {
+        if (!stItem.languageMap[type]) {
+          stItem.languageMap[type] = null;
+        }
+      });
+      return stItem;
+    });
+    const customData = [...dataList['custom']].map((cuItem) => {
+      forIn(allLanguage, ({ type }) => {
+        if (!cuItem.languageMap[type]) {
+          cuItem.languageMap[type] = null;
+        }
+      });
+      return cuItem;
+    });
+    // console.timeEnd('sum');
+
+    const mergeData = [...standardData].map((item) => {
+      let item_ = { ...item };
+      const record_ = customData.filter((record) => item_.languageKey === record.languageKey);
+      if (record_.length > 0) {
+        item_ = record_[0];
+      }
+      return item_;
+    });
+
+    this.setState({
+      standardData: sortBy(standardData, (o) => {
+        return o.languageKey;
+      }),
+      customData: sortBy(customData, (o) => {
+        return o.languageKey;
+      }),
+      mergeData: sortBy(mergeData, (o) => {
+        return o.languageKey;
+      }),
+      loading:false,
+    });
   };
 
   generateColumns = () => {
@@ -320,7 +367,7 @@ class LanguageManage extends React.Component {
       } else {
         currentlist = { ...editList, ...result };
       }
-      console.log('edit', currentlist);
+      // console.log('edit', currentlist);
       this.setState({
         editList: currentlist,
       });
@@ -390,11 +437,47 @@ class LanguageManage extends React.Component {
     this.setState({ addLangVisible: false });
   };
 
-  addApplication = () => {};
-  handleApplication = (value) => {
+  addApplication = () => {
     this.setState({
-      appCode: value,
-    });
+      addAppVisbible:true,
+    })
+  };
+
+  // 切换应用
+  handleApplication = (value) => {
+    const { editList } = this.state;
+    const _this = this;
+    if (Object.keys(editList).length >= 1) {
+      Modal.confirm({
+        title: 'Tips',
+        icon: <ExclamationCircleOutlined />,
+        content: formatMessage({ id: 'translator.languageManage.applicationTips' }),
+        okText: formatMessage({ id: 'translator.languageManage.toSave' }),
+        cancelText: formatMessage({ id: 'translator.languageManage.nocontinue' }),
+        onOk() {
+          // _this.setState({
+          //   appCode: appCode,
+          // });
+        },
+        onCancel() {
+          // todo list接口
+          _this.setState(
+            {
+              appCode: value,
+            },
+            _this.getTranslateList,
+          );
+        },
+      });
+    } else {
+      this.setState(
+        {
+          appCode: value,
+        },
+        this.getTranslateList,
+      );
+      // todo list接口
+    }
   };
 
   render() {
@@ -408,6 +491,7 @@ class LanguageManage extends React.Component {
       toggle,
       editList,
       showEditVisible,
+      loading
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
@@ -531,7 +615,7 @@ class LanguageManage extends React.Component {
 
               <Button
                 style={{ marginLeft: 20 }}
-                disabled={isNull(appCode) && editList.length === 0}
+                disabled={isNull(appCode) && Object.keys(editList).length === 0}
                 type="primary"
                 onClick={() => {
                   const { dispatch } = this.props;
@@ -599,7 +683,7 @@ class LanguageManage extends React.Component {
           </Row>
 
           <EditableTable
-            loading={false}
+            loading={loading}
             value={filterLanguage}
             columns={this.generateColumns()}
             onChange={this.updateEditList}
@@ -621,6 +705,24 @@ class LanguageManage extends React.Component {
         >
           <AddSysLang allLanguage={allLanguage} onAddLang={this.submitLanguage} />
         </Modal>
+
+
+        {/* 新增应用 */}
+        <Modal
+          title={formatMessage({ id: 'translator.languageManage.addapplication' })}
+          destroyOnClose={true}
+          maskClosable={false}
+          mask={true}
+          width={480}
+          onCancel={() => {
+            this.setState({ addAppVisbible: false });
+          }}
+          footer={null}
+          visible={this.state.addAppVisbible}
+        >
+          <AddApplication />
+        </Modal>
+
 
         {/* 未保存 */}
         <Modal

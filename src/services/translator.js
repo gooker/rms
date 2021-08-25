@@ -4,6 +4,14 @@ import { NameSpace } from '@/config/config';
 const { Coordinator } = NameSpace;
 
 // ************************************** 翻译管理  ************************************** //
+// 应用-对应的翻译内容展示
+export async function getTranslationBycode(params) {
+  return request(`/${Coordinator}/translation/getTranslationByAppCode`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
 // 系统支持的语种列表
 export async function getSysLang() {
   return request(`/${Coordinator}/translation/getSysSupportLang`, {

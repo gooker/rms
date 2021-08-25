@@ -14,4 +14,7 @@ export default {
     'translator.languageManage.langFile': '文件',
     'translator.languageManage.langname': '名称',
     'translator.languageManage.langtypeValidate': '只能是字母 下划线',
+    'translator.languageManage.applicationTips': '未保存的更新,切换应用会丢失，是否先去保存?',
+    'translator.languageManage.toSave': '是,保存',
+    'translator.languageManage.nocontinue': '否,继续',
 }
