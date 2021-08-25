@@ -26,9 +26,10 @@ import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
 import { formatMessage } from '@/utils/Lang';
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import { addSysLang, getSysLang, getApplications } from '@/services/translator';
-import ExcelTable from './component/ExcelTable.js';
+import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLang from './component/AddSysLang.js';
 import ImportApplication from './component/ImportApplication';
+import UpdateEditListModal from './component/UpdateEditListModal';
 import commonStyles from '@/common.module.less';
 import styles from './translator.module.less';
 
@@ -55,7 +56,7 @@ class LanguageManage extends React.Component {
     ],
     imporVisible: false,
     addLangVisible: false,
-    showLanguage: ['zh-CN', 'en-US','ko-KR','vi-VN'],
+    showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
     allLanguage: [
       {
         type: 'zh-CN',
@@ -95,6 +96,33 @@ class LanguageManage extends React.Component {
             'vi-VN': 'Mức Pin bất thường',
           },
         },
+        {
+          languageKey: 'wcs.transaltor.addApplication',
+          languageMap: {
+            'en-US': 'Add Application',
+            'ko-KR': '',
+            'vi-VN': '',
+            'zh-CN': '添加应用',
+          },
+        },
+        {
+          languageKey: 'menu.commonSet.commonInfo',
+          languageMap: {
+            'zh-CN': '个人设置',
+            'en-US': 'User Setting',
+            'ko-KR': '개인 설정',
+            'vi-VN': 'Mức Pinx bất thường',
+          },
+        },
+        {
+          languageKey: 'menu.authorized',
+          languageMap: {
+            'en-US': 'User Authority Manager',
+            'ko-KR': '권한 관리',
+            'vi-VN': 'Nhiệm vụ mm kvb`',
+            'zh-CN': '权限管理',
+          },
+        },
       ],
       custom: [
         {
@@ -103,7 +131,16 @@ class LanguageManage extends React.Component {
             'en-US': 'Tasks is neithe',
             'ko-KR': '작업은 취소도 아',
             'vi-VN': 'Nhiệm vụ không bị hủy',
-            'zh-CN': '任务既',
+            'zh-CN': '任务不能重做',
+          },
+        },
+        {
+          languageKey: 'menu.authorized',
+          languageMap: {
+            'en-US': 'Authorized',
+            'ko-KR': '작업은',
+            'vi-VN': 'Nhiệm vụ',
+            'zh-CN': '权限',
           },
         },
       ],
@@ -172,17 +209,16 @@ class LanguageManage extends React.Component {
     const columns = [
       {
         title: 'KEY',
-        width: 0.3,
-        dataIndex: 'languageKey',
-        readOnly: true,
+        field: 'languageKey',
+        disabled: true,
       },
     ];
     if (showLanguage.length !== 0) {
       showLanguage.map((record) => {
         columns.push({
           title: record,
-          dataIndex: record,
-          readOnly: displayMode === 'merge' ? false : true,
+          field: record,
+          disabled: displayMode === 'merge' ? false : true,
         });
       });
     }
@@ -200,7 +236,7 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
 
-    const showData_ = cloneDeep(allShowData).map((record, index) => {
+    const showData_ = [...allShowData].map((record, index) => {
       let record_ = { ...record };
       if (
         displayMode === 'merge' &&
@@ -225,8 +261,8 @@ class LanguageManage extends React.Component {
     const { filterValue, showLanguage, toggle } = this.state;
     const obj = {};
     this.generateColumns().map((record) => {
-      if (record.dataIndex) {
-        obj[record.dataIndex] = true;
+      if (record.field) {
+        obj[record.field] = true;
       }
     });
     let result = [];
@@ -260,7 +296,38 @@ class LanguageManage extends React.Component {
     return result;
   };
 
-  //导出
+  updateEditList = (field, index, record, newValue, text) => {
+    const { mergeData, editList } = this.state;
+
+    let currentlist = { ...editList };
+    const result = {};
+    let currentValue = {};
+    let flag = false;
+    if (text !== newValue) {
+      currentValue = cloneDeep(record);
+      currentValue[field] = newValue;
+      currentValue.languageMap[field] = currentValue[field];
+
+      const key = currentValue['languageKey'];
+      result[key] = currentValue;
+      const originalRow = mergeData.find((item) => item.languageKey === key);
+      if (originalRow) {
+        flag = isEqual(currentValue.languageMap, originalRow.languageMap);
+      }
+
+      if (flag && key) {
+        delete currentlist[key];
+      } else {
+        currentlist = { ...editList, ...result };
+      }
+      console.log('edit', currentlist);
+      this.setState({
+        editList: currentlist,
+      });
+    }
+  };
+
+  // todo 导出
   exportExecl = (type) => {
     const { standardData, customData, mergeData, appCode } = this.state;
     const { key } = type;
@@ -290,7 +357,7 @@ class LanguageManage extends React.Component {
     XLSX.writeFile(wb, `${modeText[key]}语言文件包-${appCode}.xlsx`); /*写文件(book,xlsx文件名称)*/
   };
 
-  // 导入
+  // todo 导入
   importApplicate = (data) => {
     const notEqual = {};
     const currentObj = {};
@@ -340,7 +407,7 @@ class LanguageManage extends React.Component {
       imporVisible,
       toggle,
       editList,
-      mergeData,
+      showEditVisible,
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
@@ -384,7 +451,7 @@ class LanguageManage extends React.Component {
                 type="link"
                 style={{ cursor: 'pointer', color: '#1890FF', marginLeft: 40 }}
                 onClick={() => {
-                  this.setState({ showLocalUpdateHistroy: true });
+                  this.setState({ showEditVisible: true });
                 }}
               >
                 {`${formatMessage({ id: 'translator.languageManage.unsaved' })} :
@@ -397,7 +464,7 @@ class LanguageManage extends React.Component {
             <Col>
               <FormItem label={formatMessage({ id: 'translator.languageManage.application' })}>
                 <Select
-                   style={{width:'190px'}}
+                  style={{ width: '190px' }}
                   value={appCode}
                   onChange={this.handleApplication}
                   dropdownRender={(menu) => (
@@ -482,8 +549,6 @@ class LanguageManage extends React.Component {
                 {formatMessage({ id: 'app.button.save' })}
               </Button>
             </Col>
-          </Row>
-          <Row>
             <Col>
               <FormItem label={formatMessage({ id: 'app.button.search' })}>
                 <Input
@@ -497,7 +562,7 @@ class LanguageManage extends React.Component {
                 />
               </FormItem>
             </Col>
-            <Col offset={1}>
+            <Col style={{ marginLeft: 30 }}>
               <Checkbox
                 value={toggle}
                 onChange={({ target: { checked } }) => {
@@ -520,6 +585,7 @@ class LanguageManage extends React.Component {
                 <Radio.Group onChange={this.onModeChange} value={displayMode}>
                   <Radio value="merge">
                     {formatMessage({ id: 'translator.languageManage.merge' })}
+                    {/* <span style={{fontSize:'12px',transform:[`scale(0.8)`]}}>可编辑</span> */}
                   </Radio>
                   <Radio value="standard">
                     {formatMessage({ id: 'translator.languageManage.standard' })}
@@ -532,38 +598,21 @@ class LanguageManage extends React.Component {
             </Col>
           </Row>
 
-          <Row style={{ marginTop: 5 }}>
-            <ExcelTable
-              loading={false}
-              uniqueKey={'languageKey'}
-              dataSource={filterLanguage}
-              columns={this.generateColumns()}
-              mergeData={mergeData}
-              onChange={(newDatasource, flag) => {
-                // 应该全部比较 全不同才是对的
-                const key = Object.keys(newDatasource);
-                let currentlist = { ...editList };
-                if (flag && key) {
-                  delete currentlist[key[0]];
-                } else {
-                  currentlist = { ...editList, ...newDatasource };
-                }
-                // console.log('edit', currentlist);
-                this.setState({
-                  editList: currentlist,
-                });
-              }}
-            />
-          </Row>
+          <EditableTable
+            loading={false}
+            value={filterLanguage}
+            columns={this.generateColumns()}
+            onChange={this.updateEditList}
+          />
         </>
 
         {/*新增语言  */}
         <Modal
-          title="添加语种"
+          title={formatMessage({ id: 'translator.languageManage.addlanguage' })}
           destroyOnClose={true}
           maskClosable={false}
           mask={true}
-          width={550}
+          width={450}
           onCancel={() => {
             this.setState({ addLangVisible: false });
           }}
@@ -571,6 +620,21 @@ class LanguageManage extends React.Component {
           visible={this.state.addLangVisible}
         >
           <AddSysLang allLanguage={allLanguage} onAddLang={this.submitLanguage} />
+        </Modal>
+
+        {/* 未保存 */}
+        <Modal
+          width={1000}
+          footer={null}
+          destroyOnClose
+          visible={showEditVisible}
+          onCancel={() => {
+            this.setState({
+              showEditVisible: false,
+            });
+          }}
+        >
+          <UpdateEditListModal source={editList} columns={allLanguage} onChange={(value) => {}} />
         </Modal>
 
         {/* 导入 */}

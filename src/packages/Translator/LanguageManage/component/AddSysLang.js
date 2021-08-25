@@ -97,7 +97,7 @@ export default class AddSysLang extends Component {
             <Input />
           </Form.Item>
 
-          <Button style={{ margin: '70px 0 0 330px' }} onClick={this.onSubmitLang} type="primary">
+          <Button style={{ margin: '50px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
             {formatMessage({ id: 'app.button.save' })}
           </Button>
         </Form>
