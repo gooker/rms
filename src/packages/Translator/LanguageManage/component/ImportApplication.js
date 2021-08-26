@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Radio, Button, Select } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 import ImportI18nLanguage from './ImportI18nLanguage';
 
 const formItemLayout = {
@@ -40,7 +40,7 @@ export default class ImportApplication extends Component {
         <Form {...formItemLayout} ref={this.formRef}>
           <Form.Item
             name="appCode"
-            label={formatMessage({ id: 'translator.languageManage.application' })}
+            label={ <FormattedMessage id='translator.languageManage.application' />}
             initialValue={appCode}
             rules={[{ required: true }]}
           >
@@ -56,22 +56,22 @@ export default class ImportApplication extends Component {
           </Form.Item>
           <Form.Item
             name="displayMode"
-            label={formatMessage({ id: 'translator.languageManage.displayMode' })}
+            label={ <FormattedMessage id='translator.languageManage.displayMode' />}
             initialValue={displayMode}
             rules={[{ required: true }]}
           >
             <Radio.Group onChange={this.onModeChange}>
               <Radio value="standard">
-                {formatMessage({ id: 'translator.languageManage.standard' })}
+                { <FormattedMessage id='translator.languageManage.standard' />}
               </Radio>
               <Radio value="custom">
-                {formatMessage({ id: 'translator.languageManage.custom' })}
+                { <FormattedMessage id='translator.languageManage.custom' />}
               </Radio>
             </Radio.Group>
           </Form.Item>
 
           <Form.Item
-            label={formatMessage({ id: 'translator.languageManage.langFile' })}
+            label={ <FormattedMessage id='translator.languageManage.langFile' />}
             name="languages"
             rules={[{ required: true }]}
           >
@@ -82,7 +82,7 @@ export default class ImportApplication extends Component {
             onClick={this.onSubmitApplicate}
             type="primary"
           >
-            {formatMessage({ id: 'app.button.save' })}
+            { <FormattedMessage id='app.button.save' />}
           </Button>
         </Form>
       </div>

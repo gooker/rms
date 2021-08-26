@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, Button } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 import ImportI18nLanguage from './ImportI18nLanguage';
 const formItemLayout = {
   labelCol: {
@@ -19,7 +19,7 @@ export default class AddApplication extends Component {
     var regex = /^[A-Za-z_-]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(
-        new Error(formatMessage({ id: 'translator.languageManage.langtypeValidate' })),
+        new Error( <FormattedMessage id='translator.languageManage.langtypeValidate' />),
       );
     }
     return Promise.resolve();
@@ -45,13 +45,13 @@ export default class AddApplication extends Component {
           </Form.Item>
           <Form.Item
             name="name"
-            label={formatMessage({ id: 'translator.languageManage.name' })}
+            label={ <FormattedMessage id='translator.languageManage.name' />}
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label={formatMessage({ id: 'translator.languageManage.langFile' })}
+            label={ <FormattedMessage id='translator.languageManage.langFile' />}
             name="i18n"
             rules={[{ required: true, message: '请上传文件' }]}
           >
@@ -63,7 +63,7 @@ export default class AddApplication extends Component {
             onClick={this.submitApplication}
             type="primary"
           >
-            {formatMessage({ id: 'app.button.save' })}
+            { <FormattedMessage id='app.button.save' />}
           </Button>
         </Form>
       </div>

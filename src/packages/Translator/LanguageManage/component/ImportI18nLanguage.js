@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Upload, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
-import { FormattedMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 import XLSX from 'xlsx';
 // import { forIn } from 'lodash';
 

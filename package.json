@@ -81,6 +81,7 @@
     "react": "^17.0.2",
     "react-dev-utils": "^11.0.3",
     "react-dom": "^17.0.2",
+    "react-gh-like-diff": "^2.0.2",
     "react-intl-universal": "^2.4.3",
     "react-loadable": "^5.5.0",
     "react-redux": "^7.2.3",

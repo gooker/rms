@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Table, Row, Col, Button } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const UpdateEditListModal = (props) => {
   const { columns, source } = props;
@@ -53,7 +53,7 @@ const UpdateEditListModal = (props) => {
             }}
             disabled={selectedRowKeys.length === 0}
           >
-            {formatMessage({ id: 'app.button.delete' })}
+            <FormattedMessage id="app.button.delete"></FormattedMessage>
           </Button>
         </Col>
       </Row>

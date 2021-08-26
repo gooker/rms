@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Row, Col, Menu } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';
 import commonStyles from '@/common.module.less';
@@ -53,7 +53,7 @@ export default class AddSysLang extends Component {
     var regex = /^[A-Za-z_-]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(
-        new Error(formatMessage({ id: 'translator.languageManage.langtypeValidate' })),
+        new Error(<FormattedMessage id= 'translator.languageManage.langtypeValidate' />),
       );
     }
     return Promise.resolve();
@@ -84,21 +84,21 @@ export default class AddSysLang extends Component {
           </Row>
           <Form.Item
             name="type"
-            label={formatMessage({ id: 'translator.languageManage.langtype' })}
+            label={ <FormattedMessage id= 'translator.languageManage.langtype' />}
             rules={[{ required: true }, { validator: this.typeValidator }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="name"
-            label={formatMessage({ id: 'translator.languageManage.langname' })}
+            label={<FormattedMessage id= 'translator.languageManage.langname' />}
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
 
           <Button style={{ margin: '50px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
-            {formatMessage({ id: 'app.button.save' })}
+            {<FormattedMessage id= 'app.button.save' />}
           </Button>
         </Form>
       </div>
