@@ -1,5 +1,6 @@
 export default {
     'translator.languageManage.application': '应用',
+    'translator.languageManage.name': '名称',
     'translator.languageManage.displayMode': '显示模式',
     'translator.languageManage.merge': '合并',
     'translator.languageManage.standard': '标准模式',

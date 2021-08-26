@@ -50,13 +50,36 @@ export default class ImportI18nLanguage extends Component {
             const sheet1Name = wb.SheetNames[0];
             const sheet1 = wb.Sheets[sheet1Name];
             const languageList = XLSX.utils.sheet_to_json(sheet1);
-            let languageMap ={}
-            languageList.map((record)=>{
-                const {languageKey,...item}=record;
-               if(languageKey) {
-                languageMap[record["languageKey"]]=item
-               } 
-            });
+            /**
+             * * key.a:{
+             *          zh-cn:'你好',
+             *          en-us:’hello',
+             *         },
+             *    key.b:{
+             *          zh-cn:‘再见‘，
+             *          en-us:'bye'
+             *       }
+             * */
+            // let languageMap = {};
+            // languageList.map((record) => {
+            //   const { languageKey, ...item } = record;
+            //   if (languageKey) {
+            //     languageMap[record['languageKey']] = item;
+            //   }
+            // });
+
+
+            /**
+             * * zh-cn:{
+             *          key.a:'你好',
+             *          key.b:'再见',
+             *         },
+             *   en-us:{
+             *         key.a:'hi',
+             *         key.b:'bye'
+             *
+             *   }
+             * */
             // languageList.map((record) => {
             //   forIn(record, (value, key) => {
             //     const languageKey = record['languageKey'];
@@ -68,7 +91,7 @@ export default class ImportI18nLanguage extends Component {
             //     }
             //   });
             // });
-            onChange(languageMap);
+            onChange(languageList);
           };
           reader.readAsBinaryString(file);
 

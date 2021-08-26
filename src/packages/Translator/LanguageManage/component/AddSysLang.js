@@ -85,7 +85,7 @@ export default class AddSysLang extends Component {
           <Form.Item
             name="type"
             label={formatMessage({ id: 'translator.languageManage.langtype' })}
-            rules={[{ required: true, validator: this.typeValidator }]}
+            rules={[{ required: true }, { validator: this.typeValidator }]}
           >
             <Input />
           </Form.Item>

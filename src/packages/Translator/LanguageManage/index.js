@@ -27,6 +27,7 @@ import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
 import { formatMessage } from '@/utils/Lang';
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import {
+  addApplication,
   addSysLang,
   getSysLang,
   getApplications,
@@ -61,10 +62,10 @@ class LanguageManage extends React.Component {
         name: 'Map-Tool',
       },
     ],
-    loading:false,
+    loading: false,
     imporVisible: false,
     addLangVisible: false,
-    addAppVisbible:false,
+    addAppVisbible: false,
     showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
     allLanguage: [
       {
@@ -177,10 +178,10 @@ class LanguageManage extends React.Component {
   };
 
   // 获取语言
-  getSysLanguage = async () => {
+  getSysLanguage = async (flag) => {
     const langData = await getSysLang();
     if (!dealResponse(langData)) {
-      this.setState({ allLanguage: langData });
+      this.setState({ allLanguage: langData }, flag && this.getTranslateList);
     }
   };
 
@@ -198,7 +199,7 @@ class LanguageManage extends React.Component {
     this.setState({ loading: true });
     const list = await getTranslationBycode({ appCode: appCode });
     if (!dealResponse(list)) {
-      // 拿到的数据处理
+      // 拿到的数据处理 todo 有接口  顺序要调整 方法放在里面
       this.setState({ dataList: list });
     }
     this.getStansardAndCsutomData();
@@ -247,7 +248,7 @@ class LanguageManage extends React.Component {
       mergeData: sortBy(mergeData, (o) => {
         return o.languageKey;
       }),
-      loading:false,
+      loading: false,
     });
   };
 
@@ -391,7 +392,6 @@ class LanguageManage extends React.Component {
       standard: formatMessage({ id: 'translator.languageManage.standard' }),
       custom: formatMessage({ id: 'translator.languageManage.custom' }),
     };
-    // todo 手动新增的语言 此时languageMap没有此key???
     const data_ = allShowData.map((record) => {
       return {
         languageKey: record.languageKey,
@@ -429,18 +429,14 @@ class LanguageManage extends React.Component {
     });
   };
 
+  // 添加新的语言
   submitLanguage = async (value) => {
     const response = await addSysLang(value);
     if (!dealResponse(response)) {
-      this.getSysLanguage();
+      // 获取所有的语言 拉list接口 todo 要验证
+      this.getSysLanguage(true);
+      this.setState({ addLangVisible: false });
     }
-    this.setState({ addLangVisible: false });
-  };
-
-  addApplication = () => {
-    this.setState({
-      addAppVisbible:true,
-    })
   };
 
   // 切换应用
@@ -480,6 +476,21 @@ class LanguageManage extends React.Component {
     }
   };
 
+  // 添加新的应用
+  addApplicateChange = async (data) => {
+    const { code } = data;
+    const addNewResponse = await addApplication({ ...data });
+    if (!dealResponse(addNewResponse)) {
+      this.setState(
+        {
+          addAppVisbible: false,
+          appCode: code,
+        },
+        this.getTranslateList,
+      );
+    }
+  };
+
   render() {
     const {
       showLanguage,
@@ -491,7 +502,7 @@ class LanguageManage extends React.Component {
       toggle,
       editList,
       showEditVisible,
-      loading
+      loading,
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
@@ -561,7 +572,9 @@ class LanguageManage extends React.Component {
                           type="link"
                           icon={<AppstoreAddOutlined />}
                           onClick={() => {
-                            this.addApplication();
+                            this.setState({
+                              addAppVisbible: true,
+                            });
                           }}
                         >
                           {formatMessage({ id: 'translator.languageManage.addapplication' })}
@@ -706,23 +719,21 @@ class LanguageManage extends React.Component {
           <AddSysLang allLanguage={allLanguage} onAddLang={this.submitLanguage} />
         </Modal>
 
-
         {/* 新增应用 */}
         <Modal
           title={formatMessage({ id: 'translator.languageManage.addapplication' })}
           destroyOnClose={true}
           maskClosable={false}
           mask={true}
-          width={480}
+          width={450}
           onCancel={() => {
             this.setState({ addAppVisbible: false });
           }}
           footer={null}
           visible={this.state.addAppVisbible}
         >
-          <AddApplication />
+          <AddApplication addApplicateChange={this.addApplicateChange} />
         </Modal>
-
 
         {/* 未保存 */}
         <Modal
