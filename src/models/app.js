@@ -9,6 +9,9 @@ export default {
   namespace: 'app',
 
   state: {
+    // 是否是编辑国际化模式
+    editI18N: false,
+
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
   },
@@ -36,6 +39,13 @@ export default {
   },
 
   reducers: {
+    switchEditI18N(state, { payload }) {
+      return {
+        ...state,
+        editI18N: payload,
+      };
+    },
+
     updateAntedLocale(state, { payload }) {
       return {
         ...state,

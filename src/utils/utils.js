@@ -1,10 +1,18 @@
 // 通用代码片段
 import { message, Tag } from 'antd';
 import moment from 'moment-timezone';
+import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
-import { formatMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
 import { AgvStateColor } from '@/consts';
+
+export function formatMessage({ id }, values) {
+  if (id) {
+    const content = intl.get(id, values);
+    return content || id;
+  }
+  return '###';
+}
 
 export function getDomainNameByUrl(url) {
   const apis = requestAPI();
