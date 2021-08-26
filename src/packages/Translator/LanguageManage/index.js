@@ -25,6 +25,7 @@ import classnames from 'classnames';
 import XLSX from 'xlsx';
 import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
+import {formatMessage} from '@/utils/Lang'
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import {
   addApplication,
@@ -38,6 +39,7 @@ import AddSysLang from './component/AddSysLang.js';
 import AddApplication from './component/AddApplication';
 import ImportApplication from './component/ImportApplication';
 import UpdateEditListModal from './component/UpdateEditListModal';
+import DiffToSaveModal from './component/DiffToSaveModal';
 import commonStyles from '@/common.module.less';
 import styles from './translator.module.less';
 
@@ -66,6 +68,8 @@ class LanguageManage extends React.Component {
     imporVisible: false,
     addLangVisible: false,
     addAppVisbible: false,
+    diffToVisible:false,
+
     showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
     allLanguage: [
       {
@@ -632,15 +636,9 @@ class LanguageManage extends React.Component {
                 disabled={isNull(appCode) && Object.keys(editList).length === 0}
                 type="primary"
                 onClick={() => {
-                  const { dispatch } = this.props;
-                  dispatch({
-                    type: 'languageManage/synchronousData',
-                    payload: { appCode },
-                  }).then((response) => {
                     this.setState({
-                      differ: true,
-                      targetData: response,
-                    });
+                      diffToVisible: true,
+
                   });
                 }}
               >
@@ -651,7 +649,7 @@ class LanguageManage extends React.Component {
               <FormItem label={<FormattedMessage id='app.button.search' />}>
                 <Input
                   allowClear
-                  placeholder={<FormattedMessage id='translator.languageManage.enterSearchKeywords'/>}
+                  placeholder= {formatMessage({ id: 'translator.languageManage.enterSearchKeywords' })}
                   onChange={({ target: { value } }) => {
                     this.setState({ filterValue: value }, this.generateFilterLanguage);
                   }}
@@ -693,7 +691,6 @@ class LanguageManage extends React.Component {
               </FormItem>
             </Col>
           </Row>
-
           <EditableTable
             loading={loading}
             value={filterLanguage}
@@ -747,6 +744,21 @@ class LanguageManage extends React.Component {
           }}
         >
           <UpdateEditListModal source={editList} columns={allLanguage} onChange={(value) => {}} />
+        </Modal>
+
+        {/* diff */}
+        <Modal
+          width={1000}
+          footer={null}
+          destroyOnClose
+          visible={this.state.diffToVisible}
+          onCancel={() => {
+            this.setState({
+              diffToVisible: false,
+            });
+          }}
+        >
+           <DiffToSaveModal originData={this.state.mergeData} execlData={filterLanguage}/>
         </Modal>
 
         {/* 导入 */}
