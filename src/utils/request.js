@@ -1,6 +1,38 @@
 import axios from 'axios';
 import { formatMessage } from '@/utils/Lang';
-import { getDomainNameByUrl, isStandardApiResponse } from '@/utils/utils';
+import { getDomainNameByUrl, isNull, isStandardApiResponse } from '@/utils/utils';
+
+// 请求拦截器
+axios.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${window.localStorage.getItem('Authorization')}`;
+  config.headers['Content-Type'] = 'application/json; charset=utf-8';
+  if (isNull(config.headers.sectionId)) {
+    config.headers.sectionId = window.localStorage.getItem('sectionId');
+  }
+  return config;
+});
+
+// 响应拦截器
+axios.interceptors.response.use((response) => {
+  // 缓存当地时区数据
+  const { data, headers } = response;
+  const timeZone = headers['time-zone'];
+  if (timeZone) {
+    sessionStorage.setItem('timeZone', timeZone);
+  }
+
+  // 如果是文件流就执行下载
+  if (headers['content-type'] === 'application/octet-stream') {
+    const blob = new Blob([data], { type: 'application/zip' });
+    const downloadLink = document.createElement('a');
+    downloadLink.download = decodeURI(headers.filename);
+    downloadLink.href = URL.createObjectURL(blob);
+    downloadLink.click();
+    URL.revokeObjectURL(downloadLink.href);
+  }
+
+  return response;
+});
 
 // 异常处理程序
 const errorHandler = (error) => {
@@ -24,49 +56,25 @@ const errorHandler = (error) => {
 
   let messageContent = error.message || 'Unrecognized Error';
   const response = error.response;
-  if (!response) {
-    if (error.message === 'Failed to fetch') {
-      messageContent = formatMessage({ id: 'app.tip.failed.fetch' }, { url: error.request.url });
-    }
-    return { code: '-1', data: null, message: messageContent };
+  if (response) {
+    const { status } = response;
+    const statusMessage = codeMessage[status];
+    return { code: '-1', data: null, message: statusMessage || messageContent };
   }
-
-  const { status } = response;
-  const statusMessage = codeMessage[status];
-  messageContent = statusMessage || messageContent;
-
-  // 通知 Portal 登出
-  if (status === 401) {
-    window.parent.postMessage({ type: 'logout', payload: null }, '*');
+  if (error.message === 'Failed to fetch') {
+    messageContent = formatMessage({ id: 'app.tip.failed.fetch' }, { url: error.request.url });
   }
-
   return { code: '-1', data: null, message: messageContent };
 };
 
 const request = async (requestUrl, payload) => {
   const { data, method, headers = {} } = payload;
-  const localStorageToken = window.localStorage.getItem('Authorization');
   const url = getDomainNameByUrl(requestUrl);
-  const option = {
-    url,
-    method,
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json; charset=utf-8',
-      Authorization: `Bearer ${localStorageToken}`,
-      ...headers,
-    },
-  };
-  if (headers.sectionId === undefined) {
-    option.headers.sectionId = window.localStorage.getItem('sectionId');
-  }
+  const option = { url, method, headers };
+
+  // 针对文件下载
   if (headers.responseType === 'blob') {
     option.responseType = 'arraybuffer';
-  }
-
-  // I18n请求不需要带section头
-  if (requestUrl === '/translation/getTranslationByParam') {
-    delete option.headers.sectionId;
   }
 
   // 目前后端不是 RestFul API, 所以只需要关注 GET 和 POST
@@ -76,6 +84,7 @@ const request = async (requestUrl, payload) => {
     option.data = data;
   }
 
+  // 请求返回实体
   let responseEntity;
   try {
     responseEntity = await axios(option);
@@ -83,33 +92,14 @@ const request = async (requestUrl, payload) => {
     responseEntity = errorHandler(error);
   }
 
-  // 如果catch到错误就会直接走这个分支
+  // 如果走这个分支则说明catch到错误了，这里是常规的HTTP错误
   if (isStandardApiResponse(responseEntity)) {
     return responseEntity;
   }
 
-  const { data: responseData, headers: responseHeader } = responseEntity;
-  // 返回''表示未查询到, code默认为2
-  if (responseData === '') {
-    return { code: '2', data: null, message: null };
-  }
-  // 判断是否是文件流
-  if (responseHeader['content-type'] === 'application/octet-stream') {
-    const blob = new Blob([responseData], { type: 'application/zip' });
-    const downloadLink = document.createElement('a');
-    downloadLink.download = decodeURI(responseHeader.filename);
-    downloadLink.href = URL.createObjectURL(blob);
-    downloadLink.click();
-    URL.revokeObjectURL(downloadLink.href);
-  }
-
-  // 缓存当地时区数据
-  if (responseHeader) {
-    const timeZone = responseHeader['time-zone'];
-    sessionStorage.setItem('timeZone', timeZone);
-  }
-
+  const { data: responseData } = responseEntity;
   if (isStandardApiResponse(responseData)) {
+    // 这里是后台返回的自定义错误
     if (responseData.code === '-1') {
       return responseData;
     }
@@ -117,5 +107,4 @@ const request = async (requestUrl, payload) => {
   }
   return responseData;
 };
-
 export default request;
