@@ -25,7 +25,7 @@ import classnames from 'classnames';
 import XLSX from 'xlsx';
 import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import {formatMessage} from '@/utils/Lang'
+import { formatMessage } from '@/utils/Lang';
 import { dealResponse, isNull, adjustModalWidth, isStrictNull } from '@/utils/utils';
 import {
   addApplication,
@@ -68,7 +68,7 @@ class LanguageManage extends React.Component {
     imporVisible: false,
     addLangVisible: false,
     addAppVisbible: false,
-    diffToVisible:false,
+    diffToVisible: false,
 
     showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
     allLanguage: [
@@ -392,9 +392,9 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
     const modeText = {
-      merge: <FormattedMessage id='translator.languageManage.merge' />,
-      standard: <FormattedMessage id='translator.languageManage.standard' />,
-      custom: <FormattedMessage id='translator.languageManage.custom' />,
+      merge: <FormattedMessage id="translator.languageManage.merge" />,
+      standard: <FormattedMessage id="translator.languageManage.standard" />,
+      custom: <FormattedMessage id="translator.languageManage.custom" />,
     };
     const data_ = allShowData.map((record) => {
       return {
@@ -451,9 +451,9 @@ class LanguageManage extends React.Component {
       Modal.confirm({
         title: 'Tips',
         icon: <ExclamationCircleOutlined />,
-        content: <FormattedMessage id='translator.languageManage.applicationTips' />,
-        okText: <FormattedMessage id='translator.languageManage.toSave' />,
-        cancelText: <FormattedMessage id='translator.languageManage.nocontinue' />,
+        content: <FormattedMessage id="translator.languageManage.applicationTips" />,
+        okText: <FormattedMessage id="translator.languageManage.toSave" />,
+        cancelText: <FormattedMessage id="translator.languageManage.nocontinue" />,
         onOk() {
           // _this.setState({
           //   appCode: appCode,
@@ -514,9 +514,7 @@ class LanguageManage extends React.Component {
         <>
           <Row>
             <Col>
-              <FormItem
-                label={<FormattedMessage id="translator.languageManage.language" />}
-              >
+              <FormItem label={<FormattedMessage id="translator.languageManage.language" />}>
                 <Checkbox.Group
                   value={showLanguage}
                   onChange={(value) => {
@@ -541,7 +539,7 @@ class LanguageManage extends React.Component {
                 }}
                 icon={<PlusCircleOutlined />}
               >
-                {<FormattedMessage id='translator.languageManage.addlanguage' />}
+                {<FormattedMessage id="translator.languageManage.addlanguage" />}
               </Button>
             </Col>
 
@@ -553,15 +551,14 @@ class LanguageManage extends React.Component {
                   this.setState({ showEditVisible: true });
                 }}
               >
-                <FormattedMessage id='translator.languageManage.unsaved' />:
-                  {Object.keys(editList).length}
-                  
+                <FormattedMessage id="translator.languageManage.unsaved" />:
+                {Object.keys(editList).length}
               </Button>
             </Col>
           </Row>
           <Row>
             <Col>
-              <FormItem label={<FormattedMessage id='translator.languageManage.application' />}>
+              <FormItem label={<FormattedMessage id="translator.languageManage.application" />}>
                 <Select
                   style={{ width: '190px' }}
                   value={appCode}
@@ -581,7 +578,7 @@ class LanguageManage extends React.Component {
                             });
                           }}
                         >
-                          {<FormattedMessage id='translator.languageManage.addapplication' />}
+                          {<FormattedMessage id="translator.languageManage.addapplication" />}
                         </Button>
                       </div>
                     </div>
@@ -594,7 +591,7 @@ class LanguageManage extends React.Component {
                   ))}
                 </Select>
               </FormItem>
-            </Col> 
+            </Col>
 
             <Col flex="auto">
               <Button
@@ -607,26 +604,26 @@ class LanguageManage extends React.Component {
                   });
                 }}
               >
-                {<FormattedMessage id='app.button.import' />}
+                {<FormattedMessage id="app.button.import" />}
               </Button>
               <Dropdown
                 disabled={isNull(appCode)}
                 overlay={
                   <Menu onClick={this.exportExecl}>
                     <Menu.Item key="standard">
-                      {<FormattedMessage id='translator.languageManage.standard' />}
+                      {<FormattedMessage id="translator.languageManage.standard" />}
                     </Menu.Item>
                     <Menu.Item key="custom">
-                      {<FormattedMessage id='translator.languageManage.custom' />}
+                      {<FormattedMessage id="translator.languageManage.custom" />}
                     </Menu.Item>
                     <Menu.Item key="merge">
-                      {<FormattedMessage id='translator.languageManage.merge' />}
+                      {<FormattedMessage id="translator.languageManage.merge" />}
                     </Menu.Item>
                   </Menu>
                 }
               >
                 <Button icon={<ExportOutlined />}>
-                  <FormattedMessage id='app.button.export' />
+                  <FormattedMessage id="app.button.export" />
                   <DownOutlined />
                 </Button>
               </Dropdown>
@@ -636,20 +633,21 @@ class LanguageManage extends React.Component {
                 disabled={isNull(appCode) && Object.keys(editList).length === 0}
                 type="primary"
                 onClick={() => {
-                    this.setState({
-                      diffToVisible: true,
-
+                  this.setState({
+                    diffToVisible: true,
                   });
                 }}
               >
-                {<FormattedMessage id='app.button.save' />}
+                {<FormattedMessage id="app.button.save" />}
               </Button>
             </Col>
             <Col>
-              <FormItem label={<FormattedMessage id='app.button.search' />}>
+              <FormItem label={<FormattedMessage id="app.button.search" />}>
                 <Input
                   allowClear
-                  placeholder= {formatMessage({ id: 'translator.languageManage.enterSearchKeywords' })}
+                  placeholder={formatMessage({
+                    id: 'translator.languageManage.enterSearchKeywords',
+                  })}
                   onChange={({ target: { value } }) => {
                     this.setState({ filterValue: value }, this.generateFilterLanguage);
                   }}
@@ -663,7 +661,7 @@ class LanguageManage extends React.Component {
                   this.setState({ toggle: checked }, this.generateFilterLanguage);
                 }}
               >
-                <FormattedMessage id='translator.languageManage.onlyShowMissing' />
+                <FormattedMessage id="translator.languageManage.onlyShowMissing" />
               </Checkbox>
             </Col>
           </Row>
@@ -673,19 +671,19 @@ class LanguageManage extends React.Component {
           <Row>
             <Col>
               <FormItem
-                label={<FormattedMessage id='translator.languageManage.displayMode' />}
+                label={<FormattedMessage id="translator.languageManage.displayMode" />}
                 width={'100%'}
               >
                 <Radio.Group onChange={this.onModeChange} value={displayMode}>
                   <Radio value="merge">
-                    {<FormattedMessage id='translator.languageManage.merge' />}
+                    {<FormattedMessage id="translator.languageManage.merge" />}
                     {/* <span style={{fontSize:'12px',transform:[`scale(0.8)`]}}>可编辑</span> */}
                   </Radio>
                   <Radio value="standard">
-                    {<FormattedMessage id='translator.languageManage.standard' />}
+                    {<FormattedMessage id="translator.languageManage.standard" />}
                   </Radio>
                   <Radio value="custom">
-                    {<FormattedMessage id='translator.languageManage.custom' />}
+                    {<FormattedMessage id="translator.languageManage.custom" />}
                   </Radio>
                 </Radio.Group>
               </FormItem>
@@ -697,11 +695,12 @@ class LanguageManage extends React.Component {
             columns={this.generateColumns()}
             onChange={this.updateEditList}
           />
+          <DiffToSaveModal />
         </>
 
         {/*新增语言  */}
         <Modal
-          title={<FormattedMessage id='translator.languageManage.addlanguage' />}
+          title={<FormattedMessage id="translator.languageManage.addlanguage" />}
           destroyOnClose={true}
           maskClosable={false}
           mask={true}
@@ -717,7 +716,7 @@ class LanguageManage extends React.Component {
 
         {/* 新增应用 */}
         <Modal
-          title={<FormattedMessage id='translator.languageManage.addapplication' />}
+          title={<FormattedMessage id="translator.languageManage.addapplication" />}
           destroyOnClose={true}
           maskClosable={false}
           mask={true}
@@ -758,7 +757,7 @@ class LanguageManage extends React.Component {
             });
           }}
         >
-           <DiffToSaveModal originData={this.state.mergeData} execlData={filterLanguage}/>
+          <DiffToSaveModal originData={this.state.mergeData} execlData={filterLanguage} />
         </Modal>
 
         {/* 导入 */}

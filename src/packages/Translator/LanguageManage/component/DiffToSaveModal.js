@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
-import { ReactGhLikeDiff } from 'react-gh-like-diff';
-import 'react-gh-like-diff/dist/css/diff2html.min.css';
+import ReactDiffViewer from 'react-diff-viewer';
 
 class DiffToSaveModal extends Component {
   state = {
-    past: '1234',
-    current: '124456789',
+    past: {
+      a: '2',
+      b: '3',
+    },
+    current: {
+      a: '3',
+      b: '3',
+      c: '3',
+    },
   };
-
-  componentDidMount() {}
 
   render() {
     return (
-      <div className="App1234">
-        <ReactGhLikeDiff
-          options={{
-            originalFileName: "TITLE",
-            updatedFileName: "TITLE"
-          }}
-          past={"12ee3"}
-          current={"1345"}
+      <div className="App">
+        <ReactDiffViewer
+          splitView={true}
+          oldValue={JSON.stringify(this.state.past,null, 4)}
+          newValue={JSON.stringify(this.state.current,null, 4)}
         />
       </div>
     );
