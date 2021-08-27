@@ -18,4 +18,6 @@ export default {
     'translator.languageManage.applicationTips': '未保存的更新,切换应用会丢失，是否先去保存?',
     'translator.languageManage.toSave': '是,保存',
     'translator.languageManage.nocontinue': '否,继续',
+    'translator.languageManage.attention': '注意: ',
+    'translator.languageManage.importTips': '导入会覆盖之前模式下的全部翻译',
 }

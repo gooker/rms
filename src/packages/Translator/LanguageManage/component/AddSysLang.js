@@ -71,7 +71,7 @@ export default class AddSysLang extends Component {
     return (
       <div>
         <Form {...formItemLayout} ref={this.formRef}>
-          <Row style={{ marginBottom: 20 }}>
+          <Row style={{ marginBottom: 5 }}>
             <Col flex="auto" className={commonStyles.textRight}>
               <HeaderDropdown
                 overlay={this.renderMenu}

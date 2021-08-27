@@ -55,7 +55,7 @@ export default class ImportApplication extends Component {
             </Select>
           </Form.Item>
           <Form.Item
-            name="displayMode"
+            name="type"
             label={ <FormattedMessage id='translator.languageManage.displayMode' />}
             initialValue={displayMode}
             rules={[{ required: true }]}
@@ -78,7 +78,7 @@ export default class ImportApplication extends Component {
             <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'} onabc={this.abv}/>
           </Form.Item>
           <Button
-            style={{ margin: '70px 0 0 330px' }}
+            style={{ margin: '70px 0 0 48%' }}
             onClick={this.onSubmitApplicate}
             type="primary"
           >

@@ -50,6 +50,15 @@ export default class ImportI18nLanguage extends Component {
             const sheet1Name = wb.SheetNames[0];
             const sheet1 = wb.Sheets[sheet1Name];
             const languageList = XLSX.utils.sheet_to_json(sheet1);
+
+            const i18nData =[...languageList].map((stItem) => {
+                const { languageKey, ...item } = stItem;
+                const currentItem = {
+                  languageKey,
+                  languageMap: { ...item },
+                };
+                return currentItem;
+              });
             /**
              * * key.a:{
              *          zh-cn:'你好',
@@ -91,7 +100,7 @@ export default class ImportI18nLanguage extends Component {
             //     }
             //   });
             // });
-            onChange(languageList);
+            onChange(i18nData);
           };
           reader.readAsBinaryString(file);
 

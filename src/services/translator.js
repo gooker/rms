@@ -11,6 +11,15 @@ export async function getTranslationBycode(params) {
     data: params,
   });
 }
+// 保存-update
+export async function updateTranslations(params) {
+  return request(`/${Coordinator}/translation/updateTranslations`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+
 
 // 系统支持的语种列表
 export async function getSysLang() {
@@ -40,3 +49,4 @@ export async function addApplication(params) {
     data: params,
   });
 }
+

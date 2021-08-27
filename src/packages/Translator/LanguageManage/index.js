@@ -33,6 +33,7 @@ import {
   getSysLang,
   getApplications,
   getTranslationBycode,
+  updateTranslations,
 } from '@/services/translator';
 import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLang from './component/AddSysLang.js';
@@ -409,27 +410,24 @@ class LanguageManage extends React.Component {
   };
 
   // todo 导入
-  importApplicate = (data) => {
-    const notEqual = {};
-    const currentObj = {};
-    const { standardData } = this.state;
-    standardData.map((record) => {
-      currentObj[record.languageKey] = record.languageMap;
+  importApplicate = async (data) => {
+    const _this = this;
+    const respones = await updateTranslations({
+      ...data,
+      saveType: 'all',
     });
-    // 找到不同的
-    const importObj = data.languages;
-    // 1.导入的数据 找到之前不存在的key
-    forIn(importObj, (value, key) => {
-      // 源数据存在key
-      if (currentObj[key]) {
-        // 1.改变 2.没改变
-        if (!isEqual(currentObj[key], value)) {
-          notEqual[key] = importObj[key];
-        }
-      } else {
-        // 源数据不存在 一定是新增的
-        notEqual[key] = value;
-      }
+    if (!dealResponse(respones)) {
+      // list接口
+      _this.setState(
+        {
+          imporVisible: false,
+        },
+        _this.getTranslateList,
+      );
+    }
+    // 需要删除todo
+    _this.setState({
+      imporVisible: false,
     });
   };
 
@@ -493,6 +491,37 @@ class LanguageManage extends React.Component {
         this.getTranslateList,
       );
     }
+  };
+
+  // 保存-update
+  makeSureUpdate = async () => {
+    const { editList, appCode } = this.state;
+    const currenUpdate = Object.values(editList).map((record) => {
+      return {
+        languageKey: record.languageKey,
+        languageMap: { ...record.languageMap },
+      };
+    });
+
+    // todo 保存接口
+    const respones = await updateTranslations({
+      appCode,
+      currenUpdate,
+      saveType: 'part',
+    });
+    if (!dealResponse(respones)) {
+      // list接口
+      this.setState(
+        {
+          diffToVisible: false,
+        },
+        this.getTranslateList,
+      );
+    }
+    // 需要删除todo
+    this.setState({
+      diffToVisible: false,
+    });
   };
 
   render() {
@@ -630,7 +659,7 @@ class LanguageManage extends React.Component {
 
               <Button
                 style={{ marginLeft: 20 }}
-                disabled={isNull(appCode) && Object.keys(editList).length === 0}
+                disabled={Object.keys(editList).length === 0}
                 type="primary"
                 onClick={() => {
                   this.setState({
@@ -695,7 +724,6 @@ class LanguageManage extends React.Component {
             columns={this.generateColumns()}
             onChange={this.updateEditList}
           />
-          <DiffToSaveModal />
         </>
 
         {/*新增语言  */}
@@ -720,7 +748,7 @@ class LanguageManage extends React.Component {
           destroyOnClose={true}
           maskClosable={false}
           mask={true}
-          width={450}
+          width={modalWidth}
           onCancel={() => {
             this.setState({ addAppVisbible: false });
           }}
@@ -732,7 +760,7 @@ class LanguageManage extends React.Component {
 
         {/* 未保存 */}
         <Modal
-          width={1000}
+          width={adjustModalWidth()}
           footer={null}
           destroyOnClose
           visible={showEditVisible}
@@ -747,7 +775,7 @@ class LanguageManage extends React.Component {
 
         {/* diff */}
         <Modal
-          width={1000}
+          width={adjustModalWidth()}
           footer={null}
           destroyOnClose
           visible={this.state.diffToVisible}
@@ -757,11 +785,25 @@ class LanguageManage extends React.Component {
             });
           }}
         >
-          <DiffToSaveModal originData={this.state.mergeData} execlData={filterLanguage} />
+          <DiffToSaveModal
+            originData={this.state.mergeData}
+            execlData={filterLanguage}
+            editList={editList}
+            allLanguage={allLanguage.map(({type})=>type)}
+            makeSureUpdate={this.makeSureUpdate}
+          />
         </Modal>
 
         {/* 导入 */}
         <Modal
+          title={
+            <>
+              <FormattedMessage id='translator.languageManage.attention'/>   
+              <span style={{ fontSize: '15px', color: '#faad14' }}>
+                <FormattedMessage id='translator.languageManage.importTips'/>   
+              </span>
+            </>
+          }
           width={modalWidth}
           footer={null}
           destroyOnClose
