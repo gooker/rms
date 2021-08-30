@@ -40,7 +40,7 @@ export default class ImportApplication extends Component {
         <Form {...formItemLayout} ref={this.formRef}>
           <Form.Item
             name="appCode"
-            label={ <FormattedMessage id='translator.languageManage.application' />}
+            label={<FormattedMessage id="translator.languageManage.application" />}
             initialValue={appCode}
             rules={[{ required: true }]}
           >
@@ -56,33 +56,33 @@ export default class ImportApplication extends Component {
           </Form.Item>
           <Form.Item
             name="type"
-            label={ <FormattedMessage id='translator.languageManage.displayMode' />}
+            label={<FormattedMessage id="translator.languageManage.displayMode" />}
             initialValue={displayMode}
             rules={[{ required: true }]}
           >
             <Radio.Group onChange={this.onModeChange}>
               <Radio value="standard">
-                { <FormattedMessage id='translator.languageManage.standard' />}
+                {<FormattedMessage id="translator.languageManage.standard" />}
               </Radio>
               <Radio value="custom">
-                { <FormattedMessage id='translator.languageManage.custom' />}
+                {<FormattedMessage id="translator.languageManage.custom" />}
               </Radio>
             </Radio.Group>
           </Form.Item>
 
           <Form.Item
-            label={ <FormattedMessage id='translator.languageManage.langFile' />}
+            label={<FormattedMessage id="translator.languageManage.langFile" />}
             name="languages"
             rules={[{ required: true }]}
           >
-            <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'} onabc={this.abv}/>
+            <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'} onabc={this.abv} />
           </Form.Item>
           <Button
             style={{ margin: '70px 0 0 48%' }}
             onClick={this.onSubmitApplicate}
             type="primary"
           >
-            { <FormattedMessage id='app.button.save' />}
+            {<FormattedMessage id="app.button.save" />}
           </Button>
         </Form>
       </div>

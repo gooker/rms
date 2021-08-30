@@ -323,7 +323,7 @@ class LanguageManage extends React.Component {
       result = dataSorce.filter((record) => {
         let flag = false;
         forIn(record, (value, key) => {
-          if (obj[key]) {
+          if (!isStrictNull(value) && obj[key]) {
             if (value.toLocaleUpperCase().indexOf(filterValue.trim().toLocaleUpperCase()) !== -1) {
               flag = true;
             }
@@ -392,10 +392,11 @@ class LanguageManage extends React.Component {
     } else {
       allShowData = customData;
     }
+
     const modeText = {
-      merge: <FormattedMessage id="translator.languageManage.merge" />,
-      standard: <FormattedMessage id="translator.languageManage.standard" />,
-      custom: <FormattedMessage id="translator.languageManage.custom" />,
+      merge: formatMessage({ id: 'translator.languageManage.merge' }),
+      standard: formatMessage({ id: 'translator.languageManage.standard' }),
+      custom: formatMessage({ id: 'translator.languageManage.custom' }),
     };
     const data_ = allShowData.map((record) => {
       return {
@@ -449,19 +450,16 @@ class LanguageManage extends React.Component {
       Modal.confirm({
         title: 'Tips',
         icon: <ExclamationCircleOutlined />,
-        content: <FormattedMessage id="translator.languageManage.applicationTips" />,
-        okText: <FormattedMessage id="translator.languageManage.toSave" />,
-        cancelText: <FormattedMessage id="translator.languageManage.nocontinue" />,
-        onOk() {
-          // _this.setState({
-          //   appCode: appCode,
-          // });
-        },
+        content: formatMessage({ id: 'translator.languageManage.applicationTips', format: false }),
+        okText: formatMessage({ id: 'translator.languageManage.toSave', format: false }),
+        cancelText: formatMessage({ id: 'translator.languageManage.nocontinue', format: false }),
+        onOk() {},
         onCancel() {
           // todo list接口
           _this.setState(
             {
               appCode: value,
+              editList: {},
             },
             _this.getTranslateList,
           );
@@ -787,9 +785,8 @@ class LanguageManage extends React.Component {
         >
           <DiffToSaveModal
             originData={this.state.mergeData}
-            execlData={filterLanguage}
             editList={editList}
-            allLanguage={allLanguage.map(({type})=>type)}
+            allLanguage={allLanguage.map(({ type }) => type)}
             makeSureUpdate={this.makeSureUpdate}
           />
         </Modal>
@@ -798,9 +795,9 @@ class LanguageManage extends React.Component {
         <Modal
           title={
             <>
-              <FormattedMessage id='translator.languageManage.attention'/>   
+              <FormattedMessage id="translator.languageManage.attention" />
               <span style={{ fontSize: '15px', color: '#faad14' }}>
-                <FormattedMessage id='translator.languageManage.importTips'/>   
+                <FormattedMessage id="translator.languageManage.importTips" />
               </span>
             </>
           }

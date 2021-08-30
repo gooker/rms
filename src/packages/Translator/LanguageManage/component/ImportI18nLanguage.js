@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Upload, message } from 'antd';
+import { Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import XLSX from 'xlsx';
-// import { forIn } from 'lodash';
 
 const Dragger = Upload.Dragger;
 
@@ -17,21 +16,7 @@ export default class ImportI18nLanguage extends Component {
       name: 'file',
       accept: accept,
       maxCount: 1,
-      //   listType:"picture-card",
-      onChange: (info) => {
-        return new Promise((resolve, reject) => {
-          let fileList = [...info.fileList];
-          if (fileList.length > 1) {
-            message.info('只可以上传一个');
-            fileList = fileList.slice(-1);
-            this.setState({ fileList });
-            return reject(false);
-          }
-          this.setState({ fileList });
-          return resolve(true);
-        });
-      },
-      beforeUpload(file, list) {
+      beforeUpload(file) {
         // 是否前端分析如果前端分析，关闭向后端发送请求，这里处理数据
         if (analyzeFunction) {
           const reader = new FileReader();
@@ -51,14 +36,14 @@ export default class ImportI18nLanguage extends Component {
             const sheet1 = wb.Sheets[sheet1Name];
             const languageList = XLSX.utils.sheet_to_json(sheet1);
 
-            const i18nData =[...languageList].map((stItem) => {
-                const { languageKey, ...item } = stItem;
-                const currentItem = {
-                  languageKey,
-                  languageMap: { ...item },
-                };
-                return currentItem;
-              });
+            const i18nData = [...languageList].map((stItem) => {
+              const { languageKey, ...item } = stItem;
+              const currentItem = {
+                languageKey,
+                languageMap: { ...item },
+              };
+              return currentItem;
+            });
             /**
              * * key.a:{
              *          zh-cn:'你好',
@@ -76,7 +61,6 @@ export default class ImportI18nLanguage extends Component {
             //     languageMap[record['languageKey']] = item;
             //   }
             // });
-
 
             /**
              * * zh-cn:{

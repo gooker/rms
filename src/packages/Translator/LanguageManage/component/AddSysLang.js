@@ -53,7 +53,7 @@ export default class AddSysLang extends Component {
     var regex = /^[A-Za-z_-]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(
-        new Error(<FormattedMessage id= 'translator.languageManage.langtypeValidate' />),
+        new Error(<FormattedMessage id="translator.languageManage.langtypeValidate" />),
       );
     }
     return Promise.resolve();
@@ -78,27 +78,29 @@ export default class AddSysLang extends Component {
                 trigger={['click']}
                 placement="bottomCenter"
               >
-                <Button type="link">快捷方式</Button>
+                <Button type="link">
+                  <FormattedMessage id="translator.languageManage.shortcut" />
+                </Button>
               </HeaderDropdown>
             </Col>
           </Row>
           <Form.Item
             name="type"
-            label={ <FormattedMessage id= 'translator.languageManage.langtype' />}
+            label={<FormattedMessage id="translator.languageManage.langtype" />}
             rules={[{ required: true }, { validator: this.typeValidator }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="name"
-            label={<FormattedMessage id= 'translator.languageManage.langname' />}
+            label={<FormattedMessage id="translator.languageManage.langname" />}
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
 
           <Button style={{ margin: '50px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
-            {<FormattedMessage id= 'app.button.save' />}
+            {<FormattedMessage id="app.button.save" />}
           </Button>
         </Form>
       </div>

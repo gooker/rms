@@ -20,4 +20,5 @@ export default {
     'translator.languageManage.nocontinue': '否,继续',
     'translator.languageManage.attention': '注意: ',
     'translator.languageManage.importTips': '导入会覆盖之前模式下的全部翻译',
+    'translator.languageManage.shortcut':  '快捷方式',
 }
