@@ -44,46 +44,6 @@ export default class ImportI18nLanguage extends Component {
               };
               return currentItem;
             });
-            /**
-             * * key.a:{
-             *          zh-cn:'你好',
-             *          en-us:’hello',
-             *         },
-             *    key.b:{
-             *          zh-cn:‘再见‘，
-             *          en-us:'bye'
-             *       }
-             * */
-            // let languageMap = {};
-            // languageList.map((record) => {
-            //   const { languageKey, ...item } = record;
-            //   if (languageKey) {
-            //     languageMap[record['languageKey']] = item;
-            //   }
-            // });
-
-            /**
-             * * zh-cn:{
-             *          key.a:'你好',
-             *          key.b:'再见',
-             *         },
-             *   en-us:{
-             *         key.a:'hi',
-             *         key.b:'bye'
-             *
-             *   }
-             * */
-            // languageList.map((record) => {
-            //   forIn(record, (value, key) => {
-            //     const languageKey = record['languageKey'];
-            //     if (key !== 'languageKey') {
-            //       if (languageMap[key] == null) {
-            //         languageMap[key] = {};
-            //       }
-            //       languageMap[key][languageKey] = value;
-            //     }
-            //   });
-            // });
             onChange(i18nData);
           };
           reader.readAsBinaryString(file);

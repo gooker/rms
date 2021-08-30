@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import ReactDiffViewer from 'react-diff-viewer';
 import { sortBy } from 'lodash';
+import { adjustModalWidth } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../translator.module.less';
 
@@ -69,28 +70,37 @@ export default class DiffToSaveModal extends Component {
 
   render() {
     const { diffData } = this.state;
+    const { onCancel } = this.props;
     return (
       <div className={styles.diffJsoContent}>
-        <div className={styles.diffHeader}>
-          <Button
-            type="primary"
-            onClick={() => {
-              const { makeSureUpdate } = this.props;
-              if (makeSureUpdate) {
-                makeSureUpdate();
-              }
-            }}
-          >
-            <FormattedMessage id="app.button.save" />
-          </Button>
-        </div>
-        <ReactDiffViewer
-          splitView={true}
-          oldValue={JSON.stringify(diffData.oldSource, null, 4)}
-          newValue={JSON.stringify(diffData.newSource, null, 4)}
-          leftTitle="before"
-          rightTitle="after"
-        />
+        <Modal
+          width={adjustModalWidth()}
+          footer={null}
+          destroyOnClose
+          visible={true}
+          onCancel={onCancel}
+        >
+          <div className={styles.diffHeader}>
+            <Button
+              type="primary"
+              onClick={() => {
+                const { makeSureUpdate } = this.props;
+                if (makeSureUpdate) {
+                  makeSureUpdate();
+                }
+              }}
+            >
+              <FormattedMessage id="app.button.save" />
+            </Button>
+          </div>
+          <ReactDiffViewer
+            splitView={true}
+            oldValue={JSON.stringify(diffData.oldSource, null, 4)}
+            newValue={JSON.stringify(diffData.newSource, null, 4)}
+            leftTitle="before"
+            rightTitle="after"
+          />
+        </Modal>
       </div>
     );
   }

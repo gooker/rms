@@ -1,9 +1,10 @@
 import React, { memo, useState } from 'react';
-import { Table, Row, Col, Button } from 'antd';
+import { Table, Row, Col, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
+import { adjustModalWidth } from '@/utils/utils';
 
 const UpdateEditListModal = (props) => {
-  const { columns, source } = props;
+  const { columns, source, visible, onCancel } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataList, setDataList] = useState(Object.values(source) || []);
   const rowSelection = {
@@ -34,39 +35,47 @@ const UpdateEditListModal = (props) => {
 
   return (
     <div>
-      <Row>
-        <Col span={4}>
-          <Button
-            onClick={() => {
-              const filterData = dataList.filter((record) => {
-                if (selectedRowKeys.indexOf(record.languageKey) !== -1) {
-                  delete source[record.languageKey];
-                  return false;
+      <Modal
+        width={adjustModalWidth()}
+        footer={null}
+        destroyOnClose
+        visible={true}
+        onCancel={onCancel}
+      >
+        <Row>
+          <Col span={4}>
+            <Button
+              onClick={() => {
+                const filterData = dataList.filter((record) => {
+                  if (selectedRowKeys.indexOf(record.languageKey) !== -1) {
+                    delete source[record.languageKey];
+                    return false;
+                  }
+                  return true;
+                });
+                const { onChange } = props;
+                if (onChange) {
+                  onChange(source);
+                  setDataList(filterData);
                 }
-                return true;
-              });
-              const { onChange } = props;
-              if (onChange) {
-                onChange(source);
-                setDataList(filterData);
-              }
-            }}
-            disabled={selectedRowKeys.length === 0}
-          >
-            <FormattedMessage id="app.button.delete"></FormattedMessage>
-          </Button>
-        </Col>
-      </Row>
+              }}
+              disabled={selectedRowKeys.length === 0}
+            >
+              <FormattedMessage id="app.button.delete"></FormattedMessage>
+            </Button>
+          </Col>
+        </Row>
 
-      <Table
-        rowSelection={rowSelection}
-        dataSource={dataList}
-        columns={getColumns()}
-        rowKey={(record) => {
-          return record.languageKey;
-        }}
-        pagination={false}
-      />
+        <Table
+          rowSelection={rowSelection}
+          dataSource={dataList}
+          columns={getColumns()}
+          rowKey={(record) => {
+            return record.languageKey;
+          }}
+          pagination={false}
+        />
+      </Modal>
     </div>
   );
 };

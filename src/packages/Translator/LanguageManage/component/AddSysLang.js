@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col, Menu } from 'antd';
+import { Form, Input, Button, Row, Col, Menu,Modal } from 'antd';
+import { formatMessage } from '@/utils/Lang';
 import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';
@@ -14,7 +15,7 @@ const formItemLayout = {
   },
 };
 
-export default class AddSysLang extends Component {
+export default class AddSysLangModal extends Component {
   formRef = React.createRef();
   renderMenu = () => {
     this.selectedKeys = null;
@@ -53,14 +54,14 @@ export default class AddSysLang extends Component {
     var regex = /^[A-Za-z_-]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(
-        new Error(<FormattedMessage id="translator.languageManage.langtypeValidate" />),
+        new Error(formatMessage({id:'translator.languageManage.langtypeValidate',})),
       );
     }
     return Promise.resolve();
   };
 
   onSubmitLang = () => {
-    const { validateFields } = this.formRef.current;
+    const { validateFields} = this.formRef.current;
     const { onAddLang } = this.props;
     validateFields().then((allValues) => {
       onAddLang(allValues);
@@ -68,8 +69,20 @@ export default class AddSysLang extends Component {
   };
 
   render() {
+    const {onCancel,visible}=this.props;
     return (
-      <div>
+      <>
+        {/*新增语言  */}
+        <Modal
+          title={<FormattedMessage id="translator.languageManage.addlanguage" />}
+          destroyOnClose={true}
+          maskClosable={false}
+          mask={true}
+          width={450}
+          onCancel={onCancel}
+          footer={null}
+          visible={visible}
+        >
         <Form {...formItemLayout} ref={this.formRef}>
           <Row style={{ marginBottom: 5 }}>
             <Col flex="auto" className={commonStyles.textRight}>
@@ -103,7 +116,9 @@ export default class AddSysLang extends Component {
             {<FormattedMessage id="app.button.save" />}
           </Button>
         </Form>
-      </div>
+        </Modal>
+
+      </>
     );
   }
 }
