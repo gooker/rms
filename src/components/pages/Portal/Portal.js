@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { ConfigProvider, message } from 'antd';
+import history from '@/history';
 import intl from 'react-intl-universal';
 import MainLayout from '@/layout/MainLayout';
 import { connect } from '@/utils/dva';
 import { getCurrentUser } from '@/services/api';
 import { dealResponse } from '@/utils/utils';
 
+let _history=history
 // Portal组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
 @connect(({ app }) => ({ antdLocale: app.antdLocale }))
 class Portal extends Component {
@@ -18,7 +20,8 @@ class Portal extends Component {
     const response = await getCurrentUser();
     if (dealResponse(response)) {
       message.error('获取当前用户信息失败');
-      return;
+      _history.push('/404')
+      return false;
     }
     const { language, currentSection, authorityKeys, userTimeZone } = response;
 

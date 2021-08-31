@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import dva from '@/utils/dva';
-import { HashRouter as Router } from 'react-router-dom';
+import { HashRouter as Router} from 'react-router-dom';
+import history from '@/history';
 import Portal from '@/components/pages/Portal/Portal';
 import appModel from '@/models/app';
 import taskModel from '@/models/task';
@@ -8,7 +9,7 @@ import './global.less';
 
 // 1. 初始化Dva对象
 const app = dva();
-window.g_app = app;
+window.g_app = app; 
 
 // 2. 注册插件
 // app.use({});
@@ -23,7 +24,7 @@ const DvaProvider = app.create();
 //   不从Iframe加载
   ReactDOM.render(
     <DvaProvider>
-      <Router>
+      <Router history={history}>
         <Portal />
       </Router>
     </DvaProvider>,
