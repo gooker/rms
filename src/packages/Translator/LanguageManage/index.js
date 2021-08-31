@@ -369,7 +369,6 @@ class LanguageManage extends React.Component {
       imporVisible,
       showMissingTranslate,
       editList,
-      showEditVisible,
       loading,
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
@@ -584,33 +583,31 @@ class LanguageManage extends React.Component {
         />
 
         {/* 未保存 */}
-        {showEditVisible && (
-          <UpdateEditListModal
-            onCancel={() => {
-              this.setState({
-                showEditVisible: false,
-              });
-            }}
-            source={editList}
-            columns={allLanguage}
-            onChange={(values) => {}}
-          />
-        )}
+        <UpdateEditListModal
+          visible={this.state.showEditVisible}
+          onCancel={() => {
+            this.setState({
+              showEditVisible: false,
+            });
+          }}
+          source={editList}
+          columns={allLanguage}
+          onChange={(values) => {}}
+        />
 
         {/* 对比 */}
-        {this.state.diffToVisible && (
-          <DiffToSaveModal
-            originData={this.state.mergeData}
-            editList={editList}
-            allLanguage={allLanguage.map(({ type }) => type)}
-            makeSureUpdate={this.makeSureUpdate}
-            onCancel={() => {
-              this.setState({
-                diffToVisible: false,
-              });
-            }}
-          />
-        )}
+        <DiffToSaveModal
+          visible={this.state.diffToVisible}
+          originData={this.state.mergeData}
+          editList={editList}
+          allLanguage={allLanguage.map(({ type }) => type)}
+          makeSureUpdate={this.makeSureUpdate}
+          onCancel={() => {
+            this.setState({
+              diffToVisible: false,
+            });
+          }}
+        />
 
         {/* 导入 */}
         <ImportApplicationModal

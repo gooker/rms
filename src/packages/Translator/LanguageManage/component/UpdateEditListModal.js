@@ -1,17 +1,21 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Table, Row, Col, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { adjustModalWidth } from '@/utils/utils';
 import { sortBy } from 'lodash';
 
 const UpdateEditListModal = (props) => {
-  const { columns, source, onCancel } = props;
+  const { columns, source, onCancel, visible } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  let _sources = Object.values(source) || [];
-  _sources = sortBy(_sources, (o) => {
-    return o.languageKey;
-  });
-  const [dataList, setDataList] = useState(_sources);
+  const [dataList, setDataList] = useState([]);
+
+  useEffect(() => {
+    let _sources = Object.values(source) || [];
+    _sources = sortBy(_sources, (o) => {
+      return o.languageKey;
+    });
+    setDataList(_sources);
+  }, [source]);
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -45,7 +49,7 @@ const UpdateEditListModal = (props) => {
         width={adjustModalWidth()}
         footer={null}
         destroyOnClose
-        visible={true}
+        visible={visible}
         onCancel={onCancel}
       >
         <Row>

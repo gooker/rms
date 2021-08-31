@@ -10,7 +10,8 @@ export default class DiffToSaveModal extends Component {
   state = {
     diffData: {},
   };
-  componentDidMount() {
+
+  componentWillReceiveProps(nextProps) {
     const result = this.getData();
     this.setState({
       diffData: result,
@@ -70,14 +71,14 @@ export default class DiffToSaveModal extends Component {
 
   render() {
     const { diffData } = this.state;
-    const { onCancel } = this.props;
+    const { onCancel, visible } = this.props;
     return (
       <div className={styles.diffJsoContent}>
         <Modal
           width={adjustModalWidth()}
           footer={null}
           destroyOnClose
-          visible={true}
+          visible={visible}
           onCancel={onCancel}
         >
           <div className={styles.diffHeader}>

@@ -35,7 +35,9 @@ export default class Content extends React.PureComponent {
               component={Loadable(() => import(`@/packages${component}`))}
             />
           ))}
+           <Route path="/login">登录</Route>
           <Route path="*">404</Route>
+          
         </Switch>
         <Detail />
       </div>
