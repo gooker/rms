@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col, Menu } from 'antd';
+import { Form, Input, Button, Row, Col, Menu, Modal } from 'antd';
+import { formatMessage } from '@/utils/Lang';
 import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';
@@ -14,7 +15,7 @@ const formItemLayout = {
   },
 };
 
-export default class AddSysLang extends Component {
+export default class AddSysLangModal extends Component {
   formRef = React.createRef();
   renderMenu = () => {
     this.selectedKeys = null;
@@ -53,7 +54,7 @@ export default class AddSysLang extends Component {
     var regex = /^[A-Za-z_-]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(
-        new Error(<FormattedMessage id= 'translator.languageManage.langtypeValidate' />),
+        new Error(formatMessage({ id: 'translator.languageManage.langtypeValidate' })),
       );
     }
     return Promise.resolve();
@@ -68,40 +69,55 @@ export default class AddSysLang extends Component {
   };
 
   render() {
+    const { onCancel, visible } = this.props;
     return (
-      <div>
-        <Form {...formItemLayout} ref={this.formRef}>
-          <Row style={{ marginBottom: 5 }}>
-            <Col flex="auto" className={commonStyles.textRight}>
-              <HeaderDropdown
-                overlay={this.renderMenu}
-                trigger={['click']}
-                placement="bottomCenter"
-              >
-                <Button type="link">快捷方式</Button>
-              </HeaderDropdown>
-            </Col>
-          </Row>
-          <Form.Item
-            name="type"
-            label={ <FormattedMessage id= 'translator.languageManage.langtype' />}
-            rules={[{ required: true }, { validator: this.typeValidator }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label={<FormattedMessage id= 'translator.languageManage.langname' />}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+      <>
+        {/*新增语言  */}
+        <Modal
+          title={<FormattedMessage id="translator.languageManage.addlanguage" />}
+          destroyOnClose={true}
+          maskClosable={false}
+          mask={true}
+          width={420}
+          onCancel={onCancel}
+          footer={null}
+          visible={visible}
+        >
+          <Form {...formItemLayout} ref={this.formRef}>
+            <Row>
+              <Col flex="auto" className={commonStyles.textRight}>
+                <HeaderDropdown
+                  overlay={this.renderMenu}
+                  trigger={['click']}
+                  placement="bottomCenter"
+                >
+                  <Button type="link">
+                    <FormattedMessage id="translator.languageManage.shortcut" />
+                  </Button>
+                </HeaderDropdown>
+              </Col>
+            </Row>
+            <Form.Item
+              name="type"
+              label={<FormattedMessage id="translator.languageManage.langtype" />}
+              rules={[{ required: true }, { validator: this.typeValidator }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="name"
+              label={<FormattedMessage id="translator.languageManage.langname" />}
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Button style={{ margin: '50px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
-            {<FormattedMessage id= 'app.button.save' />}
-          </Button>
-        </Form>
-      </div>
+            <Button style={{ margin: '40px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
+              {<FormattedMessage id="app.button.save" />}
+            </Button>
+          </Form>
+        </Modal>
+      </>
     );
   }
 }

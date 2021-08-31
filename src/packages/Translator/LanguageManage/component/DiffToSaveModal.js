@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Button } from 'antd';
+import { Button, Modal } from 'antd';
 import ReactDiffViewer from 'react-diff-viewer';
 import { sortBy } from 'lodash';
+import { adjustModalWidth } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../translator.module.less';
 
@@ -9,7 +10,8 @@ export default class DiffToSaveModal extends Component {
   state = {
     diffData: {},
   };
-  componentDidMount() {
+
+  componentWillReceiveProps(nextProps) {
     const result = this.getData();
     this.setState({
       diffData: result,
@@ -27,65 +29,41 @@ export default class DiffToSaveModal extends Component {
     return result;
   }
   getData = () => {
-    const { originData, execlData,allLanguage ,editList} = this.props;
+    const { originData, allLanguage, editList } = this.props;
 
     //将俩个数据的格式统一，方便对比
-    let orrSource=[]
-
-    let originalSource =
-      originData &&
+    let oldSource = [];
+    originData &&
       originData.map((record) => {
-        if(editList && Object.keys(editList).includes(record.languageKey)){
-          orrSource.push({
+        if (editList && Object.keys(editList).includes(record.languageKey)) {
+          oldSource.push({
             ...record.languageMap,
             languageKey: record.languageKey,
-          })
+          });
         }
+      });
+
+    let newSource =
+      editList &&
+      Object.values(editList).map((record) => {
         return {
+          languageKey: record.languageKey,
           ...record.languageMap,
-          languageKey: record.languageKey,
         };
       });
-      let currenEditList = editList && Object.values(editList).map((record) => {
-        return {
-          languageKey: record.languageKey,
-           ...record.languageMap,
-        };
-      });
-    //处理目标函数
-    let execlSource =
-      execlData &&
-      execlData.map((record) => {
-        return {
-          ...record.languageMap,
-          languageKey: record.languageKey,
-        };
-      });
-    originalSource = sortBy(originalSource, (o) => {
+    newSource = sortBy(newSource, (o) => {
       return o.languageKey;
     });
-    execlSource = sortBy(execlSource, (o) => {
+    oldSource = sortBy(oldSource, (o) => {
       return o.languageKey;
     });
-    currenEditList = sortBy(currenEditList, (o) => {
-      return o.languageKey;
-    });
-    orrSource = sortBy(orrSource, (o) => {
-      return o.languageKey;
-    });
-    let keys =[...allLanguage];
-    keys.unshift('languageKey')
+    let keys = [...allLanguage];
+    keys.unshift('languageKey');
     return {
-      oldSource: originalSource.map((record) => {
+      oldSource: oldSource.map((record) => {
         return this.generateKey(record, keys);
       }),
-      newSource: execlSource.map((record) => {
-        return this.generateKey(record, keys);
-      }),
-      orrSource: orrSource.map((record) => {
-        return this.generateKey(record, keys);
-      }),
-      editSource: currenEditList.map((record) => {
+      newSource: newSource.map((record) => {
         return this.generateKey(record, keys);
       }),
     };
@@ -93,36 +71,37 @@ export default class DiffToSaveModal extends Component {
 
   render() {
     const { diffData } = this.state;
-    /*
-        * {
-            key.a:{
-
-            }
-        }
-        *
-        * */
-
+    const { onCancel, visible } = this.props;
     return (
       <div className={styles.diffJsoContent}>
-        {/* 放button */}
-        <div className={styles.diffHeader}>
-          <Button type="primary" onClick={()=>{
-            const {makeSureUpdate}=this.props;
-            if(makeSureUpdate){
-              makeSureUpdate()
-            }
-          }}>
-            <FormattedMessage id="app.button.save" />
-          </Button>
-        </div>
-        <ReactDiffViewer
-          splitView={true}
-          oldValue={JSON.stringify(diffData.orrSource, null, 4)}
-          newValue={JSON.stringify(diffData.editSource, null, 4)}
-          leftTitle="before"
-          rightTitle="after"
-          styles={{ display: 'over' }}
-        />
+        <Modal
+          width={adjustModalWidth()}
+          footer={null}
+          destroyOnClose
+          visible={visible}
+          onCancel={onCancel}
+        >
+          <div className={styles.diffHeader}>
+            <Button
+              type="primary"
+              onClick={() => {
+                const { makeSureUpdate } = this.props;
+                if (makeSureUpdate) {
+                  makeSureUpdate();
+                }
+              }}
+            >
+              <FormattedMessage id="app.button.save" />
+            </Button>
+          </div>
+          <ReactDiffViewer
+            splitView={true}
+            oldValue={JSON.stringify(diffData.oldSource, null, 4)}
+            newValue={JSON.stringify(diffData.newSource, null, 4)}
+            leftTitle="before"
+            rightTitle="after"
+          />
+        </Modal>
       </div>
     );
   }
