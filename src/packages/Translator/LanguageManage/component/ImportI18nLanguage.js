@@ -123,7 +123,7 @@ export default class ImportI18nLanguage extends Component {
             <InboxOutlined />
           </p>
           <p className="ant-upload-text">
-            <FormattedMessage id="app.commom.upload.dragUploadedFileToThisArea" />
+            <FormattedMessage id="app.common.upload.dragUploadedFileToThisArea" />
           </p>
         </Dragger>
       </div>

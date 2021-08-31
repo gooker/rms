@@ -139,6 +139,31 @@ export default {
   'app.common.hours': '时',
   'app.common.minutes': '分',
 
-  //
-  'app.commom.upload.dragUploadedFileToThisArea': '将上传的文件单击或拖拽到此区域',
+  // 上传
+  'app.common.upload.dragUploadedFileToThisArea': '将上传的文件单击或拖拽到此区域',
+
+  // 地图
+  'app.map.map': '地图',
+  'app.map.logicArea': '逻辑区',
+  'app.map.routeArea': '路线区',
+  'app.map.point': '点位',
+  'app.map.path': '路线',
+  'app.map.view': '显示',
+  'app.map.feature': '功能',
+  'app.map.notGoAway': '不可走点',
+  'app.map.storagePoint': '存储点',
+  'app.map.followingPoint': '跟车点',
+  'app.map.waitingPoint': '等待点',
+  'app.map.notStay': '不可逗留点',
+  'app.map.fetchTask': '接任务点',
+  'app.map.workstation': '工作站',
+  'app.map.charger': '充电桩',
+  'app.map.elevator': '电梯',
+  'app.map.channel': '通道',
+  'app.map.restArea': '休息区',
+  'app.map.obstacle': '障碍物',
+  'app.map.commonPoint': '通用功能点',
+  'app.map.dumpPoint': '抛物点',
+  'app.map.intersection': '交汇点',
+  'app.map.roller': '滚筒站点',
 };
