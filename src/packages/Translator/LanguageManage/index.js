@@ -23,11 +23,10 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
-import XLSX from 'xlsx';
-import { sortBy, cloneDeep, forIn, isEqual } from 'lodash';
+import { cloneDeep, isEqual } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/Lang';
-import { dealResponse, isNull, isStrictNull } from '@/utils/utils';
+import { dealResponse, isNull } from '@/utils/utils';
 import {
   addApplication,
   addSysLang,
@@ -36,6 +35,12 @@ import {
   getTranslationBycode,
   updateTranslations,
 } from '@/services/translator';
+import {
+  exportTranslate,
+  generatefilterValue,
+  generateOriginData,
+  getdataList,
+} from './translateUtils';
 import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLangModal from './component/AddSysLang.js';
 import AddApplicationModal from './component/AddApplication';
@@ -90,49 +95,7 @@ class LanguageManage extends React.Component {
         name: 'vi-VN',
       },
     ],
-    dataList: {
-      standard: [
-        {
-          languageKey: 'wcs.wcsException.task.redoErrorStatusError',
-          languageMap: {
-            'en-US': 'Tasks is neither cancelled nor completed and cannot be redone',
-            'ko-KR': '작업은 취소도 아니고, 완성된 상태도 아니므로, 다시 할 수 없다',
-            'vi-VN':
-              'Nhiệm vụ không bị hủy bỏ cũng không được hoàn thành và không thể được thực hiện lại',
-            'zh-CN': '任务既不是取消,也不是完成状态，不能重做',
-          },
-        },
-        {
-          languageKey: 'wcs.agvErrorDefinition.7002.errorName',
-          languageMap: {
-            'zh-CN': '电量异常',
-            'en-US': 'Battery Level Abnormal',
-            'ko-KR': '전기량 이상',
-            'vi-VN': 'Mức Pin bất thường',
-          },
-        },
-      ],
-      custom: [
-        {
-          languageKey: 'wcs.wcsException.task.redoErrorStatusError',
-          languageMap: {
-            'en-US': 'Tasks is neithe',
-            'ko-KR': '작업은 취소도 아',
-            'vi-VN': 'Nhiệm vụ không bị hủy',
-            'zh-CN': '任务不能重做',
-          },
-        },
-        {
-          languageKey: 'menu.authorized',
-          languageMap: {
-            'en-US': 'Authorized',
-            'ko-KR': '작업은',
-            'vi-VN': 'Nhiệm vụ',
-            'zh-CN': '权限',
-          },
-        },
-      ],
-    },
+    dataList: getdataList(),
     standardData: [],
     customData: [],
     mergeData: [],
@@ -142,11 +105,9 @@ class LanguageManage extends React.Component {
   };
 
   componentDidMount() {
+    // TODO: 调接口的时候去掉注释
     // this.getSysLanguage();
     // this.getSysApplications();
-
-    // TODO: 之后要去掉 处理3种状态的初始化数据 暂时放在这里 有接口的时候 应该是调完list 处理的
-    this.getStansardAndCsutomData();
   }
 
   onModeChange = (e) => {
@@ -163,7 +124,7 @@ class LanguageManage extends React.Component {
     }
   };
 
-  // 获取应用
+  // 获取所有应用
   getSysApplications = async () => {
     const moduleData = await getApplications();
     if (!dealResponse(moduleData)) {
@@ -171,7 +132,7 @@ class LanguageManage extends React.Component {
     }
   };
 
-  // 获取列表-list
+  // 根据appcode获取翻译列表-list
   getTranslateList = async () => {
     const { appCode } = this.state;
     this.setState({ loading: true });
@@ -179,49 +140,26 @@ class LanguageManage extends React.Component {
     if (!dealResponse(list)) {
       this.setState({ dataList: list });
     }
-
     // TODO: 拿到的数据处理  顺序要调整 方法放在里面
     this.getStansardAndCsutomData();
   };
 
   getStansardAndCsutomData = () => {
     const { dataList, allLanguage } = this.state;
-    const standardData = [...dataList['standard']].map((stItem) => {
-      forIn(allLanguage, ({ type }) => {
-        if (!stItem.languageMap[type]) {
-          stItem.languageMap[type] = null;
-        }
-      });
-      return stItem;
-    });
-    const customData = [...dataList['custom']].map((cuItem) => {
-      forIn(allLanguage, ({ type }) => {
-        if (!cuItem.languageMap[type]) {
-          cuItem.languageMap[type] = null;
-        }
-      });
-      return cuItem;
-    });
-
-    const mergeData = [...standardData].map((item) => {
-      let item_ = { ...item };
-      const record_ = customData.filter((record) => item_.languageKey === record.languageKey);
-      if (record_.length > 0) {
-        item_ = record_[0];
-      }
-      return item_;
-    });
-
+    /*切换应用 根据后端返回的数据 以及目前前端勾选的语言 初始化数据
+     *        后端返回的数据 没有该语言 前端赋值为null
+     * 原因: 1.交互问题 保持所有数据的key一致;
+     *      2：场景: 新添加一个语言 如果之前有100条数据 那么会造成未保存的就是100条(languagemap不一样)
+     *
+     *** custom里面的key一定在standard里面
+     * *
+     * */
+    const dataArray = generateOriginData(dataList, allLanguage);
+    const { standardData, customData, mergeData } = dataArray;
     this.setState({
-      standardData: sortBy(standardData, (o) => {
-        return o.languageKey;
-      }),
-      customData: sortBy(customData, (o) => {
-        return o.languageKey;
-      }),
-      mergeData: sortBy(mergeData, (o) => {
-        return o.languageKey;
-      }),
+      standardData: [...standardData],
+      customData: [...customData],
+      mergeData: [...mergeData],
       loading: false,
     });
   };
@@ -279,46 +217,26 @@ class LanguageManage extends React.Component {
   // 语种变化 应用变化 搜索 最后都调用此放大
   generateFilterLanguage = () => {
     const dataSorce = this.generateData();
-
     const { filterValue, showLanguage, showMissingTranslate } = this.state;
+    // 当前列表的coiumns 在对应的value中搜索
     const shownColumns = {};
     this.generateColumns().map((record) => {
       if (record.field) {
         shownColumns[record.field] = true;
       }
     });
-    let result = [];
-    if (!isStrictNull(filterValue?.trim())) {
-      result = dataSorce.filter((record) => {
-        let flag = false;
-        forIn(record, (value, key) => {
-          if (!isStrictNull(value) && shownColumns[key]) {
-            if (value.indexOf(filterValue.trim()) !== -1) {
-              flag = true;
-            }
-          }
-        });
-        return flag;
-      });
-    } else {
-      result = dataSorce;
-    }
-    if (showMissingTranslate) {
-      result = result.filter((record) => {
-        let flag = false;
-        for (let index = 0; index < showLanguage.length; index++) {
-          const element = showLanguage[index];
-          flag = isStrictNull(record[element]);
-        }
-        return flag;
-      });
-    }
-    return result;
+
+    return generatefilterValue(
+      filterValue,
+      dataSorce,
+      shownColumns,
+      showMissingTranslate,
+      showLanguage,
+    );
   };
 
   updateEditList = (field, index, record, newValue, text) => {
     const { mergeData, editList } = this.state;
-
     let currentlist = { ...editList };
     const result = {};
     let currentValue = {};
@@ -361,22 +279,7 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
 
-    const modeText = {
-      merge: formatMessage({ id: 'translator.languageManage.merge' }),
-      standard: formatMessage({ id: 'translator.languageManage.standard' }),
-      custom: formatMessage({ id: 'translator.languageManage.custom' }),
-    };
-    const data_ = allShowData.map((record) => {
-      return {
-        languageKey: record.languageKey,
-        ...record.languageMap,
-      };
-    });
-    const textlang = formatMessage({ id: 'translator.languageManage.langpackage' });
-    const ws = XLSX.utils.json_to_sheet(data_); /* 新建空workbook，然后加入worksheet */
-    const wb = XLSX.utils.book_new(); /*新建book*/
-    XLSX.utils.book_append_sheet(wb, ws, 'People'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
-    XLSX.writeFile(wb, `${modeText[key]}${textlang}-${appCode}.xlsx`); /*写文件(book,xlsx文件名称)*/
+    exportTranslate(allShowData, key, appCode);
   };
 
   // 导入
@@ -387,39 +290,19 @@ class LanguageManage extends React.Component {
       saveType: 'all',
     });
     if (!dealResponse(respones)) {
-      // list接口
-      _this.setState(
-        {
-          imporVisible: false,
-        },
-        _this.getTranslateList,
-      );
+      _this.setState({ imporVisible: false }, _this.getTranslateList);
     }
     // TODO: 接口调完需要删除
-    _this.setState({
-      imporVisible: false,
-    });
+    _this.setState({ imporVisible: false });
   };
 
   // 添加新的语言
   submitLanguage = async (value) => {
-    const { allLanguage, showLanguage } = this.state;
     const response = await addSysLang(value);
     if (!dealResponse(response)) {
       this.getSysLanguage(true);
       this.setState({ addLangVisible: false, editList: {} }, this.getTranslateList);
     }
-
-    // TODO: test 要删除
-    this.setState(
-      {
-        addLangVisible: false,
-        allLanguage: [...allLanguage, value],
-        showLanguage: [...showLanguage, value.type],
-        editList: {},
-      },
-      this.getTranslateList,
-    );
   };
 
   // 切换应用
@@ -450,13 +333,7 @@ class LanguageManage extends React.Component {
     const { code } = data;
     const addNewResponse = await addApplication({ ...data });
     if (!dealResponse(addNewResponse)) {
-      this.setState(
-        {
-          addAppVisbible: false,
-          appCode: code,
-        },
-        this.getTranslateList,
-      );
+      this.setState({ addAppVisbible: false, appCode: code }, this.getTranslateList);
     }
   };
 
@@ -476,12 +353,10 @@ class LanguageManage extends React.Component {
       saveType: 'part',
     });
     if (!dealResponse(respones)) {
-      this.setState({ diffToVisible: false }, this.getTranslateList);
+      this.setState({ diffToVisible: false, editList: {} }, this.getTranslateList);
     }
     // TODO: 需要删除
-    this.setState({
-      diffToVisible: false,
-    });
+    this.setState({ diffToVisible: false, editList: {} });
   };
 
   render() {
@@ -649,20 +524,10 @@ class LanguageManage extends React.Component {
               />
             </FormItem>
           </Col>
-          <Col style={{ marginLeft: 30 }}>
-            <Checkbox
-              value={showMissingTranslate}
-              onChange={({ target: { checked } }) => {
-                this.setState({ showMissingTranslate: checked }, this.generateFilterLanguage);
-              }}
-            >
-              <FormattedMessage id="translator.languageManage.onlyShowMissing" />
-            </Checkbox>
-          </Col>
         </Row>
         <Divider></Divider>
         <Row>
-          <Col>
+          <Col flex="auto">
             <FormItem
               label={<FormattedMessage id="translator.languageManage.displayMode" />}
               width={'100%'}
@@ -679,6 +544,16 @@ class LanguageManage extends React.Component {
                 </Radio>
               </Radio.Group>
             </FormItem>
+          </Col>
+          <Col className={commonStyles.textRight}>
+            <Checkbox
+              value={showMissingTranslate}
+              onChange={({ target: { checked } }) => {
+                this.setState({ showMissingTranslate: checked }, this.generateFilterLanguage);
+              }}
+            >
+              <FormattedMessage id="translator.languageManage.onlyShowMissing" />
+            </Checkbox>
           </Col>
         </Row>
         <EditableTable
@@ -718,6 +593,7 @@ class LanguageManage extends React.Component {
             }}
             source={editList}
             columns={allLanguage}
+            onChange={(values) => {}}
           />
         )}
 

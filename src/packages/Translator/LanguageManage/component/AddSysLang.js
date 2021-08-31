@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col, Menu,Modal } from 'antd';
+import { Form, Input, Button, Row, Col, Menu, Modal } from 'antd';
 import { formatMessage } from '@/utils/Lang';
 import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
@@ -54,14 +54,14 @@ export default class AddSysLangModal extends Component {
     var regex = /^[A-Za-z_-]+$/gi;
     if (value && !regex.test(value)) {
       return Promise.reject(
-        new Error(formatMessage({id:'translator.languageManage.langtypeValidate',})),
+        new Error(formatMessage({ id: 'translator.languageManage.langtypeValidate' })),
       );
     }
     return Promise.resolve();
   };
 
   onSubmitLang = () => {
-    const { validateFields} = this.formRef.current;
+    const { validateFields } = this.formRef.current;
     const { onAddLang } = this.props;
     validateFields().then((allValues) => {
       onAddLang(allValues);
@@ -69,7 +69,7 @@ export default class AddSysLangModal extends Component {
   };
 
   render() {
-    const {onCancel,visible}=this.props;
+    const { onCancel, visible } = this.props;
     return (
       <>
         {/*新增语言  */}
@@ -78,46 +78,45 @@ export default class AddSysLangModal extends Component {
           destroyOnClose={true}
           maskClosable={false}
           mask={true}
-          width={450}
+          width={420}
           onCancel={onCancel}
           footer={null}
           visible={visible}
         >
-        <Form {...formItemLayout} ref={this.formRef}>
-          <Row style={{ marginBottom: 5 }}>
-            <Col flex="auto" className={commonStyles.textRight}>
-              <HeaderDropdown
-                overlay={this.renderMenu}
-                trigger={['click']}
-                placement="bottomCenter"
-              >
-                <Button type="link">
-                  <FormattedMessage id="translator.languageManage.shortcut" />
-                </Button>
-              </HeaderDropdown>
-            </Col>
-          </Row>
-          <Form.Item
-            name="type"
-            label={<FormattedMessage id="translator.languageManage.langtype" />}
-            rules={[{ required: true }, { validator: this.typeValidator }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="name"
-            label={<FormattedMessage id="translator.languageManage.langname" />}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
+          <Form {...formItemLayout} ref={this.formRef}>
+            <Row>
+              <Col flex="auto" className={commonStyles.textRight}>
+                <HeaderDropdown
+                  overlay={this.renderMenu}
+                  trigger={['click']}
+                  placement="bottomCenter"
+                >
+                  <Button type="link">
+                    <FormattedMessage id="translator.languageManage.shortcut" />
+                  </Button>
+                </HeaderDropdown>
+              </Col>
+            </Row>
+            <Form.Item
+              name="type"
+              label={<FormattedMessage id="translator.languageManage.langtype" />}
+              rules={[{ required: true }, { validator: this.typeValidator }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="name"
+              label={<FormattedMessage id="translator.languageManage.langname" />}
+              rules={[{ required: true }]}
+            >
+              <Input />
+            </Form.Item>
 
-          <Button style={{ margin: '50px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
-            {<FormattedMessage id="app.button.save" />}
-          </Button>
-        </Form>
+            <Button style={{ margin: '40px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
+              {<FormattedMessage id="app.button.save" />}
+            </Button>
+          </Form>
         </Modal>
-
       </>
     );
   }

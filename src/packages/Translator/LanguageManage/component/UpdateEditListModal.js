@@ -2,11 +2,17 @@ import React, { memo, useState } from 'react';
 import { Table, Row, Col, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { adjustModalWidth } from '@/utils/utils';
+import { sortBy } from 'lodash';
 
 const UpdateEditListModal = (props) => {
-  const { columns, source, visible, onCancel } = props;
+  const { columns, source, onCancel } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [dataList, setDataList] = useState(Object.values(source) || []);
+  let _sources = Object.values(source) || [];
+  _sources = sortBy(_sources, (o) => {
+    return o.languageKey;
+  });
+  const [dataList, setDataList] = useState(_sources);
+
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
