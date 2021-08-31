@@ -31,7 +31,11 @@ const TaskSearch = (props) => {
     for (const key in toteAgvTaskType) {
       if (toteAgvTaskType.hasOwnProperty(key)) {
         const element = toteAgvTaskType[key];
-        options.push(<Select.Option value={key}>{formatMessage({ id: element })}</Select.Option>);
+        options.push(
+          <Option key={key} value={key}>
+            {formatMessage({ id: element })}
+          </Option>,
+        );
       }
     }
     return options;

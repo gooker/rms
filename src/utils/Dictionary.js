@@ -11,7 +11,14 @@ const DictionaryDataSource = {
     Connecting: 'app.activity.Connecting',
   },
 
-  // 充电桩状态
+  // 充电桩方向
+  chargerDirection: {
+    0: 'app.direction.top',
+    1: 'app.direction.right',
+    2: 'app.direction.bottom',
+    3: 'app.direction.left',
+  },
+
   chargerStatus: {
     ERROR: 'app.chargeManger.ERROR',
     OFFLINE: 'app.chargeManger.OFFLINE',

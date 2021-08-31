@@ -74,12 +74,12 @@ class TaskLibraryComponent extends Component {
   };
 
   //任务详情
-  checkDetail = (taskId, taskAgvType, agvType) => {
+  checkDetail = (taskId, taskAgvType) => {
     const { dispatch } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType, agvType },
-    }).then(this.getData);
+      payload: { taskId, taskAgvType },
+    });
   };
 
   openCancelTaskConfirm = () => {

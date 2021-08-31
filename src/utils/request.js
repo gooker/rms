@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { isPlainObject } from 'lodash';
 import { formatMessage } from '@/utils/Lang';
 import { getDomainNameByUrl, isNull, isStandardApiResponse } from '@/utils/utils';
 
@@ -70,6 +71,10 @@ const errorHandler = (error) => {
 const request = async (requestUrl, payload) => {
   const { data, method, headers = {} } = payload;
   const url = getDomainNameByUrl(requestUrl);
+  // 此时可能会遇到找不到API的问题
+  if (isPlainObject(url)) {
+    return url;
+  }
   const option = { url, method, headers };
 
   // 针对文件下载

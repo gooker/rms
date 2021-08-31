@@ -9,6 +9,7 @@ import ErrorList from './components/ErrorList';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
+
 const colProps = { lg: 8, sm: 12 };
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
 const DescriptionItem = ({ title, content }) => (
@@ -250,7 +251,7 @@ class TaskDetail extends PureComponent {
               </Row>
             )}
 
-            {/** *******************************AGV实时料仓*********************************** */}
+            {/** ******************************* AGV实时料仓 *********************************** */}
             {(detailInfo.toteAGVWorkBinInfoMap || detailInfo.toteAGVTaskActionDTOS) && (
               <div>
                 <Divider orientation="left">
@@ -260,7 +261,7 @@ class TaskDetail extends PureComponent {
               </div>
             )}
 
-            {/** *******************************料箱确认抱夹信息*********************************** */}
+            {/** ******************************* 料箱确认抱夹信息 *********************************** */}
             {detailInfo.toteHoldingCode && (
               <div>
                 <Divider orientation="left">
@@ -275,7 +276,7 @@ class TaskDetail extends PureComponent {
               </div>
             )}
 
-            {/** *******************************小车错误记录*********************************** */}
+            {/** ******************************* 小车错误记录 *********************************** */}
             {errorTaskList && errorTaskList.length > 0 && (
               <Permission id="/map/monitor/taskDetail/taskDetail/errorRecord">
                 <div>
@@ -287,7 +288,7 @@ class TaskDetail extends PureComponent {
               </Permission>
             )}
 
-            {/** *******************************工作站任务*********************************** */}
+            {/** ******************************* 工作站任务 *********************************** */}
             {detailInfo.type === 'SUPER_CARRY_POD_TO_CELL' && (
               <>
                 <Divider orientation="left">
@@ -346,7 +347,7 @@ class TaskDetail extends PureComponent {
               </>
             )}
 
-            {/** *******************************工作站任务*********************************** */}
+            {/** ******************************* 工作站任务 *********************************** */}
             {detailInfo.type === 'CARRY_POD_TO_STATION' && (
               <>
                 <Divider orientation="left">
@@ -411,7 +412,7 @@ class TaskDetail extends PureComponent {
               </>
             )}
 
-            {/** *******************************充电记录*********************************** */}
+            {/** ******************************* 充电记录 *********************************** */}
             {chargeRecord && (
               <div>
                 <Divider orientation="left">
@@ -463,7 +464,7 @@ class TaskDetail extends PureComponent {
               </div>
             )}
 
-            {/** *******************************叉车搬运货物到目标点*********************************** */}
+            {/** ******************************* 叉车搬运货物到目标点 *********************************** */}
             {detailInfo.type === 'FORK_POD_TO_TARGET' && (
               <Row>
                 <Col>

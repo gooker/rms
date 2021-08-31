@@ -4,10 +4,9 @@ import { Switch, Route } from 'react-router-dom';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
 import allMouduleRouter from '@/config/router';
-import NoFound from '@/packages/Portal/Nofound'
+import NoFound from '@/packages/Portal/NoFound';
 
 export default class Content extends React.PureComponent {
- 
   createRoutesByRequire = () => {
     const result = [];
     Object.values(allMouduleRouter).forEach((item) => {
@@ -38,8 +37,12 @@ export default class Content extends React.PureComponent {
               component={Loadable(() => import(`@/packages${component}`))}
             />
           ))}
-          {/* <Route path="/login" component={Loadable(() => import(`@/packages/Portal/Login/index`))} /> */}
-          <Route path="/404" component={<NoFound />} />
+          <Route
+            exact
+            path="/login"
+            component={Loadable(() => import('@/packages/Portal/Login'))}
+          />
+          <Route component={Loadable(() => import('@/packages/Portal/NoFound'))} />
         </Switch>
         <Detail />
       </div>

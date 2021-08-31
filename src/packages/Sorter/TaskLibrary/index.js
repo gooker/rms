@@ -99,25 +99,6 @@ export default class TaskLibrary extends React.PureComponent {
           return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
-      {
-        title: formatMessage({ id: 'app.button.operation' }),
-        dataIndex: 'taskId',
-        align: 'center',
-        width: 100,
-        render: (taskId) => {
-          return (
-            <Button
-              type="link"
-              onClick={() => {
-                checkDetail(taskId, AGVType.Sorter);
-              }}
-              icon={<InfoOutlined />}
-            >
-              <FormattedMessage id="app.taskDetail.info" />
-            </Button>
-          );
-        },
-      },
     ];
   };
 

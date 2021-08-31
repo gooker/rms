@@ -23,21 +23,21 @@ export default {
 
   effects: {
     *fetchTaskDetailByTaskId({ payload }, { call, put, select }) {
-      const { nameSpace, taskId, taskAgvType } = payload;
+      const { taskId, taskAgvType } = payload;
       const sectionId = window.localStorage.getItem('sectionId');
 
       const changeVisiblePayload = { taskId, taskAgvType, visible: true };
       yield put({ type: 'changeTaskDetailModalVisible', payload: changeVisiblePayload });
 
       // 获取任务详情
-      const response = yield call(fetchTaskDetailByTaskId, nameSpace, { taskId });
+      const response = yield call(fetchTaskDetailByTaskId, taskAgvType, { taskId });
       if (dealResponse(response)) {
         return;
       }
 
       // 获取小车错误记录
       const params = { sectionId, taskId, size: 500, current: 1 };
-      const responseForError = yield call(fetchAgvErrorRecord, nameSpace, params);
+      const responseForError = yield call(fetchAgvErrorRecord, taskAgvType, params);
       if (dealResponse(responseForError)) {
         return;
       }
