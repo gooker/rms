@@ -56,6 +56,7 @@ export default class index extends Component {
 
     //   await initI18nInstance();
       history.push('/sorter/system/chargingStrategy');
+      window.location.reload()
     }
   };
 

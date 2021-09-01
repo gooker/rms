@@ -4,6 +4,7 @@ import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import history from '@/history';
 import LayoutSider from '@/packages/Portal/components/Sider';
 import LayoutContent from '@/components/pages/Content/Content';
+// import LayoutHeader from '@/packages/Portal/components//Header';
 import './mainLayout.less';
 
 const { Header } = Layout;
@@ -25,10 +26,10 @@ class MainLayout extends React.Component {
 
   render() {
     const { collapsed } = this.state;
-    // const { pathname } = history.location;
-    // if (['/login'].includes(pathname)) {
-    //   return <><LayoutContent /></>;
-    // }
+    const { pathname } = history.location;
+    if (['/login'].includes(pathname)) {
+      return <><LayoutContent /></>;
+    }
     return (
       <Layout className="main-layout">
         <LayoutSider collapsed={collapsed} />

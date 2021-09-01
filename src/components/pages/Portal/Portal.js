@@ -20,7 +20,6 @@ class Portal extends Component {
     const token = window.localStorage.getItem('Authorization');
     if (isStrictNull(token)) {
       history.push('/login');
-      this.setState({ toLogin: true });
       return;
     }
 
@@ -28,6 +27,7 @@ class Portal extends Component {
     const response = await getCurrentUser();
     if (dealResponse(response)) {
       message.error('获取当前用户信息失败');
+      history.push('/login');
       return false;
     }
     const { language, currentSection, authorityKeys, userTimeZone } = response;

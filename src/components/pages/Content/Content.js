@@ -41,6 +41,11 @@ export default class Content extends React.PureComponent {
             path="/login"
             component={Loadable(() => import('@/packages/Portal/Login'))}
           />
+           <Route
+            exact
+            path="/"
+            component={Loadable(() => import('@/packages/Portal/Welcome'))}
+          />
           <Route component={Loadable(() => import('@/packages/Portal/NoFound'))} />
         </Switch>
         <Detail />
