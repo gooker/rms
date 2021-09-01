@@ -4,7 +4,6 @@ import { Switch, Route } from 'react-router-dom';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
 import allMouduleRouter from '@/config/router';
-import NoFound from '@/packages/Portal/NoFound';
 
 export default class Content extends React.PureComponent {
   createRoutesByRequire = () => {

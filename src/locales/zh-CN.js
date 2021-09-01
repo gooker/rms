@@ -9,6 +9,7 @@ import agvRealTime from './zh-CN/agvRealTime';
 import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
 import translator from './zh-CN/Translator/translator';
+import login from './zh-CN/Portal/login';
 
 export default {
   ...menu,
@@ -21,5 +22,6 @@ export default {
   ...agvRealTime,
   ...chargingStrategy,
   ...systemParameters,
-  ...translator
+  ...translator,
+  ...login
 };

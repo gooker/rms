@@ -5,9 +5,7 @@ import intl from 'react-intl-universal';
 import MainLayout from '@/layout/MainLayout';
 import { connect } from '@/utils/dva';
 import { getCurrentUser } from '@/services/api';
-import { dealResponse } from '@/utils/utils';
-
-let _history=history
+import { dealResponse, isStrictNull } from '@/utils/utils';
 // Portal组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
 @connect(({ app }) => ({ antdLocale: app.antdLocale }))
 class Portal extends Component {
@@ -16,11 +14,20 @@ class Portal extends Component {
   };
 
   async componentDidMount() {
+    // 获取国际化数据
+    this.loadLocales();
+
+    const token = window.localStorage.getItem('Authorization');
+    if (isStrictNull(token)) {
+      history.push('/login');
+      this.setState({ toLogin: true });
+      return;
+    }
+
     // 获取用户信息
     const response = await getCurrentUser();
     if (dealResponse(response)) {
       message.error('获取当前用户信息失败');
-      _history.push('/404')
       return false;
     }
     const { language, currentSection, authorityKeys, userTimeZone } = response;
@@ -42,8 +49,6 @@ class Portal extends Component {
     window.localStorage.setItem('userTimeZone', userTimeZone);
 
     // 获取菜单数据
-    // 获取国际化数据
-    this.loadLocales();
   }
 
   loadLocales() {
@@ -63,7 +68,7 @@ class Portal extends Component {
     return (
       initDone && (
         <ConfigProvider locale={antdLocale}>
-          <MainLayout />
+            <MainLayout/>
         </ConfigProvider>
       )
     );

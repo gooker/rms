@@ -238,3 +238,12 @@ export function cutNumber(number, no = 2) {
   }
   return Number(number.toFixed(no));
 }
+
+export function getPathname(route) {
+  if (route === '/' || !route) return '/';
+  const { hash } = new URL(route);
+  const pathname = hash.replace('#/', '');
+  const snippet = pathname.split('/').filter(Boolean);
+  snippet.shift();
+  return `/${snippet.join('/')}`;
+}
