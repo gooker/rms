@@ -53,10 +53,9 @@ export default class index extends Component {
           return;
         }
       }
-
+     // TODO: 
     //   await initI18nInstance();
-      history.push('/sorter/system/chargingStrategy');
-      window.location.reload()
+      history.push('/');
     }
   };
 

@@ -26,10 +26,6 @@ class MainLayout extends React.Component {
 
   render() {
     const { collapsed } = this.state;
-    const { pathname } = history.location;
-    if (['/login'].includes(pathname)) {
-      return <><LayoutContent /></>;
-    }
     return (
       <Layout className="main-layout">
         <LayoutSider collapsed={collapsed} />

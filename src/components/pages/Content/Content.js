@@ -26,28 +26,23 @@ export default class Content extends React.PureComponent {
     const routesData = this.createRoutesByRequire();
     return (
       <div id={'layoutContent'} style={{ height: '100%', width: '100%' }}>
-        <Switch>
-          {routesData.map(({ path, component }) => (
-            <Route
-              exact
-              key={path}
-              path={path}
-              // TIP: Loadable 参数不支持变量, 只支持字符串或者字符串模板
-              component={Loadable(() => import(`@/packages${component}`))}
-            />
-          ))}
+<Switch>
+        <Route exact path="/" component={Loadable(() => import('@/packages/Portal/Welcome'))} />
+
+        {routesData.map(({ path, component }) => (
           <Route
             exact
-            path="/login"
-            component={Loadable(() => import('@/packages/Portal/Login'))}
+            key={path}
+            path={path}
+            // TIP: Loadable 参数不支持变量, 只支持字符串或者字符串模板
+            component={Loadable(() => import(`@/packages${component}`))}
           />
-           <Route
-            exact
-            path="/"
-            component={Loadable(() => import('@/packages/Portal/Welcome'))}
-          />
-          <Route component={Loadable(() => import('@/packages/Portal/NoFound'))} />
-        </Switch>
+        ))}
+
+<Route component={Loadable(() => import('@/packages/Portal/NoFound'))} />
+</Switch>
+
+
         <Detail />
       </div>
     );

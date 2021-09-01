@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import { ConfigProvider, message } from 'antd';
+import { HashRouter as Router, Switch, Route } from 'react-router-dom';
 import history from '@/history';
 import intl from 'react-intl-universal';
 import MainLayout from '@/layout/MainLayout';
+import Loadable from '@/utils/Loadable';
 import { connect } from '@/utils/dva';
 import { getCurrentUser } from '@/services/api';
 import { dealResponse, isStrictNull } from '@/utils/utils';
-// Portal组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
+// PortalApp组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
 @connect(({ app }) => ({ antdLocale: app.antdLocale }))
-class Portal extends Component {
+class PortalApp extends Component {
   state = {
     initDone: false,
   };
@@ -68,10 +70,22 @@ class Portal extends Component {
     return (
       initDone && (
         <ConfigProvider locale={antdLocale}>
-            <MainLayout/>
+          <Router history={history}>
+            <Switch>
+              <Route
+                exact
+                path="/login"
+                component={Loadable(() => import('@/packages/Portal/Login'))}
+              />
+              {/* 组件 放sider menu content */}
+              <MainLayout />
+
+            </Switch>
+          </Router>
+
         </ConfigProvider>
       )
     );
   }
 }
-export default Portal;
+export default PortalApp;
