@@ -15,7 +15,7 @@ const enStyle = { fontSize: '7vh' };
 
 const Welcome = (props) => {
   const { isFullscreen, copyRight } = props;
-  const locale = window.localStorage.getItem('umi_locale') || 'zh-CN';
+  const locale = window.localStorage.getItem('currentLocale') || 'zh-CN';
   const height = isFullscreen ? { height: '100vh' } : { height: 'calc(100vh - 64px)' };
   return (
     <div className={styles.welcome} style={{ backgroundImage: `url(${WelcomeImage})`, ...height }}>

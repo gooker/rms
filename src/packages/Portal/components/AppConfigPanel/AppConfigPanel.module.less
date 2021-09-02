@@ -1,0 +1,55 @@
+.flexRowCenter {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.flexRow {
+  display: flex;
+  flex-flow: row nowrap;
+}
+
+.flexColumn {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.backColor {
+  background-color: #fafafa;
+}
+
+.appConfigPanel {
+  .flexColumn();
+
+  width: 100%;
+  height: 100%;
+}
+
+.copy {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 20px;
+  margin-bottom: 5px;
+  color: #409eff;
+  cursor: pointer;
+}
+
+.header {
+  .flexRow();
+
+  height: 50px;
+}
+
+.body {
+  .flexColumn();
+  border-left: 1px solid #e8e8e8;
+}
+
+.tableRow {
+  .flexRow();
+
+  height: 50px;
+  border-bottom: 1px solid #e8e8e8;
+}

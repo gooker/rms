@@ -247,3 +247,16 @@ export function getPathname(route) {
   snippet.shift();
   return `/${snippet.join('/')}`;
 }
+
+export function extractNameSpaceInfoFromEnvs(env) {
+  const { additionalInfos } = env;
+  if (!additionalInfos || additionalInfos.length === 0) {
+    return {};
+  }
+  const nameSpaceInfoMap = {};
+  additionalInfos.forEach(({ key, value }) => {
+    nameSpaceInfoMap[key] = value;
+  });
+  return nameSpaceInfoMap;
+}
+

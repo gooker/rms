@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Input, Select, Button,message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import history from '@/history';
-import {fetchFindLogoByWebAddress,fetchLogin,fetchUpdateEnvironment} from '@/services/portal'
+import {fetchFindLogoByWebAddress,fetchLogin,fetchUpdateEnvironment} from '@/services/global'
 import { dealResponse ,formatMessage} from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './Login.module.less';
@@ -62,7 +62,7 @@ export default class index extends Component {
 
   render() {
     const { logo, loading } = this.state;
-    // const { environments, activeEnv } = this.props;
+    const { environments, activeEnv } = this.props;
     return (
       <div className={styles.loginPage}>
         <img src={LoginBackPicture} alt={'login_picture'} className={styles.loginBackPicture} />
@@ -94,7 +94,7 @@ export default class index extends Component {
               >
                 <Input.Password prefix={<LockOutlined />} />
               </Form.Item>
-              {/* {environments && environments.length > 0 && (
+              {environments && environments.length > 0 && (
                     <Form.Item name="environment" initialValue={activeEnv?.id}>
                       <Select>
                         {environments.map(({ label, value }) => (
@@ -104,7 +104,7 @@ export default class index extends Component {
                         ))}
                       </Select>
                     </Form.Item>
-                  )} */}
+                  )}
               <Form.Item>
                 <Button
                   type="primary"
