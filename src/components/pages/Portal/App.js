@@ -6,7 +6,7 @@ import intl from 'react-intl-universal';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/utils/Loadable';
 import { connect } from '@/utils/dva';
-import {isStrictNull } from '@/utils/utils';
+import { isStrictNull } from '@/utils/utils';
 // PortalApp组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
 @connect(({ app }) => ({ antdLocale: app.antdLocale }))
 class PortalApp extends Component {
@@ -16,23 +16,12 @@ class PortalApp extends Component {
   };
 
   async componentDidMount() {
-    const { dispatch } = this.props;
     // 获取国际化数据
     this.loadLocales();
-
     const token = window.localStorage.getItem('Authorization');
     if (isStrictNull(token)) {
       history.push('/login');
-      this.setState({ initDone: true });
       return;
-    }
-
-    // 获取用户信息
-   await dispatch({ type:'user/fetchCurrentUser'});
-   
-    const initState = await dispatch({ type: 'global/fetchInitialAppStatus' });
-    if (initState) {
-      this.setState({ initDone: true });
     }
   }
 
@@ -43,7 +32,7 @@ class PortalApp extends Component {
     };
 
     intl.init({ currentLocale: 'zh-CN', locales }).then(() => {
-      // this.setState({ initDone: true });
+      this.setState({ initDone: true });
     });
   }
 

@@ -1,20 +1,24 @@
 import React, { Component } from 'react';
-import { Form, Input, Select, Button,message } from 'antd';
+import { Form, Input, Select, Button, message } from 'antd';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/dva';
 import history from '@/history';
-import {fetchFindLogoByWebAddress,fetchLogin,fetchUpdateEnvironment} from '@/services/global'
-import { dealResponse ,formatMessage} from '@/utils/utils';
+import { fetchFindLogoByWebAddress, fetchLogin, fetchUpdateEnvironment } from '@/services/global';
+import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './Login.module.less';
 import LoginBackPicture from '../images/login_pic.png';
 import Logo from '../images/logoMain.png';
-
-export default class index extends Component {
+import { getEnvOptionData, getActiveEnv } from './selector';
+@connect(({ global }) => ({
+  environments: getEnvOptionData(global.environments),
+  activeEnv: getActiveEnv(global.environments),
+}))
+class Login extends Component {
   state = {
     logo: null,
     loading: false,
   };
-
 
   async componentDidMount() {
     const address = window.location.host;
@@ -41,9 +45,8 @@ export default class index extends Component {
       message.error(formatMessage({ id: response.message || 'app.login.fail' }));
     } else {
       window.localStorage.setItem('Authorization', response.authorization);
-      // TODO: 服务
       // 如果有environment字段说明需要重新激活一个环境
-      if (values.environment !== undefined) {
+      if (!isNull(values.environment)) {
         let requestBody = { appCode: 'MixRobot' };
         if (values.environment !== '0') {
           requestBody = { appCode: 'MixRobot', id: values.environment };
@@ -53,12 +56,11 @@ export default class index extends Component {
           return;
         }
       }
-     // TODO: 
-    //   await initI18nInstance();
+      // TODO:
+      //   await initI18nInstance();
       history.push('/');
     }
   };
-
 
   render() {
     const { logo, loading } = this.state;
@@ -95,16 +97,16 @@ export default class index extends Component {
                 <Input.Password prefix={<LockOutlined />} />
               </Form.Item>
               {environments && environments.length > 0 && (
-                    <Form.Item name="environment" initialValue={activeEnv?.id}>
-                      <Select>
-                        {environments.map(({ label, value }) => (
-                          <Select.Option key={value} value={value}>
-                            {label}
-                          </Select.Option>
-                        ))}
-                      </Select>
-                    </Form.Item>
-                  )}
+                <Form.Item name="environment" initialValue={activeEnv?.id}>
+                  <Select>
+                    {environments.map(({ label, value }) => (
+                      <Select.Option key={value} value={value}>
+                        {label}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              )}
               <Form.Item>
                 <Button
                   type="primary"
@@ -122,3 +124,4 @@ export default class index extends Component {
     );
   }
 }
+export default Login;

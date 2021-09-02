@@ -30,14 +30,6 @@ export async function fetchUpdateUserCurrentSection(params) {
   });
 }
 
-// 修改当前环境
-export async function fetchUpdateEnvironment(params) {
-  return request(`/sso/environment/updateEnvironmentFlag`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
 // 修改当前语言
 export async function fetchUpdateUserCurrentLanguage(languageType) {
   return request(`/sso/user/updateUserCurrentLanguage?languageType=${languageType}`, {

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { isPlainObject } from 'lodash';
+import history from '@/history';
 import { formatMessage } from '@/utils/Lang';
 import { getDomainNameByUrl, isNull, isStandardApiResponse } from '@/utils/utils';
 
@@ -59,6 +60,9 @@ const errorHandler = (error) => {
   const response = error.response;
   if (response) {
     const { status } = response;
+    if (status === 401){
+      history.push('/login');
+    }
     const statusMessage = codeMessage[status];
     return { code: '-1', data: null, message: statusMessage || messageContent };
   }
@@ -101,7 +105,6 @@ const request = async (requestUrl, payload) => {
   if (isStandardApiResponse(responseEntity)) {
     return responseEntity;
   }
-
   const { data: responseData } = responseEntity;
   if (isStandardApiResponse(responseData)) {
     // 这里是后台返回的自定义错误

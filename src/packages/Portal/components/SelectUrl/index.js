@@ -28,14 +28,13 @@ export default class SelectUrl extends PureComponent {
   };
 
   renderSelectedEnvironment = () => {
-    const { environments } = this.props;
-    for (let index = 0; index < environments.length; index++) {
-      const element = environments[index];
-      if (element.flag === '1') {
-        return element;
-      }
+    const { environments = [] } = this.props;
+    const currentEnv = environments.filter((item) => item.flag === '1');
+    if (currentEnv.length !== 0) {
+      return currentEnv[0];
+    } else {
+      return environments[0];
     }
-    return environments[0];
   };
 
   render() {

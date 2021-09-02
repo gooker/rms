@@ -2,8 +2,8 @@ import React from 'react';
 import { Menu } from 'antd';
 import {
   // ApiOutlined,
-  // FullscreenExitOutlined,
-  // FullscreenOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
   // LogoutOutlined,
   // UnorderedListOutlined,
   // UserOutlined,
@@ -23,156 +23,159 @@ import styles from './Head.module.less';
   currentUser: user.currentUser,
   // userRoleList: user.userRoleList,
   environments: global.environments,
-  // isFullscreen: global.isFullscreen,
+  isFullscreen: global.isFullscreen,
 }))
-
 class Header extends React.Component {
+  // 用来标记是否是用户点击触发了全屏切换，而不是ESC退出全屏
+  userAction = false;
 
-   // 用来标记是否是用户点击触发了全屏切换，而不是ESC退出全屏
-   userAction = false;
+  state = {
+    isFullscreen: false,
+    showErrorNotification: false,
+    apiListShow: false,
 
-   state = {
-     isFullscreen: false,
-     showErrorNotification: false,
-     apiListShow: false,
- 
-     showLabel: false,
-   };
- 
-   componentDidMount() {
-     screenfull.on('change', this.changeFullScreenFlag);
-     const sessionValue = window.sessionStorage.getItem('showErrorNotification');
-     const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
-     this.setState({ showErrorNotification });
-     this.resizeObserver();
-   }
- 
-   componentWillUnmount() {
-     screenfull.off('change', this.changeFullScreenFlag);
-     this.bodySizeObserver.disconnect();
-   }
- 
-   resizeObserver = () => {
-     this.bodySizeObserver = new ResizeObserver(
-      
-       throttle((entries) => {
-         const { width } = entries[0].contentRect;
-         this.setState({ showLabel: width >= 1440 });
-       }, 500),
-     );
-     this.bodySizeObserver.observe(document.body);
-   };
- 
-   changeFullScreenFlag = () => {
-     const { isFullscreen } = this.state;
-     if (!this.userAction && isFullscreen) {
-       this.setState({
-         isFullscreen: false,
-       });
-     }
-     this.userAction = false;
-   };
- 
-   switchFullScreen = () => {
-     const { isFullscreen } = this.state;
-     const { dispatch } = this.props;
-     this.userAction = true;
-     this.setState({ isFullscreen: !isFullscreen }, () => {
-       dispatch({ type: 'global/changeFullScreen', payload: !isFullscreen });
-       const AppContent = document.getElementById('AppContent');
-       screenfull.toggle(AppContent);
-     });
-   };
- 
-   changeEnvironment = (record) => {
-     const { dispatch } = this.props;
-     window.localStorage.removeItem('route');
-     dispatch({
-       type: 'global/fetchUpdateEnvironment',
-       payload: record,
-     }).then((result) => {
-       if (result) {
-         setTimeout(() => {
-           window.location.reload();
-         }, 500);
-       }
-     });
-   };
- 
-   changeSection = (record) => {
-     const { key } = record;
-     const { dispatch } = this.props;
-     window.localStorage.removeItem('route');
-     dispatch({
-       type: 'user/fetchUpdateUserCurrentSection',
-       payload: key, // key就是sectionId,
-     }).then((result) => {
-       if (result) {
-         setTimeout(() => {
-           window.location.reload();
-         }, 500);
-       }
-     });
-   };
- 
-   changeLanguage = ({ key }) => {
-     const { dispatch } = this.props;
-     window.localStorage.removeItem('route');
-     dispatch({
-       type: 'user/fetchUpdateUserCurrentLanguage',
-       payload: key,
-     }).then((result) => {
-       if (result) {
-         window.localStorage.setItem('currentLocale', key);
-         setTimeout(() => {
-           window.location.reload();
-         }, 500);
-       }
-     });
-   };
- 
-   renderMenu = () => {
-     const {
-       sectionId,
-       currentUser: { sections },
-     } = this.props;
-     let menuData = [];
-     if (sections && Array.isArray(sections)) {
-       menuData = sections.map((element) => (
-         <Menu.Item key={element.sectionId}>{element.sectionName}</Menu.Item>
-       ));
-     }
-     return (
-       <Menu selectedKeys={[sectionId]} onClick={this.changeSection}>
-         {menuData}
-       </Menu>
-     );
-   };
- 
-   handleUserMenuClick = ({ key }) => {
-     const { dispatch } = this.props;
-     if (key === 'logout') {
-       // 只有在手动退出的情况下才清空 global/environments 对象
-       dispatch({ type: 'global/clearEnvironments' });
-       dispatch({ type: 'user/logout' });
-     }
-     if (key === 'apiList') {
-       this.setState({ apiListShow: true });
-     }
-   };
- 
-   switchShowErrorNotification = (checked) => {
-     window.sessionStorage.setItem('showErrorNotification', checked);
-     this.setState({ showErrorNotification: checked });
-   };
- 
-   goToQuestionCenter = async () => {
-     const { dispatch } = this.props;
-     await dispatch({ type: 'global/saveIframeLoading', payload: true });
-     dispatch({ type: 'global/goToQuestionCenter' });
-   };
- 
+    showLabel: false,
+  };
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    screenfull.on('change', this.changeFullScreenFlag);
+    const sessionValue = window.sessionStorage.getItem('showErrorNotification');
+    const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
+    this.setState({ showErrorNotification });
+    this.resizeObserver();
+
+    window.addEventListener('fullscreenchange', function (e) {
+      if (document.fullscreenElement === null) {
+        dispatch({ type: 'global/changeFullScreen', payload: false });
+      }
+    });
+  }
+
+  componentWillUnmount() {
+    screenfull.off('change', this.changeFullScreenFlag);
+    this.bodySizeObserver.disconnect();
+    window.removeEventListener('fullscreenchange',null);
+  }
+
+  resizeObserver = () => {
+    this.bodySizeObserver = new ResizeObserver(
+      throttle((entries) => {
+        const { width } = entries[0].contentRect;
+        this.setState({ showLabel: width >= 1440 });
+      }, 500),
+    );
+    this.bodySizeObserver.observe(document.body);
+  };
+
+  changeFullScreenFlag = () => {
+    const { isFullscreen } = this.state;
+    if (!this.userAction && isFullscreen) {
+      this.setState({
+        isFullscreen: false,
+      });
+    }
+    this.userAction = false;
+  };
+
+  switchFullScreen = () => {
+    const { isFullscreen } = this.state;
+    const { dispatch } = this.props;
+    this.userAction = true;
+    this.setState({ isFullscreen: !isFullscreen }, () => {
+      dispatch({ type: 'global/changeFullScreen', payload: !isFullscreen });
+      const AppContent = document.getElementById('layoutContent');
+      screenfull.toggle(AppContent);
+    });
+  };
+
+  changeEnvironment = (record) => {
+    const { dispatch } = this.props;
+    window.localStorage.removeItem('route');
+    dispatch({
+      type: 'global/fetchUpdateEnvironment',
+      payload: record,
+    }).then((result) => {
+      if (result) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    });
+  };
+
+  changeSection = (record) => {
+    const { key } = record;
+    const { dispatch } = this.props;
+    window.localStorage.removeItem('route');
+    dispatch({
+      type: 'user/fetchUpdateUserCurrentSection',
+      payload: key, // key就是sectionId,
+    }).then((result) => {
+      if (result) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    });
+  };
+
+  changeLanguage = ({ key }) => {
+    const { dispatch } = this.props;
+    window.localStorage.removeItem('route');
+    dispatch({
+      type: 'user/fetchUpdateUserCurrentLanguage',
+      payload: key,
+    }).then((result) => {
+      if (result) {
+        window.localStorage.setItem('currentLocale', key);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
+    });
+  };
+
+  renderMenu = () => {
+    const {
+      sectionId,
+      currentUser: { sections },
+    } = this.props;
+    let menuData = [];
+    if (sections && Array.isArray(sections)) {
+      menuData = sections.map((element) => (
+        <Menu.Item key={element.sectionId}>{element.sectionName}</Menu.Item>
+      ));
+    }
+    return (
+      <Menu selectedKeys={[sectionId]} onClick={this.changeSection}>
+        {menuData}
+      </Menu>
+    );
+  };
+
+  handleUserMenuClick = ({ key }) => {
+    const { dispatch } = this.props;
+    if (key === 'logout') {
+      // 只有在手动退出的情况下才清空 global/environments 对象
+      dispatch({ type: 'global/clearEnvironments' });
+      dispatch({ type: 'user/logout' });
+    }
+    if (key === 'apiList') {
+      this.setState({ apiListShow: true });
+    }
+  };
+
+  switchShowErrorNotification = (checked) => {
+    window.sessionStorage.setItem('showErrorNotification', checked);
+    this.setState({ showErrorNotification: checked });
+  };
+
+  goToQuestionCenter = async () => {
+    const { dispatch } = this.props;
+    await dispatch({ type: 'global/saveIframeLoading', payload: true });
+    dispatch({ type: 'global/goToQuestionCenter' });
+  };
 
   changeLocale = (ev) => {
     const { dispatch } = this.props;
@@ -181,7 +184,8 @@ class Header extends React.Component {
   };
 
   render() {
-    const {environments } = this.props;
+    const { isFullscreen } = this.state;
+    const { environments } = this.props;
     // const { isFullscreen, showErrorNotification, apiListShow, showLabel } = this.state;
     // const { currentUser, noticeCount, userRoleList, environments, noticeCountUpdate } = this.props;
     // const currentSection = currentUser.currentSection ? currentUser.currentSection : {};
@@ -246,13 +250,13 @@ class Header extends React.Component {
           )} */}
 
           {/* 全屏切换 */}
-          {/* <span className={styles.icon} onClick={this.switchFullScreen}>
+          <span className={styles.icon} onClick={this.switchFullScreen}>
             {isFullscreen ? (
               <FullscreenExitOutlined style={{ fontSize: 14, color: 'red' }} />
             ) : (
               <FullscreenOutlined style={{ fontSize: 14 }} />
             )}
-          </span> */}
+          </span>
 
           {/* 问题中心 */}
           {/* <Popover
@@ -310,4 +314,4 @@ class Header extends React.Component {
     );
   }
 }
-export default Header
+export default Header;
