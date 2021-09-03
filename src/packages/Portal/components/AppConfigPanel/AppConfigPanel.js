@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from '@/utils/dva';
 import { Divider, message } from 'antd';
-import { isStrictNull ,formatMessage} from '@/utils/utils';
+import { isStrictNull, formatMessage } from '@/utils/utils';
 import find from 'lodash/find';
 import FormattedMessage from '@/components/FormattedMessage';
 import classnames from 'classnames';
@@ -31,7 +31,7 @@ class AppConfigPanel extends React.PureComponent {
   handlePromise = (promiseList) => {
     return promiseList.map((promise) =>
       promise.then(
-        async (res) => ({ status: 'true',res: await res.text() }),
+        async (res) => ({ status: 'true', res: await res.text() }),
         (err) => ({ status: 'false', res: err }),
       ),
     );
@@ -49,7 +49,6 @@ class AppConfigPanel extends React.PureComponent {
     grantedAPP.forEach(({ base, entry }) => {
       grantedAPPMap[base] = entry;
     });
-
     const appURLKey = new Set(Object.keys(grantedAPPMap));
     const appAPIKey = new Set(Object.keys(nameSpacesInfo));
     const mergedKey = new Set([...appURLKey, ...appAPIKey]);
@@ -106,23 +105,27 @@ class AppConfigPanel extends React.PureComponent {
     const versionTextList = [];
     try {
       const response = await Promise.all(this.handlePromise(getAppVersion));
-      const newResponse=[];
-      response.map((res,index) => {
-       
-        if(res.status === 'true'){
-          const currentRes=res.res;
-          const currentResArray=currentRes.split('\n');
-          if(currentResArray && currentResArray.length>0 && currentResArray[0].startsWith('version') && currentResArray[1].startsWith('git_sha1')){
+      const newResponse = [];
+      response.map((res, index) => {
+        if (res.status === 'true') {
+          const currentRes = res.res;
+          const currentResArray = currentRes.split('\n');
+          if (
+            currentResArray &&
+            currentResArray.length > 0 &&
+            currentResArray[0].startsWith('version') &&
+            currentResArray[1].startsWith('git_sha1')
+          ) {
             newResponse.push({
-              data:res.res,
-              appmodule:getAppVersionModule[index],
+              data: res.res,
+              appmodule: getAppVersionModule[index],
             });
           }
         }
       });
       newResponse.map((res) => {
-        const {data}=res;
-        const {appmodule}=res;
+        const { data } = res;
+        const { appmodule } = res;
         const responseVersionText = data.split('\n')[0];
         const versionText = responseVersionText.split(':')[1];
         versionTextList.push({
@@ -151,17 +154,17 @@ class AppConfigPanel extends React.PureComponent {
         </div>
         <div className={styles.tableRow}>
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 1 }}>
-            <FormattedMessage id= 'app.configInfo.header.moduleName' />
+            <FormattedMessage id="app.configInfo.header.moduleName" />
           </div>
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
-            <FormattedMessage id= 'app.configInfo.header.moduleURL' />
+            <FormattedMessage id="app.configInfo.header.moduleURL" />
           </div>
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
-            <FormattedMessage id= 'app.configInfo.header.moduleAPI' />
+            <FormattedMessage id="app.configInfo.header.moduleAPI" />
           </div>
         </div>
         <div className={styles.body}>
-          <SuperDescription data={dataSource} grantedAPP={grantedAPP}/>
+          <SuperDescription data={dataSource} grantedAPP={grantedAPP} />
         </div>
       </div>
     );

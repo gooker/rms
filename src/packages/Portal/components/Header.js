@@ -1,27 +1,30 @@
 import React from 'react';
-import { Menu } from 'antd';
+import { Menu, Popover, Switch, Modal } from 'antd';
 import {
-  // ApiOutlined,
+  ApiOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
-  // LogoutOutlined,
-  // UnorderedListOutlined,
-  // UserOutlined,
+  LogoutOutlined,
+  UnorderedListOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/dva';
 import throttle from 'lodash/throttle';
-// import FormattedMessage from '@/components/FormattedMessage';
-// import HeaderDropdown from '@/components/HeaderDropdown';
+import IconDir from '@/utils/ExtraIcon';
+import FormattedMessage from '@/components/FormattedMessage';
+import HeaderDropdown from '@/components/HeaderDropdown';
+import Portal from './Portal/Portal';
 import SelectUrl from './SelectUrl';
-// import NoticeIcon from './NoticeIcon';
-// import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
+import NoticeIcon from './NoticeIcon';
+import SelectLang from './SelectLang';
+import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Head.module.less';
 
 @connect(({ app, global, user }) => ({
   globalLocale: app.globalLocale,
   currentUser: user.currentUser,
-  // userRoleList: user.userRoleList,
+  userRoleList: user.userRoleList,
   environments: global.environments,
   isFullscreen: global.isFullscreen,
 }))
@@ -55,7 +58,7 @@ class Header extends React.Component {
   componentWillUnmount() {
     screenfull.off('change', this.changeFullScreenFlag);
     this.bodySizeObserver.disconnect();
-    window.removeEventListener('fullscreenchange',null);
+    window.removeEventListener('fullscreenchange', null);
   }
 
   resizeObserver = () => {
@@ -138,9 +141,9 @@ class Header extends React.Component {
 
   renderMenu = () => {
     const {
-      sectionId,
       currentUser: { sections },
     } = this.props;
+    const sectionId = window.localStorage.getItem('sectionId');
     let menuData = [];
     if (sections && Array.isArray(sections)) {
       menuData = sections.map((element) => (
@@ -184,41 +187,38 @@ class Header extends React.Component {
   };
 
   render() {
-    const { isFullscreen } = this.state;
-    const { environments } = this.props;
-    // const { isFullscreen, showErrorNotification, apiListShow, showLabel } = this.state;
-    // const { currentUser, noticeCount, userRoleList, environments, noticeCountUpdate } = this.props;
-    // const currentSection = currentUser.currentSection ? currentUser.currentSection : {};
-    // const isAdmin = currentUser.username === 'admin';
-    // const menu = (
-    //   <Menu selectedKeys={[]} onClick={this.handleUserMenuClick}>
-    //     <Menu.Item key="logout">
-    //       <LogoutOutlined />
-    //       <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
-    //     </Menu.Item>
-    //     <Menu.SubMenu
-    //       title={
-    //         <span>
-    //           <UnorderedListOutlined />
-    //           <FormattedMessage id="menu.account.roleList" />
-    //         </span>
-    //       }
-    //     >
-    //       {userRoleList.map((record) => (
-    //         <Menu.Item key={record.code}>{record.label}</Menu.Item>
-    //       ))}
-    //     </Menu.SubMenu>
-    //     <Menu.Item key="apiList">
-    //       <ApiOutlined />
-    //       <FormattedMessage id="menu.account.apiList" />
-    //     </Menu.Item>
-    //   </Menu>
-    // );
+    const { isFullscreen, showErrorNotification, showLabel, apiListShow } = this.state;
+    const { environments, currentUser, userRoleList, noticeCountUpdate, noticeCount } = this.props;
+    const currentSection = currentUser.currentSection ? currentUser.currentSection : {};
+    const isAdmin = currentUser.username === 'admin';
+    const menu = (
+      <Menu selectedKeys={[]} onClick={this.handleUserMenuClick}>
+        <Menu.Item key="logout">
+          <LogoutOutlined />
+          <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
+        </Menu.Item>
+        <Menu.SubMenu
+          title={
+            <span>
+              <UnorderedListOutlined />
+              <FormattedMessage id="menu.account.roleList" />
+            </span>
+          }
+        >
+          {userRoleList.map((record) => (
+            <Menu.Item key={record.code}>{record.label}</Menu.Item>
+          ))}
+        </Menu.SubMenu>
+        <Menu.Item key="apiList">
+          <ApiOutlined />
+          <FormattedMessage id="menu.account.apiList" />
+        </Menu.Item>
+      </Menu>
+    );
     return (
       <div className={styles.headerContent}>
         <div className={styles.leftContent}>
-          123
-          {/* <Portal /> */}
+          <Portal />
         </div>
         <div className={styles.rightContent}>
           {/* 环境切换 */}
@@ -232,22 +232,22 @@ class Header extends React.Component {
           />
 
           {/* 用户中心 */}
-          {/* <HeaderDropdown overlay={menu}>
+          <HeaderDropdown overlay={menu}>
             <span className={`${styles.action} ${styles.account}`}>
               <UserOutlined style={{ marginRight: 4 }} />
               {showLabel && <span className={styles.name}>{currentUser.username}</span>}
             </span>
-          </HeaderDropdown> */}
+          </HeaderDropdown>
 
           {/* Section切换 */}
-          {/* {!isAdmin && (
+          {!isAdmin && (
             <HeaderDropdown overlay={this.renderMenu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <span style={{ marginRight: 3 }}> </span>
+                <span style={{ marginRight: 3 }}>{IconDir('iconquyuguanli')} </span>
                 {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
               </span>
             </HeaderDropdown>
-          )} */}
+          )}
 
           {/* 全屏切换 */}
           <span className={styles.icon} onClick={this.switchFullScreen}>
@@ -259,14 +259,14 @@ class Header extends React.Component {
           </span>
 
           {/* 问题中心 */}
-          {/* <Popover
+          <Popover
             trigger="hover"
             content={
               <span>
                 <FormattedMessage id="app.notification" />:{' '}
                 <Switch
-                  checkedChildren={<FormattedMessage id= 'app.notification.on' />}
-                  unCheckedChildren={<FormattedMessage id= 'app.notification.off' />}
+                  checkedChildren={<FormattedMessage id="app.notification.on" />}
+                  unCheckedChildren={<FormattedMessage id="app.notification.off" />}
                   checked={showErrorNotification}
                   onChange={this.switchShowErrorNotification}
                 />
@@ -276,19 +276,19 @@ class Header extends React.Component {
             <span
               className={styles.icon}
               onMouseOver={noticeCountUpdate}
-              onFocus={ () => void 0 }
+              onFocus={() => void 0}
               onClick={this.goToQuestionCenter}
             >
               <NoticeIcon count={noticeCount || 0} />
             </span>
-          </Popover> */}
+          </Popover>
 
           {/* 切换语言 */}
-          {/* <SelectLang
+          <SelectLang
             showLabel={showLabel}
             className={styles.icon}
             onChange={this.changeLanguage}
-          /> */}
+          />
 
           {/* 切换时间区 */}
           {/* <SelectTimeZone
@@ -298,7 +298,7 @@ class Header extends React.Component {
           /> */}
 
           {/* API列表展示窗口 */}
-          {/* <Modal
+          <Modal
             width={960}
             footer={null}
             closable={false}
@@ -308,7 +308,7 @@ class Header extends React.Component {
             }}
           >
             <AppConfigPanel />
-          </Modal> */}
+          </Modal>
         </div>
       </div>
     );

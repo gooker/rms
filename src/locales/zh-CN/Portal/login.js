@@ -10,4 +10,22 @@ export default {
   'app.login.fail': '登录失败',
   'app.login.username.required': '请输入用户名',
   'app.login.password.required': '请输入密码',
+
+  'app.notification': '消息通知',
+  'app.notification.on': '开',
+  'app.notification.off': '关',
+  'app.notification.central': '问题处理中心',
+  'app.notification.reportProblem': '上报了错误消息',
+
+  'menu.operationLog': '操作日志',
+  'menu.account.logout': '退出登录',
+  'menu.account.roleList': '权限列表',
+  'menu.account.apiList': '页面配置信息',
+
+  'app.configInfo.title': '应用配置信息',
+  'app.configInfo.copy': '复制',
+  'app.configInfo.copy.tip': '复制应用配置信息成功',
+  'app.configInfo.header.moduleName': '模块名称',
+  'app.configInfo.header.moduleURL': '模块地址',
+  'app.configInfo.header.moduleAPI': '模块接口',
 };

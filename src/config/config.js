@@ -32,3 +32,13 @@ export const NameSpace = {
   [AGVType.ForkLifting]: 'forklift',
   [AGVType.Sorter]: 'sorter',
 };
+
+// 每个App的 BaseConText(微服务的前缀), 同时也是 AppBar 中各个WCS的代号
+export const BaseContext = {
+  Coordinator: 'mixrobot',
+  LatentLifting: 'latent-lifting',
+  ForkLifting: 'forklift',
+  Tote: 'tote-wcs-gui',
+  Slam: 'slam',
+  Sorter: 'sorter',
+};

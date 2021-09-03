@@ -2,9 +2,15 @@ import { message } from 'antd';
 import intl from 'react-intl-universal';
 import history from '@/history';
 import getUrlDir from '@/utils/urlDir';
-import { fetchFindAppByWebAddress, fetchAllAppModules, fetchNotice,fetchUpdateEnvironment,fetchAllEnvironment } from '@/services/global';
+import {
+  fetchFindAppByWebAddress,
+  fetchAllAppModules,
+  fetchNotice,
+  fetchUpdateEnvironment,
+  fetchAllEnvironment,
+} from '@/services/global';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/utils';
-import { filterAppByAuthorityKeys,convertAllMenu } from '@/utils/init';
+import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import find from 'lodash/find';
 
 export default {
@@ -30,6 +36,7 @@ export default {
     currentApp: null,
     currentEnv: null,
     currentRoute: null,
+
   },
 
   effects: {
@@ -42,7 +49,8 @@ export default {
       const allModuleMenuData = {}; // 所有的菜单信息
 
       // 获取微前端配置列表
-      const ssoWebAddress = 'http://localhost:3333';// window.location.host;
+      // TODO:
+      const ssoWebAddress = 'localhost:7000'; // window.location.host;
       const currentApp = yield call(fetchFindAppByWebAddress, ssoWebAddress);
 
       // 获取所有模块列表
@@ -76,8 +84,10 @@ export default {
 
       // 2 获取NameSpace数据 & 并整合运维配置
       const { nameSpaceMap: defaultNameSpaceMap, logo, copyRight } = currentApp;
+      let currentDefaultNameSpace = null;
       if (allEnvironment.length > 0) {
         const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
+        currentDefaultNameSpace=activeNameSpace.length>=1?activeNameSpace[0].appCode:null;
         if (activeNameSpace.length === 0) {
           nameSpaceInfo = { ...defaultNameSpaceMap };
         } else if (activeNameSpace.length === 1) {
@@ -98,7 +108,7 @@ export default {
       const urlDir = { ...getUrlDir(), ...nameSpaceInfo };
 
       // 3. 转换当前App的所有模块信息并收集部分信息
-      const { subModelList: subModuleList=[] } = currentApp;
+      const { subModelList: subModuleList = [] } = currentApp;
       for (let i = 0; i < subModuleList.length; i++) {
         const { moduleCode: itemModuleCode, webAddress } = subModuleList[i];
         const appModule = allAppModulesMap[itemModuleCode];
@@ -112,7 +122,6 @@ export default {
         });
         allModuleMenuData[itemModuleCode] = allAppModulesMap[itemModuleCode].menu;
       }
-
 
       // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
@@ -136,6 +145,7 @@ export default {
       yield put({ type: 'saveNameSpacesInfo', payload: urlDir }); // 所有API接口信息
       yield put({ type: 'saveGrantedAPx', payload: { grantedAPP } }); // 所有授权的APP
       yield put({ type: 'saveAllAppModules', payload: subModules }); // 所有子应用信息
+      yield put({ type: 'saveCurrentApp', payload: currentDefaultNameSpace }); // 默认显示的app
       yield put({ type: 'menu/saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
       yield put({ type: 'menu/saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
 
@@ -234,7 +244,7 @@ export default {
       };
     },
 
-    saveCurrentApp(state, { payload }) {
+    saveCurrentApp(state, { payload }) { // 当前默认展示的appcode
       return {
         ...state,
         currentApp: payload,

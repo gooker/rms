@@ -35,7 +35,7 @@ export default {
       const response = yield call(getCurrentUser);
       if (dealResponse(response)) {
         message.error(intl.formatMessage({ id: 'app.user.fetch.failed' }));
-        history.push('/login');
+        window.location.reload();//在页面dispatch失败后，再次进入该页面，无法执行这个dispatch，需要刷新页面才能正常执行
         throw new Error(response?.message);
       }
       const { currentSection, language, id: userId, username, authorityKeys } = response;
