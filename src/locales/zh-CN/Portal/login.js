@@ -28,4 +28,8 @@ export default {
   'app.configInfo.header.moduleName': '模块名称',
   'app.configInfo.header.moduleURL': '模块地址',
   'app.configInfo.header.moduleAPI': '模块接口',
+
+  'app.header.option.switchEnvSuccess': '环境切换成功',
+  'app.header.option.switchSectionSuccess': 'Section切换成功',
+  'app.header.option.switchLanguageSuccess': '语言切换成功',
 };

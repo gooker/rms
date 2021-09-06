@@ -7,21 +7,10 @@ import './mainLayout.less';
 
 const { Header } = Layout;
 class MainLayout extends React.Component {
-  state = {
-    collapsed: false,
-  };
-
-  toggle = () => {
-    this.setState({
-      collapsed: !this.state.collapsed,
-    });
-  };
-
   render() {
-    const { collapsed } = this.state;
     return (
       <Layout className="main-layout">
-        <LayoutSider collapsed={collapsed} />
+        <LayoutSider />
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
             <LayoutHeader />

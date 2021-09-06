@@ -2,10 +2,17 @@ import intl from 'react-intl-universal';
 import history from '@/history';
 import requestAPI from '@/utils/requestAPI';
 import { fetchNotice, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
+import { fetchUpdateUserCurrentLanguage } from '@/services/user';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/utils';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import find from 'lodash/find';
 import allMouduleRouter from '@/config/router';
+import moment from 'moment';
+import enUS from 'antd/lib/locale/en_US';
+import zhCN from 'antd/lib/locale/zh_CN';
+import koKR from 'antd/lib/locale/ko_KR';
+import 'moment/locale/zh-cn';
+import 'moment/locale/ko';
 
 export default {
   namespace: 'global',
@@ -30,6 +37,12 @@ export default {
     currentApp: null,
     currentEnv: null,
     currentRoute: null,
+
+    // 是否是编辑国际化模式
+    editI18N: false,
+
+    globalLocale: 'zh-CN',
+    antdLocale: zhCN,
   },
 
   effects: {
@@ -145,6 +158,41 @@ export default {
           newTabs.push({ localeKey: routeLocalekeyMap[pathname], route: currentRoute });
           yield put({ type: 'saveTabs', payload: newTabs });
         }
+      }
+    },
+
+    // 更新语种
+    *updateGlobalLocale({ payload }, { call, put }) {
+      let localeValue;
+      switch (payload) {
+        case 'zh-CN':
+          localeValue = zhCN;
+          break;
+        case 'en-US':
+          localeValue = enUS;
+          break;
+        case 'ko-KR':
+          localeValue = koKR;
+          break;
+        default:
+          break;
+      }
+
+      const response = yield call(fetchUpdateUserCurrentLanguage, payload);
+      if (
+        !dealResponse(
+          response,
+          true,
+          intl.formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
+        )
+      ) {
+        moment.locale(payload);
+        yield put({ type: 'updateGlobalLang', payload });
+        yield put({ type: 'updateAntedLocale', payload: localeValue });
+        window.localStorage.setItem('currentLocale', payload);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       }
     },
   },
@@ -266,6 +314,27 @@ export default {
       return {
         ...state,
         routeLocalekeyMap: action.payload,
+      };
+    },
+
+    switchEditI18N(state, { payload }) {
+      return {
+        ...state,
+        editI18N: payload,
+      };
+    },
+
+    updateAntedLocale(state, { payload }) {
+      return {
+        ...state,
+        antdLocale: payload,
+      };
+    },
+
+    updateGlobalLang(state, { payload }) {
+      return {
+        ...state,
+        globalLocale: payload,
       };
     },
   },

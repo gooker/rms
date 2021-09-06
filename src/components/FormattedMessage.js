@@ -18,6 +18,6 @@ function FormattedMessage(props) {
   }
   return '###';
 }
-export default connect(({ app }) => ({
-  editKey: app.editKey,
+export default connect(({ global }) => ({
+  editKey: global.editKey,
 }))(FormattedMessage);

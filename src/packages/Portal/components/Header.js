@@ -123,21 +123,6 @@ class Header extends React.Component {
     });
   };
 
-  changeLanguage = ({ key }) => {
-    const { dispatch } = this.props;
-    window.localStorage.removeItem('route');
-    dispatch({
-      type: 'user/fetchUpdateUserCurrentLanguage',
-      payload: key,
-    }).then((result) => {
-      if (result) {
-        window.localStorage.setItem('currentLocale', key);
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      }
-    });
-  };
 
   renderMenu = () => {
     const {
@@ -180,10 +165,10 @@ class Header extends React.Component {
     dispatch({ type: 'global/goToQuestionCenter' });
   };
 
-  changeLocale = (ev) => {
+  changeLocale = async ({key}) => {
     const { dispatch } = this.props;
-    const currentLocale = ev.target.value;
-    dispatch({ type: 'global/updateGlobalLocale', payload: currentLocale });
+    const currentLocale = key;
+    await dispatch({ type: 'global/updateGlobalLocale', payload: currentLocale });
   };
 
   render() {
@@ -289,7 +274,7 @@ class Header extends React.Component {
           <SelectLang
             showLabel={showLabel}
             className={styles.icon}
-            onChange={this.changeLanguage}
+            onChange={this.changeLocale}
           />
 
           {/* 切换时间区 */}

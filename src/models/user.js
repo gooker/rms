@@ -2,7 +2,6 @@ import {
   fetchLogout,
   fetchUserRoleList,
   fetchUpdateUserCurrentSection,
-  fetchUpdateUserCurrentLanguage,
 } from '@/services/user';
 import { getCurrentUser } from '@/services/api';
 import history from '@/history';
@@ -87,15 +86,6 @@ export default {
         response,
         true,
         intl.formatMessage({ id: 'app.header.option.switchSectionSuccess' }),
-      );
-    },
-
-    *fetchUpdateUserCurrentLanguage({ payload }, { call }) {
-      const response = yield call(fetchUpdateUserCurrentLanguage, payload);
-      return !dealResponse(
-        response,
-        true,
-        intl.formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
       );
     },
   },

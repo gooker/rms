@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { connect } from '@/utils/dva';
 import { Badge, Row } from 'antd';
-import findIndex from 'lodash/findIndex';
 import { GlobalOutlined, UserOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 import { BaseContext } from '@/config/config';

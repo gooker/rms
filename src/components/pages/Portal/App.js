@@ -9,7 +9,7 @@ import { connect } from '@/utils/dva';
 import { isStrictNull } from '@/utils/utils';
 
 // PortalApp组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
-@connect(({ app }) => ({ antdLocale: app.antdLocale }))
+@connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class PortalApp extends Component {
   state = {
     initDone: false,
@@ -19,7 +19,6 @@ class PortalApp extends Component {
   async componentDidMount() {
     const { dispatch } = this.props;
     // 获取国际化数据
-    this.loadLocales();
     const token = window.localStorage.getItem('Authorization');
     if (isStrictNull(token)) {
       history.push('/login');
@@ -33,27 +32,29 @@ class PortalApp extends Component {
     const initMenu = await dispatch({ type: 'global/fetchInitialAppStatus' });
     if (initMenu) {
       this.setState({ appReady: true });
+      this.loadLocales();
     }
   }
 
   loadLocales() {
     // TODO: 获取国际化语言 参数加一个: 当前需要的语种;
-    // 接口请求失败 国际化使用本地的 不要报错
+    // 接口请求失败 国际化使用本地的
     const locales = {
       'en-US': require('@/locales/en-US').default,
       'zh-CN': require('@/locales/zh-CN').default,
     };
 
-    intl.init({ currentLocale: 'zh-CN', locales }).then(() => {
+    const currentLocale = window.localStorage.getItem('currentLocale') || 'zh-CN';
+    intl.init({ currentLocale: currentLocale, locales }).then(() => {
       this.setState({ initDone: true });
     });
   }
 
   render() {
-    const { initDone, appReady } = this.state;
+    const { appReady } = this.state;
     const { antdLocale } = this.props;
     return (
-      initDone && (
+   
         <ConfigProvider locale={antdLocale}>
           <Router history={history}>
             <Switch>
@@ -68,7 +69,6 @@ class PortalApp extends Component {
           </Router>
         </ConfigProvider>
       )
-    );
   }
 }
 export default PortalApp;
