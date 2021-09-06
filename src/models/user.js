@@ -34,6 +34,7 @@ export default {
       const response = yield call(getCurrentUser);
       if (dealResponse(response)) {
         message.error(intl.formatMessage({ id: 'app.user.fetch.failed' }));
+        window.location.reload();// dispatch
         throw new Error(response?.message);
       }
       const { currentSection, language, id: userId, username, authorityKeys } = response;

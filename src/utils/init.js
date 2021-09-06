@@ -3,7 +3,6 @@ import intl from 'react-intl-universal';
 import { find } from 'lodash';
 import { dealResponse } from '@/utils/utils';
 import { fetchLanguageByAppCode } from '@/services/global';
-import { fetchCurrentUser } from '@/services/user';
 
 export function flattenBreadcrumbNameMap(data, context, result, parentName) {
   if (Array.isArray(data)) {
@@ -172,7 +171,7 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
 }
 
 export function getLanguage() {
-  const cachedLocale = window.localStorage.getItem('umi_locale');
+  const cachedLocale = window.localStorage.getItem('currentLocale'); // user model初始化存的
   const browserLocale = navigator.language;
   const language = cachedLocale || browserLocale;
   return language;
@@ -180,25 +179,20 @@ export function getLanguage() {
 
 export async function initI18nInstance() {
   const language = getLanguage();
-
-  // 1. 读取本地国际化数据
-  const locales = {};
   // TODO: 后续通过读取I18n中已配置的语种进行初始化
   const localLocales = ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'];
-  localLocales.forEach((locale) => {
-    try {
-      locales[locale] = require(`@/locales/${locale}`).default;
-    } catch (e) {
-      locales[locale] = {};
-    }
-  });
-  window.localStorage.setItem('locales', JSON.stringify(localLocales));
-
+  // 1. 读取本地国际化数据
+  const locales = {};
+  try {
+    locales[language] = require(`@/locales/${language}`).default;
+  } catch (e) {
+    locales[language] = {};
+  }
   // 用本地国际化数据先初始化
   await intl.init({ currentLocale: language, locales });
-  const user = await fetchCurrentUser();
 
   // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
+  // TODO: 只拉取当前语种的国际化
   const i18nData = await fetchLanguageByAppCode({ appCode: 'portal' });
   if (!dealResponse(i18nData) && Array.isArray(i18nData)) {
     i18nData.forEach(({ languageKey, languageMap }) => {
@@ -212,21 +206,8 @@ export async function initI18nInstance() {
       });
     });
 
-    // 用远程merge数据进行二次初始化
-    const finalLanuage = user?.language || language;
-
-    // 获取用户信息并且使用用户语言进行最终的国际化配置
-    await intl.init({ currentLocale: finalLanuage, locales });
-    window.localStorage.setItem('umi_locale', finalLanuage);
-
-    // 自定义intl方法
-    intl.formatMessage = ({ id }, values) => {
-      if (id) {
-        const content = intl.get(id, values);
-        return content || id;
-      }
-      return '###';
-    };
+    //  远程覆盖本地
+    await intl.init({ currentLocale: language, locales });
   } else {
     console.info('Failed to fetch remote I18N Data, will use local I18n Data');
   }

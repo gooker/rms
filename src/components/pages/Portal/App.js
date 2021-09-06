@@ -7,32 +7,22 @@ import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/utils/Loadable';
 import { connect } from '@/utils/dva';
 import { isStrictNull } from '@/utils/utils';
+import { getLanguage } from '@/utils/init';
 
 // PortalApp组件负责整个APP的初始化，包括鉴权、菜单、国际化等等
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class PortalApp extends Component {
   state = {
     initDone: false,
-    appReady: false,
   };
 
   async componentDidMount() {
-    const { dispatch } = this.props;
+    this.loadLocales();
     // 获取国际化数据
     const token = window.localStorage.getItem('Authorization');
     if (isStrictNull(token)) {
       history.push('/login');
       return;
-    }
-    // 顺序: user menu 国际化
-    // 1.获取用户信息
-    // 2.menu
-    // TODO: .reload 一边登录  手动刷新 登录后 页面空白
-    await dispatch({ type: 'user/fetchCurrentUser' });
-    const initMenu = await dispatch({ type: 'global/fetchInitialAppStatus' });
-    if (initMenu) {
-      this.setState({ appReady: true });
-      this.loadLocales();
     }
   }
 
@@ -43,19 +33,17 @@ class PortalApp extends Component {
       'en-US': require('@/locales/en-US').default,
       'zh-CN': require('@/locales/zh-CN').default,
     };
-
-    const currentLocale = window.localStorage.getItem('currentLocale') || 'zh-CN';
+    const currentLocale = getLanguage();
     intl.init({ currentLocale: currentLocale, locales }).then(() => {
       this.setState({ initDone: true });
     });
   }
 
   render() {
-    const { appReady } = this.state;
+    const { initDone } = this.state;
     const { antdLocale } = this.props;
     return (
-   
-        <ConfigProvider locale={antdLocale}>
+      initDone && (<ConfigProvider locale={antdLocale}>
           <Router history={history}>
             <Switch>
               <Route
@@ -64,11 +52,12 @@ class PortalApp extends Component {
                 component={Loadable(() => import('@/packages/Portal/Login'))}
               />
               {/* 组件 放sider menu content */}
-              {appReady && <MainLayout />}
+              <MainLayout />
             </Switch>
           </Router>
         </ConfigProvider>
       )
+    )
   }
 }
 export default PortalApp;
