@@ -1,13 +1,18 @@
 // 所有模块的路由全在此注册
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { connect } from '@/utils/dva';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
 import allMouduleRouter from '@/config/router';
 
-export default class Content extends React.PureComponent {
+@connect(({ global }) => ({
+  currentApp: global?.currentApp,
+}))
+class Content extends React.PureComponent {
   createRoutesByRequire = () => {
     const result = [];
+   //  TODO: 点击的时候 根据code拿到对应的route;
     Object.values(allMouduleRouter).forEach((item) => {
       item.forEach(({ routes, path, component }) => {
         if (routes) {
@@ -47,3 +52,4 @@ export default class Content extends React.PureComponent {
     );
   }
 }
+export default Content;

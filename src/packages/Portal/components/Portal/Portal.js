@@ -66,7 +66,7 @@ const APPs = {
 class Portal extends PureComponent {
   checkoutApp = async (appCode) => {
     const { dispatch } = this.props;
-    dispatch({ type: 'global/defaultNameSpace', payload: appCode });
+    dispatch({ type: 'global/saveCurrentApp', payload: appCode });
   };
 
   // 根据习惯, Mixrobot在第一项, SSO在最后一项, i18n在倒数第二项
@@ -214,6 +214,6 @@ export default connect(({ global, user }) => {
   return {
     isAdmin,
     appList: global.grantedAPP,
-    currentApp: global.currentApp,
+    currentApp: global?.currentApp.toLowerCase(),
   };
 })(Portal);

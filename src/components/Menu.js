@@ -2,13 +2,14 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
+import { connect } from '@/utils/dva';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
 import allMouduleRouter from '@/config/router';
 
 const { SubMenu } = Menu;
 
-const Sider = () => {
+const Sider = (prop) => {
   const [openKeys, setOpenKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
 
@@ -27,7 +28,7 @@ const Sider = () => {
   const extractOpenKey = () => {
     let openKey;
     const selectedKey = window.location.href.split('#')[1];
-
+    //  TODO: 点击的时候 根据code拿到对应的route;
     Object.values(allMouduleRouter).forEach((item) => {
       for (let index = 0; index < item.length; index++) {
         const { name, routes, path } = item[index];
@@ -128,4 +129,9 @@ const Sider = () => {
     </Menu>
   );
 };
-export default memo(Sider);
+
+export default connect(({ global }) => {
+  return {
+    currentApp: global?.currentApp,
+  };
+})(memo(Sider));

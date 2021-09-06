@@ -243,7 +243,7 @@ class Header extends React.Component {
           {!isAdmin && (
             <HeaderDropdown overlay={this.renderMenu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <span style={{ marginRight: 3 }}>{IconDir('iconquyuguanli')} </span>
+                <span style={{ marginRight: 3 }}><IconDir type="iconquyuguanli" /> </span>
                 {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
               </span>
             </HeaderDropdown>
