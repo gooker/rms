@@ -58,7 +58,9 @@ class Login extends Component {
       }
       // TODO:
       //   await initI18nInstance();
+
       history.push('/');
+
     }
   };
 

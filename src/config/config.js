@@ -41,4 +41,6 @@ export const BaseContext = {
   Tote: 'tote-wcs-gui',
   Slam: 'slam',
   Sorter: 'sorter',
+  SSO: 'sso',
+  I18N: 'i18n',
 };

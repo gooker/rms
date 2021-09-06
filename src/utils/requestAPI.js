@@ -1,4 +1,9 @@
+import { isPlainObject } from 'lodash-es';
+
 export default function requestAPI() {
+  if (isPlainObject(window.extraConfig)) {
+    return window.extraConfig;
+  }
   let nameSpace = {
     translation: 'https://translation-api-dev.mushiny.com',
     sso: 'https://sso-api-dev.mushiny.com',

@@ -113,7 +113,7 @@ export function filterAppByAuthorityKeys(subModules = [], authorityKeys = []) {
   authorityKeysWithAppcode.forEach((item) => {
     appCodes.add(item.split('/')[0]);
   });
-  return subModules.filter((item) => appCodes.has(item.name));
+  return subModules.filter((item) => appCodes.has(item));
 }
 
 export function convertToRoute(data, baseContext) {
@@ -149,7 +149,7 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
     }
 
     // 组装Map -- {路由History: 路由名称国际化Key}
-    const baseContext = appModuleInfo.baseContext ? `/${appModuleInfo.baseContext}` : null;
+    const baseContext = appModuleInfo ? `/${appModuleInfo}` : null;
     flattenBreadcrumbNameMap(appMenu, baseContext, routeLocaleKeyMap, '');
 
     // 获取路由
@@ -160,7 +160,7 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { routes, appCode } = appRoute;
-    const baseContext = allAppModulesMap[appCode].baseContext || '';
+    const baseContext = allAppModulesMap[appCode] || '';
     const baseMenuData = convertRoute2Menu(routes); // 获取菜单节点名称
     const menuData = filterMenuData(baseMenuData);
     const result = checkPermission(menuData, permissionMap, appCode, baseContext);

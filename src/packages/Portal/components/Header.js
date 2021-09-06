@@ -21,8 +21,8 @@ import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Head.module.less';
 
-@connect(({ app, global, user }) => ({
-  globalLocale: app.globalLocale,
+@connect(({global, user }) => ({
+  globalLocale: global.globalLocale,
   currentUser: user.currentUser,
   userRoleList: user.userRoleList,
   environments: global.environments,
@@ -183,13 +183,13 @@ class Header extends React.Component {
   changeLocale = (ev) => {
     const { dispatch } = this.props;
     const currentLocale = ev.target.value;
-    dispatch({ type: 'app/updateGlobalLocale', payload: currentLocale });
+    dispatch({ type: 'global/updateGlobalLocale', payload: currentLocale });
   };
 
   render() {
     const { isFullscreen, showErrorNotification, showLabel, apiListShow } = this.state;
     const { environments, currentUser, userRoleList, noticeCountUpdate, noticeCount } = this.props;
-    const currentSection = currentUser.currentSection ? currentUser.currentSection : {};
+    const currentSection = currentUser?.currentSection ? currentUser.currentSection : {};
     const isAdmin = currentUser.username === 'admin';
     const menu = (
       <Menu selectedKeys={[]} onClick={this.handleUserMenuClick}>
@@ -243,7 +243,9 @@ class Header extends React.Component {
           {!isAdmin && (
             <HeaderDropdown overlay={this.renderMenu}>
               <span className={`${styles.action} ${styles.account}`}>
-                <span style={{ marginRight: 3 }}><IconDir type="iconquyuguanli" /> </span>
+                <span style={{ marginRight: 3 }}>
+                  <IconDir type="iconquyuguanli" />{' '}
+                </span>
                 {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
               </span>
             </HeaderDropdown>

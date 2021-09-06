@@ -1,8 +1,13 @@
 import SorterRouter from './sorter.router';
 import TranslatorRouter from './i18n.router';
-import { AppCode } from '@/config/config';
+import { BaseContext } from '@/config/config';
 
 export default {
-  [AppCode.I18N]: TranslatorRouter,
-  [AppCode.Sorter]: SorterRouter,
+  [BaseContext.I18N]: TranslatorRouter,
+  [BaseContext.Sorter]: SorterRouter,
+  [BaseContext.LatentLifting]: [],
+  [BaseContext.Tote]: [],
+  [BaseContext.ForkLifting]: [],
+  [BaseContext.Coordinator]: [],
+  [BaseContext.SSO]: [],
 };

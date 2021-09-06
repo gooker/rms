@@ -1,23 +1,17 @@
-import { message } from 'antd';
 import intl from 'react-intl-universal';
 import history from '@/history';
-import getUrlDir from '@/utils/urlDir';
-import {
-  fetchFindAppByWebAddress,
-  fetchAllAppModules,
-  fetchNotice,
-  fetchUpdateEnvironment,
-  fetchAllEnvironment,
-} from '@/services/global';
+import requestAPI from '@/utils/requestAPI';
+import { fetchNotice, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/utils';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import find from 'lodash/find';
+import allMouduleRouter from '@/config/router';
 
 export default {
   namespace: 'global',
 
   state: {
-    logo: null,
+    logo: null, // TODO: 暂时为null 后续可能从别的接口获取
     copyRight: null,
 
     notification: 0,
@@ -36,7 +30,6 @@ export default {
     currentApp: null,
     currentEnv: null,
     currentRoute: null,
-
   },
 
   effects: {
@@ -44,31 +37,12 @@ export default {
     *fetchInitialAppStatus(_, { call, put, select }) {
       const { currentUser } = yield select((state) => state.user);
       const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
-      let nameSpaceInfo = {}; // 所有的url链接地址信息
-      const subModules = []; // 所有的子app信息
-      const allModuleMenuData = {}; // 所有的菜单信息
 
-      // 获取微前端配置列表
-      // TODO:
-      const ssoWebAddress = 'localhost:7000'; // window.location.host;
-      const currentApp = yield call(fetchFindAppByWebAddress, ssoWebAddress);
+      // 1.从allMouduleRouter获取所有module以及routes
+      const allAppModulesRoutesMap = { ...allMouduleRouter };
+      const subModules = Object.keys(allMouduleRouter);
 
-      // 获取所有模块列表
-      const allAppModules = yield call(fetchAllAppModules);
-      if (dealResponse(allAppModules)) {
-        message.error(intl.formatMessage({ id: 'app.subModule.fetch.failed' }));
-        return false;
-      }
-
-      // 这里需要额外处理系统初始化情况，需要跳转到配置页面
-      // 1. 用户名为admin; 2. 未查询到webAddress相关配置 或者 sso模块不存在
-      const ssoModule = find(allAppModules, { appCode: 'sso' });
-      if (currentUser.username === 'admin' && (currentApp.code === '2' || !ssoModule)) {
-        history.push(`/init?app=${currentApp.code === '2'}&module=${!ssoModule}`);
-        return false;
-      }
-
-      // 获取所有环境配置信息
+      // 2.获取所有环境配置信息
       let allEnvironment = yield call(fetchAllEnvironment);
       if (dealResponse(allEnvironment)) {
         allEnvironment = [];
@@ -76,52 +50,19 @@ export default {
         yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
       }
 
-      // 1. 数据转换 --> {[appCode]: appEntity}
-      const allAppModulesMap = {};
-      allAppModules.forEach((appModule) => {
-        allAppModulesMap[appModule.appCode] = appModule;
-      });
-
-      // 2 获取NameSpace数据 & 并整合运维配置
-      const { nameSpaceMap: defaultNameSpaceMap, logo, copyRight } = currentApp;
-      let currentDefaultNameSpace = null;
+      // 3.获取NameSpace数据 & 并整合运维配置
+      // nameSpaceMap从getAllEnvironment中flag为1的 additionalInfos
+      let nameSpaceInfo = {}; // 所有的url链接地址信息
       if (allEnvironment.length > 0) {
         const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
-        currentDefaultNameSpace=activeNameSpace.length>=1?activeNameSpace[0].appCode:null;
-        if (activeNameSpace.length === 0) {
-          nameSpaceInfo = { ...defaultNameSpaceMap };
-        } else if (activeNameSpace.length === 1) {
+        if (activeNameSpace.length > 0) {
+          // 若自定义环境出现两个已激活项目, 将默认启用第一项
           nameSpaceInfo = {
-            ...defaultNameSpaceMap,
-            ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
-          };
-        } else {
-          console.warn('当前自定义环境出现两个已激活项目, 将默认启用第一项');
-          nameSpaceInfo = {
-            ...defaultNameSpaceMap,
             ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
           };
         }
-      } else {
-        nameSpaceInfo = { ...defaultNameSpaceMap };
       }
-      const urlDir = { ...getUrlDir(), ...nameSpaceInfo };
-
-      // 3. 转换当前App的所有模块信息并收集部分信息
-      const { subModelList: subModuleList = [] } = currentApp;
-      for (let i = 0; i < subModuleList.length; i++) {
-        const { moduleCode: itemModuleCode, webAddress } = subModuleList[i];
-        const appModule = allAppModulesMap[itemModuleCode];
-        if (appModule === undefined) {
-          continue;
-        }
-        subModules.push({
-          name: appModule.baseContext,
-          base: appModule.baseContext,
-          entry: `${webAddress}/#/${itemModuleCode}`,
-        });
-        allModuleMenuData[itemModuleCode] = allAppModulesMap[itemModuleCode].menu;
-      }
+      const urlDir = { ...requestAPI(), ...nameSpaceInfo };
 
       // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
@@ -129,6 +70,21 @@ export default {
       for (let index = 0; index < authorityKeys.length; index++) {
         permissionMap[authorityKeys[index]] = true;
       }
+
+      // 5. 筛选授权的APP
+      const grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
+      const allAppModulesMap = {};
+      grantedAPP.forEach((module) => {
+        allAppModulesMap[module] = module;
+      });
+
+      // 6 根据grantedApp对allAppModulesRoutesMap筛选
+      const allModuleMenuData = {};
+      Object.keys(allAppModulesRoutesMap).filter((code) => {
+        if (grantedAPP.includes(code)) {
+          allModuleMenuData[code] = allAppModulesRoutesMap[code];
+        }
+      });
       const { allModuleFormattedMenuData, routeLocaleKeyMap } = convertAllMenu(
         adminType,
         allAppModulesMap,
@@ -136,18 +92,17 @@ export default {
         permissionMap,
       );
 
-      // 5. 筛选授权的APP和API
-      const grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
+      const defaultApp = currentUser.username === 'admin' ? 'sso' : 'mixrobot';
 
-      // 6. 保存信息
-      yield put({ type: 'saveLogo', payload: logo }); // 保存Logo数据
-      yield put({ type: 'saveCopyRight', payload: copyRight }); // 保存CopyRight数据
+      // 7. 保存信息
+      yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
+      yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
       yield put({ type: 'saveNameSpacesInfo', payload: urlDir }); // 所有API接口信息
       yield put({ type: 'saveGrantedAPx', payload: { grantedAPP } }); // 所有授权的APP
-      yield put({ type: 'saveAllAppModules', payload: subModules }); // 所有子应用信息
-      yield put({ type: 'saveCurrentApp', payload: currentDefaultNameSpace }); // 默认显示的app
-      yield put({ type: 'menu/saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
-      yield put({ type: 'menu/saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
+      yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
+      yield put({ type: 'saveCurrentApp', payload: defaultApp }); // 默认显示的app
+      yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
+      yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
 
       return true;
     },
@@ -179,9 +134,9 @@ export default {
       const { subModules, tabs } = yield select((state) => state.global);
       const { routeLocalekeyMap } = yield select((state) => state.menu);
       const mixrobot = find(subModules, { name: 'mixrobot' });
-      if (mixrobot && mixrobot.entry) {
+      if (mixrobot) {
         history.replace('/mixrobot/questionCenter');
-        const currentRoute = `${mixrobot.entry}/questionCenter`;
+        const currentRoute = `/questionCenter`;
         yield put({ type: 'saveCurrentIframeRoute', payload: currentRoute });
         const tab = find(tabs, { route: currentRoute });
         if (!tab) {
@@ -244,7 +199,8 @@ export default {
       };
     },
 
-    saveCurrentApp(state, { payload }) { // 当前默认展示的appcode
+    saveCurrentApp(state, { payload }) {
+      // 当前默认展示的appcode
       return {
         ...state,
         currentApp: payload,
@@ -297,6 +253,19 @@ export default {
       return {
         ...state,
         notification: payload,
+      };
+    },
+    saveAllMenuData(state, action) {
+      return {
+        ...state,
+        allMenuData: action.payload,
+      };
+    },
+
+    saveRouteLocaleKeyMap(state, action) {
+      return {
+        ...state,
+        routeLocalekeyMap: action.payload,
       };
     },
   },

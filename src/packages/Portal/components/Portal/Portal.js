@@ -77,7 +77,7 @@ class Portal extends PureComponent {
 
     // SSO
     let sso = null;
-    const ssoIndex = findIndex(grantedApps, { name: 'sso' });
+    const ssoIndex = grantedApps.indexOf('sso');
     if (ssoIndex >= 0) {
       sso = grantedApps.splice(ssoIndex, 1);
     }
@@ -89,14 +89,14 @@ class Portal extends PureComponent {
 
     // Mixrobot
     let mixrobot = null;
-    const mixrobotIndex = findIndex(grantedApps, { name: 'mixrobot' });
+    const mixrobotIndex = grantedApps.indexOf('mixrobot');
     if (mixrobotIndex >= 0) {
       mixrobot = grantedApps.splice(mixrobotIndex, 1);
     }
 
     // I18n
     let i18n = null;
-    const I18nIndex = findIndex(grantedApps, { name: 'i18n' });
+    const I18nIndex = grantedApps.indexOf('i18n');
     if (I18nIndex >= 0) {
       i18n = grantedApps.splice(I18nIndex, 1);
     }
@@ -112,8 +112,7 @@ class Portal extends PureComponent {
     const { currentApp } = this.props;
     return (
       <>
-        {this.getAppList().map((appInfo) => {
-          const { name } = appInfo;
+        {this.getAppList().map((name) => {
           let img = null;
           if (APPs[name] != null) {
             const { icon, style, color } = APPs[name];
