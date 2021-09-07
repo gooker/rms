@@ -49,9 +49,8 @@ class AppConfigPanel extends React.PureComponent {
     grantedAPP.forEach(({ base, entry }) => {
       grantedAPPMap[base] = entry;
     });
-    const appURLKey = new Set(Object.keys(grantedAPPMap));
     const appAPIKey = new Set(Object.keys(nameSpacesInfo));
-    const mergedKey = new Set([...appURLKey, ...appAPIKey]);
+    const mergedKey = new Set([...grantedAPP, ...appAPIKey]);
 
     // 因为对于国际化模块, 前端是i18n, 后端是translation, 所以这里删除掉一个
     // 因为对于Mixrobot模块, 前端是mixrobot, 后端是coordinator, 所以这里删除掉一个
@@ -66,16 +65,12 @@ class AppConfigPanel extends React.PureComponent {
       const item = { module };
       const appModule = find(versionTextList, ({ appmodule }) => appmodule === module);
       if (module === 'i18n') {
-        item.url = grantedAPPMap.i18n;
         item.api = nameSpacesInfo.translation;
       } else if (module === 'mixrobot') {
-        item.url = grantedAPPMap.mixrobot;
         item.api = nameSpacesInfo.coordinator;
       } else if (module === 'tote-wcs-gui') {
-        item.url = grantedAPPMap['tote-wcs-gui'];
         item.api = nameSpacesInfo.tote;
       } else {
-        item.url = grantedAPPMap[module];
         item.api = nameSpacesInfo[module];
       }
       item.version = appModule ? appModule.version : null;
@@ -156,9 +151,9 @@ class AppConfigPanel extends React.PureComponent {
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 1 }}>
             <FormattedMessage id="app.configInfo.header.moduleName" />
           </div>
-          <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
+          {/* <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
             <FormattedMessage id="app.configInfo.header.moduleURL" />
-          </div>
+          </div> */}
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
             <FormattedMessage id="app.configInfo.header.moduleAPI" />
           </div>

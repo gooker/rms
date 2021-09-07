@@ -48,6 +48,7 @@ export default class LayoutSider extends React.PureComponent {
             bottom: 40,
             left: 10,
             fontSize: '16px',
+            cursor:'pointer',
           }}
         >
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}

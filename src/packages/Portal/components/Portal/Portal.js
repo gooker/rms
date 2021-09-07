@@ -113,13 +113,14 @@ class Portal extends PureComponent {
       <>
         {this.getAppList().map((name) => {
           let img = null;
+          const currentItem=currentApp === name?styles.currentItem:"";
           if (APPs[name] != null) {
             const { icon, style, color } = APPs[name];
             if (icon != null) {
               img = <Image style={{ ...style }} src={require(`../../images/${icon}`).default} />;
             }
             return (
-              <div key={name} className={styles.portalItem}>
+              <div key={name} className={`${styles.portalItem} ${currentItem} `}>
                 <Badge dot={currentApp === name}>
                   <span
                     onClick={() => {
@@ -136,7 +137,7 @@ class Portal extends PureComponent {
           }
           if (name === 'i18n') {
             return (
-              <div key={name} className={styles.portalItem}>
+              <div key={name} className={`${styles.portalItem} ${currentItem}`}>
                 <Badge dot={currentApp === name}>
                   <span
                     style={{ background: AppIconColor.i18n }}
@@ -157,7 +158,7 @@ class Portal extends PureComponent {
           }
           if (name === 'sso') {
             return (
-              <div key={name} className={styles.portalItem}>
+              <div key={name} className={`${styles.portalItem} ${currentItem}`}>
                 <Badge dot={currentApp === name}>
                   <span
                     style={{ background: AppIconColor.sso }}
@@ -178,7 +179,7 @@ class Portal extends PureComponent {
           }
           if (name === 'mixrobot') {
             return (
-              <div key={name} className={styles.portalItem}>
+              <div key={name} className={`${styles.portalItem} ${currentItem}`}>
                 <Badge dot={currentApp === name}>
                   <span
                     style={{ background: AppIconColor[BaseContext.Coordinator] }}

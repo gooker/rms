@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import intl from 'react-intl-universal';
 import { dealResponse } from '@/utils/utils';
-import { fetchLanguageByAppCode } from '@/services/global';
+// import { fetchLanguageByAppCode } from '@/services/global';
 
 export function convertRoute2Menu(data, parentAuthority, parentName) {
   return data
