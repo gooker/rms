@@ -1,8 +1,4 @@
-import {
-  fetchLogout,
-  fetchUserRoleList,
-  fetchUpdateUserCurrentSection,
-} from '@/services/user';
+import { fetchLogout, fetchUserRoleList, fetchUpdateUserCurrentSection } from '@/services/user';
 import { getCurrentUser } from '@/services/api';
 import history from '@/history';
 import intl from 'react-intl-universal';
@@ -34,7 +30,7 @@ export default {
       const response = yield call(getCurrentUser);
       if (dealResponse(response)) {
         message.error(intl.formatMessage({ id: 'app.user.fetch.failed' }));
-        window.location.reload();// dispatch
+        window.location.reload(); // dispatch
         throw new Error(response?.message);
       }
       const { currentSection, language, id: userId, username, authorityKeys } = response;

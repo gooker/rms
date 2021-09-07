@@ -123,7 +123,7 @@ class Header extends React.Component {
     });
   };
 
-
+  // selection
   renderMenu = () => {
     const {
       currentUser: { sections },

@@ -26,5 +26,14 @@ export default {
   'menu.system.chargingStrategy': '充电策略',
   'menu.system.systemParamsManager': '参数列表',
 
-  'menu.languageManage':'翻译管理'
+  'menu.languageManage':'翻译管理',
+
+  // sso
+  'menu.userManager':'用户管理',
+  'menu.sectionManger':'区域管理',
+  'menu.roleManager':'角色',
+  'menu.userLoginHistory':'用户登录历史',
+  'menu.accountCenter':'个人中心',
+  'menu.authorizationCenter':'授权中心',
+  'menu.environmentManger':'自定义环境',
 };

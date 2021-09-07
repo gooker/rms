@@ -21,7 +21,6 @@ export default {
 
     notification: 0,
 
-    collapsed: false,
     isFullscreen: false,
     iframeLoading: false,
 
@@ -205,12 +204,6 @@ export default {
       };
     },
 
-    changeLayoutCollapsed(state, { payload }) {
-      return {
-        ...state,
-        collapsed: payload,
-      };
-    },
 
     changeFullScreen(state, { payload }) {
       return {
