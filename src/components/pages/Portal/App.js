@@ -29,11 +29,11 @@ class PortalApp extends Component {
   loadLocales() {
     // TODO: 获取国际化语言 参数加一个: 当前需要的语种;
     // 接口请求失败 国际化使用本地的
+    const currentLocale = getLanguage();
     const locales = {
       'en-US': require('@/locales/en-US').default,
       'zh-CN': require('@/locales/zh-CN').default,
     };
-    const currentLocale = getLanguage();
     intl.init({ currentLocale: currentLocale, locales }).then(() => {
       this.setState({ initDone: true });
     });
@@ -43,7 +43,8 @@ class PortalApp extends Component {
     const { initDone } = this.state;
     const { antdLocale } = this.props;
     return (
-      initDone && (<ConfigProvider locale={antdLocale}>
+      initDone && (
+        <ConfigProvider locale={antdLocale}>
           <Router history={history}>
             <Switch>
               <Route
@@ -57,7 +58,7 @@ class PortalApp extends Component {
           </Router>
         </ConfigProvider>
       )
-    )
+    );
   }
 }
 export default PortalApp;

@@ -8,9 +8,7 @@ import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import find from 'lodash/find';
 import allMouduleRouter from '@/config/router';
 import moment from 'moment';
-import enUS from 'antd/lib/locale/en_US';
 import zhCN from 'antd/lib/locale/zh_CN';
-import koKR from 'antd/lib/locale/ko_KR';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
 
@@ -80,6 +78,8 @@ export default {
       // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
       const authorityKeys = currentUser?.authorityKeys ?? [];
+      // TODO: 暂时先手动把翻译管理的权限加上
+      authorityKeys.push('i18n/languageManage');
       for (let index = 0; index < authorityKeys.length; index++) {
         permissionMap[authorityKeys[index]] = true;
       }
@@ -163,21 +163,7 @@ export default {
 
     // 更新语种
     *updateGlobalLocale({ payload }, { call, put }) {
-      let localeValue;
-      switch (payload) {
-        case 'zh-CN':
-          localeValue = zhCN;
-          break;
-        case 'en-US':
-          localeValue = enUS;
-          break;
-        case 'ko-KR':
-          localeValue = koKR;
-          break;
-        default:
-          break;
-      }
-
+      const localeValue = require(`@/locales/${payload}`).default;
       const response = yield call(fetchUpdateUserCurrentLanguage, payload);
       if (
         !dealResponse(

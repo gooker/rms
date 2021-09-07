@@ -5,13 +5,15 @@ import { Link } from 'react-router-dom';
 import { connect } from '@/utils/dva';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
-import allMouduleRouter from '@/config/router';
+import history from '@/history';
 
 const { SubMenu } = Menu;
 
 const Sider = (prop) => {
   const [openKeys, setOpenKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState([]);
+  const [currentModuleRouter, setCurrentModuleRouter] = useState([]);
+  const { currentApp, allMenuData } = prop;
 
   useEffect(() => {
     setTimeout(() => {
@@ -23,46 +25,50 @@ const Sider = (prop) => {
       const selectedKey = window.location.href.split('#')[1];
       setSelectedKeys([selectedKey]);
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    const currentAppRouter = allMenuData
+      .filter(({ appCode }) => appCode === currentApp)
+      .map(({ menu }) => menu);
+
+    // TODO: 暂时先这样
+    // start
+    history.push('/');
+    setSelectedKeys([]);
+    setOpenKeys([]);
+    // end
+    setCurrentModuleRouter(currentAppRouter && currentAppRouter[0]);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentApp]);
 
   const extractOpenKey = () => {
     let openKey;
     const selectedKey = window.location.href.split('#')[1];
-    //  TODO: 点击的时候 根据code拿到对应的route;
-    Object.values(allMouduleRouter).forEach((item) => {
-      for (let index = 0; index < item.length; index++) {
-        const { name, routes, path } = item[index];
-        if (routes) {
-          for (let index2 = 0; index2 < routes.length; index2++) {
-            if (routes[index2].path === selectedKey) {
-              openKey = name;
-              break;
-            }
-          }
-        } else {
-          if (path === selectedKey) {
+
+    for (let index = 0; index < currentModuleRouter.length; index++) {
+      const { name, routes, path } = currentModuleRouter[index];
+      if (routes) {
+        for (let index2 = 0; index2 < routes.length; index2++) {
+          if (routes[index2].path === selectedKey) {
             openKey = name;
             break;
           }
         }
-
-        if (openKey) {
+      } else {
+        if (path === selectedKey) {
+          openKey = name;
           break;
         }
       }
-    });
-    // for (let index = 0; index < allMouduleRouter.length; index++) {
-    //   const { name, routes } = allMouduleRouter[index];
-    //   for (let index2 = 0; index2 < routes.length; index2++) {
-    //     if (routes[index2].path === selectedKey) {
-    //       openKey = name;
-    //       break;
-    //     }
-    //   }
-    //   if (openKey) {
-    //     break;
-    //   }
-    // }
+
+      if (openKey) {
+        break;
+      }
+    }
+
     return openKey;
   };
 
@@ -85,15 +91,6 @@ const Sider = (prop) => {
     ));
   };
 
-  const createRoutesByRequire = () => {
-    const result = [];
-    Object.values(allMouduleRouter).forEach((item) => {
-      result.push(...item);
-    });
-    return result;
-  };
-
-  const routesData = createRoutesByRequire();
   return (
     <Menu
       mode="inline"
@@ -104,13 +101,7 @@ const Sider = (prop) => {
       onSelect={onSelectMenuItem}
       style={{ width: '100%' }}
     >
-      {/* {routesData.map(({ name, icon, path,routes }) => (
-        <SubMenu key={name} title={formatMessage({ id: `menu.${name}` })} icon={MenuIcon[icon]}>
-          {renderMenuItem(name, path,routes)}
-        </SubMenu>
-      ))} */}
-
-      {routesData.map(({ name, icon, path, routes }) => {
+      {currentModuleRouter.map(({ name, icon, path, routes }) => {
         if (Array.isArray(routes)) {
           return (
             <SubMenu key={name} title={formatMessage({ id: `menu.${name}` })} icon={MenuIcon[icon]}>
@@ -133,5 +124,6 @@ const Sider = (prop) => {
 export default connect(({ global }) => {
   return {
     currentApp: global?.currentApp,
+    allMenuData: global?.allMenuData,
   };
 })(memo(Sider));

@@ -4,25 +4,29 @@ import { Switch, Route } from 'react-router-dom';
 import { connect } from '@/utils/dva';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
-import allMouduleRouter from '@/config/router';
 
 @connect(({ global }) => ({
   currentApp: global?.currentApp,
+  allMenuData: global?.allMenuData,
 }))
 class Content extends React.PureComponent {
   createRoutesByRequire = () => {
     const result = [];
-   //  TODO: 点击的时候 根据code拿到对应的route;
-    Object.values(allMouduleRouter).forEach((item) => {
-      item.forEach(({ routes, path, component }) => {
-        if (routes) {
-          routes.forEach(({ path, component }) => {
-            result.push({ path, component });
-          });
-        } else {
+    //  TODO: 点击的时候 根据code拿到对应的route;
+    const { currentApp, allMenuData } = this.props;
+    let currentModuleRouter = [];
+    currentModuleRouter = allMenuData
+      .filter(({ appCode }) => appCode === currentApp)
+      .map(({ menu }) => menu);
+    currentModuleRouter = currentModuleRouter && currentModuleRouter[0];
+    currentModuleRouter.forEach(({ routes, path, component }) => {
+      if (routes) {
+        routes.forEach(({ path, component }) => {
           result.push({ path, component });
-        }
-      });
+        });
+      } else {
+        result.push({ path, component });
+      }
     });
     return result;
   };
