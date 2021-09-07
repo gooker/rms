@@ -1,10 +1,19 @@
 export default {
-  'app.common.RequestLoginTimeoutContent': '请重新登录，获取相关权限(3秒后自动退出)',
-  'app.common.networkError': '请求失败，网络连接可能出现异常',
-  'app.common.systemError': '操作失败，系统没有返回任何提示',
-  'app.common.systemHint': '系统提示',
-  'app.common.operationFinish': '操作成功',
-  'app.common.operationFailed': '操作失败',
+  // 通用表单必填提醒
+  'app.required.agvId': '请选择小车ID',
+
+  // 通用提醒内容
+  'app.tip.getMapFail': '获取地图数据失败',
+  'app.tip.getMapListFail': '获取地图列表失败',
+  'app.tip.getAgvListFail': '获取小车列表失败',
+  'app.tip.RequestLoginTimeoutContent': '请重新登录，获取相关权限(3秒后自动退出)',
+  'app.tip.networkError': '请求失败，网络连接可能出现异常',
+  'app.tip.systemError': '操作失败，系统没有返回任何提示',
+  'app.tip.systemHint': '系统提示',
+  'app.tip.operationFinish': '操作成功',
+  'app.tip.operationFailed': '操作失败',
+
+  // 通用页面标识内容
   'app.common.tableRecord': '共计 {count} 条记录',
   'app.common.type': '类型',
   'app.common.status': '状态',
@@ -118,9 +127,6 @@ export default {
   'app.taskStatus.Cancel': '已取消',
   'app.taskStatus.Error': '失败',
 
-  // Common Tip
-  'app.required.agvId': '请选择小车ID',
-  'app.tip.getListFail': '获取小车列表失败',
   'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
   'app.taskAction.cancel.success': '取消任务成功',
   'app.taskAction.cancel.fail': '取消任务失败',
