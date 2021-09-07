@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import intl from 'react-intl-universal';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse, isStrictNull } from '@/utils/utils';
 // import { fetchLanguageByAppCode } from '@/services/global';
 
 export function convertRoute2Menu(data, parentAuthority, parentName) {
@@ -45,7 +45,9 @@ export function filterMenuData(menuData) {
 
 export function checkPermission(router, permissionMap, appCode, nameSapce) {
   const result = [];
+  const multiApiFlag = window.localStorage.getItem('multi-api');
   for (let i = 0; i < router.length; i++) {
+    let routerHookFlag = true;
     const routerElement = router[i];
     // SSO菜单不参与权限控制
     if (routerElement.path && appCode !== 'sso') {
@@ -55,7 +57,10 @@ export function checkPermission(router, permissionMap, appCode, nameSapce) {
       } else {
         authKey = routerElement.path;
       }
-      if (!permissionMap[authKey]) {
+      // hook存在 则不参与权限控制
+      routerHookFlag = !(routerElement.hook === 'multi-api' && !isStrictNull(multiApiFlag));
+
+      if (routerHookFlag && !permissionMap[authKey]) {
         continue;
       }
     }
@@ -110,13 +115,25 @@ export function convertToRoute(data, baseContext) {
 
 export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, permissionMap) {
   const routeLocaleKeyMap = {};
-
+  const multiApiFlag = window.localStorage.getItem('multi-api');
   // 1. 转换菜单数据到一般路由数据(包括sso筛选逻辑)
   const allRoutes = Object.keys(allModuleMenuData).map((appCode) => {
     let appMenu = allModuleMenuData[appCode];
     // 如果是SSO, 需要根据adminType对菜单数据进行筛选
     if (appCode === 'sso') {
-      appMenu = appMenu.filter((route) => route.authority.includes(adminType));
+      appMenu = appMenu.filter((route) => {
+        // hook存在则一定有route
+        // authority不存在或为空 也有route
+        if (
+          (route.hook === 'multi-api' && !isStrictNull(multiApiFlag)) ||
+          isStrictNull(route.authority) ||
+          route.authority.length === 0
+        ) {
+          return true;
+        } else {
+          return route.authority.includes(adminType);
+        }
+      });
     }
 
     // 获取路由

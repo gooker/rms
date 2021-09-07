@@ -1,5 +1,6 @@
 import SorterRouter from './sorter.router';
 import TranslatorRouter from './i18n.router';
+import SsoRouter from './sso.router';
 import { BaseContext } from '@/config/config';
 
 export default {
@@ -9,5 +10,5 @@ export default {
   [BaseContext.Tote]: [],
   [BaseContext.ForkLifting]: [],
   [BaseContext.Coordinator]: [],
-  [BaseContext.SSO]: [],
+  [BaseContext.SSO]: SsoRouter,
 };
