@@ -3,7 +3,7 @@ export default [
     path: '/sso/userManager', // 用户管理
     name: 'userManager',
     icon: 'user',
-    component: '/SSO/UserManager',
+    component: '/SSO_/UserManager',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {

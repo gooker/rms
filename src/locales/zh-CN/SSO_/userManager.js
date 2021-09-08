@@ -1,0 +1,55 @@
+export default {
+  'sso.user.type.username': '用户名',
+  'sso.user.list.userType': '账号类型',
+  'sso.user.list.adminType': '管理员类型',
+  'sso.user.list.email': '邮件',
+  'sso.user.list.token': 'Token',
+  'sso.user.list.description': '备注',
+
+
+
+
+  'sso.user.require.passwordConsistent': '两次密码输入的不一致',
+  'sso.user.require.data': '请先选择数据',
+  'sso.user.require.searchByUsername': '请输入需要查询用户名',
+  'sso.user.require.username': '请输入用户名称',
+  'sso.user.require.accountType': '请选择账户类型',
+  'sso.user.require.email': '请输入邮箱',
+  'sso.user.require.validEmail': '请输入正确的邮箱',
+  'sso.user.require.password': '请输入密码',
+  'sso.user.require.passwordOnceMore': '请再次输入密码',
+  'sso.user.require.language': '请选择语言',
+  'sso.user.require.adminType': '请选择管理员类型',
+  'sso.user.require.level': '请选择用户级别',
+  'sso.user.require.userTimeZone': '请选择用户时区',
+
+  'sso.user.action.add': '添加',
+  'sso.user.action.remove': '移除',
+  'sso.user.action.newUser': '新建用户',
+  'sso.user.action.updateUser': '修改用户信息',
+  'sso.user.action.resetPwd': '重置用户密码',
+  'sso.user.action.delet': '注销',
+  'sso.user.action.sectionAssign': '区域分配',
+  'sso.user.action.roleAssign': '角色分配',
+  'sso.user.action.submit': '提交',
+  'sso.user.action.view': '显示',
+
+  'sso.user.tip.deleteSuccess': '删除成功',
+  'sso.user.tip.copySuccess': '成功复制到剪贴板',
+  'sso.user.tip.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
+  'sso.user.tip.chinese': '中文',
+  'sso.user.tip.english': '英语',
+  'sso.user.tip.sectionAssign': '区域分配',
+  'sso.user.tip.enabled': '启用中',
+  'sso.user.tip.disabled': '禁用',
+  'sso.user.tip.authAssignSuccess': '权限分配成功',
+  'sso.user.tip.roleAssigned': '已分配角色',
+  'sso.user.tip.roleUnassigned': '未分配角色',
+  'sso.user.tip.roleLevelGreater': '以下角色等级比用户高，无法完成操作',
+
+
+  'sso.user.confirm.deleteData': '确认要删除该数据么',
+  'sso.user.deleteUser.snippet1': '请确定该人员',
+  'sso.user.deleteUser.snippet2': '没有相关的业务数据',
+  'sso.user.fetch.failed': '获取当前用户信息失败',
+};

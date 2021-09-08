@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { connect } from '@/utils/dva';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
-import history from '@/history';
+// import history from '@/history';
 
 const { SubMenu } = Menu;
 
@@ -35,9 +35,9 @@ const Sider = (prop) => {
 
     // TODO: 暂时先这样
     // start
-    history.push('/');
-    setSelectedKeys([]);
-    setOpenKeys([]);
+    // history.push('/');
+    // setSelectedKeys([]);
+    // setOpenKeys([]);
     // end
     setCurrentModuleRouter(currentAppRouter && currentAppRouter[0]);
 

@@ -10,6 +10,7 @@ import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
 import translator from './zh-CN/Translator/translator';
 import portal from './zh-CN/Portal/portal';
+import userManager from './zh-CN/SSO_/userManager';
 
 export default {
   ...menu,
@@ -23,5 +24,6 @@ export default {
   ...chargingStrategy,
   ...systemParameters,
   ...translator,
-  ...portal
+  ...portal,
+  ...userManager
 };

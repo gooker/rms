@@ -1,16 +1,9 @@
 import request from '@/utils/request';
 
-export async function fetchLogin(params) {
-  return request('/sso/user/login', {
-    method: 'POST',
-    data: params,
-  });
-}
-
 export async function fetchLogout(params) {
   return request(`/sso/user/logout`, {
     method: 'GET',
-    body: params,
+    data: params,
   });
 }
 
@@ -50,18 +43,44 @@ export async function fetchUserRoleList(params) {
   });
 }
 
-// 上传模块
-export async function fetchSaveAll(params) {
-  return request('/sso/model/saveAll', {
+// 用户管理
+
+//获取用户管理列表
+export async function fetchUserList(params) {
+  return request('/sso/user/queryUserList', {
+    method: 'GET',
+    data: params,
+  });
+}
+//新建用户
+export async function fetchAddUser(params) {
+  return request('/sso/user/addUser', {
     method: 'POST',
     data: params,
   });
 }
-
-// 上传微服务配置
-export async function addMainApp(params) {
-  return request(`/sso/mainApp/add`, {
+//更新用户
+export async function fetchUpdateUser(params) {
+  return request('/sso/user/updateUser', {
     method: 'POST',
+    data: params,
+  });
+}
+//重置用户密码
+export async function fetchUpdateUserPassword(params) {
+  return request(
+    `/sso/user/changeUserPassword?userId=${params.userId}&changePassword=${params.changePassword}`,
+    {
+      method: 'POST',
+      data: {},
+    },
+  );
+}
+
+//注销用户
+export async function fetchDeleteUser(params) {
+  return request(`/sso/user/deleteUser`, {
+    method: 'GET',
     data: params,
   });
 }
