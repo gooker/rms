@@ -46,7 +46,7 @@ export async function fetchUserRoleList(params) {
 // 用户管理
 
 //获取用户管理列表
-export async function fetchUserList(params) {
+export async function fetchUserManagerList(params) {
   return request('/sso/user/queryUserList', {
     method: 'GET',
     data: params,
@@ -60,7 +60,7 @@ export async function fetchAddUser(params) {
   });
 }
 //更新用户
-export async function fetchUpdateUser(params) {
+export async function updateUserManage(params) {
   return request('/sso/user/updateUser', {
     method: 'POST',
     data: params,

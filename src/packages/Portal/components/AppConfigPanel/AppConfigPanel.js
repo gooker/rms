@@ -144,7 +144,7 @@ class AppConfigPanel extends React.PureComponent {
         </Divider>
         <div className={styles.copy}>
           <span onClick={this.addToClipBoard}>
-            <FormattedMessage id={'app.configInfo.copy'} />
+            <FormattedMessage id={'app.button.copy'} />
           </span>
         </div>
         <div className={styles.tableRow}>

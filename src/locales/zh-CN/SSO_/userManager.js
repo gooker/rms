@@ -6,22 +6,41 @@ export default {
   'sso.user.list.token': 'Token',
   'sso.user.list.description': '备注',
 
+  'sso.user.account.type.user': '普通用户',
+  'sso.user.account.type.manager': '普通管理员',
+  'sso.user.account.type.superManager': '超级管理员',
+  'sso.user.type.user': '用户',
+  'sso.user.tip.copySuccess': '成功复制到剪贴板',
+  'sso.user.tip.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
+  'sso.user.newUser': '新建用户',
+  'sso.user.updateUserInfo': '修改用户信息',
 
+
+
+  'sso.user.account': '账号',
+  'sso.user.account.type': '账户类型',
+  'sso.user.account.user': '用户',
+  'sso.user.account.app': '应用',
+  'sso.user.account.email': '邮箱',
+  'sso.user.account.password': '密码',
+  'sso.user.account.password2': '确认密码',
+  'sso.user.account.language': '语言',
+  'sso.user.account.adminType': '管理员类型',
+  'sso.user.account.level': '级别',
+  'sso.user.account.userTimeZone': '时区',
+  'sso.user.account.description': '备注',
+  'sso.user.require.username': '请输入用户名称',
+  'sso.user.require.accountType': '请选择账户类型',
+  'sso.user.require.email': '请输入邮箱',
+  'sso.user.require.userTimeZone': '请选择用户时区',
 
 
   'sso.user.require.passwordConsistent': '两次密码输入的不一致',
   'sso.user.require.data': '请先选择数据',
   'sso.user.require.searchByUsername': '请输入需要查询用户名',
-  'sso.user.require.username': '请输入用户名称',
-  'sso.user.require.accountType': '请选择账户类型',
-  'sso.user.require.email': '请输入邮箱',
   'sso.user.require.validEmail': '请输入正确的邮箱',
-  'sso.user.require.password': '请输入密码',
   'sso.user.require.passwordOnceMore': '请再次输入密码',
-  'sso.user.require.language': '请选择语言',
-  'sso.user.require.adminType': '请选择管理员类型',
-  'sso.user.require.level': '请选择用户级别',
-  'sso.user.require.userTimeZone': '请选择用户时区',
+
 
   'sso.user.action.add': '添加',
   'sso.user.action.remove': '移除',
@@ -35,8 +54,6 @@ export default {
   'sso.user.action.view': '显示',
 
   'sso.user.tip.deleteSuccess': '删除成功',
-  'sso.user.tip.copySuccess': '成功复制到剪贴板',
-  'sso.user.tip.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
   'sso.user.tip.chinese': '中文',
   'sso.user.tip.english': '英语',
   'sso.user.tip.sectionAssign': '区域分配',

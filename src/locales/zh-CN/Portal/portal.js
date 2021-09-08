@@ -23,7 +23,6 @@ export default {
   'menu.account.apiList': '页面配置信息',
 
   'app.configInfo.title': '应用配置信息',
-  'app.configInfo.copy': '复制',
   'app.configInfo.copy.tip': '复制应用配置信息成功',
   'app.configInfo.header.moduleName': '模块名称',
   'app.configInfo.header.moduleURL': '模块地址',

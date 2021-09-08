@@ -1,22 +1,20 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, Button, Table, Tag, Popover } from 'antd';
+import { Row, Col, Select, Button, Table, Tag, Popover, message, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
-import {
-  UserTColor,
-  AdminTColor,
-  AdminTLabelMap,
-  generateAdminTypeOptions,
-  generateLevelOptions,
-} from './userManagerUtils';
+import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
+import { fetchUserManagerList, updateUserManage } from '@/services/user';
+import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
+import AddUserModal from './components/AddUser';
 import commonStyles from '@/common.module.less';
+import styles from './userManager.module.less';
 
 const UserTypeColor = UserTColor();
 const AdminTypeColor = AdminTColor();
 const AdminTypeLabelMap = AdminTLabelMap();
+const { Option } = Select;
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -26,38 +24,43 @@ class UserManager extends Component {
     userList: [],
     selectRow: [],
     selectRowKey: [],
+    searchUsers: [], // 用户名搜索 为空不用filter
     addUserVisible: false,
+    updateUserFlag: null,
     loading: false,
     dataList: [],
-    adminTypeOptions: [],
-    levelOptions: [],
+    adminType: null,
   };
 
   componentDidMount() {
     const { currentUser } = this.props;
     const adminType = currentUser.adminType || 'USER';
-    const adminTypeOptions = generateAdminTypeOptions(adminType);
-    const levelOptions = generateLevelOptions(adminType);
-    this.setState({ adminTypeOptions, levelOptions });
-    this.dataList();
+    this.setState({ adminType });
+    this.getUserDataList();
   }
 
-  dataList = () => {
-    
+  getUserDataList = async () => {
+    this.setState({ loading: true });
+    const response = await fetchUserManagerList();
+    if (!dealResponse(response)) {
+      this.setState({
+        dataList: response,
+      });
+    }
+    this.setState({ loading: false });
   };
 
   // 用户名搜索
   userHandleChange = (value) => {
-    const { userList } = this.state;
-    const selectRow = userList.filter((record) => value.includes(record.id));
+    const { dataList } = this.state;
+    const selectRow = dataList.filter((record) => value.includes(record.id));
     this.setState({
       selectRow,
+      searchUsers: value,
       selectRowKey: selectRow.map((record) => record.id),
     });
   };
 
-  // 修改用户信息
-  updateUserInfo = () => {};
   // 重置密码
   resetPassWord = () => {};
   // 区域分配
@@ -67,7 +70,40 @@ class UserManager extends Component {
   // 刷新
   refresh = () => {};
 
-  rowSelectionChange = () => {};
+  // 状态更改
+  changeStatus = async (id) => {
+    const { dataList } = this.state;
+    const currentRow = dataList.filter((record) => record.id === id);
+    const params = {
+      ...currentRow,
+      disable: !currentRow.disable,
+    };
+    const updateRes = await updateUserManage(params);
+    if (!dealResponse(updateRes)) {
+      this.getUserDataList();
+    }
+  };
+
+  addToClipBoard = (content) => {
+    const input = document.createElement('input');
+    input.setAttribute('readonly', 'readonly');
+    input.setAttribute('value', content);
+    document.body.appendChild(input);
+    input.setSelectionRange(0, 9999);
+    input.select();
+    if (document.execCommand('copy')) {
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      message.info(formatMessage({ id: 'sso.user.tip.copySuccess' }));
+    } else {
+      document.body.removeChild(input);
+      message.warn(formatMessage({ id: 'sso.user.tip.unsupportCopyAPI' }));
+    }
+  };
+
+  rowSelectionChange = (selectRowKey, selectRow) => {
+    this.setState({ selectRowKey, selectRow });
+  };
   getColumn = () => {
     const columns = [
       {
@@ -108,7 +144,7 @@ class UserManager extends Component {
           let content = (
             <StatusChoice
               onChange={() => {
-                this.changeDisabled(record.id);
+                this.changeStatus(record.id);
               }}
               status={!text}
             />
@@ -142,27 +178,23 @@ class UserManager extends Component {
         title: formatMessage({ id: 'sso.user.list.token' }),
         dataIndex: 'token',
         align: 'center',
-        with:'150',
+        with: '150',
         render: (text, record) => {
           if (record.userType === 'APP') {
             return (
               <div>
-                <Popover
-                  content={text}
-                  trigger="click"
-                  visible={this.state[`${record.username}TokenShown`]}
-                  onVisibleChange={(visible) => this.handleVisibleChange(record.username, visible)}
-                >
-                  <Button>
+                <Popover content={text} trigger="click">
+                  <Button type="link">
                     <FormattedMessage id="sso.user.action.view" />
                   </Button>
                 </Popover>
                 <Button
+                  type="link"
                   onClick={() => {
                     this.addToClipBoard(text);
                   }}
                 >
-                  <FormattedMessage id="sso.user.action.copy" />
+                  <FormattedMessage id="app.button.copy" />
                 </Button>
               </div>
             );
@@ -192,7 +224,24 @@ class UserManager extends Component {
     return columns;
   };
   render() {
-    const { selectRowKey, loading, dataList } = this.state;
+    const {
+      selectRowKey,
+      selectRow,
+      updateUserFlag,
+      loading,
+      dataList,
+      searchUsers,
+      addUserVisible,
+      adminType,
+    } = this.state;
+    const showUsersList = dataList.filter((record) => {
+      if (searchUsers.length > 0) {
+        return searchUsers.includes(record.id);
+      } else {
+        return true;
+      }
+    });
+    const updateItem = updateUserFlag ? selectRow[0] : null;
     return (
       <div className={commonStyles.globalPageStyle}>
         <Row>
@@ -212,7 +261,15 @@ class UserManager extends Component {
               filterOption={(input, option) =>
                 option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
-            ></Select>
+            >
+              {dataList.map((rec) => {
+                return (
+                  <Option key={rec.id} value={rec.id}>
+                    {rec.username}
+                  </Option>
+                );
+              })}
+            </Select>
           </Col>
         </Row>
         <Row style={{ display: 'flex', padding: 20 }}>
@@ -230,8 +287,13 @@ class UserManager extends Component {
           <Button
             className={commonStyles.mr20}
             icon={<EditOutlined />}
-            disabled={selectRowKey.length > 1}
-            onClick={this.updateUserInfo}
+            disabled={selectRowKey.length !== 1}
+            onClick={() => {
+              this.setState({
+                addUserVisible: true,
+                updateUserFlag: true,
+              });
+            }}
           >
             {' '}
             <FormattedMessage id="sso.user.action.updateUser" />
@@ -239,7 +301,7 @@ class UserManager extends Component {
           <Button
             className={commonStyles.mr20}
             icon={<EditOutlined />}
-            disabled={selectRowKey.length > 1}
+            disabled={selectRowKey.length !== 1}
             onClick={this.resetPassWord}
           >
             <FormattedMessage id="sso.user.action.resetPwd" />
@@ -247,7 +309,7 @@ class UserManager extends Component {
           <Button
             className={commonStyles.mr20}
             icon={<DeleteOutlined />}
-            disabled={selectRowKey.length > 1}
+            disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({ deleteVisible: true });
             }}
@@ -256,7 +318,7 @@ class UserManager extends Component {
           </Button>
           <Button
             className={commonStyles.mr20}
-            disabled={selectRowKey.length > 1}
+            disabled={selectRowKey.length !== 1}
             onClick={this.sectionDistribution}
           >
             <FormattedMessage id="sso.user.action.sectionAssign" />
@@ -264,7 +326,7 @@ class UserManager extends Component {
           <Button
             className={commonStyles.mr20}
             onClick={this.roleDistribution}
-            disabled={selectRowKey.length > 1}
+            disabled={selectRowKey.length !== 1}
           >
             <FormattedMessage id="sso.user.action.roleAssign" />
           </Button>
@@ -274,13 +336,13 @@ class UserManager extends Component {
             </Button>
           </div>
         </Row>
-        <Row>
+        <Row className={styles.userManagerTable}>
           <Table
             bordered
             pagination={false}
             columns={this.getColumn()}
             rowKey="id"
-            dataSource={dataList}
+            dataSource={showUsersList}
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,
@@ -288,6 +350,20 @@ class UserManager extends Component {
             }}
           />
         </Row>
+        {/* 新建编辑用户 */}
+        <Modal
+          destroyOnClose
+          footer={null}
+          maskClosable={false}
+          width={adjustModalWidth() * 0.4 < 400 ? 400 : adjustModalWidth() * 0.4}
+          visible={addUserVisible}
+          title={<FormattedMessage id="sso.user.newUser" />}
+          onCancel={() => {
+            this.setState({ addUserVisible: false, updateUserFlag: false });
+          }}
+        >
+          <AddUserModal type={adminType} updateRow={updateItem} />
+        </Modal>
       </div>
     );
   }
