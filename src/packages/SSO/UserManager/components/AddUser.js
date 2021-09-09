@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Select, Input, Button,Modal } from 'antd';
+import { Form, Select, Input, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/Lang';
 import LocalsKeys from '@/locales/LocaleKeys';
@@ -19,30 +19,54 @@ const formItemLayout = {
 
 export default class AddUser extends Component {
   formRef = React.createRef();
-  state={
-    adminTypeOptions:[],
-    levelOptions:[],
-    selectedUserType:null,
-    timeZoneVisible:false,
-    zoneValue:null,
-  }
+  state = {
+    adminTypeOptions: [],
+    levelOptions: [],
+    selectedUserType: null,
+    timeZoneVisible: false,
+    zoneValue: null,
+  };
   componentDidMount() {
-    const {type,updateRow}=this.props;
+    const { type, updateRow } = this.props;
     const { setFieldsValue } = this.formRef.current;
     const levelOptions = generateLevelOptions(type);
     const adminTypeOptions = generateAdminTypeOptions(type);
-    let selectedUserType='USER';
-    let zoneValue=null;
-    if(!isStrictNull(updateRow)){
-       selectedUserType=updateRow.userType;
-       zoneValue=updateRow.userTimeZone;
-    }else{
-        setFieldsValue({
-            userType:selectedUserType
-        })
+    let selectedUserType = 'USER';
+    let zoneValue = null;
+    if (!isStrictNull(updateRow)) {
+      selectedUserType = updateRow.userType || 'USER';
+      zoneValue = updateRow.userTimeZone;
+      const params = {
+        userType: selectedUserType,
+        username: updateRow.username,
+        email: updateRow.email,
+        language: updateRow.language,
+        adminType: updateRow.adminType || 'USER',
+        userTimeZone: updateRow.userTimeZone,
+        description: updateRow.description,
+      };
+      if (selectedUserType === 'USER') {
+        params.level = updateRow.level;
+      }
+      setFieldsValue({ ...params });
+    } else {
+      setFieldsValue({
+        userType: selectedUserType,
+        username: null,
+        password: null,
+      });
     }
-    this.setState({ adminTypeOptions, levelOptions,selectedUserType,zoneValue});
+    this.setState({ adminTypeOptions, levelOptions, selectedUserType, zoneValue });
   }
+
+  setTimezoneInput = () => {
+    const { getFieldInstance } = this.formRef.current;
+    const ev = getFieldInstance('userTimeZone');
+    if (ev && ev.input) {
+      ev.input.blur();
+    }
+  };
+
   submit = (values) => {
     const { validateFields } = this.formRef.current;
     const { onAddUser } = this.props;
@@ -52,7 +76,8 @@ export default class AddUser extends Component {
   };
   render() {
     const { updateRow } = this.props;
-    const { adminTypeOptions, levelOptions,selectedUserType ,timeZoneVisible,zoneValue} = this.state;
+    const { adminTypeOptions, levelOptions, selectedUserType, timeZoneVisible, zoneValue } =
+      this.state;
     const localLocales =
       window.localStorage.getItem('locales') || '["zh-CN","en-US","ko-KR","vi-VN"]';
     return (
@@ -64,20 +89,20 @@ export default class AddUser extends Component {
             rules={[
               {
                 required: true,
-                message: formatMessage({ id: 'sso.user.require.accountType' }),
+                message: formatMessage({ id: 'sso.user.require.accountType', format: false }),
               },
             ]}
             getValueFromEvent={(ev) => {
-                this.setState({ selectedUserType:ev});
-                return ev;
-              }}
+              this.setState({ selectedUserType: ev });
+              return ev;
+            }}
           >
             <Select>
               <Option key="user" value="USER">
-                <FormattedMessage id="sso.user.account.user" />
+                <FormattedMessage id="sso.user.type.user" />
               </Option>
               <Option key="app" value="APP">
-                <FormattedMessage id="sso.user.account.app" />
+                <FormattedMessage id="translator.languageManage.application" />
               </Option>
             </Select>
           </Form.Item>
@@ -87,12 +112,21 @@ export default class AddUser extends Component {
             rules={[
               {
                 required: true,
-                message: formatMessage({ id: 'sso.user.require.username' }),
+                message: formatMessage({ id: 'sso.user.require.username', format: false }),
               },
             ]}
           >
-            <Input style={{ display: 'none' }} />
-            <Input autoComplete="off" />
+            <Input
+              autoComplete="off"
+              readOnly
+              onFocus={() => {
+                const { getFieldInstance } = this.formRef.current;
+                const ev = getFieldInstance('username');
+                if (ev && ev.input) {
+                  ev.input.readOnly = false;
+                }
+              }}
+            />
           </Form.Item>
           <Form.Item
             label={<FormattedMessage id="sso.user.account.email" />}
@@ -100,9 +134,12 @@ export default class AddUser extends Component {
             rules={[
               {
                 type: 'email',
-                message: formatMessage({ id: 'sso.user.require.validEmail' }),
+                message: formatMessage({ id: 'sso.user.require.validEmail', format: false }),
               },
-              { required: true, message: formatMessage({ id: 'sso.user.require.email' }) },
+              {
+                required: true,
+                message: formatMessage({ id: 'sso.user.require.email', format: false }),
+              },
             ]}
           >
             <Input autoComplete="off" />
@@ -111,7 +148,7 @@ export default class AddUser extends Component {
           {/* 只有新建用户才显示密码项 */}
           {!updateRow && (
             <Form.Item
-              label={formatMessage({ id: 'sso.user.account.password' })}
+              label={<FormattedMessage id="sso.user.account.password" />}
               name="password"
               rules={[
                 {
@@ -124,13 +161,16 @@ export default class AddUser extends Component {
           )}
           {!updateRow && (
             <Form.Item
-              label={formatMessage({ id: 'sso.user.account.password2' })}
+              label={<FormattedMessage id="sso.user.account.password2" />}
               name="surePassword"
               dependencies={['password']}
               rules={[
                 {
                   required: true,
-                  message: formatMessage({ id: 'sso.user.require.passwordOnceMore' }),
+                  message: formatMessage({
+                    id: 'sso.user.require.passwordOnceMore',
+                    format: false,
+                  }),
                 },
                 {
                   validator: (_, value) => {
@@ -139,7 +179,9 @@ export default class AddUser extends Component {
                       return Promise.resolve();
                     }
                     return Promise.reject(
-                      new Error(formatMessage({id: "sso.user.require.passwordConsistent" })),
+                      new Error(
+                        formatMessage({ id: 'sso.user.require.passwordConsistent', format: false }),
+                      ),
                     );
                   },
                 },
@@ -150,7 +192,7 @@ export default class AddUser extends Component {
           )}
 
           <Form.Item
-            label={formatMessage({ id: 'sso.user.account.language' })}
+            label={<FormattedMessage id="translator.languageManage.language" />}
             name="language"
             rules={[
               {
@@ -168,7 +210,7 @@ export default class AddUser extends Component {
           </Form.Item>
 
           <Form.Item
-            label={formatMessage({ id: 'sso.user.account.adminType' })}
+            label={<FormattedMessage id="sso.user.list.adminType" />}
             name="adminType"
             rules={[
               {
@@ -186,7 +228,7 @@ export default class AddUser extends Component {
           </Form.Item>
           {selectedUserType === 'USER' && (
             <Form.Item
-              label={formatMessage({ id: 'sso.user.account.level' })}
+              label={<FormattedMessage id="sso.user.account.level" />}
               name="level"
               rules={[
                 {
@@ -204,25 +246,25 @@ export default class AddUser extends Component {
             </Form.Item>
           )}
           <Form.Item
-            label={formatMessage({ id: 'sso.user.account.userTimeZone' })}
+            label={<FormattedMessage id="sso.user.account.userTimeZone" />}
             name="userTimeZone"
             rules={[
               {
                 required: true,
-                message: formatMessage({ id: 'sso.user.require.userTimeZone' }),
+                message: formatMessage({ id: 'sso.user.require.userTimeZone', format: false }),
               },
             ]}
           >
             <Input
               autoComplete="off"
-             
-              onClick={(e) => {
-                this.setState({ timeZoneVisible: true ,input:e});
+              readOnly
+              onClick={() => {
+                this.setState({ timeZoneVisible: true });
               }}
             />
           </Form.Item>
           <Form.Item
-            label={formatMessage({ id: 'sso.user.account.description' })}
+            label={<FormattedMessage id="sso.user.list.description" />}
             name="description"
           >
             <Input />
@@ -235,24 +277,18 @@ export default class AddUser extends Component {
           }}
         >
           <Button onClick={this.submit} type="primary">
-            <FormattedMessage id="sso.user.action.submit" />
+            <FormattedMessage id="app.button.submit" />
           </Button>
         </div>
-         {/*********时区分配**********/}
-         <Modal
+        {/*********时区分配**********/}
+        <Modal
           visible={timeZoneVisible}
           onCancel={() => {
             this.setState(
               {
                 timeZoneVisible: false,
               },
-              () => {
-                // const { input } = this.state;
-                // input.blur();
-                // setTimeout(() => {
-                //   this.setState({ timeZoneInput: true });
-                // }, 600);
-              }
+              this.setTimezoneInput,
             );
           }}
           width={900}
@@ -262,22 +298,15 @@ export default class AddUser extends Component {
         >
           <TimeZone
             defaultValue={zoneValue}
-            onChange={value => {
+            onChange={(value) => {
               const { setFieldsValue } = this.formRef.current;
               setFieldsValue({ userTimeZone: value });
               this.setState(
                 {
-                  zoneValue:value,
+                  zoneValue: value,
                   timeZoneVisible: false,
-                //   timeZoneInput: false,
                 },
-                () => {
-                //   const { input } = this.state;
-                //   input.blur();
-                //   setTimeout(() => {
-                //     this.setState({ timeZoneInput: true });
-                //   }, 600);
-                }
+                this.setTimezoneInput,
               );
             }}
           />

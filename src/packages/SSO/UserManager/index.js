@@ -4,10 +4,16 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
-import { fetchUserManagerList, updateUserManage } from '@/services/user';
+import {
+  fetchUserManagerList,
+  updateUserManage,
+  addUserManager,
+  updateUserPassword,
+} from '@/services/user';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
+import UpdatePasswordModal from './components/UpdatePassword';
 import commonStyles from '@/common.module.less';
 import styles from './userManager.module.less';
 
@@ -21,12 +27,12 @@ const { Option } = Select;
 }))
 class UserManager extends Component {
   state = {
-    userList: [],
     selectRow: [],
     selectRowKey: [],
     searchUsers: [], // 用户名搜索 为空不用filter
     addUserVisible: false,
-    updateUserFlag: null,
+    updateUserFlag: false, // 点击修改编辑时候为true
+    updatePwdVisible: false, // 重置用户密码
     loading: false,
     dataList: [],
     adminType: null,
@@ -62,24 +68,73 @@ class UserManager extends Component {
   };
 
   // 重置密码
-  resetPassWord = () => {};
+  submitUpdatedPwd = async (values) => {
+    const { selectRowKey } = this.state;
+    const params = {
+      userId: selectRowKey[0],
+      changePassword: values.password,
+    };
+    const updateRes = await updateUserPassword(params);
+    if (!dealResponse(updateRes)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState(
+        { updatePwdVisible: false, selectRow: [], selectRowKey: [] },
+        this.getUserDataList,
+      );
+    }
+  };
   // 区域分配
   sectionDistribution = () => {};
   // 角色分配
   roleDistribution = () => {};
   // 刷新
-  refresh = () => {};
+  refresh = () => {
+    this.getUserDataList();
+  };
+
+  // 新增编辑用户弹框
+  onAddUserSubmit = async (values) => {
+    const { updateUserFlag, selectRow } = this.state;
+
+    // 后台不支持 adminType===USER, 这里删除
+    const requestParams = { ...values };
+    if (requestParams.adminType === 'USER') {
+      delete requestParams.adminType;
+    }
+    let response;
+    // 编辑
+    if (updateUserFlag) {
+      response = await updateUserManage({ ...requestParams, id: selectRow[0].id });
+    } else {
+      response = await addUserManager(requestParams);
+    }
+    if (!dealResponse(response)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState(
+        {
+          addUserVisible: false,
+          updateUserFlag: false,
+          selectRow: [],
+          selectRowKey: [],
+        },
+        this.getUserDataList,
+      );
+    } else {
+      message.info(response.message);
+    }
+  };
 
   // 状态更改
   changeStatus = async (id) => {
     const { dataList } = this.state;
-    const currentRow = dataList.filter((record) => record.id === id);
+    const currentRow = dataList.filter((record) => record.id === id)[0];
     const params = {
       ...currentRow,
       disable: !currentRow.disable,
     };
     const updateRes = await updateUserManage(params);
     if (!dealResponse(updateRes)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
       this.getUserDataList();
     }
   };
@@ -163,7 +218,12 @@ class UserManager extends Component {
             );
           }
           return (
-            <Popover content={content} title="修改" trigger="hover" placement="left">
+            <Popover
+              content={content}
+              title={formatMessage({ id: 'sso.user.statusedit' })}
+              trigger="hover"
+              placement="left"
+            >
               {disable}
             </Popover>
           );
@@ -173,6 +233,7 @@ class UserManager extends Component {
         title: formatMessage({ id: 'sso.user.list.email' }),
         dataIndex: 'email',
         align: 'center',
+        width: '15%',
       },
       {
         title: formatMessage({ id: 'sso.user.list.token' }),
@@ -207,6 +268,7 @@ class UserManager extends Component {
         title: formatMessage({ id: 'translator.languageManage.language' }),
         dataIndex: 'language',
         align: 'center',
+        with: '150',
       },
       {
         title: formatMessage({ id: 'sso.user.list.description' }),
@@ -296,13 +358,15 @@ class UserManager extends Component {
             }}
           >
             {' '}
-            <FormattedMessage id="sso.user.action.updateUser" />
+            <FormattedMessage id="sso.user.updateUserInfo" />
           </Button>
           <Button
             className={commonStyles.mr20}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
-            onClick={this.resetPassWord}
+            onClick={() => {
+              this.setState({ updatePwdVisible: true });
+            }}
           >
             <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
@@ -336,20 +400,21 @@ class UserManager extends Component {
             </Button>
           </div>
         </Row>
-        <Row className={styles.userManagerTable}>
+        <div className={styles.userManagerTable}>
           <Table
             bordered
             pagination={false}
             columns={this.getColumn()}
             rowKey="id"
             dataSource={showUsersList}
+            scroll={{ x: 'max-content' }}
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,
               onChange: this.rowSelectionChange,
             }}
           />
-        </Row>
+        </div>
         {/* 新建编辑用户 */}
         <Modal
           destroyOnClose
@@ -357,12 +422,32 @@ class UserManager extends Component {
           maskClosable={false}
           width={adjustModalWidth() * 0.4 < 400 ? 400 : adjustModalWidth() * 0.4}
           visible={addUserVisible}
-          title={<FormattedMessage id="sso.user.newUser" />}
+          title={
+            updateUserFlag ? (
+              <FormattedMessage id="sso.user.updateUserInfo" />
+            ) : (
+              <FormattedMessage id="sso.user.newUser" />
+            )
+          }
           onCancel={() => {
             this.setState({ addUserVisible: false, updateUserFlag: false });
           }}
         >
-          <AddUserModal type={adminType} updateRow={updateItem} />
+          <AddUserModal type={adminType} updateRow={updateItem} onAddUser={this.onAddUserSubmit} />
+        </Modal>
+
+        {/*********修改密码**********/}
+        <Modal
+          width={400}
+          footer={null}
+          title={formatMessage({ id: 'sso.user.action.resetPwd' })}
+          destroyOnClose
+          visible={this.state.updatePwdVisible}
+          onCancel={() => {
+            this.setState({ updatePwdVisible: false });
+          }}
+        >
+          <UpdatePasswordModal onSubmit={this.submitUpdatedPwd} />
         </Modal>
       </div>
     );

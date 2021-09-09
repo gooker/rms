@@ -18,7 +18,7 @@ class Content extends React.PureComponent {
     currentModuleRouter = allMenuData
       .filter(({ appCode }) => appCode === currentApp)
       .map(({ menu }) => menu);
-    currentModuleRouter = currentModuleRouter && currentModuleRouter[0];
+    currentModuleRouter = currentModuleRouter.length > 0 ? currentModuleRouter[0] : [];
     currentModuleRouter.forEach(({ routes, path, component }) => {
       if (routes) {
         routes.forEach(({ path, component }) => {

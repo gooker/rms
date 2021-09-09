@@ -53,7 +53,7 @@ export async function fetchUserManagerList(params) {
   });
 }
 //新建用户
-export async function fetchAddUser(params) {
+export async function addUserManager(params) {
   return request('/sso/user/addUser', {
     method: 'POST',
     data: params,
@@ -67,7 +67,7 @@ export async function updateUserManage(params) {
   });
 }
 //重置用户密码
-export async function fetchUpdateUserPassword(params) {
+export async function updateUserPassword(params) {
   return request(
     `/sso/user/changeUserPassword?userId=${params.userId}&changePassword=${params.changePassword}`,
     {

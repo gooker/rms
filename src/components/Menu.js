@@ -39,7 +39,7 @@ const Sider = (prop) => {
     // setSelectedKeys([]);
     // setOpenKeys([]);
     // end
-    setCurrentModuleRouter(currentAppRouter && currentAppRouter[0]);
+    setCurrentModuleRouter(currentAppRouter.length > 0 ? currentAppRouter[0] : []);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentApp]);

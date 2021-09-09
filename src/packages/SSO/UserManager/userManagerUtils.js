@@ -27,14 +27,14 @@ export function AdminTLabelMap() {
 export function generateAdminTypeOptions(adminType) {
   const options = [];
   const superManagerOption = {
-    label: formatMessage({ id: 'app.user.account.type.superManager' }),
+    label: formatMessage({ id: 'sso.user.account.type.superManager' }),
     value: 'SUPERMANAGER',
   };
   const managerOption = {
-    label: formatMessage({ id: 'app.user.account.type.manager' }),
+    label: formatMessage({ id: 'sso.user.account.type.manager' }),
     value: 'MANAGER',
   };
-  const userOption = { label: formatMessage({ id: 'app.user.account.type.user' }), value: 'USER' };
+  const userOption = { label: formatMessage({ id: 'sso.user.account.type.user' }), value: 'USER' };
   if (adminType === 'ADMIN') {
     options.push(superManagerOption);
     options.push(managerOption);
@@ -55,12 +55,12 @@ export function generateAdminTypeOptions(adminType) {
 
 export function generateLevelOptions(adminType) {
   const options = [];
-  const adminOption = { label: formatMessage({ id: 'app.common.adminVisible' }), value: 3 };
+  const adminOption = { label: formatMessage({ id: 'sso.common.adminVisible' }), value: 3 };
   const superManagerOption = {
-    label: formatMessage({ id: 'app.common.superManagerVisible' }),
+    label: formatMessage({ id: 'sso.common.superManagerVisible' }),
     value: 2,
   };
-  const managerOption = { label: formatMessage({ id: 'app.common.managerVisible' }), value: 1 };
+  const managerOption = { label: formatMessage({ id: 'sso.common.managerVisible' }), value: 1 };
   if (adminType === 'ADMIN') {
     options.push(adminOption);
     options.push(superManagerOption);
