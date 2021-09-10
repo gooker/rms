@@ -60,6 +60,10 @@ export default class SectionAssign extends Component {
               <FormattedMessage id="sso.user.action.add" />,
               <FormattedMessage id="sso.user.action.remove" />,
             ]}
+            titles={[
+              <FormattedMessage id="sso.user.tip.sectionUnassigned" />,
+              <FormattedMessage id="sso.user.tip.sectionAssigned" />,
+            ]}
             render={(item) => item.sectionName}
             rowKey={(record) => record.sectionId}
             onChange={this.handleChange}

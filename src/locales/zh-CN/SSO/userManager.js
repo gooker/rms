@@ -57,5 +57,7 @@ export default {
   'sso.user.tip.disabled': '禁用',
   'sso.user.tip.roleAssigned': '已分配角色',
   'sso.user.tip.roleUnassigned': '未分配角色',
+  'sso.user.tip.sectionAssigned': '已分配区域',
+  'sso.user.tip.sectionUnassigned': '未分配区域',
   'sso.user.tip.roleLevelGreater': '以下角色等级比用户高，无法完成操作',
 };

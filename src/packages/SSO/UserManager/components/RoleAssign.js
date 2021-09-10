@@ -89,6 +89,10 @@ export default class RoleAssign extends Component {
               <FormattedMessage id="sso.user.action.add" />,
               <FormattedMessage id="sso.user.action.remove" />,
             ]}
+            titles={[
+              <FormattedMessage id="sso.user.tip.roleUnassigned" />,
+              <FormattedMessage id="sso.user.tip.roleAssigned" />,
+            ]}
             render={(item) => `${item.code}(${item.label})`}
             rowKey={(record) => record.id}
             onChange={this.handleChange}
