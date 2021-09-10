@@ -41,7 +41,7 @@ export default class RoleAssign extends Component {
       }
     } else {
       const ModalErrorConfig = {
-        title: formatMessage({ id: 'sso.user.tip.roleLevelGreater' }),
+        title: formatMessage({ id: 'sso.user.tip.roleLevelGreater', format: false }),
         content: (
           <>
             <ul style={{ listStyle: 'disc' }}>

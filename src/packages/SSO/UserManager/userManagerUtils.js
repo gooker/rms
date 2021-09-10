@@ -18,7 +18,7 @@ export function AdminTColor() {
 export function AdminTLabelMap() {
   return {
     ADMIN: 'Admin', // Lv3
-    SUPERMANAGER: formatMessage({ id: 'sso.user.account.type.superManager' }), // Lv2
+    SUPERMANAGER: formatMessage({ id: 'sso.user.account.type.superManager'  }), // Lv2
     MANAGER: formatMessage({ id: 'sso.user.account.type.manager' }), // Lv1
     USER: formatMessage({ id: 'sso.user.account.type.user' }),
   };

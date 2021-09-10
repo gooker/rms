@@ -10,7 +10,7 @@ export default [
     path: '/sso/sectionManager', // 区域管理
     name: 'sectionManger',
     icon: 'file',
-    component: '/SSO/SectionManger',
+    component: '/SSO/SectionManager',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {

@@ -11,6 +11,7 @@ import systemParameters from './zh-CN/systemParameters';
 import translator from './zh-CN/Translator/translator';
 import portal from './zh-CN/Portal/portal';
 import userManager from './zh-CN/SSO/userManager';
+import sectionManager from './zh-CN/SSO/sectionManager';
 
 export default {
   ...menu,
@@ -25,5 +26,6 @@ export default {
   ...systemParameters,
   ...translator,
   ...portal,
-  ...userManager
+  ...userManager,
+  ...sectionManager,
 };

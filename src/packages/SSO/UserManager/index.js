@@ -171,14 +171,14 @@ class UserManager extends Component {
     const { selectRow } = this.state;
     const content = (
       <>
-        {formatMessage({ id: 'sso.user.deleteUser.snippet1' })}
+        {formatMessage({ id: 'sso.user.deleteUser.snippet1', format: false })}
         <span style={{ margin: '0px 5px', color: 'red' }}>{selectRow[0].username}</span>
-        {formatMessage({ id: 'sso.user.deleteUser.snippet2' })}
+        {formatMessage({ id: 'sso.user.deleteUser.snippet2', format: false })}
       </>
     );
     const this_ = this;
     Modal.confirm({
-      title: formatMessage({ id: 'sso.user.confirm.deleteData' }),
+      title: formatMessage({ id: 'sso.user.confirm.deleteData', format: false }),
       content: content,
       onOk: async () => {
         const deleteRes = await fetchDeleteUser({ id: selectRow[0].id });
@@ -257,27 +257,29 @@ class UserManager extends Component {
   getColumn = () => {
     const columns = [
       {
-        title: formatMessage({ id: 'sso.user.type.username' }),
+        title: <FormattedMessage id="sso.user.type.username" />,
         dataIndex: 'username',
         align: 'center',
         fixed: 'left',
       },
       {
-        title: formatMessage({ id: 'sso.user.list.userType' }),
+        title: <FormattedMessage id="sso.user.list.userType" />,
         dataIndex: 'userType',
         render: (text) => {
           return (
             <Tag color={UserTypeColor[text]}>
-              {text === 'USER'
-                ? formatMessage({ id: 'sso.user.type.user' })
-                : formatMessage({ id: 'translator.languageManage.application' })}
+              {text === 'USER' ? (
+                <FormattedMessage id="sso.user.type.user" />
+              ) : (
+                <FormattedMessage id="translator.languageManage.application" />
+              )}
             </Tag>
           );
         },
         align: 'center',
       },
       {
-        title: formatMessage({ id: 'sso.user.list.adminType' }),
+        title: <FormattedMessage id="sso.user.list.adminType" />,
         dataIndex: 'adminType',
         render: (text) => {
           const adminType = text || 'USER';
@@ -286,7 +288,7 @@ class UserManager extends Component {
         align: 'center',
       },
       {
-        title: formatMessage({ id: 'app.common.status' }),
+        title: <FormattedMessage id="app.common.status" />,
         dataIndex: 'disable',
         align: 'center',
         render: (text, record) => {
@@ -302,20 +304,20 @@ class UserManager extends Component {
           if (text) {
             disable = (
               <span style={{ color: 'red', cursor: 'pointer' }}>
-                {formatMessage({ id: 'sso.user.tip.disabled' })}
+                <FormattedMessage id="sso.user.tip.disabled" />
               </span>
             );
           } else {
             disable = (
               <span style={{ color: 'green', cursor: 'pointer' }}>
-                {formatMessage({ id: 'sso.user.tip.enabled' })}
+                <FormattedMessage id="sso.user.tip.enabled" />
               </span>
             );
           }
           return (
             <Popover
               content={content}
-              title={formatMessage({ id: 'sso.user.statusedit' })}
+              title={<FormattedMessage id="sso.user.statusedit" />}
               trigger="hover"
               placement="left"
             >
@@ -325,13 +327,13 @@ class UserManager extends Component {
         },
       },
       {
-        title: formatMessage({ id: 'sso.user.list.email' }),
+        title: <FormattedMessage id="sso.user.list.email" />,
         dataIndex: 'email',
         align: 'center',
         width: '15%',
       },
       {
-        title: formatMessage({ id: 'sso.user.list.token' }),
+        title: <FormattedMessage id="sso.user.list.token" />,
         dataIndex: 'token',
         align: 'center',
         with: '150',
@@ -360,19 +362,19 @@ class UserManager extends Component {
         },
       },
       {
-        title: formatMessage({ id: 'translator.languageManage.language' }),
+        title: <FormattedMessage id="translator.languageManage.language" />,
         dataIndex: 'language',
         align: 'center',
         with: '150',
       },
       {
-        title: formatMessage({ id: 'sso.user.list.description' }),
+        title: <FormattedMessage id="sso.user.list.description" />,
         dataIndex: 'description',
         ellipsis: true,
         align: 'center',
       },
       {
-        title: formatMessage({ id: 'app.taskDetail.createTime' }),
+        title: <FormattedMessage id="app.taskDetail.createTime" />,
         dataIndex: 'createDate',
         align: 'center',
         fixed: 'right',
@@ -542,7 +544,7 @@ class UserManager extends Component {
         <Modal
           width={400}
           footer={null}
-          title={formatMessage({ id: 'sso.user.action.resetPwd' })}
+          title={formatMessage({ id: 'sso.user.action.resetPwd', format: false })}
           destroyOnClose
           visible={this.state.updatePwdVisible}
           onCancel={() => {
