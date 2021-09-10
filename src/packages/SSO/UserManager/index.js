@@ -13,12 +13,16 @@ import {
   fetchSelectSectionList,
   fetchAllSectionByUserId,
   saveUserSections,
+  fetchAllUserRoleList,
+  fetchUserAssignedRoleList,
+  saveUsersAssignedRole,
 } from '@/services/user';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
 import UpdatePasswordModal from './components/UpdatePassword';
 import SectionAssignModal from './components/SectionAssign';
+import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
 import styles from './userManager.module.less';
 
@@ -39,6 +43,9 @@ class UserManager extends Component {
     updateUserFlag: false, // 点击修改编辑时候为true
     updatePwdVisible: false, // 重置用户密码
     sectionDistriVisble: false, // 区域分配
+    rolesDistriVisible: false, // 角色分配
+    allRoles: [],
+    currentRole: [],
     allSections: [],
     currentSection: [],
     loading: false,
@@ -95,8 +102,7 @@ class UserManager extends Component {
   sectionDistribution = () => {
     const { selectRow } = this.state;
     const userId = selectRow[0].id;
-    // 获取所有section
-    // 获取当前section;
+    // 获取所有section/当前section;
     Promise.all([fetchSelectSectionList(), fetchAllSectionByUserId({ userId: userId })])
       .then((response) => {
         const [allSections, currentSection] = response;
@@ -104,17 +110,29 @@ class UserManager extends Component {
           message.error(formatMessage({ id: 'sso.user.getSectionsFailed' }));
           return;
         }
-        this.setState({ allSections, currentSection,sectionDistriVisble: true });
+        this.setState({ allSections, currentSection, sectionDistriVisble: true });
       })
       .catch((err) => {
-        message.error(formatMessage({ id: err }));
+        message.error(err);
       });
   };
   // 角色分配
-  roleDistribution = () => {};
-  // 刷新
-  refresh = () => {
-    this.getUserDataList();
+  roleDistribution = () => {
+    const { selectRow } = this.state;
+    const userId = selectRow[0].id;
+    // 获取所有角色/当前角色;
+    Promise.all([fetchAllUserRoleList(), fetchUserAssignedRoleList({ userId: userId })])
+      .then((response) => {
+        const [allRoles, currentAssigned] = response;
+        if (dealResponse(allRoles) || dealResponse(currentAssigned)) {
+          message.error(formatMessage({ id: 'sso.user.getRolesFailed' }));
+          return;
+        }
+        this.setState({ allRoles, currentRole: currentAssigned.roles, rolesDistriVisible: true });
+      })
+      .catch((err) => {
+        message.error(err);
+      });
   };
 
   // 新增编辑用户弹框
@@ -145,7 +163,7 @@ class UserManager extends Component {
         this.getUserDataList,
       );
     } else {
-      message.info(response.message);
+      message.error(response.message);
     }
   };
   // 注销用户
@@ -188,18 +206,36 @@ class UserManager extends Component {
   };
 
   // 区域分配
-  updateSectionList = async(values)=>{
+  updateSectionList = async (values) => {
     const { selectRow } = this.state;
-    const selectionRes=await saveUserSections({
-      sections:[...values],
-      userId:selectRow[0].id
+    const selectionRes = await saveUserSections({
+      sections: [...values],
+      userId: selectRow[0].id,
     });
-    if(!dealResponse(selectionRes)){
+    if (!dealResponse(selectionRes)) {
       message.info(formatMessage({ id: 'app.tip.operationFinish' }));
-      this.setState({sectionDistriVisble:false, selectRow: [], selectRowKey: [] }, this.getUserDataList);
+      this.setState(
+        { sectionDistriVisble: false, selectRow: [], selectRowKey: [] },
+        this.getUserDataList,
+      );
     }
+  };
 
-  }
+  // 角色分配
+  updateRoleList = async (values) => {
+    const { selectRow } = this.state;
+    const rolesRes = await saveUsersAssignedRole({
+      roleIds: [...values],
+      userId: selectRow[0].id,
+    });
+    if (!dealResponse(rolesRes)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState(
+        { rolesDistriVisible: false, selectRow: [], selectRowKey: [] },
+        this.getUserDataList,
+      );
+    }
+  };
 
   addToClipBoard = (content) => {
     const input = document.createElement('input');
@@ -218,9 +254,6 @@ class UserManager extends Component {
     }
   };
 
-  rowSelectionChange = (selectRowKey, selectRow) => {
-    this.setState({ selectRowKey, selectRow });
-  };
   getColumn = () => {
     const columns = [
       {
@@ -360,6 +393,9 @@ class UserManager extends Component {
       sectionDistriVisble,
       currentSection,
       allSections,
+      rolesDistriVisible,
+      allRoles,
+      currentRole,
     } = this.state;
     const showUsersList = dataList.filter((record) => {
       if (searchUsers.length > 0) {
@@ -448,17 +484,17 @@ class UserManager extends Component {
             disabled={selectRowKey.length !== 1}
             onClick={this.sectionDistribution}
           >
-            <FormattedMessage id="sso.user.action.sectionAssign" />
+            <FormattedMessage id="sso.user.sectionAssign" />
           </Button>
           <Button
             className={commonStyles.mr20}
             onClick={this.roleDistribution}
             disabled={selectRowKey.length !== 1}
           >
-            <FormattedMessage id="sso.user.action.roleAssign" />
+            <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" onClick={this.refresh}>
+            <Button type="primary" onClick={this.getUserDataList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </div>
@@ -474,10 +510,13 @@ class UserManager extends Component {
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,
-              onChange: this.rowSelectionChange,
+              onChange: (selectRowKey, selectRow) => {
+                this.setState({ selectRowKey, selectRow });
+              },
             }}
           />
         </div>
+
         {/* 新建编辑用户 */}
         <Modal
           destroyOnClose
@@ -499,7 +538,7 @@ class UserManager extends Component {
           <AddUserModal type={adminType} updateRow={updateItem} onAddUser={this.onAddUserSubmit} />
         </Modal>
 
-        {/*********修改密码**********/}
+        {/**修改密码***/}
         <Modal
           width={400}
           footer={null}
@@ -514,11 +553,10 @@ class UserManager extends Component {
         </Modal>
 
         {/* 区域分配 */}
-
         <Modal
           destroyOnClose
           footer={null}
-          width={700}
+          width={adjustModalWidth() * 0.58 < 500 ? 500 : adjustModalWidth() * 0.58}
           onCancel={() => {
             this.setState({ sectionDistriVisble: false });
           }}
@@ -529,6 +567,24 @@ class UserManager extends Component {
             allSections={allSections}
             currentSection={currentSection}
             onSubmit={this.updateSectionList}
+          />
+        </Modal>
+
+        {/* 角色分配 */}
+        <Modal
+          destroyOnClose
+          footer={null}
+          width={adjustModalWidth() * 0.58 < 550 ? 550 : adjustModalWidth() * 0.58}
+          onCancel={() => {
+            this.setState({ rolesDistriVisible: false });
+          }}
+          visible={rolesDistriVisible}
+        >
+          <RoleAssignModal
+            selectRow={selectRow}
+            allSource={allRoles}
+            currentSource={currentRole}
+            onSubmit={this.updateRoleList}
           />
         </Modal>
       </div>

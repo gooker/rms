@@ -110,7 +110,7 @@ export async function saveUserSections(params) {
 
 
 //查询所有角色信息
-export async function fetchAllUserRoleListByAppCode() {
+export async function fetchAllUserRoleList() {
   return request(`/sso/role/list`, {
     method: 'GET',
   });
