@@ -37,10 +37,15 @@ export default {
   'sso.user.require.validEmail': '请输入正确的邮箱',
   'sso.user.require.passwordOnceMore': '请再次输入密码',
 
+  'sso.user.confirm.deleteData': '确认要删除该数据么',
+  'sso.user.deleteUser.snippet1': '请确定该人员',
+  'sso.user.deleteUser.snippet2': '没有相关的业务数据',
+  'sso.user.getSectionsFailed': '获取区域失败',
+
   'sso.user.action.add': '添加',
   'sso.user.action.remove': '移除',
   'sso.user.action.resetPwd': '重置用户密码',
-  'sso.user.action.delet': '注销',
+  'sso.user.action.delete': '注销',
   'sso.user.action.sectionAssign': '区域分配',
   'sso.user.action.roleAssign': '角色分配',
   'sso.user.action.view': '显示',
@@ -49,12 +54,7 @@ export default {
   'sso.user.tip.sectionAssign': '区域分配',
   'sso.user.tip.enabled': '启用中',
   'sso.user.tip.disabled': '禁用',
-  'sso.user.tip.authAssignSuccess': '权限分配成功',
   'sso.user.tip.roleAssigned': '已分配角色',
   'sso.user.tip.roleUnassigned': '未分配角色',
   'sso.user.tip.roleLevelGreater': '以下角色等级比用户高，无法完成操作',
-
-  'sso.user.confirm.deleteData': '确认要删除该数据么',
-  'sso.user.deleteUser.snippet1': '请确定该人员',
-  'sso.user.deleteUser.snippet2': '没有相关的业务数据',
 };

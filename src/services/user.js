@@ -84,3 +84,48 @@ export async function fetchDeleteUser(params) {
     data: params,
   });
 }
+
+// 查询所有区域
+export async function fetchSelectSectionList() {
+  return request(`/sso/section/selectSectionList`, {
+    method: 'GET',
+  });
+}
+
+// 当前有的区域查询 userId
+export async function fetchAllSectionByUserId(parms) {
+  return request(`/sso/section/querySectionByUserId`, {
+    method: 'GET',
+    data: parms,
+  });
+}
+
+// 区域分配-保存
+export async function saveUserSections(params) {
+  return request(`/sso/user/updateUserSection`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+
+//查询所有角色信息
+export async function fetchAllUserRoleListByAppCode() {
+  return request(`/sso/role/list`, {
+    method: 'GET',
+  });
+}
+//获取用户已分配角色 userId
+export async function fetchUserAssignedRoleList(parms) {
+  return request(`/sso/user/roleList`, {
+    method: 'GET',
+    data: parms,
+  });
+}
+//保存用户分配角色
+export async function saveUsersAssignedRole(parms) {
+  return request(`/sso/user/roleAuthority`, {
+    method: 'POST',
+    data: parms,
+  });
+}

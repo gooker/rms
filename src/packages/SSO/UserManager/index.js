@@ -9,11 +9,16 @@ import {
   updateUserManage,
   addUserManager,
   updateUserPassword,
+  fetchDeleteUser,
+  fetchSelectSectionList,
+  fetchAllSectionByUserId,
+  saveUserSections,
 } from '@/services/user';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
 import UpdatePasswordModal from './components/UpdatePassword';
+import SectionAssignModal from './components/SectionAssign';
 import commonStyles from '@/common.module.less';
 import styles from './userManager.module.less';
 
@@ -33,6 +38,9 @@ class UserManager extends Component {
     addUserVisible: false,
     updateUserFlag: false, // 点击修改编辑时候为true
     updatePwdVisible: false, // 重置用户密码
+    sectionDistriVisble: false, // 区域分配
+    allSections: [],
+    currentSection: [],
     loading: false,
     dataList: [],
     adminType: null,
@@ -84,7 +92,24 @@ class UserManager extends Component {
     }
   };
   // 区域分配
-  sectionDistribution = () => {};
+  sectionDistribution = () => {
+    const { selectRow } = this.state;
+    const userId = selectRow[0].id;
+    // 获取所有section
+    // 获取当前section;
+    Promise.all([fetchSelectSectionList(), fetchAllSectionByUserId({ userId: userId })])
+      .then((response) => {
+        const [allSections, currentSection] = response;
+        if (dealResponse(allSections) || dealResponse(currentSection)) {
+          message.error(formatMessage({ id: 'sso.user.getSectionsFailed' }));
+          return;
+        }
+        this.setState({ allSections, currentSection,sectionDistriVisble: true });
+      })
+      .catch((err) => {
+        message.error(formatMessage({ id: err }));
+      });
+  };
   // 角色分配
   roleDistribution = () => {};
   // 刷新
@@ -123,6 +148,29 @@ class UserManager extends Component {
       message.info(response.message);
     }
   };
+  // 注销用户
+  deleteUser = () => {
+    const { selectRow } = this.state;
+    const content = (
+      <>
+        {formatMessage({ id: 'sso.user.deleteUser.snippet1' })}
+        <span style={{ margin: '0px 5px', color: 'red' }}>{selectRow[0].username}</span>
+        {formatMessage({ id: 'sso.user.deleteUser.snippet2' })}
+      </>
+    );
+    const this_ = this;
+    Modal.confirm({
+      title: formatMessage({ id: 'sso.user.confirm.deleteData' }),
+      content: content,
+      onOk: async () => {
+        const deleteRes = await fetchDeleteUser({ id: selectRow[0].id });
+        if (!dealResponse(deleteRes)) {
+          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+          this_.setState({ selectRow: [], selectRowKey: [] }, this_.getUserDataList);
+        }
+      },
+    });
+  };
 
   // 状态更改
   changeStatus = async (id) => {
@@ -138,6 +186,20 @@ class UserManager extends Component {
       this.getUserDataList();
     }
   };
+
+  // 区域分配
+  updateSectionList = async(values)=>{
+    const { selectRow } = this.state;
+    const selectionRes=await saveUserSections({
+      sections:[...values],
+      userId:selectRow[0].id
+    });
+    if(!dealResponse(selectionRes)){
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState({sectionDistriVisble:false, selectRow: [], selectRowKey: [] }, this.getUserDataList);
+    }
+
+  }
 
   addToClipBoard = (content) => {
     const input = document.createElement('input');
@@ -295,6 +357,9 @@ class UserManager extends Component {
       searchUsers,
       addUserVisible,
       adminType,
+      sectionDistriVisble,
+      currentSection,
+      allSections,
     } = this.state;
     const showUsersList = dataList.filter((record) => {
       if (searchUsers.length > 0) {
@@ -374,11 +439,9 @@ class UserManager extends Component {
             className={commonStyles.mr20}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              this.setState({ deleteVisible: true });
-            }}
+            onClick={this.deleteUser}
           >
-            <FormattedMessage id="sso.user.action.delet" />
+            <FormattedMessage id="sso.user.action.delete" />
           </Button>
           <Button
             className={commonStyles.mr20}
@@ -448,6 +511,25 @@ class UserManager extends Component {
           }}
         >
           <UpdatePasswordModal onSubmit={this.submitUpdatedPwd} />
+        </Modal>
+
+        {/* 区域分配 */}
+
+        <Modal
+          destroyOnClose
+          footer={null}
+          width={700}
+          onCancel={() => {
+            this.setState({ sectionDistriVisble: false });
+          }}
+          visible={sectionDistriVisble}
+        >
+          <SectionAssignModal
+            selectRow={selectRow}
+            allSections={allSections}
+            currentSection={currentSection}
+            onSubmit={this.updateSectionList}
+          />
         </Modal>
       </div>
     );
