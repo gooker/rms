@@ -149,7 +149,6 @@ export default {
       if (mixrobot) {
         history.replace('/mixrobot/questionCenter');
         const currentRoute = `/questionCenter`;
-        yield put({ type: 'saveCurrentIframeRoute', payload: currentRoute });
         const tab = find(tabs, { route: currentRoute });
         if (!tab) {
           const newTabs = [...tabs];
@@ -234,12 +233,6 @@ export default {
       };
     },
 
-    saveIframeLoading(state, { payload }) {
-      return {
-        ...state,
-        iframeLoading: payload,
-      };
-    },
 
     saveTabs(state, { payload }) {
       return {
@@ -248,12 +241,7 @@ export default {
       };
     },
 
-    saveCurrentIframeRoute(state, { payload }) {
-      return {
-        ...state,
-        currentRoute: payload,
-      };
-    },
+  
 
     saveGrantedAPx(state, { payload }) {
       return {

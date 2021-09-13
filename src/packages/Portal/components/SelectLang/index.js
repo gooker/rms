@@ -5,7 +5,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import classNames from 'classnames';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';
-import styles from '../SelectUrl/index.module.less';
+import styles from '../SelectEnvironment/index.module.less';
 
 export default class SelectLang extends PureComponent {
   render() {
