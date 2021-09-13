@@ -61,7 +61,7 @@ export default class AddApplication extends Component {
             </Form.Item>
             <Form.Item
               name="name"
-              label={<FormattedMessage id="translator.languageManage.name" />}
+              label={<FormattedMessage id="translator.languageManage.langname" />}
               rules={[{ required: true }]}
             >
               <Input />

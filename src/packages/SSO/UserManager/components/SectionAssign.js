@@ -1,20 +1,41 @@
 import React, { Component } from 'react';
-import { Card, Button, Transfer } from 'antd';
+import { Card, Button, Transfer, message } from 'antd';
+import { fetchSelectSectionList, fetchAllSectionByUserId } from '@/services/user';
+import { dealResponse, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AdminTColor } from '../userManagerUtils';
 const AdminTypeColor = AdminTColor();
 
 export default class SectionAssign extends Component {
   state = {
+    allSections: [],
     rightSource: [],
     name: null,
   };
 
   componentDidMount() {
-    const { currentSection } = this.props;
-    const rightSource = currentSection.map(({ sectionId }) => sectionId);
-    this.setState({ rightSource });
+    this.getSectionsList();
   }
+
+  // 区域分配
+  getSectionsList = () => {
+    const { selectRow } = this.props;
+    const userId = selectRow[0].id;
+    // 获取所有section/当前section;
+    Promise.all([fetchSelectSectionList(), fetchAllSectionByUserId({ userId: userId })])
+      .then((response) => {
+        const [allSections, currentSection] = response;
+        if (dealResponse(allSections) || dealResponse(currentSection)) {
+          message.error(formatMessage({ id: 'sso.user.getSectionsFailed' }));
+          return;
+        }
+        const rightSource = currentSection.map(({ sectionId }) => sectionId);
+        this.setState({ allSections, rightSource });
+      })
+      .catch((err) => {
+        message.error(err);
+      });
+  };
 
   handleChange = (targetKeys) => {
     this.setState({ rightSource: targetKeys });
@@ -28,8 +49,8 @@ export default class SectionAssign extends Component {
   };
 
   render() {
-    const { rightSource } = this.state;
-    const { selectRow, allSections } = this.props;
+    const { allSections, rightSource } = this.state;
+    const { selectRow } = this.props;
     const type = selectRow ? selectRow[0].adminType || 'USER' : '';
     return (
       <div>

@@ -1,28 +1,48 @@
 import React, { Component } from 'react';
-import { Card, Button, Transfer, Modal } from 'antd';
+import { Card, Button, Transfer, Modal, message } from 'antd';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import { fetchAllUserRoleList, fetchUserAssignedRoleList } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/Lang';
 import { AdminTColor } from '../userManagerUtils';
 const AdminTypeColor = AdminTColor();
 
 export default class RoleAssign extends Component {
   state = {
+    allSource: [],
     rightSource: [],
     name: null,
   };
 
   componentDidMount() {
-    const { currentSource = [] } = this.props;
-    const rightSource = currentSource.map(({ id }) => id);
-    this.setState({ rightSource });
+    this.getRoleSource();
   }
+
+  // 角色分配
+  getRoleSource = () => {
+    const { selectRow } = this.props;
+    const userId = selectRow[0].id;
+    // 获取所有角色/当前角色;
+    Promise.all([fetchAllUserRoleList(), fetchUserAssignedRoleList({ userId: userId })])
+      .then((response) => {
+        const [allSource, currentAssigned] = response;
+        if (dealResponse(allSource) || dealResponse(currentAssigned)) {
+          message.error(formatMessage({ id: 'sso.user.getRolesFailed' }));
+          return;
+        }
+        const rightSource = currentAssigned?.roles.map(({ id }) => id);
+        this.setState({ allSource, rightSource });
+      })
+      .catch((err) => {
+        message.error(err);
+      });
+  };
 
   handleChange = (targetKeys) => {
     this.setState({ rightSource: targetKeys });
   };
   submit = () => {
-    const { rightSource } = this.state;
-    const { onSubmit, allSource, selectRow } = this.props;
+    const { rightSource, allSource } = this.state;
+    const { onSubmit, selectRow } = this.props;
     const level = selectRow[0].level;
 
     // 校验已选的角色中是否存在level比user的level高
@@ -57,8 +77,8 @@ export default class RoleAssign extends Component {
   };
 
   render() {
-    const { rightSource } = this.state;
-    const { selectRow, allSource } = this.props;
+    const { allSource, rightSource } = this.state;
+    const { selectRow } = this.props;
     const type = selectRow ? selectRow[0].adminType || 'USER' : '';
     return (
       <div>
