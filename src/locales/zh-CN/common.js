@@ -33,6 +33,10 @@ export default {
   'app.direction.right': '右侧',
   'app.direction.bottom': '下方',
   'app.direction.left': '左侧',
+  'app.direction.toTop': '朝上',
+  'app.direction.toRight': '朝右',
+  'app.direction.toBottom': '朝下',
+  'app.direction.toLeft': '朝左',
 
   // Button --
   'app.button.add': '新增',
