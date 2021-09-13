@@ -10,18 +10,18 @@ import {
 } from '@ant-design/icons';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/dva';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 import IconDir from '@/utils/ExtraIcon';
 import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import Portal from './Portal/Portal';
-import SelectUrl from './SelectUrl';
+import SelectEnvironment from './SelectUrl';
 import NoticeIcon from './NoticeIcon';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Head.module.less';
 
-@connect(({global, user }) => ({
+@connect(({ global, user }) => ({
   globalLocale: global.globalLocale,
   currentUser: user.currentUser,
   userRoleList: user.userRoleList,
@@ -94,7 +94,6 @@ class Header extends React.Component {
 
   changeEnvironment = (record) => {
     const { dispatch } = this.props;
-    window.localStorage.removeItem('route');
     dispatch({
       type: 'global/fetchUpdateEnvironment',
       payload: record,
@@ -110,7 +109,6 @@ class Header extends React.Component {
   changeSection = (record) => {
     const { key } = record;
     const { dispatch } = this.props;
-    window.localStorage.removeItem('route');
     dispatch({
       type: 'user/fetchUpdateUserCurrentSection',
       payload: key, // key就是sectionId,
@@ -160,12 +158,10 @@ class Header extends React.Component {
   };
 
   goToQuestionCenter = async () => {
-    const { dispatch } = this.props;
-    await dispatch({ type: 'global/saveIframeLoading', payload: true });
-    dispatch({ type: 'global/goToQuestionCenter' });
+    // 通过路由进入
   };
 
-  changeLocale = async ({key}) => {
+  changeLocale = async ({ key }) => {
     const { dispatch } = this.props;
     const currentLocale = key;
     await dispatch({ type: 'global/updateGlobalLocale', payload: currentLocale });
@@ -207,7 +203,7 @@ class Header extends React.Component {
         </div>
         <div className={styles.rightContent}>
           {/* 环境切换 */}
-          <SelectUrl
+          <SelectEnvironment
             showLabel={true}
             className={styles.icon}
             environments={environments || []}
@@ -266,16 +262,13 @@ class Header extends React.Component {
               onFocus={() => void 0}
               onClick={this.goToQuestionCenter}
             >
+              {/* /coordinator/problemHandling/getProblemHandlingCount */}
               <NoticeIcon count={noticeCount || 0} />
             </span>
           </Popover>
 
           {/* 切换语言 */}
-          <SelectLang
-            showLabel={showLabel}
-            className={styles.icon}
-            onChange={this.changeLocale}
-          />
+          <SelectLang showLabel={showLabel} className={styles.icon} onChange={this.changeLocale} />
 
           {/* 切换时间区 */}
           {/* <SelectTimeZone
