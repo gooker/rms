@@ -136,7 +136,7 @@ export async function saveUsersAssignedRole(parms) {
 export async function fetchAddSection(parms) {
   return request(`/sso/section/addSection`, {
     method: 'POST',
-    body: parms,
+    data: parms,
   });
 }
 
@@ -144,7 +144,7 @@ export async function fetchAddSection(parms) {
 export async function deleteSectionById(parms) {
   return request(`/sso/section/deleteSectionById`, {
     method: 'GET',
-    body: parms,
+    data: parms,
   });
 }
 
@@ -152,7 +152,7 @@ export async function deleteSectionById(parms) {
 export async function updateSection(parms) {
   return request(`/sso/section/updateSection`, {
     method: 'POST',
-    body: parms,
+    data: parms,
   });
 }
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Button, Table } from 'antd';
+import { Row, Button, Table, Modal, message } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   fetchSelectSectionList,
@@ -8,6 +8,8 @@ import {
   deleteSectionById,
 } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
+import { formatMessage } from '@/utils/utils';
+import UpdateSection from './components/UpdateSection';
 import commonStyles from '@/common.module.less';
 import styles from './sectionManager.module.less';
 import { dealResponse } from '@/utils/utils';
@@ -15,8 +17,11 @@ import { dealResponse } from '@/utils/utils';
 export default class SectionManager extends Component {
   state = {
     selectRowKey: [],
+    selectRow: [],
     sectionsList: [],
     loading: false,
+    sectionModalVisible: false, // 新增 修改区域
+    updateFlag: false, // 修改为true
   };
   componentDidMount() {
     this.getData();
@@ -32,16 +37,17 @@ export default class SectionManager extends Component {
   getColumn = () => {
     return [
       {
-        title: <FormattedMessage id="translator.languageManage.langname" />,
-        dataIndex: 'sectionName',
+        title: <FormattedMessage id="app.common.sectionId" />,
+        dataIndex: 'sectionId',
         align: 'center',
         fixed: 'left',
       },
       {
-        title: <FormattedMessage id="app.common.sectionId" />,
-        dataIndex: 'sectionId',
+        title: <FormattedMessage id="app.common.name" />,
+        dataIndex: 'sectionName',
         align: 'center',
       },
+
       {
         title: <FormattedMessage id="sso.user.type.username" />,
         dataIndex: 'name',
@@ -54,18 +60,63 @@ export default class SectionManager extends Component {
       },
     ];
   };
+
+  // 删除区域
+  deleteUser = () => {
+    const { selectRowKey } = this.state;
+    const this_ = this;
+    Modal.confirm({
+      title: formatMessage({ id: 'app.tip.systemHint', format: false }),
+      content: formatMessage({ id: 'section.delete.content', format: false }),
+      onOk: async () => {
+        const deleteRes = await deleteSectionById({ id: selectRowKey[0] });
+        if (!dealResponse(deleteRes)) {
+          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+          this_.setState({ selectRow: [], selectRowKey: [] }, this_.getData);
+        }
+      },
+    });
+  };
+
+  updatedSectionSubmit = async (values) => {
+    // 新增 编辑
+    const { updateFlag, selectRowKey } = this.state;
+    let response;
+    // 编辑
+    if (updateFlag) {
+      response = await updateSection({ ...values, id: selectRowKey[0] });
+    } else {
+      response = await fetchAddSection({...values});
+    }
+    if (!dealResponse(response)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState(
+        {
+          sectionModalVisible: false,
+          updateFlag: false,
+          selectRow: [],
+          selectRowKey: [],
+        },
+        this.getData,
+      );
+    } else {
+      message.error(response.message);
+    }
+  };
+
   render() {
-    const { selectRowKey, sectionsList, loading } = this.state;
+    const { selectRowKey, sectionsList, loading, sectionModalVisible, updateFlag, selectRow } =
+      this.state;
     return (
       <div className={commonStyles.globalPageStyle}>
-        <Row style={{ display: 'flex', padding: '20px 0'}}>
+        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
             className={commonStyles.mr20}
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => {
               this.setState({
-                addUserVisible: true,
+                sectionModalVisible: true,
               });
             }}
           >
@@ -77,12 +128,11 @@ export default class SectionManager extends Component {
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({
-                addUserVisible: true,
-                updateUserFlag: true,
+                sectionModalVisible: true,
+                updateFlag: true,
               });
             }}
           >
-            {' '}
             <FormattedMessage id="app.button.edit" />
           </Button>
 
@@ -112,6 +162,31 @@ export default class SectionManager extends Component {
             }}
           />
         </div>
+
+        {/* 新增修改区域 */}
+        <Modal
+          width={480}
+          footer={null}
+          title={
+            !updateFlag ? (
+              <FormattedMessage id="section.add.section" />
+            ) : (
+              <FormattedMessage id="section.update.section" />
+            )
+          }
+          destroyOnClose
+          visible={sectionModalVisible}
+          onCancel={() => {
+            this.setState({ sectionModalVisible: false, updateFlag: false });
+          }}
+        >
+          {' '}
+          <UpdateSection
+            selectRow={selectRow}
+            updateFlag={updateFlag}
+            onSubmit={this.updatedSectionSubmit}
+          />
+        </Modal>
       </div>
     );
   }

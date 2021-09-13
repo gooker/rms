@@ -12,7 +12,6 @@ export default {
     'translator.languageManage.addapplication': '新增应用',
     'translator.languageManage.langtype': '语种类型',
     'translator.languageManage.langFile': '文件',
-    'translator.languageManage.langname': '名称',
     'translator.languageManage.langtypeValidate': '只能是字母 下划线',
     'translator.languageManage.applicationTips': '存在未保存的更新,是否保存?',
     'translator.languageManage.attention': '注意: ',

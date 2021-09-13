@@ -13,6 +13,7 @@ import {
   saveUserSections,
   saveUsersAssignedRole,
 } from '@/services/user';
+import IconFont from '@/utils/ExtraIcon';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
@@ -412,7 +413,6 @@ class UserManager extends Component {
               });
             }}
           >
-            {''}
             <FormattedMessage id="sso.user.edit" />
           </Button>
           <Button
@@ -423,7 +423,6 @@ class UserManager extends Component {
               this.setState({ updatePwdVisible: true });
             }}
           >
-            {''}
             <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
           <Button
@@ -432,7 +431,6 @@ class UserManager extends Component {
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
           >
-            {''}
             <FormattedMessage id="sso.user.action.delete" />
           </Button>
           <Button
@@ -442,6 +440,7 @@ class UserManager extends Component {
               this.setState({ sectionDistriVisble: true });
             }}
           >
+            <IconFont type="icon-fenpei" />
             <FormattedMessage id="sso.user.sectionAssign" />
           </Button>
           <Button
@@ -451,6 +450,7 @@ class UserManager extends Component {
             }}
             disabled={selectRowKey.length !== 1}
           >
+             <IconFont type="icon-fenpei" />
             <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>

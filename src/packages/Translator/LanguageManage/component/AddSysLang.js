@@ -106,7 +106,7 @@ export default class AddSysLangModal extends Component {
             </Form.Item>
             <Form.Item
               name="name"
-              label={<FormattedMessage id="translator.languageManage.langname" />}
+              label={<FormattedMessage id="app.common.name" />}
               rules={[{ required: true }]}
             >
               <Input />
