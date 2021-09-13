@@ -17,7 +17,7 @@ export default {
   'sso.common.adminVisible': 'Admin可见',
   'sso.common.superManagerVisible': '超级管理员可见',
   'sso.common.managerVisible': '普通管理员可见',
-  'sso.user.statusedit': '修改',
+  'sso.user.edit': '修改',
 
   'sso.user.account': '账号',
   'sso.user.account.type': '账户类型',
@@ -45,7 +45,7 @@ export default {
 
   'sso.user.action.add': '添加',
   'sso.user.action.remove': '移除',
-  'sso.user.action.resetPwd': '重置用户密码',
+  'sso.user.action.resetPwd': '重置密码',
   'sso.user.action.delete': '注销',
   'sso.user.action.view': '显示',
 

@@ -10,11 +10,7 @@ import {
   addUserManager,
   updateUserPassword,
   fetchDeleteUser,
-  fetchSelectSectionList,
-  fetchAllSectionByUserId,
   saveUserSections,
-  fetchAllUserRoleList,
-  fetchUserAssignedRoleList,
   saveUsersAssignedRole,
 } from '@/services/user';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
@@ -44,10 +40,6 @@ class UserManager extends Component {
     updatePwdVisible: false, // 重置用户密码
     sectionDistriVisble: false, // 区域分配
     rolesDistriVisible: false, // 角色分配
-    allRoles: [],
-    currentRole: [],
-    allSections: [],
-    currentSection: [],
     loading: false,
     dataList: [],
     adminType: null,
@@ -97,42 +89,6 @@ class UserManager extends Component {
         this.getUserDataList,
       );
     }
-  };
-  // 区域分配
-  sectionDistribution = () => {
-    const { selectRow } = this.state;
-    const userId = selectRow[0].id;
-    // 获取所有section/当前section;
-    Promise.all([fetchSelectSectionList(), fetchAllSectionByUserId({ userId: userId })])
-      .then((response) => {
-        const [allSections, currentSection] = response;
-        if (dealResponse(allSections) || dealResponse(currentSection)) {
-          message.error(formatMessage({ id: 'sso.user.getSectionsFailed' }));
-          return;
-        }
-        this.setState({ allSections, currentSection, sectionDistriVisble: true });
-      })
-      .catch((err) => {
-        message.error(err);
-      });
-  };
-  // 角色分配
-  roleDistribution = () => {
-    const { selectRow } = this.state;
-    const userId = selectRow[0].id;
-    // 获取所有角色/当前角色;
-    Promise.all([fetchAllUserRoleList(), fetchUserAssignedRoleList({ userId: userId })])
-      .then((response) => {
-        const [allRoles, currentAssigned] = response;
-        if (dealResponse(allRoles) || dealResponse(currentAssigned)) {
-          message.error(formatMessage({ id: 'sso.user.getRolesFailed' }));
-          return;
-        }
-        this.setState({ allRoles, currentRole: currentAssigned.roles, rolesDistriVisible: true });
-      })
-      .catch((err) => {
-        message.error(err);
-      });
   };
 
   // 新增编辑用户弹框
@@ -317,7 +273,7 @@ class UserManager extends Component {
           return (
             <Popover
               content={content}
-              title={<FormattedMessage id="sso.user.statusedit" />}
+              title={<FormattedMessage id="sso.user.edit" />}
               trigger="hover"
               placement="left"
             >
@@ -393,11 +349,7 @@ class UserManager extends Component {
       addUserVisible,
       adminType,
       sectionDistriVisble,
-      currentSection,
-      allSections,
       rolesDistriVisible,
-      allRoles,
-      currentRole,
     } = this.state;
     const showUsersList = dataList.filter((record) => {
       if (searchUsers.length > 0) {
@@ -437,7 +389,7 @@ class UserManager extends Component {
             </Select>
           </Col>
         </Row>
-        <Row style={{ display: 'flex', padding: 20 }}>
+        <Row style={{ display: 'flex', padding: '20px 0' }}>
           <Button
             className={commonStyles.mr20}
             icon={<PlusOutlined />}
@@ -460,8 +412,8 @@ class UserManager extends Component {
               });
             }}
           >
-            {' '}
-            <FormattedMessage id="sso.user.updateUserInfo" />
+            {''}
+            <FormattedMessage id="sso.user.edit" />
           </Button>
           <Button
             className={commonStyles.mr20}
@@ -471,6 +423,7 @@ class UserManager extends Component {
               this.setState({ updatePwdVisible: true });
             }}
           >
+            {''}
             <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
           <Button
@@ -479,18 +432,23 @@ class UserManager extends Component {
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
           >
+            {''}
             <FormattedMessage id="sso.user.action.delete" />
           </Button>
           <Button
             className={commonStyles.mr20}
             disabled={selectRowKey.length !== 1}
-            onClick={this.sectionDistribution}
+            onClick={() => {
+              this.setState({ sectionDistriVisble: true });
+            }}
           >
             <FormattedMessage id="sso.user.sectionAssign" />
           </Button>
           <Button
             className={commonStyles.mr20}
-            onClick={this.roleDistribution}
+            onClick={() => {
+              this.setState({ rolesDistriVisible: true });
+            }}
             disabled={selectRowKey.length !== 1}
           >
             <FormattedMessage id="sso.user.roleAssign" />
@@ -564,12 +522,7 @@ class UserManager extends Component {
           }}
           visible={sectionDistriVisble}
         >
-          <SectionAssignModal
-            selectRow={selectRow}
-            allSections={allSections}
-            currentSection={currentSection}
-            onSubmit={this.updateSectionList}
-          />
+          <SectionAssignModal selectRow={selectRow} onSubmit={this.updateSectionList} />
         </Modal>
 
         {/* 角色分配 */}
@@ -582,12 +535,7 @@ class UserManager extends Component {
           }}
           visible={rolesDistriVisible}
         >
-          <RoleAssignModal
-            selectRow={selectRow}
-            allSource={allRoles}
-            currentSource={currentRole}
-            onSubmit={this.updateRoleList}
-          />
+          <RoleAssignModal selectRow={selectRow} onSubmit={this.updateRoleList} />
         </Modal>
       </div>
     );
