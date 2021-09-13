@@ -196,6 +196,7 @@ class Header extends React.Component {
               onFocus={() => void 0}
               onClick={this.goToQuestionCenter}
             >
+              {/* /coordinator/problemHandling/getProblemHandlingCount */}
               <NoticeIcon count={noticeCount || 0} />
             </span>
           </Popover>

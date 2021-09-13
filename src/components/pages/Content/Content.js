@@ -12,7 +12,6 @@ import Loadable from '@/utils/Loadable';
 class Content extends React.PureComponent {
   createRoutesByRequire = () => {
     const result = [];
-    //  TODO: 点击的时候 根据code拿到对应的route;
     const { currentApp, allMenuData } = this.props;
     let currentModuleRouter = [];
     currentModuleRouter = allMenuData
@@ -43,7 +42,6 @@ class Content extends React.PureComponent {
               exact
               key={path}
               path={path}
-              // TIP: Loadable 参数不支持变量, 只支持字符串或者字符串模板
               component={Loadable(() => import(`@/packages${component}`))}
             />
           ))}

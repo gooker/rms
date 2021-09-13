@@ -14,6 +14,7 @@ class MainLayout extends React.Component {
   state = {
     appReady: false,
   };
+
   async componentDidMount() {
     // 顺序: user menu 国际化
 
@@ -21,11 +22,12 @@ class MainLayout extends React.Component {
     // 1.获取用户信息
     await dispatch({ type: 'user/fetchCurrentUser' });
     // 2.menu
-    await dispatch({ type: 'global/fetchInitialAppStatus' });
+    await dispatch({ type: 'global/initAppAuthority' });
     // 3.国际化 远程
     await initI18nInstance();
     this.setState({ appReady: true });
   }
+
   render() {
     const { appReady } = this.state;
     return (
