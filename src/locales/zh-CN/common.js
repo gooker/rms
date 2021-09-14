@@ -6,12 +6,12 @@ export default {
   'app.tip.getMapFail': '获取地图数据失败',
   'app.tip.getMapListFail': '获取地图列表失败',
   'app.tip.getAgvListFail': '获取小车列表失败',
-  'app.tip.RequestLoginTimeoutContent': '请重新登录，获取相关权限(3秒后自动退出)',
-  'app.tip.networkError': '请求失败，网络连接可能出现异常',
-  'app.tip.systemError': '操作失败，系统没有返回任何提示',
+  'app.tip.RequestLoginTimeoutContent': '请重新登录, 获取相关权限(3秒后自动退出)',
+  'app.tip.networkError': '请求失败, 网络连接可能出现异常',
+  'app.tip.systemError': '操作失败, 系统没有返回任何提示',
   'app.tip.systemHint': '系统提示',
   'app.tip.operationFinish': '操作成功',
-  'app.tip.operationFailed': '操作失败',
+  'app.tip.operationFailed': '操作失败, 请重试',
 
   // 通用页面标识内容
   'app.common.tableRecord': '共计 {count} 条记录',
@@ -25,7 +25,7 @@ export default {
   'app.common.noRecord': '无记录',
   'app.common.null': '空',
   'app.common.Error': '错误',
-  'app.common.name':'名称',
+  'app.common.name': '名称',
 
   // direction --
   'app.direction': '方向',
