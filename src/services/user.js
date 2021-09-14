@@ -156,3 +156,11 @@ export async function updateSection(parms) {
   });
 }
 
+// 用户登录历史-列表
+export async function fetchUserLoginHistory(params) {
+  return request('/sso/userLoginHistory/getLoginHistory', {
+    method: 'POST',
+    data: params,
+  });
+}
+

@@ -12,6 +12,7 @@ import translator from './zh-CN/Translator/translator';
 import portal from './zh-CN/Portal/portal';
 import userManager from './zh-CN/SSO/userManager';
 import sectionManager from './zh-CN/SSO/sectionManager';
+import userLoginHistory from './zh-CN/SSO/userHistory';
 
 export default {
   ...menu,
@@ -28,4 +29,5 @@ export default {
   ...portal,
   ...userManager,
   ...sectionManager,
+  ...userLoginHistory,
 };
