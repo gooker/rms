@@ -3,7 +3,6 @@ export default {
   'app.request.failed': '请求失败, 网络连接可能出现异常',
   'app.request.processError': '程序出现异常, 请关注相关提示信息（若无相关提示信息请联系工作人员）',
   'app.request.processError2': '程序出现错误, 请查看控制台',
-  'app.request.messageTitle': '系统提示',
   'app.request.addressError': '请求地址错误',
   'app.request.200': '服务器成功返回请求的数据',
   'app.request.201': '新建或修改数据成功',

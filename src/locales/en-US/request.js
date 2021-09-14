@@ -3,7 +3,6 @@ export default {
   'app.request.failed': 'Request failed, the network connection may be abnormal',
   'app.request.processError': 'The program is abnormal, please pay attention to the relevant prompt information (if there is no relevant prompt information, please contact the staff)',
   'app.request.processError2': 'Error occurred, please check the consol',
-  'app.request.messageTitle': 'System Hint',
   'app.request.addressError': 'Request address error',
   'app.request.200': 'The server successfully returned the requested data',
   'app.request.201': 'New or modified data successfully',
