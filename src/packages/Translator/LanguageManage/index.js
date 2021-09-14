@@ -35,6 +35,7 @@ import {
   getTranslationBycode,
   updateTranslations,
 } from '@/services/translator';
+import RcsConfirm from '@/components/RcsConfirm';
 import {
   exportTranslate,
   generatefilterValue,
@@ -310,9 +311,7 @@ class LanguageManage extends React.Component {
     const { editList, appCode } = this.state;
     const _this = this;
     if (Object.keys(editList).length >= 1) {
-      Modal.confirm({
-        title: formatMessage({ id: 'app.common.systemHint', format: false }),
-        icon: <ExclamationCircleOutlined />,
+      RcsConfirm({
         content: formatMessage({ id: 'translator.languageManage.applicationTips', format: false }),
         okText: formatMessage({ id: 'app.common.true', format: false }),
         cancelText: formatMessage({ id: 'app.common.false', format: false }),

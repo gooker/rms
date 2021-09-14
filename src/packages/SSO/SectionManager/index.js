@@ -7,6 +7,7 @@ import {
   updateSection,
   deleteSectionById,
 } from '@/services/user';
+import RcsConfirm from '@/components/RcsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 import UpdateSection from './components/UpdateSection';
@@ -65,8 +66,7 @@ export default class SectionManager extends Component {
   deleteUser = () => {
     const { selectRowKey } = this.state;
     const this_ = this;
-    Modal.confirm({
-      title: formatMessage({ id: 'app.tip.systemHint', format: false }),
+    RcsConfirm({
       content: formatMessage({ id: 'section.delete.content', format: false }),
       onOk: async () => {
         const deleteRes = await deleteSectionById({ id: selectRowKey[0] });
@@ -86,7 +86,7 @@ export default class SectionManager extends Component {
     if (updateFlag) {
       response = await updateSection({ ...values, id: selectRowKey[0] });
     } else {
-      response = await fetchAddSection({...values});
+      response = await fetchAddSection({ ...values });
     }
     if (!dealResponse(response)) {
       message.info(formatMessage({ id: 'app.tip.operationFinish' }));

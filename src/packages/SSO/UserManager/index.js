@@ -14,6 +14,7 @@ import {
   saveUsersAssignedRole,
 } from '@/services/user';
 import IconFont from '@/utils/ExtraIcon';
+import RcsConfirm from '@/components/RcsConfirm';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
@@ -134,8 +135,7 @@ class UserManager extends Component {
       </>
     );
     const this_ = this;
-    Modal.confirm({
-      title: formatMessage({ id: 'sso.user.confirm.deleteData', format: false }),
+    RcsConfirm({
       content: content,
       onOk: async () => {
         const deleteRes = await fetchDeleteUser({ id: selectRow[0].id });
