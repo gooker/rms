@@ -20,41 +20,44 @@ export default class UserLoginHistory extends Component {
       size: 10,
       total: 0,
     },
-    getColumn: [
-      {
-        title: <FormattedMessage id="sso.user.type.username" />,
-        dataIndex: 'username',
-        align: 'center',
-        fixed: 'left',
-      },
-      {
-        title: <FormattedMessage id="userLoginHistory.type" />,
-        dataIndex: 'type',
-        align: 'center',
-        render: (text) => (
-          <Tag type="text" color={text === 'login' ? '#04B431' : ''}>
-            {text}
-          </Tag>
-        ),
-      },
 
-      {
-        title: <FormattedMessage id="app.taskDetail.operatingTime" />,
-        dataIndex: 'operationTime',
-        align: 'center',
-        // sorter:true,
-        render: (text) => {
-          return text && dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
-        },
-      },
-      {
-        title: <FormattedMessage id="sso.user.list.description" />,
-        dataIndex: 'comment',
-        align: 'center',
-      },
-    ],
     loading: false,
   };
+
+  getColumn = [
+    {
+      title: <FormattedMessage id="sso.user.type.username" />,
+      dataIndex: 'username',
+      align: 'center',
+      fixed: 'left',
+    },
+    {
+      title: <FormattedMessage id="userLoginHistory.type" />,
+      dataIndex: 'type',
+      align: 'center',
+      render: (text) => (
+        <Tag type="text" color={text === 'login' ? '#04B431' : ''}>
+          {text}
+        </Tag>
+      ),
+    },
+
+    {
+      title: <FormattedMessage id="app.taskDetail.operatingTime" />,
+      dataIndex: 'operationTime',
+      align: 'center',
+      // sorter:true,
+      render: (text) => {
+        return text && dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+      },
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.description" />,
+      dataIndex: 'comment',
+      align: 'center',
+    },
+  ];
+
   componentDidMount() {
     this.getHistory();
   }
@@ -105,9 +108,9 @@ export default class UserLoginHistory extends Component {
   };
 
   exportHistory = () => {
-    const { historySource, getColumn } = this.state;
+    const { historySource } = this.state;
     const fields = [];
-    getColumn.map(({ title, dataIndex }) => {
+    this.getColumn.map(({ title, dataIndex }) => {
       fields.push({
         label: formatMessage({ id: title.props.id }),
         value: dataIndex,
@@ -120,7 +123,7 @@ export default class UserLoginHistory extends Component {
   };
 
   render() {
-    const { loading, pagination, getColumn, historySource } = this.state;
+    const { loading, pagination, historySource } = this.state;
     return (
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ marginBottom: 20 }}>
@@ -169,7 +172,7 @@ export default class UserLoginHistory extends Component {
         <div className={commonStyles.divContent}>
           <Table
             bordered
-            columns={getColumn}
+            columns={this.getColumn}
             rowKey="id"
             dataSource={historySource}
             scroll={{ x: 'max-content' }}

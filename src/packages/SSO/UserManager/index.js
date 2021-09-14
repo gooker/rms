@@ -211,134 +211,132 @@ class UserManager extends Component {
     }
   };
 
-  getColumn = () => {
-    const columns = [
-      {
-        title: <FormattedMessage id="sso.user.type.username" />,
-        dataIndex: 'username',
-        align: 'center',
-        fixed: 'left',
+  getColumn = [
+    {
+      title: <FormattedMessage id="sso.user.type.username" />,
+      dataIndex: 'username',
+      align: 'center',
+      fixed: 'left',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.userType" />,
+      dataIndex: 'userType',
+      render: (text) => {
+        return (
+          <Tag color={UserTypeColor[text]}>
+            {text === 'USER' ? (
+              <FormattedMessage id="sso.user.type.user" />
+            ) : (
+              <FormattedMessage id="translator.languageManage.application" />
+            )}
+          </Tag>
+        );
       },
-      {
-        title: <FormattedMessage id="sso.user.list.userType" />,
-        dataIndex: 'userType',
-        render: (text) => {
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.adminType" />,
+      dataIndex: 'adminType',
+      render: (text) => {
+        const adminType = text || 'USER';
+        return <Tag color={AdminTypeColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
+      },
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.common.status" />,
+      dataIndex: 'disable',
+      align: 'center',
+      render: (text, record) => {
+        let disable = null;
+        let content = (
+          <StatusChoice
+            onChange={() => {
+              this.changeStatus(record.id);
+            }}
+            status={!text}
+          />
+        );
+        if (text) {
+          disable = (
+            <span style={{ color: 'red', cursor: 'pointer' }}>
+              <FormattedMessage id="sso.user.tip.disabled" />
+            </span>
+          );
+        } else {
+          disable = (
+            <span style={{ color: 'green', cursor: 'pointer' }}>
+              <FormattedMessage id="sso.user.tip.enabled" />
+            </span>
+          );
+        }
+        return (
+          <Popover
+            content={content}
+            title={<FormattedMessage id="sso.user.edit" />}
+            trigger="hover"
+            placement="left"
+          >
+            {disable}
+          </Popover>
+        );
+      },
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.email" />,
+      dataIndex: 'email',
+      align: 'center',
+      width: '15%',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.token" />,
+      dataIndex: 'token',
+      align: 'center',
+      with: '150',
+      render: (text, record) => {
+        if (record.userType === 'APP') {
           return (
-            <Tag color={UserTypeColor[text]}>
-              {text === 'USER' ? (
-                <FormattedMessage id="sso.user.type.user" />
-              ) : (
-                <FormattedMessage id="translator.languageManage.application" />
-              )}
-            </Tag>
-          );
-        },
-        align: 'center',
-      },
-      {
-        title: <FormattedMessage id="sso.user.list.adminType" />,
-        dataIndex: 'adminType',
-        render: (text) => {
-          const adminType = text || 'USER';
-          return <Tag color={AdminTypeColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
-        },
-        align: 'center',
-      },
-      {
-        title: <FormattedMessage id="app.common.status" />,
-        dataIndex: 'disable',
-        align: 'center',
-        render: (text, record) => {
-          let disable = null;
-          let content = (
-            <StatusChoice
-              onChange={() => {
-                this.changeStatus(record.id);
-              }}
-              status={!text}
-            />
-          );
-          if (text) {
-            disable = (
-              <span style={{ color: 'red', cursor: 'pointer' }}>
-                <FormattedMessage id="sso.user.tip.disabled" />
-              </span>
-            );
-          } else {
-            disable = (
-              <span style={{ color: 'green', cursor: 'pointer' }}>
-                <FormattedMessage id="sso.user.tip.enabled" />
-              </span>
-            );
-          }
-          return (
-            <Popover
-              content={content}
-              title={<FormattedMessage id="sso.user.edit" />}
-              trigger="hover"
-              placement="left"
-            >
-              {disable}
-            </Popover>
-          );
-        },
-      },
-      {
-        title: <FormattedMessage id="sso.user.list.email" />,
-        dataIndex: 'email',
-        align: 'center',
-        width: '15%',
-      },
-      {
-        title: <FormattedMessage id="sso.user.list.token" />,
-        dataIndex: 'token',
-        align: 'center',
-        with: '150',
-        render: (text, record) => {
-          if (record.userType === 'APP') {
-            return (
-              <div>
-                <Popover content={text} trigger="click">
-                  <Button type="link">
-                    <FormattedMessage id="sso.user.action.view" />
-                  </Button>
-                </Popover>
-                <Button
-                  type="link"
-                  onClick={() => {
-                    this.addToClipBoard(text);
-                  }}
-                >
-                  <FormattedMessage id="app.button.copy" />
+            <div>
+              <Popover content={text} trigger="click">
+                <Button type="link">
+                  <FormattedMessage id="sso.user.action.view" />
                 </Button>
-              </div>
-            );
-          } else {
-            return <span />;
-          }
-        },
+              </Popover>
+              <Button
+                type="link"
+                onClick={() => {
+                  this.addToClipBoard(text);
+                }}
+              >
+                <FormattedMessage id="app.button.copy" />
+              </Button>
+            </div>
+          );
+        } else {
+          return <span />;
+        }
       },
-      {
-        title: <FormattedMessage id="translator.languageManage.language" />,
-        dataIndex: 'language',
-        align: 'center',
-        with: '150',
-      },
-      {
-        title: <FormattedMessage id="sso.user.list.description" />,
-        dataIndex: 'description',
-        ellipsis: true,
-        align: 'center',
-      },
-      {
-        title: <FormattedMessage id="app.taskDetail.createTime" />,
-        dataIndex: 'createDate',
-        align: 'center',
-        fixed: 'right',
-      },
-    ];
-    return columns;
-  };
+    },
+    {
+      title: <FormattedMessage id="translator.languageManage.language" />,
+      dataIndex: 'language',
+      align: 'center',
+      with: '150',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.description" />,
+      dataIndex: 'description',
+      ellipsis: true,
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.taskDetail.createTime" />,
+      dataIndex: 'createDate',
+      align: 'center',
+      fixed: 'right',
+    },
+  ];
+
   render() {
     const {
       selectRowKey,
@@ -450,7 +448,7 @@ class UserManager extends Component {
             }}
             disabled={selectRowKey.length !== 1}
           >
-             <IconFont type="icon-fenpei" />
+            <IconFont type="icon-fenpei" />
             <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
@@ -463,7 +461,7 @@ class UserManager extends Component {
           <Table
             bordered
             pagination={false}
-            columns={this.getColumn()}
+            columns={this.getColumn}
             rowKey="id"
             dataSource={showUsersList}
             scroll={{ x: 'max-content' }}

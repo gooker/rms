@@ -35,32 +35,31 @@ export default class SectionManager extends Component {
     }
     this.setState({ loading: false });
   };
-  getColumn = () => {
-    return [
-      {
-        title: <FormattedMessage id="app.common.sectionId" />,
-        dataIndex: 'sectionId',
-        align: 'center',
-        fixed: 'left',
-      },
-      {
-        title: <FormattedMessage id="app.common.name" />,
-        dataIndex: 'sectionName',
-        align: 'center',
-      },
 
-      {
-        title: <FormattedMessage id="sso.user.type.username" />,
-        dataIndex: 'name',
-        align: 'center',
-      },
-      {
-        title: <FormattedMessage id="sso.user.account.password" />,
-        dataIndex: 'password',
-        align: 'center',
-      },
-    ];
-  };
+  getColumn = [
+    {
+      title: <FormattedMessage id="app.common.sectionId" />,
+      dataIndex: 'sectionId',
+      align: 'center',
+      fixed: 'left',
+    },
+    {
+      title: <FormattedMessage id="app.common.name" />,
+      dataIndex: 'sectionName',
+      align: 'center',
+    },
+
+    {
+      title: <FormattedMessage id="sso.user.type.username" />,
+      dataIndex: 'name',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="sso.user.account.password" />,
+      dataIndex: 'password',
+      align: 'center',
+    },
+  ];
 
   // 删除区域
   deleteUser = () => {
@@ -149,7 +148,7 @@ export default class SectionManager extends Component {
           <Table
             bordered
             pagination={false}
-            columns={this.getColumn()}
+            columns={this.getColumn}
             rowKey="id"
             dataSource={sectionsList}
             scroll={{ x: 'max-content' }}
