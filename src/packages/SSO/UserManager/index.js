@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Select, Button, Table, Tag, Popover, message, Modal } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
@@ -452,7 +452,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" onClick={this.getUserDataList}>
+            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getUserDataList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </div>

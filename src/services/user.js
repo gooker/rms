@@ -108,7 +108,6 @@ export async function saveUserSections(params) {
   });
 }
 
-
 //查询所有角色信息
 export async function fetchAllUserRoleList() {
   return request(`/sso/role/list`, {
@@ -129,8 +128,6 @@ export async function saveUsersAssignedRole(parms) {
     data: parms,
   });
 }
-
-
 
 //  区域管理--新增
 export async function fetchAddSection(parms) {
@@ -164,3 +161,10 @@ export async function fetchUserLoginHistory(params) {
   });
 }
 
+//角色管理--列表
+export async function fetchAllRoleList(parms) {
+  return request(`/sso/role/pageList`, {
+    method: 'GET',
+    data: parms,
+  });
+}
