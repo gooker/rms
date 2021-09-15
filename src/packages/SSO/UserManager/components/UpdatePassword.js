@@ -21,9 +21,25 @@ export default class UpdatePassword extends Component {
     });
   };
   render() {
+    const { needOriginal } = this.props;
     return (
       <div>
         <Form {...formItemLayout} ref={this.formRef}>
+          {needOriginal ? (
+            <Form.Item
+              label={<FormattedMessage id="accountCenter.oldPassword" />}
+              name="originalPassword"
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <Input.Password autoComplete="off" type="password" />
+            </Form.Item>
+          ) : (
+            ''
+          )}
           <Form.Item
             label={<FormattedMessage id="sso.user.account.password" />}
             name="password"

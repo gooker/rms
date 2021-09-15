@@ -86,7 +86,7 @@ export function dateFormat(value, type) {
     //将服务器时间转化成本地时间
     //获取当前时区偏移量
     moment.tz.setDefault(timeZone); //将服务器的时间和服务器返回的时区转回成带有时区的时间格式
-    if (localStorage.getItem('userTimeZone') != null) {
+    if (!isStrictNull(localStorage.getItem('userTimeZone'))) {
       date = new moment(value).tz(localStorage.getItem('userTimeZone'));
     } else {
       date = new moment(value).tz(moment.tz.guess());

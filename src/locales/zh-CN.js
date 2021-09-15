@@ -13,6 +13,7 @@ import portal from './zh-CN/Portal/portal';
 import userManager from './zh-CN/SSO/userManager';
 import sectionManager from './zh-CN/SSO/sectionManager';
 import userLoginHistory from './zh-CN/SSO/userHistory';
+import accountCenter from './zh-CN/SSO/accountCenter';
 
 export default {
   ...menu,
@@ -30,4 +31,5 @@ export default {
   ...userManager,
   ...sectionManager,
   ...userLoginHistory,
+  ...accountCenter,
 };

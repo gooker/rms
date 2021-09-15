@@ -99,9 +99,9 @@ export default class UserLoginHistory extends Component {
       current: pagination.current,
       size: pagination.pageSize,
     };
-    if (sorter?.order) {
-      pages[sorter.field] = sorter.order === 'ascend' ? 'ASC' : 'DESC';
-    }
+    // if (sorter?.order) {
+    //   pages[sorter.field] = sorter.order === 'ascend' ? 'ASC' : 'DESC';
+    // }
     this.setState({ pagination: pages }, () => {
       this.getHistory();
     });
