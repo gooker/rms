@@ -82,13 +82,23 @@ const Sider = (prop) => {
   };
 
   const renderMenuItem = (name, routes) => {
-    return routes.map(({ path, name: childName }) => (
-      <Menu.Item key={path}>
-        <Link to={path}>
-          <FormattedMessage id={`menu.${name}.${childName}`} />
-        </Link>
-      </Menu.Item>
-    ));
+    return routes.map(({ path, name: childName, routes: itemRoutes }) => {
+      if (Array.isArray(itemRoutes)) {
+        return (
+          <SubMenu key={`${name}.${childName}`} title={formatMessage({ id: `menu.${name}.${childName}` })}>
+            {renderMenuItem(`${name}.${childName}`, itemRoutes)}
+          </SubMenu>
+        );
+      } else {
+        return (
+          <Menu.Item key={path}>
+            <Link to={path}>
+              <FormattedMessage id={`menu.${name}.${childName}`} />
+            </Link>
+          </Menu.Item>
+        );
+      }
+    });
   };
 
   return (

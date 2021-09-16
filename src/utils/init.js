@@ -29,9 +29,9 @@ export function convertRoute2Menu(data, parentAuthority, parentName) {
 }
 
 export function getSubMenu(item) {
-  if (item.children && !item.hideInMenu && item.children.some((child) => child.name)) {
+  if (item.routes && !item.hideInMenu && item.routes.some((child) => child.name)) {
     // eslint-disable-next-line no-use-before-define
-    return { ...item, children: filterMenuData(item.children) };
+    return { ...item, routes: filterMenuData(item.routes) };
   }
   return item;
 }
@@ -59,15 +59,15 @@ export function checkPermission(router, permissionMap, appCode, nameSapce) {
       }
       // hook存在 则不参与权限控制
       routerHookFlag = !(routerElement.hook === 'multi-api' && !isStrictNull(multiApiFlag));
-
       if (routerHookFlag && !permissionMap[authKey]) {
         continue;
       }
     }
 
-    if (routerElement.children != null) {
-      const children = checkPermission(routerElement.children, permissionMap, appCode, nameSapce);
-      result.push({ ...routerElement, children });
+    // 
+    if (routerElement.routes != null) {
+      const routes = checkPermission(routerElement.routes, permissionMap, appCode, nameSapce);
+      result.push({ ...routerElement, routes });
     } else {
       result.push(routerElement);
     }
@@ -77,8 +77,8 @@ export function checkPermission(router, permissionMap, appCode, nameSapce) {
 
 export function getBreadcrumbNameMap(menuData, routerMap = {}) {
   menuData.forEach((menuItem) => {
-    if (menuItem.children) {
-      getBreadcrumbNameMap(menuItem.children, routerMap);
+    if (menuItem.routes) {
+      getBreadcrumbNameMap(menuItem.routes, routerMap);
     } else {
       routerMap[menuItem.path] = menuItem;
     }
@@ -104,9 +104,8 @@ export function convertToRoute(data, baseContext) {
       result.icon = item.icon;
       result.name = item.name || item.label;
       result.hideInMenu = item.hideInMenu;
-
-      if (item.children) {
-        result.routes = convertToRoute(item.children, baseContext);
+      if (item.routes) {
+        result.routes = convertToRoute(item.routes, baseContext);
       }
       return result;
     })

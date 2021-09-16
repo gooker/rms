@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Col, Row, Modal, message } from 'antd';
+import { Button, Table, Col, Row, Modal, message, Drawer } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -19,7 +19,9 @@ import {
 } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
+import RoleAssignModal from './components/RoleAssignModal';
 import commonStyles from '@/common.module.less';
+import RcsConfirm from '@/components/RcsConfirm';
 
 export default class index extends Component {
   state = {
@@ -30,6 +32,7 @@ export default class index extends Component {
     addRoleVisble: false,
     updateRoleFlag: false,
     uploadModal: false,
+    authAssignVisible: false,
   };
 
   componentDidMount() {
@@ -68,6 +71,22 @@ export default class index extends Component {
     } else {
       message.error(response.message);
     }
+  };
+
+  // 删除
+  deleteRole = () => {
+    const { selectedRowKeys } = this.state;
+    const this_ = this;
+    RcsConfirm({
+      content: '是否要删除所选择的角色',
+      onOk: async () => {
+        const deleteRes = await fetchDeleteRoleById({ id: selectedRowKeys[0] });
+        if (!dealResponse(deleteRes)) {
+          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+          this_.setState({ selectedRow: [], selectedRowKeys: [] }, this_.getRoleList);
+        }
+      },
+    });
   };
 
   columns = [
@@ -114,8 +133,15 @@ export default class index extends Component {
   };
 
   render() {
-    const { selectedRowKeys, selectedRow, roleList, loading, addRoleVisble, updateRoleFlag } =
-      this.state;
+    const {
+      selectedRowKeys,
+      selectedRow,
+      roleList,
+      loading,
+      addRoleVisble,
+      updateRoleFlag,
+      authAssignVisible,
+    } = this.state;
     return (
       <div className={commonStyles.globalPageStyle}>
         <Row className={commonStyles.mb20}>
@@ -137,10 +163,19 @@ export default class index extends Component {
             >
               <FormattedMessage id="sso.user.edit" />
             </Button>
-            <Button disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
+            <Button
+              disabled={selectedRowKeys.length === 0}
+              icon={<DeleteOutlined />}
+              onClick={this.deleteRole}
+            >
               <FormattedMessage id="app.button.delete" />
             </Button>
-            <Button disabled={selectedRowKeys.length !== 1}>
+            <Button
+              disabled={selectedRowKeys.length !== 1}
+              onClick={() => {
+                this.setState({ authAssignVisible: true });
+              }}
+            >
               <IconFont type="icon-fenpei" />
               <FormattedMessage id="rolemanager.authAssign" />
             </Button>
@@ -184,6 +219,7 @@ export default class index extends Component {
           />
         </div>
 
+        {/* 新增修改 */}
         <Modal
           footer={null}
           visible={addRoleVisble}
@@ -201,6 +237,23 @@ export default class index extends Component {
         >
           <AddRoleModal onAddRoles={this.updateRole} updateRow={selectedRow} />
         </Modal>
+
+        {/* 权限分配 */}
+        <Drawer
+          title="权限分配"
+          destroyOnClose
+          onClose={() => {
+            this.setState({ authAssignVisible: false });
+          }}
+          width={'600'}
+          visible={authAssignVisible}
+          // bodyStyle={{ padding: '10px 30px' }}
+          style={{
+            overflow: 'auto',
+          }}
+        >
+          <RoleAssignModal />
+        </Drawer>
       </div>
     );
   }
