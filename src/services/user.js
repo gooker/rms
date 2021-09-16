@@ -168,3 +168,32 @@ export async function fetchAllRoleList(parms) {
     data: parms,
   });
 }
+
+//角色管理--添加角色
+export async function fetchAddRole(parms) {
+  return request(`/sso/role`, {
+    method: 'POST',
+    data: parms,
+  });
+}
+//角色管理--修改角色
+export async function fetchUpdateRole(parms) {
+  return request(`/sso/role`, {
+    method: 'PUT',
+    data: parms,
+  });
+}
+//角色管理--删除角色
+export async function fetchDeleteRoleById(parms) {
+  return request(`/sso/role?id=${parms.id}`, {
+    method: 'DELETE',
+  });
+}
+
+//角色管理--导入角色
+export async function fetchUploadRoles(params) {
+  return request('/sso/role/exportRoles', {
+    method: 'POST',
+    body: params,
+  });
+}

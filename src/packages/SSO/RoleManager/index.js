@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Col, Row } from 'antd';
+import { Button, Table, Col, Row, Modal, message } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -10,9 +10,15 @@ import {
 } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 import IconFont from '@/utils/ExtraIcon';
-import { dateFormat, dealResponse } from '@/utils/utils';
-import { fetchAllRoleList } from '@/services/user';
+import { dateFormat, dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
+import {
+  fetchAllRoleList,
+  fetchAddRole,
+  fetchUpdateRole,
+  fetchDeleteRoleById,
+} from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
+import AddRoleModal from './components/AddRoleModal';
 import commonStyles from '@/common.module.less';
 
 export default class index extends Component {
@@ -21,6 +27,9 @@ export default class index extends Component {
     selectedRow: [],
     roleList: [],
     loading: false,
+    addRoleVisble: false,
+    updateRoleFlag: false,
+    uploadModal: false,
   };
 
   componentDidMount() {
@@ -36,18 +45,42 @@ export default class index extends Component {
     this.setState({ loading: false });
   };
 
+  // 新增 编辑角色
+  updateRole = async (values) => {
+    const { selectedRow, updateRoleFlag } = this.state;
+    let response = null;
+    if (updateRoleFlag) {
+      response = await fetchUpdateRole({ ...values, id: selectedRow[0].id });
+    } else {
+      response = await fetchAddRole(values);
+    }
+    if (!dealResponse(response)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState(
+        {
+          addRoleVisble: false,
+          updateRoleFlag: false,
+          selectedRow: [],
+          selectedRowKeys: [],
+        },
+        this.getRoleList,
+      );
+    } else {
+      message.error(response.message);
+    }
+  };
+
   columns = [
-    {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'label',
-      align: 'center',
-    },
     {
       title: <FormattedMessage id="rolemanager.code" />,
       dataIndex: 'code',
       align: 'center',
     },
-
+    {
+      title: <FormattedMessage id="app.common.name" />,
+      dataIndex: 'label',
+      align: 'center',
+    },
     {
       title: <FormattedMessage id="rolemanager.description" />,
       dataIndex: 'description',
@@ -81,24 +114,30 @@ export default class index extends Component {
   };
 
   render() {
-    const { selectedRowKeys, roleList, loading } = this.state;
+    const { selectedRowKeys, selectedRow, roleList, loading, addRoleVisble, updateRoleFlag } =
+      this.state;
     return (
       <div className={commonStyles.globalPageStyle}>
         <Row className={commonStyles.mb20}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
-            <Button icon={<PlusOutlined />}>
-              <FormattedMessage id="app.button.add" />
-            </Button>
-            <Button icon={<EditOutlined />} disabled={selectedRowKeys.length !== 1}>
-              <FormattedMessage id="sso.user.edit" />
-            </Button>
             <Button
-              disabled={selectedRowKeys.length === 0}
-              icon={<DeleteOutlined />}
+              icon={<PlusOutlined />}
               onClick={() => {
-                this.deleteRole();
+                this.setState({ addRoleVisble: true });
               }}
             >
+              <FormattedMessage id="app.button.add" />
+            </Button>
+            <Button
+              icon={<EditOutlined />}
+              disabled={selectedRowKeys.length !== 1}
+              onClick={() => {
+                this.setState({ addRoleVisble: true, updateRoleFlag: true });
+              }}
+            >
+              <FormattedMessage id="sso.user.edit" />
+            </Button>
+            <Button disabled={selectedRowKeys.length === 0} icon={<DeleteOutlined />}>
               <FormattedMessage id="app.button.delete" />
             </Button>
             <Button disabled={selectedRowKeys.length !== 1}>
@@ -112,13 +151,17 @@ export default class index extends Component {
             >
               <FormattedMessage id="app.button.export" />
             </Button>
-            <Button icon={<ImportOutlined />}>
+            <Button
+              icon={<ImportOutlined />}
+              onClick={() => {
+                this.setState({ uploadModal: true });
+              }}
+            >
               <FormattedMessage id="app.button.import" />
             </Button>
           </Col>
-
           <Col>
-            <Button type="primary" icon={<ReloadOutlined />}>
+            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getRoleList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </Col>
@@ -140,6 +183,24 @@ export default class index extends Component {
             }}
           />
         </div>
+
+        <Modal
+          footer={null}
+          visible={addRoleVisble}
+          destroyOnClose
+          title={
+            updateRoleFlag ? (
+              <FormattedMessage id="app.button.add" />
+            ) : (
+              <FormattedMessage id="sso.user.edit" />
+            )
+          }
+          onCancel={() => {
+            this.setState({ addRoleVisble: false, updateRoleFlag: false });
+          }}
+        >
+          <AddRoleModal onAddRoles={this.updateRole} updateRow={selectedRow} />
+        </Modal>
       </div>
     );
   }

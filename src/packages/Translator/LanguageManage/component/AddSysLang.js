@@ -75,7 +75,7 @@ export default class AddSysLangModal extends Component {
         {/*新增语言  */}
         <Modal
           title={<FormattedMessage id="translator.languageManage.addlanguage" />}
-          destroyOnClose={true}
+          destroyOnClose
           maskClosable={false}
           mask={true}
           width={420}

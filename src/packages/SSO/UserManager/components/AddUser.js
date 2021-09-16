@@ -264,7 +264,7 @@ export default class AddUser extends Component {
             />
           </Form.Item>
           <Form.Item
-            label={<FormattedMessage id="sso.user.list.description" />}
+            label={<FormattedMessage id="app.common.remark" />}
             name="description"
           >
             <Input />

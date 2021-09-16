@@ -4,7 +4,6 @@ export default {
   'sso.user.list.adminType': '管理员类型',
   'sso.user.list.email': '邮件',
   'sso.user.list.token': 'Token',
-  'sso.user.list.description': '备注',
 
   'sso.user.account.type.user': '普通用户',
   'sso.user.account.type.manager': '普通管理员',

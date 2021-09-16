@@ -26,6 +26,7 @@ export default {
   'app.common.null': '空',
   'app.common.Error': '错误',
   'app.common.name': '名称',
+  'app.common.remark': '备注',
 
   // direction --
   'app.direction': '方向',

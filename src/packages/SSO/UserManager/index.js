@@ -324,7 +324,7 @@ class UserManager extends Component {
       with: '150',
     },
     {
-      title: <FormattedMessage id="sso.user.list.description" />,
+      title: <FormattedMessage id="app.common.remark" />,
       dataIndex: 'description',
       ellipsis: true,
       align: 'center',

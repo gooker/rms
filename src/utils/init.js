@@ -123,13 +123,11 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
     if (appCode === 'sso') {
       appMenu = appMenu.filter((route) => {
         // hook存在则一定有route
-        // authority不存在或为空 也有route
-        if (
-          (route.hook === 'multi-api' && !isStrictNull(multiApiFlag)) ||
-          isStrictNull(route.authority) ||
-          route.authority.length === 0
-        ) {
+        // authority不存在或为空 就没有
+        if (route.hook === 'multi-api' && !isStrictNull(multiApiFlag)) {
           return true;
+        } else if (isStrictNull(route.authority) || route.authority.length === 0) {
+          return false;
         } else {
           return route.authority.includes(adminType);
         }

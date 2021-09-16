@@ -43,7 +43,7 @@ export default class AddApplication extends Component {
       <>
         <Modal
           title={<FormattedMessage id="translator.languageManage.addapplication" />}
-          destroyOnClose={true}
+          destroyOnClose
           maskClosable={false}
           mask={true}
           width={modalWidth}

@@ -52,7 +52,7 @@ export default class UserLoginHistory extends Component {
       },
     },
     {
-      title: <FormattedMessage id="sso.user.list.description" />,
+      title: <FormattedMessage id="app.common.remark" />,
       dataIndex: 'comment',
       align: 'center',
     },
