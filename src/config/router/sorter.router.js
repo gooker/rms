@@ -13,7 +13,7 @@ export default [
         path: '/sorter/center/taskQueue',
         name: 'taskQueue',
         component: '/Sorter/TaskQueue',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        // authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       {
         path: '/sorter/center/taskManger',

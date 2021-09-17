@@ -1,47 +1,37 @@
 export default [
   {
+    path: '/mixrobot/map',
     name: 'map',
     icon: 'environment',
     routes: [
       {
         path: '/mixrobot/map/mapEdit',
         name: 'mapEdit',
-        component: '/Mixrobot/MapTool/MapEdit/Index',
+        component: './MapTool/MapEdit/mapEditor',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       {
         path: '/mixrobot/map/monitor',
         name: 'monitor',
-        component: '/Mixrobot/MapTool/MapMonitor/MapMonitor',
+        component: './MapTool/MapMonitor/MapMonitor',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       {
         path: '/mixrobot/map/mapFactory',
         name: 'mapFactory',
-        component: '/Mixrobot/MapTool/MapFactory/MapFactory',
+        component: './MapTool/MapFactory/MapFactory',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       {
         path: '/mixrobot/map/mapRecorder',
         name: 'mapRecorder',
-        component: '/Mixrobot/MapTool/MapRecorder/MapRecorder',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
-      },
-      {
-        path: '/mixrobot/map/mapRouteAssign',
-        name: 'mapRouteAssign',
-        component: '/Mixrobot/MapTool/MapRouteAssign/MapRouteAssign',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
-      },
-      {
-        path: '/mixrobot/map/mapAreaManage',
-        name: 'mapAreaManage',
-        component: '/Mixrobot/MapTool/AreaManagement/AreaManagement',
+        component: './MapTool/MapRecorder/MapRecorder',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
     ],
   },
   {
+    path: '/mixrobot/lockManager',
     name: 'lockManager',
     icon: 'lock',
     routes: [
@@ -49,7 +39,7 @@ export default [
       {
         path: '/mixrobot/lockManager/targetLock',
         name: 'targetLock',
-        component: '/Mixrobot/LockManage/TargetLock',
+        component: './LockManage/TargetLock',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       // 潜伏类
@@ -61,25 +51,25 @@ export default [
           {
             path: '/mixrobot/lockManager/latent-lifting/RobotLock',
             name: 'robotLock',
-            component: '/Mixrobot/LockManage/LatentLifting/RobotLock',
+            component: './LockManage/LatentLifting/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/mixrobot/lockManager/latent-lifting/storageLock',
             name: 'storageLock',
-            component: '/Mixrobot/LockManage/LatentLifting/StorageLock',
+            component: './LockManage/LatentLifting/StorageLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/mixrobot/lockManager/latent-lifting/PodLock',
             name: 'podLock',
-            component: '/Mixrobot/LockManage/LatentLifting/PodLock',
+            component: './LockManage/LatentLifting/PodLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/mixrobot/lockManager/latent-lifting/heavyRobotAvoidLock',
             name: 'heavyRobotAvoidLock',
-            component: '/Mixrobot/LockManage/LatentLifting/HeavyRobotAvoidLock',
+            component: './LockManage/LatentLifting/HeavyRobotAvoidLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],
@@ -93,19 +83,19 @@ export default [
           {
             path: '/mixrobot/lockManager/tote/RobotLock',
             name: 'robotLock',
-            component: '/Mixrobot/LockManage/Tote/RobotLock',
+            component: './LockManage/Tote/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/mixrobot/lockManager/tote/TotePodLock',
             name: 'totePodLock',
-            component: '/Mixrobot/LockManage/Tote/TotePodLock',
+            component: './LockManage/Tote/TotePodLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/mixrobot/lockManager/tote/ToteBinLock',
             name: 'toteBinLock',
-            component: '/Mixrobot/LockManage/Tote/ToteBinLock',
+            component: './LockManage/Tote/ToteBinLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],
@@ -119,7 +109,7 @@ export default [
           {
             path: '/mixrobot/lockManager/forklift/RobotLock',
             name: 'robotLock',
-            component: '/Mixrobot/LockManage/Forklift/RobotLock',
+            component: './LockManage/Forklift/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],
@@ -127,6 +117,7 @@ export default [
     ],
   },
   {
+    path: '/mixrobot/sourceManage',
     name: 'sourceManage',
     icon: 'iconziyuan',
     routes: [
@@ -138,13 +129,12 @@ export default [
           {
             path: '/mixrobot/sourceManage/latentPod/management',
             name: 'latentPodMange',
-            component: '/Mixrobot/SourceManage/LatentLiftingPod/PodManager',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+            component: './SourceManage/LatentLiftingPod/PodManager',
           },
           {
             path: '/mixrobot/sourceManage/latentPod/assignment',
             name: 'latentPodAssign',
-            component: '/Mixrobot/SourceManage/LatentLiftingPod/PodAssign',
+            component: './SourceManage/LatentLiftingPod/PodAssign',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],
@@ -157,39 +147,95 @@ export default [
           {
             path: '/mixrobot/sourceManage/tote/toteManagement',
             name: 'toteManagement',
-            component: '/Mixrobot/SourceManage/Tote/ToteManagement',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+            component: './SourceManage/Tote/ToteManagement',
           },
           {
             path: '/mixrobot/sourceManage/tote/toteTool',
             name: 'toteTool',
-            component: '/Mixrobot/SourceManage/Tote/ToteTool',
+            component: './SourceManage/Tote/ToteTool',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],
       },
+      {
+        path: '/mixrobot/sourceManage/mapRouteAssign',
+        name: 'mapRouteAssign',
+        component: './MapTool/MapRouteAssign/MapRouteAssign',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+      {
+        path: '/mixrobot/sourceManage/mapAreaManage',
+        name: 'mapAreaManage',
+        component: './MapTool/AreaManagement/AreaManagement',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+      {
+        path: '/mixrobot/sourceManage/agvGroup',
+        name: 'agvGroup',
+        component: './SourceManage/AgvGroup/AgvGroup',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
     ],
   },
   {
+    path: '/mixrobot/sourceGroupManage',
+    name: 'sourceGroupManage',
+    icon: 'icon-cangkucangchu',
+    routes: [
+      {
+        path: '/mixrobot/sourceGroupManage/TaskTrigger',
+        name: 'taskTrigger',
+        component: './SourceGroupManage/TaskTrigger/TaskTrigger',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+      {
+        path: '/mixrobot/sourceGroupManage/GroupManage',
+        name: 'groupManage',
+        component: './SourceGroupManage/GroupManage/GroupManage',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+      {
+        path: '/mixrobot/sourceGroupManage/GroupBinding',
+        name: 'groupBinding',
+        component: './SourceGroupManage/GroupBinding/GroupBinding',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+      {
+        path: '/mixrobot/sourceGroupManage/CustomTask',
+        name: 'customTask',
+        component: './SourceGroupManage/CustomTask/CustomTask',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+    ],
+  },
+  {
+    path: '/mixrobot/charge',
     name: 'chargeCenter',
     icon: 'iconjiayouzhan',
     routes: [
       {
         path: '/mixrobot/charge/chargeManger',
         name: 'chargeManger',
-        component: '/Mixrobot/ChargeCenter/ChargeManger',
+        component: './ChargeCenter/ChargeManger',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+      },
+      {
+        path: '/mixrobot/charge/chargeMangerBind',
+        name: 'chargeMangerBind',
+        component: './ChargeCenter/ChargerBinding',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
     ],
   },
   {
+    path: '/mixrobot/report',
     name: 'reportCenter',
     icon: 'iconreportform',
     routes: [
       {
         path: '/mixrobot/report/healthReport',
         name: 'healthReport',
-        component: '/Mixrobot/ReportCenter/HealthReport',
+        component: './ReportCenter/HealthReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
     ],
@@ -198,23 +244,31 @@ export default [
     path: '/mixrobot/operationLog',
     name: 'operationLog',
     icon: 'iconLOG',
-    component: '/Mixrobot/OperationLog/OperationLogView',
+    component: './OperationLog/OperationLogView',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
   },
   {
+    path: '/mixrobot/requestor',
+    name: 'requestor',
+    icon: 'api',
+    component: './Requestor/Requestor',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+  },
+  {
+    path: '/mixrobot/system',
     name: 'system',
     icon: 'setting',
     routes: [
       {
         path: '/mixrobot/system/systemParamsManager',
         name: 'systemParamsManager',
-        component: '/Mixrobot/System/SystemParamsManager',
+        component: './System/SystemParamsManager',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       {
         path: '/mixrobot/system/timezone',
         name: 'Timezone',
-        component: '/Mixrobot/System/Timezone',
+        component: './System/Timezone',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
     ],
@@ -223,7 +277,7 @@ export default [
     path: '/mixrobot/questionCenter',
     icon: 'line-chart',
     name: 'questionCenter',
-    component: '/Mixrobot/Question/QuestionCenter',
+    component: './Question/QuestionCenter',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
     hideInMenu: true,
   },

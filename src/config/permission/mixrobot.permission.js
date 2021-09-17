@@ -47,6 +47,10 @@ const PermissionInfo = [
                 label: '工作站自动任务',
               },
               {
+                key: '/mixrobot/map/monitor/action/latent/messagePaused',
+                label: '暂停消息',
+              },
+              {
                 key: '/mixrobot/map/monitor/action/latent/addPod',
                 label: '添加',
               },
@@ -116,6 +120,32 @@ const PermissionInfo = [
               },
             ],
           },
+          {
+            key: '/mixrobot/map/monitor/operation/sorter',
+            label: '分拣车',
+            children: [
+              {
+                key: '/mixrobot/map/monitor/action/sorter/emptyRun',
+                label: '空跑',
+              },
+              {
+                key: '/mixrobot/map/monitor/action/sorter/toRestArea',
+                label: '回休息区',
+              },
+              {
+                key: '/mixrobot/map/monitor/action/sorter/charger',
+                label: '小车充电',
+              },
+              {
+                key: '/mixrobot/map/monitor/action/sorter/pick',
+                label: '取货',
+              },
+              {
+                key: '/mixrobot/map/monitor/action/sorter/throw',
+                label: '抛货',
+              },
+            ],
+          },
         ],
       },
       {
@@ -142,9 +172,18 @@ const PermissionInfo = [
             key: '/mixrobot/map/monitor/view/mapCellView',
             label: '地图点位',
           },
+          // 料箱
           {
             key: '/mixrobot/map/monitor/view/binRack',
-            label: '料箱货架',
+            label: '显示料箱货架',
+          },
+          {
+            key: '/mixrobot/map/monitor/view/toteTaskPath',
+            label: '料箱任务路径',
+          },
+          {
+            key: '/mixrobot/map/monitor/view/toteBinState',
+            label: '料箱实时状态',
           },
           {
             key: '/mixrobot/map/monitor/view/tracking',
@@ -157,6 +196,10 @@ const PermissionInfo = [
           {
             key: '/mixrobot/map/monitor/view/heatView',
             label: '热度显示',
+          },
+          {
+            key: '/mixrobot/map/monitor/view/mapCadShadow',
+            label: 'CAD背景显示',
           },
         ],
       },
@@ -257,12 +300,24 @@ const PermissionInfo = [
             ],
           },
           {
+            key: '/mixrobot/map/monitor/agvModal/controller', // 小车点击弹窗-遥控
+            label: '遥控',
+          },
+          {
             key: '/mixrobot/map/monitor/agvModal/error', // 小车点击弹窗-错误
             label: '错误',
           },
           {
+            key: '/mixrobot/map/monitor/agvModal/runningInfo', // 小车点击弹窗-错误
+            label: '运行时信息',
+          },
+          {
             key: '/mixrobot/map/monitor/agvModal/toteBin', // 小车点击弹窗-料箱搬运信息
             label: '料箱搬运信息',
+          },
+          {
+            key: '/mixrobot/map/monitor/agvModal/totePoolTask', // 小车点击弹窗-料箱池任务
+            label: '料箱池任务',
           },
           {
             key: '/mixrobot/map/monitor/agvModal/forkBin', // 小车点击弹窗-叉车叉取信息
@@ -282,7 +337,7 @@ const PermissionInfo = [
       },
       {
         key: '/mixrobot/map/monitor/tunnelModal',
-        label: '通道详情弹窗',
+        label: '通道点击弹窗',
         children: [
           {
             key: '/mixrobot/map/monitor/tunnelModal/deleteLock',
@@ -290,31 +345,9 @@ const PermissionInfo = [
           },
         ],
       },
-    ],
-  },
-  {
-    page: '/mixrobot/map/mapRouteAssign', // 线路分配
-    children: [
       {
-        key: '/mixrobot/map/mapRouteAssign/add',
-        label: '新增',
-      },
-      {
-        key: '/mixrobot/map/mapRouteAssign/delete',
-        label: '删除',
-      },
-    ],
-  },
-  {
-    page: '/mixrobot/map/mapAreaManage', // 区域分配
-    children: [
-      {
-        key: '/mixrobot/map/mapAreaManage/add',
-        label: '新增',
-      },
-      {
-        key: '/mixrobot/map/mapAreaManage/delete',
-        label: '删除',
+        key: '/mixrobot/map/monitor/chargerMaintain',
+        label: '充电桩点击弹窗',
       },
     ],
   },
@@ -437,26 +470,54 @@ const PermissionInfo = [
       },
     ],
   },
-
-  // 充电-充电桩管理
   {
-    page: '/mixrobot/charge/chargeManger', // 充电-充电桩管理
+    page: '/mixrobot/sourceManage/mapRouteAssign', // 线路分配
     children: [
       {
-        key: '/mixrobot/charge/chargeManger/switchAvailable',
+        key: '/mixrobot/sourceManage/mapRouteAssign/add',
+        label: '新增',
+      },
+      {
+        key: '/mixrobot/sourceManage/mapRouteAssign/delete',
+        label: '删除',
+      },
+    ],
+  },
+  {
+    page: '/mixrobot/sourceManage/mapAreaManage', // 区域分配
+    children: [
+      {
+        key: '/mixrobot/sourceManage/mapAreaManage/add',
+        label: '新增',
+      },
+      {
+        key: '/mixrobot/sourceManage/mapAreaManage/delete',
+        label: '删除',
+      },
+    ],
+  },
+
+  {
+    page: '/mixrobot/sourceManage/agvGroup', // 小车分组
+    children: [
+      {
+        key: '/mixrobot/sourceManage/agvGroup/add',
+        label: '新增',
+      },
+      {
+        key: '/mixrobot/sourceManage/agvGroup/delete',
+        label: '删除',
+      },
+    ],
+  },
+
+  // 充电-充电桩绑定
+  {
+    page: '/mixrobot/charge/chargeMangerBind', // 充电-充电桩管理
+    children: [
+      {
+        key: '/mixrobot/charge/chargeMangerBind/switchAvailable',
         label: '切换可用',
-      },
-      {
-        key: '/mixrobot/charge/chargeManger/bindOther',
-        label: '更新',
-      },
-      {
-        key: '/mixrobot/charge/chargeManger/untying',
-        label: '解绑',
-      },
-      {
-        key: '/mixrobot/charge/chargeManger/reset',
-        label: '重置',
       },
     ],
   },

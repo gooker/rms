@@ -194,6 +194,14 @@ export async function fetchDeleteRoleById(parms) {
 export async function fetchUploadRoles(params) {
   return request('/sso/role/exportRoles', {
     method: 'POST',
-    body: params,
+    data: params,
+  });
+}
+
+//角色管理---保存角色分配权限
+export async function saveRoleAssignAuthority(parms) {
+  return request(`/sso/role/authority`, {
+    method: 'PUT',
+    data: parms,
   });
 }

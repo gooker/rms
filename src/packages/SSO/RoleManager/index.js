@@ -16,6 +16,7 @@ import {
   fetchAddRole,
   fetchUpdateRole,
   fetchDeleteRoleById,
+  saveRoleAssignAuthority,
 } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
@@ -87,6 +88,20 @@ export default class index extends Component {
         }
       },
     });
+  };
+
+  // 权限分配
+  submitAuthKeys = async (keys) => {
+    const { selectedRowKeys } = this.state;
+    const params = { id: selectedRowKeys[0], authorityKeys: [...keys] };
+    const response = await saveRoleAssignAuthority(params);
+    if (!dealResponse(response)) {
+      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.setState(
+        { selectedRow: [], selectedRowKeys: [], authAssignVisible: false },
+        this.getRoleList,
+      );
+    }
   };
 
   columns = [
@@ -252,7 +267,11 @@ export default class index extends Component {
             overflow: 'auto',
           }}
         >
-          <RoleAssignModal />
+          <RoleAssignModal
+            roleList={roleList}
+            selectedRowKeys={selectedRowKeys}
+            submitAuthKeys={this.submitAuthKeys}
+          />
         </Drawer>
       </div>
     );

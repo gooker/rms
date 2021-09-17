@@ -136,7 +136,6 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
     // 获取路由
     return { appMenu, appCode };
   });
-
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { appMenu, appCode } = appRoute;
