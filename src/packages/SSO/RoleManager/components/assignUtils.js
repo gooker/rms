@@ -1,3 +1,6 @@
+import { isStrictNull } from '@/utils/utils';
+import { flattenDeep } from 'lodash';
+
 // 处理permisssion.js
 export function getSubPermission(item) {
   if (item.children && item.children.length > 0) {
@@ -43,4 +46,28 @@ export function showLabelMenu(data, parentName) {
       return result;
     })
     .filter(Boolean);
+}
+
+// 权限树扁平化
+export function flattenMap(array) {
+  const result = [];
+  array &&
+    array.forEach(({ key, children }) => {
+      if (isStrictNull(key)) return;
+      result.push(key);
+      if (children) {
+        result.push(flattenMap(children));
+      }
+    });
+  return result;
+}
+export function handlePermissions(permissions, result) {
+  permissions.forEach((record) => {
+    if (isStrictNull(record)) return;
+    const { key, children } = record;
+    if (children != null) {
+      result[key] = flattenDeep(flattenMap(children));
+      handlePermissions(children, result);
+    }
+  });
 }

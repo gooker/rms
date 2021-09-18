@@ -73,7 +73,6 @@ const Sider = (prop) => {
   };
 
   const onOpenChange = (keys) => {
-    const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
     setOpenKeys(keys);
   };
 

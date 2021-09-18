@@ -4,10 +4,10 @@ import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, isStrictNull } from '@/utils/utils';
 import { filterMenuData } from '@/utils/init';
-import { transform } from 'lodash';
+import { transform, difference } from 'lodash';
 import allMouduleRouter from '@/config/router';
 import allMoudulePemission from '@/config/permission';
-import { filterPermission, showLabelMenu } from './assignUtils';
+import { filterPermission, showLabelMenu, handlePermissions } from './assignUtils';
 
 const { TreeNode } = Tree;
 
@@ -17,8 +17,9 @@ const { TreeNode } = Tree;
 class RoleAssignModal extends Component {
   state = {
     activeKey: null,
-    permissionList: [],
+    permissionList: [], // treedata
     checkedKeys: [],
+    permissionMap: {}, // 所有父级下的自己
   };
 
   componentDidMount() {
@@ -62,6 +63,24 @@ class RoleAssignModal extends Component {
       };
     });
 
+    // 展示的树节点数据 sso不展示
+    const permissionList = allAuthorityData.filter(({ appCode }) => appCode !== 'sso');
+
+    // 权限扁平化 每个父节点的value是下面所有的子集
+    const permissionMap = transform(
+      permissionList,
+      (result, record) => {
+        const { appCode, appMenu } = record;
+        const temp = {};
+        handlePermissions(appMenu, temp);
+        result[appCode] = {
+          ...temp,
+          moduleName: appCode,
+        };
+      },
+      {},
+    );
+
     // TODO: authoritykeys
     let authoritykeys = roleList.filter(({ id }) => id === selectedRowKeys[0]);
     // TODO: 测试用
@@ -71,12 +90,14 @@ class RoleAssignModal extends Component {
       authoritykeys = [];
     }
     this.setState({
-      permissionList: allAuthorityData,
+      permissionList: permissionList, //allAuthorityData,
+      permissionMap: permissionMap,
       activeKey: allAuthorityData[0].appCode,
-      checkedKeys: authoritykeys,
+      checkedKeys: { checked: [...authoritykeys], halfChecked: [] }, //authoritykeys,
     });
   }
 
+  // 处理menu
   getSubMenu = (item, codePermission) => {
     const { currentUser } = this.props;
     const adminType = currentUser.adminType || 'USER';
@@ -96,10 +117,12 @@ class RoleAssignModal extends Component {
       ) {
         return {
           ...item,
-          children: codePermission[item.path],
+          children: codePermission && codePermission[item.path],
           key: item.path || item.name,
           title: formatMessage({ id: `${item.label}` }),
         };
+      } else {
+        return false;
       }
     }
   };
@@ -112,7 +135,7 @@ class RoleAssignModal extends Component {
   };
 
   //点击复选框触发
-  onCheck = (checkedKeysValue, { checked,halfCheckedKeys }) => {
+  onCheck_ = (checkedKeysValue, { checked, halfCheckedKeys }) => {
     const { activeKey, checkedKeys: oldKeys } = this.state;
     let currentKeys = [];
     if (checked) {
@@ -129,6 +152,69 @@ class RoleAssignModal extends Component {
       currentKeys.push(...checkedKeysValue);
     }
     this.setState({ checkedKeys: [...currentKeys] });
+  };
+
+  hasParentNode = (node, permissionsMap) => {
+    const result = [];
+    Object.keys(permissionsMap).forEach((key) => {
+      if (permissionsMap[key] != null && permissionsMap[key].indexOf(node) !== -1) {
+        result.push(key);
+      }
+    });
+    if (result.length === 0) {
+      return [];
+    } else {
+      return Array.from(new Set([...result]));
+    }
+  };
+
+  //点击复选框触发
+  onCheck = (checkedKeys, { checked }) => {
+    const { permissionMap, activeKey, checkedKeys: oldCheckedKeys } = this.state;
+    const permissions = permissionMap[activeKey];
+    let diffKey = null;
+    if (checked) {
+      //当前点击的节点
+      diffKey = difference(checkedKeys.checked, oldCheckedKeys.checked || [])[0];
+      const set = new Set(oldCheckedKeys.checked || []);
+      // 1.点击的节点 没有下级 直接添加节点
+      if (permissions[diffKey] == null) {
+        set.add(diffKey);
+      } else {
+        // 2，点击节点存在下级，下级都要放进去
+        set.add(diffKey);
+        permissions[diffKey].forEach((key) => {
+          set.add(key);
+        });
+      }
+      // 找到此节点的上级节点
+      const parentNode = this.hasParentNode(diffKey, permissions);
+      if (parentNode.length > 0) {
+        parentNode.forEach((node) => {
+          if (!set.has(node)) {
+            set.add(node);
+          }
+        });
+      }
+      this.setState({
+        checkedKeys: { halfChecked: [], checked: Array.from(set) },
+      });
+    } else {
+      //删除
+      diffKey = difference(oldCheckedKeys.checked, checkedKeys.checked)[0];
+      const set = new Set(oldCheckedKeys.checked || []);
+      if (permissions[diffKey] == null) {
+        set.delete(diffKey);
+      } else {
+        set.delete(diffKey);
+        permissions[diffKey].forEach((key) => {
+          set.delete(key);
+        });
+      }
+      this.setState({
+        checkedKeys: { halfChecked: [], checked: Array.from(set) },
+      });
+    }
   };
 
   //渲染树节点
@@ -172,12 +258,11 @@ class RoleAssignModal extends Component {
                   {permission?.appMenu.length !== 0 ? (
                     <Tree
                       checkable
-                      // checkStrictly
+                      checkStrictly
                       defaultExpandAll
                       onCheck={this.onCheck}
                       autoExpandParent
                       checkedKeys={checkedKeys}
-                      // treeData={permission.appMenu}
                     >
                       {this.renderTreeNodes(permission.appMenu)}
                     </Tree>
@@ -202,7 +287,7 @@ class RoleAssignModal extends Component {
             <Button
               type="primary"
               onClick={() => {
-                submitAuthKeys(checkedKeys);
+                submitAuthKeys(checkedKeys.checked);
               }}
             >
               <FormattedMessage id="app.button.submit" />
