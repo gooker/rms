@@ -30,7 +30,7 @@ export default {
       const response = yield call(getCurrentUser);
       if (dealResponse(response)) {
         message.error(intl.formatMessage({ id: 'app.user.fetch.failed' }));
-        window.location.reload(); // dispatch
+        window.location.reload(); // dispatch  TODO: 但是如果网络问题会一直刷新 ???
         throw new Error(response?.message);
       }
       const { currentSection, language, id: userId, username, authorityKeys } = response;

@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 import IconFont from '@/utils/ExtraIcon';
-import { dateFormat, dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
+import { dateFormat, dealResponse, formatMessage } from '@/utils/utils';
 import {
   fetchAllRoleList,
   fetchAddRole,

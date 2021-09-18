@@ -49,7 +49,8 @@ class RoleAssignModal extends Component {
       );
 
       // 根据authrity
-      const authRoutes = this.filterAuthRoute(menuData, codePermissionMap);
+      const authRoutes = this.filterAuthRoute(menuData, codePermissionMap) || [];
+      console.log('menu_auth', authRoutes);
       return {
         appCode,
         appMenu: [
@@ -106,7 +107,6 @@ class RoleAssignModal extends Component {
         ...item,
         key: item.path || item.name,
         title: formatMessage({ id: `${item.label}` }),
-        routes: this.filterAuthRoute(item.routes, codePermission),
         children: this.filterAuthRoute(item.routes, codePermission),
       };
     } else {
@@ -121,8 +121,6 @@ class RoleAssignModal extends Component {
           key: item.path || item.name,
           title: formatMessage({ id: `${item.label}` }),
         };
-      } else {
-        return false;
       }
     }
   };
@@ -131,7 +129,15 @@ class RoleAssignModal extends Component {
     if (!menuData) {
       return [];
     }
-    return menuData.map((item) => this.getSubMenu(item, codePermission));
+
+    const listArray = [];
+    // 因为如果 item.authority为空或者 item.authority 不包含adminType-那么返回undefined
+    menuData.map(
+      (item) =>
+        this.getSubMenu(item, codePermission) &&
+        listArray.push(this.getSubMenu(item, codePermission)),
+    );
+    return listArray;
   };
 
   //点击复选框触发
@@ -239,7 +245,7 @@ class RoleAssignModal extends Component {
     const { activeKey, permissionList, checkedKeys } = this.state;
     const { submitAuthKeys } = this.props;
     return (
-      <div>
+      <div >
         <div>
           <Tabs
             activeKey={activeKey}
@@ -276,12 +282,13 @@ class RoleAssignModal extends Component {
           <div
             style={{
               position: 'absolute',
-              bottom: 20,
+              bottom: 0,
               left: 0,
               width: '100%',
               borderTop: '1px solid #e9e9e9',
               padding: '10px 16px',
               textAlign: 'right',
+              background:'#fff'
             }}
           >
             <Button
