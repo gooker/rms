@@ -74,7 +74,7 @@ const Sider = (prop) => {
 
   const onOpenChange = (keys) => {
     const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
-    setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+    setOpenKeys(keys);
   };
 
   const onSelectMenuItem = ({ item, key, keyPath, selectedKeys, domEvent }) => {
@@ -85,7 +85,7 @@ const Sider = (prop) => {
     return routes.map(({ path, name: childName, routes: itemRoutes }) => {
       if (Array.isArray(itemRoutes)) {
         return (
-          <SubMenu key={`${name}.${childName}`} title={formatMessage({ id: `menu.${name}.${childName}` })}>
+          <SubMenu key={path} title={formatMessage({ id: `menu.${name}.${childName}` })}>
             {renderMenuItem(`${name}.${childName}`, itemRoutes)}
           </SubMenu>
         );
@@ -114,7 +114,7 @@ const Sider = (prop) => {
       {currentModuleRouter.map(({ name, icon, path, routes }) => {
         if (Array.isArray(routes)) {
           return (
-            <SubMenu key={name} title={formatMessage({ id: `menu.${name}` })} icon={MenuIcon[icon]}>
+            <SubMenu key={path} title={formatMessage({ id: `menu.${name}` })} icon={MenuIcon[icon]}>
               {renderMenuItem(name, routes)}
             </SubMenu>
           );

@@ -17,10 +17,12 @@ import {
   fetchUpdateRole,
   fetchDeleteRoleById,
   saveRoleAssignAuthority,
+  fetchUploadRoles,
 } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
+import ImportModal from '@/packages/Translator/LanguageManage/component/ImportI18nLanguage';
 import commonStyles from '@/common.module.less';
 import RcsConfirm from '@/components/RcsConfirm';
 
@@ -147,6 +149,25 @@ export default class index extends Component {
     saveAs(blob, 'Role_Info.json');
   };
 
+  analyzeFunction = async (evt) => {
+    try {
+      const fileJson = JSON.parse(evt.target.result);
+
+      if (Array.isArray(fileJson)) {
+        const response = await fetchUploadRoles(fileJson);
+        if (!dealResponse(response)) {
+          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          this.setState({ uploadModal: false });
+          this.getRoleList();
+        }
+      } else {
+        message.error(formatMessage({ id: 'rolemanager.fileCorrupted' }));
+      }
+    } catch (error) {
+      console.error('文件格式不对,重新上传');
+    }
+  };
+
   render() {
     const {
       selectedRowKeys,
@@ -156,6 +177,7 @@ export default class index extends Component {
       addRoleVisble,
       updateRoleFlag,
       authAssignVisible,
+      uploadModal,
     } = this.state;
     return (
       <div className={commonStyles.globalPageStyle}>
@@ -273,6 +295,21 @@ export default class index extends Component {
             submitAuthKeys={this.submitAuthKeys}
           />
         </Drawer>
+
+        {/**角色导入***/}
+        <Modal
+          width={600}
+          footer={null}
+          destroyOnClose
+          visible={uploadModal}
+          onCancel={() => {
+            this.setState({
+              uploadModal: false,
+            });
+          }}
+        >
+          <ImportModal analyzeFunction={this.analyzeFunction} />
+        </Modal>
       </div>
     );
   }

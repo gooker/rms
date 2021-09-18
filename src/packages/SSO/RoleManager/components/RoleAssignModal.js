@@ -112,7 +112,7 @@ class RoleAssignModal extends Component {
   };
 
   //点击复选框触发
-  onCheck = (checkedKeysValue, { checked }) => {
+  onCheck = (checkedKeysValue, { checked,halfCheckedKeys }) => {
     const { activeKey, checkedKeys: oldKeys } = this.state;
     let currentKeys = [];
     if (checked) {
@@ -172,6 +172,7 @@ class RoleAssignModal extends Component {
                   {permission?.appMenu.length !== 0 ? (
                     <Tree
                       checkable
+                      // checkStrictly
                       defaultExpandAll
                       onCheck={this.onCheck}
                       autoExpandParent

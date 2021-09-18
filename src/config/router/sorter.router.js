@@ -1,5 +1,6 @@
 export default [
   {
+    path: '/sorter/center',
     name: 'controlCenter',
     icon: 'icon-task',
     routes: [
@@ -7,7 +8,7 @@ export default [
         path: '/sorter/center/executionQueue',
         name: 'executionQueue',
         component: '/Sorter/ExecutionQueue',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
         path: '/sorter/center/taskQueue',
@@ -19,11 +20,12 @@ export default [
         path: '/sorter/center/taskManger',
         name: 'taskManger',
         component: '/Sorter/TaskLibrary',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
     ],
   },
   {
+    path: '/sorter/agv',
     name: 'agv',
     icon: 'car',
     routes: [
@@ -31,13 +33,13 @@ export default [
         path: '/sorter/agv/agvList',
         name: 'agvList',
         component: '/Sorter/AgvList',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
         path: '/sorter/agv/agvRealTime',
         name: 'agvRealTime',
         component: '/Sorter/AgvRealTime',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       // {
       //   path: '/sorter/agv/firmwareUpgrade',
@@ -95,6 +97,7 @@ export default [
   //   ],
   // },
   {
+    path: '/sorter/system',
     name: 'system',
     icon: 'setting',
     routes: [
@@ -102,13 +105,13 @@ export default [
         path: '/sorter/system/systemParamsManager',
         name: 'systemParamsManager',
         component: '/Sorter/SystemParamsManager',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
         path: '/sorter/system/chargingStrategy',
         name: 'chargingStrategy',
         component: '/Sorter/ChargingStrategy',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
     ],
   },
