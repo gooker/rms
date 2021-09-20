@@ -4,6 +4,9 @@ import App from '@/components/pages/Portal/App';
 import globalModel from '@/models/global';
 import taskModel from '@/models/task';
 import userModel from '@/models/user';
+import editorModel from '@/models/editor';
+import monitorModel from '@/models/monitor';
+import simulatorModel from '@/models/simulator';
 import './global.less';
 
 // 全局错误处理(尝试版)
@@ -30,6 +33,9 @@ window.g_app = app;
 app.model(taskModel);
 app.model(userModel);
 app.model(globalModel);
+app.model(editorModel);
+app.model(monitorModel);
+app.model(simulatorModel);
 
 // 4. 启动
 const DvaProvider = app.create();
