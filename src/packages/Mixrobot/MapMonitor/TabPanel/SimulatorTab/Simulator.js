@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Col, Table, Button, Switch, Select, message } from 'antd';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import {
   fetchRunAGV,
   fetchStopAGV,
@@ -13,7 +13,7 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import AddSimulatorAgv from './AddSimulatorAgv';
 import SimulatorError from './SimulatorError';
 import SimulatorConfig from './SimulatorConfig';
-import { dealResponse, dateFormat } from '@/utils/utils';
+import { dealResponse, GMT2UserTimeZone } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import Config from '@/config';
 
@@ -217,7 +217,7 @@ class Simulator extends Component {
           </span>
           <span>
             <span style={{ marginLeft: 20 }}>
-              <span>{dateFormat(currentSimulator.timeStamp).format('MM-DD HH:mm')}</span>
+              <span>{GMT2UserTimeZone(currentSimulator.timeStamp).format('MM-DD HH:mm')}</span>
               <span style={{ marginLeft: 10 }}>{currentSimulator.createdByUser}</span>
             </span>
           </span>

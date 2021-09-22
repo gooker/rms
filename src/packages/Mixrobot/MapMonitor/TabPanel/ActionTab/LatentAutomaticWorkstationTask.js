@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import find from 'lodash/find';
 import {
   Card,

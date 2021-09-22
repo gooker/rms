@@ -12,7 +12,7 @@ import {
   message,
   Divider,
 } from 'antd';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import { useMount } from '@umijs/hooks';
 import Dictionary from '@/utils/Dictionary';
 import { Permission, hasApp } from '@/utils/Permission';

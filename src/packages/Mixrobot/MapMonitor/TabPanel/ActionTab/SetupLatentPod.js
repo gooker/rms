@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import { Form, Divider, InputNumber, Select, Row, Col, Button } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { Permission } from '@/utils/Permission';

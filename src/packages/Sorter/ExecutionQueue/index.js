@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/ExecutionQueueComponent';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 
@@ -111,7 +111,7 @@ export default class ExecutionQueue extends React.PureComponent {
             return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
           }
           return (
-            <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span style={{ width: '100%' }}>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
           );
         },
       },
@@ -126,7 +126,7 @@ export default class ExecutionQueue extends React.PureComponent {
             return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
           }
           return (
-            <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span style={{ width: '100%' }}>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
           );
         },
       },

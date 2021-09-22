@@ -8,7 +8,7 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { formatMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import styles from './index.module.less';
 
@@ -33,7 +33,7 @@ const taskStatusIcon = {
 
 class TaskRecordTab extends PureComponent {
   renderDescription = (record) => {
-    return <Col>{dateFormat(record.updateTime).format('YYYY-MM-DD HH:mm:ss')}</Col>;
+    return <Col>{GMT2UserTimeZone(record.updateTime).format('YYYY-MM-DD HH:mm:ss')}</Col>;
   };
 
   renderStep = (record) => {

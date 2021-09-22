@@ -8,7 +8,7 @@ import {
   FrownOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import RenderAgvTaskActions from './RenderAgvTaskActions';
 
 const Step = Steps.Step;
@@ -59,21 +59,21 @@ class AgvTaskSteps extends PureComponent {
               title={'NEW'}
               status={current === 1 ? 'process' : 'finish'}
               description={
-                records.createTime ? dateFormat(records.createTime).format('MM-DD HH:mm:ss') : null
+                records.createTime ? GMT2UserTimeZone(records.createTime).format('MM-DD HH:mm:ss') : null
               }
             />
             <Step
               title={'START'}
               status={current === 2 ? 'process' : current === 3 ? 'finish' : 'wait'}
               description={
-                records.startTime ? dateFormat(records.startTime).format('MM-DD HH:mm:ss') : null
+                records.startTime ? GMT2UserTimeZone(records.startTime).format('MM-DD HH:mm:ss') : null
               }
             />
             <Step
               title={'END'}
               status={current === 3 ? 'finish' : 'wait'}
               description={
-                records.endTime ? dateFormat(records.endTime).format('MM-DD HH:mm:ss') : null
+                records.endTime ? GMT2UserTimeZone(records.endTime).format('MM-DD HH:mm:ss') : null
               }
             />
           </Steps>

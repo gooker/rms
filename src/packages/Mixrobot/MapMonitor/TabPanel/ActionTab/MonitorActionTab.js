@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { memo, useState, Component } from 'react';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import find from 'lodash/find';
 import { useMap, useMount } from '@umijs/hooks';
 import { Row, Form, message, Col, Button, Select, Radio, InputNumber, Badge, Divider } from 'antd';

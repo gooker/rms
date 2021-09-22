@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Card, Popover } from 'antd';
 // import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat, getSuffix, getDay } from '@/utils/utils';
+import { GMT2UserTimeZone, getSuffix, getDay } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent';
 import styles from './index.module.less';
@@ -11,7 +11,7 @@ const HardwareTab = (props) => {
   const { data } = props;
 
   function renderCreateTime(time) {
-    return dateFormat(time).format('YYYY-MM-DD HH:mm:ss');
+    return GMT2UserTimeZone(time).format('YYYY-MM-DD HH:mm:ss');
   }
 
   function getModeldata(record) {

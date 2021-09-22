@@ -55,52 +55,28 @@ export function dealResponse(response, notification, successMessage, failedMessa
   return false;
 }
 
-export function dateFormat(value, type) {
-  //获取服务器端的时区偏移量
-  let date = null;
-  if (value == null) {
-    return {
-      format: () => {
-        return '';
-      },
-    };
-  }
-  let timeZone = 'GMT';
-  if (sessionStorage.getItem('timeZone') != null) {
-    timeZone = sessionStorage.getItem('timeZone');
+/**
+ * 将服务器的时间和服务器返回的时区转回成用户时区的时间格式
+ * @param {*} value
+ * @returns
+ */
+export function GMT2UserTimeZone(value) {
+  if (value === null || value === undefined) {
+    return { format: () => '' };
   }
 
-  if (type) {
-    //将本地时间转化服务时间
-    if (localStorage.getItem('userTimeZone') != null) {
-      moment.tz.setDefault(localStorage.getItem('userTimeZone'));
-    } else {
-      moment.tz.setDefault(moment.tz.guess());
-    }
-    if (value.format) {
-      date = new moment(value.format('YYYY-MM-DD HH:mm:ss')).tz(timeZone);
-    } else {
-      date = new moment(value).tz(timeZone);
-    }
+  let date = null;
+  const timeZone = 'GMT';
+  const userTimeZone = localStorage.getItem('userTimeZone');
+
+  // 获取当前时区偏移量
+  moment.tz.setDefault(timeZone);
+  if (userTimeZone != null) {
+    date = new moment(value).tz(userTimeZone);
   } else {
-    //将服务器时间转化成本地时间
-    //获取当前时区偏移量
-    moment.tz.setDefault(timeZone); //将服务器的时间和服务器返回的时区转回成带有时区的时间格式
-    if (!isStrictNull(localStorage.getItem('userTimeZone'))) {
-      date = new moment(value).tz(localStorage.getItem('userTimeZone'));
-    } else {
-      date = new moment(value).tz(moment.tz.guess());
-    }
+    date = new moment(value).tz(moment.tz.guess());
   }
-  if (date == null) {
-    return {
-      format: () => {
-        return '';
-      },
-    };
-  } else {
-    return date;
-  }
+  return date;
 }
 
 export function getSuffix(value, suffix, props) {
@@ -259,4 +235,3 @@ export function extractNameSpaceInfoFromEnvs(env) {
   });
   return nameSpaceInfoMap;
 }
-

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/utils';
+import { GMT2UserTimeZone, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
 import dictionary from '@/utils/Dictionary';
 import { AGVType } from '@/config/config';
@@ -55,9 +55,9 @@ export default class AgvList extends React.PureComponent {
         ListCardRender: true,
         render: (text, record, index, flag) => {
           if (flag) {
-            return <span>{dateFormat(text).format('MM-DD HH:mm')}</span>;
+            return <span>{GMT2UserTimeZone(text).format('MM-DD HH:mm')}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {

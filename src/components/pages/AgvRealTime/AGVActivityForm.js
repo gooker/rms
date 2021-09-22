@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, DatePicker, Col, Select, Row, Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 
 const { Option } = Select;
@@ -13,10 +13,10 @@ class AGVActivityForm extends Component {
     const { onChange } = this.props;
     if (onChange) {
       if (allValues && allValues.createDate != null) {
-        allValues.createTimeStart = dateFormat(allValues.createDate[0], 1).format(
+        allValues.createTimeStart = GMT2UserTimeZone(allValues.createDate[0], 1).format(
           'YYYY-MM-DD HH:mm:ss',
         );
-        allValues.createTimeEnd = dateFormat(allValues.createDate[1], 1).format(
+        allValues.createTimeEnd = GMT2UserTimeZone(allValues.createDate[1], 1).format(
           'YYYY-MM-DD HH:mm:ss',
         );
         delete allValues.createDate;

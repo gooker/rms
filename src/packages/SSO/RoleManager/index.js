@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
 import IconFont from '@/utils/ExtraIcon';
-import { dateFormat, dealResponse, formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/utils';
 import {
   fetchAllRoleList,
   fetchAddRole,
@@ -127,7 +127,7 @@ export default class index extends Component {
       dataIndex: 'createDate',
       align: 'center',
       render: (text) => {
-        return text && dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+        return text && GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss');
       },
     },
     {
@@ -135,7 +135,7 @@ export default class index extends Component {
       dataIndex: 'updateDate',
       align: 'center',
       render: (text) => {
-        return text && dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+        return text && GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss');
       },
     },
   ];

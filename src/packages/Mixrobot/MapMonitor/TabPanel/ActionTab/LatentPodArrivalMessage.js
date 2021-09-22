@@ -3,7 +3,7 @@ import { Row, Table, Button } from 'antd';
 import intl from 'react-intl-universal';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchReleasePod } from '@/services/map';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import { dealResponse } from '@/utils/utils';
 
 @connect(({ monitor }) => ({ monitor }))

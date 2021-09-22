@@ -4,7 +4,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
@@ -111,7 +111,7 @@ export default class TaskQueue extends React.PureComponent {
           if (!text) {
             return <span>{formatMessage({ id: 'app.taskQueue.notAvailable' })}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
@@ -124,7 +124,7 @@ export default class TaskQueue extends React.PureComponent {
           if (!text) {
             return <span>{formatMessage({ id: 'app.taskQueue.notAvailable' })}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {

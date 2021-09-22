@@ -1,14 +1,11 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import sortBy from 'lodash/sortBy';
-import groupBy from 'lodash/groupBy';
-import findIndex from 'lodash/findIndex';
-import find from 'lodash/find';
+import { sortBy, groupBy, findIndex, find } from 'lodash';
 import update from 'immutability-helper';
-import { formatMessage } from '@/utils/Lang';
-import { addTemporaryId, dealResponse, getCurveMapKey, isNull } from '@/utils/utils';
-import LogicArea from '../entities/LogicArea';
-import packageJSON from '../../../../package.json';
+import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { addTemporaryId, getCurveMapKey } from '@/utils/mapUtils';
+import { LogicArea } from '@/packages/Mixrobot/entities';
+import packageJSON from '@/../package.json';
 import {
   moveCell,
   getAngle,

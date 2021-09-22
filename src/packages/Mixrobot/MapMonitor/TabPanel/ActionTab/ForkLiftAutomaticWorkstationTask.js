@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Form, InputNumber, Button } from 'antd';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import { fetchForkLiftAutoCallWorkstationTask } from '@/services/map';
-import { dealResponse, dateFormat } from '@/utils/utils';
+import { dealResponse, GMT2UserTimeZone } from '@/utils/utils';
 import intl from 'react-intl-universal';
 
 const layout = {
@@ -148,7 +148,7 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
             id: 'app.monitorOperation.automaticToteWorkstationTask.lastOperateDate',
           })}
         >
-          {dateFormat(automaticForkLiftWorkstationTaskStatus.updateTime).format('YYYY-MM-DD HH:mm')}
+          {GMT2UserTimeZone(automaticForkLiftWorkstationTaskStatus.updateTime).format('YYYY-MM-DD HH:mm')}
         </Form.Item>
       </Form>
     );

@@ -2,7 +2,7 @@ import React from 'react';
 import { List, Col, Row } from 'antd';
 import { formatMessage,FormattedMessage } from '@/utils/Lang';
 import ErrorCodeFault from './ErrorCodeFault';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
 import styles from '../CenterOs.module.less';
 
@@ -69,7 +69,7 @@ const ErrorList = React.memo((props) => {
         <Col span={12}>
           <DescriptionItem
             title={<span>{formatMessage({ id: 'app.taskDetail.firstTime' })}</span>}
-            content={<span>{dateFormat(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>}
+            content={<span>{GMT2UserTimeZone(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>}
           />
         </Col>
         <Col span={12}>
@@ -119,7 +119,7 @@ const ErrorList = React.memo((props) => {
             <List.Item.Meta
               title={
                 <Row key={item.uniqueKey}>
-                  <Col span={12}>{dateFormat(item.updateTime).format('MM-DD HH:mm:ss')}</Col>
+                  <Col span={12}>{GMT2UserTimeZone(item.updateTime).format('MM-DD HH:mm:ss')}</Col>
                   <Col span={12}>{renderErrorName(item)}</Col>
                 </Row>
               }

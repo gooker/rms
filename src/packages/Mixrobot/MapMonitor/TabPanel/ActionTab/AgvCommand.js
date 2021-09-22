@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
+import { connect } from '@/utils/dva';
+import { Form, Select, Input, Divider, Button, message } from 'antd';
+import { map } from 'lodash';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvCommand } from '@/services/command';
 import { fetchAgvList } from '@/services/car';
-import { Form, Select, Input, Divider, Button, message } from 'antd';
-import { connect } from 'umi';
-import _map from 'lodash/map';
-import { dealResponse } from '@/utils/utils';
-import intl from 'react-intl-universal';
-import FormattedMessage from '@/components/FormattedMessage';
 
 const formItem = { wrapperCol: { span: 16 }, labelCol: { span: 6 } };
 
@@ -39,7 +38,7 @@ class AgvCommand extends Component {
         <Form.Item
           {...formItem}
           name={'agvId'}
-          label={intl.formatMessage({ id: 'app.monitorOperation.robotId' })}
+          label={formatMessage({ id: 'app.monitorOperation.robotId' })}
         >
           <SelectAll
             dataSource={agvList.map((record) => {
@@ -55,7 +54,7 @@ class AgvCommand extends Component {
         <Form.Item
           {...formItem}
           name={'rawCommandHex'}
-          label={intl.formatMessage({ id: 'app.monitorOperation.agvCommand.command' })}
+          label={formatMessage({ id: 'app.monitorOperation.agvCommand.command' })}
         >
           <Input.TextArea style={{ width: 260 }} />
         </Form.Item>
@@ -76,7 +75,7 @@ class AgvCommand extends Component {
                   this.sendAgvCommand(params);
                 } else {
                   message.error(
-                    intl.formatMessage({
+                    formatMessage({
                       id: 'app.monitorOperation.agvCommand.paramIncomplete',
                     }),
                   );
@@ -124,7 +123,7 @@ const SelectAll = (props) => {
                 onClick={() => {
                   const { onChange } = props;
                   if (onChange) {
-                    onChange(_map(options, 'value'));
+                    onChange && onChange(map(options, 'value'));
                   }
                 }}
               >

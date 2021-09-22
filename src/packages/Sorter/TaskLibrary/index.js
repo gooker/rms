@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge, Button, Tooltip } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
@@ -84,7 +84,7 @@ export default class TaskLibrary extends React.PureComponent {
           if (!text) {
             return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
@@ -96,7 +96,7 @@ export default class TaskLibrary extends React.PureComponent {
           if (!text) {
             return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
     ];

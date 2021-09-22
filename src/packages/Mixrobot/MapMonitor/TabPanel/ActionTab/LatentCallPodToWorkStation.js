@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Col, Form, InputNumber, Radio, Select } from 'antd';
 import intl from 'react-intl-universal';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const layout = {

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { connect } from 'umi';
+import { connect } from '@/utils/dva';
 import find from 'lodash/find';
 import { Row, Col, Form, Select, InputNumber, Radio, Input, Button, message } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
