@@ -190,4 +190,6 @@ export default {
 
   'app.copyboard.success': '成功复制到剪贴板',
   'app.copyboard.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
+
+  'app.workStationMap.add': '添加',
 };

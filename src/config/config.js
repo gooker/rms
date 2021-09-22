@@ -44,3 +44,6 @@ export const BaseContext = {
   SSO: 'sso',
   I18N: 'i18n',
 };
+
+// 后端接口的 Server Context_Path
+export const ApiNameSpace = ['latent-lifting', 'tote', 'forklift', 'coordinator', 'WS', 'sorter'];

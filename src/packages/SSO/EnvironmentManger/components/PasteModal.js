@@ -25,7 +25,7 @@ export default class PasteModal extends Component {
             flag: 0,
           };
         });
-        onAddEnvironment(result);
+        onAddEnvironment(...result);
       }
     } catch (e) {
       console.log('格式错误');

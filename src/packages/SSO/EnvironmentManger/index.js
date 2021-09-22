@@ -18,6 +18,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
 import PasteModal from './components/PasteModal';
+import AddEnvironmentModal from './components/AddEnvironmentModal';
 import commonStyles from '@/common.module.less';
 import styles from './environmentManager.module.less';
 
@@ -27,6 +28,7 @@ export default class index extends Component {
     selectRowKey: [],
     loading: false,
     pasteVisble: false,
+    addEnvironVisible:false,
     dataList: [],
   };
 
@@ -100,13 +102,14 @@ export default class index extends Component {
   };
 
   onAddEnvironment = async (values) => {
-    const response = await fetchAddEnvironment(...values);
+    const response = await fetchAddEnvironment(values);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.tip.operationFinish' }));
       this.getData();
       this.setState(
         {
           pasteVisble: false,
+          addEnvironVisible:false,
           selectRow: [],
           selectRowKey: [],
         },
@@ -131,7 +134,7 @@ export default class index extends Component {
   };
 
   render() {
-    const { selectRowKey, loading, dataList, pasteVisble } = this.state;
+    const { selectRowKey, loading, dataList, pasteVisble,addEnvironVisible } = this.state;
     return (
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ display: 'flex', padding: '20px 0' }}>
@@ -140,7 +143,7 @@ export default class index extends Component {
             icon={<PlusOutlined />}
             onClick={() => {
               this.setState({
-                addUserVisible: true,
+                addEnvironVisible: true,
               });
             }}
           >
@@ -219,10 +222,27 @@ export default class index extends Component {
           />
         </div>
 
+        {/* 新增 */}
+        <Modal
+          width={adjustModalWidth() * 0.7}
+          visible={addEnvironVisible}
+          destroyOnClose
+          footer={null}
+          title={<FormattedMessage id="environmentManager.add" />}
+          onCancel={() => {
+            this.setState({
+              addEnvironVisible: false,
+            });
+          }}
+        >
+         <AddEnvironmentModal onSubmit={this.onAddEnvironment} />
+        </Modal>
+
         {/* 粘贴 */}
         <Modal
           width={adjustModalWidth() * 0.7}
           visible={pasteVisble}
+          maskClosable={false}
           destroyOnClose
           footer={null}
           title={<FormattedMessage id="environmentManager.tip.pasteTip" />}
