@@ -191,17 +191,21 @@ export function getDay(second) {
  * @returns null
  */
 export function copyToBoard(value) {
-  const element = document.createElement('textarea');
-  document.body.appendChild(element);
-  element.value = value;
-  element.select();
+  const input = document.createElement('input');
+  input.setAttribute('readonly', 'readonly');
+  input.setAttribute('value', value);
+  document.body.appendChild(input);
+  input.setSelectionRange(0, 9999);
+  input.select();
   if (document.execCommand('copy')) {
     document.execCommand('copy');
-    document.body.removeChild(element);
-    return true;
+    document.body.removeChild(input);
+    message.info(formatMessage({ id: 'app.copyboard.success' }));
+  } else {
+    document.body.removeChild(input);
+    message.warn(formatMessage({ id: 'app.copyboard.unsupportCopyAPI' }));
+    return false;
   }
-  document.body.removeChild(element);
-  return false;
 }
 
 /**

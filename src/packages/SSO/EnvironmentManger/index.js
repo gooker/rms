@@ -8,9 +8,15 @@ import {
   CopyOutlined,
   ExportOutlined,
 } from '@ant-design/icons';
-import { fetchAllEnvironmentList, fetchAddEnvironment } from '@/services/user';
+import {
+  fetchAllEnvironmentList,
+  fetchAddEnvironment,
+  deleteEnvironmentById,
+  fetchUpdateEnvironment,
+} from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
+import RcsConfirm from '@/components/RcsConfirm';
 import PasteModal from './components/PasteModal';
 import commonStyles from '@/common.module.less';
 import styles from './environmentManager.module.less';
@@ -60,11 +66,16 @@ export default class index extends Component {
     this.setState({ loading: false });
   };
 
-  changeStatus = (record, flag) => {
+  changeStatus = async (record, flag) => {
     const params = {
       ...record,
       flag: flag ? 1 : 0,
     };
+    const updateRes = await fetchUpdateEnvironment(params);
+    if (!dealResponse(updateRes)) {
+      message.success(formatMessage({ id: 'environmentManager.updatestatusSuccess' }));
+      this.getData();
+    }
   };
 
   renderExpandedRowRender = (row) => {
@@ -85,32 +96,38 @@ export default class index extends Component {
   copyJson = () => {
     const { selectRow } = this.state;
     const str = JSON.stringify(selectRow);
-    const input = document.createElement('input');
-    input.setAttribute('readonly', 'readonly');
-    input.setAttribute('value', str);
-    document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
-    if (document.execCommand('copy')) {
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      message.info(formatMessage({ id: 'sso.user.tip.copySuccess' }));
-    } else {
-      document.body.removeChild(input);
-      message.warn(formatMessage({ id: 'sso.user.tip.unsupportCopyAPI' }));
-    }
+    copyToBoard(str);
   };
 
   onAddEnvironment = async (values) => {
     const response = await fetchAddEnvironment(...values);
     if (!dealResponse(response)) {
+      message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+      this.getData();
       this.setState(
         {
           pasteVisble: false,
+          selectRow: [],
+          selectRowKey: [],
         },
         this.getData,
       );
     }
+  };
+
+  deleteEnvironment = () => {
+    const this_ = this;
+    const { selectRowKey } = this.state;
+    RcsConfirm({
+      content: formatMessage({ id: 'environmentManager.deleteConfirmContent' }),
+      onOk: async () => {
+        const deleteRes = await deleteEnvironmentById({ id: selectRowKey[0] });
+        if (!dealResponse(deleteRes)) {
+          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          this_.getData();
+        }
+      },
+    });
   };
 
   render() {
@@ -146,14 +163,14 @@ export default class index extends Component {
           <Button
             className={commonStyles.mr20}
             icon={<DeleteOutlined />}
-            disabled={selectRowKey.length === 0}
-            onClick={this.deleteUser}
+            disabled={selectRowKey.length !== 1}
+            onClick={this.deleteEnvironment}
           >
             <FormattedMessage id="app.button.delete" />
           </Button>
           <Button
             className={commonStyles.mr20}
-            disabled={selectRowKey.length !==1}
+            disabled={selectRowKey.length !== 1}
             icon={<ExportOutlined />}
             onClick={() => {
               this.copyJson();

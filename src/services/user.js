@@ -227,7 +227,7 @@ export async function fetchUpdateEnvironment(parms) {
   });
 }
 //自定义环境--删除
-export async function fetchDeleteEnvironmentById(parms) {
+export async function deleteEnvironmentById(parms) {
   return request(`/sso/environment/deleteEnvironment`, {
     method: 'GET',
     data: parms,

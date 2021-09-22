@@ -259,7 +259,7 @@ class RoleAssignModal extends Component {
               // 防止Tab不显示名称
               const key = permission.appCode;
               return (
-                <Tabs.TabPane key={key} tab={formatMessage({id:`role.${key}`}) }>
+                <Tabs.TabPane key={key} tab={formatMessage({id:`app.module.${key}`}) }>
                   {permission?.appMenu.length !== 0 ? (
                     <Tree
                       checkable

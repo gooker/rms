@@ -9,8 +9,6 @@ export default {
   'sso.user.account.type.manager': '普通管理员',
   'sso.user.account.type.superManager': '超级管理员',
   'sso.user.type.user': '用户',
-  'sso.user.tip.copySuccess': '成功复制到剪贴板',
-  'sso.user.tip.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
   'sso.user.newUser': '新建用户',
   'sso.user.updateUserInfo': '修改用户信息',
   'sso.common.adminVisible': 'Admin可见',

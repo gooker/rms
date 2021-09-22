@@ -3,7 +3,7 @@ import { Row, Col, Select, Button, Table, Tag, Popover, message, Modal } from 'a
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
 import {
   fetchUserManagerList,
   updateUserManage,
@@ -195,20 +195,7 @@ class UserManager extends Component {
   };
 
   addToClipBoard = (content) => {
-    const input = document.createElement('input');
-    input.setAttribute('readonly', 'readonly');
-    input.setAttribute('value', content);
-    document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
-    if (document.execCommand('copy')) {
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      message.info(formatMessage({ id: 'sso.user.tip.copySuccess' }));
-    } else {
-      document.body.removeChild(input);
-      message.warn(formatMessage({ id: 'sso.user.tip.unsupportCopyAPI' }));
-    }
+    copyToBoard(content);
   };
 
   getColumn = [
@@ -474,9 +461,9 @@ class UserManager extends Component {
             pagination={{
               responsive: true,
               defaultPageSize: 10,
-              showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+              showTotal: (total) =>
+                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
-
           />
         </div>
 

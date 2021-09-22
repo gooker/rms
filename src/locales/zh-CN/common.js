@@ -178,4 +178,16 @@ export default {
   'app.map.dumpPoint': '抛物点',
   'app.map.intersection': '交汇点',
   'app.map.roller': '滚筒站点',
+
+
+  // 模块名称
+  'app.module.mixrobot': 'Mixrobot',
+  'app.module.sorter': '分拣车',
+  'app.module.latent-lifting': '潜伏车',
+  'app.module.tote-wcs-gui': '料箱车',
+  'app.module.forklift': '叉车',
+  'app.module.i18n': '国际化',
+
+  'app.copyboard.success': '成功复制到剪贴板',
+  'app.copyboard.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
 };
