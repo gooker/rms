@@ -460,7 +460,6 @@ class UserManager extends Component {
         <div className={styles.userManagerTable}>
           <Table
             bordered
-            pagination={false}
             columns={this.getColumn}
             rowKey="id"
             dataSource={showUsersList}
@@ -472,6 +471,12 @@ class UserManager extends Component {
                 this.setState({ selectRowKey, selectRow });
               },
             }}
+            pagination={{
+              responsive: true,
+              defaultPageSize: 10,
+              showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+            }}
+
           />
         </div>
 

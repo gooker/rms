@@ -46,5 +46,6 @@ export default [
     name: 'environmentManger',
     icon: 'ie',
     component: '/SSO/EnvironmentManger',
+    hook:"multi-api",
   },
 ];

@@ -147,7 +147,6 @@ export default class SectionManager extends Component {
         <div className={styles.sectionManagerTable}>
           <Table
             bordered
-            pagination={false}
             columns={this.getColumn}
             rowKey="id"
             dataSource={sectionsList}
@@ -158,6 +157,11 @@ export default class SectionManager extends Component {
               onChange: (selectRowKey, selectRow) => {
                 this.setState({ selectRowKey, selectRow });
               },
+            }}
+            pagination={{
+              responsive: true,
+              defaultPageSize: 10,
+              showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
           />
         </div>

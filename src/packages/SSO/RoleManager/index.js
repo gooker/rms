@@ -253,6 +253,11 @@ export default class index extends Component {
                 this.setState({ selectedRowKeys, selectedRow });
               },
             }}
+            pagination={{
+              responsive: true,
+              defaultPageSize: 10,
+              showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+            }}
           />
         </div>
 
