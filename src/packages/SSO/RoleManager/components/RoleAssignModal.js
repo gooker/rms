@@ -50,7 +50,6 @@ class RoleAssignModal extends Component {
 
       // 根据authrity
       const authRoutes = this.filterAuthRoute(menuData, codePermissionMap) || [];
-      console.log('menu_auth', authRoutes);
       return {
         appCode,
         appMenu: [
@@ -245,7 +244,7 @@ class RoleAssignModal extends Component {
     const { activeKey, permissionList, checkedKeys } = this.state;
     const { submitAuthKeys } = this.props;
     return (
-      <div >
+      <div>
         <div>
           <Tabs
             activeKey={activeKey}
@@ -260,7 +259,7 @@ class RoleAssignModal extends Component {
               // 防止Tab不显示名称
               const key = permission.appCode;
               return (
-                <Tabs.TabPane key={key} tab={key}>
+                <Tabs.TabPane key={key} tab={formatMessage({id:`role.${key}`}) }>
                   {permission?.appMenu.length !== 0 ? (
                     <Tree
                       checkable
@@ -288,7 +287,7 @@ class RoleAssignModal extends Component {
               borderTop: '1px solid #e9e9e9',
               padding: '10px 16px',
               textAlign: 'right',
-              background:'#fff'
+              background: '#fff',
             }}
           >
             <Button

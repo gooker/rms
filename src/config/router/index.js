@@ -5,11 +5,11 @@ import MixrobotRouter from './mixrobot.router'
 import { BaseContext } from '@/config/config';
 
 export default {
-  [BaseContext.I18N]: TranslatorRouter,
-  [BaseContext.Sorter]: SorterRouter,
+  [BaseContext.Coordinator]: MixrobotRouter,
   [BaseContext.LatentLifting]: [],
   [BaseContext.Tote]: [],
+  [BaseContext.Sorter]: SorterRouter,
   [BaseContext.ForkLifting]: [],
-  [BaseContext.Coordinator]: MixrobotRouter,
+  [BaseContext.I18N]: TranslatorRouter,
   [BaseContext.SSO]: SsoRouter,
 };
