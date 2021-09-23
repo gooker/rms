@@ -146,7 +146,7 @@ class DynamicForm extends Component {
           newChild = renderChild(getFieldsValue(), setFieldsValue, k);
         }
         const child = (
-          <Col key={index} {...col} style={{ display:'inline-block !important'}}>
+          <Col key={index} {...col} style={{ width: '100%'}}>
             <Form.Item
               {...formItem}
               required={false}
@@ -174,7 +174,7 @@ class DynamicForm extends Component {
         newChild = renderChild(this.generateValue(getFieldsValue(), k));
       }
       result.push(
-        <Col key={field} {...col} style={{ width: '100%'}}>
+        <Col key={field} {...col} style={{ width: '100%' }}>
           <Form.Item
             {...formItem}
             required={false}
@@ -210,7 +210,7 @@ class DynamicForm extends Component {
             renderDelete(this.renderNode(children, k), k, this.delete)
           ) : (
             <>
-              <Col span={22}>{this.renderNode(children, k)}</Col>
+              <Col span={22} style={{display:'flex'}}>{this.renderNode(children, k)}</Col>
               <Col span={2}>
                 <Button
                   type="danger"

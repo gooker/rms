@@ -52,11 +52,11 @@ export function checkPermission(router, permissionMap, appCode, nameSapce) {
     // SSO菜单不参与权限控制
     if (routerElement.path && appCode !== 'sso') {
       let authKey = null;
-      if (nameSapce && routerElement.path.indexOf(`/${nameSapce}`) !== -1) {
-        authKey = routerElement.path.replace(`/${nameSapce}`, nameSapce);
-      } else {
-        authKey = routerElement.path;
-      }
+      // if (nameSapce && routerElement.path.indexOf(`/${nameSapce}`) !== -1) {
+      //   authKey = routerElement.path.replace(`/${nameSapce}`, nameSapce);
+      // } else {
+      authKey = routerElement.path;
+      // }
       // hook存在 则不参与权限控制
       routerHookFlag = !(routerElement.hook === 'multi-api' && !isStrictNull(multiApiFlag));
       if (routerHookFlag && !permissionMap[authKey]) {
@@ -64,7 +64,7 @@ export function checkPermission(router, permissionMap, appCode, nameSapce) {
       }
     }
 
-    // 
+    //
     if (routerElement.routes != null) {
       const routes = checkPermission(routerElement.routes, permissionMap, appCode, nameSapce);
       result.push({ ...routerElement, routes });

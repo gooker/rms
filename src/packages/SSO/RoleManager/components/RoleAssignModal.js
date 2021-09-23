@@ -56,7 +56,7 @@ class RoleAssignModal extends Component {
           {
             children: [...authRoutes],
             title: '页面',
-            key: `/${appCode}/page1`,
+            key: `${appCode}/page1`, // TODO: 这里与filterAppByAuthorityKeys方法筛选授权的app对应 存在只勾选页面 但是不勾选其他节点树的情况 要优化下！
             label: '页面',
           },
         ],

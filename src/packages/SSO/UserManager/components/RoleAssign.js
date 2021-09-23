@@ -29,7 +29,8 @@ export default class RoleAssign extends Component {
           message.error(formatMessage({ id: 'sso.user.getRolesFailed' }));
           return;
         }
-        const rightSource = currentAssigned?.roles.map(({ id }) => id);
+        const rightSource =
+          currentAssigned && currentAssigned.roles ? currentAssigned.roles.map(({ id }) => id) : [];
         this.setState({ allSource, rightSource });
       })
       .catch((err) => {

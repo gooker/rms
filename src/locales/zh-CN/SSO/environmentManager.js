@@ -10,4 +10,5 @@ export default {
   'environmentManager.require.value': '请输入value',
   'environmentManager.extraInfo':'附加信息',
   'environmentManager.require.envName':'请输入环境名称',
+  'environmentManager.tip.formNotComplete': '请输入全部信息，或者删除相关附加数据',
 };

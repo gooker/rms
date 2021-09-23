@@ -57,4 +57,5 @@ export default {
   'sso.user.tip.sectionAssigned': '已分配区域',
   'sso.user.tip.sectionUnassigned': '未分配区域',
   'sso.user.tip.roleLevelGreater': '以下角色等级比用户高，无法完成操作',
+  'app.section.not.exist': '当前用户没有被赋予任何Section',
 };

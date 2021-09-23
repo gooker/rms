@@ -28,7 +28,8 @@ export default class index extends Component {
     selectRowKey: [],
     loading: false,
     pasteVisble: false,
-    addEnvironVisible:false,
+    addEnvironVisible: false,
+    updateFlag: false,
     dataList: [],
   };
 
@@ -102,6 +103,10 @@ export default class index extends Component {
   };
 
   onAddEnvironment = async (values) => {
+    const { updateFlag, selectRow } = this.state;
+    if (updateFlag) {
+      values.id = selectRow[0].id;
+    }
     const response = await fetchAddEnvironment(values);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.tip.operationFinish' }));
@@ -109,7 +114,8 @@ export default class index extends Component {
       this.setState(
         {
           pasteVisble: false,
-          addEnvironVisible:false,
+          addEnvironVisible: false,
+          updateFlag: false,
           selectRow: [],
           selectRowKey: [],
         },
@@ -134,7 +140,16 @@ export default class index extends Component {
   };
 
   render() {
-    const { selectRowKey, loading, dataList, pasteVisble,addEnvironVisible } = this.state;
+    const {
+      selectRowKey,
+      selectRow,
+      loading,
+      dataList,
+      pasteVisble,
+      addEnvironVisible,
+      updateFlag,
+    } = this.state;
+    const updateRow = updateFlag ? selectRow : null;
     return (
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ display: 'flex', padding: '20px 0' }}>
@@ -155,8 +170,8 @@ export default class index extends Component {
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({
-                addUserVisible: true,
-                updateUserFlag: true,
+                addEnvironVisible: true,
+                updateFlag: true,
               });
             }}
           >
@@ -228,14 +243,21 @@ export default class index extends Component {
           visible={addEnvironVisible}
           destroyOnClose
           footer={null}
-          title={<FormattedMessage id="environmentManager.add" />}
+          title={
+            updateRow ? (
+              <FormattedMessage id="environmentManager.update" />
+            ) : (
+              <FormattedMessage id="environmentManager.add" />
+            )
+          }
           onCancel={() => {
             this.setState({
               addEnvironVisible: false,
+              updateFlag: false,
             });
           }}
         >
-         <AddEnvironmentModal onSubmit={this.onAddEnvironment} />
+          <AddEnvironmentModal onSubmit={this.onAddEnvironment} updateRow={updateRow} />
         </Modal>
 
         {/* 粘贴 */}
