@@ -20,6 +20,7 @@ import {
   EditOutlined,
   InboxOutlined,
   ReadOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import IconFont from '@/utils/ExtraIcon';
 
@@ -27,6 +28,12 @@ export default {
   'icon-task': <IconFont type="icon-task" />,
   'line-chart': <LineChartOutlined />,
   'clock-circle': <ClockCircleOutlined />,
+  'authority':<IconFont type="icon-fuwushouquan" />,
+  'icon-cangkucangchu':<IconFont type="icon-ziyuan-fenzu" />,
+  'iconziyuan':<IconFont type="icon-ziyuanguanli" />,
+  'iconcharger':<IconFont type="icon-chongdianzhuang" />,
+  'iconLOG':<IconFont type="icon-log" />,
+  'iconreportform':<IconFont type="icon-report" />,
 
   environment: <EnvironmentOutlined />,
   lock: <LockOutlined />,
@@ -47,4 +54,5 @@ export default {
   edit: <EditOutlined />,
   inbox: <InboxOutlined />,
   read: <ReadOutlined />,
+  api: <ApiOutlined />,
 };

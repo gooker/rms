@@ -25,6 +25,7 @@ export default {
   'menu.system': '系统管理',
   'menu.system.chargingStrategy': '充电策略',
   'menu.system.systemParamsManager': '参数列表',
+  'menu.system.Timezone': '时区设置',
 
   'menu.languageManage':'翻译管理',
 
@@ -72,6 +73,11 @@ export default {
   'menu.sourceManage.restAreaAssign': '休息区分配',
   'menu.sourceManage.mapAreaManage': '区域管理',
   'menu.sourceManage.agvGroup': '小车分组',
+
+  'menu.chargeCenter': '充电',
+  'menu.chargeCenter.chargeManger': '充电桩管理',
+  'menu.chargeCenter.chargeManagement': '充电策略',
+  'menu.chargeCenter.chargeMangerBind': '充电桩绑定',
 
   'menu.reportCenter': '报表管理',
   'menu.reportCenter.healthReport': '健康报表',

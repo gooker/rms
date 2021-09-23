@@ -211,7 +211,7 @@ export default [
   {
     path: '/mixrobot/charge',
     name: 'chargeCenter',
-    icon: 'iconjiayouzhan',
+    icon: 'iconcharger',
     routes: [
       {
         path: '/mixrobot/charge/chargeManger',
