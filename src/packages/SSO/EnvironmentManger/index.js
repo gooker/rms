@@ -86,7 +86,7 @@ export default class index extends Component {
     if (row.additionalInfos != null) {
       row.additionalInfos.map((item) => {
         result.push(
-          <Col xxl={6} lg={8} key={item.key}>
+          <Col xs={24} sm={12} md={12} lg={8} xl={8} key={item.key}>
             <span className={styles.additionalInfos}>{item.key}:</span>
             <span> {item.value}</span>
           </Col>,

@@ -234,3 +234,27 @@ export async function deleteEnvironmentById(parms) {
   });
 }
 
+///////////////////// *** 授权管理 *** /////////////////////
+const coordinator_namespace = 'coordinator';
+// 授权
+export async function getCertificateStatus() {
+  return request(`/${coordinator_namespace}/certificate/getCertificateStatus`, {
+    method: 'GET',
+  });
+}
+
+export async function getApplyToken() {
+  return request(`/${coordinator_namespace}/certificate/getApplyToken`, {
+    method: 'GET',
+  });
+}
+
+export async function uploadCertication(param) {
+  return request(`/${coordinator_namespace}/certificate/active`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
+

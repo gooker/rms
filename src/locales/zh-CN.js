@@ -16,6 +16,7 @@ import userLoginHistory from './zh-CN/SSO/userHistory';
 import accountCenter from './zh-CN/SSO/accountCenter';
 import roleManager from './zh-CN/SSO/roleManager';
 import environmentManager from './zh-CN/SSO/environmentManager';
+import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 
 export default {
   ...menu,
@@ -36,4 +37,5 @@ export default {
   ...accountCenter,
   ...roleManager,
   ...environmentManager,
+  ...authorizationCenter,
 };

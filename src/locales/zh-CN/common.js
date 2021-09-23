@@ -152,7 +152,7 @@ export default {
   'app.common.minutes': '分',
 
   // 上传
-  'app.common.upload.dragUploadedFileToThisArea': '将上传的文件单击或拖拽到此区域',
+  'app.common.upload.dragUploadedFileToThisArea': '单击或拖动文件到该区域以上传',
 
   // 地图
   'app.map.map': '地图',
