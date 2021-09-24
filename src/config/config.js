@@ -16,6 +16,7 @@ export const AppCode = {
   Mixrobot: 'Mixrobot',
   SSO: 'SSO',
   I18N: 'I18N',
+  Charger:'Charger',
   [AGVType.LatentLifting]: 'LatentLifting',
   [AGVType.Tote]: 'Tote',
   [AGVType.ForkLifting]: 'ForkLifting',

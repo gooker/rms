@@ -37,6 +37,8 @@ export default {
   'menu.accountCenter':'个人中心',
   'menu.authorizationCenter':'授权中心',
   'menu.environmentManger':'自定义环境',
+  'menu.customConfiguration':'定制化配置',
+
 
 
   // MixRobot

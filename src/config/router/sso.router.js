@@ -48,4 +48,12 @@ export default [
     component: '/SSO/EnvironmentManger',
     hook:"multi-api",
   },
+  {
+    path: '/sso/customConfiguration',       // 定制化配置
+    name: 'customConfiguration',
+    icon: 'configuration',
+    component: '/SSO/CustomConfiguration',
+    authority: ['ADMIN'],
+    hook:"multi-api",
+  },
 ];

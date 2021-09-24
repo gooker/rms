@@ -7,7 +7,7 @@ import { filterMenuData } from '@/utils/init';
 import { transform, difference } from 'lodash';
 import allMouduleRouter from '@/config/router';
 import allMoudulePemission from '@/config/permission';
-import { filterPermission, showLabelMenu, handlePermissions } from './assignUtils';
+import { filterPermission, showMenuLabel, handlePermissions } from './assignUtils';
 
 const { TreeNode } = Tree;
 
@@ -34,7 +34,7 @@ class RoleAssignModal extends Component {
     const allAuthorityData = allRoutes.map((appRoute) => {
       // 处理menu
       const { appMenu, appCode } = appRoute;
-      const labelAppMenu = showLabelMenu(appMenu);
+      const labelAppMenu = showMenuLabel(appMenu);
       const menuData = filterMenuData(labelAppMenu);
 
       // 处理permission

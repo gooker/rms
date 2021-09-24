@@ -23,7 +23,7 @@ export function filterPermission(data) {
 
 // 处理menu的数据
 
-export function showLabelMenu(data, parentName) {
+export function showMenuLabel(data, parentName) {
   return data
     .map((item) => {
       if (!item.name) {
@@ -41,7 +41,7 @@ export function showLabelMenu(data, parentName) {
         label,
       };
       if (item.routes) {
-        result.routes = showLabelMenu(item.routes, label);
+        result.routes = showMenuLabel(item.routes, label);
       }
       return result;
     })
