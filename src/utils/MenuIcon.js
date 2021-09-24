@@ -34,6 +34,7 @@ export default {
   'iconcharger':<IconFont type="icon-chongdianzhuang" />,
   'iconLOG':<IconFont type="icon-log" />,
   'iconreportform':<IconFont type="icon-report" />,
+  'configuration':<IconFont type="icon-gexingdingzhi" />,
 
   environment: <EnvironmentOutlined />,
   lock: <LockOutlined />,

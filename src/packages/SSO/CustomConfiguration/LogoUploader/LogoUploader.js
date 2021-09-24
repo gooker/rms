@@ -4,13 +4,6 @@ import { LoadingOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getBase64 } from '@/utils/utils';
 import styles from './LogoUploader.module.less';
-
-function getBase641 (img, callback){
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result));
-  reader.readAsDataURL(img);
-};
-
 export default class LogoUploader extends React.Component {
   state = {
     imageUrl: null,
@@ -40,12 +33,7 @@ export default class LogoUploader extends React.Component {
       });
       return false;
     });
-    // getBase641(file,(imageUrl) => {
-    //   this.setState({ imageUrl, loading: false }, () => {
-    //     onChange(imageUrl);
-    //   });
-    //   return false;
-    // })
+  
     return false;
   }
 

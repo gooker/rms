@@ -45,7 +45,6 @@ export function filterMenuData(menuData) {
 
 export function checkPermission(router, permissionMap, appCode, nameSapce) {
   const result = [];
-  const multiApiFlag = window.localStorage.getItem('multi-api');
   for (let i = 0; i < router.length; i++) {
     let routerHookFlag = true;
     const routerElement = router[i];
@@ -58,7 +57,7 @@ export function checkPermission(router, permissionMap, appCode, nameSapce) {
       authKey = routerElement.path;
       // }
       // hook存在 则不参与权限控制
-      routerHookFlag = !(routerElement.hook === 'multi-api' && !isStrictNull(multiApiFlag));
+      routerHookFlag = !getlocalstorageHooks(routerElement.hook);
       if (routerHookFlag && !permissionMap[authKey]) {
         continue;
       }
@@ -114,7 +113,6 @@ export function convertToRoute(data, baseContext) {
 
 export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, permissionMap) {
   const routeLocaleKeyMap = {};
-  const multiApiFlag = window.localStorage.getItem('multi-api');
   // 1. 转换菜单数据到一般路由数据(包括sso筛选逻辑)
   const allRoutes = Object.keys(allModuleMenuData).map((appCode) => {
     let appMenu = allModuleMenuData[appCode];
@@ -123,7 +121,7 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
       appMenu = appMenu.filter((route) => {
         // hook存在则一定有route
         // authority不存在或为空 就没有
-        if (route.hook === 'multi-api' && !isStrictNull(multiApiFlag)) {
+        if (getlocalstorageHooks(route.hook)) {
           return true;
         } else if (isStrictNull(route.authority) || route.authority.length === 0) {
           return false;
@@ -191,4 +189,23 @@ export async function initI18nInstance() {
     await intl.init({ currentLocale: language, locales });
     console.info('Failed to fetch remote I18N Data, will use local I18n Data');
   }
+}
+
+// hook -
+export function getlocalstorageHooks(hook) {
+  // 不存在hook / 不是数组
+  if (isStrictNull(hook) || !Array.isArray(hook)) {
+    return false;
+  }
+  const orSet = new Set();
+  hook.map((item) => {
+    if (window.localStorage.getItem(item) === 'true') {
+      orSet.add(1);
+    }
+  });
+  // 只要localstorage存在hook数组里的任一个 当前这个开发者就能看到页面
+  if (orSet.has(1)) {
+    return true;
+  }
+  return false;
 }
