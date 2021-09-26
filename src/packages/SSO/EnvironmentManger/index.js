@@ -19,6 +19,7 @@ import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/ut
 import RcsConfirm from '@/components/RcsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
+import TablewidthPages from '@/components/TablewidthPages';
 import commonStyles from '@/common.module.less';
 import styles from './environmentManager.module.less';
 
@@ -211,6 +212,21 @@ export default class index extends Component {
             </Button>
           </div>
         </Row>
+        {/* <TablewidthPages
+          columns={this.columns}
+          rowKey="id"
+          dataSource={dataList}
+          loading={loading}
+          rowSelection={{
+            selectedRowKeys: selectRowKey,
+            onChange: (selectRowKey, selectRow) => {
+              this.setState({ selectRowKey, selectRow });
+            },
+          }}
+          expandedRowRender={(row) => {
+            return this.renderExpandedRowRender(row);
+          }}
+        /> */}
         <div className={commonStyles.divContent}>
           <Table
             bordered
