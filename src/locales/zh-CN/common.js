@@ -111,7 +111,7 @@ export default {
   'app.pod.side.D': 'D',
 
   // Cell
-  'app.cellId': '点位',
+  'app.spotId': '点位',
 
   // Task
   'app.task': '任务',

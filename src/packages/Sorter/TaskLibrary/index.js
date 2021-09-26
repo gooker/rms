@@ -63,7 +63,7 @@ export default class TaskLibrary extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.taskDetail.targetCellId' }),
+        title: formatMessage({ id: 'app.taskDetail.targetSpotId' }),
         dataIndex: 'targetCellId',
         align: 'center',
         width: 100,

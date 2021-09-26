@@ -95,7 +95,7 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.executionQ.chargerCellId' }),
+        title: formatMessage({ id: 'app.executionQ.chargerSpotId' }),
         dataIndex: 'chargerCellId',
         align: 'center',
         width: 100,

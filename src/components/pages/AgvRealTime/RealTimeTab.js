@@ -183,7 +183,7 @@ const RealTimeTab = (props) => {
        
        
         {/* 车头方向 所在位置 */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.currentCellId' })}>
+        <LabelComponent label={formatMessage({ id: 'app.agv.currentSpotId' })}>
           {renderAgvDirection()}
         </LabelComponent>
         {/* 加入时间 */}
@@ -318,7 +318,7 @@ const RealTimeTab = (props) => {
          {/************锁定目标点************/}
 
          <LabelComponent
-          label={<FormattedMessage id="app.activity.lockedTargetCells" />}
+          label={<FormattedMessage id="app.activity.lockedTargetSpots" />}
           children={
             data?.redisAGV?.lockedTargetCells && data?.redisAGV?.lockedTargetCells.length > 0 ? (
               <span>{renderArray(data.redisAGV.lockedTargetCells)}</span>
@@ -328,7 +328,7 @@ const RealTimeTab = (props) => {
         {/************临时不可走点************/}
 
         <LabelComponent
-          label={<FormattedMessage id="app.activity.lockedTemporaryCells" />}
+          label={<FormattedMessage id="app.activity.lockedTemporarySpots" />}
           children={
             data?.redisAGV?.lockedTemporaryCells &&
             data.redisAGV.lockedTemporaryCells.length > 0 ? (

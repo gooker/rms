@@ -230,7 +230,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.targetCellId" />}
+                    title={<FormattedMessage id="app.taskDetail.targetSpotId" />}
                     content={<span>{detailInfo.targetCellId}</span>}
                   />
                 </Col>
@@ -292,12 +292,12 @@ class TaskDetail extends PureComponent {
             {detailInfo.type === 'SUPER_CARRY_POD_TO_CELL' && (
               <>
                 <Divider orientation="left">
-                  <FormattedMessage id="app.taskDetail.superCarryPodToCell" />
+                  <FormattedMessage id="app.taskDetail.superCarryPodToSpot" />
                 </Divider>
                 <Row>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.targetCellDirection" />}
+                      title={<FormattedMessage id="app.taskDetail.targetSpotDirection" />}
                       content={
                         detailInfo.workStationDirection && (
                           <>
@@ -312,7 +312,7 @@ class TaskDetail extends PureComponent {
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.targetStopCellId" />}
+                      title={<FormattedMessage id="app.taskDetail.targetStopSpotId" />}
                       content={<span>{detailInfo.targetCellId}</span>}
                     />
                   </Col>
@@ -356,7 +356,7 @@ class TaskDetail extends PureComponent {
                 <Row>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.targetCellDirection" />}
+                      title={<FormattedMessage id="app.taskDetail.targetSpotDirection" />}
                       content={
                         detailInfo.workStationDirection != null ? (
                           <>
@@ -373,7 +373,7 @@ class TaskDetail extends PureComponent {
                     <DescriptionItem
                       title={
                         <>
-                          <FormattedMessage id="app.taskDetail.workStationStopCellId" />
+                          <FormattedMessage id="app.taskDetail.workStationStopSpotId" />
                         </>
                       }
                       content={<span>{detailInfo.workStationStopCellId}</span>}
