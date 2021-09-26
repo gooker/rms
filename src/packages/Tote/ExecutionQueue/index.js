@@ -1,9 +1,9 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/utils';
+import { dateFormat, formatMessage, isStrictNull } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 
@@ -13,7 +13,7 @@ export default class ExecutionQueue extends React.PureComponent {
   getColumn = (checkTaskDetail) => {
     return [
       {
-        title: formatMessage({ id: 'app.task.id' }),
+        title: <FormattedMessage id="app.task.id" />,
         dataIndex: 'taskId',
         width: 150,
         align: 'center',
@@ -23,7 +23,7 @@ export default class ExecutionQueue extends React.PureComponent {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkTaskDetail(text, AGVType.Sorter);
+                  checkTaskDetail(text, AGVType.Tote);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -34,10 +34,10 @@ export default class ExecutionQueue extends React.PureComponent {
       },
       {
         title: formatMessage({ id: 'app.task.type' }),
-        dataIndex: 'agvTaskType',
+        dataIndex: 'type',
         align: 'center',
         width: 150,
-        render: (text) => <FormattedMessage id={`app.taskType.${text}`} />,
+        render: (text) => <FormattedMessage id={Dictionary('toteAgvTaskType', text)} />,
       },
       {
         title: formatMessage({ id: 'app.executionQ.isReleased' }),
@@ -62,7 +62,7 @@ export default class ExecutionQueue extends React.PureComponent {
       },
       {
         title: formatMessage({ id: 'app.agv' }),
-        dataIndex: 'currentRobotId',
+        dataIndex: 'appointedAGVId',
         align: 'center',
         width: 100,
         render: (text) => {
@@ -71,7 +71,7 @@ export default class ExecutionQueue extends React.PureComponent {
       },
       {
         title: formatMessage({ id: 'app.executionQ.target' }),
-        dataIndex: 'targetCellId',
+        dataIndex: 'appointedTargetCellId',
         align: 'center',
         width: 100,
       },
@@ -130,63 +130,41 @@ export default class ExecutionQueue extends React.PureComponent {
           );
         },
       },
-      {
-        title: formatMessage({ id: 'app.executionQ.triedTimes' }),
-        dataIndex: 'triedTimes',
-        align: 'center',
-        width: 100,
-      },
-      {
-        title: formatMessage({ id: 'app.executionQ.executeMax' }),
-        dataIndex: 'executeMaxTry',
-        align: 'center',
-        width: 100,
-      },
-      {
-        title: formatMessage({ id: 'app.executionQ.delayMS' }),
-        dataIndex: 'delayMS',
-        align: 'center',
-        width: 100,
-      },
-      {
-        title: formatMessage({ id: 'app.executionQ.currentStep' }),
-        dataIndex: 'currentStepId',
-        align: 'center',
-        width: 100,
-      },
-      {
-        title: formatMessage({ id: 'app.executionQ.executionState' }),
-        dataIndex: 'isExecuted',
-        align: 'center',
-        width: 200,
-        render: (text) => {
-          if (text) {
-            return <span>{formatMessage({ id: 'app.executionQ.executed' })}</span>;
-          } else {
-            return <span>{formatMessage({ id: 'app.executionQ.unexecuted' })}</span>;
-          }
-        },
-      },
     ];
   };
 
   filterDataSource = (dataSource = [], filterValue) => {
-    debugger
-    return dataSource.filter((item) => {
-      const targetCellId = `${item.targetCellId}`;
-      return (
-        item.taskId?.includes(filterValue) ||
-        item.currentRobotId?.includes(filterValue) ||
-        targetCellId?.includes(filterValue)
-      );
+    const currrentFilterValue = {};
+    if (!isStrictNull(filterValue.taskId)) {
+      currrentFilterValue.taskId = filterValue.taskId;
+    }
+    if (!isStrictNull(filterValue.agvId)) {
+      currrentFilterValue.appointedAGVId = filterValue.agvId;
+    }
+    if (Object.keys(currrentFilterValue).length === 0) {
+      return dataSource;
+    }
+
+    let currentSources = [];
+    if (!isStrictNull(filterValue.agvTaskType)) {
+      const filtertype = filterValue.agvTaskType;
+      currentSources = dataSource.filter(({ type }) => filtertype.includes(type));
+    }
+    Object.values(currrentFilterValue).map((value) => {
+      currentSources.push(...this.filterValues(dataSource, value));
     });
+    return currentSources;
+  };
+
+  filterValues = (dataSource, value) => {
+    return dataSource.filter((item) => item[value]?.includes(value));
   };
 
   render() {
     return (
       <ExecutionQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
-        agvType={AGVType.Sorter} // 标记当前页面的车型
+        agvType={AGVType.Tote} // 标记当前页面的车型
         filter={this.filterDataSource} // 数据筛选逻辑
         delete={true} // 标记该页面是否允许执行删除操作
       />

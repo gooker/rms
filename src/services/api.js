@@ -10,12 +10,20 @@ export async function getCurrentUser() {
 }
 
 // ************************************** 执行队列  ************************************** //
-// 获取执行队列数据
+// 获取执行队列数据-sorter
 export async function fetchExecutingTaskList(agvType, params) {
   return request(`/${NameSpace[agvType]}/redis/getExecutingTaskList/${params}`, {
     method: `GET`,
   });
 }
+
+// 获取执行队列数据-tote TODO: 后端兼容之后要删除
+export async function fetchToteExecutingTaskList(agvType) {
+  return request(`/${NameSpace[agvType]}/redis/getExecutingTaskList`, {
+    method: `GET`,
+  });
+}
+
 
 // 删除执行队列任务
 export async function deleteExecutionQTasks(agvType, params) {

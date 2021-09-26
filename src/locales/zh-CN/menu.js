@@ -66,7 +66,7 @@ export default {
 
   'menu.sourceManage': '资源管理',
   'menu.sourceManage.latentPod': '潜伏货架',
-  'menu.sourceManage.latentPod.latentPodMange': '货架管理',
+  'menu.sourceManage.latentPod.latentPodMange': '货架管理',// mixrobot 下的三级目录
   'menu.sourceManage.latentPod.latentPodAssign': '货架分配',
   'menu.sourceManage.tote': '料箱',
   'menu.sourceManage.tote.toteManagement': '料箱管理',
@@ -97,7 +97,7 @@ export default {
   // tote
 
   'menu.controlCenter.totePoolTask': '料箱池任务',
-  'menu.pod': '料箱货架',
+  'menu.pod': '货架管理',// 这个是一级目录
   'menu.pod.podRowModelBaseData': '尺寸定义',
   'menu.pod.podRowModelManager': '货架列模板',
   'menu.pod.rackLayout': '货架布局',

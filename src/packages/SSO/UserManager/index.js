@@ -377,7 +377,7 @@ class UserManager extends Component {
         </Row>
         <Row style={{ display: 'flex', padding: '20px 0' }}>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<PlusOutlined />}
             onClick={() => {
               this.setState({
@@ -388,7 +388,7 @@ class UserManager extends Component {
             <FormattedMessage id="app.taskStatus.New" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -401,7 +401,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.edit" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -411,7 +411,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
@@ -419,7 +419,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.action.delete" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({ sectionDistriVisble: true });
@@ -429,7 +429,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.sectionAssign" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             onClick={() => {
               this.setState({ rolesDistriVisible: true });
             }}

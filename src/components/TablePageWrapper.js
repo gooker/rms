@@ -34,7 +34,7 @@ class TablePageWrapper extends React.Component {
     const [tool, table, ...restChildren] = this.props.children;
     return (
       <div className={commonStyles.tablePageWrapper} style={{ height: pageHeight }}>
-        <div style={{ marginBottom: 20 }}>{tool}</div>
+        <div style={{ marginBottom: 10 }}>{tool}</div>
         <div className={commonStyles.tableWrapper}>{table}</div>
         <div>{restChildren}</div>
       </div>

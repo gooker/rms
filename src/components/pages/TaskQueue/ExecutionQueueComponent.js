@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Row, Button, Input, Modal } from 'antd';
+import { Table, Row, Button, Divider, Modal } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
+import {
+  fetchExecutingTaskList,
+  fetchToteExecutingTaskList,
+  deleteExecutionQTasks,
+} from '@/services/api';
 import { dealResponse } from '@/utils/utils';
-import LabelComponent from '@/components/LabelComponent';
+import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 
@@ -14,8 +18,6 @@ const { confirm } = Modal;
 @connect()
 class ExecutionQueueComponent extends Component {
   state = {
-    filterValue: '',
-
     dataSource: [],
     selectedRow: [],
     selectedRowKeys: [],
@@ -34,11 +36,19 @@ class ExecutionQueueComponent extends Component {
     const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
-    const response = await fetchExecutingTaskList(agvType, sectionId);
+    let response;
+    if (agvType === 'Tote') {
+      // TODO: 暂时兼容 之后要删除
+      response = await fetchExecutingTaskList(agvType, sectionId);
+    } else {
+      response = await fetchExecutingTaskList(agvType, sectionId);
+    }
+
     if (!dealResponse(response)) {
       const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
-      this.setState({ dataSource, loading: false });
+      this.setState({ dataSource });
     }
+    this.setState({ loading: false });
   };
 
   deleteQueueTasks = () => {
@@ -87,8 +97,8 @@ class ExecutionQueueComponent extends Component {
     });
   };
 
-  filterTableList = () => {
-    const { dataSource, filterValue } = this.state;
+  filterTableList = (filterValue) => {
+    const { dataSource } = this.state;
     const { filter } = this.props;
     if (filterValue && filter && typeof filter === 'function') {
       return filter(dataSource, filterValue);
@@ -97,36 +107,26 @@ class ExecutionQueueComponent extends Component {
   };
 
   render() {
-    const { loading, deleteLoading, selectedRowKeys, filterValue } = this.state;
+    const { loading, deleteLoading, selectedRowKeys } = this.state;
     const { getColumn } = this.props;
     return (
       <TablePageWrapper>
-        <Row>
-          <Row className={commonStyles.tableToolLeft}>
-            <Button
-              loading={deleteLoading}
-              icon={<DeleteOutlined />}
-              onClick={this.deleteQueueTasks}
-              disabled={selectedRowKeys.length === 0}
-            >
-              <FormattedMessage id="app.button.delete" />
-            </Button>
-            <LabelComponent label={formatMessage({ id: 'app.executionQ.retrieval' })} width={250}>
-              <Input
-                value={filterValue}
-                onChange={(event) => {
-                  this.setState({ filterValue: event.target.value });
-                }}
-              />
-            </LabelComponent>
-          </Row>
-          <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" onClick={this.getData}>
-              <RedoOutlined />
-              <FormattedMessage id="app.button.refresh" />
-            </Button>
-          </Row>
-        </Row>
+        <div>
+          <ExecutionQueueSearch search={this.filterTableList} />
+          <Divider style={{margin:'0 0 15px 0'}}/>
+          <Button
+            loading={deleteLoading}
+            icon={<DeleteOutlined />}
+            onClick={this.deleteQueueTasks}
+            disabled={selectedRowKeys.length === 0}
+          >
+            <FormattedMessage id="app.button.delete" />
+          </Button>
+          <Button  onClick={this.getData} className={commonStyles.ml10}>
+            <RedoOutlined />
+            <FormattedMessage id="app.button.refresh" />
+          </Button>
+        </div>
         <Table
           loading={loading}
           columns={getColumn(this.checkTaskDetail)}

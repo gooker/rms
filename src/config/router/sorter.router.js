@@ -14,7 +14,7 @@ export default [
         path: '/sorter/center/taskQueue',
         name: 'taskQueue',
         component: '/Sorter/TaskQueue',
-        // authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
       },
       {
         path: '/sorter/center/taskManger',
@@ -27,7 +27,7 @@ export default [
   {
     path: '/sorter/agv',
     name: 'agv',
-    icon: 'car',
+    icon: 'agv',
     routes: [
       {
         path: '/sorter/agv/agvList',

@@ -155,7 +155,7 @@ export default class index extends Component {
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<PlusOutlined />}
             onClick={() => {
               this.setState({
@@ -166,7 +166,7 @@ export default class index extends Component {
             <FormattedMessage id="app.taskStatus.New" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -180,7 +180,7 @@ export default class index extends Component {
           </Button>
 
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteEnvironment}
@@ -188,7 +188,7 @@ export default class index extends Component {
             <FormattedMessage id="app.button.delete" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             disabled={selectRowKey.length !== 1}
             icon={<ExportOutlined />}
             onClick={() => {
@@ -198,7 +198,7 @@ export default class index extends Component {
             <FormattedMessage id="app.button.copy" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<CopyOutlined />}
             onClick={() => {
               this.setState({ pasteVisble: true });

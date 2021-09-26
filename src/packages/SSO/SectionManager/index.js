@@ -110,7 +110,7 @@ export default class SectionManager extends Component {
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => {
@@ -122,7 +122,7 @@ export default class SectionManager extends Component {
             <FormattedMessage id="app.button.add" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -136,7 +136,7 @@ export default class SectionManager extends Component {
           </Button>
 
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}

@@ -8,25 +8,25 @@ export default [
           {
             path: '/tote/center/executionQueue',
             name: 'executionQueue',
-            component: './ControlCenter/ExecutionQueue',
+            component: '/Tote/ExecutionQueue',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/tote/center/taskQueue',
             name: 'taskQueue',
-            component: './ControlCenter/TaskQueue',
+            component: '/Tote/TaskQueue',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/tote/center/taskManger',
             name: 'taskManger',
-            component: './ControlCenter/CenterOs',
+            component: '/Tote/CenterOs',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/tote/center/totePoolTask',
             name: 'totePoolTask',
-            component: './ControlCenter/TotePoolTask',
+            component: '/Tote/TotePoolTask',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],
@@ -40,13 +40,13 @@ export default [
           {
             path: '/tote/agv/agvList',
             name: 'agvList',
-            component: './agvManger/agvList',
+            component: './agvManger/AgvList',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
             path: '/tote/agv/agvRealTime',
             name: 'agvRealTime',
-            component: './ControlCenter/agvRealTime',
+            component: './ControlCenter/AgvRealTime',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {
@@ -65,7 +65,7 @@ export default [
           {
             path: '/tote/agv/logDownLoad',
             name: 'logDownLoad',
-            component: './agvManger/logDownLoad',
+            component: './agvManger/LogDownLoad',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
         ],

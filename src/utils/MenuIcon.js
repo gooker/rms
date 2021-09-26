@@ -25,7 +25,7 @@ import {
 import IconFont from '@/utils/ExtraIcon';
 
 export default {
-  'icon-task': <IconFont type="icon-task" />,
+  'icon-task': <IconFont type="icon-renwujincheng" />,
   'line-chart': <LineChartOutlined />,
   'clock-circle': <ClockCircleOutlined />,
   'authority':<IconFont type="icon-fuwushouquan" />,
@@ -39,7 +39,7 @@ export default {
   environment: <EnvironmentOutlined />,
   lock: <LockOutlined />,
   setting: <SettingOutlined />,
-  car: <CarOutlined />,
+  agv: <CarOutlined />,
   warning: <WarningOutlined />,
   user: <UserOutlined />,
   file: <FileOutlined />,
