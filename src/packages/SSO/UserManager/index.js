@@ -377,6 +377,7 @@ class UserManager extends Component {
         </Row>
         <Row style={{ display: 'flex', padding: '20px 0' }}>
           <Button
+            type="primary"
             className={commonStyles.mr10}
             icon={<PlusOutlined />}
             onClick={() => {
@@ -385,7 +386,7 @@ class UserManager extends Component {
               });
             }}
           >
-            <FormattedMessage id="app.taskStatus.New" />
+            <FormattedMessage id="app.button.add" />
           </Button>
           <Button
             className={commonStyles.mr10}
@@ -411,6 +412,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
           <Button
+            danger
             className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
@@ -439,7 +441,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getUserDataList}>
+            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getUserDataList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </div>

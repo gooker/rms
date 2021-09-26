@@ -155,6 +155,7 @@ export default class index extends Component {
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
+            type="primary"
             className={commonStyles.mr10}
             icon={<PlusOutlined />}
             onClick={() => {
@@ -163,7 +164,7 @@ export default class index extends Component {
               });
             }}
           >
-            <FormattedMessage id="app.taskStatus.New" />
+            <FormattedMessage id="app.button.add" />
           </Button>
           <Button
             className={commonStyles.mr10}
@@ -207,12 +208,13 @@ export default class index extends Component {
             <FormattedMessage id="app.button.past" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getData}>
+            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getData}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </div>
         </Row>
-        {/* <TablewidthPages
+
+        <TablewidthPages
           columns={this.columns}
           rowKey="id"
           dataSource={dataList}
@@ -226,32 +228,7 @@ export default class index extends Component {
           expandedRowRender={(row) => {
             return this.renderExpandedRowRender(row);
           }}
-        /> */}
-        <div className={commonStyles.divContent}>
-          <Table
-            bordered
-            columns={this.columns}
-            rowKey="id"
-            dataSource={dataList}
-            scroll={{ x: 'max-content' }}
-            loading={loading}
-            rowSelection={{
-              selectedRowKeys: selectRowKey,
-              onChange: (selectRowKey, selectRow) => {
-                this.setState({ selectRowKey, selectRow });
-              },
-            }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 10,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-            }}
-            expandedRowRender={(row) => {
-              return this.renderExpandedRowRender(row);
-            }}
-          />
-        </div>
+        />
 
         {/* 新增 */}
         <Modal

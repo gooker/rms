@@ -136,6 +136,7 @@ export default class SectionManager extends Component {
           </Button>
 
           <Button
+            danger
             className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
@@ -161,7 +162,8 @@ export default class SectionManager extends Component {
             pagination={{
               responsive: true,
               defaultPageSize: 10,
-              showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+              showTotal: (total) =>
+                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
           />
         </div>

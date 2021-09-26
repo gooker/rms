@@ -184,6 +184,7 @@ export default class index extends Component {
         <Row className={commonStyles.mb20}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button
+              type="primary"
               icon={<PlusOutlined />}
               onClick={() => {
                 this.setState({ addRoleVisble: true });
@@ -201,6 +202,7 @@ export default class index extends Component {
               <FormattedMessage id="sso.user.edit" />
             </Button>
             <Button
+              danger
               disabled={selectedRowKeys.length === 0}
               icon={<DeleteOutlined />}
               onClick={this.deleteRole}
@@ -233,7 +235,7 @@ export default class index extends Component {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getRoleList}>
+            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getRoleList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </Col>
@@ -256,7 +258,8 @@ export default class index extends Component {
             pagination={{
               responsive: true,
               defaultPageSize: 10,
-              showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+              showTotal: (total) =>
+                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
           />
         </div>
