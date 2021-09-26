@@ -9,7 +9,6 @@ export default {
   'menu.agv': 'AGV管理',
   'menu.agv.agvList': 'AGV列表',
   'menu.agv.agvRealTime': '小车监控',
-  'menu.agv.firmwareUpgrade': '批量升级',
   'menu.agv.logDownLoad': '日志下载',
 
   'menu.faultManger': '故障管理',

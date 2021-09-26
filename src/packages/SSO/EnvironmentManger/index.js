@@ -153,7 +153,7 @@ export default class index extends Component {
     const updateRow = updateFlag ? selectRow : null;
     return (
       <div className={commonStyles.globalPageStyle}>
-        <Row style={{ display: 'flex', padding: '20px 0' }}>
+        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
             className={commonStyles.mr20}
             icon={<PlusOutlined />}

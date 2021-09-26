@@ -25,7 +25,7 @@ export default {
   // 等待队列
   'app.taskQueue.appointedAgv': '必选小车',
   'app.taskQueue.appointedTarget': '指定目标点',
-  'app.taskQueue.availableCar': '可用小车',
+  'app.taskQueue.availableAgv': '可用小车',
   'app.taskQueue.createTime': '加入时间',
   'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
   'app.taskQueue.notAvailable': '暂无',
