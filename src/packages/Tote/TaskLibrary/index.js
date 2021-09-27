@@ -22,7 +22,7 @@ export default class TaskLibrary extends React.PureComponent {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkDetail(text, AGVType.Sorter);
+                  checkDetail(text, AGVType.Tote);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -103,11 +103,11 @@ export default class TaskLibrary extends React.PureComponent {
   };
 
   render() {
-    const cancelFlag = hasPermisson('/sorter/center/taskManger/cancel') ? true : false;
+    const cancelFlag = hasPermisson('/tote/center/taskManger/cancel') ? true : false;
     return (
       <TaskLibraryComponent
         getColumn={this.getColumn} // 提供表格列数据
-        agvType={AGVType.Sorter} // 标记当前页面的车型
+        agvType={AGVType.Tote} // 标记当前页面的车型
         cancel={cancelFlag} // 标记该页面是否允许执行取消操作
       />
     );

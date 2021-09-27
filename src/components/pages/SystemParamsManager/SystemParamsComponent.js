@@ -20,7 +20,7 @@ export default class SystemParamsManager extends Component {
     this.setState({ spinning: true });
 
     const formData = await fetchSystemParamFormData(agvType, {
-      language: window.localStorage.getItem('language'),
+      language: window.localStorage.getItem('currentLocale'),
     });
     if (!dealResponse(formData)) {
       this.setState({ formJson: formData });

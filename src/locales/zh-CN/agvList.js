@@ -62,6 +62,7 @@ export default {
   'app.activity.batteryTemperatureTwo': '电池温度2',
   'app.agv.lastFullChargeTime': '上次充满时间',
   'app.agv.currentCoefficient': '当前电池温度',
+  'app.agv.getListFail':'获取小车失败',
 
   // 小车状态
   'app.activity.Error': '异常',

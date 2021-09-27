@@ -230,9 +230,10 @@ export async function getIdleHoursBySectionId(agvType) {
 }
 
 //// 获取参数模版
-export async function fetchSystemParamFormData(agvType) {
+export async function fetchSystemParamFormData(agvType,params) {
   return request(`/${NameSpace[agvType]}/formTemplate/getFormTemplate`, {
     method: 'GET',
+    data:params,
   });
 }
 
@@ -243,3 +244,37 @@ export async function updateSystemParams(agvType, params) {
     data: params,
   });
 }
+
+
+/******料箱池任务 start*********/ 
+// 数据库中所有料箱池任务
+export async function dbPoolTasks(agvType,params) {
+  return request(`/${NameSpace[agvType]}/pool/queryDbTotePoolTaskInfo`, {
+    method: 'GET',
+    data: params,
+  });
+}
+//内存中的料箱池任务信息
+export async function memPoolTasks(agvType,params) {
+  return request(`/${NameSpace[agvType]}/pool/queryMemoryTotePoolTaskInfo`, {
+    method: 'GET',
+    data: params,
+  });
+}
+//红外料箱任务池任务查询
+export async function gettotePoolTasks(agvType,params) {
+  return request(`/${NameSpace[agvType]}/pool/queryTotePoolTaskInfo`, {
+    method: 'GET',
+    data: params,
+  });
+}
+//任务取消
+export async function cancelTotePoolTask(agvType,params) {
+  return request(`/${NameSpace[agvType]}/pool/cancelTotePoolTasks`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+/******料箱池任务 end*********/ 
+

@@ -51,8 +51,9 @@ class TaskLibraryComponent extends Component {
     const response = await fetchAgvTaskList(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
-      this.setState({ loading: false, dataSource: list, page });
+      this.setState({ dataSource: list, page });
     }
+    this.setState({ loading: false });
   };
 
   handleTableChange = (pagination) => {

@@ -20,7 +20,7 @@ export default [
           {
             path: '/tote/center/taskManger',
             name: 'taskManger',
-            component: '/Tote/CenterOs',
+            component: '/Tote/TaskLibrary',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {

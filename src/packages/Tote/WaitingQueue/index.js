@@ -30,7 +30,7 @@ export default class TaskQueue extends React.PureComponent {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkDetail(text, AGVType.Sorter);
+                  checkDetail(text, AGVType.Tote);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
