@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { zIndex, CostColor, CellWidth } from '@/consts';
 
 export default class Bezier extends PIXI.Container {
   constructor(props) {
@@ -16,7 +16,7 @@ export default class Bezier extends PIXI.Container {
     this.distance = props.distance;
     this.$interactive = props.interactive;
     this.isStandard = props.isStandard;
-    this.zIndex = this.isStandard ? Config.zIndex.line : 100;
+    this.zIndex = this.isStandard ? zIndex.line : 100;
     this.data = {
       selected: false,
       shownData: {
@@ -94,7 +94,7 @@ export default class Bezier extends PIXI.Container {
 
   createArrow = () => {
     const lineWidth = 15;
-    const color = Config.CostColor[this.cost];
+    const color = CostColor[this.cost];
     const {
       firtsCtrlPoints,
       secondCtrlPoints,
@@ -180,7 +180,7 @@ export default class Bezier extends PIXI.Container {
 
   plusAction(texture) {
     if (texture) {
-      const distanceInt = parseInt(this.distance, 10) - Config.CellWidth;
+      const distanceInt = parseInt(this.distance, 10) - CellWidth;
       const actionSprite = new PIXI.Sprite(texture);
       actionSprite.x = 180;
       actionSprite.y = -distanceInt * 0.3;

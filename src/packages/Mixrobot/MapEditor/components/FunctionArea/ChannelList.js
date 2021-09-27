@@ -4,7 +4,7 @@ import { Input, Table, Row, Form, Divider, Col, Button, Tag } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import MapContext from '../MapContext';
 
 const FormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };

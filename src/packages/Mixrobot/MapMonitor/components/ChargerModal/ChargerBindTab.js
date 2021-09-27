@@ -6,7 +6,7 @@ import {
   fetchBindPhysicCharger,
   fetchBatchUnbindHardware,
 } from '@/services/map';
-import MonitorMapContext from '../MonitorMapContext';
+import MonitorMapContext from '@/packages/Mixrobot/MapMonitor/MonitorMapContext';
 import { dealResponse } from '@/utils/utils';
 import styles from './chargerModal.less';
 

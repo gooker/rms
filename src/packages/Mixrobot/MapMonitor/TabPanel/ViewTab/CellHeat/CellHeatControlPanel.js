@@ -3,7 +3,7 @@ import { Button, Form, Collapse, DatePicker, Select, Row, Col, message, Switch }
 import intl from 'react-intl-universal';
 import FormattedMessage from '@/components/FormattedMessage';
 import find from 'lodash/find';
-import Config from '@/config';
+import { CellHeatType } from '@/config/config';
 import styles from './CellHeatControlPanel.less';
 
 const layout = {
@@ -33,7 +33,7 @@ class CellHeatControlPanel extends Component {
         message.error(intl.formatMessage({ id: 'app.mapView.require.heatView.viewType' }));
         return;
       }
-      if (type === Config.CellHeatType.cost_type) {
+      if (type === CellHeatType.cost_type) {
         fresh({ type, isTransparent, startTime: '', endTime: '' });
       } else {
         if (!startTime || !endTime) {
@@ -61,7 +61,7 @@ class CellHeatControlPanel extends Component {
     const OptionData = [
       {
         label: intl.formatMessage({ id: 'app.mapView.label.heatView.costHeat' }),
-        value: Config.CellHeatType.cost_type,
+        value: CellHeatType.cost_type,
       },
     ];
     return (

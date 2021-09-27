@@ -16,7 +16,7 @@ import {
   agvPowerStateColor,
   LineChartsAxisColor,
 } from '../../Exhibition/option';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import Style from './Dashboard.less';
 
 const PieInnerFontSize = 14;

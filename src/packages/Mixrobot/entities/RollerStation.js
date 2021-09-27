@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 export default class RollerStation extends PIXI.Sprite {
   constructor(texture, x, y) {

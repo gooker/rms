@@ -1,13 +1,10 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { GlobalAlpha, ToteAGVSize, zIndex } from '@/consts';
+import { AGVType } from '@/config/config';
 import BitText from './BitText';
-import {
-  switchAGVState,
-  switchAGVBatteryState,
-  getTextureFromResources,
-  isStrictNull,
-} from '@/utils/utils';
+import { isStrictNull } from '@/utils/utils';
+import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 
 export default class ToteAGV extends PIXI.Container {
   constructor(props) {
@@ -15,13 +12,13 @@ export default class ToteAGV extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.type = Config.AGVType.Tote;
-    this.width = Config.ToteAGVSize.width;
-    this.height = Config.ToteAGVSize.height;
+    this.type = AGVType.Tote;
+    this.width = ToteAGVSize.width;
+    this.height = ToteAGVSize.height;
     this.currentCellId = props.cellId;
     this.angle = props.angle;
-    this.alpha = Config.GlobalAlpha;
-    this.zIndex = Config.zIndex.agv;
+    this.alpha = GlobalAlpha;
+    this.zIndex = zIndex.agv;
     this.state = props.state;
     this.battery = props.battery;
     this.mainTain = props.mainTain;
@@ -66,13 +63,13 @@ export default class ToteAGV extends PIXI.Container {
     const toteAGVTexture = getTextureFromResources(toteState);
     this.agv = new PIXI.Sprite(toteAGVTexture);
     this.agv.anchor.set(0.5);
-    this.agv.width = Config.ToteAGVSize.width;
-    this.agv.height = Config.ToteAGVSize.height;
+    this.agv.width = ToteAGVSize.width;
+    this.agv.height = ToteAGVSize.height;
     this.addChild(this.agv);
   }
 
   addIdText() {
-    const y = -Config.ToteAGVSize.height / 4 - 30;
+    const y = -ToteAGVSize.height / 4 - 30;
     this.idText = new BitText(this.id, -60, y, 0xffffff, 200);
     this.idText.anchor.set(0.5);
     this.idText.angle = -this.angle;
@@ -81,8 +78,8 @@ export default class ToteAGV extends PIXI.Container {
 
   // 料箱车状态
   addAGVStateIcon() {
-    const x = Config.ToteAGVSize.width / 2;
-    const y = -Config.ToteAGVSize.height / 2;
+    const x = ToteAGVSize.width / 2;
+    const y = -ToteAGVSize.height / 2;
     this.stateIcon = new PIXI.Sprite();
     this.stateIcon.anchor.set(1);
     this.stateIcon.setTransform(x, y, 0.15, 0.15, 0, 0, 0, 0);
@@ -127,7 +124,7 @@ export default class ToteAGV extends PIXI.Container {
   addBatteryIcon() {
     if (this.battery === undefined || this.battery === null) return;
     const x = 0;
-    const y = -Config.ToteAGVSize.height / 2 - 30;
+    const y = -ToteAGVSize.height / 2 - 30;
     const batteryState = switchAGVBatteryState(this.battery);
     const texture = getTextureFromResources(batteryState);
     this.batteryIcon = new PIXI.Sprite(texture);
@@ -187,7 +184,7 @@ export default class ToteAGV extends PIXI.Container {
       const scaleY = this.shelfSize / shelfTexture.height;
       shelf.setTransform(
         beginX + (this.shelfSize + offset) * index,
-        Config.ToteAGVSize.height / 2 + 220,
+        ToteAGVSize.height / 2 + 220,
         scaleX,
         scaleY,
       );

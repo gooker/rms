@@ -3,7 +3,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvErrorRecord } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import styles from './ErrorTab.less';
 
 const { AgvApiNameSpace } = Config;

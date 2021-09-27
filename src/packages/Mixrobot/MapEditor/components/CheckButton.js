@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 
 import FormattedMessage from '@/components/FormattedMessage';
 

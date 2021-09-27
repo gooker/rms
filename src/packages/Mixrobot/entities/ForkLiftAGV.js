@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { AGVType } from '@/config/config';
+import { ForkLiftAGVSize, zIndex } from '@/consts';
 import BitText from './BitText';
 import ForkFreight from './ForkFreight';
 import {
@@ -17,17 +18,17 @@ export default class ForkLiftAGV extends PIXI.Container {
     this.x = props.x;
     this.y = props.y;
     this.alpha = 0.8;
-    this.type = Config.AGVType.ForkLifting;
-    this.width = Config.ForkLiftAGVSize.width;
-    this.height = Config.ForkLiftAGVSize.height;
+    this.type = AGVType.ForkLifting;
+    this.width = ForkLiftAGVSize.width;
+    this.height = ForkLiftAGVSize.height;
     this.currentCellId = props.currentCellId;
     this.angle = props.angle;
     this.state = props.state;
     this.battery = props.battery;
     this.mainTain = props.mainTain;
-    this.zIndex = Config.zIndex.agv;
+    this.zIndex = zIndex.agv;
     this.inCharging = props.inCharging;
-    this.anchorPercent = Config.ForkLiftAGVSize.radius / Config.ForkLiftAGVSize.height;
+    this.anchorPercent = ForkLiftAGVSize.radius / ForkLiftAGVSize.height;
 
     this.data = {};
     this.employer = null; // 标记当前正在为那个工作站服务
@@ -60,8 +61,8 @@ export default class ForkLiftAGV extends PIXI.Container {
       return;
     }
     const agvTexture = getTextureFromResources(forliftState);
-    const scaleX = Config.ForkLiftAGVSize.width / agvTexture.width;
-    const scaleY = Config.ForkLiftAGVSize.height / agvTexture.height;
+    const scaleX = ForkLiftAGVSize.width / agvTexture.width;
+    const scaleY = ForkLiftAGVSize.height / agvTexture.height;
     this.agv = new PIXI.Sprite(agvTexture);
     this.agv.anchor.set(0.5, this.anchorPercent);
     this.agv.setTransform(0, 0, scaleX, scaleY);

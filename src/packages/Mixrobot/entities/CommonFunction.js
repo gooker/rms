@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import BitText from './BitText';
-import { getTextureFromResources } from '@/utils/utils';
+import { getTextureFromResources } from '@/utils/mapUtils';
 
 const { CommonFunctionSize, zIndex } = Config;
 export default class CommonFunction extends PIXI.Container {

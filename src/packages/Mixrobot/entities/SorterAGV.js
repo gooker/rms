@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import BitText from './BitText';
-import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/utils';
+import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 
 const BoxWidth = 230;
 const BoxHeight = 200;

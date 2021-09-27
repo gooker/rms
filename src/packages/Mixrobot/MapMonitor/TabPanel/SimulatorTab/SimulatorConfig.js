@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import intl from 'react-intl-universal';
 import { Input, Button, Col, Drawer, Form, InputNumber, Row } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 const layout = {
   labelCol: { span: 12 },

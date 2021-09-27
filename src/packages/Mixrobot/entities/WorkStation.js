@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import Config from '@/config';
-import { getTextureFromResources } from '@/utils/utils';
+import * as Config from '@/config/config';
+import { getTextureFromResources } from '@/utils/mapUtils';
 
 const { WorkStationSize, CommonFunctionSize } = Config;
 export default class WorkStation extends PIXI.Container {

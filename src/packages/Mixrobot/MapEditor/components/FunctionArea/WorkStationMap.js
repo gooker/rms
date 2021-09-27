@@ -4,12 +4,12 @@ import { Input, Form, Table, Row, Divider, Col, Button, InputNumber } from 'antd
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import InputComponent from '@/pages/MapTool/components/MapForm/MapInput';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import SuperMultiSelect from '../../../components/SuperMultiSelect';
-import AngleSelector from '../../../components/AngleSelector';
-import CardRadio from '../../../components/CardRadio';
+import SuperMultiSelect from '@/packages/Mixrobot/components/SuperMultiSelect';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import CardRadio from '@/packages/Mixrobot/components/CardRadio';
 import MapContext from '../MapContext';
-import MenuIcon from '@/MenuIcon';
-import Config from '@/config';
+import MenuIcon from '@/utils/MenuIcon';
+import * as Config from '@/config/config';
 import { isNull, isStrictNull } from '@/utils/utils';
 
 const { WorkStationSize } = Config;

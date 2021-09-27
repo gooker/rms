@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getTextureFromResources } from '@/utils/utils';
-import Config from '@/config';
+import { getTextureFromResources } from '@/utils/mapUtils';
+import { GlobalAlpha, zIndex } from '@/consts';
 
 export default class Intersection extends PIXI.Container {
   constructor(props) {
@@ -10,8 +10,8 @@ export default class Intersection extends PIXI.Container {
     this.cellId = props.cellId;
     this.directions = props.directions;
     this.isTrafficCell = props.isTrafficCell;
-    this.alpha = Config.GlobalAlpha;
-    this.zIndex = Config.zIndex.temporaryLock;
+    this.alpha = GlobalAlpha;
+    this.zIndex = zIndex.temporaryLock;
     this.create();
     this.addDireaction();
   }

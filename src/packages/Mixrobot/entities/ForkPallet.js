@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { getTextureFromResources } from '@/utils/utils';
-import Config from '@/config';
+import { getTextureFromResources } from '@/utils/mapUtils';
+import { GlobalAlpha, zIndex, LatentPodSize } from '@/consts';
 
 export default class ForkPallet extends PIXI.Container {
   constructor(props) {
@@ -13,13 +13,13 @@ export default class ForkPallet extends PIXI.Container {
     this.$height = props.height;
     this.$width = props.width;
     this.angle = props.angle || 0;
-    this.zIndex = Config.zIndex.pod;
+    this.zIndex = zIndex.pod;
     this.create();
     this.addPodCode();
   }
 
   addPodCode() {
-    this.idText = new BitText(this.code, 0, Config.LatentPodSize.height / 3, 0xffffff, 100);
+    this.idText = new BitText(this.code, 0, LatentPodSize.height / 3, 0xffffff, 100);
     this.idText.angle = -this.angle;
     this.idText.anchor.set(0.5);
     this.addChild(this.idText);
@@ -32,7 +32,7 @@ export default class ForkPallet extends PIXI.Container {
     this.pod.y = 0;
     this.pod.height = this.$height;
     this.pod.width = this.$width;
-    this.pod.alpha = Config.GlobalAlpha;
+    this.pod.alpha = GlobalAlpha;
     this.pod.anchor.set(0.5);
     this.addChild(this.pod);
   }

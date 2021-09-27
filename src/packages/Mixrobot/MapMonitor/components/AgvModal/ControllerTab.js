@@ -4,7 +4,7 @@ import { FormattedMessage, formatMessage } from '@/utils/Lang';
 import { fetchSendAgvHexCommand, fetchAgvEmptyRun } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
 import styles from './ControllerTab.less';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 const { AgvApiNameSpace } = Config;
 const { Item: FormItem } = Form;

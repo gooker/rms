@@ -1,11 +1,9 @@
-// 只用于本地开发调试使用
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from '@/utils/dva';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
-// import history from '@/history';
 
 const { SubMenu } = Menu;
 

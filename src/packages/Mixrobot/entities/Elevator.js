@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
-import { getTextureFromResources } from '@/utils/utils';
+import { GlobalAlpha, ElevatorSize } from '@/consts';
+import { getTextureFromResources } from '@/utils/mapUtils';
 
 export default class Elevator extends PIXI.Container {
   constructor(props) {
@@ -8,7 +8,7 @@ export default class Elevator extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.alpha = Config.GlobalAlpha;
+    this.alpha = GlobalAlpha;
     this.create();
     this.addChild(this.elevator);
   }
@@ -16,8 +16,8 @@ export default class Elevator extends PIXI.Container {
   create() {
     const elevatorTexture = getTextureFromResources('elevator');
     const elevator = new PIXI.Sprite(elevatorTexture);
-    const scaleX = Config.ElevatorSize.width / elevatorTexture.width;
-    const scaleY = Config.ElevatorSize.height / elevatorTexture.height;
+    const scaleX = ElevatorSize.width / elevatorTexture.width;
+    const scaleY = ElevatorSize.height / elevatorTexture.height;
     elevator.anchor.set(0.5);
     elevator.setTransform(0, 0, scaleX, scaleY);
     this.elevator = elevator;

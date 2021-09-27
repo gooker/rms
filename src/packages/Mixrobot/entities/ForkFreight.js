@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getTextureFromResources } from '@/utils/utils';
-import Config from '@/config';
+import { getTextureFromResources } from '@/utils/mapUtils';
+import { GlobalAlpha } from '@/consts';
 
 export default class ForkFreight extends PIXI.Container {
   constructor(props) {
@@ -19,7 +19,7 @@ export default class ForkFreight extends PIXI.Container {
     this.pod.y = 0;
     this.pod.height = this.$height;
     this.pod.width = this.$width;
-    this.pod.alpha = Config.GlobalAlpha;
+    this.pod.alpha = GlobalAlpha;
     this.pod.anchor.set(0.5);
     this.addChild(this.pod);
   }

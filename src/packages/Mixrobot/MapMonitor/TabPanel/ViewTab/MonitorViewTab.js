@@ -29,7 +29,7 @@ import CheckBoxFun from './CheckBoxFun';
 import MonitorMapContext from './MonitorMapContext';
 import CellHeatControlPanel from './CellHeatControlPanel';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import config from '@/config';
+import config from '@/config/config';
 import styles from './MapMonitorView.less';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

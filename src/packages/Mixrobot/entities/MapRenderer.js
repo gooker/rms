@@ -1,6 +1,6 @@
 import sortBy from 'lodash/sortBy';
 import uniq from 'lodash/uniq';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 export default class MapRenderer {
   constructor(viewport, callRenderer, renderer) {

@@ -7,7 +7,7 @@ import MapMonitorView from './MapMonitorView';
 import { hasPermission } from '@/utils/Permission';
 import Simulator from './Simulator';
 import Dashboard from './Dashboard';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import { GlobalDrawerWidth } from '@/Const';
 
 const { TabPane } = Tabs;

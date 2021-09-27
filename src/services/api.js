@@ -57,6 +57,13 @@ export async function fetchUpdateTaskPriority(agvType, params) {
 }
 
 // ************************************** 小车相关  ************************************** //
+// 获取所有车类型
+export async function fetchAllAgvType() {
+  return request(`/${NameSpace.Mixrobot}/map/getAllRobotType`, {
+    method: 'GET',
+  });
+}
+
 // 获取小车列表
 export async function fetchAgvList(agvType, sectionId) {
   return request(`/${NameSpace[agvType]}/agv/${sectionId}`, {

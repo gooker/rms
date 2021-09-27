@@ -26,6 +26,7 @@ import Dump from './Dump';
 import DumpBasket from './DumpBasket';
 import SorterAGV from './SorterAGV';
 import RollerStation from './RollerStation';
+import LogicArea from './LogicArea';
 
 export {
   Text,
@@ -56,4 +57,5 @@ export {
   CommonFunction,
   Intersection,
   RollerStation,
+  LogicArea,
 };

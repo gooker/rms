@@ -1,15 +1,15 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { GlobalAlpha, zIndex, SpotSize } from '@/consts';
 
 export default class TemporaryLock extends PIXI.Sprite {
   constructor(texture, x, y) {
     super(texture);
     this.x = x;
-    this.y = y + Config.CellHeight / 2;
-    this.height = 3 * Config.CellHeight;
-    this.width = 3 * Config.CellWidth;
-    this.alpha = Config.GlobalAlpha;
-    this.zIndex = Config.zIndex.temporaryLock;
+    this.y = y + SpotSize.height / 2;
+    this.height = 3 * SpotSize.height;
+    this.width = 3 * SpotSize.width;
+    this.alpha = GlobalAlpha;
+    this.zIndex = zIndex.temporaryLock;
     this.anchor.set(0.5, 1);
   }
 }

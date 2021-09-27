@@ -4,12 +4,12 @@ import { Input, Table, Form, Row, Select, Divider, Col, Button, InputNumber } fr
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import CardRadio from '../../../components/CardRadio';
-import AngleSelector from '../../../components/AngleSelector';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
 import InputComponent from '../../../components/MapForm/MapInput';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import MapContext from '../MapContext';
 import { isNull, isStrictNull } from '@/utils/utils';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 const { Option } = Select;
 const { CommonFunctionSize } = Config;

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { getTextureFromResources } from '@/utils/utils';
-import Config from '@/config';
+import { getTextureFromResources } from '@/utils/mapUtils';
+import { zIndex } from '@/consts';
 
 export default class LatentPod extends PIXI.Container {
   constructor(props) {
@@ -13,7 +13,7 @@ export default class LatentPod extends PIXI.Container {
     this.$width = props.width;
     this.$height = props.height;
     this.angle = props.angle || 0;
-    this.zIndex = Config.zIndex.pod;
+    this.zIndex = zIndex.pod;
     this.create();
     this.addPodId();
   }
@@ -36,7 +36,7 @@ export default class LatentPod extends PIXI.Container {
     this.pod.y = 0;
     this.pod.height = this.$height;
     this.pod.width = this.$width;
-    this.pod.alpha = Config.GlobalAlpha;
+    this.pod.alpha = GlobalAlpha;
     this.pod.anchor.set(0.5);
     this.addChild(this.pod);
   }

@@ -6,7 +6,7 @@ import { formatTunnelStateDataSource } from '@/utils/mapUtils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { hasPermission } from '@/utils/Permission';
 import { dealResponse, isNull } from '@/utils/utils';
-import { UseMonitorModalSize } from '@/utils/MushinyHooks';
+import { UseMonitorModalSize } from '@/customHooks';
 import AgvTag from './AgvTag';
 import styles from './index.less';
 import commonStyle from '@/common/common.less';

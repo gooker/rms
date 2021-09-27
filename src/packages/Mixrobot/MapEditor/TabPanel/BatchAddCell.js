@@ -5,7 +5,7 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import { GlobalDrawerWidth } from '@/Const';
 import DirButton from './DirButton';
-import MapContext from '../MapEdit/component/MapContext';
+import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const tailLayout = { wrapperCol: { offset: 6, span: 16 } };

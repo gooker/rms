@@ -33,13 +33,12 @@ import {
 } from '@/services/map';
 import { fetchAgvList } from '@/services/car';
 import { message } from 'antd';
-import findIndex from 'lodash/findIndex';
-import isPlainObject from 'lodash/isPlainObject';
+import { findIndex, isPlainObject } from 'lodash';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import { formatMessage } from '@/utils/Lang';
-import { dealResponse, isAppInUse, isNull } from '@/utils/utils';
-import Config from '@/config';
-import { hasPermission } from '@/utils/Permission';
+import { dealResponse, isNull } from '@/utils/utils';
+import { hasPermission, isAppInUse } from '@/utils/Permission';
+import * as Config from '@/config/config';
 
 const { BaseContext } = Config;
 

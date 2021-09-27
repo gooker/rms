@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
-import orderBy from 'lodash/orderBy';
+import { GlobalAlpha, ToteAGVSize, ForkLiftAGVSize } from '@/consts';
+import { orderBy } from 'lodash';
 import BitText from './BitText';
 
 export default class GeoLock extends PIXI.Sprite {
@@ -16,7 +16,7 @@ export default class GeoLock extends PIXI.Sprite {
     this.radius = props.radius;
     this.boxType = props.boxType;
     this.boxAction = props.boxAction;
-    this.alpha = Config.GlobalAlpha;
+    this.alpha = GlobalAlpha;
     this.anchor.set(0.5);
 
     this.drawShape();
@@ -77,7 +77,6 @@ export default class GeoLock extends PIXI.Sprite {
   }
 
   getNestTextureBySize(width, height) {
-    const { ToteAGVSize, ForkLiftAGVSize } = Config;
     const latent = Math.abs(1050 - width) + Math.abs(1050 - height);
     const tote = Math.abs(ToteAGVSize.width - width) + Math.abs(ToteAGVSize.height - height);
     const fork =

@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 const { AgvApiNameSpace } = Config;
 

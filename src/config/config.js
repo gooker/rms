@@ -11,6 +11,17 @@ export const AGVType = {
   Sorter: 'Sorter',
 };
 
+// 小车状态
+export const AGVState = {
+  error: 'Error', // error
+  standBy: 'StandBy', // stand_by
+  charging: 'Charging', // charging
+  working: 'Working', // on_task
+  offline: 'Offline', // offline
+  connecting: 'Connecting', // offline
+  waiting: 'Waiting', // offline
+};
+
 // 前端模块编码
 export const AppCode = {
   Mixrobot: 'Mixrobot',

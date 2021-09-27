@@ -1,7 +1,7 @@
-import React, { memo, useEffect, useState, useCallback } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { UseMonitorModalSize } from '@/utils/MushinyHooks';
+import { UseMonitorModalSize } from '@/customHooks';
 import { fetchChargerState } from '@/services/map';
 import ChargerRealTimeTab from './ChargerRealTimeTab';
 import ChargerBindTab from './ChargerBindTab';

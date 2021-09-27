@@ -7,7 +7,7 @@ import request from '@/utils/request';
 import { useBoolean, useMount, useSize, useUnmount } from '@umijs/hooks';
 import { fetchGetRobotPath } from '@/services/map';
 import AgvModal from './components/AgvModal/AgvModal';
-import MapContext from './components/MonitorMapContext';
+import MonitorMapContext from '@/packages/Mixrobot/MapMonitor/MonitorMapContext';
 import MonitorLeftTool from './components/MapMonitorLeftTool';
 import TunnelModal from './components/TunnelModal/TunnelModal';
 import MonitorRightTool from './components/MapMonitorRightTool';
@@ -16,13 +16,14 @@ import { AGVSocketConnect } from '@/pages/MapTool/service/Service';
 import MonitorMapBridging from '../MapMonitor/components/MonitorMapBridging';
 import MapMonitorRightSliderMenu from './components/MapMonitorRightSiderMenu';
 import WorkStationModal from './components/WorkStationModal/WorkStationModal';
-import { dealResponse, isItemOfArray, isNull, sleep, useMountInterval } from '@/utils/utils';
+import { dealResponse, isItemOfArray, isNull, sleep } from '@/utils/utils';
+import { useMountInterval } from '@/customHooks';
 import {
   covertData2ChartsData,
   convertWaitingData2Chart,
 } from './components/WorkStationModal/echarts';
 import { GlobalDrawerWidth } from '@/Const';
-import config from '@/config';
+import config from '@/config/config';
 import styles from './monitor.less';
 
 const {
@@ -406,7 +407,7 @@ const MapMonitor = (props) => {
   }
 
   return (
-    <MapContext.Provider value={mapRef}>
+    <MonitorMapContext.Provider value={mapRef}>
       <div className={styles.monitorContainer}>
         {/* 顶部工具栏 */}
         <div
@@ -459,7 +460,7 @@ const MapMonitor = (props) => {
         {/* 充电桩运维弹窗 */}
         {chargerModalVisible ? <ChargerModal name={charger} /> : null}
       </div>
-    </MapContext.Provider>
+    </MonitorMapContext.Provider>
   );
 };
 export default connect(({ global, monitor }) => {

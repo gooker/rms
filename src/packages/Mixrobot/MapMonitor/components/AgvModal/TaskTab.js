@@ -8,7 +8,7 @@ import { Permission } from '@/utils/Permission';
 import { fetchCancelTask, fetchRestartTask } from './AgvModalApi';
 import { fetchAgvInfoByAgvId } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 const { AgvApiNameSpace } = Config;
 const FormItemLayout = {

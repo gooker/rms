@@ -1,7 +1,8 @@
 /* eslint-disable no-param-reassign */
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/pages/MapTool/entities';
-import { getTextureFromResources, isNull } from '@/utils/utils';
+import { isNull } from '@/utils/utils';
+import { getTextureFromResources } from '@/utils/mapUtils';
 import Config from '@/config.js';
 
 const ScaledCellSize = 800;

@@ -6,7 +6,7 @@ import { EditOutlined, DownOutlined, RightOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import SelectLogicArea from '../SelectLogicArea/Index';
 import SelectScopeMap from '../SelectScopeMap/Index';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import styles from './editorToolLeft.module.less';
 
 const MapSwitcher = memo((props) => {

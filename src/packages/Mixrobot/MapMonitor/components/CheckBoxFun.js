@@ -1,25 +1,18 @@
 import React, { useEffect } from 'react';
 import { Row, Col, Checkbox } from 'antd';
-import isEqual from 'fast-deep-equal';
+import { isEqual } from 'lodash';
 import { useSelections } from '@umijs/hooks';
 
 const CheckBoxFun = (props) => {
   const defaultChecked = props.checked || [];
   const { dataSource, height = 80, button } = props;
-  const {
-    selected,
-    allSelected,
-    isSelected,
-    toggle,
-    toggleAll,
-    partiallySelected,
-    setSelected,
-  } = useSelections(
-    dataSource.map(({ key }) => {
-      return key;
-    }),
-    defaultChecked,
-  );
+  const { selected, allSelected, isSelected, toggle, toggleAll, partiallySelected, setSelected } =
+    useSelections(
+      dataSource.map(({ key }) => {
+        return key;
+      }),
+      defaultChecked,
+    );
 
   useEffect(() => {
     if (!isEqual(defaultChecked, selected)) {

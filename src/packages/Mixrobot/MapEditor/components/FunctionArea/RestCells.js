@@ -5,9 +5,9 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchAllAgvType } from '@/services/api';
 import { dealResponse } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import AgvTypeSelect from './AgvTypeSelect';
-import SuperMultiSelect from '../../../components/SuperMultiSelect';
+import SuperMultiSelect from '@/packages/Mixrobot/components/SuperMultiSelect';
 import MapContext from '../MapContext';
 
 const doubleFormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };

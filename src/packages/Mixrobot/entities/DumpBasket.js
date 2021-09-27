@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
-import { getTextureFromResources } from '@/utils/utils';
+import * as Config from '@/config/config';
+import { getTextureFromResources } from '@/utils/mapUtils';
 import BitText from '@/pages/MapTool/entities/BitText';
 
 export default class DumpBasket extends PIXI.Sprite {

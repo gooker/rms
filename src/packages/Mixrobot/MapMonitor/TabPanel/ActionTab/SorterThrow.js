@@ -3,7 +3,7 @@ import React from 'react';
 import intl from 'react-intl-universal';
 import { Form, Button, Col, Row, Input, InputNumber, message, Switch } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull } from '@/utils/utils';
 import { fetchSorterToThrow } from '@/services/map';

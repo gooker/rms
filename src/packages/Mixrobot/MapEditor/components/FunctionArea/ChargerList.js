@@ -5,10 +5,10 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import { dealResponse, isNull } from '@/utils/utils';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import AngleSelector from '../../../components/AngleSelector';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
 import AgvTypeSelect from './AgvTypeSelect';
 import { fetchTrafficRobotType } from '@/services/simulator';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import MapContext from '../MapContext';
 
 const formLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };

@@ -3,22 +3,22 @@ import React from 'react';
 import * as PIXI from 'pixi.js';
 import { message } from 'antd';
 import intl from 'react-intl-universal';
-import find from 'lodash/find';
-import Config from '@/config';
-import BaseMap from '../../components/BaseMap';
-import getPixiUtils from '@/utils/pixiInitializer';
+import { find, isEqual } from 'lodash';
+import { AGVType, AGVState } from '@/config/config';
+import { LatentPodSize, ToteAGVSize, zIndex, GeoLockColor } from '@/consts';
+import BaseMap from '../../../../components/BaseMap';
+import PixiInitializer from '@/utils/PixiInitializer';
 import { loadTexturesForMap } from '@/utils/textures';
-import { getCurrentLogicAreaData, mergeStorageRack } from '@/utils/mapUtils';
 import {
-  isNull,
-  isEqual,
-  hasLatentPod,
   unifyAgvState,
+  hasLatentPod,
+  mergeStorageRack,
   getElevatorMapCellId,
   convertToteLayoutData,
-  getToteLayoutBaseParam,
+  getCurrentLogicAreaData,
   getTextureFromResources,
-} from '@/utils/utils';
+} from '@/utils/mapUtils';
+import { isNull, getToteLayoutBaseParam } from '@/utils/utils';
 import {
   Cell,
   BitText,
@@ -109,7 +109,7 @@ class MonitorMapView extends BaseMap {
       event.preventDefault();
     };
 
-    this.pixiUtils = getPixiUtils(this.props.width, this.props.height);
+    this.pixiUtils = new PixiInitializer(this.props.width, this.props.height);
     this.mapRenderer = new MapRenderer(
       this.pixiUtils.viewport,
       this.pixiUtils.callRender,
@@ -442,7 +442,7 @@ class MonitorMapView extends BaseMap {
       x: latentAGVData.x,
       y: latentAGVData.y,
       battery: latentAGVData.battery || 0,
-      state: latentAGVData.agvStatus ?? Config.AGVState.offline,
+      state: latentAGVData.agvStatus ?? AGVState.offline,
       mainTain: latentAGVData.mainTain,
       cellId: latentAGVData.currentCellId,
       angle: latentAGVData.currentDirection,
@@ -506,7 +506,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(latentAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, latentAGV, Config.AGVType.LatentLifting);
+      this.updateAgvCommonState(agv.c, unifiedAgvState, latentAGV, AGVType.LatentLifting);
 
       // 卸货: podId不存在但是小车还有货物的时候需要卸货 --> {robotId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, podId: 0}
       if (!hasLatentPod(podId) && latentAGV && latentAGV.pod) {
@@ -592,8 +592,8 @@ class MonitorMapView extends BaseMap {
 
   refreshLatentPod = (podStatus) => {
     const { podId, robotId, cellId: currentCellId, direction: podDirection = 0 } = podStatus;
-    const width = podStatus.w || Config.LatentPodSize.width;
-    const height = podStatus.h || Config.LatentPodSize.height;
+    const width = podStatus.w || LatentPodSize.width;
+    const height = podStatus.h || LatentPodSize.height;
 
     if (currentCellId === -1) {
       // 删除Pod
@@ -641,8 +641,8 @@ class MonitorMapView extends BaseMap {
           }
           latentPod.position.set(0, 0);
           latentPod.setAlpha(0.9);
-          latentPod.width = Config.LatentPodSize.width / 2;
-          latentPod.height = Config.LatentPodSize.height / 2;
+          latentPod.width = LatentPodSize.width / 2;
+          latentPod.height = LatentPodSize.height / 2;
           latentAGV.upPod(latentPod);
           this.idLatentPodMap.delete(`${podId}`);
         }
@@ -703,7 +703,7 @@ class MonitorMapView extends BaseMap {
       angle: currentDirection,
       shelfs: shelfs || 0,
       battery: battery || 0,
-      state: agvStatus || Config.AGVState.offline,
+      state: agvStatus || AGVState.offline,
       active: true,
       toteCodes,
       checkAGV,
@@ -777,7 +777,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(toteAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, toteAGV, Config.AGVType.Tote);
+      this.updateAgvCommonState(agv.c, unifiedAgvState, toteAGV, AGVType.Tote);
 
       // 更新料箱车货架
       if (shelfs && toteAGV.shelfs !== shelfs) {
@@ -839,11 +839,11 @@ class MonitorMapView extends BaseMap {
             let x;
             let y;
             if (adapte === 'X') {
-              x = cellEntity.x + XBase * (bin.depth / 2 + Config.ToteAGVSize.width / 2 + 150);
+              x = cellEntity.x + XBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
               y = cellEntity.y + YBase * offset;
             } else {
               x = cellEntity.x + XBase * offset;
-              y = cellEntity.y + YBase * (bin.depth / 2 + Config.ToteAGVSize.width / 2 + 150);
+              y = cellEntity.y + YBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
             }
             const totePod = new TotePod({
               x,
@@ -868,11 +868,11 @@ class MonitorMapView extends BaseMap {
             let x;
             let y;
             if (adapte === 'X') {
-              x = cellEntity.x + XBase * (bin.depth / 2 + Config.ToteAGVSize.width / 2 + 150);
+              x = cellEntity.x + XBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
               y = cellEntity.y + YBase * offset;
             } else {
               x = cellEntity.x + XBase * offset;
-              y = cellEntity.y + YBase * (bin.depth / 2 + Config.ToteAGVSize.width / 2 + 150);
+              y = cellEntity.y + YBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
             }
             const totePod = new TotePod({
               x,
@@ -914,7 +914,7 @@ class MonitorMapView extends BaseMap {
         y: agvData.y,
         currentCellId: agvData.currentCellId,
         battery: agvData.battery || 0,
-        state: agvData.agvStatus || Config.AGVState.offline,
+        state: agvData.agvStatus || AGVState.offline,
         mainTain: agvData.mainTain,
         angle: agvData.currentDirection,
         active: true,
@@ -978,7 +978,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(forkLiftAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, forkLiftAGV, Config.AGVType.ForkLifting);
+      this.updateAgvCommonState(agv.c, unifiedAgvState, forkLiftAGV, AGVType.ForkLifting);
 
       // 刷新小车上货架的状态
       if (hasPod) {
@@ -1078,7 +1078,7 @@ class MonitorMapView extends BaseMap {
       x: sorterAGVData.x,
       y: sorterAGVData.y,
       battery: sorterAGVData.battery || 0,
-      state: sorterAGVData.agvStatus ?? Config.AGVState.offline,
+      state: sorterAGVData.agvStatus ?? AGVState.offline,
       mainTain: sorterAGVData.mainTain,
       cellId: sorterAGVData.currentCellId,
       angle: sorterAGVData.currentDirection,
@@ -1141,7 +1141,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(sorterAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, sorterAGV, Config.AGVType.Sorter);
+      this.updateAgvCommonState(agv.c, unifiedAgvState, sorterAGV, AGVType.Sorter);
 
       // 更新小车车身货架
       sorterAGV.updatePod(sorterPod);
@@ -1178,7 +1178,7 @@ class MonitorMapView extends BaseMap {
         );
       }
       const { lockType, locked } = lockData;
-      const color = locked ? Config.GeoLockColor[lockType] : Config.GeoLockColor.WillLocked;
+      const color = locked ? GeoLockColor[lockType] : GeoLockColor.WillLocked;
       let geoLock;
       if (lockData.boxAction === 'GOTO_ROTATING') {
         geoLock = new OpenLock({ ...lockData, color });
@@ -1229,7 +1229,7 @@ class MonitorMapView extends BaseMap {
       );
     }
     const { lockType, locked } = lockData;
-    const color = locked ? Config.GeoLockColor[lockType] : Config.GeoLockColor.WillLocked;
+    const color = locked ? GeoLockColor[lockType] : GeoLockColor.WillLocked;
     let geoLock;
     if (lockData.boxAction === 'GOTO_ROTATING') {
       geoLock = new OpenLock({ ...lockData, color });
@@ -1402,7 +1402,7 @@ class MonitorMapView extends BaseMap {
         targetLineSprite.lineStyle(20, 0x287ada, 1);
         targetLineSprite.moveTo(agvData.x, agvData.y);
         targetLineSprite.lineTo(targetCell.x, targetCell.y);
-        targetLineSprite.zIndex = Config.zIndex.targetLine;
+        targetLineSprite.zIndex = zIndex.targetLine;
         this.pixiUtils.viewportAddChild(targetLineSprite);
         this.agvTargetLineMap.set(agvId, targetLineSprite);
       }
@@ -1470,7 +1470,7 @@ class MonitorMapView extends BaseMap {
       realTimeLineSprite.moveTo(start.x, start.y);
       realTimeLineSprite.lineTo(end.x, end.y);
       realTimeLineSprite.drawCircle(end.x, end.y, 150);
-      realTimeLineSprite.zIndex = Config.zIndex.cellHeat;
+      realTimeLineSprite.zIndex = zIndex.cellHeat;
       this.pixiUtils.viewportAddChild(realTimeLineSprite);
       this.toteTaskRealtimePath.push(realTimeLineSprite);
     });
@@ -1498,7 +1498,7 @@ class MonitorMapView extends BaseMap {
           fontSize,
         );
         sprite.anchor.set(0.5);
-        sprite.zIndex = Config.zIndex.cellHeat;
+        sprite.zIndex = zIndex.cellHeat;
         this.pixiUtils.viewportAddChild(sprite);
         this.toteTaskRealtimeState.push(sprite);
       }
@@ -1524,7 +1524,7 @@ class MonitorMapView extends BaseMap {
         heatSprite.x = x;
         heatSprite.y = y;
         heatSprite.alpha = isTransparent ? 0.5 : 1;
-        heatSprite.zIndex = Config.zIndex.cellHeat;
+        heatSprite.zIndex = zIndex.cellHeat;
         this.cellHeatMap.set(`${cellId}`, heatSprite);
         cellEntity && this.pixiUtils.viewportAddChild(heatSprite);
       }

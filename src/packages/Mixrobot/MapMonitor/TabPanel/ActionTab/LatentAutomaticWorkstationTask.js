@@ -18,7 +18,7 @@ import {
 import intl from 'react-intl-universal';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 
 const Layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const NoLabelLayout = { wrapperCol: { span: 16, offset: 6 } };

@@ -5,7 +5,7 @@ import { Row, Col, Form, Select, InputNumber, Radio, Input, Button, message } fr
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { fetchtoteToWorkstation } from '@/services/tote';
 import { dealResponse } from '@/utils/utils';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Select, Row, Col, Button } from 'antd';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 
 class SelectTagComponent extends PureComponent {
   render() {

@@ -3,11 +3,10 @@ import { connect } from '@/utils/dva';
 import { Input, Switch, Table, Form, Checkbox, Row, Divider, Col, Button } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import InputComponent from '@/pages/MapTool/components/MapForm/MapInput';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { getCurrentLogicAreaData, covertIntersectionFormData2Param } from '@/utils/mapUtils';
 import Dictionary from '@/utils/Dictionary';
 import MapContext from '../MapContext';
-import MenuIcon from '@/MenuIcon';
-import { covertIntersectionFormData2Param } from '@/utils/utils';
+import MenuIcon from '@/utils/MenuIcon';
 
 const FormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 5, span: 19 } };

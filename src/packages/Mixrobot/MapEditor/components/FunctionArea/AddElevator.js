@@ -5,7 +5,7 @@ import { Row, Form, Button, Divider, List, Select } from 'antd';
 import update from 'immutability-helper';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Input from '@/pages/MapTool/components/MapForm/MapInput';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import MapContext from '../MapContext';
 
 const formLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };

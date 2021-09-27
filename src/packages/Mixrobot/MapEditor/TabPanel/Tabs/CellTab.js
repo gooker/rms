@@ -13,8 +13,8 @@ import CellInfo from '@/pages/MapTool/components/CellInfo';
 import IconDir from '@/components/AntdIcon/IconDir';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
 import { CellTypeSetting } from '@/Const';
-import MenuIcon from '@/MenuIcon';
-import MapContext from '../MapEdit/component/MapContext';
+import MenuIcon from '@/utils/MenuIcon';
+import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 import CheckButton from './CheckButton';
 import NonStopEditor from './NonStopEditor';
 
@@ -251,6 +251,7 @@ class CellMap extends Component {
                   label={
                     <>
                       <img
+                        alt={''}
                         style={{
                           height: 20,
                           marginLeft: 15,

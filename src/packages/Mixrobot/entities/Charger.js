@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { zIndex, ChargerSize, ChargerStateColor } from '@/consts';
 import BitText from './BitText';
 import { getTextureFromResources, isNull } from '@/utils/utils';
 import { hasPermission } from '@/utils/Permission';
@@ -11,7 +11,7 @@ export default class Charger extends PIXI.Container {
     this.y = props.y;
     this.name = props.name;
     this.angle = props.angle;
-    this.zIndex = Config.zIndex.groundStorage;
+    this.zIndex = zIndex.groundStorage;
     this.state = props.state;
     this.hardwareId = props.hardwareId;
     this.sortableChildren = true;
@@ -45,8 +45,8 @@ export default class Charger extends PIXI.Container {
     this.charger = new PIXI.Sprite(chargerTexture);
     this.charger.zIndex = 1;
     this.charger.anchor.set(0.5);
-    const scaleX = Config.ChargerSize.width / chargerTexture.width;
-    const scaleY = Config.ChargerSize.height / chargerTexture.height;
+    const scaleX = ChargerSize.width / chargerTexture.width;
+    const scaleY = ChargerSize.height / chargerTexture.height;
     this.charger.setTransform(0, 0, scaleX, scaleY);
     this.addChild(this.charger);
   }
@@ -73,8 +73,8 @@ export default class Charger extends PIXI.Container {
     this.stateIcon = new PIXI.Sprite(PIXI.Texture.WHITE);
     this.stateIcon.anchor.set(0.5);
     this.OfflineMaskSprite.alpha = 0.8;
-    this.stateIcon.width = Config.ChargerSize.width * 1.5;
-    this.stateIcon.height = Config.ChargerSize.height * 1.5;
+    this.stateIcon.width = ChargerSize.width * 1.5;
+    this.stateIcon.height = ChargerSize.height * 1.5;
     this.addChild(this.stateIcon);
   }
 
@@ -85,8 +85,8 @@ export default class Charger extends PIXI.Container {
     this.LightningSprite.visible = false;
     this.LightningSprite.anchor.set(0.5, 1);
     this.LightningSprite.setTransform(
-      Config.ChargerSize.width / 2 + 40,
-      -Config.ChargerSize.height / 2 + 40,
+      ChargerSize.width / 2 + 40,
+      -ChargerSize.height / 2 + 40,
       0.3,
       0.3,
     );
@@ -146,11 +146,11 @@ export default class Charger extends PIXI.Container {
       this.ErrorMaskSprite.visible = chargerState === 'ERROR'; // 错误状态标记
 
       // 只显示有颜色的状态
-      if (Config.ChargerStateColor[chargerState]) {
+      if (ChargerStateColor[chargerState]) {
         if (!this.stateIcon) {
           this.addChargerStateIcon();
         }
-        this.stateIcon.tint = Config.ChargerStateColor[chargerState];
+        this.stateIcon.tint = ChargerStateColor[chargerState];
       } else {
         if (this.stateIcon) {
           this.removeChild(this.stateIcon);

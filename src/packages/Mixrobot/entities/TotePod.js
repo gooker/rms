@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
-import { getTextureFromResources } from '@/utils/utils';
+import { GlobalAlpha, zIndex } from '@/consts';
+import { getTextureFromResources } from '@/utils/mapUtils';
 import { BitText } from '@/pages/MapTool/entities';
 
 export default class TotePod extends PIXI.Container {
@@ -17,8 +17,8 @@ export default class TotePod extends PIXI.Container {
     this.disable = props.disable;
     this.binCellId = props.binCellId;
     this.checkTote = props.checkTote;
-    this.alpha = Config.GlobalAlpha;
-    this.zIndex = Config.zIndex.groundStorage;
+    this.alpha = GlobalAlpha;
+    this.zIndex = zIndex.groundStorage;
     this.visible = true;
     this.sortableChildren = true;
 

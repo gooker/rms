@@ -2,11 +2,11 @@ import React, { PureComponent } from 'react';
 import { Button, Card, Form, Row, Col, Table, Tag } from 'antd';
 import { connect } from '@/utils/dva';
 import findIndex from 'lodash/findIndex';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import MapContext from '../MapEdit/component/MapContext';
+import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const FormItemLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const FormItemLayoutNoLabel = { wrapperCol: { offset: 6, span: 18 } };

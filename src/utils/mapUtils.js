@@ -1,10 +1,9 @@
 import intl from 'react-intl-universal';
 import * as XLSX from 'xlsx';
-import find from 'lodash/find';
-import sortBy from 'lodash/sortBy';
-import groupBy from 'lodash/groupBy';
+import { find, sortBy, groupBy } from 'lodash';
 import LogicArea from '@/pages/MapTool/entities/LogicArea';
-import { isNull, isStrictNull } from '@/utils/utils';
+import { isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
+import { AGVState } from '@/config/config';
 import json from '../../package.json';
 
 // 根据行列数批量生成点位
@@ -716,4 +715,347 @@ export function getCurveMapKey(lineData) {
 
 export function getCurveString(lineData) {
   return `${lineData.source}_${lineData.target}_${lineData.bparam1}_${lineData.bparam2}`;
+}
+
+/**
+ * 将料箱货架布局数据转化为地图渲染可用数据结构
+ * @param {*} toteLayoutData
+ * @param {*} sizeMapping
+ * @returns
+ */
+export function convertToteLayoutData(toteLayoutData, sizeMapping) {
+  const newToteLayoutData = { ...toteLayoutData };
+  const rackGroups = newToteLayoutData.rackGroups;
+  const rackGroupKeys = Object.keys(rackGroups); // ['AA001',...]
+  rackGroupKeys.forEach((rackGroupKey) => {
+    const rackGroupData = rackGroups[rackGroupKey];
+    const { aisle, line } = rackGroupData;
+    const sideKeys = ['leftRack', 'rightRack'];
+    sideKeys.forEach((sideKey) => {
+      if (rackGroupData[sideKey]) {
+        const rack = rackGroupData[sideKey];
+        const sideFlag = sideKey === 'leftRack' ? 'L' : 'R';
+        const newBins = [];
+        rack.bins.forEach((bin) => {
+          if (Array.isArray(bin)) {
+            // 因为是俯视图，所以只需要取一个元素参与显示就行
+            const columnNumber = bin[0].column >= 10 ? `${bin[0].column}` : `0${bin[0].column}`;
+            newBins.push({ ...bin[0], code: `${aisle}${line}${sideFlag}C${columnNumber}` });
+          }
+        });
+
+        // 转换尺寸
+        newBins.forEach((bin) => {
+          bin.width = sizeMapping?.WIDTH?.[bin.width];
+          bin.depth = sizeMapping?.DEPTH?.[bin.depth];
+        });
+
+        // 替换原来的bins数据
+        rack.bins = newBins;
+      }
+    });
+  });
+  return newToteLayoutData;
+}
+
+/**
+ * 将抛物框表单数据转化为后台数据结构
+ * @param {*} currentDumpStation
+ * @param {*} existDumpStations
+ * @returns
+ */
+export function covertDumpFormData2Param(currentDumpStation, existDumpStations) {
+  const newDumpStation = {};
+  if (!isNull(currentDumpStation.dumpX) && !isNull(currentDumpStation.dumpY)) {
+    newDumpStation.name = currentDumpStation.name;
+    newDumpStation.cellId = currentDumpStation.baseCell;
+    newDumpStation.targetCellId = currentDumpStation.targetCell;
+    newDumpStation.agvDirection = currentDumpStation.agvDirection;
+
+    newDumpStation.distance = isNull(currentDumpStation.dumpDistance)
+      ? null
+      : parseInt(currentDumpStation.dumpDistance, 10);
+
+    newDumpStation.x = parseInt(currentDumpStation.dumpX, 10);
+    newDumpStation.y = parseInt(currentDumpStation.dumpY, 10);
+
+    // 处理抛物框
+    let currentDumpBasket = currentDumpStation?.dumpBasket ?? [];
+    currentDumpBasket = currentDumpBasket.filter(Boolean);
+    newDumpStation.dumpBasket = currentDumpBasket.map((basket) => {
+      const { key, direction, speed, distance } = basket;
+      const _speed = isNull(speed) ? null : parseInt(speed, 10);
+      const _distance = isNull(distance) ? 0 : parseInt(distance, 10);
+      const { x, y } = offsetByDirection(newDumpStation, direction, _distance);
+      const item = { x, y, direction, speed: _speed, distance: _distance };
+
+      /**
+       * 生成唯一Key
+       * 规则: 起始点ID+字母。字母从A开始递增
+       */
+      let basketKey = key;
+      if (isNull(basketKey)) {
+        const { baseCell } = currentDumpStation;
+        const dumpStation = find(existDumpStations, { cellId: baseCell });
+        if (dumpStation) {
+          if (!dumpStation.dumpBasket || !Array.isArray(dumpStation.dumpBasket)) {
+            basketKey = `${baseCell}${String.fromCharCode(65)}`;
+          } else {
+            // 判断当前点位是否已经存在抛物篮
+            const cellBasket = find(dumpStation.dumpBasket, { x: item.x, y: item.y });
+            if (cellBasket) {
+              basketKey = cellBasket.key;
+            } else {
+              basketKey = `${baseCell}${String.fromCharCode(65 + dumpStation.dumpBasket.length)}`;
+            }
+          }
+        } else {
+          basketKey = `${baseCell}${String.fromCharCode(65)}`;
+        }
+      }
+      item.key = basketKey;
+      return item;
+    });
+    return newDumpStation;
+  }
+  return null;
+}
+
+const directionMap = { ip0: '0', ip1: '90', ip2: '180', ip3: '270' };
+/**
+ * 将交汇点表单数据转化为后台数据结构
+ * @param {*} formData
+ * @returns
+ */
+export function covertIntersectionFormData2Param(formData) {
+  const { cellId } = formData;
+  if (isNull(cellId)) {
+    return null;
+  }
+  const ip = [];
+  const result = { cellId, ip, isTrafficCell: formData.isTrafficCell };
+  ['ip0', 'ip1', 'ip2', 'ip3'].forEach((key) => {
+    let value = formData.hasOwnProperty('ip') ? formData.ip : formData[key];
+    value = value ? value.trim() : null;
+    if (value) {
+      ip.push({
+        // 应后台要求，这是不给 0 1 2 3， 需要转换成对应角度
+        direction: directionMap[key],
+        value,
+      });
+    }
+  });
+  return result;
+}
+
+/**
+ * 获取电梯点对应的原始地图点位
+ * @param {*} currentCellId
+ * @returns
+ */
+export function getElevatorMapCellId(currentCellId) {
+  const { monitor } = window.g_app._store.getState();
+  const { elevatorCellMap } = monitor;
+  const currentLogicAreaData = getCurrentLogicAreaData('monitor');
+  if (!currentLogicAreaData) return null;
+
+  // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
+  const currentLogicId = currentLogicAreaData.id;
+  if (elevatorCellMap && elevatorCellMap[currentCellId]) {
+    currentCellId = elevatorCellMap[currentCellId][currentLogicId];
+  }
+  return currentCellId;
+}
+
+/**
+ * 根据起点和终点获取线条数据
+ * @param {*} idLineMap
+ * @param {*} source
+ * @param {*} target
+ * @returns
+ */
+export function getLineEntityFromMap(idLineMap, source, target) {
+  let line = null;
+  Object.keys(idLineMap).forEach((cost) => {
+    const lineMaps = idLineMap[cost];
+    const key = `${source}-${target}`;
+    if (lineMaps.has(key)) {
+      line = lineMaps.get(key);
+    }
+  });
+  return line;
+}
+
+/**
+ * 计算base点到target点的方向distance距离的点位
+ * 返回 0 表示两个点没有相同坐标轴(指 相同x 或者 相同y)
+ * 返回 1 表示两个点为同一个点
+ */
+export function getOffsetDistance(base, target, distance) {
+  if (base.x === target.x && base.y === target.y) {
+    return 1;
+  }
+
+  if (base.x === target.x) {
+    // Y 轴方向
+    // Base在Target下方
+    if (base.y > target.y) {
+      return { x: base.x, y: base.y - distance };
+    }
+    // Base在Target上方
+    if (base.y < target.y) {
+      return { x: base.x, y: base.y + distance };
+    }
+  } else if (base.y === target.y) {
+    // X 轴方向
+    // base在target右边
+    if (base.x > target.x) {
+      return { x: base.x - distance, y: base.y };
+    }
+    // base在target左边
+    if (base.x < target.x) {
+      return { x: base.x + distance, y: base.y };
+    }
+  } else if (base.x === target.x && base.y === target.y) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+
+/**
+ * 根据Texture key获取Texture实体数据
+ * @param {*} key
+ * @returns
+ */
+export function getTextureFromResources(key) {
+  const resources = window.PixiUtils.resources;
+  const spriteSheetBaseName = 'spritesheet';
+  const textureKeys = Object.keys(resources);
+  let texture;
+  // 先正常拿
+  if (textureKeys.includes(key)) {
+    texture = resources[key].texture;
+  } else {
+    // 再从SpriteSheets中拿
+    const spriteSheets = textureKeys.filter(
+      (textureKey) => textureKey.includes(spriteSheetBaseName) && textureKey.endsWith('.json'),
+    );
+    for (let index = 0; index < spriteSheets.length; index++) {
+      const spriteSheetName = spriteSheets[index];
+      const textures = resources[spriteSheetName].textures;
+      texture = textures && textures[`${key}.png`];
+      if (textures && texture) {
+        break;
+      }
+    }
+  }
+  return texture;
+}
+
+export function switchAGVState(key, carState) {
+  const state = [];
+  switch (carState) {
+    case AGVState.working:
+      state.push(`${key}_agv_green`);
+      state.push('on_task');
+      break;
+    case AGVState.offline:
+      state.push(`${key}_agv_grey`);
+      state.push('offline');
+      break;
+    case AGVState.connecting:
+      state.push(`${key}_agv_grey`);
+      state.push('offline');
+      break;
+    case AGVState.waiting:
+      state.push(`${key}_agv_purple`);
+      state.push('waiting');
+      break;
+    case AGVState.standBy:
+      state.push(`${key}_agv`);
+      state.push('stand_by');
+      break;
+    case AGVState.charging:
+      state.push(`${key}_agv_yellow`);
+      state.push('charging');
+      break;
+    case AGVState.error:
+      state.push(`${key}_agv_red`);
+      state.push('error');
+      break;
+    default:
+      break;
+  }
+  return state;
+}
+
+export function switchAGVBatteryState(battery) {
+  let state;
+  const batteryInt = parseInt(battery, 10);
+  switch (true) {
+    case batteryInt === 0:
+      state = '0';
+      break;
+    case batteryInt >= 1 && batteryInt <= 10:
+      state = '1-10';
+      break;
+    case batteryInt >= 11 && batteryInt <= 20:
+      state = '11-20';
+      break;
+    case batteryInt >= 21 && batteryInt <= 40:
+      state = '21-40';
+      break;
+    case batteryInt >= 41 && batteryInt <= 60:
+      state = '41-60';
+      break;
+    case batteryInt >= 61 && batteryInt <= 90: // 90以上现在定义为满
+      state = '61-80';
+      break;
+    case batteryInt >= 91:
+      state = '81-100';
+      break;
+    default:
+      break;
+  }
+  return state;
+}
+
+export function explainAgvStatus(value) {
+  const mapping = {
+    '-1': AGVState.offline,
+    0: AGVState.standBy,
+    1: AGVState.working,
+    2: AGVState.charging,
+    3: AGVState.error,
+    4: AGVState.offline,
+    5: AGVState.waiting,
+  };
+  return mapping[value];
+}
+
+export function unifyAgvState(agv) {
+  // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
+  let currentCellId = agv.c ?? agv.currentCellId;
+  currentCellId = getElevatorMapCellId(currentCellId);
+
+  return {
+    x: agv.x,
+    y: agv.y,
+    currentCellId,
+    battery: agv.b ?? agv.battery,
+    robotId: agv.r ?? agv.robotId,
+    mainTain: agv.m ?? agv.maintain,
+    agvStatus: explainAgvStatus(agv.s) ?? agv.agvStatus,
+    currentDirection: agv.rD ?? agv.currentDirection,
+    podId: agv.p ?? agv.podId,
+    podDirection: agv.pD ?? agv.podDirection,
+    hasPod: agv.hp,
+    longSide: agv.lS,
+    shortSide: agv.sS,
+    shelfs: agv.sf ?? agv.shelfs,
+    toteCodes: agv.tc ?? agv.toteCodes, // 车身的料箱
+    holdTote: agv.ht, // 抱夹的料箱
+    sorterPod: agv.ro ?? '0,0',
+  };
 }

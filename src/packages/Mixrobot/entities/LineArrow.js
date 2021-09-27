@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { zIndex, CostColor, CellWidth } from '@/consts';
 import { BitText } from '@/pages/MapTool/entities';
-import { getDirByAngle } from '@/utils/utils';
+import { covertAngle2Direction } from '@/utils/utils';
 
 export default class LineArrow extends PIXI.Container {
   constructor(props) {
@@ -15,12 +15,12 @@ export default class LineArrow extends PIXI.Container {
     this.$interactive = props.interactive;
     this.type = 'line';
     this.isClassic = props.isClassic;
-    this.zIndex = this.isClassic ? Config.zIndex.line : 100;
+    this.zIndex = this.isClassic ? zIndex.line : 100;
     this.distance = props.distance;
     this.selectLine = props.click;
     this.cost = props.cost;
     this.$angle = props.lineAngle;
-    this.dir = getDirByAngle(props.lineAngle);
+    this.dir = covertAngle2Direction(props.lineAngle);
     this.states = {
       selected: false,
       arrow: true,
@@ -31,7 +31,7 @@ export default class LineArrow extends PIXI.Container {
   }
 
   createArrow = () => {
-    const distanceInt = parseInt(this.distance, 10) - Config.CellWidth;
+    const distanceInt = parseInt(this.distance, 10) - CellWidth;
     const texture = this.switchArrowTexture();
     if (!texture) return;
     this.arrow = new PIXI.Sprite(texture);
@@ -55,7 +55,7 @@ export default class LineArrow extends PIXI.Container {
       parseInt(this.distance, 10),
       xOffset,
       -distanceInt * 0.5,
-      Config.CostColor[this.cost],
+      CostColor[this.cost],
       textFontSize,
     );
     this.distanceText.anchor = 0.5;
@@ -145,7 +145,7 @@ export default class LineArrow extends PIXI.Container {
       console.warn(`给线条添加Icon时候发生key冲突: ${key}`);
       return;
     }
-    const distanceInt = parseInt(this.distance, 10) - Config.CellWidth;
+    const distanceInt = parseInt(this.distance, 10) - CellWidth;
     const x = size === 'M' ? 180 : 100;
     const width = size === 'M' ? 250 : 150;
     const height = size === 'M' ? 250 : 150;

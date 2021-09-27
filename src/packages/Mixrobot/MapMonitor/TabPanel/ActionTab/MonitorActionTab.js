@@ -19,14 +19,13 @@ import {
   fetchForkLiftToChargerRun,
   fetchLatentLiftingSystemParam,
 } from '@/services/map';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import request from '@/utils/request';
 import { AllAGVTypes } from '@/Const';
-import { fetchGetAPI } from '@/services/api';
-import { hasModule } from '@/utils/authority';
+import { fetchGetAPI } from '@/services/mixrobot';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { Permission, hasPermission } from '@/utils/Permission';
-import { dealResponse, isAppInUse, renderRequestBodyForm } from '@/utils/utils';
+import { Permission, hasPermission, isAppInUse } from '@/utils/Permission';
+import { dealResponse, renderRequestBodyForm } from '@/utils/utils';
 import { LatentOperation, ToteOperation, ForkOperation, SorterOperation } from '../monitorParams';
 
 import Info from './LatentPodArrivalMessage';
@@ -82,7 +81,7 @@ const MapMonitorOperationMap = (props) => {
   // @权限控制: 这里做双重过滤 --> 微前端配置过滤 && 权限树过滤
   const grantedAPP = JSON.parse(window.localStorage.getItem('grantedAPP')) ?? [];
   const grantedAPPKeys = grantedAPP.map(({ name }) => name);
-  const AGVTypes = AllAGVTypes.filter((record) => hasModule(record.key)).filter((record) =>
+  const AGVTypes = AllAGVTypes.filter((record) => isAppInUse(record.key)).filter((record) =>
     grantedAPPKeys.includes(record.key),
   );
 

@@ -5,7 +5,7 @@ import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { InfoOutlined } from '@ant-design/icons';
 import DirButton from './DirButton/DirButton';
 import { GlobalDrawerWidth } from '@/Const';
-import MapContext from '../MapEdit/component/MapContext';
+import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const layout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 

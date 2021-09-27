@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
-import { getTextureFromResources } from '@/utils/utils';
+import { GlobalAlpha, zIndex } from '@/consts';
+import { getTextureFromResources } from '@/utils/mapUtils';
 import BitText from './BitText';
 
 export default class GroundStorage extends PIXI.Container {
@@ -13,7 +13,7 @@ export default class GroundStorage extends PIXI.Container {
     this.$height = props.height;
     this.$width = props.width;
     this.angle = props.angle || 0;
-    this.zIndex = Config.zIndex.groundStorage;
+    this.zIndex = zIndex.groundStorage;
     this.create();
     this.addPodCode();
   }
@@ -25,7 +25,7 @@ export default class GroundStorage extends PIXI.Container {
     this.pod.y = 0;
     this.pod.height = this.$height;
     this.pod.width = this.$width;
-    this.pod.alpha = Config.GlobalAlpha;
+    this.pod.alpha = GlobalAlpha;
     this.pod.anchor.set(0.5);
     this.addChild(this.pod);
   }

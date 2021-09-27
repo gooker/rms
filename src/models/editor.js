@@ -32,7 +32,7 @@ import {
   fetchMapHistoryDetail,
   fetachAllStationTypes,
 } from '@/services/map';
-import { getAllWebHooks, getAllWebHookTypes } from '@/services/api';
+import { getAllWebHooks, getAllWebHookTypes } from '@/services/mixrobot';
 
 const FieldTextureKeyMap = {
   blockCellIds: 'block_cell',

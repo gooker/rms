@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
+import { GlobalAlpha } from '@/consts';
 import BitText from './BitText';
 import { isNull } from '@/utils/utils';
 
@@ -14,7 +14,7 @@ export default class OpenLock extends PIXI.Container {
     this.radius = props.radius;
     this.boxType = props.boxType;
     this.boxAction = props.boxAction;
-    this.alpha = Config.GlobalAlpha;
+    this.alpha = GlobalAlpha;
     this.$width = props.width;
     this.$height = props.height;
 

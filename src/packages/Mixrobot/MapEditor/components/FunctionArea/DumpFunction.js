@@ -2,11 +2,15 @@ import React from 'react';
 import { connect } from '@/utils/dva';
 import { Button, Col, Form, Divider, Row, Table, Input, message } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { covertDumpFormData2Param, getOffsetDistance, isNull } from '@/utils/utils';
-import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtils';
+import { isNull } from '@/utils/utils';
+import {
+  getOffsetDistance,
+  getCurrentLogicAreaData,
+  covertDumpFormData2Param,
+} from '@/utils/mapUtils';
 import DirectionSelector from '../../../components/DirectionSelector';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import MenuIcon from '@/MenuIcon';
+import MenuIcon from '@/utils/MenuIcon';
 import MapContext from '../MapContext';
 
 const formLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };

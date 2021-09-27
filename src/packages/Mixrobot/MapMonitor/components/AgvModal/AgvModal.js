@@ -9,9 +9,9 @@ import ToteBinTab from './ToteBinTab';
 import TotePoolTab from './TotePoolTab';
 import ForkBin from './ForkBin';
 import { formatMessage } from '@/utils/Lang';
-import { UseMonitorModalSize } from '@/utils/MushinyHooks';
+import { UseMonitorModalSize } from '@/customHooks';
 import { hasPermission } from '@/utils/Permission';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import commonStyle from '@/common/common.less';
 
 const { BaseContext } = Config;

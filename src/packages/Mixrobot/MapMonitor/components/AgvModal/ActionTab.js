@@ -14,7 +14,7 @@ import {
   fetchSwitchManualMode,
 } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
-import Config from '@/config';
+import * as Config from '@/config/config';
 import { hasPermission, Permission } from '@/utils/Permission';
 
 const { AgvApiNameSpace, AGVState } = Config;

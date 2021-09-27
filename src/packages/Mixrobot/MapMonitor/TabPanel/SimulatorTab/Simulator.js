@@ -15,7 +15,7 @@ import SimulatorError from './SimulatorError';
 import SimulatorConfig from './SimulatorConfig';
 import { dealResponse, GMT2UserTimeZone } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import Config from '@/config';
+import * as Config from '@/config/config';
 
 @connect(({ simulator, loading, user }) => ({
   simulator,
