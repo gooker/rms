@@ -14,7 +14,7 @@ export default [
           {
             path: '/tote/center/taskQueue',
             name: 'taskQueue',
-            component: '/Tote/TaskQueue',
+            component: '/Tote/WaitingQueue',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
           },
           {

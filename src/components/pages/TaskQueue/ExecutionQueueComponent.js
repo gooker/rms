@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Row, Button, Divider, Modal } from 'antd';
+import { Table, Button, Divider, Modal } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -39,7 +39,7 @@ class ExecutionQueueComponent extends Component {
     let response;
     if (agvType === 'Tote') {
       // TODO: 暂时兼容 之后要删除
-      response = await fetchExecutingTaskList(agvType, sectionId);
+      response = await fetchToteExecutingTaskList(agvType, sectionId);
     } else {
       response = await fetchExecutingTaskList(agvType, sectionId);
     }
@@ -113,8 +113,9 @@ class ExecutionQueueComponent extends Component {
       <TablePageWrapper>
         <div>
           <ExecutionQueueSearch search={this.filterTableList} />
-          <Divider style={{margin:'0 0 15px 0'}}/>
+          <Divider className={commonStyles.divider} />
           <Button
+            danger
             loading={deleteLoading}
             icon={<DeleteOutlined />}
             onClick={this.deleteQueueTasks}
@@ -122,7 +123,7 @@ class ExecutionQueueComponent extends Component {
           >
             <FormattedMessage id="app.button.delete" />
           </Button>
-          <Button  onClick={this.getData} className={commonStyles.ml10}>
+          <Button type="primary" ghost onClick={this.getData} className={commonStyles.ml10}>
             <RedoOutlined />
             <FormattedMessage id="app.button.refresh" />
           </Button>

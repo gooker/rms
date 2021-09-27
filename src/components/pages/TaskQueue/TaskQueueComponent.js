@@ -5,6 +5,8 @@ import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/i
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
   fetchTaskQueueList,
+  fetchToteTaskQueueList,
+  fetchToteAgvOverallStatus,
   deleteTaskQueueItems,
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
@@ -41,9 +43,16 @@ class TaskQueueComponent extends Component {
     this.setState({ loading: true });
 
     // 先获取等待任务数据
-    const taskQueueResponse = await fetchTaskQueueList(agvType, sectionId);
+    const taskQueueResponse =
+      agvType === 'Tote'
+        ? await fetchToteTaskQueueList(agvType)
+        : await fetchTaskQueueList(agvType, sectionId);
+
     // 再获取小车状态总览信息
-    const agvOverallStatusResponse = await fetchAgvOverallStatus(agvType, sectionId);
+    const agvOverallStatusResponse =
+      agvType === 'Tote'
+        ? await fetchToteAgvOverallStatus(agvType)
+        : await fetchAgvOverallStatus(agvType, sectionId);
     if (!dealResponse(taskQueueResponse) && !dealResponse(agvOverallStatusResponse)) {
       const dataSource = taskQueueResponse.map((record) => {
         const { redisTaskDTO, isLockAGV, isLockPod, isLockTargetCell } = record;
@@ -57,6 +66,7 @@ class TaskQueueComponent extends Component {
       });
       this.setState({ dataSource, loading: false, agvOverallStatus: agvOverallStatusResponse });
     }
+    this.setState({ loading: false });
   };
 
   deleteQueueTasks = () => {
@@ -196,6 +206,7 @@ class TaskQueueComponent extends Component {
           <Row>
             <Row className={commonStyles.tableToolLeft}>
               <Button
+                danger
                 loading={deleteLoading}
                 onClick={this.deleteQueueTasks}
                 disabled={selectedRowKeys.length === 0}
@@ -212,7 +223,7 @@ class TaskQueueComponent extends Component {
               </Button>
             </Row>
             <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">
-              <Button type="primary" onClick={this.getData}>
+              <Button type="primary" ghost onClick={this.getData}>
                 <RedoOutlined />
                 <FormattedMessage id="app.button.refresh" />
               </Button>

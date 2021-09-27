@@ -41,6 +41,20 @@ export async function fetchTaskQueueList(agvType, params) {
   });
 }
 
+// 获取等待队列任务-Tote   TODO: 后端兼容之后要删除
+export async function fetchToteTaskQueueList(agvType) {
+  return request(`/${NameSpace[agvType]}/redis/getPipeLineTaskList`, {
+    method: `GET`,
+  });
+}
+// 获取当前区域小车状态总体数据  TODO: 后端兼容之后要删除
+export async function fetchToteAgvOverallStatus(agvType) {
+  return request(`/${NameSpace[agvType]}/agv/getStandByAndAvailableAgvNumber`, {
+    method: `GET`,
+  });
+}
+
+
 // 删除等待队列任务
 export async function deleteTaskQueueItems(agvType, params) {
   return request(`/${NameSpace[agvType]}/redis/batchDeletePipeLineTask`, {

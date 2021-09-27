@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat } from '@/utils/utils';
+import { dateFormat, isStrictNull } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 
@@ -171,15 +171,31 @@ export default class ExecutionQueue extends React.PureComponent {
   };
 
   filterDataSource = (dataSource = [], filterValue) => {
-    debugger
-    return dataSource.filter((item) => {
-      const targetCellId = `${item.targetCellId}`;
-      return (
-        item.taskId?.includes(filterValue) ||
-        item.currentRobotId?.includes(filterValue) ||
-        targetCellId?.includes(filterValue)
-      );
+
+    const currrentFilterValue = {};
+    if (!isStrictNull(filterValue.taskId)) {
+      currrentFilterValue.taskId = filterValue.taskId;
+    }
+    if (!isStrictNull(filterValue.agvId)) {
+      currrentFilterValue.currentRobotId = filterValue.agvId;
+    }
+    if (Object.keys(currrentFilterValue).length === 0) {
+      return dataSource;
+    }
+
+    let currentSources = [];
+    if (!isStrictNull(filterValue.agvTaskType)) {
+      const filtertype = filterValue.agvTaskType;
+      currentSources = dataSource.filter(({ type }) => filtertype.includes(type));
+    }
+    Object.values(currrentFilterValue).map((value) => {
+      currentSources.push(...this.filterValues(dataSource, value));
     });
+    return currentSources;
+  };
+
+  filterValues = (dataSource, value) => {
+    return dataSource.filter((item) => item[value]?.includes(value));
   };
 
   render() {

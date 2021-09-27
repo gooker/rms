@@ -33,14 +33,14 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.task.type' }),
+        title: <FormattedMessage id="app.task.type" />,
         dataIndex: 'type',
         align: 'center',
         width: 150,
-        render: (text) => <FormattedMessage id={Dictionary('toteAgvTaskType', text)} />,
+        render: (text) => <FormattedMessage id={Dictionary('agvTaskType', text)} />,
       },
       {
-        title: formatMessage({ id: 'app.executionQ.isReleased' }),
+        title: <FormattedMessage id= 'app.executionQ.isReleased' />,
         dataIndex: 'isReleased',
         align: 'center',
         width: 150,
@@ -48,20 +48,20 @@ export default class ExecutionQueue extends React.PureComponent {
           if (text) {
             return (
               <span style={{ color: green }}>
-                {formatMessage({ id: 'app.executionQ.released' })}
+                <FormattedMessage id='app.executionQ.released' />
               </span>
             );
           } else {
             return (
               <span style={{ color: red }}>
-                {formatMessage({ id: 'app.executionQ.unreleased' })}
+                <FormattedMessage id='app.executionQ.unreleased' />
               </span>
             );
           }
         },
       },
       {
-        title: formatMessage({ id: 'app.agv' }),
+        title: <FormattedMessage id= 'app.agv' />,
         dataIndex: 'appointedAGVId',
         align: 'center',
         width: 100,
@@ -70,19 +70,19 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.executionQ.target' }),
+        title: <FormattedMessage id= 'app.executionQ.target' />,
         dataIndex: 'appointedTargetCellId',
         align: 'center',
         width: 100,
       },
       {
-        title: formatMessage({ id: 'app.executionQ.chargerHardwareId' }),
+        title: <FormattedMessage id= 'app.executionQ.chargerHardwareId' />,
         dataIndex: 'chargerHardwareId',
         align: 'center',
         width: 120,
       },
       {
-        title: formatMessage({ id: 'app.executionQ.chargerDirection' }),
+        title: <FormattedMessage id= 'app.executionQ.chargerDirection' />,
         dataIndex: 'chargerDirection',
         align: 'center',
         width: 100,
@@ -95,20 +95,20 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.executionQ.chargerSpotId' }),
+        title: <FormattedMessage id= 'app.executionQ.chargerSpotId' />,
         dataIndex: 'chargerCellId',
         align: 'center',
         width: 100,
       },
       {
-        title: formatMessage({ id: 'app.executionQ.createTime' }),
+        title: <FormattedMessage id= 'app.executionQ.createTime' />,
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
-            return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
+            return <FormattedMessage id= 'app.executionQ.notAvailable' />;
           }
           return (
             <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -116,14 +116,14 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.executionQ.lastExecutedTimestamp' }),
+        title: <FormattedMessage id= 'app.executionQ.lastExecutedTimestamp' />,
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
-            return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
+            return <FormattedMessage id='app.executionQ.notAvailable' />;
           }
           return (
             <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Modal, Table } from 'antd';
+import { Button, message, Modal, Table,Divider } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
@@ -117,6 +117,7 @@ class TaskLibraryComponent extends Component {
       <TablePageWrapper>
         <div>
           <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
+          <Divider />
           {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.openCancelTaskConfirm}>
               <FormattedMessage id={'app.taskDetail.cancelTask'} />

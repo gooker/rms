@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Popover, Button, Input } from 'antd';
+import { Tooltip, Button, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
 import Dictionary from '@/utils/Dictionary';
@@ -40,33 +40,20 @@ export default class TaskQueue extends React.PureComponent {
       },
       {
         title: <FormattedMessage id="app.task.type" />,
-        dataIndex: 'agvTaskType',
+        dataIndex: 'type',
         align: 'center',
         width: 150,
-        render: (taskType) => formatMessage({ id: `app.taskType.${taskType}` }),
-        // filters: this.renderFilters(Dictionary('agvTaskType')),
+        render: (text) => {
+          return <span>{formatMessage({ id: Dictionary('agvTaskType', text) })}</span>;
+        },
         // onFilter: (value, record) => record.agvTaskType.includes(value),
       },
       {
-        title: <FormattedMessage id="app.pod.id" />,
-        dataIndex: 'podId',
-        align: 'center',
-        width: 150,
-        ...this.getColumnSearchProps('podId'),
-        render: (text, record) => {
-          if (record.isLockPod) {
-            return <span style={{ color: green }}>{text}</span>;
-          } else {
-            return <span style={{ color: red }}>{text}</span>;
-          }
-        },
-      },
-      {
         title: <FormattedMessage id="app.taskQueue.appointedTarget" />,
-        dataIndex: 'targetCellId',
+        dataIndex: 'appointedTargetCellId',
         align: 'center',
         width: 150,
-        ...this.getColumnSearchProps('targetCellId'),
+        ...this.getColumnSearchProps('appointedTargetCellId'),
         render: (text, record) => {
           if (record.isLockTargetCell == null) {
             return <span>{text}</span>;
@@ -93,71 +80,46 @@ export default class TaskQueue extends React.PureComponent {
         },
       },
       {
-        title: <FormattedMessage id='app.taskQueue.priority' />,
-        dataIndex: 'jobPriority',
+        title: <FormattedMessage id="app.taskQueue.priority" />,
+        dataIndex: 'priority',
         align: 'center',
         width: 150,
-        sorter: (a, b) => a.jobPriority - b.jobPriority,
-        ...this.getColumnSearchProps('jobPriority'),
+        sorter: (a, b) => a.priority - b.priority,
+        ...this.getColumnSearchProps('priority'),
         render: (text) => <span>{text}</span>,
       },
       {
-        title: <FormattedMessage id='app.taskQueue.createTime' />,
+        title: <FormattedMessage id="app.taskQueue.createTime" />,
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
-            return <FormattedMessage id= 'app.taskQueue.notAvailable' />;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
           return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: <FormattedMessage id='app.taskQueue.lastExecutedTimestamp' />,
+        title: <FormattedMessage id="app.taskQueue.lastExecutedTimestamp" />,
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
         width: 150,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
-            return <FormattedMessage id= 'app.taskQueue.notAvailable' />;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
           return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: <FormattedMessage id= 'app.taskQueue.triedTimes' />,
+        title: <FormattedMessage id="app.taskQueue.triedTimes" />,
         dataIndex: 'triedTimes',
         align: 'center',
         width: 150,
         sorter: (a, b) => a.triedTimes - b.triedTimes,
-      },
-      {
-        title: <FormattedMessage id= 'app.taskDetail.reason' />,
-        dataIndex: 'prepareFailedReason',
-        align: 'center',
-        fixed: 'right',
-        width: 200,
-        render: (text) => {
-          if (text) {
-            if (text.length > 18) {
-              return (
-                <Popover
-                  content={<span style={{ display: 'inline-block', width: '300px' }}>{text}</span>}
-                  trigger="hover"
-                >
-                  <span style={{ cursor: 'pointer' }}>{text.substr(0, 18)}...</span>
-                </Popover>
-              );
-            } else {
-              return <span>{text}</span>;
-            }
-          } else {
-            return <FormattedMessage id='app.taskQueue.notAvailable' />;
-          }
-        },
       },
     ];
   };
@@ -214,25 +176,11 @@ export default class TaskQueue extends React.PureComponent {
     this.setState({ searchText: '' });
   };
 
-  renderFilters = (data) => {
-    let data_ = [];
-    for (const key in data) {
-      if (data.hasOwnProperty(key)) {
-        const element = data[key];
-        data_.push({
-          text: formatMessage({ id: element }),
-          value: key,
-        });
-      }
-    }
-    return data_;
-  };
-
   render() {
     return (
       <TaskQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
-        agvType={AGVType.Sorter} // 标记当前页面的车型
+        agvType={AGVType.Tote} // 标记当前页面的车型
         delete={true} // 标记该页面是否允许执行删除操作
         priority={true} // 标记该页面是否允许执行调整优先级操作
       />
