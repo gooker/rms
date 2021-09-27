@@ -5,6 +5,7 @@ import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent'
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
+import { hasPermisson } from '@/utils/Permisson';
 import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
@@ -93,7 +94,7 @@ export default class TaskQueue extends React.PureComponent {
         },
       },
       {
-        title: <FormattedMessage id='app.taskQueue.priority' />,
+        title: <FormattedMessage id="app.taskQueue.priority" />,
         dataIndex: 'jobPriority',
         align: 'center',
         width: 150,
@@ -102,40 +103,40 @@ export default class TaskQueue extends React.PureComponent {
         render: (text) => <span>{text}</span>,
       },
       {
-        title: <FormattedMessage id='app.taskQueue.createTime' />,
+        title: <FormattedMessage id="app.taskQueue.createTime" />,
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
-            return <FormattedMessage id= 'app.taskQueue.notAvailable' />;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
           return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: <FormattedMessage id='app.taskQueue.lastExecutedTimestamp' />,
+        title: <FormattedMessage id="app.taskQueue.lastExecutedTimestamp" />,
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
         width: 150,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
-            return <FormattedMessage id= 'app.taskQueue.notAvailable' />;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
           return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: <FormattedMessage id= 'app.taskQueue.triedTimes' />,
+        title: <FormattedMessage id="app.taskQueue.triedTimes" />,
         dataIndex: 'triedTimes',
         align: 'center',
         width: 150,
         sorter: (a, b) => a.triedTimes - b.triedTimes,
       },
       {
-        title: <FormattedMessage id= 'app.taskDetail.reason' />,
+        title: <FormattedMessage id="app.taskDetail.reason" />,
         dataIndex: 'prepareFailedReason',
         align: 'center',
         fixed: 'right',
@@ -155,7 +156,7 @@ export default class TaskQueue extends React.PureComponent {
               return <span>{text}</span>;
             }
           } else {
-            return <FormattedMessage id='app.taskQueue.notAvailable' />;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
         },
       },
@@ -229,12 +230,14 @@ export default class TaskQueue extends React.PureComponent {
   };
 
   render() {
+    const deleteFlag = hasPermisson('/sorter/center/taskQueue/delete') ? true : false;
+    const priority = hasPermisson('/sorter/center/taskQueue/updatePipLine') ? true : false;
     return (
       <TaskQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Sorter} // 标记当前页面的车型
-        delete={true} // 标记该页面是否允许执行删除操作
-        priority={true} // 标记该页面是否允许执行调整优先级操作
+        deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
+        priority={priority} // 标记该页面是否允许执行调整优先级操作
       />
     );
   }

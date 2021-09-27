@@ -4,6 +4,7 @@ import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueue
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, isStrictNull } from '@/utils/utils';
+import { hasPermisson } from '@/utils/Permisson';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 
@@ -199,12 +200,13 @@ export default class ExecutionQueue extends React.PureComponent {
   };
 
   render() {
+    const deleteFlag = hasPermisson('/sorter/center/executionQueue/delete') ? true : false;
     return (
       <ExecutionQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Sorter} // 标记当前页面的车型
         filter={this.filterDataSource} // 数据筛选逻辑
-        delete={true} // 标记该页面是否允许执行删除操作
+        deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
       />
     );
   }

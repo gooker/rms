@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Modal, Table,Divider } from 'antd';
+import { Button, message, Modal, Table, Divider } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse } from '@/utils/utils';
 import TaskSearch from './TaskSearch';
+import commonStyles from '@/common.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {
@@ -117,7 +118,7 @@ class TaskLibraryComponent extends Component {
       <TablePageWrapper>
         <div>
           <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
-          <Divider />
+          <Divider className={commonStyles.divider} />
           {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.openCancelTaskConfirm}>
               <FormattedMessage id={'app.taskDetail.cancelTask'} />

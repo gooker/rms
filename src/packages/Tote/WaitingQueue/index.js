@@ -5,6 +5,7 @@ import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent'
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
+import { hasPermisson } from '@/utils/Permisson';
 import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
@@ -177,12 +178,14 @@ export default class TaskQueue extends React.PureComponent {
   };
 
   render() {
+    const deleteFlag = hasPermisson('/tote/center/taskQueue/delete') ? true : false;
+    const priority = hasPermisson('/tote/center/taskQueue/updatePipLine') ? true : false;
     return (
       <TaskQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Tote} // 标记当前页面的车型
-        delete={true} // 标记该页面是否允许执行删除操作
-        priority={true} // 标记该页面是否允许执行调整优先级操作
+        deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
+        priority={priority} // 标记该页面是否允许执行调整优先级操作
       />
     );
   }

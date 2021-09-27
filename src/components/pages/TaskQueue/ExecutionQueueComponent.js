@@ -108,21 +108,23 @@ class ExecutionQueueComponent extends Component {
 
   render() {
     const { loading, deleteLoading, selectedRowKeys } = this.state;
-    const { getColumn } = this.props;
+    const { getColumn, deleteFlag } = this.props;
     return (
       <TablePageWrapper>
         <div>
           <ExecutionQueueSearch search={this.filterTableList} />
           <Divider className={commonStyles.divider} />
-          <Button
-            danger
-            loading={deleteLoading}
-            icon={<DeleteOutlined />}
-            onClick={this.deleteQueueTasks}
-            disabled={selectedRowKeys.length === 0}
-          >
-            <FormattedMessage id="app.button.delete" />
-          </Button>
+          {deleteFlag ? (
+            <Button
+              danger
+              loading={deleteLoading}
+              icon={<DeleteOutlined />}
+              onClick={this.deleteQueueTasks}
+              disabled={selectedRowKeys.length === 0}
+            >
+              <FormattedMessage id="app.button.delete" />
+            </Button>
+          ) : null}
           <Button type="primary" ghost onClick={this.getData} className={commonStyles.ml10}>
             <RedoOutlined />
             <FormattedMessage id="app.button.refresh" />

@@ -62,17 +62,16 @@ export default {
 
       // 3.获取NameSpace数据 & 并整合运维配置
       // nameSpaceMap从getAllEnvironment中flag为1的 additionalInfos
-      let nameSpaceInfo = {}; // 所有的url链接地址信息
+      let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
       if (allEnvironment.length > 0) {
         const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
         if (activeNameSpace.length > 0) {
           // 若自定义环境出现两个已激活项目, 将默认启用第一项
-          nameSpaceInfo = {
+          urlDir = {
             ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
           };
         }
       }
-      const urlDir = { ...requestAPI(), ...nameSpaceInfo };
 
       // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
@@ -232,15 +231,12 @@ export default {
       };
     },
 
-
     saveTabs(state, { payload }) {
       return {
         ...state,
         tabs: payload,
       };
     },
-
-  
 
     saveGrantedAPx(state, { payload }) {
       return {

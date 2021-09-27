@@ -143,7 +143,7 @@ class TaskQueueComponent extends Component {
 
   render() {
     const { loading, dataSource, deleteLoading, selectedRowKeys, agvOverallStatus } = this.state;
-    const { getColumn } = this.props;
+    const { getColumn, deleteFlag, priority } = this.props;
     return (
       <TablePageWrapper>
         <div>
@@ -205,22 +205,26 @@ class TaskQueueComponent extends Component {
           </Row>
           <Row>
             <Row className={commonStyles.tableToolLeft}>
-              <Button
-                danger
-                loading={deleteLoading}
-                onClick={this.deleteQueueTasks}
-                disabled={selectedRowKeys.length === 0}
-              >
-                <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-              </Button>
-              <Button
-                disabled={selectedRowKeys.length === 0}
-                onClick={() => {
-                  this.switchTaskPriorityModal(true);
-                }}
-              >
-                <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.renice" />
-              </Button>
+              {deleteFlag ? (
+                <Button
+                  danger
+                  loading={deleteLoading}
+                  onClick={this.deleteQueueTasks}
+                  disabled={selectedRowKeys.length === 0}
+                >
+                  <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+                </Button>
+              ) : null}
+              {priority ? (
+                <Button
+                  disabled={selectedRowKeys.length === 0}
+                  onClick={() => {
+                    this.switchTaskPriorityModal(true);
+                  }}
+                >
+                  <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.renice" />
+                </Button>
+              ) : null}
             </Row>
             <Row style={{ flex: 1, justifyContent: 'flex-end' }} type="flex">
               <Button type="primary" ghost onClick={this.getData}>

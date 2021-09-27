@@ -3,6 +3,7 @@ import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, formatMessage, isStrictNull } from '@/utils/utils';
+import { hasPermisson } from '@/utils/Permisson';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
@@ -40,7 +41,7 @@ export default class ExecutionQueue extends React.PureComponent {
         render: (text) => <FormattedMessage id={Dictionary('agvTaskType', text)} />,
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.isReleased' />,
+        title: <FormattedMessage id="app.executionQ.isReleased" />,
         dataIndex: 'isReleased',
         align: 'center',
         width: 150,
@@ -48,20 +49,20 @@ export default class ExecutionQueue extends React.PureComponent {
           if (text) {
             return (
               <span style={{ color: green }}>
-                <FormattedMessage id='app.executionQ.released' />
+                <FormattedMessage id="app.executionQ.released" />
               </span>
             );
           } else {
             return (
               <span style={{ color: red }}>
-                <FormattedMessage id='app.executionQ.unreleased' />
+                <FormattedMessage id="app.executionQ.unreleased" />
               </span>
             );
           }
         },
       },
       {
-        title: <FormattedMessage id= 'app.agv' />,
+        title: <FormattedMessage id="app.agv" />,
         dataIndex: 'appointedAGVId',
         align: 'center',
         width: 100,
@@ -70,19 +71,19 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.target' />,
+        title: <FormattedMessage id="app.executionQ.target" />,
         dataIndex: 'appointedTargetCellId',
         align: 'center',
         width: 100,
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.chargerHardwareId' />,
+        title: <FormattedMessage id="app.executionQ.chargerHardwareId" />,
         dataIndex: 'chargerHardwareId',
         align: 'center',
         width: 120,
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.chargerDirection' />,
+        title: <FormattedMessage id="app.executionQ.chargerDirection" />,
         dataIndex: 'chargerDirection',
         align: 'center',
         width: 100,
@@ -95,20 +96,20 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.chargerSpotId' />,
+        title: <FormattedMessage id="app.executionQ.chargerSpotId" />,
         dataIndex: 'chargerCellId',
         align: 'center',
         width: 100,
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.createTime' />,
+        title: <FormattedMessage id="app.executionQ.createTime" />,
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
-            return <FormattedMessage id= 'app.executionQ.notAvailable' />;
+            return <FormattedMessage id="app.executionQ.notAvailable" />;
           }
           return (
             <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -116,14 +117,14 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: <FormattedMessage id= 'app.executionQ.lastExecutedTimestamp' />,
+        title: <FormattedMessage id="app.executionQ.lastExecutedTimestamp" />,
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
-            return <FormattedMessage id='app.executionQ.notAvailable' />;
+            return <FormattedMessage id="app.executionQ.notAvailable" />;
           }
           return (
             <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
@@ -161,12 +162,13 @@ export default class ExecutionQueue extends React.PureComponent {
   };
 
   render() {
+    const deleteFlag = hasPermisson('/tote/center/executionQueue/delete') ? true : false;
     return (
       <ExecutionQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Tote} // 标记当前页面的车型
         filter={this.filterDataSource} // 数据筛选逻辑
-        delete={true} // 标记该页面是否允许执行删除操作
+        deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
       />
     );
   }
