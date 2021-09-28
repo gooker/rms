@@ -5,7 +5,7 @@ import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent'
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import { hasPermisson } from '@/utils/Permisson';
+import { hasPermission } from '@/utils/Permission';
 import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
@@ -230,8 +230,8 @@ export default class TaskQueue extends React.PureComponent {
   };
 
   render() {
-    const deleteFlag = hasPermisson('/sorter/center/taskQueue/delete') ? true : false;
-    const priority = hasPermisson('/sorter/center/taskQueue/updatePipLine') ? true : false;
+    const deleteFlag = hasPermission('/sorter/center/taskQueue/delete') ? true : false;
+    const priority = hasPermission('/sorter/center/taskQueue/updatePipLine') ? true : false;
     return (
       <TaskQueueComponent
         getColumn={this.getColumn} // 提供表格列数据

@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, formatMessage, isStrictNull } from '@/utils/utils';
-import { hasPermisson } from '@/utils/Permisson';
+import { hasPermission } from '@/utils/Permission';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
@@ -162,7 +162,7 @@ export default class ExecutionQueue extends React.PureComponent {
   };
 
   render() {
-    const deleteFlag = hasPermisson('/tote/center/executionQueue/delete') ? true : false;
+    const deleteFlag = hasPermission('/tote/center/executionQueue/delete') ? true : false;
     return (
       <ExecutionQueueComponent
         getColumn={this.getColumn} // 提供表格列数据

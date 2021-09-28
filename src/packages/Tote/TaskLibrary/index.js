@@ -3,7 +3,7 @@ import { Badge, Tooltip } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { dateFormat } from '@/utils/utils';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
-import { hasPermisson } from '@/utils/Permisson';
+import { hasPermission } from '@/utils/Permission';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 import { TaskStateBageType } from '@/consts';
@@ -103,7 +103,7 @@ export default class TaskLibrary extends React.PureComponent {
   };
 
   render() {
-    const cancelFlag = hasPermisson('/tote/center/taskManger/cancel') ? true : false;
+    const cancelFlag = hasPermission('/tote/center/taskManger/cancel') ? true : false;
     return (
       <TaskLibraryComponent
         getColumn={this.getColumn} // 提供表格列数据

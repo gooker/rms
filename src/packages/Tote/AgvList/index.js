@@ -3,18 +3,13 @@ import { Badge, Tag, Button, Tooltip } from 'antd';
 import { dateFormat } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/components/pages/TaskPool/TaskPoolComponent';
+import { hasPermission } from '@/utils/Permission';
 import { AGVType } from '@/config/config';
 import { TaskStateBageType } from '@/consts';
 
-const statusTransform = {
-  New: 'New',
-  EXECUTING: 'Executing',
-  FINISHED: 'Finished',
-  CANCELLED: 'Cancel',
-  ERROR: 'Error',
-};
+const deleteFlag = hasPermission('/tote/agv/agvList/delete');
 
-const TotePoolTask = () => {
+const AgvList = () => {
   function getColumn(checkDetail) {
     return [
       {
@@ -53,7 +48,7 @@ const TotePoolTask = () => {
             return (
               <Badge
                 status={TaskStateBageType[text]}
-                text={<FormattedMessage id={`app.taskStatus.${statusTransform[text]}`} />}
+                text={<FormattedMessage id={`app.taskStatus.text}`} />}
               />
             );
           } else {
@@ -194,9 +189,9 @@ const TotePoolTask = () => {
     <TaskPoolComponent
       getColumn={getColumn} // 提供表格列数据
       agvType={AGVType.Tote} // 标记当前页面的车型
-      cancel={true} // 标记该页面是否允许执行取消操作
+      deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
     />
   );
 };
 
-export default React.memo(TotePoolTask);
+export default React.memo(AgvList);

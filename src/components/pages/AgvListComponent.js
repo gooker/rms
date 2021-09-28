@@ -130,12 +130,13 @@ class AgvListComponent extends Component {
 
   render() {
     const { loading, agvList, selectedRowKeys } = this.state;
-    const { getColumn } = this.props;
+    const { getColumn,deleteFlag,moveFlag } = this.props;
     return (
       <TablePageWrapper>
         <Row>
           <Row className={commonStyles.tableToolLeft}>
-            <Button disabled={selectedRowKeys.length === 0} onClick={this.deleteAgv}>
+            
+            <Button danger disabled={selectedRowKeys.length === 0} onClick={this.deleteAgv}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
             <Button disabled={selectedRowKeys.length === 0} onClick={this.moveOutAgv}>
