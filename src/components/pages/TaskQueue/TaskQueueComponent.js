@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Badge, Row, Button, Modal, message } from 'antd';
+import { Table, Badge, Row, Button, message } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -14,10 +14,10 @@ import {
 import { dealResponse } from '@/utils/utils';
 import UpdateTaskPriority from './components/UpdateTaskPriority/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import RcsConfirm from '@/components/RcsConfirm';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
 
-const { confirm } = Modal;
 
 @connect()
 class TaskQueueComponent extends Component {
@@ -77,8 +77,8 @@ class TaskQueueComponent extends Component {
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
 
-    confirm({
-      title: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
+    RcsConfirm({
+      content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
         const response = await deleteTaskQueueItems(agvType, requestParam);
@@ -239,6 +239,7 @@ class TaskQueueComponent extends Component {
           columns={getColumn(this.checkDetail)}
           dataSource={dataSource}
           scroll={{ x: 'max-content' }}
+          rowKey={(record) => record.taskId}
           pagination={{
             responsive: true,
             defaultPageSize: 20,

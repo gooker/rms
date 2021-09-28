@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Button, Divider, Modal } from 'antd';
+import { Table, Button, Divider } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -9,11 +9,10 @@ import {
   deleteExecutionQTasks,
 } from '@/services/api';
 import { dealResponse } from '@/utils/utils';
+import RcsConfirm from '@/components/RcsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
-
-const { confirm } = Modal;
 
 @connect()
 class ExecutionQueueComponent extends Component {
@@ -59,8 +58,8 @@ class ExecutionQueueComponent extends Component {
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
 
-    confirm({
-      title: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
+    RcsConfirm({
+      content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
         const response = await deleteExecutionQTasks(agvType, requestParam);
@@ -135,6 +134,7 @@ class ExecutionQueueComponent extends Component {
           columns={getColumn(this.checkTaskDetail)}
           dataSource={this.filterTableList()}
           scroll={{ x: 'max-content' }}
+          rowKey={(record) => record.taskId}
           pagination={{
             responsive: true,
             defaultPageSize: 20,

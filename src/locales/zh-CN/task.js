@@ -121,4 +121,15 @@ export default {
   'app.taskDetail.errorRecord': '小车错误记录',
   'app.taskDetail.confirmHugTote': '确认料箱车抱夹信息',
   'app.taskDetail.confirmToteHolding': '请确定车体抱夹上的料箱信息',
+
+  // 料箱池任务
+  'app.taskPool.code': '料箱码',
+  'app.taskPool.fetchLocation':'取料箱货位码',
+  'app.taskPool.putLocation':'放料箱货位码',
+  'app.taskPool.createTime':'添加时间',
+  'app.taskPool.targetTime':'目标完成时间',
+  'app.taskPool.fetchStatus':'取货状态',
+  'app.taskPool.lockStatus': '是否锁定',
+  'app.taskPool.FetchDetail':'FETCH 详情',
+  'app.taskPool.PutDetail':'PUT 详情',
 };

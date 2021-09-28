@@ -126,6 +126,8 @@ export default {
   'app.task.record': '任务记录',
   'app.task.type': '任务类型',
   'app.task.state': '任务状态',
+  'app.task.customId': '客户任务ID',
+  'app.task.poolId': '料箱池任务ID',
 
   'app.taskStatus.New': '新建',
   'app.taskStatus.Executing': '执行中',

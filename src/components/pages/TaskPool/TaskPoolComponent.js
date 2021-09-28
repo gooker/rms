@@ -2,23 +2,20 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, message, Table, Divider } from 'antd';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
+import {  fetchPoolTasks, cancelTotePoolTask , fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dealResponse } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
-import TaskSearch from './TaskSearch';
+import { dealResponse } from '@/utils/utils';
+import TaskPoolSearch from './TaskPoolSearch';
 import commonStyles from '@/common.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {
   state = {
     formValues: {}, // 保存查询表单的值
-
     loading: false,
-
     selectedRows: [],
     selectedRowKeys: [],
-
     agvList: [],
     dataSource: [],
     page: { currentPage: 1, size: 10, totalElements: 0 },
@@ -47,7 +44,7 @@ class TaskLibraryComponent extends Component {
 
     const sectionId = window.localStorage.getItem('sectionId');
     const params = { sectionId, current: currentPage, size, ...requestValues };
-    const response = await fetchAgvTaskList(agvType, params);
+    const response = await fetchPoolTasks(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
       this.setState({ dataSource: list, page });
@@ -62,6 +59,7 @@ class TaskLibraryComponent extends Component {
     });
   };
 
+  // 小车id
   getAgvList = async () => {
     const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
@@ -83,22 +81,18 @@ class TaskLibraryComponent extends Component {
     });
   };
 
-  openCancelTaskConfirm = () => {
+  cancelTaskConfirm = () => {
     RcsConfirm({
       content: formatMessage({ id: 'app.taskAction.cancel.confirm' }),
       onOk: this.cancelTask,
     });
   };
-
+ 
+  // 取消任务-可批量
   cancelTask = async () => {
-    const { selectedRows } = this.state;
+    const { selectedRowKeys } = this.state;
     const { agvType } = this.props;
-
-    const requestBody = {
-      sectionId: window.localStorage.getItem('sectionId'),
-      taskIds: selectedRows.map((record) => record.taskId),
-    };
-    const response = await fetchBatchCancelTask(agvType, requestBody);
+    const response = await cancelTotePoolTask(agvType, [...selectedRowKeys]);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.taskAction.cancel.success' }));
       this.setState({ selectedRowKeys: [], selectedRows: [] }, this.getData);
@@ -115,10 +109,10 @@ class TaskLibraryComponent extends Component {
     return (
       <TablePageWrapper>
         <div>
-          <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
+          <TaskPoolSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
           <Divider className={commonStyles.divider} />
           {cancel && (
-            <Button disabled={selectedRowKeys.length === 0} onClick={this.openCancelTaskConfirm}>
+            <Button disabled={selectedRowKeys.length === 0} onClick={this.cancelTaskConfirm}>
               <FormattedMessage id={'app.taskDetail.cancelTask'} />
             </Button>
           )}
@@ -126,7 +120,9 @@ class TaskLibraryComponent extends Component {
         <Table
           loading={loading}
           scroll={{ x: 'max-content' }}
-          rowKey={(record) => record.taskId}
+          rowKey={record => {
+            return record.id;
+          }}
           dataSource={dataSource}
           columns={getColumn(this.checkDetail)}
           rowSelection={{ selectedRowKeys, onChange: this.rowSelectChange }}
