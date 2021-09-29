@@ -1,8 +1,9 @@
 import React from 'react';
 import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/utils';
+import { formatMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
+import { dateFormat, getSuffix, getDirectionLocale, renderAgvStatus, isNull } from '@/utils/utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
 import dictionary from '@/utils/Dictionary';
 import { AGVType } from '@/config/config';
@@ -170,7 +171,9 @@ export default class AgvList extends React.PureComponent {
         dataIndex: 'batteryType',
         ListCardRender: true,
         render: (text) => {
-          return <FormattedMessage id={dictionary('batteryType', text)} />;
+          if (!isNull(text)) {
+            return formatMessage({ id: dictionary('batteryType', text) });
+          }
         },
       },
       {
@@ -206,8 +209,9 @@ export default class AgvList extends React.PureComponent {
       <AgvListComponent
         getColumn={this.getColumn}
         agvType={AGVType.Sorter}
-        delete={true} // 是否可以删除小车
-        moveOut={true} // 是否可以将小车移出地图
+        deleteFlag={true} // 是否可以删除小车
+        moveFlag={true} // 是否可以将小车移出地图
+        exportFlag={true} // 是否有信息导出
       />
     );
   }

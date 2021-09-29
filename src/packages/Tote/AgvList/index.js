@@ -1,16 +1,24 @@
 import React from 'react';
-import { Badge, Tag, Button, Tooltip } from 'antd';
-import { dateFormat } from '@/utils/utils';
+import { Badge, Tag, Button, Divider, Table } from 'antd';
+import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import TaskPoolComponent from '@/components/pages/TaskPool/TaskPoolComponent';
+import AgvListComponent from '@/components/pages/AgvListComponent';
 import { hasPermission } from '@/utils/Permission';
+import {
+  dateFormat,
+  getSuffix,
+  getDirectionLocale,
+  renderAgvStatus,
+  formatMessage,
+  isNull,
+} from '@/utils/utils';
+import dictionary from '@/utils/Dictionary';
 import { AGVType } from '@/config/config';
-import { TaskStateBageType } from '@/consts';
 
 const deleteFlag = hasPermission('/tote/agv/agvList/delete');
 
 const AgvList = () => {
-  function getColumn(checkDetail) {
+  function getColumn(checkAgvDetail) {
     return [
       {
         title: <FormattedMessage id="app.agv.id" />,
@@ -20,176 +28,239 @@ const AgvList = () => {
         fixed: 'left',
       },
       {
-        title: <FormattedMessage id="app.task.customId" />,
-        dataIndex: 'customId',
+        title: <FormattedMessage id="app.agv.serverIdentity" />,
+        dataIndex: 'clusterIndex',
         align: 'center',
-        width: 120,
+        width: 100,
       },
       {
-        title: <FormattedMessage id="app.task.poolId" />,
-        dataIndex: 'id',
-        width: 130,
+        title: <FormattedMessage id="app.agv.ip" />,
+        dataIndex: 'ip',
+        align: 'center',
+        width: 150,
+      },
+      {
+        title: <FormattedMessage id="app.agv.port" />,
+        dataIndex: 'port',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: <FormattedMessage id="app.common.position" />,
+        dataIndex: 'currentCellId',
+        align: 'center',
+        width: 100,
+      },
+      {
+        title: <FormattedMessage id="app.agv.direction" />,
+        dataIndex: 'currentDirection',
+        align: 'center',
+        width: 100,
+        render: (text) => getDirectionLocale(text),
+      },
+      {
+        title: <FormattedMessage id="app.agv.addingTime" />,
+        dataIndex: 'createDate',
+        width: 150,
+        align: 'center',
+        ListCardRender: true,
+        render: (text, record, index, flag) => {
+          if (flag) {
+            return <span>{dateFormat(text).format('MM-DD HH:mm')}</span>;
+          }
+          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+        },
+      },
+      {
+        title: <FormattedMessage id="app.agv.maintenanceState" />,
+        dataIndex: 'disabled',
+        align: 'center',
+        width: 100,
+        ListCardRender: true,
         render: (text) => {
           return (
-            <Tooltip title={text}>
-              <Button type="link">{text ? '*' + text.substr(text.length - 6, 6) : null}</Button>
-            </Tooltip>
+            <span>
+              {text ? (
+                <Tag color="red">
+                  <ToolOutlined />
+                  <span style={{ marginLeft: 3 }}>
+                    <FormattedMessage id="app.agv.underMaintenance" />
+                  </span>
+                </Tag>
+              ) : (
+                <Tag color="green">{<FormattedMessage id="app.agv.normal" />}</Tag>
+              )}
+            </span>
           );
         },
       },
-
+      //   {
+      //     title: <FormattedMessage id="app.agv.manualMode" />,
+      //     dataIndex: 'manualMode',
+      //     align: 'center',
+      //     width: 100,
+      //     ListCardRender: true,
+      //     render: (text) => {
+      //       return text ? (
+      //         <FormattedMessage id="app.common.true" />
+      //       ) : (
+      //         <FormattedMessage id="app.common.false" />
+      //       );
+      //     },
+      //   },
       {
-        title: <FormattedMessage id="app.executionQ.executionState" />,
-        dataIndex: 'taskActionStatus',
+        title: <FormattedMessage id="app.agv.type" />,
+        dataIndex: 'robotType',
+        width: 100,
+        ListCardRender: true,
         align: 'center',
-        width: 120,
+        render: (text, record) => {
+          if (record.isDummy) {
+            return <FormattedMessage id="app.agv.threeGenerationsOfVehicles(Virtual)" />;
+          } else if (text === 3) {
+            return <FormattedMessage id="app.agv.threeGenerationOfTianma" />;
+          } else {
+            return <span>{text}</span>;
+          }
+        },
+      },
+      {
+        title: <FormattedMessage id="app.agv.status" />,
+        width: 100,
+        dataIndex: 'agvStatus',
+        align: 'center',
+        ListCardRender: true,
+        render: (agvStatus) => renderAgvStatus(agvStatus),
+      },
+      {
+        title: <FormattedMessage id="app.agv.battery" />,
+        width: 100,
+        align: 'center',
+        dataIndex: 'battery',
+        ListCardRender: true,
         render: (text) => {
           if (text != null) {
-            return (
-              <Badge
-                status={TaskStateBageType[text]}
-                text={<FormattedMessage id={`app.taskStatus.text}`} />}
-              />
-            );
-          } else {
-            return <FormattedMessage id="app.taskDetail.notAvailable" />;
+            if (parseInt(text) > 50) {
+              return <Badge status="success" text={getSuffix(text, '%')} />;
+            } else if (parseInt(text) > 10) {
+              return <Badge status="warning" text={getSuffix(text, '%')} />;
+            } else {
+              return <Badge status="error" text={getSuffix(text, '%')} />;
+            }
           }
         },
       },
       {
-        title: <FormattedMessage id="app.taskQueue.priority" />,
-        dataIndex: 'priority',
-        width: 80,
-      },
-      {
-        title: <FormattedMessage id="app.taskPool.code" />,
-        dataIndex: 'toteCode',
-        width: '10%',
-        render: (text, record) =>
-          record.items &&
-          record.items.map((item) => (
-            <Tag style={{ margin: '0px 3px' }} key={item.toteCode}>
-              {item.toteCode}
-            </Tag>
-          )),
-      },
-      {
-        title: <FormattedMessage id="app.taskPool.fetchLocation" />,
-        dataIndex: 'fetchLocation',
-        width: '10%',
-        render: (text, record) =>
-          record.items &&
-          record.items.map((item) => (
-            <Tag style={{ margin: '0px 3px' }} key={item.fetchLocation}>
-              {item.fetchLocation}
-            </Tag>
-          )),
-      },
-      {
-        title: <FormattedMessage id="app.taskPool.putLocation" />,
-        dataIndex: 'putLocation',
-        width: '10%',
-        render: (text, record) =>
-          record.items &&
-          record.items.map((item) => (
-            <Tag style={{ margin: '0px 3px' }} key={item.putLocation}>
-              {item.putLocation}
-            </Tag>
-          )),
-      },
-
-      {
-        title: <FormattedMessage id="app.taskPool.createTime" />,
-        dataIndex: 'addedTS',
+        title: <FormattedMessage id="app.agv.batteryVoltage" />,
+        width: 100,
         align: 'center',
+        dataIndex: 'batteryVoltage',
+        ListCardRender: true,
+        render: (text) => {
+          if (text != null) {
+            if (parseInt(text) > 47000) {
+              return <Badge status="success" text={getSuffix(text / 1000, 'v')} />;
+            } else if (parseInt(text) > 45000) {
+              return <Badge status="warning" text={getSuffix(text / 1000, 'v')} />;
+            } else {
+              return <Badge status="error" text={getSuffix(text / 1000, 'v')} />;
+            }
+          }
+        },
+      },
+      {
+        title: <FormattedMessage id="app.agv.version" />,
+        width: 100,
+        align: 'center',
+        dataIndex: 'version',
+      },
+      {
+        title: <FormattedMessage id="app.agv.batteryType" />,
         width: 150,
+        align: 'center',
+        dataIndex: 'batteryType',
+        ListCardRender: true,
         render: (text) => {
-          if (!text) {
-            return <FormattedMessage id="app.taskDetail.notAvailable" />;
+          if (!isNull(text)) {
+            return formatMessage({ id: dictionary('batteryType', text) });
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: <FormattedMessage id="app.taskPool.targetTime" />,
-        dataIndex: 'targetTS',
-        width: 190,
-        render: (text) => {
-          if (!text) {
-            return <FormattedMessage id="app.taskDetail.notAvailable" />;
-          }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
-        },
-      },
-      {
-        title: <FormattedMessage id="app.taskPool.fetchStatus" />,
-        dataIndex: 'isFetched',
-        width: 100,
-        render: (text) => (
-          <>
-            {text ? (
-              <FormattedMessage id="app.common.true" />
-            ) : (
-              <FormattedMessage id="app.common.false" />
-            )}
-          </>
-        ),
-      },
-      {
-        title: <FormattedMessage id="app.taskPool.lockStatus" />,
-        dataIndex: 'isLocked',
-        width: 100,
-        render: (text) => (
-          <>
-            {text ? (
-              <FormattedMessage id="app.common.true" />
-            ) : (
-              <FormattedMessage id="app.common.false" />
-            )}
-          </>
-        ),
+        title: <FormattedMessage id="app.agv.maxChargeCurrent" />,
+        width: 150,
+        align: 'center',
+        dataIndex: 'maxChargingCurrent',
+        render: (text) => <Badge status="success" text={getSuffix(text, ' A') || '-'} />,
       },
       {
         title: <FormattedMessage id="app.button.operation" />,
-        dataIndex: 'relationToteTaskIds',
+        width: 100,
         align: 'center',
-        fixed: 'right',
-        width: 230,
-        render: (text, record) =>
-          record.relationToteTaskIds &&
-          Object.keys(record.relationToteTaskIds).map((k) => {
-            if (k === 'FETCH') {
-              return (
-                <Button
-                  type="link"
-                  onClick={() => {
-                    checkDetail(record.relationToteTaskIds[k], AGVType.Tote);
-                  }}
-                >
-                  <FormattedMessage id="app.taskPool.FetchDetail" />
-                </Button>
-              );
-            } else if (k === 'PUT')
-              return (
-                <Button
-                  type="link"
-                  style={{ paddingLeft: 10 }}
-                  onClick={() => {
-                    checkDetail(record.relationToteTaskIds[k], AGVType.Tote);
-                  }}
-                >
-                  <FormattedMessage id="app.taskPool.PutDetail" />
-                </Button>
-              );
-          }),
+        render: (text, record) => {
+          return (
+            <Button
+              type="link"
+              icon={<InfoOutlined />}
+              onClick={() => {
+                checkAgvDetail(record.robotId);
+              }}
+            >
+              <FormattedMessage id="app.agv.details" />
+            </Button>
+          );
+        },
       },
     ];
   }
+
+  function expandedRowRender(record) {
+    let result = [];
+    if (record.toteCodes) {
+      result = record.toteCodes
+        .map((toteCode, index) => {
+          return {
+            index: index + 1,
+            text: toteCode,
+          };
+        })
+        .reverse();
+    }
+    return (
+      <div style={{ margin: 20, width: 300 }}>
+        <Divider orientation="left">{<FormattedMessage id="app.taskPool.mountedBin" />}</Divider>
+        <Table
+          pagination={false}
+          dataSource={result}
+          columns={[
+            {
+              title: <FormattedMessage id="app.taskDetail.layers" />,
+              dataIndex: 'index',
+              render: (text) => {
+                return <span>{text}</span>;
+              },
+            },
+            {
+              title: <FormattedMessage id="app.taskDetail.toteCode" />,
+              dataIndex: 'text',
+              render: (text) => {
+                return <span>{text}</span>;
+              },
+            },
+          ]}
+        />
+      </div>
+    );
+  }
+
   return (
-    <TaskPoolComponent
+    <AgvListComponent
       getColumn={getColumn} // 提供表格列数据
       agvType={AGVType.Tote} // 标记当前页面的车型
       deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
+      moveFlag={false} // 标记页面是否有移出地图按钮
+      exportFlag={false}
+      expandedRowRender={expandedRowRender} // tote 的table 可展开看层数 料箱号
     />
   );
 };

@@ -40,6 +40,7 @@ export default {
 
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
+    selectedKeys:[],
   },
 
   effects: {
@@ -114,6 +115,8 @@ export default {
       yield put({ type: 'saveCurrentApp', payload: defaultApp }); // 默认显示的app
       yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
       yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
+
+      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
 
       return true;
     },
@@ -228,6 +231,13 @@ export default {
       return {
         ...state,
         currentApp: payload,
+      };
+    },
+    saveSelectedKeys(state, { payload }) {
+      // menu 选中的selectedKey
+      return {
+        ...state,
+        selectedKeys: payload,
       };
     },
 

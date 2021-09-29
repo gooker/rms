@@ -16,22 +16,22 @@ export const AppCode = {
   Mixrobot: 'Mixrobot',
   SSO: 'SSO',
   I18N: 'I18N',
-  Charger:'Charger',
-  [AGVType.LatentLifting]: 'LatentLifting',
-  [AGVType.Tote]: 'Tote',
-  [AGVType.ForkLifting]: 'ForkLifting',
-  [AGVType.Sorter]: 'Sorter',
+  Charger: 'Charger',
+  LatentLifting: 'LatentLifting',
+  Tote: 'Tote',
+  ForkLifting: 'ForkLifting',
+  Sorter: 'Sorter',
 };
 
 // 各类车型的API namespace
 export const NameSpace = {
-  [AppCode.Mixrobot]: 'coordinator',
-  [AppCode.SSO]: 'sso',
-  [AppCode.I18N]: 'translation',
-  [AGVType.LatentLifting]: 'latent-lifting',
-  [AGVType.Tote]: 'tote',
-  [AGVType.ForkLifting]: 'forklift',
-  [AGVType.Sorter]: 'sorter',
+  Mixrobot: 'coordinator',
+  SSO: 'sso',
+  I18N: 'translation',
+  LatentLifting: 'latent-lifting',
+  Tote: 'tote',
+  ForkLifting: 'forklift',
+  Sorter: 'sorter',
 };
 
 // 每个App的 BaseConText(微服务的前缀), 同时也是 AppBar 中各个WCS的代号

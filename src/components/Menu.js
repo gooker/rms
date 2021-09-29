@@ -11,10 +11,9 @@ const { SubMenu } = Menu;
 
 const Sider = (prop) => {
   const [openKeys, setOpenKeys] = useState([]);
-  const [selectedKeys, setSelectedKeys] = useState([]);
+  // const [selectedKeys, setSelectedKeys] = useState([]);
   const [currentModuleRouter, setCurrentModuleRouter] = useState([]);
-  const { currentApp, allMenuData } = prop;
-
+  const { currentApp, allMenuData,selectedKeys_global,dispatch } = prop;
   useEffect(() => {
     setTimeout(() => {
       // 提取当前展开的菜单节点
@@ -23,9 +22,9 @@ const Sider = (prop) => {
 
       // 提取当前选中的菜单项
       const selectedKey = window.location.href.split('#')[1];
-      setSelectedKeys([selectedKey]);
+      // setSelectedKeys([selectedKey]);
+      dispatch({ type: 'global/saveSelectedKeys', payload: [selectedKey] });// agv 列表会跳转到小车监控 存放起来
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -33,12 +32,6 @@ const Sider = (prop) => {
       .filter(({ appCode }) => appCode === currentApp)
       .map(({ menu }) => menu);
 
-    // TODO: 暂时先这样
-    // start
-    // history.push('/');
-    // setSelectedKeys([]);
-    // setOpenKeys([]);
-    // end
     setCurrentModuleRouter(currentAppRouter.length > 0 ? currentAppRouter[0] : []);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +70,8 @@ const Sider = (prop) => {
   };
 
   const onSelectMenuItem = ({ item, key, keyPath, selectedKeys, domEvent }) => {
-    setSelectedKeys(selectedKeys);
+    // setSelectedKeys(selectedKeys);
+    dispatch({ type: 'global/saveSelectedKeys', payload: selectedKeys });
   };
 
   const renderMenuItem = (name, routes) => {
@@ -105,7 +99,7 @@ const Sider = (prop) => {
       mode="inline"
       theme="dark"
       openKeys={openKeys}
-      selectedKeys={selectedKeys}
+      selectedKeys={selectedKeys_global}
       onOpenChange={onOpenChange}
       onSelect={onSelectMenuItem}
       style={{ width: '100%' }}
@@ -134,5 +128,6 @@ export default connect(({ global }) => {
   return {
     currentApp: global?.currentApp,
     allMenuData: global?.allMenuData,
+    selectedKeys_global:global?.selectedKeys,
   };
 })(memo(Sider));

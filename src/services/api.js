@@ -278,3 +278,13 @@ export async function cancelTotePoolTask(agvType,params) {
 
 /******料箱池任务 end*********/ 
 
+
+/**tote agv列表***/ 
+
+export async function fetchToteAgvList(agvType) {
+  return request(`/${NameSpace[agvType]}/agv/getToteAGV`, {
+    method: 'GET',
+  });
+}
+
+

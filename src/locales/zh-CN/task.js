@@ -132,4 +132,5 @@ export default {
   'app.taskPool.lockStatus': '是否锁定',
   'app.taskPool.FetchDetail':'FETCH 详情',
   'app.taskPool.PutDetail':'PUT 详情',
+  'app.taskPool.mountedBin': '已挂载的料箱',
 };
