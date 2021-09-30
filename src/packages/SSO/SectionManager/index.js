@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Button, Table, Modal, message } from 'antd';
+import { Row, Button, Modal, message } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   fetchSelectSectionList,
@@ -8,6 +8,7 @@ import {
   deleteSectionById,
 } from '@/services/user';
 import RcsConfirm from '@/components/RcsConfirm';
+import TablewidthPages from '@/components/TablewidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 import UpdateSection from './components/UpdateSection';
@@ -146,24 +147,17 @@ export default class SectionManager extends Component {
           </Button>
         </Row>
         <div className={styles.sectionManagerTable}>
-          <Table
+          <TablewidthPages
             bordered
             columns={this.getColumn}
             rowKey="id"
             dataSource={sectionsList}
-            scroll={{ x: 'max-content' }}
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,
               onChange: (selectRowKey, selectRow) => {
                 this.setState({ selectRowKey, selectRow });
               },
-            }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 10,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
           />
         </div>

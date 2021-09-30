@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Col, Row, Modal, message, Drawer } from 'antd';
+import { Button, Col, Row, Modal, message, Drawer } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -19,6 +19,7 @@ import {
   saveRoleAssignAuthority,
   fetchUploadRoles,
 } from '@/services/user';
+import TablewidthPages from '@/components/TablewidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
@@ -242,24 +243,17 @@ export default class index extends Component {
         </Row>
 
         <div className={commonStyles.divContent}>
-          <Table
+          <TablewidthPages
             bordered
             columns={this.columns}
             dataSource={roleList}
             loading={loading}
             rowKey="id"
-            scroll={{ x: 'max-content' }}
             rowSelection={{
               selectedRowKeys,
               onChange: (selectedRowKeys, selectedRow) => {
                 this.setState({ selectedRowKeys, selectedRow });
               },
-            }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 10,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
           />
         </div>

@@ -103,8 +103,7 @@ export default {
         allModuleMenuData,
         permissionMap,
       );
-
-      const defaultApp = currentUser.username === 'admin' ? 'sso' : 'mixrobot';
+    
 
       // 7. 保存信息
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
@@ -112,7 +111,6 @@ export default {
       yield put({ type: 'saveNameSpacesInfo', payload: urlDir }); // 所有API接口信息
       yield put({ type: 'saveGrantedAPx', payload: { grantedAPP } }); // 所有授权的APP
       yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
-      yield put({ type: 'saveCurrentApp', payload: defaultApp }); // 默认显示的app
       yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
       yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
 

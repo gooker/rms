@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Badge, Row, Button, message } from 'antd';
+import {  Badge, Row, Button, message } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -11,6 +11,7 @@ import {
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
 } from '@/services/api';
+import TablewidthPages from '@/components/TablewidthPages';
 import { dealResponse } from '@/utils/utils';
 import UpdateTaskPriority from './components/UpdateTaskPriority/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -234,17 +235,11 @@ class TaskQueueComponent extends Component {
             </Row>
           </Row>
         </div>
-        <Table
+        <TablewidthPages
           loading={loading}
           columns={getColumn(this.checkDetail)}
           dataSource={dataSource}
-          scroll={{ x: 'max-content' }}
           rowKey={(record) => record.taskId}
-          pagination={{
-            responsive: true,
-            defaultPageSize: 20,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-          }}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,

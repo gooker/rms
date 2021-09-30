@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, Button, Table, Tag, Popover, message, Modal } from 'antd';
+import { Row, Col, Select, Button, Tag, Popover, message, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -15,6 +15,7 @@ import {
 } from '@/services/user';
 import IconFont from '@/utils/ExtraIcon';
 import RcsConfirm from '@/components/RcsConfirm';
+import TablewidthPages from '@/components/TablewidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
@@ -447,24 +448,17 @@ class UserManager extends Component {
           </div>
         </Row>
         <div className={styles.userManagerTable}>
-          <Table
+          <TablewidthPages
             bordered
             columns={this.getColumn}
             rowKey="id"
             dataSource={showUsersList}
-            scroll={{ x: 'max-content' }}
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,
               onChange: (selectRowKey, selectRow) => {
                 this.setState({ selectRowKey, selectRow });
               },
-            }}
-            pagination={{
-              responsive: true,
-              defaultPageSize: 10,
-              showTotal: (total) =>
-                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
           />
         </div>

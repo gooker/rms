@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Button, Divider } from 'antd';
+import { Button, Divider } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -8,6 +8,7 @@ import {
   fetchToteExecutingTaskList,
   deleteExecutionQTasks,
 } from '@/services/api';
+import TablewidthPages from '@/components/TablewidthPages';
 import { dealResponse } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
@@ -129,17 +130,11 @@ class ExecutionQueueComponent extends Component {
             <FormattedMessage id="app.button.refresh" />
           </Button>
         </div>
-        <Table
+        <TablewidthPages
           loading={loading}
           columns={getColumn(this.checkTaskDetail)}
           dataSource={this.filterTableList()}
-          scroll={{ x: 'max-content' }}
           rowKey={(record) => record.taskId}
-          pagination={{
-            responsive: true,
-            defaultPageSize: 20,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-          }}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,

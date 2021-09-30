@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
+import {  Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import {
@@ -9,6 +9,7 @@ import {
   fetchDeleteAgvList,
   fetchMoveoutAGVs,
 } from '@/services/api';
+import TablewidthPages from '@/components/TablewidthPages';
 import { dealResponse, isNull } from '@/utils/utils';
 import history from '@/history';
 import { NameSpace } from '@/config/config';
@@ -172,7 +173,7 @@ class AgvListComponent extends Component {
     const route = `/${NameSpace[agvType]}/agv/agvRealTime`;
     history.push({
       pathname: route,
-      search:agvId,
+      search:`agvId=${agvId}`,
     });
     dispatch({ type: 'global/saveSelectedKeys', payload: [route] });
   };
@@ -264,17 +265,11 @@ class AgvListComponent extends Component {
             </Button>
           </Row>
         </Row>
-        <Table
+        <TablewidthPages
           loading={loading}
           columns={getColumn(this.checkAgvDetail)}
           dataSource={this.filterData()}
-          scroll={{ x: 'max-content' }}
           rowKey={"id"}
-          pagination={{
-            responsive: true,
-            defaultPageSize: 20,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-          }}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,

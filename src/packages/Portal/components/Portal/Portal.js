@@ -213,6 +213,6 @@ export default connect(({ global, user }) => {
   return {
     isAdmin,
     appList: global.grantedAPP,
-    currentApp: global?.currentApp.toLowerCase(),
+    currentApp: global?.currentApp,
   };
 })(Portal);

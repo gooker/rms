@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // 只用于本地开发调试使用
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
@@ -5,25 +6,45 @@ import { Link } from 'react-router-dom';
 import { connect } from '@/utils/dva';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
+import { isStrictNull } from '@/utils/utils';
 // import history from '@/history';
+
+const baseCode = {
+  tote: 'tote-wcs-gui',
+};
 
 const { SubMenu } = Menu;
 
 const Sider = (prop) => {
   const [openKeys, setOpenKeys] = useState([]);
-  // const [selectedKeys, setSelectedKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState(prop.selectedKeys_global);
   const [currentModuleRouter, setCurrentModuleRouter] = useState([]);
-  const { currentApp, allMenuData,selectedKeys_global,dispatch } = prop;
+  const { currentApp, currentUser, allMenuData, dispatch } = prop;
+
+  useEffect(() => {
+    // 设置当前的appcode
+    const currentOpenApp = window.location.href.split('#/')[1];
+    let code = null;
+    if (!isStrictNull(currentOpenApp)) {
+      code = baseCode[currentOpenApp.split('/')[0]] || currentOpenApp.split('/')[0];
+    } else {
+      code = currentUser && currentUser.username === 'admin' ? 'sso' : 'mixrobot';
+    }
+    dispatch({ type: 'global/saveCurrentApp', payload: code });
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     setTimeout(() => {
-      // 提取当前展开的菜单节点
-      const openKey = extractOpenKey();
-      setOpenKeys([openKey]);
+      // 1.提取当前选中的菜单项
+      let selectedKey = window.location.href.split('#')[1];
+      if (selectedKey.indexOf('?agv') >= 0) {
+        selectedKey = selectedKey.split('?agv')[0];
+      }
 
-      // 提取当前选中的菜单项
-      const selectedKey = window.location.href.split('#')[1];
-      // setSelectedKeys([selectedKey]);
-      dispatch({ type: 'global/saveSelectedKeys', payload: [selectedKey] });// agv 列表会跳转到小车监控 存放起来
+      setSelectedKeys([selectedKey]);
+      dispatch({ type: 'global/saveSelectedKeys', payload: [selectedKey] }); // agv 列表会跳转到小车监控 存放起来
     });
   }, []);
 
@@ -37,22 +58,27 @@ const Sider = (prop) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentApp]);
 
-  const extractOpenKey = () => {
-    let openKey;
-    const selectedKey = window.location.href.split('#')[1];
+  useEffect(() => {
+    // 2.提取当前展开的菜单节点
+    const openKey = extractOpenKey(selectedKeys);
+    setOpenKeys([openKey]);
+  }, [currentModuleRouter, selectedKeys]);
 
+  const extractOpenKey = (key) => {
+    let openKey;
+    const selectedKey = key[0];
     for (let index = 0; index < currentModuleRouter.length; index++) {
-      const { name, routes, path } = currentModuleRouter[index];
+      const { routes, path } = currentModuleRouter[index];
       if (routes) {
         for (let index2 = 0; index2 < routes.length; index2++) {
           if (routes[index2].path === selectedKey) {
-            openKey = name;
+            openKey = path;
             break;
           }
         }
       } else {
         if (path === selectedKey) {
-          openKey = name;
+          openKey = path;
           break;
         }
       }
@@ -70,7 +96,7 @@ const Sider = (prop) => {
   };
 
   const onSelectMenuItem = ({ item, key, keyPath, selectedKeys, domEvent }) => {
-    // setSelectedKeys(selectedKeys);
+    setSelectedKeys(selectedKeys);
     dispatch({ type: 'global/saveSelectedKeys', payload: selectedKeys });
   };
 
@@ -99,7 +125,7 @@ const Sider = (prop) => {
       mode="inline"
       theme="dark"
       openKeys={openKeys}
-      selectedKeys={selectedKeys_global}
+      selectedKeys={selectedKeys}
       onOpenChange={onOpenChange}
       onSelect={onSelectMenuItem}
       style={{ width: '100%' }}
@@ -124,10 +150,11 @@ const Sider = (prop) => {
   );
 };
 
-export default connect(({ global }) => {
+export default connect(({ global, user }) => {
   return {
     currentApp: global?.currentApp,
     allMenuData: global?.allMenuData,
-    selectedKeys_global:global?.selectedKeys,
+    selectedKeys_global: global?.selectedKeys,
+    currentUser: user?.currentUser,
   };
 })(memo(Sider));

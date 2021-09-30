@@ -1,16 +1,10 @@
-import React, { Component } from 'react'
+import React from 'react';
+import AgvRealTimeComponent from '@/components/pages/AgvRealTime/AgvRealTimeComponent';
+import { AGVType } from '@/config/config';
 
-export default class AgvRealTime extends Component {
-    componentDidMount() {
-        //console.log(this.props.match.params);
-        console.log(this.props.history);
-    }
+const TaskAgvType = AGVType.Tote;
+export default class AgvRealTime extends React.Component {
     render() {
-        console.log(this.props);
-        return (
-            <div>
-                12345
-            </div>
-        )
+        return <AgvRealTimeComponent agvType={TaskAgvType} {...this.props}/>;
     }
 }
