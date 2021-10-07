@@ -1,13 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/dva';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import { dealResponse, isNull } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { UseMonitorModalSize } from '@/customHooks';
-import { fetchChargerState } from '@/services/map';
 import ChargerRealTimeTab from './ChargerRealTimeTab';
 import ChargerBindTab from './ChargerBindTab';
 import ChargerActionTab from './ChargerActionTab';
-import commonStyle from '@/common/common.less';
-import { dealResponse, isNull } from '@/utils/utils';
+import { fetchChargerState } from '@/services/mixrobot';
+import commonStyle from '@/common.module.less';
 
 const TabCollection = [
   {

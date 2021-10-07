@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
-import { fetchBatchAgvLogin } from '@/services/simulator';
 import { message, Button, Checkbox, Col, Divider, Form, InputNumber, Row, Select } from 'antd';
+import { connect } from '@/utils/dva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dealResponse } from '@/utils/utils';
-import { AGVSubTypeMap } from '@/Const';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { addSimulationAgvs } from '@/services/monitor';
+import { AGVSubTypeMap } from '../../MonitorConsts';
 
 const AddSimulatorAgvLayout = { labelCol: { span: 6 }, wrapperCol: { span: 16 } };
 
@@ -14,7 +14,7 @@ const AddSimulatorAgvLayout = { labelCol: { span: 6 }, wrapperCol: { span: 16 } 
   const currentLogicArea = getCurrentLogicAreaData('monitor');
   return { currentMap, logicId: currentLogicArea?.id };
 })
-export default class AddSimulatorAgv extends Component {
+class AddSimulatorAgv extends Component {
   formRef = React.createRef();
 
   state = {
@@ -54,7 +54,7 @@ export default class AddSimulatorAgv extends Component {
           addFlag: isIncrement,
           robotSize: addAgvNumber,
         };
-        fetchBatchAgvLogin(params).then((res) => {
+        addSimulationAgvs(params).then((res) => {
           if (dealResponse(res)) {
             message.error(formatMessage({ id: 'app.simulator.action.addAMR.failed' }));
           } else {
@@ -207,3 +207,4 @@ export default class AddSimulatorAgv extends Component {
     );
   }
 }
+export default AddSimulatorAgv;

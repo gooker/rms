@@ -1,9 +1,8 @@
 import React, { memo } from 'react';
 import { Form } from 'antd';
-import { formatMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
+import { getSuffix, formatMessage } from '@/utils/utils';
 import styles from './chargerModal.less';
-import { getSuffix } from '@/utils/utils';
 
 const FormItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 

@@ -1,13 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { Menu } from 'antd';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { EditOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../LeftContent/index.less';
 
 const SelectLogicArea = memo((props) => {
   const { dispatch, logicAreaList, currentLogicArea } = props;
@@ -75,7 +74,6 @@ const SelectLogicArea = memo((props) => {
 
   const langMenu = (
     <Menu
-      className={styles.menu}
       selectedKeys={[`${currentLogicArea}`]}
       onClick={(record) => {
         menuClick(record);
@@ -86,8 +84,8 @@ const SelectLogicArea = memo((props) => {
   );
   return (
     <HeaderDropdown overlay={langMenu}>
-      <span className={`${styles.action} ${styles.account}`}>
-        <span style={{ fontSize: 15, fontWeight: 600 }} className={styles.name}>
+      <span>
+        <span style={{ fontSize: 15, fontWeight: 600 }}>
           {logicName || formatMessage({ id: 'app.selectLogicArea.logicArea' })}
         </span>
         <DownOutlined style={{ marginLeft: 4 }} />

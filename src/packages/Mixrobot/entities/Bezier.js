@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { zIndex, CostColor, CellWidth } from '@/consts';
+import { zIndex, CostColor, SpotSize } from '@/config/consts';
 
 export default class Bezier extends PIXI.Container {
   constructor(props) {
@@ -120,28 +120,6 @@ export default class Bezier extends PIXI.Container {
     this.arrow.lineTo(destinationPoints.x, destinationPoints.y);
     this.arrow.lineTo(right.x, right.y);
     this.addChild(this.arrow);
-
-    // HitArea
-    // this.arrow.hitArea = this.arrow.getBounds();
-    // this.arrow.buttonMode = this.$interactive;
-    // this.arrow.interactive = this.$interactive;
-    // this.arrow.on('click', this.click);
-
-    // 选中的背景色
-    // this.selectedBorderSprite = new PIXI.Graphics();
-    // this.selectedBorderSprite.lineStyle(40, 0xff5722, 1);
-    // this.selectedBorderSprite.moveTo(firtsCtrlPoints.x, firtsCtrlPoints.y);
-    // this.selectedBorderSprite.bezierCurveTo(
-    //   firtsCtrlPoints.x,
-    //   firtsCtrlPoints.y,
-    //   secondCtrlPoints.x,
-    //   secondCtrlPoints.y,
-    //   destinationPoints.x,
-    //   destinationPoints.y
-    // );
-    // this.selectedBorderSprite.alpha = 0.7;
-    // this.selectedBorderSprite.visible = false;
-    // this.addChild(this.selectedBorderSprite);
   };
 
   click = () => {
@@ -171,16 +149,11 @@ export default class Bezier extends PIXI.Container {
   switchShown(flag) {
     this.data.shownData.arrow = flag;
     this.arrow.visible = flag;
-    // if (flag) {
-    //   this.selectedBorderSprite.visible = this.data.selected;
-    // } else {
-    //   this.selectedBorderSprite.visible = false;
-    // }
   }
 
   plusAction(texture) {
     if (texture) {
-      const distanceInt = parseInt(this.distance, 10) - CellWidth;
+      const distanceInt = parseInt(this.distance, 10) - SpotSize.width;
       const actionSprite = new PIXI.Sprite(texture);
       actionSprite.x = 180;
       actionSprite.y = -distanceInt * 0.3;

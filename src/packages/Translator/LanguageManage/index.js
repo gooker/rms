@@ -23,22 +23,21 @@ import {
 import classnames from 'classnames';
 import { cloneDeep, isEqual } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/Lang';
-import { dealResponse, isNull } from '@/utils/utils';
+import { dealResponse, isNull, formatMessage } from '@/utils/utils';
 import {
-  addApplication,
   addSysLang,
   getSysLang,
+  addApplication,
   getApplications,
-  getTranslationBycode,
   updateTranslations,
+  getTranslationBycode,
 } from '@/services/translator';
 import RcsConfirm from '@/components/RcsConfirm';
 import {
-  exportTranslate,
-  generatefilterValue,
-  generateOriginData,
   getdataList,
+  exportTranslate,
+  generateOriginData,
+  generatefilterValue,
 } from './translateUtils';
 import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLangModal from './component/AddSysLang.js';

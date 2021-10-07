@@ -1,6 +1,5 @@
-import sortBy from 'lodash/sortBy';
-import uniq from 'lodash/uniq';
-import * as Config from '@/config/config';
+import { sortBy, uniq } from 'lodash';
+import { SpotSize, WorldScreenRatio } from '@/config/consts';
 
 export default class MapRenderer {
   constructor(viewport, callRenderer, renderer) {
@@ -43,16 +42,16 @@ export default class MapRenderer {
       const maxY = Ys[Ys.length - 1];
 
       // Map elements Area
-      const elementsWidth = maxX - minX + Config.CellWidth;
-      const elementsHeight = maxY - minY + Config.CellHeight;
+      const elementsWidth = maxX - minX + SpotSize.width;
+      const elementsHeight = maxY - minY + SpotSize.height;
 
-      const worldWidth = elementsWidth * Config.WorldScreenRatio;
-      const worldHeight = elementsHeight * Config.WorldScreenRatio;
+      const worldWidth = elementsWidth * WorldScreenRatio;
+      const worldHeight = elementsHeight * WorldScreenRatio;
 
       this.viewport.worldWidth = worldWidth;
       this.viewport.worldHeight = worldHeight;
       this.viewport.fitWorld(false);
-      
+
       this.viewport.moveCenter(minX + elementsWidth / 2, minY + elementsHeight / 2);
 
       return { worldWidth, worldHeight };

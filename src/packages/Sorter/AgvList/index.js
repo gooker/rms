@@ -1,7 +1,8 @@
 import React from 'react';
 import { Tag, Badge, Button } from 'antd';
 import { ToolOutlined, InfoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { GMT2UserTimeZone, getSuffix, getDirectionLocale, renderAgvStatus } from '@/utils/utils';
 import AgvListComponent from '@/components/pages/AgvListComponent';
 import dictionary from '@/utils/Dictionary';

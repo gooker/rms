@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Table, Badge, Row, Button, Modal, message } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchTaskQueueList,
   deleteTaskQueueItems,

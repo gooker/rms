@@ -1,7 +1,8 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import * as Config from '@/config/config';
 import BitText from './BitText';
+import { AGVType } from '@/config/config';
+import { zIndex, SorterAGVSize } from '@/config/consts';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 
 const BoxWidth = 230;
@@ -13,10 +14,10 @@ export default class SorterAGV extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.type = Config.AGVType.Sorter;
+    this.type = AGVType.Sorter;
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
-    this.zIndex = Config.zIndex.agv;
+    this.zIndex = zIndex.agv;
     this.state = props.state;
     this.battery = props.battery;
     this.mainTain = props.mainTain;
@@ -58,8 +59,8 @@ export default class SorterAGV extends PIXI.Container {
       return;
     }
     const agvTexture = getTextureFromResources(sorterState);
-    const scaleX = Config.SorterAGVSize.width / agvTexture.width;
-    const scaleY = Config.SorterAGVSize.height / agvTexture.height;
+    const scaleX = SorterAGVSize.width / agvTexture.width;
+    const scaleY = SorterAGVSize.height / agvTexture.height;
     this.agv = new PIXI.Sprite(agvTexture);
     this.agv.anchor.set(0.5);
     this.agv.setTransform(0, 0, scaleX, scaleY);

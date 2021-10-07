@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table, Card } from 'antd';
+import { Button, Table, Card, Modal } from 'antd';
 import { connect } from '@/utils/dva';
-import { fetchMapHistory } from '@/services/map';
+import { fetchMapHistory } from '@/services/mixrobot';
 import { dealResponse, isNull } from '@/utils/utils';
-import MapModal from './MapModal/Index';
 
 const MapUpdateHistory = function MapUpdateHistory(props) {
   const { dispatch, mapId, mapHistoryVisible } = props;
@@ -32,8 +31,7 @@ const MapUpdateHistory = function MapUpdateHistory(props) {
   }
 
   return (
-    <MapModal
-      size="small"
+    <Modal
       title="保存记录"
       style={{ top: 50 }}
       visible={mapHistoryVisible}
@@ -88,7 +86,7 @@ const MapUpdateHistory = function MapUpdateHistory(props) {
           ]}
         />
       </Card>
-    </MapModal>
+    </Modal>
   );
 };
 export default connect(({ editor }) => {

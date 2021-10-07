@@ -1,14 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Row, Col, Button, Checkbox, Radio } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import LineButton from '../../components/LineButton';
-import BatchSetCurve from '../../components/BatchSetCurve/Index';
+import { Row, Col, Button, Radio } from 'antd';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import LineButton from '../LineButton';
+import BatchSetCurve from '../BatchSetCurve/BatchSetCurve';
 import LineMapSvg from '@/../public/lineMap.svg';
-import MapContext from './MapContext';
+import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 @connect(({ editor }) => ({ selectLines: editor.selectLines }))
-class RouterMap extends Component {
+class CostTab extends Component {
   static contextType = MapContext;
 
   state = {
@@ -193,7 +194,7 @@ class RouterMap extends Component {
     );
   }
 }
-export default RouterMap;
+export default CostTab;
 
 const ColorExample = (props) => {
   const { color, text } = props;

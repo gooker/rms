@@ -4,8 +4,8 @@ import * as PIXI from 'pixi.js';
 import { message } from 'antd';
 import intl from 'react-intl-universal';
 import { find, isEqual } from 'lodash';
-import { AGVType, AGVState } from '@/config/config';
-import { LatentPodSize, ToteAGVSize, zIndex, GeoLockColor } from '@/consts';
+import { AGVType } from '@/config/config';
+import { LatentPodSize, AGVState, ToteAGVSize, zIndex, GeoLockColor } from '@/config/consts';
 import BaseMap from '../../../../components/BaseMap';
 import PixiInitializer from '@/utils/PixiInitializer';
 import { loadTexturesForMap } from '@/utils/textures';
@@ -35,7 +35,7 @@ import {
   MapRenderer,
   GroundStorage,
   TemporaryLock,
-} from '@/pages/MapTool/entities';
+} from '@/packages/Mixrobot/entities';
 
 const CadXYSize = {
   1: {

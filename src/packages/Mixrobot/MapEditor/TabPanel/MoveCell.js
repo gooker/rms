@@ -2,10 +2,11 @@ import React, { useEffect, useState, useContext, memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Col, Row, Form, InputNumber, Drawer, Button, Select, Tabs } from 'antd';
 import { InfoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import DirButton from './DirButton/DirButton';
-import { GlobalDrawerWidth } from '@/Const';
+import { formatMessage } from '@/utils/utils';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import { GlobalDrawerWidth } from '@/config/consts';
 import MenuIcon from '@/utils/MenuIcon';
+import FormattedMessage from '@/components/FormattedMessage';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
@@ -82,10 +83,10 @@ const MoveCell = (props) => {
             <Form.Item
               {...layout}
               name={'dir'}
-              initialValue={510}
+              initialValue={0}
               label={<FormattedMessage id="app.moveCell.offsetDirection" />}
             >
-              <DirButton />
+              <AngleSelector getDir />
             </Form.Item>
 
             {/* 偏移距离 */}

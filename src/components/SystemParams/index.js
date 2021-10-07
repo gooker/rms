@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Badge, Button, Card, Col, Form, message, Spin, Tabs, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { FormattedMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 import SelectTag from './component/SelectTag';
 import FormButton from './component/FormButton';
 import FormRenderComponent from './component/FormRender';
@@ -40,7 +40,7 @@ class SystemParams extends Component {
       },
       formData: {},
     };
-    let defaultValue = { 'readonly': false, type: 'string' };
+    let defaultValue = { readonly: false, type: 'string' };
     if (type === 'string') {
       defaultValue.type = 'string';
     } else if (type === 'password') {
@@ -181,7 +181,7 @@ class SystemParams extends Component {
   };
   renderGroup = (record) => {
     const { formItemWapper, colPorps } = this.props;
-    
+
     return record.map(({ group, groupName }) => {
       return (
         <Card style={{ marginTop: 40 }} key={groupName}>
@@ -246,7 +246,7 @@ class SystemParams extends Component {
                           name={field}
                           initialValue={defaultValue}
                           rules={rules}
-                          labelCol={{ span: 6 ,color:'red'}}
+                          labelCol={{ span: 6, color: 'red' }}
                           wrapperCol={{ span: 18 }}
                           {...formItemWapper}
                           {...formItemWrapperProps}

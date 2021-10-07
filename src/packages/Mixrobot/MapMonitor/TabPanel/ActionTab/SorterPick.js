@@ -6,7 +6,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import MenuIcon from '@/utils/MenuIcon';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull } from '@/utils/utils';
-import { fetchSorterToPick } from '@/services/map';
+import { sorterToPick } from '@/services/monitor';
 
 const formLayout = {
   labelCol: { span: 6 },
@@ -36,7 +36,7 @@ export default class SorterPick extends React.Component {
             });
           },
         );
-        fetchSorterToPick({ sectionId: window.localStorage.getItem('sectionId'), ...param }).then(
+        sorterToPick({ sectionId: window.localStorage.getItem('sectionId'), ...param }).then(
           (response) => {
             if (!dealResponse(response)) {
               message.success(

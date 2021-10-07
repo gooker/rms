@@ -1,7 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import { message, Row, Col } from 'antd';
 import { AlertTwoTone } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { fetchForkLiftLoad } from './AgvModalApi';
 import { dealResponse, isNull } from '@/utils/utils';
 import styles from './ForkBin.less';

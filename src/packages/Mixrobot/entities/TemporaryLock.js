@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, zIndex, SpotSize } from '@/consts';
+import { GlobalAlpha, zIndex, SpotSize } from '@/config/consts';
 
 export default class TemporaryLock extends PIXI.Sprite {
   constructor(texture, x, y) {

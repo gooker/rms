@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Select, Input, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import LocalsKeys from '@/locales/LocaleKeys';
 import TimeZone from '@/components/TimeZone';
 

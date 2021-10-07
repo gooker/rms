@@ -1,9 +1,9 @@
 import intl from 'react-intl-universal';
 import * as XLSX from 'xlsx';
 import { find, sortBy, groupBy } from 'lodash';
-import LogicArea from '@/pages/MapTool/entities/LogicArea';
+import LogicArea from '@/packages/Mixrobot/entities/LogicArea';
 import { isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
-import { AGVState } from '@/config/config';
+import { AGVState } from '@/config/consts';
 import json from '../../package.json';
 
 // 根据行列数批量生成点位
@@ -884,6 +884,27 @@ export function getLineEntityFromMap(idLineMap, source, target) {
     }
   });
   return line;
+}
+
+/**
+ * 根据线条ID从Map对象获取线条数据
+ * @param {*} lineId
+ * @param {*} idLineMap
+ * @returns
+ */
+export function getLineFromIdLineMap(lineId, idLineMap) {
+  const keys = Object.keys(idLineMap);
+  let result = [];
+  for (let index = 0; index < keys.length; index++) {
+    const key = keys[index];
+    const map = idLineMap[key];
+    const line = map.get(lineId);
+    if (line) {
+      result = [key, line]; // [cost, LineEntity]
+      break;
+    }
+  }
+  return result;
 }
 
 /**

@@ -23,16 +23,17 @@ import {
   generateCellMapByRowsAndCols,
 } from '@/utils/mapUtils';
 import {
-  fetchSaveMap,
-  getSectionMaps,
-  fetchActiveMap,
+  saveMap,
+  updateMap,
+  deleteMapById,
   fetchMapDetail,
-  fetchUpdateMap,
-  fetchDeleteMapById,
+  getAllWebHooks,
+  fetchSectionMaps,
+  getAllWebHookTypes,
+  fetchAllStationTypes,
   fetchMapHistoryDetail,
-  fetachAllStationTypes,
-} from '@/services/map';
-import { getAllWebHooks, getAllWebHookTypes } from '@/services/mixrobot';
+} from '@/services/mixrobot';
+import { fetchActiveMap } from '@/services/api';
 
 const FieldTextureKeyMap = {
   blockCellIds: 'block_cell',
@@ -193,7 +194,7 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      const mapList = yield call(getSectionMaps);
+      const mapList = yield call(fetchSectionMaps);
       if (dealResponse(mapList)) {
         message.error(formatMessage({ id: 'app.editor.fetchMapList.fail' }));
       } else {
@@ -217,7 +218,7 @@ export default {
         yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
 
         // 获取所有站点类型
-        const allStationTypes = yield call(fetachAllStationTypes);
+        const allStationTypes = yield call(fetchAllStationTypes);
         yield put({ type: 'saveAllStationTypes', payload: allStationTypes });
 
         // 获取已配置的 Web Hook
@@ -289,7 +290,7 @@ export default {
         ever: version,
         activeFlag: false,
       };
-      const response = yield call(fetchSaveMap, newMap);
+      const response = yield call(saveMap, newMap);
       if (dealResponse(response)) {
         return;
       }
@@ -308,7 +309,7 @@ export default {
     *fetchUpdateMap({ payload }, { put, call, select }) {
       const { id, name, desc: description } = payload;
       const requestBody = { id, name, description };
-      const response = yield call(fetchUpdateMap, requestBody);
+      const response = yield call(updateMap, requestBody);
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.leftContent.updateMap.failed' }));
       } else {
@@ -338,7 +339,7 @@ export default {
 
     // 删除地图
     *fetchDeleteMap({ payload }, { call, put, select }) {
-      const response = yield call(fetchDeleteMapById, payload);
+      const response = yield call(deleteMapById, payload);
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.createMap.deleteMap.failed' }));
       } else {
@@ -433,7 +434,7 @@ export default {
         }
 
         // 4. 保存
-        const response = yield call(fetchSaveMap, mapData);
+        const response = yield call(saveMap, mapData);
         if (dealResponse(response)) {
           message.error(formatMessage({ id: 'app.leftContent.saveMap.failed' }));
         } else {

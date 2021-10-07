@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import * as Config from '@/config/config';
+import { SpotSize, zIndex } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import BitText from '@/pages/MapTool/entities/BitText';
+import BitText from '@/packages/Mixrobot/entities/BitText';
 
 export default class Dump extends PIXI.Sprite {
   constructor(x, y, name) {
@@ -10,9 +10,9 @@ export default class Dump extends PIXI.Sprite {
     this.x = x;
     this.y = y;
     this.name = name;
-    this.height = Config.CellHeight * 3;
-    this.width = Config.CellWidth * 3;
-    this.zIndex = Config.zIndex.temporaryLock;
+    this.height = SpotSize.height * 3;
+    this.width = SpotSize.width * 3;
+    this.zIndex = zIndex.temporaryLock;
     this.alpha = 0.7;
     this.anchor.set(0.5, 1);
 
@@ -21,7 +21,7 @@ export default class Dump extends PIXI.Sprite {
 
   addName() {
     const y = this.height * 2 + 50;
-    this.nameSprite = new BitText(this.name, 0, -y, 0xD77F4A, 200);
+    this.nameSprite = new BitText(this.name, 0, -y, 0xd77f4a, 200);
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);
   }

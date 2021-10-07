@@ -1,18 +1,15 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-import {
-  isNull,
-  isItemOfArray,
-  getLineFromIdLineMap,
-  getTextureFromResources,
-} from '@/utils/utils';
+import { isNull, isItemOfArray } from '@/utils/utils';
 import {
   getCoordinat,
   getCurveMapKey,
-  getLineEntityFromMap,
   getTunnelGateCells,
+  getLineFromIdLineMap,
+  getLineEntityFromMap,
   calculateCellDistance,
   getCurrentRouteMapData,
+  getTextureFromResources,
 } from '@/utils/mapUtils';
 import {
   Dump,
@@ -25,9 +22,9 @@ import {
   Intersection,
   RollerStation,
   CommonFunction,
-} from '@/pages/MapTool/entities';
+} from '@/packages/Mixrobot/entities';
 import { getLineGraphics } from '@/utils/textures';
-import * as Config from '@/config/config';
+import { zIndex } from '@/config/consts';
 
 const AllPriorities = ['10', '20', '100', '1000'];
 export default class BaseMap extends React.Component {
@@ -379,7 +376,7 @@ export default class BaseMap extends React.Component {
             relationLine.lineStyle(20, 0x0389ff);
             relationLine.moveTo(x, y);
             relationLine.lineTo(cellEntity.x, cellEntity.y);
-            relationLine.zIndex = Config.zIndex.targetLine;
+            relationLine.zIndex = zIndex.targetLine;
             this.pixiUtils.viewportAddChild(relationLine);
             this.relationshipLines.set(`charger_${name}-${cellEntity.id}`, relationLine);
           }
@@ -471,7 +468,7 @@ export default class BaseMap extends React.Component {
       dashedLine.lineStyle(20, 0x0389ff);
       dashedLine.moveTo(x, y);
       dashedLine.lineTo(stopCell.x, stopCell.y);
-      dashedLine.zIndex = Config.zIndex.targetLine;
+      dashedLine.zIndex = zIndex.targetLine;
       this.pixiUtils.viewportAddChild(dashedLine);
       this.relationshipLines.set(`workStation_${station}`, dashedLine);
     }
@@ -575,7 +572,7 @@ export default class BaseMap extends React.Component {
       dashedLine.lineStyle(20, 0x0389ff);
       dashedLine.moveTo(destinationX, destinationY);
       dashedLine.lineTo(stopCell.x, stopCell.y);
-      dashedLine.zIndex = Config.zIndex.targetLine;
+      dashedLine.zIndex = zIndex.targetLine;
       this.pixiUtils.viewportAddChild(dashedLine);
       this.relationshipLines.set(`commonStation_${code}`, dashedLine);
 

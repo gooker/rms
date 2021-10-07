@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from '@/utils/dva';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { Button, Form, Switch, Popconfirm, message, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import {

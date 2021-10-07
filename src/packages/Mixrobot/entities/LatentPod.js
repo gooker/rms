@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import { zIndex } from '@/consts';
+import { zIndex } from '@/config/consts';
 
 export default class LatentPod extends PIXI.Container {
   constructor(props) {

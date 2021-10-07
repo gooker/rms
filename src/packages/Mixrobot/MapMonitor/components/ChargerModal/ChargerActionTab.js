@@ -1,9 +1,8 @@
 import React, { memo } from 'react';
 import { Form, Switch, Popconfirm, Button, message } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { fetchResetChargerStatus } from '@/services/charger';
-import { fetchClearChargerFault, fetchSwicthChargerEnable } from '@/services/map';
-import { dealResponse } from '@/utils/utils';
+import { formatMessage, dealResponse } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { resetCharger, clearChargerFault, switchChargerEnable } from '@/services/mixrobot';
 
 const FormItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 
@@ -13,9 +12,9 @@ const ChargerActionTab = (props) => {
   const chargerEnableState = data ? !data.disabled : false;
 
   // 切换可用状态
-  async function switchChargerEnable() {
+  async function doSwitchingChargerEnable() {
     if (!data?.hardwareId) return;
-    const response = await fetchSwicthChargerEnable({
+    const response = await switchChargerEnable({
       hardwareId: data.hardwareId,
       disabled: !chargerEnableState,
     });
@@ -28,9 +27,9 @@ const ChargerActionTab = (props) => {
   }
 
   // 清除故障
-  async function clearChargerFault() {
+  async function doClearingChargerFault() {
     if (!data?.hardwareId) return;
-    const response = await fetchClearChargerFault(data.id);
+    const response = await clearChargerFault(data.id);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.monitor.modal.charger.clearFault.failed' }));
     } else {
@@ -41,7 +40,7 @@ const ChargerActionTab = (props) => {
   // 解除占用
   async function releaseCharger() {
     if (!data?.hardwareId) return;
-    const response = await fetchResetChargerStatus({ chargerId: data.hardwareId });
+    const response = await resetCharger(data.hardwareId);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.monitor.modal.charger.release.tip.failed' }));
     } else {
@@ -65,7 +64,7 @@ const ChargerActionTab = (props) => {
                 : formatMessage({ id: 'app.chargeManger.enable' }),
             },
           )}
-          onConfirm={switchChargerEnable}
+          onConfirm={doSwitchingChargerEnable}
         >
           <Switch
             checked={chargerEnableState}
@@ -81,7 +80,7 @@ const ChargerActionTab = (props) => {
           {...FormItemLayout}
           label={formatMessage({ id: 'app.monitor.modal.charger.clearFault' })}
         >
-          <Button size="small" onClick={clearChargerFault}>
+          <Button size="small" onClick={doClearingChargerFault}>
             <FormattedMessage id="app.mapView.action.clear" />
           </Button>
         </Form.Item>

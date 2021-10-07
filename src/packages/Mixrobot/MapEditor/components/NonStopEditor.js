@@ -1,12 +1,13 @@
 import React, { PureComponent } from 'react';
 import { Button, Card, Form, Row, Col, Table, Tag } from 'antd';
+import { findIndex } from 'lodash';
 import { connect } from '@/utils/dva';
-import findIndex from 'lodash/findIndex';
 import MenuIcon from '@/utils/MenuIcon';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import FormattedMessage from '@/components/FormattedMessage';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
+import ButtonInput from '@/packages/Mixrobot/components/ButtonInput/ButtonInput';
 
 const FormItemLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const FormItemLayoutNoLabel = { wrapperCol: { offset: 6, span: 18 } };

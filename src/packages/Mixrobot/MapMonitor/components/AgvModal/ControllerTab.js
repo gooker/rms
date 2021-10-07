@@ -1,14 +1,12 @@
 import React, { memo } from 'react';
 import { Button, Row, Form, InputNumber, Input, message } from 'antd';
-import { FormattedMessage, formatMessage } from '@/utils/Lang';
 import { fetchSendAgvHexCommand, fetchAgvEmptyRun } from './AgvModalApi';
-import { dealResponse } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { dealResponse, formatMessage } from '@/utils/utils';
 import styles from './ControllerTab.less';
-import * as Config from '@/config/config';
+import { NameSpace } from '@/config/config';
 
-const { AgvApiNameSpace } = Config;
 const { Item: FormItem } = Form;
-
 const FormItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 
 const ControllerTab = (props) => {
@@ -61,7 +59,7 @@ const ControllerTab = (props) => {
       default:
         break;
     }
-    fetchSendAgvHexCommand(params, AgvApiNameSpace[agvType]).then((response) => {
+    fetchSendAgvHexCommand(params, NameSpace[agvType]).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.monitor.modal.controller.sendCommand.fail' }));
       } else {
@@ -79,7 +77,7 @@ const ControllerTab = (props) => {
       commandParameter: null,
       rawCommandHex: hexCommand,
     };
-    fetchSendAgvHexCommand(params, AgvApiNameSpace[agvType]).then((response) => {
+    fetchSendAgvHexCommand(params, NameSpace[agvType]).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.monitor.modal.controller.sendCommand.fail' }));
       } else {
@@ -91,7 +89,7 @@ const ControllerTab = (props) => {
   function emptyRun() {
     const targetCellId = form.getFieldValue('targetCellId');
     const params = { sectionId, targetCellId, robotId: agvId };
-    fetchAgvEmptyRun(params, AgvApiNameSpace[agvType]).then((response) => {
+    fetchAgvEmptyRun(params, NameSpace[agvType]).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.monitor.modal.controller.empty.fail' }));
       } else {

@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, zIndex } from '@/consts';
+import { GlobalAlpha, zIndex } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import { BitText } from '@/pages/MapTool/entities';
+import { BitText } from '@/packages/Mixrobot/entities';
 
 export default class TotePod extends PIXI.Container {
   constructor(props) {

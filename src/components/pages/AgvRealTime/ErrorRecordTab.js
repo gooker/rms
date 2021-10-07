@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Row, Col, Pagination } from 'antd';
-import { formatMessage } from '@/utils/Lang';
-import ErrorList from '../../TaskDetail/components/ErrorList';
+import { formatMessage } from '@/utils/utils';
+import ErrorList from '@/components/TaskDetail/components/ErrorList';
 
 class ErrorRecordTab extends PureComponent {
   render() {
-    const { data, allErrorDefinitions={}, onDetail } = this.props;
+    const { data, allErrorDefinitions = {}, onDetail } = this.props;
     return (
       <div>
         <Col span={24} style={{ minHeight: 550, marginTop: 15 }}>

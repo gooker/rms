@@ -3,15 +3,16 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Row, Form, Button, Divider, List, Select } from 'antd';
 import update from 'immutability-helper';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import Input from '@/pages/MapTool/components/MapForm/MapInput';
 import MenuIcon from '@/utils/MenuIcon';
-import MapContext from '../MapContext';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import InputWithIcon from '@/packages/Mixrobot/components/InputWithIcon';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const formLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
 
 class AddElevator extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -201,7 +202,7 @@ class AddElevator extends Component {
                       fieldKey={[fieldKey, 'cellId']}
                       label={currentElevator?.innerCellId[index]}
                     >
-                      <Input type="number" currentCellId={selectCellIds} />
+                      <InputWithIcon type="number" currentCellId={selectCellIds} />
                     </Form.Item>
                   ))}
                 </>
@@ -237,7 +238,7 @@ class AddElevator extends Component {
                         fieldKey={[fieldKey, 'cellId']}
                         label={formatMessage({ id: 'app.addElevator.entryPoint' })}
                       >
-                        <Input type="number" currentCellId={selectCellIds} />
+                        <InputWithIcon type="number" currentCellId={selectCellIds} />
                       </Form.Item>
 
                       <Form.Item
@@ -246,7 +247,7 @@ class AddElevator extends Component {
                         fieldKey={[fieldKey, 'waitCellId']}
                         label={formatMessage({ id: 'app.addElevator.waitingPoint' })}
                       >
-                        <Input type="number" currentCellId={selectCellIds} />
+                        <InputWithIcon type="number" currentCellId={selectCellIds} />
                       </Form.Item>
 
                       <Form.Item
@@ -255,7 +256,7 @@ class AddElevator extends Component {
                         fieldKey={[fieldKey, 'leaveCellId']}
                         label={formatMessage({ id: 'app.addElevator.exitPoint' })}
                       >
-                        <Input type="number" currentCellId={selectCellIds} />
+                        <InputWithIcon type="number" currentCellId={selectCellIds} />
                       </Form.Item>
                     </div>
                   ))}

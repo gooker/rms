@@ -1,23 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Input, Table, Form, Row, Select, Divider, Col, Button, InputNumber } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import CardRadio from '../../../components/CardRadio';
-import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
-import InputComponent from '../../../components/MapForm/MapInput';
 import MenuIcon from '@/utils/MenuIcon';
-import MapContext from '../MapContext';
-import { isNull, isStrictNull } from '@/utils/utils';
-import * as Config from '@/config/config';
+import { CommonFunctionSize } from '@/config/consts';
+import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { isNull, isStrictNull, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import CardRadio from '@/packages/Mixrobot/MapEditor/components/CardRadio';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import InputWithIcon from '@/packages/Mixrobot/components/InputWithIcon';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const { Option } = Select;
-const { CommonFunctionSize } = Config;
 const FormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 5, span: 19 } };
 
 class CommonFunction extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -269,9 +268,11 @@ class CommonFunction extends Component {
               initialValue={choice.stopCellId}
               label={formatMessage({ id: 'app.workStationMap.stopPoint' })}
             >
-              <InputComponent
+              <InputWithIcon
                 currentCellId={selectCellIds}
-                icon={<img style={{ width: 25 }} src={require('@/../public/stop.png')} />}
+                icon={
+                  <img alt="" style={{ width: 25 }} src={require('@/../public/webView/stop.png')} />
+                }
               />
             </Form.Item>
             {/* 站点角度 */}

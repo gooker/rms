@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, ToteAGVSize, zIndex } from '@/consts';
+import { GlobalAlpha, ToteAGVSize, zIndex } from '@/config/consts';
 import { AGVType } from '@/config/config';
 import BitText from './BitText';
 import { isStrictNull } from '@/utils/utils';

@@ -1,10 +1,11 @@
 import React, { useEffect, useContext, useState, memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Row, Checkbox, Col, InputNumber, Drawer, Button, Select } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { InfoOutlined } from '@ant-design/icons';
-import DirButton from './DirButton/DirButton';
-import { GlobalDrawerWidth } from '@/Const';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import { GlobalDrawerWidth } from '@/config/consts';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const layout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
@@ -86,7 +87,7 @@ const AdjustSpace = (props) => {
             },
           ]}
         >
-          <DirButton />
+          <AngleSelector getDir />
         </Form.Item>
 
         {/* 偏移距离 */}

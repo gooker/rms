@@ -33,7 +33,7 @@ class CardRadio extends React.PureComponent {
               >
                 <img
                   style={{ width: '80%', height: '80%' }}
-                  src={require('../../../../public/work_station.png')}
+                  src={require('@/../public/webView/work_station.png')}
                 />
               </div>
             </Col>
@@ -46,7 +46,7 @@ class CardRadio extends React.PureComponent {
               >
                 <img
                   style={{ width: '80%', height: '80%' }}
-                  src={require('../../../../public/work_station_3.png')}
+                  src={require('@/../public/webView/work_station_3.png')}
                 />
               </div>
             </Col>
@@ -64,7 +64,7 @@ class CardRadio extends React.PureComponent {
             >
               <img
                 style={{ width: '80%', height: '80%' }}
-                src={require('../../../../public/common.png')}
+                src={require('@/../public/webView/common.png')}
               />
             </div>
           </Col>
@@ -86,7 +86,7 @@ class CardRadio extends React.PureComponent {
                 >
                   <img
                     style={{ width: '80%', height: '80%' }}
-                    src={require(`../../../../public/work_station_${index + 1}.png`)}
+                    src={require(`@/../public/work_station_${index + 1}.png`)}
                   />
                 </div>
               </Col>

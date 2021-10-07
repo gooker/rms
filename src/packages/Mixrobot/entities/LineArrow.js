@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
-import { zIndex, CostColor, CellWidth } from '@/consts';
-import { BitText } from '@/pages/MapTool/entities';
+import { zIndex, CostColor, SpotSize } from '@/config/consts';
+import { BitText } from '@/packages/Mixrobot/entities';
 import { covertAngle2Direction } from '@/utils/utils';
 
 export default class LineArrow extends PIXI.Container {
@@ -31,7 +31,7 @@ export default class LineArrow extends PIXI.Container {
   }
 
   createArrow = () => {
-    const distanceInt = parseInt(this.distance, 10) - CellWidth;
+    const distanceInt = parseInt(this.distance, 10) - SpotSize.width;
     const texture = this.switchArrowTexture();
     if (!texture) return;
     this.arrow = new PIXI.Sprite(texture);
@@ -145,7 +145,7 @@ export default class LineArrow extends PIXI.Container {
       console.warn(`给线条添加Icon时候发生key冲突: ${key}`);
       return;
     }
-    const distanceInt = parseInt(this.distance, 10) - CellWidth;
+    const distanceInt = parseInt(this.distance, 10) - SpotSize.width;
     const x = size === 'M' ? 180 : 100;
     const width = size === 'M' ? 250 : 150;
     const height = size === 'M' ? 250 : 150;

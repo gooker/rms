@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Table, Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvList, fetchDeleteAgvList, fetchMoveoutAGVs } from '@/services/api';
 import { dealResponse, isNull } from '@/utils/utils';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtils';

@@ -1,3 +1,18 @@
+export const WorldScreenRatio = 1.2;
+export const GlobalAlpha = 0.6;
+export const GlobalDrawerWidth = 450;
+
+// 小车状态
+export const AGVState = {
+  error: 'Error', // error
+  standBy: 'StandBy', // stand_by
+  charging: 'Charging', // charging
+  working: 'Working', // on_task
+  offline: 'Offline', // offline
+  connecting: 'Connecting', // offline
+  waiting: 'Waiting', // offline
+};
+
 // 小车状态颜色
 export const AgvStateColor = {
   available: '#7ac143',
@@ -48,6 +63,11 @@ export const ToteAGVSize = {
   height: 1560,
 };
 
+export const ToteOffset = {
+  left: 440,
+  right: 440,
+};
+
 export const ForkLiftAGVSize = {
   width: 1050,
   height: 1743.5,
@@ -89,10 +109,6 @@ export const CellTypeSize = {
   height: 80,
 };
 
-export const ToteRightOffset = 440;
-export const ToteLeftOffset = 440;
-export const GlobalAlpha = 0.6;
-
 export const TaskPathColor = {
   passed: '0x808080', // 灰色
   locked: '0x34bf49', // 暗绿色
@@ -121,4 +137,13 @@ export const zIndex = {
   agv: 5,
   pod: 6,
   cellHeat: 7,
+};
+
+/**
+ *  点位热度相关
+ * */
+// 点位热度圆半径
+export const HeatCircleRadius = 400;
+export const CellHeatType = {
+  cost_type: 'COST_HEAT',
 };

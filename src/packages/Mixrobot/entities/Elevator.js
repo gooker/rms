@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, ElevatorSize } from '@/consts';
+import { GlobalAlpha, ElevatorSize } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
 
 export default class Elevator extends PIXI.Container {

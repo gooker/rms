@@ -1,17 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Form, InputNumber, Select, Button, message } from 'antd';
 import { connect } from '@/utils/dva';
-import { fetchAutoReleaseWorkstationTask, fetchAutoCallWorkstationTask } from '@/services/map';
-import { dealResponse, GMT2UserTimeZone } from '@/utils/utils';
-import intl from 'react-intl-universal';
+import { dealResponse, GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import { autoReleaseToteTask, autoCallToteTask } from '@/services/monitor';
 
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-};
-const noLabelLayout = {
-  wrapperCol: { span: 16, offset: 6 },
-};
+const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
+const noLabelLayout = { wrapperCol: { span: 16, offset: 6 } };
 @connect(({ monitor }) => ({ monitor }))
 class ToteAutomaticWorkstationTask extends PureComponent {
   formRef = React.createRef();
@@ -35,12 +29,12 @@ class ToteAutomaticWorkstationTask extends PureComponent {
     const delayReleaseSecondMill = getFieldValue('delayReleaseSecondMill');
     if (automaticToteWorkstationTaskStatus.isAutoRelease) {
       const params = { delayReleaseSecondMill, isAutoRelease: false };
-      fetchAutoReleaseWorkstationTask(params).then((res) => {
+      autoReleaseToteTask(params).then((res) => {
         if (
           !dealResponse(
             res,
             1,
-            intl.formatMessage({
+            formatMessage({
               id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoReleaseClose',
             }),
           )
@@ -51,12 +45,12 @@ class ToteAutomaticWorkstationTask extends PureComponent {
     } else {
       if (delayReleaseSecondMill != null) {
         const params = { delayReleaseSecondMill, isAutoRelease: true };
-        fetchAutoReleaseWorkstationTask(params).then((res) => {
+        autoReleaseToteTask(params).then((res) => {
           if (
             !dealResponse(
               res,
               1,
-              intl.formatMessage({
+              formatMessage({
                 id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoReleaseOpen',
               }),
             )
@@ -66,7 +60,7 @@ class ToteAutomaticWorkstationTask extends PureComponent {
         });
       } else {
         message.error(
-          intl.formatMessage({
+          formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.delayReleaseMassage',
           }),
         );
@@ -83,12 +77,12 @@ class ToteAutomaticWorkstationTask extends PureComponent {
       const params = {
         isAutoCall: false,
       };
-      fetchAutoCallWorkstationTask(params).then((res) => {
+      autoCallToteTask(params).then((res) => {
         if (
           !dealResponse(
             res,
             1,
-            intl.formatMessage({
+            formatMessage({
               id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoCallOpen',
             }),
           )
@@ -106,12 +100,12 @@ class ToteAutomaticWorkstationTask extends PureComponent {
           isAutoCall: true,
           maxToteNum,
         };
-        fetchAutoCallWorkstationTask(params).then((res) => {
+        autoCallToteTask(params).then((res) => {
           if (
             !dealResponse(
               res,
               1,
-              intl.formatMessage({
+              formatMessage({
                 id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoCallClose',
               }),
             )
@@ -136,11 +130,11 @@ class ToteAutomaticWorkstationTask extends PureComponent {
           {...layout}
           name={'workstationArray'}
           initialValue={automaticToteWorkstationTaskStatus?.autoCallWorkStationFilterArray}
-          label={intl.formatMessage({ id: 'app.monitorOperation.workstation' })}
+          label={formatMessage({ id: 'app.monitorOperation.workstation' })}
         >
           <Select
             mode="multiple"
-            placeholder={intl.formatMessage({
+            placeholder={formatMessage({
               id: 'app.monitorOperation.automaticLatentWorkStationTask.defaultAllStation',
             })}
             style={{ width: '80%' }}
@@ -159,7 +153,7 @@ class ToteAutomaticWorkstationTask extends PureComponent {
           {...layout}
           name={'maxTaskNum'}
           initialValue={automaticToteWorkstationTaskStatus?.maxTaskNum}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticLatentWorkStationTask.maxPodNum',
           })}
         >
@@ -170,7 +164,7 @@ class ToteAutomaticWorkstationTask extends PureComponent {
           {...layout}
           name={'maxToteNum'}
           initialValue={automaticToteWorkstationTaskStatus?.maxToteNum}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.toteUpperLimit',
           })}
         >
@@ -183,10 +177,10 @@ class ToteAutomaticWorkstationTask extends PureComponent {
             onClick={this.updateAutoCallPodToWorkstation}
           >
             {automaticToteWorkstationTaskStatus.isAutoCall
-              ? intl.formatMessage({
+              ? formatMessage({
                   id: 'app.monitorOperation.automaticToteWorkstationTask.cancelFetchAutoCall',
                 })
-              : intl.formatMessage({
+              : formatMessage({
                   id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoCall',
                 })}
           </Button>
@@ -201,7 +195,7 @@ class ToteAutomaticWorkstationTask extends PureComponent {
               })}
           name={'delayReleaseSecondMill'}
           initialValue={automaticToteWorkstationTaskStatus?.delayReleaseSecondMill || 3000}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.delayRelease',
           })}
         >
@@ -214,10 +208,10 @@ class ToteAutomaticWorkstationTask extends PureComponent {
             onClick={this.updateAutoReleaseWorkstationTask}
           >
             {automaticToteWorkstationTaskStatus?.isAutoRelease
-              ? intl.formatMessage({
+              ? formatMessage({
                   id: 'app.monitorOperation.automaticToteWorkstationTask.cancelFetchAutoRelease',
                 })
-              : intl.formatMessage({
+              : formatMessage({
                   id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoRelease',
                 })}
           </Button>
@@ -225,7 +219,7 @@ class ToteAutomaticWorkstationTask extends PureComponent {
 
         <Form.Item
           {...layout}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.lastOperator',
           })}
         >
@@ -233,11 +227,13 @@ class ToteAutomaticWorkstationTask extends PureComponent {
         </Form.Item>
         <Form.Item
           {...layout}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.lastOperateDate',
           })}
         >
-          {GMT2UserTimeZone(automaticToteWorkstationTaskStatus?.updateTime).format('YYYY-MM-DD HH:mm')}
+          {GMT2UserTimeZone(automaticToteWorkstationTaskStatus?.updateTime).format(
+            'YYYY-MM-DD HH:mm',
+          )}
         </Form.Item>
       </Form>
     );

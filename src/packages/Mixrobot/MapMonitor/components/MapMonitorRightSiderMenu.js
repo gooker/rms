@@ -1,17 +1,16 @@
 import React, { PureComponent } from 'react';
 import { connect } from '@/utils/dva';
-import FormattedMessage from '@/components/FormattedMessage';
 import { Drawer, Row, Tabs } from 'antd';
-import MapMonitorOperationMap from './MapMonitorOperationMap';
-import MapMonitorView from './MapMonitorView';
+import FormattedMessage from '@/components/FormattedMessage';
 import { hasPermission } from '@/utils/Permission';
-import Simulator from './Simulator';
-import Dashboard from './Dashboard';
 import MenuIcon from '@/utils/MenuIcon';
-import { GlobalDrawerWidth } from '@/Const';
+import { GlobalDrawerWidth } from '@/config/consts';
+import MonitorActionTab from '../TabPanel/ActionTab/MonitorActionTab';
+import MonitorViewTab from '../TabPanel/ViewTab/MonitorViewTab';
+import SimulatorTab from '../TabPanel/SimulatorTab/SimulatorTab';
+import Dashboard from '../Dashboard/Dashboard';
 
 const { TabPane } = Tabs;
-
 @connect(({ monitor }) => ({
   currentMap: monitor.currentMap,
   drawerVisible: monitor.drawerVisible,
@@ -68,7 +67,7 @@ class RightSliderMenu extends PureComponent {
                 }
               >
                 <Row style={{ marginTop: 20 }}>
-                  <MapMonitorOperationMap />
+                  <MonitorActionTab />
                 </Row>
               </TabPane>
               <TabPane
@@ -81,7 +80,7 @@ class RightSliderMenu extends PureComponent {
                 }
               >
                 <Row style={{ marginTop: 20 }}>
-                  <MapMonitorView {...this.props} />
+                  <MonitorViewTab {...this.props} />
                 </Row>
               </TabPane>
               {hasPermission('/map/monitor/simulator') && (
@@ -94,7 +93,7 @@ class RightSliderMenu extends PureComponent {
                     </span>
                   }
                 >
-                  <Simulator />
+                  <SimulatorTab />
                 </TabPane>
               )}
             </Tabs>

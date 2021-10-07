@@ -7,8 +7,7 @@ import {
   CloseCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { formatMessage } from '@/utils/Lang';
-import { GMT2UserTimeZone } from '@/utils/utils';
+import { formatMessage, GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import styles from './index.module.less';
 
@@ -74,7 +73,7 @@ class TaskRecordTab extends PureComponent {
     const { data } = this.props;
     return (
       <div>
-        <Col span={24} style={{ minHeight: 550,marginTop:15 }}>
+        <Col span={24} style={{ minHeight: 550, marginTop: 15 }}>
           <Row>
             {data ? (
               <Timeline style={{ width: '78%' }} mode="alternate">

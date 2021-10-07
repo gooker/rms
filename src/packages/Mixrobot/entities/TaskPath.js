@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import * as Config from '@/config/config';
+import { zIndex } from '@/config/consts';
 
 export default class TaskPath extends PIXI.Container {
   constructor(props) {
@@ -7,7 +7,7 @@ export default class TaskPath extends PIXI.Container {
     this.x = props.startPoint.x;
     this.y = props.startPoint.y;
     this.end = props.endPoint;
-    this.zIndex = Config.zIndex.line;
+    this.zIndex = zIndex.line;
     this.$type = props.type;
     this.calculate();
     this.createPath();

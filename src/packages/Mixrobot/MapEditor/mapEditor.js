@@ -1,15 +1,15 @@
 import React, { useCallback, memo } from 'react';
 import { connect } from '@/utils/dva';
 import { useSize } from '@umijs/hooks';
-import AllModal from '../components/AllModal';
-import MapFooter from './component/MapFooter';
-import MapContext from './component/MapContext';
-import MapBridging from './component/MapBridging';
-import EditorLeftTool from '../components/LeftContent/Index';
-import EditorRightTool from './component/EditorRightTool';
-import RightSideMenu from './component/RightSiderMenu';
-import { GlobalDrawerWidth } from '@/Const';
-import styles from './editor.less';
+import MapFooter from './components/MapFooter';
+import MapBridging from './components/EditorMapBridging';
+import RightSideMenu from './components/RightSideMenu';
+import EditorRightTool from './components/EditorRightTool';
+import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
+import EditorLeftTool from './components/EditorLeftTool/EditorLeftTool';
+import { GlobalDrawerWidth } from '@/config/consts';
+// import AllModal from '../components/AllModal';
+import styles from './editor.module.less';
 
 let mapRef = null;
 const ToolBarHeight = 35;
@@ -60,7 +60,7 @@ const MapEditor = (props) => {
         <MapFooter height={FooterBarHeight} />
 
         {/* 所有弹窗 */}
-        <AllModal />
+        {/* <AllModal /> */}
       </div>
     </MapContext.Provider>
   );

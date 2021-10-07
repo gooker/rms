@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha } from '@/consts';
+import { GlobalAlpha } from '@/config/consts';
 import BitText from './BitText';
 import { isNull } from '@/utils/utils';
 

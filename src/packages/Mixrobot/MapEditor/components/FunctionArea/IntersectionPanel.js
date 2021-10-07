@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Input, Switch, Table, Form, Checkbox, Row, Divider, Col, Button } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import InputComponent from '@/pages/MapTool/components/MapForm/MapInput';
-import { getCurrentLogicAreaData, covertIntersectionFormData2Param } from '@/utils/mapUtils';
-import Dictionary from '@/utils/Dictionary';
-import MapContext from '../MapContext';
 import MenuIcon from '@/utils/MenuIcon';
+import Dictionary from '@/utils/Dictionary';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import InputWithIcon from '@/packages/Mixrobot/components/InputWithIcon';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
+import { getCurrentLogicAreaData, covertIntersectionFormData2Param } from '@/utils/mapUtils';
 
 const FormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 5, span: 19 } };
@@ -20,7 +21,7 @@ const NoLabelFormLayout = { wrapperCol: { offset: 5, span: 19 } };
   };
 })
 class Intersection extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -186,10 +187,12 @@ class Intersection extends Component {
               initialValue={choice.cellId}
               label={formatMessage({ id: 'app.inersection.cell' })}
             >
-              <InputComponent
+              <InputWithIcon
                 currentCellId={selectCellIds}
                 btnDisabled={selectCellIds.length > 1}
-                icon={<img style={{ width: 25 }} src={require('@/../public/intersection.png')} />}
+                icon={
+                  <img alt="" style={{ width: 25 }} src={require('@/../public/webView/intersection.png')} />
+                }
               />
             </Form.Item>
             <Form.Item

@@ -1,37 +1,32 @@
 /* eslint-disable camelcase */
 import React, { memo, useCallback, useState } from 'react';
-import { connect } from '@/utils/dva';
 import { message } from 'antd';
-import intl from 'react-intl-universal';
-import request from '@/utils/request';
 import { useBoolean, useMount, useSize, useUnmount } from '@umijs/hooks';
-import { fetchGetRobotPath } from '@/services/map';
+import { connect } from '@/utils/dva';
+import request from '@/utils/request';
+import { dealResponse, isItemOfArray, isNull, formatMessage, sleep } from '@/utils/utils';
+import { fetchAgvTaskPath } from '@/services/monitor';
 import AgvModal from './components/AgvModal/AgvModal';
-import MonitorMapContext from '@/packages/Mixrobot/MapMonitor/MonitorMapContext';
 import MonitorLeftTool from './components/MapMonitorLeftTool';
 import TunnelModal from './components/TunnelModal/TunnelModal';
 import MonitorRightTool from './components/MapMonitorRightTool';
 import ChargerModal from './components/ChargerModal/ChargerModal';
-import { AGVSocketConnect } from '@/pages/MapTool/service/Service';
+import { AGVSocketConnect } from '../MapMonitor/AGVSocketConnect';
 import MonitorMapBridging from '../MapMonitor/components/MonitorMapBridging';
 import MapMonitorRightSliderMenu from './components/MapMonitorRightSiderMenu';
 import WorkStationModal from './components/WorkStationModal/WorkStationModal';
-import { dealResponse, isItemOfArray, isNull, sleep } from '@/utils/utils';
+import MonitorMapContext from '@/packages/Mixrobot/MapMonitor/MonitorMapContext';
 import { useMountInterval } from '@/customHooks';
 import {
   covertData2ChartsData,
   convertWaitingData2Chart,
 } from './components/WorkStationModal/echarts';
-import { GlobalDrawerWidth } from '@/Const';
-import config from '@/config/config';
-import styles from './monitor.less';
+import { GlobalDrawerWidth } from '@/config/consts';
+import { NameSpace } from '@/config/config';
+import styles from './monitor.module.less';
 
-const {
-  nameSpace: { latent_lifting_namespace },
-} = config;
-
-const GetWorkStationInstrumentURL = `/${latent_lifting_namespace}/agv-task/getWorkStationInstrument`;
-const GetWorkStationPre30WaitingURL = `/${latent_lifting_namespace}/api/getStopWaitKpiDTO`;
+const GetWorkStationInstrumentURL = `/${NameSpace.LatentLifting}/agv-task/getWorkStationInstrument`;
+const GetWorkStationPre30WaitingURL = `/${NameSpace.LatentLifting}/api/getStopWaitKpiDTO`;
 
 let mapRef = null;
 let checkModal = false;
@@ -206,10 +201,10 @@ const MapMonitor = (props) => {
     if (selectAgv && selectAgv.length > 0) {
       // 如果 showRoute 为空就清理地图上的路径
       if (showRoute) {
-        const response = await fetchGetRobotPath(selectAgv);
+        const response = await fetchAgvTaskPath(selectAgv);
         if (dealResponse(response)) {
           message.error(
-            `${intl.formatMessage({ id: 'app.monitor.fetchTaskPathFail' })}: ${selectAgv.join()}`,
+            `${formatMessage({ id: 'app.monitor.fetchTaskPathFail' })}: ${selectAgv.join()}`,
           );
           return false;
         }
@@ -217,7 +212,7 @@ const MapMonitor = (props) => {
           const tasks = response.filter(Boolean);
           mapRef && mapRef.registeShowTaskPath(tasks, selectAgv, true);
         } else {
-          message.error(intl.formatMessage({ id: 'app.monitor.taskPathDataIllegal' }));
+          message.error(formatMessage({ id: 'app.monitor.taskPathDataIllegal' }));
         }
       } else {
         mapRef && mapRef.registeShowTaskPath([], [], true);
@@ -254,7 +249,7 @@ const MapMonitor = (props) => {
             const data = response[index];
             if (dealResponse(data)) {
               message.error(
-                `${intl.formatMessage({
+                `${formatMessage({
                   id: 'app.monitor.fetchWorkstationTaskHistoryFail',
                 })}: ${workStationID}`,
               );
@@ -273,7 +268,7 @@ const MapMonitor = (props) => {
           });
         })
         .catch(() => {
-          message.error(intl.formatMessage({ id: 'app.monitor.fetchWorkstationTaskHistoryFail' }));
+          message.error(formatMessage({ id: 'app.monitor.fetchWorkstationTaskHistoryFail' }));
         });
     }
   }
@@ -352,7 +347,7 @@ const MapMonitor = (props) => {
 
         // 任务数据
         if (dealResponse(taskHistoryResponse)) {
-          message.error(intl.formatMessage({ id: 'app.monitor.fetchWorkstationTaskHistoryFail' }));
+          message.error(formatMessage({ id: 'app.monitor.fetchWorkstationTaskHistoryFail' }));
         } else {
           const { robotIds, taskCountMap } = taskHistoryResponse;
           const _workStationTaskHistoryData = { ...workStationTaskHistoryData };
@@ -363,7 +358,7 @@ const MapMonitor = (props) => {
 
         // 最近30次等待时间
         if (dealResponse(waitingDataResponse)) {
-          message.error(intl.formatMessage({ id: 'app.monitor.fetchWorkstationPre30WattingFail' }));
+          message.error(formatMessage({ id: 'app.monitor.fetchWorkstationPre30WattingFail' }));
         } else {
           const _workStationWaitingData = { ...workStationWaitingData };
           _workStationWaitingData[`${stopCellId}-${direction}`] =

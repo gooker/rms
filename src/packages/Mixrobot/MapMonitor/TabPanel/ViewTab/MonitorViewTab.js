@@ -1,36 +1,36 @@
 import React, { memo, useContext, useEffect, useState } from 'react';
 import {
   Row,
-  Form,
   Col,
-  Checkbox,
+  Form,
   Input,
-  InputNumber,
   Switch,
   Button,
   Select,
   message,
   Divider,
+  Checkbox,
+  InputNumber,
 } from 'antd';
 import { connect } from '@/utils/dva';
 import { useMount } from '@umijs/hooks';
+import { AppCode } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
 import { Permission, hasApp } from '@/utils/Permission';
-import SelectSearch from '@/components/SelectSearch';
+import { getCurrentRouteMapData } from '@/utils/mapUtils';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull, isStrictNull, sleep } from '@/utils/utils';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import CheckBoxFun from '@/packages/Mixrobot/MapMonitor/components/CheckBoxFun';
+import MonitorMapContext from '@/packages/Mixrobot/MapMonitor/MonitorMapContext';
+import CellHeatControlPanel from './CellHeat/CellHeatControlPanel';
 import {
   fetchCellHeat,
   fetchCellLocks,
   getToteTaskRealtimePath,
   getToteTaskRealtimeState,
-} from '@/services/map';
-import CheckBoxFun from './CheckBoxFun';
-import MonitorMapContext from './MonitorMapContext';
-import CellHeatControlPanel from './CellHeatControlPanel';
-import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import config from '@/config/config';
-import styles from './MapMonitorView.less';
+} from '@/services/mixrobot';
+import styles from '../../monitor.module.less';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 let toteTaskRealtimeImterval = null;
@@ -458,7 +458,7 @@ const MapMonitorView = (props) => {
       </Permission>
 
       {/* 料箱相关 */}
-      {hasApp(config.BaseContext.Tote) && (
+      {hasApp(AppCode.Tote) && (
         <>
           <Divider orientation="left">
             <FormattedMessage id="app.mapView.label.toteRelative" />

@@ -2,16 +2,16 @@ import React, { memo, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { Divider } from 'antd';
 import { useMount } from '@umijs/hooks';
-import { hasPermission } from '@/utils/Permission';
-import { fetchSystemParamFormData } from '@/services/api';
 import {
-  DashboardOutlined,
-  MenuUnfoldOutlined,
   SettingOutlined,
   MenuFoldOutlined,
+  DashboardOutlined,
+  MenuUnfoldOutlined,
 } from '@ant-design/icons';
+import { hasPermission } from '@/utils/Permission';
 import { dealResponse, isStrictNull } from '@/utils/utils';
-import styles from '../monitor.less';
+import { fetchSystemParamFormData } from '@/services/api';
+import styles from '@/packages/Mixrobot/MapMonitor/monitor.module.less';
 
 const MapMonitorRightTool = (props) => {
   const { dispatch, dashBoardVisible, drawerVisible } = props;

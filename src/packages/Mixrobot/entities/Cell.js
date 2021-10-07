@@ -1,15 +1,15 @@
 /* eslint-disable no-param-reassign */
 import * as PIXI from 'pixi.js';
-import { BitText } from '@/pages/MapTool/entities';
+import { BitText } from '@/packages/Mixrobot/entities';
 import { isNull } from '@/utils/utils';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import Config from '@/config.js';
+import { SpotSize, zIndex, CellTypeSize, CellTypeColor } from '@/config/consts';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;
 const ClearCellTint = '0xFFFFFF';
 const NormalScaledCellTint = '0xD8BFD8';
-const zIndex = { QR: 1, type: 2, text: 3, bg: 4 };
+const innerzIndex = { QR: 1, type: 2, text: 3, bg: 4 };
 
 export default class Cell extends PIXI.Container {
   constructor(props) {
@@ -17,9 +17,9 @@ export default class Cell extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.width = Config.CellWidth;
-    this.height = Config.CellHeight;
-    this.zIndex = Config.zIndex.cell;
+    this.width = SpotSize.width;
+    this.height = SpotSize.height;
+    this.zIndex = zIndex.cell;
     this.sortableChildren = true;
     this.interactiveChildren = false;
     this.propsInteractive = props.interactive || false;
@@ -54,23 +54,23 @@ export default class Cell extends PIXI.Container {
     const QRtexture = getTextureFromResources('qrcode');
     this.QR = new PIXI.Sprite(QRtexture);
     this.QR.anchor.set(0.5);
-    this.QR.width = Config.CellWidth;
-    this.QR.height = Config.CellHeight;
-    this.QR.zIndex = zIndex.QR;
+    this.QR.width = SpotSize.width;
+    this.QR.height = SpotSize.height;
+    this.QR.zIndex = innerzIndex.QR;
     this.addChild(this.QR);
   }
 
   addCellId(cellId) {
-    this.idText = new BitText(cellId ?? this.id, 0, Config.CellHeight / 2 + 5, 0xffffff, 70);
+    this.idText = new BitText(cellId ?? this.id, 0, SpotSize.height / 2 + 5, 0xffffff, 70);
     this.idText.anchor.set(0.5, 0);
-    this.idText.zIndex = zIndex.text;
+    this.idText.zIndex = innerzIndex.text;
     this.addChild(this.idText);
   }
 
   updateCellId(cellId) {
     const { mode } = this.data;
     let cellIdX = 0;
-    let cellIdY = Config.CellHeight / 2 + 5;
+    let cellIdY = SpotSize.height / 2 + 5;
     let textColor = 0xffffff;
     let cellIdFontSize = 70;
     if (mode === 'scaled') {
@@ -90,20 +90,20 @@ export default class Cell extends PIXI.Container {
     // 更新点位ID文本位置和样式
     this.idText = new BitText(cellId ?? this.id, cellIdX, cellIdY, textColor, cellIdFontSize);
     mode === 'standard' ? this.idText.anchor.set(0.5, 0) : this.idText.anchor.set(0, 1);
-    this.idText.zIndex = zIndex.text;
+    this.idText.zIndex = innerzIndex.text;
     this.addChild(this.idText);
   }
 
   addCoordination() {
-    this.coordX = new BitText(this.x, -Config.CellWidth / 2, -Config.CellHeight / 2, 0xffffff, 40);
+    this.coordX = new BitText(this.x, -SpotSize.width / 2, -SpotSize.height / 2, 0xffffff, 40);
     this.coordX.anchor.set(1, 1);
-    this.coordX.zIndex = zIndex.text;
+    this.coordX.zIndex = innerzIndex.text;
     this.coordX.visible = this.states.shownData.coord;
     this.addChild(this.coordX);
 
-    this.coordY = new BitText(this.y, Config.CellWidth / 2, -Config.CellHeight / 2, 0xffffff, 40);
+    this.coordY = new BitText(this.y, SpotSize.width / 2, -SpotSize.height / 2, 0xffffff, 40);
     this.coordY.anchor.set(0, 1);
-    this.coordY.zIndex = zIndex.text;
+    this.coordY.zIndex = innerzIndex.text;
     this.coordY.visible = this.states.shownData.coord;
     this.addChild(this.coordY);
   }
@@ -130,7 +130,7 @@ export default class Cell extends PIXI.Container {
     this.selectedBorderSprite.width = width;
     this.selectedBorderSprite.height = height;
     this.selectedBorderSprite.visible = false;
-    this.selectedBorderSprite.zIndex = zIndex.bg;
+    this.selectedBorderSprite.zIndex = innerzIndex.bg;
     this.addChild(this.selectedBorderSprite);
   }
 
@@ -232,16 +232,16 @@ export default class Cell extends PIXI.Container {
     let beginX;
     if (isStandard) {
       beginX =
-        -(spriteCount * Config.CellTypeSize.width + (spriteCount - 1) * offset) / 2 +
-        Config.CellTypeSize.width / 2;
+        -(spriteCount * CellTypeSize.width + (spriteCount - 1) * offset) / 2 +
+        CellTypeSize.width / 2;
     } else {
       beginX =
-        Config.CellWidth / 2 -
+        SpotSize.width / 2 -
         (spriteCount * ScaledTypeIconSize + (spriteCount - 1) * offset) +
         ScaledTypeIconSize / 2 -
         20;
     }
-    const typeIconWidth = isStandard ? Config.CellTypeSize.width : ScaledTypeIconSize;
+    const typeIconWidth = isStandard ? CellTypeSize.width : ScaledTypeIconSize;
     this.data.types.forEach((sprite) => {
       sprite.x = beginX;
       beginX = beginX + typeIconWidth + offset;
@@ -258,19 +258,19 @@ export default class Cell extends PIXI.Container {
       let sprite;
       if (typeData instanceof PIXI.Texture) {
         sprite = new PIXI.Sprite(typeData);
-        sprite.width = isStandard ? Config.CellTypeSize.width : ScaledTypeIconSize;
+        sprite.width = isStandard ? CellTypeSize.width : ScaledTypeIconSize;
       } else {
         sprite = typeData;
         sprite.scale.x = 0.55;
       }
-      sprite.height = isStandard ? Config.CellTypeSize.height : ScaledTypeIconSize;
+      sprite.height = isStandard ? CellTypeSize.height : ScaledTypeIconSize;
       sprite.anchor.set(0.5);
-      sprite.zIndex = zIndex.type;
+      sprite.zIndex = innerzIndex.type;
 
       // Y轴定位
       sprite.y = isStandard
-        ? Config.CellHeight * 1.9
-        : Config.CellHeight / 2 - ScaledTypeIconSize / 2 - 40;
+        ? SpotSize.height * 1.9
+        : SpotSize.height / 2 - ScaledTypeIconSize / 2 - 40;
 
       this.data.types.set(type, sprite);
       // 渲染当前添加的类型
@@ -280,10 +280,10 @@ export default class Cell extends PIXI.Container {
       // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
       let tint = ClearCellTint;
       if (this.data.types.has('store_cell')) {
-        tint = Config.CellTypeColor.storeType;
+        tint = CellTypeColor.storeType;
       }
       if (this.data.types.has('block_cell')) {
-        tint = Config.CellTypeColor.blockType;
+        tint = CellTypeColor.blockType;
       }
       this.QR.tint = tint;
     }
@@ -300,10 +300,10 @@ export default class Cell extends PIXI.Container {
     // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
     let tint = this.data.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
     if (this.data.types.has('store_cell')) {
-      tint = Config.CellTypeColor.storeType;
+      tint = CellTypeColor.storeType;
     }
     if (this.data.types.has('block_cell')) {
-      tint = Config.CellTypeColor.blockType;
+      tint = CellTypeColor.blockType;
     }
     this.QR.tint = tint;
 
@@ -328,16 +328,16 @@ export default class Cell extends PIXI.Container {
     if (mode === 'standard') {
       this.data.mode = 'standard';
       textColor = 0xffffff;
-      cellWidth = Config.CellWidth;
-      cellHeight = Config.CellHeight;
+      cellWidth = SpotSize.width;
+      cellHeight = SpotSize.height;
       cellIdFontSize = 70;
       cellIdX = 0;
-      cellIdY = Config.CellHeight / 2 + 5;
+      cellIdY = SpotSize.height / 2 + 5;
       coordFontSize = 40;
-      coordXx = -Config.CellWidth / 2;
-      coordXy = -Config.CellHeight / 2;
-      coordYx = Config.CellWidth / 2;
-      coordYy = -Config.CellHeight / 2;
+      coordXx = -SpotSize.width / 2;
+      coordXy = -SpotSize.height / 2;
+      coordYx = SpotSize.width / 2;
+      coordYy = -SpotSize.height / 2;
     } else {
       this.data.mode = 'scaled';
       textColor = 0x000000;
@@ -380,7 +380,7 @@ export default class Cell extends PIXI.Container {
     this.idText.destroy({ children: true });
     this.idText = new BitText(this.id, cellIdX, cellIdY, textColor, cellIdFontSize);
     mode === 'standard' ? this.idText.anchor.set(0.5, 0) : this.idText.anchor.set(0, 1);
-    this.idText.zIndex = zIndex.text;
+    this.idText.zIndex = innerzIndex.text;
     this.addChild(this.idText);
 
     // 更新坐标
@@ -388,24 +388,24 @@ export default class Cell extends PIXI.Container {
     this.coordX.destroy({ children: true });
     this.coordX = new BitText(this.x, coordXx, coordXy, textColor, coordFontSize);
     mode === 'standard' ? this.coordX.anchor.set(1, 1) : this.coordX.anchor.set(0, 0);
-    this.coordX.zIndex = zIndex.text;
+    this.coordX.zIndex = innerzIndex.text;
     this.addChild(this.coordX);
 
     this.removeChild(this.coordY);
     this.coordY.destroy({ children: true });
     this.coordY = new BitText(this.y, coordYx, coordYy, textColor, coordFontSize);
     mode === 'standard' ? this.coordY.anchor.set(0, 1) : this.coordY.anchor.set(1, 0);
-    this.coordY.zIndex = zIndex.text;
+    this.coordY.zIndex = innerzIndex.text;
     this.addChild(this.coordY);
 
     // 更新点位类型图标
     this.data.types.forEach((sprite) => {
-      sprite.width = mode === 'standard' ? Config.CellTypeSize.width : ScaledTypeIconSize;
-      sprite.height = mode === 'standard' ? Config.CellTypeSize.height : ScaledTypeIconSize;
+      sprite.width = mode === 'standard' ? CellTypeSize.width : ScaledTypeIconSize;
+      sprite.height = mode === 'standard' ? CellTypeSize.height : ScaledTypeIconSize;
       sprite.y =
         mode === 'standard'
-          ? Config.CellHeight * 1.9
-          : Config.CellHeight / 2 - ScaledTypeIconSize / 2 - 40;
+          ? SpotSize.height * 1.9
+          : SpotSize.height / 2 - ScaledTypeIconSize / 2 - 40;
     });
     this.reCalculatePosition();
   }
@@ -436,9 +436,9 @@ export default class Cell extends PIXI.Container {
       this.replaceId.destroy();
     }
     if (!isNull(replaceId)) {
-      this.replaceId = new BitText(replaceId, 0, -Config.CellHeight / 2 - 40, 0x00acee, 65);
+      this.replaceId = new BitText(replaceId, 0, -SpotSize.height / 2 - 40, 0x00acee, 65);
       this.replaceId.anchor.set(0.5);
-      this.replaceId.zIndex = zIndex.text;
+      this.replaceId.zIndex = innerzIndex.text;
       this.addChild(this.replaceId);
     }
   }

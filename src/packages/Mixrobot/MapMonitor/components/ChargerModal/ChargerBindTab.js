@@ -1,13 +1,13 @@
 import React, { memo, useState, useContext, useEffect } from 'react';
 import { Form, Row, Col, Popconfirm, Select, Button } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage, dealResponse } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchPhysicChargers,
   fetchBindPhysicCharger,
   fetchBatchUnbindHardware,
-} from '@/services/map';
+} from '@/services/mixrobot';
 import MonitorMapContext from '@/packages/Mixrobot/MapMonitor/MonitorMapContext';
-import { dealResponse } from '@/utils/utils';
 import styles from './chargerModal.less';
 
 const FormItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };

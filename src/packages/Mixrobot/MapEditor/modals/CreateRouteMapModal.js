@@ -2,9 +2,9 @@ import React, { memo, useEffect } from 'react';
 import { connect } from '@/utils/dva';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Select, Form, Input, Button } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import MapModal from './MapModal/Index';
+import { formatMessage } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const { Option } = Select;
 
@@ -104,7 +104,7 @@ const CreateRouteMap = (props) => {
     <FormattedMessage id="app.selectScopeMap.addRouteArea" />
   );
   return (
-    <MapModal
+    <Modal
       destroyOnClose
       title={modalTitle}
       visible={createScopeMapVisible}
@@ -186,7 +186,7 @@ const CreateRouteMap = (props) => {
           )}
         </Form.Item>
       </Form>
-    </MapModal>
+    </Modal>
   );
 };
 export default connect(({ editor }) => {

@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import React, { memo, useRef, useEffect } from 'react';
 import { connect } from '@/utils/dva';
-import EditorMapView from './EditorMapView';
+import EditorMapView from '../EditorMapView';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 
-const MapBridging = (props) => {
+const EditorMapBridging = (props) => {
   const { width, height, getMapRef, finishNotice, dispatch } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap } = props;
 
@@ -194,4 +194,4 @@ const MapBridging = (props) => {
 export default connect((state) => {
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap } = state.editor;
   return { currentMap, currentLogicArea, currentRouteMap, preRouteMap };
-})(memo(MapBridging));
+})(memo(EditorMapBridging));

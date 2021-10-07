@@ -1,6 +1,13 @@
 import * as PIXI from 'pixi.js';
-import Config from '@/config';
-import { BitText, LineArrow } from '@/pages/MapTool/entities';
+import {
+  SpotSize,
+  CostColor,
+  ToteAGVSize,
+  TaskPathColor,
+  ForkLiftAGVSize,
+  HeatCircleRadius,
+} from '@/config/consts';
+import { BitText, LineArrow } from '@/packages/Mixrobot/entities';
 
 function getHasOppositeDirection(relations, source, target) {
   let result = false;
@@ -25,41 +32,41 @@ function getLineCorner(relations, beginCell, endCell, angle) {
   switch (true) {
     case intAngle > 0 && intAngle < 90: {
       if (!hasOppositeDirection) {
-        x1 = beginCell.x + Config.CellWidth / 2;
-        y1 = beginCell.y - Config.CellHeight / 2;
+        x1 = beginCell.x + SpotSize.width / 2;
+        y1 = beginCell.y - SpotSize.height / 2;
       } else {
-        x1 = beginCell.x + Config.CellWidth / 2;
-        y1 = beginCell.y - Config.CellHeight / 2 + Config.CellHeight / 5;
+        x1 = beginCell.x + SpotSize.width / 2;
+        y1 = beginCell.y - SpotSize.height / 2 + SpotSize.height / 5;
       }
       break;
     }
     case intAngle > 90 && intAngle < 180: {
       if (!hasOppositeDirection) {
-        x1 = beginCell.x + Config.CellWidth / 2;
-        y1 = beginCell.y + Config.CellHeight / 2;
+        x1 = beginCell.x + SpotSize.width / 2;
+        y1 = beginCell.y + SpotSize.height / 2;
       } else {
-        x1 = beginCell.x + Config.CellWidth / 2 - Config.CellWidth / 5;
-        y1 = beginCell.y + Config.CellHeight / 2;
+        x1 = beginCell.x + SpotSize.width / 2 - SpotSize.width / 5;
+        y1 = beginCell.y + SpotSize.height / 2;
       }
       break;
     }
     case intAngle > 180 && intAngle < 270: {
       if (!hasOppositeDirection) {
-        x1 = beginCell.x - Config.CellWidth / 2;
-        y1 = beginCell.y + Config.CellHeight / 2;
+        x1 = beginCell.x - SpotSize.width / 2;
+        y1 = beginCell.y + SpotSize.height / 2;
       } else {
-        x1 = beginCell.x - Config.CellWidth / 2;
-        y1 = beginCell.y + Config.CellHeight / 2 - Config.CellHeight / 5;
+        x1 = beginCell.x - SpotSize.width / 2;
+        y1 = beginCell.y + SpotSize.height / 2 - SpotSize.height / 5;
       }
       break;
     }
     case intAngle > 270 && intAngle < 360: {
       if (!hasOppositeDirection) {
-        x1 = beginCell.x - Config.CellWidth / 2;
-        y1 = beginCell.y - Config.CellHeight / 2;
+        x1 = beginCell.x - SpotSize.width / 2;
+        y1 = beginCell.y - SpotSize.height / 2;
       } else {
-        x1 = beginCell.x - Config.CellWidth / 2 + Config.CellWidth / 5;
-        y1 = beginCell.y - Config.CellHeight / 2;
+        x1 = beginCell.x - SpotSize.width / 2 + SpotSize.width / 5;
+        y1 = beginCell.y - SpotSize.height / 2;
       }
       break;
     }
@@ -74,7 +81,7 @@ function getQrCodeSelectBorderTexture() {
   tmpSelectedBorder.clear();
   tmpSelectedBorder.lineStyle(1, 0xff5722, 1);
   tmpSelectedBorder.beginFill(0xff5722, 0.5);
-  tmpSelectedBorder.drawRect(0, 0, Config.CellWidth, Config.CellHeight);
+  tmpSelectedBorder.drawRect(0, 0, SpotSize.width, SpotSize.height);
   return window.PixiUtils.renderer.generateTexture(tmpSelectedBorder);
 }
 
@@ -160,7 +167,7 @@ function getBlodCostArrow(color) {
 
 function getTaskPathTexture(color) {
   const distance = 100; // 默认长度是100
-  const lineWidth = Config.CellWidth / 3;
+  const lineWidth = SpotSize.width / 3;
   const arrow = new PIXI.Graphics();
   arrow.clear();
   arrow.lineStyle(lineWidth, color, 1);
@@ -179,7 +186,7 @@ function getCellHeatTexture(color) {
   heatCircle.clear();
   heatCircle.lineStyle(1, color, 1);
   heatCircle.beginFill(color, 1);
-  heatCircle.drawCircle(0, 0, Config.HeatCircleRadius);
+  heatCircle.drawCircle(0, 0, HeatCircleRadius);
   return window.PixiUtils.renderer.generateTexture(heatCircle);
 }
 
@@ -201,40 +208,40 @@ function getLineAnchor(relations, beginCell, endCell, angle) {
   switch (parseInt(angle, 10)) {
     case 0: {
       if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-        fromX = beginCell.x + Config.CellWidth / 5;
-        fromY = beginCell.y - Config.CellWidth / 2;
+        fromX = beginCell.x + SpotSize.width / 5;
+        fromY = beginCell.y - SpotSize.width / 2;
       } else {
         fromX = beginCell.x;
-        fromY = beginCell.y - Config.CellWidth / 2;
+        fromY = beginCell.y - SpotSize.width / 2;
       }
       break;
     }
     case 90: {
       if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-        fromX = beginCell.x + Config.CellHeight / 2;
-        fromY = beginCell.y + Config.CellWidth / 5;
+        fromX = beginCell.x + SpotSize.height / 2;
+        fromY = beginCell.y + SpotSize.width / 5;
       } else {
-        fromX = beginCell.x + Config.CellHeight / 2;
+        fromX = beginCell.x + SpotSize.height / 2;
         fromY = beginCell.y;
       }
       break;
     }
     case 180: {
       if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-        fromX = beginCell.x - Config.CellWidth / 5;
-        fromY = beginCell.y + Config.CellWidth / 2;
+        fromX = beginCell.x - SpotSize.width / 5;
+        fromY = beginCell.y + SpotSize.width / 2;
       } else {
         fromX = beginCell.x;
-        fromY = beginCell.y + Config.CellWidth / 2;
+        fromY = beginCell.y + SpotSize.width / 2;
       }
       break;
     }
     case 270: {
       if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-        fromX = beginCell.x - Config.CellHeight / 2;
-        fromY = beginCell.y - Config.CellWidth / 5;
+        fromX = beginCell.x - SpotSize.height / 2;
+        fromY = beginCell.y - SpotSize.width / 5;
       } else {
-        fromX = beginCell.x - Config.CellHeight / 2;
+        fromX = beginCell.x - SpotSize.height / 2;
         fromY = beginCell.y;
       }
       break;
@@ -359,8 +366,6 @@ export function loadTexturesForMap(cb) {
     .add('cad_6', 'pixi_map_pic_6.png')
 
     .load(() => {
-      const { ToteAGVSize, ForkLiftAGVSize, CostColor, TaskPathColor } = Config;
-
       // 背景
       PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
       PIXI.Texture.addToCache(getQrCodeSelectBorderTexture(), 'cellSelectBorderTexture');

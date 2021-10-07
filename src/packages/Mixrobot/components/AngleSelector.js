@@ -30,9 +30,11 @@ const AngleSelector = memo((props) => {
     setAngle(_angle);
 
     // getAngle 标记是否只输出角度数据
-    const { onChange, getAngle } = props;
+    const { onChange, getAngle, getDir } = props;
     if (getAngle) {
       onChange(_angle);
+    } else if (getDir) {
+      onChange(_direction);
     } else {
       onChange({ dir: _direction, angle: _angle });
     }
@@ -52,9 +54,11 @@ const AngleSelector = memo((props) => {
     setDirection(direction);
 
     // getAngle 标记是否只输出角度数据
-    const { onChange, getAngle } = props;
+    const { onChange, getAngle, getDir } = props;
     if (getAngle) {
       onChange(_angle);
+    } else if (getDir) {
+      onChange(_direction);
     } else {
       onChange({ dir: _direction, angle: _angle });
     }

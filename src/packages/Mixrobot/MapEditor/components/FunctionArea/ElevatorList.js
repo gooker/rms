@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Row, Divider, List, Button, Descriptions, Col } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import MenuIcon from '@/utils/MenuIcon';
 import AddElevator from './AddElevator';
-import MapContext from '../MapContext';
+import MenuIcon from '@/utils/MenuIcon';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 class ElevatorList extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   state = {
     formValue: {},

@@ -3,8 +3,8 @@ import { Button, Form, Collapse, DatePicker, Select, Row, Col, message, Switch }
 import intl from 'react-intl-universal';
 import FormattedMessage from '@/components/FormattedMessage';
 import find from 'lodash/find';
-import { CellHeatType } from '@/config/config';
-import styles from './CellHeatControlPanel.less';
+import { CellHeatType } from '@/config/consts';
+import styles from './cellHeatControlPanel.module.less';
 
 const layout = {
   labelCol: { span: 6 },

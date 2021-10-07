@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, ToteAGVSize, ForkLiftAGVSize } from '@/consts';
+import { GlobalAlpha, ToteAGVSize, ForkLiftAGVSize } from '@/config/consts';
 import { orderBy } from 'lodash';
 import BitText from './BitText';
 

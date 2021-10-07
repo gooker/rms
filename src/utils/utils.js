@@ -7,7 +7,7 @@ import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
-import { AgvStateColor } from '@/consts';
+import { AgvStateColor, ToteOffset } from '@/config/consts';
 import requestorStyles from '@/packages/Mixrobot/Requestor/requestor.less';
 
 export function isItemOfArray(baseArray, array) {
@@ -126,6 +126,28 @@ export function getContentHeight() {
   const layoutContentDOM = document.getElementById('layoutContent');
   const layoutContentDOMRect = layoutContentDOM.getBoundingClientRect();
   return document.body.offsetHeight - layoutContentDOMRect.top;
+}
+
+// 根据direction, distance对obj的坐标进行更新操作
+export function offsetByDirection(obj, direction, distance) {
+  const result = { x: 0, y: 0 };
+  if (direction === 0) {
+    result.x = obj.x;
+    result.y = obj.y - distance;
+  }
+  if (direction === 90) {
+    result.x = obj.x + distance;
+    result.y = obj.y;
+  }
+  if (direction === 180) {
+    result.x = obj.x;
+    result.y = obj.y + distance;
+  }
+  if (direction === 270) {
+    result.x = obj.x - distance;
+    result.y = obj.y;
+  }
+  return result;
 }
 
 /**
@@ -584,4 +606,49 @@ export function renderRequestBodyForm(dataSource, formRef, isHook = false, optio
       </Form>
     );
   }
+}
+
+export function getToteLayoutBaseParam(agvDirection, side) {
+  let angle;
+  let XBase;
+  let YBase;
+  let offset;
+  let adapte; // adapte: 用于判断料箱在哪个方向进行距离调整, 非offset
+  switch (agvDirection) {
+    // 向上
+    case 0:
+      angle = side === 'L' ? 90 : 270;
+      XBase = side === 'L' ? -1 : 1;
+      YBase = -1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'X';
+      break;
+    // 向右
+    case 1:
+      angle = side === 'L' ? 0 : 180;
+      XBase = 1;
+      YBase = side === 'L' ? -1 : 1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'Y';
+      break;
+    // 向下
+    case 2:
+      angle = side === 'L' ? 270 : 90;
+      XBase = side === 'L' ? 1 : -1;
+      YBase = 1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'X';
+      break;
+    // 向左
+    case 3:
+      angle = side === 'L' ? 0 : 180;
+      XBase = -1;
+      YBase = side === 'L' ? 1 : -1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'Y';
+      break;
+    default:
+      break;
+  }
+  return { angle, XBase, YBase, offset, adapte };
 }

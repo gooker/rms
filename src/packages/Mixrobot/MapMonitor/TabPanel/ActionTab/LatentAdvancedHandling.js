@@ -2,26 +2,25 @@ import React from 'react';
 import { connect } from '@/utils/dva';
 import {
   Col,
-  InputNumber,
-  Radio,
-  Button,
-  Divider,
   Card,
+  Form,
+  Radio,
   Input,
+  Button,
   Select,
+  Switch,
+  Divider,
   message,
   Checkbox,
-  Switch,
-  Form,
+  InputNumber,
 } from 'antd';
-import { dealResponse } from '@/utils/utils';
-import intl from 'react-intl-universal';
+import { dealResponse, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchSuperCarryReleasePod,
-  fetchSuperPodToCell,
-  fetchGetAllScopeActions,
-} from '@/services/map';
+  advancedLatnetHandling,
+  fetchAllScopeActions,
+  releaseAdvancedLatnetHandling,
+} from '@/services/monitor';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const noLabelLayout = { wrapperCol: { span: 16, offset: 6 } };
@@ -35,7 +34,7 @@ class LatentAdvancedHandling extends React.Component {
   };
 
   async componentDidMount() {
-    const response = await fetchGetAllScopeActions(window.localStorage.getItem('sectionId'));
+    const response = await fetchAllScopeActions(window.localStorage.getItem('sectionId'));
     if (dealResponse(response)) {
       message.error('获取地图功能区信息失败!');
     } else {
@@ -81,10 +80,10 @@ class LatentAdvancedHandling extends React.Component {
       if (params.agvAction === 'DOWN_POD') {
         params.isBackToRestCellId = value.isBackToRestCellId;
       }
-      fetchSuperPodToCell(params).then((res) => {
+      advancedLatnetHandling(params).then((res) => {
         if (!dealResponse(res)) {
           message.success(
-            intl.formatMessage({
+            formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.superPodToCellSuccess',
             }),
           );
@@ -101,10 +100,10 @@ class LatentAdvancedHandling extends React.Component {
         ...value,
         sectionId: user.sectionId,
       };
-      fetchSuperCarryReleasePod(params).then((res) => {
+      releaseAdvancedLatnetHandling(params).then((res) => {
         if (!dealResponse(res)) {
           message.success(
-            intl.formatMessage({
+            formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.releasePodSuccess',
             }),
           );
@@ -121,21 +120,21 @@ class LatentAdvancedHandling extends React.Component {
         <Form.Item
           {...layout}
           name={'podId'}
-          label={intl.formatMessage({ id: 'app.monitorOperation.pod' })}
+          label={formatMessage({ id: 'app.monitorOperation.pod' })}
         >
           <InputNumber />
         </Form.Item>
         <Form.Item
           {...layout}
           name={'targetCellId'}
-          label={intl.formatMessage({ id: 'app.monitorOperation.targetCell' })}
+          label={formatMessage({ id: 'app.monitorOperation.targetCell' })}
         >
           <InputNumber />
         </Form.Item>
         <Form.Item
           {...layout}
           name={'robotId'}
-          label={intl.formatMessage({ id: 'app.monitorOperation.robotId' })}
+          label={formatMessage({ id: 'app.monitorOperation.robotId' })}
         >
           <InputNumber />
         </Form.Item>
@@ -148,17 +147,17 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'targetDirection'}
-            label={intl.formatMessage({ id: 'app.monitorOperation.targetDirection' })}
+            label={formatMessage({ id: 'app.monitorOperation.targetDirection' })}
           >
             <Radio.Group
               buttonStyle="solid"
               options={[
-                { label: intl.formatMessage({ id: 'app.monitorOperation.faceA' }), value: 0 },
-                { label: intl.formatMessage({ id: 'app.monitorOperation.faceB' }), value: 1 },
-                { label: intl.formatMessage({ id: 'app.monitorOperation.faceC' }), value: 2 },
-                { label: intl.formatMessage({ id: 'app.monitorOperation.faceD' }), value: 3 },
+                { label: formatMessage({ id: 'app.monitorOperation.faceA' }), value: 0 },
+                { label: formatMessage({ id: 'app.monitorOperation.faceB' }), value: 1 },
+                { label: formatMessage({ id: 'app.monitorOperation.faceC' }), value: 2 },
+                { label: formatMessage({ id: 'app.monitorOperation.faceD' }), value: 3 },
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.noRotation',
                   }),
                   value: null,
@@ -175,32 +174,32 @@ class LatentAdvancedHandling extends React.Component {
                   wrapperCol: { span: 16 },
                 })}
             name={'direction'}
-            label={intl.formatMessage({
+            label={formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.operationPoint',
             })}
           >
             <Radio.Group
               options={[
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.aboveTargetPoint',
                   }),
                   value: 0,
                 },
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.rightTargetPoint',
                   }),
                   value: 1,
                 },
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.BelowTargetPoint',
                   }),
                   value: 2,
                 },
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.leftTargetPoint',
                   }),
                   value: 3,
@@ -213,20 +212,20 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'agvAction'}
-            label={intl.formatMessage({
+            label={formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.arrivalStatus',
             })}
           >
             <Radio.Group
               options={[
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.putDown',
                   }),
                   value: 'DOWN_POD',
                 },
                 {
-                  label: intl.formatMessage({
+                  label: formatMessage({
                     id: 'app.monitorOperation.advancedHandlingRack.notPutDown',
                   }),
                   value: 'CARRY_POD',
@@ -242,15 +241,15 @@ class LatentAdvancedHandling extends React.Component {
               name={'isBackToRestCellId'}
               initialValue={false}
               valuePropName={'checked'}
-              label={intl.formatMessage({
+              label={formatMessage({
                 id: 'app.monitorOperation.advancedHandlingRack.toRestPoint',
               })}
             >
               <Switch
-                checkedChildren={intl.formatMessage({
+                checkedChildren={formatMessage({
                   id: 'app.monitorOperation.advancedHandlingRack.yes',
                 })}
-                unCheckedChildren={intl.formatMessage({
+                unCheckedChildren={formatMessage({
                   id: 'app.monitorOperation.advancedHandlingRack.no',
                 })}
               />
@@ -265,7 +264,7 @@ class LatentAdvancedHandling extends React.Component {
                   wrapperCol: { span: 16 },
                 })}
             name={'rotateCellId'}
-            label={intl.formatMessage({
+            label={formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.rotateCell',
             })}
           >
@@ -275,7 +274,7 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'backZone'}
-            label={intl.formatMessage({ id: 'app.monitorOperation.advancedHandlingRack.backZone' })}
+            label={formatMessage({ id: 'app.monitorOperation.advancedHandlingRack.backZone' })}
           >
             <Checkbox.Group>
               {functionArea?.map((item) => (
@@ -289,7 +288,7 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'scopeCodes1'}
-            label={intl.formatMessage({
+            label={formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.scopeCode',
             })}
           >
@@ -313,7 +312,7 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'podId'}
-            label={intl.formatMessage({ id: 'app.monitorOperation.pod' })}
+            label={formatMessage({ id: 'app.monitorOperation.pod' })}
           >
             <InputNumber />
           </Form.Item>
@@ -321,7 +320,7 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'taskId'}
-            label={intl.formatMessage({ id: 'app.monitorOperation.advancedHandlingRack.taskId' })}
+            label={formatMessage({ id: 'app.monitorOperation.advancedHandlingRack.taskId' })}
           >
             <Input />
           </Form.Item>
@@ -329,7 +328,7 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'backZone'}
-            label={intl.formatMessage({ id: 'app.monitorOperation.advancedHandlingRack.backZone' })}
+            label={formatMessage({ id: 'app.monitorOperation.advancedHandlingRack.backZone' })}
           >
             <Checkbox.Group>
               {functionArea?.map((item) => (
@@ -343,7 +342,7 @@ class LatentAdvancedHandling extends React.Component {
           <Form.Item
             {...layout}
             name={'scopeCodes'}
-            label={intl.formatMessage({
+            label={formatMessage({
               id: 'app.monitorOperation.advancedHandlingRack.scopeCode',
             })}
           >

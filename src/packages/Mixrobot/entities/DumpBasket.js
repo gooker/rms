@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import * as Config from '@/config/config';
+import { zIndex, SpotSize } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import BitText from '@/pages/MapTool/entities/BitText';
+import BitText from '@/packages/Mixrobot/entities/BitText';
 
 export default class DumpBasket extends PIXI.Sprite {
   constructor(key, x, y) {
@@ -10,9 +10,9 @@ export default class DumpBasket extends PIXI.Sprite {
     this.x = x;
     this.y = y;
     this.key = key;
-    this.height = Config.CellHeight * 4;
-    this.width = Config.CellWidth * 4;
-    this.zIndex = Config.zIndex.temporaryLock;
+    this.height = SpotSize.height * 4;
+    this.width = SpotSize.width * 4;
+    this.zIndex = zIndex.temporaryLock;
     this.anchor.set(0.5);
     this.addName();
   }

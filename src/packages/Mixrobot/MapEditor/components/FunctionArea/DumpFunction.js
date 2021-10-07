@@ -1,17 +1,17 @@
 import React from 'react';
-import { connect } from '@/utils/dva';
 import { Button, Col, Form, Divider, Row, Table, Input, message } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { isNull } from '@/utils/utils';
+import { connect } from '@/utils/dva';
+import { isNull, formatMessage } from '@/utils/utils';
 import {
   getOffsetDistance,
   getCurrentLogicAreaData,
   covertDumpFormData2Param,
 } from '@/utils/mapUtils';
-import DirectionSelector from '../../../components/DirectionSelector';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
 import MenuIcon from '@/utils/MenuIcon';
-import MapContext from '../MapContext';
+import FormattedMessage from '@/components/FormattedMessage';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import ButtonInput from '@/packages/Mixrobot/components/ButtonInput/ButtonInput';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const formLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
 const formLayout2 = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
@@ -20,9 +20,8 @@ const formLayout2 = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
  * Dump 标识抛物点
  * Basket 标识抛物篮
  */
-
 class DumpFunction extends React.Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -287,7 +286,7 @@ class DumpFunction extends React.Component {
                 label={formatMessage({ id: 'app.dump.agvDirection' })}
                 initialValue={choice.agvDirection}
               >
-                <DirectionSelector />
+                <AngleSelector getAngle />
               </Form.Item>
             )}
 
@@ -345,7 +344,7 @@ class DumpFunction extends React.Component {
                           fieldKey={[fieldKey, 'direction']}
                           label={formatMessage({ id: 'app.selectDirAngle.direction' })}
                         >
-                          <DirectionSelector />
+                          <AngleSelector getAngle />
                         </Form.Item>
 
                         {/* 抛物框名称 */}

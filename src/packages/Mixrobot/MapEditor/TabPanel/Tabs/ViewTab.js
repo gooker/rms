@@ -1,11 +1,12 @@
 import React, { memo, useContext } from 'react';
 import { connect } from '@/utils/dva';
 import { Col, Radio, Checkbox, Switch, Icon, Form, Select, Divider } from 'antd';
-import CheckBoxFun from '@/pages/MapTool/MapMonitor/components/CheckBoxFun';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import { CostOptions, DirectionOption } from '@/Const';
-import MapContext from './MapContext';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { CostOptions, DirectionOption } from '../../MapEditConst';
+import CheckBoxFun from '@/packages/Mixrobot/MapMonitor/components/CheckBoxFun';
+import MapContext from '../../MapEditContext';
 
 const formItemLayout = { labelCol: { span: 8 }, wrapperCol: { span: 16 } };
 

@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Menu, Row, Spin } from 'antd';
-import intl from 'react-intl-universal';
 import { RightOutlined, DownOutlined } from '@ant-design/icons';
 import HeaderDropdown from '@/components/HeaderDropdown';
+import { formatMessage } from '@/utils/utils';
 import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtils';
-import styles from '../monitor.less';
+import styles from '@/packages/Mixrobot/MapMonitor/monitor.module.less';
 
 const MapMonitorLeftTool = (props) => {
   const { dispatch, currentMap, logicAreaList, currentLogicArea, currentRouteMap } = props;
@@ -66,7 +66,7 @@ const MapMonitorLeftTool = (props) => {
       >
         <span className={styles.action}>
           <span style={{ fontSize: 15, fontWeight: 600 }} className={styles.name}>
-            {currentLogicArea?.name || intl.formatMessage({ id: 'app.selectLogicArea.logicArea' })}
+            {currentLogicArea?.name || formatMessage({ id: 'app.selectLogicArea.logicArea' })}
           </span>
           <DownOutlined style={{ marginLeft: 10, color: '#FFF' }} />
         </span>
@@ -93,7 +93,7 @@ const MapMonitorLeftTool = (props) => {
       >
         <span className={`${styles.action} ${styles.account}`}>
           <span style={{ fontSize: 15, fontWeight: 600 }} className={styles.name}>
-            {currentRouteMap?.name || intl.formatMessage({ id: 'app.selectScopeMap.routeArea' })}
+            {currentRouteMap?.name || formatMessage({ id: 'app.selectScopeMap.routeArea' })}
           </span>
           <DownOutlined style={{ marginLeft: 10, color: '#FFF' }} />
         </span>

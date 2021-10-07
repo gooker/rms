@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from '@/utils/dva';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { Row, Col, Form, Select, InputNumber, Radio, Input, Button, message } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { fetchtoteToWorkstation } from '@/services/tote';
-import { dealResponse } from '@/utils/utils';
-import MenuIcon from '@/utils/MenuIcon';
+import FormattedMessage from '@/components/FormattedMessage';
+import { formatMessage, dealResponse } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { toteToWorkstation } from '@/services/monitor';
+import MenuIcon from '@/utils/MenuIcon';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
@@ -60,8 +60,8 @@ class ToteWorkStationTask extends PureComponent {
           }),
         );
       } else {
-        fetchtoteToWorkstation(params).then((res) => {
-          dealResponse(res, 1, '工作站任务下发成功');
+        toteToWorkstation(params).then((res) => {
+          dealResponse(res, 1, '@@@工作站任务下发成功');
         });
       }
     });

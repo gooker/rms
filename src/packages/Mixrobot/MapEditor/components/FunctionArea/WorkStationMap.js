@@ -1,23 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Input, Form, Table, Row, Divider, Col, Button, InputNumber } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import InputComponent from '@/pages/MapTool/components/MapForm/MapInput';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import SuperMultiSelect from '@/packages/Mixrobot/components/SuperMultiSelect';
-import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
-import CardRadio from '@/packages/Mixrobot/components/CardRadio';
-import MapContext from '../MapContext';
 import MenuIcon from '@/utils/MenuIcon';
-import * as Config from '@/config/config';
-import { isNull, isStrictNull } from '@/utils/utils';
+import { WorkStationSize } from '@/config/consts';
+import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { isNull, isStrictNull, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import CardRadio from '@/packages/Mixrobot/MapEditor/components/CardRadio';
+import InputWithIcon from '@/packages/Mixrobot/components/InputWithIcon';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import SuperMultiSelect from '@/packages/Mixrobot/components/SuperMultiSelect';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
-const { WorkStationSize } = Config;
 const formLayout = { labelCol: { span: 4 }, wrapperCol: { span: 19 } };
 const noLabelFormLayout = { wrapperCol: { offset: 4, span: 19 } };
 
 class WorkStationMap extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -229,10 +228,14 @@ class WorkStationMap extends Component {
               initialValue={workStation?.stopCellId}
               label={formatMessage({ id: 'app.workStationMap.stopPoint' })}
             >
-              <InputComponent
+              <InputWithIcon
                 currentCellId={selectCellIds}
                 icon={
-                  <img alt={'stop'} style={{ width: 25 }} src={require('@/../public/stop.png')} />
+                  <img
+                    alt={'stop'}
+                    style={{ width: 25 }}
+                    src={require('@/../public/webView/stop.png')}
+                  />
                 }
               />
             </Form.Item>
@@ -296,12 +299,12 @@ class WorkStationMap extends Component {
               initialValue={workStation?.scanCellId}
               label={<FormattedMessage id="app.workStationMap.scanningPoint" />}
             >
-              <InputComponent
+              <InputWithIcon
                 icon={
                   <img
                     alt={'scan_cell'}
                     style={{ width: 25 }}
-                    src={require('@/../public/scan_cell.png')}
+                    src={require('@/../public/webView/scan_cell.png')}
                   />
                 }
                 currentCellId={selectCellIds}
@@ -314,13 +317,13 @@ class WorkStationMap extends Component {
               initialValue={workStation?.bufferCellId}
               label={formatMessage({ id: 'app.workStationMap.bufferPoint' })}
             >
-              <InputComponent
+              <InputWithIcon
                 currentCellId={selectCellIds}
                 icon={
                   <img
                     alt={'buffer_cell'}
                     style={{ width: 25 }}
-                    src={require('@/../public/buffer_cell.png')}
+                    src={require('@/../public/webView/buffer_cell.png')}
                   />
                 }
               />
@@ -338,7 +341,7 @@ class WorkStationMap extends Component {
                   <img
                     alt={'rotate'}
                     style={{ width: 25 }}
-                    src={require('@/../public/round.png')}
+                    src={require('@/../public/webView/round.png')}
                   />
                 }
               />
@@ -356,7 +359,7 @@ class WorkStationMap extends Component {
                   <img
                     alt={'bifurcation'}
                     style={{ width: 25 }}
-                    src={require('@/../public/bifurcation.png')}
+                    src={require('@/../public/webView/bifurcation.png')}
                   />
                 }
               />

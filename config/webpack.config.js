@@ -441,7 +441,7 @@ module.exports = function (webpackEnv, useAnalyzer) {
       tls: 'empty',
       child_process: 'empty',
     },
-    
+
     performance: false,
   };
 };

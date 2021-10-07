@@ -1,60 +1,52 @@
 /* eslint-disable no-unused-vars */
 import React, { memo, useState, Component } from 'react';
 import { connect } from '@/utils/dva';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { useMap, useMount } from '@umijs/hooks';
 import { Row, Form, message, Col, Button, Select, Radio, InputNumber, Badge, Divider } from 'antd';
 
-import {
-  fetchToteToRest,
-  fetchSorterToRest,
-  fetchLatentToRest,
-  fetchToteToCharger,
-  fetchToteAgvEmptyRun,
-  fetchWorkStationPods,
-  fetchSorterToCharger,
-  fetchForkLiftToRestRun,
-  fetchSorterAgvEmptyRun,
-  fetchForkLiftAgvEmptyRun,
-  fetchForkLiftToChargerRun,
-  fetchLatentLiftingSystemParam,
-} from '@/services/map';
-import * as Config from '@/config/config';
 import request from '@/utils/request';
-import { AllAGVTypes } from '@/Const';
+import { AGVType } from '@/config/config';
 import { fetchGetAPI } from '@/services/mixrobot';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 import { Permission, hasPermission, isAppInUse } from '@/utils/Permission';
-import { dealResponse, renderRequestBodyForm } from '@/utils/utils';
-import { LatentOperation, ToteOperation, ForkOperation, SorterOperation } from '../monitorParams';
+import { dealResponse, renderRequestBodyForm, formatMessage } from '@/utils/utils';
+import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtils';
+import { fetchWorkStationPods, fetchLatentLiftingSystemParam } from '@/services/monitor';
+import {
+  AllAGVTypes,
+  ToteOperation,
+  ForkOperation,
+  LatentOperation,
+  SorterOperation,
+} from '../../MonitorConsts';
 
-import Info from './LatentPodArrivalMessage';
-import ToRestArea from './ToRestArea';
 import EmptyRun from './EmptyRun';
+import ToRestArea from './ToRestArea';
 import AgvCommand from './AgvCommand';
-import SetupLatentPod from './SetupLatentPod';
+import GoCharging from './GoCharging';
 import SorterPick from './SorterPick';
 import SorterThrow from './SorterThrow';
-import ToteAgvCommand from './ToteAgvCommand';
-import ForkAgvCommand from './ForkAgvCommand';
+import LatentTransport from './LatentTransport';
+import Info from './LatentPodArrivalMessage';
+import SetupLatentPod from './SetupLatentPod';
 import LatentStopMessage from './LatentPauseMessage';
 import ToteWorkStationTask from './ToteWorkStationTask';
-import CallPodToWorkStation from './LatentCallPodToWorkStation';
 import AdvancedHandlingRack from './LatentAdvancedHandling';
 import ForkLiftTransportTask from './ForkLiftTransportTask';
+import CallPodToWorkStation from './LatentCallPodToWorkStation';
 import AutomaticToteWorkstationTask from './ToteAutomaticWorkstationTask';
 import AutomaticLatentWorkstationTask from './LatentAutomaticWorkstationTask';
 import AutomaticForkLiftWorkstationTask from './ForkLiftAutomaticWorkstationTask';
-import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtils';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const noLabelLayout = { wrapperCol: { span: 16, offset: 6 } };
 const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const TabAgvMap = {
-  0: Config.AGVType.LatentLifting,
-  1: Config.AGVType.Tote,
-  2: Config.AGVType.ForkLifting,
-  3: Config.AGVType.Sorter,
+  0: AGVType.LatentLifting,
+  1: AGVType.Tote,
+  2: AGVType.ForkLifting,
+  3: AGVType.Sorter,
 };
 
 // 权限配置
@@ -181,113 +173,28 @@ const MapMonitorOperationMap = (props) => {
     if (currentKey) {
       if (currentApp === 0) {
         if (currentKey === 'emptyRun') {
-          return (
-            <EmptyRun
-              submit={(value) => {
-                dispatch({
-                  type: 'monitor/fetchEmptyRun',
-                  payload: { ...value, sectionId },
-                });
-              }}
-            />
-          );
+          return <EmptyRun agvType={AGVType.LatentLifting} />;
         }
         if (currentKey === 'setupPod') {
-          return (
-            <SetupLatentPod
-              sectionId={sectionId}
-              height={getPodSize('height')}
-              width={getPodSize('width')}
-            />
-          );
+          return <SetupLatentPod height={getPodSize('height')} width={getPodSize('width')} />;
         }
         if (currentKey === 'toRestArea') {
-          return <ToRestArea api={fetchLatentToRest} sectionId={sectionId} />;
+          return <ToRestArea agvType={AGVType.LatentLifting} />;
         }
         if (currentKey === 'command') {
-          return <AgvCommand />;
+          return <AgvCommand agvType={AGVType.LatentLifting} />;
         }
         if (currentKey === 'charger') {
-          return (
-            <Form form={form}>
-              <Form.Item
-                {...layout}
-                name={'agvId'}
-                label={formatMessage({ id: 'app.monitorOperation.robotId' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item {...noLabelLayout}>
-                <Col span={12}>
-                  <Button
-                    onClick={() => {
-                      form.validateFields().then((value) => {
-                        dispatch({
-                          type: 'monitor/fetchTryToCharge',
-                          payload: { ...value, sectionId },
-                        });
-                      });
-                    }}
-                    type="primary"
-                  >
-                    <FormattedMessage id="app.monitorOperation.charger" />
-                  </Button>
-                </Col>
-              </Form.Item>
-            </Form>
-          );
+          return <GoCharging agvType={AGVType.LatentLifting} />;
         }
         if (currentKey === 'handlingRack') {
-          return (
-            <Form form={form}>
-              <Form.Item
-                {...layout}
-                name={'podId'}
-                label={formatMessage({ id: 'app.monitorOperation.pod' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item
-                {...layout}
-                name={'targetCellId'}
-                label={formatMessage({ id: 'app.monitorOperation.targetCell' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item
-                {...layout}
-                name={'robotId'}
-                label={formatMessage({ id: 'app.monitorOperation.robotId' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item {...noLabelLayout}>
-                <Col span={12}>
-                  <Button
-                    onClick={() => {
-                      form.validateFields().then((value) => {
-                        dispatch({
-                          type: 'monitor/fetchPodToCell',
-                          payload: { ...value, sectionId },
-                        });
-                      });
-                    }}
-                    type="primary"
-                  >
-                    <FormattedMessage id="app.monitorOperation.carryPod" />
-                  </Button>
-                </Col>
-              </Form.Item>
-            </Form>
-          );
+          return <LatentTransport agvType={AGVType.LatentLifting} />;
         }
         if (currentKey === 'advancedHandlingRack') {
           return <AdvancedHandlingRack />;
         }
         if (currentKey === 'callRackToWorkstation') {
-          return (
-            <CallPodToWorkStation sectionId={sectionId} workstationList={workstationList || []} />
-          );
+          return <CallPodToWorkStation workstationList={workstationList || []} />;
         }
         if (currentKey === 'autoLatentWorkstationTask') {
           return <AutomaticLatentWorkstationTask workstationList={workstationList || []} />;
@@ -296,77 +203,20 @@ const MapMonitorOperationMap = (props) => {
           return <Info />;
         }
         if (currentKey === 'stopMessage') {
-          return (
-            <LatentStopMessage
-              sectionId={sectionId}
-              dispatch={dispatch}
-              latentStopMessageList={latentStopMessageList}
-            />
-          );
+          return <LatentStopMessage messageList={latentStopMessageList} />;
         }
       } else if (currentApp === 1) {
         if (currentKey === 'emptyRun') {
-          return (
-            <EmptyRun
-              submit={(value) => {
-                fetchToteAgvEmptyRun({ ...value, mapScopeCode: currentRouteMap.code }).then(
-                  (res) => {
-                    if (
-                      dealResponse(
-                        res,
-                        1,
-                        formatMessage({ id: 'app.monitorOperation.agvEmptyRunSuccess' }),
-                      )
-                    ) {
-                      return false;
-                    }
-                  },
-                );
-              }}
-            />
-          );
+          return <EmptyRun mapScopeCode={currentRouteMap.code} agvType={AGVType.Tote} />;
         }
         if (currentKey === 'toRestArea') {
-          return <ToRestArea api={fetchToteToRest} sectionId={sectionId} />;
+          return <ToRestArea agvType={AGVType.Tote} />;
         }
         if (currentKey === 'charger') {
-          return (
-            <Form form={form}>
-              <Form.Item
-                {...layout}
-                name={'agvId'}
-                label={formatMessage({ id: 'app.monitorOperation.robotId' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item {...noLabelLayout}>
-                <Col span={12}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      form.validateFields().then((value) => {
-                        fetchToteToCharger({ sectionId, ...value }).then((response) => {
-                          dealResponse(
-                            response,
-                            true,
-                            formatMessage(
-                              { id: 'app.monitorOperation.chargerSuccess' },
-                              { value: value.agvId },
-                            ),
-                          );
-                        });
-                      });
-                    }}
-                  >
-                    <FormattedMessage id="app.monitorOperation.charger" />
-                  </Button>
-                </Col>
-              </Form.Item>
-            </Form>
-          );
+          return <GoCharging agvType={AGVType.Tote} />;
         }
         if (currentKey === 'command') {
-          return <ToteAgvCommand sectionId={sectionId} />;
+          return <AgvCommand agvType={AGVType.Tote} />;
         }
         if (currentKey === 'toteWorkstationTask') {
           return <ToteWorkStationTask />;
@@ -376,63 +226,16 @@ const MapMonitorOperationMap = (props) => {
         }
       } else if (currentApp === 2) {
         if (currentKey === 'emptyRun') {
-          return (
-            <EmptyRun
-              appointHeight={true}
-              submit={(value) => {
-                fetchForkLiftAgvEmptyRun({ sectionId, ...value }).then((res) => {
-                  if (
-                    dealResponse(
-                      res,
-                      1,
-                      formatMessage({ id: 'app.monitorOperation.agvEmptyRunSuccess' }),
-                    )
-                  ) {
-                    return false;
-                  }
-                });
-              }}
-            />
-          );
+          return <EmptyRun appointHeight={true} agvType={AGVType.ForkLifting} />;
         }
         if (currentKey === 'toRestArea') {
-          return <ToRestArea api={fetchForkLiftToRestRun} sectionId={sectionId} />;
+          return <ToRestArea agvType={AGVType.ForkLifting} />;
         }
         if (currentKey === 'charger') {
-          return (
-            <Form form={form}>
-              <Form.Item
-                {...layout}
-                name={'agvId'}
-                label={formatMessage({ id: 'app.monitorOperation.robotId' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item {...noLabelLayout}>
-                <Col span={12}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      form.validateFields().then((value) => {
-                        fetchForkLiftToChargerRun({ sectionId, ...value }).then((res) => {
-                          dealResponse(
-                            res,
-                            true,
-                            formatMessage({ id: 'app.monitorOperation.agvToChargerSuccess' }),
-                          );
-                        });
-                      });
-                    }}
-                  >
-                    <FormattedMessage id="app.monitorOperation.charger" />
-                  </Button>
-                </Col>
-              </Form.Item>
-            </Form>
-          );
+          return <GoCharging agvType={AGVType.ForkLifting} />;
         }
         if (currentKey === 'command') {
-          return <ForkAgvCommand sectionId={sectionId} />;
+          return <AgvCommand agvType={AGVType.ForkLifting} />;
         }
         if (currentKey === 'forkPickPodTask') {
           return <ForkLiftTransportTask />;
@@ -442,63 +245,13 @@ const MapMonitorOperationMap = (props) => {
         }
       } else if (currentApp === 3) {
         if (currentKey === 'emptyRun') {
-          return (
-            <EmptyRun
-              submit={(value) => {
-                fetchSorterAgvEmptyRun({ sectionId, ...value }).then((res) => {
-                  if (
-                    dealResponse(
-                      res,
-                      1,
-                      formatMessage({ id: 'app.monitorOperation.agvEmptyRunSuccess' }),
-                    )
-                  ) {
-                    return false;
-                  }
-                });
-              }}
-            />
-          );
+          return <EmptyRun agvType={AGVType.Sorter} />;
         }
         if (currentKey === 'toRestArea') {
-          return <ToRestArea api={fetchSorterToRest} sectionId={sectionId} />;
+          return <ToRestArea agvType={AGVType.Sorter} />;
         }
         if (currentKey === 'charger') {
-          return (
-            <Form form={form}>
-              <Form.Item
-                {...layout}
-                name={'agvId'}
-                label={formatMessage({ id: 'app.monitorOperation.robotId' })}
-              >
-                <InputNumber />
-              </Form.Item>
-              <Form.Item {...noLabelLayout}>
-                <Col span={12}>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      form.validateFields().then((value) => {
-                        fetchSorterToCharger({ sectionId, ...value }).then((res) => {
-                          if (
-                            dealResponse(
-                              res,
-                              true,
-                              formatMessage({ id: 'app.monitorOperation.agvToChargerSuccess' }),
-                            )
-                          ) {
-                            return false;
-                          }
-                        });
-                      });
-                    }}
-                  >
-                    <FormattedMessage id="app.monitorOperation.charger" />
-                  </Button>
-                </Col>
-              </Form.Item>
-            </Form>
-          );
+          return <GoCharging agvType={AGVType.Sorter} />;
         }
         if (currentKey === 'sorterPick') {
           return <SorterPick />;

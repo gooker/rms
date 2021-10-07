@@ -1,9 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import * as Config from '@/config/config';
 import { getTextureFromResources } from '@/utils/mapUtils';
-
-const { WorkStationSize, CommonFunctionSize } = Config;
+import { zIndex, WorkStationSize, CommonFunctionSize } from '@/config/consts';
 export default class WorkStation extends PIXI.Container {
   constructor(props) {
     super();
@@ -12,7 +10,7 @@ export default class WorkStation extends PIXI.Container {
     this.icon = props.icon || 'work_station';
     this.name = props.name;
     this.angle = props.angle;
-    this.zIndex = Config.zIndex.groundStorage;
+    this.zIndex = zIndex.groundStorage;
     this.direction = props.direction;
     this.check = props.check;
 

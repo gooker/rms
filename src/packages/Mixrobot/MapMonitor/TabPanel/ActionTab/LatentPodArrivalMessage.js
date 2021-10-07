@@ -1,15 +1,14 @@
 import React, { PureComponent } from 'react';
-import { Row, Table, Button } from 'antd';
-import intl from 'react-intl-universal';
-import FormattedMessage from '@/components/FormattedMessage';
-import { fetchReleasePod } from '@/services/map';
 import { connect } from '@/utils/dva';
-import { dealResponse } from '@/utils/utils';
+import { Row, Table, Button } from 'antd';
+import { releaseLatentPod } from '@/services/monitor';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 
 @connect(({ monitor }) => ({ monitor }))
 class LatentPodArrivalMessage extends PureComponent {
   release = (taskId) => {
-    fetchReleasePod({ taskId }).then((res) => {
+    releaseLatentPod({ taskId }).then((res) => {
       if (!dealResponse(res)) {
         const { dispatch } = this.props;
         dispatch({
@@ -22,27 +21,27 @@ class LatentPodArrivalMessage extends PureComponent {
 
   tableColumn = [
     {
-      title: intl.formatMessage({ id: 'app.monitorOperation.stopCellId' }),
+      title: formatMessage({ id: 'app.monitorOperation.stopCellId' }),
       dataIndex: 'stopCellId',
       align: 'center',
     },
     {
-      title: intl.formatMessage({ id: 'app.monitorOperation.direction' }),
+      title: formatMessage({ id: 'app.monitorOperation.direction' }),
       dataIndex: 'direction',
       align: 'center',
     },
     {
-      title: intl.formatMessage({ id: 'app.monitorOperation.podId' }),
+      title: formatMessage({ id: 'app.monitorOperation.podId' }),
       dataIndex: 'podId',
       align: 'center',
     },
     {
-      title: intl.formatMessage({ id: 'app.monitorOperation.podDirection' }),
+      title: formatMessage({ id: 'app.monitorOperation.podDirection' }),
       dataIndex: 'podDirection',
       align: 'center',
     },
     {
-      title: intl.formatMessage({ id: 'app.monitorOperation.operate' }),
+      title: formatMessage({ id: 'app.monitorOperation.operate' }),
       align: 'center',
       render: (text, record) => (
         <Button

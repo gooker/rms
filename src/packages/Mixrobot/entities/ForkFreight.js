@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import { GlobalAlpha } from '@/consts';
+import { GlobalAlpha } from '@/config/consts';
 
 export default class ForkFreight extends PIXI.Container {
   constructor(props) {

@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
-import { fetchSimulatorErrorMessage } from '@/services/simulator';
-import { dealResponse } from '@/utils/utils';
-import { Button, Card, Form, Input, Row, Select } from 'antd';
-import intl from 'react-intl-universal';
+import { Button, Card, Form, Input, Select } from 'antd';
+import { dealResponse, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
+import { fetchSimulatorErrorMessage } from '@/services/monitor';
 
 const layout = {
   labelCol: { span: 6 },
@@ -45,7 +44,7 @@ export default class SimulatorError extends PureComponent {
 
   render() {
     return (
-      <Card title={intl.formatMessage({ id: 'app.simulator.form.label.simulateAMRError' })}>
+      <Card title={formatMessage({ id: 'app.simulator.form.label.simulateAMRError' })}>
         <Form ref={this.formRef}>
           <Form.Item
             {...layout}
@@ -53,10 +52,10 @@ export default class SimulatorError extends PureComponent {
             rules={[
               {
                 required: true,
-                message: intl.formatMessage({ id: 'app.simulator.form.require.agv' }),
+                message: formatMessage({ id: 'app.simulator.form.require.agv' }),
               },
             ]}
-            label={intl.formatMessage({ id: 'app.simulator.form.label.AMRID' })}
+            label={formatMessage({ id: 'app.simulator.form.label.AMRID' })}
           >
             <Select allowClear showSearch mode="tags" maxTagCount={4} style={{ width: '90%' }} />
           </Form.Item>
@@ -67,10 +66,10 @@ export default class SimulatorError extends PureComponent {
             rules={[
               {
                 required: true,
-                message: intl.formatMessage({ id: 'app.simulator.form.require.errorCode' }),
+                message: formatMessage({ id: 'app.simulator.form.require.errorCode' }),
               },
             ]}
-            label={intl.formatMessage({ id: 'app.simulator.form.label.errorCode' })}
+            label={formatMessage({ id: 'app.simulator.form.label.errorCode' })}
           >
             <Input />
           </Form.Item>

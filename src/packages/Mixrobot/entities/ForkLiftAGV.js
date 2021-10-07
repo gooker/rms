@@ -1,15 +1,11 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
-import { ForkLiftAGVSize, zIndex } from '@/consts';
+import { ForkLiftAGVSize, zIndex } from '@/config/consts';
 import BitText from './BitText';
 import ForkFreight from './ForkFreight';
-import {
-  isNull,
-  switchAGVState,
-  switchAGVBatteryState,
-  getTextureFromResources,
-} from '@/utils/utils';
+import { isNull } from '@/utils/utils';
+import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 
 export default class ForkLiftAGV extends PIXI.Container {
   constructor(props) {

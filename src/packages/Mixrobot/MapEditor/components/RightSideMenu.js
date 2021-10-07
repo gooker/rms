@@ -3,21 +3,20 @@ import { connect } from '@/utils/dva';
 import { Drawer, Menu } from 'antd';
 import { ReadOutlined, SettingOutlined } from '@ant-design/icons';
 import { isNull } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import IconDir from '@/components/AntdIcon/IconDir';
-import { FormattedMessage } from '@/utils/Lang';
 
-import CellMap from '../../components/CellMap';
-import MapEditView from './MapEditView';
-import RouterMap from './RouterMap';
-import WorkStationMap from './FunctionArea/WorkStationMap';
+import CellTab from '@/packages/Mixrobot/MapEditor/TabPanel/Tabs/CellTab';
+import CostTab from '@/packages/Mixrobot/MapEditor/TabPanel/Tabs/CostTab';
+import RestCells from './FunctionArea/RestCells';
+import TunnelList from './FunctionArea/ChannelList';
 import ChargerList from './FunctionArea/ChargerList';
 import ElevatorList from './FunctionArea/ElevatorList';
-import TunnelList from './FunctionArea/ChannelList';
-import RestCells from './FunctionArea/RestCells';
-import Intersection from './FunctionArea/IntersectionPanel';
 import DumpFunction from './FunctionArea/DumpFunction';
-import RollerFunction from './FunctionArea/RollerFunction';
+import WorkStationMap from './FunctionArea/WorkStationMap';
+import Intersection from './FunctionArea/IntersectionPanel';
 import CommonFunction from './FunctionArea/CommonFunctionPanel';
+import MapEditView from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const { SubMenu } = Menu;
 
@@ -43,9 +42,9 @@ class RightSliderMenu extends Component {
     const { current } = this.state;
     switch (current) {
       case 'cellMap':
-        return <CellMap />;
+        return <CellTab />;
       case 'routerMap':
-        return <RouterMap />;
+        return <CostTab />;
       case 'view':
         return <MapEditView />;
       case 'workstationList':

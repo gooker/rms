@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Menu } from 'antd';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import { PlusOutlined, DownOutlined, EditOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
-import styles from '../LeftContent/index.less';
 
 const SelectScopeMap = (props) => {
   const { dispatch, routeMapList, currentRouteMap } = props;
@@ -67,7 +67,6 @@ const SelectScopeMap = (props) => {
 
   const routeMapMenu = (
     <Menu
-      className={styles.menu}
       selectedKeys={[currentRouteMap]}
       onClick={(record) => {
         switchRouteMap(record);
@@ -80,8 +79,8 @@ const SelectScopeMap = (props) => {
   const currentRouteMapData = routeMapList[currentRouteMap];
   return (
     <HeaderDropdown overlay={routeMapMenu}>
-      <span className={styles.action}>
-        <span style={{ fontSize: 15, fontWeight: 600 }} className={styles.name}>
+      <span>
+        <span style={{ fontSize: 15, fontWeight: 600 }}>
           {currentRouteMapData?.name || formatMessage({ id: 'app.selectScopeMap.routeArea' })}
         </span>
         <DownOutlined style={{ marginLeft: 4 }} />

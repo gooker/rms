@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import ActionTab from './ActionTab';
 import TaskTab from './TaskTab';
 import ControllerTab from './ControllerTab';
@@ -8,13 +8,11 @@ import AgvRunninInfo from './AgvRunninInfo';
 import ToteBinTab from './ToteBinTab';
 import TotePoolTab from './TotePoolTab';
 import ForkBin from './ForkBin';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import { UseMonitorModalSize } from '@/customHooks';
 import { hasPermission } from '@/utils/Permission';
-import * as Config from '@/config/config';
-import commonStyle from '@/common/common.less';
-
-const { BaseContext } = Config;
+import { AppCode } from '@/config/config';
+import commonStyle from '@/common.module.less';
 
 const TabSelectedStyle = {
   background: 'rgba(0, 0, 0, 0.2)',
@@ -92,10 +90,10 @@ class AgvModal extends Component {
     const { agv } = this.props;
     const { agvId, agvType } = JSON.parse(agv);
     const TypeNameMapping = {
-      [Config.AGVType.LatentLifting]: formatMessage({ id: 'app.monitor.modal.AGV.latent' }),
-      [Config.AGVType.Tote]: formatMessage({ id: 'app.monitor.modal.AGV.tote' }),
-      [Config.AGVType.ForkLifting]: formatMessage({ id: 'app.monitor.modal.AGV.fork' }),
-      [Config.AGVType.Sorter]: formatMessage({ id: 'app.monitor.modal.AGV.sorter' }),
+      [AppCode.LatentLifting]: formatMessage({ id: 'app.monitor.modal.AGV.latent' }),
+      [AppCode.Tote]: formatMessage({ id: 'app.monitor.modal.AGV.tote' }),
+      [AppCode.ForkLifting]: formatMessage({ id: 'app.monitor.modal.AGV.fork' }),
+      [AppCode.Sorter]: formatMessage({ id: 'app.monitor.modal.AGV.sorter' }),
     };
     return (
       <span
@@ -112,7 +110,7 @@ class AgvModal extends Component {
   openAgvDetailPage = () => {
     const { agv } = this.props;
     const { agvId, agvType } = JSON.parse(agv);
-    const appContext = BaseContext[agvType];
+    const appContext = AppCode[agvType];
     const grantedAppStr = window.localStorage.getItem('grantedAPP') ?? [];
     const grantedApp = JSON.parse(grantedAppStr);
     if (grantedApp && Array.isArray(grantedApp)) {

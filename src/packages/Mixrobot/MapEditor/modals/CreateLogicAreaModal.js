@@ -1,7 +1,8 @@
 import React, { useEffect, memo } from 'react';
 import { Input, Row, Form, Modal, Button, InputNumber, Col, Popconfirm } from 'antd';
 import { connect } from '@/utils/dva';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 16 } };
 const tailLayout = { wrapperCol: { offset: 6, span: 16 } };

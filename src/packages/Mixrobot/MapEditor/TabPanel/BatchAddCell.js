@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useContext, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Input, InputNumber, Drawer, Button, Radio, Divider } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import { GlobalDrawerWidth } from '@/Const';
-import DirButton from './DirButton';
+import { GlobalDrawerWidth } from '@/config/consts';
+import FormattedMessage from '@/components/FormattedMessage';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
@@ -205,7 +206,7 @@ const BatchAddCellModal = (props) => {
             initialValue={0}
             label={formatMessage({ id: 'app.batchAddCellModal.direction' })}
           >
-            <DirButton />
+            <AngleSelector getDir />
           </Form.Item>
 
           {/* 码间距 */}

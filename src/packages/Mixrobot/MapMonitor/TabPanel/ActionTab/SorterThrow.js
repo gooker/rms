@@ -1,12 +1,11 @@
 /* eslint-disable camelcase */
 import React from 'react';
-import intl from 'react-intl-universal';
 import { Form, Button, Col, Row, Input, InputNumber, message, Switch } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import MenuIcon from '@/utils/MenuIcon';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull } from '@/utils/utils';
-import { fetchSorterToThrow } from '@/services/map';
+import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import { sorterToPick } from '@/services/monitor';
 
 const formLayout = {
   labelCol: { span: 6 },
@@ -37,14 +36,12 @@ export default class SorterThrow extends React.Component {
             });
           },
         );
-        fetchSorterToThrow({ sectionId: window.localStorage.getItem('sectionId'), ...param }).then(
+        sorterToPick({ sectionId: window.localStorage.getItem('sectionId'), ...param }).then(
           (response) => {
             if (!dealResponse(response)) {
-              message.success(
-                intl.formatMessage({ id: 'app.monitorOperation.sendThrowTaskSuccess' }),
-              );
+              message.success(formatMessage({ id: 'app.monitorOperation.sendThrowTaskSuccess' }));
             } else {
-              message.error(intl.formatMessage({ id: 'app.monitorOperation.sendThrowTaskFail' }));
+              message.error(formatMessage({ id: 'app.monitorOperation.sendThrowTaskFail' }));
             }
           },
         );
@@ -60,7 +57,7 @@ export default class SorterThrow extends React.Component {
           <Form.Item
             {...formLayout}
             name={'robotId'}
-            label={intl.formatMessage({ id: 'app.lock.robotId' })}
+            label={formatMessage({ id: 'app.lock.robotId' })}
           >
             <Input />
           </Form.Item>
@@ -81,7 +78,7 @@ export default class SorterThrow extends React.Component {
                       <Form.Item
                         {...formLayout}
                         {...field}
-                        label={intl.formatMessage({ id: 'app.lock.cellId' })}
+                        label={formatMessage({ id: 'app.lock.cellId' })}
                         name={[field.name, 'cellId']}
                         fieldKey={[field.fieldKey, 'cellId']}
                       >
@@ -89,7 +86,7 @@ export default class SorterThrow extends React.Component {
                       </Form.Item>
                       <Form.Item
                         {...formLayout}
-                        label={intl.formatMessage({ id: 'app.monitorOperation.frontRoller' })}
+                        label={formatMessage({ id: 'app.monitorOperation.frontRoller' })}
                       >
                         <Row>
                           <Col span={5} style={{ display: 'flex', alignItems: 'center' }}>
@@ -122,7 +119,7 @@ export default class SorterThrow extends React.Component {
                       </Form.Item>
                       <Form.Item
                         {...formLayout}
-                        label={intl.formatMessage({ id: 'app.monitorOperation.rearRoller' })}
+                        label={formatMessage({ id: 'app.monitorOperation.rearRoller' })}
                       >
                         <Row>
                           <Col span={5} style={{ display: 'flex', alignItems: 'center' }}>

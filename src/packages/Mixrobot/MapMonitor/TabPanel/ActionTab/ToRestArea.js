@@ -1,6 +1,7 @@
 import React from 'react';
 import { InputNumber, Button, Form, Col } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse } from '@/utils/utils';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

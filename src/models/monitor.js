@@ -1,46 +1,44 @@
-/* eslint-disable no-shadow */
+import { message } from 'antd';
+import { findIndex, isPlainObject } from 'lodash';
 import {
+  fetchWCSAgvList,
+  fetchActiveMap,
+  fetchStoreCellGroup,
+  fetchToteRackLayout,
+  fetchForkLiftPodLayout,
+} from '@/services/api';
+import {
+  fetchGetPodList,
+  fetchChargerList,
+  fetchToteSizeList,
+  fetchMapAGVLocks,
+} from '@/services/mixrobot';
+import {
+  updateTemporaryBlockCell,
+  deleteTemporaryBlockCell,
+  fetchAutoReleasePod,
+  fetchAgvTaskPath,
   fetchSetPod,
   fetchDeletePod,
   fetchPodToCell,
-  fetchAllForkAgv,
-  fetchAllToteAgv,
-  fetchGetPodList,
-  fetchChargerList,
-  fetchAgvEmptyRun,
-  fetchGetSizeList,
-  fetchMapAGVLocks,
-  fetchTryToCharge,
-  fetchLatentToRest,
-  fetchAllSorterAgv,
-  fetchGetActiveMap,
-  fetchGetRobotPath,
-  fetchAutoReleasePod,
-  fetchStoreCellGroup,
-  fetchPodToWorkStation,
-  fetchForkLiftPodLayout,
-  fetchSaveTemporaryCell,
-  fetchDeleteTemporaryCell,
-  fetchDeletePodBySectionId,
-  fetchLatentSopMessageList,
-  fetchTemporaryLockedCells,
-  fetchToteRackLayoutDetail,
-  fetchAutoCallPodToWorkstation,
-  fetchSaveLatentAutomaticTaskConfig,
-  fetchAutomaticToteWorkstationTaskStatus,
-  fetchSelectAutoCallPodToWorkstationStatus,
-  fetchAutomaticForkLiftWorkstationTaskStatus,
-} from '@/services/map';
-import { fetchAgvList } from '@/services/car';
-import { message } from 'antd';
-import { findIndex, isPlainObject } from 'lodash';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import { formatMessage } from '@/utils/Lang';
-import { dealResponse, isNull } from '@/utils/utils';
-import { hasPermission, isAppInUse } from '@/utils/Permission';
-import * as Config from '@/config/config';
+  agvEmptyRun,
+  agvTryToCharge,
+  agvToRest,
+  latentPodToWorkStation,
+  batchUpdateLatentPod,
+  fetchLatentPausedEventList,
+  fetchTemporaryBlockCells,
+  autoCallLatentPodToWorkstation,
+  saveLatentAutomaticTaskConfig,
+  fetchLatentAutoTaskConfig,
+  fetchToteAutoTaskConfig,
+  fetchForkliftAutoTaskConfig,
+} from '@/services/monitor';
 
-const { BaseContext } = Config;
+import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { hasPermission, isAppInUse } from '@/utils/Permission';
+import { AppCode, AGVType } from '@/config/config';
 
 export default {
   namespace: 'monitor',
@@ -319,7 +317,7 @@ export default {
 
     // 加载地图初始化信息数据，点位路线等基本信息
     *initMap(_, { call, put }) {
-      const response = yield call(fetchGetActiveMap);
+      const response = yield call(fetchActiveMap);
       if (!response || dealResponse(response)) {
         message.warn(formatMessage({ id: 'app.editor.activeMap.zero' }), 10);
         return false;
@@ -351,13 +349,12 @@ export default {
       const sectionId = window.localStorage.getItem('sectionId');
 
       // @权限控制: Monitor初始化只访问有权限的APP API
-      const params = { sectionId };
       const result = {};
 
       // @权限控制: 潜伏车访问控制
-      if (isAppInUse(BaseContext.LatentLifting)) {
+      if (isAppInUse(AppCode.LatentLifting)) {
         // 加载潜伏车列表
-        const latentLiftingList = yield call(fetchAgvList, params);
+        const latentLiftingList = yield call(fetchWCSAgvList, AGVType.LatentLifting);
         if (!dealResponse(latentLiftingList)) {
           yield put({
             type: 'saveLatentLiftingList',
@@ -384,16 +381,16 @@ export default {
       }
 
       // @权限控制: 料箱车访问控制
-      if (isAppInUse(BaseContext.Tote)) {
+      if (isAppInUse(AppCode.Tote)) {
         // 加载料箱车列表
-        const toteList = yield call(fetchAllToteAgv);
+        const toteList = yield call(fetchWCSAgvList, AGVType.Tote);
         if (!dealResponse(toteList)) {
           result.toteList = toteList;
           yield put({ type: 'saveToteAgvList', payload: toteList });
         }
 
         // 加载料箱尺寸Mapping数据
-        const rackSizeList = yield call(fetchGetSizeList);
+        const rackSizeList = yield call(fetchToteSizeList);
         if (!dealResponse(rackSizeList)) {
           const rackSizeListObject = {};
           for (let index = 0; index < rackSizeList.length; index++) {
@@ -409,16 +406,16 @@ export default {
         }
 
         // 加载料箱布局信息
-        const rackLayout = yield call(fetchToteRackLayoutDetail, { mapId: currentMap.id });
+        const rackLayout = yield call(fetchToteRackLayout, { mapId: currentMap.id });
         if (!dealResponse(rackLayout)) {
           result.rackLayout = rackLayout;
         }
       }
 
       // @权限控制: 叉车访问控制
-      if (isAppInUse(BaseContext.ForkLifting)) {
+      if (isAppInUse(AppCode.ForkLifting)) {
         // 加载叉车列表
-        const forkList = yield call(fetchAllForkAgv);
+        const forkList = yield call(fetchWCSAgvList, AGVType.ForkLifting);
         if (!dealResponse(forkList)) {
           result.forkList = forkList;
           yield put({ type: 'saveForkAgvList', payload: forkList });
@@ -432,8 +429,8 @@ export default {
       }
 
       // @权限控制: 分拣车访问控制
-      if (isAppInUse(BaseContext.Sorter)) {
-        const sorterList = yield call(fetchAllSorterAgv);
+      if (isAppInUse(AppCode.Sorter)) {
+        const sorterList = yield call(fetchWCSAgvList, AGVType.Sorter);
         if (!dealResponse(sorterList)) {
           result.sorterList = sorterList;
           yield put({ type: 'saveSorterAgvList', payload: sorterList });
@@ -453,38 +450,36 @@ export default {
 
     // 拉取所有小车信息
     *refreshAllAgvList(object, { call, put }) {
-      const sectionId = window.localStorage.getItem('sectionId');
-
       // @权限控制: 潜伏车访问控制
-      if (isAppInUse(BaseContext.LatentLifting)) {
+      if (isAppInUse(AppCode.LatentLifting)) {
         // 加载潜伏车列表
-        const latentLiftingList = yield call(fetchAgvList, { sectionId });
+        const latentLiftingList = yield call(fetchWCSAgvList, AGVType.LatentLifting);
         if (!dealResponse(latentLiftingList)) {
           yield put({ type: 'saveLatentLiftingList', payload: latentLiftingList });
         }
       }
 
       // @权限控制: 料箱车访问控制
-      if (isAppInUse(BaseContext.Tote)) {
+      if (isAppInUse(AppCode.Tote)) {
         // 加载料箱车列表
-        const toteList = yield call(fetchAllToteAgv);
+        const toteList = yield call(fetchWCSAgvList, AGVType.Tote);
         if (!dealResponse(toteList)) {
           yield put({ type: 'saveToteAgvList', payload: toteList });
         }
       }
 
       // @权限控制: 叉车访问控制
-      if (isAppInUse(BaseContext.ForkLifting)) {
+      if (isAppInUse(AppCode.ForkLifting)) {
         // 加载叉车列表
-        const forkList = yield call(fetchAllForkAgv);
+        const forkList = yield call(fetchWCSAgvList, AGVType.ForkLifting);
         if (!dealResponse(forkList)) {
           yield put({ type: 'saveForkAgvList', payload: forkList });
         }
       }
 
       // @权限控制: 分拣车访问控制
-      if (isAppInUse(BaseContext.Sorter)) {
-        const sorterList = yield call(fetchAllSorterAgv);
+      if (isAppInUse(AppCode.Sorter)) {
+        const sorterList = yield call(fetchWCSAgvList, AGVType.Sorter);
         if (!dealResponse(sorterList)) {
           yield put({ type: 'saveSorterAgvList', payload: sorterList });
         }
@@ -492,11 +487,7 @@ export default {
     },
 
     *fetchAgvList(_, { call, put, select }) {
-      const sectionId = yield select((state) => state.user.sectionId);
-      const params = {
-        sectionId,
-      };
-      const latentLiftingList = yield call(fetchAgvList, params);
+      const latentLiftingList = yield call(fetchWCSAgvList, AGVType.LatentLifting);
       if (dealResponse(latentLiftingList)) {
         return false;
       }
@@ -508,14 +499,14 @@ export default {
     },
 
     *fetchPodToWorkStation({ payload }, { call }) {
-      const response = yield call(fetchPodToWorkStation, payload);
+      const response = yield call(latentPodToWorkStation, payload);
       if (dealResponse(response)) {
         return false;
       }
     },
 
     *fetchEmptyRun({ payload }, { call }) {
-      const response = yield call(fetchAgvEmptyRun, payload);
+      const response = yield call(agvEmptyRun, AGVType.LatentLifting, payload);
       if (dealResponse(response)) {
         return false;
       }
@@ -548,7 +539,7 @@ export default {
       const { podNumber, podLength, podWidth, batchAngle } = payload;
 
       // 删除已有货架
-      const response = yield call(fetchDeletePodBySectionId, { ...payload, sectionId });
+      const response = yield call(batchUpdateLatentPod, { ...payload, sectionId });
       if (dealResponse(response)) {
         return false;
       }
@@ -582,14 +573,14 @@ export default {
     },
 
     *fetchGoToRest({ payload }, { call }) {
-      const response = yield call(fetchLatentToRest, payload);
+      const response = yield call(agvToRest, AGVType.LatentLifting, payload);
       if (dealResponse(response)) {
         return false;
       }
     },
 
     *fetchTryToCharge({ payload }, { call }) {
-      const response = yield call(fetchTryToCharge, payload);
+      const response = yield call(agvTryToCharge, AGVType.LatentLifting, payload);
       if (dealResponse(response)) {
         return false;
       }
@@ -620,7 +611,7 @@ export default {
     },
 
     *fetchGetRobotPath({ payload }, { call }) {
-      const response = yield call(fetchGetRobotPath, payload);
+      const response = yield call(fetchAgvTaskPath, payload);
       if (dealResponse(response)) {
         return false;
       }
@@ -628,7 +619,7 @@ export default {
     },
 
     *fetchTemporaryLockedCells(_, { call, put }) {
-      const response = yield call(fetchTemporaryLockedCells);
+      const response = yield call(fetchTemporaryBlockCells);
       if (dealResponse(response)) {
         return [];
       }
@@ -637,14 +628,14 @@ export default {
     },
 
     *fetchSaveTemporaryCell({ payload }, { call }) {
-      const response = yield call(fetchSaveTemporaryCell, payload);
+      const response = yield call(updateTemporaryBlockCell, payload);
       if (dealResponse(response)) {
         return false;
       }
     },
 
     *fetchDeleteTemporaryCell({ payload }, { call }) {
-      const response = yield call(fetchDeleteTemporaryCell, payload);
+      const response = yield call(deleteTemporaryBlockCell, payload);
       if (dealResponse(response, 1, '操作完成')) {
         return false;
       }
@@ -654,14 +645,14 @@ export default {
     *fetchSaveLatentAutomaticTaskConfig({ payload }, { call, select }) {
       const sectionId = yield select((state) => state.user.sectionId);
       const requestParam = payload.map((item) => ({ ...item, sectionId }));
-      const response = yield call(fetchSaveLatentAutomaticTaskConfig, requestParam);
+      const response = yield call(saveLatentAutomaticTaskConfig, requestParam);
       if (dealResponse(response)) {
         return false;
       }
     },
 
     *fetchSelectAutoCallPodToWorkstationStatus({ payload }, { call, put }) {
-      let response = yield call(fetchSelectAutoCallPodToWorkstationStatus, payload);
+      let response = yield call(fetchLatentAutoTaskConfig, payload);
       if (dealResponse(response)) {
         return false;
       }
@@ -723,7 +714,7 @@ export default {
     *fetchAutoCallPodToWorkstation({ payload }, { select, call }) {
       const sectionId = yield select((state) => state.user.sectionId);
       const params = { ...payload, sectionId, isAutoCall: true };
-      const response = yield call(fetchAutoCallPodToWorkstation, params);
+      const response = yield call(autoCallLatentPodToWorkstation, params);
       if (dealResponse(response, 1, '自动呼叫已经开启')) {
         return false;
       }
@@ -732,7 +723,7 @@ export default {
     *fetchCancelAutoCallPodToWorkstation(_, { call, select }) {
       const sectionId = yield select((state) => state.user.sectionId);
       const params = { isAutoCall: false, sectionId };
-      const response = yield call(fetchAutoCallPodToWorkstation, params);
+      const response = yield call(autoCallLatentPodToWorkstation, params);
       if (dealResponse(response, 1, '自动呼叫已经关闭')) {
         return false;
       }
@@ -803,7 +794,7 @@ export default {
     },
 
     *fetchAutomaticToteWorkstationTaskStatus(_, { call, put }) {
-      const response = yield call(fetchAutomaticToteWorkstationTaskStatus);
+      const response = yield call(fetchToteAutoTaskConfig);
       if (dealResponse(response)) {
         return;
       }
@@ -814,7 +805,7 @@ export default {
     },
 
     *fetchAutomaticForkLiftWorkstationTaskStatus(_, { call, put }) {
-      const response = yield call(fetchAutomaticForkLiftWorkstationTaskStatus);
+      const response = yield call(fetchForkliftAutoTaskConfig);
       if (dealResponse(response)) {
         return;
       }
@@ -825,7 +816,7 @@ export default {
     },
 
     *fetchLatentSopMessageList({ payload }, { call, put }) {
-      const response = yield call(fetchLatentSopMessageList, payload);
+      const response = yield call(fetchLatentPausedEventList, payload);
       if (dealResponse(response)) {
         return false;
       }

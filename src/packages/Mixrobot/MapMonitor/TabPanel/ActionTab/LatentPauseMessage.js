@@ -1,19 +1,19 @@
 import React, { memo } from 'react';
-import { fetchResumeTaskRun } from '@/services/map';
-import intl from 'react-intl-universal';
-import FormattedMessage from '@/components/FormattedMessage';
 import { List, Button, Row, Col, Divider } from 'antd';
-import DescriptionList from '@/components/DescriptionList';
+import { resumeLatentPausedTask } from '@/services/monitor';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import DescriptionList from '@/packages/Mixrobot/components/DescriptionList';
 
 const { Description } = DescriptionList;
 
-export default memo(function LatentStopMessage(props) {
-  const { dispatch, latentStopMessageList, sectionId } = props;
+const LatentStopMessage = (props) => {
+  const { dispatch, messageList } = props;
   return (
     <List
       style={{ width: '100%' }}
       itemLayout="horizontal"
-      dataSource={latentStopMessageList || []}
+      dataSource={messageList || []}
       renderItem={(item) => {
         const { robotId, cellId, stepTaskId, taskId } = item;
         return (
@@ -28,7 +28,7 @@ export default memo(function LatentStopMessage(props) {
                 <Col span={12}>
                   <Description
                     style={{ minHeight: 40 }}
-                    term={intl.formatMessage({ id: 'app.monitorOperation.agvID' })}
+                    term={formatMessage({ id: 'app.monitorOperation.agvID' })}
                   >
                     {robotId}
                   </Description>
@@ -36,7 +36,7 @@ export default memo(function LatentStopMessage(props) {
                 <Col span={12}>
                   <Description
                     style={{ minHeight: 40 }}
-                    term={intl.formatMessage({ id: 'app.monitorOperation.cell' })}
+                    term={formatMessage({ id: 'app.monitorOperation.cell' })}
                   >
                     {cellId}
                   </Description>
@@ -44,7 +44,7 @@ export default memo(function LatentStopMessage(props) {
                 <Col span={12}>
                   <Description
                     style={{ minHeight: 40 }}
-                    term={intl.formatMessage({ id: 'app.monitorOperation.taskId' })}
+                    term={formatMessage({ id: 'app.monitorOperation.taskId' })}
                   >
                     {taskId ? taskId.substring(taskId.length - 5, taskId.length) : null}
                   </Description>
@@ -52,7 +52,7 @@ export default memo(function LatentStopMessage(props) {
                 <Col span={12}>
                   <Description
                     style={{ minHeight: 40 }}
-                    term={intl.formatMessage({ id: 'app.monitorOperation.taskStep' })}
+                    term={formatMessage({ id: 'app.monitorOperation.taskStep' })}
                   >
                     {stepTaskId}
                   </Description>
@@ -64,13 +64,13 @@ export default memo(function LatentStopMessage(props) {
                 size="small"
                 onClick={() => {
                   const params = {
-                    sectionId,
+                    sectionId: window.localStorage.getItem('sectionId'),
                     robotId,
                     taskId,
                     cellId,
                     taskStepId: stepTaskId,
                   };
-                  fetchResumeTaskRun(params).then(() => {
+                  resumeLatentPausedTask(params).then(() => {
                     dispatch({ type: 'monitor/fetchLatentSopMessageList' });
                   });
                 }}
@@ -83,4 +83,5 @@ export default memo(function LatentStopMessage(props) {
       }}
     />
   );
-});
+};
+export default memo(LatentStopMessage);

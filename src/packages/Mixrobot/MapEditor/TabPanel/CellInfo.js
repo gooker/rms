@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { connect } from '@/utils/dva';
 import { Row, Col, Form, InputNumber, Button } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const FormLayout = { wrapperCol: { span: 16 }, labelCol: { span: 8 } };

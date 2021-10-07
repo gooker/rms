@@ -1,16 +1,16 @@
 import {
   openSimulator,
   closeSimulator,
-  fetchAddSimulatorAgv,
+  addSimulationAgv,
   fetchUpdateAGVConfig,
+  fetchSimulatorHistory,
   fetchSimulatorLoginAGV,
+  fetchSimulatorAGVConfig,
   fetchSimulatorAgvOffLine,
-  fetchSimulatorGetAGVConfig,
-  fetchBatchDeletedSimulatorAgv,
+  fetchBatchDeleteSimulatorAgv,
   fetchSimulatorLoginAGVControlState,
-} from '@/services/map';
+} from '@/services/monitor';
 import { dealResponse } from '@/utils/utils';
-import { fetchSimulatorHistory } from '@/services/simulator';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 
 export default {
@@ -72,11 +72,12 @@ export default {
     },
 
     *fetchAddSimulatorAgv({ payload }, { call }) {
-      const response = yield call(fetchAddSimulatorAgv, payload);
+      const response = yield call(addSimulationAgv, payload);
       if (dealResponse(response, 1, '操作成功')) {
         return false;
       }
     },
+
     *fetchDeletedSimulatorAgv({ payload, then }, { call }) {
       const { robotIds } = payload;
       const currentLogicAreaData = getCurrentLogicAreaData('monitor');
@@ -84,10 +85,11 @@ export default {
         logicId: currentLogicAreaData.id,
         robotIds: robotIds.join(','),
       };
-      const response = yield call(fetchBatchDeletedSimulatorAgv, params);
+      const response = yield call(fetchBatchDeleteSimulatorAgv, params);
       if (dealResponse(response, 1, '删除小车成功')) return false;
       then && then();
     },
+
     *fetchSimulatorAgvOffLine({ payload, then }, { call }) {
       const { robotIds } = payload;
       const currentLogicAreaData = getCurrentLogicAreaData('monitor');
@@ -104,6 +106,7 @@ export default {
         then && then();
       }
     },
+
     *fetchChangeSimulatorStatus({ payload }, { call }) {
       const { status } = payload;
       if (status) {
@@ -118,6 +121,7 @@ export default {
         }
       }
     },
+
     *fetchUpdateAGVConfig({ payload, then }, { call }) {
       const response = yield call(fetchUpdateAGVConfig, payload);
       if (dealResponse(response, 1, '操作成功')) {
@@ -127,8 +131,9 @@ export default {
         then();
       }
     },
+
     *fetchSimulatorGetAGVConfig({ payload, then }, { call }) {
-      const response = yield call(fetchSimulatorGetAGVConfig, payload);
+      const response = yield call(fetchSimulatorAGVConfig, payload);
       if (dealResponse(response)) {
         return false;
       }

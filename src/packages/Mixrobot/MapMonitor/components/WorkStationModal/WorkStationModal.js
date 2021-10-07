@@ -2,7 +2,8 @@ import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
 import { useMap } from '@umijs/hooks';
 import { Dropdown, Menu, Switch, Spin, Tag } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { Permission } from '@/utils/Permission';
 import {
   waitingHistoryLineOption,
@@ -10,7 +11,7 @@ import {
   LineChartsAxisColor,
   DataColor,
 } from './echarts';
-import commonStyle from '@/common/common.less';
+import commonStyle from '@/common.module.less';
 import styles from './index.less';
 
 let taskHistoryLine = null;

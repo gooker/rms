@@ -1,9 +1,10 @@
 import React, { memo, useEffect, useContext, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, InputNumber, Drawer, Button, Select, Radio } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import { GlobalDrawerWidth } from '@/Const';
+import { GlobalDrawerWidth } from '@/config/consts';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

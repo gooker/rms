@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, zIndex } from '@/consts';
+import { GlobalAlpha, zIndex } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
 import BitText from './BitText';
 

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Modal } from 'antd';
-import { adjustModalWidth } from '@/utils/utils';
+import { adjustModalWidth, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/Lang';
 import ImportI18nLanguage from './ImportI18nLanguage';
 const formItemLayout = {
   labelCol: {

@@ -1,13 +1,13 @@
 import React, { PureComponent } from 'react';
 import { message } from 'antd';
-import find from 'lodash/find';
-import throttle from 'lodash/throttle';
+import { find, throttle } from 'lodash';
 import intl from 'react-intl-universal';
-import FormattedMessage from '@/components/FormattedMessage';
 import Dictionary from '@/utils/Dictionary';
-import initDashboard from '@/pages/MapTool/Exhibition/ECharts';
-import MixRobotExhibitionService from '@/pages/MapTool/Exhibition/MixRobotExhibitionService';
+import { AppCode, AGVType } from '@/config/config';
 import { GMT2UserTimeZone, getDpr } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import initDashboard from './ECharts';
+import MixRobotExhibitionService from './MixRobotExhibitionService';
 import { fetchSystemParamFormData } from '@/services/api';
 import {
   agvStateColor,
@@ -15,9 +15,8 @@ import {
   getAgvPowerStateMap,
   agvPowerStateColor,
   LineChartsAxisColor,
-} from '../../Exhibition/option';
-import * as Config from '@/config/config';
-import Style from './Dashboard.less';
+} from './option';
+import Style from './dashboard.module.less';
 
 const PieInnerFontSize = 14;
 const PieInnerTitleTop = '40%';
@@ -32,9 +31,9 @@ export default class Dashboard extends PureComponent {
     this.promisesType = [];
 
     this.AGVTypeName = {
-      [Config.AGVType.LatentLifting]: intl.formatMessage({ id: 'app.exhibition.agv.latent' }),
-      [Config.AGVType.Tote]: intl.formatMessage({ id: 'app.exhibition.agv.tote' }),
-      [Config.AGVType.ForkLifting]: intl.formatMessage({ id: 'app.exhibition.agv.fork' }),
+      [AppCode.LatentLifting]: intl.formatMessage({ id: 'app.exhibition.agv.latent' }),
+      [AppCode.Tote]: intl.formatMessage({ id: 'app.exhibition.agv.tote' }),
+      [AppCode.ForkLifting]: intl.formatMessage({ id: 'app.exhibition.agv.fork' }),
     };
 
     this.state = {
@@ -126,13 +125,13 @@ export default class Dashboard extends PureComponent {
 
     // 潜伏车: latent-lifting
     if (grantedAPPKey.includes('latent-lifting')) {
-      this.promisesType.push(Config.AGVType.LatentLifting);
+      this.promisesType.push(AGVType.LatentLifting);
       this.promises.push(this.MixRobotExhibitionService.refreshLatentLiftCharts());
     }
 
     // 料箱车: tote-wcs-gui
     if (grantedAPPKey.includes('tote-wcs-gui')) {
-      this.promisesType.push(Config.AGVType.Tote);
+      this.promisesType.push(AGVType.Tote);
       this.promises.push(this.MixRobotExhibitionService.refreshToteCharts());
     }
 
@@ -443,7 +442,7 @@ export default class Dashboard extends PureComponent {
     let workStation = 0;
     let charger = 0;
     let store = 0;
-    const latentIndex = this.promisesType.indexOf(Config.AGVType.LatentLifting);
+    const latentIndex = this.promisesType.indexOf(AGVType.LatentLifting);
     if (latentIndex !== -1) {
       pod = response[latentIndex].podNumber;
     }

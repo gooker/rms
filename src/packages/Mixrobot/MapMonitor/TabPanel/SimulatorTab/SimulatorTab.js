@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
 import { Row, Col, Table, Button, Switch, Select, message } from 'antd';
 import { connect } from '@/utils/dva';
+import { dealResponse, GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { fetchTrafficRobotType } from '@/services/mixrobot';
+import FormattedMessage from '@/components/FormattedMessage';
+import AddSimulatorAgv from './AddSimulatorAgv';
+import SimulatorError from './SimulatorError';
+import SimulatorConfig from './SimulatorConfig';
 import {
   fetchRunAGV,
   fetchStopAGV,
   fetchOpenAGV,
   fetchCloseAgv,
-  fetchTrafficRobotType,
   fetchSimulatorErrorMessage,
-} from '@/services/simulator';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import AddSimulatorAgv from './AddSimulatorAgv';
-import SimulatorError from './SimulatorError';
-import SimulatorConfig from './SimulatorConfig';
-import { dealResponse, GMT2UserTimeZone } from '@/utils/utils';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import * as Config from '@/config/config';
+} from '@/services/monitor';
+
+import { AGVType } from '@/config/config';
 
 @connect(({ simulator, loading, user }) => ({
   simulator,
@@ -27,7 +28,7 @@ import * as Config from '@/config/config';
 class Simulator extends Component {
   state = {
     simulatorConfig: null,
-    robotType: Config.AGVType.LatentLifting,
+    robotType: AGVType.LatentLifting,
 
     selectIds: [],
     robotTypes: [],

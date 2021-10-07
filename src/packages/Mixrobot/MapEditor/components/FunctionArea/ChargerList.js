@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, Col, Divider, Input, Form, message, Row, Select, Table } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import { dealResponse, isNull } from '@/utils/utils';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
-import AgvTypeSelect from './AgvTypeSelect';
-import { fetchTrafficRobotType } from '@/services/simulator';
 import MenuIcon from '@/utils/MenuIcon';
-import MapContext from '../MapContext';
+import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { fetchTrafficRobotType } from '@/services/mixrobot';
+import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import ButtonInput from '@/packages/Mixrobot/components/ButtonInput/ButtonInput';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const formLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 
 class ChargerList extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -275,13 +274,13 @@ class ChargerList extends Component {
                           fieldKey={[fieldKey, 'agvTypes']}
                           label={formatMessage({ id: 'app.chargerList.carType' })}
                         >
-                          <AgvTypeSelect mode="multiple">
+                          <Select mode="multiple">
                             {robotTypes.map((record) => (
                               <Select.Option value={record} key={record}>
                                 {record}
                               </Select.Option>
                             ))}
-                          </AgvTypeSelect>
+                          </Select>
                         </Form.Item>
                       </Col>
                       <Col span={3} style={{ textAlign: 'center' }}>

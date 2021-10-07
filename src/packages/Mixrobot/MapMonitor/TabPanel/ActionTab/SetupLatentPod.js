@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Divider, InputNumber, Select, Row, Col, Button } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { Permission } from '@/utils/Permission';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

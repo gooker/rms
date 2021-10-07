@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Input, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 
 export default class UpdateSection extends Component {
   formRef = React.createRef();

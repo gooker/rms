@@ -1,6 +1,5 @@
 import React, { PureComponent } from 'react';
 import { Row, Form, Steps, Divider, Tooltip } from 'antd';
-import { formatMessage } from '@/utils/Lang';
 import {
   MehOutlined,
   LoadingOutlined,
@@ -8,7 +7,7 @@ import {
   FrownOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { GMT2UserTimeZone } from '@/utils/utils';
+import { GMT2UserTimeZone, formatMessage } from '@/utils/utils';
 import RenderAgvTaskActions from './RenderAgvTaskActions';
 
 const Step = Steps.Step;
@@ -59,14 +58,18 @@ class AgvTaskSteps extends PureComponent {
               title={'NEW'}
               status={current === 1 ? 'process' : 'finish'}
               description={
-                records.createTime ? GMT2UserTimeZone(records.createTime).format('MM-DD HH:mm:ss') : null
+                records.createTime
+                  ? GMT2UserTimeZone(records.createTime).format('MM-DD HH:mm:ss')
+                  : null
               }
             />
             <Step
               title={'START'}
               status={current === 2 ? 'process' : current === 3 ? 'finish' : 'wait'}
               description={
-                records.startTime ? GMT2UserTimeZone(records.startTime).format('MM-DD HH:mm:ss') : null
+                records.startTime
+                  ? GMT2UserTimeZone(records.startTime).format('MM-DD HH:mm:ss')
+                  : null
               }
             />
             <Step

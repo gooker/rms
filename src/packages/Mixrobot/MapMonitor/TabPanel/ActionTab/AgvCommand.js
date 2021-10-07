@@ -1,98 +1,89 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Select, Input, Divider, Button, message } from 'antd';
 import { map } from 'lodash';
 import { dealResponse, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvCommand } from '@/services/command';
-import { fetchAgvList } from '@/services/car';
+import { agvCommand } from '@/services/monitor';
+import { fetchWCSAgvList } from '@/services/api';
 
 const formItem = { wrapperCol: { span: 16 }, labelCol: { span: 6 } };
 
-@connect(({ monitor, user }) => ({ monitor, sectionId: user.sectionId }))
-class AgvCommand extends Component {
-  formRef = React.createRef();
+const AgvCommand = (props) => {
+  const { sectionId, agvType } = this.props;
 
-  state = {
-    agvList: [],
-  };
+  const [agvList, setAgvList] = useState([]);
+  const [form] = Form.useForm();
 
-  sendAgvCommand = (params) => {
-    fetchAgvCommand(params).then((res) => {
-      dealResponse(res, 1, '命令操作成功');
-    });
-  };
-
-  componentDidMount() {
-    fetchAgvList().then((res) => {
+  useEffect(() => {
+    fetchWCSAgvList(agvType).then((res) => {
       if (!dealResponse(res)) {
-        this.setState({ agvList: res });
+        setAgvList(res);
+      }
+    });
+  }, []);
+
+  function sendAgvCommand(params) {
+    form.validateFields().then((value) => {
+      const { rawCommandHex, agvId } = value;
+      if (rawCommandHex != null && agvId != null) {
+        const params = {
+          rawCommandHex,
+          robotIds: agvId,
+          sectionId: parseInt(sectionId, 10),
+        };
+        agvCommand(agvType, params).then((res) => {
+          dealResponse(res, 1, '命令操作成功');
+        });
+      } else {
+        message.error(
+          formatMessage({
+            id: 'app.monitorOperation.agvCommand.paramIncomplete',
+          }),
+        );
       }
     });
   }
 
-  render() {
-    const { agvList } = this.state;
-    return (
-      <Form ref={this.formRef}>
-        <Form.Item
-          {...formItem}
-          name={'agvId'}
-          label={formatMessage({ id: 'app.monitorOperation.robotId' })}
-        >
-          <SelectAll
-            dataSource={agvList.map((record) => {
-              return {
-                label: record.robotId,
-                key: record.robotId,
-                value: record.robotId,
-              };
-            })}
-          />
-        </Form.Item>
+  return (
+    <Form form={form}>
+      <Form.Item
+        {...formItem}
+        name={'agvId'}
+        label={formatMessage({ id: 'app.monitorOperation.robotId' })}
+      >
+        <SelectAll
+          dataSource={agvList.map((record) => {
+            return {
+              label: record.robotId,
+              key: record.robotId,
+              value: record.robotId,
+            };
+          })}
+        />
+      </Form.Item>
 
-        <Form.Item
-          {...formItem}
-          name={'rawCommandHex'}
-          label={formatMessage({ id: 'app.monitorOperation.agvCommand.command' })}
-        >
-          <Input.TextArea style={{ width: 260 }} />
-        </Form.Item>
+      <Form.Item
+        {...formItem}
+        name={'rawCommandHex'}
+        label={formatMessage({ id: 'app.monitorOperation.agvCommand.command' })}
+      >
+        <Input.TextArea style={{ width: 260 }} />
+      </Form.Item>
 
-        <Form.Item wrapperCol={{ span: 16, offset: 6 }}>
-          <Button
-            onClick={() => {
-              const { sectionId } = this.props;
-              const { validateFields } = this.formRef.current;
-              validateFields().then((value) => {
-                const { rawCommandHex, agvId } = value;
-                if (rawCommandHex != null && agvId != null) {
-                  const params = {
-                    rawCommandHex,
-                    robotIds: agvId,
-                    sectionId: parseInt(sectionId, 10),
-                  };
-                  this.sendAgvCommand(params);
-                } else {
-                  message.error(
-                    formatMessage({
-                      id: 'app.monitorOperation.agvCommand.paramIncomplete',
-                    }),
-                  );
-                }
-              });
-            }}
-          >
-            <FormattedMessage id="app.monitorOperation.agvCommand.sendAgvCommand" />
-          </Button>
-        </Form.Item>
-      </Form>
-    );
-  }
-}
-export default AgvCommand;
+      <Form.Item wrapperCol={{ span: 16, offset: 6 }}>
+        <Button onClick={sendAgvCommand}>
+          <FormattedMessage id="app.monitorOperation.agvCommand.sendAgvCommand" />
+        </Button>
+      </Form.Item>
+    </Form>
+  );
+};
+export default connect(({ monitor, user }) => ({ monitor, sectionId: user.sectionId }))(
+  memo(AgvCommand),
+);
 
-const SelectAll = (props) => {
+const SelectAll = memo((props) => {
   const { value, dataSource: options } = props;
   return (
     <Select
@@ -141,4 +132,4 @@ const SelectAll = (props) => {
       ))}
     </Select>
   );
-};
+});

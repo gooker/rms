@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
 import { Input, Table, Row, Form, Divider, Col, Button, Tag } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import { connect } from '@/utils/dva';
 import MenuIcon from '@/utils/MenuIcon';
-import MapContext from '../MapContext';
+import { formatMessage } from '@/utils/utils';
+import { getCurrentRouteMapData } from '@/utils/mapUtils';
+import FormattedMessage from '@/components/FormattedMessage';
+import ButtonInput from '@/packages/Mixrobot/components/ButtonInput/ButtonInput';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const FormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 5, span: 19 } };
 
 class ChannelList extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 

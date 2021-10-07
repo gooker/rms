@@ -1,17 +1,17 @@
 import React from 'react';
 import { connect } from '@/utils/dva';
 import { Button, Col, Tooltip, InputNumber, Radio, Input, Divider, Form, Row, Table } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import MenuIcon from '@/utils/MenuIcon';
+import { isNull, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import ButtonInput from '@/packages/Mixrobot/components/ButtonInput/ButtonInput';
 import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import { isNull } from '@/utils/utils';
-import MapContext from '../MapContext';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const formLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
 
 class RollerFunction extends React.Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 

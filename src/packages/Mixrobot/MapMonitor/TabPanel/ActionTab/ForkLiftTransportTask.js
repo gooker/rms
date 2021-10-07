@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Select, Form, Checkbox, Button, InputNumber } from 'antd';
-import intl from 'react-intl-universal';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse } from '@/utils/utils';
-import { fetchEmptyAndFullStorage, forkPodToTarget } from '@/services/map';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import { fetchEmptyAndFullStorage, forkPodToTarget } from '@/services/monitor';
 
 const layout = {
   labelCol: { span: 6 },
@@ -58,7 +57,7 @@ class ForkLiftTransportTask extends PureComponent {
       dealResponse(
         res,
         true,
-        intl.formatMessage({
+        formatMessage({
           id: 'app.monitorOperation.forkLiftTransportTask.forkPodToTargetSuccess',
         }),
       );
@@ -73,7 +72,7 @@ class ForkLiftTransportTask extends PureComponent {
         <Form.Item
           {...layout}
           name={'sourceStorageCode'}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.forkLiftTransportTask.sourceStorageCode',
           })}
         >
@@ -89,7 +88,7 @@ class ForkLiftTransportTask extends PureComponent {
         <Form.Item
           {...layout}
           name={'targetStorageCode'}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.forkLiftTransportTask.targetStorageCode',
           })}
         >
@@ -110,7 +109,7 @@ class ForkLiftTransportTask extends PureComponent {
                 wrapperCol: { span: 16 },
               })}
           name={'appointRobotId'}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.forkLiftTransportTask.appointRobotId',
           })}
         >
@@ -127,7 +126,7 @@ class ForkLiftTransportTask extends PureComponent {
           name={'isNeedToPile'}
           initialValue={true}
           valuePropName={'checked'}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.forkLiftTransportTask.isNeedToPile',
           })}
         >

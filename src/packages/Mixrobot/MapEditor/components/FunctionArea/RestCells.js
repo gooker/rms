@@ -1,19 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Select, InputNumber, Row, Col, Button } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { fetchAllAgvType } from '@/services/api';
-import { dealResponse } from '@/utils/utils';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import MenuIcon from '@/utils/MenuIcon';
-import AgvTypeSelect from './AgvTypeSelect';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import { fetchAllAgvType } from '@/services/api';
+import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import FormattedMessage from '@/components/FormattedMessage';
 import SuperMultiSelect from '@/packages/Mixrobot/components/SuperMultiSelect';
-import MapContext from '../MapContext';
+import MapEditContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
 
 const doubleFormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };
 
 class RestCells extends Component {
-  static contextType = MapContext;
+  static contextType = MapEditContext;
 
   formRef = React.createRef();
 
@@ -84,13 +83,13 @@ class RestCells extends Component {
                         name={[field.name, 'agvTypes']}
                         fieldKey={[field.fieldKey, 'agvTypes']}
                       >
-                        <AgvTypeSelect style={{ width: '100%' }} mode="multiple">
+                        <Select style={{ width: '100%' }} mode="multiple">
                           {allAgvType.map((item) => (
                             <Select.Option key={item} value={item}>
                               {item}
                             </Select.Option>
                           ))}
-                        </AgvTypeSelect>
+                        </Select>
                       </Form.Item>
 
                       <Form.Item

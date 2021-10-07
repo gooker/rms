@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import * as XLSX from 'xlsx';
 import { find, sortBy, groupBy } from 'lodash/find';
-import LogicArea from '@/pages/MapTool/entities/LogicArea';
+import LogicArea from '@/packages/Mixrobot/entities/LogicArea';
 import { isNull, isStrictNull } from '@/utils/utils';
 import json from '@/../package.json';
 

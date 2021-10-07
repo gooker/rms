@@ -7,16 +7,17 @@ import {
   ColumnWidthOutlined,
   ColumnHeightOutlined,
 } from '@ant-design/icons';
-import LabelComponent from '@/components/LabelComponent/LabelComponent';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import CellInfo from '@/pages/MapTool/components/CellInfo';
-import IconDir from '@/components/AntdIcon/IconDir';
-import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import { CellTypeSetting } from '@/Const';
 import MenuIcon from '@/utils/MenuIcon';
+import { formatMessage } from '@/utils/utils';
+import { getCurrentRouteMapData } from '@/utils/mapUtils';
+import IconDir from '@/components/AntdIcon/IconDir';
+import LabelComponent from '@/components/LabelComponent';
+import FormattedMessage from '@/components/FormattedMessage';
+import CheckButton from '@/packages/Mixrobot/components/CheckButton';
 import MapContext from '@/packages/Mixrobot/MapEditor/MapEditContext';
-import CheckButton from './CheckButton';
-import NonStopEditor from './NonStopEditor';
+import CellInfo from '@/packages/Mixrobot/MapEditor/TabPanel/CellInfo';
+import { CellTypeSetting } from '@/packages/Mixrobot/MapEditor/MapEditConst';
+import NonStopEditor from '@/packages/Mixrobot/MapEditor/components/NonStopEditor';
 
 @connect(({ editor }) => {
   const { currentMap, selectCells } = editor;
@@ -24,7 +25,7 @@ import NonStopEditor from './NonStopEditor';
   const blockCellIds = currentRouteMapData?.blockCellIds ?? [];
   return { selectCellIds: selectCells, blockCellIds, currentMap: currentMap || {} };
 })
-class CellMap extends Component {
+class CellTab extends Component {
   static contextType = MapContext;
 
   state = {
@@ -257,7 +258,7 @@ class CellMap extends Component {
                           marginLeft: 15,
                           marginRight: 10,
                         }}
-                        src={require(`../../../../public/${picture}`)}
+                        src={require(`@/../public/webView/${picture}`)}
                       />
                       <FormattedMessage id={i18n} />
                     </>
@@ -280,12 +281,13 @@ class CellMap extends Component {
                 label={
                   <>
                     <img
+                      alt=""
                       style={{
                         height: 20,
                         marginLeft: 15,
                         marginRight: 10,
                       }}
-                      src={require('../../../../public/non_stop.png')}
+                      src={require('@/../public/webView/non_stop.png')}
                     />
                     <FormattedMessage id="app.cellMap.notStay" />
                   </>
@@ -336,4 +338,4 @@ class CellMap extends Component {
     );
   }
 }
-export default CellMap;
+export default CellTab;

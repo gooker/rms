@@ -1,11 +1,97 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
+// 获取当前已激活的地图
+export async function fetchActiveMap() {
+  return request(`/${NameSpace.Mixrobot}/map/getActiveMap`, { method: 'GET' });
+}
+
+// 获取存储区组
+export async function fetchStoreCellGroup(mapId) {
+  return request(`/${NameSpace.Mixrobot}/map/getStoreCellGroup/${mapId}`, {
+    method: 'GET',
+  });
+}
+
+// 获取料箱货架布局
+export async function fetchToteRackLayout(params) {
+  return request(`/${NameSpace.Tote}/rack/getRackLayoutDetail`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 获取叉车货架布局
+export async function fetchForkLiftPodLayout() {
+  return request(`/${NameSpace.ForkLifting}/rack/rackLayout/getRackLayout`, {
+    method: 'GET',
+  });
+}
+
 // ************************************** 用户管理  ************************************** //
 //获取当前登陆对象
 export async function getCurrentUser() {
   return request('/sso/user/getUser', {
     method: 'GET',
+  });
+}
+
+// ************************************** 小车相关  ************************************** //
+// 获取所有车类型
+export async function fetchAllAgvType() {
+  return request(`/${NameSpace.Mixrobot}/map/getAllRobotType`, {
+    method: 'GET',
+  });
+}
+
+// 获取WCS端小车列表-1
+export async function fetchAgvList(agvType, sectionId) {
+  return request(`/${NameSpace[agvType]}/agv/${sectionId}`, {
+    method: 'GET',
+  });
+}
+
+// 获取WCS端小车列表-2
+export async function fetchWCSAgvList(agvType) {
+  return request(`/${NameSpace[agvType]}/agv/monitor/all_agv`, {
+    method: 'GET',
+  });
+}
+
+// 请求WCS端小车实时信息
+export async function fetchAgvInfo(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv/${params.sectionId}/${params.agvId}`, {
+    method: `GET`,
+  });
+}
+
+// 请求Coordinator端小车实时信息
+export async function fetchCoordAgvInfo(agvId) {
+  return request(`/${NameSpace.Coordinator}/traffic/getAGV/${agvId}`, {
+    method: `GET`,
+  });
+}
+
+// 请求小车的硬件状态
+export async function fetchAgvHardwareInfo(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.agvId}`, {
+    method: `GET`,
+  });
+}
+
+// 请求删除小车(批量)
+export async function fetchDeleteAgvList(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv/deleteAgv`, {
+    method: `POST`,
+    data: params,
+  });
+}
+
+// 小车移出地图
+export async function fetchMoveoutAGVs(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv/robotRemoveFromMap`, {
+    method: 'POST',
+    data: params,
   });
 }
 
@@ -51,58 +137,6 @@ export async function fetchAgvOverallStatus(agvType, params) {
 // 修改任务优先级
 export async function fetchUpdateTaskPriority(agvType, params) {
   return request(`/${NameSpace[agvType]}/redis/batchUpdatePipeLineTaskPriority`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// ************************************** 小车相关  ************************************** //
-// 获取所有车类型
-export async function fetchAllAgvType() {
-  return request(`/${NameSpace.Mixrobot}/map/getAllRobotType`, {
-    method: 'GET',
-  });
-}
-
-// 获取小车列表
-export async function fetchAgvList(agvType, sectionId) {
-  return request(`/${NameSpace[agvType]}/agv/${sectionId}`, {
-    method: 'GET',
-  });
-}
-
-// 请求WCS端小车实时信息
-export async function fetchAgvInfo(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/${params.sectionId}/${params.agvId}`, {
-    method: `GET`,
-  });
-}
-
-// 请求Coordinator端小车实时信息
-export async function fetchCoordAgvInfo(agvId) {
-  return request(`/${NameSpace.Coordinator}/traffic/getAGV/${agvId}`, {
-    method: `GET`,
-  });
-}
-
-// 请求小车的硬件状态
-export async function fetchAgvHardwareInfo(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.agvId}`, {
-    method: `GET`,
-  });
-}
-
-// 请求删除小车(批量)
-export async function fetchDeleteAgvList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/deleteAgv`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// 小车移出地图
-export async function fetchMoveoutAGVs(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/robotRemoveFromMap`, {
     method: 'POST',
     data: params,
   });

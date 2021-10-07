@@ -1,15 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import { message } from 'antd';
-import intl from 'react-intl-universal';
-import { getTunnelState, deleteTunnelAgvLock } from '@/services/map';
+import { getTunnelState, deleteTunnelAgvLock } from '@/services/monitor';
 import { formatTunnelStateDataSource } from '@/utils/mapUtils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { hasPermission } from '@/utils/Permission';
-import { dealResponse, isNull } from '@/utils/utils';
+import { dealResponse, isNull, formatMessage } from '@/utils/utils';
 import { UseMonitorModalSize } from '@/customHooks';
 import AgvTag from './AgvTag';
 import styles from './index.less';
-import commonStyle from '@/common/common.less';
+import commonStyle from '@/common.module.less';
 
 const TunnelModal = memo(({ tunnel }) => {
   const [dataSource, setDataSource] = useState([]);
@@ -23,7 +22,7 @@ const TunnelModal = memo(({ tunnel }) => {
     getTunnelState().then((response) => {
       setLoading(false);
       if (dealResponse(response)) {
-        message.error(intl.formatMessage({ id: 'app.monitor.modal.tunnel.fetchFailed' }));
+        message.error(formatMessage({ id: 'app.monitor.modal.tunnel.fetchFailed' }));
         return;
       }
       setDataSource(formatTunnelStateDataSource(tunnel, response));
@@ -45,7 +44,7 @@ const TunnelModal = memo(({ tunnel }) => {
             code={null}
             agvId={item}
             deleteLock={deleteAgvLock}
-            title={intl.formatMessage({
+            title={formatMessage({
               id: 'app.monitor.modal.tunnel.deleteLockConfirm',
             })}
             permission={hasPermission('/map/monitor/tunnelModal/deleteLock')}
@@ -60,7 +59,7 @@ const TunnelModal = memo(({ tunnel }) => {
               code={code}
               agvId={agvId}
               deleteLock={deleteAgvLock}
-              title={intl.formatMessage({
+              title={formatMessage({
                 id: 'app.monitor.modal.tunnel.deleteLockConfirm',
               })}
               permission={hasPermission('/map/monitor/tunnelModal/deleteLock')}

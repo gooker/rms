@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { Divider, message, Tooltip } from 'antd';
 import { MenuFoldOutlined, MenuUnfoldOutlined, LoadingOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import { convertCadToMap } from '@/utils/mapUtils';
 import UploadUtils from '@/components/UploadUtil';
 import IconDir from '@/components/AntdIcon/IconDir';

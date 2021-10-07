@@ -1,17 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Form, InputNumber, Button } from 'antd';
 import { connect } from '@/utils/dva';
-import { fetchForkLiftAutoCallWorkstationTask } from '@/services/map';
-import { dealResponse, GMT2UserTimeZone } from '@/utils/utils';
-import intl from 'react-intl-universal';
+import { dealResponse, GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import { fetchForkLiftAutoCall } from '@/services/monitor';
 
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-};
-const noLabelLayout = {
-  wrapperCol: { span: 16, offset: 6 },
-};
+const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
+const noLabelLayout = { wrapperCol: { span: 16, offset: 6 } };
 
 @connect(({ monitor }) => ({ monitor }))
 class ForkLiftAutomaticWorkstationTask extends PureComponent {
@@ -35,12 +29,12 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
     const { validateFields } = this.formRef.current;
     if (automaticForkLiftWorkstationTaskStatus.isAutoCall) {
       const params = { isAutoCall: false };
-      fetchForkLiftAutoCallWorkstationTask(params).then((res) => {
+      fetchForkLiftAutoCall(params).then((res) => {
         if (
           !dealResponse(
             res,
             true,
-            intl.formatMessage({
+            formatMessage({
               id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoCallClose',
             }),
           )
@@ -53,12 +47,12 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
       validateFields().then((value) => {
         const { maxTaskNum, maxHeight } = value;
         const params = { maxTaskNum, maxHeight, isAutoCall: true };
-        fetchForkLiftAutoCallWorkstationTask(params).then((res) => {
+        fetchForkLiftAutoCall(params).then((res) => {
           if (
             !dealResponse(
               res,
               true,
-              intl.formatMessage({
+              formatMessage({
                 id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoCallOpen',
               }),
             )
@@ -80,7 +74,7 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
         <Form.Item
           name={'maxTaskNum'}
           initialValue={automaticForkLiftWorkstationTaskStatus.maxTaskNum}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticLatentWorkStationTask.maxPodNum',
           })}
           {...layout}
@@ -112,7 +106,7 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
             }
             return value;
           }}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticForkLiftWorkstationTask.maxHeight',
           })}
         >
@@ -125,10 +119,10 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
             onClick={this.updateAutoCallPodToWorkstation}
           >
             {automaticForkLiftWorkstationTaskStatus.isAutoCall
-              ? intl.formatMessage({
+              ? formatMessage({
                   id: 'app.monitorOperation.automaticToteWorkstationTask.cancelFetchAutoCall',
                 })
-              : intl.formatMessage({
+              : formatMessage({
                   id: 'app.monitorOperation.automaticToteWorkstationTask.fetchAutoCall',
                 })}
           </Button>
@@ -136,7 +130,7 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
 
         <Form.Item
           {...layout}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.lastOperator',
           })}
         >
@@ -144,11 +138,13 @@ class ForkLiftAutomaticWorkstationTask extends PureComponent {
         </Form.Item>
         <Form.Item
           {...layout}
-          label={intl.formatMessage({
+          label={formatMessage({
             id: 'app.monitorOperation.automaticToteWorkstationTask.lastOperateDate',
           })}
         >
-          {GMT2UserTimeZone(automaticForkLiftWorkstationTaskStatus.updateTime).format('YYYY-MM-DD HH:mm')}
+          {GMT2UserTimeZone(automaticForkLiftWorkstationTaskStatus.updateTime).format(
+            'YYYY-MM-DD HH:mm',
+          )}
         </Form.Item>
       </Form>
     );

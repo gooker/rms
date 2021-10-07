@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js';
-import { zIndex, ChargerSize, ChargerStateColor } from '@/consts';
 import BitText from './BitText';
-import { getTextureFromResources, isNull } from '@/utils/utils';
+import { isNull } from '@/utils/utils';
 import { hasPermission } from '@/utils/Permission';
+import { getTextureFromResources } from '@/utils/mapUtils';
+import { zIndex, ChargerSize, ChargerStateColor } from '@/config/consts';
 
 export default class Charger extends PIXI.Container {
   constructor(props) {

@@ -3,11 +3,12 @@ import { connect } from '@/utils/dva';
 import find from 'lodash/find';
 import { Menu, Col, Spin, Dropdown, Row, Modal, Badge, Button } from 'antd';
 import { EditOutlined, DownOutlined, RightOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import SelectLogicArea from '../SelectLogicArea/Index';
-import SelectScopeMap from '../SelectScopeMap/Index';
 import MenuIcon from '@/utils/MenuIcon';
-import styles from './editorToolLeft.module.less';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import SelectScopeMap from '@/packages/Mixrobot/components/SelectScopeMap';
+import SelectLogicArea from '@/packages/Mixrobot/components/SelectLogicArea';
+import styles from './editorLeftTool.module.less';
 
 const MapSwitcher = memo((props) => {
   const { dispatch, mapList, currentMap } = props;
