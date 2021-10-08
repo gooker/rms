@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Tag, Popover, Button,Descriptions } from 'antd';
+import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import { getDirectionLocale, renderAgvStatus, dateFormat } from '@/utils/utils';

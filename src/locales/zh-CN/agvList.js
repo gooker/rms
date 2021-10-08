@@ -15,6 +15,7 @@ export default {
   'app.agv.threeGenerationsOfVehicles(Virtual)': '三代车(虚拟)',
   'app.agv.underMaintenance': '维护中',
   'app.agv.version': '固件版本号',
+  'app.agv.firmwareStatus': '固件状态',
   'app.agv.batchCommand.Modal.Title': 'HEX命令',
   'app.agv.batchCommand.Modal.Placeholder': '小车二进制命令(HEX表示)',
   'app.agv.batchCommand.Modal.confirm': '发送',
@@ -71,4 +72,29 @@ export default {
   'app.activity.Working': '执行任务',
   'app.activity.Charging': '充电中',
   'app.activity.Connecting': '连接中',
+
+   // 固件状态
+  'app.activity.upgradeSuccessed': '升级成功',
+  'app.activity.upgradeUnsuccessful': '升级失败',
+  'app.activity.duringUpgrade': '升级中',
+
+  'app.activity.downloadSuccessful': '下载成功',
+  'app.activity.downloadLog': '下载日志',
+  'app.activity.downloadFailed': '下载失败',
+  'app.activity.uploadSuccess': '上传成功',
+  'app.activity.uploadFailed': '上传失败',
+  'app.activity.upgradeAGV': '升级小车',
+  'app.activity.upgrade': '升级',
+  'app.activity.forcedReset': '强制重置',
+  'app.activity.domaintain': '维护/取消维护',
+  'app.activity.downloadFirmware': '下载固件',
+  'app.activity.uploadFirmware': '上传固件',
+  'app.activity.switchmaintenanceStatus': '确定要切换以下小车的维护状态吗',
+  'app.activity.sendFiles': '将文件传送至小车',
+  'app.activity.selectedAGV': '选中的小车',
+  'app.activity.firmware': '固件',
+  'app.activity.selectFirmware': '请选择固件',
+  'app.activity.firmwareVersion': '固件版本',
+  'app.activity.enterFirmwareVersion': '请输入固件版本',
+
 };

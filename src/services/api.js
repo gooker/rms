@@ -286,5 +286,52 @@ export async function fetchToteAgvList(agvType) {
     method: 'GET',
   });
 }
+ 
+
+/***批量升级***/
+export async function fetchAgvFileStatusList(agvType) {
+  return request(`/${NameSpace[agvType]}/agv/getAgvFileStatusList`, {
+    method: 'GET',
+  });
+}
+export async function fetchUpdateFileTask(agvType,params) {
+  return request(`/${NameSpace[agvType]}/file/updateFileTask`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+//维护/取消维护
+export async function fetchMaintain(agvType,params) {
+  return request(`/${NameSpace[agvType]}/agv/action/maintain`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 下载固件--固件 查询SFTP上上传的文件名称
+export async function fetchFirmWarList(agvType,params) {
+  return request(`/${NameSpace[agvType]}/file/selectUploadFileNameList`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 下载固件--提交
+export async function fetchUpgradeFirmwareFile(agvType,params) {
+  return request(`/${NameSpace[agvType]}/file/upLoadFirmwareFile`, {
+    method: 'GET',
+    data: params,
+  });
+
+}
+
+// 升级
+export async function upgradeAGV(agvType,params) {
+  return request(`/${NameSpace[agvType]}/file/upgradeAGV`, {
+    method: 'GET',
+    data: params,
+  });
+}
 
 

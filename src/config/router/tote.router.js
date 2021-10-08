@@ -51,7 +51,7 @@ export default [
       {
         path: '/tote/agv/batchFirmwareUpgrade',
         name: 'batchFirmwareUpgrade',
-        component: '/Tote/BatchFirmware',
+        component: '/Tote/BatchUpgrading',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
