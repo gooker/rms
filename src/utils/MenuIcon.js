@@ -20,18 +20,26 @@ import {
   EditOutlined,
   InboxOutlined,
   ReadOutlined,
+  ApiOutlined,
 } from '@ant-design/icons';
 import IconFont from '@/utils/ExtraIcon';
 
 export default {
-  'icon-task': <IconFont type="icon-task" />,
+  'icon-task': <IconFont type="icon-renwujincheng" />,
   'line-chart': <LineChartOutlined />,
   'clock-circle': <ClockCircleOutlined />,
+  'authority':<IconFont type="icon-fuwushouquan" />,
+  'icon-cangkucangchu':<IconFont type="icon-ziyuan-fenzu" />,
+  'iconziyuan':<IconFont type="icon-ziyuanguanli" />,
+  'iconcharger':<IconFont type="icon-chongdianzhuang" />,
+  'iconLOG':<IconFont type="icon-log" />,
+  'iconreportform':<IconFont type="icon-report" />,
+  'configuration':<IconFont type="icon-gexingdingzhi" />,
 
   environment: <EnvironmentOutlined />,
   lock: <LockOutlined />,
   setting: <SettingOutlined />,
-  car: <CarOutlined />,
+  agv: <CarOutlined />,
   warning: <WarningOutlined />,
   user: <UserOutlined />,
   file: <FileOutlined />,
@@ -47,4 +55,5 @@ export default {
   edit: <EditOutlined />,
   inbox: <InboxOutlined />,
   read: <ReadOutlined />,
+  api: <ApiOutlined />,
 };

@@ -294,7 +294,7 @@ const HardwareTab = (props) => {
         </LabelComponent>
 
       
-        <LabelComponent label={formatMessage({ id: 'app.activity.distanceFromLastCell' })}>
+        <LabelComponent label={formatMessage({ id: 'app.activity.distanceFromLastSpot' })}>
           {data && data.distanceFromLastCell ? getSuffix(data.distanceFromLastCell, 'mm') : null}
         </LabelComponent>
       </Col>

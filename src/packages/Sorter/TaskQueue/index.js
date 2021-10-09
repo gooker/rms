@@ -2,10 +2,17 @@ import React from 'react';
 import { Tooltip, Popover, Button, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
+<<<<<<< HEAD
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import Dictionary from '@/utils/Dictionary';
 import { GMT2UserTimeZone } from '@/utils/utils';
+=======
+import Dictionary from '@/utils/Dictionary';
+import { dateFormat, formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { hasPermission } from '@/utils/Permission';
+>>>>>>> b1ce69d21acb6e86b1d9d2140b3a2f032180a815
 import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
@@ -17,7 +24,7 @@ export default class TaskQueue extends React.PureComponent {
   getColumn = (checkDetail) => {
     return [
       {
-        title: formatMessage({ id: 'app.task.id' }),
+        title: <FormattedMessage id="app.task.id" />,
         dataIndex: 'taskId',
         align: 'center',
         width: 200,
@@ -40,7 +47,7 @@ export default class TaskQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.task.type' }),
+        title: <FormattedMessage id="app.task.type" />,
         dataIndex: 'agvTaskType',
         align: 'center',
         width: 150,
@@ -49,7 +56,7 @@ export default class TaskQueue extends React.PureComponent {
         // onFilter: (value, record) => record.agvTaskType.includes(value),
       },
       {
-        title: formatMessage({ id: 'app.pod.id' }),
+        title: <FormattedMessage id="app.pod.id" />,
         dataIndex: 'podId',
         align: 'center',
         width: 150,
@@ -63,7 +70,7 @@ export default class TaskQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.taskQueue.appointedTarget' }),
+        title: <FormattedMessage id="app.taskQueue.appointedTarget" />,
         dataIndex: 'targetCellId',
         align: 'center',
         width: 150,
@@ -80,7 +87,7 @@ export default class TaskQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.taskQueue.appointedAgv' }),
+        title: <FormattedMessage id="app.taskQueue.appointedAgv" />,
         dataIndex: 'appointedAGVId',
         align: 'center',
         width: 150,
@@ -94,7 +101,7 @@ export default class TaskQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.taskQueue.priority' }),
+        title: <FormattedMessage id="app.taskQueue.priority" />,
         dataIndex: 'jobPriority',
         align: 'center',
         width: 150,
@@ -103,40 +110,40 @@ export default class TaskQueue extends React.PureComponent {
         render: (text) => <span>{text}</span>,
       },
       {
-        title: formatMessage({ id: 'app.taskQueue.createTime' }),
+        title: <FormattedMessage id="app.taskQueue.createTime" />,
         dataIndex: 'createTimeMilliseconds',
         align: 'center',
         width: 200,
         sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
         render: (text) => {
           if (!text) {
-            return <span>{formatMessage({ id: 'app.taskQueue.notAvailable' })}</span>;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
           return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: formatMessage({ id: 'app.taskQueue.lastExecutedTimestamp' }),
+        title: <FormattedMessage id="app.taskQueue.lastExecutedTimestamp" />,
         dataIndex: 'lastExecutedTimestamp',
         align: 'center',
         width: 150,
         sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
         render: (text) => {
           if (!text) {
-            return <span>{formatMessage({ id: 'app.taskQueue.notAvailable' })}</span>;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
           return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
-        title: formatMessage({ id: 'app.taskQueue.triedTimes' }),
+        title: <FormattedMessage id="app.taskQueue.triedTimes" />,
         dataIndex: 'triedTimes',
         align: 'center',
         width: 150,
         sorter: (a, b) => a.triedTimes - b.triedTimes,
       },
       {
-        title: formatMessage({ id: 'app.taskDetail.reason' }),
+        title: <FormattedMessage id="app.taskDetail.reason" />,
         dataIndex: 'prepareFailedReason',
         align: 'center',
         fixed: 'right',
@@ -156,7 +163,7 @@ export default class TaskQueue extends React.PureComponent {
               return <span>{text}</span>;
             }
           } else {
-            return <span>{formatMessage({ id: 'app.taskQueue.notAvailable' })}</span>;
+            return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
         },
       },
@@ -210,6 +217,11 @@ export default class TaskQueue extends React.PureComponent {
     this.setState({ searchText: selectedKeys[0] });
   };
 
+  handleReset = (clearFilters) => {
+    clearFilters();
+    this.setState({ searchText: '' });
+  };
+
   renderFilters = (data) => {
     let data_ = [];
     for (const key in data) {
@@ -225,12 +237,14 @@ export default class TaskQueue extends React.PureComponent {
   };
 
   render() {
+    const deleteFlag = hasPermission('/sorter/center/taskQueue/delete') ? true : false;
+    const priority = hasPermission('/sorter/center/taskQueue/updatePipLine') ? true : false;
     return (
       <TaskQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Sorter} // 标记当前页面的车型
-        delete={true} // 标记该页面是否允许执行删除操作
-        priority={true} // 标记该页面是否允许执行调整优先级操作
+        deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
+        priority={priority} // 标记该页面是否允许执行调整优先级操作
       />
     );
   }

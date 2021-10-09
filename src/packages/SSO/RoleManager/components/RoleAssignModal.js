@@ -7,7 +7,7 @@ import { filterMenuData } from '@/utils/init';
 import { transform, difference } from 'lodash';
 import allMouduleRouter from '@/config/router';
 import allMoudulePemission from '@/config/permission';
-import { filterPermission, showLabelMenu, handlePermissions } from './assignUtils';
+import { filterPermission, showMenuLabel, handlePermissions } from './assignUtils';
 
 const { TreeNode } = Tree;
 
@@ -34,7 +34,7 @@ class RoleAssignModal extends Component {
     const allAuthorityData = allRoutes.map((appRoute) => {
       // 处理menu
       const { appMenu, appCode } = appRoute;
-      const labelAppMenu = showLabelMenu(appMenu);
+      const labelAppMenu = showMenuLabel(appMenu);
       const menuData = filterMenuData(labelAppMenu);
 
       // 处理permission
@@ -50,14 +50,13 @@ class RoleAssignModal extends Component {
 
       // 根据authrity
       const authRoutes = this.filterAuthRoute(menuData, codePermissionMap) || [];
-      console.log('menu_auth', authRoutes);
       return {
         appCode,
         appMenu: [
           {
             children: [...authRoutes],
             title: '页面',
-            key: `/${appCode}/page1`,
+            key: `${appCode}/page1`, // TODO: 这里与filterAppByAuthorityKeys方法筛选授权的app对应 存在只勾选页面 但是不勾选其他节点树的情况 要优化下！
             label: '页面',
           },
         ],
@@ -245,7 +244,7 @@ class RoleAssignModal extends Component {
     const { activeKey, permissionList, checkedKeys } = this.state;
     const { submitAuthKeys } = this.props;
     return (
-      <div >
+      <div>
         <div>
           <Tabs
             activeKey={activeKey}
@@ -260,7 +259,7 @@ class RoleAssignModal extends Component {
               // 防止Tab不显示名称
               const key = permission.appCode;
               return (
-                <Tabs.TabPane key={key} tab={key}>
+                <Tabs.TabPane key={key} tab={formatMessage({id:`app.module.${key}`}) }>
                   {permission?.appMenu.length !== 0 ? (
                     <Tree
                       checkable
@@ -288,7 +287,7 @@ class RoleAssignModal extends Component {
               borderTop: '1px solid #e9e9e9',
               padding: '10px 16px',
               textAlign: 'right',
-              background:'#fff'
+              background: '#fff',
             }}
           >
             <Button

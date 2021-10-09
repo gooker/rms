@@ -9,9 +9,7 @@ export default {
   'sso.user.account.type.manager': '普通管理员',
   'sso.user.account.type.superManager': '超级管理员',
   'sso.user.type.user': '用户',
-  'sso.user.tip.copySuccess': '成功复制到剪贴板',
-  'sso.user.tip.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
-  'sso.user.newUser': '新建用户',
+  'sso.user.newUser': '新增用户',
   'sso.user.updateUserInfo': '修改用户信息',
   'sso.common.adminVisible': 'Admin可见',
   'sso.common.superManagerVisible': '超级管理员可见',
@@ -59,4 +57,5 @@ export default {
   'sso.user.tip.sectionAssigned': '已分配区域',
   'sso.user.tip.sectionUnassigned': '未分配区域',
   'sso.user.tip.roleLevelGreater': '以下角色等级比用户高，无法完成操作',
+  'app.section.not.exist': '当前用户没有被赋予任何Section',
 };

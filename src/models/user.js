@@ -28,45 +28,42 @@ export default {
 
     *fetchCurrentUser(_, { call, put }) {
       const response = yield call(getCurrentUser);
-      if (dealResponse(response)) {
-        message.error(intl.formatMessage({ id: 'app.user.fetch.failed' }));
-        window.location.reload(); // dispatch  TODO: 但是如果网络问题会一直刷新 ???
-        throw new Error(response?.message);
-      }
-      const { currentSection, language, id: userId, username, authorityKeys } = response;
-      // 1. 保存用户语言信息
-      yield put({ type: 'saveCurrentUser', payload: response });
+      if (!dealResponse(response)) {
+        const { currentSection, language, id: userId, username, authorityKeys } = response;
+        // 1. 保存用户语言信息
+        yield put({ type: 'saveCurrentUser', payload: response });
 
-      // 2. 保存国际化
-      window.localStorage.setItem('currentLocale', language);
+        // 2. 保存国际化
+        window.localStorage.setItem('currentLocale', language);
 
-      // 3. 保存当前Section
-      if (username !== 'admin') {
-        if (!currentSection) {
-          message.error(intl.formatMessage({ id: 'app.section.not.exist' }));
-          return false;
+        // 3. 保存当前Section
+        if (username !== 'admin') {
+          if (!currentSection) {
+            message.error(intl.formatMessage({ id: 'app.section.not.exist' }));
+            return false;
+          }
+          window.localStorage.setItem('sectionId', currentSection.sectionId);
+          yield put({ type: 'saveCurrentSectionEffect', payload: currentSection });
         }
-        window.localStorage.setItem('sectionId', currentSection.sectionId);
-        yield put({ type: 'saveCurrentSectionEffect', payload: currentSection });
+
+        // 4. 保存权限数据
+        const permissionMap = {};
+        for (let index = 0; index < authorityKeys.length; index++) {
+          permissionMap[authorityKeys[index]] = authorityKeys[index];
+        }
+        window.localStorage.setItem('permissionMap', JSON.stringify(permissionMap));
+
+        // 5. 保存用户角色信息
+        const userRoleList = yield call(fetchUserRoleList, { userId });
+        if (!dealResponse(userRoleList)) {
+          yield put({ type: 'saveUserRoleList', payload: userRoleList.roles || [] });
+        }
+
+        // 6. 保存用户时区数据
+        window.localStorage.setItem('userTimeZone', response.userTimeZone || '');
+
+        return { language };
       }
-
-      // 4. 保存权限数据
-      const permissionMap = {};
-      for (let index = 0; index < authorityKeys.length; index++) {
-        permissionMap[authorityKeys[index]] = authorityKeys[index];
-      }
-      window.localStorage.setItem('permissionMap', JSON.stringify(permissionMap));
-
-      // 5. 保存用户角色信息
-      const userRoleList = yield call(fetchUserRoleList, { userId });
-      if (!dealResponse(userRoleList)) {
-        yield put({ type: 'saveUserRoleList', payload: userRoleList.roles || [] });
-      }
-
-      // 6. 保存用户时区数据
-      window.localStorage.setItem('userTimeZone', response.userTimeZone || '');
-
-      return { language };
     },
 
     *fetchUpdateUserCurrentSection({ payload }, { call, put, select }) {

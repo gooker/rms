@@ -1,0 +1,42 @@
+.logoUploader {
+  display: flex;
+
+  :global {
+    .ant-upload-select-picture-card {
+      display: table;
+      width: 200px;
+      height: 100px;
+      margin-right: 0;
+      margin-bottom: 0;
+      .ant-upload {
+        display: table-cell;
+        width: 100%;
+        height: 100%;
+        padding: 8px;
+        text-align: center;
+        vertical-align: middle;
+      }
+    }
+    .ant-upload-picture-card-wrapper {
+      width: auto;
+    }
+  }
+}
+
+.deleteLogo {
+  width: 40px;
+  padding-left: 5px;
+  line-height: 15px;
+
+  :global {
+    svg {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    svg:hover {
+      transform: scale(1.2);
+      fill: #1890ff;
+    }
+  }
+}

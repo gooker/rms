@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, Button, Table, Tag, Popover, message, Modal } from 'antd';
+import { Row, Col, Select, Button, Tag, Popover, message, Modal } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
 import {
   fetchUserManagerList,
   updateUserManage,
@@ -15,6 +15,7 @@ import {
 } from '@/services/user';
 import IconFont from '@/utils/ExtraIcon';
 import RcsConfirm from '@/components/RcsConfirm';
+import TablewidthPages from '@/components/TablewidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
@@ -195,20 +196,7 @@ class UserManager extends Component {
   };
 
   addToClipBoard = (content) => {
-    const input = document.createElement('input');
-    input.setAttribute('readonly', 'readonly');
-    input.setAttribute('value', content);
-    document.body.appendChild(input);
-    input.setSelectionRange(0, 9999);
-    input.select();
-    if (document.execCommand('copy')) {
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      message.info(formatMessage({ id: 'sso.user.tip.copySuccess' }));
-    } else {
-      document.body.removeChild(input);
-      message.warn(formatMessage({ id: 'sso.user.tip.unsupportCopyAPI' }));
-    }
+    copyToBoard(content);
   };
 
   getColumn = [
@@ -390,7 +378,8 @@ class UserManager extends Component {
         </Row>
         <Row style={{ display: 'flex', padding: '20px 0' }}>
           <Button
-            className={commonStyles.mr20}
+            type="primary"
+            className={commonStyles.mr10}
             icon={<PlusOutlined />}
             onClick={() => {
               this.setState({
@@ -398,10 +387,10 @@ class UserManager extends Component {
               });
             }}
           >
-            <FormattedMessage id="app.taskStatus.New" />
+            <FormattedMessage id="app.button.add" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -414,7 +403,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.edit" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -424,7 +413,8 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            danger
+            className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
@@ -432,7 +422,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.action.delete" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({ sectionDistriVisble: true });
@@ -442,7 +432,7 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.sectionAssign" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             onClick={() => {
               this.setState({ rolesDistriVisible: true });
             }}
@@ -452,19 +442,17 @@ class UserManager extends Component {
             <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getUserDataList}>
+            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getUserDataList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </div>
         </Row>
         <div className={styles.userManagerTable}>
-          <Table
+          <TablewidthPages
             bordered
-            pagination={false}
             columns={this.getColumn}
             rowKey="id"
             dataSource={showUsersList}
-            scroll={{ x: 'max-content' }}
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import ExecutionQueueComponent from '@/components/pages/ExecutionQueueComponent';
-import { formatMessage } from '@/utils/utils';
-import FormattedMessage from '@/components/FormattedMessage';
 import Dictionary from '@/utils/Dictionary';
-import { GMT2UserTimeZone } from '@/utils/utils';
+import { hasPermission } from '@/utils/Permission';
+import { formatMessage, GMT2UserTimeZone, isStrictNull } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 
@@ -96,7 +96,7 @@ export default class ExecutionQueue extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.executionQ.chargerCellId' }),
+        title: formatMessage({ id: 'app.executionQ.chargerSpotId' }),
         dataIndex: 'chargerCellId',
         align: 'center',
         width: 100,
@@ -112,7 +112,9 @@ export default class ExecutionQueue extends React.PureComponent {
             return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
           }
           return (
-            <span style={{ width: '100%' }}>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span style={{ width: '100%' }}>
+              {GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}
+            </span>
           );
         },
       },
@@ -127,7 +129,9 @@ export default class ExecutionQueue extends React.PureComponent {
             return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
           }
           return (
-            <span style={{ width: '100%' }}>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span style={{ width: '100%' }}>
+              {GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}
+            </span>
           );
         },
       },
@@ -172,23 +176,40 @@ export default class ExecutionQueue extends React.PureComponent {
   };
 
   filterDataSource = (dataSource = [], filterValue) => {
-    return dataSource.filter((item) => {
-      const targetCellId = `${item.targetCellId}`;
-      return (
-        item.taskId?.includes(filterValue) ||
-        item.currentRobotId?.includes(filterValue) ||
-        targetCellId?.includes(filterValue)
-      );
+    const currrentFilterValue = {};
+    if (!isStrictNull(filterValue.taskId)) {
+      currrentFilterValue.taskId = filterValue.taskId;
+    }
+    if (!isStrictNull(filterValue.agvId)) {
+      currrentFilterValue.currentRobotId = filterValue.agvId;
+    }
+    if (Object.keys(currrentFilterValue).length === 0) {
+      return dataSource;
+    }
+
+    let currentSources = [];
+    if (!isStrictNull(filterValue.agvTaskType)) {
+      const filtertype = filterValue.agvTaskType;
+      currentSources = dataSource.filter(({ type }) => filtertype.includes(type));
+    }
+    Object.values(currrentFilterValue).map((value) => {
+      currentSources.push(...this.filterValues(dataSource, value));
     });
+    return currentSources;
+  };
+
+  filterValues = (dataSource, value) => {
+    return dataSource.filter((item) => item[value]?.includes(value));
   };
 
   render() {
+    const deleteFlag = hasPermission('/sorter/center/executionQueue/delete') ? true : false;
     return (
       <ExecutionQueueComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Sorter} // 标记当前页面的车型
         filter={this.filterDataSource} // 数据筛选逻辑
-        delete={true} // 标记该页面是否允许执行删除操作
+        deleteFlag={deleteFlag} // 标记该页面是否允许执行删除操作
       />
     );
   }

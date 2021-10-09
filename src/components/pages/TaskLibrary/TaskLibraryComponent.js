@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Modal, Table } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { Button, message, Table } from 'antd';
+import { formatMessage, dealResponse } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dealResponse } from '@/utils/utils';
+import RcsConfirm from '@/components/RcsConfirm';
 import TaskSearch from './TaskSearch';
+import commonStyles from '@/common.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {
@@ -15,7 +15,6 @@ class TaskLibraryComponent extends Component {
     formValues: {}, // 保存查询表单的值
 
     loading: false,
-    cancelLoading: false,
 
     selectedRows: [],
     selectedRowKeys: [],
@@ -51,8 +50,9 @@ class TaskLibraryComponent extends Component {
     const response = await fetchAgvTaskList(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
-      this.setState({ loading: false, dataSource: list, page });
+      this.setState({ dataSource: list, page });
     }
+    this.setState({ loading: false });
   };
 
   handleTableChange = (pagination) => {
@@ -84,9 +84,7 @@ class TaskLibraryComponent extends Component {
   };
 
   openCancelTaskConfirm = () => {
-    Modal.confirm({
-      title: formatMessage({ id: 'app.common.systemHint' }),
-      icon: <ExclamationCircleOutlined />,
+    RcsConfirm({
       content: formatMessage({ id: 'app.taskAction.cancel.confirm' }),
       onOk: this.cancelTask,
     });
@@ -118,6 +116,7 @@ class TaskLibraryComponent extends Component {
       <TablePageWrapper>
         <div>
           <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
+          <Divider className={commonStyles.divider} />
           {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.openCancelTaskConfirm}>
               <FormattedMessage id={'app.taskDetail.cancelTask'} />

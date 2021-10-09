@@ -36,7 +36,7 @@ class SelectSection extends PureComponent {
       <HeaderDropdown overlay={this.renderMenu}>
         <span className={`${styles.action} ${styles.account}`}>
           <span style={{ marginRight: 3 }}>
-            <IconDir type="iconquyuguanli" />{' '}
+            <IconDir type="icon-tuanduicankaoxian-1" />{' '}
           </span>
           {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
         </span>

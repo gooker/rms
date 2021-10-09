@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Table, Col, Row, Modal, message, Drawer } from 'antd';
+import { Button, Col, Row, Modal, message, Drawer } from 'antd';
 import {
   EditOutlined,
   DeleteOutlined,
@@ -19,6 +19,7 @@ import {
   saveRoleAssignAuthority,
   fetchUploadRoles,
 } from '@/services/user';
+import TablewidthPages from '@/components/TablewidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
@@ -184,6 +185,7 @@ export default class index extends Component {
         <Row className={commonStyles.mb20}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button
+              type="primary"
               icon={<PlusOutlined />}
               onClick={() => {
                 this.setState({ addRoleVisble: true });
@@ -201,6 +203,7 @@ export default class index extends Component {
               <FormattedMessage id="sso.user.edit" />
             </Button>
             <Button
+              danger
               disabled={selectedRowKeys.length === 0}
               icon={<DeleteOutlined />}
               onClick={this.deleteRole}
@@ -233,20 +236,19 @@ export default class index extends Component {
             </Button>
           </Col>
           <Col>
-            <Button type="primary" icon={<ReloadOutlined />} onClick={this.getRoleList}>
+            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getRoleList}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </Col>
         </Row>
 
         <div className={commonStyles.divContent}>
-          <Table
+          <TablewidthPages
             bordered
             columns={this.columns}
             dataSource={roleList}
             loading={loading}
             rowKey="id"
-            scroll={{ x: 'max-content' }}
             rowSelection={{
               selectedRowKeys,
               onChange: (selectedRowKeys, selectedRow) => {

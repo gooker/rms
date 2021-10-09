@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Button, Table, Modal, message } from 'antd';
+import { Row, Button, Modal, message } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   fetchSelectSectionList,
@@ -8,6 +8,7 @@ import {
   deleteSectionById,
 } from '@/services/user';
 import RcsConfirm from '@/components/RcsConfirm';
+import TablewidthPages from '@/components/TablewidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 import UpdateSection from './components/UpdateSection';
@@ -110,7 +111,7 @@ export default class SectionManager extends Component {
       <div className={commonStyles.globalPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<PlusOutlined />}
             type="primary"
             onClick={() => {
@@ -122,7 +123,7 @@ export default class SectionManager extends Component {
             <FormattedMessage id="app.button.add" />
           </Button>
           <Button
-            className={commonStyles.mr20}
+            className={commonStyles.mr10}
             icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
@@ -136,7 +137,8 @@ export default class SectionManager extends Component {
           </Button>
 
           <Button
-            className={commonStyles.mr20}
+            danger
+            className={commonStyles.mr10}
             icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
@@ -145,13 +147,11 @@ export default class SectionManager extends Component {
           </Button>
         </Row>
         <div className={styles.sectionManagerTable}>
-          <Table
+          <TablewidthPages
             bordered
-            pagination={false}
             columns={this.getColumn}
             rowKey="id"
             dataSource={sectionsList}
-            scroll={{ x: 'max-content' }}
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,

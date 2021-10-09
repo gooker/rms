@@ -1,22 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Row, Button, Input, Modal } from 'antd';
+import { Button, Divider } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage, dealResponse } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
-import { dealResponse } from '@/utils/utils';
-import LabelComponent from '@/components/LabelComponent';
+import TablewidthPages from '@/components/TablewidthPages';
+import RcsConfirm from '@/components/RcsConfirm';
+import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
-
-const { confirm } = Modal;
 
 @connect()
 class ExecutionQueueComponent extends Component {
   state = {
-    filterValue: '',
-
     dataSource: [],
     selectedRow: [],
     selectedRowKeys: [],
@@ -35,11 +32,12 @@ class ExecutionQueueComponent extends Component {
     const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
-    const response = await fetchExecutingTaskList(agvType, sectionId);
+    let response = await fetchExecutingTaskList(agvType, sectionId);
     if (!dealResponse(response)) {
       const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
-      this.setState({ dataSource, loading: false });
+      this.setState({ dataSource });
     }
+    this.setState({ loading: false });
   };
 
   deleteQueueTasks = () => {
@@ -50,8 +48,8 @@ class ExecutionQueueComponent extends Component {
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
 
-    confirm({
-      title: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
+    RcsConfirm({
+      content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
         const response = await deleteExecutionQTasks(agvType, requestParam);
@@ -88,8 +86,8 @@ class ExecutionQueueComponent extends Component {
     });
   };
 
-  filterTableList = () => {
-    const { dataSource, filterValue } = this.state;
+  filterTableList = (filterValue) => {
+    const { dataSource } = this.state;
     const { filter } = this.props;
     if (filterValue && filter && typeof filter === 'function') {
       return filter(dataSource, filterValue);
@@ -98,13 +96,16 @@ class ExecutionQueueComponent extends Component {
   };
 
   render() {
-    const { loading, deleteLoading, selectedRowKeys, filterValue } = this.state;
-    const { getColumn } = this.props;
+    const { loading, deleteLoading, selectedRowKeys } = this.state;
+    const { getColumn, deleteFlag } = this.props;
     return (
       <TablePageWrapper>
-        <Row>
-          <Row className={commonStyles.tableToolLeft}>
+        <div>
+          <ExecutionQueueSearch search={this.filterTableList} />
+          <Divider className={commonStyles.divider} />
+          {deleteFlag ? (
             <Button
+              danger
               loading={deleteLoading}
               icon={<DeleteOutlined />}
               onClick={this.deleteQueueTasks}
@@ -112,32 +113,17 @@ class ExecutionQueueComponent extends Component {
             >
               <FormattedMessage id="app.button.delete" />
             </Button>
-            <LabelComponent label={formatMessage({ id: 'app.executionQ.retrieval' })} width={250}>
-              <Input
-                value={filterValue}
-                onChange={(event) => {
-                  this.setState({ filterValue: event.target.value });
-                }}
-              />
-            </LabelComponent>
-          </Row>
-          <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" onClick={this.getData}>
-              <RedoOutlined />
-              <FormattedMessage id="app.button.refresh" />
-            </Button>
-          </Row>
-        </Row>
-        <Table
+          ) : null}
+          <Button type="primary" ghost onClick={this.getData} className={commonStyles.ml10}>
+            <RedoOutlined />
+            <FormattedMessage id="app.button.refresh" />
+          </Button>
+        </div>
+        <TablewidthPages
           loading={loading}
           columns={getColumn(this.checkTaskDetail)}
           dataSource={this.filterTableList()}
-          scroll={{ x: 'max-content' }}
-          pagination={{
-            responsive: true,
-            defaultPageSize: 20,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-          }}
+          rowKey={(record) => record.taskId}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,

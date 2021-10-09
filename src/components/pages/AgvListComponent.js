@@ -1,10 +1,19 @@
 import React, { Component } from 'react';
-import { Table, Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
+import { connect } from '@/utils/dva';
+import { Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvList, fetchDeleteAgvList, fetchMoveoutAGVs } from '@/services/api';
+import {
+  fetchAgvList,
+  fetchToteAgvList,
+  fetchDeleteAgvList,
+  fetchMoveoutAGVs,
+} from '@/services/api';
+import TablewidthPages from '@/components/TablewidthPages';
 import { dealResponse, isNull } from '@/utils/utils';
+import history from '@/history';
+import { NameSpace } from '@/config/config';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtils';
 import LabelComponent from '@/components/LabelComponent';
 import Dictionary from '@/utils/Dictionary';
@@ -12,11 +21,42 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
+@connect()
 class AgvListComponent extends Component {
   state = {
     loading: false,
 
-    agvList: [],
+    agvList: [
+      {
+        accumulateDistance: 0,
+        agvStatus: 'Working',
+        battery: 0,
+        batteryType: null,
+        batteryVoltage: 45000,
+        clusterIndex: 'SIMULATOR',
+        createDate: '2021-08-31 14:18:51',
+        currentCellId: 3,
+        currentDirection: 0,
+        currentUpgradeFirmware: null,
+        disabled: false,
+        hardwareVersion: 0,
+        id: '6113866ca296c0389521be31',
+        ip: null,
+        isDummy: true,
+        leiJiShiChang: 1000,
+        level: 4,
+        manualMode: false,
+        maxChargingCurrent: null,
+        port: null,
+        pubDate: 0,
+        robotId: '3',
+        robotType: 'Tote',
+        sectionId: 1,
+        toteCodes: null,
+        version: null,
+        waitAppointTask: false,
+      },
+    ],
 
     selectedRows: [],
     selectedRowKeys: [],
@@ -33,11 +73,17 @@ class AgvListComponent extends Component {
     const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
-    const response = await fetchAgvList(agvType, sectionId);
+    let response = null;
+    if (agvType === 'Tote') {
+      response = await fetchToteAgvList(agvType);
+    } else {
+      response = await fetchAgvList(agvType, sectionId);
+    }
+
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.agv.getListFail' }));
     } else {
-      this.setState({ agvList: response });
+      // this.setState({ agvList: response });
     }
     this.setState({ loading: false });
   };
@@ -123,7 +169,15 @@ class AgvListComponent extends Component {
     this.setState({ loading: false });
   };
 
-  checkAgvDetail = (agvId) => {};
+  checkAgvDetail = (agvId) => {
+    const { agvType, dispatch } = this.props;
+    const route = `/${NameSpace[agvType]}/agv/agvRealTime`;
+    history.push({
+      pathname: route,
+      search: `agvId=${agvId}`,
+    });
+    dispatch({ type: 'global/saveSelectedKeys', payload: [route] });
+  };
 
   onSelectChange = (selectedRowKeys, selectedRow) => {
     this.setState({ selectedRowKeys, selectedRow });
@@ -131,42 +185,48 @@ class AgvListComponent extends Component {
 
   render() {
     const { loading, agvList, selectedRowKeys } = this.state;
-    const { getColumn } = this.props;
+    const { getColumn, deleteFlag, moveFlag, exportFlag, expandedRowRender } = this.props;
     return (
       <TablePageWrapper>
         <Row>
           <Row className={commonStyles.tableToolLeft}>
-            <Button disabled={selectedRowKeys.length === 0} onClick={this.deleteAgv}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-            </Button>
-            <Button disabled={selectedRowKeys.length === 0} onClick={this.moveOutAgv}>
-              <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
-            </Button>
-            <Dropdown
-              overlay={
-                <Menu
-                  onClick={({ key }) => {
-                    if (key === 'hardware') {
-                      this.exportAgvHardwareInfo();
-                    } else {
-                      this.exportAgvInfo();
-                    }
-                  }}
-                >
-                  <Menu.Item key="hardware">
-                    {formatMessage({ id: 'app.agv.exportHardwareInfo' })}
-                  </Menu.Item>
-                  <Menu.Item key="carInfo">
-                    {formatMessage({ id: 'app.agv.exportAgvInfo' })}
-                  </Menu.Item>
-                </Menu>
-              }
-            >
-              <Button>
-                {formatMessage({ id: 'app.agv.infoExport' })}
-                <DownOutlined />
+            {deleteFlag && (
+              <Button danger disabled={selectedRowKeys.length === 0} onClick={this.deleteAgv}>
+                <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
               </Button>
-            </Dropdown>
+            )}
+            {moveFlag && (
+              <Button disabled={selectedRowKeys.length === 0} onClick={this.moveOutAgv}>
+                <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
+              </Button>
+            )}
+            {exportFlag && (
+              <Dropdown
+                overlay={
+                  <Menu
+                    onClick={({ key }) => {
+                      if (key === 'hardware') {
+                        this.exportAgvHardwareInfo();
+                      } else {
+                        this.exportAgvInfo();
+                      }
+                    }}
+                  >
+                    <Menu.Item key="hardware">
+                      {formatMessage({ id: 'app.agv.exportHardwareInfo' })}
+                    </Menu.Item>
+                    <Menu.Item key="carInfo">
+                      {formatMessage({ id: 'app.agv.exportAgvInfo' })}
+                    </Menu.Item>
+                  </Menu>
+                }
+              >
+                <Button>
+                  {formatMessage({ id: 'app.agv.infoExport' })}
+                  <DownOutlined />
+                </Button>
+              </Dropdown>
+            )}
             <LabelComponent label={formatMessage({ id: 'app.agv.id' })} width={300}>
               <Select
                 allowClear
@@ -200,26 +260,22 @@ class AgvListComponent extends Component {
             </LabelComponent>
           </Row>
           <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" onClick={this.getData}>
+            <Button type="primary" ghost onClick={this.getData}>
               <RedoOutlined />
               <FormattedMessage id="app.button.refresh" />
             </Button>
           </Row>
         </Row>
-        <Table
+        <TablewidthPages
           loading={loading}
           columns={getColumn(this.checkAgvDetail)}
           dataSource={this.filterData()}
-          scroll={{ x: 'max-content' }}
-          pagination={{
-            responsive: true,
-            defaultPageSize: 20,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-          }}
+          rowKey={'id'}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,
           }}
+          expandedRowRender={expandedRowRender}
         />
       </TablePageWrapper>
     );

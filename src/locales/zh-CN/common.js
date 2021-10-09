@@ -111,7 +111,7 @@ export default {
   'app.pod.side.D': 'D',
 
   // Cell
-  'app.cellId': '点位',
+  'app.spotId': '点位',
 
   // Task
   'app.task': '任务',
@@ -126,6 +126,8 @@ export default {
   'app.task.record': '任务记录',
   'app.task.type': '任务类型',
   'app.task.state': '任务状态',
+  'app.task.customId': '客户任务ID',
+  'app.task.poolId': '料箱池任务ID',
 
   'app.taskStatus.New': '新建',
   'app.taskStatus.Executing': '执行中',
@@ -152,7 +154,7 @@ export default {
   'app.common.minutes': '分',
 
   // 上传
-  'app.common.upload.dragUploadedFileToThisArea': '将上传的文件单击或拖拽到此区域',
+  'app.common.upload.dragUploadedFileToThisArea': '单击或拖动文件到该区域以上传',
 
   // 地图
   'app.map.map': '地图',
@@ -178,4 +180,18 @@ export default {
   'app.map.dumpPoint': '抛物点',
   'app.map.intersection': '交汇点',
   'app.map.roller': '滚筒站点',
+
+
+  // 模块名称
+  'app.module.mixrobot': 'Mixrobot',
+  'app.module.sorter': '分拣车',
+  'app.module.latent-lifting': '潜伏车',
+  'app.module.tote-wcs-gui': '料箱车',
+  'app.module.forklift': '叉车',
+  'app.module.i18n': '国际化',
+
+  'app.copyboard.success': '成功复制到剪贴板',
+  'app.copyboard.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
+
+  'app.workStationMap.add': '添加',
 };

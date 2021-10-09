@@ -40,6 +40,7 @@ export default {
 
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
+    selectedKeys:[],
   },
 
   effects: {
@@ -62,17 +63,16 @@ export default {
 
       // 3.获取NameSpace数据 & 并整合运维配置
       // nameSpaceMap从getAllEnvironment中flag为1的 additionalInfos
-      let nameSpaceInfo = {}; // 所有的url链接地址信息
+      let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
       if (allEnvironment.length > 0) {
         const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
         if (activeNameSpace.length > 0) {
           // 若自定义环境出现两个已激活项目, 将默认启用第一项
-          nameSpaceInfo = {
+          urlDir = {
             ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
           };
         }
       }
-      const urlDir = { ...requestAPI(), ...nameSpaceInfo };
 
       // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
@@ -103,8 +103,7 @@ export default {
         allModuleMenuData,
         permissionMap,
       );
-
-      const defaultApp = currentUser.username === 'admin' ? 'sso' : 'mixrobot';
+    
 
       // 7. 保存信息
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
@@ -112,9 +111,10 @@ export default {
       yield put({ type: 'saveNameSpacesInfo', payload: urlDir }); // 所有API接口信息
       yield put({ type: 'saveGrantedAPx', payload: { grantedAPP } }); // 所有授权的APP
       yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
-      yield put({ type: 'saveCurrentApp', payload: defaultApp }); // 默认显示的app
       yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
       yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
+
+      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
 
       return true;
     },
@@ -231,7 +231,13 @@ export default {
         currentApp: payload,
       };
     },
-
+    saveSelectedKeys(state, { payload }) {
+      // menu 选中的selectedKey
+      return {
+        ...state,
+        selectedKeys: payload,
+      };
+    },
 
     saveTabs(state, { payload }) {
       return {
@@ -239,8 +245,6 @@ export default {
         tabs: payload,
       };
     },
-
-  
 
     saveGrantedAPx(state, { payload }) {
       return {

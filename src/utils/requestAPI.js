@@ -1,22 +1,35 @@
-import { isPlainObject } from 'lodash-es';
+import { isPlainObject } from 'lodash';
+import { NameSpace } from '@/config/config';
 
 export default function requestAPI() {
+  let apiMap = {};
   if (isPlainObject(window.extraConfig)) {
-    return window.extraConfig;
+    apiMap = window.extraConfig;
+  } else {
+    apiMap = {
+      // dev
+      // sso: 'https://sso-api-dev.mushiny.com',
+
+      // NT-11
+      sso: 'http://52.83.193.245:10211',
+      coordinator: 'http://52.83.193.245:10213',
+
+      // NT-12
+      // sso: 'http://sso-api-ntdev-self-defining.mushiny.local',
+      // coordinator: 'http://translation-api-ntdev-self-defining.mushiny.local',
+
+      // 高可用 13 $ 14
+      // sso: 'http://sso-api-ntdev-ha.mushiny.local',
+      // coordinator: 'http://gateway-api-ntdev-ha.mushiny.local',
+    };
   }
-  let nameSpace = {
-    translation: 'https://translation-api-dev.mushiny.com',
-    sso: 'https://sso-api-dev.mushiny.com',
-    WS: 'ws://52.83.125.230:35674/ws',
-    coordinator: 'http://52.83.125.230:8085',
-    'latent-lifting': 'http://52.83.125.230:8085',
-    tote: 'http://52.83.125.230:8085',
-    forklift: 'http://52.83.125.230:8085',
-    sorter: 'http://192.168.0.11:8087',
-  };
-  const nameSpaceInfo = window.localStorage.getItem('nameSpacesInfo');
-  if (nameSpaceInfo) {
-    nameSpace = { ...JSON.parse(nameSpaceInfo) };
+  apiMap[NameSpace.Mixrobot] = apiMap.coordinator;
+  apiMap[NameSpace.Tote] = apiMap.coordinator;
+  apiMap[NameSpace.Sorter] = apiMap.coordinator;
+  apiMap[NameSpace.LatentLifting] = apiMap.coordinator;
+  const namespace = JSON.parse(window.localStorage.getItem('nameSpacesInfo'));
+  if (namespace) {
+    apiMap = { ...apiMap, ...namespace };
   }
-  return nameSpace;
+  return apiMap;
 }

@@ -49,7 +49,11 @@ class AgvRealTimeComponent extends React.Component {
   }
 
   fetchAgvList = async () => {
-    const { agvType } = this.props;
+    const { agvType ,location} = this.props;
+    if (location && location?.search) {
+      const robotId=location.search.split("=")[1];
+      this.setState({ agvId: robotId});
+    }
     const sectionId = window.localStorage.getItem('sectionId');
     const response = await fetchAgvList(agvType, sectionId);
     if (dealResponse(response)) {

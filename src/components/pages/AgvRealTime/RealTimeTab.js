@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Tag, Popover, Button,Descriptions } from 'antd';
+import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -184,7 +184,7 @@ const RealTimeTab = (props) => {
        
        
         {/* 车头方向 所在位置 */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.currentCellId' })}>
+        <LabelComponent label={formatMessage({ id: 'app.agv.currentSpotId' })}>
           {renderAgvDirection()}
         </LabelComponent>
         {/* 加入时间 */}
@@ -319,7 +319,7 @@ const RealTimeTab = (props) => {
          {/************锁定目标点************/}
 
          <LabelComponent
-          label={<FormattedMessage id="app.activity.lockedTargetCells" />}
+          label={<FormattedMessage id="app.activity.lockedTargetSpots" />}
           children={
             data?.redisAGV?.lockedTargetCells && data?.redisAGV?.lockedTargetCells.length > 0 ? (
               <span>{renderArray(data.redisAGV.lockedTargetCells)}</span>
@@ -329,7 +329,7 @@ const RealTimeTab = (props) => {
         {/************临时不可走点************/}
 
         <LabelComponent
-          label={<FormattedMessage id="app.activity.lockedTemporaryCells" />}
+          label={<FormattedMessage id="app.activity.lockedTemporarySpots" />}
           children={
             data?.redisAGV?.lockedTemporaryCells &&
             data.redisAGV.lockedTemporaryCells.length > 0 ? (
@@ -346,33 +346,6 @@ const RealTimeTab = (props) => {
        
       </Col>
 
-      <Descriptions title="User Info" column={2}>
-    <Descriptions.Item label="任务ID:">
-      <span style={{color:'red'}}>23</span>
-    </Descriptions.Item>
-    <Descriptions.Item label="已举升货架:" contentStyle={{color:'pink'}}>1810000000</Descriptions.Item>
-    <Descriptions.Item label="举升货架朝向:">498</Descriptions.Item>
-    <Descriptions.Item label="锁定目标点" span={2}>
-
-    </Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-    <Descriptions.Item label="任务ID:">12</Descriptions.Item>
-  </Descriptions>,
 
     </Row>
 

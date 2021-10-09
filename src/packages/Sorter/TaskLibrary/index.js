@@ -1,13 +1,13 @@
 import React from 'react';
-import { Badge, Button, Tooltip } from 'antd';
-import { InfoOutlined } from '@ant-design/icons';
+import { Badge, Tooltip } from 'antd';
 import { formatMessage } from '@/utils/utils';
-import FormattedMessage from '@/components/FormattedMessage';
 import { GMT2UserTimeZone } from '@/utils/utils';
+import { hasPermission } from '@/utils/Permission';
+import FormattedMessage from '@/components/FormattedMessage';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
-import commonStyles from '@/common.module.less';
-import { AGVType } from '@/config/config';
 import { TaskStateBageType } from '@/config/consts';
+import { AGVType } from '@/config/config';
+import commonStyles from '@/common.module.less';
 
 export default class TaskLibrary extends React.PureComponent {
   getColumn = (checkDetail) => {
@@ -64,7 +64,7 @@ export default class TaskLibrary extends React.PureComponent {
         },
       },
       {
-        title: formatMessage({ id: 'app.taskDetail.targetCellId' }),
+        title: formatMessage({ id: 'app.taskDetail.targetSpotId' }),
         dataIndex: 'targetCellId',
         align: 'center',
         width: 100,
@@ -104,11 +104,12 @@ export default class TaskLibrary extends React.PureComponent {
   };
 
   render() {
+    const cancelFlag = hasPermission('/sorter/center/taskManger/cancel') ? true : false;
     return (
       <TaskLibraryComponent
         getColumn={this.getColumn} // 提供表格列数据
         agvType={AGVType.Sorter} // 标记当前页面的车型
-        cancel={true} // 标记该页面是否允许执行取消操作
+        cancel={cancelFlag} // 标记该页面是否允许执行取消操作
       />
     );
   }
