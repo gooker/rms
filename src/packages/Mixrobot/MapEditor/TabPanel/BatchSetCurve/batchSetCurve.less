@@ -1,0 +1,112 @@
+.container {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.colorExample {
+  display: flex;
+  flex: 0 10%;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 130px;
+}
+
+.middle {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 130px;
+  transform: rotate(180deg);
+}
+
+// Top
+.topContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  margin-bottom: 5px;
+  &:hover {
+    background-color: #e6e6e6;
+  }
+}
+
+.topCap {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 0px 30px 30px;
+  cursor: pointer;
+}
+
+.topBody {
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+}
+
+// Bottom
+.bottomContainer {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  &:hover {
+    background-color: #e6e6e6;
+  }
+}
+
+.bottomBody {
+  width: 30px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.bottomCap {
+  width: 0px;
+  height: 0px;
+  border-style: solid;
+  border-width: 30px 30px 0;
+  cursor: pointer;
+}
+
+// Left
+.left {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  transform: rotate(-90deg);
+}
+// Right
+.right {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  transform: rotate(90deg);
+}
+
+// action
+.settingPanel {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  align-items: center;
+  width: 100%;
+  padding-top: 40px;
+}

@@ -1,7 +1,8 @@
 import React, { memo, useState, useEffect } from 'react';
 import moment from 'moment';
 import { Card, Form, Row, Col, Button, InputNumber, Checkbox, TimePicker, message } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { getIdleHoursBySectionId, saveIdleChargingStrategy } from '@/services/api';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from './idleChargingStrategy.module.less';

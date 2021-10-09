@@ -1,7 +1,6 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-// ************************************** 用户管理  ************************************** //
 //获取当前登陆对象
 export async function getCurrentUser() {
   return request('/sso/user/getUser', {
@@ -9,79 +8,50 @@ export async function getCurrentUser() {
   });
 }
 
-// ************************************** 执行队列  ************************************** //
-// 获取执行队列数据-sorter
-export async function fetchExecutingTaskList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/getExecutingTaskList/${params}`, {
-    method: `GET`,
+// 获取当前已激活的地图
+export async function fetchActiveMap() {
+  return request(`/${NameSpace.Mixrobot}/map/getActiveMap`, { method: 'GET' });
+}
+
+// 获取存储区组
+export async function fetchStoreCellGroup(mapId) {
+  return request(`/${NameSpace.Mixrobot}/map/getStoreCellGroup/${mapId}`, {
+    method: 'GET',
   });
 }
 
-// 获取执行队列数据-tote TODO: 后端兼容之后要删除
-export async function fetchToteExecutingTaskList(agvType) {
-  return request(`/${NameSpace[agvType]}/redis/getExecutingTaskList`, {
-    method: `GET`,
+// 获取料箱货架布局
+export async function fetchToteRackLayout(params) {
+  return request(`/${NameSpace.Tote}/rack/getRackLayoutDetail`, {
+    method: 'GET',
   });
 }
 
-
-// 删除执行队列任务
-export async function deleteExecutionQTasks(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/batchDeleteExecutingTask`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// ************************************** 等待队列  ************************************** //
-// 获取等待队列任务
-export async function fetchTaskQueueList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/getPipeLineTaskList/${params}`, {
-    method: `GET`,
-  });
-}
-
-// 获取等待队列任务-Tote   TODO: 后端兼容之后要删除
-export async function fetchToteTaskQueueList(agvType) {
-  return request(`/${NameSpace[agvType]}/redis/getPipeLineTaskList`, {
-    method: `GET`,
-  });
-}
-// 获取当前区域小车状态总体数据  TODO: 后端兼容之后要删除
-export async function fetchToteAgvOverallStatus(agvType) {
-  return request(`/${NameSpace[agvType]}/agv/getStandByAndAvailableAgvNumber`, {
-    method: `GET`,
-  });
-}
-
-
-// 删除等待队列任务
-export async function deleteTaskQueueItems(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/batchDeletePipeLineTask`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// 获取当前区域小车状态总体数据
-export async function fetchAgvOverallStatus(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/getStandByAndAvailableAgvNumber/${params}`, {
-    method: `GET`,
-  });
-}
-
-// 修改任务优先级
-export async function fetchUpdateTaskPriority(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/batchUpdatePipeLineTaskPriority`, {
-    method: 'POST',
-    data: params,
+// 获取叉车货架布局
+export async function fetchForkLiftPodLayout() {
+  return request(`/${NameSpace.ForkLifting}/rack/rackLayout/getRackLayout`, {
+    method: 'GET',
   });
 }
 
 // ************************************** 小车相关  ************************************** //
-// 获取小车列表
+// 获取所有车类型
+export async function fetchAllAgvType() {
+  return request(`/${NameSpace.Mixrobot}/map/getAllRobotType`, {
+    method: 'GET',
+  });
+}
+
+// 获取WCS端小车列表-1
 export async function fetchAgvList(agvType, sectionId) {
   return request(`/${NameSpace[agvType]}/agv/${sectionId}`, {
+    method: 'GET',
+  });
+}
+
+// 获取WCS端小车列表-2
+export async function fetchWCSAgvList(agvType) {
+  return request(`/${NameSpace[agvType]}/agv/monitor/all_agv`, {
     method: 'GET',
   });
 }
@@ -118,6 +88,53 @@ export async function fetchDeleteAgvList(agvType, params) {
 // 小车移出地图
 export async function fetchMoveoutAGVs(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv/robotRemoveFromMap`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// ************************************** 执行队列  ************************************** //
+// 获取执行队列数据
+export async function fetchExecutingTaskList(agvType, params) {
+  return request(`/${NameSpace[agvType]}/redis/getExecutingTaskList/${params}`, {
+    method: `GET`,
+  });
+}
+
+// 删除执行队列任务
+export async function deleteExecutionQTasks(agvType, params) {
+  return request(`/${NameSpace[agvType]}/redis/batchDeleteExecutingTask`, {
+    method: `POST`,
+    data: params,
+  });
+}
+
+// ************************************** 等待队列  ************************************** //
+// 获取等待队列任务
+export async function fetchTaskQueueList(agvType, params) {
+  return request(`/${NameSpace[agvType]}/redis/getPipeLineTaskList/${params}`, {
+    method: `GET`,
+  });
+}
+
+// 删除等待队列任务
+export async function deleteTaskQueueItems(agvType, params) {
+  return request(`/${NameSpace[agvType]}/redis/batchDeletePipeLineTask`, {
+    method: `POST`,
+    data: params,
+  });
+}
+
+// 获取当前区域小车状态总体数据
+export async function fetchAgvOverallStatus(agvType, params) {
+  return request(`/${NameSpace[agvType]}/agv/getStandByAndAvailableAgvNumber/${params}`, {
+    method: `GET`,
+  });
+}
+
+// 修改任务优先级
+export async function fetchUpdateTaskPriority(agvType, params) {
+  return request(`/${NameSpace[agvType]}/redis/batchUpdatePipeLineTaskPriority`, {
     method: 'POST',
     data: params,
   });
@@ -230,10 +247,10 @@ export async function getIdleHoursBySectionId(agvType) {
 }
 
 //// 获取参数模版
-export async function fetchSystemParamFormData(agvType,params) {
+export async function fetchSystemParamFormData(agvType, params) {
   return request(`/${NameSpace[agvType]}/formTemplate/getFormTemplate`, {
     method: 'GET',
-    data:params,
+    data: params,
   });
 }
 
@@ -245,48 +262,45 @@ export async function updateSystemParams(agvType, params) {
   });
 }
 
-
-/******料箱池任务 start*********/ 
+/******料箱池任务 start*********/
 // 数据库中所有料箱池任务-废弃
-export async function dbPoolTasks(agvType,params) {
+export async function dbPoolTasks(agvType, params) {
   return request(`/${NameSpace[agvType]}/pool/queryDbTotePoolTaskInfo`, {
     method: 'GET',
     data: params,
   });
 }
 //内存中的料箱池任务信息-废弃
-export async function memPoolTasks(agvType,params) {
+export async function memPoolTasks(agvType, params) {
   return request(`/${NameSpace[agvType]}/pool/queryMemoryTotePoolTaskInfo`, {
     method: 'GET',
     data: params,
   });
 }
 //红外料箱任务池任务查询
-export async function fetchPoolTasks(agvType,params) {
+export async function fetchPoolTasks(agvType, params) {
   return request(`/${NameSpace[agvType]}/pool/queryTotePoolTaskInfo`, {
     method: 'GET',
     data: params,
   });
 }
 //任务取消
-export async function cancelTotePoolTask(agvType,params) {
+export async function cancelTotePoolTask(agvType, params) {
   return request(`/${NameSpace[agvType]}/pool/cancelTotePoolTasks`, {
     method: 'POST',
     data: params,
   });
 }
 
-/******料箱池任务 end*********/ 
+/******料箱池任务 end*********/
 
-
-/**tote agv列表***/ 
+/**tote agv列表***/
 
 export async function fetchToteAgvList(agvType) {
   return request(`/${NameSpace[agvType]}/agv/getToteAGV`, {
     method: 'GET',
   });
 }
- 
 
 /***批量升级***/
 export async function fetchAgvFileStatusList(agvType) {
@@ -294,7 +308,7 @@ export async function fetchAgvFileStatusList(agvType) {
     method: 'GET',
   });
 }
-export async function fetchUpdateFileTask(agvType,params) {
+export async function fetchUpdateFileTask(agvType, params) {
   return request(`/${NameSpace[agvType]}/file/updateFileTask`, {
     method: 'POST',
     data: params,
@@ -302,7 +316,7 @@ export async function fetchUpdateFileTask(agvType,params) {
 }
 
 //维护/取消维护
-export async function fetchMaintain(agvType,params) {
+export async function fetchMaintain(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv/action/maintain`, {
     method: 'GET',
     data: params,
@@ -310,7 +324,7 @@ export async function fetchMaintain(agvType,params) {
 }
 
 // 下载固件--固件 查询SFTP上上传的文件名称
-export async function fetchFirmWarList(agvType,params) {
+export async function fetchFirmWarList(agvType, params) {
   return request(`/${NameSpace[agvType]}/file/selectUploadFileNameList`, {
     method: 'GET',
     data: params,
@@ -318,20 +332,17 @@ export async function fetchFirmWarList(agvType,params) {
 }
 
 // 下载固件--提交
-export async function fetchUpgradeFirmwareFile(agvType,params) {
+export async function fetchUpgradeFirmwareFile(agvType, params) {
   return request(`/${NameSpace[agvType]}/file/upLoadFirmwareFile`, {
     method: 'GET',
     data: params,
   });
-
 }
 
 // 升级
-export async function upgradeAGV(agvType,params) {
+export async function upgradeAGV(agvType, params) {
   return request(`/${NameSpace[agvType]}/file/upgradeAGV`, {
     method: 'GET',
     data: params,
   });
 }
-
-

@@ -1,5 +1,6 @@
-/* eslint-disable no-console */
 import React from 'react';
+import { find } from 'lodash';
+import { isNull } from './utils';
 
 function getAuthorityKeys() {
   let AuthorityKeys = window.localStorage.getItem('permissionMap');
@@ -64,4 +65,18 @@ export class Permission extends React.PureComponent {
     }
     return <></>;
   }
+}
+
+// 获取是否有某个APP的权限
+export const hasApp = (appBaseCode) => {
+  const grantedAPPStr = window.localStorage.getItem('grantedAPP') || '[]';
+  const app = find(JSON.parse(grantedAPPStr), { base: appBaseCode });
+  return !!app;
+};
+
+// 查看某APP是否在授权列表内
+export function isAppInUse(appKey) {
+  const grantedAPP = JSON.parse(window.localStorage.getItem('grantedAPP')) ?? {};
+  const result = find(grantedAPP, { name: appKey });
+  return !isNull(result);
 }

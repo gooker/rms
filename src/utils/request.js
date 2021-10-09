@@ -1,8 +1,7 @@
 import axios from 'axios';
 import { isPlainObject } from 'lodash';
 import history from '@/history';
-import { formatMessage } from '@/utils/Lang';
-import { getDomainNameByUrl, isNull, isStandardApiResponse } from '@/utils/utils';
+import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from '@/utils/utils';
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
@@ -60,7 +59,7 @@ const errorHandler = (error) => {
   const response = error.response;
   if (response) {
     const { status } = response;
-    if (status === 401){
+    if (status === 401) {
       history.push('/login');
     }
     const statusMessage = codeMessage[status];

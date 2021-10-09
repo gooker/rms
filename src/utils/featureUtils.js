@@ -4,8 +4,7 @@ import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
 import { fetchAgvHardwareInfo } from '@/services/api';
-import { dateFormat, dealResponse } from '@/utils/utils';
-import { formatMessage } from '@/utils/Lang';
+import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 
 /**
@@ -131,7 +130,7 @@ export function exportAgvInfo(agvList) {
       {
         label: formatMessage({ id: 'app.agv.addingTime' }),
         value: (row) => {
-          return dateFormat(row.createDate).format('YYYY-MM-DD HH:mm:ss');
+          return GMT2UserTimeZone(row.createDate).format('YYYY-MM-DD HH:mm:ss');
         },
       },
       {

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Badge, Tooltip } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
-import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
+import { formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import { hasPermission } from '@/utils/Permission';
-import commonStyles from '@/common.module.less';
+import FormattedMessage from '@/components/FormattedMessage';
+import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
+import { TaskStateBageType } from '@/config/consts';
 import { AGVType } from '@/config/config';
-import { TaskStateBageType } from '@/consts';
+import commonStyles from '@/common.module.less';
 
 export default class TaskLibrary extends React.PureComponent {
   getColumn = (checkDetail) => {
@@ -84,7 +85,7 @@ export default class TaskLibrary extends React.PureComponent {
           if (!text) {
             return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
@@ -96,7 +97,7 @@ export default class TaskLibrary extends React.PureComponent {
           if (!text) {
             return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
     ];

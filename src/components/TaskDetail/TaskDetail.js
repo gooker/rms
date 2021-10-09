@@ -1,8 +1,9 @@
 import React, { PureComponent, createRef } from 'react';
 import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import ErrorList from './components/ErrorList';
@@ -180,7 +181,7 @@ class TaskDetail extends PureComponent {
                   <DescriptionItem
                     title={<FormattedMessage id="app.taskDetail.createTime" />}
                     content={
-                      <span>{dateFormat(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                      <span>{GMT2UserTimeZone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
                     }
                   />
                 </Col>
@@ -194,7 +195,7 @@ class TaskDetail extends PureComponent {
                   <DescriptionItem
                     title={<FormattedMessage id="app.taskDetail.updateTime" />}
                     content={
-                      <span>{dateFormat(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                      <span>{GMT2UserTimeZone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
                     }
                   />
                 </Col>
@@ -431,7 +432,7 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.taskDetail.startTime" />}
                       content={
                         <>
-                          {dateFormat(chargeRecord.startChargingTime).format('YYYY-MM-DD HH:mm:ss')}
+                          {GMT2UserTimeZone(chargeRecord.startChargingTime).format('YYYY-MM-DD HH:mm:ss')}
                         </>
                       }
                     />
@@ -441,7 +442,7 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.taskDetail.endTime" />}
                       content={
                         <>
-                          {dateFormat(chargeRecord.stopChargingTime).format('YYYY-MM-DD HH:mm:ss')}
+                          {GMT2UserTimeZone(chargeRecord.stopChargingTime).format('YYYY-MM-DD HH:mm:ss')}
                         </>
                       }
                     />

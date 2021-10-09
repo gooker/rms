@@ -3,7 +3,7 @@ import { Select, DatePicker, Input, Button, Row, Table, Tag } from 'antd';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, dateFormat } from '@/utils/utils';
+import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/utils';
 import { fetchUserLoginHistory } from '@/services/user';
 import commonStyles from '@/common.module.less';
 const { RangePicker } = DatePicker;
@@ -48,7 +48,7 @@ export default class UserLoginHistory extends Component {
       align: 'center',
       // sorter:true,
       render: (text) => {
-        return text && dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+        return text && GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss');
       },
     },
     {

@@ -1,10 +1,26 @@
 // 通用代码片段
-import { message, Tag } from 'antd';
+import { Tooltip, Row, Button, Input, message, Form, Tag, InputNumber, Select, Switch } from 'antd';
+import { isPlainObject } from 'lodash';
+import { InfoOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { AgvStateColor } from '@/consts';
+import MenuIcon from '@/utils/MenuIcon';
+import { AgvStateColor, ToteOffset } from '@/config/consts';
+import requestorStyles from '@/packages/Mixrobot/Requestor/requestor.less';
+
+export function isItemOfArray(baseArray, array) {
+  let result = false;
+  for (let index = 0; index < array.length; index++) {
+    const element = array[index];
+    if (baseArray.includes(element)) {
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
 
 export function formatMessage({ id }, values) {
   if (id) {
@@ -55,52 +71,28 @@ export function dealResponse(response, notification, successMessage, failedMessa
   return false;
 }
 
-export function dateFormat(value, type) {
-  //获取服务器端的时区偏移量
-  let date = null;
-  if (value == null) {
-    return {
-      format: () => {
-        return '';
-      },
-    };
-  }
-  let timeZone = 'GMT';
-  if (sessionStorage.getItem('timeZone') != null) {
-    timeZone = sessionStorage.getItem('timeZone');
+/**
+ * 将服务器的时间和服务器返回的时区转回成用户时区的时间格式
+ * @param {*} value
+ * @returns
+ */
+export function GMT2UserTimeZone(value) {
+  if (value === null || value === undefined) {
+    return { format: () => '' };
   }
 
-  if (type) {
-    //将本地时间转化服务时间
-    if (localStorage.getItem('userTimeZone') != null) {
-      moment.tz.setDefault(localStorage.getItem('userTimeZone'));
-    } else {
-      moment.tz.setDefault(moment.tz.guess());
-    }
-    if (value.format) {
-      date = new moment(value.format('YYYY-MM-DD HH:mm:ss')).tz(timeZone);
-    } else {
-      date = new moment(value).tz(timeZone);
-    }
+  let date = null;
+  const timeZone = 'GMT';
+  const userTimeZone = localStorage.getItem('userTimeZone');
+
+  // 获取当前时区偏移量
+  moment.tz.setDefault(timeZone);
+  if (userTimeZone != null) {
+    date = new moment(value).tz(userTimeZone);
   } else {
-    //将服务器时间转化成本地时间
-    //获取当前时区偏移量
-    moment.tz.setDefault(timeZone); //将服务器的时间和服务器返回的时区转回成带有时区的时间格式
-    if (!isStrictNull(localStorage.getItem('userTimeZone'))) {
-      date = new moment(value).tz(localStorage.getItem('userTimeZone'));
-    } else {
-      date = new moment(value).tz(moment.tz.guess());
-    }
+    date = new moment(value).tz(moment.tz.guess());
   }
-  if (date == null) {
-    return {
-      format: () => {
-        return '';
-      },
-    };
-  } else {
-    return date;
-  }
+  return date;
 }
 
 export function getSuffix(value, suffix, props) {
@@ -134,6 +126,28 @@ export function getContentHeight() {
   const layoutContentDOM = document.getElementById('layoutContent');
   const layoutContentDOMRect = layoutContentDOM.getBoundingClientRect();
   return document.body.offsetHeight - layoutContentDOMRect.top;
+}
+
+// 根据direction, distance对obj的坐标进行更新操作
+export function offsetByDirection(obj, direction, distance) {
+  const result = { x: 0, y: 0 };
+  if (direction === 0) {
+    result.x = obj.x;
+    result.y = obj.y - distance;
+  }
+  if (direction === 90) {
+    result.x = obj.x + distance;
+    result.y = obj.y;
+  }
+  if (direction === 180) {
+    result.x = obj.x;
+    result.y = obj.y + distance;
+  }
+  if (direction === 270) {
+    result.x = obj.x - distance;
+    result.y = obj.y;
+  }
+  return result;
 }
 
 /**
@@ -264,12 +278,381 @@ export function extractNameSpaceInfoFromEnvs(env) {
   return nameSpaceInfoMap;
 }
 
-export function getBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
-  });
+/**
+ * 将角度数据转化为方向数据
+ * @param {*} angle
+ * @returns
+ */
+export function covertAngle2Direction(angle) {
+  let direction;
+  switch (true) {
+    case (angle >= 0 && angle < 90) || angle === 360:
+      direction = 0;
+      break;
+    case angle >= 90 && angle < 180:
+      direction = 1;
+      break;
+    case angle >= 180 && angle < 270:
+      direction = 2;
+      break;
+    case angle >= 270 && angle < 360:
+      direction = 3;
+      break;
+    default:
+  }
+  return direction;
 }
 
+export function getDpr() {
+  const { clientHeight } = document.getElementById('monitorDashboard');
+  const a = (clientHeight - 710) / 1440;
+  if (a > 0) {
+    return a + 1;
+  }
+  return 1;
+}
+
+// ************************************** Requestor页面相关  ************************************** //
+const PlaceHolderTestRegex = /{{[a-zA-Z]+}}/;
+const PlaceHolderExtractRegex = /{{(\w+)}}/;
+const formLayout = { labelCol: { span: 3 }, wrapperCol: { span: 15 } };
+const tailFormLayout = { wrapperCol: { offset: 3, span: 15 } };
+
+// 判断是否是占位符
+export function isFieldPlaceholder(placeholder) {
+  return PlaceHolderTestRegex.test(placeholder);
+}
+
+// 根据占位符信息拿组件[componentObject, ComponentIntialValue, ComponentType]
+export function getComponentByPlaceholder(placeholder) {
+  const fieldType = placeholder.match(PlaceHolderExtractRegex)[1];
+  return [...switchComponent(fieldType), fieldType];
+}
+
+// 根据值类型拿组件
+export function getComponentByFieldValue(fieldValue) {
+  let type = typeof fieldValue;
+  if (type === 'object') {
+    if (Array.isArray(fieldValue)) {
+      type = 'list';
+    }
+  }
+  return switchComponent(type);
+}
+
+function switchComponent(fieldType) {
+  let component;
+  let value = null;
+  switch (fieldType) {
+    case 'number':
+      component = <InputNumber />;
+      break;
+    case 'list':
+      component = (
+        <Select allowClear mode="tags" style={{ width: '100%' }} notFoundContent={null} />
+      );
+      value = [];
+      break;
+    case 'boolean':
+      component = <Switch />;
+      value = false;
+      break;
+    default:
+      // 包括 'string' 和 非数组'object'
+      component = <Input />;
+      break;
+  }
+  return [component, value];
+}
+
+// 渲染已选接口的参数配置表单
+const fieldTipStyle = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+};
+const getFormListItemTooltip = (comment, fieldKey) => {
+  const result = [];
+  Object.keys(comment).forEach((key) => {
+    if (key.startsWith(`${fieldKey}-`)) {
+      result.push({ key: key.replace(`${fieldKey}-`, ''), value: comment[key] });
+    }
+  });
+
+  return (
+    <ul style={{ padding: 0, listStyle: 'none' }}>
+      {result.map(({ key, value }, index) => (
+        <li key={index}>{`${key}:  ${value}`}</li>
+      ))}
+    </ul>
+  );
+};
+
+export function getRequestorURLParams(url) {
+  if (isStrictNull(url)) return [];
+  let urlParams = url.match(/{{(\w+)}}/g);
+  if (urlParams) {
+    urlParams = urlParams.map((item) => item.match(PlaceHolderExtractRegex)[1]);
+    return urlParams;
+  }
+  return [];
+}
+
+/**
+ * Requestor页面显示请求体
+ * @param {*} dataSource
+ * @param {*} formRef
+ * @param {*} isHook
+ * @param {*} option
+ * @returns
+ */
+export function renderRequestBodyForm(dataSource, formRef, isHook = false, option = {}) {
+  if (!dataSource) return null;
+
+  const { url, body, comment } = dataSource;
+  if (isStrictNull(body)) return;
+  const bodyJson = JSON.parse(body);
+
+  // 处理URL参数
+  const urlParamFormItem = getRequestorURLParams(url).map((item) => (
+    <Form.Item key={`url_path_${item}`} label={item}>
+      <div style={{ display: 'flex' }}>
+        <div style={{ flex: 1 }}>
+          <Form.Item noStyle name={item}>
+            <Input />
+          </Form.Item>
+        </div>
+        <div style={fieldTipStyle}>
+          <Tooltip title={comment[item]}>
+            <InfoOutlined />
+          </Tooltip>
+        </div>
+      </div>
+    </Form.Item>
+  ));
+
+  /**
+   * 针对 JSON 形式的请求体
+   * 但有可能有一层嵌套，即 value 是一个数组且只能是数组
+   */
+  if (isPlainObject(bodyJson)) {
+    const layout = option.formLayout || formLayout;
+    return (
+      <Form
+        {...layout}
+        {...(isHook ? { form: formRef } : { ref: formRef })}
+        layout={option.layout || 'horizontal'}
+      >
+        {/* 处理请求体参数 */}
+        {Object.keys(bodyJson).map((field, index) => {
+          const value = bodyJson[field];
+          const valueType = typeof value;
+
+          if (valueType === 'object') {
+            // 处理嵌套数组, 并且数组的本质只是渲染表单的元数据
+            if (Array.isArray(value) && value.length > 0) {
+              return (
+                <Form.List name={field} key={`${field}-list-${index}`} initialValue={[{}]}>
+                  {(fields, { add, remove }) => (
+                    <>
+                      {fields.map(({ key, name, fieldKey, ...restField }, fieldsIndex) => (
+                        <Form.Item
+                          key={`${field}-sub-${fieldsIndex}`}
+                          required={false}
+                          label={fieldsIndex === 0 ? field : ''}
+                          {...(fieldsIndex === 0 ? layout : tailFormLayout)}
+                        >
+                          <div
+                            key={`${field}-${fieldsIndex}-remove`}
+                            style={{
+                              padding: '10px',
+                              borderRadius: '5px',
+                              marginBottom: '20px',
+                              border: '1px solid #e0dcdc',
+                            }}
+                          >
+                            {/* 删除表单项 */}
+                            <Row type={'flex'} justify={'end'} style={{ marginBottom: 10 }}>
+                              <Button
+                                type="danger"
+                                icon={MenuIcon.delete}
+                                onClick={() => remove(name)}
+                              />
+                            </Row>
+                            <div style={{ width: '100%', display: 'flex' }}>
+                              <div style={{ flex: 1 }}>
+                                {
+                                  // 所以渲染只需要取第一个就行
+                                  (() => {
+                                    const nestedItemKeys = Object.keys(value[0]);
+                                    return nestedItemKeys.map((nestedItemKey) => {
+                                      const nestedItemValue = value[0][nestedItemKey];
+                                      const [comp, compValue, componentType] =
+                                        getComponentByPlaceholder(nestedItemValue);
+                                      return (
+                                        <Form.Item
+                                          key={`${field}-${nestedItemKey}`}
+                                          {...layout}
+                                          {...restField}
+                                          name={[name, nestedItemKey]}
+                                          fieldKey={[fieldKey, nestedItemKey]}
+                                          label={nestedItemKey}
+                                          valuePropName={
+                                            componentType === 'boolean' ? 'checked' : 'value'
+                                          }
+                                          initialValue={compValue}
+                                        >
+                                          {comp}
+                                        </Form.Item>
+                                      );
+                                    });
+                                  })()
+                                }
+                              </div>
+                              <div className={requestorStyles.formListTooltip}>
+                                <Tooltip title={getFormListItemTooltip(comment, field)}>
+                                  <ReadOutlined />
+                                </Tooltip>
+                              </div>
+                            </div>
+                          </div>
+                        </Form.Item>
+                      ))}
+                      {/* 新增表单项 */}
+                      <Form.Item {...tailFormLayout}>
+                        <Button
+                          block
+                          type="dashed"
+                          onClick={() => add()}
+                          icon={<PlusOutlined />}
+                          style={{ width: '50%' }}
+                        >
+                          {intl.formatMessage({ id: 'app.workStationMap.add' })}
+                        </Button>
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              );
+            }
+          } else {
+            // 包含占位符
+            const isPlaceholder = isFieldPlaceholder(value);
+            if (isPlaceholder) {
+              const [comp, compValue, componentType] = getComponentByPlaceholder(value);
+              return (
+                <Form.Item key={index} label={field}>
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ flex: 1 }}>
+                      <Form.Item
+                        noStyle
+                        name={field}
+                        valuePropName={componentType === 'boolean' ? 'checked' : 'value'}
+                        initialValue={compValue}
+                      >
+                        {comp}
+                      </Form.Item>
+                    </div>
+                    <div style={fieldTipStyle}>
+                      <Tooltip title={comment[field]}>
+                        <InfoOutlined />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </Form.Item>
+              );
+            }
+
+            // 没有占位符
+            const [comp, compValue] = getComponentByFieldValue(value);
+            return (
+              <Form.Item key={index} label={field}>
+                <div style={{ display: 'flex' }}>
+                  <div style={{ flex: 1 }}>
+                    <Form.Item noStyle name={field} initialValue={value ?? compValue}>
+                      {comp}
+                    </Form.Item>
+                  </div>
+                  <div style={fieldTipStyle}>
+                    <Tooltip title={comment[field]}>
+                      <InfoOutlined />
+                    </Tooltip>
+                  </div>
+                </div>
+              </Form.Item>
+            );
+          }
+        })}
+
+        {/* 处理URL参数 */}
+        {urlParamFormItem}
+      </Form>
+    );
+  }
+
+  // 针对 数组 形式的请求体
+  if (Array.isArray(bodyJson)) {
+    const layout = option.formLayout || formLayout;
+    const [comp, compValue] = getComponentByFieldValue(bodyJson);
+    return (
+      <Form {...layout} {...(isHook ? { form: formRef } : { ref: formRef })}>
+        <Form.Item
+          label={intl.formatMessage({ id: 'app.requestor.form.body' })}
+          name={'placeholder'}
+          initialValue={compValue}
+        >
+          {comp}
+        </Form.Item>
+
+        {/* 处理URL参数 */}
+        {urlParamFormItem}
+      </Form>
+    );
+  }
+}
+
+export function getToteLayoutBaseParam(agvDirection, side) {
+  let angle;
+  let XBase;
+  let YBase;
+  let offset;
+  let adapte; // adapte: 用于判断料箱在哪个方向进行距离调整, 非offset
+  switch (agvDirection) {
+    // 向上
+    case 0:
+      angle = side === 'L' ? 90 : 270;
+      XBase = side === 'L' ? -1 : 1;
+      YBase = -1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'X';
+      break;
+    // 向右
+    case 1:
+      angle = side === 'L' ? 0 : 180;
+      XBase = 1;
+      YBase = side === 'L' ? -1 : 1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'Y';
+      break;
+    // 向下
+    case 2:
+      angle = side === 'L' ? 270 : 90;
+      XBase = side === 'L' ? 1 : -1;
+      YBase = 1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'X';
+      break;
+    // 向左
+    case 3:
+      angle = side === 'L' ? 0 : 180;
+      XBase = -1;
+      YBase = side === 'L' ? 1 : -1;
+      offset = side === 'L' ? ToteOffset.left : ToteOffset.right;
+      adapte = 'Y';
+      break;
+    default:
+      break;
+  }
+  return { angle, XBase, YBase, offset, adapte };
+}
