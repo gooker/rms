@@ -2,10 +2,17 @@ import React from 'react';
 import { Tooltip, Popover, Button, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import TaskQueueComponent from '@/components/pages/TaskQueue/TaskQueueComponent';
+<<<<<<< HEAD
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import Dictionary from '@/utils/Dictionary';
+import { GMT2UserTimeZone } from '@/utils/utils';
+=======
 import Dictionary from '@/utils/Dictionary';
 import { dateFormat, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { hasPermission } from '@/utils/Permission';
+>>>>>>> b1ce69d21acb6e86b1d9d2140b3a2f032180a815
 import { AGVType } from '@/config/config';
 import commonStyles from '@/common.module.less';
 
@@ -112,7 +119,7 @@ export default class TaskQueue extends React.PureComponent {
           if (!text) {
             return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
@@ -125,7 +132,7 @@ export default class TaskQueue extends React.PureComponent {
           if (!text) {
             return <FormattedMessage id="app.taskQueue.notAvailable" />;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {

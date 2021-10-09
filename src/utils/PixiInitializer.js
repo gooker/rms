@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { Simple } from '@/libs/simple';
 import { Viewport } from 'pixi-viewport';
 import { uniq, sortBy } from 'lodash';
-import { CellHeight, CellWidth, WorldScreenRatio } from '@/config/config';
+import { WorldScreenRatio, SpotSize } from '@/config/consts';
 
 export default class PixiBuilder {
   constructor(width, height) {
@@ -114,8 +114,8 @@ export default class PixiBuilder {
       const maxY = Ys[Ys.length - 1];
 
       // Map elements Area
-      const elementsWidth = maxX - minX + CellWidth;
-      const elementsHeight = maxY - minY + CellHeight;
+      const elementsWidth = maxX - minX + SpotSize.width;
+      const elementsHeight = maxY - minY + SpotSize.height;
 
       const worldWidth = elementsWidth * WorldScreenRatio;
       const worldHeight = elementsHeight * WorldScreenRatio;

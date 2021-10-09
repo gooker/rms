@@ -1,0 +1,54 @@
+@border: 1px solid #636060;
+
+.labelWidth {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.valueWidth {
+  display: flex;
+  flex: 4;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  border-left: @border;
+}
+
+.row {
+  display: flex;
+  height: 30px;
+  border: @border;
+  border-bottom: none;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  border: @border;
+}
+
+.toteCodes {
+  div {
+    &:last-child {
+      border-bottom: @border;
+    }
+  }
+}
+
+.toteHolding {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 60px;
+  border: @border;
+}
+
+.toteHoldingColumn {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}

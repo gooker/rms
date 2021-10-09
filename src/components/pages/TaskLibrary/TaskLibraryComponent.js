@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Table, Divider } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { Button, message, Table } from 'antd';
+import { formatMessage, dealResponse } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dealResponse } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
 import TaskSearch from './TaskSearch';
 import commonStyles from '@/common.module.less';

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Tooltip } from 'antd';
-import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
 import Dictionary from '@/utils/Dictionary';
-import { dateFormat, isStrictNull } from '@/utils/utils';
 import { hasPermission } from '@/utils/Permission';
+import { formatMessage, GMT2UserTimeZone, isStrictNull } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import ExecutionQueueComponent from '@/components/pages/TaskQueue/ExecutionQueueComponent';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 
@@ -112,7 +112,9 @@ export default class ExecutionQueue extends React.PureComponent {
             return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
           }
           return (
-            <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span style={{ width: '100%' }}>
+              {GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}
+            </span>
           );
         },
       },
@@ -127,7 +129,9 @@ export default class ExecutionQueue extends React.PureComponent {
             return <span>{formatMessage({ id: 'app.executionQ.notAvailable' })}</span>;
           }
           return (
-            <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+            <span style={{ width: '100%' }}>
+              {GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss')}
+            </span>
           );
         },
       },
@@ -172,7 +176,6 @@ export default class ExecutionQueue extends React.PureComponent {
   };
 
   filterDataSource = (dataSource = [], filterValue) => {
-
     const currrentFilterValue = {};
     if (!isStrictNull(filterValue.taskId)) {
       currrentFilterValue.taskId = filterValue.taskId;

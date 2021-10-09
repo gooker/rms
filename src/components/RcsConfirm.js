@@ -1,8 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/Lang';
-import { isNull } from '@/utils/utils';
+import { isNull, formatMessage } from '@/utils/utils';
 
 const { confirm } = Modal;
 
@@ -15,7 +14,7 @@ const { confirm } = Modal;
  * @param {*} onOk 确认回调
  * @param {*} onCancel 取消回调
  */
-const RcsConfirm = ({ content, okType, onOk, onCancel,okText,cancelText }) => {
+const RcsConfirm = ({ content, okType, onOk, onCancel, okText, cancelText }) => {
   const confirmConfig = {
     title: formatMessage({ id: 'app.tip.systemHint' }),
     icon: <ExclamationCircleOutlined />,

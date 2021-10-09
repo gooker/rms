@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import {  Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
+import { Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchAgvList,
   fetchToteAgvList,
@@ -173,7 +174,7 @@ class AgvListComponent extends Component {
     const route = `/${NameSpace[agvType]}/agv/agvRealTime`;
     history.push({
       pathname: route,
-      search:`agvId=${agvId}`,
+      search: `agvId=${agvId}`,
     });
     dispatch({ type: 'global/saveSelectedKeys', payload: [route] });
   };
@@ -269,7 +270,7 @@ class AgvListComponent extends Component {
           loading={loading}
           columns={getColumn(this.checkAgvDetail)}
           dataSource={this.filterData()}
-          rowKey={"id"}
+          rowKey={'id'}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,

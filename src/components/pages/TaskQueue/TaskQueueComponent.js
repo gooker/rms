@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import {  Badge, Row, Button, message } from 'antd';
+import { Badge, Row, Button, message } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchTaskQueueList,
-  fetchToteTaskQueueList,
-  fetchToteAgvOverallStatus,
   deleteTaskQueueItems,
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
@@ -18,7 +17,6 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import RcsConfirm from '@/components/RcsConfirm';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
-
 
 @connect()
 class TaskQueueComponent extends Component {
@@ -40,20 +38,13 @@ class TaskQueueComponent extends Component {
 
   getData = async () => {
     const { agvType } = this.props;
-    const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
 
     // 先获取等待任务数据
-    const taskQueueResponse =
-      agvType === 'Tote'
-        ? await fetchToteTaskQueueList(agvType)
-        : await fetchTaskQueueList(agvType, sectionId);
+    const taskQueueResponse = await fetchTaskQueueList(agvType);
 
     // 再获取小车状态总览信息
-    const agvOverallStatusResponse =
-      agvType === 'Tote'
-        ? await fetchToteAgvOverallStatus(agvType)
-        : await fetchAgvOverallStatus(agvType, sectionId);
+    const agvOverallStatusResponse = await fetchAgvOverallStatus(agvType);
     if (!dealResponse(taskQueueResponse) && !dealResponse(agvOverallStatusResponse)) {
       const dataSource = taskQueueResponse.map((record) => {
         const { redisTaskDTO, isLockAGV, isLockPod, isLockTargetCell } = record;
