@@ -22,3 +22,9 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# menu & authority
+/public/appInfo.json
+/public/menu.json
+/public/authority.json
+/public/version.txt
