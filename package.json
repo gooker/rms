@@ -4,7 +4,7 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "./node_modules/.bin/webpack-dev-server --config=config/webpack.config.dev.js",
+    "start": "./node_modules/.bin/webpack-dev-server serve --config=config/webpack.config.dev.js",
     "build": "node scripts/build.js",
     "analyzer": "node scripts/build.js --analyzer",
     "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
@@ -94,8 +94,8 @@
     "url-loader": "4.1.1",
     "webpack": "4.44.2",
     "webpack-bundle-analyzer": "^4.4.0",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "3.11.1",
+    "webpack-cli": "^4.9.0",
+    "webpack-dev-server": "^4.3.1",
     "xlsx": "^0.16.9"
   },
   "husky": {
