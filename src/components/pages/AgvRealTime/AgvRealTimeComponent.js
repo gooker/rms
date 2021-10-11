@@ -8,15 +8,15 @@ import {
   AimOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
-import { FormattedMessage, formatMessage } from '@/utils/Lang';
 import LabelComponent from '@/components/LabelComponent';
-import { dealResponse } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { dealResponse, formatMessage } from '@/utils/utils';
 import {
   fetchAgvList,
   fetchAgvInfo,
-  fetchAgvHardwareInfo,
   fetchAgvTaskList,
   fetchAgvErrorRecord,
+  fetchAgvHardwareInfo,
 } from '@/services/api';
 import commonStyles from '@/common.module.less';
 import RealTimeTab from './RealTimeTab';
@@ -209,8 +209,8 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                  <Row>
-                    <Col span={22}>
+                <Row>
+                  <Col span={22}>
                     <AGVActivityForm
                       onChange={(value) =>
                         this.setState({ recordSearchParams: value }, () =>
@@ -219,9 +219,8 @@ class AgvRealTimeComponent extends React.Component {
                       }
                       mode={'expanded'}
                     />
-                    </Col>
-
-                  </Row>
+                  </Col>
+                </Row>
 
                 <TaskRecordTab
                   agvType={agvType}

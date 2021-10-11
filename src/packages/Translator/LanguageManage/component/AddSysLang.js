@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Row, Col, Menu, Modal } from 'antd';
-import { formatMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';

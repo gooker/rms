@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, Divider } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import {
-  fetchExecutingTaskList,
-  fetchToteExecutingTaskList,
-  deleteExecutionQTasks,
-} from '@/services/api';
+import { formatMessage, dealResponse } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
 import TablewidthPages from '@/components/TablewidthPages';
-import { dealResponse } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -36,14 +32,7 @@ class ExecutionQueueComponent extends Component {
     const { agvType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     this.setState({ loading: true });
-    let response;
-    if (agvType === 'Tote') {
-      // TODO: 暂时兼容 之后要删除
-      response = await fetchToteExecutingTaskList(agvType, sectionId);
-    } else {
-      response = await fetchExecutingTaskList(agvType, sectionId);
-    }
-
+    let response = await fetchExecutingTaskList(agvType, sectionId);
     if (!dealResponse(response)) {
       const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
       this.setState({ dataSource });

@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
 import find from 'lodash/find';
 import { Table } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const TaskQueueTaskExpanderRow = memo(function TaskQueueTaskExpanderRow(props) {
   const { toteAGVTaskActionDTOS, toteTaskList } = props;

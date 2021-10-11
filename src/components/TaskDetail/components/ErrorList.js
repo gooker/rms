@@ -1,8 +1,8 @@
 import React from 'react';
 import { List, Col, Row } from 'antd';
-import { formatMessage,FormattedMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
+import { GMT2UserTimeZone, formatMessage } from '@/utils/utils';
 import ErrorCodeFault from './ErrorCodeFault';
-import { dateFormat } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
 import styles from '../CenterOs.module.less';
 
@@ -16,7 +16,7 @@ const DescriptionItem = ({ title, content, style }) => (
 const ErrorList = React.memo((props) => {
   const { agvErrorList } = props;
   const renderDescription = (record) => {
-    const {onDetail, errorCodes } = props;
+    const { onDetail, errorCodes } = props;
     const keyName = {};
     const extraData = () => {
       if (record.agvErrorType === 'SOFTWARE_ERR0R') {
@@ -45,7 +45,7 @@ const ErrorList = React.memo((props) => {
     };
     return (
       <Row key={record.uniqueKey}>
-         <Col span={12}>
+        <Col span={12}>
           {onDetail ? (
             <DescriptionItem
               title={
@@ -69,7 +69,9 @@ const ErrorList = React.memo((props) => {
         <Col span={12}>
           <DescriptionItem
             title={<span>{formatMessage({ id: 'app.taskDetail.firstTime' })}</span>}
-            content={<span>{dateFormat(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>}
+            content={
+              <span>{GMT2UserTimeZone(record.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+            }
           />
         </Col>
         <Col span={12}>
@@ -111,7 +113,7 @@ const ErrorList = React.memo((props) => {
   };
 
   return (
-    <div style={{width:'100%'}}>
+    <div style={{ width: '100%' }}>
       <List
         dataSource={agvErrorList}
         renderItem={(item) => (
@@ -119,7 +121,7 @@ const ErrorList = React.memo((props) => {
             <List.Item.Meta
               title={
                 <Row key={item.uniqueKey}>
-                  <Col span={12}>{dateFormat(item.updateTime).format('MM-DD HH:mm:ss')}</Col>
+                  <Col span={12}>{GMT2UserTimeZone(item.updateTime).format('MM-DD HH:mm:ss')}</Col>
                   <Col span={12}>{renderErrorName(item)}</Col>
                 </Row>
               }

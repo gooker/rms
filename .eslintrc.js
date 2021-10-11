@@ -23,10 +23,12 @@ module.exports = {
     'import/no-anonymous-default-export': 0,
     'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/no-static-element-interactions': 0,
+    'jsx-a11y/anchor-is-valid': 0,
+    'jsx-a11y/alt-text': 0,
 
     'no-unused-vars': 1,
     'no-debugger': 1,
     'no-console': 1,
-    // 'react-hooks/exhaustive-deps': 1,
+    'react-hooks/exhaustive-deps': 1,
   },
 };
