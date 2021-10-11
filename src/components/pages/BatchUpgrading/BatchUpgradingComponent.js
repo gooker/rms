@@ -11,6 +11,7 @@ import {
   upgradeAGV,
 } from '@/services/api';
 import TablewidthPages from '@/components/TablewidthPages';
+import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';
 import { dealResponse } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
@@ -26,6 +27,7 @@ class BatchUpgradingComponent extends Component {
     downloadFirmwareVisible: false,
     sectionId: window.localStorage.getItem('sectionId'),
     loading: false,
+    uploadVisible:false,// 上传
   };
 
   componentDidMount() {
@@ -92,6 +94,18 @@ class BatchUpgradingComponent extends Component {
     }
   };
 
+  //
+  analyzeFunction=async (evt)=>{
+  //  const data=  evt.target.result;
+    const respones = ''; //  '/wcs/file/upload';
+  
+    if (!dealResponse(respones)) {
+      this.setState({ uploadVisible: false }, this.getData);
+    }
+              
+
+  }
+
   //强制重置
   forceSet = (record) => {
     const _this = this;
@@ -116,8 +130,8 @@ class BatchUpgradingComponent extends Component {
   };
 
   render() {
-    const { loading, selectedRowKeys, selectedRow, downloadFirmwareVisible } = this.state;
-    const { getColumn, maintainFlag, uploadFlag, upgradeFlag, agvType } = this.props;
+    const {loading, selectedRowKeys, selectedRow, downloadFirmwareVisible } = this.state;
+    const { getColumn, maintainFlag, uploadFlag, upgradeFlag, agvType,uploadVisible } = this.props;
     return (
       <TablePageWrapper>
         <div>
@@ -195,6 +209,22 @@ class BatchUpgradingComponent extends Component {
             downloadFireware={this.downloadFireware}
           />
         </Modal>
+
+          {/***************************上传固件*****************************/}
+          <Modal
+            footer={null}
+            visible={uploadVisible}
+            onCancel={() => {
+              this.setState({
+                uploadVisible: false,
+              });
+            }}
+            destroyOnClose
+          >
+            <UploadUtil
+             analyzeFunction={this.analyzeFunction}
+            />
+          </Modal>
       </TablePageWrapper>
     );
   }
