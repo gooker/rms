@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Table } from 'antd';
+import { Button, message, Table,Divider } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
