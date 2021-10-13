@@ -87,12 +87,12 @@ class AgvRealTimeComponent extends React.Component {
     this.setState({ isFetching: false, agvRealtimeData, agvHardware, agvTask, agvErrorRecord });
   };
 
-  taskOnDetail = (taskId, taskAgvType) => {
-    const { dispatch, agvType: nameSpace } = this.props;
+  taskOnDetail = (taskId) => {
+    const { dispatch, agvType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType, nameSpace },
-    }).then(() => {});
+      payload: { taskId, taskAgvType: agvType },
+    });
   };
 
   // 分页 获取记录

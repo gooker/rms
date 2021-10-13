@@ -78,11 +78,11 @@ class ExecutionQueueComponent extends Component {
     this.setState({ selectedRowKeys, selectedRow });
   };
 
-  checkTaskDetail = (taskId, taskAgvType, agvType) => {
-    const { dispatch } = this.props;
+  checkTaskDetail = (taskId) => {
+    const { dispatch, agvType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType, agvType },
+      payload: { taskId, taskAgvType: agvType },
     });
   };
 

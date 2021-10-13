@@ -16,9 +16,7 @@ class ErrorRecordTab extends PureComponent {
                 agvErrorList={data.list}
                 errorCodes={allErrorDefinitions}
               />
-            ) : (
-              ''
-            )}
+            ) : null}
           </Row>
 
           <div style={{ position: 'absolute', bottom: 0, right: 10 }}>

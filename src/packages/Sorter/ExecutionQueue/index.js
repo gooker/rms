@@ -24,7 +24,7 @@ export default class ExecutionQueue extends React.PureComponent {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkTaskDetail(text, AGVType.Sorter);
+                  checkTaskDetail(text);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}

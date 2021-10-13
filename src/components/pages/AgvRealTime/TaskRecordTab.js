@@ -10,6 +10,7 @@ import {
 import { formatMessage, GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import styles from './index.module.less';
+import { AGVType } from '@/config/config';
 
 const taskStatusIcon = {
   New: {
@@ -47,7 +48,7 @@ class TaskRecordTab extends PureComponent {
             onClick={() => {
               const { onDetail } = this.props;
               if (onDetail) {
-                onDetail(record.taskId);
+                onDetail(record.taskId, AGVType.Sorter);
               }
             }}
           >
@@ -79,9 +80,7 @@ class TaskRecordTab extends PureComponent {
               <Timeline style={{ width: '78%' }} mode="alternate">
                 {this.renderTimeline(data.list || [])}
               </Timeline>
-            ) : (
-              ''
-            )}
+            ) : null}
           </Row>
           <div style={{ position: 'absolute', bottom: 0, right: 10 }}>
             <Pagination
