@@ -28,6 +28,12 @@ export default {
   'app.common.name': '名称',
   'app.common.remark': '备注',
 
+  // 小车类型
+  'app.agvType.LatentLifting': '潜伏车',
+  'app.agvType.Tote': '料箱车',
+  'app.agvType.ForkLifting': '叉车',
+  'app.agvType.Sorter': '分拣车',
+
   // direction --
   'app.direction': '方向',
   'app.direction.current': '当前方向',
@@ -63,7 +69,7 @@ export default {
   'app.button.turnOff': '关闭',
   'app.button.operation': '操作',
 
-  // AGV --
+  // AMR --
   'app.agv': '小车',
   'app.agv.id': '小车ID',
   'app.agv.ip': 'IP',
@@ -87,6 +93,8 @@ export default {
   'app.agvState.Error': '错误',
   'app.agvState.Connecting': '连接中',
   'app.agvState.Waiting': '等待',
+  'app.agvState.lowPower': '低电量',
+
   'app.activity.StandBy': '待命',
   'app.activity.TaskError': '失败',
   'app.activity.TaskExecuting': '执行中',
@@ -148,10 +156,35 @@ export default {
   'app.chargeManger.CONNECTING': '对接中',
   'app.chargeManger.CONNECTED': '对接成功',
 
+  // 电池类型
+  'app.batteryType.enumeration1': '磷酸铁锂',
+  'app.batteryType.enumeration2': '潜伏车(三元锂)',
+  'app.batteryType.enumeration3': '保留',
+  'app.batteryType.enumeration4': '分拣车(磷酸铁锂)',
+  'app.batteryType.enumeration5': '潜伏车1.2吨和料箱机器人(磷酸铁锂)',
+
+  // Common Tip
+  'app.required.agvId': '请选择小车ID',
+  'app.agv.getListFail': '获取小车列表失败',
+  'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
+  'app.taskAction.cancel.success': '取消任务成功',
+  'app.taskAction.cancel.fail': '取消任务失败',
+  'app.taskAction.redoTip': '重做: 任务重新开始, 重新分配车辆',
+  'app.taskAction.retryTip': '重发: 重算路径后下发小车',
+  'app.taskAction.resetTask.success': '重置任务指令下发成功',
+  'app.taskAction.resetTask.fail': '重置任务指令下发失败',
+  'app.taskAction.redoTask.success': '重做任务指令下发成功',
+  'app.taskAction.redoTask.fail': '重做任务指令下发失败',
+  'app.taskAction.cancelTask.success': '取消任务指令下发成功',
+  'app.taskAction.cancelTask.fail': '取消任务指令下发失败',
+  'app.taskAction.restoreTask.success': '恢复任务指令下发成功',
+  'app.taskAction.restoreTask.fail': '恢复任务指令下发失败',
+
   // times
   'app.common.day': '天',
   'app.common.hours': '时',
   'app.common.minutes': '分',
+  'app.common.seconds': '秒',
 
   // 上传
   'app.common.upload.dragUploadedFileToThisArea': '单击或拖动文件到该区域以上传',

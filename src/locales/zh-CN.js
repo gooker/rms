@@ -4,7 +4,6 @@ import common from './zh-CN/common';
 import agvList from './zh-CN/agvList';
 import request from './zh-CN/request';
 import taskType from './zh-CN/taskType';
-import enumerate from './zh-CN/enumerate';
 import agvRealTime from './zh-CN/agvRealTime';
 import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
@@ -26,7 +25,6 @@ export default {
   ...agvList,
   ...request,
   ...taskType,
-  ...enumerate,
   ...agvRealTime,
   ...chargingStrategy,
   ...systemParameters,

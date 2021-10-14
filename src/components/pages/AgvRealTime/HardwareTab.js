@@ -56,7 +56,7 @@ const HardwareTab = (props) => {
           <Col span={7}>
             <LabelComponent
               style={{ height: '30px' }}
-              label={formatMessage({ id: 'app.activity.firewareVersion' })}
+              label={formatMessage({ id: 'app.activity.hardwareVersion' })}
               children={element.hardwareVersion}
             />
           </Col>

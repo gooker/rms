@@ -8,6 +8,7 @@ import AgvTaskSteps from './components/AgvTaskSteps';
 import AgvTaskHistory from './components/AgvTaskHistorys';
 import DetailInfo from './components/DetailInfo';
 import TaskDetail from './TaskDetail';
+import { AGVType } from '@/config/config';
 
 const { red } = Dictionary('color');
 const { confirm } = Modal;
@@ -32,7 +33,7 @@ class Detail extends PureComponent {
           <span style={{ color: 'red', margin: '0px 10px' }}>
             {formatMessage({ id: 'app.taskDetail.retransmission' })}
           </span>
-          {formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.task' })}
         </span>
       ),
       content: (
@@ -42,10 +43,13 @@ class Detail extends PureComponent {
         </div>
       ),
       onOk() {
-        dispatch({ type: 'task/fetchRestartTask', payload: { sectionId, taskId } });
+        dispatch({
+          type: 'task/fetchRestartTask',
+          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+        });
       },
-      okText: formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
     });
   };
 
@@ -59,7 +63,7 @@ class Detail extends PureComponent {
           <span style={{ color: 'red', margin: '0px 10px' }}>
             {formatMessage({ id: 'app.taskDetail.restore' })}
           </span>
-          {formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.task' })}
         </span>
       ),
       content: (
@@ -69,10 +73,13 @@ class Detail extends PureComponent {
         </div>
       ),
       onOk() {
-        dispatch({ type: 'task/fetchRestoreTask', payload: { sectionId, taskId } });
+        dispatch({
+          type: 'task/fetchRestoreTask',
+          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+        });
       },
-      okText: formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
     });
   };
 
@@ -91,7 +98,7 @@ class Detail extends PureComponent {
           >
             {formatMessage({ id: 'app.taskDetail.redo' })}
           </span>
-          {formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.task' })}
         </span>
       ),
       content: (
@@ -101,22 +108,20 @@ class Detail extends PureComponent {
             <span style={{ marginRight: 10 }}>{taskId}</span>
           </div>
           <div>
-            <span
-              style={{
-                marginTop: 10,
-                color: red,
-              }}
-            >
+            <span style={{ marginTop: 10, color: red }}>
               {formatMessage({ id: 'app.taskDetail.makeSureRobotNotLoadedPodBeforeRedoing' })}
             </span>
           </div>
         </div>
       ),
       onOk() {
-        dispatch({ type: 'task/fetchResetTask', payload: { sectionId, taskId } });
+        dispatch({
+          type: 'task/fetchResetTask',
+          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+        });
       },
-      okText: formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
     });
   };
 
@@ -128,9 +133,9 @@ class Detail extends PureComponent {
         <span>
           {formatMessage({ id: 'app.taskDetail.makeSure' })}
           <span style={{ color: 'red', margin: '0px 10px' }}>
-            {formatMessage({ id: 'app.taskDetail.cancel' })}
+            {formatMessage({ id: 'app.button.cancel' })}
           </span>
-          {formatMessage({ id: 'app.taskDetail.task' })}
+          {formatMessage({ id: 'app.task' })}
         </span>
       ),
       content: (
@@ -140,10 +145,13 @@ class Detail extends PureComponent {
         </div>
       ),
       onOk() {
-        dispatch({ type: 'task/fetchCancelTask', payload: { sectionId, taskId } });
+        dispatch({
+          type: 'task/fetchCancelTask',
+          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+        });
       },
-      okText: formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
     });
   };
 
@@ -159,8 +167,8 @@ class Detail extends PureComponent {
           payload: { sectionId, taskId, holdingTote },
         });
       },
-      okText: formatMessage({ id: 'app.taskDetail.sure' }),
-      cancelText: formatMessage({ id: 'app.taskDetail.cancel' }),
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
     });
   };
 

@@ -89,7 +89,7 @@ class TaskDetail extends PureComponent {
                 forceStandBy(detailInfo.sectionId, detailInfo.taskId);
               }}
             >
-              <FormattedMessage id="app.button.reset" />
+              <FormattedMessage id="app.taskDetail.redo" />
             </Button>
           </Permission>
         )}
@@ -148,12 +148,12 @@ class TaskDetail extends PureComponent {
                 <div>
                   <div>
                     <Permission id="/map/monitor/taskDetail/taskDetail/reset">
-                      {formatMessage({ id: 'app.activity.detailActionTip1' })}
+                      {formatMessage({ id: 'app.taskAction.redoTip' })}
                     </Permission>
                   </div>
                   <div>
                     <Permission id="/map/monitor/taskDetail/taskDetail/repeat">
-                      {formatMessage({ id: 'app.activity.detailActionTip2' })}
+                      {formatMessage({ id: 'app.taskAction.retryTip' })}
                     </Permission>
                   </div>
                 </div>
@@ -271,7 +271,7 @@ class TaskDetail extends PureComponent {
                 <div style={{ display: 'flex', width: '30%' }}>
                   <Input defaultValue={detailInfo.toteHoldingCode} ref={this.toteHoldingInput} />
                   <Button type="primary" style={{ marginLeft: 10 }} onClick={this.confirmHolding}>
-                    <FormattedMessage id="app.taskDetail.sure" />
+                    <FormattedMessage id="app.button.confirm" />
                   </Button>
                 </div>
               </div>

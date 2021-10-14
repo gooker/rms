@@ -5,7 +5,8 @@ import { AGVType } from '@/config/config';
 const TaskAgvType = AGVType.Sorter;
 class AgvRealTime extends React.Component {
   render() {
-    return <AgvRealTimeComponent agvType={TaskAgvType} />;
+    const agvId = new URLSearchParams(new URL(window.location.href).hash).get('agvId');
+    return <AgvRealTimeComponent agvType={TaskAgvType} agvId={agvId} />;
   }
 }
 export default AgvRealTime;

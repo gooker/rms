@@ -103,19 +103,17 @@ export function isStandardApiResponse(response) {
 
 export function dealResponse(response, notification, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
-  if (response && response.code === '-1') {
-    const { data, message: errorMessage } = response;
+  if (response && isStandardApiResponse(response)) {
+    const { message: errorMessage } = response;
     const defaultMessage = formatMessage({ id: 'app.common.systemError' });
     message.error(errorMessage || failedMessage || defaultMessage);
-    if (data === 'logout') {
-      // history.push('/login');
-    }
     return true;
   }
 
   // 正常请求后返回false, 表示当前请求无错误
-  notification &&
+  if (notification) {
     message.success(successMessage || formatMessage({ id: 'app.common.operationFinish' }));
+  }
   return false;
 }
 

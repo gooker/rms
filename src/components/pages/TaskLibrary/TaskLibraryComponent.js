@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Button, message, Table,Divider } from 'antd';
+import { Button, message, Table, Divider } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
@@ -29,11 +29,16 @@ class TaskLibraryComponent extends Component {
     this.getAgvList();
   }
 
-  getData = async (values = {}) => {
-    const { agvType } = this.props;
+  /**
+   * 查询方法
+   * @param {*} values 查询条件
+   * @param {*} firstPage 查询成功后是否跳转到第一页
+   */
+  getData = async (values, firstPage) => {
     const {
       page: { currentPage, size },
     } = this.state;
+    const { agvType } = this.props;
 
     this.setState({ loading: true, selectedRows: [], selectedRowKeys: [] });
 
@@ -46,7 +51,7 @@ class TaskLibraryComponent extends Component {
     }
 
     const sectionId = window.localStorage.getItem('sectionId');
-    const params = { sectionId, current: currentPage, size, ...requestValues };
+    const params = { sectionId, current: !!firstPage ? 1 : currentPage, size, ...requestValues };
     const response = await fetchAgvTaskList(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
@@ -58,7 +63,7 @@ class TaskLibraryComponent extends Component {
   handleTableChange = (pagination) => {
     const page = { ...this.state.page, currentPage: pagination.current, size: pagination.pageSize };
     this.setState({ page }, () => {
-      this.getData();
+      this.getData(null, false);
     });
   };
 
@@ -114,30 +119,36 @@ class TaskLibraryComponent extends Component {
     const { cancel, getColumn } = this.props;
     return (
       <TablePageWrapper>
+        <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
         <div>
           <TaskSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
           <Divider className={commonStyles.divider} />
           {cancel && (
-            <Button disabled={selectedRowKeys.length === 0} onClick={this.openCancelTaskConfirm}>
+            <Button
+              disabled={selectedRowKeys.length === 0}
+              onClick={this.openCancelTaskConfirm}
+              style={{ marginBottom: 10 }}
+            >
               <FormattedMessage id={'app.taskDetail.cancelTask'} />
             </Button>
           )}
+          <Table
+            loading={loading}
+            scroll={{ x: 'max-content' }}
+            rowKey={(record) => record.taskId}
+            dataSource={dataSource}
+            columns={getColumn(this.checkDetail)}
+            rowSelection={{ selectedRowKeys, onChange: this.rowSelectChange }}
+            pagination={{
+              current: page.currentPage,
+              pageSize: page.size,
+              total: page.totalElements || 0,
+              showTotal: (total) =>
+                formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
+            }}
+            onChange={this.handleTableChange}
+          />
         </div>
-        <Table
-          loading={loading}
-          scroll={{ x: 'max-content' }}
-          rowKey={(record) => record.taskId}
-          dataSource={dataSource}
-          columns={getColumn(this.checkDetail)}
-          rowSelection={{ selectedRowKeys, onChange: this.rowSelectChange }}
-          pagination={{
-            current: page.currentPage,
-            pageSize: page.size,
-            total: page.totalElements || 0,
-            showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
-          }}
-          onChange={this.handleTableChange}
-        />
       </TablePageWrapper>
     );
   }

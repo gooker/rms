@@ -1,5 +1,5 @@
-// 小车列表
 export default {
+  // 小车列表
   'app.agv.addingTime': '加入时间',
   'app.agv.battery': '电量',
   'app.agv.batteryType': '电池类型',
@@ -24,7 +24,7 @@ export default {
   'app.agv.infoExport': '信息导出',
   'app.agv.exportHardwareInfo': '硬件信息导出',
   'app.agv.exportAgvInfo': '车辆信息导出',
-  'app.agv.hardwareError': 'AGV [{robotId}] 硬件信息丢失',
+  'app.agv.hardwareError': '车辆 [{robotId}] 硬件信息丢失',
   'app.agv.moveout': '移出地图',
   'app.agv.moveOut.confirm': '确认要将所选小车从地图移出吗',
   'app.agv.moveOut.success': '所选小车移出地图成功',

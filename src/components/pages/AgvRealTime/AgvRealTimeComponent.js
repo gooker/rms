@@ -45,7 +45,11 @@ class AgvRealTimeComponent extends React.Component {
   };
 
   componentDidMount() {
+    const { agvId } = this.props;
     this.fetchAgvList();
+    if (agvId) {
+      this.setState({ agvId }, this.fetchAgvMultivariateData);
+    }
   }
 
   fetchAgvList = async () => {

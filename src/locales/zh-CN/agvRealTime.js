@@ -65,7 +65,7 @@ export default {
   // 其他
   'app.activity.redoTip': '重做:任务重新开始，重新分配车辆',
   'app.activity.reSendTip': '重发:重算路径后下发小车',
-  'app.activity.fireWareVersion': '硬件版本',
+  'app.activity.hardwareVersion': '硬件版本',
   'app.activity.firmwareType': '固件类型',
   'app.activity.modelName': '模块名称',
   'app.activity.softwareVersion': '软件版本',

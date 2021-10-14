@@ -25,7 +25,7 @@ const TaskSearch = (props) => {
         );
         params.createDate = null;
       }
-      search({ ...values, ...params });
+      search({ ...values, ...params }, true);
     });
   }
 
@@ -108,7 +108,12 @@ const TaskSearch = (props) => {
                 </Button>
               </Col>
               <Col>
-                <Button htmlType="reset">
+                <Button
+                  htmlType="reset"
+                  onClick={() => {
+                    search({}, true);
+                  }}
+                >
                   <ReloadOutlined /> <FormattedMessage id="app.button.reset" />
                 </Button>
               </Col>

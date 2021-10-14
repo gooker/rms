@@ -8,6 +8,8 @@ import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';
 
+const { red, green, yellow } = Dictionary('color');
+
 const RealTimeTab = (props) => {
   const { data } = props;
 
@@ -39,10 +41,10 @@ const RealTimeTab = (props) => {
           content={
             <Row style={{ width: 200 }}>
               <Col span={12}>
-                <LabelComponent label={<span>redis</span>} children={<span>{origin}</span>} />
+                <LabelComponent label={'Redis'} children={origin} />
               </Col>
               <Col span={12}>
-                <LabelComponent label={<span>mong</span>} children={<span>{compare}</span>} />
+                <LabelComponent label={'MongoDB'} children={compare} />
               </Col>
             </Row>
           }
@@ -52,25 +54,6 @@ const RealTimeTab = (props) => {
         </Popover>
       );
     }
-  }
-
-  function renderAbovePodContent(data) {
-    return (
-      <span>
-        <span>{data.lockedPodId}</span>
-        {
-          <Button
-            // onClick={() => {
-            //   unbindPod(data.sectionId, data.robotId);
-            // }}
-            style={styles.suffixStyle}
-            size="small"
-          >
-            <FormattedMessage id="app.activity.unlocked" />
-          </Button>
-        }
-      </span>
-    );
   }
 
   function renderArray(data) {
@@ -98,12 +81,6 @@ const RealTimeTab = (props) => {
       return <span className={styles.leftfour}>{data[0]}</span>;
     } else {
       return null;
-    }
-  }
-
-  function renderAgvDirection() {
-    if (data.mongodbAGV) {
-      return getDirectionLocale(data.mongodbAGV.currentCellId);
     }
   }
 
@@ -157,8 +134,38 @@ const RealTimeTab = (props) => {
     }
   }
 
+  function renderVoltage(batteryVoltage) {
+    let batteryVoltageColor;
+    if (batteryVoltage > 47000) {
+      batteryVoltageColor = green;
+    } else if (batteryVoltage > 45000) {
+      batteryVoltageColor = yellow;
+    } else {
+      batteryVoltageColor = red;
+    }
+
+    return getSuffix(batteryVoltage / 1000, 'V', {
+      style: { color: batteryVoltageColor },
+    });
+  }
+
+  function renderBattery(battery) {
+    let batteryColor;
+    if (battery > 50) {
+      batteryColor = green;
+    } else if (battery > 10) {
+      batteryColor = yellow;
+    } else {
+      batteryColor = red;
+    }
+    return getSuffix(parseInt(battery), '%', {
+      style: { color: batteryColor },
+    });
+  }
+
   return (
     <Row style={{ width: '100%' }}>
+      {/* 左侧 */}
       <Col span={12}>
         {/* 小车ID */}
         <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
@@ -217,12 +224,16 @@ const RealTimeTab = (props) => {
 
        
       </Col>
+
+      {/* 右侧 */}
       <Col span={12}>
+        {/* 电压 */}
         <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
-          {data?.mongodbAGV?.batteryVoltage}
+          {data?.mongodbAGV?.batteryVoltage && renderVoltage(data.mongodbAGV.batteryVoltage)}
         </LabelComponent>
+        {/* 电量 */}
         <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
-          {data?.mongodbAGV?.battery}
+          {data?.mongodbAGV?.battery && renderBattery(data.mongodbAGV.battery)}
         </LabelComponent>
         {/* 当前速度 */}
         <LabelComponent label={formatMessage({ id: 'app.agv.speed' })}>
@@ -257,17 +268,13 @@ const RealTimeTab = (props) => {
             </span>
           }
         />
-
+        {/* 车头朝向 */}
         <LabelComponent
           label={<FormattedMessage id="app.agv.currentDirection" />}
           children={renderCompare(
             data.redisAGV && data.redisAGV.currentDirection,
-            data.mongodbAGV && data.currentDirection,
-            (value) => {
-              return formatMessage({
-                id: Dictionary('agvDirection', value),
-              });
-            },
+            data.mongodbAGV && data.mongodbAGV.currentDirection,
+            getDirectionLocale,
           )}
         />
 
@@ -326,8 +333,7 @@ const RealTimeTab = (props) => {
             ) : null
           }
         />
-        {/************临时不可走点************/}
-
+        {/* 临时不可走点 */}
         <LabelComponent
           label={<FormattedMessage id="app.activity.lockedTemporarySpots" />}
           children={

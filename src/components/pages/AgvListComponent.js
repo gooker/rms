@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
+import { Row, Select, Dropdown, Table, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -15,9 +15,11 @@ import { dealResponse, isNull } from '@/utils/utils';
 import history from '@/history';
 import { NameSpace } from '@/config/config';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtils';
+import { find } from 'lodash';
 import LabelComponent from '@/components/LabelComponent';
 import Dictionary from '@/utils/Dictionary';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import Package from '@/../package.json';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;

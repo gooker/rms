@@ -3,12 +3,13 @@ import { isNull } from './utils';
 const DictionaryDataSource = {
   // 小车状态
   agvStatus: {
-    Error: 'app.activity.Error',
-    Offline: 'app.activity.Offline',
-    StandBy: 'app.activity.StandBy',
-    Working: 'app.activity.Working',
-    Charging: 'app.activity.Charging',
-    Connecting: 'app.activity.Connecting',
+    Error: 'app.agvState.Error',
+    Offline: 'app.agvState.Offline',
+    StandBy: 'app.agvState.StandBy',
+    Working: 'app.agvState.Working',
+    Charging: 'app.agvState.Charging',
+    Connecting: 'app.agvState.Connecting',
+    Waiting: 'app.agvState.Waiting',
   },
 
   // 充电桩方向
@@ -101,6 +102,10 @@ const DictionaryDataSource = {
     FORK_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
     FORK_REST_ON_REST_CELL: 'app.taskType.REST_UNDER_POD',
     FORK_POD_TO_TARGET: 'app.taskType.FORK_POD_TO_TARGET',
+
+    // 分拣车
+    ROLLER_FETCH: 'app.taskType.ROLLER_FETCH',
+    ROLLER_PUT: 'app.taskType.ROLLER_PUT',
   },
 
   // 业务颜色

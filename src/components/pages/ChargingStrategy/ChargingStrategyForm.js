@@ -316,7 +316,7 @@ const ChargingStrategyForm = (props) => {
                     <Input
                       value={agvMinChargingTime}
                       style={{ marginTop: 5 }}
-                      addonAfter={formatMessage({ id: 'app.common.day' })}
+                      addonAfter={formatMessage({ id: 'app.common.seconds' })}
                       onChange={(ev) => {
                         setMinChargingTime(ev.target.value);
                       }}

@@ -6,6 +6,7 @@ import {
   fetchRestoreTask,
   fetchAgvErrorRecord,
 } from '@/services/api';
+import { formatMessage } from '@/utils/Lang';
 import { dealResponse } from '@/utils/utils';
 
 export default {
@@ -61,43 +62,63 @@ export default {
       });
     },
 
-    *fetchRestartTask({ payload, then }, { call }) {
-      const response = yield call(fetchRestartTask, payload);
-      if (dealResponse(response, 1, '重置务操作下发成功')) {
+    *fetchRestartTask({ payload }, { call }) {
+      const { agvType, ...rest } = payload;
+      const response = yield call(fetchRestartTask, agvType, rest);
+      if (
+        dealResponse(
+          response,
+          true,
+          formatMessage({ id: 'app.taskAction.resetTask.success' }),
+          formatMessage({ id: 'app.taskAction.resetTask.fail' }),
+        )
+      ) {
         return;
-      }
-      if (then) {
-        then();
       }
     },
 
-    *fetchResetTask({ payload, then }, { call }) {
-      const response = yield call(fetchResetTask, payload);
-      if (dealResponse(response, 1, '重做任务指令下发成功')) {
+    *fetchResetTask({ payload }, { call }) {
+      const { agvType, ...rest } = payload;
+      const response = yield call(fetchResetTask, agvType, rest);
+      if (
+        dealResponse(
+          response,
+          true,
+          formatMessage({ id: 'app.taskAction.redoTask.success' }),
+          formatMessage({ id: 'app.taskAction.redoTask.fail' }),
+        )
+      ) {
         return;
-      }
-      if (then) {
-        then();
       }
     },
 
-    *fetchCancelTask({ payload, then }, { call }) {
-      const response = yield call(fetchCancelTask, payload);
-      if (dealResponse(response, 1, '取消任务指令下发成功')) {
+    *fetchCancelTask({ payload }, { call }) {
+      const { agvType, ...rest } = payload;
+      const response = yield call(fetchCancelTask, agvType, rest);
+      if (
+        dealResponse(
+          response,
+          true,
+          formatMessage({ id: 'app.taskAction.cancelTask.success' }),
+          formatMessage({ id: 'app.taskAction.cancelTask.fail' }),
+        )
+      ) {
         return;
-      }
-      if (then) {
-        then();
       }
     },
 
-    *fetchRestoreTask({ payload, then }, { call }) {
-      const response = yield call(fetchRestoreTask, payload);
-      if (dealResponse(response, 1, '任务恢复指令下发完成')) {
+    *fetchRestoreTask({ payload }, { call }) {
+      const { agvType, ...rest } = payload;
+      const response = yield call(fetchRestoreTask, agvType, rest);
+      if (
+        dealResponse(
+          response,
+          true,
+          formatMessage({ id: 'app.taskAction.restoreTask.success' }),
+          formatMessage({ id: 'app.taskAction.restoreTask.fail' }),
+        )
+      ) {
         return;
-      }
-      if (then) {
-        then();
       }
     },
   },
