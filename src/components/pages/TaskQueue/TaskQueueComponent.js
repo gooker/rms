@@ -235,6 +235,7 @@ class TaskQueueComponent extends Component {
             selectedRowKeys,
             onChange: this.onSelectChange,
           }}
+          rowKey={(record) => record.taskId}
         />
 
         {/*************************调整优先级****************************/}

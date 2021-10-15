@@ -8,8 +8,7 @@ export default {
 
   'menu.agv': 'AGV管理',
   'menu.agv.agvList': 'AGV列表',
-  'menu.agv.activityLogging':'小车监控',
-  'menu.agv.agvRealTime': '小车监控',
+  'menu.agv.agvRealTime': '小车详情',
   'menu.agv.logDownLoad': '日志下载',
   'menu.agv.batchFirmwareUpgrade': '批量升级',
   'menu.agv.firmwareUpgrade': '固件升级',
@@ -66,7 +65,7 @@ export default {
 
   'menu.sourceManage': '资源管理',
   'menu.sourceManage.latentPod': '潜伏货架',
-  'menu.sourceManage.latentPod.latentPodMange': '货架管理',// mixrobot 下的三级目录
+  'menu.sourceManage.latentPod.latentPodMange': '货架管理', // mixrobot 下的三级目录
   'menu.sourceManage.latentPod.latentPodAssign': '货架分配',
   'menu.sourceManage.tote': '料箱',
   'menu.sourceManage.tote.toteManagement': '料箱管理',
@@ -97,7 +96,7 @@ export default {
   // tote
 
   'menu.controlCenter.totePoolTask': '料箱池任务',
-  'menu.pod': '货架管理',// 这个是一级目录
+  'menu.pod': '货架管理', // 这个是一级目录
   'menu.pod.podRowModelBaseData': '尺寸定义',
   'menu.pod.podRowModelManager': '货架列模板',
   'menu.pod.rackLayout': '货架布局',

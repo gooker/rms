@@ -272,12 +272,12 @@ class AgvListComponent extends Component {
           loading={loading}
           columns={getColumn(this.checkAgvDetail)}
           dataSource={this.filterData()}
-          rowKey={'id'}
           rowSelection={{
             selectedRowKeys,
             onChange: this.onSelectChange,
           }}
           expandedRowRender={expandedRowRender}
+          rowKey={(record) => record.id}
         />
       </TablePageWrapper>
     );

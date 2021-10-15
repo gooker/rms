@@ -27,8 +27,7 @@ class AGVActivityForm extends Component {
     }
   };
   render() {
-    const { defaultValue, mode } = this.props;
-
+    const { defaultValue, mode, disabled } = this.props;
     return (
       <Form
         layout="inline"
@@ -43,7 +42,11 @@ class AGVActivityForm extends Component {
                 name="createDate"
                 initialValue={defaultValue ? defaultValue.createDate : null}
               >
-                <RangePicker showTime={{ format: 'HH:mm' }} format="YYYY-MM-DD HH:mm" />
+                <RangePicker
+                  disabled={disabled}
+                  showTime={{ format: 'HH:mm' }}
+                  format="YYYY-MM-DD HH:mm"
+                />
               </Form.Item>
             </Col>
           </Row>
@@ -71,7 +74,11 @@ class AGVActivityForm extends Component {
                       name="createDate"
                       initialValue={defaultValue ? defaultValue.createDate : null}
                     >
-                      <RangePicker showTime={{ format: 'HH:mm' }} format="YYYY-MM-DD HH:mm" />
+                      <RangePicker
+                        showTime={{ format: 'HH:mm' }}
+                        format="YYYY-MM-DD HH:mm"
+                        disabled={disabled}
+                      />
                     </Form.Item>
                   </span>
                 }
@@ -85,8 +92,9 @@ class AGVActivityForm extends Component {
                       initialValue={defaultValue ? defaultValue.agvTaskType : []}
                     >
                       <Select
-                        mode="multiple"
+                        disabled={disabled}
                         allowClear
+                        mode="multiple"
                         maxTagTextLength={2}
                         maxTagCount={1}
                         options={(function () {
@@ -113,7 +121,13 @@ class AGVActivityForm extends Component {
                       name="taskStatus"
                       initialValue={defaultValue ? defaultValue.activitySearchParams : []}
                     >
-                      <Select mode="multiple" allowClear maxTagTextLength={2} maxTagCount={1}>
+                      <Select
+                        disabled={disabled}
+                        mode="multiple"
+                        allowClear
+                        maxTagTextLength={2}
+                        maxTagCount={1}
+                      >
                         <Option key="New" value="New">
                           <FormattedMessage id="app.activity.TaskNew" />
                         </Option>

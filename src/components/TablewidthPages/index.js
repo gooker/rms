@@ -5,7 +5,6 @@ import commonStyles from '@/common.module.less';
 
 export default class TablewidthPages extends Component {
   render() {
-    // const { loading, columns, dataSource, rowSelection,expandedRowRender, rowKey } = this.props;
     return (
       <div className={commonStyles.divContent}>
         <Table

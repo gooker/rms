@@ -122,6 +122,7 @@ class ExecutionQueueComponent extends Component {
         <TablewidthPages
           loading={loading}
           columns={getColumn(this.checkTaskDetail)}
+          rowKey={(record) => record.taskId}
           dataSource={this.filterTableList()}
           rowKey={(record) => record.taskId}
           rowSelection={{

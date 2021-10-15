@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import LabelComponent from '@/components/LabelComponent';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import {
   fetchAgvList,
   fetchAgvInfo,
@@ -53,10 +53,10 @@ class AgvRealTimeComponent extends React.Component {
   }
 
   fetchAgvList = async () => {
-    const { agvType ,location} = this.props;
+    const { agvType, location } = this.props;
     if (location && location?.search) {
-      const robotId=location.search.split("=")[1];
-      this.setState({ agvId: robotId});
+      const robotId = location.search.split('=')[1];
+      this.setState({ agvId: robotId });
     }
     const sectionId = window.localStorage.getItem('sectionId');
     const response = await fetchAgvList(agvType, sectionId);
@@ -216,6 +216,7 @@ class AgvRealTimeComponent extends React.Component {
                 <Row>
                   <Col span={22}>
                     <AGVActivityForm
+                      disabled={isNull(agvId)}
                       onChange={(value) =>
                         this.setState({ recordSearchParams: value }, () =>
                           this.getRecords('record'),
@@ -247,6 +248,7 @@ class AgvRealTimeComponent extends React.Component {
                 }
               >
                 <AGVActivityForm
+                  disabled={isNull(agvId)}
                   onChange={(value) =>
                     this.setState({ errorSearchParams: value }, () => this.getRecords('error'))
                   }
