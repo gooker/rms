@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, Spin } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/utils';
 import SystemParams from '@/components/SystemParams';
-import { fetchSystemParamFormData, updateSystemParams } from '@/services/mixrobot';
+import { fetchSystemParamFormData, updateSystemParams } from '@/services/api';
 
 export default class SystemParamsManager extends Component {
   state = {
@@ -30,7 +30,7 @@ export default class SystemParamsManager extends Component {
   submit = async (value) => {
     const { agvType } = this.props;
     const responseData = await updateSystemParams(agvType, value);
-    if (!dealResponse(responseData, 1, formatMessage({ id: 'app.common.operationFinish' }))) {
+    if (!dealResponse(responseData, true, formatMessage({ id: 'app.common.operationFinish' }))) {
       this.getData();
     }
   };

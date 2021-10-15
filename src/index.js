@@ -40,7 +40,6 @@ app.model(simulatorModel);
 // 4. 启动
 const DvaProvider = app.create();
 
-//   不从Iframe加载
 ReactDOM.render(
   <DvaProvider>
     <App />

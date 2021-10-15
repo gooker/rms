@@ -1,6 +1,21 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
+export async function fetchAllTaskTypes() {
+  return request(`/${NameSpace.Coordinator}/simulator/getTaskTypeByRobot`, {
+    method: 'GET',
+  });
+}
+
+// ************************************** 国际化  ************************************** //
+export async function fetchLanguageByAppCode(params) {
+  return request(`/translation/getTranslationByParam`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// ************************************** 用户管理  ************************************** //
 //获取当前登陆对象
 export async function getCurrentUser() {
   return request('/sso/user/getUser', {
