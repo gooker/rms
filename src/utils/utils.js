@@ -702,3 +702,11 @@ export function getToteLayoutBaseParam(agvDirection, side) {
   }
   return { angle, XBase, YBase, offset, adapte };
 }
+
+export function getURLSearchParam(key) {
+  const vars = {};
+  window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
+    vars[key] = value;
+  });
+  return vars[key];
+}
