@@ -353,7 +353,13 @@ module.exports = function (webpackEnv, useAnalyzer) {
                   importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                   modules: {
-                    localIdentName: '[[local]-[hash:5]',
+                    /**
+                     * [path] 表示样式表相对于项目根目录所在路径
+                     * [name] 表示样式表文件名称
+                     * [local] 表示样式的类名定义名称
+                     * [hash:length] 表示32位的hash值
+                     */
+                    localIdentName: '[local]-[hash:5]',
                   },
                 },
                 'less-loader',
