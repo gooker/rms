@@ -46,6 +46,7 @@ export default {
   'app.chargeStrategy.cancelChargerAndReceiveTaskTip': '小车取消充电并开始接任务的最低电量',
 
   'app.chargeStrategy.defaultConfig': '默认配置',
+  'app.chargeStrategy.defaultConfig.fetch.fail': '获取默认配置信息失败',
   'app.chargeStrategy.recommendedConfigOfLithiumIron': '锂电推荐配置',
 
   'app.chargeStrategy.save.success': '保存充电策略成功',

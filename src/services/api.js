@@ -237,7 +237,7 @@ export async function getCurrentChargerType(agvType) {
 // 保存充电策略
 export async function saveChargeStrategy(agvType, params) {
   return request(`/${NameSpace[agvType]}/charger/updateChargingStrategy`, {
-    method: `POST`,
+    method: 'POST',
     data: params,
   });
 }

@@ -18,14 +18,13 @@ const ChargingStrategyComponent = (prop) => {
   const { agvType } = prop;
 
   const [spinning, setSpinning] = useState(false);
+  const [activeKey, setActiveKey] = useState('Normal'); // Tab
+  const [current, setCurrent] = useState(false); // 当前正在使用的策略
+  const [chargeStrategy, setChargeStrategy] = useState(null); // 当前策略详情
   const [idleChargingStrategyVisible, setIdleChargingStrategyVisible] = useState(false);
-  const [status, setStatus] = useState(false);
-  const [activeKey, setActiveKey] = useState('Normal');
-  const [chargeStrategy, setChargeStrategy] = useState(null);
 
   useEffect(() => {
     refresh();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function refresh() {
@@ -35,7 +34,7 @@ const ChargingStrategyComponent = (prop) => {
         getCurrentChargerType(agvType),
         getChargeStrategy(agvType, activeKey),
       ]);
-      setStatus(currentStatus === 'Normal');
+      setCurrent(currentStatus);
       setChargeStrategy(currentStrategy);
     } catch (error) {
       //
@@ -51,7 +50,7 @@ const ChargingStrategyComponent = (prop) => {
           <FormattedMessage id="app.chargeStrategy.currentStatus" />:
         </span>
         <span style={{ marginLeft: 5, zoom: 1.5, color: '#2FC25B' }}>
-          {status ? (
+          {current === 'Normal' ? (
             <FormattedMessage id="app.chargeStrategy.normal" />
           ) : (
             <FormattedMessage id="app.chargeStrategy.idleHours" />

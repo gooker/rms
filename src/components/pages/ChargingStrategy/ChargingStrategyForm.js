@@ -34,17 +34,22 @@ const ChargingStrategyForm = (props) => {
     refreshState(data);
   }, [data]);
 
+  // 默认配置
   async function configDefaultValue() {
-    const response = await getDefaultChargingStrategy();
+    const response = await getDefaultChargingStrategy(agvType);
     if (!dealResponse(response)) {
+      response.id = strategyId;
       refreshState(response);
+    } else {
+      message.error(formatMessage({ id: 'app.chargeStrategy.defaultConfig.fetch.fail' }));
     }
   }
 
+  // 锂电池推荐配置
   function configRecommendValue() {
-    setChargingVoltageMinValue(46.5);
-    setFullChargingVoltageMaxValue(53.5);
-    setFullChargingBatteryMaxValue(99);
+    setChargingVoltageMinValue(46.5); // 起始电压
+    setFullChargingVoltageMaxValue(53.5); // 满充电压
+    setFullChargingBatteryMaxValue(99); // 满充电量
   }
 
   function refreshState(data) {
@@ -73,7 +78,7 @@ const ChargingStrategyForm = (props) => {
     const sectionId = window.localStorage.getItem('sectionId');
     const params = {
       type,
-      sectionId: sectionId,
+      sectionId,
       id: strategyId,
       agvMinChargingTime,
       robotFullChargingDuration,
