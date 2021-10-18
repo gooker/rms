@@ -269,7 +269,7 @@ const ChargingStrategyForm = (props) => {
                     <Input
                       style={{ marginTop: 5 }}
                       value={robotNormalChargingMaxTimes}
-                      addonAfter={formatMessage({ id: 'app.common.day' })}
+                      addonAfter={formatMessage({ id: 'app.common.times' })}
                       onChange={(ev) => {
                         setNormalChargingMaxTimes(ev.target.value);
                       }}

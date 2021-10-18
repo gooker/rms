@@ -181,8 +181,8 @@ class AgvListComponent extends Component {
     dispatch({ type: 'global/saveSelectedKeys', payload: [route] });
   };
 
-  onSelectChange = (selectedRowKeys, selectedRow) => {
-    this.setState({ selectedRowKeys, selectedRow });
+  onSelectChange = (selectedRowKeys, selectedRows) => {
+    this.setState({ selectedRowKeys, selectedRows });
   };
 
   render() {
@@ -262,9 +262,8 @@ class AgvListComponent extends Component {
             </LabelComponent>
           </Row>
           <Row style={{ flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" ghost onClick={this.getData}>
-              <RedoOutlined />
-              <FormattedMessage id="app.button.refresh" />
+            <Button type="primary" onClick={this.getData}>
+              <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </Row>
         </Row>

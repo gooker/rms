@@ -185,6 +185,7 @@ export default {
   'app.common.hours': '时',
   'app.common.minutes': '分',
   'app.common.seconds': '秒',
+  'app.common.times': '次',
 
   // 上传
   'app.common.upload.dragUploadedFileToThisArea': '单击或拖动文件到该区域以上传',
