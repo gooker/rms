@@ -353,7 +353,7 @@ module.exports = function (webpackEnv, useAnalyzer) {
                   importLoaders: 3,
                   sourceMap: isEnvProduction && shouldUseSourceMap,
                   modules: {
-                    localIdentName: '[name]-[local]-[hash:5]',
+                    localIdentName: '[[local]-[hash:5]',
                   },
                 },
                 'less-loader',

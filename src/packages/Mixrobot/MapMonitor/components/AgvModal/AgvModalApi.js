@@ -1,7 +1,5 @@
 import request from '@/utils/request';
-import * as Config from '@/config/config';
-
-const { AgvApiNameSpace } = Config;
+import { ApiNameSpace } from '@/config/config';
 
 // 小车空跑
 export async function fetchAgvEmptyRun(params, nameSpace) {
@@ -100,7 +98,7 @@ export async function fetchSwitchManualMode(params, namespace) {
 
 // 获取料箱车料箱信息
 export async function fetchToteBins(params) {
-  return request(`/${AgvApiNameSpace.Tote}/factory/getRobotToteList`, {
+  return request(`/${ApiNameSpace.Tote}/factory/getRobotToteList`, {
     method: 'GET',
     data: params,
   });
@@ -108,7 +106,7 @@ export async function fetchToteBins(params) {
 
 // 获取红外料箱池的小车预分配任务
 export async function fetchTotePoolCodes(params) {
-  return request(`/${AgvApiNameSpace.Tote}/pool/getToteCodeByAGVId`, {
+  return request(`/${ApiNameSpace.Tote}/pool/getToteCodeByAGVId`, {
     method: 'GET',
     data: params,
   });
@@ -117,14 +115,14 @@ export async function fetchTotePoolCodes(params) {
 // 查询小车载货情况
 // http://apidoc.mushiny.com:8080/web/#/21?page_id=1347
 export async function fetchForkLiftLoad(robotId) {
-  return request(`/${AgvApiNameSpace.ForkLifting}/storage/queryAgvLoad/${robotId}`, {
+  return request(`/${ApiNameSpace.ForkLifting}/storage/queryAgvLoad/${robotId}`, {
     method: 'GET',
   });
 }
 
 // 获取当前小车实时运行信息
 export async function fetchAgvRunningInfo(params) {
-  return request(`/${AgvApiNameSpace.Coordinator}/problemHandling/getAgvErrorMessage`, {
+  return request(`/${ApiNameSpace.Coordinator}/problemHandling/getAgvErrorMessage`, {
     method: 'GET',
     data: params,
   });

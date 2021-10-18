@@ -10,6 +10,54 @@ import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, ToteOffset } from '@/config/consts';
 import requestorStyles from '@/packages/Mixrobot/Requestor/requestor.less';
 
+/**
+ * 将服务器时间转化成本地时间
+ * @param {*} value
+ * @returns
+ */
+export function dateFormat(value) {
+  // 获取服务器端的时区偏移量
+  let date = null;
+  if (value == null) {
+    return {
+      format: () => {
+        return '';
+      },
+    };
+  }
+
+  // 当前地区时区
+  let localTimeZone = 'GMT';
+  if (sessionStorage.getItem('timeZone') != null) {
+    localTimeZone = sessionStorage.getItem('timeZone');
+  }
+
+  // 获取当前时区偏移量
+  moment.tz.setDefault(localTimeZone); // 将服务器的时间和服务器返回的时区转回成带有时区的时间格式
+  if (localStorage.getItem('userTimeZone') != null) {
+    date = new moment(value).tz(localStorage.getItem('userTimeZone'));
+  } else {
+    date = new moment(value).tz(moment.tz.guess());
+  }
+  if (date == null) {
+    return {
+      format: () => {
+        return '';
+      },
+    };
+  }
+  return date;
+}
+
+export function getBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
+}
+
 export function isItemOfArray(baseArray, array) {
   let result = false;
   for (let index = 0; index < array.length; index++) {

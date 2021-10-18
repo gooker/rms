@@ -1,12 +1,12 @@
 import React from 'react';
 import { Badge, Tooltip } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { formatMessage, dateFormat } from '@/utils/utils';
 import TaskLibraryComponent from '@/components/pages/TaskLibrary/TaskLibraryComponent';
 import { hasPermission } from '@/utils/Permission';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
-import { TaskStateBageType } from '@/consts';
+import { TaskStateBageType } from '@/config/consts';
 
 export default class TaskLibrary extends React.PureComponent {
   getColumn = (checkDetail) => {

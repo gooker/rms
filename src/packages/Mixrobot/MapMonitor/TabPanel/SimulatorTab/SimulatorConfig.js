@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import intl from 'react-intl-universal';
 import { Input, Button, Col, Drawer, Form, InputNumber, Row } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import * as Config from '@/config/config';
+import { AGVType } from '@/config/config';
 
 const layout = {
   labelCol: { span: 12 },
@@ -27,7 +27,7 @@ export default class SimulatorConfig extends Component {
     const { validateFields } = this.formRef.current;
     validateFields().then((value) => {
       let obj = null;
-      if (robotType === Config.AGVType.LatentLifting) {
+      if (robotType === AGVType.LatentLifting) {
         obj = {
           robotType,
           consumePowerSpeed: value.consumePowerSpeed,
@@ -60,7 +60,7 @@ export default class SimulatorConfig extends Component {
             },
           },
         };
-      } else if (robotType === Config.AGVType.Tote) {
+      } else if (robotType === AGVType.Tote) {
         obj = {
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,
@@ -90,7 +90,7 @@ export default class SimulatorConfig extends Component {
             },
           },
         };
-      } else if (robotType === Config.AGVType.ForkLifting) {
+      } else if (robotType === AGVType.ForkLifting) {
         obj = {
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,
@@ -122,7 +122,7 @@ export default class SimulatorConfig extends Component {
             },
           },
         };
-      } else if (robotType === Config.AGVType.Sorter) {
+      } else if (robotType === AGVType.Sorter) {
         obj = {
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,

@@ -4,7 +4,7 @@ import { dateFormat } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/components/pages/TaskPool/TaskPoolComponent';
 import { AGVType } from '@/config/config';
-import { TaskStateBageType } from '@/consts';
+import { TaskStateBageType } from '@/config/consts';
 
 const statusTransform = {
   New: 'New',

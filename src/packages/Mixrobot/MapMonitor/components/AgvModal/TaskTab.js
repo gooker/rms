@@ -8,9 +8,8 @@ import { Permission } from '@/utils/Permission';
 import { fetchCancelTask, fetchRestartTask } from './AgvModalApi';
 import { fetchAgvInfoByAgvId } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
-import * as Config from '@/config/config';
+import { ApiNameSpace } from '@/config/config';
 
-const { AgvApiNameSpace } = Config;
 const FormItemLayout = {
   labelCol: { span: 5 },
   wrapperCol: { span: 19 },
@@ -36,7 +35,7 @@ const TaskTab = (props) => {
 
   async function fetchData() {
     setLoading(true);
-    const response = await fetchAgvInfoByAgvId({ sectionId, agvId }, AgvApiNameSpace[agvType]);
+    const response = await fetchAgvInfoByAgvId({ sectionId, agvId }, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       setCurrentTask({});
     } else {
@@ -59,7 +58,7 @@ const TaskTab = (props) => {
   // 重发任务
   function reStart() {
     const params = { sectionId, taskId: currentTask.currentTaskId };
-    const response = fetchRestartTask(params, AgvApiNameSpace[agvType]);
+    const response = fetchRestartTask(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       message.error(intl.formatMessage({ id: 'app.monitor.modal.AGV.tip.restartTaskFail' }));
     } else {
@@ -71,7 +70,7 @@ const TaskTab = (props) => {
   // 取消任务
   async function cancelTask() {
     const params = { sectionId, taskId: currentTask.currentTaskId };
-    const response = await fetchCancelTask(params, AgvApiNameSpace[agvType]);
+    const response = await fetchCancelTask(params, ApiNameSpace[agvType]);
     if (response === null) {
       message.success(intl.formatMessage({ id: 'app.monitor.modal.AGV.tip.cancelTaskSuccess' }));
       fetchData();

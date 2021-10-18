@@ -15,10 +15,10 @@ import {
   fetchSwitchManualMode,
 } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
-import * as Config from '@/config/config';
+import { ApiNameSpace } from '@/config/config';
+import { AGVState } from '@/config/consts';
 import { hasPermission, Permission } from '@/utils/Permission';
 
-const { AgvApiNameSpace, AGVState } = Config;
 const FormItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };
 
 const ActionTab = (props) => {
@@ -36,7 +36,7 @@ const ActionTab = (props) => {
 
   async function fetchData() {
     setLoading(true);
-    const response = await fetchAgvInfoByAgvId({ sectionId, agvId }, AgvApiNameSpace[agvType]);
+    const response = await fetchAgvInfoByAgvId({ sectionId, agvId }, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       setMongodbAGV({});
     } else {
@@ -58,7 +58,7 @@ const ActionTab = (props) => {
   // 小车退出错误状态
   async function forceAgvStandBy() {
     const params = { sectionId, agvId };
-    const response = fetchForceStandBy(params, AgvApiNameSpace[agvType]);
+    const response = fetchForceStandBy(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.monitor.modal.AGV.tip.forceStandbyFail' }));
     } else {
@@ -70,7 +70,7 @@ const ActionTab = (props) => {
   // 将小车移出地图(在已离线情况下)
   async function removeAgvFromMap() {
     const params = [agvId];
-    const response = fetchMoveoutAGVs(params, AgvApiNameSpace[agvType]);
+    const response = fetchMoveoutAGVs(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.monitor.modal.AGV.tip.moveoutFail' }));
     } else {
@@ -85,7 +85,7 @@ const ActionTab = (props) => {
       robotIds: [agvId],
       rawCommandHex: hexCommand,
     };
-    const response = fetchSendAgvHexCommand(params, AgvApiNameSpace[agvType]);
+    const response = fetchSendAgvHexCommand(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       message.error(
         formatMessage({ id: 'app.monitor.modal.AGV.tip.customCommandSendFail' }, { actionContent }),
@@ -107,7 +107,7 @@ const ActionTab = (props) => {
       agvId,
       disabled: !mainTain,
     };
-    const response = fetchMaintain(params, AgvApiNameSpace[agvType]);
+    const response = fetchMaintain(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       message.error(
         !mainTain
@@ -131,7 +131,7 @@ const ActionTab = (props) => {
       agvId,
       manualMode: !manualMode,
     };
-    const response = fetchSwitchManualMode(params, AgvApiNameSpace[agvType]);
+    const response = fetchSwitchManualMode(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       message.error(
         !manualMode
@@ -150,7 +150,7 @@ const ActionTab = (props) => {
 
   function toRest() {
     const params = { sectionId, robotId: agvId };
-    fetchAGVToRest(params, AgvApiNameSpace[agvType]).then((response) => {
+    fetchAGVToRest(params, ApiNameSpace[agvType]).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.monitor.modal.controller.toRest.fail' }));
       } else {
@@ -161,7 +161,7 @@ const ActionTab = (props) => {
 
   function goCharge() {
     const params = { sectionId, agvId };
-    fetchGoCharge(params, AgvApiNameSpace[agvType]).then((response) => {
+    fetchGoCharge(params, ApiNameSpace[agvType]).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'app.monitor.modal.controller.goCharge.fail' }));
       } else {

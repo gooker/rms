@@ -1,8 +1,8 @@
 import React from 'react';
 import { Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import { getBase64 } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { formatMessage, getBase64 } from '@/utils/utils';
 import styles from './LogoUploader.module.less';
 export default class LogoUploader extends React.Component {
   state = {
@@ -15,8 +15,8 @@ export default class LogoUploader extends React.Component {
     this.setState({ imageUrl: value });
   }
 
-  beforeUpload=(file)=> {
-     const { onChange } = this.props;
+  beforeUpload = (file) => {
+    const { onChange } = this.props;
     const isPng = file.type === 'image/png';
     if (!isPng) {
       message.error(formatMessage({ id: 'app.microApp.tip.pictureTypeError' }));
@@ -27,17 +27,15 @@ export default class LogoUploader extends React.Component {
       message.error(formatMessage({ id: 'app.microApp.tip.pictureSizeError' }));
       return;
     }
-    getBase64(file).then(imageUrl => {
+    getBase64(file).then((imageUrl) => {
       this.setState({ imageUrl, loading: false }, () => {
         onChange(imageUrl);
       });
       return false;
     });
-  
+
     return false;
-  }
-
-
+  };
 
   clearLogo = () => {
     const { clear } = this.props;
@@ -55,16 +53,8 @@ export default class LogoUploader extends React.Component {
     const { imageUrl } = this.state;
     return (
       <div className={styles.logoUploader}>
-        <Upload
-          listType="picture-card"
-          showUploadList={false}
-          beforeUpload={this.beforeUpload}
-        >
-          {imageUrl ? (
-            <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-          ) : (
-            uploadButton
-          )}
+        <Upload listType="picture-card" showUploadList={false} beforeUpload={this.beforeUpload}>
+          {imageUrl ? <img src={imageUrl} alt="avatar" style={{ width: '100%' }} /> : uploadButton}
         </Upload>
         {imageUrl && (
           <div className={styles.deleteLogo}>

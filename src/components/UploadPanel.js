@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Upload, Icon } from 'antd';
-import { FormattedMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const Dragger = Upload.Dragger;
 
@@ -15,7 +15,7 @@ class UploadUtil extends PureComponent {
         if (analyzeFunction) {
           const reader = new FileReader();
           reader.readAsText(file, 'UTF-8');
-          reader.onload = evt => {
+          reader.onload = (evt) => {
             analyzeFunction(evt);
           };
           return false;

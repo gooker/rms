@@ -1,8 +1,8 @@
 import React from 'react';
 import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { FormattedMessage, formatMessage } from '@/utils/Lang';
-import { dateFormat } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { dateFormat, formatMessage } from '@/utils/utils';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;

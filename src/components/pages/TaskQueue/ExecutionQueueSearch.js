@@ -1,7 +1,8 @@
 import React from 'react';
 import { Form, Select, Button, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { FormattedMessage, formatMessage } from '@/utils/Lang';
+import FormattedMessage from '@/components/FormattedMessage';
+import { formatMessage } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 
 const { Option } = Select;
@@ -72,7 +73,6 @@ const TaskSearch = (props) => {
           </Form.Item>
         </Col>
       </Row>
-     
     </Form>
   );
 };

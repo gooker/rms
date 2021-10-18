@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, message, Table, Divider } from 'antd';
-import { formatMessage, FormattedMessage } from '@/utils/Lang';
-import {  fetchPoolTasks, cancelTotePoolTask , fetchAgvList } from '@/services/api';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
+import { fetchPoolTasks, cancelTotePoolTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RcsConfirm from '@/components/RcsConfirm';
 import { dealResponse } from '@/utils/utils';
@@ -87,7 +88,7 @@ class TaskLibraryComponent extends Component {
       onOk: this.cancelTask,
     });
   };
- 
+
   // 取消任务-可批量
   cancelTask = async () => {
     const { selectedRowKeys } = this.state;
@@ -120,7 +121,7 @@ class TaskLibraryComponent extends Component {
         <Table
           loading={loading}
           scroll={{ x: 'max-content' }}
-          rowKey={record => {
+          rowKey={(record) => {
             return record.id;
           }}
           dataSource={dataSource}

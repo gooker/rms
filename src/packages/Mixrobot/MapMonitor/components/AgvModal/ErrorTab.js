@@ -3,10 +3,8 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvErrorRecord } from './AgvModalApi';
 import { dealResponse } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
-import * as Config from '@/config/config';
+import { ApiNameSpace } from '@/config/config';
 import styles from './ErrorTab.less';
-
-const { AgvApiNameSpace } = Config;
 
 const { blue, yellow, red } = Dictionary('color', 'all');
 const ErrorColor = {
@@ -38,7 +36,7 @@ const ErrorTab = (props) => {
       lowLevel: 3,
       highLevel: 5,
     };
-    const response = await fetchAgvErrorRecord(params, AgvApiNameSpace[agvType]);
+    const response = await fetchAgvErrorRecord(params, ApiNameSpace[agvType]);
     if (dealResponse(response)) {
       setErrors([]);
     } else {
