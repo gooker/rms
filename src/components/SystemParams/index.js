@@ -6,7 +6,7 @@ import SelectTag from './component/SelectTag';
 import FormButton from './component/FormButton';
 import FormRenderComponent from './component/FormRender';
 import PassWord from './component/PassWord';
-import styles from './SystemParamsManager.module.less';
+import styles from './systemParamsManager.module.less';
 
 const uiSchema = {};
 const { TabPane } = Tabs;
