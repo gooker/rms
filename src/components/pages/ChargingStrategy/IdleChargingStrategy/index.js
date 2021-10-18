@@ -33,13 +33,12 @@ const IdleChargingStrategy = (props) => {
         const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
           return {
             weeks,
-            time: [moment(startTime, 'HH:mm'), moment(endTime, 'HH:mm')],
+            time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
           };
         });
         form.setFieldsValue({ idleHoursQuantumDTOS: fieldsValue || [] });
       }
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function submit() {
@@ -122,6 +121,16 @@ const IdleChargingStrategy = (props) => {
                       }}
                     >
                       <Col span={21}>
+                        {/* 时间区间 */}
+                        <Form.Item
+                          {...tailFormItemLayout}
+                          {...restField}
+                          name={[name, 'time']}
+                          fieldKey={[fieldKey, 'time']}
+                        >
+                          <RangePicker format={'HH:mm'} />
+                        </Form.Item>
+
                         {/* 天 */}
                         <Form.Item
                           {...tailFormItemLayout}
@@ -136,16 +145,6 @@ const IdleChargingStrategy = (props) => {
                               </Col>
                             ))}
                           </Checkbox.Group>
-                        </Form.Item>
-
-                        {/* 时间区间 */}
-                        <Form.Item
-                          {...tailFormItemLayout}
-                          {...restField}
-                          name={[name, 'time']}
-                          fieldKey={[fieldKey, 'time']}
-                        >
-                          <RangePicker format={'HH:mm'} />
                         </Form.Item>
                       </Col>
                       <Col span={3} style={{ textAlign: 'center' }}>

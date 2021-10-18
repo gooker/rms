@@ -21,7 +21,7 @@ const ChargingStrategyComponent = (prop) => {
   const [activeKey, setActiveKey] = useState('Normal'); // Tab
   const [current, setCurrent] = useState(false); // 当前正在使用的策略
   const [chargeStrategy, setChargeStrategy] = useState(null); // 当前策略详情
-  const [idleChargingStrategyVisible, setIdleChargingStrategyVisible] = useState(false);
+  const [idleChargingStrategyVisible, setIdleChargingStrategyVisible] = useState(false); // 闲时策略配置弹窗
 
   useEffect(() => {
     refresh();
