@@ -79,7 +79,7 @@ class TaskDetail extends PureComponent {
     if (!detailInfo) return null;
     const { taskStatus } = detailInfo;
     const cardExtra = (
-      <span>
+      <div>
         {['Cancel', 'Finished'].includes(taskStatus) && (
           <Permission id="/map/monitor/taskDetail/taskDetail/reset">
             <Button
@@ -89,7 +89,7 @@ class TaskDetail extends PureComponent {
                 forceStandBy(detailInfo.sectionId, detailInfo.taskId);
               }}
             >
-              <FormattedMessage id="app.taskDetail.redo" />
+              <FormattedMessage id="app.taskDetail.reset" />
             </Button>
           </Permission>
         )}
@@ -117,7 +117,7 @@ class TaskDetail extends PureComponent {
                 restartTask(detailInfo.sectionId, detailInfo.taskId);
               }}
             >
-              <FormattedMessage id="app.taskDetail.repeat" />
+              <FormattedMessage id="app.taskDetail.restart" />
             </Button>
           </Permission>
         )}
@@ -135,34 +135,19 @@ class TaskDetail extends PureComponent {
             </Button>
           </Permission>
         )}
-        <Permission
-          type="or"
-          id={[
-            '/map/monitor/taskDetail/taskDetail/repeat',
-            '/map/monitor/taskDetail/taskDetail/reset',
-          ]}
-        >
-          <span style={{ marginLeft: 15 }}>
-            <TooltipRight
-              content={
-                <div>
-                  <div>
-                    <Permission id="/map/monitor/taskDetail/taskDetail/reset">
-                      {formatMessage({ id: 'app.taskAction.redoTip' })}
-                    </Permission>
-                  </div>
-                  <div>
-                    <Permission id="/map/monitor/taskDetail/taskDetail/repeat">
-                      {formatMessage({ id: 'app.taskAction.retryTip' })}
-                    </Permission>
-                  </div>
-                </div>
-              }
-              placement="bottomRight"
-            />
-          </span>
-        </Permission>
-      </span>
+        <span style={{ marginLeft: 15 }}>
+          <TooltipRight
+            placement="bottomRight"
+            content={
+              <div>
+                <section>{formatMessage({ id: 'app.taskAction.resetTip' })}</section>
+                <section>{formatMessage({ id: 'app.taskAction.restartTip' })}</section>
+                <section>{formatMessage({ id: 'app.taskAction.restoreTip' })}</section>
+              </div>
+            }
+          />
+        </span>
+      </div>
     );
     return (
       <div>

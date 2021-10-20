@@ -96,7 +96,7 @@ class Detail extends PureComponent {
               margin: '0px 10px',
             }}
           >
-            {formatMessage({ id: 'app.taskDetail.redo' })}
+            {formatMessage({ id: 'app.taskDetail.reset' })}
           </span>
           {formatMessage({ id: 'app.task' })}
         </span>
