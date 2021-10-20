@@ -26,3 +26,6 @@
 ## config.js 与 consts.js
 > config.js 用于管理页面业务处理时配置信息，比如: namespace、pixi等等
 > consts.js 用于管理页面渲染时常量，比如：下拉框数据、颜色等等
+
+
+注: merge截止2021-10-20 19:42
