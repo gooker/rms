@@ -1,6 +1,6 @@
 module.exports = {
-  extends: ['react-app', 'plugin:jsx-a11y/recommended'],
-  plugins: ['jsx-a11y'],
+  extends: ['react-app', 'plugin:react/recommended'],
+  plugins: ['import', 'jsx-a11y', 'react-hooks'],
   rules: {
     'new-cap': 0,
     'no-plusplus': 0,
@@ -21,14 +21,8 @@ module.exports = {
     'import/no-dynamic-require': 0,
     'no-template-curly-in-string': 0,
     'import/no-anonymous-default-export': 0,
-    'jsx-a11y/click-events-have-key-events': 0,
-    'jsx-a11y/no-static-element-interactions': 0,
-    'jsx-a11y/anchor-is-valid': 0,
-    'jsx-a11y/alt-text': 0,
-
     'no-unused-vars': 1,
     'no-debugger': 1,
     'no-console': 1,
-    'react-hooks/exhaustive-deps': 1,
   },
 };
