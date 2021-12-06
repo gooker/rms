@@ -54,6 +54,14 @@ nt11-dev-staging:
     - sudo sh -c "mkdir -p ${prefix}/dist"
     - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
     - sudo sh -c "cp -r dist ${prefix}"
+    - tar -zcv -f Sorter-GUI-${mybuild_version}.tar.gz dist/
+    - sudo -u mushiny rm -rf /home/mushiny/deployment/rms_installation_package/sorter_ui
+    - sudo -u mushiny mkdir -p /home/mushiny/deployment/rms_installation_package/sorter_ui
+    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/rms_installation_package/sorter_ui/
+    - sudo cp version.txt /home/mushiny/deployment/rms_installation_package/sorter_ui/
+    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/rms_installation_package/sorter_ui"
+    - chmod +x send_message_to_dingdion.sh
+    - ./send_message_to_dingdion.sh
   only:
     - /^nt11-dev.*$/
 
