@@ -1,7 +1,9 @@
+import React from 'react';
+
 const LabelComponent = (props) => {
-  const { label, children, width = 250 } = props;
+  const { label, children, width = '100%' } = props;
   return (
-    <div style={{ width, display: 'flex' ,marginBottom:15}}>
+    <div style={{ width, display: 'flex', marginBottom: 15 }}>
       <span style={{ display: 'flex', alignItems: 'center' }}>{label}:</span>
       <div style={{ flex: 1, marginLeft: 10 }}>{children}</div>
     </div>

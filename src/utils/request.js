@@ -72,7 +72,7 @@ const errorHandler = (error) => {
 };
 
 const request = async (requestUrl, payload) => {
-  const { data, method, headers = {} } = payload;
+  const { data, body, method, headers = {} } = payload;
   const url = getDomainNameByUrl(requestUrl);
   // 此时可能会遇到找不到API的问题
   if (isPlainObject(url)) {
@@ -87,9 +87,9 @@ const request = async (requestUrl, payload) => {
 
   // 目前后端不是 RestFul API, 所以只需要关注 GET 和 POST
   if (method.toUpperCase() === 'GET') {
-    option.params = data;
+    option.params = data ?? body;
   } else {
-    option.data = data;
+    option.data = data ?? body;
   }
 
   // 请求返回实体

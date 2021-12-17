@@ -7,12 +7,13 @@ export default function requestAPI() {
     apiMap = window.extraConfig;
   } else {
     apiMap = {
-      // dev
-      // sso: 'https://sso-api-dev.mushiny.com',
-
-      // NT-11
+      // NT-11-dev
       sso: 'http://52.83.193.245:10211',
       coordinator: 'http://52.83.193.245:10213',
+
+      // NT-11-monthly
+      // sso: 'http://192.168.0.11:6121',
+      // coordinator: 'http://192.168.0.11:6123',
 
       // NT-12
       // sso: 'http://sso-api-ntdev-self-defining.mushiny.local',
@@ -23,7 +24,7 @@ export default function requestAPI() {
       // coordinator: 'http://gateway-api-ntdev-ha.mushiny.local',
     };
   }
-  apiMap[NameSpace.Mixrobot] = apiMap.coordinator;
+  apiMap[NameSpace.Coordinator] = apiMap.coordinator;
   apiMap[NameSpace.Tote] = apiMap.coordinator;
   apiMap[NameSpace.Sorter] = apiMap.coordinator;
   apiMap[NameSpace.LatentLifting] = apiMap.coordinator;

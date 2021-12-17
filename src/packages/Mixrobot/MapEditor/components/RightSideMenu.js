@@ -4,7 +4,7 @@ import { Drawer, Menu } from 'antd';
 import { ReadOutlined, SettingOutlined } from '@ant-design/icons';
 import { isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import IconDir from '@/components/AntdIcon/IconDir';
+import { getIconFont } from '@/components/IconFont';
 
 import CellTab from '@/packages/Mixrobot/MapEditor/TabPanel/Tabs/CellTab';
 import CostTab from '@/packages/Mixrobot/MapEditor/TabPanel/Tabs/CostTab';
@@ -82,14 +82,14 @@ class RightSliderMenu extends Component {
         >
           <Menu onClick={this.handleClick} selectedKeys={[this.state.current]} mode="horizontal">
             {/* 点位 */}
-            <Menu.Item key="cellMap" icon={IconDir('iconcell')} disabled={isNull(currentLogicArea)}>
+            <Menu.Item key="cellMap" icon={getIconFont('iconcell')} disabled={isNull(currentLogicArea)}>
               <FormattedMessage id="app.rightSiderMenu.cellMap" />
             </Menu.Item>
 
             {/* 路线 */}
             <Menu.Item
               key="routerMap"
-              icon={IconDir('iconline')}
+              icon={getIconFont('iconline')}
               disabled={isNull(currentLogicArea)}
             >
               <FormattedMessage id="app.rightSiderMenu.routerMap" />
@@ -109,46 +109,46 @@ class RightSliderMenu extends Component {
             >
               {/* 工作站 */}
               <Menu.Item key="workstationList">
-                {IconDir('iconyuanshigongzuozhan')}{' '}
+                {getIconFont('iconyuanshigongzuozhan')}{' '}
                 <FormattedMessage id="app.rightSiderMenu.workstationList" />
               </Menu.Item>
 
               {/* 通用功能点 */}
               <Menu.Item key="commonFunction">
-                {IconDir('icongongnengdian')}{' '}
+                {getIconFont('icongongnengdian')}{' '}
                 <FormattedMessage id="app.rightSiderMenu.commomPoint" />
               </Menu.Item>
 
               {/* 充电桩 */}
               <Menu.Item key="chargerList">
-                {IconDir('iconchongdianzhuang1')}{' '}
+                {getIconFont('iconchongdianzhuang1')}{' '}
                 <FormattedMessage id="app.rightSiderMenu.chargerList" />
               </Menu.Item>
 
               {/* 电梯 */}
               <Menu.Item key="elevatorList">
-                {IconDir('icondianti')} <FormattedMessage id="app.rightSiderMenu.elevatorList" />
+                {getIconFont('icondianti')} <FormattedMessage id="app.rightSiderMenu.elevatorList" />
               </Menu.Item>
 
               {/* 通道 */}
               <Menu.Item key="channel">
-                {IconDir('icontongdao')} <FormattedMessage id="app.rightSiderMenu.channel" />
+                {getIconFont('icontongdao')} <FormattedMessage id="app.rightSiderMenu.channel" />
               </Menu.Item>
 
               {/* 休息区 */}
               <Menu.Item key="restCells">
-                {IconDir('iconiconfront-')} <FormattedMessage id="app.rightSiderMenu.restCells" />
+                {getIconFont('iconiconfront-')} <FormattedMessage id="app.rightSiderMenu.restCells" />
               </Menu.Item>
 
               {/* 交汇点 */}
               <Menu.Item key="intersection">
-                {IconDir('iconintersectionquery')}{' '}
+                {getIconFont('iconintersectionquery')}{' '}
                 <FormattedMessage id="app.rightSiderMenu.intersection" />
               </Menu.Item>
 
               {/* 抛物点 */}
               <Menu.Item key="dumpFunction">
-                {IconDir('icongaokongpaowu')} <FormattedMessage id="app.rightSiderMenu.dumpPoint" />
+                {getIconFont('icongaokongpaowu')} <FormattedMessage id="app.rightSiderMenu.dumpPoint" />
               </Menu.Item>
             </SubMenu>
           </Menu>

@@ -1,9 +1,9 @@
 import React, { PureComponent } from 'react';
-import { connect } from '@/utils/dva';
 import { Badge, Row } from 'antd';
-import { GlobalOutlined, UserOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
-import { BaseContext } from '@/config/config';
+import { GlobalOutlined, UserOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/dva';
+import { AppCode } from '@/config/config';
 import styles from './Portal.module.less';
 
 const Image = (props) => {
@@ -12,17 +12,17 @@ const Image = (props) => {
 };
 
 const AppIconColor = {
-  sso: '#993366',
-  i18n: '#0099FF',
-  [BaseContext.Coordinator]: 'linear-gradient(#4f97dc, #001529)',
-  [BaseContext.LatentLifting]: 'linear-gradient(#33CC33, #006633)',
-  [BaseContext.Tote]: 'linear-gradient(rgb(228, 148, 92), rgba(181, 22, 22, 0.93))',
-  [BaseContext.ForkLifting]: 'linear-gradient(#CCCC33, #CCCC66)',
-  [BaseContext.Sorter]: 'linear-gradient(rgb(80, 198, 236),rgb(35, 185, 136))',
+  [AppCode.SSO]: '#993366',
+  [AppCode.I18N]: '#0099FF',
+  [AppCode.XIHE]: 'linear-gradient(#4f97dc, #001529)',
+  [AppCode.LatentLifting]: 'linear-gradient(#33CC33, #006633)',
+  [AppCode.Tote]: 'linear-gradient(rgb(228, 148, 92), rgba(181, 22, 22, 0.93))',
+  [AppCode.ForkLifting]: 'linear-gradient(#CCCC33, #CCCC66)',
+  [AppCode.Sorter]: 'linear-gradient(rgb(80, 198, 236),rgb(35, 185, 136))',
 };
 
 const APPs = {
-  [BaseContext.LatentLifting]: {
+  [AppCode.LatentLifting]: {
     icon: 'agv_latent.png',
     style: {
       height: '70%',
@@ -30,9 +30,9 @@ const APPs = {
       verticalAlign: 'middle',
       margin: '8px auto',
     },
-    color: AppIconColor[BaseContext.LatentLifting],
+    color: AppIconColor[AppCode.LatentLifting],
   },
-  [BaseContext.Tote]: {
+  [AppCode.Tote]: {
     icon: 'agv_tote.png',
     style: {
       height: '100%',
@@ -40,25 +40,25 @@ const APPs = {
       verticalAlign: 'middle',
       margin: '0 auto',
     },
-    color: AppIconColor[BaseContext.Tote],
+    color: AppIconColor[AppCode.Tote],
   },
-  [BaseContext.ForkLifting]: {
+  [AppCode.ForkLifting]: {
     icon: 'agv_forklift.png',
     style: {
       height: '100%',
       display: 'block',
       verticalAlign: 'middle',
     },
-    color: AppIconColor[BaseContext.ForkLifting],
+    color: AppIconColor[AppCode.ForkLifting],
   },
-  [BaseContext.Sorter]: {
+  [AppCode.Sorter]: {
     icon: 'agv_sorter.png',
     style: {
       height: '100%',
       display: 'block',
       verticalAlign: 'middle',
     },
-    color: AppIconColor[BaseContext.Sorter],
+    color: AppIconColor[AppCode.Sorter],
   },
 };
 
@@ -68,7 +68,7 @@ class Portal extends PureComponent {
     dispatch({ type: 'global/saveCurrentApp', payload: appCode });
   };
 
-  // 根据习惯, Mixrobot在第一项, SSO在最后一项, i18n在倒数第二项
+  // 根据习惯, XIHE在第一项, SSO在最后一项, i18n在倒数第二项
   getAppList = () => {
     const { isAdmin, appList } = this.props;
     if (!appList || appList.length === 0) return [];
@@ -76,7 +76,7 @@ class Portal extends PureComponent {
 
     // SSO
     let sso = null;
-    const ssoIndex = grantedApps.indexOf('sso');
+    const ssoIndex = grantedApps.indexOf(AppCode.SSO);
     if (ssoIndex >= 0) {
       sso = grantedApps.splice(ssoIndex, 1);
     }
@@ -86,22 +86,22 @@ class Portal extends PureComponent {
       return sso;
     }
 
-    // Mixrobot
-    let mixrobot = null;
-    const mixrobotIndex = grantedApps.indexOf('mixrobot');
-    if (mixrobotIndex >= 0) {
-      mixrobot = grantedApps.splice(mixrobotIndex, 1);
+    // XIHE
+    let XIHE = null;
+    const XIHEIndex = grantedApps.indexOf(AppCode.XIHE);
+    if (XIHEIndex >= 0) {
+      XIHE = grantedApps.splice(XIHEIndex, 1);
     }
 
     // I18n
     let i18n = null;
-    const I18nIndex = grantedApps.indexOf('i18n');
+    const I18nIndex = grantedApps.indexOf(AppCode.I18N);
     if (I18nIndex >= 0) {
       i18n = grantedApps.splice(I18nIndex, 1);
     }
 
     // 整合数据
-    mixrobot && grantedApps.unshift(mixrobot[0]);
+    XIHE && grantedApps.unshift(XIHE[0]);
     i18n && grantedApps.push(i18n[0]);
     sso && grantedApps.push(sso[0]);
     return grantedApps;
@@ -113,8 +113,8 @@ class Portal extends PureComponent {
       <>
         {this.getAppList().map((name) => {
           let img = null;
-          const currentItem=currentApp === name?styles.currentItem:"";
-          if (APPs[name] != null) {
+          const currentItem = currentApp === name ? styles.currentItem : '';
+          if (APPs[name] !== undefined) {
             const { icon, style, color } = APPs[name];
             if (icon != null) {
               img = <Image style={{ ...style }} src={require(`../../images/${icon}`).default} />;
@@ -135,12 +135,12 @@ class Portal extends PureComponent {
               </div>
             );
           }
-          if (name === 'i18n') {
+          if (name === AppCode.I18N) {
             return (
               <div key={name} className={`${styles.portalItem} ${currentItem}`}>
                 <Badge dot={currentApp === name}>
                   <span
-                    style={{ background: AppIconColor.i18n }}
+                    style={{ background: AppIconColor[name] }}
                     className={classNames(styles.portalItemIconContainer, styles.selectApp)}
                   >
                     <span
@@ -156,12 +156,12 @@ class Portal extends PureComponent {
               </div>
             );
           }
-          if (name === 'sso') {
+          if (name === AppCode.SSO) {
             return (
               <div key={name} className={`${styles.portalItem} ${currentItem}`}>
                 <Badge dot={currentApp === name}>
                   <span
-                    style={{ background: AppIconColor.sso }}
+                    style={{ background: AppIconColor[name] }}
                     className={classNames(styles.portalItemIconContainer, styles.selectApp)}
                   >
                     <span
@@ -177,12 +177,12 @@ class Portal extends PureComponent {
               </div>
             );
           }
-          if (name === 'mixrobot') {
+          if (name === AppCode.XIHE) {
             return (
               <div key={name} className={`${styles.portalItem} ${currentItem}`}>
                 <Badge dot={currentApp === name}>
                   <span
-                    style={{ background: AppIconColor[BaseContext.Coordinator] }}
+                    style={{ background: AppIconColor[AppCode.XIHE] }}
                     className={classNames(styles.portalItemIconContainer, styles.selectApp)}
                   >
                     <span
@@ -207,7 +207,6 @@ class Portal extends PureComponent {
     return <Row className={styles.portal}>{this.renderAppInfo()}</Row>;
   }
 }
-
 export default connect(({ global, user }) => {
   const isAdmin = user?.currentUser?.username === 'admin';
   return {

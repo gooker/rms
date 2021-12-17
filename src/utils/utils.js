@@ -1,4 +1,5 @@
 // 通用代码片段
+import React from 'react';
 import { Tooltip, Row, Button, Input, message, Form, Tag, InputNumber, Select, Switch } from 'antd';
 import { isPlainObject } from 'lodash';
 import { InfoOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons';
@@ -7,8 +8,9 @@ import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
-import { AgvStateColor, ToteOffset } from '@/config/consts';
+import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
 import requestorStyles from '@/packages/Mixrobot/Requestor/requestor.less';
+import find from 'lodash/find';
 
 /**
  * 将服务器时间转化成本地时间
@@ -96,23 +98,23 @@ export function getDomainNameByUrl(url) {
 export function isStandardApiResponse(response) {
   return (
     response.hasOwnProperty('code') &&
-    response.hasOwnProperty('data') &&
+    // response.hasOwnProperty('data') &&
     response.hasOwnProperty('message')
   );
 }
 
-export function dealResponse(response, notification, successMessage, failedMessage) {
+export function dealResponse(response, successNotify, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
   if (response && isStandardApiResponse(response)) {
     const { message: errorMessage } = response;
-    const defaultMessage = formatMessage({ id: 'app.common.systemError' });
-    message.error(errorMessage || failedMessage || defaultMessage);
+    const defaultMessage = formatMessage({ id: 'app.message.operateFailed' });
+    message.error(failedMessage || errorMessage || defaultMessage);
     return true;
   }
 
   // 正常请求后返回false, 表示当前请求无错误
-  if (notification) {
-    message.success(successMessage || formatMessage({ id: 'app.common.operationFinish' }));
+  if (successNotify) {
+    message.success(successMessage || formatMessage({ id: 'app.message.operateSuccess' }));
   }
   return false;
 }
@@ -123,7 +125,7 @@ export function dealResponse(response, notification, successMessage, failedMessa
  * @returns
  */
 export function GMT2UserTimeZone(value) {
-  if (value === null || value === undefined) {
+  if (isStrictNull(value)) {
     return { format: () => '' };
   }
 
@@ -217,7 +219,7 @@ export function getDirectionLocale(angle) {
  * @param {String} agvStatus
  * @returns
  */
-export function renderAgvStatus(agvStatus) {
+export function getAgvStatusTag(agvStatus) {
   if (agvStatus != null) {
     const agvStateMap = Dictionary('agvStatus');
     return (
@@ -709,4 +711,103 @@ export function getURLSearchParam(key) {
     vars[key] = value;
   });
   return vars[key];
+}
+
+// 统一定义故障展示颜色
+export function defineErrorColor(level) {
+  if ([1, 2].includes(level)) {
+    return Colors.blue;
+  }
+  if ([3, 4].includes(level)) {
+    return Colors.yellow;
+  }
+  if ([5].includes(level)) {
+    return Colors.red;
+  }
+}
+
+// 获取Form表单layout数据
+export function getFormLayout(label, content) {
+  const formItemLayout = { labelCol: { span: label }, wrapperCol: { span: content } };
+  const formItemLayoutNoLabel = { wrapperCol: { offset: label, span: content } };
+  return { formItemLayout, formItemLayoutNoLabel };
+}
+
+/***** 报表中心  ****/
+export function countDay(params) {
+  if (params.endDate != null && params.startDate != null) {
+    return {
+      ...params,
+      endDate: GMT2UserTimeZone(params.endDate).format('YYYY-MM-DD HH:mm:ss'),
+      startDate: GMT2UserTimeZone(params.startDate).format('YYYY-MM-DD HH:mm:ss'),
+    };
+  }
+
+  if (!isNull(params.datePattern) && !isNull(params.relativeDay)) {
+    //首先确定时间格式
+    params.endDate = new moment().format();
+    if (params.datePattern === 'hour') {
+      params.startDate = new moment()
+        .subtract(parseInt(params.relativeDay), 'hours')
+        .minutes(0)
+        .seconds(0)
+        .format();
+    } else if (params.datePattern === 'month') {
+      params.startDate = new moment()
+        .subtract(parseInt(params.relativeDay), 'months')
+        .date(1)
+        .hours(0)
+        .minutes(0)
+        .seconds(0)
+        .format();
+    } else {
+      params.startDate = new moment()
+        .subtract(parseInt(params.relativeDay), 'days')
+        .hours(0)
+        .minutes(0)
+        .seconds(0)
+        .format();
+    }
+    return {
+      ...params,
+      endDate: GMT2UserTimeZone(params.endDate).format('YYYY-MM-DD HH:mm:ss'),
+      startDate: GMT2UserTimeZone(params.startDate).format('YYYY-MM-DD HH:mm:ss'),
+    };
+  }
+  return { ...params };
+}
+
+export function match(array, elements, key, descriptionValue) {
+  if (array == null || array.length === 0) {
+    return [];
+  }
+  const result = [];
+  for (let index = 0; index < array.length; index++) {
+    const element = array[index];
+    const obj = find(elements, (record) => record[key] == element);
+    if (obj == null) {
+      result.push(0);
+    } else {
+      result.push(obj[descriptionValue]);
+    }
+  }
+  return result;
+}
+
+export function transformReportDetail(data) {
+  const subtext =
+    new moment(data.startDate).format('YYYY-MM-DD') +
+    '~' +
+    new moment(data.startDate).format('YYYY-MM-DD');
+  return {
+    type: data.type, //图表类型
+    descriptionKeys: data.dimensionality,
+    descriptionValues: [data.countValue],
+    title: data.name,
+    subtext: subtext,
+    filters: data.filters,
+    datePattern: data.datePattern,
+    startDate: data.startDate,
+    endDate: data.endDate,
+  };
 }

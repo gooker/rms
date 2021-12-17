@@ -8,7 +8,7 @@ export const AGVType = {
 
 // 前端模块编码
 export const AppCode = {
-  Mixrobot: 'Mixrobot',
+  XIHE: 'XIHE',
   SSO: 'SSO',
   I18N: 'I18N',
   LatentLifting: 'LatentLifting',
@@ -19,7 +19,7 @@ export const AppCode = {
 
 // 各类车型的API namespace
 export const NameSpace = {
-  Mixrobot: 'coordinator',
+  Coordinator: 'coordinator',
   SSO: 'sso',
   I18N: 'translation',
   LatentLifting: 'latent-lifting',
@@ -28,7 +28,7 @@ export const NameSpace = {
   Sorter: 'sorter',
 };
 
-// @即将废弃(使用AppCode): 每个App的 BaseConText(微服务的前缀), 同时也是 AppBar 中各个WCS的代号
+// 兼容2.0版本
 export const BaseContext = {
   Mixrobot: 'mixrobot',
   LatentLifting: 'latent-lifting',

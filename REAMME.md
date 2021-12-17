@@ -20,7 +20,7 @@
 
 ### src/global.less: 项目顶层样式文件
 
-### src/index.js: 项目入口文件
+### src/AgvList.js: 项目入口文件
 
 
 ## config.js 与 consts.js
@@ -29,3 +29,6 @@
 
 
 注: merge截止2021-10-20 19:42
+
+## 需要移除的模块
+1. size-sensor

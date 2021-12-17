@@ -1,7 +1,6 @@
-/* eslint-disable no-param-reassign */
 import intl from 'react-intl-universal';
 import { dealResponse, isStrictNull } from '@/utils/utils';
-// import { fetchLanguageByAppCode } from '@/services/global';
+import { AppCode } from '@/config/config';
 
 export function convertRoute2Menu(data, parentAuthority, parentName) {
   return data
@@ -43,29 +42,22 @@ export function filterMenuData(menuData) {
   return menuData.filter((item) => item.name && !item.hideInMenu).map((item) => getSubMenu(item));
 }
 
-export function checkPermission(router, permissionMap, appCode, nameSapce) {
+export function checkPermission(router, permissionMap, appCode, nameSpace) {
   const result = [];
   for (let i = 0; i < router.length; i++) {
-    let routerHookFlag = true;
     const routerElement = router[i];
+    // @调试
     // SSO菜单不参与权限控制
-    if (routerElement.path && appCode !== 'sso') {
-      let authKey = null;
-      // if (nameSapce && routerElement.path.indexOf(`/${nameSapce}`) !== -1) {
-      //   authKey = routerElement.path.replace(`/${nameSapce}`, nameSapce);
-      // } else {
-      authKey = routerElement.path;
-      // }
-      // hook存在 则不参与权限控制
-      routerHookFlag = !getlocalstorageHooks(routerElement.hook);
-      if (routerHookFlag && !permissionMap[authKey]) {
-        continue;
-      }
-    }
+    // if (routerElement.path && appCode !== AppCode.SSO) {
+    //   let authKey = null;
+    //   authKey = routerElement.path;
+    //   if (isStrictNull(routerElement.hook) && !permissionMap[authKey]) {
+    //     continue;
+    //   }
+    // }
 
-    //
     if (routerElement.routes != null) {
-      const routes = checkPermission(routerElement.routes, permissionMap, appCode, nameSapce);
+      const routes = checkPermission(routerElement.routes, permissionMap, appCode, nameSpace);
       result.push({ ...routerElement, routes });
     } else {
       result.push(routerElement);
@@ -87,12 +79,14 @@ export function getBreadcrumbNameMap(menuData, routerMap = {}) {
 
 export function filterAppByAuthorityKeys(subModules = [], authorityKeys = []) {
   const appCodes = new Set();
-  appCodes.add('sso');
+  appCodes.add(AppCode.SSO);
   const authorityKeysWithAppcode = authorityKeys.filter((key) => !key.startsWith('/'));
   authorityKeysWithAppcode.forEach((item) => {
     appCodes.add(item.split('/')[0]);
   });
-  return subModules.filter((item) => appCodes.has(item));
+  // @调试
+  // return subModules.filter((item) => appCodes.has(item));
+  return [...subModules];
 }
 
 export function convertToRoute(data, baseContext) {
@@ -117,11 +111,11 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
   const allRoutes = Object.keys(allModuleMenuData).map((appCode) => {
     let appMenu = allModuleMenuData[appCode];
     // 如果是SSO, 需要根据adminType对菜单数据进行筛选
-    if (appCode === 'sso') {
+    if (appCode === AppCode.SSO) {
       appMenu = appMenu.filter((route) => {
         // hook存在则一定有route
         // authority不存在或为空 就没有
-        if (getlocalstorageHooks(route.hook)) {
+        if (getLocalStorageHooks(route.hook)) {
           return true;
         } else if (isStrictNull(route.authority) || route.authority.length === 0) {
           return false;
@@ -130,29 +124,27 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
         }
       });
     }
-
-    // 获取路由
     return { appMenu, appCode };
   });
+
+  //@@@
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { appMenu, appCode } = appRoute;
     const baseContext = allAppModulesMap[appCode] || '';
-    const baseMenuData = convertRoute2Menu(appMenu); // 获取菜单节点名称
-    const menuData = filterMenuData(baseMenuData);
-    const result = checkPermission(menuData, permissionMap, appCode, baseContext);
+    const baseMenuData = convertRoute2Menu(appMenu); // 获取菜单节点名称的国际化key
+    const menuData = filterMenuData(baseMenuData); // 筛选掉 hideInMenu 的菜单项
+    const result = checkPermission(menuData, permissionMap, appCode, baseContext); // 菜单项权限根据 AuthKey 再一次筛选
     const breadcrumbNameMap = getBreadcrumbNameMap(result);
     return { appCode, menu: result, breadcrumbNameMap };
   });
-
   return { allModuleFormattedMenuData, routeLocaleKeyMap };
 }
 
 export function getLanguage() {
-  const cachedLocale = window.localStorage.getItem('currentLocale'); // user model初始化存的
+  const cachedLocale = window.localStorage.getItem('currentLocale');
   const browserLocale = navigator.language;
-  const language = cachedLocale || browserLocale;
-  return language;
+  return cachedLocale || browserLocale;
 }
 
 export async function initI18nInstance() {
@@ -183,16 +175,16 @@ export async function initI18nInstance() {
     });
 
     //  远程覆盖本地
-    await intl.init({ currentLocale: language, locales });
+    return intl.init({ currentLocale: language, locales });
   } else {
     // 用本地国际化数据先初始化
-    await intl.init({ currentLocale: language, locales });
     console.info('Failed to fetch remote I18N Data, will use local I18n Data');
+    return intl.init({ currentLocale: language, locales });
   }
 }
 
 // hook -
-export function getlocalstorageHooks(hook) {
+export function getLocalStorageHooks(hook) {
   // 不存在hook / 不是数组
   if (isStrictNull(hook) || !Array.isArray(hook)) {
     return false;

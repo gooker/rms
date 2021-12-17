@@ -2,6 +2,14 @@ export const WorldScreenRatio = 1.2;
 export const GlobalAlpha = 0.6;
 export const GlobalDrawerWidth = 450;
 
+export const Colors = {
+  red: '#ff0000',
+  blue: '#008eff',
+  green: '#388e3c',
+  yellow: '#ffc107',
+  grey: '#9E9E9E',
+};
+
 // 小车状态
 export const AGVState = {
   error: 'Error', // error
@@ -20,8 +28,8 @@ export const AgvStateColor = {
   Working: '#2F8949',
   Charging: '#eba954',
   Offline: '#9E9E9E',
+  Connecting: '#9E9E9E',
   Error: '#fe5000',
-  Connecting: '#0092FF',
 };
 
 // 任务状态(Bage组件)
@@ -138,6 +146,15 @@ export const zIndex = {
   pod: 6,
   cellHeat: 7,
 };
+
+// 日志下载文件类型
+export const LogFileTypes = [
+  'syslog.txt',
+  'syslog1.old',
+  'syslog2.old',
+  'syslog3.old',
+  'config.txt',
+];
 
 /**
  *  点位热度相关

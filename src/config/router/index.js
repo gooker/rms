@@ -1,16 +1,17 @@
 import SorterRouter from './sorter.router';
 import TranslatorRouter from './i18n.router';
-import SsoRouter from './sso.router';
-import MixrobotRouter from './mixrobot.router'
+import SSORouter from './sso.router';
+import XIHERouter from './XIHE.router';
 import ToteRouter from './tote.router';
-import { BaseContext } from '@/config/config';
+import LatentLiftingRouter from './latentLifting.router';
+
+import { AppCode } from '@/config/config';
 
 export default {
-  [BaseContext.Coordinator]: MixrobotRouter,
-  [BaseContext.LatentLifting]: [],
-  [BaseContext.Tote]: ToteRouter,
-  [BaseContext.Sorter]: SorterRouter,
-  [BaseContext.ForkLifting]: [],
-  [BaseContext.I18N]: TranslatorRouter,
-  [BaseContext.SSO]: SsoRouter,
+  [AppCode.XIHE]: XIHERouter,
+  [AppCode.LatentLifting]: LatentLiftingRouter,
+  [AppCode.Tote]: ToteRouter,
+  [AppCode.Sorter]: SorterRouter,
+  [AppCode.I18N]: TranslatorRouter,
+  [AppCode.SSO]: SSORouter,
 };

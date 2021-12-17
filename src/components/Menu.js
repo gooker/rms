@@ -12,14 +12,13 @@ const baseCode = {
 
 const { SubMenu } = Menu;
 
-const Sider = (prop) => {
+const Slider = (prop) => {
   const [openKeys, setOpenKeys] = useState([]);
   const [selectedKeys, setSelectedKeys] = useState(prop.selectedKeys_global);
   const [currentModuleRouter, setCurrentModuleRouter] = useState([]);
   const { currentApp, currentUser, allMenuData, dispatch } = prop;
 
   useEffect(() => {
-    // 设置当前的appcode
     const currentOpenApp = window.location.href.split('#/')[1];
     let code = null;
     if (!isStrictNull(currentOpenApp)) {
@@ -28,35 +27,16 @@ const Sider = (prop) => {
       code = currentUser && currentUser.username === 'admin' ? 'sso' : 'mixrobot';
     }
     dispatch({ type: 'global/saveCurrentApp', payload: code });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      // 1.提取当前选中的菜单项
-      let selectedKey = window.location.href.split('#')[1];
-      if (selectedKey.indexOf('?agv') >= 0) {
-        selectedKey = selectedKey.split('?agv')[0];
-      }
-
-      setSelectedKeys([selectedKey]);
-      dispatch({ type: 'global/saveSelectedKeys', payload: [selectedKey] }); // agv 列表会跳转到小车监控 存放起来
-    });
   }, []);
 
   useEffect(() => {
     const currentAppRouter = allMenuData
       .filter(({ appCode }) => appCode === currentApp)
       .map(({ menu }) => menu);
-
     setCurrentModuleRouter(currentAppRouter.length > 0 ? currentAppRouter[0] : []);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentApp]);
 
   useEffect(() => {
-    // 2.提取当前展开的菜单节点
     const openKey = extractOpenKey(selectedKeys);
     setOpenKeys([openKey]);
   }, [currentModuleRouter, selectedKeys]);
@@ -146,7 +126,6 @@ const Sider = (prop) => {
     </Menu>
   );
 };
-
 export default connect(({ global, user }) => {
   return {
     currentApp: global?.currentApp,
@@ -154,4 +133,4 @@ export default connect(({ global, user }) => {
     selectedKeys_global: global?.selectedKeys,
     currentUser: user?.currentUser,
   };
-})(memo(Sider));
+})(memo(Slider));

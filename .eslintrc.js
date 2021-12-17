@@ -12,6 +12,7 @@ module.exports = {
     'no-useless-return': 0,
     'no-nested-ternary': 0,
     'react/no-deprecated': 0,
+    'react/prop-types': 0,
     'no-underscore-dangle': 0,
     'no-use-before-define': 0,
     'prefer-destructuring': 0,

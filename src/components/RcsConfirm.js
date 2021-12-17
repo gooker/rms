@@ -16,7 +16,7 @@ const { confirm } = Modal;
  */
 const RcsConfirm = ({ content, okType, onOk, onCancel, okText, cancelText }) => {
   const confirmConfig = {
-    title: formatMessage({ id: 'app.tip.systemHint' }),
+    title: formatMessage({ id: 'app.message.systemHint' }),
     icon: <ExclamationCircleOutlined />,
     content,
     onOk,

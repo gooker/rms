@@ -2,7 +2,7 @@ import request from '@/utils/request';
 import { AppCode, NameSpace } from '@/config/config';
 
 export async function fetchAllScopeActions(sectionId) {
-  return request(`/${NameSpace.Mixrobot}/actionScope/getAllActionScope`, {
+  return request(`/${NameSpace.Coordinator}/actionScope/getAllActionScope`, {
     method: 'GET',
     data: { sectionId },
   });
@@ -10,7 +10,7 @@ export async function fetchAllScopeActions(sectionId) {
 
 // 新增地图临时不可走点
 export async function updateTemporaryBlockCell(payload) {
-  return request(`/${NameSpace.Mixrobot}/lock/saveTemporaryCell`, {
+  return request(`/${NameSpace.Coordinator}/lock/saveTemporaryCell`, {
     method: 'POST',
     data: payload,
   });
@@ -18,7 +18,7 @@ export async function updateTemporaryBlockCell(payload) {
 
 // 删除地图临时不可走点
 export async function deleteTemporaryBlockCell(payload) {
-  return request(`/${NameSpace.Mixrobot}/lock/deleteTemporaryCell`, {
+  return request(`/${NameSpace.Coordinator}/lock/deleteTemporaryCell`, {
     method: 'POST',
     data: payload,
   });
@@ -26,14 +26,14 @@ export async function deleteTemporaryBlockCell(payload) {
 
 // 获取地图所有临时不可走点
 export async function fetchTemporaryBlockCells() {
-  return request(`/${NameSpace.Mixrobot}/lock/getTemporaryLockedCells`, {
+  return request(`/${NameSpace.Coordinator}/lock/getTemporaryLockedCells`, {
     method: 'GET',
   });
 }
 
 // 获取小车任务路径
 export async function fetchAgvTaskPath(robotIds) {
-  return request(`/${NameSpace.Mixrobot}/traffic/getAllPath/${robotIds.join()}`, {
+  return request(`/${NameSpace.Coordinator}/traffic/getAllPath/${robotIds.join()}`, {
     method: 'GET',
   });
 }
@@ -278,21 +278,21 @@ export async function forkPodToTarget(param) {
 /////////////////////////******** 模拟器 ******** //////////////////////////
 // 开启模拟器
 export async function openSimulator() {
-  return request(`/${NameSpace.Mixrobot}/simulator/openSimulator`, {
+  return request(`/${NameSpace.Coordinator}/simulator/openSimulator`, {
     method: 'GET',
   });
 }
 
 // 关闭模拟器
 export async function closeSimulator() {
-  return request(`/${NameSpace.Mixrobot}/simulator/closeSimulator`, {
+  return request(`/${NameSpace.Coordinator}/simulator/closeSimulator`, {
     method: 'GET',
   });
 }
 
 // 添加虚拟车
 export async function addSimulationAgv(params) {
-  return request(`/${NameSpace.Mixrobot}/simulator/agvLogin`, {
+  return request(`/${NameSpace.Coordinator}/simulator/agvLogin`, {
     method: 'POST',
     data: params,
   });
@@ -300,7 +300,7 @@ export async function addSimulationAgv(params) {
 
 // 批量添加模拟车
 export async function addSimulationAgvs(params) {
-  return request(`/${NameSpace.Mixrobot}/simulator/batchAgvLogin`, {
+  return request(`/${NameSpace.Coordinator}/simulator/batchAgvLogin`, {
     method: 'POST',
     data: params,
   });
@@ -308,7 +308,7 @@ export async function addSimulationAgvs(params) {
 
 // 更新模拟配置
 export async function fetchUpdateAGVConfig(params) {
-  return request(`/${NameSpace.Mixrobot}/simulator/saveAGVConfig`, {
+  return request(`/${NameSpace.Coordinator}/simulator/saveAGVConfig`, {
     method: 'POST',
     data: params,
   });
@@ -316,21 +316,21 @@ export async function fetchUpdateAGVConfig(params) {
 
 // 获取车型模拟车配置
 export async function fetchSimulatorAGVConfig(robotType) {
-  return request(`/${NameSpace.Mixrobot}/simulator/getAGVConfig/${robotType}`, {
+  return request(`/${NameSpace.Coordinator}/simulator/getAGVConfig/${robotType}`, {
     method: 'GET',
   });
 }
 
 // 获取模拟器小车
 export async function fetchSimulatorLoginAGV() {
-  return request(`/${NameSpace.Mixrobot}/traffic/getAllAGV`, {
+  return request(`/${NameSpace.Coordinator}/traffic/getAllAGV`, {
     method: 'GET',
   });
 }
 
 // 获取模拟器小车相关状态
 export async function fetchSimulatorLoginAGVControlState() {
-  return request(`/${NameSpace.Mixrobot}/simulator/getAGVControl`, {
+  return request(`/${NameSpace.Coordinator}/simulator/getAGVControl`, {
     method: 'GET',
   });
 }
@@ -366,7 +366,7 @@ export async function fetchCloseAgv(robotId) {
 // 下线小车
 export async function fetchSimulatorAgvOffLine(params) {
   return request(
-    `/${NameSpace.Mixrobot}/simulator/agvOffLine/${params.sectionId}/${params.robotId}`,
+    `/${NameSpace.Coordinator}/simulator/agvOffLine/${params.sectionId}/${params.robotId}`,
     { method: 'GET' },
   );
 }
@@ -374,7 +374,7 @@ export async function fetchSimulatorAgvOffLine(params) {
 // 批量删除小车
 export async function fetchBatchDeleteSimulatorAgv(params) {
   return request(
-    `/${NameSpace.Mixrobot}/simulator/batchAgvDelete/${params.logicId}/${params.robotIds}`,
+    `/${NameSpace.Coordinator}/simulator/batchAgvDelete/${params.logicId}/${params.robotIds}`,
     {
       method: 'DELETE',
     },
@@ -383,28 +383,28 @@ export async function fetchBatchDeleteSimulatorAgv(params) {
 
 // 获取模拟器错误消息
 export async function fetchSimulatorErrorMessage(params) {
-  return request(`/${NameSpace.Mixrobot}/simulator/errorMessage`, {
+  return request(`/${NameSpace.Coordinator}/simulator/errorMessage`, {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fetchSimulatorHistory() {
-  return request(`/${NameSpace.Mixrobot}/simulator/getSimulator`, {
+  return request(`/${NameSpace.Coordinator}/simulator/getSimulator`, {
     method: 'GET',
   });
 }
 
 // 获取通道锁信息
 export async function getTunnelState() {
-  return request(`/${NameSpace.Mixrobot}/traffic/getTunnelLock`, {
+  return request(`/${NameSpace.Coordinator}/traffic/getTunnelLock`, {
     method: 'GET',
   });
 }
 
 // 删除通道锁
 export async function deleteTunnelAgvLock(robotId) {
-  return request(`/${NameSpace.Mixrobot}/traffic/clearTunnelLock/${robotId}`, {
+  return request(`/${NameSpace.Coordinator}/traffic/clearTunnelLock/${robotId}`, {
     method: 'GET',
   });
 }

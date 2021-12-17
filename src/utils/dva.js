@@ -1,8 +1,10 @@
 // 基于 dva-core 封装 dva 模块
+import React from 'react';
 import { Provider } from 'react-redux';
 import * as core from 'dva-core';
 
 function getPureProvider(store) {
+  // eslint-disable-next-line react/display-name
   return (props) => <Provider store={store}>{props.children}</Provider>;
 }
 

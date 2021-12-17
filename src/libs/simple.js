@@ -1,5 +1,8 @@
 /*! *****************************************************************************
 version = 2.0.1
+Creates a simple cull Note, options.dirtyTest defaults to false.
+Set it to true for much better performance
+this requires additional work to ensure displayObject.dirty is set when objects change
 ***************************************************************************** */
 
 var __assign = function () {
@@ -96,7 +99,7 @@ var Simple = (function () {
    * @return {DisplayObjectWithCulling} object
    */
   Simple.prototype.remove = function (object) {
-    this.lists[0]?.splice(this.lists[0].indexOf(object), 1);
+    this.lists[0].splice(this.lists[0].indexOf(object), 1);
     return object;
   };
 
@@ -136,7 +139,7 @@ var Simple = (function () {
           var length_2 = list.length;
           for (var i = 0; i < length_2; i++) {
             var object = list[i];
-            if (!object.staticObject && object.dirty) {
+            if (!object.staticObject && (object.dirty === true || object.dirty === undefined)) {
               this.updateObject(object);
               object.dirty = false;
             }

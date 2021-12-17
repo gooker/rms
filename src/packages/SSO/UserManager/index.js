@@ -15,7 +15,7 @@ import {
 } from '@/services/user';
 import IconFont from '@/utils/ExtraIcon';
 import RcsConfirm from '@/components/RcsConfirm';
-import TablewidthPages from '@/components/TablewidthPages';
+import TablewidthPages from '@/components/TableWidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';

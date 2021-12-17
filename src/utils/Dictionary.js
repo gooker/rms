@@ -64,50 +64,6 @@ const DictionaryDataSource = {
     5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin robot (lithium iron phosphate)
   },
 
-  // 任务类型
-  agvTaskType: {
-    // 潜伏车
-    EMPTY_RUN: 'app.taskType.EMPTY_RUN',
-    CHARGE_RUN: 'app.taskType.CHARGE_RUN',
-    REST_UNDER_POD: 'app.taskType.REST_UNDER_POD',
-    CARRY_POD_TO_CELL: 'app.taskType.CARRY_POD_TO_CELL',
-    RUN_TO_SAFETY_AREA: 'app.taskType.RUN_TO_SAFETY_AREA',
-    CARRY_POD_TO_STATION: 'app.taskType.CARRY_POD_TO_STATION',
-    SUPER_CARRY_POD_TO_CELL: 'app.taskType.SUPER_CARRY_POD_TO_CELL',
-    HEARVY_CARRY_POD_TO_STORE: 'app.taskType.HEARVY_CARRY_POD_TO_STORE',
-    FROCK_CARRY_TO_CELL: 'app.taskType.FROCK_CARRY_TO_CELL',
-    ROLLER_CARRY_TO_CELL: 'app.taskType.ROLLER_CARRY_TO_CELL',
-
-    // 料箱
-    TOTE_PUT: 'app.taskType.TOTE_PUT',
-    TOTE_CARRY: 'app.taskType.TOTE_CARRY',
-    TOTE_EMPTY_RUN: 'app.taskType.EMPTY_RUN',
-    TOTE_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
-    TOTE_ROLLER_PUT: 'app.taskType.TOTE_ROLLER_PUT',
-    TOTE_NONE_CARRY: 'app.taskType.TOTE_NONE_CARRY',
-    TOTE_STATION_CARRY: 'app.taskType.TOTE_STATION_CARRY',
-    TOTE_TO_WORK_STATION: 'app.taskType.CARRY_POD_TO_STATION',
-    TOTE_REST_ON_REST_CELL: 'app.taskType.TOTE_REST_ON_REST_CELL',
-    TOTE_RUN_TO_SAFETY_AREA: 'app.taskType.TOTE_RUN_TO_SAFETY_AREA',
-    TOTE_TO_ROLLER_WORK_STATION: 'app.taskType.TOTE_TO_ROLLER_WORK_STATION',
-    TOTE_TO_NONE_ROLLER_WORK_STATION: 'app.taskType.TOTE_TO_NONE_ROLLER_WORK_STATION',
-    TOTE_TO_FACTORY_ROLLER_WORK_STATION: 'app.taskType.TOTE_TO_FACTORY_ROLLER_WORK_STATION',
-    TOTE_ULTRARED_EMPTY_RUN: 'app.taskType.EMPTY_RUN',
-    TOTE_ULTRARED_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
-    TOTE_ULTRARED_REST_ON_REST_CELL: 'app.taskType.TOTE_REST_ON_REST_CELL',
-    TOTE_ULTRARED_POOL_CARRY: 'app.taskType.TOTE_ULTRARED_POOL_CARRY',
-
-    // 叉车
-    FORK_EMPTY_RUN: 'app.taskType.EMPTY_RUN',
-    FORK_CHARGE_RUN: 'app.taskType.CHARGE_RUN',
-    FORK_REST_ON_REST_CELL: 'app.taskType.REST_UNDER_POD',
-    FORK_POD_TO_TARGET: 'app.taskType.FORK_POD_TO_TARGET',
-
-    // 分拣车
-    ROLLER_FETCH: 'app.taskType.ROLLER_FETCH',
-    ROLLER_PUT: 'app.taskType.ROLLER_PUT',
-  },
-
   // 业务颜色
   color: {
     red: '#f5222d',
@@ -118,6 +74,19 @@ const DictionaryDataSource = {
     pink: '#ce2a7d',
     gray: '#b3b2b2',
     cyan: '#13c2c2',
+  },
+
+  //  报表中心
+  reportCenterTable: {
+    agvId: 'app.agv.id',
+    currentRobotId: 'app.agv.id',
+    count: 'app.reportCenter.reportCount',
+    createTime: 'app.common.creationTime',
+    errorDefinition_level: 'app.fault.level',
+    errorCode: 'app.fault.code',
+    taskStatus: 'app.task.state',
+    type: 'app.task.type',
+    agvTaskType: 'app.task.type',
   },
 };
 

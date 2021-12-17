@@ -19,7 +19,7 @@ import {
   saveRoleAssignAuthority,
   fetchUploadRoles,
 } from '@/services/user';
-import TablewidthPages from '@/components/TablewidthPages';
+import TableWidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
@@ -243,7 +243,7 @@ export default class index extends Component {
         </Row>
 
         <div className={commonStyles.divContent}>
-          <TablewidthPages
+          <TableWidthPages
             bordered
             columns={this.columns}
             dataSource={roleList}
@@ -286,10 +286,7 @@ export default class index extends Component {
           }}
           width={'600'}
           visible={authAssignVisible}
-          // bodyStyle={{ padding: '10px 30px' }}
-          style={{
-            overflow: 'auto',
-          }}
+          style={{ overflow: 'auto' }}
         >
           <RoleAssignModal
             roleList={roleList}

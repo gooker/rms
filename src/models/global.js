@@ -6,7 +6,7 @@ import { fetchUpdateUserCurrentLanguage } from '@/services/user';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/utils';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import find from 'lodash/find';
-import allMouduleRouter from '@/config/router';
+import allModuleRouter from '@/config/router';
 import moment from 'moment';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
@@ -16,20 +16,17 @@ export default {
   namespace: 'global',
 
   state: {
-    logo: null, // TODO: 暂时为null 后续可能从别的接口获取
+    logo: null,
     copyRight: null,
-
     notification: 0,
-
     isFullscreen: false,
-    iframeLoading: false,
 
     tabs: [],
     subModules: [],
     environments: [],
     nameSpacesInfo: {},
-
     grantedAPP: [],
+    selectedKeys: [],
 
     currentApp: null,
     currentEnv: null,
@@ -40,7 +37,8 @@ export default {
 
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
-    selectedKeys:[],
+
+    allTaskTypes: {},
   },
 
   effects: {
@@ -49,9 +47,9 @@ export default {
       const { currentUser } = yield select((state) => state.user);
       const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
 
-      // 1.从allMouduleRouter获取所有module以及routes
-      const allAppModulesRoutesMap = { ...allMouduleRouter };
-      const subModules = Object.keys(allMouduleRouter);
+      // 1.从allModuleRouter获取所有module以及routes
+      const allAppModulesRoutesMap = { ...allModuleRouter };
+      const subModules = Object.keys(allModuleRouter);
 
       // 2.获取所有环境配置信息
       let allEnvironment = yield call(fetchAllEnvironment);
@@ -77,8 +75,6 @@ export default {
       // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
       const authorityKeys = currentUser?.authorityKeys ?? [];
-      // TODO: 暂时先手动把翻译管理的权限加上
-      authorityKeys.push('i18n/languageManage');
       for (let index = 0; index < authorityKeys.length; index++) {
         permissionMap[authorityKeys[index]] = true;
       }
@@ -90,7 +86,7 @@ export default {
         allAppModulesMap[module] = module;
       });
 
-      // 6 根据grantedApp对allAppModulesRoutesMap筛选
+      // 6 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
       const allModuleMenuData = {};
       Object.keys(allAppModulesRoutesMap).filter((code) => {
         if (grantedAPP.includes(code)) {
@@ -103,7 +99,6 @@ export default {
         allModuleMenuData,
         permissionMap,
       );
-    
 
       // 7. 保存信息
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
@@ -305,6 +300,13 @@ export default {
       return {
         ...state,
         globalLocale: payload,
+      };
+    },
+
+    updateAllTaskTypes(state, { payload }) {
+      return {
+        ...state,
+        allTaskTypes: payload,
       };
     },
   },

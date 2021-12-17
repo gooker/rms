@@ -19,7 +19,7 @@ import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/ut
 import RcsConfirm from '@/components/RcsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
-import TablewidthPages from '@/components/TablewidthPages';
+import TablewidthPages from '@/components/TableWidthPages';
 import commonStyles from '@/common.module.less';
 import styles from './environmentManager.module.less';
 

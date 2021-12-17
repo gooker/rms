@@ -1,12 +1,12 @@
 import React from 'react';
-import { Layout,Skeleton } from 'antd';
+import { Layout, Modal, message, Skeleton } from 'antd';
 import { connect } from '@/utils/dva';
-import { initI18nInstance } from '@/utils/init';
-import LayoutSider from '@/packages/Portal/components/Sider';
-import LayoutContent from '@/components/pages/Content/Content';
+import LayoutSlider from '@/packages/Portal/components/Sider';
+import LayoutContent from '@/pages/Content/Content';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import './mainLayout.less';
-import { isNull } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/utils';
+import { fetchAllTaskTypes } from '@/services/api';
 
 const { Header } = Layout;
 
@@ -18,24 +18,44 @@ class MainLayout extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    // 1.获取用户信息
-    const userAvailable = await dispatch({ type: 'user/fetchCurrentUser' });
-    if (isNull(userAvailable)) return;
 
-    // 2.menu
-    const authInitial = await dispatch({ type: 'global/initAppAuthority' });
-    if (isNull(authInitial)) return;
+    try {
+      // 1.获取用户信息
+      await dispatch({ type: 'user/fetchCurrentUser' });
 
-    // 3.国际化 远程
-    await initI18nInstance();
-    this.setState({ appReady: true });
+      // 2.初始化菜单
+      await dispatch({ type: 'global/initAppAuthority' });
+      this.setState({ appReady: true });
+      this.loadAllTaskTypes();
+    } catch (error) {
+      Modal.error({
+        title: formatMessage({ id: 'app.global.initFailed' }),
+        content: error.toString(),
+      });
+    }
   }
+
+  loadAllTaskTypes = () => {
+    const { dispatch } = this.props;
+    fetchAllTaskTypes().then((response) => {
+      if (!dealResponse(response)) {
+        dispatch({ type: 'global/updateAllTaskTypes', payload: response });
+      } else {
+        message.error(
+          `${formatMessage(
+            { id: 'app.message.fetchFailTemplate' },
+            { type: formatMessage({ id: 'app.task.type' }) },
+          )}`,
+        );
+      }
+    });
+  };
 
   render() {
     const { appReady } = this.state;
     return appReady ? (
       <Layout className="main-layout">
-        <LayoutSider />
+        <LayoutSlider />
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
             <LayoutHeader />

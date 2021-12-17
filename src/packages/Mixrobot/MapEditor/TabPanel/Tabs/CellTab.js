@@ -10,7 +10,7 @@ import {
 import MenuIcon from '@/utils/MenuIcon';
 import { formatMessage } from '@/utils/utils';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
-import IconDir from '@/components/AntdIcon/IconDir';
+import { getIconFont } from '@/components/IconFont';
 import LabelComponent from '@/components/LabelComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import CheckButton from '@/packages/Mixrobot/components/CheckButton';
@@ -117,7 +117,7 @@ class CellTab extends Component {
                   }}
                   disabled={cellMap == null}
                   style={{ width: 120, height: 50 }}
-                  icon={IconDir('iconpiliang')}
+                  icon={getIconFont('iconpiliang')}
                 >
                   {' '}
                   <FormattedMessage id="app.cellMap.batchAdd" />
@@ -135,7 +135,7 @@ class CellTab extends Component {
                     });
                   }}
                   style={{ width: 120, height: 50 }}
-                  icon={IconDir('iconbatch-del')}
+                  icon={getIconFont('iconbatch-del')}
                 >
                   {' '}
                   <FormattedMessage id="app.cellMap.deletePoint" />
@@ -156,7 +156,7 @@ class CellTab extends Component {
                   }}
                   disabled={cellMap == null}
                   style={{ width: 120, height: 50 }}
-                  icon={IconDir('iconcodebianma')}
+                  icon={getIconFont('iconcodebianma')}
                 >
                   {' '}
                   <FormattedMessage id="app.cellMap.addressCode" />

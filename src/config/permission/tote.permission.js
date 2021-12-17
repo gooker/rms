@@ -1,31 +1,31 @@
 const PermissionInfo = [
   {
-    page: '/tote/center/executionQueue', //执行队列
+    page: '/tote/task/executionQueue', //执行队列
     children: [
       {
-        key: '/tote/center/executionQueue/delete',
+        key: '/tote/task/executionQueue/delete',
         label: '删除',
       },
     ],
   },
   {
-    page: '/tote/center/taskQueue', //等待队列
+    page: '/tote/task/taskQueue', //等待队列
     children: [
       {
-        key: '/tote/center/taskQueue/delete',
+        key: '/tote/task/taskQueue/delete',
         label: '删除',
       },
       {
-        key: '/tote/center/taskQueue/updatePipLine',
+        key: '/tote/task/taskQueue/updatePipLine',
         label: '调整优先级',
       },
     ],
   },
   {
-    page: '/tote/center/taskManger', //任务查询
+    page: '/tote/task/taskManger', //任务查询
     children: [
       {
-        key: '/tote/center/taskManger/cancel',
+        key: '/tote/task/taskManger/cancel',
         label: '取消任务',
       },
     ],

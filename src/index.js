@@ -1,6 +1,7 @@
+import React from 'react';
 import ReactDOM from 'react-dom';
 import dva from '@/utils/dva';
-import App from '@/components/pages/Portal/App';
+import App from '@/pages/Portal/App';
 import globalModel from '@/models/global';
 import taskModel from '@/models/task';
 import userModel from '@/models/user';
@@ -13,23 +14,24 @@ import './global.less';
 // window.onerror = function (message, source, lineno, colno, error) {
 //   console.log('捕获到[onError]异常：', { message, source, lineno, colno, error });
 // };
-
+//
 // window.addEventListener('error', (error) => {
 //   console.log('捕获到[Error]异常：', error);
 // });
-
+//
 // window.addEventListener('unhandledrejection', (error) => {
 //   console.log('捕获到[unhandledrejection]异常：', error);
 // });
 
-// 1. 初始化Dva对象
-const app = dva();
+// 1. 初始化Dva对象(包含dva层统一错误处理)
+const app = dva({
+  onError(e, dispatch) {
+    console.log(e.message);
+  },
+});
 window.g_app = app;
 
-// 2. 注册插件
-// app.use({});
-
-// 3. 注册 Model
+// 2. 注册 Model
 app.model(taskModel);
 app.model(userModel);
 app.model(globalModel);
@@ -37,7 +39,7 @@ app.model(editorModel);
 app.model(monitorModel);
 app.model(simulatorModel);
 
-// 4. 启动
+// 3. 启动
 const DvaProvider = app.create();
 
 ReactDOM.render(

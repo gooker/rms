@@ -18,10 +18,7 @@ export default {
 
   effects: {
     *logout(_, { call }) {
-      // 因为是直接登出，不知道已存在的Iframe相关数据会不会造成内存泄露，持续观察
-      yield call(fetchLogout, {
-        token: window.localStorage.getItem('Authorization'),
-      });
+      yield call(fetchLogout, { token: window.localStorage.getItem('Authorization') });
       window.localStorage.clear();
       history.push('/login');
     },
@@ -61,8 +58,6 @@ export default {
 
         // 6. 保存用户时区数据
         window.localStorage.setItem('userTimeZone', response.userTimeZone || '');
-
-        return { language };
       }
     },
 

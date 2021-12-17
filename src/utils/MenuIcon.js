@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   EnvironmentOutlined,
   LockOutlined,
@@ -22,20 +23,21 @@ import {
   ReadOutlined,
   ApiOutlined,
 } from '@ant-design/icons';
-import IconFont from '@/utils/ExtraIcon';
+import { IconFont } from '@/components/IconFont';
 
 export default {
   'icon-task': <IconFont type="icon-renwujincheng" />,
+  'icon-cangkucangchu': <IconFont type="icon-cangkucangchu" />,
+  'icon-dispatch': <IconFont type="icon-dispatch" />,
+  authority: <IconFont type="icon-fuwushouquan" />,
+  iconziyuan: <IconFont type="icon-ziyuanguanli" />,
+  iconcharger: <IconFont type="icon-chongdianzhuang" />,
+  iconLOG: <IconFont type="icon-log" />,
+  iconreportform: <IconFont type="icon-report" />,
+  configuration: <IconFont type="icon-gexingdingzhi" />,
+
   'line-chart': <LineChartOutlined />,
   'clock-circle': <ClockCircleOutlined />,
-  'authority':<IconFont type="icon-fuwushouquan" />,
-  'icon-cangkucangchu':<IconFont type="icon-ziyuan-fenzu" />,
-  'iconziyuan':<IconFont type="icon-ziyuanguanli" />,
-  'iconcharger':<IconFont type="icon-chongdianzhuang" />,
-  'iconLOG':<IconFont type="icon-log" />,
-  'iconreportform':<IconFont type="icon-report" />,
-  'configuration':<IconFont type="icon-gexingdingzhi" />,
-
   environment: <EnvironmentOutlined />,
   lock: <LockOutlined />,
   setting: <SettingOutlined />,

@@ -2,11 +2,11 @@ import React from 'react';
 import styles from './DescriptionItem.module.less';
 
 export default function DescriptionsItem(props) {
-  const { data} = props;
+  const { data } = props;
 
   return (
     <div className={styles.descriptionsItemBottom}>
-      {data.map(({ module, api,version }) => (
+      {data.map(({ module, api, version }) => (
         <div key={module} className={styles.descriptionsItem}>
           <div className={styles.label}>{module}</div>
           {/* <div className={styles.value}>

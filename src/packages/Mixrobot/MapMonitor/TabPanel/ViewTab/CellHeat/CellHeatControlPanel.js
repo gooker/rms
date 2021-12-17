@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import { Button, Form, Collapse, DatePicker, Select, Row, Col, message, Switch } from 'antd';
-import intl from 'react-intl-universal';
-import FormattedMessage from '@/components/FormattedMessage';
 import find from 'lodash/find';
+import { formatMessage } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 import { CellHeatType } from '@/config/consts';
-import styles from './cellHeatControlPanel.module.less';
+import styles from './CellHeatControlPanel.module.less';
 
-const layout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-};
-const NoLabelLayout = {
-  wrapperCol: { span: 16, offset: 6 },
-};
+const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
+const NoLabelLayout = { wrapperCol: { span: 16, offset: 6 } };
 const { Option } = Select;
 const { Panel } = Collapse;
 
@@ -30,14 +25,14 @@ class CellHeatControlPanel extends Component {
     validateFields().then((value) => {
       const { type, startTime, endTime, isTransparent } = value;
       if (!type) {
-        message.error(intl.formatMessage({ id: 'app.mapView.require.heatView.viewType' }));
+        message.error(formatMessage({ id: 'app.mapView.require.heatView.viewType' }));
         return;
       }
       if (type === CellHeatType.cost_type) {
         fresh({ type, isTransparent, startTime: '', endTime: '' });
       } else {
         if (!startTime || !endTime) {
-          message.error(intl.formatMessage({ id: 'app.mapView.require.heatView.timeRange' }));
+          message.error(formatMessage({ id: 'app.mapView.require.heatView.timeRange' }));
           return;
         }
         fresh({
@@ -60,7 +55,7 @@ class CellHeatControlPanel extends Component {
     const locale = window.localStorage.getItem('umi_locale') || 'zh-CN';
     const OptionData = [
       {
-        label: intl.formatMessage({ id: 'app.mapView.label.heatView.costHeat' }),
+        label: formatMessage({ id: 'app.mapView.label.heatView.costHeat' }),
         value: CellHeatType.cost_type,
       },
     ];
@@ -77,9 +72,7 @@ class CellHeatControlPanel extends Component {
                     fontWeight: 500,
                     color: '#2DBF33',
                   }}
-                >{` ${
-                  type || intl.formatMessage({ id: 'app.mapView.label.heatView.null' })
-                }`}</span>
+                >{` ${type || formatMessage({ id: 'app.mapView.label.heatView.null' })}`}</span>
               </>
             }
             extra={
@@ -102,11 +95,11 @@ class CellHeatControlPanel extends Component {
                   this.setState({ type: option.label });
                   return value;
                 }}
-                label={intl.formatMessage({ id: 'app.mapView.label.heatView.queryType' })}
+                label={formatMessage({ id: 'app.mapView.label.heatView.queryType' })}
               >
                 <Select
                   style={{ width: locale === 'zh-CN' ? 195 : 185 }}
-                  placeholder={intl.formatMessage({
+                  placeholder={formatMessage({
                     id: 'app.mapView.require.heatView.viewType',
                   })}
                   onChange={this.handleTypeChanged}
@@ -127,11 +120,11 @@ class CellHeatControlPanel extends Component {
                       wrapperCol: { span: 17 },
                     })}
                 name={'startTime'}
-                label={intl.formatMessage({ id: 'app.mapView.label.heatView.startTime' })}
+                label={formatMessage({ id: 'app.mapView.label.heatView.startTime' })}
               >
                 <DatePicker
                   showTime
-                  placeholder={intl.formatMessage({
+                  placeholder={formatMessage({
                     id: 'app.mapView.require.heatView.startTime',
                   })}
                 />
@@ -145,11 +138,11 @@ class CellHeatControlPanel extends Component {
                       wrapperCol: { span: 17 },
                     })}
                 name={'endTime'}
-                label={intl.formatMessage({ id: 'app.mapView.label.heatView.endTime' })}
+                label={formatMessage({ id: 'app.mapView.label.heatView.endTime' })}
               >
                 <DatePicker
                   showTime
-                  placeholder={intl.formatMessage({ id: 'app.mapView.require.heatView.endTime' })}
+                  placeholder={formatMessage({ id: 'app.mapView.require.heatView.endTime' })}
                 />
               </Form.Item>
 
@@ -163,11 +156,11 @@ class CellHeatControlPanel extends Component {
                 name={'isTransparent'}
                 initialValue={true}
                 valuePropName={'checked'}
-                label={intl.formatMessage({ id: 'app.mapView.label.heatView.isTransparent' })}
+                label={formatMessage({ id: 'app.mapView.label.heatView.isTransparent' })}
               >
                 <Switch
-                  checkedChildren={intl.formatMessage({ id: 'app.mapView.label.heatView.yes' })}
-                  unCheckedChildren={intl.formatMessage({ id: 'app.mapView.label.heatView.no' })}
+                  checkedChildren={formatMessage({ id: 'app.mapView.label.heatView.yes' })}
+                  unCheckedChildren={formatMessage({ id: 'app.mapView.label.heatView.no' })}
                 />
               </Form.Item>
 

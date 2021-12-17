@@ -5,7 +5,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, LoadingOutlined } from '@ant-desi
 import { formatMessage } from '@/utils/utils';
 import { convertCadToMap } from '@/utils/mapUtils';
 import UploadUtils from '@/components/UploadUtil';
-import IconDir from '@/components/AntdIcon/IconDir';
+import { getIconFont } from '@/components/IconFont';
 import styles from '../editor.module.less';
 
 const EditorRightTool = (props) => {
@@ -56,7 +56,7 @@ const EditorRightTool = (props) => {
         {/* 地图导出 */}
         <span style={{ cursor: mapId ? 'pointer' : 'not-allowed' }} onClick={exportMap}>
           <Tooltip title={formatMessage({ id: 'app.mapTool.export' })}>
-            {IconDir('icondaochu')}
+            {getIconFont('icondaochu')}
           </Tooltip>
         </span>
         <Divider type="vertical" />
@@ -70,7 +70,7 @@ const EditorRightTool = (props) => {
           }}
         >
           <Tooltip title={formatMessage({ id: 'app.mapTool.import' })}>
-            {IconDir('icondaoru')}
+            {getIconFont('icondaoru')}
           </Tooltip>
         </span>
         <Divider type="vertical" />
@@ -84,7 +84,7 @@ const EditorRightTool = (props) => {
           }}
         >
           <Tooltip title={formatMessage({ id: 'app.mapTool.import' })}>
-            {IconDir('iconCADshangchuan')}
+            {getIconFont('iconCADshangchuan')}
           </Tooltip>
         </span>
         <Divider type="vertical" />
@@ -97,7 +97,7 @@ const EditorRightTool = (props) => {
           }}
         >
           <Tooltip title={formatMessage({ id: 'app.mapTool.preserve' })}>
-            {saveMapLoading ? <LoadingOutlined /> : IconDir('iconbaocun')}
+            {saveMapLoading ? <LoadingOutlined /> : getIconFont('iconbaocun')}
           </Tooltip>
         </span>
         <Divider type="vertical" />
@@ -112,10 +112,10 @@ const EditorRightTool = (props) => {
             <LoadingOutlined />
           ) : isActived ? (
             // 不支持取消激活
-            IconDir('iconsuo')
+            getIconFont('iconsuo')
           ) : (
             <Tooltip title={formatMessage({ id: 'app.mapTool.activation' })}>
-              <span onClick={activeMap}>{IconDir('iconjihuo')}</span>
+              <span onClick={activeMap}>{getIconFont('iconjihuo')}</span>
             </Tooltip>
           )}
         </span>

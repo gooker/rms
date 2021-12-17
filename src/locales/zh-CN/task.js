@@ -1,3 +1,4 @@
+// @有重复
 export default {
   //  执行队列
   'app.executionQ.chargerSpotId': '充电点',
@@ -74,7 +75,6 @@ export default {
   'app.taskDetail.resetTaskSubmit': '重做任务请求已提交',
   'app.taskDetail.relevantBusinessStopped': '请保证相关的业务功能已经停止',
   'app.taskDetail.restart': '重发',
-  'app.taskDetail.reset': '重做',
   'app.taskDetail.resetArea': '重置区域',
   'app.taskDetail.restore': '恢复',
   'app.taskDetail.retransmission': '重发',

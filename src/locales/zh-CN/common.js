@@ -1,32 +1,90 @@
 export default {
-  // 通用表单必填提醒
-  'app.required.agvId': '请选择小车ID',
+  // 模块名称
+  'app.module.XIHE': 'XIHE',
+  'app.module.LatentLifting': '潜伏车',
+  'app.module.Tote': '料箱车',
+  'app.module.ForkLifting': '叉车',
+  'app.module.Sorter': '分拣车',
+  'app.module.I18N': '国际化',
+
+  // 通用表单数据
+  'app.form.cellId': '点位ID',
+  'app.form.agvId': '小车ID',
+  'app.form.hardwareId': '硬件ID',
+  'app.form.sectionId': '区域ID',
+  'app.form.timeRange': '时间区间',
+  'app.form.dateRange': '日期区间',
 
   // 通用提醒内容
-  'app.tip.getMapFail': '获取地图数据失败',
-  'app.tip.getMapListFail': '获取地图列表失败',
-  'app.tip.getAgvListFail': '获取小车列表失败',
-  'app.tip.RequestLoginTimeoutContent': '请重新登录, 获取相关权限(3秒后自动退出)',
-  'app.tip.networkError': '请求失败, 网络连接可能出现异常',
-  'app.tip.systemError': '操作失败, 系统没有返回任何提示',
-  'app.tip.systemHint': '系统提示',
-  'app.tip.operationFinish': '操作成功',
-  'app.tip.operationFailed': '操作失败, 请重试',
+  'app.message.systemHint': '系统提示',
+  'app.message.fetchDataFailed': '获取数据失败',
+  'app.message.fetchDataEmpty': '获取的数据为空',
+  'app.message.fetchMapFail': '获取地图数据失败',
+  'app.message.fetchMapListFail': '获取地图列表失败',
+  'app.message.fetchAgvListFail': '获取小车列表失败',
+  'app.message.initFail': '数据初始化失败',
+  'app.message.operateSuccess': '操作成功',
+  'app.message.operateFailed': '操作失败',
+  'app.message.sendCommandSuccess': '发送指令成功',
+  'app.message.sendCommandFailed': '发送指令失败',
+  'app.message.cancelTask.confirm': '是否确定取消已选择的任务?',
+  'app.message.doubleConfirm': '是否确定继续进行该操作?',
+  'app.message.delete.confirm': '是否确定删除该项?',
+  'app.message.batchDelete.confirm': '是否确定删除所有已选项?',
+  'app.message.networkError': '请求失败, 网络连接可能出现异常',
+  'app.message.uploader': '单击或拖动文件到该区域以上传',
+  'app.message.fetchFailTemplate': '获取{type}数据失败',
 
   // 通用页面标识内容
+  'app.common.creator': '创建用户',
+  'app.common.creationTime': '创建时间',
+  'app.common.updater': '更新用户',
+  'app.common.updateTime': '更新时间',
+  'app.common.startTime': '开始时间',
+  'app.common.endTime': '结束时间',
   'app.common.tableRecord': '共计 {count} 条记录',
   'app.common.type': '类型',
   'app.common.status': '状态',
   'app.common.position': '位置',
   'app.common.angle': '角度',
-  'app.common.sectionId': '区域ID',
   'app.common.true': '是',
   'app.common.false': '否',
   'app.common.noRecord': '无记录',
-  'app.common.null': '空',
   'app.common.Error': '错误',
   'app.common.name': '名称',
   'app.common.remark': '备注',
+  'app.common.operation': '操作',
+  'app.common.failed': '失败',
+  'app.common.success': '成功',
+  'app.common.times': '次',
+  'app.common.all': '所有',
+  'app.common.report': '报表',
+
+  // 地图相关
+  'app.map.map': '地图',
+  'app.map.logicArea': '逻辑区',
+  'app.map.routeArea': '路线区',
+  'app.map.point': '点位',
+  'app.map.path': '路线',
+  'app.map.view': '显示',
+  'app.map.feature': '功能',
+  'app.map.notGoAway': '不可走点',
+  'app.map.storagePoint': '存储点',
+  'app.map.followingPoint': '跟车点',
+  'app.map.waitingPoint': '等待点',
+  'app.map.notStay': '不可逗留点',
+  'app.map.fetchTask': '接任务点',
+  'app.map.workstation': '工作站',
+  'app.map.charger': '充电桩',
+  'app.map.elevator': '电梯',
+  'app.map.channel': '通道',
+  'app.map.restArea': '休息区',
+  'app.map.obstacle': '障碍物',
+  'app.map.commonPoint': '通用功能点',
+  'app.map.dumpPoint': '抛物点',
+  'app.map.intersection': '交汇点',
+  'app.map.roller': '滚筒站点',
+  'app.map.targetCell': '目标点',
 
   // 小车类型
   'app.agvType.LatentLifting': '潜伏车',
@@ -34,7 +92,7 @@ export default {
   'app.agvType.ForkLifting': '叉车',
   'app.agvType.Sorter': '分拣车',
 
-  // direction --
+  // 方向
   'app.direction': '方向',
   'app.direction.current': '当前方向',
   'app.direction.top': '上方',
@@ -46,7 +104,7 @@ export default {
   'app.direction.toBottom': '朝下',
   'app.direction.toLeft': '朝左',
 
-  // Button --
+  // 按钮
   'app.button.add': '新增',
   'app.button.edit': '编辑',
   'app.button.save': '保存',
@@ -67,9 +125,11 @@ export default {
   'app.button.confirm': '确认',
   'app.button.refresh': '刷新',
   'app.button.turnOff': '关闭',
-  'app.button.operation': '操作',
+  'app.button.bind': '绑定',
+  'app.button.unbind': '解除绑定',
+  'app.button.forceReset': '强制重置',
 
-  // AMR --
+  // 小车
   'app.agv': '小车',
   'app.agv.id': '小车ID',
   'app.agv.ip': 'IP',
@@ -96,20 +156,19 @@ export default {
   'app.agvState.lowPower': '低电量',
 
   'app.activity.StandBy': '待命',
-  'app.activity.TaskError': '失败',
   'app.activity.TaskExecuting': '执行中',
   'app.activity.TaskFinished': '已完成',
   'app.activity.TaskNew': '新建',
   'app.activity.Working': '执行任务',
 
-  // Battery
+  // 电池
   'app.battery.full': '充足',
   'app.battery.good': '良好',
   'app.battery.normal': '一般',
   'app.battery.low': '低电量',
   'app.battery.danger': '馈电',
 
-  // Pod
+  // 潜伏货架
   'app.pod': '货架',
   'app.pod.id': '货架ID',
   'app.pod.direction': '货架面',
@@ -118,10 +177,7 @@ export default {
   'app.pod.side.C': 'C',
   'app.pod.side.D': 'D',
 
-  // Cell
-  'app.spotId': '点位',
-
-  // Task
+  // 任务
   'app.task': '任务',
   'app.task.id': '任务ID',
   'app.task.action': '任务细节',
@@ -137,15 +193,10 @@ export default {
   'app.task.customId': '客户任务ID',
   'app.task.poolId': '料箱池任务ID',
 
-  'app.taskStatus.New': '新建',
+  'app.taskStatus.New': '新建', // 统一用 "state"
   'app.taskStatus.Executing': '执行中',
   'app.taskStatus.Finished': '已完成',
   'app.taskStatus.Cancel': '已取消',
-  'app.taskStatus.Error': '失败',
-
-  'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
-  'app.taskAction.cancel.success': '取消任务成功',
-  'app.taskAction.cancel.fail': '取消任务失败',
 
   // 充电桩状态
   'app.chargeManger.ERROR': '错误',
@@ -163,70 +214,31 @@ export default {
   'app.batteryType.enumeration4': '分拣车(磷酸铁锂)',
   'app.batteryType.enumeration5': '潜伏车1.2吨和料箱机器人(磷酸铁锂)',
 
-  // Common Tip
-  'app.required.agvId': '请选择小车ID',
-  'app.agv.getListFail': '获取小车列表失败',
-  'app.taskAction.cancel.confirm': '确定取消已选择的任务吗?',
-  'app.taskAction.cancel.success': '取消任务成功',
-  'app.taskAction.cancel.fail': '取消任务失败',
-  'app.taskAction.resetTip': '重做: 任务重新开始, 重新分配车辆',
-  'app.taskAction.restartTip': '重发: 重算路径后下发小车',
-  'app.taskAction.restoreTip': '恢复: 继续执行当前任务',
-  'app.taskAction.resetTask.success': '重置任务指令下发成功',
-  'app.taskAction.resetTask.fail': '重置任务指令下发失败',
-  'app.taskAction.redoTask.success': '重做任务指令下发成功',
-  'app.taskAction.redoTask.fail': '重做任务指令下发失败',
-  'app.taskAction.cancelTask.success': '取消任务指令下发成功',
-  'app.taskAction.cancelTask.fail': '取消任务指令下发失败',
-  'app.taskAction.restoreTask.success': '恢复任务指令下发成功',
-  'app.taskAction.restoreTask.fail': '恢复任务指令下发失败',
+  // 时间相关
+  'app.time': '时间',
+  'app.time.year': '年',
+  'app.time.month': '月',
+  'app.time.day': '天',
+  'app.time.hours': '时',
+  'app.time.minutes': '分',
+  'app.time.seconds': '秒',
 
-  // times
-  'app.common.day': '天',
-  'app.common.hours': '时',
-  'app.common.minutes': '分',
-  'app.common.seconds': '秒',
-  'app.common.times': '次',
+  // 故障相关
+  'app.fault.code': '故障码',
+  'app.fault.name': '故障名称',
+  'app.fault.type': '故障类型',
+  'app.fault.level': '故障等级',
+  'app.fault.step': '步骤',
+  'app.fault.version': '所属版本',
+  'app.fault.description': '故障描述',
+  'app.fault.firstReport': '首发时间',
+  'app.fault.lastReport': '最近上报',
+  'app.fault.autoRecover': '自动恢复',
+  'app.fault.additionalData': '额外信息',
 
-  // 上传
-  'app.common.upload.dragUploadedFileToThisArea': '单击或拖动文件到该区域以上传',
+  'app.fault.preDataDefinition': '附加数据1',
+  'app.fault.extraData1': '附加数据1',
 
-  // 地图
-  'app.map.map': '地图',
-  'app.map.logicArea': '逻辑区',
-  'app.map.routeArea': '路线区',
-  'app.map.point': '点位',
-  'app.map.path': '路线',
-  'app.map.view': '显示',
-  'app.map.feature': '功能',
-  'app.map.notGoAway': '不可走点',
-  'app.map.storagePoint': '存储点',
-  'app.map.followingPoint': '跟车点',
-  'app.map.waitingPoint': '等待点',
-  'app.map.notStay': '不可逗留点',
-  'app.map.fetchTask': '接任务点',
-  'app.map.workstation': '工作站',
-  'app.map.charger': '充电桩',
-  'app.map.elevator': '电梯',
-  'app.map.channel': '通道',
-  'app.map.restArea': '休息区',
-  'app.map.obstacle': '障碍物',
-  'app.map.commonPoint': '通用功能点',
-  'app.map.dumpPoint': '抛物点',
-  'app.map.intersection': '交汇点',
-  'app.map.roller': '滚筒站点',
-
-
-  // 模块名称
-  'app.module.mixrobot': 'Mixrobot',
-  'app.module.sorter': '分拣车',
-  'app.module.latent-lifting': '潜伏车',
-  'app.module.tote-wcs-gui': '料箱车',
-  'app.module.forklift': '叉车',
-  'app.module.i18n': '国际化',
-
-  'app.copyboard.success': '成功复制到剪贴板',
-  'app.copyboard.unsupportCopyAPI': '该浏览器不支持点击复制到剪贴板',
-
-  'app.workStationMap.add': '添加',
+  'app.fault.curDataDefinition': '附加数据2',
+  'app.fault.extraData2': '附加数据2',
 };

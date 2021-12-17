@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import { ApiNameSpace } from '@/config/config';
 
+// 这里有重复接口
 // 小车空跑
 export async function fetchAgvEmptyRun(params, nameSpace) {
   return request(`/${nameSpace}/agv-task/empty-run`, {

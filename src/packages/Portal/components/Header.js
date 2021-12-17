@@ -1,9 +1,9 @@
 import React from 'react';
-import { Popover, Switch, Modal } from 'antd';
+import { Modal, Popover, Switch } from 'antd';
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/dva';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import Portal from './Portal/Portal';
 import SelectEnvironment from './SelectEnvironment';
@@ -136,8 +136,7 @@ class Header extends React.Component {
 
   changeLocale = async ({ key }) => {
     const { dispatch } = this.props;
-    const currentLocale = key;
-    await dispatch({ type: 'global/updateGlobalLocale', payload: currentLocale });
+    await dispatch({ type: 'global/updateGlobalLocale', payload: key });
   };
 
   render() {
@@ -196,20 +195,12 @@ class Header extends React.Component {
               onFocus={() => void 0}
               onClick={this.goToQuestionCenter}
             >
-              {/* /coordinator/problemHandling/getProblemHandlingCount */}
               <NoticeIcon count={noticeCount || 0} />
             </span>
           </Popover>
 
           {/* 切换语言 */}
           <SelectLang showLabel={showLabel} className={styles.icon} onChange={this.changeLocale} />
-
-          {/* 切换时间区 */}
-          {/* <SelectTimeZone
-            className={styles.icon}
-            userTimeZone={currentUser.userTimeZone}
-            toUserCenter={() => {}}
-          /> */}
 
           {/* API列表展示窗口 */}
           <Modal

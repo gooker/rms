@@ -5,8 +5,8 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, isStrictNull } from '@/utils/utils';
 import { filterMenuData } from '@/utils/init';
 import { transform, difference } from 'lodash';
-import allMouduleRouter from '@/config/router';
-import allMoudulePemission from '@/config/permission';
+import allModuleRouter from '@/config/router';
+import allModulePermission from '@/config/permission';
 import { filterPermission, showMenuLabel, handlePermissions } from './assignUtils';
 
 const { TreeNode } = Tree;
@@ -17,13 +17,13 @@ const { TreeNode } = Tree;
 class RoleAssignModal extends Component {
   state = {
     activeKey: null,
-    permissionList: [], // treedata
+    permissionList: [], // tree data
     checkedKeys: [],
     permissionMap: {}, // 所有父级下的自己
   };
 
   componentDidMount() {
-    const allRoutersMap = { ...allMouduleRouter };
+    const allRoutersMap = { ...allModuleRouter };
     const { roleList, selectedRowKeys } = this.props;
 
     const allRoutes = Object.keys(allRoutersMap).map((key) => {
@@ -38,7 +38,7 @@ class RoleAssignModal extends Component {
       const menuData = filterMenuData(labelAppMenu);
 
       // 处理permission
-      const codePermission = filterPermission(allMoudulePemission[appCode]);
+      const codePermission = filterPermission(allModulePermission[appCode]);
       const codePermissionMap = transform(
         codePermission,
         (result, record) => {
@@ -259,7 +259,7 @@ class RoleAssignModal extends Component {
               // 防止Tab不显示名称
               const key = permission.appCode;
               return (
-                <Tabs.TabPane key={key} tab={formatMessage({id:`app.module.${key}`}) }>
+                <Tabs.TabPane key={key} tab={formatMessage({ id: `app.module.${key}` })}>
                   {permission?.appMenu.length !== 0 ? (
                     <Tree
                       checkable
