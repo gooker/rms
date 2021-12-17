@@ -10,6 +10,7 @@ import ErrorList from './components/ErrorList';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
+import { connect } from '@/utils/dva';
 
 const colProps = { lg: 8, sm: 12 };
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
@@ -25,11 +26,11 @@ const TooltipRight = ({ content, placement }) => (
   </Tooltip>
 );
 
+@connect(({ global }) => ({
+  allTaskTypes: global.allTaskTypes,
+}))
 class TaskDetail extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.toteHoldingInput = createRef();
-  }
+  toteHoldingInput = createRef();
 
   // 渲染任务状态
   renderStatus = (text) => {
@@ -75,6 +76,7 @@ class TaskDetail extends PureComponent {
       chargeRecord,
       forceStandBy,
       errorTaskList,
+      allTaskTypes,
     } = this.props;
     if (!detailInfo) return null;
     const { taskStatus } = detailInfo;
@@ -166,7 +168,9 @@ class TaskDetail extends PureComponent {
                   <DescriptionItem
                     title={<FormattedMessage id="app.taskDetail.createTime" />}
                     content={
-                      <span>{GMT2UserTimeZone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                      <span>
+                        {GMT2UserTimeZone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}
+                      </span>
                     }
                   />
                 </Col>
@@ -180,7 +184,9 @@ class TaskDetail extends PureComponent {
                   <DescriptionItem
                     title={<FormattedMessage id="app.taskDetail.updateTime" />}
                     content={
-                      <span>{GMT2UserTimeZone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}</span>
+                      <span>
+                        {GMT2UserTimeZone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}
+                      </span>
                     }
                   />
                 </Col>
@@ -199,13 +205,7 @@ class TaskDetail extends PureComponent {
                 <Col {...colProps}>
                   <DescriptionItem
                     title={<FormattedMessage id="app.task.type" />}
-                    content={
-                      <span>
-                        {formatMessage({
-                          id: Dictionary('agvTaskType', [detailInfo.type]),
-                        })}
-                      </span>
-                    }
+                    content={allTaskTypes?.[currentType]?.[detailInfo.type] || detailInfo.type}
                   />
                 </Col>
                 <Col {...colProps}>
@@ -417,7 +417,9 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.taskDetail.startTime" />}
                       content={
                         <>
-                          {GMT2UserTimeZone(chargeRecord.startChargingTime).format('YYYY-MM-DD HH:mm:ss')}
+                          {GMT2UserTimeZone(chargeRecord.startChargingTime).format(
+                            'YYYY-MM-DD HH:mm:ss',
+                          )}
                         </>
                       }
                     />
@@ -427,7 +429,9 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.taskDetail.endTime" />}
                       content={
                         <>
-                          {GMT2UserTimeZone(chargeRecord.stopChargingTime).format('YYYY-MM-DD HH:mm:ss')}
+                          {GMT2UserTimeZone(chargeRecord.stopChargingTime).format(
+                            'YYYY-MM-DD HH:mm:ss',
+                          )}
                         </>
                       }
                     />

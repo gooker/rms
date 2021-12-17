@@ -140,8 +140,7 @@ class AgvRealTimeComponent extends React.Component {
 
   render() {
     const { agvId, agvList, isFetching } = this.state;
-    const { agvRealtimeData, agvHardware, agvTask, agvErrorRecord } = this.state;
-    const { agvType } = this.props;
+    const { agvRealtimeData, agvHardware, agvTask, agvErrorRecord, agvType } = this.state;
 
     return (
       <div className={commonStyles.tablePageWrapper}>
@@ -216,6 +215,7 @@ class AgvRealTimeComponent extends React.Component {
                 <Row>
                   <Col span={22}>
                     <AGVActivityForm
+                      agvType={agvType}
                       disabled={isNull(agvId)}
                       onChange={(value) =>
                         this.setState({ recordSearchParams: value }, () =>
@@ -248,6 +248,7 @@ class AgvRealTimeComponent extends React.Component {
                 }
               >
                 <AGVActivityForm
+                  agvType={agvType}
                   disabled={isNull(agvId)}
                   onChange={(value) =>
                     this.setState({ errorSearchParams: value }, () => this.getRecords('error'))

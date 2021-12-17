@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const paths = require('./paths');
 const modules = require('./modules');
 const getClientEnvironment = require('./env');
-const appPackageJson = require(paths.appPackageJson);
 
 const TerserPlugin = require('terser-webpack-plugin');
 const postcssNormalize = require('postcss-normalize');
@@ -122,8 +121,6 @@ module.exports = function (webpackEnv, useAnalyzer) {
       filename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].js'
         : isEnvDevelopment && 'static/js/bundle.js',
-      // TODO: remove this when upgrading to webpack 5
-      futureEmitAssets: true,
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
         : isEnvDevelopment && 'static/js/[name].chunk.js',
@@ -132,7 +129,6 @@ module.exports = function (webpackEnv, useAnalyzer) {
         ? (info) => path.relative(paths.appSrc, info.absoluteResourcePath).replace(/\\/g, '/')
         : isEnvDevelopment &&
           ((info) => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
-      jsonpFunction: `webpackJsonp${appPackageJson.name}`,
       globalObject: 'this',
     },
 
@@ -382,7 +378,11 @@ module.exports = function (webpackEnv, useAnalyzer) {
     plugins: [
       new InterpolateHtmlPlugin(HtmlWebpackPlugin, env.raw),
       new ModuleNotFoundPlugin(paths.appPath),
-      new webpack.DefinePlugin(env.stringified),
+      // new webpack.DefinePlugin(env.stringified),
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify('development')
+      }),
+
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
       useAnalyzer && new BundleAnalyzerPlugin(),

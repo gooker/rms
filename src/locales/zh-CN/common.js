@@ -189,14 +189,15 @@ export default {
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
   'app.task.type': '任务类型',
-  'app.task.state': '任务状态',
   'app.task.customId': '客户任务ID',
   'app.task.poolId': '料箱池任务ID',
 
-  'app.taskStatus.New': '新建', // 统一用 "state"
-  'app.taskStatus.Executing': '执行中',
-  'app.taskStatus.Finished': '已完成',
-  'app.taskStatus.Cancel': '已取消',
+  'app.task.state': '任务状态',
+  'app.task.state.New': '新建',
+  'app.task.state.Executing': '执行中',
+  'app.task.state.Finished': '已完成',
+  'app.task.state.Cancel': '已取消',
+  'app.task.state.Error': '失败',
 
   // 充电桩状态
   'app.chargeManger.ERROR': '错误',

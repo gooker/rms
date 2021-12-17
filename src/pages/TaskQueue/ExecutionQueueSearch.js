@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Form, Select, Button, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
-import Dictionary from '@/utils/Dictionary';
 
 const { Option } = Select;
 
 const TaskSearch = (props) => {
-  const { search } = props;
+  const { search, allTaskTypes } = props;
 
   const [form] = Form.useForm();
 
@@ -20,19 +19,11 @@ const TaskSearch = (props) => {
   }
 
   function renderAgvTaskTypeOption() {
-    const toteAgvTaskType = Dictionary('agvTaskType');
-    const options = [];
-    for (const key in toteAgvTaskType) {
-      if (toteAgvTaskType.hasOwnProperty(key)) {
-        const element = toteAgvTaskType[key];
-        options.push(
-          <Option key={key} value={key}>
-            {formatMessage({ id: element })}
-          </Option>,
-        );
-      }
-    }
-    return options;
+    return Object.keys(allTaskTypes).map((type) => (
+      <Option key={type} value={type}>
+        {allTaskTypes[type]}
+      </Option>
+    ));
   }
 
   return (
@@ -76,4 +67,4 @@ const TaskSearch = (props) => {
     </Form>
   );
 };
-export default React.memo(TaskSearch);
+export default memo(TaskSearch);

@@ -1,18 +1,19 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
-import { formatMessage, getSuffix, isNull } from '@/utils/utils';
+import { formatMessage, getSuffix } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getDirectionLocale, getAgvStatusTag, GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';
 import { hasPermission } from '@/utils/Permission';
+import { connect } from '@/utils/dva';
 
 const { red, green, yellow } = Dictionary('color');
 
 const RealTimeTab = (props) => {
-  const { data } = props;
+  const { data, agvType, allTaskTypes } = props;
 
   function renderAGVDirection(redisRecord, mongoRecord, format) {
     if (redisRecord == null && mongoRecord == null) {
@@ -210,9 +211,8 @@ const RealTimeTab = (props) => {
         {/************ 任务类型 ************/}
         <LabelComponent label={<FormattedMessage id="app.task.type" />}>
           {data?.redisAGV?.currentTaskType &&
-            formatMessage({
-              id: Dictionary('agvTaskType', data.redisAGV.currentTaskType),
-            })}
+            (allTaskTypes?.[agvType]?.[data.redisAGV.currentTaskType] ||
+              data.redisAGV.currentTaskType)}
         </LabelComponent>
       </Col>
 
@@ -318,5 +318,6 @@ const RealTimeTab = (props) => {
     </Row>
   );
 };
-
-export default React.memo(RealTimeTab);
+export default connect(({ global }) => ({
+  allTaskTypes: global.allTaskTypes,
+}))(memo(RealTimeTab));

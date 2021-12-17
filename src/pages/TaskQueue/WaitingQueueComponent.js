@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/dva';
-import { Badge, Row, Button, message } from 'antd';
+import { Badge, Row, Button, message, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/utils';
+import { dateFormat, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchTaskQueueList,
@@ -18,9 +18,15 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import RcsConfirm from '@/components/RcsConfirm';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
+import { AGVType } from '@/config/config';
+import Dictionary from '@/utils/Dictionary';
 
-@connect()
-class TaskQueueComponent extends Component {
+const { red, green } = Dictionary('color');
+
+@connect(({ global }) => ({
+  allTaskTypes: global.allTaskTypes,
+}))
+class WaitingQueueComponent extends Component {
   state = {
     dataSource: [],
     selectedRow: [],
@@ -32,6 +38,109 @@ class TaskQueueComponent extends Component {
     deleteLoading: false,
     priorityVisible: false,
   };
+
+  columns = [
+    {
+      title: <FormattedMessage id="app.task.id" />,
+      dataIndex: 'taskId',
+      align: 'center',
+      width: 200,
+      render: (text) => {
+        return (
+          <Tooltip title={text}>
+            <span
+              className={commonStyles.textLinks}
+              onClick={() => {
+                this.checkDetail(text);
+              }}
+            >
+              {text ? '*' + text.substr(text.length - 6, 6) : null}
+            </span>
+          </Tooltip>
+        );
+      },
+    },
+    {
+      title: <FormattedMessage id="app.task.type" />,
+      dataIndex: 'agvTaskType',
+      align: 'center',
+      width: 150,
+      render: (text) => {
+        const { allTaskTypes } = this.props;
+        return allTaskTypes?.[AGVType.LatentLifting]?.[text] || text;
+      },
+    },
+    {
+      title: <FormattedMessage id="app.taskQueue.appointedTarget" />,
+      dataIndex: 'appointedTargetCellId',
+      align: 'center',
+      width: 150,
+      render: (text, record) => {
+        if (record.isLockTargetCell == null) {
+          return <span>{text}</span>;
+        }
+        if (record.isLockTargetCell) {
+          return <span style={{ color: green }}>{text}</span>;
+        } else {
+          return <span style={{ color: red }}>{text}</span>;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id="app.taskQueue.appointedAgv" />,
+      dataIndex: 'appointedAGVId',
+      align: 'center',
+      width: 150,
+      render: (text, record) => {
+        if (record.isLockAGV) {
+          return <span style={{ color: green }}>{text}</span>;
+        } else {
+          return <span style={{ color: red }}>{text}</span>;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id="app.taskQueue.priority" />,
+      dataIndex: 'priority',
+      align: 'center',
+      width: 150,
+      sorter: (a, b) => a.priority - b.priority,
+      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: <FormattedMessage id="app.taskQueue.createTime" />,
+      dataIndex: 'createTimeMilliseconds',
+      align: 'center',
+      width: 200,
+      sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
+      render: (text) => {
+        if (!text) {
+          return <FormattedMessage id="app.taskQueue.notAvailable" />;
+        }
+        return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+      },
+    },
+    {
+      title: <FormattedMessage id="app.taskQueue.lastExecutedTimestamp" />,
+      dataIndex: 'lastExecutedTimestamp',
+      align: 'center',
+      width: 150,
+      sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
+      render: (text) => {
+        if (!text) {
+          return <FormattedMessage id="app.taskQueue.notAvailable" />;
+        }
+        return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+      },
+    },
+    {
+      title: <FormattedMessage id="app.taskQueue.triedTimes" />,
+      dataIndex: 'triedTimes',
+      align: 'center',
+      width: 150,
+      sorter: (a, b) => a.triedTimes - b.triedTimes,
+    },
+  ];
 
   componentDidMount() {
     this.getData();
@@ -62,7 +171,6 @@ class TaskQueueComponent extends Component {
     } catch (err) {
       message.error(formatMessage({ id: 'app.message.networkError' }));
     }
-
     this.setState({ loading: false });
   };
 
@@ -104,11 +212,11 @@ class TaskQueueComponent extends Component {
     this.setState({ selectedRowKeys, selectedRow });
   };
 
-  checkDetail = (taskId, taskAgvType, agvType) => {
-    const { dispatch } = this.props;
+  checkDetail = (taskId) => {
+    const { dispatch, AGVType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType, agvType },
+      payload: { taskId, AGVType },
     });
   };
 
@@ -140,7 +248,7 @@ class TaskQueueComponent extends Component {
 
   render() {
     const { loading, dataSource, deleteLoading, selectedRowKeys, agvOverallStatus } = this.state;
-    const { getColumn, deleteFlag, priority } = this.props;
+    const { deleteFlag, priority } = this.props;
     return (
       <TablePageWrapper>
         <div>
@@ -246,7 +354,7 @@ class TaskQueueComponent extends Component {
         </div>
         <TableWidthPages
           loading={loading}
-          columns={getColumn(this.checkDetail)}
+          columns={this.columns}
           dataSource={dataSource}
           rowKey={(record) => record.taskId}
           rowSelection={{
@@ -268,4 +376,4 @@ class TaskQueueComponent extends Component {
     );
   }
 }
-export default TaskQueueComponent;
+export default WaitingQueueComponent;

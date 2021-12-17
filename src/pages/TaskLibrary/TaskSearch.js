@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import Dictionary from '@/utils/Dictionary';
 import { GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import Dictionary from '@/utils/Dictionary';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const TaskStatus = Dictionary('taskStatus');
 
 const TaskSearch = (props) => {
-  const { search, agvList } = props;
+  const { search, agvList, allTaskTypes } = props;
 
   const [form] = Form.useForm();
 
@@ -17,12 +18,10 @@ const TaskSearch = (props) => {
     form.validateFields().then((values) => {
       const params = {};
       if (values.createDate) {
-        params.createTimeStart = GMT2UserTimeZone(values.createDate[0], 1).format(
+        params.createTimeStart = GMT2UserTimeZone(values.createDate[0]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
-        params.createTimeEnd = GMT2UserTimeZone(values.createDate[1], 1).format(
-          'YYYY-MM-DD HH:mm:ss',
-        );
+        params.createTimeEnd = GMT2UserTimeZone(values.createDate[1]).format('YYYY-MM-DD HH:mm:ss');
         params.createDate = null;
       }
       search({ ...values, ...params }, true);
@@ -30,19 +29,11 @@ const TaskSearch = (props) => {
   }
 
   function renderAgvTaskTypeOption() {
-    const toteAgvTaskType = Dictionary('agvTaskType');
-    const options = [];
-    for (const key in toteAgvTaskType) {
-      if (toteAgvTaskType.hasOwnProperty(key)) {
-        const element = toteAgvTaskType[key];
-        options.push(
-          <Option key={key} value={key}>
-            {formatMessage({ id: element })}
-          </Option>,
-        );
-      }
-    }
-    return options;
+    return Object.keys(allTaskTypes).map((type) => (
+      <Option key={type} value={type}>
+        {allTaskTypes[type]}
+      </Option>
+    ));
   }
 
   return (
@@ -67,21 +58,11 @@ const TaskSearch = (props) => {
         <Col span={8}>
           <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.state' })}>
             <Select mode="multiple" allowClear>
-              <Option key="New" value="New">
-                <FormattedMessage id="app.activity.TaskNew" />
-              </Option>
-              <Option key="Executing" value="Executing">
-                <FormattedMessage id="app.activity.TaskExecuting" />
-              </Option>
-              <Option key="Finished" value="Finished">
-                <FormattedMessage id="app.activity.TaskFinished" />
-              </Option>
-              <Option key="Error" value="Error">
-                <FormattedMessage id="app.activity.TaskError" />
-              </Option>
-              <Option key="Cancel" value="Cancel">
-                <FormattedMessage id="app.button.cancel" />
-              </Option>
+              {Object.keys(TaskStatus).map((item) => (
+                <Option key={item} value={item}>
+                  <FormattedMessage id={TaskStatus[item]} />
+                </Option>
+              ))}
             </Select>
           </Form.Item>
         </Col>
@@ -124,4 +105,4 @@ const TaskSearch = (props) => {
     </Form>
   );
 };
-export default React.memo(TaskSearch);
+export default memo(TaskSearch);

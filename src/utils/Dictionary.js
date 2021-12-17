@@ -32,11 +32,11 @@ const DictionaryDataSource = {
 
   // 任务状态
   taskStatus: {
-    New: 'app.taskStatus.New',
-    Executing: 'app.taskStatus.Executing',
-    Finished: 'app.taskStatus.Finished',
-    Error: 'app.taskStatus.Error',
-    Cancel: 'app.taskStatus.Cancel',
+    New: 'app.task.state.New',
+    Executing: 'app.task.state.Executing',
+    Finished: 'app.task.state.Finished',
+    Error: 'app.task.state.Error',
+    Cancel: 'app.task.state.Cancel',
   },
 
   // 小车方向

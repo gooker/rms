@@ -53,7 +53,7 @@ const TotePoolTask = () => {
             return (
               <Badge
                 status={TaskStateBageType[text]}
-                text={<FormattedMessage id={`app.taskStatus.${statusTransform[text]}`} />}
+                text={<FormattedMessage id={`app.task.state.${statusTransform[text]}`} />}
               />
             );
           } else {

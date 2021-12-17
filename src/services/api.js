@@ -111,9 +111,12 @@ export async function fetchMoveoutAGVs(agvType, params) {
 // ************************************** 执行队列  ************************************** //
 // 获取执行队列数据
 export async function fetchExecutingTaskList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/getExecutingTaskList/${params}`, {
-    method: `GET`,
-  });
+  return request(
+    `/${NameSpace[agvType]}/redis/getExecutingTaskList/${window.localStorage.getItem('sectionId')}`,
+    {
+      method: `GET`,
+    },
+  );
 }
 
 // 删除执行队列任务

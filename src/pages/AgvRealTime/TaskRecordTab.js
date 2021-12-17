@@ -8,9 +8,9 @@ import {
   SyncOutlined,
 } from '@ant-design/icons';
 import { formatMessage, GMT2UserTimeZone } from '@/utils/utils';
-import Dictionary from '@/utils/Dictionary';
-import styles from './index.module.less';
 import { AGVType } from '@/config/config';
+import { connect } from '@/utils/dva';
+import styles from './index.module.less';
 
 const taskStatusIcon = {
   New: {
@@ -31,12 +31,16 @@ const taskStatusIcon = {
   },
 };
 
+@connect(({ global }) => ({
+  allTaskTypes: global.allTaskTypes,
+}))
 class TaskRecordTab extends PureComponent {
   renderDescription = (record) => {
     return <Col>{GMT2UserTimeZone(record.updateTime).format('YYYY-MM-DD HH:mm:ss')}</Col>;
   };
 
   renderStep = (record) => {
+    const { agvType, allTaskTypes } = this.props;
     const taskStatus = taskStatusIcon[record.taskStatus];
     return (
       <Timeline.Item dot={taskStatus.icon} key={taskStatus.id}>
@@ -52,9 +56,7 @@ class TaskRecordTab extends PureComponent {
               }
             }}
           >
-            {formatMessage({
-              id: Dictionary('agvTaskType', [record.type]) || record.type,
-            })}
+            {allTaskTypes?.[agvType]?.[record.type] || record.type}
           </span>
         </Col>
       </Timeline.Item>

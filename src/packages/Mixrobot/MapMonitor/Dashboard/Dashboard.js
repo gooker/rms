@@ -22,7 +22,7 @@ const PieInnerFontSize = 14;
 const PieInnerTitleTop = '40%';
 const PieInnerValueTop = '46%';
 
-export default class Dashboard extends PureComponent {
+class Dashboard extends PureComponent {
   constructor(props) {
     super(props);
 
@@ -583,3 +583,4 @@ export default class Dashboard extends PureComponent {
     );
   }
 }
+export default Dashboard;

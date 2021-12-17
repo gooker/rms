@@ -5,29 +5,37 @@ import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
+import { connect } from '@/utils/dva';
 
 const { Option } = Select;
 const { Panel } = Collapse;
 const { RangePicker } = DatePicker;
+
+@connect(({ global }) => ({
+  allTaskTypes: global.allTaskTypes,
+}))
 class AGVActivityForm extends Component {
   onValuesChange = (changedValues, allValues) => {
     const { onChange } = this.props;
     if (onChange) {
       if (allValues && allValues.createDate != null) {
-        allValues.createTimeStart = GMT2UserTimeZone(allValues.createDate[0], 1).format(
+        allValues.createTimeStart = GMT2UserTimeZone(allValues.createDate[0]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
-        allValues.createTimeEnd = GMT2UserTimeZone(allValues.createDate[1], 1).format(
+        allValues.createTimeEnd = GMT2UserTimeZone(allValues.createDate[1]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
         delete allValues.createDate;
       }
-      if (allValues && !allValues.createDate) delete allValues.createDate;
+      if (allValues && !allValues.createDate) {
+        delete allValues.createDate;
+      }
       onChange(allValues || {});
     }
   };
+
   render() {
-    const { defaultValue, mode, disabled } = this.props;
+    const { defaultValue, mode, disabled, agvType, allTaskTypes } = this.props;
     return (
       <Form
         layout="inline"
@@ -97,20 +105,13 @@ class AGVActivityForm extends Component {
                         mode="multiple"
                         maxTagTextLength={2}
                         maxTagCount={1}
-                        options={(function () {
-                          const data = [];
-                          const toteAgvTaskType = Dictionary('agvTaskType');
-                          for (const key in toteAgvTaskType) {
-                            if (toteAgvTaskType.hasOwnProperty(key)) {
-                              const element = toteAgvTaskType[key];
-                              data.push({
-                                label: formatMessage({ id: element }),
-                                value: key,
-                                key: key,
-                              });
-                            }
-                          }
-                          return data;
+                        options={(() => {
+                          const specificAgvTaskTypes = allTaskTypes?.[agvType] || {};
+                          return Object.keys(specificAgvTaskTypes).map((type) => ({
+                            label: specificAgvTaskTypes[type],
+                            value: type,
+                            key: type,
+                          }));
                         })()}
                       />
                     </Form.Item>
@@ -155,5 +156,4 @@ class AGVActivityForm extends Component {
     );
   }
 }
-
 export default AGVActivityForm;

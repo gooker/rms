@@ -425,8 +425,6 @@ class TaskKPI extends Component {
           )}
         </Row>
 
-
-
         {/* Modal */}
         <KpiSavedSeedModal
           onOk={this.startComparing}

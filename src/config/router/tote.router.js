@@ -1,7 +1,7 @@
 export default [
   {
     path: '/tote/center',
-    name: 'controlCenter',
+    name: 'task',
     icon: 'icon-task',
     routes: [
       {
@@ -99,11 +99,11 @@ export default [
   {
     path: '/tote/faultManger',
     icon: 'warning',
-    name: 'faultManger',
+    name: 'faultManagement',
     routes: [
       {
         path: '/tote/faultManger/faultInfo',
-        name: 'faultInfo',
+        name: 'faultList',
         component: '/Tote/Fault/FaultInfo.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
@@ -158,7 +158,7 @@ export default [
     routes: [
       {
         path: '/tote/system/systemParamsManager',
-        name: 'systemParamsManager',
+        name: 'systemParams',
         component: '/Tote/System/SystemParams.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },

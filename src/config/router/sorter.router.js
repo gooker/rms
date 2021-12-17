@@ -1,7 +1,7 @@
 export default [
   {
     path: '/sorter/center',
-    name: 'controlCenter',
+    name: 'task',
     icon: 'icon-task',
     routes: [
       {
@@ -12,13 +12,13 @@ export default [
       },
       {
         path: '/sorter/task/taskQueue',
-        name: 'taskQueue',
-        component: '/Sorter/TaskQueue.js',
+        name: 'waitingQueue',
+        component: '/Sorter/WaitingQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
         path: '/sorter/task/taskLibrary',
-        name: 'taskManger',
+        name: 'taskLibrary',
         component: '/Sorter/TaskLibrary.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
@@ -103,7 +103,7 @@ export default [
     routes: [
       {
         path: '/sorter/system/systemParamsManager',
-        name: 'systemParamsManager',
+        name: 'systemParams',
         component: '/Sorter/SystemParams.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
