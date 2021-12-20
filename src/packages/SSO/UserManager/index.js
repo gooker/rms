@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, Button, Tag, Popover, message, Modal } from 'antd';
+import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -15,7 +15,7 @@ import {
 } from '@/services/user';
 import IconFont from '@/utils/ExtraIcon';
 import RcsConfirm from '@/components/RcsConfirm';
-import TablewidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
@@ -48,6 +48,132 @@ class UserManager extends Component {
     adminType: null,
   };
 
+  columns = [
+    {
+      title: <FormattedMessage id="sso.user.type.username" />,
+      dataIndex: 'username',
+      align: 'center',
+      fixed: 'left',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.userType" />,
+      dataIndex: 'userType',
+      render: (text) => {
+        return (
+          <Tag color={UserTypeColor[text]}>
+            {text === 'USER' ? (
+              <FormattedMessage id="sso.user.type.user" />
+            ) : (
+              <FormattedMessage id="translator.languageManage.application" />
+            )}
+          </Tag>
+        );
+      },
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.adminType" />,
+      dataIndex: 'adminType',
+      render: (text) => {
+        const adminType = text || 'USER';
+        return <Tag color={AdminTypeColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
+      },
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.common.status" />,
+      dataIndex: 'disable',
+      align: 'center',
+      render: (text, record) => {
+        let disable = null;
+        let content = (
+          <StatusChoice
+            onChange={() => {
+              this.changeStatus(record.id);
+            }}
+            status={!text}
+          />
+        );
+        if (text) {
+          disable = (
+            <span style={{ color: 'red', cursor: 'pointer' }}>
+              <FormattedMessage id="sso.user.tip.disabled" />
+            </span>
+          );
+        } else {
+          disable = (
+            <span style={{ color: 'green', cursor: 'pointer' }}>
+              <FormattedMessage id="sso.user.tip.enabled" />
+            </span>
+          );
+        }
+        return (
+          <Popover
+            content={content}
+            title={<FormattedMessage id="sso.user.edit" />}
+            trigger="hover"
+            placement="left"
+          >
+            {disable}
+          </Popover>
+        );
+      },
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.email" />,
+      dataIndex: 'email',
+      align: 'center',
+      width: '15%',
+    },
+    {
+      title: <FormattedMessage id="sso.user.list.token" />,
+      dataIndex: 'token',
+      align: 'center',
+      with: '150',
+      render: (text, record) => {
+        if (record.userType === 'APP') {
+          return (
+            <div>
+              <Popover content={text} trigger="click">
+                <Button type="link">
+                  <FormattedMessage id="sso.user.action.view" />
+                </Button>
+              </Popover>
+              <Button
+                type="link"
+                onClick={() => {
+                  this.addToClipBoard(text);
+                }}
+              >
+                <FormattedMessage id="app.button.copy" />
+              </Button>
+            </div>
+          );
+        } else {
+          return <span />;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id="translator.languageManage.language" />,
+      dataIndex: 'language',
+      align: 'center',
+      with: '150',
+    },
+    {
+      title: <FormattedMessage id="app.common.remark" />,
+      dataIndex: 'description',
+      ellipsis: true,
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.taskDetail.createTime" />,
+      dataIndex: 'createDate',
+      align: 'center',
+      fixed: 'right',
+    },
+  ];
+
   componentDidMount() {
     const { currentUser } = this.props;
     const adminType = currentUser.adminType || 'USER';
@@ -56,7 +182,7 @@ class UserManager extends Component {
   }
 
   getUserDataList = async () => {
-    this.setState({ loading: true });
+    this.setState({ loading: true, selectRow: [], selectRowKey: [] });
     const response = await fetchUserManagerList();
     if (!dealResponse(response)) {
       this.setState({
@@ -199,132 +325,6 @@ class UserManager extends Component {
     copyToBoard(content);
   };
 
-  getColumn = [
-    {
-      title: <FormattedMessage id="sso.user.type.username" />,
-      dataIndex: 'username',
-      align: 'center',
-      fixed: 'left',
-    },
-    {
-      title: <FormattedMessage id="sso.user.list.userType" />,
-      dataIndex: 'userType',
-      render: (text) => {
-        return (
-          <Tag color={UserTypeColor[text]}>
-            {text === 'USER' ? (
-              <FormattedMessage id="sso.user.type.user" />
-            ) : (
-              <FormattedMessage id="translator.languageManage.application" />
-            )}
-          </Tag>
-        );
-      },
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="sso.user.list.adminType" />,
-      dataIndex: 'adminType',
-      render: (text) => {
-        const adminType = text || 'USER';
-        return <Tag color={AdminTypeColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
-      },
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.status" />,
-      dataIndex: 'disable',
-      align: 'center',
-      render: (text, record) => {
-        let disable = null;
-        let content = (
-          <StatusChoice
-            onChange={() => {
-              this.changeStatus(record.id);
-            }}
-            status={!text}
-          />
-        );
-        if (text) {
-          disable = (
-            <span style={{ color: 'red', cursor: 'pointer' }}>
-              <FormattedMessage id="sso.user.tip.disabled" />
-            </span>
-          );
-        } else {
-          disable = (
-            <span style={{ color: 'green', cursor: 'pointer' }}>
-              <FormattedMessage id="sso.user.tip.enabled" />
-            </span>
-          );
-        }
-        return (
-          <Popover
-            content={content}
-            title={<FormattedMessage id="sso.user.edit" />}
-            trigger="hover"
-            placement="left"
-          >
-            {disable}
-          </Popover>
-        );
-      },
-    },
-    {
-      title: <FormattedMessage id="sso.user.list.email" />,
-      dataIndex: 'email',
-      align: 'center',
-      width: '15%',
-    },
-    {
-      title: <FormattedMessage id="sso.user.list.token" />,
-      dataIndex: 'token',
-      align: 'center',
-      with: '150',
-      render: (text, record) => {
-        if (record.userType === 'APP') {
-          return (
-            <div>
-              <Popover content={text} trigger="click">
-                <Button type="link">
-                  <FormattedMessage id="sso.user.action.view" />
-                </Button>
-              </Popover>
-              <Button
-                type="link"
-                onClick={() => {
-                  this.addToClipBoard(text);
-                }}
-              >
-                <FormattedMessage id="app.button.copy" />
-              </Button>
-            </div>
-          );
-        } else {
-          return <span />;
-        }
-      },
-    },
-    {
-      title: <FormattedMessage id="translator.languageManage.language" />,
-      dataIndex: 'language',
-      align: 'center',
-      with: '150',
-    },
-    {
-      title: <FormattedMessage id="app.common.remark" />,
-      dataIndex: 'description',
-      ellipsis: true,
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.taskDetail.createTime" />,
-      dataIndex: 'createDate',
-      align: 'center',
-      fixed: 'right',
-    },
-  ];
-
   render() {
     const {
       selectRowKey,
@@ -348,50 +348,44 @@ class UserManager extends Component {
     const updateItem = updateUserFlag ? selectRow[0] : null;
     return (
       <div className={commonStyles.globalPageStyle}>
-        <Row>
-          <Col span={12}>
-            <FormattedMessage id="sso.user.type.username" />{' '}
-            <Select
-              mode="multiple"
-              style={{ width: '60%' }}
-              onChange={this.userHandleChange}
-              showSearch
-              allowClear
-              placeholder={formatMessage({
-                id: 'sso.user.require.searchByUsername',
-                format: false,
-              })}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {dataList.map((rec) => {
-                return (
-                  <Option key={rec.id} value={rec.id}>
-                    {rec.username}
-                  </Option>
-                );
-              })}
-            </Select>
-          </Col>
-        </Row>
-        <Row style={{ display: 'flex', padding: '20px 0' }}>
+        <Form.Item label={<FormattedMessage id="sso.user.type.username" />}>
+          <Select
+            showSearch
+            allowClear
+            mode="multiple"
+            style={{ width: '50%' }}
+            onChange={this.userHandleChange}
+            placeholder={formatMessage({
+              id: 'sso.user.require.searchByUsername',
+            })}
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+          >
+            {dataList.map((rec) => {
+              return (
+                <Option key={rec.id} value={rec.id}>
+                  {rec.username}
+                </Option>
+              );
+            })}
+          </Select>
+        </Form.Item>
+        <Row style={{ display: 'flex', marginBottom: '20px' }}>
           <Button
             type="primary"
             className={commonStyles.mr10}
-            icon={<PlusOutlined />}
             onClick={() => {
               this.setState({
                 addUserVisible: true,
               });
             }}
           >
-            <FormattedMessage id="app.button.add" />
+            <PlusOutlined /> <FormattedMessage id="app.button.add" />
           </Button>
           <Button
             className={commonStyles.mr10}
-            icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({
@@ -400,26 +394,24 @@ class UserManager extends Component {
               });
             }}
           >
-            <FormattedMessage id="sso.user.edit" />
+            <EditOutlined /> <FormattedMessage id="sso.user.edit" />
           </Button>
           <Button
             className={commonStyles.mr10}
-            icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({ updatePwdVisible: true });
             }}
           >
-            <FormattedMessage id="sso.user.action.resetPwd" />
+            <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
           </Button>
           <Button
             danger
             className={commonStyles.mr10}
-            icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
           >
-            <FormattedMessage id="sso.user.action.delete" />
+            <DeleteOutlined /> <FormattedMessage id="sso.user.action.delete" />
           </Button>
           <Button
             className={commonStyles.mr10}
@@ -428,8 +420,7 @@ class UserManager extends Component {
               this.setState({ sectionDistriVisble: true });
             }}
           >
-            <IconFont type="icon-fenpei" />
-            <FormattedMessage id="sso.user.sectionAssign" />
+            <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
           </Button>
           <Button
             className={commonStyles.mr10}
@@ -438,20 +429,19 @@ class UserManager extends Component {
             }}
             disabled={selectRowKey.length !== 1}
           >
-            <IconFont type="icon-fenpei" />
-            <FormattedMessage id="sso.user.roleAssign" />
+            <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
           </Button>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
-            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getUserDataList}>
-              <FormattedMessage id="app.button.refresh" />
+            <Button onClick={this.getUserDataList}>
+              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </div>
         </Row>
         <div className={styles.userManagerTable}>
-          <TablewidthPages
+          <TableWidthPages
             bordered
-            columns={this.getColumn}
-            rowKey="id"
+            columns={this.columns}
+            rowKey={(record) => record.id}
             dataSource={showUsersList}
             loading={loading}
             rowSelection={{
@@ -468,7 +458,8 @@ class UserManager extends Component {
           destroyOnClose
           footer={null}
           maskClosable={false}
-          width={adjustModalWidth() * 0.4 < 400 ? 400 : adjustModalWidth() * 0.4}
+          style={{ top: 30 }}
+          width={600}
           visible={addUserVisible}
           title={
             updateUserFlag ? (

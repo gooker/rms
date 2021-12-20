@@ -1,18 +1,13 @@
 import React, { Component } from 'react';
 import { Form, Input, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-  },
-  wrapperCol: {
-    span: 15,
-  },
-};
+import { formatMessage, getFormLayout } from '@/utils/utils';
+
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 
 export default class UpdatePassword extends Component {
   formRef = React.createRef();
+
   submit = () => {
     const { validateFields } = this.formRef.current;
     const { onSubmit } = this.props;
@@ -20,74 +15,59 @@ export default class UpdatePassword extends Component {
       onSubmit(allValues);
     });
   };
+
   render() {
     const { needOriginal } = this.props;
     return (
-      <div>
-        <Form {...formItemLayout} ref={this.formRef}>
-          {needOriginal ? (
-            <Form.Item
-              label={<FormattedMessage id="accountCenter.oldPassword" />}
-              name="originalPassword"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input.Password autoComplete="off" type="password" />
-            </Form.Item>
-          ) : (
-            ''
-          )}
+      <Form {...formItemLayout} ref={this.formRef}>
+        {needOriginal ? (
           <Form.Item
-            label={<FormattedMessage id="sso.user.account.password" />}
-            name="password"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            label={formatMessage({ id: 'accountCenter.oldPassword' })}
+            name="originalPassword"
+            rules={[{ required: true }]}
           >
             <Input.Password autoComplete="off" type="password" />
           </Form.Item>
-          <Form.Item
-            label={<FormattedMessage id="sso.user.account.password2" />}
-            name="surePassword"
-            dependencies={['password']}
-            rules={[
-              {
-                required: true,
-              },
-              {
-                validator: (_, value) => {
-                  const { getFieldValue } = this.formRef.current;
-                  if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
-                  }
-                  return Promise.reject(
-                    new Error(
-                      formatMessage({ id: 'sso.user.require.passwordConsistent', format: false }),
-                    ),
-                  );
-                },
-              },
-            ]}
-          >
-            <Input.Password autoComplete="off" type="password" />
-          </Form.Item>
-        </Form>
-        <div
-          style={{
-            marginTop: 60,
-            textAlign: 'center',
-          }}
+        ) : (
+          ''
+        )}
+        <Form.Item
+          label={formatMessage({ id: 'sso.user.account.password' })}
+          name="password"
+          rules={[{ required: true }]}
         >
+          <Input.Password autoComplete="off" type="password" />
+        </Form.Item>
+        <Form.Item
+          label={formatMessage({ id: 'sso.user.account.password2' })}
+          name="surePassword"
+          dependencies={['password']}
+          rules={[
+            { required: true },
+            {
+              validator: (_, value) => {
+                const { getFieldValue } = this.formRef.current;
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(
+                  new Error(
+                    formatMessage({ id: 'sso.user.require.passwordConsistent', format: false }),
+                  ),
+                );
+              },
+            },
+          ]}
+        >
+          <Input.Password autoComplete="off" type="password" />
+        </Form.Item>
+
+        <Form.Item {...formItemLayoutNoLabel}>
           <Button onClick={this.submit} type="primary">
             <FormattedMessage id="app.button.submit" />
           </Button>
-        </div>
-      </div>
+        </Form.Item>
+      </Form>
     );
   }
 }

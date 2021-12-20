@@ -1,24 +1,19 @@
 import React, { Component } from 'react';
 import { Form, Select, Input, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage, getFormLayout } from '@/utils/utils';
 import LocalsKeys from '@/locales/LocaleKeys';
 import TimeZone from '@/components/TimeZone';
-
 import { generateAdminTypeOptions, generateLevelOptions } from '../userManagerUtils';
 import { isStrictNull } from '@/utils/utils';
+
 const { Option } = Select;
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-  },
-  wrapperCol: {
-    span: 15,
-  },
-};
+
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 
 export default class AddUser extends Component {
   formRef = React.createRef();
+
   state = {
     adminTypeOptions: [],
     levelOptions: [],
@@ -26,6 +21,7 @@ export default class AddUser extends Component {
     timeZoneVisible: false,
     zoneValue: null,
   };
+
   componentDidMount() {
     const { type, updateRow } = this.props;
     const { setFieldsValue } = this.formRef.current;
@@ -67,13 +63,14 @@ export default class AddUser extends Component {
     }
   };
 
-  submit = (values) => {
+  submit = () => {
     const { validateFields } = this.formRef.current;
     const { onAddUser } = this.props;
     validateFields().then((allValues) => {
       onAddUser(allValues);
     });
   };
+
   render() {
     const { updateRow } = this.props;
     const { adminTypeOptions, levelOptions, selectedUserType, timeZoneVisible, zoneValue } =
@@ -190,7 +187,6 @@ export default class AddUser extends Component {
               <Input.Password autoComplete="off" type="password" />
             </Form.Item>
           )}
-
           <Form.Item
             label={<FormattedMessage id="translator.languageManage.language" />}
             name="language"
@@ -208,7 +204,6 @@ export default class AddUser extends Component {
               ))}
             </Select>
           </Form.Item>
-
           <Form.Item
             label={<FormattedMessage id="sso.user.list.adminType" />}
             name="adminType"
@@ -256,30 +251,23 @@ export default class AddUser extends Component {
             ]}
           >
             <Input
-              autoComplete="off"
               readOnly
+              autoComplete="off"
               onClick={() => {
                 this.setState({ timeZoneVisible: true });
               }}
             />
           </Form.Item>
-          <Form.Item
-            label={<FormattedMessage id="app.common.remark" />}
-            name="description"
-          >
+          <Form.Item label={<FormattedMessage id="app.common.remark" />} name="description">
             <Input />
           </Form.Item>
+          <Form.Item {...formItemLayoutNoLabel}>
+            <Button onClick={this.submit} type="primary">
+              <FormattedMessage id="app.button.submit" />
+            </Button>
+          </Form.Item>
         </Form>
-        <div
-          style={{
-            marginTop: 60,
-            textAlign: 'center',
-          }}
-        >
-          <Button onClick={this.submit} type="primary">
-            <FormattedMessage id="app.button.submit" />
-          </Button>
-        </div>
+
         {/*********时区分配**********/}
         <Modal
           visible={timeZoneVisible}
