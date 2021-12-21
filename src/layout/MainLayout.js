@@ -31,6 +31,11 @@ class MainLayout extends React.Component {
       Modal.error({
         title: formatMessage({ id: 'app.global.initFailed' }),
         content: error.toString(),
+        zIndex:2147483649,
+        onOk(){
+          // 登出
+          dispatch({ type: 'user/logout' });
+        }
       });
     }
   }

@@ -106,7 +106,7 @@ export default {
 
   // 按钮
   'app.button.add': '新增',
-  'app.button.edit': '编辑',
+  'app.button.edit': '编辑', 
   'app.button.save': '保存',
   'app.button.copy': '复制',
   'app.button.past': '粘贴',
@@ -242,4 +242,14 @@ export default {
 
   'app.fault.curDataDefinition': '附加数据2',
   'app.fault.extraData2': '附加数据2',
+
+  //触发器状态
+  'app.common.description':'描述',
+  'app.common.status.end':'结束',
+  'app.common.status.start':'开始',
+  'app.common.status.pause':'暂停',
+  'app.common.batchOperate':'批量操作',
+  'app.common.timeInterval':'时间间隔',
+  'app.form.target': '目标',
+  'app.form.placeholder.pleaseSelect': '请选择',
 };

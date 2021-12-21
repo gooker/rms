@@ -1,6 +1,9 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
+const { Coordinator, Tote, LatentLifting, ForkLifting } =NameSpace;
+
+
 export async function fetchAllTaskTypes() {
   return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {
     method: 'GET',
@@ -524,3 +527,260 @@ export async function fetchReportDetailByUrl(params) {
     data: params,
   });
 }
+
+
+// 资源分组-分组管理
+export async function getCustomGroupJson() {
+  return request(`/${Coordinator}/custom/getCustomGroupJson`, {
+    method: 'GET',
+  });
+}
+
+export async function saveCustomGroup(param) {
+  return request(`/${Coordinator}/custom/saveCustomGroup `, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+export async function getCustomGroup(params) {
+  return request(`/${Coordinator}/custom/getCustomGroup`, {
+    method: 'GET',
+    data: params,
+  });
+}
+// 根据mapId和Id删除 [{}]
+export async function deleteCustomGroup(param) {
+  return request(`/${Coordinator}/custom/batchDeleteCustomGroup `, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 保存单条数据
+export async function saveOneCustomGroup(param) {
+  return request(`/${Coordinator}/custom/saveOneCustomGroup `, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
+// 资源分组-分组绑定
+// 保存绑定关系
+export async function fechSaveUnBind(param) {
+  return request(`/${Coordinator}/custom/saveUnBindGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 删除绑定关系
+export async function deleteUnBindGroup(param) {
+  return request(`/${Coordinator}/custom/deleteUnBindGroupById`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 根据mapId查询绑定关系
+export async function getUnBindGroupData(param) {
+  return request(`/${Coordinator}/custom/getUnBindGroupByMapId`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+
+// ********************** 任务触发器  ********************** //
+// 保存任务触发器
+export async function saveTaskTrigger(param) {
+  return request(`/${Coordinator}/customTrigger/saveCustomTaskTrigger`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 获取所有新增的任务触发器(参数status可选)
+export async function getAllTaskTriggers(param) {
+  return request(`/${Coordinator}/customTrigger/getAllCustomTaskTrigger`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 删除任务触发器   GET(id)
+export async function deleteTaskTrigger(param) {
+  return request(`/${Coordinator}/customTrigger/deleteCustomTaskTriggerById`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 切换任务触发器状态
+export async function switchTriggerState(param) {
+  return request(`/${Coordinator}/customTrigger/customTrigger`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 查询所有已创建的Web Hook接口
+export async function getAllWebHooks() {
+  return request(`/${Coordinator}/webHook/getAllWebHook`, {
+    method: 'GET',
+  });
+}
+
+
+// ********************** 自定义任务  ********************** //
+// 获取自定义任务-用于选择任务触发
+export async function getCustomTaskList() {
+  return request(`/${LatentLifting}/agv-custom-task/getAllCustomTaskBySectionId`, {
+    method: 'GET',
+  });
+}
+
+// 删除 Web Hook
+export async function deleteWebHooks(param) {
+  return request(`/${Coordinator}/webHook/deleteWebHookById`, {
+    method: 'POST',
+    data: param,
+  });
+}
+// 获取自定义任务可配置参数
+export async function fetchCstParams(param) {
+  return request(`/${LatentLifting}/agv-custom-task/getFixedVariable`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 资源分组-自定义任务
+// 保存自定义任务
+export async function saveCustomTask(param) {
+  return request(`/${LatentLifting}/agv-custom-task/saveCustomTask`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 获取 编辑富文本list
+export async function getAllRichText() {
+  return request(`/${Coordinator}/richText/getAllRichText`, {
+    method: 'GET',
+  });
+}
+
+// 删除 编辑富文本
+export async function deleteByRichIds(param) {
+  return request(`/${Coordinator}/richText/deleteByIds`, {
+    method: 'POST',
+    data: param,
+  });
+}
+// 获取任务节点列表
+export async function deleteCustomTasksById(param) {
+  return request(`/${LatentLifting}/agv-custom-task/deleteAllCustomTaskByIds`, {
+    method: 'POST',
+    data: param,
+  });
+}
+// 获取任务节点列表
+export async function getCustomTaskNodes() {
+  return request(`/${LatentLifting}/agv-custom-task/getCustomType`, {
+    method: 'GET',
+  });
+}
+// 获取业务模型数据
+export async function getFormModelTypes(param) {
+  return request(`/${LatentLifting}/agv-custom-task/getModelType`, {
+    method: 'GET',
+    data: param,
+  });
+}
+// 获取业务模型可锁资源
+export async function getFormModelLockResource(param) {
+  return request(`/${LatentLifting}/agv-custom-task/getLockResource`, {
+    method: 'GET',
+    data: param,
+  });
+}
+// 获取转弯协议
+export async function getTurnProtocol() {
+  return request(`/${LatentLifting}/agv-custom-task/getTurnAction`, {
+    method: 'GET',
+  });
+}
+// 获取空跑协议
+export async function getAgvRunProtocol() {
+  return request(`/${LatentLifting}/agv-custom-task/getRunAction`, {
+    method: 'GET',
+  });
+}
+// 获取小车任务类型集合
+export async function getTaskTypes() {
+  return request(`/${Coordinator}/api/getAgvTaskType`, {
+    method: 'GET',
+  });
+}
+// 获取小车返回指定的区域集合
+export async function getBackZone(param) {
+  return request(`/${LatentLifting}/agv-custom-task/getBackZone`, {
+    method: 'GET',
+    data: param,
+  });
+}
+// 获取潜伏车动作集
+export async function getLatentActions() {
+  return request(`/${LatentLifting}/agv-custom-task/getAddActions`, {
+    method: 'GET',
+  });
+}
+
+// ********************** 任务限流器  ********************** //
+// 任务类型限流
+export async function getAgvTasksByType() {
+  return request(`/${Coordinator}/customLimiter/getAgvTaskType`, {
+    method: 'GET',
+  });
+}
+// 资源组限流
+export async function getAgvTasksByCustomGroup(param) {
+  return request(`/${Coordinator}/customLimiter/getCustomGroup`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 限流保存-编辑
+export async function saveTaskLimit(param) {
+  return request(`/${Coordinator}/customLimiter/saveTaskLimit`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 保存 编辑富文本
+export async function saveRichText(param) {
+  return request(`/${Coordinator}/richText/saveRichText`, {
+    method: 'POST',
+    data: param,
+  });
+}
+// 任务限流器列表 参数mapId 选填type
+export async function getTaskLimit(param) {
+  return request(`/${Coordinator}/customLimiter/getTaskLimitByMapId`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 任务限流器列表 ids
+export async function deleteTaskLimit(param) {
+  return request(`/${Coordinator}/customLimiter/deleteTaskLimitById`, {
+    method: 'POST',
+    data: param,
+  });
+}
+

@@ -164,3 +164,13 @@ export const HeatCircleRadius = 400;
 export const CellHeatType = {
   cost_type: 'COST_HEAT',
 };
+
+// 自定义任务: 任务类型 -- 任务数据字段
+export const ModelTypeFieldMap = {
+  START: 'customStart',
+  END: 'customEnd',
+  ACTION: 'customActions',
+  EVENT: 'customEvents',
+  WAIT: 'customWaits',
+  PODSTATUS: 'customPodStatus',
+};

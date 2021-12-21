@@ -1,0 +1,48 @@
+// ActionDefiner.js
+.actionDefiner {
+  :global {
+    .smooth-dnd-container {
+      > div:not(:first-child) {
+        margin-top: 13px;
+      }
+    }
+  }
+}
+
+.dynamicRow {
+  display: flex;
+  align-items: center;
+  height: 32px;
+
+  > span:first-child {
+    :global {
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: #1890ff;
+      }
+    }
+  }
+}
+
+.dynamicValueInputs {
+  > span {
+    margin-left: 10px;
+  }
+}
+
+.dynamicMinusButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  margin-left: 10px;
+}
+
+.dynamicAddButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 230px;
+  margin-top: 13px;
+}

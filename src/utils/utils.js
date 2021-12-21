@@ -11,6 +11,7 @@ import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
 import requestorStyles from '@/packages/Mixrobot/Requestor/requestor.less';
 import find from 'lodash/find';
+import { ModelTypeFieldMap } from '@/config/consts';
 
 /**
  * 将服务器时间转化成本地时间
@@ -811,3 +812,156 @@ export function transformReportDetail(data) {
     endDate: data.endDate,
   };
 }
+
+export function convertMapToArrayMap(data, key, value) {
+  return Object.entries(data).map(([value1, value2]) => ({ [key]: value1, [value]: value2 }));
+}
+
+// Modal 长宽自适应，以这个为主
+export function adaptModalHeight() {
+  const { clientHeight } = document.body;
+  const heightDpr = getWindowHeightDpr();
+  const height = 768 * heightDpr;
+  const maxHeight = clientHeight * 0.8;
+  return height > maxHeight ? maxHeight : height;
+}
+
+export function adaptModalWidth() {
+  const widthDpr = getWindowWidthDpr();
+  const width = 1024 * widthDpr;
+  return width > 900 ? 900 : width;
+}
+
+function getWindowWidthDpr() {
+  const { clientWidth } = document.body;
+  const a = (clientWidth - 1024) / 1024;
+  if (a > 0) {
+    return a + 1;
+  }
+  return 1;
+}
+
+function getWindowHeightDpr() {
+  const { clientHeight } = document.body;
+  const a = (clientHeight - 768) / 768;
+  if (a > 0) {
+    return a + 1;
+  }
+  return 1;
+}
+
+
+export function getRandomString(length) {
+  const randomStringSeed = [];
+  let charCode = 65;
+  for (let index = 0; index < 26; index++) {
+    randomStringSeed.push(String.fromCharCode(charCode));
+    charCode += 1;
+  }
+  charCode = 97;
+  for (let index = 0; index < 26; index++) {
+    randomStringSeed.push(String.fromCharCode(charCode));
+    charCode += 1;
+  }
+  for (let index = 0; index < 10; index++) {
+    randomStringSeed.push(index);
+  }
+
+  const randomString = [];
+  for (let index = 0; index < length; index++) {
+    randomString.push(randomStringSeed[Math.floor(Math.random() * randomStringSeed.length)]);
+  }
+
+  return randomString.join('');
+}
+
+
+// 自定义任务: 将地图编程数据转化成VM
+export function convertScopeDataToUiOptions(scopeData) {
+  const result = {};
+  scopeData.forEach((item) => {
+    const { logicAreaCode, routeActionList } = item;
+    Object.keys(routeActionList).forEach((routeKey) => {
+      result[`${logicAreaCode}-${routeKey}`] = Object.values(routeActionList[routeKey]);
+    });
+  });
+  return result;
+}
+
+export function customTaskApplyDrag(arr, dragResult) {
+  const { removedIndex, addedIndex, payload } = dragResult;
+  if (removedIndex === null && addedIndex === null) return arr;
+
+  const result = [...arr];
+
+  // 如果是新增，给当前对象赋予一个code属性，custom_task_001
+  let itemToAdd;
+  if (payload) {
+    itemToAdd = { ...payload };
+    itemToAdd.code = `${payload.type}_${getRandomString(6)}`;
+  }
+
+  if (removedIndex !== null) {
+    itemToAdd = result.splice(removedIndex, 1)[0];
+  }
+
+  if (addedIndex !== null) {
+    result.splice(addedIndex, 0, itemToAdd);
+  }
+
+  return result;
+}
+
+export function extractRoutes(mapData) {
+  const routes = [];
+  if (mapData) {
+    const logicAreaList = mapData?.logicAreaList || [];
+    logicAreaList.forEach(({ id: logicId, name: logicName, routeMap }) => {
+      const routeMapContent = Object.values(routeMap).map(({ name, code }) => ({
+        logicId,
+        logicName,
+        name,
+        code,
+      }));
+      routes.push(...routeMapContent);
+    });
+  }
+  return routes;
+}
+
+// 将后台返回的自定义任务数据转化为表单数据
+export function restoreCustomTaskForm(customTask, customTypes) {
+  const result = { taskSteps: [], fieldsValue: {} };
+  const { codes } = customTask;
+
+  // 提取基本信息
+  result.fieldsValue.name = customTask.name;
+  result.fieldsValue.desc = customTask.desc;
+  result.fieldsValue.priority = customTask.priority;
+  result.fieldsValue.robot = customTask.robot;
+
+  codes.forEach((code) => {
+    const customTypeKey = code.split('_')[0];
+    const customType = find(customTypes, { type: customTypeKey });
+    result.taskSteps.push({ ...customType, code });
+
+    // 收集表单数据
+    if (['START', 'END'].includes(customTypeKey)) {
+      result.fieldsValue[code] = customTask[ModelTypeFieldMap[customTypeKey]];
+    } else {
+      const stepPayload = customTask[ModelTypeFieldMap[customTypeKey]];
+      const subTaskConfig = stepPayload[code];
+      if (subTaskConfig.customType === 'ACTION') {
+        subTaskConfig.trayActionProtocol = {
+          upAction: subTaskConfig.upAction,
+          downAction: subTaskConfig.downAction,
+        };
+        delete subTaskConfig.upAction;
+        delete subTaskConfig.downAction;
+      }
+      result.fieldsValue[code] = subTaskConfig;
+    }
+  });
+  return result;
+}
+

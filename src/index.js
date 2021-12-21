@@ -8,6 +8,8 @@ import userModel from '@/models/user';
 import editorModel from '@/models/editor';
 import monitorModel from '@/models/monitor';
 import simulatorModel from '@/models/simulator';
+import taskTriger from '@/packages/Mixrobot/SourceGroupManage/TaskTrigger/models/taskTriger';
+import customTask from '@/packages/Mixrobot/SourceGroupManage/CustomTask/models/CustomTaskModel'
 import './global.less';
 
 // 全局错误处理(尝试版)
@@ -38,6 +40,8 @@ app.model(globalModel);
 app.model(editorModel);
 app.model(monitorModel);
 app.model(simulatorModel);
+app.model(taskTriger);
+app.model(customTask);
 
 // 3. 启动
 const DvaProvider = app.create();

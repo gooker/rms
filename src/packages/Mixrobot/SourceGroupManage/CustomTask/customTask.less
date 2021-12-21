@@ -1,0 +1,386 @@
+@commonHeight: 32px;
+@layoutBorderColor: rgb(184, 181, 181);
+@antFormLabelWidth: 120px;
+
+.customTaskContainer {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+  padding: 20px;
+}
+
+.tableIcon {
+  :global {
+    span {
+      svg {
+        fill: #1890ff;
+      }
+      svg[data-icon='eye'] {
+        width: 20px;
+        height: 20px;
+      }
+      svg[data-icon='edit'] {
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+.customTaskForm {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 100%;
+
+  :global {
+    .ant-page-header {
+      padding: 0;
+      user-select: none;
+    }
+
+    .ant-divider-horizontal {
+      margin: 12px 0;
+    }
+  }
+}
+
+.layoutDivider {
+  width: 50px;
+  border-right: 1px solid #b8b5b5;
+}
+
+// 拖拽区
+.dndPanel {
+  display: flex;
+  flex-flow: column nowrap;
+  width: 155px;
+  transition: 0.5s;
+}
+
+.dndColumn {
+  display: flex;
+  flex-flow: column nowrap;
+  border: 1px solid @layoutBorderColor;
+
+  :global {
+    .smooth-dnd-container {
+      flex: 1;
+      flex-flow: column nowrap;
+      align-items: center;
+      padding-bottom: 8px;
+      overflow: auto;
+    }
+  }
+}
+
+.dndTitle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-weight: 500;
+  font-size: 16px;
+  border-bottom: 1px solid @layoutBorderColor;
+  user-select: none;
+}
+
+.dndList {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  align-items: center;
+  padding-bottom: 8px;
+  overflow: auto;
+}
+
+.taskNodeColor {
+  background: #fdc137;
+}
+
+.taskFlowColor {
+  background: #0ad986;
+}
+
+// 右侧展示 & 操作区
+.viewContent {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  width: 100%;
+  height: 100%;
+  padding-top: 40px;
+  border-bottom: 1px solid @layoutBorderColor;
+
+  :global {
+    .ant-steps-item-description {
+      padding-top: 20px;
+    }
+
+    .ant-form-item-label {
+      flex: none !important;
+      width: @antFormLabelWidth;
+    }
+
+    .ant-form-item-label label {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      height: 36px;
+      white-space: normal;
+      word-wrap: break-word;
+
+      & > .ant-checkbox {
+        padding-bottom: 6px;
+      }
+    }
+
+    .ant-form-item-control {
+      padding-top: 3px;
+    }
+
+    .ant-steps > .ant-steps-item > .ant-steps-item-container {
+      .ant-steps-item-icon {
+        margin-right: 20px;
+        .ant-steps-icon {
+          line-height: 27px;
+        }
+      }
+    }
+  }
+}
+
+.topTool {
+  height: @commonHeight;
+  margin-bottom: 5px;
+  text-align: end;
+
+  button:not(:first-child) {
+    margin-left: 20px;
+  }
+}
+
+.bottomTool {
+  height: @commonHeight;
+}
+
+// 可移动元素样式
+.dndCard {
+  position: relative;
+  width: 90%;
+  margin: 8px auto 0 auto;
+  text-align: center;
+  border: 1px solid #ebebeb;
+  border-radius: 2px;
+  cursor: move;
+  transition: border 0.2s, opacity 0.2s;
+  user-select: none;
+}
+
+.dndCardContent {
+  display: flex;
+  width: 100%;
+  height: 35px;
+
+  span {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.dndCardDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  border-left: 1px solid #e3e3e3;
+  cursor: pointer;
+
+  :global {
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+  }
+}
+
+// 表单输入框单位
+.inputUnitLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  font-size: 16px;
+}
+
+.dynamicNoLabel {
+  :global {
+    .ant-form-item > .ant-form-item-control {
+      margin-left: @antFormLabelWidth;
+    }
+  }
+}
+
+.editVaribleNoLabel {
+  :global {
+    .ant-form-item > .ant-form-item-control {
+      margin-left: 102px;
+    }
+  }
+}
+
+
+.priority {
+  :global {
+    .ant-rate-star-full {
+      svg {
+        fill: #1890ff;
+      }
+    }
+  }
+}
+
+.divider {
+  width: 600px;
+
+  :global {
+    div:not(.ant-divider-with-text) {
+      border-top: 1px solid rgba(139, 139, 139, 0.5);
+    }
+    .ant-divider-with-text {
+      font-size: 14px;
+      border-top-color: rgba(139, 139, 139, 0.5);
+      zoom: 1.2;
+    }
+    .ant-divider-inner-text {
+      color: rgb(24, 144, 255);
+      font-weight: 400;
+    }
+  }
+}
+
+// 列表页工具栏
+.listTopTool {
+  margin-bottom: 15px;
+
+  button:not(:first-child) {
+    margin-left: 10px;
+  }
+}
+
+// 动态参数Tip样式
+.dynamicParamTip {
+  color: #1890ff;
+  font-weight: 500;
+  font-size: 15px;
+}
+
+// 没有指定数值的字段
+.unUsedField {
+  padding: 5px;
+  color: #ffffff;
+  background: #1890ff;
+  border-radius: 4px;
+}
+
+// 进入待命状态
+.robotStandbyCondition {
+  margin: 0 0 24px 15px;
+  padding: 15px;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+}
+
+.standbyDynamicFormItem {
+  padding: 10px 0 0 10px;
+  border: 1px dashed #dddddd;
+}
+
+// 任务资源锁
+.taskResourceLock {
+  width: 600px;
+}
+
+.taskResourceLockTitle {
+  display: flex;
+  height: 35px;
+
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 500;
+  background: rgb(250, 250, 250);
+  border-bottom: 1px solid rgb(240, 240, 240);
+
+  & > span {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.85);
+  }
+}
+
+.taskResourceLockBodyRow {
+  display: flex;
+  height: 50px;
+
+  & > span {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+    color: rgba(0, 0, 0, 0.85);
+    border-bottom: 1px solid rgb(240, 240, 240);
+
+    :global {
+      .ant-select {
+        width: 190px;
+
+        .ant-select-selector .ant-select-selection-item {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+// 自定义任务请求体示例
+.taskBodyModal {
+  display: flex;
+  flex-flow: row nowrap;
+  height: 100%;
+}
+
+.modalColumn {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  overflow: auto;
+  border: 1px dashed #e3e3e3;
+  border-radius: 5px;
+}
+
+.treeNodeDetail {
+  flex: 1;
+  padding-left: 10px;
+  overflow: auto;
+  border-top: 1px dashed #e3e3e3;
+
+  :global {
+    .ant-form-item {
+      margin-bottom: 12px;
+    }
+
+    .ant-form-item-label {
+      flex: none !important;
+      width: 65px;
+    }
+  }
+}
+
+.treeNodeLabel {
+  color: rgb(24, 144, 255);
+  font-style: italic;
+  text-decoration: underline;
+}
