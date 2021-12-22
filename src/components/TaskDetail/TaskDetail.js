@@ -182,7 +182,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.updateTime" />}
+                    title={<FormattedMessage id="app.common.updateTime" />}
                     content={
                       <span>
                         {GMT2UserTimeZone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}

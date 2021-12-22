@@ -34,11 +34,13 @@ export default {
   'app.message.networkError': '请求失败, 网络连接可能出现异常',
   'app.message.uploader': '单击或拖动文件到该区域以上传',
   'app.message.fetchFailTemplate': '获取{type}数据失败',
+  'app.message.copy.successfully': '复制成功',
 
   // 通用页面标识内容
   'app.common.creator': '创建用户',
   'app.common.creationTime': '创建时间',
   'app.common.updater': '更新用户',
+  'app.common.operator': '操作用户',
   'app.common.updateTime': '更新时间',
   'app.common.startTime': '开始时间',
   'app.common.endTime': '结束时间',
@@ -59,6 +61,7 @@ export default {
   'app.common.times': '次',
   'app.common.all': '所有',
   'app.common.report': '报表',
+  'app.common.isRequired': '必填',
 
   // 地图相关
   'app.map.map': '地图',

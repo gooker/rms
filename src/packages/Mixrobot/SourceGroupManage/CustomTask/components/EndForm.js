@@ -8,7 +8,7 @@ import CascadeSelect from '../FormComponent/CascadeSelect';
 import {formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 6, span: 18 } };

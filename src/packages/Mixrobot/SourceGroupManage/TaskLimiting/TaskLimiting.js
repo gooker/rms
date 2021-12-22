@@ -12,6 +12,7 @@ import {
   deleteTaskLimit,
 } from '@/services/api';
 import TaskLimitModal from '../components/TaskLimitModal';
+import commonStyles from '@/common.module.less';
 
 class TaskTrigger extends Component {
   state = {
@@ -233,43 +234,9 @@ class TaskTrigger extends Component {
     };
 
     return (
-      <div style={{ margin: '20px 20px 0 20px', minHeight: '90%' }}>
+      <div className={commonStyles.globalPageStyle}>
         <Spin spinning={spinningFlag}>
-          {/*  搜索 */}
-          {/* <Card style={{ marginBottom: 15 ,}}>
-            <Row>
-              <Col md={9} sm={24}>
-                  <Checkbox.Group style={{ width: '100%' }} onChange={this.checkBoxOnChange}>
-                    <Row>
-                      <Col span={8}>
-                        <Checkbox value="A">
-                          {formatMessage({ id: 'app.taskLimiting.sourceGroup' })}
-                        </Checkbox>
-                      </Col>
-                      <Col span={8}>
-                        <Checkbox value="B">
-                          {formatMessage({ id: 'app.taskLimiting.tasktype' })}
-                        </Checkbox>
-                      </Col>
-                    </Row>
-                  </Checkbox.Group>
-              </Col>
-
-              <Col md={8} sm={24}>
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        this.search();
-                      }}
-                    >
-                      <FormattedMessage id="form.taskSearch" />
-                    </Button>
-              </Col>
-            </Row>
-        </Card> */}
-
-          <Card>
-            <Row style={{ marginBottom: 10 }}>
+            <Row style={{ marginBottom: 20 }}>
               <Button
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
@@ -297,7 +264,6 @@ class TaskTrigger extends Component {
               dataSource={taskLimitings}
               rowKey={'groupName'}
             />
-          </Card>
         </Spin>
 
         {/*  新增 编辑的弹窗 */}

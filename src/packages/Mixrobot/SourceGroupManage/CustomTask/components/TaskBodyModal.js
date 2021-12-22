@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Tree, Form } from 'antd';
-import styles from '../customTask.less';
-import {formatMessage } from '@/utils/utils';
+import styles from '../customTask.module.less';
+import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/utils';
 
@@ -24,7 +24,7 @@ const TaskBodyModal = (props) => {
         <span>
           code{' '}
           <span style={{ color: 'red' }}>
-            (<FormattedMessage id="app.customTask.cannotEdit" />)
+            (<FormattedMessage id="customTasks.cannotEdit" />)
           </span>
         </span>
       ),
@@ -35,7 +35,7 @@ const TaskBodyModal = (props) => {
         <span
           onClick={() => {
             loadTreeNodeDetail({
-              label: formatMessage({ id: 'app.customTask.form.dependencies' }), // 字段名
+              label: formatMessage({ id: 'customTasks.form.dependencies' }), // 字段名
               field: 'dependencies', // 字段
               default: [], // 默认值
               required: false, // 是否必须
@@ -44,7 +44,7 @@ const TaskBodyModal = (props) => {
         >
           dependencies{' '}
           <span className={styles.treeNodeLabel}>
-            <FormattedMessage id={'app.customTask.form.dependencies'} />
+            <FormattedMessage id={'customTasks.form.dependencies'} />
           </span>
         </span>
       ),
@@ -77,7 +77,7 @@ const TaskBodyModal = (props) => {
                   </span>
                 ) : (
                   <span style={{ color: 'red' }}>
-                    (<FormattedMessage id="app.customTask.cannotEdit" />)
+                    (<FormattedMessage id="customTasks.cannotEdit" />)
                   </span>
                 )}
               </span>
@@ -123,7 +123,7 @@ const TaskBodyModal = (props) => {
                       </span>{' '}
                       {key === 'targetAction' && key2 === 'target' ? (
                         <span style={{ color: 'red' }}>
-                          (<FormattedMessage id="app.customTask.example.isRequired" />)
+                          (<FormattedMessage id="app.common.isRequired" />)
                         </span>
                       ) : null}
                     </span>
@@ -152,7 +152,7 @@ const TaskBodyModal = (props) => {
                     ) : (
                       <span>
                         <span style={{ color: 'red' }}>
-                          (<FormattedMessage id="app.customTask.cannotEdit" />)
+                          (<FormattedMessage id="customTasks.cannotEdit" />)
                         </span>
                       </span>
                     )}
@@ -181,17 +181,17 @@ const TaskBodyModal = (props) => {
           </div>
           {exampleData && (
             <div className={styles.treeNodeDetail}>
-              <Form.Item label={formatMessage({ id: 'app.customTask.example.label' })}>
+              <Form.Item label={formatMessage({ id: 'app.common.name' })}>
                 {exampleData.label}
               </Form.Item>
-              <Form.Item label={formatMessage({ id: 'app.customTask.example.field' })}>
+              <Form.Item label={formatMessage({ id: 'customTasks.example.field' })}>
                 {exampleData.field}
               </Form.Item>
-              <Form.Item label={formatMessage({ id: 'app.customTask.example.default' })}>
+              <Form.Item label={formatMessage({ id: 'customTasks.example.default' })}>
                 {JSON.stringify(exampleData.default, null, 4)}
               </Form.Item>
-              <Form.Item label={formatMessage({ id: 'app.customTask.example.isRequired' })}>
-                {<FormattedMessage id={`app.taskDetail.${exampleData.required}`} />}
+              <Form.Item label={formatMessage({ id: 'app.common.isRequired' })}>
+                {<FormattedMessage id={`app.common.${exampleData.required}`} />}
               </Form.Item>
             </div>
           )}

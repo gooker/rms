@@ -7,7 +7,7 @@ import ModelSelection from '../FormComponent/ModelSelection';
 import { convertMapToArrayMap,formatMessage } from '@/utils/utils';
 import MenuIcon from '@/utils/MenuIcon';
 import { AGVType } from '@/config/config';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const { Option } = Select;
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

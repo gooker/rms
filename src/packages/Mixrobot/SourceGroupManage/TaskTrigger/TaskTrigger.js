@@ -27,6 +27,7 @@ import {
 import { dealResponse,formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import RcsConfirm from '@/components/RcsConfirm';
+import commonStyles from '@/common.module.less';
 import styles from '@/common.module.less';
 import style from './TaskTrigger.module.less';
 
@@ -355,7 +356,7 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={`${<FormattedMessage id='app.common.timeInterval}'/>}(s)`}
+              title={`${formatMessage({id:'app.common.timeInterval'})}(s)`}
               content={<span>{record.timeInterval}</span>}
             />
           </Col>
@@ -394,7 +395,7 @@ class TaskTrigger extends Component {
 
     return (
       <Spin spinning={loading}>
-        <div style={{ padding: 20 }}>
+        <div className={commonStyles.globalPageStyle}>
           {/* 操作栏 */}
           <Row justify="space-between">
             <Col>
@@ -457,7 +458,6 @@ class TaskTrigger extends Component {
               </Dropdown>
             </Col>
           </Row>
-          <Divider />
           {/* 列表栏 */}
           <Row style={{ marginTop: 20 }} gutter={[10, 10]}>
             {taskTriggerList && taskTriggerList.length > 0 ? (
@@ -485,7 +485,7 @@ class TaskTrigger extends Component {
               this.setState({ triggerModalVisible: false, updateTrigger: null });
             }}
           />
-        </div>
+      </div>
       </Spin>
     );
   }

@@ -10,7 +10,7 @@ import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import TrayActionProtocol from '../FormComponent/TrayActionProtocol';
 import CodeEditor from '@/components/CodeEditor';
 import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const { Option, OptGroup } = Select;
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

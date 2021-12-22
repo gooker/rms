@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Form, Row, Input, InputNumber, Switch } from 'antd';
 import {formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 

@@ -13,7 +13,7 @@ import { ModelTypeFieldMap } from '@/config/consts';
 import { isNull,formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
-import styles from '../CustomTask/customTask.less';
+import styles from '../CustomTask/customTask.module.less';
 
 const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 4, span: 20 } };

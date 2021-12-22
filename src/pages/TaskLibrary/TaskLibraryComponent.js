@@ -109,7 +109,7 @@ class TaskLibraryComponent extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.taskDetail.updateTime' }),
+      title: formatMessage({ id: 'app.common.updateTime' }),
       dataIndex: 'updateTime',
       align: 'center',
       width: 150,

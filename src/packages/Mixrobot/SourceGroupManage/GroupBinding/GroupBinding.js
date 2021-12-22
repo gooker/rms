@@ -5,6 +5,7 @@ import { dealResponse ,formatMessage} from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchGetActiveMap } from '@/services/map';
 import { getCustomGroup, getUnBindGroupData, fechSaveUnBind } from '@/services/api';
+import commonStyles from '@/common.module.less';
 import styles from '../sideToolBar.module.less';
 
 const { Option } = Select;
@@ -42,10 +43,10 @@ class GroupBinding extends Component {
         // 获取分组之间是否绑定信息
         this.getUnBindData(payload);
       } else {
-        message.error(formatMessage({ id: 'app.groupManage.fetchFailed' }));
+        message.error(formatMessage({ id: 'customTasks.groupManage.fetchFailed' }));
       }
     } else {
-      message.error(formatMessage({ id: 'app.storageManage.map.fetchFailed' }));
+      message.error(formatMessage({ id: 'customTasks.map.fetchFailed' }));
     }
   }
 
@@ -89,7 +90,7 @@ class GroupBinding extends Component {
     // 如果和x相同 return
     if (Array.isArray(values) && values.includes(xTypeValues)) {
       const index = values.findIndex((item) => item === xTypeValues);
-      message.info('不能和横轴重复');
+      message.info(formatMessage({ id: 'customTasks.groupBinding.repeat.horizeontalaxis' }));
       values.splice(index, 1);
       this.setState({ currentYvalue: values });
       return;
@@ -244,7 +245,7 @@ class GroupBinding extends Component {
         bindUnData: [...saveResult],
       });
     } else {
-      message.error(formatMessage({ id: 'app.groupManage.saveFailed' }));
+      message.error(formatMessage({ id: 'app.message.operateFailed' }));
     }
   };
 
@@ -298,22 +299,20 @@ class GroupBinding extends Component {
     }
 
     return (
-      <div>
-        <Card bordered={false} style={{ margin: '0px 10px' }}>
+      <div className={commonStyles.globalPageStyle}>
           {/* 搜索 */}
-          <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-            <div style={{ flex: 10, display: 'flex' }}>
+          <div>
               <Form ref={this.formRef}>
                 <Row>
                   <Col span={8}>
                     <FormItem
-                      label={formatMessage({ id: 'app.groupBinding.horizontalaxis' })}
+                      label={formatMessage({ id: 'customTasks.groupBinding.horizontalaxis' })}
                       name="xType"
                     >
                       <Select
-                        placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
+                        placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
                         style={{ width: '100%' }}
-                        showSearch
+                        // showSearch
                         onChange={this.groupXTypeChange}
                         options={xOptions}
                       ></Select>
@@ -321,12 +320,12 @@ class GroupBinding extends Component {
                   </Col>
                   <Col span={8} style={{ padding: '0 12px' }}>
                     <FormItem
-                      label={formatMessage({ id: 'app.groupBinding.verticalaxis' })}
+                      label={formatMessage({ id: 'customTasks.groupBinding.verticalaxis' })}
                       name="yType"
                     >
                       <Select
                         allowClear
-                        placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
+                        placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
                         style={{ width: '100%' }}
                         // showSearch
                         filterOption={false}
@@ -347,12 +346,11 @@ class GroupBinding extends Component {
 
                   <Col offset={3}>
                     <Button type={'primary'} onClick={this.submitSave}>
-                      <FormattedMessage id={'app.storageManage.save'} />
+                      <FormattedMessage id={'app.button.save'} />
                     </Button>
                   </Col>
                 </Row>
               </Form>
-            </div>
           </div>
 
           {/* 内容区 */}
@@ -451,7 +449,6 @@ class GroupBinding extends Component {
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
             )}
           </div>
-        </Card>
       </div>
     );
   }

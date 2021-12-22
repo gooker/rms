@@ -94,7 +94,6 @@ export default {
   'app.taskDetail.targetSpotId': '目标点',
   'app.taskDetail.targetStopSpotId': '目标停止点',
   'app.taskDetail.timeout': '超时',
-  'app.taskDetail.updateTime': '更新时间',
   'app.taskDetail.updateUser': '更新人',
   'app.taskDetail.workStationDirection': '工作站方位',
   'app.taskDetail.workStationStopSpotId': '工作站停止点',

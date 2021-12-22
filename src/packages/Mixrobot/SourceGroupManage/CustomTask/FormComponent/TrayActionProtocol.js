@@ -1,7 +1,7 @@
 import React from 'react';
 import { Radio } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 // upAction downAction
 const TrayActionProtocol = (props) => {

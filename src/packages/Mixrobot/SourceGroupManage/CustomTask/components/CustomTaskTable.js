@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { connect } from '@/utils/dva';
-import { Table, Button, Modal, message } from 'antd';
+import { Table, Button, Modal, message, Row, Col } from 'antd';
 import {
   FileTextOutlined,
   EyeOutlined,
@@ -9,9 +9,18 @@ import {
   EditOutlined,
 } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dateFormat, dealResponse, adaptModalWidth, adaptModalHeight, isNull,formatMessage} from '@/utils/utils';
+import {
+  dateFormat,
+  dealResponse,
+  adaptModalWidth,
+  adaptModalHeight,
+  isNull,
+  formatMessage,
+} from '@/utils/utils';
 import { deleteCustomTasksById } from '@/services/api';
-import styles from '../customTask.less';
+import RcsConfirm from '@/components/RcsConfirm';
+import commonStyles from '@/common.module.less';
+import styles from '../customTask.module.less';
 import TaskBodyModal from './TaskBodyModal';
 
 const messageKey = 'MESSAGE_KEY';
@@ -35,48 +44,48 @@ const CustomTaskTable = (props) => {
 
   const columns = [
     {
-      title: formatMessage({ id: 'app.customTask.form.taskCode' }),
+      title: formatMessage({ id: 'customTasks.table.taskCode' }),
       align: 'center',
       dataIndex: 'code',
     },
     {
-      title: formatMessage({ id: 'app.customTask.form.name' }),
+      title: formatMessage({ id: 'app.common.name' }),
       align: 'center',
       dataIndex: 'name',
     },
     {
-      title: formatMessage({ id: 'app.customTask.form.priority' }),
+      title: formatMessage({ id: 'app.taskQueue.priority' }),
       align: 'center',
       dataIndex: 'priority',
     },
     {
-      title: formatMessage({ id: 'app.customTask.table.createTime' }),
+      title: formatMessage({ id: 'app.common.creationTime' }),
       align: 'center',
       dataIndex: 'createTime',
       render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: formatMessage({ id: 'app.customTask.table.createdByUser' }),
+      title: formatMessage({ id: 'app.common.creator' }),
       align: 'center',
       dataIndex: 'createdByUser',
     },
     {
-      title: formatMessage({ id: 'app.areaManagement.updateTime' }),
+      title: formatMessage({ id: 'app.common.updateTime' }),
       align: 'center',
       dataIndex: 'updateTime',
     },
     {
-      title: formatMessage({ id: 'app.customTask.table.updatedByUser' }),
+      title: formatMessage({ id: 'app.common.updater' }),
       align: 'center',
       dataIndex: 'updatedByUser',
     },
     {
-      title: formatMessage({ id: 'app.customTask.table.operator' }),
+      title: formatMessage({ id: 'app.common.operator' }),
       align: 'center',
       dataIndex: 'operator',
     },
     {
-      title: formatMessage({ id: 'app.customTask.table.requestBody' }),
+      title: formatMessage({ id: 'customTasks.table.requestBody' }),
       with: 80,
       align: 'center',
       fixed: 'right',
@@ -91,7 +100,7 @@ const CustomTaskTable = (props) => {
       ),
     },
     {
-      title: formatMessage({ id: 'app.customTask.table.operation' }),
+      title: formatMessage({ id: 'app.common.operation' }),
       with: 80,
       align: 'center',
       fixed: 'right',
@@ -111,20 +120,20 @@ const CustomTaskTable = (props) => {
   function switchDeleteSpin(visible, isSuccess) {
     if (visible) {
       message.loading({
-        content: formatMessage({ id: 'app.customTask.requesting' }),
+        content: formatMessage({ id: 'customTasks.requesting' }),
         key: messageKey,
         duration: 0,
       });
     } else {
       if (isSuccess) {
         message.success({
-          content: formatMessage({ id: 'app.customTask.delete.success' }),
+          content: formatMessage({ id: 'customTasks.delete.success' }),
           key: messageKey,
           duration: 2,
         });
       } else {
         message.error({
-          content: formatMessage({ id: 'app.customTask.delete.failed' }),
+          content: formatMessage({ id: 'customTasks.delete.failed' }),
           key: messageKey,
           duration: 2,
         });
@@ -138,9 +147,8 @@ const CustomTaskTable = (props) => {
   };
 
   function deleteListItem() {
-    Modal.confirm({
-      title: formatMessage({ id: 'app.request.systemHint' }),
-      content: formatMessage({ id: 'app.customTask.deleteList.confirm' }),
+    RcsConfirm({
+      content: formatMessage({ id: 'customTasks.deleteList.confirm' }),
       onOk: async () => {
         switchDeleteSpin(true);
         const response = await deleteCustomTasksById(selectedRowKeys);
@@ -184,22 +192,24 @@ const CustomTaskTable = (props) => {
     input.select();
     document.execCommand('copy');
     document.body.removeChild(input);
-    message.success(formatMessage({ id: 'app.customTask.copySuccessfully' }));
+    message.success(formatMessage({ id: 'app.message.copy.successfully' }));
   }
 
   return (
-    <div style={{ width: '100%' }}>
-      <div className={styles.listTopTool}>
-        <Button type="primary" onClick={gotoFormPage}>
-          <FileTextOutlined /> <FormattedMessage id="app.customTask.new" />
-        </Button>
-        <Button disabled={selectedRowKeys.length === 0} onClick={deleteListItem}>
-          <DeleteOutlined /> <FormattedMessage id="form.delete" />
-        </Button>
-        <Button onClick={refreshPage}>
-          <RedoOutlined /> <FormattedMessage id="form.flash" />
-        </Button>
-      </div>
+    <div className={commonStyles.globalPageStyle}>
+      <Row className={commonStyles.mb20}>
+        <Col flex="auto" className={commonStyles.tableToolLeft}>
+          <Button type="primary" onClick={gotoFormPage}>
+            <FileTextOutlined /> <FormattedMessage id="app.task.state.New" />
+          </Button>
+          <Button disabled={selectedRowKeys.length === 0} onClick={deleteListItem}>
+            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+          </Button>
+          <Button onClick={refreshPage}>
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+          </Button>
+        </Col>
+      </Row>
 
       {/* 自定义任务列表 */}
       <Table
@@ -217,7 +227,7 @@ const CustomTaskTable = (props) => {
         destroyOnClose
         visible={!isNull(exampleStructure)}
         width={adaptModalWidth() + 100}
-        title={formatMessage({ id: 'app.customTask.requestBodyDemo' })}
+        title={formatMessage({ id: 'customTasks.requestBodyDemo' })}
         onCancel={() => {
           setExampleStructure(null);
         }}
@@ -230,10 +240,10 @@ const CustomTaskTable = (props) => {
               setExampleStructure(null);
             }}
           >
-            <FormattedMessage id="app.taskDetail.close" />
+            <FormattedMessage id="app.button.close" />
           </Button>,
           <Button key="copy" type="primary" onClick={copyTaskBody}>
-            <FormattedMessage id="app.selectScopeMap.copy" />
+            <FormattedMessage id="app.button.copy" />
           </Button>,
         ]}
       >

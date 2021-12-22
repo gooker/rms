@@ -112,7 +112,6 @@ export default class SectionManager extends Component {
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
             className={commonStyles.mr10}
-            icon={<PlusOutlined />}
             type="primary"
             onClick={() => {
               this.setState({
@@ -120,11 +119,10 @@ export default class SectionManager extends Component {
               });
             }}
           >
-            <FormattedMessage id="app.button.add" />
+            <PlusOutlined /> <FormattedMessage id="app.button.add" />
           </Button>
           <Button
             className={commonStyles.mr10}
-            icon={<EditOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={() => {
               this.setState({
@@ -133,17 +131,16 @@ export default class SectionManager extends Component {
               });
             }}
           >
-            <FormattedMessage id="app.button.edit" />
+            <EditOutlined /> <FormattedMessage id="app.button.edit" />
           </Button>
 
           <Button
             danger
             className={commonStyles.mr10}
-            icon={<DeleteOutlined />}
             disabled={selectRowKey.length !== 1}
             onClick={this.deleteUser}
           >
-            <FormattedMessage id="app.button.delete" />
+            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
           </Button>
         </Row>
         <div className={styles.sectionManagerTable}>

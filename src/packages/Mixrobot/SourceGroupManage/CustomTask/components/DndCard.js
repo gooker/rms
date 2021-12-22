@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Draggable } from 'react-smooth-dnd';
 import { CloseOutlined } from '@ant-design/icons';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const DndCard = (props) => {
   const { name, active, disabled, onClick, onDelete } = props;

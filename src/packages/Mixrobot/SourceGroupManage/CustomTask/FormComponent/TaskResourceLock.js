@@ -2,7 +2,7 @@ import React from 'react';
 import { Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const { Option } = Select;
 const LockTime = {

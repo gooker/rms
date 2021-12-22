@@ -2,7 +2,7 @@ import React, { memo, useEffect } from 'react';
 import { connect } from '@/utils/dva';
 import CustomTaskForm from './components/CustomTaskForm';
 import CustomTaskTable from './components/CustomTaskTable';
-import styles from './customTask.less';
+// import styles from './customTask.module.less';
 
 const CustomTask = (props) => {
   const { dispatch, listVisible } = props;
@@ -12,7 +12,7 @@ const CustomTask = (props) => {
   }, []);
 
   return (
-    <div className={styles.customTaskContainer}>
+    <div>
       {listVisible && <CustomTaskTable />}
       {!listVisible && <CustomTaskForm />}
     </div>

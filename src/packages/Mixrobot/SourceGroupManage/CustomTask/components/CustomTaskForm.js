@@ -26,7 +26,7 @@ import EventForm from './EventForm';
 import WaitForm from './WaitForm';
 import PodStatusForm from './PodStatusForm';
 import EndForm from './EndForm';
-import styles from '../customTask.less';
+import styles from '../customTask.module.less';
 
 const CustomTaskForm = (props) => {
   const { dispatch, customTypes, editingRow, listVisible } = props;
