@@ -44,48 +44,48 @@ const CustomTaskTable = (props) => {
 
   const columns = [
     {
-      title: formatMessage({ id: 'customTasks.table.taskCode' }),
+      title: <FormattedMessage id="customTasks.table.taskCode" />,
       align: 'center',
       dataIndex: 'code',
     },
     {
-      title: formatMessage({ id: 'app.common.name' }),
+      title: <FormattedMessage id="app.common.name" />,
       align: 'center',
       dataIndex: 'name',
     },
     {
-      title: formatMessage({ id: 'app.taskQueue.priority' }),
+      title: <FormattedMessage id="app.taskQueue.priority" />,
       align: 'center',
       dataIndex: 'priority',
     },
     {
-      title: formatMessage({ id: 'app.common.creationTime' }),
+      title: <FormattedMessage id="app.common.creationTime" />,
       align: 'center',
       dataIndex: 'createTime',
       render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: formatMessage({ id: 'app.common.creator' }),
+      title: <FormattedMessage id="app.common.creator" />,
       align: 'center',
       dataIndex: 'createdByUser',
     },
     {
-      title: formatMessage({ id: 'app.common.updateTime' }),
+      title: <FormattedMessage id="app.common.updateTime" />,
       align: 'center',
       dataIndex: 'updateTime',
     },
     {
-      title: formatMessage({ id: 'app.common.updater' }),
+      title: <FormattedMessage id="app.common.updater" />,
       align: 'center',
       dataIndex: 'updatedByUser',
     },
     {
-      title: formatMessage({ id: 'app.common.operator' }),
+      title: <FormattedMessage id="app.common.operator" />,
       align: 'center',
       dataIndex: 'operator',
     },
     {
-      title: formatMessage({ id: 'customTasks.table.requestBody' }),
+      title: <FormattedMessage id="customTasks.table.requestBody" />,
       with: 80,
       align: 'center',
       fixed: 'right',
@@ -100,7 +100,7 @@ const CustomTaskTable = (props) => {
       ),
     },
     {
-      title: formatMessage({ id: 'app.common.operation' }),
+      title: <FormattedMessage id="app.common.operation" />,
       with: 80,
       align: 'center',
       fixed: 'right',
@@ -196,7 +196,7 @@ const CustomTaskTable = (props) => {
   }
 
   return (
-    <div className={commonStyles.globalPageStyle}>
+    <div>
       <Row className={commonStyles.mb20}>
         <Col flex="auto" className={commonStyles.tableToolLeft}>
           <Button type="primary" onClick={gotoFormPage}>

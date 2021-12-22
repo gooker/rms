@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Table, Button, Row, Card, Modal, message, Spin } from 'antd';
+import { Table, Button, Row, Modal, message, Spin } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull,formatMessage } from '@/utils/utils';
+import { dealResponse, isNull, formatMessage } from '@/utils/utils';
 import RcsConfirm from '@/components/RcsConfirm';
 import { fetchGetActiveMap } from '@/services/map';
 import {
@@ -36,22 +36,22 @@ class TaskTrigger extends Component {
 
   columns = [
     {
-      title:<FormattedMessage id="customTasks.taskLimit"/> ,
+      title: <FormattedMessage id="customTasks.taskLimit" />,
       dataIndex: 'groupName',
       width: '25%',
       // render: (text,record) => <a>{text}</a>,
     },
     {
-      title:<FormattedMessage id="app.common.description"/> ,
+      title: <FormattedMessage id="app.common.description" />,
       dataIndex: 'describe',
-      render: (text,record) => <>{record && record.children ?record.children[0].describe:""}</>,
+      render: (text, record) => <>{record && record.children ? record.children[0].describe : ''}</>,
     },
     {
-      title: <FormattedMessage id="customTasks.taskLimit.num"/> ,
+      title: <FormattedMessage id="customTasks.taskLimit.num" />,
       dataIndex: 'limitNum',
     },
     {
-      title:<FormattedMessage id="app.common.operation"/> ,
+      title: <FormattedMessage id="app.common.operation" />,
       dataIndex: 'key',
       render: (_, record) => {
         return (
@@ -63,7 +63,7 @@ class TaskTrigger extends Component {
                   this.updateGroupItem(record);
                 }}
               >
-                {formatMessage({ id: 'app.button.edit' })}
+                <FormattedMessage id="app.button.edit" />
               </Button>
             ) : (
               ''
@@ -160,7 +160,7 @@ class TaskTrigger extends Component {
       message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       this.setState({
         limitModalVisible: false,
-        updateLimitRecord:null,
+        updateLimitRecord: null,
       });
       this.getAgvTaskLists(mapId);
     }
@@ -202,8 +202,8 @@ class TaskTrigger extends Component {
             selectedRows: [],
           });
           _this.search();
-        }else{
-          message.error(formatMessage({id:deleteResult.message}));
+        } else {
+          message.error(formatMessage({ id: deleteResult.message }));
         }
       },
       onCancel() {
@@ -236,34 +236,34 @@ class TaskTrigger extends Component {
     return (
       <div className={commonStyles.globalPageStyle}>
         <Spin spinning={spinningFlag}>
-            <Row style={{ marginBottom: 20 }}>
-              <Button
-                disabled={selectedRowKeys.length === 0}
-                onClick={() => {
-                  this.onDelete();
-                }}
-              >
-                {formatMessage({ id: 'app.button.delete' })}
-              </Button>
+          <Row style={{ marginBottom: 20 }}>
+            <Button
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => {
+                this.onDelete();
+              }}
+            >
+              <FormattedMessage id="app.button.delete" />
+            </Button>
 
-              <Button
-                type="primary"
-                style={{ marginLeft: 15 }}
-                onClick={() => {
-                  this.handleLimitModal();
-                }}
-              >
-                <FormattedMessage id="app.button.add" />
-              </Button>
-            </Row>
+            <Button
+              type="primary"
+              style={{ marginLeft: 15 }}
+              onClick={() => {
+                this.handleLimitModal();
+              }}
+            >
+              <FormattedMessage id="app.button.add" />
+            </Button>
+          </Row>
 
-            <Table
-              pagination={false}
-              rowSelection={rowSelection}
-              columns={this.columns}
-              dataSource={taskLimitings}
-              rowKey={'groupName'}
-            />
+          <Table
+            pagination={false}
+            rowSelection={rowSelection}
+            columns={this.columns}
+            dataSource={taskLimitings}
+            rowKey={'groupName'}
+          />
         </Spin>
 
         {/*  新增 编辑的弹窗 */}
@@ -272,9 +272,11 @@ class TaskTrigger extends Component {
           footer={null}
           destroyOnClose
           maskClosable={false}
-          title={!updateLimitRecord
+          title={
+            !updateLimitRecord
               ? formatMessage({ id: 'app.button.add' })
-              : formatMessage({ id: 'app.button.update' })}
+              : formatMessage({ id: 'app.button.update' })
+          }
           width={550}
           onCancel={() => {
             this.setState({ limitModalVisible: false, updateLimitRecord: null });

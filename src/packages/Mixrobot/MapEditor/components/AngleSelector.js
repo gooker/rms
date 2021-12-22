@@ -63,16 +63,16 @@ const AngleSelector = memo((props) => {
   const addonBefore = (
     <Select value={direction} onChange={addonBeforeChanged} style={{ width: '80px' }}>
       <Option value={0}>
-        {labelMap?.['0'] || <FormattedMessage id="app.selectDirAngle.upper" />}
+        {labelMap?.['0'] || <FormattedMessage id="app.direction.top" />}
       </Option>
       <Option value={1}>
-        {labelMap?.['1'] || <FormattedMessage id="app.selectDirAngle.right" />}
+        {labelMap?.['1'] || <FormattedMessage id="app.direction.right" />}
       </Option>
       <Option value={2}>
-        {labelMap?.['2'] || <FormattedMessage id="app.selectDirAngle.Below" />}
+        {labelMap?.['2'] || <FormattedMessage id="app.direction.bottom" />}
       </Option>
       <Option value={3}>
-        {labelMap?.['3'] || <FormattedMessage id="app.selectDirAngle.left" />}
+        {labelMap?.['3'] || <FormattedMessage id="app.direction.left" />}
       </Option>
     </Select>
   );

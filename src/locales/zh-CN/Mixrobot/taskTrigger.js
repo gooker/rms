@@ -61,6 +61,10 @@ export default {
   'app.customTask.form.recover': '等待恢复命令',
   'app.customTask.form.waitTime': '待命时间',
 
+   // 事件
+   'app.customTask.form.payLoad': '消息体',
+   'app.customTask.form.topic': '广播主题',
+
   // 路径和动作
   'app.customTask.form.heavy': '重车',
   'app.customTask.form.empty': '空车',
@@ -113,4 +117,18 @@ export default {
   // 请求体示例
   'customTasks.example.field': '字段',
   'customTasks.example.default': '默认值',
+
+  // 自定义页面
+  'app.customTask.backToList': '返回列表',
+  'app.customTask.customTypes': '任务节点',
+  'customTasks.button.temporarySave': '暂存',
+  'customTasks.button.updateModel': '更新关联信息',
+
+  // 表单
+  'customTasks.form.baseInfo': '基础信息',
+  'customTasks.form.delete.confirm': '即将删除该节点并清空表单数据, 是否确定?',
+  'app.customTask.form.code': '编码',
+  'app.customTask.form.skip': '跳过',
+  'app.customTask.form.specify': '指定',
+  'customTasks.form.clear.warn': '该操作会清空当前所有的输入数据, 确定执行吗?',
 };

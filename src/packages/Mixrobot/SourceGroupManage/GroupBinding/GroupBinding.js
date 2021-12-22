@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import find from 'lodash/find';
-import { Form, Select, Switch, Card, Row, Col, message, Empty, Button, Spin } from 'antd';
-import { dealResponse ,formatMessage} from '@/utils/utils';
+import { Form, Select, Switch, Row, Col, message, Empty, Button, Spin } from 'antd';
+import { dealResponse, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchGetActiveMap } from '@/services/map';
 import { getCustomGroup, getUnBindGroupData, fechSaveUnBind } from '@/services/api';
@@ -300,155 +300,155 @@ class GroupBinding extends Component {
 
     return (
       <div className={commonStyles.globalPageStyle}>
-          {/* 搜索 */}
-          <div>
-              <Form ref={this.formRef}>
-                <Row>
-                  <Col span={8}>
-                    <FormItem
-                      label={formatMessage({ id: 'customTasks.groupBinding.horizontalaxis' })}
-                      name="xType"
-                    >
-                      <Select
-                        placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
-                        style={{ width: '100%' }}
-                        // showSearch
-                        onChange={this.groupXTypeChange}
-                        options={xOptions}
-                      ></Select>
-                    </FormItem>
-                  </Col>
-                  <Col span={8} style={{ padding: '0 12px' }}>
-                    <FormItem
-                      label={formatMessage({ id: 'customTasks.groupBinding.verticalaxis' })}
-                      name="yType"
-                    >
-                      <Select
-                        allowClear
-                        placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
-                        style={{ width: '100%' }}
-                        // showSearch
-                        filterOption={false}
-                        onChange={this.groupYTypeChange}
-                        notFoundContent={this.fetching ? <Spin size="small" /> : null}
-                        mode="multiple"
-                        maxTagCount={5}
-                      >
-                        {yOptions &&
-                          yOptions.map(({ label, value }, index) => (
-                            <Option key={index} value={value}>
-                              {label}
-                            </Option>
-                          ))}
-                      </Select>
-                    </FormItem>
-                  </Col>
-
-                  <Col offset={3}>
-                    <Button type={'primary'} onClick={this.submitSave}>
-                      <FormattedMessage id={'app.button.save'} />
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-          </div>
-
-          {/* 内容区 */}
-          <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
-            {xData && yData && yData.length > 0 ? (
-              <Row style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <table
-                    style={{
-                      width: '96%',
-                      border: '1px solid #efefef',
-                      textAlign: 'center',
-                      borderCollapse: 'collapse',
-                      borderSpacing: 0,
-                      tableLayout: 'fixed',
-                    }}
+        {/* 搜索 */}
+        <div>
+          <Form ref={this.formRef}>
+            <Row>
+              <Col span={8}>
+                <FormItem
+                  label={<FormattedMessage id="customTasks.groupBinding.horizontalaxis" />}
+                  name="xType"
+                >
+                  <Select
+                    placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
+                    style={{ width: '100%' }}
+                    // showSearch
+                    onChange={this.groupXTypeChange}
+                    options={xOptions}
+                  ></Select>
+                </FormItem>
+              </Col>
+              <Col span={8} style={{ padding: '0 12px' }}>
+                <FormItem
+                  label={<FormattedMessage id="customTasks.groupBinding.verticalaxis" />}
+                  name="yType"
+                >
+                  <Select
+                    allowClear
+                    placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
+                    style={{ width: '100%' }}
+                    // showSearch
+                    filterOption={false}
+                    onChange={this.groupYTypeChange}
+                    notFoundContent={this.fetching ? <Spin size="small" /> : null}
+                    mode="multiple"
+                    maxTagCount={5}
                   >
-                    <thead
-                      className={styles.fixColumn}
-                      style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                    >
-                      <tr className={styles.body}>
-                        <th className={styles.tdBorder} colSpan="2">
-                          {' '}
-                        </th>
-                        {xData &&
-                          xData.map((item) => {
-                            return (
-                              <th key={item.id} className={styles.tdBorder}>
-                                {item.groupName}
+                    {yOptions &&
+                      yOptions.map(({ label, value }, index) => (
+                        <Option key={index} value={value}>
+                          {label}
+                        </Option>
+                      ))}
+                  </Select>
+                </FormItem>
+              </Col>
 
-                                <Switch
-                                  checked={this.theadIsChecked(item.key)}
-                                  style={{ marginLeft: '10px' }}
-                                  size="small"
-                                  onClick={(checked) => {
-                                    this.switchXtoYChange(item.key, checked);
-                                  }}
-                                />
-                              </th>
-                            );
-                          })}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {yData &&
-                        yData.map((y) => {
+              <Col offset={3}>
+                <Button type={'primary'} onClick={this.submitSave}>
+                  <FormattedMessage id={'app.button.save'} />
+                </Button>
+              </Col>
+            </Row>
+          </Form>
+        </div>
+
+        {/* 内容区 */}
+        <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
+          {xData && yData && yData.length > 0 ? (
+            <Row style={{ marginTop: 20 }}>
+              <Col span={24}>
+                <table
+                  style={{
+                    width: '96%',
+                    border: '1px solid #efefef',
+                    textAlign: 'center',
+                    borderCollapse: 'collapse',
+                    borderSpacing: 0,
+                    tableLayout: 'fixed',
+                  }}
+                >
+                  <thead
+                    className={styles.fixColumn}
+                    style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
+                  >
+                    <tr className={styles.body}>
+                      <th className={styles.tdBorder} colSpan="2">
+                        {' '}
+                      </th>
+                      {xData &&
+                        xData.map((item) => {
                           return (
-                            <tr key={y.id} className={styles.thbodyHeight}>
-                              {Object.keys(typeGroupNumber).map((i) => {
-                                if (i === y.typeName) {
-                                  const rowslength = typeGroupNumber[i];
-                                  delete typeGroupNumber[i];
-                                  return (
-                                    <th
-                                      key={y.key}
-                                      rowSpan={rowslength}
-                                      className={styles.contentBorder}
-                                    >
-                                      {y.typeName}
-                                    </th>
-                                  );
-                                }
-                              })}
+                            <th key={item.id} className={styles.tdBorder}>
+                              {item.groupName}
 
-                              <th
-                                className={styles.tdBorder}
-                                style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                              >
-                                {y.groupName}
-                              </th>
-
-                              {/* 下面td的长度 应该用xData遍历 */}
-                              {xData &&
-                                xData.map((x) => {
-                                  return (
-                                    <th key={x.id} className={styles.contentBorder}>
-                                      <Switch
-                                        size="small"
-                                        checked={this.switchIsChecked(x.key, y.key)}
-                                        data-x={x.key}
-                                        data-y={y.key}
-                                        onChange={this.switchChange(x.key, y.key)}
-                                      />
-                                    </th>
-                                  );
-                                })}
-                            </tr>
+                              <Switch
+                                checked={this.theadIsChecked(item.key)}
+                                style={{ marginLeft: '10px' }}
+                                size="small"
+                                onClick={(checked) => {
+                                  this.switchXtoYChange(item.key, checked);
+                                }}
+                              />
+                            </th>
                           );
                         })}
-                    </tbody>
-                  </table>
-                </Col>
-              </Row>
-            ) : (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
-            )}
-          </div>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {yData &&
+                      yData.map((y) => {
+                        return (
+                          <tr key={y.id} className={styles.thbodyHeight}>
+                            {Object.keys(typeGroupNumber).map((i) => {
+                              if (i === y.typeName) {
+                                const rowslength = typeGroupNumber[i];
+                                delete typeGroupNumber[i];
+                                return (
+                                  <th
+                                    key={y.key}
+                                    rowSpan={rowslength}
+                                    className={styles.contentBorder}
+                                  >
+                                    {y.typeName}
+                                  </th>
+                                );
+                              }
+                            })}
+
+                            <th
+                              className={styles.tdBorder}
+                              style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
+                            >
+                              {y.groupName}
+                            </th>
+
+                            {/* 下面td的长度 应该用xData遍历 */}
+                            {xData &&
+                              xData.map((x) => {
+                                return (
+                                  <th key={x.id} className={styles.contentBorder}>
+                                    <Switch
+                                      size="small"
+                                      checked={this.switchIsChecked(x.key, y.key)}
+                                      data-x={x.key}
+                                      data-y={y.key}
+                                      onChange={this.switchChange(x.key, y.key)}
+                                    />
+                                  </th>
+                                );
+                              })}
+                          </tr>
+                        );
+                      })}
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
+          )}
+        </div>
       </div>
     );
   }

@@ -62,6 +62,7 @@ export default {
   'app.common.all': '所有',
   'app.common.report': '报表',
   'app.common.isRequired': '必填',
+  'app.common.description':'描述',
 
   // 地图相关
   'app.map.map': '地图',
@@ -247,7 +248,7 @@ export default {
   'app.fault.extraData2': '附加数据2',
 
   //触发器状态
-  'app.common.description':'描述',
+ 
   'app.common.status.end':'结束',
   'app.common.status.start':'开始',
   'app.common.status.pause':'暂停',

@@ -26,7 +26,7 @@ const InformationForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name="name"
-        label={formatMessage({ id: 'app.customTask.form.name' })}
+        label={formatMessage({ id: 'app.common.name' })}
         rules={nameRuls}
       >
         <Input style={{ width: 300 }} />
@@ -35,7 +35,7 @@ const InformationForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name="desc"
-        label={formatMessage({ id: 'app.customTask.form.desc' })}
+        label={formatMessage({ id: 'app.common.description' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>
@@ -44,7 +44,7 @@ const InformationForm = (props) => {
         {...FormLayout}
         name="priority"
         initialValue={5}
-        label={formatMessage({ id: 'app.customTask.form.priority' })}
+        label={formatMessage({ id: 'app.taskQueue.priority' })}
       >
         <Rate
           tooltips={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}

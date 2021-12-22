@@ -33,14 +33,14 @@ const WaitForm = (props) => {
       <Form.Item
         hidden={hidden}
         {...FormLayout}
-        label={formatMessage({ id: 'app.customTask.form.standByDuration' })}
+        label={formatMessage({ id: 'app.customTask.form.waitTime' })}
       >
         <Row>
           <Form.Item noStyle name={[code, 'waitTime']} initialValue={-1}>
             <InputNumber style={{ width: 300 }} />
           </Form.Item>
           <div className={styles.inputUnitLabel}>
-            <FormattedMessage id="app.customTask.form.second" />
+            <FormattedMessage id="app.time.seconds" />
           </div>
         </Row>
       </Form.Item>
@@ -50,7 +50,7 @@ const WaitForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'remark']}
-        label={formatMessage({ id: 'app.customTask.form.remark' })}
+        label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>

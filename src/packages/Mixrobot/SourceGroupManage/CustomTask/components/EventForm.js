@@ -49,7 +49,7 @@ const EventForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'remark']}
-        label={formatMessage({ id: 'app.customTask.form.remark' })}
+        label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>

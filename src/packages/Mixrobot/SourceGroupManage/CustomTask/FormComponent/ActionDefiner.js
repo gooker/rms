@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Select, Input, Button } from 'antd';
 import { MinusOutlined, PlusOutlined, BarsOutlined } from '@ant-design/icons';
 import { Container, Draggable } from 'react-smooth-dnd';
-import styles from './formComponentStyle.less';
+import styles from './formComponentStyle.module.less';
 
 const { Option, OptGroup } = Select;
 

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Input } from 'antd';
-import {formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import CascadeSelect from '../FormComponent/CascadeSelect';
 
@@ -44,7 +44,7 @@ const StartForm = (props) => {
         {...FormLayout}
         name={[code, 'customType']}
         initialValue={type}
-        label={formatMessage({ id: 'app.customTask.form.type' })}
+        label={formatMessage({ id: 'app.common.type' })}
       >
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
@@ -80,7 +80,7 @@ const StartForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'remark']}
-        label={formatMessage({ id: 'app.customTask.form.remark' })}
+        label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>

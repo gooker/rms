@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
-import FormattedMessage from '@/components/FormattedMessage';
-import { covertAngle2Direction, isNull } from '@/utils/utils';
 import { Input, Select } from 'antd';
+import { covertAngle2Direction, isNull } from '@/utils/utils';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const { Option } = Select;
 const directionAngleMap = {
@@ -11,13 +11,12 @@ const directionAngleMap = {
   3: 270,
 };
 
-const AngleSelector = memo((props) => {
-  const { labelMap } = props; // {0:"向上",...}
-  const [angle, setAngle] = useState(null);
-  const [direction, setDirection] = useState(null);
+const AngleSelector = (props) => {
+  const { addonLabel, value, onChange, getAngle } = props;
+  const [angle, setAngle] = useState(null); // 角度
+  const [direction, setDirection] = useState(null); // 方向
 
   useEffect(() => {
-    const { value } = props;
     if (!isNull(value)) {
       setAngle(value);
       setDirection(covertAngle2Direction(value));
@@ -30,11 +29,8 @@ const AngleSelector = memo((props) => {
     setAngle(_angle);
 
     // getAngle 标记是否只输出角度数据
-    const { onChange, getAngle, getDir } = props;
     if (getAngle) {
       onChange(_angle);
-    } else if (getDir) {
-      onChange(_direction);
     } else {
       onChange({ dir: _direction, angle: _angle });
     }
@@ -50,15 +46,12 @@ const AngleSelector = memo((props) => {
     setAngle(_angle);
 
     // 转换为 direction
-    const _direction = covertAngle2Direction[_angle];
-    setDirection(direction);
+    const _direction = covertAngle2Direction(_angle);
+    setDirection(_direction);
 
     // getAngle 标记是否只输出角度数据
-    const { onChange, getAngle, getDir } = props;
     if (getAngle) {
       onChange(_angle);
-    } else if (getDir) {
-      onChange(_direction);
     } else {
       onChange({ dir: _direction, angle: _angle });
     }
@@ -67,21 +60,24 @@ const AngleSelector = memo((props) => {
   const addonBefore = (
     <Select value={direction} onChange={addonBeforeChanged} style={{ width: '80px' }}>
       <Option value={0}>
-        {labelMap?.['0'] || <FormattedMessage id="app.selectDirAngle.upper" />}
+        {/* 上方 */}
+        {addonLabel ? addonLabel[0] : <FormattedMessage id="app.direction.top" />}
       </Option>
       <Option value={1}>
-        {labelMap?.['1'] || <FormattedMessage id="app.selectDirAngle.right" />}
+        {/* 右方 */}
+        {addonLabel ? addonLabel[90] : <FormattedMessage id="app.direction.right" />}
       </Option>
       <Option value={2}>
-        {labelMap?.['2'] || <FormattedMessage id="app.selectDirAngle.Below" />}
+        {/* 下方 */}
+        {addonLabel ? addonLabel[180] : <FormattedMessage id="app.direction.bottom" />}
       </Option>
       <Option value={3}>
-        {labelMap?.['3'] || <FormattedMessage id="app.selectDirAngle.left" />}
+        {/* 左方 */}
+        {addonLabel ? addonLabel[270] : <FormattedMessage id="app.direction.left" />}
       </Option>
     </Select>
   );
 
   return <Input addonBefore={addonBefore} addonAfter="°" value={angle} onChange={inputChanged} />;
-});
-
-export default AngleSelector;
+};
+export default memo(AngleSelector);

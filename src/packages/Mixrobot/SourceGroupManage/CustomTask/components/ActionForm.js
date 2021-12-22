@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { connect } from '@/utils/dva';
 import { Form, Input, InputNumber, Radio, Checkbox, Switch, Select } from 'antd';
 import groupBy from 'lodash/groupBy';
-import { extractRoutes, isNull,formatMessage } from '@/utils/utils';
+import { extractRoutes, isNull, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import ModelSelection from '../FormComponent/ModelSelection';
 import ActionDefiner from '../FormComponent/ActionDefiner';
@@ -75,7 +75,7 @@ const ActionForm = (props) => {
 
   function renderPathCodeOptions() {
     return Object.keys(groupedRoutes).map((logicId) => {
-      const label = `${formatMessage({ id: 'app.selectLogicArea.logicArea' })}: ${
+      const label = `${formatMessage({ id: 'app.map.logicArea' })}: ${
         groupedRoutes[logicId][0].logicName
       }`;
       return (
@@ -146,10 +146,10 @@ const ActionForm = (props) => {
           getAngle
           width={220}
           addonLabel={{
-            0: formatMessage({ id: 'app.podManager.A' }),
-            90: formatMessage({ id: 'app.podManager.B' }),
-            180: formatMessage({ id: 'app.podManager.C' }),
-            270: formatMessage({ id: 'app.podManager.D' }),
+            0: formatMessage({ id: 'app.pod.side.A' }),
+            90: formatMessage({ id: 'app.pod.side.B' }),
+            180: formatMessage({ id: 'app.pod.side.C' }),
+            270: formatMessage({ id: 'app.pod.side.D' }),
           }}
         />
       </Form.Item>
@@ -160,18 +160,18 @@ const ActionForm = (props) => {
           {...FormLayout}
           name={[code, 'targetAction', 'operatorDirection']}
           initialValue={null}
-          label={formatMessage({ id: 'app.generateCode.operatingPoint' })}
+          label={formatMessage({ id: 'app.customTask.form.operatorDirection' })}
         >
-           <AngleSelector
-          getAngle
-          width={220}
-          addonLabel={{
-            0: formatMessage({ id: 'app.selectDirAngle.upper' }),
-            90: formatMessage({ id: 'app.selectDirAngle.right' }),
-            180: formatMessage({ id: 'app.selectDirAngle.Below' }),
-            270: formatMessage({ id: 'app.selectDirAngle.left' }),
-          }}
-        />
+          <AngleSelector
+            getAngle
+            width={220}
+            addonLabel={{
+              0: formatMessage({ id: 'app.direction.top' }),
+              90: formatMessage({ id: 'app.direction.right' }),
+              180: formatMessage({ id: 'app.direction.bottom' }),
+              270: formatMessage({ id: 'app.direction.left' }),
+            }}
+          />
         </Form.Item>
       ) : null}
       {/* 升降动作 */}
@@ -382,7 +382,7 @@ const ActionForm = (props) => {
         {...FormLayout}
         name={[code, 'remark']}
         initialValue={null}
-        label={formatMessage({ id: 'app.customTask.form.remark' })}
+        label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>

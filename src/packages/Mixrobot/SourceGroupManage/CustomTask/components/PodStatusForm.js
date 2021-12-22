@@ -98,7 +98,7 @@ const PodStatusForm = (props) => {
           hidden={hidden}
           {...FormLayout}
           name={[code, 'podId']}
-          label={formatMessage({ id: 'app.common.podId' })}
+          label={formatMessage({ id: 'app.pod.id' })}
           rules={[{ required: true }]}
         >
           <Input style={{ width: 300 }} />
@@ -110,7 +110,7 @@ const PodStatusForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'remark']}
-        label={formatMessage({ id: 'app.customTask.form.remark' })}
+        label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>

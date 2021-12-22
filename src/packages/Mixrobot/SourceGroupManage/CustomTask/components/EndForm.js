@@ -5,7 +5,7 @@ import { MinusOutlined, ClearOutlined } from '@ant-design/icons';
 import { Row, Col, Switch } from 'antd';
 import StandbyConditions from '../FormComponent/StandbyConditions';
 import CascadeSelect from '../FormComponent/CascadeSelect';
-import {formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from '../customTask.module.less';
@@ -38,7 +38,7 @@ const EndForm = (props) => {
         {...FormLayout}
         name={[code, 'customType']}
         initialValue={type}
-        label={<FormattedMessage id= 'app.customTask.form.type'/>}
+        label={<FormattedMessage id="app.customTask.form.type" />}
       >
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
@@ -47,7 +47,7 @@ const EndForm = (props) => {
         {...FormLayout}
         name={[code, 'code']}
         initialValue={code}
-        label={formatMessage({ id: 'app.customTask.form.code' })}
+        label={formatMessage({ id: 'app.common.code' })}
       >
         <Input style={{ width: 300 }} />
       </Form.Item>
@@ -131,12 +131,12 @@ const EndForm = (props) => {
             {...FormLayout}
             name={[code, 'agvWaitTask', 'waitTime']}
             initialValue={180}
-            label={formatMessage({ id: 'app.customTask.form.standByDuration' })}
+            label={formatMessage({ id: 'app.customTask.form.waitTime' })}
           >
             <Input
               allowClear
               style={{ width: 130 }}
-              addonAfter={formatMessage({ id: 'app.customTask.form.second' })}
+              addonAfter={formatMessage({ id: 'app.time.seconds' })}
             />
           </Form.Item>
         </div>
@@ -203,7 +203,7 @@ const EndForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'remark']}
-        label={formatMessage({ id: 'app.customTask.form.remark' })}
+        label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
       </Form.Item>

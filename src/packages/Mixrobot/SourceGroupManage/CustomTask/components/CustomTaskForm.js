@@ -18,6 +18,7 @@ import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ModelTypeFieldMap } from '@/config/consts';
 import { saveCustomTask } from '@/services/api';
+import RcsConfirm from '@/components/RcsConfirm';
 import DndCard from './DndCard';
 import InformationForm from './InformationForm';
 import StartForm from './StartForm';
@@ -49,7 +50,7 @@ const CustomTaskForm = (props) => {
       newTaskSteps.unshift({
         type: 'BASE',
         code: `BASE_${getRandomString(6)}`,
-        label: formatMessage({ id: 'app.customTask.baseInfo' }),
+        label: formatMessage({ id: 'customTasks.form.baseInfo' }),
       });
       setTaskSteps(newTaskSteps);
       setCurrentCode(newTaskSteps[0].code);
@@ -116,7 +117,7 @@ const CustomTaskForm = (props) => {
               targetAction.afterFirstActions = spliceUselessValue(targetAction.afterFirstActions);
               targetAction.beforeLastActions = spliceUselessValue(targetAction.beforeLastActions);
               targetAction.lastActions = spliceUselessValue(targetAction.lastActions);
-              targetAction.podAngle = targetAction.podAngle?[targetAction.podAngle]:[];// 后端要传数组
+              targetAction.podAngle = targetAction.podAngle ? [targetAction.podAngle] : []; // 后端要传数组
               subTaskConfig.targetAction = targetAction;
 
               // 处理托盘动作协议
@@ -155,7 +156,7 @@ const CustomTaskForm = (props) => {
     initialTaskSteps.push({
       type: 'BASE',
       code: `BASE_${getRandomString(6)}`,
-      label: formatMessage({ id: 'app.customTask.baseInfo' }),
+      label: formatMessage({ id: 'customTasks.form.baseInfo' }),
     });
     ['START', 'END'].map((item) => {
       const customType = find(customTypes, { type: item });
@@ -196,9 +197,8 @@ const CustomTaskForm = (props) => {
 
   // 删除 “任务流程” 栏的某一节点
   function deleteTaskFlowNode(index) {
-    Modal.confirm({
-      title: formatMessage({ id: 'app.request.systemHint' }),
-      content: formatMessage({ id: 'app.customTask.delete.confirm' }),
+    RcsConfirm({
+      content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
       onOk: () => {
         const newTaskSteps = [...taskSteps];
         newTaskSteps.splice(index, 1);
@@ -286,7 +286,7 @@ const CustomTaskForm = (props) => {
   function gotoListPage() {
     Modal.confirm({
       title: formatMessage({ id: 'app.customTask.backToList' }),
-      content: formatMessage({ id: 'app.customTask.clear.warn' }),
+      content: formatMessage({ id: 'customTasks.form.clear.warn' }),
       onOk: () => {
         const initialTaskSteps = getInitialTaskSteps();
         setTaskSteps(initialTaskSteps);
@@ -302,7 +302,7 @@ const CustomTaskForm = (props) => {
   const renderedCustomTypes = customTypes.filter((item) => !isStandardTab(item.type));
   return (
     <div className={styles.customTaskForm}>
-      <div style={{ flex: 1, display: 'flex', overflow: 'auto' }}>
+      <div style={{ display: 'flex', overflow: 'auto', height: '100%' }}>
         <div className={styles.dndPanel}>
           <div className={styles.dndColumn} style={{ marginBottom: 10 }}>
             <div className={classnames(styles.dndTitle, styles.taskNodeColor)}>
@@ -325,7 +325,7 @@ const CustomTaskForm = (props) => {
           </div>
           <div className={styles.dndColumn} style={{ flex: 1, marginTop: 10, overflow: 'auto' }}>
             <div className={classnames(styles.dndTitle, styles.taskFlowColor)}>
-              <FormattedMessage id="app.customTask.taskFlow" />
+              <FormattedMessage id="app.task.flow" />
             </div>
             <Container
               groupName="dnd"
@@ -357,20 +357,20 @@ const CustomTaskForm = (props) => {
           </div>
           <div className={styles.topTool}>
             <Button danger onClick={gotoListPage}>
-              <CloseOutlined /> <FormattedMessage id="app.common.back" />
+              <CloseOutlined /> <FormattedMessage id="app.button.return" />
             </Button>
             <Button
               onClick={() => {
                 dispatch({ type: 'customTask/initPage' });
               }}
             >
-              <RedoOutlined /> <FormattedMessage id="app.customTask.updateModel" />
+              <RedoOutlined /> <FormattedMessage id="customTasks.button.updateModel" />
             </Button>
             <Button>
-              <SnippetsOutlined /> <FormattedMessage id="app.customTask.temporarySave" />
+              <SnippetsOutlined /> <FormattedMessage id="customTasks.button.temporarySave" />
             </Button>
             <Button type="primary" onClick={submit}>
-              <SaveOutlined /> <FormattedMessage id="app.simulator.action.save" />
+              <SaveOutlined /> <FormattedMessage id="app.button.save" />
             </Button>
           </div>
         </div>
