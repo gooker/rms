@@ -21,7 +21,7 @@ import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
 import latentLiftingReport from './zh-CN/LatentLifting/report';
 import taskTrigger from './zh-CN/Mixrobot/taskTrigger';
-import customTask from './zh-CN/Mixrobot/customTask';
+import operationlog from './zh-CN/Mixrobot/operationlog';
 
 export default {
   ...menu,
@@ -47,5 +47,5 @@ export default {
   ...customConfiguration,
   ...latentLiftingReport,
   ...taskTrigger,
-  ...customTask,
+  ...operationlog,
 };

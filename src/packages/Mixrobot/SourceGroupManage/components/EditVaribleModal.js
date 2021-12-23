@@ -103,7 +103,7 @@ const EditVaribleModal = (props) => {
           key={`${taskCode}@@${customStart.field}`}
           name={`${taskCode}@@${customStart.field}`}
           initialValue={{ type, code }}
-          label={<FormattedMessage id="customTasks.form.robot" />}
+          label={<FormattedMessage id="app.customTasks.form.robot" />}
         >
           <CascadeSelect data={OptionsData} />
         </Form.Item>,

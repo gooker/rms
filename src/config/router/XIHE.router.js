@@ -262,7 +262,7 @@ export default [
     path: '/mixrobot/operationLog',
     name: 'operationLog',
     icon: 'iconLOG',
-    component: '/Mixrobot/OperationLog/OperationLogView',
+    component: '/Mixrobot/OperationLog/OperationLog',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {

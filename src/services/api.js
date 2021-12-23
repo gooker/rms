@@ -784,3 +784,19 @@ export async function deleteTaskLimit(param) {
   });
 }
 
+// 操作日志
+export async function fetchUserActionLogs(params) {
+  return request(`/${Coordinator}/apiLog/getApiLogs`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function fetchAppModules(params) {
+  return request(`/${Coordinator}/apiLog/getModules`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+
