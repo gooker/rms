@@ -800,3 +800,50 @@ export async function fetchAppModules(params) {
 }
 
 
+// 查询充电桩信息API
+export async function fetchChargeManagerList(params) {
+  return request(`/${Coordinator}/api/charger`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 批量解绑充电桩
+export async function batchUnbundChargerPile(params) {
+  return request(`/${Coordinator}/charger/batchUnbundlingByHardwareIds`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 批量删除充电桩
+export async function batchDeleteChargerPile(params) {
+  return request(`/${Coordinator}/charger/batchDeleteByHardwareIds`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 新增充电桩
+export async function AddChargerPile(params) {
+  return request(`/${Coordinator}/api/saveBindingMapCharger`, {
+    method: 'POST',
+    data: params,
+  });
+}
+// 清除故障
+export async function clearChargerPileFaultById(id) {
+  return request(`/${Coordinator}/charger/actions/clearError/${id}`, {
+    method: 'GET',
+  });
+}
+// 查询可用充电桩
+export async function fetchAvailableMapChargerList() {
+  return request(`/${Coordinator}/api/availableMapCharger`, {
+    method: 'GET',
+  });
+}
+
+
+
+ 

@@ -62,7 +62,9 @@ export default {
   'app.common.all': '所有',
   'app.common.report': '报表',
   'app.common.isRequired': '必填',
-  'app.common.description':'描述',
+  'app.common.description': '描述',
+  'app.common.enabled': '启用',
+  'app.common.disabled': '禁用',
 
   // 地图相关
   'app.map.map': '地图',
@@ -110,7 +112,7 @@ export default {
 
   // 按钮
   'app.button.add': '新增',
-  'app.button.edit': '编辑', 
+  'app.button.edit': '编辑',
   'app.button.save': '保存',
   'app.button.copy': '复制',
   'app.button.past': '粘贴',
@@ -132,6 +134,8 @@ export default {
   'app.button.bind': '绑定',
   'app.button.unbind': '解除绑定',
   'app.button.forceReset': '强制重置',
+  'app.button.isbinding': '已绑定',
+  'app.button.unbounded': '未绑定',
 
   // 小车
   'app.agv': '小车',
@@ -212,6 +216,11 @@ export default {
   'app.chargeManger.CONNECTING': '对接中',
   'app.chargeManger.CONNECTED': '对接成功',
 
+  'app.chargeManger.version0': '虚拟',
+  'app.chargeManger.version1': '第一代',
+  'app.chargeManger.version2': '第二代',
+  'app.chargeManger.version3': '第三代',
+
   // 电池类型
   'app.batteryType.enumeration1': '磷酸铁锂',
   'app.batteryType.enumeration2': '潜伏车(三元锂)',
@@ -248,12 +257,12 @@ export default {
   'app.fault.extraData2': '附加数据2',
 
   //触发器状态
- 
-  'app.common.status.end':'结束',
-  'app.common.status.start':'开始',
-  'app.common.status.pause':'暂停',
-  'app.common.batchOperate':'批量操作',
-  'app.common.timeInterval':'时间间隔',
+
+  'app.common.status.end': '结束',
+  'app.common.status.start': '开始',
+  'app.common.status.pause': '暂停',
+  'app.common.batchOperate': '批量操作',
+  'app.common.timeInterval': '时间间隔',
   'app.form.target': '目标',
   'app.form.placeholder.pleaseSelect': '请选择',
 };

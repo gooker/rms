@@ -22,6 +22,7 @@ import customConfiguration from './zh-CN/SSO/customConfiguration';
 import latentLiftingReport from './zh-CN/LatentLifting/report';
 import taskTrigger from './zh-CN/Mixrobot/taskTrigger';
 import operationlog from './zh-CN/Mixrobot/operationlog';
+import charging from './zh-CN/Mixrobot/charging';
 
 export default {
   ...menu,
@@ -48,4 +49,5 @@ export default {
   ...latentLiftingReport,
   ...taskTrigger,
   ...operationlog,
+  ...charging,
 };

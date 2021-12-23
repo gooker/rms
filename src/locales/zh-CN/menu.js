@@ -47,8 +47,8 @@ export default {
   'menu.sourceManage.agvGroup': '小车分组',
 
   'menu.chargeCenter': '充电',
-  'menu.chargeCenter.chargeManger': '充电桩管理',
-  'menu.chargeCenter.chargeMangerBind': '充电桩绑定',
+  'menu.chargeCenter.chargeManagerment': '充电桩管理',
+  'menu.chargeCenter.chargeFaultManagement': '充电桩故障管理',
 
   'menu.reportCenter': '报表管理',
   'menu.reportCenter.healthReport': '健康报表',
