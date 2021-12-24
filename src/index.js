@@ -9,7 +9,7 @@ import editorModel from '@/models/editor';
 import monitorModel from '@/models/monitor';
 import simulatorModel from '@/models/simulator';
 import taskTriger from '@/packages/Mixrobot/SourceGroupManage/TaskTrigger/models/taskTriger';
-import customTask from '@/packages/Mixrobot/SourceGroupManage/CustomTask/models/CustomTaskModel'
+import customTask from '@/packages/Mixrobot/SourceGroupManage/CustomTask/models/CustomTaskModel';
 import './global.less';
 
 // 全局错误处理(尝试版)
@@ -52,3 +52,7 @@ ReactDOM.render(
   </DvaProvider>,
   document.getElementById('root'),
 );
+
+if (module.hot) {
+  module.hot.accept();
+}

@@ -4,9 +4,9 @@ import { connect } from '@/utils/dva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutContent from '@/pages/Content/Content';
 import LayoutHeader from '@/packages/Portal/components/Header';
-import './mainLayout.less';
 import { dealResponse, formatMessage } from '@/utils/utils';
 import { fetchAllTaskTypes } from '@/services/api';
+import './mainLayout.less';
 
 const { Header } = Layout;
 

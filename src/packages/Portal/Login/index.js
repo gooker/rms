@@ -6,10 +6,11 @@ import history from '@/history';
 import { fetchFindLogoByWebAddress, fetchLogin, fetchUpdateEnvironment } from '@/services/global';
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from './Login.module.less';
+import { getEnvOptionData, getActiveEnv } from './selector';
 import LoginBackPicture from '../images/login_pic.png';
 import Logo from '../images/logoMain.png';
-import { getEnvOptionData, getActiveEnv } from './selector';
+import styles from './Login.module.less';
+
 @connect(({ global }) => ({
   environments: getEnvOptionData(global.environments),
   activeEnv: getActiveEnv(global.environments),
@@ -56,9 +57,8 @@ class Login extends Component {
           return;
         }
       }
-    
-      history.push('/');
 
+      history.push('/');
     }
   };
 

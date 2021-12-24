@@ -8,7 +8,7 @@ import { connect } from '@/utils/dva';
 import { initI18nInstance } from '@/utils/init';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
-class PortalApp extends Component {
+class App extends Component {
   state = {
     initDone: false,
   };
@@ -43,4 +43,4 @@ class PortalApp extends Component {
     );
   }
 }
-export default PortalApp;
+export default App;
