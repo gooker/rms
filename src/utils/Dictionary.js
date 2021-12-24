@@ -29,6 +29,12 @@ const DictionaryDataSource = {
     CONNECTED: 'app.chargeManger.CONNECTED',
     CONNECTING: 'app.chargeManger.CONNECTING',
   },
+  chargerType: {
+    0: 'app.chargeManger.version0',
+    1: 'app.chargeManger.version1',
+    2: 'app.chargeManger.version2',
+    3: 'app.chargeManger.version3',
+  },
 
   // 任务状态
   taskStatus: {

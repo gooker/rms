@@ -104,8 +104,8 @@ export default [
           },
         ],
       },
-       // 分拣类
-       {
+      // 分拣类
+      {
         path: '/mixrobot/lockManager/sorter',
         name: 'sorter',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -212,13 +212,13 @@ export default [
         path: '/mixrobot/sourceGroupManage/GroupBinding',
         name: 'groupBinding',
         component: '/Mixrobot/SourceGroupManage/GroupBinding/GroupBinding',
-         hooks: ['dev'],
+        hooks: ['dev'],
       },
       {
         path: '/mixrobot/sourceGroupManage/CustomTask',
         name: 'customTask',
         component: '/Mixrobot/SourceGroupManage/CustomTask/CustomTask',
-         hooks: ['dev'],
+        hooks: ['dev'],
       },
     ],
   },
@@ -230,16 +230,18 @@ export default [
     hooks: ['dev'],
     routes: [
       {
-        path: '/mixrobot/charge/chargeManger',
-        name: 'chargeManger',
-        component: '/Mixrobot/ChargeCenter/ChargeManger',
+        path: '/mixrobot/charge/chargeManagerment',
+        name: 'chargeManagerment',
+        component: '/Mixrobot/ChargeManage/ChargeManagerment.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+        hooks: ['dev'],
       },
       {
-        path: '/mixrobot/charge/chargeMangerBind',
-        name: 'chargeMangerBind',
-        component: '/Mixrobot/ChargeCenter/ChargerBinding',
+        path: '/mixrobot/charge/chargeFaultManagement',
+        name: 'chargeFaultManagement',
+        component: '/Mixrobot/ChargeManage/ChargeFaultManagement.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+        hooks: ['dev'],
       },
     ],
   },
@@ -253,7 +255,7 @@ export default [
         path: '/mixrobot/report/healthReport',
         name: 'healthReport',
         component: '/Mixrobot/ReportCenter/HealthReport',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
         hooks: ['dev'],
       },
     ],
