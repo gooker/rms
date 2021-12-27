@@ -9,6 +9,7 @@ import {
   batchUnbundChargerPile,
   clearChargerPileFaultById,
   AddChargerPile,
+  fetchUpdateCharger,
 } from '@/services/api';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -194,9 +195,16 @@ const ChargeManagerment = () => {
     }
     setLoading(false);
   }
-  function statusSwitch() {}
 
-  function onSelectChange(selectedKeys,selectedRows) {
+  async function statusSwitch(params) {
+    const response = await fetchUpdateCharger(params);
+    if (!dealResponse(response)) {
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+      fetchChargeList();
+    }
+  }
+
+  function onSelectChange(selectedKeys, selectedRows) {
     setSelectedRowKeys(selectedKeys);
     setSelectedRows(selectedRows);
   }
@@ -242,14 +250,14 @@ const ChargeManagerment = () => {
     });
   }
 
- async function handleSubmit(values){
-    const currentData={...values};
+  async function handleSubmit(values) {
+    const currentData = { ...values };
     const { selectedRows } = this.state;
     currentData.hardwareId = selectedRows[0].id;
     const response = await AddChargerPile(currentData);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-      setChargeVisibleModal(false)
+      setChargeVisibleModal(false);
       fetchChargeList();
     }
   }
@@ -307,19 +315,23 @@ const ChargeManagerment = () => {
       <Modal
         destroyOnClose
         title={
-          selectedRowKeys.length===1 ? (
+          selectedRowKeys.length === 1 ? (
             <FormattedMessage id="app.button.edit" />
           ) : (
             <FormattedMessage id="app.button.add" />
           )
         }
         visible={chargeVisibleModal}
-        onCancel={()=>{ setChargeVisibleModal(false)}}
+        onCancel={() => {
+          setChargeVisibleModal(false);
+        }}
         footer={null}
       >
         <BindingChargeComponent
           submit={handleSubmit}
-          cancel={()=>{ setChargeVisibleModal(false)}}
+          cancel={() => {
+            setChargeVisibleModal(false);
+          }}
           data={selectedRowKeys}
         />
       </Modal>

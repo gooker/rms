@@ -11,7 +11,7 @@ const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm';
 const FormItemLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
-const FaultListSearchForm = (props) => {
+const LogSearchForm = (props) => {
   const { search, data } = props;
 
   const [formRef] = Form.useForm();
@@ -147,7 +147,7 @@ const FaultListSearchForm = (props) => {
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col>
           <Button type={'primary'} onClick={searchSubmit}>
             <SearchOutlined /> <FormattedMessage id={'app.button.search'} />
           </Button>
@@ -167,4 +167,4 @@ const FaultListSearchForm = (props) => {
     </Form>
   );
 };
-export default memo(FaultListSearchForm);
+export default memo(LogSearchForm);

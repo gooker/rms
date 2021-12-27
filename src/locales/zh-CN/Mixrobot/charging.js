@@ -8,5 +8,8 @@ export default {
     'chargeManager.clearFault': '清除故障',
     'chargeManager.batchUnBind.confirm': '是否确定解除绑定所有已选项?',
     'chargeManager.clearFault.confirm': '是否确定清除故障?',
+    'chargeManager.fault.code': '故障编码',
+    'chargeManager.fault.createTime': '上报时间',
+    'chargeManager.fault.hardwareId': '充电桩ID',
    
   };

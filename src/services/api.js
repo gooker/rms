@@ -844,6 +844,23 @@ export async function fetchAvailableMapChargerList() {
   });
 }
 
+// 充电桩更新状态
+export async function fetchUpdateCharger(params) {
+  return request(`/${Coordinator}/charger/actions/updateEnableStatus`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+
+// 获取充电桩故障信息
+export async function fetchChargerFaultList(params) {
+  return request(`/${Coordinator}/charger/getChargerError`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 
 
  
