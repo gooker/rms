@@ -6,7 +6,7 @@ import { getAllWebHookTypes, getAllWebHooks, saveWebHook, deleteWebHooks } from 
 import { dealResponse, formatMessage } from '@/utils/utils';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
-import RcsConfirm from '@/components/RcsConfirm';
+import RcsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import WebHookFormModal from './WebHookFormModal';
 
