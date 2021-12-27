@@ -67,7 +67,7 @@ const MetaDataComponent = (props) => {
   };
 
   return (
-    <div className={commonStyle.tablePageWrapper}>
+    <div className={commonStyle.commonPageStyle}>
       <Card
         hoverable
         style={{ width: 600, border: '1px solid #e8e8e8' }}

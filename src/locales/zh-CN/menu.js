@@ -46,6 +46,13 @@ export default {
   'menu.sourceManage.mapAreaManage': '区域管理',
   'menu.sourceManage.agvGroup': '小车分组',
 
+  'menu.sourceGroupManage': '资源分组',
+  'menu.sourceGroupManage.taskTrigger': '任务触发器',
+  'menu.sourceGroupManage.TaskLimiting': '任务限流器',
+  'menu.sourceGroupManage.groupManage': '分组管理',
+  'menu.sourceGroupManage.groupBinding': '分组绑定',
+  'menu.sourceGroupManage.customTask': '自定义任务',
+
   'menu.chargeCenter': '充电',
   'menu.chargeCenter.chargeManagerment': '充电桩管理',
   'menu.chargeCenter.chargeFaultManagement': '充电桩故障管理',
@@ -54,15 +61,8 @@ export default {
   'menu.reportCenter.healthReport': '健康报表',
 
   'menu.requestor': '接口请求库',
-
+  'menu.richEditor': '富文本编辑',
   'menu.questionCenter': '问题中心',
-
-  'menu.sourceGroupManage': '资源分组',
-  'menu.sourceGroupManage.taskTrigger': '任务触发器',
-  'menu.sourceGroupManage.TaskLimiting': '任务限流器',
-  'menu.sourceGroupManage.groupManage': '分组管理',
-  'menu.sourceGroupManage.groupBinding': '分组绑定',
-  'menu.sourceGroupManage.customTask': '自定义任务',
 
   // WCS
   'menu.task': '任务管理',

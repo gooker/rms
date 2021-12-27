@@ -7,7 +7,7 @@ import {
   updateSection,
   deleteSectionById,
 } from '@/services/user';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import TablewidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
@@ -66,7 +66,7 @@ export default class SectionManager extends Component {
   deleteUser = () => {
     const { selectRowKey } = this.state;
     const this_ = this;
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'section.delete.content', format: false }),
       onOk: async () => {
         const deleteRes = await deleteSectionById({ id: selectRowKey[0] });
@@ -108,7 +108,7 @@ export default class SectionManager extends Component {
     const { selectRowKey, sectionsList, loading, sectionModalVisible, updateFlag, selectRow } =
       this.state;
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
             className={commonStyles.mr10}

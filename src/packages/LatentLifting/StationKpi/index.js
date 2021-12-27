@@ -163,7 +163,7 @@ class StationKpi extends Component {
   render() {
     const { historyLoading, realTimeLoading, regionList } = this.state;
     return (
-      <div className={commonStyles.tablePageWrapper}>
+      <div className={commonStyles.commonPageStyle}>
         <StationKpiSearchForm
           regionList={regionList}
           historyLoading={historyLoading}

@@ -1,12 +1,14 @@
+const os = require('os');
 const paths = require('./paths');
 const webpack = require('webpack');
-const HappyPack = require('happypack');
 const WebpackBar = require('webpackbar');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const postcssNormalize = require('postcss-normalize');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const HappyPack = require('happypack');
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -163,6 +165,10 @@ function getWebPackBaseConfig(webpackEnv) {
             },
           },
         ],
+        //共享进程池threadPool: HappyThreadPool 代表共享进程池，即多个 HappyPack 实例都使用同一个共享进程池中的子进程去处理任务，以防止资源占用过多。
+        threadPool: happyThreadPool,
+        //允许 HappyPack 输出日志
+        verbose: true,
       }),
 
       // 这里有个坑记录下: https://blog.csdn.net/vv_bug/article/details/113845376

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Menu } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import {
   ApiOutlined,
   LogoutOutlined,
@@ -7,7 +7,6 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import HeaderDropdown from '@/components/HeaderDropdown';
 
 import { connect } from '@/utils/dva';
 import styles from '../Head.module.less';
@@ -44,12 +43,12 @@ class UserCenter extends PureComponent {
       </Menu>
     );
     return (
-      <HeaderDropdown overlay={menu}>
+      <Dropdown overlay={menu}>
         <span className={`${styles.action} ${styles.account}`}>
           <UserOutlined style={{ marginRight: 4 }} />
           {showLabel && <span className={styles.name}>{currentUser.username}</span>}
         </span>
-      </HeaderDropdown>
+      </Dropdown>
     );
   }
 }

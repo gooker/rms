@@ -18,7 +18,7 @@ import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ModelTypeFieldMap } from '@/config/consts';
 import { saveCustomTask } from '@/services/api';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import DndCard from './DndCard';
 import InformationForm from './InformationForm';
 import StartForm from './StartForm';
@@ -197,7 +197,7 @@ const CustomTaskForm = (props) => {
 
   // 删除 “任务流程” 栏的某一节点
   function deleteTaskFlowNode(index) {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
       onOk: () => {
         const newTaskSteps = [...taskSteps];

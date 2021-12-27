@@ -1,15 +1,14 @@
-process.env.BABEL_ENV = 'production';
-process.env.NODE_ENV = 'production';
-
 const paths = require('./paths');
 const BaseConfig = require('./webpack.config.base');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
-console.log('Creating an optimized production build...');
+console.log('Creating an optimized RMS production build...');
 
 module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
   mode: 'production',
@@ -61,5 +60,14 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
       filename: 'static/css/[name].[contenthash:8].css',
       chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
     }),
-  ],
+
+    new CompressionPlugin({
+      minRatio: 0.8,
+      threshold: 10240,
+      algorithm: 'gzip',
+      test: new RegExp('\\.(js|less|css)$'),
+    }),
+
+    process.env.ANALYZE === '1' && new BundleAnalyzerPlugin(),
+  ].filter(Boolean),
 });

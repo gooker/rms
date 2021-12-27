@@ -14,7 +14,7 @@ import TableWidthPages from '@/components/TableWidthPages';
 import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';
 import { formatMessage, dealResponse } from '@/utils/utils';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 import { IconFont } from '@/components/IconFont';
@@ -56,7 +56,7 @@ class BatchUpgradingComponent extends Component {
     const { agvType } = this.props;
     const { selectedRow, sectionId } = this.state;
     const _this = this;
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.activity.switchmaintenanceStatus' }),
       onOk: async () => {
         const resetRes = await fetchMaintain(agvType, {
@@ -110,7 +110,7 @@ class BatchUpgradingComponent extends Component {
     const _this = this;
     const { agvType } = this.props;
 
-    RcsConfirm({
+    RmsConfirm({
       content: (
         <div>
           {formatMessage({ id: 'app.agv.id' })}:{record.robotId}

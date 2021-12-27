@@ -13,7 +13,7 @@ const CustomTask = (props) => {
   }, []);
 
   return (
-    <div className={commonStyles.globalPageStyle}>
+    <div className={commonStyles.commonPageStyle}>
       {listVisible && <CustomTaskTable />}
       {!listVisible && <CustomTaskForm />}
     </div>

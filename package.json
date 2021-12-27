@@ -4,8 +4,9 @@
   "private": true,
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --config webpack/webpack.config.dev.js --open",
-    "build": "webpack --config webpack/webpack.config.prod.js",
+    "start": "cross-env NODE_ENV=development webpack serve --config webpack/webpack.config.dev.js --open",
+    "build": "cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
+    "analyzer": "cross-env ANALYZE=1 NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
     "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
     "lint-staged": "lint-staged",
     "lint-staged:js": "eslint --ext .js",
@@ -36,6 +37,7 @@
     "case-sensitive-paths-webpack-plugin": "2.3.0",
     "check-prettier": "^1.0.3",
     "classnames": "^2.2.6",
+    "compression-webpack-plugin": "^9.2.0",
     "css-loader": "4.3.0",
     "dva-core": "^2.0.4",
     "echarts": "4.2.1",
@@ -120,5 +122,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3"
   }
 }

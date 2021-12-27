@@ -25,7 +25,7 @@ import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
 import ImportModal from '@/packages/Translator/LanguageManage/component/ImportI18nLanguage';
 import commonStyles from '@/common.module.less';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 
 export default class index extends Component {
   state = {
@@ -81,7 +81,7 @@ export default class index extends Component {
   deleteRole = () => {
     const { selectedRowKeys } = this.state;
     const this_ = this;
-    RcsConfirm({
+    RmsConfirm({
       content: '是否要删除所选择的角色',
       onOk: async () => {
         const deleteRes = await fetchDeleteRoleById({ id: selectedRowKeys[0] });
@@ -181,7 +181,7 @@ export default class index extends Component {
       uploadModal,
     } = this.state;
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Row className={commonStyles.mb20}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button

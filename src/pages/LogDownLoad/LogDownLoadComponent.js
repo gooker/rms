@@ -3,7 +3,7 @@ import { Row, Col, Progress, Form, Button, Select, Divider, Table, message } fro
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dateFormat, dealResponse, formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import { AGVState, Colors, LogFileTypes } from '@/config/consts';
 import {
   fetchAgvLog,
@@ -176,7 +176,7 @@ const LogDownLoadComponent = (props) => {
   }
 
   function forceReset(record) {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.logDownload.forceResetConfirm' }),
       onOk: async () => {
         const response = await forceResetLogGeneration(agvType, {

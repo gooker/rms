@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Button } from 'antd';
-import MenuIcon from '@/utils/MenuIcon';
+import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 
 import FormattedMessage from '@/components/FormattedMessage';
 
-export default class CheckButton extends Component {
+class CheckButton extends Component {
   state = { BatchAddCellVisible: false };
 
   render() {
@@ -20,29 +20,26 @@ export default class CheckButton extends Component {
       >
         {/* 添加 */}
         <Button
-          icon={MenuIcon.plus}
           disabled={disabled}
           onClick={() => {
             onClick && onClick('add');
           }}
         >
-          {' '}
-          <FormattedMessage id="app.cellMap.add" />
+          <PlusOutlined /> <FormattedMessage id="app.cellMap.add" />
         </Button>
 
         {/* 移除 */}
         <Button
           type="danger"
           disabled={disabled}
-          icon={MenuIcon.delete}
           onClick={() => {
             onClick && onClick('remove');
           }}
         >
-          {' '}
-          <FormattedMessage id="app.cellMap.remove" />
+          <DeleteOutlined /> <FormattedMessage id="app.cellMap.remove" />
         </Button>
       </div>
     );
   }
 }
+export default CheckButton;

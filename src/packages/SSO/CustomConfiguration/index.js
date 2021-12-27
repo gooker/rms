@@ -31,7 +31,7 @@ export default class customConfiguration extends Component {
   }
   render() {
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Form ref={this.formRef} {...formItemLayout}>
           <Form.Item
             label={<FormattedMessage id="app.microApp.label.copyRight" />}

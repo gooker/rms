@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table, Button, Row, Modal, message, Spin } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull, formatMessage } from '@/utils/utils';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import { fetchGetActiveMap } from '@/services/map';
 import {
   getAgvTasksByCustomGroup,
@@ -189,7 +189,7 @@ class TaskTrigger extends Component {
     const currentseleteRows = selectedRows.filter((item) => isNull(item.children));
     const _this = this;
 
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'customTasks.taskLimit.delete.confirm' }),
       onOk: async () => {
         // delete 调接口
@@ -234,7 +234,7 @@ class TaskTrigger extends Component {
     };
 
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Spin spinning={spinningFlag}>
           <Row style={{ marginBottom: 20 }}>
             <Button

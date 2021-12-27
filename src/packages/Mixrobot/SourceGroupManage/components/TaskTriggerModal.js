@@ -86,7 +86,7 @@ const TaskTriggerModal = (props) => {
     if (!Array.isArray(param)) return;
     setLoading(true);
     fetchCstParams({ id: updateItem?.id || null, codes: param }).then((response) => {
-      if (!dealResponse(response)) { 
+      if (!dealResponse(response)) {
         setVariables(response);
         setEditVaribleVisible(true);
       } else {

@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Menu } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import classNames from 'classnames';
-import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';
 import styles from '../SelectEnvironment/index.module.less';
 
@@ -21,12 +20,12 @@ export default class SelectLang extends PureComponent {
       </Menu>
     );
     return (
-      <HeaderDropdown overlay={langMenu} placement="bottomRight">
+      <Dropdown overlay={langMenu} placement="bottomRight">
         <span className={classNames(styles.dropDown, className)}>
           <GlobalOutlined title={<FormattedMessage id="app.navBar.lang" />} />
           {showLabel && <span style={{ marginLeft: 4 }}>{LocalsKeys[selectedLang]}</span>}
         </span>
-      </HeaderDropdown>
+      </Dropdown>
     );
   }
 }

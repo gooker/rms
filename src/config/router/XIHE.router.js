@@ -8,19 +8,19 @@ export default [
       {
         path: '/mixrobot/map/mapEdit',
         name: 'mapEdit',
-        component: '/Mixrobot/MapTool/MapEdit/mapEditor',
+        component: '/Mixrobot/MapEditor',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
         path: '/mixrobot/map/monitor',
         name: 'monitor',
-        component: '/Mixrobot/MapTool/MapMonitor/MapMonitor',
+        component: '/Mixrobot/MapMonitor',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
         path: '/mixrobot/map/mapFactory',
         name: 'mapFactory',
-        component: '/Mixrobot/MapTool/MapFactory/MapFactory',
+        component: '/Mixrobot/MapPrograming',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
     ],

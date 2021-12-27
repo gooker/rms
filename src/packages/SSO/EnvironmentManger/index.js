@@ -16,7 +16,7 @@ import {
 } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
 import TablewidthPages from '@/components/TableWidthPages';
@@ -128,7 +128,7 @@ export default class index extends Component {
   deleteEnvironment = () => {
     const this_ = this;
     const { selectRowKey } = this.state;
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'environmentManager.deleteConfirmContent' }),
       onOk: async () => {
         const deleteRes = await deleteEnvironmentById({ id: selectRowKey[0] });
@@ -152,7 +152,7 @@ export default class index extends Component {
     } = this.state;
     const updateRow = updateFlag ? selectRow : null;
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Button
             type="primary"

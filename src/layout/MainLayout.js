@@ -69,9 +69,7 @@ class MainLayout extends React.Component {
     const { appReady } = this.state;
     return appReady ? (
       <Layout className="main-layout">
-        <Sider>
-          <LayoutSlider />
-        </Sider>
+        <LayoutSlider />
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
             <LayoutHeader />

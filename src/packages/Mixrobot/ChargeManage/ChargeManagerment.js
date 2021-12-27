@@ -15,7 +15,7 @@ import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWidthPages from '@/components/TableWidthPages';
 import BindingChargeComponent from './components/BindingChargeComponent';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 
 const { green, blue, pink, cyan, yellow, gray, red } = Dictionary('color');
@@ -210,7 +210,7 @@ const ChargeManagerment = () => {
   }
 
   function deleteCharge() {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
         const response = await batchDeleteChargerPile(selectedRowKeys);
@@ -225,7 +225,7 @@ const ChargeManagerment = () => {
   // 清除故障
   function clearFault() {
     const _row = chargeList.filter(({ hardwareId }) => hardwareId);
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'chargeManager.clearFault.confirm' }),
       onOk: async () => {
         const response = await clearChargerPileFaultById(_row.hardwareId);
@@ -238,7 +238,7 @@ const ChargeManagerment = () => {
   }
 
   function unBindCharge() {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'chargeManager.batchUnBind.confirm' }),
       onOk: async () => {
         const response = await batchUnbundChargerPile(selectedRowKeys);

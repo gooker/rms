@@ -18,7 +18,7 @@ import {
   formatMessage,
 } from '@/utils/utils';
 import { deleteCustomTasksById } from '@/services/api';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
 import TaskBodyModal from './TaskBodyModal';
@@ -147,7 +147,7 @@ const CustomTaskTable = (props) => {
   };
 
   function deleteListItem() {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'customTasks.deleteList.confirm' }),
       onOk: async () => {
         switchDeleteSpin(true);

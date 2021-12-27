@@ -49,7 +49,7 @@ class AccountCenter extends Component {
     const { updateTimeZoneVisible } = this.state;
 
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Card title={<FormattedMessage id="accountCenter.userInfo" />} bordered={false}>
           <Row>
             <Col span={12}>

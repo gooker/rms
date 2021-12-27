@@ -5,7 +5,7 @@ import { formatMessage, dealResponse, dateFormat } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from './TaskSearch';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
@@ -185,7 +185,7 @@ class TaskLibraryComponent extends Component {
   };
 
   openCancelTaskConfirm = () => {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.taskAction.cancel.confirm' }),
       onOk: this.cancelTask,
     });

@@ -1,9 +1,8 @@
 import React, { PureComponent, Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import { BellOutlined } from '@ant-design/icons';
-import { Tabs, Badge, Spin } from 'antd';
+import { Tabs, Badge, Spin, Dropdown } from 'antd';
 import classNames from 'classnames';
-import HeaderDropdown from '@/components/HeaderDropdown';
 import List from './NoticeList';
 import styles from './index.module.less';
 
@@ -113,7 +112,7 @@ export default class NoticeIcon extends PureComponent {
       popoverProps.visible = popupVisible;
     }
     return (
-      <HeaderDropdown
+      <Dropdown
         placement="bottomRight"
         overlay={notificationBox}
         overlayClassName={styles.popover}
@@ -124,7 +123,7 @@ export default class NoticeIcon extends PureComponent {
         ref={(node) => (this.popover = ReactDOM.findDOMNode(node))} // eslint-disable-line
       >
         {trigger}
-      </HeaderDropdown>
+      </Dropdown>
     );
   }
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Input, Select, Button, InputNumber } from 'antd';
 import MenuIcon from '@/utils/MenuIcon';
-import styles from './ButtonInput.less';
+import styles from './index.module.less';
 
 /**
  * multi 是 true 的时候是 Select
@@ -9,7 +9,7 @@ import styles from './ButtonInput.less';
  *  - type 是 string 时候是文字输入框
  *  - type 是 number 时候是数字输入框
  */
-export default class ButtonInput extends React.PureComponent {
+export default class Index extends React.PureComponent {
   render() {
     const {
       value,

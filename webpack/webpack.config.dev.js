@@ -1,18 +1,14 @@
-process.env.BABEL_ENV = 'development';
-process.env.NODE_ENV = 'development';
-
 const paths = require('./paths');
 const BaseConfig = require('./webpack.config.base');
 const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
-console.log('Starting the development server...\n');
+console.log('Starting RMS development server...\n');
 
 module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
   mode: 'development',
   devtool: 'eval-cheap-module-source-map',
-  target: 'web',
 
   entry: paths.appIndexJs,
 

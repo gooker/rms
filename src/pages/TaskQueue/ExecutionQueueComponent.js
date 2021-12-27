@@ -6,7 +6,7 @@ import { formatMessage, dealResponse, dateFormat, isStrictNull } from '@/utils/u
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
 import TableWidthPages from '@/components/TableWidthPages';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { AGVType } from '@/config/config';
@@ -176,7 +176,7 @@ class ExecutionQueueComponent extends Component {
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
 
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });

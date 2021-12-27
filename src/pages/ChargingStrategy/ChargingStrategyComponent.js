@@ -69,7 +69,7 @@ const ChargingStrategyComponent = (prop) => {
   }
 
   return (
-    <div className={classnames(commonStyles.globalPageStyle, styles.chargerStrategy)}>
+    <div className={classnames(commonStyles.commonPageStyle, styles.chargerStrategy)}>
       <Tabs
         animated
         activeKey={activeKey}

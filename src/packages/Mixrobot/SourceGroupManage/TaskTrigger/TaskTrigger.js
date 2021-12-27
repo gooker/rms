@@ -25,7 +25,7 @@ import {
 } from '@/services/api';
 import { dealResponse,formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import styles from '@/common.module.less';
 import style from './TaskTrigger.module.less';
@@ -123,7 +123,7 @@ class TaskTrigger extends Component {
       }
       return statusText;
     };
-    RcsConfirm({
+    RmsConfirm({
       content: triggerStatus(status),
       onOk: () => {
         if (isBatch) {
@@ -189,7 +189,7 @@ class TaskTrigger extends Component {
       this.setState({ triggerModalVisible: true, updateTrigger: record });
     } else {
       const newTask = currentTaskTriggerList.filter((item) => item.id !== record.id);
-      RcsConfirm({
+      RmsConfirm({
         content: formatMessage({ id: 'customTasks.taskTrigger.deleteTaskrigger.tip' }),
         onOk: async () => {
           // delete 调接口
@@ -394,7 +394,7 @@ class TaskTrigger extends Component {
 
     return (
       <Spin spinning={loading}>
-        <div className={commonStyles.globalPageStyle}>
+        <div className={commonStyles.commonPageStyle}>
           {/* 操作栏 */}
           <Row justify="space-between">
             <Col>

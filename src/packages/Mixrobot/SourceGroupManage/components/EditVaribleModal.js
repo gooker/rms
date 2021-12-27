@@ -141,7 +141,7 @@ const EditVaribleModal = (props) => {
             </Form.Item>,
           );
         }
-        if (groupItem.field === 'podAngle') {// pod特殊 没有resources 
+        if (groupItem.field === 'podAngle') {// pod特殊 没有resources
           body.push(
             <Form.Item
               {...formItemLayout}

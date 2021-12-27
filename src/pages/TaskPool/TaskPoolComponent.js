@@ -5,7 +5,7 @@ import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchPoolTasks, cancelTotePoolTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import { dealResponse } from '@/utils/utils';
 import TaskPoolSearch from './TaskPoolSearch';
 import commonStyles from '@/common.module.less';
@@ -81,7 +81,7 @@ class TaskLibraryComponent extends Component {
   };
 
   cancelTaskConfirm = () => {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.taskAction.cancel.confirm' }),
       onOk: this.cancelTask,
     });

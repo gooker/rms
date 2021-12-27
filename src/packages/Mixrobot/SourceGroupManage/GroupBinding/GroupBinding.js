@@ -299,7 +299,7 @@ class GroupBinding extends Component {
     }
 
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         {/* 搜索 */}
         <div>
           <Form ref={this.formRef}>

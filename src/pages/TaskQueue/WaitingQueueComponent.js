@@ -15,7 +15,7 @@ import { dealResponse } from '@/utils/utils';
 import { AgvStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
@@ -182,7 +182,7 @@ class WaitingQueueComponent extends Component {
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
 
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });

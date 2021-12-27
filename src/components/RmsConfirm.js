@@ -14,7 +14,7 @@ const { confirm } = Modal;
  * @param {*} onOk 确认回调
  * @param {*} onCancel 取消回调
  */
-const RcsConfirm = ({ content, okType, onOk, onCancel, okText, cancelText }) => {
+const RmsConfirm = ({ content, okType, onOk, onCancel, okText, cancelText }) => {
   const confirmConfig = {
     title: formatMessage({ id: 'app.message.systemHint' }),
     icon: <ExclamationCircleOutlined />,
@@ -36,4 +36,4 @@ const RcsConfirm = ({ content, okType, onOk, onCancel, okText, cancelText }) => 
 
   confirm(confirmConfig);
 };
-export default RcsConfirm;
+export default RmsConfirm;

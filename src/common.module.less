@@ -1,13 +1,19 @@
-// 表格页面样式
-.tablePageWrapper {
+// 页面通用样式
+.commonPageStyleNoPadding {
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
-  padding: 15px;
   background: #fff;
   border: 1px solid #f0f0f0;
 }
 
+.commonPageStyle {
+  .commonPageStyleNoPadding();
+
+  padding: 24px;
+}
+
+// 表格页面样式
 .tableWrapper {
   flex: 1;
   overflow: auto;
@@ -80,43 +86,26 @@
   }
 }
 
-// 页面通用样式
-.globalPageStyle {
+// 地图页面布局通用样式
+.mapLayoutHeader {
+  height: 50px;
+}
+
+.mapLayoutBody {
   display: flex;
-  flex-flow: column nowrap;
-  height: calc(100vh - 64px);
-  padding: 24px;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-}
-
-// 内容居右
-.textRight {
-  text-align: right;
-}
-.mr10 {
-  margin-right: 10px;
-}
-.ml10 {
-  margin-left: 10px;
-}
-.mt20 {
-  margin-top: 20px;
-}
-.mb20 {
-  margin-bottom: 20px;
-}
-.m20 {
-  margin: 0 20px;
-}
-
-.divider{
-  margin:0 0 15px 0;
-}
-
-.divContent {
   flex: 1;
-  overflow: auto;
+}
+
+.mapBodyLeft {
+  width: 100px;
+}
+
+.mapBodyMiddle {
+  flex: 1;
+}
+
+.mapBodyRight {
+  width: 100px;
 }
 
 // 运维弹窗样式
@@ -198,4 +187,33 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+
+// @以下需要调整删除
+.textRight {
+  text-align: right;
+}
+.mr10 {
+  margin-right: 10px;
+}
+.ml10 {
+  margin-left: 10px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.mb20 {
+  margin-bottom: 20px;
+}
+.m20 {
+  margin: 0 20px;
+}
+
+.divider {
+  margin: 0 0 15px 0;
+}
+
+.divContent {
+  flex: 1;
+  overflow: auto;
 }

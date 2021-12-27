@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col, Menu, Modal } from 'antd';
+import { Form, Input, Button, Row, Col, Menu, Modal, Dropdown } from 'antd';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
-import HeaderDropdown from '@/components/HeaderDropdown';
 import LocalsKeys from '@/locales/LocaleKeys';
 import commonStyles from '@/common.module.less';
 
@@ -86,15 +85,11 @@ export default class AddSysLangModal extends Component {
           <Form {...formItemLayout} ref={this.formRef}>
             <Row>
               <Col flex="auto" className={commonStyles.textRight}>
-                <HeaderDropdown
-                  overlay={this.renderMenu}
-                  trigger={['click']}
-                  placement="bottomCenter"
-                >
+                <Dropdown overlay={this.renderMenu} trigger={['click']} placement="bottomCenter">
                   <Button type="link">
                     <FormattedMessage id="translator.languageManage.shortcut" />
                   </Button>
-                </HeaderDropdown>
+                </Dropdown>
               </Col>
             </Row>
             <Form.Item

@@ -32,7 +32,7 @@ import {
   updateTranslations,
   getTranslationBycode,
 } from '@/services/translator';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import {
   getdataList,
   exportTranslate,
@@ -308,7 +308,7 @@ class LanguageManage extends React.Component {
     const { editList, appCode } = this.state;
     const _this = this;
     if (Object.keys(editList).length >= 1) {
-      RcsConfirm({
+      RmsConfirm({
         content: formatMessage({ id: 'translator.languageManage.applicationTips', format: false }),
         okText: formatMessage({ id: 'app.common.true', format: false }),
         cancelText: formatMessage({ id: 'app.common.false', format: false }),
@@ -369,7 +369,7 @@ class LanguageManage extends React.Component {
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
-      <div className={classnames(commonStyles.globalPageStyle, styles.translator)}>
+      <div className={classnames(commonStyles.commonPageStyle, styles.translator)}>
         <Row>
           <Col>
             <FormItem label={<FormattedMessage id="translator.languageManage.language" />}>

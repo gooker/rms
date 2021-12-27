@@ -19,7 +19,7 @@ import {
   fetchReportSourceURL,
   saveReportGroup,
 } from '@/services/api';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
 
 const ReportGroupDetail = (props) => {
@@ -107,7 +107,7 @@ const ReportGroupDetail = (props) => {
   }
 
   function onRemove(record) {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.message.delete.confirm' }),
       onOk: async () => {
         // 调用接口删除远程数据

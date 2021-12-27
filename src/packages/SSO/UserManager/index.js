@@ -14,7 +14,7 @@ import {
   saveUsersAssignedRole,
 } from '@/services/user';
 import IconFont from '@/utils/ExtraIcon';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import TableWidthPages from '@/components/TableWidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
@@ -262,7 +262,7 @@ class UserManager extends Component {
       </>
     );
     const this_ = this;
-    RcsConfirm({
+    RmsConfirm({
       content: content,
       onOk: async () => {
         const deleteRes = await fetchDeleteUser({ id: selectRow[0].id });
@@ -347,7 +347,7 @@ class UserManager extends Component {
     });
     const updateItem = updateUserFlag ? selectRow[0] : null;
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Form.Item label={<FormattedMessage id="sso.user.type.username" />}>
           <Select
             showSearch

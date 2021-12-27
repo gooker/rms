@@ -143,7 +143,7 @@ class AgvRealTimeComponent extends React.Component {
     const { agvRealtimeData, agvHardware, agvTask, agvErrorRecord, agvType } = this.state;
 
     return (
-      <div className={commonStyles.tablePageWrapper}>
+      <div className={commonStyles.commonPageStyle}>
         <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 20 }}>
           <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
             <Select

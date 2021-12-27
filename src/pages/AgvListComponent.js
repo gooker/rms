@@ -14,7 +14,7 @@ import TableWidthPages from '@/components/TableWidthPages';
 import { dealResponse, isNull } from '@/utils/utils';
 import history from '@/history';
 import { AGVType, NameSpace } from '@/config/config';
-import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtils';
+import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtil';
 import LabelComponent from '@/components/LabelComponent';
 import Dictionary from '@/utils/Dictionary';
 import TablePageWrapper from '@/components/TablePageWrapper';

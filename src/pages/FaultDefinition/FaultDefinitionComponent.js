@@ -9,7 +9,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import { deleteFaultDefinition, fetchDefinedFaults } from '@/services/api';
 import FaultDefinitionForm from '@/pages/FaultDefinition/FaultDefinitionForm';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import styles from './FaultDefinition.module.less';
 
 const FaultDefinitionComponent = (props) => {
@@ -51,7 +51,7 @@ const FaultDefinitionComponent = (props) => {
   }
 
   async function deleteRow() {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
         const response = await deleteFaultDefinition(agvType, selectedRowKeys);
@@ -66,7 +66,7 @@ const FaultDefinitionComponent = (props) => {
   }
 
   async function initFaultDefinition() {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.fault.init.confirm' }),
       onOk: async () => {
         const response = await initFaultDefinition(agvType);

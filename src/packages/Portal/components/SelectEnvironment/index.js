@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import { IeOutlined } from '@ant-design/icons';
-import { Menu } from 'antd';
+import { Menu, Dropdown } from 'antd';
 import find from 'lodash/find';
 import classNames from 'classnames';
-import HeaderDropdown from '@/components/HeaderDropdown';
 import styles from './index.module.less';
 
 export default class SelectUrl extends PureComponent {
@@ -54,12 +53,12 @@ export default class SelectUrl extends PureComponent {
     return (
       <>
         {environments && environments.length > 1 ? (
-          <HeaderDropdown overlay={envMenu}>
+          <Dropdown overlay={envMenu}>
             <span className={classNames(styles.dropDown, className)}>
               <IeOutlined />
               {showLabel && <span style={{ marginLeft: 4 }}>{selectedEnvironment.envName}</span>}
             </span>
-          </HeaderDropdown>
+          </Dropdown>
         ) : null}
       </>
     );

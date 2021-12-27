@@ -67,7 +67,7 @@ class TaskTriggerModal extends Component {
     const { getTasksByCustomGroup, updateItem } = this.props;
     const { setFieldsValue } = this.formRef.current;
     this.getTreeData(getTasksByCustomGroup);
-   
+
     /* 编辑操作赋值 */
     if (updateItem) {
       const setValues={
@@ -328,7 +328,7 @@ getGroupType=(data)=>{
             name="type"
             initialValue={keyType}
           >
-           
+
             <Radio.Group  disabled={!!updateItem} onChange={this.onTypeChange} >
               <Radio value="sourceLimit">
                 {formatMessage({ id: 'customTasks.taskLimit.sourcelimitng' })}

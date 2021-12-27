@@ -125,7 +125,7 @@ export default class UserLoginHistory extends Component {
   render() {
     const { loading, pagination, historySource } = this.state;
     return (
-      <div className={commonStyles.globalPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
         <Row style={{ marginBottom: 20 }}>
           <Select
             style={{ width: 100 }}

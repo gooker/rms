@@ -6,7 +6,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/utils';
 import { deleteReportGroup, fetchReportGroupList, saveReportGroup } from '@/services/api';
-import RcsConfirm from '@/components/RcsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
 
 const ReportGroupList = (props) => {
@@ -101,7 +101,7 @@ const ReportGroupList = (props) => {
   }
 
   function deleteGroup(groupId) {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.message.delete.confirm' }),
       onOk: async () => {
         const response = await deleteReportGroup(agvType, groupId);
