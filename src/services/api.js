@@ -625,12 +625,6 @@ export async function switchTriggerState(param) {
   });
 }
 
-// 查询所有已创建的Web Hook接口
-export async function getAllWebHooks() {
-  return request(`/${Coordinator}/webHook/getAllWebHook`, {
-    method: 'GET',
-  });
-}
 
 
 // ********************** 自定义任务  ********************** //
@@ -641,13 +635,6 @@ export async function getCustomTaskList() {
   });
 }
 
-// 删除 Web Hook
-export async function deleteWebHooks(param) {
-  return request(`/${Coordinator}/webHook/deleteWebHookById`, {
-    method: 'POST',
-    data: param,
-  });
-}
 // 获取自定义任务可配置参数
 export async function fetchCstParams(param) {
   return request(`/${LatentLifting}/agv-custom-task/getFixedVariable`, {
@@ -861,6 +848,43 @@ export async function fetchChargerFaultList(params) {
   });
 }
 
+// 系统管理-时区设置
+export async function fetchSystemParamByKey(key) {
+  return request(`/${Coordinator}/formTemplate/getParameter/${key}`, {
+    method: 'GET',
+  });
+}
 
+// Web Hook
+// 查询所有已创建的Web Hook类型
+export async function getAllWebHookTypes() {
+  return request(`/${Coordinator}/webHook/getType`, {
+    method: 'GET',
+  });
+}
+
+// 查询所有已创建的Web Hook接口
+export async function getAllWebHooks() {
+  return request(`/${Coordinator}/webHook/getAllWebHook`, {
+    method: 'GET',
+  });
+}
+
+// 保存Web Hook接口
+export async function saveWebHook(param) {
+  return request(`/${Coordinator}/webHook/saveWebHook`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
+// 删除 Web Hook
+export async function deleteWebHooks(param) {
+  return request(`/${Coordinator}/webHook/deleteWebHookById`, {
+    method: 'POST',
+    data: param,
+  });
+}
 
  

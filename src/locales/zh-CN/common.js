@@ -44,6 +44,7 @@ export default {
   'app.common.updateTime': '更新时间',
   'app.common.startTime': '开始时间',
   'app.common.endTime': '结束时间',
+  'app.common.timeout': '超时时间',
   'app.common.tableRecord': '共计 {count} 条记录',
   'app.common.type': '类型',
   'app.common.status': '状态',
