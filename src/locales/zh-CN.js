@@ -23,6 +23,7 @@ import latentLiftingReport from './zh-CN/LatentLifting/report';
 import taskTrigger from './zh-CN/Mixrobot/taskTrigger';
 import operationlog from './zh-CN/Mixrobot/operationlog';
 import charging from './zh-CN/Mixrobot/charging';
+import webHook from './zh-CN/Mixrobot/webHook';
 
 export default {
   ...menu,
@@ -50,4 +51,5 @@ export default {
   ...taskTrigger,
   ...operationlog,
   ...charging,
+  ...webHook,
 };

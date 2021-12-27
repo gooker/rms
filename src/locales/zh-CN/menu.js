@@ -95,6 +95,7 @@ export default {
   'menu.system.systemParams': '参数列表',
   'menu.system.chargingStrategy': '充电策略',
   'menu.system.Timezone': '时区设置',
+  'menu.system.webHook': 'Web Hook',
 
   // tote
   'menu.task.totePoolTask': '料箱池任务',

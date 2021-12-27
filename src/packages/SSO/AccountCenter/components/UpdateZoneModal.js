@@ -32,7 +32,7 @@ export default class UpdateZoneModal extends Component {
           }}
           style={{ width: '100%' }}
         >
-          <FormattedMessage id="app.accountCenter.submit" />
+          <FormattedMessage id="app.button.submit" />
         </Button>
       </div>
     );
