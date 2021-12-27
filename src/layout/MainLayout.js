@@ -2,13 +2,13 @@ import React from 'react';
 import { Layout, Modal, message, Skeleton } from 'antd';
 import { connect } from '@/utils/dva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
-import LayoutContent from '@/pages/Content/Content';
 import LayoutHeader from '@/packages/Portal/components/Header';
+import LayoutContent from '@/pages/Content/Content';
 import { dealResponse, formatMessage } from '@/utils/utils';
 import { fetchAllTaskTypes } from '@/services/api';
 import './mainLayout.less';
 
-const { Header } = Layout;
+const { Header, Sider, Content } = Layout;
 
 @connect()
 class MainLayout extends React.Component {
@@ -26,16 +26,21 @@ class MainLayout extends React.Component {
       // 2.初始化菜单
       await dispatch({ type: 'global/initAppAuthority' });
       this.setState({ appReady: true });
+
+      // 3. 获取所有车类任务类型数据
       this.loadAllTaskTypes();
+
+      // 4. 加载所有地图材质
+      this.loadAllMapTextures();
     } catch (error) {
       Modal.error({
         title: formatMessage({ id: 'app.global.initFailed' }),
         content: error.toString(),
-        zIndex:2147483649,
-        onOk(){
+        zIndex: 2147483649,
+        onOk() {
           // 登出
           dispatch({ type: 'user/logout' });
-        }
+        },
       });
     }
   }
@@ -56,16 +61,24 @@ class MainLayout extends React.Component {
     });
   };
 
+  loadAllMapTextures = () => {
+    //
+  };
+
   render() {
     const { appReady } = this.state;
     return appReady ? (
       <Layout className="main-layout">
-        <LayoutSlider />
+        <Sider>
+          <LayoutSlider />
+        </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
             <LayoutHeader />
           </Header>
-          <LayoutContent />
+          <Content>
+            <LayoutContent />
+          </Content>
         </Layout>
       </Layout>
     ) : (

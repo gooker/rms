@@ -48,7 +48,7 @@ class Content extends React.PureComponent {
 
           <Route component={Loadable(() => import('@/packages/Portal/NoFound'))} />
         </Switch>
-
+        {/* 任务详情全局组件 */}
         <Detail />
       </div>
     );

@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import dva from '@/utils/dva';
-import App from '@/pages/Portal/App';
+import App from '@/pages/App';
 import globalModel from '@/models/global';
 import taskModel from '@/models/task';
 import userModel from '@/models/user';
@@ -10,6 +11,7 @@ import monitorModel from '@/models/monitor';
 import simulatorModel from '@/models/simulator';
 import taskTriger from '@/packages/Mixrobot/SourceGroupManage/TaskTrigger/models/taskTriger';
 import customTask from '@/packages/Mixrobot/SourceGroupManage/CustomTask/models/CustomTaskModel';
+import history from '@/history';
 import './global.less';
 
 // 全局错误处理(尝试版)
@@ -48,7 +50,9 @@ const DvaProvider = app.create();
 
 ReactDOM.render(
   <DvaProvider>
-    <App />
+    <Router history={history}>
+      <App />
+    </Router>
   </DvaProvider>,
   document.getElementById('root'),
 );

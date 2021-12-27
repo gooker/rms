@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
+import { Switch, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import history from '@/history';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/utils/Loadable';
 import { connect } from '@/utils/dva';
@@ -15,6 +14,7 @@ class App extends Component {
 
   async componentDidMount() {
     try {
+      // 国际化必须在系统任何内容展示前完成初始化
       await initI18nInstance();
       this.setState({ initDone: true });
     } catch (e) {
@@ -28,16 +28,16 @@ class App extends Component {
     return (
       initDone && (
         <ConfigProvider locale={antdLocale}>
-          <Router history={history}>
-            <Switch>
-              <Route
-                exact
-                path="/login"
-                component={Loadable(() => import('@/packages/Portal/Login'))}
-              />
-              <MainLayout />
-            </Switch>
-          </Router>
+          <Switch>
+            {/* 登录页面*/}
+            <Route
+              exact
+              path="/login"
+              component={Loadable(() => import('@/packages/Portal/Login'))}
+            />
+            {/* 主页面 */}
+            <MainLayout />
+          </Switch>
         </ConfigProvider>
       )
     );
