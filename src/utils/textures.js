@@ -7,7 +7,7 @@ import {
   ForkLiftAGVSize,
   HeatCircleRadius,
 } from '@/config/consts';
-import { BitText, LineArrow } from '@/packages/Mixrobot/entities';
+import { BitText, LineArrow } from '@/packages/XIHE/entities';
 
 function getHasOppositeDirection(relations, source, target) {
   let result = false;

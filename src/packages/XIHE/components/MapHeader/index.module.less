@@ -1,0 +1,32 @@
+.mapSwitcher {
+  display: flex;
+  height: 100%;
+  line-height: 35px;
+
+  & > span[role='img'] {
+    margin: 0 12px;
+    line-height: 35px;
+  }
+}
+
+.action {
+  display: inline-block;
+  height: 100%;
+  cursor: pointer;
+
+  > i {
+    color: rgb(0, 0, 0, 0.85);
+    vertical-align: middle;
+  }
+  &:hover {
+    background: rgba(0, 0, 0, 0.025);
+  }
+  &:global(.opened) {
+    background: rgba(0, 0, 0, 0.025);
+  }
+}
+
+.mapHeaderTools {
+  display: flex;
+  align-items: center;
+}

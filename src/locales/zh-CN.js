@@ -20,10 +20,11 @@ import environmentManager from './zh-CN/SSO/environmentManager';
 import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
 import latentLiftingReport from './zh-CN/LatentLifting/report';
-import taskTrigger from './zh-CN/Mixrobot/taskTrigger';
-import operationlog from './zh-CN/Mixrobot/operationlog';
-import charging from './zh-CN/Mixrobot/charging';
-import webHook from './zh-CN/Mixrobot/webHook';
+import taskTrigger from './zh-CN/XIHE/taskTrigger';
+import operationLog from './zh-CN/XIHE/operationlog';
+import charging from './zh-CN/XIHE/charging';
+import webHook from './zh-CN/XIHE/webHook';
+import mapEditor from './zh-CN/XIHE/mapEditor';
 
 export default {
   ...menu,
@@ -49,7 +50,8 @@ export default {
   ...customConfiguration,
   ...latentLiftingReport,
   ...taskTrigger,
-  ...operationlog,
+  ...operationLog,
   ...charging,
   ...webHook,
+  ...mapEditor,
 };

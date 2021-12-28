@@ -2,7 +2,7 @@
 import * as PIXI from 'pixi.js';
 import { GlobalAlpha, zIndex } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import { BitText } from '@/packages/Mixrobot/entities';
+import { BitText } from '@/packages/XIHE/entities';
 
 export default class TotePod extends PIXI.Container {
   constructor(props) {

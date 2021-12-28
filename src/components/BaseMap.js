@@ -22,7 +22,7 @@ import {
   Intersection,
   RollerStation,
   CommonFunction,
-} from '@/packages/Mixrobot/entities';
+} from '@/packages/XIHE/entities';
 import { getLineGraphics } from '@/utils/textures';
 import { zIndex } from '@/config/consts';
 

@@ -12,7 +12,7 @@ import SelectSection from './SelectSection';
 import NoticeIcon from './NoticeIcon';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
-import styles from './Head.module.less';
+import styles from './Header.module.less';
 
 @connect(({ global, user }) => ({
   globalLocale: global.globalLocale,

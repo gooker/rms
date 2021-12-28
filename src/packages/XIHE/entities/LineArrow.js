@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
 import { zIndex, CostColor, SpotSize } from '@/config/consts';
-import { BitText } from '@/packages/Mixrobot/entities';
+import { BitText } from '@/packages/XIHE/entities';
 import { covertAngle2Direction } from '@/utils/utils';
 
 export default class LineArrow extends PIXI.Container {

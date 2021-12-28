@@ -9,7 +9,7 @@ import {
 import FormattedMessage from '@/components/FormattedMessage';
 
 import { connect } from '@/utils/dva';
-import styles from '../Head.module.less';
+import styles from '../Header.module.less';
 
 @connect(({ global, user }) => ({
   currentUser: user.currentUser,

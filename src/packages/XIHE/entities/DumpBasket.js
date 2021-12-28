@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { zIndex, SpotSize } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtils';
-import BitText from '@/packages/Mixrobot/entities/BitText';
+import BitText from '@/packages/XIHE/entities/BitText';
 
 export default class DumpBasket extends PIXI.Sprite {
   constructor(key, x, y) {

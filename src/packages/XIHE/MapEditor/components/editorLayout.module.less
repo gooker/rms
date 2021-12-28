@@ -1,0 +1,59 @@
+.bodySideToolStyle {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+}
+
+// 左侧
+.bodyLeftSide {
+  .bodySideToolStyle();
+
+  padding-top: 20px;
+
+  & > span {
+    margin-bottom: 15px;
+    cursor: pointer;
+
+    svg {
+      width: 38px;
+      height: 38px;
+      fill: #fff;
+    }
+  }
+}
+
+.leftContentActive {
+  & > span > svg {
+    fill: #3eb2de;
+  }
+}
+
+// 右侧
+.bodyRightSide {
+  .bodySideToolStyle();
+
+  padding-top: 10px;
+
+  & > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 40px;
+    cursor: pointer;
+
+    svg {
+      width: 23px;
+      height: 23px;
+      fill: #fff;
+    }
+  }
+
+  & > div:hover {
+    border: 2px solid #5b7daa;
+  }
+}
+
+.rightContentActive {
+  background: #5b7daa;
+}

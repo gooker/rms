@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import * as PIXI from 'pixi.js';
-import { BitText } from '@/packages/Mixrobot/entities';
+import { BitText } from '@/packages/XIHE/entities';
 import { isNull } from '@/utils/utils';
 import { getTextureFromResources } from '@/utils/mapUtils';
 import { SpotSize, zIndex, CellTypeSize, CellTypeColor } from '@/config/consts';

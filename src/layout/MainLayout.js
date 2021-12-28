@@ -71,7 +71,10 @@ class MainLayout extends React.Component {
       <Layout className="main-layout">
         <LayoutSlider />
         <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0 }}>
+          <Header
+            className="site-layout-background"
+            style={{ padding: 0, borderBottom: '1px solid #e8e8e8' }}
+          >
             <LayoutHeader />
           </Header>
           <Content>
