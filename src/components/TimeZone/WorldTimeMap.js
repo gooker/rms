@@ -26,6 +26,12 @@ export default class WorldTimeMap extends Component {
               onMouseOver(record)
           }
         }}
+        onMouseOut={() => {
+          const { onMouseOut } = this.props
+          if(onMouseOut){
+            onMouseOut()
+          }
+        }}
       />
     )
   }

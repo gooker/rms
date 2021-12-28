@@ -6,7 +6,7 @@ import commonStyles from '@/common.module.less';
 class TableWidthPages extends Component {
   render() {
     return (
-      <div className={commonStyles.divContent}>
+      <div className={commonStyles.tableWrapper}>
         <Table
           {...this.props}
           pagination={{

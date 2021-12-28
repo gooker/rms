@@ -9,6 +9,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import { dealResponse } from '@/utils/utils';
 import TaskPoolSearch from './TaskPoolSearch';
 import commonStyles from '@/common.module.less';
+import styles from '../TaskQueue/taskQueue.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {
@@ -107,9 +108,9 @@ class TaskLibraryComponent extends Component {
     const { cancel, getColumn } = this.props;
     return (
       <TablePageWrapper>
-        <div>
+        <div className={styles.taskSearchDivider}>
           <TaskPoolSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
-          <Divider className={commonStyles.divider} />
+          <Divider />
           {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.cancelTaskConfirm}>
               <FormattedMessage id={'app.taskDetail.cancelTask'} />

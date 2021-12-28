@@ -46,7 +46,7 @@ export default [
     name: 'environmentManger',
     icon: 'ie',
     component: '/SSO/EnvironmentManger',
-    hook:["multi-api1","multi-api2","multi-api3"], // TODO: test
+    hook:["multi-api1","multi-api2","multi-api3","dev"], // TODO: test
   },
   {
     path: '/sso/customConfiguration',       // 定制化配置

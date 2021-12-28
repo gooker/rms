@@ -154,64 +154,53 @@ export default class index extends Component {
     return (
       <div className={commonStyles.commonPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
-          <Button
-            type="primary"
-            className={commonStyles.mr10}
-            icon={<PlusOutlined />}
-            onClick={() => {
-              this.setState({
-                addEnvironVisible: true,
-              });
-            }}
-          >
-            <FormattedMessage id="app.button.add" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            icon={<EditOutlined />}
-            disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              this.setState({
-                addEnvironVisible: true,
-                updateFlag: true,
-              });
-            }}
-          >
-            <FormattedMessage id="app.button.update" />
-          </Button>
+          <Col flex="auto" className={commonStyles.tableToolLeft}>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.setState({
+                  addEnvironVisible: true,
+                });
+              }}
+            >
+              <PlusOutlined /> <FormattedMessage id="app.button.add" />
+            </Button>
+            <Button
+              disabled={selectRowKey.length !== 1}
+              onClick={() => {
+                this.setState({
+                  addEnvironVisible: true,
+                  updateFlag: true,
+                });
+              }}
+            >
+              <EditOutlined /> <FormattedMessage id="app.button.update" />
+            </Button>
 
-          <Button
-            className={commonStyles.mr10}
-            icon={<DeleteOutlined />}
-            disabled={selectRowKey.length !== 1}
-            onClick={this.deleteEnvironment}
-          >
-            <FormattedMessage id="app.button.delete" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            icon={<ExportOutlined />}
-            onClick={() => {
-              this.copyJson();
-            }}
-          >
-            <FormattedMessage id="app.button.copy" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            icon={<CopyOutlined />}
-            onClick={() => {
-              this.setState({ pasteVisble: true });
-            }}
-          >
-            <FormattedMessage id="app.button.past" />
-          </Button>
-          <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
+            <Button  danger disabled={selectRowKey.length !== 1} onClick={this.deleteEnvironment}>
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+            </Button>
+            <Button
+              disabled={selectRowKey.length !== 1}
+              onClick={() => {
+                this.copyJson();
+              }}
+            >
+              <ExportOutlined /> <FormattedMessage id="app.button.copy" />
+            </Button>
+            <Button
+              onClick={() => {
+                this.setState({ pasteVisble: true });
+              }}
+            >
+              <CopyOutlined /> <FormattedMessage id="app.button.past" />
+            </Button>
+          </Col>
+          <Col>
             <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getData}>
               <FormattedMessage id="app.button.refresh" />
             </Button>
-          </div>
+          </Col>
         </Row>
 
         <TablewidthPages

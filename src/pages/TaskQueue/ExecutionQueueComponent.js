@@ -12,6 +12,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { AGVType } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
 import commonStyles from '@/common.module.less';
+import styles from './taskQueue.module.less';
 
 const { red, green } = Dictionary('color');
 
@@ -247,12 +248,12 @@ class ExecutionQueueComponent extends Component {
     const { deleteFlag, allTaskTypes, agvType } = this.props;
     return (
       <TablePageWrapper>
-        <div>
+        <div className={styles.taskSearchDivider}>
           <ExecutionQueueSearch
             allTaskTypes={allTaskTypes?.[agvType] || {}}
             search={this.filterTableList}
           />
-          <Divider className={commonStyles.divider} />
+          <Divider/>
           {deleteFlag ? (
             <Button
               danger
@@ -263,7 +264,7 @@ class ExecutionQueueComponent extends Component {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
           ) : null}
-          <Button type="primary" ghost onClick={this.getData} className={commonStyles.ml10}>
+          <Button type="primary" ghost onClick={this.getData} style={{ marginLeft: 10 }}>
             <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </div>

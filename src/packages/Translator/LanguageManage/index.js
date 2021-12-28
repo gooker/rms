@@ -395,14 +395,12 @@ class LanguageManage extends React.Component {
               onClick={() => {
                 this.setState({ addLangVisible: true });
               }}
-              icon={<PlusCircleOutlined />}
             >
-              {' '}
-              <FormattedMessage id="translator.languageManage.addlanguage" />
+              <PlusCircleOutlined /> <FormattedMessage id="translator.languageManage.addlanguage" />
             </Button>
           </Col>
 
-          <Col flex="auto" className={commonStyles.textRight}>
+          <Col flex="auto">
             <Button
               type="link"
               style={{ cursor: 'pointer', color: '#1890FF', marginLeft: 40 }}
@@ -540,7 +538,7 @@ class LanguageManage extends React.Component {
               </Radio.Group>
             </FormItem>
           </Col>
-          <Col className={commonStyles.textRight}>
+          <Col>
             <Checkbox
               value={showMissingTranslate}
               onChange={({ target: { checked } }) => {

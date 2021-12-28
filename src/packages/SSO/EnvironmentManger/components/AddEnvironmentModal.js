@@ -5,8 +5,7 @@ import { formatMessage, isStrictNull } from '@/utils/utils';
 import DynamicForm from '@/components/DynamicForm/Index';
 import { ApiNameSpace } from '@/config/config';
 const { DynamicFormCol } = DynamicForm;
-
-export default class AddEnvironmentModal extends Component {
+class AddEnvironmentModal extends Component {
   formRef = React.createRef();
   state = {
     updateInfos: [],
@@ -27,7 +26,7 @@ export default class AddEnvironmentModal extends Component {
     }
   }
 
-  validatoAdditionalInfosr = (rule, values, callback) => {
+  validatoAdditionalInfosr = (rule, values) => {
     if (values) {
       const additionalInfos = [];
       for (let index = 0; index < values.length; index++) {
@@ -41,17 +40,19 @@ export default class AddEnvironmentModal extends Component {
           value: element.value,
         });
       }
-      callback();
+      return Promise.resolve();
     }
-    callback();
+    return Promise.resolve();
   };
 
   submit = () => {
     const { validateFields } = this.formRef.current;
     const { onSubmit } = this.props;
-    validateFields().then((allValues) => {
-      onSubmit(allValues);
-    });
+    validateFields()
+      .then((allValues) => {
+        onSubmit(allValues);
+      })
+      .catch(() => {});
   };
 
   render() {
@@ -144,3 +145,4 @@ export default class AddEnvironmentModal extends Component {
     );
   }
 }
+export default AddEnvironmentModal;

@@ -132,7 +132,7 @@ const WebHook = () => {
     },
     { title: <FormattedMessage id="app.common.description" />, dataIndex: 'desc', align: 'center' },
     {
-      title: <FormattedMessage id="app.common.edit" />,
+      title: <FormattedMessage id="app.button.edit" />,
       align: 'center',
       fixed: 'right',
       render: (text, record) => (

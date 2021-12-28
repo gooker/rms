@@ -182,7 +182,7 @@ export default class index extends Component {
     } = this.state;
     return (
       <div className={commonStyles.commonPageStyle}>
-        <Row className={commonStyles.mb20}>
+        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button
               type="primary"
@@ -229,21 +229,19 @@ export default class index extends Component {
           </Col>
         </Row>
 
-        <div className={commonStyles.divContent}>
-          <TableWidthPages
-            bordered
-            columns={this.columns}
-            dataSource={roleList}
-            loading={loading}
-            rowKey="id"
-            rowSelection={{
-              selectedRowKeys,
-              onChange: (selectedRowKeys, selectedRow) => {
-                this.setState({ selectedRowKeys, selectedRow });
-              },
-            }}
-          />
-        </div>
+        <TableWidthPages
+          bordered
+          columns={this.columns}
+          dataSource={roleList}
+          loading={loading}
+          rowKey="id"
+          rowSelection={{
+            selectedRowKeys,
+            onChange: (selectedRowKeys, selectedRow) => {
+              this.setState({ selectedRowKeys, selectedRow });
+            },
+          }}
+        />
 
         {/* 新增修改 */}
         <Modal
@@ -266,7 +264,7 @@ export default class index extends Component {
 
         {/* 权限分配 */}
         <Drawer
-          title={formatMessage({id:'rolemanager.authAssign'})}
+          title={formatMessage({ id: 'rolemanager.authAssign' })}
           destroyOnClose
           onClose={() => {
             this.setState({ authAssignVisible: false });

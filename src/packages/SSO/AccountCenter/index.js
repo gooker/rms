@@ -51,12 +51,12 @@ class AccountCenter extends Component {
     return (
       <div className={commonStyles.commonPageStyle}>
         <Card title={<FormattedMessage id="accountCenter.userInfo" />} bordered={false}>
-          <Row>
+          <Row gutter={[16, 24]}>
             <Col span={12}>
               <FormattedMessage id="sso.user.type.username" /> :
               <span className={styles.font20}>{currentUser.username}</span>
             </Col>
-            <Col span={12} className={commonStyles.textRight}>
+            <Col span={12}>
               <Button
                 onClick={() => {
                   this.setState({ updatePwdVisible: true });
@@ -65,13 +65,11 @@ class AccountCenter extends Component {
                 <FormattedMessage id="accountCenter.modifyPassword" />
               </Button>
             </Col>
-          </Row>
-          <Row className={commonStyles.mt20}>
             <Col span={12}>
               <FormattedMessage id="sso.user.account.userTimeZone" /> :
               <span className={styles.font20}>{currentUser.userTimeZone}</span>
             </Col>
-            <Col span={12} className={commonStyles.textRight}>
+            <Col span={12}>
               <Button
                 onClick={() => {
                   this.setState({ updateTimeZoneVisible: true });

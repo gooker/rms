@@ -64,7 +64,8 @@ export default class AddSysLangModal extends Component {
     const { onAddLang } = this.props;
     validateFields().then((allValues) => {
       onAddLang(allValues);
-    });
+    })
+    .catch(()=>{});
   };
 
   render() {
@@ -84,7 +85,7 @@ export default class AddSysLangModal extends Component {
         >
           <Form {...formItemLayout} ref={this.formRef}>
             <Row>
-              <Col flex="auto" className={commonStyles.textRight}>
+              <Col flex="auto" style={{textAlign:'end'}}>
                 <Dropdown overlay={this.renderMenu} trigger={['click']} placement="bottomCenter">
                   <Button type="link">
                     <FormattedMessage id="translator.languageManage.shortcut" />
