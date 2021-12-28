@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Button, Modal, message } from 'antd';
+import { Row, Button, Modal, message, Col } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import {
   fetchSelectSectionList,
@@ -110,38 +110,33 @@ export default class SectionManager extends Component {
     return (
       <div className={commonStyles.commonPageStyle}>
         <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
-          <Button
-            className={commonStyles.mr10}
-            type="primary"
-            onClick={() => {
-              this.setState({
-                sectionModalVisible: true,
-              });
-            }}
-          >
-            <PlusOutlined /> <FormattedMessage id="app.button.add" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              this.setState({
-                sectionModalVisible: true,
-                updateFlag: true,
-              });
-            }}
-          >
-            <EditOutlined /> <FormattedMessage id="app.button.edit" />
-          </Button>
+          <Col flex="auto" className={commonStyles.tableToolLeft}>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.setState({
+                  sectionModalVisible: true,
+                });
+              }}
+            >
+              <PlusOutlined /> <FormattedMessage id="app.button.add" />
+            </Button>
+            <Button
+              disabled={selectRowKey.length !== 1}
+              onClick={() => {
+                this.setState({
+                  sectionModalVisible: true,
+                  updateFlag: true,
+                });
+              }}
+            >
+              <EditOutlined /> <FormattedMessage id="app.button.edit" />
+            </Button>
 
-          <Button
-            danger
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            onClick={this.deleteUser}
-          >
-            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-          </Button>
+            <Button danger disabled={selectRowKey.length !== 1} onClick={this.deleteUser}>
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+            </Button>
+          </Col>
         </Row>
         <div className={styles.sectionManagerTable}>
           <TablewidthPages

@@ -171,17 +171,15 @@ const OperationLogComponent = (props) => {
   return (
     <TablePageWrapper>
       <OperateSearchForm search={fetchLogsList} data={operateList} />
-      <div className={commonStyles.divContent}>
-        <Table
-          bordered
-          loading={loading}
-          columns={columns}
-          dataSource={operateList}
-          onChange={handleTableChange}
-          pagination={{ ...pagination, showSizeChanger: true }}
-          rowKey={'id'}
-        />
-      </div>
+      <Table
+        bordered
+        loading={loading}
+        columns={columns}
+        dataSource={operateList}
+        onChange={handleTableChange}
+        pagination={{ ...pagination, showSizeChanger: true }}
+        rowKey={'id'}
+      />
 
       {/* 请求参数结构预览 */}
       <RequestPayloadModal

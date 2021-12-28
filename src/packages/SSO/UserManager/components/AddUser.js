@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Select, Input, Button, Modal } from 'antd';
+import { Form, Select, Input, Button, Modal, message } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/utils';
 import LocalsKeys from '@/locales/LocaleKeys';
@@ -68,7 +68,8 @@ export default class AddUser extends Component {
     const { onAddUser } = this.props;
     validateFields().then((allValues) => {
       onAddUser(allValues);
-    });
+    })
+    .catch(()=>{});
   };
 
   render() {

@@ -28,12 +28,12 @@ const SystemParamsTimeZone = () => {
       client_timezone_id: timeZone,
     });
     if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.message.operateSucces' }));
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       fetchData();
     }
   }
   return (
-    <div className={commonStyles.globalPageStyle}>
+    <div className={commonStyles.commonPageStyle}>
       <div style={{ textAlign: 'end', marginBottom: '10px' }}>
         <Button onClick={fetchData}>
           <FormattedMessage id="app.button.refresh" />

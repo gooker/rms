@@ -10,6 +10,7 @@ import TaskSearch from './TaskSearch';
 import commonStyles from '@/common.module.less';
 import { AGVType } from '@/config/config';
 import { TaskStateBageType } from '@/config/consts';
+import styles from '../TaskQueue/taskQueue.module.less';
 
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
@@ -220,8 +221,8 @@ class TaskLibraryComponent extends Component {
           agvList={agvList.map(({ robotId }) => robotId)}
           allTaskTypes={allTaskTypes?.[agvType] || {}}
         />
-        <div>
-          <Divider className={commonStyles.divider} />
+        <div className={styles.taskSearchDivider} >
+          <Divider/>
           {cancel && (
             <Button
               disabled={selectedRowKeys.length === 0}

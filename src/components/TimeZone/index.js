@@ -84,12 +84,15 @@ export default class TimeZone extends Component {
             </Select>
           </Col>
           <Col style={{ textAlign: 'right', fontSize: 18 }} span={12}>
-            {onMouseOverValue.timezone}
+            {onMouseOverValue}
           </Col>
         </Row>
         <Row>
           <WorldTimeMap
             onMouseOver={value => {
+              this.setState({ onMouseOverValue: value?.timezone });
+            }}
+            onMouseOut={() => {
               this.setState({ onMouseOverValue: value });
             }}
             value={value}

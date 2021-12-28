@@ -285,20 +285,18 @@ const LogDownLoadComponent = (props) => {
           </Col>
         </Row>
       </div>
-      <div className={commonStyles.divContent}>
-        <Table
-          loading={loading}
-          columns={columns}
-          dataSource={fileList}
-          onChange={handleTableChange}
-          pagination={{ pagination, showSizeChanger: true, showTotal: renderTotalTip }}
-          rowKey={({ fileTaskId }) => fileTaskId}
-          rowSelection={{
-            selectedRowKeys,
-            onChange: onRowSelectionChange,
-          }}
-        />
-      </div>
+      <Table
+        loading={loading}
+        columns={columns}
+        dataSource={fileList}
+        onChange={handleTableChange}
+        pagination={{ pagination, showSizeChanger: true, showTotal: renderTotalTip }}
+        rowKey={({ fileTaskId }) => fileTaskId}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: onRowSelectionChange,
+        }}
+      />
     </TablePageWrapper>
   );
 };

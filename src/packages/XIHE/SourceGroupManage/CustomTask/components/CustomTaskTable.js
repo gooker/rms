@@ -197,7 +197,7 @@ const CustomTaskTable = (props) => {
 
   return (
     <div>
-      <Row className={commonStyles.mb20}>
+      <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
         <Col flex="auto" className={commonStyles.tableToolLeft}>
           <Button type="primary" onClick={gotoFormPage}>
             <FileTextOutlined /> <FormattedMessage id="app.task.state.New" />

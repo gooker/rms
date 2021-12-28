@@ -139,9 +139,8 @@ export default class UserLoginHistory extends Component {
             <Select.Option value="logout">Logout</Select.Option>
           </Select>
           <Input
-            className={commonStyles.m20}
             allowClear
-            style={{ width: 150 }}
+            style={{ width: 150, margin: '0 15px' }}
             placeholder={formatMessage({ id: 'sso.user.type.username', format: false })}
             onChange={(e) => {
               this.setState({ username: e.target.value });
@@ -162,29 +161,27 @@ export default class UserLoginHistory extends Component {
             }}
           />
 
-          <Button type="primary" className={commonStyles.m20} onClick={this.getHistory}>
+          <Button type="primary" style={{ margin: '0 20px' }} onClick={this.getHistory}>
             <FormattedMessage id="app.button.search" />
           </Button>
           <Button onClick={this.exportHistory}>
             <FormattedMessage id="app.button.export" />
           </Button>
         </Row>
-        <div className={commonStyles.divContent}>
-          <Table
-            bordered
-            columns={this.getColumn}
-            rowKey="id"
-            dataSource={historySource}
-            scroll={{ x: 'max-content' }}
-            loading={loading}
-            pagination={{
-              current: pagination.current,
-              pageSize: pagination.size,
-              total: pagination.total || 0,
-            }}
-            onChange={this.handleTableChange}
-          />
-        </div>
+        <Table
+          bordered
+          columns={this.getColumn}
+          rowKey="id"
+          dataSource={historySource}
+          scroll={{ x: 'max-content' }}
+          loading={loading}
+          pagination={{
+            current: pagination.current,
+            pageSize: pagination.size,
+            total: pagination.total || 0,
+          }}
+          onChange={this.handleTableChange}
+        />
       </div>
     );
   }

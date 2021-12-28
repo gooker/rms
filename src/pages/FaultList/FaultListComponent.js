@@ -141,17 +141,15 @@ const FaultListComponent = (props) => {
       <div>
         <FaultListSearchForm agvType={agvType} search={fetchFaultList} faults={definedFaults} />
       </div>
-      <div className={commonStyles.divContent}>
-        <Table
-          bordered
-          loading={loading}
-          columns={columns}
-          dataSource={faultList}
-          onChange={handleTableChange}
-          pagination={{ pagination, showSizeChanger: true, showTotal: renderTotalTip }}
-          rowKey={({ fileTaskId }) => fileTaskId}
-        />
-      </div>
+      <Table
+        bordered
+        loading={loading}
+        columns={columns}
+        dataSource={faultList}
+        onChange={handleTableChange}
+        pagination={{ pagination, showSizeChanger: true, showTotal: renderTotalTip }}
+        rowKey={({ fileTaskId }) => fileTaskId}
+      />
     </TablePageWrapper>
   );
 };

@@ -373,69 +373,65 @@ class UserManager extends Component {
           </Select>
         </Form.Item>
         <Row style={{ display: 'flex', marginBottom: '20px' }}>
-          <Button
-            type="primary"
-            className={commonStyles.mr10}
-            onClick={() => {
-              this.setState({
-                addUserVisible: true,
-              });
-            }}
-          >
-            <PlusOutlined /> <FormattedMessage id="app.button.add" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              this.setState({
-                addUserVisible: true,
-                updateUserFlag: true,
-              });
-            }}
-          >
-            <EditOutlined /> <FormattedMessage id="sso.user.edit" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              this.setState({ updatePwdVisible: true });
-            }}
-          >
-            <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
-          </Button>
-          <Button
-            danger
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            onClick={this.deleteUser}
-          >
-            <DeleteOutlined /> <FormattedMessage id="sso.user.action.delete" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              this.setState({ sectionDistriVisble: true });
-            }}
-          >
-            <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
-          </Button>
-          <Button
-            className={commonStyles.mr10}
-            onClick={() => {
-              this.setState({ rolesDistriVisible: true });
-            }}
-            disabled={selectRowKey.length !== 1}
-          >
-            <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
-          </Button>
-          <div style={{ display: 'flex', flex: 1, justifyContent: 'flex-end' }}>
+          <Col flex="auto" className={commonStyles.tableToolLeft}>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.setState({
+                  addUserVisible: true,
+                });
+              }}
+            >
+              <PlusOutlined /> <FormattedMessage id="app.button.add" />
+            </Button>
+            <Button
+              disabled={selectRowKey.length !== 1}
+              onClick={() => {
+                this.setState({
+                  addUserVisible: true,
+                  updateUserFlag: true,
+                });
+              }}
+            >
+              <EditOutlined /> <FormattedMessage id="sso.user.edit" />
+            </Button>
+            <Button
+              disabled={selectRowKey.length !== 1}
+              onClick={() => {
+                this.setState({ updatePwdVisible: true });
+              }}
+            >
+              <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
+            </Button>
+            <Button
+              danger
+              disabled={selectRowKey.length !== 1}
+              onClick={this.deleteUser}
+            >
+              <DeleteOutlined /> <FormattedMessage id="sso.user.action.delete" />
+            </Button>
+            <Button
+              disabled={selectRowKey.length !== 1}
+              onClick={() => {
+                this.setState({ sectionDistriVisble: true });
+              }}
+            >
+              <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
+            </Button>
+            <Button
+              onClick={() => {
+                this.setState({ rolesDistriVisible: true });
+              }}
+              disabled={selectRowKey.length !== 1}
+            >
+              <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
+            </Button>
+          </Col>
+          <Col>
             <Button onClick={this.getUserDataList}>
               <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
-          </div>
+          </Col>
         </Row>
         <div className={styles.userManagerTable}>
           <TableWidthPages
