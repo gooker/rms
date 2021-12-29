@@ -202,7 +202,7 @@ const HardwareTab = (props) => {
         <LabelComponent label={formatMessage({ id: 'app.taskDetail.createTime' })}>
           {data && data.createTime ? renderCreateTime(data.createTime) : null}
         </LabelComponent>
-        <LabelComponent label={formatMessage({ id: 'app.taskDetail.createdByUser' })}>
+        <LabelComponent label={formatMessage({ id: 'app.taskDetail.createUser' })}>
           {data?.createdByUser}
         </LabelComponent>
       </Col>

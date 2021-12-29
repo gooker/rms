@@ -265,5 +265,4 @@ export default {
   'app.common.batchOperate': '批量操作',
   'app.common.timeInterval': '时间间隔',
   'app.form.target': '目标',
-  'app.form.placeholder.pleaseSelect': '请选择',
 };

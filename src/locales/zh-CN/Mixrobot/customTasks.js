@@ -127,7 +127,7 @@ export default {
   // 表单
   'customTasks.form.baseInfo': '基础信息',
   'customTasks.form.delete.confirm': '即将删除该节点并清空表单数据, 是否确定?',
-  'app.customTask.form.code': '编码',
+  'app.customTask.form.code': '编码',//这些 app.customTask.form 都是固定的
   'app.customTask.form.skip': '跳过',
   'app.customTask.form.specify': '指定',
   'customTasks.form.clear.warn': '该操作会清空当前所有的输入数据, 确定执行吗?',

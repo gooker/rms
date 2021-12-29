@@ -353,7 +353,6 @@ getGroupType=(data)=>{
                   treeCheckable={true}
                   dropdownStyle={{ maxHeight: 500, overflowY: 'auto' }}
                   treeData={this.state.treeData}
-                  placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
                   treeDefaultExpandAll
                   onChange={this.onTreeChange}
                 />

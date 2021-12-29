@@ -278,7 +278,7 @@ export default [
     path: '/mixrobot/richEditor',
     name: 'richEditor',
     icon: 'richEditor',
-    component: '/Mixrobot/RichEditor/RichEditor',
+    component: '/Mixrobot/RichEditor',
     hooks: ['dev'],
   },
   {

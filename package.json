@@ -89,6 +89,7 @@
     "stylelint": "^13.12.0",
     "terser-webpack-plugin": "^5.3.0",
     "url-loader": "^4.1.1",
+    "wangeditor": "^4.7.11",
     "webpack": "^5.65.0",
     "webpack-bundle-analyzer": "^4.5.0",
     "webpack-cli": "^4.9.0",

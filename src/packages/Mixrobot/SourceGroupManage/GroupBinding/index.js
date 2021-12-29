@@ -310,7 +310,6 @@ class GroupBinding extends Component {
                   name="xType"
                 >
                   <Select
-                    placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
                     style={{ width: '100%' }}
                     // showSearch
                     onChange={this.groupXTypeChange}
@@ -325,7 +324,6 @@ class GroupBinding extends Component {
                 >
                   <Select
                     allowClear
-                    placeholder={formatMessage({ id: 'app.form.placeholder.pleaseSelect' })}
                     style={{ width: '100%' }}
                     // showSearch
                     filterOption={false}

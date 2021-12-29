@@ -295,22 +295,19 @@ const ChargeManagerment = () => {
           </Button>
         </Col>
       </Row>
-      <div>
-        <TableWidthPages
-          bordered
-          scroll={{ x: 'max-content' }}
-          loading={loading}
-          columns={columns}
-          dataSource={chargeList}
-          rowKey={({ id }) => id}
-          rowSelection={{
-            selectedRowKeys,
-            selectedRows,
-            onChange: onSelectChange,
-          }}
-        />
-      </div>
-
+      <TableWidthPages
+        bordered
+        scroll={{ x: 'max-content' }}
+        loading={loading}
+        columns={columns}
+        dataSource={chargeList}
+        rowKey={({ id }) => id}
+        rowSelection={{
+          selectedRowKeys,
+          selectedRows,
+          onChange: onSelectChange,
+        }}
+      />
       {/* 绑定 & 编辑 */}
       <Modal
         destroyOnClose

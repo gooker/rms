@@ -20,7 +20,7 @@ import environmentManager from './zh-CN/SSO/environmentManager';
 import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
 import latentLiftingReport from './zh-CN/LatentLifting/report';
-import taskTrigger from './zh-CN/Mixrobot/taskTrigger';
+import customTasks from './zh-CN/Mixrobot/customTasks';
 import operationlog from './zh-CN/Mixrobot/operationlog';
 import charging from './zh-CN/Mixrobot/charging';
 import webHook from './zh-CN/Mixrobot/webHook';
@@ -48,7 +48,7 @@ export default {
   ...authorizationCenter,
   ...customConfiguration,
   ...latentLiftingReport,
-  ...taskTrigger,
+  ...customTasks,
   ...operationlog,
   ...charging,
   ...webHook,

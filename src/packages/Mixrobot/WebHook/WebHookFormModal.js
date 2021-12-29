@@ -16,7 +16,7 @@ const WebHookFormModal = (props) => {
     form.validateFields().then((values) => {
       onSubmit(values);
       form.resetFields();
-    });
+    }).catch(()=>{});
   }
 
   function closeModal() {
@@ -33,6 +33,7 @@ const WebHookFormModal = (props) => {
           name="webHookType"
           initialValue={data?.webHookType}
           label={<FormattedMessage id="app.common.type" />}
+          rules={[{required:true}]}
         >
           <Select style={{ width: 200 }}>
             {options.map(({ type, label }) => (
