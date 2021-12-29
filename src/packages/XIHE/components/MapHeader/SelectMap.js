@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { connect } from '@/utils/dva';
 import { Badge, Dropdown, Menu } from 'antd';
 import { DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage, getRandomString } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './index.module.less';
 
@@ -27,7 +27,7 @@ const SelectMap = (props) => {
         );
       });
     }
-    result.push(<Menu.Divider />);
+    result.push(<Menu.Divider key={getRandomString(6)} />);
     result.push(
       <Menu.Item key="add">
         <PlusOutlined /> <FormattedMessage id="mapEditor.addMap" />

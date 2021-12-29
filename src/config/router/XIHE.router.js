@@ -124,7 +124,7 @@ export default [
     path: '/mixrobot/sourceManage',
     name: 'sourceManage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    icon: 'iconziyuan',
+    icon: 'icon-sourceManage',
     routes: [
       {
         path: '/mixrobot/sourceManage/latentPod',
@@ -187,7 +187,7 @@ export default [
   {
     path: '/mixrobot/sourceGroupManage',
     name: 'sourceGroupManage',
-    icon: 'icon-cangkucangchu',
+    icon: 'icon-sourceGroup',
     hooks: ['dev'],
     routes: [
       {
@@ -225,7 +225,7 @@ export default [
   {
     path: '/mixrobot/charge',
     name: 'chargeCenter',
-    icon: 'iconcharger',
+    icon: 'icon-charger',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     hooks: ['dev'],
     routes: [
@@ -248,7 +248,7 @@ export default [
   {
     path: '/mixrobot/report',
     name: 'reportCenter',
-    icon: 'iconreportform',
+    icon: 'icon-reportForm',
     hooks: ['dev'],
     routes: [
       {
@@ -263,7 +263,7 @@ export default [
   {
     path: '/mixrobot/operationLog',
     name: 'operationLog',
-    icon: 'iconLOG',
+    icon: 'icon-log',
     component: '/XIHE/OperationLog',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },

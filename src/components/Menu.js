@@ -5,6 +5,7 @@ import { connect } from '@/utils/dva';
 import { formatMessage, isStrictNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
+import commonStyles from '@/common.module.less';
 
 const baseCode = {
   tote: 'tote-wcs-gui',
@@ -110,13 +111,20 @@ const Slider = (prop) => {
       {currentModuleRouter.map(({ name, icon, path, routes }) => {
         if (Array.isArray(routes)) {
           return (
-            <SubMenu key={path} title={formatMessage({ id: `menu.${name}` })} icon={MenuIcon[icon]}>
+            <SubMenu
+              key={path}
+              title={formatMessage({ id: `menu.${name}` })}
+              icon={<span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span>}
+            >
               {renderMenuItem(name, routes)}
             </SubMenu>
           );
         }
         return (
-          <Menu.Item key={path} icon={MenuIcon[icon]}>
+          <Menu.Item
+            key={path}
+            icon={<span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span>}
+          >
             <Link to={path}>
               <FormattedMessage id={`menu.${name}`} />
             </Link>

@@ -3,7 +3,7 @@ import { RightOutlined } from '@ant-design/icons';
 import SelectMap from '../../components/MapHeader/SelectMap';
 import SelectLogicArea from '../../components/MapHeader/SelectLogicArea';
 import SelectRouteMap from '../../components/MapHeader/SelectRouteMap';
-import EditorHeaderTools from './EditorHeaderTools';
+import EditorHeaderRightTools from './EditorHeaderRightTools';
 import styles from '../../components/MapHeader/index.module.less';
 
 const EditorHeader = () => {
@@ -19,7 +19,7 @@ const EditorHeader = () => {
         <SelectRouteMap />
       </div>
       <div className={styles.mapHeaderTools}>
-        <EditorHeaderTools />
+        <EditorHeaderRightTools />
       </div>
     </>
   );

@@ -64,6 +64,7 @@
     "moment-locales-webpack-plugin": "^1.2.0",
     "moment-timezone": "^0.5.33",
     "optimize-css-assets-webpack-plugin": "5.0.4",
+    "pixi-scrollbox": "^2.3.1",
     "pixi-viewport": "^4.31.0",
     "pixi.js": "6.0.4",
     "postcss-flexbugs-fixes": "4.2.1",
@@ -95,7 +96,8 @@
     "webpack-dev-server": "^4.7.1",
     "webpack-merge": "^5.8.0",
     "webpackbar": "^5.0.2",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.16.9",
+    "yy-random": "^1.10.2"
   },
   "husky": {
     "hooks": {

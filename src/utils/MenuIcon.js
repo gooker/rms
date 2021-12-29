@@ -28,14 +28,14 @@ import { IconFont } from '@/components/IconFont';
 
 export default {
   'icon-task': <IconFont type="icon-renwujincheng" />,
-  'icon-cangkucangchu': <IconFont type="icon-cangkucangchu" />,
+  'icon-sourceGroup': <IconFont type="icon-sourceGroup" />,
   'icon-dispatch': <IconFont type="icon-dispatch" />,
-  authority: <IconFont type="icon-fuwushouquan" />,
-  iconziyuan: <IconFont type="icon-ziyuanguanli" />,
-  iconcharger: <IconFont type="icon-chongdianzhuang" />,
-  iconLOG: <IconFont type="icon-log" />,
-  iconreportform: <IconFont type="icon-report" />,
+  'icon-sourceManage': <IconFont type="icon-sourceManage" />,
+  'icon-charger': <IconFont type="icon-charger2" />,
+  'icon-reportForm': <IconFont type="icon-report" />,
+  'icon-log': <IconFont type="icon-log" />,
   configuration: <IconFont type="icon-gexingdingzhi" />,
+  authority: <IconFont type="icon-fuwushouquan" />,
 
   'line-chart': <LineChartOutlined />,
   'clock-circle': <ClockCircleOutlined />,

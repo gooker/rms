@@ -5,6 +5,7 @@ import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
 import commonStyles from '@/common.module.less';
+import EditorMapView from '@/packages/XIHE/MapEditor/components/EditorMapView';
 
 const MapEditor = (props) => {
   const { dispatch, mapList } = props;
@@ -26,7 +27,7 @@ const MapEditor = (props) => {
         <div className={commonStyles.mapBodyLeft}>
           <EditorBodyLeft />
         </div>
-        <div className={commonStyles.mapBodyMiddle}>3</div>
+        <EditorMapView />
         <div className={commonStyles.mapBodyRight}>
           <EditorBodyRight />
         </div>
