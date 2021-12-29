@@ -20,7 +20,7 @@ import environmentManager from './zh-CN/SSO/environmentManager';
 import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
 import latentLiftingReport from './zh-CN/LatentLifting/report';
-import taskTrigger from './zh-CN/XIHE/taskTrigger';
+import customTasks from './zh-CN/XIHE/customTasks';
 import operationLog from './zh-CN/XIHE/operationlog';
 import charging from './zh-CN/XIHE/charging';
 import webHook from './zh-CN/XIHE/webHook';
@@ -49,7 +49,7 @@ export default {
   ...authorizationCenter,
   ...customConfiguration,
   ...latentLiftingReport,
-  ...taskTrigger,
+  ...customTasks,
   ...operationLog,
   ...charging,
   ...webHook,

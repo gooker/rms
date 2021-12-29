@@ -3,11 +3,10 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { Table, Tag, Button } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { fetchUserActionLogs } from '@/services/api';
-import { dateFormat, dealResponse, formatMessage, isStrictNull } from '@/utils/utils';
+import { dateFormat, dealResponse,isStrictNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import RequestPayloadModal from './components/RequestPayloadModal';
 import OperateSearchForm from '@/pages/FaultList/OperateSearchForm';
-import commonStyles from '@/common.module.less';
 
 const OperationLogComponent = (props) => {
   const [loading, setLoading] = useState(false);

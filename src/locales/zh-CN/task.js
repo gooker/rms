@@ -53,7 +53,6 @@ export default {
   'app.taskDetail.common': '共',
   'app.taskDetail.createTime': '创建时间',
   'app.taskDetail.createUser': '创建人',
-  'app.taskDetail.createdByUser': '创建人',
   'app.taskDetail.endCondition': '结束条件',
   'app.taskDetail.endPower': '结束电量',
   'app.taskDetail.endTime': '结束时间',

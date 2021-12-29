@@ -887,4 +887,20 @@ export async function deleteWebHooks(param) {
   });
 }
 
+
+// 获取目标点锁
+export async function fetchTargetCellLockList() {
+  return request(`/${Coordinator}/lock/getTargetCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 批量删除目标点锁
+export async function fetchBatchDeleteTargetCellLock(params) {
+  return request(`/${Coordinator}/lock/batchDeleteTargetCellLock`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
  
