@@ -4,7 +4,6 @@
   flex-flow: column nowrap;
   height: 100%;
   background: #fff;
-  border: 1px solid #f0f0f0;
 }
 
 .commonPageStyle {
@@ -88,7 +87,12 @@
 
 // 地图页面布局通用样式
 .mapLayoutHeader {
-  height: 50px;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  height: 35px;
+  padding: 0 15px;
 }
 
 .mapLayoutBody {
@@ -96,16 +100,20 @@
   flex: 1;
 }
 
+@mapSideColor: #334f69;
 .mapBodyLeft {
-  width: 100px;
+  width: 65px;
+  background: @mapSideColor;
+}
+
+.mapBodyRight {
+  width: 50px;
+  background: @mapSideColor;
 }
 
 .mapBodyMiddle {
   flex: 1;
-}
-
-.mapBodyRight {
-  width: 100px;
+  background: radial-gradient(circle, rgb(88, 88, 88) 0%, rgb(46, 46, 46) 100%);
 }
 
 // 运维弹窗样式

@@ -9,7 +9,6 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
-import IconFont from '@/utils/ExtraIcon';
 import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/utils';
 import {
   fetchAllRoleList,
@@ -26,6 +25,7 @@ import RoleAssignModal from './components/RoleAssignModal';
 import ImportModal from '@/packages/Translator/LanguageManage/component/ImportI18nLanguage';
 import commonStyles from '@/common.module.less';
 import RmsConfirm from '@/components/RmsConfirm';
+import { IconFont } from '@/components/IconFont';
 
 export default class index extends Component {
   state = {

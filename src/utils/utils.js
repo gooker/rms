@@ -9,7 +9,7 @@ import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
-import requestorStyles from '@/packages/Mixrobot/Requestor/requestor.less';
+import requestorStyles from '@/packages/XIHE/Requestor/requestor.less';
 import find from 'lodash/find';
 import { ModelTypeFieldMap } from '@/config/consts';
 

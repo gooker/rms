@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import { Menu, Dropdown } from 'antd';
-import IconDir from '@/utils/ExtraIcon';
-
 import { connect } from '@/utils/dva';
-import styles from '../Head.module.less';
+import styles from '../Header.module.less';
+import { IconFont } from '@/components/IconFont';
 
 @connect(({ global, user }) => ({
   currentUser: user.currentUser,
@@ -35,7 +34,7 @@ class SelectSection extends PureComponent {
       <Dropdown overlay={this.renderMenu}>
         <span className={`${styles.action} ${styles.account}`}>
           <span style={{ marginRight: 3 }}>
-            <IconDir type="icon-tuanduicankaoxian-1" />{' '}
+            <IconFont type="icon-tuanduicankaoxian-1" />{' '}
           </span>
           {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
         </span>

@@ -12,7 +12,7 @@ import {
   fetchChargerList,
   fetchToteSizeList,
   fetchMapAGVLocks,
-} from '@/services/mixrobot';
+} from '@/services/XIHE';
 import {
   updateTemporaryBlockCell,
   deleteTemporaryBlockCell,

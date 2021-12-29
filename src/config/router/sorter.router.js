@@ -87,7 +87,7 @@ export default [
   //     {
   //       path: '/sorter/formManger/waitingKpi',
   //       name: 'waitingKpi',
-  //       component: /Sorter/index.js,
+  //       component: /Sorter/EditorHeader.js,
   //     },
   //     {
   //       path: '/sorter/formManger/metadata',

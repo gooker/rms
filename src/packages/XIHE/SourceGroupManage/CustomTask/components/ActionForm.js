@@ -9,7 +9,7 @@ import ActionDefiner from '../FormComponent/ActionDefiner';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import TrayActionProtocol from '../FormComponent/TrayActionProtocol';
 import CodeEditor from '@/components/CodeEditor';
-import AngleSelector from '@/packages/Mixrobot/components/AngleSelector';
+import AngleSelector from '@/packages/XIHE/components/AngleSelector';
 import styles from '../customTask.module.less';
 
 const { Option, OptGroup } = Select;

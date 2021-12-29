@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import * as XLSX from 'xlsx';
-import { find, sortBy, groupBy } from 'lodash';
-import LogicArea from '@/packages/Mixrobot/entities/LogicArea';
+import { find, groupBy, sortBy } from 'lodash';
+import LogicArea from '@/packages/XIHE/entities/LogicArea';
 import { isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
 import { AGVState } from '@/config/consts';
 import json from '../../package.json';
@@ -610,12 +610,10 @@ export function calculateCellDistance(cell1, cell2) {
 }
 
 export function getCurrentLogicAreaData(namespace = 'editor') {
-  // monitor
   const dvaStore = window.g_app._store.getState();
   const namespaceState = dvaStore[namespace];
   const { currentMap, currentLogicArea } = namespaceState;
-  const currentLogicAreaData = find(currentMap?.logicAreaList || [], { id: currentLogicArea });
-  return currentLogicAreaData;
+  return find(currentMap?.logicAreaList || [], { id: currentLogicArea });
 }
 
 export function getCurrentRouteMapData(namespace = 'editor') {

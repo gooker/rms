@@ -9,8 +9,8 @@ import userModel from '@/models/user';
 import editorModel from '@/models/editor';
 import monitorModel from '@/models/monitor';
 import simulatorModel from '@/models/simulator';
-import taskTriger from '@/packages/Mixrobot/SourceGroupManage/TaskTrigger/models/taskTriger';
-import customTask from '@/packages/Mixrobot/SourceGroupManage/CustomTask/models/CustomTaskModel';
+import taskTriger from '@/packages/XIHE/SourceGroupManage/TaskTrigger/models/taskTriger';
+import customTask from '@/packages/XIHE/SourceGroupManage/CustomTask/models/CustomTaskModel';
 import history from '@/history';
 import './global.less';
 

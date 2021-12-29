@@ -13,7 +13,6 @@ import {
   saveUserSections,
   saveUsersAssignedRole,
 } from '@/services/user';
-import IconFont from '@/utils/ExtraIcon';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWidthPages from '@/components/TableWidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
@@ -24,6 +23,7 @@ import SectionAssignModal from './components/SectionAssign';
 import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
 import styles from './userManager.module.less';
+import { IconFont } from '@/components/IconFont';
 
 const UserTypeColor = UserTColor();
 const AdminTypeColor = AdminTColor();

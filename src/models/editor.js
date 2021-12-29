@@ -4,7 +4,7 @@ import { sortBy, groupBy, findIndex, find } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import { addTemporaryId, getCurveMapKey } from '@/utils/mapUtils';
-import { LogicArea } from '@/packages/Mixrobot/entities';
+import { LogicArea } from '@/packages/XIHE/entities';
 import packageJSON from '@/../package.json';
 import {
   moveCell,
@@ -32,7 +32,7 @@ import {
   getAllWebHookTypes,
   fetchAllStationTypes,
   fetchMapHistoryDetail,
-} from '@/services/mixrobot';
+} from '@/services/XIHE';
 import { fetchActiveMap } from '@/services/api';
 
 const FieldTextureKeyMap = {
@@ -195,9 +195,8 @@ export default {
   effects: {
     *editorInitial(_, { put, call }) {
       const mapList = yield call(fetchSectionMaps);
-      if (dealResponse(mapList)) {
-        message.error(formatMessage({ id: 'app.editor.fetchMapList.fail' }));
-      } else {
+      const failMessage = formatMessage({ id: 'app.editor.fetchMapList.fail' });
+      if (!dealResponse(mapList, false, null, failMessage)) {
         // 检查是否有地图数据
         if (mapList.length === 0) {
           message.info(formatMessage({ id: 'app.editor.fetchMapList.zero' }));
