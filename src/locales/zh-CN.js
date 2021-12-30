@@ -24,6 +24,7 @@ import customTasks from './zh-CN/XIHE/customTasks';
 import operationLog from './zh-CN/XIHE/operationlog';
 import charging from './zh-CN/XIHE/charging';
 import webHook from './zh-CN/XIHE/webHook';
+import lockManage from './zh-CN/XIHE/lockManage';
 import mapEditor from './zh-CN/XIHE/mapEditor';
 
 export default {
@@ -53,5 +54,6 @@ export default {
   ...operationLog,
   ...charging,
   ...webHook,
+  ...lockManage,
   ...mapEditor,
 };

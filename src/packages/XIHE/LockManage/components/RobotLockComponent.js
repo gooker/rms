@@ -1,59 +1,24 @@
 import React, { useState, memo, useEffect } from 'react';
 import { connect } from '@/utils/dva';
-import { Tooltip, Button, Row, Col, message } from 'antd';
+import { Button, Row, Col, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
-import TargetLockSearch from './components/TargetLockSearch';
+import RobotLockSearch from './RobotlockSearch';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, formatMessage } from '@/utils/utils';
 import RmsConfirm from '@/components/RmsConfirm';
 
 const TargetLock = (props) => {
+  const { getColumn, dispatch } = props;
+
   const [loading, setLoading] = useState(false);
   const [targetLockList, setTargetLockList] = useState([]);
   const [currentTargetLockList, setCurrentTargetLockList] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
-
-  const columns = [
-    {
-      title: <FormattedMessage id="app.map.point" />,
-      dataIndex: 'cellId',
-      align: 'center',
-      sorter: (a, b) => a.cellId - b.cellId,
-    },
-    {
-      title: <FormattedMessage id="app.agv" />,
-      dataIndex: 'robotId',
-      align: 'center',
-      sorter: (a, b) => a.robotId - b.robotId,
-    },
-
-    {
-      title: <FormattedMessage id="app.task.id" />,
-      dataIndex: 'taskId',
-      align: 'center',
-      render: (text, record) => {
-        if (!isNull(text)) {
-          return (
-            <Tooltip title={text}>
-              <span
-                className={commonStyles.textLinks}
-                onClick={() => {
-                  checkTaskDetail(text, record.robotType);
-                }}
-              >
-                {text ? '*' + text.substr(text.length - 6, 6) : null}
-              </span>
-            </Tooltip>
-          );
-        }
-      },
-    },
-  ];
 
   useEffect(() => {
     async function init() {
@@ -62,36 +27,11 @@ const TargetLock = (props) => {
     init();
   }, []);
 
-  function checkTaskDetail(taskId, agvType) {
-    const { dispatch } = props;
-    dispatch({
-      type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType: agvType },
-    });
-  }
-
   function onSelectChange(selectedKeys, selectedRow) {
     setSelectedRowKeys(selectedKeys);
     setSelectedRow(selectedRow);
   }
 
-  async function deleteTargetLock() {
-    RmsConfirm({
-      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
-      onOk: async () => {
-        const response = await fetchBatchDeleteTargetCellLock({
-          sectionId: window.localStorage.getItem('sectionId'),
-          lockTargetCellValueList: selectedRow,
-        });
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
-          freshData();
-        } else {
-          message.success(formatMessage({ id: 'app.tip.operateFailed' }));
-        }
-      },
-    });
-  }
   async function freshData() {
     setLoading(true);
     const response = await fetchTargetCellLockList();
@@ -121,10 +61,35 @@ const TargetLock = (props) => {
     return;
   }
 
+  function checkTaskDetail(taskId, agvType) {
+    dispatch({
+      type: 'task/fetchTaskDetailByTaskId',
+      payload: { taskId, taskAgvType: agvType },
+    });
+  }
+
+  async function deleteTargetLock() {
+    RmsConfirm({
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
+      onOk: async () => {
+        const response = await fetchBatchDeleteTargetCellLock({
+          sectionId: window.localStorage.getItem('sectionId'),
+          lockTargetCellValueList: selectedRow,
+        });
+        if (!dealResponse(response)) {
+          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          freshData();
+        } else {
+          message.success(formatMessage({ id: 'app.tip.operateFailed' }));
+        }
+      },
+    });
+  }
+
   return (
     <TablePageWrapper>
       <div>
-        <TargetLockSearch search={filterData} data={targetLockList} />
+        <RobotLockSearch search={filterData} data={targetLockList} />
         <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
@@ -140,7 +105,7 @@ const TargetLock = (props) => {
         bordered
         scroll={{ x: 'max-content' }}
         loading={loading}
-        columns={columns}
+        columns={getColumn(checkTaskDetail)}
         dataSource={currentTargetLockList}
         rowKey={(record, index) => index}
         rowSelection={{
