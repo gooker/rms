@@ -47,7 +47,7 @@ export default [
           {
             path: '/mixrobot/lockManager/latent-lifting/RobotLock',
             name: 'robotLock',
-            component: '/XIHE/LockManage/LatentLifting/RobotLock',
+            component: '/XIHE/LockManage/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {

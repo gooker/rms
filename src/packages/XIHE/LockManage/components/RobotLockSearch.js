@@ -4,11 +4,10 @@ import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 
-const TargetLockSearch = (props) => {
-  const { search, data } = props;
-
+const RobotlockSearch = (props) => {
   const [form] = Form.useForm();
 
+  const { search, data } = props;
   function onFinish() {
     form
       .validateFields()
@@ -27,9 +26,9 @@ const TargetLockSearch = (props) => {
             <Input allowClear />
           </Form.Item>
         </Col>
-        {/* 点位 */}
+        {/* 任务id*/}
         <Col md={6} sm={24}>
-          <Form.Item name="cellId" label={formatMessage({ id: 'app.map.cell' })}>
+          <Form.Item name="taskId" label={formatMessage({ id: 'app.task.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
@@ -53,4 +52,4 @@ const TargetLockSearch = (props) => {
     </Form>
   );
 };
-export default React.memo(TargetLockSearch);
+export default React.memo(RobotlockSearch);
