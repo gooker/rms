@@ -27,13 +27,15 @@ import {
 import { IconFont } from '@/components/IconFont';
 
 export default {
-  'icon-task': <IconFont type="icon-renwujincheng" />,
+  'icon-task': <IconFont type="icon-taskManage" />,
   'icon-sourceGroup': <IconFont type="icon-sourceGroup" />,
+  'icon-warehouse': <IconFont type="icon-warehouse" />,
   'icon-dispatch': <IconFont type="icon-dispatch" />,
   'icon-sourceManage': <IconFont type="icon-sourceManage" />,
   'icon-charger': <IconFont type="icon-charger2" />,
   'icon-reportForm': <IconFont type="icon-report" />,
   'icon-log': <IconFont type="icon-log" />,
+  'icon-shelf': <IconFont type="icon-shelf" />,
   configuration: <IconFont type="icon-gexingdingzhi" />,
   authority: <IconFont type="icon-fuwushouquan" />,
 

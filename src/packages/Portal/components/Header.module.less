@@ -1,10 +1,9 @@
-@import '~antd/es/style/themes/default.less';
-
-@pro-header-hover-bg: rgba(0, 0, 0, 0.025);
-
 .headerContent {
   display: flex;
   flex-flow: row nowrap;
+  padding: 0;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
 }
 
 .leftContent {
@@ -17,16 +16,7 @@
   justify-content: flex-end;
 }
 
-.icon {
-  display: inline-block;
-  height: 100%;
-  padding: 0 10px;
-  cursor: pointer;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.025);
-  }
-}
+@pro-header-hover-bg: rgba(0, 0, 0, 0.025);
 
 .action {
   display: flex;
@@ -46,15 +36,5 @@
 
   &:global(.opened) {
     background: @pro-header-hover-bg;
-  }
-}
-
-.account {
-  .avatar {
-    margin: ~'calc((@{layout-header-height} - 24px) / 2)' 0;
-    margin-right: 8px;
-    color: @primary-color;
-    vertical-align: top;
-    background: rgba(255, 255, 255, 0.85);
   }
 }

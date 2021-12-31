@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
-import { Row, Select, Dropdown, Table, Button, Menu, Modal, message } from 'antd';
+import { Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
+import { withRouter } from 'react-router-dom';
+import { connect } from '@/utils/dva';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
@@ -12,7 +13,6 @@ import {
 } from '@/services/api';
 import TableWidthPages from '@/components/TableWidthPages';
 import { dealResponse, isNull } from '@/utils/utils';
-import history from '@/history';
 import { AGVType, NameSpace } from '@/config/config';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtil';
 import LabelComponent from '@/components/LabelComponent';
@@ -21,6 +21,8 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
 
 const { confirm } = Modal;
+
+@withRouter
 @connect()
 class AgvListComponent extends Component {
   state = {
@@ -137,7 +139,7 @@ class AgvListComponent extends Component {
   };
 
   checkAgvDetail = (agvId) => {
-    const { agvType, dispatch } = this.props;
+    const { agvType, dispatch, history } = this.props;
     const route = `/${NameSpace[agvType]}/agv/agvRealTime`;
     history.push({
       pathname: route,

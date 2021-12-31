@@ -54,6 +54,7 @@ export default {
     currentRouteMap: 'DEFAULT', // code
     preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
     currentCells: [], // 当前视图的点位数据
+    mapContext: null, // 地图实体对象
 
     // 选择相关
     selectCells: [],
@@ -90,6 +91,12 @@ export default {
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    saveMapContext(state, action) {
+      return {
+        ...state,
+        mapContext: action.payload,
       };
     },
     saveMapLoading(state, action) {

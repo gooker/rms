@@ -16,28 +16,27 @@ const enStyle = { fontSize: '7vh' };
 const Welcome = (props) => {
   const { isFullscreen, copyRight } = props;
   const locale = window.localStorage.getItem('currentLocale') || 'zh-CN';
-  const height = isFullscreen ? { height: '100vh' } : { height: 'calc(100vh - 64px)' };
   return (
-    <div className={styles.welcome} style={{ backgroundImage: `url(${WelcomeImage})`, ...height }}>
+    <div className={styles.welcome} style={{ backgroundImage: `url(${WelcomeImage})` }}>
       <div className={styles.welcomeText}>
         <div className={styles.mushiny} style={locale === 'zh-CN' ? zhStyle : enStyle}>
-          <FormattedMessage id='app.mushiny.title' />
+          <FormattedMessage id="app.mushiny.title" />
         </div>
         <div className={styles.features}>
           <span className={styles.feature}>
-            <FormattedMessage id='app.mushiny.purpose.smart' />
+            <FormattedMessage id="app.mushiny.purpose.smart" />
           </span>
           <span className={styles.feature}>
-            <FormattedMessage id='app.mushiny.purpose.safe' />
+            <FormattedMessage id="app.mushiny.purpose.safe" />
           </span>
           <span className={styles.feature}>
-            <FormattedMessage id='app.mushiny.purpose.stable' />
+            <FormattedMessage id="app.mushiny.purpose.stable" />
           </span>
           <span className={styles.feature}>
-            <FormattedMessage id='app.mushiny.purpose.efficient' />
+            <FormattedMessage id="app.mushiny.purpose.efficient" />
           </span>
           <span className={styles.feature}>
-            <FormattedMessage id='app.mushiny.purpose.power' />
+            <FormattedMessage id="app.mushiny.purpose.power" />
           </span>
         </div>
       </div>

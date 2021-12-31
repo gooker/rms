@@ -13,6 +13,7 @@ import NoticeIcon from './NoticeIcon';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Header.module.less';
+import { isNull } from '@/utils/utils';
 
 @connect(({ global, user }) => ({
   globalLocale: global.globalLocale,
@@ -112,18 +113,6 @@ class Header extends React.Component {
     });
   };
 
-  handleUserMenuClick = ({ key }) => {
-    const { dispatch } = this.props;
-    if (key === 'logout') {
-      // 只有在手动退出的情况下才清空 global/environments 对象
-      dispatch({ type: 'global/clearEnvironments' });
-      dispatch({ type: 'user/logout' });
-    }
-    if (key === 'apiList') {
-      this.setState({ apiListShow: true });
-    }
-  };
-
   switchShowErrorNotification = (checked) => {
     window.sessionStorage.setItem('showErrorNotification', checked);
     this.setState({ showErrorNotification: checked });
@@ -142,6 +131,7 @@ class Header extends React.Component {
   render() {
     const { isFullscreen, showErrorNotification, showLabel, apiListShow } = this.state;
     const { environments, currentUser, noticeCountUpdate, noticeCount } = this.props;
+    if (isNull(currentUser)) return null;
     const isAdmin = currentUser.username === 'admin';
     return (
       <div className={styles.headerContent}>
@@ -152,7 +142,6 @@ class Header extends React.Component {
           {/* 环境切换 */}
           <SelectEnvironment
             showLabel={showLabel}
-            className={styles.icon}
             environments={environments || []}
             changeEnvironment={(record) => {
               this.changeEnvironment(record);
@@ -160,13 +149,13 @@ class Header extends React.Component {
           />
 
           {/* 用户中心 */}
-          <UserCenter showLabel={showLabel} onMenuClick={this.handleUserMenuClick} />
+          <UserCenter showLabel={showLabel} />
 
           {/* Section切换 */}
           {!isAdmin && <SelectSection showLabel={showLabel} onMenuClick={this.changeSection} />}
 
           {/* 全屏切换 */}
-          <span className={styles.icon} onClick={this.switchFullScreen}>
+          <span className={styles.action} onClick={this.switchFullScreen}>
             {isFullscreen ? (
               <FullscreenExitOutlined style={{ fontSize: 14, color: 'red' }} />
             ) : (
@@ -190,7 +179,7 @@ class Header extends React.Component {
             }
           >
             <span
-              className={styles.icon}
+              className={styles.action}
               onMouseOver={noticeCountUpdate}
               onFocus={() => void 0}
               onClick={this.goToQuestionCenter}
@@ -200,7 +189,7 @@ class Header extends React.Component {
           </Popover>
 
           {/* 切换语言 */}
-          <SelectLang showLabel={showLabel} className={styles.icon} onChange={this.changeLocale} />
+          <SelectLang showLabel={showLabel} onChange={this.changeLocale} />
 
           {/* API列表展示窗口 */}
           <Modal

@@ -73,7 +73,7 @@ export default [
   {
     path: '/tote/pod',
     name: 'pod',
-    icon: 'icon-cangkucangchu',
+    icon: 'icon-shelf',
     routes: [
       {
         path: '/tote/pod/podRowModelBaseData',

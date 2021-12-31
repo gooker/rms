@@ -23,7 +23,7 @@ var defaultSimpleOptions = {
   dirtyTest: false,
 };
 
-var Simple = (function () {
+var SimpleCull = (function () {
   /**
    * Creates a simple cull
    * Note, options.dirtyTest defaults to false. Set to true for much better performance--this requires
@@ -248,4 +248,4 @@ var Simple = (function () {
 
   return Simple;
 })();
-export { Simple };
+export { SimpleCull };

@@ -61,7 +61,7 @@ export default [
     path: '/latentLifting/storageManagement',
     name: 'storageManagement',
     hooks: ['dev'],
-    icon: 'icon-cangkucangchu',
+    icon: 'icon-warehouse',
     component: '/LatentLifting/StorageManagement',
   },
   {

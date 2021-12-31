@@ -1,9 +1,13 @@
-import React, { Component } from 'react';
-import { Form, Input, Select, Button, message } from 'antd';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import React, { memo, useState, useEffect } from 'react';
+import { Form, Input, Select, Button, Spin } from 'antd';
+import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
-import history from '@/history';
-import { fetchFindLogoByWebAddress, fetchLogin, fetchUpdateEnvironment } from '@/services/global';
+import {
+  fetchLogin,
+  fetchAppVersion,
+  fetchUpdateEnvironment,
+  fetchFindLogoByWebAddress,
+} from '@/services/global';
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getEnvOptionData, getActiveEnv } from './selector';
@@ -11,40 +15,38 @@ import LoginBackPicture from '../images/login_pic.png';
 import Logo from '../images/logoMain.png';
 import styles from './Login.module.less';
 
-@connect(({ global }) => ({
-  environments: getEnvOptionData(global.environments),
-  activeEnv: getActiveEnv(global.environments),
-}))
-class Login extends Component {
-  state = {
-    logo: null,
-    loading: false,
-  };
+const Login = (props) => {
+  const { environments, activeEnv, history } = props;
+  const [loading, setLoading] = useState(false);
+  const [logo, setLogo] = useState(null);
+  const [appVersion, setAppVersion] = useState(null);
 
-  async componentDidMount() {
+  useEffect(() => {
+    init();
+  }, []);
+
+  async function init() {
     const address = window.location.host;
-    const response = await fetchFindLogoByWebAddress(address);
-    if (dealResponse(response)) {
-      this.setState({ logo: null });
-    } else {
-      if (response.code !== '2') {
-        this.setState({ logo: response });
+    const [appLogo, _appVersion] = await Promise.all([
+      fetchFindLogoByWebAddress(address),
+      fetchAppVersion(),
+    ]);
+    if (!dealResponse(appLogo)) {
+      if (appLogo.code !== '2') {
+        setLogo(appLogo);
       }
+    }
+    if (!dealResponse(_appVersion)) {
+      setAppVersion(_appVersion);
     }
   }
 
-  onFinish = async (values) => {
-    this.setState({ loading: true });
-
-    // 开始登陆
+  async function onFinish(values) {
+    setLoading(true);
     const _values = { ...values };
     delete _values.environment;
     const response = await fetchLogin({ ..._values, type: 'admin' });
-
-    this.setState({ loading: false });
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: response.message || 'app.login.fail' }));
-    } else {
+    if (!dealResponse(response, false, null, formatMessage({ id: 'app.login.fail' }))) {
       window.localStorage.setItem('Authorization', response.authorization);
       // 如果有environment字段说明需要重新激活一个环境
       if (!isNull(values.environment)) {
@@ -57,71 +59,75 @@ class Login extends Component {
           return;
         }
       }
-
+      setLoading(false);
       history.push('/');
     }
-  };
-
-  render() {
-    const { logo, loading } = this.state;
-    const { environments, activeEnv } = this.props;
-    return (
-      <div className={styles.loginPage}>
-        <img src={LoginBackPicture} alt={'login_picture'} className={styles.loginBackPicture} />
-        <div className={styles.loginPanel}>
-          <div className={styles.logo}>
-            <img src={logo || Logo} alt={'logo'} className={styles.logoPicture} />
-          </div>
-          <div className={styles.loginForm}>
-            <Form onFinish={this.onFinish}>
-              <Form.Item
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: <FormattedMessage id="app.login.username.required" />,
-                  },
-                ]}
-              >
-                <Input prefix={<UserOutlined />} />
+  }
+  return (
+    <div className={styles.loginPage}>
+      <img src={LoginBackPicture} alt={'login_picture'} className={styles.loginBackPicture} />
+      <div className={styles.loginPanel}>
+        <div className={styles.logo}>
+          <img src={logo || Logo} alt={'logo'} className={styles.logoPicture} />
+        </div>
+        <div className={styles.loginForm}>
+          <Form onFinish={onFinish}>
+            <Form.Item
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: <FormattedMessage id="app.login.username.required" />,
+                },
+              ]}
+            >
+              <Input prefix={<UserOutlined />} />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: <FormattedMessage id="app.login.password.required" />,
+                },
+              ]}
+            >
+              <Input.Password prefix={<LockOutlined />} />
+            </Form.Item>
+            {environments.length > 0 && (
+              <Form.Item name="environment" initialValue={activeEnv?.id}>
+                <Select>
+                  {environments.map(({ label, value }) => (
+                    <Select.Option key={value} value={value}>
+                      {label}
+                    </Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: <FormattedMessage id="app.login.password.required" />,
-                  },
-                ]}
-              >
-                <Input.Password prefix={<LockOutlined />} />
-              </Form.Item>
-              {environments && environments.length > 0 && (
-                <Form.Item name="environment" initialValue={activeEnv?.id}>
-                  <Select>
-                    {environments.map(({ label, value }) => (
-                      <Select.Option key={value} value={value}>
-                        {label}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              )}
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                  style={{ width: '100%' }}
-                >
+            )}
+            <Form.Item>
+              {loading ? (
+                <div style={{ width: '100%', textAlign: 'center' }}>
+                  <Spin indicator={<LoadingOutlined spin style={{ color: '#fff' }} />} />
+                </div>
+              ) : (
+                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                   <FormattedMessage id={'app.login.button'} />
                 </Button>
-              </Form.Item>
-            </Form>
-          </div>
+              )}
+            </Form.Item>
+          </Form>
+          {appVersion && (
+            <div style={{ textAlign: 'center', fontSize: 16, color: '#fff' }}>
+              v{appVersion.versionMap?.MixRobot?.version}
+            </div>
+          )}
         </div>
       </div>
-    );
-  }
-}
-export default Login;
+    </div>
+  );
+};
+export default connect(({ global }) => ({
+  environments: getEnvOptionData(global.environments),
+  activeEnv: getActiveEnv(global.environments),
+}))(memo(Login));

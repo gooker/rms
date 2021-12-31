@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Menu, Dropdown } from 'antd';
 import { connect } from '@/utils/dva';
-import styles from '../Header.module.less';
+import styles from './Header.module.less';
 import { IconFont } from '@/components/IconFont';
 
 @connect(({ global, user }) => ({
@@ -32,9 +32,9 @@ class SelectSection extends PureComponent {
 
     return (
       <Dropdown overlay={this.renderMenu}>
-        <span className={`${styles.action} ${styles.account}`}>
-          <span style={{ marginRight: 3 }}>
-            <IconFont type="icon-tuanduicankaoxian-1" />{' '}
+        <span className={styles.action}>
+          <span style={{ marginRight: 4 }}>
+            <IconFont type="icon-section" />
           </span>
           {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
         </span>

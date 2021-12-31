@@ -11,7 +11,7 @@ const EditorBodyLeft = (props) => {
       {EditorLeftTools.map(({ label, value, icon }) => (
         <Tooltip key={value} placement="right" title={label}>
           <span
-            className={activeKey === value && styles.leftContentActive}
+            className={activeKey === value ? styles.leftContentActive : undefined}
             onClick={() => {
               setActiveKey(value);
             }}

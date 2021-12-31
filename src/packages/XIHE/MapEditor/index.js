@@ -27,7 +27,9 @@ const MapEditor = (props) => {
         <div className={commonStyles.mapBodyLeft}>
           <EditorBodyLeft />
         </div>
-        <EditorMapView />
+        <div className={commonStyles.mapBodyMiddle}>
+          <EditorMapView />
+        </div>
         <div className={commonStyles.mapBodyRight}>
           <EditorBodyRight />
         </div>

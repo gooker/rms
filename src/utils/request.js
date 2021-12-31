@@ -1,14 +1,15 @@
 import axios from 'axios';
 import { isPlainObject } from 'lodash';
-import history from '@/history';
 import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from '@/utils/utils';
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${window.localStorage.getItem('Authorization')}`;
-  config.headers['Content-Type'] = 'application/json; charset=utf-8';
-  if (isNull(config.headers.sectionId)) {
-    config.headers.sectionId = window.localStorage.getItem('sectionId');
+  if (config.attachSection === true) {
+    config.headers.Authorization = `Bearer ${window.localStorage.getItem('Authorization')}`;
+    config.headers['Content-Type'] = 'application/json; charset=utf-8';
+    if (isNull(config.headers.sectionId)) {
+      config.headers.sectionId = window.localStorage.getItem('sectionId');
+    }
   }
   return config;
 });
@@ -60,7 +61,12 @@ const errorHandler = (error) => {
   if (response) {
     const { status } = response;
     if (status === 401) {
-      history.push('/login');
+      const { history } = window.g_app._store.getState().global;
+      if (history) {
+        history.push('/login');
+      } else {
+        console.error('history实例不存在');
+      }
     }
     const statusMessage = codeMessage[status];
     return { code: '-1', data: null, message: statusMessage || messageContent };
@@ -72,13 +78,13 @@ const errorHandler = (error) => {
 };
 
 const request = async (requestUrl, payload) => {
-  const { data, body, method, headers = {} } = payload;
+  const { data, body, method, attachSection = true, headers = {} } = payload;
   const url = getDomainNameByUrl(requestUrl);
   // 此时可能会遇到找不到API的问题
   if (isPlainObject(url)) {
     return url;
   }
-  const option = { url, method, headers };
+  const option = { url, method, headers, attachSection };
 
   // 针对文件下载
   if (headers.responseType === 'blob') {

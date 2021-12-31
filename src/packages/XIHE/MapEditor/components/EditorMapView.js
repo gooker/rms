@@ -1,48 +1,18 @@
 import React, { memo, useEffect } from 'react';
-import * as PIXI from 'pixi.js';
-import { Scrollbox } from 'pixi-scrollbox';
-import commonStyles from '@/common.module.less';
+import { connect } from '@/utils/dva';
+import PixiBuilder from '@/utils/PixiBuilder';
 
 const EditorMapView = (props) => {
+  const { dispatch } = props;
+
   useEffect(() => {
-    const domContainer = document.getElementById('editorMap');
-    const { width, height } = domContainer.getBoundingClientRect();
-
-    const app = new PIXI.Application({
-      width,
-      height,
-      resolution: window.devicePixelRatio,
-      antialias: true,
-      backgroundAlpha: 0,
-    });
-    domContainer.appendChild(app.view);
-
-    const scrollBox = app.stage.addChild(
-      new Scrollbox({
-        boxWidth: width,
-        boxHeight: height,
-        passiveWheel: false,
-        stopPropagation: true,
-        divWheel: app.view,
-        interaction: app.renderer.plugins.interaction,
-      }),
-    );
-
-    const texture = PIXI.Texture.from('/webView/agv_tote.png');
-    const positions = [
-      [-1200, -1200],
-      [1000, 1000],
-    ];
-    for (let index = 0; index < 2; index++) {
-      const sprite = new PIXI.Sprite(texture);
-      sprite.position.set(positions[index][0], positions[index][1]);
-      scrollBox.content.addChild(sprite);
-    }
-
-    // force an update of the scrollbox's calculations after updating the children
-    scrollBox.update();
+    const htmlDOM = document.getElementById('editorPixi');
+    const { width, height } = htmlDOM.getBoundingClientRect();
+    const mapContext = new PixiBuilder(width, height, htmlDOM);
+    dispatch({ type: 'editor/saveMapContext', payload: mapContext });
   }, []);
 
-  return <div id="editorMap" className={commonStyles.mapBodyMiddle} />;
+  // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
+  return <div id="editorPixi" style={{ fontSize: 0, touchAction: 'none' }} />;
 };
-export default memo(EditorMapView);
+export default connect()(memo(EditorMapView));

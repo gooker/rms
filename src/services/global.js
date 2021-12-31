@@ -29,6 +29,13 @@ export async function fetchFindLogoByWebAddress(webAddress) {
   });
 }
 
+export async function fetchAppVersion() {
+  return request(`/${NameSpace.Coordinator}/api/getAppVersion`, {
+    method: 'GET',
+    attachSection: false,
+  });
+}
+
 export async function fetchNotice() {
   return request(`/${NameSpace.Coordinator}/problemHandling/getProblemHandlingCount`, {
     method: 'GET',

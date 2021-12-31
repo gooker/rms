@@ -1,9 +1,8 @@
 import React, { PureComponent } from 'react';
 import { IeOutlined } from '@ant-design/icons';
 import { Menu, Dropdown } from 'antd';
-import find from 'lodash/find';
-import classNames from 'classnames';
-import styles from './index.module.less';
+import { find } from 'lodash';
+import styles from './Header.module.less';
 
 export default class SelectUrl extends PureComponent {
   changeEnvironment = ({ key }) => {
@@ -37,7 +36,7 @@ export default class SelectUrl extends PureComponent {
   };
 
   render() {
-    const { className, environments, showLabel } = this.props;
+    const { environments, showLabel } = this.props;
     const selectedEnvironment = this.renderSelectedEnvironment() || {};
     const envMenu = (
       <Menu
@@ -54,7 +53,7 @@ export default class SelectUrl extends PureComponent {
       <>
         {environments && environments.length > 1 ? (
           <Dropdown overlay={envMenu}>
-            <span className={classNames(styles.dropDown, className)}>
+            <span className={styles.action}>
               <IeOutlined />
               {showLabel && <span style={{ marginLeft: 4 }}>{selectedEnvironment.envName}</span>}
             </span>

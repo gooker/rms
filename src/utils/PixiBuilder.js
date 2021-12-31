@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
-import { Simple } from '@/libs/simple';
+import { SimpleCull } from '@/libs/SimpleCull';
 import { Viewport } from 'pixi-viewport';
 
 export default class PixiBuilder {
-  constructor(width, height) {
+  constructor(width, height, htmlDOM) {
     this.width = width;
     this.height = height;
     this.loader = new PIXI.Loader();
@@ -14,13 +14,11 @@ export default class PixiBuilder {
       width,
       height,
       antialias: true,
-      autoResize: true,
-      transparent: true,
-      autoDensity: true,
+      backgroundAlpha: 0,
       resolution: window.devicePixelRatio,
       powerPreference: 'high-performance',
     });
-    document.getElementById('pixi').appendChild(this.renderer.view);
+    htmlDOM.appendChild(this.renderer.view);
 
     // 创建视窗组件
     this.viewport = new Viewport({
@@ -28,7 +26,7 @@ export default class PixiBuilder {
       screenHeight: height,
       passiveWheel: false, // Event passive
       stopPropagation: true,
-      divWheel: document.getElementById('pixi'),
+      divWheel: htmlDOM,
       interaction: this.renderer.plugins.interaction,
     });
     this.viewport.drag().pinch().wheel().decelerate().clampZoom({ minScale: 0.001, maxScale: 0.5 });
@@ -36,7 +34,7 @@ export default class PixiBuilder {
     this.viewport.sortableChildren = true;
 
     // 创建cull组件
-    this.cull = new Simple();
+    this.cull = new SimpleCull();
     this.cull.addList(this.viewport.children);
     this.cull.cull(this.viewport.getVisibleBounds());
 
@@ -47,7 +45,6 @@ export default class PixiBuilder {
     this.ticker.add(() => {
       if (this.isNeedRender || this.viewport.dirty) {
         if (this.viewport.dirty) {
-          // TODO: viewport.x viewport.y  防止越界
           // 重新计算cull边界
           this.cull.cull(this.viewport.getVisibleBounds());
         }
@@ -63,10 +60,6 @@ export default class PixiBuilder {
     this.isNeedRender = true;
   };
 
-  /**
-   * 统一使用此方法添加元素到视窗，对添加的元素做是否显示判断
-   * @param {*} child 目标Sprite
-   */
   viewportAddChild = (child) => {
     this.viewport.addChild(child);
   };

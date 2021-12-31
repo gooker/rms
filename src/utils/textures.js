@@ -339,7 +339,7 @@ export function loadTexturesForMap(cb) {
     .add('waiting', 'pic/waiting.png') // 小车等待状态小图标
     .add('charging_unbind', 'pic/charging_unbind.png') // 充电桩未绑定硬件图标
     .add('traffic_control', 'pic/traffic_control.png') // 交通管控图标
-    .add('safe_spot', 'pic/safe_spot.png') // 安全区图标
+    .add('safe_spot', 'pic/safe_cell.png') // 安全区图标
 
     // 小车
     .add('tote_agv_purple', 'pic/tote_agv_purple.png')

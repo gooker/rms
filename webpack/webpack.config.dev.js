@@ -1,8 +1,8 @@
+const webpack = require('webpack');
+const { merge } = require('webpack-merge');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const paths = require('./paths');
 const BaseConfig = require('./webpack.config.base');
-const { merge } = require('webpack-merge');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 console.log('Starting RMS development server...\n');
 
@@ -19,13 +19,7 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
     publicPath: '/',
   },
 
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'static/css/[name].[contenthash:8].css',
-      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-    }),
-    new ReactRefreshWebpackPlugin(),
-  ],
+  plugins: [new webpack.HotModuleReplacementPlugin(), new ReactRefreshWebpackPlugin()],
 
   /**
    * webpack-dev-server v4.0.0+ 要求 node >= v12.13.0 和 webpack >= v4.37.0
@@ -34,6 +28,7 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
    */
   devServer: {
     port: 3333,
+    hot: true,
     // 防止刷新页面报: Cannot GET '[route]' 问题
     historyApiFallback: true,
     // 可访问开发服务器的地址

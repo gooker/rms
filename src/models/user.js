@@ -1,6 +1,5 @@
 import { fetchLogout, fetchUserRoleList, fetchUpdateUserCurrentSection } from '@/services/user';
 import { getCurrentUser } from '@/services/api';
-import history from '@/history';
 import intl from 'react-intl-universal';
 import { dealResponse } from '@/utils/utils';
 import { message } from 'antd';
@@ -16,8 +15,45 @@ export default {
     permissionMap: {},
   },
 
+  reducers: {
+    save(state, action) {
+      return {
+        ...state,
+        list: action.payload,
+      };
+    },
+
+    saveCurrentUser(state, action) {
+      return {
+        ...state,
+        currentUser: action.payload || {},
+      };
+    },
+
+    saveCurrentSectionEffect(state, { payload }) {
+      return {
+        ...state,
+        currentSection: payload,
+      };
+    },
+
+    savePermissionMap(state, { payload }) {
+      return {
+        ...state,
+        permissionMap: payload,
+      };
+    },
+
+    saveUserRoleList(state, { payload }) {
+      return {
+        ...state,
+        userRoleList: payload,
+      };
+    },
+  },
+
   effects: {
-    *logout(_, { call }) {
+    *logout({ payload: history }, { call }) {
       yield call(fetchLogout, { token: window.localStorage.getItem('Authorization') });
       window.localStorage.clear();
       history.push('/login');
@@ -76,43 +112,6 @@ export default {
         true,
         intl.formatMessage({ id: 'app.header.option.switchSectionSuccess' }),
       );
-    },
-  },
-
-  reducers: {
-    save(state, action) {
-      return {
-        ...state,
-        list: action.payload,
-      };
-    },
-
-    saveCurrentUser(state, action) {
-      return {
-        ...state,
-        currentUser: action.payload || {},
-      };
-    },
-
-    saveCurrentSectionEffect(state, { payload }) {
-      return {
-        ...state,
-        currentSection: payload,
-      };
-    },
-
-    savePermissionMap(state, { payload }) {
-      return {
-        ...state,
-        permissionMap: payload,
-      };
-    },
-
-    saveUserRoleList(state, { payload }) {
-      return {
-        ...state,
-        userRoleList: payload,
-      };
     },
   },
 };

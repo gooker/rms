@@ -1,5 +1,4 @@
 import intl from 'react-intl-universal';
-import history from '@/history';
 import requestAPI from '@/utils/requestAPI';
 import { fetchNotice, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/user';
@@ -16,6 +15,9 @@ export default {
   namespace: 'global',
 
   state: {
+    // 路由history实例
+    history: null,
+
     logo: null,
     copyRight: null,
     notification: 0,
@@ -138,11 +140,10 @@ export default {
     },
 
     *goToQuestionCenter(_, { put, select }) {
-      const { subModules, tabs } = yield select((state) => state.global);
+      const { subModules, tabs, history } = yield select((state) => state.global);
       const { routeLocalekeyMap } = yield select((state) => state.menu);
       const mixrobot = find(subModules, { name: 'mixrobot' });
       if (mixrobot) {
-        history.replace('/mixrobot/questionCenter');
         const currentRoute = `/questionCenter`;
         const tab = find(tabs, { route: currentRoute });
         if (!tab) {
@@ -177,6 +178,12 @@ export default {
   },
 
   reducers: {
+    saveHistory(state, { payload }) {
+      return {
+        ...state,
+        history: payload,
+      };
+    },
     updateEnvironment(state, { payload }) {
       return {
         ...state,
