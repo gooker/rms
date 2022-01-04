@@ -1,24 +1,26 @@
+import { AppCode } from '@/config/config';
+
 export default [
   {
-    path: '/mixrobot/map',
+    path: `/${AppCode.XIHE}/map`,
     name: 'map',
     icon: 'environment',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: '/mixrobot/map/mapEdit',
+        path: `/${AppCode.XIHE}/map/mapEdit`,
         name: 'mapEdit',
         component: '/XIHE/MapEditor',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: '/mixrobot/map/monitor',
+        path: `/${AppCode.XIHE}/map/monitor`,
         name: 'monitor',
         component: '/XIHE/MapMonitor',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/mixrobot/map/mapFactory',
+        path: `/${AppCode.XIHE}/map/mapFactory`,
         name: 'mapFactory',
         component: '/XIHE/MapPrograming',
         authority: ['ADMIN', 'SUPERMANAGER'],
@@ -26,38 +28,38 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/lockManager',
+    path: `/${AppCode.XIHE}/lockManager`,
     name: 'lockManager',
     icon: 'lock',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       // 目标点锁
       {
-        path: '/mixrobot/lockManager/targetLock',
+        path: `/${AppCode.XIHE}/lockManager/targetLock`,
         name: 'targetLock',
         component: '/XIHE/LockManage/TargetLock',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       // 潜伏类
       {
-        path: '/mixrobot/lockManager/latent-lifting',
+        path: `/${AppCode.XIHE}/lockManager/${AppCode.LatentLifting}`,
         name: 'latent-lifting',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
           {
-            path: '/mixrobot/lockManager/latent-lifting/RobotLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.LatentLifting}/robotLock`,
             name: 'robotLock',
-            component: '/XIHE/LockManage/RobotLock',
+            component: '/XIHE/LockManage/LatentLifting/RobotLock.js',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
-            path: '/mixrobot/lockManager/latent-lifting/storageLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.LatentLifting}/storageLock`,
             name: 'storageLock',
             component: '/XIHE/LockManage/LatentLifting/StorageLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
-            path: '/mixrobot/lockManager/latent-lifting/PodLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.LatentLifting}/podLock`,
             name: 'podLock',
             component: '/XIHE/LockManage/LatentLifting/PodLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -66,52 +68,38 @@ export default [
       },
       // 料箱类
       {
-        path: '/mixrobot/lockManager/tote',
+        path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}`,
         name: 'tote',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
           {
-            path: '/mixrobot/lockManager/tote/RobotLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/robotLock`,
             name: 'robotLock',
             component: '/XIHE/LockManage/Tote/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
-            path: '/mixrobot/lockManager/tote/TotePodLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/totePodLock`,
             name: 'totePodLock',
             component: '/XIHE/LockManage/Tote/TotePodLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
-            path: '/mixrobot/lockManager/tote/ToteBinLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/toteBinLock`,
             name: 'toteBinLock',
             component: '/XIHE/LockManage/Tote/ToteBinLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
         ],
       },
-      // 叉车类
-      {
-        path: '/mixrobot/lockManager/forklift',
-        name: 'forklift',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        routes: [
-          {
-            path: '/mixrobot/lockManager/forklift/RobotLock',
-            name: 'robotLock',
-            component: '/XIHE/LockManage/Forklift/RobotLock',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-          },
-        ],
-      },
       // 分拣类
       {
-        path: '/mixrobot/lockManager/sorter',
+        path: `/${AppCode.XIHE}/lockManager/${AppCode.Sorter}`,
         name: 'sorter',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
           {
-            path: '/mixrobot/lockManager/sorter/RobotLock',
+            path: `/${AppCode.XIHE}/lockManager/${AppCode.Sorter}/robotLock`,
             name: 'robotLock',
             component: '/XIHE/LockManage/Sorter/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -121,24 +109,24 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/sourceManage',
+    path: `/${AppCode.XIHE}/sourceManage`,
     name: 'sourceManage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     icon: 'icon-sourceManage',
     routes: [
       {
-        path: '/mixrobot/sourceManage/latentPod',
+        path: `/${AppCode.XIHE}/sourceManage/latentPod`,
         name: 'latentPod',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
           {
-            path: '/mixrobot/sourceManage/latentPod/management',
+            path: `/${AppCode.XIHE}/sourceManage/latentPod/management`,
             name: 'latentPodMange',
             component: '/XIHE/SourceManage/LatentLiftingPod/PodManager',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
-            path: '/mixrobot/sourceManage/latentPod/assignment',
+            path: `/${AppCode.XIHE}/sourceManage/latentPod/assignment`,
             name: 'latentPodAssign',
             component: '/XIHE/SourceManage/LatentLiftingPod/PodAssign',
             authority: ['ADMIN', 'SUPERMANAGER'],
@@ -146,18 +134,18 @@ export default [
         ],
       },
       {
-        path: '/mixrobot/sourceManage/tote',
+        path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}`,
         name: 'tote',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         routes: [
           {
-            path: '/mixrobot/sourceManage/tote/toteManagement',
+            path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}/toteManagement`,
             name: 'toteManagement',
             component: '/XIHE/SourceManage/Tote/ToteManagement',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
-            path: '/mixrobot/sourceManage/tote/toteTool',
+            path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}/toteTool`,
             name: 'toteTool',
             component: '/XIHE/SourceManage/Tote/ToteTool',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -165,19 +153,19 @@ export default [
         ],
       },
       {
-        path: '/mixrobot/sourceManage/mapRouteAssign',
+        path: `/${AppCode.XIHE}/sourceManage/mapRouteAssign`,
         name: 'mapRouteAssign',
         component: '/XIHE/MapTool/MapRouteAssign/MapRouteAssign',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: '/mixrobot/sourceManage/mapAreaManage',
+        path: `/${AppCode.XIHE}/sourceManage/mapAreaManage`,
         name: 'mapAreaManage',
         component: '/XIHE/MapTool/AreaManagement/AreaManagement',
         hooks: ['dev'],
       },
       {
-        path: '/mixrobot/sourceManage/agvGroup',
+        path: `/${AppCode.XIHE}/sourceManage/agvGroup`,
         name: 'agvGroup',
         component: '/XIHE/SourceManage/AgvGroup/AgvGroup',
         hooks: ['dev'],
@@ -185,37 +173,37 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/sourceGroupManage',
+    path: `/${AppCode.XIHE}/sourceGroupManage`,
     name: 'sourceGroupManage',
     icon: 'icon-sourceGroup',
     hooks: ['dev'],
     routes: [
       {
-        path: '/mixrobot/sourceGroupManage/TaskTrigger',
+        path: `/${AppCode.XIHE}/sourceGroupManage/TaskTrigger`,
         name: 'taskTrigger',
         component: '/XIHE/SourceGroupManage/TaskTrigger',
         hooks: ['dev'],
       },
       {
-        path: '/mixrobot/sourceGroupManage/TaskLimiting',
+        path: `/${AppCode.XIHE}/sourceGroupManage/TaskLimiting`,
         name: 'TaskLimiting',
         component: '/XIHE/SourceGroupManage/TaskLimiting',
         hooks: ['dev'],
       },
       {
-        path: '/mixrobot/sourceGroupManage/GroupManage',
+        path: `/${AppCode.XIHE}/sourceGroupManage/GroupManage`,
         name: 'groupManage',
         component: '/XIHE/SourceGroupManage/GroupManage',
         hooks: ['dev'],
       },
       {
-        path: '/mixrobot/sourceGroupManage/GroupBinding',
+        path: `/${AppCode.XIHE}/sourceGroupManage/GroupBinding`,
         name: 'groupBinding',
         component: '/XIHE/SourceGroupManage/GroupBinding',
         hooks: ['dev'],
       },
       {
-        path: '/mixrobot/sourceGroupManage/CustomTask',
+        path: `/${AppCode.XIHE}/sourceGroupManage/CustomTask`,
         name: 'customTask',
         component: '/XIHE/SourceGroupManage/CustomTask',
         hooks: ['dev'],
@@ -223,21 +211,21 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/charge',
+    path: `/${AppCode.XIHE}/charge`,
     name: 'chargeCenter',
     icon: 'icon-charger',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     hooks: ['dev'],
     routes: [
       {
-        path: '/mixrobot/charge/chargeManagerment',
+        path: `/${AppCode.XIHE}/charge/chargeManagerment`,
         name: 'chargeManagerment',
         component: '/XIHE/ChargeManage/ChargeManagerment',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         hooks: ['dev'],
       },
       {
-        path: '/mixrobot/charge/chargeFaultManagement',
+        path: `/${AppCode.XIHE}/charge/chargeFaultManagement`,
         name: 'chargeFaultManagement',
         component: '/XIHE/ChargeManage/ChargeFaultManagement',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -246,13 +234,13 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/report',
+    path: `/${AppCode.XIHE}/report`,
     name: 'reportCenter',
     icon: 'icon-reportForm',
     hooks: ['dev'],
     routes: [
       {
-        path: '/mixrobot/report/healthReport',
+        path: `/${AppCode.XIHE}/report/healthReport`,
         name: 'healthReport',
         component: '/XIHE/ReportCenter/HealthReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -261,46 +249,46 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/operationLog',
+    path: `/${AppCode.XIHE}/operationLog`,
     name: 'operationLog',
     icon: 'icon-log',
     component: '/XIHE/OperationLog',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
-    path: '/mixrobot/requestor',
+    path: `/${AppCode.XIHE}/requestor`,
     name: 'requestor',
     icon: 'api',
     component: '/XIHE/Requestor/Requestor',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
-    path: '/mixrobot/richEditor',
+    path: `/${AppCode.XIHE}/richEditor`,
     name: 'richEditor',
     icon: 'richEditor',
     component: '/XIHE/RichEditor',
     hooks: ['dev'],
   },
   {
-    path: '/mixrobot/system',
+    path: `/${AppCode.XIHE}/system`,
     name: 'system',
     icon: 'setting',
     authority: ['ADMIN', 'SUPERMANAGER'],
     routes: [
       {
-        path: '/mixrobot/system/systemParamsManager',
+        path: `/${AppCode.XIHE}/system/systemParamsManager`,
         name: 'systemParams',
         component: '/XIHE/SystemParams',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: '/mixrobot/system/timezone',
+        path: `/${AppCode.XIHE}/system/timezone`,
         name: 'Timezone',
         component: '/XIHE/SystemTimeZone',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/mixrobot/system/webHook',
+        path: `/${AppCode.XIHE}/system/webHook`,
         name: 'webHook',
         component: '/XIHE/WebHook',
         hooks: ['dev'],
@@ -308,7 +296,7 @@ export default [
     ],
   },
   {
-    path: '/mixrobot/questionCenter',
+    path: `/${AppCode.XIHE}/questionCenter`,
     icon: 'line-chart',
     name: 'questionCenter',
     component: '/XIHE/Question/QuestionCenter',

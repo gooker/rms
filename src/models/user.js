@@ -53,12 +53,6 @@ export default {
   },
 
   effects: {
-    *logout({ payload: history }, { call }) {
-      yield call(fetchLogout, { token: window.localStorage.getItem('Authorization') });
-      window.localStorage.clear();
-      history.push('/login');
-    },
-
     *fetchCurrentUser(_, { call, put }) {
       const response = yield call(getCurrentUser);
       if (!dealResponse(response)) {

@@ -6,7 +6,7 @@ import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/servi
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
-import RobotLockSearch from './RobotlockSearch';
+import RobotLockSearch from './RobotLockSearch';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, formatMessage } from '@/utils/utils';
 import RmsConfirm from '@/components/RmsConfirm';

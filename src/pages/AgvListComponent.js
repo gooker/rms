@@ -145,7 +145,7 @@ class AgvListComponent extends Component {
       pathname: route,
       search: `agvId=${agvId}`,
     });
-    dispatch({ type: 'global/saveSelectedKeys', payload: [route] });
+    dispatch({ type: 'global/saveMenuSelectKeys', payload: [route] });
   };
 
   onSelectChange = (selectedRowKeys, selectedRows) => {

@@ -1,6 +1,9 @@
 .portal {
   flex: 1;
-  z-index: 99;
+
+  & > div {
+    margin-left: 15px;
+  }
 }
 
 .selectApp {
@@ -14,38 +17,17 @@
 .portalItem {
   display: flex;
   align-items: center;
-  height: 48px;
-  margin-left: 20px;
-  filter: grayscale(1);
-  -webkit-filter: grayscale(1);
-}
-.portalItem:hover,
-.currentItem {
-  filter: grayscale(0);
-  -webkit-filter: grayscale(0);
 }
 
 .portalItemIconContainer {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 3px;
-  border-radius: 4px;
-  cursor: pointer;
-  user-select: none;
-}
-
-.portalItemIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 35px;
-  height: 35px;
   margin: auto;
+  padding: 3px;
   color: #aed7ff;
   font-weight: bold;
-  font-size: 30px;
   text-align: center;
+  cursor: pointer;
+  user-select: none;
 }

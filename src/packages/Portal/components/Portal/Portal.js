@@ -1,217 +1,176 @@
-import React, { PureComponent } from 'react';
-import { Badge, Row } from 'antd';
-import classNames from 'classnames';
-import { GlobalOutlined, UserOutlined } from '@ant-design/icons';
+import React, { memo, useEffect } from 'react';
+import { Row } from 'antd';
 import { connect } from '@/utils/dva';
 import { AppCode } from '@/config/config';
+import PortalEntry from './PortalEntry';
 import styles from './Portal.module.less';
 
-const Image = (props) => {
-  const { alt } = props;
-  return <img alt={alt} {...props} />;
-};
+const { I18N, SSO, XIHE, Mixrobot, LatentLifting, Tote, Sorter, ForkLifting } = PortalEntry;
 
-const AppIconColor = {
-  [AppCode.SSO]: '#993366',
-  [AppCode.I18N]: '#0099FF',
-  [AppCode.XIHE]: 'linear-gradient(#4f97dc, #001529)',
-  [AppCode.LatentLifting]: 'linear-gradient(#33CC33, #006633)',
-  [AppCode.Tote]: 'linear-gradient(rgb(228, 148, 92), rgba(181, 22, 22, 0.93))',
-  [AppCode.ForkLifting]: 'linear-gradient(#CCCC33, #CCCC66)',
-  [AppCode.Sorter]: 'linear-gradient(rgb(80, 198, 236),rgb(35, 185, 136))',
-};
+const Portal = (props) => {
+  const { dispatch, isAdmin, appList, currentApp, customLogo } = props;
 
-const APPs = {
-  [AppCode.LatentLifting]: {
-    icon: 'agv_latent.png',
-    style: {
-      height: '70%',
-      display: 'block',
-      verticalAlign: 'middle',
-      margin: '8px auto',
-    },
-    color: AppIconColor[AppCode.LatentLifting],
-  },
-  [AppCode.Tote]: {
-    icon: 'agv_tote.png',
-    style: {
-      height: '100%',
-      display: 'block',
-      verticalAlign: 'middle',
-      margin: '0 auto',
-    },
-    color: AppIconColor[AppCode.Tote],
-  },
-  [AppCode.ForkLifting]: {
-    icon: 'agv_forklift.png',
-    style: {
-      height: '100%',
-      display: 'block',
-      verticalAlign: 'middle',
-    },
-    color: AppIconColor[AppCode.ForkLifting],
-  },
-  [AppCode.Sorter]: {
-    icon: 'agv_sorter.png',
-    style: {
-      height: '100%',
-      display: 'block',
-      verticalAlign: 'middle',
-    },
-    color: AppIconColor[AppCode.Sorter],
-  },
-};
-
-class Portal extends PureComponent {
-  checkoutApp = async (appCode) => {
-    const { dispatch } = this.props;
-    dispatch({ type: 'global/saveCurrentApp', payload: appCode });
-  };
-
-  // 根据习惯, XIHE在第一项, SSO在最后一项, i18n在倒数第二项
-  getAppList = () => {
-    const { isAdmin, appList } = this.props;
-    if (!appList || appList.length === 0) return [];
-    const grantedApps = [...appList];
-
-    // SSO
-    let sso = null;
-    const ssoIndex = grantedApps.indexOf(AppCode.SSO);
-    if (ssoIndex >= 0) {
-      sso = grantedApps.splice(ssoIndex, 1);
+  useEffect(() => {
+    const { pathname } = window.location;
+    let currentApp;
+    if (pathname === '/') {
+      currentApp = isAdmin ? AppCode.SSO : AppCode.XIHE;
+    } else {
+      currentApp = pathname.split('/')[1];
     }
+    dispatch({ type: 'global/saveCurrentApp', payload: currentApp });
+  }, []);
+
+  async function checkoutApp(appCode) {
+    dispatch({ type: 'global/saveCurrentApp', payload: appCode });
+  }
+
+  function getAppList() {
+    if (!Array.isArray(appList) || appList.length === 0) return [];
 
     // 如果是admin账户登录，就只显示SSO APP
     if (isAdmin) {
-      return sso;
+      return appList.filter((item) => item.name === AppCode.SSO);
     }
 
-    // XIHE
-    let XIHE = null;
-    const XIHEIndex = grantedApps.indexOf(AppCode.XIHE);
-    if (XIHEIndex >= 0) {
-      XIHE = grantedApps.splice(XIHEIndex, 1);
+    // 顺序: XIHE, Latent, Tote, Sorter, I18N,SSO
+    const grantedApps = [];
+    if (appList.includes(AppCode.XIHE)) {
+      grantedApps.push(AppCode.XIHE);
     }
-
-    // I18n
-    let i18n = null;
-    const I18nIndex = grantedApps.indexOf(AppCode.I18N);
-    if (I18nIndex >= 0) {
-      i18n = grantedApps.splice(I18nIndex, 1);
+    if (appList.includes(AppCode.LatentLifting)) {
+      grantedApps.push(AppCode.LatentLifting);
     }
-
-    // 整合数据
-    XIHE && grantedApps.unshift(XIHE[0]);
-    i18n && grantedApps.push(i18n[0]);
-    sso && grantedApps.push(sso[0]);
+    if (appList.includes(AppCode.Tote)) {
+      grantedApps.push(AppCode.Tote);
+    }
+    if (appList.includes(AppCode.Sorter)) {
+      grantedApps.push(AppCode.Sorter);
+    }
+    if (appList.includes(AppCode.I18N)) {
+      grantedApps.push(AppCode.I18N);
+    }
+    if (appList.includes(AppCode.SSO)) {
+      grantedApps.push(AppCode.SSO);
+    }
     return grantedApps;
-  };
+  }
 
-  renderAppInfo = () => {
-    const { currentApp } = this.props;
+  function renderAppInfo() {
     return (
       <>
-        {this.getAppList().map((name) => {
-          let img = null;
-          const currentItem = currentApp === name ? styles.currentItem : '';
-          if (APPs[name] !== undefined) {
-            const { icon, style, color } = APPs[name];
-            if (icon != null) {
-              img = <Image style={{ ...style }} src={require(`../../images/${icon}`).default} />;
+        {getAppList().map((appCode) => {
+          if (appCode === AppCode.LatentLifting) {
+            return (
+              <LatentLifting
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={40}
+                height={40}
+              />
+            );
+          }
+          if (appCode === AppCode.Tote) {
+            return (
+              <Tote
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={40}
+                height={40}
+              />
+            );
+          }
+          if (appCode === AppCode.ForkLifting) {
+            return (
+              <ForkLifting
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={40}
+                height={40}
+              />
+            );
+          }
+          if (appCode === AppCode.Sorter) {
+            return (
+              <Sorter
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={40}
+                height={40}
+              />
+            );
+          }
+
+          if (appCode === AppCode.I18N) {
+            return (
+              <I18N
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={40}
+                height={40}
+              />
+            );
+          }
+          if (appCode === AppCode.SSO) {
+            return (
+              <SSO
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={40}
+                height={40}
+              />
+            );
+          }
+          if (appCode === AppCode.XIHE) {
+            // 如果是自定义的Logo，就显示M
+            if (customLogo) {
+              return (
+                <Mixrobot
+                  key={appCode}
+                  currentApp={currentApp}
+                  checkoutApp={checkoutApp}
+                  name={appCode}
+                  width={40}
+                  height={40}
+                />
+              );
             }
             return (
-              <div key={name} className={`${styles.portalItem} ${currentItem} `}>
-                <Badge dot={currentApp === name}>
-                  <span
-                    onClick={() => {
-                      this.checkoutApp(name);
-                    }}
-                    style={{ backgroundImage: color }}
-                    className={classNames(styles.portalItemIconContainer, styles.selectApp)}
-                  >
-                    {img}
-                  </span>
-                </Badge>
-              </div>
-            );
-          }
-          if (name === AppCode.I18N) {
-            return (
-              <div key={name} className={`${styles.portalItem} ${currentItem}`}>
-                <Badge dot={currentApp === name}>
-                  <span
-                    style={{ background: AppIconColor[name] }}
-                    className={classNames(styles.portalItemIconContainer, styles.selectApp)}
-                  >
-                    <span
-                      onClick={() => {
-                        this.checkoutApp(name);
-                      }}
-                      className={styles.portalItemIcon}
-                    >
-                      <GlobalOutlined />
-                    </span>
-                  </span>
-                </Badge>
-              </div>
-            );
-          }
-          if (name === AppCode.SSO) {
-            return (
-              <div key={name} className={`${styles.portalItem} ${currentItem}`}>
-                <Badge dot={currentApp === name}>
-                  <span
-                    style={{ background: AppIconColor[name] }}
-                    className={classNames(styles.portalItemIconContainer, styles.selectApp)}
-                  >
-                    <span
-                      onClick={() => {
-                        this.checkoutApp(name);
-                      }}
-                      className={styles.portalItemIcon}
-                    >
-                      <UserOutlined />
-                    </span>
-                  </span>
-                </Badge>
-              </div>
-            );
-          }
-          if (name === AppCode.XIHE) {
-            return (
-              <div key={name} className={`${styles.portalItem} ${currentItem}`}>
-                <Badge dot={currentApp === name}>
-                  <span
-                    style={{ background: AppIconColor[AppCode.XIHE] }}
-                    className={classNames(styles.portalItemIconContainer, styles.selectApp)}
-                  >
-                    <span
-                      onClick={() => {
-                        this.checkoutApp(name);
-                      }}
-                      className={styles.portalItemIcon}
-                    >
-                      M
-                    </span>
-                  </span>
-                </Badge>
-              </div>
+              <XIHE
+                key={appCode}
+                currentApp={currentApp}
+                checkoutApp={checkoutApp}
+                name={appCode}
+                width={45}
+                height={40}
+              />
             );
           }
         })}
       </>
     );
-  };
-
-  render() {
-    return <Row className={styles.portal}>{this.renderAppInfo()}</Row>;
   }
-}
+
+  return <Row className={styles.portal}>{renderAppInfo()}</Row>;
+};
 export default connect(({ global, user }) => {
   const isAdmin = user?.currentUser?.username === 'admin';
   return {
     isAdmin,
+    customLogo: !!global.logo,
     appList: global.grantedAPP,
-    currentApp: global?.currentApp,
+    currentApp: global.currentApp,
   };
-})(Portal);
+})(memo(Portal));

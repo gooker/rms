@@ -28,16 +28,5 @@ export const NameSpace = {
   Sorter: 'sorter',
 };
 
-// 兼容2.0版本
-export const BaseContext = {
-  Mixrobot: 'mixrobot',
-  LatentLifting: 'latent-lifting',
-  ForkLifting: 'forklift',
-  Tote: 'tote-wcs-gui',
-  Sorter: 'sorter',
-  SSO: 'sso',
-  I18N: 'i18n',
-};
-
 // 后端接口的 Server Context_Path
 export const ApiNameSpace = ['latent-lifting', 'tote', 'forklift', 'coordinator', 'WS', 'sorter'];

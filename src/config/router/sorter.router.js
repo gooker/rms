@@ -1,23 +1,25 @@
+import { AppCode } from '@/config/config';
+
 export default [
   {
-    path: '/sorter/center',
+    path: `/${AppCode.Sorter}/center`,
     name: 'task',
     icon: 'icon-task',
     routes: [
       {
-        path: '/sorter/task/executionQueue',
+        path: `/${AppCode.Sorter}/task/executionQueue`,
         name: 'executionQueue',
         component: '/Sorter/ExecutionQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/sorter/task/taskQueue',
+        path: `/${AppCode.Sorter}/task/taskQueue`,
         name: 'waitingQueue',
         component: '/Sorter/WaitingQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/sorter/task/taskLibrary',
+        path: `/${AppCode.Sorter}/task/taskLibrary`,
         name: 'taskLibrary',
         component: '/Sorter/TaskLibrary.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -25,90 +27,37 @@ export default [
     ],
   },
   {
-    path: '/sorter/agv',
+    path: `/${AppCode.Sorter}/agv`,
     name: 'agv',
     icon: 'agv',
     routes: [
       {
-        path: '/sorter/agv/agvList',
+        path: `/${AppCode.Sorter}/agv/agvList`,
         name: 'agvList',
         component: '/Sorter/AgvList.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/sorter/agv/agvRealTime',
+        path: `/${AppCode.Sorter}/agv/agvRealTime`,
         name: 'agvRealTime',
         component: '/Sorter/AgvRealTime.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
-      // {
-      //   path: '/sorter/agv/firmwareUpgrade',
-      //   name: 'firmwareUpgrade',
-      //   component: /Sorter/FirmwareUpgrade.js,
-      // },
-      // {
-      //   path: '/sorter/agv/logDownLoad',
-      //   name: 'logDownLoad',
-      //   component: /Sorter/LogDownLoad.js,
-      // },
     ],
   },
-
-  // {
-  //   icon: 'warning',
-  //   name: 'faultManger',
-  //   routes: [
-  //     {
-  //       path: '/sorter/faultManger/faultList',
-  //       name: 'faultList',
-  //       component: /Sorter/FaultList.js,
-  //     },
-  //     {
-  //       path: '/sorter/faultManger/faultDefinition',
-  //       name: 'faultDefinition',
-  //       component: /Sorter/FaultDefinition.js,
-  //     },
-  //   ],
-  // },
-  // {
-  //   icon: 'line-chart',
-  //   name: 'formManger',
-  //   routes: [
-  //     {
-  //       path: '/sorter/formManger/reportCenter',
-  //       name: 'reportCenter',
-  //       component: /Sorter/ReportCenter.js,
-  //     },
-  //     {
-  //       path: '/sorter/formManger/taskKpi',
-  //       name: 'taskKpi',
-  //       component: /Sorter/TaskKpi.js,
-  //     },
-  //     {
-  //       path: '/sorter/formManger/waitingKpi',
-  //       name: 'waitingKpi',
-  //       component: /Sorter/EditorHeader.js,
-  //     },
-  //     {
-  //       path: '/sorter/formManger/metadata',
-  //       name: 'metadata',
-  //       component:/Sorter/Metadata.js,
-  //     },
-  //   ],
-  // },
   {
-    path: '/sorter/system',
+    path: `/${AppCode.Sorter}/system`,
     name: 'system',
     icon: 'setting',
     routes: [
       {
-        path: '/sorter/system/systemParamsManager',
+        path: `/${AppCode.Sorter}/system/systemParamsManager`,
         name: 'systemParams',
         component: '/Sorter/SystemParams.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/sorter/system/chargingStrategy',
+        path: `/${AppCode.Sorter}/system/chargingStrategy`,
         name: 'chargingStrategy',
         component: '/Sorter/ChargingStrategy.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],

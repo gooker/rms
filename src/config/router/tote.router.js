@@ -1,29 +1,31 @@
+import { AppCode } from '@/config/config';
+
 export default [
   {
-    path: '/tote/center',
+    path: `/${AppCode.Tote}/center`,
     name: 'task',
     icon: 'icon-task',
     routes: [
       {
-        path: '/tote/task/executionQueue',
+        path: `/${AppCode.Tote}/task/executionQueue`,
         name: 'executionQueue',
         component: '/Tote/ExecutionQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/task/taskQueue',
+        path: `/${AppCode.Tote}/task/taskQueue`,
         name: 'waitingQueue',
         component: '/Tote/WaitingQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/task/taskLibrary',
+        path: `/${AppCode.Tote}/task/taskLibrary`,
         name: 'taskLibrary',
         component: '/Tote/TaskLibrary.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/task/totePoolTask',
+        path: `/${AppCode.Tote}/task/totePoolTask`,
         name: 'totePoolTask',
         component: '/Tote/TotePoolTask.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -32,37 +34,37 @@ export default [
   },
 
   {
-    path: '/tote/agv',
+    path: `/${AppCode.Tote}/agv`,
     name: 'agv',
     icon: 'agv',
     routes: [
       {
-        path: '/tote/agv/agvList',
+        path: `/${AppCode.Tote}/agv/agvList`,
         name: 'agvList',
         component: '/Tote/AgvList.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/agv/agvRealTime',
+        path: `/${AppCode.Tote}/agv/agvRealTime`,
         name: 'agvRealTime',
         component: '/Tote/AgvRealTime.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/agv/batchFirmwareUpgrade',
+        path: `/${AppCode.Tote}/agv/batchFirmwareUpgrade`,
         name: 'batchFirmwareUpgrade',
         component: '/Tote/BatchUpgrading',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/agv/firmwareUpgrade',
+        path: `/${AppCode.Tote}/agv/firmwareUpgrade`,
         name: 'firmwareUpgrade',
         hideInMenu: true,
         component: '/Tote/FirmwarUpdate.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/agv/logDownLoad',
+        path: `/${AppCode.Tote}/agv/logDownLoad`,
         name: 'logDownLoad',
         component: '/Tote/LogDownLoad.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -71,24 +73,24 @@ export default [
   },
 
   {
-    path: '/tote/pod',
+    path: `/${AppCode.Tote}/pod`,
     name: 'pod',
     icon: 'icon-shelf',
     routes: [
       {
-        path: '/tote/pod/podRowModelBaseData',
+        path: `/${AppCode.Tote}/pod/podRowModelBaseData`,
         name: 'podRowModelBaseData',
         component: '/Tote/Pod/PodRowModelBaseData.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/pod/podRowModelManager',
+        path: `/${AppCode.Tote}/pod/podRowModelManager`,
         name: 'podRowModelManager',
         component: '/Tote/Pod/PodRowModelManager.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/pod/newrakeLayout',
+        path: `/${AppCode.Tote}/pod/newrakeLayout`,
         name: 'rackLayout',
         component: '/Tote/Pod/RakeLayout/Index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -97,53 +99,37 @@ export default [
   },
 
   {
-    path: '/tote/faultManger',
+    path: `/${AppCode.Tote}/faultManger`,
     icon: 'warning',
     name: 'faultManagement',
     routes: [
       {
-        path: '/tote/faultManger/faultInfo',
+        path: `/${AppCode.Tote}/faultManger/faultInfo`,
         name: 'faultList',
         component: '/Tote/Fault/FaultInfo.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/faultManger/faultDefinition',
+        path: `/${AppCode.Tote}/faultManger/faultDefinition`,
         name: 'faultDefinition',
         component: '/Tote/Fault/FaultDefinition.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
     ],
   },
-
   {
-    path: '/tote/questionCenter',
-    icon: 'line-chart',
-    name: 'QuestionCenter',
-    component: '/Tote/Question/QuestionCenter.js',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
-    hideInMenu: true,
-  },
-  {
-    path: '/tote/formManger',
+    path: `/${AppCode.Tote}/formManger`,
     icon: 'line-chart',
     name: 'formManger',
     routes: [
       {
-        path: '/tote/formManger/reportCenter',
+        path: `/${AppCode.Tote}/formManger/reportCenter`,
         name: 'reportCenter',
         component: '/Tote/Form/Forms.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/formManger/detailFroms',
-        name: 'detailFroms',
-        hideInMenu: true,
-        component: '/Tote/Form/DetailFroms.js',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
-      },
-      {
-        path: '/tote/formManger/metadata',
+        path: `/${AppCode.Tote}/formManger/metadata`,
         name: 'metadata',
         component: '/Tote/Form/Metadata.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -152,18 +138,18 @@ export default [
   },
 
   {
-    path: '/tote/system',
+    path: `/${AppCode.Tote}/system`,
     name: 'system',
     icon: 'setting',
     routes: [
       {
-        path: '/tote/system/systemParamsManager',
+        path: `/${AppCode.Tote}/system/systemParamsManager`,
         name: 'systemParams',
         component: '/Tote/System/SystemParams.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
       },
       {
-        path: '/tote/system/chargingStrategy',
+        path: `/${AppCode.Tote}/system/chargingStrategy`,
         name: 'chargingStrategy',
         component: '/Tote/System/ChargingStrategy.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
