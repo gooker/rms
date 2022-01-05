@@ -1,8 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator, Tote, LatentLifting, ForkLifting } =NameSpace;
-
+const { Coordinator, Tote, LatentLifting, ForkLifting } = NameSpace;
 
 export async function fetchAllTaskTypes() {
   return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {
@@ -23,6 +22,16 @@ export async function fetchLanguageByAppCode(params) {
 export async function getCurrentUser() {
   return request('/sso/user/getUser', {
     method: 'GET',
+  });
+}
+
+// ************************************** 地图  ************************************** //
+export async function activeMap(mapId) {
+  const sectionId = window.localStorage.getItem('sectionId');
+
+  return request(`/${NameSpace.Coordinator}/map/active`, {
+    method: 'POST',
+    data: { id: mapId, sectionId },
   });
 }
 
@@ -528,7 +537,6 @@ export async function fetchReportDetailByUrl(params) {
   });
 }
 
-
 // 资源分组-分组管理
 export async function getCustomGroupJson() {
   return request(`/${Coordinator}/custom/getCustomGroupJson`, {
@@ -565,7 +573,6 @@ export async function saveOneCustomGroup(param) {
   });
 }
 
-
 // 资源分组-分组绑定
 // 保存绑定关系
 export async function fechSaveUnBind(param) {
@@ -590,7 +597,6 @@ export async function getUnBindGroupData(param) {
     data: param,
   });
 }
-
 
 // ********************** 任务触发器  ********************** //
 // 保存任务触发器
@@ -624,8 +630,6 @@ export async function switchTriggerState(param) {
     data: param,
   });
 }
-
-
 
 // ********************** 自定义任务  ********************** //
 // 获取自定义任务-用于选择任务触发
@@ -786,7 +790,6 @@ export async function fetchAppModules(params) {
   });
 }
 
-
 // 查询充电桩信息API
 export async function fetchChargeManagerList(params) {
   return request(`/${Coordinator}/api/charger`, {
@@ -839,7 +842,6 @@ export async function fetchUpdateCharger(params) {
   });
 }
 
-
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {
   return request(`/${Coordinator}/charger/getChargerError`, {
@@ -878,7 +880,6 @@ export async function saveWebHook(param) {
   });
 }
 
-
 // 删除 Web Hook
 export async function deleteWebHooks(param) {
   return request(`/${Coordinator}/webHook/deleteWebHookById`, {
@@ -886,7 +887,6 @@ export async function deleteWebHooks(param) {
     data: param,
   });
 }
-
 
 // 获取目标点锁
 export async function fetchTargetCellLockList() {
@@ -902,5 +902,3 @@ export async function fetchBatchDeleteTargetCellLock(params) {
     data: params,
   });
 }
-
- 

@@ -248,4 +248,4 @@ var SimpleCull = (function () {
 
   return Simple;
 })();
-export { SimpleCull };
+export default SimpleCull;

@@ -19,7 +19,7 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
     publicPath: '/',
   },
 
-  plugins: [new webpack.HotModuleReplacementPlugin(), new ReactRefreshWebpackPlugin()],
+  plugins: [new ReactRefreshWebpackPlugin()],
 
   /**
    * webpack-dev-server v4.0.0+ 要求 node >= v12.13.0 和 webpack >= v4.37.0
@@ -28,7 +28,6 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
    */
   devServer: {
     port: 3333,
-    hot: true,
     // 防止刷新页面报: Cannot GET '[route]' 问题
     historyApiFallback: true,
     // 可访问开发服务器的地址

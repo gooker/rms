@@ -327,6 +327,13 @@ export function extractNameSpaceInfoFromEnvs(env) {
   return nameSpaceInfoMap;
 }
 
+export function getDirByAngle(angle) {
+  if (angle > 315 || angle <= 45) return '0';
+  if (angle > 45 && angle <= 135) return '1';
+  if (angle > 135 && angle <= 225) return '2';
+  if (angle > 225 && angle <= 315) return '3';
+}
+
 /**
  * 将角度数据转化为方向数据
  * @param {*} angle
@@ -850,7 +857,6 @@ function getWindowHeightDpr() {
   return 1;
 }
 
-
 export function getRandomString(length) {
   const randomStringSeed = [];
   let charCode = 65;
@@ -874,7 +880,6 @@ export function getRandomString(length) {
 
   return randomString.join('');
 }
-
 
 // 自定义任务: 将地图编程数据转化成VM
 export function convertScopeDataToUiOptions(scopeData) {
@@ -964,4 +969,3 @@ export function restoreCustomTaskForm(customTask, customTypes) {
   });
   return result;
 }
-

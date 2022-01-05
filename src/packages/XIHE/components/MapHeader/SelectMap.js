@@ -7,7 +7,20 @@ import FormattedMessage from '@/components/FormattedMessage';
 import styles from './index.module.less';
 
 const SelectMap = (props) => {
-  const { mapList, currentMap } = props;
+  const { dispatch, mapList, currentMap } = props;
+
+  function mapMenuClick(record) {
+    if (record.key === 'add') {
+      // 当前已经打开地图，如果要新增地图则需要询问是否要保存地图防止已改数据丢失
+      // if (currentMap && currentMap.name != null) {
+      //   setSaveConfirm(true);
+      // } else {
+      //   openMapCreationModal();
+      // }
+    } else {
+      dispatch({ type: 'editor/checkoutMap', payload: record.key });
+    }
+  }
 
   function getMapListMenu() {
     let result = [];
@@ -39,7 +52,11 @@ const SelectMap = (props) => {
   return (
     <Dropdown
       overlayStyle={{ maxHeight: '50vh', overflow: 'auto' }}
-      overlay={<Menu selectedKeys={currentMap?.id}>{getMapListMenu()}</Menu>}
+      overlay={
+        <Menu selectedKeys={currentMap?.id} onClick={mapMenuClick}>
+          {getMapListMenu()}
+        </Menu>
+      }
     >
       <span className={styles.action}>
         <span style={{ fontSize: 15, fontWeight: 600 }}>

@@ -22,6 +22,7 @@ module.exports = {
     'import/no-dynamic-require': 0,
     'no-template-curly-in-string': 0,
     'import/no-anonymous-default-export': 0,
+    'jsx-a11y/aria-role': 0,
     'no-unused-vars': 1,
     'no-debugger': 1,
     'no-console': 1,

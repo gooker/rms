@@ -41,6 +41,9 @@ export default {
 
     // 全局数据
     allTaskTypes: {},
+
+    // 记录是否已经加载了纹理
+    hasLoadedTextures: false,
   },
 
   effects: {
@@ -163,6 +166,12 @@ export default {
   },
 
   reducers: {
+    saveHasLoadedTextures(state, { payload }) {
+      return {
+        ...state,
+        hasLoadedTextures: payload,
+      };
+    },
     saveHistory(state, { payload }) {
       return {
         ...state,

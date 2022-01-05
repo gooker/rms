@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { SimpleCull } from '@/libs/SimpleCull';
 import { Viewport } from 'pixi-viewport';
+import SimpleCull from '@/libs/SimpleCull';
 
 export default class PixiBuilder {
   constructor(width, height, htmlDOM) {
@@ -14,7 +14,9 @@ export default class PixiBuilder {
       width,
       height,
       antialias: true,
-      backgroundAlpha: 0,
+      autoResize: true,
+      transparent: true,
+      autoDensity: true,
       resolution: window.devicePixelRatio,
       powerPreference: 'high-performance',
     });

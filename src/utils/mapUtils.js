@@ -1,30 +1,31 @@
 import intl from 'react-intl-universal';
 import * as XLSX from 'xlsx';
 import { find, groupBy, sortBy } from 'lodash';
-import LogicArea from '@/packages/XIHE/entities/LogicArea';
+import { LogicArea } from '@/entities';
 import { isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
 import { AGVState } from '@/config/consts';
 import json from '../../package.json';
+import * as PIXI from '_pixi.js@6.2.1@pixi.js';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
   rows,
   cols,
-  firtID,
-  firtPostion,
+  firstID,
+  firstPosition,
   distanceX,
   distanceY,
   start,
   end,
   currentLogicId,
 ) {
-  let id = firtID;
+  let id = firstID;
   const cells = [];
   for (let row = 0; row < rows; row++) {
-    let innerY = firtPostion.y;
+    let innerY = firstPosition.y;
     innerY += row * distanceY;
     for (let col = 0; col < cols; col++) {
-      let innerX = firtPostion.x;
+      let innerX = firstPosition.x;
       innerX += col * distanceX;
       // 当前没有传入id或者极端的id值不在当前的逻辑视图内不会赋值
       if (id !== null && parseInt(id, 10) < end && !(parseInt(id, 10) < start)) {

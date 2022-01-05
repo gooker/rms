@@ -69,16 +69,9 @@ const Slider = (prop) => {
     } else {
       setOpenKeys(keys);
     }
-
-    // if (routeFirstLevelKeys.includes(latestOpenKey)) {
-    //   setOpenKeys(keys);
-    // } else {
-    //   setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
-    // }
   }
 
   function onSelectMenuItem({ selectedKeys }) {
-    console.log('menu keys:', selectedKeys);
     setSelectedKeys(selectedKeys);
     // dispatch({ type: 'global/saveMenuSelectKeys', payload: selectedKeys });
   }

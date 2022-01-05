@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Divider, Tooltip } from 'antd';
+import React, { memo, useState } from 'react';
+import { Divider, message, Modal, Tooltip } from 'antd';
 import {
   LoadingOutlined,
   SaveOutlined,
@@ -10,9 +10,20 @@ import {
 import { connect } from '@/utils/dva';
 import { IconFont } from '@/components/IconFont';
 import { formatMessage } from '@/utils/utils';
+import PositionCell from './PositionCell';
 
 const EditorHeaderRightTools = (props) => {
-  const { mapId, saveMapLoading, activeMapLoading, isActive } = props;
+  const { dispatch, mapId, saveMapLoading, activeMapLoading, isActive } = props;
+
+  const [positionVisible, setPositionVisible] = useState(false);
+
+  function activeMap() {
+    if (mapId) {
+      dispatch({ type: 'editor/activeMap', payload: mapId });
+    } else {
+      message.warn(formatMessage({ id: 'app.mapTool.saveMap' }));
+    }
+  }
 
   return (
     <>
@@ -26,7 +37,12 @@ const EditorHeaderRightTools = (props) => {
 
       {/* 查询点位 */}
       <Tooltip title={formatMessage({ id: 'mapEditor.locate' })}>
-        <span style={{ cursor: 'pointer' }}>
+        <span
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setPositionVisible(true);
+          }}
+        >
           <AimOutlined />
         </span>
       </Tooltip>
@@ -79,10 +95,30 @@ const EditorHeaderRightTools = (props) => {
           </Tooltip>
         ) : (
           <Tooltip title={formatMessage({ id: 'mapEditor.active' })}>
-            <IconFont type={'icon-active'} />
+            <span onClick={activeMap}>
+              <IconFont type={'icon-active'} />
+            </span>
           </Tooltip>
         )}
       </span>
+
+      {/* 定位点位 */}
+      <Modal
+        destroyOnClose
+        width={350}
+        visible={positionVisible}
+        onCancel={() => {
+          setPositionVisible(false);
+        }}
+        title={formatMessage({ id: 'app.leftContent.searchCell' })}
+        footer={null}
+      >
+        <PositionCell
+          close={() => {
+            setPositionVisible(false);
+          }}
+        />
+      </Modal>
     </>
   );
 };

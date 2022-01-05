@@ -4,7 +4,7 @@ import { sortBy, groupBy, findIndex, find } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import { addTemporaryId, getCurveMapKey } from '@/utils/mapUtils';
-import { LogicArea } from '@/packages/XIHE/entities';
+import { LogicArea } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
   moveCell,
@@ -33,7 +33,7 @@ import {
   fetchAllStationTypes,
   fetchMapHistoryDetail,
 } from '@/services/XIHE';
-import { fetchActiveMap } from '@/services/api';
+import { activeMap, fetchActiveMap } from '@/services/api';
 
 const FieldTextureKeyMap = {
   blockCellIds: 'block_cell',
@@ -52,8 +52,8 @@ export default {
     currentMap: null,
     currentLogicArea: 0, // id
     currentRouteMap: 'DEFAULT', // code
-    preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
     currentCells: [], // 当前视图的点位数据
+    preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
     mapContext: null, // 地图实体对象
 
     // 选择相关
@@ -71,19 +71,15 @@ export default {
     hideBlock: false,
     showCoordinate: false,
     showDistance: false,
-    shownPriority: [],
+    shownPriority: ['10', '20', '100', '1000'],
     showRelationsDir: [],
     showRelationsCells: [],
+    showBackImg: false,
 
-    drawerVisible: false,
-    mapHistoryVisible: false,
-
-    // Loading
+    // 标识符
     saveMapLoading: false,
     activeMapLoading: false,
-
-    // 各种弹窗数据
-    visible: {},
+    categoryPanel: null,
   },
 
   reducers: {
@@ -91,6 +87,12 @@ export default {
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    updateEditPanelVisible(state, action) {
+      return {
+        ...state,
+        categoryPanel: action.payload,
       };
     },
     saveMapContext(state, action) {
@@ -224,22 +226,27 @@ export default {
         yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
 
         // 获取所有站点类型
-        const allStationTypes = yield call(fetchAllStationTypes);
-        yield put({ type: 'saveAllStationTypes', payload: allStationTypes });
+        // fetchAllStationTypes().then((allStationTypes) => {
+        //   put({ type: 'saveAllStationTypes', payload: allStationTypes });
+        // });
 
         // 获取已配置的 Web Hook
-        const [allWebHooks, allWebHookTypes] = yield Promise.all([
-          getAllWebHooks(),
-          getAllWebHookTypes(),
-        ]);
-        if (!dealResponse(allWebHooks) && !dealResponse(allWebHookTypes)) {
-          const _allWebHooks = allWebHooks.map((hook) => ({
-            ...hook,
-            label: allWebHookTypes[hook.webHookType],
-          }));
-          yield put({ type: 'saveAllWebHooks', payload: _allWebHooks });
-        }
+        // Promise.all([getAllWebHooks(), getAllWebHookTypes()]).then(
+        //   ([allWebHooks, allWebHookTypes]) => {
+        //     if (!dealResponse(allWebHooks) && !dealResponse(allWebHookTypes)) {
+        //       const _allWebHooks = allWebHooks.map((hook) => ({
+        //         ...hook,
+        //         label: allWebHookTypes[hook.webHookType],
+        //       }));
+        //       put({ type: 'saveAllWebHooks', payload: _allWebHooks });
+        //     }
+        //   },
+        // );
       }
+    },
+
+    *startRenderMap({ payload }, { put, call }) {
+      //
     },
 
     *checkoutMap({ payload }, { put, call }) {
@@ -478,8 +485,7 @@ export default {
     *activeMap({ payload }, { select, call, put }) {
       const { currentMap } = yield select((state) => state.editor);
       yield put({ type: 'saveActiveMapLoading', payload: true });
-      const sectionId = window.localStorage.getItem('sectionId');
-      const response = yield call(fetchActiveMap, { id: payload, sectionId });
+      const response = yield call(activeMap, payload);
       if (!dealResponse(response)) {
         currentMap.activeFlag = true;
         yield put({ type: 'saveState', payload: { currentMap, activeMapLoading: false } });

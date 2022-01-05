@@ -7,6 +7,8 @@ import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
 import { dealResponse, formatMessage } from '@/utils/utils';
 import { fetchAllTaskTypes } from '@/services/api';
+import { loadTexturesForMap } from '@/utils/textures';
+
 import './mainLayout.less';
 
 @withRouter
@@ -30,9 +32,6 @@ class MainLayout extends React.Component {
 
       // 3. 获取所有车类任务类型数据
       this.loadAllTaskTypes();
-
-      // 4. 加载所有地图材质
-      this.loadAllMapTextures();
     } catch (error) {
       Modal.error({
         title: formatMessage({ id: 'app.global.initFailed' }),
@@ -58,10 +57,6 @@ class MainLayout extends React.Component {
         );
       }
     });
-  };
-
-  loadAllMapTextures = () => {
-    //
   };
 
   render() {
