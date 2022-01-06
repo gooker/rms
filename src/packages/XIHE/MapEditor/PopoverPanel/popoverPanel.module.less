@@ -40,3 +40,24 @@
     width: 100%;
   }
 }
+
+.actionTypePanelRow {
+  display: flex;
+
+  & > div {
+    flex: 1;
+  }
+
+  & > button {
+    margin-left: 4px;
+  }
+}
+
+.formWhiteLabel {
+  padding-left: 25px;
+  :global {
+    .ant-form .ant-form-item .ant-form-item-label label {
+      color: #fff;
+    }
+  }
+}

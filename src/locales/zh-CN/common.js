@@ -136,6 +136,7 @@ export default {
   'app.button.check': '查看',
   'app.button.reset': '重置',
   'app.button.update': '更新',
+  'app.button.generate': '生成',
   'app.button.delete': '删除',
   'app.button.cancel': '取消',
   'app.button.submit': '提交',
@@ -144,9 +145,11 @@ export default {
   'app.button.export': '导出',
   'app.button.import': '导入',
   'app.button.turnOn': '开启',
-  'app.button.confirm': '确认',
+  'app.button.confirm': '确定',
   'app.button.refresh': '刷新',
   'app.button.turnOff': '关闭',
+
+  // @下面5个可能需要从common中移除
   'app.button.bind': '绑定',
   'app.button.unbind': '解除绑定',
   'app.button.forceReset': '强制重置',

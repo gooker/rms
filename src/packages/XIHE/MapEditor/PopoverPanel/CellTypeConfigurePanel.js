@@ -12,7 +12,7 @@ const CellTypeConfigurePanel = (props) => {
   const { height, selectCells, onClick } = props;
 
   return (
-    <div style={{ height, width: 450 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 400 }} className={editorStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'app.map.feature'} />
       </div>
@@ -26,32 +26,28 @@ const CellTypeConfigurePanel = (props) => {
                     <img style={{ height: 20, marginRight: 10 }} src={`/textures/${picture}`} />
                     <FormattedMessage id={i18n} />
                   </div>
-                  <Row gutter={8}>
-                    <Col span={18}>
+                  <div className={styles.actionTypePanelRow}>
+                    <div>
                       <Select notFoundContent={null} style={{ width: '100%' }} />
-                    </Col>
-                    <Col span={3}>
-                      <Button
-                        disabled={selectCells.length === 0}
-                        onClick={() => {
-                          onClick && onClick('add');
-                        }}
-                      >
-                        <PlusOutlined />
-                      </Button>
-                    </Col>
-                    <Col span={3}>
-                      <Button
-                        danger
-                        disabled={selectCells.length === 0}
-                        onClick={() => {
-                          onClick && onClick('remove');
-                        }}
-                      >
-                        <DeleteOutlined />
-                      </Button>
-                    </Col>
-                  </Row>
+                    </div>
+                    <Button
+                      disabled={selectCells.length === 0}
+                      onClick={() => {
+                        onClick && onClick('add');
+                      }}
+                    >
+                      <PlusOutlined />
+                    </Button>
+                    <Button
+                      danger
+                      disabled={selectCells.length === 0}
+                      onClick={() => {
+                        onClick && onClick('remove');
+                      }}
+                    >
+                      <DeleteOutlined />
+                    </Button>
+                  </div>
                 </div>
                 <Divider style={{ margin: 5, borderTop: '1px solid #b0b0b0' }} />
               </>
