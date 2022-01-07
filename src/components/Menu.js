@@ -40,7 +40,7 @@ const Slider = (prop) => {
   useEffect(() => {
     const openKey = extractOpenKey(selectedKeys);
     setOpenKeys([openKey]);
-  }, [currentModuleRouter, selectedKeys]);
+  }, [currentModuleRouter]);
 
   const extractOpenKey = (key) => {
     let openKey;
@@ -54,6 +54,10 @@ const Slider = (prop) => {
             break;
           }
         }
+        // openKey = getOpenkey(routes, path, selectedKey);
+        // if (openKey) {
+        //   break;
+        // }
       } else {
         if (path === selectedKey) {
           openKey = path;
@@ -69,12 +73,32 @@ const Slider = (prop) => {
     return openKey;
   };
 
+  function getOpenkey(routes, path, selectedKey) {
+    let openKey;
+    for (let index = 0; index < routes.length; index++) {
+      const { routes: childRoutes, path: childPath } = routes[index];
+      if (childRoutes) {
+        openKey = getOpenkey(childRoutes, childPath, selectedKey);
+        if (openKey) break;
+      } else {
+        if (routes[index].path === selectedKey) {
+          openKey = path;
+          break;
+        }
+      }
+    }
+    return openKey;
+  }
+
+  function handleSelectkeys(e) {}
+
   const onOpenChange = (keys) => {
     setOpenKeys(keys);
   };
 
   const onSelectMenuItem = ({ item, key, keyPath, selectedKeys, domEvent }) => {
     setSelectedKeys(selectedKeys);
+    setOpenKeys(keyPath);
     dispatch({ type: 'global/saveSelectedKeys', payload: selectedKeys });
   };
 
@@ -104,6 +128,7 @@ const Slider = (prop) => {
       theme="dark"
       openKeys={openKeys}
       selectedKeys={selectedKeys}
+      onClick={handleSelectkeys}
       onOpenChange={onOpenChange}
       onSelect={onSelectMenuItem}
       style={{ width: '100%' }}

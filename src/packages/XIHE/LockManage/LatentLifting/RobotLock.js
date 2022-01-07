@@ -1,7 +1,7 @@
 import React from 'react';
-import {Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import RobotLockComponent from './components/RobotLockComponent';
+import RobotLockComponent from '../components/RobotLockComponent';
 import { AGVType } from '@/config/config';
 import { isNull } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
@@ -59,7 +59,7 @@ const RobotLock = () => {
     //   getColumn={getColumn} // 提供表格列数据
     //   agvType={AGVType.LatentLifting} // 标记当前页面的车型
     // />
-    <>1234</>
+    <>1238884</>
   );
 };
 
