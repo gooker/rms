@@ -3,7 +3,6 @@ const BaseConfig = require('./webpack.config.base');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
 const safePostCssParser = require('postcss-safe-parser');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -42,7 +41,6 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
       new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: {
           parser: safePostCssParser,
-          map: { inline: false, annotation: true },
         },
         cssProcessorPluginOptions: {
           preset: ['default', { minifyFontValues: { removeQuotes: false } }],
@@ -56,11 +54,6 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
   },
 
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'static/css/[name].[contenthash:8].css',
-      chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-    }),
-
     new CompressionPlugin({
       minRatio: 0.8,
       threshold: 10240,

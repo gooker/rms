@@ -18,7 +18,7 @@ class App extends Component {
       await initI18nInstance();
       this.setState({ initDone: true });
     } catch (e) {
-      console.log('初始化失败');
+      console.log('初始化失败: 国际化');
     }
   }
 

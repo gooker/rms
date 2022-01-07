@@ -1,15 +1,17 @@
 import React from 'react';
 import { Layout, Modal, message, Skeleton } from 'antd';
+import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/dva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
 import { dealResponse, formatMessage } from '@/utils/utils';
 import { fetchAllTaskTypes } from '@/services/api';
+import { loadTexturesForMap } from '@/utils/textures';
+
 import './mainLayout.less';
 
-const { Header, Sider, Content } = Layout;
-
+@withRouter
 @connect()
 class MainLayout extends React.Component {
   state = {
@@ -17,7 +19,8 @@ class MainLayout extends React.Component {
   };
 
   async componentDidMount() {
-    const { dispatch } = this.props;
+    const { dispatch, history } = this.props;
+    dispatch({ type: 'global/saveHistory', payload: history });
 
     try {
       // 1.获取用户信息
@@ -29,16 +32,11 @@ class MainLayout extends React.Component {
 
       // 3. 获取所有车类任务类型数据
       this.loadAllTaskTypes();
-
-      // 4. 加载所有地图材质
-      this.loadAllMapTextures();
     } catch (error) {
       Modal.error({
         title: formatMessage({ id: 'app.global.initFailed' }),
         content: error.toString(),
-        zIndex: 2147483649,
         onOk() {
-          // 登出
           dispatch({ type: 'user/logout' });
         },
       });
@@ -61,25 +59,14 @@ class MainLayout extends React.Component {
     });
   };
 
-  loadAllMapTextures = () => {
-    //
-  };
-
   render() {
     const { appReady } = this.state;
     return appReady ? (
       <Layout className="main-layout">
         <LayoutSlider />
         <Layout className="site-layout">
-          <Header
-            className="site-layout-background"
-            style={{ padding: 0, borderBottom: '1px solid #e8e8e8' }}
-          >
-            <LayoutHeader />
-          </Header>
-          <Content>
-            <LayoutContent />
-          </Content>
+          <LayoutHeader />
+          <LayoutContent />
         </Layout>
       </Layout>
     ) : (

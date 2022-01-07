@@ -25,6 +25,16 @@ export async function getCurrentUser() {
   });
 }
 
+// ************************************** 地图  ************************************** //
+export async function activeMap(mapId) {
+  const sectionId = window.localStorage.getItem('sectionId');
+
+  return request(`/${NameSpace.Coordinator}/map/active`, {
+    method: 'POST',
+    data: { id: mapId, sectionId },
+  });
+}
+
 // 获取当前已激活的地图
 export async function fetchActiveMap() {
   return request(`/${NameSpace.Coordinator}/map/getActiveMap`, { method: 'GET' });

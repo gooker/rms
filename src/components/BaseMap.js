@@ -1,19 +1,16 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-import { isNull, isItemOfArray } from '@/utils/utils';
 import {
   getCoordinat,
-  getCurveMapKey,
-  getTunnelGateCells,
-  getLineFromIdLineMap,
   getLineEntityFromMap,
-  calculateCellDistance,
   getCurrentRouteMapData,
   getTextureFromResources,
 } from '@/utils/mapUtils';
+import { getLineGraphics } from '@/utils/textures';
+import { isNull, isItemOfArray } from '@/utils/utils';
+import { CellSize, WorldScreenRatio, zIndex } from '@/config/consts';
 import {
   Dump,
-  Bezier,
   Charger,
   BitText,
   Elevator,
@@ -22,14 +19,16 @@ import {
   Intersection,
   RollerStation,
   CommonFunction,
-} from '@/packages/XIHE/entities';
-import { getLineGraphics } from '@/utils/textures';
-import { zIndex } from '@/config/consts';
+  BackImg,
+  EmergencyStop,
+} from '@/entities';
+import { sortBy, uniq } from 'lodash';
 
 const AllPriorities = ['10', '20', '100', '1000'];
+
 export default class BaseMap extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.idCellMap = new Map(); // {cellId: [CellEntity]}
     this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
     this.workStationMap = new Map(); // {stopCellId: [Entity]}
@@ -41,40 +40,80 @@ export default class BaseMap extends React.Component {
     this.dumpBasketMap = new Map();
     this.rollerMap = new Map();
     this.relationshipLines = new Map(); // 关系线
+    this.backImgMap = new Map(); // 背景图片
+    this.fixedEStopMap = new Map(); // 固定紧急避让区
   }
 
-  // 地图刷新
   refresh = () => {
-    this.mapRenderer.refresh();
+    this.pixiUtils.callRender();
   };
 
-  // 地图 resize
   resize = (width, height) => {
-    this.mapRenderer.resize(width, height);
+    this.pixiUtils.viewport.resize(width, height);
+    this.pixiUtils.callRender();
+  };
+
+  moveTo = (x, y, scaled) => {
+    this.pixiUtils.viewport.moveCenter(x, y);
+    if (scaled) {
+      this.pixiUtils.viewport.scaled = scaled;
+    }
+  };
+
+  positionCell = (cellId) => {
+    const cellEntity = this.idCellMap.get(`${cellId}`);
+    if (cellEntity) {
+      this.moveTo(cellEntity.x, cellEntity.y, 0.7);
+      this.refresh();
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  centerView = (cells) => {
+    if (cells && Object.keys(cells).length > 0) {
+      // Sort all points x & y
+      const uniqueXs = uniq(
+        Object.keys(cells)
+          .map((id) => cells[id])
+          .map((cell) => cell.x),
+      );
+      const Xs = sortBy(uniqueXs, (x) => x);
+
+      const uniqueYs = uniq(
+        Object.keys(cells)
+          .map((id) => cells[id])
+          .map((cell) => cell.y),
+      );
+      const Ys = sortBy(uniqueYs, (y) => y);
+
+      // Get Min and Max
+      const minX = Xs[0];
+      const minY = Ys[0];
+      const maxX = Xs[Xs.length - 1];
+      const maxY = Ys[Ys.length - 1];
+
+      // Map elements Area
+      const elementsWidth = maxX - minX + CellSize.width;
+      const elementsHeight = maxY - minY + CellSize.height;
+
+      const worldWidth = elementsWidth * WorldScreenRatio;
+      const worldHeight = elementsHeight * WorldScreenRatio;
+
+      this.pixiUtils.viewport.worldWidth = worldWidth;
+      this.pixiUtils.viewport.worldHeight = worldHeight;
+      this.pixiUtils.viewport.fitWorld(false);
+
+      this.pixiUtils.viewport.moveCenter(minX + elementsWidth / 2, minY + elementsHeight / 2);
+
+      return { worldWidth, worldHeight };
+    }
   };
 
   // 清空 Stage 所有元素
   clearMapStage = () => {
     this.pixiUtils.viewportRemoveChildren();
-  };
-
-  // 地图居中
-  centerView = (cells) => {
-    const allCells = this.props.cells || cells || {};
-    // 如果在monitor页面，居中显示不需要考虑不可走点
-    if (this.props.isMonitor) {
-      const blockCellIds = this.props.blockCellIds || [];
-      const _allCells = { ...allCells };
-      Object.keys(allCells).forEach((cellId) => {
-        if (blockCellIds.includes(parseInt(cellId, 10))) {
-          delete _allCells[cellId];
-        }
-      });
-      this.mapRenderer.centerView(_allCells);
-    } else {
-      this.mapRenderer.centerView(allCells);
-    }
-    this.mapRenderer.refresh();
   };
 
   // 地图点位坐标显示
@@ -83,7 +122,7 @@ export default class BaseMap extends React.Component {
     this.idCellMap.forEach((cell) => {
       cell.switchCoordinationShown(flag);
     });
-    this.mapRenderer.refresh();
+    this.pixiUtils.refresh();
   };
 
   // 切换是否显示优先级距离
@@ -96,7 +135,25 @@ export default class BaseMap extends React.Component {
         }
       });
     });
-    this.mapRenderer.refresh();
+    this.pixiUtils.refresh();
+  };
+
+  // 背景图片显示
+  switchBackImgShown = (flag) => {
+    this.states.showBackImg = flag;
+    this.backImgMap.forEach(function (value) {
+      value.switchBackImgEntityShown(flag);
+    });
+    this.pixiUtils.refresh();
+  };
+
+  // 切换急停区显示
+  switchEmergencyStopShown = (flag) => {
+    this.states.showEmergencyStop = flag;
+    this.fixedEStopMap.forEach(function (eStop) {
+      eStop.switchEstopsShown(flag);
+    });
+    this.pixiUtils.refresh();
   };
 
   // 清空并销毁所有优先级线条
@@ -188,14 +245,12 @@ export default class BaseMap extends React.Component {
 
         // 此时 sourceCell 和 targetCell 可能是电梯点
         if (sourceCell && targetCell) {
-          const distance = calculateCellDistance(sourceCell, targetCell);
           const line = getLineGraphics(
             relations,
             sourceCell,
             targetCell,
             angle,
             cost,
-            distance,
             interactive ? this.selectLine : null,
             shownMode,
           );
@@ -206,23 +261,23 @@ export default class BaseMap extends React.Component {
           }
         }
       }
-      if (type === 'curve') {
-        const { source, target, bparam1, bparam2 } = lineData;
-        const primaryCell = this.idCellMap.get(`${source}`);
-        const thirdCell = this.idCellMap.get(`${target}`);
-        if (!primaryCell || !thirdCell) return;
-        // 从后台的数据格式转回为曲线渲染需要的数据格式, 与 transformCurveData 互为逆运算
-        const curve = new Bezier({
-          cost,
-          x: primaryCell.x,
-          y: primaryCell.y,
-          primary: primaryCell,
-          secondary: { x: bparam1, y: bparam2 },
-          third: thirdCell,
-        });
-        this.pixiUtils.viewportAddChild(curve);
-        this.idLineMap[cost].set(getCurveMapKey(lineData), curve);
-      }
+      // if (type === 'curve') {
+      //   const { source, target, bparam1, bparam2 } = lineData;
+      //   const primaryCell = this.idCellMap.get(`${source}`);
+      //   const thirdCell = this.idCellMap.get(`${target}`);
+      //   if (!primaryCell || !thirdCell) return;
+      //   // 从后台的数据格式转回为曲线渲染需要的数据格式, 与 transformCurveData 互为逆运算
+      //   const curve = new Bezier({
+      //     cost,
+      //     x: primaryCell.x,
+      //     y: primaryCell.y,
+      //     primary: primaryCell,
+      //     secondary: { x: bparam1, y: bparam2 },
+      //     third: thirdCell,
+      //   });
+      //   this.pixiUtils.viewportAddChild(curve);
+      //   this.idLineMap[cost].set(getCurveMapKey(lineData), curve);
+      // }
     });
   }
 
@@ -236,7 +291,6 @@ export default class BaseMap extends React.Component {
     this.states.shownPriority = uiFilterData;
     if (relations.length === 0) return;
     const nonStopCellIds = getCurrentRouteMapData(nameSpace)?.nonStopCellIds ?? [];
-    const tunnels = getCurrentRouteMapData(nameSpace)?.tunnels ?? [];
     // 把需要隐藏优先级线条透明度置0
     const hiddenCosts = AllPriorities.filter((item) => !uiFilterData.includes(item));
     hiddenCosts.forEach((cost) => {
@@ -276,13 +330,6 @@ export default class BaseMap extends React.Component {
               'S',
             );
           });
-        });
-      }
-      // 渲染通道的出入口
-      if (tunnels) {
-        tunnels.forEach((channelData) => {
-          const { in: entrance, out: exit } = channelData;
-          this.addTunnelLineIcon(entrance, exit);
         });
       }
     }
@@ -338,7 +385,7 @@ export default class BaseMap extends React.Component {
         }
       });
     });
-    this.mapRenderer.refresh();
+    this.pixiUtils.refresh();
   };
 
   // 渲染线条特殊标志
@@ -448,7 +495,7 @@ export default class BaseMap extends React.Component {
     if (!isNull(check) && typeof check === 'function') {
       workStationParam.active = true;
       workStationParam.check = (flag, color) => {
-        check(JSON.stringify({ name, direction, stopCellId, flag, color }));
+        check(JSON.stringify({ station, name, angle, direction, stopCellId, flag, color }));
       };
     }
     const workStation = new WorkStation(workStationParam);
@@ -522,18 +569,23 @@ export default class BaseMap extends React.Component {
     }
   };
 
-  // 通用站点
-  renderCommonFunction = (commonList) => {
+  /**
+   * 渲染 通用站点
+   * @param {*} workStationData 通用站点数据
+   * @param {*} check 点击通用站点回调函数
+   */
+  renderCommonFunction = (commonList, check) => {
     commonList.forEach((commonFunctionData) => {
       const {
         name = '',
-        code,
+        station,
         angle,
         iconAngle,
         stopCellId,
         icon,
         size,
         offset,
+        direction = 0,
       } = commonFunctionData;
       const stopCell = this.idCellMap.get(`${stopCellId}`);
       if (!stopCell) return;
@@ -541,16 +593,27 @@ export default class BaseMap extends React.Component {
       let commonFunction;
       let destinationX;
       let destinationY;
+
+      const _commonPoint = {};
+      if (!isNull(check) && typeof check === 'function') {
+        _commonPoint.active = true;
+        _commonPoint.check = (flag, color) => {
+          check(JSON.stringify({ station, name, angle, direction, stopCellId, flag, color }));
+        };
+      }
+
       // 兼容旧逻辑(新通用站点必定包含offset数据)
       if (isNull(offset)) {
         destinationX = stopCell.x + commonFunctionData.x;
         destinationY = stopCell.y + commonFunctionData.y;
+
         commonFunction = new CommonFunction({
           x: destinationX,
           y: destinationY,
           name,
           angle, // 相对于停止点的方向
           iconAngle: angle, // 图标角度，仅用于渲染
+          ..._commonPoint,
         });
       } else {
         const { x, y } = getCoordinat(stopCell, angle, offset);
@@ -564,6 +627,7 @@ export default class BaseMap extends React.Component {
           iconAngle, // 图标角度，仅用于渲染
           icon, // 图标类型
           size, // 图标尺寸
+          ..._commonPoint,
         });
       }
 
@@ -574,7 +638,7 @@ export default class BaseMap extends React.Component {
       dashedLine.lineTo(stopCell.x, stopCell.y);
       dashedLine.zIndex = zIndex.targetLine;
       this.pixiUtils.viewportAddChild(dashedLine);
-      this.relationshipLines.set(`commonStation_${code}`, dashedLine);
+      this.relationshipLines.set(`commonStation_${station}`, dashedLine);
 
       this.pixiUtils.viewportAddChild(commonFunction);
       this.commonFunctionMap.set(`${stopCellId}`, commonFunction);
@@ -584,14 +648,14 @@ export default class BaseMap extends React.Component {
     });
   };
 
-  removeCommonFunction = ({ code, stopCellId }) => {
+  removeCommonFunction = ({ station, stopCellId }) => {
     const commonFunction = this.commonFunctionMap.get(`${stopCellId}`);
     if (commonFunction) {
       this.pixiUtils.viewportRemoveChild(commonFunction);
       commonFunction.destroy({ children: true });
 
       // 删除站点到停止点之间的关系线
-      const relationshipLine = this.relationshipLines.get(`commonStation_${code}`);
+      const relationshipLine = this.relationshipLines.get(`commonStation_${station}`);
       if (relationshipLine) {
         this.pixiUtils.viewportRemoveChild(relationshipLine);
         relationshipLine.destroy(true);
@@ -630,6 +694,27 @@ export default class BaseMap extends React.Component {
       intersection.destroy({ children: true });
     }
   };
+
+  // 背景图片 eg:cad背景
+  renderBackImgFunction = (backImgData) => {
+    //this.states.showBackImg
+    // console.log(this.states.showBackImg);
+    const showBackImg = this.states.showBackImg;
+    const backData = { ...backImgData, showBackImg };
+    const backImg = new BackImg(backData);
+    this.pixiUtils.viewportAddChild(backImg);
+    this.backImgMap.set(`${backImgData.x}_${backImgData.y}_${backImgData.type}`, backImg);
+  };
+
+  removeBackImgFunction = (backImgData) => {
+    const { x, y, type } = backImgData;
+    const backImg = this.backImgMap.get(`${x}_${y}_${type}`);
+    if (backImg) {
+      this.pixiUtils.viewportRemoveChild(backImg);
+      backImg.destroy(true);
+    }
+  };
+  //
 
   // 电梯
   renderElevator = (elevatorList) => {
@@ -777,6 +862,25 @@ export default class BaseMap extends React.Component {
     });
   };
 
+  // 渲染固定紧急避让区
+  renderFixedEStopFunction = (data) => {
+    const showEmergency = this.states.showEmergencyStop;
+    const eData = { ...data, showEmergency, notShowFixed: true };
+    const fixedEstop = new EmergencyStop(eData);
+    this.pixiUtils.viewportAddChild(fixedEstop);
+    this.fixedEStopMap.set(`${data.code}`, fixedEstop);
+  };
+
+  // 移除固定紧急避让区
+  removeFixedEStopFunction = (data) => {
+    const { code } = data;
+    const fixE = this.fixedEStopMap.get(`${code}`);
+    if (fixE) {
+      this.pixiUtils.viewportRemoveChild(fixE);
+      fixE.destroy({ children: true });
+    }
+  };
+
   // 滚筒站
   removeRollerFunction = (rollerStation) => {
     const { binCellId } = rollerStation;
@@ -813,11 +917,11 @@ export default class BaseMap extends React.Component {
    * 通道
    * @param newChannelList
    * @param interact Editor点位自身包含点击事件，所以不需要动态添加
+   * @param opt
    */
   renderTunnel = (newChannelList = [], interact = false, opt = 'add') => {
     newChannelList.forEach((channelData) => {
-      const { tunnelName, cells, in: entrance, out: exit } = channelData;
-      // 通道所有点位添加通道名称类型
+      const { tunnelName, cells } = channelData;
       cells.forEach((cellId) => {
         const cellEntity = this.idCellMap.get(`${cellId}`);
         const sprite = new BitText(tunnelName, 0, 0, 0xf4f9f9);
@@ -833,72 +937,6 @@ export default class BaseMap extends React.Component {
           }
         }
       });
-
-      // 新增门禁口点位图标
-      const gateCells = getTunnelGateCells(entrance, exit);
-      gateCells.forEach((cellId) => {
-        const cellEntity = this.idCellMap.get(cellId);
-        if (cellEntity) {
-          if (opt === 'add') {
-            cellEntity.plusType(
-              `tunnel_gate_${tunnelName}`,
-              getTextureFromResources('tunnel_ctrl'),
-            );
-            interact && cellEntity.interact(true, true, false, this.props.checkTunnelGate);
-          }
-          if (opt === 'remove') {
-            cellEntity.removeType(`tunnel_gate_${tunnelName}`);
-            interact && cellEntity.interact(false, true);
-          }
-        }
-      });
-
-      // 入口线条添加icon
-      if (entrance && Array.isArray(entrance)) {
-        entrance.forEach((lineId) => {
-          const [, entranceLine] = getLineFromIdLineMap(lineId, this.idLineMap);
-          if (entranceLine) {
-            opt === 'add' &&
-              entranceLine.plusAction(
-                getTextureFromResources('enter_cell'),
-                'channel_entrance',
-                'M',
-              );
-            opt === 'remove' && entranceLine && entranceLine.removeAction('channel_entrance');
-          }
-        });
-      }
-
-      // 出口线条添加icon
-      if (exit && Array.isArray(exit)) {
-        exit.forEach((lineId) => {
-          const [, outLine] = getLineFromIdLineMap(lineId, this.idLineMap);
-          if (outLine) {
-            opt === 'add' &&
-              outLine.plusAction(getTextureFromResources('leave_cell'), 'channel_exit', 'M');
-            opt === 'remove' && outLine.removeAction('channel_exit');
-          }
-        });
-      }
     });
-  };
-
-  addTunnelLineIcon = (entrance, exit) => {
-    // 入口线条添加icon
-    if (entrance && Array.isArray(entrance)) {
-      entrance.forEach((lineId) => {
-        const [, entranceLine] = getLineFromIdLineMap(lineId, this.idLineMap);
-        entranceLine &&
-          entranceLine.plusAction(getTextureFromResources('enter_cell'), 'channel_entrance', 'M');
-      });
-    }
-
-    // 出口线条添加icon
-    if (exit && Array.isArray(exit)) {
-      exit.forEach((lineId) => {
-        const [, outLine] = getLineFromIdLineMap(lineId, this.idLineMap);
-        outLine && outLine.plusAction(getTextureFromResources('leave_cell'), 'channel_exit', 'M');
-      });
-    }
   };
 }

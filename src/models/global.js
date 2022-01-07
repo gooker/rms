@@ -1,11 +1,9 @@
 import intl from 'react-intl-universal';
-import history from '@/history';
 import requestAPI from '@/utils/requestAPI';
 import { fetchNotice, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/user';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/utils';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
-import find from 'lodash/find';
 import allModuleRouter from '@/config/router';
 import moment from 'moment';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -16,29 +14,36 @@ export default {
   namespace: 'global',
 
   state: {
+    // 路由history实例
+    history: null,
+
     logo: null,
     copyRight: null,
     notification: 0,
     isFullscreen: false,
 
+    // 架构基础数据
     tabs: [],
+    grantedAPP: [],
     subModules: [],
     environments: [],
-    nameSpacesInfo: {},
-    grantedAPP: [],
-    selectedKeys: [],
+    menuSelectKeys: [],
 
     currentApp: null,
     currentEnv: null,
-    currentRoute: null,
 
     // 是否是编辑国际化模式
     editI18N: false,
 
+    // 国际化
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
 
+    // 全局数据
     allTaskTypes: {},
+
+    // 记录是否已经加载了纹理
+    hasLoadedTextures: false,
   },
 
   effects: {
@@ -60,13 +65,13 @@ export default {
       }
 
       // 3.获取NameSpace数据 & 并整合运维配置
-      // nameSpaceMap从getAllEnvironment中flag为1的 additionalInfos
       let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
       if (allEnvironment.length > 0) {
         const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
         if (activeNameSpace.length > 0) {
           // 若自定义环境出现两个已激活项目, 将默认启用第一项
           urlDir = {
+            ...urlDir,
             ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
           };
         }
@@ -103,14 +108,11 @@ export default {
       // 7. 保存信息
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
       yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
-      yield put({ type: 'saveNameSpacesInfo', payload: urlDir }); // 所有API接口信息
       yield put({ type: 'saveGrantedAPx', payload: { grantedAPP } }); // 所有授权的APP
       yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
       yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
       yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
-
       window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
-
       return true;
     },
 
@@ -138,20 +140,7 @@ export default {
     },
 
     *goToQuestionCenter(_, { put, select }) {
-      const { subModules, tabs } = yield select((state) => state.global);
-      const { routeLocalekeyMap } = yield select((state) => state.menu);
-      const mixrobot = find(subModules, { name: 'mixrobot' });
-      if (mixrobot) {
-        history.replace('/mixrobot/questionCenter');
-        const currentRoute = `/questionCenter`;
-        const tab = find(tabs, { route: currentRoute });
-        if (!tab) {
-          const newTabs = [...tabs];
-          const pathname = currentRoute.split('/#')[1].split('?')[0];
-          newTabs.push({ localeKey: routeLocalekeyMap[pathname], route: currentRoute });
-          yield put({ type: 'saveTabs', payload: newTabs });
-        }
-      }
+      //
     },
 
     // 更新语种
@@ -177,6 +166,18 @@ export default {
   },
 
   reducers: {
+    saveHasLoadedTextures(state, { payload }) {
+      return {
+        ...state,
+        hasLoadedTextures: payload,
+      };
+    },
+    saveHistory(state, { payload }) {
+      return {
+        ...state,
+        history: payload,
+      };
+    },
     updateEnvironment(state, { payload }) {
       return {
         ...state,
@@ -212,25 +213,17 @@ export default {
       };
     },
 
-    saveNameSpacesInfo(state, { payload }) {
-      return {
-        ...state,
-        nameSpacesInfo: payload,
-      };
-    },
-
     saveCurrentApp(state, { payload }) {
-      // 当前默认展示的appcode
       return {
         ...state,
         currentApp: payload,
       };
     },
-    saveSelectedKeys(state, { payload }) {
-      // menu 选中的selectedKey
+
+    saveMenuSelectKeys(state, { payload }) {
       return {
         ...state,
-        selectedKeys: payload,
+        menuSelectKeys: payload,
       };
     },
 

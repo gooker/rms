@@ -1,6 +1,5 @@
 export const WorldScreenRatio = 1.2;
 export const GlobalAlpha = 0.6;
-export const GlobalDrawerWidth = 450;
 
 export const Colors = {
   red: '#ff0000',
@@ -56,7 +55,7 @@ export const CostColor = {
 };
 
 // Size
-export const SpotSize = {
+export const CellSize = {
   width: 100,
   height: 100,
 };

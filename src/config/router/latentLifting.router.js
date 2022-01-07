@@ -1,23 +1,25 @@
+import { AppCode } from '@/config/config';
+
 export default [
   {
-    path: '/latentLifting/task',
+    path: `/${AppCode.LatentLifting}/task`,
     name: 'task',
     icon: 'icon-task',
     routes: [
       {
-        path: '/latentLifting/task/executionQueue',
+        path: `/${AppCode.LatentLifting}/task/executionQueue`,
         name: 'executionQueue',
         component: '/LatentLifting/ExecutionQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/latentLifting/task/taskQueue',
+        path: `/${AppCode.LatentLifting}/task/taskQueue`,
         name: 'waitingQueue',
         component: '/LatentLifting/WaitingQueue.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/latentLifting/task/taskLibrary',
+        path: `/${AppCode.LatentLifting}/task/taskLibrary`,
         name: 'taskLibrary',
         component: '/LatentLifting/TaskLibrary.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -26,30 +28,30 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
-    path: '/latentLifting/agv',
+    path: `/${AppCode.LatentLifting}/agv`,
     name: 'agv',
     icon: 'agv',
     routes: [
       {
-        path: '/latentLifting/agv/agvList',
+        path: `/${AppCode.LatentLifting}/agv/agvList`,
         name: 'agvList',
         component: '/LatentLifting/AgvList.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/latentLifting/agv/agvRealTime',
+        path: `/${AppCode.LatentLifting}/agv/agvRealTime`,
         name: 'agvRealTime',
         component: '/LatentLifting/AgvRealTime.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/latentLifting/agv/batchFirmwareUpgrade',
+        path: `/${AppCode.LatentLifting}/agv/batchFirmwareUpgrade`,
         name: 'batchFirmwareUpgrade',
         component: '/LatentLifting/BatchUpgrading.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: '/latentLifting/agv/logDownLoad',
+        path: `/${AppCode.LatentLifting}/agv/logDownLoad`,
         name: 'logDownLoad',
         component: '/LatentLifting/LogDownload.js',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
@@ -58,33 +60,33 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
-    path: '/latentLifting/storageManagement',
+    path: `/${AppCode.LatentLifting}/storageManagement`,
     name: 'storageManagement',
     hooks: ['dev'],
-    icon: 'icon-cangkucangchu',
+    icon: 'icon-warehouse',
     component: '/LatentLifting/StorageManagement',
   },
   {
-    path: '/latentLifting/taskDispatch',
+    path: `/${AppCode.LatentLifting}/taskDispatch`,
     name: 'taskDispatch',
     hooks: ['dev'],
     icon: 'icon-dispatch',
     component: '/LatentLifting/TaskDispatch',
   },
   {
-    path: '/latentLifting/faultManagement',
+    path: `/${AppCode.LatentLifting}/faultManagement`,
     icon: 'warning',
     name: 'faultManagement',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: '/latentLifting/faultManagement/faultList',
+        path: `/${AppCode.LatentLifting}/faultManagement/faultList`,
         name: 'faultList',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/LatentLifting/FaultList',
       },
       {
-        path: '/faultManger/faultDefinition',
+        path: `/${AppCode.LatentLifting}/faultManagement/faultDefinition`,
         name: 'faultDefinition',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/LatentLifting/FaultDefinition',
@@ -92,37 +94,37 @@ export default [
     ],
   },
   {
-    path: '/latentLifting/formManger',
+    path: `/${AppCode.LatentLifting}/formManger`,
     icon: 'line-chart',
     name: 'formManger',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: '/latentLifting/formManger/reportCenter',
+        path: `/${AppCode.LatentLifting}/formManger/reportCenter`,
         name: 'reportCenter',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/LatentLifting/ReportCenter.js',
       },
       {
-        path: '/latentLifting/formManger/taskKpi',
+        path: `/${AppCode.LatentLifting}/formManger/taskKpi`,
         name: 'taskKpi',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/LatentLifting/TaskKpi',
       },
       {
-        path: '/latentLifting/formManger/waitingKpi',
+        path: `/${AppCode.LatentLifting}/formManger/waitingKpi`,
         name: 'waitingKpi',
         hooks: ['dev'],
         component: '/LatentLifting/WaitingKpi',
       },
       {
-        path: '/latentLifting/formManger/stationKpi',
+        path: `/${AppCode.LatentLifting}/formManger/stationKpi`,
         name: 'stationKpi',
         hooks: ['dev'],
         component: '/LatentLifting/StationKpi',
       },
       {
-        path: '/latentLifting/formManger/metadata',
+        path: `/${AppCode.LatentLifting}/formManger/metadata`,
         name: 'metadata',
         authority: ['ADMIN', 'SUPERMANAGER'],
         component: '/LatentLifting/MetaData',
@@ -130,19 +132,19 @@ export default [
     ],
   },
   {
-    path: '/system',
+    path: `/${AppCode.LatentLifting}/system`,
     name: 'system',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     icon: 'setting',
     routes: [
       {
-        path: '/system/systemParams',
+        path: `/${AppCode.LatentLifting}/system/systemParams`,
         name: 'systemParams',
         authority: ['ADMIN', 'SUPERMANAGER'],
         component: '/LatentLifting/SystemParams.js',
       },
       {
-        path: '/system/chargingStrategy',
+        path: `/${AppCode.LatentLifting}/system/chargingStrategy`,
         name: 'chargingStrategy',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/LatentLifting/ChargingStrategy.js',

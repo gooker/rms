@@ -25,7 +25,7 @@ import operationLog from './zh-CN/XIHE/operationlog';
 import charging from './zh-CN/XIHE/charging';
 import webHook from './zh-CN/XIHE/webHook';
 import lockManage from './zh-CN/XIHE/lockManage';
-import mapEditor from './zh-CN/XIHE/mapEditor';
+import mapEditor from './zh-CN/XIHE/editor';
 
 export default {
   ...menu,

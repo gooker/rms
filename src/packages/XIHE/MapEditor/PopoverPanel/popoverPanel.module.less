@@ -1,0 +1,63 @@
+.panelBlock {
+  padding: 10px 5px;
+  background: #8b8b8b;
+  border-radius: 5px;
+
+  & > div:nth-child(1) {
+    padding: 0 0 5px 15px;
+    color: #fff;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  & > div:nth-child(2) {
+    padding: 0 15px;
+  }
+
+  :global {
+    .ant-form-item .ant-form-item-label label {
+      color: #fff;
+    }
+  }
+}
+
+.costConfigureArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    width: 90px;
+    height: 90px;
+    fill: #fff;
+  }
+}
+
+.functionTable {
+  width: 100%;
+
+  & > div:first-child {
+    width: 100%;
+  }
+}
+
+.actionTypePanelRow {
+  display: flex;
+
+  & > div {
+    flex: 1;
+  }
+
+  & > button {
+    margin-left: 4px;
+  }
+}
+
+.formWhiteLabel {
+  padding-left: 25px;
+  :global {
+    .ant-form .ant-form-item .ant-form-item-label label {
+      color: #fff;
+    }
+  }
+}

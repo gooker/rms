@@ -4,7 +4,7 @@ import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 
-const RobotlockSearch = (props) => {
+const RobotLockSearch = (props) => {
   const [form] = Form.useForm();
 
   const { search, data } = props;
@@ -52,4 +52,4 @@ const RobotlockSearch = (props) => {
     </Form>
   );
 };
-export default React.memo(RobotlockSearch);
+export default React.memo(RobotLockSearch);

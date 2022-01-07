@@ -7,6 +7,12 @@ export default {
   'app.module.Sorter': '分拣车',
   'app.module.I18N': '国际化',
 
+  // 颜色
+  'app.cost.green': '绿色',
+  'app.cost.blue': '蓝色',
+  'app.cost.yellow': '黄色',
+  'app.cost.red': '红色',
+
   // 通用表单数据
   'app.form.cellId': '点位ID',
   'app.form.agvId': '小车ID',
@@ -50,6 +56,7 @@ export default {
   'app.common.status': '状态',
   'app.common.position': '位置',
   'app.common.angle': '角度',
+  'app.common.code': '编码',
   'app.common.true': '是',
   'app.common.false': '否',
   'app.common.noRecord': '无记录',
@@ -66,6 +73,7 @@ export default {
   'app.common.description': '描述',
   'app.common.enabled': '启用',
   'app.common.disabled': '禁用',
+  'app.common.list': '列表',
 
   // 地图相关
   'app.map.map': '地图',
@@ -105,10 +113,14 @@ export default {
   // 方向
   'app.direction': '方向',
   'app.direction.current': '当前方向',
-  'app.direction.top': '上方',
-  'app.direction.right': '右侧',
-  'app.direction.bottom': '下方',
-  'app.direction.left': '左侧',
+  'app.direction.top': '上',
+  'app.direction.right': '右',
+  'app.direction.bottom': '下',
+  'app.direction.left': '左',
+  'app.direction.topSide': '上方',
+  'app.direction.rightSide': '右侧',
+  'app.direction.bottomSide': '下方',
+  'app.direction.leftSide': '左侧',
   'app.direction.toTop': '朝上',
   'app.direction.toRight': '朝右',
   'app.direction.toBottom': '朝下',
@@ -124,6 +136,7 @@ export default {
   'app.button.check': '查看',
   'app.button.reset': '重置',
   'app.button.update': '更新',
+  'app.button.generate': '生成',
   'app.button.delete': '删除',
   'app.button.cancel': '取消',
   'app.button.submit': '提交',
@@ -132,9 +145,11 @@ export default {
   'app.button.export': '导出',
   'app.button.import': '导入',
   'app.button.turnOn': '开启',
-  'app.button.confirm': '确认',
+  'app.button.confirm': '确定',
   'app.button.refresh': '刷新',
   'app.button.turnOff': '关闭',
+
+  // @下面5个可能需要从common中移除
   'app.button.bind': '绑定',
   'app.button.unbind': '解除绑定',
   'app.button.forceReset': '强制重置',
@@ -150,12 +165,7 @@ export default {
   'app.agv.status': '小车状态',
   'app.agv.on': '已开启',
   'app.agv.off': '未开启',
-
   'app.agv.direction': '车头方向',
-  'app.agv.direction.top': '朝上',
-  'app.agv.direction.right': '朝右',
-  'app.agv.direction.bottom': '朝下',
-  'app.agv.direction.left': '朝左',
 
   'app.agvState.available': '可用',
   'app.agvState.StandBy': '待命',
@@ -261,7 +271,6 @@ export default {
   'app.fault.extraData2': '附加数据2',
 
   //触发器状态
-
   'app.common.status.end': '结束',
   'app.common.status.start': '开始',
   'app.common.status.pause': '暂停',

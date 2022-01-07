@@ -47,10 +47,10 @@ const DictionaryDataSource = {
 
   // 小车方向
   agvDirection: {
-    0: 'app.agv.direction.top',
-    90: 'app.agv.direction.right',
-    180: 'app.agv.direction.bottom',
-    270: 'app.agv.direction.left',
+    0: 'app.direction.toTop',
+    90: 'app.direction.toRight',
+    180: 'app.direction.toBottom',
+    270: 'app.direction.toLeft',
   },
 
   // 货架方向

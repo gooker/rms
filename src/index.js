@@ -9,9 +9,8 @@ import userModel from '@/models/user';
 import editorModel from '@/models/editor';
 import monitorModel from '@/models/monitor';
 import simulatorModel from '@/models/simulator';
-import taskTriger from '@/packages/XIHE/SourceGroupManage/TaskTrigger/models/taskTriger';
-import customTask from '@/packages/XIHE/SourceGroupManage/CustomTask/models/CustomTaskModel';
-import history from '@/history';
+import taskTrigger from '@/models/taskTrigger';
+import customTask from '@/models/CustomTaskModel';
 import './global.less';
 
 // 全局错误处理(尝试版)
@@ -42,7 +41,7 @@ app.model(globalModel);
 app.model(editorModel);
 app.model(monitorModel);
 app.model(simulatorModel);
-app.model(taskTriger);
+app.model(taskTrigger);
 app.model(customTask);
 
 // 3. 启动
@@ -50,13 +49,9 @@ const DvaProvider = app.create();
 
 ReactDOM.render(
   <DvaProvider>
-    <Router history={history}>
+    <Router>
       <App />
     </Router>
   </DvaProvider>,
   document.getElementById('root'),
 );
-
-if (module.hot) {
-  module.hot.accept();
-}

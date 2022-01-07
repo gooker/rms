@@ -1,6 +1,8 @@
+import { AppCode } from '@/config/config';
+
 export default [
   {
-    path: '/i18n/languageManage',
+    path: `/${AppCode.I18N}/languageManage`,
     name: 'languageManage',
     component: '/Translator/LanguageManage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER','USER'],

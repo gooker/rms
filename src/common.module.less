@@ -5,6 +5,23 @@
   }
 }
 
+// Flex
+.flexHorizontalCenter {
+  display: flex;
+  justify-content: center;
+}
+
+.flexVerticalCenter {
+  display: flex;
+  align-items: center;
+}
+
+.flexCenter {
+  .flexVerticalCenter();
+
+  justify-content: center;
+}
+
 // 页面通用样式
 .commonPageStyleNoPadding {
   display: flex;
@@ -122,7 +139,9 @@
 
 .mapBodyMiddle {
   flex: 1;
+  font-size: 0;
   background: radial-gradient(circle, rgb(88, 88, 88) 0%, rgb(46, 46, 46) 100%);
+  touch-action: none;
 }
 
 // 运维弹窗样式

@@ -10,6 +10,17 @@ import {
   DropboxOutlined,
 } from '@ant-design/icons';
 
+export const Category = {
+  Cell: 'CELL',
+  Cost: 'COST',
+  CellType: 'CELL_TYPE',
+  Elevator: 'ELEVATOR',
+  WorkStation: 'WORK_STATION',
+  Station: 'COMMON_STATION',
+  Charger: 'CHARGER',
+  View: 'VIEW',
+};
+
 export const EditorLeftTools = [
   {
     label: formatMessage({ id: 'mapEditor.tools.choose' }),
@@ -56,38 +67,28 @@ export const EditorRightTools = [
   },
   {
     label: formatMessage({ id: 'app.map.cell' }),
-    value: 'cell',
+    value: Category.Cell,
     icon: <IconFont type={'icon-cell'} />,
   },
   {
     label: formatMessage({ id: 'app.map.routeMap' }),
-    value: 'routeMap',
+    value: Category.Cost,
     icon: <IconFont type={'icon-routeMap'} />,
   },
   {
-    label: formatMessage({ id: 'app.map.view' }),
-    value: 'view',
-    icon: <EyeOutlined />,
-  },
-  {
     label: formatMessage({ id: 'app.map.feature' }),
-    value: 'feature',
+    value: Category.CellType,
     icon: <IconFont type={'icon-feature'} />,
   },
   {
     label: formatMessage({ id: 'app.map.workstation' }),
-    value: 'workstation',
+    value: Category.WorkStation,
     icon: <IconFont type={'icon-station'} />,
   },
   {
     label: formatMessage({ id: 'app.map.station' }),
-    value: 'station',
+    value: Category.Station,
     icon: <BankOutlined />,
-  },
-  {
-    label: formatMessage({ id: 'app.map.aisle' }),
-    value: 'aisle',
-    icon: <NodeExpandOutlined />,
   },
   {
     label: formatMessage({ id: 'app.map.elevator' }),
@@ -110,6 +111,11 @@ export const EditorRightTools = [
     icon: <IconFont type={'icon-rest2'} />,
   },
   {
+    label: formatMessage({ id: 'app.map.aisle' }),
+    value: 'aisle',
+    icon: <NodeExpandOutlined />,
+  },
+  {
     label: formatMessage({ id: 'app.map.delivery' }),
     value: 'delivery',
     icon: <DropboxOutlined />,
@@ -130,8 +136,102 @@ export const EditorRightTools = [
     icon: <IconFont type={'icon-template'} />,
   },
   {
+    label: formatMessage({ id: 'app.map.view' }),
+    value: Category.View,
+    icon: <EyeOutlined />,
+  },
+  {
     label: formatMessage({ id: 'mapEditor.tools.history' }),
     value: 'history',
     icon: <IconFont type={'icon-history'} />,
   },
+];
+
+export const CellTypeSetting = [
+  // 不可走点
+  {
+    type: 'blockCellIds',
+    picture: 'block_cell.png',
+    i18n: 'editor.cellType.forbid',
+    scope: 'routeMap',
+    texture: 'block_cell',
+  },
+  // 存储点
+  {
+    type: 'storeCellIds',
+    picture: 'store_cell.png',
+    i18n: 'editor.cellType.storage',
+    scope: 'logic',
+    texture: 'store_cell',
+  },
+  // 跟车点
+  {
+    type: 'followCellIds',
+    picture: 'follow_cell.png',
+    i18n: 'editor.cellType.follow',
+    scope: 'routeMap',
+    texture: 'follow_cell',
+  },
+  // 等待点
+  {
+    type: 'waitCellIds',
+    picture: 'wait_cell.png',
+    i18n: 'editor.cellType.waiting',
+    scope: 'routeMap',
+    texture: 'wait_cell',
+  },
+  // 接任务点
+  {
+    type: 'taskCellIds',
+    picture: 'get_task.png',
+    i18n: 'editor.cellType.getTask',
+    scope: 'logic',
+    texture: 'get_task',
+  },
+  // 安全区
+  {
+    type: 'safeAreaCellIds',
+    picture: 'safe_spot.png',
+    i18n: 'editor.cellType.safe',
+    scope: 'logic',
+    texture: 'safe_spot',
+  },
+  // 独立旋转点
+  {
+    type: 'rotateCellIds',
+    picture: 'round.png',
+    i18n: 'editor.cellType.rotation',
+    scope: 'logic',
+    texture: 'round',
+  },
+];
+
+export const CostOptions = [
+  {
+    value: '10',
+    label: 'app.cost.green',
+    key: '10',
+  },
+  {
+    value: '20',
+    label: 'app.cost.blue',
+    key: '20',
+  },
+  {
+    value: '100',
+    label: 'app.cost.yellow',
+    key: '100',
+  },
+  {
+    value: '1000',
+    label: 'app.cost.red',
+    key: '1000',
+  },
+];
+
+export const DirectionOption = [
+  { value: '0', label: 'app.direction.top' },
+  { value: '1', label: 'app.direction.right' },
+  { value: '2', label: 'app.direction.bottom' },
+  { value: '3', label: 'app.direction.left' },
 ];

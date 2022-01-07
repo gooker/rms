@@ -41,7 +41,7 @@ class LayoutSider extends React.PureComponent {
     const {logo } = this.props;
     return (
       <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="siderlogo">
+        <div className="siderLogo">
             <img src={logo || Logo} alt={'logo'} />
           </div>
         <LayoutMenu />

@@ -2,34 +2,22 @@ import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from '@/utils/dva';
-import { formatMessage, isStrictNull } from '@/utils/utils';
+import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import commonStyles from '@/common.module.less';
 
-const baseCode = {
-  tote: 'tote-wcs-gui',
-};
-
 const { SubMenu } = Menu;
 
 const Slider = (prop) => {
-  const [openKeys, setOpenKeys] = useState([]);
-  const [selectedKeys, setSelectedKeys] = useState(prop.selectedKeys_global);
+  const { dispatch, currentApp, allMenuData } = prop;
+
+  const { pathname } = window.location;
   const [currentModuleRouter, setCurrentModuleRouter] = useState([]);
-  const { currentApp, currentUser, allMenuData, dispatch } = prop;
+  const [openKeys, setOpenKeys] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState(pathname === '/' ? [] : [pathname]);
 
-  useEffect(() => {
-    const currentOpenApp = window.location.href.split('#/')[1];
-    let code = null;
-    if (!isStrictNull(currentOpenApp)) {
-      code = baseCode[currentOpenApp.split('/')[0]] || currentOpenApp.split('/')[0];
-    } else {
-      code = currentUser && currentUser.username === 'admin' ? 'sso' : 'mixrobot';
-    }
-    dispatch({ type: 'global/saveCurrentApp', payload: code });
-  }, []);
-
+  // 根据currentApp重新渲染菜单数据
   useEffect(() => {
     const currentAppRouter = allMenuData
       .filter(({ appCode }) => appCode === currentApp)
@@ -38,124 +26,96 @@ const Slider = (prop) => {
   }, [currentApp]);
 
   useEffect(() => {
-    const openKey = extractOpenKey(selectedKeys);
-    setOpenKeys([openKey]);
+    setOpenKeys(extractOpenKeys());
   }, [currentModuleRouter]);
 
-  const extractOpenKey = (key) => {
-    let openKey;
-    const selectedKey = key[0];
-    for (let index = 0; index < currentModuleRouter.length; index++) {
-      const { routes, path } = currentModuleRouter[index];
-      if (routes) {
-        for (let index2 = 0; index2 < routes.length; index2++) {
-          if (routes[index2].path === selectedKey) {
-            openKey = path;
-            break;
-          }
-        }
-        // openKey = getOpenkey(routes, path, selectedKey);
-        // if (openKey) {
-        //   break;
-        // }
-      } else {
-        if (path === selectedKey) {
-          openKey = path;
-          break;
-        }
-      }
-
-      if (openKey) {
-        break;
-      }
+  function extractOpenKeys() {
+    if (
+      pathname === '/' ||
+      !Array.isArray(currentModuleRouter) ||
+      currentModuleRouter.length === 0
+    ) {
+      return [];
     }
 
-    return openKey;
-  };
+    const openKeys = [];
+    const routeFirstLevelKeys = currentModuleRouter.map(({ path }) => path);
+    for (let i = 0; i < routeFirstLevelKeys.length; i++) {
+      if (pathname.startsWith(routeFirstLevelKeys[i])) {
+        openKeys.push(routeFirstLevelKeys[i]);
 
-  function getOpenkey(routes, path, selectedKey) {
-    let openKey;
-    for (let index = 0; index < routes.length; index++) {
-      const { routes: childRoutes, path: childPath } = routes[index];
-      if (childRoutes) {
-        openKey = getOpenkey(childRoutes, childPath, selectedKey);
-        if (openKey) break;
-      } else {
-        if (routes[index].path === selectedKey) {
-          openKey = path;
-          break;
+        const suffix = `${routeFirstLevelKeys[i]}/`;
+        const restPath = pathname.replace(suffix, '').split('/');
+        if (restPath.length > 1) {
+          // 最后一个路由是页面路由要去掉
+          restPath.pop();
+          let openKey = '';
+          restPath.forEach((item) => {
+            openKey = `${suffix}${item}`;
+            openKeys.push(openKey);
+          });
         }
+        return openKeys;
       }
     }
-    return openKey;
   }
 
-  function handleSelectkeys(e) {}
+  function onOpenChange(keys) {
+    const routeFirstLevelKeys = currentModuleRouter.map(({ path }) => path);
+    // 取最后keys数组最后一个节点，如果是某个根节点(routeFirstLevelKeys)，就隐藏别的已展开的节点
+    const lastOpenKey = keys[keys.length - 1];
+    if (routeFirstLevelKeys.includes(lastOpenKey)) {
+      setOpenKeys([lastOpenKey]);
+    } else {
+      setOpenKeys(keys);
+    }
+  }
 
-  const onOpenChange = (keys) => {
-    setOpenKeys(keys);
-  };
-
-  const onSelectMenuItem = ({ item, key, keyPath, selectedKeys, domEvent }) => {
+  function onSelectMenuItem({ selectedKeys }) {
     setSelectedKeys(selectedKeys);
-    setOpenKeys(keyPath);
-    dispatch({ type: 'global/saveSelectedKeys', payload: selectedKeys });
-  };
+    // dispatch({ type: 'global/saveMenuSelectKeys', payload: selectedKeys });
+  }
 
-  const renderMenuItem = (name, routes) => {
-    return routes.map(({ path, name: childName, routes: itemRoutes }) => {
-      if (Array.isArray(itemRoutes)) {
+  // 渲染菜单
+  function renderMenu(routes, localeKey) {
+    return routes.map(({ name, icon, path, routes }) => {
+      const subLocaleKey = `${localeKey}.${name}`;
+      if (Array.isArray(routes)) {
         return (
-          <SubMenu key={path} title={formatMessage({ id: `menu.${name}.${childName}` })}>
-            {renderMenuItem(`${name}.${childName}`, itemRoutes)}
+          <SubMenu
+            key={path}
+            title={formatMessage({ id: subLocaleKey })}
+            icon={icon ? <span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span> : null}
+          >
+            {renderMenu(routes, subLocaleKey)}
           </SubMenu>
         );
       } else {
         return (
-          <Menu.Item key={path}>
+          <Menu.Item
+            key={path}
+            icon={icon ? <span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span> : null}
+          >
             <Link to={path}>
-              <FormattedMessage id={`menu.${name}.${childName}`} />
+              <FormattedMessage id={subLocaleKey} />
             </Link>
           </Menu.Item>
         );
       }
     });
-  };
+  }
 
   return (
     <Menu
       mode="inline"
       theme="dark"
       openKeys={openKeys}
-      selectedKeys={selectedKeys}
-      onClick={handleSelectkeys}
       onOpenChange={onOpenChange}
+      selectedKeys={selectedKeys}
       onSelect={onSelectMenuItem}
       style={{ width: '100%' }}
     >
-      {currentModuleRouter.map(({ name, icon, path, routes }) => {
-        if (Array.isArray(routes)) {
-          return (
-            <SubMenu
-              key={path}
-              title={formatMessage({ id: `menu.${name}` })}
-              icon={<span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span>}
-            >
-              {renderMenuItem(name, routes)}
-            </SubMenu>
-          );
-        }
-        return (
-          <Menu.Item
-            key={path}
-            icon={<span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span>}
-          >
-            <Link to={path}>
-              <FormattedMessage id={`menu.${name}`} />
-            </Link>
-          </Menu.Item>
-        );
-      })}
+      {renderMenu(currentModuleRouter, 'menu')}
     </Menu>
   );
 };
@@ -163,7 +123,6 @@ export default connect(({ global, user }) => {
   return {
     currentApp: global?.currentApp,
     allMenuData: global?.allMenuData,
-    selectedKeys_global: global?.selectedKeys,
-    currentUser: user?.currentUser,
+    menuSelectKeys: global?.menuSelectKeys,
   };
 })(memo(Slider));

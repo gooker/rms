@@ -171,6 +171,11 @@ function getWebPackBaseConfig(webpackEnv) {
         verbose: true,
       }),
 
+      new MiniCssExtractPlugin({
+        filename: 'static/css/[name].[contenthash:8].css',
+        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+      }),
+
       // 这里有个坑记录下: https://blog.csdn.net/vv_bug/article/details/113845376
       new HtmlWebpackPlugin(
         Object.assign(
