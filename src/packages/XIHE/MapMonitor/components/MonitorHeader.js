@@ -3,10 +3,11 @@ import { RightOutlined } from '@ant-design/icons';
 import SelectMap from '../MapHeader/SelectMap';
 import SelectLogicArea from '../MapHeader/SelectLogicArea';
 import SelectRouteMap from '../MapHeader/SelectRouteMap';
-import EditorHeaderRightTools from '../MapHeader/EditorHeaderRightTools';
+import MonitorHeaderRightTools from './MonitorHeaderRightTools';
 import styles from '../MapHeader/index.module.less';
 
-const EditorHeader = () => {
+const MonitorHeader = (props) => {
+  const {} = props;
   return (
     <>
       <div className={styles.mapSwitcher}>
@@ -19,9 +20,9 @@ const EditorHeader = () => {
         <SelectRouteMap />
       </div>
       <div className={styles.mapHeaderTools}>
-        <EditorHeaderRightTools />
+        <MonitorHeaderRightTools />
       </div>
     </>
   );
 };
-export default memo(EditorHeader);
+export default memo(MonitorHeader);

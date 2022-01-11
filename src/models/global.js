@@ -17,6 +17,9 @@ export default {
     // 路由history实例
     history: null,
 
+    // Socket实例
+    socketClient: null,
+
     logo: null,
     copyRight: null,
     notification: 0,
@@ -170,6 +173,12 @@ export default {
       return {
         ...state,
         hasLoadedTextures: payload,
+      };
+    },
+    saveSocketClient(state, { payload }) {
+      return {
+        ...state,
+        socketClient: payload,
       };
     },
     saveHistory(state, { payload }) {

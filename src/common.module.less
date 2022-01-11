@@ -137,11 +137,26 @@
   background: @mapSideColor;
 }
 
-.mapBodyMiddle {
+.editorBodyMiddle {
   display: flex;
   flex: 1;
   flex-flow: column nowrap;
   background: radial-gradient(circle, rgb(88, 88, 88) 0%, rgb(46, 46, 46) 100%);
+  touch-action: none;
+}
+
+.monitorBackColor {
+  background: radial-gradient(circle, rgb(0, 60, 72) 0%, rgb(14, 38, 62) 100%);
+}
+
+.monitorBodyMiddle {
+  .monitorBackColor();
+
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  height: 100%;
+  font-size: 0;
   touch-action: none;
 }
 

@@ -10,6 +10,7 @@ import { fetchAllTaskTypes } from '@/services/api';
 import { loadTexturesForMap } from '@/utils/textures';
 
 import './mainLayout.less';
+import SocketClient from '@/utils/SocketClient';
 
 @withRouter
 @connect()
@@ -24,13 +25,19 @@ class MainLayout extends React.Component {
 
     try {
       // 1.获取用户信息
-      await dispatch({ type: 'user/fetchCurrentUser' });
+      const { currentSection } = await dispatch({ type: 'user/fetchCurrentUser' });
 
-      // 2.初始化菜单
+      // 2. 初始化Socket客户端
+      const { name, password } = currentSection;
+      const socketClient = new SocketClient({ login: name, passcode: password });
+      socketClient.connect();
+      dispatch({ type: 'global/saveSocketClient', payload: socketClient });
+
+      // 3.初始化菜单
       await dispatch({ type: 'global/initAppAuthority' });
       this.setState({ appReady: true });
 
-      // 3. 获取所有车类任务类型数据
+      // 4. 获取所有车类任务类型数据
       this.loadAllTaskTypes();
     } catch (error) {
       Modal.error({

@@ -29,7 +29,7 @@ const MapEditor = (props) => {
       </div>
       <div className={commonStyles.mapLayoutBody}>
         <EditorBodyLeft />
-        <div className={commonStyles.mapBodyMiddle}>
+        <div className={commonStyles.editorBodyMiddle}>
           <EditorMapContainer />
           <EditorFooter />
         </div>

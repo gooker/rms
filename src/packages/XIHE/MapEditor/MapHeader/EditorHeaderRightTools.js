@@ -10,7 +10,7 @@ import {
 import { connect } from '@/utils/dva';
 import { IconFont } from '@/components/IconFont';
 import { formatMessage } from '@/utils/utils';
-import PositionCell from './PositionCell';
+import PositionCell from '../components/PositionCell';
 
 const EditorHeaderRightTools = (props) => {
   const { dispatch, mapId, saveMapLoading, activeMapLoading, isActive } = props;
