@@ -159,7 +159,7 @@ export default class Cell extends PIXI.Container {
     if (interactive) {
       this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
       this.addSelectedBackGround(450, 400);
-      this.on('pointerdown', (ev) => this.onClick(ev, showBG));
+      this.on('click', (ev) => this.onClick(ev, showBG));
       // 如果是动态新增交互就用参数回调来覆盖原有回调
       if (dynamic) {
         this.select = callBack;

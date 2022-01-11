@@ -187,18 +187,6 @@ export default {
         visible: action.payload,
       };
     },
-    saveAllStationTypes(state, action) {
-      return {
-        ...state,
-        allStationTypes: action.payload,
-      };
-    },
-    saveAllWebHooks(state, action) {
-      return {
-        ...state,
-        allWebHooks: action.payload,
-      };
-    },
   },
 
   effects: {
@@ -225,23 +213,28 @@ export default {
         yield put({ type: 'saveMapList', payload: mapList });
         yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
 
-        // 获取所有站点类型
-        // fetchAllStationTypes().then((allStationTypes) => {
-        //   put({ type: 'saveAllStationTypes', payload: allStationTypes });
-        // });
-
-        // 获取已配置的 Web Hook
-        // Promise.all([getAllWebHooks(), getAllWebHookTypes()]).then(
-        //   ([allWebHooks, allWebHookTypes]) => {
-        //     if (!dealResponse(allWebHooks) && !dealResponse(allWebHookTypes)) {
-        //       const _allWebHooks = allWebHooks.map((hook) => ({
-        //         ...hook,
-        //         label: allWebHookTypes[hook.webHookType],
-        //       }));
-        //       put({ type: 'saveAllWebHooks', payload: _allWebHooks });
-        //     }
-        //   },
-        // );
+        /**
+         * 1. 获取所有站点类型
+         * 2. 获取已配置的 Web Hook
+         */
+        const [allWebHooks, allWebHookTypes, allStationTypes] = yield Promise.all([
+          getAllWebHooks(),
+          getAllWebHookTypes(),
+          fetchAllStationTypes(),
+        ]);
+        if (!dealResponse(allWebHooks) && !dealResponse(allWebHookTypes)) {
+          const _allWebHooks = allWebHooks.map((hook) => ({
+            ...hook,
+            label: allWebHookTypes[hook.webHookType],
+          }));
+          yield put({
+            type: 'saveState',
+            payload: {
+              allStationTypes,
+              allWebHooks: _allWebHooks,
+            },
+          });
+        }
       }
     },
 

@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 
 export const Category = {
+  Aisle: 'AISLE',
   Cell: 'CELL',
   Cost: 'COST',
   CellType: 'CELL_TYPE',
@@ -23,14 +24,14 @@ export const Category = {
 
 export const EditorLeftTools = [
   {
-    label: formatMessage({ id: 'mapEditor.tools.choose' }),
-    value: 'choose',
-    icon: <IconFont type={'icon-click'} />,
-  },
-  {
     label: formatMessage({ id: 'mapEditor.tools.drag' }),
     value: 'drag',
     icon: <IconFont type={'icon-drag'} />,
+  },
+  {
+    label: formatMessage({ id: 'mapEditor.tools.choose' }),
+    value: 'choose',
+    icon: <IconFont type={'icon-click'} />,
   },
   {
     label: formatMessage({ id: 'mapEditor.tools.insertPicture' }),
@@ -112,7 +113,7 @@ export const EditorRightTools = [
   },
   {
     label: formatMessage({ id: 'app.map.aisle' }),
-    value: 'aisle',
+    value: Category.Aisle,
     icon: <NodeExpandOutlined />,
   },
   {

@@ -10,8 +10,8 @@ import { CellSize } from '@/config/consts';
 import { Cell } from '@/entities';
 import PixiBuilder from '@/utils/PixiBuilder';
 import BaseMap from '@/components/BaseMap';
-import commonStyles from '@/common.module.less';
 import { loadTexturesForMap } from '@/utils/textures';
+import commonStyles from '@/common.module.less';
 
 @connect((global) => ({
   hasLoadedTextures: global.hasLoadedTextures,
@@ -105,7 +105,7 @@ class EditorMapView extends BaseMap {
     if (cell.mode !== this.states.mapMode) {
       cell.switchMode(this.states.mapMode);
     }
-    this.idCellMap.set(`${id}`, cell);
+    this.idCellMap.set(id, cell);
     this.pixiUtils.viewportAddChild(cell);
   };
 
@@ -170,7 +170,7 @@ class EditorMapView extends BaseMap {
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {
         const { id, x, y } = cellPayload;
-        const cellEntity = this.idCellMap.get(`${id}`);
+        const cellEntity = this.idCellMap.get(id);
         if (cellEntity) {
           cellEntity.updateCoordination(x, y);
         }
@@ -217,6 +217,25 @@ class EditorMapView extends BaseMap {
     this.refresh();
   };
 
+  // ************************ 框选 **********************
+  rectangleSelection = (cellsInRange) => {
+    // 先取消选择已选择的点位
+    this.selectedCells.forEach((cellId) => {
+      const cellEntity = this.idCellMap.get(cellId);
+      cellEntity && cellEntity.onUnSelect();
+    });
+
+    // 缓存选择的点位
+    this.onSelectCell(cellsInRange);
+    this.selectedCells = [...cellsInRange];
+
+    cellsInRange.forEach((cellId) => {
+      const cellEntity = this.idCellMap.get(cellId);
+      cellEntity && cellEntity.onSelect();
+    });
+    this.refresh();
+  };
+
   // ************************ 点位 & 线条选择 **********************
   /**
    * 将选择的点位同步到 Store
@@ -253,7 +272,7 @@ class EditorMapView extends BaseMap {
       selectedCells.push(`${cell.id}`);
       this.selectedCells = selectedCells;
     } else {
-      this.selectedCells = this.selectedCells.filter((id) => id !== `${cell.id}`);
+      this.selectedCells = this.selectedCells.filter((id) => id !== cell.id);
     }
     this.onSelectCell(this.selectedCells.slice());
     this.refresh();
@@ -283,7 +302,7 @@ class EditorMapView extends BaseMap {
 
     // Fetch cell entity from 'idCellMap' and execute 'onSelect' function
     includedCellIds.forEach((id) => {
-      const cellEntity = this.idCellMap.get(`${id}`);
+      const cellEntity = this.idCellMap.get(id);
       cellEntity && cellEntity.onSelect();
     });
 
@@ -317,16 +336,18 @@ class EditorMapView extends BaseMap {
   };
 
   cancelCellSelected = () => {
-    const list = this.selectedCells;
-    if (list && Array.isArray(list)) {
-      list.forEach((id) => {
-        const cellEntity = this.idCellMap.get(`${id}`);
+    if (Array.isArray(this.selectedCells) && this.selectedCells.length > 0) {
+      this.selectedCells.forEach((id) => {
+        const cellEntity = this.idCellMap.get(id);
         cellEntity && cellEntity.onUnSelect();
       });
     } else {
       this.idCellMap.forEach((cellEntity) => cellEntity.onUnSelect());
     }
+
     this.selectedCells = [];
+    this.onSelectCell([]);
+    this.refresh();
   };
 
   batchSelectBaseRow = () => {
@@ -386,7 +407,7 @@ class EditorMapView extends BaseMap {
   selectLine = (id, isAdded = true) => {
     // 清空所有选中的点位
     this.selectedCells.forEach((cellId) => {
-      const cell = this.idCellMap.get(`${cellId}`);
+      const cell = this.idCellMap.get(cellId);
       cell && cell.onUnSelect();
     });
     this.selectedCells = [];
@@ -454,7 +475,16 @@ class EditorMapView extends BaseMap {
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
-    return <div id="editorPixi" className={commonStyles.mapBodyMiddle} />;
+    return (
+      <div style={{ position: 'relative', flex: 1 }}>
+        <div
+          id={'mapSelectionMask'}
+          className={commonStyles.mapSelectionMask}
+          style={{ display: 'none' }}
+        />
+        <div id="editorPixi" style={{ height: '100%', fontSize: 0 }} />
+      </div>
+    );
   }
 }
 export default EditorMapView;

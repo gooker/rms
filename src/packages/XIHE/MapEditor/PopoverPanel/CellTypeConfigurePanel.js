@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Button, Col, Divider, Row, Select } from 'antd';
+import { Button, Divider, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import { CellTypeSetting } from '../enums';
@@ -31,7 +31,6 @@ const CellTypeConfigurePanel = (props) => {
                       <Select notFoundContent={null} style={{ width: '100%' }} />
                     </div>
                     <Button
-                      disabled={selectCells.length === 0}
                       onClick={() => {
                         onClick && onClick('add');
                       }}
@@ -40,7 +39,6 @@ const CellTypeConfigurePanel = (props) => {
                     </Button>
                     <Button
                       danger
-                      disabled={selectCells.length === 0}
                       onClick={() => {
                         onClick && onClick('remove');
                       }}

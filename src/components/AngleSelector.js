@@ -58,22 +58,22 @@ const AngleSelector = (props) => {
   }
 
   const addonBefore = (
-    <Select value={direction} onChange={addonBeforeChanged} style={{ width: '80px' }}>
+    <Select value={direction} onChange={addonBeforeChanged} style={{ width: '100px' }}>
       <Option value={0}>
         {/* 上方 */}
-        {addonLabel ? addonLabel[0] : <FormattedMessage id="app.direction.top" />}
+        {addonLabel ? addonLabel[0] : <FormattedMessage id="app.direction.toTop" />}
       </Option>
       <Option value={1}>
         {/* 右方 */}
-        {addonLabel ? addonLabel[90] : <FormattedMessage id="app.direction.right" />}
+        {addonLabel ? addonLabel[90] : <FormattedMessage id="app.direction.toRight" />}
       </Option>
       <Option value={2}>
         {/* 下方 */}
-        {addonLabel ? addonLabel[180] : <FormattedMessage id="app.direction.bottom" />}
+        {addonLabel ? addonLabel[180] : <FormattedMessage id="app.direction.toBottom" />}
       </Option>
       <Option value={3}>
         {/* 左方 */}
-        {addonLabel ? addonLabel[270] : <FormattedMessage id="app.direction.left" />}
+        {addonLabel ? addonLabel[270] : <FormattedMessage id="app.direction.toLeft" />}
       </Option>
     </Select>
   );

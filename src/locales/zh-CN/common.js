@@ -74,6 +74,9 @@ export default {
   'app.common.enabled': '启用',
   'app.common.disabled': '禁用',
   'app.common.list': '列表',
+  'app.common.width': '宽度',
+  'app.common.height': '高度',
+  'app.common.depth': '深度',
 
   // 地图相关
   'app.map.map': '地图',

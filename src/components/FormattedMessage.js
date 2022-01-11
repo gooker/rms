@@ -16,7 +16,7 @@ function FormattedMessage(props) {
     }
     return content || id;
   }
-  return '###';
+  return id;
 }
 export default connect(({ global }) => ({
   editKey: global.editKey,

@@ -5,12 +5,16 @@ import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
 import EditorMapContainer from './components/EditorMapContainer';
+import EditorFooter from './components/EditorFooter';
 import commonStyles from '@/common.module.less';
 
 const MapEditor = (props) => {
   const { dispatch, mapList } = props;
 
   useEffect(() => {
+    document.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+    });
     dispatch({ type: 'editor/editorInitial' });
   }, []);
 
@@ -25,7 +29,10 @@ const MapEditor = (props) => {
       </div>
       <div className={commonStyles.mapLayoutBody}>
         <EditorBodyLeft />
-        <EditorMapContainer />
+        <div className={commonStyles.mapBodyMiddle}>
+          <EditorMapContainer />
+          <EditorFooter />
+        </div>
         <EditorBodyRight />
       </div>
     </div>

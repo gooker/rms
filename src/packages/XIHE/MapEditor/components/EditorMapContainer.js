@@ -123,12 +123,12 @@ const EditorMapContainer = (props) => {
     }
 
     // 紧急停止区
-    if (Array.isArray(emergencyStopFixedList)) {
-      const _emergencyStopFixedList = [...emergencyStopFixedList];
-      _emergencyStopFixedList.forEach((eStop) => {
-        mapContext.renderFixedEStopFunction(eStop);
-      });
-    }
+    // if (Array.isArray(emergencyStopFixedList)) {
+    //   const _emergencyStopFixedList = [...emergencyStopFixedList];
+    //   _emergencyStopFixedList.forEach((eStop) => {
+    //     mapContext.renderFixedEStopFunction(eStop);
+    //   });
+    // }
 
     // 背景
     if (Array.isArray(backGround)) {

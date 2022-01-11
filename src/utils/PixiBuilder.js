@@ -14,9 +14,8 @@ export default class PixiBuilder {
       width,
       height,
       antialias: true,
-      autoResize: true,
-      transparent: true,
       autoDensity: true,
+      backgroundAlpha: 0,
       resolution: window.devicePixelRatio,
       powerPreference: 'high-performance',
     });
