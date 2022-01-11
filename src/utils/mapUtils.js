@@ -5,7 +5,7 @@ import { LogicArea } from '@/entities';
 import { isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
 import { AGVState } from '@/config/consts';
 import json from '../../package.json';
-import * as PIXI from '_pixi.js@6.2.1@pixi.js';
+import * as PIXI from 'pixi.js';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
