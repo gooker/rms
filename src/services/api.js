@@ -902,3 +902,20 @@ export async function fetchBatchDeleteTargetCellLock(params) {
     data: params,
   });
 }
+
+// 小车锁
+export async function fetchAgvTaskLockList(agvType) {
+  return request(
+    `/${NameSpace[agvType]}/redis/getAgvTaskLockList/${window.localStorage.getItem('sectionId')}`,
+    {
+      method: `GET`,
+    },
+  );
+}
+
+export async function fetchBatchDeleteLatentAgvTaskLock(agvType, params) {
+  return request(`/${NameSpace[agvType]}/redis/batchDeleteAgvTaskLock`, {
+    method: 'POST',
+    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}

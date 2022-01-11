@@ -57,8 +57,12 @@ export default {
   'menu.chargeCenter.chargeManagerment': '充电桩管理',
   'menu.chargeCenter.chargeFaultManagement': '充电桩故障管理',
 
-  'menu.reportCenter': '报表管理',
+  'menu.reportCenter': '报表',
   'menu.reportCenter.healthReport': '健康报表',
+  'menu.reportCenter.healthQrcode': '二维码健康',
+  'menu.reportCenter.healthQrcode.groundQrcode': '地面',
+  'menu.reportCenter.healthQrcode.latentPodQrcode': '潜伏货架',
+  'menu.reportCenter.healthQrcode.toteQrcode': '料箱',
 
   'menu.requestor': '接口请求库',
   'menu.richEditor': '富文本编辑',

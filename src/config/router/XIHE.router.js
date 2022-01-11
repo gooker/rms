@@ -49,7 +49,7 @@ export default [
           {
             path: `/${AppCode.XIHE}/lockManager/${AppCode.LatentLifting}/robotLock`,
             name: 'robotLock',
-            component: '/XIHE/LockManage/LatentLifting/RobotLock.js',
+            component: '/XIHE/LockManage/LatentLifting/RobotLock',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
@@ -245,6 +245,32 @@ export default [
         component: '/XIHE/ReportCenter/HealthReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
         hooks: ['dev'],
+      },
+      {
+        path: `/${AppCode.XIHE}/report/healthQrcode`,
+        name: 'healthQrcode',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
+        hooks: ['dev'],
+        routes: [
+          {
+            path: `/${AppCode.XIHE}/report/healthQrcode/groundQrcode`,
+            name: 'groundQrcode',
+            component: '/XIHE/ReportCenter/HealthQrcode/GroundQrcode',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+          {
+            path: `/${AppCode.XIHE}/report/healthQrcode/latentPodQrcode`,
+            name: 'latentPodQrcode',
+            component: '/XIHE/ReportCenter/HealthQrcode/LatentPodQrcode',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+          {
+            path: `/${AppCode.XIHE}/report/healthQrcode/toteQrcode`,
+            name: 'toteQrcode',
+            component: '/XIHE/ReportCenter/HealthQrcode/ToteQrcode',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+        ],
       },
     ],
   },

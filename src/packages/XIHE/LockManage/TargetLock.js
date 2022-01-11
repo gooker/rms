@@ -20,7 +20,7 @@ const TargetLock = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="app.map.point" />,
+      title: <FormattedMessage id="app.map.cell" />,
       dataIndex: 'cellId',
       align: 'center',
       sorter: (a, b) => a.cellId - b.cellId,

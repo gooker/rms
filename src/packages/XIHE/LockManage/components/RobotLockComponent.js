@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import { connect } from '@/utils/dva';
 import { Button, Row, Col, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';
+import { fetchAgvTaskLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
@@ -11,18 +11,18 @@ import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, formatMessage } from '@/utils/utils';
 import RmsConfirm from '@/components/RmsConfirm';
 
-const TargetLock = (props) => {
-  const { getColumn, dispatch } = props;
+const RobotLock = (props) => {
+  const { getColumn, dispatch, agvType } = props;
 
   const [loading, setLoading] = useState(false);
-  const [targetLockList, setTargetLockList] = useState([]);
-  const [currentTargetLockList, setCurrentTargetLockList] = useState([]);
+  const [robotLockList, setRobotLockList] = useState([]);
+  const [currentRobotLockList, setCurrentRobottLockList] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
 
   useEffect(() => {
     async function init() {
-      await freshData();
+      await getData();
     }
     init();
   }, []);
@@ -32,11 +32,11 @@ const TargetLock = (props) => {
     setSelectedRow(selectedRow);
   }
 
-  async function freshData() {
+  async function getData() {
     setLoading(true);
-    const response = await fetchTargetCellLockList();
+    const response = await fetchAgvTaskLockList(agvType);
     if (!dealResponse(response)) {
-      setTargetLockList(response);
+      setRobotLockList(response);
       filterData(response);
     }
     setLoading(false);
@@ -45,19 +45,19 @@ const TargetLock = (props) => {
   function filterData(list, formValues) {
     let result = [...list];
     if (isNull(formValues)) {
-      setCurrentTargetLockList(result);
+      setCurrentRobottLockList(result);
       return;
     }
-    const { robotId, cellId } = formValues;
+    const { robotId, taskId } = formValues;
     if (!isNull(robotId)) {
       result = result.filter((item) => {
         return item.robotId === robotId;
       });
     }
-    if (!isNull(cellId)) {
-      result = result.filter((item) => item.cellId === cellId);
+    if (!isNull(taskId)) {
+      result = result.filter((item) => item.taskId === taskId);
     }
-    setCurrentTargetLockList(result);
+    setCurrentRobottLockList(result);
     return;
   }
 
@@ -68,17 +68,16 @@ const TargetLock = (props) => {
     });
   }
 
-  async function deleteTargetLock() {
+  async function deleteRobotLock() {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
         const response = await fetchBatchDeleteTargetCellLock({
-          sectionId: window.localStorage.getItem('sectionId'),
-          lockTargetCellValueList: selectedRow,
+          agvTaskLockDTOList: selectedRow,
         });
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.tip.operationFinish' }));
-          freshData();
+          getData();
         } else {
           message.success(formatMessage({ id: 'app.tip.operateFailed' }));
         }
@@ -89,13 +88,13 @@ const TargetLock = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <RobotLockSearch search={filterData} data={targetLockList} />
+        <RobotLockSearch search={filterData} data={robotLockList} />
         <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
-            <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
+            <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteRobotLock}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
-            <Button onClick={freshData}>
+            <Button onClick={getData}>
               <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </Col>
@@ -106,7 +105,7 @@ const TargetLock = (props) => {
         scroll={{ x: 'max-content' }}
         loading={loading}
         columns={getColumn(checkTaskDetail)}
-        dataSource={currentTargetLockList}
+        dataSource={currentRobotLockList}
         rowKey={(record, index) => index}
         rowSelection={{
           selectedRowKeys,
@@ -117,4 +116,4 @@ const TargetLock = (props) => {
   );
 };
 
-export default connect(() => ({}))(memo(TargetLock));
+export default connect(() => ({}))(memo(RobotLock));
