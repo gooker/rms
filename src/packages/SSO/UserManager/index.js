@@ -136,7 +136,7 @@ class UserManager extends Component {
             <div>
               <Popover content={text} trigger="click">
                 <Button type="link">
-                  <FormattedMessage id="sso.user.action.view" />
+                  <FormattedMessage id="app.map.view" />
                 </Button>
               </Popover>
               <Button

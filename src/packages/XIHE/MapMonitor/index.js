@@ -20,14 +20,8 @@ const MapMonitor = (props) => {
   }, []);
 
   return (
-    <div className={commonStyles.commonPageStyleNoPadding}>
-      <div
-        className={classnames(
-          commonStyles.mapLayoutHeader,
-          commonStyles.monitorBackColor,
-          styles.header,
-        )}
-      >
+    <div id={'mapMonitorPage'} className={commonStyles.commonPageStyleNoPadding}>
+      <div className={classnames(commonStyles.mapLayoutHeader, styles.monitorHeader)}>
         {currentMap === undefined ? (
           <LoadingOutlined style={{ fontSize: 20 }} spin />
         ) : (

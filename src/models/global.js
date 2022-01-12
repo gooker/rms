@@ -23,7 +23,10 @@ export default {
     logo: null,
     copyRight: null,
     notification: 0,
+
+    // 全屏
     isFullscreen: false,
+    isInnerFullscreen: false,
 
     // 架构基础数据
     tabs: [],
@@ -212,6 +215,13 @@ export default {
       return {
         ...state,
         isFullscreen: payload,
+      };
+    },
+
+    changeInnerFullScreen(state, { payload }) {
+      return {
+        ...state,
+        isInnerFullscreen: payload,
       };
     },
 

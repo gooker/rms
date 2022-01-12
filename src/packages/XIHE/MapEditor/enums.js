@@ -24,12 +24,12 @@ export const Category = {
 
 export const EditorLeftTools = [
   {
-    label: formatMessage({ id: 'mapEditor.tools.drag' }),
+    label: formatMessage({ id: 'app.common.drag' }),
     value: 'drag',
     icon: <IconFont type={'icon-drag'} />,
   },
   {
-    label: formatMessage({ id: 'mapEditor.tools.choose' }),
+    label: formatMessage({ id: 'app.common.select' }),
     value: 'choose',
     icon: <IconFont type={'icon-click'} />,
   },
@@ -62,7 +62,7 @@ export const EditorLeftTools = [
 
 export const EditorRightTools = [
   {
-    label: formatMessage({ id: 'mapEditor.tools.props' }),
+    label: formatMessage({ id: 'app.common.prop' }),
     value: 'props',
     icon: <SettingOutlined />,
   },

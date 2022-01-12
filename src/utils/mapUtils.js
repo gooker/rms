@@ -949,7 +949,7 @@ export function getOffsetDistance(base, target, distance) {
  * @returns
  */
 export function getTextureFromResources(key) {
-  const resources = window.PixiUtils.resources;
+  const { resources } = PIXI.Loader.shared;
   const spriteSheetBaseName = 'spritesheet';
   const textureKeys = Object.keys(resources);
   let texture;

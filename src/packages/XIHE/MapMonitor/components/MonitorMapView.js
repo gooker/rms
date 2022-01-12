@@ -6,7 +6,7 @@ import PixiBuilder from '@/utils/PixiBuilder';
 import { loadTexturesForMap } from '@/utils/textures';
 import commonStyles from '@/common.module.less';
 
-@connect((global) => ({
+@connect(({ global }) => ({
   hasLoadedTextures: global.hasLoadedTextures,
 }))
 class MonitorMapView extends BaseMap {

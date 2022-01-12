@@ -14,9 +14,18 @@ export default {
     currentCells: [], // 当前视图的点位数据
     mapContext: null, // 地图实体对象
     elevatorCellMap: null, // 保存电梯替换点与地图原始点位的Map关系
+
+    // 右侧操作栏
+    categoryPanel: null,
   },
 
   reducers: {
+    saveCategoryPanel(state, action) {
+      return {
+        ...state,
+        categoryPanel: action.payload,
+      };
+    },
     saveCurrentMap(state, action) {
       return {
         ...state,
