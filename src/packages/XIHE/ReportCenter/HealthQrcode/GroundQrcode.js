@@ -1,6 +1,7 @@
 import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
-import { Row, Col, Form, Input, Select, Card } from 'antd';
+import { Row, Col, Form, Input, Select, Card, Button } from 'antd';
+import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { forIn, groupBy } from 'lodash';
 import moment from 'moment';
@@ -34,6 +35,8 @@ const GroundQrcode = (props) => {
   const [timeData, setTimeData] = useState({}); // 根据日期的数据
 
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
+
+  const [togglesDate, setTogglesDate] = useState(0);
 
   useEffect(initChart, []);
 
@@ -100,6 +103,8 @@ const GroundQrcode = (props) => {
     setSearchKey(getOriginalData.legendData || []);
     setOriginData(getQrcodedata());
     setSearchValues(value);
+    form.resetFields();
+    formDate.resetFields();
   }
 
   const filterDataByCellId = (cellIds) => {
@@ -181,6 +186,7 @@ const GroundQrcode = (props) => {
   };
 
   function onDatefilterChange(changedValues, allValues) {
+    console.log('filter hhaah', allValues);
     let newOriginalData = { ...originData };
     if (Object.keys(originData).length === 0) return;
     const { endByTime, startByTime, cellId } = allValues;
@@ -223,39 +229,39 @@ const GroundQrcode = (props) => {
                       {searchKey.length > 0 ? (
                         <>
                           {searchKey.map((key) => {
-                            if (
-                              [
-                                'slightdeviation',
-                                'generaldeviation',
-                                'seriousdeviation',
-                                'lightdeviationCar',
-                                'slightdeviationCar',
-                                'seriousdeviationCar',
-                              ].includes(key)
-                            ) {
-                            } else {
-                              return (
-                                <Col span={6} key={key}>
-                                  <Form.Item
-                                    name={key}
-                                    label={formatMessage({
-                                      id: `reportCenter.qrcodehealth.${key}`,
-                                    })}
-                                    rules={[
-                                      {
-                                        pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                        message: '请输入正整数',
-                                      },
-                                    ]}
-                                  >
-                                    <Input allowClear />
-                                  </Form.Item>
-                                </Col>
-                              );
-                            }
+                            // if (
+                            //   [
+                            //     'slightdeviation',
+                            //     'generaldeviation',
+                            //     'seriousdeviation',
+                            //     'lightdeviationCar',
+                            //     'slightdeviationCar',
+                            //     'seriousdeviationCar',
+                            //   ].includes(key)
+                            // ) {
+                            // } else {
+                            return (
+                              <Col span={4} key={key}>
+                                <Form.Item
+                                  name={key}
+                                  label={formatMessage({
+                                    id: `reportCenter.qrcodehealth.${key}`,
+                                  })}
+                                  rules={[
+                                    {
+                                      pattern: new RegExp(/^[1-9]\d*$/, 'g'),
+                                      message: '请输入正整数',
+                                    },
+                                  ]}
+                                >
+                                  <Input allowClear />
+                                </Form.Item>
+                              </Col>
+                            );
+                            // }
                           })}
 
-                          <Col span={6}>
+                          <Col span={4}>
                             <Form.Item
                               name={'cellId'}
                               label={<FormattedMessage id="app.common.code" />}
@@ -286,10 +292,10 @@ const GroundQrcode = (props) => {
             <Card
               actions={[
                 <div key="b" style={{ position: 'relative' }}>
-                  <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
-                    <Row>
-                      {searchKey.length > 0 ? (
-                        <>
+                  {searchKey.length > 0 && togglesDate === 1 ? (
+                    <>
+                      <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
+                        <Row>
                           <Form.Item hidden name={'startByTime'} />
                           <Form.Item hidden name={'endByTime'} />
                           <Col span={6}>
@@ -324,12 +330,43 @@ const GroundQrcode = (props) => {
                               <TimePickerSelector />
                             </Form.Item>
                           </Col>
-                        </>
-                      ) : (
-                        ' '
-                      )}
+                        </Row>
+                      </Form>
+                      <Row>
+                        <Col
+                          span={24}
+                          style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}
+                        >
+                          <Button
+                            type="text"
+                            onClick={() => {
+                              setTogglesDate(0);
+                            }}
+                          >
+                            <UpOutlined />
+                            {'收起'}
+                          </Button>
+                        </Col>
+                      </Row>
+                    </>
+                  ) : searchKey.length > 0 ? (
+                    <Row>
+                      <Col span={24}>
+                        <Button
+                          type="text"
+                          style={{ padding: '10px 0' }}
+                          onClick={() => {
+                            setTogglesDate(1);
+                          }}
+                        >
+                          <DownOutlined />
+                          {'展开'}
+                        </Button>
+                      </Col>
                     </Row>
-                  </Form>
+                  ) : (
+                    ''
+                  )}
                 </div>,
               ]}
             >

@@ -8,28 +8,29 @@ const dateFormat = 'YYYY-MM-DD HH:00:00';
 const daysList = [1, 3, 7];
 
 const TimePickerSelector = (props) => {
-  const { onChange, defaultFlag } = props;
-  const [dateValue, setDateValue] = useState(defaultFlag ? 1 : null);
-  const [rangeTime, setRangeTime] = useState([{ value: 1 }, { value: 3 }, { value: 7 }]);
-  const [dateType, setDateType] = useState('days');
+  const { onChange, value, defaultType, defaultTime, disabledChangeType } = props;
+  const [dateValue, setDateValue] = useState(null);
+  const [rangeTime, setRangeTime] = useState([]);
+  const [dateType, setDateType] = useState(null);
 
   useEffect(() => {
-    // 默认进页面类型是"天" "1"
-    const _time = moment().subtract(1, 'days');
-    const formValues = {
-      startTime: defaultFlag ? GMT2UserTimeZone(_time).format('YYYY-MM-DD HH:00:00') : null,
-      endTime: defaultFlag ? GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00') : null,
-      timeDate: defaultFlag ? 1 : null,
-      dateType: 'days',
-    };
-    onChange(formValues);
+    // 默认进页面类型
+    const _type = defaultType || 'days';
+    let defaultRangeTime = [{ value: 1 }, { value: 3 }, { value: 7 }];
+    if (_type === 'hour') {
+      defaultRangeTime = [{ value: 1 }, { value: 8 }, { value: 12 }];
+    }
+
+    setDateValue(defaultTime);
+    setDateType(_type);
+    setRangeTime(defaultRangeTime);
   }, []);
 
   useEffect(() => {
     // 默认进页面类型是"天" "1"- 如果
     let num = dateValue;
-    if (isStrictNull(num) && defaultFlag) {
-      num = 1;
+    if (isStrictNull(num) && !isStrictNull(defaultTime)) {
+      num = defaultTime;
       setDateValue(num);
     }
     const _time = moment().subtract(num, dateType);
@@ -76,7 +77,6 @@ const TimePickerSelector = (props) => {
   return (
     <Row gutter={8}>
       <Col>
-        {/* <Input value="过去" readOnly bordered={false} style={{ width: 60 }} /> */}
         <Button type="link"> 过去</Button>
       </Col>
       <Col>
@@ -90,7 +90,12 @@ const TimePickerSelector = (props) => {
             options={rangeTime}
             onChange={inputChanged}
           />
-          <Select value={dateType} onChange={timeTypeChange} style={{ width: 90 }}>
+          <Select
+            value={dateType}
+            onChange={timeTypeChange}
+            style={{ width: 90 }}
+            disabled={disabledChangeType || false}
+          >
             <Option value="days">天</Option>
             <Option value="hour">小时</Option>
           </Select>

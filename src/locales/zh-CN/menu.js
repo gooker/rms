@@ -64,6 +64,8 @@ export default {
   'menu.reportCenter.healthQrcode.latentPodQrcode': '潜伏货架',
   'menu.reportCenter.healthQrcode.toteQrcode': '料箱',
 
+  'menu.reportCenter.healthCar': '小车健康',
+
   'menu.requestor': '接口请求库',
   'menu.richEditor': '富文本编辑',
   'menu.questionCenter': '问题中心',

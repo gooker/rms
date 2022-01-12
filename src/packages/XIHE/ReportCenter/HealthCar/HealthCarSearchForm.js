@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import TimePickerSelector from './timePicker';
+import TimePickerSelector from '../components/timePicker';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
@@ -26,7 +26,6 @@ const LogSearchForm = (props) => {
     <Form form={form}>
       <Form.Item hidden name={'startTime'} />
       <Form.Item hidden name={'endTime'} />
-      <Form.Item hidden name={'type'} />
       <Row gutter={24}>
         {/* 日期 */}
         <Col>
@@ -44,14 +43,14 @@ const LogSearchForm = (props) => {
               return value.timeDate;
             }}
           >
-            <TimePickerSelector defaultType={'days'} defaultTime={1} />
+            <TimePickerSelector defaultType={'hour'} defaultTime={7} disabledChangeType={true} />
           </Form.Item>
         </Col>
 
         <Col span={6}>
-          <Form.Item name={'codes'} label={<FormattedMessage id="app.common.code" />}>
+          {/* <Form.Item name={'codes'} label={<FormattedMessage id="app.common.code" />}>
             <Select mode="tags" style={{ width: '100%' }} maxTagTextLength={5} maxTagCount={4} />
-          </Form.Item>
+          </Form.Item> */}
         </Col>
 
         <Col>
