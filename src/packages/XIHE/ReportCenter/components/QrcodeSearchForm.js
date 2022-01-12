@@ -43,7 +43,7 @@ const LogSearchForm = (props) => {
               return value.timeDate;
             }}
           >
-            <TimePickerSelector />
+            <TimePickerSelector defaultFlag={true} />
           </Form.Item>
         </Col>
 
@@ -58,6 +58,15 @@ const LogSearchForm = (props) => {
             <Row justify="end">
               <Button type="primary" onClick={submitSearch}>
                 <FormattedMessage id="app.button.search" />
+              </Button>
+            </Row>
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item {...NoLabelFormLayout}>
+            <Row justify="end">
+              <Button>
+                <FormattedMessage id="app.button.save" />
               </Button>
             </Row>
           </Form.Item>

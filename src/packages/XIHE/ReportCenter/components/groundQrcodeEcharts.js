@@ -31,9 +31,9 @@ const commonOption = {
   },
 };
 
-export const dateHistoryLineOption = () => ({
+export const dateHistoryLineOption = (title) => ({
   title: {
-    text: `${formatMessage({ id: 'reportCenter.qrcodehealth' })}(${formatMessage({
+    text: `${title}(${formatMessage({
       id: 'reportCenter.way.date',
     })})`,
     x: 'center',
@@ -112,9 +112,9 @@ export const dateHistoryLineOption = () => ({
   series: [], // 有几层数据 就放几层
 });
 
-export const codeHistoryLineOption = () => ({
+export const codeHistoryLineOption = (title) => ({
   title: {
-    text: `${formatMessage({ id: 'reportCenter.qrcodehealth' })}(${formatMessage({
+    text: `${title}(${formatMessage({
       id: 'reportCenter.way.cellId',
     })})`,
     x: 'center',
@@ -203,7 +203,7 @@ export const generateTimeData = (allData) => {
 
   const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
   const legendData = [];
-  const currentAxisData = Object.values(allData)[0]; // 横坐标
+  const currentAxisData = Object.values(allData)[0] || []; // 横坐标
 
   forIn(currentAxisData[0], (value, key) => {
     if (key !== 'cellId') {
@@ -256,8 +256,8 @@ export const generateTimeData = (allData) => {
 
   const legend = {
     data: legendData,
-    orient: 'vertical',
-    right: 0,
+    // orient: 'vertical',
+    // right: 0,
     x: 'right',
     align: 'right',
     type: 'scroll',
@@ -282,7 +282,7 @@ export const generateTimeData = (allData) => {
 
 // 根据原始数据 --处理cellId数据
 export const transformCodeData = (allData = {}) => {
-  const currentAxisData = Object.values(allData)[0];
+  const currentAxisData = Object.values(allData)[0] || [];
   const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
   const legendData = [];
   const yxisData = []; // 纵坐标 是y
@@ -313,11 +313,8 @@ export const transformCodeData = (allData = {}) => {
     });
   });
 
-  console.log('last', currentCellIdData);
-
   const currentSery = {};
   Object.entries(currentCellIdData).forEach(([cellId, v]) => {
-    console.log(cellId);
     forIn(v, (value, key) => {
       if (firstTimeDataMap.has(key)) {
         let seryData = currentSery[key] || [];
@@ -326,15 +323,11 @@ export const transformCodeData = (allData = {}) => {
     });
   });
 
-  console.log(currentSery);
   Object.entries(currentSery).forEach((key) => {
-    console.log(key);
     series.push({
       ...commonOption,
       data: key[1],
-      name: `${formatMessage({
-        id: `reportCenter.qrcodehealth.${key[0]}`,
-      })}`,
+      name: key[0],
       type: 'bar',
     });
   });
@@ -365,7 +358,8 @@ export const transformCodeData = (allData = {}) => {
   const legend = {
     data: legendData,
     // orient: 'vertical',
-    align: 'left',
+    x: 'right',
+    align: 'right',
     type: 'scroll',
     textStyle: {
       color: '#90979c',
@@ -380,4 +374,47 @@ export const transformCodeData = (allData = {}) => {
   };
 
   return { yAxis, series, legend };
+};
+
+//  拿到原始数据的 所有参数 所有根据cellId的参数求和
+export const getOriginalDataBycode = (originalData) => {
+  const currentAxisData = Object.values(originalData)[0] || [];
+  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
+  const legendData = [];
+  const yxisData = []; // 纵坐标 是y
+  let currentCellIdData = {}; // 根据cellId 每个key 求和
+
+  forIn(currentAxisData[0], (value, key) => {
+    if (key !== 'cellId') {
+      firstTimeDataMap.set(key, 0);
+      legendData.push(key);
+    }
+  });
+
+  currentAxisData.map(({ cellId }) => {
+    yxisData.push(cellId);
+    currentCellIdData[cellId] = {};
+  });
+
+  Object.values(originalData).forEach((record) => {
+    record.forEach((item) => {
+      const { cellId } = item;
+      forIn(item, (value, key) => {
+        if (firstTimeDataMap.has(key)) {
+          let seryData = currentCellIdData[cellId][key] || 0;
+          currentCellIdData[cellId][key] = seryData * 1 + value * 1;
+        }
+      });
+    });
+  });
+  const currentSery = {};
+  Object.entries(currentCellIdData).forEach(([cellId, v]) => {
+    forIn(v, (value, key) => {
+      if (firstTimeDataMap.has(key)) {
+        let seryData = currentSery[key] || [];
+        currentSery[key] = [...seryData, value];
+      }
+    });
+  });
+  return { legendData, yxisData, currentSery, commonOption };
 };

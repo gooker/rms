@@ -8,8 +8,8 @@ const dateFormat = 'YYYY-MM-DD HH:00:00';
 const daysList = [1, 3, 7];
 
 const TimePickerSelector = (props) => {
-  const { onChange } = props;
-  const [dateValue, setDateValue] = useState(1);
+  const { onChange, defaultFlag } = props;
+  const [dateValue, setDateValue] = useState(defaultFlag ? 1 : null);
   const [rangeTime, setRangeTime] = useState([{ value: 1 }, { value: 3 }, { value: 7 }]);
   const [dateType, setDateType] = useState('days');
 
@@ -17,25 +17,25 @@ const TimePickerSelector = (props) => {
     // 默认进页面类型是"天" "1"
     const _time = moment().subtract(1, 'days');
     const formValues = {
-      startTime: GMT2UserTimeZone(_time).format('YYYY-MM-DD HH:00:00'),
-      endTime: GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00'),
-      timeDate: 1,
+      startTime: defaultFlag ? GMT2UserTimeZone(_time).format('YYYY-MM-DD HH:00:00') : null,
+      endTime: defaultFlag ? GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00') : null,
+      timeDate: defaultFlag ? 1 : null,
       dateType: 'days',
     };
     onChange(formValues);
   }, []);
 
   useEffect(() => {
-    // 默认进页面类型是"天" "1"
+    // 默认进页面类型是"天" "1"- 如果
     let num = dateValue;
-    if (isStrictNull(num)) {
+    if (isStrictNull(num) && defaultFlag) {
       num = 1;
       setDateValue(num);
     }
     const _time = moment().subtract(num, dateType);
     const formValues = {
-      startTime: GMT2UserTimeZone(_time).format('YYYY-MM-DD HH:00:00'),
-      endTime: GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00'),
+      startTime: num ? GMT2UserTimeZone(_time).format('YYYY-MM-DD HH:00:00') : null,
+      endTime: num ? GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00') : null,
       timeDate: num,
       dateType,
     };
@@ -50,22 +50,6 @@ const TimePickerSelector = (props) => {
       setRangeTime([{ value: 1 }, { value: 3 }, { value: 7 }]);
     }
     setDateType(t);
-  }
-
-  // 时间段选择
-  function addonBeforeChanged(e) {
-    if (!isStrictNull(e)) {
-      const currentSelected = parseFloat(e);
-      setDateValue(currentSelected);
-      const _time = moment().subtract(currentSelected, dateType);
-      const formValues = {
-        startTime: GMT2UserTimeZone(_time).format('YYYY-MM-DD HH:00:00'),
-        endTime: GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00'),
-        timeDate: currentSelected,
-        dateType,
-      };
-      onChange(formValues);
-    }
   }
 
   // 输入框数字
