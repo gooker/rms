@@ -3,10 +3,9 @@ import echarts from 'echarts';
 import { Row, Col, Form, Input, Select, Card, Button } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { forIn, groupBy } from 'lodash';
 import moment from 'moment';
 import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
-import QrcodeSearchForm from '../components/QrcodeSearchForm';
+import HealthCarSearchForm from './HealthCarSearchForm';
 import TimePickerSelector from '../components/timePicker';
 import {
   codeHistoryLineOption,
@@ -15,9 +14,9 @@ import {
   transformCodeData,
   getOriginalDataBycode,
 } from '../components/groundQrcodeEcharts';
-import { getLatentPoQrcodedata } from '../components/mockData';
+import { getQrcodedata } from '../components/mockData';
 import commonStyles from '@/common.module.less';
-import style from './qrcode.module.less';
+import style from '../HealthQrcode/qrcode.module.less';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 
@@ -45,16 +44,16 @@ const GroundQrcode = (props) => {
 
   function initChart() {
     // 根据码号报表
-    codeHistoryLine = echarts.init(document.getElementById('latenPodCodeByCellIdHistory'));
+    codeHistoryLine = echarts.init(document.getElementById('groundCodeByCellIdHistory'));
     codeHistoryLine.setOption(
-      codeHistoryLineOption(formatMessage({ id: 'reportCenter.qrcodehealth.latentPod' })),
+      codeHistoryLineOption(formatMessage({ id: 'reportCenter.qrcodehealth' })),
       true,
     );
 
     // 根据日期报表
-    timeHistoryLine = echarts.init(document.getElementById('latentPodCodeBydateHistory'));
+    timeHistoryLine = echarts.init(document.getElementById('groundCodeBydateHistory'));
     timeHistoryLine.setOption(
-      dateHistoryLineOption(formatMessage({ id: 'reportCenter.qrcodehealth.latentPod' })),
+      dateHistoryLineOption(formatMessage({ id: 'reportCenter.qrcodehealth' })),
       true,
     );
 
@@ -98,10 +97,10 @@ const GroundQrcode = (props) => {
   function submitSearch(value) {
     // TODO 调接口
     // 拿到原始数据的 所有参数 所有根据cellId的参数求和
-    const getOriginalData = getOriginalDataBycode(getLatentPoQrcodedata());
+    const getOriginalData = getOriginalDataBycode(getQrcodedata());
     commonOption = getOriginalData.commonOption;
     setSearchKey(getOriginalData.legendData || []);
-    setOriginData(getLatentPoQrcodedata());
+    setOriginData(getQrcodedata());
     setSearchValues(value);
     form.resetFields();
     formDate.resetFields();
@@ -186,6 +185,7 @@ const GroundQrcode = (props) => {
   };
 
   function onDatefilterChange(changedValues, allValues) {
+    console.log('filter hhaah', allValues);
     let newOriginalData = { ...originData };
     if (Object.keys(originData).length === 0) return;
     const { endByTime, startByTime, cellId } = allValues;
@@ -213,7 +213,7 @@ const GroundQrcode = (props) => {
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
-        <QrcodeSearchForm search={submitSearch} data={originData} />
+        <HealthCarSearchForm search={submitSearch} data={originData} />
       </div>
 
       <div className={style.body}>
@@ -228,36 +228,25 @@ const GroundQrcode = (props) => {
                       {searchKey.length > 0 ? (
                         <>
                           {searchKey.map((key) => {
-                            if (
-                              [
-                                'slightdeviation',
-                                'generaldeviation',
-                                'seriousdeviation',
-                                'lightdeviationCar',
-                                'slightdeviationCar',
-                                'seriousdeviationCar',
-                              ].includes(key)
-                            ) {
-                            } else {
-                              return (
-                                <Col span={4} key={key}>
-                                  <Form.Item
-                                    name={key}
-                                    label={formatMessage({
-                                      id: `reportCenter.qrcodehealth.${key}`,
-                                    })}
-                                    rules={[
-                                      {
-                                        pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                        message: '请输入正整数',
-                                      },
-                                    ]}
-                                  >
-                                    <Input allowClear />
-                                  </Form.Item>
-                                </Col>
-                              );
-                            }
+                            return (
+                              <Col span={4} key={key}>
+                                <Form.Item
+                                  name={key}
+                                  label={formatMessage({
+                                    id: `reportCenter.qrcodehealth.${key}`,
+                                  })}
+                                  rules={[
+                                    {
+                                      pattern: new RegExp(/^[1-9]\d*$/, 'g'),
+                                      message: '请输入正整数',
+                                    },
+                                  ]}
+                                >
+                                  <Input allowClear />
+                                </Form.Item>
+                              </Col>
+                            );
+                            // }
                           })}
 
                           <Col span={4}>
@@ -283,7 +272,7 @@ const GroundQrcode = (props) => {
                 </div>,
               ]}
             >
-              <div id="latenPodCodeByCellIdHistory" style={{ minHeight: 350 }} />
+              <div id="groundCodeByCellIdHistory" style={{ minHeight: 350 }} />
             </Card>
           </Col>
           <Col span={24}>
@@ -369,7 +358,7 @@ const GroundQrcode = (props) => {
                 </div>,
               ]}
             >
-              <div id="latentPodCodeBydateHistory" style={{ minHeight: 350 }} />
+              <div id="groundCodeBydateHistory" style={{ minHeight: 350 }} />
             </Card>
           </Col>
         </Row>

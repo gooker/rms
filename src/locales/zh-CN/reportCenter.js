@@ -25,6 +25,8 @@ export default {
   'form.reportCenter.dimensionality.cannotSame': '暂不支持两个同样的数据维度',
 
   'reportCenter.qrcodehealth': '地面二维码健康',
+  'reportCenter.qrcodehealth.latentPod': '潜伏货架二维码',
+  'reportCenter.qrcodehealth.tote': '料箱二维码',
   'reportCenter.way.cellId': '按码号',
   'reportCenter.way.date': '按日期',
 
@@ -38,4 +40,5 @@ export default {
   'reportCenter.qrcodehealth.seriousdeviationCar': ' 严重偏移车数',
   'reportCenter.qrcodehealth.dropoutNumCar': '丢码车数',
   'reportCenter.qrcodehealth.errorNumCar': '错码车数',
+
 };

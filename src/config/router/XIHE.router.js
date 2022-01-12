@@ -272,6 +272,13 @@ export default [
           },
         ],
       },
+      {
+        path: `/${AppCode.XIHE}/report/healthCar`,
+        name: 'healthCar',
+        component: '/XIHE/ReportCenter/HealthCar',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
+        hooks: ['dev'],
+      },
     ],
   },
   {
