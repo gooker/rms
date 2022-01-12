@@ -4,11 +4,10 @@ import moment from 'moment';
 import { GMT2UserTimeZone, isStrictNull } from '@/utils/utils';
 
 const { Option } = Select;
-const dateFormat = 'YYYY-MM-DD HH:00:00';
-const daysList = [1, 3, 7];
+// const dateFormat = 'YYYY-MM-DD HH:00:00';
 
 const TimePickerSelector = (props) => {
-  const { onChange, value, defaultType, defaultTime, disabledChangeType } = props;
+  const { onChange, defaultType, defaultTime, disabledChangeType } = props;
   const [dateValue, setDateValue] = useState(null);
   const [rangeTime, setRangeTime] = useState([]);
   const [dateType, setDateType] = useState(null);
@@ -24,6 +23,7 @@ const TimePickerSelector = (props) => {
     setDateValue(defaultTime);
     setDateType(_type);
     setRangeTime(defaultRangeTime);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -41,6 +41,7 @@ const TimePickerSelector = (props) => {
       dateType,
     };
     onChange(formValues);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateType]);
 
   // 时间段类型

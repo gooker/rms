@@ -3,7 +3,6 @@ import echarts from 'echarts';
 import { Row, Col, Form, Input, Select, Card, Button } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { forIn, groupBy } from 'lodash';
 import moment from 'moment';
 import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
 import QrcodeSearchForm from '../components/QrcodeSearchForm';
@@ -30,9 +29,6 @@ const GroundQrcode = (props) => {
   const [form] = Form.useForm();
   const [formDate] = Form.useForm();
   const [originData, setOriginData] = useState({}); // 原始数据
-
-  const [searchValues, setSearchValues] = useState({}); //
-  const [timeData, setTimeData] = useState({}); // 根据日期的数据
 
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
 
@@ -102,7 +98,6 @@ const GroundQrcode = (props) => {
     commonOption = getOriginalData.commonOption;
     setSearchKey(getOriginalData.legendData || []);
     setOriginData(getQrcodedata());
-    setSearchValues(value);
     form.resetFields();
     formDate.resetFields();
   }
@@ -186,7 +181,6 @@ const GroundQrcode = (props) => {
   };
 
   function onDatefilterChange(changedValues, allValues) {
-    console.log('filter hhaah', allValues);
     let newOriginalData = { ...originData };
     if (Object.keys(originData).length === 0) return;
     const { endByTime, startByTime, cellId } = allValues;

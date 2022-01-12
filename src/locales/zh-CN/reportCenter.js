@@ -28,7 +28,9 @@ export default {
   'reportCenter.qrcodehealth.latentPod': '潜伏货架二维码',
   'reportCenter.qrcodehealth.tote': '料箱二维码',
   'reportCenter.way.cellId': '按码号',
+  'reportCenter.way.robot': '按车号',
   'reportCenter.way.date': '按日期',
+  'reportCenter.robot.scancode': '小车扫码',
 
   'reportCenter.qrcodehealth.slightdeviation': '轻微偏移',
   'reportCenter.qrcodehealth.generaldeviation': ' 一般偏移',
@@ -41,4 +43,7 @@ export default {
   'reportCenter.qrcodehealth.dropoutNumCar': '丢码车数',
   'reportCenter.qrcodehealth.errorNumCar': '错码车数',
 
+  'reportCenter.qrcodehealth.dropoutcode': '丢码码数',
+  'reportCenter.qrcodehealth.errorcode': '错码码数',
+  'reportCenter.qrcodehealth.deviatiocode': '偏移码数',
 };
