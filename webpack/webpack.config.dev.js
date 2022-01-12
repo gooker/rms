@@ -8,7 +8,7 @@ console.log('Starting RMS development server...\n');
 
 module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
   mode: 'development',
-  devtool: 'eval-cheap-module-source-map',
+  devtool: 'cheap-module-source-map',
 
   entry: paths.appIndexJs,
 

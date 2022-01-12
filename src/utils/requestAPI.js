@@ -10,6 +10,7 @@ export default function requestAPI() {
       // NT-11-dev
       sso: 'http://52.83.193.245:10211',
       coordinator: 'http://52.83.193.245:10213',
+      ws: 'ws://52.83.193.245:10215/ws',
 
       // NT-11-monthly
       // sso: 'http://192.168.0.11:6121',

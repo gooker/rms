@@ -12,6 +12,7 @@ import CostPanel from '../PopoverPanel/CostPanel';
 import styles from './editorLayout.module.less';
 import StationPanel from '@/packages/XIHE/MapEditor/PopoverPanel/StationPanel';
 import ViewController from '@/packages/XIHE/MapEditor/PopoverPanel/ViewController';
+import AislePanel from '@/packages/XIHE/MapEditor/PopoverPanel/AislePanel';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -45,6 +46,8 @@ const EditorBodyRight = (props) => {
         return <StationPanel height={height} />;
       case Category.View:
         return <ViewController height={height} />;
+      case Category.Aisle:
+        return <AislePanel height={height} />;
       default:
         return null;
     }
@@ -56,7 +59,7 @@ const EditorBodyRight = (props) => {
         <Tooltip key={value} placement="right" title={label}>
           <div
             role={'category'}
-            className={categoryPanel === value ? styles.rightContentActive : undefined}
+            className={categoryPanel === value ? styles.contentActive : undefined}
             onClick={() => {
               updateEditPanelFlag(value);
             }}

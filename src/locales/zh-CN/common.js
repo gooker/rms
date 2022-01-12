@@ -25,6 +25,7 @@ export default {
   'app.message.systemHint': '系统提示',
   'app.message.fetchDataFailed': '获取数据失败',
   'app.message.fetchDataEmpty': '获取的数据为空',
+  'app.message.noActiveMap': '当前无激活的地图, 请到地图编辑页面进行地图激活操作',
   'app.message.fetchMapFail': '获取地图数据失败',
   'app.message.fetchMapListFail': '获取地图列表失败',
   'app.message.fetchAgvListFail': '获取小车列表失败',
@@ -74,6 +75,9 @@ export default {
   'app.common.enabled': '启用',
   'app.common.disabled': '禁用',
   'app.common.list': '列表',
+  'app.common.width': '宽度',
+  'app.common.height': '高度',
+  'app.common.depth': '深度',
 
   // 地图相关
   'app.map.map': '地图',

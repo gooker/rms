@@ -26,6 +26,7 @@ import charging from './zh-CN/XIHE/charging';
 import webHook from './zh-CN/XIHE/webHook';
 import lockManage from './zh-CN/XIHE/lockManage';
 import mapEditor from './zh-CN/XIHE/editor';
+import mapMonitor from './zh-CN/XIHE/monitor';
 
 export default {
   ...menu,
@@ -56,4 +57,5 @@ export default {
   ...webHook,
   ...lockManage,
   ...mapEditor,
+  ...mapMonitor,
 };

@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react';
 import { Select, Row, Col, Button } from 'antd';
-import MenuIcon from '@/utils/MenuIcon';
+import { PlusOutlined } from '@ant-design/icons';
+import commonStyle from '@/common.module.less';
 
 class SelectTagComponent extends PureComponent {
   render() {
-    const { value, currentCellId, icon } = this.props;
+    const { value, currentCellId, icon, onChange } = this.props;
     let newValue = [];
     if (value != null) {
       newValue = value;
@@ -14,30 +15,27 @@ class SelectTagComponent extends PureComponent {
 
     return (
       <Row>
-        <Col span={17}>
+        <Col span={18}>
           <Select
+            mode="tags"
+            value={newValue}
             onChange={(changedValue) => {
-              const { onChange } = this.props;
               onChange && onChange(changedValue);
             }}
-            value={newValue}
-            mode="tags"
           />
         </Col>
-        <Col span={3} style={{ textAlign: 'center' }}>
+        <Col span={3} className={commonStyle.flexCenter}>
           {icon || null}
         </Col>
-        <Col span={3} offset={1} style={{ textAlign: 'end' }}>
+        <Col span={3}>
           <Button
             onClick={() => {
-              if (this.props.onChange) {
-                this.props.onChange(currentCellId);
-              }
+              onChange && onChange(currentCellId);
             }}
-            icon={MenuIcon.plus}
             disabled={currentCellId.length === 0}
+            icon={<PlusOutlined />}
           >
-            {/* 当前点 */}
+            {/*  */}
           </Button>
         </Col>
       </Row>

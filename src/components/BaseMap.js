@@ -49,6 +49,7 @@ export default class BaseMap extends React.Component {
   };
 
   resize = (width, height) => {
+    // resize render & resize viewport & viewport.fitWorld();
     this.pixiUtils.viewport.resize(width, height);
     this.pixiUtils.callRender();
   };
@@ -61,7 +62,7 @@ export default class BaseMap extends React.Component {
   };
 
   positionCell = (cellId) => {
-    const cellEntity = this.idCellMap.get(`${cellId}`);
+    const cellEntity = this.idCellMap.get(cellId);
     if (cellEntity) {
       this.moveTo(cellEntity.x, cellEntity.y, 0.7);
       this.refresh();
@@ -170,7 +171,7 @@ export default class BaseMap extends React.Component {
   // 渲染地图点位类型 (新增 & 删除)
   renderCellsType = (cells = [], type, opt = 'add') => {
     cells.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(`${cellId}`);
+      const cellEntity = this.idCellMap.get(cellId);
       if (cellEntity) {
         opt === 'add' && cellEntity.plusType(type, getTextureFromResources(type));
         opt === 'remove' && cellEntity.removeType(type);
@@ -183,7 +184,7 @@ export default class BaseMap extends React.Component {
     restCells.forEach((item) => {
       if (item?.cellIds) {
         item.cellIds.forEach((cell) => {
-          const cellEntity = this.idCellMap.get(`${cell}`);
+          const cellEntity = this.idCellMap.get(cell);
           if (cellEntity) {
             opt === 'add' && cellEntity.plusType('rest_cell', getTextureFromResources('rest_cell'));
             opt === 'remove' && cellEntity.removeType('rest_cell');
@@ -199,7 +200,7 @@ export default class BaseMap extends React.Component {
     const cellIds = cells.map((item) => item.nonStopCell);
 
     cellIds.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(`${cellId}`);
+      const cellEntity = this.idCellMap.get(cellId);
       if (cellEntity) {
         opt === 'add' && cellEntity.plusType(type, getTextureFromResources(type));
         opt === 'remove' && cellEntity.removeType(type);
@@ -240,8 +241,8 @@ export default class BaseMap extends React.Component {
       if (!priority.includes(`${cost}`)) return;
       if (type === 'line') {
         const { source, target, angle } = lineData;
-        const sourceCell = this.idCellMap.get(`${source}`);
-        const targetCell = this.idCellMap.get(`${target}`);
+        const sourceCell = this.idCellMap.get(source);
+        const targetCell = this.idCellMap.get(target);
 
         // 此时 sourceCell 和 targetCell 可能是电梯点
         if (sourceCell && targetCell) {
@@ -414,7 +415,7 @@ export default class BaseMap extends React.Component {
       // 二维码添加充电点图标
       chargingCells.forEach((chargingCell) => {
         if (chargingCell) {
-          const cellEntity = this.idCellMap.get(`${chargingCell.cellId}`);
+          const cellEntity = this.idCellMap.get(chargingCell.cellId);
           if (cellEntity) {
             cellEntity.plusType('charger_cell', getTextureFromResources('charger_cell'));
 
@@ -441,7 +442,7 @@ export default class BaseMap extends React.Component {
 
     chargingCells.forEach((chargingCell) => {
       if (chargingCell) {
-        const cellEntity = this.idCellMap.get(`${chargingCell.cellId}`);
+        const cellEntity = this.idCellMap.get(chargingCell.cellId);
         if (cellEntity) {
           cellEntity.removeType('charger_cell');
 
@@ -503,11 +504,11 @@ export default class BaseMap extends React.Component {
     this.workStationMap.set(`${stopCellId}`, workStation);
 
     // Render Scan Cell
-    const scanCell = this.idCellMap.get(`${scanCellId}`);
+    const scanCell = this.idCellMap.get(scanCellId);
     scanCell && scanCell.plusType('scan_cell', getTextureFromResources('scan_cell'));
 
     // Render Stop Cell
-    const stopCell = this.idCellMap.get(`${stopCellId}`);
+    const stopCell = this.idCellMap.get(stopCellId);
     if (stopCell) {
       stopCell.plusType('stop', getTextureFromResources('stop'));
       // 渲染工作站到停止点之间的关系线
@@ -521,13 +522,13 @@ export default class BaseMap extends React.Component {
     }
 
     // Render Buffer Cell
-    const bufferCell = this.idCellMap.get(`${bufferCellId}`);
+    const bufferCell = this.idCellMap.get(bufferCellId);
     bufferCell && bufferCell.plusType('buffer_cell', getTextureFromResources('buffer_cell'));
 
     // Render Rotation Cell
     if (Array.isArray(rotateCellIds)) {
       rotateCellIds.forEach((cellId) => {
-        const rotateCell = this.idCellMap.get(`${cellId}`);
+        const rotateCell = this.idCellMap.get(cellId);
         rotateCell && rotateCell.plusType('round', getTextureFromResources('round'));
       });
     }
@@ -542,21 +543,21 @@ export default class BaseMap extends React.Component {
     }
 
     // Render Scan Cell
-    const scanCell = this.idCellMap.get(`${scanCellId}`);
+    const scanCell = this.idCellMap.get(scanCellId);
     scanCell && scanCell.removeType('scan_cell');
 
     // Render Stop Cell
-    const stopCell = this.idCellMap.get(`${stopCellId}`);
+    const stopCell = this.idCellMap.get(stopCellId);
     stopCell && stopCell.removeType('stop');
 
     // Render Buffer Cell
-    const bufferCell = this.idCellMap.get(`${bufferCellId}`);
+    const bufferCell = this.idCellMap.get(bufferCellId);
     bufferCell && bufferCell.removeType('buffer_cell');
 
     // Render Rotation Cell
     if (Array.isArray(rotateCellIds)) {
       rotateCellIds.forEach((cellId) => {
-        const rotateCell = this.idCellMap.get(`${cellId}`);
+        const rotateCell = this.idCellMap.get(cellId);
         rotateCell && rotateCell.removeType('round');
       });
     }
@@ -587,7 +588,7 @@ export default class BaseMap extends React.Component {
         offset,
         direction = 0,
       } = commonFunctionData;
-      const stopCell = this.idCellMap.get(`${stopCellId}`);
+      const stopCell = this.idCellMap.get(stopCellId);
       if (!stopCell) return;
 
       let commonFunction;
@@ -663,14 +664,14 @@ export default class BaseMap extends React.Component {
     }
 
     // Render Stop Cell
-    const stopCell = this.idCellMap.get(`${stopCellId}`);
+    const stopCell = this.idCellMap.get(stopCellId);
     stopCell && stopCell.removeType('stop');
   };
 
   // 交汇点
   renderIntersection = (intersectionList) => {
     intersectionList.forEach(({ cellId, ip, isTrafficCell }) => {
-      const interSectionCell = this.idCellMap.get(`${cellId}`);
+      const interSectionCell = this.idCellMap.get(cellId);
       if (interSectionCell) {
         const { x, y } = interSectionCell;
         const intersection = new Intersection({
@@ -720,7 +721,7 @@ export default class BaseMap extends React.Component {
   renderElevator = (elevatorList) => {
     elevatorList.forEach((elevatorData) => {
       const { replace, innerMapping, doors = [] } = elevatorData;
-      const elevatorCellEntity = this.idCellMap.get(`${innerMapping[replace]}`);
+      const elevatorCellEntity = this.idCellMap.get(innerMapping[replace]);
       if (!elevatorCellEntity) return;
 
       const { x, y } = elevatorCellEntity;
@@ -733,20 +734,20 @@ export default class BaseMap extends React.Component {
         const { cellId: entryCellId, leaveCellId, waitCellId } = door;
         // 入口
         if (entryCellId) {
-          const cellEntity = this.idCellMap.get(`${entryCellId}`);
+          const cellEntity = this.idCellMap.get(entryCellId);
           cellEntity && cellEntity.plusType('elevator_in', getTextureFromResources('elevator_in'));
         }
 
         // 出口
         if (leaveCellId) {
-          const cellEntity = this.idCellMap.get(`${leaveCellId}`);
+          const cellEntity = this.idCellMap.get(leaveCellId);
           cellEntity &&
             cellEntity.plusType('elevator_out', getTextureFromResources('elevator_out'));
         }
 
         // 等待点
         if (waitCellId) {
-          const cellEntity = this.idCellMap.get(`${waitCellId}`);
+          const cellEntity = this.idCellMap.get(waitCellId);
           cellEntity && cellEntity.plusType('wait_cell', getTextureFromResources('wait_cell'));
         }
 
@@ -759,7 +760,7 @@ export default class BaseMap extends React.Component {
   removeElevator = (elevatorData) => {
     const { replace, innerMapping, doors = [] } = elevatorData;
     if (replace && innerMapping && doors?.length > 0) {
-      const elevatorCellEntity = this.idCellMap.get(`${innerMapping[replace]}`);
+      const elevatorCellEntity = this.idCellMap.get(innerMapping[replace]);
       if (!elevatorCellEntity) return;
 
       const { x, y } = elevatorCellEntity;
@@ -773,17 +774,17 @@ export default class BaseMap extends React.Component {
         const { cellId: entryCellId, waitCellId, leaveCellId } = door;
 
         if (entryCellId) {
-          const cellEntity = this.idCellMap.get(`${entryCellId}`);
+          const cellEntity = this.idCellMap.get(entryCellId);
           cellEntity && cellEntity.removeType('elevator_in');
         }
 
         if (leaveCellId) {
-          const cellEntity = this.idCellMap.get(`${leaveCellId}`);
+          const cellEntity = this.idCellMap.get(leaveCellId);
           cellEntity && cellEntity.removeType('elevator_out');
         }
 
         if (waitCellId) {
-          const cellEntity = this.idCellMap.get(`${waitCellId}`);
+          const cellEntity = this.idCellMap.get(waitCellId);
           cellEntity && cellEntity.removeType('wait_cell');
         }
 
@@ -884,7 +885,7 @@ export default class BaseMap extends React.Component {
   // 滚筒站
   removeRollerFunction = (rollerStation) => {
     const { binCellId } = rollerStation;
-    const cellEntity = this.idCellMap.get(`${binCellId}`);
+    const cellEntity = this.idCellMap.get(binCellId);
     if (cellEntity) {
       const { x, y } = cellEntity;
       const roller = this.rollerMap.get(`x${x}y${y}`);
@@ -897,7 +898,7 @@ export default class BaseMap extends React.Component {
 
   renderRollerFunction = (rollerStationList) => {
     rollerStationList.forEach(({ binCellId, binCellIdType }) => {
-      const cellEntity = this.idCellMap.get(`${binCellId}`);
+      const cellEntity = this.idCellMap.get(binCellId);
       if (cellEntity) {
         let texture;
         if (binCellIdType === 'IN') {
@@ -923,7 +924,7 @@ export default class BaseMap extends React.Component {
     newChannelList.forEach((channelData) => {
       const { tunnelName, cells } = channelData;
       cells.forEach((cellId) => {
-        const cellEntity = this.idCellMap.get(`${cellId}`);
+        const cellEntity = this.idCellMap.get(cellId);
         const sprite = new BitText(tunnelName, 0, 0, 0xf4f9f9);
         if (cellEntity) {
           if (opt === 'add') {

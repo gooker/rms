@@ -10,6 +10,7 @@ export default {
   'mapEditor.locate': '点位定位',
   'mapEditor.active': '激活地图',
   'mapEditor.active.warn': '无法取消激活',
+  'mapEditor.selectMap.required': '请先选择地图',
 
   // 施工图
   'mapEditor.constructionDrawing.export': '导出施工图',
@@ -68,6 +69,16 @@ export default {
   'editor.cellType.getTask': '接任务点',
   'editor.cellType.safe': '安全区',
   'editor.cellType.rotation': '旋转点',
+  'editor.cellType.stop': '停止点',
+  'editor.cellType.scan': '扫描点',
+  'editor.cellType.buffer': '缓冲点',
+  'editor.cellType.bifurcation': '分叉点',
+
+  // 站点
+  'editor.station.distance': '距离',
+  'editor.station.icon': '图标',
+  'editor.station.icon.width': '图标宽度',
+  'editor.station.icon.height': '图标高度',
 
   // 线条
   'editor.cost.lowPriority': '低优先级',
@@ -93,4 +104,15 @@ export default {
 
   // 功能
   'editor.workstation.stop': '停止点',
+  'editor.aisle.unLockCells': '解锁点',
+  'editor.aisle.entrance': '入口',
+  'editor.aisle.exit': '出口',
+
+  // 提示信息
+  'editor.code.duplicate': '编码已存在',
+
+  // Footer
+  'editor.footer.cellSelected': '已选中点位',
+  'editor.footer.lineSelected': '已选中路线',
+  'editor.footer.totalSelected': '共选中',
 };

@@ -9,8 +9,8 @@ import ActionDefiner from '../FormComponent/ActionDefiner';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import TrayActionProtocol from '../FormComponent/TrayActionProtocol';
 import CodeEditor from '@/components/CodeEditor';
-import AngleSelector from '@/packages/XIHE/components/AngleSelector';
 import styles from '../customTask.module.less';
+import AngleSelector from '@/components/AngleSelector';
 
 const { Option, OptGroup } = Select;
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

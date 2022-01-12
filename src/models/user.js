@@ -88,6 +88,8 @@ export default {
 
         // 6. 保存用户时区数据
         window.localStorage.setItem('userTimeZone', response.userTimeZone || '');
+
+        return response;
       }
     },
 

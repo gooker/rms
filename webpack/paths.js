@@ -4,7 +4,19 @@ const fs = require('fs');
 const appDirectory = fs.realpathSync(process.cwd());
 const resolvePath = (relativePath) => path.resolve(appDirectory, relativePath);
 
-const moduleFileExtensions = ['js', 'json', 'jsx'];
+const moduleFileExtensions = [
+  'web.mjs',
+  'mjs',
+  'web.js',
+  'js',
+  'web.ts',
+  'ts',
+  'web.tsx',
+  'tsx',
+  'json',
+  'web.jsx',
+  'jsx',
+];
 
 const resolveModule = (resolveFn, filePath) => {
   const extension = moduleFileExtensions.find((extension) =>
