@@ -49,8 +49,9 @@ export default class BaseMap extends React.Component {
   };
 
   resize = (width, height) => {
-    // resize render & resize viewport & viewport.fitWorld();
+    this.pixiUtils.renderer.resize(width, height);
     this.pixiUtils.viewport.resize(width, height);
+    this.pixiUtils.viewport.fitWorld();
     this.pixiUtils.callRender();
   };
 

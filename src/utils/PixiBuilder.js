@@ -6,8 +6,6 @@ export default class PixiBuilder {
   constructor(width, height, htmlDOM) {
     this.width = width;
     this.height = height;
-    this.loader = new PIXI.Loader();
-    this.resources = this.loader.resources;
 
     // 初始化渲染器
     this.renderer = new PIXI.Renderer({
@@ -75,9 +73,7 @@ export default class PixiBuilder {
 
   destroy = () => {
     PIXI.utils.destroyTextureCache();
-    this.loader.reset();
-    this.cull.removeList(this.viewport.children);
-    this.viewport.removeChildren();
+    PIXI.Loader.shared.reset();
     this.viewport.destroy(true);
     this.renderer.destroy();
   };

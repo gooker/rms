@@ -1,10 +1,10 @@
 import React, { memo } from 'react';
 import { RightOutlined } from '@ant-design/icons';
-import SelectMap from '../MapHeader/SelectMap';
-import SelectLogicArea from '../MapHeader/SelectLogicArea';
-import SelectRouteMap from '../MapHeader/SelectRouteMap';
-import EditorHeaderRightTools from '../MapHeader/EditorHeaderRightTools';
-import styles from '../MapHeader/index.module.less';
+import SelectMap from '../HeaderItems/SelectMap';
+import SelectLogicArea from '../HeaderItems/SelectLogicArea';
+import SelectRouteMap from '../HeaderItems/SelectRouteMap';
+import EditorHeaderRightTools from '../HeaderItems/EditorHeaderRightTools';
+import styles from '../HeaderItems/index.module.less';
 
 const EditorHeader = () => {
   return (

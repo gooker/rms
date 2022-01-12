@@ -43,6 +43,9 @@ export default {
   'app.message.fetchFailTemplate': '获取{type}数据失败',
   'app.message.copy.successfully': '复制成功',
 
+  // 告警
+  'app.alert': '告警',
+
   // 通用页面标识内容
   'app.common.creator': '创建用户',
   'app.common.creationTime': '创建时间',
@@ -78,6 +81,9 @@ export default {
   'app.common.width': '宽度',
   'app.common.height': '高度',
   'app.common.depth': '深度',
+  'app.common.prop': '属性',
+  'app.common.select': '选择',
+  'app.common.drag': '拖拽',
 
   // 地图相关
   'app.map.map': '地图',

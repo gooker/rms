@@ -273,7 +273,7 @@ export function getRectLock(width, height) {
 
 export function loadTexturesForMap() {
   return new Promise((resolve) => {
-    window.PixiUtils.loader
+    PIXI.Loader.shared
       // 字体
       .add('mufont', '/fonts/mufont-hd.xml')
 

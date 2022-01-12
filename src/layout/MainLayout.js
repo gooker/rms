@@ -13,7 +13,9 @@ import './mainLayout.less';
 import SocketClient from '@/utils/SocketClient';
 
 @withRouter
-@connect()
+@connect(({ global }) => ({
+  isInnerFullscreen: global.isInnerFullscreen,
+}))
 class MainLayout extends React.Component {
   state = {
     appReady: false,
@@ -68,11 +70,12 @@ class MainLayout extends React.Component {
 
   render() {
     const { appReady } = this.state;
+    const { isInnerFullscreen } = this.props;
     return appReady ? (
       <Layout className="main-layout">
-        <LayoutSlider />
+        {!isInnerFullscreen && <LayoutSlider />}
         <Layout className="site-layout">
-          <LayoutHeader />
+          {!isInnerFullscreen && <LayoutHeader />}
           <LayoutContent />
         </Layout>
       </Layout>

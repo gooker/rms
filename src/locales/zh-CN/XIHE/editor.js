@@ -16,15 +16,12 @@ export default {
   'mapEditor.constructionDrawing.export': '导出施工图',
 
   // 两侧工具栏
-  'mapEditor.tools.choose': '选择',
-  'mapEditor.tools.drag': '拖拽',
   'mapEditor.tools.insertPicture': '插入图片',
   'mapEditor.tools.insertFont': '插入文字',
   'mapEditor.tools.insertRect': '绘制矩形',
   'mapEditor.tools.insertCircle': '绘制圆形',
   'mapEditor.tools.useTemplate': '引用模板',
   'mapEditor.tools.createTemplate': '创建模板',
-  'mapEditor.tools.props': '属性',
   'mapEditor.tools.history': '操作历史',
 
   // 点位操作

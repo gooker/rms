@@ -44,7 +44,6 @@ export default {
   'sso.user.action.remove': '移除',
   'sso.user.action.resetPwd': '重置密码',
   'sso.user.action.delete': '注销',
-  'sso.user.action.view': '显示',
 
   'sso.user.tip.deleteSuccess': '删除成功',
   'sso.user.sectionAssign': '区域分配',

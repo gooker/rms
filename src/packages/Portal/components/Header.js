@@ -26,7 +26,6 @@ class Header extends React.Component {
   userAction = false;
 
   state = {
-    isFullscreen: false,
     showErrorNotification: false,
     apiListShow: false,
     showLabel: false,
@@ -34,7 +33,6 @@ class Header extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    screenfull.on('change', this.changeFullScreenFlag);
     const sessionValue = window.sessionStorage.getItem('showErrorNotification');
     const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
     this.setState({ showErrorNotification });
@@ -48,7 +46,6 @@ class Header extends React.Component {
   }
 
   componentWillUnmount() {
-    screenfull.off('change', this.changeFullScreenFlag);
     this.bodySizeObserver.disconnect();
     window.removeEventListener('fullscreenchange', null);
   }
@@ -63,25 +60,10 @@ class Header extends React.Component {
     this.bodySizeObserver.observe(document.body);
   };
 
-  changeFullScreenFlag = () => {
-    const { isFullscreen } = this.state;
-    if (!this.userAction && isFullscreen) {
-      this.setState({
-        isFullscreen: false,
-      });
-    }
-    this.userAction = false;
-  };
-
   switchFullScreen = () => {
-    const { isFullscreen } = this.state;
-    const { dispatch } = this.props;
-    this.userAction = true;
-    this.setState({ isFullscreen: !isFullscreen }, () => {
-      dispatch({ type: 'global/changeFullScreen', payload: !isFullscreen });
-      const AppContent = document.getElementById('layoutContent');
-      screenfull.toggle(AppContent);
-    });
+    const { dispatch, isFullscreen } = this.props;
+    dispatch({ type: 'global/changeFullScreen', payload: !isFullscreen });
+    screenfull.toggle();
   };
 
   changeEnvironment = (record) => {
@@ -129,8 +111,8 @@ class Header extends React.Component {
   };
 
   render() {
-    const { isFullscreen, showErrorNotification, showLabel, apiListShow } = this.state;
-    const { environments, currentUser, noticeCountUpdate, noticeCount } = this.props;
+    const { showErrorNotification, showLabel, apiListShow } = this.state;
+    const { environments, isFullscreen, currentUser, noticeCountUpdate, noticeCount } = this.props;
     if (isNull(currentUser)) return null;
     const isAdmin = currentUser.username === 'admin';
     return (

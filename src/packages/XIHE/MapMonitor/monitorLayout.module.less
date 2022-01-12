@@ -1,3 +1,37 @@
-.header {
+// reference: 使用文件，但不会输出其内容（即文件作为样式库使用）
+@import (reference) '../../../common.module';
+
+.monitorHeader {
+  .monitorBackColor();
+
   border-bottom: 1px solid #5a5a5a;
+}
+
+// 右侧
+.bodyRightSide {
+  width: 60px;
+  background: #4a4a4a;
+
+  & > div[role='category'] {
+    .flexCenter();
+
+    min-height: 55px;
+    padding: 5px 0;
+    border-bottom: 1px solid #6a6a6a;
+    cursor: pointer;
+
+    span[role='img'] > svg {
+      width: 28px;
+      height: 28px;
+      fill: #fff;
+    }
+
+    img {
+      width: 30px;
+      height: auto;
+    }
+  }
+}
+.categoryActive {
+  background: #0f5aa1;
 }

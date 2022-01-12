@@ -13,7 +13,7 @@ import BaseMap from '@/components/BaseMap';
 import { loadTexturesForMap } from '@/utils/textures';
 import commonStyles from '@/common.module.less';
 
-@connect((global) => ({
+@connect(({ global }) => ({
   hasLoadedTextures: global.hasLoadedTextures,
 }))
 class EditorMapView extends BaseMap {

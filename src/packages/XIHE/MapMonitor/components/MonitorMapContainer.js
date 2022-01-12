@@ -1,12 +1,29 @@
 import React, { memo, useEffect } from 'react';
+import { throttle } from 'lodash';
 import { connect } from '@/utils/dva';
 import { isNull } from '@/utils/utils';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 import MonitorMapView from './MonitorMapView';
+import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 
 const MonitorMapContainer = (props) => {
-  const { dispatch, mapContext } = props;
-  const { currentMap, currentLogicArea, currentRouteMap, preRouteMap } = props;
+  const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
+    props;
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(
+      throttle(() => {
+        const htmlDOM = document.getElementById('mapMonitorPage');
+        const { width, height } = htmlDOM.getBoundingClientRect();
+        const { mapContext: _mapContext } = window.g_app._store.getState().monitor;
+        _mapContext && _mapContext.resize(width - 60, height - 35);
+      }, 500),
+    );
+    resizeObserver.observe(document.body);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (isNull(mapContext)) return;
