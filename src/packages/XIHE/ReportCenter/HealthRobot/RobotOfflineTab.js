@@ -7,27 +7,25 @@ import moment from 'moment';
 import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
 import TimePickerSelector from '../components/timePicker';
 import {
-  codeHistoryLineOption,
-  dateHistoryLineOption,
-  generateTimeData,
-  transformCodeData,
-  getOriginalDataBycode,
-} from '../components/groundQrcodeEcharts';
-import { getQrcodedata } from '../components/mockData';
+  offlineHistoryLineOption,
+  generatOfflineDataByTime,
+  generatOfflineDataByRobot,
+  getOriginalDataByRobotId,
+} from './components/RobotOfflineEchart';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 
-let codeHistoryLine = null; // 根据码号
+let codeHistoryLine = null; // 根据小车id
 let timeHistoryLine = null; // 根据日期
 
 let commonOption = null;
 
 const RobotOfflineComponent = (props) => {
+  const { originData } = props;
   const [form] = Form.useForm();
   const [formDate] = Form.useForm();
-  const [originData, setOriginData] = useState({}); // 原始数据
 
-  const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
+  const [searchKey, setSearchKey] = useState([]); // 根据小车id的数据--二次搜索
 
   const [togglesDate, setTogglesDate] = useState(0);
 
@@ -37,17 +35,26 @@ const RobotOfflineComponent = (props) => {
   useEffect(refreshChart, [originData]);
 
   function initChart() {
-    // 根据码号报表
-    codeHistoryLine = echarts.init(document.getElementById('ScanCarByIdHistory'));
+    console.log('进来');
+    // 根据小车id报表
+    codeHistoryLine = echarts.init(document.getElementById('offlineByIRobotIdHistory'));
     codeHistoryLine.setOption(
-      codeHistoryLineOption(formatMessage({ id: 'reportCenter.qrcodehealth' })),
+      offlineHistoryLineOption(
+        `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
+          id: 'reportCenter.way.robot',
+        })})`,
+      ),
       true,
     );
 
     // 根据日期报表
-    timeHistoryLine = echarts.init(document.getElementById('ScanCarBydateHistory'));
+    timeHistoryLine = echarts.init(document.getElementById('offlineByIdateHistory'));
     timeHistoryLine.setOption(
-      dateHistoryLineOption(formatMessage({ id: 'reportCenter.qrcodehealth' })),
+      offlineHistoryLineOption(
+        `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
+          id: 'reportCenter.way.date',
+        })})`,
+      ),
       true,
     );
 
@@ -65,13 +72,13 @@ const RobotOfflineComponent = (props) => {
     const sourceData = { ...originData };
     if (Object.keys(sourceData).length === 0) return;
 
-    const currenTimeData = generateTimeData(sourceData);
-    const currentCodeData = transformCodeData(sourceData);
+    const currenTimeData = generatOfflineDataByTime(sourceData);
+    const currentCodeData = generatOfflineDataByRobot(sourceData);
 
     if (currentCodeData) {
-      const { yAxis, series, legend } = currentCodeData;
+      const { xAxis, series, legend } = currentCodeData;
       const newCodeHistoryLine = codeHistoryLine.getOption();
-      newCodeHistoryLine.yAxis = yAxis;
+      newCodeHistoryLine.xAxis = xAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
       codeHistoryLine.setOption(newCodeHistoryLine, true);
@@ -85,28 +92,19 @@ const RobotOfflineComponent = (props) => {
       newTimeHistoryLine.legend = legend;
       timeHistoryLine.setOption(newTimeHistoryLine, true);
     }
-  }
 
-  // 搜索 调接口
-  function submitSearch(value) {
-    // TODO 调接口
-    // 拿到原始数据的 所有参数 所有根据cellId的参数求和
-    const getOriginalData = getOriginalDataBycode(getQrcodedata());
+    const getOriginalData = getOriginalDataByRobotId(originData);
     commonOption = getOriginalData.commonOption;
-    setSearchKey(getOriginalData.legendData || []);
-    setOriginData(getQrcodedata());
-    setSearchValues(value);
-    form.resetFields();
-    formDate.resetFields();
+    setSearchKey(getOriginalData.legendData || []); // 图列 可以用来搜索
   }
 
-  const filterDataByCellId = (cellIds) => {
+  const filterDataById = (ids) => {
     const _data = { ...originData };
     const newData = {};
     Object.entries(_data).forEach(([key, allcellData]) => {
       const _allCellData = [];
       allcellData.forEach((item) => {
-        if (cellIds.includes(item.cellId)) {
+        if (ids.includes(item.robotId)) {
           _allCellData.push(item);
         }
       });
@@ -121,9 +119,9 @@ const RobotOfflineComponent = (props) => {
     let newOriginalData = { ...originData };
     Object.entries(allValues).forEach(([key, v]) => {
       if (!isStrictNull(v)) {
-        if (key === 'cellId' && v.length > 0) {
-          // 先根据cellId 过滤数据
-          newOriginalData = filterDataByCellId(v.map((i) => i * 1));
+        if (key === 'robotIds' && v.length > 0) {
+          // 先根据robotIds 过滤数据
+          newOriginalData = filterDataById(v.map((i) => i * 1));
         } else {
           if (v !== 0) {
             newChanged[key] = v;
@@ -133,7 +131,7 @@ const RobotOfflineComponent = (props) => {
     });
 
     // filter
-    const { currentSery, yxisData, legendData } = getOriginalDataBycode(newOriginalData);
+    const { currentSery, xAxisData, legendData } = getOriginalDataByRobotId(newOriginalData);
     const sumCellSourceData = { ...currentSery };
     const newSourceData = {};
     Object.entries(sumCellSourceData).forEach(([key, typeData]) => {
@@ -151,17 +149,18 @@ const RobotOfflineComponent = (props) => {
     });
 
     const series = [];
-    Object.entries(newSourceData).forEach((key) => {
+    Object.entries(newSourceData).forEach((key, index) => {
       series.push({
         ...commonOption,
         data: key[1],
         name: key[0],
-        type: 'bar',
+        yAxisIndex: index,
+        type: key[0] === 'offlinetime' ? 'line' : 'bar',
       });
     });
     const newCodeHistoryLine = codeHistoryLine.getOption();
     newCodeHistoryLine.series = series;
-    newCodeHistoryLine.yAxis[0].data = yxisData;
+    newCodeHistoryLine.xAxis[0].data = xAxisData;
     newCodeHistoryLine.legend[0].data = legendData;
     codeHistoryLine.setOption(newCodeHistoryLine, true);
   };
@@ -179,13 +178,12 @@ const RobotOfflineComponent = (props) => {
   };
 
   function onDatefilterChange(changedValues, allValues) {
-    console.log('filter hhaah', allValues);
     let newOriginalData = { ...originData };
     if (Object.keys(originData).length === 0) return;
-    const { endByTime, startByTime, cellId } = allValues;
+    const { endByTime, startByTime, robotIds } = allValues;
 
-    if (cellId && cellId.length > 0) {
-      newOriginalData = filterDataByCellId(cellId.map((i) => i * 1));
+    if (robotIds && robotIds.length > 0) {
+      newOriginalData = filterDataById(robotIds.map((i) => i * 1));
     }
 
     if (!isStrictNull(startByTime) && !isStrictNull(endByTime)) {
@@ -193,7 +191,7 @@ const RobotOfflineComponent = (props) => {
       newOriginalData = filterDataByTime(newOriginalData, startByTime, endByTime);
     }
 
-    const currenTimeData = generateTimeData(newOriginalData);
+    const currenTimeData = generatOfflineDataByTime(newOriginalData);
     if (currenTimeData) {
       const { xAxis, series, legend } = currenTimeData;
       const newTimeHistoryLine = timeHistoryLine.getOption();
@@ -205,161 +203,142 @@ const RobotOfflineComponent = (props) => {
   }
 
   return (
-    <div style={{ display: 'flex', flex: 1, overflow: 'auto' }}>
-      <Row gutter={16}>
-        <Col span={22}>
-          {/* 按照码号 */}
-          <Card
-            actions={[
-              <div key="a" style={{ position: 'relative' }}>
-                <Form form={form} onValuesChange={onValuesChange} {...formLayout}>
-                  <Row>
-                    {searchKey.length > 0 ? (
-                      <>
-                        {searchKey.map((key) => {
-                          // if (
-                          //   [
-                          //     'slightdeviation',
-                          //     'generaldeviation',
-                          //     'seriousdeviation',
-                          //     'lightdeviationCar',
-                          //     'slightdeviationCar',
-                          //     'seriousdeviationCar',
-                          //   ].includes(key)
-                          // ) {
-                          // } else {
-                          return (
-                            <Col span={4} key={key}>
-                              <Form.Item
-                                name={key}
-                                label={formatMessage({
-                                  id: `reportCenter.qrcodehealth.${key}`,
-                                })}
-                                rules={[
-                                  {
-                                    pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                    message: '请输入正整数',
-                                  },
-                                ]}
-                              >
-                                <Input allowClear />
-                              </Form.Item>
-                            </Col>
-                          );
-                          // }
-                        })}
+    <Row gutter={16}>
+      <Col span={22}>
+        {/* 按照小车id */}
+        <Card
+          actions={[
+            <div key="a" style={{ position: 'relative' }}>
+              <Form form={form} onValuesChange={onValuesChange} {...formLayout}>
+                <Row>
+                  {searchKey.length > 0 ? (
+                    <>
+                      {searchKey.map((key) => {
+                        return (
+                          <Col span={4} key={key}>
+                            <Form.Item
+                              name={key}
+                              label={formatMessage({
+                                id: `reportCenter.robot.offline.${key}`,
+                              })}
+                              rules={[
+                                {
+                                  pattern: new RegExp(/^[1-9]\d*$/, 'g'),
+                                  message: '请输入正整数',
+                                },
+                              ]}
+                            >
+                              <Input allowClear />
+                            </Form.Item>
+                          </Col>
+                        );
+                        // }
+                      })}
 
-                        <Col span={4}>
-                          <Form.Item
-                            name={'cellId'}
-                            label={<FormattedMessage id="app.common.code" />}
-                          >
-                            <Select
-                              mode="tags"
-                              style={{ width: '100%' }}
-                              maxTagTextLength={5}
-                              maxTagCount={4}
-                              allowClear
-                            />
-                          </Form.Item>
-                        </Col>
-                      </>
-                    ) : (
-                      ' '
-                    )}
-                  </Row>
-                </Form>
-              </div>,
-            ]}
-          >
-            <div id="ScanCarByIdHistory" style={{ minHeight: 350 }} />
-          </Card>
-        </Col>
-        <Col span={24}>
-          {/* 按照日期 */}
-          <Card
-            actions={[
-              <div key="b" style={{ position: 'relative' }}>
-                {searchKey.length > 0 && togglesDate === 1 ? (
-                  <>
-                    <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
-                      <Row>
-                        <Form.Item hidden name={'startByTime'} />
-                        <Form.Item hidden name={'endByTime'} />
-                        <Col span={6}>
-                          <Form.Item
-                            name={'cellId'}
-                            label={<FormattedMessage id="app.common.code" />}
-                          >
-                            <Select
-                              mode="tags"
-                              style={{ width: '100%' }}
-                              maxTagTextLength={5}
-                              maxTagCount={4}
-                              allowClear
-                            />
-                          </Form.Item>
-                        </Col>
-                        <Col span={18}>
-                          <Form.Item
-                            {...formLayout}
-                            name={'rangeNum'}
-                            label={<FormattedMessage id="app.form.dateRange" />}
-                            getValueFromEvent={(value) => {
-                              const { setFieldsValue } = formDate;
-                              setFieldsValue({
-                                startByTime: value.startTime,
-                                endByTime: value.endTime,
-                                rangeNum: value.timeDate,
-                              });
-                              return value.timeDate;
-                            }}
-                          >
-                            <TimePickerSelector />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    </Form>
+                      <Col span={4}>
+                        <Form.Item name={'robotIds'} label={<FormattedMessage id="app.agv" />}>
+                          <Select
+                            mode="tags"
+                            style={{ width: '100%' }}
+                            maxTagTextLength={5}
+                            maxTagCount={4}
+                            allowClear
+                          />
+                        </Form.Item>
+                      </Col>
+                    </>
+                  ) : (
+                    ' '
+                  )}
+                </Row>
+              </Form>
+            </div>,
+          ]}
+        >
+          <div id="offlineByIRobotIdHistory" style={{ minHeight: 350 }} />
+        </Card>
+      </Col>
+      <Col span={22}>
+        {/* 按照日期 */}
+        <Card
+          actions={[
+            <div key="b" style={{ position: 'relative' }}>
+              {searchKey.length > 0 && togglesDate === 1 ? (
+                <>
+                  <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
                     <Row>
-                      <Col span={24} style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}>
-                        <Button
-                          type="text"
-                          onClick={() => {
-                            setTogglesDate(0);
+                      <Form.Item hidden name={'startByTime'} />
+                      <Form.Item hidden name={'endByTime'} />
+                      <Col span={6}>
+                        <Form.Item name={'robotIds'} label={<FormattedMessage id="app.agv" />}>
+                          <Select
+                            mode="tags"
+                            style={{ width: '100%' }}
+                            maxTagTextLength={5}
+                            maxTagCount={4}
+                            allowClear
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={18}>
+                        <Form.Item
+                          {...formLayout}
+                          name={'rangeNum'}
+                          label={<FormattedMessage id="app.form.dateRange" />}
+                          getValueFromEvent={(value) => {
+                            const { setFieldsValue } = formDate;
+                            setFieldsValue({
+                              startByTime: value.startTime,
+                              endByTime: value.endTime,
+                              rangeNum: value.timeDate,
+                            });
+                            return value.timeDate;
                           }}
                         >
-                          <UpOutlined />
-                          {'收起'}
-                        </Button>
+                          <TimePickerSelector />
+                        </Form.Item>
                       </Col>
                     </Row>
-                  </>
-                ) : searchKey.length > 0 ? (
+                  </Form>
                   <Row>
-                    <Col span={24}>
+                    <Col span={24} style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}>
                       <Button
                         type="text"
-                        style={{ padding: '10px 0' }}
                         onClick={() => {
-                          setTogglesDate(1);
+                          setTogglesDate(0);
                         }}
                       >
-                        <DownOutlined />
-                        {'展开'}
+                        <UpOutlined />
+                        {'收起'}
                       </Button>
                     </Col>
                   </Row>
-                ) : (
-                  ''
-                )}
-              </div>,
-            ]}
-          >
-            <div id="ScanCarBydateHistory" style={{ minHeight: 350 }} />
-          </Card>
-        </Col>
-      </Row>
-    </div>
+                </>
+              ) : searchKey.length > 0 ? (
+                <Row>
+                  <Col span={24}>
+                    <Button
+                      type="text"
+                      style={{ padding: '10px 0' }}
+                      onClick={() => {
+                        setTogglesDate(1);
+                      }}
+                    >
+                      <DownOutlined />
+                      {'展开'}
+                    </Button>
+                  </Col>
+                </Row>
+              ) : (
+                ''
+              )}
+            </div>,
+          ]}
+        >
+          <div id="offlineByIdateHistory" style={{ minHeight: 350 }} />
+        </Card>
+      </Col>
+    </Row>
   );
 };
 export default memo(RobotOfflineComponent);

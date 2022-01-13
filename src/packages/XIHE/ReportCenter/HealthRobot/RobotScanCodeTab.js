@@ -12,7 +12,7 @@ import {
   generateTimeData,
   transformCodeData,
   getOriginalDataBycode,
-} from './components/scanRobotEcharts';
+} from './components/RobotHealthEcharts';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 
@@ -93,7 +93,7 @@ const ScanCodeComponent = (props, ref) => {
       newTimeHistoryLine.legend = legend;
       timeHistoryLine.setOption(newTimeHistoryLine, true);
     }
-    // 拿到原始数据的 所有参数 所有根据cellId的参数求和
+    // 拿到原始数据的 所有参数 所有根据小车的参数求和
     const getOriginalData = getOriginalDataBycode(originData);
     commonOption = getOriginalData.commonOption;
     setSearchKey(getOriginalData.legendData || []);
@@ -258,7 +258,7 @@ const ScanCodeComponent = (props, ref) => {
           <div id="ScancodeByIdHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
-      <Col span={24}>
+      <Col span={22}>
         {/* 按照日期 */}
         <Card
           actions={[

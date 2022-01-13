@@ -1,6 +1,6 @@
 import React, { useState, memo, useRef } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
-import { getScanCodedata } from './components/mockRobotData';
+import { getScanCodedata, getRobotOfflinedata } from './components/mockRobotData';
 import ScanCodeComponent from './RobotScanCodeTab';
 import RobotOfflineComponent from './RobotOfflineTab';
 import commonStyles from '@/common.module.less';
@@ -42,10 +42,10 @@ const HealthCar = (props) => {
   function submitSearch(value) {
     // TODO 调接口
     setScanCarOriginData(getScanCodedata());
-    // setOfflineCarOriginData(offlineCarData);
+    setOfflineCarOriginData(getRobotOfflinedata());
     // setStatusCarOriginData(statusCarData);
     // setFaultCarOriginData(faultCarData);
-    formRef.current.clearForm();
+    // formRef.current.clearForm();
   }
 
   return (

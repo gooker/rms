@@ -587,8 +587,8 @@ export function getRobotOfflinedata() {
       },
       {
         robotId: 7,
-        offlineTimes: 1,
-        offlinetime: 1,
+        offlineTimes: 1,// 次数
+        offlinetime: 1,//时长
       },
     ],
   };

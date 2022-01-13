@@ -23,6 +23,7 @@ const commonOption = {
   type: 'bar',
   stack: '11',
   label: trafficLabelOption,
+  barMaxWidth: 100,
   emphasis: {
     focus: 'series',
     lable: {
@@ -68,11 +69,26 @@ export const dateHistoryLineOption = (title) => ({
   },
   legend: {
     data: [],
+    width: 10,
   },
+  // dataZoom: [// 用于区域缩放
+  //   {
+  //     show: true,
+  //     start: 30,
+  //     end: 100,
+  //     right:30,
+  //   },
+  //   {
+  //     type: 'inside',
+  //     start: 30,
+  //     end: 100,
+  //     right:30,
+  //   },
+  // ],
   xAxis: [
     {
       type: 'category',
-      axisTick: { show: false },
+      axisTick: { show: false },//是否显示坐标轴刻度。
       data: [],
     },
   ],
