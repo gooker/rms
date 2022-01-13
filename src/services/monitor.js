@@ -1,5 +1,5 @@
 import request from '@/utils/request';
-import { AppCode, NameSpace } from '@/config/config';
+import { NameSpace } from '@/config/config';
 
 export async function fetchAllScopeActions(sectionId) {
   return request(`/${NameSpace.Coordinator}/actionScope/getAllActionScope`, {
@@ -129,15 +129,16 @@ export async function fetchPodToCell(params) {
 
 // 小车空跑
 export async function agvEmptyRun(AGVType, params) {
-  return request(`/${NameSpace[AppCode[AGVType]]}/agv-task/empty-run`, {
+  const sectionId = window.localStorage.getItem('sectionId');
+  return request(`/${NameSpace[AGVType]}/agv-task/empty-run`, {
     method: 'POST',
-    data: params,
+    data: { ...params, sectionId },
   });
 }
 
 // 小车充电
 export async function agvTryToCharge(AGVType, params) {
-  return request(`/${NameSpace[AppCode[AGVType]]}/agv/action/tryToCharge`, {
+  return request(`/${NameSpace[AGVType]}/agv/action/tryToCharge`, {
     method: 'GET',
     data: params,
   });
@@ -145,7 +146,7 @@ export async function agvTryToCharge(AGVType, params) {
 
 // 小车回休息区
 export async function agvToRest(AGVType, params) {
-  return request(`/${NameSpace[AppCode[AGVType]]}/agv-task/goToRest`, {
+  return request(`/${NameSpace[AGVType]}/agv-task/goToRest`, {
     method: 'GET',
     data: params,
   });
@@ -153,7 +154,7 @@ export async function agvToRest(AGVType, params) {
 
 // 小车命令
 export async function agvCommand(AGVType, params) {
-  return request(`/${NameSpace[AppCode[AGVType]]}/agv/batchSendCommand`, {
+  return request(`/${NameSpace[AGVType]}/agv/batchSendCommand`, {
     method: 'POST',
     data: params,
   });

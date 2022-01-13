@@ -68,15 +68,7 @@ export class Permission extends React.PureComponent {
 }
 
 // 获取是否有某个APP的权限
-export const hasApp = (appBaseCode) => {
-  const grantedAPPStr = window.localStorage.getItem('grantedAPP') || '[]';
-  const app = find(JSON.parse(grantedAPPStr), { base: appBaseCode });
-  return !!app;
+export const hasAppPermission = (appCode) => {
+  const { grantedAPP } = window.g_app._store.getState().global;
+  return grantedAPP.includes(appCode);
 };
-
-// 查看某APP是否在授权列表内
-export function isAppInUse(appKey) {
-  const grantedAPP = JSON.parse(window.localStorage.getItem('grantedAPP')) ?? {};
-  const result = find(grantedAPP, { name: appKey });
-  return !isNull(result);
-}

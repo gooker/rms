@@ -156,7 +156,7 @@ export default class ForkLiftAGV extends PIXI.Container {
   }
 
   addMaintainIcon() {
-    const spannerTexture = getTextureFromResources('maintain_2');
+    const spannerTexture = getTextureFromResources('maintain');
     const spannerSprite = new PIXI.Sprite(spannerTexture);
     spannerSprite.anchor.set(0.5);
     const x = this.agv.width / 1.7;

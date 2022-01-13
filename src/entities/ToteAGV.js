@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { isStrictNull } from '@/utils/utils';
+import { isNull, isStrictNull } from '@/utils/utils';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 import { ToteAGVSize, GlobalAlpha, zIndex } from '@/config/consts';
 import { AGVType } from '@/config/config';
@@ -26,6 +26,7 @@ export default class ToteAGV extends PIXI.Container {
     this.shelfs = props.shelfs;
     this.toteCodes = props.toteCodes;
     this.inCharging = props.inCharging;
+    this.errorLevel = props.errorLevel;
     this.shelfMap = new Map(); // {层数: Shelf}; 料箱车身货架,从1开始
     this.toteMap = new Map(); // {层数: Bin}; 料箱车上的料箱, 从1开始
 
@@ -41,6 +42,7 @@ export default class ToteAGV extends PIXI.Container {
     this.updateTotes(this.toteCodes);
     this.addManuallyModeIcon();
     this.mainTain && this.addMaintainIcon();
+    this.addErrorLevelIcon();
 
     if (props.active) {
       this.agv.interactive = true;
@@ -104,13 +106,6 @@ export default class ToteAGV extends PIXI.Container {
     this.agv.texture = agvTexture;
     this.stateIcon.texture = getTextureFromResources(state);
 
-    // 如果是 error或者offline 小车要添加特殊纹理
-    if (state === 'error') {
-      this.addErrorMaskState();
-    } else {
-      if (this.AGVErrorSprite) this.AGVErrorSprite.visible = false;
-    }
-
     if (state === 'offline') {
       this.addOfflineIcon();
     } else {
@@ -127,14 +122,29 @@ export default class ToteAGV extends PIXI.Container {
     this.agv.addChild(this.AGVOfflineSprite);
   }
 
-  addErrorMaskState() {
+  //  小车显示错误等级 0:无错误; 1:error错误;  2:warn错误; 3:info错误
+  addErrorLevelIcon() {
+    if (isNull(this.errorLevel)) return;
+    const _textureName = `errorLevel_${this.errorLevel}`;
     if (!this.AGVErrorSprite) {
-      const ErrorMaskTexture = getTextureFromResources('agv_error');
+      const ErrorMaskTexture = getTextureFromResources(_textureName);
       this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
-      this.AGVErrorSprite.anchor.set(0.5, 0.62);
-      this.AGVErrorSprite.setTransform(0, 0, 1.3, 1.3);
-      this.addChild(this.AGVErrorSprite);
+      this.AGVErrorSprite.anchor.set(0.5);
+      this.AGVErrorSprite.setTransform(0, 0, 0.5, 0.5);
+      this.agv.addChild(this.AGVErrorSprite);
+    }
+    if (this.errorLevel === 0) {
+      this.AGVErrorSprite.visible = false;
+    }
+  }
+
+  updateErrorLevel(errorLevel) {
+    this.errorLevel = errorLevel;
+    if (errorLevel === 0) {
+      this.AGVErrorSprite.visible = false;
     } else {
+      const _textureName = `errorLevel_${errorLevel}`;
+      this.AGVErrorSprite.texture = getTextureFromResources(_textureName);
       this.AGVErrorSprite.visible = true;
     }
   }
@@ -160,7 +170,7 @@ export default class ToteAGV extends PIXI.Container {
 
   // 料箱车维护状态
   addMaintainIcon() {
-    const spannerTexture = getTextureFromResources('maintain_2');
+    const spannerTexture = getTextureFromResources('maintain');
     const spannerSprite = new PIXI.Sprite(spannerTexture);
     spannerSprite.anchor.set(0.5);
     const x = this.agv.width / 2 + 60;

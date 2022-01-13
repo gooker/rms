@@ -716,6 +716,39 @@ export function getCurveString(lineData) {
   return `${lineData.source}_${lineData.target}_${lineData.bparam1}_${lineData.bparam2}`;
 }
 
+// 地图监控弹窗尺寸自适应
+// Modal尺寸自适应逻辑
+function getWindowWidthDpr() {
+  const { width } = window.screen;
+  const a = (width - 1440) / 1440;
+  if (a > 0) {
+    return a + 1;
+  }
+  return 1;
+}
+
+function getWindowHeightDpr() {
+  const { height } = window.screen;
+  const a = (height - 900) / 900;
+  if (a > 0) {
+    return a + 1;
+  }
+  return 1;
+}
+
+export function getMonitorModalSize() {
+  const widthDpr = getWindowWidthDpr();
+  const heightDpr = getWindowHeightDpr();
+
+  let width = 600 * widthDpr;
+  let height = 500 * heightDpr;
+
+  width = width > 900 ? 900 : width;
+  height = height > 600 ? 600 : height;
+
+  return { width, height };
+}
+
 /**
  * 将料箱货架布局数据转化为地图渲染可用数据结构
  * @param {*} toteLayoutData
@@ -820,12 +853,12 @@ export function covertDumpFormData2Param(currentDumpStation, existDumpStations) 
   return null;
 }
 
-const directionMap = { ip0: '0', ip1: '90', ip2: '180', ip3: '270' };
 /**
  * 将交汇点表单数据转化为后台数据结构
  * @param {*} formData
  * @returns
  */
+const directionMap = { ip0: '0', ip1: '90', ip2: '180', ip3: '270' };
 export function covertIntersectionFormData2Param(formData) {
   const { cellId } = formData;
   if (isNull(cellId)) {
@@ -1066,6 +1099,7 @@ export function unifyAgvState(agv) {
     battery: agv.b ?? agv.battery,
     robotId: agv.r ?? agv.robotId,
     mainTain: agv.m ?? agv.maintain,
+    manualMode: agv.mly ?? agv.manualMode,
     agvStatus: explainAgvStatus(agv.s) ?? agv.agvStatus,
     currentDirection: agv.rD ?? agv.currentDirection,
     podId: agv.p ?? agv.podId,
@@ -1077,6 +1111,7 @@ export function unifyAgvState(agv) {
     toteCodes: agv.tc ?? agv.toteCodes, // 车身的料箱
     holdTote: agv.ht, // 抱夹的料箱
     sorterPod: agv.ro ?? '0,0',
+    errorLevel: agv.e ?? 0,
   };
 }
 
@@ -1110,4 +1145,65 @@ export function transformScreenToWorldCoordinator(point, htmlDOM, viewportEntity
     console.log(`屏幕坐标转换成世界坐标失败: ${e.message()}`);
     return [0, 0];
   }
+}
+
+/**
+ * 注册监控地图Socket回调
+ */
+export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
+  // 潜伏式车状态
+  socketClient.registerLatentAGVStatus((allAgvStatus) => {
+    mapContext.updateLatentAGV(allAgvStatus);
+  });
+
+  // 潜伏式货架状态
+  socketClient.registerLatentPodStatus((podStatus) => {
+    mapContext.refreshLatentPod(podStatus);
+  });
+
+  // 料箱车状态
+  socketClient.registerToteAGVStatus((toteAGVStatus) => {
+    mapContext.updateToteAGV(toteAGVStatus);
+  });
+
+  // 料箱车身上的货架状态
+  socketClient.registerToteStatusCallback((toteStatus) => {
+    mapContext.updateToteState(toteStatus);
+  });
+
+  // 分拣车状态
+  socketClient.registerSorterAGVStatus((sorterStatus) => {
+    mapContext.updateSorterAGV(sorterStatus);
+  });
+
+  // 充电桩状态
+  socketClient.registerChargerStatusListener((state) => {
+    mapContext.updateChargerState(state);
+  });
+
+  // 紧急停止区状态
+  socketClient.registerEmergencyStopListener((estops) => {
+    mapContext.renderEmergencyStopArea(estops ?? []);
+  });
+
+  // 潜伏货架到工作站
+  socketClient.registerPodInStation((podInfo) => {
+    dispatch({
+      type: 'monitor/savePodToWorkStation',
+      payload: podInfo,
+    });
+  });
+
+  // 潜伏车自动任务状态
+  socketClient.registerOpenAutoTask((autoTask) => {
+    dispatch({
+      type: 'monitor/fetchSaveSocketAutomaticTaskStatus',
+      payload: JSON.parse(autoTask),
+    });
+  });
+
+  // 潜伏车任务暂停事件
+  socketClient.registerLatentLiftingPauseTaskEvent(() => {
+    dispatch({ type: 'monitor/fetchLatentSopMessageList' });
+  });
 }

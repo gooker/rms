@@ -1,9 +1,9 @@
-/* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 import { zIndex, LatentAGVSize } from '@/config/consts';
 import { AGVType } from '@/config/config';
+import { isNull } from '@/utils/utils';
 
 export default class LatentAGV extends PIXI.Container {
   constructor(props) {
@@ -21,6 +21,7 @@ export default class LatentAGV extends PIXI.Container {
     this.manualMode = props.manualMode;
     this.currentCellId = props.cellId;
     this.inCharging = props.inCharging;
+    this.errorLevel = props.errorLevel;
 
     this.employer = null; // 标记当前正在为那个工作站服务
 
@@ -31,6 +32,8 @@ export default class LatentAGV extends PIXI.Container {
     this.addBatteryIcon();
     this.addManuallyModeIcon();
     this.mainTain && this.addMaintainIcon();
+
+    this.addErrorLevelIcon();
 
     if (props.active) {
       this.agv.interactive = true;
@@ -110,13 +113,6 @@ export default class LatentAGV extends PIXI.Container {
     this.agv.texture = agvTexture;
     this.stateIcon.texture = getTextureFromResources(state);
 
-    // 如果是 error或者offline 小车要添加特殊纹理
-    if (state === 'error') {
-      this.addErrorMaskState();
-    } else {
-      if (this.AGVErrorSprite) this.AGVErrorSprite.visible = false;
-    }
-
     if (state === 'offline') {
       this.addOfflineIcon();
     } else {
@@ -169,19 +165,34 @@ export default class LatentAGV extends PIXI.Container {
     this.batteryIcon.texture = getTextureFromResources(state);
   }
 
-  addErrorMaskState() {
+  //  小车显示错误等级 0:无错误; 1:error错误;  2:warn错误; 3:info错误
+  addErrorLevelIcon() {
+    if (isNull(this.errorLevel)) return;
+    const _textureName = `errorLevel_${this.errorLevel}`;
     if (!this.AGVErrorSprite) {
-      const ErrorMaskTexture = getTextureFromResources('agv_error');
+      const ErrorMaskTexture = getTextureFromResources(_textureName);
       this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
       this.AGVErrorSprite.anchor.set(0.5, 0.62);
       this.agv.addChild(this.AGVErrorSprite);
+    }
+    if (this.errorLevel === 0) {
+      this.AGVErrorSprite.visible = false;
+    }
+  }
+
+  updateErrorLevel(errorLevel) {
+    this.errorLevel = errorLevel;
+    if (errorLevel === 0) {
+      this.AGVErrorSprite.visible = false;
     } else {
+      const _textureName = `errorLevel_${errorLevel}`;
+      this.AGVErrorSprite.texture = getTextureFromResources(_textureName);
       this.AGVErrorSprite.visible = true;
     }
   }
 
   addMaintainIcon() {
-    const spannerTexture = getTextureFromResources('maintain_2');
+    const spannerTexture = getTextureFromResources('maintain');
     this.spannerSprite = new PIXI.Sprite(spannerTexture);
     this.spannerSprite.anchor.set(0.5);
     this.spannerSprite.setTransform(0, 0, 0.9, 0.9);

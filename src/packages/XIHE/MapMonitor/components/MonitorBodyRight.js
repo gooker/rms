@@ -2,10 +2,10 @@ import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/utils';
 import { connect } from '@/utils/dva';
-import { MonitorRightTools } from '../enums';
-import commonStyles from '@/common.module.less';
+import { Category, MonitorRightTools } from '../enums';
+import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
+import { AGVType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
-import classnames from 'classnames';
 
 const MonitorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -28,14 +28,33 @@ const MonitorBodyRight = (props) => {
 
   function renderIcon(icon, style) {
     if (typeof icon === 'string') {
-      return <img alt={icon} src={require(`../svg/${icon}`).default} style={style} />;
+      return <img alt={icon} src={require(`../category/${icon}`).default} style={style} />;
     } else {
       return <span style={style}>{icon}</span>;
     }
   }
 
   function renderPanelContent() {
-    //
+    switch (categoryPanel) {
+      case Category.LatentAGV:
+        return (
+          <AgvCategorySecondaryPanel
+            agvType={AGVType.LatentLifting}
+            dispatch={dispatch}
+            height={450}
+          />
+        );
+      case Category.ToteAGV:
+        return (
+          <AgvCategorySecondaryPanel agvType={AGVType.Tote} dispatch={dispatch} height={350} />
+        );
+      case Category.SorterAGV:
+        return (
+          <AgvCategorySecondaryPanel agvType={AGVType.Sorter} dispatch={dispatch} height={350} />
+        );
+      default:
+        return null;
+    }
   }
 
   return (
