@@ -11,7 +11,8 @@ export async function fetchTrafficRobotType() {
 }
 
 // 获取潜伏车货架列表
-export async function fetchGetPodList(sectionId) {
+export async function fetchLatentPodList() {
+  const sectionId = window.localStorage.getItem('sectionId');
   return request(`/${NameSpace.LatentLifting}/pod/list/${sectionId}`, {
     method: 'GET',
   });
@@ -27,6 +28,13 @@ export async function fetchToteSizeList() {
 // 获取所有站点类型
 export async function fetchAllStationTypes() {
   return request(`/${NameSpace.Coordinator}/map/getAllStationType`, {
+    method: 'GET',
+  });
+}
+
+// 获取Section急停配置信息
+export async function fetchEmergencyStopList(mapId) {
+  return request(`/${NameSpace.Coordinator}/eStop/getEStops/${mapId}`, {
     method: 'GET',
   });
 }

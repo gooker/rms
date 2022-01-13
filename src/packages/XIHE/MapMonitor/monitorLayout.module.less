@@ -1,5 +1,6 @@
 // reference: 使用文件，但不会输出其内容（即文件作为样式库使用）
 @import (reference) '../../../common.module';
+@import (reference) '~antd/dist/antd.dark.less';
 
 .monitorHeader {
   .monitorBackColor();
@@ -9,8 +10,9 @@
 
 // 右侧
 .bodyRightSide {
+  position: relative;
   width: 60px;
-  background: #4a4a4a;
+  background: #2f2f2f;
 
   & > div[role='category'] {
     .flexCenter();
@@ -34,4 +36,101 @@
 }
 .categoryActive {
   background: #0f5aa1;
+}
+
+// Popover Panel
+.popoverPanel {
+  position: absolute;
+  top: 5px;
+  right: 70px;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 60px;
+  background: rgba(99, 99, 99, 0.9);
+  border-radius: 5px;
+  user-select: none;
+
+  & > div[role='category'] {
+    .flexCenter();
+
+    height: 50px;
+    cursor: pointer;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid #7c7c7c;
+    }
+  }
+}
+
+// 弹窗
+.monitorModal {
+  position: absolute;
+  top: 10%;
+  z-index: 1;
+  display: flex;
+  flex-flow: column nowrap;
+  box-sizing: border-box;
+  color: #fff;
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5;
+  text-decoration: none;
+  list-style: none;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-feature-settings: 'tnum';
+
+  :global {
+    .ant-checkbox-group {
+      label {
+        color: #fff;
+      }
+    }
+  }
+}
+
+.monitorModalHeader {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 0 10px;
+  color: rgb(24, 144, 255);
+  font-weight: 600;
+  font-size: 16px;
+  border-bottom: 1px solid #636060;
+
+  & > span[role='img'] {
+    svg {
+      fill: #a6a6a6;
+    }
+  }
+}
+
+.monitorModalBody {
+  flex: 1;
+  padding: 10px;
+  overflow: auto;
+  :global {
+    .ant-form-item .ant-form-item-label label {
+      color: #fff;
+      font-weight: 500;
+      font-size: 15px;
+      user-select: none;
+    }
+
+    .ant-form-item .ant-switch {
+      .ant-switch();
+    }
+
+    .ant-form-item .ant-input {
+      .ant-input();
+    }
+
+    .ant-form-item .ant-btn {
+      .ant-btn();
+    }
+  }
 }

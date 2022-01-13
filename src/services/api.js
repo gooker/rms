@@ -48,7 +48,7 @@ export async function fetchStoreCellGroup(mapId) {
 }
 
 // 获取料箱货架布局
-export async function fetchToteRackLayout(params) {
+export async function fetchToteRackLayout() {
   return request(`/${NameSpace.Tote}/rack/getRackLayoutDetail`, {
     method: 'GET',
   });

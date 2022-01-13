@@ -1,6 +1,10 @@
-import { fetchActiveMap } from '@/services/api';
+import { fetchActiveMap, fetchAgvList, fetchToteRackLayout } from '@/services/api';
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import { message } from 'antd';
+import { hasAppPermission, hasPermission } from '@/utils/Permission';
+import { AGVType, AppCode } from '@/config/config';
+import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
+import { fetchTemporaryBlockCells } from '@/services/monitor';
 
 export default {
   namespace: 'monitor',
@@ -14,12 +18,61 @@ export default {
     currentCells: [], // 当前视图的点位数据
     mapContext: null, // 地图实体对象
     elevatorCellMap: null, // 保存电梯替换点与地图原始点位的Map关系
+    stationRealRate: [], // 站点实时速率
+
+    // 小车、货架等信息
+    allAGVs: [],
+    latentAgv: [],
+    latentPod: [],
+    toteAgv: [],
+    toteRack: null,
+    sorterAgv: [],
+    chargerList: [], // 硬件充电桩
+    temporaryBlock: [], // 临时不可走点
+
+    // 运行信息
+    podToWorkstationInfo: [],
+    latentStopMessageList: [],
+    autoCallPodToWorkstationStatus: '',
+    automaticToteWorkstationTaskStatus: '',
+    automaticForkLiftWorkstationTaskStatus: '',
+
+    // 自动呼叫 & 自动释放
+    latentAutomaticTaskConfig: null,
+    latentAutomaticTaskForm: null,
+    latentAutomaticTaskUsage: {},
+
+    // 急停区
+    emergencyStopList: [], // 急停区
+    globalActive: null, // 全局急停开启关闭
+    logicActive: [], // 逻辑区急停开启关闭
 
     // 右侧操作栏
     categoryPanel: null,
+
+    // 监控地图是否渲染完成
+    mapRendered: false,
+
+    // 弹窗
+    categoryModal: null,
   },
 
   reducers: {
+    saveState(state, action) {
+      return { ...state, ...action.payload };
+    },
+    saveCategoryModal(state, action) {
+      return {
+        ...state,
+        categoryModal: action.payload,
+      };
+    },
+    saveMapRendered(state, action) {
+      return {
+        ...state,
+        mapRendered: action.payload,
+      };
+    },
     saveCategoryPanel(state, action) {
       return {
         ...state,
@@ -70,7 +123,8 @@ export default {
   },
 
   effects: {
-    *initMonitorPage(_, { call, put }) {
+    // ***************** 获取地图数据 ***************** //
+    *initMonitorMap(_, { call, put }) {
       const activeMap = yield call(fetchActiveMap);
       if (isNull(activeMap)) {
         message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
@@ -94,8 +148,76 @@ export default {
           });
           yield put({ type: 'saveElevatorCellMap', payload: elevatorCellMap });
         }
+        yield put({ type: 'saveCurrentMap', payload: activeMap });
       }
-      yield put({ type: 'saveCurrentMap', payload: activeMap });
+    },
+
+    // ***************** 获取监控小车、货架等相关信息 ***************** //
+    *initMonitorLoad(_, { call, select, put }) {
+      const { currentMap } = yield select(({ monitor }) => monitor);
+      if (isNull(currentMap)) return null;
+
+      const promises = [];
+      const promiseFields = []; // 每个Promise返回值对应的 state 字段
+      // 潜伏车模块
+      if (hasAppPermission(AppCode.LatentLifting)) {
+        promises.push(fetchAgvList(AGVType.LatentLifting));
+        promiseFields.push('latentAgv');
+        promises.push(fetchLatentPodList());
+        promiseFields.push('latentPod');
+      }
+
+      // 料箱车模块
+      if (hasAppPermission(AGVType.Tote)) {
+        promises.push(fetchAgvList(AGVType.Tote));
+        promiseFields.push('toteAgv');
+        promises.push(fetchToteRackLayout());
+        promiseFields.push('toteRack');
+      }
+
+      // 分拣车模块
+      if (hasAppPermission(AGVType.Sorter)) {
+        promises.push(fetchAgvList(AGVType.Sorter));
+        promiseFields.push('sorterAgv');
+      }
+
+      // 地图充电桩与硬件绑定关系
+      if (hasPermission('/map/monitor/chargerMaintain') && currentMap.id) {
+        promises.push(fetchChargerList(currentMap.id));
+        promiseFields.push('chargerList');
+      }
+
+      // 地图临时不可走点
+      promises.push(fetchTemporaryBlockCells());
+      promiseFields.push('temporaryBlock');
+
+      // 地图急停区
+      promises.push(fetchEmergencyStopList(currentMap.id));
+      promiseFields.push('emergencyStopList');
+
+      /**
+       * 并发发送请求
+       * result {status:'fulfilled|rejected', value:any}
+       */
+      const [...responses] = yield Promise.allSettled(promises);
+      const resource = {};
+      const additionalStates = {};
+      let allAGVs = [];
+      responses.forEach(({ status, value }, index) => {
+        if (status === 'fulfilled' && !dealResponse(value)) {
+          resource[promiseFields[index]] = value;
+          additionalStates[promiseFields[index]] = value;
+          if (['latentAgv', 'toteAgv', 'sorterAgv'].includes(promiseFields[index])) {
+            allAGVs = [...allAGVs, ...value];
+          }
+        } else {
+          resource[promiseFields[index]] = null;
+          additionalStates[promiseFields[index]] = null;
+        }
+      });
+      additionalStates.allAGVs = allAGVs;
+      yield put({ type: 'saveState', payload: additionalStates });
+      return resource;
     },
   },
 };

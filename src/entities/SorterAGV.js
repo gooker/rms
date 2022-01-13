@@ -3,6 +3,7 @@ import BitText from './BitText';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
 import { zIndex, SorterAGVSize } from '@/config/consts';
 import { AGVType } from '@/config/config';
+import { isNull } from '@/utils/utils';
 
 const BoxWidth = 230;
 const BoxHeight = 200;
@@ -23,6 +24,7 @@ export default class SorterAGV extends PIXI.Container {
     this.manualMode = props.manualMode;
     this.currentCellId = props.cellId;
     this.inCharging = props.inCharging;
+    this.errorLevel = props.errorLevel;
 
     this.employer = null; // 标记当前正在为那个工作站服务
 
@@ -34,6 +36,8 @@ export default class SorterAGV extends PIXI.Container {
     this.addBatteryIcon();
     this.addManuallyModeIcon();
     this.mainTain && this.addMaintainIcon();
+
+    this.addErrorLevelIcon();
 
     if (props.active) {
       this.agv.interactive = true;
@@ -99,17 +103,37 @@ export default class SorterAGV extends PIXI.Container {
     this.agv.texture = agvTexture;
     this.stateIcon.texture = getTextureFromResources(state);
 
-    // 如果是 error或者offline 小车要添加特殊纹理
-    if (state === 'error') {
-      this.addErrorMaskState();
-    } else {
-      if (this.AGVErrorSprite) this.AGVErrorSprite.visible = false;
-    }
-
     if (state === 'offline') {
       this.addOfflineIcon();
     } else {
       if (this.AGVOfflineSprite) this.AGVOfflineSprite.visible = false;
+    }
+  }
+
+  //  小车显示错误等级 0:无错误; 1:error错误;  2:warn错误; 3:info错误
+  addErrorLevelIcon() {
+    if (isNull(this.errorLevel)) return;
+    const _textureName = `errorLevel_${this.errorLevel}`;
+    if (!this.AGVErrorSprite) {
+      const ErrorMaskTexture = getTextureFromResources(_textureName);
+      this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
+      this.AGVErrorSprite.anchor.set(0.5);
+      this.AGVErrorSprite.setTransform(0, 0, 0.7, 0.7);
+      this.agv.addChild(this.AGVErrorSprite);
+    }
+    if (this.errorLevel === 0) {
+      this.AGVErrorSprite.visible = false;
+    }
+  }
+
+  updateErrorLevel(errorLevel) {
+    this.errorLevel = errorLevel;
+    if (errorLevel === 0) {
+      this.AGVErrorSprite.visible = false;
+    } else {
+      const _textureName = `errorLevel_${errorLevel}`;
+      this.AGVErrorSprite.texture = getTextureFromResources(_textureName);
+      this.AGVErrorSprite.visible = true;
     }
   }
 
@@ -187,20 +211,8 @@ export default class SorterAGV extends PIXI.Container {
     this.bigBox.angle = 0;
   }
 
-  addErrorMaskState() {
-    if (!this.AGVErrorSprite) {
-      const ErrorMaskTexture = getTextureFromResources('agv_error');
-      this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
-      this.AGVErrorSprite.alpha = 0.8;
-      this.AGVErrorSprite.anchor.set(0.5, 0.62);
-      this.agv.addChild(this.AGVErrorSprite);
-    } else {
-      this.AGVErrorSprite.visible = true;
-    }
-  }
-
   addMaintainIcon() {
-    const spannerTexture = getTextureFromResources('maintain_2');
+    const spannerTexture = getTextureFromResources('maintain');
     this.spannerSprite = new PIXI.Sprite(spannerTexture);
     this.spannerSprite.alpha = 0.8;
     this.spannerSprite.anchor.set(0.5);

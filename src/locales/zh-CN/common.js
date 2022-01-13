@@ -84,6 +84,7 @@ export default {
   'app.common.prop': '属性',
   'app.common.select': '选择',
   'app.common.drag': '拖拽',
+  'app.common.custom': '自定义',
 
   // 地图相关
   'app.map.map': '地图',
@@ -158,6 +159,7 @@ export default {
   'app.button.confirm': '确定',
   'app.button.refresh': '刷新',
   'app.button.turnOff': '关闭',
+  'app.button.execute': '执行',
 
   // @下面5个可能需要从common中移除
   'app.button.bind': '绑定',

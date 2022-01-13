@@ -1,7 +1,14 @@
 import * as PIXI from 'pixi.js';
 import { BitText, LineArrow } from '@/entities';
 import { calculateCellDistance } from './mapUtils';
-import { CellSize, ToteAGVSize, CostColor, TaskPathColor, HeatCircleRadius } from '@/config/consts';
+import {
+  CellSize,
+  ToteAGVSize,
+  CostColor,
+  TaskPathColor,
+  HeatCircleRadius,
+  SorterAGVSize,
+} from '@/config/consts';
 
 function getQrCodeSelectBorderTexture() {
   const tmpSelectedBorder = new PIXI.Graphics();
@@ -370,6 +377,9 @@ export function loadTexturesForMap() {
       .add('work_station_6', '/textures/work_station_6.png')
       .add('work_station_7', '/textures/work_station_7.png')
       .add('work_station_8', '/textures/work_station_8.png')
+      .add('errorLevel_1', '/textures/errorLevel_1.png')
+      .add('errorLevel_2', '/textures/errorLevel_2.png')
+      .add('errorLevel_3', '/textures/errorLevel_3.png')
       .load(() => {
         // 背景
         PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
@@ -392,10 +402,10 @@ export function loadTexturesForMap() {
         // 小车锁格
         PIXI.Texture.addToCache(getRectLock(1050, 1050), 'LatentRectLock');
         PIXI.Texture.addToCache(getRectLock(ToteAGVSize.width, ToteAGVSize.height), 'ToteRectLock');
-        // PIXI.Texture.addToCache(
-        //   getRectLock(ForkLiftAGVSize.width, ForkLiftAGVSize.height),
-        //   'ForkRectLock',
-        // );
+        PIXI.Texture.addToCache(
+          getRectLock(SorterAGVSize.width, SorterAGVSize.height),
+          'SorterRectLock',
+        );
 
         // 点位成本热度
         PIXI.Texture.addToCache(getCellHeatTexture('0x3366FF'), '_cellHeat1');

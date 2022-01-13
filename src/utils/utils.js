@@ -1,17 +1,14 @@
-// 通用代码片段
 import React from 'react';
 import { Tooltip, Row, Button, Input, message, Form, Tag, InputNumber, Select, Switch } from 'antd';
-import { isPlainObject } from 'lodash';
+import { isPlainObject, find, isEqual as deepEqual } from 'lodash';
 import { InfoOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
-import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
+import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
 import requestorStyles from '@/packages/XIHE/Requestor/requestor.less';
-import find from 'lodash/find';
-import { ModelTypeFieldMap } from '@/config/consts';
 
 /**
  * 将服务器时间转化成本地时间
@@ -357,6 +354,28 @@ export function covertAngle2Direction(angle) {
     default:
   }
   return direction;
+}
+
+export function isEqual(obj1, obj2) {
+  // 为了提高对比效率，对空对象和空数组进行特殊处理
+  // 数组
+  if (
+    Array.isArray(obj1) &&
+    Array.isArray(obj2) &&
+    JSON.stringify(obj1) === '[]' &&
+    JSON.stringify(obj2) === '[]'
+  ) {
+    return true;
+  }
+  // 对象
+  if (JSON.stringify(obj1) === '{}' && JSON.stringify(obj2) === '{}') {
+    return true;
+  }
+
+  if (obj1 !== obj2) {
+    return false;
+  }
+  return deepEqual(obj1, obj2);
 }
 
 export function getDpr() {

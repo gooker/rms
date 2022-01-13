@@ -33,14 +33,15 @@ const MonitorMapContainer = (props) => {
       renderMap();
       renderLogicArea();
       renderRouteMap();
+      dispatch({ type: 'monitor/saveMapRendered', payload: true });
     }
-  }, [currentMap, currentLogicArea]);
+  }, [currentMap, currentLogicArea, mapContext]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
       renderRouteMap();
     }
-  }, [currentRouteMap]);
+  }, [currentRouteMap, mapContext]);
 
   function renderMap() {
     dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
@@ -82,8 +83,7 @@ const MonitorMapContainer = (props) => {
     const currentLogicAreaData = currentMap?.logicAreaList?.[currentLogicArea];
     if (!currentLogicAreaData) return;
 
-    const { restCells, storeCellIds, taskCellIds, safeAreaCellIds, rotateCellIds, backGround } =
-      currentLogicAreaData;
+    const { restCells, storeCellIds, taskCellIds } = currentLogicAreaData;
     // 休息区
     if (Array.isArray(restCells)) {
       mapContext.renderRestCells(restCells);
@@ -96,6 +96,8 @@ const MonitorMapContainer = (props) => {
     if (Array.isArray(taskCellIds)) {
       mapContext.renderCellsType(taskCellIds, 'get_task');
     }
+
+    const { safeAreaCellIds, rotateCellIds, backGround } = currentLogicAreaData;
     // 安全区
     if (Array.isArray(safeAreaCellIds)) {
       mapContext.renderCellsType(safeAreaCellIds, 'safe_spot');
@@ -105,8 +107,7 @@ const MonitorMapContainer = (props) => {
       mapContext.renderCellsType(rotateCellIds, 'round');
     }
 
-    const { workstationList, chargerList, commonList, emergencyStopFixedList } =
-      currentLogicAreaData;
+    const { workstationList, chargerList, commonList } = currentLogicAreaData;
     // 充电桩
     if (Array.isArray(chargerList)) {
       const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
@@ -124,7 +125,7 @@ const MonitorMapContainer = (props) => {
       mapContext.renderCommonFunction(commonList);
     }
 
-    const { intersectionList, dumpStations } = currentLogicAreaData;
+    const { intersectionList, dumpStations, emergencyStopFixedList } = currentLogicAreaData;
     // 交汇点
     if (Array.isArray(intersectionList)) {
       mapContext.renderIntersection(intersectionList);
@@ -210,7 +211,7 @@ const MonitorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.drawLine(relations, relations, null, true);
+    mapContext.drawLine(relations, relations);
     mapContext.refresh();
   }
 
