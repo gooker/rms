@@ -32,6 +32,7 @@ export default {
   'reportCenter.way.date': '按日期',
   'reportCenter.robot.scancode': '小车扫码',
   'reportCenter.robot.offline': '小车离线',
+  'reportCenter.robot.fault': '小车故障',
   'reportCenter.robot.offline.offlineTimes': '次数',
   'reportCenter.robot.offline.offlinetime': '时长',
 

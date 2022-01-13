@@ -1,8 +1,13 @@
-import React, { useState, memo, useRef } from 'react';
+import React, { useState, memo, useCallback } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
-import { getScanCodedata, getRobotOfflinedata } from './components/mockRobotData';
+import {
+  getScanCodedata,
+  getRobotOfflinedata,
+  getRobotFaultdata,
+} from './components/mockRobotData';
 import ScanCodeComponent from './RobotScanCodeTab';
 import RobotOfflineComponent from './RobotOfflineTab';
+import RobotFaultComponent from './RobotFaultTab';
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
 
@@ -36,7 +41,6 @@ const HealthCar = (props) => {
   const [faultCarOriginData, setFaultCarOriginData] = useState({}); // 原始数据 小车故障
 
   const [activeTab, setActivieTab] = useState('scancar');
-  const formRef = useRef(null);
 
   // 搜索 调接口
   function submitSearch(value) {
@@ -44,7 +48,7 @@ const HealthCar = (props) => {
     setScanCarOriginData(getScanCodedata());
     setOfflineCarOriginData(getRobotOfflinedata());
     // setStatusCarOriginData(statusCarData);
-    // setFaultCarOriginData(faultCarData);
+    setFaultCarOriginData(getRobotFaultdata());
     // formRef.current.clearForm();
   }
 
@@ -67,10 +71,9 @@ const HealthCar = (props) => {
         ))}
       </div>
       <div className={style.body}>
-        {activeTab === 'scancar' && (
-          <ScanCodeComponent originData={scanCarOriginData} ref={formRef} />
-        )}
+        {activeTab === 'scancar' && <ScanCodeComponent originData={scanCarOriginData} />}
         {activeTab === 'offlinecar' && <RobotOfflineComponent originData={offlineCarOriginData} />}
+        {activeTab === 'faultcar' && <RobotFaultComponent originData={faultCarOriginData} />}
       </div>
     </div>
   );

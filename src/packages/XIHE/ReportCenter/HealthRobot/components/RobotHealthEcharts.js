@@ -48,6 +48,20 @@ export const dateHistoryLineOption = (title) => ({
   tooltip: {
     confine: true,
     trigger: 'axis',
+    // formatter: function (params) {
+    // const name = params[0].axisValue;
+    // var showHtm = name + '<br>';
+    // for (let i = 0; i < params.length; i++) {
+    //   const { marker, seriesName, value } = params[i];
+    //   showHtm +=
+    //     marker +
+    //     formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` }) +
+    //     '：' +
+    //     value +
+    //     '<br>';
+    // }
+    // return showHtm;
+    // },
     axisPointer: {
       type: 'shadow',
       textStyle: {
@@ -88,7 +102,8 @@ export const dateHistoryLineOption = (title) => ({
   xAxis: [
     {
       type: 'category',
-      axisTick: { show: false },//是否显示坐标轴刻度。
+      // axisTick: { show: false }, //是否显示坐标轴刻度。
+      axisLabel: { rotate: 38 },
       data: [],
     },
   ],
@@ -191,7 +206,7 @@ export const codeHistoryLineOption = (title) => ({
 });
 
 // 根据原始数据 --处理日期数据
-export const generateTimeData = (allData) => {
+export const generateTimeData = (allData, notformatlegend) => {
   const series = []; // 存放纵坐标数值
   const xAxisData = Object.keys(allData).sort(); // 横坐标
 
@@ -250,6 +265,7 @@ export const generateTimeData = (allData) => {
     axisLabel: {
       fontSize: 12,
       interval: 0,
+      // rotate: 10,
     },
     splitLine: {
       show: false,
@@ -265,8 +281,6 @@ export const generateTimeData = (allData) => {
 
   const legend = {
     data: legendData,
-    // orient: 'vertical',
-    // right: 0,
     x: 'right',
     align: 'right',
     type: 'scroll',
@@ -276,11 +290,10 @@ export const generateTimeData = (allData) => {
     pageTextStyle: {
       color: '#fff',
     },
-    top: '8%',
-    bottom: '15%',
     pageIconColor: '#1890FF',
     formatter: function (name) {
-      return formatMessage({ id: `reportCenter.qrcodehealth.${name}` });
+      if (!notformatlegend) return formatMessage({ id: `reportCenter.qrcodehealth.${name}` });
+      return name;
     },
     animation: true,
   };
@@ -290,7 +303,7 @@ export const generateTimeData = (allData) => {
 };
 
 // 根据原始数据 --处理robotId数据 横坐标是和 纵坐标yxisData是小车id
-export const transformCodeData = (allData = {}) => {
+export const transformCodeData = (allData = {}, notformatlegend) => {
   const series = []; // 存放横坐标数值 是x 每个sery是每种key的求和(根据robotId)
   const { legendData, yxisData, currentSery } = getOriginalDataBycode(allData);
 
@@ -328,7 +341,6 @@ export const transformCodeData = (allData = {}) => {
 
   const legend = {
     data: legendData,
-    // orient: 'vertical',
     x: 'right',
     align: 'right',
     type: 'scroll',
@@ -339,7 +351,8 @@ export const transformCodeData = (allData = {}) => {
       color: '#fff',
     },
     formatter: function (name) {
-      return formatMessage({ id: `reportCenter.qrcodehealth.${name}` });
+      if (!notformatlegend) return formatMessage({ id: `reportCenter.qrcodehealth.${name}` });
+      return name;
     },
     animation: true,
   };
