@@ -1,12 +1,13 @@
 import React, { memo, useEffect } from 'react';
-import { Row, Col, Form, Button, Select } from 'antd';
+import { Row, Col, Form, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import TimePickerSelector from '../components/timePicker';
+import SelectCarType from './SelectCarType';
+import TimePickerSelector from '../../components/timePicker';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
 const LogSearchForm = (props) => {
-  const { search, data } = props;
+  const { search } = props;
 
   const [form] = Form.useForm();
 
@@ -18,9 +19,27 @@ const LogSearchForm = (props) => {
   function submitSearch() {
     form.validateFields().then((values) => {
       search(values);
-      console.log('filter0', values);
     });
   }
+
+  // 分车数据
+  const OptionsData = [
+    {
+      code: 'AGV',
+      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+      value: {},
+    },
+    {
+      code: 'AGV_GROUP',
+      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+      value: {}, //modelTypes?.AGV_GROUP.options ?? {},
+    },
+    {
+      code: 'AGV_TYPE',
+      name: <FormattedMessage id="app.common.type" />,
+      value: {}, //modelTypes?.AGV_GROUP.options ?? {},
+    },
+  ];
 
   return (
     <Form form={form}>
@@ -47,10 +66,12 @@ const LogSearchForm = (props) => {
           </Form.Item>
         </Col>
 
-        <Col span={6}>
-          {/* <Form.Item name={'codes'} label={<FormattedMessage id="app.common.code" />}>
-            <Select mode="tags" style={{ width: '100%' }} maxTagTextLength={5} maxTagCount={4} />
-          </Form.Item> */}
+        <Col>
+          {/* 分小车 */}
+          <Form.Item name={'robot'} label={'小车'} initialValue={{ type: 'AGV', code: [] }}>
+            <SelectCarType data={OptionsData} />
+          </Form.Item>
+          ,
         </Col>
 
         <Col>

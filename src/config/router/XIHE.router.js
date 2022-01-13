@@ -275,7 +275,7 @@ export default [
       {
         path: `/${AppCode.XIHE}/report/healthCar`,
         name: 'healthCar',
-        component: '/XIHE/ReportCenter/HealthCar',
+        component: '/XIHE/ReportCenter/HealthRobot',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
         hooks: ['dev'],
       },

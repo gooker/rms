@@ -1,4 +1,4 @@
-import { formatMessage, isStrictNull, GMT2UserTimeZone } from '@/utils/utils';
+import { formatMessage, isStrictNull } from '@/utils/utils';
 import { forIn } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -23,6 +23,7 @@ const commonOption = {
   type: 'bar',
   stack: '11',
   label: trafficLabelOption,
+  barMaxWidth: 100,
   emphasis: {
     focus: 'series',
     lable: {
@@ -47,13 +48,6 @@ export const dateHistoryLineOption = (title) => ({
   tooltip: {
     confine: true,
     trigger: 'axis',
-    // formatter: (params) => {
-    //   params.map(({ name, value, seriesName, index }) => {
-    //     return `${name}${index}<br />${formatMessage({
-    //       id: `reportCenter.qrcodehealth.${seriesName}`,
-    //     })}:${value}`;
-    //   });
-    // },
     axisPointer: {
       type: 'shadow',
       textStyle: {
@@ -75,11 +69,26 @@ export const dateHistoryLineOption = (title) => ({
   },
   legend: {
     data: [],
+    width: 10,
   },
+  // dataZoom: [// 用于区域缩放
+  //   {
+  //     show: true,
+  //     start: 30,
+  //     end: 100,
+  //     right:30,
+  //   },
+  //   {
+  //     type: 'inside',
+  //     start: 30,
+  //     end: 100,
+  //     right:30,
+  //   },
+  // ],
   xAxis: [
     {
       type: 'category',
-      axisTick: { show: false },
+      axisTick: { show: false },//是否显示坐标轴刻度。
       data: [],
     },
   ],
@@ -115,7 +124,7 @@ export const dateHistoryLineOption = (title) => ({
 export const codeHistoryLineOption = (title) => ({
   title: {
     text: `${title}(${formatMessage({
-      id: 'reportCenter.way.cellId',
+      id: 'reportCenter.way.robot',
     })})`,
     x: 'center',
     bottom: '3%',
@@ -206,7 +215,7 @@ export const generateTimeData = (allData) => {
   const currentAxisData = Object.values(allData)[0] || []; // 横坐标
 
   forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'cellId') {
+    if (key !== 'robotId') {
       firstTimeDataMap.set(key, 0);
       legendData.push(key);
     }
@@ -280,48 +289,10 @@ export const generateTimeData = (allData) => {
   return { xAxis, series, legend };
 };
 
-// 根据原始数据 --处理cellId数据
+// 根据原始数据 --处理robotId数据 横坐标是和 纵坐标yxisData是小车id
 export const transformCodeData = (allData = {}) => {
-  const currentAxisData = Object.values(allData)[0] || [];
-  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
-  const legendData = [];
-  const yxisData = []; // 纵坐标 是y
-  const series = []; // 存放横坐标数值 是x 每个sery是每种key的求和(根据cellId)
-  let currentCellIdData = {}; // 根据cellId 每个key 求和
-
-  forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'cellId') {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-    }
-  });
-
-  currentAxisData.map(({ cellId }) => {
-    yxisData.push(cellId);
-    currentCellIdData[cellId] = {};
-  });
-
-  Object.values(allData).forEach((record) => {
-    record.forEach((item) => {
-      const { cellId } = item;
-      forIn(item, (value, key) => {
-        if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[cellId][key] || 0;
-          currentCellIdData[cellId][key] = seryData * 1 + value * 1;
-        }
-      });
-    });
-  });
-
-  const currentSery = {};
-  Object.entries(currentCellIdData).forEach(([cellId, v]) => {
-    forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
-        let seryData = currentSery[key] || [];
-        currentSery[key] = [...seryData, value];
-      }
-    });
-  });
+  const series = []; // 存放横坐标数值 是x 每个sery是每种key的求和(根据robotId)
+  const { legendData, yxisData, currentSery } = getOriginalDataBycode(allData);
 
   Object.entries(currentSery).forEach((key) => {
     series.push({
@@ -376,33 +347,33 @@ export const transformCodeData = (allData = {}) => {
   return { yAxis, series, legend };
 };
 
-//  拿到原始数据的 所有参数 所有根据cellId的参数求和
+//  拿到原始数据的 所有参数 所有根据robotId的参数求和
 export const getOriginalDataBycode = (originalData) => {
   const currentAxisData = Object.values(originalData)[0] || [];
   const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
   const legendData = [];
   const yxisData = []; // 纵坐标 是y
-  let currentCellIdData = {}; // 根据cellId 每个key 求和
+  let currentCellIdData = {}; // 根据robotId 每个key 求和
 
   forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'cellId') {
+    if (key !== 'robotId') {
       firstTimeDataMap.set(key, 0);
       legendData.push(key);
     }
   });
 
-  currentAxisData.map(({ cellId }) => {
-    yxisData.push(cellId);
-    currentCellIdData[cellId] = {};
+  currentAxisData.map(({ robotId }) => {
+    yxisData.push(robotId);
+    currentCellIdData[robotId] = {};
   });
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { cellId } = item;
+      const { robotId } = item;
       forIn(item, (value, key) => {
         if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[cellId][key] || 0;
-          currentCellIdData[cellId][key] = seryData * 1 + value * 1;
+          let seryData = currentCellIdData[robotId][key] || 0;
+          currentCellIdData[robotId][key] = seryData * 1 + value * 1;
         }
       });
     });

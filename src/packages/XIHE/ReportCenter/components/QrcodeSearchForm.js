@@ -6,7 +6,7 @@ import TimePickerSelector from './timePicker';
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
 const LogSearchForm = (props) => {
-  const { search, data } = props;
+  const { search } = props;
 
   const [form] = Form.useForm();
 
@@ -18,7 +18,6 @@ const LogSearchForm = (props) => {
   function submitSearch() {
     form.validateFields().then((values) => {
       search(values);
-      console.log('filter0', values);
     });
   }
 
