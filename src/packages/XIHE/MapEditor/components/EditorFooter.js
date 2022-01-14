@@ -3,9 +3,10 @@ import classNames from 'classnames';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import { isNull } from '@/utils/utils';
+import { FooterHeight } from '../enums';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyle from '@/common.module.less';
-import styles from './editorLayout.module.less';
+import styles from '../editorLayout.module.less';
 
 const EditorFooter = (props) => {
   const { mapContext, currentMap, selectLines, selectCells } = props;
@@ -54,6 +55,7 @@ const EditorFooter = (props) => {
 
   function cancelSelection() {
     mapContext.cancelCellSelected();
+    mapContext.refresh();
   }
 
   let content;
@@ -79,7 +81,11 @@ const EditorFooter = (props) => {
       </>
     );
   }
-  return <div className={styles.footer}>{content}</div>;
+  return (
+    <div className={styles.footer} style={{ height: `${FooterHeight}px` }}>
+      {content}
+    </div>
+  );
 };
 export default connect(({ editor }) => {
   const { mapContext, currentMap, selectLines, selectCells } = editor;

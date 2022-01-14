@@ -4,6 +4,7 @@ import { connect } from '@/utils/dva';
 import { isNull } from '@/utils/utils';
 import MonitorMapView from './MonitorMapView';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
+import { HeaderHeight, RightToolBarWidth } from '../enums';
 
 const MonitorMapContainer = (props) => {
   const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
@@ -15,7 +16,7 @@ const MonitorMapContainer = (props) => {
         const htmlDOM = document.getElementById('mapMonitorPage');
         const { width, height } = htmlDOM.getBoundingClientRect();
         const { mapContext: _mapContext } = window.g_app._store.getState().monitor;
-        _mapContext && _mapContext.resize(width - 60, height - 35);
+        _mapContext && _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
       }, 500),
     );
     resizeObserver.observe(document.body);
@@ -211,11 +212,11 @@ const MonitorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.drawLine(relations, relations);
+    mapContext.drawLine(relations, relations, false);
     mapContext.refresh();
   }
 
-  return <MonitorMapView />;
+  return <MonitorMapView dispatch={dispatch} />;
 };
 export default connect(({ monitor }) => {
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, mapContext } = monitor;

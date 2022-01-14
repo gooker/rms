@@ -139,7 +139,6 @@ export const zIndex = {
   targetLine: 1,
   cell: 2,
   line: 3,
-  groundStorage: 4,
   temporaryLock: 4,
   agv: 5,
   pod: 6,

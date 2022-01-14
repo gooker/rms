@@ -4,31 +4,29 @@ import {
   getLineFromIdLineMap,
   getCurrentRouteMapData,
   getTextureFromResources,
+  loadEditorExtraTextures,
 } from '@/utils/mapUtils';
 import { connect } from '@/utils/dva';
 import { CellSize } from '@/config/consts';
 import { Cell } from '@/entities';
 import PixiBuilder from '@/utils/PixiBuilder';
 import BaseMap from '@/components/BaseMap';
-import { loadTexturesForMap } from '@/utils/textures';
 import commonStyles from '@/common.module.less';
 
-@connect(({ global }) => ({
-  hasLoadedTextures: global.hasLoadedTextures,
-}))
+@connect()
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
 
     // 记录显示控制的参数
     this.states = {
-      hideBlock: false, // 是否显示不可走点
-      shownPriority: ['10', '20', '100', '1000'],
-      shownRelationDir: ['0', '1', '2', '3'],
+      mapMode: 'standard',
+      shownPriority: [10, 20, 100, 1000],
+      shownRelationDir: [0, 1, 2, 3],
       shownRelationCell: [],
+      hideBlock: false,
       showCoordinate: false,
       showDistance: false,
-      mapMode: 'standard',
       showBackImg: false,
       showEmergencyStop: true,
     };
@@ -40,22 +38,24 @@ class EditorMapView extends BaseMap {
   }
 
   async componentDidMount() {
-    const { dispatch, hasLoadedTextures } = this.props;
+    const { dispatch } = this.props;
 
     // 禁用右键菜单
-    // document.oncontextmenu = (event) => {
-    //   event.preventDefault();
-    // };
+    document.oncontextmenu = (event) => {
+      event.preventDefault();
+    };
 
     const htmlDOM = document.getElementById('editorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
     window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM);
-    if (!hasLoadedTextures) {
-      await loadTexturesForMap();
-      dispatch({ type: 'global/saveHasLoadedTextures', payload: true });
-    }
     dispatch({ type: 'editor/saveMapContext', payload: this });
-    dispatch({ type: 'editor/startRenderMap' });
+    await loadEditorExtraTextures(this.pixiUtils.renderer);
+  }
+
+  componentWillUnmount() {
+    this.clearMapStage();
+    this.idCellMap.clear();
+    this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
 
   // 切换地图编辑地图显示模式
@@ -79,7 +79,7 @@ class EditorMapView extends BaseMap {
     // 处理Cost线条
     this.destroyAllLines();
     const relations = getCurrentRouteMapData()?.relations ?? [];
-    this.drawLine(relations, relations, this.states.shownPriority, true, mode);
+    this.drawLine(relations, relations, true, mode, this.states.shownPriority);
 
     // 保证 是否显示不可走点 状态一致
     this.switchShowBlock(this.states.hideBlock);
@@ -261,20 +261,17 @@ class EditorMapView extends BaseMap {
       this.selectedLines = [];
       this.onSelectLine([]);
 
-      // Record current clicked cell
+      // 标识
       this.currentClickedCell = cell;
-
-      // Cancel all cell selected state
-      this.cancelCellSelected(this.selectedCells);
       this.batchSelectBase = [];
 
-      const selectedCells = [];
-      selectedCells.push(`${cell.id}`);
-      this.selectedCells = selectedCells;
+      // 先取消之前已选择的点位
+      this.cancelCellSelected(this.selectedCells);
+      this.selectedCells = [cell.id];
     } else {
       this.selectedCells = this.selectedCells.filter((id) => id !== cell.id);
     }
-    this.onSelectCell(this.selectedCells.slice());
+    this.onSelectCell([...this.selectedCells]);
     this.refresh();
   };
 
@@ -293,12 +290,11 @@ class EditorMapView extends BaseMap {
     // Fetch cell id which included
     const includedCellIds = Object.values(cells)
       .filter(({ x, y }) => {
-        // 排除已隐藏的点
         if (x >= xStart && x <= xEnd && y >= yStart && y <= yEnd) {
           return true;
         }
       })
-      .map(({ id }) => `${id}`);
+      .map(({ id }) => id);
 
     // Fetch cell entity from 'idCellMap' and execute 'onSelect' function
     includedCellIds.forEach((id) => {
@@ -324,7 +320,7 @@ class EditorMapView extends BaseMap {
 
     // Add item to collection
     const newSelectedCells = this.selectedCells.slice();
-    newSelectedCells.push(`${cell.id}`);
+    newSelectedCells.push(cell.id);
     this.selectedCells = [...new Set(newSelectedCells)];
 
     // 添加到基准点
@@ -335,19 +331,18 @@ class EditorMapView extends BaseMap {
     this.refresh();
   };
 
-  cancelCellSelected = () => {
-    if (Array.isArray(this.selectedCells) && this.selectedCells.length > 0) {
-      this.selectedCells.forEach((id) => {
+  cancelCellSelected = (cells) => {
+    console.log('cancelCellSelected: ', cells);
+    if (Array.isArray(cells)) {
+      cells.forEach((id) => {
         const cellEntity = this.idCellMap.get(id);
         cellEntity && cellEntity.onUnSelect();
       });
     } else {
       this.idCellMap.forEach((cellEntity) => cellEntity.onUnSelect());
     }
-
     this.selectedCells = [];
     this.onSelectCell([]);
-    this.refresh();
   };
 
   batchSelectBaseRow = () => {
@@ -427,10 +422,10 @@ class EditorMapView extends BaseMap {
     if (type === 'add') {
       this.drawLine(
         payload,
-        getCurrentRouteMapData().relations || [],
         null,
         true,
         this.states.mapMode,
+        getCurrentRouteMapData().relations || [],
       );
     }
     // 删除

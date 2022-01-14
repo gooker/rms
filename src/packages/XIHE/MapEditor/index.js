@@ -1,12 +1,14 @@
 import React, { memo, useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
+import { HeaderHeight } from './enums';
 import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
 import EditorMapContainer from './components/EditorMapContainer';
 import EditorFooter from './components/EditorFooter';
 import commonStyles from '@/common.module.less';
+import styles from './editorLayout.module.less';
 
 const MapEditor = (props) => {
   const { dispatch, mapList } = props;
@@ -19,8 +21,8 @@ const MapEditor = (props) => {
   }, []);
 
   return (
-    <div className={commonStyles.commonPageStyleNoPadding}>
-      <div className={commonStyles.mapLayoutHeader}>
+    <div id={'mapEditorPage'} className={commonStyles.commonPageStyleNoPadding}>
+      <div className={commonStyles.mapLayoutHeader} style={{ flex: `0 0 ${HeaderHeight}px` }}>
         {Array.isArray(mapList) ? (
           <MapEditorHeader />
         ) : (
@@ -29,11 +31,13 @@ const MapEditor = (props) => {
       </div>
       <div className={commonStyles.mapLayoutBody}>
         <EditorBodyLeft />
-        <div className={commonStyles.editorBodyMiddle}>
-          <EditorMapContainer />
+        <div className={styles.editorBodyMiddle}>
+          <div style={{ display: 'flex', flex: 1 }}>
+            <EditorMapContainer />
+            <EditorBodyRight />
+          </div>
           <EditorFooter />
         </div>
-        <EditorBodyRight />
       </div>
     </div>
   );

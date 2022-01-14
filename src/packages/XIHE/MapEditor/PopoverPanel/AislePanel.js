@@ -12,7 +12,7 @@ import { formatMessage, isNull } from '@/utils/utils';
 import { getCurrentRouteMapData } from '@/utils/mapUtils';
 import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 
 const AislePanel = (props) => {

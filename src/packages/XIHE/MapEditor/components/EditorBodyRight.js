@@ -1,27 +1,41 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import classnames from 'classnames';
 import { connect } from '@/utils/dva';
 import { isNull } from '@/utils/utils';
-import { EditorRightTools, Category } from '../enums';
+import {
+  EditorRightTools,
+  Category,
+  RightToolBarWidth,
+  HeaderHeight,
+  FooterHeight,
+} from '../enums';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CellTypeConfigure from '../PopoverPanel/CellTypeConfigurePanel';
 import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
-import commonStyles from '@/common.module.less';
 import CostPanel from '../PopoverPanel/CostPanel';
-import styles from './editorLayout.module.less';
-import StationPanel from '@/packages/XIHE/MapEditor/PopoverPanel/StationPanel';
-import ViewController from '@/packages/XIHE/MapEditor/PopoverPanel/ViewController';
-import AislePanel from '@/packages/XIHE/MapEditor/PopoverPanel/AislePanel';
+import StationPanel from '../PopoverPanel/StationPanel';
+import ViewController from '../PopoverPanel/ViewController';
+import AislePanel from '../PopoverPanel/AislePanel';
+import styles from '../editorLayout.module.less';
+import { throttle } from 'lodash';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
   const [height, setHeight] = useState(0);
 
   useEffect(() => {
-    const htmlDOM = document.getElementById('editorPixi');
-    const { height } = htmlDOM.getBoundingClientRect();
-    setHeight(height - 10);
+    const htmlDOM = document.getElementById('mapEditorPage');
+    const resizeObserver = new ResizeObserver(
+      throttle(() => {
+        const { height } = htmlDOM.getBoundingClientRect();
+        setHeight(height - HeaderHeight - FooterHeight);
+      }, 500),
+    );
+    resizeObserver.observe(htmlDOM);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   function updateEditPanelFlag(category) {
@@ -35,39 +49,42 @@ const EditorBodyRight = (props) => {
   function renderPanelContent() {
     switch (categoryPanel) {
       case Category.Cell:
-        return <CellPanel height={height} />;
+        return <CellPanel height={height - 10} />;
       case Category.Cost:
-        return <CostPanel height={height} />;
+        return <CostPanel height={height - 10} />;
       case Category.CellType:
-        return <CellTypeConfigure height={height} />;
+        return <CellTypeConfigure height={height - 10} />;
       case Category.WorkStation:
-        return <WorkStationPanel height={height} />;
+        return <WorkStationPanel height={height - 10} />;
       case Category.Station:
-        return <StationPanel height={height} />;
+        return <StationPanel height={height - 10} />;
       case Category.View:
-        return <ViewController height={height} />;
+        return <ViewController height={height - 10} />;
       case Category.Aisle:
-        return <AislePanel height={height} />;
+        return <AislePanel height={height - 10} />;
       default:
         return null;
     }
   }
 
   return (
-    <div className={classnames(commonStyles.mapBodyRight, styles.bodyRightSide)}>
-      {EditorRightTools.map(({ label, value, icon }) => (
-        <Tooltip key={value} placement="right" title={label}>
-          <div
-            role={'category'}
-            className={categoryPanel === value ? styles.contentActive : undefined}
-            onClick={() => {
-              updateEditPanelFlag(value);
-            }}
-          >
-            {icon}
-          </div>
-        </Tooltip>
-      ))}
+    <div style={{ position: 'relative' }}>
+      <div style={{ width: `${RightToolBarWidth}px`, height }} className={styles.bodyRightSide}>
+        {EditorRightTools.map(({ label, value, icon }) => (
+          <Tooltip key={value} placement="right" title={label}>
+            <div
+              role={'category'}
+              className={categoryPanel === value ? styles.contentActive : undefined}
+              onClick={() => {
+                updateEditPanelFlag(value);
+              }}
+              style={{ minHeight: '40px' }}
+            >
+              {icon}
+            </div>
+          </Tooltip>
+        ))}
+      </div>
       {!isNull(categoryPanel) ? renderPanelContent() : null}
     </div>
   );

@@ -48,7 +48,8 @@ export default {
     logicActive: [], // 逻辑区急停开启关闭
 
     // 右侧操作栏
-    categoryPanel: null,
+    categoryPanel: null, // 右侧展示哪个类型的菜单
+    categoryLoad: null, // 展示菜单的内容
 
     // 监控地图是否渲染完成
     mapRendered: false,

@@ -40,7 +40,7 @@ export default class PixiBuilder {
     // 渲染标记
     this.isNeedRender = true;
     this.ticker = PIXI.Ticker.shared;
-    this.ticker.maxFPS = 10;
+    this.ticker.maxFPS = 15;
     this.ticker.add(() => {
       if (this.isNeedRender || this.viewport.dirty) {
         if (this.viewport.dirty) {
@@ -69,12 +69,5 @@ export default class PixiBuilder {
 
   viewportRemoveChildren = () => {
     this.viewport.removeChildren();
-  };
-
-  destroy = () => {
-    PIXI.utils.destroyTextureCache();
-    PIXI.Loader.shared.reset();
-    this.viewport.destroy(true);
-    this.renderer.destroy();
   };
 }

@@ -4,7 +4,7 @@ import { DragOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
 import CostConfigure from '../components/CostConfigure';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 
 const CostPanel = (props) => {

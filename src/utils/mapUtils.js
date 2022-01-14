@@ -1,11 +1,19 @@
-import intl from 'react-intl-universal';
+import * as PIXI from 'pixi.js';
 import * as XLSX from 'xlsx';
 import { find, groupBy, sortBy } from 'lodash';
 import { LogicArea } from '@/entities';
-import { isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
-import { AGVState } from '@/config/consts';
+import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
+import { AGVState, CostColor, SorterAGVSize, TaskPathColor, ToteAGVSize } from '@/config/consts';
 import json from '../../package.json';
-import * as PIXI from 'pixi.js';
+import {
+  getAgvSelectBorderTexture,
+  getBoldCostArrow,
+  getCellHeatTexture,
+  getCostArrow,
+  getQrCodeSelectBorderTexture,
+  getRectLock,
+  getTaskPathTexture,
+} from '@/utils/textures';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -515,7 +523,7 @@ export function convertCadToMap(file) {
       reader.readAsArrayBuffer(file);
     }
     reader.onerror = () => {
-      reject(intl.formatMessage({ id: 'app.editor.cad.onerror' }));
+      reject(formatMessage({ id: 'app.editor.cad.onerror' }));
     };
     reader.onload = (ev) => {
       let data = ev.target.result;
@@ -531,21 +539,21 @@ export function convertCadToMap(file) {
       const dataRow = sheetJSON.splice(1);
       const nameIndex = titleRow.indexOf('名称');
       if (nameIndex === -1) {
-        reject(intl.formatMessage({ id: 'app.editor.cad.nameColumnError' }, { name: '名称' }));
+        reject(formatMessage({ id: 'app.editor.cad.nameColumnError' }, { name: '名称' }));
       }
       const qrRow = dataRow.filter((row) => row[nameIndex] === 'STD QR CODE');
       if (qrRow.length === 0) {
-        reject(intl.formatMessage({ id: 'app.editor.cad.noQrRow' }, { qr: 'STD QR CODE' }));
+        reject(formatMessage({ id: 'app.editor.cad.noQrRow' }, { qr: 'STD QR CODE' }));
       }
 
       // 组装临时点位
       const xIndex = titleRow.indexOf('位置 X');
       if (xIndex === -1) {
-        reject(intl.formatMessage({ id: 'app.editor.cad.xColumnError' }, { x: '位置 X' }));
+        reject(formatMessage({ id: 'app.editor.cad.xColumnError' }, { x: '位置 X' }));
       }
       const yIndex = titleRow.indexOf('位置 Y');
       if (yIndex === -1) {
-        reject(intl.formatMessage({ id: 'app.editor.cad.yColumnError' }, { y: '位置 Y' }));
+        reject(formatMessage({ id: 'app.editor.cad.yColumnError' }, { y: '位置 Y' }));
       }
       let cells = qrRow.map((row, index) => ({
         id: index + 1,
@@ -572,8 +580,8 @@ export function convertCadToMap(file) {
       const routeMap = {
         DEFAULT: {
           code: 'DEFAULT',
-          name: intl.formatMessage({ id: 'app.models.default' }),
-          desc: intl.formatMessage({ id: 'app.models.description' }),
+          name: formatMessage({ id: 'app.models.default' }),
+          desc: formatMessage({ id: 'app.models.description' }),
           relations: [],
           blockCellIds: [],
           followCellIds: [],
@@ -626,10 +634,6 @@ export function getCurrentRouteMapData(namespace = 'editor') {
     return currentLogicAreaData.routeMap?.[currentRouteMap];
   }
   return null;
-}
-
-export function getDispatchFromGlobal() {
-  return window.g_app._store.dispatch;
 }
 
 export function syncLineState(cellIds, newCellMap, result) {
@@ -714,39 +718,6 @@ export function getCurveMapKey(lineData) {
 
 export function getCurveString(lineData) {
   return `${lineData.source}_${lineData.target}_${lineData.bparam1}_${lineData.bparam2}`;
-}
-
-// 地图监控弹窗尺寸自适应
-// Modal尺寸自适应逻辑
-function getWindowWidthDpr() {
-  const { width } = window.screen;
-  const a = (width - 1440) / 1440;
-  if (a > 0) {
-    return a + 1;
-  }
-  return 1;
-}
-
-function getWindowHeightDpr() {
-  const { height } = window.screen;
-  const a = (height - 900) / 900;
-  if (a > 0) {
-    return a + 1;
-  }
-  return 1;
-}
-
-export function getMonitorModalSize() {
-  const widthDpr = getWindowWidthDpr();
-  const heightDpr = getWindowHeightDpr();
-
-  let width = 600 * widthDpr;
-  let height = 500 * heightDpr;
-
-  width = width > 900 ? 900 : width;
-  height = height > 600 ? 600 : height;
-
-  return { width, height };
 }
 
 /**
@@ -1205,5 +1176,68 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
   // 潜伏车任务暂停事件
   socketClient.registerLatentLiftingPauseTaskEvent(() => {
     dispatch({ type: 'monitor/fetchLatentSopMessageList' });
+  });
+}
+
+// 加载编辑器额外的自定义Texture
+export function loadEditorExtraTextures(renderer) {
+  return new Promise((resolve) => {
+    // 点位选中的Texture
+    PIXI.Texture.addToCache(getQrCodeSelectBorderTexture(), 'cellSelectBorderTexture');
+
+    // 交汇点方向Texture
+    PIXI.Texture.addToCache(getBoldCostArrow('0xFFFFFF'), 'boldDirection');
+
+    // Cost线条
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[10]), '_10CostArrow');
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[20]), '_20CostArrow');
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[100]), '_100CostArrow');
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[1000]), '_1000CostArrow');
+
+    resolve();
+  });
+}
+
+// 加载监控额外的自定义Texture
+export function loadMonitorExtraTextures(renderer) {
+  return new Promise((resolve) => {
+    // 背景
+    PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
+
+    // 交汇点方向Texture
+    PIXI.Texture.addToCache(getBoldCostArrow('0xFFFFFF'), 'boldDirection');
+
+    // Cost线条
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[10]), '_10CostArrow');
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[20]), '_20CostArrow');
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[100]), '_100CostArrow');
+    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[1000]), '_1000CostArrow');
+
+    // 任务路径
+    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed), '_passedTaskPath');
+    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.locked), '_lockedTaskPath');
+    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.future), '_futureTaskPath');
+
+    // 小车锁格
+    PIXI.Texture.addToCache(getRectLock(1050, 1050), 'LatentRectLock');
+    PIXI.Texture.addToCache(getRectLock(ToteAGVSize.width, ToteAGVSize.height), 'ToteRectLock');
+    PIXI.Texture.addToCache(
+      getRectLock(SorterAGVSize.width, SorterAGVSize.height),
+      'SorterRectLock',
+    );
+
+    // 点位成本热度
+    PIXI.Texture.addToCache(getCellHeatTexture('0x3366FF'), '_cellHeat1');
+    PIXI.Texture.addToCache(getCellHeatTexture('0x5984C3'), '_cellHeat2');
+    PIXI.Texture.addToCache(getCellHeatTexture('0x7FA387'), '_cellHeat3');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xA5C14B'), '_cellHeat4');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xC9D04B'), '_cellHeat5');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xEEE04B'), '_cellHeat6');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xF4B042'), '_cellHeat7');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xF87636'), '_cellHeat8');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xF03C2B'), '_cellHeat9');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xCF2723'), '_cellHeat10');
+
+    resolve();
   });
 }

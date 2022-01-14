@@ -10,6 +10,11 @@ import {
   DropboxOutlined,
 } from '@ant-design/icons';
 
+export const HeaderHeight = 35;
+export const LeftToolBarWidth = 65;
+export const RightToolBarWidth = 50;
+export const FooterHeight = 25;
+
 export const Category = {
   Aisle: 'AISLE',
   Cell: 'CELL',

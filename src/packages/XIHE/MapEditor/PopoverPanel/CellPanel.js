@@ -13,7 +13,7 @@ import {
   LeftOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 import { formatMessage, isNull } from '@/utils/utils';
 import BatchAddCells from '../PopoverPanel/BatchAddCells';

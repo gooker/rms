@@ -4,7 +4,7 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import { CellTypeSetting } from '../enums';
 import FormattedMessage from '@/components/FormattedMessage';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import commonStyles from '@/common.module.less';
 import styles from './popoverPanel.module.less';
 
@@ -20,8 +20,8 @@ const CellTypeConfigurePanel = (props) => {
         <div className={styles.panelBlock}>
           <div style={{ padding: '0 10px' }}>
             {CellTypeSetting.map(({ type, picture, i18n, scope, texture }) => (
-              <>
-                <div key={type} style={{ marginBottom: 15 }}>
+              <div key={type}>
+                <div style={{ marginBottom: 15 }}>
                   <div className={commonStyles.flexVerticalCenter} style={{ marginBottom: 5 }}>
                     <img style={{ height: 20, marginRight: 10 }} src={`/textures/${picture}`} />
                     <FormattedMessage id={i18n} />
@@ -48,7 +48,7 @@ const CellTypeConfigurePanel = (props) => {
                   </div>
                 </div>
                 <Divider style={{ margin: 5, borderTop: '1px solid #b0b0b0' }} />
-              </>
+              </div>
             ))}
           </div>
         </div>

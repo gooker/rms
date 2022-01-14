@@ -4,6 +4,9 @@ import { AGVType } from '@/config/config';
 import { formatMessage } from '@/utils/utils';
 import { IconFont } from '@/components/IconFont';
 
+export const HeaderHeight = 35;
+export const RightToolBarWidth = 60;
+
 export const Category = {
   Prop: 'Prop',
   LatentAGV: 'LatentAGV',

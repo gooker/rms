@@ -1,31 +1,50 @@
 import React, { memo, useEffect } from 'react';
+import { throttle } from 'lodash';
 import { connect } from '@/utils/dva';
 import { isNull } from '@/utils/utils';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 import EditorMapView from './EditorMapView';
+import { LeftToolBarWidth, RightToolBarWidth, HeaderHeight, FooterHeight } from '../enums';
+import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap } = props;
 
   useEffect(() => {
-    // resize
+    const resizeObserver = new ResizeObserver(
+      throttle(() => {
+        const htmlDOM = document.getElementById('mapEditorPage');
+        const { width, height } = htmlDOM.getBoundingClientRect();
+        const { mapContext: _mapContext } = window.g_app._store.getState().editor;
+        _mapContext &&
+          _mapContext.resize(
+            width - LeftToolBarWidth - RightToolBarWidth,
+            height - HeaderHeight - FooterHeight,
+          );
+      }, 500),
+    );
+    resizeObserver.observe(document.body);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   useEffect(() => {
     if (isNull(mapContext)) return;
     mapContext.clearMapStage();
-    mapContext.refresh();
     if (currentMap) {
       renderMap();
       renderLogicArea();
       renderRouteMap();
     }
+    mapContext.refresh();
   }, [currentMap, currentLogicArea]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
       renderRouteMap();
+      mapContext.refresh();
     }
   }, [currentRouteMap]);
 
@@ -62,7 +81,6 @@ const EditorMapContainer = (props) => {
     }
 
     mapContext.centerView(cellsToRender);
-    mapContext.refresh();
   }
 
   function renderLogicArea() {
@@ -136,8 +154,6 @@ const EditorMapContainer = (props) => {
         mapContext.renderBackImgFunction(backImgData);
       });
     }
-
-    mapContext.refresh();
   }
 
   function renderRouteMap() {
@@ -198,8 +214,7 @@ const EditorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.drawLine(relations, relations, null, true);
-    mapContext.refresh();
+    mapContext.drawLine(relations, relations, true);
   }
 
   return <EditorMapView />;

@@ -24,7 +24,7 @@ import {
 } from '@/entities';
 import { sortBy, uniq } from 'lodash';
 
-const AllPriorities = ['10', '20', '100', '1000'];
+const AllPriorities = [10, 20, 100, 1000];
 
 export default class BaseMap extends React.Component {
   constructor(props) {
@@ -232,19 +232,18 @@ export default class BaseMap extends React.Component {
   drawLine(
     relationsToRender,
     relations,
-    shownPriority,
     interactive = false,
     shownMode = 'standard',
+    shownPriority,
   ) {
     const priority = shownPriority || this.states.shownPriority;
     relationsToRender.forEach((lineData) => {
       const { type, cost } = lineData;
-      if (!priority.includes(`${cost}`)) return;
+      if (!priority.includes(parseInt(cost))) return;
       if (type === 'line') {
         const { source, target, angle } = lineData;
         const sourceCell = this.idCellMap.get(source);
         const targetCell = this.idCellMap.get(target);
-
         // 此时 sourceCell 和 targetCell 可能是电梯点
         if (sourceCell && targetCell) {
           const line = getLineGraphics(
@@ -263,23 +262,6 @@ export default class BaseMap extends React.Component {
           }
         }
       }
-      // if (type === 'curve') {
-      //   const { source, target, bparam1, bparam2 } = lineData;
-      //   const primaryCell = this.idCellMap.get(`${source}`);
-      //   const thirdCell = this.idCellMap.get(`${target}`);
-      //   if (!primaryCell || !thirdCell) return;
-      //   // 从后台的数据格式转回为曲线渲染需要的数据格式, 与 transformCurveData 互为逆运算
-      //   const curve = new Bezier({
-      //     cost,
-      //     x: primaryCell.x,
-      //     y: primaryCell.y,
-      //     primary: primaryCell,
-      //     secondary: { x: bparam1, y: bparam2 },
-      //     third: thirdCell,
-      //   });
-      //   this.pixiUtils.viewportAddChild(curve);
-      //   this.idLineMap[cost].set(getCurveMapKey(lineData), curve);
-      // }
     });
   }
 
@@ -319,7 +301,7 @@ export default class BaseMap extends React.Component {
     });
     // 根据最新数据渲染线段
     if (priorityToRender.length > 0) {
-      this.drawLine(relations, relations, priorityToRender, nameSpace === 'editor'); // TODO: 目前只针对编辑器可点击
+      this.drawLine(relations, relations, nameSpace === 'editor', 'standard', priorityToRender); // TODO: 目前只针对编辑器可点击
       // 渲染不可逗留点Flag
       if (nonStopCellIds) {
         nonStopCellIds.forEach((item) => {

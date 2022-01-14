@@ -33,7 +33,7 @@ import {
   fetchAllStationTypes,
   fetchMapHistoryDetail,
 } from '@/services/XIHE';
-import { activeMap, fetchActiveMap } from '@/services/api';
+import { activeMap } from '@/services/api';
 
 const FieldTextureKeyMap = {
   blockCellIds: 'block_cell',
@@ -192,26 +192,27 @@ export default {
   effects: {
     *editorInitial(_, { put, call }) {
       const mapList = yield call(fetchSectionMaps);
-      const failMessage = formatMessage({ id: 'app.editor.fetchMapList.fail' });
-      if (!dealResponse(mapList, false, null, failMessage)) {
+      if (
+        !dealResponse(mapList, false, null, formatMessage({ id: 'app.editor.fetchMapList.fail' }))
+      ) {
         // 检查是否有地图数据
         if (mapList.length === 0) {
           message.info(formatMessage({ id: 'app.editor.fetchMapList.zero' }));
           yield put({ type: 'saveMapList', payload: [] });
           return;
         }
+        yield put({ type: 'saveMapList', payload: mapList });
 
         // 检查是否有激活地图
         const activeMap = mapList.filter((map) => map.activeFlag);
         if (activeMap.length === 0) {
           message.warn(formatMessage({ id: 'app.editor.activeMap.zero' }));
+        } else {
+          // 获取已激活地图数据并保存相关状态
+          const mapId = activeMap[0].id;
+          const currentMap = yield call(fetchMapDetail, mapId);
+          yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
         }
-
-        // 获取已激活地图数据并保存相关状态
-        const mapId = activeMap.length > 0 ? activeMap[0].id : mapList[0].id;
-        const currentMap = yield call(fetchMapDetail, mapId);
-        yield put({ type: 'saveMapList', payload: mapList });
-        yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
 
         /**
          * 1. 获取所有站点类型
@@ -229,17 +230,10 @@ export default {
           }));
           yield put({
             type: 'saveState',
-            payload: {
-              allStationTypes,
-              allWebHooks: _allWebHooks,
-            },
+            payload: { allStationTypes, allWebHooks: _allWebHooks },
           });
         }
       }
-    },
-
-    *startRenderMap({ payload }, { put, call }) {
-      //
     },
 
     *checkoutMap({ payload }, { put, call }) {

@@ -19,7 +19,7 @@ const AgvCategorySecondaryPanel = (props) => {
   }
 
   return (
-    <div style={{ height }} className={styles.popoverPanel}>
+    <div style={{ height, width: 60 }} className={styles.popoverPanel}>
       {AgvCategoryTools.map(({ label, icon, value, style, module }) => {
         if (module.includes(agvType)) {
           const title = typeof label === 'string' ? label : label(agvType);

@@ -6,6 +6,7 @@ import {
   LockOutlined,
   FullscreenOutlined,
   AimOutlined,
+  FullscreenExitOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import { IconFont } from '@/components/IconFont';
@@ -13,7 +14,7 @@ import { formatMessage } from '@/utils/utils';
 import PositionCell from '../components/PositionCell';
 
 const EditorHeaderRightTools = (props) => {
-  const { dispatch, mapId, saveMapLoading, activeMapLoading, isActive } = props;
+  const { dispatch, mapId, isInnerFullscreen, saveMapLoading, activeMapLoading, isActive } = props;
 
   const [positionVisible, setPositionVisible] = useState(false);
 
@@ -25,12 +26,28 @@ const EditorHeaderRightTools = (props) => {
     }
   }
 
+  function changeInnerFullScreen(payload) {
+    dispatch({ type: 'global/changeInnerFullScreen', payload });
+  }
+
   return (
     <>
       {/* 地图全屏 */}
       <Tooltip title={formatMessage({ id: 'mapEditor.fullScreen' })}>
         <span style={{ cursor: 'pointer' }}>
-          <FullscreenOutlined />
+          {isInnerFullscreen ? (
+            <FullscreenExitOutlined
+              onClick={() => {
+                changeInnerFullScreen(false);
+              }}
+            />
+          ) : (
+            <FullscreenOutlined
+              onClick={() => {
+                changeInnerFullScreen(true);
+              }}
+            />
+          )}
         </span>
       </Tooltip>
       <Divider type="vertical" />
@@ -122,7 +139,8 @@ const EditorHeaderRightTools = (props) => {
     </>
   );
 };
-export default connect(({ editor }) => ({
+export default connect(({ global, editor }) => ({
+  isInnerFullscreen: global.isInnerFullscreen,
   mapId: editor?.currentMap?.id,
   saveMapLoading: editor.saveMapLoading,
   activeMapLoading: editor.activeMapLoading,

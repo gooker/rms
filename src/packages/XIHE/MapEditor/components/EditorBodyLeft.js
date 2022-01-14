@@ -1,11 +1,8 @@
 import React, { memo } from 'react';
 import { Tooltip } from 'antd';
-import { Viewport } from 'pixi-viewport';
-import classnames from 'classnames';
 import { connect } from '@/utils/dva';
-import { EditorLeftTools } from '../enums';
-import commonStyles from '@/common.module.less';
-import styles from './editorLayout.module.less';
+import { EditorLeftTools, LeftToolBarWidth } from '../enums';
+import styles from '../editorLayout.module.less';
 import { isNull } from '@/utils/utils';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtils';
 
@@ -32,7 +29,7 @@ class EditorBodyLeft extends React.Component {
    */
   onMouseDown = (ev) => {
     // 不能阻止点击地图上任何元素
-    if (!this.pinterIsDown && ev.target instanceof Viewport) {
+    if (!this.pinterIsDown && !isNull(ev.target.worldScreenWidth)) {
       this.pinterIsDown = true;
       const maskDOM = document.getElementById('mapSelectionMask');
       const { x, y } = ev.data.global;
@@ -62,6 +59,7 @@ class EditorBodyLeft extends React.Component {
   };
 
   onMouseUp = (ev) => {
+    if (!this.pinterIsDown) return;
     this.pinterIsDown = false;
     // 重置选择框DOM样式
     const maskDOM = document.getElementById('mapSelectionMask');
@@ -119,8 +117,8 @@ class EditorBodyLeft extends React.Component {
   afterDrawRectangle = (startX, startY, endX, endY) => {
     const { mapContext, currentCells } = this.props;
 
-    const [_startX, _endX] = [startX, endX].sort();
-    const [_startY, _endY] = [startY, endY].sort();
+    const [_startX, _endX] = [startX, endX].sort((x, y) => x - y);
+    const [_startY, _endY] = [startY, endY].sort((x, y) => x - y);
 
     // 这里要判断到底要干什么
     const cellsInRange = currentCells
@@ -135,7 +133,7 @@ class EditorBodyLeft extends React.Component {
     const { activeKey } = this.state;
     const { mapContext } = this.props;
     return (
-      <div className={classnames(commonStyles.mapBodyLeft, styles.bodyLeftSide)}>
+      <div style={{ width: `${LeftToolBarWidth}px` }} className={styles.bodyLeftSide}>
         {EditorLeftTools.map(({ label, value, icon }) => (
           <Tooltip key={value} placement="right" title={label}>
             <span
