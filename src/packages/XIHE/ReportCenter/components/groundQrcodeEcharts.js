@@ -1,5 +1,5 @@
 import { formatMessage, isStrictNull, GMT2UserTimeZone } from '@/utils/utils';
-import { forIn } from 'lodash';
+import { forIn, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
@@ -280,48 +280,10 @@ export const generateTimeData = (allData) => {
   return { xAxis, series, legend };
 };
 
-// 根据原始数据 --处理cellId数据
+// 根据原始数据 --处理cellId数据 纵坐标 是y
 export const transformCodeData = (allData = {}) => {
-  const currentAxisData = Object.values(allData)[0] || [];
-  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
-  const legendData = [];
-  const yxisData = []; // 纵坐标 是y
   const series = []; // 存放横坐标数值 是x 每个sery是每种key的求和(根据cellId)
-  let currentCellIdData = {}; // 根据cellId 每个key 求和
-
-  forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'cellId') {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-    }
-  });
-
-  currentAxisData.map(({ cellId }) => {
-    yxisData.push(cellId);
-    currentCellIdData[cellId] = {};
-  });
-
-  Object.values(allData).forEach((record) => {
-    record.forEach((item) => {
-      const { cellId } = item;
-      forIn(item, (value, key) => {
-        if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[cellId][key] || 0;
-          currentCellIdData[cellId][key] = seryData * 1 + value * 1;
-        }
-      });
-    });
-  });
-
-  const currentSery = {};
-  Object.entries(currentCellIdData).forEach(([cellId, v]) => {
-    forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
-        let seryData = currentSery[key] || [];
-        currentSery[key] = [...seryData, value];
-      }
-    });
-  });
+  const { legendData, yxisData, currentSery } = getOriginalDataBycode(allData);
 
   Object.entries(currentSery).forEach((key) => {
     series.push({
@@ -378,7 +340,8 @@ export const transformCodeData = (allData = {}) => {
 
 //  拿到原始数据的 所有参数 所有根据cellId的参数求和
 export const getOriginalDataBycode = (originalData) => {
-  const currentAxisData = Object.values(originalData)[0] || [];
+  let currentAxisData = Object.values(originalData)[0] || [];
+  currentAxisData = sortBy(currentAxisData, 'cellId');
   const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
   const legendData = [];
   const yxisData = []; // 纵坐标 是y

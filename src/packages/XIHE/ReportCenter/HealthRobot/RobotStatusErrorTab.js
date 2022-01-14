@@ -6,22 +6,21 @@ import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
 import FilterSearch from './components/FilterSearch';
 import FilterSearchBydate from './components/FilterSearchBydate';
 import {
-  dateHistoryLineOption,
-  codeHistoryLineOption,
-  generateTimeData,
-  transformCodeData,
-  getOriginalDataBycode,
-} from './components/RobotHealthEcharts';
+  offlineHistoryLineOption,
+  generatOfflineDataByTime,
+  generatOfflineDataByRobot,
+  getOriginalDataByRobotId,
+} from './components/RobotOfflineEchart';
 
-let codeHistoryLine = null; // 根据码号
+let codeHistoryLine = null; // 根据小车id
 let timeHistoryLine = null; // 根据日期
 
 let commonOption = null;
 
-const ScanCodeComponent = (props) => {
+const RoboStatusErrorComponent = (props) => {
   const { originData } = props;
 
-  const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
+  const [searchKey, setSearchKey] = useState([]); // 根据小车id的数据--二次搜索
 
   useEffect(initChart, []);
 
@@ -29,17 +28,25 @@ const ScanCodeComponent = (props) => {
   useEffect(refreshChart, [originData]);
 
   function initChart() {
-    // 根据码号报表
-    codeHistoryLine = echarts.init(document.getElementById('ScancodeByIdHistory'));
+    // 根据小车id报表
+    codeHistoryLine = echarts.init(document.getElementById('offlineByIRobotIdHistory'));
     codeHistoryLine.setOption(
-      codeHistoryLineOption(formatMessage({ id: 'reportCenter.robot.scancode' })),
+      offlineHistoryLineOption(
+        `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
+          id: 'reportCenter.way.robot',
+        })})`,
+      ),
       true,
     );
 
     // 根据日期报表
-    timeHistoryLine = echarts.init(document.getElementById('ScancodeBydateHistory'));
+    timeHistoryLine = echarts.init(document.getElementById('offlineByIdateHistory'));
     timeHistoryLine.setOption(
-      dateHistoryLineOption(formatMessage({ id: 'reportCenter.robot.scancode' })),
+      offlineHistoryLineOption(
+        `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
+          id: 'reportCenter.way.date',
+        })})`,
+      ),
       true,
     );
 
@@ -57,13 +64,13 @@ const ScanCodeComponent = (props) => {
     const sourceData = { ...originData };
     if (Object.keys(sourceData).length === 0) return;
 
-    const currenTimeData = generateTimeData(sourceData);
-    const currentCodeData = transformCodeData(sourceData);
+    const currenTimeData = generatOfflineDataByTime(sourceData);
+    const currentCodeData = generatOfflineDataByRobot(sourceData);
 
     if (currentCodeData) {
-      const { yAxis, series, legend } = currentCodeData;
+      const { xAxis, series, legend } = currentCodeData;
       const newCodeHistoryLine = codeHistoryLine.getOption();
-      newCodeHistoryLine.yAxis = yAxis;
+      newCodeHistoryLine.xAxis = xAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
       codeHistoryLine.setOption(newCodeHistoryLine, true);
@@ -77,13 +84,13 @@ const ScanCodeComponent = (props) => {
       newTimeHistoryLine.legend = legend;
       timeHistoryLine.setOption(newTimeHistoryLine, true);
     }
-    // 拿到原始数据的 所有参数 所有根据小车的参数求和
-    const getOriginalData = getOriginalDataBycode(originData);
+
+    const getOriginalData = getOriginalDataByRobotId(originData);
     commonOption = getOriginalData.commonOption;
-    setSearchKey(getOriginalData.legendData || []);
+    setSearchKey(getOriginalData.legendData || []); // 图列 可以用来搜索
   }
 
-  const filterDataByCellId = (ids) => {
+  const filterDataById = (ids) => {
     const _data = { ...originData };
     const newData = {};
     Object.entries(_data).forEach(([key, allcellData]) => {
@@ -105,8 +112,8 @@ const ScanCodeComponent = (props) => {
     Object.entries(allValues).forEach(([key, v]) => {
       if (!isStrictNull(v)) {
         if (key === 'robotIds' && v.length > 0) {
-          // 先根据cellId 过滤数据
-          newOriginalData = filterDataByCellId(v.map((i) => i * 1));
+          // 先根据robotIds 过滤数据
+          newOriginalData = filterDataById(v.map((i) => i * 1));
         } else {
           if (v !== 0) {
             newChanged[key] = v;
@@ -116,7 +123,7 @@ const ScanCodeComponent = (props) => {
     });
 
     // filter
-    const { currentSery, yxisData, legendData } = getOriginalDataBycode(newOriginalData);
+    const { currentSery, xAxisData, legendData } = getOriginalDataByRobotId(newOriginalData);
     const sumCellSourceData = { ...currentSery };
     const newSourceData = {};
     Object.entries(sumCellSourceData).forEach(([key, typeData]) => {
@@ -134,17 +141,18 @@ const ScanCodeComponent = (props) => {
     });
 
     const series = [];
-    Object.entries(newSourceData).forEach((key) => {
+    Object.entries(newSourceData).forEach((key, index) => {
       series.push({
         ...commonOption,
         data: key[1],
         name: key[0],
-        type: 'bar',
+        yAxisIndex: index,
+        type: key[0] === 'offlinetime' ? 'line' : 'bar',
       });
     });
     const newCodeHistoryLine = codeHistoryLine.getOption();
     newCodeHistoryLine.series = series;
-    newCodeHistoryLine.yAxis[0].data = yxisData;
+    newCodeHistoryLine.xAxis[0].data = xAxisData;
     newCodeHistoryLine.legend[0].data = legendData;
     codeHistoryLine.setOption(newCodeHistoryLine, true);
   };
@@ -167,7 +175,7 @@ const ScanCodeComponent = (props) => {
     const { endByTime, startByTime, robotIds } = allValues;
 
     if (robotIds && robotIds.length > 0) {
-      newOriginalData = filterDataByCellId(robotIds.map((i) => i * 1));
+      newOriginalData = filterDataById(robotIds.map((i) => i * 1));
     }
 
     if (!isStrictNull(startByTime) && !isStrictNull(endByTime)) {
@@ -175,7 +183,7 @@ const ScanCodeComponent = (props) => {
       newOriginalData = filterDataByTime(newOriginalData, startByTime, endByTime);
     }
 
-    const currenTimeData = generateTimeData(newOriginalData);
+    const currenTimeData = generatOfflineDataByTime(newOriginalData);
     if (currenTimeData) {
       const { xAxis, series, legend } = currenTimeData;
       const newTimeHistoryLine = timeHistoryLine.getOption();
@@ -189,30 +197,29 @@ const ScanCodeComponent = (props) => {
   return (
     <Row gutter={16}>
       <Col span={22}>
-        {/* 按照码号 */}
+        {/* 按照小车id */}
         <Card
           actions={
             searchKey.length > 0 && [
-              <FilterSearch key={'a'} searchKey={searchKey} onValuesChange={onValuesChange} />,
+              <FilterSearch key={'a'} prefix={'reportCenter.robot.offline'} searchKey={searchKey} onValuesChange={onValuesChange} />,
             ]
           }
         >
-          <div id="ScancodeByIdHistory" style={{ minHeight: 350 }} />
+          <div id="offlineByIRobotIdHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
       <Col span={22} style={{ marginTop: 10 }}>
         {/* 按照日期 */}
         <Card
           actions={
-            searchKey.length > 0 && [
-              <FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />,
-            ]
+            searchKey.length >
+            (0)[(<FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />)]
           }
         >
-          <div id="ScancodeBydateHistory" style={{ minHeight: 350 }} />
+          <div id="offlineByIdateHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
     </Row>
   );
 };
-export default memo(ScanCodeComponent);
+export default memo(RoboStatusErrorComponent);

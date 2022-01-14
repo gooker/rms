@@ -1,26 +1,33 @@
-import React, { useState, memo, useRef } from 'react';
+import React, { useState, memo } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
-import { getScanCodedata, getRobotOfflinedata } from './components/mockRobotData';
+import {
+  getScanCodedata,
+  getRobotOfflinedata,
+  getRobotFaultdata,
+  getRobotStatuserrordata,
+} from './components/mockRobotData';
 import ScanCodeComponent from './RobotScanCodeTab';
 import RobotOfflineComponent from './RobotOfflineTab';
+import RobotFaultComponent from './RobotFaultTab';
+import RobotStatusErrorTab from './RobotStatusErrorTab';
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
 
 const TabCollection = [
   {
-    value: 'scancar',
+    value: 'scan',
     label: '小车扫码',
   },
   {
-    value: 'offlinecar',
+    value: 'offline',
     label: '小车离线',
   },
   {
-    value: 'statuscar',
+    value: 'statuserror',
     label: '状态错误',
   },
   {
-    value: 'faultcar',
+    value: 'fault',
     label: '小车故障',
   },
 ];
@@ -30,21 +37,20 @@ const TabSelectedStyle = {
 };
 
 const HealthCar = (props) => {
-  const [scanCarOriginData, setScanCarOriginData] = useState({}); // 原始数据 小车扫码
-  const [offlineCarOriginData, setOfflineCarOriginData] = useState({}); // 原始数据 小车离线
-  const [statusCarOriginData, setStatusCarOriginData] = useState({}); // 原始数据 状态错误
-  const [faultCarOriginData, setFaultCarOriginData] = useState({}); // 原始数据 小车故障
+  const [scanOriginData, setScanOriginData] = useState({}); // 原始数据 小车扫码
+  const [offlineOriginData, setOfflineOriginData] = useState({}); // 原始数据 小车离线
+  const [statuserrorOriginData, setStatuserrorOriginData] = useState({}); // 原始数据 状态错误
+  const [faultOriginData, setFaultOriginData] = useState({}); // 原始数据 小车故障
 
-  const [activeTab, setActivieTab] = useState('scancar');
-  const formRef = useRef(null);
+  const [activeTab, setActivieTab] = useState('scan');
 
   // 搜索 调接口
   function submitSearch(value) {
     // TODO 调接口
-    setScanCarOriginData(getScanCodedata());
-    setOfflineCarOriginData(getRobotOfflinedata());
-    // setStatusCarOriginData(statusCarData);
-    // setFaultCarOriginData(faultCarData);
+    setScanOriginData(getScanCodedata());
+    setOfflineOriginData(getRobotOfflinedata());
+    setStatuserrorOriginData(getRobotStatuserrordata());
+    setFaultOriginData(getRobotFaultdata());
     // formRef.current.clearForm();
   }
 
@@ -67,10 +73,10 @@ const HealthCar = (props) => {
         ))}
       </div>
       <div className={style.body}>
-        {activeTab === 'scancar' && (
-          <ScanCodeComponent originData={scanCarOriginData} ref={formRef} />
-        )}
-        {activeTab === 'offlinecar' && <RobotOfflineComponent originData={offlineCarOriginData} />}
+        {activeTab === 'scan' && <ScanCodeComponent originData={scanOriginData} />}
+        {activeTab === 'offline' && <RobotOfflineComponent originData={offlineOriginData} />}
+        {activeTab === 'statuserror' && <RobotStatusErrorTab originData={statuserrorOriginData} />}
+        {activeTab === 'fault' && <RobotFaultComponent originData={faultOriginData} />}
       </div>
     </div>
   );

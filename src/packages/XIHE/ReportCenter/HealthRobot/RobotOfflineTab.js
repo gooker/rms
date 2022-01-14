@@ -1,19 +1,16 @@
 import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
-import { Row, Col, Form, Input, Select, Card, Button } from 'antd';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import FormattedMessage from '@/components/FormattedMessage';
+import { Row, Col, Card } from 'antd';
 import moment from 'moment';
 import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
-import TimePickerSelector from '../components/timePicker';
+import FilterSearch from './components/FilterSearch';
+import FilterSearchBydate from './components/FilterSearchBydate';
 import {
   offlineHistoryLineOption,
   generatOfflineDataByTime,
   generatOfflineDataByRobot,
   getOriginalDataByRobotId,
 } from './components/RobotOfflineEchart';
-
-const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 
 let codeHistoryLine = null; // 根据小车id
 let timeHistoryLine = null; // 根据日期
@@ -22,12 +19,8 @@ let commonOption = null;
 
 const RobotOfflineComponent = (props) => {
   const { originData } = props;
-  const [form] = Form.useForm();
-  const [formDate] = Form.useForm();
 
   const [searchKey, setSearchKey] = useState([]); // 根据小车id的数据--二次搜索
-
-  const [togglesDate, setTogglesDate] = useState(0);
 
   useEffect(initChart, []);
 
@@ -35,7 +28,6 @@ const RobotOfflineComponent = (props) => {
   useEffect(refreshChart, [originData]);
 
   function initChart() {
-    console.log('进来');
     // 根据小车id报表
     codeHistoryLine = echarts.init(document.getElementById('offlineByIRobotIdHistory'));
     codeHistoryLine.setOption(
@@ -207,133 +199,22 @@ const RobotOfflineComponent = (props) => {
       <Col span={22}>
         {/* 按照小车id */}
         <Card
-          actions={[
-            <div key="a" style={{ position: 'relative' }}>
-              <Form form={form} onValuesChange={onValuesChange} {...formLayout}>
-                <Row>
-                  {searchKey.length > 0 ? (
-                    <>
-                      {searchKey.map((key) => {
-                        return (
-                          <Col span={4} key={key}>
-                            <Form.Item
-                              name={key}
-                              label={formatMessage({
-                                id: `reportCenter.robot.offline.${key}`,
-                              })}
-                              rules={[
-                                {
-                                  pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                  message: '请输入正整数',
-                                },
-                              ]}
-                            >
-                              <Input allowClear />
-                            </Form.Item>
-                          </Col>
-                        );
-                        // }
-                      })}
-
-                      <Col span={4}>
-                        <Form.Item name={'robotIds'} label={<FormattedMessage id="app.agv" />}>
-                          <Select
-                            mode="tags"
-                            style={{ width: '100%' }}
-                            maxTagTextLength={5}
-                            maxTagCount={4}
-                            allowClear
-                          />
-                        </Form.Item>
-                      </Col>
-                    </>
-                  ) : (
-                    ' '
-                  )}
-                </Row>
-              </Form>
-            </div>,
-          ]}
+          actions={
+            searchKey.length > 0 && [
+              <FilterSearch key={'a'} prefix={'reportCenter.robot.offline'} searchKey={searchKey} onValuesChange={onValuesChange} />,
+            ]
+          }
         >
           <div id="offlineByIRobotIdHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
-      <Col span={22}>
+      <Col span={22} style={{ marginTop: 10 }}>
         {/* 按照日期 */}
         <Card
-          actions={[
-            <div key="b" style={{ position: 'relative' }}>
-              {searchKey.length > 0 && togglesDate === 1 ? (
-                <>
-                  <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
-                    <Row>
-                      <Form.Item hidden name={'startByTime'} />
-                      <Form.Item hidden name={'endByTime'} />
-                      <Col span={6}>
-                        <Form.Item name={'robotIds'} label={<FormattedMessage id="app.agv" />}>
-                          <Select
-                            mode="tags"
-                            style={{ width: '100%' }}
-                            maxTagTextLength={5}
-                            maxTagCount={4}
-                            allowClear
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={18}>
-                        <Form.Item
-                          {...formLayout}
-                          name={'rangeNum'}
-                          label={<FormattedMessage id="app.form.dateRange" />}
-                          getValueFromEvent={(value) => {
-                            const { setFieldsValue } = formDate;
-                            setFieldsValue({
-                              startByTime: value.startTime,
-                              endByTime: value.endTime,
-                              rangeNum: value.timeDate,
-                            });
-                            return value.timeDate;
-                          }}
-                        >
-                          <TimePickerSelector />
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  </Form>
-                  <Row>
-                    <Col span={24} style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}>
-                      <Button
-                        type="text"
-                        onClick={() => {
-                          setTogglesDate(0);
-                        }}
-                      >
-                        <UpOutlined />
-                        {'收起'}
-                      </Button>
-                    </Col>
-                  </Row>
-                </>
-              ) : searchKey.length > 0 ? (
-                <Row>
-                  <Col span={24}>
-                    <Button
-                      type="text"
-                      style={{ padding: '10px 0' }}
-                      onClick={() => {
-                        setTogglesDate(1);
-                      }}
-                    >
-                      <DownOutlined />
-                      {'展开'}
-                    </Button>
-                  </Col>
-                </Row>
-              ) : (
-                ''
-              )}
-            </div>,
-          ]}
+          actions={
+            searchKey.length >
+            (0)[(<FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />)]
+          }
         >
           <div id="offlineByIdateHistory" style={{ minHeight: 350 }} />
         </Card>

@@ -13,15 +13,15 @@ import {
   getOriginalDataBycode,
 } from './components/RobotHealthEcharts';
 
-let codeHistoryLine = null; // 根据码号
+let codeHistoryLine = null; // 根据小车id
 let timeHistoryLine = null; // 根据日期
 
 let commonOption = null;
 
-const ScanCodeComponent = (props) => {
+const RobotFaultComponent = (props) => {
   const { originData } = props;
 
-  const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
+  const [searchKey, setSearchKey] = useState([]); // 二次搜索
 
   useEffect(initChart, []);
 
@@ -29,17 +29,17 @@ const ScanCodeComponent = (props) => {
   useEffect(refreshChart, [originData]);
 
   function initChart() {
-    // 根据码号报表
-    codeHistoryLine = echarts.init(document.getElementById('ScancodeByIdHistory'));
+    // 根据小车id报表
+    codeHistoryLine = echarts.init(document.getElementById('RobotFaultByIdHistory'));
     codeHistoryLine.setOption(
-      codeHistoryLineOption(formatMessage({ id: 'reportCenter.robot.scancode' })),
+      codeHistoryLineOption(formatMessage({ id: 'reportCenter.robot.fault' })),
       true,
     );
 
     // 根据日期报表
-    timeHistoryLine = echarts.init(document.getElementById('ScancodeBydateHistory'));
+    timeHistoryLine = echarts.init(document.getElementById('RobotFaultBydateHistory'));
     timeHistoryLine.setOption(
-      dateHistoryLineOption(formatMessage({ id: 'reportCenter.robot.scancode' })),
+      dateHistoryLineOption(formatMessage({ id: 'reportCenter.robot.fault' })),
       true,
     );
 
@@ -57,8 +57,8 @@ const ScanCodeComponent = (props) => {
     const sourceData = { ...originData };
     if (Object.keys(sourceData).length === 0) return;
 
-    const currenTimeData = generateTimeData(sourceData);
-    const currentCodeData = transformCodeData(sourceData);
+    const currenTimeData = generateTimeData(sourceData, true);
+    const currentCodeData = transformCodeData(sourceData, true);
 
     if (currentCodeData) {
       const { yAxis, series, legend } = currentCodeData;
@@ -175,7 +175,7 @@ const ScanCodeComponent = (props) => {
       newOriginalData = filterDataByTime(newOriginalData, startByTime, endByTime);
     }
 
-    const currenTimeData = generateTimeData(newOriginalData);
+    const currenTimeData = generateTimeData(newOriginalData, true);
     if (currenTimeData) {
       const { xAxis, series, legend } = currenTimeData;
       const newTimeHistoryLine = timeHistoryLine.getOption();
@@ -189,15 +189,20 @@ const ScanCodeComponent = (props) => {
   return (
     <Row gutter={16}>
       <Col span={22}>
-        {/* 按照码号 */}
+        {/* 按照小车id */}
         <Card
           actions={
             searchKey.length > 0 && [
-              <FilterSearch key={'a'} searchKey={searchKey} onValuesChange={onValuesChange} />,
+              <FilterSearch
+                key={'a'}
+                searchKey={searchKey}
+                onValuesChange={onValuesChange}
+                onShowkey={true}
+              />,
             ]
           }
         >
-          <div id="ScancodeByIdHistory" style={{ minHeight: 350 }} />
+          <div id="RobotFaultByIdHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
       <Col span={22} style={{ marginTop: 10 }}>
@@ -209,10 +214,10 @@ const ScanCodeComponent = (props) => {
             ]
           }
         >
-          <div id="ScancodeBydateHistory" style={{ minHeight: 350 }} />
+          <div id="RobotFaultBydateHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
     </Row>
   );
 };
-export default memo(ScanCodeComponent);
+export default memo(RobotFaultComponent);
