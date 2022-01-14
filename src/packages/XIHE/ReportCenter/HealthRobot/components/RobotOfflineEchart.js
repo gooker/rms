@@ -1,5 +1,5 @@
 import { formatMessage, isStrictNull } from '@/utils/utils';
-import { forIn } from 'lodash';
+import { forIn, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const colors = ['#91CC75', '#EE6666'];
@@ -277,11 +277,13 @@ export const generatOfflineDataByRobot = (allData) => {
 };
 
 //  拿到原始数据的 所有参数 所有根据robotId的参数求和
+//  重要:robotId要排序 不然数据就乱掉了 数据对应不上
 export const getOriginalDataByRobotId = (originalData) => {
-  const currentAxisData = Object.values(originalData)[0] || [];
+  let currentAxisData = Object.values(originalData)[0] || [];
+  currentAxisData = sortBy(currentAxisData, 'robotId'); // 不排序 数据会乱掉 这样robotId的轴是顺序的 对应的seriy也是顺序的
   const firstTimeDataMap = new Map(); // 存放key 比如时长 次数等
   const legendData = []; // 图例
-  const xAxisData = []; // 纵坐标 是y
+  const xAxisData = []; // 纵坐标 是y 顺序显示
   let currentCellIdData = {}; // 根据robotId 每个key 求和
 
   forIn(currentAxisData[0], (value, key) => {

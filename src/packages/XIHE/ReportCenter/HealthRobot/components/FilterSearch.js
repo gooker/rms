@@ -5,9 +5,11 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
+let _prefix = null;
 
 const FilterSearch = (props) => {
-  const { searchKey, onValuesChange, onShowkey } = props;
+  const { searchKey, onValuesChange, onShowkey, prefix } = props;
+  _prefix = prefix || 'reportCenter.qrcodehealth';
 
   const [form] = Form.useForm();
   const [togglesCode, setTogglesCode] = useState(0);
@@ -17,9 +19,9 @@ const FilterSearch = (props) => {
     init();
   }, []);
 
-  function clearForm() {
-    form.resetFields();
-  }
+  // function clearForm() {
+  //   form.resetFields();
+  // }
 
   return (
     <div key="a" style={{ position: 'relative' }}>
@@ -36,7 +38,7 @@ const FilterSearch = (props) => {
                         label={
                           !onShowkey
                             ? formatMessage({
-                                id: `reportCenter.qrcodehealth.${key}`,
+                                id: `${_prefix}.${key}`,
                               })
                             : key
                         }
@@ -51,7 +53,6 @@ const FilterSearch = (props) => {
                       </Form.Item>
                     </Col>
                   );
-                  // }
                 })}
 
                 <Col span={6}>

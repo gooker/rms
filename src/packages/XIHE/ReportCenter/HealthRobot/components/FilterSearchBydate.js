@@ -17,9 +17,9 @@ const FilterSearchBytime = (props) => {
     init();
   }, []);
 
-  function clearForm() {
-    formDate.resetFields();
-  }
+  // function clearForm() {
+  //   formDate.resetFields();
+  // }
 
   return (
     <div style={{ position: 'relative' }}>

@@ -1,5 +1,5 @@
 import { formatMessage, isStrictNull } from '@/utils/utils';
-import { forIn } from 'lodash';
+import { forIn, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
@@ -362,7 +362,8 @@ export const transformCodeData = (allData = {}, notformatlegend) => {
 
 //  拿到原始数据的 所有参数 所有根据robotId的参数求和
 export const getOriginalDataBycode = (originalData) => {
-  const currentAxisData = Object.values(originalData)[0] || [];
+  let currentAxisData = Object.values(originalData)[0] || [];
+  currentAxisData = sortBy(currentAxisData, 'robotId');
   const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
   const legendData = [];
   const yxisData = []; // 纵坐标 是y

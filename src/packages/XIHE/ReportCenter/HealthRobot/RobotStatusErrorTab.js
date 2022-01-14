@@ -17,7 +17,7 @@ let timeHistoryLine = null; // 根据日期
 
 let commonOption = null;
 
-const RobotOfflineComponent = (props) => {
+const RoboStatusErrorComponent = (props) => {
   const { originData } = props;
 
   const [searchKey, setSearchKey] = useState([]); // 根据小车id的数据--二次搜索
@@ -222,4 +222,4 @@ const RobotOfflineComponent = (props) => {
     </Row>
   );
 };
-export default memo(RobotOfflineComponent);
+export default memo(RoboStatusErrorComponent);

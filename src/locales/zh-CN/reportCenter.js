@@ -46,7 +46,6 @@ export default {
   'reportCenter.qrcodehealth.seriousdeviationCar': ' 严重偏移车数',
   'reportCenter.qrcodehealth.dropoutNumCar': '丢码车数',
   'reportCenter.qrcodehealth.errorNumCar': '错码车数',
-
   'reportCenter.qrcodehealth.dropoutcode': '丢码码数',
   'reportCenter.qrcodehealth.errorcode': '错码码数',
   'reportCenter.qrcodehealth.deviatiocode': '偏移码数',

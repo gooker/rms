@@ -205,7 +205,7 @@ const RobotFaultComponent = (props) => {
           <div id="RobotFaultByIdHistory" style={{ minHeight: 350 }} />
         </Card>
       </Col>
-      <Col span={22}>
+      <Col span={22} style={{ marginTop: 10 }}>
         {/* 按照日期 */}
         <Card
           actions={
