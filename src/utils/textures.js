@@ -10,7 +10,7 @@ import {
   SorterAGVSize,
 } from '@/config/consts';
 
-function getQrCodeSelectBorderTexture() {
+export function getQrCodeSelectBorderTexture() {
   const tmpSelectedBorder = new PIXI.Graphics();
   tmpSelectedBorder.clear();
   tmpSelectedBorder.lineStyle(1, 0xff5722, 1);
@@ -19,7 +19,7 @@ function getQrCodeSelectBorderTexture() {
   return window.PixiUtils.renderer.generateTexture(tmpSelectedBorder);
 }
 
-function getCostArrow(color) {
+export function getCostArrow(renderer, color) {
   // 默认长度是1125，宽度是15，后续可以通过Scale去调整尺寸
   const distanceInt = 1125;
   const lineWidth = 40;
@@ -48,14 +48,14 @@ function getCostArrow(color) {
 
   // 路线纹理
   const textureWidth = 100; // 150
-  return window.PixiUtils.renderer.generateTexture(arrow, {
+  return renderer.generateTexture(arrow, {
     scaleMode: 1,
     resolution: 2,
     region: new PIXI.Rectangle(-textureWidth / 2, 0, textureWidth, distanceInt),
   });
 }
 
-function getBoldCostArrow(color) {
+export function getBoldCostArrow(color) {
   // 默认长度是1125，宽度是15，后续可以通过Scale去调整尺寸
   const distanceInt = 200;
   const lineWidth = 40;
@@ -92,7 +92,7 @@ function getBoldCostArrow(color) {
   return window.PixiUtils.renderer.generateTexture(arrow);
 }
 
-function getTaskPathTexture(color) {
+export function getTaskPathTexture(color) {
   const distance = 100; // 默认长度是100
   const lineWidth = CellSize.width / 3;
   const arrow = new PIXI.Graphics();
@@ -107,7 +107,7 @@ function getTaskPathTexture(color) {
   });
 }
 
-function getCellHeatTexture(color) {
+export function getCellHeatTexture(color) {
   const heatCircle = new PIXI.Graphics();
   heatCircle.clear();
   heatCircle.lineStyle(1, color, 1);
@@ -116,7 +116,7 @@ function getCellHeatTexture(color) {
   return window.PixiUtils.renderer.generateTexture(heatCircle);
 }
 
-function getAgvSelectBorderTexture() {
+export function getAgvSelectBorderTexture() {
   const tmpSelectedBorder = new PIXI.Graphics();
   tmpSelectedBorder.clear();
   tmpSelectedBorder.lineStyle(1, 0xffffff, 1);
@@ -125,6 +125,15 @@ function getAgvSelectBorderTexture() {
   return window.PixiUtils.renderer.generateTexture(tmpSelectedBorder);
 }
 
+export function getRectLock(width, height) {
+  const rectLock = new PIXI.Graphics();
+  rectLock.clear();
+  rectLock.lineStyle(20, 0xffffff, 1);
+  rectLock.drawRect(0, 0, width, height);
+  return window.PixiUtils.renderer.generateTexture(rectLock);
+}
+
+// 渲染Cost相关
 function getHasOppositeDirection(relations, source, target) {
   let result = false;
   for (let index = 0; index < relations.length; index++) {
@@ -261,23 +270,6 @@ export function getLineGraphics(relations, beginCell, endCell, lineAngle, cost, 
   });
 }
 
-export function getFeatureTextures(text) {
-  const alphabetText = new BitText(text, 10, 0, 0xffffff, 50);
-  return window.PixiUtils.renderer.generateTexture(alphabetText, {
-    scaleMode: 1,
-    resolution: 2,
-    region: new PIXI.Rectangle(0, 0, 50, 50),
-  });
-}
-
-export function getRectLock(width, height) {
-  const rectLock = new PIXI.Graphics();
-  rectLock.clear();
-  rectLock.lineStyle(20, 0xffffff, 1);
-  rectLock.drawRect(0, 0, width, height);
-  return window.PixiUtils.renderer.generateTexture(rectLock);
-}
-
 export function loadTexturesForMap() {
   return new Promise((resolve) => {
     PIXI.Loader.shared
@@ -381,44 +373,6 @@ export function loadTexturesForMap() {
       .add('errorLevel_2', '/textures/errorLevel_2.png')
       .add('errorLevel_3', '/textures/errorLevel_3.png')
       .load(() => {
-        // 背景
-        PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
-        PIXI.Texture.addToCache(getQrCodeSelectBorderTexture(), 'cellSelectBorderTexture');
-
-        // Cost线条
-        PIXI.Texture.addToCache(getCostArrow(CostColor[10]), '_10CostArrow');
-        PIXI.Texture.addToCache(getCostArrow(CostColor[20]), '_20CostArrow');
-        PIXI.Texture.addToCache(getCostArrow(CostColor[100]), '_100CostArrow');
-        PIXI.Texture.addToCache(getCostArrow(CostColor[1000]), '_1000CostArrow');
-
-        // 方向
-        PIXI.Texture.addToCache(getBoldCostArrow('0xFFFFFF'), 'boldDirection');
-
-        // 任务路径
-        PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed), '_passedTaskPath');
-        PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.locked), '_lockedTaskPath');
-        PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.future), '_futureTaskPath');
-
-        // 小车锁格
-        PIXI.Texture.addToCache(getRectLock(1050, 1050), 'LatentRectLock');
-        PIXI.Texture.addToCache(getRectLock(ToteAGVSize.width, ToteAGVSize.height), 'ToteRectLock');
-        PIXI.Texture.addToCache(
-          getRectLock(SorterAGVSize.width, SorterAGVSize.height),
-          'SorterRectLock',
-        );
-
-        // 点位成本热度
-        PIXI.Texture.addToCache(getCellHeatTexture('0x3366FF'), '_cellHeat1');
-        PIXI.Texture.addToCache(getCellHeatTexture('0x5984C3'), '_cellHeat2');
-        PIXI.Texture.addToCache(getCellHeatTexture('0x7FA387'), '_cellHeat3');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xA5C14B'), '_cellHeat4');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xC9D04B'), '_cellHeat5');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xEEE04B'), '_cellHeat6');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xF4B042'), '_cellHeat7');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xF87636'), '_cellHeat8');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xF03C2B'), '_cellHeat9');
-        PIXI.Texture.addToCache(getCellHeatTexture('0xCF2723'), '_cellHeat10');
-
         resolve();
       });
   });

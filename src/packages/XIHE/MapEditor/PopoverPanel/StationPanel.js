@@ -11,7 +11,7 @@ import {
 import { connect } from '@/utils/dva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import FormattedMessage from '@/components/FormattedMessage';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import styles from '../PopoverPanel/popoverPanel.module.less';
 import { formatMessage, isNull } from '@/utils/utils';
 import RichInput from '@/packages/XIHE/components/RichInput';

@@ -15,7 +15,7 @@ import RichInput from '@/packages/XIHE/components/RichInput';
 import CardRadio from '@/packages/XIHE/components/CardRadio';
 import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
 import AngleSelector from '@/components/AngleSelector';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import styles from '../PopoverPanel/popoverPanel.module.less';
 
 const WorkStationPanel = (props) => {

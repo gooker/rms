@@ -6,6 +6,8 @@ import { Category, MonitorRightTools } from '../enums';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import { AGVType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
+import ItemProp from '@/packages/XIHE/MapMonitor/PopoverPanel/ElementProp';
+import { throttle } from 'lodash';
 
 const MonitorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -14,8 +16,17 @@ const MonitorBodyRight = (props) => {
 
   useEffect(() => {
     const htmlDOM = document.getElementById('monitorPixi');
-    const { height } = htmlDOM.getBoundingClientRect();
-    setHeight(height - 10);
+    const resizeObserver = new ResizeObserver(
+      throttle(() => {
+        const { height } = htmlDOM.getBoundingClientRect();
+        setHeight(height);
+      }, 500),
+    );
+    resizeObserver.observe(htmlDOM);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
   }, []);
 
   function updateEditPanelFlag(category) {
@@ -36,6 +47,8 @@ const MonitorBodyRight = (props) => {
 
   function renderPanelContent() {
     switch (categoryPanel) {
+      case Category.Prop:
+        return <ItemProp height={height - 10} />;
       case Category.LatentAGV:
         return (
           <AgvCategorySecondaryPanel
@@ -58,20 +71,22 @@ const MonitorBodyRight = (props) => {
   }
 
   return (
-    <div className={styles.bodyRightSide}>
-      {MonitorRightTools.map(({ label, value, icon, style }) => (
-        <Tooltip key={value} placement="right" title={label}>
-          <div
-            role={'category'}
-            className={categoryPanel === value ? styles.categoryActive : undefined}
-            onClick={() => {
-              updateEditPanelFlag(value);
-            }}
-          >
-            {renderIcon(icon, style)}
-          </div>
-        </Tooltip>
-      ))}
+    <div style={{ position: 'relative' }}>
+      <div className={styles.bodyRightSide} style={{ height }}>
+        {MonitorRightTools.map(({ label, value, icon, style }) => (
+          <Tooltip key={value} placement="right" title={label}>
+            <div
+              role={'category'}
+              className={categoryPanel === value ? styles.categoryActive : undefined}
+              onClick={() => {
+                updateEditPanelFlag(value);
+              }}
+            >
+              {renderIcon(icon, style)}
+            </div>
+          </Tooltip>
+        ))}
+      </div>
       {!isNull(categoryPanel) ? renderPanelContent() : null}
     </div>
   );

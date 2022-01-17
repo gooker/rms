@@ -8,6 +8,7 @@ import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
 import MonitorModals from './Modal';
+import { HeaderHeight } from './enums';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -65,7 +66,10 @@ const MapMonitor = (props) => {
 
   return (
     <div id={'mapMonitorPage'} className={commonStyles.commonPageStyleNoPadding}>
-      <div className={classnames(commonStyles.mapLayoutHeader, styles.monitorHeader)}>
+      <div
+        style={{ flex: `0 0 ${HeaderHeight}px` }}
+        className={classnames(commonStyles.mapLayoutHeader, styles.monitorHeader)}
+      >
         {currentMap === undefined ? (
           <LoadingOutlined style={{ fontSize: 20, color: '#fff' }} spin />
         ) : (

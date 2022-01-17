@@ -39,8 +39,8 @@ export default class LatentAGV extends PIXI.Container {
       this.agv.interactive = true;
       this.agv.buttonMode = true;
       this.agv.interactiveChildren = false;
-      this.agv.on('click', () => props.checkAGV(this.id, this.type));
-      this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
+      this.agv.on('pointerdown', () => props.click({ type: this.type, id: this.id }));
+      // this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
     }
   }
 

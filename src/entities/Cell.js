@@ -22,20 +22,20 @@ export default class Cell extends PIXI.Container {
     this.sortableChildren = true;
     this.interactiveChildren = false;
     this.propsInteractive = props.interactive || false;
+    this.selected = false; // 标记点位是否被选中
     this.select = props.select;
     this.ctrlSelect = props.ctrlSelect;
     this.shiftSelect = props.shiftSelect;
 
     this.data = {
       types: new Map(),
-      mode: 'standard',
     };
 
     this.states = {
+      mode: 'standard',
       shownData: {
         shown: true,
         coord: props.showCoordinate,
-        selectedBG: false,
       },
     };
 
@@ -46,7 +46,7 @@ export default class Cell extends PIXI.Container {
   }
 
   get mode() {
-    return this.data.mode;
+    return this.states.mode;
   }
 
   addQR() {
@@ -67,7 +67,7 @@ export default class Cell extends PIXI.Container {
   }
 
   updateCellId(cellId) {
-    const { mode } = this.data;
+    const { mode } = this.states;
     let cellIdX = 0;
     let cellIdY = CellSize.height / 2 + 5;
     let textColor = 0xffffff;
@@ -85,7 +85,7 @@ export default class Cell extends PIXI.Container {
       this.idText.destroy(true);
       this.idText = null;
     }
-    // this.addCellId(cellId);
+
     // 更新点位ID文本位置和样式
     this.idText = new BitText(cellId ?? this.id, cellIdX, cellIdY, textColor, cellIdFontSize);
     mode === 'standard' ? this.idText.anchor.set(0.5, 0) : this.idText.anchor.set(0, 1);
@@ -136,10 +136,7 @@ export default class Cell extends PIXI.Container {
   removeSelectedBackGround() {
     if (this.selectedBorderSprite) {
       this.removeChild(this.selectedBorderSprite);
-      // 特殊case, 会出现 _texture 为 null的 Sprite
-      if (this.selectedBorderSprite._texture) {
-        this.selectedBorderSprite.destroy({ children: true });
-      }
+      this.selectedBorderSprite = null;
     }
   }
 
@@ -151,15 +148,22 @@ export default class Cell extends PIXI.Container {
     this.states.shownData.coord = flag;
   }
 
-  // 交互(支持动态添加交互): TODO: 处理多次绑定事件
-  /// / 用dynamic来标识点位点击操作是Monitor动态新增的，否则就是Editor
+  /**
+   * 支持动态添加交互
+   * 用dynamic来标识点位点击操作是Monitor动态新增的，否则就是Editor
+   *
+   * @param interactive
+   * @param dynamic
+   * @param showBG
+   * @param callBack
+   */
   interact(interactive = false, dynamic = false, showBG = true, callBack) {
     this.interactive = interactive;
     this.buttonMode = interactive;
     if (interactive) {
       this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
       this.addSelectedBackGround(450, 400);
-      this.on('click', (ev) => this.onClick(ev, showBG));
+      this.on('pointerdown', (ev) => this.onClick(ev, showBG));
       // 如果是动态新增交互就用参数回调来覆盖原有回调
       if (dynamic) {
         this.select = callBack;
@@ -176,32 +180,29 @@ export default class Cell extends PIXI.Container {
 
   // ************ QR Code Selection ************ //
   onSelect() {
-    if (!this.states.shownData.selectedBG) {
-      this.selectedBorderSprite.visible = true;
-      this.states.shownData.selectedBG = true;
-    }
+    this.selected = true;
+    this.selectedBorderSprite.visible = true;
   }
 
   onUnSelect() {
-    if (this.states.shownData.selectedBG) {
-      this.selectedBorderSprite.visible = false;
-      this.states.shownData.selectedBG = false;
-    }
+    console.log('onUnSelect: ', this.id);
+    this.selected = false;
+    this.selectedBorderSprite.visible = false;
   }
 
   onClick(event, showBG = true) {
     if (event?.data.originalEvent.shiftKey) {
-      if (!this.states.shownData.selectedBG) {
+      if (!this.selected) {
         showBG && this.onSelect();
         this.shiftSelect && this.shiftSelect({ id: this.id, x: this.x, y: this.y });
       }
     } else if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
-      if (!this.states.shownData.selectedBG) {
+      if (!this.selected) {
         showBG && this.onSelect();
         this.ctrlSelect && this.ctrlSelect({ id: this.id, x: this.x, y: this.y });
       }
     } else {
-      if (this.states.shownData.selectedBG) {
+      if (this.selected) {
         this.onUnSelect();
         this.select &&
           this.select(
@@ -221,9 +222,9 @@ export default class Cell extends PIXI.Container {
     }
   }
 
-  // ************ 二维码功能  ************ //
+  // 重新计算点位类型图标位置
   reCalculatePosition() {
-    const isStandard = this.data.mode === 'standard';
+    const isStandard = this.states.mode === 'standard';
     // 图标在水平方向的间隔距离
     const offset = isStandard ? 30 : 50;
     // 重算每一个类型图标的位置，逻辑是把所有的类型Sprite水平拼接成一个矩形，该矩形的锚点的和二维码的锚点在同一条垂直线。然后所有的Sprite就可以以此为基准分布开来
@@ -250,7 +251,7 @@ export default class Cell extends PIXI.Container {
   // 点位类型编辑
   plusType(type, typeData) {
     if (this.data.types.has(type)) return;
-    const isStandard = this.data.mode === 'standard';
+    const isStandard = this.states.mode === 'standard';
 
     // typeData 有可能是 Texture 也有可能是 Sprite
     if (typeData) {
@@ -297,7 +298,7 @@ export default class Cell extends PIXI.Container {
     this.data.types.delete(type);
 
     // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
-    let tint = this.data.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
+    let tint = this.states.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
     if (this.data.types.has('store_cell')) {
       tint = CellTypeColor.storeType;
     }
@@ -325,7 +326,7 @@ export default class Cell extends PIXI.Container {
     let cellIdFontSize;
 
     if (mode === 'standard') {
-      this.data.mode = 'standard';
+      this.states.mode = 'standard';
       textColor = 0xffffff;
       cellWidth = CellSize.width;
       cellHeight = CellSize.height;
@@ -338,7 +339,7 @@ export default class Cell extends PIXI.Container {
       coordYx = CellSize.width / 2;
       coordYy = -CellSize.height / 2;
     } else {
-      this.data.mode = 'scaled';
+      this.states.mode = 'scaled';
       textColor = 0x000000;
       cellWidth = ScaledCellSize;
       cellHeight = ScaledCellSize;
@@ -354,7 +355,7 @@ export default class Cell extends PIXI.Container {
 
     // 更新tint
     if (!this.data.types.has('store_cell') && !this.data.types.has('block_cell')) {
-      if (this.data.mode === 'scaled') {
+      if (this.states.mode === 'scaled') {
         this.QR.tint = NormalScaledCellTint;
       } else {
         this.QR.tint = ClearCellTint;
@@ -421,7 +422,7 @@ export default class Cell extends PIXI.Container {
     if (selected) {
       if (this.coordX) this.coordX.visible = shownData.coord;
       if (this.coordY) this.coordY.visible = shownData.coord;
-      if (this.selectedBorderSprite) this.selectedBorderSprite.visible = shownData.selectedBG;
+      if (this.selectedBorderSprite) this.selectedBorderSprite.visible = this.selected;
     } else {
       if (this.coordX) this.coordX.visible = false;
       if (this.coordY) this.coordY.visible = false;
@@ -448,7 +449,7 @@ export default class Cell extends PIXI.Container {
       this.QR.tint = CellTypeColor.blockType;
     } else {
       // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
-      let tint = this.data.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
+      let tint = this.states.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
       if (this.data.types.has('store_cell')) {
         tint = CellTypeColor.storeType;
       }

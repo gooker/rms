@@ -12,7 +12,8 @@
 .bodyRightSide {
   position: relative;
   width: 60px;
-  background: #2f2f2f;
+  background: #051C28;
+  overflow: auto;
 
   & > div[role='category'] {
     .flexCenter();
@@ -35,7 +36,7 @@
   }
 }
 .categoryActive {
-  background: #0f5aa1;
+  background: #2F5597;
 }
 
 // Popover Panel
@@ -45,7 +46,6 @@
   right: 70px;
   display: flex;
   flex-flow: column nowrap;
-  width: 60px;
   background: rgba(99, 99, 99, 0.9);
   border-radius: 5px;
   user-select: none;
@@ -113,6 +113,7 @@
   flex: 1;
   padding: 10px;
   overflow: auto;
+
   :global {
     .ant-form-item .ant-form-item-label label {
       color: #fff;

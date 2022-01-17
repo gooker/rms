@@ -39,7 +39,10 @@ class MainLayout extends React.Component {
       await dispatch({ type: 'global/initAppAuthority' });
       this.setState({ appReady: true });
 
-      // 4. 获取所有车类任务类型数据
+      // 4. 加载地图Texture
+      await loadTexturesForMap();
+
+      // 5. 获取所有车类任务类型数据
       this.loadAllTaskTypes();
     } catch (error) {
       Modal.error({

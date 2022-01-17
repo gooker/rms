@@ -5,7 +5,6 @@ import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
 import { connect } from '@/utils/dva';
 import PixiBuilder from '@/utils/PixiBuilder';
-import { loadTexturesForMap } from '@/utils/textures';
 import { formatMessage, getToteLayoutBaseParam, isEqual, isNull } from '@/utils/utils';
 import { AGVState, GeoLockColor, LatentPodSize, ToteAGVSize, zIndex } from '@/config/consts';
 import BaseMap from '@/components/BaseMap';
@@ -15,6 +14,7 @@ import {
   getElevatorMapCellId,
   getTextureFromResources,
   hasLatentPod,
+  loadMonitorExtraTextures,
   unifyAgvState,
 } from '@/utils/mapUtils';
 import {
@@ -32,12 +32,9 @@ import {
   TotePod,
 } from '@/entities';
 import commonStyles from '@/common.module.less';
+import { Category } from '@/packages/XIHE/MapMonitor/enums';
 
-const AllPriorities = ['10', '20', '100', '1000'];
-
-@connect(({ global }) => ({
-  hasLoadedTextures: global.hasLoadedTextures,
-}))
+@connect()
 class MonitorMapView extends BaseMap {
   constructor() {
     super();
@@ -52,7 +49,7 @@ class MonitorMapView extends BaseMap {
       showTote: true,
       showCoordinate: false,
       showCellPoint: true,
-      shownPriority: [...AllPriorities],
+      shownPriority: [10, 20, 100, 1000],
       showDistance: false,
       showRealTimeRate: false,
       showBackImg: false,
@@ -99,15 +96,12 @@ class MonitorMapView extends BaseMap {
   }
 
   async componentDidMount() {
-    const { dispatch, hasLoadedTextures } = this.props;
+    const { dispatch } = this.props;
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
     window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM);
-    if (!hasLoadedTextures) {
-      await loadTexturesForMap();
-      dispatch({ type: 'global/saveHasLoadedTextures', payload: true });
-    }
     dispatch({ type: 'monitor/saveMapContext', payload: this });
+    await loadMonitorExtraTextures(this.pixiUtils.renderer);
   }
 
   // ************************ 可见性控制相关 **********************
@@ -269,6 +263,14 @@ class MonitorMapView extends BaseMap {
     robotId === `${this.trackAGVId}` && this.mapRenderer.mapMoveTo(agvEntity.x, agvEntity.y, 0.1);
   };
 
+  clickAgv = (agvData) => {
+    const { dispatch } = this.props;
+    dispatch({
+      type: 'monitor/saveState',
+      payload: { categoryPanel: Category.Prop, categoryLoad: agvData },
+    });
+  };
+
   // ********** 潜伏车 ********** //
   addLatentAGV = (latentAGVData) => {
     // 如果点位未渲染好直接退出
@@ -281,7 +283,6 @@ class MonitorMapView extends BaseMap {
       this.updateLatentAGV([latentAGVData]);
       return latentAGV;
     }
-    const { checkAGV, simpleCheckAgv } = this.props;
     latentAGV = new LatentAGV({
       id: latentAGVData.robotId,
       x: latentAGVData.x || cellEntity.x,
@@ -294,8 +295,7 @@ class MonitorMapView extends BaseMap {
       cellId: latentAGVData.currentCellId,
       angle: latentAGVData.currentDirection,
       active: true,
-      checkAGV,
-      simpleCheckAgv,
+      click: this.clickAgv,
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentAGV);
     this.idAGVMap.set(`${latentAGVData.robotId}`, latentAGV);

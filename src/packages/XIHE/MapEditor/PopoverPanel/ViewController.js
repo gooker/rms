@@ -3,7 +3,7 @@ import { Divider, Form, Checkbox, Radio, Switch, Select } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/dva';
 import FormattedMessage from '@/components/FormattedMessage';
-import editorStyles from '../components/editorLayout.module.less';
+import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 import { formatMessage, getFormLayout } from '@/utils/utils';
 import { CostOptions, DirectionOption } from '../enums';

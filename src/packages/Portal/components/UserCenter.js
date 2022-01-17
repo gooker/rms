@@ -29,15 +29,13 @@ const UserCenter = (props) => {
   const menu = (
     <Menu selectedKeys={[]} onClick={handleUserMenuClick}>
       <Menu.Item key="logout">
-        <LogoutOutlined />
-        <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
+        <LogoutOutlined /> <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
       </Menu.Item>
       <Menu.SubMenu
         title={
-          <span>
-            <UnorderedListOutlined />
-            <FormattedMessage id="menu.account.roleList" />
-          </span>
+          <>
+            <UnorderedListOutlined /> <FormattedMessage id="menu.account.roleList" />
+          </>
         }
       >
         {userRoleList.map((record) => (
@@ -45,8 +43,7 @@ const UserCenter = (props) => {
         ))}
       </Menu.SubMenu>
       <Menu.Item key="apiList">
-        <ApiOutlined />
-        <FormattedMessage id="menu.account.apiList" />
+        <ApiOutlined /> <FormattedMessage id="menu.account.apiList" />
       </Menu.Item>
     </Menu>
   );

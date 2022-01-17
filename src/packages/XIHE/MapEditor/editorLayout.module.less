@@ -1,3 +1,5 @@
+@import (reference) '../../../common.module';
+
 .bodySideToolStyle {
   display: flex;
   flex-flow: column nowrap;
@@ -9,6 +11,9 @@
 
 .bodyLeftSide {
   .bodySideToolStyle();
+
+  padding-top: 20px;
+  background: @mapSideColor;
 
   & > span {
     margin-bottom: 15px;
@@ -28,13 +33,22 @@
   }
 }
 
+.editorBodyMiddle {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  background: radial-gradient(circle, rgb(88, 88, 88) 0%, rgb(46, 46, 46) 100%);
+  touch-action: none;
+}
+
 // 右侧
 .bodyRightSide {
-  position: relative;
-  width: 50px;
   .bodySideToolStyle();
 
-  & > div[role='category'] {
+  overflow-y: auto;
+  background: @mapSideColor;
+
+  div[role='category'] {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -70,6 +84,7 @@
     font-size: 22px;
     border-bottom: 1px solid #7f7f7f;
   }
+
   & > div:nth-child(2) {
     flex: 1;
     padding: 10px 5px 10px 5px;
@@ -80,7 +95,6 @@
 // Footer
 .footer {
   display: flex;
-  height: 25px;
   background: #7a7a7a;
 }
 

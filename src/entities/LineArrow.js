@@ -38,12 +38,12 @@ export default class LineArrow extends PIXI.Container {
     this.arrow = new PIXI.Sprite(texture);
     this.arrow.anchor.set(0.5, 1);
     this.arrow.scale.y = this.length / 1125;
-    if (this.mapMode == 'scaled') {
+    if (this.mapMode === 'scaled') {
       this.arrow.scale.x = 5;
     }
     this.arrow.buttonMode = this.$interactive;
     this.arrow.interactive = this.$interactive;
-    this.arrow.on('click', this.click);
+    this.arrow.on('pointerdown', this.click);
     this.addChild(this.arrow);
 
     // 距离文本
