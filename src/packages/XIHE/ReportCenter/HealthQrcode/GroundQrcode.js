@@ -235,7 +235,7 @@ const GroundQrcode = (props) => {
                             // ) {
                             // } else {
                             return (
-                              <Col span={4} key={key}>
+                              <Col span={6} key={key}>
                                 <Form.Item
                                   name={key}
                                   label={formatMessage({

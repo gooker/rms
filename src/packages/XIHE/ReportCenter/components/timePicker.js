@@ -85,7 +85,7 @@ const TimePickerSelector = (props) => {
           <AutoComplete
             allowClear
             style={{
-              width: 130,
+              width: 80,
             }}
             value={dateValue}
             options={rangeTime}
@@ -94,7 +94,7 @@ const TimePickerSelector = (props) => {
           <Select
             value={dateType}
             onChange={timeTypeChange}
-            style={{ width: 90 }}
+            style={{ width: 80 }}
             disabled={disabledChangeType || false}
           >
             <Option value="days">天</Option>
