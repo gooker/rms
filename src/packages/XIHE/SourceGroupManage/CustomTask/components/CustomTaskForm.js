@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Form, Modal, message, Button } from 'antd';
 import { SnippetsOutlined, RedoOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons';
 import classnames from 'classnames';

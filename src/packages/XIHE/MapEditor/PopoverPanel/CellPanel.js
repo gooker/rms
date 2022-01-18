@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Row } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   CodeOutlined,

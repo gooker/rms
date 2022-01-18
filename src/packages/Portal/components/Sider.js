@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import throttle from 'lodash/throttle';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import LayoutMenu from '@/components/Menu';
 import Logo from '../images/logoMain.png'
 

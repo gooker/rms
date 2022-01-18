@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/utils';
 import {
   EditorRightTools,

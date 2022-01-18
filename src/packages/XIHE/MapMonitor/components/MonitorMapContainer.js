@@ -1,10 +1,10 @@
 import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/utils';
 import MonitorMapView from './MonitorMapView';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
+import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 
 const MonitorMapContainer = (props) => {
   const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =

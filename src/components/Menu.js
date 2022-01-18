@@ -1,7 +1,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';

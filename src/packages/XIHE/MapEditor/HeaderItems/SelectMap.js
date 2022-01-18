@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Badge, Dropdown, Menu } from 'antd';
 import { DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMessage, getRandomString } from '@/utils/utils';

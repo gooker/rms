@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import styles from '../monitorLayout.module.less';
 
 const ElementProp = (props) => {

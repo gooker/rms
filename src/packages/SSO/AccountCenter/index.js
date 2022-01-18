@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Card, Row, Col, Button, Modal } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/utils';
 import { updateUserManage } from '@/services/user';

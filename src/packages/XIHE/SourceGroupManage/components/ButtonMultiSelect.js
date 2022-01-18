@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 
 @connect(({ mapViewGroup }) => ({

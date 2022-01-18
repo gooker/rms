@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import {

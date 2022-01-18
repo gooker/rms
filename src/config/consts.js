@@ -143,6 +143,8 @@ export const zIndex = {
   agv: 5,
   pod: 6,
   cellHeat: 7,
+  area: 8,
+  label: 9,
 };
 
 // 日志下载文件类型

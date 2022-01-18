@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Modal, message, Skeleton } from 'antd';
 import { withRouter } from 'react-router-dom';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
@@ -37,10 +37,10 @@ class MainLayout extends React.Component {
 
       // 3.初始化菜单
       await dispatch({ type: 'global/initAppAuthority' });
-      this.setState({ appReady: true });
 
       // 4. 加载地图Texture
       await loadTexturesForMap();
+      this.setState({ appReady: true });
 
       // 5. 获取所有车类任务类型数据
       this.loadAllTaskTypes();

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import EmptyRun from './EmptyRun';
 
 const MonitorModals = (props) => {

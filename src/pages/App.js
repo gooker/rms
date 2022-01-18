@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/utils/Loadable';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { initI18nInstance } from '@/utils/init';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))

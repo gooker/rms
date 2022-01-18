@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/utils';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Category, MonitorRightTools } from '../enums';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import { AGVType } from '@/config/config';

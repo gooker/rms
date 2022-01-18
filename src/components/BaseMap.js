@@ -912,7 +912,7 @@ export default class BaseMap extends React.Component {
         if (cellEntity) {
           if (opt === 'add') {
             cellEntity.plusType(`tunnel_${tunnelName}`, sprite);
-            interact && cellEntity.interact(true, true, false, this.props.checkTunnelGate);
+            interact && cellEntity.interact(true, true, this.props.checkTunnelGate);
           }
 
           if (opt === 'remove') {

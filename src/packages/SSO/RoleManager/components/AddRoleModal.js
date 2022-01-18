@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Button, Select, Input } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { generateLevelOptions } from '../../UserManager/userManagerUtils';
 import { isStrictNull } from '@/utils/utils';

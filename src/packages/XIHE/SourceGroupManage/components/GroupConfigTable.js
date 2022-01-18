@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Table, Divider, Button, Popconfirm, Row, Tag, Form, Select, Badge, Col } from 'antd';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';

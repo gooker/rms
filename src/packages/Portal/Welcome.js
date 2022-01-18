@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { CopyrightOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import WelcomeImage from './images/welcome.png';

@@ -1,7 +1,7 @@
 // 所有模块的路由全在此注册
 import React, { memo } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/utils/Loadable';
 

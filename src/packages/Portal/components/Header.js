@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Popover, Switch } from 'antd';
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import screenfull from 'screenfull';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { throttle } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import Portal from './Portal/Portal';

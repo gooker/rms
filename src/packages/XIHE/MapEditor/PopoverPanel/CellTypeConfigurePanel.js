@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Divider, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { CellTypeSetting } from '../enums';
 import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';

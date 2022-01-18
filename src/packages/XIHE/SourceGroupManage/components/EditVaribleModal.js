@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import find from 'lodash/find';
 import groupBy from 'lodash/groupBy';
 import cloneDeep from 'lodash/cloneDeep';

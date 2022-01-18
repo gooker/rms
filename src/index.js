@@ -1,16 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import dva from '@/utils/dva';
+import createRcsDva from '@/utils/RcsDva';
 import App from '@/pages/App';
-import globalModel from '@/models/global';
-import taskModel from '@/models/task';
-import userModel from '@/models/user';
-import editorModel from '@/models/editor';
-import monitorModel from '@/models/monitor';
-import simulatorModel from '@/models/simulator';
-import taskTrigger from '@/models/taskTrigger';
-import customTask from '@/models/CustomTaskModel';
+import models from '@/models';
 import './global.less';
 
 // 全局错误处理(尝试版)
@@ -27,22 +20,16 @@ import './global.less';
 // });
 
 // 1. 初始化Dva对象(包含dva层统一错误处理)
-const app = dva({
+const app = createRcsDva({
   onError(e, dispatch) {
     console.log(e.message);
   },
 });
 window.g_app = app;
+window.__rcs_global_state__ = window.g_app._store.getState;
 
 // 2. 注册 Model
-app.model(taskModel);
-app.model(userModel);
-app.model(globalModel);
-app.model(editorModel);
-app.model(monitorModel);
-app.model(simulatorModel);
-app.model(taskTrigger);
-app.model(customTask);
+models.forEach((model) => app.model(model));
 
 // 3. 启动
 const DvaProvider = app.create();

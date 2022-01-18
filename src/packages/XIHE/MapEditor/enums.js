@@ -15,6 +15,53 @@ export const LeftToolBarWidth = 65;
 export const RightToolBarWidth = 50;
 export const FooterHeight = 25;
 
+export const LeftCategory = {
+  Drag: 'Drag',
+  Choose: 'Choose',
+  Image: 'Image',
+  Font: 'Font',
+  Rectangle: 'Rectangle',
+  Circle: 'Circle',
+  Template: 'Template',
+};
+export const EditorLeftTools = [
+  {
+    label: formatMessage({ id: 'app.common.drag' }),
+    value: LeftCategory.Drag,
+    icon: <IconFont type={'icon-drag'} />,
+  },
+  {
+    label: formatMessage({ id: 'app.common.select' }),
+    value: LeftCategory.Choose,
+    icon: <IconFont type={'icon-click'} />,
+  },
+  {
+    label: formatMessage({ id: 'mapEditor.tools.insertFont' }),
+    value: LeftCategory.Font,
+    icon: <IconFont type={'icon-font'} />,
+  },
+  {
+    label: formatMessage({ id: 'mapEditor.tools.insertRect' }),
+    value: LeftCategory.Rectangle,
+    icon: <IconFont type={'icon-rectangle'} />,
+  },
+  {
+    label: formatMessage({ id: 'mapEditor.tools.insertCircle' }),
+    value: LeftCategory.Circle,
+    icon: <IconFont type={'icon-circle'} />,
+  },
+  {
+    label: formatMessage({ id: 'mapEditor.tools.insertPicture' }),
+    value: LeftCategory.Image,
+    icon: <IconFont type={'icon-image'} />,
+  },
+  {
+    label: formatMessage({ id: 'mapEditor.tools.useTemplate' }),
+    value: LeftCategory.Template,
+    icon: <IconFont type={'icon-template'} />,
+  },
+];
+
 export const Category = {
   Aisle: 'AISLE',
   Cell: 'CELL',
@@ -26,45 +73,6 @@ export const Category = {
   Charger: 'CHARGER',
   View: 'VIEW',
 };
-
-export const EditorLeftTools = [
-  {
-    label: formatMessage({ id: 'app.common.drag' }),
-    value: 'drag',
-    icon: <IconFont type={'icon-drag'} />,
-  },
-  {
-    label: formatMessage({ id: 'app.common.select' }),
-    value: 'choose',
-    icon: <IconFont type={'icon-click'} />,
-  },
-  {
-    label: formatMessage({ id: 'mapEditor.tools.insertPicture' }),
-    value: 'image',
-    icon: <IconFont type={'icon-image'} />,
-  },
-  {
-    label: formatMessage({ id: 'mapEditor.tools.insertFont' }),
-    value: 'font',
-    icon: <IconFont type={'icon-font'} />,
-  },
-  {
-    label: formatMessage({ id: 'mapEditor.tools.insertRect' }),
-    value: 'rectangle',
-    icon: <IconFont type={'icon-rectangle'} />,
-  },
-  {
-    label: formatMessage({ id: 'mapEditor.tools.insertCircle' }),
-    value: 'circle',
-    icon: <IconFont type={'icon-circle'} />,
-  },
-  {
-    label: formatMessage({ id: 'mapEditor.tools.useTemplate' }),
-    value: 'template',
-    icon: <IconFont type={'icon-template'} />,
-  },
-];
-
 export const EditorRightTools = [
   {
     label: formatMessage({ id: 'app.common.prop' }),

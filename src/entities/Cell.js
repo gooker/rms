@@ -21,6 +21,7 @@ export default class Cell extends PIXI.Container {
     this.zIndex = zIndex.cell;
     this.sortableChildren = true;
     this.interactiveChildren = false;
+    this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
     this.propsInteractive = props.interactive || false;
     this.selected = false; // 标记点位是否被选中
     this.select = props.select;
@@ -42,7 +43,7 @@ export default class Cell extends PIXI.Container {
     this.addQR();
     this.addCellId();
     this.addCoordination();
-    this.interact(this.propsInteractive);
+    this.addSelectedBackGround(450, 400);
   }
 
   get mode() {
@@ -151,30 +152,26 @@ export default class Cell extends PIXI.Container {
   /**
    * 支持动态添加交互
    * 用dynamic来标识点位点击操作是Monitor动态新增的，否则就是Editor
-   *
    * @param interactive
-   * @param dynamic
    * @param showBG
    * @param callBack
    */
-  interact(interactive = false, dynamic = false, showBG = true, callBack) {
+  interact(interactive = false, showBG = true, callBack) {
+    const _this = this;
+    function pointerdownCB(ev) {
+      _this.onClick(ev, showBG);
+    }
+
     this.interactive = interactive;
     this.buttonMode = interactive;
     if (interactive) {
-      this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
-      this.addSelectedBackGround(450, 400);
-      this.on('pointerdown', (ev) => this.onClick(ev, showBG));
-      // 如果是动态新增交互就用参数回调来覆盖原有回调
-      if (dynamic) {
+      this.on('pointerdown', pointerdownCB);
+      // 支持覆盖原有回调
+      if (typeof callBack === 'function') {
         this.select = callBack;
       }
     } else {
-      // 清除HitArea、BG和回调
-      this.hitArea = null;
-      this.removeSelectedBackGround();
-      if (dynamic) {
-        this.select = null;
-      }
+      this.off('pointerdown', pointerdownCB);
     }
   }
 
@@ -185,7 +182,6 @@ export default class Cell extends PIXI.Container {
   }
 
   onUnSelect() {
-    console.log('onUnSelect: ', this.id);
     this.selected = false;
     this.selectedBorderSprite.visible = false;
   }

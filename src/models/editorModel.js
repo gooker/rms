@@ -34,6 +34,7 @@ import {
   fetchMapHistoryDetail,
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
+import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 
 const FieldTextureKeyMap = {
   blockCellIds: 'block_cell',
@@ -77,9 +78,14 @@ export default {
     showBackImg: false,
 
     // 标识符
+    leftActiveCategory: LeftCategory.Drag,
     saveMapLoading: false,
     activeMapLoading: false,
     categoryPanel: null,
+
+    // Mask相关
+    maskToolVisible: false,
+    maskInputVisible: false,
   },
 
   reducers: {
@@ -87,6 +93,26 @@ export default {
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    updateMaskToolVisible(state, action) {
+      return {
+        ...state,
+        maskToolVisible: action.payload,
+      };
+    },
+    updateMaskInputVisible(state, action) {
+      return {
+        ...state,
+        maskInputVisible: action.payload,
+      };
+    },
+    updateLeftActiveCategory(state, action) {
+      return {
+        ...state,
+        leftActiveCategory: action.payload,
+        maskToolVisible: false,
+        maskInputVisible: false,
       };
     },
     updateEditPanelVisible(state, action) {

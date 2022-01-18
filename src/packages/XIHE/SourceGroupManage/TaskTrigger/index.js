@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import find from 'lodash/find';
 import {
   Row,

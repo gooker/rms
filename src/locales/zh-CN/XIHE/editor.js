@@ -11,6 +11,7 @@ export default {
   'mapEditor.active': '激活地图',
   'mapEditor.active.warn': '无法取消激活',
   'mapEditor.selectMap.required': '请先选择地图',
+  'mapEditor.placeholder.requireText': '输入文本',
 
   // 施工图
   'mapEditor.constructionDrawing.export': '导出施工图',
