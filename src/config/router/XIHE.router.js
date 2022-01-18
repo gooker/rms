@@ -279,6 +279,20 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
         hooks: ['dev'],
       },
+      {
+        path: `/${AppCode.XIHE}/report/loadReport`,
+        name: 'loadReport',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
+        hooks: ['dev'],
+        routes: [
+          {
+            path: `/${AppCode.XIHE}/report/loadReport/robotLoad`,
+            name: 'robotLoad',
+            component: '/XIHE/ReportCenter/Load/RobotLoad',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
+        ],
+      },
     ],
   },
   {

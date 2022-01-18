@@ -32,7 +32,7 @@ const RoboStatusErrorComponent = (props) => {
     codeHistoryLine = echarts.init(document.getElementById('offlineByIRobotIdHistory'));
     codeHistoryLine.setOption(
       offlineHistoryLineOption(
-        `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
+        `${formatMessage({ id: 'reportCenter.robot.error' })}(${formatMessage({
           id: 'reportCenter.way.robot',
         })})`,
       ),
@@ -43,7 +43,7 @@ const RoboStatusErrorComponent = (props) => {
     timeHistoryLine = echarts.init(document.getElementById('offlineByIdateHistory'));
     timeHistoryLine.setOption(
       offlineHistoryLineOption(
-        `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
+        `${formatMessage({ id: 'reportCenter.robot.error' })}(${formatMessage({
           id: 'reportCenter.way.date',
         })})`,
       ),

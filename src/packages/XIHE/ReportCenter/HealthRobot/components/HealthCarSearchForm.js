@@ -62,7 +62,8 @@ const LogSearchForm = (props) => {
               return value.timeDate;
             }}
           >
-            <TimePickerSelector defaultType={'hour'} defaultTime={7} disabledChangeType={true} />
+            <TimePickerSelector defaultType={'hour'} defaultTime={7}  />
+            {/* disabledChangeType={true} */}
           </Form.Item>
         </Col>
 

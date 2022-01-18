@@ -65,6 +65,8 @@ export default {
   'menu.reportCenter.healthQrcode.toteQrcode': '料箱',
 
   'menu.reportCenter.healthRobot': '小车健康',
+  'menu.reportCenter.loadReport': '负载报表',
+  'menu.reportCenter.loadReport.robotLoad': '小车负载',
 
   'menu.requestor': '接口请求库',
   'menu.richEditor': '富文本编辑',

@@ -55,7 +55,8 @@ const FilterSearchBytime = (props) => {
                     return value.timeDate;
                   }}
                 >
-                  <TimePickerSelector defaultType={'hour'} disabledChangeType={true} />
+                  <TimePickerSelector defaultType={'hour'}  /> 
+                  {/* disabledChangeType={true} */}
                 </Form.Item>
               </Col>
             </Row>

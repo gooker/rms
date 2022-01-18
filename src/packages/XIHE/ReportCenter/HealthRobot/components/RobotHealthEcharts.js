@@ -109,9 +109,6 @@ export const dateHistoryLineOption = (title) => ({
   ],
   yAxis: {
     type: 'value',
-    axisLabel: {
-      fontSize: 12,
-    },
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor,
@@ -173,9 +170,7 @@ export const codeHistoryLineOption = (title) => ({
   },
   xAxis: {
     type: 'value',
-    axisLabel: {
-      fontSize: 12,
-    },
+  
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor, // 坐标轴线线的颜色。
