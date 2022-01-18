@@ -1,4 +1,4 @@
-import { formatMessage, isStrictNull, GMT2UserTimeZone } from '@/utils/utils';
+import { isStrictNull } from '@/utils/utils';
 import { forIn, isNull, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -14,25 +14,6 @@ export const Color = [
   '#ea7ccc',
 ];
 
-const statusallTime = {
-  //状态时长
-  Offline: 5, //离线
-  Free: 10, // 空闲
-  Working: 10, // 执行
-  StandBy: 10, // 待命
-  Charging: 10, // 充电
-  Error: 0, //异常  状态时长结束
-};
-const taskallTime = {
-  //任务时长
-  EMPTY_RUN: 0, //空跑
-  REST_UNDER_POD: 0, //回休息区
-  CARRY_POD_TO_STATION: 0, //工作站任务
-  CHARGE_RUN: 0, //充电
-  CUSTOM_TASK: 0, //自定义任务
-  CARRY_POD_TO_CELL: 0, //搬运货架
-};
-
 // 任务时长 状态时长
 const commonOption = {
   type: 'bar',
@@ -44,6 +25,7 @@ const commonOption = {
       show: true,
     },
   },
+  animation: true,
 };
 
 export const durationLineOption = (title) => ({
@@ -84,6 +66,15 @@ export const durationLineOption = (title) => ({
     data: [],
     z: 10,
   },
+  dataZoom: [
+    {
+      start: 0,
+      type: 'inside',
+    },
+    // {
+    //   start: 50,
+    // },
+  ],
   series: [], // 有几层数据 就放几层
 });
 // 任务次数 任务距离
@@ -115,7 +106,7 @@ export const taskLineOption = (title) => ({
     },
   },
   grid: {
-    top: '8%',
+    top: '2%',
     left: '6%',
     right: '2%',
     containLabel: true,
@@ -123,6 +114,7 @@ export const taskLineOption = (title) => ({
   legend: {
     data: [],
   },
+  color: Color[1],
   xAxis: [
     {
       type: 'category',
@@ -154,6 +146,12 @@ export const taskLineOption = (title) => ({
       show: false,
     },
   },
+  dataZoom: [
+    {
+      start: 0,
+      type: 'inside',
+    },
+  ],
   series: [], // 有几层数据 就放几层
 });
 
@@ -184,6 +182,9 @@ export const generateDurationDataByTime = (allData, type) => {
     // splitArea: {
     //   show: false,
     // },
+    axisLabel: {
+      rotate: 0,
+    },
     splitArea: {
       show: true,
       interval: 0,
@@ -213,6 +214,39 @@ export const generateDurationDataByTime = (allData, type) => {
   return { radiusAxis, series, legend };
 };
 
+// 根据原始数据--x日期 y:数值 任务次数 任务距离
+export const generateNumOrDistanceData = (allData, type) => {
+  const series = []; // 存放纵坐标数值
+  const { currentSery, xAxisData } = sumloadData(allData, type);
+
+  Object.entries(currentSery).forEach((key, i) => {
+    series.push({
+      ...commonOption,
+      data: key[1],
+      name: key[0],
+      yAxisIndex: 0,
+      type: 'bar',
+    });
+  });
+  const xAxis = {
+    type: 'category',
+    splitLine: {
+      show: false,
+    },
+    axisTick: {
+      show: false,
+    },
+    splitArea: {
+      show: false,
+    },
+    axisLabel: {
+      rotate: 20,
+    },
+    data: xAxisData,
+  };
+  return { xAxis, series };
+};
+
 export const sumloadData = (allData, type) => {
   const xAxisData = Object.keys(allData).sort(); // 横坐标-日期
 
@@ -240,7 +274,7 @@ export const sumloadData = (allData, type) => {
   let currentAxisData = Object.values(allData)[0] || []; // 横坐标
   let getallkeyMap = currentAxisData[0];
   if (!isNull(type)) {
-    getallkeyMap = currentAxisData[0][type];
+    getallkeyMap = currentAxisData[0]?.[type];
   }
 
   forIn(getallkeyMap, (value, key) => {
@@ -260,4 +294,73 @@ export const sumloadData = (allData, type) => {
     });
   });
   return { currentSery, xAxisData, legendData };
+};
+
+// table数据--根据robotId
+export const generateTableData = (originalData) => {
+  let currentAxisData = Object.values(originalData)[0] || [];
+  currentAxisData = sortBy(currentAxisData, 'robotId');
+  let _key = {
+    taskDistance: 'taskDistance',
+    statusallTime: 'Charging',
+  };
+  const firstTimeDataMap = new Map();
+  firstTimeDataMap.set('taskDistance', 0);
+  firstTimeDataMap.set('statusallTime', 0); //
+  firstTimeDataMap.set('taskallTime', 0);
+  let currentCellIdData = {}; // 根据robotId 每个key 求和
+
+  currentAxisData.map(({ robotId }) => {
+    currentCellIdData[robotId] = {};
+  });
+
+  Object.values(originalData).forEach((record) => {
+    record.forEach((item) => {
+      const { robotId, robotType } = item;
+      currentCellIdData[robotId]['robotType'] = robotType;
+      currentCellIdData[robotId]['robotId'] = robotId;
+      forIn(item, (value, key) => {
+        if (firstTimeDataMap.has(key)) {
+          let seryData = currentCellIdData[robotId][key] || 0;
+          if (_key[key]) {
+            let currentKey = _key[key];
+            currentCellIdData[robotId][key] = seryData * 1 + value[currentKey] * 1;
+          } else {
+            let _sum = 0;
+            forIn(value, (val2, k2) => {
+              _sum += val2;
+            });
+            currentCellIdData[robotId][key] = seryData * 1 + _sum * 1;
+          }
+        }
+      });
+    });
+  });
+  const currentRobotData = Object.values(currentCellIdData);
+
+  return { currentRobotData };
+};
+
+// 1234->1,234
+export const formatNumber = (n) => {
+  let num = n.toString();
+  let decimals = '';
+  // 判断是否有小数
+  num.indexOf('.') > -1 ? (decimals = num.split('.')[1]) : decimals;
+  let len = num.length;
+  if (len <= 3) {
+    return num;
+  } else {
+    let temp = '';
+    let remainder = len % 3;
+    decimals ? (temp = '.' + decimals) : temp;
+    if (remainder > 0) {
+      return (
+        num.slice(0, remainder) + ',' + num.slice(remainder, len).match(/\d{3}/g).join(',') + temp
+      );
+    } else {
+      // 是3的整数倍
+      return num.slice(0, len).match(/\d{3}/g).join(',') + temp;
+    }
+  }
 };

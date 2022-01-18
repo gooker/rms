@@ -30,7 +30,7 @@ const Content = (props) => {
 
   const routesData = createRoutesByRequire();
   return (
-    <div id={'layoutContent'} style={{ height: '100%', width: '100%' }}>
+    <div id={'layoutContent'} style={{ height: '100%', width: '100%', overflow: 'auto' }}>
       <Switch>
         <Route exact path="/" component={Loadable(() => import('@/packages/Portal/Welcome'))} />
 

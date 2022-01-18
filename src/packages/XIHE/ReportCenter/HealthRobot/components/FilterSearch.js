@@ -37,10 +37,10 @@ const FilterSearch = (props) => {
                         name={key}
                         label={
                           !onShowkey
-                            ? formatMessage({
+                            ? `${formatMessage({
                                 id: `${_prefix}.${key}`,
-                              })
-                            : key
+                              })}`
+                            : `${key}`
                         }
                         rules={[
                           {
@@ -49,7 +49,7 @@ const FilterSearch = (props) => {
                           },
                         ]}
                       >
-                        <Input allowClear />
+                        <Input allowClear/>
                       </Form.Item>
                     </Col>
                   );
