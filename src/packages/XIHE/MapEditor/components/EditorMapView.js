@@ -1,4 +1,5 @@
 import React from 'react';
+import * as PIXI from 'pixi.js';
 import {
   getCurveMapKey,
   getLineFromIdLineMap,
@@ -6,12 +7,12 @@ import {
   getTextureFromResources,
   loadEditorExtraTextures,
 } from '@/utils/mapUtils';
-import { connect } from '@/utils/dva';
-import { CellSize } from '@/config/consts';
-import { Cell } from '@/entities';
+import { connect } from '@/utils/RcsDva';
+import { CellSize, zIndex } from '@/config/consts';
+import { Cell, Text } from '@/entities';
 import PixiBuilder from '@/utils/PixiBuilder';
 import BaseMap from '@/components/BaseMap';
-import commonStyles from '@/common.module.less';
+import EditorMask from './EditorMask';
 
 @connect()
 class EditorMapView extends BaseMap {
@@ -332,7 +333,6 @@ class EditorMapView extends BaseMap {
   };
 
   cancelCellSelected = (cells) => {
-    console.log('cancelCellSelected: ', cells);
     if (Array.isArray(cells)) {
       cells.forEach((id) => {
         const cellEntity = this.idCellMap.get(id);
@@ -468,17 +468,58 @@ class EditorMapView extends BaseMap {
     this.pipeSwitchLinesShown();
   };
 
+  // 画区域
+  drawRectArea(x, y, width, height, color) {
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(color.replace('#', '0x'));
+    graphics.drawRect(x, y, width, height);
+    graphics.endFill();
+    graphics.alpha = 0.8;
+    this.pixiUtils.viewportAddChild(graphics);
+    this.refresh();
+  }
+
+  drawCircleArea(x, y, radius, color) {
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(color.replace('#', '0x'));
+    graphics.drawCircle(x, y, radius);
+    graphics.endFill();
+    graphics.alpha = 0.8;
+    graphics.zIndex = zIndex.area;
+    this.pixiUtils.viewportAddChild(graphics);
+    this.refresh();
+  }
+
+  renderLabel(text, x, y) {
+    const textSprite = new Text(text, x, y, null, true, 200);
+    textSprite.alpha = 0.8;
+    textSprite.anchor.set(0.5);
+    textSprite.zIndex = zIndex.label;
+    this.pixiUtils.viewportAddChild(textSprite);
+    this.refresh();
+  }
+
+  renderImage({ base64, x, y, width, height }) {
+    const imageBaseTexture = new PIXI.BaseTexture(base64);
+    const imageTexture = new PIXI.Texture(imageBaseTexture);
+    const imageSprite = new PIXI.Sprite(imageTexture);
+    imageSprite.x = x;
+    imageSprite.y = y;
+    imageSprite.width = width;
+    imageSprite.height = height;
+    imageSprite.alpha = 0.8;
+    imageSprite.zIndex = zIndex.area;
+    this.pixiUtils.viewportAddChild(imageSprite);
+    this.refresh();
+  }
+
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
     return (
-      <div style={{ position: 'relative', flex: 1 }}>
-        <div
-          id={'mapSelectionMask'}
-          className={commonStyles.mapSelectionMask}
-          style={{ display: 'none' }}
-        />
+      <>
+        <EditorMask />
         <div id="editorPixi" style={{ height: '100%', fontSize: 0 }} />
-      </div>
+      </>
     );
   }
 }

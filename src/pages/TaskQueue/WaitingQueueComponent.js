@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Badge, Row, Button, message, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { dateFormat, formatMessage } from '@/utils/utils';

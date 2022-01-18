@@ -7,7 +7,7 @@ import {
   PlusOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { formatMessage, isNull } from '@/utils/utils';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import FormattedMessage from '@/components/FormattedMessage';

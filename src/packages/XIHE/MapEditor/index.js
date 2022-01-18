@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { HeaderHeight } from './enums';
 import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';

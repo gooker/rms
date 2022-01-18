@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Form, Select, Radio, InputNumber, Button } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';

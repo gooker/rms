@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
 import {

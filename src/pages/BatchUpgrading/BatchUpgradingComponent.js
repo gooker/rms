@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Button, Modal } from 'antd';
 import { RedoOutlined, HistoryOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';

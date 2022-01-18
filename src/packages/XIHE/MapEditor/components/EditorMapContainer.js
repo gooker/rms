@@ -1,14 +1,20 @@
 import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/utils';
 import EditorMapView from './EditorMapView';
-import { LeftToolBarWidth, RightToolBarWidth, HeaderHeight, FooterHeight } from '../enums';
+import {
+  LeftToolBarWidth,
+  RightToolBarWidth,
+  HeaderHeight,
+  FooterHeight,
+  LeftCategory,
+} from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
 
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext } = props;
-  const { currentMap, currentLogicArea, currentRouteMap, preRouteMap } = props;
+  const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -217,9 +223,42 @@ const EditorMapContainer = (props) => {
     mapContext.drawLine(relations, relations, true);
   }
 
-  return <EditorMapView />;
+  // 地图区域鼠标样式
+  let cursorStyle;
+  switch (leftActiveCategory) {
+    case LeftCategory.Drag:
+      cursorStyle = 'grab';
+      break;
+    case LeftCategory.Image:
+    case LeftCategory.Rectangle:
+    case LeftCategory.Circle:
+      cursorStyle = 'crosshair';
+      break;
+    default:
+      cursorStyle = 'default';
+  }
+
+  return (
+    <div style={{ position: 'relative', flex: 1, cursor: cursorStyle }}>
+      <EditorMapView />
+    </div>
+  );
 };
 export default connect(({ editor }) => {
-  const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, mapContext } = editor;
-  return { currentMap, currentLogicArea, currentRouteMap, preRouteMap, mapContext };
+  const {
+    currentMap,
+    currentLogicArea,
+    currentRouteMap,
+    preRouteMap,
+    mapContext,
+    leftActiveCategory,
+  } = editor;
+  return {
+    currentMap,
+    currentLogicArea,
+    currentRouteMap,
+    preRouteMap,
+    mapContext,
+    leftActiveCategory,
+  };
 })(memo(EditorMapContainer));

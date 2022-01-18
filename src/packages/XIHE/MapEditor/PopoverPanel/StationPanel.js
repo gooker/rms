@@ -8,7 +8,7 @@ import {
   ReloadOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';

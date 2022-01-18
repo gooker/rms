@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Tooltip, Button, Row, Col, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';

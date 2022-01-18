@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Button, Form, Divider, Input } from 'antd';
 import { MinusOutlined, ClearOutlined } from '@ant-design/icons';
 import { Row, Col, Switch } from 'antd';

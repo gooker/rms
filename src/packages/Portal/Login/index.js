@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import {
   fetchLogin,
   fetchAppVersion,

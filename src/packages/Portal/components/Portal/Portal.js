@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { Row } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { AppCode } from '@/config/config';
 import PortalEntry from './PortalEntry';
 import styles from './Portal.module.less';

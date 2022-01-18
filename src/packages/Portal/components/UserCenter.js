@@ -8,7 +8,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import styles from './Header.module.less';
 
 const UserCenter = (props) => {

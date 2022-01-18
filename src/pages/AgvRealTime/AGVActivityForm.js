@@ -5,7 +5,7 @@ import { formatMessage } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 
 const { Option } = Select;
 const { Panel } = Collapse;

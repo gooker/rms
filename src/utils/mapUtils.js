@@ -1181,6 +1181,7 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
 
 // 加载编辑器额外的自定义Texture
 export function loadEditorExtraTextures(renderer) {
+  // PIXI.Texture.addTextureToCache(texture, "someId");
   return new Promise((resolve) => {
     // 点位选中的Texture
     PIXI.Texture.addToCache(getQrCodeSelectBorderTexture(), 'cellSelectBorderTexture');

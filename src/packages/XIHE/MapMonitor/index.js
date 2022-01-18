@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/utils';
 import { setMonitorSocketCallback } from '@/utils/mapUtils';
 import MonitorMapContainer from './components/MonitorMapContainer';
@@ -20,6 +20,12 @@ const MapMonitor = (props) => {
     dispatch({ type: 'monitor/initMonitorMap' });
     return () => {
       socketClient.cancelMonitorRegistration();
+      dispatch({
+        type: 'saveState',
+        payload: {
+          mapContext: false,
+        },
+      });
     };
   }, []);
 
@@ -37,7 +43,6 @@ const MapMonitor = (props) => {
   async function renderMonitorLoad() {
     if (mapRendered) {
       const resource = await dispatch({ type: 'monitor/initMonitorLoad' });
-      console.log('地图渲染完成: ', resource);
       if (!isNull(resource)) {
         const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv, temporaryBlock } = resource;
         mapContext.renderLatentAGV(latentAgv);

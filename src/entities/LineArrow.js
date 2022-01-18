@@ -32,6 +32,16 @@ export default class LineArrow extends PIXI.Container {
     this.createArrow();
   }
 
+  set clickable(value) {
+    this.arrow.buttonMode = value;
+    this.arrow.interactive = value;
+    if (value) {
+      this.arrow.on('pointerdown', this.click);
+    } else {
+      this.arrow.off('pointerdown', this.click);
+    }
+  }
+
   createArrow = () => {
     const texture = this.switchArrowTexture();
     if (!texture) return;
@@ -41,9 +51,6 @@ export default class LineArrow extends PIXI.Container {
     if (this.mapMode === 'scaled') {
       this.arrow.scale.x = 5;
     }
-    this.arrow.buttonMode = this.$interactive;
-    this.arrow.interactive = this.$interactive;
-    this.arrow.on('pointerdown', this.click);
     this.addChild(this.arrow);
 
     // 距离文本

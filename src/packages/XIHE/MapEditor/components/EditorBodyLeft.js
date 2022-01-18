@@ -1,24 +1,81 @@
 import React, { memo } from 'react';
 import { Tooltip } from 'antd';
-import { connect } from '@/utils/dva';
-import { EditorLeftTools, LeftToolBarWidth } from '../enums';
+import { connect } from '@/utils/RcsDva';
+import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
 import { isNull } from '@/utils/utils';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtils';
+import { Cell, LineArrow } from '@/entities';
 
 /**
  * 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
  * @TODO 目前有个已知bug-->向左上方框选无效
  */
-class EditorBodyLeft extends React.Component {
+class EditorBodyLeft extends React.PureComponent {
   pinterIsDown = false; // 标记指针是否被按下
   pointerDownX = null;
   pointerDownY = null;
   pointerUpX = null;
   pointerUpY = null;
 
-  state = {
-    activeKey: 'drag',
+  selectCategory = (value) => {
+    const { dispatch, mapContext } = this.props;
+    // 重置选择框DOM样式
+    this.hideMask();
+
+    // 只有Drag模式下才可以拖拽ViewPort
+    mapContext.pixiUtils.viewport.drag({
+      pressDrag: value === LeftCategory.Drag,
+    });
+    // 只有选择模式下才可以点击
+    mapContext.pixiUtils.viewport.children.forEach((element) => {
+      if (element instanceof Cell) {
+        element.interact(value === LeftCategory.Choose);
+      }
+      if (element instanceof LineArrow) {
+        element.clickable = value === LeftCategory.Choose;
+      }
+    });
+    this.handleMaskEvent(value);
+    dispatch({ type: 'editor/updateLeftActiveCategory', payload: value });
+  };
+
+  hideMask = () => {
+    const maskDOM = document.getElementById('mapSelectionMask');
+    maskDOM.style.display = 'none';
+    maskDOM.style.width = `${0}px`;
+    maskDOM.style.height = `${0}px`;
+  };
+
+  handleMaskEvent = (activeKey) => {
+    const { mapContext } = this.props;
+    if (mapContext?.pixiUtils?.renderer) {
+      const {
+        pixiUtils: { renderer },
+      } = mapContext;
+      if (
+        [
+          LeftCategory.Choose,
+          LeftCategory.Image,
+          LeftCategory.Rectangle,
+          LeftCategory.Circle,
+        ].includes(activeKey)
+      ) {
+        renderer.plugins.interaction.on('pointerdown', this.onMouseDown);
+        renderer.plugins.interaction.on('pointermove', this.onMouseMove);
+        renderer.plugins.interaction.on('pointerup', this.onMouseUp);
+      } else {
+        renderer.plugins.interaction.off('pointerdown', this.onMouseDown);
+        renderer.plugins.interaction.off('pointermove', this.onMouseMove);
+        renderer.plugins.interaction.off('pointerup', this.onMouseUp);
+      }
+
+      if (LeftCategory.Font === activeKey) {
+        renderer.plugins.interaction.on('pointerdown', this.onInsertLabel);
+      } else {
+        renderer.plugins.interaction.off('pointerdown', this.onInsertLabel);
+      }
+    }
   };
 
   /**
@@ -43,50 +100,47 @@ class EditorBodyLeft extends React.Component {
 
   onMouseMove = (ev) => {
     if (this.pinterIsDown) {
+      const { activeKey } = this.props;
       this.pointerUpX = ev.data.global.x;
       this.pointerUpY = ev.data.global.y;
+      const maskDOM = document.getElementById('mapSelectionMask');
       const selectWidth = Math.abs(this.pointerUpX - this.pointerDownX);
       const selectHeight = Math.abs(this.pointerUpY - this.pointerDownY);
-      const minX = Math.min(this.pointerUpX, this.pointerDownX);
-      const minY = Math.min(this.pointerUpY, this.pointerDownY);
 
-      const maskDOM = document.getElementById('mapSelectionMask');
-      maskDOM.style.left = `${minX}px`;
-      maskDOM.style.top = `${minY}px`;
-      maskDOM.style.width = `${selectWidth}px`;
-      maskDOM.style.height = `${selectHeight}px`;
+      // 此时判断是画矩形还是圆形
+      if ([LeftCategory.Rectangle, LeftCategory.Image, LeftCategory.Choose].includes(activeKey)) {
+        maskDOM.style.width = `${selectWidth}px`;
+        maskDOM.style.height = `${selectHeight}px`;
+      } else {
+        maskDOM.style.left = `${this.pointerDownX - selectWidth / 2}px`;
+        maskDOM.style.top = `${this.pointerDownY - selectWidth / 2}px`;
+        maskDOM.style.width = `${selectWidth}px`;
+        maskDOM.style.height = `${selectWidth}px`;
+      }
     }
   };
 
-  onMouseUp = (ev) => {
+  onMouseUp = () => {
     if (!this.pinterIsDown) return;
     this.pinterIsDown = false;
-    // 重置选择框DOM样式
-    const maskDOM = document.getElementById('mapSelectionMask');
-    maskDOM.style.display = 'none';
-    maskDOM.style.width = `${0}px`;
-    maskDOM.style.height = `${0}px`;
+    const { activeKey, dispatch } = this.props;
 
-    // 收集转换所需的数据
-    let __viewport = ev.target;
-    if (isNull(__viewport?.worldScreenWidth)) {
-      __viewport = ev.currentTarget;
+    // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
+    if (activeKey === LeftCategory.Choose) {
+      this.hideMask();
+      this.onSelectElement();
     }
-    const mapDOM = document.getElementById('editorPixi');
 
-    // 转换坐标
-    const [rangeWorldStartX, rangeWorldStartY] = transformScreenToWorldCoordinator(
-      { x: this.pointerDownX, y: this.pointerDownY },
-      mapDOM,
-      __viewport,
-    );
-    const [rangeWorldEndX, rangeWorldEndY] = transformScreenToWorldCoordinator(
-      { x: this.pointerUpX, y: this.pointerUpY },
-      mapDOM,
-      __viewport,
-    );
+    // 插入图片，鼠标抬起后立即弹出图片选择框
+    if (activeKey === LeftCategory.Image) {
+      this.onInsertPicture();
+    }
 
-    this.afterDrawRectangle(rangeWorldStartX, rangeWorldStartY, rangeWorldEndX, rangeWorldEndY);
+    // 画矩形和圆形情况下显示MaskTool
+    dispatch({
+      type: 'editor/updateMaskToolVisible',
+      payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
+    });
 
     // 重置参数
     this.pointerDownX = null;
@@ -95,32 +149,29 @@ class EditorBodyLeft extends React.Component {
     this.pointerUpY = null;
   };
 
-  handleMaskEvent = () => {
-    const { activeKey } = this.state;
-    const { mapContext } = this.props;
-    if (mapContext?.pixiUtils?.renderer) {
-      const {
-        pixiUtils: { renderer },
-      } = mapContext;
-      if (activeKey === 'choose') {
-        renderer.plugins.interaction.on('pointerdown', this.onMouseDown);
-        renderer.plugins.interaction.on('pointermove', this.onMouseMove);
-        renderer.plugins.interaction.on('pointerup', this.onMouseUp);
-      } else {
-        renderer.plugins.interaction.off('pointerdown', this.onMouseDown);
-        renderer.plugins.interaction.off('pointermove', this.onMouseMove);
-        renderer.plugins.interaction.off('pointerup', this.onMouseUp);
-      }
-    }
-  };
-
-  afterDrawRectangle = (startX, startY, endX, endY) => {
+  onSelectElement = () => {
     const { mapContext, currentCells } = this.props;
 
-    const [_startX, _endX] = [startX, endX].sort((x, y) => x - y);
-    const [_startY, _endY] = [startY, endY].sort((x, y) => x - y);
+    // 收集转换所需的数据
+    const viewport = mapContext.pixiUtils.viewport;
+    const mapDOM = document.getElementById('editorPixi');
 
-    // 这里要判断到底要干什么
+    // 转换坐标
+    const [rangeWorldStartX, rangeWorldStartY] = transformScreenToWorldCoordinator(
+      { x: this.pointerDownX, y: this.pointerDownY },
+      mapDOM,
+      viewport,
+    );
+    const [rangeWorldEndX, rangeWorldEndY] = transformScreenToWorldCoordinator(
+      { x: this.pointerUpX, y: this.pointerUpY },
+      mapDOM,
+      viewport,
+    );
+
+    const [_startX, _endX] = [rangeWorldStartX, rangeWorldEndX].sort((x, y) => x - y);
+    const [_startY, _endY] = [rangeWorldStartY, rangeWorldEndY].sort((x, y) => x - y);
+
+    // 选择元素
     const cellsInRange = currentCells
       .filter(
         (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
@@ -129,9 +180,24 @@ class EditorBodyLeft extends React.Component {
     mapContext.rectangleSelection(cellsInRange);
   };
 
+  onInsertLabel = (ev) => {
+    const { dispatch } = this.props;
+    const { x, y } = ev.data.global;
+    const maskDOM = document.getElementById('mapSelectionMask');
+    maskDOM.style.display = 'block';
+    maskDOM.style.left = `${x}px`;
+    maskDOM.style.top = `${y}px`;
+    maskDOM.style.width = `${200}px`;
+    maskDOM.style.height = `${30}px`;
+    dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
+  };
+
+  onInsertPicture = () => {
+    document.getElementById('editorMaskFilePicker').click();
+  };
+
   render() {
-    const { activeKey } = this.state;
-    const { mapContext } = this.props;
+    const { activeKey } = this.props;
     return (
       <div style={{ width: `${LeftToolBarWidth}px` }} className={styles.bodyLeftSide}>
         {EditorLeftTools.map(({ label, value, icon }) => (
@@ -139,10 +205,7 @@ class EditorBodyLeft extends React.Component {
             <span
               className={activeKey === value ? styles.contentActive : undefined}
               onClick={() => {
-                mapContext.pixiUtils.viewport.drag({ pressDrag: value === 'drag' });
-                this.setState({ activeKey: value }, () => {
-                  this.handleMaskEvent();
-                });
+                this.selectCategory(value);
               }}
             >
               {icon}
@@ -156,4 +219,5 @@ class EditorBodyLeft extends React.Component {
 export default connect(({ editor }) => ({
   mapContext: editor.mapContext,
   currentCells: editor.currentCells,
+  activeKey: editor.leftActiveCategory,
 }))(memo(EditorBodyLeft));

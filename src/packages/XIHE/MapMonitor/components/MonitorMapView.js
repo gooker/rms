@@ -3,7 +3,6 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
-import { connect } from '@/utils/dva';
 import PixiBuilder from '@/utils/PixiBuilder';
 import { formatMessage, getToteLayoutBaseParam, isEqual, isNull } from '@/utils/utils';
 import { AGVState, GeoLockColor, LatentPodSize, ToteAGVSize, zIndex } from '@/config/consts';
@@ -34,7 +33,6 @@ import {
 import commonStyles from '@/common.module.less';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
 
-@connect()
 class MonitorMapView extends BaseMap {
   constructor() {
     super();
@@ -102,6 +100,14 @@ class MonitorMapView extends BaseMap {
     window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM);
     dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
+  }
+
+  componentWillUnmount() {
+    this.clearMapStage();
+    this.idCellMap.clear();
+    this.idAGVMap.clear();
+    this.idLatentPodMap.clear();
+    this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
 
   // ************************ 可见性控制相关 **********************
@@ -299,7 +305,6 @@ class MonitorMapView extends BaseMap {
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentAGV);
     this.idAGVMap.set(`${latentAGVData.robotId}`, latentAGV);
-
     return latentAGV;
   };
 
@@ -1377,8 +1382,7 @@ class MonitorMapView extends BaseMap {
       const sprite = new BitText(name, 0, 0, 0xffffff, 200);
       if (cellEntity) {
         cellEntity.plusType(`store_group_cell_${name}_${cellId}`, sprite);
-        // interactive = false, dynamic = false, showBG = true, callBack
-        cellEntity.interact(true, true, false, this.props.checkStoreGroup);
+        cellEntity.interact(true, true, this.props.checkStoreGroup);
       }
     });
 

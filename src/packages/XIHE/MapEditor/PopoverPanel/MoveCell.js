@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Form, Select, Tabs, InputNumber, Row, Col, Button } from 'antd';
 import { InfoOutlined, PlusOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { formatMessage } from '@/utils/utils';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import FormattedMessage from '@/components/FormattedMessage';

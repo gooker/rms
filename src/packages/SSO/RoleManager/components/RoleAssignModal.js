@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Tabs, Tree, Empty, Button } from 'antd';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, isStrictNull } from '@/utils/utils';
 import { filterMenuData } from '@/utils/init';

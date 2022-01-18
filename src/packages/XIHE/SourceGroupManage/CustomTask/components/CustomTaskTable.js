@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { connect } from '@/utils/dva';
+import { connect } from '@/utils/RcsDva';
 import { Table, Button, Modal, message, Row, Col } from 'antd';
 import {
   FileTextOutlined,
