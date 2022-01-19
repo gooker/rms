@@ -79,7 +79,7 @@ const TimePickerSelector = (props) => {
   return (
     <Row gutter={8}>
       <Col>
-        <Button type="link"> 过去</Button>
+        <Button type="link">过去</Button>
       </Col>
       <Col>
         <Input.Group compact>

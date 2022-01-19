@@ -28,6 +28,7 @@ const HealthCar = (props) => {
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
   useEffect(initChart, []);
+  useEffect(submitSearch, []);
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [filterData, loadOriginData]);
 

@@ -30,6 +30,7 @@ const GroundQrcode = (props) => {
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
 
   useEffect(initChart, []);
+  useEffect(submitSearch, []); // 默认一进来就有数据
 
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [originData]);
@@ -89,12 +90,35 @@ const GroundQrcode = (props) => {
   function submitSearch(value) {
     // TODO 调接口
     // 拿到原始数据的 所有参数 所有根据cellId的参数求和
-    const getOriginalData = getOriginalDataBycode(getQrcodedata());
-    commonOption = getOriginalData.commonOption;
-    setSearchKey(getOriginalData.legendData || []);
-    setOriginData(getQrcodedata());
-    form.resetFields();
-    formDate.resetFields();
+    // 暂时为了拍视频--先固定时间 01-18 10:00--01-19 10:00
+    // 搜索约定搜过去12h 即 01-18 22:00--01-19 10:00；
+    console.log(value);
+    if (value && Object.keys(value).length > 0) {
+      const _start = '2022-01-18 22:00:00';
+      const _end = '2022-01-19 11:00:00';
+      let newOriginalData = null;
+      if (!isStrictNull(_start) && !isStrictNull(_end)) {
+        // 先根据时间过滤
+        newOriginalData = filterDataByTime(getQrcodedata(), _start, _end);
+      }
+
+      const currenTimeData = generateTimeData(newOriginalData);
+      if (currenTimeData) {
+        const { xAxis, series, legend } = currenTimeData;
+        const newTimeHistoryLine = timeHistoryLine.getOption();
+        newTimeHistoryLine.xAxis = xAxis;
+        newTimeHistoryLine.series = series;
+        newTimeHistoryLine.legend = legend;
+        timeHistoryLine.setOption(newTimeHistoryLine, true);
+      }
+    } else {
+      const getOriginalData = getOriginalDataBycode(getQrcodedata());
+      commonOption = getOriginalData.commonOption;
+      setSearchKey(getOriginalData.legendData || []);
+      setOriginData(getQrcodedata());
+      form.resetFields();
+      formDate.resetFields();
+    }
   }
 
   const filterDataByCellId = (cellIds) => {

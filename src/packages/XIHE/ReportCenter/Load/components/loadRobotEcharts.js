@@ -1,4 +1,4 @@
-import { isStrictNull } from '@/utils/utils';
+import { isStrictNull, formatMessage } from '@/utils/utils';
 import { forIn, isNull, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -98,6 +98,20 @@ export const taskLineOption = (title) => ({
         fontSize: 12,
         color: '#fff',
       },
+    },
+    formatter: function (params) {
+      const name = params[0].axisValue;
+      var showHtm = name + '<br>';
+      for (let i = 0; i < params.length; i++) {
+        const { marker, seriesName, value } = params[i];
+        showHtm +=
+          marker +
+          formatMessage({ id: `reportCenter.robot.load.${seriesName}` }) +
+          '：' +
+          value +
+          '<br>';
+      }
+      return showHtm;
     },
   },
   lineStyle: {

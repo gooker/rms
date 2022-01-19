@@ -31,9 +31,8 @@ const GroundQrcode = (props) => {
 
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
 
-  const [togglesDate, setTogglesDate] = useState(0);
-
   useEffect(initChart, []);
+  useEffect(submitSearch, []);
 
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [originData]);

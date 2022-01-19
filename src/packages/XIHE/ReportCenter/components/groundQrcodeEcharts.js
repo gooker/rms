@@ -48,13 +48,19 @@ export const dateHistoryLineOption = (title) => ({
   tooltip: {
     confine: true,
     trigger: 'axis',
-    // formatter: (params) => {
-    //   params.map(({ name, value, seriesName, index }) => {
-    //     return `${name}${index}<br />${formatMessage({
-    //       id: `reportCenter.qrcodehealth.${seriesName}`,
-    //     })}:${value}`;
-    //   });
-    // },
+    formatter: (params) => {
+      const name = params[0]?.axisValue;
+      var showHtm = name + '<br>';
+      params.map(({ marker, value, seriesName, index }) => {
+        showHtm +=
+          marker +
+          formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` }) +
+          '：' +
+          value +
+          '<br>';
+      });
+      return showHtm;
+    },
     axisPointer: {
       type: 'shadow',
       textStyle: {
@@ -78,6 +84,27 @@ export const dateHistoryLineOption = (title) => ({
     top: '0',
     data: [],
   },
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 0,
+      end: 100,
+    },
+    {
+      start: 0,
+      end: 100,
+      handleIcon:
+        'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+      handleSize: '80%',
+      handleStyle: {
+        color: '#fff',
+        shadowBlur: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.6)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2,
+      },
+    },
+  ],
   xAxis: [
     {
       type: 'category',
@@ -133,6 +160,19 @@ export const codeHistoryLineOption = (title) => ({
         fontSize: 12,
         color: '#fff',
       },
+    },
+    formatter: (params) => {
+      const name = params[0]?.axisValue;
+      var showHtml = name + '<br>';
+      params.map(({ marker, value, seriesName, index }) => {
+        showHtml +=
+          marker +
+          formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` }) +
+          '：' +
+          value +
+          '<br>';
+      });
+      return showHtml;
     },
   },
   lineStyle: {
@@ -241,6 +281,7 @@ export const generateTimeData = (allData) => {
     axisLabel: {
       fontSize: 12,
       interval: 0,
+      rotate: 20,
     },
     splitLine: {
       show: false,
