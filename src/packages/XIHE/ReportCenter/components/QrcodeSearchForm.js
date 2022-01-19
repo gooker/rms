@@ -1,8 +1,8 @@
 import React, { memo, useEffect } from 'react';
 import { Row, Col, Form, Button, Select, DatePicker } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
+import { isNull } from '@/utils/utils';
 import TimePickerSelector from './timePicker';
-import { isNull } from 'lodash';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 const { RangePicker } = DatePicker;
@@ -21,13 +21,12 @@ const LogSearchForm = (props) => {
     form.validateFields().then((values) => {
       const currentValues = { ...values };
       const { timeRange } = currentValues;
-      if (timeRange) {
+      if (!isNull(timeRange)) {
         currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:00:00');
         currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:00:00');
-        delete currentValues.timeRange;
       }
-      console.log(values);
-      console.log('1', currentValues);
+      //   console.log(values);
+      //   console.log('1', currentValues);
       search(currentValues);
     });
   }
@@ -57,15 +56,15 @@ const LogSearchForm = (props) => {
             <TimePickerSelector defaultType={'days'} defaultTime={1} />
           </Form.Item>
         </Col>
-        {/* <Col>
+        <Col>
           <Form.Item name="timeRange">
             <RangePicker
-              style={{ width: '375px' }}
+              style={{ width: '335px' }}
               showTime={{ format: 'HH' }}
               format="YYYY-MM-DD HH:00:00"
             />
           </Form.Item>
-        </Col> */}
+        </Col>
 
         <Col span={6}>
           <Form.Item name={'codes'} label={<FormattedMessage id="app.common.code" />}>
@@ -82,7 +81,7 @@ const LogSearchForm = (props) => {
             </Row>
           </Form.Item>
         </Col>
-        <Col>
+        {/* <Col>
           <Form.Item {...NoLabelFormLayout}>
             <Row justify="end">
               <Button>
@@ -90,7 +89,7 @@ const LogSearchForm = (props) => {
               </Button>
             </Row>
           </Form.Item>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   );

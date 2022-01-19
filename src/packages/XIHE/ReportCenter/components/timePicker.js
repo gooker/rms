@@ -1,9 +1,10 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Input, Select, AutoComplete, Row, Col, Button } from 'antd';
+import { Input, Select, AutoComplete, Row, Col, Button, DatePicker } from 'antd';
 import moment from 'moment';
 import { GMT2UserTimeZone, isStrictNull } from '@/utils/utils';
 
 const { Option } = Select;
+const { RangePicker } = DatePicker;
 // const dateFormat = 'YYYY-MM-DD HH:00:00';
 
 const TimePickerSelector = (props) => {
@@ -23,7 +24,7 @@ const TimePickerSelector = (props) => {
     setDateValue(defaultTime);
     setDateType(_type);
     setRangeTime(defaultRangeTime);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const TimePickerSelector = (props) => {
       dateType,
     };
     onChange(formValues);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateType]);
 
   // 时间段类型

@@ -231,7 +231,7 @@ export const generatOfflineDataByRobot = (allData) => {
       data: key[1],
       name: key[0],
       yAxisIndex: i,
-      type: key[0] === 'offlinetime' ? 'line' : 'bar',
+      type: key[0] === 'offlinetime' || key[0] === 'errortime' ? 'line' : 'bar',
     });
   });
 

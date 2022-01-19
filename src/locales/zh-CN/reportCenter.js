@@ -33,6 +33,8 @@ export default {
   'reportCenter.robot.scancode': '小车扫码',
   'reportCenter.robot.offline': '小车离线',
   'reportCenter.robot.error': '状态错误',
+  'reportCenter.robot.offline.errorTimes': '次数',
+  'reportCenter.robot.offline.errortime': '时长',
   'reportCenter.robot.fault': '小车故障',
   'reportCenter.robot.offline.offlineTimes': '次数',
   'reportCenter.robot.offline.offlinetime': '时长',

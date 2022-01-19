@@ -1,10 +1,12 @@
 import React, { memo, useEffect } from 'react';
-import { Row, Col, Form, Button } from 'antd';
+import { Row, Col, Form, Button, DatePicker } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
+import { isNull } from '@/utils/utils';
 import SelectCarType from './SelectCarType';
 import TimePickerSelector from '../../components/timePicker';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
+const { RangePicker } = DatePicker;
 
 const LogSearchForm = (props) => {
   const { search } = props;
@@ -18,7 +20,13 @@ const LogSearchForm = (props) => {
 
   function submitSearch() {
     form.validateFields().then((values) => {
-      search(values);
+      const currentValues = { ...values };
+      const { timeRange } = currentValues;
+      if (!isNull(timeRange)) {
+        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:00:00');
+        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:00:00');
+      }
+      search(currentValues);
     });
   }
 
@@ -62,8 +70,17 @@ const LogSearchForm = (props) => {
               return value.timeDate;
             }}
           >
-            <TimePickerSelector defaultType={'hour'} defaultTime={7}  />
+            <TimePickerSelector defaultType={'hour'} defaultTime={7} />
             {/* disabledChangeType={true} */}
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item name="timeRange">
+            <RangePicker
+              style={{ width: '335px' }}
+              showTime={{ format: 'HH' }}
+              format="YYYY-MM-DD HH:00:00"
+            />
           </Form.Item>
         </Col>
 
@@ -84,7 +101,7 @@ const LogSearchForm = (props) => {
             </Row>
           </Form.Item>
         </Col>
-        <Col>
+        {/* <Col>
           <Form.Item {...NoLabelFormLayout}>
             <Row justify="end">
               <Button>
@@ -92,7 +109,7 @@ const LogSearchForm = (props) => {
               </Button>
             </Row>
           </Form.Item>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   );

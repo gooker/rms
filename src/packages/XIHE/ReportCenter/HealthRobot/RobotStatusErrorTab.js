@@ -147,7 +147,7 @@ const RoboStatusErrorComponent = (props) => {
         data: key[1],
         name: key[0],
         yAxisIndex: index,
-        type: key[0] === 'offlinetime' ? 'line' : 'bar',
+        type: key[0] === 'errortime' ? 'line' : 'bar',
       });
     });
     const newCodeHistoryLine = codeHistoryLine.getOption();

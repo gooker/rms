@@ -1,10 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Form, Button, Select } from 'antd';
+import { Row, Col, Form, Button, Select, DatePicker } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import TimePickerSelector from '../../components/timePicker';
 
-const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
+const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 14 } };
+const { RangePicker } = DatePicker;
 let _name = null;
 
 const FilterSearchBytime = (props) => {
@@ -24,25 +25,14 @@ const FilterSearchBytime = (props) => {
   // }
 
   return (
-    <div style={{ position: 'relative' }}>
+    <div>
       {togglesDate === 1 ? (
         <>
           <Form form={formDate} onValuesChange={onValuesChange} {...formLayout}>
+            <Form.Item hidden name={'startByTime'} />
+            <Form.Item hidden name={'endByTime'} />
             <Row>
-              <Form.Item hidden name={'startByTime'} />
-              <Form.Item hidden name={'endByTime'} />
-              <Col span={6}>
-                <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
-                  <Select
-                    mode="tags"
-                    style={{ width: '100%' }}
-                    maxTagTextLength={5}
-                    maxTagCount={4}
-                    allowClear
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={18}>
+              <Col flex="auto">
                 <Form.Item
                   {...formLayout}
                   name={'rangeNum'}
@@ -61,8 +51,40 @@ const FilterSearchBytime = (props) => {
                   {/* disabledChangeType={true} */}
                 </Form.Item>
               </Col>
+
+              {/* <Col flex="auto">
+                <Form.Item
+                  name="timeRange"
+                  getValueFromEvent={(value) => {
+                    const { setFieldsValue } = formDate;
+                    setFieldsValue({
+                      startByTime: value[0].format('YYYY-MM-DD HH:00:00'),
+                      endByTime: value[1].format('YYYY-MM-DD HH:00:00'),
+                    });
+                    return value;
+                  }}
+                >
+                  <RangePicker
+                    style={{ width: '335px' }}
+                    showTime={{ format: 'HH' }}
+                    format="YYYY-MM-DD HH:00:00"
+                  />
+                </Form.Item>
+              </Col> */}
+              <Col span={6}>
+                <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
+                  <Select
+                    mode="tags"
+                    style={{ width: '100%' }}
+                    maxTagTextLength={5}
+                    maxTagCount={4}
+                    allowClear
+                  />
+                </Form.Item>
+              </Col>
             </Row>
           </Form>
+
           <Row>
             <Col span={24} style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}>
               <Button
