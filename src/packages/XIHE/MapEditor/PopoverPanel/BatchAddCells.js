@@ -1,5 +1,5 @@
-import React, { memo, useState } from 'react';
-import { Divider, Form, Radio, InputNumber, Input, Button } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
@@ -8,13 +8,25 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import styles from './popoverPanel.module.less';
 
 const BatchAddCells = (props) => {
-  const { dispatch, selectCells, currentLogicArea } = props;
+  const { dispatch, selectCells, mapContext, currentLogicArea } = props;
   const { rangeStart, rangeEnd } = currentLogicArea;
 
   const [addWay, setAddWay] = useState('absolute');
 
-  function submit() {
-    //
+  function submit(value) {
+    dispatch({
+      type: 'editor/batchAddCells',
+      payload: { ...value, addWay },
+    }).then(({ centerMap, additionalCells }) => {
+      mapContext.updateCells({ type: 'add', payload: additionalCells });
+      if (centerMap) {
+        const cellMap = {};
+        additionalCells.forEach((item) => {
+          cellMap[item.id] = item;
+        });
+        mapContext.centerView(cellMap);
+      }
+    });
   }
 
   return (
@@ -48,17 +60,24 @@ const BatchAddCells = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selectCells, visible } = editor;
+  const { selectCells, mapContext } = editor;
   const currentLogicAreaData = getCurrentLogicAreaData();
   return {
+    mapContext,
     selectCells,
     currentLogicArea: currentLogicAreaData || {},
   };
 })(memo(BatchAddCells));
 
 const BatchAddCellWithAbsolut = (props) => {
-  const { rangeStart, rangeEnd, submit } = props;
+  const { rangeStart, rangeEnd } = props;
   const [formRef] = Form.useForm();
+
+  function submit() {
+    formRef.validateFields().then((value) => {
+      props.submit(value);
+    });
+  }
 
   return (
     <Form form={formRef} layout={'vertical'}>
@@ -110,7 +129,7 @@ const BatchAddCellWithAbsolut = (props) => {
       {/* 行数 */}
       <Form.Item
         name={'rows'}
-        initialValue={20}
+        initialValue={5}
         label={formatMessage({ id: 'editor.batchAddCell.rows' })}
       >
         <InputNumber style={{ width: 150 }} />
@@ -119,7 +138,7 @@ const BatchAddCellWithAbsolut = (props) => {
       {/* 列数 */}
       <Form.Item
         name={'cols'}
-        initialValue={20}
+        initialValue={5}
         label={formatMessage({ id: 'editor.batchAddCell.columns' })}
       >
         <InputNumber style={{ width: 150 }} />
@@ -136,8 +155,18 @@ const BatchAddCellWithAbsolut = (props) => {
 };
 
 const BatchAddCellWithOffset = (props) => {
-  const { selectCells, submit } = props;
+  const { selectCells } = props;
   const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    formRef.setFieldsValue({ cellIds: selectCells });
+  }, [selectCells]);
+
+  function submit() {
+    formRef.validateFields().then((value) => {
+      props.submit(value);
+    });
+  }
 
   return (
     <Form form={formRef} layout={'vertical'}>
@@ -147,7 +176,7 @@ const BatchAddCellWithOffset = (props) => {
         initialValue={selectCells}
         label={formatMessage({ id: 'editor.cell.bases' })}
       >
-        <Input disabled style={{ width: 150 }} />
+        <Select disabled mode={'tags'} maxTagCount={4} style={{ width: '90%' }} />
       </Form.Item>
 
       {/* 方向 */}

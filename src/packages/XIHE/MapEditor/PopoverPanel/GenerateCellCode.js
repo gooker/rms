@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Form, Select, Radio, InputNumber, Button } from 'antd';
 import { connect } from '@/utils/RcsDva';
 import { formatMessage } from '@/utils/utils';
@@ -7,10 +7,14 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtils';
 import styles from './popoverPanel.module.less';
 
 const GenerateCellCode = (props) => {
-  const { dispatch, submit, selectCells, rangeStart, rangeEnd } = props;
+  const { dispatch, selectCells, rangeStart, rangeEnd, mapContext } = props;
 
   const [formRef] = Form.useForm();
   const [generateWay, setGenerateWay] = useState('increment');
+
+  useEffect(() => {
+    formRef.setFieldsValue({ cellIds: selectCells });
+  }, [selectCells]);
 
   function onWayChanged(ev) {
     setGenerateWay(ev.target.value);
@@ -20,12 +24,22 @@ const GenerateCellCode = (props) => {
     formRef.validateFields();
   }
 
+  function submit() {
+    formRef.validateFields().then((value) => {
+      dispatch({
+        type: 'editor/generateCellCode',
+        payload: value,
+      }).then((result) => mapContext.updateCells({ type: 'code', payload: result }));
+    });
+  }
+
   return (
     <div className={styles.formWhiteLabel}>
       <Form form={formRef} layout={'vertical'}>
         {/* 操作点 */}
         <Form.Item
           name={'cellIds'}
+          initialValue={selectCells}
           rules={[{ required: true }]}
           label={formatMessage({ id: 'app.map.cell' })}
         >
@@ -84,9 +98,10 @@ const GenerateCellCode = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selectCells, visible } = editor;
+  const { selectCells, mapContext } = editor;
   const currentLogicAreaData = getCurrentLogicAreaData();
   return {
+    mapContext,
     selectCells,
     rangeStart: currentLogicAreaData?.rangeStart,
     rangeEnd: currentLogicAreaData?.rangeEnd,

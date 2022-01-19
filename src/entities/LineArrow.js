@@ -11,14 +11,12 @@ export default class LineArrow extends PIXI.Container {
     this.y = props.fromY;
     this.angle = props.lineAngle;
     this.alpha = 0.8;
-    this.$interactive = props.interactive;
     this.type = 'line';
     this.isClassic = props.isClassic;
     this.zIndex = this.isClassic ? zIndex.line : 100;
     this.mapMode = props.mapMode;
     this.length = props.length; // Sprite长度
     this.distance = props.distance; // 显示的长度文本
-
     this.selectLine = props.click;
     this.cost = props.cost;
     this.$angle = props.lineAngle;
@@ -30,6 +28,12 @@ export default class LineArrow extends PIXI.Container {
     };
     this.additionalFlag = new Map();
     this.createArrow();
+
+    if (props.interactive) {
+      this.arrow.buttonMode = true;
+      this.arrow.interactive = true;
+      this.arrow.on('pointerdown', this.click);
+    }
   }
 
   set clickable(value) {

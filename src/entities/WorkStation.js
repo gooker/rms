@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import BitText from './BitText';
+import Text from './Text';
 import { getTextureFromResources } from '@/utils/mapUtils';
 import { WorkStationSize, CommonFunctionSize, zIndex } from '@/config/consts';
 
@@ -11,7 +11,7 @@ export default class WorkStation extends PIXI.Container {
     this.icon = props.icon || 'work_station';
     this.name = props.name;
     this.angle = props.angle;
-    this.zIndex = zIndex.groundStorage;
+    this.zIndex = zIndex.functionIcon;
     this.direction = props.direction;
     this.check = props.check;
 
@@ -53,8 +53,15 @@ export default class WorkStation extends PIXI.Container {
   }
 
   addName() {
-    this.nameSprite = new BitText(this.name, 0, -this.workStation.height / 2 - 200, 0xffffff, 250);
-    this.nameSprite.anchor.set(0.5);
+    this.nameSprite = new Text(
+      this.name,
+      0,
+      -this.workStation.height / 2 - 100,
+      0xffffff,
+      false,
+      200,
+    );
+    this.nameSprite.anchor.set(0, 0.5);
     this.nameSprite.angle = -this.angle;
     this.addChild(this.nameSprite);
   }

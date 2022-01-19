@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import BitText from './BitText';
+import Text from './Text';
 import { isNull } from '@/utils/utils';
 import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtils';
@@ -12,7 +12,7 @@ export default class Charger extends PIXI.Container {
     this.y = props.y;
     this.name = props.name;
     this.angle = props.angle;
-    this.zIndex = zIndex.groundStorage;
+    this.zIndex = zIndex.functionIcon;
     this.state = props.state;
     this.hardwareId = props.hardwareId;
     this.sortableChildren = true;
@@ -70,7 +70,7 @@ export default class Charger extends PIXI.Container {
     if (this.hardwareId) {
       name = `${name} [${this.hardwareId}]`;
     }
-    this.nameSprite = new BitText(name, 0, -y, 0xffffff, 200);
+    this.nameSprite = new Text(name, 0, -y, 0xffffff, false, 150);
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);
   }

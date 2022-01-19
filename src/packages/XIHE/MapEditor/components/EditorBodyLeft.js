@@ -1,22 +1,36 @@
 import React, { memo } from 'react';
 import { Tooltip } from 'antd';
+import { isNull } from '@/utils/utils';
 import { connect } from '@/utils/RcsDva';
+import { Cell, LineArrow } from '@/entities';
+import { transformScreenToWorldCoordinator } from '@/utils/mapUtils';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
-import { isNull } from '@/utils/utils';
-import { transformScreenToWorldCoordinator } from '@/utils/mapUtils';
-import { Cell, LineArrow } from '@/entities';
 
 /**
  * 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
  * @TODO 目前有个已知bug-->向左上方框选无效
  */
 class EditorBodyLeft extends React.PureComponent {
-  pinterIsDown = false; // 标记指针是否被按下
+  // 首次进入页面需要对renderer进行绑定事件
+  firstReceiveProps = true;
+  // 标记指针是否被按下
+  pinterIsDown = false;
+  // 框选的screen坐标数据
   pointerDownX = null;
   pointerDownY = null;
   pointerUpX = null;
   pointerUpY = null;
+
+  componentWillReceiveProps(nextProps) {
+    const { activeKey, mapContext } = nextProps;
+    if (activeKey !== this.props.activeKey || this.firstReceiveProps) {
+      this.firstReceiveProps = false;
+      if (!isNull(mapContext?.pixiUtils?.renderer)) {
+        this.handleMaskEvent(activeKey, mapContext.pixiUtils.renderer);
+      }
+    }
+  }
 
   selectCategory = (value) => {
     const { dispatch, mapContext } = this.props;
@@ -27,6 +41,7 @@ class EditorBodyLeft extends React.PureComponent {
     mapContext.pixiUtils.viewport.drag({
       pressDrag: value === LeftCategory.Drag,
     });
+
     // 只有选择模式下才可以点击
     mapContext.pixiUtils.viewport.children.forEach((element) => {
       if (element instanceof Cell) {
@@ -36,7 +51,7 @@ class EditorBodyLeft extends React.PureComponent {
         element.clickable = value === LeftCategory.Choose;
       }
     });
-    this.handleMaskEvent(value);
+
     dispatch({ type: 'editor/updateLeftActiveCategory', payload: value });
   };
 
@@ -47,34 +62,28 @@ class EditorBodyLeft extends React.PureComponent {
     maskDOM.style.height = `${0}px`;
   };
 
-  handleMaskEvent = (activeKey) => {
-    const { mapContext } = this.props;
-    if (mapContext?.pixiUtils?.renderer) {
-      const {
-        pixiUtils: { renderer },
-      } = mapContext;
-      if (
-        [
-          LeftCategory.Choose,
-          LeftCategory.Image,
-          LeftCategory.Rectangle,
-          LeftCategory.Circle,
-        ].includes(activeKey)
-      ) {
-        renderer.plugins.interaction.on('pointerdown', this.onMouseDown);
-        renderer.plugins.interaction.on('pointermove', this.onMouseMove);
-        renderer.plugins.interaction.on('pointerup', this.onMouseUp);
-      } else {
-        renderer.plugins.interaction.off('pointerdown', this.onMouseDown);
-        renderer.plugins.interaction.off('pointermove', this.onMouseMove);
-        renderer.plugins.interaction.off('pointerup', this.onMouseUp);
-      }
+  handleMaskEvent = (activeKey, renderer) => {
+    if (
+      [
+        LeftCategory.Choose,
+        LeftCategory.Image,
+        LeftCategory.Rectangle,
+        LeftCategory.Circle,
+      ].includes(activeKey)
+    ) {
+      renderer.plugins.interaction.on('pointerdown', this.onMouseDown);
+      renderer.plugins.interaction.on('pointermove', this.onMouseMove);
+      renderer.plugins.interaction.on('pointerup', this.onMouseUp);
+    } else {
+      renderer.plugins.interaction.off('pointerdown', this.onMouseDown);
+      renderer.plugins.interaction.off('pointermove', this.onMouseMove);
+      renderer.plugins.interaction.off('pointerup', this.onMouseUp);
+    }
 
-      if (LeftCategory.Font === activeKey) {
-        renderer.plugins.interaction.on('pointerdown', this.onInsertLabel);
-      } else {
-        renderer.plugins.interaction.off('pointerdown', this.onInsertLabel);
-      }
+    if (LeftCategory.Font === activeKey) {
+      renderer.plugins.interaction.on('pointerdown', this.onInsertLabel);
+    } else {
+      renderer.plugins.interaction.off('pointerdown', this.onInsertLabel);
     }
   };
 
@@ -103,14 +112,16 @@ class EditorBodyLeft extends React.PureComponent {
       const { activeKey } = this.props;
       this.pointerUpX = ev.data.global.x;
       this.pointerUpY = ev.data.global.y;
-      const maskDOM = document.getElementById('mapSelectionMask');
       const selectWidth = Math.abs(this.pointerUpX - this.pointerDownX);
       const selectHeight = Math.abs(this.pointerUpY - this.pointerDownY);
 
       // 此时判断是画矩形还是圆形
-      if ([LeftCategory.Rectangle, LeftCategory.Image, LeftCategory.Choose].includes(activeKey)) {
+      const maskDOM = document.getElementById('mapSelectionMask');
+      if ([LeftCategory.Choose, LeftCategory.Rectangle, LeftCategory.Image].includes(activeKey)) {
         maskDOM.style.width = `${selectWidth}px`;
         maskDOM.style.height = `${selectHeight}px`;
+        maskDOM.style.left = `${Math.min(this.pointerUpX, this.pointerDownX)}px`;
+        maskDOM.style.top = `${Math.min(this.pointerUpY, this.pointerDownY)}px`;
       } else {
         maskDOM.style.left = `${this.pointerDownX - selectWidth / 2}px`;
         maskDOM.style.top = `${this.pointerDownY - selectWidth / 2}px`;

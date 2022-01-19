@@ -1,37 +1,39 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { sortBy, groupBy, findIndex, find } from 'lodash';
+import { find, findIndex, groupBy, sortBy } from 'lodash';
 import update from 'immutability-helper';
-import { dealResponse, formatMessage, isNull } from '@/utils/utils';
-import { addTemporaryId, getCurveMapKey } from '@/utils/mapUtils';
+import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/utils';
+import {
+  addTemporaryId,
+  batchGenerateLine,
+  calculateCellDistance,
+  generateCellId,
+  generateCellIds,
+  generateCellMapByRowsAndCols,
+  getAngle,
+  getCurrentLogicAreaData,
+  getCurrentRouteMapData,
+  getCurveMapKey,
+  moveCell,
+  renderChargerList,
+  renderElevatorList,
+  renderWorkstaionlist,
+  syncLineState,
+  transformCurveData,
+  validateMapData,
+} from '@/utils/mapUtils';
 import { LogicArea } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
-  moveCell,
-  getAngle,
-  syncLineState,
-  generateCellId,
-  validateMapData,
-  batchGenerateLine,
-  renderChargerList,
-  transformCurveData,
-  renderElevatorList,
-  renderWorkstaionlist,
-  calculateCellDistance,
-  getCurrentRouteMapData,
-  getCurrentLogicAreaData,
-  generateCellMapByRowsAndCols,
-} from '@/utils/mapUtils';
-import {
+  deleteMapById,
+  fetchAllStationTypes,
+  fetchMapDetail,
+  fetchMapHistoryDetail,
+  fetchSectionMaps,
+  getAllWebHooks,
+  getAllWebHookTypes,
   saveMap,
   updateMap,
-  deleteMapById,
-  fetchMapDetail,
-  getAllWebHooks,
-  fetchSectionMaps,
-  getAllWebHookTypes,
-  fetchAllStationTypes,
-  fetchMapHistoryDetail,
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
@@ -42,6 +44,8 @@ const FieldTextureKeyMap = {
   followCellIds: 'follow_cell',
   waitCellIds: 'wait_cell',
   taskCellIds: 'get_task',
+  safeAreaCellIds: 'safe_cell',
+  rotateCellIds: 'rotate_cell',
 };
 
 export default {
@@ -72,16 +76,16 @@ export default {
     hideBlock: false,
     showCoordinate: false,
     showDistance: false,
-    shownPriority: ['10', '20', '100', '1000'],
-    showRelationsDir: [],
+    shownPriority: [10, 20, 100, 1000],
+    showRelationsDir: [0, 1, 2, 3],
     showRelationsCells: [],
     showBackImg: false,
 
     // 标识符
-    leftActiveCategory: LeftCategory.Drag,
     saveMapLoading: false,
     activeMapLoading: false,
     categoryPanel: null,
+    leftActiveCategory: LeftCategory.Choose,
 
     // Mask相关
     maskToolVisible: false,
@@ -279,7 +283,7 @@ export default {
       yield put({ type: 'saveVisit', payload: visible });
     },
 
-    // // // // // // // // // // //  地图操作   // // // // // // // // // // //
+    // ********************************* 地图操作 ********************************* //
     // 创建地图
     *fetchCreateMap({ payload }, { put, call, select }) {
       const { name, desc } = payload;
@@ -462,9 +466,9 @@ export default {
         // 4. 保存
         const response = yield call(saveMap, mapData);
         if (dealResponse(response)) {
-          message.error(formatMessage({ id: 'app.leftContent.saveMap.failed' }));
+          message.error(formatMessage({ id: 'app.message.operateFailed' }));
         } else {
-          message.success(formatMessage({ id: 'app.leftContent.saveMap.success' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
 
           // 此时判断是上传还是新建地图
           if (isNull(payload)) {
@@ -525,7 +529,7 @@ export default {
       saveAs(file);
     },
 
-    // // // // // // // // // // //  逻辑区操作   // // // // // // // // // // //
+    // ********************************* 逻辑区操作 ********************************* //
     *fetchCreateLogicArea({ payload }, { select, put }) {
       const currentMap = yield select(({ editor }) => editor.currentMap);
       const { logicAreaList } = currentMap;
@@ -549,14 +553,13 @@ export default {
       const { id, name, rangeStart, rangeEnd } = payload;
 
       const editingLogicAreaIndex = findIndex(logicAreaList, { id });
-      const newLogicAreaList = update(logicAreaList, {
+      currentMap.logicAreaList = update(logicAreaList, {
         [editingLogicAreaIndex]: {
           name: { $set: name },
           rangeStart: { $set: rangeStart },
           rangeEnd: { $set: rangeEnd },
         },
       });
-      currentMap.logicAreaList = newLogicAreaList;
       message.success(formatMessage({ id: 'app.leftContent.updateLogic.success' }));
     },
 
@@ -565,8 +568,7 @@ export default {
       const { cellMap, logicAreaList } = currentMap;
 
       // 剔除逻辑区数据
-      const newLogicAreaList = logicAreaList.filter((record) => record.id !== payload);
-      currentMap.logicAreaList = newLogicAreaList;
+      currentMap.logicAreaList = logicAreaList.filter((record) => record.id !== payload);
 
       // 剔除逻辑区对应的点位数据
       const newCellMap = { ...cellMap };
@@ -595,7 +597,7 @@ export default {
       }
     },
 
-    // // // // // // // // // // //  路线区操作   // // // // // // // // // // //
+    // ********************************* 路线区操作 ********************************* //
     *fetchCreateScope({ payload }, { put }) {
       // 创建路线区对象并合并到当前逻辑区的 routeMap
       const currentLogicAreaData = getCurrentLogicAreaData();
@@ -661,9 +663,11 @@ export default {
             additionalCells.push(moveCell(cellData, distance * index, dir));
           }
         });
-        additionalCells = additionalCells
-          .reverse()
-          .map((cell) => ({ ...cell, id: `L${logicId}${cell.id}` }));
+        const newCellIds = generateCellIds(cellMap, additionalCells.length);
+        additionalCells = additionalCells.map((cell, index) => ({
+          ...cell,
+          id: newCellIds[index],
+        }));
       }
 
       // 更新 cellMap & currentCells
@@ -735,9 +739,7 @@ export default {
       }
 
       // 更新 currentCells 和 currentMap 数据
-      const _currentCells = currentCells.filter(
-        (item) => !newSelectedCellIds.includes(`${item.id}`),
-      );
+      const _currentCells = currentCells.filter((item) => !newSelectedCellIds.includes(item.id));
       const newCellMap = { ...currentMap.cellMap };
       newSelectedCellIds.forEach((cellId) => {
         const newCellItem = { ...currentMap.cellMap[cellId], id: result[cellId], costs: null };
@@ -796,7 +798,7 @@ export default {
 
         // 处理 currentCells
         _currentCells = _currentCells.map((item) => {
-          if (`${item.id}` === originCellId) {
+          if (item.id === originCellId) {
             return { ...item, id: cellId };
           }
           return item;
@@ -833,14 +835,14 @@ export default {
       currentMap.cellMap = cellMap;
 
       // 删除 currentCells 数据
-      const _currentCells = currentCells.filter((item) => !selectCells.includes(`${item.id}`));
+      const _currentCells = currentCells.filter((item) => !selectCells.includes(item.id));
 
       // 删除相关线条
       const currentRouteMapData = getCurrentRouteMapData();
       let relations = [...(currentRouteMapData.relations || [])];
       // 1. 删除相关曲线
       relations = relations.filter((item) => {
-        if (selectCells.includes(`${item.source}`) || selectCells.includes(`${item.target}`)) {
+        if (selectCells.includes(item.source) || selectCells.includes(item.target)) {
           result.line.push(item);
           return false;
         }
@@ -877,7 +879,7 @@ export default {
 
       // 更新 currentCells 数据
       const _currentCells = currentCells.map((item) => {
-        if (cellIds.includes(`${item.id}`)) {
+        if (cellIds.includes(item.id)) {
           return { ...result.cell[item.id] };
         }
         return item;
@@ -885,8 +887,7 @@ export default {
 
       // 处理线条
       const currentRouteMapData = getCurrentRouteMapData();
-      const newRelations = syncLineState(cellIds, newCellMap, result);
-      currentRouteMapData.relations = newRelations;
+      currentRouteMapData.relations = syncLineState(cellIds, newCellMap, result);
 
       yield put({ type: 'saveCurrentCells', payload: _currentCells });
       return result;
@@ -940,7 +941,7 @@ export default {
 
       // 更新 currentCells 数据
       const movedCellIds = Object.keys(newCellMap);
-      const _currentCells = currentCells.filter((item) => !movedCellIds.includes(`${item.id}`));
+      const _currentCells = currentCells.filter((item) => !movedCellIds.includes(item.id));
       movedCellIds.forEach((cellId) => {
         const { type, coord } = newCellMap[cellId];
         _currentCells.push({ ...newCellMap[cellId], [type]: coord });
@@ -948,9 +949,7 @@ export default {
 
       // 对操作点位的线条进行调整，直线线条修改distance和angle数值，曲线线条直接删除
       const currentRouteMapData = getCurrentRouteMapData();
-      const newRelations = syncLineState(cellIds, newCellMap, result);
-      currentRouteMapData.relations = newRelations;
-
+      currentRouteMapData.relations = syncLineState(cellIds, newCellMap, result);
       yield put({ type: 'saveCurrentCells', payload: _currentCells });
       return result;
     },
@@ -974,7 +973,9 @@ export default {
           // 不可走点不可以配置到存储点上
           selectCells.forEach((cellId) => {
             if (storeCellIds.includes(parseInt(cellId, 10))) {
-              message.error(formatMessage({ id: 'app.models.storagePoint' }, { value: cellId }));
+              message.error(
+                formatMessage({ id: 'mapEditor.tip.storageWithoutBlock' }, { value: cellId }),
+              );
             } else {
               activeCellIds.push(parseInt(cellId, 10));
             }
@@ -983,7 +984,9 @@ export default {
           // 任何点位类型不可以配置到不可走点上
           selectCells.forEach((cellId) => {
             if (blockCellIds.includes(parseInt(cellId, 10))) {
-              message.error(formatMessage({ id: 'app.models.pointType' }, { value: cellId }));
+              message.error(
+                formatMessage({ id: 'mapEditor.tip.blockWithoutOthers' }, { value: cellId }),
+              );
             } else {
               activeCellIds.push(parseInt(cellId, 10));
             }
@@ -992,7 +995,7 @@ export default {
         scopeData[type] = [...originalData, ...activeCellIds];
       }
       if (operation === 'remove') {
-        originalData = originalData.filter((item) => !selectCells.includes(`${item}`));
+        originalData = originalData.filter((item) => !selectCells.includes(item));
         activeCellIds = [...selectCells];
         scopeData[type] = originalData;
       }
@@ -1004,7 +1007,22 @@ export default {
       };
     },
 
-    // // // // // // // // // // //  线条操作   // // // // // // // // // // //
+    // ********************************* 地图背景 ********************************* //
+    *insertBackgroundMark({ payload }, { select }) {
+      const currentLogicAreaData = getCurrentLogicAreaData();
+      let backGround = currentLogicAreaData.backGround || [];
+      backGround = [...backGround, payload];
+      currentLogicAreaData.backGround = backGround;
+    },
+
+    *insertLabel({ payload }, { select }) {
+      const currentLogicAreaData = getCurrentLogicAreaData();
+      let labels = currentLogicAreaData.labels || [];
+      labels = [...labels, payload];
+      currentLogicAreaData.labels = labels;
+    },
+
+    // ********************************* 线条操作 ********************************* //
     *generateCostLines({ payload }, { select, put }) {
       const { selectCells, currentMap } = yield select(({ editor }) => editor);
 
@@ -1176,7 +1194,7 @@ export default {
       return result;
     },
 
-    // // // // // // // // // // //  功能操作   // // // // // // // // // // //
+    // ********************************* 功能操作 ********************************* //
     *updateFunction({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
       const { scope, type, data } = payload;
@@ -1274,6 +1292,32 @@ export default {
         ];
       }
       return returnPayload;
+    },
+
+    // 批量添加充电桩
+    *addChargerInBatches({ payload }, { select }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      const { name, agvTypes, cellIds, riceDirection } = payload;
+      const scopeData = getCurrentLogicAreaData();
+      const functionData = scopeData.chargerList || [];
+
+      const tempCharger = [];
+      cellIds.forEach((cellId, index) => {
+        let nameWillBeUse = `${name}-${index + 1}`;
+        // 判断该名称是否可用
+        const isExist = findIndex(functionData, { name: nameWillBeUse }) >= 0;
+        if (isExist) {
+          nameWillBeUse = `${name}-${getRandomString(3)}`;
+        }
+        tempCharger.push({
+          name: nameWillBeUse,
+          direction: riceDirection.dir,
+          angle: riceDirection.angle,
+          chargingCells: [{ cellId, agvTypes }],
+        });
+      });
+      scopeData.chargerList = [...functionData, ...tempCharger];
+      return renderChargerList(tempCharger, currentMap.cellMap);
     },
 
     // 休息区只需要简单的全部替换就行

@@ -12,6 +12,14 @@ export default {
   'mapEditor.active.warn': '无法取消激活',
   'mapEditor.selectMap.required': '请先选择地图',
   'mapEditor.placeholder.requireText': '输入文本',
+  'mapEditor.saveMap.contentLoss': '是否保存当前修改的地图？若不保存, 则所有的修改会丢失',
+  'mapEditor.button.notSaveMap': '不保存',
+
+  // 操作提示
+  'mapEditor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',
+  'mapEditor.tip.blockWithoutOthers':
+    '{value} 点已经相关作用域是Block点, 不可设置为其它任意点位类型',
+  'mapEditor.tip.noLogicStorage': '当前逻辑区没有存储区',
 
   // 施工图
   'mapEditor.constructionDrawing.export': '导出施工图',
@@ -71,6 +79,7 @@ export default {
   'editor.cellType.scan': '扫描点',
   'editor.cellType.buffer': '缓冲点',
   'editor.cellType.bifurcation': '分叉点',
+  'editor.cellType.charging': '充电点',
 
   // 站点
   'editor.station.distance': '距离',

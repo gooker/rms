@@ -8,7 +8,25 @@ import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 
 const CostPanel = (props) => {
-  const { dispatch, height, selectLines } = props;
+  const { dispatch, height, selectLines, mapContext } = props;
+
+  function deleteLines() {
+    dispatch({ type: 'editor/deleteLines' }).then((result) => {
+      mapContext.updateLines({ type: 'remove', payload: result });
+    });
+  }
+
+  function createLines(params) {
+    dispatch({
+      type: 'editor/generateCostLines',
+      payload: params,
+    }).then(({ remove, add }) => {
+      // 要删除的
+      remove.length > 0 && mapContext.updateLines({ type: 'remove', payload: remove });
+      // 要新增的
+      add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
+    });
+  }
 
   return (
     <div style={{ height, width: 375 }} className={editorStyles.categoryPanel}>
@@ -17,7 +35,7 @@ const CostPanel = (props) => {
       </div>
       <div>
         <div className={styles.panelBlock}>
-          {/* 优先级详情 */}
+          {/* 优先级图例 */}
           <Row gutter={[10, 10]}>
             <Col span={12}>
               {/* 低优先级 */}
@@ -50,17 +68,17 @@ const CostPanel = (props) => {
               </ColorExample>
             </Col>
           </Row>
+
+          {/* 操作面板*/}
           <div style={{ marginTop: 20 }}>
-            <Button danger size="small">
+            <Button danger size="small" onClick={deleteLines} disabled={selectLines.length === 0}>
               <FormattedMessage id="editor.cost.delete" />
             </Button>
-            <div
-              style={{ flex: 1, display: 'flex', flexFlow: 'column nowrap', paddingTop: '20px' }}
-            >
+            <div className={styles.routePanel}>
               <Row type="flex" justify="center">
                 <CostConfigure
                   onChange={(value) => {
-                    this.createLines({ dir: 0, value });
+                    createLines({ dir: 0, value });
                   }}
                 />
               </Row>
@@ -69,7 +87,7 @@ const CostPanel = (props) => {
                 <Col span={7} style={{ textAlign: 'left' }}>
                   <CostConfigure
                     onChange={(value) => {
-                      this.createLines({ dir: 270, value });
+                      createLines({ dir: 270, value });
                     }}
                   />
                 </Col>
@@ -79,7 +97,7 @@ const CostPanel = (props) => {
                 <Col span={7} style={{ textAlign: 'right' }}>
                   <CostConfigure
                     onChange={(value) => {
-                      this.createLines({ dir: 90, value });
+                      createLines({ dir: 90, value });
                     }}
                   />
                 </Col>
@@ -88,7 +106,7 @@ const CostPanel = (props) => {
               <Row type="flex" justify="center">
                 <CostConfigure
                   onChange={(value) => {
-                    this.createLines({ dir: 180, value });
+                    createLines({ dir: 180, value });
                   }}
                 />
               </Row>
@@ -99,7 +117,10 @@ const CostPanel = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({ selectLines: editor.selectLines }))(memo(CostPanel));
+export default connect(({ editor }) => ({
+  mapContext: editor.mapContext,
+  selectLines: editor.selectLines,
+}))(memo(CostPanel));
 
 const ColorExample = (props) => {
   const { color, children } = props;

@@ -18,9 +18,9 @@ import {
   WorkStation,
   Intersection,
   RollerStation,
-  CommonFunction,
-  BackImg,
   EmergencyStop,
+  CommonFunction,
+  Text,
 } from '@/entities';
 import { sortBy, uniq } from 'lodash';
 
@@ -124,7 +124,7 @@ export default class BaseMap extends React.Component {
     this.idCellMap.forEach((cell) => {
       cell.switchCoordinationShown(flag);
     });
-    this.pixiUtils.refresh();
+    this.refresh();
   };
 
   // 切换是否显示优先级距离
@@ -137,7 +137,7 @@ export default class BaseMap extends React.Component {
         }
       });
     });
-    this.pixiUtils.refresh();
+    this.refresh();
   };
 
   // 背景图片显示
@@ -146,7 +146,7 @@ export default class BaseMap extends React.Component {
     this.backImgMap.forEach(function (value) {
       value.switchBackImgEntityShown(flag);
     });
-    this.pixiUtils.refresh();
+    this.refresh();
   };
 
   // 切换急停区显示
@@ -155,7 +155,7 @@ export default class BaseMap extends React.Component {
     this.fixedEStopMap.forEach(function (eStop) {
       eStop.switchEstopsShown(flag);
     });
-    this.pixiUtils.refresh();
+    this.refresh();
   };
 
   // 清空并销毁所有优先级线条
@@ -267,14 +267,16 @@ export default class BaseMap extends React.Component {
 
   /**
    * 筛选线条
-   * @param {*} relations 当前relations数据
    * @param {*} uiFilterData 筛选结果 e.g. [10,20,100,1000]
    * @param {*} nameSpace 数据模块，默认editor
    */
-  filterRelations(relations = [], uiFilterData, nameSpace = 'editor') {
+  filterRelations(uiFilterData, nameSpace = 'editor') {
     this.states.shownPriority = uiFilterData;
+    const currentRouteMapData = getCurrentRouteMapData(nameSpace);
+    const relations = currentRouteMapData.relations ?? [];
     if (relations.length === 0) return;
-    const nonStopCellIds = getCurrentRouteMapData(nameSpace)?.nonStopCellIds ?? [];
+
+    const nonStopCellIds = currentRouteMapData.nonStopCellIds ?? [];
     // 把需要隐藏优先级线条透明度置0
     const hiddenCosts = AllPriorities.filter((item) => !uiFilterData.includes(item));
     hiddenCosts.forEach((cost) => {
@@ -329,13 +331,13 @@ export default class BaseMap extends React.Component {
           const { id, cost, dir } = line;
           const [source, target] = id.split('-');
           // 是否在显示的优先级Cost范围内
-          const priorityCostFlag = shownPriority.includes(`${cost}`);
+          const priorityCostFlag = shownPriority.includes(cost);
           // 是否在显示的优先级方向范围内
-          const priorityDirFlag = shownRelationDir.includes(dir);
+          const priorityDirFlag = shownRelationDir.includes(parseInt(dir));
           // 是否是不可走点的线条 & 没有隐藏显示不可走点
           const isBlockLines = isItemOfArray(
             blockCellIds ?? [],
-            [source, target].map((item) => parseInt(item, 10)),
+            [source, target].map((item) => parseInt(item)),
           );
           const blockCellFlag = isBlockLines ? !hideBlock : true;
           // 是否是相关点的线条
@@ -347,29 +349,10 @@ export default class BaseMap extends React.Component {
           line.switchShown(
             priorityCostFlag && priorityDirFlag && cellRelevantFlag && blockCellFlag,
           );
-        } else {
-          // 贝塞尔曲线
-          const { primary, third, cost } = line;
-          const source = primary.id;
-          const target = third.id;
-
-          const priorityCostFlag = shownPriority.includes(`${cost}`);
-          const isBlockLines = isItemOfArray(
-            blockCellIds ?? [],
-            [source, target].map((item) => parseInt(item, 10)),
-          );
-          const blockCellFlag = isBlockLines ? !hideBlock : true;
-
-          let cellRelevantFlag = true;
-          if (shownRelationCell.length > 0) {
-            cellRelevantFlag = isItemOfArray(shownRelationCell, [source, target]);
-          }
-
-          line.switchShown(priorityCostFlag && cellRelevantFlag && blockCellFlag);
         }
       });
     });
-    this.pixiUtils.refresh();
+    this.refresh();
   };
 
   // 渲染线条特殊标志
@@ -464,6 +447,7 @@ export default class BaseMap extends React.Component {
       stopCellId,
       bufferCellId,
       rotateCellIds,
+      branchPathCellIds,
       size, // width@height
     } = workStationData;
 
@@ -511,14 +495,24 @@ export default class BaseMap extends React.Component {
     // Render Rotation Cell
     if (Array.isArray(rotateCellIds)) {
       rotateCellIds.forEach((cellId) => {
-        const rotateCell = this.idCellMap.get(cellId);
+        const rotateCell = this.idCellMap.get(parseInt(cellId));
         rotateCell && rotateCell.plusType('round', getTextureFromResources('round'));
+      });
+    }
+
+    // 渲染分叉点
+    if (Array.isArray(branchPathCellIds)) {
+      branchPathCellIds.forEach((cellId) => {
+        const bifurcationCell = this.idCellMap.get(parseInt(cellId));
+        bifurcationCell &&
+          bifurcationCell.plusType('bifurcation', getTextureFromResources('bifurcation'));
       });
     }
   };
 
   removeWorkStation = (workStationData) => {
-    const { station, scanCellId, stopCellId, bufferCellId, rotateCellIds } = workStationData;
+    const { station, scanCellId, stopCellId, bufferCellId, rotateCellIds, branchPathCellIds } =
+      workStationData;
     const workStation = this.workStationMap.get(`${stopCellId}`);
     if (workStation) {
       this.pixiUtils.viewportRemoveChild(workStation);
@@ -542,6 +536,14 @@ export default class BaseMap extends React.Component {
       rotateCellIds.forEach((cellId) => {
         const rotateCell = this.idCellMap.get(cellId);
         rotateCell && rotateCell.removeType('round');
+      });
+    }
+
+    // 删除分叉点
+    if (Array.isArray(branchPathCellIds)) {
+      branchPathCellIds.forEach((cellId) => {
+        const bifurcationCell = this.idCellMap.get(cellId);
+        bifurcationCell && bifurcationCell.removeType('bifurcation');
       });
     }
 
@@ -678,27 +680,6 @@ export default class BaseMap extends React.Component {
       intersection.destroy({ children: true });
     }
   };
-
-  // 背景图片 eg:cad背景
-  renderBackImgFunction = (backImgData) => {
-    //this.states.showBackImg
-    // console.log(this.states.showBackImg);
-    const showBackImg = this.states.showBackImg;
-    const backData = { ...backImgData, showBackImg };
-    const backImg = new BackImg(backData);
-    this.pixiUtils.viewportAddChild(backImg);
-    this.backImgMap.set(`${backImgData.x}_${backImgData.y}_${backImgData.type}`, backImg);
-  };
-
-  removeBackImgFunction = (backImgData) => {
-    const { x, y, type } = backImgData;
-    const backImg = this.backImgMap.get(`${x}_${y}_${type}`);
-    if (backImg) {
-      this.pixiUtils.viewportRemoveChild(backImg);
-      backImg.destroy(true);
-    }
-  };
-  //
 
   // 电梯
   renderElevator = (elevatorList) => {
@@ -923,4 +904,49 @@ export default class BaseMap extends React.Component {
       });
     });
   };
+
+  // 画区域
+  drawRectArea(x, y, width, height, color) {
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(color.replace('#', '0x'));
+    graphics.drawRect(x, y, width, height);
+    graphics.endFill();
+    graphics.alpha = 0.8;
+    this.pixiUtils.viewportAddChild(graphics);
+    this.refresh();
+  }
+
+  drawCircleArea(x, y, radius, color) {
+    const graphics = new PIXI.Graphics();
+    graphics.beginFill(color.replace('#', '0x'));
+    graphics.drawCircle(x, y, radius);
+    graphics.endFill();
+    graphics.alpha = 0.8;
+    graphics.zIndex = zIndex.area;
+    this.pixiUtils.viewportAddChild(graphics);
+    this.refresh();
+  }
+
+  renderLabel(text, x, y) {
+    const textSprite = new Text(text, x, y, null, true, 200);
+    textSprite.alpha = 0.8;
+    textSprite.anchor.set(0.5);
+    textSprite.zIndex = zIndex.label;
+    this.pixiUtils.viewportAddChild(textSprite);
+    this.refresh();
+  }
+
+  renderImage({ base64, x, y, width, height }) {
+    const imageBaseTexture = new PIXI.BaseTexture(base64);
+    const imageTexture = new PIXI.Texture(imageBaseTexture);
+    const imageSprite = new PIXI.Sprite(imageTexture);
+    imageSprite.x = x;
+    imageSprite.y = y;
+    imageSprite.width = width;
+    imageSprite.height = height;
+    imageSprite.alpha = 0.8;
+    imageSprite.zIndex = zIndex.area;
+    this.pixiUtils.viewportAddChild(imageSprite);
+    this.refresh();
+  }
 }

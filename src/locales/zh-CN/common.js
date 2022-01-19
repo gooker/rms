@@ -20,6 +20,8 @@ export default {
   'app.form.sectionId': '区域ID',
   'app.form.timeRange': '时间区间',
   'app.form.dateRange': '日期区间',
+  'app.form.code.duplicate': '编码重复',
+  'app.form.name.duplicate': '名称重复',
 
   // 通用提醒内容
   'app.message.systemHint': '系统提示',
@@ -29,6 +31,7 @@ export default {
   'app.message.fetchMapFail': '获取地图数据失败',
   'app.message.fetchMapListFail': '获取地图列表失败',
   'app.message.fetchAgvListFail': '获取小车列表失败',
+  'app.message.fetchAgvTypeListFail': '获取小车类型列表失败',
   'app.message.initFail': '数据初始化失败',
   'app.message.operateSuccess': '操作成功',
   'app.message.operateFailed': '操作失败',

@@ -50,10 +50,7 @@ const Login = (props) => {
       window.localStorage.setItem('Authorization', response.authorization);
       // 如果有environment字段说明需要重新激活一个环境
       if (!isNull(values.environment)) {
-        let requestBody = { appCode: 'MixRobot' };
-        if (values.environment !== '0') {
-          requestBody = { appCode: 'MixRobot', id: values.environment };
-        }
+        const requestBody = { id: values.environment === 0 ? null : values.environment };
         const updateEnvResponse = await fetchUpdateEnvironment(requestBody);
         if (dealResponse(updateEnvResponse)) {
           return;

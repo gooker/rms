@@ -94,8 +94,14 @@ const EditorMapContainer = (props) => {
     const currentLogicAreaData = currentMap?.logicAreaList?.[currentLogicArea];
     if (!currentLogicAreaData) return;
 
-    const { restCells, storeCellIds, taskCellIds, safeAreaCellIds, rotateCellIds, backGround } =
-      currentLogicAreaData;
+    const {
+      restCells,
+      taskCellIds,
+      storeCellIds,
+      rotateCellIds,
+      safeAreaCellIds,
+      intersectionList,
+    } = currentLogicAreaData;
     // 休息区
     if (Array.isArray(restCells)) {
       mapContext.renderRestCells(restCells);
@@ -110,15 +116,18 @@ const EditorMapContainer = (props) => {
     }
     // 安全区
     if (Array.isArray(safeAreaCellIds)) {
-      mapContext.renderCellsType(safeAreaCellIds, 'safe_spot');
+      mapContext.renderCellsType(safeAreaCellIds, 'safe_cell');
     }
     // 旋转点
     if (Array.isArray(rotateCellIds)) {
       mapContext.renderCellsType(rotateCellIds, 'round');
     }
+    // 交汇点
+    if (Array.isArray(intersectionList)) {
+      mapContext.renderIntersection(intersectionList);
+    }
 
-    const { workstationList, chargerList, commonList, emergencyStopFixedList } =
-      currentLogicAreaData;
+    const { workstationList, chargerList, commonList } = currentLogicAreaData;
     // 充电桩
     if (Array.isArray(chargerList)) {
       const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
@@ -136,14 +145,52 @@ const EditorMapContainer = (props) => {
       mapContext.renderCommonFunction(commonList);
     }
 
-    const { intersectionList, dumpStations } = currentLogicAreaData;
-    // 交汇点
-    if (Array.isArray(intersectionList)) {
-      mapContext.renderIntersection(intersectionList);
-    }
+    const { dumpStations, backGround, labels, emergencyStopFixedList } = currentLogicAreaData;
     // 抛货点
     if (Array.isArray(dumpStations)) {
       mapContext.renderDumpFunction(dumpStations);
+    }
+
+    // 背景(线框&图片)
+    if (Array.isArray(backGround)) {
+      backGround.forEach((backImgData) => {
+        // 线框
+        if (backImgData.type === 'wireframe') {
+          // 矩形
+          if (backImgData.shape === 'Rect') {
+            mapContext.drawRectArea(
+              backImgData.x,
+              backImgData.y,
+              backImgData.width,
+              backImgData.height,
+              backImgData.labelColor,
+            );
+          } else {
+            mapContext.drawCircleArea(
+              backImgData.x,
+              backImgData.y,
+              backImgData.radius,
+              backImgData.labelColor,
+            );
+          }
+        } else {
+          // 图片
+          mapContext.renderImage({
+            base64: backImgData.imageUrl,
+            x: backImgData.x,
+            y: backImgData.y,
+            width: backImgData.width,
+            height: backImgData.height,
+          });
+        }
+      });
+    }
+
+    // 文字标记
+    if (Array.isArray(labels)) {
+      labels.forEach(({ text, x, y }) => {
+        mapContext.renderLabel(text, x, y);
+      });
     }
 
     // 紧急停止区
@@ -153,13 +200,6 @@ const EditorMapContainer = (props) => {
     //     mapContext.renderFixedEStopFunction(eStop);
     //   });
     // }
-
-    // 背景
-    if (Array.isArray(backGround)) {
-      backGround.map((backImgData) => {
-        mapContext.renderBackImgFunction(backImgData);
-      });
-    }
   }
 
   function renderRouteMap() {
@@ -224,22 +264,25 @@ const EditorMapContainer = (props) => {
   }
 
   // 地图区域鼠标样式
-  let cursorStyle;
-  switch (leftActiveCategory) {
-    case LeftCategory.Drag:
-      cursorStyle = 'grab';
-      break;
-    case LeftCategory.Image:
-    case LeftCategory.Rectangle:
-    case LeftCategory.Circle:
-      cursorStyle = 'crosshair';
-      break;
-    default:
-      cursorStyle = 'default';
+  function getCursorStyle() {
+    let cursorStyle;
+    switch (leftActiveCategory) {
+      case LeftCategory.Drag:
+        cursorStyle = 'grab';
+        break;
+      case LeftCategory.Image:
+      case LeftCategory.Rectangle:
+      case LeftCategory.Circle:
+        cursorStyle = 'crosshair';
+        break;
+      default:
+        cursorStyle = 'default';
+    }
+    return cursorStyle;
   }
 
   return (
-    <div style={{ position: 'relative', flex: 1, cursor: cursorStyle }}>
+    <div style={{ position: 'relative', flex: 1, cursor: getCursorStyle() }}>
       <EditorMapView />
     </div>
   );

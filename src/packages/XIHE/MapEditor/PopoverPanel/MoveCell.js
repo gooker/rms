@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Form, Select, Tabs, InputNumber, Row, Col, Button } from 'antd';
 import { InfoOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
@@ -8,9 +8,31 @@ import FormattedMessage from '@/components/FormattedMessage';
 import styles from './popoverPanel.module.less';
 
 const MoveCell = (props) => {
-  const { submit, selectCells } = props;
+  const { dispatch, selectCells, mapContext } = props;
 
   const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    formRef.setFieldsValue({ cellIds: selectCells });
+  }, [selectCells]);
+
+  function submit() {
+    formRef.validateFields().then((value) => {
+      dispatch({
+        type: 'editor/moveCells',
+        payload: {
+          cellIds: value.cellIds,
+          dir: value.dir,
+          distance: value.distance,
+        },
+      }).then((result) => {
+        const { cell, line } = result;
+        mapContext.updateCells({ type: 'move', payload: cell });
+        mapContext.updateLines({ type: 'remove', payload: line.delete });
+        mapContext.updateLines({ type: 'add', payload: line.add });
+      });
+    });
+  }
 
   return (
     <div className={styles.formWhiteLabel}>
@@ -56,5 +78,6 @@ const MoveCell = (props) => {
   );
 };
 export default connect(({ editor }) => ({
+  mapContext: editor.mapContext,
   selectCells: editor.selectCells,
 }))(memo(MoveCell));

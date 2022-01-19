@@ -18,6 +18,10 @@ const EditorHeaderRightTools = (props) => {
 
   const [positionVisible, setPositionVisible] = useState(false);
 
+  function saveMap() {
+    dispatch({ type: 'editor/saveMap' });
+  }
+
   function activeMap() {
     if (mapId) {
       dispatch({ type: 'editor/activeMap', payload: mapId });
@@ -93,7 +97,7 @@ const EditorHeaderRightTools = (props) => {
       {/* 保存地图 */}
       <span style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}>
         <Tooltip title={formatMessage({ id: 'app.button.save' })}>
-          {saveMapLoading ? <LoadingOutlined /> : <SaveOutlined />}
+          {saveMapLoading ? <LoadingOutlined /> : <SaveOutlined onClick={saveMap} />}
         </Tooltip>
       </span>
       <Divider type="vertical" />

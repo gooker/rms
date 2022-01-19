@@ -13,6 +13,12 @@
   & > div:nth-child(2) {
     padding: 0 15px;
   }
+
+  :global {
+    .ant-row .ant-form-item-label label {
+      color: #e8e8e8;
+    }
+  }
 }
 
 .costConfigureArrow {
@@ -50,8 +56,16 @@
 .formWhiteLabel {
   padding-left: 25px;
   :global {
-    .ant-form .ant-form-item .ant-form-item-label label {
+    .ant-form > .ant-form-item > .ant-form-item-label > label {
       color: #fff;
     }
   }
+}
+
+// 路线
+.routePanel {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  padding-top: 20px;
 }

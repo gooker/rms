@@ -13,7 +13,7 @@ export default class GroundStorage extends PIXI.Container {
     this.$height = props.height;
     this.$width = props.width;
     this.angle = props.angle || 0;
-    this.zIndex = zIndex.groundStorage;
+    this.zIndex = zIndex.functionIcon;
     this.create();
     this.addPodCode();
   }

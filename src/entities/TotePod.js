@@ -17,7 +17,7 @@ export default class TotePod extends PIXI.Container {
     this.binCellId = props.binCellId;
     this.checkTote = props.checkTote;
     this.alpha = GlobalAlpha;
-    this.zIndex = zIndex.groundStorage;
+    this.zIndex = zIndex.functionIcon;
     this.visible = true;
     this.sortableChildren = true;
 

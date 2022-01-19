@@ -24,7 +24,7 @@ import AdjustCellSpace from '../PopoverPanel/AdjustCellSpace';
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
 const CellPanel = (props) => {
-  const { dispatch, height, currentMap } = props;
+  const { dispatch, height, currentMap, mapContext } = props;
 
   const [formCategory, setFormCategory] = useState(null);
   const [secondTitle, setSecondTitle] = useState(null);
@@ -91,8 +91,8 @@ const CellPanel = (props) => {
                     disabled={currentMap == null}
                     onClick={() => {
                       dispatch({ type: 'editor/batchDeleteCells' }).then(({ cell, line }) => {
-                        this.context.updateCells({ type: 'remove', payload: cell });
-                        this.context.updateLines({ type: 'remove', payload: line });
+                        mapContext.updateCells({ type: 'remove', payload: cell });
+                        mapContext.updateLines({ type: 'remove', payload: line });
                       });
                     }}
                   >
@@ -154,7 +154,7 @@ const CellPanel = (props) => {
                     style={ButtonStyle}
                     disabled={currentMap == null}
                     onClick={() => {
-                      this.context.batchSelectBaseRow();
+                      mapContext.batchSelectBaseRow();
                     }}
                   >
                     <ColumnWidthOutlined />{' '}
@@ -168,7 +168,7 @@ const CellPanel = (props) => {
                     style={ButtonStyle}
                     disabled={currentMap == null}
                     onClick={() => {
-                      this.context.batchSelectBaseColumn();
+                      mapContext.batchSelectBaseColumn();
                     }}
                   >
                     <ColumnHeightOutlined /> <FormattedMessage id="editor.cell.verticalSelection" />
@@ -184,4 +184,5 @@ const CellPanel = (props) => {
 };
 export default connect(({ editor }) => ({
   currentMap: editor.currentMap,
+  mapContext: editor.mapContext,
 }))(memo(CellPanel));

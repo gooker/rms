@@ -1,5 +1,4 @@
 import React, { memo, useRef, useState } from 'react';
-import * as PIXI from 'pixi.js';
 import { Button, Input } from 'antd';
 import { connect } from '@/utils/RcsDva';
 import { convertPngToBase64, formatMessage, getColorRGB, isStrictNull } from '@/utils/utils';
@@ -43,8 +42,10 @@ const EditorMask = (props) => {
     };
   }
 
+  // 线框背景
   function confirm() {
     const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
+    const __color = color || '#e8e8e8';
 
     if (leftActiveCategory === LeftCategory.Rectangle) {
       mapContext.drawRectArea(
@@ -52,8 +53,20 @@ const EditorMask = (props) => {
         worldStartY,
         Math.abs(worldStartX - worldEndX),
         Math.abs(worldStartY - worldEndY),
-        color || '#e8e8e8',
+        __color,
       );
+      dispatch({
+        type: 'editor/insertBackgroundMark',
+        payload: {
+          type: 'wireframe',
+          shape: 'Rect',
+          x: worldStartX,
+          y: worldStartY,
+          width: Math.abs(worldStartX - worldEndX),
+          height: Math.abs(worldStartY - worldEndY),
+          labelColor: __color,
+        },
+      });
     }
 
     if (leftActiveCategory === LeftCategory.Circle) {
@@ -62,10 +75,20 @@ const EditorMask = (props) => {
         worldStartX + width / 2,
         worldStartY + width / 2,
         width / 2,
-        color || '#e8e8e8',
+        __color,
       );
+      dispatch({
+        type: 'editor/insertBackgroundMark',
+        payload: {
+          type: 'wireframe',
+          shape: 'Circle',
+          x: worldStartX + width / 2,
+          y: worldStartY + width / 2,
+          radius: width / 2,
+          labelColor: __color,
+        },
+      });
     }
-
     cancel();
   }
 
@@ -82,6 +105,7 @@ const EditorMask = (props) => {
     setColor(null);
   }
 
+  // 文字标记
   function onPressEnter(ev) {
     const text = ev.target.value;
     if (!isStrictNull(text)) {
@@ -94,11 +118,16 @@ const EditorMask = (props) => {
         mapContext.pixiUtils.viewport,
       );
       mapContext.renderLabel(text, worldX, worldY);
+      dispatch({
+        type: 'editor/insertLabel',
+        payload: { text, x: worldX, y: worldY },
+      });
       setLabel(null);
     }
     cancel();
   }
 
+  // 图片背景
   async function onFileLoaded() {
     const file = filePickerRef.current.files[0];
     if (file instanceof File) {
@@ -111,6 +140,19 @@ const EditorMask = (props) => {
         width: Math.abs(worldStartX - worldEndX),
         height: Math.abs(worldStartY - worldEndY),
       });
+
+      dispatch({
+        type: 'editor/insertBackgroundMark',
+        payload: {
+          type: 'image',
+          x: worldStartX,
+          y: worldStartY,
+          width: Math.abs(worldStartX - worldEndX),
+          height: Math.abs(worldStartY - worldEndY),
+          imageUrl: base64,
+        },
+      });
+
       cancel();
       filePickerRef.current.value = '';
     }

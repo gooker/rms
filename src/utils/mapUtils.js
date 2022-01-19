@@ -229,6 +229,15 @@ export function moveCell(target, distance, dir) {
   return result;
 }
 
+/**
+ * 根据参数获取点位ID
+ * @param cellMap
+ * @param start
+ * @param loopStep
+ * @param step
+ * @param way
+ * @returns {[]|*}
+ */
 export function generateCellId(cellMap, start, loopStep, step, way) {
   let newId = start + loopStep.loop * step;
   if (way === 'subtract') {
@@ -241,6 +250,24 @@ export function generateCellId(cellMap, start, loopStep, step, way) {
   }
   loopStep.loop += 1;
   return generateCellId(cellMap, start, loopStep, step);
+}
+
+/**
+ * 无参数获取点位ID
+ * @param cellMap
+ * @param requiredCount
+ * @returns {[]}
+ */
+export function generateCellIds(cellMap, requiredCount) {
+  const cellId = [];
+  let step = 1;
+  for (let i = 0; i < requiredCount; i++) {
+    while (cellMap[step] !== undefined || cellId.includes(step)) {
+      step += 1;
+    }
+    cellId.push(step);
+  }
+  return cellId;
 }
 
 export function transform(object, oldValue, newValue, isUpdate) {

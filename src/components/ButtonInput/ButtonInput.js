@@ -18,7 +18,7 @@ export default class ButtonInput extends React.PureComponent {
       data,
       onClick,
 
-      multi = false, 
+      multi = false,
       type = 'string',
       disabled = false,
       btnDisabled = false,

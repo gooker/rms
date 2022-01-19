@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Form, Select, InputNumber, Button } from 'antd';
 import { connect } from '@/utils/RcsDva';
 import { formatMessage } from '@/utils/utils';
@@ -7,9 +7,27 @@ import FormattedMessage from '@/components/FormattedMessage';
 import styles from './popoverPanel.module.less';
 
 const AdjustCellSpace = (props) => {
-  const { submit, selectCells } = props;
+  const { dispatch, selectCells, mapContext } = props;
 
   const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    formRef.setFieldsValue({ cellIds: selectCells });
+  }, [selectCells]);
+
+  function submit() {
+    formRef.validateFields().then((value) => {
+      dispatch({
+        type: 'editor/adjustSpace',
+        payload: { ...value },
+      }).then((result) => {
+        const { cell, line } = result;
+        mapContext.updateCells({ type: 'adjustSpace', payload: cell });
+        mapContext.updateLines({ type: 'remove', payload: line.delete });
+        mapContext.updateLines({ type: 'add', payload: line.add });
+      });
+    });
+  }
 
   return (
     <div className={styles.formWhiteLabel}>
@@ -55,5 +73,6 @@ const AdjustCellSpace = (props) => {
   );
 };
 export default connect(({ editor }) => ({
+  mapContext: editor.mapContext,
   selectCells: editor.selectCells,
 }))(memo(AdjustCellSpace));

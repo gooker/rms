@@ -84,7 +84,14 @@ const MonitorMapContainer = (props) => {
     const currentLogicAreaData = currentMap?.logicAreaList?.[currentLogicArea];
     if (!currentLogicAreaData) return;
 
-    const { restCells, storeCellIds, taskCellIds } = currentLogicAreaData;
+    const {
+      restCells,
+      taskCellIds,
+      storeCellIds,
+      rotateCellIds,
+      safeAreaCellIds,
+      intersectionList,
+    } = currentLogicAreaData;
     // 休息区
     if (Array.isArray(restCells)) {
       mapContext.renderRestCells(restCells);
@@ -97,15 +104,17 @@ const MonitorMapContainer = (props) => {
     if (Array.isArray(taskCellIds)) {
       mapContext.renderCellsType(taskCellIds, 'get_task');
     }
-
-    const { safeAreaCellIds, rotateCellIds, backGround } = currentLogicAreaData;
     // 安全区
     if (Array.isArray(safeAreaCellIds)) {
-      mapContext.renderCellsType(safeAreaCellIds, 'safe_spot');
+      mapContext.renderCellsType(safeAreaCellIds, 'safe_cell');
     }
     // 旋转点
     if (Array.isArray(rotateCellIds)) {
       mapContext.renderCellsType(rotateCellIds, 'round');
+    }
+    // 交汇点
+    if (Array.isArray(intersectionList)) {
+      mapContext.renderIntersection(intersectionList);
     }
 
     const { workstationList, chargerList, commonList } = currentLogicAreaData;
@@ -126,14 +135,52 @@ const MonitorMapContainer = (props) => {
       mapContext.renderCommonFunction(commonList);
     }
 
-    const { intersectionList, dumpStations, emergencyStopFixedList } = currentLogicAreaData;
-    // 交汇点
-    if (Array.isArray(intersectionList)) {
-      mapContext.renderIntersection(intersectionList);
-    }
+    const { dumpStations, backGround, labels, emergencyStopFixedList } = currentLogicAreaData;
     // 抛货点
     if (Array.isArray(dumpStations)) {
       mapContext.renderDumpFunction(dumpStations);
+    }
+
+    // 背景(线框&图片)
+    if (Array.isArray(backGround)) {
+      backGround.forEach((backImgData) => {
+        // 线框
+        if (backImgData.type === 'wireframe') {
+          // 矩形
+          if (backImgData.shape === 'Rect') {
+            mapContext.drawRectArea(
+              backImgData.x,
+              backImgData.y,
+              backImgData.width,
+              backImgData.height,
+              backImgData.labelColor,
+            );
+          } else {
+            mapContext.drawCircleArea(
+              backImgData.x,
+              backImgData.y,
+              backImgData.radius,
+              backImgData.labelColor,
+            );
+          }
+        } else {
+          // 图片
+          mapContext.renderImage({
+            base64: backImgData.imageUrl,
+            x: backImgData.x,
+            y: backImgData.y,
+            width: backImgData.width,
+            height: backImgData.height,
+          });
+        }
+      });
+    }
+
+    // 文字标记
+    if (Array.isArray(labels)) {
+      labels.forEach(({ text, x, y }) => {
+        mapContext.renderLabel(text, x, y);
+      });
     }
 
     // 紧急停止区
@@ -143,13 +190,6 @@ const MonitorMapContainer = (props) => {
     //     mapContext.renderFixedEStopFunction(eStop);
     //   });
     // }
-
-    // 背景
-    if (Array.isArray(backGround)) {
-      backGround.map((backImgData) => {
-        mapContext.renderBackImgFunction(backImgData);
-      });
-    }
 
     mapContext.refresh();
   }

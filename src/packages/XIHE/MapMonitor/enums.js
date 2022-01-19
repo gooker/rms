@@ -1,8 +1,8 @@
 import React from 'react';
 import { SettingOutlined } from '@ant-design/icons';
 import { AGVType } from '@/config/config';
-import { formatMessage } from '@/utils/utils';
 import { IconFont } from '@/components/IconFont';
+import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
 export const RightToolBarWidth = 60;
@@ -25,76 +25,76 @@ export const Category = {
 
 export const MonitorRightTools = [
   {
-    label: formatMessage({ id: 'app.common.prop' }),
+    label: <FormattedMessage id={'app.common.prop'} />,
     value: Category.Prop,
     icon: <SettingOutlined />,
   },
   {
-    label: formatMessage({ id: 'monitor.right.latent' }),
+    label: <FormattedMessage id={'monitor.right.latent'} />,
     value: Category.LatentAGV,
     icon: 'latent_category.svg',
     style: { width: '38px' },
   },
   {
-    label: formatMessage({ id: 'monitor.right.tote' }),
+    label: <FormattedMessage id={'monitor.right.tote'} />,
     value: Category.ToteAGV,
     icon: 'tote_category.svg',
   },
   {
-    label: formatMessage({ id: 'monitor.right.sorter' }),
+    label: <FormattedMessage id={'monitor.right.sorter'} />,
     value: Category.SorterAGV,
     icon: 'sorter_category.svg',
     style: { width: '33px', height: '45px' },
   },
   {
-    label: formatMessage({ id: 'app.common.report' }),
+    label: <FormattedMessage id={'app.common.report'} />,
     value: Category.Report,
     icon: 'report_category.svg',
     style: { width: '28px' },
   },
   {
-    label: formatMessage({ id: 'app.map.view' }),
+    label: <FormattedMessage id={'app.map.view'} />,
     value: Category.View,
     icon: 'view_category.svg',
     style: { width: '32px' },
   },
   {
-    label: formatMessage({ id: 'app.common.select' }),
+    label: <FormattedMessage id={'app.common.select'} />,
     value: Category.Select,
     icon: 'selection_category.svg',
   },
   {
-    label: formatMessage({ id: 'app.alert' }),
+    label: <FormattedMessage id={'app.alert'} />,
     value: Category.Alert,
     icon: 'alert_category.svg',
     style: { width: '33px' },
   },
   {
-    label: formatMessage({ id: 'monitor.right.simulator' }),
+    label: <FormattedMessage id={'monitor.right.simulator'} />,
     value: Category.Simulator,
     icon: 'simulator_category.svg',
     style: { width: '37px' },
   },
   {
-    label: formatMessage({ id: 'monitor.right.navigation' }),
+    label: <FormattedMessage id={'monitor.right.navigation'} />,
     value: Category.Navigation,
     icon: 'navigation_category.svg',
     style: { width: '34px', paddingTop: '5px' },
   },
   {
-    label: formatMessage({ id: 'app.map.emergencyStop' }),
+    label: <FormattedMessage id={'app.map.emergencyStop'} />,
     value: Category.Emergency,
     icon: 'emergency_category.svg',
     style: { width: '32px', paddingTop: '5px' },
   },
   {
-    label: formatMessage({ id: 'monitor.right.resource' }),
+    label: <FormattedMessage id={'monitor.right.resource'} />,
     value: Category.Resource,
     icon: 'resource_category.svg',
     style: { width: '33px', paddingTop: '5px' },
   },
   {
-    label: formatMessage({ id: 'monitor.right.message' }),
+    label: <FormattedMessage id={'monitor.right.message'} />,
     value: Category.Message,
     icon: <IconFont type={'icon-message'} />,
     style: { paddingTop: '5px' },
@@ -103,35 +103,35 @@ export const MonitorRightTools = [
 
 export const AgvCategoryTools = [
   {
-    label: formatMessage({ id: 'monitor.right.emptyRun' }),
+    label: <FormattedMessage id={'monitor.right.emptyRun'} />,
     icon: 'emptyRun_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'emptyRun',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
   {
-    label: formatMessage({ id: 'monitor.right.charge' }),
+    label: <FormattedMessage id={'monitor.right.charge'} />,
     icon: 'charge_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'charge',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
   {
-    label: formatMessage({ id: 'monitor.right.goRest' }),
+    label: <FormattedMessage id={'monitor.right.goRest'} />,
     icon: 'goRest_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'goRest',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
   {
-    label: formatMessage({ id: 'monitor.right.carry' }),
+    label: <FormattedMessage id={'monitor.right.carry'} />,
     icon: 'carry_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'carry',
     module: [AGVType.LatentLifting],
   },
   {
-    label: formatMessage({ id: 'monitor.right.advancedCarry' }),
+    label: <FormattedMessage id={'monitor.right.advancedCarry'} />,
     icon: 'advancedCarry_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'advancedCarry',
@@ -140,9 +140,9 @@ export const AgvCategoryTools = [
   {
     label: (agvType) => {
       if (agvType === AGVType.LatentLifting) {
-        return formatMessage({ id: 'monitor.right.workStationTask' });
+        return <FormattedMessage id={'monitor.right.workStationTask'} />;
       } else {
-        return formatMessage({ id: 'monitor.right.stationTask' });
+        return <FormattedMessage id={'monitor.right.stationTask'} />;
       }
     },
     icon: 'workStationTask_category.png',
@@ -151,21 +151,21 @@ export const AgvCategoryTools = [
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
   {
-    label: formatMessage({ id: 'monitor.right.autoCall' }),
+    label: <FormattedMessage id={'monitor.right.autoCall'} />,
     icon: 'autoCall_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'autoCall',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
   {
-    label: formatMessage({ id: 'monitor.right.remoteControl' }),
+    label: <FormattedMessage id={'monitor.right.remoteControl'} />,
     icon: 'remoteCtrl_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'remoteControl',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
   {
-    label: formatMessage({ id: 'app.common.custom' }),
+    label: <FormattedMessage id={'app.common.custom'} />,
     icon: 'custom_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'custom',

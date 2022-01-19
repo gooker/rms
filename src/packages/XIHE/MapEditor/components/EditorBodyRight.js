@@ -1,23 +1,24 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
+import { throttle } from 'lodash';
 import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/utils';
 import {
-  EditorRightTools,
   Category,
-  RightToolBarWidth,
   HeaderHeight,
   FooterHeight,
+  EditorRightTools,
+  RightToolBarWidth,
 } from '../enums';
 import CellPanel from '../PopoverPanel/CellPanel';
-import CellTypeConfigure from '../PopoverPanel/CellTypeConfigurePanel';
-import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
 import CostPanel from '../PopoverPanel/CostPanel';
-import StationPanel from '../PopoverPanel/StationPanel';
-import ViewController from '../PopoverPanel/ViewController';
 import AislePanel from '../PopoverPanel/AislePanel';
+import StationPanel from '../PopoverPanel/StationPanel';
+import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
+import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
+import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
+import ChargerPanel from '../PopoverPanel/ChargerPanel';
 import styles from '../editorLayout.module.less';
-import { throttle } from 'lodash';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -53,13 +54,15 @@ const EditorBodyRight = (props) => {
       case Category.Cost:
         return <CostPanel height={height - 10} />;
       case Category.CellType:
-        return <CellTypeConfigure height={height - 10} />;
+        return <CellTypeConfigurePanel height={height - 10} />;
       case Category.WorkStation:
         return <WorkStationPanel height={height - 10} />;
+      case Category.Charger:
+        return <ChargerPanel height={height - 10} />;
       case Category.Station:
         return <StationPanel height={height - 10} />;
       case Category.View:
-        return <ViewController height={height - 10} />;
+        return <ViewControllerPanel height={height - 10} />;
       case Category.Aisle:
         return <AislePanel height={height - 10} />;
       default:

@@ -9,7 +9,7 @@ import { formatMessage, getFormLayout } from '@/utils/utils';
 import { CostOptions, DirectionOption } from '../enums';
 
 const { formItemLayout } = getFormLayout(7, 17);
-const ViewController = (props) => {
+const ViewControllerPanel = (props) => {
   const { dispatch, height, mapContext, shownPriority } = props;
 
   function radioGroupChange(ev) {
@@ -58,6 +58,7 @@ const ViewController = (props) => {
       type: 'editor/saveState',
       payload: { shownPriority: value },
     });
+    mapContext.filterRelations(value);
   }
 
   function filterRelationDir(value) {
@@ -127,7 +128,7 @@ const ViewController = (props) => {
             />
           </Form.Item>
 
-          {/* "距离显示" */}
+          {/* 距离显示 */}
           <Form.Item
             {...formItemLayout}
             label={<FormattedMessage id={'editor.view.distanceDisplay'} />}
@@ -155,13 +156,13 @@ const ViewController = (props) => {
           </Form.Item>
 
           <Divider />
-          {/* "优先级显示" */}
+          {/* 优先级显示 */}
           <Form.Item
             {...formItemLayout}
             label={<FormattedMessage id={'editor.view.priorityDisplay'} />}
           >
             <Checkbox.Group
-              checked={shownPriority}
+              value={shownPriority}
               onChange={(value) => {
                 showPriority(value);
               }}
@@ -196,6 +197,7 @@ const ViewController = (props) => {
             label={<FormattedMessage id={'editor.view.showOnlyRelevantPoints'} />}
           >
             <Select
+              allowClear
               mode="tags"
               style={{ width: '95%' }}
               value={props.showRelationsCells}
@@ -212,11 +214,12 @@ const ViewController = (props) => {
 export default connect(({ editor }) => ({
   mapMode: editor.mapMode,
   hideBlock: editor.hideBlock,
-  showCoordinate: editor.showCoordinate,
   showBackImg: editor.showBackImg,
-  showEmergencyStop: editor.showEmergencyStop,
   showDistance: editor.showDistance,
   shownPriority: editor.shownPriority,
+  showCoordinate: editor.showCoordinate,
   showRelationsDir: editor.showRelationsDir,
+  showEmergencyStop: editor.showEmergencyStop,
   showRelationsCells: editor.showRelationsCells,
-}))(memo(ViewController));
+  mapContext: editor.mapContext,
+}))(memo(ViewControllerPanel));

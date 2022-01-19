@@ -7,9 +7,25 @@ import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';
 import commonStyles from '@/common.module.less';
 import styles from './popoverPanel.module.less';
+import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtils';
 
 const CellTypeConfigurePanel = (props) => {
-  const { height, selectCells, onClick } = props;
+  const { dispatch, height, mapContext, selectCells } = props;
+
+  function setCellType(type, value, scope, texture) {
+    dispatch({
+      type: 'editor/setCellType',
+      payload: { type, scope, operation: value, texture },
+    }).then((result) => {
+      // TIP: 这个dispatch只是为了触发这个组件rerender, 不然select框不更新
+      dispatch({ type: 'editor/saveSelectCells', payload: [...selectCells] });
+      mapContext.updateCells({ type: 'type', payload: result });
+    });
+  }
+
+  function getValue(type) {
+    return props[type] || [];
+  }
 
   return (
     <div style={{ height, width: 400 }} className={editorStyles.categoryPanel}>
@@ -23,24 +39,36 @@ const CellTypeConfigurePanel = (props) => {
               <div key={type}>
                 <div style={{ marginBottom: 15 }}>
                   <div className={commonStyles.flexVerticalCenter} style={{ marginBottom: 5 }}>
-                    <img style={{ height: 20, marginRight: 10 }} src={`/textures/${picture}`} />
+                    <img
+                      alt={picture}
+                      src={`/textures/${picture}`}
+                      style={{ height: 20, marginRight: 10 }}
+                    />
                     <FormattedMessage id={i18n} />
                   </div>
                   <div className={styles.actionTypePanelRow}>
                     <div>
-                      <Select notFoundContent={null} style={{ width: '100%' }} />
+                      <Select
+                        mode={'tags'}
+                        maxTagCount={5}
+                        notFoundContent={null}
+                        style={{ width: '100%' }}
+                        value={getValue(type)}
+                      />
                     </div>
                     <Button
+                      disabled={selectCells.length === 0}
                       onClick={() => {
-                        onClick && onClick('add');
+                        setCellType(type, 'add', scope, texture);
                       }}
                     >
                       <PlusOutlined />
                     </Button>
                     <Button
                       danger
+                      disabled={selectCells.length === 0}
                       onClick={() => {
-                        onClick && onClick('remove');
+                        setCellType(type, 'remove', scope, texture);
                       }}
                     >
                       <DeleteOutlined />
@@ -56,6 +84,28 @@ const CellTypeConfigurePanel = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  selectCells: editor.selectCells,
-}))(memo(CellTypeConfigurePanel));
+export default connect(({ editor }) => {
+  const currentLogicAreaData = getCurrentLogicAreaData();
+  const currentRouteMap = getCurrentRouteMapData();
+
+  const storeCellIds = currentLogicAreaData.storeCellIds || [];
+  const taskCellIds = currentLogicAreaData.taskCellIds || [];
+  const safeAreaCellIds = currentLogicAreaData.safeAreaCellIds || [];
+  const rotateCellIds = currentLogicAreaData.rotateCellIds || [];
+  const blockCellIds = currentRouteMap.blockCellIds || [];
+  const followCellIds = currentRouteMap.followCellIds || [];
+  const waitCellIds = currentRouteMap.waitCellIds || [];
+
+  return {
+    mapContext: editor.mapContext,
+    selectCells: editor.selectCells,
+
+    blockCellIds,
+    storeCellIds,
+    followCellIds,
+    waitCellIds,
+    taskCellIds,
+    safeAreaCellIds,
+    rotateCellIds,
+  };
+})(memo(CellTypeConfigurePanel));

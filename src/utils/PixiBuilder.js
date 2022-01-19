@@ -28,7 +28,12 @@ export default class PixiBuilder {
       divWheel: htmlDOM,
       interaction: this.renderer.plugins.interaction,
     });
-    this.viewport.drag().pinch().wheel().decelerate().clampZoom({ minScale: 0.001, maxScale: 0.5 });
+    this.viewport
+      .drag({ pressDrag: false })
+      .pinch()
+      .wheel()
+      .decelerate()
+      .clampZoom({ minScale: 0.001, maxScale: 0.5 });
     this.viewport.fitWorld(false);
     this.viewport.sortableChildren = true;
 

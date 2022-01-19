@@ -156,16 +156,16 @@ class EditorMapView extends BaseMap {
       Object.keys(payload).forEach((cellId) => {
         const newCellId = payload[cellId];
         selectedCells.push(newCellId);
-        const cellEntity = this.idCellMap.get(cellId);
+        const cellEntity = this.idCellMap.get(parseInt(cellId));
         if (cellEntity) {
           cellEntity.updateCellId(newCellId);
 
           // 更新 idCellMap
           this.idCellMap.delete(cellId);
-          this.idCellMap.set(`${newCellId}`, cellEntity);
+          this.idCellMap.set(newCellId, cellEntity);
         }
       });
-      this.selectedCells = selectedCells.map((id) => `${id}`);
+      this.selectedCells = selectedCells;
     }
     // 移动点位
     if (type === 'move') {
@@ -179,23 +179,25 @@ class EditorMapView extends BaseMap {
     }
     // 调整码间距
     if (type === 'adjustSpace') {
-      Object.keys(payload).forEach((cellId) => {
-        const { type: field, coord } = payload[cellId];
-        const cellEntity = this.idCellMap.get(cellId);
-        if (cellEntity) {
-          if (field === 'x') {
-            cellEntity.updateCoordination(coord, cellEntity.y);
-          } else {
-            cellEntity.updateCoordination(cellEntity.x, coord);
+      Object.keys(payload)
+        .map((item) => parseInt(item))
+        .forEach((cellId) => {
+          const { type: field, coord } = payload[cellId];
+          const cellEntity = this.idCellMap.get(cellId);
+          if (cellEntity) {
+            if (field === 'x') {
+              cellEntity.updateCoordination(coord, cellEntity.y);
+            } else {
+              cellEntity.updateCoordination(cellEntity.x, coord);
+            }
           }
-        }
-      });
+        });
     }
     // 配置点位类型
     if (type === 'type') {
       const { cellIds, cellType, texture } = payload;
       cellIds.forEach((cellId) => {
-        const cellEntity = this.idCellMap.get(`${cellId}`);
+        const cellEntity = this.idCellMap.get(cellId);
         if (texture) {
           cellEntity.plusType(cellType, getTextureFromResources(texture));
         } else {
@@ -420,13 +422,7 @@ class EditorMapView extends BaseMap {
   updateLines = ({ type, payload }) => {
     // 新增
     if (type === 'add') {
-      this.drawLine(
-        payload,
-        null,
-        true,
-        this.states.mapMode,
-        getCurrentRouteMapData().relations || [],
-      );
+      this.drawLine(payload, getCurrentRouteMapData().relations || [], true, this.states.mapMode);
     }
     // 删除
     if (type === 'remove') {
@@ -456,7 +452,7 @@ class EditorMapView extends BaseMap {
   filterRelationDir = (dirs) => {
     let _dirs = [...dirs];
     if (dirs.length === 0 || dirs.length === 4) {
-      _dirs = ['0', '1', '2', '3'];
+      _dirs = [0, 1, 2, 3];
     }
     this.states.shownRelationDir = _dirs;
     this.pipeSwitchLinesShown();
@@ -467,51 +463,6 @@ class EditorMapView extends BaseMap {
     this.states.shownRelationCell = cells;
     this.pipeSwitchLinesShown();
   };
-
-  // 画区域
-  drawRectArea(x, y, width, height, color) {
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(color.replace('#', '0x'));
-    graphics.drawRect(x, y, width, height);
-    graphics.endFill();
-    graphics.alpha = 0.8;
-    this.pixiUtils.viewportAddChild(graphics);
-    this.refresh();
-  }
-
-  drawCircleArea(x, y, radius, color) {
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(color.replace('#', '0x'));
-    graphics.drawCircle(x, y, radius);
-    graphics.endFill();
-    graphics.alpha = 0.8;
-    graphics.zIndex = zIndex.area;
-    this.pixiUtils.viewportAddChild(graphics);
-    this.refresh();
-  }
-
-  renderLabel(text, x, y) {
-    const textSprite = new Text(text, x, y, null, true, 200);
-    textSprite.alpha = 0.8;
-    textSprite.anchor.set(0.5);
-    textSprite.zIndex = zIndex.label;
-    this.pixiUtils.viewportAddChild(textSprite);
-    this.refresh();
-  }
-
-  renderImage({ base64, x, y, width, height }) {
-    const imageBaseTexture = new PIXI.BaseTexture(base64);
-    const imageTexture = new PIXI.Texture(imageBaseTexture);
-    const imageSprite = new PIXI.Sprite(imageTexture);
-    imageSprite.x = x;
-    imageSprite.y = y;
-    imageSprite.width = width;
-    imageSprite.height = height;
-    imageSprite.alpha = 0.8;
-    imageSprite.zIndex = zIndex.area;
-    this.pixiUtils.viewportAddChild(imageSprite);
-    this.refresh();
-  }
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右

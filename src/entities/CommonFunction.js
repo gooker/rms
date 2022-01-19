@@ -10,7 +10,7 @@ export default class CommonFunction extends PIXI.Container {
     this.y = props.y;
     this.name = props.name;
     this.angle = props.iconAngle || 0;
-    this.zIndex = zIndex.groundStorage;
+    this.zIndex = zIndex.functionIcon;
     this.$angle = props.angle || 0; // 仅用于纠正名称角度
     this.icon = props.icon || 'common';
     this.iconSize = props.size || `${CommonFunctionSize.width}@${CommonFunctionSize.height}`;

@@ -22,7 +22,6 @@ export default class Cell extends PIXI.Container {
     this.sortableChildren = true;
     this.interactiveChildren = false;
     this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
-    this.propsInteractive = props.interactive || false;
     this.selected = false; // 标记点位是否被选中
     this.select = props.select;
     this.ctrlSelect = props.ctrlSelect;
@@ -44,6 +43,7 @@ export default class Cell extends PIXI.Container {
     this.addCellId();
     this.addCoordination();
     this.addSelectedBackGround(450, 400);
+    this.interact(true);
   }
 
   get mode() {
@@ -153,25 +153,20 @@ export default class Cell extends PIXI.Container {
    * 支持动态添加交互
    * 用dynamic来标识点位点击操作是Monitor动态新增的，否则就是Editor
    * @param interactive
-   * @param showBG
    * @param callBack
    */
-  interact(interactive = false, showBG = true, callBack) {
-    const _this = this;
-    function pointerdownCB(ev) {
-      _this.onClick(ev, showBG);
-    }
-
+  interact(interactive = false, callBack) {
     this.interactive = interactive;
     this.buttonMode = interactive;
     if (interactive) {
-      this.on('pointerdown', pointerdownCB);
       // 支持覆盖原有回调
       if (typeof callBack === 'function') {
         this.select = callBack;
       }
+
+      this.on('pointerdown', this.onClick);
     } else {
-      this.off('pointerdown', pointerdownCB);
+      this.off('pointerdown', this.onClick);
     }
   }
 
@@ -186,15 +181,15 @@ export default class Cell extends PIXI.Container {
     this.selectedBorderSprite.visible = false;
   }
 
-  onClick(event, showBG = true) {
+  onClick(event) {
     if (event?.data.originalEvent.shiftKey) {
       if (!this.selected) {
-        showBG && this.onSelect();
+        this.onSelect();
         this.shiftSelect && this.shiftSelect({ id: this.id, x: this.x, y: this.y });
       }
     } else if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
       if (!this.selected) {
-        showBG && this.onSelect();
+        this.onSelect();
         this.ctrlSelect && this.ctrlSelect({ id: this.id, x: this.x, y: this.y });
       }
     } else {
@@ -206,7 +201,7 @@ export default class Cell extends PIXI.Container {
             true,
           );
       } else {
-        showBG && this.onSelect();
+        this.onSelect();
         this.select &&
           this.select({
             id: this.id,
