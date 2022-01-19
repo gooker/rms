@@ -145,7 +145,7 @@ export function getloadRobotdata() {
           taskNumber: 3,
         },
         taskDistance: {
-          taskDistance: 150,
+          taskDistance: 15,
         },
         statusallTime: {
           //状态时长
@@ -173,7 +173,7 @@ export function getloadRobotdata() {
           taskNumber: 3,
         },
         taskDistance: {
-          taskDistance: 150,
+          taskDistance: 250,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -225,7 +225,7 @@ export function getloadRobotdata() {
           taskNumber: 30,
         },
         taskDistance: {
-          taskDistance: 250,
+          taskDistance: 150,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -251,7 +251,7 @@ export function getloadRobotdata() {
           taskNumber: 30,
         },
         taskDistance: {
-          taskDistance: 250,
+          taskDistance: 200,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -442,7 +442,7 @@ export function getloadRobotdata() {
           taskNumber: 3,
         },
         taskDistance: {
-          taskDistance: 150,
+          taskDistance: 190,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -494,7 +494,7 @@ export function getloadRobotdata() {
           taskNumber: 30,
         },
         taskDistance: {
-          taskDistance: 250,
+          taskDistance: 50,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -682,7 +682,7 @@ export function getloadRobotdata() {
           taskNumber: 2,
         },
         taskDistance: {
-          taskDistance: 40,
+          taskDistance: 140,
         },
         statusallTime: {
           //状态时长
@@ -710,7 +710,7 @@ export function getloadRobotdata() {
           taskNumber: 1,
         },
         taskDistance: {
-          taskDistance: 10,
+          taskDistance: 100,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -785,7 +785,7 @@ export function getloadRobotdata() {
         robotId: 5,
         robotType: 'Latenglifting',
         taskTimes: {
-          taskNumber: 30,
+          taskNumber: 60,
         },
         taskDistance: {
           taskDistance: 250,
@@ -816,7 +816,7 @@ export function getloadRobotdata() {
           taskNumber: 2,
         },
         taskDistance: {
-          taskDistance: 40,
+          taskDistance: 60,
         },
         statusallTime: {
           //状态时长
@@ -844,7 +844,7 @@ export function getloadRobotdata() {
           taskNumber: 1,
         },
         taskDistance: {
-          taskDistance: 10,
+          taskDistance: 100,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -896,7 +896,7 @@ export function getloadRobotdata() {
           taskNumber: 30,
         },
         taskDistance: {
-          taskDistance: 250,
+          taskDistance: 100,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长
@@ -922,7 +922,7 @@ export function getloadRobotdata() {
           taskNumber: 30,
         },
         taskDistance: {
-          taskDistance: 250,
+          taskDistance: 150,
         },
         statusallTime: {
           Offline: 5, //离线   状态时长

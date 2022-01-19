@@ -20,6 +20,7 @@ const trafficLabelOption = {
 
 const commonOption = {
   type: 'bar',
+  barMaxWidth: 100,
   label: trafficLabelOption,
   emphasis: {
     focus: 'series',

@@ -837,7 +837,7 @@ export function getRobotStatuserrordata() {
       },
       {
         robotId: 2,
-        errorTimes: 0,
+        errorTimes: 3,
         errortime: 0,
       },
       {
@@ -857,7 +857,7 @@ export function getRobotStatuserrordata() {
       },
       {
         robotId: 6,
-        errorTimes: 0,
+        errorTimes: 10,
         errortime: 0,
       },
       {
@@ -985,8 +985,8 @@ export function getRobotStatuserrordata() {
       },
       {
         robotId: 5,
-        errorTimes: 0,
-        errortime: 0,
+        errorTimes: 20,
+        errortime: 40,
       },
       {
         robotId: 3,

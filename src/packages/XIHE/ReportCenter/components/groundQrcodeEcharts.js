@@ -186,6 +186,14 @@ export const codeHistoryLineOption = (title) => ({
     right: '2%',
     containLabel: true,
   },
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 0,
+      end: 100,
+      yAxisIndex: 0,
+    },
+  ],
   xAxis: {
     type: 'value',
     axisLine: {
