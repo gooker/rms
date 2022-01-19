@@ -13,11 +13,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 1, //丢码次数
         errorcodeNum: 5, // 错码次数
-        lightdeviationCar: 6, //轻微偏移车数
-        slightdeviationCar: 7, // 一般偏移车数
-        seriousdeviationCar: 8, // 严重偏移车数
-        dropoutNumCar: 9, //丢码车数
-        errorNumCar: 10, //错码车数
+        slightdeviationAMR: 6, //轻微偏移车数
+        generaldeviationAMR: 7, // 一般偏移车数
+        seriousdeviationAMR: 8, // 严重偏移车数
+        dropoutNumAMR: 9, //丢码车数
+        errorNumAMR: 10, //错码车数
       },
       {
         cellId: 2,
@@ -26,11 +26,11 @@ export function getQrcodedata() {
         seriousdeviation: 0, // 严重偏移
         throwcodeNum: 0, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 4, // 一般偏移车数
-        seriousdeviationCar: 5, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 4, // 一般偏移车数
+        seriousdeviationAMR: 5, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -39,11 +39,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -52,11 +52,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -65,11 +65,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -78,11 +78,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -91,11 +91,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -104,11 +104,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-03 11:00': [
@@ -119,11 +119,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 5, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -132,11 +132,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -145,11 +145,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -158,11 +158,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -171,11 +171,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -184,11 +184,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -197,11 +197,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -210,11 +210,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-03 12:00': [
@@ -225,11 +225,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 5, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -238,11 +238,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -251,11 +251,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -264,11 +264,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -277,11 +277,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -290,11 +290,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -303,11 +303,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -316,11 +316,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-03 13:00': [
@@ -331,11 +331,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 5, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -344,11 +344,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -357,11 +357,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -370,11 +370,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -383,11 +383,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -396,11 +396,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -409,11 +409,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -422,11 +422,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-03 14:00': [
@@ -437,11 +437,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 5, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -450,11 +450,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -463,11 +463,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -476,11 +476,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -489,11 +489,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -502,11 +502,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -515,11 +515,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -528,11 +528,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-03 15:00': [
@@ -543,11 +543,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 5, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -556,11 +556,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -569,11 +569,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -582,11 +582,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -595,11 +595,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -608,11 +608,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -621,11 +621,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -634,11 +634,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-03 16:00': [
@@ -649,11 +649,11 @@ export function getQrcodedata() {
         seriousdeviation: 3, // 严重偏移
         throwcodeNum: 5, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -662,11 +662,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -675,11 +675,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -688,11 +688,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -701,11 +701,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -714,11 +714,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -727,11 +727,11 @@ export function getQrcodedata() {
         seriousdeviation: 1, // 严重偏移
         throwcodeNum: 2, //丢码次数
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -740,11 +740,11 @@ export function getQrcodedata() {
         seriousdeviation: 6, // 严重偏移
         throwcodeNum: 9, //丢码次数
         errorcodeNum: 10, // 错码次数
-        lightdeviationCar: 2, //轻微偏移车数
-        slightdeviationCar: 20, // 一般偏移车数
-        seriousdeviationCar: 15, // 严重偏移车数
-        dropoutNumCar: 10, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 2, //轻微偏移车数
+        generaldeviationAMR: 20, // 一般偏移车数
+        seriousdeviationAMR: 15, // 严重偏移车数
+        dropoutNumAMR: 10, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
     ],
   };
@@ -759,11 +759,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 0, // 严重偏移
         errorcodeNum: 0, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 0, // 一般偏移车数
-        seriousdeviationCar: 0, // 严重偏移车数
-        dropoutNumCar: 0, //丢码车数
-        errorNumCar: 0, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 0, // 一般偏移车数
+        seriousdeviationAMR: 0, // 严重偏移车数
+        dropoutNumAMR: 0, //丢码车数
+        errorNumAMR: 0, //错码车数
       },
       {
         cellId: 2,
@@ -771,11 +771,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -783,11 +783,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 3, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 3, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 3, // 一般偏移车数
-        seriousdeviationCar: 0, // 严重偏移车数
-        dropoutNumCar: 3, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 3, // 一般偏移车数
+        seriousdeviationAMR: 0, // 严重偏移车数
+        dropoutNumAMR: 3, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
       {
         cellId: 4,
@@ -795,11 +795,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -807,11 +807,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -819,11 +819,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -831,11 +831,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -843,11 +843,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-11 11:00': [
@@ -857,11 +857,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -869,11 +869,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -881,11 +881,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -893,11 +893,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -905,11 +905,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -917,11 +917,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -929,11 +929,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -941,11 +941,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-11 12:00': [
@@ -955,11 +955,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -967,11 +967,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -979,11 +979,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -991,11 +991,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1003,11 +1003,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1015,11 +1015,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -1027,11 +1027,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1039,11 +1039,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-11 13:00': [
@@ -1053,11 +1053,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -1065,11 +1065,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -1077,11 +1077,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -1089,11 +1089,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1101,11 +1101,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1113,11 +1113,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -1125,11 +1125,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1137,11 +1137,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-11 14:00': [
@@ -1151,11 +1151,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -1163,11 +1163,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -1175,11 +1175,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -1187,11 +1187,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1199,11 +1199,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1211,11 +1211,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -1223,11 +1223,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1235,11 +1235,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-11 15:00': [
@@ -1249,11 +1249,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -1261,11 +1261,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -1273,11 +1273,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -1285,11 +1285,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1297,11 +1297,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1309,11 +1309,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -1321,11 +1321,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1333,11 +1333,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
     ],
     '2022-01-11 16:00': [
@@ -1347,11 +1347,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 3, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 3, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 3, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -1359,11 +1359,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 3,
@@ -1371,11 +1371,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 4,
@@ -1383,11 +1383,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1395,11 +1395,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1407,11 +1407,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 7,
@@ -1419,11 +1419,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1431,11 +1431,11 @@ export function getLatentPoQrcodedata() {
         generaldeviation: 4, // 一般偏移
         seriousdeviation: 6, // 严重偏移
         errorcodeNum: 10, // 错码次数
-        lightdeviationCar: 2, //轻微偏移车数
-        slightdeviationCar: 20, // 一般偏移车数
-        seriousdeviationCar: 15, // 严重偏移车数
-        dropoutNumCar: 10, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 2, //轻微偏移车数
+        generaldeviationAMR: 20, // 一般偏移车数
+        seriousdeviationAMR: 15, // 严重偏移车数
+        dropoutNumAMR: 10, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
     ],
   };
@@ -1450,11 +1450,11 @@ export function getToteQrcodedata() {
         generaldeviation: 10, // 一般偏移
         seriousdeviation: 10, // 严重偏移
         errorcodeNum: 10, // 错码次数
-        lightdeviationCar: 10, //轻微偏移车数
-        slightdeviationCar: 10, // 一般偏移车数
-        seriousdeviationCar: 10, // 严重偏移车数
-        dropoutNumCar: 10, //丢码车数
-        errorNumCar: 10, //错码车数
+        slightdeviationAMR: 10, //轻微偏移车数
+        generaldeviationAMR: 10, // 一般偏移车数
+        seriousdeviationAMR: 10, // 严重偏移车数
+        dropoutNumAMR: 10, //丢码车数
+        errorNumAMR: 10, //错码车数
       },
       {
         cellId: 2,
@@ -1462,11 +1462,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 4, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 4, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 4, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 4, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 4, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
       {
         cellId: 3,
@@ -1474,11 +1474,11 @@ export function getToteQrcodedata() {
         generaldeviation: 3, // 一般偏移
         seriousdeviation: 6, // 严重偏移
         errorcodeNum: 3, // 错码次数
-        lightdeviationCar: 6, //轻微偏移车数
-        slightdeviationCar: 3, // 一般偏移车数
-        seriousdeviationCar: 6, // 严重偏移车数
-        dropoutNumCar: 3, //丢码车数
-        errorNumCar: 6, //错码车数
+        slightdeviationAMR: 6, //轻微偏移车数
+        generaldeviationAMR: 3, // 一般偏移车数
+        seriousdeviationAMR: 6, // 严重偏移车数
+        dropoutNumAMR: 3, //丢码车数
+        errorNumAMR: 6, //错码车数
       },
       {
         cellId: 4,
@@ -1486,11 +1486,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1498,11 +1498,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 0, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 0, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1510,11 +1510,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 0, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 0, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 0, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 0, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 0, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
       {
         cellId: 7,
@@ -1522,11 +1522,11 @@ export function getToteQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1534,11 +1534,11 @@ export function getToteQrcodedata() {
         generaldeviation: 4, // 一般偏移
         seriousdeviation: 4, // 严重偏移
         errorcodeNum: 4, // 错码次数
-        lightdeviationCar: 4, //轻微偏移车数
-        slightdeviationCar: 4, // 一般偏移车数
-        seriousdeviationCar: 4, // 严重偏移车数
-        dropoutNumCar: 4, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 4, //轻微偏移车数
+        generaldeviationAMR: 4, // 一般偏移车数
+        seriousdeviationAMR: 4, // 严重偏移车数
+        dropoutNumAMR: 4, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
     ],
     '2022-01-15 09:00': [
@@ -1548,11 +1548,11 @@ export function getToteQrcodedata() {
         generaldeviation: 10, // 一般偏移
         seriousdeviation: 10, // 严重偏移
         errorcodeNum: 10, // 错码次数
-        lightdeviationCar: 10, //轻微偏移车数
-        slightdeviationCar: 10, // 一般偏移车数
-        seriousdeviationCar: 10, // 严重偏移车数
-        dropoutNumCar: 10, //丢码车数
-        errorNumCar: 10, //错码车数
+        slightdeviationAMR: 10, //轻微偏移车数
+        generaldeviationAMR: 10, // 一般偏移车数
+        seriousdeviationAMR: 10, // 严重偏移车数
+        dropoutNumAMR: 10, //丢码车数
+        errorNumAMR: 10, //错码车数
       },
       {
         cellId: 2,
@@ -1560,11 +1560,11 @@ export function getToteQrcodedata() {
         generaldeviation: 10, // 一般偏移
         seriousdeviation: 4, // 严重偏移
         errorcodeNum: 10, // 错码次数
-        lightdeviationCar: 4, //轻微偏移车数
-        slightdeviationCar: 10, // 一般偏移车数
-        seriousdeviationCar: 4, // 严重偏移车数
-        dropoutNumCar: 10, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 4, //轻微偏移车数
+        generaldeviationAMR: 10, // 一般偏移车数
+        seriousdeviationAMR: 4, // 严重偏移车数
+        dropoutNumAMR: 10, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
       {
         cellId: 3,
@@ -1572,11 +1572,11 @@ export function getToteQrcodedata() {
         generaldeviation: 3, // 一般偏移
         seriousdeviation: 6, // 严重偏移
         errorcodeNum: 3, // 错码次数
-        lightdeviationCar: 6, //轻微偏移车数
-        slightdeviationCar: 3, // 一般偏移车数
-        seriousdeviationCar: 6, // 严重偏移车数
-        dropoutNumCar: 3, //丢码车数
-        errorNumCar: 6, //错码车数
+        slightdeviationAMR: 6, //轻微偏移车数
+        generaldeviationAMR: 3, // 一般偏移车数
+        seriousdeviationAMR: 6, // 严重偏移车数
+        dropoutNumAMR: 3, //丢码车数
+        errorNumAMR: 6, //错码车数
       },
       {
         cellId: 4,
@@ -1584,11 +1584,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 10, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1596,11 +1596,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 0, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 0, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1608,11 +1608,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 0, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 0, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 0, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 0, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 0, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
       {
         cellId: 7,
@@ -1620,11 +1620,11 @@ export function getToteQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1632,11 +1632,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
     ],
     '2022-01-15 10:00': [
@@ -1646,11 +1646,11 @@ export function getToteQrcodedata() {
         generaldeviation: 10, // 一般偏移
         seriousdeviation: 10, // 严重偏移
         errorcodeNum: 10, // 错码次数
-        lightdeviationCar: 10, //轻微偏移车数
-        slightdeviationCar: 10, // 一般偏移车数
-        seriousdeviationCar: 10, // 严重偏移车数
-        dropoutNumCar: 10, //丢码车数
-        errorNumCar: 10, //错码车数
+        slightdeviationAMR: 10, //轻微偏移车数
+        generaldeviationAMR: 10, // 一般偏移车数
+        seriousdeviationAMR: 10, // 严重偏移车数
+        dropoutNumAMR: 10, //丢码车数
+        errorNumAMR: 10, //错码车数
       },
       {
         cellId: 2,
@@ -1658,11 +1658,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 4, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 4, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 4, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 4, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 4, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
       {
         cellId: 3,
@@ -1670,11 +1670,11 @@ export function getToteQrcodedata() {
         generaldeviation: 3, // 一般偏移
         seriousdeviation: 6, // 严重偏移
         errorcodeNum: 3, // 错码次数
-        lightdeviationCar: 6, //轻微偏移车数
-        slightdeviationCar: 3, // 一般偏移车数
-        seriousdeviationCar: 6, // 严重偏移车数
-        dropoutNumCar: 3, //丢码车数
-        errorNumCar: 6, //错码车数
+        slightdeviationAMR: 6, //轻微偏移车数
+        generaldeviationAMR: 3, // 一般偏移车数
+        seriousdeviationAMR: 6, // 严重偏移车数
+        dropoutNumAMR: 3, //丢码车数
+        errorNumAMR: 6, //错码车数
       },
       {
         cellId: 4,
@@ -1682,11 +1682,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1694,11 +1694,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 0, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 0, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1706,11 +1706,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 0, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 0, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 0, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 0, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 0, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
       {
         cellId: 7,
@@ -1718,11 +1718,11 @@ export function getToteQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1730,11 +1730,11 @@ export function getToteQrcodedata() {
         generaldeviation: 4, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
     ],
     '2022-01-15 11:00': [
@@ -1744,11 +1744,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 2,
@@ -1756,11 +1756,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 4, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 4, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 4, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 4, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 4, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
       {
         cellId: 3,
@@ -1768,11 +1768,11 @@ export function getToteQrcodedata() {
         generaldeviation: 3, // 一般偏移
         seriousdeviation: 6, // 严重偏移
         errorcodeNum: 3, // 错码次数
-        lightdeviationCar: 6, //轻微偏移车数
-        slightdeviationCar: 3, // 一般偏移车数
-        seriousdeviationCar: 6, // 严重偏移车数
-        dropoutNumCar: 3, //丢码车数
-        errorNumCar: 6, //错码车数
+        slightdeviationAMR: 6, //轻微偏移车数
+        generaldeviationAMR: 3, // 一般偏移车数
+        seriousdeviationAMR: 6, // 严重偏移车数
+        dropoutNumAMR: 3, //丢码车数
+        errorNumAMR: 6, //错码车数
       },
       {
         cellId: 4,
@@ -1780,11 +1780,11 @@ export function getToteQrcodedata() {
         generaldeviation: 1, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 1, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 5,
@@ -1792,11 +1792,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 0, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 0, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 6,
@@ -1804,11 +1804,11 @@ export function getToteQrcodedata() {
         generaldeviation: 0, // 一般偏移
         seriousdeviation: 0, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 0, //轻微偏移车数
-        slightdeviationCar: 0, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 0, //丢码车数
-        errorNumCar: 3, //错码车数
+        slightdeviationAMR: 0, //轻微偏移车数
+        generaldeviationAMR: 0, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 0, //丢码车数
+        errorNumAMR: 3, //错码车数
       },
       {
         cellId: 7,
@@ -1816,11 +1816,11 @@ export function getToteQrcodedata() {
         generaldeviation: 2, // 一般偏移
         seriousdeviation: 2, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 2, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 1, //丢码车数
-        errorNumCar: 1, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 2, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 1, //丢码车数
+        errorNumAMR: 1, //错码车数
       },
       {
         cellId: 8,
@@ -1828,11 +1828,11 @@ export function getToteQrcodedata() {
         generaldeviation: 4, // 一般偏移
         seriousdeviation: 1, // 严重偏移
         errorcodeNum: 2, // 错码次数
-        lightdeviationCar: 1, //轻微偏移车数
-        slightdeviationCar: 1, // 一般偏移车数
-        seriousdeviationCar: 1, // 严重偏移车数
-        dropoutNumCar: 2, //丢码车数
-        errorNumCar: 4, //错码车数
+        slightdeviationAMR: 1, //轻微偏移车数
+        generaldeviationAMR: 1, // 一般偏移车数
+        seriousdeviationAMR: 1, // 严重偏移车数
+        dropoutNumAMR: 2, //丢码车数
+        errorNumAMR: 4, //错码车数
       },
     ],
   };

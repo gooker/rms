@@ -204,7 +204,7 @@ export const generateDurationDataByTime = (allData, type) => {
     },
     orient: 'vertical',
     // align: 'right',
-    left: 20,
+    left: 5,
     formatter: function (name) {
       return name;
     },

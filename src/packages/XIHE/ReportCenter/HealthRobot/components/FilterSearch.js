@@ -6,10 +6,12 @@ import { formatMessage } from '@/utils/utils';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 let _prefix = null;
+let _name = null;
 
 const FilterSearch = (props) => {
-  const { searchKey, onValuesChange, onShowkey, prefix } = props;
+  const { searchKey, onValuesChange, onShowkey, prefix, type } = props;
   _prefix = prefix || 'reportCenter.qrcodehealth';
+  _name = type || 'robotIds';
 
   const [form] = Form.useForm();
   const [togglesCode, setTogglesCode] = useState(0);
@@ -49,14 +51,14 @@ const FilterSearch = (props) => {
                           },
                         ]}
                       >
-                        <Input allowClear/>
+                        <Input allowClear />
                       </Form.Item>
                     </Col>
                   );
                 })}
 
                 <Col span={6}>
-                  <Form.Item name={'robotIds'} label={<FormattedMessage id="app.agv" />}>
+                  <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
                     <Select
                       mode="tags"
                       style={{ width: '100%' }}

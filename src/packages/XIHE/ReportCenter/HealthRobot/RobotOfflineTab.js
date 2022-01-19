@@ -201,7 +201,12 @@ const RobotOfflineComponent = (props) => {
         <Card
           actions={
             searchKey.length > 0 && [
-              <FilterSearch key={'a'} prefix={'reportCenter.robot.offline'} searchKey={searchKey} onValuesChange={onValuesChange} />,
+              <FilterSearch
+                key={'a'}
+                prefix={'reportCenter.robot.offline'}
+                searchKey={searchKey}
+                onValuesChange={onValuesChange}
+              />,
             ]
           }
         >
@@ -212,8 +217,9 @@ const RobotOfflineComponent = (props) => {
         {/* 按照日期 */}
         <Card
           actions={
-            searchKey.length >
-            (0)[(<FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />)]
+            searchKey.length > 0 && [
+              <FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />,
+            ]
           }
         >
           <div id="offlineByIdateHistory" style={{ minHeight: 350 }} />

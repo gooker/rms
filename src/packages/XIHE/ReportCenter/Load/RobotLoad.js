@@ -217,6 +217,7 @@ const HealthCar = (props) => {
               dataSource={tableData}
               rowKey={'robotId'}
               pagination={false}
+              scroll={{ y: 300 }}
             />
           </Col>
         </Row>

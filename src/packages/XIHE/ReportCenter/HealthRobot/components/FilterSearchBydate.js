@@ -5,9 +5,11 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TimePickerSelector from '../../components/timePicker';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
+let _name = null;
 
 const FilterSearchBytime = (props) => {
-  const { onValuesChange } = props;
+  const { onValuesChange, name } = props;
+  _name = name || 'robotIds';
 
   const [formDate] = Form.useForm();
   const [togglesDate, setTogglesDate] = useState(0);
@@ -30,7 +32,7 @@ const FilterSearchBytime = (props) => {
               <Form.Item hidden name={'startByTime'} />
               <Form.Item hidden name={'endByTime'} />
               <Col span={6}>
-                <Form.Item name={'robotIds'} label={<FormattedMessage id="app.agv" />}>
+                <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
                   <Select
                     mode="tags"
                     style={{ width: '100%' }}
@@ -55,7 +57,7 @@ const FilterSearchBytime = (props) => {
                     return value.timeDate;
                   }}
                 >
-                  <TimePickerSelector defaultType={'hour'}  /> 
+                  <TimePickerSelector defaultType={'hour'} />
                   {/* disabledChangeType={true} */}
                 </Form.Item>
               </Col>

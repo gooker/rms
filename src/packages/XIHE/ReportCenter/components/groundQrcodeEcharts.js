@@ -69,12 +69,13 @@ export const dateHistoryLineOption = (title) => ({
     },
   },
   grid: {
-    top: '8%',
+    top: '15%',
     left: '6%',
     right: '2%',
     containLabel: true,
   },
   legend: {
+    top: '0',
     data: [],
   },
   xAxis: [
@@ -140,7 +141,7 @@ export const codeHistoryLineOption = (title) => ({
     },
   },
   grid: {
-    top: '8%',
+    top: '10%',
     left: '6%',
     right: '2%',
     containLabel: true,
@@ -171,6 +172,10 @@ export const codeHistoryLineOption = (title) => ({
   },
   yAxis: {
     type: 'category',
+    data: [],
+  },
+  legend: {
+    top: '0',
     data: [],
   },
   series: [], // 数据 有几种类型就放几种
