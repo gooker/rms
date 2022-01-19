@@ -32,7 +32,20 @@ const commonOption = {
   },
 };
 
-export const dateHistoryLineOption = (title) => ({
+const tootipsFormatter = (params, flag) => {
+  const name = params[0].axisValue;
+  var showHtm = name + '<br>';
+  for (let i = 0; i < params.length; i++) {
+    const { marker, seriesName, value } = params[i];
+    const _seriesName = flag
+      ? seriesName
+      : formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` });
+    showHtm += marker + _seriesName + '：' + value + '<br>';
+  }
+  return showHtm;
+};
+
+export const dateHistoryLineOption = (title, flag) => ({
   title: {
     text: `${title}(${formatMessage({
       id: 'reportCenter.way.date',
@@ -48,20 +61,18 @@ export const dateHistoryLineOption = (title) => ({
   tooltip: {
     confine: true,
     trigger: 'axis',
-    // formatter: function (params) {
-    // const name = params[0].axisValue;
-    // var showHtm = name + '<br>';
-    // for (let i = 0; i < params.length; i++) {
-    //   const { marker, seriesName, value } = params[i];
-    //   showHtm +=
-    //     marker +
-    //     formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` }) +
-    //     '：' +
-    //     value +
-    //     '<br>';
-    // }
-    // return showHtm;
-    // },
+    formatter: function (params) {
+      const name = params[0].axisValue;
+      var showHtm = name + '<br>';
+      for (let i = 0; i < params.length; i++) {
+        const { marker, seriesName, value } = params[i];
+        const _seriesName = flag
+          ? seriesName
+          : formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` });
+        showHtm += marker + _seriesName + '：' + value + '<br>';
+      }
+      return showHtm;
+    },
     axisPointer: {
       type: 'shadow',
       textStyle: {
@@ -85,25 +96,31 @@ export const dateHistoryLineOption = (title) => ({
     data: [],
     width: 10,
   },
-  // dataZoom: [// 用于区域缩放
-  //   {
-  //     show: true,
-  //     start: 30,
-  //     end: 100,
-  //     right:30,
-  //   },
-  //   {
-  //     type: 'inside',
-  //     start: 30,
-  //     end: 100,
-  //     right:30,
-  //   },
-  // ],
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 0,
+      end: 100,
+    },
+    {
+      start: 0,
+      end: 100,
+      handleIcon:
+        'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+      handleSize: '80%',
+      handleStyle: {
+        color: '#fff',
+        shadowBlur: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.6)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2,
+      },
+    },
+  ],
   xAxis: [
     {
       type: 'category',
       // axisTick: { show: false }, //是否显示坐标轴刻度。
-      axisLabel: { rotate: 38 },
       data: [],
     },
   ],
@@ -133,7 +150,7 @@ export const dateHistoryLineOption = (title) => ({
   series: [], // 有几层数据 就放几层
 });
 
-export const codeHistoryLineOption = (title) => ({
+export const codeHistoryLineOption = (title, flag) => ({
   title: {
     text: `${title}(${formatMessage({
       id: 'reportCenter.way.robot',
@@ -156,6 +173,9 @@ export const codeHistoryLineOption = (title) => ({
         color: '#fff',
       },
     },
+    formatter: function (params) {
+      return tootipsFormatter(params, flag);
+    },
   },
   lineStyle: {
     normal: {
@@ -170,7 +190,7 @@ export const codeHistoryLineOption = (title) => ({
   },
   xAxis: {
     type: 'value',
-  
+
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor, // 坐标轴线线的颜色。
@@ -260,7 +280,7 @@ export const generateTimeData = (allData, notformatlegend) => {
     axisLabel: {
       fontSize: 12,
       interval: 0,
-      // rotate: 10,
+      rotate: 20,
     },
     splitLine: {
       show: false,

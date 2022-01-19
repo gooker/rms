@@ -3,6 +3,7 @@ import { Select, DatePicker, Input, Button, Row, Table, Tag } from 'antd';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
 import FormattedMessage from '@/components/FormattedMessage';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/utils';
 import { fetchUserLoginHistory } from '@/services/user';
 import commonStyles from '@/common.module.less';
@@ -125,7 +126,7 @@ export default class UserLoginHistory extends Component {
   render() {
     const { loading, pagination, historySource } = this.state;
     return (
-      <div className={commonStyles.commonPageStyle}>
+      <TablePageWrapper>
         <Row style={{ marginBottom: 20 }}>
           <Select
             style={{ width: 100 }}
@@ -182,7 +183,7 @@ export default class UserLoginHistory extends Component {
           }}
           onChange={this.handleTableChange}
         />
-      </div>
+      </TablePageWrapper>
     );
   }
 }

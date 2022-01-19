@@ -1,12 +1,11 @@
 import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
-import { Row, Col, Form, Input, Select, Card, Button } from 'antd';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import FormattedMessage from '@/components/FormattedMessage';
+import { Row, Col, Form, Card } from 'antd';
 import moment from 'moment';
 import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
+import FilterSearchBydate from '../HealthRobot/components/FilterSearchBydate';
+import FilterSearch from '../HealthRobot/components/FilterSearch';
 import QrcodeSearchForm from '../components/QrcodeSearchForm';
-import TimePickerSelector from '../components/timePicker';
 import {
   codeHistoryLineOption,
   dateHistoryLineOption,
@@ -30,12 +29,10 @@ const GroundQrcode = (props) => {
   const [formDate] = Form.useForm();
   const [originData, setOriginData] = useState({}); // 原始数据
 
-
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
 
-  const [togglesDate, setTogglesDate] = useState(0);
-
   useEffect(initChart, []);
+  useEffect(submitSearch, []);
 
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [originData]);
@@ -217,153 +214,33 @@ const GroundQrcode = (props) => {
           <Col span={22}>
             {/* 按照码号 */}
             <Card
-              actions={[
-                <div key="a" style={{ position: 'relative' }}>
-                  <Form form={form} onValuesChange={onValuesChange} {...formLayout}>
-                    <Row>
-                      {searchKey.length > 0 ? (
-                        <>
-                          {searchKey.map((key) => {
-                            if (
-                              [
-                                'slightdeviation',
-                                'generaldeviation',
-                                'seriousdeviation',
-                                'lightdeviationCar',
-                                'slightdeviationCar',
-                                'seriousdeviationCar',
-                              ].includes(key)
-                            ) {
-                            } else {
-                              return (
-                                <Col span={4} key={key}>
-                                  <Form.Item
-                                    name={key}
-                                    label={formatMessage({
-                                      id: `reportCenter.qrcodehealth.${key}`,
-                                    })}
-                                    rules={[
-                                      {
-                                        pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                        message: '请输入正整数',
-                                      },
-                                    ]}
-                                  >
-                                    <Input allowClear />
-                                  </Form.Item>
-                                </Col>
-                              );
-                            }
-                          })}
-
-                          <Col span={4}>
-                            <Form.Item
-                              name={'cellId'}
-                              label={<FormattedMessage id="app.common.code" />}
-                            >
-                              <Select
-                                mode="tags"
-                                style={{ width: '100%' }}
-                                maxTagTextLength={5}
-                                maxTagCount={4}
-                                allowClear
-                              />
-                            </Form.Item>
-                          </Col>
-                        </>
-                      ) : (
-                        ' '
-                      )}
-                    </Row>
-                  </Form>
-                </div>,
-              ]}
+              actions={
+                searchKey.length > 0 && [
+                  <FilterSearch
+                    key={'a'}
+                    prefix={'reportCenter.qrcodehealth'}
+                    type={'cellId'}
+                    searchKey={searchKey}
+                    onValuesChange={onValuesChange}
+                  />,
+                ]
+              }
             >
               <div id="latenPodCodeByCellIdHistory" style={{ minHeight: 350 }} />
             </Card>
           </Col>
-          <Col span={24}>
+          <Col span={22} style={{ marginTop: 10 }}>
             {/* 按照日期 */}
             <Card
-              actions={[
-                <div key="b" style={{ position: 'relative' }}>
-                  {searchKey.length > 0 && togglesDate === 1 ? (
-                    <>
-                      <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
-                        <Row>
-                          <Form.Item hidden name={'startByTime'} />
-                          <Form.Item hidden name={'endByTime'} />
-                          <Col span={6}>
-                            <Form.Item
-                              name={'cellId'}
-                              label={<FormattedMessage id="app.common.code" />}
-                            >
-                              <Select
-                                mode="tags"
-                                style={{ width: '100%' }}
-                                maxTagTextLength={5}
-                                maxTagCount={4}
-                                allowClear
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col span={18}>
-                            <Form.Item
-                              {...formLayout}
-                              name={'rangeNum'}
-                              label={<FormattedMessage id="app.form.dateRange" />}
-                              getValueFromEvent={(value) => {
-                                const { setFieldsValue } = formDate;
-                                setFieldsValue({
-                                  startByTime: value.startTime,
-                                  endByTime: value.endTime,
-                                  rangeNum: value.timeDate,
-                                });
-                                return value.timeDate;
-                              }}
-                            >
-                              <TimePickerSelector />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Form>
-                      <Row>
-                        <Col
-                          span={24}
-                          style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}
-                        >
-                          <Button
-                            type="text"
-                            onClick={() => {
-                              setTogglesDate(0);
-                            }}
-                          >
-                            <UpOutlined />
-                            {'收起'}
-                          </Button>
-                        </Col>
-                      </Row>
-                    </>
-                  ) : searchKey.length > 0 ? (
-                    <Row>
-                      <Col span={24}>
-                        <Button
-                          type="text"
-                          style={{ padding: '10px 0' }}
-                          onClick={() => {
-                            setTogglesDate(1);
-                          }}
-                        >
-                          <DownOutlined />
-                          {'展开'}
-                        </Button>
-                      </Col>
-                    </Row>
-                  ) : (
-                    ''
-                  )}
-                </div>,
-              ]}
+              actions={
+                searchKey.length > 0 && [
+                  <FilterSearchBydate
+                    key={'b'}
+                    onValuesChange={onDatefilterChange}
+                    type={'cellId'}
+                  />,
+                ]
+              }
             >
               <div id="latentPodCodeBydateHistory" style={{ minHeight: 350 }} />
             </Card>

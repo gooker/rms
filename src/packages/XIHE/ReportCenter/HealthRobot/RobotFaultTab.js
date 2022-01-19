@@ -24,7 +24,6 @@ const RobotFaultComponent = (props) => {
   const [searchKey, setSearchKey] = useState([]); // 二次搜索
 
   useEffect(initChart, []);
-
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [originData]);
 
@@ -32,14 +31,14 @@ const RobotFaultComponent = (props) => {
     // 根据小车id报表
     codeHistoryLine = echarts.init(document.getElementById('RobotFaultByIdHistory'));
     codeHistoryLine.setOption(
-      codeHistoryLineOption(formatMessage({ id: 'reportCenter.robot.fault' })),
+      codeHistoryLineOption(formatMessage({ id: 'reportCenter.robot.fault' }), true),
       true,
     );
 
     // 根据日期报表
     timeHistoryLine = echarts.init(document.getElementById('RobotFaultBydateHistory'));
     timeHistoryLine.setOption(
-      dateHistoryLineOption(formatMessage({ id: 'reportCenter.robot.fault' })),
+      dateHistoryLineOption(formatMessage({ id: 'reportCenter.robot.fault' }), true),
       true,
     );
 

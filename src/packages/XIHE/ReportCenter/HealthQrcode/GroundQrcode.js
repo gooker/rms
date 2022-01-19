@@ -1,12 +1,11 @@
 import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
-import { Row, Col, Form, Input, Select, Card, Button } from 'antd';
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
-import FormattedMessage from '@/components/FormattedMessage';
+import { Row, Col, Form, Card } from 'antd';
 import moment from 'moment';
 import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
+import FilterSearchBydate from '../HealthRobot/components/FilterSearchBydate';
+import FilterSearch from '../HealthRobot/components/FilterSearch';
 import QrcodeSearchForm from '../components/QrcodeSearchForm';
-import TimePickerSelector from '../components/timePicker';
 import {
   codeHistoryLineOption,
   dateHistoryLineOption,
@@ -17,8 +16,6 @@ import {
 import { getQrcodedata } from '../components/mockData';
 import commonStyles from '@/common.module.less';
 import style from './qrcode.module.less';
-
-const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 
 let codeHistoryLine = null; // 根据码号
 let timeHistoryLine = null; // 根据日期
@@ -32,9 +29,8 @@ const GroundQrcode = (props) => {
 
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
 
-  const [togglesDate, setTogglesDate] = useState(0);
-
   useEffect(initChart, []);
+  useEffect(submitSearch, []); // 默认一进来就有数据
 
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [originData]);
@@ -94,12 +90,35 @@ const GroundQrcode = (props) => {
   function submitSearch(value) {
     // TODO 调接口
     // 拿到原始数据的 所有参数 所有根据cellId的参数求和
-    const getOriginalData = getOriginalDataBycode(getQrcodedata());
-    commonOption = getOriginalData.commonOption;
-    setSearchKey(getOriginalData.legendData || []);
-    setOriginData(getQrcodedata());
-    form.resetFields();
-    formDate.resetFields();
+    // 暂时为了拍视频--先固定时间 01-18 10:00--01-19 10:00
+    // 搜索约定搜过去12h 即 01-18 22:00--01-19 10:00；
+    console.log(value);
+    if (value && Object.keys(value).length > 0) {
+      const _start = '2022-01-18 22:00:00';
+      const _end = '2022-01-19 11:00:00';
+      let newOriginalData = null;
+      if (!isStrictNull(_start) && !isStrictNull(_end)) {
+        // 先根据时间过滤
+        newOriginalData = filterDataByTime(getQrcodedata(), _start, _end);
+      }
+
+      const currenTimeData = generateTimeData(newOriginalData);
+      if (currenTimeData) {
+        const { xAxis, series, legend } = currenTimeData;
+        const newTimeHistoryLine = timeHistoryLine.getOption();
+        newTimeHistoryLine.xAxis = xAxis;
+        newTimeHistoryLine.series = series;
+        newTimeHistoryLine.legend = legend;
+        timeHistoryLine.setOption(newTimeHistoryLine, true);
+      }
+    } else {
+      const getOriginalData = getOriginalDataBycode(getQrcodedata());
+      commonOption = getOriginalData.commonOption;
+      setSearchKey(getOriginalData.legendData || []);
+      setOriginData(getQrcodedata());
+      form.resetFields();
+      formDate.resetFields();
+    }
   }
 
   const filterDataByCellId = (cellIds) => {
@@ -216,153 +235,33 @@ const GroundQrcode = (props) => {
           <Col span={22}>
             {/* 按照码号 */}
             <Card
-              actions={[
-                <div key="a" style={{ position: 'relative' }}>
-                  <Form form={form} onValuesChange={onValuesChange} {...formLayout}>
-                    <Row>
-                      {searchKey.length > 0 ? (
-                        <>
-                          {searchKey.map((key) => {
-                            // if (
-                            //   [
-                            //     'slightdeviation',
-                            //     'generaldeviation',
-                            //     'seriousdeviation',
-                            //     'lightdeviationCar',
-                            //     'slightdeviationCar',
-                            //     'seriousdeviationCar',
-                            //   ].includes(key)
-                            // ) {
-                            // } else {
-                            return (
-                              <Col span={6} key={key}>
-                                <Form.Item
-                                  name={key}
-                                  label={formatMessage({
-                                    id: `reportCenter.qrcodehealth.${key}`,
-                                  })}
-                                  rules={[
-                                    {
-                                      pattern: new RegExp(/^[1-9]\d*$/, 'g'),
-                                      message: '请输入正整数',
-                                    },
-                                  ]}
-                                >
-                                  <Input allowClear />
-                                </Form.Item>
-                              </Col>
-                            );
-                            // }
-                          })}
-
-                          <Col span={4}>
-                            <Form.Item
-                              name={'cellId'}
-                              label={<FormattedMessage id="app.common.code" />}
-                            >
-                              <Select
-                                mode="tags"
-                                style={{ width: '100%' }}
-                                maxTagTextLength={5}
-                                maxTagCount={4}
-                                allowClear
-                              />
-                            </Form.Item>
-                          </Col>
-                        </>
-                      ) : (
-                        ' '
-                      )}
-                    </Row>
-                  </Form>
-                </div>,
-              ]}
+              actions={
+                searchKey.length > 0 && [
+                  <FilterSearch
+                    key={'a'}
+                    prefix={'reportCenter.qrcodehealth'}
+                    type={'cellId'}
+                    searchKey={searchKey}
+                    onValuesChange={onValuesChange}
+                  />,
+                ]
+              }
             >
               <div id="groundCodeByCellIdHistory" style={{ minHeight: 350 }} />
             </Card>
           </Col>
-          <Col span={24}>
+          <Col span={22} style={{ marginTop: 10 }}>
             {/* 按照日期 */}
             <Card
-              actions={[
-                <div key="b" style={{ position: 'relative' }}>
-                  {searchKey.length > 0 && togglesDate === 1 ? (
-                    <>
-                      <Form form={formDate} onValuesChange={onDatefilterChange} {...formLayout}>
-                        <Row>
-                          <Form.Item hidden name={'startByTime'} />
-                          <Form.Item hidden name={'endByTime'} />
-                          <Col span={6}>
-                            <Form.Item
-                              name={'cellId'}
-                              label={<FormattedMessage id="app.common.code" />}
-                            >
-                              <Select
-                                mode="tags"
-                                style={{ width: '100%' }}
-                                maxTagTextLength={5}
-                                maxTagCount={4}
-                                allowClear
-                              />
-                            </Form.Item>
-                          </Col>
-                          <Col span={18}>
-                            <Form.Item
-                              {...formLayout}
-                              name={'rangeNum'}
-                              label={<FormattedMessage id="app.form.dateRange" />}
-                              getValueFromEvent={(value) => {
-                                const { setFieldsValue } = formDate;
-                                setFieldsValue({
-                                  startByTime: value.startTime,
-                                  endByTime: value.endTime,
-                                  rangeNum: value.timeDate,
-                                });
-                                return value.timeDate;
-                              }}
-                            >
-                              <TimePickerSelector />
-                            </Form.Item>
-                          </Col>
-                        </Row>
-                      </Form>
-                      <Row>
-                        <Col
-                          span={24}
-                          style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}
-                        >
-                          <Button
-                            type="text"
-                            onClick={() => {
-                              setTogglesDate(0);
-                            }}
-                          >
-                            <UpOutlined />
-                            {'收起'}
-                          </Button>
-                        </Col>
-                      </Row>
-                    </>
-                  ) : searchKey.length > 0 ? (
-                    <Row>
-                      <Col span={24}>
-                        <Button
-                          type="text"
-                          style={{ padding: '10px 0' }}
-                          onClick={() => {
-                            setTogglesDate(1);
-                          }}
-                        >
-                          <DownOutlined />
-                          {'展开'}
-                        </Button>
-                      </Col>
-                    </Row>
-                  ) : (
-                    ''
-                  )}
-                </div>,
-              ]}
+              actions={
+                searchKey.length > 0 && [
+                  <FilterSearchBydate
+                    key={'b'}
+                    onValuesChange={onDatefilterChange}
+                    type={'cellId'}
+                  />,
+                ]
+              }
             >
               <div id="groundCodeBydateHistory" style={{ minHeight: 350 }} />
             </Card>

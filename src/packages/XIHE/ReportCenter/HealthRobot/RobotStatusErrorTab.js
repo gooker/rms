@@ -147,7 +147,7 @@ const RoboStatusErrorComponent = (props) => {
         data: key[1],
         name: key[0],
         yAxisIndex: index,
-        type: key[0] === 'offlinetime' ? 'line' : 'bar',
+        type: key[0] === 'errortime' ? 'line' : 'bar',
       });
     });
     const newCodeHistoryLine = codeHistoryLine.getOption();
@@ -201,7 +201,12 @@ const RoboStatusErrorComponent = (props) => {
         <Card
           actions={
             searchKey.length > 0 && [
-              <FilterSearch key={'a'} prefix={'reportCenter.robot.offline'} searchKey={searchKey} onValuesChange={onValuesChange} />,
+              <FilterSearch
+                key={'a'}
+                prefix={'reportCenter.robot.offline'}
+                searchKey={searchKey}
+                onValuesChange={onValuesChange}
+              />,
             ]
           }
         >
@@ -212,8 +217,9 @@ const RoboStatusErrorComponent = (props) => {
         {/* 按照日期 */}
         <Card
           actions={
-            searchKey.length >
-            (0)[(<FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />)]
+            searchKey.length > 0 && [
+              <FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />,
+            ]
           }
         >
           <div id="offlineByIdateHistory" style={{ minHeight: 350 }} />

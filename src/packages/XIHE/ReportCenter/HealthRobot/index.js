@@ -1,4 +1,4 @@
-import React, { useState, memo } from 'react';
+import React, { useState, memo, useEffect } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
 import {
   getScanCodedata,
@@ -12,6 +12,7 @@ import RobotFaultComponent from './RobotFaultTab';
 import RobotStatusErrorTab from './RobotStatusErrorTab';
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
+import { getContentHeight } from '@/utils/utils';
 
 const TabCollection = [
   {
@@ -43,6 +44,8 @@ const HealthCar = (props) => {
   const [faultOriginData, setFaultOriginData] = useState({}); // 原始数据 小车故障
 
   const [activeTab, setActivieTab] = useState('scan');
+
+  useEffect(submitSearch, []);
 
   // 搜索 调接口
   function submitSearch(value) {
