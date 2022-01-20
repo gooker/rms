@@ -1030,13 +1030,9 @@ export default {
       const currentRouteMapData = getCurrentRouteMapData();
       const relations = currentRouteMapData.relations || [];
       const lineRelationsMap = {}; // 直线Map
-      const curves = [];
       relations.forEach((relation) => {
         if (relation.type === 'line') {
           lineRelationsMap[`${relation.source}-${relation.target}`] = relation;
-        } else {
-          // 曲线不和直线放在一起处理
-          curves.push(relation);
         }
       });
 
@@ -1068,8 +1064,7 @@ export default {
           result.add.push(oppositeLineEntity);
         }
       });
-      const newRelations = [...Object.values(lineRelationsMap), ...curves];
-      currentRouteMapData.relations = newRelations;
+      currentRouteMapData.relations = [...Object.values(lineRelationsMap)];
       yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
       return result;
     },

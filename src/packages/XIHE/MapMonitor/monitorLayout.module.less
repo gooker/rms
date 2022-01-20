@@ -12,8 +12,8 @@
 .bodyRightSide {
   position: relative;
   width: 60px;
-  background: #051C28;
   overflow: auto;
+  background: #051c28;
 
   & > div[role='category'] {
     .flexCenter();
@@ -36,7 +36,7 @@
   }
 }
 .categoryActive {
-  background: #2F5597;
+  background: #2f5597;
 }
 
 // Popover Panel
@@ -59,6 +59,115 @@
     &:not(:last-child) {
       border-bottom: 1px solid #7c7c7c;
     }
+  }
+}
+
+// 侧边栏小车内容
+.rightSideAgvContent {
+  display: flex;
+  flex-flow: column nowrap;
+
+  & > div:first-child {
+    height: 50px;
+    padding-left: 13px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 25px;
+    background: #051c28;
+    border-bottom: 1px solid #6c6c6c;
+
+    .flexVerticalCenter();
+  }
+
+  & > div:nth-child(2) {
+    flex: 1;
+    padding: 20px;
+    overflow: auto;
+    background: #0c415a;
+  }
+}
+
+.rightSideAgvContentDetail {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+
+  & > div:first-child {
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    width: 50px;
+    height: 60px;
+    color: #fff;
+
+    span {
+      .flexCenter();
+    }
+  }
+
+  & > div:nth-child(2) {
+    color: #fff;
+    font-weight: 500;
+    font-size: 18px;
+    .flexVerticalCenter();
+  }
+}
+
+.rightSideAgvContentOperation {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.rightSideAgvContentOperationItem {
+  .flexCenter();
+
+  width: 70px;
+  height: 60px;
+  padding-top: 4px;
+  background: #0870a0;
+  border-radius: 5px;
+  cursor: pointer;
+
+  & > img {
+    width: 23px;
+    height: auto;
+    text-align: center;
+  }
+
+  & > div {
+    flex: 1 1;
+    color: #fff;
+    font-size: 17px;
+    .flexCenter();
+  }
+}
+
+.rightSideAgvContentOperationItem2 {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+  width: 65px;
+  height: 65px;
+
+  & > div:nth-child(1) {
+    .flexRowCenter();
+
+    flex: 1;
+    border: 1px solid #aeaeae;
+    border-radius: 5px;
+    cursor: pointer;
+
+    img {
+      width: 23px;
+      height: auto;
+    }
+  }
+
+  & > div:nth-child(2) {
+    .flexRowCenter();
+
+    color: #fff;
   }
 }
 

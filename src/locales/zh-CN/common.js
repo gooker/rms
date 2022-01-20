@@ -181,6 +181,7 @@ export default {
   'app.agv.on': '已开启',
   'app.agv.off': '未开启',
   'app.agv.direction': '车头方向',
+  'app.agv.electricity': '电量',
 
   'app.agvState.available': '可用',
   'app.agvState.StandBy': '待命',

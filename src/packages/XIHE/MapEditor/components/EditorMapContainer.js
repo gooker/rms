@@ -29,7 +29,7 @@ const EditorMapContainer = (props) => {
           );
       }, 500),
     );
-    resizeObserver.observe(document.body);
+    resizeObserver.observe(document.getElementById('editorPixi'));
 
     return () => {
       resizeObserver.disconnect();

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
-import { formatMessage, getSuffix } from '@/utils/utils';
+import { formatMessage, getSuffix, renderBattery } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getDirectionLocale, getAgvStatusTag, GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
@@ -116,21 +116,6 @@ const RealTimeTab = (props) => {
     });
   }
 
-  function renderBattery() {
-    const battery = data.mongodbAGV.battery;
-    let batteryColor;
-    if (battery > 50) {
-      batteryColor = green;
-    } else if (battery > 10) {
-      batteryColor = yellow;
-    } else {
-      batteryColor = red;
-    }
-    return getSuffix(parseInt(battery), '%', {
-      style: { color: batteryColor },
-    });
-  }
-
   function renderAbovePodContent() {
     const { unbindPod } = props;
     const { redisAGV } = data;
@@ -225,7 +210,7 @@ const RealTimeTab = (props) => {
 
         {/************ 电量 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
-          {data?.mongodbAGV?.battery && renderBattery()}
+          {data?.mongodbAGV?.battery && renderBattery(data.mongodbAGV.battery)}
         </LabelComponent>
 
         {/************ 当前速度 ************/}

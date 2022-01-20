@@ -3,7 +3,7 @@ import { Viewport } from 'pixi-viewport';
 import SimpleCull from '@/libs/SimpleCull';
 
 export default class PixiBuilder {
-  constructor(width, height, htmlDOM) {
+  constructor(width, height, htmlDOM, draggable = true) {
     this.width = width;
     this.height = height;
 
@@ -29,7 +29,7 @@ export default class PixiBuilder {
       interaction: this.renderer.plugins.interaction,
     });
     this.viewport
-      .drag({ pressDrag: false })
+      .drag({ pressDrag: draggable })
       .pinch()
       .wheel()
       .decelerate()

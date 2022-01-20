@@ -76,7 +76,7 @@ export default {
         // 4. 保存权限数据
         const permissionMap = {};
         for (let index = 0; index < authorityKeys.length; index++) {
-          permissionMap[authorityKeys[index]] = authorityKeys[index];
+          permissionMap[authorityKeys[index]] = true;
         }
         window.localStorage.setItem('permissionMap', JSON.stringify(permissionMap));
 

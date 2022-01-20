@@ -4,8 +4,21 @@ import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
 import PixiBuilder from '@/utils/PixiBuilder';
-import { formatMessage, getToteLayoutBaseParam, isEqual, isNull } from '@/utils/utils';
-import { AGVState, GeoLockColor, LatentPodSize, ToteAGVSize, zIndex } from '@/config/consts';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+} from '@/utils/utils';
+import {
+  AGVState,
+  ElementType,
+  GeoLockColor,
+  LatentPodSize,
+  ToteAGVSize,
+  zIndex,
+} from '@/config/consts';
 import BaseMap from '@/components/BaseMap';
 import {
   convertToteLayoutData,
@@ -32,6 +45,7 @@ import {
 } from '@/entities';
 import commonStyles from '@/common.module.less';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
+import { fetchAgvInfo } from '@/services/api';
 
 class MonitorMapView extends BaseMap {
   constructor() {
@@ -97,7 +111,7 @@ class MonitorMapView extends BaseMap {
     const { dispatch } = this.props;
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM);
+    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
     dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
   }
@@ -154,7 +168,13 @@ class MonitorMapView extends BaseMap {
     if (cells.length > 0) {
       this.idCellMap.clear();
       cells.forEach(({ id, x, y }) => {
-        const cell = new Cell({ id, x, y, showCoordinate: this.states.showCoordinate });
+        const cell = new Cell({
+          id,
+          x,
+          y,
+          interactive: false,
+          showCoordinate: this.states.showCoordinate,
+        });
         this.idCellMap.set(id, cell);
         this.pixiUtils.viewportAddChild(cell);
       });
@@ -189,6 +209,21 @@ class MonitorMapView extends BaseMap {
     });
     this.TemporaryLockMap.clear();
     this.refresh();
+  };
+
+  // 地图元素点击事件
+  onAgvClick = async ({ type, id }) => {
+    const { dispatch } = this.props;
+    const response = await fetchAgvInfo(type, id);
+    if (dealResponse(response)) {
+      message.error(formatMessage({ id: 'app.message.fetchDataFailed' }));
+    } else {
+      const { mongodbAGV = {}, redisAGV = {} } = response;
+      dispatch({
+        type: 'monitor/saveCheckingElement',
+        payload: { type: ElementType.AGV, payload: { ...mongodbAGV, ...redisAGV } },
+      });
+    }
   };
 
   // ************************ 小车 & 货架相关 **********************
@@ -269,14 +304,6 @@ class MonitorMapView extends BaseMap {
     robotId === `${this.trackAGVId}` && this.mapRenderer.mapMoveTo(agvEntity.x, agvEntity.y, 0.1);
   };
 
-  clickAgv = (agvData) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'monitor/saveState',
-      payload: { categoryPanel: Category.Prop, categoryLoad: agvData },
-    });
-  };
-
   // ********** 潜伏车 ********** //
   addLatentAGV = (latentAGVData) => {
     // 如果点位未渲染好直接退出
@@ -301,7 +328,7 @@ class MonitorMapView extends BaseMap {
       cellId: latentAGVData.currentCellId,
       angle: latentAGVData.currentDirection,
       active: true,
-      click: this.clickAgv,
+      click: this.onAgvClick,
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentAGV);
     this.idAGVMap.set(`${latentAGVData.robotId}`, latentAGV);

@@ -43,10 +43,6 @@ export default class Charger extends PIXI.Container {
 
   create() {
     const chargerTexture = getTextureFromResources('charger');
-    if (isNull(chargerTexture)) {
-      console.log('材质:[charger] 丢失');
-      return;
-    }
     this.charger = new PIXI.Sprite(chargerTexture);
     this.charger.zIndex = 1;
     this.charger.anchor.set(0.5);

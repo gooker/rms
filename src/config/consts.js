@@ -9,6 +9,16 @@ export const Colors = {
   grey: '#9E9E9E',
 };
 
+// 地图元素枚举
+export const ElementType = {
+  AGV: 'AGV',
+  workStation: 'WORK_STATION',
+  station: 'STATION',
+  charger: 'CHARGER',
+  pod: 'POD',
+  toteRack: 'TOTE_RACK',
+};
+
 // 小车状态
 export const AGVState = {
   error: 'Error', // error

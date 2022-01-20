@@ -26,22 +26,26 @@ import { sortBy, uniq } from 'lodash';
 
 const AllPriorities = [10, 20, 100, 1000];
 
+function initState(context) {
+  context.idCellMap = new Map(); // {cellId: [CellEntity]}
+  context.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
+  context.workStationMap = new Map(); // {stopCellId: [Entity]}
+  context.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}
+  context.intersectionMap = new Map(); // {stopCellId: [Entity]}
+  context.commonFunctionMap = new Map(); // {stopCellId: [Entity]}
+  context.chargerMap = new Map(); // {[x${x}y${y}]: [Entity]}
+  context.dumpMap = new Map();
+  context.dumpBasketMap = new Map();
+  context.rollerMap = new Map();
+  context.relationshipLines = new Map(); // 关系线
+  context.backImgMap = new Map(); // 背景图片
+  context.fixedEStopMap = new Map(); // 固定紧急避让区
+}
+
 export default class BaseMap extends React.Component {
   constructor(props) {
     super(props);
-    this.idCellMap = new Map(); // {cellId: [CellEntity]}
-    this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
-    this.workStationMap = new Map(); // {stopCellId: [Entity]}
-    this.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}
-    this.intersectionMap = new Map(); // {stopCellId: [Entity]}
-    this.commonFunctionMap = new Map(); // {stopCellId: [Entity]}
-    this.chargerMap = new Map(); // {[x${x}y${y}]: [Entity]}
-    this.dumpMap = new Map();
-    this.dumpBasketMap = new Map();
-    this.rollerMap = new Map();
-    this.relationshipLines = new Map(); // 关系线
-    this.backImgMap = new Map(); // 背景图片
-    this.fixedEStopMap = new Map(); // 固定紧急避让区
+    initState(this);
   }
 
   refresh = () => {
@@ -116,6 +120,7 @@ export default class BaseMap extends React.Component {
   // 清空 Stage 所有元素
   clearMapStage = () => {
     this.pixiUtils.viewportRemoveChildren();
+    initState(this);
   };
 
   // 地图点位坐标显示

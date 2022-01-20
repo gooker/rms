@@ -73,7 +73,7 @@ class AgvRealTimeComponent extends React.Component {
     const { agvType } = this.props;
     this.setState({ isFetching: true });
     const [agvRealtimeData, agvHardware, agvTask, agvErrorRecord] = await Promise.all([
-      fetchAgvInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
+      fetchAgvInfo(agvType, agvId),
       fetchAgvHardwareInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
       fetchAgvTaskList(agvType, {
         sectionId: window.localStorage.getItem('sectionId'),

@@ -19,7 +19,7 @@ const MonitorMapContainer = (props) => {
         _mapContext && _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
       }, 500),
     );
-    resizeObserver.observe(document.body);
+    resizeObserver.observe(document.getElementById('mapMonitorPage'));
 
     return () => {
       resizeObserver.disconnect();
@@ -121,7 +121,9 @@ const MonitorMapContainer = (props) => {
     // 充电桩
     if (Array.isArray(chargerList)) {
       const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
-      mapContext.renderChargers(chargerListData);
+      mapContext.renderChargers(chargerListData, true, () => {
+        console.log('MapMonitorContainer配置点击回调');
+      });
     }
     // 工作站
     if (Array.isArray(workstationList)) {

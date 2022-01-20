@@ -22,7 +22,7 @@ const AgvCategorySecondaryPanel = (props) => {
     <div style={{ height, width: 60 }} className={styles.popoverPanel}>
       {AgvCategoryTools.map(({ label, icon, value, style, module }) => {
         if (module.includes(agvType)) {
-          const title = typeof label === 'string' ? label : label(agvType);
+          const title = typeof label === 'function' ? label(agvType) : label;
           return (
             <Tooltip key={value} placement="left" title={title}>
               <div

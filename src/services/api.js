@@ -84,8 +84,9 @@ export async function fetchWCSAgvList(agvType) {
 }
 
 // 请求WCS端小车实时信息
-export async function fetchAgvInfo(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/${params.sectionId}/${params.agvId}`, {
+export async function fetchAgvInfo(agvType, agvId) {
+  const sectionId = window.localStorage.getItem('sectionId');
+  return request(`/${NameSpace[agvType]}/agv/${sectionId}/${agvId}`, {
     method: `GET`,
   });
 }

@@ -1,13 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
+import { throttle } from 'lodash';
 import { isNull } from '@/utils/utils';
 import { connect } from '@/utils/RcsDva';
-import { Category, MonitorRightTools } from '../enums';
-import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import { AGVType } from '@/config/config';
+import { Category, MonitorRightTools } from '../enums';
+import ElementProp from '../PopoverPanel/ElementProp';
+import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import styles from '../monitorLayout.module.less';
-import ItemProp from '@/packages/XIHE/MapMonitor/PopoverPanel/ElementProp';
-import { throttle } from 'lodash';
 
 const MonitorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -48,7 +48,7 @@ const MonitorBodyRight = (props) => {
   function renderPanelContent() {
     switch (categoryPanel) {
       case Category.Prop:
-        return <ItemProp height={height - 10} />;
+        return <ElementProp height={height - 10} />;
       case Category.LatentAGV:
         return (
           <AgvCategorySecondaryPanel
@@ -79,7 +79,9 @@ const MonitorBodyRight = (props) => {
               role={'category'}
               className={categoryPanel === value ? styles.categoryActive : undefined}
               onClick={() => {
-                updateEditPanelFlag(value);
+                if (value !== Category.Prop || categoryPanel === Category.Prop) {
+                  updateEditPanelFlag(value);
+                }
               }}
             >
               {renderIcon(icon, style)}

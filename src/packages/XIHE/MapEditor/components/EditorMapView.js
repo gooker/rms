@@ -1,15 +1,13 @@
 import React from 'react';
-import * as PIXI from 'pixi.js';
 import {
-  getCurveMapKey,
   getLineFromIdLineMap,
   getCurrentRouteMapData,
   getTextureFromResources,
   loadEditorExtraTextures,
 } from '@/utils/mapUtils';
 import { connect } from '@/utils/RcsDva';
-import { CellSize, zIndex } from '@/config/consts';
-import { Cell, Text } from '@/entities';
+import { CellSize } from '@/config/consts';
+import { Cell } from '@/entities';
 import PixiBuilder from '@/utils/PixiBuilder';
 import BaseMap from '@/components/BaseMap';
 import EditorMask from './EditorMask';
@@ -48,15 +46,9 @@ class EditorMapView extends BaseMap {
 
     const htmlDOM = document.getElementById('editorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM);
+    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, false);
     dispatch({ type: 'editor/saveMapContext', payload: this });
     await loadEditorExtraTextures(this.pixiUtils.renderer);
-  }
-
-  componentWillUnmount() {
-    this.clearMapStage();
-    this.idCellMap.clear();
-    this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
 
   // 切换地图编辑地图显示模式
@@ -430,9 +422,6 @@ class EditorMapView extends BaseMap {
         let relationMapKey;
         if (line.type === 'line') {
           relationMapKey = `${line.source}-${line.target}`;
-        }
-        if (line.type === 'curve') {
-          relationMapKey = getCurveMapKey(line);
         }
         const [cost, lineEntity] = getLineFromIdLineMap(relationMapKey, this.idLineMap);
         if (cost && lineEntity) {

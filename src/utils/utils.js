@@ -9,6 +9,7 @@ import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
 import requestorStyles from '@/packages/XIHE/Requestor/requestor.less';
+import FormattedMessage from '@/components/FormattedMessage';
 
 /**
  * 将服务器时间转化成本地时间
@@ -144,14 +145,36 @@ export function GMT2UserTimeZone(value) {
 export function getSuffix(value, suffix, props) {
   if (value != null) {
     return (
-      <span>
-        <span {...props}>{value}</span>
+      <span {...props}>
+        <span>{value}</span>
         <span style={{ marginLeft: 1, fontSize: 14 }}>{suffix}</span>
       </span>
     );
   } else {
     return null;
   }
+}
+
+export function renderBattery(battery) {
+  let batteryColor;
+  if (battery > 50) {
+    batteryColor = Colors.green;
+  } else if (battery > 10) {
+    batteryColor = Colors.yellow;
+  } else {
+    batteryColor = Colors.red;
+  }
+  return getSuffix(parseInt(battery), '%', {
+    style: { color: batteryColor, fontWeight: 700, fontSize: '20px' },
+  });
+}
+
+export function renderAgvState(state) {
+  return (
+    <Tag color={AgvStateColor[state]}>
+      <FormattedMessage id={`app.agvState.${state}`} />
+    </Tag>
+  );
 }
 
 export function adjustModalWidth() {

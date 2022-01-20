@@ -5,6 +5,7 @@ import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
 import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
 import { fetchTemporaryBlockCells } from '@/services/monitor';
+import { Category } from '@/packages/XIHE/MapMonitor/enums';
 
 export default {
   namespace: 'monitor',
@@ -49,7 +50,7 @@ export default {
 
     // 右侧操作栏
     categoryPanel: null, // 右侧展示哪个类型的菜单
-    categoryLoad: null, // 展示菜单的内容
+    checkingElement: null, // 展示菜单的内容
 
     // 监控地图是否渲染完成
     mapRendered: false,
@@ -61,6 +62,13 @@ export default {
   reducers: {
     saveState(state, action) {
       return { ...state, ...action.payload };
+    },
+    saveCheckingElement(state, action) {
+      return {
+        ...state,
+        categoryPanel: Category.Prop,
+        checkingElement: action.payload,
+      };
     },
     saveCategoryModal(state, action) {
       return {

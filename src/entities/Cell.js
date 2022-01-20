@@ -43,7 +43,7 @@ export default class Cell extends PIXI.Container {
     this.addCellId();
     this.addCoordination();
     this.addSelectedBackGround(450, 400);
-    this.interact(true);
+    this.interact(props.interactive);
   }
 
   get mode() {
