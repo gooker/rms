@@ -1,9 +1,16 @@
 import * as PIXI from 'pixi.js';
 import * as XLSX from 'xlsx';
 import { find, groupBy, sortBy } from 'lodash';
-import { LogicArea } from '@/entities';
+import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
-import { AGVState, CostColor, SorterAGVSize, TaskPathColor, ToteAGVSize } from '@/config/consts';
+import {
+  AGVState,
+  CellSize,
+  CostColor,
+  SorterAGVSize,
+  TaskPathColor,
+  ToteAGVSize,
+} from '@/config/consts';
 import json from '../../package.json';
 import {
   getAgvSelectBorderTexture,
@@ -96,6 +103,144 @@ export function getLineJson(source, target, cost) {
     cost,
     distance: getDistance(source, target),
   };
+}
+
+// 判断是否有对头线
+function getHasOppositeDirection(relations, source, target) {
+  let result = false;
+  for (let index = 0; index < relations.length; index++) {
+    const element = relations[index];
+    if (element.source === target && element.target === source) {
+      result = true;
+      break;
+    }
+  }
+  return result;
+}
+
+// 如果是斜线，要考虑锚点在点位角上
+function getLineCorner(relations, beginCell, endCell, angle) {
+  let x1;
+  let y1;
+
+  switch (true) {
+    case angle > 0 && angle < 90: {
+      x1 = beginCell.x + CellSize.width / 2;
+      y1 = beginCell.y - CellSize.height / 2;
+      break;
+    }
+    case angle > 90 && angle < 180: {
+      x1 = beginCell.x + CellSize.width / 2;
+      y1 = beginCell.y + CellSize.height / 2;
+      break;
+    }
+    case angle > 180 && angle < 270: {
+      x1 = beginCell.x - CellSize.width / 2;
+      y1 = beginCell.y + CellSize.height / 2;
+      break;
+    }
+    case angle > 270 && angle < 360: {
+      x1 = beginCell.x - CellSize.width / 2;
+      y1 = beginCell.y - CellSize.height / 2;
+      break;
+    }
+    default:
+      break;
+  }
+  return { x1, y1 };
+}
+
+/**
+ * 获取当前线条的起始点坐标和角度
+ * @param {*} relations
+ * @param {*} beginCell
+ * @param {*} endCell
+ * @param {*} angle
+ * @returns { fromX, fromY, length, distance }
+ */
+function getLineAnchor(relations, beginCell, endCell, angle) {
+  let fromX;
+  let fromY;
+  let length;
+
+  // 计算线条起点
+  if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
+    fromX = (beginCell.x + endCell.x) / 2;
+    fromY = (beginCell.y + endCell.y) / 2;
+  } else {
+    switch (angle) {
+      case 0: {
+        fromX = beginCell.x;
+        fromY = beginCell.y - CellSize.height / 2;
+        break;
+      }
+      case 90: {
+        fromX = beginCell.x + CellSize.height / 2;
+        fromY = beginCell.y;
+        break;
+      }
+      case 180: {
+        fromX = beginCell.x;
+        fromY = beginCell.y + CellSize.width / 2;
+        break;
+      }
+      case 270: {
+        fromX = beginCell.x - CellSize.height / 2;
+        fromY = beginCell.y;
+        break;
+      }
+      default: {
+        const data = getLineCorner(relations, beginCell, endCell, angle);
+        fromX = data.x1;
+        fromY = data.y1;
+        break;
+      }
+    }
+  }
+
+  // 计算线条长度
+  if ([0, 90, 180, 270].includes(angle)) {
+    length = calculateCellDistance({ x: fromX, y: fromY }, endCell) - CellSize.height / 2;
+  } else {
+    length =
+      calculateCellDistance({ x: fromX, y: fromY }, endCell) -
+      Math.sqrt(CellSize.height ** 2 + CellSize.width ** 2) / 2;
+  }
+
+  const distance = calculateCellDistance(beginCell, endCell);
+  return { fromX, fromY, length, distance };
+}
+
+/**
+ * 获取线条实例
+ * @param {*} relations
+ * @param {*} beginCell
+ * @param {*} endCell
+ * @param {*} lineAngle
+ * @param {*} cost
+ * @param {*} clickCB
+ * @param {*} mapMode
+ */
+export function getLineGraphics(relations, beginCell, endCell, lineAngle, cost, clickCB, mapMode) {
+  const { fromX, fromY, length, distance } = getLineAnchor(
+    relations,
+    beginCell,
+    endCell,
+    lineAngle,
+  );
+  return new LineArrow({
+    id: `${beginCell.id}-${endCell.id}`,
+    fromX,
+    fromY,
+    lineAngle,
+    cost,
+    length,
+    distance,
+    interactive: !!clickCB,
+    isClassic: mapMode === 'standard',
+    mapMode: mapMode,
+    click: clickCB,
+  });
 }
 
 /**
