@@ -6,7 +6,6 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { GMT2UserTimeZone } from '@/utils/utils';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
-import ErrorList from './components/ErrorList';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
@@ -69,13 +68,11 @@ class TaskDetail extends PureComponent {
     const {
       cancel,
       detailInfo,
-      errorCodes,
       restartTask,
       restoreTask,
       currentType,
       chargeRecord,
       forceStandBy,
-      errorTaskList,
       allTaskTypes,
     } = this.props;
     if (!detailInfo) return null;
@@ -198,7 +195,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.common.sectionId" />}
+                    title={<FormattedMessage id="app.form.sectionId" />}
                     content={<span>{detailInfo.sectionId}</span>}
                   />
                 </Col>
@@ -260,18 +257,6 @@ class TaskDetail extends PureComponent {
                   </Button>
                 </div>
               </div>
-            )}
-
-            {/** ******************************* 小车错误记录 *********************************** */}
-            {errorTaskList && errorTaskList.length > 0 && (
-              <Permission id="/map/monitor/taskDetail/taskDetail/errorRecord">
-                <div>
-                  <Divider orientation="left">
-                    {formatMessage({ id: 'app.taskDetail.errorRecord' })}
-                  </Divider>
-                  <ErrorList agvErrorList={errorTaskList} errorCodes={errorCodes} />
-                </div>
-              </Permission>
             )}
 
             {/** ******************************* 工作站任务 *********************************** */}

@@ -6,4 +6,5 @@ export default {
     'lockManage.robot.missingRobotLock': '缺小车锁',
     'lockManage.robot.notAvailable': '暂无',
     'lockManage.robot.updateAgv': '请更新小车锁相关的接口',
+    'lockManage.robot.number.required': '请输入数字',
 };

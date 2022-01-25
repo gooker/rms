@@ -2,17 +2,17 @@ import React, { useState, memo, useEffect } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Button, Row, Col, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchAgvTaskLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';
+import { fetchAgvTaskLockList, batchDeleteAgvTaskLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
 import RobotLockSearch from './RobotLockSearch';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/utils';
 import RmsConfirm from '@/components/RmsConfirm';
 
 const RobotLock = (props) => {
-  const { getColumn, dispatch, agvType } = props;
+  const { dispatch, agvType } = props;
 
   const [loading, setLoading] = useState(false);
   const [robotLockList, setRobotLockList] = useState([]);
@@ -49,12 +49,12 @@ const RobotLock = (props) => {
       return;
     }
     const { robotId, taskId } = formValues;
-    if (!isNull(robotId)) {
+    if (!isStrictNull(robotId)) {
       result = result.filter((item) => {
         return item.robotId === robotId;
       });
     }
-    if (!isNull(taskId)) {
+    if (!isStrictNull(taskId)) {
       result = result.filter((item) => item.taskId === taskId);
     }
     setCurrentRobottLockList(result);
@@ -72,7 +72,7 @@ const RobotLock = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await fetchBatchDeleteTargetCellLock({
+        const response = await batchDeleteAgvTaskLock(agvType, {
           agvTaskLockDTOList: selectedRow,
         });
         if (!dealResponse(response)) {
@@ -83,6 +83,54 @@ const RobotLock = (props) => {
         }
       },
     });
+  }
+
+  function getColumn(checkDetail) {
+    return [
+      {
+        title: <FormattedMessage id="app.agv.id" />,
+        dataIndex: 'robotId',
+        align: 'center',
+        fixed: 'left',
+      },
+      {
+        title: <FormattedMessage id="lockManage.robot.status" />,
+        dataIndex: 'lockStatus',
+        render: (text) => {
+          if (text === 0) {
+            return <FormattedMessage id="lockManage.robot.fullLock" />;
+          }
+          if (text === 1) {
+            return <FormattedMessage id="lockManage.robot.missingTaskLock" />;
+          }
+          if (text === 2) {
+            return <FormattedMessage id="lockManage.robot.missingRobotLock" />;
+          }
+          return <FormattedMessage id="lockManage.robot.notAvailable" />;
+        },
+      },
+      {
+        title: <FormattedMessage id="app.task.id" />,
+        dataIndex: 'taskId',
+        align: 'center',
+        render: (text, record) => {
+          if (!isNull(text)) {
+            return (
+              <Tooltip title={text}>
+                <span
+                  className={commonStyles.textLinks}
+                  onClick={() => {
+                    checkDetail(text, AGVType.LatentLifting);
+                  }}
+                >
+                  {text ? '*' + text.substr(text.length - 6, 6) : null}
+                </span>
+              </Tooltip>
+            );
+          }
+        },
+      },
+    ];
   }
 
   return (

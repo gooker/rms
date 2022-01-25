@@ -5,6 +5,8 @@ import {
   fetchCancelTask,
   fetchRestoreTask,
   fetchAgvErrorRecord,
+  getAGVTaskLog,
+  getAlertCentersByTaskIdOrAgvId,
 } from '@/services/api';
 import { dealResponse, formatMessage } from '@/utils/utils';
 
@@ -19,6 +21,8 @@ export default {
 
     detailInfo: {},
     singleErrorTask: [],
+    taskRecord: [], // 任务日志
+    taskAlaram: [], // 告警信息
   },
 
   effects: {
@@ -35,6 +39,25 @@ export default {
         return;
       }
 
+      // 获取任务日志
+      const responseLog = yield call(getAGVTaskLog, {
+        size: 10,
+        current: 1,
+        taskId,
+      });
+      debugger;
+      if (dealResponse(responseLog)) {
+        return;
+      }
+
+      // 获取告警信息
+      const responseAlaram = yield call(getAlertCentersByTaskIdOrAgvId, {
+        taskId,
+      });
+      if (dealResponse(responseAlaram)) {
+        return;
+      }
+
       // 获取小车错误记录
       const params = { sectionId, taskId, size: 500, current: 1 };
       const responseForError = yield call(fetchAgvErrorRecord, taskAgvType, params);
@@ -44,6 +67,8 @@ export default {
 
       yield put({ type: 'fetchTaskDetailByTaskIdEffect', payload: response });
       yield put({ type: 'fetchTaskErrorTaskIdEffect', payload: responseForError.list });
+      yield put({ type: 'fetchTaskLogBytaskIdEffect', payload: responseLog.list || [] });
+      yield put({ type: 'fetchTaskAlaramBytaskIdEffect', payload: responseAlaram || [] });
       yield put({ type: 'changeLoadingTaskDetail', payload: false });
     },
 
@@ -157,6 +182,18 @@ export default {
       return {
         ...state,
         loadingTaskDetail: payload,
+      };
+    },
+    fetchTaskLogBytaskIdEffect(state, { payload }) {
+      return {
+        ...state,
+        taskRecord: payload,
+      };
+    },
+    fetchTaskAlaramBytaskIdEffect(state, { payload }) {
+      return {
+        ...state,
+        taskAlaram: payload,
       };
     },
   },

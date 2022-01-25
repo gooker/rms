@@ -7,6 +7,7 @@ import Dictionary from '@/utils/Dictionary';
 import AgvTaskSteps from './components/AgvTaskSteps';
 import AgvTaskHistory from './components/AgvTaskHistorys';
 import DetailInfo from './components/DetailInfo';
+import TaskRecordOrAlarm from './components/TaskRecordOrAlarm';
 import TaskDetail from './TaskDetail';
 import { AGVType } from '@/config/config';
 
@@ -180,7 +181,14 @@ class Detail extends PureComponent {
   render() {
     const { allErrorDefinitions } = this.state;
     const {
-      task: { loadingTaskDetail, taskDetailVisible, taskAgvType, detailInfo, singleErrorTask },
+      task: {
+        loadingTaskDetail,
+        taskDetailVisible,
+        taskAgvType,
+        detailInfo,
+        taskRecord,
+        taskAlaram,
+      },
     } = this.props;
     return (
       <DetailInfo
@@ -195,7 +203,6 @@ class Detail extends PureComponent {
               <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
                 <TaskDetail
                   currentType={taskAgvType}
-                  errorTaskList={singleErrorTask}
                   errorCodes={allErrorDefinitions}
                   detailInfo={detailInfo.taskDetail}
                   chargeRecord={detailInfo.chargeRecord}
@@ -229,6 +236,36 @@ class Detail extends PureComponent {
                         robotType={taskAgvType}
                         step={detailInfo.taskDetail.agvStepTaskHistorys}
                       />
+                    </Card>
+                  ) : (
+                    <Empty />
+                  )}
+                </Col>
+              </Tabs.TabPane>
+            )}
+
+            {/********* 任务日志 *********/}
+            {hasPermission('/map/monitor/taskDetail/taskDetail') && (
+              <Tabs.TabPane tab={formatMessage({ id: 'app.taskRecord.log' })} key="d">
+                <Col span={24}>
+                  {taskRecord.length > 0 ? (
+                    <Card bordered={true}>
+                      <TaskRecordOrAlarm taskRecord={taskRecord} />
+                    </Card>
+                  ) : (
+                    <Empty />
+                  )}
+                </Col>
+              </Tabs.TabPane>
+            )}
+
+            {/********* 任务告警 *********/}
+            {hasPermission('/map/monitor/taskDetail/taskDetail') && (
+              <Tabs.TabPane tab={formatMessage({ id: 'app.taskAlarm.log' })} key="e">
+                <Col span={24}>
+                  {taskAlaram.length > 0 ? (
+                    <Card bordered={true}>
+                      <TaskRecordOrAlarm taskAlaram={taskAlaram} />
                     </Card>
                   ) : (
                     <Empty />

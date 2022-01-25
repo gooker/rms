@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator, Tote, LatentLifting, ForkLifting } = NameSpace;
+const { Coordinator, Tote, LatentLifting, ForkLifting, Sorter } = NameSpace;
 
 export async function fetchAllTaskTypes() {
   return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {
@@ -185,6 +185,22 @@ export async function fetchAgvTaskList(agvType, params) {
   return request(`/${NameSpace[agvType]}/api/agvTask`, {
     method: 'POST',
     data: params,
+  });
+}
+
+// 小车-任务日志
+export async function getAGVTaskLog(param) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAGVTaskLog`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 小车详情-告警信息
+export async function getAlertCentersByTaskIdOrAgvId(param) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCentersByTaskIdOrAgvId`, {
+    method: 'GET',
+    data: param,
   });
 }
 
@@ -904,7 +920,7 @@ export async function fetchBatchDeleteTargetCellLock(params) {
   });
 }
 
-// 小车锁
+// 潜伏类/分拣---小车锁
 export async function fetchAgvTaskLockList(agvType) {
   return request(
     `/${NameSpace[agvType]}/redis/getAgvTaskLockList/${window.localStorage.getItem('sectionId')}`,
@@ -913,10 +929,57 @@ export async function fetchAgvTaskLockList(agvType) {
     },
   );
 }
-
-export async function fetchBatchDeleteLatentAgvTaskLock(agvType, params) {
+//潜伏类/分拣---小车锁删除
+export async function batchDeleteAgvTaskLock(agvType, params) {
   return request(`/${NameSpace[agvType]}/redis/batchDeleteAgvTaskLock`, {
     method: 'POST',
     data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}
+
+// 潜伏类---获取存储点锁
+export async function fetchStorageLockList() {
+  return request(`/${Coordinator}/lock/getStoreCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 潜伏类---批量删除存储点锁
+export async function batchDeleteStorageLock(params) {
+  return request(`/${Coordinator}/redis/batchDeleteStoreCellLock`, {
+    method: 'POST',
+    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}
+
+// 潜伏类---获取货架任务锁
+export async function fetchPodTaskLockList() {
+  return request(`/${Coordinator}/lock/getPodTaskLockList`, {
+    method: 'GET',
+  });
+}
+// 潜伏类---批量删除货架任务锁
+export async function batchDeletePodTaskLock(params) {
+  return request(`/${Coordinator}/lock/batchDeletePodTaskLock`, {
+    method: 'POST',
+    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}
+
+// 分拣类----小车锁列表
+export async function fetchGetSorterAgvTaskLockList(sectionId, params) {
+  return request(
+    `/${Sorter}/redis/getAgvTaskLockList/${window.localStorage.getItem('sectionId')}`,
+    {
+      method: 'GET',
+      data: params,
+    },
+  );
+}
+// 分拣类---小车锁删除
+export async function fetchBatchDeleteSorterAgvTaskLock(params) {
+  return request(`/${Sorter}/redis/batchDeleteAgvTaskLock`, {
+    method: 'POST',
+    data: params,
   });
 }

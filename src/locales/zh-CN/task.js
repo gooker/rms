@@ -131,4 +131,17 @@ export default {
   'app.taskPool.FetchDetail':'FETCH 详情',
   'app.taskPool.PutDetail':'PUT 详情',
   'app.taskPool.mountedBin': '已挂载的料箱',
+
+  // 任务日志
+  'app.taskRecord.date': '日期',
+  'app.taskRecord.log': '任务日志',
+
+  // 任务告警
+  'app.taskAlarm.log': '任务告警',
+  'app.taskAlarm.code': '告警编码',
+  'app.taskAlarm.level': '告警等级',
+  'app.taskAlarm.count': '告警次数',
+  'app.taskAlarm.alertName': '告警名称',
+  'app.taskAlarm.alertContent': '告警内容',
+
 };

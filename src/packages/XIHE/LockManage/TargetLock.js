@@ -8,7 +8,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
 import TargetLockSearch from './components/TargetLockSearch';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/utils';
 import RmsConfirm from '@/components/RmsConfirm';
 
 const TargetLock = (props) => {
@@ -109,13 +109,13 @@ const TargetLock = (props) => {
       return;
     }
     const { robotId, cellId } = formValues;
-    if (!isNull(robotId)) {
+    if (!isStrictNull(robotId)) {
       result = result.filter((item) => {
         return item.robotId === robotId;
       });
     }
-    if (!isNull(cellId)) {
-      result = result.filter((item) => item.cellId === cellId);
+    if (!isStrictNull(cellId)) {
+      result = result.filter((item) => item.cellId === Number(cellId));
     }
     setCurrentTargetLockList(result);
     return;
