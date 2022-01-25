@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from '@/utils/RcsDva';
 import { CopyrightOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import WelcomeImage from './images/welcome.png';
+import WelcomeImage from '@/../public/images/welcome.png';
 import styles from './Welcome.module.less';
 
 /**

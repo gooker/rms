@@ -1,4 +1,3 @@
-const webpack = require('webpack');
 const { merge } = require('webpack-merge');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const paths = require('./paths');
@@ -14,8 +13,8 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
 
   output: {
     path: paths.appBuild,
-    filename: 'static/js/[name].bundle.js', // 这里必须是[name],否则会报文件名冲突错误
-    chunkFilename: 'static/js/[name].chunk.js',
+    filename: 'js/[name].bundle.js', // 这里必须是[name],否则会报文件名冲突错误
+    chunkFilename: 'js/[name].chunk.js',
     publicPath: '/',
   },
 
@@ -32,5 +31,11 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
     historyApiFallback: true,
     // 可访问开发服务器的地址
     allowedHosts: 'all',
+
+    // 当出现编译错误或警告时，在浏览器中显示全屏覆盖
+    client: {
+      progress: true,
+      overlay: false,
+    },
   },
 });

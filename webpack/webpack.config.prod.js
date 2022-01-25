@@ -2,9 +2,9 @@ const paths = require('./paths');
 const BaseConfig = require('./webpack.config.base');
 const { merge } = require('webpack-merge');
 const TerserPlugin = require('terser-webpack-plugin');
-const safePostCssParser = require('postcss-safe-parser');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 console.log('Creating an optimized RMS production build...');
@@ -17,8 +17,8 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
 
   output: {
     path: paths.appBuild,
-    filename: 'static/js/[name].[contenthash:8].js',
-    chunkFilename: 'static/js/[name].[contenthash:8].chunk.js',
+    filename: 'js/[name].[contenthash:8].js',
+    chunkFilename: 'js/[name].[contenthash:8].chunk.js',
     publicPath: '/',
   },
 
@@ -38,14 +38,7 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
       }),
 
       // This is only used in production mode
-      new OptimizeCSSAssetsPlugin({
-        cssProcessorOptions: {
-          parser: safePostCssParser,
-        },
-        cssProcessorPluginOptions: {
-          preset: ['default', { minifyFontValues: { removeQuotes: false } }],
-        },
-      }),
+      new CssMinimizerPlugin(),
     ],
 
     runtimeChunk: {
@@ -59,6 +52,24 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
       threshold: 10240,
       algorithm: 'gzip',
       test: new RegExp('\\.(js|less|css)$'),
+    }),
+
+    /**
+     * PIXI Texture图片文件和字体文件不是经过import或者require方式访问
+     * 所以并不会被Webpack所处理，所以这里使用这个插件将这些文件拷贝到指定目录
+     */
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: `${paths.appPublic}/images`,
+          to: 'images',
+        },
+        {
+          from: `${paths.appPublic}/fonts`,
+          filter: (resourcePath) => !resourcePath.endsWith('.ttf'),
+          to: 'fonts',
+        },
+      ],
     }),
 
     process.env.ANALYZE === '1' && new BundleAnalyzerPlugin(),

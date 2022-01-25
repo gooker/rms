@@ -4,7 +4,7 @@ import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import throttle from 'lodash/throttle';
 import { connect } from '@/utils/RcsDva';
 import LayoutMenu from '@/components/Menu';
-import Logo from '../images/logoMain.png'
+import Logo from '@/../public/images/logoMain.png';
 
 const { Sider } = Layout;
 
@@ -12,9 +12,11 @@ class LayoutSider extends React.PureComponent {
   state = {
     collapsed: false,
   };
+
   componentDidMount() {
     this.resizeObserver();
   }
+
   componentWillUnmount() {
     this.bodySizeObserver.disconnect();
   }
@@ -38,12 +40,12 @@ class LayoutSider extends React.PureComponent {
   };
   render() {
     const { collapsed } = this.state;
-    const {logo } = this.props;
+    const { logo } = this.props;
     return (
       <Sider trigger={null} collapsible collapsed={collapsed}>
         <div className="siderLogo">
-            <img src={logo || Logo} alt={'logo'} />
-          </div>
+          <img src={logo || Logo} alt={'logo'} />
+        </div>
         <LayoutMenu />
         <div
           onClick={this.toggle}
@@ -53,7 +55,7 @@ class LayoutSider extends React.PureComponent {
             bottom: 40,
             left: 10,
             fontSize: '16px',
-            cursor:'pointer',
+            cursor: 'pointer',
           }}
         >
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}

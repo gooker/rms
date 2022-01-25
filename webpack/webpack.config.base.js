@@ -2,8 +2,8 @@ const os = require('os');
 const paths = require('./paths');
 const webpack = require('webpack');
 const WebpackBar = require('webpackbar');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const postcssNormalize = require('postcss-normalize');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -61,7 +61,6 @@ function getWebPackBaseConfig(webpackEnv) {
   return {
     resolve: {
       modules: ['node_modules', paths.appNodeModules],
-      extensions: paths.moduleFileExtensions.map((ext) => `.${ext}`),
       alias: {
         '@': paths.appSrc,
       },
@@ -131,27 +130,27 @@ function getWebPackBaseConfig(webpackEnv) {
         },
 
         {
-          test: /\.(woff|eot|ttf|svg)$/,
+          test: /\.(woff|eot|ttf)$/,
           loader: 'url-loader',
           options: {
             limit: 10,
-            name: 'static/fonts/[name].[hash:8].[ext]',
+            name: 'fonts/[name].[hash:8].[ext]',
           },
         },
 
         {
-          test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
+          test: [/\.gif$/, /\.jpe?g$/, /\.png$/, /\.svg$/],
           loader: 'url-loader',
           options: {
-            limit: 10000,
-            name: 'static/media/[name].[hash:8].[ext]',
+            limit: 1024 * 100, // 当大于100kb时候，将文件打包到publicPath中
+            name: 'images/[name].[hash:8].[ext]',
           },
         },
       ],
     },
 
     plugins: [
-      new WebpackBar(),
+      new WebpackBar({ color: 'green', profile: true }),
       new MomentLocalesPlugin(),
       new CaseSensitivePathsPlugin(),
       new webpack.IgnorePlugin({ resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ }),
@@ -172,8 +171,8 @@ function getWebPackBaseConfig(webpackEnv) {
       }),
 
       new MiniCssExtractPlugin({
-        filename: 'static/css/[name].[contenthash:8].css',
-        chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        filename: 'css/[name].[contenthash:8].css',
+        chunkFilename: 'css/[name].[contenthash:8].chunk.css',
       }),
 
       // 这里有个坑记录下: https://blog.csdn.net/vv_bug/article/details/113845376

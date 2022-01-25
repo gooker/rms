@@ -29,7 +29,7 @@ const XIHE = (props) => {
               display: 'block',
               verticalAlign: 'middle',
             }}
-            src={require('@/../public/pictures/xihe.png').default}
+            src={require('@/../public/images/xihe.png').default}
           />
         </span>
       </Badge>
@@ -87,7 +87,7 @@ const LatentLifting = (props) => {
               verticalAlign: 'middle',
               margin: '8px auto',
             }}
-            src={require('@/../public/pictures/agv_latent.png').default}
+            src={require('@/../public/images/agv_latent.png').default}
           />
         </span>
       </Badge>
@@ -120,7 +120,7 @@ const Tote = (props) => {
               verticalAlign: 'middle',
               margin: '0 auto',
             }}
-            src={require('@/../public/pictures/agv_tote.png').default}
+            src={require('@/../public/images/agv_tote.png').default}
           />
         </span>
       </Badge>
@@ -152,7 +152,7 @@ const Sorter = (props) => {
               display: 'block',
               verticalAlign: 'middle',
             }}
-            src={require('@/../public/pictures/agv_sorter.png').default}
+            src={require('@/../public/images/agv_sorter.png').default}
           />
         </span>
       </Badge>
@@ -184,7 +184,7 @@ const ForkLifting = (props) => {
               display: 'block',
               verticalAlign: 'middle',
             }}
-            src={require('@/../public/pictures/agv_forklift.png').default}
+            src={require('@/../public/images/agv_forklift.png').default}
           />
         </span>
       </Badge>

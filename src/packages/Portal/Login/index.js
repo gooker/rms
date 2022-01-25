@@ -11,8 +11,8 @@ import {
 import { dealResponse, formatMessage, isNull } from '@/utils/utils';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getEnvOptionData, getActiveEnv } from './selector';
-import LoginBackPicture from '../images/login_pic.png';
-import Logo from '../images/logoMain.png';
+import LoginBackPicture from '@/../public/images/login_pic.png';
+import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
 
 const Login = (props) => {

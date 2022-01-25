@@ -31,7 +31,7 @@ class CardRadio extends React.PureComponent {
                   onChange('work_station');
                 }}
               >
-                <img style={{ width: '80%', height: '80%' }} src={'/pictures/work_station.png'} />
+                <img style={{ width: '80%', height: '80%' }} src={'/work_station.png'} />
               </div>
             </Col>
             <Col span={12}>
@@ -41,7 +41,7 @@ class CardRadio extends React.PureComponent {
                   onChange('work_station_3');
                 }}
               >
-                <img style={{ width: '80%', height: '80%' }} src={'/pictures/work_station_3.png'} />
+                <img style={{ width: '80%', height: '80%' }} src={'/work_station_3.png'} />
               </div>
             </Col>
           </>
@@ -56,7 +56,7 @@ class CardRadio extends React.PureComponent {
                 onChange('common');
               }}
             >
-              <img style={{ width: '80%', height: '80%' }} src={'/pictures/common.png'} />
+              <img style={{ width: '80%', height: '80%' }} src={'/common.png'} />
             </div>
           </Col>
         )}
@@ -77,7 +77,7 @@ class CardRadio extends React.PureComponent {
                 >
                   <img
                     style={{ width: '80%', height: index + 1 === 8 ? '65%' : '80%' }}
-                    src={`/pictures/work_station_${index + 1}.png`}
+                    src={`/work_station_${index + 1}.png`}
                   />
                 </div>
               </Col>
