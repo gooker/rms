@@ -26,7 +26,7 @@ const app = createRcsDva({
   },
 });
 window.g_app = app;
-window.__rcs_global_state__ = window.g_app._store.getState;
+window.__g_state__ = window.g_app._store.getState;
 
 // 2. 注册 Model
 models.forEach((model) => app.model(model));
