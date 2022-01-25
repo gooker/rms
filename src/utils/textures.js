@@ -1,14 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { BitText, LineArrow } from '@/entities';
-import { calculateCellDistance } from './mapUtils';
-import {
-  CellSize,
-  ToteAGVSize,
-  CostColor,
-  TaskPathColor,
-  HeatCircleRadius,
-  SorterAGVSize,
-} from '@/config/consts';
+import { CellSize, HeatCircleRadius } from '@/config/consts';
 
 export function getQrCodeSelectBorderTexture() {
   const tmpSelectedBorder = new PIXI.Graphics();
@@ -70,22 +61,22 @@ export function getBoldCostArrow(color) {
   // 箭头左帽
   let arrowX;
   let arrowY;
-  const headlen = 150;
+  const headLength = 150;
   const theta = 25;
   const angle1 = ((90 + theta) * Math.PI) / 180;
-  const topX = headlen * Math.cos(angle1);
-  const topY = headlen * Math.sin(angle1);
-  arrowX = 0 + topX;
-  arrowY = 0 + topY;
+  const topX = headLength * Math.cos(angle1);
+  const topY = headLength * Math.sin(angle1);
+  arrowX = topX;
+  arrowY = topY;
   arrow.moveTo(arrowX, arrowY);
   arrow.lineTo(0, 0);
 
   // 箭头右帽
   const angle2 = ((90 - theta) * Math.PI) / 180;
-  const botX = headlen * Math.cos(angle2);
-  const botY = headlen * Math.sin(angle2);
-  arrowX = 0 + botX;
-  arrowY = 0 + botY;
+  const botX = headLength * Math.cos(angle2);
+  const botY = headLength * Math.sin(angle2);
+  arrowX = botX;
+  arrowY = botY;
   arrow.lineTo(arrowX, arrowY);
 
   // 路线纹理
@@ -133,143 +124,6 @@ export function getRectLock(width, height) {
   return window.PixiUtils.renderer.generateTexture(rectLock);
 }
 
-// 渲染Cost相关
-function getHasOppositeDirection(relations, source, target) {
-  let result = false;
-  for (let index = 0; index < relations.length; index++) {
-    const element = relations[index];
-    if (element.source === target && element.target === source) {
-      result = true;
-      break;
-    }
-  }
-  return result;
-}
-
-function getLineCorner(relations, beginCell, endCell, angle) {
-  let x1;
-  let y1;
-
-  switch (true) {
-    case angle > 0 && angle < 90: {
-      x1 = beginCell.x + CellSize.width / 2;
-      y1 = beginCell.y - CellSize.height / 2;
-      break;
-    }
-    case angle > 90 && angle < 180: {
-      x1 = beginCell.x + CellSize.width / 2;
-      y1 = beginCell.y + CellSize.height / 2;
-      break;
-    }
-    case angle > 180 && angle < 270: {
-      x1 = beginCell.x - CellSize.width / 2;
-      y1 = beginCell.y + CellSize.height / 2;
-      break;
-    }
-    case angle > 270 && angle < 360: {
-      x1 = beginCell.x - CellSize.width / 2;
-      y1 = beginCell.y - CellSize.height / 2;
-      break;
-    }
-    default:
-      break;
-  }
-  return { x1, y1 };
-}
-
-/**
- * 获取当前线条的起始点坐标和角度
- * @param {*} relations
- * @param {*} beginCell
- * @param {*} endCell
- * @param {*} angle
- * @returns { fromX, fromY, length, distance }
- */
-function getLineAnchor(relations, beginCell, endCell, angle) {
-  let fromX;
-  let fromY;
-  let length;
-
-  // 计算线条起点
-  if (getHasOppositeDirection(relations, beginCell.id, endCell.id)) {
-    fromX = (beginCell.x + endCell.x) / 2;
-    fromY = (beginCell.y + endCell.y) / 2;
-  } else {
-    switch (angle) {
-      case 0: {
-        fromX = beginCell.x;
-        fromY = beginCell.y - CellSize.height / 2;
-        break;
-      }
-      case 90: {
-        fromX = beginCell.x + CellSize.height / 2;
-        fromY = beginCell.y;
-        break;
-      }
-      case 180: {
-        fromX = beginCell.x;
-        fromY = beginCell.y + CellSize.width / 2;
-        break;
-      }
-      case 270: {
-        fromX = beginCell.x - CellSize.height / 2;
-        fromY = beginCell.y;
-        break;
-      }
-      default: {
-        const data = getLineCorner(relations, beginCell, endCell, angle);
-        fromX = data.x1;
-        fromY = data.y1;
-        break;
-      }
-    }
-  }
-
-  // 计算线条长度
-  if ([0, 90, 180, 270].includes(angle)) {
-    length = calculateCellDistance({ x: fromX, y: fromY }, endCell) - CellSize.height / 2;
-  } else {
-    length =
-      calculateCellDistance({ x: fromX, y: fromY }, endCell) -
-      Math.sqrt(CellSize.height ** 2 + CellSize.width ** 2) / 2;
-  }
-
-  const distance = calculateCellDistance(beginCell, endCell);
-  return { fromX, fromY, length, distance };
-}
-
-/**
- * 获取线条实例
- * @param {*} relations
- * @param {*} beginCell
- * @param {*} endCell
- * @param {*} lineAngle
- * @param {*} cost
- * @param {*} clickCB
- * @param {*} mapMode
- */
-export function getLineGraphics(relations, beginCell, endCell, lineAngle, cost, clickCB, mapMode) {
-  const { fromX, fromY, length, distance } = getLineAnchor(
-    relations,
-    beginCell,
-    endCell,
-    lineAngle,
-  );
-  return new LineArrow({
-    id: `${beginCell.id}-${endCell.id}`,
-    fromX,
-    fromY,
-    lineAngle,
-    cost,
-    length,
-    distance,
-    interactive: !!clickCB,
-    isClassic: mapMode === 'standard',
-    mapMode: mapMode,
-    click: clickCB,
-  });
-}
-
 export function loadTexturesForMap() {
   return new Promise((resolve) => {
     PIXI.Loader.shared
@@ -277,101 +131,101 @@ export function loadTexturesForMap() {
       .add('mufont', '/fonts/mufont-hd.xml')
 
       // 材质图片
-      .add('0', '/textures/0.png')
-      .add('1-10', '/textures/1-10.png')
-      .add('11-20', '/textures/11-20.png')
-      .add('21-40', '/textures/21-40.png')
-      .add('41-60', '/textures/41-60.png')
-      .add('61-80', '/textures/61-80.png')
-      .add('81-100', '/textures/81-100.png')
-      .add('actions', '/textures/actions.png')
-      .add('agv_connected', '/textures/agv_connected.png')
-      .add('agv_error', '/textures/agv_error.png')
-      .add('agv_manually', '/textures/agv_manually.png')
-      .add('agv_offline', '/textures/agv_offline.png')
-      .add('agv_on_task', '/textures/agv_on_task.png')
-      .add('agv_sorter', '/textures/agv_sorter.png')
-      .add('agv_stand_by', '/textures/agv_stand_by.png')
-      .add('agv_tote', '/textures/agv_tote.png')
-      .add('agv_waiting', '/textures/agv_waiting.png')
-      .add('barrier', '/textures/barrier.png')
-      .add('bifurcation', '/textures/bifurcation.png')
-      .add('block_cell', '/textures/block_cell.png')
-      .add('box', '/textures/box.png')
-      .add('buffer_cell', '/textures/buffer_cell.png')
-      .add('charger', '/textures/charger.png')
-      .add('charger_cell', '/textures/charger_cell.png')
-      .add('charging', '/textures/charging.png')
-      .add('charging_unbind', '/textures/charging_unbind.png')
-      .add('common', '/textures/common.png')
-      .add('elevator', '/textures/elevator.png')
-      .add('elevator_in', '/textures/elevator_in.png')
-      .add('elevator_out', '/textures/elevator_out.png')
-      .add('enter_cell', '/textures/enter_cell.png')
-      .add('error', '/textures/error.png')
-      .add('follow_cell', '/textures/follow_cell.png')
-      .add('forbidden', '/textures/forbidden.png')
-      .add('get_task', '/textures/get_task.png')
-      .add('heat_0', '/textures/heat_0.png')
-      .add('intersection', '/textures/intersection.png')
-      .add('latent_agv', '/textures/latent_agv.png')
-      .add('latent_agv_green', '/textures/latent_agv_green.png')
-      .add('latent_agv_grey', '/textures/latent_agv_grey.png')
-      .add('latent_agv_purple', '/textures/latent_agv_purple.png')
-      .add('latent_agv_red', '/textures/latent_agv_red.png')
-      .add('latent_agv_yellow', '/textures/latent_agv_yellow.png')
-      .add('leave_cell', '/textures/leave_cell.png')
-      .add('lock', '/textures/lock.png')
-      .add('maintain', '/textures/maintain.png')
-      .add('non_stop', '/textures/non_stop.png')
-      .add('offline', '/textures/offline.png')
-      .add('parking', '/textures/parking.png')
-      .add('pod', '/textures/pod.png')
-      .add('pod_BOTH', '/textures/pod_BOTH.png')
-      .add('pod_FETCH', '/textures/pod_FETCH.png')
-      .add('pod_PUT', '/textures/pod_PUT.png')
-      .add('pod_grey', '/textures/pod_grey.png')
-      .add('qrcode', '/textures/qrcode.png')
-      .add('rest_cell', '/textures/rest_cell.png')
-      .add('risk', '/textures/risk.png')
-      .add('rotate_lock', '/textures/rorate_lock.png')
-      .add('rotate_cell', '/textures/round.png')
-      .add('safe_cell', '/textures/safe_spot.png')
-      .add('scan_cell', '/textures/scan_cell.png')
-      .add('sorter', '/textures/sorter.png')
-      .add('sorter_green', '/textures/sorter_green.png')
-      .add('sorter_grey', '/textures/sorter_grey.png')
-      .add('sorter_purple', '/textures/sorter_purple.png')
-      .add('sorter_red', '/textures/sorter_red.png')
-      .add('sorter_yellow', '/textures/sorter_yellow.png')
-      .add('stop', '/textures/stop.png')
-      .add('store_cell', '/textures/store_cell.png')
-      .add('tmp_block_lock', '/textures/tmp_block_lock.png')
-      .add('tote_agv', '/textures/tote_agv.png')
-      .add('tote_agv_green', '/textures/tote_agv_green.png')
-      .add('tote_agv_grey', '/textures/tote_agv_grey.png')
-      .add('tote_agv_purple', '/textures/tote_agv_purple.png')
-      .add('tote_agv_red', '/textures/tote_agv_red.png')
-      .add('tote_agv_yellow', '/textures/tote_agv_yellow.png')
-      .add('tote_bin', '/textures/tote_bin.png')
-      .add('tote_shelf', '/textures/tote_shelf.png')
-      .add('traffic_control', '/textures/traffic_control.png')
-      .add('wait_cell', '/textures/wait_cell.png')
-      .add('waiting', '/textures/waiting.png')
-      .add('warning', '/textures/warning.png')
-      .add('welcome', '/textures/welcome.png')
-      .add('work_station', '/textures/work_station.png')
-      .add('work_station_1', '/textures/work_station_1.png')
-      .add('work_station_2', '/textures/work_station_2.png')
-      .add('work_station_3', '/textures/work_station_3.png')
-      .add('work_station_4', '/textures/work_station_4.png')
-      .add('work_station_5', '/textures/work_station_5.png')
-      .add('work_station_6', '/textures/work_station_6.png')
-      .add('work_station_7', '/textures/work_station_7.png')
-      .add('work_station_8', '/textures/work_station_8.png')
-      .add('errorLevel_1', '/textures/errorLevel_1.png')
-      .add('errorLevel_2', '/textures/errorLevel_2.png')
-      .add('errorLevel_3', '/textures/errorLevel_3.png')
+      .add('0', '/images/0.png')
+      .add('1-10', '/images/1-10.png')
+      .add('11-20', '/images/11-20.png')
+      .add('21-40', '/images/21-40.png')
+      .add('41-60', '/images/41-60.png')
+      .add('61-80', '/images/61-80.png')
+      .add('81-100', '/images/81-100.png')
+      .add('actions', '/images/actions.png')
+      .add('agv_connected', '/images/agv_connected.png')
+      .add('agv_error', '/images/agv_error.png')
+      .add('agv_manually', '/images/agv_manually.png')
+      .add('agv_offline', '/images/agv_offline.png')
+      .add('agv_on_task', '/images/agv_on_task.png')
+      .add('agv_sorter', '/images/agv_sorter.png')
+      .add('agv_stand_by', '/images/agv_stand_by.png')
+      .add('agv_tote', '/images/agv_tote.png')
+      .add('agv_waiting', '/images/agv_waiting.png')
+      .add('barrier', '/images/barrier.png')
+      .add('bifurcation', '/images/bifurcation.png')
+      .add('block_cell', '/images/block_cell.png')
+      .add('box', '/images/box.png')
+      .add('buffer_cell', '/images/buffer_cell.png')
+      .add('charger', '/images/charger.png')
+      .add('charger_cell', '/images/charger_cell.png')
+      .add('charging', '/images/charging.png')
+      .add('charging_unbind', '/images/charging_unbind.png')
+      .add('common', '/images/common.png')
+      .add('elevator', '/images/elevator.png')
+      .add('elevator_in', '/images/elevator_in.png')
+      .add('elevator_out', '/images/elevator_out.png')
+      .add('enter_cell', '/images/enter_cell.png')
+      .add('error', '/images/error.png')
+      .add('follow_cell', '/images/follow_cell.png')
+      .add('forbidden', '/images/forbidden.png')
+      .add('get_task', '/images/get_task.png')
+      .add('heat_0', '/images/heat_0.png')
+      .add('intersection', '/images/intersection.png')
+      .add('latent_agv', '/images/latent_agv.png')
+      .add('latent_agv_green', '/images/latent_agv_green.png')
+      .add('latent_agv_grey', '/images/latent_agv_grey.png')
+      .add('latent_agv_purple', '/images/latent_agv_purple.png')
+      .add('latent_agv_red', '/images/latent_agv_red.png')
+      .add('latent_agv_yellow', '/images/latent_agv_yellow.png')
+      .add('leave_cell', '/images/leave_cell.png')
+      .add('lock', '/images/lock.png')
+      .add('maintain', '/images/maintain.png')
+      .add('non_stop', '/images/non_stop.png')
+      .add('offline', '/images/offline.png')
+      .add('parking', '/images/parking.png')
+      .add('pod', '/images/pod.png')
+      .add('pod_BOTH', '/images/pod_BOTH.png')
+      .add('pod_FETCH', '/images/pod_FETCH.png')
+      .add('pod_PUT', '/images/pod_PUT.png')
+      .add('pod_grey', '/images/pod_grey.png')
+      .add('qrcode', '/images/qrcode.png')
+      .add('rest_cell', '/images/rest_cell.png')
+      .add('risk', '/images/risk.png')
+      .add('rotate_lock', '/images/rorate_lock.png')
+      .add('rotate_cell', '/images/round.png')
+      .add('safe_cell', '/images/safe_spot.png')
+      .add('scan_cell', '/images/scan_cell.png')
+      .add('sorter', '/images/sorter.png')
+      .add('sorter_green', '/images/sorter_green.png')
+      .add('sorter_grey', '/images/sorter_grey.png')
+      .add('sorter_purple', '/images/sorter_purple.png')
+      .add('sorter_red', '/images/sorter_red.png')
+      .add('sorter_yellow', '/images/sorter_yellow.png')
+      .add('stop', '/images/stop.png')
+      .add('store_cell', '/images/store_cell.png')
+      .add('tmp_block_lock', '/images/tmp_block_lock.png')
+      .add('tote_agv', '/images/tote_agv.png')
+      .add('tote_agv_green', '/images/tote_agv_green.png')
+      .add('tote_agv_grey', '/images/tote_agv_grey.png')
+      .add('tote_agv_purple', '/images/tote_agv_purple.png')
+      .add('tote_agv_red', '/images/tote_agv_red.png')
+      .add('tote_agv_yellow', '/images/tote_agv_yellow.png')
+      .add('tote_bin', '/images/tote_bin.png')
+      .add('tote_shelf', '/images/tote_shelf.png')
+      .add('traffic_control', '/images/traffic_control.png')
+      .add('wait_cell', '/images/wait_cell.png')
+      .add('waiting', '/images/waiting.png')
+      .add('warning', '/images/warning.png')
+      .add('welcome', '/images/welcome.png')
+      .add('work_station', '/images/work_station.png')
+      .add('work_station_1', '/images/work_station_1.png')
+      .add('work_station_2', '/images/work_station_2.png')
+      .add('work_station_3', '/images/work_station_3.png')
+      .add('work_station_4', '/images/work_station_4.png')
+      .add('work_station_5', '/images/work_station_5.png')
+      .add('work_station_6', '/images/work_station_6.png')
+      .add('work_station_7', '/images/work_station_7.png')
+      .add('work_station_8', '/images/work_station_8.png')
+      .add('errorLevel_1', '/images/errorLevel_1.png')
+      .add('errorLevel_2', '/images/errorLevel_2.png')
+      .add('errorLevel_3', '/images/errorLevel_3.png')
       .load(() => {
         resolve();
       });

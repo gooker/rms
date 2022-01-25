@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import classnames from 'classnames';
 import { connect } from '@/utils/RcsDva';
-import styles from '../monitorLayout.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isStrictNull, renderAgvState, renderBattery } from '@/utils/utils';
+import styles from '../monitorLayout.module.less';
 
 const ElementProp = (props) => {
   const {
@@ -114,7 +114,7 @@ const ElementProp = (props) => {
                 <FormattedMessage id={'app.agv.exception'} />
               </span>
             </div>
-            <div></div>
+            <div />
           </div>
         </div>
 
@@ -144,7 +144,7 @@ const ElementProp = (props) => {
                 <img alt={'agv'} src={require('@/packages/XIHE/icons/path.png').default} />
               </div>
               <div>
-                <FormattedMessage id={'monitor.right.charge'} />
+                <FormattedMessage id={'monitor.path'} />
               </div>
             </div>
             <div className={styles.rightSideAgvContentOperationItem2}>
@@ -152,7 +152,7 @@ const ElementProp = (props) => {
                 <img alt={'agv'} src={require('@/packages/XIHE/icons/maintain.png').default} />
               </div>
               <div>
-                <FormattedMessage id={'monitor.right.charge'} />
+                <FormattedMessage id={'monitor.maintain'} />
               </div>
             </div>
             <div className={styles.rightSideAgvContentOperationItem2}>
@@ -160,7 +160,7 @@ const ElementProp = (props) => {
                 <img alt={'agv'} src={require('@/packages/XIHE/icons/manual.png').default} />
               </div>
               <div>
-                <FormattedMessage id={'monitor.right.charge'} />
+                <FormattedMessage id={'monitor.manual'} />
               </div>
             </div>
           </div>
@@ -176,7 +176,7 @@ const ElementProp = (props) => {
             <div className={styles.rightSideAgvContentOperationItem}>
               <img alt={'agv'} src={require('@/packages/XIHE/icons/reboot.png').default} />
               <div>
-                <FormattedMessage id={'monitor.operation.reboot'} />
+                <FormattedMessage id={'monitor.reboot'} />
               </div>
             </div>
             <div className={styles.rightSideAgvContentOperationItem}>

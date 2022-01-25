@@ -5,8 +5,8 @@ import {
   getLineEntityFromMap,
   getCurrentRouteMapData,
   getTextureFromResources,
+  getLineGraphics,
 } from '@/utils/mapUtils';
-import { getLineGraphics } from '@/utils/textures';
 import { isNull, isItemOfArray } from '@/utils/utils';
 import { CellSize, WorldScreenRatio, zIndex } from '@/config/consts';
 import {

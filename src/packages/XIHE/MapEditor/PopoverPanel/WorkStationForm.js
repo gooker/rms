@@ -107,7 +107,7 @@ const WorkStationForm = (props) => {
         >
           <RichInput
             currentCellId={selectCellIds}
-            icon={<img alt={'stop'} style={{ width: 25 }} src={'/pictures/stop.png'} />}
+            icon={<img alt={'stop'} style={{ width: 25 }} src={'/stop.png'} />}
           />
         </Form.Item>
 
@@ -170,7 +170,7 @@ const WorkStationForm = (props) => {
           label={<FormattedMessage id="editor.cellType.scan" />}
         >
           <RichInput
-            icon={<img alt={'scan_cell'} style={{ width: 25 }} src={'/pictures/scan_cell.png'} />}
+            icon={<img alt={'scan_cell'} style={{ width: 25 }} src={'/scan_cell.png'} />}
             currentCellId={selectCellIds}
           />
         </Form.Item>
@@ -184,7 +184,7 @@ const WorkStationForm = (props) => {
           <RichInput
             currentCellId={selectCellIds}
             icon={
-              <img alt={'buffer_cell'} style={{ width: 25 }} src={'/pictures/buffer_cell.png'} />
+              <img alt={'buffer_cell'} style={{ width: 25 }} src={'/buffer_cell.png'} />
             }
           />
         </Form.Item>
@@ -197,7 +197,7 @@ const WorkStationForm = (props) => {
         >
           <SuperMultiSelect
             currentCellId={selectCellIds}
-            icon={<img alt={'rotate'} style={{ width: 25 }} src={'/pictures/round.png'} />}
+            icon={<img alt={'rotate'} style={{ width: 25 }} src={'/round.png'} />}
           />
         </Form.Item>
 
@@ -210,7 +210,7 @@ const WorkStationForm = (props) => {
           <SuperMultiSelect
             currentCellId={selectCellIds}
             icon={
-              <img alt={'bifurcation'} style={{ width: 25 }} src={'/pictures/bifurcation.png'} />
+              <img alt={'bifurcation'} style={{ width: 25 }} src={'/bifurcation.png'} />
             }
           />
         </Form.Item>

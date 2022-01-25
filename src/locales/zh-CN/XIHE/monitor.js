@@ -3,9 +3,12 @@ export default {
   'monitor.dashboard': '仪表盘',
   'monitor.location': '定位',
   'monitor.reload': '重载地图',
-  'monitor.runTime': '运行时',
 
-  'monitor.operation.reboot': '重启',
+  'monitor.runTime': '运行时',
+  'monitor.maintain': '维护',
+  'monitor.path': '路径',
+  'monitor.manual': '手动',
+  'monitor.reboot': '重启',
 
   // Right Tools
   'monitor.right.latent': '潜伏车操作',

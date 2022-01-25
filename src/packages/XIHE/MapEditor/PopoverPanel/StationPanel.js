@@ -273,7 +273,7 @@ const StationForm = (props) => {
         >
           <RichInput
             currentCellId={selectCellIds}
-            icon={<img style={{ width: 25 }} src={'/pictures/stop.png'} />}
+            icon={<img style={{ width: 25 }} src={'/stop.png'} />}
           />
         </Form.Item>
 
