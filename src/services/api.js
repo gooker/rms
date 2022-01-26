@@ -966,19 +966,30 @@ export async function batchDeletePodTaskLock(params) {
   });
 }
 
-// 分拣类----小车锁列表
-export async function fetchGetSorterAgvTaskLockList(sectionId, params) {
-  return request(
-    `/${Sorter}/redis/getAgvTaskLockList/${window.localStorage.getItem('sectionId')}`,
-    {
-      method: 'GET',
-      data: params,
-    },
-  );
+// 料箱类-料箱锁
+export async function fetchToteLockList() {
+  return request(`/${Tote}/lock/getToteLockBySectionId`, {
+    method: 'GET',
+  });
 }
-// 分拣类---小车锁删除
-export async function fetchBatchDeleteSorterAgvTaskLock(params) {
-  return request(`/${Sorter}/redis/batchDeleteAgvTaskLock`, {
+
+// 料箱类-料箱锁删除
+export async function batchDeleteToteLock(params) {
+  return request(`/${Tote}/lock/batchDeleteToteLock`, {
+    method: 'POST',
+    data: params,
+  });
+}
+// 料箱类-货位锁
+export async function fetchToteBinLock() {
+  return request(`/${Tote}/lock/getBinLockBySectionId`, {
+    method: 'GET',
+  });
+}
+
+// 料箱类-货位锁删除
+export async function batchDeleteToteBinLock(params) {
+  return request(`/${Tote}/lock/batchDeleteBinLock`, {
     method: 'POST',
     data: params,
   });
