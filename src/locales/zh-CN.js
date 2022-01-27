@@ -27,6 +27,8 @@ import webHook from './zh-CN/XIHE/webHook';
 import lockManage from './zh-CN/XIHE/lockManage';
 import mapEditor from './zh-CN/XIHE/editor';
 import mapMonitor from './zh-CN/XIHE/monitor';
+import notification from './zh-CN/XIHE/notification';
+import sourcemanage from './zh-CN/XIHE/sourcemanage';
 
 export default {
   ...menu,
@@ -58,4 +60,6 @@ export default {
   ...lockManage,
   ...mapEditor,
   ...mapMonitor,
+  ...notification,
+  ...sourcemanage,
 };

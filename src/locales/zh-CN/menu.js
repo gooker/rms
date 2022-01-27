@@ -72,6 +72,10 @@ export default {
   'menu.richEditor': '富文本编辑',
   'menu.questionCenter': '问题中心',
 
+  'menu.notificationCenter': '通知管理中心',
+  'menu.notificationCenter.broadcast': '广播频道',
+  'menu.notificationCenter.subscription': '频道订阅',
+
   // WCS
   'menu.task': '任务管理',
   'menu.task.executionQueue': '执行队列',

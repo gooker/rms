@@ -994,3 +994,75 @@ export async function batchDeleteToteBinLock(params) {
     data: params,
   });
 }
+
+// 资源管理--潜伏货架-货架管理列表
+export async function fetchPodListBySectionId(params) {
+  return request(`/${LatentLifting}/pod/list/${window.localStorage.getItem('sectionId')}`, {
+    method: 'GET',
+  });
+}
+// 资源管理--潜伏货架-货架管理新增
+export async function AddPod(params) {
+  return request(`/${LatentLifting}/pod`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+export async function batchDeletePod(params) {
+  return request(`/${LatentLifting}/pod/deletePod/${window.localStorage.getItem('sectionId')}`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+
+
+
+/******* 广播频道  *******/
+// 查看已创建的广播频道
+export async function fetchBroadCastChannel() {
+  return request(`/${Coordinator}/alertCenter/getBroadCastChannel`, {
+    method: 'GET',
+  });
+}
+
+// 保存广播频道
+export async function saveBroadCastChannel(params) {
+  return request(`/${Coordinator}/alertCenter/saveBroadCastChannel`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 删除广播频道
+export async function deleteBroadCastChannels(params) {
+  return request(`/${Coordinator}/alertCenter/deleteBroadCastChannel`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 获取用户频道订阅信息
+export async function fetchChannelSubscription(userId) {
+  return request(`/${Coordinator}/alertCenter/getChannelSubscription`, {
+    method: 'GET',
+    data: { userId },
+  });
+}
+
+// 保存用户订阅
+export async function saveChannelSubscription(params) {
+  return request(`/${Coordinator}/alertCenter/saveChannelSubscription`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 删除用户订阅
+export async function deleteChannelSubscription(params) {
+  return request(`/${Coordinator}/alertCenter/deleteChannelSubscription`, {
+    method: 'POST',
+    data: params,
+  });
+}

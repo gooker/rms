@@ -317,6 +317,26 @@ export default [
     hooks: ['dev'],
   },
   {
+    path: `/${AppCode.XIHE}/notificationCenter`,
+    name: 'notificationCenter',
+    icon: 'notification',
+    authority: ['ADMIN', 'SUPERMANAGER'],
+    routes: [
+      {
+        path: `/${AppCode.XIHE}/notificationCenter/broadcast`,
+        name: 'broadcast',
+        component: '/XIHE/NotificationCenter/BroadcastChannel',
+        authority: ['ADMIN', 'SUPERMANAGER'],
+      },
+      {
+        path: `/${AppCode.XIHE}/notificationCenter/subscription`,
+        name: 'subscription',
+        component: '/XIHE/NotificationCenter/ChannelSubscription',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+    ],
+  },
+  {
     path: `/${AppCode.XIHE}/system`,
     name: 'system',
     icon: 'setting',
