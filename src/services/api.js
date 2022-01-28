@@ -1002,13 +1002,13 @@ export async function fetchPodListBySectionId(params) {
   });
 }
 // 资源管理--潜伏货架-货架管理新增
-export async function AddPod(params) {
+export async function savePod(params) {
   return request(`/${LatentLifting}/pod`, {
     method: 'POST',
     data: params,
   });
 }
-
+// 资源管理--潜伏货架-货架管理批量删除
 export async function batchDeletePod(params) {
   return request(`/${LatentLifting}/pod/deletePod/${window.localStorage.getItem('sectionId')}`, {
     method: 'POST',
@@ -1016,8 +1016,59 @@ export async function batchDeletePod(params) {
   });
 }
 
+// 资源管理--潜伏货架--货架分配列表
+export async function fetchPodAssignData(params) {
+  return request(`/${LatentLifting}/podAndAgvMatch/getBySectionId`, {
+    method: 'GET',
+    data: params,
+  });
+}
+// 资源管理--潜伏货架--货架分配保存
+export async function savePodAssign(params) {
+  return request(`/${LatentLifting}/podAndAgvMatch/save`, {
+    method: 'POST',
+    data: params,
+  });
+}
 
+// 资源管理--潜伏货架--货架分配删除
+export async function batchDeletePodAssign(params) {
+  return request(`/${LatentLifting}/podAndAgvMatch/deleteByIdIn`, {
+    method: 'POST',
+    data: params,
+  });
+}
 
+// 资源管理--小车分组列表
+export async function fetchAllMonitorAgvGroup() {
+  return request(`/${Coordinator}/mapScope/getAllMonitorAgvGroup`, {
+    method: 'GET',
+  });
+}
+
+// 资源管理--小车分组新增保存
+export async function saveMonitorAgvGroup(param) {
+  return request(`/${Coordinator}/mapScope/saveMonitorAgvGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 资源管理--小车分组更新保存
+export async function updateMonitorAgvGroup(param) {
+  return request(`/${Coordinator}/mapScope/updateMonitorAgvGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 资源管理--小车分组 批量删除
+export async function batchDeleteMonitorAgvGroup(param) {
+  return request(`/${Coordinator}/mapScope/batchDeleteMonitorAgvGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
 
 /******* 广播频道  *******/
 // 查看已创建的广播频道

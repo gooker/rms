@@ -167,7 +167,7 @@ export default [
       {
         path: `/${AppCode.XIHE}/sourceManage/agvGroup`,
         name: 'agvGroup',
-        component: '/XIHE/SourceManage/AgvGroup/AgvGroup',
+        component: '/XIHE/SourceManage/AgvGroup',
         hooks: ['dev'],
       },
     ],

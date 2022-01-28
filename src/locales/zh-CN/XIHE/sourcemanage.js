@@ -8,4 +8,10 @@ export default {
   'sourcemanage.require.podId': '请输入货架ID',
   'sourcemanage.require.position': '请输入位置',
   'sourcemanage.podManager.exportPod': '导出货架信息',
+  'sourcemanage.podAssign': '货架配置',
+
+  'sourcemanage.agvgroup.name': '组名',
+  'sourcemanage.require.agvgroup': '请输入组名',
+
+
 };

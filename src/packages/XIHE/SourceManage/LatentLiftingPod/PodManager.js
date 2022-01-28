@@ -13,7 +13,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddPodModal from './components/AddPodModal';
-import { fetchPodListBySectionId, AddPod, batchDeletePod } from '@/services/api';
+import { fetchPodListBySectionId, savePod, batchDeletePod } from '@/services/api';
 import Dictionary from '@/utils/Dictionary';
 import { formatMessage, dealResponse, isStrictNull } from '@/utils/utils';
 import commonStyles from '@/common.module.less';
@@ -49,9 +49,9 @@ const PodManager = () => {
   function deletepod() {
     const podIds = selectedRow.map((record) => record.podId);
     RmsConfirm({
-      title: formatMessage({ id: 'app.message.delete.confirm' }),
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const res = await batchDeletePod({ podId: podIds });
+        const res = await batchDeletePod(podIds);
         if (!dealResponse(res)) {
           message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           cancelModal();
@@ -82,19 +82,16 @@ const PodManager = () => {
       title: <FormattedMessage id="sourcemanage.pod.length.bd" />,
       dataIndex: 'length',
       align: 'center',
-      editable: true,
     },
     {
       title: <FormattedMessage id="sourcemanage.pod.length.ac" />,
       dataIndex: 'width',
       align: 'center',
-      editable: true,
     },
     {
       title: <FormattedMessage id="sourcemanage.pod.area" />,
       dataIndex: 'zoneIds',
       align: 'center',
-      editable: true,
       render: (text) => {
         if (text && Array.isArray(text)) {
           return (
@@ -112,7 +109,6 @@ const PodManager = () => {
       title: <FormattedMessage id="app.common.position" />,
       dataIndex: 'cellId',
       align: 'center',
-      editable: true,
     },
     {
       title: <FormattedMessage id="sourcemanage.pod.reserved" />,
@@ -129,7 +125,6 @@ const PodManager = () => {
       title: <FormattedMessage id="app.direction" />,
       dataIndex: 'angle',
       align: 'center',
-      editable: true,
       render: (text) => {
         const content = formatMessage({ id: Dictionary('podDirection', text) });
         return content || text;
@@ -146,7 +141,7 @@ const PodManager = () => {
       _values.id = selectedRowKeys[0];
     }
 
-    const response = await AddPod(_values);
+    const response = await savePod(_values);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       cancelModal();

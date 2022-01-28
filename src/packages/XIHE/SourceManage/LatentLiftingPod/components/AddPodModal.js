@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Row, Col, Input, InputNumber, Select, Radio, Button } from 'antd';
+import { Form,InputNumber, Select, Radio, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/utils';
 import styles from './addpod.module.less';
