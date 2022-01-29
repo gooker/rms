@@ -53,7 +53,7 @@ export default class UpdateSection extends Component {
             <Input />
           </Form.Item>
           <Form.Item
-            label={formatMessage({ id: 'app.common.sectionId' })}
+            label={formatMessage({ id: 'app.form.sectionId' })}
             name="sectionId"
             rules={[
               {

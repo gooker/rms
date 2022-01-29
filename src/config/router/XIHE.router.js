@@ -167,7 +167,7 @@ export default [
       {
         path: `/${AppCode.XIHE}/sourceManage/agvGroup`,
         name: 'agvGroup',
-        component: '/XIHE/SourceManage/AgvGroup/AgvGroup',
+        component: '/XIHE/SourceManage/AgvGroup',
         hooks: ['dev'],
       },
     ],
@@ -315,6 +315,26 @@ export default [
     icon: 'richEditor',
     component: '/XIHE/RichEditor',
     hooks: ['dev'],
+  },
+  {
+    path: `/${AppCode.XIHE}/notificationCenter`,
+    name: 'notificationCenter',
+    icon: 'notification',
+    authority: ['ADMIN', 'SUPERMANAGER'],
+    routes: [
+      {
+        path: `/${AppCode.XIHE}/notificationCenter/broadcast`,
+        name: 'broadcast',
+        component: '/XIHE/NotificationCenter/BroadcastChannel',
+        authority: ['ADMIN', 'SUPERMANAGER'],
+      },
+      {
+        path: `/${AppCode.XIHE}/notificationCenter/subscription`,
+        name: 'subscription',
+        component: '/XIHE/NotificationCenter/ChannelSubscription',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+    ],
   },
   {
     path: `/${AppCode.XIHE}/system`,

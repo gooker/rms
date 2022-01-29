@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator, Tote, LatentLifting, ForkLifting } = NameSpace;
+const { Coordinator, Tote, LatentLifting, ForkLifting, Sorter } = NameSpace;
 
 export async function fetchAllTaskTypes() {
   return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {
@@ -185,6 +185,22 @@ export async function fetchAgvTaskList(agvType, params) {
   return request(`/${NameSpace[agvType]}/api/agvTask`, {
     method: 'POST',
     data: params,
+  });
+}
+
+// 小车-任务日志
+export async function getAGVTaskLog(param) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAGVTaskLog`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 小车详情-告警信息
+export async function getAlertCentersByTaskIdOrAgvId(param) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCentersByTaskIdOrAgvId`, {
+    method: 'GET',
+    data: param,
   });
 }
 
@@ -904,7 +920,7 @@ export async function fetchBatchDeleteTargetCellLock(params) {
   });
 }
 
-// 小车锁
+// 潜伏类/分拣---小车锁
 export async function fetchAgvTaskLockList(agvType) {
   return request(
     `/${NameSpace[agvType]}/redis/getAgvTaskLockList/${window.localStorage.getItem('sectionId')}`,
@@ -913,10 +929,191 @@ export async function fetchAgvTaskLockList(agvType) {
     },
   );
 }
-
-export async function fetchBatchDeleteLatentAgvTaskLock(agvType, params) {
+//潜伏类/分拣---小车锁删除
+export async function batchDeleteAgvTaskLock(agvType, params) {
   return request(`/${NameSpace[agvType]}/redis/batchDeleteAgvTaskLock`, {
     method: 'POST',
     data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}
+
+// 潜伏类---获取存储点锁
+export async function fetchStorageLockList() {
+  return request(`/${Coordinator}/lock/getStoreCellLockList`, {
+    method: 'GET',
+  });
+}
+
+// 潜伏类---批量删除存储点锁
+export async function batchDeleteStorageLock(params) {
+  return request(`/${Coordinator}/redis/batchDeleteStoreCellLock`, {
+    method: 'POST',
+    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}
+
+// 潜伏类---获取货架任务锁
+export async function fetchPodTaskLockList() {
+  return request(`/${Coordinator}/lock/getPodTaskLockList`, {
+    method: 'GET',
+  });
+}
+// 潜伏类---批量删除货架任务锁
+export async function batchDeletePodTaskLock(params) {
+  return request(`/${Coordinator}/lock/batchDeletePodTaskLock`, {
+    method: 'POST',
+    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+  });
+}
+
+// 料箱类-料箱锁
+export async function fetchToteLockList() {
+  return request(`/${Tote}/lock/getToteLockBySectionId`, {
+    method: 'GET',
+  });
+}
+
+// 料箱类-料箱锁删除
+export async function batchDeleteToteLock(params) {
+  return request(`/${Tote}/lock/batchDeleteToteLock`, {
+    method: 'POST',
+    data: params,
+  });
+}
+// 料箱类-货位锁
+export async function fetchToteBinLock() {
+  return request(`/${Tote}/lock/getBinLockBySectionId`, {
+    method: 'GET',
+  });
+}
+
+// 料箱类-货位锁删除
+export async function batchDeleteToteBinLock(params) {
+  return request(`/${Tote}/lock/batchDeleteBinLock`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 资源管理--潜伏货架-货架管理列表
+export async function fetchPodListBySectionId(params) {
+  return request(`/${LatentLifting}/pod/list/${window.localStorage.getItem('sectionId')}`, {
+    method: 'GET',
+  });
+}
+// 资源管理--潜伏货架-货架管理新增
+export async function savePod(params) {
+  return request(`/${LatentLifting}/pod`, {
+    method: 'POST',
+    data: params,
+  });
+}
+// 资源管理--潜伏货架-货架管理批量删除
+export async function batchDeletePod(params) {
+  return request(`/${LatentLifting}/pod/deletePod/${window.localStorage.getItem('sectionId')}`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 资源管理--潜伏货架--货架分配列表
+export async function fetchPodAssignData(params) {
+  return request(`/${LatentLifting}/podAndAgvMatch/getBySectionId`, {
+    method: 'GET',
+    data: params,
+  });
+}
+// 资源管理--潜伏货架--货架分配保存
+export async function savePodAssign(params) {
+  return request(`/${LatentLifting}/podAndAgvMatch/save`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 资源管理--潜伏货架--货架分配删除
+export async function batchDeletePodAssign(params) {
+  return request(`/${LatentLifting}/podAndAgvMatch/deleteByIdIn`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 资源管理--小车分组列表
+export async function fetchAllMonitorAgvGroup() {
+  return request(`/${Coordinator}/mapScope/getAllMonitorAgvGroup`, {
+    method: 'GET',
+  });
+}
+
+// 资源管理--小车分组新增保存
+export async function saveMonitorAgvGroup(param) {
+  return request(`/${Coordinator}/mapScope/saveMonitorAgvGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 资源管理--小车分组更新保存
+export async function updateMonitorAgvGroup(param) {
+  return request(`/${Coordinator}/mapScope/updateMonitorAgvGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 资源管理--小车分组 批量删除
+export async function batchDeleteMonitorAgvGroup(param) {
+  return request(`/${Coordinator}/mapScope/batchDeleteMonitorAgvGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+/******* 广播频道  *******/
+// 查看已创建的广播频道
+export async function fetchBroadCastChannel() {
+  return request(`/${Coordinator}/alertCenter/getBroadCastChannel`, {
+    method: 'GET',
+  });
+}
+
+// 保存广播频道
+export async function saveBroadCastChannel(params) {
+  return request(`/${Coordinator}/alertCenter/saveBroadCastChannel`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 删除广播频道
+export async function deleteBroadCastChannels(params) {
+  return request(`/${Coordinator}/alertCenter/deleteBroadCastChannel`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 获取用户频道订阅信息
+export async function fetchChannelSubscription(userId) {
+  return request(`/${Coordinator}/alertCenter/getChannelSubscription`, {
+    method: 'GET',
+    data: { userId },
+  });
+}
+
+// 保存用户订阅
+export async function saveChannelSubscription(params) {
+  return request(`/${Coordinator}/alertCenter/saveChannelSubscription`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 删除用户订阅
+export async function deleteChannelSubscription(params) {
+  return request(`/${Coordinator}/alertCenter/deleteChannelSubscription`, {
+    method: 'POST',
+    data: params,
   });
 }

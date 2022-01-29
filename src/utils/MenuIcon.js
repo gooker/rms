@@ -23,6 +23,7 @@ import {
   ReadOutlined,
   ApiOutlined,
   MediumOutlined,
+  NotificationOutlined,
 } from '@ant-design/icons';
 import { IconFont } from '@/components/IconFont';
 
@@ -62,4 +63,5 @@ export default {
   read: <ReadOutlined />,
   api: <ApiOutlined />,
   richEditor: <MediumOutlined />,
+  notification: <NotificationOutlined />,
 };

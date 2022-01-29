@@ -39,7 +39,7 @@ export default class SectionManager extends Component {
 
   getColumn = [
     {
-      title: <FormattedMessage id="app.common.sectionId" />,
+      title: <FormattedMessage id="app.form.sectionId" />,
       dataIndex: 'sectionId',
       align: 'center',
       fixed: 'left',

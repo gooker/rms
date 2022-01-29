@@ -5,7 +5,7 @@ import { AGVType } from '@/config/config';
 const RobotLock = () => {
   return (
     <RobotLockComponent
-      agvType={AGVType.Tote} // 标记当前页面的车型
+      agvType={AGVType.Sorter} // 标记当前页面的车型
     />
   );
 };
