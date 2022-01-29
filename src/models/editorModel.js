@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { saveAs } from 'file-saver';
 import { find, findIndex, groupBy, sortBy } from 'lodash';
 import update from 'immutability-helper';
-import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
   addTemporaryId,
   batchGenerateLine,
@@ -21,7 +21,7 @@ import {
   syncLineState,
   transformCurveData,
   validateMapData,
-} from '@/utils/mapUtils';
+} from '@/utils/mapUtil';
 import { LogicArea } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
@@ -506,9 +506,9 @@ export default {
       if (!dealResponse(response)) {
         currentMap.activeFlag = true;
         yield put({ type: 'saveState', payload: { currentMap, activeMapLoading: false } });
-        message.success(formatMessage({ id: 'app.leftContent.activeMap.success' }));
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       } else {
-        message.error(formatMessage({ id: 'app.leftContent.activeMap.failed' }));
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
       }
     },
 
@@ -633,7 +633,7 @@ export default {
     // 新增点位
     *batchAddCells({ payload }, { select, put }) {
       const { currentMap, currentCells } = yield select(({ editor }) => editor);
-      const { id: logicId, rangeEnd, rangeStart } = getCurrentLogicAreaData();
+      const { rangeStart, rangeEnd } = getCurrentLogicAreaData();
       const { cellMap } = currentMap;
 
       let additionalCells = [];
@@ -651,7 +651,6 @@ export default {
             distanceY,
             rangeStart,
             rangeEnd,
-            logicId,
           );
         }
       } else {

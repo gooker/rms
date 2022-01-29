@@ -1,4 +1,4 @@
-import { isNull } from './utils';
+import { isNull } from './util';
 
 const DictionaryDataSource = {
   // 小车状态

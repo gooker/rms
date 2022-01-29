@@ -3,7 +3,7 @@ import { Select, Row, Col, Checkbox } from 'antd';
 import sortBy from 'lodash/sortBy';
 import flatten from 'lodash/flatten';
 import isPlainObject from 'lodash/isPlainObject';
-import { convertMapToArrayMap, isNull,formatMessage } from '@/utils/utils';
+import { convertMapToArrayMap, isNull,formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Form, Row, Col, Input, Button } from 'antd';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isStrictNull } from '@/utils/utils';
+import { isStrictNull } from '@/utils/util';
 
 const FaultDefinitionSearchForm = (props) => {
   const { search } = props;

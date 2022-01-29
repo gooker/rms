@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
-import { getDirByAngle } from '@/utils/utils';
+import { getDirByAngle } from '@/utils/util';
 import { zIndex, CostColor, CellSize } from '@/config/consts';
 
 export default class LineArrow extends PIXI.Container {

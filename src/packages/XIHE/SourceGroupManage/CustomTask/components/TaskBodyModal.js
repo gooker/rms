@@ -1,9 +1,9 @@
 import React, { memo, useState } from 'react';
 import { Tree, Form } from 'antd';
 import styles from '../customTask.module.less';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 
 const TaskBodyModal = (props) => {
   const { data } = props;

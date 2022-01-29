@@ -1,7 +1,7 @@
 import { fetchLogout, fetchUserRoleList, fetchUpdateUserCurrentSection } from '@/services/user';
 import { getCurrentUser } from '@/services/api';
 import intl from 'react-intl-universal';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/util';
 import { message } from 'antd';
 import find from 'lodash/find';
 

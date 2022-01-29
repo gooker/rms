@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Form, DatePicker, Col, Select, Row, Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { GMT2UserTimeZone } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import { connect } from '@/utils/RcsDva';
 

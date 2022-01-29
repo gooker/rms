@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { unionBy, groupBy } from 'lodash';
 import { connect } from '@/utils/RcsDva';
 import ReactEcharts from './EchartsForReact';
-import { formatMessage, match } from '@/utils/utils';
+import { formatMessage, match } from '@/utils/util';
 
 const Line = (props) => {
   const { description, type, info, agvType, allTaskTypes } = props;

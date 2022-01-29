@@ -8,8 +8,8 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage, isNull } from '@/utils/utils';
-import { getCurrentRouteMapData } from '@/utils/mapUtils';
+import { formatMessage, isNull } from '@/utils/util';
+import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 import editorStyles from '../editorLayout.module.less';

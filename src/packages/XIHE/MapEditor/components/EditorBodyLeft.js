@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import { Tooltip } from 'antd';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import { Cell, LineArrow } from '@/entities';
-import { transformScreenToWorldCoordinator } from '@/utils/mapUtils';
+import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
 
@@ -144,7 +144,7 @@ class EditorBodyLeft extends React.PureComponent {
 
     // 插入图片，鼠标抬起后立即弹出图片选择框
     if (activeKey === LeftCategory.Image) {
-      this.onInsertPicture();
+      document.getElementById('editorMaskFilePicker').click();
     }
 
     // 画矩形和圆形情况下显示MaskTool
@@ -160,6 +160,7 @@ class EditorBodyLeft extends React.PureComponent {
     this.pointerUpY = null;
   };
 
+  // 框选地图元素
   onSelectElement = () => {
     const { mapContext, currentCells } = this.props;
 
@@ -191,6 +192,7 @@ class EditorBodyLeft extends React.PureComponent {
     mapContext.rectangleSelection(cellsInRange);
   };
 
+  // 显示Label输入框
   onInsertLabel = (ev) => {
     const { dispatch } = this.props;
     const { x, y } = ev.data.global;
@@ -201,10 +203,6 @@ class EditorBodyLeft extends React.PureComponent {
     maskDOM.style.width = `${200}px`;
     maskDOM.style.height = `${30}px`;
     dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
-  };
-
-  onInsertPicture = () => {
-    document.getElementById('editorMaskFilePicker').click();
   };
 
   render() {

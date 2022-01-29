@@ -3,7 +3,7 @@ import { Row, Select, Dropdown, Button, Menu, Modal, message } from 'antd';
 import { DeleteOutlined, DownOutlined, RedoOutlined, ToTopOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchAgvList,
@@ -12,7 +12,7 @@ import {
   fetchMoveoutAGVs,
 } from '@/services/api';
 import TableWidthPages from '@/components/TableWidthPages';
-import { dealResponse, isNull } from '@/utils/utils';
+import { dealResponse, isNull } from '@/utils/util';
 import { AGVType, NameSpace } from '@/config/config';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtil';
 import LabelComponent from '@/components/LabelComponent';

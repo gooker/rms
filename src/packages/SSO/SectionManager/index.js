@@ -10,11 +10,11 @@ import {
 import RmsConfirm from '@/components/RmsConfirm';
 import TablewidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import UpdateSection from './components/UpdateSection';
 import commonStyles from '@/common.module.less';
 import styles from './sectionManager.module.less';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/util';
 
 export default class SectionManager extends Component {
   state = {

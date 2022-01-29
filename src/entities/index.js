@@ -24,7 +24,6 @@ import Intersection from './Intersection';
 import Dump from './Dump';
 import DumpBasket from './DumpBasket';
 import SorterAGV from './SorterAGV';
-import RollerStation from './RollerStation';
 import BackImg from './BackImg';
 import EmergencyStop from './EmergencyStop';
 import RealtimeRate from './RealtimeRate';
@@ -56,7 +55,6 @@ export {
   GroundStorage,
   CommonFunction,
   Intersection,
-  RollerStation,
   BackImg,
   EmergencyStop,
   RealtimeRate,

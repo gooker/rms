@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Form, Input, Rate } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import styles from '../customTask.module.less';
 
 const FormLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };

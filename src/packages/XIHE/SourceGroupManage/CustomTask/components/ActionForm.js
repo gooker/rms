@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Form, Input, InputNumber, Radio, Checkbox, Switch, Select } from 'antd';
 import groupBy from 'lodash/groupBy';
-import { extractRoutes, isNull, formatMessage } from '@/utils/utils';
+import { extractRoutes, isNull, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ModelSelection from '../FormComponent/ModelSelection';
 import ActionDefiner from '../FormComponent/ActionDefiner';

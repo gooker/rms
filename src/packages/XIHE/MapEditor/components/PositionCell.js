@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Row, Form, InputNumber, message } from 'antd';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage, isNull } from '@/utils/utils';
+import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const PositionCell = (props) => {

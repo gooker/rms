@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Badge, Button, Dropdown, Form, Input, Menu, Modal } from 'antd';
 import { DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { formatMessage, getFormLayout, getRandomString } from '@/utils/utils';
+import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './index.module.less';
 
@@ -31,11 +31,8 @@ const SelectMap = (props) => {
 
   function submit() {
     formRef.validateFields().then(async (value) => {
-      const payload = {
-        ...value,
-      };
       setSaveLoading(true);
-      await dispatch({ type: 'editor/fetchCreateMap', payload });
+      await dispatch({ type: 'editor/fetchCreateMap', value });
       setCreationVisible(false);
       setSaveLoading(false);
     });
@@ -84,7 +81,7 @@ const SelectMap = (props) => {
   return (
     <>
       <Dropdown
-        overlayStyle={{ maxHeight: '50vh', overflow: 'auto' }}
+        overlayStyle={{ maxHeight: '40vh', overflow: 'auto' }}
         overlay={
           <Menu selectedKeys={currentMap?.id} onClick={mapMenuClick}>
             {getMapListMenu()}

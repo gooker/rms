@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import TimeZone from '@/components/TimeZone';
-import { isStrictNull } from '@/utils/utils';
+import { isStrictNull } from '@/utils/util';
 
 export default class UpdateZoneModal extends Component {
   state = {

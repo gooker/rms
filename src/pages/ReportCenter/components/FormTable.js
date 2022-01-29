@@ -7,7 +7,7 @@ import { connect } from '@/utils/RcsDva';
 import Dictionary from '@/utils/Dictionary';
 import ControlledRangePicker from './ControlledRangePicker';
 import FilterTag from './FilterTag';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../ReportCenter.module.less';
 

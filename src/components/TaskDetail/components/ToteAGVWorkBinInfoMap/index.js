@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import find from 'lodash/find';
 import { Table } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const TaskQueueTaskExpanderRow = memo(function TaskQueueTaskExpanderRow(props) {

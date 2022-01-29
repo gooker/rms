@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Text from './Text';
-import { getTextureFromResources } from '@/utils/mapUtils';
+import { getTextureFromResources } from '@/utils/mapUtil';
 import { WorkStationSize, CommonFunctionSize, zIndex } from '@/config/consts';
 
 export default class WorkStation extends PIXI.Container {

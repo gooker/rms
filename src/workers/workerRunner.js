@@ -1,4 +1,5 @@
-import { isNull } from '@/utils/utils';
+// https://github.com/GoogleChromeLabs/comlink
+import { isNull } from '@/utils/util';
 
 // 小车任务路径轮询线程
 const AgvPathWorker = function () {};

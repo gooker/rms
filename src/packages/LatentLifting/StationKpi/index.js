@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import echarts from 'echarts';
 import { throttle, find } from 'lodash';
 import { message } from 'antd';
-import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import StationKpiSearchForm from './StationKpiSearchForm';
 import {
   getRegionReport,

@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { CloseCircleOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import { FooterHeight } from '../enums';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyle from '@/common.module.less';

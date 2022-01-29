@@ -4,7 +4,7 @@ import { EditOutlined, EyeOutlined } from '@ant-design/icons';
 import { getAllRichText, saveRichText, deleteByRichIds } from '@/services/api';
 import RichEditorFormModal from './component/RichEditorFormModal';
 import RichEditorDetailModal from './component/RichEditorDetailModal';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import TablePageWrapper from '@/components/TablePageWrapper';

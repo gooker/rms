@@ -2,7 +2,7 @@ import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
 import { Row, Col, Form, Card } from 'antd';
 import moment from 'moment';
-import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
+import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FilterSearchBydate from '../HealthRobot/components/FilterSearchBydate';
 import FilterSearch from '../HealthRobot/components/FilterSearch';
 import QrcodeSearchForm from '../components/QrcodeSearchForm';

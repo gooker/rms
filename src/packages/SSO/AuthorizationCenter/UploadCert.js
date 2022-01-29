@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, message } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import UploadPanel from '@/components/UploadPanel';
-import { dealResponse, isStrictNull,formatMessage } from '@/utils/utils';
+import { dealResponse, isStrictNull,formatMessage } from '@/utils/util';
 import { uploadCertication } from '@/services/user';
 import styles from './UploadSSOAppInfo.module.less';
 

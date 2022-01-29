@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Row, Col, Input, Radio, Select, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isStrictNull } from '@/utils/utils';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import DynamicForm from '@/components/DynamicForm/Index';
 import { ApiNameSpace } from '@/config/config';
 const { DynamicFormCol } = DynamicForm;

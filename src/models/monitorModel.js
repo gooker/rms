@@ -1,5 +1,5 @@
 import { fetchActiveMap, fetchAgvList, fetchToteRackLayout } from '@/services/api';
-import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';

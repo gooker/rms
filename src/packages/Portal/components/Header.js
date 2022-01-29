@@ -13,7 +13,7 @@ import NoticeIcon from './NoticeIcon';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Header.module.less';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 
 @connect(({ global, user }) => ({
   globalLocale: global.globalLocale,

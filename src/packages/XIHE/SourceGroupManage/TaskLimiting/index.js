@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Table, Button, Row, Modal, message, Spin } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import { dealResponse, isNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import { fetchGetActiveMap } from '@/services/map';
 import {

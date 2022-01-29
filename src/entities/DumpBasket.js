@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getTextureFromResources } from '@/utils/mapUtils';
+import { getTextureFromResources } from '@/utils/mapUtil';
 import BitText from './BitText';
 import { zIndex } from '@/config/consts';
 

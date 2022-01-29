@@ -1,4 +1,4 @@
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 export function UserTColor() {
   return {
     USER: '#2db7f5',

@@ -7,7 +7,7 @@ import {
   getFormLayout,
   GMT2UserTimeZone,
   isNull,
-} from '@/utils/utils';
+} from '@/utils/util';
 import { DownloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { downloadLogFromSFTP, fetchAgvList } from '@/services/api';

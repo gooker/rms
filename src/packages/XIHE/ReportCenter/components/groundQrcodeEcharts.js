@@ -1,4 +1,4 @@
-import { formatMessage, isStrictNull, GMT2UserTimeZone } from '@/utils/utils';
+import { formatMessage, isStrictNull, GMT2UserTimeZone } from '@/utils/util';
 import { forIn, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';

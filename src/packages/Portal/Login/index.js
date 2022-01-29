@@ -8,7 +8,7 @@ import {
   fetchUpdateEnvironment,
   fetchFindLogoByWebAddress,
 } from '@/services/global';
-import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getEnvOptionData, getActiveEnv } from './selector';
 import LoginBackPicture from '@/../public/images/login_pic.png';

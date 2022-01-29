@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Col, Select, Input, Button } from 'antd';
 import { fetchFirmWarList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 
 const formItemAddLayout = {
   labelCol: {

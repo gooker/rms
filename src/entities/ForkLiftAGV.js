@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import ForkFreight from './ForkFreight';
-import { getTextureFromResources, switchAGVBatteryState, switchAGVState } from '@/utils/mapUtils';
-import { isNull } from '@/utils/utils';
+import { getTextureFromResources, switchAGVBatteryState, switchAGVState } from '@/utils/mapUtil';
+import { isNull } from '@/utils/util';
 import { AGVType } from '@/config/config';
 import { ForkLiftAGVSize, zIndex } from '@/config/consts';
 

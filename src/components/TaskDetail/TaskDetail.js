@@ -1,9 +1,9 @@
 import React, { PureComponent, createRef } from 'react';
 import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { GMT2UserTimeZone } from '@/utils/utils';
+import { GMT2UserTimeZone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import ErrorList from './components/ErrorList';

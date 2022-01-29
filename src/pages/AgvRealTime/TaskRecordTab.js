@@ -7,7 +7,7 @@ import {
   CloseCircleOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { formatMessage, GMT2UserTimeZone } from '@/utils/utils';
+import { formatMessage, GMT2UserTimeZone } from '@/utils/util';
 import { AGVType } from '@/config/config';
 import { connect } from '@/utils/RcsDva';
 import styles from './index.module.less';

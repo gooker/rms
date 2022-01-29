@@ -9,7 +9,7 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons';
 import { saveAs } from 'file-saver';
-import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/util';
 import {
   fetchAllRoleList,
   fetchAddRole,

@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull ,formatMessage} from '@/utils/utils';
+import { isNull ,formatMessage} from '@/utils/util';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 

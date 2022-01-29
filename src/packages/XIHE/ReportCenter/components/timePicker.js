@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Input, Select, AutoComplete, Row, Col, Button, DatePicker } from 'antd';
 import moment from 'moment';
-import { GMT2UserTimeZone, isStrictNull } from '@/utils/utils';
+import { GMT2UserTimeZone, isStrictNull } from '@/utils/util';
 
 const { Option } = Select;
 const { RangePicker } = DatePicker;

@@ -5,12 +5,12 @@ import classnames from 'classnames';
 import ChargingStrategyForm from './ChargingStrategyForm';
 import IdleChargingStrategy from './IdleChargingStrategy';
 import { getCurrentChargerType, getChargeStrategy } from '@/services/api';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { hasPermission } from '@/utils/Permission';
 import commonStyles from '@/common.module.less';
 import styles from './chargingStrategy.module.less';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/util';
 
 const { TabPane } = Tabs;
 

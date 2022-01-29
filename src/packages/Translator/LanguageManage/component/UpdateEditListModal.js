@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Table, Row, Col, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { adjustModalWidth } from '@/utils/utils';
+import { adjustModalWidth } from '@/utils/util';
 import { sortBy } from 'lodash';
 
 const UpdateEditListModal = (props) => {

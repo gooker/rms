@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import moment from 'moment';
 import { Button, Divider, message, DatePicker, Form, Input, Radio, Select, Spin } from 'antd';
-import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ReportConfigurationOfTime from '@/pages/ReportCenter/components/ReportConfigurationOfTime';
 import { fetchReportSourceDetail } from '@/services/api';

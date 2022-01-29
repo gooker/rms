@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Form, Select, Input, Button, Modal, message } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, getFormLayout } from '@/utils/utils';
+import { formatMessage, getFormLayout } from '@/utils/util';
 import LocalsKeys from '@/locales/LocaleKeys';
 import TimeZone from '@/components/TimeZone';
 import { generateAdminTypeOptions, generateLevelOptions } from '../userManagerUtils';
-import { isStrictNull } from '@/utils/utils';
+import { isStrictNull } from '@/utils/util';
 
 const { Option } = Select;
 

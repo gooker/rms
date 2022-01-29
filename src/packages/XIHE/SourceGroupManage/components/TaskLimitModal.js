@@ -13,7 +13,7 @@ import {
   Radio,
   Popover,
 } from 'antd';
-import { isNull,formatMessage } from '@/utils/utils';
+import { isNull,formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 

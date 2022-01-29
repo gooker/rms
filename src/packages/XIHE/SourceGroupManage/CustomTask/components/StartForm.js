@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Form, Input } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import CascadeSelect from '../FormComponent/CascadeSelect';
 

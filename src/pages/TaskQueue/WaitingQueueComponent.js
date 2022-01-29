@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Badge, Row, Button, message, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { dateFormat, formatMessage } from '@/utils/utils';
+import { dateFormat, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchTaskQueueList,
@@ -11,7 +11,7 @@ import {
   fetchUpdateTaskPriority,
 } from '@/services/api';
 import TableWidthPages from '@/components/TableWidthPages';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/util';
 import { AgvStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';

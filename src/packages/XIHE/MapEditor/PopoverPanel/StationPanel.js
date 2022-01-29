@@ -9,11 +9,11 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';
 import styles from '../PopoverPanel/popoverPanel.module.less';
-import { formatMessage, isNull } from '@/utils/utils';
+import { formatMessage, isNull } from '@/utils/util';
 import RichInput from '@/packages/XIHE/components/RichInput';
 import AngleSelector from '@/components/AngleSelector';
 import CardRadio from '@/packages/XIHE/components/CardRadio';

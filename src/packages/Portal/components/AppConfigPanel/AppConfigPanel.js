@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Divider, message } from 'antd';
-import { isStrictNull, formatMessage } from '@/utils/utils';
+import { isStrictNull, formatMessage } from '@/utils/util';
 import find from 'lodash/find';
 import FormattedMessage from '@/components/FormattedMessage';
 import classnames from 'classnames';

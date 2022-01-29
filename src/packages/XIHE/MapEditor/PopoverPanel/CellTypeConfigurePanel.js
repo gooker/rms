@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';
 import commonStyles from '@/common.module.less';
 import styles from './popoverPanel.module.less';
-import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtils';
+import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtil';
 
 const CellTypeConfigurePanel = (props) => {
   const { dispatch, height, mapContext, selectCells } = props;

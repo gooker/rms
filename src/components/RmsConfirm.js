@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { isNull, formatMessage } from '@/utils/utils';
+import { isNull, formatMessage } from '@/utils/util';
 
 const { confirm } = Modal;
 

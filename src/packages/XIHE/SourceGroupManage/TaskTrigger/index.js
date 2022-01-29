@@ -23,7 +23,7 @@ import {
   deleteTaskTrigger,
   switchTriggerState,
 } from '@/services/api';
-import { dealResponse,formatMessage } from '@/utils/utils';
+import { dealResponse,formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';

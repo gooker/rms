@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Button, message, Table, Divider, Tooltip, Badge } from 'antd';
-import { formatMessage, dealResponse, dateFormat } from '@/utils/utils';
+import { formatMessage, dealResponse, dateFormat } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';

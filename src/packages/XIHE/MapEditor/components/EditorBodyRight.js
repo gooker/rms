@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RcsDva';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import {
   Category,
   HeaderHeight,

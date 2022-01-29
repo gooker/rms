@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Select } from 'antd';
-import { convertMapToArrayMap, isNull } from '@/utils/utils';
+import { convertMapToArrayMap, isNull } from '@/utils/util';
 
 const { Option } = Select;
 const SelectCarType = (props) => {

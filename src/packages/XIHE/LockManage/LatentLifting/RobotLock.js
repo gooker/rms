@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import RobotLockComponent from '../components/RobotLockComponent';
 import { AGVType } from '@/config/config';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import commonStyles from '@/common.module.less';
 
 const RobotLock = () => {

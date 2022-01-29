@@ -6,8 +6,8 @@ import {
   getCurrentRouteMapData,
   getTextureFromResources,
   getLineGraphics,
-} from '@/utils/mapUtils';
-import { isNull, isItemOfArray } from '@/utils/utils';
+} from '@/utils/mapUtil';
+import { isNull, isItemOfArray } from '@/utils/util';
 import { CellSize, WorldScreenRatio, zIndex } from '@/config/consts';
 import {
   Dump,
@@ -17,12 +17,12 @@ import {
   DumpBasket,
   WorkStation,
   Intersection,
-  RollerStation,
   EmergencyStop,
   CommonFunction,
   Text,
 } from '@/entities';
 import { sortBy, uniq } from 'lodash';
+import MapZoneMarker from '@/entities/MapZoneMarker';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -34,12 +34,14 @@ function initState(context) {
   context.intersectionMap = new Map(); // {stopCellId: [Entity]}
   context.commonFunctionMap = new Map(); // {stopCellId: [Entity]}
   context.chargerMap = new Map(); // {[x${x}y${y}]: [Entity]}
-  context.dumpMap = new Map();
-  context.dumpBasketMap = new Map();
-  context.rollerMap = new Map();
+  context.dumpMap = new Map(); // 抛物点
+  context.dumpBasketMap = new Map(); // 抛物框
   context.relationshipLines = new Map(); // 关系线
   context.backImgMap = new Map(); // 背景图片
   context.fixedEStopMap = new Map(); // 固定紧急避让区
+
+  // 线条与点位ID的Map关系
+  context.cellCostMap = new Map(); // {[cellId]:[Cost, Cost]}
 }
 
 export default class BaseMap extends React.Component {
@@ -234,7 +236,7 @@ export default class BaseMap extends React.Component {
    * @param {*} interactive 是否可交互  默认false
    * @param {*} shownMode 显示模式  默认standard
    */
-  drawLine(
+  renderCostLines(
     relationsToRender,
     relations,
     interactive = false,
@@ -308,7 +310,13 @@ export default class BaseMap extends React.Component {
     });
     // 根据最新数据渲染线段
     if (priorityToRender.length > 0) {
-      this.drawLine(relations, relations, nameSpace === 'editor', 'standard', priorityToRender); // TODO: 目前只针对编辑器可点击
+      this.renderCostLines(
+        relations,
+        relations,
+        nameSpace === 'editor',
+        'standard',
+        priorityToRender,
+      ); // TODO: 目前只针对编辑器可点击
       // 渲染不可逗留点Flag
       if (nonStopCellIds) {
         nonStopCellIds.forEach((item) => {
@@ -562,7 +570,7 @@ export default class BaseMap extends React.Component {
 
   /**
    * 渲染 通用站点
-   * @param {*} workStationData 通用站点数据
+   * @param {*} commonList 通用站点数据
    * @param {*} check 点击通用站点回调函数
    */
   renderCommonFunction = (commonList, check) => {
@@ -851,38 +859,6 @@ export default class BaseMap extends React.Component {
     }
   };
 
-  // 滚筒站
-  removeRollerFunction = (rollerStation) => {
-    const { binCellId } = rollerStation;
-    const cellEntity = this.idCellMap.get(binCellId);
-    if (cellEntity) {
-      const { x, y } = cellEntity;
-      const roller = this.rollerMap.get(`x${x}y${y}`);
-      if (roller) {
-        this.pixiUtils.viewportRemoveChild(roller);
-        roller.destroy({ children: true });
-      }
-    }
-  };
-
-  renderRollerFunction = (rollerStationList) => {
-    rollerStationList.forEach(({ binCellId, binCellIdType }) => {
-      const cellEntity = this.idCellMap.get(binCellId);
-      if (cellEntity) {
-        let texture;
-        if (binCellIdType === 'IN') {
-          texture = getTextureFromResources('roller_in');
-        } else {
-          texture = getTextureFromResources('roller_out');
-        }
-        const { x, y } = cellEntity;
-        const roller = new RollerStation(texture, x, y);
-        this.pixiUtils.viewportAddChild(roller);
-        this.rollerMap.set(`x${x}y${y}`, roller);
-      }
-    });
-  };
-
   /**
    * 通道
    * @param newChannelList
@@ -912,13 +888,8 @@ export default class BaseMap extends React.Component {
 
   // 画区域
   drawRectArea(x, y, width, height, color) {
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(color.replace('#', '0x'));
-    graphics.drawRect(x, y, width, height);
-    graphics.endFill();
-    graphics.alpha = 0.8;
+    const graphics = new MapZoneMarker(x, y, width, height, color.replace('#', '0x'), this.refresh);
     this.pixiUtils.viewportAddChild(graphics);
-    this.refresh();
   }
 
   drawCircleArea(x, y, radius, color) {

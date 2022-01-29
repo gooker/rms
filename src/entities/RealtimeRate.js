@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getCoordinat } from '@/utils/mapUtils';
-import { isStrictNull, formatMessage } from '@/utils/utils';
+import { getCoordinat } from '@/utils/mapUtil';
+import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn } from 'lodash';
 
 export default class RealtimeRate extends PIXI.Container {

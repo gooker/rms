@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { getTextureFromResources } from '@/utils/mapUtils';
+import { getTextureFromResources } from '@/utils/mapUtil';
 import { GlobalAlpha, zIndex } from '@/config/consts';
 
 export default class Intersection extends PIXI.Container {

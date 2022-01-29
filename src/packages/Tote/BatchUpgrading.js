@@ -2,7 +2,7 @@ import React from 'react';
 import { Badge, Progress, Button } from 'antd';
 import Dictionary from '@/utils/Dictionary';
 import BatchUpgradingComponent from '@/pages/BatchUpgrading/BatchUpgradingComponent';
-import { formatMessage, getAgvStatusTag, getSuffix } from '@/utils/utils';
+import { formatMessage, getAgvStatusTag, getSuffix } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AGVType } from '@/config/config';

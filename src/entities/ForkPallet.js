@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { getTextureFromResources } from '@/utils/mapUtils';
+import { getTextureFromResources } from '@/utils/mapUtil';
 import { zIndex, LatentPodSize, GlobalAlpha } from '@/config/consts';
 
 export default class ForkPallet extends PIXI.Container {

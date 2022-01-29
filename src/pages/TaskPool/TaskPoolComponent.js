@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Button, message, Table, Divider } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchPoolTasks, cancelTotePoolTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
-import { dealResponse } from '@/utils/utils';
+import { dealResponse } from '@/utils/util';
 import TaskPoolSearch from './TaskPoolSearch';
 import commonStyles from '@/common.module.less';
 import styles from '../TaskQueue/taskQueue.module.less';

@@ -3,8 +3,8 @@ import { Menu, Dropdown } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RcsDva';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
-import { formatMessage } from '@/utils/utils';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { formatMessage } from '@/utils/util';
 import styles from './index.module.less';
 
 const SelectLogicArea = (props) => {

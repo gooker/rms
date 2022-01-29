@@ -3,7 +3,7 @@ import { Button, message, Row, Col } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getAllWebHookTypes, getAllWebHooks, saveWebHook, deleteWebHooks } from '@/services/api';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
 import RcsConfirm from '@/components/RmsConfirm';

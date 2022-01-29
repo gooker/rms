@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Card, Popover } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { GMT2UserTimeZone, getSuffix, getDay } from '@/utils/utils';
+import { GMT2UserTimeZone, getSuffix, getDay } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent';
 import styles from './index.module.less';

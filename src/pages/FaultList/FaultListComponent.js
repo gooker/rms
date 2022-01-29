@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { message, Table } from 'antd';
 import { fetchAgvErrorRecord, fetchDefinedFaults } from '@/services/api';
-import { dateFormat, dealResponse, formatMessage } from '@/utils/utils';
+import { dateFormat, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';
 import commonStyles from '@/common.module.less';

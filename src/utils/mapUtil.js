@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import * as XLSX from 'xlsx';
 import { find, groupBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
-import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/utils';
+import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import {
   AGVState,
   CellSize,
@@ -32,7 +32,6 @@ export function generateCellMapByRowsAndCols(
   distanceY,
   start,
   end,
-  currentLogicId,
 ) {
   let id = firstID;
   const cells = [];
@@ -42,22 +41,10 @@ export function generateCellMapByRowsAndCols(
     for (let col = 0; col < cols; col++) {
       let innerX = firstPosition.x;
       innerX += col * distanceX;
-      // 当前没有传入id或者极端的id值不在当前的逻辑视图内不会赋值
-      if (id !== null && parseInt(id, 10) < end && !(parseInt(id, 10) < start)) {
-        cells.push({
-          id,
-          x: innerX,
-          y: innerY,
-        });
-      } else {
-        const tempId = `L${currentLogicId}X${innerX}Y${innerY}`;
-        cells.push({
-          tempId,
-          x: innerX,
-          y: innerY,
-        });
+      if (parseInt(id, 10) >= start && parseInt(id, 10) <= end) {
+        cells.push({ id, x: innerX, y: innerY });
+        id += 1;
       }
-      id += 1;
     }
   }
   return cells;

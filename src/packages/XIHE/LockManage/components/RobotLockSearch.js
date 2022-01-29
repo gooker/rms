@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Button, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 
 const RobotLockSearch = (props) => {
   const [form] = Form.useForm();

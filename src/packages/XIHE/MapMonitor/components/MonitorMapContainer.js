@@ -1,10 +1,10 @@
 import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RcsDva';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
+import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
 
 const MonitorMapContainer = (props) => {
   const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
@@ -254,7 +254,7 @@ const MonitorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.drawLine(relations, relations, false);
+    mapContext.renderCostLines(relations, relations, false);
     mapContext.refresh();
   }
 

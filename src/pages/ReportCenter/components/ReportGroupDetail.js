@@ -11,7 +11,7 @@ import {
   formatMessage,
   isNull,
   transformReportDetail,
-} from '@/utils/utils';
+} from '@/utils/util';
 import {
   fetchDimensionDictionary,
   fetchReportDetailByUrl,

@@ -5,7 +5,7 @@ import { MinusOutlined, ClearOutlined } from '@ant-design/icons';
 import { Row, Col, Switch } from 'antd';
 import StandbyConditions from '../FormComponent/StandbyConditions';
 import CascadeSelect from '../FormComponent/CascadeSelect';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from '../customTask.module.less';

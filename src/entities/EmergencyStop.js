@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
-import { getTextureFromResources } from '@/utils/mapUtils';
+import { getTextureFromResources } from '@/utils/mapUtil';
 import { zIndex } from '@/config/consts';
 
 class EmergencyStop extends PIXI.Container {

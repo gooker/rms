@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import { Row, Col, Table } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import { getloadRobotdata } from './components/mockLoadData';
 import {
   taskLineOption,

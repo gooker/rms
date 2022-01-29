@@ -7,7 +7,7 @@ import {
   FrownOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import RenderAgvTaskActions from '../AgvTaskSteps/RenderAgvTaskActions';
 
 const Step = Steps.Step;

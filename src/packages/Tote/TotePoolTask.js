@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge, Tag, Button, Tooltip } from 'antd';
-import { dateFormat } from '@/utils/utils';
+import { dateFormat } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/pages/TaskPool/TaskPoolComponent';
 import { AGVType } from '@/config/config';

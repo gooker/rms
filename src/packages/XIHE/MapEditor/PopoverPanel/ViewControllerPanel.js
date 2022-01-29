@@ -5,7 +5,7 @@ import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
-import { formatMessage, getFormLayout } from '@/utils/utils';
+import { formatMessage, getFormLayout } from '@/utils/util';
 import { CostOptions, DirectionOption } from '../enums';
 
 const { formItemLayout } = getFormLayout(7, 17);

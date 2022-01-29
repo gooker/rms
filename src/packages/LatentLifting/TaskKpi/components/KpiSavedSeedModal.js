@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, Input, Table, Button, message, Popconfirm } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { deleteSearchSeek, fetchAllSearchSeeds } from '@/services/latentLifting';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import { getFirstSetItem, getLabelByValue } from '../utils.js';
 import FormattedMessage from '@/components/FormattedMessage';
 import KpiSearchConditions from './KpiSearchConditions';

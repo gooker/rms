@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import MainLayout from '@/layout/MainLayout';
-import Loadable from '@/utils/Loadable';
+import Loadable from '@/components/Loadable';
 import { connect } from '@/utils/RcsDva';
 import { initI18nInstance } from '@/utils/init';
 

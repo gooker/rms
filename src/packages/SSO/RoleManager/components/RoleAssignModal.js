@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Tabs, Tree, Empty, Button } from 'antd';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isStrictNull } from '@/utils/utils';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import { filterMenuData } from '@/utils/init';
 import { transform, difference } from 'lodash';
 import allModuleRouter from '@/config/router';

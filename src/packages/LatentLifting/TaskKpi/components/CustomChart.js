@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Divider } from 'antd';
 import { Chart, Geom, Axis, Tooltip, Legend } from 'bizcharts';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import Enum from '../enum';
 import styles from '../TaskKpi.module.less';
 

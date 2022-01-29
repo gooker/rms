@@ -2,12 +2,12 @@ import React, { useEffect, useState, memo } from 'react';
 import { connect } from '@/utils/RcsDva';
 import moment from 'moment';
 import { Form, DatePicker, Modal, Button, InputNumber, Input, Radio, Select, message } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
 import { fetchCstParams, getBackZone } from '@/services/api';
 import { fetchGetActiveMap } from '@/services/map';
-import { dealResponse, isNull } from '@/utils/utils';
+import { dealResponse, isNull } from '@/utils/util';
 
 const FormItem = Form.Item;
 const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };

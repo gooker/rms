@@ -14,7 +14,7 @@ import {
   Popover,
 } from 'antd';
 import ButtonMultiSelect from './ButtonMultiSelect';
-import { isStrictNull,formatMessage } from '@/utils/utils';
+import { isStrictNull,formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const formItemLayout = { labelCol: { span: 7 }, wrapperCol: { span: 17 } };

@@ -1,4 +1,4 @@
-import { isStrictNull, formatMessage } from '@/utils/utils';
+import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';

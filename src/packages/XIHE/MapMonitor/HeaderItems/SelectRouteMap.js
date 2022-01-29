@@ -3,7 +3,7 @@ import { Menu, Dropdown } from 'antd';
 import { find } from 'lodash';
 import { DownOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import styles from './index.module.less';
 
 const SelectRouteMap = (props) => {

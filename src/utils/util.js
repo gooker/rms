@@ -80,7 +80,7 @@ export function formatMessage({ id }, values) {
 }
 
 export function getDomainNameByUrl(url) {
-  const apis = requestAPI();
+  const apis = JSON.parse(window.localStorage.getItem('nameSpacesInfo'));
   const array = url.split('/');
   if (array.length < 2) {
     message.error(formatMessage({ id: 'app.request.addressError' }));

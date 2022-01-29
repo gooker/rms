@@ -4,7 +4,7 @@ import TimeZone from '@/components/TimeZone';
 import { fetchSystemParamByKey, updateSystemParams } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 
 const SystemParamsTimeZone = () => {
   const [timeZone, setTimeZone] = useState(null);

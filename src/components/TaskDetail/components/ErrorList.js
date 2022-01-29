@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Col, Row } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone, formatMessage } from '@/utils/util';
 import ErrorCodeFault from './ErrorCodeFault';
 import commonStyles from '@/common.module.less';
 import styles from '../CenterOs.module.less';

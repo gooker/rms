@@ -3,8 +3,8 @@ import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
-import { formatMessage } from '@/utils/utils';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { formatMessage } from '@/utils/util';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import styles from './popoverPanel.module.less';
 
 const BatchAddCells = (props) => {

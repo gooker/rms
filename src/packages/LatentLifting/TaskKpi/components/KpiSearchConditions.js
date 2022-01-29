@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Checkbox, Tooltip, DatePicker, Select } from 'antd';
 import { connect } from '@/utils/RcsDva';
 
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../TaskKpi.module.less';
 

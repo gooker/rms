@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import FormattedMessage from '@/components/FormattedMessage';
 import { Row, Input, Button } from 'antd';
-import { isStrictNull } from '@/utils/utils';
+import { isStrictNull } from '@/utils/util';
 
 export default class PasteModal extends Component {
   state = {

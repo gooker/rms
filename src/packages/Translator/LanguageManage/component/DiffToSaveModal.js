@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Button, Modal } from 'antd';
 import ReactDiffViewer from 'react-diff-viewer';
 import { sortBy } from 'lodash';
-import { adjustModalWidth } from '@/utils/utils';
+import { adjustModalWidth } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../translator.module.less';
 

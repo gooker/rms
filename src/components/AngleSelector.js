@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Input, Select } from 'antd';
-import { covertAngle2Direction, isNull } from '@/utils/utils';
+import { covertAngle2Direction, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { Option } = Select;

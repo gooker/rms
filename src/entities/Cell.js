@@ -1,8 +1,8 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import { CellSize, zIndex, CellTypeSize, CellTypeColor } from '@/config/consts';
-import { getTextureFromResources } from '@/utils/mapUtils';
+import { getTextureFromResources } from '@/utils/mapUtil';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;

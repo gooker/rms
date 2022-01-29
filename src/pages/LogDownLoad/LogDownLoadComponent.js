@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Progress, Form, Button, Select, Divider, Table, message } from 'antd';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dateFormat, dealResponse, formatMessage } from '@/utils/utils';
+import { dateFormat, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import { AGVState, Colors, LogFileTypes } from '@/config/consts';

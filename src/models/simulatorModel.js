@@ -10,8 +10,8 @@ import {
   fetchBatchDeleteSimulatorAgv,
   fetchSimulatorLoginAGVControlState,
 } from '@/services/monitor';
-import { dealResponse } from '@/utils/utils';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { dealResponse } from '@/utils/util';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
 export default {
   namespace: 'simulator',

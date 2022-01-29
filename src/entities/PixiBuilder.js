@@ -34,7 +34,6 @@ export default class PixiBuilder {
       .wheel()
       .decelerate()
       .clampZoom({ minScale: 0.001, maxScale: 0.5 });
-    this.viewport.fitWorld(false);
     this.viewport.sortableChildren = true;
 
     // 创建cull组件

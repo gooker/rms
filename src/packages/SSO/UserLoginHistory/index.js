@@ -4,7 +4,7 @@ import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/utils';
+import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/util';
 import { fetchUserLoginHistory } from '@/services/user';
 import commonStyles from '@/common.module.less';
 const { RangePicker } = DatePicker;

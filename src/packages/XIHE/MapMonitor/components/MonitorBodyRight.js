@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { throttle } from 'lodash';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import { AGVType } from '@/config/config';
 import { Category, MonitorRightTools } from '../enums';

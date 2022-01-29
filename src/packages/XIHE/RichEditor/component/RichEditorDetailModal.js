@@ -1,6 +1,6 @@
 import React from 'react';
 import { Modal, Tabs } from 'antd';
-import { adaptModalWidth, adaptModalHeight, formatMessage } from '@/utils/utils';
+import { adaptModalWidth, adaptModalHeight, formatMessage } from '@/utils/util';
 import LocalsKeys from '@/locales/LocaleKeys';
 
 const { TabPane } = Tabs;

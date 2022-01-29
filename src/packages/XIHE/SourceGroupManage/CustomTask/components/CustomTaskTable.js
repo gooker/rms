@@ -16,7 +16,7 @@ import {
   adaptModalHeight,
   isNull,
   formatMessage,
-} from '@/utils/utils';
+} from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/api';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';

@@ -4,7 +4,7 @@ import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
 import { fetchAgvHardwareInfo } from '@/services/api';
-import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 
 /**

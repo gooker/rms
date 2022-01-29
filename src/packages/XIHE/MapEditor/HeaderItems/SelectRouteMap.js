@@ -4,7 +4,7 @@ import { EditOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import styles from './index.module.less';
 
 const SelectRouteMap = (props) => {

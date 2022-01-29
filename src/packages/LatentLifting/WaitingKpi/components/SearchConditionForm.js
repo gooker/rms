@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Checkbox, DatePicker, Select, Form, Button, Row, Col } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../WaitingKpi.module.less';
 import { SearchOutlined } from '@ant-design/icons';

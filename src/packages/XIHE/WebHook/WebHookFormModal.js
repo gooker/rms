@@ -1,6 +1,6 @@
 import React from 'react';
 import { Row, Col, Modal, Form, Input, InputNumber, Select } from 'antd';
-import { isNull,formatMessage} from '@/utils/utils';
+import { isNull,formatMessage} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { Item } = Form;

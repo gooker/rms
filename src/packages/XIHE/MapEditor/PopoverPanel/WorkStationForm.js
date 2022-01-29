@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Form, Input, InputNumber } from 'antd';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/utils';
+import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/util';
 import { WorkStationSize } from '@/config/consts';
 import AngleSelector from '@/components/AngleSelector';
 import FormattedMessage from '@/components/FormattedMessage';

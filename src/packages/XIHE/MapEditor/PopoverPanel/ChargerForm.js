@@ -3,10 +3,10 @@ import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isNull } from '@/utils/utils';
+import { formatMessage, isNull } from '@/utils/util';
 import AngleSelector from '@/components/AngleSelector';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
 const ChargerForm = (props) => {
   const { dispatch, charger, mapContext, selectCellIds, allChargers, robotTypes } = props;

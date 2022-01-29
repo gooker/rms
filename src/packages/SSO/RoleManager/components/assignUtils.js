@@ -1,4 +1,4 @@
-import { isStrictNull } from '@/utils/utils';
+import { isStrictNull } from '@/utils/util';
 import { flattenDeep } from 'lodash';
 
 // 处理permisssion.js

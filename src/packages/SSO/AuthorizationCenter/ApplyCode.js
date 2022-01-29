@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Input, Button, message } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getApplyToken } from '@/services/user';
-import { dealResponse, isNull ,formatMessage} from '@/utils/utils';
+import { dealResponse, isNull ,formatMessage} from '@/utils/util';
 import styles from './UploadSSOAppInfo.module.less';
 
 // 获取申请码

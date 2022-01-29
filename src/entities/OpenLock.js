@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import { GlobalAlpha } from '@/config/consts';
 
 export default class OpenLock extends PIXI.Container {

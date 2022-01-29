@@ -4,7 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { agvEmptyRun } from '@/services/monitor';
 import { connect } from '@/utils/RcsDva';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/utils';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 

@@ -4,7 +4,7 @@ import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import TableWidthPages from '@/components/TableWidthPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/utils';
+import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/util';
 import { deleteReportGroup, fetchReportGroupList, saveReportGroup } from '@/services/api';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';

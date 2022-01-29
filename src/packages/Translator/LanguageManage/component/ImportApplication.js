@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Radio, Button, Select, Modal } from 'antd';
-import { adjustModalWidth } from '@/utils/utils';
+import { adjustModalWidth } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ImportI18nLanguage from './ImportI18nLanguage';
 

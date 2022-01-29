@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
-import { isStrictNull, formatMessage } from '@/utils/utils';
+import { isStrictNull, formatMessage } from '@/utils/util';
 
 export function exportTranslate(allShowData, key, appcode) {
   const modeText = {

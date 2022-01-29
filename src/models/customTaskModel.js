@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { dealResponse, convertMapToArrayMap, convertScopeDataToUiOptions,formatMessage } from '@/utils/utils';
+import { dealResponse, convertMapToArrayMap, convertScopeDataToUiOptions,formatMessage } from '@/utils/util';
 import { fetchGetActiveMap, fetchGetAllScopeActions } from '@/services/map';
 import {
   getBackZone,

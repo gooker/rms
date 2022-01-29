@@ -11,7 +11,7 @@ import {
   AddChargerPile,
   fetchUpdateCharger,
 } from '@/services/api';
-import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWidthPages from '@/components/TableWidthPages';
 import BindingChargeComponent from './components/BindingChargeComponent';

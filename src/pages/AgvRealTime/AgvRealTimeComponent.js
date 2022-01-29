@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import LabelComponent from '@/components/LabelComponent';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
   fetchAgvList,
   fetchAgvInfo,

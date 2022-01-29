@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Modal, Form, Input, Tabs } from 'antd';
-import { adaptModalWidth, adaptModalHeight, formatMessage } from '@/utils/utils';
+import { adaptModalWidth, adaptModalHeight, formatMessage } from '@/utils/util';
 import Editor from './editor.js';
 import LocaleKeys from '@/locales/LocaleKeys';
 

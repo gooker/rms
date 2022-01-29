@@ -1,6 +1,4 @@
 import React from 'react';
-import { find } from 'lodash';
-import { isNull } from './utils';
 
 function getAuthorityKeys() {
   let AuthorityKeys = window.localStorage.getItem('permissionMap');

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Input, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, getFormLayout } from '@/utils/utils';
+import { formatMessage, getFormLayout } from '@/utils/util';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 

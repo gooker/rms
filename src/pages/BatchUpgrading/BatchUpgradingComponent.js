@@ -13,7 +13,7 @@ import {
 import TableWidthPages from '@/components/TableWidthPages';
 import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';
-import { formatMessage, dealResponse } from '@/utils/utils';
+import { formatMessage, dealResponse } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';

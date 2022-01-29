@@ -2,7 +2,7 @@ import React from 'react';
 import { Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, getBase64 } from '@/utils/utils';
+import { formatMessage, getBase64 } from '@/utils/util';
 import styles from './LogoUploader.module.less';
 export default class LogoUploader extends React.Component {
   state = {

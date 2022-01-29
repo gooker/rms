@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
-import { dealResponse, formatMessage, GMT2UserTimeZone, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, GMT2UserTimeZone, isNull } from '@/utils/util';
 import { fetchAgvList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';

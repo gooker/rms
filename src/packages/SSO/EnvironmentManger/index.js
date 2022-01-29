@@ -15,7 +15,7 @@ import {
   fetchUpdateEnvironment,
 } from '@/services/user';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';

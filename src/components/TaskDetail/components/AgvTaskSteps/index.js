@@ -7,7 +7,7 @@ import {
   FrownOutlined,
   ClockCircleOutlined,
 } from '@ant-design/icons';
-import { GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone, formatMessage } from '@/utils/util';
 import RenderAgvTaskActions from './RenderAgvTaskActions';
 
 const Step = Steps.Step;

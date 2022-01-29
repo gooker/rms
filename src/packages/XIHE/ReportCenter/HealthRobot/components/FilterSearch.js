@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Button, Input, Select } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 let _prefix = null;

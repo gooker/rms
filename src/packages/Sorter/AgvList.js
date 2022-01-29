@@ -8,7 +8,7 @@ import {
   getAgvStatusTag,
   GMT2UserTimeZone,
   getDirectionLocale,
-} from '@/utils/utils';
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import AgvListComponent from '@/pages/AgvListComponent';
 import dictionary from '@/utils/Dictionary';

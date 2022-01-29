@@ -9,7 +9,7 @@ import {
   FullscreenExitOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 
 const MonitorHeaderRightTools = (props) => {
   const { dispatch, isInnerFullscreen } = props;

@@ -6,7 +6,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import FaultDefinitionSearchForm from '@/pages/FaultDefinition/FaultDefinitionSearchForm';
 import TableWidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull } from '@/utils/utils';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteFaultDefinition, fetchDefinedFaults } from '@/services/api';
 import FaultDefinitionForm from '@/pages/FaultDefinition/FaultDefinitionForm';
 import RmsConfirm from '@/components/RmsConfirm';

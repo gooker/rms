@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { GMT2UserTimeZone, formatMessage } from '@/utils/utils';
+import { GMT2UserTimeZone, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import FormattedMessage from '@/components/FormattedMessage';
 

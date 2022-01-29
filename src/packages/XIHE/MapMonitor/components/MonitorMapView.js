@@ -3,14 +3,14 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
-import PixiBuilder from '@/utils/PixiBuilder';
+import PixiBuilder from '@/entities/PixiBuilder';
 import {
   dealResponse,
   formatMessage,
   getToteLayoutBaseParam,
   isEqual,
   isNull,
-} from '@/utils/utils';
+} from '@/utils/util';
 import {
   AGVState,
   ElementType,
@@ -28,7 +28,7 @@ import {
   hasLatentPod,
   loadMonitorExtraTextures,
   unifyAgvState,
-} from '@/utils/mapUtils';
+} from '@/utils/mapUtil';
 import {
   BitText,
   Cell,

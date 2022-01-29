@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { Row, Col, Form, Button, DatePicker } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
 import TimePickerSelector from '../../components/timePicker';
 

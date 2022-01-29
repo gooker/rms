@@ -12,7 +12,7 @@ import RobotFaultComponent from './RobotFaultTab';
 import RobotStatusErrorTab from './RobotStatusErrorTab';
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
-import { getContentHeight } from '@/utils/utils';
+import { getContentHeight } from '@/utils/util';
 
 const TabCollection = [
   {

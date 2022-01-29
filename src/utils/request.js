@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { isPlainObject } from 'lodash';
-import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from '@/utils/utils';
+import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from '@/utils/util';
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {

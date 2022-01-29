@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { fetchChargerFaultList } from '@/services/api';
-import { dealResponse, formatMessage, dateFormat } from '@/utils/utils';
+import { dealResponse, formatMessage, dateFormat } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWidthPages from '@/components/TableWidthPages';
 import FaultSearchForm from './components/FaultSearchForm';

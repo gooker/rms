@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Modal } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 
 export default class SetSeedNameModal extends Component {
   state = {

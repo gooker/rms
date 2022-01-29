@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { connect } from '@/utils/RcsDva';
 import Detail from '@/components/TaskDetail/Detail';
-import Loadable from '@/utils/Loadable';
+import Loadable from '@/components/Loadable';
 
 const Content = (props) => {
   const { currentApp, allMenuData } = props;

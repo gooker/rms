@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
-import { formatMessage, getSuffix, renderBattery } from '@/utils/utils';
+import { formatMessage, getSuffix, renderBattery } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getDirectionLocale, getAgvStatusTag, GMT2UserTimeZone } from '@/utils/utils';
+import { getDirectionLocale, getAgvStatusTag, GMT2UserTimeZone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';

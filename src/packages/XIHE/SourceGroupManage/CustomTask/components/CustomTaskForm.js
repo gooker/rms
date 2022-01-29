@@ -13,8 +13,8 @@ import {
   getRandomString,
   customTaskApplyDrag,
   restoreCustomTaskForm,
-} from '@/utils/utils';
-import { formatMessage } from '@/utils/utils';
+} from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ModelTypeFieldMap } from '@/config/consts';
 import { saveCustomTask } from '@/services/api';

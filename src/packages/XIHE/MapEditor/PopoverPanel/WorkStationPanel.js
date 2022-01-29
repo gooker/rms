@@ -8,8 +8,8 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage, isNull } from '@/utils/utils';
-import { getCurrentLogicAreaData } from '@/utils/mapUtils';
+import { formatMessage, isNull } from '@/utils/util';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';
 import styles from '../PopoverPanel/popoverPanel.module.less';

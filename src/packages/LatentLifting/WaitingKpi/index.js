@@ -6,7 +6,7 @@ import GanttModal from './components/GanttModal';
 import { convertWaitingToChartVM, transformTime } from './utils';
 import { fetchWaitingKpiView } from '@/services/latentLifting';
 import styles from './WaitingKpi.module.less';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const gridLayout = {

@@ -3,7 +3,7 @@ import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form } from 'an
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/utils';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
 import {
   fetchUserManagerList,
   updateUserManage,

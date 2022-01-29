@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import { dealResponse, isStrictNull } from '@/utils/utils';
+import { dealResponse, isStrictNull } from '@/utils/util';
 import { AppCode } from '@/config/config';
 
 export function convertRoute2Menu(data, parentAuthority, parentName) {

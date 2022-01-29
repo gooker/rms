@@ -4,13 +4,12 @@ import {
   getCurrentRouteMapData,
   getTextureFromResources,
   loadEditorExtraTextures,
-} from '@/utils/mapUtils';
+} from '@/utils/mapUtil';
 import { connect } from '@/utils/RcsDva';
 import { CellSize } from '@/config/consts';
 import { Cell } from '@/entities';
-import PixiBuilder from '@/utils/PixiBuilder';
+import PixiBuilder from '@/entities/PixiBuilder';
 import BaseMap from '@/components/BaseMap';
-import EditorMask from './EditorMask';
 
 @connect()
 class EditorMapView extends BaseMap {
@@ -30,9 +29,13 @@ class EditorMapView extends BaseMap {
       showEmergencyStop: true,
     };
 
-    // 编辑器相关
-    this.selectedCells = []; // The collection of selected Cells data
-    this.selectedLines = []; // The collection of selected lines id
+    // 核心业务逻辑参数
+    this.cellXMap = new Map(); // {[x]:[Cell]}
+    this.cellYMap = new Map(); // {[y]:[Cell]}
+
+    // 选择相关
+    this.selectedCells = []; // 缓存选中的点位ID
+    this.selectedLines = []; // 缓存选中的线条ID
     this.batchSelectBase = []; // 批量选择的基准点位
   }
 
@@ -50,6 +53,22 @@ class EditorMapView extends BaseMap {
     dispatch({ type: 'editor/saveMapContext', payload: this });
     await loadEditorExtraTextures(this.pixiUtils.renderer);
   }
+
+  // 数据清理
+  clearEditorMapData = () => {
+    this.cellXMap.clear();
+    this.cellYMap.clear();
+    this.selectedCells = [];
+    this.batchSelectBase = [];
+    this.clearEditorRouteData();
+    this.onSelectCell([]);
+  };
+
+  clearEditorRouteData = () => {
+    this.cellCostMap.clear();
+    this.selectedLines = [];
+    this.onSelectLine([]);
+  };
 
   // 切换地图编辑地图显示模式
   changeMapMode = (mode) => {
@@ -72,7 +91,7 @@ class EditorMapView extends BaseMap {
     // 处理Cost线条
     this.destroyAllLines();
     const relations = getCurrentRouteMapData()?.relations ?? [];
-    this.drawLine(relations, relations, true, mode, this.states.shownPriority);
+    this.renderCostLines(relations, relations, true, mode, this.states.shownPriority);
 
     // 保证 是否显示不可走点 状态一致
     this.switchShowBlock(this.states.hideBlock);
@@ -105,15 +124,8 @@ class EditorMapView extends BaseMap {
   /**
    * 渲染点位
    * @param {*} cells 需要渲染点位数据
-   * @param {*} clear 是否需要清理掉idCellMap数据
    */
-  renderCells = (cells, clear = true) => {
-    if (clear) {
-      this.idCellMap.clear();
-      this.selectedLines = [];
-      this.selectedCells = [];
-      this.batchSelectBase = [];
-    }
+  renderCells = (cells) => {
     cells.forEach((cellData) => {
       this.addCell(cellData.id, cellData.x, cellData.y);
     });
@@ -136,7 +148,7 @@ class EditorMapView extends BaseMap {
   updateCells = ({ type, payload }) => {
     // 新增点位
     if (type === 'add') {
-      this.renderCells(payload, false);
+      this.renderCells(payload);
     }
     // 删除点位
     if (type === 'remove') {
@@ -213,6 +225,10 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 框选 **********************
+  /**
+   * 待选项: 点位、线条、工作站、通用站点、充电桩
+   * @param cellsInRange
+   */
   rectangleSelection = (cellsInRange) => {
     // 先取消选择已选择的点位
     this.selectedCells.forEach((cellId) => {
@@ -414,7 +430,12 @@ class EditorMapView extends BaseMap {
   updateLines = ({ type, payload }) => {
     // 新增
     if (type === 'add') {
-      this.drawLine(payload, getCurrentRouteMapData().relations || [], true, this.states.mapMode);
+      this.renderCostLines(
+        payload,
+        getCurrentRouteMapData().relations || [],
+        true,
+        this.states.mapMode,
+      );
     }
     // 删除
     if (type === 'remove') {
@@ -455,12 +476,7 @@ class EditorMapView extends BaseMap {
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
-    return (
-      <>
-        <EditorMask />
-        <div id="editorPixi" style={{ height: '100%', fontSize: 0 }} />
-      </>
-    );
+    return <div id="editorPixi" style={{ height: '100%', fontSize: 0 }} />;
   }
 }
 export default EditorMapView;

@@ -23,7 +23,7 @@ import {
 import classnames from 'classnames';
 import { cloneDeep, isEqual } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import { dealResponse, isNull, formatMessage } from '@/utils/util';
 import {
   addSysLang,
   getSysLang,

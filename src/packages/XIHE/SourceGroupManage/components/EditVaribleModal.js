@@ -10,7 +10,7 @@ import CascadeSelect from '../CustomTask/FormComponent/CascadeSelect';
 import ModelSelection from '../CustomTask/FormComponent/ModelSelection';
 // import AngleSelector from '@/pages/MapTool/components/AngleSelector';
 import { ModelTypeFieldMap } from '@/config/consts';
-import { isNull,formatMessage } from '@/utils/utils';
+import { isNull,formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from '../CustomTask/customTask.module.less';

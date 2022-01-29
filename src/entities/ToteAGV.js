@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { isNull, isStrictNull } from '@/utils/utils';
-import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
+import { isNull, isStrictNull } from '@/utils/util';
+import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
 import { ToteAGVSize, GlobalAlpha, zIndex } from '@/config/consts';
 import { AGVType } from '@/config/config';
 

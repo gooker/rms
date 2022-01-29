@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, Button, Modal } from 'antd';
-import { adjustModalWidth, formatMessage } from '@/utils/utils';
+import { adjustModalWidth, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ImportI18nLanguage from './ImportI18nLanguage';
 const formItemLayout = {

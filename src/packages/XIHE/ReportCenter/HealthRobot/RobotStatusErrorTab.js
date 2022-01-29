@@ -2,7 +2,7 @@ import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
 import { Row, Col, Card } from 'antd';
 import moment from 'moment';
-import { formatMessage, isNull, isStrictNull } from '@/utils/utils';
+import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FilterSearch from './components/FilterSearch';
 import FilterSearchBydate from './components/FilterSearchBydate';
 import {

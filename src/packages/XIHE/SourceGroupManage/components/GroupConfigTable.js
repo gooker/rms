@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Table, Divider, Button, Popconfirm, Row, Tag, Form, Select, Badge, Col } from 'antd';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
 

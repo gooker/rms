@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Button, Transfer, message } from 'antd';
 import { fetchSelectSectionList, fetchAllSectionByUserId } from '@/services/user';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AdminTColor } from '../userManagerUtils';
 const AdminTypeColor = AdminTColor();

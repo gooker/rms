@@ -11,7 +11,7 @@ import {
   getAgvStatusTag,
   formatMessage,
   isNull,
-} from '@/utils/utils';
+} from '@/utils/util';
 import dictionary from '@/utils/Dictionary';
 import { AGVType } from '@/config/config';
 

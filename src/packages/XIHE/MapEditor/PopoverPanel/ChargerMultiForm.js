@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Button, Form, Input, Row, Select } from 'antd';
-import { formatMessage, getFormLayout } from '@/utils/utils';
+import { formatMessage, getFormLayout } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';

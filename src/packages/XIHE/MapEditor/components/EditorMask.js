@@ -1,8 +1,8 @@
 import React, { memo, useRef, useState } from 'react';
 import { Button, Input } from 'antd';
 import { connect } from '@/utils/RcsDva';
-import { convertPngToBase64, formatMessage, getColorRGB, isStrictNull } from '@/utils/utils';
-import { transformScreenToWorldCoordinator } from '@/utils/mapUtils';
+import { convertPngToBase64, formatMessage, getColorRGB, isStrictNull } from '@/utils/util';
+import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
@@ -48,22 +48,21 @@ const EditorMask = (props) => {
     const __color = color || '#e8e8e8';
 
     if (leftActiveCategory === LeftCategory.Rectangle) {
-      mapContext.drawRectArea(
-        worldStartX,
-        worldStartY,
-        Math.abs(worldStartX - worldEndX),
-        Math.abs(worldStartY - worldEndY),
-        __color,
-      );
+      // 锚点在正中心
+      const width = Math.abs(worldStartX - worldEndX);
+      const height = Math.abs(worldStartY - worldEndY);
+      const x = worldStartX + width / 2;
+      const y = worldStartY + height / 2;
+      mapContext.drawRectArea(x, y, width, height, __color);
       dispatch({
         type: 'editor/insertBackgroundMark',
         payload: {
           type: 'wireframe',
           shape: 'Rect',
-          x: worldStartX,
-          y: worldStartY,
-          width: Math.abs(worldStartX - worldEndX),
-          height: Math.abs(worldStartY - worldEndY),
+          x,
+          y,
+          width,
+          height,
           labelColor: __color,
         },
       });

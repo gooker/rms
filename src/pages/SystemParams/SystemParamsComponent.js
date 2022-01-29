@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Card, Spin } from 'antd';
-import { formatMessage, dealResponse } from '@/utils/utils';
+import { formatMessage, dealResponse } from '@/utils/util';
 import SystemParams from '@/components/SystemParams';
 import { fetchSystemParamFormData, updateSystemParams } from '@/services/api';
 

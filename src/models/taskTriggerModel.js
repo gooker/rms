@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { getCustomTaskList, getCustomTaskNodes, getFormModelTypes } from '@/services/api';
-import { dealResponse,formatMessage } from '@/utils/utils';
+import { dealResponse,formatMessage } from '@/utils/util';
 import { fetchGetActiveMap } from '@/services/map';
 
 export default {

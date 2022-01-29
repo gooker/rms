@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import { connect } from '@/utils/RcsDva';
 import { IconFont } from '@/components/IconFont';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import PositionCell from '../components/PositionCell';
 
 const EditorHeaderRightTools = (props) => {

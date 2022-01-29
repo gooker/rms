@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import { Modal, Button } from 'antd';
 
 const RequestPayloadModal = (props) => {

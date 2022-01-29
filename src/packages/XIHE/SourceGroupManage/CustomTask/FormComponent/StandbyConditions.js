@@ -4,7 +4,7 @@ import { connect } from '@/utils/RcsDva';
 import { Form, Select, Row, Col, Button } from 'antd';
 import { MinusOutlined, ClearOutlined } from '@ant-design/icons';
 import ModelSelection from '../FormComponent/ModelSelection';
-import { convertMapToArrayMap,formatMessage } from '@/utils/utils';
+import { convertMapToArrayMap,formatMessage } from '@/utils/util';
 import MenuIcon from '@/utils/MenuIcon';
 import { AGVType } from '@/config/config';
 import styles from '../customTask.module.less';

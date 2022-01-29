@@ -5,12 +5,12 @@ import { connect } from '@/utils/RcsDva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllTaskTypes } from '@/services/api';
 import { loadTexturesForMap } from '@/utils/textures';
 
 import './mainLayout.less';
-import SocketClient from '@/utils/SocketClient';
+import SocketClient from '@/entities/SocketClient';
 
 @withRouter
 @connect(({ global }) => ({

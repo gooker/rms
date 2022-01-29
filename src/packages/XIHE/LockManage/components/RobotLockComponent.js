@@ -8,7 +8,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
 import RobotLockSearch from './RobotLockSearch';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, formatMessage } from '@/utils/utils';
+import { dealResponse, isNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 
 const RobotLock = (props) => {

@@ -13,7 +13,7 @@ import KpiSearchConditions from './components/KpiSearchConditions';
 import KpiSavedSeedModal from './components/KpiSavedSeedModal';
 import SetSeedNameModal from './components/SetSeedNameModal';
 import CustomChart from './components/CustomChart';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './TaskKpi.module.less';
 

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Form, Select } from 'antd';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAvailableMapChargerList } from '@/services/api';
 

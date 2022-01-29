@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import find from 'lodash/find';
 import { Form, Select, Switch, Row, Col, message, Empty, Button, Spin } from 'antd';
-import { dealResponse, formatMessage } from '@/utils/utils';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchGetActiveMap } from '@/services/map';
 import { getCustomGroup, getUnBindGroupData, fechSaveUnBind } from '@/services/api';

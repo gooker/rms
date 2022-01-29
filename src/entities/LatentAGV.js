@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtils';
+import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
 import { zIndex, LatentAGVSize } from '@/config/consts';
 import { AGVType } from '@/config/config';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 
 export default class LatentAGV extends PIXI.Container {
   constructor(props) {

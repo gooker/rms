@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from '@/utils/RcsDva';
-import { formatMessage } from '@/utils/utils';
+import { formatMessage } from '@/utils/util';
 
 function FormattedMessage(props) {
   const { id, values = {}, editKey } = props;

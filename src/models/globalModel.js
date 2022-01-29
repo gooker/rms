@@ -2,7 +2,7 @@ import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import { fetchNotice, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/user';
-import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/utils';
+import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/util';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
 import moment from 'moment';

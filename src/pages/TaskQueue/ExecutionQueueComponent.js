@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/RcsDva';
 import { Button, Divider, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { formatMessage, dealResponse, dateFormat, isStrictNull } from '@/utils/utils';
+import { formatMessage, dealResponse, dateFormat, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
 import TableWidthPages from '@/components/TableWidthPages';

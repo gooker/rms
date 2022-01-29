@@ -1,16 +1,17 @@
 import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RcsDva';
-import { isNull } from '@/utils/utils';
+import { isNull } from '@/utils/util';
 import EditorMapView from './EditorMapView';
+import EditorMask from './EditorMask';
 import {
-  LeftToolBarWidth,
-  RightToolBarWidth,
   HeaderHeight,
   FooterHeight,
   LeftCategory,
+  LeftToolBarWidth,
+  RightToolBarWidth,
 } from '../enums';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtils';
+import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
 
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext } = props;
@@ -39,6 +40,8 @@ const EditorMapContainer = (props) => {
   useEffect(() => {
     if (isNull(mapContext)) return;
     mapContext.clearMapStage();
+    mapContext.clearEditorMapData();
+
     if (currentMap) {
       renderMap();
       renderLogicArea();
@@ -49,6 +52,7 @@ const EditorMapContainer = (props) => {
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
+      mapContext.clearEditorRouteData();
       renderRouteMap();
       mapContext.refresh();
     }
@@ -260,7 +264,7 @@ const EditorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.drawLine(relations, relations, true);
+    mapContext.renderCostLines(relations, relations, true);
   }
 
   // 地图区域鼠标样式
@@ -270,6 +274,7 @@ const EditorMapContainer = (props) => {
       case LeftCategory.Drag:
         cursorStyle = 'grab';
         break;
+      case LeftCategory.Choose:
       case LeftCategory.Image:
       case LeftCategory.Rectangle:
       case LeftCategory.Circle:
@@ -282,7 +287,11 @@ const EditorMapContainer = (props) => {
   }
 
   return (
-    <div style={{ position: 'relative', flex: 1, cursor: getCursorStyle() }}>
+    <div
+      id={'editorPixiContainer'}
+      style={{ position: 'relative', flex: 1, cursor: getCursorStyle() }}
+    >
+      <EditorMask />
       <EditorMapView />
     </div>
   );
