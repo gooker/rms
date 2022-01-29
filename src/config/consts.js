@@ -146,16 +146,16 @@ export const GeoLockColor = {
 
 // 地图元素 zIndex
 export const zIndex = {
-  area: 1,
-  label: 1,
-  targetLine: 1,
-  cell: 2,
-  line: 3,
-  temporaryLock: 4,
-  agv: 5,
-  pod: 6,
-  cellHeat: 7,
-  functionIcon: 8,
+  zoneMarker: 1,
+  label: 2,
+  targetLine: 3,
+  cell: 4,
+  line: 5,
+  temporaryLock: 6,
+  agv: 7,
+  pod: 8,
+  cellHeat: 9,
+  functionIcon: 10,
 };
 
 // 日志下载文件类型

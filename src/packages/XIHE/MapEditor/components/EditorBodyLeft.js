@@ -3,6 +3,7 @@ import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import { Cell, LineArrow } from '@/entities';
+import MapLabelMarker from '@/entities/MapLabelMarker';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
@@ -195,14 +196,19 @@ class EditorBodyLeft extends React.PureComponent {
   // 显示Label输入框
   onInsertLabel = (ev) => {
     const { dispatch } = this.props;
+    const evTarget = ev.target;
     const { x, y } = ev.data.global;
-    const maskDOM = document.getElementById('mapSelectionMask');
-    maskDOM.style.display = 'block';
-    maskDOM.style.left = `${x}px`;
-    maskDOM.style.top = `${y}px`;
-    maskDOM.style.width = `${200}px`;
-    maskDOM.style.height = `${30}px`;
-    dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
+
+    // 点击到Text本身要阻止该事件
+    if (!(evTarget.parent instanceof MapLabelMarker)) {
+      const maskDOM = document.getElementById('mapSelectionMask');
+      maskDOM.style.display = 'block';
+      maskDOM.style.left = `${x}px`;
+      maskDOM.style.top = `${y}px`;
+      maskDOM.style.width = `${200}px`;
+      maskDOM.style.height = `${30}px`;
+      dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
+    }
   };
 
   render() {

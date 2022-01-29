@@ -23,6 +23,7 @@ import {
 } from '@/entities';
 import { sortBy, uniq } from 'lodash';
 import MapZoneMarker from '@/entities/MapZoneMarker';
+import MapLabelMarker from '@/entities/MapLabelMarker';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -888,26 +889,40 @@ export default class BaseMap extends React.Component {
 
   // 画区域
   drawRectArea(x, y, width, height, color) {
-    const graphics = new MapZoneMarker(x, y, width, height, color.replace('#', '0x'), this.refresh);
+    const graphics = new MapZoneMarker({
+      x,
+      y,
+      width,
+      height,
+      color: color.replace('#', '0x'),
+      refresh: this.refresh,
+      type: 'RECT',
+    });
     this.pixiUtils.viewportAddChild(graphics);
+    this.refresh();
   }
 
   drawCircleArea(x, y, radius, color) {
-    const graphics = new PIXI.Graphics();
-    graphics.beginFill(color.replace('#', '0x'));
-    graphics.drawCircle(x, y, radius);
-    graphics.endFill();
-    graphics.alpha = 0.8;
-    graphics.zIndex = zIndex.area;
+    const graphics = new MapZoneMarker({
+      x,
+      y,
+      radius,
+      color: color.replace('#', '0x'),
+      refresh: this.refresh,
+      type: 'CIRCLE',
+    });
     this.pixiUtils.viewportAddChild(graphics);
     this.refresh();
   }
 
   renderLabel(text, x, y) {
-    const textSprite = new Text(text, x, y, null, true, 200);
-    textSprite.alpha = 0.8;
-    textSprite.anchor.set(0.5);
-    textSprite.zIndex = zIndex.label;
+    const textSprite = new MapLabelMarker({
+      text,
+      x,
+      y,
+      color: 0xffffff,
+      refresh: this.refresh,
+    });
     this.pixiUtils.viewportAddChild(textSprite);
     this.refresh();
   }
