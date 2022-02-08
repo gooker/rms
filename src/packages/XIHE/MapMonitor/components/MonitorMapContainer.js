@@ -180,8 +180,8 @@ const MonitorMapContainer = (props) => {
 
     // 文字标记
     if (Array.isArray(labels)) {
-      labels.forEach(({ text, x, y }) => {
-        mapContext.renderLabel(text, x, y);
+      labels.forEach((label) => {
+        mapContext.renderLabel(label);
       });
     }
 

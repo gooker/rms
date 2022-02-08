@@ -118,8 +118,7 @@ export default {
   // 提示信息
   'editor.code.duplicate': '编码已存在',
 
-  // Footer
-  'editor.footer.cellSelected': '已选中点位',
-  'editor.footer.lineSelected': '已选中路线',
-  'editor.footer.totalSelected': '共选中',
+  // 添加地图标记
+  'editor.label.creation': '创建标记信息',
+  'editor.label.required': '请输入标签内容',
 };

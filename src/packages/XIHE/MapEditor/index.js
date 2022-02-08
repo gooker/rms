@@ -6,9 +6,7 @@ import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
 import EditorMapContainer from './components/EditorMapContainer';
-import EditorFooter from './components/EditorFooter';
 import commonStyles from '@/common.module.less';
-import styles from './editorLayout.module.less';
 
 const MapEditor = (props) => {
   const { dispatch, mapList } = props;
@@ -31,13 +29,8 @@ const MapEditor = (props) => {
       </div>
       <div className={commonStyles.mapLayoutBody}>
         <EditorBodyLeft />
-        <div className={styles.editorBodyMiddle}>
-          <div style={{ display: 'flex', flex: 1 }}>
-            <EditorMapContainer />
-            <EditorBodyRight />
-          </div>
-          <EditorFooter />
-        </div>
+        <EditorMapContainer />
+        <EditorBodyRight />
       </div>
     </div>
   );

@@ -2,16 +2,12 @@ import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/util';
-import EditorMapView from './EditorMapView';
 import EditorMask from './EditorMask';
-import {
-  HeaderHeight,
-  FooterHeight,
-  LeftCategory,
-  LeftToolBarWidth,
-  RightToolBarWidth,
-} from '../enums';
+import EditorMapView from './EditorMapView';
+import { ZoneMarkerType } from '@/config/consts';
+import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
+import styles from '@/packages/XIHE/MapEditor/editorLayout.module.less';
 
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext } = props;
@@ -24,10 +20,7 @@ const EditorMapContainer = (props) => {
         const { width, height } = htmlDOM.getBoundingClientRect();
         const { mapContext: _mapContext } = window.g_app._store.getState().editor;
         _mapContext &&
-          _mapContext.resize(
-            width - LeftToolBarWidth - RightToolBarWidth,
-            height - HeaderHeight - FooterHeight,
-          );
+          _mapContext.resize(width - LeftToolBarWidth - RightToolBarWidth, height - HeaderHeight);
       }, 500),
     );
     resizeObserver.observe(document.getElementById('editorPixi'));
@@ -149,51 +142,54 @@ const EditorMapContainer = (props) => {
       mapContext.renderCommonFunction(commonList);
     }
 
-    const { dumpStations, backGround, labels, emergencyStopFixedList } = currentLogicAreaData;
+    const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;
     // 抛货点
     if (Array.isArray(dumpStations)) {
       mapContext.renderDumpFunction(dumpStations);
     }
 
     // 背景(线框&图片)
-    if (Array.isArray(backGround)) {
-      backGround.forEach((backImgData) => {
+    if (Array.isArray(zoneMarker)) {
+      zoneMarker.forEach((zoneMarkerItem) => {
         // 线框
-        if (backImgData.type === 'wireframe') {
-          // 矩形
-          if (backImgData.shape === 'Rect') {
-            mapContext.drawRectArea(
-              backImgData.x,
-              backImgData.y,
-              backImgData.width,
-              backImgData.height,
-              backImgData.labelColor,
-            );
-          } else {
-            mapContext.drawCircleArea(
-              backImgData.x,
-              backImgData.y,
-              backImgData.radius,
-              backImgData.labelColor,
-            );
-          }
-        } else {
-          // 图片
-          mapContext.renderImage({
-            base64: backImgData.imageUrl,
-            x: backImgData.x,
-            y: backImgData.y,
-            width: backImgData.width,
-            height: backImgData.height,
-          });
+        if (zoneMarkerItem.type === ZoneMarkerType.RECT) {
+          mapContext.drawRectArea(
+            zoneMarkerItem.code,
+            zoneMarkerItem.x,
+            zoneMarkerItem.y,
+            zoneMarkerItem.width,
+            zoneMarkerItem.height,
+            zoneMarkerItem.color,
+          );
+        }
+
+        if (zoneMarkerItem.type === ZoneMarkerType.CIRCLE) {
+          mapContext.drawCircleArea(
+            zoneMarkerItem.code,
+            zoneMarkerItem.x,
+            zoneMarkerItem.y,
+            zoneMarkerItem.radius,
+            zoneMarkerItem.color,
+          );
+        }
+
+        if (zoneMarkerItem.type === ZoneMarkerType.IMG) {
+          mapContext.renderImage(
+            zoneMarkerItem.code,
+            zoneMarkerItem.x,
+            zoneMarkerItem.y,
+            zoneMarkerItem.width,
+            zoneMarkerItem.height,
+            zoneMarkerItem.data,
+          );
         }
       });
     }
 
     // 文字标记
     if (Array.isArray(labels)) {
-      labels.forEach(({ text, x, y }) => {
-        mapContext.renderLabel(text, x, y);
+      labels.forEach((item) => {
+        mapContext.renderLabel(item);
       });
     }
 
@@ -275,9 +271,10 @@ const EditorMapContainer = (props) => {
         cursorStyle = 'grab';
         break;
       case LeftCategory.Choose:
-      case LeftCategory.Image:
+      case LeftCategory.Font:
       case LeftCategory.Rectangle:
       case LeftCategory.Circle:
+      case LeftCategory.Image:
         cursorStyle = 'crosshair';
         break;
       default:
@@ -289,7 +286,8 @@ const EditorMapContainer = (props) => {
   return (
     <div
       id={'editorPixiContainer'}
-      style={{ position: 'relative', flex: 1, cursor: getCursorStyle() }}
+      className={styles.editorBodyMiddle}
+      style={{  cursor: getCursorStyle() }}
     >
       <EditorMask />
       <EditorMapView />

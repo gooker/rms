@@ -8,7 +8,7 @@ import {
   getLineGraphics,
 } from '@/utils/mapUtil';
 import { isNull, isItemOfArray } from '@/utils/util';
-import { CellSize, WorldScreenRatio, zIndex } from '@/config/consts';
+import { CellSize, WorldScreenRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 import {
   Dump,
   Charger,
@@ -19,7 +19,6 @@ import {
   Intersection,
   EmergencyStop,
   CommonFunction,
-  Text,
 } from '@/entities';
 import { sortBy, uniq } from 'lodash';
 import MapZoneMarker from '@/entities/MapZoneMarker';
@@ -40,6 +39,8 @@ function initState(context) {
   context.relationshipLines = new Map(); // 关系线
   context.backImgMap = new Map(); // 背景图片
   context.fixedEStopMap = new Map(); // 固定紧急避让区
+  context.labelMap = new Map(); // 标签
+  context.zoneMap = new Map(); // 区域标记
 
   // 线条与点位ID的Map关系
   context.cellCostMap = new Map(); // {[cellId]:[Cost, Cost]}
@@ -888,7 +889,7 @@ export default class BaseMap extends React.Component {
   };
 
   // 画区域
-  drawRectArea(x, y, width, height, color) {
+  drawRectArea(code, x, y, width, height, color) {
     const graphics = new MapZoneMarker({
       x,
       y,
@@ -896,48 +897,52 @@ export default class BaseMap extends React.Component {
       height,
       color: color.replace('#', '0x'),
       refresh: this.refresh,
-      type: 'RECT',
+      type: ZoneMarkerType.RECT,
     });
     this.pixiUtils.viewportAddChild(graphics);
     this.refresh();
   }
 
-  drawCircleArea(x, y, radius, color) {
+  drawCircleArea(code, x, y, radius, color) {
     const graphics = new MapZoneMarker({
       x,
       y,
       radius,
       color: color.replace('#', '0x'),
       refresh: this.refresh,
-      type: 'CIRCLE',
+      type: ZoneMarkerType.CIRCLE,
     });
     this.pixiUtils.viewportAddChild(graphics);
     this.refresh();
   }
 
-  renderLabel(text, x, y) {
-    const textSprite = new MapLabelMarker({
-      text,
+  renderImage(code, x, y, width, height, base64) {
+    const graphics = new MapZoneMarker({
       x,
       y,
-      color: 0xffffff,
+      width,
+      height,
+      data: base64,
       refresh: this.refresh,
+      type: ZoneMarkerType.IMG,
     });
-    this.pixiUtils.viewportAddChild(textSprite);
+    this.zoneMap.set(code, graphics);
+    this.pixiUtils.viewportAddChild(graphics);
     this.refresh();
   }
 
-  renderImage({ base64, x, y, width, height }) {
-    const imageBaseTexture = new PIXI.BaseTexture(base64);
-    const imageTexture = new PIXI.Texture(imageBaseTexture);
-    const imageSprite = new PIXI.Sprite(imageTexture);
-    imageSprite.x = x;
-    imageSprite.y = y;
-    imageSprite.width = width;
-    imageSprite.height = height;
-    imageSprite.alpha = 0.8;
-    imageSprite.zIndex = zIndex.area;
-    this.pixiUtils.viewportAddChild(imageSprite);
+  renderLabel({ code, x, y, text, color, width, height }) {
+    const textSprite = new MapLabelMarker({
+      x,
+      y,
+      text,
+      color: color || 0xffffff,
+      width,
+      height,
+      refresh: this.refresh,
+    });
+    this.labelMap.set(code, textSprite);
+    this.pixiUtils.viewportAddChild(textSprite);
     this.refresh();
   }
 }

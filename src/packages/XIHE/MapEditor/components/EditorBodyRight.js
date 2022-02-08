@@ -3,21 +3,15 @@ import { Tooltip } from 'antd';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RcsDva';
 import { isNull } from '@/utils/util';
-import {
-  Category,
-  HeaderHeight,
-  FooterHeight,
-  EditorRightTools,
-  RightToolBarWidth,
-} from '../enums';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CostPanel from '../PopoverPanel/CostPanel';
 import AislePanel from '../PopoverPanel/AislePanel';
 import StationPanel from '../PopoverPanel/StationPanel';
+import ChargerPanel from '../PopoverPanel/ChargerPanel';
 import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
 import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
 import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
-import ChargerPanel from '../PopoverPanel/ChargerPanel';
+import { Category, HeaderHeight, EditorRightTools, RightToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
 
 const EditorBodyRight = (props) => {
@@ -29,7 +23,7 @@ const EditorBodyRight = (props) => {
     const resizeObserver = new ResizeObserver(
       throttle(() => {
         const { height } = htmlDOM.getBoundingClientRect();
-        setHeight(height - HeaderHeight - FooterHeight);
+        setHeight(height - HeaderHeight);
       }, 500),
     );
     resizeObserver.observe(htmlDOM);

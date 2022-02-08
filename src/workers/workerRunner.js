@@ -2,7 +2,7 @@
 import { isNull } from '@/utils/util';
 
 // 小车任务路径轮询线程
-const AgvPathWorker = function () {};
+const AgvPathWorker = {};
 AgvPathWorker.getInstance = function (dispatcher) {
   if (isNull(AgvPathWorker.instance)) {
     AgvPathWorker.instance = new Worker(new URL('./agvPathPolling.js', import.meta.url));
@@ -14,7 +14,7 @@ AgvPathWorker.getInstance = function (dispatcher) {
 };
 
 // 工作站状态轮询线程
-const WorkStationWorker = function () {};
+const WorkStationWorker = {};
 WorkStationWorker.getInstance = function (dispatcher) {
   if (isNull(WorkStationWorker.instance)) {
     WorkStationWorker.instance = new Worker(
@@ -28,7 +28,7 @@ WorkStationWorker.getInstance = function (dispatcher) {
 };
 
 // 通用站点状态轮询线程
-const StationWorker = function () {};
+const StationWorker = {};
 StationWorker.getInstance = function (dispatcher) {
   if (isNull(StationWorker.instance)) {
     StationWorker.instance = new Worker(new URL('./workStationStatePolling.js', import.meta.url));

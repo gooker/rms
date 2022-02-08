@@ -3,20 +3,22 @@ import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import { Cell, LineArrow } from '@/entities';
-import MapLabelMarker from '@/entities/MapLabelMarker';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
 
 /**
  * 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
- * @TODO 目前有个已知bug-->向左上方框选无效
  */
 class EditorBodyLeft extends React.PureComponent {
   // 首次进入页面需要对renderer进行绑定事件
   firstReceiveProps = true;
-  // 标记指针是否被按下
+
+  // 标记指针相关数据
   pinterIsDown = false;
+  pinterIsMoving = false;
+  pinterDownTimestamp = null;
+
   // 框选的screen坐标数据
   pointerDownX = null;
   pointerDownY = null;
@@ -67,34 +69,27 @@ class EditorBodyLeft extends React.PureComponent {
     if (
       [
         LeftCategory.Choose,
-        LeftCategory.Image,
+        LeftCategory.Font,
         LeftCategory.Rectangle,
         LeftCategory.Circle,
+        LeftCategory.Image,
       ].includes(activeKey)
     ) {
       renderer.plugins.interaction.on('pointerdown', this.onMouseDown);
       renderer.plugins.interaction.on('pointermove', this.onMouseMove);
       renderer.plugins.interaction.on('pointerup', this.onMouseUp);
+      // 解决向左上方画区域不会触发 pointerup 事件
+      renderer.plugins.interaction.on('pointerupoutside', this.onMouseUp);
     } else {
       renderer.plugins.interaction.off('pointerdown', this.onMouseDown);
       renderer.plugins.interaction.off('pointermove', this.onMouseMove);
       renderer.plugins.interaction.off('pointerup', this.onMouseUp);
-    }
-
-    if (LeftCategory.Font === activeKey) {
-      renderer.plugins.interaction.on('pointerdown', this.onInsertLabel);
-    } else {
-      renderer.plugins.interaction.off('pointerdown', this.onInsertLabel);
+      renderer.plugins.interaction.off('pointerupoutside', this.onMouseUp);
     }
   };
 
-  /**
-   * 这里针对 mouseUp && pointerUp 有个bug, 首次点击(click行为)会出现只触发了 down事件，up事件并未触发
-   * 所以这个方法会在两中情况下触发
-   * 1. 按下
-   * 2. 首次点击
-   */
   onMouseDown = (ev) => {
+    this.pinterDownTimestamp = new Date().getTime();
     // 不能阻止点击地图上任何元素
     if (!this.pinterIsDown && !isNull(ev.target.worldScreenWidth)) {
       this.pinterIsDown = true;
@@ -102,7 +97,6 @@ class EditorBodyLeft extends React.PureComponent {
       const { x, y } = ev.data.global;
       this.pointerDownX = x;
       this.pointerDownY = y;
-      maskDOM.style.display = 'block';
       maskDOM.style.left = `${x}px`;
       maskDOM.style.top = `${y}px`;
     }
@@ -110,6 +104,7 @@ class EditorBodyLeft extends React.PureComponent {
 
   onMouseMove = (ev) => {
     if (this.pinterIsDown) {
+      this.pinterIsMoving = true;
       const { activeKey } = this.props;
       this.pointerUpX = ev.data.global.x;
       this.pointerUpY = ev.data.global.y;
@@ -118,11 +113,24 @@ class EditorBodyLeft extends React.PureComponent {
 
       // 此时判断是画矩形还是圆形
       const maskDOM = document.getElementById('mapSelectionMask');
-      if ([LeftCategory.Choose, LeftCategory.Rectangle, LeftCategory.Image].includes(activeKey)) {
-        maskDOM.style.width = `${selectWidth}px`;
-        maskDOM.style.height = `${selectHeight}px`;
+
+      // 这个逻辑是为了解决第一次click不触发 pointerup 事件；因为事件触发在Mask节点上而不是Canvas，导致触发了 pointerupoutside 事件
+      if (selectWidth * selectHeight >= 40) {
+        maskDOM.style.display = 'block';
+      }
+
+      if (
+        [
+          LeftCategory.Choose,
+          LeftCategory.Font,
+          LeftCategory.Rectangle,
+          LeftCategory.Image,
+        ].includes(activeKey)
+      ) {
         maskDOM.style.left = `${Math.min(this.pointerUpX, this.pointerDownX)}px`;
         maskDOM.style.top = `${Math.min(this.pointerUpY, this.pointerDownY)}px`;
+        maskDOM.style.width = `${selectWidth}px`;
+        maskDOM.style.height = `${selectHeight}px`;
       } else {
         maskDOM.style.left = `${this.pointerDownX - selectWidth / 2}px`;
         maskDOM.style.top = `${this.pointerDownY - selectWidth / 2}px`;
@@ -132,11 +140,20 @@ class EditorBodyLeft extends React.PureComponent {
     }
   };
 
-  onMouseUp = () => {
+  onMouseUp = (ev) => {
     if (!this.pinterIsDown) return;
+    const { x, y } = ev.data.global;
+    this.pointerUpX = x;
+    this.pointerUpY = y;
+    this.pinterIsMoving = false;
     this.pinterIsDown = false;
-    const { activeKey, dispatch } = this.props;
 
+    const pointerTimeGap = new Date().getTime() - this.pinterDownTimestamp;
+    if (pointerTimeGap <= 120) {
+      console.log('click');
+    }
+
+    const { activeKey, dispatch } = this.props;
     // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
     if (activeKey === LeftCategory.Choose) {
       this.hideMask();
@@ -146,6 +163,11 @@ class EditorBodyLeft extends React.PureComponent {
     // 插入图片，鼠标抬起后立即弹出图片选择框
     if (activeKey === LeftCategory.Image) {
       document.getElementById('editorMaskFilePicker').click();
+    }
+
+    // 插入文字，鼠标抬起后立即弹出输入框
+    if (LeftCategory.Font === activeKey) {
+      dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
     }
 
     // 画矩形和圆形情况下显示MaskTool
@@ -191,24 +213,6 @@ class EditorBodyLeft extends React.PureComponent {
       )
       .map(({ id }) => id);
     mapContext.rectangleSelection(cellsInRange);
-  };
-
-  // 显示Label输入框
-  onInsertLabel = (ev) => {
-    const { dispatch } = this.props;
-    const evTarget = ev.target;
-    const { x, y } = ev.data.global;
-
-    // 点击到Text本身要阻止该事件
-    if (!(evTarget.parent instanceof MapLabelMarker)) {
-      const maskDOM = document.getElementById('mapSelectionMask');
-      maskDOM.style.display = 'block';
-      maskDOM.style.left = `${x}px`;
-      maskDOM.style.top = `${y}px`;
-      maskDOM.style.width = `${200}px`;
-      maskDOM.style.height = `${30}px`;
-      dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
-    }
   };
 
   render() {

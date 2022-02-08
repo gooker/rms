@@ -1,10 +1,12 @@
 import React, { memo, useRef, useState } from 'react';
-import { Button, Input } from 'antd';
+import { Button, Modal } from 'antd';
 import { connect } from '@/utils/RcsDva';
-import { convertPngToBase64, formatMessage, getColorRGB, isStrictNull } from '@/utils/util';
+import { convertPngToBase64, getColorRGB, getRandomString } from '@/utils/util';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import FormattedMessage from '@/components/FormattedMessage';
+import { ZoneMarkerType } from '@/config/consts';
+import LabelInputModal from './LabelInputModal';
 import commonStyles from '@/common.module.less';
 
 const EditorMask = (props) => {
@@ -13,7 +15,6 @@ const EditorMask = (props) => {
   const maskRef = useRef();
   const filePickerRef = useRef();
   const [color, setColor] = useState('transparent');
-  const [label, setLabel] = useState(null);
 
   function getSelectionWorldCoordinator() {
     const mapDOM = document.getElementById('editorPixi');
@@ -45,47 +46,32 @@ const EditorMask = (props) => {
   // 线框背景
   function confirm() {
     const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
-    const __color = color || '#e8e8e8';
-
     if (leftActiveCategory === LeftCategory.Rectangle) {
       // 锚点在正中心
+      const type = ZoneMarkerType.RECT;
+      const code = `${type}_${getRandomString(6)}`;
       const width = Math.abs(worldStartX - worldEndX);
       const height = Math.abs(worldStartY - worldEndY);
       const x = worldStartX + width / 2;
       const y = worldStartY + height / 2;
-      mapContext.drawRectArea(x, y, width, height, __color);
+      mapContext.drawRectArea(code, x, y, width, height, color);
       dispatch({
-        type: 'editor/insertBackgroundMark',
-        payload: {
-          type: 'wireframe',
-          shape: 'Rect',
-          x,
-          y,
-          width,
-          height,
-          labelColor: __color,
-        },
+        type: 'editor/insertZoneMarker',
+        payload: { code, x, y, width, height, color, type },
       });
     }
 
     if (leftActiveCategory === LeftCategory.Circle) {
+      const type = ZoneMarkerType.CIRCLE;
+      const code = `${type}_${getRandomString(6)}`;
       const width = Math.abs(worldStartX - worldEndX);
-      mapContext.drawCircleArea(
-        worldStartX + width / 2,
-        worldStartY + width / 2,
-        width / 2,
-        __color,
-      );
+      const x = worldStartX + width / 2;
+      const y = worldStartY + width / 2;
+      const radius = width / 2;
+      mapContext.drawCircleArea(code, x, y, radius, color);
       dispatch({
-        type: 'editor/insertBackgroundMark',
-        payload: {
-          type: 'wireframe',
-          shape: 'Circle',
-          x: worldStartX + width / 2,
-          y: worldStartY + width / 2,
-          radius: width / 2,
-          labelColor: __color,
-        },
+        type: 'editor/insertZoneMarker',
+        payload: { code, x, y, radius, color, type },
       });
     }
     cancel();
@@ -100,30 +86,7 @@ const EditorMask = (props) => {
 
     // 重置工具栏显示状态
     dispatch({ type: 'editor/updateMaskToolVisible', payload: false });
-    dispatch({ type: 'editor/maskInputVisible', payload: false });
     setColor(null);
-  }
-
-  // 文字标记
-  function onPressEnter(ev) {
-    const text = ev.target.value;
-    if (!isStrictNull(text)) {
-      const mapDOM = document.getElementById('editorPixi');
-      const x = maskRef.current.offsetLeft;
-      const y = maskRef.current.offsetTop;
-      const [worldX, worldY] = transformScreenToWorldCoordinator(
-        { x, y },
-        mapDOM,
-        mapContext.pixiUtils.viewport,
-      );
-      mapContext.renderLabel(text, worldX, worldY);
-      dispatch({
-        type: 'editor/insertLabel',
-        payload: { text, x: worldX, y: worldY },
-      });
-      setLabel(null);
-    }
-    cancel();
   }
 
   // 图片背景
@@ -132,16 +95,15 @@ const EditorMask = (props) => {
     if (file instanceof File) {
       const base64 = await convertPngToBase64(file);
       const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
-      mapContext.renderImage({
-        base64,
-        x: worldStartX,
-        y: worldStartY,
-        width: Math.abs(worldStartX - worldEndX),
-        height: Math.abs(worldStartY - worldEndY),
-      });
 
+      // 锚点在正中心
+      const width = Math.abs(worldStartX - worldEndX);
+      const height = Math.abs(worldStartY - worldEndY);
+      const x = worldStartX + width / 2;
+      const y = worldStartY + height / 2;
+      mapContext.renderImage({ x, y, width, height, base64 });
       dispatch({
-        type: 'editor/insertBackgroundMark',
+        type: 'editor/insertZoneMarker',
         payload: {
           type: 'image',
           x: worldStartX,
@@ -164,10 +126,10 @@ const EditorMask = (props) => {
       className={commonStyles.mapSelectionMask}
       style={{
         background: getColorRGB(color, 0.8),
-        ...(maskInputVisible ? { border: 'none' } : {}),
         ...(leftActiveCategory === LeftCategory.Circle ? { borderRadius: '50%' } : {}),
       }}
     >
+      {/* 区域标记 */}
       {maskToolVisible ? (
         <div style={{ position: 'relative', width: '100%', height: '100%', cursor: 'grab' }}>
           <input
@@ -194,16 +156,20 @@ const EditorMask = (props) => {
         </div>
       ) : null}
 
-      {maskInputVisible ? (
-        <Input
-          value={label}
-          onChange={(ev) => setLabel(ev.target.value)}
-          onPressEnter={onPressEnter}
-          placeholder={formatMessage({ id: 'mapEditor.placeholder.requireText' })}
-          style={{ width: '100%' }}
+      {/* Label输入 */}
+      <Modal
+        visible={maskInputVisible}
+        title={<FormattedMessage id={'editor.label.creation'} />}
+        footer={null}
+        closable={false}
+      >
+        <LabelInputModal
+          onCancel={cancel}
+          getSelectionWorldCoordinator={getSelectionWorldCoordinator}
         />
-      ) : null}
+      </Modal>
 
+      {/* 图片选择器 */}
       <input
         ref={filePickerRef}
         type={'file'}

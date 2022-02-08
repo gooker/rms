@@ -185,3 +185,10 @@ export const ModelTypeFieldMap = {
   WAIT: 'customWaits',
   PODSTATUS: 'customPodStatus',
 };
+
+// 地图区域标记类型
+export const ZoneMarkerType = {
+  RECT: 'RECT',
+  CIRCLE: 'CIRCLE',
+  IMG: 'IMG',
+};

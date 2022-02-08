@@ -45,6 +45,7 @@ export default {
   'app.message.uploader': '单击或拖动文件到该区域以上传',
   'app.message.fetchFailTemplate': '获取{type}数据失败',
   'app.message.copy.successfully': '复制成功',
+  'app.message.ruleRequired': '请输入{label}',
 
   // 告警
   'app.alert': '告警',
@@ -88,6 +89,8 @@ export default {
   'app.common.select': '选择',
   'app.common.drag': '拖拽',
   'app.common.custom': '自定义',
+  'app.common.color': '颜色',
+  'app.common.text': '文本',
 
   // 地图相关
   'app.map.map': '地图',

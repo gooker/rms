@@ -2,8 +2,8 @@ import * as PIXI from 'pixi.js';
 import { isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import { getTextureFromResources } from '@/utils/mapUtil';
+import { Text } from '@/entities';
 
-const Tiny_Move_Offset = 60;
 const Tiny_Rotate_Offset = 120;
 
 function calcAngleRadians(x, y) {
@@ -15,22 +15,6 @@ export default class ResizableContainer extends PIXI.Container {
     super();
     this.sortableChildren = true;
 
-    // 元素
-    this.border = null;
-    this.scaleHandler = null;
-    this.hScaleHandler = null;
-    this.vScaleHandler = null;
-    this.rotateHandler = null;
-    this.moveHandler = null;
-
-    // 标记
-    this.toolShown = false;
-    this.aDragging = false; // 角拖拽
-    this.hDragging = false; // 横向拖拽
-    this.vDragging = false; // 纵向拖拽
-    this.rDragging = false; // 旋转拖拽
-    this.mDragging = false; // 移动
-
     // 边框线条宽度
     this.borderWidth = 10;
     // 边框线条颜色
@@ -39,27 +23,68 @@ export default class ResizableContainer extends PIXI.Container {
     this.handlerSize = 70;
     // 控制点颜色
     this.handlerColor = 0xffffff;
+
+    // 元素
+    this.border = null;
+    this.hScaleHandler = null;
+    this.vScaleHandler = null;
+    this.scaleHandler = null;
+    this.rotateHandler = null;
+
+    // 标记
+    this.toolShown = false;
+    this.aDragging = false; // 角拖拽
+    this.hDragging = false; // 横向拖拽
+    this.vDragging = false; // 纵向拖拽
+    this.rDragging = false; // 旋转拖拽
+    this.mDragging = false; // 移动
   }
 
-  create(element, zIndex) {
+  create(element, updater, zIndex) {
     this.$zIndex = zIndex;
+    this.$updater = updater;
     this.element = this.addChild(element);
-    this.element.on('pointerdown', this.onElementPointerDown).on('pointerup', () => {
-      this.data = null;
-    });
+    this.element.buttonMode = true;
+    this.element.interactive = true;
+    this.element
+      .on('pointerdown', this.onElementPointerDown)
+      .on('pointermove', this.onElementMove)
+      .on('pointerup', this.onElementPointerUp)
+      .on('pointerupoutside', this.onElementPointerUp);
     this.initResizeTool();
   }
 
-  // 移动
+  /**
+   * 元素移动事件
+   * 注意点:
+   * 1. 支持直接将Label添加到区域标记上
+   * 2. Label依然要支持点击
+   */
   onElementPointerDown = (event) => {
-    // 有将Label直接添加到区域标记上的需求，所以这里要处理下
+    const target = event.target;
     const leftActiveCategory = window.g_app._store.getState().editor.leftActiveCategory;
-    if (leftActiveCategory !== LeftCategory.Font) {
-      this.toolShown = !this.toolShown;
+    if (leftActiveCategory !== LeftCategory.Font || target instanceof Text) {
       this.data = event.data;
-      this.element.cursor = this.toolShown ? 'all-scroll' : 'pointer';
-      this.switchResizeToolShown(this.toolShown);
+      this.toolShown = true;
+      this.mDragging = true;
+      this.element.cursor = 'move';
     }
+  };
+
+  onElementMove = () => {
+    if (this.mDragging) {
+      const newPosition = this.data.getLocalPosition(this.parent);
+      this.x = newPosition.x;
+      this.y = newPosition.y;
+      this.updateElement();
+    }
+  };
+
+  onElementPointerUp = () => {
+    this.data = null;
+    this.mDragging = false;
+    this.switchResizeToolShown(this.toolShown);
+    // this.$updater({ x: this.x, y: this.y });
   };
 
   createHandler(cursor) {
@@ -109,10 +134,6 @@ export default class ResizableContainer extends PIXI.Container {
 
     if (this.rotateHandler) {
       this.rotateHandler.visible = visible;
-    }
-
-    if (this.moveHandler) {
-      this.moveHandler.visible = visible;
     }
 
     this.updateElement();
@@ -206,23 +227,6 @@ export default class ResizableContainer extends PIXI.Container {
         });
     }
 
-    if (isNull(this.moveHandler)) {
-      this.moveHandler = this.addChild(this.createTinyHandler('tiny_move', 'all-scroll'));
-      this.moveHandler.x = width / 2 + Tiny_Move_Offset;
-      this.moveHandler.y = -height / 2 - Tiny_Move_Offset;
-      this.moveHandler
-        .on('pointerdown', () => {
-          this.mDragging = true;
-        })
-        .on('pointermove', this.onMoveToolMove)
-        .on('pointerup', () => {
-          this.mDragging = false;
-        })
-        .on('pointerupoutside', () => {
-          this.mDragging = false;
-        });
-    }
-
     this.switchResizeToolShown(false);
   }
 
@@ -251,21 +255,7 @@ export default class ResizableContainer extends PIXI.Container {
 
     this.rotateHandler.x = 0;
     this.rotateHandler.y = -height / 2 - Tiny_Rotate_Offset;
-
-    this.moveHandler.x = width / 2 + Tiny_Move_Offset;
-    this.moveHandler.y = -height / 2 - Tiny_Move_Offset;
   }
-
-  // 移动
-  onMoveToolMove = (event) => {
-    if (event.data && this.mDragging) {
-      const { width, height } = this.element;
-      const newPosition = event.data.getLocalPosition(this.parent);
-      this.x = newPosition.x - width / 2 - Tiny_Move_Offset;
-      this.y = newPosition.y + height / 2 + Tiny_Move_Offset;
-      this.updateElement();
-    }
-  };
 
   // 横向拉伸
   onHScaleToolDown = (event) => {
