@@ -101,16 +101,18 @@ const EditorMask = (props) => {
       const height = Math.abs(worldStartY - worldEndY);
       const x = worldStartX + width / 2;
       const y = worldStartY + height / 2;
-      mapContext.renderImage({ x, y, width, height, base64 });
+      const code = `${ZoneMarkerType.IMG}_${getRandomString(6)}`;
+      mapContext.renderImage(code, x, y, width, height, base64);
       dispatch({
         type: 'editor/insertZoneMarker',
         payload: {
-          type: 'image',
+          code,
+          type: ZoneMarkerType.IMG,
           x: worldStartX,
           y: worldStartY,
-          width: Math.abs(worldStartX - worldEndX),
-          height: Math.abs(worldStartY - worldEndY),
-          imageUrl: base64,
+          width,
+          height,
+          data: base64,
         },
       });
 
@@ -173,7 +175,7 @@ const EditorMask = (props) => {
       <input
         ref={filePickerRef}
         type={'file'}
-        accept="image/png"
+        accept="image/png,image/jpeg"
         style={{ display: 'none' }}
         id={'editorMaskFilePicker'}
         onChange={() => {

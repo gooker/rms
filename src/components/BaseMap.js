@@ -890,7 +890,8 @@ export default class BaseMap extends React.Component {
 
   // 画区域
   drawRectArea(code, x, y, width, height, color) {
-    const graphics = new MapZoneMarker({
+    const mapZoneMarker = new MapZoneMarker({
+      code,
       x,
       y,
       width,
@@ -899,12 +900,14 @@ export default class BaseMap extends React.Component {
       refresh: this.refresh,
       type: ZoneMarkerType.RECT,
     });
-    this.pixiUtils.viewportAddChild(graphics);
+    this.zoneMap.set(code, mapZoneMarker);
+    this.pixiUtils.viewportAddChild(mapZoneMarker);
     this.refresh();
   }
 
   drawCircleArea(code, x, y, radius, color) {
-    const graphics = new MapZoneMarker({
+    const mapZoneMarker = new MapZoneMarker({
+      code,
       x,
       y,
       radius,
@@ -912,12 +915,14 @@ export default class BaseMap extends React.Component {
       refresh: this.refresh,
       type: ZoneMarkerType.CIRCLE,
     });
-    this.pixiUtils.viewportAddChild(graphics);
+    this.zoneMap.set(code, mapZoneMarker);
+    this.pixiUtils.viewportAddChild(mapZoneMarker);
     this.refresh();
   }
 
   renderImage(code, x, y, width, height, base64) {
-    const graphics = new MapZoneMarker({
+    const mapZoneMarker = new MapZoneMarker({
+      code,
       x,
       y,
       width,
@@ -926,13 +931,13 @@ export default class BaseMap extends React.Component {
       refresh: this.refresh,
       type: ZoneMarkerType.IMG,
     });
-    this.zoneMap.set(code, graphics);
-    this.pixiUtils.viewportAddChild(graphics);
+    this.zoneMap.set(code, mapZoneMarker);
+    this.pixiUtils.viewportAddChild(mapZoneMarker);
     this.refresh();
   }
 
   renderLabel({ code, x, y, text, color, width, height }) {
-    const textSprite = new MapLabelMarker({
+    const mapLabelMarker = new MapLabelMarker({
       x,
       y,
       text,
@@ -941,8 +946,8 @@ export default class BaseMap extends React.Component {
       height,
       refresh: this.refresh,
     });
-    this.labelMap.set(code, textSprite);
-    this.pixiUtils.viewportAddChild(textSprite);
+    this.labelMap.set(code, mapLabelMarker);
+    this.pixiUtils.viewportAddChild(mapLabelMarker);
     this.refresh();
   }
 }

@@ -120,22 +120,22 @@ export default class LineArrow extends PIXI.Container {
 
   click = () => {
     if (this.states.selected) {
-      this.unSelect();
+      this.onUnSelect();
       this.selectLine && this.selectLine(this.id, false);
     } else {
-      this.select();
+      this.onSelect();
       this.selectLine && this.selectLine(this.id);
     }
   };
 
-  select = () => {
+  onSelect = () => {
     if (!this.states.selected) {
       this.states.selected = true;
       this.selectedBorderSprite.visible = true;
     }
   };
 
-  unSelect = () => {
+  onUnSelect = () => {
     if (this.states.selected) {
       this.states.selected = false;
       this.selectedBorderSprite.visible = false;

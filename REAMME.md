@@ -34,3 +34,34 @@
 ```
 
 > i18n 可显示的语种; name 平台主体名称
+
+### zoneMarker 和 labels 数据结构
+
+```json
+{
+  "zoneMarker": [
+    {
+      "code":"string",
+      "type": "string",
+      "x": 0,
+      "y": 0,
+      "width": 0,
+      "height": 0,
+      "radius": 0,
+      "color":"string",
+      "data": "string"
+    }
+  ],
+  "labels": [
+    {
+      "code":"string",
+      "x": 0,
+      "y": 0,
+      "color":"string",
+      "text": "string",
+      "width": 0,
+      "height": 0
+    }
+  ]
+}
+```

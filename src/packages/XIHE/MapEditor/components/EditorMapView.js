@@ -6,7 +6,7 @@ import {
   loadEditorExtraTextures,
 } from '@/utils/mapUtil';
 import { connect } from '@/utils/RcsDva';
-import { CellSize } from '@/config/consts';
+import { CellSize, MapSelectableSpriteType } from '@/config/consts';
 import { Cell } from '@/entities';
 import PixiBuilder from '@/entities/PixiBuilder';
 import BaseMap from '@/components/BaseMap';
@@ -221,25 +221,6 @@ class EditorMapView extends BaseMap {
       if (cellEntity) cellEntity.switchShown(!flag);
     });
     this.pipeSwitchLinesShown();
-    this.refresh();
-  };
-
-  // ************************ 框选 **********************
-  rectangleSelection = (cellsInRange) => {
-    // 先取消选择已选择的点位
-    this.selectedCells.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      cellEntity && cellEntity.onUnSelect();
-    });
-
-    // 缓存选择的点位
-    this.onSelectCell(cellsInRange);
-    this.selectedCells = [...cellsInRange];
-
-    cellsInRange.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      cellEntity && cellEntity.onSelect();
-    });
     this.refresh();
   };
 
@@ -469,6 +450,33 @@ class EditorMapView extends BaseMap {
     this.states.shownRelationCell = cells;
     this.pipeSwitchLinesShown();
   };
+
+  // 框选显示
+  rangeSelection(selections) {
+    if (Array.isArray(selections)) {
+      selections.forEach((selection) => {
+        let entity;
+        switch (selection.type) {
+          case MapSelectableSpriteType.CELL:
+            entity = this.idCellMap.get(selection.id);
+            break;
+          case MapSelectableSpriteType.COST:
+            entity = this.idLineMap[selection.cost].get(`${selection.source}-${selection.target}`);
+            break;
+          case MapSelectableSpriteType.ZONE:
+            entity = this.zoneMap.get(selection.code);
+            break;
+          case MapSelectableSpriteType.LABEL:
+            entity = this.labelMap.get(selection.code);
+            break;
+          default:
+            entity = null;
+        }
+        entity && entity.onSelect();
+      });
+      this.refresh();
+    }
+  }
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右

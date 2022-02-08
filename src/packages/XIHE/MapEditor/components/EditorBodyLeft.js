@@ -3,14 +3,9 @@ import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import { Cell, LineArrow } from '@/entities';
-import {
-  getCurrentLogicAreaData,
-  getCurrentRouteMapData,
-  transformScreenToWorldCoordinator,
-} from '@/utils/mapUtil';
+import { filterMapSpriteByRange, transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
-import { MapSelectableSpriteType } from '@/config/consts';
 
 /**
  * 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
@@ -192,7 +187,7 @@ class EditorBodyLeft extends React.PureComponent {
 
   // 框选地图元素
   onSelectElement = () => {
-    const { mapContext, currentCells } = this.props;
+    const { dispatch, mapContext, currentCells } = this.props;
 
     // 收集转换所需的数据
     const viewport = mapContext.pixiUtils.viewport;
@@ -213,28 +208,9 @@ class EditorBodyLeft extends React.PureComponent {
     const [_startX, _endX] = [rangeWorldStartX, rangeWorldEndX].sort((x, y) => x - y);
     const [_startY, _endY] = [rangeWorldStartY, rangeWorldEndY].sort((x, y) => x - y);
 
-    // 选择元素: 充电桩、工作站、通用站点、电梯、投递点、交汇点
-    const selections = [];
-    // 点位
-    const cellsInRange = currentCells.filter(
-      (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
-    );
-    const cellIds = cellsInRange.map(({ id }) => id);
-    const cellSelections = cellIds.map((id) => ({ id, type: MapSelectableSpriteType.CELL }));
-    selections.push(...cellSelections);
-
-    // 线条
-    const currentRouteMap = getCurrentRouteMapData();
-    if (Array.isArray(currentRouteMap.relations)) {
-      const costsSelections = currentRouteMap.relations.map((relation) => {});
-    }
-
-    // 区域标记
-
-    // Label
-
-    const currentLogicArea = getCurrentLogicAreaData();
-    // mapContext.rectangleSelection(cellsInRange);
+    const selections = filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY);
+    mapContext.rangeSelection(selections);
+    // dispatch({ type: 'editor/updateSelections', payload: selections });
   };
 
   render() {

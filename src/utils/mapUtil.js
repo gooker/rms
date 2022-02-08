@@ -7,6 +7,7 @@ import {
   AGVState,
   CellSize,
   CostColor,
+  MapSelectableSpriteType,
   SorterAGVSize,
   TaskPathColor,
   ToteAGVSize,
@@ -1400,4 +1401,57 @@ export function loadMonitorExtraTextures(renderer) {
 
     resolve();
   });
+}
+
+/**
+ * 根据框选范围筛选地图元素
+ * 充电桩、工作站、通用站点、电梯、投递点、交汇点
+ */
+export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY) {
+  // 选择元素: 充电桩、工作站、通用站点、电梯、投递点、交汇点
+  const currentLogicArea = getCurrentLogicAreaData();
+  const currentRouteMap = getCurrentRouteMapData();
+  const selections = [];
+
+  // 点位
+  const cellsInRange = currentCells.filter(
+    (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
+  );
+  const cellIds = cellsInRange.map(({ id }) => id);
+  const cellSelections = cellIds.map((id) => ({ id, type: MapSelectableSpriteType.CELL }));
+  selections.push(...cellSelections);
+
+  // 线条
+  if (Array.isArray(currentRouteMap.relations)) {
+    const costsSelections = currentRouteMap.relations
+      .map(({ source, target, cost, type }) => {
+        if (cellIds.includes(source) || cellIds.includes(target)) {
+          return { type: MapSelectableSpriteType.COST, source, target, cost, costType: type };
+        }
+      })
+      .filter(Boolean);
+    selections.push(...costsSelections);
+  }
+
+  // 区域标记
+  if (Array.isArray(currentLogicArea.zoneMarker)) {
+    const zoneMarkerSelections = currentLogicArea.zoneMarker
+      .filter(
+        (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
+      )
+      .map(({ code }) => ({ code, type: MapSelectableSpriteType.ZONE }));
+    selections.push(...zoneMarkerSelections);
+  }
+
+  // Label
+  if (Array.isArray(currentLogicArea.labels)) {
+    const labelsSelections = currentLogicArea.labels
+      .filter(
+        (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
+      )
+      .map(({ code }) => ({ code, type: MapSelectableSpriteType.LABEL }));
+    selections.push(...labelsSelections);
+  }
+
+  return selections;
 }

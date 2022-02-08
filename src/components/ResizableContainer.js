@@ -54,6 +54,10 @@ export default class ResizableContainer extends PIXI.Container {
     this.initResizeTool();
   }
 
+  onSelect() {
+    this.switchResizeToolShown(true);
+  }
+
   /**
    * 元素移动事件
    * 注意点:
@@ -84,7 +88,7 @@ export default class ResizableContainer extends PIXI.Container {
     this.data = null;
     this.mDragging = false;
     this.switchResizeToolShown(this.toolShown);
-    // this.$updater({ x: this.x, y: this.y });
+    this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
   };
 
   createHandler(cursor) {

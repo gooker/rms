@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js';
-import { debounce } from 'lodash';
 import ResizableContainer from '@/components/ResizableContainer';
 import { zIndex } from '@/config/consts';
 
 export default class MapZoneMarker extends ResizableContainer {
-  constructor({ type, x, y, radius, width, height, color, data, refresh }) {
+  constructor({ code, type, x, y, radius, width, height, color, data, refresh }) {
     super();
     this.x = x;
     this.y = y;
+    this.code = code;
     this.type = type;
     this.data = data;
     this.color = color;
@@ -15,7 +15,7 @@ export default class MapZoneMarker extends ResizableContainer {
     this.refresh = refresh;
     this.zIndex = zIndex.zoneMarker;
     const element = this.createElement(width, height);
-    this.create(element, debounce(this.updateZonMarker, 100), zIndex.zoneMarker);
+    this.create(element, this.updateZonMarker, zIndex.zoneMarker);
   }
 
   createElement(width, height) {
@@ -45,6 +45,7 @@ export default class MapZoneMarker extends ResizableContainer {
   }
 
   updateZonMarker(data) {
-    console.log(data);
+    const { dispatch } = window.g_app._store;
+    dispatch({ type: 'editor/updateZoneMarker', payload: { code: this.code, ...data } });
   }
 }

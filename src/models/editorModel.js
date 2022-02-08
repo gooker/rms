@@ -1013,12 +1013,24 @@ export default {
       };
     },
 
-    // ********************************* 地图背景 ********************************* //
-    *insertBackgroundMark({ payload }, { select }) {
+    // ********************************* 地图标记 ********************************* //
+    insertZoneMarker({ payload }, { select }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
-      let backGround = currentLogicAreaData.backGround || [];
-      backGround = [...backGround, payload];
-      currentLogicAreaData.backGround = backGround;
+      let zoneMarker = currentLogicAreaData.zoneMarker || [];
+      zoneMarker = [...zoneMarker, payload];
+      currentLogicAreaData.zoneMarker = zoneMarker;
+    },
+
+    updateZoneMarker({ payload }, { select }) {
+      const currentLogicAreaData = getCurrentLogicAreaData();
+      let zoneMarker = currentLogicAreaData.zoneMarker || [];
+      const targetMarker = find(zoneMarker, { code: payload.code });
+      if (targetMarker) {
+        targetMarker.x = payload.x;
+        targetMarker.y = payload.y;
+        targetMarker.width = payload.width;
+        targetMarker.height = payload.height;
+      }
     },
 
     *insertLabel({ payload }, { select }) {
