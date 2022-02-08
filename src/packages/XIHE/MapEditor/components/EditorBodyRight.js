@@ -11,7 +11,7 @@ import ChargerPanel from '../PopoverPanel/ChargerPanel';
 import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
 import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
 import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
-import { Category, HeaderHeight, EditorRightTools, RightToolBarWidth } from '../enums';
+import { RightCategory, HeaderHeight, EditorRightTools, RightToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
 
 const EditorBodyRight = (props) => {
@@ -43,21 +43,21 @@ const EditorBodyRight = (props) => {
 
   function renderPanelContent() {
     switch (categoryPanel) {
-      case Category.Cell:
+      case RightCategory.Cell:
         return <CellPanel height={height - 10} />;
-      case Category.Cost:
+      case RightCategory.Cost:
         return <CostPanel height={height - 10} />;
-      case Category.CellType:
+      case RightCategory.CellType:
         return <CellTypeConfigurePanel height={height - 10} />;
-      case Category.WorkStation:
+      case RightCategory.WorkStation:
         return <WorkStationPanel height={height - 10} />;
-      case Category.Charger:
+      case RightCategory.Charger:
         return <ChargerPanel height={height - 10} />;
-      case Category.Station:
+      case RightCategory.Station:
         return <StationPanel height={height - 10} />;
-      case Category.View:
+      case RightCategory.View:
         return <ViewControllerPanel height={height - 10} />;
-      case Category.Aisle:
+      case RightCategory.Aisle:
         return <AislePanel height={height - 10} />;
       default:
         return null;

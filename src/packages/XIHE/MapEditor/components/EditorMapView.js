@@ -225,10 +225,6 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 框选 **********************
-  /**
-   * 待选项: 点位、线条、工作站、通用站点、充电桩
-   * @param cellsInRange
-   */
   rectangleSelection = (cellsInRange) => {
     // 先取消选择已选择的点位
     this.selectedCells.forEach((cellId) => {

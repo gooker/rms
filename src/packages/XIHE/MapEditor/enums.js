@@ -23,6 +23,19 @@ export const LeftCategory = {
   Circle: 'Circle',
   Template: 'Template',
 };
+
+export const RightCategory = {
+  Aisle: 'AISLE',
+  Cell: 'CELL',
+  Cost: 'COST',
+  CellType: 'CELL_TYPE',
+  Elevator: 'ELEVATOR',
+  WorkStation: 'WORK_STATION',
+  Station: 'COMMON_STATION',
+  Charger: 'CHARGER',
+  View: 'VIEW',
+};
+
 export const EditorLeftTools = [
   {
     label: <FormattedMessage id={'app.common.select'} />,
@@ -61,17 +74,6 @@ export const EditorLeftTools = [
   },
 ];
 
-export const Category = {
-  Aisle: 'AISLE',
-  Cell: 'CELL',
-  Cost: 'COST',
-  CellType: 'CELL_TYPE',
-  Elevator: 'ELEVATOR',
-  WorkStation: 'WORK_STATION',
-  Station: 'COMMON_STATION',
-  Charger: 'CHARGER',
-  View: 'VIEW',
-};
 export const EditorRightTools = [
   {
     label: <FormattedMessage id={'app.common.prop'} />,
@@ -79,38 +81,43 @@ export const EditorRightTools = [
     icon: <SettingOutlined />,
   },
   {
+    label: <FormattedMessage id={'app.map.view'} />,
+    value: RightCategory.View,
+    icon: <EyeOutlined />,
+  },
+  {
     label: <FormattedMessage id={'app.map.cell'} />,
-    value: Category.Cell,
+    value: RightCategory.Cell,
     icon: <IconFont type={'icon-cell'} />,
   },
   {
     label: <FormattedMessage id={'app.map.routeMap'} />,
-    value: Category.Cost,
+    value: RightCategory.Cost,
     icon: <IconFont type={'icon-routeMap'} />,
   },
   {
     label: <FormattedMessage id={'app.map.feature'} />,
-    value: Category.CellType,
+    value: RightCategory.CellType,
     icon: <IconFont type={'icon-feature'} />,
   },
   {
     label: <FormattedMessage id={'app.map.workstation'} />,
-    value: Category.WorkStation,
+    value: RightCategory.WorkStation,
     icon: <IconFont type={'icon-station'} />,
   },
   {
     label: <FormattedMessage id={'app.map.station'} />,
-    value: Category.Station,
+    value: RightCategory.Station,
     icon: <BankOutlined />,
   },
   {
     label: <FormattedMessage id={'app.map.elevator'} />,
-    value: Category.Elevator,
+    value: RightCategory.Elevator,
     icon: <IconFont type={'icon-elevator'} />,
   },
   {
     label: <FormattedMessage id={'app.map.charger'} />,
-    value: Category.Charger,
+    value: RightCategory.Charger,
     icon: <IconFont type={'icon-charger2'} />,
   },
   {
@@ -125,7 +132,7 @@ export const EditorRightTools = [
   },
   {
     label: <FormattedMessage id={'app.map.aisle'} />,
-    value: Category.Aisle,
+    value: RightCategory.Aisle,
     icon: <NodeExpandOutlined />,
   },
   {
@@ -147,11 +154,6 @@ export const EditorRightTools = [
     label: <FormattedMessage id={'mapEditor.tools.createTemplate'} />,
     value: 'template',
     icon: <IconFont type={'icon-template'} />,
-  },
-  {
-    label: <FormattedMessage id={'app.map.view'} />,
-    value: Category.View,
-    icon: <EyeOutlined />,
   },
   {
     label: <FormattedMessage id={'mapEditor.tools.history'} />,

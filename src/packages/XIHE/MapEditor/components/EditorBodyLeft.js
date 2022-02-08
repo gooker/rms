@@ -3,9 +3,14 @@ import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RcsDva';
 import { Cell, LineArrow } from '@/entities';
-import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
+import {
+  getCurrentLogicAreaData,
+  getCurrentRouteMapData,
+  transformScreenToWorldCoordinator,
+} from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
+import { MapSelectableSpriteType } from '@/config/consts';
 
 /**
  * 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
@@ -145,38 +150,40 @@ class EditorBodyLeft extends React.PureComponent {
     const { x, y } = ev.data.global;
     this.pointerUpX = x;
     this.pointerUpY = y;
-    this.pinterIsMoving = false;
-    this.pinterIsDown = false;
 
+    // 手动模拟点击事件
     const pointerTimeGap = new Date().getTime() - this.pinterDownTimestamp;
-    if (pointerTimeGap <= 120) {
+    if (!this.pinterIsMoving && pointerTimeGap <= 150) {
+      // 取消选择
       console.log('click');
-    }
+    } else {
+      const { activeKey, dispatch } = this.props;
+      // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
+      if (activeKey === LeftCategory.Choose) {
+        this.hideMask();
+        this.onSelectElement();
+      }
 
-    const { activeKey, dispatch } = this.props;
-    // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
-    if (activeKey === LeftCategory.Choose) {
-      this.hideMask();
-      this.onSelectElement();
-    }
+      // 插入图片，鼠标抬起后立即弹出图片选择框
+      if (activeKey === LeftCategory.Image) {
+        document.getElementById('editorMaskFilePicker').click();
+      }
 
-    // 插入图片，鼠标抬起后立即弹出图片选择框
-    if (activeKey === LeftCategory.Image) {
-      document.getElementById('editorMaskFilePicker').click();
-    }
+      // 插入文字，鼠标抬起后立即弹出输入框
+      if (LeftCategory.Font === activeKey) {
+        dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
+      }
 
-    // 插入文字，鼠标抬起后立即弹出输入框
-    if (LeftCategory.Font === activeKey) {
-      dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
+      // 画矩形和圆形情况下显示MaskTool
+      dispatch({
+        type: 'editor/updateMaskToolVisible',
+        payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
+      });
     }
-
-    // 画矩形和圆形情况下显示MaskTool
-    dispatch({
-      type: 'editor/updateMaskToolVisible',
-      payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
-    });
 
     // 重置参数
+    this.pinterIsMoving = false;
+    this.pinterIsDown = false;
     this.pointerDownX = null;
     this.pointerDownY = null;
     this.pointerUpX = null;
@@ -206,13 +213,28 @@ class EditorBodyLeft extends React.PureComponent {
     const [_startX, _endX] = [rangeWorldStartX, rangeWorldEndX].sort((x, y) => x - y);
     const [_startY, _endY] = [rangeWorldStartY, rangeWorldEndY].sort((x, y) => x - y);
 
-    // 选择元素
-    const cellsInRange = currentCells
-      .filter(
-        (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
-      )
-      .map(({ id }) => id);
-    mapContext.rectangleSelection(cellsInRange);
+    // 选择元素: 充电桩、工作站、通用站点、电梯、投递点、交汇点
+    const selections = [];
+    // 点位
+    const cellsInRange = currentCells.filter(
+      (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
+    );
+    const cellIds = cellsInRange.map(({ id }) => id);
+    const cellSelections = cellIds.map((id) => ({ id, type: MapSelectableSpriteType.CELL }));
+    selections.push(...cellSelections);
+
+    // 线条
+    const currentRouteMap = getCurrentRouteMapData();
+    if (Array.isArray(currentRouteMap.relations)) {
+      const costsSelections = currentRouteMap.relations.map((relation) => {});
+    }
+
+    // 区域标记
+
+    // Label
+
+    const currentLogicArea = getCurrentLogicAreaData();
+    // mapContext.rectangleSelection(cellsInRange);
   };
 
   render() {

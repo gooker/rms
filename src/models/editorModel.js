@@ -62,6 +62,7 @@ export default {
     mapContext: null, // 地图实体对象
 
     // 选择相关
+    selections: [],
     selectCells: [],
     selectLines: [],
 
@@ -82,10 +83,10 @@ export default {
     showBackImg: false,
 
     // 标识符
-    saveMapLoading: false,
-    activeMapLoading: false,
-    categoryPanel: null,
-    leftActiveCategory: LeftCategory.Choose,
+    saveMapLoading: false, // 保存地图
+    activeMapLoading: false, // 激活地图
+    leftActiveCategory: LeftCategory.Choose, // 左侧菜单选中项
+    categoryPanel: null, // 右侧菜单选中项
 
     // Mask相关
     maskToolVisible: false,
@@ -103,6 +104,12 @@ export default {
       return {
         ...state,
         maskToolVisible: action.payload,
+      };
+    },
+    updateSelections(state, action) {
+      return {
+        ...state,
+        selections: action.payload,
       };
     },
     updateMaskInputVisible(state, action) {

@@ -192,3 +192,20 @@ export const ZoneMarkerType = {
   CIRCLE: 'CIRCLE',
   IMG: 'IMG',
 };
+
+/**
+ * 地图可选择元素类型枚举
+ * 点位、线条、区域标记、Label、充电桩、工作站、通用站点、电梯、投递点、交汇点
+ */
+export const MapSelectableSpriteType = {
+  CELL: 'CELL',
+  COST: 'COST',
+  ZONE: 'ZONE',
+  LABEL: 'LABEL',
+  CHARGER: 'CHARGER',
+  STATION: 'STATION',
+  WORKSTATION: 'WORKSTATION',
+  ELEVATOR: 'ELEVATOR',
+  DELIVERY: 'DELIVERY',
+  INTERSECTION: 'INTERSECTION',
+};
