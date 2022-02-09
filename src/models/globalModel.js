@@ -47,6 +47,9 @@ export default {
 
     // 全局数据
     allTaskTypes: {},
+
+    // Texture
+    textureLoaded: false,
   },
 
   effects: {
@@ -185,6 +188,12 @@ export default {
       return {
         ...state,
         currentEnv: payload,
+      };
+    },
+    updateTextureLoaded(state, { payload }) {
+      return {
+        ...state,
+        textureLoaded: payload,
       };
     },
 

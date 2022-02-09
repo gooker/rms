@@ -29,6 +29,7 @@ export default {
   'app.message.fetchDataEmpty': '获取的数据为空',
   'app.message.noActiveMap': '当前无激活的地图, 请到地图编辑页面进行地图激活操作',
   'app.message.fetchMapFail': '获取地图数据失败',
+  'app.message.fetchUserFail': '获取用户信息失败',
   'app.message.fetchMapListFail': '获取地图列表失败',
   'app.message.fetchAgvListFail': '获取小车列表失败',
   'app.message.fetchAgvTypeListFail': '获取小车类型列表失败',

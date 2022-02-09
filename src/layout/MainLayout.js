@@ -14,6 +14,7 @@ import SocketClient from '@/entities/SocketClient';
 
 @withRouter
 @connect(({ global }) => ({
+  textureLoaded: global.textureLoaded,
   isInnerFullscreen: global.isInnerFullscreen,
 }))
 class MainLayout extends React.Component {
@@ -22,7 +23,7 @@ class MainLayout extends React.Component {
   };
 
   async componentDidMount() {
-    const { dispatch, history } = this.props;
+    const { dispatch, history, textureLoaded } = this.props;
     dispatch({ type: 'global/saveHistory', payload: history });
 
     try {
@@ -41,13 +42,17 @@ class MainLayout extends React.Component {
         dispatch({ type: 'global/saveSocketClient', payload: socketClient });
 
         // 4. 加载地图Texture
-        await loadTexturesForMap();
+        if (!textureLoaded) {
+          await loadTexturesForMap();
+          dispatch({ type: 'global/updateTextureLoaded', payload: true });
+        }
+
         this.setState({ appReady: true });
 
         // 5. 获取所有车类任务类型数据
         this.loadAllTaskTypes();
       } else {
-        throw new Error();
+        throw new Error(formatMessage({ id: 'app.message.fetchUserFail' }));
       }
     } catch (error) {
       Modal.error({

@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
 import Stomp from 'stompjs';
-import requestAPI from '@/utils/requestAPI';
+import { formatMessage, isStrictNull } from '@/utils/util';
+import { message } from 'antd';
 
 class SocketClient {
   constructor({ login, passcode }) {
-    this.ws = requestAPI().ws;
+    const nameSpacesInfo = JSON.parse(window.localStorage.getItem('nameSpacesInfo'));
+    this.ws = nameSpacesInfo?.ws;
     this.headers = {
       login: login,
       passcode: passcode,
@@ -14,15 +16,21 @@ class SocketClient {
   }
 
   getInstance() {
-    if (this.client === null) {
-      this.client = Stomp.over(new WebSocket(this.ws));
-      this.client.debug = false;
+    if (isStrictNull(this.ws)) {
+      message.error(formatMessage({ id: 'app.global.wsInvalid' }));
+    } else {
+      if (this.client === null) {
+        this.client = Stomp.over(new WebSocket(this.ws));
+        this.client.debug = false;
+      }
     }
   }
 
   connect() {
     this.getInstance();
-    this.client.connect(this.headers, this.onConnect.bind(this), this.onError.bind(this));
+    if (this.client) {
+      this.client.connect(this.headers, this.onConnect.bind(this), this.onError.bind(this));
+    }
   }
 
   disconnect() {
