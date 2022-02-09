@@ -5,11 +5,11 @@ import {
   getTextureFromResources,
   loadEditorExtraTextures,
 } from '@/utils/mapUtil';
-import { connect } from '@/utils/RmsDva';
-import { CellSize, MapSelectableSpriteType } from '@/config/consts';
 import { Cell } from '@/entities';
-import PixiBuilder from '@/entities/PixiBuilder';
+import { connect } from '@/utils/RmsDva';
 import BaseMap from '@/components/BaseMap';
+import PixiBuilder from '@/entities/PixiBuilder';
+import { CellSize, MapSelectableSpriteType } from '@/config/consts';
 
 @connect()
 class EditorMapView extends BaseMap {
@@ -222,13 +222,6 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位 & 线条选择 **********************
-  cancelAllSelection = () => {
-    const { dispatch } = window.g_app._store;
-    this.rangeSelection(this.selections, false);
-    this.selections = [];
-    dispatch({ type: 'editor/updateSelections', payload: [] });
-  };
-
   /**
    * 将选择的点位同步到 Store
    * @param {*} cells 已选中的点位ID
@@ -430,7 +423,33 @@ class EditorMapView extends BaseMap {
     this.pipeSwitchLinesShown();
   };
 
+  // ************************ Zone相关 **********************
+  selectZoneMarker = (zoneMarker, add) => {
+    const { dispatch } = window.g_app._store;
+    const _this = this;
+    if (add) {
+      _this.selections.push(zoneMarker);
+    } else {
+      _this.selections = _this.selections.filter(
+        (item) => item.id !== zoneMarker.id && item.type !== zoneMarker.type,
+      );
+    }
+    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+  };
+
+  // ************************ Label相关 **********************
+  selectLabelMarker = () => {
+    //
+  };
+
   // ************************ 框选相关 **********************
+  cancelAllSelection = () => {
+    const { dispatch } = window.g_app._store;
+    this.rangeSelection(this.selections, false);
+    this.selections = [];
+    dispatch({ type: 'editor/updateSelections', payload: [] });
+  };
+
   rangeSelection(selections, selected = true) {
     if (Array.isArray(selections)) {
       this.selections = selections;
@@ -444,10 +463,10 @@ class EditorMapView extends BaseMap {
             entity = this.idLineMap[selection.cost].get(`${selection.source}-${selection.target}`);
             break;
           case MapSelectableSpriteType.ZONE:
-            entity = this.zoneMap.get(selection.code);
+            entity = this.zoneMap.get(selection.id);
             break;
           case MapSelectableSpriteType.LABEL:
-            entity = this.labelMap.get(selection.code);
+            entity = this.labelMap.get(selection.id);
             break;
           default:
             entity = null;

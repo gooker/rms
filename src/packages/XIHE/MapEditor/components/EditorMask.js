@@ -54,7 +54,7 @@ const EditorMask = (props) => {
       const height = Math.abs(worldStartY - worldEndY);
       const x = worldStartX + width / 2;
       const y = worldStartY + height / 2;
-      mapContext.drawRectArea(code, x, y, width, height, color);
+      mapContext.drawRectArea({ code, x, y, width, height, color }, true);
       dispatch({
         type: 'editor/insertZoneMarker',
         payload: { code, x, y, width, height, color, type },
@@ -68,7 +68,7 @@ const EditorMask = (props) => {
       const x = worldStartX + width / 2;
       const y = worldStartY + width / 2;
       const radius = width / 2;
-      mapContext.drawCircleArea(code, x, y, radius, color);
+      mapContext.drawCircleArea({ code, x, y, radius, color }, true);
       dispatch({
         type: 'editor/insertZoneMarker',
         payload: { code, x, y, radius, color, type },
@@ -93,7 +93,7 @@ const EditorMask = (props) => {
   async function onFileLoaded() {
     const file = filePickerRef.current.files[0];
     if (file instanceof File) {
-      const base64 = await convertPngToBase64(file);
+      const data = await convertPngToBase64(file);
       const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
 
       // 锚点在正中心
@@ -102,17 +102,17 @@ const EditorMask = (props) => {
       const x = worldStartX + width / 2;
       const y = worldStartY + height / 2;
       const code = `${ZoneMarkerType.IMG}_${getRandomString(6)}`;
-      mapContext.renderImage(code, x, y, width, height, base64);
+      mapContext.renderImage({ code, x, y, width, height, data }, true);
       dispatch({
         type: 'editor/insertZoneMarker',
         payload: {
           code,
-          type: ZoneMarkerType.IMG,
-          x: worldStartX,
-          y: worldStartY,
           width,
           height,
-          data: base64,
+          data,
+          x: worldStartX,
+          y: worldStartY,
+          type: ZoneMarkerType.IMG,
         },
       });
 

@@ -153,35 +153,18 @@ const EditorMapContainer = (props) => {
       zoneMarker.forEach((zoneMarkerItem) => {
         // 线框
         if (zoneMarkerItem.type === ZoneMarkerType.RECT) {
-          mapContext.drawRectArea(
-            zoneMarkerItem.code,
-            zoneMarkerItem.x,
-            zoneMarkerItem.y,
-            zoneMarkerItem.width,
-            zoneMarkerItem.height,
-            zoneMarkerItem.color,
-          );
+          const { code, x, y, width, height, color } = zoneMarkerItem;
+          mapContext.drawRectArea({ code, x, y, width, height, color }, true);
         }
 
         if (zoneMarkerItem.type === ZoneMarkerType.CIRCLE) {
-          mapContext.drawCircleArea(
-            zoneMarkerItem.code,
-            zoneMarkerItem.x,
-            zoneMarkerItem.y,
-            zoneMarkerItem.radius,
-            zoneMarkerItem.color,
-          );
+          const { code, x, y, radius, color } = zoneMarkerItem;
+          mapContext.drawCircleArea({ code, x, y, radius, color }, true);
         }
 
         if (zoneMarkerItem.type === ZoneMarkerType.IMG) {
-          mapContext.renderImage(
-            zoneMarkerItem.code,
-            zoneMarkerItem.x,
-            zoneMarkerItem.y,
-            zoneMarkerItem.width,
-            zoneMarkerItem.height,
-            zoneMarkerItem.data,
-          );
+          const { code, x, y, width, height, data } = zoneMarkerItem;
+          mapContext.renderImage({ code, x, y, width, height, data }, true);
         }
       });
     }
@@ -287,7 +270,7 @@ const EditorMapContainer = (props) => {
     <div
       id={'editorPixiContainer'}
       className={styles.editorBodyMiddle}
-      style={{  cursor: getCursorStyle() }}
+      style={{ cursor: getCursorStyle() }}
     >
       <EditorMask />
       <EditorMapView />

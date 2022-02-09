@@ -889,62 +889,70 @@ export default class BaseMap extends React.Component {
   };
 
   // 画区域
-  drawRectArea(code, x, y, width, height, color) {
+  drawRectArea({ code, x, y, width, height, color }, interactive) {
     const mapZoneMarker = new MapZoneMarker({
       code,
       x,
       y,
       width,
       height,
+      interactive,
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.RECT,
       refresh: this.refresh,
+      select: this.selectZoneMarker,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
     this.refresh();
   }
 
-  drawCircleArea(code, x, y, radius, color) {
+  drawCircleArea({ code, x, y, radius, color }, interactive) {
     const mapZoneMarker = new MapZoneMarker({
       code,
       x,
       y,
       radius,
+      interactive,
       color: color.replace('#', '0x'),
-      refresh: this.refresh,
       type: ZoneMarkerType.CIRCLE,
+      refresh: this.refresh,
+      select: this.selectZoneMarker,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
     this.refresh();
   }
 
-  renderImage(code, x, y, width, height, base64) {
+  renderImage({ code, x, y, width, height, data }, interactive) {
     const mapZoneMarker = new MapZoneMarker({
       code,
       x,
       y,
       width,
       height,
-      data: base64,
-      refresh: this.refresh,
+      data,
+      interactive,
       type: ZoneMarkerType.IMG,
+      refresh: this.refresh,
+      select: this.selectZoneMarker,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
     this.refresh();
   }
 
-  renderLabel({ code, x, y, text, color, width, height }) {
+  renderLabel({ code, x, y, text, color, width, height }, interactive) {
     const mapLabelMarker = new MapLabelMarker({
       x,
       y,
       text,
-      color: color || 0xffffff,
       width,
       height,
+      interactive,
+      color: color || 0xffffff,
       refresh: this.refresh,
+      select: this.selectLabelMarker,
     });
     this.labelMap.set(code, mapLabelMarker);
     this.pixiUtils.viewportAddChild(mapLabelMarker);

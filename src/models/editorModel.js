@@ -1040,6 +1040,18 @@ export default {
       currentLogicAreaData.labels = labels;
     },
 
+    updateLabelMarker({ payload }, { select }) {
+      const currentLogicAreaData = getCurrentLogicAreaData();
+      let labels = currentLogicAreaData.labels || [];
+      const targetMarker = find(labels, { code: payload.code });
+      if (targetMarker) {
+        targetMarker.x = payload.x;
+        targetMarker.y = payload.y;
+        targetMarker.width = payload.width;
+        targetMarker.height = payload.height;
+      }
+    },
+
     // ********************************* 线条操作 ********************************* //
     *generateCostLines({ payload }, { select, put }) {
       const { selectCells, currentMap } = yield select(({ editor }) => editor);

@@ -37,8 +37,8 @@ export default {
   'icon-reportForm': <IconFont type="icon-report" />,
   'icon-log': <IconFont type="icon-log" />,
   'icon-shelf': <IconFont type="icon-shelf" />,
-  configuration: <IconFont type="icon-gexingdingzhi" />,
-  authority: <IconFont type="icon-fuwushouquan" />,
+  customConfig: <IconFont type="icon-customConfig" />,
+  authorize: <IconFont type="icon-authorize" />,
 
   'line-chart': <LineChartOutlined />,
   'clock-circle': <ClockCircleOutlined />,

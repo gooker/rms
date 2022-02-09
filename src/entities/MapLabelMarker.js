@@ -12,7 +12,7 @@ export default class MapLabelMarker extends ResizableContainer {
     this.refresh = refresh;
     this.zIndex = zIndex.label;
     const element = this.createElement(width, height);
-    this.create(element, zIndex.label);
+    this.create(element, this.updateZonMarker, zIndex.label);
   }
 
   createElement(width, height) {
@@ -22,5 +22,10 @@ export default class MapLabelMarker extends ResizableContainer {
     element.alpha = 0.8;
     element.anchor.set(0.5);
     return element;
+  }
+
+  updateZonMarker(data) {
+    const { dispatch } = window.g_app._store;
+    dispatch({ type: 'editor/updateLabelMarker', payload: { code: this.code, ...data } });
   }
 }

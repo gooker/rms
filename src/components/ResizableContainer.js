@@ -40,25 +40,30 @@ export default class ResizableContainer extends PIXI.Container {
     this.mDragging = false; // 移动
   }
 
-  create(element, updater, zIndex) {
+  create(element, updater, zIndex, interactive) {
     this.$zIndex = zIndex;
     this.$updater = updater;
     this.element = this.addChild(element);
-    this.element.buttonMode = true;
-    this.element.interactive = true;
-    this.element
-      .on('pointerdown', this.onElementPointerDown)
-      .on('pointermove', this.onElementMove)
-      .on('pointerup', this.onElementPointerUp)
-      .on('pointerupoutside', this.onElementPointerUp);
-    this.initResizeTool();
+
+    if (interactive) {
+      this.element.buttonMode = true;
+      this.element.interactive = true;
+      this.element
+        .on('pointerdown', this.onElementPointerDown)
+        .on('pointermove', this.onElementMove)
+        .on('pointerup', this.onElementPointerUp)
+        .on('pointerupoutside', this.onElementPointerUp);
+      this.initResizeTool();
+    }
   }
 
   onSelect() {
+    this.toolShown = true;
     this.switchResizeToolShown(true);
   }
 
   onUnSelect() {
+    this.toolShown = false;
     this.switchResizeToolShown(false);
   }
 
@@ -73,9 +78,10 @@ export default class ResizableContainer extends PIXI.Container {
     const leftActiveCategory = window.g_app._store.getState().editor.leftActiveCategory;
     if (leftActiveCategory !== LeftCategory.Font || target instanceof Text) {
       this.data = event.data;
-      this.toolShown = true;
-      this.mDragging = true;
-      this.element.cursor = 'move';
+      this.toolShown = !this.toolShown;
+      this.mDragging = this.toolShown;
+      this.element.cursor = this.toolShown ? 'move' : 'default';
+      this.select(this.toolShown);
     }
   };
 

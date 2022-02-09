@@ -1,9 +1,11 @@
 import * as PIXI from 'pixi.js';
 import ResizableContainer from '@/components/ResizableContainer';
-import { zIndex } from '@/config/consts';
+import { MapSelectableSpriteType, zIndex } from '@/config/consts';
 
 export default class MapZoneMarker extends ResizableContainer {
-  constructor({ code, type, x, y, radius, width, height, color, data, refresh }) {
+  constructor(props) {
+    const { code, type, x, y, radius, width, height, color, data } = props;
+    const { interactive, select, refresh } = props;
     super();
     this.x = x;
     this.y = y;
@@ -12,10 +14,13 @@ export default class MapZoneMarker extends ResizableContainer {
     this.data = data;
     this.color = color;
     this.radius = radius;
+    this.select = (add) => {
+      select({ id: code, type: MapSelectableSpriteType.ZONE }, add);
+    };
     this.refresh = refresh;
     this.zIndex = zIndex.zoneMarker;
     const element = this.createElement(width, height);
-    this.create(element, this.updateZonMarker, zIndex.zoneMarker);
+    this.create(element, this.updateZonMarker, zIndex.zoneMarker, interactive);
   }
 
   createElement(width, height) {

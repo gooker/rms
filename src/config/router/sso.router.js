@@ -39,7 +39,7 @@ export default [
   {
     path: `/${AppCode.SSO}/authorizationCenter`, // 授权中心
     name: 'authorizationCenter',
-    icon: 'authority',
+    icon: 'authorize',
     component: '/SSO/AuthorizationCenter',
     authority: ['ADMIN'],
   },
@@ -53,7 +53,7 @@ export default [
   {
     path: `/${AppCode.SSO}/customConfiguration`, // 定制化配置
     name: 'customConfiguration',
-    icon: 'configuration',
+    icon: 'customConfig',
     component: '/SSO/CustomConfiguration',
     authority: ['ADMIN'],
     hook: ['dev'],

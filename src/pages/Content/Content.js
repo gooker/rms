@@ -30,7 +30,7 @@ const Content = (props) => {
 
   const routesData = createRoutesByRequire();
   return (
-    <div id={'layoutContent'} style={{ height: '100%', width: '100%', overflow: 'auto' }}>
+    <div id={'layoutContent'} style={{ flex: 1, overflow: 'auto' }}>
       <Switch>
         <Route
           exact

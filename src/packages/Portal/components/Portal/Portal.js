@@ -30,7 +30,7 @@ const Portal = (props) => {
 
     // 如果是admin账户登录，就只显示SSO APP
     if (isAdmin) {
-      return appList.filter((item) => item.name === AppCode.SSO);
+      return appList.filter((item) => item === AppCode.SSO);
     }
 
     // 顺序: XIHE, Latent, Tote, Sorter, I18N,SSO
@@ -57,9 +57,10 @@ const Portal = (props) => {
   }
 
   function renderAppInfo() {
+    const grantedApps = getAppList();
     return (
       <>
-        {getAppList().map((appCode) => {
+        {grantedApps.map((appCode) => {
           if (appCode === AppCode.LatentLifting) {
             return (
               <LatentLifting

@@ -5,6 +5,7 @@ import { isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
+import { ZoneMarkerType } from '@/config/consts';
 
 const MonitorMapContainer = (props) => {
   const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
@@ -137,51 +138,37 @@ const MonitorMapContainer = (props) => {
       mapContext.renderCommonFunction(commonList);
     }
 
-    const { dumpStations, backGround, labels, emergencyStopFixedList } = currentLogicAreaData;
+    const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;
     // 抛货点
     if (Array.isArray(dumpStations)) {
       mapContext.renderDumpFunction(dumpStations);
     }
 
     // 背景(线框&图片)
-    if (Array.isArray(backGround)) {
-      backGround.forEach((backImgData) => {
+    if (Array.isArray(zoneMarker)) {
+      zoneMarker.forEach((zoneMarkerItem) => {
         // 线框
-        if (backImgData.type === 'wireframe') {
-          // 矩形
-          if (backImgData.shape === 'Rect') {
-            mapContext.drawRectArea(
-              backImgData.x,
-              backImgData.y,
-              backImgData.width,
-              backImgData.height,
-              backImgData.labelColor,
-            );
-          } else {
-            mapContext.drawCircleArea(
-              backImgData.x,
-              backImgData.y,
-              backImgData.radius,
-              backImgData.labelColor,
-            );
-          }
-        } else {
-          // 图片
-          mapContext.renderImage({
-            base64: backImgData.imageUrl,
-            x: backImgData.x,
-            y: backImgData.y,
-            width: backImgData.width,
-            height: backImgData.height,
-          });
+        if (zoneMarkerItem.type === ZoneMarkerType.RECT) {
+          const { code, x, y, width, height, color } = zoneMarkerItem;
+          mapContext.drawRectArea({ code, x, y, width, height, color }, false);
+        }
+
+        if (zoneMarkerItem.type === ZoneMarkerType.CIRCLE) {
+          const { code, x, y, radius, color } = zoneMarkerItem;
+          mapContext.drawCircleArea({ code, x, y, radius, color }, false);
+        }
+
+        if (zoneMarkerItem.type === ZoneMarkerType.IMG) {
+          const { code, x, y, width, height, data } = zoneMarkerItem;
+          mapContext.renderImage({ code, x, y, width, height, data }, false);
         }
       });
     }
 
     // 文字标记
     if (Array.isArray(labels)) {
-      labels.forEach((label) => {
-        mapContext.renderLabel(label);
+      labels.forEach((item) => {
+        mapContext.renderLabel(item, false);
       });
     }
 

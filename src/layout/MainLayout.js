@@ -30,16 +30,17 @@ class MainLayout extends React.Component {
       // 1.获取用户信息
       const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
       if (userInfo && !dealResponse(userInfo)) {
-        const { currentSection } = userInfo;
-
         // 2.初始化应用基础信息
         await dispatch({ type: 'global/initPlatformState' });
 
         // 3. 初始化Socket客户端
-        const { name, password } = currentSection;
-        const socketClient = new SocketClient({ login: name, passcode: password });
-        socketClient.connect();
-        dispatch({ type: 'global/saveSocketClient', payload: socketClient });
+        const { currentSection, username } = userInfo;
+        if (username !== 'admin') {
+          const { name, password } = currentSection;
+          const socketClient = new SocketClient({ login: name, passcode: password });
+          socketClient.connect();
+          dispatch({ type: 'global/saveSocketClient', payload: socketClient });
+        }
 
         // 4. 加载地图Texture
         if (!textureLoaded) {
@@ -50,7 +51,9 @@ class MainLayout extends React.Component {
         this.setState({ appReady: true });
 
         // 5. 获取所有车类任务类型数据
-        this.loadAllTaskTypes();
+        if (username !== 'admin') {
+          this.loadAllTaskTypes();
+        }
       } else {
         throw new Error(formatMessage({ id: 'app.message.fetchUserFail' }));
       }
