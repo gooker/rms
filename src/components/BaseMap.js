@@ -900,7 +900,7 @@ export default class BaseMap extends React.Component {
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.RECT,
       refresh: this.refresh,
-      select: this.selectZoneMarker,
+      select: this.selectMapMarker,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -917,7 +917,7 @@ export default class BaseMap extends React.Component {
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.CIRCLE,
       refresh: this.refresh,
-      select: this.selectZoneMarker,
+      select: this.selectMapMarker,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -935,7 +935,7 @@ export default class BaseMap extends React.Component {
       interactive,
       type: ZoneMarkerType.IMG,
       refresh: this.refresh,
-      select: this.selectZoneMarker,
+      select: this.selectMapMarker,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -944,6 +944,7 @@ export default class BaseMap extends React.Component {
 
   renderLabel({ code, x, y, text, color, width, height }, interactive) {
     const mapLabelMarker = new MapLabelMarker({
+      code,
       x,
       y,
       text,
@@ -952,7 +953,7 @@ export default class BaseMap extends React.Component {
       interactive,
       color: color || 0xffffff,
       refresh: this.refresh,
-      select: this.selectLabelMarker,
+      select: this.selectMapMarker,
     });
     this.labelMap.set(code, mapLabelMarker);
     this.pixiUtils.viewportAddChild(mapLabelMarker);

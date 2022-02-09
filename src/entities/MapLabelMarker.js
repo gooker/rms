@@ -1,18 +1,22 @@
 import ResizableContainer from '@/components/ResizableContainer';
 import { Text } from '@/entities';
-import { zIndex } from '@/config/consts';
+import { MapSelectableSpriteType, zIndex } from '@/config/consts';
 
 export default class MapLabelMarker extends ResizableContainer {
-  constructor({ x, y, color, text, width, height, refresh }) {
+  constructor({ code, x, y, color, text, width, height, refresh, select, interactive }) {
     super();
     this.x = x;
     this.y = y;
+    this.code = code;
     this.text = text;
     this.color = color;
     this.refresh = refresh;
     this.zIndex = zIndex.label;
+    this.select = (add) => {
+      select({ id: code, type: MapSelectableSpriteType.LABEL }, add);
+    };
     const element = this.createElement(width, height);
-    this.create(element, this.updateZonMarker, zIndex.label);
+    this.create(element, this.updateZonMarker, zIndex.label, interactive);
   }
 
   createElement(width, height) {

@@ -424,22 +424,17 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ Zone相关 **********************
-  selectZoneMarker = (zoneMarker, add) => {
+  selectMapMarker = (marker, add) => {
     const { dispatch } = window.g_app._store;
     const _this = this;
     if (add) {
-      _this.selections.push(zoneMarker);
+      _this.selections.push(marker);
     } else {
       _this.selections = _this.selections.filter(
-        (item) => item.id !== zoneMarker.id && item.type !== zoneMarker.type,
+        (item) => item.id !== marker.id && item.type !== marker.type,
       );
     }
     dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
-  };
-
-  // ************************ Label相关 **********************
-  selectLabelMarker = () => {
-    //
   };
 
   // ************************ 框选相关 **********************

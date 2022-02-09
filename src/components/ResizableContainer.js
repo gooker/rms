@@ -32,7 +32,8 @@ export default class ResizableContainer extends PIXI.Container {
     this.rotateHandler = null;
 
     // 标记
-    this.toolShown = false;
+    this.isPointerDown = false; // 指针是否按下
+    this.toolShown = false; // 是否显示Resize触点
     this.aDragging = false; // 角拖拽
     this.hDragging = false; // 横向拖拽
     this.vDragging = false; // 纵向拖拽
@@ -46,8 +47,9 @@ export default class ResizableContainer extends PIXI.Container {
     this.element = this.addChild(element);
 
     if (interactive) {
-      this.element.buttonMode = true;
       this.element.interactive = true;
+      this.element.buttonMode = true;
+      this.element.cursor = 'pointer';
       this.element
         .on('pointerdown', this.onElementPointerDown)
         .on('pointermove', this.onElementMove)
@@ -59,11 +61,13 @@ export default class ResizableContainer extends PIXI.Container {
 
   onSelect() {
     this.toolShown = true;
+    this.element.cursor = 'move';
     this.switchResizeToolShown(true);
   }
 
   onUnSelect() {
     this.toolShown = false;
+    this.element.cursor = 'pointer';
     this.switchResizeToolShown(false);
   }
 
@@ -77,16 +81,14 @@ export default class ResizableContainer extends PIXI.Container {
     const target = event.target;
     const leftActiveCategory = window.g_app._store.getState().editor.leftActiveCategory;
     if (leftActiveCategory !== LeftCategory.Font || target instanceof Text) {
+      this.isPointerDown = true;
       this.data = event.data;
-      this.toolShown = !this.toolShown;
-      this.mDragging = this.toolShown;
-      this.element.cursor = this.toolShown ? 'move' : 'default';
-      this.select(this.toolShown);
     }
   };
 
   onElementMove = () => {
-    if (this.mDragging) {
+    if (this.isPointerDown) {
+      this.mDragging = true;
       const newPosition = this.data.getLocalPosition(this.parent);
       this.x = newPosition.x;
       this.y = newPosition.y;
@@ -95,9 +97,15 @@ export default class ResizableContainer extends PIXI.Container {
   };
 
   onElementPointerUp = () => {
+    // 如果进行了拖拽，就不判定是选择
+    if (!this.mDragging) {
+      this.toolShown = !this.toolShown;
+      this.select(this.toolShown);
+      this.switchResizeToolShown(this.toolShown);
+    }
     this.data = null;
     this.mDragging = false;
-    this.switchResizeToolShown(this.toolShown);
+    this.isPointerDown = false;
     this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
   };
 

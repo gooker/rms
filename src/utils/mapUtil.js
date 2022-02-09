@@ -1435,7 +1435,7 @@ export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _e
       .filter(
         (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
       )
-      .map(({ code }) => ({ code, type: MapSelectableSpriteType.ZONE }));
+      .map(({ code }) => ({ id: code, type: MapSelectableSpriteType.ZONE }));
     selections.push(...zoneMarkerSelections);
   }
 
@@ -1445,7 +1445,7 @@ export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _e
       .filter(
         (item) => item.x >= _startX && item.x <= _endX && item.y >= _startY && item.y <= _endY,
       )
-      .map(({ code }) => ({ code, type: MapSelectableSpriteType.LABEL }));
+      .map(({ code }) => ({ id: code, type: MapSelectableSpriteType.LABEL }));
     selections.push(...labelsSelections);
   }
 

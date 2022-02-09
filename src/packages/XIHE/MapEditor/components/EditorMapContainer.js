@@ -172,7 +172,7 @@ const EditorMapContainer = (props) => {
     // 文字标记
     if (Array.isArray(labels)) {
       labels.forEach((item) => {
-        mapContext.renderLabel(item);
+        mapContext.renderLabel(item, true);
       });
     }
 

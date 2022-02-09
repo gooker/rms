@@ -27,15 +27,18 @@ const LabelInputModal = (props) => {
         const x = worldStartX + width / 2;
         const y = worldStartY + height / 2;
         const code = `LABEL_${getRandomString(6)}`;
-        mapContext.renderLabel({
-          code,
-          x,
-          y,
-          text,
-          color: color.replace('#', '0x'),
-          width,
-          height,
-        });
+        mapContext.renderLabel(
+          {
+            code,
+            x,
+            y,
+            text,
+            color: color.replace('#', '0x'),
+            width,
+            height,
+          },
+          true,
+        );
         dispatch({
           type: 'editor/insertLabel',
           payload: { code, x, y, text, color, width, height },
