@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator, Tote, LatentLifting, ForkLifting, Sorter } = NameSpace;
+const { Coordinator, Tote, LatentLifting } = NameSpace;
 
 export async function fetchAllTaskTypes() {
   return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {

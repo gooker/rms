@@ -1,15 +1,7 @@
 import request from '@/utils/request';
 
 export async function fetchLogout(params) {
-  return request(`/sso/user/logout`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
-// 获取当前登陆对象
-export async function fetchCurrentUser(params) {
-  return request('/sso/user/getUser', {
+  return request('/sso/user/logout', {
     method: 'GET',
     data: params,
   });
@@ -17,7 +9,7 @@ export async function fetchCurrentUser(params) {
 
 // 修改当前默认的section
 export async function fetchUpdateUserCurrentSection(params) {
-  return request(`/sso/user/updateUserDefaultSection`, {
+  return request('/sso/user/updateUserDefaultSection', {
     method: 'POST',
     data: params,
   });
@@ -25,7 +17,7 @@ export async function fetchUpdateUserCurrentSection(params) {
 
 // 修改当前语言
 export async function fetchUpdateUserCurrentLanguage(languageType) {
-  return request(`/sso/user/updateUserCurrentLanguage?languageType=${languageType}`, {
+  return request('/sso/user/updateUserCurrentLanguage?languageType=${languageType}', {
     method: 'POST',
   });
 }
@@ -37,7 +29,7 @@ export async function fetchAllEnvironment() {
 }
 
 export async function fetchUserRoleList(params) {
-  return request(`/sso/user/roleList`, {
+  return request('/sso/user/roleList', {
     method: 'GET',
     data: params,
   });
@@ -255,6 +247,3 @@ export async function uploadCertication(param) {
     data: param,
   });
 }
-
-
-

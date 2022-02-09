@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import {
   fetchLogin,
   fetchAppVersion,
@@ -57,7 +57,7 @@ const Login = (props) => {
         }
       }
       setLoading(false);
-      history.push('/');
+      history.push('/welcome');
     }
   }
   return (

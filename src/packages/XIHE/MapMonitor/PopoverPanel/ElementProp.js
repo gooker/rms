@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import classnames from 'classnames';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isStrictNull, renderAgvState, renderBattery } from '@/utils/util';
 import styles from '../monitorLayout.module.less';

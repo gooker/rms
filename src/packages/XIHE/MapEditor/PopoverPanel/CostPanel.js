@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Col, Row } from 'antd';
 import { DragOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import CostConfigure from '../components/CostConfigure';
 import editorStyles from '../editorLayout.module.less';

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { throttle } from 'lodash';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CostPanel from '../PopoverPanel/CostPanel';

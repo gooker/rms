@@ -1,7 +1,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
@@ -10,7 +10,7 @@ import commonStyles from '@/common.module.less';
 const { SubMenu } = Menu;
 
 const Slider = (prop) => {
-  const { dispatch, currentApp, allMenuData } = prop;
+  const { currentApp, allMenuData } = prop;
 
   const { pathname } = window.location;
   const [currentModuleRouter, setCurrentModuleRouter] = useState([]);

@@ -2,7 +2,7 @@ import React from 'react';
 import { Modal, Popover, Switch } from 'antd';
 import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import screenfull from 'screenfull';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { throttle } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import Portal from './Portal/Portal';
@@ -22,9 +22,6 @@ import { isNull } from '@/utils/util';
   isFullscreen: global.isFullscreen,
 }))
 class Header extends React.Component {
-  // 用来标记是否是用户点击触发了全屏切换，而不是ESC退出全屏
-  userAction = false;
-
   state = {
     showErrorNotification: false,
     apiListShow: false,

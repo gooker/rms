@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';

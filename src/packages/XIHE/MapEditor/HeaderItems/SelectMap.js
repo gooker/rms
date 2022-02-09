@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Badge, Button, Dropdown, Form, Input, Menu, Modal } from 'antd';
 import { DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';

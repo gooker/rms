@@ -8,7 +8,7 @@ import {
   CloudDownloadOutlined,
   FullscreenExitOutlined,
 } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 
 const MonitorHeaderRightTools = (props) => {

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Menu, Dropdown } from 'antd';
 import { find } from 'lodash';
 import { DownOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import styles from './index.module.less';
 

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import moment from 'moment';
 import { Checkbox, Tooltip, DatePicker, Select } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config webpack/webpack.config.dev.js --open",
-    "build": "rm -rf dist && cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
+    "build": "rm -rf dist && cross-env NODE_ENV=production webpack --config webpack/webpack.config.prod.js && node ./scripts/addDefaultConfig.js",
     "analyzer": "cross-env ANALYZE=1 NODE_ENV=production webpack --config webpack/webpack.config.prod.js",
     "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
     "lint-staged": "lint-staged",
@@ -84,7 +84,6 @@
     "react-refresh": "^0.11.0",
     "react-router-dom": "^5.2.0",
     "react-smooth-dnd": "^0.11.1",
-    "redux-devtools-extension": "2.13.9",
     "screenfull": "^5.1.0",
     "size-sensor": "^1.0.1",
     "stompjs": "2.3.3",

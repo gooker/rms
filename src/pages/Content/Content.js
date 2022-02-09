@@ -1,7 +1,7 @@
 // 所有模块的路由全在此注册
 import React, { memo } from 'react';
 import { Switch, Route } from 'react-router-dom';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/components/Loadable';
 
@@ -32,7 +32,11 @@ const Content = (props) => {
   return (
     <div id={'layoutContent'} style={{ height: '100%', width: '100%', overflow: 'auto' }}>
       <Switch>
-        <Route exact path="/" component={Loadable(() => import('@/packages/Portal/Welcome'))} />
+        <Route
+          exact
+          path="/welcome"
+          component={Loadable(() => import('@/packages/Portal/Welcome'))}
+        />
 
         {/* 模块页面路由 */}
         {routesData.map(({ path, component }) => (

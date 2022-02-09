@@ -1,6 +1,6 @@
 import React, { memo, useEffect } from 'react';
 import { Row } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import PortalEntry from './PortalEntry';
 import styles from './Portal.module.less';
@@ -13,7 +13,7 @@ const Portal = (props) => {
   useEffect(() => {
     const { pathname } = window.location;
     let currentApp;
-    if (pathname === '/') {
+    if (pathname === '/welcome') {
       currentApp = isAdmin ? AppCode.SSO : AppCode.XIHE;
     } else {
       currentApp = pathname.split('/')[1];

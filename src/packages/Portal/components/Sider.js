@@ -2,7 +2,7 @@ import React from 'react';
 import { Layout } from 'antd';
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import throttle from 'lodash/throttle';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import LayoutMenu from '@/components/Menu';
 import Logo from '@/../public/images/logoMain.png';
 
@@ -38,6 +38,7 @@ class LayoutSider extends React.PureComponent {
       collapsed: !this.state.collapsed,
     });
   };
+
   render() {
     const { collapsed } = this.state;
     const { logo } = this.props;

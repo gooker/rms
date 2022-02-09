@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { unionBy, groupBy } from 'lodash';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import ReactEcharts from './EchartsForReact';
 import { formatMessage, match } from '@/utils/util';
 

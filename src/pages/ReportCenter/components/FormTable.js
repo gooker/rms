@@ -3,7 +3,7 @@ import { Table, Radio, Card, Col, Row } from 'antd';
 import { DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { groupBy } from 'lodash';
 import moment from 'moment';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import ControlledRangePicker from './ControlledRangePicker';
 import FilterTag from './FilterTag';

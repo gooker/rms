@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Cell, LineArrow } from '@/entities';
 import { filterMapSpriteByRange, transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
@@ -149,8 +149,7 @@ class EditorBodyLeft extends React.PureComponent {
     // 手动模拟点击事件
     const pointerTimeGap = new Date().getTime() - this.pinterDownTimestamp;
     if (!this.pinterIsMoving && pointerTimeGap <= 150) {
-      // 取消选择
-      console.log('click');
+      this.cancelSelections();
     } else {
       const { activeKey, dispatch } = this.props;
       // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
@@ -185,8 +184,16 @@ class EditorBodyLeft extends React.PureComponent {
     this.pointerUpY = null;
   };
 
+  // 取消选择所以已选中的元素
+  cancelSelections = () => {
+    const { dispatch, selections, mapContext } = this.props;
+    mapContext.rangeSelection(selections, false);
+    dispatch({ type: 'editor/updateSelections', payload: [] });
+  };
+
   // 框选地图元素
   onSelectElement = () => {
+    this.cancelSelections();
     const { dispatch, mapContext, currentCells } = this.props;
 
     // 收集转换所需的数据
@@ -210,7 +217,7 @@ class EditorBodyLeft extends React.PureComponent {
 
     const selections = filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY);
     mapContext.rangeSelection(selections);
-    // dispatch({ type: 'editor/updateSelections', payload: selections });
+    dispatch({ type: 'editor/updateSelections', payload: selections });
   };
 
   render() {
@@ -235,6 +242,7 @@ class EditorBodyLeft extends React.PureComponent {
 }
 export default connect(({ editor }) => ({
   mapContext: editor.mapContext,
+  selections: editor.selections,
   currentCells: editor.currentCells,
   activeKey: editor.leftActiveCategory,
 }))(memo(EditorBodyLeft));

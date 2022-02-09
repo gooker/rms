@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { formatMessage, GMT2UserTimeZone } from '@/utils/util';
 import { AGVType } from '@/config/config';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import styles from './index.module.less';
 
 const taskStatusIcon = {

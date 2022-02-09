@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import CustomTaskForm from './components/CustomTaskForm';
 import CustomTaskTable from './components/CustomTaskTable';
 import commonStyles from '@/common.module.less';

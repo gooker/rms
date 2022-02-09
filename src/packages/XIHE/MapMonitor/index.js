@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import MonitorMapContainer from './components/MonitorMapContainer';

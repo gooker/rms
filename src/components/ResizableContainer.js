@@ -58,6 +58,10 @@ export default class ResizableContainer extends PIXI.Container {
     this.switchResizeToolShown(true);
   }
 
+  onUnSelect() {
+    this.switchResizeToolShown(false);
+  }
+
   /**
    * 元素移动事件
    * 注意点:

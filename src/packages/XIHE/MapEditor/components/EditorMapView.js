@@ -5,7 +5,7 @@ import {
   getTextureFromResources,
   loadEditorExtraTextures,
 } from '@/utils/mapUtil';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { CellSize, MapSelectableSpriteType } from '@/config/consts';
 import { Cell } from '@/entities';
 import PixiBuilder from '@/entities/PixiBuilder';
@@ -35,8 +35,7 @@ class EditorMapView extends BaseMap {
 
     // 选择相关
     this.selectedCells = []; // 缓存选中的点位ID
-    this.selectedLines = []; // 缓存选中的线条ID
-    this.batchSelectBase = []; // 批量选择的基准点位
+    this.selections = []; // 选中的元素数据
   }
 
   async componentDidMount() {
@@ -59,14 +58,12 @@ class EditorMapView extends BaseMap {
     this.cellXMap.clear();
     this.cellYMap.clear();
     this.selectedCells = [];
-    this.batchSelectBase = [];
     this.clearEditorRouteData();
     this.onSelectCell([]);
   };
 
   clearEditorRouteData = () => {
     this.cellCostMap.clear();
-    this.selectedLines = [];
     this.onSelectLine([]);
   };
 
@@ -217,7 +214,7 @@ class EditorMapView extends BaseMap {
     this.states.hideBlock = flag;
     const { blockCellIds } = getCurrentRouteMapData();
     blockCellIds.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(`${cellId}`);
+      const cellEntity = this.idCellMap.get(cellId);
       if (cellEntity) cellEntity.switchShown(!flag);
     });
     this.pipeSwitchLinesShown();
@@ -225,9 +222,16 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位 & 线条选择 **********************
+  cancelAllSelection = () => {
+    const { dispatch } = window.g_app._store;
+    this.rangeSelection(this.selections, false);
+    this.selections = [];
+    dispatch({ type: 'editor/updateSelections', payload: [] });
+  };
+
   /**
    * 将选择的点位同步到 Store
-   * @param {*} cells 已选中的点位
+   * @param {*} cells 已选中的点位ID
    */
   onSelectCell = (cells) => {
     const { dispatch } = window.g_app._store;
@@ -240,33 +244,31 @@ class EditorMapView extends BaseMap {
    * @param {*} cull 是否是取消选择
    */
   selectCell = (cell, cull = false) => {
+    // Chrome调试会误将this指向Cell, 为了便于调试所以使用_this
+    const _this = this;
+    const { dispatch } = window.g_app._store;
+    // 选中操作
     if (!cull) {
-      // Clear line selections
-      this.selectedLines.forEach((id) => {
-        const [, line] = getLineFromIdLineMap(id, this.idLineMap);
-        line && line.unSelect();
-      });
-      this.selectedLines = [];
-      this.onSelectLine([]);
-
-      // 标识
-      this.currentClickedCell = cell;
-      this.batchSelectBase = [];
-
-      // 先取消之前已选择的点位
-      this.cancelCellSelected(this.selectedCells);
-      this.selectedCells = [cell.id];
+      _this.cancelAllSelection();
+      // 更新标识
+      _this.currentClickedCell = cell;
+      _this.selections = [{ id: cell.id, type: MapSelectableSpriteType.CELL }];
     } else {
-      this.selectedCells = this.selectedCells.filter((id) => id !== cell.id);
+      _this.selections = _this.selections.filter(
+        (item) => item.id !== cell.id || item.type !== MapSelectableSpriteType.CELL,
+      );
     }
-    this.onSelectCell([...this.selectedCells]);
-    this.refresh();
+    _this.rangeSelection(_this.selections);
+    _this.refresh();
+    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
   };
 
   shiftSelectCell = (cell) => {
-    const { editor } = window.g_app._store.getState();
+    const _this = this;
+    const { dispatch, getState } = window.g_app._store;
+    const { editor } = getState();
     const cells = editor.currentCells;
-    const pre = this.currentClickedCell;
+    const pre = _this.currentClickedCell;
     const next = cell;
 
     // Fetch the selection area
@@ -286,100 +288,87 @@ class EditorMapView extends BaseMap {
 
     // Fetch cell entity from 'idCellMap' and execute 'onSelect' function
     includedCellIds.forEach((id) => {
-      const cellEntity = this.idCellMap.get(id);
+      const cellEntity = _this.idCellMap.get(id);
       cellEntity && cellEntity.onSelect();
     });
 
     // Record current clicked cell
-    this.currentClickedCell = cell;
+    _this.currentClickedCell = cell;
 
-    // 添加到基准点
-    if (this.batchSelectBase.length > 0) this.batchSelectBase.push(...includedCellIds);
+    // 删除重复点位数据
+    const storedCellIds = this.selections
+      .filter((item) => item.type === MapSelectableSpriteType.CELL)
+      .map(({ id }) => id);
+    const additional = includedCellIds
+      .filter((id) => !storedCellIds.includes(id))
+      .map((cellId) => ({
+        id: cellId,
+        type: MapSelectableSpriteType.CELL,
+      }));
 
-    // Call Back
-    this.selectedCells = [...new Set([...this.selectedCells, ...includedCellIds])];
-    this.onSelectCell(this.selectedCells.slice());
-    this.refresh();
+    // 数据同步
+    _this.refresh();
+    _this.selections = [..._this.selections, ...additional];
+    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
   };
 
   ctrlSelectCell = (cell) => {
-    // Record current clicked cell
+    const _this = this;
+    const { dispatch } = window.g_app._store;
+
+    // 记录当前点击的点
     this.currentClickedCell = cell;
 
-    // Add item to collection
-    const newSelectedCells = this.selectedCells.slice();
-    newSelectedCells.push(cell.id);
-    this.selectedCells = [...new Set(newSelectedCells)];
-
-    // 添加到基准点
-    if (this.batchSelectBase.length > 0) this.batchSelectBase.push(`${cell.id}`);
-
-    // Call Back
-    this.onSelectCell(this.selectedCells);
-    this.refresh();
+    // 数据同步
+    _this.refresh();
+    _this.selections = [..._this.selections, { id: cell.id, type: MapSelectableSpriteType.CELL }];
+    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
   };
 
-  cancelCellSelected = (cells) => {
-    if (Array.isArray(cells)) {
-      cells.forEach((id) => {
-        const cellEntity = this.idCellMap.get(id);
-        cellEntity && cellEntity.onUnSelect();
-      });
-    } else {
-      this.idCellMap.forEach((cellEntity) => cellEntity.onUnSelect());
-    }
-    this.selectedCells = [];
-    this.onSelectCell([]);
-  };
+  batchSelectCellByDirection = (prop) => {
+    const { dispatch } = window.g_app._store;
+    const baseCellIds = this.selections
+      .filter((item) => item.type === MapSelectableSpriteType.CELL)
+      .map(({ id }) => id);
 
-  batchSelectBaseRow = () => {
     // 按行选择的话，只要统计选中点的Y坐标，遍历所有点找出所有与该Y坐标相同的点位即可
-    if (this.batchSelectBase.length === 0) this.batchSelectBase = [...this.selectedCells];
-    const Ys = new Set();
-    this.batchSelectBase.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      cellEntity.onUnSelect();
-      Ys.add(cellEntity.y);
-    });
+    if (baseCellIds.length > 0) {
+      const XYs = new Set();
+      baseCellIds.forEach((cellId) => {
+        const cellEntity = this.idCellMap.get(cellId);
+        XYs.add(cellEntity[prop]);
+      });
 
-    const selectedCells = [];
-    this.idCellMap.forEach((cellEntity) => {
-      if (Ys.has(cellEntity.y)) {
-        cellEntity.onSelect();
-        selectedCells.push(`${cellEntity.id}`);
-      }
-    });
-    this.selectedCells = [...new Set([...this.selectedCells, ...selectedCells])];
-    this.onSelectCell(this.selectedCells.slice());
-    this.refresh();
-  };
+      // 符合规则的所有点位ID
+      const cellSelected = [];
+      this.idCellMap.forEach((cellEntity) => {
+        if (XYs.has(cellEntity[prop])) {
+          cellEntity.onSelect();
+          cellSelected.push(cellEntity.id);
+        }
+      });
 
-  batchSelectBaseColumn = () => {
-    // 按列选择的话，只要统计选中点的X坐标，遍历所有点找出所有与该X坐标相同的点位即可
-    if (this.batchSelectBase.length === 0) this.batchSelectBase = [...this.selectedCells];
-    const Xs = new Set();
-    this.batchSelectBase.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      cellEntity.onUnSelect();
-      Xs.add(cellEntity.x);
-    });
+      // 删除重复点位数据
+      const storedCellIds = this.selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
 
-    const selectedCells = [];
-    this.idCellMap.forEach((cellEntity) => {
-      if (Xs.has(cellEntity.x)) {
-        cellEntity.onSelect();
-        selectedCells.push(`${cellEntity.id}`);
-      }
-    });
-    this.selectedCells = [...new Set([...this.selectedCells, ...selectedCells])];
-    this.onSelectCell(this.selectedCells.slice());
-    this.refresh();
+      const additional = cellSelected
+        .filter((id) => !storedCellIds.includes(id))
+        .map((cellId) => ({
+          id: cellId,
+          type: MapSelectableSpriteType.CELL,
+        }));
+      this.refresh();
+      this.selections = [...this.selections, ...additional];
+      dispatch({ type: 'editor/updateSelections', payload: [...this.selections] });
+    }
   };
 
   // ************************ 线条相关 **********************
   /**
    * 将选择的线条同步到 Store
-   * @param {*} lines 已选中的线条
+   * @param {*} lines 已选中的线条ID
    */
   onSelectLine = (lines) => {
     const { dispatch } = window.g_app._store;
@@ -387,21 +376,11 @@ class EditorMapView extends BaseMap {
   };
 
   selectLine = (id, isAdded = true) => {
-    // 清空所有选中的点位
-    this.selectedCells.forEach((cellId) => {
-      const cell = this.idCellMap.get(cellId);
-      cell && cell.onUnSelect();
-    });
-    this.selectedCells = [];
-    this.batchSelectBase = [];
-    this.onSelectCell([]);
+    //
+  };
 
-    isAdded
-      ? this.selectedLines.push(id)
-      : this.selectedLines.splice(this.selectedLines.indexOf(id), 1);
-
-    this.onSelectLine([...new Set(this.selectedLines)]);
-    this.refresh();
+  ctrlSelectLine = (line) => {
+    //
   };
 
   updateLines = ({ type, payload }) => {
@@ -451,9 +430,10 @@ class EditorMapView extends BaseMap {
     this.pipeSwitchLinesShown();
   };
 
-  // 框选显示
-  rangeSelection(selections) {
+  // ************************ 框选相关 **********************
+  rangeSelection(selections, selected = true) {
     if (Array.isArray(selections)) {
+      this.selections = selections;
       selections.forEach((selection) => {
         let entity;
         switch (selection.type) {
@@ -472,7 +452,9 @@ class EditorMapView extends BaseMap {
           default:
             entity = null;
         }
-        entity && entity.onSelect();
+        if (entity) {
+          selected ? entity.onSelect() : entity.onUnSelect();
+        }
       });
       this.refresh();
     }

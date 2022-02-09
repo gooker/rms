@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Menu, Dropdown } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import styles from './Header.module.less';
 import { IconFont } from '@/components/IconFont';
 

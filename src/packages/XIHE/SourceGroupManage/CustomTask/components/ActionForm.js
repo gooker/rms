@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Form, Input, InputNumber, Radio, Checkbox, Switch, Select } from 'antd';
 import groupBy from 'lodash/groupBy';
 import { extractRoutes, isNull, formatMessage } from '@/utils/util';

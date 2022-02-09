@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import createRcsDva from '@/utils/RcsDva';
+import createRcsDva from '@/utils/RmsDva';
 import App from '@/pages/App';
 import models from '@/models';
 import './global.less';
@@ -20,19 +20,14 @@ import './global.less';
 // });
 
 // 1. 初始化Dva对象(包含dva层统一错误处理)
-const app = createRcsDva({
-  onError(e, dispatch) {
-    console.log(e.message);
+const DvaProvider = createRcsDva(
+  {
+    onError(e, dispatch) {
+      console.log(e.message);
+    },
   },
-});
-window.g_app = app;
-window.__g_state__ = window.g_app._store.getState;
-
-// 2. 注册 Model
-models.forEach((model) => app.model(model));
-
-// 3. 启动
-const DvaProvider = app.create();
+  models,
+);
 
 ReactDOM.render(
   <DvaProvider>

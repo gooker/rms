@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Button, Input, Form, message, Modal, Table, Tag } from 'antd';
 import { BellOutlined, ReloadOutlined, DisconnectOutlined } from '@ant-design/icons';
 import find from 'lodash/find';

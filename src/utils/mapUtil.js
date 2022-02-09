@@ -1403,12 +1403,8 @@ export function loadMonitorExtraTextures(renderer) {
   });
 }
 
-/**
- * 根据框选范围筛选地图元素
- * 充电桩、工作站、通用站点、电梯、投递点、交汇点
- */
+// 根据框选范围筛选地图元素
 export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY) {
-  // 选择元素: 充电桩、工作站、通用站点、电梯、投递点、交汇点
   const currentLogicArea = getCurrentLogicAreaData();
   const currentRouteMap = getCurrentRouteMapData();
   const selections = [];
@@ -1452,6 +1448,8 @@ export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _e
       .map(({ code }) => ({ code, type: MapSelectableSpriteType.LABEL }));
     selections.push(...labelsSelections);
   }
+
+  // 充电桩、工作站、通用站点、电梯、投递点、交汇点
 
   return selections;
 }

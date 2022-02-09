@@ -4,7 +4,7 @@ import { NameSpace } from '@/config/config';
 export default function requestAPI() {
   let apiMap = {};
   if (isPlainObject(window.extraConfig)) {
-    apiMap = window.extraConfig;
+    apiMap = { ...window.extraConfig };
   } else {
     apiMap = {
       // NT-11-Dev 内网
@@ -31,8 +31,10 @@ export default function requestAPI() {
     };
   }
   apiMap[NameSpace.Coordinator] = apiMap.coordinator;
+  apiMap[NameSpace.LatentLifting] = apiMap.coordinator;
   apiMap[NameSpace.Tote] = apiMap.coordinator;
   apiMap[NameSpace.Sorter] = apiMap.coordinator;
-  apiMap[NameSpace.LatentLifting] = apiMap.coordinator;
+  apiMap[NameSpace.I18N] = apiMap.coordinator;
+
   return apiMap;
 }

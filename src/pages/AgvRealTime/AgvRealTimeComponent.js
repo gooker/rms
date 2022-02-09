@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Row, Col, Tabs, Button, Select, message } from 'antd';
 import {
   FileTextOutlined,

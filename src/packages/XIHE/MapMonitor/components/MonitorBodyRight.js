@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { throttle } from 'lodash';
 import { isNull } from '@/utils/util';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { AGVType } from '@/config/config';
 import { Category, MonitorRightTools } from '../enums';
 import ElementProp from '../PopoverPanel/ElementProp';

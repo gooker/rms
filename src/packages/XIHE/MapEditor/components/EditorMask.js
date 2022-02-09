@@ -1,6 +1,6 @@
 import React, { memo, useRef, useState } from 'react';
 import { Button, Modal } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { convertPngToBase64, getColorRGB, getRandomString } from '@/utils/util';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';

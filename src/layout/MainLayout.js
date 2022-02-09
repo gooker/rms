@@ -1,7 +1,7 @@
 import React from 'react';
 import { Layout, Modal, message, Skeleton } from 'antd';
 import { withRouter } from 'react-router-dom';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
@@ -27,23 +27,28 @@ class MainLayout extends React.Component {
 
     try {
       // 1.获取用户信息
-      const { currentSection } = await dispatch({ type: 'user/fetchCurrentUser' });
+      const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
+      if (userInfo && !dealResponse(userInfo)) {
+        const { currentSection } = userInfo;
 
-      // 2. 初始化Socket客户端
-      const { name, password } = currentSection;
-      const socketClient = new SocketClient({ login: name, passcode: password });
-      socketClient.connect();
-      dispatch({ type: 'global/saveSocketClient', payload: socketClient });
+        // 2.初始化应用基础信息
+        await dispatch({ type: 'global/initPlatformState' });
 
-      // 3.初始化菜单
-      await dispatch({ type: 'global/initAppAuthority' });
+        // 3. 初始化Socket客户端
+        const { name, password } = currentSection;
+        const socketClient = new SocketClient({ login: name, passcode: password });
+        socketClient.connect();
+        dispatch({ type: 'global/saveSocketClient', payload: socketClient });
 
-      // 4. 加载地图Texture
-      await loadTexturesForMap();
-      this.setState({ appReady: true });
+        // 4. 加载地图Texture
+        await loadTexturesForMap();
+        this.setState({ appReady: true });
 
-      // 5. 获取所有车类任务类型数据
-      this.loadAllTaskTypes();
+        // 5. 获取所有车类任务类型数据
+        this.loadAllTaskTypes();
+      } else {
+        throw new Error();
+      }
     } catch (error) {
       Modal.error({
         title: formatMessage({ id: 'app.global.initFailed' }),

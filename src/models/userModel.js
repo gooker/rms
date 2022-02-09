@@ -93,6 +93,16 @@ export default {
       }
     },
 
+    *logout({ payload: history }, { call }) {
+      const response = yield call(fetchLogout, {
+        token: window.localStorage.getItem('Authorization'),
+      });
+      if (!dealResponse(response)) {
+        window.localStorage.clear();
+        history.push('/login');
+      }
+    },
+
     *fetchUpdateUserCurrentSection({ payload }, { call, put, select }) {
       const sections = yield select(({ user }) => user.currentUser.sections);
       const currentSection = find(sections, { sectionId: payload });

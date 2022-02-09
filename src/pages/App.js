@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { initI18nInstance } from '@/utils/init';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
@@ -29,6 +29,7 @@ class App extends Component {
       initDone && (
         <ConfigProvider locale={antdLocale} input={{ autoComplete: 'off' }}>
           <Switch>
+            <Redirect exact from="/" to="/login" />
             {/* 登录页面*/}
             <Route
               exact

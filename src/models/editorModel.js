@@ -1033,7 +1033,7 @@ export default {
       }
     },
 
-    *insertLabel({ payload }, { select }) {
+    insertLabel({ payload }, { select }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let labels = currentLogicAreaData.labels || [];
       labels = [...labels, payload];

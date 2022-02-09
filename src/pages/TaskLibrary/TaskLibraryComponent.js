@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Button, message, Table, Divider, Tooltip, Badge } from 'antd';
 import { formatMessage, dealResponse, dateFormat } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

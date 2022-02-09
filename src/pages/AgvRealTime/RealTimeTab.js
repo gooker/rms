@@ -8,7 +8,7 @@ import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';
 import { hasPermission } from '@/utils/Permission';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 
 const { red, green, yellow } = Dictionary('color');
 

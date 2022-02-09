@@ -9,7 +9,7 @@ import { Permission } from '@/utils/Permission';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 
 const colProps = { lg: 8, sm: 12 };
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];

@@ -8,7 +8,7 @@ import {
   AimOutlined,
   FullscreenExitOutlined,
 } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
 import { formatMessage } from '@/utils/util';
 import PositionCell from '../components/PositionCell';

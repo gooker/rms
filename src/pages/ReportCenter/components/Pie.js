@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { groupBy, forIn, sumBy, orderBy } from 'lodash';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 
 import ReactEcharts from './EchartsForReact';
 

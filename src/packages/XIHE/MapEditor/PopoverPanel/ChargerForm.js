@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, isNull } from '@/utils/util';
 import AngleSelector from '@/components/AngleSelector';

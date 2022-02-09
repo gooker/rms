@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Row } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   CodeOutlined,
@@ -154,7 +154,7 @@ const CellPanel = (props) => {
                     style={ButtonStyle}
                     disabled={currentMap == null}
                     onClick={() => {
-                      mapContext.batchSelectBaseRow();
+                      mapContext.batchSelectCellByDirection('y');
                     }}
                   >
                     <ColumnWidthOutlined />{' '}
@@ -168,7 +168,7 @@ const CellPanel = (props) => {
                     style={ButtonStyle}
                     disabled={currentMap == null}
                     onClick={() => {
-                      mapContext.batchSelectBaseColumn();
+                      mapContext.batchSelectCellByDirection('x');
                     }}
                   >
                     <ColumnHeightOutlined /> <FormattedMessage id="editor.cell.verticalSelection" />

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Form, Input, Rate } from 'antd';
 import { formatMessage } from '@/utils/util';
 import styles from '../customTask.module.less';

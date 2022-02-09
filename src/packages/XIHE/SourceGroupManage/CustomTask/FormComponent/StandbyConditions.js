@@ -1,6 +1,6 @@
 // 小车进入待命状态的条件输入框
 import React, { memo } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Form, Select, Row, Col, Button } from 'antd';
 import { MinusOutlined, ClearOutlined } from '@ant-design/icons';
 import ModelSelection from '../FormComponent/ModelSelection';

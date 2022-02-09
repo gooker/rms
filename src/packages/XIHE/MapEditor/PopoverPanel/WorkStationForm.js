@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Form, Input, InputNumber } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/util';
 import { WorkStationSize } from '@/config/consts';
 import AngleSelector from '@/components/AngleSelector';

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Button, Divider, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, dealResponse, dateFormat, isStrictNull } from '@/utils/util';

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import find from 'lodash/find';
 import {
   Button,

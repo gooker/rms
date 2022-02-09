@@ -25,7 +25,7 @@ class SocketClient {
     this.client.connect(this.headers, this.onConnect.bind(this), this.onError.bind(this));
   }
 
-  disConnect() {
+  disconnect() {
     if (this.client) {
       this.client.disconnect(() => {
         this.client = null;

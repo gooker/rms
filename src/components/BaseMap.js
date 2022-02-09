@@ -1,14 +1,13 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
+import { sortBy, uniq } from 'lodash';
 import {
   getCoordinat,
+  getLineGraphics,
   getLineEntityFromMap,
   getCurrentRouteMapData,
   getTextureFromResources,
-  getLineGraphics,
 } from '@/utils/mapUtil';
-import { isNull, isItemOfArray } from '@/utils/util';
-import { CellSize, WorldScreenRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 import {
   Dump,
   Charger,
@@ -20,9 +19,10 @@ import {
   EmergencyStop,
   CommonFunction,
 } from '@/entities';
-import { sortBy, uniq } from 'lodash';
+import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
+import { CellSize, WorldScreenRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -897,8 +897,8 @@ export default class BaseMap extends React.Component {
       width,
       height,
       color: color.replace('#', '0x'),
-      refresh: this.refresh,
       type: ZoneMarkerType.RECT,
+      refresh: this.refresh,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);

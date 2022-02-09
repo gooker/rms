@@ -51,7 +51,7 @@ export default {
 
   effects: {
     // 页面初始化加载信息，加载网络信息，加载APP应用信息（主应用，子应用）,个人信息
-    *initAppAuthority(_, { call, put, select }) {
+    *initPlatformState(_, { call, put, select }) {
       const { currentUser } = yield select((state) => state.user);
       const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
 

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Form, Input, Button } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 

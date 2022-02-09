@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
 import { adjustModalWidth, formatMessage } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';

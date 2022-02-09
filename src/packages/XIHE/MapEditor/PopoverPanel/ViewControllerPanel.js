@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Divider, Form, Checkbox, Radio, Switch, Select } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';

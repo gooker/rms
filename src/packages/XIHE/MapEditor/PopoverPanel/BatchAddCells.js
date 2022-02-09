@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
-import { connect } from '@/utils/RcsDva';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import { formatMessage } from '@/utils/util';
