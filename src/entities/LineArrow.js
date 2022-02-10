@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
 import { getDirByAngle } from '@/utils/util';
-import { zIndex, CostColor, CellSize } from '@/config/consts';
+import { zIndex, CostColor, CellSize, MapSelectableSpriteType } from '@/config/consts';
 
 export default class LineArrow extends PIXI.Container {
   constructor(props) {
@@ -17,10 +17,14 @@ export default class LineArrow extends PIXI.Container {
     this.mapMode = props.mapMode;
     this.length = props.length; // Sprite长度
     this.distance = props.distance; // 显示的长度文本
-    this.selectLine = props.click;
     this.cost = props.cost;
     this.$angle = props.lineAngle;
     this.dir = getDirByAngle(props.lineAngle);
+
+    this.refresh = props.refresh; // 单选
+    this.select = props.select; // 单选
+    this.ctrlSelect = props.ctrlSelect; // 批量选
+
     this.states = {
       selected: false,
       arrow: true,
@@ -118,14 +122,34 @@ export default class LineArrow extends PIXI.Container {
     return texture;
   };
 
-  click = () => {
-    if (this.states.selected) {
-      this.onUnSelect();
-      this.selectLine && this.selectLine(this.id, false);
+  click = (event) => {
+    const cost = {
+      type: MapSelectableSpriteType.COST,
+      costType: this.type,
+      id: this.id,
+      cost: this.cost,
+    };
+
+    if (event?.data.originalEvent.shiftKey) {
+      // 不支持shift
+    } else if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (this.states.selected) {
+        this.onUnSelect();
+        this.ctrlSelect && this.ctrlSelect(cost, false);
+      } else {
+        this.onSelect();
+        this.ctrlSelect && this.ctrlSelect(cost, true);
+      }
     } else {
-      this.onSelect();
-      this.selectLine && this.selectLine(this.id);
+      if (this.states.selected) {
+        this.onUnSelect();
+        this.select && this.select(cost, false);
+      } else {
+        this.onSelect();
+        this.select && this.select(cost, true);
+      }
     }
+    this.refresh();
   };
 
   onSelect = () => {

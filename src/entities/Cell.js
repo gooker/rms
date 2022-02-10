@@ -182,33 +182,24 @@ export default class Cell extends PIXI.Container {
   }
 
   onClick(event) {
+    const cellData = { id: this.id, x: this.x, y: this.y };
     if (event?.data.originalEvent.shiftKey) {
       if (!this.selected) {
         this.onSelect();
-        this.shiftSelect && this.shiftSelect({ id: this.id, x: this.x, y: this.y });
+        this.shiftSelect && this.shiftSelect(cellData);
       }
     } else if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
       if (!this.selected) {
         this.onSelect();
-        this.ctrlSelect && this.ctrlSelect({ id: this.id, x: this.x, y: this.y });
+        this.ctrlSelect && this.ctrlSelect(cellData);
       }
     } else {
       if (this.selected) {
         this.onUnSelect();
-        this.select &&
-          this.select(
-            { id: this.id, x: this.x, y: this.y, data: [...this.data.types.keys()] },
-            true,
-          );
+        this.select && this.select(cellData, true);
       } else {
         this.onSelect();
-        this.select &&
-          this.select({
-            id: this.id,
-            x: this.x,
-            y: this.y,
-            data: [...this.data.types.keys()],
-          });
+        this.select && this.select(cellData);
       }
     }
   }

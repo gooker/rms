@@ -5,7 +5,7 @@ import { MapSelectableSpriteType, zIndex } from '@/config/consts';
 export default class MapZoneMarker extends ResizableContainer {
   constructor(props) {
     const { code, type, x, y, radius, width, height, color, data } = props;
-    const { interactive, select, refresh } = props;
+    const { interactive, select, ctrlSelect, refresh } = props;
     super();
     this.x = x;
     this.y = y;
@@ -16,6 +16,9 @@ export default class MapZoneMarker extends ResizableContainer {
     this.radius = radius;
     this.select = (add) => {
       select({ id: code, type: MapSelectableSpriteType.ZONE }, add);
+    };
+    this.ctrlSelect = () => {
+      ctrlSelect({ id: code, type: MapSelectableSpriteType.ZONE });
     };
     this.refresh = refresh;
     this.zIndex = zIndex.zoneMarker;

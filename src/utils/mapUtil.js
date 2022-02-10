@@ -201,15 +201,29 @@ function getLineAnchor(relations, beginCell, endCell, angle) {
 
 /**
  * 获取线条实例
- * @param {*} relations
- * @param {*} beginCell
- * @param {*} endCell
- * @param {*} lineAngle
- * @param {*} cost
- * @param {*} clickCB
- * @param {*} mapMode
+ * @param relations
+ * @param beginCell
+ * @param endCell
+ * @param lineAngle
+ * @param cost
+ * @param select
+ * @param ctrlSelect
+ * @param refresh
+ * @param mapMode
+ * @returns {LineArrow}
  */
-export function getLineGraphics(relations, beginCell, endCell, lineAngle, cost, clickCB, mapMode) {
+export function getLineGraphics(
+  relations,
+  beginCell,
+  endCell,
+  lineAngle,
+  cost,
+  select,
+  ctrlSelect,
+  refresh,
+  mapMode,
+) {
+  const interactive = !isNull(select) || !isNull(ctrlSelect);
   const { fromX, fromY, length, distance } = getLineAnchor(
     relations,
     beginCell,
@@ -224,10 +238,12 @@ export function getLineGraphics(relations, beginCell, endCell, lineAngle, cost, 
     cost,
     length,
     distance,
-    interactive: !!clickCB,
+    interactive,
+    refresh,
+    select,
+    ctrlSelect,
     isClassic: mapMode === 'standard',
     mapMode: mapMode,
-    click: clickCB,
   });
 }
 
@@ -1422,7 +1438,12 @@ export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _e
     const costsSelections = currentRouteMap.relations
       .map(({ source, target, cost, type }) => {
         if (cellIds.includes(source) || cellIds.includes(target)) {
-          return { type: MapSelectableSpriteType.COST, source, target, cost, costType: type };
+          return {
+            type: MapSelectableSpriteType.COST,
+            id: `${source}-${target}`,
+            cost,
+            costType: type,
+          };
         }
       })
       .filter(Boolean);

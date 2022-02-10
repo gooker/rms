@@ -3,7 +3,10 @@ import { Text } from '@/entities';
 import { MapSelectableSpriteType, zIndex } from '@/config/consts';
 
 export default class MapLabelMarker extends ResizableContainer {
-  constructor({ code, x, y, color, text, width, height, refresh, select, interactive }) {
+  constructor(props) {
+    const { code, x, y, color, text, width, height } = props;
+    const { refresh, select, ctrlSelect, interactive } = props;
+
     super();
     this.x = x;
     this.y = y;
@@ -15,6 +18,10 @@ export default class MapLabelMarker extends ResizableContainer {
     this.select = (add) => {
       select({ id: code, type: MapSelectableSpriteType.LABEL }, add);
     };
+    this.ctrlSelect = () => {
+      ctrlSelect({ id: code, type: MapSelectableSpriteType.LABEL });
+    };
+
     const element = this.createElement(width, height);
     this.create(element, this.updateZonMarker, zIndex.label, interactive);
   }

@@ -262,6 +262,8 @@ export default class BaseMap extends React.Component {
             angle,
             cost,
             interactive ? this.selectLine : null,
+            interactive ? this.ctrlSelectLine : null,
+            interactive ? this.refresh : null,
             shownMode,
           );
           if (line) {
@@ -900,7 +902,12 @@ export default class BaseMap extends React.Component {
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.RECT,
       refresh: this.refresh,
-      select: this.selectMapMarker,
+      select: (marker, isAdd) => {
+        this.selectMapMarker(marker, isAdd, false);
+      },
+      ctrlSelect: (marker) => {
+        this.selectMapMarker(marker, true, true);
+      },
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -917,7 +924,12 @@ export default class BaseMap extends React.Component {
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.CIRCLE,
       refresh: this.refresh,
-      select: this.selectMapMarker,
+      select: (marker, isAdd) => {
+        this.selectMapMarker(marker, isAdd, false);
+      },
+      ctrlSelect: (marker) => {
+        this.selectMapMarker(marker, true, true);
+      },
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -935,7 +947,12 @@ export default class BaseMap extends React.Component {
       interactive,
       type: ZoneMarkerType.IMG,
       refresh: this.refresh,
-      select: this.selectMapMarker,
+      select: (marker, isAdd) => {
+        this.selectMapMarker(marker, isAdd, false);
+      },
+      ctrlSelect: (marker) => {
+        this.selectMapMarker(marker, true, true);
+      },
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -953,7 +970,12 @@ export default class BaseMap extends React.Component {
       interactive,
       color: color || 0xffffff,
       refresh: this.refresh,
-      select: this.selectMapMarker,
+      select: (marker, isAdd) => {
+        this.selectMapMarker(marker, isAdd, false);
+      },
+      ctrlSelect: (marker) => {
+        this.selectMapMarker(marker, true, true);
+      },
     });
     this.labelMap.set(code, mapLabelMarker);
     this.pixiUtils.viewportAddChild(mapLabelMarker);

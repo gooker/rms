@@ -96,11 +96,18 @@ export default class ResizableContainer extends PIXI.Container {
     }
   };
 
-  onElementPointerUp = () => {
+  onElementPointerUp = (event) => {
     // 如果进行了拖拽，就不判定是选择
     if (!this.mDragging) {
-      this.toolShown = !this.toolShown;
-      this.select(this.toolShown);
+      if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+        if (!this.toolShown) {
+          this.toolShown = !this.toolShown;
+          this.ctrlSelect();
+        }
+      } else {
+        this.toolShown = !this.toolShown;
+        this.select(this.toolShown);
+      }
       this.switchResizeToolShown(this.toolShown);
     }
     this.data = null;

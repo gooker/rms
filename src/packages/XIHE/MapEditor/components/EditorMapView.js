@@ -59,12 +59,12 @@ class EditorMapView extends BaseMap {
     this.cellYMap.clear();
     this.selectedCells = [];
     this.clearEditorRouteData();
-    this.onSelectCell([]);
+    // TODO:this.onSelectCell([]);
   };
 
   clearEditorRouteData = () => {
     this.cellCostMap.clear();
-    this.onSelectLine([]);
+    // TODO:this.onSelectLine([]);
   };
 
   // 切换地图编辑地图显示模式
@@ -359,21 +359,27 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 线条相关 **********************
-  /**
-   * 将选择的线条同步到 Store
-   * @param {*} lines 已选中的线条ID
-   */
-  onSelectLine = (lines) => {
+  selectLine = (cost, isAdded) => {
     const { dispatch } = window.g_app._store;
-    dispatch({ type: 'editor/saveSelectLines', payload: lines });
+    const _this = this;
+    if (isAdded) {
+      this.cancelAllSelection();
+      _this.selections.push(cost);
+    } else {
+      _this.selections = _this.selections.filter((item) => item.id !== cost.id);
+    }
+    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
   };
 
-  selectLine = (id, isAdded = true) => {
-    //
-  };
-
-  ctrlSelectLine = (line) => {
-    //
+  ctrlSelectLine = (cost, isAdded) => {
+    const { dispatch } = window.g_app._store;
+    const _this = this;
+    if (isAdded) {
+      _this.selections.push(cost);
+    } else {
+      _this.selections = _this.selections.filter((item) => item.id !== cost.id);
+    }
+    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
   };
 
   updateLines = ({ type, payload }) => {
@@ -424,10 +430,11 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ Zone相关 **********************
-  selectMapMarker = (marker, add) => {
+  selectMapMarker = (marker, isAdd, isBatch) => {
     const { dispatch } = window.g_app._store;
     const _this = this;
-    if (add) {
+    if (isAdd) {
+      !isBatch && _this.cancelAllSelection();
       _this.selections.push(marker);
     } else {
       _this.selections = _this.selections.filter(
@@ -473,9 +480,9 @@ class EditorMapView extends BaseMap {
         }
         break;
       case MapSelectableSpriteType.COST:
-        entity = this.idLineMap[selection.cost].get(`${selection.source}-${selection.target}`);
+        entity = this.idLineMap[selection.cost].get(selection.id);
         if (remove) {
-          this.idLineMap[selection.cost].delete(`${selection.source}-${selection.target}`);
+          this.idLineMap[selection.cost].delete(selection.id);
         }
         break;
       case MapSelectableSpriteType.ZONE:
