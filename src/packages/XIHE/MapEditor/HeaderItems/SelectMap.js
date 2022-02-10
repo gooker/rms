@@ -1,30 +1,37 @@
 import React, { memo, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Badge, Button, Dropdown, Form, Input, Menu, Modal } from 'antd';
+import { Badge, Button, Dropdown, Form, Input, Menu, Modal, Popconfirm } from 'antd';
 import { DownOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './index.module.less';
+import Loadable from '@/components/Loadable';
 
+const MapUpdateHistory = Loadable(() => import('../components/MapUpdateHistory'));
 const { formItemLayout } = getFormLayout(5, 19);
+
 const SelectMap = (props) => {
   const { dispatch, mapList, currentMap } = props;
 
   const [formRef] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(null);
   const [saveLoading, setSaveLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [saveConfirm, setSaveConfirm] = useState(false);
   const [creationVisible, setCreationVisible] = useState(false);
+  const [historyVisible, setHistoryVisible] = useState(false);
 
   async function saveMap() {
-    setLoading(true);
+    setSaveLoading(true);
     const result = await dispatch({ type: 'editor/saveMap' });
     result && openMapCreationModal();
-    setLoading(false);
+    setSaveLoading(false);
     setSaveConfirm(false);
   }
 
   function openMapCreationModal() {
+    formRef.resetFields();
+    setEditing(null);
     setSaveConfirm(false);
     setCreationVisible(true);
   }
@@ -32,7 +39,11 @@ const SelectMap = (props) => {
   function submit() {
     formRef.validateFields().then(async (value) => {
       setSaveLoading(true);
-      await dispatch({ type: 'editor/fetchCreateMap', value });
+      if (editing) {
+        await dispatch({ type: 'editor/fetchUpdateMap', payload: { id: editing.id, ...value } });
+      } else {
+        await dispatch({ type: 'editor/fetchCreateMap', payload: value });
+      }
       setCreationVisible(false);
       setSaveLoading(false);
     });
@@ -51,6 +62,23 @@ const SelectMap = (props) => {
     }
   }
 
+  function editMap(record) {
+    setCreationVisible(true);
+    setEditing(record);
+    formRef.setFieldsValue({ name: record.name, description: record.description });
+  }
+
+  async function deleteMap() {
+    setDeleteLoading(true);
+    await dispatch({ type: 'editor/fetchDeleteMap', payload: editing.id });
+    setDeleteLoading(false);
+    setCreationVisible(false);
+  }
+
+  function showSavingRecord() {
+    setHistoryVisible(true);
+  }
+
   function getMapListMenu() {
     let result = [];
     if (mapList) {
@@ -62,7 +90,13 @@ const SelectMap = (props) => {
               <div style={{ width: '15px' }}>{activeFlag && <Badge status="success" />}</div>
               <div>{record.name}</div>
               <div style={{ flex: 1, textAlign: 'end' }}>
-                <EditOutlined style={{ marginLeft: '10px' }} />
+                <EditOutlined
+                  style={{ marginLeft: '10px' }}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    editMap(record);
+                  }}
+                />
               </div>
             </div>
           </Menu.Item>
@@ -72,7 +106,8 @@ const SelectMap = (props) => {
     result.push(<Menu.Divider key={getRandomString(6)} />);
     result.push(
       <Menu.Item key="add">
-        <PlusOutlined /> <FormattedMessage id="mapEditor.addMap" />
+        <PlusOutlined /> <FormattedMessage id="app.button.add" />
+        <FormattedMessage id="mapEditor.map" />
       </Menu.Item>,
     );
     return result;
@@ -99,9 +134,11 @@ const SelectMap = (props) => {
       {/* 是否保存地图 */}
       <Modal
         destroyOnClose
+        width={500}
         closable={false}
         maskClosable={false}
-        width={500}
+        transitionName=""
+        maskTransitionName=""
         visible={saveConfirm}
         title={formatMessage({ id: 'app.message.systemHint' })}
         footer={[
@@ -124,8 +161,8 @@ const SelectMap = (props) => {
           <Button
             key="save"
             type={'primary'}
-            loading={loading}
-            disabled={loading}
+            loading={saveLoading}
+            disabled={saveLoading}
             onClick={() => {
               saveMap();
             }}
@@ -137,20 +174,57 @@ const SelectMap = (props) => {
         <FormattedMessage id={'mapEditor.saveMap.contentLoss'} />
       </Modal>
 
-      {/*  创建&更新地图 */}
+      {/*  创建 & 更新地图 */}
       <Modal
-        destroyOnClose
         width={500}
+        transitionName=""
+        maskTransitionName=""
+        closable={false}
+        maskClosable={false}
         visible={creationVisible}
-        title={formatMessage({ id: 'mapEditor.addMap' })}
-        onOk={submit}
-        onCancel={() => {
-          setCreationVisible(false);
-        }}
-        okButtonProps={{
-          loading: saveLoading,
-          disabled: saveLoading,
-        }}
+        title={`${formatMessage({
+          id: editing ? 'app.button.edit' : 'app.button.add',
+        })}${formatMessage({ id: 'mapEditor.map' })}`}
+        footer={[
+          <Button
+            key="cancel"
+            loading={deleteLoading}
+            disabled={deleteLoading}
+            onClick={() => {
+              setCreationVisible(false);
+            }}
+          >
+            <FormattedMessage id={'app.button.cancel'} />
+          </Button>,
+
+          editing && (
+            <Popconfirm
+              key="delete"
+              title={formatMessage({ id: 'mapEditor.deleteMapConfirm' })}
+              onConfirm={deleteMap}
+            >
+              <Button danger>
+                <FormattedMessage id={'app.button.delete'} />
+              </Button>
+            </Popconfirm>
+          ),
+
+          editing && (
+            <Button key="record" onClick={showSavingRecord}>
+              <FormattedMessage id={'mapEditor.button.record'} />
+            </Button>
+          ),
+
+          <Button
+            key="save"
+            type={'primary'}
+            onClick={submit}
+            loading={saveLoading}
+            disabled={saveLoading}
+          >
+            <FormattedMessage id={'app.button.save'} />
+          </Button>,
+        ].filter(Boolean)}
       >
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
@@ -161,10 +235,34 @@ const SelectMap = (props) => {
             <Input style={{ width: 300 }} />
           </Form.Item>
 
-          <Form.Item name={'desc'} label={formatMessage({ id: 'app.common.description' })}>
+          <Form.Item name={'description'} label={formatMessage({ id: 'app.common.description' })}>
             <Input style={{ width: 300 }} />
           </Form.Item>
         </Form>
+      </Modal>
+
+      {/* 地图更新记录 */}
+      <Modal
+        width={800}
+        transitionName=""
+        maskTransitionName=""
+        closable={false}
+        maskClosable={false}
+        visible={historyVisible}
+        title={<FormattedMessage id={'mapEditor.updateHistory'} />}
+        footer={[
+          <Button
+            key="cancel"
+            type={'primary'}
+            onClick={() => {
+              setHistoryVisible(false);
+            }}
+          >
+            <FormattedMessage id={'app.button.cancel'} />
+          </Button>,
+        ]}
+      >
+        <MapUpdateHistory dispatch={dispatch} mapId={editing?.id} />
       </Modal>
     </>
   );

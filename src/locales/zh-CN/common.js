@@ -145,7 +145,7 @@ export default {
   'app.direction.toLeft': '朝左',
 
   // 按钮
-  'app.button.add': '新增',
+  'app.button.add': '添加',
   'app.button.edit': '编辑',
   'app.button.save': '保存',
   'app.button.copy': '复制',

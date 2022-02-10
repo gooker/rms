@@ -1,6 +1,5 @@
 export default {
   'mapEditor.map': '地图',
-  'mapEditor.addMap': '添加地图',
   'mapEditor.logicArea': '逻辑区',
   'mapEditor.addLogicArea': '添加逻辑区',
   'mapEditor.routeMap': '路线区',
@@ -14,6 +13,11 @@ export default {
   'mapEditor.placeholder.requireText': '输入文本',
   'mapEditor.saveMap.contentLoss': '是否保存当前修改的地图？若不保存, 则所有的修改会丢失',
   'mapEditor.button.notSaveMap': '不保存',
+  'mapEditor.button.record': '保存记录',
+  'mapEditor.deleteMapConfirm': '是否确定删除该地图?',
+  'mapEditor.updateHistory': '地图更新记录',
+  'mapEditor.editorVersion': '编辑器版本',
+  'mapEditor.mapVersion': '地图版本',
 
   // 操作提示
   'mapEditor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',

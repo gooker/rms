@@ -18,8 +18,7 @@ import FormattedMessage from '@/components/FormattedMessage';
  */
 export function dateFormat(value) {
   // 获取服务器端的时区偏移量
-  let date = null;
-  if (value == null) {
+  if (isStrictNull(value)) {
     return {
       format: () => {
         return '';
@@ -28,18 +27,19 @@ export function dateFormat(value) {
   }
 
   // 当前地区时区
-  let localTimeZone = 'GMT';
-  if (sessionStorage.getItem('timeZone') != null) {
-    localTimeZone = sessionStorage.getItem('timeZone');
-  }
+  let localTimeZone = window.sessionStorage.getItem('timeZone');
+  localTimeZone = localTimeZone || 'GMT';
+  moment.tz.setDefault(localTimeZone); // 将服务器的时间和服务器返回的时区转回成带有时区的时间格式
 
   // 获取当前时区偏移量
-  moment.tz.setDefault(localTimeZone); // 将服务器的时间和服务器返回的时区转回成带有时区的时间格式
-  if (localStorage.getItem('userTimeZone') != null) {
-    date = new moment(value).tz(localStorage.getItem('userTimeZone'));
+  let date = null;
+  const userTimeZone = window.localStorage.getItem('userTimeZone');
+  if (userTimeZone !== null) {
+    date = new moment(value).tz(userTimeZone);
   } else {
     date = new moment(value).tz(moment.tz.guess());
   }
+
   if (date == null) {
     return {
       format: () => {

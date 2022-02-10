@@ -53,8 +53,7 @@ export default class ResizableContainer extends PIXI.Container {
       this.element
         .on('pointerdown', this.onElementPointerDown)
         .on('pointermove', this.onElementMove)
-        .on('pointerup', this.onElementPointerUp)
-        .on('pointerupoutside', this.onElementPointerUp);
+        .on('pointerup', this.onElementPointerUp);
       this.initResizeTool();
     }
   }

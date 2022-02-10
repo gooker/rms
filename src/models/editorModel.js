@@ -37,6 +37,7 @@ import {
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
+import { MapSelectableSpriteType } from '@/config/consts';
 
 // 后台字段与Texture Key的对应关系
 const FieldTextureKeyMap = {
@@ -303,7 +304,7 @@ export default {
     // ********************************* 地图操作 ********************************* //
     // 创建地图
     *fetchCreateMap({ payload }, { put, call, select }) {
-      const { name, desc } = payload;
+      const { name, description } = payload;
       const { sectionId } = yield select((state) => state.user);
       const { mapList } = yield select((state) => state.editor);
 
@@ -328,7 +329,7 @@ export default {
       const { version } = packageJSON;
       const newMap = {
         name,
-        desc,
+        description,
         sectionId,
         cellMap: {},
         logicAreaList,
@@ -358,7 +359,7 @@ export default {
       const requestBody = { id, name, description };
       const response = yield call(updateMap, requestBody);
       if (dealResponse(response)) {
-        message.error(formatMessage({ id: 'app.leftContent.updateMap.failed' }));
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
       } else {
         const { mapList, currentMap } = yield select((state) => state.editor);
         const currentMapIndex = findIndex(mapList, { id });
@@ -379,8 +380,7 @@ export default {
           });
           yield put({ type: 'saveCurrentMapOnly', payload: newCurrentMap });
         }
-
-        message.success(formatMessage({ id: 'app.leftContent.updateMap.success' }));
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       }
     },
 
@@ -388,9 +388,9 @@ export default {
     *fetchDeleteMap({ payload }, { call, put, select }) {
       const response = yield call(deleteMapById, payload);
       if (dealResponse(response)) {
-        message.error(formatMessage({ id: 'app.createMap.deleteMap.failed' }));
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
       } else {
-        message.success(formatMessage({ id: 'app.createMap.deleteMap.success' }));
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
         const { mapList, currentMap } = yield select((state) => state.editor);
         const newMapList = mapList.filter((record) => record.id !== payload);
         yield put({ type: 'saveMapList', payload: newMapList });
@@ -547,13 +547,28 @@ export default {
     },
 
     // 高级删除, 选择多种元素进行同意删除
-    *advancedDeletion({ payload }, { select }) {
+    *advancedDeletion({ payload }, { select, put }) {
       const { currentMap, currentCells } = yield select(({ editor }) => editor);
       const groupedSelections = groupBy(payload, 'type');
-      Object.keys(groupedSelections).forEach((type) => {
-        //
-      });
-      console.log(groupedSelections);
+      const types = Object.keys(groupedSelections);
+      for (let i = 0; i < types.length; i++) {
+        const type = types[i];
+        switch (type) {
+          case MapSelectableSpriteType.CELL: {
+            const cells = groupedSelections[type];
+            const cellIds = cells.map(({ id }) => id);
+            cellIds.forEach((id) => {
+              delete currentMap.cellMap[id];
+            });
+            const _currentCells = currentCells.filter((item) => !cellIds.includes(item.id));
+            yield put({ type: 'saveCurrentCells', payload: _currentCells });
+            break;
+          }
+          // TODO:
+          default:
+            break;
+        }
+      }
     },
 
     // ********************************* 逻辑区操作 ********************************* //
