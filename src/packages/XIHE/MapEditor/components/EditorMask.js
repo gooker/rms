@@ -1,7 +1,12 @@
 import React, { memo, useRef, useState } from 'react';
 import { Button, Modal } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { convertPngToBase64, getColorRGB, getRandomString } from '@/utils/util';
+import {
+  convertPngToBase64,
+  getColorRGB,
+  getRandomString,
+  getUploadedImageDetail,
+} from '@/utils/util';
 import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -97,11 +102,22 @@ const EditorMask = (props) => {
       const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
 
       // 锚点在正中心
-      const width = Math.abs(worldStartX - worldEndX);
-      const height = Math.abs(worldStartY - worldEndY);
-      const x = worldStartX + width / 2;
-      const y = worldStartY + height / 2;
       const code = `${ZoneMarkerType.IMG}_${getRandomString(6)}`;
+      const x = (worldStartX + worldEndX) / 2;
+      const y = (worldStartY + worldEndY) / 2;
+      const rangeWidth = Math.abs(worldStartX - worldEndX);
+      const rangeHeight = Math.abs(worldStartY - worldEndY);
+      let width, height;
+
+      // 这里插入图片要保持图片原有尺寸比例, 尺寸谁大就不用谁
+      const imgDetail = await getUploadedImageDetail(file);
+      if (rangeWidth >= rangeHeight) {
+        height = rangeHeight;
+        width = (rangeHeight * imgDetail.width) / imgDetail.height;
+      } else {
+        width = rangeWidth;
+        height = (rangeWidth * imgDetail.height) / imgDetail.width;
+      }
       mapContext.renderImage({ code, x, y, width, height, data }, true);
       dispatch({
         type: 'editor/insertZoneMarker',

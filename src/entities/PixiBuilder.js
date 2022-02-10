@@ -1,6 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import SimpleCull from '@/libs/SimpleCull';
+import { Simple } from 'pixi-cull';
+// import Simple from '@/libs/SimpleCull';
 
 export default class PixiBuilder {
   constructor(width, height, htmlDOM, draggable = true) {
@@ -37,7 +38,7 @@ export default class PixiBuilder {
     this.viewport.sortableChildren = true;
 
     // 创建cull组件
-    this.cull = new SimpleCull();
+    this.cull = new Simple();
     this.cull.addList(this.viewport.children);
     this.cull.cull(this.viewport.getVisibleBounds());
 

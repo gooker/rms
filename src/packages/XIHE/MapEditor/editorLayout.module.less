@@ -125,3 +125,44 @@
     fill: #ff9800;
   }
 }
+
+// 快捷工具
+.editorShortcutTool {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  display: flex;
+  align-items: center;
+  width: 200px;
+  height: 50px;
+  padding: 5px;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
+  cursor: default;
+
+  span {
+    cursor: pointer;
+    svg {
+      width: 28px;
+      height: 28px;
+      fill: rgba(162, 162, 162, 0.7);
+    }
+
+    &:hover {
+      svg {
+        width: 30px;
+        height: 30px;
+        fill: rgba(162, 162, 162, 1);
+      }
+    }
+
+    &:active {
+      svg {
+        width: 30px;
+        height: 30px;
+        fill: rgba(162, 162, 162, 1);
+      }
+    }
+  }
+}

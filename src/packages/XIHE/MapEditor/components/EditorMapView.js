@@ -449,23 +449,7 @@ class EditorMapView extends BaseMap {
     if (Array.isArray(selections)) {
       this.selections = selections;
       selections.forEach((selection) => {
-        let entity;
-        switch (selection.type) {
-          case MapSelectableSpriteType.CELL:
-            entity = this.idCellMap.get(selection.id);
-            break;
-          case MapSelectableSpriteType.COST:
-            entity = this.idLineMap[selection.cost].get(`${selection.source}-${selection.target}`);
-            break;
-          case MapSelectableSpriteType.ZONE:
-            entity = this.zoneMap.get(selection.id);
-            break;
-          case MapSelectableSpriteType.LABEL:
-            entity = this.labelMap.get(selection.id);
-            break;
-          default:
-            entity = null;
-        }
+        const entity = this.pickEntityBySelection(selection, false);
         if (entity) {
           selected ? entity.onSelect() : entity.onUnSelect();
         }
@@ -473,6 +457,61 @@ class EditorMapView extends BaseMap {
       this.refresh();
     }
   }
+
+  /**
+   * @param selection 选中的元素数据
+   * @param remove 是否删除Map里对应的数据
+   * @returns {null}
+   */
+  pickEntityBySelection = (selection, remove) => {
+    let entity;
+    switch (selection.type) {
+      case MapSelectableSpriteType.CELL:
+        entity = this.idCellMap.get(selection.id);
+        if (remove) {
+          this.idCellMap.delete(selection.id);
+        }
+        break;
+      case MapSelectableSpriteType.COST:
+        entity = this.idLineMap[selection.cost].get(`${selection.source}-${selection.target}`);
+        if (remove) {
+          this.idLineMap[selection.cost].delete(`${selection.source}-${selection.target}`);
+        }
+        break;
+      case MapSelectableSpriteType.ZONE:
+        entity = this.zoneMap.get(selection.id);
+        if (remove) {
+          this.zoneMap.delete(selection.id);
+        }
+        break;
+      case MapSelectableSpriteType.LABEL:
+        entity = this.labelMap.get(selection.id);
+        if (remove) {
+          this.labelMap.delete(selection.id);
+        }
+        break;
+      default:
+        entity = null;
+    }
+    return entity;
+  };
+
+  deleteAnyTime = (selections) => {
+    const { dispatch } = window.g_app._store;
+    // 删除元素
+    selections.forEach((selection) => {
+      const entity = this.pickEntityBySelection(selection, true);
+      if (entity) {
+        this.pixiUtils.viewportRemoveChild(entity);
+        entity.destroy({ children: true });
+      }
+    });
+
+    // 同步selections
+    this.selections = [];
+    dispatch({ type: 'editor/updateSelections', payload: [] });
+    this.refresh();
+  };
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右

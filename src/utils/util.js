@@ -1076,3 +1076,18 @@ export function convertPngToBase64(file) {
     reader.onerror = (error) => reject(error);
   });
 }
+
+export function getUploadedImageDetail(imgFile) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(imgFile);
+    reader.onload = function (e) {
+      const image = new Image();
+      image.src = e.target.result;
+      image.onload = function () {
+        const { width, height } = this;
+        resolve({ width, height });
+      };
+    };
+  });
+}

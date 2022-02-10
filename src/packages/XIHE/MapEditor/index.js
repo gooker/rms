@@ -16,6 +16,10 @@ const MapEditor = (props) => {
       ev.preventDefault();
     });
     dispatch({ type: 'editor/editorInitial' });
+
+    return () => {
+      dispatch({ type: 'editor/unmount' });
+    };
   }, []);
 
   return (

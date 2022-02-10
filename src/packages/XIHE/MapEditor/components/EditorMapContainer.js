@@ -4,10 +4,11 @@ import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';
+import EditorShortcutTool from './EditorShortcutTool';
 import { ZoneMarkerType } from '@/config/consts';
 import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
-import styles from '@/packages/XIHE/MapEditor/editorLayout.module.less';
+import styles from '../editorLayout.module.less';
 
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext } = props;
@@ -272,6 +273,7 @@ const EditorMapContainer = (props) => {
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
+      <EditorShortcutTool />
       <EditorMask />
       <EditorMapView />
     </div>

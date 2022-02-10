@@ -38,6 +38,7 @@ import {
 import { activeMap } from '@/services/api';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 
+// 后台字段与Texture Key的对应关系
 const FieldTextureKeyMap = {
   blockCellIds: 'block_cell',
   storeCellIds: 'store_cell',
@@ -48,52 +49,61 @@ const FieldTextureKeyMap = {
   rotateCellIds: 'rotate_cell',
 };
 
+const EditorState = {
+  // 地图数据相关
+  mapList: null,
+  currentMap: null,
+  currentLogicArea: 0, // id
+  currentRouteMap: 'DEFAULT', // code
+  currentCells: [], // 当前视图的点位数据
+  preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
+  mapContext: null, // 地图实体对象
+
+  // 选择相关
+  selections: [],
+  selectCells: [],
+  selectLines: [],
+
+  // 所有站点类型
+  allStationTypes: {},
+
+  // 所有Web Hooks
+  allWebHooks: [],
+
+  // 显示相关
+  mapMode: 'standard',
+  hideBlock: false,
+  showCoordinate: false,
+  showDistance: false,
+  shownPriority: [10, 20, 100, 1000],
+  showRelationsDir: [0, 1, 2, 3],
+  showRelationsCells: [],
+  showBackImg: false,
+
+  // 标识符
+  saveMapLoading: false, // 保存地图
+  activeMapLoading: false, // 激活地图
+  leftActiveCategory: LeftCategory.Choose, // 左侧菜单选中项
+  categoryPanel: null, // 右侧菜单选中项
+
+  // Mask相关
+  maskToolVisible: false,
+  maskInputVisible: false,
+};
+
 export default {
   namespace: 'editor',
 
   state: {
-    // 地图数据相关
-    mapList: null,
-    currentMap: null,
-    currentLogicArea: 0, // id
-    currentRouteMap: 'DEFAULT', // code
-    currentCells: [], // 当前视图的点位数据
-    preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
-    mapContext: null, // 地图实体对象
-
-    // 选择相关
-    selections: [],
-    selectCells: [],
-    selectLines: [],
-
-    // 所有站点类型
-    allStationTypes: {},
-
-    // 所有Web Hooks
-    allWebHooks: [],
-
-    // 显示相关
-    mapMode: 'standard',
-    hideBlock: false,
-    showCoordinate: false,
-    showDistance: false,
-    shownPriority: [10, 20, 100, 1000],
-    showRelationsDir: [0, 1, 2, 3],
-    showRelationsCells: [],
-    showBackImg: false,
-
-    // 标识符
-    saveMapLoading: false, // 保存地图
-    activeMapLoading: false, // 激活地图
-    leftActiveCategory: LeftCategory.Choose, // 左侧菜单选中项
-    categoryPanel: null, // 右侧菜单选中项
-
-    // Mask相关
-    maskToolVisible: false,
-    maskInputVisible: false,
+    ...EditorState,
   },
 
   reducers: {
+    unmount(state) {
+      return {
+        ...EditorState,
+      };
+    },
     saveState(state, action) {
       return {
         ...state,
@@ -534,6 +544,16 @@ export default {
         },
       );
       saveAs(file);
+    },
+
+    // 高级删除, 选择多种元素进行同意删除
+    *advancedDeletion({ payload }, { select }) {
+      const { currentMap, currentCells } = yield select(({ editor }) => editor);
+      const groupedSelections = groupBy(payload, 'type');
+      Object.keys(groupedSelections).forEach((type) => {
+        //
+      });
+      console.log(groupedSelections);
     },
 
     // ********************************* 逻辑区操作 ********************************* //

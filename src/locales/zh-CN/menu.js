@@ -15,7 +15,6 @@ export default {
   'menu.map': '地图',
   'menu.map.mapEdit': '地图编辑',
   'menu.map.monitor': '地图监控',
-  'menu.map.mapFactory': '地图编程',
   'menu.map.mapRecorder': '地图回放',
 
   'menu.lockManager': '锁管理',

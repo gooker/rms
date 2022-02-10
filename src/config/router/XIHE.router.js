@@ -19,12 +19,6 @@ export default [
         component: '/XIHE/MapMonitor',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
-      {
-        path: `/${AppCode.XIHE}/map/mapFactory`,
-        name: 'mapFactory',
-        component: '/XIHE/MapPrograming',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
     ],
   },
   {
