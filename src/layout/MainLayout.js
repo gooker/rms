@@ -2,15 +2,15 @@ import React from 'react';
 import { Layout, Modal, message, Skeleton } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
+import { NameSpace } from '@/config/config';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllTaskTypes } from '@/services/api';
 import { loadTexturesForMap } from '@/utils/textures';
-
-import './mainLayout.less';
 import SocketClient from '@/entities/SocketClient';
+import './mainLayout.less';
 
 @withRouter
 @connect(({ global }) => ({
@@ -66,6 +66,10 @@ class MainLayout extends React.Component {
         },
       });
     }
+  }
+
+  componentWillUnmount() {
+    //TODO: 暂停所有 Web Worker
   }
 
   loadAllTaskTypes = () => {

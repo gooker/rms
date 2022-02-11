@@ -36,8 +36,8 @@ export async function fetchAppVersion() {
   });
 }
 
-export async function fetchNotice() {
-  return request(`/${NameSpace.Coordinator}/problemHandling/getProblemHandlingCount`, {
+export async function fetchAlertCount() {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCenterCount`, {
     method: 'GET',
   });
 }

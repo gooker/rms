@@ -1,6 +1,6 @@
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
-import { fetchNotice, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
+import { fetchAlertCount, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/user';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/util';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
@@ -137,7 +137,7 @@ export default {
     },
 
     *fetchNotice({ payload }, { call, put }) {
-      const response = yield call(fetchNotice, payload);
+      const response = yield call(fetchAlertCount, payload);
       if (dealResponse(response)) {
         return;
       }
