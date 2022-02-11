@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, Col, Divider, Form, Input, Row, Table, Tag } from 'antd';
+import { Button, Col, Divider, Empty, Row, Table, Tag } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
@@ -8,108 +8,112 @@ import {
   RightOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, isNull } from '@/utils/util';
+import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import AisleForm from '../PopoverPanel/AisleForm';
+import FunctionListItem from '../components/FunctionListItem';
 import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
+import LabelComponent from '@/components/LabelComponent';
 
 const AislePanel = (props) => {
-  const { height, aisles, selectCellIds } = props;
+  const { dispatch, height, aisles, mapContext } = props;
 
-  const [formVisible, setFormVisible] = useState(null);
+  const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
+  const [formVisible, setFormVisible] = useState(null);
 
-  const aisleColumns = [
-    {
-      // 名称
-      title: formatMessage({ id: 'app.common.name' }),
-      align: 'center',
-      dataIndex: 'tunnelName',
-    },
-    {
-      // 点位
-      title: formatMessage({ id: 'app.map.cell' }),
-      align: 'center',
-      width: 200,
-      dataIndex: 'cells',
-      render: (text) => {
-        if (text) {
-          return text.map((item, index) => <Tag key={index}>{item}</Tag>);
-        }
-      },
-    },
-    {
-      // 解锁点位
-      title: formatMessage({ id: 'editor.aisle.unLockCells' }),
-      align: 'center',
-      dataIndex: 'tunnelInUnLockCell',
-      render: (text) => {
-        if (text) {
-          return text.map((item, index) => <Tag key={index}>{item}</Tag>);
-        }
-      },
-    },
-    {
-      // 入口
-      title: formatMessage({ id: 'editor.aisle.entrance' }),
-      align: 'center',
-      dataIndex: 'in',
-      render: (text) => {
-        if (text) {
-          return text.map((item, index) => <Tag key={index}>{item}</Tag>);
-        }
-      },
-    },
-    {
-      // 出口
-      title: formatMessage({ id: 'editor.aisle.exit' }),
-      align: 'center',
-      dataIndex: 'out',
-      render: (text) => {
-        if (text) {
-          return text.map((item, index) => <Tag key={index}>{item}</Tag>);
-        }
-      },
-    },
-    {
-      // 操作
-      title: formatMessage({ id: 'app.common.operation' }),
-      align: 'center',
-      fixed: 'right',
-      render: (text, record, index) => {
-        return (
-          <div>
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                setFormVisible(true);
-              }}
-            >
-              <EditOutlined />
-            </span>
-            <Divider type="vertical" />
-            <span
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                remove(index + 1);
-              }}
-            >
-              <DeleteOutlined />
-            </span>
-          </div>
-        );
-      },
-    },
-  ];
-
-  function remove() {
-    //
+  function edit(index, record) {
+    setEditing(record);
+    setFormVisible(true);
+    setAddFlag(index);
   }
 
+  function remove(flag) {
+    dispatch({
+      type: 'editor/removeFunction',
+      payload: { flag, type: 'tunnels', scope: 'route' },
+    }).then((result) => {
+      mapContext.renderTunnel([result], false, 'remove');
+      mapContext.refresh();
+    });
+  }
+
+  function getListData() {
+    return aisles.map((item, index) => {
+      const { tunnelName, cells, tunnelInUnLockCell, in: entrance, out } = item;
+      return {
+        name: tunnelName,
+        index,
+        rawData: item,
+        fields: [
+          {
+            field: 'tunnelName',
+            label: <FormattedMessage id={'app.common.name'} />,
+            value: tunnelName,
+          },
+          {
+            field: 'cells',
+            label: <FormattedMessage id={'app.common.code'} />,
+            value: cells,
+          },
+          {
+            field: 'tunnelInUnLockCell',
+            node: (
+              <Col span={24}>
+                <LabelComponent label={<FormattedMessage id={'app.map.cell'} />}>
+                  {cells.map((item) => (
+                    <Tag key={item}>{item}</Tag>
+                  ))}
+                </LabelComponent>
+              </Col>
+            ),
+          },
+          {
+            field: 'unLockCells',
+            node: (
+              <Col span={24}>
+                <LabelComponent label={<FormattedMessage id={'editor.aisle.unLockCells'} />}>
+                  {tunnelInUnLockCell?.map((item) => (
+                    <Tag key={item}>{item}</Tag>
+                  ))}
+                </LabelComponent>
+              </Col>
+            ),
+          },
+          {
+            field: 'entrance',
+            node: (
+              <Col span={24}>
+                <LabelComponent label={<FormattedMessage id={'editor.aisle.entrance'} />}>
+                  {entrance?.map((item) => (
+                    <Tag key={item}>{item}</Tag>
+                  ))}
+                </LabelComponent>
+              </Col>
+            ),
+          },
+          {
+            field: 'out',
+            node: (
+              <Col span={24}>
+                <LabelComponent label={<FormattedMessage id={'editor.aisle.exit'} />}>
+                  {out?.map((item) => (
+                    <Tag key={item}>{item}</Tag>
+                  ))}
+                </LabelComponent>
+              </Col>
+            ),
+          },
+        ],
+      };
+    });
+  }
+
+  const listData = getListData();
   return (
-    <div style={{ height, width: 450 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+      {/* 标题栏 */}
       <div>
         {formVisible ? (
           <LeftOutlined
@@ -130,92 +134,47 @@ const AislePanel = (props) => {
             : null}
         </span>
       </div>
+
+      {/* 列表区 */}
       <div>
-        <div className={styles.panelBlock}>
-          <Row style={{ padding: '0 15px 5px 15px' }}>
-            {formVisible ? (
-              <AisleForm aisle={editing} selectCellIds={selectCellIds} />
+        {formVisible ? (
+          <AisleForm aisle={editing} flag={addFlag} />
+        ) : (
+          <>
+            <div style={{ width: '100%', textAlign: 'end' }}>
+              <Button
+                type="primary"
+                style={{ marginBottom: 10 }}
+                onClick={() => {
+                  setAddFlag(aisles.length + 1);
+                  setFormVisible(true);
+                }}
+              >
+                <PlusOutlined /> <FormattedMessage id="app.button.add" />
+              </Button>
+            </div>
+
+            {listData.length === 0 ? (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             ) : (
-              <>
-                <Row style={{ width: '100%' }}>
-                  <Col span={12}>
-                    <h3 style={{ color: '#FFF' }}>
-                      <FormattedMessage id="app.map.aisle" />
-                      <FormattedMessage id="app.common.list" />
-                    </h3>
-                  </Col>
-                  <Col span={12} style={{ textAlign: 'end' }}>
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        setFormVisible(true);
-                      }}
-                    >
-                      <PlusOutlined /> <FormattedMessage id="app.button.add" />
-                    </Button>
-                  </Col>
-                </Row>
-                <Row className={styles.functionTable}>
-                  <Table
-                    bordered
-                    pagination={false}
-                    dataSource={aisles}
-                    columns={aisleColumns}
-                    scroll={{ x: 'max-content' }}
-                  />
-                </Row>
-              </>
+              listData.map((item) => (
+                <FunctionListItem
+                  key={getRandomString(6)}
+                  data={item}
+                  onEdit={edit}
+                  onDelete={remove}
+                />
+              ))
             )}
-          </Row>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
 };
 export default connect(({ editor }) => {
-  const { selectCells } = editor;
+  const { mapContext } = editor;
   const currentScopeMapData = getCurrentRouteMapData();
   const tunnels = currentScopeMapData?.tunnels ?? [];
-  return { selectCellIds: selectCells, aisles: tunnels };
+  return { mapContext, aisles: tunnels };
 })(memo(AislePanel));
-
-const AisleForm = (props) => {
-  const { tunnel, selectCellIds } = props;
-
-  const [formRef] = Form.useForm();
-
-  function onValuesChange() {
-    //
-  }
-
-  function customNameDuplicateValidator() {
-    //
-  }
-
-  return (
-    <div className={styles.formWhiteLabel}>
-      <Form form={formRef} onValuesChange={onValuesChange} layout={'vertical'}>
-        {/* 名称 */}
-        <Form.Item
-          name={'tunnelName'}
-          initialValue={tunnel?.tunnelName}
-          label={<FormattedMessage id="app.common.name" />}
-          rules={[{ required: true }, customNameDuplicateValidator()]}
-        >
-          <Input maxLength={4} />
-        </Form.Item>
-
-        {/* 点位 */}
-        <Form.Item
-          name={'cells'}
-          initialValue={tunnel?.cells || []}
-          rules={[{ required: true }]}
-          label={<FormattedMessage id="app.map.cell" />}
-        >
-          <ButtonInput multi={true} data={selectCellIds} btnDisabled={selectCellIds.length === 0} />
-        </Form.Item>
-      </Form>
-    </div>
-  );
-};

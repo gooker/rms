@@ -1,6 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Row, Input, Button, Col, InputNumber } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
+import commonStyles from '@/common.module.less';
 
 export default memo(function MapInput(props) {
   const { currentCellId, icon, btnDisabled = false, type = 'string' } = props;
@@ -37,7 +38,7 @@ export default memo(function MapInput(props) {
         )}
       </Col>
       {icon ? (
-        <Col span={3} style={{ textAlign: 'center' }}>
+        <Col span={3} className={commonStyles.flexCenter}>
           {icon}
         </Col>
       ) : null}

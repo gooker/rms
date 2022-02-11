@@ -5,6 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import { MapSelectableSpriteType } from '@/config/consts';
 
 const { formItemLayout } = getFormLayout(5, 19);
 
@@ -96,7 +97,7 @@ const ChargerMultiForm = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selectCells, currentMap, mapContext } = editor;
+  const { selections, currentMap, mapContext } = editor;
 
   // 获取所有充电桩名称列表
   const allChargers = [];
@@ -106,5 +107,9 @@ export default connect(({ editor }) => {
     allChargers.push(...chargerList);
   });
 
-  return { allChargers, mapContext, selectCellIds: selectCells };
+  const selectCellIds = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
+
+  return { allChargers, mapContext, selectCellIds };
 })(memo(ChargerMultiForm));

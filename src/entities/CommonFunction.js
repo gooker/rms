@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { CommonFunctionSize, zIndex } from '@/config/consts';
+import Text from '@/entities/Text';
 
 export default class CommonFunction extends PIXI.Container {
   constructor(props) {
@@ -48,7 +49,7 @@ export default class CommonFunction extends PIXI.Container {
 
   addName() {
     const y = this.CommonFunction.height / 2 + 150;
-    this.nameSprite = new BitText(this.name, 0, -y, 0xffffff, 250);
+    this.nameSprite = new Text(this.name, 0, -y, 0xffffff, false, 200);
     this.nameSprite.anchor.set(0.5);
     this.nameSprite.angle = -this.angle;
     this.addChild(this.nameSprite);

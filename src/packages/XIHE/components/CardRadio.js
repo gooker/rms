@@ -31,7 +31,11 @@ class CardRadio extends React.PureComponent {
                   onChange('work_station');
                 }}
               >
-                <img style={{ width: '80%', height: '80%' }} src={'/work_station.png'} />
+                <img
+                  alt={'work_station'}
+                  style={{ width: '80%', height: '80%' }}
+                  src={'/images/work_station.png'}
+                />
               </div>
             </Col>
             <Col span={12}>
@@ -41,7 +45,11 @@ class CardRadio extends React.PureComponent {
                   onChange('work_station_3');
                 }}
               >
-                <img style={{ width: '80%', height: '80%' }} src={'/work_station_3.png'} />
+                <img
+                  alt={'work_station_3'}
+                  style={{ width: '80%', height: '80%' }}
+                  src={'/images/work_station_3.png'}
+                />
               </div>
             </Col>
           </>
@@ -56,10 +64,15 @@ class CardRadio extends React.PureComponent {
                 onChange('common');
               }}
             >
-              <img style={{ width: '80%', height: '80%' }} src={'/common.png'} />
+              <img
+                alt={'common'}
+                style={{ width: '80%', height: '80%' }}
+                src={'/images/common.png'}
+              />
             </div>
           </Col>
         )}
+
         {type === 'common' &&
           Array(8)
             .fill()
@@ -76,8 +89,9 @@ class CardRadio extends React.PureComponent {
                   }}
                 >
                   <img
+                    alt={`work_station_${index + 1}`}
                     style={{ width: '80%', height: index + 1 === 8 ? '65%' : '80%' }}
-                    src={`/work_station_${index + 1}.png`}
+                    src={`/images/work_station_${index + 1}.png`}
                   />
                 </div>
               </Col>

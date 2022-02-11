@@ -213,7 +213,6 @@ export function loadTexturesForMap() {
       .add('wait_cell', '/images/wait_cell.png')
       .add('waiting', '/images/waiting.png')
       .add('warning', '/images/warning.png')
-      .add('welcome', '/images/welcome.png')
       .add('work_station', '/images/work_station.png')
       .add('work_station_1', '/images/work_station_1.png')
       .add('work_station_2', '/images/work_station_2.png')

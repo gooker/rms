@@ -41,7 +41,7 @@ const CellTypeConfigurePanel = (props) => {
                   <div className={commonStyles.flexVerticalCenter} style={{ marginBottom: 5 }}>
                     <img
                       alt={picture}
-                      src={`/textures/${picture}`}
+                      src={`/images/${picture}`}
                       style={{ height: 20, marginRight: 10 }}
                     />
                     <FormattedMessage id={i18n} />

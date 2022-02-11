@@ -18,6 +18,7 @@ export default class ButtonInput extends React.PureComponent {
       data,
       onClick,
 
+      maxTagCount = 4,
       multi = false,
       type = 'string',
       disabled = false,
@@ -29,10 +30,9 @@ export default class ButtonInput extends React.PureComponent {
           <Select
             allowClear
             mode="tags"
-            maxTagCount={4}
+            maxTagCount={maxTagCount}
             value={value}
             disabled={disabled}
-            // onChange={onChange}
             onChange={(values) => {
               onChange(values);
               valueChange && valueChange(values);

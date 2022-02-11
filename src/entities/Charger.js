@@ -67,6 +67,7 @@ export default class Charger extends PIXI.Container {
       name = `${name} [${this.hardwareId}]`;
     }
     this.nameSprite = new Text(name, 0, -y, 0xffffff, false, 150);
+    this.nameSprite.angle = -this.angle;
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);
   }

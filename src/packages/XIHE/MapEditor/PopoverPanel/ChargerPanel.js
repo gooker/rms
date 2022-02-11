@@ -1,25 +1,21 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Divider, message, Row, Table } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LeftOutlined,
-  PlusOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { Button, Col, Empty, message } from 'antd';
+import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { fetchTrafficRobotType } from '@/services/XIHE';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ChargerForm from './ChargerForm';
 import ChargerMultiForm from './ChargerMultiForm';
+import FunctionListItem from '../components/FunctionListItem';
 import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
-import { fetchTrafficRobotType } from '@/services/XIHE';
+import LabelComponent from '@/components/LabelComponent';
 
 const ChargerPanel = (props) => {
   const { dispatch, height, mapContext, chargerList } = props;
 
+  const [addFlag, setAddFlag] = useState(-1);
   const [formVisible, setFormVisible] = useState(null);
   const [multiFormVisible, setMultiFormVisible] = useState(null);
   const [editing, setEditing] = useState(null);
@@ -35,64 +31,10 @@ const ChargerPanel = (props) => {
     });
   }, []);
 
-  const chargerListColumns = [
-    {
-      // 名称
-      title: formatMessage({ id: 'app.common.name' }),
-      align: 'center',
-      dataIndex: 'name',
-    },
-    {
-      // 充电点
-      title: formatMessage({ id: 'editor.cellType.charging' }),
-      align: 'center',
-      dataIndex: 'chargingCells',
-      render: (text) => {
-        const cellIds = text.map((item) => item.cellId);
-        return `${cellIds.join()}`;
-      },
-    },
-    {
-      // 角度
-      title: formatMessage({ id: 'app.common.angle' }),
-      align: 'center',
-      dataIndex: 'angle',
-    },
-    {
-      // 操作
-      title: formatMessage({ id: 'app.common.operation' }),
-      align: 'center',
-      render: (text, record, index) => {
-        return (
-          <div>
-            <span
-              key="edit"
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                editRow(record, index);
-              }}
-            >
-              <EditOutlined />
-            </span>
-            <Divider type="vertical" />
-            <span
-              key="delete"
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                remove(index + 1);
-              }}
-            >
-              <DeleteOutlined />
-            </span>
-          </div>
-        );
-      },
-    },
-  ];
-
-  function editRow(record) {
-    setEditing({ ...record, extraAngle: record.angle });
+  function edit(index, record) {
+    setEditing(record);
     setFormVisible(true);
+    setAddFlag(index);
   }
 
   function remove(flag) {
@@ -105,10 +47,57 @@ const ChargerPanel = (props) => {
     });
   }
 
+  function renderChargingCells(chargingCells) {
+    return chargingCells.map(({ cellId, agvTypes }) => (
+      <Col key={getRandomString(6)} span={24}>
+        <LabelComponent
+          label={
+            <>
+              <FormattedMessage id={'editor.cellType.charging'} />({cellId})
+            </>
+          }
+        >
+          {agvTypes.join()}
+        </LabelComponent>
+      </Col>
+    ));
+  }
+
+  function getListData() {
+    return chargerList.map((item, index) => {
+      const { name, chargingCells, angle } = item;
+      return {
+        name,
+        index,
+        rawData: item,
+        fields: [
+          {
+            field: 'name',
+            label: <FormattedMessage id={'app.common.name'} />,
+            value: name,
+          },
+          {
+            field: 'angle',
+            label: <FormattedMessage id={'app.common.angle'} />,
+            value: angle,
+          },
+          {
+            field: 'chargingCells',
+            label: <FormattedMessage id={'editor.cellType.charging'} />,
+            node: renderChargingCells(chargingCells),
+          },
+        ],
+      };
+    });
+  }
+
+  const listData = getListData();
+  console.log(listData);
   return (
-    <div style={{ height, width: 450 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 380 }} className={editorStyles.categoryPanel}>
+      {/* 标题栏 */}
       <div>
-        {formVisible ? (
+        {formVisible || multiFormVisible ? (
           <LeftOutlined
             style={{ cursor: 'pointer', marginRight: 5 }}
             onClick={() => {
@@ -119,71 +108,65 @@ const ChargerPanel = (props) => {
           />
         ) : null}
         <FormattedMessage id={'app.map.charger'} />
-        {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
+        {formVisible || multiFormVisible ? (
+          <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} />
+        ) : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
-          {formVisible
+          {formVisible || multiFormVisible
             ? isNull(editing)
               ? formatMessage({ id: 'app.button.add' })
               : formatMessage({ id: 'app.button.update' })
             : null}
         </span>
       </div>
+
+      {/* 列表区 */}
       <div>
-        <div className={styles.panelBlock}>
-          <Row style={{ padding: '0 15px 5px 15px' }}>
-            {formVisible ? (
-              <ChargerForm charger={editing} robotTypes={robotTypes} />
-            ) : multiFormVisible ? (
-              <ChargerMultiForm
-                robotTypes={robotTypes}
-                back={() => {
-                  setMultiFormVisible(false);
+        {formVisible ? (
+          <ChargerForm charger={editing} robotTypes={robotTypes} flag={addFlag} />
+        ) : multiFormVisible ? (
+          <ChargerMultiForm
+            robotTypes={robotTypes}
+            back={() => {
+              setMultiFormVisible(false);
+            }}
+          />
+        ) : (
+          <>
+            <div style={{ width: '100%', textAlign: 'end', marginBottom: 10 }}>
+              <Button
+                type="primary"
+                onClick={() => {
+                  setAddFlag(chargerList.length + 1);
+                  setFormVisible(true);
                 }}
-              />
+              >
+                <PlusOutlined /> <FormattedMessage id="app.button.add" />
+              </Button>
+              <Button
+                type="primary"
+                style={{ marginLeft: 10 }}
+                onClick={() => {
+                  setMultiFormVisible(true);
+                }}
+              >
+                <PlusOutlined /> <FormattedMessage id="editor.cell.batchAdd" />
+              </Button>
+            </div>
+            {listData.length === 0 ? (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             ) : (
-              <>
-                <Row style={{ width: '100%' }}>
-                  <Col span={12}>
-                    <h3 style={{ color: '#FFF' }}>
-                      <FormattedMessage id="app.map.charger" />
-                      <FormattedMessage id="app.common.list" />
-                    </h3>
-                  </Col>
-                  <Col span={12} style={{ textAlign: 'end' }}>
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        setFormVisible(true);
-                      }}
-                    >
-                      <PlusOutlined /> <FormattedMessage id="app.button.add" />
-                    </Button>
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => {
-                        setMultiFormVisible(true);
-                      }}
-                      style={{ marginLeft: 10 }}
-                    >
-                      <PlusOutlined /> <FormattedMessage id="editor.cell.batchAdd" />
-                    </Button>
-                  </Col>
-                </Row>
-                <Row className={styles.functionTable}>
-                  <Table
-                    bordered
-                    pagination={false}
-                    dataSource={chargerList}
-                    columns={chargerListColumns}
-                    scroll={{ x: 'max-content' }}
-                  />
-                </Row>
-              </>
+              listData.map((item) => (
+                <FunctionListItem
+                  key={getRandomString(6)}
+                  data={item}
+                  onEdit={edit}
+                  onDelete={remove}
+                />
+              ))
             )}
-          </Row>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

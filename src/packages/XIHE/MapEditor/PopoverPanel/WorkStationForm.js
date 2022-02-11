@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Form, Input, InputNumber } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/util';
-import { WorkStationSize } from '@/config/consts';
+import { MapSelectableSpriteType, WorkStationSize } from '@/config/consts';
 import AngleSelector from '@/components/AngleSelector';
 import FormattedMessage from '@/components/FormattedMessage';
 import RichInput from '@/packages/XIHE/components/RichInput';
@@ -11,7 +11,7 @@ import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
 import styles from './popoverPanel.module.less';
 
 const WorkStationForm = (props) => {
-  const { dispatch, mapContext, selectCellIds, workStation, allWorkstations } = props;
+  const { flag, dispatch, mapContext, selectCellIds, workStation, allWorkstations } = props;
   const [formRef] = Form.useForm();
 
   // 拆分size
@@ -43,12 +43,12 @@ const WorkStationForm = (props) => {
         payload: { scope: 'logic', type: 'workstationList', data: currentWorkStation },
       }).then((result) => {
         if (result.type === 'add') {
-          mapContext.addWorkStation(result.payload);
+          mapContext.addWorkStation(result.payload, null);
         }
         if (result.type === 'update') {
           const { pre, current } = result;
           pre && mapContext.removeWorkStation(pre);
-          mapContext.addWorkStation(current);
+          mapContext.addWorkStation(current, null);
         }
         mapContext.refresh();
       });
@@ -67,6 +67,7 @@ const WorkStationForm = (props) => {
     <div className={styles.formWhiteLabel}>
       <Form form={formRef} onValuesChange={onValuesChange} layout={'vertical'}>
         {/* 隐藏字段 */}
+        <Form.Item hidden name={'flag'} initialValue={flag} />
         <Form.Item hidden name={'direction'} initialValue={workStation?.direction} />
         <Form.Item hidden name={'angle'} initialValue={workStation?.angle} />
 
@@ -107,7 +108,7 @@ const WorkStationForm = (props) => {
         >
           <RichInput
             currentCellId={selectCellIds}
-            icon={<img alt={'stop'} style={{ width: 25 }} src={'/stop.png'} />}
+            icon={<img alt={'stop'} style={{ width: 25 }} src={'/images/stop.png'} />}
           />
         </Form.Item>
 
@@ -170,7 +171,7 @@ const WorkStationForm = (props) => {
           label={<FormattedMessage id="editor.cellType.scan" />}
         >
           <RichInput
-            icon={<img alt={'scan_cell'} style={{ width: 25 }} src={'/scan_cell.png'} />}
+            icon={<img alt={'scan_cell'} style={{ width: 25 }} src={'/images/scan_cell.png'} />}
             currentCellId={selectCellIds}
           />
         </Form.Item>
@@ -183,9 +184,7 @@ const WorkStationForm = (props) => {
         >
           <RichInput
             currentCellId={selectCellIds}
-            icon={
-              <img alt={'buffer_cell'} style={{ width: 25 }} src={'/buffer_cell.png'} />
-            }
+            icon={<img alt={'buffer_cell'} style={{ width: 25 }} src={'/images/buffer_cell.png'} />}
           />
         </Form.Item>
 
@@ -197,7 +196,7 @@ const WorkStationForm = (props) => {
         >
           <SuperMultiSelect
             currentCellId={selectCellIds}
-            icon={<img alt={'rotate'} style={{ width: 25 }} src={'/round.png'} />}
+            icon={<img alt={'rotate'} style={{ width: 25 }} src={'/images/round.png'} />}
           />
         </Form.Item>
 
@@ -209,9 +208,7 @@ const WorkStationForm = (props) => {
         >
           <SuperMultiSelect
             currentCellId={selectCellIds}
-            icon={
-              <img alt={'bifurcation'} style={{ width: 25 }} src={'/bifurcation.png'} />
-            }
+            icon={<img alt={'bifurcation'} style={{ width: 25 }} src={'/images/bifurcation.png'} />}
           />
         </Form.Item>
       </Form>
@@ -219,7 +216,7 @@ const WorkStationForm = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { currentMap, selectCells, mapContext } = editor;
+  const { currentMap, selections, mapContext } = editor;
 
   // 获取所有工作站点列表
   const allWorkstations = [];
@@ -229,5 +226,9 @@ export default connect(({ editor }) => {
     allWorkstations.push(...logicWorkstations);
   });
 
-  return { mapContext, selectCellIds: selectCells, allWorkstations };
+  const selectCellIds = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
+
+  return { mapContext, selectCellIds, allWorkstations };
 })(memo(WorkStationForm));

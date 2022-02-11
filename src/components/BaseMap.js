@@ -487,11 +487,11 @@ export default class BaseMap extends React.Component {
     this.pixiUtils.viewportAddChild(workStation);
     this.workStationMap.set(`${stopCellId}`, workStation);
 
-    // Render Scan Cell
+    // 扫描点
     const scanCell = this.idCellMap.get(scanCellId);
     scanCell && scanCell.plusType('scan_cell', getTextureFromResources('scan_cell'));
 
-    // Render Stop Cell
+    // 停止点
     const stopCell = this.idCellMap.get(stopCellId);
     if (stopCell) {
       stopCell.plusType('stop', getTextureFromResources('stop'));
@@ -505,19 +505,19 @@ export default class BaseMap extends React.Component {
       this.relationshipLines.set(`workStation_${station}`, dashedLine);
     }
 
-    // Render Buffer Cell
+    // 缓冲点
     const bufferCell = this.idCellMap.get(bufferCellId);
     bufferCell && bufferCell.plusType('buffer_cell', getTextureFromResources('buffer_cell'));
 
-    // Render Rotation Cell
+    // 旋转点
     if (Array.isArray(rotateCellIds)) {
       rotateCellIds.forEach((cellId) => {
         const rotateCell = this.idCellMap.get(parseInt(cellId));
-        rotateCell && rotateCell.plusType('round', getTextureFromResources('round'));
+        rotateCell && rotateCell.plusType('rotate_cell', getTextureFromResources('rotate_cell'));
       });
     }
 
-    // 渲染分叉点
+    // 分叉点
     if (Array.isArray(branchPathCellIds)) {
       branchPathCellIds.forEach((cellId) => {
         const bifurcationCell = this.idCellMap.get(parseInt(cellId));
@@ -551,15 +551,15 @@ export default class BaseMap extends React.Component {
     // Render Rotation Cell
     if (Array.isArray(rotateCellIds)) {
       rotateCellIds.forEach((cellId) => {
-        const rotateCell = this.idCellMap.get(cellId);
-        rotateCell && rotateCell.removeType('round');
+        const rotateCell = this.idCellMap.get(parseInt(cellId));
+        rotateCell && rotateCell.removeType('rotate_cell');
       });
     }
 
     // 删除分叉点
     if (Array.isArray(branchPathCellIds)) {
       branchPathCellIds.forEach((cellId) => {
-        const bifurcationCell = this.idCellMap.get(cellId);
+        const bifurcationCell = this.idCellMap.get(parseInt(cellId));
         bifurcationCell && bifurcationCell.removeType('bifurcation');
       });
     }

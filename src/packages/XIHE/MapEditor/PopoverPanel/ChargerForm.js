@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { Button, Form, Input, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -7,9 +7,11 @@ import { formatMessage, isNull } from '@/utils/util';
 import AngleSelector from '@/components/AngleSelector';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { MapSelectableSpriteType } from '@/config/consts';
+import styles from './popoverPanel.module.less';
 
 const ChargerForm = (props) => {
-  const { dispatch, charger, mapContext, selectCellIds, allChargers, robotTypes } = props;
+  const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, robotTypes } = props;
 
   const [formRef] = Form.useForm();
 
@@ -51,6 +53,7 @@ const ChargerForm = (props) => {
   return (
     <Form form={formRef} onValuesChange={onValueChange} style={{ width: '100%' }}>
       {/* 隐藏字段 */}
+      <Form.Item hidden name={'flag'} initialValue={flag} />
       <Form.Item hidden name={'direction'} initialValue={charger?.direction} />
       <Form.Item hidden name={'angle'} initialValue={charger?.angle} />
 
@@ -102,17 +105,8 @@ const ChargerForm = (props) => {
         {(fields, { add, remove }) => (
           <>
             {fields.map(({ key, name, fieldKey, ...restField }) => (
-              <Row
-                key={key}
-                style={{
-                  border: '1px solid #e0dcdc',
-                  padding: '25px 10px 0 10px',
-                  borderRadius: '5px',
-                  marginBottom: '20px',
-                }}
-                gutter={6}
-              >
-                <Col span={21}>
+              <div key={key} className={styles.chargerFormDynamicRow}>
+                <div>
                   {/* 充电点 */}
                   <Form.Item
                     {...restField}
@@ -142,13 +136,16 @@ const ChargerForm = (props) => {
                       ))}
                     </Select>
                   </Form.Item>
-                </Col>
-                <Col span={3} style={{ textAlign: 'center' }}>
-                  <Button type="danger" onClick={() => remove(name)}>
-                    <DeleteOutlined />
-                  </Button>
-                </Col>
-              </Row>
+                </div>
+                <Button
+                  size={'small'}
+                  type="danger"
+                  onClick={() => remove(name)}
+                  style={{ width: '100%' }}
+                >
+                  <DeleteOutlined />
+                </Button>
+              </div>
             ))}
             <Form.Item>
               <Button block type="dashed" onClick={() => add()}>
@@ -162,7 +159,7 @@ const ChargerForm = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selectCells, currentMap, mapContext } = editor;
+  const { selections, currentMap, mapContext } = editor;
 
   // 获取所有充电桩名称列表
   const allChargers = [];
@@ -172,5 +169,9 @@ export default connect(({ editor }) => {
     allChargers.push(...chargerList);
   });
 
-  return { allChargers, mapContext, selectCellIds: selectCells };
+  const selectCellIds = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
+
+  return { allChargers, mapContext, selectCellIds };
 })(memo(ChargerForm));
