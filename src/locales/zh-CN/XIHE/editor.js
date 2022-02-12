@@ -24,6 +24,7 @@ export default {
   'mapEditor.tip.blockWithoutOthers':
     '{value} 点已经相关作用域是Block点, 不可设置为其它任意点位类型',
   'mapEditor.tip.noLogicStorage': '当前逻辑区没有存储区',
+  'editor.code.duplicate': '编码已存在',
 
   // 施工图
   'mapEditor.constructionDrawing.export': '导出施工图',
@@ -70,6 +71,7 @@ export default {
 
   'editor.moveCell.offsetDistance': '偏移距离',
   'editor.adjustSpace.baseLine': '调整基线',
+  'editor.restCells': '休息点',
 
   // 点位类型
   'editor.cellType.forbid': '不可走点',
@@ -84,12 +86,6 @@ export default {
   'editor.cellType.buffer': '缓冲点',
   'editor.cellType.bifurcation': '分叉点',
   'editor.cellType.charging': '充电点',
-
-  // 站点
-  'editor.station.distance': '距离',
-  'editor.station.icon': '图标',
-  'editor.station.icon.width': '图标宽度',
-  'editor.station.icon.height': '图标高度',
 
   // 线条
   'editor.cost.lowPriority': '低优先级',
@@ -114,13 +110,23 @@ export default {
   'editor.view.showOnlyRelevantPoints': '仅显示相关点',
 
   // 功能
+  'editor.config.distance': '距离',
   'editor.workstation.stop': '停止点',
+  'editor.station.icon': '图标',
+  'editor.station.icon.width': '图标宽度',
+  'editor.station.icon.height': '图标高度',
   'editor.aisle.unLockCells': '解锁点',
   'editor.aisle.entrance': '入口',
   'editor.aisle.exit': '出口',
-
-  // 提示信息
-  'editor.code.duplicate': '编码已存在',
+  'editor.delivery': '投递点',
+  'editor.delivery.basket': '投递框',
+  'editor.delivery.baseCell': '基准点',
+  'editor.delivery.speed': '投递速度',
+  'editor.delivery.distance': '投递距离',
+  'editor.delivery.aligned.required': '请选择两个对齐的点位',
+  'editor.delivery.different.required': '请选择两个不同的点位',
+  'editor.intersection.multiDirection': '多向设置',
+  'editor.intersection.isTrafficCell': '交通管控',
 
   // 添加地图标记
   'editor.label.creation': '创建标记信息',

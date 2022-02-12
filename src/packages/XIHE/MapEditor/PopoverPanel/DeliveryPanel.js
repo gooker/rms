@@ -1,23 +1,16 @@
 import React, { memo, useState } from 'react';
-import { Button, Col, Divider, Empty, Row, Table, Tag } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LeftOutlined,
-  PlusOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { Button, Empty } from 'antd';
+import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
-import AisleForm from '../PopoverPanel/AisleForm';
 import FunctionListItem from '../components/FunctionListItem';
+import DeliveryForm from './DeliveryForm';
 import editorStyles from '../editorLayout.module.less';
-import LabelComponent from '@/components/LabelComponent';
 
-const AislePanel = (props) => {
-  const { dispatch, height, aisles, mapContext } = props;
+const DeliveryPanel = (props) => {
+  const { height, dispatch, mapContext, dumpStations } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
@@ -32,45 +25,37 @@ const AislePanel = (props) => {
   function remove(flag) {
     dispatch({
       type: 'editor/removeFunction',
-      payload: { flag, type: 'tunnels', scope: 'route' },
+      payload: { flag, scope: 'logic', type: 'dumpStations' },
     }).then((result) => {
-      mapContext.renderTunnel([result], false, 'remove');
+      mapContext.removeDumpFunction(result);
       mapContext.refresh();
     });
   }
 
   function getListData() {
-    return aisles.map((item, index) => {
-      const { tunnelName, cells, tunnelInUnLockCell, in: entrance, out } = item;
+    return dumpStations.map((item, index) => {
+      const { name, agvDirection, x, y, dumpBasket } = item;
       return {
-        name: tunnelName,
+        name,
         index,
         rawData: item,
         fields: [
           {
-            field: 'tunnelName',
+            field: 'name',
             label: <FormattedMessage id={'app.common.name'} />,
-            value: tunnelName,
+            value: name,
           },
           {
-            field: 'cells',
-            label: <FormattedMessage id={'app.map.cell'} />,
-            value: cells,
+            field: 'agvDirection',
+            label: <FormattedMessage id={'app.agv.direction'} />,
+            value: agvDirection,
           },
+          { field: 'X', label: 'X', value: x },
+          { field: 'Y', label: 'Y', value: y },
           {
-            field: 'tunnelInUnLockCell',
-            label: <FormattedMessage id={'editor.aisle.unLockCells'} />,
-            value: tunnelInUnLockCell,
-          },
-          {
-            field: 'entrance',
-            label: <FormattedMessage id={'editor.aisle.entrance'} />,
-            value: entrance,
-          },
-          {
-            field: 'out',
-            label: <FormattedMessage id={'editor.aisle.exit'} />,
-            value: out,
+            field: 'basket',
+            label: <FormattedMessage id={'editor.delivery.basket'} />,
+            value: dumpBasket.map(({ key }) => key),
           },
         ],
       };
@@ -91,7 +76,7 @@ const AislePanel = (props) => {
             }}
           />
         ) : null}
-        <FormattedMessage id={'app.map.aisle'} />
+        <FormattedMessage id={'app.map.delivery'} />
         {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
           {formVisible
@@ -105,7 +90,7 @@ const AislePanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <AisleForm aisle={editing} flag={addFlag} />
+          <DeliveryForm delivery={editing} flag={addFlag} />
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>
@@ -113,14 +98,13 @@ const AislePanel = (props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => {
-                  setAddFlag(aisles.length + 1);
+                  setAddFlag(dumpStations.length + 1);
                   setFormVisible(true);
                 }}
               >
                 <PlusOutlined /> <FormattedMessage id="app.button.add" />
               </Button>
             </div>
-
             {listData.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             ) : (
@@ -140,8 +124,7 @@ const AislePanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { mapContext } = editor;
-  const currentScopeMapData = getCurrentRouteMapData();
-  const tunnels = currentScopeMapData?.tunnels ?? [];
-  return { mapContext, aisles: tunnels };
-})(memo(AislePanel));
+  const currentLogicAreaData = getCurrentLogicAreaData();
+  const dumpStations = currentLogicAreaData?.dumpStations ?? [];
+  return { dumpStations, mapContext: editor.mapContext };
+})(memo(DeliveryPanel));

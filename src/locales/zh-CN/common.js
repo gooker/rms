@@ -92,6 +92,8 @@ export default {
   'app.common.custom': '自定义',
   'app.common.color': '颜色',
   'app.common.text': '文本',
+  'app.common.priority': '优先级',
+  'app.common.target': '目标点', // 有重复
 
   // 地图相关
   'app.map.map': '地图',
@@ -115,7 +117,6 @@ export default {
   'app.map.restArea': '休息区',
   'app.map.obstacle': '障碍物',
   'app.map.commonPoint': '通用功能点',
-  'app.map.dumpPoint': '抛物点',
   'app.map.intersection': '交汇点',
   'app.map.emergencyStop': '急停区',
   'app.map.delivery': '投递点',
@@ -184,7 +185,7 @@ export default {
   'app.agv.status': '小车状态',
   'app.agv.on': '已开启',
   'app.agv.off': '未开启',
-  'app.agv.direction': '车头方向',
+  'app.agv.direction': '车方向',
   'app.agv.electricity': '电量',
 
   'app.agvState.available': '可用',

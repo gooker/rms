@@ -190,18 +190,16 @@ export default class BaseMap extends React.Component {
   };
 
   // 渲染休息点
-  renderRestCells = (restCells, opt = 'add') => {
-    restCells.forEach((item) => {
-      if (item?.cellIds) {
-        item.cellIds.forEach((cell) => {
-          const cellEntity = this.idCellMap.get(cell);
-          if (cellEntity) {
-            opt === 'add' && cellEntity.plusType('rest_cell', getTextureFromResources('rest_cell'));
-            opt === 'remove' && cellEntity.removeType('rest_cell');
-          }
-        });
-      }
-    });
+  renderRestCells = (rest, opt = 'add') => {
+    if (Array.isArray(rest?.cellIds)) {
+      rest.cellIds.forEach((cell) => {
+        const cellEntity = this.idCellMap.get(cell);
+        if (cellEntity) {
+          opt === 'add' && cellEntity.plusType('rest_cell', getTextureFromResources('rest_cell'));
+          opt === 'remove' && cellEntity.removeType('rest_cell');
+        }
+      });
+    }
   };
 
   // 渲染不可逗留点

@@ -226,6 +226,8 @@ export function loadTexturesForMap() {
       .add('errorLevel_2', '/images/errorLevel_2.png')
       .add('errorLevel_3', '/images/errorLevel_3.png')
       .add('tiny_rotate', '/images/tiny_rotate.png')
+      .add('location', '/images/location.png')
+      .add('basket', '/images/basket.png')
       .load(() => {
         resolve();
       });

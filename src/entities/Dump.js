@@ -5,7 +5,7 @@ import { zIndex } from '@/config/consts';
 
 export default class Dump extends PIXI.Sprite {
   constructor(x, y, name) {
-    const texture = getTextureFromResources('dump');
+    const texture = getTextureFromResources('location');
     super(texture);
     this.x = x;
     this.y = y;

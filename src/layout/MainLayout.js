@@ -7,7 +7,7 @@ import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
 import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchAllTaskTypes } from '@/services/api';
+import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { loadTexturesForMap } from '@/utils/textures';
 import SocketClient from '@/entities/SocketClient';
 import './mainLayout.less';
@@ -54,6 +54,9 @@ class MainLayout extends React.Component {
         if (username !== 'admin') {
           this.loadAllTaskTypes();
         }
+
+        // 6. 货物所有车类型
+        this.loadAllAgvTypes();
       } else {
         throw new Error(formatMessage({ id: 'app.message.fetchUserFail' }));
       }
@@ -82,6 +85,22 @@ class MainLayout extends React.Component {
           `${formatMessage(
             { id: 'app.message.fetchFailTemplate' },
             { type: formatMessage({ id: 'app.task.type' }) },
+          )}`,
+        );
+      }
+    });
+  };
+
+  loadAllAgvTypes = () => {
+    const { dispatch } = this.props;
+    fetchAllAgvType().then((response) => {
+      if (!dealResponse(response)) {
+        dispatch({ type: 'global/saveAllAgvTypes', payload: response });
+      } else {
+        message.error(
+          `${formatMessage(
+            { id: 'app.message.fetchFailTemplate' },
+            { type: formatMessage({ id: 'app.agv.type' }) },
           )}`,
         );
       }

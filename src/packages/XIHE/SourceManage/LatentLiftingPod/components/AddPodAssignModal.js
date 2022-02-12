@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Form, InputNumber, Select, Button, message } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Form, InputNumber, Select, Button } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvList, fetchAllAgvType } from '@/services/api';
+import { fetchAgvList } from '@/services/api';
 import { formatMessage, dealResponse } from '@/utils/util';
 import { AGVType } from '@/config/config';
 import styles from './addpod.module.less';
@@ -9,30 +10,21 @@ const FormLayout = { labelCol: { span: 7 }, wrapperCol: { span: 17 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 7, span: 9 } };
 
 function AddPodAssignModal(props) {
-  const { updateRow, onCancel, onSubmit } = props;
+  const { allAgvTypes, updateRow, onCancel, onSubmit } = props;
+
   const [formRef] = Form.useForm();
   const [agvList, setAgvList] = useState([]);
-  const [agvType, setAgvType] = useState([]);
 
   useEffect(() => {
-    async function init() {
-      await getAGvData();
-    }
-    init();
+    getData();
   }, []);
 
-  function getAGvData() {
-    Promise.all([fetchAgvList(AGVType.LatentLifting), fetchAllAgvType()])
-      .then((response) => {
-        const [agvList, agvType] = response;
-        if (!dealResponse(agvList) && !dealResponse(agvType)) {
-          setAgvList(agvList);
-          setAgvType(agvType);
-        }
-      })
-      .catch((err) => {
-        message.error(err);
-      });
+  function getData() {
+    fetchAgvList(AGVType.LatentLifting).then((response) => {
+      if (!dealResponse(agvList)) {
+        setAgvList(agvList);
+      }
+    });
   }
 
   function submit() {
@@ -90,7 +82,7 @@ function AddPodAssignModal(props) {
             option.props.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-          {agvType?.map((item) => (
+          {allAgvTypes?.map((item) => (
             <Select.Option key={item} value={item}>
               {item}
             </Select.Option>
@@ -128,5 +120,6 @@ function AddPodAssignModal(props) {
     </Form>
   );
 }
-
-export default AddPodAssignModal;
+export default connect(({ global }) => ({
+  allAgvTypes: global.allAgvTypes,
+}))(memo(AddPodAssignModal));

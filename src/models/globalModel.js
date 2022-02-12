@@ -47,6 +47,7 @@ export default {
 
     // 全局数据
     allTaskTypes: {},
+    allAgvTypes: [],
 
     // Texture
     textureLoaded: false,
@@ -145,11 +146,6 @@ export default {
       return response;
     },
 
-    *goToQuestionCenter(_, { put, select }) {
-      //
-    },
-
-    // 更新语种
     *updateGlobalLocale({ payload }, { call, put }) {
       const localeValue = require(`@/locales/${payload}`).default;
       const response = yield call(fetchUpdateUserCurrentLanguage, payload);
@@ -196,7 +192,12 @@ export default {
         textureLoaded: payload,
       };
     },
-
+    saveAllAgvTypes(state, { payload }) {
+      return {
+        ...state,
+        allAgvTypes: payload,
+      };
+    },
     saveAllEnvironments(state, { payload }) {
       return {
         ...state,

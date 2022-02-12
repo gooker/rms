@@ -1,23 +1,18 @@
 import React, { memo, useState } from 'react';
-import { Button, Col, Divider, Empty, Row, Table, Tag } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LeftOutlined,
-  PlusOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { Button, Empty } from 'antd';
+import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
-import AisleForm from '../PopoverPanel/AisleForm';
 import FunctionListItem from '../components/FunctionListItem';
-import editorStyles from '../editorLayout.module.less';
 import LabelComponent from '@/components/LabelComponent';
+import Dictionary from '@/utils/Dictionary';
+import IntersectionForm from '@/packages/XIHE/MapEditor/PopoverPanel/IntersectionForm';
+import editorStyles from '../editorLayout.module.less';
 
-const AislePanel = (props) => {
-  const { dispatch, height, aisles, mapContext } = props;
+const IntersectionPanel = (props) => {
+  const { height, dispatch, mapContext, intersectionList } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
@@ -32,45 +27,41 @@ const AislePanel = (props) => {
   function remove(flag) {
     dispatch({
       type: 'editor/removeFunction',
-      payload: { flag, type: 'tunnels', scope: 'route' },
+      payload: { flag, type: 'intersectionList', scope: 'logic' },
     }).then((result) => {
-      mapContext.renderTunnel([result], false, 'remove');
+      mapContext.removeIntersection(result);
       mapContext.refresh();
     });
   }
 
+  function renderIP(ip) {
+    return (
+      <LabelComponent label={'IP'}>
+        {ip.map((record, index) => (
+          <div key={index}>{`${formatMessage({
+            id: `${Dictionary('agvDirection', [record.direction])}`,
+          })}: ${record.value}`}</div>
+        ))}
+      </LabelComponent>
+    );
+  }
+
   function getListData() {
-    return aisles.map((item, index) => {
-      const { tunnelName, cells, tunnelInUnLockCell, in: entrance, out } = item;
+    return intersectionList.map((item, index) => {
+      const { cellId, ip, isTrafficCell } = item;
       return {
-        name: tunnelName,
+        name: cellId,
         index,
         rawData: item,
         fields: [
           {
-            field: 'tunnelName',
-            label: <FormattedMessage id={'app.common.name'} />,
-            value: tunnelName,
+            field: 'ip',
+            node: renderIP(ip),
           },
           {
-            field: 'cells',
-            label: <FormattedMessage id={'app.map.cell'} />,
-            value: cells,
-          },
-          {
-            field: 'tunnelInUnLockCell',
-            label: <FormattedMessage id={'editor.aisle.unLockCells'} />,
-            value: tunnelInUnLockCell,
-          },
-          {
-            field: 'entrance',
-            label: <FormattedMessage id={'editor.aisle.entrance'} />,
-            value: entrance,
-          },
-          {
-            field: 'out',
-            label: <FormattedMessage id={'editor.aisle.exit'} />,
-            value: out,
+            field: 'isTrafficCell',
+            label: <FormattedMessage id={'editor.intersection.isTrafficCell'} />,
+            value: formatMessage({ id: `app.common.${isTrafficCell}` }),
           },
         ],
       };
@@ -91,7 +82,7 @@ const AislePanel = (props) => {
             }}
           />
         ) : null}
-        <FormattedMessage id={'app.map.aisle'} />
+        <FormattedMessage id={'app.map.intersection'} />
         {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
           {formVisible
@@ -105,7 +96,7 @@ const AislePanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <AisleForm aisle={editing} flag={addFlag} />
+          <IntersectionForm intersection={editing} flag={addFlag} />
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>
@@ -113,14 +104,13 @@ const AislePanel = (props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => {
-                  setAddFlag(aisles.length + 1);
+                  setAddFlag(intersectionList.length + 1);
                   setFormVisible(true);
                 }}
               >
                 <PlusOutlined /> <FormattedMessage id="app.button.add" />
               </Button>
             </div>
-
             {listData.length === 0 ? (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             ) : (
@@ -140,8 +130,7 @@ const AislePanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { mapContext } = editor;
-  const currentScopeMapData = getCurrentRouteMapData();
-  const tunnels = currentScopeMapData?.tunnels ?? [];
-  return { mapContext, aisles: tunnels };
-})(memo(AislePanel));
+  const currentLogicAreaData = getCurrentLogicAreaData();
+  const intersectionList = currentLogicAreaData?.intersectionList ?? [];
+  return { intersectionList, mapContext: editor.mapContext };
+})(memo(IntersectionPanel));

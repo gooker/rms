@@ -25,6 +25,7 @@ export const LeftCategory = {
 };
 
 export const RightCategory = {
+  Prop: 'PROP',
   Aisle: 'AISLE',
   Cell: 'CELL',
   Cost: 'COST',
@@ -34,6 +35,13 @@ export const RightCategory = {
   Station: 'COMMON_STATION',
   Charger: 'CHARGER',
   View: 'VIEW',
+  Rest: 'REST',
+  EmergencyStop: 'EMERGENCY_STOP',
+  Delivery: 'DELIVERY',
+  Intersection: 'INTERSECTION',
+  Programing: 'PROGRAMING',
+  Template: 'TEMPLATE',
+  History: 'HISTORY',
 };
 
 export const EditorLeftTools = [
@@ -77,7 +85,7 @@ export const EditorLeftTools = [
 export const EditorRightTools = [
   {
     label: <FormattedMessage id={'app.common.prop'} />,
-    value: 'props',
+    value: RightCategory.Prop,
     icon: <SettingOutlined />,
   },
   {
@@ -122,12 +130,12 @@ export const EditorRightTools = [
   },
   {
     label: <FormattedMessage id={'app.map.emergencyStop'} />,
-    value: 'emergencyStop',
+    value: RightCategory.EmergencyStop,
     icon: <StopOutlined />,
   },
   {
     label: <FormattedMessage id={'app.map.restArea'} />,
-    value: 'restArea',
+    value: RightCategory.Rest,
     icon: <IconFont type={'icon-rest2'} />,
   },
   {
@@ -137,27 +145,27 @@ export const EditorRightTools = [
   },
   {
     label: <FormattedMessage id={'app.map.delivery'} />,
-    value: 'delivery',
+    value: RightCategory.Delivery,
     icon: <DropboxOutlined />,
   },
   {
     label: <FormattedMessage id={'app.map.intersection'} />,
-    value: 'intersection',
+    value: RightCategory.Intersection,
     icon: <IconFont type={'icon-intersection'} />,
   },
   {
     label: <FormattedMessage id={'app.map.programing'} />,
-    value: 'programing',
+    value: RightCategory.Programing,
     icon: <IconFont type={'icon-programing'} />,
   },
   {
     label: <FormattedMessage id={'mapEditor.tools.createTemplate'} />,
-    value: 'template',
+    value: RightCategory.Template,
     icon: <IconFont type={'icon-template'} />,
   },
   {
     label: <FormattedMessage id={'mapEditor.tools.history'} />,
-    value: 'history',
+    value: RightCategory.History,
     icon: <IconFont type={'icon-history'} />,
   },
 ];

@@ -207,15 +207,15 @@ export function offsetByDirection(obj, direction, distance) {
     result.x = obj.x;
     result.y = obj.y - distance;
   }
-  if (direction === 90) {
+  if (direction === 1) {
     result.x = obj.x + distance;
     result.y = obj.y;
   }
-  if (direction === 180) {
+  if (direction === 2) {
     result.x = obj.x;
     result.y = obj.y + distance;
   }
-  if (direction === 270) {
+  if (direction === 3) {
     result.x = obj.x - distance;
     result.y = obj.y;
   }

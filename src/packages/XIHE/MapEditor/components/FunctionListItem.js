@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Divider, Row, Col } from 'antd';
+import { Divider, Row, Col, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import styles from '../PopoverPanel/popoverPanel.module.less';
 import LabelComponent from '@/components/LabelComponent';
@@ -16,6 +16,19 @@ const FunctionListItem = (props) => {
       if (node) {
         return node;
       } else {
+        if (Array.isArray(value)) {
+          return (
+            <Col key={field} span={24}>
+              <LabelComponent label={label}>
+                {value.map((item) => (
+                  <Tag key={item} color="blue">
+                    {item}
+                  </Tag>
+                ))}
+              </LabelComponent>
+            </Col>
+          );
+        }
         return (
           <Col key={field} span={12}>
             <LabelComponent label={label}>{value}</LabelComponent>

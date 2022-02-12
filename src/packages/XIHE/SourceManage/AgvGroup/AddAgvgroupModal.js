@@ -1,37 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, Button, message } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Form, Input, Select, Button } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvList, fetchAllAgvType } from '@/services/api';
-import { formatMessage, dealResponse, isNull } from '@/utils/util';
+import { fetchAgvList } from '@/services/api';
+import { formatMessage, dealResponse } from '@/utils/util';
 import { AGVType } from '@/config/config';
+
 const FormLayout = { labelCol: { span: 7 }, wrapperCol: { span: 17 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 7, span: 9 } };
 
 function AddAgvGroupModal(props) {
-  const { updateRow, onCancel, onSubmit, dataSource,loading } = props;
+  const { updateRow, onCancel, onSubmit, dataSource, loading, allAgvTypes } = props;
+
   const [formRef] = Form.useForm();
   const [agvList, setAgvList] = useState([]);
-  const [agvType, setAgvType] = useState([]);
 
   useEffect(() => {
-    async function init() {
-      await getAGvData();
-    }
-    init();
+    getAGvData();
   }, []);
 
   function getAGvData() {
-    Promise.all([fetchAgvList(AGVType.LatentLifting), fetchAllAgvType()])
-      .then((response) => {
-        const [agvList, agvType] = response;
-        if (!dealResponse(agvList) && !dealResponse(agvType)) {
-          setAgvList(agvList);
-          setAgvType(agvType);
-        }
-      })
-      .catch((err) => {
-        message.error(err);
-      });
+    fetchAgvList(AGVType.LatentLifting).then((response) => {
+      if (!dealResponse(agvList)) {
+        setAgvList(agvList);
+      }
+    });
   }
 
   function submit() {
@@ -85,7 +78,7 @@ function AddAgvGroupModal(props) {
             option.props.children?.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-          {agvType?.map((item) => (
+          {allAgvTypes?.map((item) => (
             <Select.Option key={item} value={item}>
               {item}
             </Select.Option>
@@ -116,12 +109,13 @@ function AddAgvGroupModal(props) {
         <Button onClick={onCancel}>
           <FormattedMessage id="app.button.cancel" />
         </Button>
-        <Button type="primary" onClick={submit} style={{ marginLeft: '20px' }}  loading={loading}>
+        <Button type="primary" onClick={submit} style={{ marginLeft: '20px' }} loading={loading}>
           <FormattedMessage id="app.button.confirm" />
         </Button>
       </Form.Item>
     </Form>
   );
 }
-
-export default AddAgvGroupModal;
+export default connect(({ global }) => ({
+  allAgvTypes: global.allAgvTypes,
+}))(memo(AddAgvGroupModal));

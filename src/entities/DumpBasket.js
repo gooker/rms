@@ -5,7 +5,7 @@ import { zIndex } from '@/config/consts';
 
 export default class DumpBasket extends PIXI.Sprite {
   constructor(key, x, y) {
-    const texture = getTextureFromResources('dump_basket');
+    const texture = getTextureFromResources('basket');
     super(texture);
     this.x = x;
     this.y = y;

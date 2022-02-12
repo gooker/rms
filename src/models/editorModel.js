@@ -1380,14 +1380,6 @@ export default {
       return renderChargerList(tempCharger, currentMap.cellMap);
     },
 
-    // 休息区只需要简单的全部替换就行
-    updateRestArea({ payload }) {
-      const currentLogicAreaData = getCurrentLogicAreaData();
-      const restCellsData = currentLogicAreaData.restCells || [];
-      currentLogicAreaData.restCells = payload;
-      return { pre: restCellsData, current: payload };
-    },
-
     // 不可逗留点只需要简单的全部替换就行
     updateNonStopCells({ payload }) {
       const currentRouteMapData = getCurrentRouteMapData();

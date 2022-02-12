@@ -116,7 +116,7 @@ const WorkStationForm = (props) => {
         <Form.Item
           name={'offset'}
           initialValue={workStation?.offset || 1000}
-          label={<FormattedMessage id="editor.station.distance" />}
+          label={<FormattedMessage id="editor.config.distance" />}
         >
           <InputNumber style={{ width: 150 }} />
         </Form.Item>

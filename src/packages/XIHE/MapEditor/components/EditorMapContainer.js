@@ -102,7 +102,9 @@ const EditorMapContainer = (props) => {
     } = currentLogicAreaData;
     // 休息区
     if (Array.isArray(restCells)) {
-      mapContext.renderRestCells(restCells);
+      restCells.forEach((item) => {
+        mapContext.renderRestCells(item);
+      });
     }
     // 存储区
     if (Array.isArray(storeCellIds)) {
