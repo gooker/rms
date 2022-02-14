@@ -64,12 +64,12 @@ const AislePanel = (props) => {
           },
           {
             field: 'entrance',
-            label: <FormattedMessage id={'editor.aisle.entrance'} />,
+            label: <FormattedMessage id={'editor.cellType.entrance'} />,
             value: entrance,
           },
           {
             field: 'out',
-            label: <FormattedMessage id={'editor.aisle.exit'} />,
+            label: <FormattedMessage id={'editor.cellType.exit'} />,
             value: out,
           },
         ],

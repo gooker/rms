@@ -6,11 +6,11 @@ import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
-import RestForm from './RestForm';
+import DeliveryForm from './DeliveryForm';
 import editorStyles from '../editorLayout.module.less';
 
-const RestPanel = (props) => {
-  const { height, dispatch, mapContext, restCells } = props;
+const EmergencyStopPanel = (props) => {
+  const { height, dispatch, mapContext, dumpStations } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
@@ -25,35 +25,37 @@ const RestPanel = (props) => {
   function remove(flag) {
     dispatch({
       type: 'editor/removeFunction',
-      payload: { flag, type: 'restCells', scope: 'logic' },
+      payload: { flag, scope: 'logic', type: 'dumpStations' },
     }).then((result) => {
-      mapContext.renderRestCells(result, 'remove');
+      mapContext.removeDumpFunction(result);
       mapContext.refresh();
     });
   }
 
   function getListData() {
-    return restCells.map((item, index) => {
-      const { agvTypes, cellIds, priority } = item;
+    return dumpStations.map((item, index) => {
+      const { name, agvDirection, x, y, dumpBasket } = item;
       return {
-        name: index + 1,
+        name,
         index,
         rawData: item,
         fields: [
           {
-            field: 'priority',
-            label: <FormattedMessage id={'app.common.priority'} />,
-            value: priority,
+            field: 'name',
+            label: <FormattedMessage id={'app.common.name'} />,
+            value: name,
           },
           {
-            field: 'cellIds',
-            label: <FormattedMessage id={'editor.cellType.rest'} />,
-            value: cellIds,
+            field: 'agvDirection',
+            label: <FormattedMessage id={'app.agv.direction'} />,
+            value: agvDirection,
           },
+          { field: 'X', label: 'X', value: x },
+          { field: 'Y', label: 'Y', value: y },
           {
-            field: 'agvTypes',
-            label: <FormattedMessage id={'app.agv.type'} />,
-            value: agvTypes,
+            field: 'basket',
+            label: <FormattedMessage id={'editor.delivery.basket'} />,
+            value: dumpBasket.map(({ key }) => key),
           },
         ],
       };
@@ -74,7 +76,7 @@ const RestPanel = (props) => {
             }}
           />
         ) : null}
-        <FormattedMessage id={'app.map.restArea'} />
+        <FormattedMessage id={'app.map.emergencyStop'} />
         {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
           {formVisible
@@ -88,7 +90,7 @@ const RestPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <RestForm rest={editing} flag={addFlag} />
+          <DeliveryForm delivery={editing} flag={addFlag} />
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>
@@ -96,7 +98,7 @@ const RestPanel = (props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => {
-                  setAddFlag(restCells.length + 1);
+                  setAddFlag(dumpStations.length + 1);
                   setFormVisible(true);
                 }}
               >
@@ -123,6 +125,6 @@ const RestPanel = (props) => {
 };
 export default connect(({ editor }) => {
   const currentLogicAreaData = getCurrentLogicAreaData();
-  const restCells = currentLogicAreaData?.restCells ?? [];
-  return { restCells, mapContext: editor.mapContext };
-})(memo(RestPanel));
+  const dumpStations = currentLogicAreaData?.dumpStations ?? [];
+  return { dumpStations, mapContext: editor.mapContext };
+})(memo(EmergencyStopPanel));

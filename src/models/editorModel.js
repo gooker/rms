@@ -1287,9 +1287,7 @@ export default {
         returnPayload = renderChargerList([currentFunction], currentMap.cellMap)[0];
       }
       if (type === 'elevatorList') {
-        returnPayload = renderElevatorList([currentFunction], currentMap.cellMap)[
-          currentLogicAreaData.id
-        ];
+        returnPayload = renderElevatorList([currentFunction])[currentLogicAreaData.id];
       }
 
       // 新增
@@ -1305,9 +1303,7 @@ export default {
 
       // 对电梯进行特殊处理
       if (type === 'elevatorList') {
-        const preLoad = renderElevatorList(oldFunctionData, currentMap.cellMap)[
-          currentLogicAreaData.id
-        ];
+        const preLoad = renderElevatorList(oldFunctionData)[currentLogicAreaData.id];
         return {
           type: 'update',
           pre: preLoad,

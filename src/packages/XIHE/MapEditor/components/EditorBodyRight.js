@@ -1,21 +1,23 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { throttle } from 'lodash';
-import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
+import { RightCategory, HeaderHeight, EditorRightTools, RightToolBarWidth } from '../enums';
 import RestPanel from '../PopoverPanel/RestPanel';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CostPanel from '../PopoverPanel/CostPanel';
 import AislePanel from '../PopoverPanel/AislePanel';
 import StationPanel from '../PopoverPanel/StationPanel';
 import ChargerPanel from '../PopoverPanel/ChargerPanel';
+import DeliveryPanel from '../PopoverPanel/DeliveryPanel';
+import ElevatorPanel from '../PopoverPanel/ElevatorPanel';
 import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
+import IntersectionPanel from '../PopoverPanel/IntersectionPanel';
 import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
 import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
-import { RightCategory, HeaderHeight, EditorRightTools, RightToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
-import DeliveryPanel from '@/packages/XIHE/MapEditor/PopoverPanel/DeliveryPanel';
-import IntersectionPanel from '@/packages/XIHE/MapEditor/PopoverPanel/IntersectionPanel';
+import EmergencyStopPanel from '@/packages/XIHE/MapEditor/PopoverPanel/EmergencyStopPanel';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -68,6 +70,10 @@ const EditorBodyRight = (props) => {
         return <DeliveryPanel height={height - 10} />;
       case RightCategory.Intersection:
         return <IntersectionPanel height={height - 10} />;
+      case RightCategory.Elevator:
+        return <ElevatorPanel height={height - 10} />;
+      case RightCategory.EmergencyStop:
+        return <EmergencyStopPanel height={height - 10} />;
       default:
         return null;
     }

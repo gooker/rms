@@ -88,7 +88,7 @@ const SelectLogicArea = (props) => {
     <Dropdown overlay={langMenu}>
       <span className={styles.action}>
         <span style={{ fontSize: 15, fontWeight: 600 }}>
-          {logicName || formatMessage({ id: 'mapEditor.logicArea' })}
+          {logicName || formatMessage({ id: 'app.map.logicArea' })}
         </span>
         <DownOutlined style={{ marginLeft: 4 }} />
       </span>

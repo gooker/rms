@@ -1417,7 +1417,7 @@ class MonitorMapView extends BaseMap {
     entry.forEach((cellId) => {
       const entryCell = this.idCellMap.get(cellId);
       if (entryCell) {
-        entryCell.plusType(`store_group_in_${cellId}`, getTextureFromResources('enter_cell'));
+        entryCell.plusType(`store_group_in_${cellId}`, getTextureFromResources('entrance_cell'));
       }
     });
 
@@ -1425,7 +1425,7 @@ class MonitorMapView extends BaseMap {
     exit.forEach((cellId) => {
       const exitCell = this.idCellMap.get(cellId);
       if (exitCell) {
-        exitCell.plusType(`store_group_out_${cellId}`, getTextureFromResources('leave_cell'));
+        exitCell.plusType(`store_group_out_${cellId}`, getTextureFromResources('exit_cell'));
       }
     });
   };

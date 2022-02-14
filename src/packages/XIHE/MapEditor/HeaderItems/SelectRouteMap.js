@@ -82,7 +82,7 @@ const SelectRouteMap = (props) => {
     <Dropdown overlay={routeMapMenu}>
       <span className={styles.action}>
         <span style={{ fontSize: 15, fontWeight: 600 }}>
-          {currentRouteMapData?.name || formatMessage({ id: 'mapEditor.routeMap' })}
+          {currentRouteMapData?.name || formatMessage({ id: 'app.map.routeArea' })}
         </span>
         <DownOutlined style={{ marginLeft: 4 }} />
       </span>

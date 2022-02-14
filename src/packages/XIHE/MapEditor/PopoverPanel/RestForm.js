@@ -39,7 +39,7 @@ const RestForm = (props) => {
 
       <Form.Item
         name={'cellIds'}
-        label={formatMessage({ id: 'editor.restCells' })}
+        label={formatMessage({ id: 'editor.cellType.rest' })}
         initialValue={rest?.cellIds}
       >
         <SuperMultiSelect currentCellId={selectCellIds} style={{ width: '100%' }} />

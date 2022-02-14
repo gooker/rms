@@ -713,20 +713,20 @@ export default class BaseMap extends React.Component {
         const { cellId: entryCellId, leaveCellId, waitCellId } = door;
         // 入口
         if (entryCellId) {
-          const cellEntity = this.idCellMap.get(entryCellId);
-          cellEntity && cellEntity.plusType('elevator_in', getTextureFromResources('elevator_in'));
+          const cellEntity = this.idCellMap.get(parseInt(entryCellId));
+          cellEntity &&
+            cellEntity.plusType('elevator_in', getTextureFromResources('entrance_cell'));
         }
 
         // 出口
         if (leaveCellId) {
-          const cellEntity = this.idCellMap.get(leaveCellId);
-          cellEntity &&
-            cellEntity.plusType('elevator_out', getTextureFromResources('elevator_out'));
+          const cellEntity = this.idCellMap.get(parseInt(leaveCellId));
+          cellEntity && cellEntity.plusType('elevator_out', getTextureFromResources('exit_cell'));
         }
 
         // 等待点
         if (waitCellId) {
-          const cellEntity = this.idCellMap.get(waitCellId);
+          const cellEntity = this.idCellMap.get(parseInt(waitCellId));
           cellEntity && cellEntity.plusType('wait_cell', getTextureFromResources('wait_cell'));
         }
 
@@ -739,7 +739,7 @@ export default class BaseMap extends React.Component {
   removeElevator = (elevatorData) => {
     const { replace, innerMapping, doors = [] } = elevatorData;
     if (replace && innerMapping && doors?.length > 0) {
-      const elevatorCellEntity = this.idCellMap.get(innerMapping[replace]);
+      const elevatorCellEntity = this.idCellMap.get(parseInt(innerMapping[replace]));
       if (!elevatorCellEntity) return;
 
       const { x, y } = elevatorCellEntity;
@@ -753,17 +753,17 @@ export default class BaseMap extends React.Component {
         const { cellId: entryCellId, waitCellId, leaveCellId } = door;
 
         if (entryCellId) {
-          const cellEntity = this.idCellMap.get(entryCellId);
+          const cellEntity = this.idCellMap.get(parseInt(entryCellId));
           cellEntity && cellEntity.removeType('elevator_in');
         }
 
         if (leaveCellId) {
-          const cellEntity = this.idCellMap.get(leaveCellId);
+          const cellEntity = this.idCellMap.get(parseInt(leaveCellId));
           cellEntity && cellEntity.removeType('elevator_out');
         }
 
         if (waitCellId) {
-          const cellEntity = this.idCellMap.get(waitCellId);
+          const cellEntity = this.idCellMap.get(parseInt(waitCellId));
           cellEntity && cellEntity.removeType('wait_cell');
         }
 

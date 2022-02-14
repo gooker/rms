@@ -8,14 +8,14 @@ export default function requestAPI() {
   } else {
     apiMap = {
       // NT-11-Dev 内网
-      // sso: 'http://192.168.0.11:6021',
-      // coordinator: 'http://192.168.0.11:6023',
-      // ws: 'ws://52.83.193.245:10215/ws',
+      sso: 'http://192.168.0.11:6021',
+      coordinator: 'http://192.168.0.11:6023',
+      ws: 'ws://52.83.193.245:10215/ws',
 
       // NT-11-dev 公网
-      sso: 'http://52.83.193.245:10211',
-      coordinator: 'http://52.83.193.245:10213',
-      ws: 'ws://52.83.193.245:10215/ws',
+      // sso: 'http://52.83.193.245:10211',
+      // coordinator: 'http://52.83.193.245:10213',
+      // ws: 'ws://52.83.193.245:10215/ws',
 
       // NT-11-monthly
       // sso: 'http://192.168.0.11:6121',

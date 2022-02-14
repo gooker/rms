@@ -1,8 +1,6 @@
 export default {
   'mapEditor.map': '地图',
-  'mapEditor.logicArea': '逻辑区',
   'mapEditor.addLogicArea': '添加逻辑区',
-  'mapEditor.routeMap': '路线区',
   'mapEditor.addRouteMap': '添加路线区',
   'mapEditor.fullScreen': '进入全屏',
   'mapEditor.fullScreenOut': '退出全屏',
@@ -71,7 +69,6 @@ export default {
 
   'editor.moveCell.offsetDistance': '偏移距离',
   'editor.adjustSpace.baseLine': '调整基线',
-  'editor.restCells': '休息点',
 
   // 点位类型
   'editor.cellType.forbid': '不可走点',
@@ -86,6 +83,9 @@ export default {
   'editor.cellType.buffer': '缓冲点',
   'editor.cellType.bifurcation': '分叉点',
   'editor.cellType.charging': '充电点',
+  'editor.cellType.entrance': '入口点',
+  'editor.cellType.exit': '出口点',
+  'editor.cellType.rest': '休息点',
 
   // 线条
   'editor.cost.lowPriority': '低优先级',
@@ -116,8 +116,6 @@ export default {
   'editor.station.icon.width': '图标宽度',
   'editor.station.icon.height': '图标高度',
   'editor.aisle.unLockCells': '解锁点',
-  'editor.aisle.entrance': '入口',
-  'editor.aisle.exit': '出口',
   'editor.delivery': '投递点',
   'editor.delivery.basket': '投递框',
   'editor.delivery.baseCell': '基准点',
@@ -127,6 +125,9 @@ export default {
   'editor.delivery.different.required': '请选择两个不同的点位',
   'editor.intersection.multiDirection': '多向设置',
   'editor.intersection.isTrafficCell': '交通管控',
+  'editor.elevator.location': '电梯点',
+  'editor.elevator.singleDoor': '单门',
+  'editor.elevator.doubleDoor': '双门',
 
   // 添加地图标记
   'editor.label.creation': '创建标记信息',

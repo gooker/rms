@@ -3,14 +3,13 @@ import { Button, Empty } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
-import RestForm from './RestForm';
+import ElevatorForm from './ElevatorForm';
 import editorStyles from '../editorLayout.module.less';
 
-const RestPanel = (props) => {
-  const { height, dispatch, mapContext, restCells } = props;
+const ElevatorPanel = (props) => {
+  const { height, dispatch, mapContext, elevatorList, logicAreaList } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
@@ -25,37 +24,35 @@ const RestPanel = (props) => {
   function remove(flag) {
     dispatch({
       type: 'editor/removeFunction',
-      payload: { flag, type: 'restCells', scope: 'logic' },
+      payload: { flag, scope: 'logic', type: 'dumpStations' },
     }).then((result) => {
-      mapContext.renderRestCells(result, 'remove');
+      mapContext.removeDumpFunction(result);
       mapContext.refresh();
     });
   }
 
+  function renderLogicElevator(logicLocations) {
+    return Object.keys(logicLocations).map((logicId) => {
+      const { doors, innerMapping } = logicLocations[logicId];
+      if (Array.isArray(doors)) {
+        return {
+          field: 'doors',
+          label: logicAreaList[logicId].name,
+          value: Object.values(innerMapping).map((cellId) => cellId),
+        };
+      }
+      return {};
+    });
+  }
+
   function getListData() {
-    return restCells.map((item, index) => {
-      const { agvTypes, cellIds, priority } = item;
+    return elevatorList.map((item, index) => {
+      const { innerCellId, logicLocations } = item;
       return {
-        name: index + 1,
+        name: innerCellId[0],
         index,
         rawData: item,
-        fields: [
-          {
-            field: 'priority',
-            label: <FormattedMessage id={'app.common.priority'} />,
-            value: priority,
-          },
-          {
-            field: 'cellIds',
-            label: <FormattedMessage id={'editor.cellType.rest'} />,
-            value: cellIds,
-          },
-          {
-            field: 'agvTypes',
-            label: <FormattedMessage id={'app.agv.type'} />,
-            value: agvTypes,
-          },
-        ],
+        fields: renderLogicElevator(logicLocations),
       };
     });
   }
@@ -74,7 +71,7 @@ const RestPanel = (props) => {
             }}
           />
         ) : null}
-        <FormattedMessage id={'app.map.restArea'} />
+        <FormattedMessage id={'app.map.elevator'} />
         {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
           {formVisible
@@ -88,7 +85,7 @@ const RestPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <RestForm rest={editing} flag={addFlag} />
+          <ElevatorForm elevator={editing} flag={addFlag} />
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>
@@ -96,7 +93,7 @@ const RestPanel = (props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => {
-                  setAddFlag(restCells.length + 1);
+                  setAddFlag(elevatorList.length + 1);
                   setFormVisible(true);
                 }}
               >
@@ -122,7 +119,7 @@ const RestPanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const currentLogicAreaData = getCurrentLogicAreaData();
-  const restCells = currentLogicAreaData?.restCells ?? [];
-  return { restCells, mapContext: editor.mapContext };
-})(memo(RestPanel));
+  const { currentMap } = editor;
+  const { elevatorList, logicAreaList } = currentMap;
+  return { elevatorList, logicAreaList, mapContext: editor.mapContext };
+})(memo(ElevatorPanel));
