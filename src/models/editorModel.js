@@ -88,8 +88,9 @@ const EditorState = {
   categoryPanel: null, // 右侧菜单选中项
 
   // Mask相关
-  maskToolVisible: false,
-  maskInputVisible: false,
+  rangeForConfig: false, // 绘制区域用于配置地图功能
+  zoneMarkerVisible: false,
+  labelMarkerVisible: false,
 };
 
 export default {
@@ -111,10 +112,20 @@ export default {
         ...action.payload,
       };
     },
-    updateMaskToolVisible(state, action) {
+    updateRangeForConfig(state, action) {
       return {
         ...state,
-        maskToolVisible: action.payload,
+        rangeForConfig: true,
+        leftActiveCategory: action.payload,
+        zoneMarkerVisible: false,
+        labelMarkerVisible: false,
+      };
+    },
+
+    updateZoneMarkerVisible(state, action) {
+      return {
+        ...state,
+        zoneMarkerVisible: action.payload,
       };
     },
     updateSelections(state, action) {
@@ -123,18 +134,19 @@ export default {
         selections: action.payload,
       };
     },
-    updateMaskInputVisible(state, action) {
+    updateLabelInputVisible(state, action) {
       return {
         ...state,
-        maskInputVisible: action.payload,
+        labelMarkerVisible: action.payload,
       };
     },
     updateLeftActiveCategory(state, action) {
       return {
         ...state,
+        rangeForConfig: false,
         leftActiveCategory: action.payload,
-        maskToolVisible: false,
-        maskInputVisible: false,
+        zoneMarkerVisible: false,
+        labelMarkerVisible: false,
       };
     },
     updateEditPanelVisible(state, action) {
@@ -240,9 +252,7 @@ export default {
   effects: {
     *editorInitial(_, { put, call }) {
       const mapList = yield call(fetchSectionMaps);
-      if (
-        !dealResponse(mapList, false, null, formatMessage({ id: 'app.editor.fetchMapList.fail' }))
-      ) {
+      if (!dealResponse(mapList, false, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
         // 检查是否有地图数据
         if (mapList.length === 0) {
           message.info(formatMessage({ id: 'app.editor.fetchMapList.zero' }));

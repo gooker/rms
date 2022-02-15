@@ -1,58 +1,64 @@
 import React, { memo } from 'react';
 import { Form, Input, Button } from 'antd';
 import { connect } from '@/utils/RmsDva';
+import { ZoneMarkerType } from '@/config/consts';
 import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 20);
 
-const LabelInputModal = (props) => {
-  const { mapContext, dispatch, onCancel } = props;
+const ZoneMarkerModal = (props) => {
+  const { onCancel } = props;
+  const { mapContext, dispatch, leftActiveCategory } = props;
+
   const [formRef] = Form.useForm();
 
   function closeModal() {
     onCancel();
-    dispatch({ type: 'editor/updateLabelInputVisible', payload: false });
+    dispatch({ type: 'editor/updateZoneMarkerVisible', payload: false });
   }
 
   // 文字标记
-  function onsubmit() {
-    formRef
-      .validateFields()
-      .then(({ text, color }) => {
-        // 确定选择区域部分数据
-        const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator(
-          document.getElementById('editorPixi'),
-          document.getElementById('mapSelectionMask'),
-          mapContext.pixiUtils.viewport,
-        );
+  // 线框背景
+  function confirm() {
+    formRef.validateFields().then(({ text, color }) => {
+      const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator(
+        document.getElementById('editorPixi'),
+        document.getElementById('mapSelectionMask'),
+        mapContext.pixiUtils.viewport,
+      );
+      if (leftActiveCategory === LeftCategory.Rectangle) {
+        // 锚点在正中心
+        const type = ZoneMarkerType.RECT;
+        const code = `${type}_${getRandomString(6)}`;
         const width = Math.abs(worldStartX - worldEndX);
         const height = Math.abs(worldStartY - worldEndY);
         const x = worldStartX + width / 2;
         const y = worldStartY + height / 2;
-        const code = `LABEL_${getRandomString(6)}`;
-        mapContext.renderLabel(
-          {
-            code,
-            x,
-            y,
-            text,
-            color: color.replace('#', '0x'),
-            width,
-            height,
-          },
-          true,
-        );
+        mapContext.drawRectArea({ code, x, y, width, height, color, text }, true);
         dispatch({
-          type: 'editor/insertLabel',
-          payload: { code, x, y, text, color, width, height },
+          type: 'editor/insertZoneMarker',
+          payload: { code, x, y, width, height, color, type, text },
         });
-        closeModal();
-      })
-      .catch((reason) => {
-        console.log(reason);
-      });
+      }
+
+      if (leftActiveCategory === LeftCategory.Circle) {
+        const type = ZoneMarkerType.CIRCLE;
+        const code = `${type}_${getRandomString(6)}`;
+        const width = Math.abs(worldStartX - worldEndX);
+        const x = worldStartX + width / 2;
+        const y = worldStartY + width / 2;
+        const radius = width / 2;
+        mapContext.drawCircleArea({ code, x, y, radius, color, text }, true);
+        dispatch({
+          type: 'editor/insertZoneMarker',
+          payload: { code, x, y, radius, color, type, text },
+        });
+      }
+      onCancel();
+    });
   }
 
   return (
@@ -89,7 +95,7 @@ const LabelInputModal = (props) => {
         <input type={'color'} />
       </Form.Item>
       <Form.Item {...formItemLayoutNoLabel}>
-        <Button type={'primary'} onClick={onsubmit}>
+        <Button type={'primary'} onClick={confirm}>
           <FormattedMessage id={'app.button.confirm'} />
         </Button>
         <Button style={{ marginLeft: 15 }} onClick={closeModal}>
@@ -101,4 +107,5 @@ const LabelInputModal = (props) => {
 };
 export default connect(({ editor }) => ({
   mapContext: editor.mapContext,
-}))(memo(LabelInputModal));
+  leftActiveCategory: editor.leftActiveCategory,
+}))(memo(ZoneMarkerModal));

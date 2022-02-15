@@ -27,7 +27,7 @@ const MonitorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* 地图全屏 */}
-      <Tooltip title={formatMessage({ id: 'mapEditor.fullScreen' })} placement={'bottom'}>
+      <Tooltip title={formatMessage({ id: 'app.common.fullScreen' })} placement={'bottom'}>
         {isInnerFullscreen ? (
           <FullscreenExitOutlined
             onClick={() => {

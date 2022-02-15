@@ -156,13 +156,13 @@ const EditorMapContainer = (props) => {
       zoneMarker.forEach((zoneMarkerItem) => {
         // 线框
         if (zoneMarkerItem.type === ZoneMarkerType.RECT) {
-          const { code, x, y, width, height, color } = zoneMarkerItem;
-          mapContext.drawRectArea({ code, x, y, width, height, color }, true);
+          const { code, x, y, width, height, color, text } = zoneMarkerItem;
+          mapContext.drawRectArea({ code, x, y, width, height, color, text }, true);
         }
 
         if (zoneMarkerItem.type === ZoneMarkerType.CIRCLE) {
-          const { code, x, y, radius, color } = zoneMarkerItem;
-          mapContext.drawCircleArea({ code, x, y, radius, color }, true);
+          const { code, x, y, radius, color, text } = zoneMarkerItem;
+          mapContext.drawCircleArea({ code, x, y, radius, color, text }, true);
         }
 
         if (zoneMarkerItem.type === ZoneMarkerType.IMG) {
@@ -180,12 +180,12 @@ const EditorMapContainer = (props) => {
     }
 
     // 紧急停止区
-    // if (Array.isArray(emergencyStopFixedList)) {
-    //   const _emergencyStopFixedList = [...emergencyStopFixedList];
-    //   _emergencyStopFixedList.forEach((eStop) => {
-    //     mapContext.renderFixedEStopFunction(eStop);
-    //   });
-    // }
+    if (Array.isArray(emergencyStopFixedList)) {
+      const _emergencyStopFixedList = [...emergencyStopFixedList];
+      _emergencyStopFixedList.forEach((eStop) => {
+        mapContext.renderFixedEStopFunction(eStop);
+      });
+    }
   }
 
   function renderRouteMap() {

@@ -52,6 +52,8 @@ export default {
   'app.alert': '告警',
 
   // 通用页面标识内容
+  'app.common.fullScreen': '进入全屏',
+  'app.common.fullScreenOut': '退出全屏',
   'app.common.creator': '创建用户',
   'app.common.creationTime': '创建时间',
   'app.common.updater': '更新用户',
@@ -86,6 +88,7 @@ export default {
   'app.common.width': '宽度',
   'app.common.height': '高度',
   'app.common.depth': '深度',
+  'app.common.radius': '半径',
   'app.common.prop': '属性',
   'app.common.select': '选择',
   'app.common.drag': '拖拽',
@@ -94,11 +97,14 @@ export default {
   'app.common.text': '文本',
   'app.common.priority': '优先级',
   'app.common.target': '目标点', // 有重复
+  'app.common.param': '参数',
 
   // 地图相关
   'app.map.map': '地图',
   'app.map.logicArea': '逻辑区',
   'app.map.routeArea': '路线区',
+  'app.map.scope': '作用域',
+  'app.map.zone': '区域',
   'app.map.cell': '点位',
   'app.map.routeMap': '路线',
   'app.map.view': '显示',

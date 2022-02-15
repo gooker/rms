@@ -37,7 +37,7 @@ const EditorHeaderRightTools = (props) => {
   return (
     <>
       {/* 地图全屏 */}
-      <Tooltip title={formatMessage({ id: 'mapEditor.fullScreen' })}>
+      <Tooltip title={formatMessage({ id: 'app.common.fullScreen' })}>
         <span style={{ cursor: 'pointer' }}>
           {isInnerFullscreen ? (
             <FullscreenExitOutlined

@@ -151,7 +151,7 @@ class EditorBodyLeft extends React.PureComponent {
     if (!this.pinterIsMoving && pointerTimeGap <= 150) {
       this.cancelSelections();
     } else {
-      const { activeKey, dispatch } = this.props;
+      const { activeKey, dispatch, rangeForConfig } = this.props;
       // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
       if (activeKey === LeftCategory.Choose) {
         this.hideMask();
@@ -165,14 +165,16 @@ class EditorBodyLeft extends React.PureComponent {
 
       // 插入文字，鼠标抬起后立即弹出输入框
       if (LeftCategory.Font === activeKey) {
-        dispatch({ type: 'editor/updateMaskInputVisible', payload: true });
+        dispatch({ type: 'editor/updateLabelInputVisible', payload: true });
       }
 
-      // 画矩形和圆形情况下显示MaskTool
-      dispatch({
-        type: 'editor/updateMaskToolVisible',
-        payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
-      });
+      // 画矩形和圆形情况下显示区域配置Modal，前提是不是在配置地图功能
+      if (!rangeForConfig) {
+        dispatch({
+          type: 'editor/updateZoneMarkerVisible',
+          payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
+        });
+      }
     }
 
     // 重置参数
@@ -245,4 +247,5 @@ export default connect(({ editor }) => ({
   selections: editor.selections,
   currentCells: editor.currentCells,
   activeKey: editor.leftActiveCategory,
+  rangeForConfig: editor.rangeForConfig,
 }))(memo(EditorBodyLeft));

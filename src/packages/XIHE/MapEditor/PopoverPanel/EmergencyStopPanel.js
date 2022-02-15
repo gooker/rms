@@ -6,11 +6,11 @@ import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
-import DeliveryForm from './DeliveryForm';
+import EmergencyStopForm from './EmergencyStopForm';
 import editorStyles from '../editorLayout.module.less';
 
 const EmergencyStopPanel = (props) => {
-  const { height, dispatch, mapContext, dumpStations } = props;
+  const { height, dispatch, mapContext, emergencyStopFixedList } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
@@ -25,39 +25,68 @@ const EmergencyStopPanel = (props) => {
   function remove(flag) {
     dispatch({
       type: 'editor/removeFunction',
-      payload: { flag, scope: 'logic', type: 'dumpStations' },
+      payload: { flag, type: 'emergencyStopFixedList', scope: 'logic' },
     }).then((result) => {
-      mapContext.removeDumpFunction(result);
+      if (isNull(result)) return;
+      mapContext.removeFixedEStopFunction(result);
       mapContext.refresh();
     });
   }
 
   function getListData() {
-    return dumpStations.map((item, index) => {
-      const { name, agvDirection, x, y, dumpBasket } = item;
+    return emergencyStopFixedList.map((item, index) => {
+      const { x, y, name, code, estopMode, group, xlength, ylength, r } = item;
+      const fields = [
+        {
+          field: 'code',
+          label: <FormattedMessage id={'app.common.code'} />,
+          value: code,
+          col: 24,
+        },
+        {
+          field: 'estopMode',
+          label: <FormattedMessage id="editor.emergency.mode" />,
+          value: <FormattedMessage id={`editor.emergency.${estopMode}`} />,
+          col: 12,
+        },
+        {
+          field: 'group',
+          label: <FormattedMessage id="editor.emergency.group" />,
+          value: group,
+        },
+        { field: 'X', label: 'X', value: x },
+        { field: 'Y', label: 'Y', value: y },
+      ];
+
+      if (!isNull(xlength)) {
+        fields.push({
+          field: 'xlength',
+          label: <FormattedMessage id="app.common.width" />,
+          value: `${xlength} mm`,
+        });
+      }
+
+      if (!isNull(ylength)) {
+        fields.push({
+          field: 'ylength',
+          label: <FormattedMessage id="app.common.height" />,
+          value: `${ylength} mm`,
+        });
+      }
+
+      if (!isNull(r)) {
+        fields.push({
+          field: 'r',
+          label: <FormattedMessage id="app.common.radius" />,
+          value: `${r} mm`,
+        });
+      }
+
       return {
         name,
         index,
+        fields,
         rawData: item,
-        fields: [
-          {
-            field: 'name',
-            label: <FormattedMessage id={'app.common.name'} />,
-            value: name,
-          },
-          {
-            field: 'agvDirection',
-            label: <FormattedMessage id={'app.agv.direction'} />,
-            value: agvDirection,
-          },
-          { field: 'X', label: 'X', value: x },
-          { field: 'Y', label: 'Y', value: y },
-          {
-            field: 'basket',
-            label: <FormattedMessage id={'editor.delivery.basket'} />,
-            value: dumpBasket.map(({ key }) => key),
-          },
-        ],
       };
     });
   }
@@ -90,7 +119,13 @@ const EmergencyStopPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <DeliveryForm delivery={editing} flag={addFlag} />
+          <EmergencyStopForm
+            delivery={editing}
+            flag={addFlag}
+            back={() => {
+              setFormVisible(false);
+            }}
+          />
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>
@@ -98,7 +133,7 @@ const EmergencyStopPanel = (props) => {
                 type="primary"
                 style={{ marginBottom: 10 }}
                 onClick={() => {
-                  setAddFlag(dumpStations.length + 1);
+                  setAddFlag(emergencyStopFixedList.length + 1);
                   setFormVisible(true);
                 }}
               >
@@ -125,6 +160,6 @@ const EmergencyStopPanel = (props) => {
 };
 export default connect(({ editor }) => {
   const currentLogicAreaData = getCurrentLogicAreaData();
-  const dumpStations = currentLogicAreaData?.dumpStations ?? [];
-  return { dumpStations, mapContext: editor.mapContext };
+  const emergencyStopFixedList = currentLogicAreaData?.emergencyStopFixedList ?? [];
+  return { emergencyStopFixedList, mapContext: editor.mapContext };
 })(memo(EmergencyStopPanel));

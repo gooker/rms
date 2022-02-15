@@ -2,8 +2,7 @@ export default {
   'mapEditor.map': '地图',
   'mapEditor.addLogicArea': '添加逻辑区',
   'mapEditor.addRouteMap': '添加路线区',
-  'mapEditor.fullScreen': '进入全屏',
-  'mapEditor.fullScreenOut': '退出全屏',
+  'mapEditor.addScope': '添加作用域',
   'mapEditor.locate': '点位定位',
   'mapEditor.active': '激活地图',
   'mapEditor.active.warn': '无法取消激活',
@@ -129,7 +128,28 @@ export default {
   'editor.elevator.singleDoor': '单门',
   'editor.elevator.doubleDoor': '双门',
 
+  // 急停区
+  'editor.emergency.mode': '急停模式',
+  'editor.emergency.AGVPathFinished': '完成下发路径',
+  'editor.emergency.NearestQRCode': '紧急停在最近二维码 ',
+  'editor.emergency.ImmediateStop': '立即停止',
+  'editor.emergency.LockPath': '暂停锁格',
+  'editor.emergency.group': '组别',
+  'editor.emergency.shape': '形状',
+  'editor.emergency.shape.rect': '矩形',
+  'editor.emergency.shape.circle': '圆形',
+  'editor.emergency.autLoad': '自动载入数据',
+
   // 添加地图标记
+  'editor.zone.creation': '创建区域',
   'editor.label.creation': '创建标记信息',
   'editor.label.required': '请输入标签内容',
+
+  // 地图编程
+  'editor.program.cell.willArrive': '到达前',
+  'editor.program.cell.afterArrive': '到达后',
+  'editor.program.cell.beforeLeave': '离开前',
+  'editor.program.relation': '线条',
+  'editor.program.relation.beginning': '起点',
+  'editor.program.relation.destination': '终点',
 };

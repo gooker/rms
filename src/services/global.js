@@ -54,10 +54,3 @@ export async function fetchLanguageByAppCode(params) {
     data: params,
   });
 }
-
-// 获取小车任务类型
-export async function fetchAllTaskTypes() {
-  return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {
-    method: 'GET',
-  });
-}

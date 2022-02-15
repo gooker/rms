@@ -117,8 +117,8 @@ export const CommonFunctionSize = {
 };
 
 export const ElevatorSize = {
-  width: 2000,
-  height: 1500,
+  width: 900,
+  height: 1300,
 };
 
 export const CellTypeSize = {
@@ -144,6 +144,24 @@ export const GeoLockColor = {
   WillLocked: '0xF6830F', // 橙色
 };
 
+// 急停区状态颜色
+export const EStopStateColor = {
+  inactive: {
+    color: 0x999999,
+    fillColor: 0x666666,
+  },
+  active: {
+    safe: {
+      color: 0xf10d0d,
+      fillColor: 0xf56161,
+    },
+    unSafe: {
+      color: 0xffe600,
+      fillColor: 0xdec674,
+    },
+  },
+};
+
 // 地图元素 zIndex
 export const zIndex = {
   zoneMarker: 1,
@@ -152,6 +170,7 @@ export const zIndex = {
   cell: 4,
   line: 5,
   temporaryLock: 6,
+  emergencyStop: 6,
   agv: 7,
   pod: 8,
   cellHeat: 9,
@@ -209,3 +228,11 @@ export const MapSelectableSpriteType = {
   DELIVERY: 'DELIVERY',
   INTERSECTION: 'INTERSECTION',
 };
+
+// 急停区类型枚举
+export const EmergencyStopMode = [
+  { label: 'editor.emergency.AGVPathFinished', value: 'AGVPathFinished' },
+  { label: 'editor.emergency.NearestQRCode', value: 'NearestQRCode' },
+  { label: 'editor.emergency.ImmediateStop', value: 'ImmediateStop' },
+  { label: 'editor.emergency.LockPath', value: 'LockPath' },
+];

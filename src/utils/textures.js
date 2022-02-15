@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { CellSize, HeatCircleRadius } from '@/config/consts';
 
+const graphics = new PIXI.Graphics();
 export function getQrCodeSelectBorderTexture() {
-  const tmpSelectedBorder = new PIXI.Graphics();
-  tmpSelectedBorder.clear();
-  tmpSelectedBorder.lineStyle(1, 0xff5722, 1);
-  tmpSelectedBorder.beginFill(0xff5722, 0.5);
-  tmpSelectedBorder.drawRect(0, 0, CellSize.width, CellSize.height);
-  return window.PixiUtils.renderer.generateTexture(tmpSelectedBorder);
+  graphics.clear();
+  graphics.lineStyle(1, 0xff5722, 1);
+  graphics.beginFill(0xff5722, 0.5);
+  graphics.drawRect(0, 0, CellSize.width, CellSize.height);
+  return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
 export function getCostArrow(renderer, color) {
@@ -16,14 +16,11 @@ export function getCostArrow(renderer, color) {
   const lineWidth = 40;
 
   // 箭头主体
-  const arrow = new PIXI.Graphics();
-
-  arrow.clear();
-
-  arrow.beginFill(color);
+  graphics.clear();
+  graphics.beginFill(color);
 
   // 画一个三角形，作为箭头
-  arrow.drawPolygon([
+  graphics.drawPolygon([
     0,
     0, // Starting x, y coordinates
     -50,
@@ -31,15 +28,14 @@ export function getCostArrow(renderer, color) {
     50,
     300,
   ]);
-  arrow.endFill();
-
-  arrow.lineStyle(lineWidth, color, 1);
-  arrow.moveTo(0, 300);
-  arrow.lineTo(0, distanceInt);
+  graphics.endFill();
+  graphics.lineStyle(lineWidth, color, 1);
+  graphics.moveTo(0, 300);
+  graphics.lineTo(0, distanceInt);
 
   // 路线纹理
   const textureWidth = 100; // 150
-  return renderer.generateTexture(arrow, {
+  return renderer.generateTexture(graphics, {
     scaleMode: 1,
     resolution: 2,
     region: new PIXI.Rectangle(-textureWidth / 2, 0, textureWidth, distanceInt),
@@ -52,11 +48,10 @@ export function getBoldCostArrow(color) {
   const lineWidth = 40;
 
   // 箭头主体
-  const arrow = new PIXI.Graphics();
-  arrow.clear();
-  arrow.lineStyle(lineWidth, color, 1);
-  arrow.moveTo(0, distanceInt);
-  arrow.lineTo(0, 0);
+  graphics.clear();
+  graphics.lineStyle(lineWidth, color, 1);
+  graphics.moveTo(0, distanceInt);
+  graphics.lineTo(0, 0);
 
   // 箭头左帽
   let arrowX;
@@ -68,8 +63,8 @@ export function getBoldCostArrow(color) {
   const topY = headLength * Math.sin(angle1);
   arrowX = topX;
   arrowY = topY;
-  arrow.moveTo(arrowX, arrowY);
-  arrow.lineTo(0, 0);
+  graphics.moveTo(arrowX, arrowY);
+  graphics.lineTo(0, 0);
 
   // 箭头右帽
   const angle2 = ((90 - theta) * Math.PI) / 180;
@@ -77,21 +72,20 @@ export function getBoldCostArrow(color) {
   const botY = headLength * Math.sin(angle2);
   arrowX = botX;
   arrowY = botY;
-  arrow.lineTo(arrowX, arrowY);
+  graphics.lineTo(arrowX, arrowY);
 
   // 路线纹理
-  return window.PixiUtils.renderer.generateTexture(arrow);
+  return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
 export function getTaskPathTexture(color) {
   const distance = 100; // 默认长度是100
   const lineWidth = CellSize.width / 3;
-  const arrow = new PIXI.Graphics();
-  arrow.clear();
-  arrow.lineStyle(lineWidth, color, 1);
-  arrow.moveTo(0, 0);
-  arrow.lineTo(0, distance);
-  return window.PixiUtils.renderer.generateTexture(arrow, {
+  graphics.clear();
+  graphics.lineStyle(lineWidth, color, 1);
+  graphics.moveTo(0, 0);
+  graphics.lineTo(0, distance);
+  return window.PixiUtils.renderer.generateTexture(graphics, {
     scaleMode: 1,
     resolution: 2,
     region: new PIXI.Rectangle(-25, 0, 50, distance),
@@ -99,29 +93,44 @@ export function getTaskPathTexture(color) {
 }
 
 export function getCellHeatTexture(color) {
-  const heatCircle = new PIXI.Graphics();
-  heatCircle.clear();
-  heatCircle.lineStyle(1, color, 1);
-  heatCircle.beginFill(color, 1);
-  heatCircle.drawCircle(0, 0, HeatCircleRadius);
-  return window.PixiUtils.renderer.generateTexture(heatCircle);
+  graphics.clear();
+  graphics.lineStyle(1, color, 1);
+  graphics.beginFill(color, 1);
+  graphics.drawCircle(0, 0, HeatCircleRadius);
+  return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
 export function getAgvSelectBorderTexture() {
-  const tmpSelectedBorder = new PIXI.Graphics();
-  tmpSelectedBorder.clear();
-  tmpSelectedBorder.lineStyle(1, 0xffffff, 1);
-  tmpSelectedBorder.beginFill(0xffffff, 0.5);
-  tmpSelectedBorder.drawCircle(0, 0, 500);
-  return window.PixiUtils.renderer.generateTexture(tmpSelectedBorder);
+  graphics.clear();
+  graphics.lineStyle(1, 0xffffff, 1);
+  graphics.beginFill(0xffffff, 0.5);
+  graphics.drawCircle(0, 0, 500);
+  return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
 export function getRectLock(width, height) {
-  const rectLock = new PIXI.Graphics();
-  rectLock.clear();
-  rectLock.lineStyle(20, 0xffffff, 1);
-  rectLock.drawRect(0, 0, width, height);
-  return window.PixiUtils.renderer.generateTexture(rectLock);
+  graphics.clear();
+  graphics.lineStyle(20, 0xffffff, 1);
+  graphics.drawRect(0, 0, width, height);
+  return window.PixiUtils.renderer.generateTexture(graphics);
+}
+
+export function getEStopTexture(color) {
+  graphics.clear();
+  graphics.lineStyle(20, color, 1);
+  graphics.beginFill(color);
+  graphics.drawRect(0, 0, 100, 100);
+  graphics.endFill();
+  return window.PixiUtils.renderer.generateTexture(graphics);
+}
+
+export function getEStopCircleTexture(color) {
+  graphics.clear();
+  graphics.lineStyle(70, color, 1);
+  graphics.beginFill(color);
+  graphics.drawCircle(0, 0, 100);
+  graphics.endFill();
+  return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
 export function loadTexturesForMap() {

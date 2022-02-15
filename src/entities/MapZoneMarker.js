@@ -1,10 +1,11 @@
 import * as PIXI from 'pixi.js';
 import ResizableContainer from '@/components/ResizableContainer';
 import { MapSelectableSpriteType, zIndex } from '@/config/consts';
+import { Text } from '@/entities/index';
 
 export default class MapZoneMarker extends ResizableContainer {
   constructor(props) {
-    const { code, type, x, y, radius, width, height, color, data } = props;
+    const { code, type, x, y, radius, width, height, color, text, data } = props;
     const { interactive, select, ctrlSelect, refresh } = props;
     super();
     this.x = x;
@@ -13,6 +14,7 @@ export default class MapZoneMarker extends ResizableContainer {
     this.type = type;
     this.data = data;
     this.color = color;
+    this.text = text;
     this.radius = radius;
     this.select = (add) => {
       select({ id: code, type: MapSelectableSpriteType.ZONE }, add);
@@ -47,8 +49,26 @@ export default class MapZoneMarker extends ResizableContainer {
       element.width = width;
       element.height = height;
     }
-    element.alpha = 0.8;
+    element.alpha = 0.7;
     element.anchor.set(0.5);
+    element.zIndex = 1;
+
+    // 添加Label
+    const textSprite = new Text(this.text, 0, 0, '0xffffff', true, 200);
+    let textWidth, textHeight;
+    if (width >= height) {
+      textHeight = height;
+      textWidth = (textSprite.width * textHeight) / textSprite.height;
+    } else {
+      textWidth = width;
+      textHeight = (textSprite.height * textWidth) / textSprite.width;
+    }
+    textSprite.anchor.set(0.5);
+    textSprite.width = textWidth;
+    textSprite.height = textHeight;
+    textSprite.zIndex = 2;
+
+    element.addChild(textSprite);
     return element;
   }
 
