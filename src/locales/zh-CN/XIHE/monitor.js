@@ -32,4 +32,21 @@ export default {
   'monitor.tip.fetchLockFail': '获取锁格信息失败',
   'monitor.tip.LockDataAbnormal': '锁格数据异常: {detail}',
   'monitor.tip.fetchCellLockFail': '获取点位锁格信息失败',
+
+  // modal title
+  'monitor.goRest.toRestArea': '回休息区',
+  'monitor.advancedcarry.released': '释放',
+  'monitor.pod.noRotation': '不旋转',
+  'monitor.direction.topSide': '目标点上方',
+  'monitor.direction.rightSide': '目标点右方',
+  'monitor.direction.bottomSide': '目标点下方',
+  'monitor.direction.leftSide': '目标点左方',
+  'monitor.advancedcarry.arrivalStatus': '到站状态',
+  'monitor.advancedcarry.putDown': '放下货架',
+  'monitor.advancedcarry.notPutDown': '不放下货架',
+  'monitor.advancedcarry.toRestPoint': '回休息点',
+  'monitor.advancedcarry.backZone': '放回区域',
+  'monitor.advancedcarry.scopeCode': '作用域',
+  
+
 };

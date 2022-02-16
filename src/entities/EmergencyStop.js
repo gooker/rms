@@ -23,7 +23,6 @@ class EmergencyStop extends PIXI.Container {
       this.drawLogicOrSection(props);
     } else {
       this.drawShape(props);
-      this.drawShape(props);
       this.addName(props);
       this.addIcon(props);
       isNull(props.notShowFixed) && props.isFixed && this.addFixed(props); //notShowFixed是地图编辑传的参数 地图编辑不需要显示固定icon
@@ -190,7 +189,7 @@ class EmergencyStop extends PIXI.Container {
     this[`logicSprite${type}`].height = this.$worldHeight;
     this[`logicSprite${type}`].x = -400;
     this[`logicSprite${type}`].y = -400;
-    this[`logicSprite${type}`].tint = this.fillcolor.replace('#', '0x');
+    this[`logicSprite${type}`].tint = this.fillcolor;
     this[`logicSprite${type}`].alpha = 0.4;
     this[`logicSprite${type}`].anchor.set(0);
     this.addChild(this[`logicSprite${type}`]);
