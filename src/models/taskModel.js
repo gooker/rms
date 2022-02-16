@@ -45,7 +45,6 @@ export default {
         current: 1,
         taskId,
       });
-      debugger;
       if (dealResponse(responseLog)) {
         return;
       }

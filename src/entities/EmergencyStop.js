@@ -212,7 +212,7 @@ class EmergencyStop extends PIXI.Container {
     this[`logicSprite${type}`].height = this.$worldHeight;
     this[`logicSprite${type}`].x = -400;
     this[`logicSprite${type}`].y = -400;
-    this[`logicSprite${type}`].tint = this.fillColor.replace('#', '0x');
+    this[`logicSprite${type}`].tint = this.fillcolor;
     this[`logicSprite${type}`].alpha = 0.4;
     this[`logicSprite${type}`].anchor.set(0);
     this.addChild(this[`logicSprite${type}`]);

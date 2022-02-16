@@ -4,13 +4,7 @@ import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import {
-  dealResponse,
-  formatMessage,
-  getToteLayoutBaseParam,
-  isEqual,
-  isNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull } from '@/utils/util';
 import {
   AGVState,
   ElementType,
@@ -318,8 +312,8 @@ class MonitorMapView extends BaseMap {
     }
     latentAGV = new LatentAGV({
       id: latentAGVData.robotId,
-      x: latentAGVData.x || cellEntity.x,
-      y: latentAGVData.y || cellEntity.y,
+      x: latentAGVData.x || cellEntity?.x,
+      y: latentAGVData.y || cellEntity?.y,
       battery: latentAGVData.battery || 0,
       errorLevel: latentAGVData.errorLevel || 0,
       state: latentAGVData.agvStatus ?? AGVState.offline,
