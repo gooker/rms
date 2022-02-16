@@ -8,6 +8,7 @@ import editorStyles from '../editorLayout.module.less';
 import commonStyles from '@/common.module.less';
 import styles from './popoverPanel.module.less';
 import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtil';
+import { MapSelectableSpriteType } from '@/config/consts';
 
 const CellTypeConfigurePanel = (props) => {
   const { dispatch, height, mapContext, selectCells } = props;
@@ -17,8 +18,7 @@ const CellTypeConfigurePanel = (props) => {
       type: 'editor/setCellType',
       payload: { type, scope, operation: value, texture },
     }).then((result) => {
-      // TIP: 这个dispatch只是为了触发这个组件rerender, 不然select框不更新
-      dispatch({ type: 'editor/saveSelectCells', payload: [...selectCells] });
+      dispatch({ type: 'editor/saveForceUpdate' });
       mapContext.updateCells({ type: 'type', payload: result });
     });
   }
@@ -85,6 +85,7 @@ const CellTypeConfigurePanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
+  const { selections, mapContext, forceUpdate } = editor;
   const currentLogicAreaData = getCurrentLogicAreaData();
   const currentRouteMap = getCurrentRouteMapData();
 
@@ -96,10 +97,13 @@ export default connect(({ editor }) => {
   const followCellIds = currentRouteMap.followCellIds || [];
   const waitCellIds = currentRouteMap.waitCellIds || [];
 
-  return {
-    mapContext: editor.mapContext,
-    selectCells: editor.selectCells,
+  const selectCells = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
 
+  return {
+    mapContext,
+    selectCells,
     blockCellIds,
     storeCellIds,
     followCellIds,
@@ -107,5 +111,6 @@ export default connect(({ editor }) => {
     taskCellIds,
     safeAreaCellIds,
     rotateCellIds,
+    forceUpdate,
   };
 })(memo(CellTypeConfigurePanel));

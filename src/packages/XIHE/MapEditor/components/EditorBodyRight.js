@@ -19,6 +19,7 @@ import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
 import styles from '../editorLayout.module.less';
 import EmergencyStopPanel from '@/packages/XIHE/MapEditor/PopoverPanel/EmergencyStopPanel';
 import ProgramingPanel from '@/packages/XIHE/MapEditor/PopoverPanel/ProgramingPanel';
+import Property from '@/packages/XIHE/MapEditor/PopoverPanel/Property';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -49,6 +50,8 @@ const EditorBodyRight = (props) => {
 
   function renderPanelContent() {
     switch (categoryPanel) {
+      case RightCategory.Prop:
+        return <Property height={height - 10} />;
       case RightCategory.Cell:
         return <CellPanel height={height - 10} />;
       case RightCategory.Cost:

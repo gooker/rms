@@ -40,12 +40,12 @@ const MapUpdateHistory = (props) => {
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'mapEditor.editorVersion' }),
+      title: formatMessage({ id: 'editor.editorVersion' }),
       dataIndex: 'ever',
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'mapEditor.mapVersion' }),
+      title: formatMessage({ id: 'editor.mapVersion' }),
       dataIndex: 'mver',
       align: 'center',
     },

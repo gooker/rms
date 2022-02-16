@@ -1,39 +1,39 @@
 export default {
-  'mapEditor.map': '地图',
-  'mapEditor.addLogicArea': '添加逻辑区',
-  'mapEditor.addRouteMap': '添加路线区',
-  'mapEditor.addScope': '添加作用域',
-  'mapEditor.locate': '点位定位',
-  'mapEditor.active': '激活地图',
-  'mapEditor.active.warn': '无法取消激活',
-  'mapEditor.selectMap.required': '请先选择地图',
-  'mapEditor.placeholder.requireText': '输入文本',
-  'mapEditor.saveMap.contentLoss': '是否保存当前修改的地图？若不保存, 则所有的修改会丢失',
-  'mapEditor.button.notSaveMap': '不保存',
-  'mapEditor.button.record': '保存记录',
-  'mapEditor.deleteMapConfirm': '是否确定删除该地图?',
-  'mapEditor.updateHistory': '地图更新记录',
-  'mapEditor.editorVersion': '编辑器版本',
-  'mapEditor.mapVersion': '地图版本',
+  'editor.addLogicArea': '添加逻辑区',
+  'editor.addRouteMap': '添加路线区',
+  'editor.addScope': '添加作用域',
+  'editor.locate': '点位定位',
+  'editor.active': '激活地图',
+  'editor.active.warn': '无法取消激活',
+  'editor.selectMap.required': '请先选择地图',
+  'editor.saveMap.contentLoss': '是否保存当前修改的地图？若不保存, 则所有的修改会丢失',
+  'editor.button.notSaveMap': '不保存',
+  'editor.button.record': '保存记录',
+  'editor.deleteMapConfirm': '是否确定删除该地图?',
+  'editor.updateHistory': '地图更新记录',
+  'editor.editorVersion': '编辑器版本',
+  'editor.mapVersion': '地图版本',
+  'editor.programing': '编程信息',
 
   // 操作提示
-  'mapEditor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',
-  'mapEditor.tip.blockWithoutOthers':
-    '{value} 点已经相关作用域是Block点, 不可设置为其它任意点位类型',
-  'mapEditor.tip.noLogicStorage': '当前逻辑区没有存储区',
+  'editor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',
+  'editor.tip.blockWithoutOthers': '{value} 点已经相关作用域是Block点, 不可设置为其它任意点位类型',
+  'editor.tip.noLogicStorage': '当前逻辑区没有存储区',
+  'editor.message.codeNotExit': '点位不存在',
+  'editor.message.codeNotInRange': '点位ID不在该逻辑区范围',
   'editor.code.duplicate': '编码已存在',
 
   // 施工图
-  'mapEditor.constructionDrawing.export': '导出施工图',
+  'editor.constructionDrawing.export': '导出施工图',
 
   // 两侧工具栏
-  'mapEditor.tools.insertPicture': '插入图片',
-  'mapEditor.tools.insertFont': '插入文字',
-  'mapEditor.tools.insertRect': '绘制矩形',
-  'mapEditor.tools.insertCircle': '绘制圆形',
-  'mapEditor.tools.useTemplate': '引用模板',
-  'mapEditor.tools.createTemplate': '创建模板',
-  'mapEditor.tools.history': '操作历史',
+  'editor.tools.insertPicture': '插入图片',
+  'editor.tools.insertFont': '插入文字',
+  'editor.tools.insertRect': '绘制矩形',
+  'editor.tools.insertCircle': '绘制圆形',
+  'editor.tools.useTemplate': '引用模板',
+  'editor.tools.createTemplate': '创建模板',
+  'editor.tools.history': '操作历史',
 
   // 点位操作
   'editor.cell.code': '地址码',
@@ -69,7 +69,8 @@ export default {
   'editor.moveCell.offsetDistance': '偏移距离',
   'editor.adjustSpace.baseLine': '调整基线',
 
-  // 点位类型
+  // 点位类型  @有重复
+  'editor.cellType': '点位类型',
   'editor.cellType.forbid': '不可走点',
   'editor.cellType.storage': '存储点',
   'editor.cellType.follow': '跟车点',

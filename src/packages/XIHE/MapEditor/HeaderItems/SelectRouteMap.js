@@ -42,7 +42,7 @@ const SelectRouteMap = (props) => {
       // 添加路线区
       <Menu.Item key="add">
         <PlusOutlined />
-        <FormattedMessage id="mapEditor.addRouteMap" />
+        <FormattedMessage id="editor.addRouteMap" />
       </Menu.Item>,
     );
     return result;

@@ -18,7 +18,7 @@ const ProgramingZone = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.List name="params">
+        <Form.List name="params" initialValue={[null]}>
           {(fields, { add, remove }, { errors }) => (
             <>
               {fields.map((field, index) => (
