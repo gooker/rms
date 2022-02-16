@@ -1,96 +1,37 @@
 import React, { memo, useRef, useState } from 'react';
-import { Button, Modal } from 'antd';
+import { Modal } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import {
-  convertPngToBase64,
   getColorRGB,
   getRandomString,
+  convertPngToBase64,
   getUploadedImageDetail,
 } from '@/utils/util';
-import { transformScreenToWorldCoordinator } from '@/utils/mapUtil';
+import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ZoneMarkerType } from '@/config/consts';
 import LabelInputModal from './LabelInputModal';
+import ZoneMarkerModal from './ZoneMarkerModal';
 import commonStyles from '@/common.module.less';
 
 const EditorMask = (props) => {
-  const { dispatch, mapContext, leftActiveCategory, maskToolVisible, maskInputVisible } = props;
+  const { dispatch, mapContext, leftActiveCategory, zoneMarkerVisible, labelMarkerVisible } = props;
 
   const maskRef = useRef();
   const filePickerRef = useRef();
   const [color, setColor] = useState('transparent');
 
-  function getSelectionWorldCoordinator() {
-    const mapDOM = document.getElementById('editorPixi');
-    const x = maskRef.current.offsetLeft;
-    const y = maskRef.current.offsetTop;
-    const { width, height } = maskRef.current.getBoundingClientRect();
-    // 转换坐标
-    const [rangeWorldStartX, rangeWorldStartY] = transformScreenToWorldCoordinator(
-      { x, y },
-      mapDOM,
-      mapContext.pixiUtils.viewport,
-    );
-    const [rangeWorldEndX, rangeWorldEndY] = transformScreenToWorldCoordinator(
-      { x: x + width, y: y + height },
-      mapDOM,
-      mapContext.pixiUtils.viewport,
-    );
-
-    return {
-      width,
-      height,
-      worldStartX: rangeWorldStartX,
-      worldStartY: rangeWorldStartY,
-      worldEndX: rangeWorldEndX,
-      worldEndY: rangeWorldEndY,
-    };
-  }
-
-  // 线框背景
-  function confirm() {
-    const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
-    if (leftActiveCategory === LeftCategory.Rectangle) {
-      // 锚点在正中心
-      const type = ZoneMarkerType.RECT;
-      const code = `${type}_${getRandomString(6)}`;
-      const width = Math.abs(worldStartX - worldEndX);
-      const height = Math.abs(worldStartY - worldEndY);
-      const x = worldStartX + width / 2;
-      const y = worldStartY + height / 2;
-      mapContext.drawRectArea({ code, x, y, width, height, color }, true);
-      dispatch({
-        type: 'editor/insertZoneMarker',
-        payload: { code, x, y, width, height, color, type },
-      });
-    }
-
-    if (leftActiveCategory === LeftCategory.Circle) {
-      const type = ZoneMarkerType.CIRCLE;
-      const code = `${type}_${getRandomString(6)}`;
-      const width = Math.abs(worldStartX - worldEndX);
-      const x = worldStartX + width / 2;
-      const y = worldStartY + width / 2;
-      const radius = width / 2;
-      mapContext.drawCircleArea({ code, x, y, radius, color }, true);
-      dispatch({
-        type: 'editor/insertZoneMarker',
-        payload: { code, x, y, radius, color, type },
-      });
-    }
-    cancel();
-  }
-
   function cancel() {
     // 重置选择框DOM样式
     maskRef.current.style.display = 'none';
+    maskRef.current.style.cursor = 'default';
     maskRef.current.style.width = `${0}px`;
     maskRef.current.style.height = `${0}px`;
     maskRef.current.style.borderRadius = `${0}px`;
 
     // 重置工具栏显示状态
-    dispatch({ type: 'editor/updateMaskToolVisible', payload: false });
+    dispatch({ type: 'editor/updateZoneMarkerVisible', payload: false });
     setColor(null);
   }
 
@@ -99,7 +40,11 @@ const EditorMask = (props) => {
     const file = filePickerRef.current.files[0];
     if (file instanceof File) {
       const data = await convertPngToBase64(file);
-      const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator();
+      const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator(
+        document.getElementById('editorPixi'),
+        maskRef.current,
+        mapContext.pixiUtils.viewport,
+      );
 
       // 锚点在正中心
       const code = `${ZoneMarkerType.IMG}_${getRandomString(6)}`;
@@ -147,44 +92,24 @@ const EditorMask = (props) => {
         ...(leftActiveCategory === LeftCategory.Circle ? { borderRadius: '50%' } : {}),
       }}
     >
-      {/* 区域标记 */}
-      {maskToolVisible ? (
-        <div style={{ position: 'relative', width: '100%', height: '100%', cursor: 'grab' }}>
-          <input
-            type={'color'}
-            style={{ position: 'absolute', right: '90px', bottom: '-40px' }}
-            onChange={(value) => {
-              setColor(value.target.value);
-            }}
-          />
-          <Button
-            type={'link'}
-            style={{ position: 'absolute', right: '30px', bottom: '-40px' }}
-            onClick={cancel}
-          >
-            <FormattedMessage id={'app.button.cancel'} />
-          </Button>
-          <Button
-            type={'link'}
-            style={{ position: 'absolute', right: '-10px', bottom: '-40px' }}
-            onClick={confirm}
-          >
-            <FormattedMessage id={'app.button.confirm'} />
-          </Button>
-        </div>
-      ) : null}
+      {/* 创建区域 */}
+      <Modal
+        visible={zoneMarkerVisible}
+        title={<FormattedMessage id={'editor.zone.creation'} />}
+        footer={null}
+        closable={false}
+      >
+        <ZoneMarkerModal onCancel={cancel} />
+      </Modal>
 
       {/* Label输入 */}
       <Modal
-        visible={maskInputVisible}
+        visible={labelMarkerVisible}
         title={<FormattedMessage id={'editor.label.creation'} />}
         footer={null}
         closable={false}
       >
-        <LabelInputModal
-          onCancel={cancel}
-          getSelectionWorldCoordinator={getSelectionWorldCoordinator}
-        />
+        <LabelInputModal onCancel={cancel} />
       </Modal>
 
       {/* 图片选择器 */}
@@ -203,7 +128,7 @@ const EditorMask = (props) => {
 };
 export default connect(({ editor }) => ({
   leftActiveCategory: editor.leftActiveCategory,
-  maskInputVisible: editor.maskInputVisible,
-  maskToolVisible: editor.maskToolVisible,
+  labelMarkerVisible: editor.labelMarkerVisible,
+  zoneMarkerVisible: editor.zoneMarkerVisible,
   mapContext: editor.mapContext,
 }))(memo(EditorMask));

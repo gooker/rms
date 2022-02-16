@@ -3,6 +3,8 @@ import { Viewport } from 'pixi-viewport';
 import { Simple } from 'pixi-cull';
 // import Simple from '@/libs/SimpleCull';
 
+window.PIXI = PIXI;
+
 export default class PixiBuilder {
   constructor(width, height, htmlDOM, draggable = true) {
     this.width = width;

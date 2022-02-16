@@ -2,32 +2,181 @@ import * as PIXI from 'pixi.js';
 import { isNull } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex } from '@/config/consts';
+import { EStopStateColor, zIndex } from '@/config/consts';
+import Text from './Text';
+import ResizableContainer from '@/components/ResizableContainer';
 
 class EmergencyStop extends PIXI.Container {
   constructor(props) {
     super();
-    this.x = props.x || 0;
-    this.y = props.y || 0;
+    this.x = props.x;
+    this.y = props.y;
     this.zIndex = zIndex.emergencyStop;
+    this.visible = this.$visible;
     this.code = props.code;
     this.angle = props.angle || 0;
-    this.$angle = props.angle || 0; //// 仅用于纠正名称角度
     this.activated = props.activated || false;
     this.safe = props.safe || 0;
     this.boxType = props.ylength && props.xlength ? 'Rect' : 'Circle';
     this.$visible = props.showEmergency;
-    this.estopType = props.estopType;
+
+    this.select = props.select;
+    this.refresh = props.refresh;
+
     // Section,Logic
     if (props.estopType === 'Section' || props.estopType === 'Logic') {
       this.drawLogicOrSection(props);
     } else {
-      this.drawShape(props);
-      this.addName(props);
-      this.addIcon(props);
-      isNull(props.notShowFixed) && props.isFixed && this.addFixed(props); //notShowFixed是地图编辑传的参数 地图编辑不需要显示固定icon
-      isNull(props.notShowFixed) && this.interactiveModal(props); // 地图编辑不用看弹框
+      const element = this.createElement(props);
+      // this.create(element, () => {}, zIndex.zoneMarker, true);
     }
+  }
+
+  createElement(props) {
+    const container = new PIXI.Container();
+    const { eStopArea, color, width, height, radius } = this.createEStopArea(props);
+    // container.addChild(eStopArea);
+    this.addChild(this.createBorder(width, height, radius, color));
+    this.addChild(this.createName(props));
+    // this.addChild(this.createIcon(props));
+
+    // notShowFixed是地图编辑传的参数 地图编辑不需要显示固定icon
+    // if (isNull(props.notShowFixed) && props.isFixed) {
+    //   container.addChild(this.createFixedIcon(props));
+    // }
+    //
+    // // 地图编辑不用看弹框
+    // if (isNull(props.notShowFixed)) {
+    //   this.interactiveModal(props);
+    // }
+
+    // this.addChild(container);
+    // return container;
+  }
+
+  // 安全显示红色，不安全显示黄色，禁用显示灰色
+  createEStopArea(props) {
+    let texture;
+    let color, fillColor;
+    if (props.activated) {
+      if (props.isSafe) {
+        color = EStopStateColor.active.safe.color;
+        fillColor = EStopStateColor.active.safe.fillColor;
+        if (this.boxType === 'Rect') {
+          texture = getTextureFromResources('_EStopActiveSafe');
+        } else {
+          texture = getTextureFromResources('_EStopCircleActiveSafe');
+        }
+      } else {
+        color = EStopStateColor.active.unSafe.color;
+        fillColor = EStopStateColor.active.unSafe.fillColor;
+        if (this.boxType === 'Rect') {
+          texture = getTextureFromResources('_EStopActiveUnsafe');
+        } else {
+          texture = getTextureFromResources('_EStopCircleActiveUnsafe');
+        }
+      }
+    } else {
+      color = EStopStateColor.inactive.color;
+      fillColor = EStopStateColor.inactive.fillColor;
+      if (this.boxType === 'Rect') {
+        texture = getTextureFromResources('_EStopInactive');
+      } else {
+        texture = getTextureFromResources('_EStopCircleInactive');
+      }
+    }
+
+    const eStopArea = new PIXI.Sprite(texture);
+    eStopArea.alpha = 0.5;
+
+    let { xlength: width, ylength: height, r: radius } = props;
+    if (isNull(width) || isNull(height)) {
+      width = radius * 2;
+      height = radius * 2;
+    }
+    eStopArea.width = width;
+    eStopArea.height = height;
+    return { eStopArea, color, fillColor, width, height, radius };
+  }
+
+  createBorder(width, height, radius, color) {
+    const line = new PIXI.Graphics();
+    if (isNull(radius)) {
+      line.lineStyle(50, color).drawRect(0, 0, width, height);
+    } else {
+      line.lineStyle(50, color).drawCircle(0, 0, radius);
+    }
+    line.alpha = 0.8;
+    return line;
+  }
+
+  createName(props) {
+    const nameText = props.name
+      ? props.name
+      : props.group
+      ? `${props.group}: ${props.code}`
+      : props.code;
+
+    let { xlength: width, ylength: height, r: radius } = props;
+    if (isNull(width) || isNull(height)) {
+      width = radius * 2;
+      height = radius * 2;
+    }
+    const namTextSprite = new Text(nameText, width / 2, height / 2, 0xffffff, true, 200);
+    namTextSprite.alpha = 0.8;
+    namTextSprite.anchor.set(0.5);
+    namTextSprite.angle = -this.angle;
+
+    // 字体大小自适应急停区大小
+    let textWidth, textHeight;
+    if (width >= height) {
+      textHeight = height / 2;
+      textWidth = (namTextSprite.width * textHeight) / namTextSprite.height;
+    } else {
+      textWidth = width / 2;
+      textHeight = (namTextSprite.height * textWidth) / namTextSprite.width;
+    }
+    namTextSprite.width = textWidth;
+    namTextSprite.height = textHeight;
+    return namTextSprite;
+  }
+
+  createIcon(props) {
+    let _x, _y;
+    if (this.boxType === 'Rect') {
+      _x = props.xlength - 300;
+      _y = props.ylength - 300;
+    } else {
+      _x = props.r;
+      _y = props.r * 2 - 300;
+    }
+    const fixedTexture = getTextureFromResources('barrier');
+    const barrierIcon = new PIXI.Sprite(fixedTexture);
+    barrierIcon.x = _x;
+    barrierIcon.y = _y;
+    barrierIcon.angle = -this.angle;
+    barrierIcon.visible = this.$visible;
+    barrierIcon.anchor.set(0.5);
+    return barrierIcon;
+  }
+
+  createFixedIcon(props) {
+    let _x, _y;
+    if (this.boxType === 'Rect') {
+      _x = props.xlength - 300;
+      _y = props.ylength - 680;
+    } else {
+      _x = props.r * 2 - 300;
+      _y = props.r;
+    }
+    const fixedTexture = getTextureFromResources('emergencyStopFixed');
+    const fixedIcon = new PIXI.Sprite(fixedTexture);
+    fixedIcon.x = _x;
+    fixedIcon.y = _y;
+    fixedIcon.angle = -this.angle;
+    fixedIcon.visible = this.$visible;
+    fixedIcon.anchor.set(0.5);
+    return fixedIcon;
   }
 
   drawLogicOrSection(props) {
@@ -36,136 +185,10 @@ class EmergencyStop extends PIXI.Container {
     if (props.isSafe) {
       fillColor = 0xf3704b;
     }
-    this.fillcolor = fillColor;
+    this.fillColor = fillColor;
     this.$worldWidth = worldSize.worldWidth;
     this.$worldHeight = worldSize.worldHeight;
     this.drawLogic(props.estopType);
-  }
-
-  drawShape(props) {
-    let color = null;
-    let fillColor = null;
-    if (props.activated) {
-      if (props.isSafe) {
-        color = 0xf10d0d;
-        fillColor = 0xf56161;
-      } else {
-        color = 0xffe600;
-        fillColor = 0xdec674; //0xf9f79e';
-      }
-    } else {
-      color = 0x999999; // 禁用灰色
-      fillColor = 0x666666;
-    }
-    this.color = color;
-    this.fillcolor = fillColor;
-    let shape = 'Circle';
-    if (this.boxType === 'Rect') {
-      shape = 'Rect';
-    }
-    // 方法只会调一个 所以用一个Sprite -eStopSprite
-    switch (shape) {
-      case 'Rect':
-        this.drawRect(props);
-        break;
-      case 'Circle':
-        this.drawCircle(props);
-        break;
-      default:
-        break;
-    }
-    return shape;
-  }
-
-  drawRect(props) {
-    //安全显示红色圈儿，不安全显示黄色圈儿，禁用显示灰色
-    const rectStop = new PIXI.Graphics();
-    rectStop.lineStyle(70, this.color, 1);
-    rectStop.beginFill(this.fillcolor);
-    rectStop.drawRect(0, 0, props.xlength, props.ylength);
-    rectStop.endFill();
-    rectStop.pivot.x = props.xlength / 2;
-    rectStop.pivot.y = props.ylength / 2;
-
-    this.eStopSprite = rectStop;
-    this.eStopSprite.visible = this.$visible;
-    this.eStopSprite.alpha = 0.4;
-    this.addChild(this.eStopSprite);
-  }
-
-  drawCircle(props) {
-    const circle = new PIXI.Graphics();
-    circle.lineStyle(70, this.color, 1);
-    circle.beginFill(this.fillcolor);
-    circle.drawCircle(0, 0, props.r);
-    circle.endFill();
-    const texture = window.PixiUtils.renderer.generateTexture(circle);
-    this.eStopSprite = new PIXI.Sprite(texture);
-    this.eStopSprite.visible = this.$visible;
-    this.eStopSprite.alpha = 0.4;
-    this.eStopSprite.anchor.set(0.5);
-    this.addChild(this.eStopSprite);
-  }
-
-  addName(props) {
-    let _fontsize = props.fontSize || 220;
-    this.nameText = props.name
-      ? props.name
-      : props.group
-      ? `${props.group}: ${props.code}`
-      : props.code;
-
-    const style = {
-      fontFamily: 'Arial',
-      fontSize: _fontsize,
-      fontWeight: 'bold',
-      fill: '0xffffff',
-    };
-    this.namText = new PIXI.Text(this.nameText, style);
-    this.namText.visible = this.$visible;
-    this.namText.anchor.set(0.5);
-    this.namText.angle = -this.$angle;
-    this.addChild(this.namText);
-  }
-
-  addFixed(props) {
-    let _x = null;
-    let _y = null;
-    if (this.boxType === 'Rect') {
-      _x = 0 + props.xlength / 2 - 300;
-      _y = 0 + props.ylength / 2 - 680;
-    } else {
-      _x = 0 + props.r - 300;
-      _y = 0 - props.r / 4;
-    }
-    const Fixedtexture = getTextureFromResources('emergencyStopFixed');
-    this.fixedPoint = new PIXI.Sprite(Fixedtexture);
-    this.fixedPoint.x = _x;
-    this.fixedPoint.y = _y;
-    this.fixedPoint.angle = -this.$angle;
-    this.fixedPoint.visible = this.$visible;
-    this.fixedPoint.anchor.set(0.5);
-    this.addChild(this.fixedPoint);
-  }
-
-  addIcon(props) {
-    let _x = null;
-    let _y = null;
-    if (this.boxType === 'Rect') {
-      _x = 0 + props.xlength / 2 - 300;
-      _y = 0 + props.ylength / 2 - 300;
-    } else {
-      _x = 0 + props.r - 300;
-      _y = 0;
-    }
-    const Fixedtexture = getTextureFromResources('barrier');
-    this.barrierIcon = new PIXI.Sprite(Fixedtexture);
-    this.barrierIcon.x = _x;
-    this.barrierIcon.y = _y;
-    this.barrierIcon.angle = -this.$angle;
-    this.barrierIcon.visible = this.$visible;
-    this.barrierIcon.anchor.set(0.5);
-    this.addChild(this.barrierIcon);
   }
 
   interactiveModal(props) {

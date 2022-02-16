@@ -18,6 +18,7 @@ import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
 import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
 import styles from '../editorLayout.module.less';
 import EmergencyStopPanel from '@/packages/XIHE/MapEditor/PopoverPanel/EmergencyStopPanel';
+import ProgramingPanel from '@/packages/XIHE/MapEditor/PopoverPanel/ProgramingPanel';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
@@ -74,6 +75,8 @@ const EditorBodyRight = (props) => {
         return <ElevatorPanel height={height - 10} />;
       case RightCategory.EmergencyStop:
         return <EmergencyStopPanel height={height - 10} />;
+      case RightCategory.Programing:
+        return <ProgramingPanel height={height - 10} />;
       default:
         return null;
     }

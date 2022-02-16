@@ -24,9 +24,9 @@ const ElevatorPanel = (props) => {
   function remove(flag) {
     dispatch({
       type: 'editor/removeFunction',
-      payload: { flag, scope: 'logic', type: 'dumpStations' },
+      payload: { flag, type: 'elevatorList', scope: 'map' },
     }).then((result) => {
-      mapContext.removeDumpFunction(result);
+      mapContext.removeElevator(result);
       mapContext.refresh();
     });
   }

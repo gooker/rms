@@ -1,4 +1,5 @@
 @import (reference) '../../../common.module';
+//@import (reference) '~antd/dist/antd.dark.less';
 
 .bodySideToolStyle {
   display: flex;
@@ -133,42 +134,71 @@
 }
 
 // 快捷工具
+@shutCutHeight: 40px;
+@shutCutWidth: 200px;
 .editorShortcutTool {
   position: absolute;
   top: 15px;
   left: 15px;
   display: flex;
   align-items: center;
-  width: 200px;
-  height: 50px;
+  width: @shutCutWidth;
+  height: @shutCutHeight;
   padding: 5px;
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: 5px;
   box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
   cursor: default;
 
-  span {
-    cursor: pointer;
-    svg {
-      width: 28px;
-      height: 28px;
-      fill: rgba(162, 162, 162, 0.7);
-    }
-
-    &:hover {
+  div:nth-child(1) {
+    flex: 1;
+    span {
+      cursor: pointer;
       svg {
-        width: 30px;
-        height: 30px;
-        fill: rgba(162, 162, 162, 1);
+        width: 25px;
+        height: 25px;
+        fill: rgba(162, 162, 162, 0.7);
       }
-    }
 
-    &:active {
-      svg {
-        width: 30px;
-        height: 30px;
-        fill: rgba(162, 162, 162, 1);
+      &:hover {
+        svg {
+          fill: rgba(162, 162, 162, 1);
+        }
+      }
+
+      &:active {
+        svg {
+          fill: rgba(162, 162, 162, 1);
+        }
       }
     }
   }
+
+  div:nth-child(2) {
+    padding-left: 10px;
+    color: #e8e8e8;
+    font-weight: 600;
+    font-size: 20px;
+    border-left: 1px solid #595959;
+    cursor: pointer;
+    user-select: none;
+
+    & > span[role='img'] {
+      svg {
+        width: 13px;
+      }
+    }
+  }
+}
+
+.editorShortcutToolOptions {
+  position: absolute;
+  top: 45px;
+  left: 1px;
+  width: 200px;
+  height: 30vh;
+  background: #6b6b6b;
+  border-radius: 5px;
+  user-select: none;
+  overflow-y: auto;
 }

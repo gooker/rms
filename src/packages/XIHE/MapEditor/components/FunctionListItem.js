@@ -12,13 +12,13 @@ const FunctionListItem = (props) => {
   } = props;
 
   function renderFields() {
-    return fields.map(({ field, label, value, node }) => {
+    return fields.map(({ field, label, value, node, col }) => {
       if (node) {
         return node;
       } else {
         if (Array.isArray(value)) {
           return (
-            <Col key={field} span={24}>
+            <Col key={field} span={col || 24}>
               <LabelComponent label={label}>
                 {value.map((item) => (
                   <Tag key={item} color="blue">
@@ -30,7 +30,7 @@ const FunctionListItem = (props) => {
           );
         }
         return (
-          <Col key={field} span={12}>
+          <Col key={field} span={col || 12}>
             <LabelComponent label={label}>{value}</LabelComponent>
           </Col>
         );

@@ -32,10 +32,50 @@ export async function fetchAllStationTypes() {
   });
 }
 
+//////////////////////////**** 急停区 ****//////////////////////////
 // 获取Section急停配置信息
 export async function fetchEmergencyStopList(mapId) {
   return request(`/${NameSpace.Coordinator}/eStop/getEStops/${mapId}`, {
     method: 'GET',
+  });
+}
+
+// 根据编码获取急停配置信息
+export async function getEmergencyStopByCode(code) {
+  return request(`/${NameSpace.Coordinator}/eStop/getEStopByCode/${code}`, {
+    method: 'GET',
+  });
+}
+
+// 保存急停配置信息
+export async function saveEmergencyStop(params) {
+  return request(`/${NameSpace.Coordinator}/eStop/saveEStop`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 启用 | 禁用
+export async function changeEmergencyStopStatus(params) {
+  return request(`/${NameSpace.Coordinator}/eStop/changeStatus`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 删除急停配置信息
+export async function deleteEmergencyStop(params) {
+  return request(`/${NameSpace.Coordinator}/eStop/removeEStop`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 获取Section急停操作日志
+export async function getEStopLogs(params) {
+  return request(`/${NameSpace.Coordinator}/eStop/getEStopLogs`, {
+    method: 'POST',
+    data: params,
   });
 }
 

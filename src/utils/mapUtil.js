@@ -11,6 +11,7 @@ import {
   SorterAGVSize,
   TaskPathColor,
   ToteAGVSize,
+  EStopStateColor,
 } from '@/config/consts';
 import json from '../../package.json';
 import {
@@ -18,6 +19,8 @@ import {
   getBoldCostArrow,
   getCellHeatTexture,
   getCostArrow,
+  getEStopCircleTexture,
+  getEStopTexture,
   getQrCodeSelectBorderTexture,
   getRectLock,
   getTaskPathTexture,
@@ -1150,6 +1153,10 @@ export function getTextureFromResources(key) {
       }
     }
   }
+
+  if (isNull(texture)) {
+    texture = PIXI.utils.TextureCache[key];
+  }
   return texture;
 }
 
@@ -1294,6 +1301,33 @@ export function transformScreenToWorldCoordinator(point, htmlDOM, viewportEntity
   }
 }
 
+// 获取框选区域的相关世界信息
+export function getSelectionWorldCoordinator(mapDOM, maskDOM, viewportEntity) {
+  const x = maskDOM.offsetLeft;
+  const y = maskDOM.offsetTop;
+  const { width, height } = maskDOM.getBoundingClientRect();
+  // 转换坐标
+  const [rangeWorldStartX, rangeWorldStartY] = transformScreenToWorldCoordinator(
+    { x, y },
+    mapDOM,
+    viewportEntity,
+  );
+  const [rangeWorldEndX, rangeWorldEndY] = transformScreenToWorldCoordinator(
+    { x: x + width, y: y + height },
+    mapDOM,
+    viewportEntity,
+  );
+
+  return {
+    width,
+    height,
+    worldStartX: parseInt(rangeWorldStartX),
+    worldStartY: parseInt(rangeWorldStartY),
+    worldEndX: parseInt(rangeWorldEndX),
+    worldEndY: parseInt(rangeWorldEndY),
+  };
+}
+
 /**
  * 注册监控地图Socket回调
  */
@@ -1357,7 +1391,6 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
 
 // 加载编辑器额外的自定义Texture
 export function loadEditorExtraTextures(renderer) {
-  // PIXI.Texture.addTextureToCache(texture, "someId");
   return new Promise((resolve) => {
     // 点位选中的Texture
     PIXI.Texture.addToCache(getQrCodeSelectBorderTexture(), 'cellSelectBorderTexture');
@@ -1370,6 +1403,31 @@ export function loadEditorExtraTextures(renderer) {
     PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[20]), '_20CostArrow');
     PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[100]), '_100CostArrow');
     PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[1000]), '_1000CostArrow');
+
+    // 急停区
+    PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
+    PIXI.Texture.addToCache(
+      getEStopCircleTexture(EStopStateColor.inactive.fillColor),
+      '_EStopCircleInactive',
+    );
+
+    PIXI.Texture.addToCache(
+      getEStopTexture(EStopStateColor.active.safe.fillColor),
+      '_EStopActiveSafe',
+    );
+    PIXI.Texture.addToCache(
+      getEStopCircleTexture(EStopStateColor.active.safe.fillColor),
+      '_EStopCircleActiveSafe',
+    );
+
+    PIXI.Texture.addToCache(
+      getEStopTexture(EStopStateColor.active.unSafe.fillColor),
+      '_EStopActiveUnsafe',
+    );
+    PIXI.Texture.addToCache(
+      getEStopCircleTexture(EStopStateColor.active.unSafe.fillColor),
+      '_EStopCircleActiveUnsafe',
+    );
 
     resolve();
   });
@@ -1414,6 +1472,31 @@ export function loadMonitorExtraTextures(renderer) {
     PIXI.Texture.addToCache(getCellHeatTexture('0xF87636'), '_cellHeat8');
     PIXI.Texture.addToCache(getCellHeatTexture('0xF03C2B'), '_cellHeat9');
     PIXI.Texture.addToCache(getCellHeatTexture('0xCF2723'), '_cellHeat10');
+
+    // 急停区
+    PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
+    PIXI.Texture.addToCache(
+      getEStopCircleTexture(EStopStateColor.inactive.fillColor),
+      '_EStopCircleInactive',
+    );
+
+    PIXI.Texture.addToCache(
+      getEStopTexture(EStopStateColor.active.safe.fillColor),
+      '_EStopActiveSafe',
+    );
+    PIXI.Texture.addToCache(
+      getEStopCircleTexture(EStopStateColor.active.safe.fillColor),
+      '_EStopCircleActiveSafe',
+    );
+
+    PIXI.Texture.addToCache(
+      getEStopTexture(EStopStateColor.active.unSafe.fillColor),
+      '_EStopActiveUnsafe',
+    );
+    PIXI.Texture.addToCache(
+      getEStopCircleTexture(EStopStateColor.active.unSafe.fillColor),
+      '_EStopCircleActiveUnsafe',
+    );
 
     resolve();
   });

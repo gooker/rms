@@ -845,7 +845,15 @@ export default class BaseMap extends React.Component {
   // 渲染固定紧急避让区
   renderFixedEStopFunction = (data) => {
     const showEmergency = this.states.showEmergencyStop;
-    const eData = { ...data, showEmergency, notShowFixed: true };
+    const eData = {
+      ...data,
+      showEmergency,
+      notShowFixed: true,
+      refresh: this.refresh,
+      select: (EStop, isAdd) => {
+        //
+      },
+    };
     const fixedEstop = new EmergencyStop(eData);
     this.pixiUtils.viewportAddChild(fixedEstop);
     this.fixedEStopMap.set(`${data.code}`, fixedEstop);
@@ -889,13 +897,14 @@ export default class BaseMap extends React.Component {
   };
 
   // 画区域
-  drawRectArea({ code, x, y, width, height, color }, interactive) {
+  drawRectArea({ code, x, y, width, height, color, text }, interactive) {
     const mapZoneMarker = new MapZoneMarker({
       code,
       x,
       y,
       width,
       height,
+      text,
       interactive,
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.RECT,
@@ -912,12 +921,13 @@ export default class BaseMap extends React.Component {
     this.refresh();
   }
 
-  drawCircleArea({ code, x, y, radius, color }, interactive) {
+  drawCircleArea({ code, x, y, radius, color, text }, interactive) {
     const mapZoneMarker = new MapZoneMarker({
       code,
       x,
       y,
       radius,
+      text,
       interactive,
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.CIRCLE,
