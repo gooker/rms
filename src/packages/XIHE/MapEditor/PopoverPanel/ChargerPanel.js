@@ -94,7 +94,7 @@ const ChargerPanel = (props) => {
   const listData = getListData();
   console.log(listData);
   return (
-    <div style={{ height, width: 380 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible || multiFormVisible ? (

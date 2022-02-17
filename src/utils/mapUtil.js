@@ -19,7 +19,6 @@ import {
   getBoldCostArrow,
   getCellHeatTexture,
   getCostArrow,
-  getEStopCircleTexture,
   getEStopTexture,
   getQrCodeSelectBorderTexture,
   getRectLock,
@@ -1407,28 +1406,13 @@ export function loadEditorExtraTextures(renderer) {
     // 急停区
     PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
     PIXI.Texture.addToCache(
-      getEStopCircleTexture(EStopStateColor.inactive.fillColor),
-      '_EStopCircleInactive',
-    );
-
-    PIXI.Texture.addToCache(
       getEStopTexture(EStopStateColor.active.safe.fillColor),
       '_EStopActiveSafe',
     );
     PIXI.Texture.addToCache(
-      getEStopCircleTexture(EStopStateColor.active.safe.fillColor),
-      '_EStopCircleActiveSafe',
-    );
-
-    PIXI.Texture.addToCache(
       getEStopTexture(EStopStateColor.active.unSafe.fillColor),
       '_EStopActiveUnsafe',
     );
-    PIXI.Texture.addToCache(
-      getEStopCircleTexture(EStopStateColor.active.unSafe.fillColor),
-      '_EStopCircleActiveUnsafe',
-    );
-
     resolve();
   });
 }
@@ -1476,26 +1460,12 @@ export function loadMonitorExtraTextures(renderer) {
     // 急停区
     PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
     PIXI.Texture.addToCache(
-      getEStopCircleTexture(EStopStateColor.inactive.fillColor),
-      '_EStopCircleInactive',
-    );
-
-    PIXI.Texture.addToCache(
       getEStopTexture(EStopStateColor.active.safe.fillColor),
       '_EStopActiveSafe',
     );
     PIXI.Texture.addToCache(
-      getEStopCircleTexture(EStopStateColor.active.safe.fillColor),
-      '_EStopCircleActiveSafe',
-    );
-
-    PIXI.Texture.addToCache(
       getEStopTexture(EStopStateColor.active.unSafe.fillColor),
       '_EStopActiveUnsafe',
-    );
-    PIXI.Texture.addToCache(
-      getEStopCircleTexture(EStopStateColor.active.unSafe.fillColor),
-      '_EStopCircleActiveUnsafe',
     );
 
     resolve();

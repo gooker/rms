@@ -62,7 +62,6 @@ const EditorState = {
 
   // 选择相关
   selections: [],
-  selectCells: [],
   selectLines: [],
 
   // 所有站点类型
@@ -139,7 +138,9 @@ export default {
       const selections = action.payload;
       const newState = { ...state, selections };
       if (selections.length === 1) {
-        newState.categoryPanel = RightCategory.Prop;
+        if (state.categoryPanel === null) {
+          newState.categoryPanel = RightCategory.Prop;
+        }
       } else {
         if (state.categoryPanel === RightCategory.Prop) {
           newState.categoryPanel = null;
@@ -246,12 +247,6 @@ export default {
       return {
         ...state,
         selectLines: action.payload,
-      };
-    },
-    saveSelectCells(state, action) {
-      return {
-        ...state,
-        selectCells: action.payload,
       };
     },
     saveVisit(state, action) {
@@ -818,7 +813,6 @@ export default {
         type: 'saveState',
         payload: {
           currentCells: _currentCells,
-          selectCells: Object.values(result),
         },
       });
       return result;
@@ -898,11 +892,12 @@ export default {
 
     // 删除点位
     *batchDeleteCells(_, { select, put }) {
-      const { selectCells, currentMap, currentCells } = yield select(({ editor }) => editor);
-      const result = {
-        cell: selectCells,
-        line: [],
-      };
+      const { selections, currentMap, currentCells } = yield select(({ editor }) => editor);
+
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
+      const result = { cell: selectCells, line: [] };
 
       // 删除 currentMap 中的点位
       const cellMap = { ...currentMap.cellMap };
@@ -1088,14 +1083,14 @@ export default {
     },
 
     // ********************************* 地图标记 ********************************* //
-    insertZoneMarker({ payload }, { select }) {
+    insertZoneMarker({ payload }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let zoneMarker = currentLogicAreaData.zoneMarker || [];
       zoneMarker = [...zoneMarker, payload];
       currentLogicAreaData.zoneMarker = zoneMarker;
     },
 
-    updateZoneMarker({ payload }, { select }) {
+    updateZoneMarker({ payload }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let zoneMarker = currentLogicAreaData.zoneMarker || [];
       const targetMarker = find(zoneMarker, { code: payload.code });
@@ -1104,6 +1099,18 @@ export default {
         targetMarker.y = payload.y;
         targetMarker.width = payload.width;
         targetMarker.height = payload.height;
+      }
+    },
+
+    updateEStop({ payload }) {
+      const currentLogicAreaData = getCurrentLogicAreaData();
+      let emergencyStopFixedList = currentLogicAreaData.emergencyStopFixedList || [];
+      const targetMarker = find(emergencyStopFixedList, { code: payload.code });
+      if (targetMarker) {
+        targetMarker.x = payload.x - payload.width / 2;
+        targetMarker.y = payload.y - payload.height / 2;
+        targetMarker.xlength = payload.width;
+        targetMarker.ylength = payload.height;
       }
     },
 
@@ -1128,7 +1135,11 @@ export default {
 
     // ********************************* 线条操作 ********************************* //
     *generateCostLines({ payload }, { select, put }) {
-      const { selectCells, currentMap } = yield select(({ editor }) => editor);
+      const { selections, currentMap } = yield select(({ editor }) => editor);
+
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
 
       // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
       const currentRouteMapData = getCurrentRouteMapData();
@@ -1174,8 +1185,12 @@ export default {
     },
 
     *generateCostCurve({ payload }, { select, put }) {
-      const { selectCells, currentMap } = yield select(({ editor }) => editor);
+      const { selections, currentMap } = yield select(({ editor }) => editor);
       const cellMap = currentMap.cellMap;
+
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
 
       // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
       const currentRouteMapData = getCurrentRouteMapData();

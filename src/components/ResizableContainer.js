@@ -192,7 +192,7 @@ export default class ResizableContainer extends PIXI.Container {
       this.border.zIndex = 1;
     }
 
-    if (isNull(this.hScaleHandler)) {
+    if (this.boxType === 'Rect' && isNull(this.hScaleHandler)) {
       this.hScaleHandler = this.addChild(this.createHandler('e-resize'));
       this.hScaleHandler.drawRect(0, 0, this.handlerSize, this.handlerSize);
       this.hScaleHandler.x = width / 2;
@@ -202,13 +202,15 @@ export default class ResizableContainer extends PIXI.Container {
         .on('pointermove', this.onHScaleToolMove)
         .on('pointerup', () => {
           this.hDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         })
         .on('pointerupoutside', () => {
           this.hDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         });
     }
 
-    if (isNull(this.vScaleHandler)) {
+    if (this.boxType === 'Rect' && isNull(this.vScaleHandler)) {
       this.vScaleHandler = this.addChild(this.createHandler('s-resize'));
       this.vScaleHandler.drawRect(0, 0, this.handlerSize, this.handlerSize);
       this.vScaleHandler.x = 0;
@@ -218,9 +220,11 @@ export default class ResizableContainer extends PIXI.Container {
         .on('pointermove', this.onVScaleToolMove)
         .on('pointerup', () => {
           this.vDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         })
         .on('pointerupoutside', () => {
           this.vDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         });
     }
 
@@ -234,13 +238,15 @@ export default class ResizableContainer extends PIXI.Container {
         .on('pointermove', this.onScaleToolMove)
         .on('pointerup', () => {
           this.aDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         })
         .on('pointerupoutside', () => {
           this.aDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         });
     }
 
-    if (isNull(this.rotateHandler)) {
+    if (this.boxType === 'Rect' && isNull(this.rotateHandler)) {
       this.rotateHandler = this.addChild(this.createTinyHandler('tiny_rotate', 'grabbing'));
       this.rotateHandler.x = 0;
       this.rotateHandler.y = -height / 2 - Tiny_Rotate_Offset;
@@ -249,9 +255,11 @@ export default class ResizableContainer extends PIXI.Container {
         .on('pointermove', this.onRotateToolMove)
         .on('pointerup', () => {
           this.rDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         })
         .on('pointerupoutside', () => {
           this.rDragging = false;
+          this.$updater({ x: this.x, y: this.y, width: this.width, height: this.height });
         });
     }
 
@@ -272,17 +280,25 @@ export default class ResizableContainer extends PIXI.Container {
       .drawRect(-width / 2, -height / 2, width, height);
     this.border.zIndex = 1;
 
-    this.hScaleHandler.x = width / 2;
-    this.hScaleHandler.y = 0;
+    if (this.hScaleHandler) {
+      this.hScaleHandler.x = width / 2;
+      this.hScaleHandler.y = 0;
+    }
 
-    this.vScaleHandler.x = 0;
-    this.vScaleHandler.y = height / 2;
+    if (this.vScaleHandler) {
+      this.vScaleHandler.x = 0;
+      this.vScaleHandler.y = height / 2;
+    }
 
-    this.scaleHandler.x = width / 2;
-    this.scaleHandler.y = height / 2;
+    if (this.scaleHandler) {
+      this.scaleHandler.x = width / 2;
+      this.scaleHandler.y = height / 2;
+    }
 
-    this.rotateHandler.x = 0;
-    this.rotateHandler.y = -height / 2 - Tiny_Rotate_Offset;
+    if (this.rotateHandler) {
+      this.rotateHandler.x = 0;
+      this.rotateHandler.y = -height / 2 - Tiny_Rotate_Offset;
+    }
   }
 
   // 横向拉伸
@@ -324,25 +340,27 @@ export default class ResizableContainer extends PIXI.Container {
 
   // 角向拉伸
   onScaleToolDown = (event) => {
+    this.scaleEventData = event.data;
     this.aDragging = true;
     this.baseWidth = this.element.width;
     this.baseHeight = this.element.height;
-    this.globalStart = event.data.getLocalPosition(this.parent).clone();
+    this.globalStart = this.scaleEventData.getLocalPosition(this.parent).clone();
   };
 
-  onScaleToolMove = (event) => {
+  onScaleToolMove = () => {
     if (!this.aDragging) {
       return;
     }
-    const endPosition = event.data.getLocalPosition(this.parent).clone();
+    const endPosition = this.scaleEventData.getLocalPosition(this.parent).clone();
     this.element.width = this.baseWidth + (endPosition.x - this.globalStart.x);
-    this.element.height = this.baseHeight + (endPosition.y - this.globalStart.y);
+    this.element.height = this.baseHeight + (endPosition.x - this.globalStart.x);
     this.rerenderResizeTool();
     this.updateElement();
   };
 
   // 旋转
   onRotateToolDown = (event) => {
+    this.scaleEventData = null;
     this.rDragging = true;
     this.rotationStartPoint = event.data.getLocalPosition(this.parent).clone();
     this.baseRotation = this.rotation;

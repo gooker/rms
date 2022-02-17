@@ -9,6 +9,6 @@ fs.access(distDir, (err) => {
   }
   fs.writeFileSync(
     path.resolve(__dirname, '../dist/config.js'),
-    'window.extraConfig = { sso: "SSO_API", coordinator: "TRANSLATOR_API", ws: "WS_URL" }',
+    'window.extraConfig = { sso: "SSO_API", coordinator: "COORDINATOR_API", ws: "WS_URL" }',
   );
 });

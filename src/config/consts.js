@@ -227,6 +227,7 @@ export const MapSelectableSpriteType = {
   ELEVATOR: 'ELEVATOR',
   DELIVERY: 'DELIVERY',
   INTERSECTION: 'INTERSECTION',
+  EMSTOP: 'EMSTOP',
 };
 
 // 急停区类型枚举
