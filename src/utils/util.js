@@ -426,7 +426,7 @@ export function isFieldPlaceholder(placeholder) {
 
 // 根据占位符信息拿组件[componentObject, ComponentIntialValue, ComponentType]
 export function getComponentByPlaceholder(placeholder) {
-  const fieldType = placeholder.match(PlaceHolderExtractRegex)[1];
+  const fieldType = placeholder.match(PlaceHolderExtractRegex)? placeholder.match(PlaceHolderExtractRegex)[1]:null;
   return [...switchComponent(fieldType), fieldType];
 }
 
