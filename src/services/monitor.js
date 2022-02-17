@@ -160,6 +160,15 @@ export async function agvCommand(AGVType, params) {
   });
 }
 
+// 发送小车命令
+export async function agvRemoteControl(AGVType,params) {
+  return request(`/${NameSpace[AGVType]}/agv/command`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+
 // 呼叫潜伏货架到工作站
 export async function latentPodToWorkStation(payload) {
   return request(`/${NameSpace.LatentLifting}/agv-task/pod-to-workstation`, {

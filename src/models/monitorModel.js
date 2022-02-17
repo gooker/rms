@@ -4,7 +4,13 @@ import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
 import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
-import { fetchTemporaryBlockCells } from '@/services/monitor';
+import {
+  fetchTemporaryBlockCells,
+  fetchLatentAutoTaskConfig,
+  saveLatentAutomaticTaskConfig,
+  fetchAutoReleasePod,
+  autoCallLatentPodToWorkstation,
+} from '@/services/monitor';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
 
 export default {
@@ -129,6 +135,33 @@ export default {
         preRouteMap: currentRouteMapData,
       };
     },
+
+    saveAutoCallPodToWorkstationStatus(state, action) {
+      return {
+        ...state,
+        autoCallPodToWorkstationStatus: action.payload,
+      };
+    },
+
+    // 自动呼叫 & 自动释放
+    saveLatentAutomaticTaskConfig(state, action) {
+      return {
+        ...state,
+        latentAutomaticTaskConfig: action.payload,
+      };
+    },
+    saveLatentAutomaticTaskForm(state, action) {
+      return {
+        ...state,
+        latentAutomaticTaskForm: action.payload,
+      };
+    },
+    saveLatentAutomaticTaskUsage(state, action) {
+      return {
+        ...state,
+        latentAutomaticTaskUsage: action.payload,
+      };
+    },
   },
 
   effects: {
@@ -227,6 +260,86 @@ export default {
       additionalStates.allAGVs = allAGVs;
       yield put({ type: 'saveState', payload: additionalStates });
       return resource;
+    },
+
+    /// /////////////// 潜伏车工作站自动任务 //////////////////
+    *fetchSaveLatentAutomaticTaskConfig({ payload }, { call, select }) {
+      const sectionId = window.localStorage.getItem('sectionId');
+      const requestParam = payload.map((item) => ({ ...item, sectionId }));
+      const response = yield call(saveLatentAutomaticTaskConfig, requestParam);
+      if (dealResponse(response)) {
+        return false;
+      }
+    },
+
+    // get list
+    *fetchLatentAutoCallPodToWorkstation({ payload }, { call, put }) {
+      let response = yield call(fetchLatentAutoTaskConfig, payload);
+      if (dealResponse(response)) {
+        return false;
+      }
+
+      if (response === null) {
+        response = {};
+      }
+      const {
+        monitorCallPodDTO,
+        monitorCallPodDTOS = [],
+        callByUser,
+        callTime,
+        releaseByUser,
+        releaseTime,
+      } = response;
+      yield put({ type: 'saveLatentAutomaticTaskForm', payload: monitorCallPodDTO });
+      yield put({ type: 'saveAutoCallPodToWorkstationStatus', payload: response });
+      yield put({
+        type: 'saveLatentAutomaticTaskUsage',
+        payload: { callByUser, callTime, releaseByUser, releaseTime },
+      });
+
+      // monitorCallPodDTOS 添加id列用于表格编辑
+      let _monitorCallPodDTOS = [];
+      if (monitorCallPodDTOS != null) {
+        _monitorCallPodDTOS = monitorCallPodDTOS.map((item, index) => ({
+          id: index,
+          ...item,
+        }));
+      }
+
+      yield put({ type: 'saveLatentAutomaticTaskConfig', payload: _monitorCallPodDTOS || [] });
+    },
+
+    // 自动释放
+    *openAutoReleasePod({ payload }, { select, call }) {
+      const params = { ...payload, isAutoRelease: true };
+      const response = yield call(fetchAutoReleasePod, params);
+      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskReleaseOn' }))) {
+        return false;
+      }
+    },
+
+    *cancelAutoReleasePod(_, { call, select }) {
+      const params = { isAutoRelease: false };
+      const response = yield call(fetchAutoReleasePod, params);
+      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskReleaseOff' }))) {
+        return false;
+      }
+    },
+
+    // 自动呼叫
+    *openAutomatCcall({ payload }, { select, call }) {
+      const params = { ...payload, isAutoCall: true };
+      const response = yield call(autoCallLatentPodToWorkstation, params);
+      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskOn' }))) {
+        return false;
+      }
+    },
+    *cancelAutomatiCcall(_, { call, select }) {
+      const params = { isAutoCall: false };
+      const response = yield call(autoCallLatentPodToWorkstation, params);
+      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskOff' }))) {
+        return false;
+      }
     },
   },
 };

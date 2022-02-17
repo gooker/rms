@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Button, Col, Divider, Form, Input, Row, Select } from '_antd@4.18.3@antd';
+import { Button, Col, Divider, Form, Input, Row, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import commonStyle from '@/common.module.less';

@@ -5,7 +5,11 @@ import Charging from './Charging';
 import ToRest from './ToRest';
 import CarryPod from './CarryPod';
 import AdvancedCarry from './AdcancedCarry';
+import LatentWorkStationTask from './LatentWorkStationTask';
 import AutomaticLatentWorkstationTask from './AutomaticLatentWorkstationTask';
+import AutomaticToteWorkstationTask from './AutomaticToteWorkstationTask';
+import RemoteControl from './RemoteControl';
+import CustomComponent from './CustomComponent';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel } = props;
@@ -17,11 +21,16 @@ const MonitorModals = (props) => {
       {categoryModal === 'carry' && <CarryPod />}
       {categoryModal === 'advancedCarry' && <AdvancedCarry />}
       {categoryModal === 'workStationTask' && categoryPanel === 'LatentAGV' && (
+        <LatentWorkStationTask />
+      )}
+      {categoryModal === 'autoCall' && categoryPanel === 'LatentAGV' && (
         <AutomaticLatentWorkstationTask />
       )}
       {categoryModal === 'workStationTask' && categoryPanel === 'ToteAGV' && (
-        <AutomaticLatentWorkstationTask />
+        <AutomaticToteWorkstationTask />
       )}
+      {categoryModal === 'remoteControl' && <RemoteControl />}
+      {categoryModal === 'custom' && <CustomComponent category={categoryPanel} />}
     </>
   );
 };

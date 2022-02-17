@@ -78,7 +78,7 @@ const CarryPod = (props) => {
           </Form.Item>
 
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button onClick={emptyRun} loading={executing} disabled={executing}>
+            <Button onClick={emptyRun} loading={executing} disabled={executing} type="primary">
               <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
