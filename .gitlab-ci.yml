@@ -65,6 +65,7 @@ nt13-dev-staging:
   script:
     - node -v
     - npm -v
+    - cnpm install
     - npm run build
     - mybuild_date=`date "+%m%d"`
     - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
