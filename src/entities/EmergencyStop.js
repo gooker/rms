@@ -2,10 +2,11 @@ import * as PIXI from 'pixi.js';
 import Text from './Text';
 import { isNull } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
-import { EStopStateColor, MapSelectableSpriteType, zIndex } from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtil';
+import { EStopStateColor, MapSelectableSpriteType, zIndex } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
 
+const BorderWidth = 50;
 class EmergencyStop extends ResizableContainer {
   constructor(props) {
     super();
@@ -15,9 +16,10 @@ class EmergencyStop extends ResizableContainer {
     this.angle = props.angle || 0;
     this.visible = props.showEmergency;
     this.code = props.code;
-    this.activated = props.activated || false;
-    this.safe = props.safe || 0;
     this.boxType = props.ylength && props.xlength ? 'Rect' : 'Circle';
+
+    // 缓存data数据
+    this.$$data = { ...props };
 
     if (this.boxType === 'Rect') {
       this.x = props.x + props.xlength / 2;
@@ -27,55 +29,92 @@ class EmergencyStop extends ResizableContainer {
       this.y = props.y;
     }
 
+    // 回调事件
     this.select = (add) => {
       props.select({ id: this.code, type: MapSelectableSpriteType.EMSTOP }, add);
     };
     this.refresh = props.refresh;
 
-    if (props.estopType === 'Section' || props.estopType === 'Logic') {
+    if (['Section', 'Logic'].includes(props.estopType)) {
       this.drawLogicOrSection(props);
     } else {
-      const element = this.createElement(props);
-      this.create(
-        element,
-        (data) => {
-          const { dispatch } = window.g_app._store;
-          dispatch({ type: 'editor/updateEStop', payload: { code: this.code, ...data } });
-        },
-        zIndex.zoneMarker,
-        true,
-      );
+      // 为了支持ResizableContainer组件，需要把所有元素集中在一个元素里
+      this.$$container = new PIXI.Container();
+      this.$$container.sortableChildren = true;
+      this.createElement();
+      this.create(this.$$container, this.updateLayout, zIndex.zoneMarker, true);
     }
   }
 
-  createElement(props) {
-    const container = new PIXI.Container();
-    container.sortableChildren = true;
-    const { eStopArea, color, width, height, radius } = this.createEStopArea(props);
-    container.addChild(eStopArea);
-    container.addChild(this.createBorder(width, height, radius, color));
-    container.addChild(this.createName(props));
-    container.addChild(this.createIcon(props));
+  updateLayout(data) {
+    const { dispatch } = window.g_app._store;
+    const { x, y, width, height } = data;
+    dispatch({
+      type: 'editor/updateEStop',
+      payload: {
+        code: this.code,
+        x: parseInt(x),
+        y: parseInt(y),
+        width: parseInt(width),
+        height: parseInt(height),
+      },
+    });
+    dispatch({ type: 'editor/saveForceUpdate' });
+    this.$$data = {
+      ...this.$$data,
+      xlength: parseInt(width) - BorderWidth,
+      ylength: parseInt(height) - BorderWidth,
+    };
+
+    // 这里比较重要，保证急停区拖拽时候元素不变形的核心逻辑
+    this.$$container.scale.set(1, 1);
+    this.eStopArea.width = this.$$data.xlength;
+    this.eStopArea.height = this.$$data.ylength;
+    this.rerenderEStop();
+  }
+
+  // Resize过程中会出现 border, name, icon, fixedIcon 变形
+  rerenderEStop() {
+    this.$$container.removeChild(this.eBorder, this.eName, this.eIcon, this.eFixedIcon);
+    this.eBorder && this.eBorder.destroy(true);
+    this.eName && this.eName.destroy(true);
+    this.eIcon && this.eIcon.destroy();
+    this.eFixedIcon && this.eFixedIcon.destroy();
+    this.createElement(false);
+    this.refresh();
+  }
+
+  /**
+   * 创建急停区所有元素
+   * @param needEStopArea 是否创建区域对象(border内的部分)
+   */
+  createElement(needEStopArea = true) {
+    const { eStopArea, color } = this.createEStopArea(needEStopArea);
+    if (needEStopArea) {
+      this.eStopArea = this.$$container.addChild(eStopArea);
+    }
+    this.eBorder = this.$$container.addChild(this.createBorder(color));
+    this.eName = this.$$container.addChild(this.createName());
+    this.eIcon = this.$$container.addChild(this.createIcon());
 
     // notShowFixed是地图编辑传的参数 地图编辑不需要显示固定icon
-    if (isNull(props.notShowFixed) && props.isFixed) {
-      container.addChild(this.createFixedIcon(props));
+    if (isNull(this.$$data.notShowFixed) && this.$$data.isFixed) {
+      this.eFixedIcon = this.$$container.addChild(this.createFixedIcon());
     }
 
     // 地图编辑不用看弹框
-    if (isNull(props.notShowFixed)) {
-      this.interactiveModal(props);
+    if (isNull(this.$$data.notShowFixed)) {
+      this.interactiveModal();
     }
-
-    return container;
   }
 
   // 安全显示红色，不安全显示黄色，禁用显示灰色
-  createEStopArea(props) {
+  createEStopArea(needEStopArea) {
+    const { activated, isSafe } = this.$$data;
     let texture;
     let color, fillColor;
-    if (props.activated) {
-      if (props.isSafe) {
+    if (activated) {
+      if (isSafe) {
         color = EStopStateColor.active.safe.color;
         fillColor = EStopStateColor.active.safe.fillColor;
         if (this.boxType === 'Rect') {
@@ -102,52 +141,53 @@ class EmergencyStop extends ResizableContainer {
       }
     }
 
-    let width = props.xlength;
-    let height = props.ylength;
-    let radius = props.r;
     let eStopArea;
-    if (this.boxType === 'Rect') {
-      eStopArea = new PIXI.Sprite(texture);
-      eStopArea.width = width;
-      eStopArea.height = height;
-      eStopArea.anchor.set(0.5);
-    } else {
-      eStopArea = new PIXI.Graphics();
-      eStopArea.lineStyle(0);
-      eStopArea.beginFill(fillColor);
-      eStopArea.drawCircle(0, 0, radius);
-      eStopArea.endFill();
+    if (needEStopArea) {
+      let width = this.$$data.xlength;
+      let height = this.$$data.ylength;
+      let radius = this.$$data.r;
+      if (this.boxType === 'Rect') {
+        eStopArea = new PIXI.Sprite(texture);
+        eStopArea.width = width;
+        eStopArea.height = height;
+        eStopArea.anchor.set(0.5);
+      } else {
+        eStopArea = new PIXI.Graphics();
+        eStopArea.lineStyle(0);
+        eStopArea.beginFill(fillColor);
+        eStopArea.drawCircle(0, 0, radius);
+        eStopArea.endFill();
+      }
+      eStopArea.alpha = 0.5;
+      eStopArea.zIndex = 1;
     }
-    eStopArea.alpha = 0.5;
-    eStopArea.zIndex = 1;
-    return { eStopArea, color, fillColor, width, height, radius };
+    return { eStopArea, color, fillColor };
   }
 
-  createBorder(width, height, radius, color) {
+  createBorder(color) {
+    const width = this.$$data.xlength;
+    const height = this.$$data.ylength;
+    const radius = this.$$data.r;
     const line = new PIXI.Graphics();
     if (isNull(radius)) {
-      line.lineStyle(50, color).drawRect(0 - width / 2, 0 - height / 2, width, height);
+      line.lineStyle(BorderWidth, color).drawRect(0 - width / 2, 0 - height / 2, width, height);
     } else {
-      line.lineStyle(50, color).drawCircle(0, 0, radius);
+      line.lineStyle(BorderWidth, color).drawCircle(0, 0, radius);
     }
     line.alpha = 0.8;
     line.zIndex = 1;
     return line;
   }
 
-  createName(props) {
-    const nameText = props.name
-      ? props.name
-      : props.group
-      ? `${props.group}: ${props.code}`
-      : props.code;
+  createName() {
+    const { name, code, group } = this.$$data;
+    let { xlength: width, ylength: height, r: radius } = this.$$data;
 
-    let { xlength: width, ylength: height, r: radius } = props;
+    const nameText = name ? name : group ? `${group}: ${code}` : code;
     if (isNull(width) || isNull(height)) {
       width = radius * 2;
       height = radius * 2;
     }
-
     const namTextSprite = new Text(nameText, 0, 0, 0xffffff, true, 200);
     namTextSprite.alpha = 0.8;
     namTextSprite.anchor.set(0.5);
@@ -168,14 +208,15 @@ class EmergencyStop extends ResizableContainer {
     return namTextSprite;
   }
 
-  createIcon(props) {
+  createIcon() {
+    const { xlength, ylength, r: radius } = this.$$data;
     let _x, _y;
     if (this.boxType === 'Rect') {
-      _x = props.xlength / 2 - 300;
-      _y = props.ylength / 2 - 300;
+      _x = xlength / 2 - 300;
+      _y = ylength / 2 - 300;
     } else {
       _x = 0;
-      _y = props.r - 300;
+      _y = radius - 300;
     }
     const fixedTexture = getTextureFromResources('barrier');
     const barrierIcon = new PIXI.Sprite(fixedTexture);
@@ -187,14 +228,15 @@ class EmergencyStop extends ResizableContainer {
     return barrierIcon;
   }
 
-  createFixedIcon(props) {
+  createFixedIcon() {
+    const { xlength, ylength, r: radius } = this.$$data;
     let _x, _y;
     if (this.boxType === 'Rect') {
-      _x = props.xlength - 300;
-      _y = props.ylength - 680;
+      _x = xlength - 300;
+      _y = ylength - 680;
     } else {
-      _x = props.r * 2 - 300;
-      _y = props.r;
+      _x = radius * 2 - 300;
+      _y = radius;
     }
     const fixedTexture = getTextureFromResources('emergencyStopFixed');
     const fixedIcon = new PIXI.Sprite(fixedTexture);
@@ -231,41 +273,33 @@ class EmergencyStop extends ResizableContainer {
   }
 
   interactiveModal(props) {
+    // @@@@权限key调整
     if (hasPermission('/map/monitor/action/set/emergencyArea')) {
-      this.eStopSprite.interactive = true;
-      this.eStopSprite.buttonMode = true;
-      this.eStopSprite.interactiveChildren = false;
-      this.eStopSprite.on('click', () => props.checkEStopArea(props));
+      this.$$container.interactive = true;
+      this.$$container.buttonMode = true;
+      this.$$container.interactiveChildren = false;
+      this.$$container.on('click', () => this.$$data.checkEStopArea(this.$$data));
     }
   }
 
   switchEStopsVisible(flag) {
-    this.children.forEach((child) => {
-      child.visible = flag;
-    });
+    this.visible = flag;
   }
 
   updateEStop(params) {
-    if (params.estopType === 'Section' || params.estopType === 'Logic') {
+    this.$$data = params;
+    if (['Section', 'Logic'].includes(params.estopType)) {
       this.drawLogicOrSection(params);
     } else {
-      this.removeChild(this.namText);
-      if (this.eStopSprite) {
-        this.removeChild(this.eStopSprite);
-      }
+      // 先清空container内所有元素
+      this.$$container.removeChildren();
+      this.eBorder && this.eBorder.destroy(true);
+      this.eName && this.eName.destroy(true);
+      this.eIcon && this.eIcon.destroy();
+      this.eFixedIcon && this.eFixedIcon.destroy();
 
-      this.drawShape(params);
-      this.interactiveModal(params);
-
-      this.addName(params);
-      if (this.fixedPoint) {
-        this.removeChild(this.fixedPoint);
-        this.addFixed(params);
-      }
-      if (this.barrierIcon) {
-        this.removeChild(this.barrierIcon);
-        this.addIcon(params);
-      }
+      // 重新创建元素
+      this.createElement();
     }
   }
 }

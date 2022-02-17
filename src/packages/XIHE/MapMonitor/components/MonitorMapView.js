@@ -1465,7 +1465,6 @@ class MonitorMapView extends BaseMap {
       }
 
       if (['Section', 'Logic'].includes(currentdata.estopType)) {
-        //
         let updateSectionFlag = currentdata.estopType === 'Section';
         let updateLogicFlag = currentdata.estopType === 'Logic';
         let _entity = this.emergencyAreaMap.get(`special${currentdata.estopType}`);
