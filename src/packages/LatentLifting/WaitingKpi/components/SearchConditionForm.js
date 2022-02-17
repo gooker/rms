@@ -43,7 +43,7 @@ const SearchConditionForm = (props) => {
               maxTagCount={4}
               notFoundContent={null}
               style={{ width: '281px' }}
-              placeholder={formatMessage({ id: 'app.map.targetCell' })}
+              placeholder={formatMessage({ id: 'app.common.targetCell' })}
             />
           </Form.Item>
         </Col>

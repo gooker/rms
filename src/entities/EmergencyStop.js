@@ -31,7 +31,7 @@ class EmergencyStop extends ResizableContainer {
 
     // 回调事件
     this.select = (add) => {
-      props.select({ id: this.code, type: MapSelectableSpriteType.EMSTOP }, add);
+      props.select({ id: this.code, type: MapSelectableSpriteType.EMERGENCYSTOP }, add);
     };
     this.refresh = props.refresh;
 

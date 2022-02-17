@@ -63,6 +63,7 @@ const EditorState = {
   // 选择相关
   selections: [],
   selectLines: [],
+  showShortcutTool: false,
 
   // 所有站点类型
   allStationTypes: {},
@@ -136,7 +137,7 @@ export default {
     },
     updateSelections(state, action) {
       const selections = action.payload;
-      const newState = { ...state, selections };
+      const newState = { ...state, selections, showShortcutTool: selections.length > 0 };
       if (selections.length === 1) {
         if (state.categoryPanel === null) {
           newState.categoryPanel = RightCategory.Prop;

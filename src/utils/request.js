@@ -4,12 +4,10 @@ import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
-  if (config.attachSection === true) {
-    config.headers.Authorization = `Bearer ${window.localStorage.getItem('Authorization')}`;
-    config.headers['Content-Type'] = 'application/json; charset=utf-8';
-    if (isNull(config.headers.sectionId)) {
-      config.headers.sectionId = window.localStorage.getItem('sectionId');
-    }
+  config.headers.Authorization = `Bearer ${window.localStorage.getItem('Authorization')}`;
+  config.headers['Content-Type'] = 'application/json; charset=utf-8';
+  if (config.attachSection && isNull(config.headers.sectionId)) {
+    config.headers.sectionId = window.localStorage.getItem('sectionId');
   }
   return config;
 });
@@ -78,7 +76,13 @@ const errorHandler = (error) => {
 };
 
 const request = async (requestUrl, payload) => {
-  const { data, body, method, attachSection = true, headers = {} } = payload;
+  const { data, body, method, headers = {} } = payload;
+
+  let attachSection = isNull(payload.attachSection) ? true : payload.attachSection;
+  if (requestUrl.startsWith('/sso/')) {
+    attachSection = false;
+  }
+
   const url = getDomainNameByUrl(requestUrl);
   // 此时可能会遇到找不到API的问题
   if (isPlainObject(url)) {

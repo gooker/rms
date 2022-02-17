@@ -59,12 +59,10 @@ class EditorMapView extends BaseMap {
     this.cellYMap.clear();
     this.selectedCells = [];
     this.clearEditorRouteData();
-    // TODO:this.onSelectCell([]);
   };
 
   clearEditorRouteData = () => {
-    this.cellCostMap.clear();
-    // TODO:this.onSelectLine([]);
+    //
   };
 
   // 切换地图编辑地图显示模式
@@ -222,15 +220,6 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位 & 线条选择 **********************
-  /**
-   * 将选择的点位同步到 Store
-   * @param {*} cells 已选中的点位ID
-   */
-  onSelectCell = (cells) => {
-    const { dispatch } = window.g_app._store;
-    dispatch({ type: 'editor/saveSelectCells', payload: cells });
-  };
-
   /**
    * 点位单击回调
    * @param {*} cell 需要选中的点位
@@ -479,7 +468,7 @@ class EditorMapView extends BaseMap {
           this.idCellMap.delete(selection.id);
         }
         break;
-      case MapSelectableSpriteType.COST:
+      case MapSelectableSpriteType.ROUTE:
         entity = this.idLineMap[selection.cost].get(selection.id);
         if (remove) {
           this.idLineMap[selection.cost].delete(selection.id);

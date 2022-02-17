@@ -11,7 +11,7 @@ import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/u
 import styles from '../editorLayout.module.less';
 
 const EditorMapContainer = (props) => {
-  const { dispatch, mapContext } = props;
+  const { dispatch, mapContext, showShortcutTool } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
@@ -275,7 +275,7 @@ const EditorMapContainer = (props) => {
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
-      <EditorShortcutTool />
+      {showShortcutTool && <EditorShortcutTool />}
       <EditorMask />
       <EditorMapView />
     </div>
@@ -289,6 +289,7 @@ export default connect(({ editor }) => {
     preRouteMap,
     mapContext,
     leftActiveCategory,
+    showShortcutTool,
   } = editor;
   return {
     currentMap,
@@ -297,5 +298,6 @@ export default connect(({ editor }) => {
     preRouteMap,
     mapContext,
     leftActiveCategory,
+    showShortcutTool,
   };
 })(memo(EditorMapContainer));

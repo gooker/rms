@@ -1492,7 +1492,7 @@ export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _e
       .map(({ source, target, cost, type }) => {
         if (cellIds.includes(source) || cellIds.includes(target)) {
           return {
-            type: MapSelectableSpriteType.COST,
+            type: MapSelectableSpriteType.ROUTE,
             id: `${source}-${target}`,
             cost,
             costType: type,

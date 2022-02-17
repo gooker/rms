@@ -150,7 +150,7 @@
   box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
   cursor: default;
 
-  div:nth-child(1) {
+  & > div:nth-child(1) {
     flex: 1;
     span {
       cursor: pointer;
@@ -174,7 +174,7 @@
     }
   }
 
-  div:nth-child(2) {
+  & > div:nth-child(2) {
     padding-left: 10px;
     color: #e8e8e8;
     font-weight: 600;
@@ -196,9 +196,26 @@
   top: 45px;
   left: 1px;
   width: 200px;
-  height: 30vh;
+  max-height: 30vh;
+  padding: 0 10px;
   overflow-y: auto;
-  background: #6b6b6b;
+  background: #5f5f5fcc;
   border-radius: 5px;
   user-select: none;
+
+  & > div:not(:last-child) {
+    border-bottom: 1px solid #7a7a7a;
+  }
+
+  & > div {
+    display: flex;
+    align-items: center;
+    height: 40px;
+
+    label {
+      padding-right: 50px;
+      color: #c4c4c4;
+      font-weight: 500;
+    }
+  }
 }

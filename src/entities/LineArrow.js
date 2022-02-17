@@ -124,7 +124,7 @@ export default class LineArrow extends PIXI.Container {
 
   click = (event) => {
     const cost = {
-      type: MapSelectableSpriteType.COST,
+      type: MapSelectableSpriteType.ROUTE,
       costType: this.type,
       id: this.id,
       cost: this.cost,

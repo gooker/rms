@@ -18,14 +18,14 @@ export default function requestAPI() {
       // ws: 'ws://52.83.193.245:10215/ws',
 
       // NT-11-monthly 内网
-      sso: 'http://192.168.0.11:6121',
-      coordinator: 'http://192.168.0.11:6123',
-      ws: 'ws://52.83.193.245:10225/ws',
+      // sso: 'http://192.168.0.11:6121',
+      // coordinator: 'http://192.168.0.11:6123',
+      // ws: 'ws://52.83.193.245:10225/ws',
 
       // NT-11-monthly 公网
-      // sso: 'http://52.83.193.245:10221',
-      // coordinator: 'http://52.83.193.245:10223',
-      // ws: '//52.83.193.245:10225/ws',
+      sso: 'http://52.83.193.245:10221',
+      coordinator: 'http://52.83.193.245:10223',
+      ws: 'ws://52.83.193.245:10225/ws',
 
       // NT-12
       // sso: 'http://sso-api-ntdev-self-defining.mushiny.local',

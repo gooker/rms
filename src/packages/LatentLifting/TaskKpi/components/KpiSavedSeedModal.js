@@ -181,7 +181,7 @@ export default class KpiSavedSeedModal extends Component {
         text ? formatMessage({ id: 'app.common.true' }) : formatMessage({ id: 'app.common.false' }),
     },
     {
-      title: formatMessage({ id: 'app.map.targetCell' }),
+      title: formatMessage({ id: 'app.common.targetCell' }),
       dataIndex: 'kpiSearchParam.targetCellId',
       align: 'center',
       width: 200,

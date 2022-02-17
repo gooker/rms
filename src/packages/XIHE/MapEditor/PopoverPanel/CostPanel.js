@@ -31,7 +31,7 @@ const CostPanel = (props) => {
   return (
     <div style={{ height, width: 375 }} className={editorStyles.categoryPanel}>
       <div>
-        <FormattedMessage id={'app.map.routeMap'} />
+        <FormattedMessage id={'app.map.route'} />
       </div>
       <div>
         <div className={styles.panelBlock}>

@@ -30,7 +30,7 @@ import {
   addApplication,
   getApplications,
   updateTranslations,
-  getTranslationBycode,
+  getTranslationByCode,
 } from '@/services/translator';
 import RmsConfirm from '@/components/RmsConfirm';
 import {
@@ -134,7 +134,7 @@ class LanguageManage extends React.Component {
   getTranslateList = async () => {
     const { appCode } = this.state;
     this.setState({ loading: true });
-    const list = await getTranslationBycode({ appCode: appCode });
+    const list = await getTranslationByCode({ appCode: appCode });
     if (!dealResponse(list)) {
       this.setState({ dataList: list });
     }

@@ -67,7 +67,7 @@ const EmptyRun = (props) => {
           <Form.Item
             {...formItemLayout}
             name={'targetCellId'}
-            label={formatMessage({ id: 'app.map.targetCell' })}
+            label={formatMessage({ id: 'app.common.targetCell' })}
             rules={[{ required: true }]}
           >
             <Input />

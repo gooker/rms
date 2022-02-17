@@ -2,14 +2,6 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
 //////////////////////////**** 通用 ****//////////////////////////
-// 获取所有小车类型数据
-// @Dup: /map/getAllRobotType
-export async function fetchTrafficRobotType() {
-  return request(`/${NameSpace.Coordinator}/traffic/getRobotType`, {
-    method: 'GET',
-  });
-}
-
 // 获取潜伏车货架列表
 export async function fetchLatentPodList() {
   const sectionId = window.localStorage.getItem('sectionId');

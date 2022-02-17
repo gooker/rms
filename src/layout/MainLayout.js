@@ -32,31 +32,29 @@ class MainLayout extends React.Component {
       if (userInfo && !dealResponse(userInfo)) {
         // 2.初始化应用基础信息
         await dispatch({ type: 'global/initPlatformState' });
-
-        // 3. 初始化Socket客户端
         const { currentSection, username } = userInfo;
+
         if (username !== 'admin') {
+          // 3. 初始化Socket客户端
           const { name, password } = currentSection;
           const socketClient = new SocketClient({ login: name, passcode: password });
           socketClient.connect();
           dispatch({ type: 'global/saveSocketClient', payload: socketClient });
-        }
 
-        // 4. 加载地图Texture
-        if (!textureLoaded) {
-          await loadTexturesForMap();
-          dispatch({ type: 'global/updateTextureLoaded', payload: true });
+          // 4. 加载地图Texture
+          if (!textureLoaded) {
+            await loadTexturesForMap();
+            dispatch({ type: 'global/updateTextureLoaded', payload: true });
+          }
+
+          // 5. 获取所有车类任务类型数据
+          this.loadAllTaskTypes();
+
+          // 6. 货物所有车类型
+          this.loadAllAgvTypes();
         }
 
         this.setState({ appReady: true });
-
-        // 5. 获取所有车类任务类型数据
-        if (username !== 'admin') {
-          this.loadAllTaskTypes();
-        }
-
-        // 6. 货物所有车类型
-        this.loadAllAgvTypes();
       } else {
         throw new Error(formatMessage({ id: 'app.message.fetchUserFail' }));
       }
@@ -65,7 +63,7 @@ class MainLayout extends React.Component {
         title: formatMessage({ id: 'app.global.initFailed' }),
         content: error.toString(),
         onOk() {
-          dispatch({ type: 'user/logout' });
+          dispatch({ type: 'user/logout', payload: history });
         },
       });
     }
