@@ -117,18 +117,9 @@ export function getRectLock(width, height) {
 
 export function getEStopTexture(color) {
   graphics.clear();
-  graphics.lineStyle(20, color, 1);
+  graphics.lineStyle(0);
   graphics.beginFill(color);
   graphics.drawRect(0, 0, 100, 100);
-  graphics.endFill();
-  return window.PixiUtils.renderer.generateTexture(graphics);
-}
-
-export function getEStopCircleTexture(color) {
-  graphics.clear();
-  graphics.lineStyle(70, color, 1);
-  graphics.beginFill(color);
-  graphics.drawCircle(0, 0, 100);
   graphics.endFill();
   return window.PixiUtils.renderer.generateTexture(graphics);
 }

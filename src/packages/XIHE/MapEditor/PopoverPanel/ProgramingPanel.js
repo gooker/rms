@@ -60,7 +60,7 @@ const ProgramingPanel = (props) => {
                 {menu}
                 <Divider style={{ margin: '4px 0' }} />
                 <div style={{ padding: '2px 0 2px 10px', cursor: 'pointer' }} onClick={addScope}>
-                  <PlusOutlined /> <FormattedMessage id={'mapEditor.addScope'} />
+                  <PlusOutlined /> <FormattedMessage id={'editor.addScope'} />
                 </div>
               </div>
             )}

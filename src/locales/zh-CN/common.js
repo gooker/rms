@@ -100,7 +100,7 @@ export default {
   'app.common.param': '参数',
 
   // 地图相关
-  'app.map.map': '地图',
+  'app.map': '地图',
   'app.map.logicArea': '逻辑区',
   'app.map.routeArea': '路线区',
   'app.map.scope': '作用域',

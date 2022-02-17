@@ -31,32 +31,14 @@ stages:
   - release
   - deploy
 
-#  - build
-##  - release
-#  - deploy
-
-local-build-staging:
-  image: 172.31.2.100:5000/node_lftp:alpine
+# 发布到南通11服务器的开发环境
+nt11-dev-staging:
   stage: build
   tags:
-    - production-group-to-dev-k8s-1-14-3
-  #  before_script:
-  #    - apk update
-  #    - apk gzip
-  #  before_script:
-  #    - apk update
-  #    - apk add lftp
-  #    - apk add openssh
+    - prod_group_nt_node1
   script:
     - node -v
     - npm -v
-    - npm config get cache
-    - npm config set registry https://registry.npm.taobao.org
-    - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
-    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
-    - npm config set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs/
-    - npm config set gifsicle_cdnurl https://npm.taobao.org/mirrors/gifsicle-bin/
-    - npm install cnpm -g
     - cnpm install
     - npm run build
     - mybuild_date=`date "+%m%d"`
@@ -67,24 +49,119 @@ local-build-staging:
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
     #    - zip maptool.zip dist
     - cp version.txt dist/
-    - tar -zcv -f Portal-GUI-${mybuild_version}.tar.gz dist/
-    - cp Portal-GUI-${mybuild_version}.tar.gz tmp_build/
+    - date_time_string=`date "+%Y%m%d%H%M%S"`
+    - prefix=/usr/share/nginx/node/dev/sorter_wcs
+    - sudo sh -c "mkdir -p ${prefix}/dist"
+    - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
+    - sudo sh -c "cp -r dist ${prefix}"
+  only:
+    - /^nt11-dev.*$/
+
+# 发布到南通13服务器的开发环境
+nt13-dev-staging:
+  stage: build
+  tags:
+    - prod_group_nt_node3
+  script:
+    - node -v
+    - npm -v
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
+    - echo  $mybuild_version $mybuild_date
+    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    - cp version.txt dist/
+    - sed -i "s|SSO_API|http://192.168.0.13:8071|" dist/config.js
+    - sed -i "s|COORDINATOR_API|http://192.168.0.13:8073|" dist/config.js
+    - sed -i "s|WS_URL|ws://192.168.0.13:15654/ws|" dist/config.js
+    - date_time_string=`date "+%Y%m%d%H%M%S"`
+    - prefix=/usr/share/nginx/node/dev/portal_ui
+    - sudo sh -c "mkdir -p ${prefix}/dist"
+    - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
+    - sudo sh -c "cp -r dist ${prefix}"
+  only:
+    - /^nt13-dev.*$/
+
+# 发布到南通11服务器的月度发布环境
+nt11-monthly_release-staging:
+  stage: build
+  tags:
+    - prod_group_nt_node1
+  script:
+    - node -v
+    - npm -v
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
+    - echo  $mybuild_version $mybuild_date
+    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    #    - zip maptool.zip dist
+    - cp version.txt dist/
+    - date_time_string=`date "+%Y%m%d%H%M%S"`
+    - prefix=/usr/share/nginx/node/monthly_release/sorter_wcs
+    - sudo sh -c "mkdir -p ${prefix}/dist"
+    - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
+    - sudo sh -c "cp -r dist ${prefix}"
+  only:
+    - /^nt11-monthly_release.*$/
+
+# 在南通12服务器上打包
+nt-local-build-staging:
+  #  image: 172.31.2.100:5000/node_lftp:alpine
+  stage: build
+  tags:
+    - prod_group_nt_node2
+  #  before_script:
+  #    - apk update
+  #    - apk gzip
+  #  before_script:
+  #    - apk update
+  #    - apk add lftp
+  #    - apk add openssh
+  script:
+    - node -v
+    - npm -v
+    #    - npm config get cache
+    #    - npm config set registry https://registry.npm.taobao.org
+    #    - npm config set electron_mirror https://npm.taobao.org/mirrors/electron/
+    #    - npm config set sass_binary_site https://npm.taobao.org/mirrors/node-sass/
+    #    - npm config set phantomjs_cdnurl https://npm.taobao.org/mirrors/phantomjs/
+    #    - npm config set gifsicle_cdnurl https://npm.taobao.org/mirrors/gifsicle-bin/
+    #    - npm install cnpm -g
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
+    - echo  $mybuild_version $mybuild_date
+    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    #    - zip maptool.zip dist
+    - cp version.txt dist/
+    - tar -zcv -f Sorter-GUI-${mybuild_version}.tar.gz dist/
+    - cp Sorter-GUI-${mybuild_version}.tar.gz tmp_build/
     - cp version.txt tmp_build/
-    - full_folder=/data/build/2.4GE/Portal-GUI/$mybuild_version/$mybuild_date/
+    - full_folder=/data/build/2.7GE/Sorter-GUI/$mybuild_version/$mybuild_date/
     - echo $full_folder
-    - lftp -e "debug; set sftp:auto-confirm yes;set ssl:verify-certificate no;set ftp:ssl-allow false; set ssl:check-hostname false; open -u release_account,$sftp_password sftp://172.31.10.146:22; mirror -R -p --verbose=3 tmp_build/ $full_folder; quit"
+    - lftp -e "debug; set sftp:auto-confirm yes;set ssl:verify-certificate no;set ftp:ssl-allow false; set ssl:check-hostname false; open -u release_account,$sftp_password sftp://52.83.230.100:22; mirror -R -p --verbose=3 tmp_build/ $full_folder; quit"
 
   #    - mvn help:effective-settings
   #  cache:
   #    paths:
   #      - /cache_mvn_repo/
-  artifacts:
-    paths:
-      - WCS-GUI.tar.gz
-      - version.txt
-    expire_in: 20 minutes
+  #  artifacts:
+  #    paths:
+  #      - WCS-GUI.tar.gz
+  #      - version.txt
+  #    expire_in: 20 minutes
   only:
-    - /^local-release-.*$/
+    - /^nt-local-release-.*$/
 
 nt-docker-images-build-staging:
   #  image: reg.mushiny.com/library/node:alpine
@@ -178,7 +255,7 @@ docker-images-package-staging:
     - /^docker-release-.*$/
 
 docker-build-staging:
-#  image: 172.31.2.100:5000/node:alpine
+  #  image: 172.31.2.100:5000/node:alpine
   image: node:10.16-alpine
   stage: build
   tags:

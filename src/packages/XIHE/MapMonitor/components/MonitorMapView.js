@@ -153,7 +153,7 @@ class MonitorMapView extends BaseMap {
   emergencyAreaShown = (flag) => {
     this.states.emergencyAreaShown = flag;
     this.emergencyAreaMap.forEach((eStop) => {
-      eStop.switchEstopsShown(flag);
+      eStop.switchEStopsVisible(flag);
     });
   };
 
@@ -1504,7 +1504,7 @@ class MonitorMapView extends BaseMap {
         // 判断这个code是否存在 存在就更新
         const stopEntity = this.emergencyAreaMap.get(`${currentdata.code}`);
         if (stopEntity) {
-          stopEntity.updateEstop(eStopData);
+          stopEntity.updateEStop(eStopData);
           this.emergencyAreaMap.delete(`${currentdata.code}`);
           this.emergencyAreaMap.set(`${currentdata.code}`, stopEntity);
         } else {
@@ -1549,7 +1549,7 @@ class MonitorMapView extends BaseMap {
       worldSize,
     };
     if (estop) {
-      estop.updateEstop(_params);
+      estop.updateEStop(_params);
       this.emergencyAreaMap.delete(`${params.code}`);
       this.emergencyAreaMap.set(`${params.code}`, estop);
     }

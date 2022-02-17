@@ -57,7 +57,7 @@ const EditorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* 查询点位 */}
-      <Tooltip title={formatMessage({ id: 'mapEditor.locate' })}>
+      <Tooltip title={formatMessage({ id: 'editor.locate' })}>
         <span
           style={{ cursor: 'pointer' }}
           onClick={() => {
@@ -70,7 +70,7 @@ const EditorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* 导出施工图 */}
-      <Tooltip title={formatMessage({ id: 'mapEditor.constructionDrawing.export' })}>
+      <Tooltip title={formatMessage({ id: 'editor.constructionDrawing.export' })}>
         <span style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}>
           <IconFont type={'icon-constructionDrawing'} />
         </span>
@@ -111,11 +111,11 @@ const EditorHeaderRightTools = (props) => {
         {activeMapLoading ? (
           <LoadingOutlined />
         ) : isActive ? (
-          <Tooltip title={formatMessage({ id: 'mapEditor.active.warn' })}>
+          <Tooltip title={formatMessage({ id: 'editor.active.warn' })}>
             <LockOutlined />
           </Tooltip>
         ) : (
-          <Tooltip title={formatMessage({ id: 'mapEditor.active' })}>
+          <Tooltip title={formatMessage({ id: 'editor.active' })}>
             <span onClick={activeMap}>
               <IconFont type={'icon-active'} />
             </span>

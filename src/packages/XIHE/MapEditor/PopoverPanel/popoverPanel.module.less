@@ -75,6 +75,27 @@
   padding-top: 20px;
 }
 
+// EditorCard
+.editorCard {
+  .panelBlockBase();
+
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 10px 20px;
+
+  & > div:nth-child(1) {
+    padding-bottom: 5px;
+    color: #e8e8e8;
+    font-weight: 600;
+    font-size: 18px;
+    border-bottom: 1px solid #a3a3a3;
+  }
+
+  & > div:nth-child(2) {
+    padding-top: 10px;
+  }
+}
+
 // 功能列表项, 比如：工作站列表、充电桩列表等等
 .functionListItem {
   .panelBlockBase();
@@ -133,3 +154,8 @@
 }
 
 // ProgramingPanel
+
+// 点位属性
+.cellPropsTag {
+  text-align: center;
+}

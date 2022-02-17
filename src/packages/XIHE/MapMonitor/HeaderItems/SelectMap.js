@@ -7,7 +7,7 @@ const SelectMap = (props) => {
   const { currentMap } = props;
   return (
     <span className={styles.action}>
-      {currentMap?.name || formatMessage({ id: 'mapEditor.map' })}
+      {currentMap?.name || formatMessage({ id: 'app.map' })}
     </span>
   );
 };

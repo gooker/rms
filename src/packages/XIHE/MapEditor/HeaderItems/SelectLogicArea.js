@@ -50,7 +50,7 @@ const SelectLogicArea = (props) => {
     result.push(
       <Menu.Item key="add">
         <PlusOutlined />
-        <FormattedMessage id="mapEditor.addLogicArea" />
+        <FormattedMessage id="editor.addLogicArea" />
       </Menu.Item>,
     );
     return result;

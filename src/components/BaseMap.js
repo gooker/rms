@@ -162,7 +162,7 @@ export default class BaseMap extends React.Component {
   switchEmergencyStopShown = (flag) => {
     this.states.showEmergencyStop = flag;
     this.fixedEStopMap.forEach(function (eStop) {
-      eStop.switchEstopsShown(flag);
+      eStop.switchEStopsVisible(flag);
     });
     this.refresh();
   };
@@ -854,18 +854,18 @@ export default class BaseMap extends React.Component {
         //
       },
     };
-    const fixedEstop = new EmergencyStop(eData);
-    this.pixiUtils.viewportAddChild(fixedEstop);
-    this.fixedEStopMap.set(`${data.code}`, fixedEstop);
+    const fixedEStop = new EmergencyStop(eData);
+    this.pixiUtils.viewportAddChild(fixedEStop);
+    this.fixedEStopMap.set(`${data.code}`, fixedEStop);
   };
 
   // 移除固定紧急避让区
   removeFixedEStopFunction = (data) => {
     const { code } = data;
-    const fixE = this.fixedEStopMap.get(`${code}`);
-    if (fixE) {
-      this.pixiUtils.viewportRemoveChild(fixE);
-      fixE.destroy({ children: true });
+    const fixedEStop = this.fixedEStopMap.get(`${code}`);
+    if (fixedEStop) {
+      this.pixiUtils.viewportRemoveChild(fixedEStop);
+      fixedEStop.destroy({ children: true });
     }
   };
 

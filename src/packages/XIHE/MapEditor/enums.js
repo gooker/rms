@@ -56,27 +56,27 @@ export const EditorLeftTools = [
     icon: <IconFont type={'icon-drag'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.insertFont'} />,
+    label: <FormattedMessage id={'editor.tools.insertFont'} />,
     value: LeftCategory.Font,
     icon: <IconFont type={'icon-font'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.insertRect'} />,
+    label: <FormattedMessage id={'editor.tools.insertRect'} />,
     value: LeftCategory.Rectangle,
     icon: <IconFont type={'icon-rectangle'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.insertCircle'} />,
+    label: <FormattedMessage id={'editor.tools.insertCircle'} />,
     value: LeftCategory.Circle,
     icon: <IconFont type={'icon-circle'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.insertPicture'} />,
+    label: <FormattedMessage id={'editor.tools.insertPicture'} />,
     value: LeftCategory.Image,
     icon: <IconFont type={'icon-image'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.useTemplate'} />,
+    label: <FormattedMessage id={'editor.tools.useTemplate'} />,
     value: LeftCategory.Template,
     icon: <IconFont type={'icon-template'} />,
   },
@@ -159,12 +159,12 @@ export const EditorRightTools = [
     icon: <IconFont type={'icon-programing'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.createTemplate'} />,
+    label: <FormattedMessage id={'editor.tools.createTemplate'} />,
     value: RightCategory.Template,
     icon: <IconFont type={'icon-template'} />,
   },
   {
-    label: <FormattedMessage id={'mapEditor.tools.history'} />,
+    label: <FormattedMessage id={'editor.tools.history'} />,
     value: RightCategory.History,
     icon: <IconFont type={'icon-history'} />,
   },

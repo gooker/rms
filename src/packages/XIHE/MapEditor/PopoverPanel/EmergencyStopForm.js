@@ -47,10 +47,11 @@ const EmergencyStopForm = (props) => {
         ylength: yLength,
       });
     } else {
+      // 注意: 圆的计算点在圆心，不是左上角
       formRef.setFieldsValue({
-        x: worldStartX,
-        y: worldStartY,
-        r: xLength / 2,
+        x: (worldEndX + worldStartX) / 2,
+        y: (worldEndY + worldStartY) / 2,
+        r: (xLength + yLength) / 4,
       });
     }
     setDataAutoLoaded(true);

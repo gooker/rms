@@ -36,7 +36,7 @@ import {
   updateMap,
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
-import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
+import { LeftCategory, RightCategory } from '@/packages/XIHE/MapEditor/enums';
 import { MapSelectableSpriteType } from '@/config/consts';
 
 // 后台字段与Texture Key的对应关系
@@ -62,7 +62,6 @@ const EditorState = {
 
   // 选择相关
   selections: [],
-  selectCells: [],
   selectLines: [],
 
   // 所有站点类型
@@ -82,6 +81,7 @@ const EditorState = {
   showBackImg: false,
 
   // 标识符
+  forceUpdate: {}, // 部分组件需要手动渲染
   saveMapLoading: false, // 保存地图
   activeMapLoading: false, // 激活地图
   leftActiveCategory: LeftCategory.Choose, // 左侧菜单选中项
@@ -106,10 +106,17 @@ export default {
         ...EditorState,
       };
     },
+
     saveState(state, action) {
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    saveForceUpdate(state, action) {
+      return {
+        ...state,
+        forceUpdate: {},
       };
     },
     updateRangeForConfig(state, action) {
@@ -121,7 +128,6 @@ export default {
         labelMarkerVisible: false,
       };
     },
-
     updateZoneMarkerVisible(state, action) {
       return {
         ...state,
@@ -129,10 +135,18 @@ export default {
       };
     },
     updateSelections(state, action) {
-      return {
-        ...state,
-        selections: action.payload,
-      };
+      const selections = action.payload;
+      const newState = { ...state, selections };
+      if (selections.length === 1) {
+        if (state.categoryPanel === null) {
+          newState.categoryPanel = RightCategory.Prop;
+        }
+      } else {
+        if (state.categoryPanel === RightCategory.Prop) {
+          newState.categoryPanel = null;
+        }
+      }
+      return newState;
     },
     updateLabelInputVisible(state, action) {
       return {
@@ -233,12 +247,6 @@ export default {
       return {
         ...state,
         selectLines: action.payload,
-      };
-    },
-    saveSelectCells(state, action) {
-      return {
-        ...state,
-        selectCells: action.payload,
       };
     },
     saveVisit(state, action) {
@@ -805,7 +813,6 @@ export default {
         type: 'saveState',
         payload: {
           currentCells: _currentCells,
-          selectCells: Object.values(result),
         },
       });
       return result;
@@ -813,19 +820,19 @@ export default {
 
     // 修改单个点位地址码
     *changeSingleCellCode({ payload }, { select, put }) {
-      const { currentMap, currentCells, selectCells } = yield select(({ editor }) => editor);
+      const { currentMap, currentCells, selections } = yield select(({ editor }) => editor);
       const { rangeStart, rangeEnd } = getCurrentLogicAreaData();
       const { type, cellId, x, y } = payload;
 
       // 校验 cellId 是否已存在或者是否在逻辑区range
       if (currentMap.cellMap[cellId]) {
-        message.error(formatMessage({ id: 'app.cellMap.code.exist' }));
+        message.error(formatMessage({ id: 'editor.code.duplicate' }));
         return;
       }
       if (cellId < rangeStart || cellId > rangeEnd) {
-        message.error(
+        message.warn(
           formatMessage(
-            { id: 'app.cellMap.code.notInRange' },
+            { id: 'editor.message.codeNotInRange' },
             { range: `${rangeStart}~${rangeEnd}` },
           ),
         );
@@ -841,7 +848,7 @@ export default {
         response = { id: cellId, x, y, cost: null };
       }
       if (type === 'update') {
-        const originCellId = selectCells[0];
+        const originCellId = selections[0].id;
 
         // 处理地图 cellMap
         newCellMap[cellId] = { ...newCellMap[originCellId], id: cellId };
@@ -855,10 +862,23 @@ export default {
           return item;
         });
 
-        // TODO: 处理线条
+        // 处理线条: 将 originCellId 替换成 cellId
         response = { [originCellId]: cellId };
+        const currentRouteMap = getCurrentRouteMapData();
+        currentRouteMap.relations.forEach((relation) => {
+          if (relation.source === originCellId) {
+            relation.source = cellId;
+          }
+          if (relation.target === originCellId) {
+            relation.target = cellId;
+          }
+        });
 
-        yield put({ type: 'saveSelectCells', payload: [cellId] });
+        // 处理点位类型
+
+        // 处理 selections
+        const newSelections = [{ ...selections[0], id: cellId }];
+        yield put({ type: 'updateSelections', payload: newSelections });
       }
       currentMap.cellMap = newCellMap;
 
@@ -872,11 +892,12 @@ export default {
 
     // 删除点位
     *batchDeleteCells(_, { select, put }) {
-      const { selectCells, currentMap, currentCells } = yield select(({ editor }) => editor);
-      const result = {
-        cell: selectCells,
-        line: [],
-      };
+      const { selections, currentMap, currentCells } = yield select(({ editor }) => editor);
+
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
+      const result = { cell: selectCells, line: [] };
 
       // 删除 currentMap 中的点位
       const cellMap = { ...currentMap.cellMap };
@@ -1007,9 +1028,12 @@ export default {
 
     // 设置点位类型
     *setCellType({ payload }, { select }) {
-      const { selectCells } = yield select(({ editor }) => editor);
+      const { selections } = yield select(({ editor }) => editor);
       const { type, scope, operation } = payload;
 
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
       const currentLogicAreaData = getCurrentLogicAreaData();
       const currentRouteMapData = getCurrentRouteMapData();
       const scopeData = scope === 'routeMap' ? currentRouteMapData : currentLogicAreaData;
@@ -1025,7 +1049,7 @@ export default {
           selectCells.forEach((cellId) => {
             if (storeCellIds.includes(parseInt(cellId, 10))) {
               message.error(
-                formatMessage({ id: 'mapEditor.tip.storageWithoutBlock' }, { value: cellId }),
+                formatMessage({ id: 'editor.tip.storageWithoutBlock' }, { value: cellId }),
               );
             } else {
               activeCellIds.push(parseInt(cellId, 10));
@@ -1036,7 +1060,7 @@ export default {
           selectCells.forEach((cellId) => {
             if (blockCellIds.includes(parseInt(cellId, 10))) {
               message.error(
-                formatMessage({ id: 'mapEditor.tip.blockWithoutOthers' }, { value: cellId }),
+                formatMessage({ id: 'editor.tip.blockWithoutOthers' }, { value: cellId }),
               );
             } else {
               activeCellIds.push(parseInt(cellId, 10));
@@ -1059,14 +1083,14 @@ export default {
     },
 
     // ********************************* 地图标记 ********************************* //
-    insertZoneMarker({ payload }, { select }) {
+    insertZoneMarker({ payload }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let zoneMarker = currentLogicAreaData.zoneMarker || [];
       zoneMarker = [...zoneMarker, payload];
       currentLogicAreaData.zoneMarker = zoneMarker;
     },
 
-    updateZoneMarker({ payload }, { select }) {
+    updateZoneMarker({ payload }) {
       const currentLogicAreaData = getCurrentLogicAreaData();
       let zoneMarker = currentLogicAreaData.zoneMarker || [];
       const targetMarker = find(zoneMarker, { code: payload.code });
@@ -1075,6 +1099,18 @@ export default {
         targetMarker.y = payload.y;
         targetMarker.width = payload.width;
         targetMarker.height = payload.height;
+      }
+    },
+
+    updateEStop({ payload }) {
+      const currentLogicAreaData = getCurrentLogicAreaData();
+      let emergencyStopFixedList = currentLogicAreaData.emergencyStopFixedList || [];
+      const targetMarker = find(emergencyStopFixedList, { code: payload.code });
+      if (targetMarker) {
+        targetMarker.x = payload.x - payload.width / 2;
+        targetMarker.y = payload.y - payload.height / 2;
+        targetMarker.xlength = payload.width;
+        targetMarker.ylength = payload.height;
       }
     },
 
@@ -1099,7 +1135,11 @@ export default {
 
     // ********************************* 线条操作 ********************************* //
     *generateCostLines({ payload }, { select, put }) {
-      const { selectCells, currentMap } = yield select(({ editor }) => editor);
+      const { selections, currentMap } = yield select(({ editor }) => editor);
+
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
 
       // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
       const currentRouteMapData = getCurrentRouteMapData();
@@ -1145,8 +1185,12 @@ export default {
     },
 
     *generateCostCurve({ payload }, { select, put }) {
-      const { selectCells, currentMap } = yield select(({ editor }) => editor);
+      const { selections, currentMap } = yield select(({ editor }) => editor);
       const cellMap = currentMap.cellMap;
+
+      const selectCells = selections
+        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .map(({ id }) => id);
 
       // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
       const currentRouteMapData = getCurrentRouteMapData();
@@ -1262,6 +1306,33 @@ export default {
 
       yield put({ type: 'saveState', payload: { currentMap, selectLines: [] } });
       return result;
+    },
+
+    *updateCost({ payload }, { select, put }) {
+      const selections = yield select(({ editor }) => editor.selections);
+      const { id, cost } = payload;
+
+      let preRelation;
+      // 更新地图数据
+      const currentRouteMap = getCurrentRouteMapData();
+      const [source, target] = id.split('-').map((item) => parseInt(item));
+      currentRouteMap.relations.forEach((relation) => {
+        if (relation.source === source && relation.target === target) {
+          preRelation = { ...relation };
+          relation.cost = parseInt(cost);
+        }
+      });
+
+      // 更新 selections
+      yield put({
+        type: 'updateSelections',
+        payload: [{ ...selections[0], cost: parseInt(cost) }],
+      });
+
+      return {
+        pre: { ...preRelation },
+        next: { ...preRelation, cost: parseInt(cost) },
+      };
     },
 
     // ********************************* 功能操作 ********************************* //

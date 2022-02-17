@@ -107,7 +107,7 @@ const SelectMap = (props) => {
     result.push(
       <Menu.Item key="add">
         <PlusOutlined /> <FormattedMessage id="app.button.add" />
-        <FormattedMessage id="mapEditor.map" />
+        <FormattedMessage id="app.map" />
       </Menu.Item>,
     );
     return result;
@@ -125,7 +125,7 @@ const SelectMap = (props) => {
       >
         <span className={styles.action}>
           <span style={{ fontSize: 15, fontWeight: 600 }}>
-            {currentMap?.name || formatMessage({ id: 'mapEditor.map' })}
+            {currentMap?.name || formatMessage({ id: 'app.map' })}
           </span>
           <DownOutlined style={{ marginLeft: 4 }} />
         </span>
@@ -156,7 +156,7 @@ const SelectMap = (props) => {
               openMapCreationModal();
             }}
           >
-            <FormattedMessage id={'mapEditor.button.notSaveMap'} />
+            <FormattedMessage id={'editor.button.notSaveMap'} />
           </Button>,
           <Button
             key="save"
@@ -171,7 +171,7 @@ const SelectMap = (props) => {
           </Button>,
         ]}
       >
-        <FormattedMessage id={'mapEditor.saveMap.contentLoss'} />
+        <FormattedMessage id={'editor.saveMap.contentLoss'} />
       </Modal>
 
       {/*  创建 & 更新地图 */}
@@ -184,7 +184,7 @@ const SelectMap = (props) => {
         visible={creationVisible}
         title={`${formatMessage({
           id: editing ? 'app.button.edit' : 'app.button.add',
-        })}${formatMessage({ id: 'mapEditor.map' })}`}
+        })}${formatMessage({ id: 'app.map' })}`}
         footer={[
           <Button
             key="cancel"
@@ -200,7 +200,7 @@ const SelectMap = (props) => {
           editing && (
             <Popconfirm
               key="delete"
-              title={formatMessage({ id: 'mapEditor.deleteMapConfirm' })}
+              title={formatMessage({ id: 'editor.deleteMapConfirm' })}
               onConfirm={deleteMap}
             >
               <Button danger>
@@ -211,7 +211,7 @@ const SelectMap = (props) => {
 
           editing && (
             <Button key="record" onClick={showSavingRecord}>
-              <FormattedMessage id={'mapEditor.button.record'} />
+              <FormattedMessage id={'editor.button.record'} />
             </Button>
           ),
 
@@ -249,7 +249,7 @@ const SelectMap = (props) => {
         closable={false}
         maskClosable={false}
         visible={historyVisible}
-        title={<FormattedMessage id={'mapEditor.updateHistory'} />}
+        title={<FormattedMessage id={'editor.updateHistory'} />}
         footer={[
           <Button
             key="cancel"
