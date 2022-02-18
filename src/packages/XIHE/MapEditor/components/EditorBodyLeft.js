@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { Cell, LineArrow } from '@/entities';
 import { filterMapSpriteByRange, transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
@@ -46,14 +45,14 @@ class EditorBodyLeft extends React.PureComponent {
     });
 
     // 只有选择模式下才可以点击
-    mapContext.pixiUtils.viewport.children.forEach((element) => {
-      if (element instanceof Cell) {
-        element.interact(value === LeftCategory.Choose);
-      }
-      if (element instanceof LineArrow) {
-        element.clickable = value === LeftCategory.Choose;
-      }
-    });
+    // mapContext.pixiUtils.viewport.children.forEach((element) => {
+    //   if (element instanceof Cell) {
+    //     element.interact(value === LeftCategory.Choose);
+    //   }
+    //   if (element instanceof LineArrow) {
+    //     element.clickable = value === LeftCategory.Choose;
+    //   }
+    // });
 
     dispatch({ type: 'editor/updateLeftActiveCategory', payload: value });
   };

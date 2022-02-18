@@ -85,7 +85,7 @@ const EditorState = {
   forceUpdate: {}, // 部分组件需要手动渲染
   saveMapLoading: false, // 保存地图
   activeMapLoading: false, // 激活地图
-  leftActiveCategory: LeftCategory.Choose, // 左侧菜单选中项
+  leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
 
   // Mask相关

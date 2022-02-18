@@ -48,7 +48,7 @@ class EditorMapView extends BaseMap {
 
     const htmlDOM = document.getElementById('editorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, false);
+    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
     dispatch({ type: 'editor/saveMapContext', payload: this });
     await loadEditorExtraTextures(this.pixiUtils.renderer);
   }
