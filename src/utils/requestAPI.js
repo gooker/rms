@@ -3,7 +3,7 @@ import { NameSpace } from '@/config/config';
 
 export default function requestAPI() {
   let apiMap = {};
-  if (isPlainObject(window.extraConfig)) {
+  if (window.extraConfig && isPlainObject(window.extraConfig)) {
     apiMap = { ...window.extraConfig };
   } else {
     apiMap = {

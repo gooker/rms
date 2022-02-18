@@ -76,11 +76,13 @@ const CostPanel = (props) => {
             </Button>
             <div className={styles.routePanel}>
               <Row type="flex" justify="center">
-                <CostConfigure
-                  onChange={(value) => {
-                    createLines({ dir: 0, value });
-                  }}
-                />
+                <Col span={7}>
+                  <CostConfigure
+                    onChange={(value) => {
+                      createLines({ dir: 0, value });
+                    }}
+                  />
+                </Col>
               </Row>
 
               <Row type="flex" justify="space-around">
@@ -102,13 +104,14 @@ const CostPanel = (props) => {
                   />
                 </Col>
               </Row>
-
               <Row type="flex" justify="center">
-                <CostConfigure
-                  onChange={(value) => {
-                    createLines({ dir: 180, value });
-                  }}
-                />
+                <Col span={7}>
+                  <CostConfigure
+                    onChange={(value) => {
+                      createLines({ dir: 180, value });
+                    }}
+                  />
+                </Col>
               </Row>
             </div>
           </div>

@@ -51,7 +51,6 @@ export default {
   'app.taskDetail.chargingRecord': '充电记录',
   'app.taskDetail.close': '关闭',
   'app.taskDetail.common': '共',
-  'app.taskDetail.createTime': '创建时间',
   'app.taskDetail.createUser': '创建人',
   'app.taskDetail.endCondition': '结束条件',
   'app.taskDetail.endPower': '结束电量',

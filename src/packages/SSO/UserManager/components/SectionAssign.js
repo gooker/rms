@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Card, Button, Transfer, message } from 'antd';
-import { fetchSelectSectionList, fetchAllSectionByUserId } from '@/services/user';
+import { fetchSelectSectionList, fetchAllSectionByUserId } from '@/services/SSO';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AdminTColor } from '../userManagerUtils';

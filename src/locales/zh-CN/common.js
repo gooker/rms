@@ -47,6 +47,9 @@ export default {
   'app.message.fetchFailTemplate': '获取{type}数据失败',
   'app.message.copy.successfully': '复制成功',
   'app.message.ruleRequired': '请输入{label}',
+  'app.message.fileCorrupted': '文件已损坏',
+  'app.message.upload.tip': '单击或拖动文件到该区域进行上传',
+  'app.message.gotIt': '知道了',
 
   // 告警
   'app.alert': '告警',
@@ -166,6 +169,8 @@ export default {
   'app.button.refresh': '刷新',
   'app.button.turnOff': '关闭',
   'app.button.execute': '执行',
+  'app.button.upload': '上传',
+  'app.button.download': '下载',
 
   // @下面5个可能需要从common中移除
   'app.button.bind': '绑定',

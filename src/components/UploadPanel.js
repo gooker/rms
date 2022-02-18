@@ -36,7 +36,7 @@ class UploadUtil extends PureComponent {
             <Icon type="inbox" />
           </p>
           <p className="ant-upload-text">
-            <FormattedMessage id="app.common.upload.dragUploadedFileToThisArea" />
+            <FormattedMessage id="app.message.upload.tip" />
           </p>
         </Dragger>
       </div>

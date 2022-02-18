@@ -6,7 +6,7 @@ import {
   fetchAddSection,
   updateSection,
   deleteSectionById,
-} from '@/services/user';
+} from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
 import TablewidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';

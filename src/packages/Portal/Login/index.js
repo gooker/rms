@@ -46,7 +46,7 @@ const Login = (props) => {
     const _values = { ...values };
     delete _values.environment;
     const response = await fetchLogin({ ..._values, type: 'admin' });
-    if (!dealResponse(response, false, null, formatMessage({ id: 'app.login.fail' }))) {
+    if (!dealResponse(response)) {
       window.localStorage.setItem('Authorization', response.authorization);
       // 如果有environment字段说明需要重新激活一个环境
       if (!isNull(values.environment)) {

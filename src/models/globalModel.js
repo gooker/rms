@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import { fetchAlertCount, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
-import { fetchUpdateUserCurrentLanguage } from '@/services/user';
+import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/util';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
@@ -48,6 +48,9 @@ export default {
     // 全局数据
     allTaskTypes: {},
     allAgvTypes: [],
+    backendVersion: null,
+    adapterVersion: null,
+    sysAuthInfo: null,
 
     // Texture
     textureLoaded: false,
@@ -320,6 +323,13 @@ export default {
       return {
         ...state,
         allTaskTypes: payload,
+      };
+    },
+
+    saveSysAuthInfo(state, { payload }) {
+      return {
+        ...state,
+        sysAuthInfo: payload,
       };
     },
   },

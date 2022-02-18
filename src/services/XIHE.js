@@ -1,6 +1,20 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
+//////////////////////////**** 高可用 ****//////////////////////////
+export async function getHAInfo() {
+  return request(`/${NameSpace.Coordinator}/serverInfo/getServerInfo`, {
+    method: 'GET',
+    attachSectionId: false,
+  });
+}
+
+export async function getHAChangeHistory() {
+  return request(`/${NameSpace.Coordinator}/serverInfo/getHaServerChange`, {
+    method: 'GET',
+  });
+}
+
 //////////////////////////**** 通用 ****//////////////////////////
 // 获取潜伏车货架列表
 export async function fetchLatentPodList() {

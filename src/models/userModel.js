@@ -1,4 +1,4 @@
-import { fetchLogout, fetchUserRoleList, fetchUpdateUserCurrentSection } from '@/services/user';
+import { fetchLogout, fetchUserRoleList, fetchUpdateUserCurrentSection } from '@/services/SSO';
 import { getCurrentUser } from '@/services/api';
 import intl from 'react-intl-universal';
 import { dealResponse } from '@/utils/util';

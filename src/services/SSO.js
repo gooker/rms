@@ -1,4 +1,7 @@
 import request from '@/utils/request';
+import { NameSpace } from '@/config/config';
+
+const { Coordinator } = NameSpace;
 
 export async function fetchLogout(params) {
   return request('/sso/user/logout', {
@@ -227,23 +230,39 @@ export async function deleteEnvironmentById(parms) {
 }
 
 ///////////////////// *** 授权管理 *** /////////////////////
-const coordinator_namespace = 'coordinator';
-// 授权
+/**
+ * 1. 是否导入证书
+ * 2. 导出的情况下判断是否过期
+ * @return boolean
+ */
 export async function getCertificateStatus() {
-  return request(`/${coordinator_namespace}/certificate/getCertificateStatus`, {
+  return request(`/${Coordinator}/certificate/getCertificateStatus`, {
     method: 'GET',
+    attachSection: false,
   });
 }
 
+// 获取授权码
 export async function getApplyToken() {
-  return request(`/${coordinator_namespace}/certificate/getApplyToken`, {
+  return request(`/${Coordinator}/certificate/getApplyToken`, {
     method: 'GET',
+    attachSection: false,
   });
 }
 
-export async function uploadCertication(param) {
-  return request(`/${coordinator_namespace}/certificate/active`, {
+// 上传证书
+export async function uploadCertification(param) {
+  return request(`/${Coordinator}/certificate/active`, {
     method: 'POST',
-    data: param,
+    body: param,
+    attachSection: false,
+  });
+}
+
+// 获取授权状态
+export async function getAuthorityInfo() {
+  return request(`/${Coordinator}/certificate/getSystemInfo`, {
+    method: 'GET',
+    attachSection: false,
   });
 }

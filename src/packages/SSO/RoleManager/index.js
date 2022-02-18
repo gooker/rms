@@ -8,24 +8,25 @@ import {
   ExportOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
+import moment from 'moment';
 import { saveAs } from 'file-saver';
-import { GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import {
-  fetchAllRoleList,
   fetchAddRole,
   fetchUpdateRole,
+  fetchUploadRoles,
+  fetchAllRoleList,
   fetchDeleteRoleById,
   saveRoleAssignAuthority,
-  fetchUploadRoles,
-} from '@/services/user';
+} from '@/services/SSO';
 import TableWidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
-import ImportModal from '@/packages/Translator/LanguageManage/component/ImportI18nLanguage';
-import commonStyles from '@/common.module.less';
+import UploadPanel from '@/components/UploadPanel';
 import RmsConfirm from '@/components/RmsConfirm';
 import { IconFont } from '@/components/IconFont';
+import commonStyles from '@/common.module.less';
 
 export default class index extends Component {
   state = {
@@ -109,7 +110,7 @@ export default class index extends Component {
 
   columns = [
     {
-      title: <FormattedMessage id="rolemanager.code" />,
+      title: <FormattedMessage id="app.common.code" />,
       dataIndex: 'code',
       align: 'center',
     },
@@ -119,25 +120,21 @@ export default class index extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="rolemanager.description" />,
+      title: <FormattedMessage id="app.common.description" />,
       dataIndex: 'description',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.taskDetail.createTime" />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createDate',
       align: 'center',
-      render: (text) => {
-        return text && GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss');
-      },
+      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: <FormattedMessage id="rolemanager.updateTime" />,
+      title: <FormattedMessage id="app.common.updateTime" />,
       dataIndex: 'updateDate',
       align: 'center',
-      render: (text) => {
-        return text && GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss');
-      },
+      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
   ];
 
@@ -162,10 +159,10 @@ export default class index extends Component {
           this.getRoleList();
         }
       } else {
-        message.error(formatMessage({ id: 'rolemanager.fileCorrupted' }));
+        message.error(formatMessage({ id: 'app.message.fileCorrupted' }));
       }
     } catch (error) {
-      console.error('文件格式不对,重新上传');
+      message.error(formatMessage({ id: 'app.message.fileCorrupted' }));
     }
   };
 
@@ -209,7 +206,7 @@ export default class index extends Component {
                 this.setState({ authAssignVisible: true });
               }}
             >
-              <IconFont type="icon-fenpei" /> <FormattedMessage id="rolemanager.authAssign" />
+              <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.role.permissionAssign" />
             </Button>
             <Button disabled={roleList.length === 0} onClick={this.export}>
               <ExportOutlined /> <FormattedMessage id="app.button.export" />
@@ -264,7 +261,7 @@ export default class index extends Component {
 
         {/* 权限分配 */}
         <Drawer
-          title={formatMessage({ id: 'rolemanager.authAssign' })}
+          title={formatMessage({ id: 'sso.role.assign' })}
           destroyOnClose
           onClose={() => {
             this.setState({ authAssignVisible: false });
@@ -286,13 +283,14 @@ export default class index extends Component {
           footer={null}
           destroyOnClose
           visible={uploadModal}
+          title={'导入角色'}
           onCancel={() => {
             this.setState({
               uploadModal: false,
             });
           }}
         >
-          <ImportModal analyzeFunction={this.analyzeFunction} />
+          <UploadPanel analyzeFunction={this.analyzeFunction} />
         </Modal>
       </div>
     );

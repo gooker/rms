@@ -133,7 +133,7 @@ export function GMT2UserTimeZone(value) {
 
   let date = null;
   const timeZone = 'GMT';
-  const userTimeZone = localStorage.getItem('userTimeZone');
+  const userTimeZone = window.localStorage.getItem('userTimeZone');
 
   // 获取当前时区偏移量
   moment.tz.setDefault(timeZone);
