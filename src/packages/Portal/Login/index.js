@@ -56,9 +56,9 @@ const Login = (props) => {
           return;
         }
       }
-      setLoading(false);
       history.push('/welcome');
     }
+    setLoading(false);
   }
   return (
     <div className={styles.loginPage}>

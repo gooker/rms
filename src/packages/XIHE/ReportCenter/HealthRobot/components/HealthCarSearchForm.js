@@ -1,5 +1,6 @@
 import React, { memo, useEffect } from 'react';
-import { Row, Col, Form, Button, DatePicker } from 'antd';
+import { Row, Col, Form, Button, DatePicker, Select } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
@@ -9,7 +10,8 @@ const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 const { RangePicker } = DatePicker;
 
 const LogSearchForm = (props) => {
-  const { search } = props;
+  const { search, type, allTaskTypes } = props;
+  debugger;
 
   const [form] = Form.useForm();
 
@@ -89,8 +91,19 @@ const LogSearchForm = (props) => {
           <Form.Item name={'robot'} label={'小车'} initialValue={{ type: 'AGV', code: [] }}>
             <SelectCarType data={OptionsData} />
           </Form.Item>
-          ,
         </Col>
+
+        {type === 'taskload' && (
+          <Form.Item name={'agvTaskType'} label={<FormattedMessage id="app.task.type" />}>
+            <Select mode="multiple" allowClear style={{ width: 200 }}>
+              {Object.keys(allTaskTypes).map((type) => (
+                <Select.Option key={type} value={type}>
+                  {allTaskTypes[type]}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
 
         <Col>
           <Form.Item {...NoLabelFormLayout}>
@@ -114,4 +127,6 @@ const LogSearchForm = (props) => {
     </Form>
   );
 };
-export default memo(LogSearchForm);
+export default connect(({ global }) => ({
+  allTaskTypes: global?.allTaskTypes?.LatentLifting || {},
+}))(memo(LogSearchForm));

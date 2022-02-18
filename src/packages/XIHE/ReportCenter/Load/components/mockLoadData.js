@@ -31,6 +31,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 20, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 2,
+          Up: 8,
+          Down: 4,
+        },
       },
       {
         robotId: 2,
@@ -56,6 +61,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 40, //充电
           CUSTOM_TASK: 40, //自定义任务
           CARRY_POD_TO_CELL: 40, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
       {
@@ -83,6 +93,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 5,
+          Down: 8,
+        },
       },
       {
         robotId: 4,
@@ -109,6 +124,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 3,
+          Up: 6,
+          Down: 4,
+        },
       },
       {
         robotId: 5,
@@ -134,6 +154,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 2, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 10,
+          Up: 20,
+          Down: 25,
         },
       },
     ],
@@ -165,6 +190,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 5,
+          Down: 9,
+        },
       },
       {
         robotId: 2,
@@ -190,6 +220,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 0, //充电
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 10,
+          Up: 9,
+          Down: 10,
         },
       },
       {
@@ -217,6 +252,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 4,
@@ -243,6 +283,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 5,
@@ -268,6 +313,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 2, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
     ],
@@ -300,6 +350,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 10, //自定义任务
           CARRY_POD_TO_CELL: 10, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 2,
@@ -325,6 +380,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 0, //充电
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
       {
@@ -352,6 +412,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 7,
+          Up: 5,
+          Down: 4,
+        },
       },
       {
         robotId: 4,
@@ -378,6 +443,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 5,
@@ -403,6 +473,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 2, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
     ],
@@ -434,6 +509,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 2,
@@ -459,6 +539,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 0, //充电
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
       {
@@ -486,6 +571,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 9,
+          Up: 3,
+          Down: 4,
+        },
       },
       {
         robotId: 4,
@@ -512,6 +602,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 5,
@@ -537,6 +632,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 60, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
     ],
@@ -568,6 +668,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 10, //自定义任务
           CARRY_POD_TO_CELL: 60, //搬运货架
         },
+        actionLoad: {
+          Noaction: 5,
+          Up: 16,
+          Down: 18,
+        },
       },
       {
         robotId: 2,
@@ -593,6 +698,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 100, //充电
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 3, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
       {
@@ -620,6 +730,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 4,
@@ -646,6 +761,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 2,
+          Up: 5,
+          Down: 4,
+        },
       },
       {
         robotId: 5,
@@ -671,6 +791,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 2, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
     ],
@@ -702,6 +827,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 60, //自定义任务
           CARRY_POD_TO_CELL: 60, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 2,
@@ -727,6 +857,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 10, //充电
           CUSTOM_TASK: 40, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
       {
@@ -754,6 +889,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 4,
@@ -780,6 +920,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 6,
+          Up: 10,
+          Down: 9,
+        },
       },
       {
         robotId: 5,
@@ -805,6 +950,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 60, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 10,
+          Up: 10,
+          Down: 4,
         },
       },
     ],
@@ -836,6 +986,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 60, //自定义任务
           CARRY_POD_TO_CELL: 60, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 2,
@@ -861,6 +1016,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 10, //充电
           CUSTOM_TASK: 40, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
         },
       },
       {
@@ -888,6 +1048,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 0, //自定义任务
           CARRY_POD_TO_CELL: 0, //搬运货架
         },
+        actionLoad: {
+          Noaction: 1,
+          Up: 10,
+          Down: 4,
+        },
       },
       {
         robotId: 4,
@@ -914,6 +1079,11 @@ export function getloadRobotdata() {
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
         },
+        actionLoad: {
+          Noaction: 4,
+          Up: 10,
+          Down: 12,
+        },
       },
       {
         robotId: 5,
@@ -939,6 +1109,11 @@ export function getloadRobotdata() {
           CHARGE_RUN: 60, //充电
           CUSTOM_TASK: 50, //自定义任务
           CARRY_POD_TO_CELL: 50, //搬运货架
+        },
+        actionLoad: {
+          Noaction: 5,
+          Up: 9,
+          Down: 10,
         },
       },
     ],

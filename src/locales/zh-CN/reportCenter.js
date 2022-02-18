@@ -43,6 +43,9 @@ export default {
   'reportCenter.robot.load.taskNumber': '任务次数',
   'reportCenter.robot.load.taskDistance': '任务距离',
 
+  'reportCenter.robot.load.action': '动作负载',
+
+
   'reportCenter.qrcodehealth.slightdeviation': '轻微偏移',
   'reportCenter.qrcodehealth.generaldeviation': ' 一般偏移',
   'reportCenter.qrcodehealth.seriousdeviation': ' 严重偏移',
