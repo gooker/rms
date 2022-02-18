@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Select, DatePicker, Input, Button, Row, Table, Tag } from 'antd';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
+import moment from 'moment';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/util';
-import { fetchUserLoginHistory } from '@/services/user';
-import commonStyles from '@/common.module.less';
+import { dealResponse, formatMessage } from '@/utils/util';
+import { fetchUserLoginHistory } from '@/services/SSO';
+
 const { RangePicker } = DatePicker;
 
 export default class UserLoginHistory extends Component {
@@ -47,10 +48,7 @@ export default class UserLoginHistory extends Component {
       title: <FormattedMessage id="app.taskDetail.operatingTime" />,
       dataIndex: 'operationTime',
       align: 'center',
-      // sorter:true,
-      render: (text) => {
-        return text && GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss');
-      },
+      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: <FormattedMessage id="app.common.remark" />,

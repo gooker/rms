@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
+import { Text } from '@/entities';
 import ResizableContainer from '@/components/ResizableContainer';
 import { MapSelectableSpriteType, zIndex } from '@/config/consts';
-import { Text } from '@/entities/index';
 
 export default class MapZoneMarker extends ResizableContainer {
   constructor(props) {
@@ -16,6 +16,7 @@ export default class MapZoneMarker extends ResizableContainer {
     this.color = color;
     this.text = text;
     this.radius = radius;
+    this.boxType = 'Rect';
     this.select = (add) => {
       select({ id: code, type: MapSelectableSpriteType.ZONE }, add);
     };
@@ -24,56 +25,76 @@ export default class MapZoneMarker extends ResizableContainer {
     };
     this.refresh = refresh;
     this.zIndex = zIndex.zoneMarker;
-    const element = this.createElement(width, height);
-    this.create(element, this.updateZonMarker, zIndex.zoneMarker, interactive);
+
+    this.$$container = new PIXI.Container();
+    this.$$container.sortableChildren = true;
+    this.createElement(width, height);
+    this.create(this.$$container, this.updateZonMarker, zIndex.zoneMarker, interactive);
   }
 
   createElement(width, height) {
-    let element;
     if (['RECT', 'CIRCLE'].includes(this.type)) {
-      element = new PIXI.Graphics();
-      element.beginFill(this.color);
+      const graphics = new PIXI.Graphics();
+      graphics.beginFill(this.color);
       if (this.type === 'RECT') {
-        element.drawRect(0, 0, width, height);
+        graphics.drawRect(0, 0, width, height);
       }
       if (this.type === 'CIRCLE') {
-        element.drawCircle(0, 0, this.radius);
+        graphics.drawCircle(0, 0, this.radius);
       }
-      element.endFill();
-      const texture = window.PixiUtils.renderer.generateTexture(element);
-      element = new PIXI.Sprite(texture);
+      graphics.endFill();
+      const texture = window.PixiUtils.renderer.generateTexture(graphics);
+      this.zoneArea = new PIXI.Sprite(texture);
     } else {
       const imageBaseTexture = new PIXI.BaseTexture(this.data);
       const imageTexture = new PIXI.Texture(imageBaseTexture);
-      element = new PIXI.Sprite(imageTexture);
-      element.width = width;
-      element.height = height;
+      this.zoneArea = new PIXI.Sprite(imageTexture);
+      this.zoneArea.width = width;
+      this.zoneArea.height = height;
     }
-    element.alpha = 0.7;
-    element.anchor.set(0.5);
-    element.zIndex = 1;
+    this.zoneArea.alpha = 0.7;
+    this.zoneArea.anchor.set(0.5);
+    this.zoneArea.zIndex = 1;
+    this.$$container.addChild(this.zoneArea);
 
+    // 渲染名称
+    this.renderName(width, height);
+  }
+
+  renderName(width, height) {
     // 添加Label
-    const textSprite = new Text(this.text, 0, 0, '0xffffff', true, 200);
+    this.textSprite = new Text(this.text, 0, 0, '0xffffff', true, 200);
     let textWidth, textHeight;
     if (width >= height) {
       textHeight = height;
-      textWidth = (textSprite.width * textHeight) / textSprite.height;
+      textWidth = (this.textSprite.width * textHeight) / this.textSprite.height;
     } else {
       textWidth = width;
-      textHeight = (textSprite.height * textWidth) / textSprite.width;
+      textHeight = (this.textSprite.height * textWidth) / this.textSprite.width;
     }
-    textSprite.anchor.set(0.5);
-    textSprite.width = textWidth;
-    textSprite.height = textHeight;
-    textSprite.zIndex = 2;
-
-    element.addChild(textSprite);
-    return element;
+    this.textSprite.anchor.set(0.5);
+    this.textSprite.width = textWidth;
+    this.textSprite.height = textHeight;
+    this.textSprite.zIndex = 2;
+    this.$$container.addChild(this.textSprite);
   }
 
   updateZonMarker(data) {
     const { dispatch } = window.g_app._store;
     dispatch({ type: 'editor/updateZoneMarker', payload: { code: this.code, ...data } });
+
+    // 这里比较重要，保证急停区拖拽时候元素不变形的核心逻辑
+    this.$$container.scale.set(1, 1);
+    const width = parseInt(data.width);
+    const height = parseInt(data.height);
+    this.zoneArea.width = width;
+    this.zoneArea.height = height;
+
+    if (this.textSprite) {
+      this.$$container.removeChild(this.textSprite);
+      this.textSprite.destroy(true);
+    }
+    this.renderName(width, height);
+    this.refresh();
   }
 }

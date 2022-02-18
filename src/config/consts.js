@@ -217,17 +217,17 @@ export const ZoneMarkerType = {
  * 点位、线条、区域标记、Label、充电桩、工作站、通用站点、电梯、投递点、交汇点
  */
 export const MapSelectableSpriteType = {
-  CELL: 'CELL',
-  COST: 'COST',
-  ZONE: 'ZONE',
-  LABEL: 'LABEL',
-  CHARGER: 'CHARGER',
-  STATION: 'STATION',
-  WORKSTATION: 'WORKSTATION',
-  ELEVATOR: 'ELEVATOR',
-  DELIVERY: 'DELIVERY',
-  INTERSECTION: 'INTERSECTION',
-  EMSTOP: 'EMSTOP',
+  CELL: 'cell',
+  ZONE: 'zone',
+  ROUTE: 'route',
+  LABEL: 'label',
+  CHARGER: 'charger',
+  STATION: 'station',
+  ELEVATOR: 'elevator',
+  DELIVERY: 'delivery',
+  WORKSTATION: 'workStation',
+  INTERSECTION: 'intersection',
+  EMERGENCYSTOP: 'emergencyStop',
 };
 
 // 急停区类型枚举

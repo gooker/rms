@@ -1,20 +1,23 @@
 import React, { memo, useState } from 'react';
 import { Button, message } from 'antd';
-import FormattedMessage from '@/components/FormattedMessage';
 import UploadPanel from '@/components/UploadPanel';
-import { dealResponse, isStrictNull,formatMessage } from '@/utils/util';
-import { uploadCertication } from '@/services/user';
+import FormattedMessage from '@/components/FormattedMessage';
+import { uploadCertification } from '@/services/SSO';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import styles from './UploadSSOAppInfo.module.less';
 
 const UploadCert = () => {
-  const [certication, setCertication] = useState(null);
+  const [certification, setCertification] = useState(null);
 
   async function upload() {
-    const res = await uploadCertication(certication);
+    const res = await uploadCertification(JSON.parse(certification));
     if (dealResponse(res)) {
-      message.error(formatMessage({ id: 'sso.init.upload.failed' }));
+      message.error(formatMessage({ id: 'app.message.operateFailed' }));
     } else {
-      message.success(formatMessage({ id: 'sso.init.upload.success' }));
+      message.success(formatMessage({ id: 'app.authCenter.updateAuth.successTip' }));
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     }
   }
 
@@ -23,19 +26,19 @@ const UploadCert = () => {
       <UploadPanel
         styles={{ flex: 1 }}
         remove={() => {
-          setCertication(null);
+          setCertification(null);
         }}
         analyzeFunction={(evt) => {
           try {
-            setCertication(evt.target.result);
+            setCertification(evt.target.result);
           } catch (error) {
-            message.error(formatMessage({ id: 'app.groupManage.tip.fileError' }));
+            message.error(formatMessage({ id: 'app.message.fileCorrupted' }));
           }
         }}
       />
       <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 30 }}>
-        <Button type="primary" disabled={isStrictNull(certication)} onClick={upload}>
-          <FormattedMessage id="sso.init.upload" />
+        <Button type="primary" disabled={isStrictNull(certification)} onClick={upload}>
+          <FormattedMessage id="app.button.upload" />
         </Button>
       </div>
     </div>

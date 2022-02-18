@@ -2,14 +2,11 @@ import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { Cell, LineArrow } from '@/entities';
-import { filterMapSpriteByRange, transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
+import { filterMapSpriteByRange, transformScreenToWorldCoordinator } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
 
-/**
- * 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
- */
+// 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
 class EditorBodyLeft extends React.PureComponent {
   // 首次进入页面需要对renderer进行绑定事件
   firstReceiveProps = true;
@@ -43,16 +40,6 @@ class EditorBodyLeft extends React.PureComponent {
     // 只有Drag模式下才可以拖拽ViewPort
     mapContext.pixiUtils.viewport.drag({
       pressDrag: value === LeftCategory.Drag,
-    });
-
-    // 只有选择模式下才可以点击
-    mapContext.pixiUtils.viewport.children.forEach((element) => {
-      if (element instanceof Cell) {
-        element.interact(value === LeftCategory.Choose);
-      }
-      if (element instanceof LineArrow) {
-        element.clickable = value === LeftCategory.Choose;
-      }
     });
 
     dispatch({ type: 'editor/updateLeftActiveCategory', payload: value });
@@ -110,8 +97,6 @@ class EditorBodyLeft extends React.PureComponent {
       this.pointerUpY = ev.data.global.y;
       const selectWidth = Math.abs(this.pointerUpX - this.pointerDownX);
       const selectHeight = Math.abs(this.pointerUpY - this.pointerDownY);
-
-      // 此时判断是画矩形还是圆形
       const maskDOM = document.getElementById('mapSelectionMask');
 
       // 这个逻辑是为了解决第一次click不触发 pointerup 事件；因为事件触发在Mask节点上而不是Canvas，导致触发了 pointerupoutside 事件
@@ -224,9 +209,16 @@ class EditorBodyLeft extends React.PureComponent {
 
   render() {
     const { activeKey } = this.props;
+    // PC 端不显示"选择"与"拖拽"按钮
+    let EditorLeftToolsToRender = [...EditorLeftTools];
+    if (window.currentPlatForm.isPc) {
+      EditorLeftToolsToRender = EditorLeftToolsToRender.filter(
+        (item) => ![LeftCategory.Choose, LeftCategory.Drag].includes(item.value),
+      );
+    }
     return (
       <div style={{ width: `${LeftToolBarWidth}px` }} className={styles.bodyLeftSide}>
-        {EditorLeftTools.map(({ label, value, icon }) => (
+        {EditorLeftToolsToRender.map(({ label, value, icon }) => (
           <Tooltip key={value} placement="right" title={label}>
             <span
               className={activeKey === value ? styles.contentActive : undefined}
@@ -237,7 +229,7 @@ class EditorBodyLeft extends React.PureComponent {
               {icon}
             </span>
           </Tooltip>
-        ))}
+        )).filter(Boolean)}
       </div>
     );
   }

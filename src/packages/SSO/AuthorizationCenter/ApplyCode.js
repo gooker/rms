@@ -1,34 +1,42 @@
-import React, { memo, useState } from 'react';
-import { Input, Button, message } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, message } from 'antd';
+import { saveAs } from 'file-saver';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getApplyToken } from '@/services/user';
-import { dealResponse, isNull ,formatMessage} from '@/utils/util';
+import { getApplyToken } from '@/services/SSO';
+import { dealResponse, formatMessage } from '@/utils/util';
 import styles from './UploadSSOAppInfo.module.less';
 
 // 获取申请码
-const ApplyCode = () => {
+const ApplyCode = (props) => {
+  const { autoDownload } = props;
   const [loading, setLoading] = useState(false);
-  const [code, setCode] = useState(null);
+
+  useEffect(() => {
+    autoDownload && applyAppCode();
+  }, []);
 
   async function applyAppCode() {
     setLoading(true);
     const res = await getApplyToken();
     if (dealResponse(res)) {
-      message.error(formatMessage({ id: 'sso.init.apply.failed' }));
+      message.error(formatMessage({ id: 'app.authCenter.init.apply.failed' }));
     } else {
-      setCode(res?.applyToken);
+      const blob = new Blob([res?.applyToken], { type: 'text/plain;charset=utf-8;' });
+      saveAs(blob, 'auth_apply_token.txt');
     }
     setLoading(false);
   }
+
   return (
     <div className={styles.applyCode}>
-      <Input.TextArea value={code} />
-      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 13 }}>
-        <Button type="primary" loading={loading} onClick={applyAppCode} disabled={!isNull(code)}>
-          <FormattedMessage id="sso.init.apply" />
+      <div
+        style={{ display: 'flex', justifyContent: 'flex-start', marginTop: 13, paddingLeft: '5%' }}
+      >
+        <Button type="primary" loading={loading} onClick={applyAppCode}>
+          <FormattedMessage id="app.button.download" />
         </Button>
         <Button type="link">
-          <FormattedMessage id="sso.init.nextStepWithCert" />
+          <FormattedMessage id="app.authCenter.init.nextStepWithCert" />
         </Button>
       </div>
     </div>

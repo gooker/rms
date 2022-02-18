@@ -22,7 +22,7 @@ const CostProperty = (props) => {
   return (
     <>
       <div>
-        <FormattedMessage id={'app.map.routeMap'} />
+        <FormattedMessage id={'app.map.route'} />
         <FormattedMessage id={'app.common.prop'} />
       </div>
       <div>

@@ -75,7 +75,7 @@ const ProgramingPanel = (props) => {
           <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key="cell">
             <ProgramingCell />
           </TabPane>
-          <TabPane tab={<FormattedMessage id={'app.map.routeMap'} />} key="relation">
+          <TabPane tab={<FormattedMessage id={'app.map.route'} />} key="relation">
             <ProgramingRelation />
           </TabPane>
         </Tabs>

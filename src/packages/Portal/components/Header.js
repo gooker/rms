@@ -13,19 +13,24 @@ import NoticeIcon from './NoticeIcon';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Header.module.less';
-import { isNull } from '@/utils/util';
+import { dealResponse, isNull } from '@/utils/util';
+import { getHAInfo } from '@/services/XIHE';
+import HA from '@/packages/Portal/components/HA';
+import ExpiredTip from '@/packages/Portal/components/ExpiredTip';
 
 @connect(({ global, user }) => ({
   globalLocale: global.globalLocale,
   currentUser: user.currentUser,
   environments: global.environments,
   isFullscreen: global.isFullscreen,
+  sysAuthInfo: global.sysAuthInfo,
 }))
 class Header extends React.Component {
   state = {
     showErrorNotification: false,
     apiListShow: false,
     showLabel: false,
+    isHA: false, // 是否是高可用模式
   };
 
   componentDidMount() {
@@ -55,6 +60,22 @@ class Header extends React.Component {
       }, 500),
     );
     this.bodySizeObserver.observe(document.body);
+  };
+
+  getHAInformation = () => {
+    getHAInfo().then((response) => {
+      if (!dealResponse(response)) {
+        // 服务器列表中highAvailable只要有一个是true就表示是高可用模式
+        let isHA = false;
+        for (let index = 0; index < response.length; index++) {
+          const { highAvailable } = response[index];
+          if (highAvailable) {
+            isHA = true;
+          }
+        }
+        this.setState({ isHA });
+      }
+    });
   };
 
   switchFullScreen = () => {
@@ -108,14 +129,20 @@ class Header extends React.Component {
   };
 
   render() {
-    const { showErrorNotification, showLabel, apiListShow } = this.state;
-    const { environments, isFullscreen, currentUser, noticeCountUpdate, noticeCount } = this.props;
+    const { showErrorNotification, showLabel, apiListShow, isHA } = this.state;
+    const { environments, isFullscreen, currentUser } = this.props;
+    const { noticeCountUpdate, noticeCount, sysAuthInfo } = this.props;
     if (isNull(currentUser)) return null;
+
     const isAdmin = currentUser.username === 'admin';
     return (
       <div className={styles.headerContent}>
         <div className={styles.leftContent}>
           <Portal />
+        </div>
+        <div className={styles.middleContent}>
+          {isHA && <HA />}
+          {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
         </div>
         <div className={styles.rightContent}>
           {/* 环境切换 */}

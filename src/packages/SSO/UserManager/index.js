@@ -12,7 +12,7 @@ import {
   fetchDeleteUser,
   saveUserSections,
   saveUsersAssignedRole,
-} from '@/services/user';
+} from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWidthPages from '@/components/TableWidthPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';

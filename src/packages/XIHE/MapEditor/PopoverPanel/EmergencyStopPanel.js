@@ -161,5 +161,5 @@ const EmergencyStopPanel = (props) => {
 export default connect(({ editor }) => {
   const currentLogicAreaData = getCurrentLogicAreaData();
   const emergencyStopFixedList = currentLogicAreaData?.emergencyStopFixedList ?? [];
-  return { emergencyStopFixedList, mapContext: editor.mapContext };
+  return { emergencyStopFixedList, mapContext: editor.mapContext, forceUpdate: editor.forceUpdate };
 })(memo(EmergencyStopPanel));

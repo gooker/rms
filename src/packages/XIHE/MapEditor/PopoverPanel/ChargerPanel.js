@@ -2,7 +2,6 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Empty, message } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { fetchTrafficRobotType } from '@/services/XIHE';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -11,6 +10,7 @@ import ChargerMultiForm from './ChargerMultiForm';
 import FunctionListItem from '../components/FunctionListItem';
 import editorStyles from '../editorLayout.module.less';
 import LabelComponent from '@/components/LabelComponent';
+import { fetchAllAgvType } from '@/services/api';
 
 const ChargerPanel = (props) => {
   const { dispatch, height, mapContext, chargerList } = props;
@@ -22,7 +22,7 @@ const ChargerPanel = (props) => {
   const [robotTypes, setRobotTypes] = useState([]);
 
   useEffect(() => {
-    fetchTrafficRobotType().then((response) => {
+    fetchAllAgvType().then((response) => {
       if (!dealResponse(response)) {
         setRobotTypes(response);
       } else {

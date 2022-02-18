@@ -1,7 +1,7 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { HeaderHeight } from './enums';
+import { HeaderHeight, LeftCategory } from './enums';
 import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
@@ -9,7 +9,8 @@ import EditorMapContainer from './components/EditorMapContainer';
 import commonStyles from '@/common.module.less';
 
 const MapEditor = (props) => {
-  const { dispatch, mapList } = props;
+  const { dispatch, mapList, mapContext } = props;
+  const keyDown = useRef(false);
 
   useEffect(() => {
     document.addEventListener('contextmenu', (ev) => {
@@ -21,6 +22,49 @@ const MapEditor = (props) => {
       dispatch({ type: 'editor/unmount' });
     };
   }, []);
+
+  useEffect(() => {
+    // 按下S键
+    function onXKeyDown(event) {
+      if (event.keyCode === 83 && !keyDown.current) {
+        keyDown.current = true;
+        if (mapContext) {
+          mapContext.pixiUtils.viewport.drag({
+            pressDrag: false,
+          });
+          dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Choose });
+        }
+      }
+    }
+    // 抬起S键
+    function onXKeyUp(event) {
+      if (event.keyCode === 83) {
+        keyDown.current = false;
+        if (props.mapContext) {
+          props.mapContext.pixiUtils.viewport.drag({
+            pressDrag: true,
+          });
+          dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Drag });
+        }
+      }
+    }
+
+    document.addEventListener('contextmenu', (ev) => {
+      ev.preventDefault();
+    });
+
+    if (window.currentPlatForm.isPc) {
+      document.addEventListener('keydown', onXKeyDown);
+      document.addEventListener('keyup', onXKeyUp);
+    }
+
+    return () => {
+      if (window.currentPlatForm.isPc) {
+        document.removeEventListener('keydown', onXKeyDown);
+        document.removeEventListener('keyup', onXKeyUp);
+      }
+    };
+  }, [mapContext]);
 
   return (
     <div id={'mapEditorPage'} className={commonStyles.commonPageStyleNoPadding}>
@@ -41,4 +85,5 @@ const MapEditor = (props) => {
 };
 export default connect(({ editor }) => ({
   mapList: editor.mapList,
+  mapContext: editor.mapContext,
 }))(memo(MapEditor));

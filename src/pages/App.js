@@ -27,7 +27,7 @@ class App extends Component {
     const { antdLocale } = this.props;
     return (
       initDone && (
-        <ConfigProvider locale={antdLocale} input={{ autoComplete: 'off' }}>
+        <ConfigProvider locale={antdLocale}>
           <Switch>
             <Redirect exact from="/" to="/login" />
             {/* 登录页面*/}

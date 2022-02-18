@@ -38,11 +38,10 @@ export default class ImportI18nLanguage extends Component {
 
             const i18nData = [...languageList].map((stItem) => {
               const { languageKey, ...item } = stItem;
-              const currentItem = {
+              return {
                 languageKey,
                 languageMap: { ...item },
               };
-              return currentItem;
             });
             onChange(i18nData);
           };

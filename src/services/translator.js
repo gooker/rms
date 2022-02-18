@@ -5,7 +5,7 @@ const { Coordinator } = NameSpace;
 
 // ************************************** 翻译管理  ************************************** //
 // 应用-对应的翻译内容展示
-export async function getTranslationBycode(params) {
+export async function getTranslationByCode(params) {
   return request(`/${Coordinator}/translation/getTranslationByAppCode`, {
     method: 'GET',
     data: params,

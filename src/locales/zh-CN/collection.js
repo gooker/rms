@@ -18,4 +18,7 @@ export default {
   // 原始数据
   'app.metaData.agvOffsetData': '小车偏移数据',
   'app.metaData.rangeNotValid': '时间区间数据不完整',
+
+  // 角色管理A
+  'sso.role.permissionAssign': '权限分配',
 };

@@ -88,7 +88,7 @@ class KpiSearchConditions extends PureComponent {
           notFoundContent={null}
           style={{ width: '300px' }}
           onChange={searchTargetCellChanged}
-          placeholder={formatMessage({ id: 'app.map.targetCell' })}
+          placeholder={formatMessage({ id: 'app.common.targetCell' })}
           disabled={taskType === 'ALL'} // 这里之所以设置 "全部类型" 时无法输入目标点是因为考虑到目前版本对比功能。对比的前提是 相同类型 && 都不是按小时，其次就是如果输入了点位那么x轴就变成目标点了，这里会导致要重复判断已选择的 "所有类型" 的savedSeed是否有目标点，不符合当前版本的功能范围
         />
       </div>

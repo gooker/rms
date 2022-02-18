@@ -99,17 +99,17 @@ export const EditorRightTools = [
     icon: <IconFont type={'icon-cell'} />,
   },
   {
-    label: <FormattedMessage id={'app.map.routeMap'} />,
+    label: <FormattedMessage id={'app.map.route'} />,
     value: RightCategory.Cost,
     icon: <IconFont type={'icon-routeMap'} />,
   },
   {
-    label: <FormattedMessage id={'app.map.feature'} />,
+    label: <FormattedMessage id={'app.map.function'} />,
     value: RightCategory.CellType,
     icon: <IconFont type={'icon-feature'} />,
   },
   {
-    label: <FormattedMessage id={'app.map.workstation'} />,
+    label: <FormattedMessage id={'app.map.workStation'} />,
     value: RightCategory.WorkStation,
     icon: <IconFont type={'icon-station'} />,
   },

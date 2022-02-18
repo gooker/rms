@@ -79,7 +79,7 @@ const WorkStationPanel = (props) => {
             }}
           />
         ) : null}
-        <FormattedMessage id={'app.map.workstation'} />
+        <FormattedMessage id={'app.map.workStation'} />
         {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
           {formVisible

@@ -56,7 +56,7 @@ const AdvancedCarryComponent = (props) => {
         </Form.Item>
         <Form.Item
           name={'targetCellId'}
-          label={formatMessage({ id: 'app.map.targetCell' })}
+          label={formatMessage({ id: 'app.common.targetCell' })}
           rules={[{ required: true }]}
         >
           <InputNumber style={inputWidth} />

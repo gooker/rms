@@ -22,7 +22,13 @@ import {
 import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
-import { CellSize, WorldScreenRatio, zIndex, ZoneMarkerType } from '@/config/consts';
+import {
+  CellSize,
+  MapSelectableSpriteType,
+  WorldScreenRatio,
+  zIndex,
+  ZoneMarkerType,
+} from '@/config/consts';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -41,9 +47,6 @@ function initState(context) {
   context.fixedEStopMap = new Map(); // 固定紧急避让区
   context.labelMap = new Map(); // 标签
   context.zoneMap = new Map(); // 区域标记
-
-  // 线条与点位ID的Map关系
-  context.cellCostMap = new Map(); // {[cellId]:[Cost, Cost]}
 }
 
 export default class BaseMap extends React.Component {
@@ -165,6 +168,46 @@ export default class BaseMap extends React.Component {
       eStop.switchEStopsVisible(flag);
     });
     this.refresh();
+  };
+
+  /**
+   * 批量切换元素选中状态
+   * @param flag 是否选中
+   * @param type 元素类型
+   * @param list 同类型元素数据列表
+   */
+  switchSpriteSelected = (flag, type, list) => {
+    let dataMap;
+    switch (type) {
+      case MapSelectableSpriteType.CELL:
+        dataMap = this.idCellMap;
+        break;
+      case MapSelectableSpriteType.ROUTE:
+        dataMap = this.idLineMap;
+        break;
+      case MapSelectableSpriteType.ZONE:
+        dataMap = this.zoneMap;
+        break;
+      case MapSelectableSpriteType.LABEL:
+        dataMap = this.labelMap;
+        break;
+      default:
+        dataMap = null;
+    }
+    if (isNull(dataMap)) return;
+    list.forEach(({ id, type, cost }) => {
+      let spriteEntity;
+      if (type === MapSelectableSpriteType.ROUTE) {
+        spriteEntity = dataMap[cost].get(id);
+      } else if (type === MapSelectableSpriteType.CELL) {
+        spriteEntity = dataMap.get(parseInt(id));
+      } else {
+        spriteEntity = dataMap.get(id);
+      }
+      if (spriteEntity) {
+        flag ? spriteEntity?.onSelect() : spriteEntity?.onUnSelect();
+      }
+    });
   };
 
   // 清空并销毁所有优先级线条

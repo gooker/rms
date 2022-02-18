@@ -115,7 +115,7 @@ const DeliveryForm = (props) => {
         {...formLayout}
         name={'targetCell'}
         initialValue={delivery?.targetCellId}
-        label={formatMessage({ id: 'app.common.target' })}
+        label={formatMessage({ id: 'app.common.targetCell' })}
       >
         <ButtonInput
           type="number"

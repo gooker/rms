@@ -13,7 +13,7 @@ import {
   fetchAddEnvironment,
   deleteEnvironmentById,
   fetchUpdateEnvironment,
-} from '@/services/user';
+} from '@/services/SSO';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';

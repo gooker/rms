@@ -30,7 +30,7 @@ const CellTypeConfigurePanel = (props) => {
   return (
     <div style={{ height, width: 400 }} className={editorStyles.categoryPanel}>
       <div>
-        <FormattedMessage id={'app.map.feature'} />
+        <FormattedMessage id={'app.map.function'} />
       </div>
       <div>
         <div className={styles.panelBlock}>

@@ -63,6 +63,7 @@ const EditorState = {
   // 选择相关
   selections: [],
   selectLines: [],
+  showShortcutTool: false,
 
   // 所有站点类型
   allStationTypes: {},
@@ -84,7 +85,7 @@ const EditorState = {
   forceUpdate: {}, // 部分组件需要手动渲染
   saveMapLoading: false, // 保存地图
   activeMapLoading: false, // 激活地图
-  leftActiveCategory: LeftCategory.Choose, // 左侧菜单选中项
+  leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
 
   // Mask相关
@@ -136,7 +137,7 @@ export default {
     },
     updateSelections(state, action) {
       const selections = action.payload;
-      const newState = { ...state, selections };
+      const newState = { ...state, selections, showShortcutTool: selections.length > 0 };
       if (selections.length === 1) {
         if (state.categoryPanel === null) {
           newState.categoryPanel = RightCategory.Prop;

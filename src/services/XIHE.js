@@ -1,15 +1,21 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-//////////////////////////**** 通用 ****//////////////////////////
-// 获取所有小车类型数据
-// @Dup: /map/getAllRobotType
-export async function fetchTrafficRobotType() {
-  return request(`/${NameSpace.Coordinator}/traffic/getRobotType`, {
+//////////////////////////**** 高可用 ****//////////////////////////
+export async function getHAInfo() {
+  return request(`/${NameSpace.Coordinator}/serverInfo/getServerInfo`, {
+    method: 'GET',
+    attachSectionId: false,
+  });
+}
+
+export async function getHAChangeHistory() {
+  return request(`/${NameSpace.Coordinator}/serverInfo/getHaServerChange`, {
     method: 'GET',
   });
 }
 
+//////////////////////////**** 通用 ****//////////////////////////
 // 获取潜伏车货架列表
 export async function fetchLatentPodList() {
   const sectionId = window.localStorage.getItem('sectionId');

@@ -16,7 +16,7 @@ const Property = (props) => {
       switch (type) {
         case MapSelectableSpriteType.CELL:
           return <CellProperty data={selection} />;
-        case MapSelectableSpriteType.COST:
+        case MapSelectableSpriteType.ROUTE:
           return <CostProperty data={selection} />;
         default:
           return <MapProperty />;

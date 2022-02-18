@@ -31,7 +31,7 @@ const CostPanel = (props) => {
   return (
     <div style={{ height, width: 375 }} className={editorStyles.categoryPanel}>
       <div>
-        <FormattedMessage id={'app.map.routeMap'} />
+        <FormattedMessage id={'app.map.route'} />
       </div>
       <div>
         <div className={styles.panelBlock}>
@@ -76,11 +76,13 @@ const CostPanel = (props) => {
             </Button>
             <div className={styles.routePanel}>
               <Row type="flex" justify="center">
-                <CostConfigure
-                  onChange={(value) => {
-                    createLines({ dir: 0, value });
-                  }}
-                />
+                <Col span={7}>
+                  <CostConfigure
+                    onChange={(value) => {
+                      createLines({ dir: 0, value });
+                    }}
+                  />
+                </Col>
               </Row>
 
               <Row type="flex" justify="space-around">
@@ -102,13 +104,14 @@ const CostPanel = (props) => {
                   />
                 </Col>
               </Row>
-
               <Row type="flex" justify="center">
-                <CostConfigure
-                  onChange={(value) => {
-                    createLines({ dir: 180, value });
-                  }}
-                />
+                <Col span={7}>
+                  <CostConfigure
+                    onChange={(value) => {
+                      createLines({ dir: 180, value });
+                    }}
+                  />
+                </Col>
               </Row>
             </div>
           </div>

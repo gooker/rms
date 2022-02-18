@@ -47,6 +47,9 @@ export default {
   'app.message.fetchFailTemplate': '获取{type}数据失败',
   'app.message.copy.successfully': '复制成功',
   'app.message.ruleRequired': '请输入{label}',
+  'app.message.fileCorrupted': '文件已损坏',
+  'app.message.upload.tip': '单击或拖动文件到该区域进行上传',
+  'app.message.gotIt': '知道了',
 
   // 告警
   'app.alert': '告警',
@@ -96,8 +99,8 @@ export default {
   'app.common.color': '颜色',
   'app.common.text': '文本',
   'app.common.priority': '优先级',
-  'app.common.target': '目标点', // 有重复
   'app.common.param': '参数',
+  'app.common.targetCell': '目标点',
 
   // 地图相关
   'app.map': '地图',
@@ -105,29 +108,21 @@ export default {
   'app.map.routeArea': '路线区',
   'app.map.scope': '作用域',
   'app.map.zone': '区域',
+  'app.map.label': '区域标签',
   'app.map.cell': '点位',
-  'app.map.routeMap': '路线',
+  'app.map.route': '路线',
   'app.map.view': '显示',
-  'app.map.feature': '功能',
-  'app.map.notGoAway': '不可走点',
-  'app.map.storagePoint': '存储点',
-  'app.map.followingPoint': '跟车点',
-  'app.map.waitingPoint': '等待点',
-  'app.map.notStay': '不可逗留点',
-  'app.map.fetchTask': '接任务点',
-  'app.map.workstation': '工作站',
+  'app.map.function': '功能',
+  'app.map.workStation': '工作站',
   'app.map.station': '站点',
   'app.map.charger': '充电桩',
   'app.map.elevator': '电梯',
+  'app.map.delivery': '投递点',
   'app.map.aisle': '通道',
   'app.map.restArea': '休息区',
-  'app.map.obstacle': '障碍物',
-  'app.map.commonPoint': '通用功能点',
-  'app.map.intersection': '交汇点',
   'app.map.emergencyStop': '急停区',
-  'app.map.delivery': '投递点',
+  'app.map.intersection': '交汇点',
   'app.map.programing': '地图编程',
-  'app.map.targetCell': '目标点',
 
   // 小车类型
   'app.agvType.LatentLifting': '潜伏车',
@@ -174,6 +169,8 @@ export default {
   'app.button.refresh': '刷新',
   'app.button.turnOff': '关闭',
   'app.button.execute': '执行',
+  'app.button.upload': '上传',
+  'app.button.download': '下载',
 
   // @下面5个可能需要从common中移除
   'app.button.bind': '绑定',
