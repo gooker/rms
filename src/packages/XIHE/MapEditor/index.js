@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useRef } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { HeaderHeight } from './enums';
+import { HeaderHeight, LeftCategory } from './enums';
 import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
@@ -24,25 +24,27 @@ const MapEditor = (props) => {
   }, []);
 
   useEffect(() => {
-    // 按下x键
+    // 按下S键
     function onXKeyDown(event) {
-      if (event.keyCode === 88 && !keyDown.current) {
+      if (event.keyCode === 83 && !keyDown.current) {
         keyDown.current = true;
         if (mapContext) {
           mapContext.pixiUtils.viewport.drag({
             pressDrag: false,
           });
+          dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Choose });
         }
       }
     }
-    // 抬起x键
+    // 抬起S键
     function onXKeyUp(event) {
-      if (event.keyCode === 88) {
+      if (event.keyCode === 83) {
         keyDown.current = false;
         if (props.mapContext) {
           props.mapContext.pixiUtils.viewport.drag({
             pressDrag: true,
           });
+          dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Drag });
         }
       }
     }
@@ -50,12 +52,17 @@ const MapEditor = (props) => {
     document.addEventListener('contextmenu', (ev) => {
       ev.preventDefault();
     });
-    document.addEventListener('keydown', onXKeyDown);
-    document.addEventListener('keyup', onXKeyUp);
+
+    if (window.currentPlatForm.isPc) {
+      document.addEventListener('keydown', onXKeyDown);
+      document.addEventListener('keyup', onXKeyUp);
+    }
 
     return () => {
-      document.removeEventListener('keydown', onXKeyDown);
-      document.removeEventListener('keyup', onXKeyUp);
+      if (window.currentPlatForm.isPc) {
+        document.removeEventListener('keydown', onXKeyDown);
+        document.removeEventListener('keyup', onXKeyUp);
+      }
     };
   }, [mapContext]);
 

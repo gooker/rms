@@ -20,7 +20,7 @@ export default class ResizableContainer extends PIXI.Container {
     // 边框线条颜色
     this.borderColor = 0xffffff;
     // 控制点尺寸
-    this.handlerSize = 70;
+    this.handlerSize = 100;
     // 控制点颜色
     this.handlerColor = 0xffffff;
 

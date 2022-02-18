@@ -2,11 +2,10 @@ import React from 'react';
 import { Layout, Modal, message, Skeleton } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
-import { NameSpace } from '@/config/config';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, getPlateFormType } from '@/utils/util';
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { loadTexturesForMap } from '@/utils/textures';
 import SocketClient from '@/entities/SocketClient';
@@ -25,6 +24,15 @@ class MainLayout extends React.Component {
   async componentDidMount() {
     const { dispatch, history, textureLoaded } = this.props;
     dispatch({ type: 'global/saveHistory', payload: history });
+
+    // 判断当前平台类型
+    window.currentPlatForm = getPlateFormType();
+    if (!window.currentPlatForm.isChrome) {
+      Modal.warning({
+        title: formatMessage({ id: 'app.message.systemHint' }),
+        content: formatMessage({ id: 'app.global.chrome.suggested' }),
+      });
+    }
 
     try {
       // 1.获取用户信息
