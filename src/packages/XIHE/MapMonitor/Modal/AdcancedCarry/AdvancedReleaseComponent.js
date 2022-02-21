@@ -1,11 +1,12 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, InputNumber, Input, Checkbox, Select } from 'antd';
 import { releaseAdvancedLatnetHandling } from '@/services/monitor';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage,getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
 
 const inputWidth = { width: '100%' };
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const AdvancedReleaseComponent = (props) => {
   const { dispatch, functionArea } = props;
@@ -35,7 +36,7 @@ const AdvancedReleaseComponent = (props) => {
 
   return (
     <>
-      <Form form={formRef} layout={'vertical'} className={styles.advancedForm}>
+      <Form form={formRef} labelWrap className={styles.advancedForm} {...formItemLayout}>
         <Form.Item
           name={'podId'}
           label={formatMessage({ id: 'app.pod' })}
@@ -69,7 +70,7 @@ const AdvancedReleaseComponent = (props) => {
           <Select mode="tags" />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item {...formItemLayoutNoLabel} >
           <Button onClick={release} loading={executing} disabled={executing} type="primary">
             <FormattedMessage id={'app.button.execute'} />
           </Button>

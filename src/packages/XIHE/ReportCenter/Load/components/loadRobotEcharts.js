@@ -1,5 +1,6 @@
 import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull, sortBy } from 'lodash';
+import moment from 'moment';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const Color = [
@@ -27,6 +28,100 @@ const commonOption = {
   },
   animation: true,
 };
+
+// 动作负载-pie option
+
+export const actionPieOption = (title) => ({
+  title: {
+    text: title,
+    left: 'center',
+  },
+  tooltip: {
+    confine: true,
+    trigger: 'item',
+    formatter: '{b}: {c} ({d}%)',
+  },
+  color: Color,
+  legend: {
+    left: 5,
+    orient: 'vertical',
+  },
+  series: [],
+});
+
+// 动作负载-柱状图 横坐标是日期
+export const actionBarOption = (title) => ({
+  title: {
+    text: '',
+    left: 'center',
+  },
+  tooltip: {
+    confine: true,
+    trigger: 'axis',
+    axisPointer: {
+      type: 'shadow',
+      textStyle: {
+        fontSize: 12,
+        color: '#fff',
+      },
+    },
+  },
+  color: Color,
+  lineStyle: {
+    normal: {
+      color: DataColor,
+    },
+  },
+  legend: {
+    right: 0,
+    top: 0,
+    bottom: 0,
+  },
+  grid: {
+    top: '8%',
+    left: '6%',
+    right: '2%',
+    containLabel: true,
+  },
+
+  dataZoom: [
+    {
+      type: 'inside',
+      start: 0,
+      end: 100,
+    },
+  ],
+  xAxis: [
+    {
+      type: 'category',
+      data: [],
+    },
+  ],
+  yAxis: {
+    type: 'value',
+    axisLine: {
+      lineStyle: {
+        color: LineChartsAxisColor,
+      },
+    },
+    axisTick: {
+      show: false, //坐标轴刻度。
+    },
+    splitLine: {
+      show: true,
+      lineStyle: {
+        width: 0.5,
+        color: LineChartsAxisColor,
+        type: 'dotted',
+        opacity: 0.7,
+      },
+    },
+    splitArea: {
+      show: false,
+    },
+  },
+  series: [], // 有几层数据 就放几层
+});
 
 export const durationLineOption = (title) => ({
   title: {
@@ -240,6 +335,85 @@ export const generateNumOrDistanceData = (allData, type) => {
       name: key[0],
       yAxisIndex: 0,
       type: 'bar',
+    });
+  });
+  const xAxis = {
+    type: 'category',
+    splitLine: {
+      show: false,
+    },
+    axisTick: {
+      show: false,
+    },
+    splitArea: {
+      show: false,
+    },
+    axisLabel: {
+      rotate: 20,
+    },
+    data: xAxisData,
+  };
+  return { xAxis, series };
+};
+
+// 运动动作负载-pie
+export const generateActionPieData = (allData, type) => {
+  const seryData = [];
+  let currentActionSum = {}; // 当前运动动作求和
+  Object.entries(allData).forEach(([key, typeData]) => {
+    if (!isStrictNull(typeData)) {
+      typeData.forEach((record) => {
+        let _record = { ...record };
+        if (!isNull(type)) {
+          _record = { ...record[type] };
+        }
+        forIn(_record, (value, parameter) => {
+          const _value = isStrictNull(value) ? 0 : value;
+          const existValue = currentActionSum[parameter] || 0;
+          currentActionSum[parameter] = existValue * 1 + _value * 1;
+        });
+      });
+    }
+  });
+  forIn(currentActionSum, (v, key) => {
+    // let d = moment.duration(v, 'minutes');
+    // const currenValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
+    seryData.push({ name: key, value: v });
+  });
+
+  const series = [
+    {
+      type: 'pie',
+      radius: ['40%', '70%'],
+      avoidLabelOverlap: false,
+      label: {
+        show: false,
+        position: 'center',
+      },
+      emphasis: {
+        label: {
+          show: true,
+          fontSize: '12',
+          fontWeight: 'bold',
+        },
+      },
+      data: seryData,
+    },
+  ];
+  return { series };
+};
+
+// 运动动作负载-bar  x:日期 y:数值 比如:无动作 顶升 下降
+export const generateActionBarData = (allData, type) => {
+  const series = []; // 存放纵坐标数值
+  const { currentSery, xAxisData } = sumloadData(allData, type);
+
+  Object.entries(currentSery).forEach((key, i) => {
+    series.push({
+      ...commonOption,
+      data: key[1],
+      name: key[0],
+      yAxisIndex: 0,
     });
   });
   const xAxis = {

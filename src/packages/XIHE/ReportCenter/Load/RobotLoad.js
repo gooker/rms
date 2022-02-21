@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Table } from 'antd';
+import { Row, Col, Table, Divider } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
 import { formatMessage } from '@/utils/util';
@@ -7,8 +7,12 @@ import { getloadRobotdata } from './components/mockLoadData';
 import {
   taskLineOption,
   durationLineOption,
+  actionPieOption,
+  actionBarOption,
   generateDurationDataByTime,
   generateNumOrDistanceData,
+  generateActionPieData,
+  generateActionBarData,
   generateTableData,
   formatNumber,
 } from './components/loadRobotEcharts';
@@ -21,9 +25,12 @@ let statusHistoryLine = null; // 状态时长
 let taskHistoryLine = null; // 任务时长
 let taskNumberHistoryLine = null; // 任务次数
 let diatanceHistoryLine = null; // 任务距离
+let actionPieHistoryLine = null; // 动作负载-pie
+let actionBarHistoryLine = null; // 动作负载-bar
 
 const HealthCar = (props) => {
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
+  const [selectedKeys, setSelectedKeys] = useState([]); // 
   const [tableData, setTableData] = useState([]); // table
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
@@ -38,6 +45,9 @@ const HealthCar = (props) => {
     taskHistoryLine = echarts.init(document.getElementById('load_tasktimeHistory'));
     taskNumberHistoryLine = echarts.init(document.getElementById('load_taskTimesHistory'));
     diatanceHistoryLine = echarts.init(document.getElementById('load_taskDistanceHistory'));
+    // 动作负载
+    actionPieHistoryLine = echarts.init(document.getElementById('load_actionPieHistory'));
+    actionBarHistoryLine = echarts.init(document.getElementById('load_actionBarHistory'));
 
     statusHistoryLine.setOption(
       durationLineOption(formatMessage({ id: 'reportCenter.robot.load.statusduration' })),
@@ -55,21 +65,35 @@ const HealthCar = (props) => {
       taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskDistance' })),
       true,
     );
+    actionPieHistoryLine.setOption(
+      actionPieOption(formatMessage({ id: 'reportCenter.robot.load.action' })),
+      true,
+    );
+
+    actionBarHistoryLine.setOption(
+      actionBarOption(formatMessage({ id: 'reportCenter.robot.load.action' })),
+      true,
+    );
 
     return () => {
       statusHistoryLine.dispose();
       taskHistoryLine.dispose();
       taskNumberHistoryLine.dispose();
       diatanceHistoryLine.dispose();
+      actionPieHistoryLine.dispose();
+      actionBarHistoryLine.dispose();
       statusHistoryLine = null;
       taskHistoryLine = null;
       taskNumberHistoryLine = null;
       diatanceHistoryLine = null;
+      actionPieHistoryLine = null;
+      actionBarHistoryLine = null;
     };
   }
 
   function refreshChart() {
-    if (!statusHistoryLine || !taskHistoryLine || !taskNumberHistoryLine) return;
+    if (!statusHistoryLine || !taskHistoryLine || !taskNumberHistoryLine || !actionPieHistoryLine)
+      return;
     const sourceData = { ...filterData };
     if (Object.keys(sourceData).length === 0) return;
 
@@ -77,6 +101,8 @@ const HealthCar = (props) => {
     const taskdurationData = generateDurationDataByTime(sourceData, 'taskallTime');
     const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes');
     const distanceData = generateNumOrDistanceData(sourceData, 'taskDistance');
+    const actionPieData = generateActionPieData(sourceData, 'actionLoad'); //动作负载-pie
+    const actionBarData = generateActionBarData(sourceData, 'actionLoad'); //动作负载-bar
 
     if (statusData) {
       const { radiusAxis, series, legend } = statusData;
@@ -111,6 +137,21 @@ const HealthCar = (props) => {
       diatanceHistoryLine.setOption(newDistanceHistoryLine, true);
     }
 
+    if (actionPieData) {
+      const { series } = actionPieData;
+      const newActionPieLine = actionPieHistoryLine.getOption();
+      newActionPieLine.series = series;
+      actionPieHistoryLine.setOption(newActionPieLine, true);
+    }
+
+    if (actionBarData) {
+      const { xAxis, series } = actionBarData;
+      const newActionBaryLine = actionBarHistoryLine.getOption();
+      newActionBaryLine.xAxis = xAxis;
+      newActionBaryLine.series = series;
+      actionBarHistoryLine.setOption(newActionBaryLine, true);
+    }
+
     // table数据
     const { currentRobotData } = generateTableData(loadOriginData);
     setTableData(currentRobotData);
@@ -121,6 +162,7 @@ const HealthCar = (props) => {
     // TODO 调接口
     setLoadOriginData(getloadRobotdata());
     setFilterData(getloadRobotdata());
+    setSelectedKeys([]);
   }
 
   // 124
@@ -139,6 +181,7 @@ const HealthCar = (props) => {
     return newData;
   };
   const rowSelection = {
+    selectedRowKeys:selectedKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       let filterData;
       if (selectedRowKeys.length === 0) {
@@ -146,9 +189,8 @@ const HealthCar = (props) => {
       } else {
         filterData = filterDataByRobotId(selectedRowKeys);
       }
-      console.log(filterData);
       setFilterData(filterData);
-      console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      setSelectedKeys(selectedRowKeys);
     },
   };
   const columns = [
@@ -203,6 +245,14 @@ const HealthCar = (props) => {
           <Col span={12}>
             <div id="load_tasktimeHistory" style={{ minHeight: 340 }} />
           </Col>
+          <Divider />
+          <Col span={12}>
+            <div id="load_actionPieHistory" style={{ minHeight: 340 }} />
+          </Col>
+          <Col span={12}>
+            <div id="load_actionBarHistory" style={{ minHeight: 340 }} />
+          </Col>
+          <Divider />
           <Col span={12}>
             <div id="load_taskTimesHistory" style={{ minHeight: 340 }} />
           </Col>

@@ -285,6 +285,12 @@ export default [
             component: '/XIHE/ReportCenter/Load/RobotLoad',
             authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
+          {
+            path: `/${AppCode.XIHE}/report/loadReport/taskLoad`,
+            name: 'taskLoad',
+            component: '/XIHE/ReportCenter/Load/TaskLoad',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+          },
         ],
       },
     ],

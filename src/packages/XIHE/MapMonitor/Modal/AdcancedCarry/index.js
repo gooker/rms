@@ -61,7 +61,7 @@ const AdvancedCarry = (props) => {
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20, paddingLeft: 25 }}>
-        <div style={{ marginBottom: 20 }}>
+        <div style={{ marginBottom: 20 ,marginLeft:80}}>
           <span style={{ marginRight: 10, color: '#fff' }}>
             <FormattedMessage id="app.common.type" />:
           </span>

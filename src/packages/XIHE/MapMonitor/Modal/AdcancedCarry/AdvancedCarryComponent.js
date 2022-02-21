@@ -2,11 +2,12 @@ import React, { memo, useState } from 'react';
 import { Form, Button, InputNumber, Radio, Switch, Checkbox, Select } from 'antd';
 import { advancedLatnetHandling } from '@/services/monitor';
 
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage,getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
 
 const inputWidth = { width: '100%' };
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const AdvancedCarryComponent = (props) => {
   const { dispatch, functionArea } = props;
@@ -45,7 +46,7 @@ const AdvancedCarryComponent = (props) => {
 
   return (
     <>
-      <Form form={formRef} layout={'vertical'} className={styles.advancedForm}>
+      <Form form={formRef} labelWrap className={styles.advancedForm} {...formItemLayout}>
         <Form.Item
           name={'podId'}
           label={formatMessage({ id: 'app.pod' })}
@@ -200,7 +201,7 @@ const AdvancedCarryComponent = (props) => {
           <Select mode="tags" />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item {...formItemLayoutNoLabel}>
           <Button onClick={startCarry} loading={executing} disabled={executing} type="primary">
             <FormattedMessage id={'app.button.execute'} />
           </Button>
