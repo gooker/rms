@@ -61,22 +61,29 @@ export function generatefilterValue(
 }
 
 export function generateOriginData(dataList, allLanguage) {
-  const standardData = [...dataList['standard']].map((stItem) => {
-    forIn(allLanguage, ({ type }) => {
-      if (!stItem.languageMap[type]) {
-        stItem.languageMap[type] = null;
-      }
+  let standardData = [];
+  if (Array.isArray(dataList.standard)) {
+    standardData = [...dataList.standard].map((stItem) => {
+      forIn(allLanguage, ({ type }) => {
+        if (!stItem.languageMap[type]) {
+          stItem.languageMap[type] = null;
+        }
+      });
+      return stItem;
     });
-    return stItem;
-  });
-  const customData = [...dataList['custom']].map((cuItem) => {
-    forIn(allLanguage, ({ type }) => {
-      if (!cuItem.languageMap[type]) {
-        cuItem.languageMap[type] = null;
-      }
+  }
+
+  let customData = [];
+  if (Array.isArray(dataList.custom)) {
+    customData = [...dataList.custom].map((cuItem) => {
+      forIn(allLanguage, ({ type }) => {
+        if (!cuItem.languageMap[type]) {
+          cuItem.languageMap[type] = null;
+        }
+      });
+      return cuItem;
     });
-    return cuItem;
-  });
+  }
 
   // custom里面的key一定在standard里面
   const mergeData = [...standardData].map((item) => {

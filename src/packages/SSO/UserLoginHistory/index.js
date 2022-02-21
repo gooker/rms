@@ -28,24 +28,13 @@ export default class UserLoginHistory extends Component {
 
   getColumn = [
     {
-      title: <FormattedMessage id="sso.user.type.username" />,
+      title: <FormattedMessage id="sso.user.name" />,
       dataIndex: 'username',
       align: 'center',
       fixed: 'left',
     },
     {
-      title: <FormattedMessage id="userLoginHistory.type" />,
-      dataIndex: 'type',
-      align: 'center',
-      render: (text) => (
-        <Tag type="text" color={text === 'login' ? '#04B431' : ''}>
-          {text}
-        </Tag>
-      ),
-    },
-
-    {
-      title: <FormattedMessage id="app.taskDetail.operatingTime" />,
+      title: <FormattedMessage id="sso.user.loginTime" />,
       dataIndex: 'operationTime',
       align: 'center',
       render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
@@ -125,22 +114,11 @@ export default class UserLoginHistory extends Component {
     const { loading, pagination, historySource } = this.state;
     return (
       <TablePageWrapper>
-        <Row style={{ marginBottom: 20 }}>
-          <Select
-            style={{ width: 100 }}
-            allowClear
-            placeholder={formatMessage({ id: 'userLoginHistory.type', format: false })}
-            onChange={(value) => {
-              this.setState({ type: value });
-            }}
-          >
-            <Select.Option value="login">Login</Select.Option>
-            <Select.Option value="logout">Logout</Select.Option>
-          </Select>
+        <div>
           <Input
             allowClear
-            style={{ width: 150, margin: '0 15px' }}
-            placeholder={formatMessage({ id: 'sso.user.type.username', format: false })}
+            style={{ width: 150, marginRight: 15 }}
+            placeholder={formatMessage({ id: 'sso.user.name', format: false })}
             onChange={(e) => {
               this.setState({ username: e.target.value });
             }}
@@ -166,7 +144,7 @@ export default class UserLoginHistory extends Component {
           <Button onClick={this.exportHistory}>
             <FormattedMessage id="app.button.export" />
           </Button>
-        </Row>
+        </div>
         <Table
           bordered
           columns={this.getColumn}

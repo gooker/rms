@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, sortBy } from 'lodash';
+import { find, findIndex, groupBy, sortBy, some } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
@@ -136,8 +136,24 @@ export default {
       };
     },
     updateSelections(state, action) {
-      const selections = action.payload;
-      const newState = { ...state, selections, showShortcutTool: selections.length > 0 };
+      const { incremental, selections } = action.payload;
+      let _selections;
+      // 存在增量选择，需要删除重复的对象
+      if (incremental) {
+        _selections = [...state.selections];
+        selections.forEach((selection) => {
+          if (!some(state.selections, selection)) {
+            _selections.push(selection);
+          }
+        });
+      } else {
+        _selections = selections;
+      }
+      const newState = {
+        ...state,
+        selections: _selections,
+        showShortcutTool: selections.length > 0,
+      };
       if (selections.length === 1) {
         if (state.categoryPanel === null) {
           newState.categoryPanel = RightCategory.Prop;
@@ -264,7 +280,7 @@ export default {
       if (!dealResponse(mapList, false, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
         // 检查是否有地图数据
         if (mapList.length === 0) {
-          message.info(formatMessage({ id: 'app.editor.fetchMapList.zero' }));
+          message.info(formatMessage({ id: 'app.message.noMap' }));
           yield put({ type: 'saveMapList', payload: [] });
           return;
         }
@@ -273,7 +289,7 @@ export default {
         // 检查是否有激活地图
         const activeMap = mapList.filter((map) => map.activeFlag);
         if (activeMap.length === 0) {
-          message.warn(formatMessage({ id: 'app.editor.activeMap.zero' }));
+          message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
         } else {
           // 获取已激活地图数据并保存相关状态
           const mapId = activeMap[0].id;
@@ -875,11 +891,14 @@ export default {
           }
         });
 
-        // 处理点位类型
+        // TODO: 处理点位类型
 
         // 处理 selections
         const newSelections = [{ ...selections[0], id: cellId }];
-        yield put({ type: 'updateSelections', payload: newSelections });
+        yield put({
+          type: 'updateSelections',
+          payload: { incremental: false, selections: newSelections },
+        });
       }
       currentMap.cellMap = newCellMap;
 
@@ -1327,7 +1346,7 @@ export default {
       // 更新 selections
       yield put({
         type: 'updateSelections',
-        payload: [{ ...selections[0], cost: parseInt(cost) }],
+        payload: { incremental: false, selections: [{ ...selections[0], cost: parseInt(cost) }] },
       });
 
       return {

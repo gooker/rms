@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
-import { fetchAlertCount, fetchUpdateEnvironment, fetchAllEnvironment } from '@/services/global';
-import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
+import { fetchAlertCount, fetchUpdateEnvironment } from '@/services/global';
+import { fetchAllEnvironmentList, fetchUpdateUserCurrentLanguage } from '@/services/SSO';
 import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/util';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
@@ -14,19 +14,14 @@ export default {
   namespace: 'global',
 
   state: {
-    // 路由history实例
+    // 部分实例对象
     history: null,
-
-    // Socket实例
     socketClient: null,
 
-    logo: null,
-    copyRight: null,
-    notification: 0,
-
-    // 全屏
+    // 标识符
     isFullscreen: false,
     isInnerFullscreen: false,
+    textureLoaded: false,
 
     // 架构基础数据
     tabs: [],
@@ -46,14 +41,14 @@ export default {
     antdLocale: zhCN,
 
     // 全局数据
+    logo: null,
+    copyRight: null,
+    alertCount: 0,
     allTaskTypes: {},
     allAgvTypes: [],
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
-
-    // Texture
-    textureLoaded: false,
   },
 
   effects: {
@@ -62,46 +57,46 @@ export default {
       const { currentUser } = yield select((state) => state.user);
       const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
 
-      // 1.从allModuleRouter获取所有module以及routes
-      const allAppModulesRoutesMap = { ...allModuleRouter };
-      const subModules = Object.keys(allModuleRouter);
-
-      // 2.获取所有环境配置信息
-      let allEnvironment = yield call(fetchAllEnvironment);
-      if (dealResponse(allEnvironment)) {
-        allEnvironment = [];
-      } else {
-        yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
-      }
-
-      // 3.获取NameSpace数据 & 并整合运维配置
+      // 获取所有环境配置信息
       let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
-      if (allEnvironment.length > 0) {
-        const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
-        if (activeNameSpace.length > 0) {
-          // 若自定义环境出现两个已激活项目, 将默认启用第一项
-          urlDir = {
-            ...urlDir,
-            ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
-          };
+      if (currentUser.username !== 'admin') {
+        let allEnvironment = yield call(fetchAllEnvironmentList);
+        if (dealResponse(allEnvironment)) {
+          allEnvironment = [];
+        } else {
+          yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
+        }
+
+        // 获取NameSpace数据 & 并整合运维配置
+        if (allEnvironment.length > 0) {
+          const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
+          if (activeNameSpace.length > 0) {
+            // 若自定义环境出现两个已激活项目, 将默认启用第一项
+            urlDir = {
+              ...urlDir,
+              ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
+            };
+          }
         }
       }
 
-      // 4. 将所有模块的路由数据转换成框架可用的菜单数据格式
+      // 将所有模块的路由数据转换成框架可用的菜单数据格式
       const permissionMap = {};
       const authorityKeys = currentUser?.authorityKeys ?? [];
       for (let index = 0; index < authorityKeys.length; index++) {
         permissionMap[authorityKeys[index]] = true;
       }
 
-      // 5. 筛选授权的APP
+      // 筛选授权的APP
+      const allAppModulesRoutesMap = { ...allModuleRouter };
+      const subModules = Object.keys(allModuleRouter);
       const grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
       const allAppModulesMap = {};
       grantedAPP.forEach((module) => {
         allAppModulesMap[module] = module;
       });
 
-      // 6 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
+      // 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
       const allModuleMenuData = {};
       Object.keys(allAppModulesRoutesMap).filter((code) => {
         if (grantedAPP.includes(code)) {
@@ -115,15 +110,24 @@ export default {
         permissionMap,
       );
 
-      // 7. 保存信息
+      // 保存信息
+      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
       yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
       yield put({ type: 'saveGrantedAPx', payload: grantedAPP }); // 所有授权的APP
       yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
       yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
       yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
-      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
       return true;
+    },
+
+    *fetchAlertCount(_, { call, put }) {
+      const response = yield call(fetchAlertCount);
+      if (dealResponse(response)) {
+        return;
+      }
+      yield put({ type: 'updateAlertCount', payload: response });
+      return response;
     },
 
     *fetchUpdateEnvironment({ payload }, { call }) {
@@ -138,15 +142,6 @@ export default {
         true,
         intl.formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
       );
-    },
-
-    *fetchNotice({ payload }, { call, put }) {
-      const response = yield call(fetchAlertCount, payload);
-      if (dealResponse(response)) {
-        return;
-      }
-      yield put({ type: 'fetchNoticeEffect', payload: response });
-      return response;
     },
 
     *updateGlobalLocale({ payload }, { call, put }) {
@@ -278,10 +273,10 @@ export default {
       };
     },
 
-    fetchNoticeEffect(state, { payload }) {
+    updateAlertCount(state, { payload }) {
       return {
         ...state,
-        notification: payload,
+        alertCount: payload,
       };
     },
     saveAllMenuData(state, action) {

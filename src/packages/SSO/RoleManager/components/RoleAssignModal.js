@@ -24,7 +24,7 @@ class RoleAssignModal extends Component {
 
   componentDidMount() {
     const allRoutersMap = { ...allModuleRouter };
-    const { roleList, selectedRowKeys } = this.props;
+    const { role } = this.props;
 
     const allRoutes = Object.keys(allRoutersMap).map((key) => {
       const currentRoutes = allRoutersMap[key] || [];
@@ -48,16 +48,16 @@ class RoleAssignModal extends Component {
         {},
       );
 
-      // 根据authrity
+      // 根据Authority
       const authRoutes = this.filterAuthRoute(menuData, codePermissionMap) || [];
       return {
         appCode,
         appMenu: [
           {
+            key: `@@_${appCode}`, // TODO: 这里与filterAppByAuthorityKeys方法筛选授权的app对应 存在只勾选页面 但是不勾选其他节点树的情况 要优化下！
+            title: formatMessage({ id: 'app.module' }),
+            label: formatMessage({ id: 'app.module' }),
             children: [...authRoutes],
-            title: '页面',
-            key: `${appCode}/page1`, // TODO: 这里与filterAppByAuthorityKeys方法筛选授权的app对应 存在只勾选页面 但是不勾选其他节点树的情况 要优化下！
-            label: '页面',
           },
         ],
       };
@@ -81,19 +81,12 @@ class RoleAssignModal extends Component {
       {},
     );
 
-    // TODO: authoritykeys
-    let authoritykeys = roleList.filter(({ id }) => id === selectedRowKeys[0]);
-    // TODO: 测试用
-    if (selectedRowKeys[0] === '61445b634530fb00017f5e44') {
-      authoritykeys = authoritykeys[0].authorityKeys;
-    } else {
-      authoritykeys = [];
-    }
+    const authorityKeys = role?.authorityKeys || [];
     this.setState({
-      permissionList: permissionList, //allAuthorityData,
+      permissionList: permissionList,
       permissionMap: permissionMap,
       activeKey: allAuthorityData[0].appCode,
-      checkedKeys: { checked: [...authoritykeys], halfChecked: [] }, //authoritykeys,
+      checkedKeys: { checked: [...authorityKeys], halfChecked: [] },
     });
   }
 
@@ -245,60 +238,58 @@ class RoleAssignModal extends Component {
     const { submitAuthKeys } = this.props;
     return (
       <div>
-        <div>
-          <Tabs
-            activeKey={activeKey}
-            onChange={(key) => {
-              this.setState({
-                activeKey: key,
-              });
+        <Tabs
+          activeKey={activeKey}
+          onChange={(key) => {
+            this.setState({
+              activeKey: key,
+            });
+          }}
+          style={{ marginBottom: 50 }}
+        >
+          {permissionList.map((permission, index) => {
+            // 防止Tab不显示名称
+            const key = permission.appCode;
+            return (
+              <Tabs.TabPane key={key} tab={formatMessage({ id: `app.module.${key}` })}>
+                {permission?.appMenu.length !== 0 ? (
+                  <Tree
+                    checkable
+                    checkStrictly
+                    defaultExpandAll
+                    autoExpandParent
+                    onCheck={this.onCheck}
+                    checkedKeys={checkedKeys}
+                  >
+                    {this.renderTreeNodes(permission.appMenu)}
+                  </Tree>
+                ) : (
+                  <Empty />
+                )}
+              </Tabs.TabPane>
+            );
+          })}
+        </Tabs>
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: 0,
+            width: '100%',
+            borderTop: '1px solid #e9e9e9',
+            padding: '10px 16px',
+            textAlign: 'right',
+            background: '#fff',
+          }}
+        >
+          <Button
+            type="primary"
+            onClick={() => {
+              submitAuthKeys(checkedKeys.checked);
             }}
-            style={{ marginBottom: 50 }}
           >
-            {permissionList.map((permission, index) => {
-              // 防止Tab不显示名称
-              const key = permission.appCode;
-              return (
-                <Tabs.TabPane key={key} tab={formatMessage({ id: `app.module.${key}` })}>
-                  {permission?.appMenu.length !== 0 ? (
-                    <Tree
-                      checkable
-                      checkStrictly
-                      defaultExpandAll
-                      onCheck={this.onCheck}
-                      autoExpandParent
-                      checkedKeys={checkedKeys}
-                    >
-                      {this.renderTreeNodes(permission.appMenu)}
-                    </Tree>
-                  ) : (
-                    <Empty />
-                  )}
-                </Tabs.TabPane>
-              );
-            })}
-          </Tabs>
-          <div
-            style={{
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              width: '100%',
-              borderTop: '1px solid #e9e9e9',
-              padding: '10px 16px',
-              textAlign: 'right',
-              background: '#fff',
-            }}
-          >
-            <Button
-              type="primary"
-              onClick={() => {
-                submitAuthKeys(checkedKeys.checked);
-              }}
-            >
-              <FormattedMessage id="app.button.submit" />
-            </Button>
-          </div>
+            <FormattedMessage id="app.button.submit" />
+          </Button>
         </div>
       </div>
     );

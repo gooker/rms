@@ -1,6 +1,7 @@
-import { getDomainNameByUrl, isNull } from '@/utils/util';
+import { dealResponse, getDomainNameByUrl, isNull } from '@/utils/util';
 import { NameSpace } from '@/config/config';
 import AlertCountPollingWorker from './alertCountPolling.worker';
+import { message } from 'antd';
 
 /**
  * @@@@@@ 单例 @@@@@@
@@ -13,7 +14,14 @@ AlertCountPolling.getInstance = function (dispatcher) {
   if (isNull(AlertCountPolling.instance)) {
     const worker = new Worker(new URL('./alertCountPolling.worker.js', import.meta.url));
     worker.onmessage = function ({ data }) {
-      dispatcher(data);
+      /**
+       * TODO
+       * 1. 如果token过期就停止
+       * 2. 处理错误
+       */
+      if (data.code === '0') {
+        dispatcher(data.data);
+      }
     };
     AlertCountPolling.instance = worker;
   }

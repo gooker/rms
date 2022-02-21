@@ -1,0 +1,67 @@
+.commonPageStyleNoPadding {
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100%;
+  background: #fff;
+}
+
+.commonPageStyle {
+  .commonPageStyleNoPadding();
+
+  padding: 24px;
+}
+
+.tableWrapper {
+  flex: 1;
+  overflow: auto;
+
+  :global {
+    .ant-table-wrapper {
+      height: 100%;
+    }
+    .ant-spin-nested-loading {
+      height: 100%;
+    }
+    .ant-spin-container {
+      display: flex;
+      flex-flow: column nowrap;
+      height: 100%;
+
+      .ant-table {
+        flex: 1;
+        overflow: auto;
+
+        .ant-table-container {
+          display: flex;
+          flex-flow: column nowrap;
+          height: 100%;
+
+          .ant-table-content {
+            overflow: auto !important;
+          }
+        }
+      }
+
+      .ant-pagination {
+        height: 32px;
+      }
+    }
+  }
+}
+
+
+.toolBar {
+  margin-bottom: 20px;
+  button:not(:first-child) {
+    margin-left: 20px;
+  }
+
+  :global {
+    .ant-form-item {
+      margin-bottom: 14px;
+    }
+    .ant-divider-horizontal {
+      margin: 15px 0;
+    }
+  }
+}

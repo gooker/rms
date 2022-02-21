@@ -16,7 +16,7 @@ self.onmessage = ({ data: { state, url, token, sectionId } }) => {
       fetch(url, { headers })
         .then((response) => response.json())
         .then((response) => self.postMessage(response));
-    }, 5 * 1000);
+    }, 10 * 1000);
   } else if (state === 'end') {
     clearInterval(intervalInstance);
     intervalInstance = null;

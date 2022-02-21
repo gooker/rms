@@ -1,6 +1,7 @@
 import React from 'react';
-import { Modal, Popover, Switch } from 'antd';
-import { FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
+import { Badge, Modal, Popover, Switch } from 'antd';
+import { FullscreenExitOutlined, FullscreenOutlined, BellOutlined } from '@ant-design/icons';
+import { withRouter } from 'react-router-dom';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
 import { throttle } from 'lodash';
@@ -9,7 +10,6 @@ import Portal from './Portal/Portal';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
-import NoticeIcon from './NoticeIcon';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
 import styles from './Header.module.less';
@@ -18,7 +18,9 @@ import { getHAInfo } from '@/services/XIHE';
 import HA from '@/packages/Portal/components/HA';
 import ExpiredTip from '@/packages/Portal/components/ExpiredTip';
 
+@withRouter
 @connect(({ global, user }) => ({
+  alertCount: global.alertCount,
   globalLocale: global.globalLocale,
   currentUser: user.currentUser,
   environments: global.environments,
@@ -35,6 +37,7 @@ class Header extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
+    this.getHAInformation();
     const sessionValue = window.sessionStorage.getItem('showErrorNotification');
     const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
     this.setState({ showErrorNotification });
@@ -119,8 +122,8 @@ class Header extends React.Component {
   };
 
   goToQuestionCenter = async () => {
-    const { dispatch } = this.props;
-    dispatch({ type: 'global/goToQuestionCenter' });
+    const { history } = this.props;
+    history.push('/XIHE/questionCenter');
   };
 
   changeLocale = async ({ key }) => {
@@ -131,7 +134,7 @@ class Header extends React.Component {
   render() {
     const { showErrorNotification, showLabel, apiListShow, isHA } = this.state;
     const { environments, isFullscreen, currentUser } = this.props;
-    const { noticeCountUpdate, noticeCount, sysAuthInfo } = this.props;
+    const { alertCount, sysAuthInfo } = this.props;
     if (isNull(currentUser)) return null;
 
     const isAdmin = currentUser.username === 'admin';
@@ -184,13 +187,10 @@ class Header extends React.Component {
               </span>
             }
           >
-            <span
-              className={styles.action}
-              onMouseOver={noticeCountUpdate}
-              onFocus={() => void 0}
-              onClick={this.goToQuestionCenter}
-            >
-              <NoticeIcon count={noticeCount || 0} />
+            <span className={styles.action} onClick={this.goToQuestionCenter}>
+              <Badge size="small" showZero={false} count={alertCount} overflowCount={99}>
+                <BellOutlined />
+              </Badge>
             </span>
           </Popover>
 

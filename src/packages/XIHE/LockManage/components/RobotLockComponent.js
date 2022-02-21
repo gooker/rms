@@ -76,7 +76,7 @@ const RobotLock = (props) => {
           agvTaskLockDTOList: selectedRow,
         });
         if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           getData();
         } else {
           message.success(formatMessage({ id: 'app.tip.operateFailed' }));

@@ -1,23 +1,21 @@
 import React, { Component } from 'react';
-import { Form, Select, Input, Button, Modal, message } from 'antd';
+import { Form, Select, Input, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import LocalsKeys from '@/locales/LocaleKeys';
 import TimeZone from '@/components/TimeZone';
-import { generateAdminTypeOptions, generateLevelOptions } from '../userManagerUtils';
+import { generateAdminTypeOptions } from '../userManagerUtils';
 import { isStrictNull } from '@/utils/util';
 
 const { Option } = Select;
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 18);
 
 export default class AddUser extends Component {
   formRef = React.createRef();
 
   state = {
     adminTypeOptions: [],
-    levelOptions: [],
-    selectedUserType: null,
     timeZoneVisible: false,
     zoneValue: null,
   };
@@ -25,15 +23,12 @@ export default class AddUser extends Component {
   componentDidMount() {
     const { type, updateRow } = this.props;
     const { setFieldsValue } = this.formRef.current;
-    const levelOptions = generateLevelOptions(type);
     const adminTypeOptions = generateAdminTypeOptions(type);
-    let selectedUserType = 'USER';
     let zoneValue = null;
     if (!isStrictNull(updateRow)) {
-      selectedUserType = updateRow.userType || 'USER';
       zoneValue = updateRow.userTimeZone;
       const params = {
-        userType: selectedUserType,
+        userType: updateRow.userType || 'USER',
         username: updateRow.username,
         email: updateRow.email,
         language: updateRow.language,
@@ -41,18 +36,14 @@ export default class AddUser extends Component {
         userTimeZone: updateRow.userTimeZone,
         description: updateRow.description,
       };
-      if (selectedUserType === 'USER') {
-        params.level = updateRow.level;
-      }
       setFieldsValue({ ...params });
-    } else {
-      setFieldsValue({
-        userType: selectedUserType,
-        username: null,
-        password: null,
-      });
     }
-    this.setState({ adminTypeOptions, levelOptions, selectedUserType, zoneValue });
+    this.setState({ adminTypeOptions, zoneValue });
+  }
+
+  componentWillUnmount() {
+    const { resetFields } = this.formRef.current;
+    resetFields();
   }
 
   setTimezoneInput = () => {
@@ -66,23 +57,23 @@ export default class AddUser extends Component {
   submit = () => {
     const { validateFields } = this.formRef.current;
     const { onAddUser } = this.props;
-    validateFields().then((allValues) => {
-      onAddUser(allValues);
-    })
-    .catch(()=>{});
+    validateFields()
+      .then((allValues) => {
+        onAddUser(allValues);
+      })
+      .catch(() => {});
   };
 
   render() {
     const { updateRow } = this.props;
-    const { adminTypeOptions, levelOptions, selectedUserType, timeZoneVisible, zoneValue } =
-      this.state;
+    const { adminTypeOptions, timeZoneVisible, zoneValue } = this.state;
     const localLocales =
       window.localStorage.getItem('locales') || '["zh-CN","en-US","ko-KR","vi-VN"]';
     return (
       <div>
         <Form {...formItemLayout} ref={this.formRef}>
           <Form.Item
-            label={<FormattedMessage id="sso.user.account.type" />}
+            label={<FormattedMessage id="app.common.type" />}
             name="userType"
             rules={[
               {
@@ -90,22 +81,19 @@ export default class AddUser extends Component {
                 message: formatMessage({ id: 'sso.user.require.accountType', format: false }),
               },
             ]}
-            getValueFromEvent={(ev) => {
-              this.setState({ selectedUserType: ev });
-              return ev;
-            }}
           >
             <Select>
               <Option key="user" value="USER">
-                <FormattedMessage id="sso.user.type.user" />
+                <FormattedMessage id="sso.user" />
               </Option>
               <Option key="app" value="APP">
-                <FormattedMessage id="translator.languageManage.application" />
+                <FormattedMessage id="app.module" />
               </Option>
             </Select>
           </Form.Item>
+
           <Form.Item
-            label={<FormattedMessage id="sso.user.type.username" />}
+            label={<FormattedMessage id="sso.user.name" />}
             name="username"
             rules={[
               {
@@ -114,20 +102,11 @@ export default class AddUser extends Component {
               },
             ]}
           >
-            <Input
-              autoComplete="off"
-              readOnly
-              onFocus={() => {
-                const { getFieldInstance } = this.formRef.current;
-                const ev = getFieldInstance('username');
-                if (ev && ev.input) {
-                  ev.input.readOnly = false;
-                }
-              }}
-            />
+            <Input />
           </Form.Item>
+
           <Form.Item
-            label={<FormattedMessage id="sso.user.account.email" />}
+            label={<FormattedMessage id="sso.user.email" />}
             name="email"
             rules={[
               {
@@ -140,26 +119,23 @@ export default class AddUser extends Component {
               },
             ]}
           >
-            <Input autoComplete="off" />
+            <Input />
           </Form.Item>
 
           {/* 只有新建用户才显示密码项 */}
           {!updateRow && (
             <Form.Item
-              label={<FormattedMessage id="sso.user.account.password" />}
+              label={<FormattedMessage id="sso.user.password" />}
               name="password"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
+              rules={[{ required: true }]}
             >
               <Input.Password autoComplete="off" type="password" />
             </Form.Item>
           )}
+
           {!updateRow && (
             <Form.Item
-              label={<FormattedMessage id="sso.user.account.password2" />}
+              label={<FormattedMessage id="sso.user.password2" />}
               name="surePassword"
               dependencies={['password']}
               rules={[
@@ -188,14 +164,11 @@ export default class AddUser extends Component {
               <Input.Password autoComplete="off" type="password" />
             </Form.Item>
           )}
+
           <Form.Item
-            label={<FormattedMessage id="translator.languageManage.language" />}
+            label={<FormattedMessage id="sso.user.language" />}
             name="language"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            rules={[{ required: true }]}
           >
             <Select>
               {JSON.parse(localLocales).map((locale) => (
@@ -205,14 +178,11 @@ export default class AddUser extends Component {
               ))}
             </Select>
           </Form.Item>
+
           <Form.Item
-            label={<FormattedMessage id="sso.user.list.adminType" />}
+            label={<FormattedMessage id="sso.user.adminType" />}
             name="adminType"
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            rules={[{ required: true }]}
           >
             <Select onChange={this.adminTypeChanged}>
               {adminTypeOptions.map((option) => (
@@ -222,27 +192,8 @@ export default class AddUser extends Component {
               ))}
             </Select>
           </Form.Item>
-          {selectedUserType === 'USER' && (
-            <Form.Item
-              label={<FormattedMessage id="sso.user.account.level" />}
-              name="level"
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Select>
-                {levelOptions.map((option) => (
-                  <Option key={option.value} value={option.value}>
-                    {option.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-          )}
           <Form.Item
-            label={<FormattedMessage id="sso.user.account.userTimeZone" />}
+            label={<FormattedMessage id="sso.user.timeZone" />}
             name="userTimeZone"
             rules={[
               {

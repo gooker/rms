@@ -32,6 +32,7 @@ const UserCenter = (props) => {
         <LogoutOutlined /> <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
       </Menu.Item>
       <Menu.SubMenu
+        key={'roleList'}
         title={
           <>
             <UnorderedListOutlined /> <FormattedMessage id="menu.account.roleList" />

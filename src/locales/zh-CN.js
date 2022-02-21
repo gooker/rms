@@ -28,6 +28,7 @@ import mapEditor from './zh-CN/XIHE/editor';
 import mapMonitor from './zh-CN/XIHE/monitor';
 import notification from './zh-CN/XIHE/notification';
 import sourcemanage from './zh-CN/XIHE/sourcemanage';
+import alert from './zh-CN/XIHE/alert';
 
 export default {
   ...menu,
@@ -60,4 +61,5 @@ export default {
   ...mapMonitor,
   ...notification,
   ...sourcemanage,
+  ...alert,
 };

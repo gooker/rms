@@ -53,7 +53,7 @@ class AccountCenter extends Component {
         <Card title={<FormattedMessage id="accountCenter.userInfo" />} bordered={false}>
           <Row gutter={[16, 24]}>
             <Col span={12}>
-              <FormattedMessage id="sso.user.type.username" /> :
+              <FormattedMessage id="sso.user.name" /> :
               <span className={styles.font20}>{currentUser.username}</span>
             </Col>
             <Col span={12}>

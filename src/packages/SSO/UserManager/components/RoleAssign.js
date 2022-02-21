@@ -4,7 +4,6 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllUserRoleList, fetchUserAssignedRoleList } from '@/services/SSO';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AdminTColor } from '../userManagerUtils';
-const AdminTypeColor = AdminTColor();
 
 export default class RoleAssign extends Component {
   state = {
@@ -41,6 +40,7 @@ export default class RoleAssign extends Component {
   handleChange = (targetKeys) => {
     this.setState({ rightSource: targetKeys });
   };
+
   submit = () => {
     const { rightSource, allSource } = this.state;
     const { onSubmit, selectRow } = this.props;
@@ -84,18 +84,7 @@ export default class RoleAssign extends Component {
     return (
       <div>
         <Card
-          title={
-            <span>
-              <FormattedMessage id="sso.user.roleAssign" />
-              {selectRow ? (
-                <span style={{ marginLeft: 10, fontSize: 13, color: AdminTypeColor[type] }}>
-                  {`( ${selectRow[0].username} )`}
-                </span>
-              ) : (
-                ''
-              )}
-            </span>
-          }
+          title={<span style={{ color: AdminTColor[type] }}>{selectRow[0].username}</span>}
           extra={
             <Button type="primary" onClick={this.submit}>
               <FormattedMessage id="app.button.submit" />
@@ -107,12 +96,12 @@ export default class RoleAssign extends Component {
             targetKeys={rightSource}
             showSearch
             operations={[
-              <FormattedMessage id="sso.user.action.add" />,
-              <FormattedMessage id="sso.user.action.remove" />,
+              <FormattedMessage key={'add'} id="app.button.add" />,
+              <FormattedMessage key={'delete'} id="app.button.delete" />,
             ]}
             titles={[
-              <FormattedMessage id="sso.user.tip.roleUnassigned" />,
-              <FormattedMessage id="sso.user.tip.roleAssigned" />,
+              <FormattedMessage key={'roleUnassigned'} id="sso.user.tip.roleUnassigned" />,
+              <FormattedMessage key={'roleAssigned'} id="sso.user.tip.roleAssigned" />,
             ]}
             render={(item) => `${item.code}(${item.label})`}
             rowKey={(record) => record.id}

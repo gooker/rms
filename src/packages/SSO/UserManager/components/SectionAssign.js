@@ -4,7 +4,6 @@ import { fetchSelectSectionList, fetchAllSectionByUserId } from '@/services/SSO'
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AdminTColor } from '../userManagerUtils';
-const AdminTypeColor = AdminTColor();
 
 export default class SectionAssign extends Component {
   state = {
@@ -55,18 +54,7 @@ export default class SectionAssign extends Component {
     return (
       <div>
         <Card
-          title={
-            <span>
-              <FormattedMessage id="sso.user.sectionAssign" />
-              {selectRow ? (
-                <span style={{ marginLeft: 10, fontSize: 13, color: AdminTypeColor[type] }}>
-                  {`( ${selectRow[0].username} )`}
-                </span>
-              ) : (
-                ''
-              )}
-            </span>
-          }
+          title={<span style={{ color: AdminTColor[type] }}>{selectRow[0].username}</span>}
           extra={
             <Button type="primary" onClick={this.submit}>
               <FormattedMessage id="app.button.submit" />
@@ -78,12 +66,12 @@ export default class SectionAssign extends Component {
             targetKeys={rightSource}
             showSearch
             operations={[
-              <FormattedMessage id="sso.user.action.add" />,
-              <FormattedMessage id="sso.user.action.remove" />,
+              <FormattedMessage key={'add'} id="app.button.add" />,
+              <FormattedMessage key={'delete'} id="app.button.delete" />,
             ]}
             titles={[
-              <FormattedMessage id="sso.user.tip.sectionUnassigned" />,
-              <FormattedMessage id="sso.user.tip.sectionAssigned" />,
+              <FormattedMessage key={'sectionUnassigned'} id="sso.user.tip.sectionUnassigned" />,
+              <FormattedMessage key={'sectionAssigned'} id="sso.user.tip.sectionAssigned" />,
             ]}
             render={(item) => item.sectionName}
             rowKey={(record) => record.sectionId}

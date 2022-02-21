@@ -55,7 +55,7 @@ const LogSearchForm = (props) => {
         value: 'trackId',
       },
       {
-        label: formatMessage({ id: 'sso.user.type.user' }),
+        label: formatMessage({ id: 'sso.user' }),
         value: 'username',
       },
       {
@@ -122,7 +122,7 @@ const LogSearchForm = (props) => {
           </Form.Item>
         </Col>
         <Col span={6}>
-          <Form.Item name={'username'} label={<FormattedMessage id="sso.user.type.user" />}>
+          <Form.Item name={'username'} label={<FormattedMessage id="sso.user" />}>
             <Input allowClear />
           </Form.Item>
         </Col>

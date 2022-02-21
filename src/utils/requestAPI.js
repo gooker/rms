@@ -2,7 +2,7 @@ import { isPlainObject } from 'lodash';
 import { NameSpace } from '@/config/config';
 
 export default function requestAPI() {
-  let apiMap = {};
+  let apiMap;
   if (window.extraConfig && isPlainObject(window.extraConfig)) {
     apiMap = { ...window.extraConfig };
   } else {
@@ -23,13 +23,23 @@ export default function requestAPI() {
       // ws: 'ws://52.83.193.245:10225/ws',
 
       // NT-11-monthly 公网
-      sso: 'http://52.83.193.245:10221',
-      coordinator: 'http://52.83.193.245:10223',
-      ws: 'ws://52.83.193.245:10225/ws',
+      // sso: 'http://52.83.193.245:10221',
+      // coordinator: 'http://52.83.193.245:10223',
+      // ws: 'ws://52.83.193.245:10225/ws',
 
       // NT-12
       // sso: 'http://sso-api-ntdev-self-defining.mushiny.local',
       // coordinator: 'http://translation-api-ntdev-self-defining.mushiny.local',
+
+      // NT-13 内网
+      sso: 'http://192.168.0.13:8071',
+      coordinator: 'http://192.168.0.13:8073',
+      ws: 'ws://192.168.0.13:15654/ws',
+
+      // NT-13 外网
+      // ws: 'ws://52.83.193.245:10216/ws',
+      // sso: 'http://52.83.193.245:10217',
+      // coordinator: 'http://52.83.193.245:10218',
 
       // 高可用 13 $ 14
       // sso: 'http://sso-api-ntdev-ha.mushiny.local',

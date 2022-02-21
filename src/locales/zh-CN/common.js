@@ -1,11 +1,13 @@
 export default {
   // 模块名称
-  'app.module.XIHE': 'XIHE',
+  'app.module': '应用',
+  'app.module.XIHE': '羲和',
   'app.module.LatentLifting': '潜伏车',
   'app.module.Tote': '料箱车',
   'app.module.ForkLifting': '叉车',
   'app.module.Sorter': '分拣车',
   'app.module.I18N': '国际化',
+  'app.module.SSO': 'SSO',
 
   // 颜色
   'app.cost.green': '绿色',
@@ -27,7 +29,8 @@ export default {
   'app.message.systemHint': '系统提示',
   'app.message.fetchDataFailed': '获取数据失败',
   'app.message.fetchDataEmpty': '获取的数据为空',
-  'app.message.noActiveMap': '当前无激活的地图, 请到地图编辑页面进行地图激活操作',
+  'app.message.noMap': '当前不存在地图数据',
+  'app.message.noActiveMap': '当前无激活的地图',
   'app.message.fetchMapFail': '获取地图数据失败',
   'app.message.fetchUserFail': '获取用户信息失败',
   'app.message.fetchMapListFail': '获取地图列表失败',

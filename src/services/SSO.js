@@ -25,21 +25,6 @@ export async function fetchUpdateUserCurrentLanguage(languageType) {
   });
 }
 
-export async function fetchAllEnvironment() {
-  return request('/sso/environment/getAllEnvironment', {
-    method: 'GET',
-  });
-}
-
-export async function fetchUserRoleList(params) {
-  return request('/sso/user/roleList', {
-    method: 'GET',
-    data: params,
-  });
-}
-
-// 用户管理
-
 //获取用户管理列表
 export async function fetchUserManagerList(params) {
   return request('/sso/user/queryUserList', {
@@ -109,13 +94,15 @@ export async function fetchAllUserRoleList() {
     method: 'GET',
   });
 }
+
 //获取用户已分配角色 userId
-export async function fetchUserAssignedRoleList(parms) {
+export async function fetchUserAssignedRoleList(params) {
   return request(`/sso/user/roleList`, {
     method: 'GET',
-    data: parms,
+    data: params,
   });
 }
+
 //保存用户分配角色
 export async function saveUsersAssignedRole(parms) {
   return request(`/sso/user/roleAuthority`, {
@@ -171,16 +158,18 @@ export async function fetchAddRole(parms) {
     data: parms,
   });
 }
+
 //角色管理--修改角色
-export async function fetchUpdateRole(parms) {
+export async function fetchUpdateRole(params) {
   return request(`/sso/role`, {
     method: 'PUT',
-    data: parms,
+    data: params,
   });
 }
+
 //角色管理--删除角色
-export async function fetchDeleteRoleById(parms) {
-  return request(`/sso/role?id=${parms.id}`, {
+export async function fetchDeleteRoleById(params) {
+  return request(`/sso/role?id=${params.id}`, {
     method: 'DELETE',
   });
 }
@@ -207,6 +196,7 @@ export async function fetchAllEnvironmentList() {
     method: 'GET',
   });
 }
+
 //自定义环境--新增
 export async function fetchAddEnvironment(parms) {
   return request(`/sso/environment/saveEnvironment`, {
@@ -214,6 +204,7 @@ export async function fetchAddEnvironment(parms) {
     data: parms,
   });
 }
+
 //自定义环境--更新
 export async function fetchUpdateEnvironment(parms) {
   return request(`/sso/environment/updateEnvironment`, {
@@ -221,6 +212,7 @@ export async function fetchUpdateEnvironment(parms) {
     data: parms,
   });
 }
+
 //自定义环境--删除
 export async function deleteEnvironmentById(parms) {
   return request(`/sso/environment/deleteEnvironment`, {

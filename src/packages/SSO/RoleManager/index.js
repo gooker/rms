@@ -34,78 +34,10 @@ export default class index extends Component {
     selectedRow: [],
     roleList: [],
     loading: false,
-    addRoleVisble: false,
+    addRoleVisible: false,
     updateRoleFlag: false,
     uploadModal: false,
     authAssignVisible: false,
-  };
-
-  componentDidMount() {
-    this.getRoleList();
-  }
-
-  getRoleList = async () => {
-    this.setState({ loading: true });
-    const roleList = await fetchAllRoleList();
-    if (!dealResponse(roleList)) {
-      this.setState({ roleList });
-    }
-    this.setState({ loading: false });
-  };
-
-  // 新增 编辑角色
-  updateRole = async (values) => {
-    const { selectedRow, updateRoleFlag } = this.state;
-    let response = null;
-    if (updateRoleFlag) {
-      response = await fetchUpdateRole({ ...values, id: selectedRow[0].id });
-    } else {
-      response = await fetchAddRole(values);
-    }
-    if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
-      this.setState(
-        {
-          addRoleVisble: false,
-          updateRoleFlag: false,
-          selectedRow: [],
-          selectedRowKeys: [],
-        },
-        this.getRoleList,
-      );
-    } else {
-      message.error(response.message);
-    }
-  };
-
-  // 删除
-  deleteRole = () => {
-    const { selectedRowKeys } = this.state;
-    const this_ = this;
-    RmsConfirm({
-      content: '是否要删除所选择的角色',
-      onOk: async () => {
-        const deleteRes = await fetchDeleteRoleById({ id: selectedRowKeys[0] });
-        if (!dealResponse(deleteRes)) {
-          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
-          this_.setState({ selectedRow: [], selectedRowKeys: [] }, this_.getRoleList);
-        }
-      },
-    });
-  };
-
-  // 权限分配
-  submitAuthKeys = async (keys) => {
-    const { selectedRowKeys } = this.state;
-    const params = { id: selectedRowKeys[0], authorityKeys: [...keys] };
-    const response = await saveRoleAssignAuthority(params);
-    if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
-      this.setState(
-        { selectedRow: [], selectedRowKeys: [], authAssignVisible: false },
-        this.getRoleList,
-      );
-    }
   };
 
   columns = [
@@ -138,6 +70,74 @@ export default class index extends Component {
     },
   ];
 
+  componentDidMount() {
+    this.getRoleList();
+  }
+
+  getRoleList = async () => {
+    this.setState({ loading: true });
+    const roleList = await fetchAllRoleList();
+    if (!dealResponse(roleList)) {
+      this.setState({ roleList });
+    }
+    this.setState({ loading: false });
+  };
+
+  // 新增 编辑角色
+  updateRole = async (values) => {
+    const { selectedRow, updateRoleFlag } = this.state;
+    let response = null;
+    if (updateRoleFlag) {
+      response = await fetchUpdateRole({ ...values, id: selectedRow[0].id });
+    } else {
+      response = await fetchAddRole(values);
+    }
+    if (!dealResponse(response)) {
+      message.info(formatMessage({ id: 'app.message.operateSuccess' }));
+      this.setState(
+        {
+          addRoleVisible: false,
+          updateRoleFlag: false,
+          selectedRow: [],
+          selectedRowKeys: [],
+        },
+        this.getRoleList,
+      );
+    } else {
+      message.error(response.message);
+    }
+  };
+
+  // 删除
+  deleteRole = () => {
+    const { selectedRowKeys } = this.state;
+    const this_ = this;
+    RmsConfirm({
+      content: '是否要删除所选择的角色',
+      onOk: async () => {
+        const deleteRes = await fetchDeleteRoleById({ id: selectedRowKeys[0] });
+        if (!dealResponse(deleteRes)) {
+          message.info(formatMessage({ id: 'app.message.operateSuccess' }));
+          this_.setState({ selectedRow: [], selectedRowKeys: [] }, this_.getRoleList);
+        }
+      },
+    });
+  };
+
+  // 权限分配
+  submitAuthKeys = async (keys) => {
+    const { selectedRowKeys } = this.state;
+    const params = { id: selectedRowKeys[0], authorityKeys: [...keys] };
+    const response = await saveRoleAssignAuthority(params);
+    if (!dealResponse(response)) {
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+      this.setState(
+        { selectedRow: [], selectedRowKeys: [], authAssignVisible: false },
+        this.getRoleList,
+      );
+    }
+  };
+
   export = () => {
     const { selectedRow, roleList } = this.state;
     const exportData = selectedRow.length === 0 ? roleList : selectedRow;
@@ -150,11 +150,10 @@ export default class index extends Component {
   analyzeFunction = async (evt) => {
     try {
       const fileJson = JSON.parse(evt.target.result);
-
       if (Array.isArray(fileJson)) {
         const response = await fetchUploadRoles(fileJson);
         if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           this.setState({ uploadModal: false });
           this.getRoleList();
         }
@@ -168,11 +167,11 @@ export default class index extends Component {
 
   render() {
     const {
-      selectedRowKeys,
-      selectedRow,
-      roleList,
       loading,
-      addRoleVisble,
+      roleList,
+      selectedRow,
+      selectedRowKeys,
+      addRoleVisible,
       updateRoleFlag,
       authAssignVisible,
       uploadModal,
@@ -184,7 +183,7 @@ export default class index extends Component {
             <Button
               type="primary"
               onClick={() => {
-                this.setState({ addRoleVisble: true });
+                this.setState({ addRoleVisible: true });
               }}
             >
               <PlusOutlined /> <FormattedMessage id="app.button.add" />
@@ -192,10 +191,10 @@ export default class index extends Component {
             <Button
               disabled={selectedRowKeys.length !== 1}
               onClick={() => {
-                this.setState({ addRoleVisble: true, updateRoleFlag: true });
+                this.setState({ addRoleVisible: true, updateRoleFlag: true });
               }}
             >
-              <EditOutlined /> <FormattedMessage id="sso.user.edit" />
+              <EditOutlined /> <FormattedMessage id="app.button.edit" />
             </Button>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={this.deleteRole}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
@@ -243,17 +242,17 @@ export default class index extends Component {
         {/* 新增修改 */}
         <Modal
           footer={null}
-          visible={addRoleVisble}
+          visible={addRoleVisible}
           destroyOnClose
           title={
             updateRoleFlag ? (
               <FormattedMessage id="app.button.add" />
             ) : (
-              <FormattedMessage id="sso.user.edit" />
+              <FormattedMessage id="app.button.edit" />
             )
           }
           onCancel={() => {
-            this.setState({ addRoleVisble: false, updateRoleFlag: false });
+            this.setState({ addRoleVisible: false, updateRoleFlag: false });
           }}
         >
           <AddRoleModal onAddRoles={this.updateRole} updateRow={selectedRow} />
@@ -261,7 +260,7 @@ export default class index extends Component {
 
         {/* 权限分配 */}
         <Drawer
-          title={formatMessage({ id: 'sso.role.assign' })}
+          title={formatMessage({ id: 'sso.role.permissionAssign' })}
           destroyOnClose
           onClose={() => {
             this.setState({ authAssignVisible: false });
@@ -270,11 +269,7 @@ export default class index extends Component {
           visible={authAssignVisible}
           style={{ overflow: 'auto' }}
         >
-          <RoleAssignModal
-            roleList={roleList}
-            selectedRowKeys={selectedRowKeys}
-            submitAuthKeys={this.submitAuthKeys}
-          />
+          <RoleAssignModal role={roleList[0]} submitAuthKeys={this.submitAuthKeys} />
         </Drawer>
 
         {/**角色导入***/}

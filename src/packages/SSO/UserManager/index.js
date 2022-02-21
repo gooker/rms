@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
+import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
 import {
@@ -23,10 +24,7 @@ import SectionAssignModal from './components/SectionAssign';
 import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
 import styles from './userManager.module.less';
-import { IconFont } from '@/components/IconFont';
 
-const UserTypeColor = UserTColor();
-const AdminTypeColor = AdminTColor();
 const AdminTypeLabelMap = AdminTLabelMap();
 const { Option } = Select;
 
@@ -35,36 +33,48 @@ const { Option } = Select;
 }))
 class UserManager extends Component {
   state = {
+    loading: false,
+    // 标记当前是否是编辑操作
+    updateUserFlag: false,
+    // 是否可以更新账户信息
+    updateEnabled: false,
+    updateItem: null,
+
     selectRow: [],
     selectRowKey: [],
-    searchUsers: [], // 用户名搜索 为空不用filter
-    addUserVisible: false,
-    updateUserFlag: false, // 点击修改编辑时候为true
-    updatePwdVisible: false, // 重置用户密码
-    sectionDistriVisble: false, // 区域分配
-    rolesDistriVisible: false, // 角色分配
-    loading: false,
+
+    searchUsers: [],
     dataList: [],
+
+    // 新增 & 更新用户Modal
+    addUserVisible: false,
+    // 重置用户密码Modal
+    updatePwdVisible: false,
+    // 区域分配Modal
+    sectionAssignVisible: false,
+    // 角色分配Modal
+    roleAssignVisible: false,
+
     adminType: null,
   };
 
   columns = [
     {
-      title: <FormattedMessage id="sso.user.type.username" />,
+      title: <FormattedMessage id="sso.user.name" />,
       dataIndex: 'username',
       align: 'center',
       fixed: 'left',
     },
     {
-      title: <FormattedMessage id="sso.user.list.userType" />,
+      title: <FormattedMessage id="app.common.type" />,
       dataIndex: 'userType',
       render: (text) => {
         return (
-          <Tag color={UserTypeColor[text]}>
+          <Tag color={UserTColor[text]}>
             {text === 'USER' ? (
-              <FormattedMessage id="sso.user.type.user" />
+              <FormattedMessage id="sso.user" />
             ) : (
-              <FormattedMessage id="translator.languageManage.application" />
+              <FormattedMessage id="app.module" />
             )}
           </Tag>
         );
@@ -72,11 +82,11 @@ class UserManager extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="sso.user.list.adminType" />,
+      title: <FormattedMessage id="sso.user.adminType" />,
       dataIndex: 'adminType',
       render: (text) => {
         const adminType = text || 'USER';
-        return <Tag color={AdminTypeColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
+        return <Tag color={AdminTColor[adminType]}>{AdminTypeLabelMap[adminType]}</Tag>;
       },
       align: 'center',
     },
@@ -110,7 +120,7 @@ class UserManager extends Component {
         return (
           <Popover
             content={content}
-            title={<FormattedMessage id="sso.user.edit" />}
+            title={<FormattedMessage id="app.button.edit" />}
             trigger="hover"
             placement="left"
           >
@@ -120,13 +130,13 @@ class UserManager extends Component {
       },
     },
     {
-      title: <FormattedMessage id="sso.user.list.email" />,
+      title: <FormattedMessage id="sso.user.email" />,
       dataIndex: 'email',
       align: 'center',
       width: '15%',
     },
     {
-      title: <FormattedMessage id="sso.user.list.token" />,
+      title: 'Token',
       dataIndex: 'token',
       align: 'center',
       with: '150',
@@ -167,7 +177,7 @@ class UserManager extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.taskDetail.createTime" />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createDate',
       align: 'center',
       fixed: 'right',
@@ -185,22 +195,59 @@ class UserManager extends Component {
     this.setState({ loading: true, selectRow: [], selectRowKey: [] });
     const response = await fetchUserManagerList();
     if (!dealResponse(response)) {
-      this.setState({
-        dataList: response,
-      });
+      this.setState({ dataList: response });
     }
     this.setState({ loading: false });
   };
 
+  tableRowSelection = (selectRowKey, selectRow) => {
+    const { currentUser } = this.props;
+    let updateEnabled = false;
+    if (selectRow === 0) {
+      //
+    } else {
+      if (selectRow.length > 1) {
+        this.setState({ updateItem: null, selectRowKey, selectRow });
+      } else {
+        const updateItem = { ...selectRow[0] };
+        updateItem.adminType = updateItem.adminType ? updateItem.adminType : 'USER';
+
+        // 当前管理员只能修改小于自己level的账户信息 或者 修改本身
+        updateEnabled =
+          currentUser.level > updateItem.level || updateItem.username === currentUser.username;
+        this.setState({ updateItem, selectRowKey, selectRow, updateEnabled });
+      }
+    }
+  };
+
   // 用户名搜索
-  userHandleChange = (value) => {
+  userHandleChange = (searchUsers) => {
     const { dataList } = this.state;
-    const selectRow = dataList.filter((record) => value.includes(record.id));
-    this.setState({
-      selectRow,
-      searchUsers: value,
-      selectRowKey: selectRow.map((record) => record.id),
-    });
+    const { currentUser } = this.props;
+    const selectRow = dataList.filter((record) => searchUsers.includes(record.id));
+    const selectRowKey = selectRow.map((record) => record.id);
+
+    if (selectRow.length > 0) {
+      if (selectRow.length === 1) {
+        const updateItem = { ...selectRow[0] };
+        updateItem.adminType = updateItem.adminType ? updateItem.adminType : 'USER';
+
+        // 当前管理员只能修改小于自己level的账户信息 或者 修改本身
+        const updateEnabled =
+          currentUser.level > updateItem.level || updateItem.username === currentUser.username;
+        this.setState({ searchUsers, updateItem, selectRowKey, selectRow, updateEnabled });
+      } else {
+        this.setState({ searchUsers, updateItem: null, selectRowKey, selectRow });
+      }
+    } else {
+      this.setState({
+        searchUsers: [],
+        updateItem: null,
+        selectRowKey: [],
+        selectRow: [],
+        updateEnabled: false,
+      });
+    }
   };
 
   // 重置密码
@@ -211,8 +258,7 @@ class UserManager extends Component {
       changePassword: values.password,
     };
     const updateRes = await updateUserPassword(params);
-    if (!dealResponse(updateRes)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+    if (!dealResponse(updateRes, true)) {
       this.setState(
         { updatePwdVisible: false, selectRow: [], selectRowKey: [] },
         this.getUserDataList,
@@ -220,8 +266,8 @@ class UserManager extends Component {
     }
   };
 
-  // 新增编辑用户弹框
-  onAddUserSubmit = async (values) => {
+  // 用户表单提交
+  onSubmit = async (values) => {
     const { updateUserFlag, selectRow } = this.state;
 
     // 后台不支持 adminType===USER, 这里删除
@@ -236,8 +282,7 @@ class UserManager extends Component {
     } else {
       response = await addUserManager(requestParams);
     }
-    if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+    if (!dealResponse(response, true)) {
       this.setState(
         {
           addUserVisible: false,
@@ -251,6 +296,7 @@ class UserManager extends Component {
       message.error(response.message);
     }
   };
+
   // 注销用户
   deleteUser = () => {
     const { selectRow } = this.state;
@@ -266,8 +312,7 @@ class UserManager extends Component {
       content: content,
       onOk: async () => {
         const deleteRes = await fetchDeleteUser({ id: selectRow[0].id });
-        if (!dealResponse(deleteRes)) {
-          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+        if (!dealResponse(deleteRes, true)) {
           this_.setState({ selectRow: [], selectRowKey: [] }, this_.getUserDataList);
         }
       },
@@ -283,8 +328,7 @@ class UserManager extends Component {
       disable: !currentRow.disable,
     };
     const updateRes = await updateUserManage(params);
-    if (!dealResponse(updateRes)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+    if (!dealResponse(updateRes, true)) {
       this.getUserDataList();
     }
   };
@@ -296,10 +340,9 @@ class UserManager extends Component {
       sections: [...values],
       userId: selectRow[0].id,
     });
-    if (!dealResponse(selectionRes)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+    if (!dealResponse(selectionRes, true)) {
       this.setState(
-        { sectionDistriVisble: false, selectRow: [], selectRowKey: [] },
+        { sectionAssignVisible: false, selectRow: [], selectRowKey: [] },
         this.getUserDataList,
       );
     }
@@ -312,10 +355,9 @@ class UserManager extends Component {
       roleIds: [...values],
       userId: selectRow[0].id,
     });
-    if (!dealResponse(rolesRes)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+    if (!dealResponse(rolesRes, true)) {
       this.setState(
-        { rolesDistriVisible: false, selectRow: [], selectRowKey: [] },
+        { roleAssignVisible: false, selectRow: [], selectRowKey: [] },
         this.getUserDataList,
       );
     }
@@ -327,16 +369,18 @@ class UserManager extends Component {
 
   render() {
     const {
-      selectRowKey,
-      selectRow,
-      updateUserFlag,
       loading,
       dataList,
+      selectRow,
+      selectRowKey,
+      updateUserFlag,
+      updateEnabled,
       searchUsers,
-      addUserVisible,
       adminType,
-      sectionDistriVisble,
-      rolesDistriVisible,
+      updateItem,
+      addUserVisible,
+      roleAssignVisible,
+      sectionAssignVisible,
     } = this.state;
     const showUsersList = dataList.filter((record) => {
       if (searchUsers.length > 0) {
@@ -345,19 +389,15 @@ class UserManager extends Component {
         return true;
       }
     });
-    const updateItem = updateUserFlag ? selectRow[0] : null;
     return (
       <div className={commonStyles.commonPageStyle}>
-        <Form.Item label={<FormattedMessage id="sso.user.type.username" />}>
+        <Form.Item label={<FormattedMessage id="sso.user.name" />}>
           <Select
             showSearch
             allowClear
             mode="multiple"
             style={{ width: '50%' }}
             onChange={this.userHandleChange}
-            placeholder={formatMessage({
-              id: 'sso.user.require.searchByUsername',
-            })}
             optionFilterProp="children"
             filterOption={(input, option) =>
               option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -374,55 +414,61 @@ class UserManager extends Component {
         </Form.Item>
         <Row style={{ display: 'flex', marginBottom: '20px' }}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
+            {/* 新增用户 */}
             <Button
               type="primary"
               onClick={() => {
-                this.setState({
-                  addUserVisible: true,
-                });
+                this.setState({ addUserVisible: true, updateUserFlag: false });
               }}
             >
               <PlusOutlined /> <FormattedMessage id="app.button.add" />
             </Button>
+
+            {/* 编辑 */}
             <Button
-              disabled={selectRowKey.length !== 1}
+              disabled={selectRowKey.length !== 1 || !updateEnabled}
               onClick={() => {
-                this.setState({
-                  addUserVisible: true,
-                  updateUserFlag: true,
-                });
+                this.setState({ addUserVisible: true, updateUserFlag: true });
               }}
             >
-              <EditOutlined /> <FormattedMessage id="sso.user.edit" />
+              <EditOutlined /> <FormattedMessage id="app.button.edit" />
             </Button>
+
+            {/* 重置密码 */}
             <Button
-              disabled={selectRowKey.length !== 1}
+              disabled={selectRowKey.length !== 1 || !updateEnabled}
               onClick={() => {
                 this.setState({ updatePwdVisible: true });
               }}
             >
               <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
             </Button>
+
+            {/* 删除用户 */}
             <Button
               danger
-              disabled={selectRowKey.length !== 1}
+              disabled={selectRowKey.length !== 1 || !updateEnabled}
               onClick={this.deleteUser}
             >
-              <DeleteOutlined /> <FormattedMessage id="sso.user.action.delete" />
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
+
+            {/* 分配区域 */}
             <Button
-              disabled={selectRowKey.length !== 1}
+              disabled={selectRowKey.length !== 1 || !updateEnabled}
               onClick={() => {
-                this.setState({ sectionDistriVisble: true });
+                this.setState({ sectionAssignVisible: true });
               }}
             >
               <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
             </Button>
+
+            {/* 分配角色 */}
             <Button
+              disabled={selectRowKey.length !== 1 || !updateEnabled}
               onClick={() => {
-                this.setState({ rolesDistriVisible: true });
+                this.setState({ roleAssignVisible: true });
               }}
-              disabled={selectRowKey.length !== 1}
             >
               <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
             </Button>
@@ -442,9 +488,7 @@ class UserManager extends Component {
             loading={loading}
             rowSelection={{
               selectedRowKeys: selectRowKey,
-              onChange: (selectRowKey, selectRow) => {
-                this.setState({ selectRowKey, selectRow });
-              },
+              onChange: this.tableRowSelection,
             }}
           />
         </div>
@@ -468,7 +512,7 @@ class UserManager extends Component {
             this.setState({ addUserVisible: false, updateUserFlag: false });
           }}
         >
-          <AddUserModal type={adminType} updateRow={updateItem} onAddUser={this.onAddUserSubmit} />
+          <AddUserModal type={adminType} updateRow={updateItem} onAddUser={this.onSubmit} />
         </Modal>
 
         {/**修改密码***/}
@@ -488,12 +532,14 @@ class UserManager extends Component {
         {/* 区域分配 */}
         <Modal
           destroyOnClose
+          style={{ top: 20 }}
           footer={null}
+          title={<FormattedMessage id="sso.user.sectionAssign" />}
           width={adjustModalWidth() * 0.58 < 500 ? 500 : adjustModalWidth() * 0.58}
           onCancel={() => {
-            this.setState({ sectionDistriVisble: false });
+            this.setState({ sectionAssignVisible: false });
           }}
-          visible={sectionDistriVisble}
+          visible={sectionAssignVisible}
         >
           <SectionAssignModal selectRow={selectRow} onSubmit={this.updateSectionList} />
         </Modal>
@@ -501,12 +547,14 @@ class UserManager extends Component {
         {/* 角色分配 */}
         <Modal
           destroyOnClose
+          style={{ top: 20 }}
           footer={null}
+          title={<FormattedMessage id="sso.user.roleAssign" />}
           width={adjustModalWidth() * 0.58 < 550 ? 550 : adjustModalWidth() * 0.58}
           onCancel={() => {
-            this.setState({ rolesDistriVisible: false });
+            this.setState({ roleAssignVisible: false });
           }}
-          visible={rolesDistriVisible}
+          visible={roleAssignVisible}
         >
           <RoleAssignModal selectRow={selectRow} onSubmit={this.updateRoleList} />
         </Modal>
@@ -514,5 +562,4 @@ class UserManager extends Component {
     );
   }
 }
-
 export default UserManager;

@@ -56,6 +56,5 @@ export default [
     icon: 'customConfig',
     component: '/SSO/CustomConfiguration',
     authority: ['ADMIN'],
-    hook: ['dev'],
   },
 ];

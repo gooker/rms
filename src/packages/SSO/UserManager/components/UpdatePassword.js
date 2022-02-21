@@ -32,14 +32,14 @@ export default class UpdatePassword extends Component {
           ''
         )}
         <Form.Item
-          label={formatMessage({ id: 'sso.user.account.password' })}
+          label={formatMessage({ id: 'sso.user.password' })}
           name="password"
           rules={[{ required: true }]}
         >
           <Input.Password autoComplete="off" type="password" />
         </Form.Item>
         <Form.Item
-          label={formatMessage({ id: 'sso.user.account.password2' })}
+          label={formatMessage({ id: 'sso.user.password2' })}
           name="surePassword"
           dependencies={['password']}
           rules={[

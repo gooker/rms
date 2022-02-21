@@ -140,7 +140,8 @@ class EditorBodyLeft extends React.PureComponent {
       // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
       if (activeKey === LeftCategory.Choose) {
         this.hideMask();
-        this.onSelectElement();
+        const incremental = ev?.data.originalEvent.ctrlKey || ev?.data.originalEvent.metaKey;
+        this.onSelectElement(incremental);
       }
 
       // 插入图片，鼠标抬起后立即弹出图片选择框
@@ -175,12 +176,12 @@ class EditorBodyLeft extends React.PureComponent {
   cancelSelections = () => {
     const { dispatch, selections, mapContext } = this.props;
     mapContext.rangeSelection(selections, false);
-    dispatch({ type: 'editor/updateSelections', payload: [] });
+    dispatch({ type: 'editor/updateSelections', payload: { incremental: false, selections: [] } });
   };
 
   // 框选地图元素
-  onSelectElement = () => {
-    this.cancelSelections();
+  onSelectElement = (incremental) => {
+    !incremental && this.cancelSelections();
     const { dispatch, mapContext, currentCells } = this.props;
 
     // 收集转换所需的数据
@@ -204,21 +205,14 @@ class EditorBodyLeft extends React.PureComponent {
 
     const selections = filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY);
     mapContext.rangeSelection(selections);
-    dispatch({ type: 'editor/updateSelections', payload: selections });
+    dispatch({ type: 'editor/updateSelections', payload: { incremental, selections } });
   };
 
   render() {
     const { activeKey } = this.props;
-    // PC 端不显示"选择"与"拖拽"按钮
-    let EditorLeftToolsToRender = [...EditorLeftTools];
-    if (window.currentPlatForm.isPc) {
-      EditorLeftToolsToRender = EditorLeftToolsToRender.filter(
-        (item) => ![LeftCategory.Choose, LeftCategory.Drag].includes(item.value),
-      );
-    }
     return (
       <div style={{ width: `${LeftToolBarWidth}px` }} className={styles.bodyLeftSide}>
-        {EditorLeftToolsToRender.map(({ label, value, icon }) => (
+        {EditorLeftTools.map(({ label, value, icon }) => (
           <Tooltip key={value} placement="right" title={label}>
             <span
               className={activeKey === value ? styles.contentActive : undefined}

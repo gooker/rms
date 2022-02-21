@@ -8,12 +8,6 @@ export async function fetchLogin(params) {
   });
 }
 
-export async function fetchAllEnvironment() {
-  return request(`/${NameSpace.SSO}/environment/getAllEnvironment`, {
-    method: 'GET',
-  });
-}
-
 // 修改当前环境
 export async function fetchUpdateEnvironment(params) {
   return request(`/${NameSpace.SSO}/environment/updateEnvironmentFlag`, {

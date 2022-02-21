@@ -84,7 +84,7 @@ const TargetLock = (props) => {
           lockTargetCellValueList: selectedRow,
         });
         if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           freshData();
         } else {
           message.success(formatMessage({ id: 'app.tip.operateFailed' }));
