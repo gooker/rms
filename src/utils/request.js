@@ -37,10 +37,6 @@ axios.interceptors.response.use((response) => {
 // 异常处理程序
 const errorHandler = (error) => {
   const codeMessage = {
-    200: formatMessage({ id: 'app.request.200' }),
-    201: formatMessage({ id: 'app.request.201' }),
-    202: formatMessage({ id: 'app.request.202' }),
-    204: formatMessage({ id: 'app.request.204' }),
     400: formatMessage({ id: 'app.request.400' }),
     401: formatMessage({ id: 'app.request.401' }),
     403: formatMessage({ id: 'app.request.403' }),
@@ -53,26 +49,25 @@ const errorHandler = (error) => {
     503: formatMessage({ id: 'app.request.503' }),
     504: formatMessage({ id: 'app.request.504' }),
   };
-
-  let messageContent = error.message || 'Unrecognized Error';
-  const response = error.response;
+  const { response } = error;
   if (response) {
-    const { status } = response;
+    const { status, data } = response;
     if (status === 401) {
       const { history } = window.g_app._store.getState().global;
-      if (history) {
-        history.push('/login');
-      } else {
-        console.error('history实例不存在');
-      }
+      history && history.push('/login');
     }
     const statusMessage = codeMessage[status];
-    return { code: '-1', data: null, message: statusMessage || messageContent };
+    return { code: '-1', data: null, message: data.message || statusMessage };
+  } else {
+    let messageContent;
+    if (error.message === 'Network Error') {
+      messageContent = formatMessage({ id: 'app.request.failed' });
+    } else {
+      messageContent = formatMessage({ id: 'app.request.error' });
+    }
+
+    return { code: '-1', data: null, message: messageContent };
   }
-  if (error.message === 'Failed to fetch') {
-    messageContent = formatMessage({ id: 'app.tip.failed.fetch' }, { url: error.request.url });
-  }
-  return { code: '-1', data: null, message: messageContent };
 };
 
 const request = async (requestUrl, payload) => {

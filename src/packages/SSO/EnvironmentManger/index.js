@@ -110,7 +110,7 @@ export default class index extends Component {
     }
     const response = await fetchAddEnvironment(values);
     if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       this.getData();
       this.setState(
         {
@@ -133,7 +133,7 @@ export default class index extends Component {
       onOk: async () => {
         const deleteRes = await deleteEnvironmentById({ id: selectRowKey[0] });
         if (!dealResponse(deleteRes)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           this_.getData();
         }
       },

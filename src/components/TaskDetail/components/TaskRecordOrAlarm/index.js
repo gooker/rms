@@ -80,7 +80,7 @@ class TaskRecordOrAlarm extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'sso.user.account.level' }),
+      title: formatMessage({ id: 'sso.user.level' }),
       dataIndex: 'level',
       align: 'center',
       render: (text) => {

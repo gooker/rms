@@ -1,5 +1,11 @@
 import { message } from 'antd';
-import { dealResponse, convertMapToArrayMap, convertScopeDataToUiOptions,formatMessage } from '@/utils/util';
+import {
+  dealResponse,
+  convertMapToArrayMap,
+  convertScopeDataToUiOptions,
+  formatMessage,
+  isNull,
+} from '@/utils/util';
 import { fetchGetActiveMap, fetchGetAllScopeActions } from '@/services/map';
 import {
   getBackZone,
@@ -70,8 +76,8 @@ export default {
   effects: {
     *initPage(_, { call }) {
       const mapData = yield call(fetchGetActiveMap);
-      if (dealResponse(mapData)) {
-        message.error(formatMessage({ id: 'app.customTask.fetch.map.fail' }));
+      if (isNull(mapData) || dealResponse(mapData)) {
+        message.error(formatMessage({ id: 'app.message.fetchMapFail' }));
       } else {
         const { id } = mapData;
         Promise.all([

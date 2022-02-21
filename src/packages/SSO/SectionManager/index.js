@@ -51,7 +51,7 @@ export default class SectionManager extends Component {
     },
 
     {
-      title: <FormattedMessage id="sso.user.type.username" />,
+      title: <FormattedMessage id="sso.user.name" />,
       dataIndex: 'name',
       align: 'center',
     },
@@ -71,7 +71,7 @@ export default class SectionManager extends Component {
       onOk: async () => {
         const deleteRes = await deleteSectionById({ id: selectRowKey[0] });
         if (!dealResponse(deleteRes)) {
-          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.info(formatMessage({ id: 'app.message.operateSuccess' }));
           this_.setState({ selectRow: [], selectRowKey: [] }, this_.getData);
         }
       },
@@ -89,7 +89,7 @@ export default class SectionManager extends Component {
       response = await fetchAddSection({ ...values });
     }
     if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      message.info(formatMessage({ id: 'app.message.operateSuccess' }));
       this.setState(
         {
           sectionModalVisible: false,

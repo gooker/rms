@@ -63,7 +63,7 @@ export default class index extends Component {
       response = await fetchAddRole(values);
     }
     if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      message.info(formatMessage({ id: 'app.message.operateSuccess' }));
       this.setState(
         {
           addRoleVisble: false,
@@ -87,7 +87,7 @@ export default class index extends Component {
       onOk: async () => {
         const deleteRes = await fetchDeleteRoleById({ id: selectedRowKeys[0] });
         if (!dealResponse(deleteRes)) {
-          message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.info(formatMessage({ id: 'app.message.operateSuccess' }));
           this_.setState({ selectedRow: [], selectedRowKeys: [] }, this_.getRoleList);
         }
       },
@@ -100,7 +100,7 @@ export default class index extends Component {
     const params = { id: selectedRowKeys[0], authorityKeys: [...keys] };
     const response = await saveRoleAssignAuthority(params);
     if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.tip.operationFinish' }));
+      message.info(formatMessage({ id: 'app.message.operateSuccess' }));
       this.setState(
         { selectedRow: [], selectedRowKeys: [], authAssignVisible: false },
         this.getRoleList,
@@ -154,7 +154,7 @@ export default class index extends Component {
       if (Array.isArray(fileJson)) {
         const response = await fetchUploadRoles(fileJson);
         if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           this.setState({ uploadModal: false });
           this.getRoleList();
         }
@@ -195,7 +195,7 @@ export default class index extends Component {
                 this.setState({ addRoleVisble: true, updateRoleFlag: true });
               }}
             >
-              <EditOutlined /> <FormattedMessage id="sso.user.edit" />
+              <EditOutlined /> <FormattedMessage id="app.button.edit" />
             </Button>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={this.deleteRole}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
@@ -249,7 +249,7 @@ export default class index extends Component {
             updateRoleFlag ? (
               <FormattedMessage id="app.button.add" />
             ) : (
-              <FormattedMessage id="sso.user.edit" />
+              <FormattedMessage id="app.button.edit" />
             )
           }
           onCancel={() => {

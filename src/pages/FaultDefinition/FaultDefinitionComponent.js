@@ -56,7 +56,7 @@ const FaultDefinitionComponent = (props) => {
       onOk: async () => {
         const response = await deleteFaultDefinition(agvType, selectedRowKeys);
         if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           getData();
         } else {
           message.success(formatMessage({ id: 'app.tip.operateFailed' }));
@@ -71,7 +71,7 @@ const FaultDefinitionComponent = (props) => {
       onOk: async () => {
         const response = await initFaultDefinition(agvType);
         if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.tip.operationFinish' }));
+          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           getData();
         } else {
           message.success(formatMessage({ id: 'app.tip.operateFailed' }));

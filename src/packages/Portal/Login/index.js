@@ -58,6 +58,8 @@ const Login = (props) => {
       }
       setLoading(false);
       history.push('/welcome');
+    } else {
+      setLoading(false);
     }
   }
   return (

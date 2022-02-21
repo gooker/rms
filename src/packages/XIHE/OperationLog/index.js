@@ -24,7 +24,7 @@ const OperationLogComponent = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="sso.user.type.user" />,
+      title: <FormattedMessage id="sso.user" />,
       dataIndex: 'username',
       align: 'center',
       width: 200,
