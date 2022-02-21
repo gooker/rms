@@ -5,11 +5,15 @@ import { connect } from '@/utils/RmsDva';
 import LayoutSlider from '@/packages/Portal/components/Sider';
 import LayoutHeader from '@/packages/Portal/components/Header';
 import LayoutContent from '@/pages/Content/Content';
+import RmsConfirm from '@/components/RmsConfirm';
+import { AlertCountPolling } from '@/workers/WebWorkerManager';
 import { dealResponse, formatMessage, getPlateFormType, isNull } from '@/utils/util';
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { loadTexturesForMap } from '@/utils/textures';
 import SocketClient from '@/entities/SocketClient';
 import { getAuthorityInfo } from '@/services/SSO';
+import { fetchGetProblemDetail } from '@/services/global';
+import notice from '@/utils/notice';
 import './mainLayout.less';
 
 @withRouter
@@ -18,18 +22,21 @@ import './mainLayout.less';
   isInnerFullscreen: global.isInnerFullscreen,
 }))
 class MainLayout extends React.Component {
+  notificationQueue = [];
+
   state = {
     appReady: false,
   };
 
   async componentDidMount() {
+    const _this = this;
     const { dispatch, history, textureLoaded } = this.props;
     dispatch({ type: 'global/saveHistory', payload: history });
 
     try {
       const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
       if (userInfo && !dealResponse(userInfo)) {
-        // 1. 先验证授权
+        // 先验证授权
         const granted = await this.validateAuthority();
         if (!granted && userInfo.username !== 'admin') {
           dispatch({ type: 'global/clearEnvironments' });
@@ -44,28 +51,54 @@ class MainLayout extends React.Component {
             });
           }
 
-          // 2.初始化应用基础信息
+          // 初始化应用基础信息
           await dispatch({ type: 'global/initPlatformState' });
           const { currentSection, username } = userInfo;
 
           if (username !== 'admin') {
-            // 3. 初始化Socket客户端
+            // 初始化Socket客户端
             const { name, password } = currentSection;
             const socketClient = new SocketClient({ login: name, passcode: password });
             socketClient.connect();
-            dispatch({ type: 'global/saveSocketClient', payload: socketClient });
+            socketClient.registerNotificationQuestion((message) => {
+              // 如果关闭提示，就直接不拉取接口
+              const sessionValue = window.sessionStorage.getItem('showErrorNotification');
+              const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
+              if (!showErrorNotification) return;
+              this.showSystemProblem(message);
+            });
+            await dispatch({ type: 'global/saveSocketClient', payload: socketClient });
 
-            // 4. 加载地图Texture
+            // 立即获取一次告警数量
+            dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
+              if (response > 0) {
+                RmsConfirm({
+                  content: formatMessage({ id: 'app.alertCenter.requestHandle' }, { response }),
+                  okText: formatMessage({ id: 'app.alertCenter.goHandle' }),
+                  cancelText: formatMessage({ id: 'app.button.cancel' }),
+                  onOk() {
+                    _this.goToQuestionCenter();
+                  },
+                });
+              }
+            });
+
+            // 加载地图Texture
             if (!textureLoaded) {
               await loadTexturesForMap();
-              dispatch({ type: 'global/updateTextureLoaded', payload: true });
+              await dispatch({ type: 'global/updateTextureLoaded', payload: true });
             }
 
-            // 5. 获取所有车类任务类型数据
+            // 获取所有车类任务类型数据
             this.loadAllTaskTypes();
 
-            // 6. 货物所有车类型
+            // 获取所有车类型
             this.loadAllAgvTypes();
+
+            // 轮询告警数量
+            AlertCountPolling.start((value) => {
+              dispatch({ type: 'global/updateAlertCount', payload: value });
+            });
           }
 
           this.setState({ appReady: true });
@@ -85,8 +118,31 @@ class MainLayout extends React.Component {
   }
 
   componentWillUnmount() {
-    //TODO: 暂停所有 Web Worker
+    // 关闭所有 Web Worker
+    AlertCountPolling.terminate();
   }
+
+  showSystemProblem = async (message) => {
+    const { currentSection } = this.props;
+    const { errorCountNumber, hasNewError, alertCenter } = message;
+    if (hasNewError) {
+      const response = await fetchGetProblemDetail(alertCenter.id);
+      if (dealResponse(response)) {
+        notice(message, currentSection.sectionId, this.notificationQueue);
+      } else {
+        const newMessage = {
+          errorCountNumber,
+          hasNewError,
+          problemHandling: response,
+        };
+        notice(newMessage, currentSection.sectionId, this.notificationQueue);
+      }
+    }
+  };
+
+  goToQuestionCenter = () => {
+    //
+  };
 
   async validateAuthority() {
     const { dispatch } = this.props;

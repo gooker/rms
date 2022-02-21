@@ -368,6 +368,6 @@ export default [
     name: 'questionCenter',
     component: '/XIHE/Question/QuestionCenter',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    hideInMenu: true,
+    // hideInMenu: true,
   },
 ];

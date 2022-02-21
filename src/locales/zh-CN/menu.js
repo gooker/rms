@@ -70,7 +70,7 @@ export default {
 
   'menu.requestor': '接口请求库',
   'menu.richEditor': '富文本编辑',
-  'menu.questionCenter': '问题中心',
+  'menu.questionCenter': '告警中心',
 
   'menu.notificationCenter': '通知管理中心',
   'menu.notificationCenter.broadcast': '广播频道',

@@ -77,7 +77,7 @@ export default {
     *initPage(_, { call }) {
       const mapData = yield call(fetchGetActiveMap);
       if (isNull(mapData) || dealResponse(mapData)) {
-        message.error(formatMessage({ id: 'app.message.fetchMapFail' }));
+        message.error(formatMessage({ id: 'app.message.noActiveMap' }));
       } else {
         const { id } = mapData;
         Promise.all([

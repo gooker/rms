@@ -269,6 +269,31 @@ export async function deleteWebHooks(param) {
   });
 }
 
+//////////////////////////**** 告警中心 ****//////////////////////////
+//获取数据库告警中心 分页
+export async function fetchAlertCenterList(params) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCenter`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 全部完成处理
+export async function allUpdateProblemHandling(params) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/updateAllAlertCenter`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 批量完成处理(选中的)
+export async function batchUpdateAlertCenter(params) {
+  return request(`/${NameSpace.Coordinator}/alertCenter/batchUpdateAlertCenter`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 //////////////////////////**** MixRobot系统参数 ****//////////////////////////
 // 获取参数模版
 export async function fetchSystemParamFormData() {

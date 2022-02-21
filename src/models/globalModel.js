@@ -14,19 +14,14 @@ export default {
   namespace: 'global',
 
   state: {
-    // 路由history实例
+    // 部分实例对象
     history: null,
-
-    // Socket实例
     socketClient: null,
 
-    logo: null,
-    copyRight: null,
-    notification: 0,
-
-    // 全屏
+    // 标识符
     isFullscreen: false,
     isInnerFullscreen: false,
+    textureLoaded: false,
 
     // 架构基础数据
     tabs: [],
@@ -46,14 +41,14 @@ export default {
     antdLocale: zhCN,
 
     // 全局数据
+    logo: null,
+    copyRight: null,
+    alertCount: 0,
     allTaskTypes: {},
     allAgvTypes: [],
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
-
-    // Texture
-    textureLoaded: false,
   },
 
   effects: {
@@ -126,6 +121,15 @@ export default {
       return true;
     },
 
+    *fetchAlertCount(_, { call, put }) {
+      const response = yield call(fetchAlertCount);
+      if (dealResponse(response)) {
+        return;
+      }
+      yield put({ type: 'updateAlertCount', payload: response });
+      return response;
+    },
+
     *fetchUpdateEnvironment({ payload }, { call }) {
       let response = null;
       if (payload.id === 0) {
@@ -138,15 +142,6 @@ export default {
         true,
         intl.formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
       );
-    },
-
-    *fetchNotice({ payload }, { call, put }) {
-      const response = yield call(fetchAlertCount, payload);
-      if (dealResponse(response)) {
-        return;
-      }
-      yield put({ type: 'fetchNoticeEffect', payload: response });
-      return response;
     },
 
     *updateGlobalLocale({ payload }, { call, put }) {
@@ -278,10 +273,10 @@ export default {
       };
     },
 
-    fetchNoticeEffect(state, { payload }) {
+    updateAlertCount(state, { payload }) {
       return {
         ...state,
-        notification: payload,
+        alertCount: payload,
       };
     },
     saveAllMenuData(state, action) {

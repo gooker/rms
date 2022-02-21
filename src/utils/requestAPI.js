@@ -8,9 +8,9 @@ export default function requestAPI() {
   } else {
     apiMap = {
       // NT-11-Dev 内网
-      sso: 'http://192.168.0.11:6021',
-      coordinator: 'http://192.168.0.11:6023',
-      ws: 'ws://52.83.193.245:10215/ws',
+      // sso: 'http://192.168.0.11:6021',
+      // coordinator: 'http://192.168.0.11:6023',
+      // ws: 'ws://52.83.193.245:10215/ws',
 
       // NT-11-dev 公网
       // sso: 'http://52.83.193.245:10211',
@@ -32,9 +32,9 @@ export default function requestAPI() {
       // coordinator: 'http://translation-api-ntdev-self-defining.mushiny.local',
 
       // NT-13 内网
-      // sso: 'http://192.168.0.13:8071',
-      // coordinator: 'http://192.168.0.13:8073',
-      // ws: 'ws://192.168.0.13:15654/ws',
+      sso: 'http://192.168.0.13:8071',
+      coordinator: 'http://192.168.0.13:8073',
+      ws: 'ws://192.168.0.13:15654/ws',
 
       // NT-13 外网
       // ws: 'ws://52.83.193.245:10216/ws',
