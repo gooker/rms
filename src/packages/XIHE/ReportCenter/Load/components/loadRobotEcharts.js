@@ -15,6 +15,32 @@ export const Color = [
   '#ea7ccc',
 ];
 
+export const Types = [
+  { label: '空跑', value: 'EMPTY_RUN' },
+  { label: '充电', value: 'CHARGE_RUN' },
+  { label: '回休息区', value: 'REST_UNDER_POD' },
+  { label: '搬运货架', value: 'CARRY_POD_TO_CELL' },
+  { label: '工作站任务', value: 'CARRY_POD_TO_STATION' },
+  { label: '高级搬运任务', value: 'SUPER_CARRY_POD_TO_CELL' },
+  { label: '重车回存储区', value: 'HEARVY_CARRY_POD_TO_STORE' },
+  { label: '自定义任务', value: 'CUSTOM_TASK' },
+
+  { label: '离线', value: 'Offline' },
+  { label: '空闲', value: 'Free' },
+  { label: '执行', value: 'Working' },
+  { label: '待命', value: 'StandBy' },
+  { label: '充电', value: 'Charging' },
+  { label: '异常', value: 'Error' },
+];
+
+export const getLabelByValue = (value) => {
+  const item = Types.filter((item) => item.value === value);
+  if (item.length < 1) {
+    return value;
+  }
+  return item[0].label;
+};
+
 // 任务时长 状态时长
 const commonOption = {
   type: 'bar',
@@ -34,12 +60,21 @@ const commonOption = {
 export const actionPieOption = (title) => ({
   title: {
     text: title,
+    subtext: '汇总',
     left: 'center',
   },
   tooltip: {
     confine: true,
     trigger: 'item',
-    formatter: '{b}: {c} ({d}%)',
+    formatter: function (params) {
+      const { name, value, percent } = params;
+      const currentValue = MinuteFormat(value);
+      var showHtm = `${formatMessage({
+        id: `reportCenter.load.action.${name}`,
+      })} ${' : '}${currentValue} ${' ('}${percent} ${'%)'}
+      `;
+      return showHtm;
+    },
   },
   color: Color,
   legend: {
@@ -64,6 +99,20 @@ export const actionBarOption = (title) => ({
         fontSize: 12,
         color: '#fff',
       },
+    },
+    formatter: function (params) {
+      const name = params[0].axisValue;
+      var showHtm = name + '<br>';
+      for (let i = 0; i < params.length; i++) {
+        const { marker, seriesName, value } = params[i];
+        showHtm +=
+          marker +
+          formatMessage({ id: `reportCenter.load.action.${seriesName}` }) +
+          '：' +
+          MinuteFormat(value) +
+          '<br>';
+      }
+      return showHtm;
     },
   },
   color: Color,
@@ -123,6 +172,7 @@ export const actionBarOption = (title) => ({
   series: [], // 有几层数据 就放几层
 });
 
+// 状态时长 任务时长
 export const durationLineOption = (title) => ({
   title: {
     text: title,
@@ -139,6 +189,15 @@ export const durationLineOption = (title) => ({
     trigger: 'axis',
     axisPointer: {
       type: 'cross',
+    },
+    formatter: function (params) {
+      const name = params[0].axisValue;
+      var showHtm = name + '<br>';
+      for (let i = 0; i < params.length; i++) {
+        const { marker, seriesName, value } = params[i];
+        showHtm += marker + getLabelByValue(seriesName) + '：' + MinuteFormat(value) + '<br>';
+      }
+      return showHtm;
     },
   },
   color: Color,
@@ -315,7 +374,7 @@ export const generateDurationDataByTime = (allData, type) => {
     // align: 'right',
     left: 5,
     formatter: function (name) {
-      return name;
+      return getLabelByValue(name);
     },
     animation: true,
   };
@@ -375,20 +434,35 @@ export const generateActionPieData = (allData, type) => {
       });
     }
   });
+  const legendMap = new Map();
   forIn(currentActionSum, (v, key) => {
-    // let d = moment.duration(v, 'minutes');
-    // const currenValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
-    seryData.push({ name: key, value: v });
+    seryData.push({ name: key, value: v, label: `reportCenter.load.action.${key}` });
+    legendMap.set(key, `reportCenter.load.action.${key}`);
   });
+
+  const legend = {
+    left: 5,
+    orient: 'vertical',
+    formatter: function (params) {
+      return formatMessage({ id: legendMap.get(params) });
+    },
+    animation: true,
+  };
 
   const series = [
     {
       type: 'pie',
-      radius: ['40%', '70%'],
+      radius: ['38%', '70%'],
       avoidLabelOverlap: false,
       label: {
-        show: false,
-        position: 'center',
+        formatter: (params) => {
+          if (params?.data?.label) {
+            const currentLabel = params?.data?.label;
+            return formatMessage({ id: `${currentLabel}` });
+          } else {
+            return params.name;
+          }
+        },
       },
       emphasis: {
         label: {
@@ -400,19 +474,22 @@ export const generateActionPieData = (allData, type) => {
       data: seryData,
     },
   ];
-  return { series };
+  return { series, legend };
 };
 
 // 运动动作负载-bar  x:日期 y:数值 比如:无动作 顶升 下降
 export const generateActionBarData = (allData, type) => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData } = sumloadData(allData, type);
+  const { currentSery, xAxisData, legendMap } = sumloadData(allData, type);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
       ...commonOption,
       data: key[1],
       name: key[0],
+      itemStyle: {
+        color: null, //null会是取默认颜色，key[1]?.[0]?.color,
+      },
       yAxisIndex: 0,
     });
   });
@@ -432,7 +509,16 @@ export const generateActionBarData = (allData, type) => {
     },
     data: xAxisData,
   };
-  return { xAxis, series };
+
+  const legend = {
+    type: 'scroll',
+    formatter: function (params) {
+      return formatMessage({ id: legendMap.get(params) });
+    },
+    animation: true,
+  };
+
+  return { xAxis, series, legend };
 };
 
 export const sumloadData = (allData, type) => {
@@ -459,6 +545,7 @@ export const sumloadData = (allData, type) => {
 
   const firstTimeDataMap = new Map(); // 存放key 比如充电 空闲等
   const legendData = [];
+  const legendMap = new Map();
   let currentAxisData = Object.values(allData)[0] || []; // 横坐标
   let getallkeyMap = currentAxisData[0];
   if (!isNull(type)) {
@@ -469,6 +556,7 @@ export const sumloadData = (allData, type) => {
     if (key !== 'robotId') {
       firstTimeDataMap.set(key, 0);
       legendData.push(key);
+      legendMap.set(key, `reportCenter.load.action.${key}`);
     }
   });
 
@@ -481,7 +569,58 @@ export const sumloadData = (allData, type) => {
       }
     });
   });
-  return { currentSery, xAxisData, legendData };
+  return { currentSery, xAxisData, legendData, legendMap };
+};
+
+export const sumloadData1 = (allData, type) => {
+  const xAxisData = Object.keys(allData).sort(); // 横坐标-日期
+
+  const firstTimeDataMap = new Map(); // 存放key 比如充电 空闲等
+  const legendMap = new Map();
+  const legendData = new Set();
+
+  const typeResult = [];
+  Object.entries(allData).forEach(([key, typeData]) => {
+    if (!isStrictNull(typeData)) {
+      let currentTime = {
+        // waitingForAMR: {
+        //   color: '#ef1',
+        //   value: 2,
+        //   label: '等分车时间',
+        // },
+      }; // 当前日期key 求和
+      typeData.forEach((record) => {
+        let _record = { ...record };
+        if (!isNull(type)) {
+          _record = { ...record[type] };
+        }
+        forIn(_record, (v, parameter) => {
+          const _value = isStrictNull(v?.value) ? 0 : v?.value;
+          const existValue = currentTime[parameter]?.value || 0;
+          currentTime[parameter] = {
+            color: v?.color,
+            value: existValue * 1 + _value * 1,
+            label: v.label,
+          };
+          firstTimeDataMap.set(parameter, 0);
+          legendMap.set(parameter, `reportCenter.load.action.${parameter}`);
+          legendData.add(parameter);
+        });
+      });
+      typeResult.push(currentTime);
+    }
+  });
+
+  const currentSery = {};
+  typeResult.map((v) => {
+    forIn(v, (value, key) => {
+      if (firstTimeDataMap.has(key)) {
+        let seryData = currentSery[key] || [];
+        currentSery[key] = [...seryData, value];
+      }
+    });
+  });
+  return { currentSery, xAxisData, legendData, legendMap };
 };
 
 // table数据--根据robotId
@@ -551,4 +690,21 @@ export const formatNumber = (n) => {
       return num.slice(0, len).match(/\d{3}/g).join(',') + temp;
     }
   }
+};
+
+// 时间转换-天 时 分
+export const MinuteFormat = (value) => {
+  const d = moment.duration(value, 'minutes');
+  let currentValue = '';
+  if (Math.floor(d.asDays()) > 0) {
+    currentValue += Math.floor(d.asDays()) + '天';
+  }
+  if (d.hours() > 0) {
+    currentValue += d.hours() + '时';
+  }
+  if (d.minutes() > 0) {
+    currentValue += d.minutes() + '分';
+  }
+  return currentValue;
+  // const currentValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
 };

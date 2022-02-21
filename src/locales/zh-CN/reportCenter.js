@@ -45,7 +45,6 @@ export default {
 
   'reportCenter.robot.load.action': '动作负载',
 
-
   'reportCenter.qrcodehealth.slightdeviation': '轻微偏移',
   'reportCenter.qrcodehealth.generaldeviation': ' 一般偏移',
   'reportCenter.qrcodehealth.seriousdeviation': ' 严重偏移',
@@ -59,4 +58,24 @@ export default {
   'reportCenter.qrcodehealth.dropoutcode': '丢码码数',
   'reportCenter.qrcodehealth.errorcode': '错码码数',
   'reportCenter.qrcodehealth.deviatiocode': '偏移码数',
+
+  // 负载-tootip
+  'reportCenter.load.action.Noaction': '无动作',
+  'reportCenter.load.action.Up': '顶升',
+  'reportCenter.load.action.Down': '下降',
+
+  'reportCenter.load.action.waitingForAMR': '等分车时间',
+  'reportCenter.load.action.waitCommand': '等命令时间',
+  'reportCenter.load.action.actionAMR': '车辆动作时间',
+  'reportCenter.load.action.abnormalTime': '异常时间',
+  'reportCenter.load.action.dullTime': '车辆呆滞时间',
+
+  'reportCenter.load.action.putTime': '放料时间',
+  'reportCenter.load.action.dealTime': '处理料时间',
+
+  'reportCenter.load.action.waitingRelease': '等释放时间',
+  'reportCenter.load.action.waitingAtStation': '进站等待时间',
+  'reportCenter.load.action.fetchTime': '取料时间',
+  'reportCenter.load.action.carryTime': '搬料时间',
+  'reportCenter.load.action.backtoTime': '送回时间',
 };

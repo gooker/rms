@@ -1,7 +1,6 @@
 import React, { useState, memo, useEffect } from 'react';
 import { Row, Col, Table, Divider } from 'antd';
 import echarts from 'echarts';
-import moment from 'moment';
 import { formatMessage } from '@/utils/util';
 import { getloadRobotdata } from './components/mockLoadData';
 import {
@@ -15,6 +14,7 @@ import {
   generateActionBarData,
   generateTableData,
   formatNumber,
+  MinuteFormat,
 } from './components/loadRobotEcharts';
 import HealthCarSearchForm from '../HealthRobot/components/HealthCarSearchForm';
 
@@ -30,7 +30,7 @@ let actionBarHistoryLine = null; // 动作负载-bar
 
 const HealthCar = (props) => {
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
-  const [selectedKeys, setSelectedKeys] = useState([]); // 
+  const [selectedKeys, setSelectedKeys] = useState([]); //
   const [tableData, setTableData] = useState([]); // table
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
@@ -138,17 +138,19 @@ const HealthCar = (props) => {
     }
 
     if (actionPieData) {
-      const { series } = actionPieData;
+      const { series, legend } = actionPieData;
       const newActionPieLine = actionPieHistoryLine.getOption();
       newActionPieLine.series = series;
+      newActionPieLine.legend = legend;
       actionPieHistoryLine.setOption(newActionPieLine, true);
     }
 
     if (actionBarData) {
-      const { xAxis, series } = actionBarData;
+      const { xAxis, series, legend } = actionBarData;
       const newActionBaryLine = actionBarHistoryLine.getOption();
       newActionBaryLine.xAxis = xAxis;
       newActionBaryLine.series = series;
+      newActionBaryLine.legend = legend;
       actionBarHistoryLine.setOption(newActionBaryLine, true);
     }
 
@@ -181,7 +183,7 @@ const HealthCar = (props) => {
     return newData;
   };
   const rowSelection = {
-    selectedRowKeys:selectedKeys,
+    selectedRowKeys: selectedKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       let filterData;
       if (selectedRowKeys.length === 0) {
@@ -208,8 +210,7 @@ const HealthCar = (props) => {
       dataIndex: 'taskallTime',
       sorter: (a, b) => a.taskallTime - b.taskallTime,
       render: (text) => {
-        let d = moment.duration(text, 'minutes');
-        return Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
+        return MinuteFormat(text);
       },
     },
     {
@@ -217,8 +218,7 @@ const HealthCar = (props) => {
       dataIndex: 'statusallTime', //
       sorter: (a, b) => a.statusallTime - b.statusallTime,
       render: (text) => {
-        let d = moment.duration(text, 'minutes');
-        return Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
+        return MinuteFormat(text);
       },
     },
     {
