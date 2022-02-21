@@ -5,7 +5,7 @@ import { NameSpace } from '@/config/config';
 export async function getHAInfo() {
   return request(`/${NameSpace.Coordinator}/serverInfo/getServerInfo`, {
     method: 'GET',
-    attachSectionId: false,
+    attachSection: false,
   });
 }
 

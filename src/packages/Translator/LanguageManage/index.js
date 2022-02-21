@@ -102,12 +102,6 @@ class LanguageManage extends React.Component {
     showMissingTranslate: false,
   };
 
-  componentDidMount() {
-    // TODO: 调接口的时候去掉注释
-    // this.getSysLanguage();
-    // this.getSysApplications();
-  }
-
   onModeChange = (e) => {
     this.setState({
       displayMode: e.target.value,
@@ -136,13 +130,11 @@ class LanguageManage extends React.Component {
     this.setState({ loading: true });
     const list = await getTranslationByCode({ appCode: appCode });
     if (!dealResponse(list)) {
-      this.setState({ dataList: list });
+      this.setState({ dataList: list }, this.getStandardAndCustomData);
     }
-    // TODO: 拿到的数据处理  顺序要调整 方法放在里面
-    this.getStansardAndCsutomData();
   };
 
-  getStansardAndCsutomData = () => {
+  getStandardAndCustomData = () => {
     const { dataList, allLanguage } = this.state;
     /*切换应用 根据后端返回的数据 以及目前前端勾选的语言 初始化数据
      *        后端返回的数据 没有该语言 前端赋值为null
@@ -415,7 +407,7 @@ class LanguageManage extends React.Component {
         </Row>
         <Row>
           <Col>
-            <FormItem label={<FormattedMessage id="translator.languageManage.application" />}>
+            <FormItem label={<FormattedMessage id="app.module" />}>
               <Select
                 style={{ width: '190px' }}
                 value={appCode}

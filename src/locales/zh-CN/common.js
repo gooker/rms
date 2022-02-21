@@ -1,11 +1,13 @@
 export default {
   // 模块名称
-  'app.module.XIHE': 'XIHE',
+  'app.module': '应用',
+  'app.module.XIHE': '羲和',
   'app.module.LatentLifting': '潜伏车',
   'app.module.Tote': '料箱车',
   'app.module.ForkLifting': '叉车',
   'app.module.Sorter': '分拣车',
   'app.module.I18N': '国际化',
+  'app.module.SSO': 'SSO',
 
   // 颜色
   'app.cost.green': '绿色',

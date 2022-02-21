@@ -242,7 +242,10 @@ class EditorMapView extends BaseMap {
     }
     _this.rangeSelection(_this.selections);
     _this.refresh();
-    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: _this.selections },
+    });
   };
 
   shiftSelectCell = (cell) => {
@@ -291,7 +294,10 @@ class EditorMapView extends BaseMap {
     // 数据同步
     _this.refresh();
     _this.selections = [..._this.selections, ...additional];
-    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: _this.selections },
+    });
   };
 
   ctrlSelectCell = (cell) => {
@@ -304,7 +310,10 @@ class EditorMapView extends BaseMap {
     // 数据同步
     _this.refresh();
     _this.selections = [..._this.selections, { id: cell.id, type: MapSelectableSpriteType.CELL }];
-    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: _this.selections },
+    });
   };
 
   batchSelectCellByDirection = (prop) => {
@@ -343,7 +352,10 @@ class EditorMapView extends BaseMap {
         }));
       this.refresh();
       this.selections = [...this.selections, ...additional];
-      dispatch({ type: 'editor/updateSelections', payload: [...this.selections] });
+      dispatch({
+        type: 'editor/updateSelections',
+        payload: { incremental: false, selections: this.selections },
+      });
     }
   };
 
@@ -357,7 +369,10 @@ class EditorMapView extends BaseMap {
     } else {
       _this.selections = _this.selections.filter((item) => item.id !== cost.id);
     }
-    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: _this.selections },
+    });
   };
 
   ctrlSelectLine = (cost, isAdded) => {
@@ -368,7 +383,10 @@ class EditorMapView extends BaseMap {
     } else {
       _this.selections = _this.selections.filter((item) => item.id !== cost.id);
     }
-    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: _this.selections },
+    });
   };
 
   updateLines = ({ type, payload }) => {
@@ -430,7 +448,10 @@ class EditorMapView extends BaseMap {
         (item) => item.id !== marker.id && item.type !== marker.type,
       );
     }
-    dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: _this.selections },
+    });
   };
 
   // ************************ 框选相关 **********************
@@ -438,7 +459,7 @@ class EditorMapView extends BaseMap {
     const { dispatch } = window.g_app._store;
     this.rangeSelection(this.selections, false);
     this.selections = [];
-    dispatch({ type: 'editor/updateSelections', payload: [] });
+    dispatch({ type: 'editor/updateSelections', payload: { incremental: false, selections: [] } });
   };
 
   rangeSelection(selections, selected = true) {
@@ -505,7 +526,7 @@ class EditorMapView extends BaseMap {
 
     // 同步selections
     this.selections = [];
-    dispatch({ type: 'editor/updateSelections', payload: [] });
+    dispatch({ type: 'editor/updateSelections', payload: { incremental: false, selections: [] } });
     this.refresh();
   };
 

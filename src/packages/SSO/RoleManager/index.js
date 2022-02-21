@@ -34,11 +34,41 @@ export default class index extends Component {
     selectedRow: [],
     roleList: [],
     loading: false,
-    addRoleVisble: false,
+    addRoleVisible: false,
     updateRoleFlag: false,
     uploadModal: false,
     authAssignVisible: false,
   };
+
+  columns = [
+    {
+      title: <FormattedMessage id="app.common.code" />,
+      dataIndex: 'code',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.common.name" />,
+      dataIndex: 'label',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.common.description" />,
+      dataIndex: 'description',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.common.creationTime" />,
+      dataIndex: 'createDate',
+      align: 'center',
+      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: <FormattedMessage id="app.common.updateTime" />,
+      dataIndex: 'updateDate',
+      align: 'center',
+      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+  ];
 
   componentDidMount() {
     this.getRoleList();
@@ -66,7 +96,7 @@ export default class index extends Component {
       message.info(formatMessage({ id: 'app.message.operateSuccess' }));
       this.setState(
         {
-          addRoleVisble: false,
+          addRoleVisible: false,
           updateRoleFlag: false,
           selectedRow: [],
           selectedRowKeys: [],
@@ -100,43 +130,13 @@ export default class index extends Component {
     const params = { id: selectedRowKeys[0], authorityKeys: [...keys] };
     const response = await saveRoleAssignAuthority(params);
     if (!dealResponse(response)) {
-      message.info(formatMessage({ id: 'app.message.operateSuccess' }));
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       this.setState(
         { selectedRow: [], selectedRowKeys: [], authAssignVisible: false },
         this.getRoleList,
       );
     }
   };
-
-  columns = [
-    {
-      title: <FormattedMessage id="app.common.code" />,
-      dataIndex: 'code',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'label',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.description" />,
-      dataIndex: 'description',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.creationTime" />,
-      dataIndex: 'createDate',
-      align: 'center',
-      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
-    },
-    {
-      title: <FormattedMessage id="app.common.updateTime" />,
-      dataIndex: 'updateDate',
-      align: 'center',
-      render: (text) => new moment(text).format('YYYY-MM-DD HH:mm:ss'),
-    },
-  ];
 
   export = () => {
     const { selectedRow, roleList } = this.state;
@@ -150,7 +150,6 @@ export default class index extends Component {
   analyzeFunction = async (evt) => {
     try {
       const fileJson = JSON.parse(evt.target.result);
-
       if (Array.isArray(fileJson)) {
         const response = await fetchUploadRoles(fileJson);
         if (!dealResponse(response)) {
@@ -168,11 +167,11 @@ export default class index extends Component {
 
   render() {
     const {
-      selectedRowKeys,
-      selectedRow,
-      roleList,
       loading,
-      addRoleVisble,
+      roleList,
+      selectedRow,
+      selectedRowKeys,
+      addRoleVisible,
       updateRoleFlag,
       authAssignVisible,
       uploadModal,
@@ -184,7 +183,7 @@ export default class index extends Component {
             <Button
               type="primary"
               onClick={() => {
-                this.setState({ addRoleVisble: true });
+                this.setState({ addRoleVisible: true });
               }}
             >
               <PlusOutlined /> <FormattedMessage id="app.button.add" />
@@ -192,7 +191,7 @@ export default class index extends Component {
             <Button
               disabled={selectedRowKeys.length !== 1}
               onClick={() => {
-                this.setState({ addRoleVisble: true, updateRoleFlag: true });
+                this.setState({ addRoleVisible: true, updateRoleFlag: true });
               }}
             >
               <EditOutlined /> <FormattedMessage id="app.button.edit" />
@@ -243,7 +242,7 @@ export default class index extends Component {
         {/* 新增修改 */}
         <Modal
           footer={null}
-          visible={addRoleVisble}
+          visible={addRoleVisible}
           destroyOnClose
           title={
             updateRoleFlag ? (
@@ -253,7 +252,7 @@ export default class index extends Component {
             )
           }
           onCancel={() => {
-            this.setState({ addRoleVisble: false, updateRoleFlag: false });
+            this.setState({ addRoleVisible: false, updateRoleFlag: false });
           }}
         >
           <AddRoleModal onAddRoles={this.updateRole} updateRow={selectedRow} />
@@ -261,7 +260,7 @@ export default class index extends Component {
 
         {/* 权限分配 */}
         <Drawer
-          title={formatMessage({ id: 'sso.role.assign' })}
+          title={formatMessage({ id: 'sso.role.permissionAssign' })}
           destroyOnClose
           onClose={() => {
             this.setState({ authAssignVisible: false });
@@ -270,11 +269,7 @@ export default class index extends Component {
           visible={authAssignVisible}
           style={{ overflow: 'auto' }}
         >
-          <RoleAssignModal
-            roleList={roleList}
-            selectedRowKeys={selectedRowKeys}
-            submitAuthKeys={this.submitAuthKeys}
-          />
+          <RoleAssignModal role={roleList[0]} submitAuthKeys={this.submitAuthKeys} />
         </Drawer>
 
         {/**角色导入***/}

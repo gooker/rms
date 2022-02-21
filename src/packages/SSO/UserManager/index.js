@@ -74,7 +74,7 @@ class UserManager extends Component {
             {text === 'USER' ? (
               <FormattedMessage id="sso.user" />
             ) : (
-              <FormattedMessage id="translator.languageManage.application" />
+              <FormattedMessage id="app.module" />
             )}
           </Tag>
         );

@@ -14,9 +14,12 @@ AlertCountPolling.getInstance = function (dispatcher) {
   if (isNull(AlertCountPolling.instance)) {
     const worker = new Worker(new URL('./alertCountPolling.worker.js', import.meta.url));
     worker.onmessage = function ({ data }) {
-      if (data.code !== '0') {
-        dealResponse(data);
-      } else {
+      /**
+       * TODO
+       * 1. 如果token过期就停止
+       * 2. 处理错误
+       */
+      if (data.code === '0') {
         dispatcher(data.data);
       }
     };

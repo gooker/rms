@@ -1,6 +1,5 @@
 export default {
   'sso.user': '用户',
-  'sso.application': '应用',
   'sso.user.name': '用户名',
   'sso.user.password': '密码',
   'sso.user.password2': '确认密码',

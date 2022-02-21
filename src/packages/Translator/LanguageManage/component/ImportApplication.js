@@ -56,7 +56,7 @@ export default class ImportApplicationModal extends Component {
           <Form {...formItemLayout} ref={this.formRef}>
             <Form.Item
               name="appCode"
-              label={<FormattedMessage id="translator.languageManage.application" />}
+              label={<FormattedMessage id="app.module" />}
               initialValue={appCode}
               rules={[{ required: true }]}
             >

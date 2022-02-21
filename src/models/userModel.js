@@ -1,9 +1,12 @@
-import { fetchLogout, fetchUserRoleList, fetchUpdateUserCurrentSection } from '@/services/SSO';
-import { getCurrentUser } from '@/services/api';
-import intl from 'react-intl-universal';
-import { dealResponse } from '@/utils/util';
 import { message } from 'antd';
-import find from 'lodash/find';
+import { find } from 'lodash';
+import {
+  fetchLogout,
+  fetchUserAssignedRoleList,
+  fetchUpdateUserCurrentSection,
+} from '@/services/SSO';
+import { getCurrentUser } from '@/services/api';
+import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {
   namespace: 'user',
@@ -63,32 +66,31 @@ export default {
         // 2. 保存国际化
         window.localStorage.setItem('currentLocale', language);
 
-        // 3. 保存当前Section
         if (username !== 'admin') {
+          // 3. 保存当前Section
           if (!currentSection) {
-            message.error(intl.formatMessage({ id: 'app.section.not.exist' }));
+            message.error(formatMessage({ id: 'app.section.not.exist' }));
             return false;
           }
           window.localStorage.setItem('sectionId', currentSection.sectionId);
           yield put({ type: 'saveCurrentSectionEffect', payload: currentSection });
+
+          // 4. 保存用户角色信息
+          const userRoleList = yield call(fetchUserAssignedRoleList, { userId });
+          if (!dealResponse(userRoleList)) {
+            yield put({ type: 'saveUserRoleList', payload: userRoleList.roles || [] });
+          }
         }
 
-        // 4. 保存权限数据
+        // 5. 保存权限数据
         const permissionMap = {};
         for (let index = 0; index < authorityKeys.length; index++) {
           permissionMap[authorityKeys[index]] = true;
         }
         window.localStorage.setItem('permissionMap', JSON.stringify(permissionMap));
 
-        // 5. 保存用户角色信息
-        const userRoleList = yield call(fetchUserRoleList, { userId });
-        if (!dealResponse(userRoleList)) {
-          yield put({ type: 'saveUserRoleList', payload: userRoleList.roles || [] });
-        }
-
         // 6. 保存用户时区数据
         window.localStorage.setItem('userTimeZone', response.userTimeZone || '');
-
         return response;
       }
     },

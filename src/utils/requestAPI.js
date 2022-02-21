@@ -2,7 +2,7 @@ import { isPlainObject } from 'lodash';
 import { NameSpace } from '@/config/config';
 
 export default function requestAPI() {
-  let apiMap = {};
+  let apiMap;
   if (window.extraConfig && isPlainObject(window.extraConfig)) {
     apiMap = { ...window.extraConfig };
   } else {

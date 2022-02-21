@@ -87,7 +87,7 @@ export default class AddUser extends Component {
                 <FormattedMessage id="sso.user" />
               </Option>
               <Option key="app" value="APP">
-                <FormattedMessage id="sso.application" />
+                <FormattedMessage id="app.module" />
               </Option>
             </Select>
           </Form.Item>

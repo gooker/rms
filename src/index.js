@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
 import createRcsDva from '@/utils/RmsDva';
 import App from '@/pages/App';
 import models from '@/models';
@@ -31,9 +30,7 @@ const DvaProvider = createRcsDva(
 
 ReactDOM.render(
   <DvaProvider>
-    <Router>
-      <App />
-    </Router>
+    <App />
   </DvaProvider>,
   document.getElementById('root'),
 );

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
-import { connect } from '@/utils/RmsDva';
 import { initI18nInstance } from '@/utils/init';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
@@ -28,17 +28,20 @@ class App extends Component {
     return (
       initDone && (
         <ConfigProvider locale={antdLocale}>
-          <Switch>
-            <Redirect exact from="/" to="/login" />
-            {/* 登录页面*/}
-            <Route
-              exact
-              path="/login"
-              component={Loadable(() => import('@/packages/Portal/Login'))}
-            />
-            {/* 主页面 */}
-            <MainLayout />
-          </Switch>
+          <BrowserRouter>
+            <Switch>
+              {/* 登录页面*/}
+              <Redirect exact from="/" to="/login" />
+              <Route
+                exact
+                path="/login"
+                component={Loadable(() => import('@/packages/Portal/Login'))}
+              />
+
+              {/* 主页面 */}
+              <MainLayout />
+            </Switch>
+          </BrowserRouter>
         </ConfigProvider>
       )
     );

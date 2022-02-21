@@ -2,10 +2,9 @@ import React, { memo, useEffect, useState } from 'react';
 import { Modal, Timeline, Divider, Button } from 'antd';
 import { ClockCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import * as dayjs from 'dayjs';
-import intl from 'react-intl-universal';
 import ServerList from './ServerList';
 import { getHAChangeHistory, getHAInfo } from '@/services/XIHE';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import HAIcon from '@/../public/images/ha_icon.png';
 import LoadingIcon from '@/../public/images/loading_icon.gif';
 import styles from './ha.module.less';
@@ -13,8 +12,8 @@ import styles from './ha.module.less';
 const HA = () => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [changeTimeline, setChangeTimeline] = useState([]);
   const [servers, setServers] = useState([]);
+  const [changeTimeline, setChangeTimeline] = useState([]);
 
   function refreshModalContent() {
     setLoading(true);
@@ -51,7 +50,7 @@ const HA = () => {
       >
         <img alt={'HAIcon'} src={HAIcon} className={styles.haIcon} />
         <img alt={'LoadingIcon'} src={LoadingIcon} className={styles.haLoading} />
-        <span className={styles.haLabel}>{intl.formatMessage({ id: 'app.navBar.haMode' })}</span>
+        <span className={styles.haLabel}>{formatMessage({ id: 'app.navBar.haMode' })}</span>
       </div>
 
       <Modal
@@ -66,21 +65,21 @@ const HA = () => {
               setVisible(false);
             }}
           >
-            {intl.formatMessage({ id: 'app.navBar.haMode.get' })}
+            {formatMessage({ id: 'app.navBar.haMode.get' })}
           </Button>
         }
       >
         <div style={{ textAlign: 'end' }}>
           <Button onClick={refreshModalContent}>
-            <SyncOutlined spin={loading} /> {intl.formatMessage({ id: 'app.tabs.refresh' })}
+            <SyncOutlined spin={loading} /> {formatMessage({ id: 'app.tabs.refresh' })}
           </Button>
         </div>
         <Divider orientation="left">
-          {intl.formatMessage({ id: 'app.navBar.haMode.serverList' })}
+          {formatMessage({ id: 'app.navBar.haMode.serverList' })}
         </Divider>
         <ServerList servers={servers} />
         <Divider orientation="left">
-          {intl.formatMessage({ id: 'app.navBar.haMode.switchHistory' })}
+          {formatMessage({ id: 'app.navBar.haMode.switchHistory' })}
         </Divider>
         <div style={{ maxHeight: '30vh', overflow: 'auto', paddingTop: 10 }}>
           <Timeline mode="left">
