@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Row, Button, Modal, message, Col } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import {
   fetchSelectSectionList,
   fetchAddSection,
@@ -8,13 +8,13 @@ import {
   deleteSectionById,
 } from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
-import TablewidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import UpdateSection from './components/UpdateSection';
 import commonStyles from '@/common.module.less';
-import styles from './sectionManager.module.less';
 import { dealResponse } from '@/utils/util';
+import TablePageWrapper from '@/components/TablePageWrapper';
 
 export default class SectionManager extends Component {
   state = {
@@ -25,9 +25,11 @@ export default class SectionManager extends Component {
     sectionModalVisible: false, // 新增 修改区域
     updateFlag: false, // 修改为true
   };
+
   componentDidMount() {
     this.getData();
   }
+
   getData = async () => {
     this.setState({ loading: true });
     const response = await fetchSelectSectionList();
@@ -37,7 +39,7 @@ export default class SectionManager extends Component {
     this.setState({ loading: false });
   };
 
-  getColumn = [
+  columns = [
     {
       title: <FormattedMessage id="app.form.sectionId" />,
       dataIndex: 'sectionId',
@@ -56,7 +58,7 @@ export default class SectionManager extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="sso.user.account.password" />,
+      title: <FormattedMessage id="sso.user.password" />,
       dataIndex: 'password',
       align: 'center',
     },
@@ -105,11 +107,11 @@ export default class SectionManager extends Component {
   };
 
   render() {
-    const { selectRowKey, sectionsList, loading, sectionModalVisible, updateFlag, selectRow } =
-      this.state;
+    const { selectRowKey, selectRow } = this.state;
+    const { sectionsList, loading, sectionModalVisible, updateFlag } = this.state;
     return (
-      <div className={commonStyles.commonPageStyle}>
-        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
+      <TablePageWrapper>
+        <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button
               type="primary"
@@ -137,22 +139,25 @@ export default class SectionManager extends Component {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
           </Col>
+          <Col>
+            <Button onClick={this.getData}>
+              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
+            </Button>
+          </Col>
         </Row>
-        <div className={styles.sectionManagerTable}>
-          <TablewidthPages
-            bordered
-            columns={this.getColumn}
-            rowKey="id"
-            dataSource={sectionsList}
-            loading={loading}
-            rowSelection={{
-              selectedRowKeys: selectRowKey,
-              onChange: (selectRowKey, selectRow) => {
-                this.setState({ selectRowKey, selectRow });
-              },
-            }}
-          />
-        </div>
+        <TableWidthPages
+          bordered
+          rowKey={'id'}
+          loading={loading}
+          columns={this.columns}
+          dataSource={sectionsList}
+          rowSelection={{
+            selectedRowKeys: selectRowKey,
+            onChange: (selectRowKey, selectRow) => {
+              this.setState({ selectRowKey, selectRow });
+            },
+          }}
+        />
 
         {/* 新增修改区域 */}
         <Modal
@@ -178,7 +183,7 @@ export default class SectionManager extends Component {
             onSubmit={this.updatedSectionSubmit}
           />
         </Modal>
-      </div>
+      </TablePageWrapper>
     );
   }
 }

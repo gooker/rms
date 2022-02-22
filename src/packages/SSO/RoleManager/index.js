@@ -27,6 +27,7 @@ import UploadPanel from '@/components/UploadPanel';
 import RmsConfirm from '@/components/RmsConfirm';
 import { IconFont } from '@/components/IconFont';
 import commonStyles from '@/common.module.less';
+import TablePageWrapper from '@/components/TablePageWrapper';
 
 export default class index extends Component {
   state = {
@@ -177,8 +178,8 @@ export default class index extends Component {
       uploadModal,
     } = this.state;
     return (
-      <div className={commonStyles.commonPageStyle}>
-        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
+      <TablePageWrapper>
+        <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button
               type="primary"
@@ -224,7 +225,6 @@ export default class index extends Component {
             </Button>
           </Col>
         </Row>
-
         <TableWidthPages
           bordered
           columns={this.columns}
@@ -287,7 +287,7 @@ export default class index extends Component {
         >
           <UploadPanel analyzeFunction={this.analyzeFunction} />
         </Modal>
-      </div>
+      </TablePageWrapper>
     );
   }
 }

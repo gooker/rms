@@ -1,10 +1,10 @@
 import React from 'react';
-import { connect } from '@/utils/RmsDva';
-import { Divider, message } from 'antd';
-import { isStrictNull, formatMessage } from '@/utils/util';
-import find from 'lodash/find';
-import FormattedMessage from '@/components/FormattedMessage';
+import { message } from 'antd';
+import { find } from 'lodash';
 import classnames from 'classnames';
+import { connect } from '@/utils/RmsDva';
+import { isStrictNull, formatMessage } from '@/utils/util';
+import FormattedMessage from '@/components/FormattedMessage';
 import SuperDescription from './SuperDescription';
 import styles from './AppConfigPanel.module.less';
 
@@ -139,9 +139,6 @@ class AppConfigPanel extends React.PureComponent {
     const { grantedAPP } = this.props;
     return (
       <div className={styles.appConfigPanel}>
-        <Divider>
-          <FormattedMessage id="app.configInfo.title" />
-        </Divider>
         <div className={styles.copy}>
           <span onClick={this.addToClipBoard}>
             <FormattedMessage id={'app.button.copy'} />
@@ -151,9 +148,6 @@ class AppConfigPanel extends React.PureComponent {
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 1 }}>
             <FormattedMessage id="app.configInfo.header.moduleName" />
           </div>
-          {/* <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
-            <FormattedMessage id="app.configInfo.header.moduleURL" />
-          </div> */}
           <div className={classnames(styles.flexRowCenter, styles.backColor)} style={{ flex: 2 }}>
             <FormattedMessage id="app.configInfo.header.moduleAPI" />
           </div>

@@ -6,14 +6,11 @@ import Detail from '@/components/TaskDetail/Detail';
 import Loadable from '@/components/Loadable';
 
 const Content = (props) => {
-  const { currentApp, allMenuData } = props;
+  const { allMenuData } = props;
 
   function createRoutesByRequire() {
     const result = [];
-    let currentModuleRouter = allMenuData
-      .filter(({ appCode }) => appCode === currentApp)
-      .map(({ menu }) => menu);
-    currentModuleRouter = currentModuleRouter.length > 0 ? currentModuleRouter[0] : [];
+    const currentModuleRouter = allMenuData.map(({ menu }) => menu).flat();
     flatMenuData(currentModuleRouter, result);
     return result;
   }
@@ -57,6 +54,5 @@ const Content = (props) => {
   );
 };
 export default connect(({ global }) => ({
-  currentApp: global?.currentApp,
   allMenuData: global?.allMenuData,
 }))(memo(Content));

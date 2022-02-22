@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Select, DatePicker, Input, Button, Row, Table, Tag } from 'antd';
+import { DatePicker, Input, Button } from 'antd';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
 import moment from 'moment';
@@ -7,6 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchUserLoginHistory } from '@/services/SSO';
+import TableWidthPages from '@/components/TableWidthPages';
 
 const { RangePicker } = DatePicker;
 
@@ -87,9 +88,6 @@ export default class UserLoginHistory extends Component {
       current: pagination.current,
       size: pagination.pageSize,
     };
-    // if (sorter?.order) {
-    //   pages[sorter.field] = sorter.order === 'ascend' ? 'ASC' : 'DESC';
-    // }
     this.setState({ pagination: pages }, () => {
       this.getHistory();
     });
@@ -145,7 +143,7 @@ export default class UserLoginHistory extends Component {
             <FormattedMessage id="app.button.export" />
           </Button>
         </div>
-        <Table
+        <TableWidthPages
           bordered
           columns={this.getColumn}
           rowKey="id"

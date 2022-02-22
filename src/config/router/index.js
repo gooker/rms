@@ -10,7 +10,7 @@ import { AppCode } from '@/config/config';
 export default {
   [AppCode.XIHE]: XIHERouter,
   [AppCode.LatentLifting]: LatentLiftingRouter,
-  [AppCode.Tote]: ToteRouter,
+  // [AppCode.Tote]: ToteRouter,
   [AppCode.Sorter]: SorterRouter,
   [AppCode.I18N]: TranslatorRouter,
   [AppCode.SSO]: SSORouter,

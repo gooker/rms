@@ -65,7 +65,7 @@ class AddRoleModal extends Component {
           </Form.Item>
 
           <Form.Item
-            label={<FormattedMessage id="sso.user.account.level" />}
+            label={<FormattedMessage id="sso.user.level" />}
             name="level"
             rules={[{ required: true }]}
           >

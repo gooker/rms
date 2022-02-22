@@ -61,31 +61,31 @@ export default [
         ],
       },
       // 料箱类
-      {
-        path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}`,
-        name: 'tote',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        routes: [
-          {
-            path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/robotLock`,
-            name: 'robotLock',
-            component: '/XIHE/LockManage/Tote/RobotLock',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-          },
-          {
-            path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/totePodLock`,
-            name: 'totePodLock',
-            component: '/XIHE/LockManage/Tote/TotePodLock',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-          },
-          {
-            path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/toteBinLock`,
-            name: 'toteBinLock',
-            component: '/XIHE/LockManage/Tote/ToteBinLock',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-          },
-        ],
-      },
+      // {
+      //   path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}`,
+      //   name: 'tote',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //   routes: [
+      //     {
+      //       path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/robotLock`,
+      //       name: 'robotLock',
+      //       component: '/XIHE/LockManage/Tote/RobotLock',
+      //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //     },
+      //     {
+      //       path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/totePodLock`,
+      //       name: 'totePodLock',
+      //       component: '/XIHE/LockManage/Tote/TotePodLock',
+      //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //     },
+      //     {
+      //       path: `/${AppCode.XIHE}/lockManager/${AppCode.Tote}/toteBinLock`,
+      //       name: 'toteBinLock',
+      //       component: '/XIHE/LockManage/Tote/ToteBinLock',
+      //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //     },
+      //   ],
+      // },
       // 分拣类
       {
         path: `/${AppCode.XIHE}/lockManager/${AppCode.Sorter}`,
@@ -127,25 +127,25 @@ export default [
           },
         ],
       },
-      {
-        path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}`,
-        name: 'tote',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        routes: [
-          {
-            path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}/toteManagement`,
-            name: 'toteManagement',
-            component: '/XIHE/SourceManage/Tote/ToteManagement',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-          },
-          {
-            path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}/toteTool`,
-            name: 'toteTool',
-            component: '/XIHE/SourceManage/Tote/ToteTool',
-            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-          },
-        ],
-      },
+      // {
+      //   path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}`,
+      //   name: 'tote',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //   routes: [
+      //     {
+      //       path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}/toteManagement`,
+      //       name: 'toteManagement',
+      //       component: '/XIHE/SourceManage/Tote/ToteManagement',
+      //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //     },
+      //     {
+      //       path: `/${AppCode.XIHE}/sourceManage/${AppCode.Tote}/toteTool`,
+      //       name: 'toteTool',
+      //       component: '/XIHE/SourceManage/Tote/ToteTool',
+      //       authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //     },
+      //   ],
+      // },
       {
         path: `/${AppCode.XIHE}/sourceManage/mapRouteAssign`,
         name: 'mapRouteAssign',

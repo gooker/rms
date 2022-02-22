@@ -14,7 +14,7 @@ const zhStyle = { fontSize: '9vh', letterSpacing: '20px' };
 const enStyle = { fontSize: '7vh' };
 
 const Welcome = (props) => {
-  const { isFullscreen, copyRight } = props;
+  const { copyRight } = props;
   const locale = window.localStorage.getItem('currentLocale') || 'zh-CN';
   return (
     <div className={styles.welcome} style={{ backgroundImage: `url(${WelcomeImage})` }}>
@@ -55,5 +55,4 @@ const Welcome = (props) => {
 };
 export default connect(({ global }) => ({
   copyRight: global?.copyRight,
-  isFullscreen: global?.isFullscreen,
 }))(Welcome);

@@ -37,13 +37,13 @@ const TargetLockSearch = (props) => {
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={4}>
           {/* 小车id */}
-          <Form.Item name={'agvId'} label={formatMessage({ id: 'form.robotId' })}>
+          <Form.Item name={'agvId'} label={formatMessage({ id: 'app.agv.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
         {/* 任务id */}
         <Col span={4}>
-          <Form.Item name="taskId" label={formatMessage({ id: 'app.lock.taskId' })}>
+          <Form.Item name="taskId" label={formatMessage({ id: 'app.task.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
@@ -58,12 +58,12 @@ const TargetLockSearch = (props) => {
             <Row gutter={24}>
               <Col>
                 <Button type="primary" onClick={onFinish}>
-                  <SearchOutlined /> <FormattedMessage id="form.searchKey" />
+                  <SearchOutlined /> <FormattedMessage id="app.button.search" />
                 </Button>
               </Col>
               <Col>
                 <Button onClick={onClear}>
-                  <ReloadOutlined /> <FormattedMessage id="form.reset" />
+                  <ReloadOutlined /> <FormattedMessage id="app.button.reset" />
                 </Button>
               </Col>
             </Row>

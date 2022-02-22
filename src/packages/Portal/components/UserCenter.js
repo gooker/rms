@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Menu, Dropdown } from 'antd';
+import React, { memo, useState } from 'react';
+import { Menu, Dropdown, Modal } from 'antd';
 import { useHistory } from 'react-router-dom';
 import {
   ApiOutlined,
@@ -7,13 +7,16 @@ import {
   UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import FormattedMessage from '@/components/FormattedMessage';
 import { connect } from '@/utils/RmsDva';
+import FormattedMessage from '@/components/FormattedMessage';
+import AppConfigPanel from '@/packages/Portal/components/AppConfigPanel';
 import styles from './Header.module.less';
 
 const UserCenter = (props) => {
-  const { dispatch, currentUser, userRoleList, showLabel } = props;
+  const { dispatch, currentUser, userRoleList } = props;
   const history = useHistory();
+
+  const [apiListVisible, setApiListVisible] = useState(false);
 
   function handleUserMenuClick({ key }) {
     if (key === 'logout') {
@@ -22,12 +25,14 @@ const UserCenter = (props) => {
       dispatch({ type: 'user/logout', payload: history });
     }
     if (key === 'apiList') {
-      this.setState({ apiListShow: true });
+      setApiListVisible(true);
     }
   }
 
   const menu = (
     <Menu selectedKeys={[]} onClick={handleUserMenuClick}>
+      <Menu.Item key={'loginName'}>{currentUser.username}</Menu.Item>
+      <Menu.Divider />
       <Menu.Item key="logout">
         <LogoutOutlined /> <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
       </Menu.Item>
@@ -50,12 +55,26 @@ const UserCenter = (props) => {
   );
 
   return (
-    <Dropdown overlay={menu}>
-      <span className={styles.action}>
-        <UserOutlined style={{ marginRight: 4 }} />
-        {showLabel && <span className={styles.name}>{currentUser.username}</span>}
-      </span>
-    </Dropdown>
+    <>
+      <Dropdown overlay={menu}>
+        <span className={styles.action}>
+          <UserOutlined />
+        </span>
+      </Dropdown>
+
+      {/* API列表展示窗口 */}
+      <Modal
+        width={960}
+        footer={null}
+        closable={false}
+        visible={apiListVisible}
+        onCancel={() => {
+          setApiListVisible(false);
+        }}
+      >
+        <AppConfigPanel />
+      </Modal>
+    </>
   );
 };
 export default connect(({ global, user }) => ({

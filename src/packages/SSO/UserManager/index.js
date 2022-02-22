@@ -23,7 +23,7 @@ import UpdatePasswordModal from './components/UpdatePassword';
 import SectionAssignModal from './components/SectionAssign';
 import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
-import styles from './userManager.module.less';
+import TablePageWrapper from '@/components/TablePageWrapper';
 
 const AdminTypeLabelMap = AdminTLabelMap();
 const { Option } = Select;
@@ -390,108 +390,108 @@ class UserManager extends Component {
       }
     });
     return (
-      <div className={commonStyles.commonPageStyle}>
-        <Form.Item label={<FormattedMessage id="sso.user.name" />}>
-          <Select
-            showSearch
-            allowClear
-            mode="multiple"
-            style={{ width: '50%' }}
-            onChange={this.userHandleChange}
-            optionFilterProp="children"
-            filterOption={(input, option) =>
-              option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-            }
-          >
-            {dataList.map((rec) => {
-              return (
-                <Option key={rec.id} value={rec.id}>
-                  {rec.username}
-                </Option>
-              );
-            })}
-          </Select>
-        </Form.Item>
-        <Row style={{ display: 'flex', marginBottom: '20px' }}>
-          <Col flex="auto" className={commonStyles.tableToolLeft}>
-            {/* 新增用户 */}
-            <Button
-              type="primary"
-              onClick={() => {
-                this.setState({ addUserVisible: true, updateUserFlag: false });
-              }}
+      <TablePageWrapper>
+        <div>
+          <Form.Item label={<FormattedMessage id="sso.user.name" />}>
+            <Select
+              showSearch
+              allowClear
+              mode="multiple"
+              style={{ width: '50%' }}
+              onChange={this.userHandleChange}
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
             >
-              <PlusOutlined /> <FormattedMessage id="app.button.add" />
-            </Button>
+              {dataList.map((rec) => {
+                return (
+                  <Option key={rec.id} value={rec.id}>
+                    {rec.username}
+                  </Option>
+                );
+              })}
+            </Select>
+          </Form.Item>
+          <Row>
+            <Col flex="auto" className={commonStyles.tableToolLeft}>
+              {/* 新增用户 */}
+              <Button
+                type="primary"
+                onClick={() => {
+                  this.setState({ addUserVisible: true, updateUserFlag: false });
+                }}
+              >
+                <PlusOutlined /> <FormattedMessage id="app.button.add" />
+              </Button>
 
-            {/* 编辑 */}
-            <Button
-              disabled={selectRowKey.length !== 1 || !updateEnabled}
-              onClick={() => {
-                this.setState({ addUserVisible: true, updateUserFlag: true });
-              }}
-            >
-              <EditOutlined /> <FormattedMessage id="app.button.edit" />
-            </Button>
+              {/* 编辑 */}
+              <Button
+                disabled={selectRowKey.length !== 1 || !updateEnabled}
+                onClick={() => {
+                  this.setState({ addUserVisible: true, updateUserFlag: true });
+                }}
+              >
+                <EditOutlined /> <FormattedMessage id="app.button.edit" />
+              </Button>
 
-            {/* 重置密码 */}
-            <Button
-              disabled={selectRowKey.length !== 1 || !updateEnabled}
-              onClick={() => {
-                this.setState({ updatePwdVisible: true });
-              }}
-            >
-              <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
-            </Button>
+              {/* 重置密码 */}
+              <Button
+                disabled={selectRowKey.length !== 1 || !updateEnabled}
+                onClick={() => {
+                  this.setState({ updatePwdVisible: true });
+                }}
+              >
+                <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
+              </Button>
 
-            {/* 删除用户 */}
-            <Button
-              danger
-              disabled={selectRowKey.length !== 1 || !updateEnabled}
-              onClick={this.deleteUser}
-            >
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-            </Button>
+              {/* 删除用户 */}
+              <Button
+                danger
+                disabled={selectRowKey.length !== 1 || !updateEnabled}
+                onClick={this.deleteUser}
+              >
+                <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+              </Button>
 
-            {/* 分配区域 */}
-            <Button
-              disabled={selectRowKey.length !== 1 || !updateEnabled}
-              onClick={() => {
-                this.setState({ sectionAssignVisible: true });
-              }}
-            >
-              <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
-            </Button>
+              {/* 分配区域 */}
+              <Button
+                disabled={selectRowKey.length !== 1 || !updateEnabled}
+                onClick={() => {
+                  this.setState({ sectionAssignVisible: true });
+                }}
+              >
+                <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
+              </Button>
 
-            {/* 分配角色 */}
-            <Button
-              disabled={selectRowKey.length !== 1 || !updateEnabled}
-              onClick={() => {
-                this.setState({ roleAssignVisible: true });
-              }}
-            >
-              <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
-            </Button>
-          </Col>
-          <Col>
-            <Button onClick={this.getUserDataList}>
-              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
-            </Button>
-          </Col>
-        </Row>
-        <div className={styles.userManagerTable}>
-          <TableWidthPages
-            bordered
-            columns={this.columns}
-            rowKey={(record) => record.id}
-            dataSource={showUsersList}
-            loading={loading}
-            rowSelection={{
-              selectedRowKeys: selectRowKey,
-              onChange: this.tableRowSelection,
-            }}
-          />
+              {/* 分配角色 */}
+              <Button
+                disabled={selectRowKey.length !== 1 || !updateEnabled}
+                onClick={() => {
+                  this.setState({ roleAssignVisible: true });
+                }}
+              >
+                <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
+              </Button>
+            </Col>
+            <Col>
+              <Button onClick={this.getUserDataList}>
+                <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
+              </Button>
+            </Col>
+          </Row>
         </div>
+        <TableWidthPages
+          bordered
+          columns={this.columns}
+          rowKey={(record) => record.id}
+          dataSource={showUsersList}
+          loading={loading}
+          rowSelection={{
+            selectedRowKeys: selectRowKey,
+            onChange: this.tableRowSelection,
+          }}
+        />
 
         {/* 新建编辑用户 */}
         <Modal
@@ -558,7 +558,7 @@ class UserManager extends Component {
         >
           <RoleAssignModal selectRow={selectRow} onSubmit={this.updateRoleList} />
         </Modal>
-      </div>
+      </TablePageWrapper>
     );
   }
 }

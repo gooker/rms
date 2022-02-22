@@ -66,7 +66,7 @@ class AccountCenter extends Component {
               </Button>
             </Col>
             <Col span={12}>
-              <FormattedMessage id="sso.user.account.userTimeZone" /> :
+              <FormattedMessage id="sso.user.timeZone" /> :
               <span className={styles.font20}>{currentUser.userTimeZone}</span>
             </Col>
             <Col span={12}>

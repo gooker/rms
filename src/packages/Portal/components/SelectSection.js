@@ -26,21 +26,15 @@ class SelectSection extends PureComponent {
       </Menu>
     );
   };
-  render() {
-    const { showLabel, currentUser } = this.props;
-    const currentSection = currentUser?.currentSection ? currentUser.currentSection : {};
 
+  render() {
     return (
       <Dropdown overlay={this.renderMenu}>
         <span className={styles.action}>
-          <span style={{ marginRight: 4 }}>
-            <IconFont type="icon-section" />
-          </span>
-          {showLabel && <span className={styles.name}>{currentSection.sectionName}</span>}
+          <IconFont type="icon-section" />
         </span>
       </Dropdown>
     );
   }
 }
-
 export default SelectSection;

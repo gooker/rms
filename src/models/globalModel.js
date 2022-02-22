@@ -1,11 +1,10 @@
-import intl from 'react-intl-universal';
+import moment from 'moment';
 import requestAPI from '@/utils/requestAPI';
 import { fetchAlertCount, fetchUpdateEnvironment } from '@/services/global';
 import { fetchAllEnvironmentList, fetchUpdateUserCurrentLanguage } from '@/services/SSO';
-import { dealResponse, extractNameSpaceInfoFromEnvs } from '@/utils/util';
+import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage } from '@/utils/util';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
-import moment from 'moment';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
@@ -140,7 +139,7 @@ export default {
       return !dealResponse(
         response,
         true,
-        intl.formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
+        formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
       );
     },
 
@@ -151,7 +150,7 @@ export default {
         !dealResponse(
           response,
           true,
-          intl.formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
+          formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
         )
       ) {
         moment.locale(payload);

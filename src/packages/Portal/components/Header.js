@@ -11,7 +11,7 @@ import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
 import SelectLang from './SelectLang';
-import AppConfigPanel from './AppConfigPanel/AppConfigPanel';
+import AppConfigPanel from './AppConfigPanel';
 import styles from './Header.module.less';
 import { dealResponse, isNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHE';
@@ -31,39 +31,15 @@ class Header extends React.Component {
   state = {
     showErrorNotification: false,
     apiListShow: false,
-    showLabel: false,
     isHA: false, // 是否是高可用模式
   };
 
   componentDidMount() {
-    const { dispatch } = this.props;
     this.getHAInformation();
     const sessionValue = window.sessionStorage.getItem('showErrorNotification');
     const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
     this.setState({ showErrorNotification });
-    this.resizeObserver();
-
-    window.addEventListener('fullscreenchange', function (e) {
-      if (document.fullscreenElement === null) {
-        dispatch({ type: 'global/changeFullScreen', payload: false });
-      }
-    });
   }
-
-  componentWillUnmount() {
-    this.bodySizeObserver.disconnect();
-    window.removeEventListener('fullscreenchange', null);
-  }
-
-  resizeObserver = () => {
-    this.bodySizeObserver = new ResizeObserver(
-      throttle((entries) => {
-        const { width } = entries[0].contentRect;
-        this.setState({ showLabel: width >= 1440 });
-      }, 500),
-    );
-    this.bodySizeObserver.observe(document.body);
-  };
 
   getHAInformation = () => {
     getHAInfo().then((response) => {
@@ -132,7 +108,7 @@ class Header extends React.Component {
   };
 
   render() {
-    const { showErrorNotification, showLabel, apiListShow, isHA } = this.state;
+    const { showErrorNotification, apiListShow, isHA } = this.state;
     const { environments, isFullscreen, currentUser } = this.props;
     const { alertCount, sysAuthInfo } = this.props;
     if (isNull(currentUser)) return null;
@@ -150,7 +126,6 @@ class Header extends React.Component {
         <div className={styles.rightContent}>
           {/* 环境切换 */}
           <SelectEnvironment
-            showLabel={showLabel}
             environments={environments || []}
             changeEnvironment={(record) => {
               this.changeEnvironment(record);
@@ -158,10 +133,10 @@ class Header extends React.Component {
           />
 
           {/* 用户中心 */}
-          <UserCenter showLabel={showLabel} />
+          <UserCenter />
 
           {/* Section切换 */}
-          {!isAdmin && <SelectSection showLabel={showLabel} onMenuClick={this.changeSection} />}
+          {!isAdmin && <SelectSection onMenuClick={this.changeSection} />}
 
           {/* 全屏切换 */}
           <span className={styles.action} onClick={this.switchFullScreen}>
@@ -195,7 +170,7 @@ class Header extends React.Component {
           </Popover>
 
           {/* 切换语言 */}
-          <SelectLang showLabel={showLabel} onChange={this.changeLocale} />
+          <SelectLang onChange={this.changeLocale} />
 
           {/* API列表展示窗口 */}
           <Modal

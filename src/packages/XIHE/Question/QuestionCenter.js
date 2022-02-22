@@ -224,7 +224,7 @@ class QuestionCenter extends Component {
               <FormattedMessage id={'app.alertCenter.dismissedSelected'} />
             </Button>
             <Button type="primary" onClick={this.getData}>
-              <FormattedMessage id="app.alertCenter.flash" />
+              <FormattedMessage id="app.button.flash" />
             </Button>
           </Row>
         </div>
