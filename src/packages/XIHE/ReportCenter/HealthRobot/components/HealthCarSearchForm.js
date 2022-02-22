@@ -6,12 +6,12 @@ import { isNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
 import TimePickerSelector from '../../components/timePicker';
 
+const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 const { RangePicker } = DatePicker;
 
 const LogSearchForm = (props) => {
   const { search, type, allTaskTypes } = props;
-  debugger;
 
   const [form] = Form.useForm();
 
@@ -28,7 +28,7 @@ const LogSearchForm = (props) => {
         currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:00:00');
         currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:00:00');
       }
-      search(currentValues);
+      search && search(currentValues);
     });
   }
 
@@ -92,28 +92,33 @@ const LogSearchForm = (props) => {
             <SelectCarType data={OptionsData} />
           </Form.Item>
         </Col>
-
         {type === 'taskload' && (
-          <Form.Item name={'agvTaskType'} label={<FormattedMessage id="app.task.type" />}>
-            <Select mode="multiple" allowClear style={{ width: 200 }}>
-              {Object.keys(allTaskTypes).map((type) => (
-                <Select.Option key={type} value={type}>
-                  {allTaskTypes[type]}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <Col>
+            <Form.Item
+              name={'agvTaskType'}
+              label={<FormattedMessage id="app.task.type" />}
+              {...formLayout}
+            >
+              <Select mode="multiple" allowClear style={{ width: 200 }}>
+                {Object.keys(allTaskTypes).map((type) => (
+                  <Select.Option key={type} value={type}>
+                    {allTaskTypes[type]}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
         )}
 
-        <Col>
-          <Form.Item {...NoLabelFormLayout}>
-            <Row justify="end">
-              <Button type="primary" onClick={submitSearch}>
-                <FormattedMessage id="app.button.search" />
-              </Button>
-            </Row>
-          </Form.Item>
-        </Col>
+          <Col offset={1}>
+            <Form.Item {...NoLabelFormLayout}>
+              <Row justify="end">
+                <Button type="primary" onClick={submitSearch}>
+                  <FormattedMessage id="app.button.search" />
+                </Button>
+              </Row>
+            </Form.Item>
+          </Col>
         {/* <Col>
           <Form.Item {...NoLabelFormLayout}>
             <Row justify="end">
