@@ -164,11 +164,43 @@ export const AgvCategoryTools = [
     value: 'remoteControl',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
   },
+
+  {
+    label: <FormattedMessage id={'monitor.right.pickCargo'} />,
+    icon: 'quhuo.png',
+    style: { width: '37px', height: 'auto' },
+    value: 'pickCargo',
+    module: [AGVType.Sorter],
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.dumpCargo'} />,
+    icon: 'paowu.png',
+    style: { width: '37px', height: 'auto' },
+    value: 'dumpCargo',
+    module: [AGVType.Sorter],
+  },
+
   {
     label: <FormattedMessage id={'app.common.custom'} />,
     icon: 'custom_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'custom',
     module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+  },
+];
+
+// 显示二级
+export const ViewCategoryTools = [
+  {
+    label: <FormattedMessage id={'monitor.right.pathLock'} />,
+    icon: 'pathViewicon.png',
+    style: { width: '37px', height: 'auto' },
+    value: 'pathLock',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.mapView'} />,
+    icon: 'mapViewicon.png',
+    style: { width: '37px', height: 'auto' },
+    value: 'mapShow',
   },
 ];

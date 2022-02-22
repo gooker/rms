@@ -10,6 +10,10 @@ import AutomaticLatentWorkstationTask from './AutomaticLatentWorkstationTask';
 import AutomaticToteWorkstationTask from './AutomaticToteWorkstationTask';
 import RemoteControl from './RemoteControl';
 import CustomComponent from './CustomComponent';
+import Parabolic from './Parabolic';
+import PickCargo from './PickCargo';
+import PathLock from './PathLock';
+import MapShowComponet from './MapShowComponent';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel } = props;
@@ -31,6 +35,10 @@ const MonitorModals = (props) => {
       )}
       {categoryModal === 'remoteControl' && <RemoteControl />}
       {categoryModal === 'custom' && <CustomComponent category={categoryPanel} />}
+      {categoryModal === 'dumpCargo' && <Parabolic />}
+      {categoryModal === 'pickCargo' && <PickCargo />}
+      {categoryModal === 'pathLock' && <PathLock />}
+      {categoryModal === 'mapShow' && <MapShowComponet />}
     </>
   );
 };

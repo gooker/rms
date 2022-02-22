@@ -285,6 +285,22 @@ export async function forkPodToTarget(param) {
   });
 }
 
+// 分拣车去拣货
+export async function fetchSorterToPick(params) {
+  return request(`/${NameSpace.Sorter}/agv-task/pick-up`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 分拣车去抛货
+export async function fetchSorterToThrow(params) {
+  return request(`/${NameSpace.Sorter}/agv-task/deliver`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
 /////////////////////////******** 模拟器 ******** //////////////////////////
 // 开启模拟器
 export async function openSimulator() {

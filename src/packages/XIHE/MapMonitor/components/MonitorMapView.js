@@ -761,7 +761,7 @@ class MonitorMapView extends BaseMap {
   };
 
   renderTotePod = (toteLayoutData) => {
-    const rackGroups = toteLayoutData.rackGroups;
+    const rackGroups = toteLayoutData?.rackGroups;
     if (!rackGroups) return;
     const newTotePodData = convertToteLayoutData(toteLayoutData);
     this.addTotePod(newTotePodData);
