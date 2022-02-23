@@ -4,8 +4,9 @@ import { Route, useHistory } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, isStrictNull } from '@/utils/util';
 import Detail from '@/components/TaskDetail/Detail';
-import style from '@/layout/homeLayout.module.less';
 import { AppCode } from '@/config/config';
+import TabsBar from '@/components/TabsBar';
+import style from '@/layout/homeLayout.module.less';
 
 const { TabPane } = Tabs;
 
@@ -18,16 +19,13 @@ const Content = (props) => {
       history.push(activeTab);
       if (activeTab === '/') {
         dispatch({ type: 'global/saveCurrentApp', payload: AppCode.XIHE });
-        // dispatch({
-        //   type: 'menu/saveState',
-        //   payload: { openKeys: [], selectedKeys: [] },
-        // });
       } else {
         const _currentApp = activeTab.split('/')[1];
-        // 如果是切换了APP，那么Menu会主动更新openKeys；如果不是切换APP只是单纯在某个APP级别切换Tab，那就需要手动触发更新openKeys
+        // 如果是切换了APP，那么Menu会主动更新openKeys
         if (currentApp !== _currentApp) {
           dispatch({ type: 'global/saveCurrentApp', payload: _currentApp });
         } else {
+          // 如果不是切换APP只是单纯在某个APP级别切换Tab, 那就需要手动触发Menu更新openKeys
           dispatch({ type: 'menu/forceUpdateOpenKeys' });
           dispatch({ type: 'menu/saveSelectedKeys', payload: [activeTab] });
         }
@@ -35,25 +33,18 @@ const Content = (props) => {
     }
   }, [activeTab]);
 
-  function onChange(menuKey) {
-    dispatch({ type: 'menu/saveActiveTab', payload: menuKey });
-  }
-
-  function onRemove(menuKey) {
-    dispatch({ type: 'menu/removeTab', payload: menuKey });
+  function renderTabBar(props) {
+    // 提取tab信息
+    const tabInfo = [];
+    props.panes.forEach((item) => {
+      tabInfo.push({ path: item.key, title: item.props.tab });
+    });
+    return <TabsBar tabs={tabInfo} />;
   }
 
   return (
     <div id={'layoutContent'} className={style.layoutContent}>
-      <Tabs
-        hideAdd
-        type="editable-card"
-        tabBarStyle={{ background: '#fff' }}
-        activeKey={activeTab}
-        onChange={onChange}
-        onEdit={onRemove}
-        // renderTabBar={() => <span style={{ position: 'absolute' }}>111</span>}
-      >
+      <Tabs activeKey={activeTab} renderTabBar={renderTabBar}>
         {tabs.map((item) => {
           return (
             <TabPane

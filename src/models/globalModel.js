@@ -188,27 +188,27 @@ export default {
 
       // 获取所有环境配置信息
       let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
+      let allEnvironment = yield call(fetchAllEnvironmentList);
+      if (dealResponse(allEnvironment)) {
+        allEnvironment = [];
+      } else {
+        yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
+      }
+
+      // 获取NameSpace数据 & 并整合运维配置
+      if (allEnvironment.length > 0) {
+        const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
+        if (activeNameSpace.length > 0) {
+          // 若自定义环境出现两个已激活项目, 将默认启用第一项
+          urlDir = {
+            ...urlDir,
+            ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
+          };
+        }
+      }
+
+      // 版本信息
       if (currentUser.username !== 'admin') {
-        let allEnvironment = yield call(fetchAllEnvironmentList);
-        if (dealResponse(allEnvironment)) {
-          allEnvironment = [];
-        } else {
-          yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
-        }
-
-        // 获取NameSpace数据 & 并整合运维配置
-        if (allEnvironment.length > 0) {
-          const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
-          if (activeNameSpace.length > 0) {
-            // 若自定义环境出现两个已激活项目, 将默认启用第一项
-            urlDir = {
-              ...urlDir,
-              ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
-            };
-          }
-        }
-
-        // 版本信息
         const version = yield call(fetchAppVersion);
         if (version && !dealResponse(version)) {
           yield put({ type: 'saveBackendVersion', payload: version });

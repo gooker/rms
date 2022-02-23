@@ -25,7 +25,6 @@ const HomeLayout = (props) => {
         <Menu />
         <Content />
       </div>
-      <div className={styles.tabsContainer}>1111</div>
     </div>
   );
 };

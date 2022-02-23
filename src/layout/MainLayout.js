@@ -148,8 +148,9 @@ class MainLayout extends React.Component {
   validateAuthority = async () => {
     const { dispatch } = this.props;
     const response = await getAuthorityInfo();
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.authCenter.fetchInfo.failed' }));
+    if (
+      dealResponse(response, false, null, formatMessage({ id: 'app.authCenter.fetchInfo.failed' }))
+    ) {
       return false;
     } else {
       /**
