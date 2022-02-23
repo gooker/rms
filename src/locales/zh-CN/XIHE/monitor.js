@@ -27,6 +27,10 @@ export default {
   'monitor.right.stationTask': '站点任务',
   'monitor.right.autoCall': '自动呼叫',
   'monitor.right.remoteControl': '遥控',
+  'monitor.right.pickCargo': '取货',
+  'monitor.right.dumpCargo': '抛货',
+  'monitor.right.pathLock': '路径锁格',
+  'monitor.right.mapView': '地图显示',
 
   // 提醒
   'monitor.tip.fetchLockFail': '获取锁格信息失败',
@@ -68,7 +72,37 @@ export default {
   'monitor.remotecontrol.asideToLeft': 'A面朝左',
   'monitor.remotecontrol.asideToRight': 'A面朝右',
   'monitor.remotecontrol.liftingShelf': '升降货架',
-  
+
   'monitor.requestor.execute.failed': '任务执行失败',
   'monitor.requestor.execute.success': '任务执行成功',
+
+  'monitor.dumpCargo.frontRoller': '前滚筒',
+  'monitor.dumpCargo.rearRoller': '后滚筒',
+  'monitor.dumpCargo.bothRoller': '前后滚筒',
+
+  'monitor.operate.targetStation': '抛货框',
+  'monitor.operate.actionType': '动作类型',
+  'monitor.operate.actionType.WAIT_TASK': '等待任务',
+  'monitor.operate.actionType.STOP_THROW': '停车抛货',
+  'monitor.operate.actionType.NON_STOP_THROW': '边走边抛',
+  'monitor.operate.actionType.CONVEYOR.pick': '滚筒站任务',
+  'monitor.operate.actionType.CONVEYOR.put': '送至滚筒站',
+  'monitor.operate.goodsCode': '货物编码',
+
+  'monitor.view.selectAgvall': '全部',
+  'monitor.view.lockView': '显示锁格',
+  'monitor.view.lock.path': '一般锁',
+  'monitor.view.lock.rotation': '旋转锁',
+  'monitor.view.lock.special': '特殊锁',
+  'monitor.view.pathView': '显示路径',
+  'monitor.view.path.fullPath': '全路径',
+  'monitor.view.path.targetLine': '目标线',
+  'monitor.view.cellLock': '点位锁格',
+  'monitor.view.cell.required': '请输入点位ID',
+  'monitor.view.require.AGV': '请先选择小车',
+  'monitor.view.temporaryBlock': '临时不可走点',
+  'monitor.view.temporaryBlock.required': '请输入临时不可走点',
+  'monitor.view.mapCellView': '地图点位',
+  'monitor.view.coordinateDisplay': '点位坐标',
+  'monitor.view.stationRealtimeRate': '站点速率',
 };

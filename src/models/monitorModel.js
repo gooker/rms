@@ -6,6 +6,8 @@ import { AGVType, AppCode } from '@/config/config';
 import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
 import {
   fetchTemporaryBlockCells,
+  updateTemporaryBlockCell,
+  deleteTemporaryBlockCell,
   fetchLatentAutoTaskConfig,
   saveLatentAutomaticTaskConfig,
   fetchAutoReleasePod,
@@ -36,6 +38,40 @@ export default {
     sorterAgv: [],
     chargerList: [], // 硬件充电桩
     temporaryBlock: [], // 临时不可走点
+
+    // “显示”
+    viewSetting: {
+      selectAgv: [],
+      showLockCell: [],
+      showRoute: true,
+      showFullPath: false,
+      showTagetLine: false,
+      showLockedCell: true,
+      tempBlockShown: true,
+
+      temporaryCell: [],
+      shownPriority: [],
+      distanceShow: false,
+      coordinationShow: false,
+      cellPointShow: true,
+      toteBinShown: true,
+      // 站点实时速率显示
+      stationRealTimeRateView: false,
+
+      // 紧急区域
+      emergencyAreaShow: true,
+
+      // 背景
+      backImgeView: false,
+
+      // 追踪小车
+      trackingCar: undefined,
+      trackingCarSure: undefined,
+
+      // 定位
+      locationType: undefined,
+      locationValue: undefined,
+    },
 
     // 运行信息
     podToWorkstationInfo: [],
@@ -162,6 +198,12 @@ export default {
         latentAutomaticTaskUsage: action.payload,
       };
     },
+    saveViewSetting(state, action) {
+      return {
+        ...state,
+        viewSetting: action.payload,
+      };
+    },
   },
 
   effects: {
@@ -260,6 +302,38 @@ export default {
       additionalStates.allAGVs = allAGVs;
       yield put({ type: 'saveState', payload: additionalStates });
       return resource;
+    },
+
+    // *****显示******
+    *fetchUpdateViewSetting({ payload }, { put, select }) {
+      const { viewSetting } = yield select((state) => state.monitor);
+      const { key, value } = payload;
+      const newViewSetting = { ...viewSetting, [key]: value };
+      yield put({ type: 'saveViewSetting', payload: newViewSetting });
+    },
+
+    // *****临时不可走点
+    *fetchTemporaryLockedCells(_, { call, put }) {
+      const response = yield call(fetchTemporaryBlockCells);
+      if (dealResponse(response)) {
+        return [];
+      }
+      yield put({ type: 'saveState', payload: { temporaryBlock: response } });
+      return response;
+    },
+
+    *fetchSaveTemporaryCell({ payload }, { call }) {
+      const response = yield call(updateTemporaryBlockCell, payload);
+      if (dealResponse(response)) {
+        return false;
+      }
+    },
+
+    *fetchDeleteTemporaryCell({ payload }, { call }) {
+      const response = yield call(deleteTemporaryBlockCell, payload);
+      if (dealResponse(response, true, formatMessage({ id: 'app.message.operateSuccess' }))) {
+        return false;
+      }
     },
 
     /// /////////////// 潜伏车工作站自动任务 //////////////////

@@ -7,6 +7,7 @@ import { AGVType } from '@/config/config';
 import { Category, MonitorRightTools } from '../enums';
 import ElementProp from '../PopoverPanel/ElementProp';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
+import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
 import styles from '../monitorLayout.module.less';
 
 const MonitorBodyRight = (props) => {
@@ -35,6 +36,7 @@ const MonitorBodyRight = (props) => {
     } else {
       dispatch({ type: 'monitor/saveCategoryPanel', payload: category });
     }
+    dispatch({ type: 'monitor/saveCategoryModal', payload: null });
   }
 
   function renderIcon(icon, style) {
@@ -65,6 +67,8 @@ const MonitorBodyRight = (props) => {
         return (
           <AgvCategorySecondaryPanel agvType={AGVType.Sorter} dispatch={dispatch} height={350} />
         );
+      case Category.View:
+        return <ViewCategorySecondaryPanel dispatch={dispatch} height={350} />;
       default:
         return null;
     }
