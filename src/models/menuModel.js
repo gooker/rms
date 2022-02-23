@@ -28,12 +28,14 @@ export default {
         ...payload,
       };
     },
+
     forceUpdateOpenKeys(state) {
       return {
         ...state,
         updateOpenKeys: {},
       };
     },
+
     saveOpenKeys(state, { payload }) {
       return {
         ...state,
@@ -59,6 +61,10 @@ export default {
       const { tabs, allRouteData } = state;
       const _tabs = [...tabs];
       const target = find(_tabs, { path: payload });
+
+      if (payload === '/login') {
+        return { ...state, tabs: [], activeTab: [], openKeys: [], selectedKeys: [] };
+      }
 
       if (_tabs.length === 0) {
         _tabs.push({
@@ -115,6 +121,24 @@ export default {
         ...state,
         routeLocaleKeyMap: action.payload,
       };
+    },
+
+    closeTab(state, { payload }) {
+      const { tabs } = state;
+      const { index, action } = payload;
+      const activeTab = tabs[index].path;
+      let _tabs;
+      switch (action) {
+        case 'left':
+          _tabs = tabs.filter((item, index) => index === 0 || index >= payload.index);
+          break;
+        case 'right':
+          _tabs = tabs.filter((item, index) => index <= payload.index);
+          break;
+        default:
+          _tabs = tabs.filter((item, index) => index === 0 || index === payload.index);
+      }
+      return { ...state, tabs: _tabs, activeTab };
     },
   },
 

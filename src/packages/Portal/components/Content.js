@@ -11,14 +11,17 @@ import style from '@/layout/homeLayout.module.less';
 const { TabPane } = Tabs;
 
 const Content = (props) => {
-  const { dispatch, tabs, activeTab, currentApp, routeLocaleKeyMap } = props;
+  const { dispatch, tabs, activeTab, currentApp, routeLocaleKeyMap, currentUser } = props;
   const history = useHistory();
 
   useEffect(() => {
     if (!isStrictNull(activeTab)) {
       history.push(activeTab);
       if (activeTab === '/') {
-        dispatch({ type: 'global/saveCurrentApp', payload: AppCode.XIHE });
+        dispatch({
+          type: 'global/saveCurrentApp',
+          payload: currentUser.username === 'admin' ? AppCode.SSO : AppCode.XIHE,
+        });
       } else {
         const _currentApp = activeTab.split('/')[1];
         // 如果是切换了APP，那么Menu会主动更新openKeys
@@ -39,7 +42,7 @@ const Content = (props) => {
     props.panes.forEach((item) => {
       tabInfo.push({ path: item.key, title: item.props.tab });
     });
-    return <TabsBar tabs={tabInfo} />;
+    return <TabsBar tabInfo={tabInfo} />;
   }
 
   return (
@@ -63,7 +66,8 @@ const Content = (props) => {
     </div>
   );
 };
-export default connect(({ global, menu }) => ({
+export default connect(({ global, menu, user }) => ({
+  currentUser: user.currentUser,
   currentApp: global.currentApp,
   tabs: menu.tabs,
   activeTab: menu.activeTab,

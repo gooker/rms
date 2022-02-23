@@ -8,17 +8,22 @@
   display: flex;
   height: 35px;
 
-  & > div:not(:first-child) {
-    margin-left: 2px;
+  & > div:nth-child(2) {
+    & > div:not(:first-child) {
+      margin-left: 3px;
+    }
+  }
+
+  ::-webkit-scrollbar {
+    height: 2px;
   }
 }
 
-.tabButton {
-  .flexRowCenter();
-
+.tabButtonBase {
   width: auto;
   height: 100%;
   padding: 0 10px;
+  background: #fff;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
   cursor: pointer;
@@ -26,4 +31,15 @@
   svg:hover {
     fill: #1890ff;
   }
+}
+
+.tabButton {
+  .tabButtonBase();
+
+  display: inline-block;
+}
+
+.tabScroller {
+  .flexRowCenter();
+  .tabButtonBase();
 }

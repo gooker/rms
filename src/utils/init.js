@@ -134,6 +134,7 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
 
     return { appMenu, appCode };
   });
+
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { appMenu, appCode } = appRoute;
@@ -143,6 +144,7 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
     const result = checkPermission(menuData, permissionMap, appCode, baseContext); // 菜单项权限根据 AuthKey 再一次筛选
     return { appCode, menu: result };
   });
+
   return { allModuleFormattedMenuData, routeLocaleKeyMap };
 }
 

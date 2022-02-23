@@ -13,6 +13,7 @@ import allModuleRouter from '@/config/router';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
+import { AppCode } from '@/config/config';
 
 export default {
   namespace: 'global',
@@ -223,9 +224,13 @@ export default {
       }
 
       // 筛选授权的APP
-      const allAppModulesRoutesMap = { ...allModuleRouter };
-      const subModules = Object.keys(allModuleRouter);
-      const grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
+      let grantedAPP;
+      if (currentUser.username === 'admin') {
+        grantedAPP = [AppCode.SSO];
+      } else {
+        const subModules = Object.keys(allModuleRouter);
+        grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
+      }
       const allAppModulesMap = {};
       grantedAPP.forEach((module) => {
         allAppModulesMap[module] = module;
@@ -233,9 +238,9 @@ export default {
 
       // 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
       const allModuleMenuData = {};
-      Object.keys(allAppModulesRoutesMap).filter((code) => {
+      Object.keys(allModuleRouter).filter((code) => {
         if (grantedAPP.includes(code)) {
-          allModuleMenuData[code] = allAppModulesRoutesMap[code];
+          allModuleMenuData[code] = allModuleRouter[code];
         }
       });
       const { allModuleFormattedMenuData, routeLocaleKeyMap } = convertAllMenu(
