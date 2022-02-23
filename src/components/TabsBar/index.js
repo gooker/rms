@@ -66,7 +66,10 @@ const TabsBar = (props) => {
       >
         <LeftOutlined />
       </div>
-      <div ref={domRef} style={{ maxWidth: width - 70, whiteSpace: 'nowrap', overflow: 'auto' }}>
+      <div
+        ref={domRef}
+        style={{ maxWidth: width ? width - 70 : 0, whiteSpace: 'nowrap', overflow: 'auto' }}
+      >
         {tabInfo.map(({ path, title }, index) => (
           <TabButton
             key={path}

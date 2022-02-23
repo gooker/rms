@@ -22,13 +22,13 @@ const TabButton = (props) => {
 
   const menu = (
     <Menu onClick={onContextMenu}>
-      <Menu.Item key="left" disabled={!(index > 1)}>
+      <Menu.Item key="left" disabled={index <= 1}>
         <FormattedMessage id={'app.tabs.closeLeft'} />
       </Menu.Item>
-      <Menu.Item key="right" disabled={!(index < tabCount - 1)}>
+      <Menu.Item key="right" disabled={index >= tabCount - 1}>
         <FormattedMessage id={'app.tabs.closeRight'} />
       </Menu.Item>
-      <Menu.Item key="others" disabled={!(index > 0)}>
+      <Menu.Item key="others" disabled={index <= 1}>
         <FormattedMessage id={'app.tabs.closeOthers'} />
       </Menu.Item>
     </Menu>
@@ -36,15 +36,15 @@ const TabButton = (props) => {
 
   return (
     <Dropdown overlay={menu} trigger={['contextMenu']}>
-      <div className={styles.tabButton} style={{ background: active ? '#fff' : '#9f9f9f' }}>
+      <div
+        className={styles.tabButton}
+        style={{ background: active ? '#fff' : '#9f9f9f' }}
+        onClick={() => {
+          onChange(menuKey);
+        }}
+      >
         <div className={commonStyle.flexRowCenter} style={{ height: '100%' }}>
-          <span
-            onClick={() => {
-              onChange(menuKey);
-            }}
-          >
-            {label}
-          </span>
+          <span>{label}</span>
           {menuKey !== '/' && (
             <CloseCircleFilled
               style={{ marginLeft: 5 }}

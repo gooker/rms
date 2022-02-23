@@ -56,7 +56,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -68,7 +68,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -80,7 +80,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -92,7 +92,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -105,7 +105,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -117,7 +117,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -131,7 +131,7 @@ const Portal = (props) => {
                   currentApp={currentApp}
                   checkoutApp={checkoutApp}
                   name={appCode}
-                  width={40}
+                  width={45}
                   height={40}
                 />
               );
