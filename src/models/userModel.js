@@ -95,13 +95,13 @@ export default {
       }
     },
 
-    *logout({ payload: history }, { call }) {
+    *logout(_, { call }) {
       const response = yield call(fetchLogout, {
         token: window.localStorage.getItem('Authorization'),
       });
       if (!dealResponse(response)) {
         window.localStorage.clear();
-        history.push('/login');
+        window.history.$$push('/login');
       }
     },
 
@@ -118,7 +118,7 @@ export default {
       return !dealResponse(
         response,
         true,
-        intl.formatMessage({ id: 'app.header.option.switchSectionSuccess' }),
+        formatMessage({ id: 'app.header.option.switchSectionSuccess' }),
       );
     },
   },

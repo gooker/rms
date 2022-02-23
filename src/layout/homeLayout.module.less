@@ -1,0 +1,79 @@
+.home {
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 100vh;
+  background: linear-gradient(to bottom, #354ab9, #141d4a);
+}
+
+.header {
+  flex: none;
+  height: 60px;
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  padding: 20px 10px 10px 10px;
+  overflow: hidden;
+
+  & > div:nth-child(1) {
+    margin-right: 5px;
+  }
+
+  & > div:nth-child(2) {
+    flex: 1;
+    margin-left: 5px;
+  }
+}
+
+// 菜单
+.menu {
+  display: flex;
+
+  & > div:nth-child(2) {
+    width: 200px;
+    overflow: hidden auto;
+  }
+
+  :global {
+    ul {
+      width: 200px;
+
+      li:nth-child(1) {
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+//
+.layoutContent {
+  overflow: auto;
+
+  :global {
+    .ant-tabs {
+      height: 100%;
+    }
+
+    .ant-tabs-nav {
+      margin: 0 !important;
+    }
+
+    .ant-tabs-content-holder {
+      .ant-tabs-content {
+        height: 100%;
+      }
+    }
+  }
+}
+
+// 多标签
+.tabsContainer {
+  position: absolute;
+  top: 40px;
+  left: 275px;
+  width: calc(80% - 275px);
+  height: 40px;
+  border: 1px solid #e8e8e8;
+}

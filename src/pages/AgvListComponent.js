@@ -139,13 +139,9 @@ class AgvListComponent extends Component {
   };
 
   checkAgvDetail = (agvId) => {
-    const { agvType, dispatch, history } = this.props;
+    const { dispatch, agvType, history } = this.props;
     const route = `/${NameSpace[agvType]}/agv/agvRealTime`;
-    history.push({
-      pathname: route,
-      search: `agvId=${agvId}`,
-    });
-    dispatch({ type: 'global/saveMenuSelectKeys', payload: [route] });
+    history.push({ pathname: route, search: `agvId=${agvId}` });
   };
 
   onSelectChange = (selectedRowKeys, selectedRows) => {

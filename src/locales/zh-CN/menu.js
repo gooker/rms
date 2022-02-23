@@ -1,4 +1,5 @@
 export default {
+  'menu.home': '首页',
   'menu.languageManage': '翻译管理',
 
   // sso

@@ -10,6 +10,7 @@ import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
 import requestorStyles from '@/packages/XIHE/Requestor/requestor.less';
 import FormattedMessage from '@/components/FormattedMessage';
+import Loadable from '@/components/Loadable';
 
 /**
  * 将服务器时间转化成本地时间
@@ -196,8 +197,7 @@ export function isStrictNull(value) {
 
 export function getContentHeight() {
   const layoutContentDOM = document.getElementById('layoutContent');
-  const layoutContentDOMRect = layoutContentDOM.getBoundingClientRect();
-  return document.body.offsetHeight - layoutContentDOMRect.top;
+  return layoutContentDOM.getBoundingClientRect().height;
 }
 
 // 根据direction, distance对obj的坐标进行更新操作
@@ -1114,4 +1114,25 @@ export function getPlateFormType() {
     isChrome: isChrome,
     isPc: isPc,
   };
+}
+
+export function convertMenuData2RouteData(allMenuData) {
+  const result = [];
+  const currentModuleRouter = allMenuData.map(({ menu }) => menu).flat();
+  flatMenuData(currentModuleRouter, result);
+  return result;
+}
+
+function flatMenuData(currentModuleRouter, result) {
+  currentModuleRouter.forEach(({ path, component, routes }) => {
+    if (Array.isArray(routes)) {
+      flatMenuData(routes, result);
+    } else {
+      result.push({
+        path,
+        component,
+        $$component: Loadable(() => import(`@/packages${component}`)),
+      });
+    }
+  });
 }

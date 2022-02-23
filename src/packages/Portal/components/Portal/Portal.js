@@ -1,5 +1,4 @@
 import React, { memo, useEffect } from 'react';
-import { Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import PortalEntry from './PortalEntry';
@@ -13,7 +12,7 @@ const Portal = (props) => {
   useEffect(() => {
     const { pathname } = window.location;
     let currentApp;
-    if (pathname === '/welcome') {
+    if (pathname === '/') {
       currentApp = isAdmin ? AppCode.SSO : AppCode.XIHE;
     } else {
       currentApp = pathname.split('/')[1];
@@ -164,7 +163,7 @@ const Portal = (props) => {
     );
   }
 
-  return <Row className={styles.portal}>{renderAppInfo()}</Row>;
+  return <div className={styles.portal}>{renderAppInfo()}</div>;
 };
 export default connect(({ global, user }) => {
   const isAdmin = user?.currentUser?.username === 'admin';

@@ -1,8 +1,13 @@
 import moment from 'moment';
 import requestAPI from '@/utils/requestAPI';
-import { fetchAlertCount, fetchUpdateEnvironment } from '@/services/global';
+import { fetchAlertCount, fetchAppVersion, fetchUpdateEnvironment } from '@/services/global';
 import { fetchAllEnvironmentList, fetchUpdateUserCurrentLanguage } from '@/services/SSO';
-import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  convertMenuData2RouteData,
+  extractNameSpaceInfoFromEnvs,
+} from '@/utils/util';
 import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -14,26 +19,18 @@ export default {
 
   state: {
     // 部分实例对象
-    history: null,
     socketClient: null,
 
     // 标识符
     isFullscreen: false,
     isInnerFullscreen: false,
     textureLoaded: false,
+    editI18N: false,
 
-    // 架构基础数据
-    tabs: [],
+    // 基础信息
     grantedAPP: [],
     subModules: [],
-    environments: [],
-    menuSelectKeys: [],
-
     currentApp: null,
-    currentEnv: null,
-
-    // 是否是编辑国际化模式
-    editI18N: false,
 
     // 国际化
     globalLocale: 'zh-CN',
@@ -45,142 +42,24 @@ export default {
     alertCount: 0,
     allTaskTypes: {},
     allAgvTypes: [],
+    environments: [],
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
   },
 
-  effects: {
-    // 页面初始化加载信息，加载网络信息，加载APP应用信息（主应用，子应用）,个人信息
-    *initPlatformState(_, { call, put, select }) {
-      const { currentUser } = yield select((state) => state.user);
-      const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
-
-      // 获取所有环境配置信息
-      let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
-      if (currentUser.username !== 'admin') {
-        let allEnvironment = yield call(fetchAllEnvironmentList);
-        if (dealResponse(allEnvironment)) {
-          allEnvironment = [];
-        } else {
-          yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
-        }
-
-        // 获取NameSpace数据 & 并整合运维配置
-        if (allEnvironment.length > 0) {
-          const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
-          if (activeNameSpace.length > 0) {
-            // 若自定义环境出现两个已激活项目, 将默认启用第一项
-            urlDir = {
-              ...urlDir,
-              ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
-            };
-          }
-        }
-      }
-
-      // 将所有模块的路由数据转换成框架可用的菜单数据格式
-      const permissionMap = {};
-      const authorityKeys = currentUser?.authorityKeys ?? [];
-      for (let index = 0; index < authorityKeys.length; index++) {
-        permissionMap[authorityKeys[index]] = true;
-      }
-
-      // 筛选授权的APP
-      const allAppModulesRoutesMap = { ...allModuleRouter };
-      const subModules = Object.keys(allModuleRouter);
-      const grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
-      const allAppModulesMap = {};
-      grantedAPP.forEach((module) => {
-        allAppModulesMap[module] = module;
-      });
-
-      // 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
-      const allModuleMenuData = {};
-      Object.keys(allAppModulesRoutesMap).filter((code) => {
-        if (grantedAPP.includes(code)) {
-          allModuleMenuData[code] = allAppModulesRoutesMap[code];
-        }
-      });
-      const { allModuleFormattedMenuData, routeLocaleKeyMap } = convertAllMenu(
-        adminType,
-        allAppModulesMap,
-        allModuleMenuData,
-        permissionMap,
-      );
-
-      // 保存信息
-      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
-      yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
-      yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
-      yield put({ type: 'saveGrantedAPx', payload: grantedAPP }); // 所有授权的APP
-      yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
-      yield put({ type: 'saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
-      yield put({ type: 'saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
-      return true;
-    },
-
-    *fetchAlertCount(_, { call, put }) {
-      const response = yield call(fetchAlertCount);
-      if (dealResponse(response)) {
-        return;
-      }
-      yield put({ type: 'updateAlertCount', payload: response });
-      return response;
-    },
-
-    *fetchUpdateEnvironment({ payload }, { call }) {
-      let response = null;
-      if (payload.id === 0) {
-        response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: '' });
-      } else {
-        response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: payload.id });
-      }
-      return !dealResponse(
-        response,
-        true,
-        formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
-      );
-    },
-
-    *updateGlobalLocale({ payload }, { call, put }) {
-      const localeValue = require(`@/locales/${payload}`).default;
-      const response = yield call(fetchUpdateUserCurrentLanguage, payload);
-      if (
-        !dealResponse(
-          response,
-          true,
-          formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
-        )
-      ) {
-        moment.locale(payload);
-        yield put({ type: 'updateGlobalLang', payload });
-        yield put({ type: 'updateAntedLocale', payload: localeValue });
-        window.localStorage.setItem('currentLocale', payload);
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      }
-    },
-  },
-
   reducers: {
+    saveBackendVersion(state, { payload }) {
+      return {
+        ...state,
+        backendVersion: payload?.versionMap || {},
+        adapterVersion: payload?.adapterServerMap || {},
+      };
+    },
     saveSocketClient(state, { payload }) {
       return {
         ...state,
         socketClient: payload,
-      };
-    },
-    saveHistory(state, { payload }) {
-      return {
-        ...state,
-        history: payload,
-      };
-    },
-    updateEnvironment(state, { payload }) {
-      return {
-        ...state,
-        currentEnv: payload,
       };
     },
     updateTextureLoaded(state, { payload }) {
@@ -237,20 +116,6 @@ export default {
       };
     },
 
-    saveMenuSelectKeys(state, { payload }) {
-      return {
-        ...state,
-        menuSelectKeys: payload,
-      };
-    },
-
-    saveTabs(state, { payload }) {
-      return {
-        ...state,
-        tabs: payload,
-      };
-    },
-
     saveGrantedAPx(state, { payload }) {
       return {
         ...state,
@@ -276,19 +141,6 @@ export default {
       return {
         ...state,
         alertCount: payload,
-      };
-    },
-    saveAllMenuData(state, action) {
-      return {
-        ...state,
-        allMenuData: action.payload,
-      };
-    },
-
-    saveRouteLocaleKeyMap(state, action) {
-      return {
-        ...state,
-        routeLocalekeyMap: action.payload,
       };
     },
 
@@ -325,6 +177,134 @@ export default {
         ...state,
         sysAuthInfo: payload,
       };
+    },
+  },
+
+  effects: {
+    // 页面初始化加载信息，加载网络信息，加载APP应用信息（主应用，子应用）,个人信息
+    *initPlatformState(_, { call, put, select }) {
+      const { currentUser } = yield select((state) => state.user);
+      const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
+
+      // 获取所有环境配置信息
+      let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
+      if (currentUser.username !== 'admin') {
+        let allEnvironment = yield call(fetchAllEnvironmentList);
+        if (dealResponse(allEnvironment)) {
+          allEnvironment = [];
+        } else {
+          yield put({ type: 'saveAllEnvironments', payload: allEnvironment });
+        }
+
+        // 获取NameSpace数据 & 并整合运维配置
+        if (allEnvironment.length > 0) {
+          const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
+          if (activeNameSpace.length > 0) {
+            // 若自定义环境出现两个已激活项目, 将默认启用第一项
+            urlDir = {
+              ...urlDir,
+              ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
+            };
+          }
+        }
+
+        // 版本信息
+        const version = yield call(fetchAppVersion);
+        if (version && !dealResponse(version)) {
+          yield put({ type: 'saveBackendVersion', payload: version });
+        }
+      }
+
+      // 将所有模块的路由数据转换成框架可用的菜单数据格式
+      const permissionMap = {};
+      const authorityKeys = currentUser?.authorityKeys ?? [];
+      for (let index = 0; index < authorityKeys.length; index++) {
+        permissionMap[authorityKeys[index]] = true;
+      }
+
+      // 筛选授权的APP
+      const allAppModulesRoutesMap = { ...allModuleRouter };
+      const subModules = Object.keys(allModuleRouter);
+      const grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
+      const allAppModulesMap = {};
+      grantedAPP.forEach((module) => {
+        allAppModulesMap[module] = module;
+      });
+
+      // 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
+      const allModuleMenuData = {};
+      Object.keys(allAppModulesRoutesMap).filter((code) => {
+        if (grantedAPP.includes(code)) {
+          allModuleMenuData[code] = allAppModulesRoutesMap[code];
+        }
+      });
+      const { allModuleFormattedMenuData, routeLocaleKeyMap } = convertAllMenu(
+        adminType,
+        allAppModulesMap,
+        allModuleMenuData,
+        permissionMap,
+      );
+      const routeData = convertMenuData2RouteData(allModuleFormattedMenuData);
+
+      // 保存信息
+      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
+      yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
+      yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
+      yield put({ type: 'saveGrantedAPx', payload: grantedAPP }); // 所有授权的APP
+      yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
+
+      // 保存菜单相关
+      yield put({ type: 'menu/saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据
+      yield put({ type: 'menu/saveAllRouteData', payload: routeData }); // 所有子应用的菜单路由数据
+      yield put({ type: 'menu/saveRouteLocaleKeyMap', payload: routeLocaleKeyMap }); // 用于生成 Tab Label
+
+      const { pathname } = window.location;
+      yield put({ type: 'menu/saveTabs', payload: pathname });
+
+      return true;
+    },
+
+    *fetchAlertCount(_, { call, put }) {
+      const response = yield call(fetchAlertCount);
+      if (dealResponse(response)) {
+        return;
+      }
+      yield put({ type: 'updateAlertCount', payload: response });
+      return response;
+    },
+
+    *fetchUpdateEnvironment({ payload }, { call }) {
+      let response = null;
+      if (payload.id === 0) {
+        response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: '' });
+      } else {
+        response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: payload.id });
+      }
+      return !dealResponse(
+        response,
+        true,
+        formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
+      );
+    },
+
+    *updateGlobalLocale({ payload }, { call, put }) {
+      const localeValue = require(`@/locales/${payload}`).default;
+      const response = yield call(fetchUpdateUserCurrentLanguage, payload);
+      if (
+        !dealResponse(
+          response,
+          true,
+          formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
+        )
+      ) {
+        moment.locale(payload);
+        yield put({ type: 'updateGlobalLang', payload });
+        yield put({ type: 'updateAntedLocale', payload: localeValue });
+        window.localStorage.setItem('currentLocale', payload);
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
+      }
     },
   },
 };

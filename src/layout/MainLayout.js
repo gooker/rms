@@ -1,25 +1,23 @@
 import React from 'react';
-import { Layout, Modal, message, Skeleton, notification } from 'antd';
+import { Modal, message, notification } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
-import LayoutSlider from '@/packages/Portal/components/Sider';
-import LayoutHeader from '@/packages/Portal/components/Header';
-import LayoutContent from '@/pages/Content/Content';
+import HomeLayout from '@/layout/HomeLayout';
 import RmsConfirm from '@/components/RmsConfirm';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
 import { AlertCountPolling } from '@/workers/WebWorkerManager';
-import { dealResponse, formatMessage, getPlateFormType, isNull } from '@/utils/util';
-import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
-import { loadTexturesForMap } from '@/utils/textures';
 import SocketClient from '@/entities/SocketClient';
+import { AppCode } from '@/config/config';
+import notice from '@/utils/notice';
+import { loadTexturesForMap } from '@/utils/textures';
+import { dealResponse, formatMessage, getPlateFormType, isNull, sleep } from '@/utils/util';
+import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { getAuthorityInfo } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
-import notice from '@/utils/notice';
-import './mainLayout.less';
 
 @withRouter
 @connect(({ global }) => ({
   textureLoaded: global.textureLoaded,
-  isInnerFullscreen: global.isInnerFullscreen,
 }))
 class MainLayout extends React.Component {
   notificationQueue = [];
@@ -31,7 +29,8 @@ class MainLayout extends React.Component {
   async componentDidMount() {
     const _this = this;
     const { dispatch, history, textureLoaded } = this.props;
-    dispatch({ type: 'global/saveHistory', payload: history });
+    // 挂载push函数
+    window.history.$$push = history.push;
 
     try {
       const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
@@ -101,6 +100,8 @@ class MainLayout extends React.Component {
             });
           }
 
+          // 登录仪式感
+          await sleep(500);
           this.setState({ appReady: true });
         }
       } else {
@@ -141,10 +142,10 @@ class MainLayout extends React.Component {
   };
 
   goToQuestionCenter = () => {
-    //
+    this.props.history.push(`/${AppCode.XIHE}/questionCenter`);
   };
 
-  async validateAuthority() {
+  validateAuthority = async () => {
     const { dispatch } = this.props;
     const response = await getAuthorityInfo();
     if (dealResponse(response)) {
@@ -190,7 +191,7 @@ class MainLayout extends React.Component {
         }
       }
     }
-  }
+  };
 
   loadAllTaskTypes = () => {
     const { dispatch } = this.props;
@@ -226,18 +227,7 @@ class MainLayout extends React.Component {
 
   render() {
     const { appReady } = this.state;
-    const { isInnerFullscreen } = this.props;
-    return appReady ? (
-      <Layout className="main-layout">
-        {!isInnerFullscreen && <LayoutSlider />}
-        <Layout className="site-layout">
-          {!isInnerFullscreen && <LayoutHeader />}
-          <LayoutContent />
-        </Layout>
-      </Layout>
-    ) : (
-      <Skeleton active />
-    );
+    return appReady ? <HomeLayout /> : <LoadingSkeleton />;
   }
 }
 export default MainLayout;

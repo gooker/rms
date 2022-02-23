@@ -2,44 +2,52 @@ import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
 import { Link } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
+import { formatMessage, isNull } from '@/utils/util';
+import FormattedMessage from '@/components/FormattedMessage';
+import Portal from '@/packages/Portal/components/Portal/Portal';
+import styles from '../layout/homeLayout.module.less';
 import commonStyles from '@/common.module.less';
 
 const { SubMenu } = Menu;
 
-const Slider = (prop) => {
-  const { currentApp, allMenuData } = prop;
-
+const AppMenu = (prop) => {
+  const { dispatch, currentApp, allMenuData, updateOpenKeys, openKeys, selectedKeys } = prop;
+  const [currentModuleMenu, setCurrentModuleMenu] = useState([]);
   const { pathname } = window.location;
-  const [currentModuleRouter, setCurrentModuleRouter] = useState([]);
-  const [openKeys, setOpenKeys] = useState([]);
-  const [selectedKeys, setSelectedKeys] = useState(pathname === '/' ? [] : [pathname]);
+
+  useEffect(() => {
+    const _selectedKeys = pathname === '/' ? [] : [pathname];
+    if (_selectedKeys.length > 0) {
+      const currentApp = pathname.split('/')[1];
+      dispatch({ type: 'global/saveCurrentApp', payload: currentApp });
+    }
+    dispatch({ type: 'menu/saveSelectedKeys', payload: _selectedKeys });
+  }, []);
 
   // 根据currentApp重新渲染菜单数据
   useEffect(() => {
+    if (isNull(currentApp)) return;
     const currentAppRouter = allMenuData
       .filter(({ appCode }) => appCode === currentApp)
       .map(({ menu }) => menu);
-    setCurrentModuleRouter(currentAppRouter.length > 0 ? currentAppRouter[0] : []);
+    setCurrentModuleMenu(currentAppRouter.length > 0 ? currentAppRouter[0] : []);
   }, [currentApp]);
 
   useEffect(() => {
-    setOpenKeys(extractOpenKeys());
-  }, [currentModuleRouter]);
+    dispatch({
+      type: 'menu/saveState',
+      payload: { openKeys: extractOpenKeys(), selectedKeys: [pathname] },
+    });
+  }, [currentModuleMenu, updateOpenKeys]);
 
   function extractOpenKeys() {
-    if (
-      pathname === '/' ||
-      !Array.isArray(currentModuleRouter) ||
-      currentModuleRouter.length === 0
-    ) {
+    if (pathname === '/' || !Array.isArray(currentModuleMenu) || currentModuleMenu.length === 0) {
       return [];
     }
 
     const openKeys = [];
-    const routeFirstLevelKeys = currentModuleRouter.map(({ path }) => path);
+    const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);
     for (let i = 0; i < routeFirstLevelKeys.length; i++) {
       if (pathname.startsWith(routeFirstLevelKeys[i])) {
         openKeys.push(routeFirstLevelKeys[i]);
@@ -61,19 +69,18 @@ const Slider = (prop) => {
   }
 
   function onOpenChange(keys) {
-    const routeFirstLevelKeys = currentModuleRouter.map(({ path }) => path);
+    const routeFirstLevelKeys = currentModuleMenu.map(({ path }) => path);
     // 取最后keys数组最后一个节点，如果是某个根节点(routeFirstLevelKeys)，就隐藏别的已展开的节点
     const lastOpenKey = keys[keys.length - 1];
     if (routeFirstLevelKeys.includes(lastOpenKey)) {
-      setOpenKeys([lastOpenKey]);
+      dispatch({ type: 'menu/saveOpenKeys', payload: [lastOpenKey] });
     } else {
-      setOpenKeys(keys);
+      dispatch({ type: 'menu/saveOpenKeys', payload: keys });
     }
   }
 
-  function onSelectMenuItem({ selectedKeys }) {
-    setSelectedKeys(selectedKeys);
-    // dispatch({ type: 'global/saveMenuSelectKeys', payload: selectedKeys });
+  function onSelectMenuItem(item) {
+    dispatch({ type: 'menu/saveSelectedKeys', payload: item.selectedKeys });
   }
 
   // 渲染菜单
@@ -106,23 +113,30 @@ const Slider = (prop) => {
   }
 
   return (
-    <Menu
-      mode="inline"
-      theme="dark"
-      openKeys={openKeys}
-      onOpenChange={onOpenChange}
-      selectedKeys={selectedKeys}
-      onSelect={onSelectMenuItem}
-      style={{ width: '100%' }}
-    >
-      {renderMenu(currentModuleRouter, 'menu')}
-    </Menu>
+    <div className={styles.menu}>
+      <Portal />
+      <div>
+        <Menu
+          mode="inline"
+          theme="dark"
+          openKeys={openKeys}
+          onOpenChange={onOpenChange}
+          selectedKeys={selectedKeys}
+          onSelect={onSelectMenuItem}
+          style={{ width: '100%' }}
+        >
+          {renderMenu(currentModuleMenu, 'menu')}
+        </Menu>
+      </div>
+    </div>
   );
 };
-export default connect(({ global, user }) => {
+export default connect(({ global, menu }) => {
   return {
-    currentApp: global?.currentApp,
-    allMenuData: global?.allMenuData,
-    menuSelectKeys: global?.menuSelectKeys,
+    currentApp: global.currentApp,
+    allMenuData: menu.allMenuData,
+    openKeys: menu.openKeys,
+    selectedKeys: menu.selectedKeys,
+    updateOpenKeys: menu.updateOpenKeys,
   };
-})(memo(Slider));
+})(memo(AppMenu));
