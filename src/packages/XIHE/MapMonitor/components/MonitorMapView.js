@@ -157,6 +157,11 @@ class MonitorMapView extends BaseMap {
     });
   };
 
+  // 追踪小车
+  trackAGV = (agvId) => {
+    this.trackAGVId = agvId;
+  };
+
   // ************************ 点位相关 **********************
   renderCells = (cells) => {
     if (cells.length > 0) {
@@ -295,7 +300,7 @@ class MonitorMapView extends BaseMap {
     }
 
     // 执行跟踪
-    robotId === `${this.trackAGVId}` && this.mapRenderer.mapMoveTo(agvEntity.x, agvEntity.y, 0.1);
+    robotId === `${this.trackAGVId}` && this.mapRenderer.moveTo(agvEntity.x, agvEntity.y, 0.1);
   };
 
   // ********** 潜伏车 ********** //

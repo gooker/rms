@@ -48,21 +48,17 @@ export default {
       showTagetLine: false,
       showLockedCell: true,
       tempBlockShown: true,
-
       temporaryCell: [],
-      shownPriority: [],
+
+      shownPriority: [10, 20, 100, 1000],
       distanceShow: false,
       coordinationShow: false,
       cellPointShow: true,
+      stationRealTimeRateView: false, // 站点实时速率显示
+      emergencyAreaShow: true, // 紧急区域
+      backImgeView: false, // 背景
+
       toteBinShown: true,
-      // 站点实时速率显示
-      stationRealTimeRateView: false,
-
-      // 紧急区域
-      emergencyAreaShow: true,
-
-      // 背景
-      backImgeView: false,
 
       // 追踪小车
       trackingCar: undefined,
@@ -305,11 +301,11 @@ export default {
     },
 
     // *****显示******
-    *fetchUpdateViewSetting({ payload }, { put, select }) {
+    *saveViewSetting({ payload }, { put, select }) {
       const { viewSetting } = yield select((state) => state.monitor);
       const { key, value } = payload;
       const newViewSetting = { ...viewSetting, [key]: value };
-      yield put({ type: 'saveViewSetting', payload: newViewSetting });
+      yield put({ type: 'saveState', payload: newViewSetting });
     },
 
     // *****临时不可走点

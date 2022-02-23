@@ -13,7 +13,10 @@ import CustomComponent from './CustomComponent';
 import Parabolic from './Parabolic';
 import PickCargo from './PickCargo';
 import PathLock from './PathLock';
-import MapShowComponet from './MapShowComponent';
+import ViewControlComponent from './ViewControlComponent';
+import ToteViewControlComponent from './ToteViewControlComponent';
+import HotHeatControlComponent from './HotHeatControlComponent';
+import Tracking from './Tracking';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel } = props;
@@ -38,7 +41,10 @@ const MonitorModals = (props) => {
       {categoryModal === 'dumpCargo' && <Parabolic />}
       {categoryModal === 'pickCargo' && <PickCargo />}
       {categoryModal === 'pathLock' && <PathLock />}
-      {categoryModal === 'mapShow' && <MapShowComponet />}
+      {categoryModal === 'mapShow' && <ViewControlComponent />}
+      {categoryModal === 'toteDisplay' && <ToteViewControlComponent />}
+      {categoryModal === 'heatHeat' && <HotHeatControlComponent />}
+      {categoryModal === 'tracking' && <Tracking />}
     </>
   );
 };

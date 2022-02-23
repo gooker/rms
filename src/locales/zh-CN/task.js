@@ -17,7 +17,7 @@ export default {
   'app.executionQ.isReleased': '是否释放',
   'app.executionQ.unreleased': '未释放',
   'app.executionQ.lastExecutedTimestamp': '最近执行时间',
-  'app.executionQ.notAvailable': '暂无',
+  'app.executionQ.notAvailable': '暂无',//@有重复
   'app.executionQ.released': '已释放',
   'app.executionQ.retrieval': '全属性检索',
   'app.executionQ.target': '目标点',

@@ -193,14 +193,44 @@ export const AgvCategoryTools = [
 export const ViewCategoryTools = [
   {
     label: <FormattedMessage id={'monitor.right.pathLock'} />,
-    icon: 'pathViewicon.png',
+    icon: 'pathView.png',
     style: { width: '37px', height: 'auto' },
     value: 'pathLock',
   },
   {
     label: <FormattedMessage id={'monitor.right.mapView'} />,
-    icon: 'mapViewicon.png',
+    icon: 'mapView.png',
     style: { width: '37px', height: 'auto' },
     value: 'mapShow',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.latentDisplay'} />,
+    icon: 'latentView.png',
+    style: { width: '45px', height: 'auto' },
+    value: 'latentDisplay',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.toteDisplay'} />,
+    icon: 'toteView.png',
+    style: { width: '30px', height: 'auto' },
+    value: 'toteDisplay',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.sorterDisplay'} />,
+    icon: 'sorterView.png',
+    style: { width: '45px', height: 'auto' },
+    value: 'sorterDisplay',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.tracking'} />,
+    icon: 'tracking.png',
+    style: { width: '33px', height: 'auto' },
+    value: 'tracking',
+  },
+  {
+    label: <FormattedMessage id={'monitor.right.cellheat'} />,
+    icon: 'heatView.png',
+    style: { width: '33px', height: 'auto' },
+    value: 'heatHeat',
   },
 ];
