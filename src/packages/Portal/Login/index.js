@@ -21,6 +21,9 @@ const Login = (props) => {
   const [logo, setLogo] = useState(null);
   const [appVersion, setAppVersion] = useState(null);
 
+  // 挂载push函数
+  window.history.$$push = history.push;
+
   useEffect(() => {
     init();
   }, []);
@@ -57,7 +60,7 @@ const Login = (props) => {
         }
       }
       setLoading(false);
-      history.push('/welcome');
+      history.push('/');
     } else {
       setLoading(false);
     }

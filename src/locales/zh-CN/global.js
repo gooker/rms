@@ -5,6 +5,8 @@ export default {
   'app.section.not.exist': '当前用户没有被赋予任何Section',
 
   // 多标签页
+
+  'app.tabs.closeLeft': '关闭左侧所有',
+  'app.tabs.closeRight': '关闭右侧所有',
   'app.tabs.closeOthers': '关闭其它',
-  'app.tabs.refresh': '刷新',
 };

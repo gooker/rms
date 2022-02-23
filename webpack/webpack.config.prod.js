@@ -57,6 +57,7 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
     /**
      * PIXI Texture图片文件和字体文件不是经过import或者require方式访问
      * 所以并不会被Webpack所处理，所以这里使用这个插件将这些文件拷贝到指定目录
+     * TODO: 部分图片已经存在于images，所以需要额外判断是否要拷贝，比如：welcome
      */
     new CopyWebpackPlugin({
       patterns: [

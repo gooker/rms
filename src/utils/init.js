@@ -66,15 +66,17 @@ export function checkPermission(router, permissionMap, appCode, nameSpace) {
   return result;
 }
 
-export function getBreadcrumbNameMap(menuData, routerMap = {}) {
-  menuData.forEach((menuItem) => {
-    if (menuItem.routes) {
-      getBreadcrumbNameMap(menuItem.routes, routerMap);
-    } else {
-      routerMap[menuItem.path] = menuItem;
-    }
-  });
-  return routerMap;
+function generateRouteLocaleKeyMap(data, result, parentName) {
+  if (Array.isArray(data)) {
+    data.forEach((record) => {
+      const { path, routes, name } = record;
+      if (Array.isArray(routes)) {
+        generateRouteLocaleKeyMap(routes, result, `${parentName}.${name}`);
+      } else {
+        result[path] = parentName ? `${parentName}.${name}` : `${name}`;
+      }
+    });
+  }
 }
 
 export function filterAppByAuthorityKeys(subModules = [], authorityKeys = []) {
@@ -106,10 +108,12 @@ export function convertToRoute(data, baseContext) {
 }
 
 export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, permissionMap) {
-  const routeLocaleKeyMap = {};
+  const routeLocaleKeyMap = { '/': 'menu.home' };
+
   // 1. 转换菜单数据到一般路由数据(包括sso筛选逻辑)
   const allRoutes = Object.keys(allModuleMenuData).map((appCode) => {
     let appMenu = allModuleMenuData[appCode];
+
     // 如果是SSO, 需要根据adminType对菜单数据进行筛选
     if (appCode === AppCode.SSO) {
       appMenu = appMenu.filter((route) => {
@@ -124,10 +128,13 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
         }
       });
     }
+
+    // 组装多标签Label Map -- {路由History: 路由名称国际化Key}
+    generateRouteLocaleKeyMap(appMenu, routeLocaleKeyMap, 'menu');
+
     return { appMenu, appCode };
   });
 
-  //@@@
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { appMenu, appCode } = appRoute;
@@ -135,9 +142,9 @@ export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, p
     const baseMenuData = convertRoute2Menu(appMenu); // 获取菜单节点名称的国际化key
     const menuData = filterMenuData(baseMenuData); // 筛选掉 hideInMenu 的菜单项
     const result = checkPermission(menuData, permissionMap, appCode, baseContext); // 菜单项权限根据 AuthKey 再一次筛选
-    const breadcrumbNameMap = getBreadcrumbNameMap(result);
-    return { appCode, menu: result, breadcrumbNameMap };
+    return { appCode, menu: result };
   });
+
   return { allModuleFormattedMenuData, routeLocaleKeyMap };
 }
 
@@ -196,8 +203,5 @@ export function getLocalStorageHooks(hook) {
     }
   });
   // 只要localstorage存在hook数组里的任一个 当前这个开发者就能看到页面
-  if (orSet.has(1)) {
-    return true;
-  }
-  return false;
+  return orSet.has(1);
 }

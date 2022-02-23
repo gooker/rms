@@ -53,8 +53,7 @@ const errorHandler = (error) => {
   if (response) {
     const { status, data } = response;
     if (status === 401) {
-      const { history } = window.g_app._store.getState().global;
-      history && history.push('/login');
+      window.history.$$push('/login');
     }
     const statusMessage = codeMessage[status];
     return { code: '-1', data: null, message: data.message || statusMessage };
@@ -65,7 +64,6 @@ const errorHandler = (error) => {
     } else {
       messageContent = formatMessage({ id: 'app.request.error' });
     }
-
     return { code: '-1', data: null, message: messageContent };
   }
 };

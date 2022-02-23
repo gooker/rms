@@ -18,10 +18,10 @@ const EditorMapContainer = (props) => {
     const resizeObserver = new ResizeObserver(
       throttle(() => {
         const htmlDOM = document.getElementById('mapEditorPage');
-        const { width, height } = htmlDOM.getBoundingClientRect();
-        const { mapContext: _mapContext } = window.g_app._store.getState().editor;
-        _mapContext &&
-          _mapContext.resize(width - LeftToolBarWidth - RightToolBarWidth, height - HeaderHeight);
+        if (htmlDOM && mapContext) {
+          const { width, height } = htmlDOM.getBoundingClientRect();
+          mapContext.resize(width - LeftToolBarWidth - RightToolBarWidth, height - HeaderHeight);
+        }
       }, 500),
     );
     resizeObserver.observe(document.getElementById('editorPixi'));

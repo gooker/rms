@@ -4,28 +4,28 @@ import { FullscreenExitOutlined, FullscreenOutlined, BellOutlined } from '@ant-d
 import { withRouter } from 'react-router-dom';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
-import { throttle } from 'lodash';
+import { dealResponse, isNull } from '@/utils/util';
+import { getHAInfo } from '@/services/XIHE';
+import HA from '@/packages/Portal/components/HA';
+import ExpiredTip from '@/packages/Portal/components/ExpiredTip';
 import FormattedMessage from '@/components/FormattedMessage';
-import Portal from './Portal/Portal';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel';
 import styles from './Header.module.less';
-import { dealResponse, isNull } from '@/utils/util';
-import { getHAInfo } from '@/services/XIHE';
-import HA from '@/packages/Portal/components/HA';
-import ExpiredTip from '@/packages/Portal/components/ExpiredTip';
 
 @withRouter
 @connect(({ global, user }) => ({
+  logo: global.logo,
   alertCount: global.alertCount,
+  sysAuthInfo: global.sysAuthInfo,
   globalLocale: global.globalLocale,
-  currentUser: user.currentUser,
   environments: global.environments,
   isFullscreen: global.isFullscreen,
-  sysAuthInfo: global.sysAuthInfo,
+  backendVersion: global.backendVersion,
+  currentUser: user.currentUser,
 }))
 class Header extends React.Component {
   state = {
@@ -108,21 +108,30 @@ class Header extends React.Component {
   };
 
   render() {
-    const { showErrorNotification, apiListShow, isHA } = this.state;
-    const { environments, isFullscreen, currentUser } = this.props;
-    const { alertCount, sysAuthInfo } = this.props;
+    const { showErrorNotification, isHA, sysAuthInfo } = this.state;
+    const { history, alertCount, backendVersion, apiListShow } = this.props;
+    const { logo, environments, isFullscreen, currentUser } = this.props;
     if (isNull(currentUser)) return null;
 
+    const mainVersion = backendVersion?.MixRobot?.version;
     const isAdmin = currentUser.username === 'admin';
     return (
       <div className={styles.headerContent}>
         <div className={styles.leftContent}>
-          <Portal />
+          <img
+            className={styles.logo}
+            src={logo || '/images/logoMain.png'}
+            alt={'logo'}
+            onClick={() => {
+              history.push('/');
+            }}
+          />
+          <div className={styles.version}>{mainVersion && `v${mainVersion}`}</div>
         </div>
-        <div className={styles.middleContent}>
-          {isHA && <HA />}
-          {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
-        </div>
+        {/*<div className={styles.middleContent}>*/}
+        {/*  {isHA && <HA />}*/}
+        {/*  {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}
+        {/*</div>*/}
         <div className={styles.rightContent}>
           {/* 环境切换 */}
           <SelectEnvironment

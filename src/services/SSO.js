@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator } = NameSpace;
+const { Coordinator, SSO } = NameSpace;
 
 export async function fetchLogout(params) {
   return request('/sso/user/logout', {
@@ -219,6 +219,11 @@ export async function deleteEnvironmentById(parms) {
     method: 'GET',
     data: parms,
   });
+}
+
+// 根据Token获取用户，验证成功返回用户信息，验证失败就返回code -1
+export async function queryUserByToken() {
+  return request(`${SSO}/user/queryUserByToken`, { method: 'GET' });
 }
 
 ///////////////////// *** 授权管理 *** /////////////////////

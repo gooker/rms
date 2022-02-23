@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
@@ -28,10 +28,9 @@ class App extends Component {
     return (
       initDone && (
         <ConfigProvider locale={antdLocale}>
-          <BrowserRouter>
+          <Router>
             <Switch>
               {/* 登录页面*/}
-              <Redirect exact from="/" to="/login" />
               <Route
                 exact
                 path="/login"
@@ -39,9 +38,9 @@ class App extends Component {
               />
 
               {/* 主页面 */}
-              <MainLayout />
+              <Route exact={false} path="/" component={MainLayout} />
             </Switch>
-          </BrowserRouter>
+          </Router>
         </ConfigProvider>
       )
     );

@@ -41,7 +41,7 @@ export default [
     name: 'authorizationCenter',
     icon: 'authorize',
     component: '/SSO/AuthorizationCenter',
-    authority: ['ADMIN'],
+    authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.SSO}/environmentManager`, // 自定义环境

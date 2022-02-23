@@ -1,5 +1,4 @@
-import React, { memo, useEffect } from 'react';
-import { Row } from 'antd';
+import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import PortalEntry from './PortalEntry';
@@ -9,17 +8,6 @@ const { I18N, SSO, XIHE, Mixrobot, LatentLifting, Tote, Sorter, ForkLifting } = 
 
 const Portal = (props) => {
   const { dispatch, isAdmin, appList, currentApp, customLogo } = props;
-
-  useEffect(() => {
-    const { pathname } = window.location;
-    let currentApp;
-    if (pathname === '/welcome') {
-      currentApp = isAdmin ? AppCode.SSO : AppCode.XIHE;
-    } else {
-      currentApp = pathname.split('/')[1];
-    }
-    dispatch({ type: 'global/saveCurrentApp', payload: currentApp });
-  }, []);
 
   async function checkoutApp(appCode) {
     dispatch({ type: 'global/saveCurrentApp', payload: appCode });
@@ -68,7 +56,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -80,7 +68,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -92,7 +80,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -104,7 +92,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -117,7 +105,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -129,7 +117,7 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={40}
+                width={45}
                 height={40}
               />
             );
@@ -143,7 +131,7 @@ const Portal = (props) => {
                   currentApp={currentApp}
                   checkoutApp={checkoutApp}
                   name={appCode}
-                  width={40}
+                  width={45}
                   height={40}
                 />
               );
@@ -164,7 +152,7 @@ const Portal = (props) => {
     );
   }
 
-  return <Row className={styles.portal}>{renderAppInfo()}</Row>;
+  return <div className={styles.portal}>{renderAppInfo()}</div>;
 };
 export default connect(({ global, user }) => {
   const isAdmin = user?.currentUser?.username === 'admin';
