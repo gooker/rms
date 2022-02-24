@@ -31,6 +31,11 @@ export default {
   'monitor.right.dumpCargo': '抛货',
   'monitor.right.pathLock': '路径锁格',
   'monitor.right.mapView': '地图显示',
+  'monitor.right.latentDisplay': '潜伏显示',
+  'monitor.right.toteDisplay': '料箱显示',
+  'monitor.right.sorterDisplay': '分拣显示',
+  'monitor.right.cellheat': '点位热度',
+  'monitor.right.tracking': '追踪',
 
   // 提醒
   'monitor.tip.fetchLockFail': '获取锁格信息失败',
@@ -105,4 +110,34 @@ export default {
   'monitor.view.mapCellView': '地图点位',
   'monitor.view.coordinateDisplay': '点位坐标',
   'monitor.view.stationRealtimeRate': '站点速率',
+  'monitor.view.toteRack': '料箱货架',
+  'monitor.view.toteTaskPath': '料箱任务路径',
+  'monitor.view.toteBinState': '料箱实时状态',
+  'monitor.view.bothTaskCount': '实时任务分布',
+  'monitor.view.binUsedState': '货位使用情况',
+  'monitor.view.heat.queryType': '查询类型',
+  'monitor.view.heat.clear': '清除',
+  'monitor.view.heat.cost': '成本热度',
+  'monitor.view.heat.isTransparent': '是否透明',
+
+  'monitor.simulator.config': '配置',
+  'monitor.simulator.action.batchAddPods': '批量添加货架',
+  'monitor.simulator.action.remove': '移除',
+  'monitor.simulator.action.beatStop': '拍急停',
+  'monitor.simulator.action.loosenStop': '松急停',
+  'monitor.simulator.action.shutDown': '关机',
+  'monitor.simulator.action.bootUp': '开机',
+  'monitor.simulator.list.snapStop': '急停',
+  'monitor.simulator.list.movable': '可动',
+  'monitor.simulator.list.unMovable': '不可动',
+  'monitor.simulator.status': '状态',
+
+  'monitor.simulator.config.title': '模拟车配置',
+  'monitor.simulator.config.consumePowerSpeed': '耗电速度',
+  'monitor.tracking.trackAMR': '追踪小车',
+  'monitor.tracking.trackAMR.track': '开始追踪',
+  'monitor.tracking.trackAMR.untrack': '取消追踪',
+  'monitor.tracking.require.trackAMR': '请选择需要追踪的小车',
+
+
 };

@@ -1,6 +1,4 @@
 import {
-  openSimulator,
-  closeSimulator,
   addSimulationAgv,
   fetchUpdateAGVConfig,
   fetchSimulatorHistory,
@@ -107,20 +105,6 @@ export default {
       }
     },
 
-    *fetchChangeSimulatorStatus({ payload }, { call }) {
-      const { status } = payload;
-      if (status) {
-        const response = yield call(openSimulator);
-        if (dealResponse(response, 1, '打开模拟器成功')) {
-          return false;
-        }
-      } else {
-        const response = yield call(closeSimulator);
-        if (dealResponse(response, 1, '关闭模拟器成功')) {
-          return false;
-        }
-      }
-    },
 
     *fetchUpdateAGVConfig({ payload, then }, { call }) {
       const response = yield call(fetchUpdateAGVConfig, payload);

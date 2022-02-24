@@ -1,6 +1,6 @@
 import React, { useState, memo, useEffect } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Row, Col, message } from 'antd';
+import { Button, Row, Col, message, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchAgvTaskLockList, batchDeleteAgvTaskLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -106,7 +106,7 @@ const RobotLock = (props) => {
           if (text === 2) {
             return <FormattedMessage id="lockManage.robot.missingRobotLock" />;
           }
-          return <FormattedMessage id="lockManage.robot.notAvailable" />;
+          return <FormattedMessage id="app.common.notAvailable" />;
         },
       },
       {
@@ -120,7 +120,7 @@ const RobotLock = (props) => {
                 <span
                   className={commonStyles.textLinks}
                   onClick={() => {
-                    checkDetail(text, AGVType.LatentLifting);
+                    checkDetail(text, agvType);
                   }}
                 >
                   {text ? '*' + text.substr(text.length - 6, 6) : null}

@@ -1,10 +1,9 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Form, Row, Col, Switch, Button, Checkbox } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { CostOptions } from '../../MapEditor/enums';
 import styles from '../monitorLayout.module.less';
 
@@ -12,8 +11,8 @@ const width = 500;
 const height = 500;
 const { formItemLayout } = getFormLayout(6, 16);
 
-const MapShowComponent = (props) => {
-  const { dispatch, relations, mapRef, viewSetting } = props;
+const ViewControlComponent = (props) => {
+  const { dispatch, mapRef, viewSetting } = props;
   const [form] = Form.useForm();
 
   function close() {
@@ -70,7 +69,7 @@ const MapShowComponent = (props) => {
           >
             <Checkbox.Group
               onChange={(value) => {
-                mapRef && mapRef.filterRelations(relations, value || [], 'monitor');
+                mapRef && mapRef.filterRelations(value || [], 'monitor');
               }}
               options={CostOptions?.map((item) => ({
                 ...item,
@@ -87,7 +86,7 @@ const MapShowComponent = (props) => {
           >
             <Switch
               onChange={(value) => {
-                mapRef && mapRef.switchDistanceShown(value, true);
+                mapRef && mapRef.switchDistanceShown(value, false);
               }}
             />
           </Form.Item>
@@ -185,5 +184,4 @@ export default connect(({ monitor }) => ({
   mapRef: monitor.mapContext,
   viewSetting: monitor.viewSetting,
   currentLogicAreaId: monitor.currentLogicArea,
-  relations: getCurrentRouteMapData('monitor')?.relations || [],
-}))(memo(MapShowComponent));
+}))(memo(ViewControlComponent));

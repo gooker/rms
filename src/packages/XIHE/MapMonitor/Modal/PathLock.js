@@ -1,15 +1,5 @@
-import React, { memo, useEffect } from 'react';
-import {
-  Form,
-  Row,
-  Col,
-  Switch,
-  Select,
-  Button,
-  message,
-  Checkbox,
-  InputNumber,
-} from 'antd';
+import React, { memo } from 'react';
+import { Form, Row, Col, Switch, Select, Button, message, Checkbox, InputNumber } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { fetchCellLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
@@ -45,23 +35,6 @@ const PathLock = (props) => {
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
-  }
-
-  useEffect(() => {
-    mapPropsToFields();
-  }, [viewSetting]);
-
-  function mapPropsToFields() {
-    form.setFieldsValue({
-      selectAgv: viewSetting.selectAgv,
-      showLockCell: viewSetting.showLockCell,
-      showRoute: viewSetting.showRoute,
-      showLockedCell: viewSetting.showLockedCell,
-      showFullPath: viewSetting.showFullPath,
-      showTagetLine: viewSetting.showTagetLine,
-      tempBlockShown: viewSetting.tempBlockShown,
-      temporaryCell: viewSetting.temporaryCell,
-    });
   }
 
   function onValuesChange(changedValues) {
@@ -214,6 +187,7 @@ const PathLock = (props) => {
                 <Form.Item
                   noStyle
                   name={'selectAgv'}
+                  initialValue={viewSetting?.selectAgv || []}
                   getValueFromEvent={(value) => {
                     onAgvListChanged(value);
                     return value;
@@ -241,6 +215,7 @@ const PathLock = (props) => {
             {...formItemLayout}
             name={'showLockCell'}
             valuePropName={'checked'}
+            initialValue={viewSetting?.showLockCell || []}
             label={formatMessage({ id: 'monitor.view.lockView' })}
           >
             <Checkbox.Group
@@ -259,7 +234,13 @@ const PathLock = (props) => {
           <Form.Item {...formItemLayout} label={formatMessage({ id: 'monitor.view.pathView' })}>
             <Row gutter={10}>
               <Col span={8}>
-                <Form.Item noStyle {...formItemLayout} name={'showRoute'} valuePropName={'checked'}>
+                <Form.Item
+                  noStyle
+                  {...formItemLayout}
+                  name={'showRoute'}
+                  valuePropName={'checked'}
+                  initialValue={viewSetting?.showRoute || true}
+                >
                   <Switch
                     checkedChildren={formatMessage({ id: 'app.notification.on' })}
                     unCheckedChildren={formatMessage({ id: 'app.notification.off' })}
@@ -272,6 +253,7 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showFullPath'}
                   valuePropName={'checked'}
+                  initialValue={viewSetting?.showFullPath || false}
                 >
                   <Checkbox>
                     <FormattedMessage id="monitor.view.path.fullPath" />
@@ -284,6 +266,7 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showTagetLine'}
                   valuePropName={'checked'}
+                  initialValue={viewSetting?.showTagetLine || false}
                 >
                   <Checkbox>
                     <FormattedMessage id="monitor.view.path.targetLine" />
@@ -297,13 +280,17 @@ const PathLock = (props) => {
           <Form.Item {...formItemLayout} label={<FormattedMessage id="monitor.view.cellLock" />}>
             <Row style={{ width: '100%' }}>
               <Col span={5}>
-                <Form.Item name={'showLockedCell'} valuePropName={'checked'}>
+                <Form.Item
+                  name={'showLockedCell'}
+                  valuePropName={'checked'}
+                  initialValue={viewSetting?.showLockedCell}
+                >
                   <Switch
                     checkedChildren={formatMessage({
                       id: 'app.map.view',
                     })}
                     unCheckedChildren={formatMessage({
-                      id: 'app.button.close',
+                      id: 'app.common.hide',
                     })}
                     onChange={(checked) => {
                       if (!checked) {
@@ -347,13 +334,17 @@ const PathLock = (props) => {
             <Row>
               <Row style={{ width: '100%' }}>
                 <Col span={6}>
-                  <Form.Item name={'tempBlockShown'} valuePropName={'checked'}>
+                  <Form.Item
+                    name={'tempBlockShown'}
+                    valuePropName={'checked'}
+                    initialValue={viewSetting?.tempBlockShown}
+                  >
                     <Switch
                       checkedChildren={formatMessage({
                         id: 'app.map.view',
                       })}
                       unCheckedChildren={formatMessage({
-                        id: 'app.button.close',
+                        id: 'app.common.hide',
                       })}
                       onChange={(checked) => {
                         if (checked) {
@@ -373,7 +364,7 @@ const PathLock = (props) => {
               </Row>
               <Row style={{ width: '100%' }}>
                 <Col span={14}>
-                  <Form.Item name={'temporaryCell'}>
+                  <Form.Item name={'temporaryCell'} initialValue={viewSetting?.temporaryCell}>
                     <Select
                       allowClear
                       mode="tags"

@@ -421,6 +421,12 @@ export async function fetchSimulatorHistory() {
   });
 }
 
+export async function fetchTrafficRobotType() {
+  return request(`/${NameSpace.Coordinator}/traffic/getRobotType`, {
+    method: 'GET',
+  });
+}
+
 // 获取通道锁信息
 export async function getTunnelState() {
   return request(`/${NameSpace.Coordinator}/traffic/getTunnelLock`, {

@@ -8,6 +8,7 @@ import { Category, MonitorRightTools } from '../enums';
 import ElementProp from '../PopoverPanel/ElementProp';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
+import SimulatorPanel from '../PopoverPanel/SimulatorPanel';
 import styles from '../monitorLayout.module.less';
 
 const MonitorBodyRight = (props) => {
@@ -69,6 +70,8 @@ const MonitorBodyRight = (props) => {
         );
       case Category.View:
         return <ViewCategorySecondaryPanel dispatch={dispatch} height={350} />;
+      case Category.Simulator:
+        return <SimulatorPanel dispatch={dispatch} height={height - 10} />;
       default:
         return null;
     }
