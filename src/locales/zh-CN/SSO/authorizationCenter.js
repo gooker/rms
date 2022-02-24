@@ -17,7 +17,7 @@ export default {
   'app.authCenter.unauthorized.message': '当前系统未进行授权，请及时进行授权处理',
   'app.authCenter.expired': '当前系统授权已过期，请及时续费',
   'app.authCenter.willExpired': '当前系统授权即将过期：{day}天',
-  'app.authCenter.days': '天',
+  'app.authCenter.dayRest': '剩余{day}天',
   'app.authCenter.hasExpired': '已到期',
   'app.authCenter.unauthorized': '未授权',
 

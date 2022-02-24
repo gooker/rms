@@ -26,12 +26,8 @@
 
 .rightContent {
   display: flex;
-  justify-content: flex-end;
-}
-
-.middleContent {
-  display: flex;
   align-items: center;
+  justify-content: flex-end;
 }
 
 @pro-header-hover-bg: rgba(0, 0, 0, 0.025);
@@ -55,30 +51,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 95%;
-  margin-left: 10px;
+  height: 80%;
+  margin: 0 20px 0 10px;
   padding: 0 10px;
   color: #fff;
   font-weight: 900;
   font-size: 18px;
-  border-radius: 5px;
 }
 
 // 30 天后过期
 .expiredIn30 {
-  background: linear-gradient(359deg, rgb(120 179 221) 20%, rgb(7 101 157) 81%);
+  background: #07659d;
   .expireInformation();
 }
 
 // 7天后过期
 .expiredTipIn7 {
-  background: linear-gradient(359deg, rgb(221 173 35) 20%, rgb(255 213 6) 81%);
+  background: #b69700;
   .expireInformation();
 }
 
 // 3天后过期
 .expiredTipIn3 {
-  background: linear-gradient(359deg, rgb(219 37 37) 20%, rgb(255 6 6) 81%);
+  background: #ae0000;
   animation: twinkling 1s infinite;
   .expireInformation();
 }

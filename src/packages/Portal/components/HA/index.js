@@ -5,8 +5,6 @@ import * as dayjs from 'dayjs';
 import ServerList from './ServerList';
 import { getHAChangeHistory, getHAInfo } from '@/services/XIHE';
 import { dealResponse, formatMessage } from '@/utils/util';
-import HAIcon from '@/../public/images/ha_icon.png';
-import LoadingIcon from '@/../public/images/loading_icon.gif';
 import styles from './ha.module.less';
 
 const HA = () => {
@@ -48,8 +46,6 @@ const HA = () => {
           setVisible(true);
         }}
       >
-        <img alt={'HAIcon'} src={HAIcon} className={styles.haIcon} />
-        <img alt={'LoadingIcon'} src={LoadingIcon} className={styles.haLoading} />
         <span className={styles.haLabel}>{formatMessage({ id: 'app.navBar.haMode' })}</span>
       </div>
 
@@ -71,7 +67,7 @@ const HA = () => {
       >
         <div style={{ textAlign: 'end' }}>
           <Button onClick={refreshModalContent}>
-            <SyncOutlined spin={loading} /> {formatMessage({ id: 'app.tabs.refresh' })}
+            <SyncOutlined spin={loading} /> {formatMessage({ id: 'app.button.refresh' })}
           </Button>
         </div>
         <Divider orientation="left">

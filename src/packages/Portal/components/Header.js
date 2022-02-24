@@ -128,11 +128,10 @@ class Header extends React.Component {
           />
           <div className={styles.version}>{mainVersion && `v${mainVersion}`}</div>
         </div>
-        {/*<div className={styles.middleContent}>*/}
-        {/*  {isHA && <HA />}*/}
-        {/*  {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}*/}
-        {/*</div>*/}
         <div className={styles.rightContent}>
+          {isHA && <HA />}
+          {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
+
           {/* 环境切换 */}
           <SelectEnvironment
             environments={environments || []}
