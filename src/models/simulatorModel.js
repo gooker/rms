@@ -8,7 +8,7 @@ import {
   fetchBatchDeleteSimulatorAgv,
   fetchSimulatorLoginAGVControlState,
 } from '@/services/monitor';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
 export default {
@@ -71,7 +71,7 @@ export default {
 
     *fetchAddSimulatorAgv({ payload }, { call }) {
       const response = yield call(addSimulationAgv, payload);
-      if (dealResponse(response, 1, '操作成功')) {
+      if (dealResponse(response, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
         return false;
       }
     },
@@ -105,10 +105,9 @@ export default {
       }
     },
 
-
     *fetchUpdateAGVConfig({ payload, then }, { call }) {
       const response = yield call(fetchUpdateAGVConfig, payload);
-      if (dealResponse(response, 1, '操作成功')) {
+      if (dealResponse(response, 1,  formatMessage({ id: 'app.message.operateSuccess' }))) {
         return false;
       }
       if (then) {

@@ -40,15 +40,11 @@ const HotheatControlComponent = (props) => {
       .validateFields()
       .then((value) => {
         const { type, startTime, endTime, isTransparent } = value;
-        if (!type) {
-          message.error(formatMessage({ id: 'app.mapView.require.heatView.viewType' }));
-          return;
-        }
         if (type === CellHeatType.cost_type) {
           refreshCellHeat({ type, isTransparent, startTime: '', endTime: '' });
         } else {
           if (!startTime || !endTime) {
-            message.error(formatMessage({ id: 'app.mapView.require.heatView.timeRange' }));
+            message.error(formatMessage({ id: 'monitor.view.heat.require.timeRange' }));
             return;
           }
           refreshCellHeat({

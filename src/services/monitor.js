@@ -47,9 +47,10 @@ export async function fetchWorkStationPods() {
 }
 
 // 获取潜伏车系统参数
-export async function fetchLatentLiftingSystemParam() {
+export async function fetchLatentLiftingSystemParam(params) {
   return request(`/${NameSpace.LatentLifting}/formTemplate/getFormTemplate`, {
     method: 'GET',
+    data: params,
   });
 }
 

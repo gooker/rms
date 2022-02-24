@@ -23,7 +23,7 @@ const PositionCell = (props) => {
   return (
     <Row>
       <Col>
-        <Form.Item label={formatMessage({ id: 'app.mapView.label.cell' })}>
+        <Form.Item label={formatMessage({ id: 'app.form.cellId' })}>
           <InputNumber
             onChange={(value) => {
               setCellId(value);

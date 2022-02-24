@@ -201,7 +201,7 @@ export default function SimulatorConfig(props) {
             <Form.Item
               name={'actionConsumePowerSpeed'}
               initialValue={simulatorConfig?.actionConsumePowerSpeed}
-              label={formatMessage({ id: 'app.simulator.config.actionConsumePowerSpeed' })}
+              label={formatMessage({ id: 'monitor.simulator.config.actionConsumePowerSpeed' })}
             >
               <Input suffix={'ms/%'} />
             </Form.Item>
@@ -211,7 +211,7 @@ export default function SimulatorConfig(props) {
             <Form.Item
               name={'chargeSpeed'}
               initialValue={simulatorConfig?.chargeSpeed}
-              label={formatMessage({ id: 'app.simulator.config.chargeSpeed' })}
+              label={formatMessage({ id: 'monitor.simulator.config.chargeSpeed' })}
             >
               <Input suffix={'ms/%'} />
             </Form.Item>
@@ -221,7 +221,7 @@ export default function SimulatorConfig(props) {
             <Form.Item
               name={'startStopSpeed'}
               initialValue={config?.startStopSpeed}
-              label={formatMessage({ id: 'app.simulator.config.startStopSpeed' })}
+              label={formatMessage({ id: 'monitor.simulator.config.startStopSpeed' })}
             >
               <Input suffix={'ms'} />
             </Form.Item>
@@ -231,7 +231,7 @@ export default function SimulatorConfig(props) {
             <Form.Item
               name={'agvEmptyRotateSpeed'}
               initialValue={config?.agvEmptyRotateSpeed}
-              label={formatMessage({ id: 'app.simulator.config.agvEmptyRotateSpeed' })}
+              label={formatMessage({ id: 'monitor.simulator.config.agvEmptyRotateSpeed' })}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -241,7 +241,7 @@ export default function SimulatorConfig(props) {
             <Form.Item
               name={'agvHeavyRotateSpeed'}
               initialValue={config?.agvHeavyRotateSpeed}
-              label={formatMessage({ id: 'app.simulator.config.agvHeavyRotateSpeed' })}
+              label={formatMessage({ id: 'monitor.simulator.config.agvHeavyRotateSpeed' })}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -255,7 +255,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'podRobotRotateSpeed'}
                 initialValue={config?.podRobotRotateSpeed}
-                label={formatMessage({ id: 'app.simulator.config.podRobotRotateSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.podRobotRotateSpeed' })}
               >
                 <Input suffix={'ms/°'} />
               </Form.Item>
@@ -265,7 +265,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'backSpeed'}
                 initialValue={config?.backSpeed}
-                label={formatMessage({ id: 'app.simulator.config.backSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.backSpeed' })}
               >
                 <Input suffix={'mm/s'} />
               </Form.Item>
@@ -275,7 +275,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'upSpeed'}
                 initialValue={config?.upSpeed}
-                label={formatMessage({ id: 'app.simulator.config.upSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.upSpeed' })}
               >
                 <Input suffix={'ms'} />
               </Form.Item>
@@ -285,7 +285,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'downSpeed'}
                 initialValue={config?.downSpeed}
-                label={formatMessage({ id: 'app.simulator.config.downSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.downSpeed' })}
               >
                 <Input suffix={'ms'} />
               </Form.Item>
@@ -295,7 +295,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'podRotateSpeed'}
                 initialValue={config?.podRotateSpeed}
-                label={formatMessage({ id: 'app.simulator.config.podRotate90Speed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.podRotate90Speed' })}
               >
                 <Input suffix={'ms'} />
               </Form.Item>
@@ -310,7 +310,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'pickPlaceSpeed'}
                 initialValue={config?.pickPlaceSpeed}
-                label={formatMessage({ id: 'app.simulator.config.pickPlaceSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.pickPlaceSpeed' })}
               >
                 <Input suffix={'ms'} />
               </Form.Item>
@@ -320,9 +320,9 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'level'}
                 initialValue={config?.level}
-                label={formatMessage({ id: 'app.simulator.config.levelCount' })}
+                label={formatMessage({ id: 'app.taskDetail.layers' })}
               >
-                <Input suffix={<FormattedMessage id="app.simulator.config.leve" />} />
+                <Input suffix={<FormattedMessage id="monitor.simulator.config.leve" />} />
               </Form.Item>
             </Col>
           </Row>
@@ -335,7 +335,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'lineSpeed'}
                 initialValue={config?.lineSpeed}
-                label={formatMessage({ id: 'app.simulator.config.lineSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.lineSpeed' })}
               >
                 <InputNumber />
               </Form.Item>
@@ -345,7 +345,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'bezierSpeed'}
                 initialValue={config?.bezierSpeed}
-                label={formatMessage({ id: 'app.simulator.config.bezierSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.bezierSpeed' })}
               >
                 <InputNumber />
               </Form.Item>
@@ -355,7 +355,7 @@ export default function SimulatorConfig(props) {
               <Form.Item
                 name={'pickPlaceSpeed'}
                 initialValue={config?.pickPlaceSpeed}
-                label={formatMessage({ id: 'app.simulator.config.forkPickPlaceSpeed' })}
+                label={formatMessage({ id: 'monitor.simulator.config.forkPickPlaceSpeed' })}
               >
                 <Input suffix={'ms'} />
               </Form.Item>
@@ -373,7 +373,7 @@ export default function SimulatorConfig(props) {
               alignItems: 'center',
             }}
           >
-            <FormattedMessage id="app.simulator.config.AMRGearSpeed" />:
+            <FormattedMessage id="monitor.simulator.config.AMRGearSpeed" />:
           </div>
           <div style={{ flex: 1 }}>
             <Row type={'flex'} style={{ height: '100%', alignItems: 'center', paddingRight: 20 }}>
@@ -383,7 +383,7 @@ export default function SimulatorConfig(props) {
                   style={{ marginBottom: 0 }}
                   name={'runSpeed1'}
                   initialValue={runSpeed['1']}
-                  label={formatMessage({ id: 'app.simulator.config.1Gear' })}
+                  label={formatMessage({ id: 'monitor.simulator.config.1Gear' })}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -395,7 +395,7 @@ export default function SimulatorConfig(props) {
                   style={{ marginBottom: 0 }}
                   name={'runSpeed2'}
                   initialValue={runSpeed['2']}
-                  label={formatMessage({ id: 'app.simulator.config.2Gear' })}
+                  label={formatMessage({ id: 'monitor.simulator.config.2Gear' })}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -407,7 +407,7 @@ export default function SimulatorConfig(props) {
                   style={{ marginBottom: 0 }}
                   name={'runSpeed3'}
                   initialValue={runSpeed['3']}
-                  label={formatMessage({ id: 'app.simulator.config.3Gear' })}
+                  label={formatMessage({ id: 'monitor.simulator.config.3Gear' })}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -419,7 +419,7 @@ export default function SimulatorConfig(props) {
                   style={{ marginBottom: 0 }}
                   name={'runSpeed4'}
                   initialValue={runSpeed['4']}
-                  label={formatMessage({ id: 'app.simulator.config.4Gear' })}
+                  label={formatMessage({ id: 'monitor.simulator.config.4Gear' })}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -431,7 +431,7 @@ export default function SimulatorConfig(props) {
                   style={{ marginBottom: 0 }}
                   name={'runSpeed5'}
                   initialValue={runSpeed['5']}
-                  label={formatMessage({ id: 'app.simulator.config.5Gear' })}
+                  label={formatMessage({ id: 'monitor.simulator.config.5Gear' })}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
@@ -443,7 +443,7 @@ export default function SimulatorConfig(props) {
                   style={{ marginBottom: 0 }}
                   name={'runSpeed6'}
                   initialValue={runSpeed['6']}
-                  label={formatMessage({ id: 'app.simulator.config.6Gear' })}
+                  label={formatMessage({ id: 'monitor.simulator.config.6Gear' })}
                 >
                   <Input suffix={'mm/s'} />
                 </Form.Item>
