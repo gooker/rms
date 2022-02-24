@@ -15,16 +15,18 @@ import {
 } from '@/services/monitor';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import SimulatorConfig from './SimulatorConfig';
+import SimulatorConfig from '../Modal/Simulator/SimulatorConfig';
+import AddSimulatorAgv from '../Modal/Simulator/AddSimulatorAgv';
+import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
+import SimulatorError from '../Modal/Simulator/SimulatorError';
 import { AGVType } from '@/config/config';
-import { isStrictNull, formatMessage, dateFormat, dealResponse } from '@/utils/util';
+import { formatMessage, dateFormat, dealResponse } from '@/utils/util';
 import styles from '../monitorLayout.module.less';
 
 const size = 'small';
 
 const SimulatorPanel = (props) => {
   const { height = 100, dispatch, simulatorConfig, simulatorAgvList, currentLogicArea } = props;
-  const [formVisible, setFormVisible] = useState(null);
   const [loading, setLoading] = useState(false);
   const [robotTypes, setRobotTypes] = useState([]); // 所有类型
   const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
@@ -40,6 +42,7 @@ const SimulatorPanel = (props) => {
   }, []);
 
   function init() {
+    setLoading(true);
     dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
     dispatch({ type: 'simulator/fetchSimulatorHistory' });
     fetchTrafficRobotType().then((res) => {
@@ -47,6 +50,7 @@ const SimulatorPanel = (props) => {
         setRobotTypes(res);
       }
     });
+    setLoading(false);
   }
 
   const columns = [
@@ -75,7 +79,7 @@ const SimulatorPanel = (props) => {
       },
     },
     {
-      title: formatMessage({ id: 'monitor.simulator.status' }),
+      title: formatMessage({ id: 'app.common.status' }),
       dataIndex: 'isOpen',
       align: 'center',
       width: '80',
@@ -106,7 +110,6 @@ const SimulatorPanel = (props) => {
   ];
 
   async function changeSimulatorStatus(status) {
-    setLoading(true);
     if (status) {
       const response = await openSimulator();
       if (dealResponse(response, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
@@ -120,7 +123,6 @@ const SimulatorPanel = (props) => {
     }
 
     init();
-    setLoading(false);
   }
 
   function changeAgvRunTask(robotId, checked) {
@@ -175,8 +177,22 @@ const SimulatorPanel = (props) => {
     }
   }
 
+  // 判断visible是不是有一个为true
+  function isExistVisbleDisplay() {
+    if (addVisit || addPodVisible || errorVisible) {
+      return true;
+    }
+    return false;
+  }
+
+  function closeVisible() {
+    setAddVisit(false);
+    setAddPodVisible(false);
+    setErrorVisible(false);
+  }
+
   return (
-    <div style={{ height, width: 300 }} className={classnames(styles.popoverPanel)}>
+    <div style={{ height, width: 330 }} className={classnames(styles.popoverPanel)}>
       {renderContent()}
 
       {/* 标题栏 */}
@@ -191,24 +207,48 @@ const SimulatorPanel = (props) => {
           borderBottom: '1px solid #6c6c6c',
         }}
       >
-        {formVisible ? (
-          <LeftOutlined
-            style={{ cursor: 'pointer', marginRight: 5 }}
-            onClick={() => {
-              setFormVisible(false);
-            }}
-          />
+        {isExistVisbleDisplay() ? (
+          <LeftOutlined style={{ cursor: 'pointer', marginRight: 5 }} onClick={closeVisible} />
         ) : null}
         <FormattedMessage id={'monitor.right.simulator'} />
-        {formVisible ? <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} /> : null}
+        {isExistVisbleDisplay() ? (
+          <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} />
+        ) : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>
-          {formVisible ? formatMessage({ id: 'app.button.update' }) : null}
+          {(addVisit || addPodVisible) && formatMessage({ id: 'app.button.add' })}
+          {errorVisible && formatMessage({ id: 'monitor.simulator.simulateAMRError' })}
         </span>
       </div>
 
       <div style={{ marginLeft: 6 }}>
-        {formVisible ? (
-          <>111</>
+        {addVisit || addPodVisible || errorVisible ? (
+          <div style={{ marginTop: 20 }}>
+            {addVisit && (
+              <AddSimulatorAgv
+                robotType={currentRobotType}
+                robotTypes={robotTypes}
+                submit={(value) => {
+                  dispatch({
+                    type: 'simulator/fetchAddSimulatorAgv',
+                    payload: { ...value },
+                  }).then(() => {
+                    dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+                    setAddVisit(false);
+                  });
+                }}
+                onCancel={setAddVisit}
+              />
+            )}
+            {addPodVisible && <ClearPodsAndBatchAdd dispatch={dispatch} />}
+            {errorVisible && (
+              <SimulatorError
+                dispatch={dispatch}
+                selectIds={selectedRowKeys}
+                logicId={currentLogicArea?.id}
+                onCancel={setErrorVisible}
+              />
+            )}
+          </div>
         ) : (
           <>
             {/* 模拟器开关  */}
@@ -219,8 +259,8 @@ const SimulatorPanel = (props) => {
                 </span>
                 <Switch
                   onChange={changeSimulatorStatus}
-                  loading={loading}
                   checked={simulatorConfig.openSimulator}
+                  loading={loading}
                   size={size}
                 />
               </span>
@@ -279,7 +319,7 @@ const SimulatorPanel = (props) => {
               <Button
                 size={size}
                 onClick={() => {
-                  setAddVisit(false);
+                  setAddVisit(true);
                 }}
               >
                 <FormattedMessage id="app.button.add" />

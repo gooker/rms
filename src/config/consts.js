@@ -237,3 +237,35 @@ export const EmergencyStopMode = [
   { label: 'editor.emergency.ImmediateStop', value: 'ImmediateStop' },
   { label: 'editor.emergency.LockPath', value: 'LockPath' },
 ];
+
+// 小车子类型
+export const AGVSubTypeMap = {
+  LatentLifting: [
+    {
+      label: 'monitor.simulator.subType.normal',
+      value: 'Normal',
+    },
+    {
+      label: 'monitor.simulator.subType.infrared',
+      value: 'Infrared',
+    },
+    {
+      label: 'monitor.simulator.subType.frock',
+      value: 'Frock',
+    },
+    {
+      label: 'monitor.simulator.subType.tote',
+      value: 'Tote',
+    },
+  ],
+  Tote: [
+    {
+      label: 'monitor.simulator.subType.normal',
+      value: 'Normal',
+    },
+    {
+      label: 'monitor.simulator.subType.infrared',
+      value: 'Infrared',
+    },
+  ],
+};

@@ -12,8 +12,11 @@ import {
   saveLatentAutomaticTaskConfig,
   fetchAutoReleasePod,
   autoCallLatentPodToWorkstation,
+  batchUpdateLatentPod,
+  fetchSetPod,
 } from '@/services/monitor';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
 export default {
   namespace: 'monitor',
@@ -411,5 +414,43 @@ export default {
         return false;
       }
     },
+
+     // 批量添加潜伏货架
+     *fetchDeletePodAndAddPod({ payload }, { call }) {
+      const sectionId = window.localStorage.getItem('sectionId');
+      const { podNumber, podLength, podWidth, batchAngle } = payload;
+
+      // 删除已有货架
+      const response = yield call(batchUpdateLatentPod, { ...payload,sectionId });
+      if (dealResponse(response)) {
+        return false;
+      }
+
+      // 请求新增货架
+      const currentLogicArea = getCurrentLogicAreaData('monitor');
+      const { storeCellIds } = currentLogicArea;
+      if (isNull(storeCellIds) || storeCellIds.length === 0) {
+        message.error(formatMessage({ id: 'monitor.models.storageArea' }));
+        return false;
+      }
+      const result = [];
+      for (let index = 0; index < storeCellIds.length; index++) {
+        if (index + 1 > podNumber) {
+          break;
+        }
+        const element = storeCellIds[index];
+        result.push({
+          sectionId,
+          length: podLength,
+          width: podWidth,
+          cellId: element,
+          angle: batchAngle,
+          podId: element,
+        });
+      }
+      const setPodResponse = yield call(fetchSetPod, result);
+      return !dealResponse(setPodResponse);
+    },
+
   },
 };

@@ -3,7 +3,7 @@ import { Form, Row, Col, Switch, Select, Button, message, Checkbox, InputNumber 
 import { CloseOutlined } from '@ant-design/icons';
 import { fetchCellLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
@@ -57,7 +57,7 @@ const PathLock = (props) => {
         payload: { lockTypes: showLockCell, robotIds: changedAgvList },
         then: (locked) => {
           if (!locked) {
-            message.error(formatMessage({ id: 'app.mapView.tip.fetchLockFail' }));
+            message.error(formatMessage({ id: 'monitor.tip.fetchLockFail' }));
             return;
           }
           mapRef.renderLockCell(locked);
@@ -95,7 +95,7 @@ const PathLock = (props) => {
         },
         then: (locked) => {
           if (!locked) {
-            message.error(formatMessage({ id: 'app.mapView.tip.fetchLockFail' }));
+            message.error(formatMessage({ id: 'monitor.tip.fetchLockFail' }));
             return;
           }
           mapRef.renderLockCell(locked);
@@ -112,12 +112,12 @@ const PathLock = (props) => {
     if (!isNull(cellId)) {
       const response = await fetchCellLocks(currentLogicAreaId, cellId);
       if (dealResponse(response)) {
-        message.error(formatMessage({ id: 'app.mapView.tip.fetchCellLockFail' }));
+        message.error(formatMessage({ id: 'monitor.tip.fetchCellLockFail' }));
       } else {
         mapRef.renderCellLocks(response);
       }
     } else {
-      message.error(formatMessage({ id: 'app.mapView.require.cell' }));
+      message.error(formatMessage({ id: 'monitor.view.cell.required' }));
     }
   }
 
@@ -138,7 +138,7 @@ const PathLock = (props) => {
   // 新增临时不可走点
   function addTemporaryLockedCells() {
     const temporaryCell = form.getFieldValue('temporaryCell');
-    if (temporaryCell != null) {
+    if (temporaryCell.length !== 0) {
       const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
       dispatch({
         type: 'monitor/fetchSaveTemporaryCell',
@@ -147,21 +147,21 @@ const PathLock = (props) => {
         },
       }).then(refreshTemporaryLockedCells);
     } else {
-      message.error(formatMessage({ id: 'app.mapView.require.temporaryBlock' }));
+      message.error(formatMessage({ id: 'monitor.view.temporaryBlock.required' }));
     }
   }
 
   // 删除临时不可走点
   const deleteTemporaryLockedCells = () => {
     const temporaryCell = form.getFieldValue('temporaryCell');
-    if (temporaryCell != null) {
+    if (temporaryCell.length !== 0) {
       const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
       dispatch({
         type: 'monitor/fetchDeleteTemporaryCell',
         payload: { temporaryCellList },
       }).then(refreshTemporaryLockedCells);
     } else {
-      message.error(formatMessage({ id: 'app.mapView.require.temporaryBlock' }));
+      message.error(formatMessage({ id: 'monitor.view.temporaryBlock.required' }));
     }
   };
 

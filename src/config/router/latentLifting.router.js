@@ -72,6 +72,7 @@ export default [
     hooks: ['dev'],
     icon: 'icon-dispatch',
     component: '/LatentLifting/TaskDispatch',
+    hideInMenu:true
   },
   {
     path: `/${AppCode.LatentLifting}/faultManagement`,

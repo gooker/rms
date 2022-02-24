@@ -80,6 +80,14 @@ export function formatMessage({ id }, values) {
   return '###';
 }
 
+export const htmlFormatMessage = ({ id }, values) => {
+  if (id) {
+    const content = intl.getHTML(id, values);
+    return content || id;
+  }
+  return '###';
+};
+
 export function getDomainNameByUrl(url) {
   let apis = JSON.parse(window.localStorage.getItem('nameSpacesInfo'));
   if (!isPlainObject(apis)) {
@@ -1135,4 +1143,21 @@ function flatMenuData(currentModuleRouter, result) {
       });
     }
   });
+}
+
+export function LatentSizeUpdaterValidator(_, value) {
+  if (isNull(value)) {
+    return Promise.reject(
+      new Error(formatMessage({ id: 'monitor.pod.podSize.required' })),
+    );
+  }
+  if (isStrictNull(value.width) || isStrictNull(value.height)) {
+    return Promise.reject(
+      new Error(formatMessage({ id: 'monitor.pod.podSize.incomplete' })),
+    );
+  }
+  if (parseInt(value.width, 10) <= 0 || parseInt(value.height, 10) <= 0) {
+    return Promise.reject(new Error(formatMessage({ id: 'monitor.pod.podSize.invalid' })));
+  }
+  return Promise.resolve();
 }
