@@ -1,8 +1,8 @@
+import XIHEPermission from './XIHE.permission';
+import LatentLiftingPermission from './latentLifting.permission';
+import TotePermission from './tote.permission';
 import SorterPermission from './sorter.permission';
 import I18NPermission from './i18n.permission';
-import XIHEPermission from './XIHE.permission';
-import TotePermission from './tote.permission';
-import LatentLiftingPermission from './latentLifting.permission';
 import { AppCode } from '@/config/config';
 
 export default {

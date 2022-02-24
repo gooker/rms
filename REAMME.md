@@ -22,6 +22,9 @@
 1. size-sensor
 2. bizCharts
 
+### 菜单hook
+> 渲染角色权限树时候用到
+
 ### extraConfig 设计
 
 ```json

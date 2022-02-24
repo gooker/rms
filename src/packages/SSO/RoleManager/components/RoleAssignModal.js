@@ -1,15 +1,14 @@
 import React, { Component } from 'react';
-import { Tabs, Tree, Empty, Button } from 'antd';
+import { Button, Empty, Tabs, Tree } from 'antd';
+import { difference, transform } from 'lodash';
 import { connect } from '@/utils/RmsDva';
+import { AppCode } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isStrictNull } from '@/utils/util';
-import { filterMenuData } from '@/utils/init';
-import { transform, difference } from 'lodash';
+import { generateMenuNodeLocaleKey, validateMenuNodePermission } from '@/utils/init';
+import { formatMessage } from '@/utils/util';
+import { generateTreeData, handlePermissions } from './assignUtils';
 import allModuleRouter from '@/config/router';
 import allModulePermission from '@/config/permission';
-import { filterPermission, showMenuLabel, handlePermissions } from './assignUtils';
-
-const { TreeNode } = Tree;
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -23,69 +22,63 @@ class RoleAssignModal extends Component {
   };
 
   componentDidMount() {
-    const allRoutersMap = { ...allModuleRouter };
-    const { role } = this.props;
+    const {
+      currentUser: { authorityKeys },
+    } = this.props;
 
-    const allRoutes = Object.keys(allRoutersMap).map((key) => {
-      const currentRoutes = allRoutersMap[key] || [];
+    const allRoutes = Object.keys(allModuleRouter).map((key) => {
+      const currentRoutes = allModuleRouter[key] || [];
       return { appCode: key, appMenu: currentRoutes };
     });
 
-    const allAuthorityData = allRoutes.map((appRoute) => {
-      // 处理menu
-      const { appMenu, appCode } = appRoute;
-      const labelAppMenu = showMenuLabel(appMenu);
-      const menuData = filterMenuData(labelAppMenu);
+    const allAuthorityData = allRoutes
+      .map((appRoute) => {
+        // 处理menu, 需要跳过SSO
+        const { appCode, appMenu } = appRoute;
+        if (appCode === AppCode.SSO) {
+          return null;
+        }
+        const menuData = generateMenuNodeLocaleKey(appMenu);
 
-      // 处理permission
-      const codePermission = filterPermission(allModulePermission[appCode]);
-      const codePermissionMap = transform(
-        codePermission,
-        (result, record) => {
-          const { page, children } = record;
-          result[page] = children;
-        },
-        {},
-      );
-
-      // 根据Authority
-      const authRoutes = this.filterAuthRoute(menuData, codePermissionMap) || [];
-      return {
-        appCode,
-        appMenu: [
-          {
-            key: `@@_${appCode}`, // TODO: 这里与filterAppByAuthorityKeys方法筛选授权的app对应 存在只勾选页面 但是不勾选其他节点树的情况 要优化下！
-            title: formatMessage({ id: 'app.module' }),
-            label: formatMessage({ id: 'app.module' }),
-            children: [...authRoutes],
+        // 处理自定义的权限数据
+        const codePermissionMap = transform(
+          allModulePermission[appCode],
+          (result, record) => {
+            const { page, children } = record;
+            result[page] = children;
           },
-        ],
-      };
-    });
+          {},
+        );
 
-    // 展示的树节点数据 sso不展示
-    const permissionList = allAuthorityData.filter(({ appCode }) => appCode !== 'sso');
+        // 将路由与自定义权限合并
+        const authRoutes = this.combineMenuAndPermission(menuData, codePermissionMap) || [];
+        return {
+          appCode,
+          appMenu: {
+            key: `@@_${appCode}`,
+            title: formatMessage({ id: 'app.module' }),
+            children: authRoutes.filter(Boolean),
+          },
+        };
+      })
+      .filter(Boolean);
 
     // 权限扁平化 每个父节点的value是下面所有的子集
     const permissionMap = transform(
-      permissionList,
+      allAuthorityData,
       (result, record) => {
         const { appCode, appMenu } = record;
         const temp = {};
         handlePermissions(appMenu, temp);
-        result[appCode] = {
-          ...temp,
-          moduleName: appCode,
-        };
+        result[appCode] = temp;
       },
       {},
     );
 
-    const authorityKeys = role?.authorityKeys || [];
     this.setState({
-      permissionList: permissionList,
-      permissionMap: permissionMap,
       activeKey: allAuthorityData[0].appCode,
+      permissionMap: permissionMap,
+      permissionList: allAuthorityData,
       checkedKeys: { checked: [...authorityKeys], halfChecked: [] },
     });
   }
@@ -94,62 +87,31 @@ class RoleAssignModal extends Component {
   getSubMenu = (item, codePermission) => {
     const { currentUser } = this.props;
     const adminType = currentUser.adminType || 'USER';
-    if (item.routes && !item.hideInMenu) {
-      return {
-        ...item,
-        key: item.path || item.name,
-        title: formatMessage({ id: `${item.label}` }),
-        children: this.filterAuthRoute(item.routes, codePermission),
-      };
-    } else {
-      if (
-        !isStrictNull(item.authority) &&
-        item.authority.length > 0 &&
-        item.authority.includes(adminType)
-      ) {
+
+    if (validateMenuNodePermission(item, adminType)) {
+      if (Array.isArray(item.routes)) {
         return {
           ...item,
-          children: codePermission && codePermission[item.path],
-          key: item.path || item.name,
+          key: item.path,
           title: formatMessage({ id: `${item.label}` }),
+          children: this.combineMenuAndPermission(item.routes, codePermission).filter(Boolean),
+        };
+      } else {
+        return {
+          ...item,
+          key: item.path,
+          title: formatMessage({ id: `${item.label}` }),
+          children: codePermission?.[item.path] || [],
         };
       }
     }
   };
 
-  filterAuthRoute = (menuData, codePermission) => {
+  combineMenuAndPermission = (menuData, codePermission) => {
     if (!menuData) {
       return [];
     }
-
-    const listArray = [];
-    // 因为如果 item.authority为空或者 item.authority 不包含adminType-那么返回undefined
-    menuData.map(
-      (item) =>
-        this.getSubMenu(item, codePermission) &&
-        listArray.push(this.getSubMenu(item, codePermission)),
-    );
-    return listArray;
-  };
-
-  //点击复选框触发
-  onCheck_ = (checkedKeysValue, { checked, halfCheckedKeys }) => {
-    const { activeKey, checkedKeys: oldKeys } = this.state;
-    let currentKeys = [];
-    if (checked) {
-      // checkedKeysValue拿到的是每次点击的tab的所有数据  所以如果oldKeys中存在的话 就不要放进去
-      checkedKeysValue.map((item) => {
-        if (!oldKeys.includes(item)) {
-          oldKeys.push(item);
-        }
-      });
-      currentKeys = [...oldKeys];
-    } else {
-      // 需注意: 理论上来说 每个appcode都是该模块的 其他模块不会有存在该appcode
-      currentKeys = oldKeys.filter((item) => item.indexOf(`/${activeKey}`));
-      currentKeys.push(...checkedKeysValue);
-    }
-    this.setState({ checkedKeys: [...currentKeys] });
+    return menuData.map((item) => this.getSubMenu(item, codePermission));
   };
 
   hasParentNode = (node, permissionsMap) => {
@@ -170,7 +132,7 @@ class RoleAssignModal extends Component {
   onCheck = (checkedKeys, { checked }) => {
     const { permissionMap, activeKey, checkedKeys: oldCheckedKeys } = this.state;
     const permissions = permissionMap[activeKey];
-    let diffKey = null;
+    let diffKey;
     if (checked) {
       //当前点击的节点
       diffKey = difference(checkedKeys.checked, oldCheckedKeys.checked || [])[0];
@@ -215,44 +177,24 @@ class RoleAssignModal extends Component {
     }
   };
 
-  //渲染树节点
-  renderTreeNodes = (data) => {
-    return (
-      data &&
-      data.map((item) => {
-        if (!item) return;
-        if (item && item.children) {
-          return (
-            <TreeNode title={<FormattedMessage id={item.label} />} key={item.key} dataRef={item}>
-              {this.renderTreeNodes(item.children)}
-            </TreeNode>
-          );
-        }
-        return <TreeNode key={item.key} title={<FormattedMessage id={item.label} />} />;
-      })
-    );
-  };
-
   render() {
     const { activeKey, permissionList, checkedKeys } = this.state;
-    const { submitAuthKeys } = this.props;
+    const { submitAuthKeys, currentUser } = this.props;
+    const adminType = currentUser.adminType || 'USER';
     return (
       <div>
         <Tabs
           activeKey={activeKey}
-          onChange={(key) => {
-            this.setState({
-              activeKey: key,
-            });
-          }}
           style={{ marginBottom: 50 }}
+          onChange={(key) => {
+            this.setState({ activeKey: key });
+          }}
         >
-          {permissionList.map((permission, index) => {
-            // 防止Tab不显示名称
-            const key = permission.appCode;
+          {permissionList.map(({ appCode, appMenu }, index) => {
+            const treeData = generateTreeData(appMenu, adminType);
             return (
-              <Tabs.TabPane key={key} tab={formatMessage({ id: `app.module.${key}` })}>
-                {permission?.appMenu.length !== 0 ? (
+              <Tabs.TabPane key={appCode} tab={formatMessage({ id: `app.module.${appCode}` })}>
+                {appMenu.length !== 0 ? (
                   <Tree
                     checkable
                     checkStrictly
@@ -260,9 +202,8 @@ class RoleAssignModal extends Component {
                     autoExpandParent
                     onCheck={this.onCheck}
                     checkedKeys={checkedKeys}
-                  >
-                    {this.renderTreeNodes(permission.appMenu)}
-                  </Tree>
+                    treeData={[treeData]}
+                  />
                 ) : (
                   <Empty />
                 )}

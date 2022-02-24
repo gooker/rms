@@ -84,32 +84,34 @@ const AppMenu = (prop) => {
   }
 
   // 渲染菜单
-  function renderMenu(routes, localeKey) {
-    return routes.map(({ name, icon, path, routes }) => {
-      const subLocaleKey = `${localeKey}.${name}`;
-      if (Array.isArray(routes)) {
-        return (
-          <SubMenu
-            key={path}
-            title={formatMessage({ id: subLocaleKey })}
-            icon={icon ? <span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span> : null}
-          >
-            {renderMenu(routes, subLocaleKey)}
-          </SubMenu>
-        );
-      } else {
-        return (
-          <Menu.Item
-            key={path}
-            icon={icon ? <span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span> : null}
-          >
-            <Link to={path}>
-              <FormattedMessage id={subLocaleKey} />
-            </Link>
-          </Menu.Item>
-        );
-      }
-    });
+  function renderMenu(routes) {
+    return routes
+      .map(({ icon, path, routes, locale, hideInMenu }) => {
+        if (hideInMenu) return null;
+        if (Array.isArray(routes)) {
+          return (
+            <SubMenu
+              key={path}
+              title={formatMessage({ id: locale })}
+              icon={icon ? <span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span> : null}
+            >
+              {renderMenu(routes)}
+            </SubMenu>
+          );
+        } else {
+          return (
+            <Menu.Item
+              key={path}
+              icon={icon ? <span className={commonStyles.menuIcon}>{MenuIcon[icon]}</span> : null}
+            >
+              <Link to={path}>
+                <FormattedMessage id={locale} />
+              </Link>
+            </Menu.Item>
+          );
+        }
+      })
+      .filter(Boolean);
   }
 
   return (
@@ -125,7 +127,7 @@ const AppMenu = (prop) => {
           onSelect={onSelectMenuItem}
           style={{ width: '100%' }}
         >
-          {renderMenu(currentModuleMenu, 'menu')}
+          {renderMenu(currentModuleMenu)}
         </Menu>
       </div>
     </div>

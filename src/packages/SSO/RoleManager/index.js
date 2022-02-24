@@ -19,6 +19,7 @@ import {
   fetchDeleteRoleById,
   saveRoleAssignAuthority,
 } from '@/services/SSO';
+import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWidthPages from '@/components/TableWidthPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
@@ -27,7 +28,6 @@ import UploadPanel from '@/components/UploadPanel';
 import RmsConfirm from '@/components/RmsConfirm';
 import { IconFont } from '@/components/IconFont';
 import commonStyles from '@/common.module.less';
-import TablePageWrapper from '@/components/TablePageWrapper';
 
 export default class index extends Component {
   state = {
@@ -269,7 +269,7 @@ export default class index extends Component {
           visible={authAssignVisible}
           style={{ overflow: 'auto' }}
         >
-          <RoleAssignModal role={roleList[0]} submitAuthKeys={this.submitAuthKeys} />
+          <RoleAssignModal submitAuthKeys={this.submitAuthKeys} />
         </Drawer>
 
         {/**角色导入***/}

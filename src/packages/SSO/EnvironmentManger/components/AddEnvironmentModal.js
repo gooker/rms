@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
-import { Form, Row, Col, Input, Radio, Select, Button } from 'antd';
+import { Form, Input, Radio, Select, Button, Col, Row } from 'antd';
+import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isStrictNull } from '@/utils/util';
 import DynamicForm from '@/components/DynamicForm/Index';
 import { ApiNameSpace } from '@/config/config';
+import MenuIcon from '@/utils/MenuIcon';
+import { PlusOutlined } from '@ant-design/icons';
+
 const { DynamicFormCol } = DynamicForm;
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
+
 class AddEnvironmentModal extends Component {
   formRef = React.createRef();
+
   state = {
     updateInfos: [],
   };
@@ -26,25 +32,6 @@ class AddEnvironmentModal extends Component {
     }
   }
 
-  validatoAdditionalInfosr = (rule, values) => {
-    if (values) {
-      const additionalInfos = [];
-      for (let index = 0; index < values.length; index++) {
-        const element = values[index];
-        if (isStrictNull(element.key) && isStrictNull(element.value)) {
-          //  callback(formatMessage({ id: 'environmentManager.tip.formNotComplete' }));
-          return false;
-        }
-        additionalInfos.push({
-          key: element.key,
-          value: element.value,
-        });
-      }
-      return Promise.resolve();
-    }
-    return Promise.resolve();
-  };
-
   submit = () => {
     const { validateFields } = this.formRef.current;
     const { onSubmit } = this.props;
@@ -59,74 +46,99 @@ class AddEnvironmentModal extends Component {
     const { updateRow } = this.props;
     return (
       <div>
-        <Form ref={this.formRef}>
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item
-                label={<FormattedMessage id="environmentManager.envName" />}
-                name="envName"
-                rules={[
-                  {
-                    required: true,
-                    message: formatMessage({ id: 'environmentManager.require.envName' }),
-                  },
-                ]}
-              >
-                <Input
-                  placeholder={formatMessage({
-                    id: 'environmentManager.require.envName',
-                  })}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label={<FormattedMessage id="environmentManager.isDefault" />}
-                name="flag"
-                rules={[{ required: true }]}
-              >
-                <Radio.Group>
-                  <Radio value="0">
-                    <FormattedMessage id="app.common.false" />
-                  </Radio>
-                  <Radio value="1">
-                    <FormattedMessage id="app.common.true" />
-                  </Radio>
-                </Radio.Group>
-              </Form.Item>
-            </Col>
-            <Col span={24}>
-              <Form.Item
-                label={<FormattedMessage id="environmentManager.extraInfo" />}
-                name="additionalInfos"
-                rules={[{ validator: this.validatoAdditionalInfosr }]}
-                initialValue={updateRow ? updateRow[0].additionalInfos : []}
-              >
-                <DynamicForm>
-                  <DynamicFormCol field="key" col={{ span: 9 }}>
-                    <Select
-                      placeholder={formatMessage({
-                        id: 'environmentManager.require.key',
-                      })}
-                    >
-                      {ApiNameSpace.map((item) => (
-                        <Select.Option key={item} value={item}>
-                          {item}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </DynamicFormCol>
-                  <DynamicFormCol field="value" col={{ span: 11, offset: 1 }}>
-                    <Input
-                      placeholder={formatMessage({
-                        id: 'environmentManager.require.value',
-                      })}
-                    />
-                  </DynamicFormCol>
-                </DynamicForm>
-              </Form.Item>
-            </Col>
-          </Row>
+        <Form ref={this.formRef} {...formItemLayout}>
+          <Form.Item
+            label={<FormattedMessage id="environmentManager.envName" />}
+            name="envName"
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label={<FormattedMessage id="environmentManager.isDefault" />}
+            name="flag"
+            rules={[{ required: true }]}
+          >
+            <Radio.Group>
+              <Radio value="0">
+                <FormattedMessage id="app.common.false" />
+              </Radio>
+              <Radio value="1">
+                <FormattedMessage id="app.common.true" />
+              </Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.List
+            name={'additionalInfos'}
+            initialValue={updateRow ? updateRow[0].additionalInfos : [{ key: null, value: null }]}
+          >
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                    label={index === 0 ? <FormattedMessage id="environmentManager.apis" /> : ''}
+                    required={true}
+                    key={field.key}
+                  >
+                    <Row gutter={10}>
+                      <Col span={10}>
+                        <Form.Item
+                          noStyle
+                          {...field}
+                          name={[field.name, 'key']}
+                          label={formatMessage({ id: 'app.configInfo.header.moduleName' })}
+                          rules={[{ required: true }]}
+                        >
+                          <Select
+                            placeholder={formatMessage({
+                              id: 'environmentManager.module.required',
+                            })}
+                          >
+                            {ApiNameSpace.map((item) => (
+                              <Select.Option key={item} value={item}>
+                                {item}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                      <Col span={10}>
+                        <Form.Item
+                          noStyle
+                          {...field}
+                          name={[field.name, 'value']}
+                          label={formatMessage({ id: 'app.configInfo.header.moduleURL' })}
+                          rules={[{ required: true }, { type: 'url' }]}
+                        >
+                          <Input
+                            placeholder={formatMessage({
+                              id: 'environmentManager.url.required',
+                            })}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={4} style={{ textAlign: 'center' }}>
+                        {fields.length > 1 ? (
+                          <Button
+                            type="danger"
+                            icon={MenuIcon.delete}
+                            onClick={() => remove(field.name)}
+                          />
+                        ) : null}
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                ))}
+                <Form.Item {...formItemLayoutNoLabel}>
+                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                    <PlusOutlined />
+                  </Button>
+                  <Form.ErrorList errors={errors} />
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
         </Form>
         <div
           style={{
