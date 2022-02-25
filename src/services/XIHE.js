@@ -159,6 +159,22 @@ export async function getToteTaskRealtimeState(type) {
   });
 }
 
+// 更新货架位置
+export async function updateLatentPodPosition(payload) {
+  return request(`/${NameSpace.LatentLifting}/pod/updatePodCellId`, {
+    method: 'POST',
+    data: payload,
+  });
+}
+
+// 更新货架尺寸
+export async function updateLatentPodSize(payload) {
+  return request(`/${NameSpace.LatentLifting}/pod/updatePodSize`, {
+    method: 'POST',
+    data: payload,
+  });
+}
+
 //////////////////////////**** 地图锁相关 ****//////////////////////////
 export async function fetchMapAGVLocks(logicId, lockTypes, robotIds) {
   return request(

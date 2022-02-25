@@ -234,3 +234,55 @@ export const ViewCategoryTools = [
     value: 'heatHeat',
   },
 ];
+
+// 急停区二级
+export const EmergencyCategoryTools = [
+  {
+    label: <FormattedMessage id={'monitor.emergency.drag'} />,
+    value: 'dragEmergency',
+    icon: 'emergency_category.svg',
+    style: { width: '33px', height: 'auto' },
+  },
+  {
+    label: <FormattedMessage id={'monitor.emergency.operation'} />,
+    value: 'operateEmergency',
+    icon: 'emergency_category.svg',
+    style: { width: '33px', height: 'auto' },
+  },
+
+  {
+    label: <FormattedMessage id={'monitor.emergency.temporaryBlock'} />,
+    value: 'temporaryBlock',
+    icon: 'temporary.png',
+    style: { width: '33px', height: 'auto' },
+  },
+];
+
+// 资源二级
+export const ResourceCategoryTools = [
+  {
+    label: <FormattedMessage id={'app.map.station'} />,
+    value: 'station',
+    icon: 'workStationTask_category.png',
+    style: { width: '33px', height: 'auto' },
+  },
+  {
+    label: <FormattedMessage id={'menu.sourceManage.latentPod'} />,
+    value: 'setLatentPod',
+    icon: 'latentPod.png',
+    style: { width: '33px', height: 'auto' },
+  },
+
+  {
+    label: <FormattedMessage id={'monitor.view.toteRack'} />,
+    value: 'setTotePod',
+    icon: 'totePod.png',
+    style: { width: '33px', height: 'auto' },
+  },
+  {
+    label: <FormattedMessage id={'app.map.charger'} />,
+    value: 'chargingPile',
+    icon: 'charge_category.png',
+    style: { width: '33px', height: 'auto' },
+  },
+];

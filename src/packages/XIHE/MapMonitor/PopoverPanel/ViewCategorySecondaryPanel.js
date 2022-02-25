@@ -1,10 +1,40 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
-import { ViewCategoryTools } from '../enums';
+import {
+  Category,
+  EmergencyCategoryTools,
+  ViewCategoryTools,
+  ResourceCategoryTools,
+} from '../enums';
 import styles from '../monitorLayout.module.less';
 
+const defaultTop = 95;
+
 const ViewCategorySecondaryPanel = (props) => {
-  const { dispatch, height } = props;
+  const { dispatch, height, offsetTop, type } = props;
+  const [categoryTools, setCategoryTools] = useState([]);
+  const [top, setTop] = useState(5);
+
+  useEffect(() => {
+    let _top = 5;
+    if (offsetTop) {
+      _top = offsetTop - defaultTop - height / 2;
+      if (_top < 5) {
+        _top = 5;
+      }
+    }
+    setTop(_top);
+
+    if (type === Category.View) {
+      setCategoryTools(ViewCategoryTools);
+    }
+    if (type === Category.Emergency) {
+      setCategoryTools(EmergencyCategoryTools);
+    }
+    if (type === Category.Resource) {
+      setCategoryTools(ResourceCategoryTools);
+    }
+  }, [height, offsetTop, type]);
 
   function renderIcon(icon, style) {
     if (typeof icon === 'string') {
@@ -19,21 +49,23 @@ const ViewCategorySecondaryPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 60, top: 80 }} className={styles.popoverPanel}>
-      {ViewCategoryTools.map(({ label, icon, value, style, module }) => {
-        return (
-          <Tooltip key={value} placement="left" title={label}>
-            <div
-              role={'category'}
-              onClick={() => {
-                onClick(value);
-              }}
-            >
-              {renderIcon(icon, style)}
-            </div>
-          </Tooltip>
-        );
-      }).filter(Boolean)}
+    <div style={{ height, width: 60, top: top }} className={styles.popoverPanel}>
+      {categoryTools
+        .map(({ label, icon, value, style }) => {
+          return (
+            <Tooltip key={value} placement="left" title={label}>
+              <div
+                role={'category'}
+                onClick={() => {
+                  onClick(value);
+                }}
+              >
+                {renderIcon(icon, style)}
+              </div>
+            </Tooltip>
+          );
+        })
+        .filter(Boolean)}
     </div>
   );
 };
