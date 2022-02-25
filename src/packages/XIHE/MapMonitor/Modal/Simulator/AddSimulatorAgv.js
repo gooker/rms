@@ -1,7 +1,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Form, Button, Row, Col, Checkbox, Select, Divider, InputNumber, message } from 'antd';
-import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { addSimulationAgvs } from '@/services/monitor';
 import FormattedMessage from '@/components/FormattedMessage';

@@ -137,7 +137,6 @@ export default {
   'monitor.tracking.trackAMR.untrack': '取消追踪',
   'monitor.tracking.require.trackAMR': '请选择需要追踪的小车',
 
-
   'monitor.simulator.config.title': '模拟车配置',
   'monitor.simulator.config.consumePowerSpeed': '耗电速度',
   'monitor.simulator.config.actionConsumePowerSpeed': '执行任务时耗电',
@@ -177,6 +176,13 @@ export default {
 
   'monitor.operation.podProps': 'POD属性', //@
   'monitor.operation.batchAdd': '批量添加',
+  'monitor.operation.setLatentPodSuccessfully': '设置货架命令下发完成',
+  'monitor.operation.removeLatentPodSuccessfully': '移除货架命令下发完成',
+  'monitor.operation.setupPod': '设置货架',
+  'monitor.operation.movePod': '移动货架',
+  'monitor.operation.resizePod': '修改货架尺寸',
+  'monitor.operation.set': '设置',
+
 
   'monitor.models.storageArea': '当前逻辑区没有存储区',
   'monitor.operation.commandSendSuccessfully': '{type}命令下发成功',
@@ -193,4 +199,8 @@ export default {
 
   'monitor.simulator.errorCode': '错误代码',
   'monitor.simulator.errorCode.success': '模拟错误成功',
+
+  'monitor.emergency.temporaryBlock': '临时不可走',
+  'monitor.emergency.operation': '急停区操作',
+  'monitor.emergency.drag': '拖拽急停区',
 };

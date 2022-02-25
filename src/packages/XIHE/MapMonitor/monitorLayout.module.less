@@ -14,6 +14,7 @@
   width: 60px;
   overflow: auto;
   background: #051c28;
+  user-select: none;
 
   & > div[role='category'] {
     .flexCenter();
@@ -256,8 +257,14 @@
       .ant-collapse();
       border: 1px solid rgba(255, 255, 255, 0.04);
     }
+    .ant-divider{
+      .ant-divider();
+    }
 
     .ant-collapse .ant-collapse-item .ant-collapse-header {
+      color: #fff;
+    }
+    .ant-tabs-tab{
       color: #fff;
     }
   }

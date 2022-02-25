@@ -4,7 +4,13 @@ import { throttle } from 'lodash';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { AGVType } from '@/config/config';
-import { Category, MonitorRightTools } from '../enums';
+import {
+  Category,
+  MonitorRightTools,
+  EmergencyCategoryTools,
+  ViewCategoryTools,
+  ResourceCategoryTools,
+} from '../enums';
 import ElementProp from '../PopoverPanel/ElementProp';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
@@ -15,6 +21,7 @@ const MonitorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
 
   const [height, setHeight] = useState(0);
+  const [offsetTop, setOffsetTop] = useState(0);
 
   useEffect(() => {
     const htmlDOM = document.getElementById('monitorPixi');
@@ -69,9 +76,37 @@ const MonitorBodyRight = (props) => {
           <AgvCategorySecondaryPanel agvType={AGVType.Sorter} dispatch={dispatch} height={350} />
         );
       case Category.View:
-        return <ViewCategorySecondaryPanel dispatch={dispatch} height={350} />;
+        return (
+          <ViewCategorySecondaryPanel
+            type={Category.View}
+            categoryTools={ViewCategoryTools}
+            dispatch={dispatch}
+            height={350}
+            offsetTop={offsetTop}
+          />
+        );
       case Category.Simulator:
         return <SimulatorPanel dispatch={dispatch} height={height - 10} />;
+      case Category.Emergency:
+        return (
+          <ViewCategorySecondaryPanel
+          type={Category.Emergency}
+            categoryTools={EmergencyCategoryTools}
+            dispatch={dispatch}
+            height={170}
+            offsetTop={offsetTop}
+          />
+        );
+      case Category.Resource:
+        return (
+          <ViewCategorySecondaryPanel
+          type={Category.Resource}
+            categoryTools={ResourceCategoryTools}
+            dispatch={dispatch}
+            height={210}
+            offsetTop={offsetTop + 20}
+          />
+        );
       default:
         return null;
     }
@@ -85,7 +120,9 @@ const MonitorBodyRight = (props) => {
             <div
               role={'category'}
               className={categoryPanel === value ? styles.categoryActive : undefined}
-              onClick={() => {
+              onClick={(e) => {
+                const { top } = e?.target?.getBoundingClientRect();
+                setOffsetTop(top);
                 if (value !== Category.Prop || categoryPanel === Category.Prop) {
                   updateEditPanelFlag(value);
                 }

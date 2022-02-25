@@ -220,7 +220,7 @@ const SimulatorPanel = (props) => {
         </span>
       </div>
 
-      <div style={{ marginLeft: 6 }}>
+      <div style={{ marginLeft: 6,overflow:'auto' }}>
         {addVisit || addPodVisible || errorVisible ? (
           <div style={{ marginTop: 20 }}>
             {addVisit && (
