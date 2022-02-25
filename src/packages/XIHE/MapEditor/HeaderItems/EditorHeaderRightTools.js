@@ -7,6 +7,7 @@ import {
   FullscreenOutlined,
   AimOutlined,
   FullscreenExitOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
@@ -34,8 +35,20 @@ const EditorHeaderRightTools = (props) => {
     dispatch({ type: 'global/changeInnerFullScreen', payload });
   }
 
+  function reloadMap() {
+    dispatch({ type: 'editor/reloadMap' });
+  }
+
   return (
     <>
+      {/* 重载地图 */}
+      <Tooltip title={formatMessage({ id: 'monitor.reload' })}>
+        <span style={{ cursor: 'pointer' }}>
+          <ReloadOutlined onClick={reloadMap} />
+        </span>
+      </Tooltip>
+      <Divider type="vertical" />
+
       {/* 地图全屏 */}
       <Tooltip title={formatMessage({ id: 'app.common.fullScreen' })}>
         <span style={{ cursor: 'pointer' }}>

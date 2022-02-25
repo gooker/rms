@@ -84,44 +84,11 @@ export default class BaseMap extends React.Component {
     }
   };
 
-  centerView = (cells) => {
-    if (cells && Object.keys(cells).length > 0) {
-      // Sort all points x & y
-      const uniqueXs = uniq(
-        Object.keys(cells)
-          .map((id) => cells[id])
-          .map((cell) => cell.x),
-      );
-      const Xs = sortBy(uniqueXs, (x) => x);
-
-      const uniqueYs = uniq(
-        Object.keys(cells)
-          .map((id) => cells[id])
-          .map((cell) => cell.y),
-      );
-      const Ys = sortBy(uniqueYs, (y) => y);
-
-      // Get Min and Max
-      const minX = Xs[0];
-      const minY = Ys[0];
-      const maxX = Xs[Xs.length - 1];
-      const maxY = Ys[Ys.length - 1];
-
-      // Map elements Area
-      const elementsWidth = maxX - minX + CellSize.width;
-      const elementsHeight = maxY - minY + CellSize.height;
-
-      const worldWidth = elementsWidth * WorldScreenRatio;
-      const worldHeight = elementsHeight * WorldScreenRatio;
-
-      this.pixiUtils.viewport.worldWidth = worldWidth;
-      this.pixiUtils.viewport.worldHeight = worldHeight;
-      this.pixiUtils.viewport.fitWorld(false);
-
-      this.pixiUtils.viewport.moveCenter(minX + elementsWidth / 2, minY + elementsHeight / 2);
-
-      return { worldWidth, worldHeight };
-    }
+  centerView = () => {
+    const { viewport } = this.pixiUtils;
+    viewport.fit(true, viewport.worldWidth * 1.1, viewport.worldHeight * 1.1);
+    viewport.moveCenter(viewport.worldWidth / 2, viewport.worldHeight / 2);
+    this.refresh();
   };
 
   // 清空 Stage 所有元素

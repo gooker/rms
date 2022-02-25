@@ -4,7 +4,7 @@ import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${window.localStorage.getItem('Authorization')}`;
+  config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('Authorization')}`;
   config.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (config.attachSection && isNull(config.headers.sectionId)) {
     config.headers.sectionId = window.localStorage.getItem('sectionId');
@@ -18,7 +18,7 @@ axios.interceptors.response.use((response) => {
   const { data, headers } = response;
   const timeZone = headers['time-zone'];
   if (timeZone) {
-    sessionStorage.setItem('timeZone', timeZone);
+    window.localStorage.setItem('serverTimeZone', timeZone);
   }
 
   // 如果是文件流就执行下载

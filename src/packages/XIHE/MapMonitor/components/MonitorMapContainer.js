@@ -35,6 +35,7 @@ const MonitorMapContainer = (props) => {
       renderMap();
       renderLogicArea();
       renderRouteMap();
+      mapContext.centerView();
       dispatch({ type: 'monitor/saveMapRendered', payload: true });
     }
   }, [currentMap, currentLogicArea, mapContext]);
@@ -76,9 +77,6 @@ const MonitorMapContainer = (props) => {
       const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
       mapContext.renderElevator(logicElevator || []);
     }
-
-    mapContext.centerView(cellsToRender);
-    mapContext.refresh();
   }
 
   function renderLogicArea() {

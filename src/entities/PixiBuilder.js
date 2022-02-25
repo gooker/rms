@@ -3,10 +3,8 @@ import { Viewport } from 'pixi-viewport';
 import { Simple } from 'pixi-cull';
 // import Simple from '@/libs/SimpleCull';
 
-window.PIXI = PIXI;
-
 export default class PixiBuilder {
-  constructor(width, height, htmlDOM, draggable = true) {
+  constructor(width, height, htmlDOM) {
     this.width = width;
     this.height = height;
 
@@ -31,13 +29,8 @@ export default class PixiBuilder {
       divWheel: htmlDOM,
       interaction: this.renderer.plugins.interaction,
     });
-    this.viewport
-      .drag({ pressDrag: draggable })
-      .pinch()
-      .wheel()
-      .decelerate()
-      .clampZoom({ minScale: 0.001, maxScale: 0.5 });
     this.viewport.sortableChildren = true;
+    this.viewport.drag().pinch().wheel().decelerate();
 
     // 创建cull组件
     this.cull = new Simple();
@@ -47,11 +40,10 @@ export default class PixiBuilder {
     // 渲染标记
     this.isNeedRender = true;
     this.ticker = PIXI.Ticker.shared;
-    this.ticker.maxFPS = 15;
+    this.ticker.maxFPS = 20;
     this.ticker.add(() => {
       if (this.isNeedRender || this.viewport.dirty) {
         if (this.viewport.dirty) {
-          // 重新计算cull边界
           this.cull.cull(this.viewport.getVisibleBounds());
         }
         this.isNeedRender = false;

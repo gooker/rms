@@ -97,9 +97,7 @@ const EditorState = {
 export default {
   namespace: 'editor',
 
-  state: {
-    ...EditorState,
-  },
+  state: { ...EditorState },
 
   reducers: {
     unmount(state) {
@@ -336,6 +334,15 @@ export default {
       yield put({ type: 'saveVisit', payload: visible });
     },
 
+    *reloadMap(_, { select, call, put }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      if (isNull(currentMap)) {
+        message.warn(formatMessage({ id: 'editor.selectMap.required' }));
+      } else {
+        const _currentMap = yield call(fetchMapDetail, currentMap.id);
+        yield put({ type: 'saveCurrentMapOnly', payload: addTemporaryId(_currentMap) });
+      }
+    },
     // ********************************* 地图操作 ********************************* //
     // 创建地图
     *fetchCreateMap({ payload }, { put, call, select }) {

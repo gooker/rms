@@ -21,7 +21,7 @@ export default class LineArrow extends PIXI.Container {
     this.$angle = props.lineAngle;
     this.dir = getDirByAngle(props.lineAngle);
 
-    this.refresh = props.refresh; // 单选
+    this.refresh = props.refresh; // 刷新
     this.select = props.select; // 单选
     this.ctrlSelect = props.ctrlSelect; // 批量选
 

@@ -19,13 +19,7 @@ const BatchAddCells = (props) => {
       payload: { ...value, addWay },
     }).then(({ centerMap, additionalCells }) => {
       mapContext.updateCells({ type: 'add', payload: additionalCells });
-      if (centerMap) {
-        const cellMap = {};
-        additionalCells.forEach((item) => {
-          cellMap[item.id] = item;
-        });
-        mapContext.centerView(cellMap);
-      }
+      centerMap && mapContext.centerView();
     });
   }
 
