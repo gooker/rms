@@ -8,7 +8,7 @@ import {
   convertMenuData2RouteData,
   extractNameSpaceInfoFromEnvs,
 } from '@/utils/util';
-import { filterAppByAuthorityKeys, convertAllMenu } from '@/utils/init';
+import { convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
@@ -30,7 +30,6 @@ export default {
 
     // 基础信息
     grantedAPP: [],
-    subModules: [],
     currentApp: null,
 
     // 国际化
@@ -100,13 +99,6 @@ export default {
       return {
         ...state,
         isInnerFullscreen: payload,
-      };
-    },
-
-    saveAllAppModules(state, { payload }) {
-      return {
-        ...state,
-        subModules: payload,
       };
     },
 
@@ -216,7 +208,7 @@ export default {
         }
       }
 
-      // 将所有模块的路由数据转换成框架可用的菜单数据格式
+      // 权限数据重新组装
       const permissionMap = {};
       const authorityKeys = currentUser?.authorityKeys ?? [];
       for (let index = 0; index < authorityKeys.length; index++) {
@@ -224,17 +216,15 @@ export default {
       }
 
       // 筛选授权的APP
-      let grantedAPP;
-      if (currentUser.username === 'admin') {
-        grantedAPP = [AppCode.SSO];
-      } else {
-        const subModules = Object.keys(allModuleRouter);
-        grantedAPP = filterAppByAuthorityKeys(subModules, authorityKeys);
+      let grantedAPP = [AppCode.SSO];
+      if (currentUser.username !== 'admin') {
+        // 约定: authorityKeys 中以 @@_ 开头的key就代表某个模块
+        const startsBase = '@@_';
+        const additionalApp = authorityKeys
+          .filter((item) => item.startsWith(startsBase))
+          .map((item) => item.replace(startsBase, ''));
+        grantedAPP.push(...additionalApp);
       }
-      const allAppModulesMap = {};
-      grantedAPP.forEach((module) => {
-        allAppModulesMap[module] = module;
-      });
 
       // 根据grantedApp对allAppModulesRoutesMap进行第一次权限筛选
       const allModuleMenuData = {};
@@ -245,7 +235,6 @@ export default {
       });
       const { allModuleFormattedMenuData, routeLocaleKeyMap } = convertAllMenu(
         adminType,
-        allAppModulesMap,
         allModuleMenuData,
         permissionMap,
       );
@@ -256,7 +245,6 @@ export default {
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
       yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
       yield put({ type: 'saveGrantedAPx', payload: grantedAPP }); // 所有授权的APP
-      yield put({ type: 'saveAllAppModules', payload: allAppModulesMap }); // 所有子应用信息
 
       // 保存菜单相关
       yield put({ type: 'menu/saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据

@@ -2,37 +2,27 @@ import intl from 'react-intl-universal';
 import { dealResponse, isStrictNull } from '@/utils/util';
 import { AppCode } from '@/config/config';
 
-export function convertRoute2Menu(data, parentAuthority, parentName) {
+export function generateMenuNodeLocaleKey(data, parentName) {
   return data
     .map((item) => {
       if (!item.name) {
         return null;
       }
+
       let locale;
-      if (parentName) {
+      if (!isStrictNull(parentName)) {
         locale = `${parentName}.${item.name}`;
       } else {
         locale = `menu.${item.name}`;
       }
 
-      const result = {
-        ...item,
-        locale,
-      };
+      const result = { ...item, locale };
       if (item.routes) {
-        result.routes = convertRoute2Menu(item.routes, item.authority, locale);
+        result.routes = generateMenuNodeLocaleKey(item.routes, locale);
       }
       return result;
     })
     .filter(Boolean);
-}
-
-export function getSubMenu(item) {
-  if (item.routes && !item.hideInMenu && item.routes.some((child) => child.name)) {
-    // eslint-disable-next-line no-use-before-define
-    return { ...item, routes: filterMenuData(item.routes) };
-  }
-  return item;
 }
 
 export function filterMenuData(menuData) {
@@ -42,22 +32,28 @@ export function filterMenuData(menuData) {
   return menuData.filter((item) => item.name && !item.hideInMenu).map((item) => getSubMenu(item));
 }
 
-export function checkPermission(router, permissionMap, appCode, nameSpace) {
+export function getSubMenu(item) {
+  if (item.routes && !item.hideInMenu && item.routes.some((child) => child.name)) {
+    return { ...item, routes: filterMenuData(item.routes) };
+  }
+  return item;
+}
+
+export function checkPermission(router, permissionMap, appCode) {
   const result = [];
   for (let i = 0; i < router.length; i++) {
     const routerElement = router[i];
-    // @调试
     // SSO菜单不参与权限控制
-    // if (routerElement.path && appCode !== AppCode.SSO) {
-    //   let authKey = null;
-    //   authKey = routerElement.path;
-    //   if (isStrictNull(routerElement.hook) && !permissionMap[authKey]) {
-    //     continue;
-    //   }
-    // }
+    if (routerElement.path && appCode !== AppCode.SSO) {
+      let authKey = null;
+      authKey = routerElement.path;
+      if (isStrictNull(routerElement.hook) && !permissionMap[authKey]) {
+        continue;
+      }
+    }
 
     if (routerElement.routes != null) {
-      const routes = checkPermission(routerElement.routes, permissionMap, appCode, nameSpace);
+      const routes = checkPermission(routerElement.routes, permissionMap, appCode);
       result.push({ ...routerElement, routes });
     } else {
       result.push(routerElement);
@@ -79,18 +75,6 @@ function generateRouteLocaleKeyMap(data, result, parentName) {
   }
 }
 
-export function filterAppByAuthorityKeys(subModules = [], authorityKeys = []) {
-  const appCodes = new Set();
-  appCodes.add(AppCode.SSO);
-  const authorityKeysWithAppcode = authorityKeys.filter((key) => !key.startsWith('/'));
-  authorityKeysWithAppcode.forEach((item) => {
-    appCodes.add(item.split('/')[0]);
-  });
-  // @调试
-  // return subModules.filter((item) => appCodes.has(item));
-  return [...subModules];
-}
-
 export function convertToRoute(data, baseContext) {
   return data
     .map((item) => {
@@ -107,44 +91,37 @@ export function convertToRoute(data, baseContext) {
     .filter(Boolean);
 }
 
-export function convertAllMenu(adminType, allAppModulesMap, allModuleMenuData, permissionMap) {
+export function convertAllMenu(adminType, allModuleMenuData, permissionMap) {
   const routeLocaleKeyMap = { '/': 'menu.home' };
-
-  // 1. 转换菜单数据到一般路由数据(包括sso筛选逻辑)
+  // 1. 根据菜单的hook和authority字段进行第一次权限筛选
   const allRoutes = Object.keys(allModuleMenuData).map((appCode) => {
     let appMenu = allModuleMenuData[appCode];
-
     // 如果是SSO, 需要根据adminType对菜单数据进行筛选
     if (appCode === AppCode.SSO) {
       appMenu = appMenu.filter((route) => {
-        // hook存在则一定有route
-        // authority不存在或为空 就没有
-        if (getLocalStorageHooks(route.hook)) {
-          return true;
-        } else if (isStrictNull(route.authority) || route.authority.length === 0) {
-          return false;
-        } else {
+        // 权限控制基于 authority 和 hooks，且hooks优先
+        // if (Array.isArray(route.hook)) {
+        //   return validateHookPermission(route.hook);
+        // }
+        if (Array.isArray(route.authority)) {
           return route.authority.includes(adminType);
         }
+        return false;
       });
     }
-
     // 组装多标签Label Map -- {路由History: 路由名称国际化Key}
     generateRouteLocaleKeyMap(appMenu, routeLocaleKeyMap, 'menu');
-
     return { appMenu, appCode };
   });
-
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { appMenu, appCode } = appRoute;
-    const baseContext = allAppModulesMap[appCode] || '';
-    const baseMenuData = convertRoute2Menu(appMenu); // 获取菜单节点名称的国际化key
-    const menuData = filterMenuData(baseMenuData); // 筛选掉 hideInMenu 的菜单项
-    const result = checkPermission(menuData, permissionMap, appCode, baseContext); // 菜单项权限根据 AuthKey 再一次筛选
-    return { appCode, menu: result };
+    // 菜单项权限根据 AuthKey 再一次筛选
+    const grantedMenu = checkPermission(appMenu, permissionMap, appCode);
+    // 获取菜单节点名称的国际化key
+    const menu = generateMenuNodeLocaleKey(grantedMenu);
+    return { appCode, menu };
   });
-
   return { allModuleFormattedMenuData, routeLocaleKeyMap };
 }
 
@@ -190,18 +167,26 @@ export async function initI18nInstance() {
   }
 }
 
-// hook -
-export function getLocalStorageHooks(hook) {
-  // 不存在hook / 不是数组
+export function validateMenuNodePermission(menuNode, adminType) {
+  if (Array.isArray(menuNode.hooks)) {
+    return validateHookPermission(menuNode.hooks);
+  } else {
+    return validateRouteAuthority(menuNode, adminType);
+  }
+}
+
+export function validateHookPermission(hook) {
   if (isStrictNull(hook) || !Array.isArray(hook)) {
     return false;
   }
-  const orSet = new Set();
-  hook.map((item) => {
-    if (window.localStorage.getItem(item) === 'true') {
-      orSet.add(1);
+  for (let index = 0; index < hook.length; index++) {
+    if (window.localStorage.getItem(hook[index]) === 'true') {
+      return true;
     }
-  });
-  // 只要localstorage存在hook数组里的任一个 当前这个开发者就能看到页面
-  return orSet.has(1);
+  }
+  return false;
+}
+
+export function validateRouteAuthority(record, adminType) {
+  return Array.isArray(record?.authority) && record.authority.includes(adminType);
 }

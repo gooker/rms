@@ -42,6 +42,9 @@ const Content = (props) => {
     props.panes.forEach((item) => {
       tabInfo.push({ path: item.key, title: item.props.tab });
     });
+    if (props.panes.length <= 1) {
+      return null;
+    }
     return <TabsBar tabInfo={tabInfo} />;
   }
 

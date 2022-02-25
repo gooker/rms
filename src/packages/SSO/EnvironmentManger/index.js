@@ -76,8 +76,7 @@ export default class index extends Component {
       flag: flag ? 1 : 0,
     };
     const updateRes = await fetchUpdateEnvironment(params);
-    if (!dealResponse(updateRes)) {
-      message.success(formatMessage({ id: 'environmentManager.updatestatusSuccess' }));
+    if (!dealResponse(updateRes, true)) {
       this.getData();
     }
   };
@@ -177,7 +176,7 @@ export default class index extends Component {
               <EditOutlined /> <FormattedMessage id="app.button.update" />
             </Button>
 
-            <Button  danger disabled={selectRowKey.length !== 1} onClick={this.deleteEnvironment}>
+            <Button danger disabled={selectRowKey.length !== 1} onClick={this.deleteEnvironment}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
             <Button

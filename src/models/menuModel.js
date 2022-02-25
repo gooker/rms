@@ -84,6 +84,8 @@ export default {
           if (routeData) {
             _tabs.push(routeData);
             return { ...state, tabs: _tabs, activeTab: payload };
+          } else {
+            return state;
           }
         }
       } else {

@@ -1,180 +1,180 @@
 const PermissionInfo = [
   {
-    page: '/tote/task/executionQueue', //执行队列
+    page: '/Tote/task/executionQueue', //执行队列
     children: [
       {
-        key: '/tote/task/executionQueue/delete',
+        key: '/Tote/task/executionQueue/delete',
         label: '删除',
       },
     ],
   },
   {
-    page: '/tote/task/taskQueue', //等待队列
+    page: '/Tote/task/taskQueue', //等待队列
     children: [
       {
-        key: '/tote/task/taskQueue/delete',
+        key: '/Tote/task/taskQueue/delete',
         label: '删除',
       },
       {
-        key: '/tote/task/taskQueue/updatePipLine',
+        key: '/Tote/task/taskQueue/updatePipLine',
         label: '调整优先级',
       },
     ],
   },
   {
-    page: '/tote/task/taskManger', //任务查询
+    page: '/Tote/task/taskManger', //任务查询
     children: [
       {
-        key: '/tote/task/taskManger/cancel',
+        key: '/Tote/task/taskManger/cancel',
         label: '取消任务',
       },
     ],
   },
   {
-    page: '/tote/agv/agvList', //AGV列表
+    page: '/Tote/agv/agvList', //AGV列表
     children: [
       {
-        key: '/tote/agv/agvList/delete',
+        key: '/Tote/agv/agvList/delete',
         label: '删除',
       },
     ],
   },
   {
-    page: '/tote/agv/agvRealTime', //小车监控
+    page: '/Tote/agv/agvRealTime', //小车监控
     children: [
       {
-        key: '/tote/agv/agvRealTime/realTime',
+        key: '/Tote/agv/agvRealTime/realTime',
         label: '小车实时信息',
       },
       {
-        key: '/tote/agv/agvRealTime/taskData',
+        key: '/Tote/agv/agvRealTime/taskData',
         label: '小车硬件信息',
         children: [
           {
-            key: '/tote/agv/agvRealTime/taskData/realStatus',
+            key: '/Tote/agv/agvRealTime/taskData/realStatus',
             label: '实时状态信息',
           },
           {
-            key: '/tote/agv/agvRealTime/taskData/attributesAndStatistics',
+            key: '/Tote/agv/agvRealTime/taskData/attributesAndStatistics',
             label: '属性和统计信息',
           },
           {
-            key: '/tote/agv/agvRealTime/taskData/batteryStatusAndChargeManagement',
+            key: '/Tote/agv/agvRealTime/taskData/batteryStatusAndChargeManagement',
             label: '电池状态和充电管理信息',
           },
         ],
       },
       {
-        key: '/tote/agv/agvRealTime/taskRecord',
+        key: '/Tote/agv/agvRealTime/taskRecord',
         label: '小车任务记录',
       },
       {
-        key: '/tote/agv/agvRealTime/errorRecord',
+        key: '/Tote/agv/agvRealTime/errorRecord',
         label: '小车错误记录',
       },
     ],
   },
   {
-    page: '/tote/agv/batchFirmwareUpgrade', //批量升级
+    page: '/Tote/agv/batchFirmwareUpgrade', //批量升级
     children: [
       {
-        key: '/tote/agv/batchFirmwareUpgrade/Maintain',
+        key: '/Tote/agv/batchFirmwareUpgrade/Maintain',
         label: '维护/取消维护',
       },
       {
-        key: '/tote/agv/batchFirmwareUpgrade/uploadFirmware',
+        key: '/Tote/agv/batchFirmwareUpgrade/uploadFirmware',
         label: '上传固件',
       },
       {
-        key: '/tote/agv/batchFirmwareUpgrade/upgrade',
+        key: '/Tote/agv/batchFirmwareUpgrade/upgrade',
         label: '升级',
       },
     ],
   },
   {
-    page: '/tote/agv/logDownLoad', //日志下载
+    page: '/Tote/agv/logDownLoad', //日志下载
     children: [
       {
-        key: '/tote/agv/logDownLoad/delete',
+        key: '/Tote/agv/logDownLoad/delete',
         label: '删除',
       },
     ],
   },
   {
-    page: '/tote/pod/podRowModelBaseData', //货架尺寸
+    page: '/Tote/pod/podRowModelBaseData', //货架尺寸
     children: [
       {
-        key: '/tote/pod/podRowModelBaseData/import',
+        key: '/Tote/pod/podRowModelBaseData/import',
         label: '导入',
       },
       {
-        key: '/tote/pod/podRowModelBaseData/add',
+        key: '/Tote/pod/podRowModelBaseData/add',
         label: '添加',
       },
     ],
   },
   {
-    page: '/tote/pod/podRowModelManager', //货架列模板
+    page: '/Tote/pod/podRowModelManager', //货架列模板
     children: [
       {
-        key: '/tote/pod/podRowModelManager/add',
+        key: '/Tote/pod/podRowModelManager/add',
         label: '新增',
       },
       {
-        key: '/tote/pod/podRowModelManager/delete',
+        key: '/Tote/pod/podRowModelManager/delete',
         label: '删除',
       },
     ],
   },
   {
-    page: '/tote/faultManger/faultDefinition', //故障定义
+    page: '/Tote/faultManger/faultDefinition', //故障定义
     children: [
       {
-        key: '/tote/faultManger/faultDefinition/add',
+        key: '/Tote/faultManger/faultDefinition/add',
         label: '新增',
       },
       {
-        key: '/tote/faultManger/faultDefinition/update',
+        key: '/Tote/faultManger/faultDefinition/update',
         label: '修改',
       },
       {
-        key: '/tote/faultManger/faultDefinition/delete',
+        key: '/Tote/faultManger/faultDefinition/delete',
         label: '删除',
       },
       {
-        key: '/tote/faultManger/faultDefinition/initialization',
+        key: '/Tote/faultManger/faultDefinition/initialization',
         label: '一键初始化',
       },
     ],
   },
   {
-    page: '/tote/formManger/reportCenter', //报表中心
+    page: '/Tote/formManger/reportCenter', //报表中心
     children: [
       {
-        key: '/tote/formManger/reportCenter/add',
+        key: '/Tote/formManger/reportCenter/add',
         label: '添加',
       },
       {
-        key: '/tote/formManger/reportCenter/delete',
+        key: '/Tote/formManger/reportCenter/delete',
         label: '删除',
       },
     ],
   },
   {
-    page: '/tote/system/chargingStrategy', //充电策略
+    page: '/Tote/system/chargingStrategy', //充电策略
     children: [
       {
-        key: '/tote/system/chargingStrategy/idle',
+        key: '/Tote/system/chargingStrategy/idle',
         label: '闲时',
         children: [
           {
-            key: '/tote/system/chargingStrategy/idle/strategy',
+            key: '/Tote/system/chargingStrategy/idle/strategy',
             label: '配置闲时策略',
           },
         ],
       },
       {
-        key: '/tote/system/chargingStrategy/save',
+        key: '/Tote/system/chargingStrategy/save',
         label: '保存',
       },
     ],

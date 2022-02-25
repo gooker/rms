@@ -6,6 +6,9 @@ import styles from './Portal.module.less';
 
 const { I18N, SSO, XIHE, Mixrobot, LatentLifting, Tote, Sorter, ForkLifting } = PortalEntry;
 
+const PortalWidth = 30;
+const PortalHeight = 29;
+
 const Portal = (props) => {
   const { dispatch, isAdmin, appList, currentApp, customLogo } = props;
 
@@ -56,8 +59,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }
@@ -68,8 +71,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }
@@ -80,8 +83,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }
@@ -92,8 +95,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }
@@ -105,8 +108,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }
@@ -117,8 +120,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }
@@ -131,8 +134,8 @@ const Portal = (props) => {
                   currentApp={currentApp}
                   checkoutApp={checkoutApp}
                   name={appCode}
-                  width={45}
-                  height={40}
+                  width={PortalWidth}
+                  height={PortalHeight}
                 />
               );
             }
@@ -142,8 +145,8 @@ const Portal = (props) => {
                 currentApp={currentApp}
                 checkoutApp={checkoutApp}
                 name={appCode}
-                width={45}
-                height={40}
+                width={PortalWidth}
+                height={PortalHeight}
               />
             );
           }

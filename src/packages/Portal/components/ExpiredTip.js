@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import intl from 'react-intl-universal';
+import { formatMessage } from '@/utils/util';
 import styles from './Header.module.less';
 
 const ExpiredTip = (props) => {
@@ -14,16 +14,11 @@ const ExpiredTip = (props) => {
   }
   return (
     <div className={tipStyle}>
-      {days === null ? (
-        intl.formatMessage({ id: 'app.authCenter.unauthorized' })
-      ) : days > 0 ? (
-        <>
-          {days}
-          {intl.formatMessage({ id: 'app.authCenter.days' })}
-        </>
-      ) : (
-        intl.formatMessage({ id: 'app.authCenter.hasExpired' })
-      )}
+      {days === null
+        ? formatMessage({ id: 'app.authCenter.unauthorized' })
+        : days > 0
+        ? formatMessage({ id: 'app.authCenter.dayRest' }, { day: days })
+        : formatMessage({ id: 'app.authCenter.hasExpired' })}
     </div>
   );
 };
