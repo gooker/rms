@@ -15,7 +15,7 @@ const PositionCell = (props) => {
       if (result) {
         close();
       } else {
-        message.error(formatMessage({ id: 'app.editor.cell.notExist' }));
+        message.error(formatMessage({ id: 'editor.cell.notExist' }));
       }
     }
   }
@@ -23,7 +23,7 @@ const PositionCell = (props) => {
   return (
     <Row>
       <Col>
-        <Form.Item label={formatMessage({ id: 'app.form.cellId' })}>
+        <Form.Item label={formatMessage({ id: 'app.map.cell' })}>
           <InputNumber
             onChange={(value) => {
               setCellId(value);
@@ -33,7 +33,7 @@ const PositionCell = (props) => {
       </Col>
       <Col offset={1}>
         <Button type={'primary'} onClick={positionSpot}>
-          <FormattedMessage id={'form.taskSearch'} />
+          <FormattedMessage id={'app.button.search'} />
         </Button>
       </Col>
     </Row>

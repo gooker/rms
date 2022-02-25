@@ -1,23 +1,37 @@
 import React, { memo, useState } from 'react';
 import { Divider, message, Modal, Tooltip } from 'antd';
 import {
-  LoadingOutlined,
+  AimOutlined,
   SaveOutlined,
   LockOutlined,
-  FullscreenOutlined,
-  AimOutlined,
-  FullscreenExitOutlined,
   ReloadOutlined,
+  LoadingOutlined,
+  FullscreenOutlined,
+  FullscreenExitOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
+import { formatMessage, isNull } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
-import { formatMessage } from '@/utils/util';
 import PositionCell from '../components/PositionCell';
+import UploadPanel from '@/components/UploadPanel';
 
 const EditorHeaderRightTools = (props) => {
-  const { dispatch, mapId, isInnerFullscreen, saveMapLoading, activeMapLoading, isActive } = props;
+  const {
+    mapId,
+    dispatch,
+    isActive,
+    saveMapLoading,
+    positionVisible,
+    activeMapLoading,
+    isInnerFullscreen,
+  } = props;
 
-  const [positionVisible, setPositionVisible] = useState(false);
+  const [isCad, setIsCad] = useState(false);
+  const [uploadVisible, setUploadVisible] = useState(false);
+
+  function switchPositionModal(visible) {
+    dispatch({ type: 'editor/savePositionVisible', payload: visible });
+  }
 
   function saveMap() {
     dispatch({ type: 'editor/saveMap' });
@@ -29,6 +43,29 @@ const EditorHeaderRightTools = (props) => {
     } else {
       message.warn(formatMessage({ id: 'app.mapTool.saveMap' }));
     }
+  }
+
+  async function importMap(evt) {
+    let mapData = JSON.parse(evt.target.result);
+    // if (isCad) {
+    //   try {
+    //     mapData = await convertCadToMap(mapData);
+    //   } catch (error) {
+    //     message.error(error);
+    //     return;
+    //   }
+    // }
+    if (isNull(mapData.logicAreaList) || isNull(mapData.cellMap)) {
+      message.error(formatMessage({ id: 'editor.map.upload.mapIncomplete' }));
+      setUploadVisible(false);
+      return false;
+    }
+    dispatch({ type: 'editor/saveMap', payload: { ...mapData } });
+    setUploadVisible(false);
+  }
+
+  function exportMap() {
+    dispatch({ type: 'editor/exportMap' });
   }
 
   function changeInnerFullScreen(payload) {
@@ -74,7 +111,7 @@ const EditorHeaderRightTools = (props) => {
         <span
           style={{ cursor: 'pointer' }}
           onClick={() => {
-            setPositionVisible(true);
+            switchPositionModal(true);
           }}
         >
           <AimOutlined />
@@ -92,16 +129,25 @@ const EditorHeaderRightTools = (props) => {
 
       {/* 导出地图 */}
       <Tooltip title={formatMessage({ id: 'app.button.export' })}>
-        <span style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}>
+        <span
+          style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}
+          onClick={() => {
+            mapId && exportMap();
+          }}
+        >
           <IconFont type={'icon-download'} />
         </span>
       </Tooltip>
-
       <Divider type="vertical" />
 
       {/* 导入地图 */}
       <Tooltip title={formatMessage({ id: 'app.button.import' })}>
-        <span style={{ cursor: 'pointer' }}>
+        <span
+          style={{ cursor: 'pointer' }}
+          onClick={() => {
+            setUploadVisible(true);
+          }}
+        >
           <IconFont type={'icon-upload'} />
         </span>
       </Tooltip>
@@ -116,19 +162,15 @@ const EditorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* 地图激活 */}
-      <span
-        style={{
-          cursor: !isActive && mapId ? 'pointer' : 'not-allowed',
-        }}
-      >
+      <span style={{ cursor: !isActive && mapId ? 'pointer' : 'not-allowed' }}>
         {activeMapLoading ? (
           <LoadingOutlined />
         ) : isActive ? (
-          <Tooltip title={formatMessage({ id: 'editor.active.warn' })}>
+          <Tooltip title={formatMessage({ id: 'editor.map.active.warn' })}>
             <LockOutlined />
           </Tooltip>
         ) : (
-          <Tooltip title={formatMessage({ id: 'editor.active' })}>
+          <Tooltip title={formatMessage({ id: 'editor.map.active' })}>
             <span onClick={activeMap}>
               <IconFont type={'icon-active'} />
             </span>
@@ -136,20 +178,40 @@ const EditorHeaderRightTools = (props) => {
         )}
       </span>
 
+      {/* 上传地图 */}
+      <Modal
+        destroyOnClose
+        width={500}
+        visible={uploadVisible}
+        onCancel={() => {
+          setUploadVisible(false);
+        }}
+        title={formatMessage({ id: 'editor.map.upload' })}
+        footer={null}
+      >
+        <UploadPanel
+          onCancel={() => {
+            setUploadVisible(false);
+          }}
+          fileType={isCad}
+          analyzeFunction={importMap}
+        />
+      </Modal>
+
       {/* 定位点位 */}
       <Modal
         destroyOnClose
-        width={350}
+        width={300}
         visible={positionVisible}
         onCancel={() => {
-          setPositionVisible(false);
+          switchPositionModal(false);
         }}
-        title={formatMessage({ id: 'app.leftContent.searchCell' })}
+        title={formatMessage({ id: 'editor.locate' })}
         footer={null}
       >
         <PositionCell
           close={() => {
-            setPositionVisible(false);
+            switchPositionModal(false);
           }}
         />
       </Modal>
@@ -160,6 +222,7 @@ export default connect(({ global, editor }) => ({
   isInnerFullscreen: global.isInnerFullscreen,
   mapId: editor?.currentMap?.id,
   saveMapLoading: editor.saveMapLoading,
-  activeMapLoading: editor.activeMapLoading,
+  positionVisible: editor.positionVisible,
   isActive: editor?.currentMap?.activeFlag,
+  activeMapLoading: editor.activeMapLoading,
 }))(memo(EditorHeaderRightTools));

@@ -18,7 +18,16 @@ const MapEditor = (props) => {
     });
     dispatch({ type: 'editor/editorInitial' });
 
+    function listenKeyDown(ev) {
+      if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyF') {
+        ev.preventDefault();
+        dispatch({ type: 'editor/savePositionVisible', payload: true });
+      }
+    }
+    document.addEventListener('keydown', listenKeyDown);
+
     return () => {
+      document.removeEventListener('keydown', listenKeyDown);
       dispatch({ type: 'editor/unmount' });
     };
   }, []);
