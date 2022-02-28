@@ -1,6 +1,6 @@
 import React from 'react';
 import { SettingOutlined } from '@ant-design/icons';
-import { AGVType } from '@/config/config';
+import { AGVType,AppCode } from '@/config/config';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -98,6 +98,7 @@ export const MonitorRightTools = [
     value: Category.Message,
     icon: <IconFont type={'icon-message'} />,
     style: { paddingTop: '5px' },
+    showBadge: true,
   },
 ];
 
@@ -284,5 +285,23 @@ export const ResourceCategoryTools = [
     value: 'chargingPile',
     icon: 'charge_category.png',
     style: { width: '33px', height: 'auto' },
+  },
+];
+
+// 消息
+export const MessageCategoryTools = [
+  {
+    label: <FormattedMessage id={'monitor.message.podToWorkstationInfo'} />,
+    value: 'podToWorkstationInfoMessage',
+    icon: 'workStationTask_category.png',
+    style: { width: '33px', height: 'auto' },
+    permissionFlag: AppCode.LatentLifting,
+  },
+  {
+    label: <FormattedMessage id={'monitor.message.latentStopMessage'} />,
+    value: 'stopMessage',
+    icon: 'latentPod.png',
+    style: { width: '33px', height: 'auto' },
+    permissionFlag: AppCode.LatentLifting,
   },
 ];

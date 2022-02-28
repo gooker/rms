@@ -85,7 +85,7 @@ export default {
   'app.taskDetail.startTime': '开始时间',
   'app.taskDetail.startingPower': '开始电量',
   'app.taskDetail.stepId': '步骤',
-  'app.taskDetail.stopPoints': '停止点',
+  'app.taskDetail.stopPoints': '停止点',//@重复
   'app.taskDetail.superCarryPodToSpot': '高级搬运任务',
   'app.taskDetail.systemHint': '系统提示',
   'app.taskDetail.targetSpotDirection': '目标点方位',
@@ -118,6 +118,7 @@ export default {
   'app.taskDetail.errorRecord': '小车错误记录',
   'app.taskDetail.confirmHugTote': '确认料箱车抱夹信息',
   'app.taskDetail.confirmToteHolding': '请确定车体抱夹上的料箱信息',
+  'app.taskDetail.taskStep': '任务步数',
 
   // 料箱池任务
   'app.taskPool.code': '料箱码',

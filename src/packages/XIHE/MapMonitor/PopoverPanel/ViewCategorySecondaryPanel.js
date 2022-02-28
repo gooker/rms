@@ -1,5 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import {
   Category,
   EmergencyCategoryTools,
@@ -8,23 +9,24 @@ import {
 } from '../enums';
 import styles from '../monitorLayout.module.less';
 
-const defaultTop = 95;
-
 const ViewCategorySecondaryPanel = (props) => {
-  const { dispatch, height, offsetTop, type } = props;
+  const { dispatch, height, offsetTop, type, pixHeight } = props;
   const [categoryTools, setCategoryTools] = useState([]);
   const [top, setTop] = useState(5);
 
   useEffect(() => {
     let _top = 5;
     if (offsetTop) {
-      _top = offsetTop - defaultTop - height / 2;
+      _top = offsetTop - height / 2;
+      const _height = _top + height - pixHeight;
+      if (_height > 0) {
+        _top = _top - _height;
+      }
       if (_top < 5) {
         _top = 5;
       }
     }
     setTop(_top);
-
     if (type === Category.View) {
       setCategoryTools(ViewCategoryTools);
     }
@@ -34,7 +36,7 @@ const ViewCategorySecondaryPanel = (props) => {
     if (type === Category.Resource) {
       setCategoryTools(ResourceCategoryTools);
     }
-  }, [height, offsetTop, type]);
+  }, [height, offsetTop, pixHeight, type]);
 
   function renderIcon(icon, style) {
     if (typeof icon === 'string') {
@@ -69,4 +71,4 @@ const ViewCategorySecondaryPanel = (props) => {
     </div>
   );
 };
-export default memo(ViewCategorySecondaryPanel);
+export default connect(() => ({}))(memo(ViewCategorySecondaryPanel));

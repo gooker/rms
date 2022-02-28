@@ -98,7 +98,7 @@ const SimulatorPanel = (props) => {
       width: '100',
       render: (text, record) => (
         <Switch
-          checked={text}
+          checked={text || false}
           checkedChildren={formatMessage({ id: 'monitor.simulator.list.movable' })}
           unCheckedChildren={formatMessage({ id: 'monitor.simulator.list.unMovable' })}
           onChange={(checked) => {

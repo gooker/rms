@@ -3,6 +3,7 @@ import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
+import { findIndex } from 'lodash';
 import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
 import {
   fetchTemporaryBlockCells,
@@ -14,6 +15,7 @@ import {
   autoCallLatentPodToWorkstation,
   batchUpdateLatentPod,
   fetchSetPod,
+  fetchLatentPausedEventList,
 } from '@/services/monitor';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
@@ -201,6 +203,15 @@ export default {
       return {
         ...state,
         viewSetting: action.payload,
+      };
+    },
+    savePodToWorkstationInfo(state, action) {
+      return { ...state, podToWorkstationInfo: action.payload };
+    },
+    saveLatentSopMessageList(state, action) {
+      return {
+        ...state,
+        latentStopMessageList: action.payload,
       };
     },
   },
@@ -415,13 +426,13 @@ export default {
       }
     },
 
-     // 批量添加潜伏货架
-     *fetchDeletePodAndAddPod({ payload }, { call }) {
+    // 批量添加潜伏货架
+    *fetchDeletePodAndAddPod({ payload }, { call }) {
       const sectionId = window.localStorage.getItem('sectionId');
       const { podNumber, podLength, podWidth, batchAngle } = payload;
 
       // 删除已有货架
-      const response = yield call(batchUpdateLatentPod, { ...payload,sectionId });
+      const response = yield call(batchUpdateLatentPod, { ...payload, sectionId });
       if (dealResponse(response)) {
         return false;
       }
@@ -452,5 +463,57 @@ export default {
       return !dealResponse(setPodResponse);
     },
 
+    *savePodToWorkStation({ payload }, { select, put }) {
+      let result = [];
+      if (Array.isArray(payload)) {
+        yield put({
+          type: 'savePodToWorkstationInfo',
+          payload,
+        });
+      } else {
+        const { stopCellId, direction, releasePod } = payload;
+        const podToWorkstationInfo = yield select((state) => state.monitor.podToWorkstationInfo);
+        const filterIndex = findIndex(podToWorkstationInfo, (record) => {
+          if (record) {
+            return record.stopCellId === stopCellId && record.direction === direction;
+          }
+          return false;
+        });
+        if (filterIndex !== -1) {
+          result = podToWorkstationInfo.filter((_, index) => {
+            return index !== filterIndex;
+          });
+          if (!releasePod) {
+            result = [payload, ...result];
+          }
+        } else {
+          result = [payload, ...podToWorkstationInfo];
+        }
+        yield put({
+          type: 'savePodToWorkstationInfo',
+          payload: result,
+        });
+      }
+    },
+
+    *removeWorkStationInfo({ payload }, { select, put }) {
+      const { taskId } = payload;
+      const { podToWorkstationInfo } = yield select(({ monitor }) => monitor);
+      const newPodToWorkstationInfo = podToWorkstationInfo.filter(
+        (record) => record.taskId !== taskId,
+      );
+      yield put({ type: 'savePodToWorkstationInfo', payload: newPodToWorkstationInfo });
+    },
+
+    *fetchLatentSopMessageList({ payload }, { call, put }) {
+      const response = yield call(fetchLatentPausedEventList, payload);
+      if (dealResponse(response)) {
+        return false;
+      }
+      yield put({
+        type: 'saveLatentSopMessageList',
+        payload: response,
+      });
+    },
   },
 };

@@ -203,4 +203,8 @@ export default {
   'monitor.emergency.temporaryBlock': '临时不可走',
   'monitor.emergency.operation': '急停区操作',
   'monitor.emergency.drag': '拖拽急停区',
+
+  'monitor.message.podToWorkstationInfo': '到站消息',
+  'monitor.message.latentStopMessage': '暂停消息',
+  'monitor.message.releasePodSuccess': '释放成功',
 };
