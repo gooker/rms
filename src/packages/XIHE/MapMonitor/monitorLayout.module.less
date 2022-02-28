@@ -39,6 +39,22 @@
 .categoryActive {
   background: #2f5597;
 }
+.categoryBadge {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  color: #fff;
+  font-size: 12px;
+  line-height: 20px;
+  border-radius: 50%;
+  & > span {
+    display: flex;
+    transform: scale(0.8);
+    justify-content: center;
+  }
+}
 
 // Popover Panel
 .popoverPanel {
@@ -175,7 +191,7 @@
 // 弹窗
 .monitorModal {
   position: absolute;
-  top: 10%;
+  top: 15%;
   z-index: 1;
   display: flex;
   flex-flow: column nowrap;
@@ -257,14 +273,14 @@
       .ant-collapse();
       border: 1px solid rgba(255, 255, 255, 0.04);
     }
-    .ant-divider{
+    .ant-divider {
       .ant-divider();
     }
 
     .ant-collapse .ant-collapse-item .ant-collapse-header {
       color: #fff;
     }
-    .ant-tabs-tab{
+    .ant-tabs-tab {
       color: #fff;
     }
   }
