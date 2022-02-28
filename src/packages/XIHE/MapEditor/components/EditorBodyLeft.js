@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
-import { filterMapSpriteByRange, transformScreenToWorldCoordinator } from '@/utils/mapUtil';
+import { filterMapSpriteByRange } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
 
 // 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
@@ -184,20 +184,16 @@ class EditorBodyLeft extends React.PureComponent {
     !incremental && this.cancelSelections();
     const { dispatch, mapContext, currentCells } = this.props;
 
-    // 收集转换所需的数据
-    const viewport = mapContext.pixiUtils.viewport;
-    const mapDOM = document.getElementById('editorPixi');
-
     // 转换坐标
-    const [rangeWorldStartX, rangeWorldStartY] = transformScreenToWorldCoordinator(
-      { x: this.pointerDownX, y: this.pointerDownY },
-      mapDOM,
-      viewport,
+    const viewport = mapContext.pixiUtils.viewport;
+    const { x: rangeWorldStartX, y: rangeWorldStartY } = viewport.toWorld(
+      this.pointerDownX,
+      this.pointerDownY,
     );
-    const [rangeWorldEndX, rangeWorldEndY] = transformScreenToWorldCoordinator(
-      { x: this.pointerUpX, y: this.pointerUpY },
-      mapDOM,
-      viewport,
+
+    const { x: rangeWorldEndX, y: rangeWorldEndY } = viewport.toWorld(
+      this.pointerUpX,
+      this.pointerUpY,
     );
 
     const [_startX, _endX] = [rangeWorldStartX, rangeWorldEndX].sort((x, y) => x - y);

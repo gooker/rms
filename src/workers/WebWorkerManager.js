@@ -1,7 +1,5 @@
-import { dealResponse, getDomainNameByUrl, isNull } from '@/utils/util';
+import { getDomainNameByUrl, isNull } from '@/utils/util';
 import { NameSpace } from '@/config/config';
-import AlertCountPollingWorker from './alertCountPolling.worker';
-import { message } from 'antd';
 
 /**
  * @@@@@@ 单例 @@@@@@

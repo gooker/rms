@@ -6,6 +6,7 @@ import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import { formatMessage } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import styles from './popoverPanel.module.less';
+import { MapSelectableSpriteType } from '@/config/consts';
 
 const BatchAddCells = (props) => {
   const { dispatch, selectCells, mapContext, currentLogicArea } = props;
@@ -54,8 +55,13 @@ const BatchAddCells = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selectCells, mapContext } = editor;
+  const { selections, mapContext } = editor;
   const currentLogicAreaData = getCurrentLogicAreaData();
+
+  const selectCells = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
+
   return {
     mapContext,
     selectCells,

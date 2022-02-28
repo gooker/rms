@@ -86,8 +86,21 @@ export default class BaseMap extends React.Component {
 
   centerView = () => {
     const { viewport } = this.pixiUtils;
-    viewport.fit(true, viewport.worldWidth * 1.1, viewport.worldHeight * 1.1);
-    viewport.moveCenter(viewport.worldWidth / 2, viewport.worldHeight / 2);
+    const { x, y, width, height } = viewport.getLocalBounds();
+    if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
+      viewport.fit(true, width * 1.1, height * 1.1);
+      viewport.moveCenter(x + width / 2, y + height / 2);
+
+      // 动态限制地图缩放尺寸
+      viewport.clampZoom({
+        minWidth: viewport.worldScreenWidth * viewport.scale.x,
+        minHeight: viewport.worldScreenHeight * viewport.scale.y,
+        maxWidth: viewport.worldScreenWidth,
+        maxHeight: viewport.worldScreenHeight,
+      });
+    }
+    // 记录当前地图世界宽度
+    window.sessionStorage.setItem('EDITOR_MAP', JSON.stringify({ x, y, width, height }));
     this.refresh();
   };
 

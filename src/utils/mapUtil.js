@@ -1268,55 +1268,14 @@ export function unifyAgvState(agv) {
   };
 }
 
-/**
- * @@@@ 框图功能核心代码 @@@@
- * 屏幕坐标转换成世界坐标
- * @param point 坐标 {x,y}
- * @param htmlDOM 地图容器节点
- * @param viewportEntity 地图Viewport实例
- */
-export function transformScreenToWorldCoordinator(point, htmlDOM, viewportEntity) {
-  try {
-    const {
-      worldScreenWidth,
-      lastViewport: {
-        x: worldOffsetScreenX, // 世界左上角相对于Screen左上角的横向pixel距离
-        y: worldOffsetScreenY, // 世界左上角相对于Screen左上角的纵向pixel距离
-      },
-    } = viewportEntity;
-
-    // 根据实际screen的pixel尺寸和 viewport.worldScreenSize 来确定转换系数
-    const mapDOM = document.getElementById('editorPixi');
-    const { width } = mapDOM.getBoundingClientRect();
-    const transformCoefficient = worldScreenWidth / width;
-
-    // 因为世界的左上角是0点，所以只要计算框选部分和地图部分的特定点差值*转换系数即可
-    const x = (point.x - worldOffsetScreenX) * transformCoefficient;
-    const y = (point.y - worldOffsetScreenY) * transformCoefficient;
-    return [x, y];
-  } catch (e) {
-    console.log(`屏幕坐标转换成世界坐标失败: ${e.message()}`);
-    return [0, 0];
-  }
-}
-
 // 获取框选区域的相关世界信息
 export function getSelectionWorldCoordinator(mapDOM, maskDOM, viewportEntity) {
   const x = maskDOM.offsetLeft;
   const y = maskDOM.offsetTop;
   const { width, height } = maskDOM.getBoundingClientRect();
   // 转换坐标
-  const [rangeWorldStartX, rangeWorldStartY] = transformScreenToWorldCoordinator(
-    { x, y },
-    mapDOM,
-    viewportEntity,
-  );
-  const [rangeWorldEndX, rangeWorldEndY] = transformScreenToWorldCoordinator(
-    { x: x + width, y: y + height },
-    mapDOM,
-    viewportEntity,
-  );
-
+  const { x: rangeWorldStartX, y: rangeWorldStartY } = viewportEntity.toWorld(x, y);
+  const { x: rangeWorldEndX, y: rangeWorldEndY } = viewportEntity.toWorld(x, y);
   return {
     width,
     height,

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
@@ -13,7 +13,6 @@ import styles from '../editorLayout.module.less';
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext, showShortcutTool } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
-  const worldSize = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -36,7 +35,7 @@ const EditorMapContainer = (props) => {
     if (isNull(mapContext)) return;
     const { viewport } = mapContext.pixiUtils;
     // 很重要: 一定要先取消旧的clamp，不然新的会无法生效
-    viewport.clampZoom({});
+    viewport.clampZoom(null);
 
     // 清空相关数据
     mapContext.clearMapStage();
@@ -48,32 +47,29 @@ const EditorMapContainer = (props) => {
       renderRouteMap();
       mapContext.centerView();
 
-      // 动态限制地图缩放尺寸
-      viewport.clampZoom({
-        minWidth: viewport.worldScreenWidth * viewport.scale.x,
-        minHeight: viewport.worldScreenHeight * viewport.scale.y,
-        maxWidth: viewport.worldScreenWidth,
-        maxHeight: viewport.worldScreenHeight,
-      });
-
-      worldSize.current.width = viewport.worldWidth;
-      worldSize.current.height = viewport.worldHeight;
-
       viewport.off('moved');
       viewport.on(
         'moved',
         throttle(function () {
-          if (this.top >= worldSize.current.height - 1500) {
-            this.top = worldSize.current.height - 1500;
+          const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
+          const topLimit = y + height * 0.8;
+          if (this.top >= topLimit) {
+            this.top = topLimit;
           }
-          if (this.bottom <= 1500) {
-            this.bottom = 1500;
+
+          const bottomLimit = y + height * 0.2;
+          if (this.bottom <= bottomLimit) {
+            this.bottom = bottomLimit;
           }
-          if (this.left >= worldSize.current.width - 1500) {
-            this.left = worldSize.current.width - 1500;
+
+          const leftLimit = x + width * 0.8;
+          if (this.left >= leftLimit) {
+            this.left = leftLimit;
           }
-          if (this.right <= 1500) {
-            this.right = 1500;
+
+          const rightLimit = x + width * 0.2;
+          if (this.right <= rightLimit) {
+            this.right = rightLimit;
           }
         }, 200),
       );
