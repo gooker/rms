@@ -87,6 +87,7 @@ const EditorState = {
   activeMapLoading: false, // 激活地图
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
+  positionVisible: false, // 定位功能弹窗
 
   // Mask相关
   rangeForConfig: false, // 绘制区域用于配置地图功能
@@ -97,9 +98,7 @@ const EditorState = {
 export default {
   namespace: 'editor',
 
-  state: {
-    ...EditorState,
-  },
+  state: { ...EditorState },
 
   reducers: {
     unmount(state) {
@@ -107,7 +106,6 @@ export default {
         ...EditorState,
       };
     },
-
     saveState(state, action) {
       return {
         ...state,
@@ -118,6 +116,12 @@ export default {
       return {
         ...state,
         forceUpdate: {},
+      };
+    },
+    savePositionVisible(state, action) {
+      return {
+        ...state,
+        positionVisible: action.payload,
       };
     },
     updateRangeForConfig(state, action) {
@@ -336,6 +340,15 @@ export default {
       yield put({ type: 'saveVisit', payload: visible });
     },
 
+    *reloadMap(_, { select, call, put }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      if (isNull(currentMap)) {
+        message.warn(formatMessage({ id: 'editor.selectMap.required' }));
+      } else {
+        const _currentMap = yield call(fetchMapDetail, currentMap.id);
+        yield put({ type: 'saveCurrentMapOnly', payload: addTemporaryId(_currentMap) });
+      }
+    },
     // ********************************* 地图操作 ********************************* //
     // 创建地图
     *fetchCreateMap({ payload }, { put, call, select }) {
@@ -444,6 +457,7 @@ export default {
     // 导出地图
     *exportMap(_, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
+      //TODO: 验证地图数据
       const mapData = { ...currentMap };
       mapData.activeFlag = false;
       delete mapData.sectionId;

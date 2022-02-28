@@ -3,8 +3,11 @@ export default {
   'editor.addRouteMap': '添加路线区',
   'editor.addScope': '添加作用域',
   'editor.locate': '点位定位',
-  'editor.active': '激活地图',
-  'editor.active.warn': '无法取消激活',
+  'editor.map.active': '激活地图',
+  'editor.map.active.warn': '无法取消激活',
+  'editor.map.upload': '上传地图',
+  'editor.map.upload.mapIncomplete': '地图数据不完整',
+  'editor.map.download': '下载地图',
   'editor.selectMap.required': '请先选择地图',
   'editor.saveMap.contentLoss': '是否保存当前修改的地图？若不保存, 则所有的修改会丢失',
   'editor.button.notSaveMap': '不保存',
@@ -14,6 +17,7 @@ export default {
   'editor.editorVersion': '编辑器版本',
   'editor.mapVersion': '地图版本',
   'editor.programing': '编程信息',
+  'editor.cell.notExist': '点位不存在',
 
   // 操作提示
   'editor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',

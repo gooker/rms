@@ -60,6 +60,7 @@ export default {
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',
   'app.common.fullScreenOut': '退出全屏',
+  'app.common.firstTime': '首发时间',
   'app.common.creator': '创建用户',
   'app.common.creationTime': '创建时间',
   'app.common.updater': '更新用户',

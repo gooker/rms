@@ -87,7 +87,7 @@ export default {
         for (let index = 0; index < authorityKeys.length; index++) {
           permissionMap[authorityKeys[index]] = true;
         }
-        window.localStorage.setItem('permissionMap', JSON.stringify(permissionMap));
+        window.sessionStorage.setItem('permissionMap', JSON.stringify(permissionMap));
 
         // 6. 保存用户时区数据
         window.localStorage.setItem('userTimeZone', response.userTimeZone || '');
@@ -97,10 +97,11 @@ export default {
 
     *logout(_, { call }) {
       const response = yield call(fetchLogout, {
-        token: window.localStorage.getItem('Authorization'),
+        token: window.sessionStorage.getItem('Authorization'),
       });
       if (!dealResponse(response)) {
         window.localStorage.clear();
+        window.sessionStorage.clear();
         window.history.$$push('/login');
       }
     },
@@ -112,7 +113,7 @@ export default {
 
       const params = {
         sectionId: payload,
-        token: window.localStorage.getItem('Authorization'),
+        token: window.sessionStorage.getItem('Authorization'),
       };
       const response = yield call(fetchUpdateUserCurrentSection, params);
       return !dealResponse(

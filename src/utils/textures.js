@@ -32,14 +32,7 @@ export function getCostArrow(renderer, color) {
   graphics.lineStyle(lineWidth, color, 1);
   graphics.moveTo(0, 300);
   graphics.lineTo(0, distanceInt);
-
-  // 路线纹理
-  const textureWidth = 100; // 150
-  return renderer.generateTexture(graphics, {
-    scaleMode: 1,
-    resolution: 2,
-    region: new PIXI.Rectangle(-textureWidth / 2, 0, textureWidth, distanceInt),
-  });
+  return renderer.generateTexture(graphics);
 }
 
 export function getBoldCostArrow(color) {

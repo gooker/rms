@@ -13,6 +13,32 @@ import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 
 /**
+ * 将服务器的时间和服务器返回的时区转回成用户时区的时间格式
+ * @param {*} value
+ * @returns
+ */
+export function GMT2UserTimeZone(value) {
+  if (isStrictNull(value)) {
+    return { format: () => '' };
+  }
+
+  // 服务器所在地方时区
+  let serverTimeZone = window.localStorage.getItem('serverTimeZone');
+  serverTimeZone = serverTimeZone || 'GMT';
+  moment.tz.setDefault(serverTimeZone);
+
+  // 获取当前时区偏移量
+  let date;
+  const userTimeZone = window.localStorage.getItem('userTimeZone');
+  if (userTimeZone != null) {
+    date = new moment(value).tz(userTimeZone);
+  } else {
+    date = new moment(value).tz(moment.tz.guess());
+  }
+  return date;
+}
+
+/**
  * 将服务器时间转化成本地时间
  * @param {*} value
  * @returns
@@ -28,12 +54,12 @@ export function dateFormat(value) {
   }
 
   // 当前地区时区
-  let localTimeZone = window.sessionStorage.getItem('timeZone');
+  let localTimeZone = window.localStorage.getItem('serverTimeZone');
   localTimeZone = localTimeZone || 'GMT';
   moment.tz.setDefault(localTimeZone); // 将服务器的时间和服务器返回的时区转回成带有时区的时间格式
 
   // 获取当前时区偏移量
-  let date = null;
+  let date;
   const userTimeZone = window.localStorage.getItem('userTimeZone');
   if (userTimeZone !== null) {
     date = new moment(value).tz(userTimeZone);
@@ -89,7 +115,7 @@ export const htmlFormatMessage = ({ id }, values) => {
 };
 
 export function getDomainNameByUrl(url) {
-  let apis = JSON.parse(window.localStorage.getItem('nameSpacesInfo'));
+  let apis = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
   if (!isPlainObject(apis)) {
     apis = requestAPI();
   }
@@ -128,30 +154,6 @@ export function dealResponse(response, successNotify, successMessage, failedMess
     message.success(successMessage || formatMessage({ id: 'app.message.operateSuccess' }));
   }
   return false;
-}
-
-/**
- * 将服务器的时间和服务器返回的时区转回成用户时区的时间格式
- * @param {*} value
- * @returns
- */
-export function GMT2UserTimeZone(value) {
-  if (isStrictNull(value)) {
-    return { format: () => '' };
-  }
-
-  let date = null;
-  const timeZone = 'GMT';
-  const userTimeZone = window.localStorage.getItem('userTimeZone');
-
-  // 获取当前时区偏移量
-  moment.tz.setDefault(timeZone);
-  if (userTimeZone != null) {
-    date = new moment(value).tz(userTimeZone);
-  } else {
-    date = new moment(value).tz(moment.tz.guess());
-  }
-  return date;
 }
 
 export function getSuffix(value, suffix, props) {
@@ -1147,14 +1149,10 @@ function flatMenuData(currentModuleRouter, result) {
 
 export function LatentSizeUpdaterValidator(_, value) {
   if (isNull(value)) {
-    return Promise.reject(
-      new Error(formatMessage({ id: 'monitor.pod.podSize.required' })),
-    );
+    return Promise.reject(new Error(formatMessage({ id: 'monitor.pod.podSize.required' })));
   }
   if (isStrictNull(value.width) || isStrictNull(value.height)) {
-    return Promise.reject(
-      new Error(formatMessage({ id: 'monitor.pod.podSize.incomplete' })),
-    );
+    return Promise.reject(new Error(formatMessage({ id: 'monitor.pod.podSize.incomplete' })));
   }
   if (parseInt(value.width, 10) <= 0 || parseInt(value.height, 10) <= 0) {
     return Promise.reject(new Error(formatMessage({ id: 'monitor.pod.podSize.invalid' })));

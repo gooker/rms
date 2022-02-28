@@ -1,7 +1,7 @@
 import React from 'react';
 
 function getAuthorityKeys() {
-  let AuthorityKeys = window.localStorage.getItem('permissionMap');
+  let AuthorityKeys = window.sessionStorage.getItem('permissionMap');
   if (AuthorityKeys === null) {
     AuthorityKeys = {};
   } else {

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Row, Button, message, Divider, Tag } from 'antd';
+import { Table, Row, Button, Divider, Tag } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import QuestionSearch from './QuestionSearch';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -46,22 +46,14 @@ class QuestionCenter extends Component {
     this.setState({ loading: true });
     const response = await fetchAlertCenterList(params);
     if (!dealResponse(response)) {
-      // 数据
       const { list, page } = response;
       this.setState({
         questionList: list,
         pagination: { current: page.currentPage, pageSize: page.size, total: page.totalElements },
       });
     }
-
-    dispatch({
-      type: 'user/fetchNotice',
-      payload: sectionId,
-    });
-    this.setState({
-      selectedRowKeys: [],
-      loading: false,
-    });
+    dispatch({ type: 'user/fetchNotice', payload: sectionId });
+    this.setState({ selectedRowKeys: [], loading: false });
   };
 
   search = (value) => {
@@ -85,16 +77,14 @@ class QuestionCenter extends Component {
   onSelectedHandle = async () => {
     const { selectedRowKeys } = this.state;
     const response = await batchUpdateAlertCenter(selectedRowKeys);
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.monitor.tip.operateSuccess' }));
+    if (!dealResponse(response, true)) {
       this.getData();
     }
   };
 
   onAllHandle = async () => {
     const response = await allUpdateProblemHandling();
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.monitor.tip.operateSuccess' }));
+    if (!dealResponse(response, true)) {
       this.getData();
     }
   };
@@ -121,7 +111,7 @@ class QuestionCenter extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.chargeManger.type' }),
+      title: formatMessage({ id: 'app.common.type' }),
       dataIndex: 'alertType',
       align: 'center',
       render: (text) => {
@@ -138,7 +128,7 @@ class QuestionCenter extends Component {
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'app.taskDetail.firstTime' }), // 首发时间
+      title: formatMessage({ id: 'app.common.firstTime' }), // 首发时间
       dataIndex: 'createTime',
       align: 'center',
       render: (text) => {
@@ -150,26 +140,41 @@ class QuestionCenter extends Component {
   expandedRowRender = (currentItemData) => {
     if (currentItemData) {
       const itemColumns = [
-        { title: <FormattedMessage id="app.alertCenter.code" />, dataIndex: 'alertCode' },
-        { title: <FormattedMessage id="app.simulator.form.label.cell" />, dataIndex: 'cellId' },
-        { title: <FormattedMessage id="app.alertCenter.count" />, dataIndex: 'alertCount' },
+        {
+          title: <FormattedMessage id="app.alertCenter.code" />,
+          dataIndex: 'alertCode',
+          align: 'center',
+        },
+        { title: <FormattedMessage id="app.map.cell" />, dataIndex: 'cellId', align: 'center' },
+        {
+          title: <FormattedMessage id="app.alertCenter.count" />,
+          dataIndex: 'alertCount',
+          align: 'center',
+        },
         {
           title: <FormattedMessage id="app.alertCenter.level" />,
           dataIndex: 'alertItemLevel',
+          align: 'center',
           render: (text) => {
             if (!isNull(text)) {
               return <span style={{ color: alertLevel[text] }}>{text}</span>;
             }
           },
         },
-        { title: <FormattedMessage id="app.chargeManger.type" />, dataIndex: 'alertItemType' },
+        {
+          title: <FormattedMessage id="app.common.type" />,
+          dataIndex: 'alertItemType',
+          align: 'center',
+        },
         {
           title: <FormattedMessage id="app.alertCenter.alertName" />,
           dataIndex: 'alertNameI18NKey',
+          align: 'center',
         },
         {
           title: <FormattedMessage id="app.alertCenter.alertContent" />,
           dataIndex: 'alertContentI18NKey',
+          align: 'center',
         },
       ];
       return (
@@ -224,7 +229,7 @@ class QuestionCenter extends Component {
               <FormattedMessage id={'app.alertCenter.dismissedSelected'} />
             </Button>
             <Button type="primary" onClick={this.getData}>
-              <FormattedMessage id="app.button.flash" />
+              <FormattedMessage id="app.button.refresh" />
             </Button>
           </Row>
         </div>
@@ -234,7 +239,7 @@ class QuestionCenter extends Component {
               ...pagination,
               showSizeChanger: true,
               showTotal: (total) =>
-                `${formatMessage({ id: 'app.common.tableRowCount' }, { value: total })}`,
+                `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
             }}
             columns={this.column}
             dataSource={questionList}

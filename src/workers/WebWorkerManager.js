@@ -38,7 +38,7 @@ AlertCountPolling.start = function (dispatcher) {
   AlertCountPolling.instance.postMessage({
     state: 'start',
     url: alertCountURL,
-    token: window.localStorage.getItem('Authorization'),
+    token: window.sessionStorage.getItem('Authorization'),
     sectionId: window.localStorage.getItem('sectionId'),
   });
 };

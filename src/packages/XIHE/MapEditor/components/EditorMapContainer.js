@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
@@ -13,6 +13,7 @@ import styles from '../editorLayout.module.less';
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext, showShortcutTool } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
+  const worldSize = useRef({ width: 0, height: 0 });
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -33,6 +34,11 @@ const EditorMapContainer = (props) => {
 
   useEffect(() => {
     if (isNull(mapContext)) return;
+    const { viewport } = mapContext.pixiUtils;
+    // 很重要: 一定要先取消旧的clamp，不然新的会无法生效
+    viewport.clampZoom({});
+
+    // 清空相关数据
     mapContext.clearMapStage();
     mapContext.clearEditorMapData();
 
@@ -40,8 +46,38 @@ const EditorMapContainer = (props) => {
       renderMap();
       renderLogicArea();
       renderRouteMap();
+      mapContext.centerView();
+
+      // 动态限制地图缩放尺寸
+      viewport.clampZoom({
+        minWidth: viewport.worldScreenWidth * viewport.scale.x,
+        minHeight: viewport.worldScreenHeight * viewport.scale.y,
+        maxWidth: viewport.worldScreenWidth,
+        maxHeight: viewport.worldScreenHeight,
+      });
+
+      worldSize.current.width = viewport.worldWidth;
+      worldSize.current.height = viewport.worldHeight;
+
+      viewport.off('moved');
+      viewport.on(
+        'moved',
+        throttle(function () {
+          if (this.top >= worldSize.current.height - 1500) {
+            this.top = worldSize.current.height - 1500;
+          }
+          if (this.bottom <= 1500) {
+            this.bottom = 1500;
+          }
+          if (this.left >= worldSize.current.width - 1500) {
+            this.left = worldSize.current.width - 1500;
+          }
+          if (this.right <= 1500) {
+            this.right = 1500;
+          }
+        }, 200),
+      );
     }
-    mapContext.refresh();
   }, [currentMap, currentLogicArea]);
 
   useEffect(() => {
@@ -83,8 +119,6 @@ const EditorMapContainer = (props) => {
       const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
       mapContext.renderElevator(logicElevator || []);
     }
-
-    mapContext.centerView(cellsToRender);
   }
 
   function renderLogicArea() {

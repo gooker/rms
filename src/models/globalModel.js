@@ -241,7 +241,7 @@ export default {
       const routeData = convertMenuData2RouteData(allModuleFormattedMenuData);
 
       // 保存信息
-      window.localStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
+      window.sessionStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
       yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
       yield put({ type: 'saveGrantedAPx', payload: grantedAPP }); // 所有授权的APP

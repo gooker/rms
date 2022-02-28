@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
-import { Upload, Icon } from 'antd';
+import { Upload } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const Dragger = Upload.Dragger;
@@ -33,7 +34,7 @@ class UploadUtil extends PureComponent {
       <div style={styles}>
         <Dragger {...props}>
           <p className="ant-upload-drag-icon">
-            <Icon type="inbox" />
+            <InboxOutlined />
           </p>
           <p className="ant-upload-text">
             <FormattedMessage id="app.message.upload.tip" />
