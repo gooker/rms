@@ -100,6 +100,9 @@ export default {
 
     // 弹窗
     categoryModal: null,
+
+    //
+    stationData: null,
   },
 
   reducers: {
@@ -111,6 +114,14 @@ export default {
         ...state,
         categoryPanel: Category.Prop,
         checkingElement: action.payload,
+      };
+    },
+    saveStationElement(state, action) {
+      return {
+        ...state,
+        categoryPanel: Category.Report,
+        categoryModal: action.payload?.type,
+        stationData: action.payload?.data,
       };
     },
     saveCategoryModal(state, action) {
@@ -315,11 +326,11 @@ export default {
     },
 
     // *****显示******
-    *saveViewSetting({ payload }, { put, select }) {
+    *fetchUpdateViewSetting({ payload }, { put, select }) {
       const { viewSetting } = yield select((state) => state.monitor);
       const { key, value } = payload;
       const newViewSetting = { ...viewSetting, [key]: value };
-      yield put({ type: 'saveState', payload: newViewSetting });
+      yield put({ type: 'saveViewSetting', payload: newViewSetting });
     },
 
     // *****临时不可走点

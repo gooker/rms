@@ -22,7 +22,7 @@ import LatentStopMessage from './LatentStopMessage';
 import Tracking from './Tracking';
 
 const MonitorModals = (props) => {
-  const { categoryModal, categoryPanel, dispatch } = props;
+  const { categoryModal, categoryPanel,workStationMark, dispatch } = props;
   return (
     <>
       {categoryModal === 'emptyRun' && <EmptyRun />}
@@ -51,6 +51,7 @@ const MonitorModals = (props) => {
       {categoryModal === 'setLatentPod' && <SetupLatentPod dispatch={dispatch} />}
       {categoryModal === 'podToWorkstationInfoMessage' && <PodToStationMessage />}
       {categoryModal === 'stopMessage' && <LatentStopMessage />}
+      {categoryModal === 'Report' && <LatentStopMessage />}
     </>
   );
 };

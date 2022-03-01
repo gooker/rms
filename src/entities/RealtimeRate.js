@@ -103,7 +103,7 @@ export default class RealtimeRate extends PIXI.Container {
     this.labelFreightSprite.y = _y;
 
     this.rateFreightSprite = new PIXI.Text(
-      `${goodsRate} ${formatMessage({ id: 'app.monitor.modal.workstation.label.count' })}`,
+      `${goodsRate} ${formatMessage({ id: 'monitor.workstation.label.count' })}`,
       this.textStyle,
     );
     this.rateFreightSprite.visible = this.$visible;
@@ -127,7 +127,7 @@ export default class RealtimeRate extends PIXI.Container {
     this.labelAgvRateSprite.y = _y;
 
     this.rateAgvRateSprite = new PIXI.Text(
-      `${rate} ${formatMessage({ id: 'app.monitor.modal.workstation.label.rate' })}`,
+      `${rate} ${formatMessage({ id: 'monitor.workstation.label.rate' })}`,
       this.textStyle,
     );
     this.rateAgvRateSprite.visible = this.$visible;

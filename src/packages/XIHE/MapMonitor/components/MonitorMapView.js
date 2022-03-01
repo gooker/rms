@@ -1330,7 +1330,6 @@ class MonitorMapView extends BaseMap {
         agv.switchMarkerShown(false, null, null);
       }
     });
-
     const workStation = this.workStationMap.get(workStationId);
     const renderColor = color ?? workStation.employeeColor; // 边缘Case: 请求发送完成到请求返回中间时间工作站被取消显示小车
     if (isShown && renderColor) {
