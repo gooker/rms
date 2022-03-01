@@ -6,8 +6,8 @@ import styles from './Portal.module.less';
 
 const { I18N, SSO, XIHE, Mixrobot, LatentLifting, Tote, Sorter, ForkLifting } = PortalEntry;
 
-const PortalWidth = 30;
-const PortalHeight = 29;
+const PortalWidth = 25;
+const PortalHeight = 25;
 
 const Portal = (props) => {
   const { dispatch, isAdmin, appList, currentApp, customLogo } = props;

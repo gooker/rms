@@ -3,11 +3,7 @@
   flex-flow: column nowrap;
   height: 100vh;
   background: #00113e;
-}
-
-.header {
-  flex: none;
-  height: 60px;
+  background: linear-gradient(180deg, #00113e, #383a3c);
 }
 
 .body {
@@ -15,15 +11,6 @@
   flex: 1;
   padding-top: 20px;
   overflow: hidden;
-
-  & > div:nth-child(1) {
-    margin-right: 5px;
-  }
-
-  & > div:nth-child(2) {
-    flex: 1;
-    margin-left: 5px;
-  }
 }
 
 // 菜单
@@ -36,12 +23,19 @@
 
     :global {
       ul {
-        background: #00113e;
+        background: transparent;
 
-        li {
-          .ant-menu-sub {
-            background: #00113e;
+        li[class*='ant-menu-item-selected'] {
+          background-color: transparent !important;
+
+          .ant-menu-title-content > a {
+            color: #0ba2e8;
+            font-weight: 600;
           }
+        }
+
+        ul[class*='ant-menu-sub'] {
+          background-color: transparent !important;
         }
       }
     }
@@ -58,8 +52,9 @@
   }
 }
 
-//
 .layoutContent {
+  flex: 1 1;
+  margin: 0 6px 6px 0;
   overflow: auto;
   box-shadow: 0 0 8px #acacac;
 

@@ -22,9 +22,10 @@ const MonitorMapContainer = (props) => {
     const resizeObserver = new ResizeObserver(
       throttle(() => {
         const htmlDOM = document.getElementById('mapMonitorPage');
-        const { width, height } = htmlDOM.getBoundingClientRect();
-        const { mapContext: _mapContext } = window.g_app._store.getState().monitor;
-        _mapContext && _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
+        if (htmlDOM && mapContext) {
+          const { width, height } = htmlDOM.getBoundingClientRect();
+          mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
+        }
       }, 500),
     );
     resizeObserver.observe(document.getElementById('mapMonitorPage'));

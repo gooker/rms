@@ -116,7 +116,7 @@ class Header extends React.Component {
     const mainVersion = backendVersion?.MixRobot?.version;
     const isAdmin = currentUser.username === 'admin';
     return (
-      <div className={styles.headerContent}>
+      <div className={styles.header}>
         <div className={styles.leftContent}>
           <img
             className={styles.logo}
