@@ -152,7 +152,7 @@ class EmergencyStop extends ResizableContainer {
         eStopArea.height = height;
         eStopArea.anchor.set(0.5);
       } else {
-        eStopArea = new PIXI.Graphics();
+        eStopArea = new SmoothGraphics();
         eStopArea.lineStyle(0);
         eStopArea.beginFill(fillColor);
         eStopArea.drawCircle(0, 0, radius);
@@ -168,7 +168,7 @@ class EmergencyStop extends ResizableContainer {
     const width = this.$$data.xlength;
     const height = this.$$data.ylength;
     const radius = this.$$data.r;
-    const line = new PIXI.Graphics();
+    const line = new SmoothGraphics();
     if (isNull(radius)) {
       line.lineStyle(BorderWidth, color).drawRect(0 - width / 2, 0 - height / 2, width, height);
     } else {

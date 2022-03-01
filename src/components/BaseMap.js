@@ -1,9 +1,8 @@
 import React from 'react';
-import * as PIXI from 'pixi.js';
-import { sortBy, uniq } from 'lodash';
+import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import {
   getCoordinat,
-  getLineGraphics,
+  createRelation,
   getLineEntityFromMap,
   getCurrentRouteMapData,
   getTextureFromResources,
@@ -22,13 +21,7 @@ import {
 import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
-import {
-  CellSize,
-  MapSelectableSpriteType,
-  WorldScreenRatio,
-  zIndex,
-  ZoneMarkerType,
-} from '@/config/consts';
+import { MapSelectableSpriteType, zIndex, ZoneMarkerType } from '@/config/consts';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -276,7 +269,7 @@ export default class BaseMap extends React.Component {
         const targetCell = this.idCellMap.get(target);
         // 此时 sourceCell 和 targetCell 可能是电梯点
         if (sourceCell && targetCell) {
-          const line = getLineGraphics(
+          const line = createRelation(
             relations,
             sourceCell,
             targetCell,
@@ -424,8 +417,8 @@ export default class BaseMap extends React.Component {
             cellEntity.plusType('charger_cell', getTextureFromResources('charger_cell'));
 
             // 渲染充电桩到充电点之间的关系线
-            const relationLine = new PIXI.Graphics();
-            relationLine.lineStyle(20, 0x0389ff);
+            const relationLine = new SmoothGraphics();
+            relationLine.lineStyle(20, 0x0389ff, 1, LINE_SCALE_MODE.NONE);
             relationLine.moveTo(x, y);
             relationLine.lineTo(cellEntity.x, cellEntity.y);
             relationLine.zIndex = zIndex.targetLine;
@@ -517,7 +510,7 @@ export default class BaseMap extends React.Component {
     if (stopCell) {
       stopCell.plusType('stop', getTextureFromResources('stop'));
       // 渲染工作站到停止点之间的关系线
-      const dashedLine = new PIXI.Graphics();
+      const dashedLine = new SmoothGraphics();
       dashedLine.lineStyle(20, 0x0389ff);
       dashedLine.moveTo(x, y);
       dashedLine.lineTo(stopCell.x, stopCell.y);
@@ -656,7 +649,7 @@ export default class BaseMap extends React.Component {
       }
 
       // 渲染站点到停止点之间的关系线
-      const dashedLine = new PIXI.Graphics();
+      const dashedLine = new SmoothGraphics();
       dashedLine.lineStyle(20, 0x0389ff);
       dashedLine.moveTo(destinationX, destinationY);
       dashedLine.lineTo(stopCell.x, stopCell.y);
@@ -829,7 +822,7 @@ export default class BaseMap extends React.Component {
         this.addDumpBasket(item.key, item.x, item.y);
 
         // 渲染抛物点与抛物框之间的虚线
-        const dashedLine = new PIXI.Graphics();
+        const dashedLine = new SmoothGraphics();
         dashedLine.lineStyle(15, 0xdc8758);
         dashedLine.moveTo(dumpData.x, dumpData.y);
         dashedLine.lineTo(item.x, item.y);

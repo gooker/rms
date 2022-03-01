@@ -2,73 +2,12 @@ import * as PIXI from 'pixi.js';
 import { CellSize, HeatCircleRadius } from '@/config/consts';
 
 const graphics = new PIXI.Graphics();
-export function getQrCodeSelectBorderTexture() {
+export function getQrCodeSelectBorderTexture(renderer, hasBorder) {
   graphics.clear();
-  graphics.lineStyle(1, 0xff5722, 1);
+  hasBorder && graphics.lineStyle(1, 0xff5722, 1);
   graphics.beginFill(0xff5722, 0.5);
   graphics.drawRect(0, 0, CellSize.width, CellSize.height);
-  return window.PixiUtils.renderer.generateTexture(graphics);
-}
-
-export function getCostArrow(renderer, color) {
-  // 默认长度是1125，宽度是15，后续可以通过Scale去调整尺寸
-  const distanceInt = 1125;
-  const lineWidth = 40;
-
-  // 箭头主体
-  graphics.clear();
-  graphics.beginFill(color);
-
-  // 画一个三角形，作为箭头
-  graphics.drawPolygon([
-    0,
-    0, // Starting x, y coordinates
-    -50,
-    300,
-    50,
-    300,
-  ]);
-  graphics.endFill();
-  graphics.lineStyle(lineWidth, color, 1);
-  graphics.moveTo(0, 300);
-  graphics.lineTo(0, distanceInt);
   return renderer.generateTexture(graphics);
-}
-
-export function getBoldCostArrow(color) {
-  // 默认长度是1125，宽度是15，后续可以通过Scale去调整尺寸
-  const distanceInt = 200;
-  const lineWidth = 40;
-
-  // 箭头主体
-  graphics.clear();
-  graphics.lineStyle(lineWidth, color, 1);
-  graphics.moveTo(0, distanceInt);
-  graphics.lineTo(0, 0);
-
-  // 箭头左帽
-  let arrowX;
-  let arrowY;
-  const headLength = 150;
-  const theta = 25;
-  const angle1 = ((90 + theta) * Math.PI) / 180;
-  const topX = headLength * Math.cos(angle1);
-  const topY = headLength * Math.sin(angle1);
-  arrowX = topX;
-  arrowY = topY;
-  graphics.moveTo(arrowX, arrowY);
-  graphics.lineTo(0, 0);
-
-  // 箭头右帽
-  const angle2 = ((90 - theta) * Math.PI) / 180;
-  const botX = headLength * Math.cos(angle2);
-  const botY = headLength * Math.sin(angle2);
-  arrowX = botX;
-  arrowY = botY;
-  graphics.lineTo(arrowX, arrowY);
-
-  // 路线纹理
-  return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
 export function getTaskPathTexture(color) {

@@ -61,7 +61,7 @@ export default class BackImg extends PIXI.Container {
 
   drawRect(props) {
     // 线框
-    const graphicsRect = new PIXI.Graphics();
+    const graphicsRect = new SmoothGraphics();
     graphicsRect.clear();
     graphicsRect.lineStyle(45, this.color, 1);
     graphicsRect.beginFill(this.color, this.$alpha);
@@ -76,7 +76,7 @@ export default class BackImg extends PIXI.Container {
   }
 
   drawCircle(props) {
-    const circle = new PIXI.Graphics();
+    const circle = new SmoothGraphics();
     circle.clear();
     circle.lineStyle(45, this.color, 1);
     circle.beginFill(this.color, this.$alpha);

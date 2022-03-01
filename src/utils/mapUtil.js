@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import * as XLSX from 'xlsx';
 import { find, groupBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
@@ -6,24 +7,21 @@ import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/
 import {
   AGVState,
   CellSize,
-  CostColor,
-  MapSelectableSpriteType,
+  ToteAGVSize,
   SorterAGVSize,
   TaskPathColor,
-  ToteAGVSize,
   EStopStateColor,
+  MapSelectableSpriteType,
 } from '@/config/consts';
-import json from '../../package.json';
 import {
   getAgvSelectBorderTexture,
-  getBoldCostArrow,
   getCellHeatTexture,
-  getCostArrow,
   getEStopTexture,
   getQrCodeSelectBorderTexture,
   getRectLock,
   getTaskPathTexture,
 } from '@/utils/textures';
+import json from '../../package.json';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -140,13 +138,49 @@ function getLineCorner(relations, beginCell, endCell, angle) {
   return { x1, y1 };
 }
 
+const CAP_WIDTH = 50;
+const CAP_HEIGHT = 150;
+export function getCostArrow(length, color) {
+  const smoothGraphics = new SmoothGraphics();
+  const polygonPath = [
+    0,
+    0,
+    -CAP_WIDTH,
+    CAP_HEIGHT,
+    -CAP_WIDTH / 2,
+    CAP_HEIGHT,
+    -CAP_WIDTH / 2,
+    length,
+    CAP_WIDTH / 2,
+    length,
+    CAP_WIDTH / 2,
+    CAP_HEIGHT,
+    CAP_WIDTH,
+    CAP_HEIGHT,
+  ];
+  smoothGraphics.lineStyle(1, color, 1, 1, LINE_SCALE_MODE.NONE);
+  smoothGraphics.beginFill(color, 1, true);
+  smoothGraphics.drawPolygon(polygonPath);
+  smoothGraphics.endFill();
+  return smoothGraphics;
+}
+
+export function getRelationSelectionBG(width, height) {
+  const smoothGraphics = new SmoothGraphics();
+  smoothGraphics.lineStyle(0);
+  smoothGraphics.beginFill(0xff5722, 1, true);
+  smoothGraphics.drawRect(0, 0, width, height);
+  smoothGraphics.endFill();
+  return smoothGraphics;
+}
+
 /**
  * 获取当前线条的起始点坐标和角度
  * @param {*} relations
  * @param {*} beginCell
  * @param {*} endCell
  * @param {*} angle
- * @returns { fromX, fromY, length, distance }
+ * @returns {{distance: number, length: number, fromX: number, fromY: number}}
  */
 function getLineAnchor(relations, beginCell, endCell, angle) {
   let fromX;
@@ -214,7 +248,7 @@ function getLineAnchor(relations, beginCell, endCell, angle) {
  * @param mapMode
  * @returns {LineArrow}
  */
-export function getLineGraphics(
+export function createRelation(
   relations,
   beginCell,
   endCell,
@@ -1275,7 +1309,7 @@ export function getSelectionWorldCoordinator(mapDOM, maskDOM, viewportEntity) {
   const { width, height } = maskDOM.getBoundingClientRect();
   // 转换坐标
   const { x: rangeWorldStartX, y: rangeWorldStartY } = viewportEntity.toWorld(x, y);
-  const { x: rangeWorldEndX, y: rangeWorldEndY } = viewportEntity.toWorld(x, y);
+  const { x: rangeWorldEndX, y: rangeWorldEndY } = viewportEntity.toWorld(x + width, y + height);
   return {
     width,
     height,
@@ -1351,16 +1385,10 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
 export function loadEditorExtraTextures(renderer) {
   return new Promise((resolve) => {
     // 点位选中的Texture
-    PIXI.Texture.addToCache(getQrCodeSelectBorderTexture(), 'cellSelectBorderTexture');
-
-    // 交汇点方向Texture
-    PIXI.Texture.addToCache(getBoldCostArrow('0xFFFFFF'), 'boldDirection');
-
-    // Cost线条
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[10]), '_10CostArrow');
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[20]), '_20CostArrow');
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[100]), '_100CostArrow');
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[1000]), '_1000CostArrow');
+    PIXI.Texture.addToCache(
+      getQrCodeSelectBorderTexture(renderer, true),
+      'cellSelectBorderTexture',
+    );
 
     // 急停区
     PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
@@ -1381,15 +1409,6 @@ export function loadMonitorExtraTextures(renderer) {
   return new Promise((resolve) => {
     // 背景
     PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
-
-    // 交汇点方向Texture
-    PIXI.Texture.addToCache(getBoldCostArrow('0xFFFFFF'), 'boldDirection');
-
-    // Cost线条
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[10]), '_10CostArrow');
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[20]), '_20CostArrow');
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[100]), '_100CostArrow');
-    PIXI.Texture.addToCache(getCostArrow(renderer, CostColor[1000]), '_1000CostArrow');
 
     // 任务路径
     PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed), '_passedTaskPath');

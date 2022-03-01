@@ -85,7 +85,7 @@ export default class OpenLock extends PIXI.Container {
     outRadius = Number.parseFloat(outRadius.toFixed(3));
 
     // 画内矩形
-    const reactPainter = new PIXI.Graphics();
+    const reactPainter = new SmoothGraphics();
     reactPainter.lineStyle(30, this.color, 1);
     const rect = reactPainter.drawRect(0, 0, this.$width, this.$height);
     rect.position.x = this.width / 2 - rect.width / 2 + 15;
@@ -95,7 +95,7 @@ export default class OpenLock extends PIXI.Container {
     // 画外圆
     const { startX, startY, endX, endY } = this.getStartAndEnd();
     if (startX && startY && endX && endY) {
-      const circlePainter = new PIXI.Graphics();
+      const circlePainter = new SmoothGraphics();
       circlePainter.lineStyle(30, this.color, 1);
       const openCircle = circlePainter.arc(
         0,

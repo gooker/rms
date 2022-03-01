@@ -78,7 +78,7 @@ class MonitorMapView extends BaseMap {
     this.showTaskPath = false;
     this.agvTaskMap = new Map(); // {agvID: TaskActions}
     this.agvPathMap = new Map(); // {agvID:[TaskPathEntity]}
-    this.agvTargetLineMap = new Map(); // {agvID:PIXI.Graphics}
+    this.agvTargetLineMap = new Map(); // {agvID:SmoothGraphics}
 
     // 料箱实时任务
     this.toteTaskRealtimePath = [];
@@ -1113,7 +1113,7 @@ class MonitorMapView extends BaseMap {
         lineEnd = getElevatorMapCellId(lineEnd);
         const targetCell = this.idCellMap.get(lineEnd);
 
-        const targetLineSprite = new PIXI.Graphics();
+        const targetLineSprite = new SmoothGraphics();
         targetLineSprite.lineStyle(20, 0x287ada, 1);
         targetLineSprite.moveTo(agvData.x, agvData.y);
         targetLineSprite.lineTo(targetCell.x, targetCell.y);
@@ -1178,7 +1178,7 @@ class MonitorMapView extends BaseMap {
 
     // 画线条
     pathLineData.forEach(({ start, end }) => {
-      const realTimeLineSprite = new PIXI.Graphics();
+      const realTimeLineSprite = new SmoothGraphics();
       // 根据end任务类型选择不同颜色
       const color = end.action === 'f' ? 0x34bf49 : 0xfbb034;
       realTimeLineSprite.lineStyle(50, color, 1);

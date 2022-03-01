@@ -1,10 +1,11 @@
 import * as PIXI from 'pixi.js';
+import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import { isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { Text } from '@/entities';
 
-const Tiny_Rotate_Offset = 120;
+const Tiny_Rotate_Offset = 200;
 
 function calcAngleRadians(x, y) {
   return Math.atan2(y, x);
@@ -41,7 +42,7 @@ export default class ResizableContainer extends PIXI.Container {
     this.mDragging = false; // 移动
   }
 
-  create(element, updater, zIndex, interactive, rerender) {
+  create(element, updater, zIndex, interactive) {
     this.$zIndex = zIndex;
     this.$updater = updater;
     this.element = this.addChild(element);
@@ -49,7 +50,6 @@ export default class ResizableContainer extends PIXI.Container {
     if (interactive) {
       this.element.interactive = true;
       this.element.buttonMode = true;
-      this.element.cursor = 'pointer';
       this.element
         .on('pointerdown', this.onElementPointerDown)
         .on('pointermove', this.onElementMove)
@@ -118,10 +118,12 @@ export default class ResizableContainer extends PIXI.Container {
 
   createHandler(cursor) {
     const handle = new PIXI.Graphics();
-    handle.lineStyle(this.borderWidth, this.handlerColor).beginFill(this.handlerColor);
+    handle.beginFill(this.handlerColor);
+    handle.drawRect(0, 0, this.handlerSize, this.handlerSize);
+    handle.endFill();
     handle.pivot.set(this.handlerSize / 2, this.handlerSize / 2);
     handle.interactive = true;
-    handle.zIndex = 2;
+    handle.zIndex = 1;
     this.addToolTip(handle, cursor);
     return handle;
   }
@@ -186,16 +188,14 @@ export default class ResizableContainer extends PIXI.Container {
   initResizeTool() {
     const { width, height } = this.element;
     if (isNull(this.border)) {
-      this.border = this.addChild(new PIXI.Graphics());
-      this.border
-        .lineStyle(this.borderWidth, this.borderColor)
-        .drawRect(-width / 2, -height / 2, width, height);
+      this.border = this.addChild(new SmoothGraphics());
+      this.border.lineStyle(this.borderWidth, this.borderColor);
+      this.border.drawRect(-width / 2, -height / 2, width, height);
       this.border.zIndex = 1;
     }
 
     if (this.boxType === 'Rect' && isNull(this.hScaleHandler)) {
       this.hScaleHandler = this.addChild(this.createHandler('e-resize'));
-      this.hScaleHandler.drawRect(0, 0, this.handlerSize, this.handlerSize);
       this.hScaleHandler.x = width / 2;
       this.hScaleHandler.y = 0;
       this.hScaleHandler
@@ -207,7 +207,6 @@ export default class ResizableContainer extends PIXI.Container {
 
     if (this.boxType === 'Rect' && isNull(this.vScaleHandler)) {
       this.vScaleHandler = this.addChild(this.createHandler('s-resize'));
-      this.vScaleHandler.drawRect(0, 0, this.handlerSize, this.handlerSize);
       this.vScaleHandler.x = 0;
       this.vScaleHandler.y = height / 2;
       this.vScaleHandler
@@ -219,7 +218,6 @@ export default class ResizableContainer extends PIXI.Container {
 
     if (isNull(this.scaleHandler)) {
       this.scaleHandler = this.addChild(this.createHandler('se-resize'));
-      this.scaleHandler.drawRect(0, 0, this.handlerSize, this.handlerSize);
       this.scaleHandler.x = width / 2;
       this.scaleHandler.y = height / 2;
       this.scaleHandler
@@ -251,10 +249,9 @@ export default class ResizableContainer extends PIXI.Container {
       this.border.destroy(true);
       this.border = null;
     }
-    this.border = this.addChild(new PIXI.Graphics());
-    this.border
-      .lineStyle(this.borderWidth, 0xffffff)
-      .drawRect(-width / 2, -height / 2, width, height);
+    this.border = this.addChild(new SmoothGraphics());
+    this.border.lineStyle(this.borderWidth, 0xffffff, 1, 1, LINE_SCALE_MODE.NONE);
+    this.border.drawRect(-width / 2, -height / 2, width, height);
     this.border.zIndex = 1;
 
     if (this.hScaleHandler) {

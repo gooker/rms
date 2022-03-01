@@ -11,7 +11,7 @@ export default class WorkState extends PIXI.Sprite {
   }
 
   createGraphics() {
-    const circle = new PIXI.Graphics();
+    const circle = new SmoothGraphics();
     circle.clear();
     circle.beginFill(this.color);
     circle.drawCircle(0, 0, 3);
