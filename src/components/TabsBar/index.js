@@ -32,17 +32,23 @@ const TabsBar = (props) => {
   return (
     <div className={styles.tabsContainer} style={{ width: width }}>
       <div style={{ maxWidth: width ? width - 70 : 0, whiteSpace: 'nowrap', overflow: 'auto' }}>
-        {tabInfo.map(({ path, title }, index) => (
-          <TabButton
-            key={path}
-            index={index}
-            tabCount={tabInfo.length}
-            active={path === activeTab}
-            menuKey={path}
-            label={title}
-            dispatch={dispatch}
-          />
-        ))}
+        {tabInfo
+          .map(({ path, title }, index) => {
+            if (path !== '/') {
+              return (
+                <TabButton
+                  key={path}
+                  index={index}
+                  tabCount={tabInfo.length}
+                  active={path === activeTab}
+                  menuKey={path}
+                  label={title}
+                  dispatch={dispatch}
+                />
+              );
+            }
+          })
+          .filter(Boolean)}
       </div>
     </div>
   );

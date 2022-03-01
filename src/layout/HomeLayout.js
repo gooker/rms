@@ -18,9 +18,7 @@ const HomeLayout = (props) => {
 
   return (
     <div className={styles.home}>
-      <div className={styles.header}>
-        <Header />
-      </div>
+      <Header />
       <div className={styles.body}>
         <Menu />
         <Content />

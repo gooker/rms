@@ -94,6 +94,7 @@ const EditorMask = (props) => {
     >
       {/* 创建区域 */}
       <Modal
+        destroyOnClose
         visible={zoneMarkerVisible}
         title={<FormattedMessage id={'editor.zone.creation'} />}
         footer={null}

@@ -12,10 +12,10 @@ export default class PixiBuilder {
     this.renderer = new PIXI.Renderer({
       width,
       height,
-      antialias: true,
+      antialias: false,
       autoDensity: true,
       backgroundAlpha: 0,
-      resolution: window.devicePixelRatio,
+      resolution: window.devicePixelRatio || 1.0,
       powerPreference: 'high-performance',
     });
     htmlDOM.appendChild(this.renderer.view);

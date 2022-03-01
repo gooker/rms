@@ -69,7 +69,7 @@ export default class GeoLock extends PIXI.Sprite {
   }
 
   drawCircleLock() {
-    const circle = new PIXI.Graphics();
+    const circle = new SmoothGraphics();
     circle.clear();
     circle.lineStyle(30, this.color, 1);
     circle.drawCircle(0, 0, this.radius);

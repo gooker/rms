@@ -1,9 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { LINE_SCALE_MODE, settings } from '@pixi/graphics-smooth';
 import createRcsDva from '@/utils/RmsDva';
 import App from '@/pages/App';
 import models from '@/models';
 import './global.less';
+
+// https://github.com/pixijs/graphics-smooth
+settings.PIXEL_LINE = 1;
+settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
 
 // 全局错误处理(尝试版)
 // window.onerror = function (message, source, lineno, colno, error) {

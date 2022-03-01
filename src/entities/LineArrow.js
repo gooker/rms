@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
 import { getDirByAngle } from '@/utils/util';
 import { zIndex, CostColor, CellSize, MapSelectableSpriteType } from '@/config/consts';
+import { getCostArrow, getRelationSelectionBG } from '@/utils/mapUtil';
 
 export default class LineArrow extends PIXI.Container {
   constructor(props) {
@@ -11,33 +12,32 @@ export default class LineArrow extends PIXI.Container {
     this.y = props.fromY;
     this.angle = props.lineAngle;
     this.alpha = 0.8;
-    this.type = 'line';
-    this.isClassic = props.isClassic;
     this.zIndex = this.isClassic ? zIndex.line : 100;
+
+    this.type = 'line';
+    this.cost = props.cost;
     this.mapMode = props.mapMode;
+    this.isClassic = props.isClassic;
     this.length = props.length; // Sprite长度
     this.distance = props.distance; // 显示的长度文本
-    this.cost = props.cost;
-    this.$angle = props.lineAngle;
     this.dir = getDirByAngle(props.lineAngle);
 
     this.refresh = props.refresh; // 刷新
     this.select = props.select; // 单选
     this.ctrlSelect = props.ctrlSelect; // 批量选
 
-    this.states = {
-      selected: false,
-      arrow: true,
-      distance: false,
-    };
-    this.additionalFlag = new Map();
     this.createArrow();
+    this.createLabel();
+    this.createSelectionBG();
 
     if (props.interactive) {
       this.arrow.buttonMode = true;
       this.arrow.interactive = true;
       this.arrow.on('pointerdown', this.click);
     }
+
+    this.states = { selected: false, arrow: true, distance: false };
+    this.additionalFlag = new Map();
   }
 
   set clickable(value) {
@@ -51,16 +51,15 @@ export default class LineArrow extends PIXI.Container {
   }
 
   createArrow = () => {
-    const texture = this.switchArrowTexture();
-    if (!texture) return;
-    this.arrow = new PIXI.Sprite(texture);
-    this.arrow.anchor.set(0.5, 1);
-    this.arrow.scale.y = this.length / 1125;
+    this.arrow = getCostArrow(this.length, CostColor[this.cost]);
+    this.arrow.pivot = { x: 0, y: this.length };
     if (this.mapMode === 'scaled') {
       this.arrow.scale.x = 5;
     }
     this.addChild(this.arrow);
+  };
 
+  createLabel() {
     // 距离文本
     let distanceAngle;
     const textFontSize = 70;
@@ -73,7 +72,7 @@ export default class LineArrow extends PIXI.Container {
     }
     let fontColor = CostColor[this.cost];
 
-    //大图模式下，字体悬浮在箭头上，所以显示成白色
+    // 大图模式下，字体悬浮在箭头上，所以显示成白色
     if (this.mapMode === 'scaled') {
       fontColor = 0xffffff;
       xOffset = 15;
@@ -89,38 +88,16 @@ export default class LineArrow extends PIXI.Container {
     this.distanceText.angle = distanceAngle;
     this.distanceText.zIndex = 200;
     this.addChild(this.distanceText);
+  }
 
-    // 线条选中背景色
-    this.selectedBorderSprite = new PIXI.Sprite(PIXI.utils.TextureCache.cellSelectBorderTexture);
-    this.selectedBorderSprite.anchor.set(0, 1);
-    this.selectedBorderSprite.x = -this.width / 2;
-    this.selectedBorderSprite.alpha = 0.7;
-    this.selectedBorderSprite.height = this.height;
-    this.selectedBorderSprite.width = this.width;
+  createSelectionBG() {
+    this.selectedBorderSprite = getRelationSelectionBG(this.arrow.width, this.arrow.height);
+    this.selectedBorderSprite.pivot = { x: 0, y: this.length };
+    this.selectedBorderSprite.x = -this.arrow.width / 2;
+    this.selectedBorderSprite.alpha = 0.6;
     this.selectedBorderSprite.visible = false;
     this.addChild(this.selectedBorderSprite);
-  };
-
-  switchArrowTexture = () => {
-    let texture;
-    switch (this.cost) {
-      case 10:
-        texture = PIXI.utils.TextureCache._10CostArrow;
-        break;
-      case 20:
-        texture = PIXI.utils.TextureCache._20CostArrow;
-        break;
-      case 100:
-        texture = PIXI.utils.TextureCache._100CostArrow;
-        break;
-      case 1000:
-        texture = PIXI.utils.TextureCache._1000CostArrow;
-        break;
-      default:
-        break;
-    }
-    return texture;
-  };
+  }
 
   click = (event) => {
     const cost = {

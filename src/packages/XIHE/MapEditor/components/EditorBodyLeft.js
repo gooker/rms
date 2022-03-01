@@ -150,7 +150,7 @@ class EditorBodyLeft extends React.PureComponent {
       }
 
       // 插入文字，鼠标抬起后立即弹出输入框
-      if (LeftCategory.Font === activeKey) {
+      if (activeKey === LeftCategory.Font) {
         dispatch({ type: 'editor/updateLabelInputVisible', payload: true });
       }
 

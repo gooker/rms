@@ -10,6 +10,7 @@ import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from 
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
 
+const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
   const { dispatch, mapContext, showShortcutTool } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
@@ -47,27 +48,28 @@ const EditorMapContainer = (props) => {
       renderRouteMap();
       mapContext.centerView();
 
+      // 添加事件处理地图跑出Screen
       viewport.off('moved');
       viewport.on(
         'moved',
         throttle(function () {
           const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
-          const topLimit = y + height * 0.8;
+          const topLimit = y + (height - CLAMP_VALUE);
           if (this.top >= topLimit) {
             this.top = topLimit;
           }
 
-          const bottomLimit = y + height * 0.2;
+          const bottomLimit = y + CLAMP_VALUE;
           if (this.bottom <= bottomLimit) {
             this.bottom = bottomLimit;
           }
 
-          const leftLimit = x + width * 0.8;
+          const leftLimit = x + (width - CLAMP_VALUE);
           if (this.left >= leftLimit) {
             this.left = leftLimit;
           }
 
-          const rightLimit = x + width * 0.2;
+          const rightLimit = x + CLAMP_VALUE;
           if (this.right <= rightLimit) {
             this.right = rightLimit;
           }

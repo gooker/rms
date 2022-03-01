@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { Text } from '@/entities';
 import ResizableContainer from '@/components/ResizableContainer';
 import { MapSelectableSpriteType, zIndex } from '@/config/consts';
@@ -34,7 +35,8 @@ export default class MapZoneMarker extends ResizableContainer {
 
   createElement(width, height) {
     if (['RECT', 'CIRCLE'].includes(this.type)) {
-      const graphics = new PIXI.Graphics();
+      const graphics = new SmoothGraphics();
+      graphics.lineStyle(0);
       graphics.beginFill(this.color);
       if (this.type === 'RECT') {
         graphics.drawRect(0, 0, width, height);
@@ -43,8 +45,7 @@ export default class MapZoneMarker extends ResizableContainer {
         graphics.drawCircle(0, 0, this.radius);
       }
       graphics.endFill();
-      const texture = window.PixiUtils.renderer.generateTexture(graphics);
-      this.zoneArea = new PIXI.Sprite(texture);
+      this.zoneArea = graphics;
     } else {
       const imageBaseTexture = new PIXI.BaseTexture(this.data);
       const imageTexture = new PIXI.Texture(imageBaseTexture);
@@ -53,7 +54,7 @@ export default class MapZoneMarker extends ResizableContainer {
       this.zoneArea.height = height;
     }
     this.zoneArea.alpha = 0.7;
-    this.zoneArea.anchor.set(0.5);
+    this.zoneArea.pivot = { x: width / 2, y: height / 2 };
     this.zoneArea.zIndex = 1;
     this.$$container.addChild(this.zoneArea);
 
