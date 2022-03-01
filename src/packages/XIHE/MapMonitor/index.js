@@ -6,16 +6,22 @@ import { isNull, dealResponse } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
+import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
 import WorkStationReport from './Modal/WorkStationReport/WorkStationReport';
+import CommonStationReport from './Modal/CommonStationReport/CommonStationReport';
 import { fetchWorkStationInstrument, fetchWorkStationPre30Waiting } from '@/services/monitor';
 import {
   covertData2ChartsData,
   convertWaitingData2Chart,
 } from '@/packages/XIHE/MapMonitor/Modal/WorkStationReport/workStationEchart';
-
+import {
+  transformCommonTrafficData,
+  transitionRobots,
+} from './Modal/CommonStationReport/commonStationEchart';
+import { commonStationCallback } from './Modal/CommonStationReport/stationReport';
 import MonitorModals from './Modal';
 import { HeaderHeight } from './enums';
 import styles from './monitorLayout.module.less';
@@ -38,6 +44,12 @@ const MapMonitor = (props) => {
   const [workStationWaitingData, setWorkStationWaitingData] = useState({});
   const [workStationTaskHistoryData, setWorkStationTaskHistoryData] = useState({});
   const [workStationPolling, setWorkStationPolling] = useState([]);
+
+  const [commonPointOB, setCommonPointOB] = useState({});
+  const [commonPointWaitingData, setCommonPointWaitingData] = useState({});
+  const [commonPointTaskHistoryData, setCommonPointTaskHistoryData] = useState({});
+  const [commonPointTrafficData, setCommonPointTrafficData] = useState({});
+  const [commonPointPolling, setCommonPointPolling] = useState([]);
 
   useEffect(() => {
     socketClient.applyMonitorRegistration();
@@ -124,6 +136,55 @@ const MapMonitor = (props) => {
     };
   }, [workStationPolling]);
 
+  // 轮询 通用站点雇佣车标记
+  useEffect(() => {
+    if (commonPointPolling && commonPointPolling.length > 0) {
+      const promises = [];
+      const commonPointPromise = [];
+      // 收集请求队列
+      commonPointPolling.forEach((ele) => {
+        const [stopCellId, direction] = ele.split('-');
+        commonPointPromise.push(stopCellId);
+        promises.push({ stopCellId, stopDirection: direction });
+      });
+
+      CommonStationStatePolling.start(promises, (response) => {
+        // 生成工作站任务历史数据
+        const currentResponse = [...response];
+        const _commonPointTaskHistoryData = { ...commonPointTaskHistoryData };
+        currentResponse.map((data, index) => {
+          if (!dealResponse(data)) {
+            //到站次数
+            const TaskCountData = { ...data };
+            const stopCellId = commonPointPromise[index];
+            const robotIdMap = transitionRobots(TaskCountData);
+            const taskHistoryData = transformCommonTrafficData(TaskCountData);
+            _commonPointTaskHistoryData[stopCellId] = {
+              robotIdMap,
+              taskHistoryData,
+            };
+          }
+        });
+
+        setCommonPointTaskHistoryData(_commonPointTaskHistoryData);
+
+        // 根据返回数据刷新小车标记
+        Object.keys(_commonPointTaskHistoryData).forEach((stopId) => {
+          const { robotIdMap } = _commonPointTaskHistoryData[stopId];
+          const robotIds = [];
+          Object.values(robotIdMap).map((ids) => {
+            robotIds.push(...ids);
+          });
+          mapContext.markCommonPointAgv(robotIds, true, null, stopId);
+        });
+      });
+    }
+
+    return () => {
+      CommonStationStatePolling.terminate();
+    };
+  }, [commonPointPolling]);
+
   // 渲染监控里的小车、货架等
   async function renderMonitorLoad() {
     if (mapRendered) {
@@ -184,17 +245,11 @@ const MapMonitor = (props) => {
           type: 'monitor/saveStationElement',
           payload: {
             type: 'WorkStation',
-            data: {
-              workStationTaskHistoryData: _workStationTaskHistoryData,
-              workStationWaitingData: _workStationWaitingData,
-              workStation: { station, name, angle, direction, stopCellId, flag, color },
-            },
           },
         });
       });
     }
   }
-
   // 标记事件 工作站雇佣车
   const workStationMark = (agvs, checked, stationOB) => {
     if (mapContext) {
@@ -221,6 +276,46 @@ const MapMonitor = (props) => {
     }
   };
 
+  // 通用站点
+  async function checkCommonStation(commonOb) {
+    // 请求该工作站的展示数据并缓存
+    const { _commonPointTaskHistoryData, _trafficData, _commonWaitingData } =
+      await commonStationCallback(commonOb, commonPointTaskHistoryData);
+    dispatch({
+      type: 'monitor/saveStationElement',
+      payload: {
+        type: 'CommonStation',
+      },
+    });
+    setCommonPointOB({ ...commonOb });
+    setCommonPointTaskHistoryData(_commonPointTaskHistoryData);
+    setCommonPointTrafficData(_trafficData);
+    setCommonPointWaitingData(_commonWaitingData);
+  }
+  // 标记事件 通用站点雇佣车
+  function markCommonPointAgv(agvs, checked, commonOB) {
+    if (mapContext) {
+      const { stopCellId, color, angle:direction } = commonOB;
+      const currentStopCellId = `${stopCellId}`;
+      setCommonPointOB(commonOB);
+
+      // 更新地图显示
+      mapContext.markCommonPoint(currentStopCellId, checked, color);
+      mapContext.markCommonPointAgv(agvs, checked, color, currentStopCellId);
+
+      let _currentCommonStations = [...commonPointPolling];
+      if (checked) {
+        _currentCommonStations.push(`${currentStopCellId}-${direction}`);
+      } else {
+        _currentCommonStations.splice(
+          _currentCommonStations.indexOf(`${currentStopCellId}-${direction}`),
+          1,
+        );
+      }
+      setCommonPointPolling([..._currentCommonStations]);
+    }
+  }
+
   return (
     <div id={'mapMonitorPage'} className={commonStyles.commonPageStyleNoPadding}>
       <div
@@ -234,7 +329,10 @@ const MapMonitor = (props) => {
         )}
       </div>
       <div className={commonStyles.mapLayoutBody}>
-        <MonitorMapContainer checkWorkStation={checkWorkStation} />
+        <MonitorMapContainer
+          checkWorkStation={checkWorkStation}
+          checkCommonStation={checkCommonStation}
+        />
         <MonitorBodyRight />
       </div>
       <MonitorModals />
@@ -245,6 +343,16 @@ const MapMonitor = (props) => {
           waiting={workStationWaitingData} // 最后30次等待时间
           marker={workStationMark} // 标记函数/>
           refresh={checkWorkStation}
+        />
+      )}
+      {categoryModal === 'CommonStation' && categoryPanel === 'Report' && (
+        <CommonStationReport
+          commonPoint={commonPointOB} // 当前查看的通用站点数据
+          dataSource={commonPointTaskHistoryData} // 到站次数数据
+          waiting={commonPointWaitingData} // 最后30次等待时间
+          traffic={commonPointTrafficData} // 货物流量
+          marker={markCommonPointAgv} // 标记函数
+          refresh={checkCommonStation}
         />
       )}
     </div>

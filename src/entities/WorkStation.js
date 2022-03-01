@@ -11,6 +11,7 @@ export default class WorkStation extends PIXI.Container {
     this.icon = props.icon || 'work_station';
     this.name = props.name;
     this.angle = props.angle;
+    this.$angle = props.angle || 0; // 不要删掉 为了和通用站点保持统一 站点速率显示会用
     this.zIndex = zIndex.functionIcon;
     this.direction = props.direction;
 

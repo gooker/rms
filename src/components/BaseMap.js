@@ -502,11 +502,10 @@ export default class BaseMap extends React.Component {
       size,
       stopCellId,
       station,
-      click: this.onWorkStationClick,
     };
     if (!isNull(check) && typeof check === 'function') {
       workStationParam.active = true;
-      workStationParam.click = ({flag, color}) => {
+      workStationParam.click = ({ flag, color }) => {
         check({ station, name, angle, direction, stopCellId, flag, color });
       };
     }
@@ -628,8 +627,8 @@ export default class BaseMap extends React.Component {
       const _commonPoint = {};
       if (!isNull(check) && typeof check === 'function') {
         _commonPoint.active = true;
-        _commonPoint.check = (flag, color) => {
-          check(JSON.stringify({ station, name, angle, direction, stopCellId, flag, color }));
+        _commonPoint.click = (flag, color) => {
+          check({ station, name, angle, direction, stopCellId, flag, color });
         };
       }
 

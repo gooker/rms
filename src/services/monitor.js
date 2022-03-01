@@ -457,3 +457,27 @@ export async function fetchWorkStationPre30Waiting(params) {
     data: params,
   });
 }
+
+// 获取通用站点的到站次数在途小车
+export async function fetchCommonPointInstrument(params) {
+  return request(`/${NameSpace.Coordinator}/stationProxy/getStationReport`, {
+    method: 'GET',
+    data: params,
+  });
+}
+// 获取通用站点30s数据
+export async function fetchCommonPointPre30Waiting(params) {
+  return request(`/${NameSpace.Coordinator}/stationProxy/getStopWaitKpiDTO`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 获取站点查询实时速率
+export async function fetchStationRealTimeRate(params) {
+  return request(`/${NameSpace.Coordinator}/stationProxy/getRealTimeRate`, {
+    method: 'GET',
+    data: params,
+  });
+}
+

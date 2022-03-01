@@ -31,8 +31,8 @@ export default class CommonFunction extends PIXI.Container {
       this.CommonFunction.interactive = true;
       this.CommonFunction.buttonMode = true;
       this.CommonFunction.interactiveChildren = false;
-      this.CommonFunction.on('click', () => {
-        props.check(this.showEmployee, this.employeeColor);
+      this.CommonFunction.on('pointerdown', () => {
+        props.click(this.showEmployee, this.employeeColor);
       });
     }
   }
