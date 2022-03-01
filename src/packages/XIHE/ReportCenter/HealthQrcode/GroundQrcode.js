@@ -92,7 +92,6 @@ const GroundQrcode = (props) => {
     // 拿到原始数据的 所有参数 所有根据cellId的参数求和
     // 暂时为了拍视频--先固定时间 01-18 10:00--01-19 10:00
     // 搜索约定搜过去12h 即 01-18 22:00--01-19 10:00；
-    console.log(value);
     if (value && Object.keys(value).length > 0) {
       const _start = '2022-01-18 22:00:00';
       const _end = '2022-01-19 11:00:00';

@@ -8,8 +8,15 @@ import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/u
 import { ZoneMarkerType } from '@/config/consts';
 
 const MonitorMapContainer = (props) => {
-  const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
-    props;
+  const {
+    dispatch,
+    mapContext,
+    currentMap,
+    currentLogicArea,
+    currentRouteMap,
+    preRouteMap,
+    checkWorkStation,
+  } = props;
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -130,7 +137,7 @@ const MonitorMapContainer = (props) => {
     if (Array.isArray(workstationList)) {
       const workStationListData = renderWorkstaionlist(workstationList, currentMap.cellMap);
       workStationListData.forEach((workStation) => {
-        mapContext.addWorkStation(workStation);
+        mapContext.addWorkStation(workStation, checkWorkStation);
       });
     }
     // 通用站点

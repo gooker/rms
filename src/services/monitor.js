@@ -162,13 +162,12 @@ export async function agvCommand(AGVType, params) {
 }
 
 // 发送小车命令
-export async function agvRemoteControl(AGVType,params) {
+export async function agvRemoteControl(AGVType, params) {
   return request(`/${NameSpace[AGVType]}/agv/command`, {
     method: 'POST',
     data: params,
   });
 }
-
 
 // 呼叫潜伏货架到工作站
 export async function latentPodToWorkStation(payload) {
@@ -439,5 +438,22 @@ export async function getTunnelState() {
 export async function deleteTunnelAgvLock(robotId) {
   return request(`/${NameSpace.Coordinator}/traffic/clearTunnelLock/${robotId}`, {
     method: 'GET',
+  });
+}
+
+// 工作站
+// 任务数据
+export async function fetchWorkStationInstrument(params) {
+  return request(`/${NameSpace.LatentLifting}/agv-task/getWorkStationInstrument`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 最近30次等待时间
+export async function fetchWorkStationPre30Waiting(params) {
+  return request(`/${NameSpace.LatentLifting}/api/getStopWaitKpiDTO`, {
+    method: 'POST',
+    data: params,
   });
 }

@@ -13,7 +13,6 @@ export default class WorkStation extends PIXI.Container {
     this.angle = props.angle;
     this.zIndex = zIndex.functionIcon;
     this.direction = props.direction;
-    this.check = props.check;
 
     // 尺寸转换(向前兼容)
     if (this.icon === 'common') {
@@ -36,8 +35,11 @@ export default class WorkStation extends PIXI.Container {
       this.workStation.interactive = true;
       this.workStation.buttonMode = true;
       this.workStation.interactiveChildren = false;
-      this.workStation.on('click', () => {
-        props.check(this.showEmployee, this.employeeColor);
+      this.workStation.on('pointerdown', () => {
+        props.click({
+          flag: this.showEmployee,
+          color: this.employeeColor,
+        });
       });
     }
   }

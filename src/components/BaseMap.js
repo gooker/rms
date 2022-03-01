@@ -460,6 +460,8 @@ export default class BaseMap extends React.Component {
     }
   };
 
+  // 地图-工作站点击事件
+
   /**
    * 渲染一个工作站
    * @param {*} workStationData 工作站数据
@@ -490,13 +492,17 @@ export default class BaseMap extends React.Component {
       direction,
       icon,
       size,
+      stopCellId,
+      station,
+      click: this.onWorkStationClick,
     };
     if (!isNull(check) && typeof check === 'function') {
       workStationParam.active = true;
-      workStationParam.check = (flag, color) => {
-        check(JSON.stringify({ station, name, angle, direction, stopCellId, flag, color }));
+      workStationParam.click = ({ flag, color }) => {
+        check({ station, name, angle, direction, stopCellId, flag, color });
       };
     }
+
     const workStation = new WorkStation(workStationParam);
     this.pixiUtils.viewportAddChild(workStation);
     this.workStationMap.set(`${stopCellId}`, workStation);

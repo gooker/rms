@@ -207,4 +207,21 @@ export default {
   'monitor.message.podToWorkstationInfo': '到站消息',
   'monitor.message.latentStopMessage': '暂停消息',
   'monitor.message.releasePodSuccess': '释放成功',
+
+   // 工作站点击弹窗
+   'monitor.workstation.label.marked': '已标记',
+   'monitor.workstation.label.unmarked': '未标记',
+   'monitor.workstation.label.arrivals': '到站次数',
+   'monitor.workstation.label.last30Wait': '最后30次等待时间(s)',
+   'monitor.workstation.label.serviceAMR': '在途车数',
+   'monitor.workstation.label.piece': '辆',
+   'monitor.workstation.label.traffic': '到站个数',
+   'monitor.workstation.label.arrivalRate': '到站预估实时速率',
+   'monitor.workstation.label.speedCargo': '货物预估实时速​速率',
+   'monitor.workstation.label.rate': '次/小时',
+   'monitor.workstation.label.count': '个/小时',
+   'monitor.workstation.label.average': '平均值',
+   'monitor.workstation.label.num': '任务数量',
+   'monitor.tip.noTask': '当前无任务执行',
+ 
 };
