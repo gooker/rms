@@ -34,13 +34,13 @@ module.exports = {
   appPath: resolvePath('.'),
   appBuild: resolvePath('dist'),
   appPublic: resolvePath('public'),
-  appHtml: resolvePath('public/index.html'),
+  appHtml: resolvePath('public/index.js.html'),
   appFavicon: resolvePath('public/favicon.ico'),
   appPackageJson: resolvePath('package.json'),
   appSrc: resolvePath('src'),
   appNodeModules: resolvePath('node_modules'),
   appJsConfig: resolvePath('jsconfig.json'),
-  appIndexJs: resolveModule(resolvePath, 'src/index'),
+  appIndexJs: resolveModule(resolvePath, 'src/index.js'),
 };
 module.exports.resolvePath = resolvePath;
 module.exports.moduleFileExtensions = moduleFileExtensions;

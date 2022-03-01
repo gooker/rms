@@ -80,6 +80,8 @@ export default class BaseMap extends React.Component {
   centerView = () => {
     const { viewport } = this.pixiUtils;
     const { x, y, width, height } = viewport.getLocalBounds();
+
+    let minMapRatio;
     if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
       viewport.fit(true, width * 1.1, height * 1.1);
       viewport.moveCenter(x + width / 2, y + height / 2);
@@ -91,10 +93,14 @@ export default class BaseMap extends React.Component {
         maxWidth: viewport.worldScreenWidth,
         maxHeight: viewport.worldScreenHeight,
       });
+
+      // 返回最小缩小比例
+      minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
     }
     // 记录当前地图世界宽度
     window.sessionStorage.setItem('EDITOR_MAP', JSON.stringify({ x, y, width, height }));
     this.refresh();
+    return minMapRatio;
   };
 
   // 清空 Stage 所有元素

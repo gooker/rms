@@ -72,6 +72,8 @@ const EditorState = {
   allWebHooks: [],
 
   // 显示相关
+  mapMinRatio: null, // 地图最小缩放比例
+  mapRatio: null, // 地图当前缩放比例
   mapMode: 'standard',
   hideBlock: false,
   showCoordinate: false,
@@ -110,6 +112,19 @@ export default {
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    saveMapRatio(state, action) {
+      return {
+        ...state,
+        mapRatio: action.payload,
+      };
+    },
+    saveMapMinRatio(state, action) {
+      return {
+        ...state,
+        mapMinRatio: action.payload,
+        mapRatio: action.payload,
       };
     },
     saveForceUpdate(state, action) {
