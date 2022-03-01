@@ -16,6 +16,7 @@ const MonitorMapContainer = (props) => {
     currentRouteMap,
     preRouteMap,
     checkWorkStation,
+    checkCommonStation,
   } = props;
 
   useEffect(() => {
@@ -143,7 +144,7 @@ const MonitorMapContainer = (props) => {
     }
     // 通用站点
     if (Array.isArray(commonList)) {
-      mapContext.renderCommonFunction(commonList);
+      mapContext.renderCommonFunction(commonList, checkCommonStation);
     }
 
     const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;

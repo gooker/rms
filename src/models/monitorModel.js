@@ -101,8 +101,6 @@ export default {
     // 弹窗
     categoryModal: null,
 
-    //
-    stationData: null,
   },
 
   reducers: {
@@ -121,7 +119,6 @@ export default {
         ...state,
         categoryPanel: Category.Report,
         categoryModal: action.payload?.type,
-        stationData: action.payload?.data,
       };
     },
     saveCategoryModal(state, action) {
