@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Row, Col, Tag, Spin, Switch, Button } from 'antd';
 import echarts from 'echarts';
-import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
+import { CloseOutlined } from '@ant-design/icons';
 import { useMap } from '@umijs/hooks';
 import { connect } from '@/utils/RmsDva';
 import {

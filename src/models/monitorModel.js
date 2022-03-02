@@ -1,5 +1,5 @@
 import { fetchActiveMap, fetchAgvList, fetchToteRackLayout } from '@/services/api';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
@@ -100,7 +100,6 @@ export default {
 
     // 弹窗
     categoryModal: null,
-
   },
 
   reducers: {
@@ -521,6 +520,17 @@ export default {
       yield put({
         type: 'saveLatentSopMessageList',
         payload: response,
+      });
+    },
+    *updateStationRate({ payload }, { call, put }) {
+      const { mapContext, response } = payload;
+       // 后端类型返回 不为空 就存起来 return 目前理论上只会有一个类型有值
+      let currentData = Object.values(response).filter((item) => !isStrictNull(item));
+      currentData = currentData[0];
+      mapContext?.renderCommonStationRate(currentData);
+      yield put({
+        type: 'saveState',
+        payload: { stationRealRate: currentData },
       });
     },
   },

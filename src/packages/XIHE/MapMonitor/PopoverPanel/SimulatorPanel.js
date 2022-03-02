@@ -26,8 +26,7 @@ import styles from '../monitorLayout.module.less';
 const size = 'small';
 
 const SimulatorPanel = (props) => {
-  const { height = 100, dispatch, simulatorConfig, simulatorAgvList, currentLogicArea } = props;
-  const [loading, setLoading] = useState(false);
+  const { height = 100, dispatch, simulatorConfig, simulatorAgvList, currentLogicArea,loading } = props;
   const [robotTypes, setRobotTypes] = useState([]); // 所有类型
   const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
@@ -42,7 +41,6 @@ const SimulatorPanel = (props) => {
   }, []);
 
   function init() {
-    setLoading(true);
     dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
     dispatch({ type: 'simulator/fetchSimulatorHistory' });
     fetchTrafficRobotType().then((res) => {
@@ -50,7 +48,6 @@ const SimulatorPanel = (props) => {
         setRobotTypes(res);
       }
     });
-    setLoading(false);
   }
 
   const columns = [
@@ -473,8 +470,9 @@ const SimulatorPanel = (props) => {
     </div>
   );
 };
-export default connect(({ simulator }) => ({
+export default connect(({ simulator ,loading }) => ({
   simulatorAgvList: simulator?.simulatorAgvList,
   simulatorConfig: simulator?.simulatorConfig,
   currentLogicArea: getCurrentLogicAreaData('monitor'),
+  loading: loading.effects['simulator/fetchSimulatorLoginAGV'],
 }))(memo(SimulatorPanel));
