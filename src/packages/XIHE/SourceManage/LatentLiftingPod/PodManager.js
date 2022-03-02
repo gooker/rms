@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddPodModal from './components/AddPodModal';
 import { fetchPodListBySectionId, savePod, batchDeletePod } from '@/services/api';

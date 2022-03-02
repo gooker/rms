@@ -10,7 +10,7 @@ import {
   fetchUpgradeFirmwareFile,
   upgradeAGV,
 } from '@/services/api';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';
 import { formatMessage, dealResponse } from '@/utils/util';

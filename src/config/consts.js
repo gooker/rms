@@ -269,3 +269,12 @@ export const AGVSubTypeMap = {
     },
   ],
 };
+
+// Grid响应式常用配置
+export const GridResponsive = {
+  xs: 24,
+  sm: 12,
+  md: 12,
+  lg: 12,
+  xl: 6,
+};

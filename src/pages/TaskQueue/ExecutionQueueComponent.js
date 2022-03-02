@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Divider, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { formatMessage, dealResponse, dateFormat, isStrictNull } from '@/utils/util';
+import { formatMessage, dealResponse, convertToUserTimezone, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -134,7 +134,7 @@ class ExecutionQueueComponent extends Component {
           return <FormattedMessage id="app.executionQ.notAvailable" />;
         }
         return (
-          <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+          <span style={{ width: '100%' }}>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
         );
       },
     },
@@ -149,7 +149,7 @@ class ExecutionQueueComponent extends Component {
           return <FormattedMessage id="app.executionQ.notAvailable" />;
         }
         return (
-          <span style={{ width: '100%' }}>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+          <span style={{ width: '100%' }}>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
         );
       },
     },

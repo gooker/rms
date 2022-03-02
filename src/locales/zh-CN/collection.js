@@ -19,6 +19,18 @@ export default {
   'app.metaData.agvOffsetData': '小车偏移数据',
   'app.metaData.rangeNotValid': '时间区间数据不完整',
 
-  // 角色管理A
+  // 角色管理
   'sso.role.permissionAssign': '权限分配',
+
+  // Web Hook
+  'webHook.retryTimes': '重试次数',
+  'webHook.queue': '队列',
+  'webHook.headerItem.empty': '请求头配置不完整',
+  'webHook.headerItem.keyDuplicate': '请求头存在重复Key',
+
+  // 富文本编辑
+  'richEditor.richtext': '富文本',
+  'richEditor.content': '内容',
+  'richEditor.code.duplicate': '编码已经存在,请重新命名',
+  'richEditor.text.detail': '富文本详情',
 };

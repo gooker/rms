@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Progress, Form, Button, Select, Divider, Table, message } from 'antd';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { dateFormat, dealResponse, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import { AGVState, Colors, LogFileTypes } from '@/config/consts';
@@ -87,7 +87,7 @@ const LogDownLoadComponent = (props) => {
       width: 150,
       render: (text) => {
         if (text) {
-          return dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+          return convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss');
         }
       },
     },

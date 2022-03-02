@@ -1,102 +1,232 @@
-import React from 'react';
-import { Row, Col, Modal, Form, Input, InputNumber, Select } from 'antd';
-import { isNull,formatMessage} from '@/utils/util';
+import React, { useEffect, useState } from 'react';
+import { Row, Col, Form, Input, InputNumber, Select, Button } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { isPlainObject } from 'lodash';
+import {
+  convertMapToArrayMap,
+  dealResponse,
+  formatMessage,
+  getFormLayout,
+  isStrictNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { saveWebHook } from '@/services/api';
+import RequestHeaderForm from '@/components/RequestHeaderForm';
+import commonStyle from '@/common.module.less';
 
-const { Item } = Form;
 const { Option } = Select;
-const formLayout = { labelCol: { span: 3 }, wrapperCol: { span: 20 } };
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
 
 const WebHookFormModal = (props) => {
-  const { data, visible, onSubmit, onClose, options = [] } = props;
+  const { editing, webHooksType, mqQueue, onClose } = props;
+  const options = Object.entries(webHooksType).map(([type, label]) => ({ type, label }));
 
-  const [form] = Form.useForm();
+  const [formRef] = Form.useForm();
+  const [isMqType, setIsMqType] = useState(false); // 标记当前类型是否是 MQ
+  const [submitLoading, setSubmitLoading] = useState(false);
+
+  useEffect(() => {
+    if (!isStrictNull(editing)) {
+      setIsMqType(editing.webHookType === 'MQ_PUSH');
+    }
+  }, []);
 
   function submit() {
-    form.validateFields().then((values) => {
-      onSubmit(values);
-      form.resetFields();
-    }).catch(()=>{});
+    setSubmitLoading(true);
+    formRef
+      .validateFields()
+      .then(async (webhook) => {
+        let headers = {};
+        if (Array.isArray(webhook.headers)) {
+          webhook.headers.forEach((item) => {
+            if (isPlainObject(item)) {
+              const { key, value } = item;
+              headers[key] = value;
+            }
+          });
+        }
+        let requestBody = { ...webhook, headers };
+        if (editing) {
+          requestBody = { ...editing, ...requestBody };
+        }
+        const response = await saveWebHook(requestBody);
+        if (!dealResponse(response)) {
+          onClose();
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        setSubmitLoading(false);
+      });
   }
 
-  function closeModal() {
-    form.resetFields();
-    onClose();
+  function validateHeaders(_, headers) {
+    // 排除默认状态
+    if (headers.length === 1 && headers[0] === '') {
+      return Promise.resolve();
+    }
+
+    // 判断key或者value有没有空白
+    for (let i = 0; i < headers.length; i++) {
+      const headerItem = headers[i];
+      if (isStrictNull(headerItem.key) || isStrictNull(headerItem.value)) {
+        return Promise.reject(new Error(formatMessage({ id: 'webHook.headerItem.empty' })));
+      }
+    }
+
+    // 判断key有没有重复
+    const keys = headers.map(({ key }) => key);
+    if (keys.length !== new Set(keys).size) {
+      return Promise.reject(new Error(formatMessage({ id: 'webHook.headerItem.keyDuplicate' })));
+    }
+
+    return Promise.resolve();
   }
 
-  const title = `${formatMessage({ id: isNull(data) ? 'app.button.add' : 'app.button.update' })} WebHook`;
+  function convertHeaders() {
+    if (editing) {
+      return convertMapToArrayMap(editing.headers);
+    }
+    return [''];
+  }
+
   return (
-    <Modal title={title} width={600} visible={visible} onOk={submit} onCancel={closeModal}>
-      <Form form={form}>
-        <Item
-          {...formLayout}
-          name="webHookType"
-          initialValue={data?.webHookType}
-          label={<FormattedMessage id="app.common.type" />}
-          rules={[{required:true}]}
+    <Form form={formRef} {...formItemLayout}>
+      <Form.Item
+        name="name"
+        label={formatMessage({ id: 'app.common.name' })}
+        initialValue={editing?.name}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item
+        name="webHookType"
+        initialValue={editing?.webHookType}
+        label={<FormattedMessage id="app.common.type" />}
+        rules={[{ required: true }]}
+        getValueFromEvent={(value) => {
+          setIsMqType(value === 'MQ_PUSH');
+          return value;
+        }}
+      >
+        <Select style={{ width: 200 }}>
+          {options.map(({ type, label }) => (
+            <Option key={type} value={type}>
+              {label}
+            </Option>
+          ))}
+        </Select>
+      </Form.Item>
+
+      {isMqType && (
+        <Form.Item
+          name="topic"
+          label={<FormattedMessage id={'webHook.queue'} />}
+          initialValue={editing?.topic}
+          rules={[{ required: true }]}
         >
-          <Select style={{ width: 200 }}>
-            {options.map(({ type, label }) => (
-              <Option key={type} value={type}>
-                {label}
+          <Select>
+            {mqQueue.map((queue) => (
+              <Option key={queue} value={queue}>
+                {queue}
               </Option>
             ))}
           </Select>
-        </Item>
-        <Item
-          {...formLayout}
-          name="name"
-          label={formatMessage({ id: 'app.common.name' })}
-          initialValue={data?.name}
+        </Form.Item>
+      )}
+
+      <Form.Item name="url" label={'URL'} initialValue={editing?.url} rules={[{ type: 'url' }]}>
+        <Input.TextArea />
+      </Form.Item>
+      <Form.Item name="token" label={'Token'} initialValue={editing?.token}>
+        <Input.TextArea />
+      </Form.Item>
+
+      {/* 请求头 */}
+      <Form.List
+        name="headers"
+        initialValue={convertHeaders()}
+        rules={[{ validator: validateHeaders }]}
+      >
+        {(fields, { add, remove }, { errors }) => (
+          <>
+            {fields.map((field, index) => (
+              <Form.Item
+                key={field.key}
+                required={true}
+                {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                label={index === 0 ? formatMessage({ id: 'app.request.headers' }) : ''}
+              >
+                <Row gutter={10}>
+                  <Col span={22}>
+                    <Form.Item noStyle {...field}>
+                      <RequestHeaderForm />
+                    </Form.Item>
+                  </Col>
+                  <Col span={2} className={commonStyle.flexCenter}>
+                    <MinusCircleOutlined
+                      onClick={() => remove(field.name)}
+                      style={{ fontSize: 18 }}
+                    />
+                  </Col>
+                </Row>
+              </Form.Item>
+            ))}
+            <Form.Item {...formItemLayoutNoLabel}>
+              <Button block type="dashed" onClick={() => add()}>
+                <PlusOutlined />
+              </Button>
+              <Form.ErrorList errors={errors} />
+            </Form.Item>
+          </>
+        )}
+      </Form.List>
+
+      <Form.Item
+        name="desc"
+        label={<FormattedMessage id="app.common.description" />}
+        initialValue={editing?.desc}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item label={<FormattedMessage id="app.common.timeout" />}>
+        <Row>
+          <Col>
+            <Form.Item noStyle name="timeOut" initialValue={editing?.timeOut || 60}>
+              <InputNumber />
+            </Form.Item>
+          </Col>
+          <Col style={{ marginLeft: 10, display: 'flex', alignItems: 'center' }}>
+            <FormattedMessage id="app.time.seconds" />
+          </Col>
+        </Row>
+      </Form.Item>
+      <Form.Item label={<FormattedMessage id="webHook.retryTimes" />}>
+        <Row>
+          <Col>
+            <Form.Item noStyle name="tryCount" initialValue={editing?.tryCount || 3}>
+              <InputNumber />
+            </Form.Item>
+          </Col>
+          <Col style={{ marginLeft: 10, display: 'flex', alignItems: 'center' }}>
+            <FormattedMessage id="app.common.times" />
+          </Col>
+        </Row>
+      </Form.Item>
+      <Form.Item {...formItemLayoutNoLabel}>
+        <Button type={'primary'} onClick={submit} loading={submitLoading} disabled={submitLoading}>
+          <FormattedMessage id={'app.button.submit'} />
+        </Button>
+        <Button
+          onClick={() => {
+            onClose(false);
+          }}
+          style={{ marginLeft: 15 }}
         >
-          <Input />
-        </Item>
-        <Item
-          {...formLayout}
-          name="url"
-          label={'URL'}
-          initialValue={data?.url}
-          rules={[{ type: 'url' }]}
-        >
-          <Input.TextArea />
-        </Item>
-        <Item {...formLayout} name="token" label={'Token'} initialValue={data?.token}>
-          <Input.TextArea />
-        </Item>
-        <Item
-          {...formLayout}
-          name="desc"
-          label={<FormattedMessage id="app.common.description" />}
-          initialValue={data?.desc}
-        >
-          <Input />
-        </Item>
-        <Item {...formLayout} label={<FormattedMessage id="app.common.timeout" />}>
-          <Row>
-            <Col>
-              <Item noStyle name="timeOut" initialValue={data?.timeOut || 60}>
-                <InputNumber />
-              </Item>
-            </Col>
-            <Col style={{ marginLeft: 10, display: 'flex', alignItems: 'center' }}>
-              <FormattedMessage id="app.time.seconds" />
-            </Col>
-          </Row>
-        </Item>
-        <Item {...formLayout} label={<FormattedMessage id="webHook.retryTimes" />}>
-          <Row>
-            <Col>
-              <Item noStyle name="tryCount" initialValue={data?.tryCount || 3}>
-                <InputNumber />
-              </Item>
-            </Col>
-            <Col style={{ marginLeft: 10, display: 'flex', alignItems: 'center' }}>
-              <FormattedMessage id="app.common.times" />
-            </Col>
-          </Row>
-        </Item>
-      </Form>
-    </Modal>
+          <FormattedMessage id={'app.button.cancel'} />
+        </Button>
+      </Form.Item>
+    </Form>
   );
 };
 export default WebHookFormModal;

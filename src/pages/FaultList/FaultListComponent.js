@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { message, Table } from 'antd';
 import { fetchAgvErrorRecord, fetchDefinedFaults } from '@/services/api';
-import { dateFormat, dealResponse, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';
 import commonStyles from '@/common.module.less';
@@ -45,14 +45,14 @@ const FaultListComponent = (props) => {
       dataIndex: 'createTime',
       align: 'center',
       width: 230,
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: formatMessage({ id: 'app.fault.lastReport' }),
       dataIndex: 'updateTime',
       align: 'center',
       width: 230,
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: formatMessage({ id: 'app.task.id' }),

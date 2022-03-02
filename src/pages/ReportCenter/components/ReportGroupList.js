@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Modal } from 'antd';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/util';

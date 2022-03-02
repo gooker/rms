@@ -20,7 +20,7 @@ import {
   saveRoleAssignAuthority,
 } from '@/services/SSO';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';

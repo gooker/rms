@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Card } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
-import { dateFormat, dealResponse, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import { fetchMapHistory } from '@/services/XIHE';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 
 const MapUpdateHistory = (props) => {
   const { dispatch, mapId } = props;
@@ -32,7 +32,7 @@ const MapUpdateHistory = (props) => {
       title: formatMessage({ id: 'app.common.updateTime' }),
       dataIndex: 'editedDate',
       align: 'center',
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: formatMessage({ id: 'app.common.updater' }),

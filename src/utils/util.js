@@ -43,7 +43,7 @@ export function GMT2UserTimeZone(value) {
  * @param {*} value
  * @returns
  */
-export function dateFormat(value) {
+export function convertToUserTimezone(value) {
   // 获取服务器端的时区偏移量
   if (isStrictNull(value)) {
     return {
@@ -133,20 +133,30 @@ export function getDomainNameByUrl(url) {
 }
 
 export function isStandardApiResponse(response) {
-  return (
-    response.hasOwnProperty('code') &&
-    // response.hasOwnProperty('data') &&
-    response.hasOwnProperty('message')
-  );
+  return response.hasOwnProperty('code') && response.hasOwnProperty('message');
 }
 
 export function dealResponse(response, successNotify, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
-  if (response && isStandardApiResponse(response)) {
-    const { message: errorMessage } = response;
-    const defaultMessage = formatMessage({ id: 'app.message.operateFailed' });
-    message.error(failedMessage || errorMessage || defaultMessage);
-    return true;
+  if (Array.isArray(response)) {
+    let failed = false;
+    for (let i = 0; i < response.length; i++) {
+      if (response[i] && isStandardApiResponse(response[i])) {
+        failed = true;
+        break;
+      }
+    }
+    if (failed) {
+      message.error(formatMessage({ id: 'app.request.concurrent.failed' }));
+      return true;
+    }
+  } else {
+    if (response && isStandardApiResponse(response)) {
+      const { message: errorMessage } = response;
+      const defaultMessage = formatMessage({ id: 'app.message.operateFailed' });
+      message.error(failedMessage || errorMessage || defaultMessage);
+      return true;
+    }
   }
 
   // 正常请求后返回false, 表示当前请求无错误
@@ -877,8 +887,26 @@ export function transformReportDetail(data) {
   };
 }
 
-export function convertMapToArrayMap(data, key, value) {
-  return Object.entries(data).map(([value1, value2]) => ({ [key]: value1, [value]: value2 }));
+/**
+ *
+ * @param data
+ * @param keyLabel 自定义key的标识
+ * @param valueLabel 自定义value的标识
+ * @param empty 空数组情况下的填充值
+ */
+export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value', empty = '') {
+  if (isPlainObject(data)) {
+    const result = Object.entries(data).map(([key, value]) => ({
+      [keyLabel]: key,
+      [valueLabel]: value,
+    }));
+    if (result.length === 0) {
+      return [empty];
+    }
+    return result;
+  } else {
+    return [empty];
+  }
 }
 
 // Modal 长宽自适应，以这个为主

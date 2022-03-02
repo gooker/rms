@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Tag, Table } from 'antd';
-import { dateFormat, isNull, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, isNull, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
 // 任务告警和任务日志公用一个组件
@@ -63,7 +63,7 @@ class TaskRecordOrAlarm extends Component {
       fixed: 'right',
       render: (text) => {
         if (!isNull(text)) {
-          return dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+          return convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss');
         }
       },
     },
@@ -76,7 +76,7 @@ class TaskRecordOrAlarm extends Component {
       align: 'center',
       fixed: 'left',
       render: (text) => {
-        return !isNull(text) && dateFormat(text).format('YYYY-MM-DD HH:mm:ss');
+        return !isNull(text) && convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss');
       },
     },
     {

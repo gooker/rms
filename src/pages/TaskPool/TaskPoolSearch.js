@@ -2,7 +2,7 @@ import React from 'react';
 import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dateFormat, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -16,8 +16,8 @@ const TaskSearch = (props) => {
     form.validateFields().then((values) => {
       const params = {};
       if (values.createDate && values.createDate[0] && values.createDate[1]) {
-        params.createTimeStart = dateFormat(values.createDate[0], 1).format('YYYY-MM-DD HH:mm:ss');
-        params.createTimeEnd = dateFormat(values.createDate[1], 1).format('YYYY-MM-DD HH:mm:ss');
+        params.createTimeStart = convertToUserTimezone(values.createDate[0], 1).format('YYYY-MM-DD HH:mm:ss');
+        params.createTimeEnd = convertToUserTimezone(values.createDate[1], 1).format('YYYY-MM-DD HH:mm:ss');
         params.createDate = null;
         delete params.createDate;
       }

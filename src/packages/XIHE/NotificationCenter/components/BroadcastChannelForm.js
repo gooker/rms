@@ -180,7 +180,7 @@ const BroadcastChannelForm = (props) => {
       </Form.Item>
       <Form.Item {...formItemLayoutNoLabel}>
         <Button type={'primary'} onClick={submit} loading={loading} disabled={loading}>
-          <FormattedMessage id={'form.submit'} />
+          <FormattedMessage id={'app.button.submit'} />
         </Button>
       </Form.Item>
     </Form>

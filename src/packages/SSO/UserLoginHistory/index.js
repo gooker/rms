@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchUserLoginHistory } from '@/services/SSO';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 
 const { RangePicker } = DatePicker;
 

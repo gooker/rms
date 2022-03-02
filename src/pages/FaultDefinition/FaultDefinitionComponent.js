@@ -4,7 +4,7 @@ import { DeleteOutlined, ExportOutlined, PlusOutlined, SettingOutlined } from '@
 import { saveAs } from 'file-saver';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FaultDefinitionSearchForm from '@/pages/FaultDefinition/FaultDefinitionSearchForm';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteFaultDefinition, fetchDefinedFaults } from '@/services/api';
