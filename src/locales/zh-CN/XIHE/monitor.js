@@ -132,6 +132,15 @@ export default {
   'monitor.simulator.list.movable': '可动',
   'monitor.simulator.list.unMovable': '不可动',
 
+  'monitor.simulator.tip.beatStopSuccess': '拍急停成功',
+  'monitor.simulator.tip.beatStopFail': '拍急停失败',
+  'monitor.simulator.tip.loosenStopSuccess': '松急停成功',
+  'monitor.simulator.tip.loosenStopFail': '松急停失败',
+  'monitor.simulator.tip.shutdownSuccess': '关机成功',
+  'monitor.simulator.tip.shutdownFail': '关机失败',
+  'monitor.simulator.tip.bootUpSuccess': '开机成功',
+  'monitor.simulator.tip.bootUpFail': '开机失败',
+
   'monitor.tracking.trackAMR': '追踪小车',
   'monitor.tracking.trackAMR.track': '开始追踪',
   'monitor.tracking.trackAMR.untrack': '取消追踪',
@@ -183,7 +192,6 @@ export default {
   'monitor.operation.resizePod': '修改货架尺寸',
   'monitor.operation.set': '设置',
 
-
   'monitor.models.storageArea': '当前逻辑区没有存储区',
   'monitor.operation.commandSendSuccessfully': '{type}命令下发成功',
   'monitor.operation.deleteAndBatchAdd': '清空后批量添加',
@@ -208,20 +216,19 @@ export default {
   'monitor.message.latentStopMessage': '暂停消息',
   'monitor.message.releasePodSuccess': '释放成功',
 
-   // 工作站点击弹窗
-   'monitor.workstation.label.marked': '已标记',
-   'monitor.workstation.label.unmarked': '未标记',
-   'monitor.workstation.label.arrivals': '到站次数',
-   'monitor.workstation.label.last30Wait': '最后30次等待时间(s)',
-   'monitor.workstation.label.serviceAMR': '在途车数',
-   'monitor.workstation.label.piece': '辆',
-   'monitor.workstation.label.traffic': '到站个数',
-   'monitor.workstation.label.arrivalRate': '到站预估实时速率',
-   'monitor.workstation.label.speedCargo': '货物预估实时速​速率',
-   'monitor.workstation.label.rate': '次/小时',
-   'monitor.workstation.label.count': '个/小时',
-   'monitor.workstation.label.average': '平均值',
-   'monitor.workstation.label.num': '任务数量',
-   'monitor.tip.noTask': '当前无任务执行',
- 
+  // 工作站点击弹窗
+  'monitor.workstation.label.marked': '已标记',
+  'monitor.workstation.label.unmarked': '未标记',
+  'monitor.workstation.label.arrivals': '到站次数',
+  'monitor.workstation.label.last30Wait': '最后30次等待时间(s)',
+  'monitor.workstation.label.serviceAMR': '在途车数',
+  'monitor.workstation.label.piece': '辆',
+  'monitor.workstation.label.traffic': '到站个数',
+  'monitor.workstation.label.arrivalRate': '到站预估实时速率',
+  'monitor.workstation.label.speedCargo': '货物预估实时速​速率',
+  'monitor.workstation.label.rate': '次/小时',
+  'monitor.workstation.label.count': '个/小时',
+  'monitor.workstation.label.average': '平均值',
+  'monitor.workstation.label.num': '任务数量',
+  'monitor.tip.noTask': '当前无任务执行',
 };

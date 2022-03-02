@@ -4,7 +4,14 @@ import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { AGVType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import {
   AGVState,
   ElementType,
@@ -36,6 +43,7 @@ import {
   TemporaryLock,
   ToteAGV,
   TotePod,
+  RealtimeRate,
 } from '@/entities';
 import commonStyles from '@/common.module.less';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
@@ -223,6 +231,47 @@ class MonitorMapView extends BaseMap {
         payload: { type: ElementType.AGV, payload: { ...mongodbAGV, ...redisAGV } },
       });
     }
+  };
+
+  // ************************ 站点报表速率显示 ********************** //
+  renderCommonStationRate = (allData) => {
+    const showRealTimeRate = this.states.showRealTimeRate;
+    const currentMap = new Map([...this.commonFunctionMap, ...this.workStationMap]);
+    allData.forEach((currentdata) => {
+      const stopCellId = currentdata.stationCellId;
+      const _station = currentMap.get(`${stopCellId}`);
+      const cellEntity = this.idCellMap.get(`${stopCellId}`);
+      if (isNull(_station) || !cellEntity) return;
+      // 如果4个显示都为null 则直接return
+      const { goodsRate, agvRate, waitTime, agvAndTaskProportion } = currentdata;
+      if (
+        isStrictNull(agvRate) &&
+        isStrictNull(goodsRate) &&
+        isStrictNull(waitTime) &&
+        isStrictNull(agvAndTaskProportion)
+      )
+        return;
+      const _currentdata = {
+        ...currentdata,
+        showRealTimeRate,
+        x: _station?.x,
+        y: _station?.y || 0,
+        iconwidth: _station?.width || 0,
+        iconheight: _station?.height || 0,
+        angle: _station?.$angle || 0,
+      };
+      let _entity = this.stationRealTimeRateMap.get(`${stopCellId}`);
+      if (!isNull(_entity)) {
+        this.pixiUtils.viewportRemoveChild(_entity);
+        _entity.destroy(true);
+        this.stationRealTimeRateMap.delete(`${stopCellId}`);
+      }
+      // 新增
+      const newEntity = new RealtimeRate(_currentdata);
+      this.pixiUtils.viewportAddChild(newEntity);
+      this.stationRealTimeRateMap.set(`${stopCellId}`, newEntity);
+    });
+    this.refresh();
   };
 
   // ************************ 小车 & 货架相关 **********************

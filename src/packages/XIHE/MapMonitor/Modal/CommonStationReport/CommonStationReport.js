@@ -33,14 +33,7 @@ const CommonStationReport = (props) => {
     refresh,
     stationRateData = [],
   } = props;
-  const {
-    name,
-    angle,
-    direction,
-    stopCellId,
-    flag: showEmployee,
-    color: employeeColor,
-  } = commonPoint;
+  const { name, angle, stopCellId, flag: showEmployee, color: employeeColor } = commonPoint;
   const monitorScreenDOM = document.body;
 
   const [agvs, setAgvs] = useState(null);
@@ -50,6 +43,7 @@ const CommonStationReport = (props) => {
   const [currentRealRate, setCurrentRealRate] = useState({}); // 当前站点的速率和等待时间等
   const [popVisible, setPopVisible] = useState(false);
 
+  // eslint-disable-next-line no-unused-vars
   const [map, { get: getModalSize, setAll }] = useMap([
     ['height', monitorScreenDOM.clientHeight / clientHeightBase],
     ['width', monitorScreenDOM.clientWidth / clientWidthBase],
@@ -61,6 +55,7 @@ const CommonStationReport = (props) => {
       ['height', clientHeight / clientHeightBase],
       ['width', clientWidth / clientWidthBase],
     ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function close() {

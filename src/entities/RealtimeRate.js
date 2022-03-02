@@ -31,10 +31,10 @@ export default class RealtimeRate extends PIXI.Container {
     let commonY = (props.y || 0) * 1;
     let commonAngle = props.angle || 0;
     let r = props.iconwidth || 1500;
-    if (0 <= commonAngle < 90 || 180 <= commonAngle < 270) {
+    if ((commonAngle >= 0 && commonAngle < 90) || (commonAngle >= 180 && commonAngle < 270)) {
       r = props.iconheight / 2 + this.$height / 2 + 500 || 1500;
     }
-    if (90 <= commonAngle < 180 || 270 <= commonAngle < 360) {
+    if ((commonAngle >= 90 && commonAngle < 180) || (commonAngle >= 270 && commonAngle < 360)) {
       r = props.iconwidth + 500 || 1500;
     }
     const { x, y } = getCoordinat({ x: commonX, y: commonY }, commonAngle, r);
@@ -193,8 +193,9 @@ export default class RealtimeRate extends PIXI.Container {
   updateRateEntity(params) {
     this.children.forEach((child) => {
       this.removeChild(child);
-      child.destroy();
+      child.destroy(true);
     });
+
     this.drawRealRate(params);
   }
 }

@@ -7,12 +7,17 @@ import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
+import { StationRatePolling } from '@/workers/StationRateManager';
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
 import WorkStationReport from './Modal/WorkStationReport/WorkStationReport';
 import CommonStationReport from './Modal/CommonStationReport/CommonStationReport';
-import { fetchWorkStationInstrument, fetchWorkStationPre30Waiting } from '@/services/monitor';
+import {
+  fetchWorkStationInstrument,
+  fetchWorkStationPre30Waiting,
+  fetchStationRealTimeRate,
+} from '@/services/monitor';
 import {
   covertData2ChartsData,
   convertWaitingData2Chart,
@@ -36,6 +41,7 @@ const MapMonitor = (props) => {
     mapRendered,
     selectAgv,
     showRoute,
+    stationRealTimeRateView,
     categoryModal,
     categoryPanel,
   } = props;
@@ -69,6 +75,11 @@ const MapMonitor = (props) => {
   useEffect(() => {
     if (!isNull(mapContext)) {
       setMonitorSocketCallback(socketClient, mapContext, dispatch);
+      fetchStationRealTimeRate().then((response) => {
+        if (!dealResponse(response)) {
+          dispatch({ type: 'monitor/updateStationRate', payload: { mapContext, response } });
+        }
+      });
     }
   }, [mapContext]);
 
@@ -95,6 +106,16 @@ const MapMonitor = (props) => {
       AgvPollingTaskPathManager.terminate();
     };
   }, [selectAgv, showRoute]);
+
+  useEffect(() => {
+    stationRealTimeRateView &&
+      StationRatePolling.start((value) => {
+        dispatch({ type: 'monitor/updateStationRate', payload: { mapContext, response: value } });
+      });
+    return () => {
+      StationRatePolling.terminate();
+    };
+  }, [stationRealTimeRateView]);
 
   // 轮询 工作站雇佣车标记
   useEffect(() => {
@@ -295,7 +316,7 @@ const MapMonitor = (props) => {
   // 标记事件 通用站点雇佣车
   function markCommonPointAgv(agvs, checked, commonOB) {
     if (mapContext) {
-      const { stopCellId, color, angle:direction } = commonOB;
+      const { stopCellId, color, angle: direction } = commonOB;
       const currentStopCellId = `${stopCellId}`;
       setCommonPointOB(commonOB);
 
@@ -365,6 +386,7 @@ export default connect(({ monitor, global }) => ({
   mapRendered: monitor.mapRendered,
   selectAgv: monitor.viewSetting?.selectAgv,
   showRoute: monitor.viewSetting?.showRoute,
+  stationRealTimeRateView: monitor.viewSetting?.stationRealTimeRateView,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
 }))(memo(MapMonitor));

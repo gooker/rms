@@ -22,7 +22,7 @@ import LatentStopMessage from './LatentStopMessage';
 import Tracking from './Tracking';
 
 const MonitorModals = (props) => {
-  const { categoryModal, categoryPanel,workStationMark, dispatch } = props;
+  const { categoryModal, categoryPanel, dispatch } = props;
   return (
     <>
       {categoryModal === 'emptyRun' && <EmptyRun />}
