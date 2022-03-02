@@ -19,7 +19,7 @@ export default {
   'app.reportCenter.chart': '图表',
   'app.reportCenter.filterCriteria': '过滤条件',
   'app.reportCenter.filtrationTime': '过滤时间',
-  'app.reportCenter.indexDimension': '第{index}维度',
+  'app.reportCenter.indexDimension': '第{index.js}维度',
   'app.reportCenter.filterCondition': '过滤条件',
   'app.reportCenter.dimensionality.required': '请至少选择一个维度',
   'form.reportCenter.dimensionality.cannotSame': '暂不支持两个同样的数据维度',

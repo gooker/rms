@@ -9,10 +9,11 @@ import { ZoneMarkerType } from '@/config/consts';
 import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
+import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
-  const { dispatch, mapContext, showShortcutTool } = props;
+  const { dispatch, mapRatio, mapContext, showShortcutTool } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
@@ -46,7 +47,14 @@ const EditorMapContainer = (props) => {
       renderMap();
       renderLogicArea();
       renderRouteMap();
-      mapContext.centerView();
+      const minMapRatio = mapContext.centerView();
+      dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
+
+      // 监听地图缩放比例
+      viewport.off('zoomed-end');
+      viewport.on('zoomed-end', function () {
+        dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
+      });
 
       // 添加事件处理地图跑出Screen
       viewport.off('moved');
@@ -85,6 +93,12 @@ const EditorMapContainer = (props) => {
       mapContext.refresh();
     }
   }, [currentRouteMap]);
+
+  useEffect(() => {
+    if (isNull(mapContext)) return;
+    const { viewport } = mapContext.pixiUtils;
+    viewport.setZoom(mapRatio, true);
+  }, [mapRatio]);
 
   function renderMap() {
     dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
@@ -310,11 +324,13 @@ const EditorMapContainer = (props) => {
       {showShortcutTool && <EditorShortcutTool />}
       <EditorMask />
       <EditorMapView />
+      <MapRatioSlider />
     </div>
   );
 };
 export default connect(({ editor }) => {
   const {
+    mapRatio,
     currentMap,
     currentLogicArea,
     currentRouteMap,
@@ -324,6 +340,7 @@ export default connect(({ editor }) => {
     showShortcutTool,
   } = editor;
   return {
+    mapRatio,
     currentMap,
     currentLogicArea,
     currentRouteMap,

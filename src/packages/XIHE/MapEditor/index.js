@@ -81,7 +81,7 @@ const MapEditor = (props) => {
         {Array.isArray(mapList) ? (
           <MapEditorHeader />
         ) : (
-          <LoadingOutlined style={{ fontSize: 20 }} spin />
+          <LoadingOutlined spin style={{ fontSize: 20 }} />
         )}
       </div>
       <div className={commonStyles.mapLayoutBody}>
