@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, sortBy, some } from 'lodash';
+import { find, findIndex, groupBy, some, sortBy, isEqual } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
@@ -14,6 +14,7 @@ import {
   getCurrentLogicAreaData,
   getCurrentRouteMapData,
   getCurveMapKey,
+  getDistance,
   moveCell,
   renderChargerList,
   renderElevatorList,
@@ -364,6 +365,7 @@ export default {
         yield put({ type: 'saveCurrentMapOnly', payload: addTemporaryId(_currentMap) });
       }
     },
+
     // ********************************* 地图操作 ********************************* //
     // 创建地图
     *fetchCreateMap({ payload }, { put, call, select }) {
@@ -1329,21 +1331,19 @@ export default {
       } else {
         curveRelationsMap[curveRelationsMapKey] = bezier;
       }
-
-      const newRelations = [...Object.values(curveRelationsMap), ...lines];
-      currentRouteMapData.relations = newRelations;
+      currentRouteMapData.relations = [...Object.values(curveRelationsMap), ...lines];
       yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
-
       return bezier;
     },
 
     *deleteLines(_, { select, put }) {
-      const { selectLines, currentMap } = yield select(({ editor }) => editor);
+      const { selections, currentMap } = yield select(({ editor }) => editor);
+
+      const selectLines = selections.filter((item) => item.type === MapSelectableSpriteType.ROUTE);
+      const result = [];
 
       const currentRouteMapData = getCurrentRouteMapData();
       let relations = [...(currentRouteMapData.relations ?? [])];
-
-      const result = [];
       relations = relations.filter((relation) => {
         const isIncludes = selectLines.includes(`${relation.source}-${relation.target}`);
         if (isIncludes) {
@@ -1382,6 +1382,125 @@ export default {
         pre: { ...preRelation },
         next: { ...preRelation, cost: parseInt(cost) },
       };
+    },
+
+    /**
+     * 根据规则生成默认线条
+     * 横向配置为地图上方第一行，随后交叉相同
+     * 纵向配置为地图左侧第一列，随后交叉相同
+     */
+    *createDefaultLines({ payload }, { select }) {
+      const { currentMap, currentCells, selections } = yield select(({ editor }) => editor);
+      // TODO: 强制取消当前选择的线条
+      let selectCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
+      if (selectCells.length > 0) {
+        selectCells = selectCells.map(({ id }) => currentMap.cellMap[id]);
+      } else {
+        selectCells = currentCells;
+      }
+
+      const additionalRelations = [];
+      // 处理横向数据
+      const groupByY = groupBy(selectCells, 'y');
+      const rows = Object.keys(groupByY);
+      for (let i = 1; i < rows.length + 1; i++) {
+        const isOdd = i % 2 !== 0;
+        const cells = groupByY[rows[i - 1]];
+        if (cells.length > 1) {
+          cells.reduce((pre, next) => {
+            additionalRelations.push({
+              source: pre.id,
+              target: next.id,
+              type: 'line',
+              cost: payload[isOdd ? 1 : 3],
+              angle: getAngle(pre, next),
+              distance: getDistance(pre, next),
+            });
+            additionalRelations.push({
+              source: next.id,
+              target: pre.id,
+              type: 'line',
+              cost: payload[isOdd ? 3 : 1],
+              angle: getAngle(next, pre),
+              distance: getDistance(next, pre),
+            });
+            return next;
+          });
+        }
+      }
+
+      // 处理纵向数据
+      const groupByX = groupBy(selectCells, 'x');
+      const columns = Object.keys(groupByX);
+      for (let i = 1; i < columns.length + 1; i++) {
+        const isOdd = i % 2 !== 0;
+        const cells = groupByX[columns[i - 1]];
+        if (cells.length > 1) {
+          // 这里需要注意：纵向情况下，y坐标从小到大的方向的向下
+          cells.reduce((pre, next) => {
+            additionalRelations.push({
+              source: pre.id,
+              target: next.id,
+              type: 'line',
+              cost: payload[isOdd ? 2 : 0],
+              angle: getAngle(pre, next),
+              distance: getDistance(pre, next),
+            });
+            additionalRelations.push({
+              source: next.id,
+              target: pre.id,
+              type: 'line',
+              cost: payload[isOdd ? 0 : 2],
+              angle: getAngle(next, pre),
+              distance: getDistance(next, pre),
+            });
+            return next;
+          });
+        }
+      }
+
+      /**
+       * 数据合并
+       * additionalRelations覆盖relations
+       * 如果additionalRelations存在cost为-1的情况，则是删除
+       */
+      const relationsToDelete = [];
+      const relationsToRender = [];
+      const relationMap = new Map();
+      const relations = getCurrentRouteMapData().relations || [];
+      relations.forEach((item) => {
+        relationMap.set(`${item.source}-${item.target}`, item);
+      });
+
+      additionalRelations.forEach((item) => {
+        const key = `${item.source}-${item.target}`;
+        // 删除操作
+        if (item.cost === -1) {
+          // 只有存在的情况才做处理
+          if (relationMap.has(key)) {
+            relationMap.delete(key);
+            relationsToDelete.push(item);
+          }
+        } else {
+          // 如果已经存在且不同就替换,相同则跳过
+          if (relationMap.has(key)) {
+            // 用lodash.isEqual来判断两个线条是否相同
+            if (!isEqual(item, relationMap.get(key))) {
+              relationsToDelete.push(relationMap.get(key));
+              relationMap.set(key, item);
+              relationsToRender.push(item);
+            }
+          } else {
+            // 如果不存在接直接新增
+            relationMap.set(key, item);
+            relationsToRender.push(item);
+          }
+        }
+      });
+
+      // 获取最新地图relation数据
+      getCurrentRouteMapData().relations = [...relationMap.values()];
+      return { add: relationsToRender, remove: relationsToDelete };
     },
 
     // ********************************* 功能操作 ********************************* //

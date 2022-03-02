@@ -1,9 +1,11 @@
 import React, { memo } from 'react';
 import { Button, Col, Row } from 'antd';
-import { DragOutlined } from '@ant-design/icons';
+import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import FormattedMessage from '@/components/FormattedMessage';
 import CostConfigure from '../components/CostConfigure';
+import CreateDefaultRoute from '../components/CreateDefaultRoute';
+import FormattedMessage from '@/components/FormattedMessage';
+import { MapSelectableSpriteType } from '@/config/consts';
 import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 
@@ -21,15 +23,13 @@ const CostPanel = (props) => {
       type: 'editor/generateCostLines',
       payload: params,
     }).then(({ remove, add }) => {
-      // 要删除的
       remove.length > 0 && mapContext.updateLines({ type: 'remove', payload: remove });
-      // 要新增的
       add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
     });
   }
 
   return (
-    <div style={{ height, width: 375 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 380 }} className={editorStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'app.map.route'} />
       </div>
@@ -70,60 +70,70 @@ const CostPanel = (props) => {
           </Row>
 
           {/* 操作面板*/}
-          <div style={{ marginTop: 20 }}>
-            <Button danger size="small" onClick={deleteLines} disabled={selectLines.length === 0}>
-              <FormattedMessage id="editor.cost.delete" />
-            </Button>
-            <div className={styles.routePanel}>
-              <Row type="flex" justify="center">
-                <Col span={7}>
-                  <CostConfigure
-                    onChange={(value) => {
-                      createLines({ dir: 0, value });
-                    }}
-                  />
-                </Col>
-              </Row>
+          <div style={{ marginTop: 15 }} className={styles.routePanel}>
+            <Row type="flex" justify="center">
+              <Col span={7}>
+                <CostConfigure
+                  onChange={(value) => {
+                    createLines({ dir: 0, value });
+                  }}
+                />
+              </Col>
+            </Row>
 
-              <Row type="flex" justify="space-around">
-                <Col span={7} style={{ textAlign: 'left' }}>
-                  <CostConfigure
-                    onChange={(value) => {
-                      createLines({ dir: 270, value });
-                    }}
-                  />
-                </Col>
-                <Col span={10} className={styles.costConfigureArrow}>
-                  <DragOutlined />
-                </Col>
-                <Col span={7} style={{ textAlign: 'right' }}>
-                  <CostConfigure
-                    onChange={(value) => {
-                      createLines({ dir: 90, value });
-                    }}
-                  />
-                </Col>
-              </Row>
-              <Row type="flex" justify="center">
-                <Col span={7}>
-                  <CostConfigure
-                    onChange={(value) => {
-                      createLines({ dir: 180, value });
-                    }}
-                  />
-                </Col>
-              </Row>
-            </div>
+            <Row type="flex" justify="space-around">
+              <Col span={7} style={{ textAlign: 'left' }}>
+                <CostConfigure
+                  onChange={(value) => {
+                    createLines({ dir: 270, value });
+                  }}
+                />
+              </Col>
+              <Col span={10} className={styles.costConfigureArrow}>
+                <DragOutlined />
+              </Col>
+              <Col span={7} style={{ textAlign: 'right' }}>
+                <CostConfigure
+                  onChange={(value) => {
+                    createLines({ dir: 90, value });
+                  }}
+                />
+              </Col>
+            </Row>
+            <Row type="flex" justify="center">
+              <Col span={7}>
+                <CostConfigure
+                  onChange={(value) => {
+                    createLines({ dir: 180, value });
+                  }}
+                />
+              </Col>
+            </Row>
           </div>
         </div>
+        <Row className={styles.panelBlockBase} style={{ marginTop: 10, padding: '10px 10px' }}>
+          <Col span={8}>
+            <Button
+              danger
+              size="small"
+              style={{ width: '100%', height: 50, borderRadius: 5 }}
+              onClick={deleteLines}
+              disabled={selectLines.length === 0}
+            >
+              <DeleteOutlined /> <FormattedMessage id="editor.cost.delete" />
+            </Button>
+          </Col>
+        </Row>
+        <CreateDefaultRoute style={{ marginTop: 10, padding: '10px 15px' }} />
       </div>
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  mapContext: editor.mapContext,
-  selectLines: editor.selectLines,
-}))(memo(CostPanel));
+export default connect(({ editor }) => {
+  const { selections, mapContext } = editor;
+  const selectLines = selections.filter((item) => item.type === MapSelectableSpriteType.ROUTE);
+  return { mapContext, selectLines };
+})(memo(CostPanel));
 
 const ColorExample = (props) => {
   const { color, children } = props;

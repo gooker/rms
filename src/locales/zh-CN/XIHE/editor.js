@@ -157,4 +157,8 @@ export default {
   'editor.program.relation': '线条',
   'editor.program.relation.beginning': '起点',
   'editor.program.relation.destination': '终点',
+
+  // 创建默认线条
+  'editor.defaultRoute.title': '创建默认路线',
+  'editor.defaultRoute.warn': '该操作可能会覆盖已存在的路线, 是否继续执行?',
 };
