@@ -29,6 +29,21 @@ export default {
 
   // 施工图
   'editor.constructionDrawing.export': '导出施工图',
+  'editor.constructionDrawing.paperSize': '纸张尺寸',
+  'editor.constructionDrawing.paperOrientation': '纸张方向',
+  'editor.constructionDrawing.vertical': '纵向',
+  'editor.constructionDrawing.horizontal': '横向',
+  'editor.constructionDrawing.showBlockedCells': '包含不可走点',
+  'editor.constructionDrawing.exportCellData': '导出点位数据',
+  'editor.constructionDrawing.showCellCoordinates': '显示点位坐标',
+  'editor.constructionDrawing.cellExport': '点位导出',
+  'editor.constructionDrawing.pngExport': 'PNG导出',
+  'editor.constructionDrawing.pdfExport': 'PDF导出',
+  'editor.constructionDrawing.standardCell': '标准点',
+  'editor.constructionDrawing.mapName': '地图名称',
+  'editor.constructionDrawing.unit': '单位',
+  'editor.constructionDrawing.createUser': '生成用户',
+  'editor.constructionDrawing.cellNumber': '点位个数',
 
   // 两侧工具栏
   'editor.tools.insertPicture': '插入图片',

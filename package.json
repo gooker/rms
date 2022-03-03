@@ -60,6 +60,7 @@
     "husky": "^5.2.0",
     "immutability-helper": "^3.1.1",
     "json2csv": "^5.0.6",
+    "jspdf": "^2.5.1",
     "less": "^4.1.1",
     "less-loader": "^10.0.1",
     "lint-staged": "^10.5.4",
@@ -102,7 +103,8 @@
     "webpack-dev-server": "^4.7.1",
     "webpack-merge": "^5.8.0",
     "webpackbar": "^5.0.2",
-    "xlsx": "^0.16.9"
+    "xlsx": "^0.16.9",
+    "zrender": "^4.0.0"
   },
   "husky": {
     "hooks": {

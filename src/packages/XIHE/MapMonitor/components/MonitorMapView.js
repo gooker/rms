@@ -170,6 +170,56 @@ class MonitorMapView extends BaseMap {
     this.trackAGVId = agvId;
   };
 
+  // 定位:type --> 小车、点位、货架
+  locationElements = (type, id) => {
+    let x;
+    let y;
+    let scaled;
+    switch (type) {
+      case 'cell': {
+        const cellEntity = this.idCellMap.get(Number(id));
+        if (cellEntity) {
+          x = cellEntity.x;
+          y = cellEntity.y;
+          scaled = 0.7;
+        }
+        break;
+      }
+      case 'robot': {
+        const robot = this.idAGVMap.get(`${id}`);
+        if (robot) {
+          x = robot.x;
+          y = robot.y;
+          scaled = 0.3;
+        }
+        break;
+      }
+      case 'pod': {
+        const pod = this.idLatentPodMap.get(`${id}`);
+        if (pod) {
+          x = pod.x;
+          y = pod.y;
+          scaled = 0.3;
+        } else {
+          // 如果地上的潜伏货架没有符合条件的就查看潜伏车身上的货架
+          const agvId = this.idLatentPodInCar.get(id);
+          if (isNull(agvId)) return;
+          const agvEntity = this.idAGVMap.get(`${agvId}`);
+          x = agvEntity.x;
+          y = agvEntity.y;
+          scaled = 0.3;
+        }
+        break;
+      }
+      default:
+        break;
+    }
+    if (!isNull(x) && !isNull(y)) {
+      this.moveTo(x, y, scaled);
+      this.refresh();
+    }
+  };
+
   // ************************ 点位相关 **********************
   renderCells = (cells) => {
     if (cells.length > 0) {
@@ -349,7 +399,7 @@ class MonitorMapView extends BaseMap {
     }
 
     // 执行跟踪
-    robotId === `${this.trackAGVId}` && this.mapRenderer.moveTo(agvEntity.x, agvEntity.y, 0.1);
+    robotId === `${this.trackAGVId}` && this.moveTo(agvEntity.x, agvEntity.y, 0.1);
   };
 
   // ********** 潜伏车 ********** //

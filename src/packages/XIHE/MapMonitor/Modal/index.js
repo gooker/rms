@@ -19,7 +19,6 @@ import HotHeatControlComponent from './HotHeatControlComponent';
 import SetupLatentPod from './SetupLatentPod/SetupLatentPod';
 import PodToStationMessage from './PodToStationMessage';
 import LatentStopMessage from './LatentStopMessage';
-import Tracking from './Tracking';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
@@ -47,7 +46,6 @@ const MonitorModals = (props) => {
       {categoryModal === 'mapShow' && <ViewControlComponent />}
       {categoryModal === 'toteDisplay' && <ToteViewControlComponent />}
       {categoryModal === 'heatHeat' && <HotHeatControlComponent />}
-      {categoryModal === 'tracking' && <Tracking />}
       {categoryModal === 'setLatentPod' && <SetupLatentPod dispatch={dispatch} />}
       {categoryModal === 'podToWorkstationInfoMessage' && <PodToStationMessage />}
       {categoryModal === 'stopMessage' && <LatentStopMessage />}

@@ -97,6 +97,7 @@ export default {
 
     // 监控地图是否渲染完成
     mapRendered: false,
+    positionVisible: false, // 定位功能弹窗
 
     // 弹窗
     categoryModal: null,
@@ -136,6 +137,12 @@ export default {
       return {
         ...state,
         categoryPanel: action.payload,
+      };
+    },
+    savePositionVisible(state, action) {
+      return {
+        ...state,
+        positionVisible: action.payload,
       };
     },
     saveCurrentMap(state, action) {

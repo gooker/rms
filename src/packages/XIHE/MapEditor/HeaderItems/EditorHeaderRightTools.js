@@ -10,10 +10,12 @@ import {
   FullscreenExitOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, isNull } from '@/utils/util';
+import { formatMessage, isNull,adjustModalWidth } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import PositionCell from '../components/PositionCell';
 import UploadPanel from '@/components/UploadPanel';
+import ConstructionInfoModal from '../components/ConstructionDraw/ConstructionInfoModal';
+import ConstructionDrawing from '../components/ConstructionDraw/ConstructionDrawing';
 
 const EditorHeaderRightTools = (props) => {
   const {
@@ -28,9 +30,19 @@ const EditorHeaderRightTools = (props) => {
 
   const [isCad, setIsCad] = useState(false);
   const [uploadVisible, setUploadVisible] = useState(false);
+  const [exportConstruction, setExportConstruction] = useState(false);
+  const [constructionInfo, setConstructionInfo] = useState(null);
+  const [constructionDrawVisible, setConstructionDrawVisible] = useState(false);
 
   function switchPositionModal(visible) {
     dispatch({ type: 'editor/savePositionVisible', payload: visible });
+  }
+
+  function switchExportConstruction(visible) {
+    setExportConstruction(visible);
+  }
+  function switchConstructionDraw(visible) {
+    setConstructionDrawVisible(visible);
   }
 
   function saveMap() {
@@ -121,7 +133,12 @@ const EditorHeaderRightTools = (props) => {
 
       {/* 导出施工图 */}
       <Tooltip title={formatMessage({ id: 'editor.constructionDrawing.export' })}>
-        <span style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}>
+        <span
+          style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}
+          onClick={() => {
+            switchExportConstruction(true);
+          }}
+        >
           <IconFont type={'icon-constructionDrawing'} />
         </span>
       </Tooltip>
@@ -215,6 +232,44 @@ const EditorHeaderRightTools = (props) => {
           }}
         />
       </Modal>
+
+      {/* 配置导出施工图 */}
+      <Modal
+        width={450}
+        destroyOnClose
+        visible={exportConstruction}
+        onCancel={() => {
+          switchExportConstruction(false);
+        }}
+        title={formatMessage({ id: 'editor.constructionDrawing.export' })}
+        footer={null}
+      >
+        <ConstructionInfoModal
+          configureSubmit={(values) => {
+            switchConstructionDraw(true)
+            setConstructionInfo(values);
+          }}
+        />
+      </Modal>
+
+      <Modal
+        width={adjustModalWidth()}
+        destroyOnClose
+        visible={constructionDrawVisible}
+        onCancel={() => {
+          switchConstructionDraw(false)
+          setConstructionInfo(null);
+        }}
+        bodyStyle={{
+          height: 600,
+          overflow: 'auto',
+        }}
+        footer={null}
+      >
+        {/* <ConstructionDraw Info={constructionInfo} /> */}
+        <ConstructionDrawing Info={constructionInfo} />
+      </Modal>
+
     </>
   );
 };

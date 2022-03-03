@@ -145,6 +145,7 @@ export default {
   'monitor.tracking.trackAMR.track': '开始追踪',
   'monitor.tracking.trackAMR.untrack': '取消追踪',
   'monitor.tracking.require.trackAMR': '请选择需要追踪的小车',
+  'monitor.tracking.require.location': '请选择需要定位的类型和序号',
 
   'monitor.simulator.config.title': '模拟车配置',
   'monitor.simulator.config.consumePowerSpeed': '耗电速度',
