@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { dealResponse, GMT2UserTimeZone, isNull, formatMessage } from '@/utils/util';
+import { dealResponse, GMT2UserTimeZone, isNull, formatMessage, convertToUserTimezone } from '@/utils/util';
 import { fetchAppModules } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { saveAs } from 'file-saver';
@@ -97,7 +97,7 @@ const LogSearchForm = (props) => {
       {
         label: formatMessage({ id: 'app.taskDetail.createTime' }),
         value: 'createtime',
-        render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+        render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
       },
     ];
 

@@ -3,6 +3,7 @@ import { Divider, Row, Col, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import styles from '../PopoverPanel/popoverPanel.module.less';
 import LabelComponent from '@/components/LabelComponent';
+import { isNull } from '@/utils/util';
 
 const FunctionListItem = (props) => {
   const {
@@ -43,21 +44,27 @@ const FunctionListItem = (props) => {
       <div>
         <div>{name}</div>
         <div>
-          <span key="edit" style={{ cursor: 'pointer' }}>
-            <EditOutlined
-              onClick={() => {
-                onEdit(index + 1, rawData);
-              }}
-            />
-          </span>
-          <Divider type="vertical" />
-          <span key="delete" style={{ cursor: 'pointer' }}>
-            <DeleteOutlined
-              onClick={() => {
-                onDelete(index + 1);
-              }}
-            />
-          </span>
+          {!isNull(onEdit) && (
+            <>
+              <span key="edit" style={{ cursor: 'pointer' }}>
+                <EditOutlined
+                  onClick={() => {
+                    onEdit(index + 1, rawData);
+                  }}
+                />
+              </span>
+              <Divider type="vertical" />
+            </>
+          )}
+          {!isNull(onDelete) && (
+            <span key="delete" style={{ cursor: 'pointer' }}>
+              <DeleteOutlined
+                onClick={() => {
+                  onDelete(index + 1);
+                }}
+              />
+            </span>
+          )}
         </div>
       </div>
       <Row gutter={10}>{renderFields()}</Row>

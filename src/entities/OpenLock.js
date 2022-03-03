@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { isNull } from '@/utils/util';
 import { GlobalAlpha } from '@/config/consts';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class OpenLock extends PIXI.Container {
   constructor(props) {

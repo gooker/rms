@@ -18,6 +18,8 @@ export default {
   'editor.mapVersion': '地图版本',
   'editor.programing': '编程信息',
   'editor.cell.notExist': '点位不存在',
+  'editor.logic.rangeStart': '范围起始值',
+  'editor.logic.rangeEnd': '范围结束值',
 
   // 操作提示
   'editor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',
@@ -53,6 +55,8 @@ export default {
   'editor.tools.useTemplate': '引用模板',
   'editor.tools.createTemplate': '创建模板',
   'editor.tools.history': '操作历史',
+
+  // 地图属性展示面板
 
   // 点位操作
   'editor.cell.code': '地址码',

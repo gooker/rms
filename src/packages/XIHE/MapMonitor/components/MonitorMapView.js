@@ -48,6 +48,7 @@ import {
 import commonStyles from '@/common.module.less';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
 import { fetchAgvInfo } from '@/services/api';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 class MonitorMapView extends BaseMap {
   constructor() {

@@ -1,4 +1,5 @@
 import React from 'react';
+import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import {
   getCoordinat,
@@ -423,8 +424,8 @@ export default class BaseMap extends React.Component {
             cellEntity.plusType('charger_cell', getTextureFromResources('charger_cell'));
 
             // 渲染充电桩到充电点之间的关系线
-            const relationLine = new SmoothGraphics();
-            relationLine.lineStyle(20, 0x0389ff, 1, LINE_SCALE_MODE.NONE);
+            const relationLine = new PIXI.Graphics();
+            relationLine.lineStyle(40, 0x0389ff);
             relationLine.moveTo(x, y);
             relationLine.lineTo(cellEntity.x, cellEntity.y);
             relationLine.zIndex = zIndex.targetLine;
@@ -465,8 +466,6 @@ export default class BaseMap extends React.Component {
       chargerEntity.destroy({ children: true });
     }
   };
-
-  // 地图-工作站点击事件
 
   /**
    * 渲染一个工作站
@@ -521,8 +520,8 @@ export default class BaseMap extends React.Component {
     if (stopCell) {
       stopCell.plusType('stop', getTextureFromResources('stop'));
       // 渲染工作站到停止点之间的关系线
-      const dashedLine = new SmoothGraphics();
-      dashedLine.lineStyle(20, 0x0389ff);
+      const dashedLine = new PIXI.Graphics();
+      dashedLine.lineStyle(40, 0x0389ff);
       dashedLine.moveTo(x, y);
       dashedLine.lineTo(stopCell.x, stopCell.y);
       dashedLine.zIndex = zIndex.targetLine;

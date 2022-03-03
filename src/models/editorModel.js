@@ -61,21 +61,14 @@ const EditorState = {
   preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
   mapContext: null, // 地图实体对象
 
-  // 选择相关
-  selections: [],
-  selectLines: [],
-  showShortcutTool: false,
-
-  // 所有站点类型
-  allStationTypes: {},
-
-  // 所有Web Hooks
-  allWebHooks: [],
+  selections: [], // 选择相关
+  allStationTypes: {}, // 所有站点类型
+  allWebHooks: [], // 所有Web Hooks
 
   // 显示相关
+  mapMode: 'standard',
   mapMinRatio: null, // 地图最小缩放比例
   mapRatio: null, // 地图当前缩放比例
-  mapMode: 'standard',
   hideBlock: false,
   showCoordinate: false,
   showDistance: false,
@@ -88,14 +81,15 @@ const EditorState = {
   forceUpdate: {}, // 部分组件需要手动渲染
   saveMapLoading: false, // 保存地图
   activeMapLoading: false, // 激活地图
+
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
-  positionVisible: false, // 定位功能弹窗
 
-  // Mask相关
+  positionVisible: false, // 定位功能弹窗
+  shortcutToolVisible: false, // 是否显示便捷操作工具
+  zoneMarkerVisible: false, // 是否显示区域配置弹窗
+  labelMarkerVisible: false, // 是否显示Label配置弹窗
   rangeForConfig: false, // 绘制区域用于配置地图功能
-  zoneMarkerVisible: false,
-  labelMarkerVisible: false,
 };
 
 export default {
@@ -172,7 +166,7 @@ export default {
       const newState = {
         ...state,
         selections: _selections,
-        showShortcutTool: selections.length > 0,
+        shortcutToolVisible: selections.length > 0,
       };
       if (selections.length === 1) {
         if (state.categoryPanel === null) {
@@ -278,12 +272,6 @@ export default {
       return {
         ...state,
         currentCells: action.payload,
-      };
-    },
-    saveSelectLines(state, action) {
-      return {
-        ...state,
-        selectLines: action.payload,
       };
     },
     saveVisit(state, action) {
@@ -1338,7 +1326,6 @@ export default {
 
     *deleteLines(_, { select, put }) {
       const { selections, currentMap } = yield select(({ editor }) => editor);
-
       const selectLines = selections.filter((item) => item.type === MapSelectableSpriteType.ROUTE);
       const result = [];
 

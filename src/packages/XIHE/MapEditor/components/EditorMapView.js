@@ -90,14 +90,16 @@ class EditorMapView extends BaseMap {
 
     // 保证 是否显示不可走点 状态一致
     this.switchShowBlock(this.states.hideBlock);
-
-    const { dispatch } = window.g_app._store;
-    dispatch({ type: 'editor/saveSelectLines', payload: [] });
-
     this.refresh();
   };
 
   // ************************ 点位相关 **********************
+  renderCells = (cells) => {
+    cells.forEach((cellData) => {
+      this.addCell(cellData.id, cellData.x, cellData.y);
+    });
+  };
+
   addCell = (id, x, y) => {
     const cell = new Cell({
       id,
@@ -114,16 +116,6 @@ class EditorMapView extends BaseMap {
     }
     this.idCellMap.set(id, cell);
     this.pixiUtils.viewportAddChild(cell);
-  };
-
-  /**
-   * 渲染点位
-   * @param {*} cells 需要渲染点位数据
-   */
-  renderCells = (cells) => {
-    cells.forEach((cellData) => {
-      this.addCell(cellData.id, cellData.x, cellData.y);
-    });
   };
 
   removeCells = (cells) => {

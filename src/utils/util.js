@@ -859,7 +859,7 @@ export function match(array, elements, key, descriptionValue) {
   const result = [];
   for (let index = 0; index < array.length; index++) {
     const element = array[index];
-    const obj = find(elements, (record) => record[key] == element);
+    const obj = find(elements, (record) => record[key] === element);
     if (obj == null) {
       result.push(0);
     } else {

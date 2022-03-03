@@ -5,6 +5,7 @@ import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { EStopStateColor, MapSelectableSpriteType, zIndex } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 const BorderWidth = 50;
 class EmergencyStop extends ResizableContainer {
