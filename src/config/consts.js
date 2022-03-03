@@ -269,3 +269,24 @@ export const AGVSubTypeMap = {
     },
   ],
 };
+
+// 纸张尺寸
+export const PaperSize = [
+  { label: 'A0', value: 'A0' },
+  { label: 'A1', value: 'A1' },
+  { label: 'A2', value: 'A2' },
+  { label: 'A3', value: 'A3' },
+  { label: 'A4', value: 'A4' },
+  { label: 'A5', value: 'A5' },
+];
+
+export const JspdfData = {
+  A0: [2383.94, 3370.39],
+  A1: [1683.78, 2383.94],
+  A2: [1190.55, 1683.78],
+  A3: [841.89, 1190.55],
+  A4: [595.28, 841.89],
+  A5: [419.53, 595.28],
+  A6: [297.64, 419.53],
+  A7: [209.76, 297.64],
+};

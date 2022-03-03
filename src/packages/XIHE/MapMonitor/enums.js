@@ -223,12 +223,6 @@ export const ViewCategoryTools = [
     value: 'sorterDisplay',
   },
   {
-    label: <FormattedMessage id={'monitor.right.tracking'} />,
-    icon: 'tracking.png',
-    style: { width: '33px', height: 'auto' },
-    value: 'tracking',
-  },
-  {
     label: <FormattedMessage id={'monitor.right.cellheat'} />,
     icon: 'heatView.png',
     style: { width: '33px', height: 'auto' },

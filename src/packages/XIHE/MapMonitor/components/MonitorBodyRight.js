@@ -94,7 +94,7 @@ const MonitorBodyRight = (props) => {
         return (
           <ViewCategorySecondaryPanel
             type={Category.View}
-            height={350}
+            height={300}
             pixHeight={height}
             offsetTop={offsetTop}
           />
