@@ -11,7 +11,7 @@ import {
   fetchDeleteAgvList,
   fetchMoveoutAGVs,
 } from '@/services/api';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import { dealResponse, isNull } from '@/utils/util';
 import { AGVType, NameSpace } from '@/config/config';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtil';

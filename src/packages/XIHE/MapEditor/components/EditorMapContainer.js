@@ -323,7 +323,9 @@ const EditorMapContainer = (props) => {
     >
       {showShortcutTool && <EditorShortcutTool />}
       <EditorMask />
-      <EditorMapView />
+
+      {/* 平板不用显示滑条 */}
+      {!window.currentPlatForm.isTablet && <EditorMapView />}
       <MapRatioSlider />
     </div>
   );

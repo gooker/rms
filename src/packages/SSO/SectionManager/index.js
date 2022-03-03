@@ -8,7 +8,7 @@ import {
   deleteSectionById,
 } from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import UpdateSection from './components/UpdateSection';

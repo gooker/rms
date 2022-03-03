@@ -290,3 +290,12 @@ export const JspdfData = {
   A6: [297.64, 419.53],
   A7: [209.76, 297.64],
 };
+
+// Grid响应式常用配置
+export const GridResponsive = {
+  xs: 24,
+  sm: 12,
+  md: 12,
+  lg: 12,
+  xl: 6,
+};

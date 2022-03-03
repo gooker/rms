@@ -5,7 +5,7 @@ import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchAgvTaskLockList, batchDeleteAgvTaskLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import RobotLockSearch from './RobotLockSearch';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';

@@ -10,7 +10,7 @@ import {
 } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import StorageOrPodLockSearch from './StorageOrPodLockSearch';
 import { forIn } from 'lodash';
 import commonStyles from '@/common.module.less';

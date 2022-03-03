@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  dateFormat,
+  convertToUserTimezone,
   dealResponse,
   adaptModalWidth,
   adaptModalHeight,
@@ -62,7 +62,7 @@ const CustomTaskTable = (props) => {
       title: <FormattedMessage id="app.common.creationTime" />,
       align: 'center',
       dataIndex: 'createTime',
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: <FormattedMessage id="app.common.creator" />,

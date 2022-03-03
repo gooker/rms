@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import { connect } from '@/utils/RmsDva';
+import { find } from 'lodash';
 import { Button, Input, Form, message, Modal, Table, Tag } from 'antd';
 import { BellOutlined, ReloadOutlined, DisconnectOutlined } from '@ant-design/icons';
-import find from 'lodash/find';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { BroadCastPattern, BroadCastTiming, BroadCastType, ContentType } from './enum';
 import { dealResponse, isNull, formatMessage } from '@/utils/util';
@@ -13,7 +13,9 @@ import {
   fetchChannelSubscription,
   saveChannelSubscription,
 } from '@/services/api';
-import styles from './BroadcastChannel.module.less';
+import TablePageWrapper from '@/components/TablePageWrapper';
+import commonStyles from '@/common.module.less';
+import TableWithPages from '@/components/TableWithPages';
 
 const ChannelSubscription = (props) => {
   const [subscribeLoading, setSubscribeLoading] = useState(false);
@@ -222,8 +224,8 @@ const ChannelSubscription = (props) => {
   ];
 
   return (
-    <div style={{ padding: 20 }}>
-      <div className={styles.broadcastChannel}>
+    <TablePageWrapper>
+      <div className={commonStyles.tableToolLeft}>
         <Button
           type={'primary'}
           onClick={() => {
@@ -240,12 +242,11 @@ const ChannelSubscription = (props) => {
           <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
         </Button>
       </div>
-      <Table
+      <TableWithPages
         bordered
         loading={loading}
         columns={columns}
         dataSource={riceDataSource}
-        pagination={false}
         rowKey={(record) => record.id}
         scroll={{ x: 'max-content' }}
         rowSelection={{
@@ -291,7 +292,7 @@ const ChannelSubscription = (props) => {
           />
         </Form.Item>
       </Modal>
-    </div>
+    </TablePageWrapper>
   );
 };
 export default connect(({ user }) => ({

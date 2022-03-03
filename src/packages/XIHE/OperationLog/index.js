@@ -3,7 +3,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { Table, Tag, Button } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { fetchUserActionLogs } from '@/services/api';
-import { dateFormat, dealResponse,isStrictNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse,isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RequestPayloadModal from './components/RequestPayloadModal';
 import OperateSearchForm from '@/pages/FaultList/OperateSearchForm';
@@ -96,7 +96,7 @@ const OperationLogComponent = (props) => {
       width: 200,
       sorter: true,
       dataIndex: 'createtime', // 时间戳
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: <FormattedMessage id="operation.log.requestResponse" />,

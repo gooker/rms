@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { fetchChargerFaultList } from '@/services/api';
-import { dealResponse, formatMessage, dateFormat } from '@/utils/util';
+import { dealResponse, formatMessage, convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import FaultSearchForm from './components/FaultSearchForm';
 
 /**
@@ -50,7 +50,7 @@ const ChargeManagerment = () => {
       title: formatMessage({ id: 'chargeManager.fault.createTime' }),
       dataIndex: 'createTime',
       align: 'center',
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
   ];
 

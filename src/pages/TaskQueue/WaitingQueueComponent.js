@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Badge, Row, Button, message, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { dateFormat, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchTaskQueueList,
@@ -10,7 +10,7 @@ import {
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
 } from '@/services/api';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import { dealResponse } from '@/utils/util';
 import { AgvStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
@@ -117,7 +117,7 @@ class WaitingQueueComponent extends Component {
         if (!text) {
           return <FormattedMessage id="app.taskQueue.notAvailable" />;
         }
-        return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
       },
     },
     {
@@ -130,7 +130,7 @@ class WaitingQueueComponent extends Component {
         if (!text) {
           return <FormattedMessage id="app.taskQueue.notAvailable" />;
         }
-        return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
       },
     },
     {

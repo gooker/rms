@@ -5,7 +5,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import AgvListComponent from '@/pages/AgvListComponent';
 import { hasPermission } from '@/utils/Permission';
 import {
-  dateFormat,
+  convertToUserTimezone,
   getSuffix,
   getDirectionLocale,
   getAgvStatusTag,
@@ -66,9 +66,9 @@ const AgvList = () => {
         ListCardRender: true,
         render: (text, record, index, flag) => {
           if (flag) {
-            return <span>{dateFormat(text).format('MM-DD HH:mm')}</span>;
+            return <span>{convertToUserTimezone(text).format('MM-DD HH:mm')}</span>;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {

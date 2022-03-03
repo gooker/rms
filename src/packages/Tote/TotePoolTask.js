@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge, Tag, Button, Tooltip } from 'antd';
-import { dateFormat } from '@/utils/util';
+import { convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/pages/TaskPool/TaskPoolComponent';
 import { AGVType } from '@/config/config';
@@ -112,7 +112,7 @@ const TotePoolTask = () => {
           if (!text) {
             return <FormattedMessage id="app.taskDetail.notAvailable" />;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {
@@ -123,7 +123,7 @@ const TotePoolTask = () => {
           if (!text) {
             return <FormattedMessage id="app.taskDetail.notAvailable" />;
           }
-          return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+          return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
         },
       },
       {

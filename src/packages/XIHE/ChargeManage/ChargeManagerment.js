@@ -13,7 +13,7 @@ import {
 } from '@/services/api';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import BindingChargeComponent from './components/BindingChargeComponent';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';

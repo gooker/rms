@@ -52,11 +52,18 @@ const errorHandler = (error) => {
   const { response } = error;
   if (response) {
     const { status, data } = response;
-    if (status === 401) {
-      window.history.$$push('/login');
+    const netStateMessage = codeMessage[status];
+    if (netStateMessage) {
+      if (status === 401) {
+        setTimeout(() => {
+          window.history.$$push('/login');
+        }, 1500);
+      }
+      return { code: '-1', data: null, message: netStateMessage };
+    } else {
+      const message = data.message || formatMessage({ id: 'app.request.failed' });
+      return { code: '-1', data: null, message };
     }
-    const statusMessage = codeMessage[status];
-    return { code: '-1', data: null, message: data.message || statusMessage };
   } else {
     let messageContent;
     if (error.message === 'Network Error') {

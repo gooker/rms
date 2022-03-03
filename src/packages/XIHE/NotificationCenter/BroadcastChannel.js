@@ -1,10 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Table, Switch, Button, Modal, message } from 'antd';
+import { Switch, Button, Modal, message } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import BroadcastChannelForm from './components/BroadcastChannelForm';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dateFormat, dealResponse, isNull, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, isNull, formatMessage } from '@/utils/util';
 import {
   deleteBroadCastChannels,
   fetchBroadCastChannel,
@@ -13,7 +13,9 @@ import {
 import { BroadCastType, BroadCastPattern, ContentType, BroadCastTiming } from './enum';
 import LocaleKeys from '@/locales/LocaleKeys';
 import RmsConfirm from '@/components/RmsConfirm';
-import styles from './BroadcastChannel.module.less';
+import TablePageWrapper from '@/components/TablePageWrapper';
+import TableWithPages from '@/components/TableWithPages';
+import commonStyles from '@/common.module.less';
 
 const BroadcastChannel = () => {
   const [loading, setLoading] = useState(false);
@@ -118,33 +120,6 @@ const BroadcastChannel = () => {
       },
     },
     {
-      title: formatMessage({ id: 'app.notification.broadCastTiming' }),
-      dataIndex: 'broadCastTiming',
-      align: 'center',
-      width: 100,
-      render: (text) => {
-        const enumItem = find(BroadCastTiming, { key: text });
-        if (!isNull(enumItem)) {
-          return formatMessage({ id: enumItem.label });
-        } else {
-          return '??';
-        }
-      },
-    },
-    {
-      title: formatMessage({ id: 'app.notification.broadCastTiming.delayLabel' }),
-      dataIndex: 'timeOut',
-      align: 'center',
-      width: 100,
-      render: (text, record) => {
-        if (record.broadCastTiming === 'Delay') {
-          return `${text}s`;
-        } else {
-          return '-';
-        }
-      },
-    },
-    {
       title: formatMessage({ id: 'app.notification.contentType' }),
       dataIndex: 'contentType',
       align: 'center',
@@ -172,41 +147,6 @@ const BroadcastChannel = () => {
       },
     },
     {
-      title: 'Web Hook',
-      dataIndex: 'webhook',
-      align: 'center',
-      width: 150,
-      render: (text) => text || '-',
-    },
-    {
-      title: 'Sign',
-      dataIndex: 'sign',
-      align: 'center',
-      width: 150,
-      render: (text) => text || '-',
-    },
-    {
-      title: formatMessage({ id: 'translator.languageManage.language' }),
-      dataIndex: 'languageType',
-      align: 'center',
-      width: 150,
-      render: (text) => LocaleKeys[text] || '??',
-    },
-    {
-      title: formatMessage({ id: 'app.common.creationTime' }),
-      dataIndex: 'createTime',
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
-      align: 'center',
-      width: 150,
-    },
-    {
-      title: formatMessage({ id: 'app.common.updateTime' }),
-      dataIndex: 'updateTime',
-      render: (text) => dateFormat(text).format('YYYY-MM-DD HH:mm:ss'),
-      align: 'center',
-      width: 150,
-    },
-    {
       title: formatMessage({ id: 'app.notification.subscribable' }),
       dataIndex: 'isSubscribe',
       align: 'center',
@@ -218,8 +158,6 @@ const BroadcastChannel = () => {
           onChange={(checked) => {
             updateIsSubscribe(record, checked);
           }}
-          checkedChildren={formatMessage({ id: 'app.common.yes' })}
-          unCheckedChildren={formatMessage({ id: 'app.common.no' })}
         />
       ),
     },
@@ -235,8 +173,6 @@ const BroadcastChannel = () => {
           onChange={(checked) => {
             updateChannelState(record, checked);
           }}
-          checkedChildren={formatMessage({ id: 'app.chargeManger.enable' })}
-          unCheckedChildren={formatMessage({ id: 'app.chargeManger.disabled' })}
         />
       ),
     },
@@ -255,9 +191,60 @@ const BroadcastChannel = () => {
     },
   ];
 
+  const expandColumns = [
+    {
+      title: formatMessage({ id: 'app.notification.broadCastTiming' }),
+      dataIndex: 'broadCastTiming',
+      render: (text) => {
+        const enumItem = find(BroadCastTiming, { key: text });
+        if (!isNull(enumItem)) {
+          return formatMessage({ id: enumItem.label });
+        } else {
+          return '??';
+        }
+      },
+    },
+    {
+      title: formatMessage({ id: 'app.notification.broadCastTiming.delayLabel' }),
+      dataIndex: 'timeOut',
+      render: (text, record) => {
+        if (record.broadCastTiming === 'Delay') {
+          return `${text}s`;
+        } else {
+          return '-';
+        }
+      },
+    },
+    {
+      title: 'Web Hook',
+      dataIndex: 'webhook',
+      render: (text) => text || '-',
+    },
+    {
+      title: 'Sign',
+      dataIndex: 'sign',
+      render: (text) => text || '-',
+    },
+    {
+      title: formatMessage({ id: 'translator.languageManage.language' }),
+      dataIndex: 'languageType',
+      render: (text) => LocaleKeys[text] || '??',
+    },
+    {
+      title: formatMessage({ id: 'app.common.creationTime' }),
+      dataIndex: 'createTime',
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: formatMessage({ id: 'app.common.updateTime' }),
+      dataIndex: 'updateTime',
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+  ];
+
   return (
-    <div style={{ padding: 20 }}>
-      <div className={styles.broadcastChannel}>
+    <TablePageWrapper>
+      <div className={commonStyles.tableToolLeft}>
         <Button
           type={'primary'}
           onClick={() => {
@@ -274,14 +261,14 @@ const BroadcastChannel = () => {
           <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
         </Button>
       </div>
-      <Table
+
+      <TableWithPages
         bordered
         loading={loading}
         columns={columns}
+        expandColumns={expandColumns}
         dataSource={dataSource}
-        pagination={false}
         rowKey={(record) => record.id}
-        scroll={{ x: 'max-content' }}
         rowSelection={{
           selectedRowKeys,
           onChange: setSelectedRowKeys,
@@ -304,7 +291,7 @@ const BroadcastChannel = () => {
       >
         <BroadcastChannelForm data={editing} onSubmit={createChannel} loading={creationLoading} />
       </Modal>
-    </div>
+    </TablePageWrapper>
   );
 };
 export default memo(BroadcastChannel);

@@ -882,6 +882,13 @@ export async function getAllWebHookTypes() {
   });
 }
 
+// 查询所有MQ Queue
+export async function getAllQueues() {
+  return request(`/${Coordinator}/webHook/getAllQueue`, {
+    method: 'GET',
+  });
+}
+
 // 查询所有已创建的Web Hook接口
 export async function getAllWebHooks() {
   return request(`/${Coordinator}/webHook/getAllWebHook`, {

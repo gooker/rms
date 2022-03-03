@@ -1,9 +1,11 @@
 export default {
   'app.request.error': '请求错误',
   'app.request.failed': '请求失败, 网络连接可能出现异常',
-  'app.request.processError': '程序出现异常, 请关注相关提示信息（若无相关提示信息请联系工作人员）',
-  'app.request.processError2': '程序出现错误, 请查看控制台',
+  'app.request.concurrent.failed': '网络请求中存在一个或多个异常',
   'app.request.addressError': '请求地址错误',
+  'app.request.headers': '请求头',
+  'app.require.namespace': '{namespace} 相关接口未配置',
+
   'app.request.400': '请求参数错误',
   'app.request.401': '用户没有权限（令牌、用户名、密码错误）',
   'app.request.403': '用户得到授权，但是访问是被禁止的',
@@ -15,5 +17,4 @@ export default {
   'app.request.502': '网关错误',
   'app.request.503': '服务不可用，服务器暂时过载或维护',
   'app.request.504': '网关超时',
-  'app.require.namespace': '{namespace} 相关接口未配置',
 };

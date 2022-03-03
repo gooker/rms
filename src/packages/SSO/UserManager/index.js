@@ -15,7 +15,7 @@ import {
   saveUsersAssignedRole,
 } from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';

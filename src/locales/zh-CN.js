@@ -22,7 +22,6 @@ import latentLiftingReport from './zh-CN/LatentLifting/report';
 import customTasks from './zh-CN/XIHE/customTasks';
 import operationLog from './zh-CN/XIHE/operationlog';
 import charging from './zh-CN/XIHE/charging';
-import webHook from './zh-CN/XIHE/webHook';
 import lockManage from './zh-CN/XIHE/lockManage';
 import mapEditor from './zh-CN/XIHE/editor';
 import mapMonitor from './zh-CN/XIHE/monitor';
@@ -55,7 +54,6 @@ export default {
   ...customTasks,
   ...operationLog,
   ...charging,
-  ...webHook,
   ...lockManage,
   ...mapEditor,
   ...mapMonitor,

@@ -5,7 +5,7 @@ import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchToteBinLock, batchDeleteToteBinLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWidthPages';
+import TableWidthPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';

@@ -20,7 +20,7 @@ import AddSimulatorAgv from '../Modal/Simulator/AddSimulatorAgv';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
 import SimulatorError from '../Modal/Simulator/SimulatorError';
 import { AGVType } from '@/config/config';
-import { formatMessage, dateFormat, dealResponse } from '@/utils/util';
+import { formatMessage, convertToUserTimezone, dealResponse } from '@/utils/util';
 import styles from '../monitorLayout.module.less';
 
 const size = 'small';
@@ -263,7 +263,7 @@ const SimulatorPanel = (props) => {
               </span>
               <span>
                 <span style={{ marginLeft: 20 }}>
-                  <span>{dateFormat(simulatorConfig.timeStamp).format('MM-DD HH:mm')}</span>
+                  <span>{convertToUserTimezone(simulatorConfig.timeStamp).format('MM-DD HH:mm')}</span>
                   <span style={{ marginLeft: 10 }}>{simulatorConfig.createdByUser}</span>
                 </span>
               </span>

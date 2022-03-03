@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, message, Table, Divider, Tooltip, Badge } from 'antd';
-import { formatMessage, dealResponse, dateFormat } from '@/utils/util';
+import { formatMessage, dealResponse, convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -106,7 +106,7 @@ class TaskLibraryComponent extends Component {
         if (!text) {
           return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
         }
-        return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
       },
     },
     {
@@ -118,7 +118,7 @@ class TaskLibraryComponent extends Component {
         if (!text) {
           return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
         }
-        return <span>{dateFormat(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
       },
     },
   ];

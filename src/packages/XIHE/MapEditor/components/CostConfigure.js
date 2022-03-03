@@ -1,8 +1,9 @@
 import React, { memo } from 'react';
 import { Button } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
 
 const CostConfigure = (props) => {
-  const { onChange } = props;
+  const { showSelection, value, onChange } = props;
 
   return (
     <div>
@@ -13,7 +14,7 @@ const CostConfigure = (props) => {
             onChange(1000);
           }}
         >
-          {' '}
+          {showSelection && value === 1000 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
         <Button
           style={{ background: '#ffca28' }}
@@ -21,7 +22,7 @@ const CostConfigure = (props) => {
             onChange(100);
           }}
         >
-          {' '}
+          {showSelection && value === 100 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
       </div>
       <div style={{ textAlign: 'center' }}>
@@ -31,7 +32,7 @@ const CostConfigure = (props) => {
             onChange(-1);
           }}
         >
-          {' '}
+          {showSelection && value === -1 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
       </div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -41,7 +42,7 @@ const CostConfigure = (props) => {
             onChange(20);
           }}
         >
-          {' '}
+          {showSelection && value === 20 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
         <Button
           style={{ background: '#388e3c' }}
@@ -49,7 +50,7 @@ const CostConfigure = (props) => {
             onChange(10);
           }}
         >
-          {' '}
+          {showSelection && value === 10 ? <CheckOutlined style={{ color: '#000000' }} /> : ' '}
         </Button>
       </div>
     </div>
