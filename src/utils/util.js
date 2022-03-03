@@ -892,20 +892,19 @@ export function transformReportDetail(data) {
  * @param data
  * @param keyLabel 自定义key的标识
  * @param valueLabel 自定义value的标识
- * @param empty 空数组情况下的填充值
  */
-export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value', empty = '') {
+export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value') {
   if (isPlainObject(data)) {
     const result = Object.entries(data).map(([key, value]) => ({
       [keyLabel]: key,
       [valueLabel]: value,
     }));
     if (result.length === 0) {
-      return [empty];
+      return [];
     }
     return result;
   } else {
-    return [empty];
+    return [];
   }
 }
 

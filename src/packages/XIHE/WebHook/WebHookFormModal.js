@@ -61,8 +61,7 @@ const WebHookFormModal = (props) => {
   }
 
   function validateHeaders(_, headers) {
-    // 排除默认状态
-    if (headers.length === 1 && headers[0] === '') {
+    if (headers.filter(Boolean).length === 0) {
       return Promise.resolve();
     }
 
@@ -87,14 +86,15 @@ const WebHookFormModal = (props) => {
     if (editing) {
       return convertMapToArrayMap(editing.headers);
     }
-    return [''];
+    return [];
   }
 
   return (
     <Form form={formRef} {...formItemLayout}>
       <Form.Item
         name="name"
-        label={formatMessage({ id: 'app.common.name' })}
+        label={<FormattedMessage id={'app.common.name'} />}
+        rules={[{ required: true }]}
         initialValue={editing?.name}
       >
         <Input />
@@ -135,52 +135,59 @@ const WebHookFormModal = (props) => {
         </Form.Item>
       )}
 
-      <Form.Item name="url" label={'URL'} initialValue={editing?.url} rules={[{ type: 'url' }]}>
+      <Form.Item
+        name="url"
+        label={'URL'}
+        initialValue={editing?.url}
+        rules={[{ required: true }, { type: 'url' }]}
+      >
         <Input.TextArea />
       </Form.Item>
-      <Form.Item name="token" label={'Token'} initialValue={editing?.token}>
+      <Form.Item
+        name="token"
+        label={'Token'}
+        initialValue={editing?.token}
+        rules={[{ required: true }]}
+      >
         <Input.TextArea />
       </Form.Item>
 
       {/* 请求头 */}
-      <Form.List
-        name="headers"
-        initialValue={convertHeaders()}
-        rules={[{ validator: validateHeaders }]}
-      >
-        {(fields, { add, remove }, { errors }) => (
-          <>
-            {fields.map((field, index) => (
-              <Form.Item
-                key={field.key}
-                required={true}
-                {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                label={index === 0 ? formatMessage({ id: 'app.request.headers' }) : ''}
-              >
-                <Row gutter={10}>
-                  <Col span={22}>
-                    <Form.Item noStyle {...field}>
-                      <RequestHeaderForm />
-                    </Form.Item>
-                  </Col>
-                  <Col span={2} className={commonStyle.flexCenter}>
-                    <MinusCircleOutlined
-                      onClick={() => remove(field.name)}
-                      style={{ fontSize: 18 }}
-                    />
-                  </Col>
-                </Row>
+      <Form.Item label={formatMessage({ id: 'app.request.headers' })}>
+        <Form.List
+          name="headers"
+          initialValue={convertHeaders()}
+          rules={[{ validator: validateHeaders }]}
+        >
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item key={field.key}>
+                  <Row gutter={10}>
+                    <Col span={22}>
+                      <Form.Item noStyle {...field}>
+                        <RequestHeaderForm />
+                      </Form.Item>
+                    </Col>
+                    <Col span={2} className={commonStyle.flexCenter}>
+                      <MinusCircleOutlined
+                        onClick={() => remove(field.name)}
+                        style={{ fontSize: 18 }}
+                      />
+                    </Col>
+                  </Row>
+                </Form.Item>
+              ))}
+              <Form.Item noStyle>
+                <Button block type="dashed" onClick={() => add()}>
+                  <PlusOutlined />
+                </Button>
+                <Form.ErrorList errors={errors} />
               </Form.Item>
-            ))}
-            <Form.Item {...formItemLayoutNoLabel}>
-              <Button block type="dashed" onClick={() => add()}>
-                <PlusOutlined />
-              </Button>
-              <Form.ErrorList errors={errors} />
-            </Form.Item>
-          </>
-        )}
-      </Form.List>
+            </>
+          )}
+        </Form.List>
+      </Form.Item>
 
       <Form.Item
         name="desc"
