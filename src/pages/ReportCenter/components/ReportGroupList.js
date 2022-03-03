@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Modal } from 'antd';
 import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/util';
@@ -127,7 +127,7 @@ const ReportGroupList = (props) => {
           <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
         </Button>
       </div>
-      <TableWidthPages
+      <TableWithPages
         bordered
         loading={loading}
         columns={columns}

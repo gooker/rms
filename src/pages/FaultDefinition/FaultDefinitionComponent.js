@@ -4,7 +4,7 @@ import { DeleteOutlined, ExportOutlined, PlusOutlined, SettingOutlined } from '@
 import { saveAs } from 'file-saver';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FaultDefinitionSearchForm from '@/pages/FaultDefinition/FaultDefinitionSearchForm';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteFaultDefinition, fetchDefinedFaults } from '@/services/api';
@@ -202,7 +202,7 @@ const FaultDefinitionComponent = (props) => {
           </Button>
         </div>
       </div>
-      <TableWidthPages
+      <TableWithPages
         bordered
         scroll={{ x: 'max-content' }}
         loading={loading}

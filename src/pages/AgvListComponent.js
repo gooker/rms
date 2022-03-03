@@ -11,7 +11,7 @@ import {
   fetchDeleteAgvList,
   fetchMoveoutAGVs,
 } from '@/services/api';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import { dealResponse, isNull } from '@/utils/util';
 import { AGVType, NameSpace } from '@/config/config';
 import { exportAgvModuleInfo, exportAgvInfo } from '@/utils/featureUtil';
@@ -230,7 +230,7 @@ class AgvListComponent extends Component {
             </Button>
           </Row>
         </div>
-        <TableWidthPages
+        <TableWithPages
           loading={loading}
           columns={getColumn(this.checkAgvDetail)}
           dataSource={this.filterData()}

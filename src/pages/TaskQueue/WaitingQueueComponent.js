@@ -10,7 +10,7 @@ import {
   fetchAgvOverallStatus,
   fetchUpdateTaskPriority,
 } from '@/services/api';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import { dealResponse } from '@/utils/util';
 import { AgvStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
@@ -352,7 +352,7 @@ class WaitingQueueComponent extends Component {
             </Button>
           </Row>
         </div>
-        <TableWidthPages
+        <TableWithPages
           loading={loading}
           columns={this.columns}
           dataSource={dataSource}

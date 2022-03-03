@@ -10,7 +10,7 @@ import {
   fetchUpgradeFirmwareFile,
   upgradeAGV,
 } from '@/services/api';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';
 import { formatMessage, dealResponse } from '@/utils/util';
@@ -175,7 +175,7 @@ class BatchUpgradingComponent extends Component {
             <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </div>
-        <TableWidthPages
+        <TableWithPages
           loading={loading}
           columns={getColumn(this.forceSet)}
           dataSource={[]}
