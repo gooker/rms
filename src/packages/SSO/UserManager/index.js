@@ -15,7 +15,7 @@ import {
   saveUsersAssignedRole,
 } from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
 import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
@@ -481,7 +481,7 @@ class UserManager extends Component {
             </Col>
           </Row>
         </div>
-        <TableWidthPages
+        <TableWithPages
           bordered
           columns={this.columns}
           rowKey={(record) => record.id}

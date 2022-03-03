@@ -19,7 +19,7 @@ import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/ut
 import RmsConfirm from '@/components/RmsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
-import TablewidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from './environmentManager.module.less';
 
@@ -202,7 +202,7 @@ export default class index extends Component {
           </Col>
         </Row>
 
-        <TablewidthPages
+        <TableWithPages
           columns={this.columns}
           rowKey="id"
           dataSource={dataList}

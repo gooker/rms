@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddPodModal from './components/AddPodModal';
 import { fetchPodListBySectionId, savePod, batchDeletePod } from '@/services/api';
@@ -242,7 +242,7 @@ const PodManager = () => {
           </Col>
         </Row>
       </div>
-      <TableWidthPages
+      <TableWithPages
         bordered
         loading={loading}
         columns={columns}

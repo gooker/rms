@@ -5,7 +5,7 @@ import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { formatMessage, dealResponse, convertToUserTimezone, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -268,7 +268,7 @@ class ExecutionQueueComponent extends Component {
             <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </div>
-        <TableWidthPages
+        <TableWithPages
           loading={loading}
           columns={this.columns}
           dataSource={this.filterTableList()}

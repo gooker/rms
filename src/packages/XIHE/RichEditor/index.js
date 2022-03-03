@@ -8,7 +8,7 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from './index.module.less';
 
@@ -206,7 +206,7 @@ const RichEditor = () => {
           </Button>
         </Col>
       </Row>
-      <TableWidthPages
+      <TableWithPages
         bordered
         loading={loading}
         rowSelection={rowSelection}

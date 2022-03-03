@@ -5,7 +5,7 @@ import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchToteLockList, batchDeleteToteLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -100,7 +100,7 @@ const TargetLock = (props) => {
           </Button>
         </Col>
       </Row>
-      <TableWidthPages
+      <TableWithPages
         bordered
         scroll={{ x: 'max-content' }}
         loading={loading}

@@ -8,7 +8,7 @@ import {
   deleteSectionById,
 } from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import UpdateSection from './components/UpdateSection';
@@ -145,7 +145,7 @@ export default class SectionManager extends Component {
             </Button>
           </Col>
         </Row>
-        <TableWidthPages
+        <TableWithPages
           bordered
           rowKey={'id'}
           loading={loading}

@@ -5,7 +5,7 @@ import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import TargetLockSearch from './components/TargetLockSearch';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
@@ -136,7 +136,7 @@ const TargetLock = (props) => {
           </Col>
         </Row>
       </div>
-      <TableWidthPages
+      <TableWithPages
         bordered
         scroll={{ x: 'max-content' }}
         loading={loading}

@@ -5,7 +5,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { getAllWebHookTypes, getAllWebHooks, deleteWebHooks, getAllQueues } from '@/services/api';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import RcsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import WebHookFormModal from './WebHookFormModal';
@@ -155,7 +155,7 @@ const WebHook = () => {
           <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
         </Button>
       </div>
-      <TableWidthPages
+      <TableWithPages
         bordered
         loading={loading}
         rowSelection={rowSelection}

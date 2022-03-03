@@ -20,7 +20,7 @@ import {
   saveRoleAssignAuthority,
 } from '@/services/SSO';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRoleModal from './components/AddRoleModal';
 import RoleAssignModal from './components/RoleAssignModal';
@@ -225,7 +225,7 @@ export default class index extends Component {
             </Button>
           </Col>
         </Row>
-        <TableWidthPages
+        <TableWithPages
           bordered
           columns={this.columns}
           dataSource={roleList}

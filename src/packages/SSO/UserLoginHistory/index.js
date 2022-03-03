@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchUserLoginHistory } from '@/services/SSO';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 
 const { RangePicker } = DatePicker;
 
@@ -143,7 +143,7 @@ export default class UserLoginHistory extends Component {
             <FormattedMessage id="app.button.export" />
           </Button>
         </div>
-        <TableWidthPages
+        <TableWithPages
           bordered
           columns={this.getColumn}
           rowKey="id"

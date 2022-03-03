@@ -3,7 +3,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { fetchChargerFaultList } from '@/services/api';
 import { dealResponse, formatMessage, convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import FaultSearchForm from './components/FaultSearchForm';
 
 /**
@@ -70,7 +70,7 @@ const ChargeManagerment = () => {
     <TablePageWrapper>
       <FaultSearchForm search={fetchChargeFaultList} />
       <div>
-        <TableWidthPages
+        <TableWithPages
           bordered
           scroll={{ x: 'max-content' }}
           loading={loading}

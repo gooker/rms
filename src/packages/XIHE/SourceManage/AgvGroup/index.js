@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Button, Tag, Modal, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined, PlusOutlined, EditOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddAgvgroupModal from './AddAgvgroupModal';
 import {
@@ -133,7 +133,7 @@ const AgvGroup = () => {
           </Col>
         </Row>
       </div>
-      <TableWidthPages
+      <TableWithPages
         bordered
         loading={loading}
         columns={columns}

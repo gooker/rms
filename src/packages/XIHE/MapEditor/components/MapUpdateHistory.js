@@ -3,7 +3,7 @@ import { Card } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import { fetchMapHistory } from '@/services/XIHE';
-import TableWidthPages from '@/components/TableWithPages';
+import TableWithPages from '@/components/TableWithPages';
 
 const MapUpdateHistory = (props) => {
   const { dispatch, mapId } = props;
@@ -66,7 +66,7 @@ const MapUpdateHistory = (props) => {
 
   return (
     <Card bordered={false} size="small" style={{ minHeight: 500 }}>
-      <TableWidthPages
+      <TableWithPages
         bordered
         loading={fetching}
         columns={columns}
