@@ -1,15 +1,17 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Switch, Button, Select, message, DatePicker } from 'antd';
+import { Form, Row, Col, Switch, Button, Select, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { fetchCellHeat } from '@/services/XIHE';
-import { getFormLayout, dealResponse, formatMessage } from '@/utils/util';
+import { getFormLayout, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { CellHeatType } from '@/config/consts';
+import { CostHeatPollingManager } from '@/workers/CostHeatPollingManager';
 import FormattedMessage from '@/components/FormattedMessage';
+
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
-const height = 500;
+const height = 400;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 const { Option } = Select;
 const OptionData = [
@@ -20,7 +22,7 @@ const OptionData = [
 ];
 
 const HotheatControlComponent = (props) => {
-  const { dispatch, mapRef } = props;
+  const { dispatch, mapRef, hotType, costHeatOpacity, showCostPolling } = props;
   const [form] = Form.useForm();
 
   function close() {
@@ -28,10 +30,10 @@ const HotheatControlComponent = (props) => {
   }
 
   // 点位热度
-  async function refreshCellHeat({ type, startTime, endTime, isTransparent }) {
+  async function refreshCellHeat({ type, startTime, endTime }) {
     const response = await fetchCellHeat({ type, startTime, endTime });
     if (dealResponse(response)) return;
-    mapRef.renderCellHeat(response, isTransparent);
+    mapRef.renderCellHeat(response);
   }
 
   function handleRequestHeat(event) {
@@ -39,9 +41,9 @@ const HotheatControlComponent = (props) => {
     form
       .validateFields()
       .then((value) => {
-        const { type, startTime, endTime, isTransparent } = value;
+        const { type, startTime, endTime } = value;
         if (type === CellHeatType.cost_type) {
-          refreshCellHeat({ type, isTransparent, startTime: '', endTime: '' });
+          refreshCellHeat({ type, startTime: '', endTime: '' });
         } else {
           if (!startTime || !endTime) {
             message.error(formatMessage({ id: 'monitor.view.heat.require.timeRange' }));
@@ -49,7 +51,6 @@ const HotheatControlComponent = (props) => {
           }
           refreshCellHeat({
             type,
-            isTransparent,
             startTime: startTime.format('YYYY-MM-DD HH:mm:ss'),
             endTime: endTime.format('YYYY-MM-DD HH:mm:ss'),
           });
@@ -59,7 +60,48 @@ const HotheatControlComponent = (props) => {
   }
 
   function clear() {
+    switchPolling(false);
     mapRef.clearCellHeat();
+  }
+
+  function switchPolling(checked) {
+    dispatch({
+      type: 'monitorView/savePollingCost',
+      payload: checked,
+    });
+    showCostPollingCallback(checked);
+  }
+
+  /*****start 轮询**/
+  function showCostPollingCallback(flag, type) {
+    if (flag) {
+      openCostPolling(type);
+    } else {
+      closeCostPolling();
+    }
+  }
+
+  function openCostPolling(type) {
+    const currrentType = type || hotType;
+    if (!isStrictNull(currrentType)) {
+      CostHeatPollingManager.start(
+        { type: currrentType, startTime: '', endTime: '' },
+        (response) => {
+          mapRef.renderCellHeat(response);
+        },
+      );
+    }
+  }
+
+  function closeCostPolling() {
+    CostHeatPollingManager.terminate();
+  }
+
+  async function switchTransparent(checked) {
+    await dispatch({
+      type: 'monitorView/saveViewState',
+      payload: { costHeatOpacity: checked },
+    });
   }
 
   return (
@@ -72,22 +114,38 @@ const HotheatControlComponent = (props) => {
       className={styles.monitorModal}
     >
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'monitor.right.cellheat'} />
+        <FormattedMessage id={'monitor.right.heat'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
-        <div style={{ textAlign: 'end', marginBottom: 20 }}>
-          <Button type="link" onClick={handleRequestHeat}>
-            <FormattedMessage id="app.button.refresh" />
-          </Button>
-        </div>
+        <Row>
+          <Col offset={16}>
+            <Form.Item label={<FormattedMessage id={'monitor.view.heat.autoRefresh'} />}>
+              <Switch
+                checked={showCostPolling}
+                onChange={(ev) => switchPolling(ev)}
+                checkedChildren={formatMessage({ id: 'app.common.true' })}
+                unCheckedChildren={formatMessage({ id: 'app.common.false' })}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
 
         <Form form={form} {...formItemLayout}>
           <Form.Item
             name={'type'}
+            initialValue={hotType}
             label={formatMessage({ id: 'monitor.view.heat.queryType' })}
             rules={[{ required: true }]}
             allowClear
+            getValueFromEvent={(e) => {
+              dispatch({
+                type: 'monitorView/saveViewState',
+                payload: { hotType: e },
+              });
+              showCostPollingCallback(showCostPolling, e);
+              return e;
+            }}
           >
             <Select>
               {OptionData.map(({ label, value }, index) => (
@@ -98,19 +156,15 @@ const HotheatControlComponent = (props) => {
             </Select>
           </Form.Item>
 
-          <Form.Item name={'startTime'} label={formatMessage({ id: 'app.common.startTime' })}>
-            <DatePicker showTime />
-          </Form.Item>
-
-          <Form.Item name={'endTime'} label={formatMessage({ id: 'app.common.endTime' })}>
-            <DatePicker showTime />
-          </Form.Item>
-
           <Form.Item
             name={'isTransparent'}
-            initialValue={true}
             valuePropName={'checked'}
             label={formatMessage({ id: 'monitor.view.heat.isTransparent' })}
+            initialValue={costHeatOpacity}
+            getValueFromEvent={(e) => {
+              switchTransparent(e);
+              return e;
+            }}
           >
             <Switch
               checkedChildren={formatMessage({ id: 'app.common.true' })}
@@ -137,9 +191,9 @@ const HotheatControlComponent = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+export default connect(({ monitor, monitorView }) => ({
   mapRef: monitor.mapContext,
-  viewSetting: monitor.viewSetting,
-  currentLogicAreaId: monitor.currentLogicArea,
+  showCostPolling: monitorView?.showCostPolling,
+  hotType: monitorView?.hotType,
+  costHeatOpacity: monitorView?.costHeatOpacity,
 }))(memo(HotheatControlComponent));

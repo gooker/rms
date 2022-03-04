@@ -5,7 +5,7 @@ import { NameSpace } from '@/config/config';
 const CommonStationStatePolling = {};
 CommonStationStatePolling.getInstance = function (dispatcher,promises) {
   if (isNull(CommonStationStatePolling.instance)) {
-    const worker = new Worker(new URL('./workStationStatePolling.worker.js', import.meta.url));
+    const worker = new Worker(new URL('./workStationPolling.worker.js', import.meta.url));
     worker.onmessage = function ({ data }) {
       const newData = [];
       data.map(({ code, data }) => {

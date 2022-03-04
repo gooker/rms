@@ -2,12 +2,13 @@ import React, { memo, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
-import { isNull, dealResponse } from '@/utils/util';
+import { isNull, dealResponse, isStrictNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
-import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
+
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
-import { StationRatePolling } from '@/workers/StationRateManager';
+
+
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
@@ -39,11 +40,11 @@ const MapMonitor = (props) => {
     currentMap,
     mapContext,
     mapRendered,
-    selectAgv,
-    showRoute,
-    stationRealTimeRateView,
     categoryModal,
     categoryPanel,
+    showCostPolling,
+    currentLogicArea,
+    hotType,
   } = props;
 
   const [workStationOB, setWorkStationOB] = useState({});
@@ -87,35 +88,6 @@ const MapMonitor = (props) => {
     renderMonitorLoad();
   }, [mapRendered]);
 
-  // 轮询小车任务路径
-  useEffect(() => {
-    // 轮询小车任务路径
-    if (selectAgv && selectAgv.length > 0 && showRoute) {
-      AgvPollingTaskPathManager.start(selectAgv, (response) => {
-        if (response && Array.isArray(response)) {
-          const tasks = response.filter(Boolean);
-          mapContext.registerShowTaskPath(tasks, selectAgv, true);
-        }
-      });
-    } else {
-      // 清理地图上的路径
-      mapContext?.registerShowTaskPath([], [], true);
-    }
-
-    return () => {
-      AgvPollingTaskPathManager.terminate();
-    };
-  }, [selectAgv, showRoute]);
-
-  useEffect(() => {
-    stationRealTimeRateView &&
-      StationRatePolling.start((value) => {
-        dispatch({ type: 'monitor/updateStationRate', payload: { mapContext, response: value } });
-      });
-    return () => {
-      StationRatePolling.terminate();
-    };
-  }, [stationRealTimeRateView]);
 
   // 轮询 工作站雇佣车标记
   useEffect(() => {
@@ -379,14 +351,15 @@ const MapMonitor = (props) => {
     </div>
   );
 };
-export default connect(({ monitor, global }) => ({
+export default connect(({ monitor, global, monitorView }) => ({
   socketClient: global.socketClient,
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
   mapRendered: monitor.mapRendered,
-  selectAgv: monitor.viewSetting?.selectAgv,
-  showRoute: monitor.viewSetting?.showRoute,
-  stationRealTimeRateView: monitor.viewSetting?.stationRealTimeRateView,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
+  currentLogicArea: monitor.currentLogicArea,
+  showCostPolling: monitorView?.showCostPolling,
+  showLockCellPolling: monitorView?.showLockCellPolling,
+  hotType: monitor?.hotType,
 }))(memo(MapMonitor));

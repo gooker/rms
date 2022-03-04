@@ -102,6 +102,8 @@ export default {
   'app.taskDetail.layers': '层数',
   'app.taskDetail.unknown': '未知的',
   'app.taskDetail.action': '动作',
+  'app.taskDetail.action.fetch': '取',
+  'app.taskDetail.action.put': '放',
   'app.taskDetail.toteCode': '料箱号',
   'app.taskDetail.binCode': '货位号',
   'app.taskDetail.toteBinAtHolding': '抱夹中',

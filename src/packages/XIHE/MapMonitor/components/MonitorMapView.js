@@ -1075,8 +1075,8 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 渲染小车行驶路径路径 ********************** //
-  registerShowTaskPath = (agvTasks = [], filteredAGV, showTaskPath) => {
-    this.filteredAGV = filteredAGV;
+  registerShowTaskPath = (agvTasks = [], showTaskPath) => {
+    this.filteredAGV = window.g_app._store.getState().monitorView.selectAgv;
     this.showTaskPath = showTaskPath;
 
     // 前置处理
@@ -1155,7 +1155,7 @@ class MonitorMapView extends BaseMap {
   };
 
   renderTaskPaths = (agvId) => {
-    const { showFullPath, showTagetLine } = window.$$state().monitor.viewSetting;
+    const { showFullPath, showTagetLine } = window.$$state.monitorView.routeView;
 
     // 渲染新的路径
     const _this = this;
@@ -1383,8 +1383,9 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 点位热度 ********************** //
-  renderCellHeat = (data, isTransparent) => {
+  renderCellHeat = (data) => {
     if (!data) return;
+    const { costHeatOpacity } = window.g_app._store.getState().monitorView;
     // 每次渲染前都是替换，所以第一步需要清除所有点位热度对象
     this.clearCellHeat();
     data.forEach((item) => {
@@ -1400,7 +1401,7 @@ class MonitorMapView extends BaseMap {
         heatSprite.anchor.set(0.5);
         heatSprite.x = x;
         heatSprite.y = y;
-        heatSprite.alpha = isTransparent ? 0.5 : 1;
+        heatSprite.alpha = costHeatOpacity ? 0.5 : 1;
         heatSprite.zIndex = zIndex.cellHeat;
         this.cellHeatMap.set(`${cellId}`, heatSprite);
         cellEntity && this.pixiUtils.viewportAddChild(heatSprite);
@@ -1663,4 +1664,5 @@ class MonitorMapView extends BaseMap {
     return <div id="monitorPixi" className={commonStyles.monitorBodyMiddle} />;
   }
 }
+
 export default MonitorMapView;

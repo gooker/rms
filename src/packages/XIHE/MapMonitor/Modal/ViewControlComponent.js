@@ -4,6 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { StationRatePolling } from '@/workers/StationRateManager';
 import { CostOptions } from '../../MapEditor/enums';
 import styles from '../monitorLayout.module.less';
 
@@ -12,7 +13,17 @@ const height = 500;
 const { formItemLayout } = getFormLayout(6, 16);
 
 const ViewControlComponent = (props) => {
-  const { dispatch, mapRef, viewSetting } = props;
+  const {
+    dispatch,
+    mapRef,
+    shownPriority,
+    distanceShow,
+    cellPointShow,
+    coordinationShow,
+    stationRealTimeRateView,
+    backImgeView,
+    emergencyAreaShow,
+  } = props;
   const [form] = Form.useForm();
 
   function close() {
@@ -20,11 +31,12 @@ const ViewControlComponent = (props) => {
   }
 
   function onValuesChange(changedValues) {
+    const currentKey = Object.keys(changedValues)[0];
+    const currentValue = Object.values(changedValues)[0];
     dispatch({
-      type: 'monitor/fetchUpdateViewSetting',
+      type: 'monitorView/saveViewState',
       payload: {
-        key: Object.keys(changedValues)[0],
-        value: Object.values(changedValues)[0],
+        [currentKey]: currentValue,
       },
     });
   }
@@ -43,6 +55,17 @@ const ViewControlComponent = (props) => {
         mapRef.clearEmergencyStopArea();
       }
     });
+  }
+
+  // 轮询站点速率
+  function switchRatePolling(checked) {
+    if (checked) {
+      StationRatePolling.start((value) => {
+        dispatch({ type: 'monitor/updateStationRate', payload: { mapRef, response: value } });
+      });
+    } else {
+      StationRatePolling.terminate();
+    }
   }
 
   return (
@@ -64,7 +87,7 @@ const ViewControlComponent = (props) => {
           <Form.Item
             {...formItemLayout}
             name="shownPriority"
-            initialValue={viewSetting?.shownPriority || []}
+            initialValue={shownPriority || []}
             label={<FormattedMessage id={'editor.view.priorityDisplay'} />}
           >
             <Checkbox.Group
@@ -80,7 +103,7 @@ const ViewControlComponent = (props) => {
 
           <Form.Item
             name={'distanceShow'}
-            initialValue={viewSetting?.distanceShow || false}
+            initialValue={distanceShow}
             valuePropName={'checked'}
             label={formatMessage({ id: 'editor.view.distanceDisplay' })}
           >
@@ -94,7 +117,7 @@ const ViewControlComponent = (props) => {
           {/* 地图点位 */}
           <Form.Item
             name={'cellPointShow'}
-            initialValue={viewSetting?.cellPointShow || true}
+            initialValue={cellPointShow}
             valuePropName={'checked'}
             label={formatMessage({ id: 'monitor.view.mapCellView' })}
           >
@@ -108,7 +131,7 @@ const ViewControlComponent = (props) => {
           {/* 点位坐标 */}
           <Form.Item
             name={'coordinationShow'}
-            initialValue={viewSetting?.coordinationShow || false}
+            initialValue={coordinationShow}
             valuePropName={'checked'}
             label={formatMessage({ id: 'monitor.view.coordinateDisplay' })}
           >
@@ -124,10 +147,11 @@ const ViewControlComponent = (props) => {
             label={formatMessage({ id: 'monitor.view.stationRealtimeRate' })}
             name={'stationRealTimeRateView'}
             valuePropName={'checked'}
-            initialValue={viewSetting?.stationRealTimeRateView || false}
+            initialValue={stationRealTimeRateView}
           >
             <Switch
               onChange={(value) => {
+                switchRatePolling(value);
                 mapRef && mapRef.switchStationRealTimeRateShown(value);
               }}
             />
@@ -138,7 +162,7 @@ const ViewControlComponent = (props) => {
             label={formatMessage({ id: 'editor.view.backImgDisplay' })}
             name={'backImgeView'}
             valuePropName={'checked'}
-            initialValue={viewSetting?.backImgeView || false}
+            initialValue={backImgeView}
           >
             <Switch
               checked={props.showBackImg}
@@ -158,7 +182,7 @@ const ViewControlComponent = (props) => {
                 <Form.Item
                   name={'emergencyAreaShow'}
                   valuePropName={'checked'}
-                  initialValue={viewSetting?.emergencyAreaShow || true}
+                  initialValue={emergencyAreaShow}
                 >
                   <Switch
                     onChange={(value) => {
@@ -179,9 +203,15 @@ const ViewControlComponent = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
   mapRef: monitor.mapContext,
-  viewSetting: monitor.viewSetting,
+  shownPriority: monitorView.shownPriority,
+  distanceShow: monitorView.distanceShow,
+  cellPointShow: monitorView.cellPointShow,
+  coordinationShow: monitorView.coordinationShow,
+  stationRealTimeRateView: monitorView.stationRealTimeRateView,
+  backImgeView: monitorView.backImgeView,
+  emergencyAreaShow: monitorView.emergencyAreaShow,
   currentLogicAreaId: monitor.currentLogicArea,
 }))(memo(ViewControlComponent));

@@ -35,23 +35,23 @@ export const MonitorRightTools = [
     icon: 'latent_category.svg',
     style: { width: '38px' },
   },
-  {
-    label: <FormattedMessage id={'monitor.right.tote'} />,
-    value: Category.ToteAGV,
-    icon: 'tote_category.svg',
-  },
+  // {
+  //   label: <FormattedMessage id={'monitor.right.tote'} />,
+  //   value: Category.ToteAGV,
+  //   icon: 'tote_category.svg',
+  // },
   {
     label: <FormattedMessage id={'monitor.right.sorter'} />,
     value: Category.SorterAGV,
     icon: 'sorter_category.svg',
     style: { width: '33px', height: '45px' },
   },
-  {
-    label: <FormattedMessage id={'app.common.report'} />,
-    value: Category.Report,
-    icon: 'report_category.svg',
-    style: { width: '28px' },
-  },
+  // {
+  //   label: <FormattedMessage id={'app.common.report'} />,
+  //   value: Category.Report,
+  //   icon: 'report_category.svg',
+  //   style: { width: '28px' },
+  // },
   {
     label: <FormattedMessage id={'app.map.view'} />,
     value: Category.View,
@@ -223,7 +223,7 @@ export const ViewCategoryTools = [
     value: 'sorterDisplay',
   },
   {
-    label: <FormattedMessage id={'monitor.right.cellheat'} />,
+    label: <FormattedMessage id={'monitor.right.heat'} />,
     icon: 'heatView.png',
     style: { width: '33px', height: 'auto' },
     value: 'heatHeat',

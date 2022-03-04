@@ -8,6 +8,7 @@ import simulatorModel from './simulatorModel';
 import taskTriggerModel from './taskTriggerModel';
 import customTaskModel from './customTaskModel';
 import menuModel from './menuModel';
+import monitorViewModel from './monitorViewModel';
 
 export default [
   globalModel,
@@ -20,4 +21,5 @@ export default [
   taskTriggerModel,
   customTaskModel,
   menuModel,
+  monitorViewModel,
 ];

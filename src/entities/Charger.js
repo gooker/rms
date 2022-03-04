@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Text from './Text';
-import { isNull, isStrictNull } from '@/utils/util';
-import { hasPermission } from '@/utils/Permission';
+import { isNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { zIndex, ChargerSize, ChargerStateColor, SelectionType } from '@/config/consts';
 import { SmoothGraphics } from '_@pixi_graphics-smooth@0.0.22@@pixi/graphics-smooth';
@@ -30,7 +29,7 @@ export default class Charger extends PIXI.Container {
     this.charger.interactiveChildren = false;
     this.charger.on('click', this.click);
 
-    if (hasPermission('/map/monitor/chargerMaintain')) {
+    if (props.active) {
       this.addLightningIcon(); // 充电中标记
       this.addErrorMaskState(); // 错误状态标记
       this.addOfflineMaskState(); // 离线标记

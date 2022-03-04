@@ -88,7 +88,7 @@ const MonitorBodyRight = (props) => {
         );
       case Category.SorterAGV:
         return (
-          <AgvCategorySecondaryPanel agvType={AGVType.Sorter} dispatch={dispatch} height={350} />
+          <AgvCategorySecondaryPanel agvType={AGVType.Sorter} dispatch={dispatch} height={450} />
         );
       case Category.View:
         return (
@@ -105,7 +105,7 @@ const MonitorBodyRight = (props) => {
         return (
           <ViewCategorySecondaryPanel
             type={Category.Emergency}
-            height={170}
+            height={160}
             pixHeight={height}
             offsetTop={offsetTop}
           />

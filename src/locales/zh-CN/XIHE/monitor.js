@@ -35,6 +35,7 @@ export default {
   'monitor.right.toteDisplay': '料箱显示',
   'monitor.right.sorterDisplay': '分拣显示',
   'monitor.right.cellheat': '点位热度',
+  'monitor.right.heat': '热度',
   'monitor.right.tracking': '追踪',
 
   // 提醒
@@ -64,6 +65,7 @@ export default {
   'monitor.automaticLatentWorkStationTask.updateConfiguration': '更新配置',
   'monitor.automaticLatentWorkStationTask.handleAutoRelease': '自动释放',
   'monitor.automaticLatentWorkStationTask.deleteConfig.success': '删除配置成功',
+  'monitor.automaticLatentWorkStationTask.toteWeight': '料箱重量',
   'monitor.latentAutoTaskOn': '自动呼叫已开启',
   'monitor.latentAutoTaskOff': '自动呼叫已关闭',
   'monitor.latentAutoTaskReleaseOn': '自动释放已开启',
@@ -120,6 +122,7 @@ export default {
   'monitor.view.heat.cost': '成本热度',
   'monitor.view.heat.require.timeRange': '请选择时间区间',
   'monitor.view.heat.isTransparent': '是否透明',
+  'monitor.view.heat.autoRefresh': '自动刷新',
 
   'monitor.simulator.config': '配置',
   'monitor.simulator.action.batchAddPods': '批量添加货架',

@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
 import { findIndex } from 'lodash';
-import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
+import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList,fetchMapAGVLocks } from '@/services/XIHE';
 import {
   fetchTemporaryBlockCells,
   updateTemporaryBlockCell,
@@ -46,22 +46,11 @@ export default {
 
     // “显示”
     viewSetting: {
-      selectAgv: [],
-      showLockCell: [],
-      showRoute: true,
-      showFullPath: false,
-      showTagetLine: false,
-      showLockedCell: true,
+
+
       tempBlockShown: true,
       temporaryCell: [],
 
-      shownPriority: [10, 20, 100, 1000],
-      distanceShow: false,
-      coordinationShow: false,
-      cellPointShow: true,
-      stationRealTimeRateView: false, // 站点实时速率显示
-      emergencyAreaShow: true, // 紧急区域
-      backImgeView: false, // 背景
 
       toteBinShown: true,
 
@@ -98,6 +87,9 @@ export default {
     // 监控地图是否渲染完成
     mapRendered: false,
     positionVisible: false, // 定位功能弹窗
+
+   
+
 
     // 弹窗
     categoryModal: null,
@@ -539,6 +531,15 @@ export default {
         type: 'saveState',
         payload: { stationRealRate: currentData },
       });
+    },
+    *fetchAllLockCells({ payload, then }, { call, select }) {
+      const { currentLogicArea } = yield select((state) => state.monitor);
+      const { lockTypes, robotIds } = payload;
+      const response = yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
+      if (dealResponse(response)) {
+        return false;
+      }
+      then && then(response);
     },
   },
 };
