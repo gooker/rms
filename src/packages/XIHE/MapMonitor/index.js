@@ -7,7 +7,7 @@ import { setMonitorSocketCallback } from '@/utils/mapUtil';
 
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
-import { StationRatePolling } from '@/workers/StationRateManager';
+
 import { CostHeatPollingManager } from '@/workers/CostHeatPollingManager';
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
@@ -40,7 +40,6 @@ const MapMonitor = (props) => {
     currentMap,
     mapContext,
     mapRendered,
-    stationRealTimeRateView,
     categoryModal,
     categoryPanel,
     showCostPolling,
@@ -89,7 +88,6 @@ const MapMonitor = (props) => {
     renderMonitorLoad();
   }, [mapRendered]);
 
-
   // 轮询成本热度
   useEffect(() => {
     if (!isStrictNull(hotType) && showCostPolling) {
@@ -101,17 +99,6 @@ const MapMonitor = (props) => {
       CostHeatPollingManager.terminate();
     };
   }, [showCostPolling, hotType]);
-
-  // 轮询站点速率
-  useEffect(() => {
-    stationRealTimeRateView &&
-      StationRatePolling.start((value) => {
-        dispatch({ type: 'monitor/updateStationRate', payload: { mapContext, response: value } });
-      });
-    return () => {
-      StationRatePolling.terminate();
-    };
-  }, [stationRealTimeRateView]);
 
   // 轮询 工作站雇佣车标记
   useEffect(() => {
@@ -380,7 +367,6 @@ export default connect(({ monitor, global, monitorView }) => ({
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
   mapRendered: monitor.mapRendered,
-  stationRealTimeRateView: monitor.viewSetting?.stationRealTimeRateView,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
   currentLogicArea: monitor.currentLogicArea,

@@ -51,13 +51,6 @@ export default {
       tempBlockShown: true,
       temporaryCell: [],
 
-      shownPriority: [10, 20, 100, 1000],
-      distanceShow: false,
-      coordinationShow: false,
-      cellPointShow: true,
-      stationRealTimeRateView: false, // 站点实时速率显示
-      emergencyAreaShow: true, // 紧急区域
-      backImgeView: false, // 背景
 
       toteBinShown: true,
 
