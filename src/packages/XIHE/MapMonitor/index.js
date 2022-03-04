@@ -2,12 +2,13 @@ import React, { memo, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
-import { isNull, dealResponse } from '@/utils/util';
+import { isNull, dealResponse, isStrictNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
 import { StationRatePolling } from '@/workers/StationRateManager';
+import { CostHeatPollingManager } from '@/workers/CostHeatPollingManager';
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
@@ -44,6 +45,8 @@ const MapMonitor = (props) => {
     stationRealTimeRateView,
     categoryModal,
     categoryPanel,
+    showCostPolling,
+    hotType,
   } = props;
 
   const [workStationOB, setWorkStationOB] = useState({});
@@ -107,6 +110,19 @@ const MapMonitor = (props) => {
     };
   }, [selectAgv, showRoute]);
 
+  // 轮询成本热度
+  useEffect(() => {
+    if (!isStrictNull(hotType) && showCostPolling) {
+      CostHeatPollingManager.start({ type: hotType, startTime: '', endTime: '' }, (response) => {
+        mapContext.renderCellHeat(response);
+      });
+    }
+    return () => {
+      CostHeatPollingManager.terminate();
+    };
+  }, [showCostPolling, hotType]);
+
+  // 轮询站点速率
   useEffect(() => {
     stationRealTimeRateView &&
       StationRatePolling.start((value) => {
@@ -379,7 +395,7 @@ const MapMonitor = (props) => {
     </div>
   );
 };
-export default connect(({ monitor, global }) => ({
+export default connect(({ monitor, global,monitorView }) => ({
   socketClient: global.socketClient,
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
@@ -389,4 +405,6 @@ export default connect(({ monitor, global }) => ({
   stationRealTimeRateView: monitor.viewSetting?.stationRealTimeRateView,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
+  showCostPolling: monitorView?.showCostPolling,
+  hotType: monitor?.hotType,
 }))(memo(MapMonitor));

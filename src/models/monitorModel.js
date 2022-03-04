@@ -99,6 +99,11 @@ export default {
     mapRendered: false,
     positionVisible: false, // 定位功能弹窗
 
+    // 热度类型
+    hotType:null,
+    costHeatOpacity:true,
+
+
     // 弹窗
     categoryModal: null,
   },

@@ -10,7 +10,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
-const height = 300;
+const height = 500;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const AutomaticToteWorkstationTask = (props) => {
@@ -57,10 +57,7 @@ const AutomaticToteWorkstationTask = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <Form.Item
-            name={'workstation'}
-            label={formatMessage({ id: 'app.monitorOperation.workstation' })}
-          >
+          <Form.Item name={'workstation'} label={formatMessage({ id: 'app.map.workStation' })}>
             <Select style={{ width: '80%' }}>
               {workstationList.map((record, index) => {
                 return (
@@ -79,7 +76,7 @@ const AutomaticToteWorkstationTask = (props) => {
           >
             <Input />
           </Form.Item>
-{/* 
+
           <Form.List name="toteAGVTaskActionDTOS">
             {(fields, { add, remove }) => (
               <>
@@ -88,16 +85,17 @@ const AutomaticToteWorkstationTask = (props) => {
                     key={field.key}
                     style={{
                       border: '1px solid #e0dcdc',
-                      padding: '25px 10px 0 0',
+                      padding: '10px',
                       borderRadius: '5px',
                       marginBottom: '20px',
+                      marginLeft: 20,
                     }}
                   >
                     <Col span={22}>
                       <Form.Item
                         {...field}
                         label={formatMessage({
-                          id: 'app.monitorOperation.toteWorkStation.action',
+                          id: 'app.taskDetail.action',
                         })}
                         initialValue={'FETCH'}
                         name={[field.name, 'toteAGVTaskActionType']}
@@ -105,17 +103,17 @@ const AutomaticToteWorkstationTask = (props) => {
                       >
                         <Radio.Group>
                           <Radio.Button value="FETCH">
-                            <FormattedMessage id="app.monitorOperation.toteWorkStation.fetch" />
+                            <FormattedMessage id="app.taskDetail.action.fetch" />
                           </Radio.Button>
                           <Radio.Button value="PUT">
-                            <FormattedMessage id="app.monitorOperation.toteWorkStation.put" />
+                            <FormattedMessage id="app.taskDetail.action.put" />
                           </Radio.Button>
                         </Radio.Group>
                       </Form.Item>
                       <Form.Item
                         {...field}
                         label={formatMessage({
-                          id: 'app.monitorOperation.toteWorkStation.toteCode',
+                          id: 'lockManage.toteCode',
                         })}
                         name={[field.name, 'toteCode']}
                         fieldKey={[field.fieldKey, 'toteCode']}
@@ -125,7 +123,7 @@ const AutomaticToteWorkstationTask = (props) => {
                       <Form.Item
                         {...field}
                         label={formatMessage({
-                          id: 'app.monitorOperation.toteWorkStation.toteWeight',
+                          id: 'monitor.automaticLatentWorkStationTask.toteWeight',
                         })}
                         name={[field.name, 'weight']}
                         fieldKey={[field.fieldKey, 'weight']}
@@ -135,7 +133,7 @@ const AutomaticToteWorkstationTask = (props) => {
                       <Form.Item
                         {...field}
                         label={formatMessage({
-                          id: 'app.monitorOperation.toteWorkStation.binCode',
+                          id: 'app.taskDetail.binCode',
                         })}
                         name={[field.name, 'binCode']}
                         fieldKey={[field.fieldKey, 'binCode']}
@@ -153,13 +151,13 @@ const AutomaticToteWorkstationTask = (props) => {
                   </Row>
                 ))}
                 <Form.Item>
-                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    <FormattedMessage id="app.workStationMap.add" />
+                  <Button block type="dashed" onClick={() => add()} icon={<PlusOutlined />}>
+                    <FormattedMessage id="app.button.add" />
                   </Button>
                 </Form.Item>
               </>
             )}
-          </Form.List> */}
+          </Form.List>
 
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={emptyRun} loading={executing} disabled={executing}>

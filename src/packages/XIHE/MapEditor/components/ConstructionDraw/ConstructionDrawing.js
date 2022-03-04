@@ -5,7 +5,7 @@ import * as zrender from 'zrender';
 import jsPDF from 'jspdf';
 import { groupBy, sortBy } from 'lodash';
 import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtil';
-import { formatMessage, dateFormat } from '@/utils/util';
+import { formatMessage, convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { JspdfData } from '@/config/consts';
 import { getAllallCellsMap, exportCells, styleDistance } from './constructionUtil';
@@ -320,7 +320,7 @@ const ConstructionDrawing = (props) => {
       {
         x: 270 + 260 * 1,
         y: 10,
-        text: `${formatMessage({ id: 'app.taskRecord.date' })}:   ${dateFormat(new Date()).format(
+        text: `${formatMessage({ id: 'app.taskRecord.date' })}:   ${convertToUserTimezone(new Date()).format(
           'YYYYMMDD',
         )}`,
       },
@@ -376,7 +376,7 @@ const ConstructionDrawing = (props) => {
       const a = document.createElement('a');
       a.download = `${currentMapName}-${currentLogicArea.name || null}  -${formatMessage({
         id: 'app.constructiondrawing',
-      })}${dateFormat(new Date()).format('YYYYMMDD')}.png`; // 下载的文件名，
+      })}${convertToUserTimezone(new Date()).format('YYYYMMDD')}.png`; // 下载的文件名，
       a.href = strDataURI;
       document.body.appendChild(a);
       a.click();
@@ -417,7 +417,7 @@ const ConstructionDrawing = (props) => {
       papersize || null
     } -${formatMessage({
       id: 'app.constructiondrawing',
-    })}${dateFormat(new Date()).format('YYYYMMDD')}.pdf`;
+    })}${convertToUserTimezone(new Date()).format('YYYYMMDD')}.pdf`;
 
     const pdf = new jsPDF(orientation, 'pt', papersize);
     const imgLength = imgs.length;
