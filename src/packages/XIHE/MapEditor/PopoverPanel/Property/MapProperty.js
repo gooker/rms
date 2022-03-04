@@ -1,17 +1,17 @@
 import React, { memo } from 'react';
+import { Col, Divider } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelColComponent from '@/components/LabelColComponent';
-import { Card, Col, Divider } from 'antd';
-import FunctionListItem from '@/packages/XIHE/MapEditor/components/FunctionListItem';
+import FunctionListItem from '../../components/FunctionListItem';
 
 const MapProperty = (props) => {
   const { currentMap } = props;
 
   function generateLogicData() {
     return currentMap.logicAreaList.map((item) => {
-      const { id, name, rangeStart, rangeEnd, routeMap } = item;
+      const { id, name, rangeStart, rangeEnd } = item;
       return {
         name,
         fields: [

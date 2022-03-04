@@ -48,9 +48,8 @@ class EmergencyStop extends ResizableContainer {
   }
 
   updateLayout(data) {
-    const { dispatch } = window.g_app._store;
     const { x, y, width, height } = data;
-    dispatch({
+    window.dispatch({
       type: 'editor/updateEStop',
       payload: {
         code: this.code,

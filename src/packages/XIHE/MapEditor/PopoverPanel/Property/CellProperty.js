@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Form, Row, Col, InputNumber, Button, Tag, Empty } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { getFormLayout } from '@/utils/util';
@@ -16,6 +16,14 @@ const CellProperty = (props) => {
   const { cellMap } = currentMap;
   const cellData = cellMap[data?.id];
 
+  useEffect(() => {
+    formRef.setFieldsValue({
+      cellId: cellData?.id,
+      x: cellData?.x,
+      y: cellData?.y,
+    });
+  }, [cellData]);
+
   function updateCellData() {
     formRef.validateFields().then((values) => {
       dispatch({
@@ -25,7 +33,6 @@ const CellProperty = (props) => {
         if (response) {
           const { type, payload } = response;
           // if (type === 'add') {
-          //   this.context.addCell(payload.id, payload.x, payload.y);
           // }
           if (type === 'update') {
             mapContext.updateCells({ type: 'code', payload });
@@ -79,32 +86,17 @@ const CellProperty = (props) => {
         <Form {...formItemLayout} form={formRef}>
           <Row>
             <Col span={12}>
-              <Form.Item
-                name={'cellId'}
-                label={'ID'}
-                initialValue={cellData?.id}
-                rules={[{ required: true }]}
-              >
+              <Form.Item name={'cellId'} label={'ID'} rules={[{ required: true }]}>
                 <InputNumber min={1} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name={'x'}
-                label={'X'}
-                initialValue={cellData?.x}
-                rules={[{ required: true }]}
-              >
+              <Form.Item name={'x'} label={'X'} rules={[{ required: true }]}>
                 <InputNumber disabled />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name={'y'}
-                label={'Y'}
-                initialValue={cellData?.y}
-                rules={[{ required: true }]}
-              >
+              <Form.Item name={'y'} label={'Y'} rules={[{ required: true }]}>
                 <InputNumber disabled />
               </Form.Item>
             </Col>

@@ -150,22 +150,22 @@ export default {
       };
     },
     updateSelections(state, action) {
-      const { incremental, selections } = action.payload;
-      let _selections;
-      // 存在增量选择，需要删除重复的对象
-      if (incremental) {
-        _selections = [...state.selections];
-        selections.forEach((selection) => {
-          if (!some(state.selections, selection)) {
-            _selections.push(selection);
-          }
-        });
-      } else {
-        _selections = selections;
-      }
+      const selections = action.payload;
+      // let _selections;
+      // // 存在增量选择，需要删除重复的对象
+      // if (incremental) {
+      //   _selections = [...state.selections];
+      //   selections.forEach((selection) => {
+      //     if (!some(state.selections, selection)) {
+      //       _selections.push(selection);
+      //     }
+      //   });
+      // } else {
+      //   _selections = selections;
+      // }
       const newState = {
         ...state,
-        selections: _selections,
+        selections,
         shortcutToolVisible: selections.length > 0,
       };
       if (selections.length === 1) {

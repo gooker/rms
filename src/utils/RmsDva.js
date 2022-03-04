@@ -15,8 +15,8 @@ function createRmsDva(opts = {}, models) {
   app.use(createLoading());
   app.start();
 
-  window.g_app = app;
-  window.__g_state__ = window.g_app._store.getState;
+  window.$$dispatch = app._store.dispatch;
+  window.$$state = app._store.getState;
 
   return getPureProvider(app._store);
 }

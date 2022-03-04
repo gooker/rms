@@ -1,12 +1,19 @@
 import * as PIXI from 'pixi.js';
-import BitText from './BitText';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { CommonFunctionSize, zIndex } from '@/config/consts';
+import {
+  zIndex,
+  SelectionType,
+  CommonFunctionSize,
+  MapSelectableSpriteType,
+} from '@/config/consts';
 import Text from '@/entities/Text';
+import { isStrictNull } from '@/utils/util';
 
 export default class CommonFunction extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MapSelectableSpriteType.STATION;
     this.x = props.x;
     this.y = props.y;
     this.name = props.name;
@@ -15,6 +22,8 @@ export default class CommonFunction extends PIXI.Container {
     this.$angle = props.angle || 0; // 仅用于纠正名称角度
     this.icon = props.icon || 'common';
     this.iconSize = props.size || `${CommonFunctionSize.width}@${CommonFunctionSize.height}`;
+    this.select = props.select;
+    this.selected = false; // 标记该工作站是否被选中
 
     // 尺寸转换(向前兼容)
     const [iconWidth, iconHeight] = this.iconSize.split('@').map((value) => parseInt(value, 10));
@@ -22,20 +31,46 @@ export default class CommonFunction extends PIXI.Container {
     this.iconHeight = iconHeight;
 
     this.create();
-    this.name && this.addName();
+    this.addName();
+    this.createSelectionBorder();
 
+    // 在途小车显示相关
     this.employeeColor = null;
     this.showEmployee = false;
 
-    if (props.active) {
-      this.CommonFunction.interactive = true;
-      this.CommonFunction.buttonMode = true;
-      this.CommonFunction.interactiveChildren = false;
-      this.CommonFunction.on('pointerdown', () => {
-        props.click(this.showEmployee, this.employeeColor);
-      });
-    }
+    // 点击事件处理
+    this.CommonFunction.interactive = true;
+    this.CommonFunction.buttonMode = true;
+    this.CommonFunction.interactiveChildren = false;
+    this.CommonFunction.on('pointerdown', this.click);
   }
+
+  // 选择相关
+  onSelect = () => {
+    if (!this.selected) {
+      this.selected = true;
+      this.selectionBorder.visible = true;
+    }
+  };
+
+  onUnSelect = () => {
+    if (this.selected) {
+      this.selected = false;
+      this.selectionBorder.visible = false;
+    }
+  };
+
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
+    }
+  };
 
   create() {
     const commonFunctionTexture = getTextureFromResources(this.icon || 'common');
@@ -48,11 +83,24 @@ export default class CommonFunction extends PIXI.Container {
   }
 
   addName() {
+    if (isStrictNull(this.name)) return;
     const y = this.CommonFunction.height / 2 + 150;
     this.nameSprite = new Text(this.name, 0, -y, 0xffffff, false, 200);
     this.nameSprite.anchor.set(0.5);
     this.nameSprite.angle = -this.angle;
     this.addChild(this.nameSprite);
+  }
+
+  // 创建选择边框
+  createSelectionBorder() {
+    this.selectionBorder = new SmoothGraphics();
+    this.selectionBorder.lineStyle(5, 0xff0000);
+    const { width, height } = this.getLocalBounds();
+    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.alpha = 0.8;
+    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.visible = false;
+    this.addChild(this.selectionBorder);
   }
 
   // Marker

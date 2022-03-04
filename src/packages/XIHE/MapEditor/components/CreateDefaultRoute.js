@@ -14,7 +14,7 @@ const IconStyle = { color: '#e8e8e8' };
 const CreateDefaultRoute = (props) => {
   const { style, dispatch, mapContext } = props;
   const [collapsed, setCollapsed] = useState(true);
-  const [value, setValue] = useState({ 0: -1, 1: -1, 2: -1, 3: -1 });
+  const [value, setValue] = useState({});
 
   function switchCost(dir, cost) {
     setValue({ ...value, [dir]: cost });

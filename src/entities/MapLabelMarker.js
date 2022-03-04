@@ -36,7 +36,6 @@ export default class MapLabelMarker extends ResizableContainer {
   }
 
   updateZonMarker(data) {
-    const { dispatch } = window.g_app._store;
-    dispatch({ type: 'editor/updateLabelMarker', payload: { code: this.code, ...data } });
+    window.$$dispatch({ type: 'editor/updateLabelMarker', payload: { code: this.code, ...data } });
   }
 }

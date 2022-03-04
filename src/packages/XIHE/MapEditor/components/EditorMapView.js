@@ -9,7 +9,7 @@ import { Cell } from '@/entities';
 import { connect } from '@/utils/RmsDva';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { CellSize, MapSelectableSpriteType } from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 
 @connect()
 class EditorMapView extends BaseMap {
@@ -88,34 +88,28 @@ class EditorMapView extends BaseMap {
     const relations = getCurrentRouteMapData()?.relations ?? [];
     this.renderCostLines(relations, relations, true, mode, this.states.shownPriority);
 
-    // 保证 是否显示不可走点 状态一致
+    // 保证是否显示不可走点 状态一致
     this.switchShowBlock(this.states.hideBlock);
     this.refresh();
   };
 
   // ************************ 点位相关 **********************
   renderCells = (cells) => {
-    cells.forEach((cellData) => {
-      this.addCell(cellData.id, cellData.x, cellData.y);
+    cells.forEach(({ id, x, y }) => {
+      const cell = new Cell({
+        id,
+        x,
+        y,
+        interactive: true,
+        select: this.select,
+        showCoordinate: this.states.showCoordinate,
+      });
+      if (cell.mode !== this.states.mapMode) {
+        cell.switchMode(this.states.mapMode);
+      }
+      this.idCellMap.set(id, cell);
+      this.pixiUtils.viewportAddChild(cell);
     });
-  };
-
-  addCell = (id, x, y) => {
-    const cell = new Cell({
-      id,
-      x,
-      y,
-      showCoordinate: this.states.showCoordinate,
-      select: this.selectCell,
-      shiftSelect: this.shiftSelectCell,
-      ctrlSelect: this.ctrlSelectCell,
-      interactive: true,
-    });
-    if (cell.mode !== this.states.mapMode) {
-      cell.switchMode(this.states.mapMode);
-    }
-    this.idCellMap.set(id, cell);
-    this.pixiUtils.viewportAddChild(cell);
   };
 
   removeCells = (cells) => {
@@ -212,104 +206,77 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位 & 线条选择 **********************
-  /**
-   * 点位单击回调
-   * @param {*} cell 需要选中的点位
-   * @param {*} cull 是否是取消选择
-   */
-  selectCell = (cell, cull = false) => {
+  select = (entity, mode) => {
     // Chrome调试会误将this指向Cell, 为了便于调试所以使用_this
     const _this = this;
-    const { dispatch } = window.g_app._store;
-    // 选中操作
-    if (!cull) {
-      _this.cancelAllSelection();
-      // 更新标识
-      _this.currentClickedCell = cell;
-      _this.selections = [{ id: cell.id, type: MapSelectableSpriteType.CELL }];
+
+    // 先判断是否是取消选择
+    const isCull = _this.selections.includes(entity);
+    if (isCull) {
+      _this.selections = this.selections.filter((item) => item !== entity);
     } else {
-      _this.selections = _this.selections.filter(
-        (item) => item.id !== cell.id || item.type !== MapSelectableSpriteType.CELL,
-      );
+      if (mode === SelectionType.SINGLE) {
+        if (entity instanceof Cell) {
+          _this.currentClickedCell = entity;
+        }
+        _this.selections.forEach((entity) => entity.onUnSelect());
+        _this.selections.length = 0;
+        _this.selections.push(entity);
+      } else if (mode === SelectionType.CTRL) {
+        if (entity instanceof Cell) {
+          _this.currentClickedCell = entity;
+        }
+        _this.selections.push(entity);
+      } else {
+        _this.shiftSelectCell(entity);
+      }
     }
-    _this.rangeSelection(_this.selections);
     _this.refresh();
-    dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: _this.selections },
-    });
+    window.$$dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
   };
 
   shiftSelectCell = (cell) => {
     const _this = this;
-    const { dispatch, getState } = window.g_app._store;
-    const { editor } = getState();
+    const { editor } = window.$$state();
     const cells = editor.currentCells;
+
     const pre = _this.currentClickedCell;
     const next = cell;
 
-    // Fetch the selection area
+    // 确定选择范围
     const xStart = pre.x > next.x ? next.x : pre.x;
     const xEnd = pre.x > next.x ? pre.x : next.x;
     const yStart = pre.y > next.y ? next.y : pre.y;
     const yEnd = pre.y > next.y ? pre.y : next.y;
 
-    // Fetch cell id which included
+    // 提取选择范围内的点位ID
     const includedCellIds = Object.values(cells)
-      .filter(({ x, y }) => {
-        if (x >= xStart && x <= xEnd && y >= yStart && y <= yEnd) {
-          return true;
-        }
-      })
+      .filter(({ x, y }) => x >= xStart && x <= xEnd && y >= yStart && y <= yEnd)
       .map(({ id }) => id);
 
-    // Fetch cell entity from 'idCellMap' and execute 'onSelect' function
+    // 批量选中范围内的点位
     includedCellIds.forEach((id) => {
       const cellEntity = _this.idCellMap.get(id);
       cellEntity && cellEntity.onSelect();
     });
 
-    // Record current clicked cell
+    // 重新缓存当前点击的点位，为了下一次Shift选择做准备
     _this.currentClickedCell = cell;
 
     // 删除重复点位数据
     const storedCellIds = this.selections
       .filter((item) => item.type === MapSelectableSpriteType.CELL)
       .map(({ id }) => id);
+
     const additional = includedCellIds
       .filter((id) => !storedCellIds.includes(id))
-      .map((cellId) => ({
-        id: cellId,
-        type: MapSelectableSpriteType.CELL,
-      }));
+      .map((cellId) => _this.idCellMap.get(cellId));
 
     // 数据同步
-    _this.refresh();
     _this.selections = [..._this.selections, ...additional];
-    dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: _this.selections },
-    });
-  };
-
-  ctrlSelectCell = (cell) => {
-    const _this = this;
-    const { dispatch } = window.g_app._store;
-
-    // 记录当前点击的点
-    this.currentClickedCell = cell;
-
-    // 数据同步
-    _this.refresh();
-    _this.selections = [..._this.selections, { id: cell.id, type: MapSelectableSpriteType.CELL }];
-    dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: _this.selections },
-    });
   };
 
   batchSelectCellByDirection = (prop) => {
-    const { dispatch } = window.g_app._store;
     const baseCellIds = this.selections
       .filter((item) => item.type === MapSelectableSpriteType.CELL)
       .map(({ id }) => id);
@@ -338,49 +305,15 @@ class EditorMapView extends BaseMap {
 
       const additional = cellSelected
         .filter((id) => !storedCellIds.includes(id))
-        .map((cellId) => ({
-          id: cellId,
-          type: MapSelectableSpriteType.CELL,
-        }));
+        .map((cellId) => this.idCellMap.get(cellId));
+
       this.refresh();
       this.selections = [...this.selections, ...additional];
-      dispatch({
-        type: 'editor/updateSelections',
-        payload: { incremental: false, selections: this.selections },
-      });
+      window.$$dispatch({ type: 'editor/updateSelections', payload: [...this.selections] });
     }
   };
 
   // ************************ 线条相关 **********************
-  selectLine = (cost, isAdded) => {
-    const { dispatch } = window.g_app._store;
-    const _this = this;
-    if (isAdded) {
-      this.cancelAllSelection();
-      _this.selections.push(cost);
-    } else {
-      _this.selections = _this.selections.filter((item) => item.id !== cost.id);
-    }
-    dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: _this.selections },
-    });
-  };
-
-  ctrlSelectLine = (cost, isAdded) => {
-    const { dispatch } = window.g_app._store;
-    const _this = this;
-    if (isAdded) {
-      _this.selections.push(cost);
-    } else {
-      _this.selections = _this.selections.filter((item) => item.id !== cost.id);
-    }
-    dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: _this.selections },
-    });
-  };
-
   updateLines = ({ type, payload }) => {
     // 新增
     if (type === 'add') {
@@ -428,32 +361,7 @@ class EditorMapView extends BaseMap {
     this.pipeSwitchLinesShown();
   };
 
-  // ************************ Zone相关 **********************
-  selectMapMarker = (marker, isAdd, isBatch) => {
-    const { dispatch } = window.g_app._store;
-    const _this = this;
-    if (isAdd) {
-      !isBatch && _this.cancelAllSelection();
-      _this.selections.push(marker);
-    } else {
-      _this.selections = _this.selections.filter(
-        (item) => item.id !== marker.id && item.type !== marker.type,
-      );
-    }
-    dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: _this.selections },
-    });
-  };
-
   // ************************ 框选相关 **********************
-  cancelAllSelection = () => {
-    const { dispatch } = window.g_app._store;
-    this.rangeSelection(this.selections, false);
-    this.selections = [];
-    dispatch({ type: 'editor/updateSelections', payload: { incremental: false, selections: [] } });
-  };
-
   rangeSelection(selections, selected = true) {
     if (Array.isArray(selections)) {
       this.selections = selections;
@@ -506,7 +414,6 @@ class EditorMapView extends BaseMap {
   };
 
   deleteAnyTime = (selections) => {
-    const { dispatch } = window.g_app._store;
     // 删除元素
     selections.forEach((selection) => {
       const entity = this.pickEntityBySelection(selection, true);
@@ -518,7 +425,10 @@ class EditorMapView extends BaseMap {
 
     // 同步selections
     this.selections = [];
-    dispatch({ type: 'editor/updateSelections', payload: { incremental: false, selections: [] } });
+    window.$$dispatch({
+      type: 'editor/updateSelections',
+      payload: { incremental: false, selections: [] },
+    });
     this.refresh();
   };
 

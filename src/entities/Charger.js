@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 import Text from './Text';
-import { isNull } from '@/utils/util';
+import { isNull, isStrictNull } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, ChargerSize, ChargerStateColor } from '@/config/consts';
+import { zIndex, ChargerSize, ChargerStateColor, SelectionType } from '@/config/consts';
+import { SmoothGraphics } from '_@pixi_graphics-smooth@0.0.22@@pixi/graphics-smooth';
 
 export default class Charger extends PIXI.Container {
   constructor(props) {
@@ -16,30 +17,53 @@ export default class Charger extends PIXI.Container {
     this.state = props.state;
     this.hardwareId = props.hardwareId;
     this.sortableChildren = true;
+    this.select = props.select;
+    this.selected = false; // 标记该工作站是否被选中
 
     this.create();
-    this.name && this.addName();
+    this.addName();
+    this.createSelectionBorder();
 
-    if (hasPermission('/map/monitor/chargerMaintain') && props.active) {
+    // 处理点击事件
+    this.charger.interactive = true;
+    this.charger.buttonMode = true;
+    this.charger.interactiveChildren = false;
+    this.charger.on('click', this.click);
+
+    if (hasPermission('/map/monitor/chargerMaintain')) {
       this.addLightningIcon(); // 充电中标记
       this.addErrorMaskState(); // 错误状态标记
       this.addOfflineMaskState(); // 离线标记
       this.addChargeUnbindState(); // 未绑定硬件标记
-
-      this.charger.interactive = true;
-      this.charger.buttonMode = true;
-      this.charger.interactiveChildren = false;
-      this.charger.on('click', () => {
-        props.check({
-          x: this.x,
-          y: this.y,
-          name: this.name,
-          angle: this.angle,
-          state: this.state,
-        });
-      });
     }
   }
+
+  // 选择相关
+  onSelect = () => {
+    if (!this.selected) {
+      this.selected = true;
+      this.selectionBorder.visible = true;
+    }
+  };
+
+  onUnSelect = () => {
+    if (this.selected) {
+      this.selected = false;
+      this.selectionBorder.visible = false;
+    }
+  };
+
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
+    }
+  };
 
   create() {
     const chargerTexture = getTextureFromResources('charger');
@@ -53,8 +77,7 @@ export default class Charger extends PIXI.Container {
   }
 
   addName() {
-    if (isNull(this.charger)) return;
-
+    if (isStrictNull(this.charger)) return;
     if (this.nameSprite) {
       this.removeChild(this.nameSprite);
       this.nameSprite.destroy(true);
@@ -70,6 +93,18 @@ export default class Charger extends PIXI.Container {
     this.nameSprite.angle = -this.angle;
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);
+  }
+
+  // 创建选择边框
+  createSelectionBorder() {
+    this.selectionBorder = new SmoothGraphics();
+    this.selectionBorder.lineStyle(5, 0xff0000);
+    const { width, height } = this.getLocalBounds();
+    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.alpha = 0.8;
+    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.visible = false;
+    this.addChild(this.selectionBorder);
   }
 
   // 充电桩实时状态背景色
