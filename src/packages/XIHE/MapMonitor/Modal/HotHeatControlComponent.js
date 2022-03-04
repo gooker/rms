@@ -3,8 +3,9 @@ import { Form, Row, Col, Switch, Button, Select, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { fetchCellHeat } from '@/services/XIHE';
-import { getFormLayout, dealResponse, formatMessage } from '@/utils/util';
+import { getFormLayout, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { CellHeatType } from '@/config/consts';
+import { CostHeatPollingManager } from '@/workers/CostHeatPollingManager';
 import FormattedMessage from '@/components/FormattedMessage';
 
 import styles from '../monitorLayout.module.less';
@@ -21,7 +22,7 @@ const OptionData = [
 ];
 
 const HotheatControlComponent = (props) => {
-  const { dispatch, mapRef, hotType, costHeatOpacity } = props;
+  const { dispatch, mapRef, hotType, costHeatOpacity, showCostPolling } = props;
   const [form] = Form.useForm();
 
   function close() {
@@ -68,11 +69,37 @@ const HotheatControlComponent = (props) => {
       type: 'monitorView/savePollingCost',
       payload: checked,
     });
+    showCostPollingCallback(checked);
+  }
+
+  /*****start 轮询**/
+  function showCostPollingCallback(flag, type) {
+    if (flag) {
+      openCostPolling(type);
+    } else {
+      closeCostPolling();
+    }
+  }
+
+  function openCostPolling(type) {
+    const currrentType = type || hotType;
+    if (!isStrictNull(currrentType)) {
+      CostHeatPollingManager.start(
+        { type: currrentType, startTime: '', endTime: '' },
+        (response) => {
+          mapRef.renderCellHeat(response);
+        },
+      );
+    }
+  }
+
+  function closeCostPolling() {
+    CostHeatPollingManager.terminate();
   }
 
   async function switchTransparent(checked) {
     await dispatch({
-      type: 'monitor/saveState',
+      type: 'monitorView/saveViewState',
       payload: { costHeatOpacity: checked },
     });
   }
@@ -95,7 +122,7 @@ const HotheatControlComponent = (props) => {
           <Col offset={16}>
             <Form.Item label={<FormattedMessage id={'monitor.view.heat.autoRefresh'} />}>
               <Switch
-                checked={props.showCostPolling}
+                checked={showCostPolling}
                 onChange={(ev) => switchPolling(ev)}
                 checkedChildren={formatMessage({ id: 'app.common.true' })}
                 unCheckedChildren={formatMessage({ id: 'app.common.false' })}
@@ -113,9 +140,10 @@ const HotheatControlComponent = (props) => {
             allowClear
             getValueFromEvent={(e) => {
               dispatch({
-                type: 'monitor/saveState',
+                type: 'monitorView/saveViewState',
                 payload: { hotType: e },
               });
+              showCostPollingCallback(showCostPolling, e);
               return e;
             }}
           >
@@ -166,6 +194,6 @@ const HotheatControlComponent = (props) => {
 export default connect(({ monitor, monitorView }) => ({
   mapRef: monitor.mapContext,
   showCostPolling: monitorView?.showCostPolling,
-  hotType: monitor?.hotType,
-  costHeatOpacity: monitor?.costHeatOpacity,
+  hotType: monitorView?.hotType,
+  costHeatOpacity: monitorView?.costHeatOpacity,
 }))(memo(HotheatControlComponent));

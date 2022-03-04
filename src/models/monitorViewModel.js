@@ -21,6 +21,12 @@ export default {
     backImgeView: false, // 背景
     emergencyAreaShow: true, // 紧急区域
 
+     // 自动轮询成本热度
+     showCostPolling: false,
+      // 热度类型
+    hotType:null,
+    costHeatOpacity:true,
+
 
 
 
@@ -47,8 +53,7 @@ export default {
     locationType: undefined,
     locationValue: undefined,
 
-    // 自动轮询成本热度
-    showCostPolling: false,
+   
   },
   reducers: {
     saveViewState(state, action) {

@@ -8,7 +8,7 @@ import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
 
-import { CostHeatPollingManager } from '@/workers/CostHeatPollingManager';
+
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
@@ -88,17 +88,6 @@ const MapMonitor = (props) => {
     renderMonitorLoad();
   }, [mapRendered]);
 
-  // 轮询成本热度
-  useEffect(() => {
-    if (!isStrictNull(hotType) && showCostPolling) {
-      CostHeatPollingManager.start({ type: hotType, startTime: '', endTime: '' }, (response) => {
-        mapContext.renderCellHeat(response);
-      });
-    }
-    return () => {
-      CostHeatPollingManager.terminate();
-    };
-  }, [showCostPolling, hotType]);
 
   // 轮询 工作站雇佣车标记
   useEffect(() => {

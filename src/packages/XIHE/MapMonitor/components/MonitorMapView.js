@@ -1385,7 +1385,7 @@ class MonitorMapView extends BaseMap {
   // ************************ 点位热度 ********************** //
   renderCellHeat = (data) => {
     if (!data) return;
-    const { costHeatOpacity } = window.g_app._store.getState().monitor;
+    const { costHeatOpacity } = window.g_app._store.getState().monitorView;
     // 每次渲染前都是替换，所以第一步需要清除所有点位热度对象
     this.clearCellHeat();
     data.forEach((item) => {
