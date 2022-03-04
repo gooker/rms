@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class WorkState extends PIXI.Sprite {
   constructor(props) {

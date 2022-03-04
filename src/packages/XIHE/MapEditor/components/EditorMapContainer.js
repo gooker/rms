@@ -13,7 +13,7 @@ import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
-  const { dispatch, mapRatio, mapContext, showShortcutTool } = props;
+  const { dispatch, mapRatio, mapContext, shortcutToolVisible } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
@@ -174,17 +174,17 @@ const EditorMapContainer = (props) => {
     }
 
     const { workstationList, chargerList, commonList } = currentLogicAreaData;
-    // 充电桩
-    if (Array.isArray(chargerList)) {
-      const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
-      mapContext.renderChargers(chargerListData);
-    }
     // 工作站
     if (Array.isArray(workstationList)) {
       const workStationListData = renderWorkstaionlist(workstationList, currentMap.cellMap);
       workStationListData.forEach((workStation) => {
         mapContext.addWorkStation(workStation);
       });
+    }
+    // 充电桩
+    if (Array.isArray(chargerList)) {
+      const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
+      mapContext.renderChargers(chargerListData);
     }
     // 通用站点
     if (Array.isArray(commonList)) {
@@ -321,7 +321,7 @@ const EditorMapContainer = (props) => {
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
-      {showShortcutTool && <EditorShortcutTool />}
+      {shortcutToolVisible && <EditorShortcutTool />}
       <EditorMask />
 
       {/* 平板不用显示滑条 */}
@@ -339,7 +339,7 @@ export default connect(({ editor }) => {
     preRouteMap,
     mapContext,
     leftActiveCategory,
-    showShortcutTool,
+    shortcutToolVisible,
   } = editor;
   return {
     mapRatio,
@@ -349,6 +349,6 @@ export default connect(({ editor }) => {
     preRouteMap,
     mapContext,
     leftActiveCategory,
-    showShortcutTool,
+    shortcutToolVisible,
   };
 })(memo(EditorMapContainer));

@@ -2,13 +2,13 @@ import React from 'react';
 import { Row, Col } from 'antd';
 
 const LabelColComponent = (props) => {
-  const { label, children } = props;
+  const { label, children, labelCol = 6, color = '#e8e8e8' } = props;
   return (
-    <Row style={{ marginBottom: 15 }}>
-      <Col span={12}>
-        <span>{label}:</span>
+    <Row style={{ color, marginBottom: 15 }}>
+      <Col span={labelCol} style={{ textAlign: 'end', fontWeight: 600, fontSize: 15 }}>
+        {label}
       </Col>
-      <Col span={12}>
+      <Col span={24 - labelCol}>
         <div style={{ flex: 1, marginLeft: 10 }}>{children}</div>
       </Col>
     </Row>

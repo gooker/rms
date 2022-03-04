@@ -81,7 +81,7 @@ const LogDownLoadComponent = (props) => {
       },
     },
     {
-      title: formatMessage({ id: 'app.common.createTime' }),
+      title: formatMessage({ id: 'app.common.creationTime' }),
       align: 'center',
       dataIndex: 'createTime',
       width: 150,

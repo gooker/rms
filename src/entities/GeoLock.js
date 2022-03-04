@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import { orderBy } from 'lodash';
 import BitText from './BitText';
 import { GlobalAlpha, ToteAGVSize, ForkLiftAGVSize } from '@/config/consts';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class GeoLock extends PIXI.Sprite {
   constructor(props) {

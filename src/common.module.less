@@ -47,13 +47,14 @@
   display: flex;
   flex-flow: column nowrap;
   height: 100%;
-  background: #fff;
+  background: transparent;
 }
 
 .commonPageStyle {
   .commonPageStyleNoPadding();
 
   padding: 24px;
+  background: #fff;
 }
 
 // 表格页面样式
@@ -142,8 +143,6 @@
   display: flex;
   flex: 1;
 }
-
-@mapSideColor: #001b35;
 
 .monitorBackColor {
   background: radial-gradient(circle, rgb(0, 60, 72) 0%, rgb(14, 38, 62) 100%);

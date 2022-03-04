@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef } from 'react';
+import classnames from 'classnames';
 import { LoadingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { HeaderHeight, LeftCategory } from './enums';
@@ -6,6 +7,7 @@ import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
 import EditorMapContainer from './components/EditorMapContainer';
+import style from './components/component.module.less';
 import commonStyles from '@/common.module.less';
 
 const MapEditor = (props) => {
@@ -76,8 +78,14 @@ const MapEditor = (props) => {
   }, [mapContext]);
 
   return (
-    <div id={'mapEditorPage'} className={commonStyles.commonPageStyleNoPadding}>
-      <div className={commonStyles.mapLayoutHeader} style={{ flex: `0 0 ${HeaderHeight}px` }}>
+    <div
+      id={'mapEditorPage'}
+      className={commonStyles.commonPageStyleNoPadding}
+    >
+      <div
+        style={{ flex: `0 0 ${HeaderHeight}px` }}
+        className={classnames(commonStyles.mapLayoutHeader, style.editorHeader)}
+      >
         {Array.isArray(mapList) ? (
           <MapEditorHeader />
         ) : (

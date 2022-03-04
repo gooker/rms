@@ -64,8 +64,8 @@ export default {
   'app.common.creator': '创建用户',
   'app.common.creationTime': '创建时间',
   'app.common.updater': '更新用户',
-  'app.common.operator': '操作用户',
   'app.common.updateTime': '更新时间',
+  'app.common.operator': '操作用户',
   'app.common.startTime': '开始时间',
   'app.common.endTime': '结束时间',
   'app.common.timeout': '超时时间',
@@ -110,6 +110,9 @@ export default {
 
   // 地图相关
   'app.map': '地图',
+  'app.map.detail': '地图信息',
+  'app.map.ever': '编辑器版本',
+  'app.map.mver': '平台版本',
   'app.map.logicArea': '逻辑区',
   'app.map.routeArea': '路线区',
   'app.map.scope': '作用域',

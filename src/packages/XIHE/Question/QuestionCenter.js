@@ -9,7 +9,8 @@ import {
   batchUpdateAlertCenter,
   fetchAlertCenterList,
 } from '@/services/XIHE';
-import styles from './questionCenter.module.less';
+import commonStyles from '@/common.module.less';
+import TablePageWrapper from '@/components/TablePageWrapper';
 
 const alertType = { TASK_ALERT: 'magenta', AGV_ALERT: 'red', SYSTEM_ALERT: 'volcano' };
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
@@ -202,16 +203,16 @@ class QuestionCenter extends Component {
     };
 
     return (
-      <div className={styles.commonPageStyle}>
-        <div className={styles.toolBar}>
+      <TablePageWrapper>
+        <div>
           <QuestionSearch
             search={this.search}
             resetValues={() => {
               this.setState({ formValue: {} });
             }}
           />
-          <Divider />
-          <Row>
+          <Divider style={{ margin: '0 0 20px 0' }} />
+          <Row className={commonStyles.tableToolLeft}>
             <Button
               disabled={questionList.length === 0}
               onClick={() => {
@@ -233,27 +234,25 @@ class QuestionCenter extends Component {
             </Button>
           </Row>
         </div>
-        <div className={styles.tableWrapper}>
-          <Table
-            pagination={{
-              ...pagination,
-              showSizeChanger: true,
-              showTotal: (total) =>
-                `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
-            }}
-            columns={this.column}
-            dataSource={questionList}
-            rowSelection={rowSelection}
-            onChange={this.handleTableChange}
-            loading={loading}
-            rowKey={({ id }) => id}
-            expandable={{
-              expandedRowRender: (record) => this.expandedRowRender(record?.alertItemList),
-            }}
-            scroll={{ x: 'max-content' }}
-          />
-        </div>
-      </div>
+        <Table
+          pagination={{
+            ...pagination,
+            showSizeChanger: true,
+            showTotal: (total) =>
+              `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
+          }}
+          columns={this.column}
+          dataSource={questionList}
+          rowSelection={rowSelection}
+          onChange={this.handleTableChange}
+          loading={loading}
+          rowKey={({ id }) => id}
+          expandable={{
+            expandedRowRender: (record) => this.expandedRowRender(record?.alertItemList),
+          }}
+          scroll={{ x: 'max-content' }}
+        />
+      </TablePageWrapper>
     );
   }
 }
