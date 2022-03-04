@@ -1075,8 +1075,8 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 渲染小车行驶路径路径 ********************** //
-  registerShowTaskPath = (agvTasks = [], filteredAGV, showTaskPath) => {
-    this.filteredAGV = filteredAGV;
+  registerShowTaskPath = (agvTasks = [], showTaskPath) => {
+    this.filteredAGV = window.g_app._store.getState().monitorView.selectAgv;
     this.showTaskPath = showTaskPath;
 
     // 前置处理
@@ -1155,7 +1155,7 @@ class MonitorMapView extends BaseMap {
   };
 
   renderTaskPaths = (agvId) => {
-    const { showFullPath, showTagetLine } = window.g_app._store.getState().monitor.viewSetting;
+    const { showFullPath, showTagetLine } = window.g_app._store.getState().monitorView.routeView;
 
     // 渲染新的路径
     const _this = this;

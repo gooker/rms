@@ -46,12 +46,8 @@ export default {
 
     // “显示”
     viewSetting: {
-      selectAgv: [],
-      showLockCell: [],
-      showRoute: true,
-      showFullPath: false,
-      showTagetLine: false,
-      showLockedCell: true,
+
+
       tempBlockShown: true,
       temporaryCell: [],
 

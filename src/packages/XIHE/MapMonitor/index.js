@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
 import { isNull, dealResponse, isStrictNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
-import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
+
 import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
 import { StationRatePolling } from '@/workers/StationRateManager';
@@ -40,14 +40,10 @@ const MapMonitor = (props) => {
     currentMap,
     mapContext,
     mapRendered,
-    selectAgv,
-    showRoute,
     stationRealTimeRateView,
     categoryModal,
     categoryPanel,
     showCostPolling,
-    showLockCellPolling,
-    showLockCell,
     currentLogicArea,
     hotType,
   } = props;
@@ -93,43 +89,6 @@ const MapMonitor = (props) => {
     renderMonitorLoad();
   }, [mapRendered]);
 
-  // 轮询小车任务路径
-  useEffect(() => {
-    // 轮询小车任务路径
-    if (selectAgv && selectAgv.length > 0 && showRoute) {
-      AgvPollingTaskPathManager.start(selectAgv, (response) => {
-        if (response && Array.isArray(response)) {
-          const tasks = response.filter(Boolean);
-          mapContext.registerShowTaskPath(tasks, selectAgv, true);
-        }
-      });
-    } else {
-      // 清理地图上的路径
-      mapContext?.registerShowTaskPath([], [], true);
-    }
-
-    return () => {
-      AgvPollingTaskPathManager.terminate();
-    };
-  }, [selectAgv, showRoute]);
-
- 
-  // useEffect(() => {
-  //   if (showLockCellPolling && selectAgv?.length > 0 && showLockCell?.length > 0) {
-  //     LockCellPolling.start(
-  //       { logicId: currentLogicArea, lockTypes: showLockCell, robotIds: selectAgv },
-  //       (response) => {
-  //         mapContext.renderLockCell(response);
-  //       },
-  //     );
-  //   } else {
-  //     LockCellPolling.terminate();
-  //   }
-
-  //   return () => {
-  //     LockCellPolling.terminate();
-  //   };
-  // }, [showLockCellPolling, selectAgv, showLockCell]);
 
   // 轮询成本热度
   useEffect(() => {
@@ -421,9 +380,6 @@ export default connect(({ monitor, global, monitorView }) => ({
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
   mapRendered: monitor.mapRendered,
-  selectAgv: monitor.viewSetting?.selectAgv,
-  showRoute: monitor.viewSetting?.showRoute,
-  showLockCell: monitor.viewSetting?.showLockCell,
   stationRealTimeRateView: monitor.viewSetting?.stationRealTimeRateView,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,

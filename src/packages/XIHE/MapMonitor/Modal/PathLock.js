@@ -7,6 +7,7 @@ import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent.js';
 import { LockCellPolling } from '@/workers/LockCellPollingManager';
+import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
@@ -63,13 +64,25 @@ const PathLock = (props) => {
 
   function onAgvListChanged(changedAgvList) {
     if (!mapRef) return;
+
+    dispatch({
+      type: 'monitorView/saveViewState',
+      payload: { selectAgv: changedAgvList },
+    });
     // 更新地图锁格显示
     const showAgvLock = form.getFieldValue('showAgvLock');
     lockcellPollingCallback(false);
+    showRoutePollingCallback(false);
     if (changedAgvList.length > 0 && showAgvLock?.length > 0) {
       lockcellPollingCallback(agvLockView.showLockCellPolling, changedAgvList);
     } else {
       mapRef.clearAllLocks();
+    }
+    if (changedAgvList.length > 0) {
+      showRoutePollingCallback(routeView.showRoute, changedAgvList);
+    } else {
+      // 清理地图上的路径
+      mapRef?.registerShowTaskPath([], true);
     }
   }
 
@@ -156,6 +169,36 @@ const PathLock = (props) => {
     LockCellPolling.terminate();
   }
   //end 显示锁格
+
+  /*****start 显示路径**/
+  function showRoutePollingCallback(flag, agvs) {
+    if (flag) {
+      openRoutePolling(agvs);
+    } else {
+      closeRoutePolling();
+    }
+  }
+
+  function openRoutePolling(agvs) {
+    const robotIds = agvs || selectAgv;
+    if (robotIds?.length > 0) {
+      AgvPollingTaskPathManager.start(robotIds, (response) => {
+        if (response && Array.isArray(response)) {
+          const tasks = response.filter(Boolean);
+          mapRef.registerShowTaskPath(tasks, true);
+        }
+      });
+    } else {
+      // 清理地图上的路径
+      mapRef?.registerShowTaskPath([], true);
+    }
+  }
+
+  function closeRoutePolling() {
+    AgvPollingTaskPathManager.terminate();
+  }
+
+  /*****end*****/
 
   function switchCellLock(checked) {
     dispatch({
