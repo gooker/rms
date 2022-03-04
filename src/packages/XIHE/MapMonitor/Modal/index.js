@@ -17,6 +17,7 @@ import ViewControlComponent from './ViewControlComponent';
 import ToteViewControlComponent from './ToteViewControlComponent';
 import HotHeatControlComponent from './HotHeatControlComponent';
 import SetupLatentPod from './SetupLatentPod/SetupLatentPod';
+import TemporaryForbidcell from './TemporaryForbidcell';
 import PodToStationMessage from './PodToStationMessage';
 import LatentStopMessage from './LatentStopMessage';
 
@@ -50,6 +51,7 @@ const MonitorModals = (props) => {
       {categoryModal === 'podToWorkstationInfoMessage' && <PodToStationMessage />}
       {categoryModal === 'stopMessage' && <LatentStopMessage />}
       {categoryModal === 'Report' && <LatentStopMessage />}
+      {categoryModal==='temporaryBlock' && <TemporaryForbidcell/>}
     </>
   );
 };

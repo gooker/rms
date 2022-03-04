@@ -46,6 +46,9 @@ const MapMonitor = (props) => {
     categoryModal,
     categoryPanel,
     showCostPolling,
+    showLockCellPolling,
+    showLockCell,
+    currentLogicArea,
     hotType,
   } = props;
 
@@ -109,6 +112,24 @@ const MapMonitor = (props) => {
       AgvPollingTaskPathManager.terminate();
     };
   }, [selectAgv, showRoute]);
+
+ 
+  // useEffect(() => {
+  //   if (showLockCellPolling && selectAgv?.length > 0 && showLockCell?.length > 0) {
+  //     LockCellPolling.start(
+  //       { logicId: currentLogicArea, lockTypes: showLockCell, robotIds: selectAgv },
+  //       (response) => {
+  //         mapContext.renderLockCell(response);
+  //       },
+  //     );
+  //   } else {
+  //     LockCellPolling.terminate();
+  //   }
+
+  //   return () => {
+  //     LockCellPolling.terminate();
+  //   };
+  // }, [showLockCellPolling, selectAgv, showLockCell]);
 
   // 轮询成本热度
   useEffect(() => {
@@ -395,16 +416,19 @@ const MapMonitor = (props) => {
     </div>
   );
 };
-export default connect(({ monitor, global,monitorView }) => ({
+export default connect(({ monitor, global, monitorView }) => ({
   socketClient: global.socketClient,
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
   mapRendered: monitor.mapRendered,
   selectAgv: monitor.viewSetting?.selectAgv,
   showRoute: monitor.viewSetting?.showRoute,
+  showLockCell: monitor.viewSetting?.showLockCell,
   stationRealTimeRateView: monitor.viewSetting?.stationRealTimeRateView,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
+  currentLogicArea: monitor.currentLogicArea,
   showCostPolling: monitorView?.showCostPolling,
+  showLockCellPolling: monitorView?.showLockCellPolling,
   hotType: monitor?.hotType,
 }))(memo(MapMonitor));

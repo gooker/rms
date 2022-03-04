@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Text from './Text';
 import { isNull } from '@/utils/util';
-import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { zIndex, ChargerSize, ChargerStateColor } from '@/config/consts';
 
@@ -20,7 +19,7 @@ export default class Charger extends PIXI.Container {
     this.create();
     this.name && this.addName();
 
-    if (hasPermission('/map/monitor/chargerMaintain') && props.active) {
+    if (props.active) {
       this.addLightningIcon(); // 充电中标记
       this.addErrorMaskState(); // 错误状态标记
       this.addOfflineMaskState(); // 离线标记

@@ -10,7 +10,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
-const height = 500;
+const height = 400;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 const { Option } = Select;
 const OptionData = [

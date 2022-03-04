@@ -4,7 +4,7 @@ import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
 import { findIndex } from 'lodash';
-import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList } from '@/services/XIHE';
+import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList,fetchMapAGVLocks } from '@/services/XIHE';
 import {
   fetchTemporaryBlockCells,
   updateTemporaryBlockCell,
@@ -544,6 +544,15 @@ export default {
         type: 'saveState',
         payload: { stationRealRate: currentData },
       });
+    },
+    *fetchAllLockCells({ payload, then }, { call, select }) {
+      const { currentLogicArea } = yield select((state) => state.monitor);
+      const { lockTypes, robotIds } = payload;
+      const response = yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
+      if (dealResponse(response)) {
+        return false;
+      }
+      then && then(response);
     },
   },
 };

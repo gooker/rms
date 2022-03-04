@@ -3,12 +3,14 @@ import { Form, Row, Col, Switch, Select, Button, message, Checkbox, InputNumber 
 import { CloseOutlined } from '@ant-design/icons';
 import { fetchCellLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import LabelComponent from '@/components/LabelComponent.js';
+import { LockCellPolling } from '@/workers/LockCellPollingManager';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
-const height = 500;
+const height = 400;
 const { formItemLayout } = getFormLayout(6, 16);
 
 const allLockOptions = [
@@ -30,7 +32,16 @@ const allLockOptions = [
 ];
 
 const PathLock = (props) => {
-  const { dispatch, allAGVs, mapRef, viewSetting, currentLogicAreaId } = props;
+  const {
+    dispatch,
+    allAGVs,
+    mapRef,
+    selectAgv,
+    agvLockView,
+    routeView,
+    showCellLock,
+    currentLogicAreaId,
+  } = props;
   const [form] = Form.useForm();
 
   function close() {
@@ -38,33 +49,40 @@ const PathLock = (props) => {
   }
 
   function onValuesChange(changedValues) {
-    dispatch({
-      type: 'monitor/fetchUpdateViewSetting',
-      payload: {
-        key: Object.keys(changedValues)[0],
-        value: Object.values(changedValues)[0],
-      },
-    });
+    const currentkey = Object.keys(changedValues)[0];
+    const currentValue = Object.values(changedValues)[0];
+    if (['showRoute', 'showFullPath', 'showTagetLine'].includes(currentkey)) {
+      dispatch({
+        type: 'monitorView/saveRouteView',
+        payload: {
+          [currentkey]: currentValue,
+        },
+      });
+    }
   }
 
   function onAgvListChanged(changedAgvList) {
     if (!mapRef) return;
     // 更新地图锁格显示
-    const showLockCell = form.getFieldValue('showLockCell');
-    if (changedAgvList.length > 0 && showLockCell.length > 0) {
-      dispatch({
-        type: 'monitor/fetchAllLockCells',
-        payload: { lockTypes: showLockCell, robotIds: changedAgvList },
-        then: (locked) => {
-          if (!locked) {
-            message.error(formatMessage({ id: 'monitor.tip.fetchLockFail' }));
-            return;
-          }
-          mapRef.renderLockCell(locked);
-        },
-      });
+    const showAgvLock = form.getFieldValue('showAgvLock');
+    lockcellPollingCallback(false);
+    if (changedAgvList.length > 0 && showAgvLock?.length > 0) {
+      lockcellPollingCallback(agvLockView.showLockCellPolling, changedAgvList);
     } else {
       mapRef.clearAllLocks();
+    }
+  }
+
+  function changeAgvlock(changedValues) {
+    dispatch({
+      type: 'monitorView/saveAgvLockView',
+      payload: {
+        showAgvLock: changedValues,
+      },
+    });
+    lockcellPollingCallback(false);
+    if (changedValues?.length > 0) {
+      lockcellPollingCallback(agvLockView.showLockCellPolling, null, changedValues);
     }
   }
 
@@ -73,24 +91,24 @@ const PathLock = (props) => {
     form.setFieldsValue({ selectAgv });
     onAgvListChanged(selectAgv);
     dispatch({
-      type: 'monitor/fetchUpdateViewSetting',
-      payload: { key: 'selectAgv', value: selectAgv },
+      type: 'monitorView/saveViewState',
+      payload: { selectAgv },
     });
   }
 
-  // 小车锁
+  // 显示锁格-刷新
   function refreshMapAgvLock() {
     const selectAgv = form.getFieldValue('selectAgv');
     if (selectAgv.length === 0) {
       message.error(formatMessage({ id: 'monitor.view.require.AGV' }));
       return false;
     }
-    const showLockCell = form.getFieldValue('showLockCell');
-    if (showLockCell && showLockCell.length > 0) {
+    const showAgvLock = form.getFieldValue('showAgvLock');
+    if (showAgvLock && showAgvLock?.length > 0) {
       dispatch({
         type: 'monitor/fetchAllLockCells',
         payload: {
-          lockTypes: showLockCell,
+          lockTypes: showAgvLock,
           robotIds: selectAgv,
         },
         then: (locked) => {
@@ -106,7 +124,46 @@ const PathLock = (props) => {
     }
   }
 
-  // 点位锁格
+  // 点位锁格-自动刷新
+  function switchLockCellPolling(checked) {
+    lockcellPollingCallback(checked);
+    dispatch({
+      type: 'monitorView/saveAgvLockView',
+      payload: { showLockCellPolling: checked },
+    });
+  }
+
+  // start 轮询显示锁格
+  function lockcellPollingCallback(flag, agvs, lockstype) {
+    if (flag) {
+      openLockcellPolling(agvs, lockstype);
+    } else {
+      closeLockcellPolling();
+    }
+  }
+  function openLockcellPolling(agvs, lockstype) {
+    const { showAgvLock } = agvLockView;
+    const robotIds = agvs || selectAgv;
+    const lockTypes = lockstype || showAgvLock;
+    if (robotIds?.length > 0 && lockTypes?.length > 0) {
+      LockCellPolling.start({ logicId: currentLogicAreaId, lockTypes, robotIds }, (response) => {
+        mapRef?.renderLockCell(response);
+      });
+    }
+  }
+
+  function closeLockcellPolling() {
+    LockCellPolling.terminate();
+  }
+  //end 显示锁格
+
+  function switchCellLock(checked) {
+    dispatch({
+      type: 'monitorView/saveViewState',
+      payload: { showCellLock: checked },
+    });
+  }
+  // 点位锁格-点击刷新
   async function viewCellLocker() {
     const cellId = form.getFieldValue('cellIdForLock');
     if (!isNull(cellId)) {
@@ -120,50 +177,6 @@ const PathLock = (props) => {
       message.error(formatMessage({ id: 'monitor.view.cell.required' }));
     }
   }
-
-  // 临时不可走点
-  function refreshTemporaryLockedCells() {
-    dispatch({
-      type: 'monitor/fetchTemporaryLockedCells',
-    }).then((res) => {
-      const showTempAllowed = form.getFieldValue('tempBlockShown');
-      if (showTempAllowed) {
-        mapRef.renderTemporaryLock(res || []);
-      } else {
-        mapRef.clearTemporaryLock();
-      }
-    });
-  }
-
-  // 新增临时不可走点
-  function addTemporaryLockedCells() {
-    const temporaryCell = form.getFieldValue('temporaryCell');
-    if (temporaryCell.length !== 0) {
-      const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
-      dispatch({
-        type: 'monitor/fetchSaveTemporaryCell',
-        payload: {
-          temporaryCellList,
-        },
-      }).then(refreshTemporaryLockedCells);
-    } else {
-      message.error(formatMessage({ id: 'monitor.view.temporaryBlock.required' }));
-    }
-  }
-
-  // 删除临时不可走点
-  const deleteTemporaryLockedCells = () => {
-    const temporaryCell = form.getFieldValue('temporaryCell');
-    if (temporaryCell.length !== 0) {
-      const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
-      dispatch({
-        type: 'monitor/fetchDeleteTemporaryCell',
-        payload: { temporaryCellList },
-      }).then(refreshTemporaryLockedCells);
-    } else {
-      message.error(formatMessage({ id: 'monitor.view.temporaryBlock.required' }));
-    }
-  };
 
   return (
     <div
@@ -187,7 +200,7 @@ const PathLock = (props) => {
                 <Form.Item
                   noStyle
                   name={'selectAgv'}
-                  initialValue={viewSetting?.selectAgv || []}
+                  initialValue={selectAgv || []}
                   getValueFromEvent={(value) => {
                     onAgvListChanged(value);
                     return value;
@@ -210,24 +223,45 @@ const PathLock = (props) => {
             </Row>
           </Form.Item>
 
-          {/* 显示锁格 */}
-          <Form.Item
-            {...formItemLayout}
-            name={'showLockCell'}
-            valuePropName={'checked'}
-            initialValue={viewSetting?.showLockCell || []}
-            label={formatMessage({ id: 'monitor.view.lockView' })}
-          >
-            <Checkbox.Group
-              options={allLockOptions.map((item) => ({
-                ...item,
-                label: formatMessage({ id: item.label }),
-              }))}
-            />
-
-            <Button size="small" onClick={refreshMapAgvLock} style={{ marginTop: 5 }}>
-              <FormattedMessage id="app.button.refresh" />
-            </Button>
+          {/* 显示锁格  -小车*/}
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'monitor.view.lockView' })}>
+            <Row gutter={10}>
+              <Form.Item
+                noStyle
+                {...formItemLayout}
+                name={'showAgvLock'}
+                valuePropName={'checked'}
+                getValueFromEvent={(value) => {
+                  changeAgvlock(value);
+                  return value;
+                }}
+              >
+                <Checkbox.Group
+                  value={agvLockView?.showAgvLock || []}
+                  options={allLockOptions.map((item) => ({
+                    ...item,
+                    label: formatMessage({ id: item.label }),
+                  }))}
+                />
+              </Form.Item>
+            </Row>
+            <Row style={{ margin: '10px 0 0 0 ' }}>
+              <Col span={13}>
+                <LabelComponent label={<FormattedMessage id={'monitor.view.heat.autoRefresh'} />}>
+                  <Switch
+                    checked={agvLockView?.showLockCellPolling}
+                    onChange={(ev) => switchLockCellPolling(ev)}
+                    checkedChildren={formatMessage({ id: 'app.common.true' })}
+                    unCheckedChildren={formatMessage({ id: 'app.common.false' })}
+                  />
+                </LabelComponent>
+              </Col>
+              <Col span={7}>
+                <Button size="small" onClick={refreshMapAgvLock} style={{ marginTop: 5 }}>
+                  <FormattedMessage id="app.button.refresh" />
+                </Button>
+              </Col>
+            </Row>
           </Form.Item>
 
           {/* 显示路径 */}
@@ -239,7 +273,7 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showRoute'}
                   valuePropName={'checked'}
-                  initialValue={viewSetting?.showRoute || true}
+                  initialValue={routeView?.showRoute || true}
                 >
                   <Switch
                     checkedChildren={formatMessage({ id: 'app.notification.on' })}
@@ -253,7 +287,7 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showFullPath'}
                   valuePropName={'checked'}
-                  initialValue={viewSetting?.showFullPath || false}
+                  initialValue={routeView?.showFullPath || false}
                 >
                   <Checkbox>
                     <FormattedMessage id="monitor.view.path.fullPath" />
@@ -266,7 +300,7 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showTagetLine'}
                   valuePropName={'checked'}
-                  initialValue={viewSetting?.showTagetLine || false}
+                  initialValue={routeView?.showTagetLine || false}
                 >
                   <Checkbox>
                     <FormattedMessage id="monitor.view.path.targetLine" />
@@ -281,9 +315,9 @@ const PathLock = (props) => {
             <Row style={{ width: '100%' }}>
               <Col span={5}>
                 <Form.Item
-                  name={'showLockedCell'}
+                  name={'showCellLock'}
                   valuePropName={'checked'}
-                  initialValue={viewSetting?.showLockedCell}
+                  initialValue={showCellLock}
                 >
                   <Switch
                     checkedChildren={formatMessage({
@@ -293,6 +327,7 @@ const PathLock = (props) => {
                       id: 'app.common.hide',
                     })}
                     onChange={(checked) => {
+                      switchCellLock();
                       if (!checked) {
                         form.setFieldsValue({ cellIdForLock: null });
                         mapRef.clearCellLocks();
@@ -306,7 +341,7 @@ const PathLock = (props) => {
                 <Form.Item name={'cellIdForLock'}>
                   <InputNumber
                     allowClear
-                    disabled={!viewSetting?.showLockedCell}
+                    disabled={!showCellLock}
                     size="small"
                     style={{ width: '80%' }}
                     placeholder={formatMessage({ id: 'monitor.view.cell.required' })}
@@ -315,76 +350,10 @@ const PathLock = (props) => {
               </Col>
 
               <Col span={5} style={{ paddingTop: 4 }}>
-                <Button
-                  size="small"
-                  disabled={!viewSetting?.showLockedCell}
-                  onClick={viewCellLocker}
-                >
+                <Button size="small" disabled={!showCellLock} onClick={viewCellLocker}>
                   <FormattedMessage id="app.button.refresh" />
                 </Button>
               </Col>
-            </Row>
-          </Form.Item>
-
-          {/* 临时不可走点 */}
-          <Form.Item
-            {...formItemLayout}
-            label={formatMessage({ id: 'monitor.view.temporaryBlock' })}
-          >
-            <Row>
-              <Row style={{ width: '100%' }}>
-                <Col span={6}>
-                  <Form.Item
-                    name={'tempBlockShown'}
-                    valuePropName={'checked'}
-                    initialValue={viewSetting?.tempBlockShown}
-                  >
-                    <Switch
-                      checkedChildren={formatMessage({
-                        id: 'app.map.view',
-                      })}
-                      unCheckedChildren={formatMessage({
-                        id: 'app.common.hide',
-                      })}
-                      onChange={(checked) => {
-                        if (checked) {
-                          refreshTemporaryLockedCells();
-                        } else {
-                          mapRef.clearTemporaryLock();
-                        }
-                      }}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={12} style={{ padding: 5 }}>
-                  <Button size="small" onClick={refreshTemporaryLockedCells}>
-                    <FormattedMessage id="app.button.refresh" />
-                  </Button>
-                </Col>
-              </Row>
-              <Row style={{ width: '100%' }}>
-                <Col span={14}>
-                  <Form.Item name={'temporaryCell'} initialValue={viewSetting?.temporaryCell}>
-                    <Select
-                      allowClear
-                      mode="tags"
-                      size="small"
-                      style={{ width: '90%' }}
-                      placeholder={formatMessage({ id: 'monitor.view.temporaryBlock.required' })}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={5} style={{ paddingTop: 4 }}>
-                  <Button size="small" onClick={addTemporaryLockedCells}>
-                    <FormattedMessage id="app.button.add" />
-                  </Button>
-                </Col>
-                <Col span={5} style={{ paddingTop: 4 }}>
-                  <Button size="small" type="danger" onClick={deleteTemporaryLockedCells}>
-                    <FormattedMessage id="app.button.delete" />
-                  </Button>
-                </Col>
-              </Row>
             </Row>
           </Form.Item>
         </Form>
@@ -392,9 +361,12 @@ const PathLock = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
   mapRef: monitor.mapContext,
-  viewSetting: monitor.viewSetting,
+  selectAgv: monitorView.selectAgv,
+  agvLockView: monitorView.agvLockView,
+  routeView: monitorView.routeView,
+  showCellLock: monitorView.showCellLock,
   currentLogicAreaId: monitor.currentLogicArea,
 }))(memo(PathLock));
