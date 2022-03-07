@@ -13,7 +13,7 @@ const { formItemLayout } = getFormLayout(6, 16);
 let toteTaskRealtimeImterval = null;
 
 const ToteViewControlComponent = (props) => {
-  const { dispatch, mapRef, viewSetting, allAGVs } = props;
+  const { dispatch, mapRef, toteBinShown, allAGVs } = props;
   const [form] = Form.useForm();
   const [pullToteTaskRealtime, setPullToteTaskRealtime] = useState(false);
 
@@ -22,12 +22,11 @@ const ToteViewControlComponent = (props) => {
   }
 
   function onValuesChange(changedValues) {
+    const currentKey = Object.keys(changedValues)[0];
+    const currentValue = Object.values(changedValues)[0];
     dispatch({
-      type: 'monitor/fetchUpdateViewSetting',
-      payload: {
-        key: Object.keys(changedValues)[0],
-        value: Object.values(changedValues)[0],
-      },
+      type: 'monitorView/saveViewState',
+      payload: { [currentKey]: currentValue },
     });
   }
 
@@ -89,7 +88,7 @@ const ToteViewControlComponent = (props) => {
             name={'toteBinShown'}
             valuePropName={'checked'}
             label={<FormattedMessage id="monitor.view.toteRack" />}
-            initialValue={viewSetting?.toteBinShown || true}
+            initialValue={toteBinShown}
           >
             <Switch
               onChange={(value) => {
@@ -151,9 +150,9 @@ const ToteViewControlComponent = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
   mapRef: monitor.mapContext,
-  viewSetting: monitor.viewSetting,
+  toteBinShown: monitorView.toteBinShown,
   currentLogicAreaId: monitor.currentLogicArea,
 }))(memo(ToteViewControlComponent));

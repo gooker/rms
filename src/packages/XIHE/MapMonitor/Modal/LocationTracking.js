@@ -8,15 +8,21 @@ import FormattedMessage from '@/components/FormattedMessage';
 const { formItemLayout } = getFormLayout(6, 16);
 
 const LocationTracking = (props) => {
-  const { dispatch, mapRef, allAGVs, trackingCar, trackingCarSure } = props;
+  const {
+    dispatch,
+    mapRef,
+    allAGVs,
+    trackingView: { trackingCar, trackingCarSure, locationType, locationValue },
+  } = props;
   const [form] = Form.useForm();
 
   function onValuesChange(changedValues) {
+    const currentkey = Object.keys(changedValues)[0];
+    const currentValue = Object.values(changedValues)[0];
     dispatch({
-      type: 'monitor/fetchUpdateViewSetting',
+      type: 'monitorView/saveTrackingView',
       payload: {
-        key: Object.keys(changedValues)[0],
-        value: Object.values(changedValues)[0],
+        [currentkey]: currentValue,
       },
     });
   }
@@ -43,7 +49,7 @@ const LocationTracking = (props) => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col style={{ paddingTop: 4, marginLeft: 10 }}>
+            <Col style={{ marginLeft: 10 }}>
               <Button
                 onClick={() => {
                   let isTracking;
@@ -63,10 +69,9 @@ const LocationTracking = (props) => {
                     mapRef && mapRef.trackAGV(trackingCar);
                   }
                   dispatch({
-                    type: 'monitor/fetchUpdateViewSetting',
+                    type: 'monitorView/saveTrackingView',
                     payload: {
-                      key: 'trackingCarSure',
-                      value: isTracking,
+                      trackingCarSure:isTracking,
                     },
                   });
                 }}
@@ -84,7 +89,7 @@ const LocationTracking = (props) => {
         <Form.Item label={formatMessage({ id: 'monitor.location' })}>
           <Row>
             <Col span={8}>
-              <Form.Item name={'locationType'}>
+              <Form.Item noStyle name={'locationType'} initialValue={locationType}>
                 <Select size="small">
                   <Select.Option key="cell" value={'cell'}>
                     <FormattedMessage id="app.map.cell" />
@@ -99,11 +104,11 @@ const LocationTracking = (props) => {
               </Form.Item>
             </Col>
             <Col span={8} offset={1}>
-              <Form.Item name={'locationValue'}>
+              <Form.Item noStyle name={'locationValue'} initialValue={locationValue}>
                 <Input size="small" />
               </Form.Item>
             </Col>
-            <Col span={6} style={{ textAlign: 'right', paddingTop: 3 }}>
+            <Col span={6} style={{ textAlign: 'right' }}>
               <Button
                 size="small"
                 onClick={() => {
@@ -125,10 +130,9 @@ const LocationTracking = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
   mapRef: monitor.mapContext,
-  trackingCar: monitor.viewSetting?.trackingCar,
-  trackingCarSure: monitor.viewSetting?.trackingCarSure || false,
+  trackingView: monitorView.trackingView,
   currentLogicAreaId: monitor.currentLogicArea,
 }))(memo(LocationTracking));

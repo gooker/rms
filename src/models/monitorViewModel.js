@@ -21,39 +21,26 @@ export default {
     backImgeView: false, // 背景
     emergencyAreaShow: true, // 紧急区域
 
-     // 自动轮询成本热度
-     showCostPolling: false,
-      // 热度类型
-    hotType:null,
-    costHeatOpacity:true,
+    // 自动轮询成本热度
+    showCostPolling: false,
+    // 热度类型
+    hotType: null,
+    costHeatOpacity: true,
 
-
-
-
-
-
-
-
-
-
-
-
-
+    // 临时不可走点
     tempBlockShown: true,
     temporaryCell: [],
 
-
+    // 料箱货架
     toteBinShown: true,
 
     // 追踪小车
-    trackingCar: undefined,
-    trackingCarSure: undefined,
-
-    // 定位
-    locationType: undefined,
-    locationValue: undefined,
-
-   
+    trackingView:{
+      trackingCar: undefined,
+      trackingCarSure: false,
+      locationType:'cell',
+      locationValue:null,
+    }
   },
   reducers: {
     saveViewState(state, action) {
@@ -69,13 +56,19 @@ export default {
     saveAgvLockView(state, action) {
       return {
         ...state,
-        agvLockView: {...state.agvLockView,...action.payload},
+        agvLockView: { ...state.agvLockView, ...action.payload },
       };
     },
     saveRouteView(state, action) {
       return {
         ...state,
-        routeView: {...state.routeView,...action.payload},
+        routeView: { ...state.routeView, ...action.payload },
+      };
+    },
+    saveTrackingView(state, action) {
+      return {
+        ...state,
+        trackingView: { ...state.trackingView, ...action.payload },
       };
     },
   },

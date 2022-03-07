@@ -44,24 +44,6 @@ export default {
     chargerList: [], // 硬件充电桩
     temporaryBlock: [], // 临时不可走点
 
-    // “显示”
-    viewSetting: {
-
-
-      tempBlockShown: true,
-      temporaryCell: [],
-
-
-      toteBinShown: true,
-
-      // 追踪小车
-      trackingCar: undefined,
-      trackingCarSure: undefined,
-
-      // 定位
-      locationType: undefined,
-      locationValue: undefined,
-    },
 
     // 运行信息
     podToWorkstationInfo: [],
@@ -320,13 +302,6 @@ export default {
       return resource;
     },
 
-    // *****显示******
-    *fetchUpdateViewSetting({ payload }, { put, select }) {
-      const { viewSetting } = yield select((state) => state.monitor);
-      const { key, value } = payload;
-      const newViewSetting = { ...viewSetting, [key]: value };
-      yield put({ type: 'saveViewSetting', payload: newViewSetting });
-    },
 
     // *****临时不可走点
     *fetchTemporaryLockedCells(_, { call, put }) {
