@@ -50,7 +50,7 @@ const Login = (props) => {
     delete _values.environment;
     const response = await fetchLogin({ ..._values, type: 'admin' });
     if (!dealResponse(response)) {
-      window.sessionStorage.setItem('Authorization', response.authorization);
+      window.sessionStorage.setItem('token', response.authorization);
       // 如果有environment字段说明需要重新激活一个环境
       if (!isNull(values.environment)) {
         const requestBody = { id: values.environment === 0 ? null : values.environment };

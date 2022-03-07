@@ -4,8 +4,8 @@ import {
   fetchLogout,
   fetchUserAssignedRoleList,
   fetchUpdateUserCurrentSection,
+  getCurrentUser,
 } from '@/services/SSO';
-import { getCurrentUser } from '@/services/api';
 import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {
@@ -97,7 +97,7 @@ export default {
 
     *logout(_, { call }) {
       const response = yield call(fetchLogout, {
-        token: window.sessionStorage.getItem('Authorization'),
+        token: window.sessionStorage.getItem('token'),
       });
       if (!dealResponse(response)) {
         window.localStorage.clear();
@@ -113,7 +113,7 @@ export default {
 
       const params = {
         sectionId: payload,
-        token: window.sessionStorage.getItem('Authorization'),
+        token: window.sessionStorage.getItem('token'),
       };
       const response = yield call(fetchUpdateUserCurrentSection, params);
       return !dealResponse(

@@ -4,7 +4,7 @@ import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('Authorization')}`;
+  config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('token')}`;
   config.headers['Content-Type'] = 'application/json; charset=utf-8';
   if (config.attachSection && isNull(config.headers.sectionId)) {
     config.headers.sectionId = window.localStorage.getItem('sectionId');

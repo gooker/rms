@@ -26,7 +26,7 @@ AgvPollingTaskPathManager.start = function (agvIds = [], dispatcher) {
   AgvPollingTaskPathManager.instance.postMessage({
     state: 'start',
     url: agvPathURL,
-    token: window.sessionStorage.getItem('Authorization'),
+    token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
   });
 };

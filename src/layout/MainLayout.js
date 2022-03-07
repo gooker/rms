@@ -10,9 +10,16 @@ import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
-import { dealResponse, formatMessage, getPlateFormType, isNull, sleep } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getPlateFormType,
+  isNull,
+  isStrictNull,
+  sleep,
+} from '@/utils/util';
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
-import { getAuthorityInfo } from '@/services/SSO';
+import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
 
 @withRouter
@@ -32,89 +39,97 @@ class MainLayout extends React.Component {
     // 挂载push函数
     window.history.$$push = history.push;
 
-    try {
-      const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
-      if (userInfo && !dealResponse(userInfo)) {
-        // 先验证授权
-        const granted = await this.validateAuthority();
-        if (!granted && userInfo.username !== 'admin') {
-          dispatch({ type: 'global/clearEnvironments' });
-          history.push('/login');
-        } else {
-          // 判断当前平台类型
-          window.currentPlatForm = getPlateFormType();
-          if (!window.currentPlatForm.isChrome) {
-            Modal.warning({
-              title: formatMessage({ id: 'app.message.systemHint' }),
-              content: formatMessage({ id: 'app.global.chrome.suggested' }),
-            });
-          }
-
-          // 初始化应用基础信息
-          await dispatch({ type: 'global/initPlatformState' });
-          const { currentSection, username } = userInfo;
-
-          if (username !== 'admin') {
-            // 初始化Socket客户端
-            const { name, password } = currentSection;
-            const socketClient = new SocketClient({ login: name, passcode: password });
-            socketClient.connect();
-            socketClient.registerNotificationQuestion((message) => {
-              // 如果关闭提示，就直接不拉取接口
-              const sessionValue = window.sessionStorage.getItem('showErrorNotification');
-              const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
-              if (!showErrorNotification) return;
-              this.showSystemProblem(message);
-            });
-            await dispatch({ type: 'global/saveSocketClient', payload: socketClient });
-
-            // 立即获取一次告警数量
-            dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
-              if (response > 0) {
-                RmsConfirm({
-                  content: formatMessage({ id: 'app.alertCenter.requestHandle' }, { response }),
-                  okText: formatMessage({ id: 'app.alertCenter.goHandle' }),
-                  cancelText: formatMessage({ id: 'app.button.cancel' }),
-                  onOk() {
-                    _this.goToQuestionCenter();
-                  },
-                });
-              }
-            });
-
-            // 加载地图Texture
-            if (!textureLoaded) {
-              await loadTexturesForMap();
-              await dispatch({ type: 'global/updateTextureLoaded', payload: true });
+    // 首先验证token的有效性
+    const token = window.sessionStorage.getItem('token');
+    if (isStrictNull(token)) {
+      this.logout();
+    } else {
+      const validateResult = await queryUserByToken();
+      if (validateResult && !dealResponse(validateResult)) {
+        try {
+          const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
+          // 先验证授权
+          const granted = await this.validateAuthority();
+          if (!granted && userInfo.username !== 'admin') {
+            dispatch({ type: 'global/clearEnvironments' });
+            history.push('/login');
+          } else {
+            // 判断当前平台类型
+            window.currentPlatForm = getPlateFormType();
+            if (!window.currentPlatForm.isChrome) {
+              Modal.warning({
+                title: formatMessage({ id: 'app.message.systemHint' }),
+                content: formatMessage({ id: 'app.global.chrome.suggested' }),
+              });
             }
 
-            // 获取所有车类任务类型数据
-            this.loadAllTaskTypes();
+            // 初始化应用基础信息
+            await dispatch({ type: 'global/initPlatformState' });
+            const { currentSection, username } = userInfo;
 
-            // 获取所有车类型
-            this.loadAllAgvTypes();
+            if (username !== 'admin') {
+              // 初始化Socket客户端
+              const { name, password } = currentSection;
+              const socketClient = new SocketClient({ login: name, passcode: password });
+              socketClient.connect();
+              socketClient.registerNotificationQuestion((message) => {
+                // 如果关闭提示，就直接不拉取接口
+                const sessionValue = window.sessionStorage.getItem('showErrorNotification');
+                const showErrorNotification =
+                  sessionValue === null ? true : JSON.parse(sessionValue);
+                if (!showErrorNotification) return;
+                this.showSystemProblem(message);
+              });
+              await dispatch({ type: 'global/saveSocketClient', payload: socketClient });
 
-            // 轮询告警数量
-            AlertCountPolling.start((value) => {
-              dispatch({ type: 'global/updateAlertCount', payload: value });
-            });
+              // 立即获取一次告警数量
+              dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
+                if (response > 0) {
+                  RmsConfirm({
+                    content: formatMessage({ id: 'app.alertCenter.requestHandle' }, { response }),
+                    okText: formatMessage({ id: 'app.alertCenter.goHandle' }),
+                    cancelText: formatMessage({ id: 'app.button.cancel' }),
+                    onOk() {
+                      _this.goToQuestionCenter();
+                    },
+                  });
+                }
+              });
+
+              // 加载地图Texture
+              if (!textureLoaded) {
+                await loadTexturesForMap();
+                await dispatch({ type: 'global/updateTextureLoaded', payload: true });
+              }
+
+              // 获取所有车类任务类型数据
+              this.loadAllTaskTypes();
+
+              // 获取所有车类型
+              this.loadAllAgvTypes();
+
+              // 轮询告警数量
+              AlertCountPolling.start((value) => {
+                dispatch({ type: 'global/updateAlertCount', payload: value });
+              });
+            }
+
+            // 登录仪式感
+            await sleep(500);
+            this.setState({ appReady: true });
           }
-
-          // 登录仪式感
-          await sleep(500);
-          this.setState({ appReady: true });
+        } catch (error) {
+          Modal.error({
+            title: formatMessage({ id: 'app.global.initFailed' }),
+            content: error.toString(),
+            onOk() {
+              dispatch({ type: 'user/logout', payload: history });
+            },
+          });
         }
       } else {
-        throw new Error(formatMessage({ id: 'app.message.fetchUserFail' }));
+        this.logout();
       }
-    } catch (error) {
-      Modal.error({
-        title: formatMessage({ id: 'app.global.initFailed' }),
-        content: error.toString(),
-        onOk() {
-          dispatch({ type: 'user/logout', payload: history });
-        },
-      });
     }
   }
 
@@ -122,6 +137,13 @@ class MainLayout extends React.Component {
     // 关闭所有 Web Worker
     AlertCountPolling.terminate();
   }
+
+  logout = () => {
+    const { history } = this.props;
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    history.push('/login');
+  };
 
   showSystemProblem = async (message) => {
     const { currentSection } = this.props;
