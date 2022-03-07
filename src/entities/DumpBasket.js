@@ -1,15 +1,15 @@
 import * as PIXI from 'pixi.js';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import BitText from './BitText';
 import { zIndex } from '@/config/consts';
+import Text from '@/entities/Text';
 
 export default class DumpBasket extends PIXI.Sprite {
-  constructor(key, x, y) {
+  constructor(name, x, y) {
     const texture = getTextureFromResources('basket');
     super(texture);
     this.x = x;
     this.y = y;
-    this.key = key;
+    this.name = name;
     this.height = 100 * 4;
     this.width = 100 * 4;
     this.zIndex = zIndex.temporaryLock;
@@ -19,7 +19,7 @@ export default class DumpBasket extends PIXI.Sprite {
 
   addName() {
     const y = this.height / 2 + 50;
-    this.nameSprite = new BitText(this.key, 0, -y, 0xd77f4a, 200);
+    this.nameSprite = new Text(this.name, 0, y, 0xd77f4a, false, 200);
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);
   }

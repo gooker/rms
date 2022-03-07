@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
+import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
 
 const MonitorMapContainer = (props) => {
@@ -137,7 +137,7 @@ const MonitorMapContainer = (props) => {
     }
     // 工作站
     if (Array.isArray(workstationList)) {
-      const workStationListData = renderWorkstaionlist(workstationList, currentMap.cellMap);
+      const workStationListData = renderWorkStationList(workstationList, currentMap.cellMap);
       workStationListData.forEach((workStation) => {
         mapContext.addWorkStation(workStation, null);
       });

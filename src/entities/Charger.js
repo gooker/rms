@@ -1,13 +1,21 @@
 import * as PIXI from 'pixi.js';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import Text from './Text';
 import { isNull, isStrictNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, ChargerSize, ChargerStateColor, SelectionType } from '@/config/consts';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
+import {
+  zIndex,
+  ChargerSize,
+  SelectionType,
+  ChargerStateColor,
+  MapSelectableSpriteType,
+} from '@/config/consts';
 
 export default class Charger extends PIXI.Container {
   constructor(props) {
     super();
+    this.$$formData = props.$$formData;
+    this.type = MapSelectableSpriteType.CHARGER;
     this.x = props.x;
     this.y = props.y;
     this.name = props.name;
@@ -27,14 +35,14 @@ export default class Charger extends PIXI.Container {
     this.charger.interactive = true;
     this.charger.buttonMode = true;
     this.charger.interactiveChildren = false;
-    this.charger.on('click', this.click);
+    this.charger.on('pointerdown', this.click);
 
-    // if (props.active) {
-    this.addLightningIcon(); // 充电中标记
-    this.addErrorMaskState(); // 错误状态标记
-    this.addOfflineMaskState(); // 离线标记
-    this.addChargeUnbindState(); // 未绑定硬件标记
-    // }
+    if (props.active) {
+      this.addLightningIcon(); // 充电中标记
+      this.addErrorMaskState(); // 错误状态标记
+      this.addOfflineMaskState(); // 离线标记
+      this.addChargeUnbindState(); // 未绑定硬件标记
+    }
   }
 
   // 选择相关

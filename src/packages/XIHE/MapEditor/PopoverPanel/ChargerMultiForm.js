@@ -96,7 +96,7 @@ const ChargerMultiForm = (props) => {
     </Form>
   );
 };
-export default connect(({ editor }) => {
+export default connect(({ editor, global }) => {
   const { selections, currentMap, mapContext } = editor;
 
   // 获取所有充电桩名称列表
@@ -111,5 +111,5 @@ export default connect(({ editor }) => {
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
 
-  return { allChargers, mapContext, selectCellIds };
+  return { allChargers, mapContext, selectCellIds, robotTypes: global.allAgvTypes };
 })(memo(ChargerMultiForm));

@@ -12,8 +12,9 @@ import { MapSelectableSpriteType } from '@/config/consts';
 const { Option } = Select;
 
 const StationForm = (props) => {
-  const { dispatch, station, allCommons, mapContext } = props;
-  const { flag, selectCellIds, allWebHooks, allStationTypes } = props;
+  const { dispatch, allCommons, allWebHooks, allStationTypes, mapContext } = props;
+  const { flag, station, selectCellIds } = props;
+
   const [iconWidth, iconHeight] = station?.size.split('@').map((value) => parseInt(value, 10)) || [
     1000, 1000,
   ];
@@ -67,7 +68,7 @@ const StationForm = (props) => {
         if (result.type === 'update') {
           const { pre, current } = result;
           mapContext.removeCommonFunction(pre);
-          mapContext.renderCommonFunction([current], null);
+          mapContext.renderCommonFunction([current], null, true);
         }
         mapContext.refresh();
       });

@@ -8,7 +8,7 @@ import {
   getCurrentLogicAreaData,
   covertDumpFormData2Param,
 } from '@/utils/mapUtil';
-import { formatMessage, isNull } from '@/utils/util';
+import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
@@ -65,6 +65,13 @@ const DeliveryForm = (props) => {
     const currentDump = covertDumpFormData2Param(allFieldsValue, dumpStations);
     if (!currentDump) return;
 
+    // 处理dumpBasket名称为空的情况
+    currentDump.dumpBasket = currentDump.dumpBasket.map((item, index) => {
+      if (isStrictNull(item.key)) {
+        return { ...item, key: `${currentDump.cellId}-${String.fromCharCode(65 + index)}` };
+      }
+      return item;
+    });
     currentDump.flag = allFieldsValue.flag;
     dispatch({
       type: 'editor/updateFunction',
@@ -151,12 +158,12 @@ const DeliveryForm = (props) => {
       {/* 显示最终的抛物点坐标，不可手动输入，由上方输入换算 */}
       <Form.Item {...formLayout} label={formatMessage({ id: 'editor.delivery' })}>
         <Row gutter={4} style={{ width: '100%' }}>
-          <Col span={8}>
+          <Col span={12}>
             <Form.Item noStyle name={'dumpX'} initialValue={delivery?.x}>
               <Input prefix={'x'} disabled />
             </Form.Item>
           </Col>
-          <Col span={8}>
+          <Col span={12}>
             <Form.Item noStyle name={'dumpY'} initialValue={delivery?.y}>
               <Input prefix={'y'} disabled />
             </Form.Item>
@@ -205,7 +212,7 @@ const DeliveryForm = (props) => {
                   <Form.Item
                     {...formLayout2}
                     {...restField}
-                    initialValue={1000}
+                    initialValue={700}
                     name={[name, 'distance']}
                     fieldKey={[fieldKey, 'distance']}
                     label={formatMessage({ id: 'editor.delivery.distance' })}

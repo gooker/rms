@@ -13,6 +13,7 @@ import { isStrictNull } from '@/utils/util';
 export default class CommonFunction extends PIXI.Container {
   constructor(props) {
     super();
+    this.$$formData = props.$$formData;
     this.type = MapSelectableSpriteType.STATION;
     this.x = props.x;
     this.y = props.y;

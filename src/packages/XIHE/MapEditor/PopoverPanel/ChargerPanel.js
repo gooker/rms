@@ -1,16 +1,15 @@
-import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Empty, message } from 'antd';
+import React, { memo, useState } from 'react';
+import { Button, Col, Empty } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
+import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ChargerForm from './ChargerForm';
 import ChargerMultiForm from './ChargerMultiForm';
 import FunctionListItem from '../components/FunctionListItem';
 import editorStyles from '../editorLayout.module.less';
 import LabelComponent from '@/components/LabelComponent';
-import { fetchAllAgvType } from '@/services/api';
 
 const ChargerPanel = (props) => {
   const { dispatch, height, mapContext, chargerList } = props;
@@ -19,17 +18,6 @@ const ChargerPanel = (props) => {
   const [formVisible, setFormVisible] = useState(null);
   const [multiFormVisible, setMultiFormVisible] = useState(null);
   const [editing, setEditing] = useState(null);
-  const [robotTypes, setRobotTypes] = useState([]);
-
-  useEffect(() => {
-    fetchAllAgvType().then((response) => {
-      if (!dealResponse(response)) {
-        setRobotTypes(response);
-      } else {
-        message.error(formatMessage({ id: 'app.message.fetchAgvTypeListFail' }));
-      }
-    });
-  }, []);
 
   function edit(index, record) {
     setEditing(record);
@@ -92,7 +80,6 @@ const ChargerPanel = (props) => {
   }
 
   const listData = getListData();
-  console.log(listData);
   return (
     <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
       {/* 标题栏 */}
@@ -123,10 +110,9 @@ const ChargerPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <ChargerForm charger={editing} robotTypes={robotTypes} flag={addFlag} />
+          <ChargerForm charger={editing} flag={addFlag} />
         ) : multiFormVisible ? (
           <ChargerMultiForm
-            robotTypes={robotTypes}
             back={() => {
               setMultiFormVisible(false);
             }}

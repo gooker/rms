@@ -7,7 +7,7 @@ import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
 import { ZoneMarkerType } from '@/config/consts';
 import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
-import { renderChargerList, renderElevatorList, renderWorkstaionlist } from '@/utils/mapUtil';
+import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
 import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
 
@@ -129,7 +129,7 @@ const EditorMapContainer = (props) => {
         currentLogicArea,
       );
       const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
-      mapContext.renderElevator(logicElevator || []);
+      mapContext.renderElevator(logicElevator);
     }
   }
 
@@ -173,18 +173,18 @@ const EditorMapContainer = (props) => {
       mapContext.renderIntersection(intersectionList);
     }
 
-    const { workstationList, chargerList, commonList } = currentLogicAreaData;
-    // 工作站
-    if (Array.isArray(workstationList)) {
-      const workStationListData = renderWorkstaionlist(workstationList, currentMap.cellMap);
-      workStationListData.forEach((workStation) => {
-        mapContext.addWorkStation(workStation);
-      });
-    }
+    const { chargerList, workstationList, commonList } = currentLogicAreaData;
     // 充电桩
     if (Array.isArray(chargerList)) {
       const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
       mapContext.renderChargers(chargerListData);
+    }
+    // 工作站
+    if (Array.isArray(workstationList)) {
+      const workStationListData = renderWorkStationList(workstationList, currentMap.cellMap);
+      workStationListData.forEach((workStation, index) => {
+        mapContext.addWorkStation({ flag: index + 1, ...workStation });
+      });
     }
     // 通用站点
     if (Array.isArray(commonList)) {
@@ -196,7 +196,6 @@ const EditorMapContainer = (props) => {
     if (Array.isArray(dumpStations)) {
       mapContext.renderDumpFunction(dumpStations);
     }
-
     // 背景(线框&图片)
     if (Array.isArray(zoneMarker)) {
       zoneMarker.forEach((zoneMarkerItem) => {
@@ -217,14 +216,12 @@ const EditorMapContainer = (props) => {
         }
       });
     }
-
     // 文字标记
     if (Array.isArray(labels)) {
       labels.forEach((item) => {
         mapContext.renderLabel(item, true);
       });
     }
-
     // 紧急停止区
     if (Array.isArray(emergencyStopFixedList)) {
       const _emergencyStopFixedList = [...emergencyStopFixedList];
