@@ -34,7 +34,7 @@ LockCellPolling.start = function (params, dispatcher) {
   LockCellPolling.instance.postMessage({
     state: 'start',
     url: lockCellURL,
-    token: window.sessionStorage.getItem('Authorization'),
+    token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
     params,
   });

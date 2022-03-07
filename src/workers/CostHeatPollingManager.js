@@ -34,7 +34,7 @@ CostHeatPollingManager.start = function (params, dispatcher) {
   CostHeatPollingManager.instance.postMessage({
     state: 'start',
     url: getHeatURL,
-    token: window.sessionStorage.getItem('Authorization'),
+    token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
     params,
   });

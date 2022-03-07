@@ -3,14 +3,14 @@ import { NameSpace } from '@/config/config';
 
 // 获取工作站雇佣车
 const WorkStationStatePolling = {};
-WorkStationStatePolling.getInstance = function (dispatcher,promises) {
+WorkStationStatePolling.getInstance = function (dispatcher) {
   if (isNull(WorkStationStatePolling.instance)) {
     const worker = new Worker(new URL('./workStationPolling.worker.js', import.meta.url));
-    worker.onmessage = function ({ data }) {
+    worker.onmessage = function ({ data: { response, requestParam } }) {
       const newData = [];
-      data.map(({ code, data }) => {
+      response.map(({ code, data }, index) => {
         if (code === '0') {
-          newData.push(data);
+          newData.push({ ...data, ...requestParam[index] });
         }
       });
       dispatcher(newData);
@@ -22,7 +22,7 @@ WorkStationStatePolling.getInstance = function (dispatcher,promises) {
 
 WorkStationStatePolling.start = function (promises, dispatcher) {
   if (isNull(WorkStationStatePolling.instance)) {
-    WorkStationStatePolling.getInstance(dispatcher,promises);
+    WorkStationStatePolling.getInstance(dispatcher);
   }
 
   const workStationURL = getDomainNameByUrl(
@@ -31,9 +31,9 @@ WorkStationStatePolling.start = function (promises, dispatcher) {
 
   WorkStationStatePolling.instance.postMessage({
     state: 'start',
-    promises,
+    requestParam: promises,
     url: workStationURL,
-    token: window.sessionStorage.getItem('Authorization'),
+    token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
   });
 };

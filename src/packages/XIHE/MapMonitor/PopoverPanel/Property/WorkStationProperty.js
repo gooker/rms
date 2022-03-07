@@ -16,18 +16,20 @@ const WorkStationProperty = (props) => {
     mapContext,
     workStationView: { workStationOB, workStationPolling, workStationTaskHistoryData },
   } = props;
-  const [checked, setChecked] = useState(data?.showEmployee ?? false);
-  const [color, setColor] = useState(data?.employeeColor ?? '#1da1a3');
+  const [checked, setChecked] = useState(false);
+  const [color, setColor] = useState('#1da1a3');
   const [robotIds, setRobotIds] = useState([]);
 
   useEffect(() => {
     async function init() {
+      setChecked(data.showEmployee ?? false);
+      setColor(data?.employeeColor || '#1da1a3');
       // 1.获取状态任务数
       // 2.获取分车带数
       await checkWorkStation();
     }
     init();
-  }, []);
+  }, [data]);
 
   // 工作站点击
   async function checkWorkStation() {
@@ -99,29 +101,25 @@ const WorkStationProperty = (props) => {
 
   /***轮询标记****/
   function workStationPollingCallback(pollingData) {
+    closePolling();
     if (pollingData?.length > 0) {
       const promises = [];
-      const workStationPromise = [];
       // 收集请求队列
       pollingData.forEach((workStationID) => {
         const [stopCellId, direction] = workStationID.split('-');
-        workStationPromise.push(stopCellId);
         promises.push({ stopCellId, stopDirection: direction });
       });
-      openPolling(promises, workStationPromise);
-    } else {
-      closePolling();
+      openPolling(promises);
     }
   }
 
-  function openPolling(params, stopList) {
+  function openPolling(params) {
     WorkStationStatePolling.start(params, (response) => {
-      // 获取分车
       const currentResponse = [...response];
       const _workStationTaskHistoryData = { ...workStationTaskHistoryData };
       currentResponse.map((data, index) => {
         if (!dealResponse(data)) {
-          const stopCellId = stopList[index];
+          const stopCellId = data?.stopCellId; // 轮询返回结果 前端加上的
           const { robotIds, taskCountMap } = data;
           const taskHistoryData = covertData2ChartsData(taskCountMap);
           _workStationTaskHistoryData[stopCellId] = { robotIds, taskHistoryData };

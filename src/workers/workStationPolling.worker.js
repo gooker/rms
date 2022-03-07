@@ -4,7 +4,7 @@
  * self 是worker上下文最顶端的 workerGlobalScope 对象本身
  */
 let timeInterval;
-self.onmessage = ({ data: { state, promises = [], url, token, sectionId } }) => {
+self.onmessage = ({ data: { state, requestParam = [], url, token, sectionId } }) => {
   if (state === 'start') {
     const headers = {
       sectionId,
@@ -14,7 +14,7 @@ self.onmessage = ({ data: { state, promises = [], url, token, sectionId } }) => 
 
     timeInterval = setInterval(() => {
       const newPromises = [];
-      promises.forEach(({ stopCellId, stopDirection }) => {
+      requestParam.forEach(({ stopCellId, stopDirection }) => {
         newPromises.push(
           fetch(`${url}?stopCellId=${stopCellId}&stopDirection=${stopDirection}`, {
             headers,
@@ -23,7 +23,7 @@ self.onmessage = ({ data: { state, promises = [], url, token, sectionId } }) => 
         );
       });
       Promise.all(newPromises).then((response) => {
-        return self.postMessage(response);
+        return self.postMessage({ response, requestParam });
       });
     }, 10 * 1000);
   } else {
