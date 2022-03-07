@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isStrictNull, renderAgvState, renderBattery } from '@/utils/util';
-import styles from '../monitorLayout.module.less';
+import styles from '../../monitorLayout.module.less';
 
 const ElementProp = (props) => {
   const {
@@ -12,10 +12,7 @@ const ElementProp = (props) => {
   } = props;
 
   return (
-    <div
-      style={{ height, width: 300 }}
-      className={classnames(styles.popoverPanel, styles.rightSideAgvContent)}
-    >
+    <div>
       <div>
         <FormattedMessage id={'app.common.prop'} />
       </div>
@@ -23,12 +20,12 @@ const ElementProp = (props) => {
         {/* 小车详情 */}
         <div>
           {/* 小车*/}
-          <div className={styles.rightSideAgvContentDetail}>
+          <div className={styles.rightSideContentDetail}>
             <div>
               <img
                 alt={'agv'}
                 style={{ width: 45, height: 'auto' }}
-                src={require('../category/latent_category.svg').default}
+                src={require('../../category/latent_category.svg').default}
               />
               <span>
                 <FormattedMessage id={'app.agv'} />
@@ -38,7 +35,7 @@ const ElementProp = (props) => {
           </div>
 
           {/* 电量 */}
-          <div className={styles.rightSideAgvContentDetail}>
+          <div className={styles.rightSideContentDetail}>
             <div>
               <img
                 alt={'agv'}
@@ -53,7 +50,7 @@ const ElementProp = (props) => {
           </div>
 
           {/* 小车状态 */}
-          <div className={styles.rightSideAgvContentDetail}>
+          <div className={styles.rightSideContentDetail}>
             <div>
               <img
                 alt={'agv'}
@@ -68,7 +65,7 @@ const ElementProp = (props) => {
           </div>
 
           {/* 潜伏货架 */}
-          <div className={styles.rightSideAgvContentDetail}>
+          <div className={styles.rightSideContentDetail}>
             <div>
               <img
                 alt={'agv'}
@@ -83,7 +80,7 @@ const ElementProp = (props) => {
           </div>
 
           {/* 任务 */}
-          <div className={styles.rightSideAgvContentDetail}>
+          <div className={styles.rightSideContentDetail}>
             <div>
               <img
                 alt={'agv'}
@@ -103,7 +100,7 @@ const ElementProp = (props) => {
           </div>
 
           {/* 异常 */}
-          <div className={styles.rightSideAgvContentDetail}>
+          <div className={styles.rightSideContentDetail}>
             <div>
               <img
                 alt={'agv'}

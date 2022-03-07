@@ -62,6 +62,14 @@ export const ChargerStateColor = {
   CONNECTING: 0x5f208f, // 连接中
 };
 
+// 工作站状态
+export const StationStateColor = {
+  START: '#abf579', 
+  PAUSED: '#fddd1c', 
+  END: '#f3602d',
+};
+
+
 export const CostColor = {
   10: '0x388e3c', // 绿色
   20: '0x1976d2', // 蓝色

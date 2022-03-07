@@ -2,27 +2,16 @@ import React, { memo, useEffect, useState } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
-import { isNull, dealResponse, isStrictNull } from '@/utils/util';
+import { isNull, dealResponse } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
 
-import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
 import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
-
 
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
-import WorkStationReport from './Modal/WorkStationReport/WorkStationReport';
 import CommonStationReport from './Modal/CommonStationReport/CommonStationReport';
-import {
-  fetchWorkStationInstrument,
-  fetchWorkStationPre30Waiting,
-  fetchStationRealTimeRate,
-} from '@/services/monitor';
-import {
-  covertData2ChartsData,
-  convertWaitingData2Chart,
-} from '@/packages/XIHE/MapMonitor/Modal/WorkStationReport/workStationEchart';
+import { fetchStationRealTimeRate } from '@/services/monitor';
 import {
   transformCommonTrafficData,
   transitionRobots,
@@ -42,15 +31,7 @@ const MapMonitor = (props) => {
     mapRendered,
     categoryModal,
     categoryPanel,
-    showCostPolling,
-    currentLogicArea,
-    hotType,
   } = props;
-
-  const [workStationOB, setWorkStationOB] = useState({});
-  const [workStationWaitingData, setWorkStationWaitingData] = useState({});
-  const [workStationTaskHistoryData, setWorkStationTaskHistoryData] = useState({});
-  const [workStationPolling, setWorkStationPolling] = useState([]);
 
   const [commonPointOB, setCommonPointOB] = useState({});
   const [commonPointWaitingData, setCommonPointWaitingData] = useState({});
@@ -87,47 +68,6 @@ const MapMonitor = (props) => {
   useEffect(() => {
     renderMonitorLoad();
   }, [mapRendered]);
-
-
-  // 轮询 工作站雇佣车标记
-  useEffect(() => {
-    if (workStationPolling && workStationPolling.length > 0) {
-      const promises = [];
-      const workStationPromise = [];
-
-      // 收集请求队列
-      workStationPolling.forEach((workStationID) => {
-        const [stopCellId, direction] = workStationID.split('-');
-        workStationPromise.push(stopCellId);
-        promises.push({ stopCellId, stopDirection: direction });
-      });
-
-      WorkStationStatePolling.start(promises, (response) => {
-        // 生成工作站任务历史数据
-        const currentResponse = [...response];
-        const _workStationTaskHistoryData = { ...workStationTaskHistoryData };
-        currentResponse.map((data, index) => {
-          if (!dealResponse(data)) {
-            const stopCellId = workStationPromise[index];
-            const { robotIds, taskCountMap } = data;
-            const taskHistoryData = covertData2ChartsData(taskCountMap);
-            _workStationTaskHistoryData[stopCellId] = { robotIds, taskHistoryData };
-          }
-        });
-
-        setWorkStationTaskHistoryData(_workStationTaskHistoryData);
-
-        // 根据返回数据刷新小车标记
-        Object.keys(_workStationTaskHistoryData).forEach((stopId) => {
-          const { robotIds } = _workStationTaskHistoryData[stopId];
-          mapContext?.markWorkStationAgv(robotIds, true, null, stopId);
-        });
-      });
-    }
-    return () => {
-      WorkStationStatePolling.terminate();
-    };
-  }, [workStationPolling]);
 
   // 轮询 通用站点雇佣车标记
   useEffect(() => {
@@ -208,67 +148,6 @@ const MapMonitor = (props) => {
     }
   }
 
-  // 工作站点击
-  async function checkWorkStation({ station, name, angle, direction, stopCellId, flag, color }) {
-    if (!isNull(stopCellId) && !isNull(direction)) {
-      Promise.all([
-        fetchWorkStationInstrument({ stopCellId, stopDirection: direction }),
-        fetchWorkStationPre30Waiting({ stopCellId, stopDirection: direction }),
-      ]).then((response) => {
-        const [taskHistoryResponse, waitingDataResponse] = response;
-        let _workStationTaskHistoryData;
-        let _workStationWaitingData;
-        // 任务数据
-        if (!dealResponse(taskHistoryResponse)) {
-          const { robotIds, taskCountMap } = taskHistoryResponse;
-          _workStationTaskHistoryData = { ...workStationTaskHistoryData };
-          const taskHistoryData = covertData2ChartsData(taskCountMap);
-          _workStationTaskHistoryData[`${stopCellId}`] = { robotIds, taskHistoryData };
-          setWorkStationTaskHistoryData(_workStationTaskHistoryData);
-        }
-
-        // 最近30次等待时间
-        if (!dealResponse(waitingDataResponse)) {
-          _workStationWaitingData = { ...workStationWaitingData };
-          _workStationWaitingData[`${stopCellId}`] = convertWaitingData2Chart(waitingDataResponse);
-          setWorkStationWaitingData(_workStationWaitingData);
-        }
-        setWorkStationOB({ station, name, angle, direction, stopCellId, flag, color });
-        dispatch({
-          type: 'monitor/saveStationElement',
-          payload: {
-            type: 'WorkStation',
-          },
-        });
-      });
-    }
-  }
-  // 标记事件 工作站雇佣车
-  const workStationMark = (agvs, checked, stationOB) => {
-    if (mapContext) {
-      const { stopCellId, color, direction } = stationOB;
-      const currentStopCellId = `${stopCellId}`;
-      setWorkStationOB(stationOB);
-
-      // 更新地图显示
-      mapContext.markWorkStation(currentStopCellId, checked, color);
-      mapContext.markWorkStationAgv(agvs, checked, color, currentStopCellId);
-
-      // 更新已被使用的颜色
-      let _currenyWorkStations = [...workStationPolling];
-
-      if (checked) {
-        _currenyWorkStations.push(`${currentStopCellId}-${direction}`);
-      } else {
-        _currenyWorkStations.splice(
-          _currenyWorkStations.indexOf(`${currentStopCellId}-${direction}`),
-          1,
-        );
-      }
-      setWorkStationPolling([..._currenyWorkStations]);
-    }
-  };
-
   // 通用站点
   async function checkCommonStation(commonOb) {
     // 请求该工作站的展示数据并缓存
@@ -322,22 +201,10 @@ const MapMonitor = (props) => {
         )}
       </div>
       <div className={commonStyles.mapLayoutBody}>
-        <MonitorMapContainer
-          checkWorkStation={checkWorkStation}
-          checkCommonStation={checkCommonStation}
-        />
+        <MonitorMapContainer />
         <MonitorBodyRight />
       </div>
       <MonitorModals />
-      {categoryModal === 'WorkStation' && categoryPanel === 'Report' && (
-        <WorkStationReport
-          workStation={workStationOB} // 当前查看的工作站数据
-          dataSource={workStationTaskHistoryData} // 到站次数数据
-          waiting={workStationWaitingData} // 最后30次等待时间
-          marker={workStationMark} // 标记函数/>
-          refresh={checkWorkStation}
-        />
-      )}
       {categoryModal === 'CommonStation' && categoryPanel === 'Report' && (
         <CommonStationReport
           commonPoint={commonPointOB} // 当前查看的通用站点数据
@@ -358,8 +225,4 @@ export default connect(({ monitor, global, monitorView }) => ({
   mapRendered: monitor.mapRendered,
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
-  currentLogicArea: monitor.currentLogicArea,
-  showCostPolling: monitorView?.showCostPolling,
-  showLockCellPolling: monitorView?.showLockCellPolling,
-  hotType: monitor?.hotType,
 }))(memo(MapMonitor));

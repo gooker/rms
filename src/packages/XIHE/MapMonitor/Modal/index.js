@@ -20,6 +20,7 @@ import SetupLatentPod from './SetupLatentPod/SetupLatentPod';
 import TemporaryForbidcell from './TemporaryForbidcell';
 import PodToStationMessage from './PodToStationMessage';
 import LatentStopMessage from './LatentStopMessage';
+import WorkStationReport from './WorkStationReport';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
@@ -50,8 +51,9 @@ const MonitorModals = (props) => {
       {categoryModal === 'setLatentPod' && <SetupLatentPod dispatch={dispatch} />}
       {categoryModal === 'podToWorkstationInfoMessage' && <PodToStationMessage />}
       {categoryModal === 'stopMessage' && <LatentStopMessage />}
-      {categoryModal === 'Report' && <LatentStopMessage />}
-      {categoryModal==='temporaryBlock' && <TemporaryForbidcell/>}
+      {categoryModal === 'temporaryBlock' && <TemporaryForbidcell />}
+
+      {categoryModal === 'WorkStation' && <WorkStationReport />}
     </>
   );
 };

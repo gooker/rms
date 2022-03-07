@@ -103,17 +103,16 @@
   }
 }
 
-.rightSideAgvContentDetail {
+.rightSideContentDetail {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 
   & > div:first-child {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
     width: 50px;
-    height: 60px;
     color: #fff;
 
     span {
@@ -301,4 +300,72 @@
   padding: 10px 20px;
   background: #8b8b8b;
   border-radius: 5px;
+}
+
+.categoryPanel {
+  position: absolute;
+  top: 5px;
+  right: 60px;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 300px;
+  background: rgba(99, 99, 99, 0.9);
+  border-radius: 5px;
+  user-select: none;
+
+  & > div:nth-child(1) {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 22px;
+    border-bottom: 1px solid #7f7f7f;
+  }
+
+  & > div:nth-child(2) {
+    flex: 1;
+    padding: 10px;
+    overflow: auto;
+
+    :global {
+      form .ant-form-item .ant-form-item-label > label {
+        color: #e8e8e8;
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// 分车标记
+.allocatedContent {
+  padding: 8px;
+  border: 2px dashed #c9c8c8;
+  margin-bottom:10px;
+  span {
+    display: inline-block;
+    margin: 4px;
+    padding: 6px 4px;
+    color: #fff;
+    line-height: 15px;
+    background: #5384c5;
+    border: 1px solid #fff;
+  }
+}
+.markedContent {
+  .marked {
+    display: flex;
+    width: 150px;
+    padding: 8px;
+    background-color: rgba(0, 0, 0, 0.45);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+  display: flex;
+  justify-content: flex-end;
+  height: auto;
+  text-decoration: none;
+  list-style: none;
+  font-feature-settings: 'tnum';
+  margin-bottom: 10px;
 }

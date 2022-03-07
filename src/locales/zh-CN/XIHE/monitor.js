@@ -234,5 +234,8 @@ export default {
   'monitor.workstation.label.count': '个/小时',
   'monitor.workstation.label.average': '平均值',
   'monitor.workstation.label.num': '任务数量',
+  'monitor.workstation.allocateAMRnum': '分车数',
+  'monitor.workstation.allocateAMRnum.limit': '分车上线',
+
   'monitor.tip.noTask': '当前无任务执行',
 };
