@@ -8,13 +8,14 @@ import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import WorkStationForm from './WorkStationForm';
 import editorStyles from '../editorLayout.module.less';
+import styles from './popoverPanel.module.less';
 
 const WorkStationPanel = (props) => {
   const { height, dispatch, mapContext, workstationList } = props;
 
   const [addFlag, setAddFlag] = useState(-1);
   const [editing, setEditing] = useState(null);
-  const [formVisible, setFormVisible] = useState(null);
+  const [formVisible, setFormVisible] = useState(false);
 
   function edit(index, record) {
     setEditing(record);
@@ -93,7 +94,9 @@ const WorkStationPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <WorkStationForm workStation={editing} flag={addFlag} />
+          <div className={styles.formWhiteLabel}>
+            <WorkStationForm workStation={editing} flag={addFlag} />
+          </div>
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>

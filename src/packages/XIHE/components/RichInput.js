@@ -9,7 +9,7 @@ export default memo(function MapInput(props) {
   const [value, setValue] = useState(props.value);
 
   return (
-    <Row type="flex" gutter={10}>
+    <Row type="flex">
       <Col span={icon ? 18 : 21}>
         {type === 'string' ? (
           <Input

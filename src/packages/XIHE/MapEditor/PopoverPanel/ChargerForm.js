@@ -22,22 +22,19 @@ const ChargerForm = (props) => {
       Array.isArray(allValues.chargingCells) &&
       JSON.stringify(allValues.chargingCells[0]) !== '{}'
     ) {
-      // 删除无用的字段
       const currentCharger = { ...allValues };
-      delete currentCharger.extraAngle;
-
       dispatch({
         type: 'editor/updateFunction',
         payload: { scope: 'logic', type: 'chargerList', data: currentCharger },
       }).then((result) => {
         const currentLogicAreaData = getCurrentLogicAreaData();
         if (result.type === 'add') {
-          mapContext.renderChargers([result.payload]);
+          mapContext.renderChargers([result.payload], null);
         }
         if (result.type === 'update') {
           const { pre, current } = result;
           mapContext.removeCharger(pre, currentLogicAreaData.id);
-          mapContext.renderChargers([current]);
+          mapContext.renderChargers([current], null, true);
         }
         mapContext.refresh();
       });
@@ -45,8 +42,9 @@ const ChargerForm = (props) => {
   }
 
   function checkNameDuplicate(name) {
-    const { tid } = formRef.getFieldValue();
-    const existNames = allChargers.filter((item) => item.tid !== tid).map((item) => item.name);
+    const existNames = allChargers
+      .filter((item, index) => index !== flag - 1)
+      .map((item) => item.name);
     return existNames.includes(name);
   }
 
@@ -81,7 +79,7 @@ const ChargerForm = (props) => {
       {/* 角度 */}
       <Form.Item
         name={'extraAngle'}
-        initialValue={charger?.extraAngle}
+        initialValue={charger?.angle}
         label={<FormattedMessage id="app.common.angle" />}
         getValueFromEvent={(value) => {
           formRef.setFieldsValue({
@@ -158,7 +156,7 @@ const ChargerForm = (props) => {
     </Form>
   );
 };
-export default connect(({ editor }) => {
+export default connect(({ global, editor }) => {
   const { selections, currentMap, mapContext } = editor;
 
   // 获取所有充电桩名称列表
@@ -173,5 +171,5 @@ export default connect(({ editor }) => {
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
 
-  return { allChargers, mapContext, selectCellIds };
+  return { allChargers, mapContext, selectCellIds, robotTypes: global.allAgvTypes };
 })(memo(ChargerForm));

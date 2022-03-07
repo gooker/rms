@@ -523,18 +523,14 @@ export function renderCommonList(commonList, cellMap) {
   });
 }
 
-export function renderWorkstaionlist(workstationList, cellMap) {
+export function renderWorkStationList(workstationList, cellMap) {
   return workstationList.map((record) => {
     const { stopCellId, angle, offset } = record;
     if (!isStrictNull(stopCellId) && !isStrictNull(angle)) {
       const stopCell = cellMap[stopCellId];
       if (!isNull(stopCell)) {
         const { x, y } = getCoordinat({ x: stopCell.x, y: stopCell.y }, angle, offset || 1900);
-        return {
-          ...record,
-          x,
-          y,
-        };
+        return { ...record, x, y };
       }
       return record;
     }

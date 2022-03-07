@@ -15,6 +15,7 @@ export default class WorkStation extends PIXI.Container {
   constructor(props) {
     super();
     this.type = MapSelectableSpriteType.WORKSTATION;
+    this.$$formData = props.$$formData;
     this.x = props.x;
     this.y = props.y;
     this.code = props.station;

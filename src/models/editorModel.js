@@ -18,7 +18,7 @@ import {
   moveCell,
   renderChargerList,
   renderElevatorList,
-  renderWorkstaionlist,
+  renderWorkStationList,
   syncLineState,
   transformCurveData,
   validateMapData,
@@ -1517,7 +1517,7 @@ export default {
 
       let returnPayload = currentFunction;
       if (type === 'workstationList') {
-        returnPayload = renderWorkstaionlist([currentFunction], currentMap.cellMap)[0];
+        returnPayload = renderWorkStationList([currentFunction], currentMap.cellMap)[0];
       }
       if (type === 'chargerList') {
         returnPayload = renderChargerList([currentFunction], currentMap.cellMap)[0];
@@ -1573,7 +1573,7 @@ export default {
       scopeData[type] = scopeData[type].filter((item, index) => index !== flag - 1);
       let returnPayload = removedFunctionItem;
       if (type === 'workstationList') {
-        returnPayload = renderWorkstaionlist([removedFunctionItem], currentMap.cellMap)[0];
+        returnPayload = renderWorkStationList([removedFunctionItem], currentMap.cellMap)[0];
       }
       if (type === 'chargerList') {
         returnPayload = renderChargerList([removedFunctionItem], currentMap.cellMap)[0];

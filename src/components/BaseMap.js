@@ -405,9 +405,10 @@ export default class BaseMap extends React.Component {
    * 充电桩
    * @param {*} chargerList
    * @param {*} callback 点击回调
+   * @param autoSelect
    */
-  renderChargers = (chargerList, callback) => {
-    chargerList.forEach((chargerData) => {
+  renderChargers = (chargerList, callback, autoSelect = false) => {
+    chargerList.forEach((chargerData, index) => {
       if (!chargerData) return;
       const { x, y, name, angle, chargingCells = [] } = chargerData;
       if (x === null || y === null) return;
@@ -417,9 +418,13 @@ export default class BaseMap extends React.Component {
         y,
         name,
         angle,
+        $$formData: { flag: index + 1, ...chargerData },
         // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
         select: typeof callback === 'function' ? callback : this.select,
       });
+      autoSelect && charger.onSelect();
+      this.pixiUtils.viewportAddChild(charger);
+      this.chargerMap.set(name, charger);
 
       // 二维码添加充电点图标
       chargingCells.forEach((chargingCell) => {
@@ -439,9 +444,6 @@ export default class BaseMap extends React.Component {
           }
         }
       });
-      // 渲染充电桩
-      this.pixiUtils.viewportAddChild(charger);
-      this.chargerMap.set(name, charger);
     });
   };
 
@@ -476,8 +478,9 @@ export default class BaseMap extends React.Component {
    * 渲染一个工作站
    * @param workStationData 工作站数据
    * @param callback 点击回调
+   * @param autoSelect 新增完是否有选中样式
    */
-  addWorkStation = (workStationData, callback) => {
+  addWorkStation = (workStationData, callback, autoSelect = false) => {
     const {
       x,
       y,
@@ -495,6 +498,7 @@ export default class BaseMap extends React.Component {
     } = workStationData;
 
     const workStationParam = {
+      $$formData: workStationData, // 原始DB数据
       x,
       y,
       name,
@@ -508,6 +512,7 @@ export default class BaseMap extends React.Component {
       select: typeof callback === 'function' ? callback : this.select,
     };
     const workStation = new WorkStation(workStationParam);
+    autoSelect && workStation.onSelect();
     this.pixiUtils.viewportAddChild(workStation);
     this.workStationMap.set(`${stopCellId}`, workStation);
 
@@ -600,9 +605,10 @@ export default class BaseMap extends React.Component {
    * 渲染 通用站点
    * @param {*} commonList 通用站点数据
    * @param {*} callback 点击通用站点回调函数
+   * @param autoSelect 新增完是否有选中样式
    */
-  renderCommonFunction = (commonList, callback) => {
-    commonList.forEach((commonFunctionData) => {
+  renderCommonFunction = (commonList, callback, autoSelect = false) => {
+    commonList.forEach((commonFunctionData, index) => {
       const {
         name = '',
         station,
@@ -620,7 +626,7 @@ export default class BaseMap extends React.Component {
       let destinationX;
       let destinationY;
 
-      const _commonPoint = {
+      const callbackOption = {
         // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
         select: typeof callback === 'function' ? callback : this.select,
       };
@@ -629,14 +635,14 @@ export default class BaseMap extends React.Component {
       if (isNull(offset)) {
         destinationX = stopCell.x + commonFunctionData.x;
         destinationY = stopCell.y + commonFunctionData.y;
-
         commonFunction = new CommonFunction({
           x: destinationX,
           y: destinationY,
           name,
           angle, // 相对于停止点的方向
           iconAngle: angle, // 图标角度，仅用于渲染
-          ..._commonPoint,
+          $$formData: commonFunctionData,
+          ...callbackOption,
         });
       } else {
         const { x, y } = getCoordinat(stopCell, angle, offset);
@@ -650,9 +656,13 @@ export default class BaseMap extends React.Component {
           iconAngle, // 图标角度，仅用于渲染
           icon, // 图标类型
           size, // 图标尺寸
-          ..._commonPoint,
+          $$formData: commonFunctionData,
+          ...callbackOption,
         });
       }
+      autoSelect && commonFunction.onSelect();
+      this.pixiUtils.viewportAddChild(commonFunction);
+      this.commonFunctionMap.set(`${stopCellId}`, commonFunction);
 
       // 渲染站点到停止点之间的关系线
       const dashedLine = new PIXI.Graphics();
@@ -663,10 +673,7 @@ export default class BaseMap extends React.Component {
       this.pixiUtils.viewportAddChild(dashedLine);
       this.relationshipLines.set(`commonStation_${station}`, dashedLine);
 
-      this.pixiUtils.viewportAddChild(commonFunction);
-      this.commonFunctionMap.set(`${stopCellId}`, commonFunction);
-
-      // Render Stop Cell
+      // 标记停止点
       stopCell.plusType('stop', getTextureFromResources('stop'));
     });
   };
@@ -719,14 +726,19 @@ export default class BaseMap extends React.Component {
   };
 
   // 电梯
-  renderElevator = (elevatorList) => {
-    elevatorList.forEach((elevatorData) => {
+  renderElevator = (elevatorList, callback) => {
+    elevatorList.forEach((elevatorData, index) => {
       const { replace, innerMapping, doors = [] } = elevatorData;
       const elevatorCellEntity = this.idCellMap.get(innerMapping[replace]);
       if (!elevatorCellEntity) return;
 
       const { x, y } = elevatorCellEntity;
-      const elevator = new Elevator({ x, y });
+      const elevator = new Elevator({
+        x,
+        y,
+        $$formData: { flag: index + 1, ...elevatorData },
+        select: typeof callback === 'function' ? callback : this.select,
+      });
       this.pixiUtils.viewportAddChild(elevator);
       this.elevatorMap.set(`x${x}y${y}`, elevator);
 
@@ -794,10 +806,16 @@ export default class BaseMap extends React.Component {
     }
   };
 
-  // 抛物点
+  // ************************* 投递点 ************************* //
   // 渲染抛物点标记
-  addDump = (name, x, y) => {
-    const dump = new Dump(x, y, name);
+  addDump = ({ name, x, y, callback, $$formData }) => {
+    const dump = new Dump({
+      x,
+      y,
+      name,
+      $$formData,
+      select: typeof callback === 'function' ? callback : this.select,
+    });
     this.pixiUtils.viewportAddChild(dump);
     this.dumpMap.set(`x${x}y${y}`, dump);
   };
@@ -812,23 +830,29 @@ export default class BaseMap extends React.Component {
   };
 
   // 新增抛物框
-  addDumpBasket = (key, x, y) => {
-    const basket = new DumpBasket(key, x, y);
+  addDumpBasket = ({ name, x, y }) => {
+    const basket = new DumpBasket(name, x, y);
     this.pixiUtils.viewportAddChild(basket);
     this.dumpBasketMap.set(`x${x}y${y}`, basket);
   };
 
-  renderDumpFunction = (dumpStations) => {
-    dumpStations.forEach((dumpData) => {
+  renderDumpFunction = (dumpStations, callback) => {
+    dumpStations.forEach((dumpData, index) => {
       // 渲染抛物点
-      this.addDump(dumpData.name, dumpData.x, dumpData.y);
+      this.addDump({
+        name: dumpData.name,
+        x: dumpData.x,
+        y: dumpData.y,
+        callback,
+        $$formData: { flag: index + 1, ...dumpData },
+      });
 
       // 渲染抛物框
       dumpData.dumpBasket.forEach((item) => {
-        this.addDumpBasket(item.key, item.x, item.y);
+        this.addDumpBasket({ name: item.key, x: item.x, y: item.y });
 
         // 渲染抛物点与抛物框之间的虚线
-        const dashedLine = new SmoothGraphics();
+        const dashedLine = new PIXI.Graphics();
         dashedLine.lineStyle(15, 0xdc8758);
         dashedLine.moveTo(dumpData.x, dumpData.y);
         dashedLine.lineTo(item.x, item.y);
