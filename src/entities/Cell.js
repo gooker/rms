@@ -1,7 +1,14 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
 import { isNull } from '@/utils/util';
-import { CellSize, zIndex, CellTypeSize, CellTypeColor } from '@/config/consts';
+import {
+  zIndex,
+  CellSize,
+  CellTypeSize,
+  CellTypeColor,
+  SelectionType,
+  MapSelectableSpriteType,
+} from '@/config/consts';
 import { getTextureFromResources } from '@/utils/mapUtil';
 
 const ScaledCellSize = 800;
@@ -13,6 +20,7 @@ const InnerIndex = { QR: 1, type: 2, text: 3, bg: 4 };
 export default class Cell extends PIXI.Container {
   constructor(props) {
     super(props);
+    this.type = MapSelectableSpriteType.CELL;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
@@ -24,8 +32,6 @@ export default class Cell extends PIXI.Container {
     this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
     this.selected = false; // 标记点位是否被选中
     this.select = props.select;
-    this.ctrlSelect = props.ctrlSelect;
-    this.shiftSelect = props.shiftSelect;
 
     this.data = {
       types: new Map(),
@@ -182,25 +188,19 @@ export default class Cell extends PIXI.Container {
   }
 
   onClick(event) {
-    const cellData = { id: this.id, x: this.x, y: this.y };
     if (event?.data.originalEvent.shiftKey) {
       if (!this.selected) {
         this.onSelect();
-        this.shiftSelect && this.shiftSelect(cellData);
+        this.select && this.select(this, SelectionType.SHIFT);
       }
     } else if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
       if (!this.selected) {
         this.onSelect();
-        this.ctrlSelect && this.ctrlSelect(cellData);
+        this.select && this.select(this, SelectionType.CTRL);
       }
     } else {
-      if (this.selected) {
-        this.onUnSelect();
-        this.select && this.select(cellData, true);
-      } else {
-        this.onSelect();
-        this.select && this.select(cellData);
-      }
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
     }
   }
 

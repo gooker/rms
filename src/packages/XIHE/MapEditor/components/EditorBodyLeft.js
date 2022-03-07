@@ -184,21 +184,20 @@ class EditorBodyLeft extends React.PureComponent {
     !incremental && this.cancelSelections();
     const { dispatch, mapContext, currentCells } = this.props;
 
-    // 转换坐标
+    // 转换坐标确定选择区域
     const viewport = mapContext.pixiUtils.viewport;
     const { x: rangeWorldStartX, y: rangeWorldStartY } = viewport.toWorld(
       this.pointerDownX,
       this.pointerDownY,
     );
-
     const { x: rangeWorldEndX, y: rangeWorldEndY } = viewport.toWorld(
       this.pointerUpX,
       this.pointerUpY,
     );
-
     const [_startX, _endX] = [rangeWorldStartX, rangeWorldEndX].sort((x, y) => x - y);
     const [_startY, _endY] = [rangeWorldStartY, rangeWorldEndY].sort((x, y) => x - y);
 
+    // 筛选出区域内的元素(从 viewport.children中筛选，对于个别类比如: 线条、投递点需要额外逻辑处理)
     const selections = filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY);
     mapContext.rangeSelection(selections);
     dispatch({ type: 'editor/updateSelections', payload: { incremental, selections } });

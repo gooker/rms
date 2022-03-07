@@ -1,19 +1,31 @@
 import * as PIXI from 'pixi.js';
-import Text from './Text';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
+import { isStrictNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { WorkStationSize, CommonFunctionSize, zIndex } from '@/config/consts';
+import Text from './Text';
+import {
+  zIndex,
+  SelectionType,
+  WorkStationSize,
+  CommonFunctionSize,
+  MapSelectableSpriteType,
+} from '@/config/consts';
 
 export default class WorkStation extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MapSelectableSpriteType.WORKSTATION;
     this.x = props.x;
     this.y = props.y;
+    this.code = props.station;
     this.icon = props.icon || 'work_station';
     this.name = props.name;
     this.angle = props.angle;
     this.$angle = props.angle || 0; // 不要删掉 为了和通用站点保持统一 站点速率显示会用
     this.zIndex = zIndex.functionIcon;
     this.direction = props.direction;
+    this.select = props.select;
+    this.selected = false; // 标记该工作站是否被选中
 
     // 尺寸转换(向前兼容)
     if (this.icon === 'common') {
@@ -27,23 +39,46 @@ export default class WorkStation extends PIXI.Container {
     }
 
     this.create();
-    this.name && this.addName();
+    this.addName();
+    this.createSelectionBorder();
 
-    this.employeeColor = null;
+    // 在途小车显示相关
     this.showEmployee = false;
+    this.employeeColor = null;
 
-    if (props.active) {
-      this.workStation.interactive = true;
-      this.workStation.buttonMode = true;
-      this.workStation.interactiveChildren = false;
-      this.workStation.on('pointerdown', () => {
-        props.click({
-          flag: this.showEmployee,
-          color: this.employeeColor,
-        });
-      });
-    }
+    // 点击事件处理
+    this.workStation.interactive = true;
+    this.workStation.buttonMode = true;
+    this.workStation.interactiveChildren = false;
+    this.workStation.on('pointerdown', this.click);
   }
+
+  // 选择相关
+  onSelect = () => {
+    if (!this.selected) {
+      this.selected = true;
+      this.selectionBorder.visible = true;
+    }
+  };
+
+  onUnSelect = () => {
+    if (this.selected) {
+      this.selected = false;
+      this.selectionBorder.visible = false;
+    }
+  };
+
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
+    }
+  };
 
   create() {
     const workStationTexture = getTextureFromResources(this.icon);
@@ -56,6 +91,7 @@ export default class WorkStation extends PIXI.Container {
   }
 
   addName() {
+    if (isStrictNull(this.name)) return;
     this.nameSprite = new Text(
       this.name,
       0,
@@ -69,24 +105,36 @@ export default class WorkStation extends PIXI.Container {
     this.addChild(this.nameSprite);
   }
 
-  // Marker
-  createEmployerMark(color) {
-    this.destroySelectedBorderSprite();
-    this.selectedBorderSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
-    this.selectedBorderSprite.width = this.workStation.width + 200;
-    this.selectedBorderSprite.height = this.workStation.height + 200;
-    this.selectedBorderSprite.anchor.set(0.5);
-    this.selectedBorderSprite.zIndex = 1;
-    this.selectedBorderSprite.alpha = 0.6;
-    this.selectedBorderSprite.tint = color.replace('#', '0x');
-    this.addChild(this.selectedBorderSprite);
+  // 创建选择边框
+  createSelectionBorder() {
+    this.selectionBorder = new SmoothGraphics();
+    this.selectionBorder.lineStyle(5, 0xff0000);
+    const { width, height } = this.getLocalBounds();
+    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.alpha = 0.8;
+    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.visible = false;
+    this.addChild(this.selectionBorder);
   }
 
-  destroySelectedBorderSprite = () => {
-    if (this.selectedBorderSprite) {
-      this.removeChild(this.selectedBorderSprite);
-      this.selectedBorderSprite.destroy();
-      this.selectedBorderSprite = null;
+  // Marker
+  createEmployerMark(color) {
+    this.destroyMarkerSprite();
+    this.markerSprite = new PIXI.Sprite(PIXI.Texture.WHITE);
+    this.markerSprite.width = this.workStation.width + 200;
+    this.markerSprite.height = this.workStation.height + 200;
+    this.markerSprite.anchor.set(0.5);
+    this.markerSprite.zIndex = 1;
+    this.markerSprite.alpha = 0.6;
+    this.markerSprite.tint = color.replace('#', '0x');
+    this.addChild(this.markerSprite);
+  }
+
+  destroyMarkerSprite = () => {
+    if (this.markerSprite) {
+      this.removeChild(this.markerSprite);
+      this.markerSprite.destroy(true);
+      this.markerSprite = null;
     }
   };
 
@@ -94,7 +142,7 @@ export default class WorkStation extends PIXI.Container {
     if (isShown) {
       this.createEmployerMark(color);
     } else {
-      this.destroySelectedBorderSprite();
+      this.destroyMarkerSprite();
     }
     this.showEmployee = isShown;
     this.employeeColor = isShown ? color : null;

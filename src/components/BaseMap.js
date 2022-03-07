@@ -282,9 +282,7 @@ export default class BaseMap extends React.Component {
             targetCell,
             angle,
             cost,
-            interactive ? this.selectLine : null,
-            interactive ? this.ctrlSelectLine : null,
-            interactive ? this.refresh : null,
+            interactive ? this.select : null,
             shownMode,
           );
           if (line) {
@@ -406,15 +404,22 @@ export default class BaseMap extends React.Component {
   /**
    * 充电桩
    * @param {*} chargerList
-   * @param {*} active 是否可以点击
-   * @param {*} check 点击回调
+   * @param {*} callback 点击回调
    */
-  renderChargers = (chargerList, active = false, check = null) => {
+  renderChargers = (chargerList, callback) => {
     chargerList.forEach((chargerData) => {
       if (!chargerData) return;
       const { x, y, name, angle, chargingCells = [] } = chargerData;
       if (x === null || y === null) return;
-      const charger = new Charger({ x, y, name, angle, active, check });
+
+      const charger = new Charger({
+        x,
+        y,
+        name,
+        angle,
+        // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
+        select: typeof callback === 'function' ? callback : this.select,
+      });
 
       // 二维码添加充电点图标
       chargingCells.forEach((chargingCell) => {
@@ -469,10 +474,10 @@ export default class BaseMap extends React.Component {
 
   /**
    * 渲染一个工作站
-   * @param {*} workStationData 工作站数据
-   * @param {*} check 点击工作站回调函数
+   * @param workStationData 工作站数据
+   * @param callback 点击回调
    */
-  addWorkStation = (workStationData, check) => {
+  addWorkStation = (workStationData, callback) => {
     const {
       x,
       y,
@@ -499,14 +504,9 @@ export default class BaseMap extends React.Component {
       size,
       stopCellId,
       station,
+      // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
+      select: typeof callback === 'function' ? callback : this.select,
     };
-    if (!isNull(check) && typeof check === 'function') {
-      workStationParam.active = true;
-      workStationParam.click = ({ flag, color }) => {
-        check({ station, name, angle, direction, stopCellId, flag, color });
-      };
-    }
-
     const workStation = new WorkStation(workStationParam);
     this.pixiUtils.viewportAddChild(workStation);
     this.workStationMap.set(`${stopCellId}`, workStation);
@@ -599,9 +599,9 @@ export default class BaseMap extends React.Component {
   /**
    * 渲染 通用站点
    * @param {*} commonList 通用站点数据
-   * @param {*} check 点击通用站点回调函数
+   * @param {*} callback 点击通用站点回调函数
    */
-  renderCommonFunction = (commonList, check) => {
+  renderCommonFunction = (commonList, callback) => {
     commonList.forEach((commonFunctionData) => {
       const {
         name = '',
@@ -612,7 +612,6 @@ export default class BaseMap extends React.Component {
         icon,
         size,
         offset,
-        direction = 0,
       } = commonFunctionData;
       const stopCell = this.idCellMap.get(stopCellId);
       if (!stopCell) return;
@@ -621,13 +620,10 @@ export default class BaseMap extends React.Component {
       let destinationX;
       let destinationY;
 
-      const _commonPoint = {};
-      if (!isNull(check) && typeof check === 'function') {
-        _commonPoint.active = true;
-        _commonPoint.click = (flag, color) => {
-          check({ station, name, angle, direction, stopCellId, flag, color });
-        };
-      }
+      const _commonPoint = {
+        // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
+        select: typeof callback === 'function' ? callback : this.select,
+      };
 
       // 兼容旧逻辑(新通用站点必定包含offset数据)
       if (isNull(offset)) {
@@ -659,8 +655,8 @@ export default class BaseMap extends React.Component {
       }
 
       // 渲染站点到停止点之间的关系线
-      const dashedLine = new SmoothGraphics();
-      dashedLine.lineStyle(20, 0x0389ff);
+      const dashedLine = new PIXI.Graphics();
+      dashedLine.lineStyle(40, 0x0389ff);
       dashedLine.moveTo(destinationX, destinationY);
       dashedLine.lineTo(stopCell.x, stopCell.y);
       dashedLine.zIndex = zIndex.targetLine;
@@ -934,13 +930,7 @@ export default class BaseMap extends React.Component {
       interactive,
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.RECT,
-      refresh: this.refresh,
-      select: (marker, isAdd) => {
-        this.selectMapMarker(marker, isAdd, false);
-      },
-      ctrlSelect: (marker) => {
-        this.selectMapMarker(marker, true, true);
-      },
+      select: this.select,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -957,13 +947,7 @@ export default class BaseMap extends React.Component {
       interactive,
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.CIRCLE,
-      refresh: this.refresh,
-      select: (marker, isAdd) => {
-        this.selectMapMarker(marker, isAdd, false);
-      },
-      ctrlSelect: (marker) => {
-        this.selectMapMarker(marker, true, true);
-      },
+      select: this.select,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -980,13 +964,7 @@ export default class BaseMap extends React.Component {
       data,
       interactive,
       type: ZoneMarkerType.IMG,
-      refresh: this.refresh,
-      select: (marker, isAdd) => {
-        this.selectMapMarker(marker, isAdd, false);
-      },
-      ctrlSelect: (marker) => {
-        this.selectMapMarker(marker, true, true);
-      },
+      select: this.select,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -1003,13 +981,7 @@ export default class BaseMap extends React.Component {
       height,
       interactive,
       color: color || 0xffffff,
-      refresh: this.refresh,
-      select: (marker, isAdd) => {
-        this.selectMapMarker(marker, isAdd, false);
-      },
-      ctrlSelect: (marker) => {
-        this.selectMapMarker(marker, true, true);
-      },
+      select: this.select,
     });
     this.labelMap.set(code, mapLabelMarker);
     this.pixiUtils.viewportAddChild(mapLabelMarker);

@@ -114,7 +114,7 @@ export default {
                 !dealResponse(backZones) &&
                 !dealResponse(modelLocks)
               ) {
-                window.g_app._store.dispatch({
+                window.$$dispatch({
                   type: 'customTask/saveState',
                   payload: {
                     mapData,

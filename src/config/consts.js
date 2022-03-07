@@ -1,5 +1,10 @@
-export const WorldScreenRatio = 1.2;
 export const GlobalAlpha = 0.6;
+
+export const SelectionType = {
+  SINGLE: 'SINGLE',
+  CTRL: 'CTRL',
+  SHIFT: 'SHIFT',
+};
 
 export const Colors = {
   red: '#ff0000',

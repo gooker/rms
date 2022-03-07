@@ -81,8 +81,7 @@ export default class MapZoneMarker extends ResizableContainer {
   }
 
   updateZonMarker(data) {
-    const { dispatch } = window.g_app._store;
-    dispatch({ type: 'editor/updateZoneMarker', payload: { code: this.code, ...data } });
+    window.$$dispatch({ type: 'editor/updateZoneMarker', payload: { code: this.code, ...data } });
 
     // 这里比较重要，保证急停区拖拽时候元素不变形的核心逻辑
     this.$$container.scale.set(1, 1);

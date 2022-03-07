@@ -1,12 +1,19 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
 import { getDirByAngle } from '@/utils/util';
-import { zIndex, CostColor, CellSize, MapSelectableSpriteType } from '@/config/consts';
+import {
+  zIndex,
+  CostColor,
+  CellSize,
+  MapSelectableSpriteType,
+  SelectionType,
+} from '@/config/consts';
 import { getCostArrow, getRelationSelectionBG } from '@/utils/mapUtil';
 
 export default class LineArrow extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MapSelectableSpriteType.ROUTE;
     this.id = props.id;
     this.x = props.fromX;
     this.y = props.fromY;
@@ -14,19 +21,16 @@ export default class LineArrow extends PIXI.Container {
     this.alpha = 0.8;
     this.zIndex = this.isClassic ? zIndex.line : 100;
 
-    this.type = 'line';
     this.cost = props.cost;
     this.mapMode = props.mapMode;
     this.isClassic = props.isClassic;
     this.length = props.length; // Sprite长度
     this.distance = props.distance; // 显示的长度文本
     this.dir = getDirByAngle(props.lineAngle);
-
-    this.refresh = props.refresh; // 刷新
-    this.select = props.select; // 单选
-    this.ctrlSelect = props.ctrlSelect; // 批量选
+    this.select = props.select;
 
     this.createArrow();
+    // this.createHitArea();
     this.createLabel();
     this.createSelectionBG();
 
@@ -90,6 +94,17 @@ export default class LineArrow extends PIXI.Container {
     this.addChild(this.distanceText);
   }
 
+  createHitArea() {
+    const hitArea = new PIXI.Rectangle(
+      -this.arrow.width / 2,
+      0,
+      this.arrow.width,
+      this.arrow.height,
+    );
+    // hitArea.pivot = { x: 0, y: this.length };
+    this.hitArea = hitArea;
+  }
+
   createSelectionBG() {
     this.selectedBorderSprite = getRelationSelectionBG(this.arrow.width, this.arrow.height);
     this.selectedBorderSprite.pivot = { x: 0, y: this.length };
@@ -99,36 +114,7 @@ export default class LineArrow extends PIXI.Container {
     this.addChild(this.selectedBorderSprite);
   }
 
-  click = (event) => {
-    const cost = {
-      type: MapSelectableSpriteType.ROUTE,
-      costType: this.type,
-      id: this.id,
-      cost: this.cost,
-    };
-
-    if (event?.data.originalEvent.shiftKey) {
-      // 不支持shift
-    } else if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
-      if (this.states.selected) {
-        this.onUnSelect();
-        this.ctrlSelect && this.ctrlSelect(cost, false);
-      } else {
-        this.onSelect();
-        this.ctrlSelect && this.ctrlSelect(cost, true);
-      }
-    } else {
-      if (this.states.selected) {
-        this.onUnSelect();
-        this.select && this.select(cost, false);
-      } else {
-        this.onSelect();
-        this.select && this.select(cost, true);
-      }
-    }
-    this.refresh();
-  };
-
+  // 选择相关
   onSelect = () => {
     if (!this.states.selected) {
       this.states.selected = true;
@@ -140,6 +126,18 @@ export default class LineArrow extends PIXI.Container {
     if (this.states.selected) {
       this.states.selected = false;
       this.selectedBorderSprite.visible = false;
+    }
+  };
+
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.states.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
     }
   };
 

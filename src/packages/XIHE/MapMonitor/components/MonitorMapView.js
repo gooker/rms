@@ -1155,7 +1155,7 @@ class MonitorMapView extends BaseMap {
   };
 
   renderTaskPaths = (agvId) => {
-    const { showFullPath, showTagetLine } = window.g_app._store.getState().monitorView.routeView;
+    const { showFullPath, showTagetLine } = window.$$state.monitorView.routeView;
 
     // 渲染新的路径
     const _this = this;
@@ -1539,7 +1539,7 @@ class MonitorMapView extends BaseMap {
     const showEmergency = this.states.emergencyAreaShown;
     const { checkEStopArea } = this.props;
     const worldSize = this.getLogicWidth();
-    const { globalActive, logicActive, currentLogicArea } = window.g_app._store.getState().monitor;
+    const { globalActive, logicActive, currentLogicArea } = window.$$state().monitor;
 
     const _visible = showEmergency && (globalActive || logicActive.includes(currentLogicArea));
     this.logicSpriteSectionFlag = false;

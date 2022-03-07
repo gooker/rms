@@ -78,7 +78,7 @@ export default class ResizableContainer extends PIXI.Container {
    */
   onElementPointerDown = (event) => {
     const target = event.target;
-    const leftActiveCategory = window.g_app._store.getState().editor.leftActiveCategory;
+    const leftActiveCategory = window.$$state().editor.leftActiveCategory;
     if (leftActiveCategory !== LeftCategory.Font || target instanceof Text) {
       this.isPointerDown = true;
       this.data = event.data;

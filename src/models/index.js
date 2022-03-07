@@ -2,6 +2,7 @@ import globalModel from './globalModel';
 import taskModel from './taskModel';
 import userModel from './userModel';
 import editorModel from './editorModel';
+import editorViewModel from './editorViewModel';
 import monitorModel from './monitorModel';
 import simulatorModel from './simulatorModel';
 import taskTriggerModel from './taskTriggerModel';
@@ -14,6 +15,7 @@ export default [
   taskModel,
   userModel,
   editorModel,
+  editorViewModel,
   monitorModel,
   simulatorModel,
   taskTriggerModel,

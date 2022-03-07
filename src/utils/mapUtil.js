@@ -831,15 +831,15 @@ export function calculateCellDistance(cell1, cell2) {
 }
 
 export function getCurrentLogicAreaData(namespace = 'editor') {
-  const dvaStore = window.g_app._store.getState();
+  const dvaStore = window.$$state();
   const namespaceState = dvaStore[namespace];
   const { currentMap, currentLogicArea } = namespaceState;
   return find(currentMap?.logicAreaList || [], { id: currentLogicArea });
 }
 
 export function getCurrentRouteMapData(namespace = 'editor') {
-  const dvaSore = window.g_app._store.getState();
-  const namespaceState = dvaSore[namespace];
+  const dvaStore = window.$$state();
+  const namespaceState = dvaStore[namespace];
   const { currentRouteMap } = namespaceState;
   const currentLogicAreaData = getCurrentLogicAreaData(namespace);
   if (currentLogicAreaData) {
@@ -1069,7 +1069,7 @@ export function covertIntersectionFormData2Param(formData) {
  * @returns
  */
 export function getElevatorMapCellId(currentCellId) {
-  const { monitor } = window.g_app._store.getState();
+  const { monitor } = window.$$state();
   const { elevatorCellMap } = monitor;
   const currentLogicAreaData = getCurrentLogicAreaData('monitor');
   if (!currentLogicAreaData) return null;

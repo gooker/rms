@@ -67,6 +67,6 @@ export class Permission extends React.PureComponent {
 
 // 获取是否有某个APP的权限
 export const hasAppPermission = (appCode) => {
-  const { grantedAPP } = window.g_app._store.getState().global;
+  const { grantedAPP } = window.$$state().global;
   return grantedAPP.includes(appCode);
 };
