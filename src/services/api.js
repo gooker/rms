@@ -17,18 +17,9 @@ export async function fetchLanguageByAppCode(params) {
   });
 }
 
-// ************************************** 用户管理  ************************************** //
-//获取当前登陆对象
-export async function getCurrentUser() {
-  return request('/sso/user/getUser', {
-    method: 'GET',
-  });
-}
-
 // ************************************** 地图  ************************************** //
 export async function activeMap(mapId) {
   const sectionId = window.localStorage.getItem('sectionId');
-
   return request(`/${NameSpace.Coordinator}/map/active`, {
     method: 'POST',
     data: { id: mapId, sectionId },

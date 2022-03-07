@@ -116,7 +116,7 @@ export const htmlFormatMessage = ({ id }, values) => {
 
 export function getDomainNameByUrl(url) {
   let apis = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
-  if (!isPlainObject(apis)) {
+  if (isStrictNull(apis) || !isPlainObject(apis)) {
     apis = requestAPI();
   }
   const array = url.split('/');

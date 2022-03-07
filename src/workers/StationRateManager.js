@@ -24,7 +24,7 @@ StationRatePolling.start = function (dispatcher) {
   StationRatePolling.instance.postMessage({
     state: 'start',
     url: rateURL,
-    token: window.sessionStorage.getItem('Authorization'),
+    token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
   });
 };
