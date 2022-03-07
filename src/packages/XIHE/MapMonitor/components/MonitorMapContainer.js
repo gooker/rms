@@ -139,7 +139,7 @@ const MonitorMapContainer = (props) => {
     if (Array.isArray(workstationList)) {
       const workStationListData = renderWorkstaionlist(workstationList, currentMap.cellMap);
       workStationListData.forEach((workStation) => {
-        mapContext.addWorkStation(workStation, checkWorkStation);
+        mapContext.addWorkStation(workStation, null);
       });
     }
     // 通用站点

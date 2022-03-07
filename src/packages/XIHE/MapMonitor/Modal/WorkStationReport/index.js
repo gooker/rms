@@ -12,6 +12,7 @@ import {
 } from './workStationEchart';
 import { formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { workStationCallback } from './workstationUtil';
 import styles from '../../monitorLayout.module.less';
 
 let taskHistoryLine = null;
@@ -23,16 +24,15 @@ const WorkStationReport = (props) => {
   const {
     workStation,
     dataSource = {},
-    waiting = {},
+    waitingData = {},
     stationRateData = [],
     dispatch,
     marker,
-    refresh,
   } = props;
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
-    dispatch({ type: 'monitor/saveCategoryPanel', payload: null });
+    // dispatch({ type: 'monitor/saveCategoryPanel', payload: null });
     dispatch({
       type: 'monitor/saveStationElement',
       payload: {
@@ -62,11 +62,16 @@ const WorkStationReport = (props) => {
     ]);
   }, []);
 
-  useEffect(initChart, []);
-  useEffect(initChart, []);
+  useEffect(() => {
+    async function init() {
+      await workStationCallback(workStation, dispatch);
+      initChart();
+    }
+    init();
+  }, []);
 
   // workStation 的变化触发显重新拉取数据，dataSource的变化触发图表数据更新
-  useEffect(refreshChart, [workStation, dataSource, waiting]);
+  useEffect(refreshChart, [workStation, dataSource, waitingData]);
 
   function initChart() {
     // 到站次数
@@ -99,7 +104,7 @@ const WorkStationReport = (props) => {
     }
 
     const workStationTaskHistoryData = dataSource[`${stopCellId}`];
-    const workStationWaitingData = waiting[`${stopCellId}`];
+    const workStationWaitingData = waitingData[`${stopCellId}`];
 
     if (workStationTaskHistoryData) {
       const { robotIds, taskHistoryData } = workStationTaskHistoryData;
@@ -156,7 +161,7 @@ const WorkStationReport = (props) => {
 
           <Button
             onClick={() => {
-              refresh(workStation);
+              workStationCallback(workStation, dispatch);
             }}
             style={{ marginLeft: 15 }}
             type="link"
@@ -271,7 +276,10 @@ const WorkStationReport = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   stationRateData: monitor?.stationRealRate,
   mapContext: monitor.mapContext,
+  workStation: monitorView.workStationView?.workStationOB,
+  waitingData: monitorView.workStationView?.workStationWaitingData,
+  dataSource: monitorView.workStationView?.workStationTaskHistoryData,
 }))(memo(WorkStationReport));

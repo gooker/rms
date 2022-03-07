@@ -49,6 +49,7 @@ import commonStyles from '@/common.module.less';
 import { Category } from '@/packages/XIHE/MapMonitor/enums';
 import { fetchAgvInfo } from '@/services/api';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
+import { SelectionType } from '@/config/consts';
 
 class MonitorMapView extends BaseMap {
   constructor() {
@@ -76,6 +77,8 @@ class MonitorMapView extends BaseMap {
     this.idLatentPodMap = new Map(); // {cellId: [PodEntity]}
     this.idLatentPodInCar = new Map(); // {podId:null} // 用来标识有哪些货架在小车身上
     this.idTotePodMap = new Map(); // {cellId_L: [PodEntity]} ||  {cellId_R: [PodEntity]}
+
+    this.selections = []; // 选中的元素数据
 
     // Locks
     this.agvLocksMap = new Map();
@@ -237,6 +240,35 @@ class MonitorMapView extends BaseMap {
         this.pixiUtils.viewportAddChild(cell);
       });
     }
+  };
+
+  select = (entity, mode) => {
+    // Chrome调试会误将this指向Cell, 为了便于调试所以使用_this
+    const _this = this;
+
+    // 先判断是否是取消选择
+    const isCull = _this.selections.includes(entity);
+    if (isCull) {
+      _this.selections = this.selections.filter((item) => item !== entity);
+    } else {
+      if (mode === SelectionType.SINGLE) {
+        if (entity instanceof Cell) {
+          _this.currentClickedCell = entity;
+        }
+        _this.selections.forEach((entity) => entity.onUnSelect());
+        _this.selections.length = 0;
+        _this.selections.push(entity);
+      } else if (mode === SelectionType.CTRL) {
+        if (entity instanceof Cell) {
+          _this.currentClickedCell = entity;
+        }
+        _this.selections.push(entity);
+      } else {
+        _this.shiftSelectCell(entity);
+      }
+    }
+    _this.refresh();
+    window.$$dispatch({ type: 'monitor/updateSelections', payload: [..._this.selections] });
   };
 
   // ************************ 临时不可走点锁 **********************

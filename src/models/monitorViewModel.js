@@ -40,6 +40,14 @@ export default {
       trackingCarSure: false,
       locationType:'cell',
       locationValue:null,
+    },
+
+    // 工作站
+    workStationView:{
+      workStationOB:{},
+      workStationPolling:[],
+      workStationWaitingData:{},
+      workStationTaskHistoryData:{},
     }
   },
   reducers: {
@@ -69,6 +77,12 @@ export default {
       return {
         ...state,
         trackingView: { ...state.trackingView, ...action.payload },
+      };
+    },
+    saveWorkStationView(state, action) {
+      return {
+        ...state,
+        workStationView: { ...state.workStationView, ...action.payload },
       };
     },
   },

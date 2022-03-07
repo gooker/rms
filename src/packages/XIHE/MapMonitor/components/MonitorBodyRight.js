@@ -8,7 +8,7 @@ import { Category, MonitorRightTools } from '../enums';
 import { useMount } from '@umijs/hooks';
 import { hasAppPermission } from '@/utils/Permission';
 import { fetchWorkStationPods } from '@/services/monitor';
-import ElementProp from '../PopoverPanel/ElementProp';
+import Property from '../PopoverPanel/Property';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
 import MessageCategorySecondaryPanel from '../PopoverPanel/MessageCategorySecondaryPanel';
@@ -73,7 +73,7 @@ const MonitorBodyRight = (props) => {
   function renderPanelContent() {
     switch (categoryPanel) {
       case Category.Prop:
-        return <ElementProp height={height - 10} />;
+        return <Property height={height - 10} />;
       case Category.LatentAGV:
         return (
           <AgvCategorySecondaryPanel

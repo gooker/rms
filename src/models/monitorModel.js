@@ -4,7 +4,12 @@ import { message } from 'antd';
 import { hasAppPermission, hasPermission } from '@/utils/Permission';
 import { AGVType, AppCode } from '@/config/config';
 import { findIndex } from 'lodash';
-import { fetchChargerList, fetchEmergencyStopList, fetchLatentPodList,fetchMapAGVLocks } from '@/services/XIHE';
+import {
+  fetchChargerList,
+  fetchEmergencyStopList,
+  fetchLatentPodList,
+  fetchMapAGVLocks,
+} from '@/services/XIHE';
 import {
   fetchTemporaryBlockCells,
   updateTemporaryBlockCell,
@@ -34,6 +39,8 @@ export default {
     elevatorCellMap: null, // 保存电梯替换点与地图原始点位的Map关系
     stationRealRate: [], // 站点实时速率
 
+    selections: [], // 选择相关
+
     // 小车、货架等信息
     allAGVs: [],
     latentAgv: [],
@@ -43,7 +50,6 @@ export default {
     sorterAgv: [],
     chargerList: [], // 硬件充电桩
     temporaryBlock: [], // 临时不可走点
-
 
     // 运行信息
     podToWorkstationInfo: [],
@@ -70,9 +76,6 @@ export default {
     mapRendered: false,
     positionVisible: false, // 定位功能弹窗
 
-   
-
-
     // 弹窗
     categoryModal: null,
   },
@@ -91,8 +94,7 @@ export default {
     saveStationElement(state, action) {
       return {
         ...state,
-        categoryPanel: Category.Report,
-        categoryModal: action.payload?.type,
+        categoryModal: action.payload,
       };
     },
     saveCategoryModal(state, action) {
@@ -202,6 +204,24 @@ export default {
         latentStopMessageList: action.payload,
       };
     },
+    updateSelections(state, action) {
+      const selections = action.payload;
+      const newState = {
+        ...state,
+        selections,
+        shortcutToolVisible: selections.length > 0,
+      };
+      if (selections.length === 1) {
+        if (state.categoryPanel === null) {
+          newState.categoryPanel = Category.Prop;
+        }
+      } else {
+        if (state.categoryPanel === Category.Prop) {
+          newState.categoryPanel = null;
+        }
+      }
+      return newState;
+    },
   },
 
   effects: {
@@ -301,7 +321,6 @@ export default {
       yield put({ type: 'saveState', payload: additionalStates });
       return resource;
     },
-
 
     // *****临时不可走点
     *fetchTemporaryLockedCells(_, { call, put }) {
@@ -498,7 +517,7 @@ export default {
     },
     *updateStationRate({ payload }, { call, put }) {
       const { mapContext, response } = payload;
-       // 后端类型返回 不为空 就存起来 return 目前理论上只会有一个类型有值
+      // 后端类型返回 不为空 就存起来 return 目前理论上只会有一个类型有值
       let currentData = Object.values(response).filter((item) => !isStrictNull(item));
       currentData = currentData[0];
       mapContext?.renderCommonStationRate(currentData);
