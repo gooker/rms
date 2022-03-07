@@ -11,7 +11,7 @@ const height = 300;
 const { formItemLayout } = getFormLayout(6, 16);
 
 const TemporaryForbidcel = (props) => {
-  const { dispatch, mapRef, viewSetting } = props;
+  const { dispatch, mapRef, tempBlockShown, temporaryCell } = props;
   const [form] = Form.useForm();
 
   function close() {
@@ -19,12 +19,11 @@ const TemporaryForbidcel = (props) => {
   }
 
   function onValuesChange(changedValues) {
+    const currentKey = Object.keys(changedValues)[0];
+    const currentValue = Object.values(changedValues)[0];
     dispatch({
-      type: 'monitor/fetchUpdateViewSetting',
-      payload: {
-        key: Object.keys(changedValues)[0],
-        value: Object.values(changedValues)[0],
-      },
+      type: 'monitorView/saveViewState',
+      payload: { [currentKey]: currentValue },
     });
   }
 
@@ -98,7 +97,7 @@ const TemporaryForbidcel = (props) => {
                   <Form.Item
                     name={'tempBlockShown'}
                     valuePropName={'checked'}
-                    initialValue={viewSetting?.tempBlockShown}
+                    initialValue={tempBlockShown}
                   >
                     <Switch
                       checkedChildren={formatMessage({
@@ -125,7 +124,7 @@ const TemporaryForbidcel = (props) => {
               </Row>
               <Row style={{ width: '100%' }}>
                 <Col span={14}>
-                  <Form.Item name={'temporaryCell'} initialValue={viewSetting?.temporaryCell}>
+                  <Form.Item name={'temporaryCell'} initialValue={temporaryCell}>
                     <Select
                       allowClear
                       mode="tags"
@@ -153,8 +152,9 @@ const TemporaryForbidcel = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   mapRef: monitor.mapContext,
-  viewSetting: monitor.viewSetting,
+  temporaryCell: monitorView.temporaryCell,
+  tempBlockShown: monitorView.tempBlockShown,
   currentLogicAreaId: monitor.currentLogicArea,
 }))(memo(TemporaryForbidcel));
