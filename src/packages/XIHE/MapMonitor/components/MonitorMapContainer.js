@@ -8,16 +8,8 @@ import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/
 import { ZoneMarkerType } from '@/config/consts';
 
 const MonitorMapContainer = (props) => {
-  const {
-    dispatch,
-    mapContext,
-    currentMap,
-    currentLogicArea,
-    currentRouteMap,
-    preRouteMap,
-    checkWorkStation,
-    checkCommonStation,
-  } = props;
+  const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
+    props;
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -144,7 +136,7 @@ const MonitorMapContainer = (props) => {
     }
     // 通用站点
     if (Array.isArray(commonList)) {
-      mapContext.renderCommonFunction(commonList, checkCommonStation);
+      mapContext.renderCommonFunction(commonList);
     }
 
     const { dumpStations, zoneMarker, labels, emergencyStopFixedList } = currentLogicAreaData;

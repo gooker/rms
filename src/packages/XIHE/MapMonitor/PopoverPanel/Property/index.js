@@ -1,11 +1,10 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
-import classnames from 'classnames';
 import { isNull } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
 import WorkStationProperty from './WorkStationProperty';
+import CommonStationProperty from './CommonStationProperty';
 import styles from '../../monitorLayout.module.less';
-import MonitorHeaderRightTools from '../../components/MonitorHeaderRightTools';
 
 const Property = (props) => {
   const { height, selection } = props;
@@ -17,7 +16,7 @@ const Property = (props) => {
         case MapSelectableSpriteType.WORKSTATION:
           return <WorkStationProperty data={selection} />;
         case MapSelectableSpriteType.STATION:
-          return <WorkStationProperty data={selection} />;
+          return <CommonStationProperty data={selection} />;
         default:
           return <></>;
       }

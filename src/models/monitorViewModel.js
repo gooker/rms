@@ -48,7 +48,16 @@ export default {
       workStationPolling:[],
       workStationWaitingData:{},
       workStationTaskHistoryData:{},
-    }
+    },
+
+    // 通用工作站
+    commonStationView:{
+      commonPointOB:{},
+      commonPointPolling:[],
+      commonPointWaitingData:{},
+      commonPointTaskHistoryData:{},
+      commonPointTrafficData:{},
+    },
   },
   reducers: {
     saveViewState(state, action) {
@@ -83,6 +92,12 @@ export default {
       return {
         ...state,
         workStationView: { ...state.workStationView, ...action.payload },
+      };
+    },
+    saveCommonStationView(state, action) {
+      return {
+        ...state,
+        commonStationView: { ...state.commonStationView, ...action.payload },
       };
     },
   },

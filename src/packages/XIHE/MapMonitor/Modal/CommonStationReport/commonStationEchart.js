@@ -3,12 +3,6 @@ import { GMT2UserTimeZone, isNull, isStrictNull, formatMessage } from '@/utils/u
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
-export const transformType = {
-  Sorter: 'sorter',
-  LatentLifting: 'latent',
-  Tote: 'tote',
-  Fork: 'fork',
-};
 
 export const taskHistoryLineOption = () => ({
   title: {
@@ -309,7 +303,7 @@ export const transformCommonWaitingData = (waitingDataResponse) => {
       ...commonOption,
       stack: '11',
       data: typeNum.reverse(),
-      name: formatMessage({ id: `app.monitor.modal.AGV.${transformType[key]}` }),
+      name: formatMessage({ id: `app.module.${key}` }),
     });
   });
   // 全部数据求平均值
@@ -413,7 +407,7 @@ export const transformCommonTrafficData = (allData = {}) => {
     series.push({
       ...commonOption,
       data: typeNum,
-      name: formatMessage({ id: `app.monitor.modal.AGV.${transformType[key]}` }),
+      name: formatMessage({ id: `app.module.${key}` }),
     });
   });
   // 全部数据求和

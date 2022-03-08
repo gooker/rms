@@ -7,7 +7,7 @@ import {
 } from './commonStationEchart';
 import { isNull, dealResponse } from '@/utils/util';
 
-export const commonStationCallback = async (commonOb, commonPointTaskHistoryData) => {
+export const commonStationCallback = async (commonOb, dispatch,commonPointTaskHistoryData) => {
   const { stopCellId, angle } = commonOb;
   if (!isNull(stopCellId) && !isNull(angle)) {
     const [_trafficDataRes, waitingDataResponse] = await Promise.all([

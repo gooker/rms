@@ -28,8 +28,8 @@ const CommonStationReport = (props) => {
     commonPoint,
     marker,
     dataSource = {},
-    waiting = {},
-    traffic = {},
+    waitingData = {},
+    trafficData = {},
     refresh,
     stationRateData = [],
   } = props;
@@ -72,7 +72,7 @@ const CommonStationReport = (props) => {
   useEffect(initChart, []);
 
   // commonPoint 的变化触发显重新拉取数据，dataSource的变化触发图表数据更新
-  useEffect(refreshChart, [commonPoint, dataSource, waiting, traffic]);
+  useEffect(refreshChart, [commonPoint, dataSource, waitingData, trafficData]);
 
   function initChart() {
     // 到站次数
@@ -112,8 +112,8 @@ const CommonStationReport = (props) => {
     }
 
     const commonPointTaskHistoryData = dataSource[`${stopCellId}`];
-    const commonPointWaitingData = waiting[`${stopCellId}`]; //
-    const commonPointTrafficData = traffic[`${stopCellId}`]; // todo 要更改
+    const commonPointWaitingData = waitingData[`${stopCellId}`]; //
+    const commonPointTrafficData = trafficData[`${stopCellId}`]; // todo 要更改
 
     if (commonPointTaskHistoryData) {
       const { robotIdMap, taskHistoryData } = commonPointTaskHistoryData;
@@ -275,30 +275,6 @@ const CommonStationReport = (props) => {
               <span style={{ fontSize: '16px', color: LineChartsAxisColor }}>
                 <FormattedMessage id="monitor.workstation.label.serviceAMR" />:
               </span>
-              <Popover
-                content={
-                  <Row style={{ maxWidth: 250, wordBreak: 'break-all' }}>{renderPopContent()}</Row>
-                }
-                trigger="click"
-                visible={popVisible}
-                onVisibleChange={(visible) => {
-                  setPopVisible(visible);
-                }}
-                style={{ minWidth: 260 }}
-                title={<FormattedMessage id="monitor.workstation.label.serviceAMR" />}
-              >
-                <span
-                  style={{
-                    fontSize: '16px',
-                    marginLeft: '8px',
-                    fontWeight: 500,
-                    color: DataColor,
-                  }}
-                >
-                  {agvs ? agvs.length : 0}
-                  {formatMessage({ id: 'monitor.workstation.label.piece' })}
-                </span>
-              </Popover>
             </div>
             <div style={{ marginTop: 4, display: 'flex', flexFlow: 'row wrap' }}>
               {renderTool()}
@@ -375,6 +351,11 @@ const CommonStationReport = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
+export default connect(({ monitor, monitorView }) => ({
   stationRateData: monitor?.stationRealRate,
+  mapContext: monitor.mapContext,
+  commonPoint: monitorView.commonStationView?.commonPointOB,
+  waitingData: monitorView.commonStationView?.commonPointWaitingData,
+  dataSource: monitorView.commonStationView?.commonPointTaskHistoryData,
+  trafficData: monitorView.commonStationView?.commonPointTrafficData,
 }))(memo(CommonStationReport));

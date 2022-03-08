@@ -237,5 +237,10 @@ export default {
   'monitor.workstation.allocateAMRnum': '分车数',
   'monitor.workstation.allocateAMRnum.limit': '分车上线',
 
+  'monitor.station.status.START': '已开始',
+  'monitor.station.status.PAUSED': '已暂停',
+  'monitor.station.status.END': '已结束',
+
   'monitor.tip.noTask': '当前无任务执行',
+  'monitor.station.more': '更多',
 };
