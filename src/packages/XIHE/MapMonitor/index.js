@@ -1,36 +1,20 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
 import { isNull, dealResponse } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
-
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
 import { fetchStationRealTimeRate } from '@/services/monitor';
-import { commonStationCallback } from './Modal/CommonStationReport/stationUtil';
 import MonitorModals from './Modal';
 import { HeaderHeight } from './enums';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
 
 const MapMonitor = (props) => {
-  const {
-    dispatch,
-    socketClient,
-    currentMap,
-    mapContext,
-    mapRendered,
-    categoryModal,
-    categoryPanel,
-  } = props;
-
-  const [commonPointOB, setCommonPointOB] = useState({});
-  const [commonPointWaitingData, setCommonPointWaitingData] = useState({});
-  const [commonPointTaskHistoryData, setCommonPointTaskHistoryData] = useState({});
-  const [commonPointTrafficData, setCommonPointTrafficData] = useState({});
-  const [commonPointPolling, setCommonPointPolling] = useState([]);
+  const { dispatch, socketClient, currentMap, mapContext, mapRendered } = props;
 
   useEffect(() => {
     socketClient.applyMonitorRegistration();
@@ -92,23 +76,6 @@ const MapMonitor = (props) => {
     }
   }
 
-  // 通用站点
-  async function checkCommonStation(commonOb) {
-    // 请求该工作站的展示数据并缓存
-    const { _commonPointTaskHistoryData, _trafficData, _commonWaitingData } =
-      await commonStationCallback(commonOb, commonPointTaskHistoryData);
-    dispatch({
-      type: 'monitor/saveStationElement',
-      payload: {
-        type: 'CommonStation',
-      },
-    });
-    setCommonPointOB({ ...commonOb });
-    setCommonPointTaskHistoryData(_commonPointTaskHistoryData);
-    setCommonPointTrafficData(_trafficData);
-    setCommonPointWaitingData(_commonWaitingData);
-  }
-
   return (
     <div id={'mapMonitorPage'} className={commonStyles.commonPageStyleNoPadding}>
       <div
@@ -126,15 +93,6 @@ const MapMonitor = (props) => {
         <MonitorBodyRight />
       </div>
       <MonitorModals />
-      {/* {categoryModal === 'CommonStation' && categoryPanel === 'Report' && (
-        <CommonStationReport
-          commonPoint={commonPointOB} // 当前查看的通用站点数据
-          dataSource={commonPointTaskHistoryData} // 到站次数数据
-          waiting={commonPointWaitingData} // 最后30次等待时间
-          traffic={commonPointTrafficData} // 货物流量
-          refresh={checkCommonStation}
-        />
-      )} */}
     </div>
   );
 };
@@ -143,6 +101,4 @@ export default connect(({ monitor, global, monitorView }) => ({
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
   mapRendered: monitor.mapRendered,
-  categoryModal: monitor.categoryModal,
-  categoryPanel: monitor.categoryPanel,
 }))(memo(MapMonitor));

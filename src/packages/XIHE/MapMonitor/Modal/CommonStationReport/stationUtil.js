@@ -7,7 +7,7 @@ import {
 } from './commonStationEchart';
 import { isNull, dealResponse } from '@/utils/util';
 
-export const commonStationCallback = async (commonOb, dispatch,commonPointTaskHistoryData) => {
+export const commonStationCallback = async (commonOb, dispatch, commonPointTaskHistoryData) => {
   const { stopCellId, angle } = commonOb;
   if (!isNull(stopCellId) && !isNull(angle)) {
     const [_trafficDataRes, waitingDataResponse] = await Promise.all([
@@ -31,24 +31,24 @@ export const commonStationCallback = async (commonOb, dispatch,commonPointTaskHi
         robotIdMap,
         taskHistoryData,
       };
-      //   setCommonPointTaskHistoryData(_commonPointTaskHistoryData);
     }
     // 到站个数
     if (!dealResponse(trafficDataRes)) {
       const TaskNumData = generateGoodsCountData(trafficDataRes);
       _trafficData[`${stopCellId}`] = transformCommonTrafficData(TaskNumData);
-      //   setCommonPointTrafficData(_trafficData);
     }
     if (!dealResponse(waitingDataResponse)) {
       // 最近30次等待时间
       _commonWaitingData[`${stopCellId}`] = transformCommonWaitingData(waitingDataResponse);
-      //   setCommonPointWaitingData(_commonWaitingData);
     }
 
-    return {
-      _commonWaitingData,
-      _trafficData,
-      _commonPointTaskHistoryData,
-    };
+    dispatch({
+      type: 'monitorView/saveCommonStationView',
+      payload: {
+        commonPointTrafficData: _trafficData,
+        commonPointWaitingData: _commonWaitingData,
+        commonPointTaskHistoryData: _commonPointTaskHistoryData,
+      },
+    });
   }
 };

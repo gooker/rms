@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Tag, Spin, Switch, Button, Popover } from 'antd';
+import { Row, Col, Button } from 'antd';
 import echarts from 'echarts';
 import { CloseOutlined } from '@ant-design/icons';
 import { useMap } from '@umijs/hooks';
@@ -9,9 +9,9 @@ import {
   taskHistoryLineOption,
   LineChartsAxisColor,
   DataColor,
-  transformType,
   trafficHistoryLineOption,
 } from './commonStationEchart';
+import { commonStationCallback } from './stationUtil';
 import { formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
@@ -26,22 +26,16 @@ const CommonStationReport = (props) => {
   const {
     dispatch,
     commonPoint,
-    marker,
     dataSource = {},
     waitingData = {},
     trafficData = {},
     refresh,
     stationRateData = [],
   } = props;
-  const { name, angle, stopCellId, flag: showEmployee, color: employeeColor } = commonPoint;
+  const { name, angle, stopCellId } = commonPoint;
   const monitorScreenDOM = document.body;
 
-  const [agvs, setAgvs] = useState(null);
-  const [checked, setChecked] = useState(false);
-  const [color, setColor] = useState(employeeColor ?? '#efa283');
-  const [agvTypes, setAgvTypes] = useState({});
   const [currentRealRate, setCurrentRealRate] = useState({}); // 当前站点的速率和等待时间等
-  const [popVisible, setPopVisible] = useState(false);
 
   // eslint-disable-next-line no-unused-vars
   const [map, { get: getModalSize, setAll }] = useMap([
@@ -69,7 +63,13 @@ const CommonStationReport = (props) => {
     });
   }
 
-  useEffect(initChart, []);
+  useEffect(() => {
+    async function init() {
+      await commonStationCallback(commonPoint, dispatch);
+      initChart();
+    }
+    init();
+  }, []);
 
   // commonPoint 的变化触发显重新拉取数据，dataSource的变化触发图表数据更新
   useEffect(refreshChart, [commonPoint, dataSource, waitingData, trafficData]);
@@ -101,8 +101,6 @@ const CommonStationReport = (props) => {
 
   function refreshChart() {
     if (!taskHistoryLine || !waitingHistoryLine || !trafficHistoryLine) return;
-    setAgvs(null);
-    setChecked(showEmployee);
 
     if (stationRateData && stationRateData.length > 1) {
       const currentRate = stationRateData.find((item) => {
@@ -116,13 +114,7 @@ const CommonStationReport = (props) => {
     const commonPointTrafficData = trafficData[`${stopCellId}`]; // todo 要更改
 
     if (commonPointTaskHistoryData) {
-      const { robotIdMap, taskHistoryData } = commonPointTaskHistoryData;
-      const robotIds = [];
-      Object.values(robotIdMap).map((ids) => {
-        robotIds.push(...ids);
-      });
-      setAgvs(robotIds);
-      setAgvTypes(robotIdMap);
+      const { taskHistoryData } = commonPointTaskHistoryData;
       const { xAxis, series } = taskHistoryData;
       const newTaskHistoryLineOption = taskHistoryLine.getOption();
       newTaskHistoryLineOption.xAxis = xAxis;
@@ -147,80 +139,6 @@ const CommonStationReport = (props) => {
     }
   }
 
-  function renderPopContent() {
-    if (agvs && agvs.length > 0) {
-      return (
-        <div>
-          {Object.entries(agvTypes).map(([type, value]) => {
-            if (agvTypes[type]) {
-              return (
-                <>
-                  <Row key={Math.floor(Math.random() * 100)}>
-                    <Col>
-                      {formatMessage({ id: `app.monitor.modal.AGV.${transformType[type]}` })}:
-                    </Col>
-                    <Col>
-                      {value.length > 0
-                        ? value.map((id) => {
-                            return (
-                              <Tag key={id} color="blue">
-                                {id}
-                              </Tag>
-                            );
-                          })
-                        : '--'}
-                    </Col>
-                  </Row>
-                </>
-              );
-            }
-          })}
-        </div>
-      );
-    } else {
-      return (
-        <span style={{ color: 'rgb(3, 137, 255)' }}>
-          <FormattedMessage id="monitor.tip.noTask" />
-        </span>
-      );
-    }
-  }
-
-  function renderTool() {
-    if (agvs) {
-      if (agvs.length > 0) {
-        return agvs.map((id, index) => {
-          if (index < 5) {
-            return (
-              <Tag key={id} color="rgba(1,137,255,0.6)">
-                {id}
-              </Tag>
-            );
-          } else if (index === 5) {
-            return (
-              <Tag
-                key={`${id}${index}`}
-                color="rgba(1,137,255,0.6)"
-                onClick={() => {
-                  setPopVisible(true);
-                }}
-                style={{ cursor: 'pointer' }}
-              >
-                ...
-                <FormattedMessage id="app.monitor.modal.more" />
-              </Tag>
-            );
-          }
-        });
-      }
-      return (
-        <span style={{ color: 'rgb(3, 137, 255)' }}>
-          <FormattedMessage id="monitor.tip.noTask" />
-        </span>
-      );
-    }
-    return <Spin />;
-  }
   const _left = getModalSize('width') < 550 ? 550 / 2 : getModalSize('width') / 2;
 
   return (
@@ -242,7 +160,7 @@ const CommonStationReport = (props) => {
 
           <Button
             onClick={() => {
-              refresh(commonPoint);
+              commonStationCallback(commonPoint, dispatch);
             }}
             style={{ marginLeft: 15 }}
             type="link"
@@ -270,42 +188,7 @@ const CommonStationReport = (props) => {
       </div>
       <div style={{ padding: '15px 0px 15px 15px', borderTop: '1px solid #333', marginTop: 12 }}>
         <Row className={styles.tool}>
-          <Col span={11} offset={1}>
-            <div>
-              <span style={{ fontSize: '16px', color: LineChartsAxisColor }}>
-                <FormattedMessage id="monitor.workstation.label.serviceAMR" />:
-              </span>
-            </div>
-            <div style={{ marginTop: 4, display: 'flex', flexFlow: 'row wrap' }}>
-              {renderTool()}
-            </div>
-            <div style={{ marginTop: 4, display: 'flex' }}>
-              <input
-                disabled={checked || !agvs || agvs.length === 0}
-                type="color"
-                value={color}
-                onChange={(e) => {
-                  setColor(e.target.value);
-                }}
-              />
-
-              <div style={{ marginLeft: '5px' }}>
-                <Switch
-                  checked={checked}
-                  checkedChildren={formatMessage({
-                    id: 'monitor.workstation.label.marked',
-                  })}
-                  unCheckedChildren={formatMessage({
-                    id: 'monitor.workstation.label.unmarked',
-                  })}
-                  onChange={(value) => {
-                    setChecked(value);
-                    marker(agvs, value, { ...commonPoint, flag: value, color });
-                  }}
-                />
-              </div>
-            </div>
-          </Col>
+          <Col span={11} offset={1}></Col>
           <Col span={12}>
             {!isStrictNull(currentRealRate?.goodsRate) && (
               <div>
