@@ -100,9 +100,9 @@ export function convertAllMenu(adminType, allModuleMenuData, permissionMap) {
     if (appCode === AppCode.SSO) {
       appMenu = appMenu.filter((route) => {
         // 权限控制基于 authority 和 hooks，且hooks优先
-        // if (Array.isArray(route.hook)) {
-        //   return validateHookPermission(route.hook);
-        // }
+        if (Array.isArray(route.hook)) {
+          return validateHookPermission(route.hook);
+        }
         if (Array.isArray(route.authority)) {
           return route.authority.includes(adminType);
         }

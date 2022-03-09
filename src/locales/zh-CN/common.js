@@ -32,6 +32,7 @@ export default {
   'app.message.noMap': '当前不存在地图数据',
   'app.message.noActiveMap': '当前无激活的地图',
   'app.message.fetchMapFail': '获取地图数据失败',
+  'app.message.fetchScopeProgramFail': '获取地图编程数据失败',
   'app.message.fetchUserFail': '获取用户信息失败',
   'app.message.fetchMapListFail': '获取地图列表失败',
   'app.message.fetchAgvListFail': '获取小车列表失败',

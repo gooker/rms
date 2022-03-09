@@ -1,8 +1,8 @@
-import React, { memo, useState } from 'react';
-import { Button, Divider, Select, Tabs } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Divider, Form, Input, Modal, Select, Tabs } from 'antd';
 import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent';
 import ProgramingZone from './ProgramingZone';
@@ -10,6 +10,7 @@ import ProgramingCell from './ProgramingCell';
 import ProgramingRelation from './ProgramingRelation';
 import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
+import { fetchScopeProgram, saveScopeProgram } from '@/services/XIHE';
 
 const { Option, OptGroup } = Select;
 const { TabPane } = Tabs;
@@ -17,9 +18,53 @@ const { TabPane } = Tabs;
 const ProgramingPanel = (props) => {
   const { height, currentMap } = props;
 
+  const [formRef] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
   const [selectedRoute, setSelectedRoute] = useState(null);
+  const [scopeProgram, setScopeProgram] = useState([]); // 已保存的地图编程数据
 
-  function addScope() {}
+  useEffect(() => {
+    refresh();
+  }, []);
+
+  function refresh() {
+    fetchScopeProgram({ mapId: currentMap.id }).then((response) => {
+      if (
+        !dealResponse(
+          response,
+          false,
+          null,
+          formatMessage({ id: 'app.message.fetchScopeProgramFail' }),
+        )
+      ) {
+        setScopeProgram(response);
+      }
+    });
+  }
+
+  function addScope() {
+    const [logicId, routeCode] = selectedRoute.split('-');
+    formRef.validateFields().then((values) => {
+      setLoading(true);
+      const scopeProgramItem = {
+        mapId: currentMap.id,
+        logicId,
+        routeCode,
+        ...values,
+        detailMap: {},
+      };
+      saveScopeProgram(scopeProgramItem)
+        .then((response) => {
+          if (!dealResponse(response, true)) {
+            setVisible(false);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    });
+  }
 
   function onSelectRoute(value) {
     setSelectedRoute(value);
@@ -54,7 +99,7 @@ const ProgramingPanel = (props) => {
           <Button style={{ marginLeft: 10, height: 40 }}>
             <ImportOutlined /> <FormattedMessage id={'app.button.import'} />
           </Button>
-          <Button type={'dashed'} style={{ marginLeft: 10, height: 40 }}>
+          <Button type={'dashed'} style={{ marginLeft: 10, height: 40 }} onClick={refresh}>
             <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
           </Button>
         </div>
@@ -71,11 +116,16 @@ const ProgramingPanel = (props) => {
               <div>
                 {menu}
                 <Divider style={{ margin: '4px 0' }} />
-                <div
-                  onClick={addScope}
-                  style={{ padding: '2px 0 2px 10px', cursor: 'pointer', textAlign: 'center' }}
-                >
-                  <PlusOutlined /> <FormattedMessage id={'editor.addScope'} />
+                <div style={{ padding: '2px 0 2px 10px', cursor: 'pointer', textAlign: 'center' }}>
+                  <Button
+                    type="text"
+                    disabled={isNull(selectedRoute)}
+                    onClick={() => {
+                      setVisible(true);
+                    }}
+                  >
+                    <PlusOutlined /> <FormattedMessage id={'editor.addScope'} />
+                  </Button>
                 </div>
               </div>
             )}
@@ -95,6 +145,36 @@ const ProgramingPanel = (props) => {
           </Tabs>
         </div>
       </div>
+
+      <Modal
+        visible={visible}
+        width={500}
+        okButtonProps={{
+          loading,
+          disabled: loading,
+        }}
+        onOk={addScope}
+        onCancel={() => {
+          setVisible(false);
+        }}
+      >
+        <Form form={formRef}>
+          <Form.Item
+            name={'scopeCode'}
+            label={formatMessage({ id: 'app.common.code' })}
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name={'scopeName'}
+            label={formatMessage({ id: 'app.common.name' })}
+            rules={[{ required: true }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </div>
   );
 };
