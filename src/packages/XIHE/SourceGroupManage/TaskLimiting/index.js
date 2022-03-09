@@ -17,7 +17,7 @@ import commonStyles from '@/common.module.less';
 class TaskTrigger extends Component {
   state = {
     checkedType: [],
-    getTasksByType: [], // 任务类型限流
+    getTasksByType: {}, // 任务类型限流
     getTasksByCustomGroup: [], // 资源组限流
     taskLimitings: [],
     spinningFlag: false,
@@ -118,7 +118,7 @@ class TaskTrigger extends Component {
       currentLists.map((item) => {
         if (isNull(item.name) && item.limitDatas) {
           const sourceItem = {
-            groupName: '类型',
+            groupName: formatMessage({ id: 'app.common.type' }),
             type: 'taskLimit',
             children: [...item.limitDatas],
           };

@@ -226,7 +226,7 @@ const TaskTriggerModal = (props) => {
             { required: true },
             {
               pattern: /^[0-9]*$/,
-              message: <FormattedMessage id={'app.taskTrigger.timeRulesMessage'} />,
+              message: formatMessage({ id: 'app.taskTrigger.timeRulesMessage' }),
             },
           ]}
         >
@@ -239,7 +239,7 @@ const TaskTriggerModal = (props) => {
           rules={[
             {
               pattern: /^[0-9]*$/,
-              message: <FormattedMessage id={'app.taskTrigger.timeRulesMessage'} />,
+              message: formatMessage({ id: 'app.taskTrigger.timeRulesMessage' }),
             },
           ]}
         >
