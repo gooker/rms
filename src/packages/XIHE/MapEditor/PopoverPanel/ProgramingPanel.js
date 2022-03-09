@@ -149,6 +149,9 @@ const ProgramingPanel = (props) => {
       <Modal
         visible={visible}
         width={500}
+        title={`${formatMessage({ id: 'app.button.add' })}${formatMessage({
+          id: 'app.map.scope',
+        })}`}
         okButtonProps={{
           loading,
           disabled: loading,

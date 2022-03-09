@@ -28,6 +28,7 @@ export default {
   'editor.message.codeNotExit': '点位不存在',
   'editor.message.codeNotInRange': '点位ID不在该逻辑区范围',
   'editor.code.duplicate': '编码已存在',
+  'editor.form.invalidURL': 'URL格式不合法',
 
   // 施工图
   'editor.constructionDrawing.export': '导出施工图',

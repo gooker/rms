@@ -116,7 +116,7 @@ export default {
   'app.map.mver': '平台版本',
   'app.map.logicArea': '逻辑区',
   'app.map.routeArea': '路线区',
-  'app.map.scope': '作用域',
+  'app.map.scope': '编程',
   'app.map.zone': '区域',
   'app.map.label': '区域标签',
   'app.map.cell': '点位',

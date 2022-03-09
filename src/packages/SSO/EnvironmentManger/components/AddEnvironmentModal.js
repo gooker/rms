@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { Form, Input, Radio, Select, Button, Col, Row } from 'antd';
-import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import { formatMessage, getFormLayout, isStrictNull, validateUrl } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import DynamicForm from '@/components/DynamicForm/Index';
 import { ApiNameSpace } from '@/config/config';
 import MenuIcon from '@/utils/MenuIcon';
 import { PlusOutlined } from '@ant-design/icons';
 
-const { DynamicFormCol } = DynamicForm;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
 
 class AddEnvironmentModal extends Component {
@@ -41,6 +39,13 @@ class AddEnvironmentModal extends Component {
       })
       .catch(() => {});
   };
+
+  urlValidator(_, value) {
+    if (!isStrictNull(value) && validateUrl(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error(formatMessage({ id: 'editor.form.invalidURL' })));
+  }
 
   render() {
     const { updateRow } = this.props;
@@ -109,7 +114,7 @@ class AddEnvironmentModal extends Component {
                           {...field}
                           name={[field.name, 'value']}
                           label={formatMessage({ id: 'app.configInfo.header.moduleURL' })}
-                          rules={[{ required: true }, { type: 'url' }]}
+                          rules={[{ required: true }, { validator: this.urlValidator }]}
                         >
                           <Input
                             placeholder={formatMessage({
