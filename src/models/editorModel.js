@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, some, sortBy, isEqual, isPlainObject } from 'lodash';
+import { find, findIndex, groupBy, isEqual, isPlainObject, some, sortBy } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
@@ -30,6 +30,7 @@ import {
   fetchAllStationTypes,
   fetchMapDetail,
   fetchMapHistoryDetail,
+  fetchScopeActionProtocol,
   fetchSectionMaps,
   getAllWebHooks,
   getAllWebHookTypes,
@@ -66,6 +67,7 @@ const EditorState = {
   selections: [], // 选择相关
   allStationTypes: {}, // 所有站点类型
   allWebHooks: [], // 所有Web Hooks
+  scopeActions: [], // 地图编程动作集
 
   // 显示相关
   mapMode: 'standard',
@@ -363,21 +365,27 @@ export default {
          * 1. 获取所有站点类型
          * 2. 获取已配置的 Web Hook
          */
-        const [allWebHooks, allWebHookTypes, allStationTypes] = yield Promise.all([
+        const [allWebHooks, allWebHookTypes, allStationTypes, scopeActions] = yield Promise.all([
           getAllWebHooks(),
           getAllWebHookTypes(),
           fetchAllStationTypes(),
+          fetchScopeActionProtocol(),
         ]);
+
+        const state = {};
         if (!dealResponse(allWebHooks) && !dealResponse(allWebHookTypes)) {
-          const _allWebHooks = allWebHooks.map((hook) => ({
+          state.allWebHooks = allWebHooks.map((hook) => ({
             ...hook,
             label: allWebHookTypes[hook.webHookType],
           }));
-          yield put({
-            type: 'saveState',
-            payload: { allStationTypes, allWebHooks: _allWebHooks },
-          });
         }
+        if (!dealResponse(allStationTypes)) {
+          state.allStationTypes = allStationTypes;
+        }
+        if (!dealResponse(scopeActions)) {
+          state.scopeActions = scopeActions;
+        }
+        yield put({ type: 'saveState', payload: state });
       }
     },
 

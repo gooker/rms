@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
+import { isStrictNull } from '@/utils/util';
 
 //////////////////////////**** 高可用 ****//////////////////////////
 export async function getHAInfo() {
@@ -327,7 +328,43 @@ export async function updateSystemParams(params) {
 }
 // 根据key获取系统参数
 export async function fetchGetParameterByKey(key) {
-  return request(`/${NameSpace.Coordinator}//formTemplate/getParameter/${key}`, {
+  return request(`/${NameSpace.Coordinator}/formTemplate/getParameter/${key}`, {
+    method: 'GET',
+  });
+}
+
+//////////////////////////**** 地图编程 ****//////////////////////////
+// 获取地图编程动作协议接口
+export function fetchScopeActionProtocol() {
+  return request(`/${NameSpace.Coordinator}/actionScope/getScopeAction`, {
+    method: 'GET',
+  });
+}
+
+// 保存地图编程
+export function saveScopeProgram(params) {
+  return request(`/${NameSpace.Coordinator}/actionScope/saveActionScopes`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 根据参数获取地图编程数据
+export function fetchScopeProgram({ mapId, logicId, routeCode, scopeCode }) {
+  let sub = '/actionScope/getActionScope';
+  if (!isStrictNull(mapId)) {
+    sub = `${sub}/${mapId}`;
+  }
+  if (!isStrictNull(logicId)) {
+    sub = `${sub}/${logicId}`;
+  }
+  if (!isStrictNull(routeCode)) {
+    sub = `${sub}/${routeCode}`;
+  }
+  if (!isStrictNull(scopeCode)) {
+    sub = `${sub}/${scopeCode}`;
+  }
+  return request(`/${NameSpace.Coordinator}${sub}`, {
     method: 'GET',
   });
 }
