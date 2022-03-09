@@ -3,8 +3,8 @@ import { Table, Button, Row, Modal, message, Spin } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
-import { fetchGetActiveMap } from '@/services/map';
 import {
+  fetchActiveMap,
   getAgvTasksByCustomGroup,
   getAgvTasksByType,
   saveTaskLimit,
@@ -80,7 +80,7 @@ class TaskTrigger extends Component {
 
   getAgvTasks = async () => {
     this.setState({ spinningFlag: true });
-    const originalMapData = await fetchGetActiveMap();
+    const originalMapData = await fetchActiveMap();
     if (originalMapData) {
       const payload = { mapId: originalMapData.id };
       this.getAgvTaskLists(originalMapData.id);

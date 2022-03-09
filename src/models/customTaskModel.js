@@ -6,8 +6,9 @@ import {
   formatMessage,
   isNull,
 } from '@/utils/util';
-import { fetchGetActiveMap, fetchGetAllScopeActions } from '@/services/map';
+import { fetchAllScopeActions } from '@/services/monitor';
 import {
+  fetchActiveMap,
   getBackZone,
   getTaskTypes,
   getTurnProtocol,
@@ -75,7 +76,7 @@ export default {
 
   effects: {
     *initPage(_, { call }) {
-      const mapData = yield call(fetchGetActiveMap);
+      const mapData = yield call(fetchActiveMap);
       if (isNull(mapData) || dealResponse(mapData)) {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
       } else {
@@ -87,7 +88,7 @@ export default {
           getTurnProtocol(),
           getAgvRunProtocol(),
           getTaskTypes(),
-          fetchGetAllScopeActions(),
+          fetchAllScopeActions(),
           getBackZone({ mapId: id }),
           getFormModelLockResource({ modelType: '' }),
         ])

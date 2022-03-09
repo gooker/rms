@@ -5,8 +5,7 @@ import { Form, DatePicker, Modal, Button, InputNumber, Input, Radio, Select, mes
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
-import { fetchCstParams, getBackZone } from '@/services/api';
-import { fetchGetActiveMap } from '@/services/map';
+import { fetchCstParams, getBackZone,fetchActiveMap } from '@/services/api';
 import { dealResponse, isNull } from '@/utils/util';
 
 const FormItem = Form.Item;
@@ -70,7 +69,7 @@ const TaskTriggerModal = (props) => {
     getBackzones();
   }, []);
   async function getBackzones() {
-    const originalMapData = await fetchGetActiveMap();
+    const originalMapData = await fetchActiveMap();
     if (!dealResponse(originalMapData)) {
       getBackZone({ mapId: originalMapData?.id }).then((response) => {
         if (!dealResponse(response)) {

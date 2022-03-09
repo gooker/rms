@@ -96,7 +96,7 @@ const MapMonitor = (props) => {
     </div>
   );
 };
-export default connect(({ monitor, global, monitorView }) => ({
+export default connect(({ monitor, global }) => ({
   socketClient: global.socketClient,
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,

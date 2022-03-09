@@ -3,7 +3,7 @@ import { Radio, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchGetAllScopeActions } from '@/services/map';
+import { fetchAllScopeActions } from '@/services/monitor';
 import { dealResponse } from '@/utils/util';
 import AdvancedCarryComponent from './AdvancedCarryComponent';
 import AdvancedReleaseComponent from './AdvancedReleaseComponent';
@@ -19,7 +19,7 @@ const AdvancedCarry = (props) => {
 
   useEffect(() => {
     async function getArea() {
-      const response = await fetchGetAllScopeActions();
+      const response = await fetchAllScopeActions();
       if (dealResponse(response)) {
         message.error('获取地图功能区信息失败!');
       } else {

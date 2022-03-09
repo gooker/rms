@@ -9,6 +9,7 @@ import taskTriggerModel from './taskTriggerModel';
 import customTaskModel from './customTaskModel';
 import menuModel from './menuModel';
 import monitorViewModel from './monitorViewModel';
+import groupManageModel from './groupManageModel';
 
 export default [
   globalModel,
@@ -22,4 +23,5 @@ export default [
   customTaskModel,
   menuModel,
   monitorViewModel,
+  groupManageModel,
 ];
