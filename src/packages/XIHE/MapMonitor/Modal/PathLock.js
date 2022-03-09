@@ -7,7 +7,6 @@ import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent.js';
 import { LockCellPolling } from '@/workers/LockCellPollingManager';
-import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
@@ -59,6 +58,12 @@ const PathLock = (props) => {
           [currentkey]: currentValue,
         },
       });
+      if (currentkey === 'showRoute') {
+        showRoutePollingCallback(false);
+        if (currentValue) {
+          showRoutePollingCallback(true);
+        }
+      }
     }
   }
 
@@ -172,32 +177,11 @@ const PathLock = (props) => {
 
   /*****start 显示路径**/
   function showRoutePollingCallback(flag, agvs) {
-    if (flag) {
-      openRoutePolling(agvs);
-    } else {
-      closeRoutePolling();
-    }
+    dispatch({
+      type: 'monitorView/routePolling',
+      payload: { flag, agvs },
+    });
   }
-
-  function openRoutePolling(agvs) {
-    const robotIds = agvs || selectAgv;
-    if (robotIds?.length > 0) {
-      AgvPollingTaskPathManager.start(robotIds, (response) => {
-        if (response && Array.isArray(response)) {
-          const tasks = response.filter(Boolean);
-          mapRef.registerShowTaskPath(tasks, true);
-        }
-      });
-    } else {
-      // 清理地图上的路径
-      mapRef?.registerShowTaskPath([], true);
-    }
-  }
-
-  function closeRoutePolling() {
-    AgvPollingTaskPathManager.terminate();
-  }
-
   /*****end*****/
 
   function switchCellLock(checked) {
@@ -283,7 +267,6 @@ const PathLock = (props) => {
                   value={agvLockView?.showAgvLock || []}
                   options={allLockOptions.map((item) => ({
                     ...item,
-                    label: formatMessage({ id: item.label }),
                   }))}
                 />
               </Form.Item>
@@ -316,7 +299,7 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showRoute'}
                   valuePropName={'checked'}
-                  initialValue={routeView?.showRoute || true}
+                  initialValue={routeView?.showRoute}
                 >
                   <Switch
                     checkedChildren={formatMessage({ id: 'app.notification.on' })}
@@ -357,11 +340,7 @@ const PathLock = (props) => {
           <Form.Item {...formItemLayout} label={<FormattedMessage id="monitor.view.cellLock" />}>
             <Row style={{ width: '100%' }}>
               <Col span={5}>
-                <Form.Item
-                  name={'showCellLock'}
-                  valuePropName={'checked'}
-                  initialValue={showCellLock}
-                >
+                <Form.Item>
                   <Switch
                     checkedChildren={formatMessage({
                       id: 'app.map.view',
@@ -369,13 +348,14 @@ const PathLock = (props) => {
                     unCheckedChildren={formatMessage({
                       id: 'app.common.hide',
                     })}
-                    onChange={(checked) => {
-                      switchCellLock();
-                      if (!checked) {
+                    onChange={(value) => {
+                      switchCellLock(value);
+                      if (!value) {
                         form.setFieldsValue({ cellIdForLock: null });
                         mapRef.clearCellLocks();
                       }
                     }}
+                    checked={showCellLock}
                   />
                 </Form.Item>
               </Col>

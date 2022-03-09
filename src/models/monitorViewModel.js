@@ -1,3 +1,4 @@
+import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 export default {
   namespace: 'monitorView',
   state: {
@@ -35,29 +36,32 @@ export default {
     toteBinShown: true,
 
     // 追踪小车
-    trackingView:{
+    trackingView: {
       trackingCar: undefined,
       trackingCarSure: false,
-      locationType:'cell',
-      locationValue:null,
+      locationType: 'cell',
+      locationValue: null,
     },
 
     // 工作站
-    workStationView:{
-      workStationOB:{},
-      workStationPolling:[],
-      workStationWaitingData:{},
-      workStationTaskHistoryData:{},
+    workStationView: {
+      workStationOB: {},
+      workStationPolling: [],
+      workStationWaitingData: {},
+      workStationTaskHistoryData: {},
     },
 
     // 通用工作站
-    commonStationView:{
-      commonPointOB:{},
-      commonPointPolling:[],
-      commonPointWaitingData:{},
-      commonPointTaskHistoryData:{},
-      commonPointTrafficData:{},
+    commonStationView: {
+      commonPointOB: {},
+      commonPointPolling: [],
+      commonPointWaitingData: {},
+      commonPointTaskHistoryData: {},
+      commonPointTrafficData: {},
     },
+
+    // 小车告警异常
+    agvAlarmList: [],
   },
   reducers: {
     saveViewState(state, action) {
@@ -100,6 +104,35 @@ export default {
         commonStationView: { ...state.commonStationView, ...action.payload },
       };
     },
+
+    saveAgvAlarmList(state, action) {
+      return {
+        ...state,
+        agvAlarmList: action.payload,
+      };
+    },
   },
-  effects: {},
+  effects: {
+    *routePolling({ payload }, { select, call, put }) {
+      const { flag, agvs } = payload;
+      const { mapContext } = yield select(({ monitor }) => monitor);
+      const { selectAgv } = yield select(({ monitorView }) => monitorView);
+      if (flag) {
+        const robotIds = agvs || selectAgv;
+        if (robotIds?.length > 0) {
+          AgvPollingTaskPathManager.start(robotIds, (response) => {
+            if (response && Array.isArray(response)) {
+              const tasks = response.filter(Boolean);
+              mapContext.registerShowTaskPath(tasks, true);
+            }
+          });
+        } else {
+          // 清理地图上的路径
+          mapContext?.registerShowTaskPath([], true);
+        }
+      } else {
+        AgvPollingTaskPathManager.terminate();
+      }
+    },
+  },
 };

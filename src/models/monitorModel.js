@@ -91,12 +91,7 @@ export default {
         checkingElement: action.payload,
       };
     },
-    saveStationElement(state, action) {
-      return {
-        ...state,
-        categoryModal: action.payload,
-      };
-    },
+  
     saveCategoryModal(state, action) {
       return {
         ...state,

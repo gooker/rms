@@ -76,7 +76,7 @@ const CommonStationProperty = (props) => {
 
   function showStationReport() {
     dispatch({
-      type: 'monitor/saveStationElement',
+      type: 'monitor/saveCategoryModal',
       payload: 'station',
     });
   }
@@ -301,9 +301,9 @@ const CommonStationProperty = (props) => {
             <div>
               <div className={styles.allocatedContent}>
                 {robotIds.map((item, index) => {
-                  if (index < 2) {
+                  if (index < 10) {
                     return <span key={item}>{item}</span>;
-                  } else if (index === 2) {
+                  } else if (index === 10) {
                     return (
                       <Tag
                         key={`${item}${index}`}
@@ -372,28 +372,11 @@ const CommonStationProperty = (props) => {
               <InputNumber value={data?.maxCount} min={0} />
             </div>
           </div>
-
-          {/* 查看报表 */}
-          <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'station'}
-                style={{ width: 35 }}
-                src={require('@/packages/XIHE/MapMonitor/category/report_category.svg').default}
-              />
-              <span>
-                <FormattedMessage id={'app.common.report'} />
-              </span>
-            </div>
-            <div style={{ cursor: 'pointer' }} onClick={showStationReport}>
-              <EyeOutlined />
-            </div>
-          </div>
         </div>
 
         {/* 操作区域*/}
         <div style={{ marginTop: 30 }}>
-          {/* 开启结束暂停 */}
+          {/* 开启结束暂停 查看报表 */}
           <div className={styles.rightSideAgvContentOperation}>
             <div className={styles.rightSideAgvContentOperationItem2}>
               <div
@@ -441,6 +424,21 @@ const CommonStationProperty = (props) => {
               </div>
               <div>
                 <FormattedMessage id={'app.common.status.end'} />
+              </div>
+            </div>
+          </div>
+
+          <div className={styles.rightSideAgvContentOperation}>
+            <div className={styles.rightSideAgvContentOperationItem2}>
+              <div onClick={showStationReport}>
+                <img
+                  alt={'station'}
+                  style={{ width: 35 }}
+                  src={require('@/packages/XIHE/MapMonitor/category/report_category.svg').default}
+                />
+              </div>
+              <div>
+                <FormattedMessage id={'app.common.report'} />
               </div>
             </div>
           </div>

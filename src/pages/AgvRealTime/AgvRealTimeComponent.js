@@ -57,7 +57,7 @@ class AgvRealTimeComponent extends React.Component {
     const { agvType, location } = this.props;
     if (location && location?.search) {
       const robotId = location.search.split('=')[1];
-      this.setState({ agvId: robotId });
+      this.setState({ agvId: robotId }, this.fetchAgvMultivariateData);
     }
     const response = await fetchAgvList(agvType);
     if (dealResponse(response)) {
