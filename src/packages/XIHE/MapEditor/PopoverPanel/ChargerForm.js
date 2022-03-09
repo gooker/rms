@@ -34,7 +34,7 @@ const ChargerForm = (props) => {
         if (result.type === 'update') {
           const { pre, current } = result;
           mapContext.removeCharger(pre, currentLogicAreaData.id);
-          mapContext.renderChargers([current], null, true);
+          mapContext.renderChargers([current]);
         }
         mapContext.refresh();
       });

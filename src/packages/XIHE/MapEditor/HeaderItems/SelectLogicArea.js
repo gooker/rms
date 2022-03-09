@@ -7,11 +7,14 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './index.module.less';
+import CreateLogicAreaModal from '@/packages/XIHE/MapEditor/components/CreateLogicAreaModal';
 
 const SelectLogicArea = (props) => {
   const { dispatch, logicAreaList, currentLogicArea } = props;
   const currentLogicAreaData = getCurrentLogicAreaData();
 
+  const [editing, setEditing] = useState(null);
+  const [visible, setVisible] = useState(false);
   const [logicName, setLogicName] = useState(currentLogicAreaData?.name);
 
   useEffect(() => {
@@ -30,14 +33,8 @@ const SelectLogicArea = (props) => {
               <EditOutlined
                 onClick={(e) => {
                   e.stopPropagation();
-                  dispatch({
-                    type: 'editor/updateModalVisit',
-                    payload: {
-                      type: 'createLogicAreaVisit',
-                      value: true,
-                      extraData: record,
-                    },
-                  });
+                  setVisible(true);
+                  setEditing(record);
                 }}
               />
             </div>
@@ -58,13 +55,7 @@ const SelectLogicArea = (props) => {
 
   function menuClick(record) {
     if (record.key === 'add') {
-      dispatch({
-        type: 'editor/updateModalVisit',
-        payload: {
-          type: 'createLogicAreaVisit',
-          value: true,
-        },
-      });
+      setVisible(true);
     } else {
       dispatch({
         type: 'editor/saveCurrentLogicArea',
@@ -73,7 +64,7 @@ const SelectLogicArea = (props) => {
     }
   }
 
-  const langMenu = (
+  const menu = (
     <Menu
       className={styles.menu}
       selectedKeys={[`${currentLogicArea}`]}
@@ -85,14 +76,24 @@ const SelectLogicArea = (props) => {
     </Menu>
   );
   return (
-    <Dropdown overlay={langMenu}>
-      <span className={styles.action}>
-        <span style={{ fontSize: 15, fontWeight: 600 }}>
-          {logicName || formatMessage({ id: 'app.map.logicArea' })}
+    <>
+      <Dropdown overlay={menu}>
+        <span className={styles.action}>
+          <span style={{ fontSize: 15, fontWeight: 600 }}>
+            {logicName || formatMessage({ id: 'app.map.logicArea' })}
+          </span>
+          <DownOutlined style={{ marginLeft: 4 }} />
         </span>
-        <DownOutlined style={{ marginLeft: 4 }} />
-      </span>
-    </Dropdown>
+      </Dropdown>
+
+      <CreateLogicAreaModal
+        visible={visible}
+        data={editing}
+        close={() => {
+          setVisible(false);
+        }}
+      />
+    </>
   );
 };
 export default connect(({ editor }) => {

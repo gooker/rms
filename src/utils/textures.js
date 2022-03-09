@@ -10,6 +10,35 @@ export function getQrCodeSelectBorderTexture(renderer, hasBorder) {
   return renderer.generateTexture(graphics);
 }
 
+export function getIntersectionDirectionTexture(renderer) {
+  graphics.clear();
+
+  const length = 250;
+  const CAP_WIDTH = 40;
+  const CAP_HEIGHT = 80;
+  const polygonPath = [
+    0,
+    0,
+    -CAP_WIDTH,
+    CAP_HEIGHT,
+    -CAP_WIDTH / 2,
+    CAP_HEIGHT,
+    -CAP_WIDTH / 2,
+    length,
+    CAP_WIDTH / 2,
+    length,
+    CAP_WIDTH / 2,
+    CAP_HEIGHT,
+    CAP_WIDTH,
+    CAP_HEIGHT,
+  ];
+  graphics.lineStyle(0);
+  graphics.beginFill(0xffffff, 1);
+  graphics.drawPolygon(polygonPath);
+  graphics.endFill();
+  return renderer.generateTexture(graphics);
+}
+
 export function getTaskPathTexture(color) {
   const distance = 100; // 默认长度是100
   const lineWidth = CellSize.width / 3;

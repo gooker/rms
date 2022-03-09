@@ -55,6 +55,8 @@ export default {
   'editor.tools.useTemplate': '引用模板',
   'editor.tools.createTemplate': '创建模板',
   'editor.tools.history': '操作历史',
+  'editor.tools.selections': '已选择元素',
+  'editor.tools.layer': '图层',
 
   // 地图属性展示面板
 

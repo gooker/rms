@@ -37,6 +37,8 @@ const MapEditor = (props) => {
   useEffect(() => {
     // 按下S键
     function onXKeyDown(event) {
+      // 不能干扰输入框
+      if (event.target instanceof HTMLInputElement) return;
       if (event.keyCode === 83 && !keyDown.current) {
         keyDown.current = true;
         if (mapContext) {
@@ -49,6 +51,7 @@ const MapEditor = (props) => {
     }
     // 抬起S键
     function onXKeyUp(event) {
+      if (event.target instanceof HTMLInputElement) return;
       if (event.keyCode === 83) {
         keyDown.current = false;
         if (props.mapContext) {
@@ -78,10 +81,7 @@ const MapEditor = (props) => {
   }, [mapContext]);
 
   return (
-    <div
-      id={'mapEditorPage'}
-      className={commonStyles.commonPageStyleNoPadding}
-    >
+    <div id={'mapEditorPage'} className={commonStyles.commonPageStyleNoPadding}>
       <div
         style={{ flex: `0 0 ${HeaderHeight}px` }}
         className={classnames(commonStyles.mapLayoutHeader, style.editorHeader)}

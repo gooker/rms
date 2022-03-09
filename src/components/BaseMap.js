@@ -150,46 +150,6 @@ export default class BaseMap extends React.Component {
     this.refresh();
   };
 
-  /**
-   * 批量切换元素选中状态
-   * @param flag 是否选中
-   * @param type 元素类型
-   * @param list 同类型元素数据列表
-   */
-  switchSpriteSelected = (flag, type, list) => {
-    let dataMap;
-    switch (type) {
-      case MapSelectableSpriteType.CELL:
-        dataMap = this.idCellMap;
-        break;
-      case MapSelectableSpriteType.ROUTE:
-        dataMap = this.idLineMap;
-        break;
-      case MapSelectableSpriteType.ZONE:
-        dataMap = this.zoneMap;
-        break;
-      case MapSelectableSpriteType.LABEL:
-        dataMap = this.labelMap;
-        break;
-      default:
-        dataMap = null;
-    }
-    if (isNull(dataMap)) return;
-    list.forEach(({ id, type, cost }) => {
-      let spriteEntity;
-      if (type === MapSelectableSpriteType.ROUTE) {
-        spriteEntity = dataMap[cost].get(id);
-      } else if (type === MapSelectableSpriteType.CELL) {
-        spriteEntity = dataMap.get(parseInt(id));
-      } else {
-        spriteEntity = dataMap.get(id);
-      }
-      if (spriteEntity) {
-        flag ? spriteEntity?.onSelect() : spriteEntity?.onUnSelect();
-      }
-    });
-  };
-
   // 清空并销毁所有优先级线条
   destroyAllLines = () => {
     Object.values(this.idLineMap).forEach((lineMap) => {
@@ -407,7 +367,7 @@ export default class BaseMap extends React.Component {
    * @param {*} callback 点击回调
    * @param autoSelect
    */
-  renderChargers = (chargerList, callback, autoSelect = false) => {
+  renderChargers = (chargerList, callback = null, autoSelect = false) => {
     chargerList.forEach((chargerData, index) => {
       if (!chargerData) return;
       const { x, y, name, angle, chargingCells = [] } = chargerData;
@@ -607,7 +567,7 @@ export default class BaseMap extends React.Component {
    * @param {*} callback 点击通用站点回调函数
    * @param autoSelect 新增完是否有选中样式
    */
-  renderCommonFunction = (commonList, callback, autoSelect = false) => {
+  renderCommonFunction = (commonList, callback = null, autoSelect = false) => {
     commonList.forEach((commonFunctionData, index) => {
       const {
         name = '',
@@ -699,7 +659,8 @@ export default class BaseMap extends React.Component {
 
   // 交汇点
   renderIntersection = (intersectionList) => {
-    intersectionList.forEach(({ cellId, ip, isTrafficCell }) => {
+    intersectionList.forEach((intersectionData, index) => {
+      const { cellId, ip, isTrafficCell } = intersectionData;
       const interSectionCell = this.idCellMap.get(cellId);
       if (interSectionCell) {
         const { x, y } = interSectionCell;
@@ -709,6 +670,8 @@ export default class BaseMap extends React.Component {
           cellId,
           directions: ip,
           isTrafficCell,
+          select: this.select,
+          $$formData: { flag: index + 1, ...intersectionData },
         });
         this.pixiUtils.viewportAddChild(intersection);
         this.intersectionMap.set(`${cellId}`, intersection);
@@ -726,19 +689,22 @@ export default class BaseMap extends React.Component {
   };
 
   // 电梯
-  renderElevator = (elevatorList, callback) => {
-    elevatorList.forEach((elevatorData, index) => {
+  renderElevator = (elevatorList, autoSelect = false) => {
+    return elevatorList.map((elevatorData, index) => {
       const { replace, innerMapping, doors = [] } = elevatorData;
       const elevatorCellEntity = this.idCellMap.get(innerMapping[replace]);
       if (!elevatorCellEntity) return;
 
       const { x, y } = elevatorCellEntity;
       const elevator = new Elevator({
+        id: index,
         x,
         y,
         $$formData: { flag: index + 1, ...elevatorData },
-        select: typeof callback === 'function' ? callback : this.select,
+        select: this.select,
       });
+
+      autoSelect && elevator.onSelect();
       this.pixiUtils.viewportAddChild(elevator);
       this.elevatorMap.set(`x${x}y${y}`, elevator);
 
@@ -767,6 +733,8 @@ export default class BaseMap extends React.Component {
         // 电梯点替换点ID
         elevatorCellEntity.addReplaceId(replace);
       });
+
+      return elevator;
     });
   };
 
@@ -955,6 +923,7 @@ export default class BaseMap extends React.Component {
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.RECT,
       select: this.select,
+      refresh: this.refresh,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -972,6 +941,7 @@ export default class BaseMap extends React.Component {
       color: color.replace('#', '0x'),
       type: ZoneMarkerType.CIRCLE,
       select: this.select,
+      refresh: this.refresh,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -980,15 +950,16 @@ export default class BaseMap extends React.Component {
 
   renderImage({ code, x, y, width, height, data }, interactive) {
     const mapZoneMarker = new MapZoneMarker({
+      type: ZoneMarkerType.IMG,
       code,
-      x,
-      y,
+      x: x + width / 2,
+      y: y + height / 2,
       width,
       height,
       data,
       interactive,
-      type: ZoneMarkerType.IMG,
       select: this.select,
+      refresh: this.refresh,
     });
     this.zoneMap.set(code, mapZoneMarker);
     this.pixiUtils.viewportAddChild(mapZoneMarker);
@@ -1006,6 +977,7 @@ export default class BaseMap extends React.Component {
       interactive,
       color: color || 0xffffff,
       select: this.select,
+      refresh: this.refresh,
     });
     this.labelMap.set(code, mapLabelMarker);
     this.pixiUtils.viewportAddChild(mapLabelMarker);

@@ -10,10 +10,11 @@ import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from 
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
 import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
+import { Elevator } from '@/entities';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
-  const { dispatch, mapRatio, mapContext, shortcutToolVisible } = props;
+  const { dispatch, mapRatio, mapContext, shortcutToolVisible, selections } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
@@ -129,7 +130,18 @@ const EditorMapContainer = (props) => {
         currentLogicArea,
       );
       const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
-      mapContext.renderElevator(logicElevator);
+      const elevators = mapContext.renderElevator(logicElevator, false);
+
+      // 判断是否有需要在切换逻辑区时候自动选中的电梯
+      if (
+        logicElevator.length > 0 &&
+        selections.length === 1 &&
+        selections[0] instanceof Elevator
+      ) {
+        const currentElevator = elevators[selections[0].id];
+        currentElevator.onSelect();
+        window.$$dispatch({ type: 'editor/updateSelections', payload: [currentElevator] });
+      }
     }
   }
 
@@ -337,6 +349,7 @@ export default connect(({ editor }) => {
     mapContext,
     leftActiveCategory,
     shortcutToolVisible,
+    selections,
   } = editor;
   return {
     mapRatio,
@@ -347,5 +360,6 @@ export default connect(({ editor }) => {
     mapContext,
     leftActiveCategory,
     shortcutToolVisible,
+    selections,
   };
 })(memo(EditorMapContainer));

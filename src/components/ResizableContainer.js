@@ -4,6 +4,7 @@ import { isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { Text } from '@/entities';
+import { ZoneMarkerType } from '@/config/consts';
 
 const Tiny_Rotate_Offset = 200;
 
@@ -97,17 +98,10 @@ export default class ResizableContainer extends PIXI.Container {
 
   onElementPointerUp = (event) => {
     if (!this.isPointerDown) return;
-    // 如果进行了拖拽，就不判定是选择
+    // 如果进行了拖拽，就判定不是选择
     if (!this.mDragging) {
-      if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
-        if (!this.toolShown) {
-          this.toolShown = !this.toolShown;
-          this.ctrlSelect();
-        }
-      } else {
-        this.toolShown = !this.toolShown;
-        this.select(this.toolShown);
-      }
+      this.toolShown = !this.toolShown;
+      this.select(event);
       this.switchResizeToolShown(this.toolShown);
     }
     this.data = null;
@@ -117,7 +111,8 @@ export default class ResizableContainer extends PIXI.Container {
   };
 
   createHandler(cursor) {
-    const handle = new PIXI.Graphics();
+    const handle = new SmoothGraphics();
+    handle.lineStyle(10, this.handlerColor, 1);
     handle.beginFill(this.handlerColor);
     handle.drawRect(0, 0, this.handlerSize, this.handlerSize);
     handle.endFill();
@@ -194,7 +189,7 @@ export default class ResizableContainer extends PIXI.Container {
       this.border.zIndex = 1;
     }
 
-    if (this.boxType === 'Rect' && isNull(this.hScaleHandler)) {
+    if (this.type === ZoneMarkerType.RECT && isNull(this.hScaleHandler)) {
       this.hScaleHandler = this.addChild(this.createHandler('e-resize'));
       this.hScaleHandler.x = width / 2;
       this.hScaleHandler.y = 0;
@@ -205,7 +200,7 @@ export default class ResizableContainer extends PIXI.Container {
         .on('pointerupoutside', this.onHScaleToolUp);
     }
 
-    if (this.boxType === 'Rect' && isNull(this.vScaleHandler)) {
+    if (this.type === ZoneMarkerType.RECT && isNull(this.vScaleHandler)) {
       this.vScaleHandler = this.addChild(this.createHandler('s-resize'));
       this.vScaleHandler.x = 0;
       this.vScaleHandler.y = height / 2;
@@ -227,7 +222,7 @@ export default class ResizableContainer extends PIXI.Container {
         .on('pointerupoutside', this.onScaleToolUp);
     }
 
-    if (this.boxType === 'Rect' && isNull(this.rotateHandler)) {
+    if (this.type === ZoneMarkerType.RECT && isNull(this.rotateHandler)) {
       this.rotateHandler = this.addChild(this.createTinyHandler('tiny_rotate', 'grabbing'));
       this.rotateHandler.x = 0;
       this.rotateHandler.y = -height / 2 - Tiny_Rotate_Offset;
