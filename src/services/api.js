@@ -361,6 +361,14 @@ export async function fetchMaintain(agvType, params) {
   });
 }
 
+// 请求切换小车手动模式
+export async function fetchManualMode(agvType,params) {
+  return request(`/${NameSpace[agvType]}/agv/action/manualMode`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
 // 下载固件--固件 查询SFTP上上传的文件名称
 export async function fetchFirmWarList(agvType, params) {
   return request(`/${NameSpace[agvType]}/file/selectUploadFileNameList`, {

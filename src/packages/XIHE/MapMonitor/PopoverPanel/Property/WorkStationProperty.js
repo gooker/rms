@@ -65,7 +65,7 @@ const WorkStationProperty = (props) => {
 
   function showStationReport() {
     dispatch({
-      type: 'monitor/saveStationElement',
+      type: 'monitor/saveCategoryModal',
       payload: 'WorkStation',
     });
   }
@@ -281,23 +281,6 @@ const WorkStationProperty = (props) => {
               <InputNumber value={data?.maxCount} min={0} />
             </div>
           </div>
-
-          {/* 查看报表 */}
-          <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'station'}
-                style={{ width: 35 }}
-                src={require('@/packages/XIHE/MapMonitor/category/report_category.svg').default}
-              />
-              <span>
-                <FormattedMessage id={'app.common.report'} />
-              </span>
-            </div>
-            <div style={{ cursor: 'pointer' }} onClick={showStationReport}>
-              <EyeOutlined />
-            </div>
-          </div>
         </div>
 
         {/* 操作区域*/}
@@ -350,6 +333,22 @@ const WorkStationProperty = (props) => {
               </div>
               <div>
                 <FormattedMessage id={'app.common.status.end'} />
+              </div>
+            </div>
+          </div>
+
+          {/* 报表 */}
+          <div className={styles.rightSideAgvContentOperation}>
+            <div className={styles.rightSideAgvContentOperationItem2}>
+              <div onClick={showStationReport}>
+                <img
+                  alt={'station'}
+                  style={{ width: 25, height: 25 }}
+                  src={require('@/packages/XIHE/MapMonitor/category/report_category.svg').default}
+                />
+              </div>
+              <div>
+                <FormattedMessage id={'app.common.report'} />
               </div>
             </div>
           </div>

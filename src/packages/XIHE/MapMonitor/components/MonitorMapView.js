@@ -436,7 +436,11 @@ class MonitorMapView extends BaseMap {
   };
 
   // ********** 潜伏车 ********** //
-  addLatentAGV = (latentAGVData) => {
+  /**
+   * @param latentAGVData 数据
+   * @param callback 点击回调
+   */
+  addLatentAGV = (latentAGVData, callback) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**AGV就会创建一台车[offline]
@@ -448,6 +452,7 @@ class MonitorMapView extends BaseMap {
       return latentAGV;
     }
     latentAGV = new LatentAGV({
+      $$formData: latentAGVData, // 原始DB数据
       id: latentAGVData.robotId,
       x: latentAGVData.x || cellEntity?.x,
       y: latentAGVData.y || cellEntity?.y,
@@ -459,7 +464,9 @@ class MonitorMapView extends BaseMap {
       cellId: latentAGVData.currentCellId,
       angle: latentAGVData.currentDirection,
       active: true,
-      click: this.onAgvClick,
+      // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
+      select: typeof callback === 'function' ? callback : this.select,
+      // click: this.onAgvClick,
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentAGV);
     this.idAGVMap.set(`${latentAGVData.robotId}`, latentAGV);
@@ -1108,7 +1115,7 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 渲染小车行驶路径路径 ********************** //
   registerShowTaskPath = (agvTasks = [], showTaskPath) => {
-    this.filteredAGV = window.g_app._store.getState().monitorView.selectAgv;
+    this.filteredAGV = window.$$state().monitorView.selectAgv;
     this.showTaskPath = showTaskPath;
 
     // 前置处理
@@ -1187,7 +1194,7 @@ class MonitorMapView extends BaseMap {
   };
 
   renderTaskPaths = (agvId) => {
-    const { showFullPath, showTagetLine } = window.$$state.monitorView.routeView;
+    const { showFullPath, showTagetLine } = window.$$state().monitorView.routeView;
 
     // 渲染新的路径
     const _this = this;
@@ -1417,7 +1424,7 @@ class MonitorMapView extends BaseMap {
   // ************************ 点位热度 ********************** //
   renderCellHeat = (data) => {
     if (!data) return;
-    const { costHeatOpacity } = window.g_app._store.getState().monitorView;
+    const { costHeatOpacity } = window.$$state().monitorView;
     // 每次渲染前都是替换，所以第一步需要清除所有点位热度对象
     this.clearCellHeat();
     data.forEach((item) => {

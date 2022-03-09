@@ -32,12 +32,6 @@ const WorkStationReport = (props) => {
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
     // dispatch({ type: 'monitor/saveCategoryPanel', payload: null });
-    dispatch({
-      type: 'monitor/saveStationElement',
-      payload: {
-        type: null,
-      },
-    });
   }
 
   const { name, angle, stopCellId} = workStation;

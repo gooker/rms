@@ -1,13 +1,15 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, LatentAGVSize } from '@/config/consts';
+import { zIndex, LatentAGVSize, SelectionType } from '@/config/consts';
 import { AGVType } from '@/config/config';
 import { isNull } from '@/utils/util';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class LatentAGV extends PIXI.Container {
   constructor(props) {
     super();
+    this.$$formData = props.$$formData;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
@@ -35,11 +37,15 @@ export default class LatentAGV extends PIXI.Container {
 
     this.addErrorLevelIcon();
 
+    this.select = props.select;
+    this.selected = false; // 是否被框选
+    this.createSelectionBorder();
+
     if (props.active) {
       this.agv.interactive = true;
       this.agv.buttonMode = true;
       this.agv.interactiveChildren = false;
-      this.agv.on('pointerdown', () => props.click({ type: this.type, id: this.id }));
+      this.agv.on('pointerdown', this.click);
       // this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
     }
   }
@@ -63,6 +69,46 @@ export default class LatentAGV extends PIXI.Container {
     }
     return null;
   }
+
+  // 选择相关
+
+  // 创建选择边框
+  createSelectionBorder() {
+    this.selectionBorder = new SmoothGraphics();
+    this.selectionBorder.lineStyle(5, 0xff0000);
+    const { width, height } = this.getLocalBounds();
+    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.alpha = 0.8;
+    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.visible = false;
+    this.addChild(this.selectionBorder);
+  }
+
+  onSelect = () => {
+    if (!this.selected) {
+      this.selected = true;
+      this.selectionBorder.visible = true;
+    }
+  };
+
+  onUnSelect = () => {
+    if (this.selected) {
+      this.selected = false;
+      this.selectionBorder.visible = false;
+    }
+  };
+
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
+    }
+  };
 
   create() {
     const latentState = switchAGVState('latent', this.state)[0];
