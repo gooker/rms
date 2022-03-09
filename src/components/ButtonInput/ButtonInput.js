@@ -44,7 +44,7 @@ export default class ButtonInput extends React.PureComponent {
             allowClear
             value={value}
             disabled={disabled}
-            onChange={(ev) => onChange(ev.target.value)}
+            onChange={onChange}
             style={{ width: '100%' }}
           />
         ) : (

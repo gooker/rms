@@ -4,7 +4,7 @@ import { createFromIconfontCN } from '@ant-design/icons';
 
 const ExtraIconCharge = createFromIconfontCN({
   // scriptUrl: ['IconFont.js'],
-  scriptUrl: ['//at.alicdn.com/t/font_2597007_ykak8dg0fo.js'],
+  scriptUrl: ['//at.alicdn.com/t/font_2597007_n362mh54by.js'],
 });
 
 export function getIconFont(icon, style) {

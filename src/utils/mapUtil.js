@@ -17,6 +17,7 @@ import {
   getAgvSelectBorderTexture,
   getCellHeatTexture,
   getEStopTexture,
+  getIntersectionDirectionTexture,
   getQrCodeSelectBorderTexture,
   getRectLock,
   getTaskPathTexture,
@@ -1386,6 +1387,9 @@ export function loadEditorExtraTextures(renderer) {
       'cellSelectBorderTexture',
     );
 
+    // 交汇点
+    PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
+
     // 急停区
     PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
     PIXI.Texture.addToCache(
@@ -1405,6 +1409,9 @@ export function loadMonitorExtraTextures(renderer) {
   return new Promise((resolve) => {
     // 背景
     PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
+
+    // 交汇点
+    PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
 
     // 任务路径
     PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed), '_passedTaskPath');

@@ -1,13 +1,14 @@
 import ResizableContainer from '@/components/ResizableContainer';
 import { Text } from '@/entities';
-import { MapSelectableSpriteType, zIndex } from '@/config/consts';
+import { MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
 export default class MapLabelMarker extends ResizableContainer {
   constructor(props) {
     const { code, x, y, color, text, width, height } = props;
-    const { refresh, select, ctrlSelect, interactive } = props;
+    const { refresh, select, interactive } = props;
 
     super();
+    this.type = MapSelectableSpriteType.LABEL;
     this.x = x;
     this.y = y;
     this.code = code;
@@ -15,16 +16,20 @@ export default class MapLabelMarker extends ResizableContainer {
     this.color = color;
     this.refresh = refresh;
     this.zIndex = zIndex.label;
-    this.select = (add) => {
-      select({ id: code, type: MapSelectableSpriteType.LABEL }, add);
+    this.select = (event) => {
+      this.click(event, select);
     };
-    this.ctrlSelect = () => {
-      ctrlSelect({ id: code, type: MapSelectableSpriteType.LABEL });
-    };
-
     const element = this.createElement(width, height);
     this.create(element, this.updateZonMarker, zIndex.label, interactive);
   }
+
+  click = (event, select) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      select && select(this, SelectionType.CTRL);
+    } else {
+      select && select(this, SelectionType.SINGLE);
+    }
+  };
 
   createElement(width, height) {
     let element = new Text(this.text, 0, 0, this.color, true, 200);

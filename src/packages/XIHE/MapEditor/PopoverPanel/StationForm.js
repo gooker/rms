@@ -68,7 +68,7 @@ const StationForm = (props) => {
         if (result.type === 'update') {
           const { pre, current } = result;
           mapContext.removeCommonFunction(pre);
-          mapContext.renderCommonFunction([current], null, true);
+          mapContext.renderCommonFunction([current]);
         }
         mapContext.refresh();
       });

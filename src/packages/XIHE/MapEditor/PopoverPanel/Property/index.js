@@ -3,25 +3,28 @@ import { connect } from '@/utils/RmsDva';
 import CellProperty from './CellProperty';
 import MapProperty from './MapProperty';
 import CostProperty from './CostProperty';
+import StationForm from '../StationForm';
+import ChargerForm from '../ChargerForm';
+import DeliveryForm from '../DeliveryForm';
+import ElevatorForm from '../ElevatorForm';
 import WorkStationForm from '../WorkStationForm';
+import IntersectionForm from '../IntersectionForm';
 import { MapSelectableSpriteType } from '@/config/consts';
-import styles from '../../editorLayout.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
-import StationForm from '@/packages/XIHE/MapEditor/PopoverPanel/StationForm';
-import ChargerForm from '@/packages/XIHE/MapEditor/PopoverPanel/ChargerForm';
-import DeliveryForm from '@/packages/XIHE/MapEditor/PopoverPanel/DeliveryForm';
-import ElevatorForm from '@/packages/XIHE/MapEditor/PopoverPanel/ElevatorForm';
+import styles from '../../editorLayout.module.less';
 
 const Property = (props) => {
-  const { height, selections, showMapInfo, showProp, showSelections } = props;
+  const { height, lockedProps, showMapInfo, categoryProps } = props;
 
   function renderContent() {
+    const showProp = !!categoryProps;
     if (showMapInfo) {
       return <MapProperty />;
     }
     if (showProp) {
-      const selection = selections[0];
-      switch (selection.type) {
+      const selection = categoryProps;
+      const propCategory = lockedProps || selection.type;
+      switch (propCategory) {
         case MapSelectableSpriteType.CELL:
           return <CellProperty data={selection} />;
         case MapSelectableSpriteType.ROUTE:
@@ -68,6 +71,20 @@ const Property = (props) => {
             </>
           );
         }
+        case MapSelectableSpriteType.INTERSECTION: {
+          const intersectionData = selection.$$formData;
+          return (
+            <>
+              <div>
+                <FormattedMessage id={'app.map.intersection'} />
+                <FormattedMessage id={'app.common.prop'} />
+              </div>
+              <div>
+                <IntersectionForm flag={intersectionData.flag} intersection={intersectionData} />
+              </div>
+            </>
+          );
+        }
         case MapSelectableSpriteType.DELIVERY: {
           const deliveryData = selection.$$formData;
           return (
@@ -100,20 +117,21 @@ const Property = (props) => {
           return null;
       }
     }
-    if (showSelections) {
-      return <span>showSelections</span>;
-    }
   }
 
-  return (
-    <div style={{ height }} className={styles.categoryPanel}>
-      {renderContent()}
-    </div>
-  );
+  const component = renderContent();
+
+  if (component) {
+    return (
+      <div style={{ height }} className={styles.categoryPanel}>
+        {component}
+      </div>
+    );
+  }
+  return null;
 };
 export default connect(({ editor }) => ({
-  selections: editor.selections,
+  lockedProps: editor.lockedProps,
+  categoryProps: editor.categoryProps,
   showMapInfo: editor.selections.length === 0,
-  showProp: editor.selections.length === 1,
-  showSelections: editor.selections.length > 1,
 }))(memo(Property));

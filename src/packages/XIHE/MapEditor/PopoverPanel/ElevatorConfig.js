@@ -1,16 +1,21 @@
-import React, { memo, useState } from 'react';
-import { Button, Divider, Form } from 'antd';
-import { CheckOutlined, RollbackOutlined } from '@ant-design/icons';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Form } from 'antd';
+import { isPlainObject } from 'lodash';
 import update from 'immutability-helper';
+import { CheckOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
 import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 
 const ElevatorConfig = (props) => {
-  const { dispatch, mapContext, replace, onBack } = props;
-  const { flag, selectCellIds, logicAreaId, currentElevator, elevatorList } = props;
+  const { dispatch, mapContext } = props;
+  const { flag, selections, logicAreaId, currentElevator, elevatorList } = props;
+
+  const selectCellIds = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
 
   const [formRef] = Form.useForm();
   const [isDouble, setIsDouble] = useState(false);
@@ -18,13 +23,7 @@ const ElevatorConfig = (props) => {
   function confirm() {
     formRef.validateFields().then((allValues) => {
       const { replaceCell, logicAreaId, innerCellId } = allValues;
-      const innerMapping = {};
-      for (let index = 0; index < replaceCell.length; index++) {
-        const element = replaceCell[index];
-        const { cellId } = element;
-        innerMapping[innerCellId[index]] = cellId;
-      }
-
+      const innerMapping = { [innerCellId[0]]: replaceCell };
       let currentElevator =
         elevatorList?.length === 0 ? { ...allValues, flag } : { ...elevatorList[flag - 1], flag };
       currentElevator = update(currentElevator, {
@@ -47,55 +46,49 @@ const ElevatorConfig = (props) => {
     });
   }
 
-  // 获取电梯点默认值, 其实就是原始地图点位
-  const defaultInnerMapping = currentElevator?.logicLocations[logicAreaId]?.innerMapping ?? {};
-  const originalCellId = defaultInnerMapping[currentElevator?.innerCellId];
+  function generateDoorsInitialValue() {
+    if (isPlainObject(currentElevator?.logicLocations)) {
+      const logicElevator = currentElevator.logicLocations[logicAreaId];
+      return isNull(logicElevator) ? [{}] : logicElevator.doors;
+    }
+    return [{}];
+  }
+
+  useEffect(() => {
+    // 获取电梯点默认值, 其实就是原始地图点位
+    const defaultInnerMapping = currentElevator?.logicLocations[logicAreaId]?.innerMapping ?? {};
+    const originalCellId = defaultInnerMapping[currentElevator?.innerCellId];
+
+    formRef.setFieldsValue({
+      logicAreaId,
+      innerCellId: currentElevator?.innerCellId,
+      replaceCell: originalCellId,
+      doors: generateDoorsInitialValue(),
+    });
+  }, [logicAreaId]);
 
   return (
     <div>
-      <div>
-        <Button onClick={onBack}>
-          <RollbackOutlined /> <FormattedMessage id={'app.button.return'} />
-        </Button>
-        <Button type={'primary'} style={{ marginLeft: 15 }} onClick={confirm}>
+      <div style={{ textAlign: 'end', marginBottom: 10 }}>
+        <Button type={'primary'} onClick={confirm}>
           <CheckOutlined /> <FormattedMessage id={'app.button.confirm'} />
         </Button>
       </div>
-      <Divider style={{ background: '#a3a3a3' }} />
       <Form form={formRef}>
-        <Form.Item hidden name={'logicAreaId'} initialValue={logicAreaId} />
-        <Form.Item hidden name={'innerCellId'} initialValue={currentElevator?.innerCellId} />
+        <Form.Item hidden name={'logicAreaId'} />
+        <Form.Item hidden name={'innerCellId'} />
 
         {/* 替换点 */}
-        <Form.List name={'replaceCell'} initialValue={[{ cellId: originalCellId }]}>
-          {(fields) => (
-            <>
-              {fields.map(({ key, name, fieldKey, ...restField }, index) => (
-                <Form.Item
-                  key={key}
-                  {...restField}
-                  name={[name, 'cellId']}
-                  fieldKey={[fieldKey, 'cellId']}
-                  label={currentElevator?.innerCellId[index]}
-                >
-                  <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
-                </Form.Item>
-              ))}
-            </>
-          )}
-        </Form.List>
+        <Form.Item name={'replaceCell'} label={currentElevator?.innerCellId[0]}>
+          <ButtonInput
+            type={'number'}
+            data={selectCellIds[0]}
+            btnDisabled={selectCellIds.length !== 1}
+          />
+        </Form.Item>
 
         {/* 电梯门 */}
-        <Form.List
-          name={'doors'}
-          initialValue={
-            currentElevator &&
-            currentElevator?.logicLocations &&
-            currentElevator.logicLocations[logicAreaId]
-              ? currentElevator.logicLocations[logicAreaId]?.doors
-              : [{}]
-          }
-        >
+        <Form.List name={'doors'}>
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name, fieldKey, ...restField }) => (
@@ -114,7 +107,11 @@ const ElevatorConfig = (props) => {
                     fieldKey={[fieldKey, 'cellId']}
                     label={formatMessage({ id: 'editor.cellType.entrance' })}
                   >
-                    <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
+                    <ButtonInput
+                      type={'number'}
+                      data={selectCellIds[0]}
+                      btnDisabled={selectCellIds.length !== 1}
+                    />
                   </Form.Item>
                   <Form.Item
                     {...restField}
@@ -122,7 +119,11 @@ const ElevatorConfig = (props) => {
                     fieldKey={[fieldKey, 'leaveCellId']}
                     label={formatMessage({ id: 'editor.cellType.exit' })}
                   >
-                    <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
+                    <ButtonInput
+                      type={'number'}
+                      data={selectCellIds[0]}
+                      btnDisabled={selectCellIds.length !== 1}
+                    />
                   </Form.Item>
                   <Form.Item
                     {...restField}
@@ -130,14 +131,18 @@ const ElevatorConfig = (props) => {
                     fieldKey={[fieldKey, 'waitCellId']}
                     label={formatMessage({ id: 'editor.cellType.waiting' })}
                   >
-                    <ButtonInput data={selectCellIds[0]} btnDisabled={selectCellIds.length !== 1} />
+                    <ButtonInput
+                      type={'number'}
+                      data={selectCellIds[0]}
+                      btnDisabled={selectCellIds.length !== 1}
+                    />
                   </Form.Item>
                 </div>
               ))}
               <Form.Item>
                 {isDouble ? (
                   <Button
-                    type="primary"
+                    type="dashed"
                     onClick={() => {
                       setIsDouble(false);
                       remove(fields[1]?.name);
@@ -148,7 +153,7 @@ const ElevatorConfig = (props) => {
                   </Button>
                 ) : (
                   <Button
-                    type="primary"
+                    type="dashed"
                     onClick={() => {
                       setIsDouble(true);
                       add();
@@ -167,12 +172,7 @@ const ElevatorConfig = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selections, currentMap, mapContext } = editor;
+  const { selections, currentMap, mapContext, currentLogicArea } = editor;
   const { elevatorList } = currentMap;
-
-  const selectCellIds = selections
-    .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
-
-  return { selectCellIds, mapContext, elevatorList };
+  return { selections, mapContext, elevatorList, logicAreaId: currentLogicArea };
 })(memo(ElevatorConfig));

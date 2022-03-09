@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, some, sortBy, isEqual } from 'lodash';
+import { find, findIndex, groupBy, some, sortBy, isEqual, isPlainObject } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
@@ -23,7 +23,7 @@ import {
   transformCurveData,
   validateMapData,
 } from '@/utils/mapUtil';
-import { LogicArea } from '@/entities';
+import { Elevator, LogicArea } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
   deleteMapById,
@@ -39,6 +39,8 @@ import {
 import { activeMap } from '@/services/api';
 import { LeftCategory, RightCategory } from '@/packages/XIHE/MapEditor/enums';
 import { MapSelectableSpriteType } from '@/config/consts';
+
+const { CELL, ROUTE } = MapSelectableSpriteType;
 
 // 后台字段与Texture Key的对应关系
 const FieldTextureKeyMap = {
@@ -84,6 +86,8 @@ const EditorState = {
 
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
+  categoryProps: null, // 属性栏正在展示的元素
+  lockedProps: null, // 属性栏，部分元素展示时需要锁定
 
   positionVisible: false, // 定位功能弹窗
   shortcutToolVisible: false, // 是否显示便捷操作工具
@@ -149,36 +153,6 @@ export default {
         zoneMarkerVisible: action.payload,
       };
     },
-    updateSelections(state, action) {
-      const selections = action.payload;
-      // let _selections;
-      // // 存在增量选择，需要删除重复的对象
-      // if (incremental) {
-      //   _selections = [...state.selections];
-      //   selections.forEach((selection) => {
-      //     if (!some(state.selections, selection)) {
-      //       _selections.push(selection);
-      //     }
-      //   });
-      // } else {
-      //   _selections = selections;
-      // }
-      const newState = {
-        ...state,
-        selections,
-        shortcutToolVisible: selections.length > 0,
-      };
-      if (selections.length === 1) {
-        if (state.categoryPanel === null) {
-          newState.categoryPanel = RightCategory.Prop;
-        }
-      } else {
-        if (state.categoryPanel === RightCategory.Prop) {
-          newState.categoryPanel = null;
-        }
-      }
-      return newState;
-    },
     updateLabelInputVisible(state, action) {
       return {
         ...state,
@@ -194,11 +168,83 @@ export default {
         labelMarkerVisible: false,
       };
     },
-    updateEditPanelVisible(state, action) {
-      return {
+    updateSelections(state, { payload }) {
+      let selections = [];
+      let incremental = false;
+      if (isPlainObject(payload)) {
+        selections = payload.selections;
+        incremental = payload.incremental;
+      } else {
+        selections = payload;
+      }
+
+      let _selections = selections;
+      // 存在增量选择，需要删除重复的对象
+      if (incremental) {
+        _selections = [...state.selections];
+        selections.forEach((selection) => {
+          if (!some(state.selections, selection)) {
+            _selections.push(selection);
+          }
+        });
+      }
+
+      const newState = {
         ...state,
-        categoryPanel: action.payload,
+        selections: _selections,
+        shortcutToolVisible: _selections.length > 0,
       };
+
+      if (_selections.length === 1) {
+        if (state.categoryPanel === null) {
+          newState.categoryPanel = RightCategory.Prop;
+        }
+
+        // 点位和线条可被替换
+        if (state.categoryProps === null || [CELL, ROUTE].includes(state.categoryProps.type)) {
+          newState.categoryProps = _selections[0];
+        }
+
+        // 除了点位和线条，可以互相替换
+        if (
+          ![CELL, ROUTE].includes(state.categoryProps) &&
+          ![CELL, ROUTE].includes(selections[0].type)
+        ) {
+          newState.categoryProps = _selections[0];
+          newState.lockedProps = _selections[0].type;
+        }
+      } else {
+        newState.categoryProps = null;
+        newState.lockedProps = null;
+        if (state.categoryPanel === RightCategory.Prop) {
+          newState.categoryPanel = null;
+        }
+      }
+      return newState;
+    },
+    updateEditPanelVisible(state, action) {
+      if (action.payload === null) {
+        return {
+          ...state,
+          categoryPanel: null,
+          categoryProps: null,
+          lockedProps: null,
+        };
+      } else {
+        if (action.payload === RightCategory.Prop) {
+          const selection = state.selections[0];
+          return {
+            ...state,
+            categoryPanel: action.payload,
+            categoryProps: selection,
+            lockedProps: [CELL, ROUTE].includes(selection?.type) ? null : selection?.type,
+          };
+        }
+        return {
+          ...state,
+          categoryPanel: action.payload,
+        };
+      }
     },
     saveMapContext(state, action) {
       return {
@@ -230,12 +276,15 @@ export default {
         mapList: action.payload,
       };
     },
+
+    // 用于保存地图
     saveCurrentMapOnly(state, action) {
       return {
         ...state,
         currentMap: action.payload,
       };
     },
+    // 用于切换地图
     saveCurrentMap(state, action) {
       return {
         ...state,
@@ -243,14 +292,25 @@ export default {
         currentLogicArea: 0,
         currentRouteMap: 'DEFAULT',
         preRouteMap: null,
+        selections: [],
       };
     },
     saveCurrentLogicArea(state, action) {
+      // 电梯配置的特殊性，需要切换逻辑区，所以这里切换逻辑区就不删除selections中的电梯，并且在重新渲染电梯数据的时候替换掉
+      const { selections, categoryProps } = state;
+      let newSelections = [];
+      if (selections.length === 1 && selections[0] instanceof Elevator) {
+        newSelections = selections;
+      } else if (categoryProps instanceof Elevator) {
+        newSelections = [categoryProps];
+      }
+
       return {
         ...state,
         currentLogicArea: action.payload,
         currentRouteMap: 'DEFAULT',
         preRouteMap: null,
+        selections: newSelections,
       };
     },
     saveCurrentRouteMap(state, action) {
@@ -272,12 +332,6 @@ export default {
       return {
         ...state,
         currentCells: action.payload,
-      };
-    },
-    saveVisit(state, action) {
-      return {
-        ...state,
-        visible: action.payload,
       };
     },
   },
@@ -330,18 +384,6 @@ export default {
     *checkoutMap({ payload }, { put, call }) {
       const currentMap = yield call(fetchMapDetail, payload);
       yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
-    },
-
-    *updateModalVisit({ payload }, { put, select }) {
-      const { visible } = yield select((state) => state.editor);
-      const { type, value, extraData } = payload;
-      visible[type] = value;
-      if (extraData) {
-        visible.extraData = extraData;
-      } else {
-        visible.extraData = null;
-      }
-      yield put({ type: 'saveVisit', payload: visible });
     },
 
     *reloadMap(_, { select, call, put }) {
@@ -656,7 +698,7 @@ export default {
           rangeEnd: { $set: rangeEnd },
         },
       });
-      message.success(formatMessage({ id: 'app.leftContent.updateLogic.success' }));
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
     },
 
     *fetchDeleteLogicArea({ payload }, { select, put }) {

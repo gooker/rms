@@ -47,7 +47,7 @@ const WorkStationForm = (props) => {
         if (result.type === 'update') {
           const { pre, current } = result;
           pre && mapContext.removeWorkStation(pre);
-          mapContext.addWorkStation(current, null, true);
+          mapContext.addWorkStation(current);
         }
         mapContext.refresh();
       });

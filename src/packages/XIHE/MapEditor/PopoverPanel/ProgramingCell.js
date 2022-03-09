@@ -10,7 +10,7 @@ const ProgramingCell = (props) => {
   const [formRef] = Form.useForm();
 
   return (
-    <div>
+    <div style={{ paddingTop: 20 }}>
       <Form labelWrap form={formRef} layout={'vertical'}>
         <Form.Item name={'zone'} label={<FormattedMessage id={'app.map.cell'} />}>
           <Select>

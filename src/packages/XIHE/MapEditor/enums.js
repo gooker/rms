@@ -40,6 +40,8 @@ export const RightCategory = {
   Delivery: 'DELIVERY',
   Intersection: 'INTERSECTION',
   Programing: 'PROGRAMING',
+  Selections: 'SELECTIONS',
+  Layer: 'LAYER',
   Template: 'TEMPLATE',
   History: 'HISTORY',
 };
@@ -92,6 +94,16 @@ export const EditorRightTools = [
     label: <FormattedMessage id={'app.map.view'} />,
     value: RightCategory.View,
     icon: <EyeOutlined />,
+  },
+  {
+    label: <FormattedMessage id={'editor.tools.selections'} />,
+    value: RightCategory.Selections,
+    icon: <IconFont type={'icon-selections'} />,
+  },
+  {
+    label: <FormattedMessage id={'editor.tools.layer'} />,
+    value: RightCategory.Layer,
+    icon: <IconFont type={'icon-layout'} />,
   },
   {
     label: <FormattedMessage id={'app.map.cell'} />,

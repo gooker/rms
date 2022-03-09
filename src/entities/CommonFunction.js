@@ -97,9 +97,9 @@ export default class CommonFunction extends PIXI.Container {
     this.selectionBorder = new SmoothGraphics();
     this.selectionBorder.lineStyle(5, 0xff0000);
     const { width, height } = this.getLocalBounds();
-    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.drawRect(0, -100, width * 1.3, height * 1.2);
     this.selectionBorder.alpha = 0.8;
-    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: (height * 1.2) / 2 };
     this.selectionBorder.visible = false;
     this.addChild(this.selectionBorder);
   }

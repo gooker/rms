@@ -10,6 +10,7 @@ import { connect } from '@/utils/RmsDva';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
+import { isNull } from '@/utils/util';
 
 @connect()
 class EditorMapView extends BaseMap {
@@ -35,7 +36,6 @@ class EditorMapView extends BaseMap {
 
     // 选择相关
     this.selectedCells = []; // 缓存选中的点位ID
-    this.selections = []; // 选中的元素数据
   }
 
   async componentDidMount() {
@@ -211,31 +211,33 @@ class EditorMapView extends BaseMap {
     const _this = this;
 
     // 先判断是否是取消选择
-    const isCull = _this.selections.includes(entity);
+    let selections = [...window.$$state().editor.selections];
+    const isCull = selections.includes(entity);
     if (isCull) {
-      _this.selections = this.selections.filter((item) => item !== entity);
+      selections = selections.filter((item) => item !== entity);
     } else {
       if (mode === SelectionType.SINGLE) {
         if (entity instanceof Cell) {
           _this.currentClickedCell = entity;
         }
-        _this.selections.forEach((entity) => entity.onUnSelect());
-        _this.selections.length = 0;
-        _this.selections.push(entity);
+        selections.forEach((entity) => entity.onUnSelect());
+        selections.length = 0;
+        selections.push(entity);
       } else if (mode === SelectionType.CTRL) {
         if (entity instanceof Cell) {
           _this.currentClickedCell = entity;
         }
-        _this.selections.push(entity);
+        selections.push(entity);
       } else {
-        _this.shiftSelectCell(entity);
+        selections = _this.shiftSelectCell(entity);
       }
     }
     _this.refresh();
-    window.$$dispatch({ type: 'editor/updateSelections', payload: [..._this.selections] });
+    window.$$dispatch({ type: 'editor/updateSelections', payload: selections });
   };
 
   shiftSelectCell = (cell) => {
+    if (isNull(this.currentClickedCell)) return;
     const _this = this;
     const { editor } = window.$$state();
     const cells = editor.currentCells;
@@ -264,7 +266,8 @@ class EditorMapView extends BaseMap {
     _this.currentClickedCell = cell;
 
     // 删除重复点位数据
-    const storedCellIds = this.selections
+    const selections = [...window.$$state().editor.selections];
+    const storedCellIds = selections
       .filter((item) => item.type === MapSelectableSpriteType.CELL)
       .map(({ id }) => id);
 
@@ -273,11 +276,12 @@ class EditorMapView extends BaseMap {
       .map((cellId) => _this.idCellMap.get(cellId));
 
     // 数据同步
-    _this.selections = [..._this.selections, ...additional];
+    return [...selections, ...additional];
   };
 
   batchSelectCellByDirection = (prop) => {
-    const baseCellIds = this.selections
+    let selections = [...window.$$state().editor.selections];
+    const baseCellIds = selections
       .filter((item) => item.type === MapSelectableSpriteType.CELL)
       .map(({ id }) => id);
 
@@ -299,7 +303,7 @@ class EditorMapView extends BaseMap {
       });
 
       // 删除重复点位数据
-      const storedCellIds = this.selections
+      const storedCellIds = selections
         .filter((item) => item.type === MapSelectableSpriteType.CELL)
         .map(({ id }) => id);
 
@@ -308,8 +312,8 @@ class EditorMapView extends BaseMap {
         .map((cellId) => this.idCellMap.get(cellId));
 
       this.refresh();
-      this.selections = [...this.selections, ...additional];
-      window.$$dispatch({ type: 'editor/updateSelections', payload: [...this.selections] });
+      selections = [...selections, ...additional];
+      window.$$dispatch({ type: 'editor/updateSelections', payload: selections });
     }
   };
 
@@ -362,19 +366,6 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 框选相关 **********************
-  rangeSelection(selections, selected = true) {
-    if (Array.isArray(selections)) {
-      this.selections = selections;
-      selections.forEach((selection) => {
-        const entity = this.pickEntityBySelection(selection, false);
-        if (entity) {
-          selected ? entity.onSelect() : entity.onUnSelect();
-        }
-      });
-      this.refresh();
-    }
-  }
-
   /**
    * @param selection 选中的元素数据
    * @param remove 是否删除Map里对应的数据
@@ -422,14 +413,8 @@ class EditorMapView extends BaseMap {
         entity.destroy({ children: true });
       }
     });
-
-    // 同步selections
-    this.selections = [];
-    window.$$dispatch({
-      type: 'editor/updateSelections',
-      payload: { incremental: false, selections: [] },
-    });
     this.refresh();
+    window.$$dispatch({ type: 'editor/updateSelections', payload: [] });
   };
 
   render() {

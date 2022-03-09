@@ -28,7 +28,7 @@ const LabelComponent = (props) => {
           marginBottom: layout !== 'row' ? '3px' : 0,
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
+          justifyContent: 'flex-start',
         }}
       >
         {label}:

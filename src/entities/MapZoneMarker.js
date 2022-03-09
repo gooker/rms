@@ -1,13 +1,13 @@
 import * as PIXI from 'pixi.js';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { Text } from '@/entities';
+import { SelectionType, zIndex, ZoneMarkerType } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
-import { MapSelectableSpriteType, zIndex } from '@/config/consts';
+import { isStrictNull } from '@/utils/util';
 
 export default class MapZoneMarker extends ResizableContainer {
   constructor(props) {
     const { code, type, x, y, radius, width, height, color, text, data } = props;
-    const { interactive, select, ctrlSelect, refresh } = props;
+    const { interactive, select, refresh } = props;
     super();
     this.x = x;
     this.y = y;
@@ -17,12 +17,8 @@ export default class MapZoneMarker extends ResizableContainer {
     this.color = color;
     this.text = text;
     this.radius = radius;
-    this.boxType = 'Rect';
-    this.select = (add) => {
-      select({ id: code, type: MapSelectableSpriteType.ZONE }, add);
-    };
-    this.ctrlSelect = () => {
-      ctrlSelect({ id: code, type: MapSelectableSpriteType.ZONE });
+    this.select = (event) => {
+      this.click(event, select);
     };
     this.refresh = refresh;
     this.zIndex = zIndex.zoneMarker;
@@ -33,15 +29,24 @@ export default class MapZoneMarker extends ResizableContainer {
     this.create(this.$$container, this.updateZonMarker, zIndex.zoneMarker, interactive);
   }
 
+  click = (event, select) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      select && select(this, SelectionType.CTRL);
+    } else {
+      select && select(this, SelectionType.SINGLE);
+    }
+  };
+
   createElement(width, height) {
-    if (['RECT', 'CIRCLE'].includes(this.type)) {
-      const graphics = new SmoothGraphics();
+    if ([ZoneMarkerType.RECT, ZoneMarkerType.CIRCLE].includes(this.type)) {
+      const graphics = new PIXI.Graphics();
       graphics.lineStyle(0);
       graphics.beginFill(this.color);
-      if (this.type === 'RECT') {
+      if (this.type === ZoneMarkerType.RECT) {
         graphics.drawRect(0, 0, width, height);
+        graphics.pivot = { x: width / 2, y: height / 2 };
       }
-      if (this.type === 'CIRCLE') {
+      if (this.type === ZoneMarkerType.CIRCLE) {
         graphics.drawCircle(0, 0, this.radius);
       }
       graphics.endFill();
@@ -52,19 +57,23 @@ export default class MapZoneMarker extends ResizableContainer {
       this.zoneArea = new PIXI.Sprite(imageTexture);
       this.zoneArea.width = width;
       this.zoneArea.height = height;
+      this.zoneArea.anchor.set(0.5);
     }
     this.zoneArea.alpha = 0.7;
-    this.zoneArea.pivot = { x: width / 2, y: height / 2 };
     this.zoneArea.zIndex = 1;
     this.$$container.addChild(this.zoneArea);
 
     // 渲染名称
-    this.renderName(width, height);
+    if (this.type === ZoneMarkerType.CIRCLE) {
+      this.renderName(this.radius * 0.5, this.radius * 0.5);
+    } else {
+      this.renderName(width * 0.5, height * 0.5);
+    }
   }
 
   renderName(width, height) {
-    // 添加Label
-    this.textSprite = new Text(this.text, 0, 0, '0xffffff', true, 200);
+    if (isStrictNull(this.text)) return;
+    this.textSprite = new Text(this.text, 0, 0, 0xffffff, true, 200);
     let textWidth, textHeight;
     if (width >= height) {
       textHeight = height;
@@ -94,7 +103,12 @@ export default class MapZoneMarker extends ResizableContainer {
       this.$$container.removeChild(this.textSprite);
       this.textSprite.destroy(true);
     }
-    this.renderName(width, height);
+    // 渲染名称
+    if (this.type === ZoneMarkerType.CIRCLE) {
+      this.renderName(width * 0.6, width * 0.6);
+    } else {
+      this.renderName(width, height);
+    }
     this.refresh();
   }
 }

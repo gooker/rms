@@ -5,6 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
 import { filterMapSpriteByRange } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
+import { DumpBasket } from '@/entities';
 
 // 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
 class EditorBodyLeft extends React.PureComponent {
@@ -175,14 +176,15 @@ class EditorBodyLeft extends React.PureComponent {
   // 取消选择所以已选中的元素
   cancelSelections = () => {
     const { dispatch, selections, mapContext } = this.props;
-    mapContext.rangeSelection(selections, false);
-    dispatch({ type: 'editor/updateSelections', payload: { incremental: false, selections: [] } });
+    selections.forEach((entity) => entity.onUnSelect());
+    mapContext.refresh();
+    dispatch({ type: 'editor/updateSelections', payload: [] });
   };
 
   // 框选地图元素
   onSelectElement = (incremental) => {
     !incremental && this.cancelSelections();
-    const { dispatch, mapContext, currentCells } = this.props;
+    const { dispatch, mapContext } = this.props;
 
     // 转换坐标确定选择区域
     const viewport = mapContext.pixiUtils.viewport;
@@ -197,10 +199,22 @@ class EditorBodyLeft extends React.PureComponent {
     const [_startX, _endX] = [rangeWorldStartX, rangeWorldEndX].sort((x, y) => x - y);
     const [_startY, _endY] = [rangeWorldStartY, rangeWorldEndY].sort((x, y) => x - y);
 
-    // 筛选出区域内的元素(从 viewport.children中筛选，对于个别类比如: 线条、投递点需要额外逻辑处理)
-    const selections = filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _endY);
-    mapContext.rangeSelection(selections);
-    dispatch({ type: 'editor/updateSelections', payload: { incremental, selections } });
+    // 筛选出区域内的元素
+    const selections = mapContext.pixiUtils.viewport.children.filter(
+      (item) =>
+        item.x >= _startX &&
+        item.x <= _endX &&
+        item.y >= _startY &&
+        item.y <= _endY &&
+        !(item instanceof DumpBasket), // 筛掉抛物篮
+    );
+    selections.forEach((entity) => entity.onSelect());
+    mapContext.refresh();
+    if (incremental) {
+      dispatch({ type: 'editor/updateSelections', payload: { incremental, selections } });
+    } else {
+      dispatch({ type: 'editor/updateSelections', payload: selections });
+    }
   };
 
   render() {

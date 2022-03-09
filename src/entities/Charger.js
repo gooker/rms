@@ -24,6 +24,7 @@ export default class Charger extends PIXI.Container {
     this.state = props.state;
     this.hardwareId = props.hardwareId;
     this.sortableChildren = true;
+
     this.select = props.select;
     this.selected = false; // 标记该工作站是否被选中
 
@@ -107,9 +108,9 @@ export default class Charger extends PIXI.Container {
     this.selectionBorder = new SmoothGraphics();
     this.selectionBorder.lineStyle(5, 0xff0000);
     const { width, height } = this.getLocalBounds();
-    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.drawRect(0, -200, width * 1.4, height * 1.3);
     this.selectionBorder.alpha = 0.8;
-    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: (height * 1.3) / 2 };
     this.selectionBorder.visible = false;
     this.addChild(this.selectionBorder);
   }

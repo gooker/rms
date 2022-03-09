@@ -48,8 +48,6 @@ const EditorMask = (props) => {
 
       // 锚点在正中心
       const code = `${ZoneMarkerType.IMG}_${getRandomString(6)}`;
-      const x = (worldStartX + worldEndX) / 2;
-      const y = (worldStartY + worldEndY) / 2;
       const rangeWidth = Math.abs(worldStartX - worldEndX);
       const rangeHeight = Math.abs(worldStartY - worldEndY);
       let width, height;
@@ -63,7 +61,7 @@ const EditorMask = (props) => {
         width = rangeWidth;
         height = (rangeWidth * imgDetail.height) / imgDetail.width;
       }
-      mapContext.renderImage({ code, x, y, width, height, data }, true);
+      mapContext.renderImage({ code, x: worldStartX, y: worldStartY, width, height, data }, true);
       dispatch({
         type: 'editor/insertZoneMarker',
         payload: {
