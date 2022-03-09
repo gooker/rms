@@ -21,6 +21,7 @@ import TemporaryForbidcell from './TemporaryForbidcell';
 import PodToStationMessage from './PodToStationMessage';
 import LatentStopMessage from './LatentStopMessage';
 import WorkStationReport from './WorkStationReport';
+import CommonStationReport from './CommonStationReport';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
@@ -54,6 +55,7 @@ const MonitorModals = (props) => {
       {categoryModal === 'temporaryBlock' && <TemporaryForbidcell />}
 
       {categoryModal === 'WorkStation' && <WorkStationReport />}
+      {categoryModal === 'station' && <CommonStationReport />}
     </>
   );
 };

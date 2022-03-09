@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Tag, Spin, Switch, Button } from 'antd';
+import { Row, Col, Button } from 'antd';
 import echarts from 'echarts';
 import { CloseOutlined } from '@ant-design/icons';
 import { useMap } from '@umijs/hooks';
@@ -27,7 +27,6 @@ const WorkStationReport = (props) => {
     waitingData = {},
     stationRateData = [],
     dispatch,
-    marker,
   } = props;
 
   function close() {
@@ -41,12 +40,9 @@ const WorkStationReport = (props) => {
     });
   }
 
-  const { name, angle, stopCellId, flag: showEmployee, color: employeeColor } = workStation;
+  const { name, angle, stopCellId} = workStation;
   const monitorScreenDOM = document.body;
 
-  const [agvs, setAgvs] = useState(null);
-  const [checked, setChecked] = useState(false);
-  const [color, setColor] = useState(employeeColor ?? '#1da1a3');
   const [currentRealRate, setCurrentRealRate] = useState({}); // 当前站点的速率和等待时间等
 
   const [map, { get: getModalSize, setAll }] = useMap([
@@ -93,8 +89,6 @@ const WorkStationReport = (props) => {
 
   function refreshChart() {
     if (!taskHistoryLine || !waitingHistoryLine) return;
-    setAgvs(null);
-    setChecked(showEmployee);
 
     if (stationRateData && stationRateData.length > 1) {
       const currentRate = stationRateData.find((item) => {
@@ -107,8 +101,7 @@ const WorkStationReport = (props) => {
     const workStationWaitingData = waitingData[`${stopCellId}`];
 
     if (workStationTaskHistoryData) {
-      const { robotIds, taskHistoryData } = workStationTaskHistoryData;
-      setAgvs(robotIds);
+      const { taskHistoryData } = workStationTaskHistoryData;
       const { xAxis, series } = taskHistoryData;
       const newTaskHistoryLineOption = taskHistoryLine.getOption();
       newTaskHistoryLineOption.xAxis = xAxis;
@@ -125,23 +118,7 @@ const WorkStationReport = (props) => {
     }
   }
 
-  function renderTool() {
-    if (agvs) {
-      if (agvs.length > 0) {
-        return agvs.map((id) => (
-          <Tag key={id} color="rgba(1,137,255,0.6)">
-            {id}
-          </Tag>
-        ));
-      }
-      return (
-        <span style={{ color: 'rgb(3, 137, 255)' }}>
-          <FormattedMessage id="monitor.tip.noTask" />
-        </span>
-      );
-    }
-    return <Spin />;
-  }
+  
 
   return (
     <div
@@ -188,49 +165,7 @@ const WorkStationReport = (props) => {
       </div>
       <div style={{ padding: '15px 0px 15px 15px', borderTop: '1px solid #333' }}>
         <Row className={styles.tool}>
-          <Col span={11} offset={1}>
-            <div>
-              <span style={{ fontSize: '16px', color: LineChartsAxisColor }}>
-                <FormattedMessage id="monitor.workstation.label.serviceAMR" />:
-              </span>
-              <span
-                style={{ fontSize: '16px', marginLeft: '8px', fontWeight: 500, color: DataColor }}
-              >
-                {agvs ? agvs.length : 0}
-                {formatMessage({ id: 'monitor.workstation.label.piece' })}
-              </span>
-            </div>
-            <div style={{ marginTop: 4, display: 'flex', flexFlow: 'row wrap' }}>
-              {renderTool()}
-            </div>
-            <div style={{ marginTop: 4, display: 'flex' }}>
-              <input
-                disabled={checked || !agvs || agvs.length === 0}
-                type="color"
-                value={color}
-                onChange={(e) => {
-                  setColor(e.target.value);
-                }}
-              />
-
-              <div style={{ marginLeft: '5px' }}>
-                <Switch
-                  checked={checked}
-                  checkedChildren={formatMessage({
-                    id: 'monitor.workstation.label.marked',
-                  })}
-                  unCheckedChildren={formatMessage({
-                    id: 'monitor.workstation.label.unmarked',
-                  })}
-                  onChange={(value) => {
-                    setChecked(value);
-                    marker(agvs, value, { ...workStation, color, flag: value });
-                  }}
-                />
-              </div>
-            </div>
-          </Col>
-          <Col span={11}>
+          <Col span={24}>
             {!isStrictNull(currentRealRate?.goodsRate) && (
               <div>
                 <span style={{ fontSize: '16px', color: LineChartsAxisColor }}>

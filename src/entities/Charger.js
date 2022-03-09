@@ -38,12 +38,12 @@ export default class Charger extends PIXI.Container {
     this.charger.interactiveChildren = false;
     this.charger.on('pointerdown', this.click);
 
-    if (props.active) {
-      this.addLightningIcon(); // 充电中标记
-      this.addErrorMaskState(); // 错误状态标记
-      this.addOfflineMaskState(); // 离线标记
-      this.addChargeUnbindState(); // 未绑定硬件标记
-    }
+    // if (props.active) {
+    this.addLightningIcon(); // 充电中标记
+    this.addErrorMaskState(); // 错误状态标记
+    this.addOfflineMaskState(); // 离线标记
+    this.addChargeUnbindState(); // 未绑定硬件标记
+    // }
   }
 
   // 选择相关
