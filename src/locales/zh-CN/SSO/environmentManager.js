@@ -8,4 +8,5 @@ export default {
   'environmentManager.apis': '接口信息',
   'environmentManager.module.required': '请选择模块名称',
   'environmentManager.url.required': '请输入模块地址',
+  'environmentManager.url.invalid': 'URL格式不合法',
 };

@@ -28,7 +28,6 @@ export default {
   'editor.message.codeNotExit': '点位不存在',
   'editor.message.codeNotInRange': '点位ID不在该逻辑区范围',
   'editor.code.duplicate': '编码已存在',
-  'editor.form.invalidURL': 'URL格式不合法',
 
   // 施工图
   'editor.constructionDrawing.export': '导出施工图',
@@ -58,8 +57,6 @@ export default {
   'editor.tools.history': '操作历史',
   'editor.tools.selections': '已选择元素',
   'editor.tools.layer': '图层',
-
-  // 地图属性展示面板
 
   // 点位操作
   'editor.cell.code': '地址码',
@@ -173,12 +170,15 @@ export default {
   'editor.label.required': '请输入标签内容',
 
   // 地图编程
-  'editor.program.cell.willArrive': '到达前',
-  'editor.program.cell.afterArrive': '到达后',
+  'editor.program.cell.beforeArrive': '到达前',
+  'editor.program.cell.arrived': '到达后',
   'editor.program.cell.beforeLeave': '离开前',
   'editor.program.relation': '线条',
-  'editor.program.relation.beginning': '起点',
-  'editor.program.relation.destination': '终点',
+  'editor.program.relation.begin': '起点',
+  'editor.program.relation.end': '终点',
+  'editor.program.zone.configList': '区域配置列表',
+  'editor.program.action.required': '请选择动作类型',
+  'editor.program.param.required': '请完善动作参数',
 
   // 创建默认线条
   'editor.defaultRoute.title': '创建默认路线',

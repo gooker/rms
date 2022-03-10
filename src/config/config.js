@@ -28,5 +28,13 @@ export const NameSpace = {
   Sorter: 'sorter',
 };
 
-// 后端接口的 Server Context_Path
-export const ApiNameSpace = ['latent-lifting', 'tote', 'forklift', 'coordinator', 'WS', 'sorter'];
+// 后端接口的 Server 的集合
+export const ApiNameSpace = [
+  'latent-lifting',
+  'tote',
+  'forklift',
+  'coordinator',
+  'WS',
+  'sorter',
+  'translation',
+];

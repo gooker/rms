@@ -35,8 +35,8 @@ const ZoneMarkerModal = (props) => {
         const code = `${type}_${getRandomString(6)}`;
         const width = Math.abs(worldStartX - worldEndX);
         const height = Math.abs(worldStartY - worldEndY);
-        const x = worldStartX + width / 2;
-        const y = worldStartY + height / 2;
+        const x = worldStartX;
+        const y = worldStartY;
         mapContext.drawRectArea({ code, x, y, width, height, color, text }, true);
         dispatch({
           type: 'editor/insertZoneMarker',

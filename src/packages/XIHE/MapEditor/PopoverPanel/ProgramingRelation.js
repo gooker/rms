@@ -4,96 +4,28 @@ import { MinusCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/i
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import commonStyle from '@/common.module.less';
+import ActionDefiner from '@/packages/XIHE/MapEditor/components/ActionDefiner';
 
 const ProgramingRelation = (props) => {
-  const {} = props;
+  const { data, actions } = props;
   const [formRef] = Form.useForm();
 
   return (
     <div style={{ paddingTop: 20 }}>
       <Form labelWrap form={formRef} layout={'vertical'}>
-        <Form.Item name={'zone'} label={<FormattedMessage id={'app.map.cell'} />}>
+        <Form.Item name={'relationCode'} label={<FormattedMessage id={'app.map.route'} />}>
           <Select>
             <Select.Option>111</Select.Option>
           </Select>
         </Form.Item>
-
         {/* 起点 */}
-        <Form.List name="beginning" initialValue={[null]}>
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
-                <Form.Item
-                  label={
-                    index === 0 ? formatMessage({ id: 'editor.program.relation.beginning' }) : ''
-                  }
-                  required={false}
-                  key={field.key}
-                >
-                  <Row gutter={10}>
-                    <Col span={20}>
-                      <Form.Item {...field} noStyle>
-                        <Input style={{ width: '100%' }} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={4} className={commonStyle.flexCenter}>
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          onClick={() => remove(field.name)}
-                          style={{ color: 'red', fontSize: 24 }}
-                        />
-                      ) : null}
-                    </Col>
-                  </Row>
-                </Form.Item>
-              ))}
-              <Form.Item>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  <PlusOutlined />
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
-
-        {/* 终点 */}
-        <Form.List name="destination" initialValue={[null]}>
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
-                <Form.Item
-                  label={
-                    index === 0 ? formatMessage({ id: 'editor.program.relation.destination' }) : ''
-                  }
-                  required={false}
-                  key={field.key}
-                >
-                  <Row gutter={10}>
-                    <Col span={20}>
-                      <Form.Item {...field} noStyle>
-                        <Input style={{ width: '100%' }} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={4} className={commonStyle.flexCenter}>
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          onClick={() => remove(field.name)}
-                          style={{ color: 'red', fontSize: 24 }}
-                        />
-                      ) : null}
-                    </Col>
-                  </Row>
-                </Form.Item>
-              ))}
-              <Form.Item>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  <PlusOutlined />
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
-
+        <Form.Item name="begin" label={formatMessage({ id: 'editor.program.relation.begin' })}>
+          <ActionDefiner data={actions} />
+        </Form.Item>
+        {/* 起点 */}
+        <Form.Item name="end" label={formatMessage({ id: 'editor.program.relation.end' })}>
+          <ActionDefiner data={actions} />
+        </Form.Item>
         <Form.Item>
           <Button type="primary">
             <FormattedMessage id={'app.button.confirm'} />

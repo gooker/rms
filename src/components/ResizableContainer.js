@@ -18,7 +18,7 @@ export default class ResizableContainer extends PIXI.Container {
     this.sortableChildren = true;
 
     // 边框线条宽度
-    this.borderWidth = 10;
+    this.borderWidth = 40;
     // 边框线条颜色
     this.borderColor = 0xffffff;
     // 控制点尺寸
@@ -183,7 +183,7 @@ export default class ResizableContainer extends PIXI.Container {
   initResizeTool() {
     const { width, height } = this.element;
     if (isNull(this.border)) {
-      this.border = this.addChild(new SmoothGraphics());
+      this.border = this.addChild(new PIXI.Graphics());
       this.border.lineStyle(this.borderWidth, this.borderColor);
       this.border.drawRect(-width / 2, -height / 2, width, height);
       this.border.zIndex = 1;
@@ -244,8 +244,8 @@ export default class ResizableContainer extends PIXI.Container {
       this.border.destroy(true);
       this.border = null;
     }
-    this.border = this.addChild(new SmoothGraphics());
-    this.border.lineStyle(this.borderWidth, 0xffffff, 1, 1, LINE_SCALE_MODE.NONE);
+    this.border = this.addChild(new PIXI.Graphics());
+    this.border.lineStyle(this.borderWidth, this.borderColor);
     this.border.drawRect(-width / 2, -height / 2, width, height);
     this.border.zIndex = 1;
 

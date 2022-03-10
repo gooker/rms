@@ -952,8 +952,8 @@ export default class BaseMap extends React.Component {
     const mapZoneMarker = new MapZoneMarker({
       type: ZoneMarkerType.IMG,
       code,
-      x: x + width / 2,
-      y: y + height / 2,
+      x,
+      y,
       width,
       height,
       data,

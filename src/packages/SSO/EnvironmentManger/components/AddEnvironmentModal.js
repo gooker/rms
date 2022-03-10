@@ -44,7 +44,7 @@ class AddEnvironmentModal extends Component {
     if (!isStrictNull(value) && validateUrl(value)) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error(formatMessage({ id: 'editor.form.invalidURL' })));
+    return Promise.reject(new Error(formatMessage({ id: 'environmentManager.url.invalid' })));
   }
 
   render() {

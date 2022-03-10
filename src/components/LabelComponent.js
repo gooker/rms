@@ -1,4 +1,5 @@
 import React from 'react';
+import { isNull } from '@/utils/util';
 
 const LabelComponent = (props) => {
   const {
@@ -20,7 +21,7 @@ const LabelComponent = (props) => {
         ...style,
       }}
     >
-      <span
+      <div
         style={{
           color,
           fontWeight: weight,
@@ -32,7 +33,7 @@ const LabelComponent = (props) => {
         }}
       >
         {label}:
-      </span>
+      </div>
       <div style={{ flex: 1 }}>{children}</div>
     </div>
   );

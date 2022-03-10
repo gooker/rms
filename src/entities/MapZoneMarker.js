@@ -1,16 +1,22 @@
 import * as PIXI from 'pixi.js';
 import { Text } from '@/entities';
+import { isStrictNull } from '@/utils/util';
 import { SelectionType, zIndex, ZoneMarkerType } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
-import { isStrictNull } from '@/utils/util';
 
 export default class MapZoneMarker extends ResizableContainer {
   constructor(props) {
     const { code, type, x, y, radius, width, height, color, text, data } = props;
     const { interactive, select, refresh } = props;
     super();
+
     this.x = x;
     this.y = y;
+    if (type === ZoneMarkerType.RECT) {
+      this.x = x + width / 2;
+      this.y = y + height / 2;
+    }
+
     this.code = code;
     this.type = type;
     this.data = data;
@@ -105,9 +111,9 @@ export default class MapZoneMarker extends ResizableContainer {
     }
     // 渲染名称
     if (this.type === ZoneMarkerType.CIRCLE) {
-      this.renderName(width * 0.6, width * 0.6);
+      this.renderName(width * 0.5, width * 0.5);
     } else {
-      this.renderName(width, height);
+      this.renderName(width * 0.5, height * 0.5);
     }
     this.refresh();
   }
