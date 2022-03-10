@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { GlobalAlpha, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
-import { SmoothGraphics } from '_@pixi_graphics-smooth@0.0.22@@pixi/graphics-smooth';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class Intersection extends PIXI.Container {
   constructor(props) {

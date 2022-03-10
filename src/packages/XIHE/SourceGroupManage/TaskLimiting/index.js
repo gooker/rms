@@ -3,8 +3,8 @@ import { Table, Button, Row, Modal, message, Spin } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
-import { fetchGetActiveMap } from '@/services/map';
 import {
+  fetchActiveMap,
   getAgvTasksByCustomGroup,
   getAgvTasksByType,
   saveTaskLimit,
@@ -17,7 +17,7 @@ import commonStyles from '@/common.module.less';
 class TaskTrigger extends Component {
   state = {
     checkedType: [],
-    getTasksByType: [], // 任务类型限流
+    getTasksByType: {}, // 任务类型限流
     getTasksByCustomGroup: [], // 资源组限流
     taskLimitings: [],
     spinningFlag: false,
@@ -80,7 +80,7 @@ class TaskTrigger extends Component {
 
   getAgvTasks = async () => {
     this.setState({ spinningFlag: true });
-    const originalMapData = await fetchGetActiveMap();
+    const originalMapData = await fetchActiveMap();
     if (originalMapData) {
       const payload = { mapId: originalMapData.id };
       this.getAgvTaskLists(originalMapData.id);
@@ -118,7 +118,7 @@ class TaskTrigger extends Component {
       currentLists.map((item) => {
         if (isNull(item.name) && item.limitDatas) {
           const sourceItem = {
-            groupName: '类型',
+            groupName: formatMessage({ id: 'app.common.type' }),
             type: 'taskLimit',
             children: [...item.limitDatas],
           };

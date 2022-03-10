@@ -3,8 +3,7 @@ import find from 'lodash/find';
 import { Form, Select, Switch, Row, Col, message, Empty, Button, Spin } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchGetActiveMap } from '@/services/map';
-import { getCustomGroup, getUnBindGroupData, fechSaveUnBind } from '@/services/api';
+import { getCustomGroup, getUnBindGroupData, fechSaveUnBind ,fetchActiveMap} from '@/services/api';
 import commonStyles from '@/common.module.less';
 import styles from '../sideToolBar.module.less';
 
@@ -30,7 +29,7 @@ class GroupBinding extends Component {
   };
 
   async componentDidMount() {
-    const originalMapData = await fetchGetActiveMap();
+    const originalMapData = await fetchActiveMap();
     if (originalMapData) {
       const payload = { mapId: originalMapData.id };
 

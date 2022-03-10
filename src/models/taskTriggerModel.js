@@ -1,7 +1,6 @@
 import { message } from 'antd';
-import { getCustomTaskList, getCustomTaskNodes, getFormModelTypes } from '@/services/api';
+import { getCustomTaskList, getCustomTaskNodes, getFormModelTypes,fetchActiveMap } from '@/services/api';
 import { dealResponse,formatMessage } from '@/utils/util';
-import { fetchGetActiveMap } from '@/services/map';
 
 export default {
   namespace: 'taskTriger',
@@ -15,7 +14,7 @@ export default {
 
   effects: {
     *fetchActiveMap(_, { call, put }) {
-      const activeMap = yield call(fetchGetActiveMap);
+      const activeMap = yield call(fetchActiveMap);
       if (!dealResponse(activeMap)) {
         yield put({ type: 'saveActiveMap', payload: activeMap });
       } else {

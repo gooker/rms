@@ -22,6 +22,11 @@ import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
 
 const checkedColor = '#ff8400';
+const AGVcategory = {
+  LatentLifting: 'latent',
+  Tote: 'tote',
+  Sorter: 'sorter',
+};
 
 const AGVElementProp = (props) => {
   const { data, type, dispatch, history, selectAgv, showRoute } = props;
@@ -223,7 +228,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 45, height: 'auto' }}
-                src={require('../../category/latent_category.svg').default}
+                src={require(`../../category/${AGVcategory[type]}_category.svg`).default}
               />
               <span>
                 <FormattedMessage id={'app.agv'} />

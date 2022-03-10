@@ -13,16 +13,15 @@ import {
   Radio,
   Popover,
 } from 'antd';
-import { isNull,formatMessage } from '@/utils/util';
+import { isNull, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-
 
 const FormItem = Form.Item;
 const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 16 } };
 const rulesValidate = [
   {
     pattern: /^[0-9]*$/,
-    message: <FormattedMessage id={'app.taskTrigger.timeRulesMessage'} />,
+    message: formatMessage({ id: 'app.taskTrigger.timeRulesMessage' }),
   },
 ];
 class TaskTriggerModal extends Component {
@@ -34,33 +33,8 @@ class TaskTriggerModal extends Component {
     treeSelectValue: [],
     treeData: [],
     selectedRowKeys: [],
-    limitColumns: [
-      {
-        title: formatMessage({ id: 'customTasks.taskLimit.currentlimiting' }),
-        dataIndex: 'groupName',
-        width:'60%',
-        render: (text, record) => {
-          if (isNull(record.groupTypeName)) {
-            return <>{text}</>;
-          }
-          return <>{`${record.groupTypeName} / ${text}`}</>;
-        },
-      },
-      {
-        title: formatMessage({ id: 'customTasks.taskLimit.num' }),
-        dataIndex: 'limitNum',
-        render: (text, record) => (
-          <InputNumber
-            rules={rulesValidate}
-            min={0}
-            max={1000}
-            onChange={(e) => this.onLimitNumChange(e, record)}
-            value={text}
-          />
-        ),
-      },
-    ],
     limitNumData: [],
+    searchValue: null,
   };
 
   componentDidMount() {
@@ -70,20 +44,21 @@ class TaskTriggerModal extends Component {
 
     /* 编辑操作赋值 */
     if (updateItem) {
-      const setValues={
-        type:updateItem.type,
-        describe:updateItem.children[0].describe,
-      }
-      if(updateItem.type==='sourceLimit'){
-        setValues.sourcegroup=this.getSourceGroupEdit(updateItem.children);
-      } else{
-        setValues.sourceType=updateItem.children.map(({groupName}) => ( groupName ));
+      const setValues = {
+        type: updateItem.type,
+        describe: updateItem.children[0].describe,
+      };
+      if (updateItem.type === 'sourceLimit') {
+        setValues.sourcegroup = this.getSourceGroupEdit(updateItem.children);
+      } else {
+        setValues.sourceType = updateItem.children.map(({ groupName }) => groupName);
       }
       this.setState(
         {
           keyType: updateItem.type,
-          limitNumData:updateItem.children,
-          treeSelectValue:updateItem.type==='sourceLimit'?this.getSourceGroupEdit(updateItem.children):[],
+          limitNumData: updateItem.children,
+          treeSelectValue:
+            updateItem.type === 'sourceLimit' ? this.getSourceGroupEdit(updateItem.children) : [],
         },
         () => {
           setFieldsValue(setValues);
@@ -92,28 +67,64 @@ class TaskTriggerModal extends Component {
     }
   }
 
+  limitColumns = [
+    {
+      title: formatMessage({ id: 'customTasks.taskLimit.currentlimiting' }),
+      dataIndex: 'groupName',
+      width: '60%',
+      render: (text, record) => {
+        if (isNull(record.groupTypeName)) {
+          return <>{text}</>;
+        }
+        return <>{`${record.groupTypeName} / ${text}`}</>;
+      },
+    },
+    {
+      title: formatMessage({ id: 'customTasks.taskLimit.num' }),
+      dataIndex: 'limitNum',
+      render: (text, record) => (
+        <InputNumber
+          rules={rulesValidate}
+          min={0}
+          max={1000}
+          onChange={(e) => this.onLimitNumChange(e, record)}
+          value={text}
+        />
+      ),
+    },
+  ];
+
   // 对customgroup数据处理
   getTreeData = (getTasksByCustomGroup) => {
     const custom = [...getTasksByCustomGroup];
     const currentTreeData = [];
 
-    custom && custom.forEach((item) => {
-      const currentTree = {
-        title: item.name,
-        key: item.name,
-        value: item.name,
-        children: [],
-      };
-      Array.isArray(item.groupValue) &&
-      item.groupValue.map((rec) => {
-          currentTree.children.push({
-            title: rec,
-            value: JSON.stringify({ group: `${item.name}`, valueitem: `${rec}` ,groupType: `${item.groupType}`}),
-            key: JSON.stringify({ group: `${item.name}`, valueitem: `${rec}` ,groupType: `${item.groupType}`}), // JSON.stringify({ [item]: `${rec}` }),
+    custom &&
+      custom.forEach((item) => {
+        const currentTree = {
+          title: item.name,
+          key: item.name,
+          value: item.name,
+          children: [],
+        };
+        Array.isArray(item.groupValue) &&
+          item.groupValue.map((rec) => {
+            currentTree.children.push({
+              title: rec,
+              value: JSON.stringify({
+                group: `${item.name}`,
+                valueitem: `${rec}`,
+                groupType: `${item.groupType}`,
+              }),
+              key: JSON.stringify({
+                group: `${item.name}`,
+                valueitem: `${rec}`,
+                groupType: `${item.groupType}`,
+              }), // JSON.stringify({ [item]: `${rec}` }),
+            });
           });
-        });
-      currentTreeData.push(currentTree);
-    });
+        currentTreeData.push(currentTree);
+      });
     this.setState({
       treeData: currentTreeData,
     });
@@ -121,28 +132,36 @@ class TaskTriggerModal extends Component {
 
   numFilter = (item, group) => {
     const { limitNumData, keyType } = this.state;
+    const { tasksByTypeOptions } = this.props;
     let existRow = null;
     if (limitNumData && limitNumData.length > 0) {
       existRow = limitNumData.filter((value) => {
         if (keyType === 'sourceLimit') {
           return value.groupName === item && value.groupTypeName === group;
         }
-        return value.groupName === item;
+        return value.groupName === tasksByTypeOptions[item];
       });
     }
     return existRow && existRow.length > 0 ? existRow[0] : null;
+  };
+
+  sourceSearch = (text) => {
+    this.setState({ searchValue: text });
   };
 
   onTreeChange = (value) => {
     const currentValue = [...value];
     const limitNumList = [];
     currentValue.forEach((item) => {
-      const { valueitem, group ,groupType} = JSON.parse(item);
+      if (isStrictNull(item)) {
+        return;
+      }
+      const { valueitem, group, groupType } = JSON.parse(item);
       const existItem = this.numFilter(valueitem, group);
       isNull(existItem)
         ? limitNumList.push({
             groupName: valueitem,
-            groupTypeName:group,
+            groupTypeName: group,
             groupType,
             limitNum: null,
           })
@@ -156,13 +175,15 @@ class TaskTriggerModal extends Component {
   };
 
   onAGVTypeChange = (value) => {
+    const { tasksByTypeOptions } = this.props;
     const currentValue = [...value];
     const limitNumList = [];
     currentValue.forEach((item) => {
       const existItem = this.numFilter(item);
       isNull(existItem)
         ? limitNumList.push({
-            groupName:item,
+            groupName: tasksByTypeOptions[item],
+            groupCode: item,
             limitNum: null,
           })
         : limitNumList.push(existItem);
@@ -205,7 +226,8 @@ class TaskTriggerModal extends Component {
     const currentNumData = [...limitNumData];
     currentNumData.map((item) => {
       if (keyType === 'sourceLimit') {
-        if (item.groupName === record.groupName && item.groupTypeName === record.groupTypeName) item.limitNum = e;
+        if (item.groupName === record.groupName && item.groupTypeName === record.groupTypeName)
+          item.limitNum = e;
       } else {
         if (item.groupName === record.groupName) item.limitNum = e;
       }
@@ -256,31 +278,31 @@ class TaskTriggerModal extends Component {
     });
   };
 
-  getSourceGroupEdit=(data)=>{
-    const currentData=[...data];
-    const newData=[]
-    currentData.map((item)=>{
-      newData.push(JSON.stringify({
-         group: item.groupTypeName,
-         valueitem: item.groupName,
-         groupType: item.groupType,
-      }))
-    })
+  getSourceGroupEdit = (data) => {
+    const currentData = [...data];
+    const newData = [];
+    currentData.map((item) => {
+      newData.push(
+        JSON.stringify({
+          group: item.groupTypeName,
+          valueitem: item.groupName,
+          groupType: item.groupType,
+        }),
+      );
+    });
     return newData;
-  }
+  };
 
+  getGroupType = (data) => {
+    const currentGroup = [...data];
+    const list = new Set();
+    currentGroup.map((i) => {
+      list.add(i.groupType);
+    });
+    return Array.from(list);
+  };
 
-getGroupType=(data)=>{
-  const currentGroup = [...data];
-  const list=new Set();
-  currentGroup.map((i)=>{
-    list.add(i.groupType)
-  });
-  return Array.from(list);
-
-}
-
- // 废弃
+  // 废弃
   getSourceGroup = (group) => {
     const currentGroup = group.sourcegroup;
     const unreadMsg = {};
@@ -298,14 +320,8 @@ getGroupType=(data)=>{
   };
 
   render() {
-    const {
-      keyType,
-      limitColumns,
-      limitNumData,
-      selectedRowKeys,
-      batchUpdateNumvisible,
-    } = this.state;
-    const { tasksByTypeOptions,onSubmit, updateItem } = this.props;
+    const { keyType, limitNumData, selectedRowKeys, batchUpdateNumvisible } = this.state;
+    const { tasksByTypeOptions, onSubmit, updateItem } = this.props;
     const limitRowSelection = {
       selectedRowKeys,
       onChange: (_selectedRowKeys) => {
@@ -328,12 +344,13 @@ getGroupType=(data)=>{
             name="type"
             initialValue={keyType}
           >
-
-            <Radio.Group  disabled={!!updateItem} onChange={this.onTypeChange} >
+            <Radio.Group disabled={!!updateItem} onChange={this.onTypeChange}>
               <Radio value="sourceLimit">
                 {formatMessage({ id: 'customTasks.taskLimit.sourcelimitng' })}
               </Radio>
-              <Radio value="taskLimit">{formatMessage({ id: 'customTasks.taskLimit.tasklimiting' })}</Radio>
+              <Radio value="taskLimit">
+                {formatMessage({ id: 'customTasks.taskLimit.tasklimiting' })}
+              </Radio>
             </Radio.Group>
           </Form.Item>
 
@@ -355,6 +372,7 @@ getGroupType=(data)=>{
                   treeData={this.state.treeData}
                   treeDefaultExpandAll
                   onChange={this.onTreeChange}
+                  onSearch={this.sourceSearch}
                 />
               </FormItem>
             </>
@@ -365,9 +383,9 @@ getGroupType=(data)=>{
               rules={[{ required: true }]}
             >
               <Select allowClear mode="multiple" maxTagCount={4} onChange={this.onAGVTypeChange}>
-                {tasksByTypeOptions.map((record) => (
-                  <Select.Option key={record} value={record}>
-                    {record}
+                {Object.entries(tasksByTypeOptions)?.map(([key, value]) => (
+                  <Select.Option key={key} value={key}>
+                    {value}
                   </Select.Option>
                 ))}
               </Select>
@@ -385,12 +403,12 @@ getGroupType=(data)=>{
                   this.formRef.current
                     .validateFields()
                     .then((values) => {
-                      const currentValues={...values};
+                      const currentValues = { ...values };
                       currentValues.limitNumData = limitNumData;
                       if (keyType === 'sourceLimit') {
-                        currentValues.groupType=this. getGroupType(limitNumData);
+                        currentValues.groupType = this.getGroupType(limitNumData);
                         delete currentValues.sourcegroup;
-                      }else{
+                      } else {
                         delete currentValues.sourceType;
                       }
                       if (updateItem) currentValues.id = updateItem.id;
@@ -399,7 +417,7 @@ getGroupType=(data)=>{
                     .catch(() => {});
                 }}
               >
-                <FormattedMessage id='app.button.save' />
+                <FormattedMessage id="app.button.save" />
               </Button>
             </Col>
           </Row>
@@ -421,17 +439,17 @@ getGroupType=(data)=>{
                   onClick={() => {
                     this.setState({ batchUpdateNumvisible: true });
                   }}
-                  disabled= {selectedRowKeys.length === 0}
+                  disabled={selectedRowKeys.length === 0}
                   style={{
                     float: 'right',
                   }}
                 >
-                  <FormattedMessage id='customTasks.taskLimit.batchUpdateNum' />
+                  <FormattedMessage id="customTasks.taskLimit.batchUpdateNum" />
                 </Button>
               </Popover>
             </div>
             <Table
-              columns={limitColumns}
+              columns={this.limitColumns}
               dataSource={limitNumData}
               rowSelection={limitRowSelection}
               size="small"

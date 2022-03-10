@@ -4,7 +4,6 @@ import { NameSpace } from '@/config/config';
 export async function fetchAllScopeActions(sectionId) {
   return request(`/${NameSpace.Coordinator}/actionScope/getAllActionScope`, {
     method: 'GET',
-    data: { sectionId },
   });
 }
 

@@ -23,7 +23,7 @@ import {
   deleteTaskTrigger,
   switchTriggerState,
 } from '@/services/api';
-import { dealResponse,formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
@@ -355,7 +355,7 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={`${formatMessage({id:'app.common.timeInterval'})}(s)`}
+              title={`${formatMessage({ id: 'app.common.timeInterval' })}(s)`}
               content={<span>{record.timeInterval}</span>}
             />
           </Col>
@@ -393,8 +393,8 @@ class TaskTrigger extends Component {
     } = this.state;
 
     return (
-      <Spin spinning={loading}>
-        <div className={commonStyles.commonPageStyle}>
+      <div className={commonStyles.commonPageStyle}>
+        <Spin spinning={loading}>
           {/* 操作栏 */}
           <Row justify="space-between">
             <Col>
@@ -446,13 +446,14 @@ class TaskTrigger extends Component {
                     <Menu.Item key="pause">
                       {<FormattedMessage id="app.common.status.pause" />}
                     </Menu.Item>
-                    <Menu.Item key="end">{<FormattedMessage id="app.common.status.end" />}</Menu.Item>
+                    <Menu.Item key="end">
+                      {<FormattedMessage id="app.common.status.end" />}
+                    </Menu.Item>
                   </Menu>
                 }
               >
                 <Button>
-                  <FormattedMessage id="app.common.batchOperate" />{' '}
-                  <DownOutlined />
+                  <FormattedMessage id="app.common.batchOperate" /> <DownOutlined />
                 </Button>
               </Dropdown>
             </Col>
@@ -484,8 +485,8 @@ class TaskTrigger extends Component {
               this.setState({ triggerModalVisible: false, updateTrigger: null });
             }}
           />
+        </Spin>
       </div>
-      </Spin>
     );
   }
 }

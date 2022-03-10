@@ -912,7 +912,7 @@ class MonitorMapView extends BaseMap {
   };
 
   // ********** 分拣车 ********** //
-  addSorterAGV = (sorterAGVData) => {
+  addSorterAGV = (sorterAGVData, callback) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**AGV就会创建一台车[offline]
@@ -923,7 +923,7 @@ class MonitorMapView extends BaseMap {
       this.updateSorterAGV([sorterAGVData]);
       return sorterAGV;
     }
-    const { checkAGV, simpleCheckAgv } = this.props;
+    const { simpleCheckAgv } = this.props;
     sorterAGV = new SorterAGV({
       id: sorterAGVData.robotId,
       x: sorterAGVData.x || cellEntity.x,
@@ -936,7 +936,7 @@ class MonitorMapView extends BaseMap {
       cellId: sorterAGVData.currentCellId,
       angle: sorterAGVData.currentDirection,
       active: true,
-      checkAGV,
+      select: typeof callback === 'function' ? callback : this.select,
       simpleCheckAgv,
     });
     cellEntity && this.pixiUtils.viewportAddChild(sorterAGV);
