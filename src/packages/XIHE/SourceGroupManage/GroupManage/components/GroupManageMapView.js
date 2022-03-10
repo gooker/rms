@@ -1,11 +1,12 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-import { Cell, WorkStation, BitText } from '@/entities';
+import { Cell, BitText } from '@/entities';
 import { getTextureFromResources, loadEditorExtraTextures } from '@/utils/mapUtil';
 import { connect } from '@/utils/RmsDva';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { CellSize, zIndex } from '@/config/consts';
+import { CellSize, zIndex, SelectionType, MapSelectableSpriteType } from '@/config/consts';
+import { isNull } from '@/utils/util';
 import commonStyles from '@/common.module.less';
 
 @connect()
@@ -17,8 +18,6 @@ class GroupManageMapView extends BaseMap {
     this.idCellMap = new Map();
     this.storageGroupMap = new Map();
     this.areaGroupMap = new Map();
-    this.workStationMap = new Map();
-    this.commonFunctionMap = new Map();
 
     this.selectedCells = [];
     this.batchSelectBase = []; // 批量选择的基准点位
@@ -46,10 +45,14 @@ class GroupManageMapView extends BaseMap {
     await loadEditorExtraTextures(this.pixiUtils.renderer);
   }
 
-
   componentWillUnmount() {
     this.clearMapStage();
+    this.cellData = {};
     this.idCellMap.clear();
+    this.storageGroupMap.clear();
+    this.areaGroupMap.clear();
+    this.selectedCells = [];
+    this.batchSelectBase = [];
   }
 
   // 地图初始化
@@ -58,8 +61,6 @@ class GroupManageMapView extends BaseMap {
     this.idCellMap = new Map();
     this.storageGroupMap = new Map();
     this.areaGroupMap = new Map();
-    this.workStationMap = new Map();
-    this.commonFunctionMap = new Map();
     this.selectedCells = [];
     this.batchSelectBase = [];
   };
@@ -98,8 +99,9 @@ class GroupManageMapView extends BaseMap {
           id,
           x,
           y,
-          interactive: false,
-          showCoordinate: this.states.showCoordinate,
+          interactive: true,
+          select: this.select,
+          showCoordinate: true, //this.states.showCoordinate,
         });
         this.idCellMap.set(id, cell);
         this.pixiUtils.viewportAddChild(cell);
@@ -107,13 +109,34 @@ class GroupManageMapView extends BaseMap {
     }
   };
 
-  /**
-   * 将选择的点位同步到 Store
-   * @param {*} cells 已选中的点位
-   */
-  onSelectCell = (cells) => {
-    const { dispatch } = window.g_app._store;
-    dispatch({ type: 'mapViewGroup/updateSelectedCells', payload: cells });
+  select = (entity, mode) => {
+    // Chrome调试会误将this指向Cell, 为了便于调试所以使用_this
+    const _this = this;
+
+    // 先判断是否是取消选择
+    let selections = [...window.$$state().mapViewGroup.selections];
+    const isCull = selections.includes(entity);
+    if (isCull) {
+      selections = selections.filter((item) => item !== entity);
+    } else {
+      if (mode === SelectionType.SINGLE) {
+        if (entity instanceof Cell) {
+          _this.currentClickedCell = entity;
+        }
+        selections.forEach((entity) => entity.onUnSelect());
+        selections.length = 0;
+        selections.push(entity);
+      } else if (mode === SelectionType.CTRL) {
+        if (entity instanceof Cell) {
+          _this.currentClickedCell = entity;
+        }
+        selections.push(entity);
+      } else {
+        selections = _this.shiftSelectCell(entity);
+      }
+    }
+    _this.refresh();
+    window.$$dispatch({ type: 'mapViewGroup/updateSelections', payload: selections });
   };
 
   // 高亮地图点位
@@ -126,11 +149,11 @@ class GroupManageMapView extends BaseMap {
 
       // 高亮
       cells.forEach((cellId, index) => {
-        const cellEntity = this.idCellMap.get(cellId);
+        const cellEntity = this.idCellMap.get(Number(cellId));
         if (cellEntity) {
           cellEntity.obscure(false);
           cellEntity.scale.set(3, 3);
-          index === 0 && this.mapRenderer.mapMoveTo(cellEntity.x, cellEntity.y, 0.1);
+          index === 0 && this.moveTo(cellEntity.x, cellEntity.y, 0.1);
         }
       });
     } else {
@@ -144,92 +167,63 @@ class GroupManageMapView extends BaseMap {
     this.refresh();
   };
 
-  // 点位选择
-  selectCell = (cell, cull = false) => {
-    if (!cull) {
-      // Record current clicked cell
-      this.currentClickedCell = cell;
-
-      // Cancel all cell selected state
-      this.cancelCellSelected();
-      this.batchSelectBase = [];
-
-      const selectedCells = [];
-      selectedCells.push(cell.id);
-      this.selectedCells = selectedCells;
-      this.onSelectCell(this.selectedCells.slice());
-    } else {
-      this.selectedCells = this.selectedCells.filter((id) => id !== cell.id);
-      this.onSelectCell(this.selectedCells.slice());
-    }
-    this.refresh();
-  };
-
-  shiftSelectCell = (cell) => {
-    const { mapViewGroup } = window.g_app._store.getState();
-    const currentCells = mapViewGroup.currentCells;
-    const pre = this.currentClickedCell;
-    const next = cell;
-
-    // Fetch the selection area
-    const xStart = pre.x > next.x ? next.x : pre.x;
-    const xEnd = pre.x > next.x ? pre.x : next.x;
-    const yStart = pre.y > next.y ? next.y : pre.y;
-    const yEnd = pre.y > next.y ? pre.y : next.y;
-
-    // Fetch cell id which included
-    const includedCellIds = Object.values(currentCells)
-      .filter(({ x, y }) => {
-        return x >= xStart && x <= xEnd && y >= yStart && y <= yEnd;
-      })
-      .map(({ id }) => id);
-
-    // Fetch cell entity from 'idCellMap' and execute 'onSelect' function
-    includedCellIds.forEach((id) => {
-      const cellEntity = this.idCellMap.get(`${id}`);
-      cellEntity && cellEntity.onSelect();
-    });
-
-    // Record current clicked cell
-    this.currentClickedCell = cell;
-
-    // 添加到基准点
-    if (this.batchSelectBase.length > 0) this.batchSelectBase.push(...includedCellIds);
-
-    // 选择回调
-    this.selectedCells = [...new Set([...this.selectedCells, ...includedCellIds])];
-    this.onSelectCell(this.selectedCells.slice());
-    this.refresh();
-  };
-
-  ctrlSelectCell = (cell) => {
-    // Record current clicked cell
-    this.currentClickedCell = cell;
-
-    // Add item to collection
-    const newSelectedCells = this.selectedCells.slice();
-    newSelectedCells.push(cell.id);
-    this.selectedCells = [...new Set(newSelectedCells)];
-
-    // 添加到基准点
-    if (this.batchSelectBase.length > 0) this.batchSelectBase.push(cell.id);
-
-    // Call Back
-    this.onSelectCell(this.selectedCells);
-    this.refresh();
-  };
-
   cancelCellSelected = () => {
-    const list = this.selectedCells;
-    if (list && Array.isArray(list)) {
+    const { mapViewGroup } = window.$$state();
+
+    const list = mapViewGroup.selectedCells;
+    if (list && Array.isArray(list) && list.length > 0) {
       list.forEach((id) => {
-        const cellEntity = this.idCellMap.get(`${id}`);
+        const cellEntity = this.idCellMap.get(id);
         cellEntity && cellEntity.onUnSelect();
       });
     } else {
       this.idCellMap.forEach((cellEntity) => cellEntity.onUnSelect());
     }
+    window.$$dispatch({ type: 'mapViewGroup/updateSelections', payload: [] });
     this.selectedCells = [];
+  };
+
+  shiftSelectCell = (cell) => {
+    if (isNull(this.currentClickedCell)) return;
+    const _this = this;
+    const { mapViewGroup } = window.$$state();
+    const cells = mapViewGroup.currentCells;
+
+    const pre = _this.currentClickedCell;
+    const next = cell;
+
+    // 确定选择范围
+    const xStart = pre.x > next.x ? next.x : pre.x;
+    const xEnd = pre.x > next.x ? pre.x : next.x;
+    const yStart = pre.y > next.y ? next.y : pre.y;
+    const yEnd = pre.y > next.y ? pre.y : next.y;
+
+    // 提取选择范围内的点位ID
+    const includedCellIds = Object.values(cells)
+      .filter(({ x, y }) => x >= xStart && x <= xEnd && y >= yStart && y <= yEnd)
+      .map(({ id }) => id);
+
+    // 批量选中范围内的点位
+    includedCellIds.forEach((id) => {
+      const cellEntity = _this.idCellMap.get(id);
+      cellEntity && cellEntity.onSelect();
+    });
+
+    // 重新缓存当前点击的点位，为了下一次Shift选择做准备
+    _this.currentClickedCell = cell;
+
+    // 删除重复点位数据
+    const selections = [...window.$$state().editor.selections];
+    const storedCellIds = selections
+      .filter((item) => item.type === MapSelectableSpriteType.CELL)
+      .map(({ id }) => id);
+
+    const additional = includedCellIds
+      .filter((id) => !storedCellIds.includes(id))
+      .map((cellId) => _this.idCellMap.get(cellId));
+
+    // 数据同步
+    return [...selections, ...additional];
   };
 
   // 渲染站点组标记
@@ -307,41 +301,41 @@ class GroupManageMapView extends BaseMap {
   };
 
   // 工作站
-  addWorkStation = (workStationData) => {
-    const { x, y, icon, name, angle, direction, stopCellId } = workStationData;
+  //   addWorkStation = (workStationData) => {
+  //     const { x, y, icon, name, angle, direction, stopCellId } = workStationData;
 
-    // 渲染工作站主体
-    const workStation = new WorkStation({ x, y, name, angle, direction, icon });
-    this.pixiUtils.viewportAddChild(workStation);
-    this.workStationMap.set(stopCellId, workStation);
+  //     // 渲染工作站主体
+  //     const workStation = new WorkStation({ x, y, name, angle, direction, icon });
+  //     this.pixiUtils.viewportAddChild(workStation);
+  //     this.workStationMap.set(stopCellId, workStation);
 
-    // 渲染工作站停止点
-    const stopCell = this.idCellMap.get(stopCellId);
-    stopCell && stopCell.plusType('stop', getTextureFromResources('stop'));
-  };
+  //     // 渲染工作站停止点
+  //     const stopCell = this.idCellMap.get(stopCellId);
+  //     stopCell && stopCell.plusType('stop', getTextureFromResources('stop'));
+  //   };
 
-  removeWorkStation = (stopCellId) => {
-    const workStation = this.workStationMap.get(stopCellId);
-    if (workStation) {
-      this.pixiUtils.viewportRemoveChild(workStation);
-      workStation.destroy({ children: true });
-    }
-    const stopCell = this.idCellMap.get(stopCellId);
-    stopCell && stopCell.removeType('stop');
-  };
+  //   removeWorkStation = (stopCellId) => {
+  //     const workStation = this.workStationMap.get(stopCellId);
+  //     if (workStation) {
+  //       this.pixiUtils.viewportRemoveChild(workStation);
+  //       workStation.destroy({ children: true });
+  //     }
+  //     const stopCell = this.idCellMap.get(stopCellId);
+  //     stopCell && stopCell.removeType('stop');
+  //   };
 
-  renderWorkStation = (workStationList = []) => {
-    // 移除所有 WorkStation
-    const stopCellIds = [...this.workStationMap.keys()];
-    stopCellIds.forEach((stopCellId) => {
-      this.removeWorkStation(stopCellId);
-    });
+  //   renderWorkStation = (workStationList = []) => {
+  //     // 移除所有 WorkStation
+  //     const stopCellIds = [...this.workStationMap.keys()];
+  //     stopCellIds.forEach((stopCellId) => {
+  //       this.removeWorkStation(stopCellId);
+  //     });
 
-    // 用新数据重新渲染所有 WorkStation
-    workStationList.forEach((workStation) => {
-      this.addWorkStation(workStation);
-    });
-  };
+  //     // 用新数据重新渲染所有 WorkStation
+  //     workStationList.forEach((workStation) => {
+  //       this.addWorkStation(workStation);
+  //     });
+  //   };
 
   render() {
     return <div id="groupManagePixi" className={commonStyles.monitorBodyMiddle} />;

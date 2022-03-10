@@ -4,6 +4,7 @@ import { Table, Divider, Button, Popconfirm, Row, Tag, Form, Select, Badge, Col 
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import styles from '../GroupManage/groupManage.module.less';
 
 const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 11 } };
 const { Item: FormItem } = Form;
@@ -21,13 +22,13 @@ class StorageConfigTable extends React.PureComponent {
 
   columns = [
     {
-      title: formatMessage({ id: 'app.groupManage.groupname' }),
+      title: formatMessage({ id: 'sourcemanage.agvgroup.name' }),
       dataIndex: 'groupName',
       align: 'center',
       width: 100,
     },
     {
-      title: formatMessage({ id: 'app.storageManage.form.cells' }),
+      title: formatMessage({ id: 'app.map.cell' }),
       dataIndex: 'priority',
       width: 150,
       align: 'center',
@@ -47,14 +48,14 @@ class StorageConfigTable extends React.PureComponent {
         )),
     },
     {
-      title: formatMessage({ id: 'app.groupManage.groupkey' }),
+      title: formatMessage({ id: 'groupManage.key' }),
       align: 'center',
       dataIndex: 'key',
       width: 100,
       ellipsis: true,
     },
     {
-      title: formatMessage({ id: 'app.groupManage.operate' }),
+      title: formatMessage({ id: 'app.common.operation' }),
       align: 'center',
       width: 110,
       fixed: 'right',
@@ -62,7 +63,7 @@ class StorageConfigTable extends React.PureComponent {
         <>
           <Popconfirm
             placement="topRight"
-            title={formatMessage({ id: 'app.groupManage.delete.confirm' })}
+            title={formatMessage({ id: 'app.message.delete.confirm' })}
             onConfirm={() => {
               this.deleteGroupItem(record);
             }}
@@ -136,64 +137,68 @@ class StorageConfigTable extends React.PureComponent {
 
   render() {
     const { dataTable, formRef, groupType } = this.state;
-    const { highLight, groupJson } = this.props;
+    const { highLight, groupJson, height, width } = this.props;
     return (
-      <div style={{ width: '100%' }}>
-        <Form ref={formRef}>
-          <Row>
-            <Col span={18}>
-              <FormItem
-                {...formItemLayout}
-                label={formatMessage({ id: 'app.groupManage.belonggroup' })}
-                name="belongGroup"
-                rules={[
-                  {
-                    required: true,
-                    message: <FormattedMessage id={'app.groupManage.pleaseSelect'} />,
-                  },
-                ]}
-              >
-                <Select
-                  placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
-                  style={{ width: '100%' }}
-                  values={groupType}
-                  showSearch
-                  onChange={(values) => {
-                    highLight([]);
-                    const newData = this.getTypeData(values);
-                    this.setState({ groupType: values, dataTable: [...newData] });
-                  }}
+      <div style={{ height, width }} className={styles.categoryPanel}>
+        <div>
+          <FormattedMessage id={'groupManage.config.detail'} />
+        </div>
+        <div>
+          <Form ref={formRef}>
+            <Row>
+              <Col span={18}>
+                <FormItem
+                  {...formItemLayout}
+                  label={formatMessage({ id: 'editor.emergency.group' })}
+                  name="belongGroup"
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
                 >
-                  {groupJson.map((item) => (
-                    <Option key={item.value} values={item.value}>
-                      {item.label}
-                    </Option>
-                  ))}
-                </Select>
-              </FormItem>
-            </Col>
-            <Col span={6}>
-              <Popconfirm
-                title={formatMessage({ id: 'app.groupManage.deleteGroupAll.confirm' })}
-                onConfirm={this.deleteAllGroup}
-                okText={formatMessage({ id: 'app.taskDetail.sure' })}
-                cancelText={formatMessage({ id: 'app.groupManage.cancel' })}
-              >
-                <Button type="primary" disabled={dataTable.length === 0}>
-                  <FormattedMessage id={'app.groupManage.deleteGroupAll'} />
-                </Button>
-              </Popconfirm>
-            </Col>
-          </Row>
-        </Form>
+                  <Select
+                    placeholder={formatMessage({ id: 'app.common.select' })}
+                    style={{ width: '100%' }}
+                    values={groupType}
+                    showSearch
+                    onChange={(values) => {
+                      highLight([]);
+                      const newData = this.getTypeData(values);
+                      this.setState({ groupType: values, dataTable: [...newData] });
+                    }}
+                  >
+                    {groupJson.map((item) => (
+                      <Option key={item.value} values={item.value}>
+                        {item.label}
+                      </Option>
+                    ))}
+                  </Select>
+                </FormItem>
+              </Col>
+              <Col span={6}>
+                <Popconfirm
+                  title={formatMessage({ id: 'groupManage.tip.deleteGroupAll' })}
+                  onConfirm={this.deleteAllGroup}
+                  okText={formatMessage({ id: 'app.button.confirm' })}
+                  cancelText={formatMessage({ id: 'app.button.cancel' })}
+                >
+                  <Button type="primary" disabled={dataTable.length === 0}>
+                    <FormattedMessage id={'groupManage.button.deleteGroup'} />
+                  </Button>
+                </Popconfirm>
+              </Col>
+            </Row>
+          </Form>
 
-        <Table
-          pagination={false}
-          columns={this.columns}
-          rowKey="id"
-          dataSource={dataTable}
-          scroll={{ x: 'max-content' }}
-        />
+          <Table
+            pagination={false}
+            columns={this.columns}
+            rowKey="id"
+            dataSource={dataTable}
+            scroll={{ x: 'max-content' }}
+          />
+        </div>
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { dealResponse, formatMessage,isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
   fetchActiveMap,
   saveCustomGroup,
@@ -9,10 +9,7 @@ import {
 } from '@/services/api';
 import { message } from 'antd';
 import { isPlainObject, some } from 'lodash';
-import { RightCategory } from '@/packages/XIHE/MapEditor/enums';
 import { MapSelectableSpriteType } from '@/config/consts';
-
-const { CELL, ROUTE } = MapSelectableSpriteType;
 
 export default {
   namespace: 'mapViewGroup',
@@ -32,15 +29,18 @@ export default {
     editingGroup: null,
     editingGroupVisible: false,
     groupJson: [],
+
+    selections: [], // 选择相关
+    // 右侧操作栏
+    categoryPanel: null, // 右侧展示哪个类型的菜单
     mapContext: null, // 地图实体对象
-     // 监控地图是否渲染完成
-     mapRendered: false,
+    // 监控地图是否渲染完成
+    mapRendered: false,
   },
 
   effects: {
-
-     // ***************** 获取地图数据 ***************** //
-     *initMap(_, { call, put }) {
+    // ***************** 获取地图数据 ***************** //
+    *initMap(_, { call, put }) {
       const activeMap = yield call(fetchActiveMap);
       if (isNull(activeMap)) {
         message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
@@ -75,7 +75,7 @@ export default {
       if (!dealResponse(response)) {
         yield put({ type: 'updateStorageConfigData', payload: response });
       } else {
-        message.error(formatMessage({ id: 'app.groupManage.fetchFailed' }));
+        message.error(formatMessage({ id: 'groupManage.fetchFailed' }));
       }
     },
 
@@ -110,7 +110,7 @@ export default {
         newGroupData.push(response);
         yield put({ type: 'updateStorageConfigData', payload: newGroupData });
       } else {
-        message.error(formatMessage({ id: 'app.groupManage.saveFailed' }));
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
       }
     },
 
@@ -145,7 +145,7 @@ export default {
 
         yield put({ type: 'updateStorageConfigData', payload: currentSectionStoreGroup });
       } else {
-        message.error(formatMessage({ id: 'app.groupManage.deleteFailed' }));
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
       }
     },
 
@@ -166,7 +166,7 @@ export default {
         );
         yield put({ type: 'updateStorageConfigData', payload: currentSectionStoreGroup });
       } else {
-        message.error(formatMessage({ id: 'app.groupManage.deleteFailed' }));
+        message.error(formatMessage({ id: 'app.message.operateFailed' }));
       }
     },
 
@@ -183,6 +183,12 @@ export default {
       return {
         ...state,
         ...action.payload,
+      };
+    },
+    saveCategoryPanel(state, action) {
+      return {
+        ...state,
+        categoryPanel: action.payload,
       };
     },
     saveMapContext(state, action) {
@@ -224,37 +230,20 @@ export default {
         });
       }
 
+      const _selectedCells = [];
+      _selections.forEach((selection) => {
+        if (selection.type === MapSelectableSpriteType.CELL) {
+          _selectedCells.push(selection.id);
+        }
+      });
+      _selections.forEach((item) => item.type === MapSelectableSpriteType.CELL);
+
       const newState = {
         ...state,
         selections: _selections,
+        selectedCells: _selectedCells,
         shortcutToolVisible: _selections.length > 0,
       };
-
-      if (_selections.length === 1) {
-        if (state.categoryPanel === null) {
-          newState.categoryPanel = RightCategory.Prop;
-        }
-
-        // 点位和线条可被替换
-        if (state.categoryProps === null || [CELL, ROUTE].includes(state.categoryProps.type)) {
-          newState.categoryProps = _selections[0];
-        }
-
-        // 除了点位和线条，可以互相替换
-        if (
-          ![CELL, ROUTE].includes(state.categoryProps) &&
-          ![CELL, ROUTE].includes(selections[0].type)
-        ) {
-          newState.categoryProps = _selections[0];
-          newState.lockedProps = _selections[0].type;
-        }
-      } else {
-        newState.categoryProps = null;
-        newState.lockedProps = null;
-        if (state.categoryPanel === RightCategory.Prop) {
-          newState.categoryPanel = null;
-        }
-      }
       return newState;
     },
 

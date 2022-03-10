@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import find from 'lodash/find';
+import { find } from 'lodash';
 import {
   Button,
   Input,
@@ -14,11 +14,11 @@ import {
   Popover,
 } from 'antd';
 import ButtonMultiSelect from './ButtonMultiSelect';
-import { isStrictNull,formatMessage } from '@/utils/util';
+import { isStrictNull, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import styles from '../GroupManage/groupManage.module.less';
 
-const formItemLayout = { labelCol: { span: 7 }, wrapperCol: { span: 17 } };
-const tailFormItemLayout = { wrapperCol: { offset: 6, span: 18 } };
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 const FormItem = Form.Item;
 
 @connect(({ mapViewGroup }) => ({
@@ -49,11 +49,11 @@ class GroupManageConfiguration extends Component {
       // 优先级表头
       priorityColumns: [
         {
-          title: this.tableTilte, // formatMessage({ id: 'app.groupManage.element' }),
+          title: this.tableTilte,
           dataIndex: 'item',
         },
         {
-          title: formatMessage({ id: 'app.groupManage.grouppriority' }),
+          title: formatMessage({ id: 'app.common.priority' }),
           dataIndex: 'priority',
           render: (text, record) => (
             <InputNumber
@@ -191,7 +191,7 @@ class GroupManageConfiguration extends Component {
     const existAreasName = storageGroup.map(({ groupName }) => groupName);
     // 名称不可以重复
     if (value && existAreasName.includes(value)) {
-      return Promise.reject(formatMessage({ id: 'app.groupManage.repeatGroupname' }));
+      return Promise.reject(formatMessage({ id: 'groupManage.groupname.duplicate' }));
     }
     return Promise.resolve();
   };
@@ -206,7 +206,7 @@ class GroupManageConfiguration extends Component {
     const existAreasKey = storageGroup.map(({ key }) => key);
     // 唯一key不可以重复
     if (value && existAreasKey.includes(value)) {
-      return Promise.reject(formatMessage({ id: 'app.groupManage.repeatGroupkey' }));
+      return Promise.reject(formatMessage({ id: 'groupManage.key.duplicate' }));
     } else {
       return Promise.resolve();
     }
@@ -217,27 +217,32 @@ class GroupManageConfiguration extends Component {
     const { editGroupItemFlag } = this.state;
     const { dispatch, groupJson, close, clearSelection, editItemData } = this.props;
     const { priorityData, typeName } = this.state;
-    this.mapRef.current.validateFields().then((values) => {
-      // canView
-      const groupJsonItem = find(groupJson, { value: values.groupType });
-      const canView = !!groupJsonItem.canView;
-      values.canView = canView;
+    this.mapRef.current
+      .validateFields()
+      .then((values) => {
+        // canView
+        const groupJsonItem = find(groupJson, { value: values.groupType });
+        const canView = !!groupJsonItem.canView;
+        values.canView = canView;
 
-      // 为null情况
-      const _typeName = isStrictNull(typeName) ? groupJsonItem.label : typeName;
+        // 为null情况
+        const _typeName = isStrictNull(typeName) ? groupJsonItem.label : typeName;
 
-      values.priority = priorityData;
-      values.typeName = _typeName;
-      // 如果是编辑更新 要把mapId id放进去
-      if (editGroupItemFlag && editItemData) {
-        values.mapId = editItemData.mapId;
-        values.id = editItemData.id;
-      }
-      dispatch({ type: 'mapViewGroup/fetchAddStorageConfigurations', payload: values }).then(() => {
-        close();
-        clearSelection();
-      });
-    });
+        values.priority = priorityData;
+        values.typeName = _typeName;
+        // 如果是编辑更新 要把mapId id放进去
+        if (editGroupItemFlag && editItemData) {
+          values.mapId = editItemData.mapId;
+          values.id = editItemData.id;
+        }
+        dispatch({ type: 'mapViewGroup/fetchAddStorageConfigurations', payload: values }).then(
+          () => {
+            close();
+            clearSelection();
+          },
+        );
+      })
+      .catch(() => {});
   };
 
   renderFormItemContent = (content) => {
@@ -335,7 +340,7 @@ class GroupManageConfiguration extends Component {
   // 批量更新popover content
   popContent = () => {
     return (
-      <FormItem {...tailFormItemLayout} label="优先级" name="priority" key="priority" noStyle>
+      <FormItem {...formItemLayoutNoLabel} label="优先级" name="priority" key="priority" noStyle>
         <InputNumber
           min={1}
           max={100}
@@ -345,10 +350,10 @@ class GroupManageConfiguration extends Component {
         />
         <div style={{ marginTop: 16 }}>
           <Button size={'small'} onClick={this.popHidden}>
-            <FormattedMessage id={'app.groupManage.cancel'} />
+            <FormattedMessage id={'app.button.cancel'} />
           </Button>
           <Button size={'small'} style={{ marginLeft: 16 }} onClick={this.popSubmit}>
-            <FormattedMessage id={'app.taskDetail.sure'} />
+            <FormattedMessage id={'app.button.confirm'} />
           </Button>
         </div>
       </FormItem>
@@ -361,7 +366,6 @@ class GroupManageConfiguration extends Component {
 
   // 批量更改优先级
   popSubmit = () => {
-    // console.log(this.batchInput.value)
     const newPriority = this.batchInput.value;
     const { priorityData } = this.state;
     priorityData.map((e) => {
@@ -379,7 +383,7 @@ class GroupManageConfiguration extends Component {
   };
 
   render() {
-    const { groupJson } = this.props;
+    const { groupJson, height, width } = this.props;
     const initGroupData = groupJson && groupJson[0].formContent;
     const initGroupType = groupJson && groupJson[0].value;
     const {
@@ -398,68 +402,75 @@ class GroupManageConfiguration extends Component {
 
     // 初始化 读取默认的 类似车辆组
     return (
-      <Form {...formItemLayout} ref={this.mapRef}>
-        <FormItem
-          label={formatMessage({ id: 'app.groupManage.belonggroup' })}
-          name="groupType"
-          rules={[{ required: true }]}
-          initialValue={groupType || initGroupType}
-        >
-          <Select
-            placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
-            style={{ width: '100%' }}
-            showSearch
-            onChange={this.groupTypeChange}
-            options={groupJson}
-            disabled={!!editGroupItemFlag}
-          ></Select>
-        </FormItem>
-
-        {/*  渲染出formitem */}
-        {this.renderGroup(groupData && groupData.length > 0 ? groupData : initGroupData)}
-
-        <FormItem {...tailFormItemLayout}>
-          <Button type={'primary'} onClick={this.createGroupSubmit}>
-            <FormattedMessage id={'app.storageManage.save'} />
-          </Button>
-        </FormItem>
-
-        {/* 优先级表格 */}
+      <div style={{ height, width }} className={styles.categoryPanel}>
         <div>
-          <div style={{ marginBottom: 16 }}>
-            <Popover
-              destroyTooltipOnHide
-              arrowPointAtCenter={true}
-              content={this.popContent}
-              title={formatMessage({ id: 'app.groupManage.updateSelectedPriority' })}
-              trigger="click"
-              visible={batchEditPriorityvisible}
-            >
-              <Button
-                key={`${groupType}--btn`}
-                onClick={() => {
-                  this.setState({ batchEditPriorityvisible: true });
-                }}
-                style={{ visibility: selectedRowKeys.length === 0 ? 'hidden' : 'visible' }}
-              >
-                <FormattedMessage id={'app.groupManage.batchUpdate'} />
-              </Button>
-            </Popover>
-          </div>
-
-          <Table
-            columns={priorityColumns}
-            dataSource={priorityData}
-            rowSelection={rowSelection}
-            size="small"
-            pagination={false}
-            rowKey={(record) => record.item}
-            rowClassName="priority-row"
-            scroll={{ y: 240 }}
-            style={{ padding: '0 0 10px 30px', width: 300 }}
-          />
+          <FormattedMessage id={'groupManage.manage'} />
         </div>
-      </Form>
+        <div>
+          <Form {...formItemLayout} ref={this.mapRef} labelWrap>
+            <FormItem
+              label={formatMessage({ id: 'editor.emergency.group' })}
+              name="groupType"
+              rules={[{ required: true }]}
+              initialValue={groupType || initGroupType}
+            >
+              <Select
+                style={{ width: '100%' }}
+                showSearch
+                onChange={this.groupTypeChange}
+                options={groupJson}
+                disabled={!!editGroupItemFlag}
+              ></Select>
+            </FormItem>
+
+            {/*  渲染出formitem */}
+            {this.renderGroup(groupData && groupData.length > 0 ? groupData : initGroupData)}
+
+            <FormItem {...formItemLayoutNoLabel}>
+              <Button type={'primary'} onClick={this.createGroupSubmit}>
+                <FormattedMessage id={'app.button.save'} />
+              </Button>
+            </FormItem>
+
+            {/* 优先级表格 */}
+            <div>
+              <div style={{ margin: 16 }}>
+                <Popover
+                  destroyTooltipOnHide
+                  arrowPointAtCenter={true}
+                  content={this.popContent}
+                  title={formatMessage({ id: 'groupManage.updateSelectedPriority' })}
+                  trigger="click"
+                  visible={batchEditPriorityvisible}
+                >
+                  <Button
+                    key={`${groupType}--btn`}
+                    size={'small'}
+                    onClick={() => {
+                      this.setState({ batchEditPriorityvisible: true });
+                    }}
+                    style={{ visibility: selectedRowKeys.length === 0 ? 'hidden' : 'visible' }}
+                  >
+                    <FormattedMessage id={'groupManage.batchUpdate'} />
+                  </Button>
+                </Popover>
+              </div>
+
+              <Table
+                columns={priorityColumns}
+                dataSource={priorityData}
+                rowSelection={rowSelection}
+                size="small"
+                pagination={false}
+                rowKey={(record) => record.item}
+                rowClassName="priority-row"
+                scroll={{ y: 240 }}
+                style={{ padding: '0 0 10px 30px', width: 300 }}
+              />
+            </div>
+          </Form>
+        </div>
+      </div>
     );
   }
 }

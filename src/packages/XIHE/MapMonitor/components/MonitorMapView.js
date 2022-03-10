@@ -925,6 +925,7 @@ class MonitorMapView extends BaseMap {
     }
     const { simpleCheckAgv } = this.props;
     sorterAGV = new SorterAGV({
+      $$formData: sorterAGVData, // 原始DB数据
       id: sorterAGVData.robotId,
       x: sorterAGVData.x || cellEntity.x,
       y: sorterAGVData.y || cellEntity.y,
