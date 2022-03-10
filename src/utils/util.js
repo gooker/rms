@@ -77,6 +77,14 @@ export function convertToUserTimezone(value) {
   return date;
 }
 
+export function isEmptyPlainObject(obj) {
+  return isPlainObject(obj) && Object.keys(obj).length === 0;
+}
+
+export function isEmptyArray(arr) {
+  return Array.isArray(arr) && arr.length === 0;
+}
+
 export function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

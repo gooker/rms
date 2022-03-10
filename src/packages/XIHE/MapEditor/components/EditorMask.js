@@ -61,7 +61,9 @@ const EditorMask = (props) => {
         width = rangeWidth;
         height = (rangeWidth * imgDetail.height) / imgDetail.width;
       }
-      mapContext.renderImage({ code, x: worldStartX, y: worldStartY, width, height, data }, true);
+      const x = worldStartX + rangeWidth / 2;
+      const y = worldStartY + rangeHeight / 2;
+      mapContext.renderImage({ code, x, y, width, height, data }, true);
       dispatch({
         type: 'editor/insertZoneMarker',
         payload: {
@@ -69,8 +71,8 @@ const EditorMask = (props) => {
           width,
           height,
           data,
-          x: worldStartX,
-          y: worldStartY,
+          x,
+          y,
           type: ZoneMarkerType.IMG,
         },
       });

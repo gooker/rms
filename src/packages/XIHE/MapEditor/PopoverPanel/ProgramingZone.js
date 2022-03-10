@@ -1,66 +1,142 @@
-import React, { memo } from 'react';
-import { Button, Form, Input, Select, Row, Col, Divider } from 'antd';
-import { MinusCircleOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Form, Select, List, Divider } from 'antd';
+import { find } from 'lodash';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/util';
-import commonStyle from '@/common.module.less';
+import { formatMessage, isEmptyArray, isEmptyPlainObject, isNull } from '@/utils/util';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { ZoneMarkerType } from '@/config/consts';
+import ActionDefiner from '../components/ActionDefiner';
 
 const ProgramingZone = (props) => {
-  const {} = props;
+  const { currentLogicArea, currentCells, data, loading, actions, submit } = props;
+
   const [formRef] = Form.useForm();
+  const [zoneMarkers, setZoneMarkers] = useState([]);
+
+  useEffect(() => {
+    formRef.resetFields();
+  }, [data]);
+
+  useEffect(() => {
+    // 暂时只处理矩形区域
+    let zoneMarker = getCurrentLogicAreaData()?.zoneMarker || [];
+    zoneMarker = zoneMarker.filter((item) => item.type === ZoneMarkerType.RECT);
+    setZoneMarkers(zoneMarker);
+  }, [currentLogicArea]);
+
+  function validateParam(_, value) {
+    // 在没选类型情况下value是空数组
+    if (isNull(value) || isEmptyArray(value)) {
+      return Promise.reject();
+    } else {
+      for (let i = 0; i < value.length; i++) {
+        if (isEmptyPlainObject(value[i])) {
+          return Promise.reject(new Error(formatMessage({ id: 'editor.program.action.required' })));
+        }
+        const { code, params } = value[i];
+        const action = find(actions, { code });
+        // 检查该action的参数是否可以为空
+        const canBeEmpty = isEmptyPlainObject(action.params);
+        if (!canBeEmpty && params.length === 0) {
+          return Promise.reject(new Error(formatMessage({ id: 'editor.program.param.required' })));
+        }
+      }
+      return Promise.resolve();
+    }
+  }
+
+  function onSubmit() {
+    formRef
+      .validateFields()
+      .then((values) => {
+        const { zoneMarker } = getCurrentLogicAreaData();
+        const zone = find(zoneMarker, { code: values.zoneCode });
+        const { x, y, width, height } = zone;
+        const endX = x + width;
+        const endY = y + height;
+        const zoneCells = currentCells
+          .filter((item) => item.x >= x && item.y >= y && item.x <= endX && item.y <= endY)
+          .map(({ id }) => id);
+        submit({ ...values, zoneCells }, 'zone');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  function onZoneCodeChanged(zoneCode) {
+    const zoneParam = find(data, { zoneCode });
+    if (isNull(zoneParam)) {
+      formRef.setFieldsValue({ scopeParams: [] });
+    } else {
+      formRef.setFieldsValue({ scopeParams: zoneParam.scopeParams });
+    }
+    return zoneCode;
+  }
+
+  function getListData() {
+    const dbZoneMarkers = getCurrentLogicAreaData()?.zoneMarker || [];
+    if (Array.isArray(data)) {
+      return data
+        .map(({ zoneCode }) => {
+          const dbZoneMarker = find(dbZoneMarkers, { code: zoneCode });
+          if (dbZoneMarker) {
+            return { code: zoneCode, name: dbZoneMarker.text };
+          } else {
+            console.log(`区域数据丢失: ${zoneCode}`);
+          }
+        })
+        .filter(Boolean);
+    }
+    return [];
+  }
 
   return (
     <div style={{ paddingTop: 20 }}>
       <Form labelWrap form={formRef} layout={'vertical'}>
-        <Form.Item name={'zone'} label={<FormattedMessage id={'app.map.zone'} />}>
+        <Form.Item
+          name={'zoneCode'}
+          label={<FormattedMessage id={'app.map.zone'} />}
+          rules={[{ required: true }]}
+          getValueFromEvent={onZoneCodeChanged}
+        >
           <Select>
-            <Select.Option>111</Select.Option>
+            {zoneMarkers.map((item) => (
+              <Select.Option key={item.code} value={item.code}>
+                {item.text || item.code}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
-
-        <Form.List name="params" initialValue={[null]}>
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
-                <Form.Item
-                  label={index === 0 ? formatMessage({ id: 'app.common.param' }) : ''}
-                  required={false}
-                  key={field.key}
-                >
-                  <Row gutter={10}>
-                    <Col span={20}>
-                      <Form.Item {...field} noStyle>
-                        <Input style={{ width: '100%' }} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={4} className={commonStyle.flexCenter}>
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          onClick={() => remove(field.name)}
-                          style={{ color: 'red', fontSize: 24 }}
-                        />
-                      ) : null}
-                    </Col>
-                  </Row>
-                </Form.Item>
-              ))}
-              <Form.Item>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  <PlusOutlined />
-                </Button>
-              </Form.Item>
-              <Form.Item>
-                <Button type="primary">
-                  <FormattedMessage id={'app.button.confirm'} />
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+        <Form.Item
+          name="scopeParams"
+          label={formatMessage({ id: 'app.common.param' })}
+          rules={[
+            { required: true, message: formatMessage({ id: 'editor.program.action.required' }) },
+            { validator: validateParam },
+          ]}
+        >
+          <ActionDefiner data={actions} />
+        </Form.Item>
       </Form>
+      <Button type={'primary'} onClick={onSubmit} loading={loading} disabled={loading}>
+        <FormattedMessage id={'app.button.confirm'} />
+      </Button>
+
+      {/* 区域配置列表 */}
       <Divider style={{ background: '#a3a3a3' }} />
-      <Input prefix={<SearchOutlined />} />
+      <List
+        bodered
+        header={<FormattedMessage id={'editor.program.zone.configList'} />}
+        footer={null}
+        dataSource={getListData()}
+        renderItem={(item) => <List.Item>{item.name}</List.Item>}
+      />
     </div>
   );
 };
-export default memo(ProgramingZone);
+export default connect(({ editor }) => ({
+  currentCells: editor.currentCells,
+  currentLogicArea: editor.currentLogicArea,
+}))(memo(ProgramingZone));
