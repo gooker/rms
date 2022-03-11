@@ -1,14 +1,13 @@
 import React, { memo, useEffect } from 'react';
-import { Row, Col, Form, Button, DatePicker, Select } from 'antd';
+import { Row, Col, Form, Button, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
-import TimePickerSelector from '../../components/timePicker';
+import DatePickerSelector from '../../components/DatePickerSelector';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
-const { RangePicker } = DatePicker;
 
 const LogSearchForm = (props) => {
   const { search, type, allTaskTypes } = props;
@@ -25,9 +24,10 @@ const LogSearchForm = (props) => {
       const currentValues = { ...values };
       const { timeRange } = currentValues;
       if (!isNull(timeRange)) {
-        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:00:00');
-        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:00:00');
+        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:00');
+        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:00');
       }
+      delete currentValues.timeRange;
       search && search(currentValues);
     });
   }
@@ -59,30 +59,13 @@ const LogSearchForm = (props) => {
         {/* 日期 */}
         <Col>
           <Form.Item
-            name={'timeNum'}
             label={<FormattedMessage id="app.form.dateRange" />}
+            name="timeRange"
             getValueFromEvent={(value) => {
-              const { setFieldsValue } = form;
-              setFieldsValue({
-                startTime: value.startTime,
-                endTime: value.endTime,
-                type: value.dateType,
-                timeNum: value.timeDate,
-              });
-              return value.timeDate;
+              return value;
             }}
           >
-            <TimePickerSelector defaultType={'hour'} defaultTime={7} />
-            {/* disabledChangeType={true} */}
-          </Form.Item>
-        </Col>
-        <Col>
-          <Form.Item name="timeRange">
-            <RangePicker
-              style={{ width: '335px' }}
-              showTime={{ format: 'HH' }}
-              format="YYYY-MM-DD HH:00:00"
-            />
+            <DatePickerSelector />
           </Form.Item>
         </Col>
 
@@ -110,15 +93,15 @@ const LogSearchForm = (props) => {
           </Col>
         )}
 
-          <Col offset={1}>
-            <Form.Item {...NoLabelFormLayout}>
-              <Row justify="end">
-                <Button type="primary" onClick={submitSearch}>
-                  <FormattedMessage id="app.button.search" />
-                </Button>
-              </Row>
-            </Form.Item>
-          </Col>
+        <Col offset={1}>
+          <Form.Item {...NoLabelFormLayout}>
+            <Row justify="end">
+              <Button type="primary" onClick={submitSearch}>
+                <FormattedMessage id="app.button.search" />
+              </Button>
+            </Row>
+          </Form.Item>
+        </Col>
         {/* <Col>
           <Form.Item {...NoLabelFormLayout}>
             <Row justify="end">

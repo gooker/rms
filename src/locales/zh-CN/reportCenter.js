@@ -24,6 +24,16 @@ export default {
   'app.reportCenter.dimensionality.required': '请至少选择一个维度',
   'form.reportCenter.dimensionality.cannotSame': '暂不支持两个同样的数据维度',
 
+  'reportCenter.currentHour':'本小时',
+  'reportCenter.lastHour':'上1小时',
+  'reportCenter.today':'今天',
+  'reportCenter.yesterday':'昨天',
+  'reportCenter.currentWeek':'本周',
+  'reportCenter.lastWeek':'上周',
+  'reportCenter.currentMonth':'本月',
+  'reportCenter.lastMonth':'上月',
+  'reportCenter.lastthreeMonths':'最近三个月',
+
   'reportCenter.qrcodehealth': '地面二维码健康',
   'reportCenter.qrcodehealth.latentPod': '潜伏货架二维码',
   'reportCenter.qrcodehealth.tote': '料箱二维码',
