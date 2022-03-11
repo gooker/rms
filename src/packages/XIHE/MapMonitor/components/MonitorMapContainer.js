@@ -123,9 +123,7 @@ const MonitorMapContainer = (props) => {
     // 充电桩
     if (Array.isArray(chargerList)) {
       const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
-      mapContext.renderChargers(chargerListData, () => {
-        console.log('MapMonitorContainer配置点击回调');
-      });
+      mapContext.renderChargers(chargerListData);
     }
     // 工作站
     if (Array.isArray(workstationList)) {

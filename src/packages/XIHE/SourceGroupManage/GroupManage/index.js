@@ -1,6 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { connect } from '@/utils/RmsDva';
 import GroupManageMapContainer from './components/GroupManageMapContainer';
+import GroupManageBodyRight from './components/GroupManageBodyRight';
 import commonStyles from '@/common.module.less';
 
 const GroupManagement = (props) => {
@@ -35,7 +36,7 @@ const GroupManagement = (props) => {
     <div id={'mapGroupManagePage'} className={commonStyles.commonPageStyleNoPadding}>
       <div className={commonStyles.mapLayoutBody}>
         <GroupManageMapContainer />
-        {/* <GroupManageBodyRight /> */}
+        <GroupManageBodyRight />
       </div>
     </div>
   );

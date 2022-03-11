@@ -62,6 +62,8 @@ export default {
 
     // 小车告警异常
     agvAlarmList: [],
+    // 小车运行信息
+    agvRunningInfoList: [],
   },
   reducers: {
     saveViewState(state, action) {
@@ -109,6 +111,12 @@ export default {
       return {
         ...state,
         agvAlarmList: action.payload,
+      };
+    },
+    saveAgvRunningInfoList(state, action) {
+      return {
+        ...state,
+        agvRunningInfoList: action.payload,
       };
     },
   },

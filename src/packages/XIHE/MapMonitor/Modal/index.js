@@ -23,6 +23,7 @@ import LatentStopMessage from './LatentStopMessage';
 import WorkStationReport from './WorkStationReport';
 import CommonStationReport from './CommonStationReport';
 import AgvAlert from './AgvInfo/AgvAlert';
+import AgvRunninInfo from './AgvInfo/AgvRunninInfo';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
@@ -59,8 +60,7 @@ const MonitorModals = (props) => {
       {categoryModal === 'station' && <CommonStationReport />}
 
       {categoryModal === 'AgvAlert' && <AgvAlert />}
-
-      
+      {categoryModal === 'AgvRunInfo' && <AgvRunninInfo />}
     </>
   );
 };

@@ -257,11 +257,7 @@ const GroupManageMapContainer = (props) => {
     mapContext.refresh();
   }
 
-  return (
-    <div id={'groupManagePixiContainer'}>
-      <GroupManageMapView />
-    </div>
-  );
+  return <GroupManageMapView />;
 };
 export default connect(({ mapViewGroup }) => {
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, mapContext, selections } =

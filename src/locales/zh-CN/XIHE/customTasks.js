@@ -132,4 +132,19 @@ export default {
   'app.customTask.form.skip': '跳过',
   'app.customTask.form.specify': '指定',
   'customTasks.form.clear.warn': '该操作会清空当前所有的输入数据, 确定执行吗?',
+
+
+  // 分组管理
+  'groupManage.config.detail': '分组配置信息',
+  'groupManage.manage': '分组配置',
+
+  'groupManage.key.duplicate': '唯一key不能重复',
+  'groupManage.groupname.duplicate': '组名不能重复',
+  'groupManage.key': '唯一key',
+  'groupManage.fetchFailed': '获取分组信息失败',
+  'groupManage.batchUpdate': '批量更新',
+  'groupManage.updateSelectedPriority': '更新选中的优先级',
+
+  'groupManage.button.deleteGroup': '清空此分组',
+  'groupManage.tip.deleteGroupAll': '确定删除此分组全部记录吗？',
 };

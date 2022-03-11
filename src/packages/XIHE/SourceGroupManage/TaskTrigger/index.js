@@ -219,7 +219,7 @@ class TaskTrigger extends Component {
         this.initData(selectSearchItem);
       }
     } else {
-      message.error(formatMessage({ id: 'app.groupManage.saveFailed' }));
+      message.error(formatMessage({ id: 'app.message.operateFailed' }));
     }
   };
 

@@ -9,8 +9,8 @@ import {
   batchUnbundChargerPile,
   clearChargerPileFaultById,
   AddChargerPile,
-  fetchUpdateCharger,
 } from '@/services/api';
+import { fetchUpdateCharger } from '@/services/XIHE';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
