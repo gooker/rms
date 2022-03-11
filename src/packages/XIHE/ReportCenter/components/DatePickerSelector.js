@@ -62,8 +62,11 @@ const DatePickerSelector = (props) => {
   const [pickVisible, setPickVisible] = useState(false);
 
   useEffect(() => {
-    // 默认进页面类型
-    setDateValue(defaultTime);
+    // 默认进页面时间区间
+    const defaultHour = moment();
+    const start = GMT2UserTimeZone(defaultHour).format('YYYY-MM-DD HH:00:00');
+    const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+    setDateValue([moment(start), moment(endTime)]);
   }, []);
 
   function tagClick(ev) {
@@ -97,6 +100,8 @@ const DatePickerSelector = (props) => {
           break;
         case CustomData.currentWeek:
           //本周
+          //startOf('week')-一周指的是周日-周六
+          //startOf('isoWeek')-一周指的是周一-周日
           const start = moment().week(moment().week()).startOf('week'); // 周一日期
           const end = moment().week(moment().week()).endOf('week'); // 周日日期
           result.startTime = GMT2UserTimeZone(start).format('YYYY-MM-DD 00:00:00');
