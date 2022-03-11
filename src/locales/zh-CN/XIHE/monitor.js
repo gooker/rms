@@ -256,4 +256,13 @@ export default {
 
   'monitor.tip.noTask': '当前无任务执行',
   'monitor.station.more': '更多',
+
+  'monitor.charge.assignedAMR': '已分配小车',
+  'monitor.charger.bind.confirm': '确定绑定该充电桩ID吗?',
+  'monitor.charger.unBind.confirm': '确定解绑该充电桩ID吗?',
+  'monitor.charger.enable.confirm': '确定将充电桩切换为: {state}?',
+  'monitor.charger.release': '解除占用',
+  'monitor.charger.release.confirm': '确定解除占用吗?',
+
+  'monitor.runTime.info': '运行时信息',
 };

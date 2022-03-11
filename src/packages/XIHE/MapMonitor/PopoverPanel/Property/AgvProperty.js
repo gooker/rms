@@ -8,6 +8,7 @@ import {
   getAlertCentersByTaskIdOrAgvId,
   fetchMaintain,
   fetchManualMode,
+  fetchAgvRunningInfo,
 } from '@/services/api';
 import { agvTryToCharge, agvToRest, agvRemoteControl } from '@/services/monitor';
 import {
@@ -40,7 +41,6 @@ const AGVElementProp = (props) => {
   useEffect(() => {
     async function init() {
       setAgvId(JSON.parse(data.id));
-      console.log('1-----', data.id, selectAgv);
       if (selectAgv.includes(data.id) && showRoute) {
         setPathChecked(true);
       } else {
@@ -102,6 +102,19 @@ const AGVElementProp = (props) => {
       type: 'monitor/saveCategoryModal',
       payload: 'AgvAlert',
     });
+  }
+
+  // 运行时
+  async function showRunInfo() {
+    const response = await fetchAgvRunningInfo({ robotId: agvId });
+    if (!dealResponse(response)) {
+      const newInfoList = [];
+      Object.values(response).forEach(({ agvRunningStatus, agvInfoTypeI18n, detailFormat }) => {
+        newInfoList.push({ type: agvRunningStatus, title: agvInfoTypeI18n, message: detailFormat });
+      });
+      dispatch({ type: 'monitor/saveAgvRunningInfoList', payload: 'newInfoList' });
+    }
+    dispatch({ type: 'monitor/saveCategoryModal', payload: 'AgvRunInfo' });
   }
 
   function goCharge() {
@@ -348,7 +361,7 @@ const AGVElementProp = (props) => {
                 <FormattedMessage id={'monitor.right.goRest'} />
               </div>
             </div>
-            <div style={{ width: 80 }} />
+            <div style={{ width: 65 }} />
           </div>
 
           {/* 路径、维护、手动 */}
@@ -442,7 +455,7 @@ const AGVElementProp = (props) => {
               </div>
             </Popconfirm>
 
-            <div className={styles.rightSideAgvContentOperationItem}>
+            <div className={styles.rightSideAgvContentOperationItem} onClick={showRunInfo}>
               <img alt={'agv'} src={require('@/packages/XIHE/icons/runTime.png').default} />
               <div>
                 <FormattedMessage id={'monitor.runTime'} />

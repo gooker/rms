@@ -692,7 +692,12 @@ export const formatNumber = (n) => {
   }
 };
 
-// 时间转换-天 时 分
+// 时间转换-天 时 分 秒
+/** seconds
+ * minutes
+ * hours
+ *
+ * */
 export const MinuteFormat = (value) => {
   const d = moment.duration(value, 'minutes');
   let currentValue = '';
@@ -704,6 +709,9 @@ export const MinuteFormat = (value) => {
   }
   if (d.minutes() > 0) {
     currentValue += d.minutes() + '分';
+  }
+  if (d.seconds() > 0) {
+    currentValue += d.seconds() + '秒';
   }
   return currentValue;
   // const currentValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';

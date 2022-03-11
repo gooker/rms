@@ -231,7 +231,7 @@ export async function resetCharger(hardwareId) {
 }
 
 // 切换充电桩可用
-export async function switchChargerEnable(params) {
+export async function fetchUpdateCharger(params) {
   return request(`/${NameSpace.Coordinator}/charger/actions/updateEnableStatus`, {
     method: 'POST',
     data: params,

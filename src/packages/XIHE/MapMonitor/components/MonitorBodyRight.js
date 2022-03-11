@@ -73,7 +73,7 @@ const MonitorBodyRight = (props) => {
   function renderPanelContent() {
     switch (categoryPanel) {
       case Category.Prop:
-        return <Property height={height - 10} width={280} />;
+        return <Property height={height - 10} width={230} />;
       case Category.LatentAGV:
         return (
           <AgvCategorySecondaryPanel

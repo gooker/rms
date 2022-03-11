@@ -112,6 +112,14 @@ export async function fetchMoveoutAGVs(agvType, params) {
   });
 }
 
+// 获取当前小车实时运行信息
+export async function fetchAgvRunningInfo(params) {
+  return request(`/${NameSpace.Coordinator}/problemHandling/getAgvErrorMessage`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
 // ************************************** 执行队列  ************************************** //
 // 获取执行队列数据
 export async function fetchExecutingTaskList(agvType, params) {
@@ -850,13 +858,6 @@ export async function fetchAvailableMapChargerList() {
   });
 }
 
-// 充电桩更新状态
-export async function fetchUpdateCharger(params) {
-  return request(`/${Coordinator}/charger/actions/updateEnableStatus`, {
-    method: 'POST',
-    data: params,
-  });
-}
 
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {
