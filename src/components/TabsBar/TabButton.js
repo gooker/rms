@@ -44,16 +44,14 @@ const TabButton = (props) => {
         }}
       >
         <div className={commonStyle.flexRowCenter} style={{ height: '100%' }}>
-          <span>{label}</span>
-          {menuKey !== '/' && (
-            <CloseCircleFilled
-              style={{ marginLeft: 5 }}
-              onClick={(ev) => {
-                ev.stopPropagation();
-                onRemove(menuKey);
-              }}
-            />
-          )}
+          <span style={active ? { color: '#1890ff', fontWeight: 500 } : {}}>{label}</span>
+          <CloseCircleFilled
+            style={{ marginLeft: 5 }}
+            onClick={(ev) => {
+              ev.stopPropagation();
+              onRemove(menuKey);
+            }}
+          />
         </div>
       </div>
     </Dropdown>

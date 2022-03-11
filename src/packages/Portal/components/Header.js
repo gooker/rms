@@ -70,6 +70,7 @@ class Header extends React.Component {
       payload: record,
     }).then((result) => {
       if (result) {
+        window.sessionStorage.removeItem('nameSpacesInfo');
         setTimeout(() => {
           window.location.reload();
         }, 500);

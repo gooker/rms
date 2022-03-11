@@ -1,6 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Modal, Select, Tabs } from 'antd';
-import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  ExportOutlined,
+  ImportOutlined,
+  InfoOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
@@ -23,6 +29,7 @@ const ProgramingPanel = (props) => {
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [needGLO, setNeedGLO] = useState(false); // 标记是否需要强制创建GLO
   const [scopeProgram, setScopeProgram] = useState([]); // 已保存的地图编程数据
   const [selectedRoute, setSelectedRoute] = useState(null); // 已选择的路线Code
   const [selectedScope, setSelectedScope] = useState(null); // 已选择的编程Code
@@ -72,6 +79,12 @@ const ProgramingPanel = (props) => {
           setLoading(false);
         });
     });
+  }
+
+  function openAddingScopeModal() {
+    const GLO = find(scopeProgram, { routeCode: selectedRoute, scopeCode: 'GLO' });
+    setNeedGLO(isNull(GLO));
+    setVisible(true);
   }
 
   function renderRouteOptions() {
@@ -152,7 +165,7 @@ const ProgramingPanel = (props) => {
         </div>
         <Divider style={{ background: '#a3a3a3', margin: '10px 0 20px 0' }} />
 
-        {/* 选择区 */}
+        {/* 选择路线区 */}
         <Form.Item label={<FormattedMessage id={'app.map.routeArea'} />} {...formItemLayout}>
           <Select
             value={selectedRoute}
@@ -165,6 +178,8 @@ const ProgramingPanel = (props) => {
             {renderRouteOptions()}
           </Select>
         </Form.Item>
+
+        {/* 选择编程 */}
         <Form.Item label={<FormattedMessage id={'app.map.scope'} />} {...formItemLayout}>
           <Select
             disabled={isNull(selectedRoute)}
@@ -179,9 +194,7 @@ const ProgramingPanel = (props) => {
                   <Button
                     type="text"
                     disabled={isNull(selectedRoute)}
-                    onClick={() => {
-                      setVisible(true);
-                    }}
+                    onClick={openAddingScopeModal}
                   >
                     <PlusOutlined /> <FormattedMessage id={'editor.addScope'} />
                   </Button>
@@ -209,6 +222,7 @@ const ProgramingPanel = (props) => {
         </div>
       </div>
 
+      {/* 创建编程 */}
       <Modal
         visible={visible}
         width={450}
@@ -224,13 +238,20 @@ const ProgramingPanel = (props) => {
           setVisible(false);
         }}
       >
+        {needGLO && (
+          <div style={{ margin: '0 0 5px 60px', color: 'red' }}>
+            <InfoOutlined />
+            <FormattedMessage id={'editor.program.route.noGLO'} />
+          </div>
+        )}
         <Form form={formRef} {...formItemLayout2}>
           <Form.Item
             name={'scopeCode'}
             label={formatMessage({ id: 'app.common.code' })}
             rules={[{ required: true }]}
+            {...(needGLO ? { initialValue: 'GLO' } : {})}
           >
-            <Input />
+            <Input disabled={needGLO} />
           </Form.Item>
           <Form.Item
             name={'scopeName'}
