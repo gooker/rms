@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Menu, Dropdown } from 'antd';
 import { EditOutlined, PlusOutlined, DownOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
@@ -6,9 +6,14 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import styles from './index.module.less';
+import CreateRouteMapModal from '@/packages/XIHE/MapEditor/components/CreateRouteMapModal';
+import CreateLogicAreaModal from '@/packages/XIHE/MapEditor/components/CreateLogicAreaModal';
 
 const SelectRouteMap = (props) => {
   const { dispatch, routeMapList, currentRouteMap } = props;
+
+  const [editing, setEditing] = useState(null);
+  const [visible, setVisible] = useState(false);
 
   function renderRouteMapMenu() {
     const result = [];
@@ -22,14 +27,8 @@ const SelectRouteMap = (props) => {
                 <EditOutlined
                   onClick={(e) => {
                     e.stopPropagation();
-                    dispatch({
-                      type: 'editor/updateModalVisit',
-                      payload: {
-                        type: 'createScopeMap',
-                        value: true,
-                        extraData: routeMapList[key],
-                      },
-                    });
+                    setVisible(true);
+                    setEditing(routeMapList[key]);
                   }}
                 />
               </div>
@@ -50,13 +49,8 @@ const SelectRouteMap = (props) => {
 
   function switchRouteMap(record) {
     if (record.key === 'add') {
-      dispatch({
-        type: 'editor/updateModalVisit',
-        payload: {
-          type: 'createScopeMap',
-          value: true,
-        },
-      });
+      setVisible(true);
+      setEditing(null);
     } else {
       dispatch({
         type: 'editor/saveCurrentRouteMap',
@@ -67,7 +61,6 @@ const SelectRouteMap = (props) => {
 
   const routeMapMenu = (
     <Menu
-      className={styles.menu}
       selectedKeys={[currentRouteMap]}
       onClick={(record) => {
         switchRouteMap(record);
@@ -79,14 +72,24 @@ const SelectRouteMap = (props) => {
 
   const currentRouteMapData = routeMapList[currentRouteMap];
   return (
-    <Dropdown overlay={routeMapMenu}>
-      <span className={styles.action}>
-        <span style={{ fontSize: 15, fontWeight: 600 }}>
-          {currentRouteMapData?.name || formatMessage({ id: 'app.map.routeArea' })}
+    <>
+      <Dropdown overlay={routeMapMenu}>
+        <span className={styles.action}>
+          <span style={{ fontSize: 15, fontWeight: 600 }}>
+            {currentRouteMapData?.name || formatMessage({ id: 'app.map.routeArea' })}
+          </span>
+          <DownOutlined style={{ marginLeft: 4 }} />
         </span>
-        <DownOutlined style={{ marginLeft: 4 }} />
-      </span>
-    </Dropdown>
+      </Dropdown>
+
+      <CreateRouteMapModal
+        visible={visible}
+        data={editing}
+        close={() => {
+          setVisible(false);
+        }}
+      />
+    </>
   );
 };
 export default connect(({ editor }) => {

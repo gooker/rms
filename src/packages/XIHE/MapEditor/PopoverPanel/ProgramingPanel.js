@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Divider, Form, Input, Modal, Select, Tabs } from 'antd';
 import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import { find, findIndex } from 'lodash';
+import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import { fetchScopeProgram, saveScopeProgram } from '@/services/XIHE';
@@ -12,13 +12,13 @@ import ProgramingRelation from './ProgramingRelation';
 import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 
-const { Option, OptGroup } = Select;
+const { Option } = Select;
 const { TabPane } = Tabs;
 const { formItemLayout } = getFormLayout(4, 20);
 const { formItemLayout: formItemLayout2 } = getFormLayout(4, 18);
 
 const ProgramingPanel = (props) => {
-  const { height, currentMap, scopeActions } = props;
+  const { height, currentMap, currentLogicArea, scopeActions } = props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -26,13 +26,17 @@ const ProgramingPanel = (props) => {
   const [scopeProgram, setScopeProgram] = useState([]); // 已保存的地图编程数据
   const [selectedRoute, setSelectedRoute] = useState(null); // 已选择的路线Code
   const [selectedScope, setSelectedScope] = useState(null); // 已选择的编程Code
-  const scopeLoad = getScopeLoad();
 
-  useEffect(refresh, []);
-  useEffect(refresh, [currentMap]);
+  const scopeLoad = getScopeLoad();
+  const hideTabs = isNull(selectedRoute) || isNull(selectedScope);
+
+  useEffect(refresh, [currentMap, currentLogicArea]);
 
   function refresh() {
-    fetchScopeProgram({ mapId: currentMap.id }).then((response) => {
+    fetchScopeProgram({
+      mapId: currentMap.id,
+      logicId: currentLogicArea,
+    }).then((response) => {
       if (
         !dealResponse(
           response,
@@ -70,27 +74,20 @@ const ProgramingPanel = (props) => {
     });
   }
 
-  function getScopeLoad() {
-    if (isStrictNull(selectedRoute)) return null;
-    const [logicId, routeCode] = selectedRoute.split('-');
-    return find(scopeProgram, {
-      logicId: parseInt(logicId),
-      routeCode,
-      scopeCode: selectedScope,
-    });
-  }
-
   function renderRouteOptions() {
     const { logicAreaList } = currentMap;
-    return logicAreaList.map(({ id, name, routeMap }) => (
-      <OptGroup key={id} label={`${formatMessage({ id: 'app.map.logicArea' })}: ${name}`}>
-        {Object.values(routeMap).map(({ code, name }) => (
-          <Option key={`${id}-${code}`} value={`${id}-${code}`}>
-            {name}
-          </Option>
-        ))}
-      </OptGroup>
-    ));
+    return logicAreaList
+      .map(({ id, routeMap }) => {
+        if (id === currentLogicArea) {
+          return Object.values(routeMap).map(({ code, name }) => (
+            <Option key={`${id}-${code}`} value={`${id}-${code}`}>
+              {name}
+            </Option>
+          ));
+        }
+      })
+      .filter(Boolean)
+      .flat();
   }
 
   function renderScopeOptions() {
@@ -106,35 +103,23 @@ const ProgramingPanel = (props) => {
     ));
   }
 
+  // 获取指定编程数据
+  function getScopeLoad() {
+    if (isStrictNull(selectedRoute)) return null;
+    const [, routeCode] = selectedRoute.split('-');
+    return find(scopeProgram, {
+      routeCode,
+      scopeCode: selectedScope,
+    });
+  }
+
+  // 获取不同类型的可配置动作
   function getActions(groupName) {
     const actions = find(scopeActions, { groupName });
     if (actions) {
       return actions.actionList;
     }
     return [];
-  }
-
-  // type：zone, cell, relation
-  function submit(detail, type) {
-    // 直接替换并保存后台
-    const scopeProgramItem = { ...scopeLoad, detailMap: { ...scopeLoad.detailMap } };
-    const typeLoad = [...scopeProgramItem.detailMap[type]];
-    const index = findIndex(typeLoad, { zoneCode: detail.zoneCode });
-    typeLoad.splice(index, 1, detail);
-    scopeProgramItem.detailMap[type] = typeLoad;
-
-    // request
-    setLoading(true);
-    saveScopeProgram(scopeProgramItem)
-      .then((response) => {
-        if (!dealResponse(response, true)) {
-          setVisible(false);
-          refresh();
-        }
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   }
 
   return (
@@ -154,16 +139,27 @@ const ProgramingPanel = (props) => {
           <Button style={{ marginLeft: 10, height: 40 }}>
             <ImportOutlined /> <FormattedMessage id={'app.button.import'} />
           </Button>
-          <Button style={{ marginLeft: 10, height: 40 }} onClick={refresh}>
+          <Button
+            style={{ marginLeft: 10, height: 40 }}
+            onClick={() => {
+              refresh();
+              setSelectedRoute(null);
+              setSelectedScope(null);
+            }}
+          >
             <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
           </Button>
         </div>
         <Divider style={{ background: '#a3a3a3', margin: '10px 0 20px 0' }} />
+
         {/* 选择区 */}
         <Form.Item label={<FormattedMessage id={'app.map.routeArea'} />} {...formItemLayout}>
           <Select
             value={selectedRoute}
-            onChange={(value) => setSelectedRoute(value)}
+            onChange={(value) => {
+              setSelectedRoute(value);
+              setSelectedScope(null);
+            }}
             style={{ width: '100%' }}
           >
             {renderRouteOptions()}
@@ -196,25 +192,18 @@ const ProgramingPanel = (props) => {
             {renderScopeOptions()}
           </Select>
         </Form.Item>
+
         {/* Tab栏 */}
-        <div className={styles.programTabs}>
+        <div className={styles.programTabs} style={{ opacity: hideTabs ? 0 : 1 }}>
           <Tabs defaultActiveKey="zone">
             <TabPane tab={<FormattedMessage id={'app.map.zone'} />} key="zone">
-              <ProgramingZone
-                loading={loading}
-                data={scopeLoad?.detailMap?.zone}
-                actions={getActions('zone')}
-                submit={submit}
-              />
+              <ProgramingZone scopeLoad={scopeLoad} actions={getActions('zone')} />
             </TabPane>
             <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key="cell">
-              <ProgramingCell data={scopeLoad?.detailMap?.cell} actions={getActions('cell')} />
+              <ProgramingCell scopeLoad={scopeLoad} actions={getActions('cell')} />
             </TabPane>
             <TabPane tab={<FormattedMessage id={'app.map.route'} />} key="relation">
-              <ProgramingRelation
-                data={scopeLoad?.detailMap?.relation}
-                actions={getActions('relation')}
-              />
+              <ProgramingRelation scopeLoad={scopeLoad} actions={getActions('relation')} />
             </TabPane>
           </Tabs>
         </div>
@@ -258,4 +247,5 @@ const ProgramingPanel = (props) => {
 export default connect(({ editor }) => ({
   currentMap: editor.currentMap,
   scopeActions: editor.scopeActions,
+  currentLogicArea: editor.currentLogicArea,
 }))(memo(ProgramingPanel));
