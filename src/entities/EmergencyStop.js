@@ -5,7 +5,6 @@ import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { EStopStateColor, MapSelectableSpriteType, zIndex } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 const BorderWidth = 50;
 class EmergencyStop extends ResizableContainer {
@@ -59,7 +58,7 @@ class EmergencyStop extends ResizableContainer {
         height: parseInt(height),
       },
     });
-    dispatch({ type: 'editor/saveForceUpdate' });
+    window.$$dispatch({ type: 'editor/saveForceUpdate' });
     this.$$data = {
       ...this.$$data,
       xlength: parseInt(width) - BorderWidth,
@@ -152,7 +151,7 @@ class EmergencyStop extends ResizableContainer {
         eStopArea.height = height;
         eStopArea.anchor.set(0.5);
       } else {
-        eStopArea = new SmoothGraphics();
+        eStopArea = new PIXI.Graphics();
         eStopArea.lineStyle(0);
         eStopArea.beginFill(fillColor);
         eStopArea.drawCircle(0, 0, radius);
@@ -168,7 +167,7 @@ class EmergencyStop extends ResizableContainer {
     const width = this.$$data.xlength;
     const height = this.$$data.ylength;
     const radius = this.$$data.r;
-    const line = new SmoothGraphics();
+    const line = new PIXI.Graphics();
     if (isNull(radius)) {
       line.lineStyle(BorderWidth, color).drawRect(0 - width / 2, 0 - height / 2, width, height);
     } else {
