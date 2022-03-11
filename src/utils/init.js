@@ -1,6 +1,39 @@
 import intl from 'react-intl-universal';
-import { dealResponse, isStrictNull } from '@/utils/util';
+import { dealResponse, extractNameSpaceInfoFromEnvs, isStrictNull } from '@/utils/util';
 import { AppCode } from '@/config/config';
+import requestAPI from '@/utils/requestAPI';
+import { fetchAllEnvironmentList } from '@/services/SSO';
+
+export function handleNameSpace(dispatch) {
+  return new Promise(async (resolve, reject) => {
+    // 获取所有环境配置信息
+    try {
+      let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
+      let allEnvironment = await fetchAllEnvironmentList();
+      if (dealResponse(allEnvironment)) {
+        allEnvironment = [];
+      } else {
+        dispatch({ type: 'global/saveAllEnvironments', payload: allEnvironment });
+      }
+
+      // 获取NameSpace数据 & 并整合运维配置
+      if (allEnvironment.length > 0) {
+        const activeNameSpace = allEnvironment.filter(({ flag }) => flag === '1');
+        if (activeNameSpace.length > 0) {
+          // 若自定义环境出现两个已激活项目, 将默认启用第一项
+          urlDir = {
+            ...urlDir,
+            ...extractNameSpaceInfoFromEnvs(activeNameSpace[0]),
+          };
+        }
+      }
+      window.sessionStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
+      resolve();
+    } catch (e) {
+      reject();
+    }
+  });
+}
 
 export function generateMenuNodeLocaleKey(data, parentName) {
   return data

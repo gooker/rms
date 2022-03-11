@@ -1,16 +1,16 @@
 import React, { memo } from 'react';
-import { Select, Input, InputNumber, Button } from 'antd';
+import { Select, Input, Button } from 'antd';
 import { MinusOutlined, PlusOutlined, BarsOutlined } from '@ant-design/icons';
 import { Container, Draggable } from 'react-smooth-dnd';
 import { find } from 'lodash';
-import styles from './actionDefiner.module.less';
 import { getRandomString } from '@/utils/util';
+import styles from './actionDefiner.module.less';
 
 const { Option } = Select;
 
 const ActionDefiner = (props) => {
   const { data, value, onChange } = props;
-  const currentValue = Array.isArray(value) && value.length > 0 ? [...value] : [{}]; // [{code: "A2", params: null}, {code: "B", params: ["2"]]
+  const currentValue = Array.isArray(value) && value.length > 0 ? [...value] : [];
 
   function addDynamicRow() {
     onChange([...currentValue, {}]);
@@ -62,7 +62,7 @@ const ActionDefiner = (props) => {
         result.push(
           <Input
             key={index}
-            style={{ width: 200 }}
+            style={{ width: 170 }}
             addonBefore={actionData.params[labelKey]}
             value={currentValue[dataRowIndex].params[index]}
             onChange={(ev) => {
@@ -77,38 +77,38 @@ const ActionDefiner = (props) => {
 
   return (
     <div className={styles.actionDefiner}>
-      <Container
-        orientation="vertical"
-        onDrop={(e) => onOrderChanged(e)}
-        dragHandleSelector={'.actionDefinerDrag'}
-        dropPlaceholder={{
-          animationDuration: 150,
-          showOnTop: true,
-        }}
-      >
-        {currentValue.map((item, index) => (
-          <Draggable key={item.code}>
-            <div className={styles.dynamicRow}>
-              <BarsOutlined className={'actionDefinerDrag'} style={{ cursor: 'move' }} />
-              <div style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex' }}>
-                <div style={{ marginLeft: 5 }}>
-                  <Select
-                    style={{ width: 150 }}
-                    value={currentValue[index].code}
-                    onChange={(code) => {
-                      onTypeChange(index, code);
-                    }}
-                  >
-                    {data.map((action) => (
-                      <Option key={getRandomString(6)} value={action.code}>
-                        {action.actionName}
-                      </Option>
-                    ))}
-                  </Select>
+      {currentValue.length > 0 && (
+        <Container
+          orientation="vertical"
+          onDrop={(e) => onOrderChanged(e)}
+          dragHandleSelector={'.actionDefinerDrag'}
+          dropPlaceholder={{
+            animationDuration: 150,
+            showOnTop: true,
+          }}
+        >
+          {currentValue.map((item, index) => (
+            <Draggable key={item.code}>
+              <div className={styles.dynamicRow}>
+                <BarsOutlined className={'actionDefinerDrag'} style={{ cursor: 'move' }} />
+                <div style={{ overflowX: 'auto', overflowY: 'hidden', display: 'flex' }}>
+                  <div style={{ marginLeft: 5 }}>
+                    <Select
+                      style={{ width: 130 }}
+                      value={currentValue[index].code}
+                      onChange={(code) => {
+                        onTypeChange(index, code);
+                      }}
+                    >
+                      {data.map((action) => (
+                        <Option key={getRandomString(6)} value={action.code}>
+                          {action.actionName}
+                        </Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className={styles.dynamicValueInputs}>{getOptions(index, item.code)}</div>
                 </div>
-                <div className={styles.dynamicValueInputs}>{getOptions(index, item.code)}</div>
-              </div>
-              {currentValue.length > 1 && (
                 <Button
                   className={styles.dynamicMinusButton}
                   onClick={() => {
@@ -117,11 +117,12 @@ const ActionDefiner = (props) => {
                 >
                   <MinusOutlined />
                 </Button>
-              )}
-            </div>
-          </Draggable>
-        ))}
-      </Container>
+              </div>
+            </Draggable>
+          ))}
+        </Container>
+      )}
+
       <Button type="dashed" className={styles.dynamicAddButton} onClick={addDynamicRow}>
         <PlusOutlined />
       </Button>

@@ -2,10 +2,9 @@ import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
-import { filterMapSpriteByRange } from '@/utils/mapUtil';
-import styles from '../editorLayout.module.less';
 import { DumpBasket } from '@/entities';
+import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
+import styles from '../editorLayout.module.less';
 
 // 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便
 class EditorBodyLeft extends React.PureComponent {

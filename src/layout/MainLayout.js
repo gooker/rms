@@ -11,16 +11,17 @@ import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
 import {
+  sleep,
+  isNull,
+  isStrictNull,
   dealResponse,
   formatMessage,
   getPlateFormType,
-  isNull,
-  isStrictNull,
-  sleep,
 } from '@/utils/util';
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
+import { handleNameSpace } from '@/utils/init';
 
 @withRouter
 @connect(({ global }) => ({
@@ -44,6 +45,10 @@ class MainLayout extends React.Component {
     if (isStrictNull(token)) {
       this.logout();
     } else {
+      // 刚进入页面需要首先处理namespace数据
+      await handleNameSpace(dispatch);
+
+      // 开始初始化应用
       const validateResult = await queryUserByToken();
       if (validateResult && !dealResponse(validateResult)) {
         try {
@@ -51,7 +56,7 @@ class MainLayout extends React.Component {
           // 先验证授权
           const granted = await this.validateAuthority();
           if (!granted && userInfo.username !== 'admin') {
-            dispatch({ type: 'global/clearEnvironments' });
+            // dispatch({ type: 'global/clearEnvironments' });
             history.push('/login');
           } else {
             // 判断当前平台类型
@@ -123,7 +128,7 @@ class MainLayout extends React.Component {
             title: formatMessage({ id: 'app.global.initFailed' }),
             content: error.toString(),
             onOk() {
-              dispatch({ type: 'user/logout', payload: history });
+              dispatch({ type: 'user/logout' });
             },
           });
         }

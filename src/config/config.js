@@ -34,7 +34,7 @@ export const ApiNameSpace = [
   'tote',
   'forklift',
   'coordinator',
-  'WS',
+  'ws',
   'sorter',
   'translation',
 ];

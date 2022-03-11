@@ -1,22 +1,33 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Form, Select, List, Divider } from 'antd';
-import { find } from 'lodash';
+import { Button, Form, Select, Divider, Empty } from 'antd';
+import { cloneDeep, find, findIndex } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isEmptyArray, isEmptyPlainObject, isNull } from '@/utils/util';
+import { saveScopeProgram } from '@/services/XIHE';
+import {
+  isNull,
+  dealResponse,
+  formatMessage,
+  isEmptyArray,
+  isEmptyPlainObject,
+  isStrictNull,
+} from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
 import ActionDefiner from '../components/ActionDefiner';
+import ScopeProgramList from '@/packages/XIHE/MapEditor/components/ScopeProgramList';
 
 const ProgramingZone = (props) => {
-  const { currentLogicArea, currentCells, data, loading, actions, submit } = props;
+  const { currentLogicArea, currentCells, scopeLoad, actions } = props;
+  const zoneConfigLoad = scopeLoad?.detailMap?.zone || [];
 
   const [formRef] = Form.useForm();
+  const [loading, setLoading] = useState(false);
   const [zoneMarkers, setZoneMarkers] = useState([]);
 
   useEffect(() => {
     formRef.resetFields();
-  }, [data]);
+  }, [zoneConfigLoad]);
 
   useEffect(() => {
     // 暂时只处理矩形区域
@@ -25,9 +36,24 @@ const ProgramingZone = (props) => {
     setZoneMarkers(zoneMarker);
   }, [currentLogicArea]);
 
+  function save(payload) {
+    setLoading(true);
+    saveScopeProgram(payload)
+      .then((response) => {
+        dealResponse(response, true);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
   function validateParam(_, value) {
+    if (isNull(value)) {
+      return Promise.resolve();
+    }
+
     // 在没选类型情况下value是空数组
-    if (isNull(value) || isEmptyArray(value)) {
+    if (isEmptyArray(value)) {
       return Promise.reject();
     } else {
       for (let i = 0; i < value.length; i++) {
@@ -50,6 +76,7 @@ const ProgramingZone = (props) => {
     formRef
       .validateFields()
       .then((values) => {
+        // 获取区域包含的点位
         const { zoneMarker } = getCurrentLogicAreaData();
         const zone = find(zoneMarker, { code: values.zoneCode });
         const { x, y, width, height } = zone;
@@ -58,7 +85,16 @@ const ProgramingZone = (props) => {
         const zoneCells = currentCells
           .filter((item) => item.x >= x && item.y >= y && item.x <= endX && item.y <= endY)
           .map(({ id }) => id);
-        submit({ ...values, zoneCells }, 'zone');
+
+        // 先删选掉已经存在的点位配置数据
+        const restZoneConfigLoad = [...zoneConfigLoad].filter(
+          (item) => item.zoneCode !== values.zoneCode,
+        );
+        restZoneConfigLoad.push({ ...values, zoneCells });
+        scopeLoad.detailMap.zone = restZoneConfigLoad;
+
+        // request
+        save(scopeLoad);
       })
       .catch((err) => {
         console.log(err);
@@ -66,19 +102,24 @@ const ProgramingZone = (props) => {
   }
 
   function onZoneCodeChanged(zoneCode) {
-    const zoneParam = find(data, { zoneCode });
-    if (isNull(zoneParam)) {
-      formRef.setFieldsValue({ scopeParams: [] });
+    if (isNull(zoneCode)) {
+      formRef.resetFields();
     } else {
-      formRef.setFieldsValue({ scopeParams: zoneParam.scopeParams });
+      const zoneParam = find(zoneConfigLoad, { zoneCode });
+      if (isNull(zoneParam)) {
+        formRef.setFieldsValue({ scopeParams: [] });
+      } else {
+        formRef.setFieldsValue({ scopeParams: zoneParam.scopeParams });
+      }
     }
+
     return zoneCode;
   }
 
-  function getListData() {
+  function getDatasource() {
     const dbZoneMarkers = getCurrentLogicAreaData()?.zoneMarker || [];
-    if (Array.isArray(data)) {
-      return data
+    if (Array.isArray(zoneConfigLoad)) {
+      return zoneConfigLoad
         .map(({ zoneCode }) => {
           const dbZoneMarker = find(dbZoneMarkers, { code: zoneCode });
           if (dbZoneMarker) {
@@ -92,6 +133,17 @@ const ProgramingZone = (props) => {
     return [];
   }
 
+  function onEdit(id) {
+    const { zoneCode, scopeParams, zoneCells } = find(zoneConfigLoad, { zoneCode: id });
+    formRef.setFieldsValue({ zoneCode, scopeParams, zoneCells });
+  }
+
+  function onDelete(id) {
+    scopeLoad.detailMap.zone = zoneConfigLoad.filter((item) => item.zoneCode !== id);
+    save(scopeLoad);
+  }
+
+  const dataSource = getDatasource();
   return (
     <div style={{ paddingTop: 20 }}>
       <Form labelWrap form={formRef} layout={'vertical'}>
@@ -101,7 +153,7 @@ const ProgramingZone = (props) => {
           rules={[{ required: true }]}
           getValueFromEvent={onZoneCodeChanged}
         >
-          <Select>
+          <Select allowClear>
             {zoneMarkers.map((item) => (
               <Select.Option key={item.code} value={item.code}>
                 {item.text || item.code}
@@ -109,13 +161,11 @@ const ProgramingZone = (props) => {
             ))}
           </Select>
         </Form.Item>
+
         <Form.Item
           name="scopeParams"
           label={formatMessage({ id: 'app.common.param' })}
-          rules={[
-            { required: true, message: formatMessage({ id: 'editor.program.action.required' }) },
-            { validator: validateParam },
-          ]}
+          rules={[{ validator: validateParam }]}
         >
           <ActionDefiner data={actions} />
         </Form.Item>
@@ -126,13 +176,11 @@ const ProgramingZone = (props) => {
 
       {/* 区域配置列表 */}
       <Divider style={{ background: '#a3a3a3' }} />
-      <List
-        bodered
-        header={<FormattedMessage id={'editor.program.zone.configList'} />}
-        footer={null}
-        dataSource={getListData()}
-        renderItem={(item) => <List.Item>{item.name}</List.Item>}
-      />
+      {dataSource.length === 0 ? (
+        <Empty />
+      ) : (
+        <ScopeProgramList datasource={getDatasource()} onEdit={onEdit} onDelete={onDelete} />
+      )}
     </div>
   );
 };
