@@ -102,8 +102,8 @@ const DatePickerSelector = (props) => {
           //本周
           //startOf('week')-一周指的是周日-周六
           //startOf('isoWeek')-一周指的是周一-周日
-          const start = moment().week(moment().week()).startOf('week'); // 周一日期
-          const end = moment().week(moment().week()).endOf('week'); // 周日日期
+          const start = moment().week(moment().week()).startOf('isoWeek'); // 周一日期
+          const end = moment().week(moment().week()).endOf('isoWeek'); // 周日日期
           result.startTime = GMT2UserTimeZone(start).format('YYYY-MM-DD 00:00:00');
           result.endTime = GMT2UserTimeZone(end).format('YYYY-MM-DD 23:59:59');
           break;
@@ -111,10 +111,10 @@ const DatePickerSelector = (props) => {
           //上周
           const prevWeekStart = moment()
             .week(moment().week() - 1)
-            .startOf('week');
+            .startOf('isoWeek');
           const endWeekStart = moment()
             .week(moment().week() - 1)
-            .endOf('week');
+            .endOf('isoWeek');
           result.startTime = GMT2UserTimeZone(prevWeekStart).format('YYYY-MM-DD 00:00:00');
           result.endTime = GMT2UserTimeZone(endWeekStart).format('YYYY-MM-DD 23:59:59');
           break;
