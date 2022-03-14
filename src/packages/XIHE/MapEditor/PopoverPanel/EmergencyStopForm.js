@@ -3,21 +3,25 @@ import { Button, Form, InputNumber, message, Input, Radio, Select } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { EmergencyStopMode } from '@/config/consts';
+import { EmergencyStopMode, MapSelectableSpriteType } from '@/config/consts';
 import { fetchEmergencyStopList } from '@/services/XIHE';
 import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
+import ButtonInput from '@/components/ButtonInput/ButtonInput';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 20);
 const key = 'updatable';
 
 const EmergencyStopForm = (props) => {
-  const { dispatch, flag, editing, mapContext, mapId, logicId, back } = props;
+  const { dispatch, flag, editing, back } = props;
+  const { cellMap, mapContext, selections, mapId, logicId } = props;
+  const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
 
   const [formRef] = Form.useForm();
   const [shape, setShape] = useState(null);
   const [allEStop, setAllEStop] = useState([]);
+  const [radiusRequired, setRadiusRequired] = useState(false);
 
   useEffect(() => {
     // fetchEmergencyStopList(mapId).then((response) => {
@@ -52,39 +56,59 @@ const EmergencyStopForm = (props) => {
   }
 
   function autLoad() {
-    const maskDOM = document.getElementById('mapSelectionMask');
-    const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator(
-      document.getElementById('editorPixi'),
-      maskDOM,
-      mapContext.pixiUtils.viewport,
-    );
-    const xLength = Math.abs(worldEndX - worldStartX);
-    const yLength = Math.abs(worldStartY - worldEndY);
+    formRef
+      .validateFields()
+      .then((values) => {
+        const maskDOM = document.getElementById('mapSelectionMask');
+        const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator(
+          document.getElementById('editorPixi'),
+          maskDOM,
+          mapContext.pixiUtils.viewport,
+        );
+        const xLength = Math.abs(worldEndX - worldStartX);
+        const yLength = Math.abs(worldStartY - worldEndY);
 
-    if (shape === 'Rect') {
-      formRef.setFieldsValue({
-        x: worldStartX,
-        y: worldStartY,
-        xlength: xLength,
-        ylength: yLength,
-      });
-    } else {
-      // 注意: 圆的计算点在圆心，不是左上角
-      formRef.setFieldsValue({
-        x: (worldEndX + worldStartX) / 2,
-        y: (worldEndY + worldStartY) / 2,
-        r: (xLength + yLength) / 4,
-      });
-    }
-    onValuesChange({}, formRef.getFieldsValue());
-    dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Drag });
-    maskDOM.style.display = 'none';
-    message.destroy(key);
-    back();
+        if (shape === 'Rect') {
+          formRef.setFieldsValue({
+            x: worldStartX,
+            y: worldStartY,
+            xlength: xLength,
+            ylength: yLength,
+          });
+        } else {
+          /**
+           * 注意: 圆的计算点在圆心，不是左上角
+           * 另外：
+           * 1. 如果指定了点位，那么必须指定半径
+           * 2. 如果指定了半径，就忽略计算出来的半径，只用坐标
+           */
+          let valueMap = {};
+          if (!isNull(values.cell)) {
+            valueMap = {
+              x: cellMap[values.cell].x,
+              y: cellMap[values.cell].y,
+              r: values.r,
+            };
+          } else {
+            valueMap = {
+              x: (worldEndX + worldStartX) / 2,
+              y: (worldEndY + worldStartY) / 2,
+              r: isNull(values.r) ? (xLength + yLength) / 4 : values.r,
+            };
+          }
+          formRef.setFieldsValue(valueMap);
+        }
+        onValuesChange({}, formRef.getFieldsValue());
+        dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Drag });
+        maskDOM.style.display = 'none';
+        message.destroy(key);
+        back();
+      })
+      .catch(() => {});
   }
 
   function onValuesChange(changedValues, allValues) {
-    const commonFlag = !isNull(allValues.code) && !isNull(allValues.x) && !isNull(allValues.y);
+    const commonFlag = !isNull(allValues.code) && !isNull(allValues.name);
     if (!commonFlag) return;
 
     const currentAllValues = { ...allValues };
@@ -93,22 +117,20 @@ const EmergencyStopForm = (props) => {
     currentAllValues.logicId = logicId;
     currentAllValues.isFixed = true;
 
-    if (commonFlag) {
-      dispatch({
-        type: 'editor/updateFunction',
-        payload: { scope: 'logic', type: 'emergencyStopFixedList', data: currentAllValues },
-      }).then((result) => {
-        if (result.type === 'add') {
-          mapContext.renderFixedEStopFunction(result.payload);
-        }
-        if (result.type === 'update') {
-          const { pre, current } = result;
-          mapContext.removeFixedEStopFunction(pre);
-          mapContext.renderFixedEStopFunction(current);
-        }
-        mapContext.refresh();
-      });
-    }
+    dispatch({
+      type: 'editor/updateFunction',
+      payload: { scope: 'logic', type: 'emergencyStopFixedList', data: currentAllValues },
+    }).then((result) => {
+      if (result.type === 'add') {
+        mapContext.renderFixedEStopFunction(result.payload);
+      }
+      if (result.type === 'update') {
+        const { pre, current } = result;
+        mapContext.removeFixedEStopFunction(pre);
+        mapContext.renderFixedEStopFunction(current);
+      }
+      mapContext.refresh();
+    });
   }
 
   function onShapeChange(evt) {
@@ -127,7 +149,12 @@ const EmergencyStopForm = (props) => {
   }
 
   return (
-    <Form labelWrap form={formRef} onValuesChange={onValuesChange} {...formItemLayout}>
+    <Form
+      labelWrap
+      form={formRef}
+      {...formItemLayout}
+      {...(isNull(editing) ? {} : { onValuesChange })}
+    >
       <Form.Item hidden name={'flag'} initialValue={flag} />
       {/* 模式 */}
       <Form.Item
@@ -147,7 +174,8 @@ const EmergencyStopForm = (props) => {
       <Form.Item
         name={'code'}
         initialValue={editing?.code || `ESP_${getRandomString(8)}`}
-        label={<FormattedMessage id="app.common.code" />}
+        label={formatMessage({ id: 'app.common.code' })}
+        rules={[{ required: true }]}
       >
         <Input />
       </Form.Item>
@@ -155,7 +183,8 @@ const EmergencyStopForm = (props) => {
       <Form.Item
         name={'name'}
         initialValue={editing?.name}
-        label={<FormattedMessage id="app.common.name" />}
+        label={formatMessage({ id: 'app.common.name' })}
+        rules={[{ required: true }]}
       >
         <Input />
       </Form.Item>
@@ -226,15 +255,43 @@ const EmergencyStopForm = (props) => {
       )}
 
       {!isNull(shape) && shape === 'Circle' && (
-        // 半径
-        <Form.Item
-          name={'r'}
-          initialValue={editing?.r}
-          label={<FormattedMessage id="app.common.radius" />}
-          hidden={isNull(editing)}
-        >
-          <InputNumber style={{ width: 150 }} />
-        </Form.Item>
+        <>
+          {/* 点位 */}
+          <Form.Item
+            name={'cell'}
+            label={<FormattedMessage id="app.map.cell" />}
+            getValueFromEvent={(value) => {
+              if (isNull(value)) {
+                setRadiusRequired(false);
+                message.info({
+                  content: formatMessage({ id: 'editor.emergency.tip' }),
+                  duration: 0,
+                  key,
+                });
+              } else {
+                message.destroy(key);
+                setRadiusRequired(true);
+              }
+              return value;
+            }}
+          >
+            <ButtonInput
+              type={'number'}
+              data={selectedCells[0]?.id}
+              disabled={selectedCells.length !== 1}
+            />
+          </Form.Item>
+
+          {/* 半径 */}
+          <Form.Item
+            name={'r'}
+            initialValue={editing?.r}
+            label={formatMessage({ id: 'app.common.radius' })}
+            rules={[{ required: radiusRequired }]}
+          >
+            <InputNumber style={{ width: 150 }} />
+          </Form.Item>
+        </>
       )}
 
       {isNull(editing) && (
@@ -253,5 +310,7 @@ export default connect(({ editor }) => {
     mapId: currentMap?.id,
     logicId: currentLogicArea,
     mapContext: editor.mapContext,
+    selections: editor.selections,
+    cellMap: editor.currentMap.cellMap,
   };
 })(memo(EmergencyStopForm));

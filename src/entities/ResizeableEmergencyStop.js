@@ -59,6 +59,7 @@ class ResizeableEmergencyStop extends ResizableContainer {
 
   updateLayout(data) {
     const { x, y, width, height } = data;
+    // 判断是圆形还是矩形
     window.$$dispatch({
       type: 'editor/updateEStop',
       payload: {
