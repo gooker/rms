@@ -1,11 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Form, Button, Select, DatePicker } from 'antd';
+import { Row, Col, Form, Button, Select } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import TimePickerSelector from '../../components/timePicker';
+import DatePickerSelector from '../../components/DatePickerSelector';
+import { isNull } from 'lodash';
 
 const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 14 } };
-const { RangePicker } = DatePicker;
 let _name = null;
 
 const FilterSearchBytime = (props) => {
@@ -34,43 +34,20 @@ const FilterSearchBytime = (props) => {
             <Row>
               <Col flex="auto">
                 <Form.Item
-                  {...formLayout}
-                  name={'rangeNum'}
                   label={<FormattedMessage id="app.form.dateRange" />}
-                  getValueFromEvent={(value) => {
-                    const { setFieldsValue } = formDate;
-                    setFieldsValue({
-                      startByTime: value.startTime,
-                      endByTime: value.endTime,
-                      rangeNum: value.timeDate,
-                    });
-                    return value.timeDate;
-                  }}
-                >
-                  <TimePickerSelector defaultType={'hour'} />
-                  {/* disabledChangeType={true} */}
-                </Form.Item>
-              </Col>
-
-              {/* <Col flex="auto">
-                <Form.Item
                   name="timeRange"
                   getValueFromEvent={(value) => {
-                    const { setFieldsValue } = formDate;
-                    setFieldsValue({
-                      startByTime: value[0].format('YYYY-MM-DD HH:00:00'),
-                      endByTime: value[1].format('YYYY-MM-DD HH:00:00'),
+                    formDate.setFieldsValue({
+                      startByTime: isNull(value) ? null : value[0].format('YYYY-MM-DD HH:mm:00'),
+                      endByTime: isNull(value) ? null : value[1].format('YYYY-MM-DD HH:mm:00'),
                     });
                     return value;
                   }}
                 >
-                  <RangePicker
-                    style={{ width: '335px' }}
-                    showTime={{ format: 'HH' }}
-                    format="YYYY-MM-DD HH:00:00"
-                  />
+                  <DatePickerSelector />
                 </Form.Item>
-              </Col> */}
+              </Col>
+
               <Col span={6}>
                 <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
                   <Select

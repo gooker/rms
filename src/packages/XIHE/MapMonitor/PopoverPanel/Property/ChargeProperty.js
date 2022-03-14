@@ -19,7 +19,7 @@ import LabelColComponent from '@/components/LabelColComponent';
 import Dictionary from '@/utils/Dictionary';
 import styles from '../../monitorLayout.module.less';
 
-const checkedColor = '#ff8400';
+const checkedColor = '#70df39';
 
 const ChargeProperty = (props) => {
   const { data, mapId, mapContext } = props;

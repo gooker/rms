@@ -1,11 +1,10 @@
 import React, { memo, useEffect } from 'react';
-import { Row, Col, Form, Button, Select, DatePicker } from 'antd';
+import { Row, Col, Form, Button, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/util';
-import TimePickerSelector from './timePicker';
+import DatePickerSelector from './DatePickerSelector';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
-const { RangePicker } = DatePicker;
 
 const LogSearchForm = (props) => {
   const { search } = props;
@@ -25,8 +24,7 @@ const LogSearchForm = (props) => {
         currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:00:00');
         currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:00:00');
       }
-      //   console.log(values);
-      //   console.log('1', currentValues);
+      delete currentValues.timeRange;
       search(currentValues);
     });
   }
@@ -37,32 +35,15 @@ const LogSearchForm = (props) => {
       <Form.Item hidden name={'endTime'} />
       <Form.Item hidden name={'type'} />
       <Row gutter={24}>
-        {/* 日期 */}
         <Col>
           <Form.Item
-            name={'timeNum'}
             label={<FormattedMessage id="app.form.dateRange" />}
+            name="timeRange"
             getValueFromEvent={(value) => {
-              const { setFieldsValue } = form;
-              setFieldsValue({
-                startTime: value.startTime,
-                endTime: value.endTime,
-                type: value.dateType,
-                timeNum: value.timeDate,
-              });
-              return value.timeDate;
+              return value;
             }}
           >
-            <TimePickerSelector defaultType={'days'} defaultTime={1} />
-          </Form.Item>
-        </Col>
-        <Col>
-          <Form.Item name="timeRange">
-            <RangePicker
-              style={{ width: '335px' }}
-              showTime={{ format: 'HH' }}
-              format="YYYY-MM-DD HH:00:00"
-            />
+            <DatePickerSelector />
           </Form.Item>
         </Col>
 
