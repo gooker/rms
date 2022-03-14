@@ -107,22 +107,23 @@ class TaskTriggerModal extends Component {
           value: item.name,
           children: [],
         };
-        Array.isArray(item.groupValue) &&
-          item.groupValue.map((rec) => {
-            currentTree.children.push({
-              title: rec,
-              value: JSON.stringify({
-                group: `${item.name}`,
-                valueitem: `${rec}`,
-                groupType: `${item.groupType}`,
-              }),
-              key: JSON.stringify({
-                group: `${item.name}`,
-                valueitem: `${rec}`,
-                groupType: `${item.groupType}`,
-              }), // JSON.stringify({ [item]: `${rec}` }),
-            });
+        Object.entries(item.groupValue)?.map(([code, value]) => {
+          currentTree.children.push({
+            title: value,
+            value: JSON.stringify({
+              group: `${item.name}`,
+              valueitem: `${value}`,
+              groupCode: `${code}`,
+              groupType: `${item.groupType}`,
+            }),
+            key: JSON.stringify({
+              group: `${item.name}`,
+              valueitem: `${value}`,
+              groupCode: `${code}`,
+              groupType: `${item.groupType}`,
+            }),
           });
+        });
         currentTreeData.push(currentTree);
       });
     this.setState({
@@ -156,11 +157,12 @@ class TaskTriggerModal extends Component {
       if (isStrictNull(item)) {
         return;
       }
-      const { valueitem, group, groupType } = JSON.parse(item);
+      const { valueitem, group, groupType, groupCode } = JSON.parse(item);
       const existItem = this.numFilter(valueitem, group);
       isNull(existItem)
         ? limitNumList.push({
             groupName: valueitem,
+            groupCode,
             groupTypeName: group,
             groupType,
             limitNum: null,
@@ -286,6 +288,7 @@ class TaskTriggerModal extends Component {
         JSON.stringify({
           group: item.groupTypeName,
           valueitem: item.groupName,
+          groupCode: item.groupCode,
           groupType: item.groupType,
         }),
       );
@@ -300,23 +303,6 @@ class TaskTriggerModal extends Component {
       list.add(i.groupType);
     });
     return Array.from(list);
-  };
-
-  // 废弃
-  getSourceGroup = (group) => {
-    const currentGroup = group.sourcegroup;
-    const unreadMsg = {};
-    currentGroup.forEach((item) => {
-      const newitem = JSON.parse(item);
-      const kk = newitem.group; // Object.keys(newitem).toString();
-      const vv = newitem.valueitem; // Object.values(newitem).toString();
-      if (unreadMsg.hasOwnProperty(kk)) {
-        unreadMsg[kk].push(vv);
-      } else {
-        unreadMsg[kk] = [vv];
-      }
-    });
-    return unreadMsg;
   };
 
   render() {
