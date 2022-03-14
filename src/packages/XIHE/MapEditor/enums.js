@@ -148,11 +148,11 @@ export const EditorRightTools = [
     value: RightCategory.Delivery,
     icon: <DropboxOutlined />,
   },
-  {
-    label: <FormattedMessage id={'app.map.intersection'} />,
-    value: RightCategory.Intersection,
-    icon: <IconFont type={'icon-intersection'} />,
-  },
+  // {
+  //   label: <FormattedMessage id={'app.map.intersection'} />,
+  //   value: RightCategory.Intersection,
+  //   icon: <IconFont type={'icon-intersection'} />,
+  // },
   {
     label: <FormattedMessage id={'app.map.programing'} />,
     value: RightCategory.Programing,

@@ -48,7 +48,7 @@ const CellProperty = (props) => {
       type: 'editor/setCellType',
       payload: { type: field, scope, operation: 'remove' },
     }).then((result) => {
-      dispatch({ type: 'editor/saveForceUpdate' });
+      dispatch({ type: 'editorView/saveForceUpdate' });
       mapContext.updateCells({ type: 'type', payload: result });
     });
   }
@@ -139,10 +139,10 @@ const CellProperty = (props) => {
     </>
   );
 };
-export default connect(({ editor }) => ({
+export default connect(({ editor, editorView }) => ({
   currentLogicArea: getCurrentLogicAreaData(),
   currentRouteMap: getCurrentLogicAreaData(),
   mapContext: editor.mapContext,
   currentMap: editor.currentMap,
-  forceUpdate: editor.forceUpdate,
+  forceUpdate: editorView.forceUpdate,
 }))(memo(CellProperty));

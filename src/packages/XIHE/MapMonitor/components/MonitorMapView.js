@@ -33,7 +33,7 @@ import {
 import {
   BitText,
   Cell,
-  EmergencyStop,
+  ResizeableEmergencyStop,
   GeoLock,
   LatentAGV,
   LatentPod,
@@ -1594,32 +1594,32 @@ class MonitorMapView extends BaseMap {
 
     // logic section 比较特殊  只需要留一条数据就够了
     // 渲染新拿到所有的紧急停止点
-    allData.forEach((currentdata) => {
+    allData.forEach((currentData) => {
       const eStopData = {
-        ...currentdata,
+        ...currentData,
         showEmergency,
-        active: true,
         checkEStopArea,
         worldSize,
+        resizeable: false,
       };
-      if (!['Section', 'Logic', 'Area'].includes(currentdata.estopType)) {
+      if (!['Section', 'Logic', 'Area'].includes(currentData.estopType)) {
         return;
       }
-      if (currentdata.estopType !== 'Section' && currentdata.logicId !== currentLogicArea) {
+      if (currentData.estopType !== 'Section' && currentData.logicId !== currentLogicArea) {
         return;
       }
 
-      if (['Section', 'Logic'].includes(currentdata.estopType)) {
-        let updateSectionFlag = currentdata.estopType === 'Section';
-        let updateLogicFlag = currentdata.estopType === 'Logic';
-        let _entity = this.emergencyAreaMap.get(`special${currentdata.estopType}`);
+      if (['Section', 'Logic'].includes(currentData.estopType)) {
+        let updateSectionFlag = currentData.estopType === 'Section';
+        let updateLogicFlag = currentData.estopType === 'Logic';
+        let _entity = this.emergencyAreaMap.get(`special${currentData.estopType}`);
         if (isNull(_entity)) {
           // 新增
-          _entity = new EmergencyStop(eStopData);
+          _entity = new ResizeableEmergencyStop(eStopData);
           this.pixiUtils.viewportAddChild(_entity);
-          this.emergencyAreaMap.set(`special${currentdata.estopType}`, _entity);
+          this.emergencyAreaMap.set(`special${currentData.estopType}`, _entity);
 
-          if (currentdata.estopType === 'Section') {
+          if (currentData.estopType === 'Section') {
             updateSectionFlag = false;
           } else {
             updateLogicFlag = false;
@@ -1629,7 +1629,7 @@ class MonitorMapView extends BaseMap {
         if (sectionMaskSprite) {
           sectionMaskSprite.renderable = _visible && this.logicSpriteSectionFlag;
           if (updateSectionFlag) {
-            sectionMaskSprite.logicSpriteSection.tint = currentdata.isSafe ? 0xf3704b : 0xdec674;
+            sectionMaskSprite.logicSpriteSection.tint = currentData.isSafe ? 0xf3704b : 0xdec674;
             this.emergencyAreaMap.delete(`specialSection`);
             this.emergencyAreaMap.set(`specialSection`, sectionMaskSprite);
           }
@@ -1639,23 +1639,23 @@ class MonitorMapView extends BaseMap {
         if (logicMaskSprite) {
           logicMaskSprite.renderable = _visible && this.logicSpriteLogicFlag;
           if (updateLogicFlag) {
-            logicMaskSprite.logicSpriteLogic.tint = currentdata.isSafe ? 0xf3704b : 0xdec674;
+            logicMaskSprite.logicSpriteLogic.tint = currentData.isSafe ? 0xf3704b : 0xdec674;
             this.emergencyAreaMap.delete(`specialLogic`);
             this.emergencyAreaMap.set(`specialLogic`, logicMaskSprite);
           }
         }
       } else {
         // 判断这个code是否存在 存在就更新
-        const stopEntity = this.emergencyAreaMap.get(`${currentdata.code}`);
+        const stopEntity = this.emergencyAreaMap.get(`${currentData.code}`);
         if (stopEntity) {
           stopEntity.updateEStop(eStopData);
-          this.emergencyAreaMap.delete(`${currentdata.code}`);
-          this.emergencyAreaMap.set(`${currentdata.code}`, stopEntity);
+          this.emergencyAreaMap.delete(`${currentData.code}`);
+          this.emergencyAreaMap.set(`${currentData.code}`, stopEntity);
         } else {
           // 新增
-          const eStop = new EmergencyStop(eStopData);
+          const eStop = new ResizeableEmergencyStop(eStopData);
           this.pixiUtils.viewportAddChild(eStop);
-          this.emergencyAreaMap.set(`${currentdata.code}`, eStop);
+          this.emergencyAreaMap.set(`${currentData.code}`, eStop);
         }
       }
     });

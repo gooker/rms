@@ -6,7 +6,7 @@ import { message } from 'antd';
 class SocketClient {
   constructor({ login, passcode }) {
     const nameSpacesInfo = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
-    this.ws = nameSpacesInfo?.ws || nameSpacesInfo?.WS; // 兼容
+    this.ws = nameSpacesInfo?.ws;
     this.headers = {
       login: login,
       passcode: passcode,

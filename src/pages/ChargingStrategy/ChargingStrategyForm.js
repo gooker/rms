@@ -111,8 +111,7 @@ const ChargingStrategyForm = (props) => {
         title={formatMessage({ id: 'app.chargeStrategy.normalCharge' })}
         bordered={false}
         extra={
-          type !== 'Normal' &&
-          hasPermission('/system/chargerManageMents/idle/configIdle') && (
+          type !== 'Normal' && (
             <Button
               onClick={() => {
                 openIdle(true);

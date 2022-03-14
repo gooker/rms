@@ -66,14 +66,13 @@ export default [
     icon: 'icon-warehouse',
     component: '/LatentLifting/StorageManagement',
   },
-  {
-    path: `/${AppCode.LatentLifting}/taskDispatch`,
-    name: 'taskDispatch',
-    hooks: ['dev'],
-    icon: 'icon-dispatch',
-    component: '/LatentLifting/TaskDispatch',
-    hideInMenu:true
-  },
+  // {
+  //   path: `/${AppCode.LatentLifting}/taskDispatch`,
+  //   name: 'taskDispatch',
+  //   hooks: ['dev'],
+  //   icon: 'icon-dispatch',
+  //   component: '/LatentLifting/TaskDispatch',
+  // },
   {
     path: `/${AppCode.LatentLifting}/faultManagement`,
     icon: 'warning',

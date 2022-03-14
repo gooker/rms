@@ -18,7 +18,7 @@ const CellTypeConfigurePanel = (props) => {
       type: 'editor/setCellType',
       payload: { type, scope, operation: value, texture },
     }).then((result) => {
-      dispatch({ type: 'editor/saveForceUpdate' });
+      dispatch({ type: 'editorView/saveForceUpdate' });
       mapContext.updateCells({ type: 'type', payload: result });
     });
   }

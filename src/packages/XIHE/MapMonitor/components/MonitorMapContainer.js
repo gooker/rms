@@ -175,7 +175,8 @@ const MonitorMapContainer = (props) => {
     // if (Array.isArray(emergencyStopFixedList)) {
     //   const _emergencyStopFixedList = [...emergencyStopFixedList];
     //   _emergencyStopFixedList.forEach((eStop) => {
-    //     mapContext.renderFixedEStopFunction(eStop);
+    //     // 不触发 resize 组件特性
+    //     mapContext.renderFixedEStopFunction(eStop, false);
     //   });
     // }
 
