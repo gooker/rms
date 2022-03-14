@@ -3,7 +3,7 @@ import Text from './Text';
 import { isNull } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { EStopStateColor, MapSelectableSpriteType, zIndex, ZoneMarkerType } from '@/config/consts';
+import { EStopStateColor, SelectionType, zIndex, ZoneMarkerType } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
 
 const BorderWidth = 50;
@@ -16,7 +16,7 @@ class ResizeableEmergencyStop extends ResizableContainer {
     this.angle = props.angle || 0;
     this.visible = props.showEmergency;
     this.zIndex = zIndex.emergencyStop;
-    this.boxType =
+    this.type =
       !isNull(props.ylength) && !isNull(props.xlength)
         ? ZoneMarkerType.RECT
         : ZoneMarkerType.CIRCLE;
@@ -24,7 +24,7 @@ class ResizeableEmergencyStop extends ResizableContainer {
     // 缓存data数据
     this.$$data = { ...props };
 
-    if (this.boxType === 'Rect') {
+    if (this.type === ZoneMarkerType.RECT) {
       this.x = props.x + props.xlength / 2;
       this.y = props.y + props.ylength / 2;
     } else {
@@ -33,8 +33,8 @@ class ResizeableEmergencyStop extends ResizableContainer {
     }
 
     // 回调事件
-    this.select = (add) => {
-      props.select({ id: this.code, type: MapSelectableSpriteType.EMERGENCYSTOP }, add);
+    this.select = (event) => {
+      this.click(event, props.select);
     };
     this.refresh = props.refresh;
 
@@ -49,6 +49,14 @@ class ResizeableEmergencyStop extends ResizableContainer {
     }
   }
 
+  click = (event, select) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      select && select(this, SelectionType.CTRL);
+    } else {
+      select && select(this, SelectionType.SINGLE);
+    }
+  };
+
   updateLayout(data) {
     const { x, y, width, height } = data;
     window.$$dispatch({
@@ -57,8 +65,8 @@ class ResizeableEmergencyStop extends ResizableContainer {
         code: this.code,
         x: parseInt(x),
         y: parseInt(y),
-        width: parseInt(width),
-        height: parseInt(height),
+        width: parseInt(width) - BorderWidth,
+        height: parseInt(height) - BorderWidth,
       },
     });
     window.$$dispatch({ type: 'editorView/saveForceUpdate' });
@@ -70,32 +78,24 @@ class ResizeableEmergencyStop extends ResizableContainer {
 
     // 这里比较重要，保证急停区拖拽时候元素不变形的核心逻辑
     this.$$container.scale.set(1, 1);
-    this.eStopArea.width = this.$$data.xlength;
-    this.eStopArea.height = this.$$data.ylength;
     this.rerenderEStop();
   }
 
-  // Resize过程中会出现 border, name, icon, fixedIcon 变形
   rerenderEStop() {
-    this.$$container.removeChild(this.eBorder, this.eName, this.eIcon, this.eFixedIcon);
-    this.eBorder && this.eBorder.destroy(true);
+    this.$$container.removeChild(this.eStopArea, this.eName, this.eIcon, this.eFixedIcon);
+    this.eStopArea && this.eStopArea.destroy(true);
     this.eName && this.eName.destroy(true);
     this.eIcon && this.eIcon.destroy();
     this.eFixedIcon && this.eFixedIcon.destroy();
-    this.createElement(false);
+    this.createElement();
     this.refresh();
   }
 
   /**
    * 创建急停区所有元素
-   * @param needEStopArea 是否创建区域对象(border内的部分)
    */
-  createElement(needEStopArea = true) {
-    const { eStopArea, color } = this.createEStopArea(needEStopArea);
-    if (needEStopArea) {
-      this.eStopArea = this.$$container.addChild(eStopArea);
-    }
-    this.eBorder = this.$$container.addChild(this.createBorder(color));
+  createElement() {
+    this.eStopArea = this.$$container.addChild(this.createEStopArea());
     this.eName = this.$$container.addChild(this.createName());
     this.eIcon = this.$$container.addChild(this.createIcon());
 
@@ -111,74 +111,32 @@ class ResizeableEmergencyStop extends ResizableContainer {
   }
 
   // 安全显示红色，不安全显示黄色，禁用显示灰色
-  createEStopArea(needEStopArea) {
-    const { activated, isSafe } = this.$$data;
-    let texture;
+  createEStopArea() {
+    const { activated, isSafe, xlength, ylength, r } = this.$$data;
     let color, fillColor;
     if (activated) {
       if (isSafe) {
         color = EStopStateColor.active.safe.color;
         fillColor = EStopStateColor.active.safe.fillColor;
-        if (this.boxType === 'Rect') {
-          texture = getTextureFromResources('_EStopActiveSafe');
-        } else {
-          texture = getTextureFromResources('_EStopCircleActiveSafe');
-        }
       } else {
         color = EStopStateColor.active.unSafe.color;
         fillColor = EStopStateColor.active.unSafe.fillColor;
-        if (this.boxType === 'Rect') {
-          texture = getTextureFromResources('_EStopActiveUnsafe');
-        } else {
-          texture = getTextureFromResources('_EStopCircleActiveUnsafe');
-        }
       }
     } else {
       color = EStopStateColor.inactive.color;
       fillColor = EStopStateColor.inactive.fillColor;
-      if (this.boxType === 'Rect') {
-        texture = getTextureFromResources('_EStopInactive');
-      } else {
-        texture = getTextureFromResources('_EStopCircleInactive');
-      }
     }
-
-    let eStopArea;
-    if (needEStopArea) {
-      let width = this.$$data.xlength;
-      let height = this.$$data.ylength;
-      let radius = this.$$data.r;
-      if (this.boxType === 'Rect') {
-        eStopArea = new PIXI.Sprite(texture);
-        eStopArea.width = width;
-        eStopArea.height = height;
-        eStopArea.anchor.set(0.5);
-      } else {
-        eStopArea = new PIXI.Graphics();
-        eStopArea.lineStyle(0);
-        eStopArea.beginFill(fillColor);
-        eStopArea.drawCircle(0, 0, radius);
-        eStopArea.endFill();
-      }
-      eStopArea.alpha = 0.5;
-      eStopArea.zIndex = 1;
-    }
-    return { eStopArea, color, fillColor };
-  }
-
-  createBorder(color) {
-    const width = this.$$data.xlength;
-    const height = this.$$data.ylength;
-    const radius = this.$$data.r;
-    const line = new PIXI.Graphics();
-    if (isNull(radius)) {
-      line.lineStyle(BorderWidth, color).drawRect(0 - width / 2, 0 - height / 2, width, height);
+    const graphics = new PIXI.Graphics();
+    graphics.lineStyle(BorderWidth, color, 1);
+    graphics.beginFill(fillColor);
+    if (isNull(r)) {
+      graphics.drawRect(0, 0, xlength, ylength);
+      graphics.pivot.set(xlength / 2, ylength / 2);
     } else {
-      line.lineStyle(BorderWidth, color).drawCircle(0, 0, radius);
+      graphics.drawCircle(0, 0, r);
     }
-    line.alpha = 0.8;
-    line.zIndex = 1;
-    return line;
+    graphics.endFill();
+    return graphics;
   }
 
   createName() {
@@ -197,11 +155,12 @@ class ResizeableEmergencyStop extends ResizableContainer {
 
     // 字体大小自适应急停区大小
     let textWidth, textHeight;
+    const sizeBase = isNull(radius) ? 2 : 4;
     if (width >= height) {
-      textHeight = height / 2;
+      textHeight = height / sizeBase;
       textWidth = (namTextSprite.width * textHeight) / namTextSprite.height;
     } else {
-      textWidth = width / 2;
+      textWidth = width / sizeBase;
       textHeight = (namTextSprite.height * textWidth) / namTextSprite.width;
     }
     namTextSprite.width = textWidth;
@@ -213,7 +172,7 @@ class ResizeableEmergencyStop extends ResizableContainer {
   createIcon() {
     const { xlength, ylength, r: radius } = this.$$data;
     let _x, _y;
-    if (this.boxType === 'Rect') {
+    if (this.type === ZoneMarkerType.RECT) {
       _x = xlength / 2 - 300;
       _y = ylength / 2 - 300;
     } else {
@@ -233,7 +192,7 @@ class ResizeableEmergencyStop extends ResizableContainer {
   createFixedIcon() {
     const { xlength, ylength, r: radius } = this.$$data;
     let _x, _y;
-    if (this.boxType === 'Rect') {
+    if (this.box === ZoneMarkerType.RECT) {
       _x = xlength - 300;
       _y = ylength - 680;
     } else {
@@ -295,7 +254,6 @@ class ResizeableEmergencyStop extends ResizableContainer {
     } else {
       // 先清空container内所有元素
       this.$$container.removeChildren();
-      this.eBorder && this.eBorder.destroy(true);
       this.eName && this.eName.destroy(true);
       this.eIcon && this.eIcon.destroy();
       this.eFixedIcon && this.eFixedIcon.destroy();

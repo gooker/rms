@@ -1,13 +1,16 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Form, InputNumber, Input, Radio, Select } from 'antd';
-import { PushpinOutlined } from '@ant-design/icons';
+import { Button, Form, InputNumber, message, Input, Radio, Select } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { EmergencyStopMode } from '@/config/consts';
 import { fetchEmergencyStopList } from '@/services/XIHE';
-import { dealResponse, getRandomString, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
+
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 20);
+const key = 'updatable';
 
 const EmergencyStopForm = (props) => {
   const { dispatch, flag, editing, mapContext, mapId, logicId, back } = props;
@@ -15,27 +18,46 @@ const EmergencyStopForm = (props) => {
   const [formRef] = Form.useForm();
   const [shape, setShape] = useState(null);
   const [allEStop, setAllEStop] = useState([]);
-  const [dataAutoLoaded, setDataAutoLoaded] = useState(false);
 
   useEffect(() => {
-    fetchEmergencyStopList().then((response) => {
-      if (!dealResponse(response)) {
-        setAllEStop(response);
-      }
-    });
+    // fetchEmergencyStopList(mapId).then((response) => {
+    //   if (!dealResponse(response)) {
+    //     setAllEStop(response);
+    //   }
+    // });
+
+    //
+    if (!isNull(editing)) {
+      const _shape = isNull(editing.r) ? 'Rect' : 'Circle';
+      setShape(_shape);
+      formRef.setFieldsValue({ shape: _shape });
+    }
+
+    return () => {
+      // 先关闭Mask
+      const maskDOM = document.getElementById('mapSelectionMask');
+      maskDOM.style.display = 'none';
+
+      message.destroy(key);
+      mapContext.pixiUtils.viewport.drag({ pressDrag: true });
+      dispatch({
+        type: 'editor/updateLeftActiveCategory',
+        payload: LeftCategory.Drag,
+      });
+    };
   }, []);
 
-  function checkCodeDuplicate() {}
+  function checkCodeDuplicate() {
+    //
+  }
 
   function autLoad() {
     const maskDOM = document.getElementById('mapSelectionMask');
-
     const { worldStartX, worldStartY, worldEndX, worldEndY } = getSelectionWorldCoordinator(
       document.getElementById('editorPixi'),
       maskDOM,
       mapContext.pixiUtils.viewport,
     );
-
     const xLength = Math.abs(worldEndX - worldStartX);
     const yLength = Math.abs(worldStartY - worldEndY);
 
@@ -54,10 +76,10 @@ const EmergencyStopForm = (props) => {
         r: (xLength + yLength) / 4,
       });
     }
-    setDataAutoLoaded(true);
     onValuesChange({}, formRef.getFieldsValue());
-    dispatch({ type: 'editor/updateRangeForConfig', payload: LeftCategory.Choose });
+    dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Drag });
     maskDOM.style.display = 'none';
+    message.destroy(key);
     back();
   }
 
@@ -89,8 +111,23 @@ const EmergencyStopForm = (props) => {
     }
   }
 
+  function onShapeChange(evt) {
+    // 先关闭Mask
+    const maskDOM = document.getElementById('mapSelectionMask');
+    maskDOM.style.display = 'none';
+    // 给予用户操作指引
+    message.info({ content: formatMessage({ id: 'editor.emergency.tip' }), duration: 0, key });
+    setShape(evt.target.value);
+    mapContext.pixiUtils.viewport.drag({ pressDrag: false });
+    dispatch({
+      type: 'editor/updateSettingEStop',
+      payload: evt.target.value === 'Rect' ? LeftCategory.Rectangle : LeftCategory.Circle,
+    });
+    return evt.target.value;
+  }
+
   return (
-    <Form form={formRef} layout={'vertical'} onValuesChange={onValuesChange}>
+    <Form labelWrap form={formRef} onValuesChange={onValuesChange} {...formItemLayout}>
       <Form.Item hidden name={'flag'} initialValue={flag} />
       {/* 模式 */}
       <Form.Item
@@ -111,19 +148,6 @@ const EmergencyStopForm = (props) => {
         name={'code'}
         initialValue={editing?.code || `ESP_${getRandomString(8)}`}
         label={<FormattedMessage id="app.common.code" />}
-        rules={
-          [
-            // () => ({
-            //   validator(_, value) {
-            //     const isDuplicate = checkCodeDuplicate(value);
-            //     if (!isDuplicate) {
-            //       return Promise.resolve();
-            //     }
-            //     return Promise.reject(new Error(formatMessage({ id: 'editor.code.duplicate' })));
-            //   },
-            // }),
-          ]
-        }
       >
         <Input />
       </Form.Item>
@@ -146,18 +170,10 @@ const EmergencyStopForm = (props) => {
       {/*  形状 */}
       <Form.Item
         name={'shape'}
-        initialValue={editing?.shape}
         label={<FormattedMessage id="editor.emergency.shape" />}
-        getValueFromEvent={(e) => {
-          setShape(e.target.value);
-          dispatch({
-            type: 'editor/updateRangeForConfig',
-            payload: e.target.value === 'Rect' ? LeftCategory.Rectangle : LeftCategory.Circle,
-          });
-          return e.target.value;
-        }}
+        getValueFromEvent={onShapeChange}
       >
-        <Radio.Group buttonStyle="solid">
+        <Radio.Group buttonStyle="solid" disabled={!isNull(editing)}>
           <Radio.Button value={'Rect'}>
             <FormattedMessage id="editor.emergency.shape.rect" />
           </Radio.Button>
@@ -168,61 +184,66 @@ const EmergencyStopForm = (props) => {
       </Form.Item>
 
       {/* x */}
-      <Form.Item name={'x'} label={'X'} initialValue={editing?.x} hidden={!dataAutoLoaded}>
+      <Form.Item name={'x'} label={'X'} initialValue={editing?.x} hidden={isNull(editing)}>
         <InputNumber />
       </Form.Item>
 
       {/* y */}
-      <Form.Item name={'y'} label={'Y'} initialValue={editing?.y} hidden={!dataAutoLoaded}>
+      <Form.Item name={'y'} label={'Y'} initialValue={editing?.y} hidden={isNull(editing)}>
         <InputNumber />
       </Form.Item>
 
-      {shape === 'Rect' ? (
+      {!isNull(shape) && shape === 'Rect' && (
         <>
           {/* 宽度 */}
           <Form.Item
             name={'xlength'}
             label={<FormattedMessage id="app.common.width" />}
             initialValue={editing?.xlength}
-            hidden={!dataAutoLoaded}
+            hidden={isNull(editing)}
           >
             <InputNumber style={{ width: 150 }} />
           </Form.Item>
           {/* 高度 */}
           <Form.Item
-            hidden={!dataAutoLoaded}
             name={'ylength'}
             initialValue={editing?.ylength}
             label={<FormattedMessage id="app.common.height" />}
+            hidden={isNull(editing)}
           >
             <InputNumber style={{ width: 150 }} />
           </Form.Item>
           {/* 方向 */}
           <Form.Item
-            hidden={!dataAutoLoaded}
             name={'angle'}
             initialValue={editing?.angle || 0}
             label={<FormattedMessage id="app.common.angle" />}
+            hidden={isNull(editing)}
           >
             <InputNumber style={{ width: 150 }} />
           </Form.Item>
         </>
-      ) : (
+      )}
+
+      {!isNull(shape) && shape === 'Circle' && (
         // 半径
         <Form.Item
-          hidden={!dataAutoLoaded}
           name={'r'}
-          initialValue={editing?.r || 1000}
-          label={<FormattedMessage id="app.mapEditView.CircleRadius" />}
+          initialValue={editing?.r}
+          label={<FormattedMessage id="app.common.radius" />}
+          hidden={isNull(editing)}
         >
           <InputNumber style={{ width: 150 }} />
         </Form.Item>
       )}
-      <Form.Item>
-        <Button type={'primary'} onClick={autLoad} disabled={isNull(shape)}>
-          <PushpinOutlined /> <FormattedMessage id={'editor.emergency.autLoad'} />
-        </Button>
-      </Form.Item>
+
+      {isNull(editing) && (
+        <Form.Item {...formItemLayoutNoLabel}>
+          <Button type={'primary'} onClick={autLoad} disabled={isNull(shape)}>
+            <CheckOutlined /> <FormattedMessage id={'app.button.confirm'} />
+          </Button>
+        </Form.Item>
+      )}
     </Form>
   );
 };

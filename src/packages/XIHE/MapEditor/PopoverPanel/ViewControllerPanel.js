@@ -216,15 +216,15 @@ const ViewControllerPanel = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  mapMode: editor.mapMode,
-  hideBlock: editor.hideBlock,
-  showBackImg: editor.showBackImg,
-  showDistance: editor.showDistance,
-  shownPriority: editor.shownPriority,
-  showCoordinate: editor.showCoordinate,
-  showRelationsDir: editor.showRelationsDir,
-  showEmergencyStop: editor.showEmergencyStop,
-  showRelationsCells: editor.showRelationsCells,
+export default connect(({ editor, editorView }) => ({
+  mapMode: editorView.mapMode,
+  hideBlock: editorView.hideBlock,
+  showBackImg: editorView.showBackImg,
+  showDistance: editorView.showDistance,
+  shownPriority: editorView.shownPriority,
+  showCoordinate: editorView.showCoordinate,
+  showRelationsDir: editorView.showRelationsDir,
+  showEmergencyStop: editorView.showEmergencyStop,
+  showRelationsCells: editorView.showRelationsCells,
   mapContext: editor.mapContext,
 }))(memo(ViewControllerPanel));

@@ -197,7 +197,7 @@ const ChannelSubscription = (props) => {
       align: 'center',
       render: (text) => (
         <Tag color={text ? 'success' : 'error'}>
-          <FormattedMessage id={text ? 'app.chargeManger.enable' : 'app.chargeManger.disabled'} />
+          <FormattedMessage id={text ? 'app.common.enabled' : 'app.common.disabled'} />
         </Tag>
       ),
     },

@@ -51,6 +51,7 @@ export default class ResizableContainer extends PIXI.Container {
     if (interactive) {
       this.element.interactive = true;
       this.element.buttonMode = true;
+      this.element.interactiveChildren = true;
       this.element
         .on('pointerdown', this.onElementPointerDown)
         .on('pointermove', this.onElementMove)

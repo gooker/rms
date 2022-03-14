@@ -17,7 +17,7 @@ export default {
     shortcutToolVisible: false, // 是否显示便捷操作工具
     zoneMarkerVisible: false, // 是否显示区域配置弹窗
     labelMarkerVisible: false, // 是否显示Label配置弹窗
-    rangeForConfig: false, // 绘制区域用于配置地图功能
+    settingEStop: false, // 绘制区域用于配置地图功能
     saveMapLoading: false, // 保存地图
     activeMapLoading: false, // 激活地图
   },

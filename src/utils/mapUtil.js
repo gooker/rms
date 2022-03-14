@@ -1389,17 +1389,6 @@ export function loadEditorExtraTextures(renderer) {
 
     // 交汇点
     PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
-
-    // 急停区
-    PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
-    PIXI.Texture.addToCache(
-      getEStopTexture(EStopStateColor.active.safe.fillColor),
-      '_EStopActiveSafe',
-    );
-    PIXI.Texture.addToCache(
-      getEStopTexture(EStopStateColor.active.unSafe.fillColor),
-      '_EStopActiveUnsafe',
-    );
     resolve();
   });
 }
@@ -1437,18 +1426,6 @@ export function loadMonitorExtraTextures(renderer) {
     PIXI.Texture.addToCache(getCellHeatTexture('0xF87636'), '_cellHeat8');
     PIXI.Texture.addToCache(getCellHeatTexture('0xF03C2B'), '_cellHeat9');
     PIXI.Texture.addToCache(getCellHeatTexture('0xCF2723'), '_cellHeat10');
-
-    // 急停区
-    PIXI.Texture.addToCache(getEStopTexture(EStopStateColor.inactive.fillColor), '_EStopInactive');
-    PIXI.Texture.addToCache(
-      getEStopTexture(EStopStateColor.active.safe.fillColor),
-      '_EStopActiveSafe',
-    );
-    PIXI.Texture.addToCache(
-      getEStopTexture(EStopStateColor.active.unSafe.fillColor),
-      '_EStopActiveUnsafe',
-    );
-
     resolve();
   });
 }

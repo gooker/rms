@@ -91,7 +91,7 @@ export default {
         checkingElement: action.payload,
       };
     },
-  
+
     saveCategoryModal(state, action) {
       return {
         ...state,
@@ -223,29 +223,29 @@ export default {
     // ***************** 获取地图数据 ***************** //
     *initMonitorMap(_, { call, put }) {
       const activeMap = yield call(fetchActiveMap);
-      if (isNull(activeMap)) {
-        message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
-        yield put({ type: 'saveCurrentMap', payload: null });
-      }
-      if (dealResponse(activeMap)) {
-        message.error(formatMessage({ id: 'app.message.fetchMapFail' }));
-      }
-      if (activeMap) {
-        const { elevatorList } = activeMap;
-        if (!isNull(elevatorList)) {
-          let elevatorCellMap = {};
-          elevatorList.forEach(({ logicLocations }) => {
-            Object.values(logicLocations).forEach(({ innerMapping }) => {
-              const currentLogicReplaceCellId = Object.keys(innerMapping)[0];
-              elevatorCellMap = { [currentLogicReplaceCellId]: [], ...elevatorCellMap };
-              elevatorCellMap[currentLogicReplaceCellId].push(
-                innerMapping[currentLogicReplaceCellId],
-              );
+      if (
+        !dealResponse(activeMap, false, null, formatMessage({ id: 'app.message.fetchMapFail' }))
+      ) {
+        if (isNull(activeMap)) {
+          message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
+          yield put({ type: 'saveCurrentMap', payload: null });
+        } else {
+          const { elevatorList } = activeMap;
+          if (!isNull(elevatorList)) {
+            let elevatorCellMap = {};
+            elevatorList.forEach(({ logicLocations }) => {
+              Object.values(logicLocations).forEach(({ innerMapping }) => {
+                const currentLogicReplaceCellId = Object.keys(innerMapping)[0];
+                elevatorCellMap = { [currentLogicReplaceCellId]: [], ...elevatorCellMap };
+                elevatorCellMap[currentLogicReplaceCellId].push(
+                  innerMapping[currentLogicReplaceCellId],
+                );
+              });
             });
-          });
-          yield put({ type: 'saveElevatorCellMap', payload: elevatorCellMap });
+            yield put({ type: 'saveElevatorCellMap', payload: elevatorCellMap });
+          }
+          yield put({ type: 'saveCurrentMap', payload: activeMap });
         }
-        yield put({ type: 'saveCurrentMap', payload: activeMap });
       }
     },
 
@@ -279,10 +279,8 @@ export default {
       }
 
       // 地图充电桩与硬件绑定关系
-      if (hasPermission('/map/monitor/chargerMaintain') && currentMap.id) {
-        promises.push(fetchChargerList(currentMap.id));
-        promiseFields.push('chargerList');
-      }
+      promises.push(fetchChargerList(currentMap.id));
+      promiseFields.push('chargerList');
 
       // 地图临时不可走点
       promises.push(fetchTemporaryBlockCells());

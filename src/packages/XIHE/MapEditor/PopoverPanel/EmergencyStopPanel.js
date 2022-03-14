@@ -18,8 +18,8 @@ const EmergencyStopPanel = (props) => {
 
   function edit(index, record) {
     setEditing(record);
-    setFormVisible(true);
     setAddFlag(index);
+    setFormVisible(true);
   }
 
   function remove(flag) {
@@ -120,8 +120,8 @@ const EmergencyStopPanel = (props) => {
       <div>
         {formVisible ? (
           <EmergencyStopForm
-            delivery={editing}
             flag={addFlag}
+            editing={editing}
             back={() => {
               setFormVisible(false);
             }}
@@ -158,8 +158,12 @@ const EmergencyStopPanel = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
+export default connect(({ editor, editorView }) => {
   const currentLogicAreaData = getCurrentLogicAreaData();
   const emergencyStopFixedList = currentLogicAreaData?.emergencyStopFixedList ?? [];
-  return { emergencyStopFixedList, mapContext: editor.mapContext, forceUpdate: editor.forceUpdate };
+  return {
+    emergencyStopFixedList,
+    mapContext: editor.mapContext,
+    forceUpdate: editorView.forceUpdate,
+  };
 })(memo(EmergencyStopPanel));
