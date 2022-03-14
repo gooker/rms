@@ -19,4 +19,6 @@ export default {
   'translator.languageManage.uploadfile': '请上传文件',
   'translator.languageManage.shortcut': '快捷方式',
   'translator.languageManage.langpackage': '语言文件包',
+  'translator.languageManage.frontend': '前端(FE)',
+  'translator.languageManage.backend': '后端(BE)',
 };

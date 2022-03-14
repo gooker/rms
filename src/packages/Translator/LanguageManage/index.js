@@ -56,16 +56,12 @@ class LanguageManage extends React.Component {
     appCode: null,
     appList: [
       {
-        code: 'wcs',
-        name: 'WCS_GUI',
+        code: 'FE',
+        name: 'translator.languageManage.frontend',
       },
       {
-        code: 'wcs-service',
-        name: 'WCS-Service',
-      },
-      {
-        code: 'map-tool',
-        name: 'Map-Tool',
+        code: 'BE',
+        name: 'translator.languageManage.backend',
       },
     ],
     loading: false,
@@ -408,34 +404,10 @@ class LanguageManage extends React.Component {
         <Row>
           <Col>
             <FormItem label={<FormattedMessage id="app.module" />}>
-              <Select
-                style={{ width: '190px' }}
-                value={appCode}
-                onChange={this.handleApplication}
-                dropdownRender={(menu) => (
-                  <div>
-                    {menu}
-                    <Divider style={{ margin: '4px 0' }} />
-                    <div style={{ display: 'flex', flexWrap: 'nowrap' }}>
-                      <Button
-                        style={{ margin: '0 auto', textAlign: 'center' }}
-                        type="link"
-                        icon={<AppstoreAddOutlined />}
-                        onClick={() => {
-                          this.setState({
-                            addAppVisbible: true,
-                          });
-                        }}
-                      >
-                        <FormattedMessage id="translator.languageManage.addapplication" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              >
+              <Select style={{ width: '190px' }} value={appCode} onChange={this.handleApplication}>
                 {appList.map((record) => (
                   <Select.Option key={record.code} value={record.code}>
-                    {record.name}
+                    {formatMessage({ id: record.name })}
                   </Select.Option>
                 ))}
               </Select>
