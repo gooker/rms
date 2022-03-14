@@ -10,7 +10,7 @@ import {
   FullscreenExitOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, isNull,adjustModalWidth } from '@/utils/util';
+import { formatMessage, isNull, adjustModalWidth } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import PositionCell from '../components/PositionCell';
 import UploadPanel from '@/components/UploadPanel';
@@ -35,7 +35,7 @@ const EditorHeaderRightTools = (props) => {
   const [constructionDrawVisible, setConstructionDrawVisible] = useState(false);
 
   function switchPositionModal(visible) {
-    dispatch({ type: 'editor/savePositionVisible', payload: visible });
+    dispatch({ type: 'editorView/savePositionVisible', payload: visible });
   }
 
   function switchExportConstruction(visible) {
@@ -246,7 +246,7 @@ const EditorHeaderRightTools = (props) => {
       >
         <ConstructionInfoModal
           configureSubmit={(values) => {
-            switchConstructionDraw(true)
+            switchConstructionDraw(true);
             setConstructionInfo(values);
           }}
         />
@@ -257,7 +257,7 @@ const EditorHeaderRightTools = (props) => {
         destroyOnClose
         visible={constructionDrawVisible}
         onCancel={() => {
-          switchConstructionDraw(false)
+          switchConstructionDraw(false);
           setConstructionInfo(null);
         }}
         bodyStyle={{
@@ -269,15 +269,14 @@ const EditorHeaderRightTools = (props) => {
         {/* <ConstructionDraw Info={constructionInfo} /> */}
         <ConstructionDrawing Info={constructionInfo} />
       </Modal>
-
     </>
   );
 };
-export default connect(({ global, editor }) => ({
+export default connect(({ global, editor, editorView }) => ({
   isInnerFullscreen: global.isInnerFullscreen,
   mapId: editor?.currentMap?.id,
-  saveMapLoading: editor.saveMapLoading,
-  positionVisible: editor.positionVisible,
   isActive: editor?.currentMap?.activeFlag,
-  activeMapLoading: editor.activeMapLoading,
+  saveMapLoading: editorView.saveMapLoading,
+  activeMapLoading: editorView.activeMapLoading,
+  positionVisible: editorView.positionVisible,
 }))(memo(EditorHeaderRightTools));

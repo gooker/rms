@@ -79,16 +79,14 @@ const ChargingStrategyComponent = (prop) => {
         <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeStrategy.normal' })}>
           <ChargingStrategyForm type="Normal" agvType={agvType} data={chargeStrategy} />
         </TabPane>
-        {hasPermission('/system/chargerManageMents/idle') ? (
-          <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="IdleHours">
-            <ChargingStrategyForm
-              type="IdleHours"
-              agvType={agvType}
-              data={chargeStrategy}
-              openIdle={setIdleChargingStrategyVisible}
-            />
-          </TabPane>
-        ) : null}
+        <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="IdleHours">
+          <ChargingStrategyForm
+            type="IdleHours"
+            agvType={agvType}
+            data={chargeStrategy}
+            openIdle={setIdleChargingStrategyVisible}
+          />
+        </TabPane>
       </Tabs>
 
       {/* 闲时策略 */}

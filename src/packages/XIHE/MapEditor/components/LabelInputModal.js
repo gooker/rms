@@ -13,7 +13,7 @@ const LabelInputModal = (props) => {
 
   function closeModal() {
     onCancel();
-    dispatch({ type: 'editor/updateLabelInputVisible', payload: false });
+    dispatch({ type: 'editorView/updateLabelInputVisible', payload: false });
   }
 
   // 文字标记

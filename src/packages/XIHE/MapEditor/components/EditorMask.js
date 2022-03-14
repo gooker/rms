@@ -31,7 +31,7 @@ const EditorMask = (props) => {
     maskRef.current.style.borderRadius = `${0}px`;
 
     // 重置工具栏显示状态
-    dispatch({ type: 'editor/updateZoneMarkerVisible', payload: false });
+    dispatch({ type: 'editorView/updateZoneMarkerVisible', payload: false });
     setColor(null);
   }
 
@@ -127,9 +127,9 @@ const EditorMask = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  leftActiveCategory: editor.leftActiveCategory,
-  labelMarkerVisible: editor.labelMarkerVisible,
-  zoneMarkerVisible: editor.zoneMarkerVisible,
+export default connect(({ editor, editorView }) => ({
   mapContext: editor.mapContext,
+  leftActiveCategory: editor.leftActiveCategory,
+  zoneMarkerVisible: editorView.zoneMarkerVisible,
+  labelMarkerVisible: editorView.labelMarkerVisible,
 }))(memo(EditorMask));

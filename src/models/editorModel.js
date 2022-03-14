@@ -63,6 +63,8 @@ const EditorState = {
   currentCells: [], // 当前视图的点位数据
   preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
   mapContext: null, // 地图实体对象
+  mapMinRatio: null, // 地图最小缩放比例
+  mapRatio: null, // 地图当前缩放比例
 
   selections: [], // 选择相关
   allStationTypes: {}, // 所有站点类型
@@ -70,32 +72,13 @@ const EditorState = {
   scopeActions: [], // 地图编程动作集
 
   // 显示相关
-  mapMode: 'standard',
-  mapMinRatio: null, // 地图最小缩放比例
-  mapRatio: null, // 地图当前缩放比例
-  hideBlock: false,
-  showCoordinate: false,
-  showDistance: false,
-  shownPriority: [10, 20, 100, 1000],
-  showRelationsDir: [0, 1, 2, 3],
-  showRelationsCells: [],
-  showBackImg: false,
+  shortcutToolVisible: false, // 是否显示便捷操作工具 --
 
-  // 标识符
-  forceUpdate: {}, // 部分组件需要手动渲染
-  saveMapLoading: false, // 保存地图
-  activeMapLoading: false, // 激活地图
-
+  // 侧边栏控制
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
   categoryProps: null, // 属性栏正在展示的元素
   lockedProps: null, // 属性栏，部分元素展示时需要锁定
-
-  positionVisible: false, // 定位功能弹窗
-  shortcutToolVisible: false, // 是否显示便捷操作工具
-  zoneMarkerVisible: false, // 是否显示区域配置弹窗
-  labelMarkerVisible: false, // 是否显示Label配置弹窗
-  rangeForConfig: false, // 绘制区域用于配置地图功能
 };
 
 export default {
@@ -128,102 +111,7 @@ export default {
         mapRatio: action.payload,
       };
     },
-    saveForceUpdate(state, action) {
-      return {
-        ...state,
-        forceUpdate: {},
-      };
-    },
-    savePositionVisible(state, action) {
-      return {
-        ...state,
-        positionVisible: action.payload,
-      };
-    },
-    updateRangeForConfig(state, action) {
-      return {
-        ...state,
-        rangeForConfig: true,
-        leftActiveCategory: action.payload,
-        zoneMarkerVisible: false,
-        labelMarkerVisible: false,
-      };
-    },
-    updateZoneMarkerVisible(state, action) {
-      return {
-        ...state,
-        zoneMarkerVisible: action.payload,
-      };
-    },
-    updateLabelInputVisible(state, action) {
-      return {
-        ...state,
-        labelMarkerVisible: action.payload,
-      };
-    },
-    updateLeftActiveCategory(state, action) {
-      return {
-        ...state,
-        rangeForConfig: false,
-        leftActiveCategory: action.payload,
-        zoneMarkerVisible: false,
-        labelMarkerVisible: false,
-      };
-    },
-    updateSelections(state, { payload }) {
-      let selections = [];
-      let incremental = false;
-      if (isPlainObject(payload)) {
-        selections = payload.selections;
-        incremental = payload.incremental;
-      } else {
-        selections = payload;
-      }
 
-      let _selections = selections;
-      // 存在增量选择，需要删除重复的对象
-      if (incremental) {
-        _selections = [...state.selections];
-        selections.forEach((selection) => {
-          if (!some(state.selections, selection)) {
-            _selections.push(selection);
-          }
-        });
-      }
-
-      const newState = {
-        ...state,
-        selections: _selections,
-        shortcutToolVisible: _selections.length > 0,
-      };
-
-      if (_selections.length === 1) {
-        if (state.categoryPanel === null) {
-          newState.categoryPanel = RightCategory.Prop;
-        }
-
-        // 点位和线条可被替换
-        if (state.categoryProps === null || [CELL, ROUTE].includes(state.categoryProps.type)) {
-          newState.categoryProps = _selections[0];
-        }
-
-        // 除了点位和线条，可以互相替换
-        if (
-          ![CELL, ROUTE].includes(state.categoryProps) &&
-          ![CELL, ROUTE].includes(selections[0].type)
-        ) {
-          newState.categoryProps = _selections[0];
-          newState.lockedProps = _selections[0].type;
-        }
-      } else {
-        newState.categoryProps = null;
-        newState.lockedProps = null;
-        if (state.categoryPanel === RightCategory.Prop) {
-          newState.categoryPanel = null;
-        }
-      }
-      return newState;
-    },
     updateEditPanelVisible(state, action) {
       if (action.payload === null) {
         return {
@@ -254,24 +142,7 @@ export default {
         mapContext: action.payload,
       };
     },
-    saveMapLoading(state, action) {
-      return {
-        ...state,
-        saveMapLoading: action.payload,
-      };
-    },
-    saveActiveMapLoading(state, action) {
-      return {
-        ...state,
-        activeMapLoading: action.payload,
-      };
-    },
-    saveMapHistoryVisible(state, action) {
-      return {
-        ...state,
-        mapHistoryVisible: action.payload,
-      };
-    },
+
     saveMapList(state, action) {
       return {
         ...state,
@@ -528,7 +399,7 @@ export default {
       const { currentMap, mapList } = yield select(({ editor }) => editor);
       const { sectionId } = yield select((state) => state.user);
       const mapData = payload || currentMap;
-      yield put({ type: 'saveMapLoading', payload: true });
+      yield put({ type: 'editorView/saveMapLoading', payload: true });
 
       // 1. 校验地图数据
       if (validateMapData(mapData)) {
@@ -616,7 +487,7 @@ export default {
       } else {
         message.error(formatMessage({ id: 'app.model.mapEdit.mapDataError' }));
       }
-      yield put({ type: 'saveMapLoading', payload: false });
+      yield put({ type: 'editorView/saveMapLoading', payload: false });
     },
 
     // 激活地图
@@ -626,7 +497,8 @@ export default {
       const response = yield call(activeMap, payload);
       if (!dealResponse(response)) {
         currentMap.activeFlag = true;
-        yield put({ type: 'saveState', payload: { currentMap, activeMapLoading: false } });
+        yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
+        yield put({ type: 'editorView/saveActiveMapLoading', payload: false });
         message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       } else {
         message.error(formatMessage({ id: 'app.message.operateFailed' }));
@@ -1694,6 +1566,90 @@ export default {
       }
       currentMap.elevatorList = elevatorList;
       yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
+    },
+
+    // ********************************* 更新部分标识符 ********************************* //
+    *updateSelections({ payload }, { select, put }) {
+      const { selections, categoryProps, categoryPanel } = yield select(({ editor }) => editor);
+
+      let payloadSelections = [];
+      let incremental = false;
+      if (isPlainObject(payload)) {
+        payloadSelections = payload.selections;
+        incremental = payload.incremental;
+      } else {
+        payloadSelections = payload;
+      }
+
+      let _selections = payloadSelections;
+      // 存在增量选择，需要删除重复的对象
+      if (incremental) {
+        _selections = [...selections];
+        payloadSelections.forEach((selection) => {
+          if (!some(selections, selection)) {
+            _selections.push(selection);
+          }
+        });
+      }
+
+      const newState = {
+        selections: _selections,
+      };
+      if (_selections.length === 1) {
+        if (categoryPanel === null) {
+          newState.categoryPanel = RightCategory.Prop;
+        }
+
+        // 点位和线条可被替换
+        if (categoryProps === null || [CELL, ROUTE].includes(categoryProps.type)) {
+          newState.categoryProps = _selections[0];
+        }
+
+        // 除了点位和线条，可以互相替换
+        if (![CELL, ROUTE].includes(categoryProps) && ![CELL, ROUTE].includes(selections[0].type)) {
+          newState.categoryProps = _selections[0];
+          newState.lockedProps = _selections[0].type;
+        }
+      } else {
+        newState.categoryProps = null;
+        newState.lockedProps = null;
+        if (categoryPanel === RightCategory.Prop) {
+          newState.categoryPanel = null;
+        }
+      }
+      yield put({ type: 'saveState', payload: newState });
+      yield put({ type: 'editorView/saveShortcutToolVisible', payload: _selections.length > 0 });
+    },
+
+    *updateLeftActiveCategory({ payload }, { put }) {
+      yield put({
+        type: 'editorView/saveState',
+        payload: {
+          rangeForConfig: false,
+          zoneMarkerVisible: false,
+          labelMarkerVisible: false,
+        },
+      });
+
+      yield put({
+        type: 'saveState',
+        payload: { leftActiveCategory: payload },
+      });
+    },
+
+    *updateRangeForConfig({ payload }, { put }) {
+      yield put({
+        type: 'editorView/saveState',
+        payload: {
+          zoneMarkerVisible: false,
+          labelMarkerVisible: false,
+          rangeForConfig: true,
+        },
+      });
+      yield put({
+        type: 'saveState',
+        payload: { leftActiveCategory: payload },
+      });
     },
   },
 };

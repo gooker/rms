@@ -3,20 +3,23 @@ import Text from './Text';
 import { isNull } from '@/utils/util';
 import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { EStopStateColor, MapSelectableSpriteType, zIndex } from '@/config/consts';
+import { EStopStateColor, MapSelectableSpriteType, zIndex, ZoneMarkerType } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
 
 const BorderWidth = 50;
-class EmergencyStop extends ResizableContainer {
+class ResizeableEmergencyStop extends ResizableContainer {
   constructor(props) {
     super();
+    this.code = props.code;
     this.x = props.x;
     this.y = props.y;
-    this.zIndex = zIndex.emergencyStop;
     this.angle = props.angle || 0;
     this.visible = props.showEmergency;
-    this.code = props.code;
-    this.boxType = props.ylength && props.xlength ? 'Rect' : 'Circle';
+    this.zIndex = zIndex.emergencyStop;
+    this.boxType =
+      !isNull(props.ylength) && !isNull(props.xlength)
+        ? ZoneMarkerType.RECT
+        : ZoneMarkerType.CIRCLE;
 
     // 缓存data数据
     this.$$data = { ...props };
@@ -48,7 +51,7 @@ class EmergencyStop extends ResizableContainer {
 
   updateLayout(data) {
     const { x, y, width, height } = data;
-    window.dispatch({
+    window.$$dispatch({
       type: 'editor/updateEStop',
       payload: {
         code: this.code,
@@ -58,7 +61,7 @@ class EmergencyStop extends ResizableContainer {
         height: parseInt(height),
       },
     });
-    window.$$dispatch({ type: 'editor/saveForceUpdate' });
+    window.$$dispatch({ type: 'editorView/saveForceUpdate' });
     this.$$data = {
       ...this.$$data,
       xlength: parseInt(width) - BorderWidth,
@@ -302,4 +305,4 @@ class EmergencyStop extends ResizableContainer {
     }
   }
 }
-export default EmergencyStop;
+export default ResizeableEmergencyStop;

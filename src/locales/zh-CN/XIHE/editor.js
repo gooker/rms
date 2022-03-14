@@ -179,7 +179,6 @@ export default {
   'editor.program.zone.configList': '区域配置列表',
   'editor.program.action.required': '请选择动作类型',
   'editor.program.param.required': '请完善动作参数',
-  'editor.program.route.noGLO': '该路线区不存在全局编程数据, 将优先创建',
 
   // 创建默认线条
   'editor.defaultRoute.title': '创建默认路线',

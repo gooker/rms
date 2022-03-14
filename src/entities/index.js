@@ -25,7 +25,7 @@ import Dump from './Dump';
 import DumpBasket from './DumpBasket';
 import SorterAGV from './SorterAGV';
 import BackImg from './BackImg';
-import EmergencyStop from './EmergencyStop';
+import ResizeableEmergencyStop from './ResizeableEmergencyStop';
 import RealtimeRate from './RealtimeRate';
 
 export {
@@ -56,6 +56,6 @@ export {
   CommonFunction,
   Intersection,
   BackImg,
-  EmergencyStop,
+  ResizeableEmergencyStop,
   RealtimeRate,
 };

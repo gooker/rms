@@ -339,7 +339,7 @@ const EditorMapContainer = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
+export default connect(({ editor, editorView }) => {
   const {
     mapRatio,
     currentMap,
@@ -359,7 +359,7 @@ export default connect(({ editor }) => {
     preRouteMap,
     mapContext,
     leftActiveCategory,
-    shortcutToolVisible,
     selections,
+    shortcutToolVisible: editorView.shortcutToolVisible,
   };
 })(memo(EditorMapContainer));

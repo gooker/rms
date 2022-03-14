@@ -17,7 +17,7 @@ const ZoneMarkerModal = (props) => {
 
   function closeModal() {
     onCancel();
-    dispatch({ type: 'editor/updateZoneMarkerVisible', payload: false });
+    dispatch({ type: 'editorView/updateZoneMarkerVisible', payload: false });
   }
 
   // 文字标记

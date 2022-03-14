@@ -1,12 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Menu, Dropdown, Modal } from 'antd';
 import { useHistory } from 'react-router-dom';
-import {
-  ApiOutlined,
-  LogoutOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
+import { ApiOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import AppConfigPanel from '@/packages/Portal/components/AppConfigPanel';
@@ -31,8 +26,6 @@ const UserCenter = (props) => {
 
   const menu = (
     <Menu selectedKeys={[]} onClick={handleUserMenuClick}>
-      <Menu.Item key={'loginName'}>{currentUser.username}</Menu.Item>
-      <Menu.Divider />
       <Menu.Item key="logout">
         <LogoutOutlined /> <FormattedMessage id="menu.account.logout" defaultMessage="logout" />
       </Menu.Item>
@@ -40,7 +33,7 @@ const UserCenter = (props) => {
         key={'roleList'}
         title={
           <>
-            <UnorderedListOutlined /> <FormattedMessage id="menu.account.roleList" />
+            <TeamOutlined /> <FormattedMessage id="menu.account.roleList" />
           </>
         }
       >
@@ -50,6 +43,10 @@ const UserCenter = (props) => {
       </Menu.SubMenu>
       <Menu.Item key="apiList">
         <ApiOutlined /> <FormattedMessage id="menu.account.apiList" />
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key={'loginName'}>
+        <UserOutlined /> {currentUser.username}
       </Menu.Item>
     </Menu>
   );

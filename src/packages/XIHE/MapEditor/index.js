@@ -23,7 +23,7 @@ const MapEditor = (props) => {
     function listenKeyDown(ev) {
       if ((ev.ctrlKey || ev.metaKey) && ev.code === 'KeyF') {
         ev.preventDefault();
-        dispatch({ type: 'editor/savePositionVisible', payload: true });
+        dispatch({ type: 'editorView/savePositionVisible', payload: true });
       }
     }
     document.addEventListener('keydown', listenKeyDown);

@@ -1,6 +1,5 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
-import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import {
   getCoordinat,
   createRelation,
@@ -16,13 +15,13 @@ import {
   DumpBasket,
   WorkStation,
   Intersection,
-  EmergencyStop,
+  ResizeableEmergencyStop,
   CommonFunction,
 } from '@/entities';
 import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
-import { MapSelectableSpriteType, zIndex, ZoneMarkerType } from '@/config/consts';
+import { zIndex, ZoneMarkerType } from '@/config/consts';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -868,7 +867,7 @@ export default class BaseMap extends React.Component {
         //
       },
     };
-    const fixedEStop = new EmergencyStop(eData);
+    const fixedEStop = new ResizeableEmergencyStop(eData);
     this.pixiUtils.viewportAddChild(fixedEStop);
     this.fixedEStopMap.set(`${data.code}`, fixedEStop);
   };

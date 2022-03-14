@@ -151,13 +151,13 @@ class EditorBodyLeft extends React.PureComponent {
 
       // 插入文字，鼠标抬起后立即弹出输入框
       if (activeKey === LeftCategory.Font) {
-        dispatch({ type: 'editor/updateLabelInputVisible', payload: true });
+        dispatch({ type: 'editorView/updateLabelInputVisible', payload: true });
       }
 
       // 画矩形和圆形情况下显示区域配置Modal，前提是不是在配置地图功能
       if (!rangeForConfig) {
         dispatch({
-          type: 'editor/updateZoneMarkerVisible',
+          type: 'editorView/updateZoneMarkerVisible',
           payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
         });
       }
