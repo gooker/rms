@@ -244,6 +244,7 @@ export const MapSelectableSpriteType = {
 
 // 监控地图可选的元素类型
 export const MonitorSelectableSpriteType = {
+  // 车型数据与 config.AGVType 保持一致
   LatentLifting: 'LatentLifting',
   Tote: 'Tote',
   ForkLifting: 'ForkLifting',

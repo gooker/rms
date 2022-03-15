@@ -163,8 +163,7 @@ class OperationType extends React.PureComponent {
           !(item instanceof DumpBasket), // 筛掉抛物篮
       )
       .filter((item) => selectable.includes(item.type));
-    console.log(selections);
-    // dispatch({ type: 'monitor/updateSelections', payload: selections });
+    dispatch({ type: 'monitor/updateSelections', payload: selections });
   };
 
   onChange = (type) => {
