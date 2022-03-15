@@ -1,17 +1,5 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-  Form,
-  Select,
-  Button,
-  Dropdown,
-  Menu,
-  Checkbox,
-  Radio,
-  Input,
-  Divider,
-} from 'antd';
+import { Row, Col, Form, Button, Dropdown, Menu, Checkbox, Radio, Input, Divider } from 'antd';
 import {
   PlusCircleOutlined,
   ImportOutlined,
@@ -47,20 +35,10 @@ import styles from './translator.module.less';
 
 const { Item: FormItem } = Form;
 class LanguageManage extends React.Component {
-  appList = [
-    {
-      code: 'FE',
-      name: 'translator.languageManage.frontend',
-    },
-    {
-      code: 'BE',
-      name: 'translator.languageManage.backend',
-    },
-  ];
   state = {
     StandardFE: [], // 前端原始数据
     displayMode: 'merge',
-    appCode: null,
+    appCode: 'FE',
 
     loading: false,
     imporVisible: false,
@@ -87,30 +65,9 @@ class LanguageManage extends React.Component {
   getSysLanguage = async () => {
     const langData = await getSysLang();
     if (!dealResponse(langData)) {
-      // const currentLang = langData.map(({ code }) => code);
-      // TODO 要删除 没默认中英文
-      // this.setState({ allLanguage: langData, showLanguage: currentLang });
-      const allLanguage = [
-        {
-          code: 'zh-CN',
-          name: '中文',
-        },
-        {
-          code: 'en-US',
-          name: 'en-US',
-        },
-        {
-          code: 'ko-KR',
-          name: 'ko-KR',
-        },
-        {
-          code: 'vi-VN',
-          name: 'vi-VN',
-        },
-      ];
-
+      const currentLang = langData.map(({ code }) => code);
       const StandardFE = [];
-      allLanguage.map(({ code }) => {
+      langData.map(({ code }) => {
         let languageMap = {};
         try {
           languageMap = require(`@/locales/${code}`)?.default;
@@ -119,11 +76,14 @@ class LanguageManage extends React.Component {
         }
         StandardFE.push({ languageKey: code, languageMap });
       });
-      this.setState({
-        allLanguage,
-        showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
-        StandardFE,
-      });
+      this.setState(
+        {
+          allLanguage: langData,
+          showLanguage: currentLang,
+          StandardFE,
+        },
+        this.getTranslateList,
+      );
     }
   };
 
@@ -300,9 +260,9 @@ class LanguageManage extends React.Component {
   importTranslation = async (data) => {
     // 1.判断key是否存在standard 不存在删除 (如果语种key不在系统中 也要删除)
     // 2.有修改的翻译留下来
-    const { standardData, allLanguage } = this.state;
+    const { standardData, allLanguage, appCode } = this.state;
     const allSysLang = allLanguage.map(({ code }) => code);
-    const { appCode, merge, languages: exportLanguages } = data;
+    const { merge, languages: exportLanguages } = data;
     const newExportLanguages = [];
     const deleteLangKey = [];
 
@@ -354,7 +314,8 @@ class LanguageManage extends React.Component {
   };
 
   // 切换应用
-  handleApplication = (value) => {
+  handleApplication = (e) => {
+    const value = e.target.value;
     const { editList, appCode } = this.state;
     const _this = this;
     if (Object.keys(editList).length >= 1) {
@@ -452,13 +413,22 @@ class LanguageManage extends React.Component {
         <Row>
           <Col>
             <FormItem label={<FormattedMessage id="app.module" />}>
-              <Select style={{ width: '190px' }} value={appCode} onChange={this.handleApplication}>
-                {this.appList.map((record) => (
-                  <Select.Option key={record.code} value={record.code}>
-                    {formatMessage({ id: record.name })}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Radio.Group
+                optionType="button"
+                buttonStyle="solid"
+                onChange={this.handleApplication}
+                value={appCode}
+                options={[
+                  {
+                    label: formatMessage({ id: 'translator.languageManage.frontend' }),
+                    value: 'FE',
+                  },
+                  {
+                    label: formatMessage({ id: 'translator.languageManage.backend' }),
+                    value: 'BE',
+                  },
+                ]}
+              />
             </FormItem>
           </Col>
 
@@ -636,8 +606,6 @@ class LanguageManage extends React.Component {
               imporVisible: false,
             });
           }}
-          appList={this.appList}
-          appCode={appCode}
           importApplicate={this.importTranslation}
         />
       </div>

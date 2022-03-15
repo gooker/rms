@@ -1,7 +1,10 @@
 import React, { useState, memo, useEffect } from 'react';
 import { Row, Col, Table, Divider } from 'antd';
 import echarts from 'echarts';
-import { formatMessage } from '@/utils/util';
+import moment from 'moment';
+import { formatMessage, GMT2UserTimeZone, dealResponse, isStrictNull } from '@/utils/util';
+import { fetchAGVload } from '@/services/api';
+import FormattedMessage from '@/components/FormattedMessage';
 import { getloadRobotdata } from './components/mockLoadData';
 import {
   taskLineOption,
@@ -35,7 +38,14 @@ const HealthCar = (props) => {
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
   useEffect(initChart, []);
-  useEffect(submitSearch, []);
+  useEffect(() => {
+    async function initCodeData() {
+      const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
+      const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
+    }
+    initCodeData();
+  }, []);
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [filterData, loadOriginData]);
 
@@ -54,7 +64,7 @@ const HealthCar = (props) => {
       true,
     );
     taskHistoryLine.setOption(
-      durationLineOption(formatMessage({ id: 'reportCenter.robot.load.taskduration' })),
+      durationLineOption(formatMessage({ id: 'reportCenter.agvload.taskduration' })),
       true,
     );
     taskNumberHistoryLine.setOption(
@@ -97,8 +107,8 @@ const HealthCar = (props) => {
     const sourceData = { ...filterData };
     if (Object.keys(sourceData).length === 0) return;
 
-    const statusData = generateDurationDataByTime(sourceData, 'statusallTime');
-    const taskdurationData = generateDurationDataByTime(sourceData, 'taskallTime');
+    const statusData = generateDurationDataByTime(sourceData, 'statusAllTime'); // 状态时长
+    const taskdurationData = generateDurationDataByTime(sourceData, 'taskAllTime'); // 任务时长
     const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes');
     const distanceData = generateNumOrDistanceData(sourceData, 'taskDistance');
     const actionPieData = generateActionPieData(sourceData, 'actionLoad'); //动作负载-pie
@@ -160,11 +170,25 @@ const HealthCar = (props) => {
   }
 
   // 搜索 调接口
-  function submitSearch(value) {
-    // TODO 调接口
-    setLoadOriginData(getloadRobotdata());
-    setFilterData(getloadRobotdata());
-    setSelectedKeys([]);
+  async function submitSearch(value) {
+    const {
+      startTime,
+      endTime,
+      agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
+    } = value;
+    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      const response = await fetchAGVload({
+        startTime,
+        endTime,
+        agvSearchTypeValue,
+        agvSearchType,
+      });
+      if (!dealResponse(response)) {
+        setLoadOriginData(response);
+        setFilterData(response);
+        setSelectedKeys([]);
+      }
+    }
   }
 
   // 124
@@ -197,26 +221,26 @@ const HealthCar = (props) => {
   };
   const columns = [
     {
-      title: '车辆ID',
-      dataIndex: 'robotId',
+      title: <FormattedMessage id='app.form.agvId' />,
+      dataIndex: 'agvId',
       sorter: (a, b) => a.robotId - b.robotId,
     },
     {
-      title: '车辆类型',
+      title: <FormattedMessage id="app.agv.type" />,
       dataIndex: 'robotType',
     },
     {
-      title: '任务时长',
-      dataIndex: 'taskallTime',
-      sorter: (a, b) => a.taskallTime - b.taskallTime,
+      title: <FormattedMessage id='reportCenter.agvload.taskduration' />,
+      dataIndex: 'taskAllTime',
+      sorter: (a, b) => a.taskAllTime - b.taskAllTime,
       render: (text) => {
         return MinuteFormat(text);
       },
     },
     {
       title: '充电耗时',
-      dataIndex: 'statusallTime', //
-      sorter: (a, b) => a.statusallTime - b.statusallTime,
+      dataIndex: 'statusAllTime',
+      sorter: (a, b) => a.statusAllTime - b.statusAllTime,
       render: (text) => {
         return MinuteFormat(text);
       },

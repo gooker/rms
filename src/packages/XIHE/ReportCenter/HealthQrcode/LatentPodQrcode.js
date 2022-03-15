@@ -2,7 +2,8 @@ import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
 import { Row, Col, Form, Card } from 'antd';
 import moment from 'moment';
-import { formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { formatMessage, isNull, isStrictNull,GMT2UserTimeZone,dealResponse } from '@/utils/util';
+import { fetchCodeHealth } from '@/services/api';
 import FilterSearchBydate from '../HealthRobot/components/FilterSearchBydate';
 import FilterSearch from '../HealthRobot/components/FilterSearch';
 import QrcodeSearchForm from '../components/QrcodeSearchForm';
@@ -17,8 +18,6 @@ import { getLatentPoQrcodedata } from '../components/mockData';
 import commonStyles from '@/common.module.less';
 import style from './qrcode.module.less';
 
-const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
-
 let codeHistoryLine = null; // 根据码号
 let timeHistoryLine = null; // 根据日期
 
@@ -32,7 +31,14 @@ const GroundQrcode = (props) => {
   const [searchKey, setSearchKey] = useState([]); // 根据码号的数据--二次搜索
 
   useEffect(initChart, []);
-  useEffect(submitSearch, []);
+  useEffect(() => {
+    async function initCodeData() {
+      const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
+      const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      submitSearch({ startTime, endTime });
+    }
+    initCodeData();
+  }, []); // 默认一进来就有数据
 
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [originData]);
@@ -89,15 +95,19 @@ const GroundQrcode = (props) => {
   }
 
   // 搜索 调接口
-  function submitSearch(value) {
-    // TODO 调接口
-    // 拿到原始数据的 所有参数 所有根据cellId的参数求和
-    const getOriginalData = getOriginalDataBycode(getLatentPoQrcodedata());
-    commonOption = getOriginalData.commonOption;
-    setSearchKey(getOriginalData.legendData || []);
-    setOriginData(getLatentPoQrcodedata());
-    form.resetFields();
-    formDate.resetFields();
+ async function submitSearch(value) {
+    const { startTime, endTime } = value;
+    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      const response = await fetchCodeHealth({ ...value, codeType: 'POD' });
+      if (!dealResponse(response)) {
+        const originalData = getOriginalDataBycode(response); //拿到原始数据的 所有参数 所有根据cellId的参数求和
+        commonOption = originalData.commonOption;
+        setSearchKey(originalData.legendData || []);
+        setOriginData(response);
+        form.resetFields();
+        formDate.resetFields();
+      }
+    }
   }
 
   const filterDataByCellId = (cellIds) => {

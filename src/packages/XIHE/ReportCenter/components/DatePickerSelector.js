@@ -57,7 +57,7 @@ const CustomDay = [
 ];
 
 const DatePickerSelector = (props) => {
-  const { onChange, defaultTime } = props;
+  const { onChange } = props;
   const [dateValue, setDateValue] = useState(null);
   const [pickVisible, setPickVisible] = useState(false);
 
@@ -67,6 +67,7 @@ const DatePickerSelector = (props) => {
     const start = GMT2UserTimeZone(defaultHour).format('YYYY-MM-DD HH:00:00');
     const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
     setDateValue([moment(start), moment(endTime)]);
+    onChange([moment(start), moment(endTime)]);
   }, []);
 
   function tagClick(ev) {
@@ -167,7 +168,7 @@ const DatePickerSelector = (props) => {
     <Row gutter={8}>
       <RangePicker
         value={dateValue}
-        style={{ width: '335px' }}
+        style={{ width: '100%' }}
         showTime={{ format: 'HH' }}
         format={MomentRangeFormat}
         open={pickVisible}

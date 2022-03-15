@@ -26,7 +26,7 @@ export default class ImportApplicationModal extends Component {
   };
 
   render() {
-    const { appList, appCode, visible, onCancel } = this.props;
+    const { visible, onCancel } = this.props;
     return (
       <>
         <Modal
@@ -38,22 +38,6 @@ export default class ImportApplicationModal extends Component {
           onCancel={onCancel}
         >
           <Form {...formItemLayout} ref={this.formRef}>
-            <Form.Item
-              name="appCode"
-              label={<FormattedMessage id="app.module" />}
-              initialValue={appCode}
-              rules={[{ required: true }]}
-            >
-              <Select disabled={true}>
-                {appList.map((record) => {
-                  return (
-                    <Select.Option key={record.code} value={record.code}>
-                      {formatMessage({ id: record.name })}
-                    </Select.Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
             <Form.Item
               name="merge"
               label={<FormattedMessage id="translator.languageManage.importType" />}

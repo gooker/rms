@@ -6,6 +6,9 @@ import {
   getRobotFaultdata,
   getRobotStatuserrordata,
 } from './components/mockRobotData';
+import moment from 'moment';
+import { fetchAGVHealth } from '@/services/api';
+import { isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
 import ScanCodeComponent from './RobotScanCodeTab';
 import RobotOfflineComponent from './RobotOfflineTab';
 import RobotFaultComponent from './RobotFaultTab';
@@ -44,16 +47,37 @@ const HealthCar = (props) => {
 
   const [activeTab, setActivieTab] = useState('scan');
 
-  useEffect(submitSearch, []);
+  useEffect(() => {
+    async function initCodeData() {
+      const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
+      const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
+    }
+    initCodeData();
+  }, []);
 
   // 搜索 调接口
-  function submitSearch(value) {
-    // TODO 调接口
-    setScanOriginData(getScanCodedata());
-    setOfflineOriginData(getRobotOfflinedata());
-    setStatuserrorOriginData(getRobotStatuserrordata());
-    setFaultOriginData(getRobotFaultdata());
-    // formRef.current.clearForm();
+  async function submitSearch(value) {
+    const {
+      startTime,
+      endTime,
+      agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
+    } = value;
+    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      const response = await fetchAGVHealth({
+        startTime,
+        endTime,
+        agvSearchTypeValue,
+        agvSearchType,
+      });
+      if (!dealResponse(response)) {
+        // TODO:看数据结构
+        setScanOriginData(getScanCodedata());
+        setOfflineOriginData(getRobotOfflinedata());
+        setStatuserrorOriginData(getRobotStatuserrordata());
+        setFaultOriginData(getRobotFaultdata());
+      }
+    }
   }
 
   return (

@@ -370,7 +370,7 @@ export async function fetchMaintain(agvType, params) {
 }
 
 // 请求切换小车手动模式
-export async function fetchManualMode(agvType,params) {
+export async function fetchManualMode(agvType, params) {
   return request(`/${NameSpace[agvType]}/agv/action/manualMode`, {
     method: 'GET',
     data: params,
@@ -858,7 +858,6 @@ export async function fetchAvailableMapChargerList() {
   });
 }
 
-
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {
   return request(`/${Coordinator}/charger/getChargerError`, {
@@ -1124,3 +1123,36 @@ export async function deleteChannelSubscription(params) {
     data: params,
   });
 }
+
+/******报表**********/
+// 二维码健康
+export async function fetchCodeHealth(params) {
+  return request(`/${Coordinator}/statistic/getCellCode`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 小车健康
+export async function fetchAGVHealth(params) {
+  return request(`/${Coordinator}/statistic/getAgvHealth`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+// 小车负载报表
+export async function fetchAGVload(params) {
+  return request(`/${Coordinator}/statistic/getAgvLoad`, {
+    method: 'POST',
+    data: params,
+  });
+}
+//任务负载报表
+export async function fetchTaskLoad(params) {
+  return request(`/${Coordinator}/statistic/getTaskLoad`, {
+    method: 'POST',
+    data: params,
+  });
+}
+

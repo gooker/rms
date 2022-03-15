@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/util';
@@ -11,18 +11,13 @@ const LogSearchForm = (props) => {
 
   const [form] = Form.useForm();
 
-  useEffect(() => {
-    function init() {}
-    init();
-  }, []);
-
   function submitSearch() {
     form.validateFields().then((values) => {
       const currentValues = { ...values };
       const { timeRange } = currentValues;
       if (!isNull(timeRange)) {
-        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:00:00');
-        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:00:00');
+        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:ss');
+        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:ss');
       }
       delete currentValues.timeRange;
       search(currentValues);
@@ -31,11 +26,8 @@ const LogSearchForm = (props) => {
 
   return (
     <Form form={form}>
-      <Form.Item hidden name={'startTime'} />
-      <Form.Item hidden name={'endTime'} />
-      <Form.Item hidden name={'type'} />
       <Row gutter={24}>
-        <Col>
+        <Col span={8}>
           <Form.Item
             label={<FormattedMessage id="app.form.dateRange" />}
             name="timeRange"
@@ -48,7 +40,7 @@ const LogSearchForm = (props) => {
         </Col>
 
         <Col span={6}>
-          <Form.Item name={'codes'} label={<FormattedMessage id="app.common.code" />}>
+          <Form.Item name={'code'} label={<FormattedMessage id="app.common.code" />}>
             <Select mode="tags" style={{ width: '100%' }} maxTagTextLength={5} maxTagCount={4} />
           </Form.Item>
         </Col>

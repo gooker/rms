@@ -31,6 +31,7 @@ export const Types = [
   { label: '待命', value: 'StandBy' },
   { label: '充电', value: 'Charging' },
   { label: '异常', value: 'Error' },
+  { label: '连接中', value: 'Connecting' },
 ];
 
 export const getLabelByValue = (value) => {
@@ -553,7 +554,7 @@ export const sumloadData = (allData, type) => {
   }
 
   forIn(getallkeyMap, (value, key) => {
-    if (key !== 'robotId') {
+    if (key !== 'agvId') {
       firstTimeDataMap.set(key, 0);
       legendData.push(key);
       legendMap.set(key, `reportCenter.load.action.${key}`);
@@ -623,41 +624,41 @@ export const sumloadData1 = (allData, type) => {
   return { currentSery, xAxisData, legendData, legendMap };
 };
 
-// table数据--根据robotId
+// table数据--根据agvId
 export const generateTableData = (originalData) => {
   let currentAxisData = Object.values(originalData)[0] || [];
-  currentAxisData = sortBy(currentAxisData, 'robotId');
+  currentAxisData = sortBy(currentAxisData, 'agvId');
   let _key = {
     taskDistance: 'taskDistance',
-    statusallTime: 'Charging',
+    statusAllTime: 'Charging',
   };
   const firstTimeDataMap = new Map();
   firstTimeDataMap.set('taskDistance', 0);
-  firstTimeDataMap.set('statusallTime', 0); //
-  firstTimeDataMap.set('taskallTime', 0);
-  let currentCellIdData = {}; // 根据robotId 每个key 求和
+  firstTimeDataMap.set('statusAllTime', 0);
+  firstTimeDataMap.set('taskAllTime', 0);
+  let currentCellIdData = {}; // 根据agvId 每个key 求和
 
-  currentAxisData.map(({ robotId }) => {
-    currentCellIdData[robotId] = {};
+  currentAxisData.map(({ agvId }) => {
+    currentCellIdData[agvId] = {};
   });
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { robotId, robotType } = item;
-      currentCellIdData[robotId]['robotType'] = robotType;
-      currentCellIdData[robotId]['robotId'] = robotId;
+      const { agvId, robotType } = item;
+      currentCellIdData[agvId]['robotType'] = robotType;
+      currentCellIdData[agvId]['agvId'] = agvId;
       forIn(item, (value, key) => {
         if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[robotId][key] || 0;
+          let seryData = currentCellIdData[agvId][key] || 0;
           if (_key[key]) {
             let currentKey = _key[key];
-            currentCellIdData[robotId][key] = seryData * 1 + value[currentKey] * 1;
+            currentCellIdData[agvId][key] = seryData * 1 + value[currentKey] * 1;
           } else {
             let _sum = 0;
             forIn(value, (val2, k2) => {
               _sum += val2;
             });
-            currentCellIdData[robotId][key] = seryData * 1 + _sum * 1;
+            currentCellIdData[agvId][key] = seryData * 1 + _sum * 1;
           }
         }
       });
