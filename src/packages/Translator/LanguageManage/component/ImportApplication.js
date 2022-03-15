@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Radio, Button, Select, Modal } from 'antd';
-import { adjustModalWidth } from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ImportI18nLanguage from './ImportI18nLanguage';
 
@@ -12,44 +12,28 @@ const formItemLayout = {
     span: 15,
   },
 };
-const modalWidth = adjustModalWidth() * 0.6;
+const modalWidth = 500;
 export default class ImportApplicationModal extends Component {
   formRef = React.createRef();
-  state = {
-    displayMode: 'standard',
-  };
-
-  onModeChange = (e) => {
-    this.setState({
-      displayMode: e.target.value,
-    });
-  };
-
   onSubmitApplicate = () => {
     const { validateFields } = this.formRef.current;
     const { importApplicate } = this.props;
-    validateFields().then((allValues) => {
-      importApplicate(allValues);
-    });
+    validateFields()
+      .then((allValues) => {
+        importApplicate(allValues);
+      })
+      .catch(() => {});
   };
 
   render() {
     const { appList, appCode, visible, onCancel } = this.props;
-    const { displayMode } = this.state;
     return (
       <>
         <Modal
-          title={
-            <>
-              <FormattedMessage id="translator.languageManage.attention" />
-              <span style={{ fontSize: '15px', color: '#faad14' }}>
-                <FormattedMessage id="translator.languageManage.importTips" />
-              </span>
-            </>
-          }
+          destroyOnClose
+          title={<FormattedMessage id="app.button.import" />}
           width={modalWidth}
           footer={null}
-          destroyOnClose
           visible={visible}
           onCancel={onCancel}
         >
@@ -64,24 +48,24 @@ export default class ImportApplicationModal extends Component {
                 {appList.map((record) => {
                   return (
                     <Select.Option key={record.code} value={record.code}>
-                      {record.name}
+                      {formatMessage({ id: record.name })}
                     </Select.Option>
                   );
                 })}
               </Select>
             </Form.Item>
             <Form.Item
-              name="type"
-              label={<FormattedMessage id="translator.languageManage.displayMode" />}
-              initialValue={displayMode}
+              name="merge"
+              label={<FormattedMessage id="translator.languageManage.importType" />}
+              initialValue={true}
               rules={[{ required: true }]}
             >
-              <Radio.Group onChange={this.onModeChange}>
-                <Radio value="standard">
-                  {<FormattedMessage id="translator.languageManage.standard" />}
+              <Radio.Group>
+                <Radio value={true}>
+                  <FormattedMessage id="translator.languageManage.merge" />
                 </Radio>
-                <Radio value="custom">
-                  {<FormattedMessage id="translator.languageManage.custom" />}
+                <Radio value={false}>
+                  <FormattedMessage id="translator.languageManage.replace" />
                 </Radio>
               </Radio.Group>
             </Form.Item>
@@ -96,10 +80,10 @@ export default class ImportApplicationModal extends Component {
                 },
               ]}
             >
-              <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'}  />
+              <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'} />
             </Form.Item>
             <Button
-              style={{ margin: '70px 0 0 48%' }}
+              style={{ margin: '40px 0 0 200px' }}
               onClick={this.onSubmitApplicate}
               type="primary"
             >
