@@ -20,9 +20,9 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
-import { cloneDeep, findIndex, isEqual } from 'lodash';
+import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage } from '@/utils/util';
+import { dealResponse, isNull, formatMessage, isStrictNull } from '@/utils/util';
 import {
   addSysLang,
   getSysLang,
@@ -58,6 +58,7 @@ class LanguageManage extends React.Component {
     },
   ];
   state = {
+    StandardFE: [], // 前端原始数据
     displayMode: 'merge',
     appCode: null,
 
@@ -83,43 +84,60 @@ class LanguageManage extends React.Component {
   }
 
   // 获取语言
-  getSysLanguage = async (flag) => {
+  getSysLanguage = async () => {
     const langData = await getSysLang();
     if (!dealResponse(langData)) {
-      const currentLang = langData.map(({ code }) => code);
+      // const currentLang = langData.map(({ code }) => code);
       // TODO 要删除 没默认中英文
       // this.setState({ allLanguage: langData, showLanguage: currentLang });
+      const allLanguage = [
+        {
+          code: 'zh-CN',
+          name: '中文',
+        },
+        {
+          code: 'en-US',
+          name: 'en-US',
+        },
+        {
+          code: 'ko-KR',
+          name: 'ko-KR',
+        },
+        {
+          code: 'vi-VN',
+          name: 'vi-VN',
+        },
+      ];
+
+      const StandardFE = [];
+      allLanguage.map(({ code }) => {
+        let languageMap = {};
+        try {
+          languageMap = require(`@/locales/${code}`)?.default;
+        } catch (error) {
+          languageMap = {};
+        }
+        StandardFE.push({ languageKey: code, languageMap });
+      });
       this.setState({
-        allLanguage: [
-          {
-            code: 'zh-CN',
-            name: '中文',
-          },
-          {
-            code: 'en-US',
-            name: '英文',
-          },
-          {
-            code: 'ko-KR',
-            name: '韩文',
-          },
-          {
-            code: 'vi-VN',
-            name: 'vi-VN',
-          },
-        ],
+        allLanguage,
         showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
+        StandardFE,
       });
     }
   };
 
   // 根据appcode获取翻译列表-list
   getTranslateList = async () => {
-    const { appCode } = this.state;
+    const { appCode, StandardFE } = this.state;
     this.setState({ loading: true });
     const list = await getTranslationByCode({ appCode: appCode });
     if (!dealResponse(list)) {
-      this.setState({ dataList: list }, this.getStandardAndCustomData);
+      const currentList = { ...list };
+      if (appCode === 'FE') {
+        currentList.Standard = StandardFE;
+      }
+      this.setState({ dataList: currentList }, this.getStandardAndCustomData);
     }
     this.setState({ loading: false });
   };
@@ -226,7 +244,6 @@ class LanguageManage extends React.Component {
     let currentlist = { ...editList };
     const result = {};
     let currentValue = {};
-    let flag = false;
     if (text !== newValue) {
       currentValue = cloneDeep(record);
       currentValue[field] = newValue;
@@ -236,16 +253,27 @@ class LanguageManage extends React.Component {
       result[key] = currentValue;
 
       // 拿到key对应的源数据
+
+      const changedSet = new Set(); // 比较是否有修改
       const originalRow = mergeData.find((item) => item.languageKey === key);
-      if (originalRow) {
-        flag = isEqual(currentValue.languageMap, originalRow.languageMap);
-      }
+      let newLanguageMap = { ...currentValue.languageMap };
+      Object.entries(newLanguageMap).forEach(([key, value]) => {
+        // 防止原始数据是'' 或者null
+        if (isStrictNull(originalRow.languageMap[key]) && !isStrictNull(value)) {
+          changedSet.add(1);
+        }
+        if (!isStrictNull(originalRow.languageMap[key]) && value !== originalRow.languageMap[key]) {
+          changedSet.add(1);
+        }
+      });
+
       // 源数据和修改后的数据相同 则不放入未保存的对象中
-      if (flag && key) {
-        delete currentlist[key];
-      } else {
+      if (changedSet.size === 1 && changedSet.has(1)) {
         currentlist = { ...editList, ...result };
+      } else {
+        delete currentlist[key];
       }
+
       this.setState({
         editList: currentlist,
       });
@@ -320,7 +348,7 @@ class LanguageManage extends React.Component {
   submitLanguage = async (value) => {
     const response = await addSysLang(value);
     if (!dealResponse(response)) {
-      this.getSysLanguage(true);
+      this.getSysLanguage();
       this.setState({ addLangVisible: false, editList: {} }, this.getTranslateList);
     }
   };

@@ -127,7 +127,7 @@ export function generateOriginData(dataList, allLanguage) {
   // custom里面的key一定在standard里面
   const mergeData = [...standardData].map((item) => {
     let item_ = { ...item };
-    const record_ = customData.filter((record) => item_.languageKey === record.languageKey);
+    const record_ = customData.filter((record) => item.languageKey === record.languageKey);
     if (record_.length > 0) {
       item_ = record_[0];
     }
