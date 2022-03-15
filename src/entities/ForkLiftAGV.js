@@ -4,11 +4,12 @@ import ForkFreight from './ForkFreight';
 import { getTextureFromResources, switchAGVBatteryState, switchAGVState } from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import { AGVType } from '@/config/config';
-import { ForkLiftAGVSize, zIndex } from '@/config/consts';
+import { ForkLiftAGVSize, MonitorSelectableSpriteType, zIndex } from '@/config/consts';
 
 export default class ForkLiftAGV extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MonitorSelectableSpriteType.ForkLifting;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;

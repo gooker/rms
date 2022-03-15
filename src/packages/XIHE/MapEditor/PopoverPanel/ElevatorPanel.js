@@ -6,7 +6,7 @@ import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import ElevatorForm from './ElevatorForm';
-import editorStyles from '../editorLayout.module.less';
+import commonStyles from '@/common.module.less';
 
 const ElevatorPanel = (props) => {
   const { height, dispatch, mapContext, elevatorList, logicAreaList } = props;
@@ -59,7 +59,7 @@ const ElevatorPanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible ? (

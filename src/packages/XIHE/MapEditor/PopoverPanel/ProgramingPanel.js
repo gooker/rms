@@ -7,10 +7,10 @@ import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util
 import { fetchScopeProgram, saveScopeProgram } from '@/services/XIHE';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingZone from './ProgramingZone';
-import ProgramingCell from './ProgramingCell';
+import ProgramingCell from '../../ProgramingCell';
 import ProgramingRelation from './ProgramingRelation';
-import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
 
 const { TabPane } = Tabs;
 const { formItemLayout } = getFormLayout(4, 20);
@@ -108,7 +108,7 @@ const ProgramingPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         <FormattedMessage id={'app.map.programing'} />

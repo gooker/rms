@@ -14,9 +14,11 @@ import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPan
 import MessageCategorySecondaryPanel from '../PopoverPanel/MessageCategorySecondaryPanel';
 import SimulatorPanel from '../PopoverPanel/SimulatorPanel';
 import styles from '../monitorLayout.module.less';
+import MonitorSelectionPanel from '@/packages/XIHE/MapMonitor/PopoverPanel/MonitorSelectionPanel';
 
 const MonitorBodyRight = (props) => {
-  const { dispatch, categoryPanel, podToWorkstationInfo, latentStopMessageList } = props;
+  const { dispatch, selections, categoryPanel, podToWorkstationInfo, latentStopMessageList } =
+    props;
 
   const [height, setHeight] = useState(0);
   const [top, setTop] = useState(0);
@@ -41,7 +43,7 @@ const MonitorBodyRight = (props) => {
   useMount(() => {
     // 获取潜伏车到站信息和暂停消息
     if (hasAppPermission(AppCode.LatentLifting)) {
-      dispatch({ type: 'monitor/fetchLatentSopMessageList' });
+      dispatch({ type: 'monitor/fetchLatentStopMessageList' });
       fetchWorkStationPods().then((res) => {
         if (!dealResponse(res)) {
           dispatch({
@@ -99,8 +101,10 @@ const MonitorBodyRight = (props) => {
             offsetTop={offsetTop}
           />
         );
+      case Category.Select:
+        return <MonitorSelectionPanel height={height - 10} />;
       case Category.Simulator:
-        return <SimulatorPanel dispatch={dispatch} height={height - 10} />;
+        return <SimulatorPanel height={height - 10} />;
       case Category.Emergency:
         return (
           <ViewCategorySecondaryPanel
@@ -113,6 +117,7 @@ const MonitorBodyRight = (props) => {
       case Category.Resource:
         return (
           <ViewCategorySecondaryPanel
+            dispatch={dispatch}
             pixHeight={height}
             type={Category.Resource}
             height={210}
@@ -133,45 +138,65 @@ const MonitorBodyRight = (props) => {
     }
   }
 
+  function renderBadge(type) {
+    switch (type) {
+      case Category.Message: {
+        const total = podToWorkstationInfo.length + latentStopMessageList.length;
+        if (total > 0) {
+          return (
+            <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
+              {total > 99 ? '99+' : total}
+            </div>
+          );
+        }
+        return null;
+      }
+      case Category.Select: {
+        if (selections.length > 0) {
+          return (
+            <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
+              {selections.length > 99 ? '99+' : selections.length}
+            </div>
+          );
+        }
+        return null;
+      }
+      default:
+        return null;
+    }
+  }
+
   return (
     <div style={{ position: 'relative' }}>
       <div className={styles.bodyRightSide} style={{ height }}>
-        {MonitorRightTools.map(({ label, value, icon, style }) => (
-          <Tooltip key={value} placement="right" title={label}>
-            <div
-              role={'category'}
-              style={{ position: 'relative' }}
-              className={categoryPanel === value ? styles.categoryActive : undefined}
-              onClick={(e) => {
-                const { top: categoryTop } = e?.target?.getBoundingClientRect();
-                setOffsetTop(categoryTop - top);
-                if (value !== Category.Prop || categoryPanel === Category.Prop) {
-                  updateEditPanelFlag(value);
-                }
-              }}
-            >
-              {renderIcon(icon, style)}
-              {value === Category.Message &&
-              podToWorkstationInfo.length + latentStopMessageList.length > 0 ? (
-                <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
-                  <span>
-                    {podToWorkstationInfo.length + latentStopMessageList.length > 99
-                      ? '99+'
-                      : podToWorkstationInfo.length + latentStopMessageList.length}
-                  </span>
-                </div>
-              ) : (
-                ''
-              )}
-            </div>
-          </Tooltip>
-        ))}
+        {MonitorRightTools.map(({ label, value, icon, style }) => {
+          return (
+            <Tooltip key={value} placement="right" title={label}>
+              <div
+                role={'category'}
+                style={{ position: 'relative' }}
+                className={categoryPanel === value ? styles.categoryActive : undefined}
+                onClick={(e) => {
+                  const { top: categoryTop } = e?.target?.getBoundingClientRect();
+                  setOffsetTop(categoryTop - top);
+                  if (value !== Category.Prop || categoryPanel === Category.Prop) {
+                    updateEditPanelFlag(value);
+                  }
+                }}
+              >
+                {renderIcon(icon, style)}
+                {renderBadge(value)}
+              </div>
+            </Tooltip>
+          );
+        })}
       </div>
       {!isNull(categoryPanel) ? renderPanelContent() : null}
     </div>
   );
 };
 export default connect(({ monitor }) => ({
+  selections: monitor.selections,
   categoryPanel: monitor.categoryPanel,
   podToWorkstationInfo: monitor.podToWorkstationInfo || [],
   latentStopMessageList: monitor.latentStopMessageList || [],

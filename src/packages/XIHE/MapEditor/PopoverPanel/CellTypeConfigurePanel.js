@@ -4,11 +4,10 @@ import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { CellTypeSetting } from '../enums';
 import FormattedMessage from '@/components/FormattedMessage';
-import editorStyles from '../editorLayout.module.less';
-import commonStyles from '@/common.module.less';
-import styles from './popoverPanel.module.less';
 import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtil';
 import { MapSelectableSpriteType } from '@/config/consts';
+import styles from '../../popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
 
 const CellTypeConfigurePanel = (props) => {
   const { dispatch, height, mapContext, selectCells } = props;
@@ -28,7 +27,7 @@ const CellTypeConfigurePanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 400 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 400 }} className={commonStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'app.map.function'} />
       </div>

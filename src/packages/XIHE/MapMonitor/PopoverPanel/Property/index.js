@@ -7,11 +7,10 @@ import WorkStationProperty from './WorkStationProperty';
 import CommonStationProperty from './CommonStationProperty';
 import AGVElementProp from './AgvProperty';
 import ChargeProperty from './ChargeProperty';
-
-import styles from '../../monitorLayout.module.less';
+import commonStyle from '@/common.module.less';
 
 const Property = (props) => {
-  const { height, width,selection } = props;
+  const { height, width, selection } = props;
 
   function renderContent() {
     if (!isNull(selection)) {
@@ -22,21 +21,21 @@ const Property = (props) => {
         case MapSelectableSpriteType.STATION:
           return <CommonStationProperty data={selection} />;
         case AGVType.LatentLifting:
-          return <AGVElementProp data={selection} type={AGVType.LatentLifting}/>;
+          return <AGVElementProp data={selection} type={AGVType.LatentLifting} />;
         case AGVType.Sorter:
           return <AGVElementProp data={selection} type={AGVType.Sorter} />;
         case MapSelectableSpriteType.CHARGER:
-           return <ChargeProperty data={selection}/>
+          return <ChargeProperty data={selection} />;
         default:
-          return <></>;
+          return null;
       }
     } else {
-      return <></>;
+      return null;
     }
   }
 
   return (
-    <div style={{ height,width }} className={styles.categoryPanel}>
+    <div style={{ height, width }} className={commonStyle.categoryPanel}>
       {renderContent()}
     </div>
   );

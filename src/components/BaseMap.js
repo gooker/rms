@@ -77,7 +77,7 @@ export default class BaseMap extends React.Component {
     }
   };
 
-  centerView = () => {
+  centerView = (key) => {
     const { viewport } = this.pixiUtils;
     const { x, y, width, height } = viewport.getLocalBounds();
 
@@ -98,7 +98,7 @@ export default class BaseMap extends React.Component {
       minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
     }
     // 记录当前地图世界宽度
-    window.sessionStorage.setItem('EDITOR_MAP', JSON.stringify({ x, y, width, height }));
+    window.sessionStorage.setItem(key, JSON.stringify({ x, y, width, height }));
     this.refresh();
     return minMapRatio;
   };
@@ -861,7 +861,6 @@ export default class BaseMap extends React.Component {
     const eData = {
       ...data,
       showEmergency,
-      notShowFixed: true,
       refresh: this.refresh,
       select: this.select,
     };

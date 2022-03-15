@@ -16,7 +16,7 @@ import {
 import ButtonMultiSelect from './ButtonMultiSelect';
 import { isStrictNull, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../GroupManage/groupManage.module.less';
+import commonStyle from '@/common.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 const FormItem = Form.Item;
@@ -402,7 +402,7 @@ class GroupManageConfiguration extends Component {
 
     // 初始化 读取默认的 类似车辆组
     return (
-      <div style={{ height, width }} className={styles.categoryPanel}>
+      <div style={{ height, width }} className={commonStyle.categoryPanel}>
         <div>
           <FormattedMessage id={'groupManage.manage'} />
         </div>
@@ -420,7 +420,7 @@ class GroupManageConfiguration extends Component {
                 onChange={this.groupTypeChange}
                 options={groupJson}
                 disabled={!!editGroupItemFlag}
-              ></Select>
+              />
             </FormItem>
 
             {/*  渲染出formitem */}

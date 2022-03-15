@@ -37,6 +37,8 @@ export default {
   'monitor.right.cellheat': '点位热度',
   'monitor.right.heat': '热度',
   'monitor.right.tracking': '追踪',
+  'monitor.select.enable': '可选',
+  'monitor.select.disable': '禁选',
 
   // 提醒
   'monitor.tip.fetchLockFail': '获取锁格信息失败',

@@ -5,16 +5,16 @@ import { isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
+import { Elevator } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';
+import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
 import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
-import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
-import { Elevator } from '@/entities';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
-  const { dispatch, mapRatio, mapContext, shortcutToolVisible, selections } = props;
+  const { dispatch, mapRatio, mapMinRatio, mapContext, shortcutToolVisible, selections } = props;
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
@@ -48,7 +48,7 @@ const EditorMapContainer = (props) => {
       renderMap();
       renderLogicArea();
       renderRouteMap();
-      const minMapRatio = mapContext.centerView();
+      const minMapRatio = mapContext.centerView('EDITOR_MAP');
       dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
 
       // 监听地图缩放比例
@@ -85,7 +85,7 @@ const EditorMapContainer = (props) => {
         }, 200),
       );
     }
-  }, [currentMap, currentLogicArea]);
+  }, [currentMap, currentLogicArea, mapContext]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
@@ -311,7 +311,6 @@ const EditorMapContainer = (props) => {
       case LeftCategory.Drag:
         cursorStyle = 'grab';
         break;
-      case LeftCategory.Choose:
       case LeftCategory.Font:
       case LeftCategory.Rectangle:
       case LeftCategory.Circle:
@@ -324,35 +323,42 @@ const EditorMapContainer = (props) => {
     return cursorStyle;
   }
 
+  function onSliderChange(value) {
+    dispatch({ type: 'editor/saveMapRatio', payload: value });
+  }
+
   return (
     <div
       id={'editorPixiContainer'}
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
-      {shortcutToolVisible && <EditorShortcutTool />}
+      <EditorMapView />
       <EditorMask />
 
+      {shortcutToolVisible && <EditorShortcutTool />}
       {/* 平板不用显示滑条 */}
-      {!window.currentPlatForm.isTablet && <EditorMapView />}
-      <MapRatioSlider />
+      {!window.currentPlatForm.isTablet && (
+        <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
+      )}
     </div>
   );
 };
 export default connect(({ editor, editorView }) => {
   const {
     mapRatio,
+    mapMinRatio,
     currentMap,
     currentLogicArea,
     currentRouteMap,
     preRouteMap,
     mapContext,
     leftActiveCategory,
-    shortcutToolVisible,
     selections,
   } = editor;
   return {
     mapRatio,
+    mapMinRatio,
     currentMap,
     currentLogicArea,
     currentRouteMap,

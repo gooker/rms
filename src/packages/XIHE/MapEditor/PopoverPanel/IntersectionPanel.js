@@ -9,7 +9,7 @@ import FunctionListItem from '../components/FunctionListItem';
 import LabelComponent from '@/components/LabelComponent';
 import Dictionary from '@/utils/Dictionary';
 import IntersectionForm from '@/packages/XIHE/MapEditor/PopoverPanel/IntersectionForm';
-import editorStyles from '../editorLayout.module.less';
+import commonStyles from '@/common.module.less';
 
 const IntersectionPanel = (props) => {
   const { height, dispatch, mapContext, intersectionList } = props;
@@ -70,7 +70,7 @@ const IntersectionPanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible ? (

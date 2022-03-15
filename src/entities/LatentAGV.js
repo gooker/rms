@@ -1,10 +1,9 @@
 import * as PIXI from 'pixi.js';
-import BitText from './BitText';
-import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, LatentAGVSize, SelectionType } from '@/config/consts';
-import { AGVType } from '@/config/config';
-import { isNull } from '@/utils/util';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
+import BitText from './BitText';
+import { isNull } from '@/utils/util';
+import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
+import { zIndex, LatentAGVSize, SelectionType, MonitorSelectableSpriteType } from '@/config/consts';
 
 export default class LatentAGV extends PIXI.Container {
   constructor(props) {
@@ -13,7 +12,7 @@ export default class LatentAGV extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.type = AGVType.LatentLifting;
+    this.type = MonitorSelectableSpriteType.LatentLifting;
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
     this.zIndex = zIndex.agv;

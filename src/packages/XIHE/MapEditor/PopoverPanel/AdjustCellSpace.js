@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 
 const AdjustCellSpace = (props) => {
   const { dispatch, selectCells, mapContext } = props;

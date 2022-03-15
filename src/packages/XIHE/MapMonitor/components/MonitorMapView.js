@@ -45,8 +45,6 @@ import {
   TotePod,
   RealtimeRate,
 } from '@/entities';
-import commonStyles from '@/common.module.less';
-import { Category } from '@/packages/XIHE/MapMonitor/enums';
 import { fetchAgvInfo } from '@/services/api';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { SelectionType } from '@/config/consts';
@@ -114,11 +112,10 @@ class MonitorMapView extends BaseMap {
   }
 
   async componentDidMount() {
-    const { dispatch } = this.props;
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
     window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
-    dispatch({ type: 'monitor/saveMapContext', payload: this });
+    window.$$dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
   }
 
@@ -1701,7 +1698,7 @@ class MonitorMapView extends BaseMap {
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
-    return <div id="monitorPixi" className={commonStyles.monitorBodyMiddle} />;
+    return <div id="monitorPixi" style={{ height: '100%', fontSize: 0 }} />;
   }
 }
 

@@ -8,8 +8,8 @@ import FormattedMessage from '@/components/FormattedMessage';
 import ChargerForm from './ChargerForm';
 import ChargerMultiForm from './ChargerMultiForm';
 import FunctionListItem from '../components/FunctionListItem';
-import editorStyles from '../editorLayout.module.less';
 import LabelComponent from '@/components/LabelComponent';
+import commonStyles from '@/common.module.less';
 
 const ChargerPanel = (props) => {
   const { dispatch, height, mapContext, chargerList } = props;
@@ -81,7 +81,7 @@ const ChargerPanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible || multiFormVisible ? (

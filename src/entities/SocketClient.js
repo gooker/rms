@@ -71,7 +71,7 @@ class SocketClient {
 
     /// /////////////////////////////// 潜伏式  //////////////////////////////////
     // 潜伏式车状态
-    unsubscription = unsubscription = this.client.subscribe(
+    unsubscription = this.client.subscribe(
       `/topic/latent_lifting_ui_monitor_agv.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);

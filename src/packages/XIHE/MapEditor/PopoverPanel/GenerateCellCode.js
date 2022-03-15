@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 
 const GenerateCellCode = (props) => {
   const { dispatch, selectCells, rangeStart, rangeEnd, mapContext } = props;

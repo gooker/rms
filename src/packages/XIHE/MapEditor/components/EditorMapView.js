@@ -6,13 +6,11 @@ import {
   loadEditorExtraTextures,
 } from '@/utils/mapUtil';
 import { Cell } from '@/entities';
-import { connect } from '@/utils/RmsDva';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { isNull } from '@/utils/util';
 
-@connect()
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
@@ -39,8 +37,6 @@ class EditorMapView extends BaseMap {
   }
 
   async componentDidMount() {
-    const { dispatch } = this.props;
-
     // 禁用右键菜单
     document.oncontextmenu = (event) => {
       event.preventDefault();
@@ -49,7 +45,7 @@ class EditorMapView extends BaseMap {
     const htmlDOM = document.getElementById('editorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
     window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
-    dispatch({ type: 'editor/saveMapContext', payload: this });
+    window.$$dispatch({ type: 'editor/saveMapContext', payload: this });
     await loadEditorExtraTextures(this.pixiUtils.renderer);
   }
 

@@ -4,7 +4,7 @@ import { CheckOutlined, DownOutlined, DragOutlined, UpOutlined } from '@ant-desi
 import { connect } from '@/utils/RmsDva';
 import CostConfigure from './CostConfigure';
 import FormattedMessage from '@/components/FormattedMessage';
-import popoverPanelStyles from '../PopoverPanel/popoverPanel.module.less';
+import popoverPanelStyles from '../../popoverPanel.module.less';
 import styles from './createDefaultRoute.module.less';
 import RmsConfirm from '@/components/RmsConfirm';
 import { formatMessage } from '@/utils/util';

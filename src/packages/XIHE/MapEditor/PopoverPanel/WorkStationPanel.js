@@ -7,8 +7,8 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import WorkStationForm from './WorkStationForm';
-import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
 
 const WorkStationPanel = (props) => {
   const { height, dispatch, mapContext, workstationList } = props;
@@ -68,7 +68,7 @@ const WorkStationPanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible ? (

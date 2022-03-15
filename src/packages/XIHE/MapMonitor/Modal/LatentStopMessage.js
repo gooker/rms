@@ -86,7 +86,7 @@ const LatentStopMessage = (props) => {
                         taskStepId: stepTaskId,
                       };
                       resumeLatentPausedTask(params).then(() => {
-                        dispatch({ type: 'monitor/fetchLatentSopMessageList' });
+                        dispatch({ type: 'monitor/fetchLatentStopMessageList' });
                       });
                     }}
                   >

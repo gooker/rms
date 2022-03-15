@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import styles from '../PopoverPanel/popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 
 const EditorCard = (props) => {
   const { label, children } = props;

@@ -98,17 +98,14 @@ class ResizeableEmergencyStop extends ResizableContainer {
   createElement() {
     this.eStopArea = this.$$container.addChild(this.createEStopArea());
     this.eName = this.$$container.addChild(this.createName());
-    this.eIcon = this.$$container.addChild(this.createIcon());
 
-    // notShowFixed是地图编辑传的参数 地图编辑不需要显示固定icon
-    if (isNull(this.$$data.notShowFixed) && this.$$data.isFixed) {
+    if (this.$$data.isFixed) {
       this.eFixedIcon = this.$$container.addChild(this.createFixedIcon());
+    } else {
+      this.eIcon = this.$$container.addChild(this.createIcon());
     }
 
-    // 地图编辑不用看弹框
-    if (isNull(this.$$data.notShowFixed)) {
-      this.interactiveModal();
-    }
+    this.interactiveModal();
   }
 
   // 安全显示红色，不安全显示黄色，禁用显示灰色
@@ -193,14 +190,14 @@ class ResizeableEmergencyStop extends ResizableContainer {
   createFixedIcon() {
     const { xlength, ylength, r: radius } = this.$$data;
     let _x, _y;
-    if (this.box === ZoneMarkerType.RECT) {
-      _x = xlength - 300;
-      _y = ylength - 680;
+    if (this.type === ZoneMarkerType.RECT) {
+      _x = xlength / 2 - 300;
+      _y = ylength / 2 - 300;
     } else {
-      _x = radius * 2 - 300;
-      _y = radius;
+      _x = radius * Math.cos(45) - 200;
+      _y = radius * Math.sin(45) - 200;
     }
-    const fixedTexture = getTextureFromResources('emergencyStopFixed');
+    const fixedTexture = getTextureFromResources('pin');
     const fixedIcon = new PIXI.Sprite(fixedTexture);
     fixedIcon.x = _x;
     fixedIcon.y = _y;
@@ -235,13 +232,10 @@ class ResizeableEmergencyStop extends ResizableContainer {
   }
 
   interactiveModal(props) {
-    // @@@@权限key调整
-    if (hasPermission('/map/monitor/action/set/emergencyArea')) {
-      this.$$container.interactive = true;
-      this.$$container.buttonMode = true;
-      this.$$container.interactiveChildren = false;
-      this.$$container.on('click', () => this.$$data.checkEStopArea(this.$$data));
-    }
+    this.$$container.interactive = true;
+    this.$$container.buttonMode = true;
+    this.$$container.interactiveChildren = false;
+    this.$$container.on('click', () => this.$$data.checkEStopArea(this.$$data));
   }
 
   switchEStopsVisible(flag) {

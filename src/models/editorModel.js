@@ -108,7 +108,6 @@ export default {
         mapRatio: action.payload,
       };
     },
-
     updateEditPanelVisible(state, action) {
       if (action.payload === null) {
         return {

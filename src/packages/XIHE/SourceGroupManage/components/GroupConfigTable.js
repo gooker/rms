@@ -1,14 +1,15 @@
 import React from 'react';
-import { connect } from '@/utils/RmsDva';
 import { Table, Divider, Button, Popconfirm, Row, Tag, Form, Select, Badge, Col } from 'antd';
+import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { DeleteOutlined, EditOutlined, EyeOutlined } from '@ant-design/icons';
-import styles from '../GroupManage/groupManage.module.less';
+import commonStyles from '@/common.module.less';
 
 const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 11 } };
 const { Item: FormItem } = Form;
 const { Option } = Select;
+
 @connect(({ mapViewGroup }) => ({
   dataSource: mapViewGroup.storageConfigData,
   groupJson: mapViewGroup.groupJson,
@@ -139,7 +140,7 @@ class StorageConfigTable extends React.PureComponent {
     const { dataTable, formRef, groupType } = this.state;
     const { highLight, groupJson, height, width } = this.props;
     return (
-      <div style={{ height, width }} className={styles.categoryPanel}>
+      <div style={{ height, width }} className={commonStyles.categoryPanel}>
         <div>
           <FormattedMessage id={'groupManage.config.detail'} />
         </div>

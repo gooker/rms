@@ -1,11 +1,16 @@
 import React from 'react';
 import { SettingOutlined } from '@ant-design/icons';
-import { AGVType,AppCode } from '@/config/config';
+import { AGVType, AppCode } from '@/config/config';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
 export const RightToolBarWidth = 60;
+
+export const MonitorOperationType = {
+  Choose: 'CHOOSE',
+  Drag: 'DRAG',
+};
 
 export const Category = {
   Prop: 'Prop',

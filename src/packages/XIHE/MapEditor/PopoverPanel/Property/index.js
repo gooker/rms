@@ -11,7 +11,7 @@ import WorkStationForm from '../WorkStationForm';
 import IntersectionForm from '../IntersectionForm';
 import { MapSelectableSpriteType } from '@/config/consts';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../../editorLayout.module.less';
+import commonStyles from '@/common.module.less';
 
 const Property = (props) => {
   const { height, lockedProps, showMapInfo, categoryProps } = props;
@@ -123,7 +123,7 @@ const Property = (props) => {
 
   if (component) {
     return (
-      <div style={{ height }} className={styles.categoryPanel}>
+      <div style={{ height }} className={commonStyles.categoryPanel}>
         {component}
       </div>
     );

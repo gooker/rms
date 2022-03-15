@@ -233,9 +233,14 @@ export default {
   'app.pod.side.C': 'C',
   'app.pod.side.D': 'D',
 
-  // 任务
+  // 料箱货架
+  'app.tote.rack': '料箱货架',
+
+  // 任务属性
   'app.task': '任务',
   'app.task.id': '任务ID',
+  'app.task.customId': '客户任务ID',
+  'app.task.poolId': '料箱池任务ID',
   'app.task.action': '任务细节',
   'app.task.step': '任务步骤',
   'app.task.flow': '任务流程',
@@ -245,9 +250,8 @@ export default {
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
   'app.task.type': '任务类型',
-  'app.task.customId': '客户任务ID',
-  'app.task.poolId': '料箱池任务ID',
 
+  // 任务状态
   'app.task.state': '任务状态',
   'app.task.state.New': '新建',
   'app.task.state.Executing': '执行中',
@@ -264,6 +268,7 @@ export default {
   'app.chargeManger.CONNECTING': '对接中',
   'app.chargeManger.CONNECTED': '对接成功',
 
+  // 充电桩类型
   'app.chargeManger.version0': '虚拟',
   'app.chargeManger.version1': '第一代',
   'app.chargeManger.version2': '第二代',
@@ -297,10 +302,8 @@ export default {
   'app.fault.lastReport': '最近上报',
   'app.fault.autoRecover': '自动恢复',
   'app.fault.additionalData': '额外信息',
-
   'app.fault.preDataDefinition': '附加数据1',
   'app.fault.extraData1': '附加数据1',
-
   'app.fault.curDataDefinition': '附加数据2',
   'app.fault.extraData2': '附加数据2',
 
