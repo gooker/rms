@@ -2,22 +2,28 @@ import XLSX from 'xlsx';
 import { forIn, sortBy, findIndex } from 'lodash';
 import { isStrictNull, formatMessage } from '@/utils/util';
 
-export function exportTranslate(allShowData, key, appcode) {
+export function exportTranslate(allShowData, key, appcode, showLanguage) {
   const modeText = {
     merge: formatMessage({ id: 'translator.languageManage.merge' }),
     standard: formatMessage({ id: 'translator.languageManage.standard' }),
     custom: formatMessage({ id: 'translator.languageManage.custom' }),
   };
   const data_ = allShowData.map((record) => {
+    const currentlangMap = {};
+    forIn(record.languageMap, (value, key) => {
+      if (showLanguage.includes(key)) {
+        currentlangMap[key] = value;
+      }
+    });
     return {
       languageKey: record.languageKey,
-      ...record.languageMap,
+      ...currentlangMap,
     };
   });
   const textlang = formatMessage({ id: 'translator.languageManage.langpackage' });
   const ws = XLSX.utils.json_to_sheet(data_); /* 新建空workbook，然后加入worksheet */
   const wb = XLSX.utils.book_new(); /*新建book*/
-  XLSX.utils.book_append_sheet(wb, ws, 'People'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
+  XLSX.utils.book_append_sheet(wb, ws, 'common'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
   XLSX.writeFile(wb, `${modeText[key]}${textlang}-${appcode}.xlsx`); /*写文件(book,xlsx文件名称)*/
 }
 

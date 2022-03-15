@@ -105,7 +105,7 @@ class LanguageManage extends React.Component {
           },
           {
             code: 'vi-VN',
-            name: '111',
+            name: 'vi-VN',
           },
         ],
         showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
@@ -254,7 +254,7 @@ class LanguageManage extends React.Component {
 
   //导出
   exportExecl = (type) => {
-    const { standardData, customData, mergeData, appCode } = this.state;
+    const { standardData, customData, mergeData, appCode, showLanguage } = this.state;
     const { key } = type;
     let allShowData = [];
     if (key === 'merge') {
@@ -265,50 +265,47 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
 
-    exportTranslate(allShowData, key, appCode);
+    exportTranslate(allShowData, key, appCode, showLanguage);
   };
 
   // 导入
   importTranslation = async (data) => {
     // 1.判断key是否存在standard 不存在删除 (如果语种key不在系统中 也要删除)
     // 2.有修改的翻译留下来
-    const { standardData, showLanguage } = this.state;
+    const { standardData, allLanguage } = this.state;
+    const allSysLang = allLanguage.map(({ code }) => code);
     const { appCode, merge, languages: exportLanguages } = data;
     const newExportLanguages = [];
     const deleteLangKey = [];
 
     exportLanguages.forEach(({ languageKey, languageMap }) => {
+      if (isNull(languageKey)) return;
       let filterKey = standardData.find((item) => item.languageKey === languageKey);
       let index = findIndex(standardData, (record) => record.languageKey === languageKey);
       if (index >= 0) {
         let newLanguageMap = { ...languageMap };
-        Object.entries(filterKey.languageMap)?.forEach(([key, value]) => {
-          if (!newLanguageMap[key]) {
-            newLanguageMap[key] = '';
-          }
-        });
+        const changedSet = new Set(); // 比较是否有修改
         Object.entries(newLanguageMap).forEach(([key, value]) => {
-          if (!showLanguage.includes(key)) {
+          if (!allSysLang.includes(key)) {
             delete newLanguageMap[key];
+          } else {
+            if (value !== filterKey.languageMap[key]) {
+              changedSet.add(1);
+            }
           }
         });
-        if (!isEqual(filterKey.languageMap, newLanguageMap)) {
+        if (changedSet.size === 1 && changedSet.has(1)) {
           newExportLanguages.push({
             languageKey,
-            languageMap: newLanguageMap,
+            ...newLanguageMap,
           });
         }
       } else {
         deleteLangKey.push(languageKey);
       }
     });
-    const currenUpdate = newExportLanguages.map((record) => {
-      return {
-        languageKey: record.languageKey,
-        ...record.languageMap,
-      };
-    });
-    const translationDetail = generateUpdateDataToSave(currenUpdate);
+
+    const translationDetail = generateUpdateDataToSave(newExportLanguages);
     const respones = await updateSysTranslation({
       appCode,
       merge,
