@@ -2,7 +2,8 @@ import React, { useState, memo, useEffect } from 'react';
 import { Row, Col, Divider, Card } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
-import { isStrictNull } from '@/utils/util';
+import { isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
+import { fetchTaskLoad } from '@/services/api';
 import { getTaskLoadData } from './components/mockTaskLockData';
 import {
   actionPieOption,
@@ -24,12 +25,19 @@ let taskActionBarLine = null; // 任务动作负载-bar(日期x轴)
 let taskWorkBarLine = null;
 let taskPickworkBarLine = null;
 
-const HealthCar = (props) => {
+const HealthTask = (props) => {
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
   useEffect(initChart, []);
-  useEffect(submitSearch, []);
+  useEffect(() => {
+    async function initCodeData() {
+      const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
+      const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
+    }
+    initCodeData();
+  }, []);
   // 源数据变化触发显重新拉取数据 二次搜索
   useEffect(refreshChart, [filterData, loadOriginData]);
 
@@ -134,15 +142,28 @@ const HealthCar = (props) => {
     }
   }
 
-  // 搜索 调接口
-  function submitSearch(value) {
-    // TODO 调接口
-    setLoadOriginData(getTaskLoadData());
-    setFilterData(getTaskLoadData());
+  // 搜索
+  async function submitSearch(value) {
+    const {
+      startTime,
+      endTime,
+      agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
+    } = value;
+    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      const response = await fetchTaskLoad({
+        startTime,
+        endTime,
+        agvSearchTypeValue,
+        agvSearchType,
+      });
+      if (!dealResponse(response)) {
+        setLoadOriginData(response);
+        setFilterData(response);
+      }
+    }
   }
 
   // 二次-search
-
   function onDatefilterChange(allValues) {
     let newOriginalData = { ...loadOriginData };
     if (Object.keys(loadOriginData).length === 0) return;
@@ -169,10 +190,9 @@ const HealthCar = (props) => {
   }
 
   /*
-  *@searchValues 搜索条件数据
-  *
-  @param  在接口返回的数据中参数名
-  * */
+   *@searchValues 搜索条件数据
+   *@param  在接口返回的数据中参数名
+   * */
   const filterDataByParam = (searchValues, param) => {
     const _data = { ...loadOriginData };
     const newData = {};
@@ -241,4 +261,4 @@ const HealthCar = (props) => {
     </div>
   );
 };
-export default memo(HealthCar);
+export default memo(HealthTask);

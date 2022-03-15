@@ -5,12 +5,12 @@ import { adjustModalWidth } from '@/utils/util';
 import { sortBy } from 'lodash';
 
 const UpdateEditListModal = (props) => {
-  const { columns, source, onCancel, visible } = props;
+  const { columns, source, onCancel, visible, deleteHandle } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
-    let _sources = Object.values(source) || [];
+    let _sources = (source && Object.values(source)) || [];
     _sources = sortBy(_sources, (o) => {
       return o.languageKey;
     });
@@ -31,11 +31,11 @@ const UpdateEditListModal = (props) => {
           dataIndex: 'languageKey',
         },
       ];
-      columns.map(({ type }) => {
+      columns.map(({ code }) => {
         currentColumns.push({
-          title: type,
-          field: type,
-          dataIndex: type,
+          title: code,
+          field: code,
+          dataIndex: code,
         });
       });
       return currentColumns;
@@ -52,20 +52,20 @@ const UpdateEditListModal = (props) => {
         visible={visible}
         onCancel={onCancel}
       >
-        <Row>
+        <Row style={{marginBottom:10}}>
           <Col span={4}>
             <Button
               onClick={() => {
+                const currentSource = { ...source };
                 const filterData = dataList.filter((record) => {
                   if (selectedRowKeys.indexOf(record.languageKey) !== -1) {
-                    delete source[record.languageKey];
+                    delete currentSource[record.languageKey];
                     return false;
                   }
                   return true;
                 });
-                const { onChange } = props;
-                if (onChange) {
-                  onChange(source);
+                if (deleteHandle) {
+                  deleteHandle(currentSource);
                   setDataList(filterData);
                 }
               }}

@@ -9,6 +9,7 @@ import styles from '../translator.module.less';
 export default class DiffToSaveModal extends Component {
   state = {
     diffData: {},
+    loading: false,
   };
 
   componentWillReceiveProps(nextProps) {
@@ -70,7 +71,7 @@ export default class DiffToSaveModal extends Component {
   };
 
   render() {
-    const { diffData } = this.state;
+    const { diffData, loading } = this.state;
     const { onCancel, visible } = this.props;
     return (
       <div className={styles.diffJsoContent}>
@@ -84,11 +85,14 @@ export default class DiffToSaveModal extends Component {
           <div className={styles.diffHeader}>
             <Button
               type="primary"
+              loading={loading}
               onClick={() => {
+                this.setState({ loading: true });
                 const { makeSureUpdate } = this.props;
                 if (makeSureUpdate) {
                   makeSureUpdate();
                 }
+                this.setState({ loading: false });
               }}
             >
               <FormattedMessage id="app.button.save" />

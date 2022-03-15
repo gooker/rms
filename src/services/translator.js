@@ -11,9 +11,9 @@ export async function getTranslationByCode(params) {
   });
 }
 
-// 保存-update
+// 更新具体翻译，保存到custom-批量
 export async function updateTranslations(params) {
-  return request(`/${I18N}/updateTranslations`, {
+  return request(`/${I18N}/batchUpdateTranslation`, {
     method: 'POST',
     data: params,
   });
@@ -21,29 +21,30 @@ export async function updateTranslations(params) {
 
 // 系统支持的语种列表
 export async function getSysLang() {
-  return request(`/${I18N}/getSysSupportLang`, {
+  return request(`/${I18N}/languageType/findAll`, {
     method: 'GET',
+  });
+}
+
+// 获取上一次保存数据
+export async function getPreviousList(params) {
+  return request(`/${I18N}/getPreviousSaving`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 导入
+export async function updateSysTranslation(params) {
+  return request(`/${I18N}/importTranslation`, {
+    method: 'POST',
+    data: params,
   });
 }
 
 // 添加语言
 export async function addSysLang(params) {
-  return request(`/${I18N}/addSysLang`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// 已注册国际化的应用列表
-export async function getApplications() {
-  return request(`/${I18N}/getApplications`, {
-    method: 'GET',
-  });
-}
-
-// 添加应用
-export async function addApplication(params) {
-  return request(`/${I18N}/addApplication`, {
+  return request(`/${I18N}/languageType/addOrUpdate`, {
     method: `POST`,
     data: params,
   });

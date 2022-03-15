@@ -1,95 +1,54 @@
 import React from 'react';
-import {
-  Row,
-  Col,
-  Form,
-  Select,
-  Button,
-  Dropdown,
-  Menu,
-  Checkbox,
-  Radio,
-  Input,
-  Divider,
-} from 'antd';
+import { Row, Col, Form, Button, Dropdown, Menu, Checkbox, Radio, Input, Divider } from 'antd';
 import {
   PlusCircleOutlined,
   ImportOutlined,
   ExportOutlined,
-  AppstoreAddOutlined,
   DownOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
-import { cloneDeep, isEqual } from 'lodash';
+import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage } from '@/utils/util';
+import { dealResponse, isNull, formatMessage, isStrictNull } from '@/utils/util';
 import {
   addSysLang,
   getSysLang,
-  addApplication,
-  getApplications,
-  updateTranslations,
   getTranslationByCode,
+  updateSysTranslation,
 } from '@/services/translator';
 import RmsConfirm from '@/components/RmsConfirm';
 import {
-  getdataList,
   exportTranslate,
   generateOriginData,
   generatefilterValue,
+  generateUpdateDataToSave,
 } from './translateUtils';
 import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLangModal from './component/AddSysLang.js';
-import AddApplicationModal from './component/AddApplication';
 import ImportApplicationModal from './component/ImportApplication';
 import UpdateEditListModal from './component/UpdateEditListModal';
 import DiffToSaveModal from './component/DiffToSaveModal';
+import BackLangModal from './component/BackLangModal';
 import commonStyles from '@/common.module.less';
 import styles from './translator.module.less';
 
 const { Item: FormItem } = Form;
-
 class LanguageManage extends React.Component {
   state = {
+    StandardFE: [], // 前端原始数据
     displayMode: 'merge',
-    appCode: null,
-    appList: [
-      {
-        code: 'FE',
-        name: 'translator.languageManage.frontend',
-      },
-      {
-        code: 'BE',
-        name: 'translator.languageManage.backend',
-      },
-    ],
+    appCode: 'FE',
+
     loading: false,
     imporVisible: false,
     addLangVisible: false,
-    addAppVisbible: false,
     diffToVisible: false,
+    backVisible: false,
 
-    showLanguage: ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'],
-    allLanguage: [
-      {
-        type: 'zh-CN',
-        name: 'zh-CN',
-      },
-      {
-        type: 'en-US',
-        name: 'en-US',
-      },
-      {
-        type: 'ko-KR',
-        name: 'ko-KR',
-      },
-      {
-        type: 'vi-VN',
-        name: 'vi-VN',
-      },
-    ],
-    dataList: getdataList(),
+    showLanguage: [],
+    allLanguage: [],
+    dataList: {},
     standardData: [],
     customData: [],
     mergeData: [],
@@ -98,36 +57,49 @@ class LanguageManage extends React.Component {
     showMissingTranslate: false,
   };
 
-  onModeChange = (e) => {
-    this.setState({
-      displayMode: e.target.value,
-    });
-  };
+  componentDidMount() {
+    this.getSysLanguage();
+  }
 
   // 获取语言
-  getSysLanguage = async (flag) => {
+  getSysLanguage = async () => {
     const langData = await getSysLang();
     if (!dealResponse(langData)) {
-      this.setState({ allLanguage: langData }, flag && this.getTranslateList);
-    }
-  };
-
-  // 获取所有应用
-  getSysApplications = async () => {
-    const moduleData = await getApplications();
-    if (!dealResponse(moduleData)) {
-      this.setState({ appList: moduleData });
+      const currentLang = langData.map(({ code }) => code);
+      const StandardFE = [];
+      langData.map(({ code }) => {
+        let languageMap = {};
+        try {
+          languageMap = require(`@/locales/${code}`)?.default;
+        } catch (error) {
+          languageMap = {};
+        }
+        StandardFE.push({ languageKey: code, languageMap });
+      });
+      this.setState(
+        {
+          allLanguage: langData,
+          showLanguage: currentLang,
+          StandardFE,
+        },
+        this.getTranslateList,
+      );
     }
   };
 
   // 根据appcode获取翻译列表-list
   getTranslateList = async () => {
-    const { appCode } = this.state;
+    const { appCode, StandardFE } = this.state;
     this.setState({ loading: true });
     const list = await getTranslationByCode({ appCode: appCode });
     if (!dealResponse(list)) {
-      this.setState({ dataList: list }, this.getStandardAndCustomData);
+      const currentList = { ...list };
+      if (appCode === 'FE') {
+        currentList.Standard = StandardFE;
+      }
+      this.setState({ dataList: currentList }, this.getStandardAndCustomData);
     }
+    this.setState({ loading: false });
   };
 
   getStandardAndCustomData = () => {
@@ -150,7 +122,13 @@ class LanguageManage extends React.Component {
     });
   };
 
-  generateColumns = () => {
+  onModeChange = (e) => {
+    this.setState({
+      displayMode: e.target.value,
+    });
+  };
+
+  tableColumns = () => {
     const { showLanguage, displayMode } = this.state;
     const columns = [
       {
@@ -206,7 +184,7 @@ class LanguageManage extends React.Component {
     const { filterValue, showLanguage, showMissingTranslate } = this.state;
     // 当前列表的coiumns 在对应的value中搜索
     const shownColumns = {};
-    this.generateColumns().map((record) => {
+    this.tableColumns().map((record) => {
       if (record.field) {
         shownColumns[record.field] = true;
       }
@@ -226,7 +204,6 @@ class LanguageManage extends React.Component {
     let currentlist = { ...editList };
     const result = {};
     let currentValue = {};
-    let flag = false;
     if (text !== newValue) {
       currentValue = cloneDeep(record);
       currentValue[field] = newValue;
@@ -236,16 +213,27 @@ class LanguageManage extends React.Component {
       result[key] = currentValue;
 
       // 拿到key对应的源数据
+
+      const changedSet = new Set(); // 比较是否有修改
       const originalRow = mergeData.find((item) => item.languageKey === key);
-      if (originalRow) {
-        flag = isEqual(currentValue.languageMap, originalRow.languageMap);
-      }
+      let newLanguageMap = { ...currentValue.languageMap };
+      Object.entries(newLanguageMap).forEach(([key, value]) => {
+        // 防止原始数据是'' 或者null
+        if (isStrictNull(originalRow.languageMap[key]) && !isStrictNull(value)) {
+          changedSet.add(1);
+        }
+        if (!isStrictNull(originalRow.languageMap[key]) && value !== originalRow.languageMap[key]) {
+          changedSet.add(1);
+        }
+      });
+
       // 源数据和修改后的数据相同 则不放入未保存的对象中
-      if (flag && key) {
-        delete currentlist[key];
-      } else {
+      if (changedSet.size === 1 && changedSet.has(1)) {
         currentlist = { ...editList, ...result };
+      } else {
+        delete currentlist[key];
       }
+
       this.setState({
         editList: currentlist,
       });
@@ -254,7 +242,7 @@ class LanguageManage extends React.Component {
 
   //导出
   exportExecl = (type) => {
-    const { standardData, customData, mergeData, appCode } = this.state;
+    const { standardData, customData, mergeData, appCode, showLanguage } = this.state;
     const { key } = type;
     let allShowData = [];
     if (key === 'merge') {
@@ -265,34 +253,69 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
 
-    exportTranslate(allShowData, key, appCode);
+    exportTranslate(allShowData, key, appCode, showLanguage);
   };
 
   // 导入
-  importApplicate = async (data) => {
-    const _this = this;
-    const respones = await updateTranslations({
-      ...data,
-      saveType: 'all',
+  importTranslation = async (data) => {
+    // 1.判断key是否存在standard 不存在删除 (如果语种key不在系统中 也要删除)
+    // 2.有修改的翻译留下来
+    const { standardData, allLanguage, appCode } = this.state;
+    const allSysLang = allLanguage.map(({ code }) => code);
+    const { merge, languages: exportLanguages } = data;
+    const newExportLanguages = [];
+    const deleteLangKey = [];
+
+    exportLanguages.forEach(({ languageKey, languageMap }) => {
+      if (isNull(languageKey)) return;
+      let filterKey = standardData.find((item) => item.languageKey === languageKey);
+      let index = findIndex(standardData, (record) => record.languageKey === languageKey);
+      if (index >= 0) {
+        let newLanguageMap = { ...languageMap };
+        const changedSet = new Set(); // 比较是否有修改
+        Object.entries(newLanguageMap).forEach(([key, value]) => {
+          if (!allSysLang.includes(key)) {
+            delete newLanguageMap[key];
+          } else {
+            if (value !== filterKey.languageMap[key]) {
+              changedSet.add(1);
+            }
+          }
+        });
+        if (changedSet.size === 1 && changedSet.has(1)) {
+          newExportLanguages.push({
+            languageKey,
+            ...newLanguageMap,
+          });
+        }
+      } else {
+        deleteLangKey.push(languageKey);
+      }
     });
-    if (!dealResponse(respones)) {
-      _this.setState({ imporVisible: false }, _this.getTranslateList);
+
+    const translationDetail = generateUpdateDataToSave(newExportLanguages);
+    const respones = await updateSysTranslation({
+      appCode,
+      merge,
+      translationDetail,
+    });
+    if (!dealResponse(respones, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
+      this.setState({ imporVisible: false }, this.getTranslateList);
     }
-    // TODO: 接口调完需要删除
-    _this.setState({ imporVisible: false });
   };
 
   // 添加新的语言
   submitLanguage = async (value) => {
     const response = await addSysLang(value);
     if (!dealResponse(response)) {
-      this.getSysLanguage(true);
+      this.getSysLanguage();
       this.setState({ addLangVisible: false, editList: {} }, this.getTranslateList);
     }
   };
 
   // 切换应用
-  handleApplication = (value) => {
+  handleApplication = (e) => {
+    const value = e.target.value;
     const { editList, appCode } = this.state;
     const _this = this;
     if (Object.keys(editList).length >= 1) {
@@ -312,35 +335,21 @@ class LanguageManage extends React.Component {
     }
   };
 
-  // 添加新的应用
-  addApplicateChange = async (data) => {
-    const { code } = data;
-    const addNewResponse = await addApplication({ ...data });
-    if (!dealResponse(addNewResponse)) {
-      this.setState({ addAppVisbible: false, appCode: code }, this.getTranslateList);
-    }
-  };
-
   // 保存-update
   makeSureUpdate = async () => {
     const { editList, appCode } = this.state;
     const currenUpdate = Object.values(editList).map((record) => {
       return {
         languageKey: record.languageKey,
-        languageMap: { ...record.languageMap },
+        ...record.languageMap,
       };
     });
 
-    const respones = await updateTranslations({
-      appCode,
-      currenUpdate,
-      saveType: 'part',
-    });
-    if (!dealResponse(respones)) {
+    const translationDetail = generateUpdateDataToSave(currenUpdate);
+    const respones = await updateSysTranslation({ appCode, merge: true, translationDetail });
+    if (!dealResponse(respones, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
       this.setState({ diffToVisible: false, editList: {} }, this.getTranslateList);
     }
-    // TODO: 需要删除
-    this.setState({ diffToVisible: false, editList: {} });
   };
 
   render() {
@@ -348,9 +357,9 @@ class LanguageManage extends React.Component {
       showLanguage,
       allLanguage,
       appCode,
-      appList,
       displayMode,
       imporVisible,
+      backVisible,
       showMissingTranslate,
       editList,
       loading,
@@ -368,8 +377,8 @@ class LanguageManage extends React.Component {
                 }}
               >
                 {allLanguage.map((record) => (
-                  <Checkbox key={record.name} value={record.type}>
-                    {record.type}
+                  <Checkbox key={record.code} value={record.code}>
+                    {record.name}
                   </Checkbox>
                 ))}
               </Checkbox.Group>
@@ -404,20 +413,28 @@ class LanguageManage extends React.Component {
         <Row>
           <Col>
             <FormItem label={<FormattedMessage id="app.module" />}>
-              <Select style={{ width: '190px' }} value={appCode} onChange={this.handleApplication}>
-                {appList.map((record) => (
-                  <Select.Option key={record.code} value={record.code}>
-                    {formatMessage({ id: record.name })}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Radio.Group
+                optionType="button"
+                buttonStyle="solid"
+                onChange={this.handleApplication}
+                value={appCode}
+                options={[
+                  {
+                    label: formatMessage({ id: 'translator.languageManage.frontend' }),
+                    value: 'FE',
+                  },
+                  {
+                    label: formatMessage({ id: 'translator.languageManage.backend' }),
+                    value: 'BE',
+                  },
+                ]}
+              />
             </FormItem>
           </Col>
 
           <Col flex="auto">
             <Button
               style={{ margin: '0 20px 0 20px' }}
-              icon={<ImportOutlined />}
               disabled={isNull(appCode)}
               onClick={() => {
                 this.setState({
@@ -425,8 +442,7 @@ class LanguageManage extends React.Component {
                 });
               }}
             >
-              {' '}
-              <FormattedMessage id="app.button.import" />
+              <ImportOutlined /> <FormattedMessage id="app.button.import" />
             </Button>
 
             <Dropdown
@@ -453,7 +469,6 @@ class LanguageManage extends React.Component {
             </Dropdown>
 
             <Button
-              icon={<SaveOutlined />}
               style={{ marginLeft: 20 }}
               disabled={Object.keys(editList).length === 0}
               type="primary"
@@ -463,9 +478,18 @@ class LanguageManage extends React.Component {
                 });
               }}
             >
-              {' '}
-              <FormattedMessage id="app.button.save" />
+              <SaveOutlined /> <FormattedMessage id="app.button.save" />
             </Button>
+
+            {/* <Button
+              style={{ marginLeft: 20 }}
+              disabled={isNull(appCode)}
+              onClick={() => {
+                this.setState({ backVisible: true });
+              }}
+            >
+              <RollbackOutlined /> <FormattedMessage id="translator.languageManage.back" />
+            </Button> */}
           </Col>
           <Col>
             <FormItem label={<FormattedMessage id="app.button.search" />}>
@@ -516,7 +540,7 @@ class LanguageManage extends React.Component {
         <EditableTable
           loading={loading}
           value={filterLanguage}
-          columns={this.generateColumns()}
+          columns={this.tableColumns()}
           onChange={this.updateEditList}
         />
 
@@ -530,16 +554,6 @@ class LanguageManage extends React.Component {
           }}
         />
 
-        {/* 新增应用 */}
-
-        <AddApplicationModal
-          addApplicateChange={this.addApplicateChange}
-          visible={this.state.addAppVisbible}
-          onCancel={() => {
-            this.setState({ addAppVisbible: false });
-          }}
-        />
-
         {/* 未保存 */}
         <UpdateEditListModal
           visible={this.state.showEditVisible}
@@ -550,15 +564,32 @@ class LanguageManage extends React.Component {
           }}
           source={editList}
           columns={allLanguage}
-          onChange={(values) => {}}
+          deleteHandle={(values) => {
+            this.setState({
+              editList: values,
+            });
+          }}
         />
+
+        {/* 退回 */}
+        {backVisible && (
+          <BackLangModal
+            appCode={appCode}
+            visible={backVisible}
+            onCancel={() => {
+              this.setState({
+                backVisible: false,
+              });
+            }}
+          />
+        )}
 
         {/* 对比 */}
         <DiffToSaveModal
           visible={this.state.diffToVisible}
           originData={this.state.mergeData}
           editList={editList}
-          allLanguage={allLanguage.map(({ type }) => type)}
+          allLanguage={allLanguage.map(({ code }) => code)}
           makeSureUpdate={this.makeSureUpdate}
           onCancel={() => {
             this.setState({
@@ -575,9 +606,7 @@ class LanguageManage extends React.Component {
               imporVisible: false,
             });
           }}
-          appList={appList}
-          appCode={appCode}
-          importApplicate={this.importApplicate}
+          importApplicate={this.importTranslation}
         />
       </div>
     );

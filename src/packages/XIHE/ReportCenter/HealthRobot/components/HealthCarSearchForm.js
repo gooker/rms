@@ -1,8 +1,9 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
+import { getFormModelTypes, fetchActiveMap } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
 import DatePickerSelector from '../../components/DatePickerSelector';
 
@@ -13,9 +14,45 @@ const LogSearchForm = (props) => {
   const { search, type, allTaskTypes } = props;
 
   const [form] = Form.useForm();
+  const [optionsData, setOptionsData] = useState([
+    {
+      code: 'AGV_ID',
+      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+      value: {},
+    },
+  ]);
 
   useEffect(() => {
-    function init() {}
+    async function init() {
+      const mapData = await fetchActiveMap();
+      if (!dealResponse(mapData)) {
+        const { id } = mapData;
+        const modelTypes = await getFormModelTypes({ mapId: id });
+        if (!dealResponse(modelTypes)) {
+          const optionsData = [
+            {
+              code: 'AGV_ID',
+              name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+              value: {},
+            },
+            {
+              code: 'AGV_GROUP',
+              name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+              value: modelTypes?.AGV_GROUP.options ?? {},
+            },
+            {
+              code: 'AGV_TYPE',
+              name: <FormattedMessage id="app.common.type" />,
+              value: {
+                LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
+                Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
+              },
+            },
+          ];
+          setOptionsData(optionsData);
+        }
+      }
+    }
     init();
   }, []);
 
@@ -31,25 +68,6 @@ const LogSearchForm = (props) => {
       search && search(currentValues);
     });
   }
-
-  // 分车数据
-  const OptionsData = [
-    {
-      code: 'AGV',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
-      value: {},
-    },
-    {
-      code: 'AGV_GROUP',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
-      value: {}, //modelTypes?.AGV_GROUP.options ?? {},
-    },
-    {
-      code: 'AGV_TYPE',
-      name: <FormattedMessage id="app.common.type" />,
-      value: {}, //modelTypes?.AGV_GROUP.options ?? {},
-    },
-  ];
 
   return (
     <Form form={form}>
@@ -71,18 +89,23 @@ const LogSearchForm = (props) => {
 
         <Col>
           {/* 分小车 */}
-          <Form.Item name={'robot'} label={'小车'} initialValue={{ type: 'AGV', code: [] }}>
-            <SelectCarType data={OptionsData} />
+          <Form.Item
+            name={'agvSearch'}
+            label={<FormattedMessage id="app.agv" />}
+            initialValue={{ type: 'AGV_ID', code: [] }}
+          >
+            <SelectCarType data={optionsData} />
           </Form.Item>
         </Col>
         {type === 'taskload' && (
           <Col>
             <Form.Item
-              name={'agvTaskType'}
+              name={'taskType'}
               label={<FormattedMessage id="app.task.type" />}
               {...formLayout}
             >
-              <Select mode="multiple" allowClear style={{ width: 200 }}>
+              {/* mode="multiple" */}
+              <Select allowClear style={{ width: 200 }}>
                 {Object.keys(allTaskTypes).map((type) => (
                   <Select.Option key={type} value={type}>
                     {allTaskTypes[type]}

@@ -51,7 +51,6 @@ const SelectCarType = (props) => {
         style={{ width: 140 }}
         value={currentValue?.type}
         onChange={onTypeChange}
-        allowClear
       >
         {firstSelecOptions}
       </Select>

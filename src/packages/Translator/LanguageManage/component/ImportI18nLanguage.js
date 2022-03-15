@@ -54,7 +54,7 @@ export default class ImportI18nLanguage extends Component {
       },
       onRemove: () => {
         remove && remove();
-        this.setState({ fileList: [] });
+        this.setState({ fileList: [] }, onChange(null));
         return true;
       },
     };
@@ -66,7 +66,7 @@ export default class ImportI18nLanguage extends Component {
             <InboxOutlined />
           </p>
           <p className="ant-upload-text">
-            <FormattedMessage id="app.common.upload.dragUploadedFileToThisArea" />
+            <FormattedMessage id="app.message.upload.tip" />
           </p>
         </Dragger>
       </div>

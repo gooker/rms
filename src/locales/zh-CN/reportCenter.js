@@ -49,7 +49,7 @@ export default {
   'reportCenter.robot.offline.offlineTimes': '次数',
   'reportCenter.robot.offline.offlinetime': '时长',
   'reportCenter.robot.load.statusduration': '状态时长',
-  'reportCenter.robot.load.taskduration': '任务时长',
+  'reportCenter.agvload.taskduration': '任务时长',
   'reportCenter.robot.load.taskNumber': '任务次数',
   'reportCenter.robot.load.taskDistance': '任务距离',
 
@@ -70,9 +70,9 @@ export default {
   'reportCenter.qrcodehealth.deviatiocode': '偏移码数',
 
   // 负载-tootip
-  'reportCenter.load.action.Noaction': '无动作',
-  'reportCenter.load.action.Up': '顶升',
-  'reportCenter.load.action.Down': '下降',
+  'reportCenter.load.action.NO_ACTION': '无动作',
+  'reportCenter.load.action.UP': '顶升',
+  'reportCenter.load.action.DOWN': '下降',
 
   'reportCenter.load.action.waitingForAMR': '等分车时间',
   'reportCenter.load.action.waitCommand': '等命令时间',

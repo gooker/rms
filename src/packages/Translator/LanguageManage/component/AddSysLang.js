@@ -3,7 +3,6 @@ import { Form, Input, Button, Row, Col, Menu, Modal, Dropdown } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import LocalsKeys from '@/locales/LocaleKeys';
-import commonStyles from '@/common.module.less';
 
 const formItemLayout = {
   labelCol: {
@@ -16,10 +15,11 @@ const formItemLayout = {
 
 export default class AddSysLangModal extends Component {
   formRef = React.createRef();
+  
   renderMenu = () => {
     this.selectedKeys = null;
     const { allLanguage } = this.props;
-    const existKeys = Object.values(allLanguage).map(({ type }) => type);
+    const existKeys = Object.values(allLanguage).map(({ code }) => code);
     let menuData = [];
 
     Object.keys(LocalsKeys).forEach((key) => {
@@ -43,7 +43,7 @@ export default class AddSysLangModal extends Component {
     const { key } = e;
     const name = LocalsKeys[key];
     setFieldsValue({
-      type: key,
+      code: key,
       name,
     });
   };
@@ -62,10 +62,11 @@ export default class AddSysLangModal extends Component {
   onSubmitLang = () => {
     const { validateFields } = this.formRef.current;
     const { onAddLang } = this.props;
-    validateFields().then((allValues) => {
-      onAddLang(allValues);
-    })
-    .catch(()=>{});
+    validateFields()
+      .then((allValues) => {
+        onAddLang(allValues);
+      })
+      .catch(() => {});
   };
 
   render() {
@@ -85,7 +86,7 @@ export default class AddSysLangModal extends Component {
         >
           <Form {...formItemLayout} ref={this.formRef}>
             <Row>
-              <Col flex="auto" style={{textAlign:'end'}}>
+              <Col flex="auto" style={{ textAlign: 'end' }}>
                 <Dropdown overlay={this.renderMenu} trigger={['click']} placement="bottomCenter">
                   <Button type="link">
                     <FormattedMessage id="translator.languageManage.shortcut" />
@@ -94,7 +95,7 @@ export default class AddSysLangModal extends Component {
               </Col>
             </Row>
             <Form.Item
-              name="type"
+              name="code"
               label={<FormattedMessage id="translator.languageManage.langtype" />}
               rules={[{ required: true }, { validator: this.typeValidator }]}
             >
