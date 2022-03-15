@@ -863,9 +863,7 @@ export default class BaseMap extends React.Component {
       showEmergency,
       notShowFixed: true,
       refresh: this.refresh,
-      select: (EStop, isAdd) => {
-        //
-      },
+      select: this.select,
     };
     const fixedEStop = new ResizeableEmergencyStop(eData);
     this.pixiUtils.viewportAddChild(fixedEStop);

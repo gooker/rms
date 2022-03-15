@@ -76,15 +76,6 @@ export function getRectLock(width, height) {
   return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
-export function getEStopTexture(color) {
-  graphics.clear();
-  graphics.lineStyle(0);
-  graphics.beginFill(color);
-  graphics.drawRect(0, 0, 100, 100);
-  graphics.endFill();
-  return window.PixiUtils.renderer.generateTexture(graphics);
-}
-
 export function loadTexturesForMap() {
   return new Promise((resolve) => {
     PIXI.Loader.shared

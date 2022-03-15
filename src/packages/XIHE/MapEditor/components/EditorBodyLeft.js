@@ -136,7 +136,7 @@ class EditorBodyLeft extends React.PureComponent {
     if (!this.pinterIsMoving && pointerTimeGap <= 150) {
       this.cancelSelections();
     } else {
-      const { activeKey, dispatch, rangeForConfig } = this.props;
+      const { activeKey, dispatch, settingEStop } = this.props;
       // 框选动作，只有选择模式下鼠标抬起才需要隐藏选择框
       if (activeKey === LeftCategory.Choose) {
         this.hideMask();
@@ -155,7 +155,7 @@ class EditorBodyLeft extends React.PureComponent {
       }
 
       // 画矩形和圆形情况下显示区域配置Modal，前提是不是在配置地图功能
-      if (!rangeForConfig) {
+      if (!settingEStop) {
         dispatch({
           type: 'editorView/updateZoneMarkerVisible',
           payload: [LeftCategory.Rectangle, LeftCategory.Circle].includes(activeKey),
@@ -236,10 +236,10 @@ class EditorBodyLeft extends React.PureComponent {
     );
   }
 }
-export default connect(({ editor }) => ({
+export default connect(({ editor, editorView }) => ({
   mapContext: editor.mapContext,
   selections: editor.selections,
   currentCells: editor.currentCells,
   activeKey: editor.leftActiveCategory,
-  rangeForConfig: editor.rangeForConfig,
+  settingEStop: editorView.settingEStop,
 }))(memo(EditorBodyLeft));

@@ -71,9 +71,6 @@ const EditorState = {
   allWebHooks: [], // 所有Web Hooks
   scopeActions: [], // 地图编程动作集
 
-  // 显示相关
-  shortcutToolVisible: false, // 是否显示便捷操作工具 --
-
   // 侧边栏控制
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
   categoryPanel: null, // 右侧菜单选中项
@@ -229,7 +226,16 @@ export default {
           // 获取已激活地图数据并保存相关状态
           const mapId = activeMap[0].id;
           const currentMap = yield call(fetchMapDetail, mapId);
-          yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
+          if (
+            !dealResponse(
+              currentMap,
+              false,
+              null,
+              formatMessage({ id: 'app.message.fetchMapFail' }),
+            )
+          ) {
+            yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
+          }
         }
 
         /**
@@ -1606,7 +1612,10 @@ export default {
         }
 
         // 除了点位和线条，可以互相替换
-        if (![CELL, ROUTE].includes(categoryProps) && ![CELL, ROUTE].includes(selections[0].type)) {
+        if (
+          ![CELL, ROUTE].includes(categoryProps) &&
+          ![CELL, ROUTE].includes(_selections[0].type)
+        ) {
           newState.categoryProps = _selections[0];
           newState.lockedProps = _selections[0].type;
         }
@@ -1625,7 +1634,7 @@ export default {
       yield put({
         type: 'editorView/saveState',
         payload: {
-          rangeForConfig: false,
+          settingEStop: false,
           zoneMarkerVisible: false,
           labelMarkerVisible: false,
         },
@@ -1637,13 +1646,13 @@ export default {
       });
     },
 
-    *updateRangeForConfig({ payload }, { put }) {
+    *updateSettingEStop({ payload }, { put }) {
       yield put({
         type: 'editorView/saveState',
         payload: {
+          settingEStop: true,
           zoneMarkerVisible: false,
           labelMarkerVisible: false,
-          rangeForConfig: true,
         },
       });
       yield put({

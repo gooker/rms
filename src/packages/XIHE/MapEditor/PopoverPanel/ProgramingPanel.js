@@ -3,7 +3,7 @@ import { Button, Divider, Form, Input, Modal, Select, Tabs } from 'antd';
 import { ExportOutlined, ImportOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { fetchScopeProgram, saveScopeProgram } from '@/services/XIHE';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingZone from './ProgramingZone';
@@ -12,25 +12,27 @@ import ProgramingRelation from './ProgramingRelation';
 import editorStyles from '../editorLayout.module.less';
 import styles from './popoverPanel.module.less';
 
-const { Option } = Select;
 const { TabPane } = Tabs;
 const { formItemLayout } = getFormLayout(4, 20);
 const { formItemLayout: formItemLayout2 } = getFormLayout(4, 18);
 
 const ProgramingPanel = (props) => {
-  const { height, currentMap, currentLogicArea, scopeActions } = props;
+  const { height, currentMap, currentLogicArea, currentRouteMap, scopeActions } = props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [scopeProgram, setScopeProgram] = useState([]); // 已保存的地图编程数据
-  const [selectedRoute, setSelectedRoute] = useState(null); // 已选择的路线Code
   const [selectedScope, setSelectedScope] = useState(null); // 已选择的编程Code
 
   const scopeLoad = getScopeLoad();
-  const hideTabs = isNull(selectedRoute) || isNull(selectedScope);
+  const hideTabs = isNull(selectedScope);
 
   useEffect(refresh, [currentMap, currentLogicArea]);
+
+  useEffect(() => {
+    setSelectedScope(null);
+  }, [currentRouteMap]);
 
   function refresh() {
     fetchScopeProgram({
@@ -51,13 +53,12 @@ const ProgramingPanel = (props) => {
   }
 
   function addScope() {
-    const [logicId, routeCode] = selectedRoute.split('-');
     formRef.validateFields().then((values) => {
       setLoading(true);
       const scopeProgramItem = {
         mapId: currentMap.id,
-        logicId,
-        routeCode,
+        logicId: currentLogicArea,
+        routeCode: currentRouteMap,
         ...values,
         detailMap: { zone: [], cell: [], relation: [] },
       };
@@ -78,27 +79,9 @@ const ProgramingPanel = (props) => {
     setVisible(true);
   }
 
-  function renderRouteOptions() {
-    const { logicAreaList } = currentMap;
-    return logicAreaList
-      .map(({ id, routeMap }) => {
-        if (id === currentLogicArea) {
-          return Object.values(routeMap).map(({ code, name }) => (
-            <Option key={`${id}-${code}`} value={`${id}-${code}`}>
-              {name}
-            </Option>
-          ));
-        }
-      })
-      .filter(Boolean)
-      .flat();
-  }
-
   function renderScopeOptions() {
-    if (isStrictNull(selectedRoute)) return [];
-    const [logicId, routeCode] = selectedRoute.split('-');
     const scopes = scopeProgram.filter(
-      (item) => item.logicId === parseInt(logicId) && item.routeCode === routeCode,
+      (item) => item.logicId === currentLogicArea && item.routeCode === currentRouteMap,
     );
     return scopes.map((item) => (
       <Select.Option key={item.scopeCode} value={item.scopeCode}>
@@ -109,10 +92,8 @@ const ProgramingPanel = (props) => {
 
   // 获取指定编程数据
   function getScopeLoad() {
-    if (isStrictNull(selectedRoute)) return null;
-    const [, routeCode] = selectedRoute.split('-');
     return find(scopeProgram, {
-      routeCode,
+      routeCode: currentRouteMap,
       scopeCode: selectedScope,
     });
   }
@@ -147,7 +128,6 @@ const ProgramingPanel = (props) => {
             style={{ marginLeft: 10, height: 40 }}
             onClick={() => {
               refresh();
-              setSelectedRoute(null);
               setSelectedScope(null);
             }}
           >
@@ -156,24 +136,9 @@ const ProgramingPanel = (props) => {
         </div>
         <Divider style={{ background: '#a3a3a3', margin: '10px 0 20px 0' }} />
 
-        {/* 选择路线区 */}
-        <Form.Item label={<FormattedMessage id={'app.map.routeArea'} />} {...formItemLayout}>
-          <Select
-            value={selectedRoute}
-            onChange={(value) => {
-              setSelectedRoute(value);
-              setSelectedScope(null);
-            }}
-            style={{ width: '100%' }}
-          >
-            {renderRouteOptions()}
-          </Select>
-        </Form.Item>
-
         {/* 选择编程 */}
         <Form.Item label={<FormattedMessage id={'app.map.scope'} />} {...formItemLayout}>
           <Select
-            disabled={isNull(selectedRoute)}
             style={{ width: '100%' }}
             value={selectedScope}
             onChange={(value) => setSelectedScope(value)}
@@ -182,11 +147,7 @@ const ProgramingPanel = (props) => {
                 {menu}
                 <Divider style={{ margin: '4px 0' }} />
                 <div style={{ padding: '2px 0 2px 10px', cursor: 'pointer', textAlign: 'center' }}>
-                  <Button
-                    type="text"
-                    disabled={isNull(selectedRoute)}
-                    onClick={openAddingScopeModal}
-                  >
+                  <Button type="text" onClick={openAddingScopeModal}>
                     <PlusOutlined /> <FormattedMessage id={'editor.addScope'} />
                   </Button>
                 </div>
@@ -253,4 +214,5 @@ export default connect(({ editor }) => ({
   currentMap: editor.currentMap,
   scopeActions: editor.scopeActions,
   currentLogicArea: editor.currentLogicArea,
+  currentRouteMap: editor.currentRouteMap,
 }))(memo(ProgramingPanel));

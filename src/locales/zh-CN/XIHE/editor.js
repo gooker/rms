@@ -153,7 +153,7 @@ export default {
   'editor.elevator.doubleDoor': '双门',
 
   // 急停区
-  'editor.emergency.mode': '急停模式',
+  'editor.emergency.mode': '模式',
   'editor.emergency.AGVPathFinished': '完成下发路径',
   'editor.emergency.NearestQRCode': '紧急停在最近二维码 ',
   'editor.emergency.ImmediateStop': '立即停止',
@@ -162,7 +162,7 @@ export default {
   'editor.emergency.shape': '形状',
   'editor.emergency.shape.rect': '矩形',
   'editor.emergency.shape.circle': '圆形',
-  'editor.emergency.autLoad': '自动载入数据',
+  'editor.emergency.tip': '请在地图区域按住并拖动完成区域框选',
 
   // 添加地图标记
   'editor.zone.creation': '创建区域',

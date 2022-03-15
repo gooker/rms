@@ -90,7 +90,7 @@ export default {
   'app.common.report': '报表',
   'app.common.isRequired': '必填',
   'app.common.description': '描述',
-  'app.common.enabled': '启用',
+  'app.common.enabled': '可用',
   'app.common.disabled': '禁用',
   'app.common.list': '列表',
   'app.common.width': '宽度',
