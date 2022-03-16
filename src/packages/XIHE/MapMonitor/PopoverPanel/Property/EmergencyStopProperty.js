@@ -10,9 +10,9 @@ import {
 } from '@/services/XIHE';
 
 const textSpan = { fontSize: '1.3vh', color: 'rgb(24, 144, 255)' };
-const { formItemLayout } = getFormLayout(8, 16);
+const { formItemLayout } = getFormLayout(7, 16);
 
-const EStopProperty = (props) => {
+const EmergencyStopProperty = (props) => {
   const { data, mapId, mapContext } = props;
 
   const [dataReal, setDataReal] = useState(null);
@@ -72,8 +72,8 @@ const EStopProperty = (props) => {
       </div>
       <div>
         {dataReal && (
-          <>
-            <Form.Item label={formatMessage({ id: 'app.common.status' })} {...formItemLayout}>
+          <Form labelWrap {...formItemLayout}>
+            <Form.Item label={formatMessage({ id: 'app.common.status' })}>
               <Popconfirm
                 title={formatMessage({ id: 'app.message.doubleConfirm' })}
                 onConfirm={changeEStopStatus}
@@ -86,7 +86,7 @@ const EStopProperty = (props) => {
               </Popconfirm>
             </Form.Item>
             {!dataReal.isFixed && (
-              <Form.Item label={'删除急停区'} {...formItemLayout}>
+              <Form.Item label={'删除急停区'}>
                 <Popconfirm
                   title={formatMessage({ id: 'app.message.doubleConfirm' })}
                   onConfirm={remove}
@@ -98,13 +98,13 @@ const EStopProperty = (props) => {
               </Form.Item>
             )}
 
-            <Form.Item label={formatMessage({ id: 'app.common.name' })} {...formItemLayout}>
+            <Form.Item label={formatMessage({ id: 'app.common.name' })}>
               <span style={textSpan}>{dataReal.name}</span>
             </Form.Item>
-            <Form.Item label={formatMessage({ id: 'app.common.groupName' })} {...formItemLayout}>
+            <Form.Item label={formatMessage({ id: 'app.common.groupName' })}>
               <span style={textSpan}>{dataReal.group}</span>
             </Form.Item>
-            <Form.Item label={formatMessage({ id: 'monitor.estop.isSafe' })} {...formItemLayout}>
+            <Form.Item label={formatMessage({ id: 'monitor.estop.isSafe' })}>
               {dataReal.isSafe && dataReal.activated ? (
                 <Tag color="red">
                   <FormattedMessage id="monitor.estop.safe" />
@@ -116,30 +116,30 @@ const EStopProperty = (props) => {
               )}
             </Form.Item>
 
-            <Form.Item label={'x'} {...formItemLayout}>
+            <Form.Item label={'x'}>
               <span style={textSpan}>{dataReal.x}</span>
             </Form.Item>
-            <Form.Item label={'y'} {...formItemLayout}>
+            <Form.Item label={'y'}>
               <span style={textSpan}>{dataReal.y}</span>
             </Form.Item>
             {dataReal.xlength && dataReal.ylength ? (
               <>
-                <Form.Item label={formatMessage({ id: 'app.common.width' })} {...formItemLayout}>
+                <Form.Item label={formatMessage({ id: 'app.common.width' })}>
                   <span style={textSpan}>{dataReal.xlength}</span>
                 </Form.Item>
-                <Form.Item label={formatMessage({ id: 'app.common.height' })} {...formItemLayout}>
+                <Form.Item label={formatMessage({ id: 'app.common.height' })}>
                   <span style={textSpan}>{dataReal.ylength}</span>
                 </Form.Item>
-                <Form.Item label={formatMessage({ id: 'app.common.angle' })} {...formItemLayout}>
+                <Form.Item label={formatMessage({ id: 'app.common.angle' })}>
                   <span style={textSpan}>{dataReal.angle}</span>
                 </Form.Item>
               </>
             ) : (
-              <Form.Item label={formatMessage({ id: 'app.common.radius' })} {...formItemLayout}>
+              <Form.Item label={formatMessage({ id: 'app.common.radius' })}>
                 <span style={textSpan}>{dataReal.r}</span>
               </Form.Item>
             )}
-          </>
+          </Form>
         )}
       </div>
     </>
@@ -148,4 +148,4 @@ const EStopProperty = (props) => {
 export default connect(({ monitor }) => ({
   mapContext: monitor.mapContext,
   mapId: monitor.currentMap?.id,
-}))(memo(EStopProperty));
+}))(memo(EmergencyStopProperty));

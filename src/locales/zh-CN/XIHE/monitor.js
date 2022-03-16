@@ -227,9 +227,9 @@ export default {
   'monitor.simulator.errorCode': '错误代码',
   'monitor.simulator.errorCode.success': '模拟错误成功',
 
-  'monitor.emergency.temporaryBlock': '临时不可走',
+  'monitor.emergency.drag': '创建急停区',
   'monitor.emergency.operation': '急停区操作',
-  'monitor.emergency.drag': '拖拽急停区',
+  'monitor.emergency.temporaryBlock': '临时不可走',
 
   'monitor.message.podToWorkstationInfo': '到站消息',
   'monitor.message.latentStopMessage': '暂停消息',
@@ -243,6 +243,7 @@ export default {
   'monitor.estop.isSafe': '是否安全',
   'monitor.estop.safe': '安全',
   'monitor.estop.unsafe': '不安全',
+  'monitor.estop.creationTip': '请在地图区域按住并拖动完成创建急停区',
 
   // 工作站点击弹窗
   'monitor.workstation.label.marked': '已标记',

@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { findIndex } from 'lodash';
 import { hasAppPermission } from '@/utils/Permission';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { AGVType, AppCode } from '@/config/config';
 import { Category, MonitorOperationType } from '@/packages/XIHE/MapMonitor/enums';
 import {
@@ -10,6 +10,7 @@ import {
   fetchEmergencyStopList,
   fetchLatentPodList,
   fetchMapAGVLocks,
+  saveEmergencyStop,
 } from '@/services/XIHE';
 import {
   autoCallLatentPodToWorkstation,
@@ -547,6 +548,28 @@ export default {
       const { currentLogicArea } = yield select((state) => state.monitor);
       const { lockTypes, robotIds } = payload;
       return yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
+    },
+
+    // ************************ 急停区 ************************ //
+    *saveMonitorEStop({ payload }, { call, select }) {
+      const { start, end } = payload;
+      const { currentMap, currentLogicArea } = yield select(({ monitor }) => monitor);
+      const requestBody = {
+        code: `E_${getRandomString(6)}`,
+        mapId: currentMap.id,
+        logicId: currentLogicArea,
+        estopMode: 'LockPath',
+        estopType: 'Area',
+        x: start.x,
+        y: start.y,
+        xlength: Math.abs(end.x - start.x),
+        ylength: Math.abs(end.y - start.y),
+        angle: 0,
+      };
+      const response = yield call(saveEmergencyStop, requestBody);
+      if (!dealResponse(response, true)) {
+        return requestBody;
+      }
     },
   },
 };

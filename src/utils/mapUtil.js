@@ -10,13 +10,11 @@ import {
   ToteAGVSize,
   SorterAGVSize,
   TaskPathColor,
-  EStopStateColor,
   MapSelectableSpriteType,
 } from '@/config/consts';
 import {
   getAgvSelectBorderTexture,
   getCellHeatTexture,
-  getEStopTexture,
   getIntersectionDirectionTexture,
   getQrCodeSelectBorderTexture,
   getRectLock,
@@ -183,7 +181,7 @@ export function getRelationSelectionBG(width, height) {
  * @param {*} angle
  * @returns {{distance: number, length: number, fromX: number, fromY: number}}
  */
-function getLineAnchor(relations, beginCell, endCell, angle) {
+export function getLineAnchor(relations, beginCell, endCell, angle) {
   let fromX;
   let fromY;
   let length;
@@ -280,7 +278,6 @@ export function createRelation(
     select,
     ctrlSelect,
     isClassic: mapMode === 'standard',
-    mapMode: mapMode,
   });
 }
 
@@ -1484,4 +1481,27 @@ export function filterMapSpriteByRange(currentCells, _startX, _endX, _startY, _e
   // TODO: 充电桩、工作站、通用站点、电梯、投递点、交汇点
 
   return selections;
+}
+
+// 地图元素内部Label大小自适应
+export function adaptLabelSize({ width, height }, labelSize, isRect) {
+  let sizeBase = isRect ? 2 : 4;
+  let textWidth, textHeight;
+
+  function adjust() {
+    if (width >= height) {
+      textHeight = height / sizeBase;
+      textWidth = (labelSize.width * textHeight) / labelSize.height;
+    } else {
+      textWidth = width / sizeBase;
+      textHeight = (labelSize.height * textWidth) / labelSize.width;
+    }
+  }
+
+  adjust();
+  while (textWidth >= width - 100 || textHeight >= height - 100) {
+    sizeBase += 0.1;
+    adjust();
+  }
+  return [textWidth, textHeight];
 }

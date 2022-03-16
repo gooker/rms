@@ -8,7 +8,6 @@ import { zIndex, LatentAGVSize, SelectionType, MonitorSelectableSpriteType } fro
 export default class LatentAGV extends PIXI.Container {
   constructor(props) {
     super();
-    this.$$formData = props.$$formData;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
@@ -32,21 +31,18 @@ export default class LatentAGV extends PIXI.Container {
     this.addAGVStateIcon();
     this.addBatteryIcon();
     this.addManuallyModeIcon();
-    this.mainTain && this.addMaintainIcon();
-
     this.addErrorLevelIcon();
+    this.mainTain && this.addMaintainIcon();
 
     this.select = props.select;
     this.selected = false; // 是否被框选
     this.createSelectionBorder();
 
-    if (props.active) {
-      this.agv.interactive = true;
-      this.agv.buttonMode = true;
-      this.agv.interactiveChildren = false;
-      this.agv.on('pointerdown', this.click);
-      // this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
-    }
+    this.agv.interactive = true;
+    this.agv.buttonMode = true;
+    this.agv.interactiveChildren = false;
+    this.agv.on('pointerdown', this.click);
+    // this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
   }
 
   set angle(value) {

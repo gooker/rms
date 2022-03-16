@@ -95,7 +95,7 @@ const LogSearchForm = (props) => {
         value: 'brower',
       },
       {
-        label: formatMessage({ id: 'app.taskDetail.createTime' }),
+        label: formatMessage({ id: 'app.common.creationTime' }),
         value: 'createtime',
         render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
       },
@@ -138,7 +138,7 @@ const LogSearchForm = (props) => {
           </Form.Item>
         </Col>
         <Col span={6}>
-          <Form.Item name={'date'} label={<FormattedMessage id="app.taskDetail.createTime" />}>
+          <Form.Item name={'date'} label={<FormattedMessage id="app.common.creationTime" />}>
             <RangePicker format={dateFormat} style={{ width: '100%' }} />
           </Form.Item>
         </Col>

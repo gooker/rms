@@ -112,7 +112,7 @@ const MapMonitor = (props) => {
         }
 
         // 急停区
-        // mapContext.renderEmergencyStopArea(emergencyStopList);
+        mapContext.renderEmergencyStopArea(emergencyStopList);
       }
     }
   }

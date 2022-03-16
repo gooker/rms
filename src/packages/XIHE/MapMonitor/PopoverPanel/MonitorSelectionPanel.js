@@ -102,7 +102,7 @@ const MonitorSelectionPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 350, right: 65 }} className={commonStyles.categoryPanel}>
+    <div style={{ height, width: 280, right: 65 }} className={commonStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'editor.tools.selections'} />
       </div>

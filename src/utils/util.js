@@ -203,11 +203,14 @@ export function renderBattery(battery) {
 }
 
 export function renderAgvState(state) {
-  return (
-    <Tag color={AgvStateColor[state]}>
-      <FormattedMessage id={`app.agvState.${state}`} />
-    </Tag>
-  );
+  if (!isStrictNull(state)) {
+    return (
+      <Tag color={AgvStateColor[state]}>
+        <FormattedMessage id={`app.agvState.${state}`} />
+      </Tag>
+    );
+  }
+  return null;
 }
 
 export function adjustModalWidth() {

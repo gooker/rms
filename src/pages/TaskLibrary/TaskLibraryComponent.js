@@ -98,7 +98,7 @@ class TaskLibraryComponent extends Component {
     },
 
     {
-      title: formatMessage({ id: 'app.taskDetail.createTime' }),
+      title: formatMessage({ id: 'app.common.creationTime' }),
       dataIndex: 'createTime',
       align: 'center',
       width: 150,

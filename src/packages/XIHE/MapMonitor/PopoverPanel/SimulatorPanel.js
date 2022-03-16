@@ -6,7 +6,6 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import {
   openSimulator,
   closeSimulator,
-  fetchTrafficRobotType,
   fetchSimulatorErrorMessage,
   fetchStopAGV,
   fetchRunAGV,
@@ -26,8 +25,15 @@ import styles from '../monitorLayout.module.less';
 const size = 'small';
 
 const SimulatorPanel = (props) => {
-  const { height = 100, dispatch, simulatorConfig, simulatorAgvList, currentLogicArea,loading } = props;
-  const [robotTypes, setRobotTypes] = useState([]); // 所有类型
+  const {
+    height = 100,
+    dispatch,
+    simulatorConfig,
+    simulatorAgvList,
+    currentLogicArea,
+    loading,
+    robotTypes,
+  } = props;
   const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
   const [configurationVisible, setConfigurationVisible] = useState(false); // 配置
@@ -43,11 +49,6 @@ const SimulatorPanel = (props) => {
   function init() {
     dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
     dispatch({ type: 'simulator/fetchSimulatorHistory' });
-    fetchTrafficRobotType().then((res) => {
-      if (!dealResponse(res)) {
-        setRobotTypes(res);
-      }
-    });
   }
 
   const columns = [
@@ -217,7 +218,7 @@ const SimulatorPanel = (props) => {
         </span>
       </div>
 
-      <div style={{ marginLeft: 6,overflow:'auto' }}>
+      <div style={{ marginLeft: 6, overflow: 'auto' }}>
         {addVisit || addPodVisible || errorVisible ? (
           <div style={{ marginTop: 20 }}>
             {addVisit && (
@@ -263,7 +264,9 @@ const SimulatorPanel = (props) => {
               </span>
               <span>
                 <span style={{ marginLeft: 20 }}>
-                  <span>{convertToUserTimezone(simulatorConfig.timeStamp).format('MM-DD HH:mm')}</span>
+                  <span>
+                    {convertToUserTimezone(simulatorConfig.timeStamp).format('MM-DD HH:mm')}
+                  </span>
                   <span style={{ marginLeft: 10 }}>{simulatorConfig.createdByUser}</span>
                 </span>
               </span>
@@ -470,7 +473,8 @@ const SimulatorPanel = (props) => {
     </div>
   );
 };
-export default connect(({ simulator ,loading }) => ({
+export default connect(({ global, simulator, loading }) => ({
+  robotTypes: global.allAgvTypes,
   simulatorAgvList: simulator?.simulatorAgvList,
   simulatorConfig: simulator?.simulatorConfig,
   currentLogicArea: getCurrentLogicAreaData('monitor'),

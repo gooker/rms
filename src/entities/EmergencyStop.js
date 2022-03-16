@@ -7,9 +7,9 @@ import {
   MapSelectableSpriteType,
 } from '@/config/consts';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { isNull } from '@/utils/util';
 import Text from '@/entities/Text';
-import { getTextureFromResources } from '@/utils/mapUtil';
+import { isNull, isStrictNull } from '@/utils/util';
+import { adaptLabelSize, getTextureFromResources } from '@/utils/mapUtil';
 
 const BorderWidth = 50;
 class EmergencyStop extends PIXI.Container {
@@ -26,8 +26,11 @@ class EmergencyStop extends PIXI.Container {
     this.$angle = props.angle || 0; // 仅用于纠正名称角度
     this.activated = props.activated || false;
     this.safe = props.safe || 0;
-    this.boxType = props.ylength && props.xlength ? ZoneMarkerType.RECT : ZoneMarkerType.CIRCLE;
     this.estopType = props.estopType;
+    this.boxType = props.ylength && props.xlength ? ZoneMarkerType.RECT : ZoneMarkerType.CIRCLE;
+    this.xlength = props.xlength;
+    this.ylength = props.ylength;
+    this.r = props.r;
 
     this.select = props.select;
     this.selected = false;
@@ -110,13 +113,13 @@ class EmergencyStop extends PIXI.Container {
   }
 
   createSelectionBorder() {
-    const scaleBase = 1.05;
+    const padding = 200;
+    const width = this.boxType === ZoneMarkerType.RECT ? this.xlength : this.r * 2;
+    const height = this.boxType === ZoneMarkerType.RECT ? this.ylength : this.r * 2;
     this.selectionBorder = new SmoothGraphics();
     this.selectionBorder.lineStyle(5, 0xff0000);
-    const { width, height } = this.getLocalBounds();
-    this.selectionBorder.drawRect(0, 0, width * scaleBase, height * scaleBase);
+    this.selectionBorder.drawRect(-padding / 2, -padding / 2, width + padding, height + padding);
     this.selectionBorder.alpha = 0.8;
-    this.selectionBorder.pivot = { x: (width * scaleBase) / 2, y: (height * scaleBase) / 2 };
     this.selectionBorder.visible = false;
     this.addChild(this.selectionBorder);
   }
@@ -142,7 +145,6 @@ class EmergencyStop extends PIXI.Container {
     this.areaSprite.beginFill(fillColor);
     if (isNull(r)) {
       this.areaSprite.drawRect(0, 0, xlength, ylength);
-      this.areaSprite.pivot.set(xlength / 2, ylength / 2);
     } else {
       this.areaSprite.drawCircle(0, 0, r);
     }
@@ -152,27 +154,23 @@ class EmergencyStop extends PIXI.Container {
   createName(props) {
     const { name, code, group } = props;
     let { xlength: width, ylength: height, r: radius } = props;
-
     this.nameText = name ? name : group ? `${group}: ${code}` : code;
     if (isNull(width) || isNull(height)) {
       width = radius * 2;
       height = radius * 2;
     }
-    this.namTextSprite = this.addChild(new Text(this.nameText, 0, 0, 0xffffff, true, 200));
-    this.namTextSprite.alpha = 0.8;
+    this.namTextSprite = this.addChild(
+      new Text(this.nameText, width / 2, height / 2, 0xffffff, true, 200),
+    );
     this.namTextSprite.anchor.set(0.5);
     this.namTextSprite.angle = -this.angle;
 
     // 字体大小自适应急停区大小
-    let textWidth, textHeight;
-    const sizeBase = isNull(radius) ? 2 : 4;
-    if (width >= height) {
-      textHeight = height / sizeBase;
-      textWidth = (this.namTextSprite.width * textHeight) / this.namTextSprite.height;
-    } else {
-      textWidth = width / sizeBase;
-      textHeight = (this.namTextSprite.height * textWidth) / this.namTextSprite.width;
-    }
+    const [textWidth, textHeight] = adaptLabelSize(
+      { width, height },
+      this.namTextSprite,
+      this.boxType === ZoneMarkerType.RECT,
+    );
     this.namTextSprite.width = textWidth;
     this.namTextSprite.height = textHeight;
     this.namTextSprite.zIndex = 2;
@@ -182,8 +180,8 @@ class EmergencyStop extends PIXI.Container {
     const { xlength, ylength, r: radius } = props;
     let _x, _y;
     if (this.boxType === ZoneMarkerType.RECT) {
-      _x = xlength / 2 - 300;
-      _y = ylength / 2 - 300;
+      _x = xlength - 300;
+      _y = ylength - 300;
     } else {
       _x = 0;
       _y = radius - 300;
@@ -201,8 +199,8 @@ class EmergencyStop extends PIXI.Container {
     const { xlength, ylength, r: radius } = props;
     let _x, _y;
     if (this.boxType === ZoneMarkerType.RECT) {
-      _x = xlength / 2 - 300;
-      _y = ylength / 2 - 300;
+      _x = xlength - 300;
+      _y = ylength - 300;
     } else {
       _x = radius * Math.cos(45) - 200;
       _y = radius * Math.sin(45) - 200;

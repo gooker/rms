@@ -12,9 +12,10 @@ import Property from '../PopoverPanel/Property';
 import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
 import MessageCategorySecondaryPanel from '../PopoverPanel/MessageCategorySecondaryPanel';
+import MonitorSelectionPanel from '../PopoverPanel/MonitorSelectionPanel';
+import EmergencyStopPanel from '../PopoverPanel/EmergencyStopPanel';
 import SimulatorPanel from '../PopoverPanel/SimulatorPanel';
 import styles from '../monitorLayout.module.less';
-import MonitorSelectionPanel from '@/packages/XIHE/MapMonitor/PopoverPanel/MonitorSelectionPanel';
 
 const MonitorBodyRight = (props) => {
   const { dispatch, selections, categoryPanel, podToWorkstationInfo, latentStopMessageList } =
@@ -77,21 +78,17 @@ const MonitorBodyRight = (props) => {
       case Category.Prop:
         return <Property height={height - 10} />;
       case Category.LatentAGV:
-        return (
-          <AgvCategorySecondaryPanel
-            agvType={AGVType.LatentLifting}
-            dispatch={dispatch}
-            height={450}
-          />
-        );
+        return <AgvCategorySecondaryPanel agvType={AGVType.LatentLifting} height={450} />;
       case Category.ToteAGV:
-        return (
-          <AgvCategorySecondaryPanel agvType={AGVType.Tote} dispatch={dispatch} height={350} />
-        );
+        return <AgvCategorySecondaryPanel agvType={AGVType.Tote} height={350} />;
       case Category.SorterAGV:
-        return (
-          <AgvCategorySecondaryPanel agvType={AGVType.Sorter} dispatch={dispatch} height={450} />
-        );
+        return <AgvCategorySecondaryPanel agvType={AGVType.Sorter} height={450} />;
+      case Category.Select:
+        return <MonitorSelectionPanel height={height - 10} />;
+      case Category.Simulator:
+        return <SimulatorPanel height={height - 10} />;
+      case Category.Emergency:
+        return <EmergencyStopPanel height={160} pixHeight={height} offsetTop={offsetTop} />;
       case Category.View:
         return (
           <ViewCategorySecondaryPanel
@@ -101,36 +98,22 @@ const MonitorBodyRight = (props) => {
             offsetTop={offsetTop}
           />
         );
-      case Category.Select:
-        return <MonitorSelectionPanel height={height - 10} />;
-      case Category.Simulator:
-        return <SimulatorPanel height={height - 10} />;
-      case Category.Emergency:
-        return (
-          <ViewCategorySecondaryPanel
-            type={Category.Emergency}
-            height={160}
-            pixHeight={height}
-            offsetTop={offsetTop}
-          />
-        );
       case Category.Resource:
         return (
           <ViewCategorySecondaryPanel
-            dispatch={dispatch}
-            pixHeight={height}
             type={Category.Resource}
             height={210}
+            pixHeight={height}
             offsetTop={offsetTop}
           />
         );
       case Category.Message:
         return (
           <MessageCategorySecondaryPanel
+            type={Category.Message}
             height={110}
             pixHeight={height}
             offsetTop={offsetTop}
-            type={Category.Message}
           />
         );
       default:

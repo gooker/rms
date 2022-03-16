@@ -17,16 +17,16 @@ export default class LineArrow extends PIXI.Container {
     this.id = props.id;
     this.x = props.fromX;
     this.y = props.fromY;
-    this.angle = props.lineAngle;
+    this.angle = props.angle;
     this.alpha = 0.8;
-    this.zIndex = this.isClassic ? zIndex.line : 100;
+    this.zIndex = props.isClassic ? zIndex.line : 100;
 
     this.cost = props.cost;
-    this.mapMode = props.mapMode;
     this.isClassic = props.isClassic;
     this.length = props.length; // Sprite长度
     this.distance = props.distance; // 显示的长度文本
-    this.dir = getDirByAngle(props.lineAngle);
+    this.dir = getDirByAngle(props.angle);
+
     this.select = props.select;
 
     this.createArrow();
@@ -57,7 +57,7 @@ export default class LineArrow extends PIXI.Container {
   createArrow = () => {
     this.arrow = getCostArrow(this.length, CostColor[this.cost]);
     this.arrow.pivot = { x: 0, y: this.length };
-    if (this.mapMode === 'scaled') {
+    if (!this.isClassic) {
       this.arrow.scale.x = 5;
     }
     this.addChild(this.arrow);
@@ -77,7 +77,7 @@ export default class LineArrow extends PIXI.Container {
     let fontColor = CostColor[this.cost];
 
     // 大图模式下，字体悬浮在箭头上，所以显示成白色
-    if (this.mapMode === 'scaled') {
+    if (!this.isClassic) {
       fontColor = 0xffffff;
       xOffset = 15;
     }

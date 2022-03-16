@@ -1,15 +1,10 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
-import {
-  Category,
-  EmergencyCategoryTools,
-  ViewCategoryTools,
-  ResourceCategoryTools,
-} from '../enums';
+import { Category, ViewCategoryTools, ResourceCategoryTools } from '../enums';
 import styles from '../monitorLayout.module.less';
 
 const ViewCategorySecondaryPanel = (props) => {
-  const { dispatch, height, offsetTop, type, pixHeight } = props;
+  const { height, offsetTop, type, pixHeight } = props;
   const [categoryTools, setCategoryTools] = useState([]);
   const [top, setTop] = useState(5);
 
@@ -29,9 +24,6 @@ const ViewCategorySecondaryPanel = (props) => {
     if (type === Category.View) {
       setCategoryTools(ViewCategoryTools);
     }
-    if (type === Category.Emergency) {
-      setCategoryTools(EmergencyCategoryTools);
-    }
     if (type === Category.Resource) {
       setCategoryTools(ResourceCategoryTools);
     }
@@ -46,7 +38,7 @@ const ViewCategorySecondaryPanel = (props) => {
   }
 
   function onClick(category) {
-    dispatch({ type: 'monitor/saveCategoryModal', payload: category });
+    window.$$dispatch({ type: 'monitor/saveCategoryModal', payload: category });
   }
 
   return (

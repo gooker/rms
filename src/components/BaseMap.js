@@ -6,6 +6,7 @@ import {
   getLineEntityFromMap,
   getCurrentRouteMapData,
   getTextureFromResources,
+  getLineAnchor,
 } from '@/utils/mapUtil';
 import {
   Dump,
@@ -16,6 +17,7 @@ import {
   WorkStation,
   Intersection,
   CommonFunction,
+  LineArrow,
 } from '@/entities';
 import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
@@ -224,15 +226,24 @@ export default class BaseMap extends React.Component {
         const targetCell = this.idCellMap.get(target);
         // 此时 sourceCell 和 targetCell 可能是电梯点
         if (sourceCell && targetCell) {
-          const line = createRelation(
+          const { fromX, fromY, length, distance } = getLineAnchor(
             relations,
             sourceCell,
             targetCell,
             angle,
-            cost,
-            interactive ? this.select : null,
-            shownMode,
           );
+          const line = new LineArrow({
+            id: `${sourceCell.id}-${targetCell.id}`,
+            fromX,
+            fromY,
+            angle,
+            cost,
+            length,
+            distance,
+            interactive,
+            select: this.select,
+            isClassic: shownMode === 'standard',
+          });
           if (line) {
             line.switchDistanceShown(this.states.showDistance);
             this.pixiUtils.viewportAddChild(line);
