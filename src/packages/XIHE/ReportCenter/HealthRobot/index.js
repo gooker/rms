@@ -1,11 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
-import {
-  getScanCodedata,
-  getRobotOfflinedata,
-  getRobotFaultdata,
-  getRobotStatuserrordata,
-} from './components/mockRobotData';
 import moment from 'moment';
 import { fetchAGVHealth } from '@/services/api';
 import { isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
@@ -40,6 +34,7 @@ const TabSelectedStyle = {
 };
 
 const HealthCar = (props) => {
+  const [sourceData, setSourceData] = useState({});
   const [scanOriginData, setScanOriginData] = useState({}); // 原始数据 小车扫码
   const [offlineOriginData, setOfflineOriginData] = useState({}); // 原始数据 小车离线
   const [statuserrorOriginData, setStatuserrorOriginData] = useState({}); // 原始数据 状态错误
@@ -71,11 +66,11 @@ const HealthCar = (props) => {
         agvSearchType,
       });
       if (!dealResponse(response)) {
-        // TODO:看数据结构
-        setScanOriginData(getScanCodedata());
-        setOfflineOriginData(getRobotOfflinedata());
-        setStatuserrorOriginData(getRobotStatuserrordata());
-        setFaultOriginData(getRobotFaultdata());
+        setSourceData(response);
+        setScanOriginData(response?.code ?? {});
+        setOfflineOriginData(response?.offline ?? {});
+        setStatuserrorOriginData(response?.error ?? {});
+        setFaultOriginData(response?.malfunction ?? {});
       }
     }
   }
@@ -83,7 +78,7 @@ const HealthCar = (props) => {
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm search={submitSearch} />
+        <HealthCarSearchForm search={submitSearch} downloadVisible={true} sourceData={sourceData} />
       </div>
 
       <div style={{ display: 'flex', height: '40px' }}>

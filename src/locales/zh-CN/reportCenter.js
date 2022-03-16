@@ -34,6 +34,8 @@ export default {
   'reportCenter.lastMonth':'上月',
   'reportCenter.lastthreeMonths':'最近三个月',
 
+  'reportCenter.sourceData.download':'下载源数据',
+
   'reportCenter.qrcodehealth': '地面二维码健康',
   'reportCenter.qrcodehealth.latentPod': '潜伏货架二维码',
   'reportCenter.qrcodehealth.tote': '料箱二维码',
@@ -44,10 +46,10 @@ export default {
   'reportCenter.robot.offline': '小车离线',
   'reportCenter.robot.error': '状态错误',
   'reportCenter.robot.offline.errorTimes': '次数',
-  'reportCenter.robot.offline.errortime': '时长',
+  'reportCenter.robot.offline.errorTime': '时长',
   'reportCenter.robot.fault': '小车故障',
   'reportCenter.robot.offline.offlineTimes': '次数',
-  'reportCenter.robot.offline.offlinetime': '时长',
+  'reportCenter.robot.offline.offlineTime': '时长',
   'reportCenter.robot.load.statusduration': '状态时长',
   'reportCenter.agvload.taskduration': '任务时长',
   'reportCenter.robot.load.taskNumber': '任务次数',

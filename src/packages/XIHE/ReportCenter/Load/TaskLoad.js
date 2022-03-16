@@ -4,7 +4,6 @@ import echarts from 'echarts';
 import moment from 'moment';
 import { isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
 import { fetchTaskLoad } from '@/services/api';
-import { getTaskLoadData } from './components/mockTaskLockData';
 import {
   actionPieOption,
   generateActionPieData,
@@ -229,7 +228,7 @@ const HealthTask = (props) => {
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm search={submitSearch} type="taskload" key={'1'} />
+        <HealthCarSearchForm search={submitSearch} type="taskload" downloadVisible={true} />
       </div>
 
       <div className={style.body}>

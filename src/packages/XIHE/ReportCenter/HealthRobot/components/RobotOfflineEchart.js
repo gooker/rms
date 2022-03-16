@@ -2,7 +2,7 @@ import { formatMessage, isStrictNull } from '@/utils/util';
 import { forIn, sortBy } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
-export const colors = ['#91CC75', '#EE6666'];
+export const colors = ['#91CC75', '#89c7f2'];
 
 // Series
 const trafficLabelOption = {
@@ -180,12 +180,11 @@ export const generatOfflineDataByTime = (allData) => {
     }
   });
 
-  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
+  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等 TODO 后端会改的
   const legendData = [];
   const currentAxisData = Object.values(allData)[0] || []; // 横坐标
-
   forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'robotId') {
+    if (!['agvId', 'createTime', 'id', 'period', 'robotType', 'sectionId'].includes(key)) {
       firstTimeDataMap.set(key, 0);
       legendData.push(key);
     }
@@ -310,34 +309,34 @@ export const generatOfflineDataByRobot = (allData) => {
 };
 
 //  拿到原始数据的 所有参数 所有根据robotId的参数求和
-//  重要:robotId要排序 不然数据就乱掉了 数据对应不上
+//  重要:agvId要排序 不然数据就乱掉了 数据对应不上
 export const getOriginalDataByRobotId = (originalData) => {
   let currentAxisData = Object.values(originalData)[0] || [];
-  currentAxisData = sortBy(currentAxisData, 'robotId'); // 不排序 数据会乱掉 这样robotId的轴是顺序的 对应的seriy也是顺序的
-  const firstTimeDataMap = new Map(); // 存放key 比如时长 次数等
+  currentAxisData = sortBy(currentAxisData, 'agvId'); // 不排序 数据会乱掉 这样robotId的轴是顺序的 对应的seriy也是顺序的
+  const firstTimeDataMap = new Map(); // 存放key 比如时长 次数等 TODO:后端会给的
   const legendData = []; // 图例
   const xAxisData = []; // 纵坐标 是y 顺序显示
   let currentCellIdData = {}; // 根据robotId 每个key 求和
 
   forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'robotId') {
+    if (!['agvId', 'createTime', 'id', 'period', 'robotType', 'sectionId'].includes(key)) {
       firstTimeDataMap.set(key, 0);
       legendData.push(key);
     }
   });
 
-  currentAxisData.map(({ robotId }) => {
-    xAxisData.push(robotId);
-    currentCellIdData[robotId] = {};
+  currentAxisData.map(({ agvId }) => {
+    xAxisData.push(agvId);
+    currentCellIdData[agvId] = {};
   });
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { robotId } = item;
+      const { agvId } = item;
       forIn(item, (value, key) => {
         if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[robotId][key] || 0;
-          currentCellIdData[robotId][key] = seryData * 1 + value * 1;
+          let seryData = currentCellIdData[agvId][key] || 0;
+          currentCellIdData[agvId][key] = seryData * 1 + value * 1;
         }
       });
     });

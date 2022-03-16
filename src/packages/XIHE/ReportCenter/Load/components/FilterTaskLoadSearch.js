@@ -13,7 +13,7 @@ const FilterTaskLoadSearch = (props) => {
     <div key="a" style={{ margin: '0 10px' }}>
       {togglesCode === 1 ? (
         <>
-          <HealthCarSearchForm type="taskload" key={'2'} noButton={true} search={searchChange} />
+          <HealthCarSearchForm type="taskload" key={'2'} search={searchChange} />
           <Row>
             <Col span={24} style={{ padding: '10px 0', borderTop: '1px solid #e8e8e8' }}>
               <Button
