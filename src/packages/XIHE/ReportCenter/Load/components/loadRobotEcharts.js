@@ -700,7 +700,7 @@ export const formatNumber = (n) => {
  *
  * */
 export const MinuteFormat = (value) => {
-  const d = moment.duration(value, 'minutes');
+  const d = moment.duration(value, 'seconds');
   let currentValue = '';
   if (Math.floor(d.asDays()) > 0) {
     currentValue += Math.floor(d.asDays()) + '天';

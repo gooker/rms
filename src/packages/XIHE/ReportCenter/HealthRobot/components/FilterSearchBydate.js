@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -9,26 +9,26 @@ const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 14 } };
 let _name = null;
 
 const FilterSearchBytime = (props) => {
-  const { onValuesChange, name } = props;
+  const { refreshCharts, name } = props;
   _name = name || 'robotIds';
 
-  const [formDate] = Form.useForm();
+  const [formRef] = Form.useForm();
   const [togglesDate, setTogglesDate] = useState(0);
 
-  useEffect(() => {
-    function init() {}
-    init();
-  }, []);
-
-  // function clearForm() {
-  //   formDate.resetFields();
-  // }
+  async function getRequestBody() {
+    const { startByTime, endByTime, robotIds } = formRef.getFieldsValue();
+    return {
+      startByTime,
+      endByTime,
+      robotIds,
+    };
+  }
 
   return (
     <div>
       {togglesDate === 1 ? (
         <>
-          <Form form={formDate} onValuesChange={onValuesChange} {...formLayout}>
+          <Form form={formRef} {...formLayout}>
             <Form.Item hidden name={'startByTime'} />
             <Form.Item hidden name={'endByTime'} />
             <Row>
@@ -37,9 +37,9 @@ const FilterSearchBytime = (props) => {
                   label={<FormattedMessage id="app.form.dateRange" />}
                   name="timeRange"
                   getValueFromEvent={(value) => {
-                    formDate.setFieldsValue({
-                      startByTime: isNull(value) ? null : value[0].format('YYYY-MM-DD HH:mm:00'),
-                      endByTime: isNull(value) ? null : value[1].format('YYYY-MM-DD HH:mm:00'),
+                    formRef.setFieldsValue({
+                      startByTime: isNull(value) ? null : value[0].format('YYYY-MM-DD HH:mm:ss'),
+                      endByTime: isNull(value) ? null : value[1].format('YYYY-MM-DD HH:mm:ss'),
                     });
                     return value;
                   }}
@@ -58,6 +58,15 @@ const FilterSearchBytime = (props) => {
                     allowClear
                   />
                 </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Button
+                  onClick={() => {
+                    refreshCharts(getRequestBody());
+                  }}
+                >
+                  <FormattedMessage id={'app.button.check'} />
+                </Button>
               </Col>
             </Row>
           </Form>

@@ -1,17 +1,25 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
+import XLSX from 'xlsx';
+import { forIn } from 'lodash';
 import { getFormModelTypes, fetchActiveMap } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
 import DatePickerSelector from '../../components/DatePickerSelector';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
+const colums = {
+  agvId: formatMessage({ id: 'app.agv.id' }),
+  period: formatMessage({ id: 'app.time' }),
+  robotType: formatMessage({ id: 'app.agv.type' }),
+};
+
 const LogSearchForm = (props) => {
-  const { search, type, allTaskTypes } = props;
+  const { search, type, downloadVisible, sourceData, allTaskTypes } = props;
 
   const [form] = Form.useForm();
   const [optionsData, setOptionsData] = useState([
@@ -69,11 +77,49 @@ const LogSearchForm = (props) => {
     });
   }
 
+  function generateEveryType(allData, type) {
+    const typeResult = [];
+    Object.entries(sourceData).forEach(([key, typeData]) => {
+      if (!isStrictNull(typeData)) {
+        typeData.forEach((record) => {
+          let currentTime = {};
+          let _record = { ...record };
+          currentTime[colums.agvId] = record.agvId;
+          currentTime[colums.period] = record.period;
+          currentTime[colums.robotType] = record.robotType;
+          if (!isNull(type)) {
+            _record = { ...record[type] };
+          }
+          forIn(_record, (value, parameter) => {
+            currentTime[parameter] = value;
+          });
+          typeResult.push(currentTime);
+        });
+      }
+    });
+    return typeResult;
+  }
+
+  function exportData() {
+    const wb = XLSX.utils.book_new(); /*新建book*/
+    const statusWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'statusAllTime'));
+    const taskWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskAllTime'));
+    const actionWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'actionLoad'));
+    const taskNumWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskTimes'));
+    const taskDistanceWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskDistance'));
+    XLSX.utils.book_append_sheet(wb, statusWs, '状态时长');
+    XLSX.utils.book_append_sheet(wb, taskWs, '任务时长');
+    XLSX.utils.book_append_sheet(wb, actionWs, '动作时长');
+    XLSX.utils.book_append_sheet(wb, taskNumWs, '任务次数');
+    XLSX.utils.book_append_sheet(wb, taskDistanceWs, '任务距离');
+    XLSX.writeFile(wb, `小车负载.xlsx`);
+  }
+
   return (
     <Form form={form}>
-      <Form.Item hidden name={'startTime'} />
-      <Form.Item hidden name={'endTime'} />
       <Row gutter={24}>
+        <Form.Item hidden name={'startTime'} />
+        <Form.Item hidden name={'endTime'} />
         {/* 日期 */}
         <Col>
           <Form.Item
@@ -125,15 +171,17 @@ const LogSearchForm = (props) => {
             </Row>
           </Form.Item>
         </Col>
-        {/* <Col>
-          <Form.Item {...NoLabelFormLayout}>
-            <Row justify="end">
-              <Button>
-                <FormattedMessage id="app.button.save" />
-              </Button>
-            </Row>
-          </Form.Item>
-        </Col> */}
+        {downloadVisible && (
+          <Col>
+            <Form.Item {...NoLabelFormLayout}>
+              <Row justify="end">
+                <Button onClick={exportData}>
+                  <FormattedMessage id="reportCenter.sourceData.download" />
+                </Button>
+              </Row>
+            </Form.Item>
+          </Col>
+        )}
       </Row>
     </Form>
   );

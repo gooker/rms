@@ -88,7 +88,7 @@ const RobotFaultComponent = (props) => {
     Object.entries(_data).forEach(([key, allcellData]) => {
       const _allCellData = [];
       allcellData.forEach((item) => {
-        if (ids.includes(item.robotId)) {
+        if (ids.includes(item.agvId)) {
           _allCellData.push(item);
         }
       });
@@ -160,7 +160,7 @@ const RobotFaultComponent = (props) => {
     return newData;
   };
 
-  function onDatefilterChange(changedValues, allValues) {
+  function onDatefilterChange(allValues) {
     let newOriginalData = { ...originData };
     if (Object.keys(originData).length === 0) return;
     const { endByTime, startByTime, robotIds } = allValues;
@@ -209,7 +209,7 @@ const RobotFaultComponent = (props) => {
         <Card
           actions={
             searchKey.length > 0 && [
-              <FilterSearchBydate key={'b'} onValuesChange={onDatefilterChange} />,
+              <FilterSearchBydate key={'b'} refreshCharts={onDatefilterChange} />,
             ]
           }
         >

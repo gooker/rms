@@ -14,7 +14,6 @@ import {
   transformCodeData,
   getOriginalDataBycode,
 } from '../components/groundQrcodeEcharts';
-import { getToteQrcodedata } from '../components/mockData';
 import commonStyles from '@/common.module.less';
 import style from './qrcode.module.less';
 
@@ -187,7 +186,7 @@ const GroundQrcode = (props) => {
     return newData;
   };
 
-  function onDatefilterChange(changedValues, allValues) {
+  function onDatefilterChange(allValues) {
     let newOriginalData = { ...originData };
     if (Object.keys(originData).length === 0) return;
     const { endByTime, startByTime, cellId } = allValues;
@@ -215,7 +214,7 @@ const GroundQrcode = (props) => {
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
-        <QrcodeSearchForm search={submitSearch} data={originData} />
+        <QrcodeSearchForm search={submitSearch} sourceData={originData} name={formatMessage({id:'reportCenter.qrcodehealth.tote'})}/>
       </div>
 
       <div className={style.body}>
@@ -245,7 +244,7 @@ const GroundQrcode = (props) => {
                 searchKey.length > 0 && [
                   <FilterSearchBydate
                     key={'b'}
-                    onValuesChange={onDatefilterChange}
+                    refreshCharts={onDatefilterChange}
                     type={'cellId'}
                   />,
                 ]

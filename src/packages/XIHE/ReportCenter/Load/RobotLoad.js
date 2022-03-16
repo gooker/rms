@@ -5,7 +5,6 @@ import moment from 'moment';
 import { formatMessage, GMT2UserTimeZone, dealResponse, isStrictNull } from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getloadRobotdata } from './components/mockLoadData';
 import {
   taskLineOption,
   durationLineOption,
@@ -221,7 +220,7 @@ const HealthCar = (props) => {
   };
   const columns = [
     {
-      title: <FormattedMessage id='app.form.agvId' />,
+      title: <FormattedMessage id="app.form.agvId" />,
       dataIndex: 'agvId',
       sorter: (a, b) => a.robotId - b.robotId,
     },
@@ -230,7 +229,7 @@ const HealthCar = (props) => {
       dataIndex: 'robotType',
     },
     {
-      title: <FormattedMessage id='reportCenter.agvload.taskduration' />,
+      title: <FormattedMessage id="reportCenter.agvload.taskduration" />,
       dataIndex: 'taskAllTime',
       sorter: (a, b) => a.taskAllTime - b.taskAllTime,
       render: (text) => {
@@ -257,8 +256,12 @@ const HealthCar = (props) => {
 
   return (
     <div className={commonStyles.commonPageStyle}>
-      <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm search={submitSearch} />
+      <div style={{ marginBottom: 10, display: 'flex', flexFlow: 'column wrap' }}>
+        <HealthCarSearchForm
+          search={submitSearch}
+          downloadVisible={true}
+          sourceData={loadOriginData}
+        />
       </div>
 
       <div className={style.body}>

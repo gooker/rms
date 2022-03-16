@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Radio, Button, Select, Modal } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { Form, Radio, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import ImportI18nLanguage from './ImportI18nLanguage';
 
