@@ -6,8 +6,8 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
-import editorStyles from '../editorLayout.module.less';
 import StationForm from './StationForm';
+import commonStyles from '@/common.module.less';
 
 const StationPanel = (props) => {
   const { dispatch, height, commonList, mapContext } = props;
@@ -62,7 +62,7 @@ const StationPanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible ? (

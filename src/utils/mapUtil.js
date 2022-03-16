@@ -1374,7 +1374,7 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
 
   // 潜伏车任务暂停事件
   socketClient.registerLatentLiftingPauseTaskEvent(() => {
-    dispatch({ type: 'monitor/fetchLatentSopMessageList' });
+    dispatch({ type: 'monitor/fetchLatentStopMessageList' });
   });
 }
 

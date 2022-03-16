@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
 import Text from './Text';
 import { isNull } from '@/utils/util';
-import { hasPermission } from '@/utils/Permission';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { EStopStateColor, SelectionType, zIndex, ZoneMarkerType } from '@/config/consts';
 import ResizableContainer from '@/components/ResizableContainer';
@@ -38,15 +37,11 @@ class ResizeableEmergencyStop extends ResizableContainer {
     };
     this.refresh = props.refresh;
 
-    if (['Section', 'Logic'].includes(props.estopType)) {
-      this.drawLogicOrSection(props);
-    } else {
-      // 为了支持ResizableContainer组件，需要把所有元素集中在一个元素里
-      this.$$container = new PIXI.Container();
-      this.$$container.sortableChildren = true;
-      this.createElement();
-      this.create(this.$$container, this.updateLayout, zIndex.zoneMarker, true);
-    }
+    // 为了支持ResizableContainer组件，需要把所有元素集中在一个元素里
+    this.$$container = new PIXI.Container();
+    this.$$container.sortableChildren = true;
+    this.createElement();
+    this.create(this.$$container, this.updateLayout, zIndex.zoneMarker, true);
   }
 
   click = (event, select) => {
@@ -87,7 +82,6 @@ class ResizeableEmergencyStop extends ResizableContainer {
     this.eStopArea && this.eStopArea.destroy(true);
     this.eName && this.eName.destroy(true);
     this.eIcon && this.eIcon.destroy();
-    this.eFixedIcon && this.eFixedIcon.destroy();
     this.createElement();
     this.refresh();
   }
@@ -99,34 +93,12 @@ class ResizeableEmergencyStop extends ResizableContainer {
     this.eStopArea = this.$$container.addChild(this.createEStopArea());
     this.eName = this.$$container.addChild(this.createName());
     this.eIcon = this.$$container.addChild(this.createIcon());
-
-    // notShowFixed是地图编辑传的参数 地图编辑不需要显示固定icon
-    if (isNull(this.$$data.notShowFixed) && this.$$data.isFixed) {
-      this.eFixedIcon = this.$$container.addChild(this.createFixedIcon());
-    }
-
-    // 地图编辑不用看弹框
-    if (isNull(this.$$data.notShowFixed)) {
-      this.interactiveModal();
-    }
   }
 
-  // 安全显示红色，不安全显示黄色，禁用显示灰色
   createEStopArea() {
-    const { activated, isSafe, xlength, ylength, r } = this.$$data;
-    let color, fillColor;
-    if (activated) {
-      if (isSafe) {
-        color = EStopStateColor.active.safe.color;
-        fillColor = EStopStateColor.active.safe.fillColor;
-      } else {
-        color = EStopStateColor.active.unSafe.color;
-        fillColor = EStopStateColor.active.unSafe.fillColor;
-      }
-    } else {
-      color = EStopStateColor.inactive.color;
-      fillColor = EStopStateColor.inactive.fillColor;
-    }
+    const { xlength, ylength, r } = this.$$data;
+    const color = EStopStateColor.inactive.color;
+    const fillColor = EStopStateColor.inactive.fillColor;
     const graphics = new PIXI.Graphics();
     graphics.lineStyle(BorderWidth, color, 1);
     graphics.beginFill(fillColor);
@@ -190,78 +162,21 @@ class ResizeableEmergencyStop extends ResizableContainer {
     return barrierIcon;
   }
 
-  createFixedIcon() {
-    const { xlength, ylength, r: radius } = this.$$data;
-    let _x, _y;
-    if (this.box === ZoneMarkerType.RECT) {
-      _x = xlength - 300;
-      _y = ylength - 680;
-    } else {
-      _x = radius * 2 - 300;
-      _y = radius;
-    }
-    const fixedTexture = getTextureFromResources('emergencyStopFixed');
-    const fixedIcon = new PIXI.Sprite(fixedTexture);
-    fixedIcon.x = _x;
-    fixedIcon.y = _y;
-    fixedIcon.zIndex = 2;
-    fixedIcon.angle = -this.angle;
-    fixedIcon.anchor.set(0.5);
-    return fixedIcon;
-  }
-
-  drawLogic(type) {
-    this[`logicSprite${type}`] = new PIXI.Sprite(PIXI.Texture.WHITE);
-    this[`logicSprite${type}`].width = this.$worldWidth;
-    this[`logicSprite${type}`].height = this.$worldHeight;
-    this[`logicSprite${type}`].x = -400;
-    this[`logicSprite${type}`].y = -400;
-    this[`logicSprite${type}`].tint = this.fillColor;
-    this[`logicSprite${type}`].alpha = 0.4;
-    this[`logicSprite${type}`].anchor.set(0);
-    this.addChild(this[`logicSprite${type}`]);
-  }
-
-  drawLogicOrSection(props) {
-    const { worldSize } = props;
-    let fillColor = 0xdec674;
-    if (props.isSafe) {
-      fillColor = 0xf3704b;
-    }
-    this.fillColor = fillColor;
-    this.$worldWidth = worldSize.worldWidth;
-    this.$worldHeight = worldSize.worldHeight;
-    this.drawLogic(props.estopType);
-  }
-
-  interactiveModal(props) {
-    // @@@@权限key调整
-    if (hasPermission('/map/monitor/action/set/emergencyArea')) {
-      this.$$container.interactive = true;
-      this.$$container.buttonMode = true;
-      this.$$container.interactiveChildren = false;
-      this.$$container.on('click', () => this.$$data.checkEStopArea(this.$$data));
-    }
-  }
-
   switchEStopsVisible(flag) {
     this.visible = flag;
   }
 
   updateEStop(params) {
     this.$$data = params;
-    if (['Section', 'Logic'].includes(params.estopType)) {
-      this.drawLogicOrSection(params);
-    } else {
-      // 先清空container内所有元素
-      this.$$container.removeChildren();
-      this.eName && this.eName.destroy(true);
-      this.eIcon && this.eIcon.destroy();
-      this.eFixedIcon && this.eFixedIcon.destroy();
 
-      // 重新创建元素
-      this.createElement();
-    }
+    // 先清空container内所有元素
+    this.$$container.removeChildren();
+    this.eName && this.eName.destroy(true);
+    this.eIcon && this.eIcon.destroy();
+    this.eFixedIcon && this.eFixedIcon.destroy();
+
+    // 重新创建元素
+    this.createElement();
   }
 }
 export default ResizeableEmergencyStop;

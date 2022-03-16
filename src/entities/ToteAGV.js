@@ -3,12 +3,13 @@ import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { isNull, isStrictNull } from '@/utils/util';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
-import { ToteAGVSize, GlobalAlpha, zIndex } from '@/config/consts';
+import { ToteAGVSize, GlobalAlpha, zIndex, MonitorSelectableSpriteType } from '@/config/consts';
 import { AGVType } from '@/config/config';
 
 export default class ToteAGV extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MonitorSelectableSpriteType.Tote;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;

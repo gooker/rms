@@ -179,6 +179,7 @@ export function loadTexturesForMap() {
       .add('tiny_rotate', '/images/tiny_rotate.png')
       .add('delivery', '/images/delivery.png')
       .add('basket', '/images/basket.png')
+      .add('pin', '/images/pin.png')
       .load(() => {
         resolve();
       });

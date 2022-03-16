@@ -155,7 +155,6 @@
   flex: 1;
   flex-flow: column nowrap;
   height: 100%;
-  font-size: 0;
   touch-action: none;
 }
 
@@ -164,4 +163,41 @@
   position: absolute;
   display: none;
   border: 2px dashed #b0b0b0;
+}
+
+// 地图编辑和监控弹出面板通用样式
+.categoryPanel {
+  position: absolute;
+  top: 5px;
+  right: 53px;
+  display: flex;
+  flex-flow: column nowrap;
+  width: 300px;
+  background: rgba(99, 99, 99, 0.9);
+  border-radius: 5px;
+  user-select: none;
+
+  & > div:nth-child(1) {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #fff;
+    font-weight: 600;
+    font-size: 22px;
+    border-bottom: 1px solid #7f7f7f;
+  }
+
+  & > div:nth-child(2) {
+    flex: 1;
+    padding: 10px;
+    overflow: auto;
+  }
+
+  // 表单Label样式统一处理
+  :global {
+    .ant-form-item .ant-form-item-label > label {
+      color: #e8e8e8;
+      font-weight: 500;
+    }
+  }
 }

@@ -1,0 +1,32 @@
+@import (reference) '../../../../common.module';
+
+// OperationType
+.operationType {
+  position: absolute;
+  right: calc(20% + 10px);
+  bottom: 5px;
+  display: flex;
+  width: 100px;
+  height: 40px;
+  background: #4f4f4f;
+  border-radius: 5px;
+
+  & > div {
+    flex: 1;
+    cursor: pointer;
+    .flexCenter();
+
+    & > span > svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+}
+
+.operationTypeActive {
+  background: #f4f4f4;
+
+  & > span > svg {
+    fill: #1890ff !important;
+  }
+}

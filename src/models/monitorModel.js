@@ -1,9 +1,10 @@
-import { fetchActiveMap, fetchAgvList, fetchToteRackLayout } from '@/services/api';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { message } from 'antd';
-import { hasAppPermission, hasPermission } from '@/utils/Permission';
-import { AGVType, AppCode } from '@/config/config';
 import { findIndex } from 'lodash';
+import { hasAppPermission } from '@/utils/Permission';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { AGVType, AppCode } from '@/config/config';
+import { Category, MonitorOperationType } from '@/packages/XIHE/MapMonitor/enums';
 import {
   fetchChargerList,
   fetchEmergencyStopList,
@@ -11,19 +12,19 @@ import {
   fetchMapAGVLocks,
 } from '@/services/XIHE';
 import {
-  fetchTemporaryBlockCells,
-  updateTemporaryBlockCell,
-  deleteTemporaryBlockCell,
-  fetchLatentAutoTaskConfig,
-  saveLatentAutomaticTaskConfig,
-  fetchAutoReleasePod,
   autoCallLatentPodToWorkstation,
   batchUpdateLatentPod,
-  fetchSetPod,
+  deleteTemporaryBlockCell,
+  fetchAutoReleasePod,
+  fetchLatentAutoTaskConfig,
   fetchLatentPausedEventList,
+  fetchSetPod,
+  fetchTemporaryBlockCells,
+  saveLatentAutomaticTaskConfig,
+  updateTemporaryBlockCell,
 } from '@/services/monitor';
-import { Category } from '@/packages/XIHE/MapMonitor/enums';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { fetchActiveMap, fetchAgvList, fetchToteRackLayout } from '@/services/api';
+import { MonitorSelectableSpriteType } from '@/config/consts';
 
 export default {
   namespace: 'monitor',
@@ -36,10 +37,13 @@ export default {
     preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
     currentCells: [], // 当前视图的点位数据
     mapContext: null, // 地图实体对象
+    mapMinRatio: null, // 地图最小缩放比例
+    mapRatio: null, // 地图当前缩放比例
     elevatorCellMap: null, // 保存电梯替换点与地图原始点位的Map关系
-    stationRealRate: [], // 站点实时速率
 
-    selections: [], // 选择相关
+    // 选择相关
+    selections: [],
+    selectableType: ['AGV', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
 
     // 小车、货架等信息
     allAGVs: [],
@@ -51,7 +55,26 @@ export default {
     chargerList: [], // 硬件充电桩
     temporaryBlock: [], // 临时不可走点
 
-    // 运行信息
+    // 二级面板
+    categoryModal: null,
+
+    // 急停区
+    emergencyStopList: [], // 急停区
+    globalActive: null, // 全局急停开启关闭
+    logicActive: [], // 逻辑区急停开启关闭
+
+    // 操作栏
+    operationType: MonitorOperationType.Drag,
+    categoryPanel: null, // 右侧展示哪个类型的菜单
+    checkingElement: null, // 展示菜单的内容
+
+    // 监控地图是否渲染完成
+    mapRendered: false,
+    // 定位功能弹窗
+    positionVisible: false,
+
+    // TODO: 以下状态需要切分出去独立成model(运行信息)
+    stationRealRate: [], // 站点实时速率
     podToWorkstationInfo: [],
     latentStopMessageList: [],
     autoCallPodToWorkstationStatus: '',
@@ -62,27 +85,30 @@ export default {
     latentAutomaticTaskConfig: null,
     latentAutomaticTaskForm: null,
     latentAutomaticTaskUsage: {},
-
-    // 急停区
-    emergencyStopList: [], // 急停区
-    globalActive: null, // 全局急停开启关闭
-    logicActive: [], // 逻辑区急停开启关闭
-
-    // 右侧操作栏
-    categoryPanel: null, // 右侧展示哪个类型的菜单
-    checkingElement: null, // 展示菜单的内容
-
-    // 监控地图是否渲染完成
-    mapRendered: false,
-    positionVisible: false, // 定位功能弹窗
-
-    // 弹窗
-    categoryModal: null,
   },
 
   reducers: {
     saveState(state, action) {
       return { ...state, ...action.payload };
+    },
+    saveMapRatio(state, action) {
+      return {
+        ...state,
+        mapRatio: action.payload,
+      };
+    },
+    saveMapMinRatio(state, action) {
+      return {
+        ...state,
+        mapMinRatio: action.payload,
+        mapRatio: action.payload,
+      };
+    },
+    saveOperationType(state, action) {
+      return {
+        ...state,
+        operationType: action.payload,
+      };
     },
     saveCheckingElement(state, action) {
       return {
@@ -91,7 +117,12 @@ export default {
         checkingElement: action.payload,
       };
     },
-
+    saveStationRate(state, action) {
+      return {
+        ...state,
+        stationRealRate: action.payload,
+      };
+    },
     saveCategoryModal(state, action) {
       return {
         ...state,
@@ -199,13 +230,18 @@ export default {
         latentStopMessageList: action.payload,
       };
     },
+    updateSelectableType(state, action) {
+      let _selectableType = [...state.selectableType];
+      if (!_selectableType.includes(action.payload)) {
+        _selectableType.push(action.payload);
+      } else {
+        _selectableType = _selectableType.filter((item) => item !== action.payload);
+      }
+      return { ...state, selectableType: _selectableType };
+    },
     updateSelections(state, action) {
       const selections = action.payload;
-      const newState = {
-        ...state,
-        selections,
-        shortcutToolVisible: selections.length > 0,
-      };
+      const newState = { ...state, selections };
       if (selections.length === 1) {
         if (state.categoryPanel === null) {
           newState.categoryPanel = Category.Prop;
@@ -498,35 +534,19 @@ export default {
       yield put({ type: 'savePodToWorkstationInfo', payload: newPodToWorkstationInfo });
     },
 
-    *fetchLatentSopMessageList({ payload }, { call, put }) {
+    *fetchLatentStopMessageList({ payload }, { call, put }) {
       const response = yield call(fetchLatentPausedEventList, payload);
-      if (dealResponse(response)) {
-        return false;
+      if (!dealResponse(response)) {
+        yield put({
+          type: 'saveLatentSopMessageList',
+          payload: response,
+        });
       }
-      yield put({
-        type: 'saveLatentSopMessageList',
-        payload: response,
-      });
-    },
-    *updateStationRate({ payload }, { call, put }) {
-      const { mapContext, response } = payload;
-      // 后端类型返回 不为空 就存起来 return 目前理论上只会有一个类型有值
-      let currentData = Object.values(response).filter((item) => !isStrictNull(item));
-      currentData = currentData[0];
-      mapContext?.renderCommonStationRate(currentData);
-      yield put({
-        type: 'saveState',
-        payload: { stationRealRate: currentData },
-      });
     },
     *fetchAllLockCells({ payload, then }, { call, select }) {
       const { currentLogicArea } = yield select((state) => state.monitor);
       const { lockTypes, robotIds } = payload;
-      const response = yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
-      if (dealResponse(response)) {
-        return false;
-      }
-      then && then(response);
+      return yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
     },
   },
 };

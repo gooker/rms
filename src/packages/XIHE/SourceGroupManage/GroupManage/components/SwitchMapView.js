@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { find } from 'lodash';
 import { Row, Switch, Button, Col } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../groupManage.module.less';
+import commonStyles from '@/common.module.less';
 
 const SwitchMapView = (props) => {
   const {
@@ -39,7 +39,7 @@ const SwitchMapView = (props) => {
   }
 
   return (
-    <div style={{ height, width }} className={styles.categoryPanel}>
+    <div style={{ height, width }} className={commonStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'app.map.logicArea'} />
       </div>

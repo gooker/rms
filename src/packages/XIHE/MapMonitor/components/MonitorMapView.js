@@ -2,6 +2,7 @@ import React from 'react';
 import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { AGVType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
 import {
@@ -15,12 +16,12 @@ import {
 import {
   AGVState,
   ElementType,
+  EStopStateColor,
   GeoLockColor,
   LatentPodSize,
   ToteAGVSize,
   zIndex,
 } from '@/config/consts';
-import BaseMap from '@/components/BaseMap';
 import {
   convertToteLayoutData,
   getCurrentLogicAreaData,
@@ -33,7 +34,6 @@ import {
 import {
   BitText,
   Cell,
-  ResizeableEmergencyStop,
   GeoLock,
   LatentAGV,
   LatentPod,
@@ -44,11 +44,10 @@ import {
   ToteAGV,
   TotePod,
   RealtimeRate,
+  EmergencyStop,
 } from '@/entities';
-import commonStyles from '@/common.module.less';
-import { Category } from '@/packages/XIHE/MapMonitor/enums';
+import BaseMap from '@/components/BaseMap';
 import { fetchAgvInfo } from '@/services/api';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { SelectionType } from '@/config/consts';
 
 class MonitorMapView extends BaseMap {
@@ -114,11 +113,10 @@ class MonitorMapView extends BaseMap {
   }
 
   async componentDidMount() {
-    const { dispatch } = this.props;
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
     window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
-    dispatch({ type: 'monitor/saveMapContext', payload: this });
+    window.$$dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
   }
 
@@ -1597,39 +1595,40 @@ class MonitorMapView extends BaseMap {
     allData.forEach((currentData) => {
       const eStopData = {
         ...currentData,
-        showEmergency,
-        checkEStopArea,
         worldSize,
-        resizeable: false,
+        select: this.select,
       };
+
       if (!['Section', 'Logic', 'Area'].includes(currentData.estopType)) {
         return;
       }
       if (currentData.estopType !== 'Section' && currentData.logicId !== currentLogicArea) {
         return;
       }
-
       if (['Section', 'Logic'].includes(currentData.estopType)) {
         let updateSectionFlag = currentData.estopType === 'Section';
         let updateLogicFlag = currentData.estopType === 'Logic';
         let _entity = this.emergencyAreaMap.get(`special${currentData.estopType}`);
         if (isNull(_entity)) {
           // 新增
-          _entity = new ResizeableEmergencyStop(eStopData);
+          _entity = new EmergencyStop(eStopData);
           this.pixiUtils.viewportAddChild(_entity);
           this.emergencyAreaMap.set(`special${currentData.estopType}`, _entity);
-
           if (currentData.estopType === 'Section') {
             updateSectionFlag = false;
           } else {
             updateLogicFlag = false;
           }
         }
+
         const sectionMaskSprite = this.emergencyAreaMap.get('specialSection');
         if (sectionMaskSprite) {
           sectionMaskSprite.renderable = _visible && this.logicSpriteSectionFlag;
           if (updateSectionFlag) {
-            sectionMaskSprite.logicSpriteSection.tint = currentData.isSafe ? 0xf3704b : 0xdec674;
+            sectionMaskSprite.logicSpriteSection.tint = currentData.isSafe
+              ? EStopStateColor.active.safe.fillColor
+              : EStopStateColor.active.unSafe.fillColor;
+
             this.emergencyAreaMap.delete(`specialSection`);
             this.emergencyAreaMap.set(`specialSection`, sectionMaskSprite);
           }
@@ -1639,7 +1638,10 @@ class MonitorMapView extends BaseMap {
         if (logicMaskSprite) {
           logicMaskSprite.renderable = _visible && this.logicSpriteLogicFlag;
           if (updateLogicFlag) {
-            logicMaskSprite.logicSpriteLogic.tint = currentData.isSafe ? 0xf3704b : 0xdec674;
+            logicMaskSprite.logicSpriteLogic.tint = currentData.isSafe
+              ? EStopStateColor.active.safe.fillColor
+              : EStopStateColor.active.unSafe.fillColor;
+
             this.emergencyAreaMap.delete(`specialLogic`);
             this.emergencyAreaMap.set(`specialLogic`, logicMaskSprite);
           }
@@ -1648,18 +1650,17 @@ class MonitorMapView extends BaseMap {
         // 判断这个code是否存在 存在就更新
         const stopEntity = this.emergencyAreaMap.get(`${currentData.code}`);
         if (stopEntity) {
-          stopEntity.updateEStop(eStopData);
+          stopEntity.update(eStopData);
           this.emergencyAreaMap.delete(`${currentData.code}`);
           this.emergencyAreaMap.set(`${currentData.code}`, stopEntity);
         } else {
           // 新增
-          const eStop = new ResizeableEmergencyStop(eStopData);
+          const eStop = new EmergencyStop(eStopData);
           this.pixiUtils.viewportAddChild(eStop);
           this.emergencyAreaMap.set(`${currentData.code}`, eStop);
         }
       }
     });
-
     this.refresh();
   };
 
@@ -1693,7 +1694,7 @@ class MonitorMapView extends BaseMap {
       worldSize,
     };
     if (estop) {
-      estop.updateEStop(_params);
+      estop.update(_params);
       this.emergencyAreaMap.delete(`${params.code}`);
       this.emergencyAreaMap.set(`${params.code}`, estop);
     }
@@ -1701,7 +1702,7 @@ class MonitorMapView extends BaseMap {
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
-    return <div id="monitorPixi" className={commonStyles.monitorBodyMiddle} />;
+    return <div id="monitorPixi" style={{ height: '100%', fontSize: 0 }} />;
   }
 }
 

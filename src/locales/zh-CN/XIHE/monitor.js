@@ -37,6 +37,8 @@ export default {
   'monitor.right.cellheat': '点位热度',
   'monitor.right.heat': '热度',
   'monitor.right.tracking': '追踪',
+  'monitor.select.enable': '可选',
+  'monitor.select.disable': '禁选',
 
   // 提醒
   'monitor.tip.fetchLockFail': '获取锁格信息失败',
@@ -232,6 +234,15 @@ export default {
   'monitor.message.podToWorkstationInfo': '到站消息',
   'monitor.message.latentStopMessage': '暂停消息',
   'monitor.message.releasePodSuccess': '释放成功',
+
+  // 急停区
+  'monitor.estop.relevant': '急停相关',
+  'monitor.estop.globalEStop': '全局急停',
+  'monitor.estop.logicEStop': '逻辑区急停',
+  'monitor.estop.logicEStopLog': '急停日志',
+  'monitor.estop.isSafe': '是否安全',
+  'monitor.estop.safe': '安全',
+  'monitor.estop.unsafe': '不安全',
 
   // 工作站点击弹窗
   'monitor.workstation.label.marked': '已标记',

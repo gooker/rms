@@ -8,7 +8,7 @@ import AngleSelector from '@/components/AngleSelector';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { MapSelectableSpriteType } from '@/config/consts';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 
 const ChargerForm = (props) => {
   const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, robotTypes } = props;

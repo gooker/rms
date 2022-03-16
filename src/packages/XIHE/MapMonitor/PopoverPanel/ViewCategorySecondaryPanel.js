@@ -1,6 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
-import { connect } from '@/utils/RmsDva';
 import {
   Category,
   EmergencyCategoryTools,
@@ -71,4 +70,4 @@ const ViewCategorySecondaryPanel = (props) => {
     </div>
   );
 };
-export default connect(() => ({}))(memo(ViewCategorySecondaryPanel));
+export default memo(ViewCategorySecondaryPanel);

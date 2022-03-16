@@ -1,20 +1,13 @@
 import React, { memo, useState } from 'react';
-import { Button, Col, Divider, Empty, Row, Table, Tag } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  LeftOutlined,
-  PlusOutlined,
-  RightOutlined,
-} from '@ant-design/icons';
+import { Button, Empty } from 'antd';
+import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import AisleForm from '../PopoverPanel/AisleForm';
 import FunctionListItem from '../components/FunctionListItem';
-import editorStyles from '../editorLayout.module.less';
-import LabelComponent from '@/components/LabelComponent';
+import commonStyles from '@/common.module.less';
 
 const AislePanel = (props) => {
   const { dispatch, height, aisles, mapContext } = props;
@@ -79,7 +72,7 @@ const AislePanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible ? (

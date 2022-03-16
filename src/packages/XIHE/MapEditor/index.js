@@ -42,9 +42,7 @@ const MapEditor = (props) => {
       if (event.keyCode === 83 && !keyDown.current) {
         keyDown.current = true;
         if (mapContext) {
-          mapContext.pixiUtils.viewport.drag({
-            pressDrag: false,
-          });
+          mapContext.pixiUtils.viewport.drag({ pressDrag: false });
           dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Choose });
         }
       }
@@ -55,9 +53,7 @@ const MapEditor = (props) => {
       if (event.keyCode === 83) {
         keyDown.current = false;
         if (props.mapContext) {
-          props.mapContext.pixiUtils.viewport.drag({
-            pressDrag: true,
-          });
+          props.mapContext.pixiUtils.viewport.drag({ pressDrag: true });
           dispatch({ type: 'editor/updateLeftActiveCategory', payload: LeftCategory.Drag });
         }
       }

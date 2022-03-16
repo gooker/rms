@@ -43,7 +43,7 @@ export default {
   'app.message.sendCommandSuccess': '发送指令成功',
   'app.message.sendCommandFailed': '发送指令失败',
   'app.message.cancelTask.confirm': '是否确定取消已选择的任务?',
-  'app.message.doubleConfirm': '是否确定继续进行该操作?',
+  'app.message.doubleConfirm': '是否确定继续执行该操作?',
   'app.message.delete.confirm': '是否确定删除该项?',
   'app.message.batchDelete.confirm': '是否确定删除所有已选项?',
   'app.message.networkError': '请求失败, 网络连接可能出现异常',
@@ -81,6 +81,7 @@ export default {
   'app.common.noRecord': '无记录',
   'app.common.Error': '错误',
   'app.common.name': '名称',
+  'app.common.groupName': '组名称',
   'app.common.remark': '备注',
   'app.common.operation': '操作',
   'app.common.failed': '失败',
@@ -90,8 +91,8 @@ export default {
   'app.common.report': '报表',
   'app.common.isRequired': '必填',
   'app.common.description': '描述',
-  'app.common.enabled': '可用',
-  'app.common.disabled': '禁用',
+  'app.common.enabled': '启用中',
+  'app.common.disabled': '已禁用',
   'app.common.list': '列表',
   'app.common.width': '宽度',
   'app.common.height': '高度',
@@ -108,6 +109,7 @@ export default {
   'app.common.targetCell': '目标点',
   'app.common.hide': '隐藏',
   'app.common.notAvailable': '暂无',
+  'app.common.loading': '加载中...',
 
   // 地图相关
   'app.map': '地图',
@@ -233,9 +235,14 @@ export default {
   'app.pod.side.C': 'C',
   'app.pod.side.D': 'D',
 
-  // 任务
+  // 料箱货架
+  'app.tote.rack': '料箱货架',
+
+  // 任务属性
   'app.task': '任务',
   'app.task.id': '任务ID',
+  'app.task.customId': '客户任务ID',
+  'app.task.poolId': '料箱池任务ID',
   'app.task.action': '任务细节',
   'app.task.step': '任务步骤',
   'app.task.flow': '任务流程',
@@ -245,9 +252,8 @@ export default {
   'app.task.info': '任务数据',
   'app.task.record': '任务记录',
   'app.task.type': '任务类型',
-  'app.task.customId': '客户任务ID',
-  'app.task.poolId': '料箱池任务ID',
 
+  // 任务状态
   'app.task.state': '任务状态',
   'app.task.state.New': '新建',
   'app.task.state.Executing': '执行中',
@@ -264,6 +270,7 @@ export default {
   'app.chargeManger.CONNECTING': '对接中',
   'app.chargeManger.CONNECTED': '对接成功',
 
+  // 充电桩类型
   'app.chargeManger.version0': '虚拟',
   'app.chargeManger.version1': '第一代',
   'app.chargeManger.version2': '第二代',
@@ -297,10 +304,8 @@ export default {
   'app.fault.lastReport': '最近上报',
   'app.fault.autoRecover': '自动恢复',
   'app.fault.additionalData': '额外信息',
-
   'app.fault.preDataDefinition': '附加数据1',
   'app.fault.extraData1': '附加数据1',
-
   'app.fault.curDataDefinition': '附加数据2',
   'app.fault.extraData2': '附加数据2',
 

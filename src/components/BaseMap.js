@@ -15,7 +15,6 @@ import {
   DumpBasket,
   WorkStation,
   Intersection,
-  ResizeableEmergencyStop,
   CommonFunction,
 } from '@/entities';
 import { isNull, isItemOfArray } from '@/utils/util';
@@ -37,7 +36,6 @@ function initState(context) {
   context.dumpBasketMap = new Map(); // 抛物框
   context.relationshipLines = new Map(); // 关系线
   context.backImgMap = new Map(); // 背景图片
-  context.fixedEStopMap = new Map(); // 固定紧急避让区
   context.labelMap = new Map(); // 标签
   context.zoneMap = new Map(); // 区域标记
 }
@@ -77,7 +75,7 @@ export default class BaseMap extends React.Component {
     }
   };
 
-  centerView = () => {
+  centerView = (key) => {
     const { viewport } = this.pixiUtils;
     const { x, y, width, height } = viewport.getLocalBounds();
 
@@ -98,7 +96,7 @@ export default class BaseMap extends React.Component {
       minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
     }
     // 记录当前地图世界宽度
-    window.sessionStorage.setItem('EDITOR_MAP', JSON.stringify({ x, y, width, height }));
+    window.sessionStorage.setItem(key, JSON.stringify({ x, y, width, height }));
     this.refresh();
     return minMapRatio;
   };
@@ -136,15 +134,6 @@ export default class BaseMap extends React.Component {
     this.states.showBackImg = flag;
     this.backImgMap.forEach(function (value) {
       value.switchBackImgEntityShown(flag);
-    });
-    this.refresh();
-  };
-
-  // 切换急停区显示
-  switchEmergencyStopShown = (flag) => {
-    this.states.showEmergencyStop = flag;
-    this.fixedEStopMap.forEach(function (eStop) {
-      eStop.switchEStopsVisible(flag);
     });
     this.refresh();
   };
@@ -853,31 +842,6 @@ export default class BaseMap extends React.Component {
         dashedLine.destroy(true);
       }
     });
-  };
-
-  // 渲染固定紧急避让区
-  renderFixedEStopFunction = (data) => {
-    const showEmergency = this.states.showEmergencyStop;
-    const eData = {
-      ...data,
-      showEmergency,
-      notShowFixed: true,
-      refresh: this.refresh,
-      select: this.select,
-    };
-    const fixedEStop = new ResizeableEmergencyStop(eData);
-    this.pixiUtils.viewportAddChild(fixedEStop);
-    this.fixedEStopMap.set(`${data.code}`, fixedEStop);
-  };
-
-  // 移除固定紧急避让区
-  removeFixedEStopFunction = (data) => {
-    const { code } = data;
-    const fixedEStop = this.fixedEStopMap.get(`${code}`);
-    if (fixedEStop) {
-      this.pixiUtils.viewportRemoveChild(fixedEStop);
-      fixedEStop.destroy({ children: true });
-    }
   };
 
   /**

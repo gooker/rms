@@ -5,7 +5,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import { formatMessage } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 import { MapSelectableSpriteType } from '@/config/consts';
 
 const BatchAddCells = (props) => {

@@ -7,7 +7,7 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import RestForm from './RestForm';
-import editorStyles from '../editorLayout.module.less';
+import commonStyles from '@/common.module.less';
 
 const RestPanel = (props) => {
   const { height, dispatch, mapContext, restCells } = props;
@@ -62,7 +62,7 @@ const RestPanel = (props) => {
 
   const listData = getListData();
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       {/* 标题栏 */}
       <div>
         {formVisible ? (

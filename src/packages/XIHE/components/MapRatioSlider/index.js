@@ -1,12 +1,11 @@
 import React, { memo } from 'react';
 import { Col, Row, Slider, Menu, Dropdown } from 'antd';
 import { DownOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RmsDva';
 import commonStyle from '@/common.module.less';
 import styles from './mapRatioSlider.module.less';
 
 const MapRatioSlider = (props) => {
-  const { dispatch, mapMinRatio, mapRatio } = props;
+  const { onChange, mapMinRatio, mapRatio } = props;
 
   // viewport scale 值转换成百分比
   function inputValue() {
@@ -15,8 +14,7 @@ const MapRatioSlider = (props) => {
 
   // 百分比转换成viewport scale 值
   function outputValue(value) {
-    const mapRatio = mapMinRatio + (1 - mapMinRatio) * (value / 100);
-    dispatch({ type: 'editor/saveMapRatio', payload: mapRatio });
+    onChange(mapMinRatio + (1 - mapMinRatio) * (value / 100));
   }
 
   function onDecrease() {
@@ -77,7 +75,4 @@ const MapRatioSlider = (props) => {
     </Row>
   );
 };
-export default connect(({ editor }) => ({
-  mapRatio: editor.mapRatio,
-  mapMinRatio: editor.mapMinRatio,
-}))(memo(MapRatioSlider));
+export default memo(MapRatioSlider);

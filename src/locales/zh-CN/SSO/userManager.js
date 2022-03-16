@@ -31,8 +31,6 @@ export default {
   'sso.user.action.resetPwd': '重置密码',
   'sso.user.sectionAssign': '区域分配',
   'sso.user.roleAssign': '角色分配',
-  'sso.user.tip.enabled': '启用中',
-  'sso.user.tip.disabled': '禁用',
   'sso.user.tip.roleAssigned': '已分配角色',
   'sso.user.tip.roleUnassigned': '未分配角色',
   'sso.user.tip.sectionAssigned': '已分配区域',

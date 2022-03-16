@@ -13,13 +13,13 @@ import {
   LeftOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
 import { formatMessage, isNull } from '@/utils/util';
 import BatchAddCells from '../PopoverPanel/BatchAddCells';
 import GenerateCellCode from '../PopoverPanel/GenerateCellCode';
 import MoveCell from '../PopoverPanel/MoveCell';
 import AdjustCellSpace from '../PopoverPanel/AdjustCellSpace';
+import styles from '../../popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
@@ -45,7 +45,7 @@ const CellPanel = (props) => {
   }
 
   return (
-    <div style={{ height }} className={editorStyles.categoryPanel}>
+    <div style={{ height }} className={commonStyles.categoryPanel}>
       <div>
         {!isNull(formCategory) ? (
           <LeftOutlined

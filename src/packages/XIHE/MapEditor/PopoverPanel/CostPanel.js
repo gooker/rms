@@ -6,8 +6,8 @@ import CostConfigure from '../components/CostConfigure';
 import CreateDefaultRoute from '../components/CreateDefaultRoute';
 import FormattedMessage from '@/components/FormattedMessage';
 import { MapSelectableSpriteType } from '@/config/consts';
-import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
 
 const CostPanel = (props) => {
   const { dispatch, height, selectLines, mapContext } = props;
@@ -29,7 +29,7 @@ const CostPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 380 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 380 }} className={commonStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'app.map.route'} />
       </div>

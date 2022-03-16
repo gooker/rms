@@ -1,11 +1,12 @@
 import * as PIXI from 'pixi.js';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { BitText } from '@/entities';
-import { GlobalAlpha, zIndex } from '@/config/consts';
+import { GlobalAlpha, MonitorSelectableSpriteType, zIndex } from '@/config/consts';
 
 export default class TotePod extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MonitorSelectableSpriteType.ToteRack;
     this.x = props.x;
     this.y = props.y;
     this.angle = props.angle;

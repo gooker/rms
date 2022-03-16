@@ -225,7 +225,7 @@ export const ZoneMarkerType = {
 };
 
 /**
- * 地图可选择元素类型枚举
+ * 地图编辑可选择元素类型枚举
  * 点位、线条、区域标记、Label、充电桩、工作站、通用站点、电梯、投递点、交汇点
  */
 export const MapSelectableSpriteType = {
@@ -240,6 +240,23 @@ export const MapSelectableSpriteType = {
   WORKSTATION: 'workStation',
   INTERSECTION: 'intersection',
   EMERGENCYSTOP: 'emergencyStop',
+};
+
+// 监控地图可选的元素类型
+export const MonitorSelectableSpriteType = {
+  // 车型数据与 config.AGVType 保持一致
+  LatentLifting: 'LatentLifting',
+  Tote: 'Tote',
+  ForkLifting: 'ForkLifting',
+  Sorter: 'Sorter',
+
+  LatentPod: 'LatentPod',
+  ToteRack: 'ToteRack',
+
+  Delivery: 'delivery',
+  Station: 'station',
+  WorkStation: 'workStation',
+  Charger: 'charger',
 };
 
 // 急停区类型枚举

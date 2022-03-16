@@ -35,7 +35,7 @@ const PathLock = (props) => {
   const {
     dispatch,
     allAGVs,
-    mapRef,
+    mapContext,
     selectAgv,
     agvLockView,
     routeView,
@@ -68,7 +68,7 @@ const PathLock = (props) => {
   }
 
   function onAgvListChanged(changedAgvList) {
-    if (!mapRef) return;
+    if (!mapContext) return;
 
     dispatch({
       type: 'monitorView/saveViewState',
@@ -81,13 +81,13 @@ const PathLock = (props) => {
     if (changedAgvList.length > 0 && showAgvLock?.length > 0) {
       lockcellPollingCallback(agvLockView.showLockCellPolling, changedAgvList);
     } else {
-      mapRef.clearAllLocks();
+      mapContext.clearAllLocks();
     }
     if (changedAgvList.length > 0) {
       showRoutePollingCallback(routeView.showRoute, changedAgvList);
     } else {
       // 清理地图上的路径
-      mapRef?.registerShowTaskPath([], true);
+      mapContext?.registerShowTaskPath([], true);
     }
   }
 
@@ -125,20 +125,16 @@ const PathLock = (props) => {
     if (showAgvLock && showAgvLock?.length > 0) {
       dispatch({
         type: 'monitor/fetchAllLockCells',
-        payload: {
-          lockTypes: showAgvLock,
-          robotIds: selectAgv,
-        },
-        then: (locked) => {
-          if (!locked) {
-            message.error(formatMessage({ id: 'monitor.tip.fetchLockFail' }));
-            return;
-          }
-          mapRef.renderLockCell(locked);
-        },
+        payload: { lockTypes: showAgvLock, robotIds: selectAgv },
+      }).then((response) => {
+        if (
+          !dealResponse(response, false, null, formatMessage({ id: 'monitor.tip.fetchLockFail' }))
+        ) {
+          mapContext.renderLockCell(response);
+        }
       });
     } else {
-      mapRef.clearAllLocks();
+      mapContext.clearAllLocks();
     }
   }
 
@@ -165,7 +161,7 @@ const PathLock = (props) => {
     const lockTypes = lockstype || showAgvLock;
     if (robotIds?.length > 0 && lockTypes?.length > 0) {
       LockCellPolling.start({ logicId: currentLogicAreaId, lockTypes, robotIds }, (response) => {
-        mapRef?.renderLockCell(response);
+        mapContext?.renderLockCell(response);
       });
     }
   }
@@ -198,7 +194,7 @@ const PathLock = (props) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.tip.fetchCellLockFail' }));
       } else {
-        mapRef.renderCellLocks(response);
+        mapContext.renderCellLocks(response);
       }
     } else {
       message.error(formatMessage({ id: 'monitor.view.cell.required' }));
@@ -352,7 +348,7 @@ const PathLock = (props) => {
                       switchCellLock(value);
                       if (!value) {
                         form.setFieldsValue({ cellIdForLock: null });
-                        mapRef.clearCellLocks();
+                        mapContext.clearCellLocks();
                       }
                     }}
                     checked={showCellLock}
@@ -386,7 +382,7 @@ const PathLock = (props) => {
 };
 export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
-  mapRef: monitor.mapContext,
+  mapContext: monitor.mapContext,
   selectAgv: monitorView.selectAgv,
   agvLockView: monitorView.agvLockView,
   routeView: monitorView.routeView,

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Form, Row, Col, Switch, Button, Checkbox } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { StationRatePolling } from '@/workers/StationRateManager';
 import { CostOptions } from '../../MapEditor/enums';
@@ -15,7 +15,7 @@ const { formItemLayout } = getFormLayout(6, 16);
 const ViewControlComponent = (props) => {
   const {
     dispatch,
-    mapRef,
+    mapContext,
     shownPriority,
     distanceShow,
     cellPointShow,
@@ -50,9 +50,9 @@ const ViewControlComponent = (props) => {
     }).then((res) => {
       const showAllowed = form.getFieldValue('emergencyAreaShow');
       if (showAllowed) {
-        mapRef.renderEmergencyStopArea(res || []);
+        mapContext.renderEmergencyStopArea(res || []);
       } else {
-        mapRef.clearEmergencyStopArea();
+        mapContext.clearEmergencyStopArea();
       }
     });
   }
@@ -60,8 +60,12 @@ const ViewControlComponent = (props) => {
   // 轮询站点速率
   function switchRatePolling(checked) {
     if (checked) {
-      StationRatePolling.start((value) => {
-        dispatch({ type: 'monitor/updateStationRate', payload: { mapRef, response: value } });
+      StationRatePolling.start((response) => {
+        if (!dealResponse(response)) {
+          const currentData = Object.values(response).filter((item) => !isStrictNull(item))[0];
+          mapContext.renderCommonStationRate(currentData);
+          dispatch({ type: 'monitor/saveStationRate', payload: currentData });
+        }
       });
     } else {
       StationRatePolling.terminate();
@@ -92,7 +96,7 @@ const ViewControlComponent = (props) => {
           >
             <Checkbox.Group
               onChange={(value) => {
-                mapRef && mapRef.filterRelations(value || [], 'monitor');
+                mapContext && mapContext.filterRelations(value || [], 'monitor');
               }}
               options={CostOptions?.map((item) => ({
                 ...item,
@@ -109,7 +113,7 @@ const ViewControlComponent = (props) => {
           >
             <Switch
               onChange={(value) => {
-                mapRef && mapRef.switchDistanceShown(value, false);
+                mapContext && mapContext.switchDistanceShown(value, false);
               }}
             />
           </Form.Item>
@@ -123,7 +127,7 @@ const ViewControlComponent = (props) => {
           >
             <Switch
               onChange={(value) => {
-                mapRef && mapRef.switchCellShown(value, true);
+                mapContext && mapContext.switchCellShown(value, true);
               }}
             />
           </Form.Item>
@@ -137,7 +141,7 @@ const ViewControlComponent = (props) => {
           >
             <Switch
               onChange={(value) => {
-                mapRef && mapRef.switchCoordinationShown(value, true);
+                mapContext && mapContext.switchCoordinationShown(value, true);
               }}
             />
           </Form.Item>
@@ -152,7 +156,7 @@ const ViewControlComponent = (props) => {
             <Switch
               onChange={(value) => {
                 switchRatePolling(value);
-                mapRef && mapRef.switchStationRealTimeRateShown(value);
+                mapContext && mapContext.switchStationRealTimeRateShown(value);
               }}
             />
           </Form.Item>
@@ -167,7 +171,7 @@ const ViewControlComponent = (props) => {
             <Switch
               checked={props.showBackImg}
               onChange={(value) => {
-                mapRef && mapRef.switchBackImgShown(value);
+                mapContext && mapContext.switchBackImgShown(value);
               }}
             />
           </Form.Item>
@@ -186,7 +190,7 @@ const ViewControlComponent = (props) => {
                 >
                   <Switch
                     onChange={(value) => {
-                      mapRef && mapRef.emergencyAreaShown(value);
+                      mapContext && mapContext.emergencyAreaShown(value);
                     }}
                   />
                 </Form.Item>
@@ -205,7 +209,7 @@ const ViewControlComponent = (props) => {
 };
 export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
-  mapRef: monitor.mapContext,
+  mapContext: monitor.mapContext,
   shownPriority: monitorView.shownPriority,
   distanceShow: monitorView.distanceShow,
   cellPointShow: monitorView.cellPointShow,

@@ -27,6 +27,7 @@ import SorterAGV from './SorterAGV';
 import BackImg from './BackImg';
 import ResizeableEmergencyStop from './ResizeableEmergencyStop';
 import RealtimeRate from './RealtimeRate';
+import EmergencyStop from './EmergencyStop';
 
 export {
   Text,
@@ -58,4 +59,5 @@ export {
   BackImg,
   ResizeableEmergencyStop,
   RealtimeRate,
+  EmergencyStop,
 };

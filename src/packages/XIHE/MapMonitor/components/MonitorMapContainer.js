@@ -6,10 +6,15 @@ import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
+import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
+import commonStyles from '@/common.module.less';
+import OperationType from '@/packages/XIHE/MapMonitor/components/OperationType';
+import MonitorMask from '@/packages/XIHE/MapMonitor/components/MonitorMask';
 
+const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
-  const { dispatch, mapContext, currentMap, currentLogicArea, currentRouteMap, preRouteMap } =
-    props;
+  const { dispatch, currentLogicArea, currentRouteMap, preRouteMap } = props;
+  const { mapContext, mapRatio, mapMinRatio, currentMap } = props;
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -30,14 +35,62 @@ const MonitorMapContainer = (props) => {
 
   useEffect(() => {
     if (isNull(mapContext)) return;
+    const { viewport } = mapContext.pixiUtils;
+    viewport.setZoom(mapRatio, true);
+  }, [mapRatio]);
+
+  useEffect(() => {
+    if (isNull(mapContext)) return;
+    const { viewport } = mapContext.pixiUtils;
+    // 很重要: 一定要先取消旧的clamp，不然新的会无法生效
+    viewport.clampZoom(null);
+
+    // 清空相关数据
     mapContext.clearMapStage();
     mapContext.refresh();
+
     if (currentMap) {
       renderMap();
       renderLogicArea();
       renderRouteMap();
-      mapContext.centerView();
       dispatch({ type: 'monitor/saveMapRendered', payload: true });
+
+      const minMapRatio = mapContext.centerView('MONITOR_MAP');
+      dispatch({ type: 'monitor/saveMapMinRatio', payload: minMapRatio });
+
+      // 监听地图缩放比例
+      viewport.off('zoomed-end');
+      viewport.on('zoomed-end', function () {
+        dispatch({ type: 'monitor/saveMapRatio', payload: this.scale.x });
+      });
+
+      // 添加事件处理地图跑出Screen
+      viewport.off('moved');
+      viewport.on(
+        'moved',
+        throttle(function () {
+          const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('MONITOR_MAP'));
+          const topLimit = y + (height - CLAMP_VALUE);
+          if (this.top >= topLimit) {
+            this.top = topLimit;
+          }
+
+          const bottomLimit = y + CLAMP_VALUE;
+          if (this.bottom <= bottomLimit) {
+            this.bottom = bottomLimit;
+          }
+
+          const leftLimit = x + (width - CLAMP_VALUE);
+          if (this.left >= leftLimit) {
+            this.left = leftLimit;
+          }
+
+          const rightLimit = x + CLAMP_VALUE;
+          if (this.right <= rightLimit) {
+            this.right = rightLimit;
+          }
+        }, 200),
+      );
     }
   }, [currentMap, currentLogicArea, mapContext]);
 
@@ -148,13 +201,13 @@ const MonitorMapContainer = (props) => {
       zoneMarker.forEach((zoneMarkerItem) => {
         // 线框
         if (zoneMarkerItem.type === ZoneMarkerType.RECT) {
-          const { code, x, y, width, height, color } = zoneMarkerItem;
-          mapContext.drawRectArea({ code, x, y, width, height, color }, false);
+          const { code, x, y, width, height, color, text } = zoneMarkerItem;
+          mapContext.drawRectArea({ code, x, y, width, height, color, text }, false);
         }
 
         if (zoneMarkerItem.type === ZoneMarkerType.CIRCLE) {
-          const { code, x, y, radius, color } = zoneMarkerItem;
-          mapContext.drawCircleArea({ code, x, y, radius, color }, false);
+          const { code, x, y, radius, color, text } = zoneMarkerItem;
+          mapContext.drawCircleArea({ code, x, y, radius, color, text }, false);
         }
 
         if (zoneMarkerItem.type === ZoneMarkerType.IMG) {
@@ -172,14 +225,9 @@ const MonitorMapContainer = (props) => {
     }
 
     // 紧急停止区
-    // if (Array.isArray(emergencyStopFixedList)) {
-    //   const _emergencyStopFixedList = [...emergencyStopFixedList];
-    //   _emergencyStopFixedList.forEach((eStop) => {
-    //     // 不触发 resize 组件特性
-    //     mapContext.renderFixedEStopFunction(eStop, false);
-    //   });
-    // }
-
+    if (Array.isArray(emergencyStopFixedList)) {
+      mapContext.renderEmergencyStopArea(emergencyStopFixedList);
+    }
     mapContext.refresh();
   }
 
@@ -245,9 +293,46 @@ const MonitorMapContainer = (props) => {
     mapContext.refresh();
   }
 
-  return <MonitorMapView dispatch={dispatch} />;
+  function onSliderChange(value) {
+    dispatch({ type: 'monitor/saveMapRatio', payload: value });
+  }
+
+  return (
+    <div
+      id={'monitorPixiContainer'}
+      className={commonStyles.monitorBodyMiddle}
+      style={{ position: 'relative' }}
+    >
+      <MonitorMapView />
+      <MonitorMask />
+
+      {/* 平板不用显示滑条 */}
+      {!window.currentPlatForm.isTablet && (
+        <>
+          <OperationType />
+          <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
+        </>
+      )}
+    </div>
+  );
 };
 export default connect(({ monitor }) => {
-  const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, mapContext } = monitor;
-  return { currentMap, currentLogicArea, currentRouteMap, preRouteMap, mapContext };
+  const {
+    currentMap,
+    currentLogicArea,
+    currentRouteMap,
+    preRouteMap,
+    mapContext,
+    mapRatio,
+    mapMinRatio,
+  } = monitor;
+  return {
+    currentMap,
+    currentLogicArea,
+    currentRouteMap,
+    preRouteMap,
+    mapContext,
+    mapRatio,
+    mapMinRatio,
+  };
 })(memo(MonitorMapContainer));

@@ -3,10 +3,10 @@ import { Divider, Form, Checkbox, Radio, Switch, Select } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import editorStyles from '../editorLayout.module.less';
-import styles from './popoverPanel.module.less';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { CostOptions, DirectionOption } from '../enums';
+import styles from '../../popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
 
 const { formItemLayout } = getFormLayout(7, 17);
 const ViewControllerPanel = (props) => {
@@ -78,7 +78,7 @@ const ViewControllerPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 350 }} className={editorStyles.categoryPanel}>
+    <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
       <div>
         <FormattedMessage id={'app.map.view'} />
       </div>
