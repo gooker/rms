@@ -226,11 +226,8 @@ const MonitorMapContainer = (props) => {
 
     // 紧急停止区
     if (Array.isArray(emergencyStopFixedList)) {
-      emergencyStopFixedList.forEach((eStop) => {
-        mapContext.renderFixedEStopFunction(eStop);
-      });
+      mapContext.renderEmergencyStopArea(emergencyStopFixedList);
     }
-
     mapContext.refresh();
   }
 

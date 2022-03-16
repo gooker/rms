@@ -69,20 +69,20 @@ export default class LatentAGV extends PIXI.Container {
     return null;
   }
 
-  // 选择相关
-
   // 创建选择边框
   createSelectionBorder() {
+    const scaleBase = 1.2;
     this.selectionBorder = new SmoothGraphics();
     this.selectionBorder.lineStyle(5, 0xff0000);
     const { width, height } = this.getLocalBounds();
-    this.selectionBorder.drawRect(0, 0, width * 1.3, height);
+    this.selectionBorder.drawRect(0, 0, width * scaleBase, height * scaleBase);
     this.selectionBorder.alpha = 0.8;
-    this.selectionBorder.pivot = { x: (width * 1.3) / 2, y: height / 2 };
+    this.selectionBorder.pivot = { x: (width * scaleBase) / 2, y: (height * scaleBase) / 2 };
     this.selectionBorder.visible = false;
     this.addChild(this.selectionBorder);
   }
 
+  // 选择相关
   onSelect = () => {
     if (!this.selected) {
       this.selected = true;

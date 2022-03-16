@@ -7,6 +7,7 @@ import WorkStationProperty from './WorkStationProperty';
 import CommonStationProperty from './CommonStationProperty';
 import AGVElementProp from './AgvProperty';
 import ChargeProperty from './ChargeProperty';
+import EStopProperty from './EStopProperty';
 import commonStyle from '@/common.module.less';
 
 const Property = (props) => {
@@ -18,6 +19,8 @@ const Property = (props) => {
       switch (type) {
         case MapSelectableSpriteType.WORKSTATION:
           return <WorkStationProperty data={selection} />;
+        case MapSelectableSpriteType.EMERGENCYSTOP:
+          return <EStopProperty data={selection} />;
         case MapSelectableSpriteType.STATION:
           return <CommonStationProperty data={selection} />;
         case AGVType.LatentLifting:
@@ -35,7 +38,7 @@ const Property = (props) => {
   }
 
   return (
-    <div style={{ height, width }} className={commonStyle.categoryPanel}>
+    <div style={{ height, width: 250, right: 65 }} className={commonStyle.categoryPanel}>
       {renderContent()}
     </div>
   );

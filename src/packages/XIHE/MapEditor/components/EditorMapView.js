@@ -5,7 +5,7 @@ import {
   getTextureFromResources,
   loadEditorExtraTextures,
 } from '@/utils/mapUtil';
-import { Cell } from '@/entities';
+import { Cell, ResizeableEmergencyStop } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
@@ -31,6 +31,7 @@ class EditorMapView extends BaseMap {
     // 核心业务逻辑参数
     this.cellXMap = new Map(); // {[x]:[Cell]}
     this.cellYMap = new Map(); // {[y]:[Cell]}
+    this.fixedEStopMap = new Map(); // 固定紧急避让区
 
     // 选择相关
     this.selectedCells = []; // 缓存选中的点位ID
@@ -398,6 +399,40 @@ class EditorMapView extends BaseMap {
         entity = null;
     }
     return entity;
+  };
+
+  // ************************ 急停区 **********************
+  // 渲染固定紧急避让区
+  renderFixedEStopFunction = (data) => {
+    const showEmergency = this.states.showEmergencyStop;
+    const eData = {
+      ...data,
+      showEmergency,
+      refresh: this.refresh,
+      select: this.select,
+    };
+    const fixedEStop = new ResizeableEmergencyStop(eData);
+    this.pixiUtils.viewportAddChild(fixedEStop);
+    this.fixedEStopMap.set(`${data.code}`, fixedEStop);
+  };
+
+  // 移除固定紧急避让区
+  removeFixedEStopFunction = (data) => {
+    const { code } = data;
+    const fixedEStop = this.fixedEStopMap.get(`${code}`);
+    if (fixedEStop) {
+      this.pixiUtils.viewportRemoveChild(fixedEStop);
+      fixedEStop.destroy({ children: true });
+    }
+  };
+
+  // 切换急停区显示
+  switchEmergencyStopShown = (flag) => {
+    this.states.showEmergencyStop = flag;
+    this.fixedEStopMap.forEach(function (eStop) {
+      eStop.switchEStopsVisible(flag);
+    });
+    this.refresh();
   };
 
   deleteAnyTime = (selections) => {
