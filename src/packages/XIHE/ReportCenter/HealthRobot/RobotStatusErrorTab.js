@@ -33,7 +33,7 @@ const RoboStatusErrorComponent = (props) => {
     codeHistoryLine.setOption(
       offlineHistoryLineOption(
         `${formatMessage({ id: 'reportCenter.robot.error' })}(${formatMessage({
-          id: 'reportCenter.way.robot',
+          id: 'reportCenter.way.agv',
         })})`,
       ),
       true,

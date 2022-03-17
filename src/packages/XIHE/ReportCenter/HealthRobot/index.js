@@ -2,13 +2,18 @@ import React, { useState, memo, useEffect } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
 import moment from 'moment';
 import { fetchAGVHealth } from '@/services/api';
-import { isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
+import { isStrictNull, GMT2UserTimeZone, dealResponse, formatMessage } from '@/utils/util';
 import ScanCodeComponent from './RobotScanCodeTab';
 import RobotOfflineComponent from './RobotOfflineTab';
 import RobotFaultComponent from './RobotFaultTab';
 import RobotStatusErrorTab from './RobotStatusErrorTab';
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
+
+const colums = {
+  agvId: formatMessage({ id: 'app.agv' }),
+  time: formatMessage({ id: 'app.time' }),
+};
 
 const TabCollection = [
   {
@@ -39,6 +44,9 @@ const HealthCar = (props) => {
   const [offlineOriginData, setOfflineOriginData] = useState({}); // 原始数据 小车离线
   const [statuserrorOriginData, setStatuserrorOriginData] = useState({}); // 原始数据 状态错误
   const [faultOriginData, setFaultOriginData] = useState({}); // 原始数据 小车故障
+
+  const [keyCodeData, setKeyCodeData] = useState({}); // 扫码 - {key:value}
+  // TODO: 获取所有故障号以及对应的翻译
 
   const [activeTab, setActivieTab] = useState('scan');
 
@@ -71,10 +79,12 @@ const HealthCar = (props) => {
         setOfflineOriginData(response?.offline ?? {});
         setStatuserrorOriginData(response?.error ?? {});
         setFaultOriginData(response?.malfunction ?? {});
+        setKeyCodeData(response?.translate ?? {});
       }
     }
   }
 
+  // 下载数据
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
@@ -94,7 +104,9 @@ const HealthCar = (props) => {
         ))}
       </div>
       <div className={style.body}>
-        {activeTab === 'scan' && <ScanCodeComponent originData={scanOriginData} />}
+        {activeTab === 'scan' && (
+          <ScanCodeComponent originData={scanOriginData} keyDataMap={keyCodeData} />
+        )}
         {activeTab === 'offline' && <RobotOfflineComponent originData={offlineOriginData} />}
         {activeTab === 'statuserror' && <RobotStatusErrorTab originData={statuserrorOriginData} />}
         {activeTab === 'fault' && <RobotFaultComponent originData={faultOriginData} />}

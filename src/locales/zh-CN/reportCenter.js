@@ -40,7 +40,7 @@ export default {
   'reportCenter.qrcodehealth.latentPod': '潜伏货架二维码',
   'reportCenter.qrcodehealth.tote': '料箱二维码',
   'reportCenter.way.cellId': '按码号',
-  'reportCenter.way.robot': '按车号',
+  'reportCenter.way.agv': '按车号',
   'reportCenter.way.date': '按日期',
   'reportCenter.robot.scancode': '小车扫码',
   'reportCenter.robot.offline': '小车离线',
@@ -57,19 +57,6 @@ export default {
 
   'reportCenter.robot.load.action': '动作负载',
 
-  'reportCenter.qrcodehealth.slightdeviation': '轻微偏移',
-  'reportCenter.qrcodehealth.generaldeviation': ' 一般偏移',
-  'reportCenter.qrcodehealth.seriousdeviation': ' 严重偏移',
-  'reportCenter.qrcodehealth.throwcodeNum': '丢码次数',
-  'reportCenter.qrcodehealth.errorcodeNum': '错码次数',
-  'reportCenter.qrcodehealth.slightdeviationAMR': '轻微偏移车数',
-  'reportCenter.qrcodehealth.generaldeviationAMR': ' 一般偏移车数',
-  'reportCenter.qrcodehealth.seriousdeviationAMR': ' 严重偏移车数',
-  'reportCenter.qrcodehealth.dropoutNumAMR': '丢码车数',
-  'reportCenter.qrcodehealth.errorNumAMR': '错码车数',
-  'reportCenter.qrcodehealth.dropoutcode': '丢码码数',
-  'reportCenter.qrcodehealth.errorcode': '错码码数',
-  'reportCenter.qrcodehealth.deviatiocode': '偏移码数',
 
   // 负载-tootip
   'reportCenter.load.action.NO_ACTION': '无动作',

@@ -6,23 +6,12 @@ import DatePickerSelector from '../../components/DatePickerSelector';
 import { isNull } from 'lodash';
 
 const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 14 } };
-let _name = null;
 
 const FilterSearchBytime = (props) => {
-  const { refreshCharts, name } = props;
-  _name = name || 'robotIds';
+  const { refreshCharts, showCellId, showAgvId } = props;
 
   const [formRef] = Form.useForm();
   const [togglesDate, setTogglesDate] = useState(0);
-
-  async function getRequestBody() {
-    const { startByTime, endByTime, robotIds } = formRef.getFieldsValue();
-    return {
-      startByTime,
-      endByTime,
-      robotIds,
-    };
-  }
 
   return (
     <div>
@@ -48,21 +37,38 @@ const FilterSearchBytime = (props) => {
                 </Form.Item>
               </Col>
 
-              <Col span={6}>
-                <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
-                  <Select
-                    mode="tags"
-                    style={{ width: '100%' }}
-                    maxTagTextLength={5}
-                    maxTagCount={4}
-                    allowClear
-                  />
-                </Form.Item>
-              </Col>
+              {showCellId && (
+                <Col span={6}>
+                  <Form.Item name={'cellId'} label={<FormattedMessage id="app.map.cell" />}>
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      maxTagTextLength={5}
+                      maxTagCount={4}
+                      allowClear
+                    />
+                  </Form.Item>
+                </Col>
+              )}
+              {showAgvId && (
+                <Col span={6}>
+                  <Form.Item name={'agvId'} label={<FormattedMessage id="app.agv" />}>
+                    <Select
+                      mode="tags"
+                      style={{ width: '100%' }}
+                      maxTagTextLength={5}
+                      maxTagCount={4}
+                      allowClear
+                    />
+                  </Form.Item>
+                </Col>
+              )}
               <Col span={6}>
                 <Button
                   onClick={() => {
-                    refreshCharts(getRequestBody());
+                    formRef.validateFields().then((values) => {
+                      refreshCharts(values);
+                    });
                   }}
                 >
                   <FormattedMessage id={'app.button.check'} />

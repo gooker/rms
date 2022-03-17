@@ -33,8 +33,9 @@ const LogSearchForm = (props) => {
   useEffect(() => {
     async function init() {
       const mapData = await fetchActiveMap();
-      if (!dealResponse(mapData)) {
+      if (!dealResponse(mapData) && mapData) {
         const { id } = mapData;
+        if (isNull(id)) return;
         const modelTypes = await getFormModelTypes({ mapId: id });
         if (!dealResponse(modelTypes)) {
           const optionsData = [

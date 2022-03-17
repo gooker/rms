@@ -33,7 +33,7 @@ const RobotOfflineComponent = (props) => {
     codeHistoryLine.setOption(
       offlineHistoryLineOption(
         `${formatMessage({ id: 'reportCenter.robot.offline' })}(${formatMessage({
-          id: 'reportCenter.way.robot',
+          id: 'reportCenter.way.agv',
         })})`,
       ),
       true,
