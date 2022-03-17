@@ -17,8 +17,8 @@ class EmergencyStop extends PIXI.Container {
     super();
     this.type = MapSelectableSpriteType.EMERGENCYSTOP;
     this.code = props.code;
-    this.x = props.x;
-    this.y = props.y;
+    this.x = props.x + props.xlength / 2;
+    this.y = props.y + props.ylength / 2;
     this.angle = props.angle || 0;
     this.zIndex = zIndex.emergencyStop;
     this.alpha = 0.75;
@@ -41,6 +41,8 @@ class EmergencyStop extends PIXI.Container {
       this.drawEStopMask(props);
     } else {
       this.create(props);
+      this.pivot.x = props.xlength / 2;
+      this.pivot.y = props.ylength / 2;
     }
   }
 
@@ -90,10 +92,10 @@ class EmergencyStop extends PIXI.Container {
       this.areaSprite.destroy(true);
       this.areaSprite = null;
     }
-    if (!isNull(this.nameSprite)) {
-      this.removeChild(this.nameSprite);
-      this.nameSprite.destroy(true);
-      this.nameSprite = null;
+    if (!isNull(this.namTextSprite)) {
+      this.removeChild(this.namTextSprite);
+      this.namTextSprite.destroy(true);
+      this.namTextSprite = null;
     }
     if (!isNull(this.fixIcon)) {
       this.removeChild(this.fixIcon);
@@ -111,12 +113,16 @@ class EmergencyStop extends PIXI.Container {
       this.selectionBorder = null;
     }
 
+    if (!isNull(params.x)) {
+      this.x = params.x + params.xlength / 2;
+    }
+    if (!isNull(params.y)) {
+      this.y = params.y + params.ylength / 2;
+    }
+    if (!isNull(params.angle)) {
+      this.angle = params.angle;
+    }
     this.create(params);
-  }
-
-  // 仅仅更新外观
-  updateLayout(){
-
   }
 
   createSelectionBorder() {

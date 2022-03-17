@@ -1638,11 +1638,6 @@ class MonitorMapView extends BaseMap {
     this.refresh();
   };
 
-  updateEmergencyStopArea = (data) => {
-    const entity = this.emergencyAreaMap.get(`${data.code}`);
-      entity && entity.updateLayout(data)
-  };
-
   // 清除所有的紧急停止区域
   clearEmergencyStopArea = () => {
     this.emergencyAreaMap.forEach((estop) => {

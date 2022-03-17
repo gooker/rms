@@ -8,6 +8,7 @@ import {
   deleteEmergencyStop,
   getEmergencyStopByCode,
   changeEmergencyStopStatus,
+  saveEmergencyStop,
 } from '@/services/XIHE';
 
 const { formItemLayout } = getFormLayout(7, 17);
@@ -72,8 +73,13 @@ const EmergencyStopProperty = (props) => {
   async function saveUpdate() {
     setEditMode(false);
     if (!isNull(formData.current)) {
-      console.log(formData.current);
-      formData.current = null;
+      const response = await saveEmergencyStop(formData.current);
+      if (!dealResponse(response, true)) {
+        formData.current = null;
+        setEditMode(false);
+      }
+    } else {
+      setEditMode(false);
     }
   }
 
@@ -211,8 +217,9 @@ const EStopForm = (props) => {
   const [formRef] = Form.useForm();
 
   function onValuesChange(changedValue, values) {
-    update(values);
-    console.log(values);
+    const mergeData = { ...data, ...values };
+    update(mergeData);
+    mapContext.renderEmergencyStopArea([mergeData]);
   }
 
   return (
