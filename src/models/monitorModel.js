@@ -2,7 +2,7 @@ import { message } from 'antd';
 import { findIndex } from 'lodash';
 import { hasAppPermission } from '@/utils/Permission';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { AGVType, AppCode } from '@/config/config';
 import { Category, MonitorOperationType } from '@/packages/XIHE/MapMonitor/enums';
 import {
@@ -10,6 +10,7 @@ import {
   fetchEmergencyStopList,
   fetchLatentPodList,
   fetchMapAGVLocks,
+  saveEmergencyStop,
 } from '@/services/XIHE';
 import {
   autoCallLatentPodToWorkstation,
@@ -90,6 +91,30 @@ export default {
   reducers: {
     saveState(state, action) {
       return { ...state, ...action.payload };
+    },
+    saveEmergencyStopList(state, action) {
+      const emergencyStopList = action.payload;
+
+      // 全局急停
+      const sectionId = parseInt(window.localStorage.getItem('sectionId'));
+      const sectionEstop = emergencyStopList.filter((item) => {
+        return item.sectionId === sectionId && item.estopType === 'Section' && item.activated;
+      });
+      const globalActive = sectionEstop.length >= 1;
+
+      // 逻辑区急停
+      const logicActive = emergencyStopList
+        .filter(
+          (item) => item.sectionId === sectionId && item.estopType === 'Logic' && item.activated,
+        )
+        .map(({ logicId }) => logicId);
+
+      return {
+        ...state,
+        globalActive,
+        logicActive,
+        emergencyStopList,
+      };
     },
     saveMapRatio(state, action) {
       return {
@@ -253,6 +278,19 @@ export default {
       }
       return newState;
     },
+    saveGlobalActive(state, action) {
+      return {
+        ...state,
+        globalActive: action.payload,
+      };
+    },
+
+    saveLogicActive(state, action) {
+      return {
+        ...state,
+        logicActive: action.payload,
+      };
+    },
   },
 
   effects: {
@@ -286,7 +324,7 @@ export default {
     },
 
     // ***************** 获取监控小车、货架等相关信息 ***************** //
-    *initMonitorLoad(_, { call, select, put }) {
+    *initMonitorLoad(_, { select, put }) {
       const { currentMap } = yield select(({ monitor }) => monitor);
       if (isNull(currentMap)) return null;
 
@@ -547,6 +585,28 @@ export default {
       const { currentLogicArea } = yield select((state) => state.monitor);
       const { lockTypes, robotIds } = payload;
       return yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
+    },
+
+    // ************************ 急停区 ************************ //
+    *saveMonitorEStop({ payload }, { call, select }) {
+      const { start, end } = payload;
+      const { currentMap, currentLogicArea } = yield select(({ monitor }) => monitor);
+      const requestBody = {
+        code: `E_${getRandomString(6)}`,
+        mapId: currentMap.id,
+        logicId: currentLogicArea,
+        estopMode: 'LockPath',
+        estopType: 'Area',
+        x: start.x,
+        y: start.y,
+        xlength: Math.abs(end.x - start.x),
+        ylength: Math.abs(end.y - start.y),
+        angle: 0,
+      };
+      const response = yield call(saveEmergencyStop, requestBody);
+      if (!dealResponse(response, true)) {
+        return requestBody;
+      }
     },
   },
 };

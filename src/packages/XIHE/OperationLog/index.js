@@ -91,7 +91,7 @@ const OperationLogComponent = (props) => {
       ellipsis: true,
     },
     {
-      title: <FormattedMessage id="app.taskDetail.createTime" />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       align: 'center',
       width: 200,
       sorter: true,

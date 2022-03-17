@@ -177,16 +177,16 @@ export const EStopStateColor = {
 // 地图元素 zIndex
 export const zIndex = {
   zoneMarker: 1,
+  line: 1,
   label: 2,
   targetLine: 3,
   cell: 4,
-  line: 5,
   temporaryLock: 6,
-  emergencyStop: 6,
   agv: 7,
   pod: 8,
   cellHeat: 9,
   functionIcon: 10,
+  emergencyStop: 11,
 };
 
 // 日志下载文件类型

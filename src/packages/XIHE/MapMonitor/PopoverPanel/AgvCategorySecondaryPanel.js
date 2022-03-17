@@ -4,7 +4,7 @@ import { AgvCategoryTools } from '../enums';
 import styles from '../monitorLayout.module.less';
 
 const AgvCategorySecondaryPanel = (props) => {
-  const { dispatch, agvType, height } = props;
+  const { agvType, height } = props;
 
   function renderIcon(icon, style) {
     if (typeof icon === 'string') {
@@ -15,11 +15,11 @@ const AgvCategorySecondaryPanel = (props) => {
   }
 
   function onClick(category) {
-    dispatch({ type: 'monitor/saveCategoryModal', payload: category });
+    window.$$dispatch({ type: 'monitor/saveCategoryModal', payload: category });
   }
 
   return (
-    <div style={{ height, width: 60,overflow:'auto' }} className={styles.popoverPanel}>
+    <div style={{ height, width: 60, overflow: 'auto' }} className={styles.popoverPanel}>
       {AgvCategoryTools.map(({ label, icon, value, style, module }) => {
         if (module.includes(agvType)) {
           const title = typeof label === 'function' ? label(agvType) : label;

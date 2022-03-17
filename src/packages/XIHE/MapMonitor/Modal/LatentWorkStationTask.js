@@ -87,7 +87,7 @@ const LatentWorkStationTask = (props) => {
 
           <Form.Item
             name={'workstation'}
-            label={formatMessage({ id: 'app.map.workstation' })}
+            label={formatMessage({ id: 'app.map.workStation' })}
             rules={[{ required: true }]}
           >
             <Select style={{ width: '80%' }}>
@@ -101,11 +101,7 @@ const LatentWorkStationTask = (props) => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name={'robotId'}
-            label={formatMessage({ id: 'app.agv.id' })}
-            rules={[{ required: true }]}
-          >
+          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv.id' })}>
             <InputNumber />
           </Form.Item>
 

@@ -163,7 +163,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.createTime" />}
+                    title={<FormattedMessage id="app.common.creationTime" />}
                     content={
                       <span>
                         {GMT2UserTimeZone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}

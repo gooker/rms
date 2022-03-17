@@ -1,16 +1,24 @@
 class EventManager {
   callbacks = {};
 
-  subscribe(type, fn) {
-    if (!Array.isArray(this.callbacks[type])) {
-      this.callbacks[type] = [];
+  /**
+   * 这个id是用来标记function, 可以便捷取消订阅
+   */
+  subscribe(type, fn, id) {
+    if (typeof fn === 'function') {
+      if (!Array.isArray(this.callbacks[type])) {
+        this.callbacks[type] = [];
+      }
+      fn.id = id;
+      this.callbacks[type].push(fn);
+    } else {
+      console.error('subscribe第二个参数必须为function');
     }
-    this.callbacks[type].push(fn);
   }
 
-  unSubscribe(type, fn) {
+  unSubscribe(type, id) {
     if (Array.isArray(this.callbacks[type])) {
-      this.callbacks[type] = this.callbacks[type].filter((func) => func !== fn);
+      this.callbacks[type] = this.callbacks[type].filter((func) => func.id !== id);
     }
   }
 

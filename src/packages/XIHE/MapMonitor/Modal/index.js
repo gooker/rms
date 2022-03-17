@@ -17,23 +17,28 @@ import ViewControlComponent from './ViewControlComponent';
 import ToteViewControlComponent from './ToteViewControlComponent';
 import HotHeatControlComponent from './HotHeatControlComponent';
 import SetupLatentPod from './SetupLatentPod/SetupLatentPod';
-import TemporaryForbidcell from './TemporaryForbidcell';
+import TemporaryForbiddenCell from './TemporaryForbidcell';
 import PodToStationMessage from './PodToStationMessage';
 import LatentStopMessage from './LatentStopMessage';
 import WorkStationReport from './WorkStationReport';
 import CommonStationReport from './CommonStationReport';
 import AgvAlert from './AgvInfo/AgvAlert';
-import AgvRunninInfo from './AgvInfo/AgvRunninInfo';
+import AgvRunningInfo from './AgvInfo/AgvRunninInfo';
+import EmergencyManagerModal from './EmergencyStopModal';
 
 const MonitorModals = (props) => {
   const { categoryModal, categoryPanel, dispatch } = props;
   return (
     <>
+      {categoryModal === 'AgvAlert' && <AgvAlert />}
+      {categoryModal === 'AgvRunInfo' && <AgvRunningInfo />}
+
       {categoryModal === 'emptyRun' && <EmptyRun />}
       {categoryModal === 'charge' && <Charging />}
       {categoryModal === 'goRest' && <ToRest />}
       {categoryModal === 'carry' && <CarryPod />}
       {categoryModal === 'advancedCarry' && <AdvancedCarry />}
+
       {categoryModal === 'workStationTask' && categoryPanel === 'LatentAGV' && (
         <LatentWorkStationTask />
       )}
@@ -43,8 +48,9 @@ const MonitorModals = (props) => {
       {categoryModal === 'workStationTask' && categoryPanel === 'ToteAGV' && (
         <AutomaticToteWorkstationTask />
       )}
+
       {categoryModal === 'remoteControl' && <RemoteControl />}
-      {categoryModal === 'custom' && <CustomComponent category={categoryPanel} />}
+      {categoryModal === 'custom' && <CustomComponent />}
       {categoryModal === 'dumpCargo' && <Parabolic />}
       {categoryModal === 'pickCargo' && <PickCargo />}
       {categoryModal === 'pathLock' && <PathLock />}
@@ -54,13 +60,11 @@ const MonitorModals = (props) => {
       {categoryModal === 'setLatentPod' && <SetupLatentPod dispatch={dispatch} />}
       {categoryModal === 'podToWorkstationInfoMessage' && <PodToStationMessage />}
       {categoryModal === 'stopMessage' && <LatentStopMessage />}
-      {categoryModal === 'temporaryBlock' && <TemporaryForbidcell />}
+      {categoryModal === 'temporaryBlock' && <TemporaryForbiddenCell />}
+      {categoryModal === 'emergencyManagerModal' && <EmergencyManagerModal dispatch={dispatch} />}
 
-      {categoryModal === 'WorkStation' && <WorkStationReport />}
       {categoryModal === 'station' && <CommonStationReport />}
-
-      {categoryModal === 'AgvAlert' && <AgvAlert />}
-      {categoryModal === 'AgvRunInfo' && <AgvRunninInfo />}
+      {categoryModal === 'WorkStation' && <WorkStationReport />}
     </>
   );
 };

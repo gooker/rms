@@ -434,11 +434,7 @@ class MonitorMapView extends BaseMap {
   };
 
   // ********** 潜伏车 ********** //
-  /**
-   * @param latentAGVData 数据
-   * @param callback 点击回调
-   */
-  addLatentAGV = (latentAGVData, callback) => {
+  addLatentAGV = (latentAGVData) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**AGV就会创建一台车[offline]
@@ -450,7 +446,6 @@ class MonitorMapView extends BaseMap {
       return latentAGV;
     }
     latentAGV = new LatentAGV({
-      $$formData: latentAGVData, // 原始DB数据
       id: latentAGVData.robotId,
       x: latentAGVData.x || cellEntity?.x,
       y: latentAGVData.y || cellEntity?.y,
@@ -461,10 +456,7 @@ class MonitorMapView extends BaseMap {
       manualMode: latentAGVData.manualMode,
       cellId: latentAGVData.currentCellId,
       angle: latentAGVData.currentDirection,
-      active: true,
-      // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
-      select: typeof callback === 'function' ? callback : this.select,
-      // click: this.onAgvClick,
+      select: this.select,
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentAGV);
     this.idAGVMap.set(`${latentAGVData.robotId}`, latentAGV);
@@ -605,6 +597,7 @@ class MonitorMapView extends BaseMap {
   };
 
   refreshLatentPod = (podStatus) => {
+    // {"podId":"22","direction":0,"cellId":22,"h":1050,"w":1050}
     const { podId, robotId, cellId: currentCellId, direction: podDirection = 0 } = podStatus;
     const width = podStatus.w || LatentPodSize.width;
     const height = podStatus.h || LatentPodSize.height;
@@ -662,7 +655,7 @@ class MonitorMapView extends BaseMap {
         }
         latentPod.visible = true;
         latentPod.cellId = currentCellId;
-        latentPod.setAlgle(podDirection);
+        latentPod.setAngle(podDirection);
       }
     } else {
       // 首先看这个pod是否已经存在, 不存在的话再添加, 存在的话可能是更新位置
@@ -671,10 +664,10 @@ class MonitorMapView extends BaseMap {
         latentPod.x = cellEntity.x;
         latentPod.y = cellEntity.y;
         latentPod.resize(width, height);
-        latentPod.setAlgle(podDirection);
+        latentPod.setAngle(podDirection);
       } else {
         this.addLatentPod({
-          id: podId,
+          podId,
           cellId: currentCellId,
           angle: podDirection,
           width,
@@ -1568,93 +1561,74 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 渲染 清除 紧急停止区域 ********************** //
-  getLogicWidth = () => {
-    const { worldHeight, worldWidth } = this.pixiUtils.viewport;
-    return { worldHeight, worldWidth };
-  };
-
   renderEmergencyStopArea = (allData) => {
-    const showEmergency = this.states.emergencyAreaShown;
-    const { checkEStopArea } = this.props;
-    const worldSize = this.getLogicWidth();
     const { globalActive, logicActive, currentLogicArea } = window.$$state().monitor;
+    const showEmergency = this.states.emergencyAreaShown;
 
-    const _visible = showEmergency && (globalActive || logicActive.includes(currentLogicArea));
-    this.logicSpriteSectionFlag = false;
-    this.logicSpriteLogicFlag = false;
-
+    // 根据store数据初步判定visible
+    let sectionEStopVisibleFlag = false;
+    let logicEStopVisibleFlag = false;
     if (globalActive) {
-      this.logicSpriteSectionFlag = true;
-    }
-    if (!globalActive && logicActive.includes(currentLogicArea)) {
-      this.logicSpriteLogicFlag = true;
+      sectionEStopVisibleFlag = true;
+    } else {
+      logicEStopVisibleFlag = logicActive.includes(currentLogicArea);
     }
 
-    // logic section 比较特殊  只需要留一条数据就够了
-    // 渲染新拿到所有的紧急停止点
     allData.forEach((currentData) => {
-      const eStopData = {
-        ...currentData,
-        worldSize,
-        select: this.select,
-      };
-
       if (!['Section', 'Logic', 'Area'].includes(currentData.estopType)) {
         return;
       }
       if (currentData.estopType !== 'Section' && currentData.logicId !== currentLogicArea) {
         return;
       }
+
+      const eStopData = {
+        ...currentData,
+        worldBounds: this.pixiUtils.viewport.getLocalBounds(),
+        select: this.select,
+      };
+
       if (['Section', 'Logic'].includes(currentData.estopType)) {
         let updateSectionFlag = currentData.estopType === 'Section';
         let updateLogicFlag = currentData.estopType === 'Logic';
-        let _entity = this.emergencyAreaMap.get(`special${currentData.estopType}`);
-        if (isNull(_entity)) {
-          // 新增
-          _entity = new EmergencyStop(eStopData);
-          this.pixiUtils.viewportAddChild(_entity);
-          this.emergencyAreaMap.set(`special${currentData.estopType}`, _entity);
-          if (currentData.estopType === 'Section') {
-            updateSectionFlag = false;
-          } else {
-            updateLogicFlag = false;
+
+        let entity = this.emergencyAreaMap.get(`special${currentData.estopType}`);
+        if (isNull(entity)) {
+          entity = new EmergencyStop(eStopData);
+          this.pixiUtils.viewportAddChild(entity);
+          this.emergencyAreaMap.set(`special${currentData.estopType}`, entity);
+        }
+
+        if (currentData.estopType === 'Section') {
+          const sectionMaskSprite = this.emergencyAreaMap.get('specialSection');
+          if (sectionMaskSprite) {
+            // TODO: 使用 visible 控制无效
+            sectionMaskSprite.renderable = showEmergency && sectionEStopVisibleFlag;
+            if (updateSectionFlag) {
+              sectionMaskSprite.sectionEStop.tint = currentData.isSafe
+                ? EStopStateColor.active.safe.fillColor
+                : EStopStateColor.active.unSafe.fillColor;
+            }
           }
         }
 
-        const sectionMaskSprite = this.emergencyAreaMap.get('specialSection');
-        if (sectionMaskSprite) {
-          sectionMaskSprite.renderable = _visible && this.logicSpriteSectionFlag;
-          if (updateSectionFlag) {
-            sectionMaskSprite.logicSpriteSection.tint = currentData.isSafe
-              ? EStopStateColor.active.safe.fillColor
-              : EStopStateColor.active.unSafe.fillColor;
-
-            this.emergencyAreaMap.delete(`specialSection`);
-            this.emergencyAreaMap.set(`specialSection`, sectionMaskSprite);
-          }
-        }
-
-        const logicMaskSprite = this.emergencyAreaMap.get('specialLogic');
-        if (logicMaskSprite) {
-          logicMaskSprite.renderable = _visible && this.logicSpriteLogicFlag;
-          if (updateLogicFlag) {
-            logicMaskSprite.logicSpriteLogic.tint = currentData.isSafe
-              ? EStopStateColor.active.safe.fillColor
-              : EStopStateColor.active.unSafe.fillColor;
-
-            this.emergencyAreaMap.delete(`specialLogic`);
-            this.emergencyAreaMap.set(`specialLogic`, logicMaskSprite);
+        if (currentData.estopType === 'Logic') {
+          const logicMaskSprite = this.emergencyAreaMap.get('specialLogic');
+          if (logicMaskSprite) {
+            // TODO: 使用 visible 控制无效
+            logicMaskSprite.renderable = showEmergency && logicEStopVisibleFlag;
+            if (updateLogicFlag) {
+              logicMaskSprite.logicEStop.tint = currentData.isSafe
+                ? EStopStateColor.active.safe.fillColor
+                : EStopStateColor.active.unSafe.fillColor;
+            }
           }
         }
       } else {
-        // 判断这个code是否存在 存在就更新
         const stopEntity = this.emergencyAreaMap.get(`${currentData.code}`);
         if (stopEntity) {
           stopEntity.update(eStopData);
-          this.emergencyAreaMap.delete(`${currentData.code}`);
-          this.emergencyAreaMap.set(`${currentData.code}`, stopEntity);
         } else {
-          // 新增
           const eStop = new EmergencyStop(eStopData);
           this.pixiUtils.viewportAddChild(eStop);
           this.emergencyAreaMap.set(`${currentData.code}`, eStop);
@@ -1681,22 +1655,7 @@ class MonitorMapView extends BaseMap {
       this.emergencyAreaMap.delete(`${code}`);
       this.pixiUtils.viewportRemoveChild(estop);
       estop.destroy({ children: true });
-    }
-  };
-  updateEmergencyStopArea = (params) => {
-    const { checkEStopArea } = this.props;
-    const worldSize = this.getLogicWidth();
-    const estop = this.emergencyAreaMap.get(`${params.code}`);
-    const _params = {
-      ...params,
-      active: true,
-      checkEStopArea,
-      worldSize,
-    };
-    if (estop) {
-      estop.update(_params);
-      this.emergencyAreaMap.delete(`${params.code}`);
-      this.emergencyAreaMap.set(`${params.code}`, estop);
+      this.refresh();
     }
   };
 

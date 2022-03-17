@@ -5,10 +5,10 @@ import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchAgvInfo,
-  getAlertCentersByTaskIdOrAgvId,
   fetchMaintain,
   fetchManualMode,
   fetchAgvRunningInfo,
+  getAlertCentersByTaskIdOrAgvId,
 } from '@/services/api';
 import { agvTryToCharge, agvToRest, agvRemoteControl } from '@/services/monitor';
 import {
@@ -23,7 +23,7 @@ import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
 
 const checkedColor = '#ff8400';
-const AGVcategory = {
+const AGVCategory = {
   LatentLifting: 'latent',
   Tote: 'tote',
   Sorter: 'sorter',
@@ -47,27 +47,24 @@ const AGVElementProp = (props) => {
         setPathChecked(false);
       }
       // 1.获取小车属性
-      await fetcgAgvInfo();
+      await getAgvInfo();
     }
     init();
   }, [data]);
 
-  async function fetcgAgvInfo() {
+  async function getAgvInfo() {
     const [response, alertResponse] = await Promise.all([
       fetchAgvInfo(type, data.id),
       getAlertCentersByTaskIdOrAgvId({ agvId: JSON.parse(data.id) }),
     ]);
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.message.fetchDataFailed' }));
-    } else {
+    if (!dealResponse(response)) {
       const { mongodbAGV = {}, redisAGV = {} } = response;
       setAgvInfo({ ...mongodbAGV, ...redisAGV });
       setMainTain(mongodbAGV?.disabled);
       setManualMode(mongodbAGV?.manualMode);
     }
 
-    if (!dealResponse(alertResponse)) {
-      // 数据
+    if (alertResponse && !dealResponse(alertResponse)) {
       const newTaskAlarm = [];
       alertResponse.map(({ alertItemList }) => {
         if (Array.isArray(alertItemList)) {
@@ -76,12 +73,8 @@ const AGVElementProp = (props) => {
           });
         }
       });
-
       setAgvAlarmList(newTaskAlarm);
-      dispatch({
-        type: 'monitorView/saveAgvAlarmList',
-        payload: newTaskAlarm,
-      });
+      dispatch({ type: 'monitorView/saveAgvAlarmList', payload: newTaskAlarm });
     }
   }
 
@@ -241,7 +234,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 45, height: 'auto' }}
-                src={require(`../../category/${AGVcategory[type]}_category.svg`).default}
+                src={require(`../../category/${AGVCategory[type]}_category.svg`).default}
               />
               <span>
                 <FormattedMessage id={'app.agv'} />

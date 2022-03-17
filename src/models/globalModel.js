@@ -1,13 +1,7 @@
 import moment from 'moment';
-import requestAPI from '@/utils/requestAPI';
 import { fetchAlertCount, fetchAppVersion, fetchUpdateEnvironment } from '@/services/global';
-import { fetchAllEnvironmentList, fetchUpdateUserCurrentLanguage } from '@/services/SSO';
-import {
-  dealResponse,
-  formatMessage,
-  convertMenuData2RouteData,
-  extractNameSpaceInfoFromEnvs,
-} from '@/utils/util';
+import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
+import { dealResponse, formatMessage, convertMenuData2RouteData } from '@/utils/util';
 import { convertAllMenu } from '@/utils/init';
 import allModuleRouter from '@/config/router';
 import zhCN from 'antd/lib/locale/zh_CN';

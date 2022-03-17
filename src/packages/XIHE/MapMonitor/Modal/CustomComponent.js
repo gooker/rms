@@ -17,7 +17,7 @@ const TabAgvMap = {
   SorterAGV: AGVType.Sorter,
 };
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout } = getFormLayout(6, 16);
 
 const CustomComponent = (props) => {
   const { dispatch, category } = props;
@@ -151,4 +151,5 @@ const CustomComponent = (props) => {
 };
 export default connect(({ monitor }) => ({
   allAGVs: monitor.allAGVs,
+  category: monitor.categoryPanel,
 }))(memo(CustomComponent));

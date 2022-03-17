@@ -227,6 +227,8 @@ const MonitorMapContainer = (props) => {
     // 紧急停止区
     if (Array.isArray(emergencyStopFixedList)) {
       mapContext.renderEmergencyStopArea(emergencyStopFixedList);
+
+      // TODO: 需要额外处理Monitor创建的急停区
     }
     mapContext.refresh();
   }

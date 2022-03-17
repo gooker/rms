@@ -67,6 +67,7 @@ export default {
   'app.common.updater': '更新用户',
   'app.common.updateTime': '更新时间',
   'app.common.operator': '操作用户',
+  'app.common.operationTime': '操作时间',
   'app.common.startTime': '开始时间',
   'app.common.endTime': '结束时间',
   'app.common.timeout': '超时时间',
@@ -199,7 +200,7 @@ export default {
   'app.agv.type': '小车类型',
   'app.agv.status': '小车状态',
   'app.agv.on': '已开启',
-  'app.agv.off': '未开启',
+  'app.agv.off': '已关闭',
   'app.agv.direction': '车方向',
   'app.agv.electricity': '电量',
 

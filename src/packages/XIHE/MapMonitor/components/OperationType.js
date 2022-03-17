@@ -2,10 +2,11 @@ import React from 'react';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
-import styles from './components.module.less';
-import { MonitorOperationType } from '@/packages/XIHE/MapMonitor/enums';
 import { DumpBasket } from '@/entities';
 import { MonitorSelectableSpriteType } from '@/config/consts';
+import { MonitorOperationType } from '@/packages/XIHE/MapMonitor/enums';
+import EventManager from '@/utils/EventManager';
+import styles from './components.module.less';
 
 const { LatentLifting, Tote, Sorter, ForkLifting } = MonitorSelectableSpriteType;
 
@@ -105,6 +106,18 @@ class OperationType extends React.PureComponent {
       this.hideMask();
       this.onSelectElement();
     }
+
+    // 发布订阅
+    EventManager.dispatch('moveUp', {
+      start: {
+        x: this.pointerDownX,
+        y: this.pointerDownY,
+      },
+      end: {
+        x: this.pointerUpX,
+        y: this.pointerUpY,
+      },
+    });
 
     // 重置参数
     this.pinterIsMoving = false;

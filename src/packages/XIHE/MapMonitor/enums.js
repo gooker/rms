@@ -28,6 +28,7 @@ export const Category = {
   Message: 'Message',
 };
 
+// 右侧主菜单
 export const MonitorRightTools = [
   {
     label: <FormattedMessage id={'app.common.prop'} />,
@@ -107,6 +108,7 @@ export const MonitorRightTools = [
   },
 ];
 
+// 车辆二级
 export const AgvCategoryTools = [
   {
     label: <FormattedMessage id={'monitor.right.emptyRun'} />,
@@ -245,7 +247,7 @@ export const EmergencyCategoryTools = [
   },
   {
     label: <FormattedMessage id={'monitor.emergency.operation'} />,
-    value: 'operateEmergency',
+    value: 'emergencyManagerModal',
     icon: 'emergency_category.svg',
     style: { width: '33px', height: 'auto' },
   },
@@ -287,7 +289,7 @@ export const ResourceCategoryTools = [
   },
 ];
 
-// 消息
+// 消息二级
 export const MessageCategoryTools = [
   {
     label: <FormattedMessage id={'monitor.message.podToWorkstationInfo'} />,

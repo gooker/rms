@@ -56,7 +56,7 @@ const FaulSearchForm = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'date'} label={<FormattedMessage id="app.taskDetail.createTime" />}>
+          <Form.Item name={'date'} label={<FormattedMessage id="app.common.creationTime" />}>
             <RangePicker format={dateFormat} style={{ width: '100%' }} />
           </Form.Item>
         </Col>

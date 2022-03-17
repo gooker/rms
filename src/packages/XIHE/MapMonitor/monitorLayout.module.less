@@ -187,21 +187,15 @@
 // 弹窗
 .monitorModal {
   position: absolute;
-  top: 15%;
+  top: 10%;
   z-index: 1;
   display: flex;
   flex-flow: column nowrap;
-  box-sizing: border-box;
-  color: #fff;
-  font-size: 14px;
-  font-variant: tabular-nums;
-  line-height: 1.5;
-  text-decoration: none;
-  list-style: none;
-  background-color: rgba(0, 0, 0, 0.45);
-  border-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  font-feature-settings: 'tnum';
+  background-color: rgba(76, 76, 76, 0.9);
+  border-radius: 2px;
+  box-shadow: 0 3px 0 -4px rgb(0 0 0 / 48%), 0 6px 10px 0 rgb(0 0 0 / 32%),
+    0 9px 20px 8px rgb(0 0 0 / 20%);
+  pointer-events: auto;
 
   :global {
     .ant-checkbox-group {
@@ -220,23 +214,38 @@
   flex-flow: row nowrap;
   align-items: center;
   justify-content: space-between;
-  height: 40px;
-  padding: 0 10px;
-  color: rgb(24, 144, 255);
+  padding: 16px 24px;
+  color: rgba(255, 255, 255, 0.85);
   font-weight: 600;
   font-size: 16px;
-  border-bottom: 1px solid #636060;
+  border-bottom: 1px solid #303030;
 
   & > span[role='img'] {
     svg {
-      fill: #a6a6a6;
+      fill: rgba(255, 255, 255, 0.85);
+    }
+  }
+
+  & > span[role='img']:hover {
+    svg {
+      width: 17px;
+      height: 17px;
     }
   }
 }
 
+.monitorModalTab {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  color: #e8e8e8;
+  cursor: pointer;
+}
+
 .monitorModalBody {
   flex: 1;
-  padding: 10px;
+  padding: 24px;
   overflow: auto;
 
   :global {
@@ -247,41 +256,20 @@
       user-select: none;
     }
 
-    .ant-form-item .ant-switch {
-      .ant-switch();
-    }
-
-    .ant-form-item .ant-input {
-      .ant-input();
-    }
-
-    .ant-form-item .ant-input-number {
-      .ant-input-number();
-    }
-
-    .ant-form-item .ant-btn {
-      .ant-btn();
-    }
-    .ant-card {
-      .ant-card();
-    }
     .ant-collapse {
-      .ant-collapse();
-
       border: 1px solid rgba(255, 255, 255, 0.04);
-    }
-    .ant-divider {
-      .ant-divider();
     }
 
     .ant-collapse .ant-collapse-item .ant-collapse-header {
       color: #fff;
     }
+
     .ant-tabs-tab {
       color: #fff;
     }
   }
 }
+// ----- 弹窗
 
 .advancedForm {
   :global {
@@ -316,6 +304,7 @@
     border: 1px solid #fff;
   }
 }
+
 .markedContent {
   display: flex;
   justify-content: flex-end;
