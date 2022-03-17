@@ -247,7 +247,7 @@ export const EmergencyCategoryTools = [
   },
   {
     label: <FormattedMessage id={'monitor.emergency.operation'} />,
-    value: 'operateEmergency',
+    value: 'emergencyManagerModal',
     icon: 'emergency_category.svg',
     style: { width: '33px', height: 'auto' },
   },

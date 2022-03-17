@@ -11,7 +11,7 @@ import EStopProperty from './EmergencyStopProperty';
 import commonStyle from '@/common.module.less';
 
 const Property = (props) => {
-  const { height, width, selection } = props;
+  const { height, selection } = props;
 
   function renderContent() {
     if (!isNull(selection)) {

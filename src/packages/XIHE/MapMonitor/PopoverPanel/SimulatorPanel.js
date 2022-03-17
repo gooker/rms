@@ -176,11 +176,8 @@ const SimulatorPanel = (props) => {
   }
 
   // 判断visible是不是有一个为true
-  function isExistVisbleDisplay() {
-    if (addVisit || addPodVisible || errorVisible) {
-      return true;
-    }
-    return false;
+  function isExistVisibleDisplay() {
+    return addVisit || addPodVisible || errorVisible;
   }
 
   function closeVisible() {
@@ -205,11 +202,11 @@ const SimulatorPanel = (props) => {
           borderBottom: '1px solid #6c6c6c',
         }}
       >
-        {isExistVisbleDisplay() ? (
+        {isExistVisibleDisplay() ? (
           <LeftOutlined style={{ cursor: 'pointer', marginRight: 5 }} onClick={closeVisible} />
         ) : null}
         <FormattedMessage id={'monitor.right.simulator'} />
-        {isExistVisbleDisplay() ? (
+        {isExistVisibleDisplay() ? (
           <RightOutlined style={{ fontSize: 16, margin: '0 5px' }} />
         ) : null}
         <span style={{ fontSize: 15, fontWeight: 500 }}>

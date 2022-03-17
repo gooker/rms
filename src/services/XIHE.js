@@ -79,7 +79,7 @@ export async function deleteEmergencyStop(params) {
 }
 
 // 获取Section急停操作日志
-export async function getEStopLogs(params) {
+export async function fetchEStopLogs(params) {
   return request(`/${NameSpace.Coordinator}/eStop/getEStopLogs`, {
     method: 'POST',
     data: params,

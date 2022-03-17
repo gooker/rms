@@ -8,7 +8,7 @@ import {
 } from '@/config/consts';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import Text from '@/entities/Text';
-import { isNull, isStrictNull } from '@/utils/util';
+import { isNull } from '@/utils/util';
 import { adaptLabelSize, getTextureFromResources } from '@/utils/mapUtil';
 
 const BorderWidth = 50;
@@ -31,20 +31,16 @@ class EmergencyStop extends PIXI.Container {
     this.xlength = props.xlength;
     this.ylength = props.ylength;
     this.r = props.r;
+    this.sectionEStop = null;
+    this.logicEStop = null;
 
     this.select = props.select;
     this.selected = false;
 
     if (['Section', 'Logic'].includes(props.estopType)) {
-      this.drawLogicOrSection(props);
+      this.drawEStopMask(props);
     } else {
       this.create(props);
-
-      // 处理点击事件
-      this.areaSprite.interactive = true;
-      this.areaSprite.buttonMode = true;
-      this.areaSprite.interactiveChildren = false;
-      this.areaSprite.on('pointerdown', this.click);
     }
   }
 
@@ -80,6 +76,12 @@ class EmergencyStop extends PIXI.Container {
       this.createIcon(props);
     }
     this.createSelectionBorder();
+
+    // 处理点击事件
+    this.areaSprite.interactive = true;
+    this.areaSprite.buttonMode = true;
+    this.areaSprite.interactiveChildren = false;
+    this.areaSprite.on('pointerdown', this.click);
   }
 
   update(params) {
@@ -110,6 +112,11 @@ class EmergencyStop extends PIXI.Container {
     }
 
     this.create(params);
+  }
+
+  // 仅仅更新外观
+  updateLayout(){
+
   }
 
   createSelectionBorder() {
@@ -214,28 +221,27 @@ class EmergencyStop extends PIXI.Container {
     this.fixedIcon.anchor.set(0.5);
   }
 
-  drawLogicOrSection(props) {
-    const { worldSize } = props;
+  drawEStopMask(props) {
+    const { isSafe, worldBounds, estopType } = props;
     let fillColor = 0xdec674;
-    if (props.isSafe) {
+    if (isSafe) {
       fillColor = 0xf3704b;
     }
-    this.fillColor = fillColor;
-    this.$worldWidth = worldSize.worldWidth;
-    this.$worldHeight = worldSize.worldHeight;
-    this.drawLogic(props.estopType);
-  }
+    const { x, y, width, height } = worldBounds;
+    const estopMask = new PIXI.Sprite(PIXI.Texture.WHITE);
+    estopMask.x = x;
+    estopMask.y = y;
+    estopMask.width = width;
+    estopMask.height = height;
+    estopMask.alpha = 0.4;
+    estopMask.tint = fillColor;
 
-  drawLogic(type) {
-    this[`logicSprite${type}`] = new PIXI.Sprite(PIXI.Texture.WHITE);
-    this[`logicSprite${type}`].width = this.$worldWidth;
-    this[`logicSprite${type}`].height = this.$worldHeight;
-    this[`logicSprite${type}`].x = -400;
-    this[`logicSprite${type}`].y = -400;
-    this[`logicSprite${type}`].tint = this.fillColor;
-    this[`logicSprite${type}`].alpha = 0.4;
-    this[`logicSprite${type}`].anchor.set(0);
-    this.addChild(this[`logicSprite${type}`]);
+    if (estopType === 'Section') {
+      this.sectionEStop = estopMask;
+    } else {
+      this.logicEStop = estopMask;
+    }
+    this.addChild(estopMask);
   }
 }
 export default EmergencyStop;

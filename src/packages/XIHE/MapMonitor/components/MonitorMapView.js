@@ -1561,92 +1561,74 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 渲染 清除 紧急停止区域 ********************** //
-  getLogicWidth = () => {
-    const { worldHeight, worldWidth } = this.pixiUtils.viewport;
-    return { worldHeight, worldWidth };
-  };
-
   renderEmergencyStopArea = (allData) => {
-    const showEmergency = this.states.emergencyAreaShown;
-    const worldSize = this.getLogicWidth();
     const { globalActive, logicActive, currentLogicArea } = window.$$state().monitor;
+    const showEmergency = this.states.emergencyAreaShown;
 
-    const _visible = showEmergency && (globalActive || logicActive.includes(currentLogicArea));
-    this.logicSpriteSectionFlag = false;
-    this.logicSpriteLogicFlag = false;
-
+    // 根据store数据初步判定visible
+    let sectionEStopVisibleFlag = false;
+    let logicEStopVisibleFlag = false;
     if (globalActive) {
-      this.logicSpriteSectionFlag = true;
-    }
-    if (!globalActive && logicActive.includes(currentLogicArea)) {
-      this.logicSpriteLogicFlag = true;
+      sectionEStopVisibleFlag = true;
+    } else {
+      logicEStopVisibleFlag = logicActive.includes(currentLogicArea);
     }
 
-    // logic section 比较特殊  只需要留一条数据就够了
-    // 渲染新拿到所有的紧急停止点
     allData.forEach((currentData) => {
-      const eStopData = {
-        ...currentData,
-        worldSize,
-        select: this.select,
-      };
-
       if (!['Section', 'Logic', 'Area'].includes(currentData.estopType)) {
         return;
       }
       if (currentData.estopType !== 'Section' && currentData.logicId !== currentLogicArea) {
         return;
       }
+
+      const eStopData = {
+        ...currentData,
+        worldBounds: this.pixiUtils.viewport.getLocalBounds(),
+        select: this.select,
+      };
+
       if (['Section', 'Logic'].includes(currentData.estopType)) {
         let updateSectionFlag = currentData.estopType === 'Section';
         let updateLogicFlag = currentData.estopType === 'Logic';
-        let _entity = this.emergencyAreaMap.get(`special${currentData.estopType}`);
-        if (isNull(_entity)) {
-          // 新增
-          _entity = new EmergencyStop(eStopData);
-          this.pixiUtils.viewportAddChild(_entity);
-          this.emergencyAreaMap.set(`special${currentData.estopType}`, _entity);
-          if (currentData.estopType === 'Section') {
-            updateSectionFlag = false;
-          } else {
-            updateLogicFlag = false;
+
+        let entity = this.emergencyAreaMap.get(`special${currentData.estopType}`);
+        if (isNull(entity)) {
+          entity = new EmergencyStop(eStopData);
+          this.pixiUtils.viewportAddChild(entity);
+          this.emergencyAreaMap.set(`special${currentData.estopType}`, entity);
+        }
+
+        if (currentData.estopType === 'Section') {
+          const sectionMaskSprite = this.emergencyAreaMap.get('specialSection');
+          if (sectionMaskSprite) {
+            // TODO: 使用 visible 控制无效
+            sectionMaskSprite.renderable = showEmergency && sectionEStopVisibleFlag;
+            if (updateSectionFlag) {
+              sectionMaskSprite.sectionEStop.tint = currentData.isSafe
+                ? EStopStateColor.active.safe.fillColor
+                : EStopStateColor.active.unSafe.fillColor;
+            }
           }
         }
 
-        const sectionMaskSprite = this.emergencyAreaMap.get('specialSection');
-        if (sectionMaskSprite) {
-          sectionMaskSprite.renderable = _visible && this.logicSpriteSectionFlag;
-          if (updateSectionFlag) {
-            sectionMaskSprite.logicSpriteSection.tint = currentData.isSafe
-              ? EStopStateColor.active.safe.fillColor
-              : EStopStateColor.active.unSafe.fillColor;
-
-            this.emergencyAreaMap.delete(`specialSection`);
-            this.emergencyAreaMap.set(`specialSection`, sectionMaskSprite);
-          }
-        }
-
-        const logicMaskSprite = this.emergencyAreaMap.get('specialLogic');
-        if (logicMaskSprite) {
-          logicMaskSprite.renderable = _visible && this.logicSpriteLogicFlag;
-          if (updateLogicFlag) {
-            logicMaskSprite.logicSpriteLogic.tint = currentData.isSafe
-              ? EStopStateColor.active.safe.fillColor
-              : EStopStateColor.active.unSafe.fillColor;
-
-            this.emergencyAreaMap.delete(`specialLogic`);
-            this.emergencyAreaMap.set(`specialLogic`, logicMaskSprite);
+        if (currentData.estopType === 'Logic') {
+          const logicMaskSprite = this.emergencyAreaMap.get('specialLogic');
+          if (logicMaskSprite) {
+            // TODO: 使用 visible 控制无效
+            logicMaskSprite.renderable = showEmergency && logicEStopVisibleFlag;
+            if (updateLogicFlag) {
+              logicMaskSprite.logicEStop.tint = currentData.isSafe
+                ? EStopStateColor.active.safe.fillColor
+                : EStopStateColor.active.unSafe.fillColor;
+            }
           }
         }
       } else {
-        // 判断这个code是否存在 存在就更新
         const stopEntity = this.emergencyAreaMap.get(`${currentData.code}`);
         if (stopEntity) {
           stopEntity.update(eStopData);
-          this.emergencyAreaMap.delete(`${currentData.code}`);
-          this.emergencyAreaMap.set(`${currentData.code}`, stopEntity);
         } else {
-          // 新增
           const eStop = new EmergencyStop(eStopData);
           this.pixiUtils.viewportAddChild(eStop);
           this.emergencyAreaMap.set(`${currentData.code}`, eStop);
@@ -1654,6 +1636,11 @@ class MonitorMapView extends BaseMap {
       }
     });
     this.refresh();
+  };
+
+  updateEmergencyStopArea = (data) => {
+    const entity = this.emergencyAreaMap.get(`${data.code}`);
+      entity && entity.updateLayout(data)
   };
 
   // 清除所有的紧急停止区域
@@ -1674,22 +1661,6 @@ class MonitorMapView extends BaseMap {
       this.pixiUtils.viewportRemoveChild(estop);
       estop.destroy({ children: true });
       this.refresh();
-    }
-  };
-  updateEmergencyStopArea = (params) => {
-    const { checkEStopArea } = this.props;
-    const worldSize = this.getLogicWidth();
-    const estop = this.emergencyAreaMap.get(`${params.code}`);
-    const _params = {
-      ...params,
-      active: true,
-      checkEStopArea,
-      worldSize,
-    };
-    if (estop) {
-      estop.update(_params);
-      this.emergencyAreaMap.delete(`${params.code}`);
-      this.emergencyAreaMap.set(`${params.code}`, estop);
     }
   };
 

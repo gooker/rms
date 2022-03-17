@@ -84,35 +84,36 @@ const MapMonitor = (props) => {
   }, [mapContext]);
 
   useEffect(() => {
-    renderMonitorLoad();
+    if (mapRendered) {
+      renderMonitorLoad();
+    }
   }, [mapRendered]);
 
   // 渲染监控里的小车、货架等
   async function renderMonitorLoad() {
-    if (mapRendered) {
-      const resource = await dispatch({ type: 'monitor/initMonitorLoad' });
-      if (!isNull(resource)) {
-        const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv } = resource;
-        mapContext.renderLatentAGV(latentAgv);
-        mapContext.renderLatentPod(latentPod);
-        mapContext.renderToteAGV(toteAgv);
-        mapContext.renderTotePod(toteRack);
-        mapContext.renderSorterAGV(sorterAgv);
+    const resource = await dispatch({ type: 'monitor/initMonitorLoad' });
+    if (!isNull(resource)) {
+      const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv } = resource;
+      mapContext.renderLatentAGV(latentAgv);
+      mapContext.renderLatentPod(latentPod);
+      mapContext.renderToteAGV(toteAgv);
+      mapContext.renderTotePod(toteRack);
+      mapContext.renderSorterAGV(sorterAgv);
 
-        const { temporaryBlock, chargerList, emergencyStopList } = resource;
-        // 临时不可走点
-        mapContext.renderTemporaryLock(temporaryBlock);
+      const { temporaryBlock, emergencyStopList, chargerList } = resource;
+      // 临时不可走点
+      mapContext.renderTemporaryLock(temporaryBlock);
 
-        // 渲染充电桩已绑定HardwareID标记(这里只是处理已经绑定HardwareId的情况)
-        if (Array.isArray(chargerList)) {
-          chargerList.forEach((item) => {
-            mapContext.updateChargerHardware(item.name, item.hardwareId);
-            mapContext.updateChargerState({ n: item.name, s: item.status });
-          });
-        }
+      // 急停区
+      mapContext.renderEmergencyStopArea(emergencyStopList);
+      dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
 
-        // 急停区
-        mapContext.renderEmergencyStopArea(emergencyStopList);
+      // 渲染充电桩已绑定HardwareID标记(这里只是处理已经绑定HardwareId的情况)
+      if (Array.isArray(chargerList)) {
+        chargerList.forEach((item) => {
+          mapContext.updateChargerHardware(item.name, item.hardwareId);
+          mapContext.updateChargerState({ n: item.name, s: item.status });
+        });
       }
     }
   }

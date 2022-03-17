@@ -13,6 +13,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 
 /**
+ * @废弃
  * 将服务器的时间和服务器返回的时区转回成用户时区的时间格式
  * @param {*} value
  * @returns
@@ -61,13 +62,13 @@ export function convertToUserTimezone(value) {
   // 获取当前时区偏移量
   let date;
   const userTimeZone = window.localStorage.getItem('userTimeZone');
-  if (userTimeZone !== null) {
+  if (!isNull(userTimeZone)) {
     date = new moment(value).tz(userTimeZone);
   } else {
     date = new moment(value).tz(moment.tz.guess());
   }
 
-  if (date == null) {
+  if (isNull(date)) {
     return {
       format: () => {
         return '';
@@ -923,30 +924,32 @@ export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value
 // Modal 长宽自适应，以这个为主
 export function adaptModalHeight() {
   const { clientHeight } = document.body;
-  const heightDpr = getWindowHeightDpr();
+  const heightDpr = getScreenHeightDpr();
   const height = 768 * heightDpr;
   const maxHeight = clientHeight * 0.8;
   return height > maxHeight ? maxHeight : height;
 }
 
 export function adaptModalWidth() {
-  const widthDpr = getWindowWidthDpr();
+  const { clientWidth } = document.body;
+  const widthDpr = getScreenWidthDpr();
   const width = 1024 * widthDpr;
-  return width > 900 ? 900 : width;
+  const maxWidth = clientWidth * 0.8;
+  return width > maxWidth ? maxWidth : width;
 }
 
-function getWindowWidthDpr() {
+function getScreenWidthDpr() {
   const { clientWidth } = document.body;
-  const a = (clientWidth - 1024) / 1024;
+  const a = (clientWidth - 1920) / 1920;
   if (a > 0) {
     return a + 1;
   }
   return 1;
 }
 
-function getWindowHeightDpr() {
+function getScreenHeightDpr() {
   const { clientHeight } = document.body;
-  const a = (clientHeight - 768) / 768;
+  const a = (clientHeight - 1080) / 1080;
   if (a > 0) {
     return a + 1;
   }
