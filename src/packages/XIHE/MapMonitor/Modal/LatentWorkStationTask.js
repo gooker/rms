@@ -34,9 +34,7 @@ const LatentWorkStationTask = (props) => {
           direction: currentworkstation[1],
         };
         latentPodToWorkStation({ ...currentParams }).then((response) => {
-          if (
-            !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-          ) {
+          if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
             close();
           }
         });

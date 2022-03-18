@@ -80,9 +80,7 @@ const ReportGroupList = (props) => {
   async function fetchList() {
     setLoading(true);
     const response = await fetchReportGroupList(agvType);
-    if (
-      !dealResponse(response, false, null, formatMessage({ id: 'app.message.fetchDataFailed' }))
-    ) {
+    if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchDataFailed' }))) {
       setReportGroup(response);
     }
     setLoading(false);

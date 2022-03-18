@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, InputNumber, Input, Checkbox, Select } from 'antd';
 import { releaseAdvancedLatnetHandling } from '@/services/monitor';
-import { dealResponse, formatMessage,getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
 
@@ -23,9 +23,7 @@ const AdvancedReleaseComponent = (props) => {
       .then((values) => {
         setExecuting(true);
         releaseAdvancedLatnetHandling({ ...values }).then((response) => {
-          if (
-            !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-          ) {
+          if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
             close();
           }
         });
@@ -70,7 +68,7 @@ const AdvancedReleaseComponent = (props) => {
           <Select mode="tags" />
         </Form.Item>
 
-        <Form.Item {...formItemLayoutNoLabel} >
+        <Form.Item {...formItemLayoutNoLabel}>
           <Button onClick={release} loading={executing} disabled={executing} type="primary">
             <FormattedMessage id={'app.button.execute'} />
           </Button>

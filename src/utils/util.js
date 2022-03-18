@@ -146,8 +146,9 @@ export function isStandardApiResponse(response) {
   return response.hasOwnProperty('code') && response.hasOwnProperty('message');
 }
 
-export function dealResponse(response, successNotify, successMessage, failedMessage) {
+export function dealResponse(response, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
+  const successNotify = successMessage === true || !isStrictNull(successMessage);
   if (Array.isArray(response)) {
     let failed = false;
     for (let i = 0; i < response.length; i++) {
@@ -819,6 +820,15 @@ export function getFormLayout(label, content) {
   const formItemLayout = { labelCol: { span: label }, wrapperCol: { span: content } };
   const formItemLayoutNoLabel = { wrapperCol: { offset: label, span: content } };
   return { formItemLayout, formItemLayoutNoLabel };
+}
+
+// 地图弹窗相对位置
+export function getMapModalPosition(width, height) {
+  return {
+    width: `${width}px`,
+    height: `${height}px`,
+    left: `calc(50% - ${width / 2}px)`,
+  };
 }
 
 /***** 报表中心  ****/

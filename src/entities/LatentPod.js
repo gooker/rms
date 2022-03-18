@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import BitText from './BitText';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
+import BitText from './BitText';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { zIndex, GlobalAlpha, MonitorSelectableSpriteType, SelectionType } from '@/config/consts';
 
@@ -58,7 +58,7 @@ export default class LatentPod extends PIXI.Container {
 
   // 创建选择边框
   createSelectionBorder() {
-    const scaleBase = 1.2;
+    const scaleBase = 1.05;
     this.selectionBorder = new SmoothGraphics();
     this.selectionBorder.lineStyle(5, 0xff0000);
     const { width, height } = this.getLocalBounds();

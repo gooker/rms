@@ -110,12 +110,12 @@ const SimulatorPanel = (props) => {
   async function changeSimulatorStatus(status) {
     if (status) {
       const response = await openSimulator();
-      if (dealResponse(response, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
+      if (dealResponse(response, formatMessage({ id: 'app.message.operateSuccess' }))) {
         return false;
       }
     } else {
       const response = await closeSimulator();
-      if (dealResponse(response, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
+      if (dealResponse(response, formatMessage({ id: 'app.message.operateSuccess' }))) {
         return false;
       }
     }

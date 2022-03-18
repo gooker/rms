@@ -127,9 +127,7 @@ const PathLock = (props) => {
         type: 'monitor/fetchAllLockCells',
         payload: { lockTypes: showAgvLock, robotIds: selectAgv },
       }).then((response) => {
-        if (
-          !dealResponse(response, false, null, formatMessage({ id: 'monitor.tip.fetchLockFail' }))
-        ) {
+        if (!dealResponse(response, null, formatMessage({ id: 'monitor.tip.fetchLockFail' }))) {
           mapContext.renderLockCell(response);
         }
       });

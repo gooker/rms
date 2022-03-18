@@ -1,15 +1,13 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Input } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { agvToRest } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 200;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const ToRest = (props) => {
@@ -29,9 +27,7 @@ const ToRest = (props) => {
         const agv = find(allAGVs, { robotId: values.robotId });
         if (agv) {
           agvToRest(agv.robotType, { ...values }).then((response) => {
-            if (
-              !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-            ) {
+            if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
           });
@@ -42,14 +38,7 @@ const ToRest = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(500, 222)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.goRest.toRestArea'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -67,7 +56,7 @@ const ToRest = (props) => {
 
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
-              <FormattedMessage id={'app.button.execute'} />
+              <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
         </Form>

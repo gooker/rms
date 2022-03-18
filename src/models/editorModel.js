@@ -208,7 +208,7 @@ export default {
   effects: {
     *editorInitial(_, { put, call }) {
       const mapList = yield call(fetchSectionMaps);
-      if (!dealResponse(mapList, false, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+      if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
         // 检查是否有地图数据
         if (mapList.length === 0) {
           message.info(formatMessage({ id: 'app.message.noMap' }));
