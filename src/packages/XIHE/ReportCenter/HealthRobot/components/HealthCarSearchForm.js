@@ -19,7 +19,7 @@ const colums = {
 };
 
 const LogSearchForm = (props) => {
-  const { search, type, downloadVisible, sourceData, allTaskTypes } = props;
+  const { search, type, downloadVisible, sourceData, allTaskTypes, exportData } = props;
 
   const [form] = Form.useForm();
   const [optionsData, setOptionsData] = useState([
@@ -28,14 +28,27 @@ const LogSearchForm = (props) => {
       name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
       value: {},
     },
+    {
+      code: 'AGV_GROUP',
+      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+      value: {},
+    },
+    {
+      code: 'AGV_TYPE',
+      name: <FormattedMessage id="app.common.type" />,
+      value: {
+        LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
+        Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
+      },
+    },
   ]);
 
   useEffect(() => {
     async function init() {
       const mapData = await fetchActiveMap();
-      if (!dealResponse(mapData) && mapData) {
+      if (!dealResponse(mapData)) {
+        if (isNull(mapData)) return;
         const { id } = mapData;
-        if (isNull(id)) return;
         const modelTypes = await getFormModelTypes({ mapId: id });
         if (!dealResponse(modelTypes)) {
           const optionsData = [
@@ -101,7 +114,7 @@ const LogSearchForm = (props) => {
     return typeResult;
   }
 
-  function exportData() {
+  function exportLoad() {
     const wb = XLSX.utils.book_new(); /*新建book*/
     const statusWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'statusAllTime'));
     const taskWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskAllTime'));
@@ -176,7 +189,11 @@ const LogSearchForm = (props) => {
           <Col>
             <Form.Item {...NoLabelFormLayout}>
               <Row justify="end">
-                <Button onClick={exportData}>
+                <Button
+                  onClick={() => {
+                    exportData ? exportData() : exportLoad();
+                  }}
+                >
                   <FormattedMessage id="reportCenter.sourceData.download" />
                 </Button>
               </Row>

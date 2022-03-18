@@ -217,7 +217,7 @@ export const codeHistoryLineOption = (title, keyMap = {}) => ({
   series: [], // 数据 有几种类型就放几种
 });
 
-// 根据原始数据 --处理日期数据
+// 根据原始数据 --处理日期数据(x轴：日期)
 export const generateTimeData = (allData, translate) => {
   const series = []; // 存放纵坐标数值
   const xAxisData = Object.keys(allData).sort(); // 横坐标
@@ -311,17 +311,16 @@ export const generateTimeData = (allData, translate) => {
     },
     animation: true,
   };
-  // todo 对于偏移次数 和偏移小车  这个数据要和在一起
-
   return { xAxis, series, legend };
 };
 
 /*
- *根据原始数据 --处理cellId数据(y轴) 横坐标是key的sum
+ * idName- 是cellId或者agvId
+ *根据原始数据 --处理idName数据(y轴) 横坐标是key的sum
  *translate-是翻译{key:value}
- *idName- 是cellId或者agvId
+ *
  */
-export const transformCodeData = (allData = {}, translate, idName) => {
+export const transformCodeData = (allData = {}, translate, idName = 'cellId') => {
   const series = []; // 存放横坐标数值 是x 每个sery是每种key的求和(根据cellId)
   const { legendData, yxisData, currentSery } = getOriginalDataBycode(allData, translate, idName);
 
@@ -377,7 +376,11 @@ export const transformCodeData = (allData = {}, translate, idName) => {
   return { yAxis, series, legend };
 };
 
-//  拿到原始数据的 所有参数 所有根据cellId的参数求和
+/**拿到原始数据的 所有参数 所有根据cellId/agvId的参数求和
+ * @param {*} originalData 数据
+ * *@param {*} translate 报表所有的key和对应的翻译 {key:value}
+ * *@param {*} idName 根据id求合 可以是cellId/agvId
+ * */  
 export const getOriginalDataBycode = (originalData, translate, idName) => {
   let keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
   let legendData = []; // 存放key
@@ -400,11 +403,11 @@ export const getOriginalDataBycode = (originalData, translate, idName) => {
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { cellId } = item;
+      const id = item[idName];
       forIn(item, (value, key) => {
         if (keyDataMap.has(key)) {
-          let seryData = currentCellIdData[cellId][key] || 0;
-          currentCellIdData[cellId][key] = seryData * 1 + value * 1;
+          let seryData = currentCellIdData[id][key] || 0;
+          currentCellIdData[id][key] = seryData * 1 + value * 1;
         }
       });
     });
@@ -431,5 +434,6 @@ export const getAllCellId = (originalData, key) => {
       result.add(item[key]);
     });
   });
-  return [...result].sort((a, b) => a - b);
+  // 重要！！不排序 数据会乱掉 这样Id的轴是顺序的 对应的seriy也是顺序的
+  return [...result].sort((a, b) => a - b); 
 };

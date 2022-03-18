@@ -5,19 +5,18 @@ import moment from 'moment';
 import { isNull, isStrictNull } from '@/utils/util';
 import FilterSearchBydate from './FilterSearchBydate';
 import FilterSearch from './FilterSearch';
+import { getOriginalDataBycode } from '../../components/groundQrcodeEcharts';
 import {
-  codeHistoryLineOption,
-  dateHistoryLineOption,
-  generateTimeData,
-  transformCodeData,
-  getOriginalDataBycode,
+  offlineHistoryLineOption,
+  generatOfflineDataByTime,
+  generatOfflineDataByRobot,
   commonOption,
-} from '../../components/groundQrcodeEcharts';
+} from './RobotOfflineEchart';
 
 let codeHistoryLine = null; // 根据码号
 let timeHistoryLine = null; // 根据日期
 
-const ScanOrFaultComponent = (props) => {
+const OfflineOrStatusErrorComponent = (props) => {
   const { codeDomId, dateDomId, chartTitle, chartSubTitle, originData, keyData, activeTab } = props;
 
   useEffect(refreshChart, [originData, keyData, activeTab]);
@@ -26,13 +25,16 @@ const ScanOrFaultComponent = (props) => {
     // 根据码号报表
     codeHistoryLine = echarts.init(document.getElementById(`${codeDomId}`));
     codeHistoryLine.setOption(
-      codeHistoryLineOption(`${chartTitle}(${chartSubTitle})`, keyData),
+      offlineHistoryLineOption(`${chartTitle}(${chartSubTitle})`, keyData),
       true,
     );
 
     // 根据日期报表
     timeHistoryLine = echarts.init(document.getElementById(`${dateDomId}`));
-    timeHistoryLine.setOption(dateHistoryLineOption(`${chartTitle}`, keyData), true);
+    timeHistoryLine.setOption(
+      offlineHistoryLineOption(`${chartTitle}(${chartSubTitle})`, keyData),
+      true,
+    );
 
     return () => {
       codeHistoryLine.dispose();
@@ -48,13 +50,13 @@ const ScanOrFaultComponent = (props) => {
     if (!codeHistoryLine || !timeHistoryLine) return;
     const sourceData = { ...originData };
 
-    const currenTimeData = generateTimeData(sourceData, keyData);
-    const currentCodeData = transformCodeData(sourceData, keyData, 'agvId');
+    const currenTimeData = generatOfflineDataByTime(sourceData, keyData);
+    const currentCodeData = generatOfflineDataByRobot(sourceData, keyData, 'agvId');
 
     if (currentCodeData) {
-      const { yAxis, series, legend } = currentCodeData;
+      const { xAxis, series, legend } = currentCodeData;
       const newCodeHistoryLine = codeHistoryLine.getOption();
-      newCodeHistoryLine.yAxis = yAxis;
+      newCodeHistoryLine.xAxis = xAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
       codeHistoryLine.setOption(newCodeHistoryLine, true);
@@ -131,12 +133,13 @@ const ScanOrFaultComponent = (props) => {
     });
 
     const series = [];
-    Object.entries(newSourceData).forEach((key) => {
+    Object.entries(newSourceData).forEach((key, index) => {
       series.push({
         ...commonOption,
         data: key[1],
         name: key[0],
-        type: 'bar',
+        yAxisIndex: index,
+        type: ['offlineTime', 'errorTime'].includes(key[0]) ? 'line' : 'bar',
       });
     });
     const newCodeHistoryLine = codeHistoryLine.getOption();
@@ -158,7 +161,7 @@ const ScanOrFaultComponent = (props) => {
       newOriginalData = filterDataByTime(newOriginalData, startByTime, endByTime);
     }
 
-    const currenTimeData = generateTimeData(newOriginalData, keyData);
+    const currenTimeData = generatOfflineDataByTime(newOriginalData, keyData);
     if (currenTimeData) {
       const { xAxis, series, legend } = currenTimeData;
       const newTimeHistoryLine = timeHistoryLine.getOption();
@@ -205,4 +208,4 @@ const ScanOrFaultComponent = (props) => {
     </>
   );
 };
-export default memo(ScanOrFaultComponent);
+export default memo(OfflineOrStatusErrorComponent);

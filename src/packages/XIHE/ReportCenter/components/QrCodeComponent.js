@@ -215,7 +215,7 @@ const QrCodeComponent = (props) => {
 
   // 下载数据
 
-  function generateEveryType(type) {
+  function generateEveryType() {
     const typeResult = [];
     Object.entries(originData).forEach(([key, typeData]) => {
       if (!isStrictNull(typeData)) {
@@ -233,7 +233,7 @@ const QrCodeComponent = (props) => {
         });
       }
     });
-    return sortBy(typeResult, 'period');
+    return sortBy(typeResult, 'cellId');
   }
   function exportData() {
     const wb = XLSX.utils.book_new(); /*新建book*/
