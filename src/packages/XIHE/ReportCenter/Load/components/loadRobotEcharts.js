@@ -1,5 +1,6 @@
-import { isStrictNull, formatMessage } from '@/utils/util';
-import { forIn, isNull, sortBy } from 'lodash';
+import { isStrictNull } from '@/utils/util';
+import { forIn, isNull } from 'lodash';
+import { AgvStateColor } from '@/config/consts';
 import { getAllCellId } from '../../components/groundQrcodeEcharts';
 import moment from 'moment';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
@@ -313,8 +314,14 @@ export const taskLineOption = (title, keyMap) => ({
   series: [], // 有几层数据 就放几层
 });
 
-// 根据原始数据 --x日期数据- 数值:任务时长 状态时长
-export const generateDurationDataByTime = (allData, type, translate) => {
+/*
+ *根据原始数据 --x日期数据- 数值:任务时长 状态时长
+ *@param allData-源数据
+ *@param type-用于从源数据中取报表对应的数据
+ *@param translate-报表的legend {key:value}
+ *@param colorFlag-目前只有状态时长传true
+ */
+export const generateDurationDataByTime = (allData, type, translate, colorFlag) => {
   const series = []; // 存放纵坐标数值
   const { currentSery, xAxisData, legendData } = sumloadData(allData, type, translate);
 
@@ -326,20 +333,14 @@ export const generateDurationDataByTime = (allData, type, translate) => {
       name: key[0],
       yAxisIndex: 0,
       type: 'bar',
+      itemStyle: {
+        color: colorFlag ? AgvStateColor[key[0]] ?? null : null, //null会是取默认颜色，key[1]?.[0]?.color,
+      },
     });
   });
 
   const radiusAxis = {
     type: 'category',
-    // splitLine: {
-    //   show: false,
-    // },
-    // axisTick: {
-    //   show: false,
-    // },
-    // splitArea: {
-    //   show: false,
-    // },
     axisLabel: {
       rotate: 0,
     },
@@ -364,7 +365,7 @@ export const generateDurationDataByTime = (allData, type, translate) => {
     // align: 'right',
     left: 5,
     formatter: function (name) {
-      return getLabelByValue(name);
+      return translate[name];
     },
     animation: true,
   };
@@ -557,57 +558,6 @@ export const sumloadData = (allData, type, translate) => {
     });
   });
   return { currentSery, xAxisData, legendData };
-};
-
-export const sumloadData1 = (allData, type) => {
-  const xAxisData = Object.keys(allData).sort(); // 横坐标-日期
-
-  const firstTimeDataMap = new Map(); // 存放key 比如充电 空闲等
-  const legendMap = new Map();
-  const legendData = new Set();
-
-  const typeResult = [];
-  Object.entries(allData).forEach(([key, typeData]) => {
-    if (!isStrictNull(typeData)) {
-      let currentTime = {
-        // waitingForAMR: {
-        //   color: '#ef1',
-        //   value: 2,
-        //   label: '等分车时间',
-        // },
-      }; // 当前日期key 求和
-      typeData.forEach((record) => {
-        let _record = { ...record };
-        if (!isNull(type)) {
-          _record = { ...record[type] };
-        }
-        forIn(_record, (v, parameter) => {
-          const _value = isStrictNull(v?.value) ? 0 : v?.value;
-          const existValue = currentTime[parameter]?.value || 0;
-          currentTime[parameter] = {
-            color: v?.color,
-            value: existValue * 1 + _value * 1,
-            label: v.label,
-          };
-          firstTimeDataMap.set(parameter, 0);
-          legendMap.set(parameter, `reportCenter.load.action.${parameter}`);
-          legendData.add(parameter);
-        });
-      });
-      typeResult.push(currentTime);
-    }
-  });
-
-  const currentSery = {};
-  typeResult.map((v) => {
-    forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
-        let seryData = currentSery[key] || [];
-        currentSery[key] = [...seryData, value];
-      }
-    });
-  });
-  return { currentSery, xAxisData, legendData, legendMap };
 };
 
 // table数据--根据agvId

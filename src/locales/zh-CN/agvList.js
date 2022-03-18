@@ -72,7 +72,7 @@ export default {
   'app.activity.Working': '执行任务',
   'app.activity.Charging': '充电中',
   'app.activity.Connecting': '连接中',
-  'app.activity.Waiting': 'Waiting',
+  'app.activity.Waiting': '等待任务',
 
    // 固件状态
   'app.activity.upgradeSuccessed': '升级成功',

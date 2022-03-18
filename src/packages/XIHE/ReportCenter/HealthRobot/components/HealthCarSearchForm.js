@@ -1,11 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import XLSX from 'xlsx';
-import { forIn } from 'lodash';
 import { getFormModelTypes, fetchActiveMap } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import SelectCarType from './SelectCarType';
 import DatePickerSelector from '../../components/DatePickerSelector';
 

@@ -122,7 +122,7 @@ const HealthCar = (props) => {
       return;
     const sourceData = { ...filterData };
 
-    const statusData = generateDurationDataByTime(sourceData, 'statusAllTime', keyStatus); // 状态时长
+    const statusData = generateDurationDataByTime(sourceData, 'statusAllTime', keyStatus, true); // 状态时长
     const taskdurationData = generateDurationDataByTime(sourceData, 'taskAllTime', keyTask); // 任务时长
     const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes', keyTimes);
     const distanceData = generateNumOrDistanceData(sourceData, 'taskDistance', keyDisatance);

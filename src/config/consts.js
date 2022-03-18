@@ -44,6 +44,7 @@ export const AgvStateColor = {
   Offline: '#9E9E9E',
   Connecting: '#9E9E9E',
   Error: '#fe5000',
+  Waiting: '#a356f4',
 };
 
 // 任务状态(Bage组件)

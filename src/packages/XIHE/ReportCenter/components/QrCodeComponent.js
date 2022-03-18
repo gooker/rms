@@ -49,7 +49,6 @@ const QrCodeComponent = (props) => {
   function initChart() {
     // 根据码号报表
     codeHistoryLine = echarts.init(document.getElementById(`${codeDomId}`));
-    console.log(keyData);
     codeHistoryLine.setOption(
       codeHistoryLineOption(
         `${chartTitle}(${formatMessage({
