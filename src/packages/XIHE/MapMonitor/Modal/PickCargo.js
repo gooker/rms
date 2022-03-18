@@ -28,9 +28,7 @@ const PickCargo = (props) => {
         setExecuting(true);
         if (agv) {
           agvEmptyRun(agv.robotType, { ...values }).then((response) => {
-            if (
-              !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-            ) {
+            if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
           });
@@ -55,13 +53,14 @@ const PickCargo = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv.id' })} rules={[{required:true}]}>
+          <Form.Item
+            name={'robotId'}
+            label={formatMessage({ id: 'app.agv.id' })}
+            rules={[{ required: true }]}
+          >
             <Input />
           </Form.Item>
-          <Form.Item
-            name={'targetStation'}
-            label={formatMessage({ id: 'app.map.station' })}
-          >
+          <Form.Item name={'targetStation'} label={formatMessage({ id: 'app.map.station' })}>
             <Select>
               {commonStations.map(({ label, value }) => (
                 <Select.Option key={value} value={value}>

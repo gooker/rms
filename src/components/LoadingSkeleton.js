@@ -1,14 +1,21 @@
 import React, { memo } from 'react';
-import commonStyle from '@/common.module.less';
+import styles from './loadingSkeleton.module.less';
 
 const LoadingSkeleton = () => {
   return (
-    <div className={commonStyle.flexCenter} style={{ height: '100vh' }}>
-      <img
-        alt={'loading'}
-        src={'/images/global_loading.gif'}
-        style={{ width: '80px', height: 'auto' }}
-      />
+    <div className={styles.container}>
+      <div className={styles.header} />
+      <div style={{ display: 'flex', flex: 1 }}>
+        <div className={styles.leftSide} />
+        <div className={styles.content}>
+          <div className={styles.contentItem} />
+          <div className={styles.contentItem} />
+          <div className={styles.contentItem} />
+          <div className={styles.contentItem} />
+          <div className={styles.contentItem} />
+          <div className={styles.contentItem} />
+        </div>
+      </div>
     </div>
   );
 };

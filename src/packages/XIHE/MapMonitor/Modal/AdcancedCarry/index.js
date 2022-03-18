@@ -1,43 +1,40 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Radio, message } from 'antd';
+import { Radio, message, Form } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAllScopeActions } from '@/services/monitor';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, getFormLayout, getMapModalPosition } from '@/utils/util';
 import AdvancedCarryComponent from './AdvancedCarryComponent';
 import AdvancedReleaseComponent from './AdvancedReleaseComponent';
 import styles from '../../monitorLayout.module.less';
 
-const width = 500;
-const height = 600;
-
+const { formItemLayoutNoLabel } = getFormLayout(4, 16);
 const AdvancedCarry = (props) => {
   const { dispatch } = props;
   const [type, setType] = useState('carry');
   const [functionArea, setFunctionArea] = useState([]);
 
   useEffect(() => {
-    async function getArea() {
-      const response = await fetchAllScopeActions();
-      if (dealResponse(response)) {
-        message.error('获取地图功能区信息失败!');
-      } else {
-        const functionAreaSet = new Set();
-        response.forEach(({ sectionCellIdMap }) => {
-          if (sectionCellIdMap) {
-            Object.values(sectionCellIdMap).forEach((item) => {
-              functionAreaSet.add(item);
-            });
-          }
-        });
-        setFunctionArea([...functionAreaSet]);
-      }
-    }
     getArea();
-
-    return () => {};
   }, []);
+
+  async function getArea() {
+    const response = await fetchAllScopeActions();
+    if (dealResponse(response)) {
+      message.error('获取地图功能区信息失败!');
+    } else {
+      const functionAreaSet = new Set();
+      response.forEach(({ sectionCellIdMap }) => {
+        if (sectionCellIdMap) {
+          Object.values(sectionCellIdMap).forEach((item) => {
+            functionAreaSet.add(item);
+          });
+        }
+      });
+      setFunctionArea([...functionAreaSet]);
+    }
+  }
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
@@ -48,23 +45,13 @@ const AdvancedCarry = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(680, 600)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.advancedCarry'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20, paddingLeft: 25 }}>
-        <div style={{ marginBottom: 20 ,marginLeft:80}}>
-          <span style={{ marginRight: 10, color: '#fff' }}>
-            <FormattedMessage id="app.common.type" />:
-          </span>
+        <Form.Item {...formItemLayoutNoLabel}>
           <Radio.Group
             onChange={onTypeChange}
             defaultValue="carry"
@@ -78,8 +65,7 @@ const AdvancedCarry = (props) => {
               <FormattedMessage id="monitor.advancedcarry.released" />
             </Radio.Button>
           </Radio.Group>
-        </div>
-
+        </Form.Item>
         {type === 'carry' ? (
           <AdvancedCarryComponent functionArea={functionArea} />
         ) : (
@@ -89,4 +75,4 @@ const AdvancedCarry = (props) => {
     </div>
   );
 };
-export default connect(() => ({}))(memo(AdvancedCarry));
+export default connect()(memo(AdvancedCarry));

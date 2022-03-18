@@ -30,9 +30,7 @@ const AutomaticToteWorkstationTask = (props) => {
         const agv = find(allAGVs, { robotId: values.robotId });
         if (agv) {
           agvEmptyRun(agv.robotType, { ...values }).then((response) => {
-            if (
-              !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-            ) {
+            if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
           });

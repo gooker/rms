@@ -1,15 +1,15 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Input, Switch } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { agvEmptyRun } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;
-const height = 300;
+const height = 333;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const EmptyRun = (props) => {
@@ -29,9 +29,7 @@ const EmptyRun = (props) => {
         const agv = find(allAGVs, { robotId: values.robotId });
         if (agv) {
           agvEmptyRun(agv.robotType, { ...values }).then((response) => {
-            if (
-              !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-            ) {
+            if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
           });
@@ -42,20 +40,13 @@ const EmptyRun = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(width, height)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.emptyRun'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
-        <Form form={formRef}>
+        <Form labelWrap form={formRef}>
           <Form.Item
             {...formItemLayout}
             name={'robotId'}
@@ -81,8 +72,8 @@ const EmptyRun = (props) => {
             <Switch />
           </Form.Item>
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button onClick={emptyRun} loading={executing} disabled={executing}>
-              <FormattedMessage id={'app.button.execute'} />
+            <Button type={'primary'} onClick={emptyRun} loading={executing} disabled={executing}>
+              <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
         </Form>

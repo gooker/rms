@@ -204,8 +204,6 @@ export default {
 
   'monitor.operation.podProps': 'POD属性', //@
   'monitor.operation.batchAdd': '批量添加',
-  'monitor.operation.setLatentPodSuccessfully': '设置货架命令下发完成',
-  'monitor.operation.removeLatentPodSuccessfully': '移除货架命令下发完成',
   'monitor.operation.setupPod': '设置货架',
   'monitor.operation.movePod': '移动货架',
   'monitor.operation.resizePod': '修改货架尺寸',

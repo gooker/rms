@@ -297,9 +297,7 @@ export default {
     // ***************** 获取地图数据 ***************** //
     *initMonitorMap(_, { call, put }) {
       const activeMap = yield call(fetchActiveMap);
-      if (
-        !dealResponse(activeMap, false, null, formatMessage({ id: 'app.message.fetchMapFail' }))
-      ) {
+      if (!dealResponse(activeMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
         if (isNull(activeMap)) {
           message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
           yield put({ type: 'saveCurrentMap', payload: null });
@@ -408,7 +406,7 @@ export default {
 
     *fetchDeleteTemporaryCell({ payload }, { call }) {
       const response = yield call(deleteTemporaryBlockCell, payload);
-      if (dealResponse(response, true, formatMessage({ id: 'app.message.operateSuccess' }))) {
+      if (dealResponse(response, formatMessage({ id: 'app.message.operateSuccess' }))) {
         return false;
       }
     },
@@ -464,7 +462,7 @@ export default {
     *openAutoReleasePod({ payload }, { select, call }) {
       const params = { ...payload, isAutoRelease: true };
       const response = yield call(fetchAutoReleasePod, params);
-      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskReleaseOn' }))) {
+      if (dealResponse(response, formatMessage({ id: 'monitor.latentAutoTaskReleaseOn' }))) {
         return false;
       }
     },
@@ -472,7 +470,7 @@ export default {
     *cancelAutoReleasePod(_, { call, select }) {
       const params = { isAutoRelease: false };
       const response = yield call(fetchAutoReleasePod, params);
-      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskReleaseOff' }))) {
+      if (dealResponse(response, formatMessage({ id: 'monitor.latentAutoTaskReleaseOff' }))) {
         return false;
       }
     },
@@ -481,14 +479,14 @@ export default {
     *openAutomatCcall({ payload }, { select, call }) {
       const params = { ...payload, isAutoCall: true };
       const response = yield call(autoCallLatentPodToWorkstation, params);
-      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskOn' }))) {
+      if (dealResponse(response, formatMessage({ id: 'monitor.latentAutoTaskOn' }))) {
         return false;
       }
     },
     *cancelAutomatiCcall(_, { call, select }) {
       const params = { isAutoCall: false };
       const response = yield call(autoCallLatentPodToWorkstation, params);
-      if (dealResponse(response, true, formatMessage({ id: 'monitor.latentAutoTaskOff' }))) {
+      if (dealResponse(response, formatMessage({ id: 'monitor.latentAutoTaskOff' }))) {
         return false;
       }
     },
