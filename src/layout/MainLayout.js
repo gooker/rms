@@ -83,7 +83,7 @@ class MainLayout extends React.Component {
                 const showErrorNotification =
                   sessionValue === null ? true : JSON.parse(sessionValue);
                 if (!showErrorNotification) return;
-                this.showSystemProblem(message);
+                this.showSystemProblem(message, currentSection);
               });
               await dispatch({ type: 'global/saveSocketClient', payload: socketClient });
 
@@ -150,8 +150,7 @@ class MainLayout extends React.Component {
     history.push('/login');
   };
 
-  showSystemProblem = async (message) => {
-    const { currentSection } = this.props;
+  showSystemProblem = async (message, currentSection) => {
     const { errorCountNumber, hasNewError, alertCenter } = message;
     if (hasNewError) {
       const response = await fetchGetProblemDetail(alertCenter.id);

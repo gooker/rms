@@ -2,6 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import HealthCarSearchForm from './components/HealthCarSearchForm';
 import moment from 'moment';
 import XLSX from 'xlsx';
+import { getDatBysortTime } from '../components/groundQrcodeEcharts';
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
 import { isStrictNull, GMT2UserTimeZone, dealResponse, formatMessage, isNull } from '@/utils/util';
@@ -41,7 +42,6 @@ const TabSelectedStyle = {
 };
 
 const HealthCar = (props) => {
-  const [sourceData, setSourceData] = useState({});
   const [scanOriginData, setScanOriginData] = useState({}); // 原始数据 小车扫码
   const [offlineOriginData, setOfflineOriginData] = useState({}); // 原始数据 小车离线
   const [statuserrorOriginData, setStatuserrorOriginData] = useState({}); // 原始数据 状态错误
@@ -116,11 +116,15 @@ const HealthCar = (props) => {
         agvSearchType,
       });
       if (!dealResponse(response)) {
-        setSourceData(response);
-        setScanOriginData(response?.code ?? {});
-        setOfflineOriginData(response?.offline ?? {});
-        setStatuserrorOriginData(response?.error ?? {});
-        setFaultOriginData(response?.malfunction ?? {});
+        const newCode = getDatBysortTime(response?.code ?? {});
+        const newOffline = getDatBysortTime(response?.offline ?? {});
+        const newError = getDatBysortTime(response?.error ?? {});
+        const newMalfunction = getDatBysortTime(response?.malfunction ?? {});
+
+        setScanOriginData(newCode);
+        setOfflineOriginData(newOffline);
+        setStatuserrorOriginData(newError);
+        setFaultOriginData(newMalfunction);
 
         setKeyCodeData(response?.codeTranslate ?? {});
         setKeyFaultData(getFaultKey(response?.errorCode ?? {})); // // 获取返回的故障码key;
@@ -173,12 +177,7 @@ const HealthCar = (props) => {
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm
-          search={submitSearch}
-          downloadVisible={true}
-          sourceData={sourceData}
-          exportData={exportData}
-        />
+        <HealthCarSearchForm search={submitSearch} downloadVisible={true} exportData={exportData} />
       </div>
 
       <div style={{ display: 'flex', height: '40px' }}>

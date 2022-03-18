@@ -4,6 +4,7 @@ import { Row, Col, Card } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
+import { getDatBysortTime } from './groundQrcodeEcharts';
 import { formatMessage, isNull, isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
 import { fetchCodeHealth } from '@/services/api';
 import FilterSearchBydate from '../HealthRobot/components/FilterSearchBydate';
@@ -106,7 +107,9 @@ const QrCodeComponent = (props) => {
       const response = await fetchCodeHealth({ ...value, codeType });
       if (!dealResponse(response)) {
         const { qrCodeData = {}, translate } = response;
-        setOriginData(qrCodeData);
+
+        const newQrCodeData = getDatBysortTime(qrCodeData);
+        setOriginData(newQrCodeData);
         setKeyData(translate);
       }
     }

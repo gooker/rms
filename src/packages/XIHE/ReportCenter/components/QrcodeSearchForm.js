@@ -6,10 +6,8 @@ import DatePickerSelector from './DatePickerSelector';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
-
-
 const QrcodeSearchComponent = (props) => {
-  const { search,exportData } = props;
+  const { search, exportData } = props;
 
   const [form] = Form.useForm();
 
@@ -26,11 +24,10 @@ const QrcodeSearchComponent = (props) => {
     });
   }
 
-
   return (
     <Form form={form}>
       <Row gutter={24}>
-        <Col span={8}>
+        <Col flex="auto">
           <Form.Item
             label={<FormattedMessage id="app.form.dateRange" />}
             name="timeRange"
