@@ -108,7 +108,7 @@ const OfflineOrStatusErrorComponent = (props) => {
     Object.entries(allValues).forEach(([key, v]) => {
       if (!isStrictNull(v)) {
         if (key === 'agvId' && v.length > 0) {
-          newOriginalData = filterDataById(v.map((i) => i * 1));
+          newOriginalData = filterDataById(v);
         } else {
           newChanged[key] = v;
         }
@@ -154,7 +154,7 @@ const OfflineOrStatusErrorComponent = (props) => {
     const { endByTime, startByTime, agvId } = allValues;
 
     if (agvId?.length > 0) {
-      newOriginalData = filterDataById(agvId.map((i) => i * 1));
+      newOriginalData = filterDataById(agvId);
     }
 
     if (!isStrictNull(startByTime) && !isStrictNull(endByTime)) {

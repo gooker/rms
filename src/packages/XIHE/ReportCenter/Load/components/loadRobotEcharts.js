@@ -172,8 +172,8 @@ export const actionBarOption = (title, keyMap) => ({
 export const durationLineOption = (title, keyMap) => ({
   title: {
     text: title,
-    bottom: 0,
     x: 'center',
+    bottom: '-5',
     textStyle: {
       fontWeight: 'normal',
       color: LineChartsAxisColor,
@@ -198,7 +198,7 @@ export const durationLineOption = (title, keyMap) => ({
   },
   color: Color,
   grid: {
-    top: '8%',
+    top: '2%',
     left: '6%',
     right: '2%',
     containLabel: true,
@@ -435,7 +435,9 @@ export const generateActionPieData = (allData, type, translate) => {
   });
 
   forIn(currentActionSum, (v, key) => {
-    seryData.push({ name: key, value: v, label: translate[key] });
+    console.log(v);
+    const value = v === 0 ? '' : v;
+    seryData.push({ name: key, value, label: translate[key] });
   });
 
   const legend = {

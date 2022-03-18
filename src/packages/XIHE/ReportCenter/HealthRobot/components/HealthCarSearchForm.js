@@ -10,11 +10,6 @@ import DatePickerSelector from '../../components/DatePickerSelector';
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
-const colums = {
-  agvId: formatMessage({ id: 'app.agv.id' }),
-  period: formatMessage({ id: 'app.time' }),
-  robotType: formatMessage({ id: 'app.agv.type' }),
-};
 
 const LogSearchForm = (props) => {
   const { search, type, downloadVisible, allTaskTypes, exportData } = props;

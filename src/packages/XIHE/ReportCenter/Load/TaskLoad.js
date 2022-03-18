@@ -229,14 +229,11 @@ const TaskLoadComponent = (props) => {
   function onDatefilterChange(allValues) {
     let newOriginalData = { ...loadOriginData };
     if (Object.keys(loadOriginData).length === 0) return;
-    const { endTime, startTime, robot, agvTaskType = [] } = allValues;
+    const { endTime, startTime, agvId, taskType = [] } = allValues;
 
     //TODO:要改
-    if (robot && robot?.code.length > 0) {
-      newOriginalData = filterDataByParam(
-        robot?.code.map((item) => item * 1),
-        'robotId',
-      );
+    if (agvId?.length > 0) {
+      newOriginalData = filterDataByParam(agvId, 'agvId');
     }
 
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
@@ -244,8 +241,8 @@ const TaskLoadComponent = (props) => {
     }
 
     // 根据任务类型
-    if (agvTaskType && agvTaskType.length > 0) {
-      newOriginalData = filterDataByParam(agvTaskType, 'taskType');
+    if (taskType && taskType.length > 0) {
+      newOriginalData = filterDataByParam(taskType, 'taskType');
     }
 
     setFilterData(newOriginalData);
@@ -305,7 +302,7 @@ const TaskLoadComponent = (props) => {
       </div>
 
       <div className={style.body}>
-        <Card actions={[<FilterTaskLoadSearch key={'2'} searchChange={onDatefilterChange} />]}>
+        <Card actions={[<FilterTaskLoadSearch key={'2'} search={onDatefilterChange} />]}>
           <Row>
             <Col span={12}>
               <div id="load_taskActionPie" style={{ minHeight: 340 }} />
