@@ -380,7 +380,7 @@ export const transformCodeData = (allData = {}, translate, idName = 'cellId') =>
  * @param {*} originalData 数据
  * *@param {*} translate 报表所有的key和对应的翻译 {key:value}
  * *@param {*} idName 根据id求合 可以是cellId/agvId
- * */  
+ * */
 export const getOriginalDataBycode = (originalData, translate, idName) => {
   let keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
   let legendData = []; // 存放key
@@ -435,5 +435,15 @@ export const getAllCellId = (originalData, key) => {
     });
   });
   // 重要！！不排序 数据会乱掉 这样Id的轴是顺序的 对应的seriy也是顺序的
-  return [...result].sort((a, b) => a - b); 
+  return [...result].sort((a, b) => a - b);
+};
+
+// 日期排序
+export const getDatBysortTime = (loadData) => {
+  const currentNewLoadTime = Object.keys(loadData).sort((a, b) => (a >= b ? 1 : -1));
+  const newLoadData = {};
+  currentNewLoadTime.map((t) => {
+    newLoadData[t] = loadData[t];
+  });
+  return newLoadData;
 };

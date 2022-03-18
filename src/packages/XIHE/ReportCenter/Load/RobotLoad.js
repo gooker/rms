@@ -2,7 +2,10 @@ import React, { useState, memo, useEffect } from 'react';
 import { Row, Col, Table, Divider } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
-import { formatMessage, GMT2UserTimeZone, dealResponse, isStrictNull } from '@/utils/util';
+import XLSX from 'xlsx';
+import { forIn, sortBy } from 'lodash';
+import { getDatBysortTime } from '../components/groundQrcodeEcharts';
+import { formatMessage, GMT2UserTimeZone, dealResponse, isStrictNull, isNull } from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
@@ -23,6 +26,11 @@ import HealthCarSearchForm from '../HealthRobot/components/HealthCarSearchForm';
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
 
+const colums = {
+  time: formatMessage({ id: 'app.time' }),
+  robotType: formatMessage({ id: 'app.agv.type' }),
+};
+
 let statusHistoryLine = null; // 状态时长
 let taskHistoryLine = null; // 任务时长
 let taskNumberHistoryLine = null; // 任务次数
@@ -36,7 +44,12 @@ const HealthCar = (props) => {
   const [tableData, setTableData] = useState([]); // table
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
-  useEffect(initChart, []);
+  const [keyAction, setKeyAction] = useState({}); // actionTranslate
+  const [keyStatus, setKeyStatus] = useState({}); //status
+  const [keyTask, setKeyTask] = useState({}); //task
+  const [keyTimes, setTimes] = useState({}); //任务次数
+  const [keyDisatance, setKeyDisatance] = useState({}); //任务距离
+
   useEffect(() => {
     async function initCodeData() {
       const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
@@ -59,28 +72,31 @@ const HealthCar = (props) => {
     actionBarHistoryLine = echarts.init(document.getElementById('load_actionBarHistory'));
 
     statusHistoryLine.setOption(
-      durationLineOption(formatMessage({ id: 'reportCenter.robot.load.statusduration' })),
+      durationLineOption(
+        formatMessage({ id: 'reportCenter.robot.load.statusduration' }),
+        keyStatus,
+      ),
       true,
     );
     taskHistoryLine.setOption(
-      durationLineOption(formatMessage({ id: 'reportCenter.agvload.taskduration' })),
+      durationLineOption(formatMessage({ id: 'reportCenter.agvload.taskduration' }), keyTask),
       true,
     );
     taskNumberHistoryLine.setOption(
-      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskNumber' })),
+      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskNumber' }), keyTimes),
       true,
     );
     diatanceHistoryLine.setOption(
-      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskDistance' })),
+      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskDistance' }), keyDisatance),
       true,
     );
     actionPieHistoryLine.setOption(
-      actionPieOption(formatMessage({ id: 'reportCenter.robot.load.action' })),
+      actionPieOption(formatMessage({ id: 'reportCenter.robot.load.action' }), keyAction),
       true,
     );
 
     actionBarHistoryLine.setOption(
-      actionBarOption(formatMessage({ id: 'reportCenter.robot.load.action' })),
+      actionBarOption(formatMessage({ id: 'reportCenter.robot.load.action' }), keyAction),
       true,
     );
 
@@ -101,16 +117,17 @@ const HealthCar = (props) => {
   }
 
   function refreshChart() {
+    initChart();
     if (!statusHistoryLine || !taskHistoryLine || !taskNumberHistoryLine || !actionPieHistoryLine)
       return;
     const sourceData = { ...filterData };
 
-    const statusData = generateDurationDataByTime(sourceData, 'statusAllTime'); // 状态时长
-    const taskdurationData = generateDurationDataByTime(sourceData, 'taskAllTime'); // 任务时长
-    const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes');
-    const distanceData = generateNumOrDistanceData(sourceData, 'taskDistance');
-    const actionPieData = generateActionPieData(sourceData, 'actionLoad'); //动作负载-pie
-    const actionBarData = generateActionBarData(sourceData, 'actionLoad'); //动作负载-bar
+    const statusData = generateDurationDataByTime(sourceData, 'statusAllTime', keyStatus); // 状态时长
+    const taskdurationData = generateDurationDataByTime(sourceData, 'taskAllTime', keyTask); // 任务时长
+    const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes', keyTimes);
+    const distanceData = generateNumOrDistanceData(sourceData, 'taskDistance', keyDisatance);
+    const actionPieData = generateActionPieData(sourceData, 'actionLoad', keyAction); //动作负载-pie
+    const actionBarData = generateActionBarData(sourceData, 'actionLoad', keyAction); //动作负载-bar
 
     if (statusData) {
       const { radiusAxis, series, legend } = statusData;
@@ -167,6 +184,14 @@ const HealthCar = (props) => {
     setTableData(currentRobotData);
   }
 
+  function generateStatus(allStatus) {
+    const statusMap = {};
+    allStatus.map((item) => {
+      statusMap[item] = formatMessage({ id: `app.activity.${item}` });
+    });
+    return statusMap;
+  }
+
   // 搜索 调接口
   async function submitSearch(value) {
     const {
@@ -182,12 +207,88 @@ const HealthCar = (props) => {
         agvSearchType,
       });
       if (!dealResponse(response)) {
-        const loadData=response?.AGVLoadData || {};
-        setLoadOriginData(loadData);
-        setFilterData(loadData);
+        let loadData = response?.AGVLoadData || {};
+        const newLoadData = getDatBysortTime(loadData);
+
+        // console.log(Object.keys(loadData).sort((a, b) => (a >= b ? 1 : -1)));
+        // console.log(newLoadData);
+        setLoadOriginData(newLoadData);
+        setFilterData(newLoadData);
         setSelectedKeys([]);
+
+        setKeyAction(response?.translate || {});
+        setKeyStatus(generateStatus(response?.status));
+        setKeyTask({
+          EMPTY_RUN: '空跑',
+          CHARGE_RUN: '充电',
+          REST_UNDER_POD: '回休息区',
+          CARRY_POD_TO_CELL: '搬运货架',
+          CARRY_POD_TO_STATION: '工作站任务',
+          SUPER_CARRY_POD_TO_CELL: '高级搬运任务',
+          HEARVY_CARRY_POD_TO_STORE: '重车回存储区',
+          CUSTOM_TASK: '自定义任务',
+        });
+
+        setTimes({
+          taskNumber: '任务次数',
+        });
+
+        setKeyDisatance({
+          taskDistance: '任务距离',
+        });
       }
     }
+  }
+
+  function generateEveryType(allData, type, keyData) {
+    const typeResult = [];
+    Object.keys(allData).forEach((key) => {
+      const typeData = allData[key];
+      if (!isStrictNull(typeData)) {
+        const currentTypeData = sortBy(typeData, 'agvId');
+        currentTypeData.forEach((record) => {
+          let currentTime = {};
+          let _record = {};
+          currentTime[colums.time] = key;
+          currentTime.agvId = record.agvId;
+          currentTime[colums.robotType] = record.robotType;
+          if (!isNull(type)) {
+            _record = { ...record[type] };
+          }
+          forIn(_record, (value, parameter) => {
+            const _param = keyData[parameter] ?? parameter;
+            currentTime[_param] = value;
+          });
+          typeResult.push(currentTime);
+        });
+      }
+    });
+    return typeResult;
+  }
+
+  function exportData() {
+    const wb = XLSX.utils.book_new(); /*新建book*/
+    const statusWs = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'statusAllTime', keyStatus),
+    );
+    const taskWs = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'taskAllTime', keyTask),
+    );
+    const actionWs = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'actionLoad', keyAction),
+    );
+    const taskNumWs = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'taskTimes', keyTimes),
+    );
+    const taskDistanceWs = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'taskDistance', keyDisatance),
+    );
+    XLSX.utils.book_append_sheet(wb, statusWs, '状态时长');
+    XLSX.utils.book_append_sheet(wb, taskWs, '任务时长');
+    XLSX.utils.book_append_sheet(wb, actionWs, '动作时长');
+    XLSX.utils.book_append_sheet(wb, taskNumWs, '任务次数');
+    XLSX.utils.book_append_sheet(wb, taskDistanceWs, '任务距离');
+    XLSX.writeFile(wb, `小车负载.xlsx`);
   }
 
   // 124
@@ -249,7 +350,7 @@ const HealthCar = (props) => {
       dataIndex: 'taskDistance',
       sorter: (a, b) => a.taskDistance - b.taskDistance,
       render: (text) => {
-        return formatNumber(text) + '米';
+        return text ? formatNumber(text) + '米' : '-';
       },
     },
   ];
@@ -261,6 +362,7 @@ const HealthCar = (props) => {
           search={submitSearch}
           downloadVisible={true}
           sourceData={loadOriginData}
+          exportData={exportData}
         />
       </div>
 

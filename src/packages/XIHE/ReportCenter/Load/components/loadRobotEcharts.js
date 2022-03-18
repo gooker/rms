@@ -1,5 +1,6 @@
 import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull, sortBy } from 'lodash';
+import { getAllCellId } from '../../components/groundQrcodeEcharts';
 import moment from 'moment';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -58,7 +59,7 @@ const commonOption = {
 
 // 动作负载-pie option
 
-export const actionPieOption = (title) => ({
+export const actionPieOption = (title, keyMap) => ({
   title: {
     text: title,
     subtext: '汇总',
@@ -70,9 +71,7 @@ export const actionPieOption = (title) => ({
     formatter: function (params) {
       const { name, value, percent } = params;
       const currentValue = MinuteFormat(value);
-      var showHtm = `${formatMessage({
-        id: `reportCenter.load.action.${name}`,
-      })} ${' : '}${currentValue} ${' ('}${percent} ${'%)'}
+      var showHtm = `${keyMap[name]} ${' : '}${currentValue} ${' ('}${percent} ${'%)'}
       `;
       return showHtm;
     },
@@ -86,7 +85,7 @@ export const actionPieOption = (title) => ({
 });
 
 // 动作负载-柱状图 横坐标是日期
-export const actionBarOption = (title) => ({
+export const actionBarOption = (title, keyMap) => ({
   title: {
     text: '',
     left: 'center',
@@ -106,12 +105,7 @@ export const actionBarOption = (title) => ({
       var showHtm = name + '<br>';
       for (let i = 0; i < params.length; i++) {
         const { marker, seriesName, value } = params[i];
-        showHtm +=
-          marker +
-          formatMessage({ id: `reportCenter.load.action.${seriesName}` }) +
-          '：' +
-          MinuteFormat(value) +
-          '<br>';
+        showHtm += marker + keyMap[seriesName] + '：' + MinuteFormat(value) + '<br>';
       }
       return showHtm;
     },
@@ -174,7 +168,7 @@ export const actionBarOption = (title) => ({
 });
 
 // 状态时长 任务时长
-export const durationLineOption = (title) => ({
+export const durationLineOption = (title, keyMap) => ({
   title: {
     text: title,
     bottom: 0,
@@ -196,7 +190,7 @@ export const durationLineOption = (title) => ({
       var showHtm = name + '<br>';
       for (let i = 0; i < params.length; i++) {
         const { marker, seriesName, value } = params[i];
-        showHtm += marker + getLabelByValue(seriesName) + '：' + MinuteFormat(value) + '<br>';
+        showHtm += marker + keyMap[seriesName] + '：' + MinuteFormat(value) + '<br>';
       }
       return showHtm;
     },
@@ -233,7 +227,7 @@ export const durationLineOption = (title) => ({
   series: [], // 有几层数据 就放几层
 });
 // 任务次数 任务距离
-export const taskLineOption = (title) => ({
+export const taskLineOption = (title, keyMap) => ({
   title: {
     text: title,
     x: 'center',
@@ -259,12 +253,7 @@ export const taskLineOption = (title) => ({
       var showHtm = name + '<br>';
       for (let i = 0; i < params.length; i++) {
         const { marker, seriesName, value } = params[i];
-        showHtm +=
-          marker +
-          formatMessage({ id: `reportCenter.robot.load.${seriesName}` }) +
-          '：' +
-          value +
-          '<br>';
+        showHtm += marker + keyMap[seriesName] + '：' + value + '<br>';
       }
       return showHtm;
     },
@@ -325,9 +314,9 @@ export const taskLineOption = (title) => ({
 });
 
 // 根据原始数据 --x日期数据- 数值:任务时长 状态时长
-export const generateDurationDataByTime = (allData, type) => {
+export const generateDurationDataByTime = (allData, type, translate) => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData, legendData } = sumloadData(allData, type);
+  const { currentSery, xAxisData, legendData } = sumloadData(allData, type, translate);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -384,9 +373,9 @@ export const generateDurationDataByTime = (allData, type) => {
 };
 
 // 根据原始数据--x日期 y:数值 任务次数 任务距离
-export const generateNumOrDistanceData = (allData, type) => {
+export const generateNumOrDistanceData = (allData, type, translate) => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData } = sumloadData(allData, type);
+  const { currentSery, xAxisData } = sumloadData(allData, type, translate);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -417,9 +406,15 @@ export const generateNumOrDistanceData = (allData, type) => {
 };
 
 // 运动动作负载-pie
-export const generateActionPieData = (allData, type) => {
+export const generateActionPieData = (allData, type, translate) => {
   const seryData = [];
-  let currentActionSum = {}; // 当前运动动作求和
+  let legendData = Object.keys(translate); // 存放key数组
+  let currentActionSum = {}; // 当前key-运动动作求和
+
+  legendData.map((item) => {
+    currentActionSum[item] = 0;
+  });
+
   Object.entries(allData).forEach(([key, typeData]) => {
     if (!isStrictNull(typeData)) {
       typeData.forEach((record) => {
@@ -428,24 +423,25 @@ export const generateActionPieData = (allData, type) => {
           _record = { ...record[type] };
         }
         forIn(_record, (value, parameter) => {
-          const _value = isStrictNull(value) ? 0 : value;
-          const existValue = currentActionSum[parameter] || 0;
-          currentActionSum[parameter] = existValue * 1 + _value * 1;
+          if (legendData.includes(parameter)) {
+            const _value = isStrictNull(value) ? 0 : value;
+            const existValue = currentActionSum[parameter] || 0;
+            currentActionSum[parameter] = existValue * 1 + _value * 1;
+          }
         });
       });
     }
   });
-  const legendMap = new Map();
+
   forIn(currentActionSum, (v, key) => {
-    seryData.push({ name: key, value: v, label: `reportCenter.load.action.${key}` });
-    legendMap.set(key, `reportCenter.load.action.${key}`);
+    seryData.push({ name: key, value: v, label: translate[key] });
   });
 
   const legend = {
     left: 5,
     orient: 'vertical',
-    formatter: function (params) {
-      return formatMessage({ id: legendMap.get(params) });
+    formatter: function (name) {
+      return translate[name];
     },
     animation: true,
   };
@@ -459,7 +455,7 @@ export const generateActionPieData = (allData, type) => {
         formatter: (params) => {
           if (params?.data?.label) {
             const currentLabel = params?.data?.label;
-            return formatMessage({ id: `${currentLabel}` });
+            return currentLabel;
           } else {
             return params.name;
           }
@@ -479,9 +475,9 @@ export const generateActionPieData = (allData, type) => {
 };
 
 // 运动动作负载-bar  x:日期 y:数值 比如:无动作 顶升 下降
-export const generateActionBarData = (allData, type) => {
+export const generateActionBarData = (allData, type, translate) => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData, legendMap } = sumloadData(allData, type);
+  const { currentSery, xAxisData } = sumloadData(allData, type, translate);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -513,8 +509,8 @@ export const generateActionBarData = (allData, type) => {
 
   const legend = {
     type: 'scroll',
-    formatter: function (params) {
-      return formatMessage({ id: legendMap.get(params) });
+    formatter: function (name) {
+      return translate[name];
     },
     animation: true,
   };
@@ -522,7 +518,7 @@ export const generateActionBarData = (allData, type) => {
   return { xAxis, series, legend };
 };
 
-export const sumloadData = (allData, type) => {
+export const sumloadData = (allData, type, translate) => {
   const xAxisData = Object.keys(allData).sort(); // 横坐标-日期
 
   const typeResult = [];
@@ -544,33 +540,23 @@ export const sumloadData = (allData, type) => {
     }
   });
 
-  const firstTimeDataMap = new Map(); // 存放key 比如充电 空闲等
-  const legendData = [];
-  const legendMap = new Map();
-  let currentAxisData = Object.values(allData)[0] || []; // 横坐标
-  let getallkeyMap = currentAxisData[0];
-  if (!isNull(type)) {
-    getallkeyMap = currentAxisData[0]?.[type];
-  }
+  const legendData = Object.keys(translate);
+  const keyDataMap = new Map(); // 存放key 比如充电 空闲等的求和
 
-  forIn(getallkeyMap, (value, key) => {
-    if (key !== 'agvId') {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-      legendMap.set(key, `reportCenter.load.action.${key}`);
-    }
+  legendData.map((item) => {
+    keyDataMap.set(item, 0);
   });
 
   const currentSery = {};
   typeResult.map((v) => {
     forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
+      if (keyDataMap.has(key)) {
         let seryData = currentSery[key] || [];
         currentSery[key] = [...seryData, value];
       }
     });
   });
-  return { currentSery, xAxisData, legendData, legendMap };
+  return { currentSery, xAxisData, legendData };
 };
 
 export const sumloadData1 = (allData, type) => {
@@ -625,9 +611,8 @@ export const sumloadData1 = (allData, type) => {
 };
 
 // table数据--根据agvId
-export const generateTableData = (originalData) => {
-  let currentAxisData = Object.values(originalData)[0] || [];
-  currentAxisData = sortBy(currentAxisData, 'agvId');
+export const generateTableData = (originalData = {}) => {
+  const currentAxisData = getAllCellId(originalData, 'agvId');
   let _key = {
     taskDistance: 'taskDistance',
     statusAllTime: 'Charging',
@@ -638,8 +623,8 @@ export const generateTableData = (originalData) => {
   firstTimeDataMap.set('taskAllTime', 0);
   let currentCellIdData = {}; // 根据agvId 每个key 求和
 
-  currentAxisData.map(({ agvId }) => {
-    currentCellIdData[agvId] = {};
+  currentAxisData.map((agv) => {
+    currentCellIdData[agv] = {};
   });
 
   Object.values(originalData).forEach((record) => {
@@ -674,7 +659,10 @@ export const formatNumber = (n) => {
   let num = n.toString();
   let decimals = '';
   // 判断是否有小数
-  num.indexOf('.') > -1 ? (decimals = num.split('.')[1]) : decimals;
+  if (num.indexOf('.') > -1) {
+    decimals = num.split('.')[1];
+    num = num.split('.')[0];
+  }
   let len = num.length;
   if (len <= 3) {
     return num;

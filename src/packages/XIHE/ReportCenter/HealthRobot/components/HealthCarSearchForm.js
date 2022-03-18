@@ -19,7 +19,7 @@ const colums = {
 };
 
 const LogSearchForm = (props) => {
-  const { search, type, downloadVisible, sourceData, allTaskTypes, exportData } = props;
+  const { search, type, downloadVisible, allTaskTypes, exportData } = props;
 
   const [form] = Form.useForm();
   const [optionsData, setOptionsData] = useState([
@@ -91,51 +91,13 @@ const LogSearchForm = (props) => {
     });
   }
 
-  function generateEveryType(allData, type) {
-    const typeResult = [];
-    Object.entries(sourceData).forEach(([key, typeData]) => {
-      if (!isStrictNull(typeData)) {
-        typeData.forEach((record) => {
-          let currentTime = {};
-          let _record = { ...record };
-          currentTime[colums.agvId] = record.agvId;
-          currentTime[colums.period] = record.period;
-          currentTime[colums.robotType] = record.robotType;
-          if (!isNull(type)) {
-            _record = { ...record[type] };
-          }
-          forIn(_record, (value, parameter) => {
-            currentTime[parameter] = value;
-          });
-          typeResult.push(currentTime);
-        });
-      }
-    });
-    return typeResult;
-  }
-
-  function exportLoad() {
-    const wb = XLSX.utils.book_new(); /*新建book*/
-    const statusWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'statusAllTime'));
-    const taskWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskAllTime'));
-    const actionWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'actionLoad'));
-    const taskNumWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskTimes'));
-    const taskDistanceWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData, 'taskDistance'));
-    XLSX.utils.book_append_sheet(wb, statusWs, '状态时长');
-    XLSX.utils.book_append_sheet(wb, taskWs, '任务时长');
-    XLSX.utils.book_append_sheet(wb, actionWs, '动作时长');
-    XLSX.utils.book_append_sheet(wb, taskNumWs, '任务次数');
-    XLSX.utils.book_append_sheet(wb, taskDistanceWs, '任务距离');
-    XLSX.writeFile(wb, `小车负载.xlsx`);
-  }
-
   return (
     <Form form={form}>
       <Row gutter={24}>
         <Form.Item hidden name={'startTime'} />
         <Form.Item hidden name={'endTime'} />
         {/* 日期 */}
-        <Col>
+        <Col flex="auto">
           <Form.Item
             label={<FormattedMessage id="app.form.dateRange" />}
             name="timeRange"
@@ -191,7 +153,7 @@ const LogSearchForm = (props) => {
               <Row justify="end">
                 <Button
                   onClick={() => {
-                    exportData ? exportData() : exportLoad();
+                    exportData ? exportData() : '';
                   }}
                 >
                   <FormattedMessage id="reportCenter.sourceData.download" />

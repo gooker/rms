@@ -1,8 +1,10 @@
 import React, { useState, memo, useEffect } from 'react';
 import { Row, Col, Divider, Card } from 'antd';
 import echarts from 'echarts';
+import XLSX from 'xlsx';
 import moment from 'moment';
-import { isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
+import { getDatBysortTime } from '../components/groundQrcodeEcharts';
+import { isStrictNull, GMT2UserTimeZone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchTaskLoad } from '@/services/api';
 import {
   actionPieOption,
@@ -15,6 +17,12 @@ import FilterTaskLoadSearch from './components/FilterTaskLoadSearch';
 
 import commonStyles from '@/common.module.less';
 import style from '../HealthQrcode/qrcode.module.less';
+import { sortBy, forIn } from 'lodash';
+
+const colums = {
+  time: formatMessage({ id: 'app.time' }),
+  robotType: formatMessage({ id: 'app.agv.type' }),
+};
 
 let taskActionPieLine = null; // 任务动作负载-pie
 let taskWorkPieLine = null; // 任务作业负载-pie
@@ -24,11 +32,14 @@ let taskActionBarLine = null; // 任务动作负载-bar(日期x轴)
 let taskWorkBarLine = null;
 let taskPickworkBarLine = null;
 
-const HealthTask = (props) => {
+const TaskLoadComponent = (props) => {
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
 
-  useEffect(initChart, []);
+  const [keyAction, setKeyAction] = useState({}); //actionTranslate
+  const [keyStation, setKeyStation] = useState({}); //stationTranslate 拣选工作站
+  const [keyWork, setKeyWork] = useState({}); //workTranslate 任务作业
+
   useEffect(() => {
     async function initCodeData() {
       const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
@@ -43,24 +54,24 @@ const HealthTask = (props) => {
   function initChart() {
     // 任务动作负载 -pie
     taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
-    taskActionPieLine.setOption(actionPieOption('任务动作负载 '), true);
+    taskActionPieLine.setOption(actionPieOption('任务动作负载 ', keyAction), true);
     //-bar
     taskActionBarLine = echarts.init(document.getElementById('load_taskActionBar'));
-    taskActionBarLine.setOption(actionBarOption('任务动作负载'), true);
+    taskActionBarLine.setOption(actionBarOption('任务动作负载', keyAction), true);
 
     // 任务作业负载 -pie
     taskWorkPieLine = echarts.init(document.getElementById('load_taskWorkPie'));
-    taskWorkPieLine.setOption(actionPieOption('任务作业负载'), true);
+    taskWorkPieLine.setOption(actionPieOption('任务作业负载', keyWork), true);
     // -bar
     taskWorkBarLine = echarts.init(document.getElementById('load_taskWorkBar'));
-    taskWorkBarLine.setOption(actionBarOption('任务作业负载'), true);
+    taskWorkBarLine.setOption(actionBarOption('任务作业负载', keyWork), true);
 
     // 拣选工作站任务作业负载 -pie
     taskPickworkPieLine = echarts.init(document.getElementById('load_taskPickworkPie'));
-    taskPickworkPieLine.setOption(actionPieOption('拣选工作站任务作业负载'), true);
+    taskPickworkPieLine.setOption(actionPieOption('拣选工作站任务作业负载', keyStation), true);
     // -bar
     taskPickworkBarLine = echarts.init(document.getElementById('load_taskPickworkBar'));
-    taskPickworkBarLine.setOption(actionBarOption('拣选工作站任务作业负载'), true);
+    taskPickworkBarLine.setOption(actionBarOption('拣选工作站任务作业负载', keyStation), true);
 
     return () => {
       taskActionPieLine.dispose();
@@ -80,17 +91,26 @@ const HealthTask = (props) => {
   }
 
   function refreshChart() {
+    initChart();
     if (!taskPickworkPieLine || !taskWorkPieLine || !taskActionPieLine || !taskActionBarLine)
       return;
     const sourceData = { ...filterData };
 
-    const actionPieData = generateActionPieData(sourceData, 'actionLoad'); //动作负载-pie
-    const taskWorkPieData = generateActionPieData(sourceData, 'workLoad');
-    const taskPickworkPieData = generateActionPieData(sourceData, 'pickingWorkstationWorkload');
+    const actionPieData = generateActionPieData(sourceData, 'actionLoad', keyAction); //动作负载-pie
+    const taskWorkPieData = generateActionPieData(sourceData, 'workLoad', keyWork);
+    const taskPickworkPieData = generateActionPieData(
+      sourceData,
+      'pickingWorkstationWorkload',
+      keyStation,
+    );
 
-    const actionBarData = generateActionBarData(sourceData, 'actionLoad'); //动作负载-bar
-    const taskWorkBarData = generateActionBarData(sourceData, 'workLoad');
-    const taskPickworkBarData = generateActionBarData(sourceData, 'pickingWorkstationWorkload');
+    const actionBarData = generateActionBarData(sourceData, 'actionLoad', keyAction); //动作负载-bar
+    const taskWorkBarData = generateActionBarData(sourceData, 'workLoad', keyWork);
+    const taskPickworkBarData = generateActionBarData(
+      sourceData,
+      'pickingWorkstationWorkload',
+      keyStation,
+    );
 
     if (actionPieData) {
       const { series, legend } = actionPieData;
@@ -156,38 +176,29 @@ const HealthTask = (props) => {
         agvSearchType,
       });
       if (!dealResponse(response)) {
-        const taskLoad=response?.taskLoadData || {}
-        setLoadOriginData(taskLoad);
-        setFilterData(taskLoad);
+        let taskLoad = response?.taskLoadData || {};
+        const newTaskLoad = getDatBysortTime(taskLoad);
+        setLoadOriginData(newTaskLoad);
+        setFilterData(newTaskLoad);
+        setKeyAction(response?.actionTranslate || {});
+        setKeyStation(response?.stationTranslate || {});
+        setKeyWork(response?.workTranslate || {});
       }
     }
   }
 
-  // 二次-search
-  function onDatefilterChange(allValues) {
-    let newOriginalData = { ...loadOriginData };
-    if (Object.keys(loadOriginData).length === 0) return;
-    const { endTime, startTime, robot, agvTaskType = [] } = allValues;
-
-    if (robot && robot?.code.length > 0) {
-      newOriginalData = filterDataByParam(
-        robot?.code.map((item) => item * 1),
-        'robotId',
-      );
-    }
-
-    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
-      // 先根据时间过滤
-      newOriginalData = filterDataByTime(newOriginalData, startTime, endTime);
-    }
-
-    // 根据任务类型
-    if (agvTaskType && agvTaskType.length > 0) {
-      newOriginalData = filterDataByParam(agvTaskType, 'taskType');
-    }
-
-    setFilterData(newOriginalData);
-  }
+  // 过滤时间
+  const filterDataByTime = (data, startT, endT) => {
+    const _data = { ...data };
+    const newData = {};
+    Object.entries(_data).forEach(([key, allcellData]) => {
+      const _allCellData = [...allcellData];
+      if (moment(key).isBetween(moment(startT), moment(endT))) {
+        newData[key] = _allCellData;
+      }
+    });
+    return newData;
+  };
 
   /*
    *@searchValues 搜索条件数据
@@ -214,22 +225,83 @@ const HealthTask = (props) => {
     return newData;
   };
 
-  const filterDataByTime = (data, startT, endT) => {
-    const _data = { ...data };
-    const newData = {};
-    Object.entries(_data).forEach(([key, allcellData]) => {
-      const _allCellData = [...allcellData];
-      if (moment(key).isBetween(moment(startT), moment(endT))) {
-        newData[key] = _allCellData;
+  // 二次-search
+  function onDatefilterChange(allValues) {
+    let newOriginalData = { ...loadOriginData };
+    if (Object.keys(loadOriginData).length === 0) return;
+    const { endTime, startTime, robot, agvTaskType = [] } = allValues;
+
+    //TODO:要改
+    if (robot && robot?.code.length > 0) {
+      newOriginalData = filterDataByParam(
+        robot?.code.map((item) => item * 1),
+        'robotId',
+      );
+    }
+
+    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      newOriginalData = filterDataByTime(newOriginalData, startTime, endTime);
+    }
+
+    // 根据任务类型
+    if (agvTaskType && agvTaskType.length > 0) {
+      newOriginalData = filterDataByParam(agvTaskType, 'taskType');
+    }
+
+    setFilterData(newOriginalData);
+  }
+
+  function generateEveryType(allData, type, keyData) {
+    const typeResult = [];
+    Object.entries(allData).forEach(([key, typeData]) => {
+      if (!isStrictNull(typeData)) {
+        const currentTypeData = sortBy(typeData, 'agvId');
+        currentTypeData.forEach((record) => {
+          let currentTime = {};
+          let _record = {};
+          currentTime[colums.time] = key;
+          currentTime.agvId = record.agvId;
+          currentTime.agvTaskType = record.agvTaskType;
+          currentTime[colums.robotType] = record.robotType;
+          if (!isNull(type)) {
+            _record = { ...record[type] };
+          }
+          forIn(_record, (value, parameter) => {
+            currentTime[keyData[parameter]] = value;
+          });
+          typeResult.push(currentTime);
+        });
       }
     });
-    return newData;
-  };
+    return typeResult;
+  }
+
+  // 下载
+  function exportData() {
+    const wb = XLSX.utils.book_new();
+    const action = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'actionLoad', keyAction),
+    );
+    const work = XLSX.utils.json_to_sheet(generateEveryType(loadOriginData, 'workLoad', keyWork));
+    const pickStation = XLSX.utils.json_to_sheet(
+      generateEveryType(loadOriginData, 'pickingWorkstationWorkload', keyStation),
+    );
+    XLSX.utils.book_append_sheet(wb, action, '任务动作负载');
+    XLSX.utils.book_append_sheet(wb, work, '任务作业负载');
+    XLSX.utils.book_append_sheet(wb, pickStation, '拣选工作站任务作业负载');
+
+    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.reportCenter.loadReport.taskLoad' })}.xlsx`);
+  }
 
   return (
     <div className={commonStyles.commonPageStyle}>
       <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm search={submitSearch} type="taskload" downloadVisible={true} />
+        <HealthCarSearchForm
+          search={submitSearch}
+          type="taskload"
+          downloadVisible={true}
+          exportData={exportData}
+        />
       </div>
 
       <div className={style.body}>
@@ -261,4 +333,4 @@ const HealthTask = (props) => {
     </div>
   );
 };
-export default memo(HealthTask);
+export default memo(TaskLoadComponent);
