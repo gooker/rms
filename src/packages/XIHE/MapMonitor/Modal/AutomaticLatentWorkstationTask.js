@@ -17,14 +17,12 @@ import {
 import { CloseOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { find } from 'lodash';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 600;
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 18);
 
 const AutomaticLatentWorkstationTask = (props) => {
   const {
@@ -58,7 +56,7 @@ const AutomaticLatentWorkstationTask = (props) => {
 
   const AutomaticTaskConfigColumn = [
     {
-      title: <FormattedMessage id="app.map.workstation" />,
+      title: <FormattedMessage id="app.map.workStation" />,
       dataIndex: 'workstationArray',
       align: 'center',
       width: 150,
@@ -292,14 +290,7 @@ const AutomaticLatentWorkstationTask = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(600, 650)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.autoCall'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -313,7 +304,7 @@ const AutomaticLatentWorkstationTask = (props) => {
                 ? covertWorkstationArrayToFormData(latentAutomaticTaskForm.workstationArray)
                 : []
             }
-            label={formatMessage({ id: 'app.map.workstation' })}
+            label={formatMessage({ id: 'app.map.workStation' })}
           >
             <Select
               mode="multiple"
@@ -429,10 +420,8 @@ const AutomaticLatentWorkstationTask = (props) => {
         </Form>
         <Divider />
         <Table
-          style={{ width: width }}
           bordered
           pagination={false}
-          scroll={{ x: 600 }}
           rowKey={(_, index) => index}
           dataSource={latentAutomaticTaskConfig}
           columns={AutomaticTaskConfigColumn}

@@ -36,7 +36,7 @@ const CarryPod = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(500, 333)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.carry'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -49,7 +49,7 @@ const CarryPod = (props) => {
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber style={{ width: '80%' }} />
           </Form.Item>
           <Form.Item
             {...formItemLayout}
@@ -57,7 +57,7 @@ const CarryPod = (props) => {
             label={formatMessage({ id: 'app.pod' })}
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber style={{ width: '80%' }} />
           </Form.Item>
           <Form.Item
             {...formItemLayout}
@@ -65,7 +65,7 @@ const CarryPod = (props) => {
             label={formatMessage({ id: 'app.common.targetCell' })}
             rules={[{ required: true }]}
           >
-            <InputNumber />
+            <InputNumber style={{ width: '80%' }} />
           </Form.Item>
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={emptyRun} loading={executing} disabled={executing} type="primary">

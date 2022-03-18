@@ -8,8 +8,6 @@ import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from 
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 333;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const EmptyRun = (props) => {
@@ -40,7 +38,7 @@ const EmptyRun = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(width, height)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.emptyRun'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />

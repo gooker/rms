@@ -91,7 +91,6 @@ export default {
       if (
         dealResponse(
           response,
-          true,
           formatMessage({ id: 'app.taskAction.resetTask.success' }),
           formatMessage({ id: 'app.taskAction.resetTask.fail' }),
         )
@@ -106,7 +105,6 @@ export default {
       if (
         dealResponse(
           response,
-          true,
           formatMessage({ id: 'app.taskAction.redoTask.success' }),
           formatMessage({ id: 'app.taskAction.redoTask.fail' }),
         )
@@ -121,7 +119,6 @@ export default {
       if (
         dealResponse(
           response,
-          true,
           formatMessage({ id: 'app.taskAction.cancelTask.success' }),
           formatMessage({ id: 'app.taskAction.cancelTask.fail' }),
         )
@@ -136,7 +133,6 @@ export default {
       if (
         dealResponse(
           response,
-          true,
           formatMessage({ id: 'app.taskAction.restoreTask.success' }),
           formatMessage({ id: 'app.taskAction.restoreTask.fail' }),
         )

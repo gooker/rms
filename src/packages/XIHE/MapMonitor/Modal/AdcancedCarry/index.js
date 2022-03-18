@@ -9,7 +9,7 @@ import AdvancedCarryComponent from './AdvancedCarryComponent';
 import AdvancedReleaseComponent from './AdvancedReleaseComponent';
 import styles from '../../monitorLayout.module.less';
 
-const { formItemLayoutNoLabel } = getFormLayout(4, 16);
+const { formItemLayoutNoLabel } = getFormLayout(5, 19);
 const AdvancedCarry = (props) => {
   const { dispatch } = props;
   const [type, setType] = useState('carry');
@@ -45,7 +45,7 @@ const AdvancedCarry = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(680, 600)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550, 600)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.advancedCarry'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -62,7 +62,7 @@ const AdvancedCarry = (props) => {
               <FormattedMessage id="monitor.right.carry" />
             </Radio.Button>
             <Radio.Button value="release">
-              <FormattedMessage id="monitor.advancedcarry.released" />
+              <FormattedMessage id="monitor.advancedCarry.released" />
             </Radio.Button>
           </Radio.Group>
         </Form.Item>

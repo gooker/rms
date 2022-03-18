@@ -3,14 +3,12 @@ import { Button, Row, Form, Col, List } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { resumeLatentPausedTask } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 300;
 const { formItemLayout } = getFormLayout(6, 16);
-const LatentStopMessage = (props) => {
+const LatentPauseMessage = (props) => {
   const { dispatch, latentStopMessageList } = props;
 
   function close() {
@@ -18,16 +16,9 @@ const LatentStopMessage = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'monitor.message.latentStopMessage'} />
+        <FormattedMessage id={'monitor.message.latentPauseMessage'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
@@ -42,26 +33,17 @@ const LatentStopMessage = (props) => {
                 <Col span={20}>
                   <Row>
                     <Col span={12}>
-                      <Form.Item
-                        {...formItemLayout}
-                        label={formatMessage({ id: 'app.agv.id' })}
-                      >
+                      <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agv.id' })}>
                         {robotId}
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item
-                        {...formItemLayout}
-                        term={formatMessage({ id: 'app.map.cell' })}
-                      >
+                      <Form.Item {...formItemLayout} term={formatMessage({ id: 'app.map.cell' })}>
                         {cellId}
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item
-                        {...formItemLayout}
-                        term={formatMessage({ id: 'app.task.id' })}
-                      >
+                      <Form.Item {...formItemLayout} term={formatMessage({ id: 'app.task.id' })}>
                         {taskId ? taskId.substring(taskId.length - 5, taskId.length) : null}
                       </Form.Item>
                     </Col>
@@ -103,4 +85,4 @@ const LatentStopMessage = (props) => {
 };
 export default connect(({ monitor }) => ({
   latentStopMessageList: monitor.latentStopMessageList,
-}))(memo(LatentStopMessage));
+}))(memo(LatentPauseMessage));

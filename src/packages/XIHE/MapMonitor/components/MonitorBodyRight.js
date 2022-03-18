@@ -83,21 +83,21 @@ const MonitorBodyRight = (props) => {
         return <AgvCategorySecondaryPanel agvType={AGVType.Tote} height={350} />;
       case Category.SorterAGV:
         return <AgvCategorySecondaryPanel agvType={AGVType.Sorter} height={450} />;
+      case Category.View:
+        return (
+          <ViewCategorySecondaryPanel
+            type={Category.View}
+            height={250}
+            pixHeight={height}
+            offsetTop={offsetTop}
+          />
+        );
       case Category.Select:
         return <MonitorSelectionPanel height={height - 10} />;
       case Category.Simulator:
         return <SimulatorPanel height={height - 10} />;
       case Category.Emergency:
         return <EmergencyStopPanel height={160} pixHeight={height} offsetTop={offsetTop} />;
-      case Category.View:
-        return (
-          <ViewCategorySecondaryPanel
-            type={Category.View}
-            height={300}
-            pixHeight={height}
-            offsetTop={offsetTop}
-          />
-        );
       case Category.Resource:
         return (
           <ViewCategorySecondaryPanel

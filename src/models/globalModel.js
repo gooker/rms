@@ -245,22 +245,14 @@ export default {
       } else {
         response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: payload.id });
       }
-      return !dealResponse(
-        response,
-        true,
-        formatMessage({ id: 'app.header.option.switchEnvSuccess' }),
-      );
+      return !dealResponse(response, formatMessage({ id: 'app.header.option.switchEnvSuccess' }));
     },
 
     *updateGlobalLocale({ payload }, { call, put }) {
       const localeValue = require(`@/locales/${payload}`).default;
       const response = yield call(fetchUpdateUserCurrentLanguage, payload);
       if (
-        !dealResponse(
-          response,
-          true,
-          formatMessage({ id: 'app.header.option.switchLanguageSuccess' }),
-        )
+        !dealResponse(response, formatMessage({ id: 'app.header.option.switchLanguageSuccess' }))
       ) {
         moment.locale(payload);
         yield put({ type: 'updateGlobalLang', payload });

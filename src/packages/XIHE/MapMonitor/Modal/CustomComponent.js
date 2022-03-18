@@ -3,14 +3,18 @@ import { Form, Button, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import request from '@/utils/request';
-import { dealResponse, formatMessage, getFormLayout, renderRequestBodyForm } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getFormLayout,
+  getMapModalPosition,
+  renderRequestBodyForm,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AGVType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
 import { fetchGetAPI } from '@/services/XIHE';
 
-const width = 500;
-const height = 500;
 const TabAgvMap = {
   LatentAGV: AGVType.LatentLifting,
   ToteAGV: AGVType.Tote,
@@ -111,14 +115,7 @@ const CustomComponent = (props) => {
   };
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(600, 360)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'app.common.custom'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />

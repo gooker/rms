@@ -1,17 +1,15 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Input, Select, Checkbox, Card, message } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { fetchSorterToThrow } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 600;
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 16);
 
-const Parabolic = (props) => {
+const SorterThrow = (props) => {
   const { dispatch, dropBox } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
@@ -59,16 +57,9 @@ const Parabolic = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(500, 300)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'monitor.right.dumpCargo'} />
+        <FormattedMessage id={'monitor.right.sorterThrow'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
@@ -78,37 +69,32 @@ const Parabolic = (props) => {
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
-            <Input />
+            <Select mode={'tags'} />
           </Form.Item>
 
           {/* 选择器 */}
-          <div
-            style={{
-              paddingLeft: 45,
-              display: 'flex',
-              flexFlow: 'row wrap',
-              color: '#fff',
-            }}
-          >
-            <Checkbox
-              checked={checkBoxValue.includes('frontRoller')}
-              onChange={() => onCheckBoxChange('frontRoller')}
-            >
-              <FormattedMessage id={'monitor.dumpCargo.frontRoller'} />
-            </Checkbox>
-            <Checkbox
-              checked={checkBoxValue.includes('rearRoller')}
-              onChange={() => onCheckBoxChange('rearRoller')}
-            >
-              <FormattedMessage id={'monitor.dumpCargo.rearRoller'} />
-            </Checkbox>
-            <Checkbox
-              checked={checkBoxValue.includes('bothRoller')}
-              onChange={() => onCheckBoxChange('bothRoller')}
-            >
-              <FormattedMessage id={'monitor.dumpCargo.bothRoller'} />
-            </Checkbox>
-          </div>
+          <Form.Item {...formItemLayoutNoLabel}>
+            <div style={{ display: 'flex', flexFlow: 'row wrap', color: '#fff' }}>
+              <Checkbox
+                checked={checkBoxValue.includes('frontRoller')}
+                onChange={() => onCheckBoxChange('frontRoller')}
+              >
+                <FormattedMessage id={'monitor.dumpCargo.frontRoller'} />
+              </Checkbox>
+              <Checkbox
+                checked={checkBoxValue.includes('rearRoller')}
+                onChange={() => onCheckBoxChange('rearRoller')}
+              >
+                <FormattedMessage id={'monitor.dumpCargo.rearRoller'} />
+              </Checkbox>
+              <Checkbox
+                checked={checkBoxValue.includes('bothRoller')}
+                onChange={() => onCheckBoxChange('bothRoller')}
+              >
+                <FormattedMessage id={'monitor.dumpCargo.bothRoller'} />
+              </Checkbox>
+            </div>
+          </Form.Item>
 
           {checkBoxValue.map((item) => (
             <Card
@@ -165,8 +151,8 @@ const Parabolic = (props) => {
             </Card>
           ))}
           <Form.Item {...formItemLayoutNoLabel} style={{ marginTop: 35 }}>
-            <Button onClick={sendCommand} loading={executing} disabled={executing}>
-              <FormattedMessage id={'app.button.execute'} />
+            <Button type={'primary'} onClick={sendCommand} loading={executing} disabled={executing}>
+              <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
         </Form>
@@ -185,4 +171,4 @@ export default connect(({ monitor }) => {
     });
   }
   return { dropBox };
-})(memo(Parabolic));
+})(memo(SorterThrow));
