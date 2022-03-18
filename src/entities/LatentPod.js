@@ -1,7 +1,8 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, GlobalAlpha, MonitorSelectableSpriteType } from '@/config/consts';
+import { zIndex, GlobalAlpha, MonitorSelectableSpriteType, SelectionType } from '@/config/consts';
 
 export default class LatentPod extends PIXI.Container {
   constructor(props) {
@@ -17,6 +18,55 @@ export default class LatentPod extends PIXI.Container {
     this.zIndex = zIndex.pod;
     this.create();
     this.addPodId();
+
+    this.select = props.select;
+    this.selected = false; // 是否被框选
+    this.createSelectionBorder();
+
+    this.pod.interactive = true;
+    this.pod.buttonMode = true;
+    this.pod.interactiveChildren = false;
+    this.pod.on('pointerdown', this.click);
+  }
+
+  // 选择相关
+  onSelect = () => {
+    if (!this.selected) {
+      this.selected = true;
+      this.selectionBorder.visible = true;
+    }
+  };
+
+  onUnSelect = () => {
+    if (this.selected) {
+      this.selected = false;
+      this.selectionBorder.visible = false;
+    }
+  };
+
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
+    }
+  };
+
+  // 创建选择边框
+  createSelectionBorder() {
+    const scaleBase = 1.2;
+    this.selectionBorder = new SmoothGraphics();
+    this.selectionBorder.lineStyle(5, 0xff0000);
+    const { width, height } = this.getLocalBounds();
+    this.selectionBorder.drawRect(0, 0, width * scaleBase, height * scaleBase);
+    this.selectionBorder.alpha = 0.8;
+    this.selectionBorder.pivot = { x: (width * scaleBase) / 2, y: (height * scaleBase) / 2 };
+    this.selectionBorder.visible = false;
+    this.addChild(this.selectionBorder);
   }
 
   setAlpha(value) {

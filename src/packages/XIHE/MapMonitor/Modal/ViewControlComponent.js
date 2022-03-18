@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Form, Row, Col, Switch, Button, Checkbox } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -115,6 +115,12 @@ const ViewControlComponent = (props) => {
               onChange={(value) => {
                 mapContext && mapContext.switchDistanceShown(value, false);
               }}
+              checkedChildren={formatMessage({
+                id: 'app.common.visible',
+              })}
+              unCheckedChildren={formatMessage({
+                id: 'app.common.hidden',
+              })}
             />
           </Form.Item>
 
@@ -129,6 +135,12 @@ const ViewControlComponent = (props) => {
               onChange={(value) => {
                 mapContext && mapContext.switchCellShown(value, true);
               }}
+              checkedChildren={formatMessage({
+                id: 'app.common.visible',
+              })}
+              unCheckedChildren={formatMessage({
+                id: 'app.common.hidden',
+              })}
             />
           </Form.Item>
 
@@ -143,6 +155,12 @@ const ViewControlComponent = (props) => {
               onChange={(value) => {
                 mapContext && mapContext.switchCoordinationShown(value, true);
               }}
+              checkedChildren={formatMessage({
+                id: 'app.common.visible',
+              })}
+              unCheckedChildren={formatMessage({
+                id: 'app.common.hidden',
+              })}
             />
           </Form.Item>
 
@@ -158,6 +176,12 @@ const ViewControlComponent = (props) => {
                 switchRatePolling(value);
                 mapContext && mapContext.switchStationRealTimeRateShown(value);
               }}
+              checkedChildren={formatMessage({
+                id: 'app.common.visible',
+              })}
+              unCheckedChildren={formatMessage({
+                id: 'app.common.hidden',
+              })}
             />
           </Form.Item>
 
@@ -173,6 +197,12 @@ const ViewControlComponent = (props) => {
               onChange={(value) => {
                 mapContext && mapContext.switchBackImgShown(value);
               }}
+              checkedChildren={formatMessage({
+                id: 'app.common.visible',
+              })}
+              unCheckedChildren={formatMessage({
+                id: 'app.common.hidden',
+              })}
             />
           </Form.Item>
 
@@ -182,24 +212,28 @@ const ViewControlComponent = (props) => {
             style={{ marginBottom: 0 }}
           >
             <Row style={{ width: '100%' }}>
-              <Col span={6}>
-                <Form.Item
-                  name={'emergencyAreaShow'}
-                  valuePropName={'checked'}
-                  initialValue={emergencyAreaShow}
-                >
-                  <Switch
-                    onChange={(value) => {
-                      mapContext && mapContext.emergencyAreaShown(value);
-                    }}
-                  />
-                </Form.Item>
-              </Col>
-              <Col span={4} style={{ padding: 5 }}>
-                <Button size="small" onClick={refreshEmergencyArea}>
-                  <FormattedMessage id="app.button.refresh" />
+              <Form.Item
+                name={'emergencyAreaShow'}
+                valuePropName={'checked'}
+                initialValue={emergencyAreaShow}
+              >
+                <Switch
+                  onChange={(value) => {
+                    mapContext && mapContext.emergencyAreaShown(value);
+                  }}
+                  checkedChildren={formatMessage({
+                    id: 'app.common.visible',
+                  })}
+                  unCheckedChildren={formatMessage({
+                    id: 'app.common.hidden',
+                  })}
+                />
+              </Form.Item>
+              <div style={{ paddingTop: 5, marginLeft: 5 }}>
+                <Button size="small" type={'link'} onClick={refreshEmergencyArea}>
+                  <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
                 </Button>
-              </Col>
+              </div>
             </Row>
           </Form.Item>
         </Form>

@@ -1,9 +1,8 @@
 import React, { memo, useState } from 'react';
-import { connect } from '@/utils/RmsDva';
-import { Button, Form, InputNumber, message, Row, Col, Select } from 'antd';
-import LatentPodUpdater from '../Simulator/LatentPodUpdater';
+import { Button, Form, InputNumber, Row, Col, Select } from 'antd';
 import { useMap, useMount } from '@umijs/hooks';
 import { find } from 'lodash';
+import LatentPodUpdater from '../Simulator/LatentPodUpdater';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   dealResponse,
@@ -12,14 +11,14 @@ import {
   formatMessage,
   getFormLayout,
 } from '@/utils/util';
-import { fetchSetPod, fetchDeletePod } from '@/services/monitor';
 import { hasAppPermission } from '@/utils/Permission';
-import { AppCode } from '@/config/config';
+import { fetchSetPod, fetchDeletePod } from '@/services/monitor';
 import { fetchLatentLiftingSystemParam } from '@/services/monitor';
+import { AppCode } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
-const AddLatentPod = (props) => {
+const AddLatentPod = () => {
   const [form] = Form.useForm();
   const [angle, setAngle] = useState(0);
 
@@ -61,52 +60,43 @@ const AddLatentPod = (props) => {
   });
 
   function addSubmit() {
-    form.validateFields().then((value) => {
-      const {
-        size: { width, height },
-      } = value;
-      if (!width || !height) return;
-      const params = {
-        sectionId,
-        width,
-        length: height,
-        podId: value.podId,
-        cellId: value.targetId,
-        angle: value.angle,
-        zoneIds: value.zoneIds ? value.zoneIds : null,
-      };
+    form
+      .validateFields()
+      .then((value) => {
+        const {
+          size: { width, height },
+        } = value;
+        if (!width || !height) return;
+        const params = {
+          sectionId,
+          width,
+          length: height,
+          podId: value.podId,
+          cellId: value.targetId,
+          angle: value.angle,
+          zoneIds: value.zoneIds ? value.zoneIds : null,
+        };
 
-      addPod(params);
-    }).catch(()=>{});
+        addPod([params]);
+      })
+      .catch(() => {});
   }
 
   async function addPod(params) {
     const result = await fetchSetPod(params);
-    if (!dealResponse(result)) {
-      message.success(
-        formatMessage({
-          id: 'monitor.operation.setLatentPodSuccessfully',
-        }),
-      );
-    }
+    dealResponse(result, true);
   }
 
   async function deletePod() {
     const podId = form.getFieldValue('podId');
     if (!isNull(podId)) {
       const response = await fetchDeletePod({ podId, sectionId });
-      if (!dealResponse(response)) {
-        message.success(
-          formatMessage({
-            id: 'monitor.operation.removeLatentPodSuccessfully',
-          }),
-        );
-      }
+      dealResponse(response, true);
     }
   }
 
   return (
-    <div style={{ height: '100%', overflow: 'auto',marginTop:8 }}>
+    <div style={{ height: '100%', overflow: 'auto', marginTop: 8 }}>
       <Form form={form} {...formItemLayout}>
         <Form.Item
           name={'size'}
@@ -165,4 +155,4 @@ const AddLatentPod = (props) => {
     </div>
   );
 };
-export default connect()(memo(AddLatentPod));
+export default memo(AddLatentPod);

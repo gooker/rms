@@ -580,6 +580,7 @@ class MonitorMapView extends BaseMap {
         angle: angle || 0,
         x: cellEntity ? cellEntity.x : null,
         y: cellEntity ? cellEntity.y : null,
+        select: this.select,
       });
       latentPod.dirty = true;
       cellEntity && this.pixiUtils.viewportAddChild(latentPod);
@@ -639,6 +640,7 @@ class MonitorMapView extends BaseMap {
                 y: cellEntity.y,
                 width,
                 height,
+                select: this.select,
               });
             } else {
               return;

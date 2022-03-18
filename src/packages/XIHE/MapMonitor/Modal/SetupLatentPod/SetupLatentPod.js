@@ -9,7 +9,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
 
 const { TabPane } = Tabs;
-const width = 500;
+const width = 600;
 const height = 600;
 
 const SetupLatentPod = (props) => {

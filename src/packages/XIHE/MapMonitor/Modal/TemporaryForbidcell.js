@@ -101,10 +101,10 @@ const TemporaryForbidcel = (props) => {
                   >
                     <Switch
                       checkedChildren={formatMessage({
-                        id: 'app.map.view',
+                        id: 'app.common.visible',
                       })}
                       unCheckedChildren={formatMessage({
-                        id: 'app.common.hide',
+                        id: 'app.common.hidden',
                       })}
                       onChange={(checked) => {
                         if (checked) {

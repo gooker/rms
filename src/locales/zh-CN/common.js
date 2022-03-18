@@ -108,7 +108,8 @@ export default {
   'app.common.priority': '优先级',
   'app.common.param': '参数',
   'app.common.targetCell': '目标点',
-  'app.common.hide': '隐藏',
+  'app.common.visible': '可见',
+  'app.common.hidden': '隐藏',
   'app.common.notAvailable': '暂无',
   'app.common.loading': '加载中...',
 
