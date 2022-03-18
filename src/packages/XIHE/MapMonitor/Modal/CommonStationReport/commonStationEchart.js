@@ -356,7 +356,7 @@ export const transformCommonTrafficData = (allData = {}) => {
     result[time] = currentTaskCountMap[dateTime];
   });
   // 横坐标
-  const xAxisData = Object.keys(result).sort();
+  const xAxisData = Object.keys(result).sort((a,b)=>a=b);
 
   // Series
   const trafficLabelOption = {

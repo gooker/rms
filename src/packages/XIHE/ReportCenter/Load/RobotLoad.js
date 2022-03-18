@@ -104,7 +104,6 @@ const HealthCar = (props) => {
     if (!statusHistoryLine || !taskHistoryLine || !taskNumberHistoryLine || !actionPieHistoryLine)
       return;
     const sourceData = { ...filterData };
-    if (Object.keys(sourceData).length === 0) return;
 
     const statusData = generateDurationDataByTime(sourceData, 'statusAllTime'); // 状态时长
     const taskdurationData = generateDurationDataByTime(sourceData, 'taskAllTime'); // 任务时长
@@ -183,8 +182,9 @@ const HealthCar = (props) => {
         agvSearchType,
       });
       if (!dealResponse(response)) {
-        setLoadOriginData(response);
-        setFilterData(response);
+        const loadData=response?.AGVLoadData || {};
+        setLoadOriginData(loadData);
+        setFilterData(loadData);
         setSelectedKeys([]);
       }
     }

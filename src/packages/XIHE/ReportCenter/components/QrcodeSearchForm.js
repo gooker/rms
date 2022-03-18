@@ -1,21 +1,15 @@
 import React, { memo } from 'react';
 import { Row, Col, Form, Button, Select } from 'antd';
-import XLSX from 'xlsx';
-import { forIn } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull, formatMessage, isStrictNull } from '@/utils/util';
+import { isNull } from '@/utils/util';
 import DatePickerSelector from './DatePickerSelector';
 
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
-const colums = {
-  agvId: formatMessage({ id: 'app.agv.id' }),
-  period: formatMessage({ id: 'app.time' }),
-  robotType: formatMessage({ id: 'app.agv.type' }),
-};
+
 
 const QrcodeSearchComponent = (props) => {
-  const { search, name, sourceData } = props;
+  const { search,exportData } = props;
 
   const [form] = Form.useForm();
 
@@ -32,35 +26,6 @@ const QrcodeSearchComponent = (props) => {
     });
   }
 
-  function generateEveryType(allData, type) {
-    const typeResult = [];
-    Object.entries(sourceData).forEach(([key, typeData]) => {
-      if (!isStrictNull(typeData)) {
-        typeData.forEach((record) => {
-          let currentTime = {};
-          let _record = { ...record };
-          currentTime[colums.agvId] = record.agvId;
-          currentTime[colums.period] = record.period;
-          currentTime[colums.robotType] = record.robotType;
-          if (!isNull(type)) {
-            _record = { ...record[type] };
-          }
-          forIn(_record, (value, parameter) => {
-            currentTime[parameter] = value;
-          });
-          typeResult.push(currentTime);
-        });
-      }
-    });
-    return typeResult;
-  }
-
-  function exportData() {
-    const wb = XLSX.utils.book_new(); /*新建book*/
-    const statusWs = XLSX.utils.json_to_sheet(generateEveryType(sourceData));
-    XLSX.utils.book_append_sheet(wb, statusWs, 'common');
-    XLSX.writeFile(wb, `${name}.xlsx`);
-  }
 
   return (
     <Form form={form}>

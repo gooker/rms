@@ -1,49 +1,33 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Row, Col, Form, Button, Input, Select } from 'antd';
 import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/util';
 
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
-let _prefix = null;
-let _name = null;
 
 const FilterSearch = (props) => {
-  const { searchKey, onValuesChange, onShowkey, prefix, type } = props;
-  _prefix = prefix || 'reportCenter.qrcodehealth';
-  _name = type || 'robotIds';
+  const { searchKey, qrcodeSearch, showCellId, showAgvId } = props;
 
   const [form] = Form.useForm();
   const [togglesCode, setTogglesCode] = useState(0);
 
-  useEffect(() => {
-    function init() {}
-    init();
-  }, []);
-
-  // function clearForm() {
-  //   form.resetFields();
-  // }
+  function clearForm() {
+    form.resetFields();
+  }
 
   return (
     <div key="a" style={{ position: 'relative' }}>
       {togglesCode === 1 ? (
         <>
-          <Form form={form} onValuesChange={onValuesChange} {...formLayout}>
+          <Form form={form} {...formLayout}>
             <Row>
               <>
-                {searchKey.map((key) => {
+                {Object.entries(searchKey).map(([value, label]) => {
                   return (
-                    <Col span={6} key={key}>
+                    <Col span={6} key={label}>
                       <Form.Item
-                        name={key}
-                        label={
-                          !onShowkey
-                            ? `${formatMessage({
-                                id: `${_prefix}.${key}`,
-                              })}`
-                            : `${key}`
-                        }
+                        name={value}
+                        label={label}
                         rules={[
                           {
                             pattern: new RegExp(/^[1-9]\d*$/, 'g'),
@@ -57,16 +41,43 @@ const FilterSearch = (props) => {
                   );
                 })}
 
+                {showCellId && (
+                  <Col span={6}>
+                    <Form.Item name={'cellId'} label={<FormattedMessage id="app.map.cell" />}>
+                      <Select
+                        mode="tags"
+                        style={{ width: '100%' }}
+                        maxTagTextLength={5}
+                        maxTagCount={4}
+                        allowClear
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                {showAgvId && (
+                  <Col span={6}>
+                    <Form.Item name={'agvId'} label={<FormattedMessage id="app.agv" />}>
+                      <Select
+                        mode="tags"
+                        style={{ width: '100%' }}
+                        maxTagTextLength={5}
+                        maxTagCount={4}
+                        allowClear
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+
                 <Col span={6}>
-                  <Form.Item name={_name} label={<FormattedMessage id="app.agv" />}>
-                    <Select
-                      mode="tags"
-                      style={{ width: '100%' }}
-                      maxTagTextLength={5}
-                      maxTagCount={4}
-                      allowClear
-                    />
-                  </Form.Item>
+                  <Button
+                    onClick={() => {
+                      form.validateFields().then((values) => {
+                        qrcodeSearch(values);
+                      });
+                    }}
+                  >
+                    <FormattedMessage id="app.button.check" />
+                  </Button>
                 </Col>
               </>
             </Row>

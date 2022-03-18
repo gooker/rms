@@ -176,7 +176,7 @@ export const covertData2ChartsData = (taskCountMap) => {
   });
 
   // 横坐标
-  const xAxisData = Object.keys(result).sort();
+  const xAxisData = Object.keys(result).sort((a,b)=>a-b);
   const xAxis = {
     type: 'category',
     axisLine: {

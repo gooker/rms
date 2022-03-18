@@ -1,11 +1,12 @@
-import { formatMessage, isStrictNull } from '@/utils/util';
-import { forIn, sortBy } from 'lodash';
+import { isStrictNull } from '@/utils/util';
+import { forIn } from 'lodash';
+import { getOriginalDataBycode } from '../../components/groundQrcodeEcharts';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const colors = ['#91CC75', '#89c7f2'];
 
 // Series
-const trafficLabelOption = {
+export const trafficLabelOption = {
   position: 'insideBottom',
   distance: 15,
   align: 'left',
@@ -18,7 +19,7 @@ const trafficLabelOption = {
   },
 };
 
-const commonOption = {
+export const commonOption = {
   type: 'bar',
   barMaxWidth: 100,
   label: trafficLabelOption,
@@ -30,7 +31,7 @@ const commonOption = {
   },
 };
 
-export const offlineHistoryLineOption = (title) => ({
+export const offlineHistoryLineOption = (title, keyMap) => ({
   title: {
     text: title,
     x: 'center',
@@ -53,8 +54,7 @@ export const offlineHistoryLineOption = (title) => ({
       var showHtm = name + '<br>';
       for (let i = 0; i < params.length; i++) {
         const { marker, seriesName, value } = params[i];
-        const _seriesName = formatMessage({ id: `reportCenter.robot.offline.${seriesName}` });
-        showHtm += marker + _seriesName + '：' + value + '<br>';
+        showHtm += marker + keyMap[seriesName] + '：' + value + '<br>';
       }
       return showHtm;
     },
@@ -160,8 +160,11 @@ export const offlineHistoryLineOption = (title) => ({
   series: [], // 有几层数据 就放几层
 });
 
-// 根据原始数据 --处理日期数据-小车离线
-export const generatOfflineDataByTime = (allData) => {
+/*
+ *根据原始数据 --处理日期数据(x轴:日期)-小车离线
+ *translate {key:value}
+ */
+export const generatOfflineDataByTime = (allData, translate) => {
   const series = []; // 存放纵坐标数值
   const xAxisData = Object.keys(allData).sort(); // 横坐标
 
@@ -180,20 +183,16 @@ export const generatOfflineDataByTime = (allData) => {
     }
   });
 
-  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等 TODO 后端会改的
-  const legendData = [];
-  const currentAxisData = Object.values(allData)[0] || []; // 横坐标
-  forIn(currentAxisData[0], (value, key) => {
-    if (!['agvId', 'createTime', 'id', 'period', 'robotType', 'sectionId'].includes(key)) {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-    }
+  const keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
+  const legendData = Object.keys(translate);
+  legendData.map((item) => {
+    keyDataMap.set(item, 0);
   });
 
   const currentSery = {};
   typeResult.map((v) => {
     forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
+      if (keyDataMap.has(key)) {
         let seryData = currentSery[key] || [];
         currentSery[key] = [...seryData, value];
       }
@@ -206,7 +205,7 @@ export const generatOfflineDataByTime = (allData) => {
       data: key[1],
       name: key[0],
       yAxisIndex: i,
-      type: key[0] === 'offlinetime' || key[0] === 'errortime' ? 'line' : 'bar',
+      type: ['offlineTime', 'errorTime'].includes(key[0]) ? 'line' : 'bar',
     });
   });
 
@@ -244,7 +243,7 @@ export const generatOfflineDataByTime = (allData) => {
       color: '#fff',
     },
     formatter: function (name) {
-      return formatMessage({ id: `reportCenter.robot.offline.${name}` });
+      return translate[name];
     },
     animation: true,
   };
@@ -252,10 +251,14 @@ export const generatOfflineDataByTime = (allData) => {
   return { xAxis, series, legend };
 };
 
-// 根据原始数据 --处理robotId数据-小车离线
-export const generatOfflineDataByRobot = (allData) => {
+// 根据原始数据 --处理agvId数据-小车离线
+export const generatOfflineDataByRobot = (allData = {}, translate, idName = 'agvId') => {
   const series = []; // 存放纵坐标数值
-  const { legendData, xAxisData, currentSery } = getOriginalDataByRobotId(allData);
+  const {
+    legendData,
+    yxisData: xAxisData,
+    currentSery,
+  } = getOriginalDataBycode(allData, translate, idName);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -263,7 +266,7 @@ export const generatOfflineDataByRobot = (allData) => {
       data: key[1],
       name: key[0],
       yAxisIndex: i,
-      type: key[0] === 'offlinetime' || key[0] === 'errortime' ? 'line' : 'bar',
+      type: ['offlineTime', 'errorTime'].includes(key[0]) ? 'line' : 'bar',
     });
   });
 
@@ -300,55 +303,10 @@ export const generatOfflineDataByRobot = (allData) => {
       color: '#fff',
     },
     formatter: function (name) {
-      return formatMessage({ id: `reportCenter.robot.offline.${name}` });
+      return translate[name];
     },
     animation: true,
   };
 
   return { xAxis, series, legend };
-};
-
-//  拿到原始数据的 所有参数 所有根据robotId的参数求和
-//  重要:agvId要排序 不然数据就乱掉了 数据对应不上
-export const getOriginalDataByRobotId = (originalData) => {
-  let currentAxisData = Object.values(originalData)[0] || [];
-  currentAxisData = sortBy(currentAxisData, 'agvId'); // 不排序 数据会乱掉 这样robotId的轴是顺序的 对应的seriy也是顺序的
-  const firstTimeDataMap = new Map(); // 存放key 比如时长 次数等 TODO:后端会给的
-  const legendData = []; // 图例
-  const xAxisData = []; // 纵坐标 是y 顺序显示
-  let currentCellIdData = {}; // 根据robotId 每个key 求和
-
-  forIn(currentAxisData[0], (value, key) => {
-    if (!['agvId', 'createTime', 'id', 'period', 'robotType', 'sectionId'].includes(key)) {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-    }
-  });
-
-  currentAxisData.map(({ agvId }) => {
-    xAxisData.push(agvId);
-    currentCellIdData[agvId] = {};
-  });
-
-  Object.values(originalData).forEach((record) => {
-    record.forEach((item) => {
-      const { agvId } = item;
-      forIn(item, (value, key) => {
-        if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[agvId][key] || 0;
-          currentCellIdData[agvId][key] = seryData * 1 + value * 1;
-        }
-      });
-    });
-  });
-  const currentSery = {};
-  Object.entries(currentCellIdData).forEach(([_, v]) => {
-    forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
-        let seryData = currentSery[key] || [];
-        currentSery[key] = [...seryData, value];
-      }
-    });
-  });
-  return { legendData, xAxisData, currentSery, commonOption };
 };

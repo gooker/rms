@@ -156,8 +156,9 @@ const HealthTask = (props) => {
         agvSearchType,
       });
       if (!dealResponse(response)) {
-        setLoadOriginData(response);
-        setFilterData(response);
+        const taskLoad=response?.taskLoadData || {}
+        setLoadOriginData(taskLoad);
+        setFilterData(taskLoad);
       }
     }
   }

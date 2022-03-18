@@ -1,11 +1,11 @@
-import { formatMessage, isStrictNull, GMT2UserTimeZone } from '@/utils/util';
-import { forIn, sortBy } from 'lodash';
+import { formatMessage, isStrictNull } from '@/utils/util';
+import { forIn } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
 
 // Series
-const trafficLabelOption = {
+export const labelOption = {
   // show: true,
   position: 'insideBottom',
   distance: 15,
@@ -19,11 +19,11 @@ const trafficLabelOption = {
   },
 };
 
-const commonOption = {
+export const commonOption = {
   type: 'bar',
   stack: '11',
   barMaxWidth: 60,
-  label: trafficLabelOption,
+  label: labelOption,
   emphasis: {
     focus: 'series',
     lable: {
@@ -32,7 +32,7 @@ const commonOption = {
   },
 };
 
-export const dateHistoryLineOption = (title) => ({
+export const dateHistoryLineOption = (title, keyMap = {}) => ({
   title: {
     text: `${title}(${formatMessage({
       id: 'reportCenter.way.date',
@@ -52,12 +52,7 @@ export const dateHistoryLineOption = (title) => ({
       const name = params[0]?.axisValue;
       var showHtm = name + '<br>';
       params.map(({ marker, value, seriesName, index }) => {
-        showHtm +=
-          marker +
-          formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` }) +
-          '：' +
-          value +
-          '<br>';
+        showHtm += marker + keyMap[seriesName] + '：' + value + '<br>';
       });
       return showHtm;
     },
@@ -138,11 +133,9 @@ export const dateHistoryLineOption = (title) => ({
   series: [], // 有几层数据 就放几层
 });
 
-export const codeHistoryLineOption = (title) => ({
+export const codeHistoryLineOption = (title, keyMap = {}) => ({
   title: {
-    text: `${title}(${formatMessage({
-      id: 'reportCenter.way.cellId',
-    })})`,
+    text: `${title}`,
     x: 'center',
     bottom: '3%',
     textStyle: {
@@ -165,12 +158,7 @@ export const codeHistoryLineOption = (title) => ({
       const name = params[0]?.axisValue;
       var showHtml = name + '<br>';
       params.map(({ marker, value, seriesName, index }) => {
-        showHtml +=
-          marker +
-          formatMessage({ id: `reportCenter.qrcodehealth.${seriesName}` }) +
-          '：' +
-          value +
-          '<br>';
+        showHtml += marker + keyMap[seriesName] + '：' + value + '<br>';
       });
       return showHtml;
     },
@@ -229,8 +217,8 @@ export const codeHistoryLineOption = (title) => ({
   series: [], // 数据 有几种类型就放几种
 });
 
-// 根据原始数据 --处理日期数据
-export const generateTimeData = (allData) => {
+// 根据原始数据 --处理日期数据(x轴：日期)
+export const generateTimeData = (allData, translate) => {
   const series = []; // 存放纵坐标数值
   const xAxisData = Object.keys(allData).sort(); // 横坐标
 
@@ -249,21 +237,22 @@ export const generateTimeData = (allData) => {
     }
   });
 
-  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
-  const legendData = [];
-  const currentAxisData = Object.values(allData)[0] || []; // 横坐标
+  const keyDataMap = new Map(); // 存放key 比如车次 偏移等等的求和
+  let legendData = [];
+  if (Array.isArray(translate)) {
+    legendData = [...translate];
+  } else {
+    legendData = Object.keys(translate);
+  }
 
-  forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'cellId') {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-    }
+  legendData.map((item) => {
+    keyDataMap.set(item, 0);
   });
 
   const currentSery = {};
   typeResult.map((v) => {
     forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
+      if (keyDataMap.has(key)) {
         let seryData = currentSery[key] || [];
         currentSery[key] = [...seryData, value];
       }
@@ -305,8 +294,6 @@ export const generateTimeData = (allData) => {
 
   const legend = {
     data: legendData,
-    // orient: 'vertical',
-    // right: 0,
     x: 'right',
     align: 'right',
     type: 'scroll',
@@ -320,19 +307,22 @@ export const generateTimeData = (allData) => {
     bottom: '15%',
     pageIconColor: '#1890FF',
     formatter: function (name) {
-      return formatMessage({ id: `reportCenter.qrcodehealth.${name}` });
+      return translate[name];
     },
     animation: true,
   };
-  // todo 对于偏移次数 和偏移小车  这个数据要和在一起
-
   return { xAxis, series, legend };
 };
 
-// 根据原始数据 --处理cellId数据 纵坐标 是y
-export const transformCodeData = (allData = {}) => {
+/*
+ * idName- 是cellId或者agvId
+ *根据原始数据 --处理idName数据(y轴) 横坐标是key的sum
+ *translate-是翻译{key:value}
+ *
+ */
+export const transformCodeData = (allData = {}, translate, idName = 'cellId') => {
   const series = []; // 存放横坐标数值 是x 每个sery是每种key的求和(根据cellId)
-  const { legendData, yxisData, currentSery } = getOriginalDataBycode(allData);
+  const { legendData, yxisData, currentSery } = getOriginalDataBycode(allData, translate, idName);
 
   Object.entries(currentSery).forEach((key) => {
     series.push({
@@ -368,7 +358,6 @@ export const transformCodeData = (allData = {}) => {
 
   const legend = {
     data: legendData,
-    // orient: 'vertical',
     x: 'right',
     align: 'right',
     type: 'scroll',
@@ -379,7 +368,7 @@ export const transformCodeData = (allData = {}) => {
       color: '#fff',
     },
     formatter: function (name) {
-      return formatMessage({ id: `reportCenter.qrcodehealth.${name}` });
+      return translate[name];
     },
     animation: true,
   };
@@ -387,34 +376,38 @@ export const transformCodeData = (allData = {}) => {
   return { yAxis, series, legend };
 };
 
-//  拿到原始数据的 所有参数 所有根据cellId的参数求和
-export const getOriginalDataBycode = (originalData) => {
-  let currentAxisData = Object.values(originalData)[0] || [];
-  currentAxisData = sortBy(currentAxisData, 'cellId');
-  const firstTimeDataMap = new Map(); // 存放key 比如车次 偏移等
-  const legendData = [];
-  const yxisData = []; // 纵坐标 是y
+/**拿到原始数据的 所有参数 所有根据cellId/agvId的参数求和
+ * @param {*} originalData 数据
+ * *@param {*} translate 报表所有的key和对应的翻译 {key:value}
+ * *@param {*} idName 根据id求合 可以是cellId/agvId
+ * */  
+export const getOriginalDataBycode = (originalData, translate, idName) => {
+  let keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
+  let legendData = []; // 存放key
+  const yxisData = getAllCellId(originalData, idName); // 纵坐标 是y
   let currentCellIdData = {}; // 根据cellId 每个key 求和
 
-  forIn(currentAxisData[0], (value, key) => {
-    if (key !== 'cellId') {
-      firstTimeDataMap.set(key, 0);
-      legendData.push(key);
-    }
+  if (Array.isArray(translate)) {
+    legendData = [...translate];
+  } else {
+    legendData = Object.keys(translate);
+  }
+
+  legendData.map((item) => {
+    keyDataMap.set(item, 0);
   });
 
-  currentAxisData.map(({ cellId }) => {
-    yxisData.push(cellId);
-    currentCellIdData[cellId] = {};
+  yxisData.map((item) => {
+    currentCellIdData[item] = {};
   });
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { cellId } = item;
+      const id = item[idName];
       forIn(item, (value, key) => {
-        if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[cellId][key] || 0;
-          currentCellIdData[cellId][key] = seryData * 1 + value * 1;
+        if (keyDataMap.has(key)) {
+          let seryData = currentCellIdData[id][key] || 0;
+          currentCellIdData[id][key] = seryData * 1 + value * 1;
         }
       });
     });
@@ -422,11 +415,25 @@ export const getOriginalDataBycode = (originalData) => {
   const currentSery = {};
   Object.entries(currentCellIdData).forEach(([_, v]) => {
     forIn(v, (value, key) => {
-      if (firstTimeDataMap.has(key)) {
+      if (keyDataMap.has(key)) {
         let seryData = currentSery[key] || [];
         currentSery[key] = [...seryData, value];
       }
     });
   });
   return { legendData, yxisData, currentSery, commonOption };
+};
+
+// /*获取数据里所有的cellId/agvId;
+// *
+// /
+export const getAllCellId = (originalData, key) => {
+  const result = new Set();
+  Object.values(originalData).forEach((record) => {
+    record?.forEach((item) => {
+      result.add(item[key]);
+    });
+  });
+  // 重要！！不排序 数据会乱掉 这样Id的轴是顺序的 对应的seriy也是顺序的
+  return [...result].sort((a, b) => a - b); 
 };
