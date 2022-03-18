@@ -5,13 +5,7 @@ import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import ReportCreationModal from './ReportCreationModal';
 import Reports from './Reports';
-import {
-  countDay,
-  dealResponse,
-  formatMessage,
-  isNull,
-  transformReportDetail,
-} from '@/utils/util';
+import { countDay, dealResponse, formatMessage, isNull, transformReportDetail } from '@/utils/util';
 import {
   fetchDimensionDictionary,
   fetchReportDetailByUrl,
@@ -128,7 +122,6 @@ const ReportGroupDetail = (props) => {
         if (
           !dealResponse(
             response,
-            true,
             formatMessage({ id: 'app.message.operateSuccess' }),
             formatMessage({ id: 'app.message.operateFailed' }),
           )
@@ -203,7 +196,6 @@ const ReportGroupDetail = (props) => {
     if (
       !dealResponse(
         reportDetail,
-        false,
         null,
         formatMessage(
           { id: 'app.message.fetchFailTemplate' },

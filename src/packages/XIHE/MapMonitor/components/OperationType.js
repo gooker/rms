@@ -12,6 +12,7 @@ const { LatentLifting, Tote, Sorter, ForkLifting } = MonitorSelectableSpriteType
 
 @connect(({ monitor }) => ({
   mapContext: monitor.mapContext,
+  selections: monitor.selections,
   operationType: monitor.operationType,
   selectableType: monitor.selectableType,
 }))
@@ -138,8 +139,8 @@ class OperationType extends React.PureComponent {
   // 取消选择所以已选中的元素
   cancelSelections = () => {
     const { dispatch, selections, mapContext } = this.props;
-    // selections.forEach((entity) => entity.onUnSelect());
-    // mapContext.refresh();
+    selections.forEach((entity) => entity.onUnSelect());
+    mapContext.refresh();
     dispatch({ type: 'monitor/updateSelections', payload: [] });
   };
 
@@ -176,6 +177,8 @@ class OperationType extends React.PureComponent {
           !(item instanceof DumpBasket), // 筛掉抛物篮
       )
       .filter((item) => selectable.includes(item.type));
+    selections.forEach((item) => item.onSelect());
+    mapContext.refresh();
     dispatch({ type: 'monitor/updateSelections', payload: selections });
   };
 

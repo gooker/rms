@@ -118,7 +118,6 @@ export default {
       const response = yield call(fetchUpdateUserCurrentSection, params);
       return !dealResponse(
         response,
-        true,
         formatMessage({ id: 'app.header.option.switchSectionSuccess' }),
       );
     },

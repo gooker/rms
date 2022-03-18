@@ -2,12 +2,13 @@ import React, { memo, useState } from 'react';
 import { Form, Button, InputNumber, Radio, Switch, Checkbox, Select } from 'antd';
 import { advancedLatnetHandling } from '@/services/monitor';
 
-import { dealResponse, formatMessage,getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
+import { SendOutlined } from '@ant-design/icons';
 
 const inputWidth = { width: '100%' };
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 18);
 
 const AdvancedCarryComponent = (props) => {
   const { dispatch, functionArea } = props;
@@ -52,21 +53,21 @@ const AdvancedCarryComponent = (props) => {
           label={formatMessage({ id: 'app.pod' })}
           rules={[{ required: true }]}
         >
-          <InputNumber style={inputWidth} />
+          <InputNumber />
         </Form.Item>
         <Form.Item
           name={'targetCellId'}
           label={formatMessage({ id: 'app.common.targetCell' })}
           rules={[{ required: true }]}
         >
-          <InputNumber style={inputWidth} />
+          <InputNumber />
         </Form.Item>
         <Form.Item
           name={'robotId'}
           label={formatMessage({ id: 'app.agv.id' })}
           rules={[{ required: true }]}
         >
-          <InputNumber style={inputWidth} />
+          <InputNumber />
         </Form.Item>
 
         <Form.Item name={'targetDirection'} label={formatMessage({ id: 'app.pod.direction' })}>
@@ -125,7 +126,7 @@ const AdvancedCarryComponent = (props) => {
         <Form.Item
           name={'agvAction'}
           label={formatMessage({
-            id: 'monitor.advancedcarry.arrivalStatus',
+            id: 'monitor.advancedCarry.arrivalStatus',
           })}
           getValueFromEvent={(e) => {
             setCurrentAgvAction(e.target.value);
@@ -136,13 +137,13 @@ const AdvancedCarryComponent = (props) => {
             options={[
               {
                 label: formatMessage({
-                  id: 'monitor.advancedcarry.putDown',
+                  id: 'monitor.advancedCarry.putDown',
                 }),
                 value: 'DOWN_POD',
               },
               {
                 label: formatMessage({
-                  id: 'monitor.advancedcarry.notPutDown',
+                  id: 'monitor.advancedCarry.notPutDown',
                 }),
                 value: 'CARRY_POD',
               },
@@ -156,7 +157,7 @@ const AdvancedCarryComponent = (props) => {
             initialValue={false}
             valuePropName={'checked'}
             label={formatMessage({
-              id: 'monitor.advancedcarry.toRestPoint',
+              id: 'monitor.advancedCarry.toRestPoint',
             })}
           >
             <Switch
@@ -176,12 +177,12 @@ const AdvancedCarryComponent = (props) => {
             id: 'editor.cellType.rotation',
           })}
         >
-          <InputNumber style={inputWidth} />
+          <InputNumber />
         </Form.Item>
 
         <Form.Item
           name={'backZone'}
-          label={formatMessage({ id: 'monitor.advancedcarry.backZone' })}
+          label={formatMessage({ id: 'monitor.advancedCarry.backZone' })}
         >
           <Checkbox.Group>
             {functionArea?.map((item) => (
@@ -195,15 +196,15 @@ const AdvancedCarryComponent = (props) => {
         <Form.Item
           name={'scopeCodes'}
           label={formatMessage({
-            id: 'monitor.advancedcarry.scopeCode',
+            id: 'monitor.advancedCarry.scopeCode',
           })}
         >
-          <Select mode="tags" />
+          <Select mode="tags" style={{ width: '70%' }} />
         </Form.Item>
 
         <Form.Item {...formItemLayoutNoLabel}>
           <Button onClick={startCarry} loading={executing} disabled={executing} type="primary">
-            <FormattedMessage id={'app.button.execute'} />
+            <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
           </Button>
         </Form.Item>
       </Form>

@@ -134,7 +134,9 @@ class ExecutionQueueComponent extends Component {
           return <FormattedMessage id="app.executionQ.notAvailable" />;
         }
         return (
-          <span style={{ width: '100%' }}>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+          <span style={{ width: '100%' }}>
+            {convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
         );
       },
     },
@@ -149,7 +151,9 @@ class ExecutionQueueComponent extends Component {
           return <FormattedMessage id="app.executionQ.notAvailable" />;
         }
         return (
-          <span style={{ width: '100%' }}>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>
+          <span style={{ width: '100%' }}>
+            {convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}
+          </span>
         );
       },
     },
@@ -185,7 +189,6 @@ class ExecutionQueueComponent extends Component {
         if (
           !dealResponse(
             response,
-            true,
             formatMessage({ id: 'app.executionQ.deleteTaskSuccess' }),
             formatMessage({ id: 'app.executionQ.deleteTaskFail' }),
           )
@@ -253,7 +256,7 @@ class ExecutionQueueComponent extends Component {
             allTaskTypes={allTaskTypes?.[agvType] || {}}
             search={this.filterTableList}
           />
-          <Divider/>
+          <Divider />
           {deleteFlag ? (
             <Button
               danger

@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Input } from 'antd';
+import { Form, Button, InputNumber } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
@@ -38,7 +38,7 @@ const Charging = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(500, 222)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(400, 240)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.charge'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -51,9 +51,8 @@ const Charging = (props) => {
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
-            <Input />
+            <InputNumber style={{ width: '100%' }} />
           </Form.Item>
-
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />

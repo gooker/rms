@@ -1,18 +1,15 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Input, Select } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
-import { find } from 'lodash';
+import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { agvEmptyRun } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 400;
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 16);
 
-const PickCargo = (props) => {
+const SorterPick = (props) => {
   const { dispatch, commonStations } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
@@ -26,29 +23,16 @@ const PickCargo = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        if (agv) {
-          agvEmptyRun(agv.robotType, { ...values }).then((response) => {
-            if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
-              close();
-            }
-          });
-        }
+        //
         setExecuting(false);
       })
       .catch(() => {});
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'monitor.right.pickCargo'} />
+        <FormattedMessage id={'monitor.right.sorterPick'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
@@ -83,8 +67,8 @@ const PickCargo = (props) => {
             </Select>
           </Form.Item>
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button onClick={emptyRun} loading={executing} disabled={executing}>
-              <FormattedMessage id={'app.button.execute'} />
+            <Button type={'primary'} onClick={emptyRun} loading={executing} disabled={executing}>
+              <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
         </Form>
@@ -105,4 +89,4 @@ export default connect(({ monitor }) => {
     });
   }
   return { commonStations };
-})(memo(PickCargo));
+})(memo(SorterPick));

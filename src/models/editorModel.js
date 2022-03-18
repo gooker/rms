@@ -225,14 +225,7 @@ export default {
           // 获取已激活地图数据并保存相关状态
           const mapId = activeMap[0].id;
           const currentMap = yield call(fetchMapDetail, mapId);
-          if (
-            !dealResponse(
-              currentMap,
-              false,
-              null,
-              formatMessage({ id: 'app.message.fetchMapFail' }),
-            )
-          ) {
+          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
             yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
           }
         }

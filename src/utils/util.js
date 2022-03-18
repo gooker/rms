@@ -172,7 +172,11 @@ export function dealResponse(response, successMessage, failedMessage) {
 
   // 正常请求后返回false, 表示当前请求无错误
   if (successNotify) {
-    message.success(successMessage || formatMessage({ id: 'app.message.operateSuccess' }));
+    message.success(
+      typeof successMessage === 'string'
+        ? successMessage
+        : formatMessage({ id: 'app.message.operateSuccess' }),
+    );
   }
   return false;
 }

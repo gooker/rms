@@ -1,17 +1,21 @@
 import React, { memo } from 'react';
-import { Form, Button, Input, InputNumber, message } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { Form, Button, Input, Select, InputNumber, message } from 'antd';
+import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { agvRemoteControl } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getFormLayout,
+  getMapModalPosition,
+  isStrictNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { Category } from '../enums';
 import styles from '../monitorLayout.module.less';
 
-const width = 620;
-const height = 630;
-const { formItemLayout } = getFormLayout(6, 16);
+const { formItemLayout } = getFormLayout(4, 20);
 
 const RemoteControl = (props) => {
   const { dispatch, allAGVs, categoryPanel } = props;
@@ -109,14 +113,7 @@ const RemoteControl = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(600, 600)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.remoteControl'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -128,41 +125,39 @@ const RemoteControl = (props) => {
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
-            <Input />
+            <Select mode={'tags'} style={{ width: 400 }} />
           </Form.Item>
+
           {/* 小车直行 */}
-          <Form.Item label={formatMessage({ id: 'monitor.remotecontrol.agvStraight' })}>
-            <div style={{ height: 80 }}>
-              <div style={{ marginBottom: 5 }}>
-                <Button
-                  onClick={() => {
-                    prefabricatedCommand(0x02);
-                  }}
-                >
-                  <FormattedMessage id={'app.hardWareStatus.straightLine'} />
-                </Button>
-                <Button
-                  style={{ marginLeft: 15 }}
-                  onClick={() => {
-                    prefabricatedCommand(0x03);
-                  }}
-                >
-                  <FormattedMessage id="monitor.remotecontrol.followStraight" />
-                </Button>
-              </div>
-              <Form.Item
-                name={'distance'}
-                initialValue={1350}
-                label={formatMessage({ id: 'editor.config.distance' })}
+          <Form.Item label={formatMessage({ id: 'monitor.remoteControl.agvStraight' })}>
+            <div style={{ marginBottom: 5 }}>
+              <Button
+                onClick={() => {
+                  prefabricatedCommand(0x02);
+                }}
               >
-                <Input suffix={'mm'} style={{ width: '60%' }} />
-              </Form.Item>
+                <FormattedMessage id={'app.hardWareStatus.straightLine'} />
+              </Button>
+              <Button
+                style={{ marginLeft: 15 }}
+                onClick={() => {
+                  prefabricatedCommand(0x03);
+                }}
+              >
+                <FormattedMessage id="monitor.remoteControl.followStraight" />
+              </Button>
             </div>
+            <Form.Item noStyle name={'distance'}>
+              <InputNumber
+                suffix={'mm'}
+                style={{ width: 120 }}
+                placeholder={formatMessage({ id: 'editor.config.distance' })}
+              />
+            </Form.Item>
           </Form.Item>
 
           {/* 小车转向 */}
-
-          <Form.Item label={formatMessage({ id: 'monitor.remotecontrol.agvTurn' })}>
+          <Form.Item label={formatMessage({ id: 'monitor.remoteControl.agvTurn' })}>
             <div>
               <Button
                 onClick={() => {
@@ -199,15 +194,14 @@ const RemoteControl = (props) => {
           {categoryPanel !== Category.SorterAGV ? (
             <>
               {/* 托盘旋转 */}
-
-              <Form.Item label={formatMessage({ id: 'monitor.remotecontrol.palletRotation' })}>
+              <Form.Item label={formatMessage({ id: 'monitor.remoteControl.palletRotation' })}>
                 <div className={styles.formRowPallet}>
                   <Button
                     onClick={() => {
                       prefabricatedCommand(0x11, 0);
                     }}
                   >
-                    <FormattedMessage id={'monitor.remotecontrol.asideToTop'} />
+                    <FormattedMessage id={'monitor.remoteControl.asideToTop'} />
                   </Button>
                   <Button
                     style={{ margin: '0 15px' }}
@@ -215,14 +209,14 @@ const RemoteControl = (props) => {
                       prefabricatedCommand(0x11, 180);
                     }}
                   >
-                    <FormattedMessage id={'monitor.remotecontrol.asideToBottom'} />
+                    <FormattedMessage id={'monitor.remoteControl.asideToBottom'} />
                   </Button>
                   <Button
                     onClick={() => {
                       prefabricatedCommand(0x11, 270);
                     }}
                   >
-                    <FormattedMessage id={'monitor.remotecontrol.asideToLeft'} />
+                    <FormattedMessage id={'monitor.remoteControl.asideToLeft'} />
                   </Button>
                   <Button
                     style={{ margin: '0 15px' }}
@@ -230,35 +224,36 @@ const RemoteControl = (props) => {
                       prefabricatedCommand(0x11, 90);
                     }}
                   >
-                    <FormattedMessage id={'monitor.remotecontrol.asideToRight'} />
+                    <FormattedMessage id={'monitor.remoteControl.asideToRight'} />
                   </Button>
                 </div>
               </Form.Item>
 
               {/* 升降货架 */}
-              <Form.Item label={formatMessage({ id: 'monitor.remotecontrol.liftingShelf' })}>
-                <div style={{ height: 80 }}>
-                  <div style={{ marginBottom: 5 }}>
-                    <Button
-                      onClick={() => {
-                        prefabricatedCommand(0x20);
-                      }}
-                    >
-                      <FormattedMessage id={'app.activity.jackingUp'} />
-                    </Button>
-                    <Button
-                      style={{ marginLeft: 15 }}
-                      onClick={() => {
-                        prefabricatedCommand(0x21);
-                      }}
-                    >
-                      <FormattedMessage id={'app.hardWareStatus.decline'} />
-                    </Button>
-                  </div>
-                  <Form.Item name={'podId'} label={formatMessage({ id: 'app.pod.id' })}>
-                    <InputNumber style={{ width: 120 }} />
-                  </Form.Item>
+              <Form.Item label={formatMessage({ id: 'monitor.remoteControl.liftingShelf' })}>
+                <div style={{ marginBottom: 5 }}>
+                  <Button
+                    onClick={() => {
+                      prefabricatedCommand(0x20);
+                    }}
+                  >
+                    <FormattedMessage id={'app.activity.jackingUp'} />
+                  </Button>
+                  <Button
+                    style={{ marginLeft: 15 }}
+                    onClick={() => {
+                      prefabricatedCommand(0x21);
+                    }}
+                  >
+                    <FormattedMessage id={'app.hardWareStatus.decline'} />
+                  </Button>
                 </div>
+                <Form.Item noStyle name={'podId'}>
+                  <InputNumber
+                    style={{ width: 120 }}
+                    placeholder={formatMessage({ id: 'app.pod.id' })}
+                  />
+                </Form.Item>
               </Form.Item>
             </>
           ) : null}
@@ -271,7 +266,7 @@ const RemoteControl = (props) => {
               </Form.Item>
               <div style={{ marginTop: 10 }}>
                 <Button onClick={sendCustomCommand}>
-                  <FormattedMessage id={'app.agv.batchCommand.Modal.confirm'} />
+                  <SendOutlined /> <FormattedMessage id={'app.agv.batchCommand.Modal.confirm'} />
                 </Button>
               </div>
             </div>

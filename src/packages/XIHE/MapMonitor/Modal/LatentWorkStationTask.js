@@ -1,15 +1,13 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Select, InputNumber, Radio } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { latentPodToWorkStation } from '@/services/monitor';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const width = 500;
-const height = 400;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const LatentWorkStationTask = (props) => {
@@ -44,20 +42,17 @@ const LatentWorkStationTask = (props) => {
   }
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(500, 400)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.workStationTask'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
+          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv.id' })}>
+            <InputNumber />
+          </Form.Item>
+
           <Form.Item
             name={'podId'}
             label={formatMessage({ id: 'app.pod' })}
@@ -99,10 +94,6 @@ const LatentWorkStationTask = (props) => {
             </Select>
           </Form.Item>
 
-          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv.id' })}>
-            <InputNumber />
-          </Form.Item>
-
           <Form.Item {...formItemLayoutNoLabel}>
             <Button
               onClick={callRackToWorkstation}
@@ -110,7 +101,7 @@ const LatentWorkStationTask = (props) => {
               disabled={executing}
               type="primary"
             >
-              <FormattedMessage id={'app.button.execute'} />
+              <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
         </Form>

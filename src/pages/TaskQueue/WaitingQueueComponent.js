@@ -190,7 +190,6 @@ class WaitingQueueComponent extends Component {
         if (
           !dealResponse(
             response,
-            true,
             formatMessage({ id: 'app.executionQ.deleteTaskSuccess' }),
             formatMessage({ id: 'app.executionQ.deleteTaskFail' }),
           )

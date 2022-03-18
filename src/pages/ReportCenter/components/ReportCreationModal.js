@@ -22,7 +22,6 @@ const ReportCreationModal = (props) => {
     if (
       !dealResponse(
         response,
-        false,
         null,
         `${formatMessage(
           { id: 'app.message.fetchFailTemplate' },

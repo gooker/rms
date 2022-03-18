@@ -174,14 +174,14 @@ export const AgvCategoryTools = [
   },
 
   {
-    label: <FormattedMessage id={'monitor.right.pickCargo'} />,
+    label: <FormattedMessage id={'monitor.right.sorterPick'} />,
     icon: 'quhuo.png',
     style: { width: '37px', height: 'auto' },
     value: 'pickCargo',
     module: [AGVType.Sorter],
   },
   {
-    label: <FormattedMessage id={'monitor.right.dumpCargo'} />,
+    label: <FormattedMessage id={'monitor.right.sorterThrow'} />,
     icon: 'paowu.png',
     style: { width: '37px', height: 'auto' },
     value: 'dumpCargo',
@@ -217,12 +217,12 @@ export const ViewCategoryTools = [
     style: { width: '45px', height: 'auto' },
     value: 'latentDisplay',
   },
-  {
-    label: <FormattedMessage id={'monitor.right.toteDisplay'} />,
-    icon: 'toteView.png',
-    style: { width: '30px', height: 'auto' },
-    value: 'toteDisplay',
-  },
+  // {
+  //   label: <FormattedMessage id={'monitor.right.toteDisplay'} />,
+  //   icon: 'toteView.png',
+  //   style: { width: '30px', height: 'auto' },
+  //   value: 'toteDisplay',
+  // },
   {
     label: <FormattedMessage id={'monitor.right.sorterDisplay'} />,
     icon: 'sorterView.png',
@@ -299,7 +299,7 @@ export const MessageCategoryTools = [
     permissionFlag: AppCode.LatentLifting,
   },
   {
-    label: <FormattedMessage id={'monitor.message.latentStopMessage'} />,
+    label: <FormattedMessage id={'monitor.message.latentPauseMessage'} />,
     value: 'stopMessage',
     icon: 'latentPod.png',
     style: { width: '33px', height: 'auto' },

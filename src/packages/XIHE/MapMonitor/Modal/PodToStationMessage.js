@@ -3,12 +3,9 @@ import { Table, Empty, Button, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { releaseLatentPod } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
-
-const width = 500;
-const height = 450;
 
 const PodToStationMessage = (props) => {
   const { dispatch, podToWorkstationInfo } = props;
@@ -64,21 +61,14 @@ const PodToStationMessage = (props) => {
             release(record.taskId);
           }}
         >
-          <FormattedMessage id="monitor.advancedcarry.released" />
+          <FormattedMessage id="monitor.advancedCarry.released" />
         </Button>
       ),
     },
   ];
 
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.message.podToWorkstationInfo'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
