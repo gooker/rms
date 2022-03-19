@@ -150,6 +150,17 @@ const Portal = (props) => {
               />
             );
           }
+
+          return (
+            <XIHE
+              key={appCode}
+              currentApp={currentApp}
+              checkoutApp={checkoutApp}
+              name={appCode}
+              width={PortalWidth}
+              height={PortalHeight}
+            />
+          );
         })}
       </>
     );

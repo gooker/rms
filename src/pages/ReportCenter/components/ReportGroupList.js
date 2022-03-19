@@ -4,7 +4,7 @@ import { PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, GMT2UserTimeZone } from '@/utils/util';
+import { dealResponse, formatMessage, convertToUserTimezone } from '@/utils/util';
 import { deleteReportGroup, fetchReportGroupList, saveReportGroup } from '@/services/api';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
@@ -33,7 +33,7 @@ const ReportGroupList = (props) => {
       title: formatMessage({ id: 'app.common.creationTime' }),
       dataIndex: 'createTime',
       align: 'center',
-      render: (text) => GMT2UserTimeZone(text).format('YYYY-MM-DD HH:mm:ss'),
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: formatMessage({ id: 'app.common.updater' }),

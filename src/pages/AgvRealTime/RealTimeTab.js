@@ -3,7 +3,7 @@ import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
 import { formatMessage, getSuffix, renderBattery } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getDirectionLocale, getAgvStatusTag, GMT2UserTimeZone } from '@/utils/util';
+import { getDirectionLocale, getAgvStatusTag, convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';
@@ -52,7 +52,7 @@ const RealTimeTab = (props) => {
 
   function renderAddingTime() {
     if (data.mongodbAGV) {
-      return GMT2UserTimeZone(data.mongodbAGV.createDate).format('YYYY-MM-DD HH:mm:ss');
+      return convertToUserTimezone(data.mongodbAGV.createDate).format('YYYY-MM-DD HH:mm:ss');
     }
   }
 

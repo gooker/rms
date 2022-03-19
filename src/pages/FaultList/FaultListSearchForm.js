@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
-import { dealResponse, formatMessage, GMT2UserTimeZone, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, convertToUserTimezone, isNull } from '@/utils/util';
 import { fetchAgvList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
@@ -35,12 +35,12 @@ const FaultListSearchForm = (props) => {
       Object.keys(values).forEach((formKey) => {
         if (formKey === 'date') {
           if (!isNull(values?.date?.[0])) {
-            formValues.createTimeStart = GMT2UserTimeZone(values.date[0]).format(
+            formValues.createTimeStart = convertToUserTimezone(values.date[0]).format(
               'YYYY-MM-DD HH:mm:ss',
             );
           }
           if (!isNull(values?.date?.[1])) {
-            formValues.createTimeEnd = GMT2UserTimeZone(values.date[1]).format(
+            formValues.createTimeEnd = convertToUserTimezone(values.date[1]).format(
               'YYYY-MM-DD HH:mm:ss',
             );
           }

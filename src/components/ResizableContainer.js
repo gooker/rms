@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import { isNull } from '@/utils/util';
-import { LeftCategory } from '@/packages/XIHE/MapEditor/enums';
+import { LeftCategory } from '@/packages/Scene/MapEditor/enums';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import { Text } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';

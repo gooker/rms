@@ -14,7 +14,7 @@ import { fetchUpdateCharger } from '@/services/XIHE';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
-import BindingChargeComponent from './components/BindingChargeComponent';
+import BindingChargeComponent from '../../ResourceManage/Charger/components/BindingChargeComponent';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 

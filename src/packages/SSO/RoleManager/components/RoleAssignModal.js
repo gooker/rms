@@ -8,7 +8,6 @@ import { generateMenuNodeLocaleKey, validateMenuNodePermission } from '@/utils/i
 import { formatMessage } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
 import allModuleRouter from '@/config/router';
-import allModulePermission from '@/config/permission';
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -41,14 +40,15 @@ class RoleAssignModal extends Component {
         const menuData = generateMenuNodeLocaleKey(appMenu);
 
         // 处理自定义的权限数据
-        const codePermissionMap = transform(
-          allModulePermission[appCode],
-          (result, record) => {
-            const { page, children } = record;
-            result[page] = children;
-          },
-          {},
-        );
+        // const codePermissionMap = transform(
+        //   allModulePermission[appCode],
+        //   (result, record) => {
+        //     const { page, children } = record;
+        //     result[page] = children;
+        //   },
+        //   {},
+        // );
+        const codePermissionMap = {};
 
         // 将路由与自定义权限合并
         const authRoutes = this.combineMenuAndPermission(menuData, codePermissionMap) || [];

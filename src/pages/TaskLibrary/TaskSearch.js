@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { GMT2UserTimeZone, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -18,10 +18,10 @@ const TaskSearch = (props) => {
     form.validateFields().then((values) => {
       const params = {};
       if (values.createDate) {
-        params.createTimeStart = GMT2UserTimeZone(values.createDate[0]).format(
+        params.createTimeStart = convertToUserTimezone(values.createDate[0]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
-        params.createTimeEnd = GMT2UserTimeZone(values.createDate[1]).format('YYYY-MM-DD HH:mm:ss');
+        params.createTimeEnd = convertToUserTimezone(values.createDate[1]).format('YYYY-MM-DD HH:mm:ss');
         params.createDate = null;
       }
       search({ ...values, ...params }, true);

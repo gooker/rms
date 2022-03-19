@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { dealResponse, GMT2UserTimeZone, isNull, formatMessage, convertToUserTimezone } from '@/utils/util';
+import { dealResponse, convertToUserTimezone, isNull, formatMessage } from '@/utils/util';
 import { fetchAppModules } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { saveAs } from 'file-saver';
@@ -33,10 +33,14 @@ const LogSearchForm = (props) => {
       Object.keys(values).forEach((formKey) => {
         if (formKey === 'date') {
           if (!isNull(values?.date?.[0])) {
-            formValues.startTime = GMT2UserTimeZone(values.date[0]).format('YYYY-MM-DD HH:mm:ss');
+            formValues.startTime = convertToUserTimezone(values.date[0]).format(
+              'YYYY-MM-DD HH:mm:ss',
+            );
           }
           if (!isNull(values?.date?.[1])) {
-            formValues.endTime = GMT2UserTimeZone(values.date[1]).format('YYYY-MM-DD HH:mm:ss');
+            formValues.endTime = convertToUserTimezone(values.date[1]).format(
+              'YYYY-MM-DD HH:mm:ss',
+            );
           }
         } else {
           if (!isNull(values[formKey])) {

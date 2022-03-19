@@ -5,7 +5,7 @@ import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
 import { getDatBysortTime } from '../components/groundQrcodeEcharts';
-import { formatMessage, GMT2UserTimeZone, dealResponse, isStrictNull, isNull } from '@/utils/util';
+import { formatMessage, convertToUserTimezone, dealResponse, isStrictNull, isNull } from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
@@ -52,8 +52,8 @@ const HealthCar = (props) => {
 
   useEffect(() => {
     async function initCodeData() {
-      const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
       submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
     }
     initCodeData();

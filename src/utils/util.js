@@ -13,33 +13,6 @@ import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 
 /**
- * @废弃
- * 将服务器的时间和服务器返回的时区转回成用户时区的时间格式
- * @param {*} value
- * @returns
- */
-export function GMT2UserTimeZone(value) {
-  if (isStrictNull(value)) {
-    return { format: () => '' };
-  }
-
-  // 服务器所在地方时区
-  let serverTimeZone = window.localStorage.getItem('serverTimeZone');
-  serverTimeZone = serverTimeZone || 'GMT';
-  moment.tz.setDefault(serverTimeZone);
-
-  // 获取当前时区偏移量
-  let date;
-  const userTimeZone = window.localStorage.getItem('userTimeZone');
-  if (userTimeZone != null) {
-    date = new moment(value).tz(userTimeZone);
-  } else {
-    date = new moment(value).tz(moment.tz.guess());
-  }
-  return date;
-}
-
-/**
  * 将服务器时间转化成本地时间
  * @param {*} value
  * @returns
@@ -506,6 +479,19 @@ function switchComponent(fieldType) {
   return [component, value];
 }
 
+export function getURL(url) {
+  if (!url) return '';
+  const dir = requestAPI();
+  const array = url.split('/');
+  if (array.length < 2) {
+    return '';
+  }
+  if (dir && array[1] != null && dir[array[1]] != null) {
+    return `${dir[array[1]]}${url}`;
+  }
+  return '';
+}
+
 // 渲染已选接口的参数配置表单
 const fieldTipStyle = {
   display: 'flex',
@@ -840,8 +826,8 @@ export function countDay(params) {
   if (params.endDate != null && params.startDate != null) {
     return {
       ...params,
-      endDate: GMT2UserTimeZone(params.endDate).format('YYYY-MM-DD HH:mm:ss'),
-      startDate: GMT2UserTimeZone(params.startDate).format('YYYY-MM-DD HH:mm:ss'),
+      endDate: convertToUserTimezone(params.endDate).format('YYYY-MM-DD HH:mm:ss'),
+      startDate: convertToUserTimezone(params.startDate).format('YYYY-MM-DD HH:mm:ss'),
     };
   }
 
@@ -872,8 +858,8 @@ export function countDay(params) {
     }
     return {
       ...params,
-      endDate: GMT2UserTimeZone(params.endDate).format('YYYY-MM-DD HH:mm:ss'),
-      startDate: GMT2UserTimeZone(params.startDate).format('YYYY-MM-DD HH:mm:ss'),
+      endDate: convertToUserTimezone(params.endDate).format('YYYY-MM-DD HH:mm:ss'),
+      startDate: convertToUserTimezone(params.startDate).format('YYYY-MM-DD HH:mm:ss'),
     };
   }
   return { ...params };

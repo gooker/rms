@@ -3,7 +3,7 @@ import { Form, DatePicker, Col, Select, Row, Collapse } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { GMT2UserTimeZone } from '@/utils/util';
+import { convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import { connect } from '@/utils/RmsDva';
 
@@ -19,10 +19,10 @@ class AGVActivityForm extends Component {
     const { onChange } = this.props;
     if (onChange) {
       if (allValues && allValues.createDate != null) {
-        allValues.createTimeStart = GMT2UserTimeZone(allValues.createDate[0]).format(
+        allValues.createTimeStart = convertToUserTimezone(allValues.createDate[0]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
-        allValues.createTimeEnd = GMT2UserTimeZone(allValues.createDate[1]).format(
+        allValues.createTimeEnd = convertToUserTimezone(allValues.createDate[1]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
         delete allValues.createDate;

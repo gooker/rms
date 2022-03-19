@@ -5,7 +5,7 @@ import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
 import { getDatBysortTime } from './groundQrcodeEcharts';
-import { formatMessage, isNull, isStrictNull, GMT2UserTimeZone, dealResponse } from '@/utils/util';
+import { formatMessage, isNull, isStrictNull, convertToUserTimezone, dealResponse } from '@/utils/util';
 import { fetchCodeHealth } from '@/services/api';
 import FilterSearchBydate from '../HealthRobot/components/FilterSearchBydate';
 import FilterSearch from '../HealthRobot/components/FilterSearch';
@@ -36,8 +36,8 @@ const QrCodeComponent = (props) => {
 
   useEffect(() => {
     async function initCodeData() {
-      const startTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = GMT2UserTimeZone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
       submitSearch({ startTime, endTime });
     }
     initCodeData();

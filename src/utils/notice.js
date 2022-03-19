@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, notification } from 'antd';
-import { formatMessage, GMT2UserTimeZone } from '@/utils/util';
+import { formatMessage, convertToUserTimezone } from '@/utils/util';
 
 const LimitedNotification = 1;
 
@@ -89,7 +89,7 @@ export default function notice(message, sectionId, notificationQueue) {
             </div>
           </div>
           <div style={{ textAlign: 'end', marginTop: 15 }}>
-            {GMT2UserTimeZone(updateTime).format('YY-MM-DD HH:mm:ss')}
+            {convertToUserTimezone(updateTime).format('YY-MM-DD HH:mm:ss')}
           </div>
         </span>
       );

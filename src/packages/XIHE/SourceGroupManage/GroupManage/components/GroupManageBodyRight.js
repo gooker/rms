@@ -10,7 +10,7 @@ import SwitchMapView from './SwitchMapView';
 import GroupManageConfiguration from '../../components/GroupManageConfig';
 import StorageConfigTable from '../../components/GroupConfigTable';
 
-import styles from '@/packages/XIHE/MapMonitor/monitorLayout.module.less';
+import styles from '@/packages/Scene/MapMonitor/monitorLayout.module.less';
 
 const GroupManageBodyRight = (props) => {
   const { dispatch, categoryPanel, storageConfigData, mapContext } = props;

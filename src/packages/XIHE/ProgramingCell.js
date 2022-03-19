@@ -13,8 +13,8 @@ import {
 } from '@/utils/util';
 import { saveScopeProgram } from '@/services/XIHE';
 import { MapSelectableSpriteType } from '@/config/consts';
-import ActionDefiner from './MapEditor/components/ActionDefiner';
-import ScopeProgramList from './MapEditor/components/ScopeProgramList';
+import ActionDefiner from '../Scene/MapEditor/components/ActionDefiner';
+import ScopeProgramList from '../Scene/MapEditor/components/ScopeProgramList';
 import FormattedMessage from '@/components/FormattedMessage';
 import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
 

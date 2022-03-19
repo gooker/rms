@@ -34,7 +34,7 @@ export default [
     name: 'accountCenter',
     icon: 'home',
     component: '/SSO/AccountCenter',
-    authority: ['USER', 'SUPERMANAGER', 'MANAGER'],
+    authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
   },
   {
     path: `/${AppCode.SSO}/authorizationCenter`, // 授权中心
@@ -44,17 +44,17 @@ export default [
     authority: ['ADMIN'],
   },
   {
-    path: `/${AppCode.SSO}/environmentManager`, // 自定义环境
-    name: 'environmentManger',
-    icon: 'ie',
-    component: '/SSO/EnvironmentManger',
-    hook: ['dev'],
-  },
-  {
     path: `/${AppCode.SSO}/customConfiguration`, // 定制化配置
     name: 'customConfiguration',
     icon: 'customConfig',
     component: '/SSO/CustomConfiguration',
     authority: ['ADMIN'],
+  },
+  {
+    path: `/${AppCode.SSO}/environmentManager`, // 自定义环境
+    name: 'environmentManger',
+    icon: 'ie',
+    component: '/SSO/EnvironmentManger',
+    hook: ['dev'],
   },
 ];

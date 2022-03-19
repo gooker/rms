@@ -5,7 +5,7 @@ import {
   dealResponse,
   formatMessage,
   getFormLayout,
-  GMT2UserTimeZone,
+  convertToUserTimezone,
   isNull,
 } from '@/utils/util';
 import { DownloadOutlined } from '@ant-design/icons';
@@ -38,8 +38,8 @@ const MetaDataComponent = (props) => {
       setLoading(true);
       const requestParam = {
         agvIds,
-        startDate: GMT2UserTimeZone(createDate[0]).format('YYYY-MM-DD HH:mm:ss'),
-        endDate: GMT2UserTimeZone(createDate[1]).format('YYYY-MM-DD HH:mm:ss'),
+        startDate: convertToUserTimezone(createDate[0]).format('YYYY-MM-DD HH:mm:ss'),
+        endDate: convertToUserTimezone(createDate[1]).format('YYYY-MM-DD HH:mm:ss'),
       };
       const response = await downloadLogFromSFTP(agvType, requestParam);
       dealResponse(

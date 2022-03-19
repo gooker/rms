@@ -38,7 +38,7 @@ import {
   updateMap,
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
-import { LeftCategory, RightCategory } from '@/packages/XIHE/MapEditor/enums';
+import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/enums';
 import { MapSelectableSpriteType } from '@/config/consts';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;

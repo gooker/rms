@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
+import { isStrictNull } from '@/utils/util';
 
 const { Coordinator, Tote, LatentLifting } = NameSpace;
 
@@ -1156,3 +1157,77 @@ export async function fetchTaskLoad(params) {
   });
 }
 
+// 清扫模块
+// 保存扫地策略
+export async function saveCleanLatentStrategy(params, id) {
+  let _urlStitching = '';
+  if (!isStrictNull(id)) {
+    _urlStitching = `/${id}`;
+  }
+  return request(`/${NameSpace.LatentLifting}/cleanLatent/saveStrategy${_urlStitching}`, {
+    method: 'PUT',
+    body: params,
+  });
+}
+
+// 查询清扫策略
+export async function getCleanStrategy() {
+  return request(`/${NameSpace.LatentLifting}/cleanLatent/getCleanStrategy`, {
+    method: 'GET',
+  });
+}
+
+// 查询清扫记录
+export async function fetchCleaningTaskHistory(params) {
+  return request(`/${NameSpace.LatentLifting}/cleanLatent/cleaningTaskHistory`, {
+    method: 'POST',
+    body: params,
+  });
+}
+
+// 查询清扫计划
+export async function fetchCleaningPlan() {
+  return request(`/${NameSpace.LatentLifting}/cleanLatent/cleaningPlan`, {
+    method: 'GET',
+  });
+}
+
+// 查询清扫计划当前模式
+export async function fetchCleaningPlanMode() {
+  return request(`/${NameSpace.LatentLifting}/cleanLatent/cleaningPlanSchema`, {
+    method: 'GET',
+  });
+}
+
+// 请求器
+export async function fetchGetAPI(params) {
+  return request(`/${NameSpace.Coordinator}/api/getDataApi`, {
+    method: 'GET',
+    data: params,
+  });
+}
+export async function fetchSaveAPI(params) {
+  return request(`/${NameSpace.Coordinator}/api/saveDataApi`, {
+    method: 'POST',
+    data: params,
+  });
+}
+export async function fetchBatchSaveAPI(params) {
+  return request(`/${NameSpace.Coordinator}/api/batchSaveDataApi`, {
+    method: 'POST',
+    data: params,
+  });
+}
+// robotType
+export async function fetchUpdateAPI(params) {
+  return request(`/${NameSpace.Coordinator}/api/updateDataApi`, {
+    method: 'POST',
+    data: params,
+  });
+}
+export async function fetchDeleteAPI(params) {
+  return request(`/${NameSpace.Coordinator}/api/batchDeleteDataApi`, {
+    method: 'DELETE',
+    data: params,
+  });
+}

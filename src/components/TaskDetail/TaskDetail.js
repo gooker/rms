@@ -3,7 +3,7 @@ import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { GMT2UserTimeZone } from '@/utils/util';
+import { convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
@@ -166,7 +166,7 @@ class TaskDetail extends PureComponent {
                     title={<FormattedMessage id="app.common.creationTime" />}
                     content={
                       <span>
-                        {GMT2UserTimeZone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}
+                        {convertToUserTimezone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}
                       </span>
                     }
                   />
@@ -182,7 +182,7 @@ class TaskDetail extends PureComponent {
                     title={<FormattedMessage id="app.common.updateTime" />}
                     content={
                       <span>
-                        {GMT2UserTimeZone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}
+                        {convertToUserTimezone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}
                       </span>
                     }
                   />
@@ -402,7 +402,7 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.taskDetail.startTime" />}
                       content={
                         <>
-                          {GMT2UserTimeZone(chargeRecord.startChargingTime).format(
+                          {convertToUserTimezone(chargeRecord.startChargingTime).format(
                             'YYYY-MM-DD HH:mm:ss',
                           )}
                         </>
@@ -414,7 +414,7 @@ class TaskDetail extends PureComponent {
                       title={<FormattedMessage id="app.taskDetail.endTime" />}
                       content={
                         <>
-                          {GMT2UserTimeZone(chargeRecord.stopChargingTime).format(
+                          {convertToUserTimezone(chargeRecord.stopChargingTime).format(
                             'YYYY-MM-DD HH:mm:ss',
                           )}
                         </>

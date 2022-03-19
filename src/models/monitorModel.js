@@ -4,7 +4,7 @@ import { hasAppPermission } from '@/utils/Permission';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { AGVType, AppCode } from '@/config/config';
-import { Category, MonitorOperationType } from '@/packages/XIHE/MapMonitor/enums';
+import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
 import {
   fetchChargerList,
   fetchEmergencyStopList,

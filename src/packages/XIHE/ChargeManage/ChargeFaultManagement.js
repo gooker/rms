@@ -4,7 +4,7 @@ import { fetchChargerFaultList } from '@/services/api';
 import { dealResponse, formatMessage, convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
-import FaultSearchForm from './components/FaultSearchForm';
+import FaultSearchForm from '../../ResourceManage/Charger/components/FaultSearchForm';
 
 /**
  * 充电桩上报错误信息：
