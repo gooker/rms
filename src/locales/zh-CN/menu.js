@@ -106,15 +106,15 @@ export default {
   'menu.sortTaskManagement': '任务查询',
 
   // 清扫
-  'menu.cleaning.cleaningStrategy': '清扫策略',
-  'menu.cleaning.cleaningPlan': '清扫计划',
-  'menu.cleaning.cleaningRecord': '清扫记录',
+  'menu.cleaningStrategy': '清扫策略',
+  'menu.cleaningPlan': '清扫计划',
+  'menu.cleaningRecord': '清扫记录',
 
   // 工具
   'menu.operationLog': '操作日志',
   'menu.requestor': '接口请求库',
   'menu.richEditor': '富文本编辑',
-  'menu.questionCenter': '告警中心',
+  'menu.alertCenter': '告警中心',
   'menu.notificationCenter': '通知管理中心',
   'menu.notificationCenter.broadcast': '广播频道',
   'menu.notificationCenter.subscription': '频道订阅',
@@ -123,7 +123,7 @@ export default {
   'menu.chargingStrategy': '充电策略',
   'menu.speedStrategy': '速度策略',
   'menu.parkingStrategy': '停车策略',
-  'menu.systemParams': '参数列表',
+  'menu.systemParameters': '参数列表',
 
   // 报表数据
   'menu.healthReport': '健康报表',
@@ -146,4 +146,7 @@ export default {
   'menu.stationReport': '站点报表',
   'menu.waitingReport': '空等报表',
   'menu.flowReport': '流量报表',
+
+  // 定制
+
 };

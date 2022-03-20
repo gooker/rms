@@ -8,6 +8,7 @@ import { generateMenuNodeLocaleKey, validateMenuNodePermission } from '@/utils/i
 import { formatMessage } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
 import allModuleRouter from '@/config/router';
+import { CheckOutlined } from '@ant-design/icons';
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -39,7 +40,7 @@ class RoleAssignModal extends Component {
         }
         const menuData = generateMenuNodeLocaleKey(appMenu);
 
-        // 处理自定义的权限数据
+        // TODO: 处理自定义的权限数据
         // const codePermissionMap = transform(
         //   allModulePermission[appCode],
         //   (result, record) => {
@@ -75,11 +76,18 @@ class RoleAssignModal extends Component {
       {},
     );
 
+    // 这里要对authorityKeys中的对象进行筛选，在权限树中不存在的key就过滤掉
+    let flatPermissionMap = {};
+    Object.values(permissionMap).forEach((item) => {
+      flatPermissionMap = { ...flatPermissionMap, ...item };
+    });
+    const _authorityKeys = authorityKeys.filter((item) => !!flatPermissionMap[item]);
+
     this.setState({
-      activeKey: allAuthorityData[0].appCode,
-      permissionMap: permissionMap,
+      permissionMap,
       permissionList: allAuthorityData,
-      checkedKeys: { checked: [...authorityKeys], halfChecked: [] },
+      activeKey: allAuthorityData[0].appCode,
+      checkedKeys: { checked: [..._authorityKeys], halfChecked: [] },
     });
   }
 
@@ -229,7 +237,7 @@ class RoleAssignModal extends Component {
               submitAuthKeys(checkedKeys.checked);
             }}
           >
-            <FormattedMessage id="app.button.submit" />
+            <CheckOutlined /> <FormattedMessage id="app.button.submit" />
           </Button>
         </div>
       </div>

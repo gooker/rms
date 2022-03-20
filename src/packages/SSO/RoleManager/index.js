@@ -265,7 +265,7 @@ export default class index extends Component {
           onClose={() => {
             this.setState({ authAssignVisible: false });
           }}
-          width={'600'}
+          width={'35%'}
           visible={authAssignVisible}
           style={{ overflow: 'auto' }}
         >

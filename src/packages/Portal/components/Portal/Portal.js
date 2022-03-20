@@ -10,48 +10,33 @@ const PortalWidth = 25;
 const PortalHeight = 25;
 
 const Portal = (props) => {
-  const { dispatch, isAdmin, appList, currentApp, customLogo } = props;
+  const { dispatch, isAdmin, grantedAPP, currentApp, customLogo } = props;
 
   async function checkoutApp(appCode) {
     dispatch({ type: 'global/saveCurrentApp', payload: appCode });
   }
 
   function getAppList() {
-    if (!Array.isArray(appList) || appList.length === 0) return [];
+    if (!Array.isArray(grantedAPP) || grantedAPP.length === 0) return [];
 
     // 如果是admin账户登录，就只显示SSO APP
     if (isAdmin) {
-      return appList.filter((item) => item === AppCode.SSO);
+      return grantedAPP.filter((item) => item === AppCode.SSO);
     }
 
-    // 顺序: XIHE, Latent, Tote, Sorter, I18N,SSO
-    const grantedApps = [];
-    if (appList.includes(AppCode.XIHE)) {
-      grantedApps.push(AppCode.XIHE);
+    // I18N,SSO 排在最后
+    const appList = [...grantedAPP].filter((item) => ![AppCode.SSO, AppCode.I18N].includes(item));
+    if (grantedAPP.includes(AppCode.I18N)) {
+      appList.push(AppCode.I18N);
     }
-    if (appList.includes(AppCode.LatentLifting)) {
-      grantedApps.push(AppCode.LatentLifting);
-    }
-    if (appList.includes(AppCode.Tote)) {
-      grantedApps.push(AppCode.Tote);
-    }
-    if (appList.includes(AppCode.Sorter)) {
-      grantedApps.push(AppCode.Sorter);
-    }
-    if (appList.includes(AppCode.I18N)) {
-      grantedApps.push(AppCode.I18N);
-    }
-    if (appList.includes(AppCode.SSO)) {
-      grantedApps.push(AppCode.SSO);
-    }
-    return grantedApps;
+    appList.push(AppCode.SSO);
+    return appList;
   }
 
   function renderAppInfo() {
-    const grantedApps = getAppList();
     return (
       <>
-        {grantedApps.map((appCode) => {
+        {getAppList().map((appCode) => {
           if (appCode === AppCode.LatentLifting) {
             return (
               <LatentLifting
@@ -173,7 +158,7 @@ export default connect(({ global, user }) => {
   return {
     isAdmin,
     customLogo: !!global.logo,
-    appList: global.grantedAPP,
+    grantedAPP: global.grantedAPP,
     currentApp: global.currentApp,
   };
 })(memo(Portal));

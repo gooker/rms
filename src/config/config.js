@@ -14,6 +14,7 @@ export const AppCode = {
   Strategy: 'Strategy',
   Report: 'Report',
   SSO: 'SSO',
+  I18N: 'I18N',
   Customized: 'Customized',
 };
 
