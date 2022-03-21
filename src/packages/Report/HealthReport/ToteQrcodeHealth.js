@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { formatMessage } from '@/utils/util';
-import QrCodeComponent from '../../XIHE/ReportCenter/components/QrCodeComponent';
+import QrCodeComponent from '../components/QrCodeComponent';
 
 const ToteQrcodeHealth = (props) => {
   return (

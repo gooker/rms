@@ -1,10 +1,10 @@
 import { isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
-import { getOriginalDataBycode } from '@/packages/Report/components/GroundQrcodeEcharts';
-
+import { labelColor,titleColor,getOriginalDataBycode } from '@/packages/Report/components/GroundQrcodeEcharts';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const colors = ['#91CC75', '#89c7f2'];
+
 
 // Series
 export const trafficLabelOption = {
@@ -38,8 +38,8 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
     x: 'center',
     bottom: '3%',
     textStyle: {
-      fontWeight: 'normal',
-      color: LineChartsAxisColor,
+      fontWeight: 'bold',
+      color: titleColor,
       fontSize: 16,
     },
   },
@@ -219,8 +219,9 @@ export const generatOfflineDataByTime = (allData, translate) => {
     },
     axisLabel: {
       fontSize: 12,
-      interval: 0,
+      interval: 2,
       rotate: 20,
+      color: labelColor,
     },
     splitLine: {
       show: false,
@@ -281,6 +282,7 @@ export const generatOfflineDataByRobot = (allData = {}, translate, idName = 'agv
     axisLabel: {
       fontSize: 12,
       interval: 0,
+      color: labelColor,
     },
     splitLine: {
       show: false,

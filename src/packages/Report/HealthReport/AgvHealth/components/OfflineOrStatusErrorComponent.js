@@ -5,7 +5,7 @@ import moment from 'moment';
 import { isNull, isStrictNull } from '@/utils/util';
 import FilterSearchBydate from '../../../components/FilterSearchByDate';
 import FilterSearch from '../../../components/FilterSearch';
-import { getOriginalDataBycode } from '@/packages/Report/components/GroundQrcodeEcharts';
+import { getOriginalDataBycode,noDataGragraphic } from '@/packages/Report/components/GroundQrcodeEcharts';
 import {
   offlineHistoryLineOption,
   generatOfflineDataByTime,
@@ -59,7 +59,7 @@ const OfflineOrStatusErrorComponent = (props) => {
       newCodeHistoryLine.xAxis = xAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
-      codeHistoryLine.setOption(newCodeHistoryLine, true);
+      codeHistoryLine.setOption({...newCodeHistoryLine,...noDataGragraphic(series.length)}, true);
     }
 
     if (currenTimeData) {
@@ -68,7 +68,7 @@ const OfflineOrStatusErrorComponent = (props) => {
       newTimeHistoryLine.xAxis = xAxis;
       newTimeHistoryLine.series = series;
       newTimeHistoryLine.legend = legend;
-      timeHistoryLine.setOption(newTimeHistoryLine, true);
+      timeHistoryLine.setOption({...newTimeHistoryLine,...noDataGragraphic(series.length)}, true);
     }
   }
 
@@ -175,7 +175,7 @@ const OfflineOrStatusErrorComponent = (props) => {
   return (
     <>
       <Row gutter={16}>
-        <Col span={22}>
+        <Col span={24}>
           {/* 按照码号 */}
           <Card
             actions={
@@ -192,7 +192,7 @@ const OfflineOrStatusErrorComponent = (props) => {
             <div id={codeDomId} style={{ minHeight: 350 }} />
           </Card>
         </Col>
-        <Col span={22} style={{ marginTop: 10 }}>
+        <Col span={24} style={{ marginTop: 10 }}>
           {/* 按照日期 */}
           <Card
             actions={

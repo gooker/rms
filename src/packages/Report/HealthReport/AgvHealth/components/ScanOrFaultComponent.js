@@ -12,6 +12,7 @@ import {
   transformCodeData,
   getOriginalDataBycode,
   commonOption,
+  noDataGragraphic,
 } from '@/packages/Report/components/GroundQrcodeEcharts';
 
 let codeHistoryLine = null; // 根据码号
@@ -57,7 +58,7 @@ const ScanOrFaultComponent = (props) => {
       newCodeHistoryLine.yAxis = yAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
-      codeHistoryLine.setOption(newCodeHistoryLine, true);
+      codeHistoryLine.setOption({...newCodeHistoryLine,...noDataGragraphic(series.length)}, true);
     }
 
     if (currenTimeData) {
@@ -66,7 +67,7 @@ const ScanOrFaultComponent = (props) => {
       newTimeHistoryLine.xAxis = xAxis;
       newTimeHistoryLine.series = series;
       newTimeHistoryLine.legend = legend;
-      timeHistoryLine.setOption(newTimeHistoryLine, true);
+      timeHistoryLine.setOption({...newTimeHistoryLine,...noDataGragraphic(series.length)}, true);
     }
   }
 
@@ -172,7 +173,7 @@ const ScanOrFaultComponent = (props) => {
   return (
     <>
       <Row gutter={16}>
-        <Col span={22}>
+        <Col span={24}>
           {/* 按照码号 */}
           <Card
             actions={
@@ -189,7 +190,7 @@ const ScanOrFaultComponent = (props) => {
             <div id={codeDomId} style={{ minHeight: 350 }} />
           </Card>
         </Col>
-        <Col span={22} style={{ marginTop: 10 }}>
+        <Col span={24} style={{ marginTop: 10 }}>
           {/* 按照日期 */}
           <Card
             actions={

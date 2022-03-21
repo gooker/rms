@@ -10,7 +10,6 @@ import DatePickerSelector from '@/packages/Report/components/DatePickerSelector'
 const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
-
 const LogSearchForm = (props) => {
   const { search, type, downloadVisible, allTaskTypes, exportData } = props;
 
@@ -72,16 +71,19 @@ const LogSearchForm = (props) => {
   }, []);
 
   function submitSearch() {
-    form.validateFields().then((values) => {
-      const currentValues = { ...values };
-      const { timeRange } = currentValues;
-      if (!isNull(timeRange)) {
-        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:00');
-        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:00');
-      }
-      delete currentValues.timeRange;
-      search && search(currentValues);
-    });
+    form
+      .validateFields()
+      .then((values) => {
+        const currentValues = { ...values };
+        const { timeRange } = currentValues;
+        if (!isNull(timeRange)) {
+          currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:00');
+          currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:00');
+        }
+        delete currentValues.timeRange;
+        search && search(currentValues);
+      })
+      .catch(() => {});
   }
 
   return (
@@ -94,6 +96,12 @@ const LogSearchForm = (props) => {
           <Form.Item
             label={<FormattedMessage id="app.form.dateRange" />}
             name="timeRange"
+            rules={[
+              {
+                required: true,
+                message: <FormattedMessage id="reportCenter.time.required" />,
+              },
+            ]}
             getValueFromEvent={(value) => {
               return value;
             }}

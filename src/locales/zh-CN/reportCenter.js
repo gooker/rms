@@ -63,6 +63,8 @@ export default {
   'reportCenter.taskload.action': '任务动作负载',
   'reportCenter.taskload.workload': '任务作业负载',
   'reportCenter.taskload.pickingWorkstation': '拣选工作站任务作业负载',
+  'reportCenter.time.required': '请选择时间',
+  'reportCenter.noData': '暂无数据',
 
 
 };

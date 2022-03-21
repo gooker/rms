@@ -1,7 +1,11 @@
 import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull } from 'lodash';
 import { AgvStateColor } from '@/config/consts';
-import { getAllCellId } from '../../components/GroundQrcodeEcharts';
+import {
+  labelColor,
+  getAllCellId,
+  titleColor,
+} from '@/packages/Report/components/GroundQrcodeEcharts';
 import moment from 'moment';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -16,19 +20,6 @@ export const Color = [
   '#9a60b4',
   '#ea7ccc',
 ];
-
-export const Types = [
-  { label: '空跑', value: 'EMPTY_RUN' },
-  { label: '充电', value: 'CHARGE_RUN' },
-  { label: '回休息区', value: 'REST_UNDER_POD' },
-  { label: '搬运货架', value: 'CARRY_POD_TO_CELL' },
-  { label: '工作站任务', value: 'CARRY_POD_TO_STATION' },
-  { label: '高级搬运任务', value: 'SUPER_CARRY_POD_TO_CELL' },
-  { label: '重车回存储区', value: 'HEARVY_CARRY_POD_TO_STORE' },
-  { label: '自定义任务', value: 'CUSTOM_TASK' },
-
-];
-
 
 // 任务时长 状态时长
 const commonOption = {
@@ -75,6 +66,12 @@ export const actionPieOption = (title, keyMap) => ({
 export const actionBarOption = (title, keyMap) => ({
   title: {
     text: '',
+    subtext: '',
+    subTextStyle: {
+      fontWeight: 'bold',
+      color: titleColor,
+      fontSize: 16,
+    },
     left: 'center',
   },
   tooltip: {
@@ -154,15 +151,16 @@ export const actionBarOption = (title, keyMap) => ({
   series: [], // 有几层数据 就放几层
 });
 
-// 状态时长 任务时长
+// 状态时长 任务时长 极坐标
 export const durationLineOption = (title, keyMap) => ({
   title: {
     text: title,
     x: 'center',
-    bottom: '-5',
+    y: 'top',
+    top: '-5',
     textStyle: {
-      fontWeight: 'normal',
-      color: LineChartsAxisColor,
+      fontWeight: 'bold',
+      color: titleColor,
       fontSize: 16,
     },
   },
@@ -220,8 +218,8 @@ export const taskLineOption = (title, keyMap) => ({
     x: 'center',
     bottom: '3%',
     textStyle: {
-      fontWeight: 'normal',
-      color: LineChartsAxisColor,
+      fontWeight: 'bold',
+      color: titleColor,
       fontSize: 16,
     },
   },
@@ -328,6 +326,7 @@ export const generateDurationDataByTime = (allData, type, translate, colorFlag) 
     type: 'category',
     axisLabel: {
       rotate: 0,
+      color: labelColor,
     },
     splitArea: {
       show: true,
@@ -385,6 +384,7 @@ export const generateNumOrDistanceData = (allData, type, translate) => {
     },
     axisLabel: {
       rotate: 20,
+      color: labelColor,
     },
     data: xAxisData,
   };
@@ -421,7 +421,9 @@ export const generateActionPieData = (allData, type, translate) => {
 
   forIn(currentActionSum, (v, key) => {
     const value = v === 0 ? '' : v;
-    seryData.push({ name: key, value, label: translate[key] });
+    if (v !== 0) {
+      seryData.push({ name: key, value, label: translate[key] });
+    }
   });
 
   const legend = {
@@ -490,6 +492,7 @@ export const generateActionBarData = (allData, type, translate) => {
     },
     axisLabel: {
       rotate: 20,
+      color: labelColor,
     },
     data: xAxisData,
   };

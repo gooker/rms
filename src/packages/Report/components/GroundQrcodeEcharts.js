@@ -3,6 +3,8 @@ import { forIn } from 'lodash';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
+export const labelColor = '#564d4d';
+export const titleColor = 'rgb(77, 76, 76)';
 
 // Series
 export const labelOption = {
@@ -32,6 +34,26 @@ export const commonOption = {
   },
 };
 
+export const noDataGragraphic = (invisible) => {
+  return {
+    graphic: [
+      {
+        type: 'text',
+        left: 'center',
+        top: 'middle',
+        silent: true,
+        invisible,
+        style: {
+          fill: '#605e5e',
+          text: formatMessage({ id: 'reportCenter.noData' }),
+          fontWeight: 'bold',
+          font: '16px Microsoft YaHei',
+        },
+      },
+    ],
+  };
+};
+
 export const dateHistoryLineOption = (title, keyMap = {}) => ({
   title: {
     text: `${title}(${formatMessage({
@@ -40,8 +62,8 @@ export const dateHistoryLineOption = (title, keyMap = {}) => ({
     x: 'center',
     bottom: '3%',
     textStyle: {
-      fontWeight: 'normal',
-      color: LineChartsAxisColor,
+      fontWeight: 'bold',
+      color: titleColor,
       fontSize: 16,
     },
   },
@@ -139,8 +161,8 @@ export const codeHistoryLineOption = (title, keyMap = {}) => ({
     x: 'center',
     bottom: '3%',
     textStyle: {
-      fontWeight: 'normal',
-      color: LineChartsAxisColor,
+      fontWeight: 'bold',
+      color: titleColor,
       fontSize: 16,
     },
   },
@@ -279,6 +301,7 @@ export const generateTimeData = (allData, translate) => {
       fontSize: 12,
       interval: 0,
       rotate: 20,
+      color: labelColor,
     },
     splitLine: {
       show: false,
@@ -343,6 +366,7 @@ export const transformCodeData = (allData = {}, translate, idName = 'cellId') =>
     axisLabel: {
       fontSize: 12,
       interval: 0,
+      color: labelColor,
     },
     splitLine: {
       show: false,

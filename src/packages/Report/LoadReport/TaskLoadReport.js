@@ -3,10 +3,16 @@ import { Row, Col, Divider, Card } from 'antd';
 import echarts from 'echarts';
 import XLSX from 'xlsx';
 import moment from 'moment';
-import { isStrictNull, convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import {
+  isStrictNull,
+  convertToUserTimezone,
+  dealResponse,
+  formatMessage,
+  isNull,
+} from '@/utils/util';
 import { fetchTaskLoad } from '@/services/api';
 import { sortBy, forIn } from 'lodash';
-import { getDatBysortTime } from '../components/GroundQrcodeEcharts';
+import { getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
 import {
   actionPieOption,
   generateActionPieData,
@@ -17,7 +23,6 @@ import HealthCarSearchForm from '../components/HealthCarSearchForm';
 import FilterTaskLoadSearch from './components/FilterTaskLoadSearch';
 import commonStyles from '@/common.module.less';
 import style from '../report.module.less';
-
 
 const colums = {
   time: formatMessage({ id: 'app.time' }),
@@ -54,24 +59,48 @@ const TaskLoadComponent = (props) => {
   function initChart() {
     // 任务动作负载 -pie
     taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
-    taskActionPieLine.setOption(actionPieOption(formatMessage({id:'reportCenter.taskload.action'}), keyAction), true);
+    taskActionPieLine.setOption(
+      actionPieOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
+      true,
+    );
     //-bar
     taskActionBarLine = echarts.init(document.getElementById('load_taskActionBar'));
-    taskActionBarLine.setOption(actionBarOption(formatMessage({id:'reportCenter.taskload.action'}), keyAction), true);
+    taskActionBarLine.setOption(
+      actionBarOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
+      true,
+    );
 
     // 任务作业负载 -pie
     taskWorkPieLine = echarts.init(document.getElementById('load_taskWorkPie'));
-    taskWorkPieLine.setOption(actionPieOption(formatMessage({id:'reportCenter.taskload.workload'}), keyWork), true);
+    taskWorkPieLine.setOption(
+      actionPieOption(formatMessage({ id: 'reportCenter.taskload.workload' }), keyWork),
+      true,
+    );
     // -bar
     taskWorkBarLine = echarts.init(document.getElementById('load_taskWorkBar'));
-    taskWorkBarLine.setOption(actionBarOption(formatMessage({id:'reportCenter.taskload.workload'}), keyWork), true);
+    taskWorkBarLine.setOption(
+      actionBarOption(formatMessage({ id: 'reportCenter.taskload.workload' }), keyWork),
+      true,
+    );
 
     // 拣选工作站任务作业负载 -pie
     taskPickworkPieLine = echarts.init(document.getElementById('load_taskPickworkPie'));
-    taskPickworkPieLine.setOption(actionPieOption(formatMessage({id:'reportCenter.taskload.pickingWorkstation'}), keyStation), true);
+    taskPickworkPieLine.setOption(
+      actionPieOption(
+        formatMessage({ id: 'reportCenter.taskload.pickingWorkstation' }),
+        keyStation,
+      ),
+      true,
+    );
     // -bar
     taskPickworkBarLine = echarts.init(document.getElementById('load_taskPickworkBar'));
-    taskPickworkBarLine.setOption(actionBarOption(formatMessage({id:'reportCenter.taskload.pickingWorkstation'}), keyStation), true);
+    taskPickworkBarLine.setOption(
+      actionBarOption(
+        formatMessage({ id: 'reportCenter.taskload.pickingWorkstation' }),
+        keyStation,
+      ),
+      true,
+    );
 
     return () => {
       taskActionPieLine.dispose();
@@ -117,21 +146,30 @@ const TaskLoadComponent = (props) => {
       const newActionPieLine = taskActionPieLine.getOption();
       newActionPieLine.series = series;
       newActionPieLine.legend = legend;
-      taskActionPieLine.setOption(newActionPieLine, true);
+      taskActionPieLine.setOption(
+        { ...newActionPieLine, ...noDataGragraphic(series?.data?.length) },
+        true,
+      );
     }
     if (taskWorkPieData) {
       const { series, legend } = taskWorkPieData;
       const newWorkPieLine = taskWorkPieLine.getOption();
       newWorkPieLine.series = series;
       newWorkPieLine.legend = legend;
-      taskWorkPieLine.setOption(newWorkPieLine, true);
+      taskWorkPieLine.setOption(
+        { ...newWorkPieLine, ...noDataGragraphic(series?.data?.length) },
+        true,
+      );
     }
     if (taskPickworkPieData) {
       const { series, legend } = taskPickworkPieData;
       const newPickPieLine = taskPickworkPieLine.getOption();
       newPickPieLine.series = series;
       newPickPieLine.legend = legend;
-      taskPickworkPieLine.setOption(newPickPieLine, true);
+      taskPickworkPieLine.setOption(
+        { ...newPickPieLine, ...noDataGragraphic(series?.data?.length) },
+        true,
+      );
     }
 
     if (actionBarData) {
@@ -140,7 +178,10 @@ const TaskLoadComponent = (props) => {
       newActionBaryLine.xAxis = xAxis;
       newActionBaryLine.series = series;
       newActionBaryLine.legend = legend;
-      taskActionBarLine.setOption(newActionBaryLine, true);
+      taskActionBarLine.setOption(
+        { ...newActionBaryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
 
     if (taskWorkBarData) {
@@ -149,7 +190,10 @@ const TaskLoadComponent = (props) => {
       newtaskWorkBarLine.xAxis = xAxis;
       newtaskWorkBarLine.series = series;
       newtaskWorkBarLine.legend = legend;
-      taskWorkBarLine.setOption(newtaskWorkBarLine, true);
+      taskWorkBarLine.setOption(
+        { ...newtaskWorkBarLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
     if (taskPickworkBarData) {
       const { xAxis, series, legend } = taskPickworkBarData;
@@ -157,7 +201,10 @@ const TaskLoadComponent = (props) => {
       newtaskPickworkBarLine.xAxis = xAxis;
       newtaskPickworkBarLine.series = series;
       newtaskPickworkBarLine.legend = legend;
-      taskPickworkBarLine.setOption(newtaskPickworkBarLine, true);
+      taskPickworkBarLine.setOption(
+        { ...newtaskPickworkBarLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
   }
 
@@ -283,23 +330,25 @@ const TaskLoadComponent = (props) => {
     const pickStation = XLSX.utils.json_to_sheet(
       generateEveryType(loadOriginData, 'pickingWorkstationWorkload', keyStation),
     );
-    XLSX.utils.book_append_sheet(wb, action, formatMessage({id:'reportCenter.taskload.action'}));
-    XLSX.utils.book_append_sheet(wb, work, formatMessage({id:'reportCenter.taskload.workload'}));
-    XLSX.utils.book_append_sheet(wb, pickStation, formatMessage({id:'reportCenter.taskload.pickingWorkstation'}));
+    XLSX.utils.book_append_sheet(wb, action, formatMessage({ id: 'reportCenter.taskload.action' }));
+    XLSX.utils.book_append_sheet(wb, work, formatMessage({ id: 'reportCenter.taskload.workload' }));
+    XLSX.utils.book_append_sheet(
+      wb,
+      pickStation,
+      formatMessage({ id: 'reportCenter.taskload.pickingWorkstation' }),
+    );
 
     XLSX.writeFile(wb, `${formatMessage({ id: 'menu.reportCenter.loadReport.taskLoad' })}.xlsx`);
   }
 
   return (
     <div className={commonStyles.commonPageStyle}>
-      <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm
-          search={submitSearch}
-          type="taskload"
-          downloadVisible={true}
-          exportData={exportData}
-        />
-      </div>
+      <HealthCarSearchForm
+        search={submitSearch}
+        type="taskload"
+        downloadVisible={true}
+        exportData={exportData}
+      />
 
       <div className={style.body}>
         <Card actions={[<FilterTaskLoadSearch key={'2'} search={onDatefilterChange} />]}>

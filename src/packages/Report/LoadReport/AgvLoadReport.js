@@ -14,6 +14,7 @@ import {
 } from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
+import { noDataGragraphic } from '../components/GroundQrcodeEcharts';
 import {
   taskLineOption,
   durationLineOption,
@@ -140,7 +141,13 @@ const HealthCar = (props) => {
       newStatusHistoryLine.radiusAxis = radiusAxis;
       newStatusHistoryLine.series = series;
       newStatusHistoryLine.legend = legend;
-      statusHistoryLine.setOption(newStatusHistoryLine, true);
+
+      newStatusHistoryLine.angleAxis[0].show = series.length;
+      newStatusHistoryLine.radiusAxis.show = series.length;
+      statusHistoryLine.setOption(
+        { ...newStatusHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
 
     if (taskdurationData) {
@@ -149,7 +156,14 @@ const HealthCar = (props) => {
       newTaskdurationHistoryLine.radiusAxis = radiusAxis;
       newTaskdurationHistoryLine.series = series;
       newTaskdurationHistoryLine.legend = legend;
-      taskHistoryLine.setOption(newTaskdurationHistoryLine, true);
+
+      newTaskdurationHistoryLine.angleAxis[0].show = series.length;
+      newTaskdurationHistoryLine.radiusAxis.show = series.length;
+
+      taskHistoryLine.setOption(
+        { ...newTaskdurationHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
 
     if (taskNumData) {
@@ -157,14 +171,20 @@ const HealthCar = (props) => {
       const newTaskNumHistoryLine = taskNumberHistoryLine.getOption();
       newTaskNumHistoryLine.xAxis = xAxis;
       newTaskNumHistoryLine.series = series;
-      taskNumberHistoryLine.setOption(newTaskNumHistoryLine, true);
+      taskNumberHistoryLine.setOption(
+        { ...newTaskNumHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
     if (distanceData) {
       const { xAxis, series } = distanceData;
       const newDistanceHistoryLine = diatanceHistoryLine.getOption();
       newDistanceHistoryLine.xAxis = xAxis;
       newDistanceHistoryLine.series = series;
-      diatanceHistoryLine.setOption(newDistanceHistoryLine, true);
+      diatanceHistoryLine.setOption(
+        { ...newDistanceHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
 
     if (actionPieData) {
@@ -172,7 +192,10 @@ const HealthCar = (props) => {
       const newActionPieLine = actionPieHistoryLine.getOption();
       newActionPieLine.series = series;
       newActionPieLine.legend = legend;
-      actionPieHistoryLine.setOption(newActionPieLine, true);
+      actionPieHistoryLine.setOption(
+        { ...newActionPieLine, ...noDataGragraphic(series[0]?.data?.length) },
+        true,
+      );
     }
 
     if (actionBarData) {
@@ -181,7 +204,10 @@ const HealthCar = (props) => {
       newActionBaryLine.xAxis = xAxis;
       newActionBaryLine.series = series;
       newActionBaryLine.legend = legend;
-      actionBarHistoryLine.setOption(newActionBaryLine, true);
+      actionBarHistoryLine.setOption(
+        { ...newActionBaryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
 
     // table数据
@@ -373,24 +399,22 @@ const HealthCar = (props) => {
       dataIndex: 'taskDistance',
       sorter: (a, b) => a.taskDistance - b.taskDistance,
       render: (text) => {
-        return text ? formatNumber(text) + formatMessage({id:'app.report.mile'}) : '-';
+        return text ? formatNumber(text) + formatMessage({ id: 'app.report.mile' }) : '-';
       },
     },
   ];
 
   return (
     <div className={commonStyles.commonPageStyle}>
-      <div style={{ marginBottom: 10, display: 'flex', flexFlow: 'column wrap' }}>
-        <HealthCarSearchForm
-          search={submitSearch}
-          downloadVisible={true}
-          sourceData={loadOriginData}
-          exportData={exportData}
-        />
-      </div>
+      <HealthCarSearchForm
+        search={submitSearch}
+        downloadVisible={true}
+        sourceData={loadOriginData}
+        exportData={exportData}
+      />
 
       <div className={style.body}>
-        <Row>
+        <Row style={{ padding: 15 }}>
           <Col span={12}>
             <div id="load_statustimeHistory" style={{ minHeight: 340 }} />
           </Col>

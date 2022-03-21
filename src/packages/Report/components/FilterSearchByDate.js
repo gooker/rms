@@ -24,6 +24,7 @@ const FilterSearchBytime = (props) => {
               <Col flex="auto">
                 <Form.Item
                   label={<FormattedMessage id="app.form.dateRange" />}
+                  rules={[{required:true,message:''}]}
                   name="timeRange"
                   getValueFromEvent={(value) => {
                     formRef.setFieldsValue({

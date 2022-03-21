@@ -3,7 +3,7 @@ import { Row, Tag, DatePicker } from 'antd';
 import moment from 'moment';
 import { formatMessage, convertToUserTimezone, isStrictNull } from '@/utils/util';
 
-const MomentRangeFormat = 'YYYY-MM-DD HH:mm:00';
+const MomentRangeFormat = 'YYYY-MM-DD HH:mm:ss';
 const { RangePicker } = DatePicker;
 //本小时，上1小时，今天，昨天，本周，上周，本月，上月，最近三个月
 const CustomData = {
@@ -63,9 +63,9 @@ const DatePickerSelector = (props) => {
 
   useEffect(() => {
     // 默认进页面时间区间
-    const defaultHour = moment();
+    const defaultHour = moment().subtract(1, 'hours');
     const start = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
-    const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
+    const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
     setDateValue([moment(start), moment(endTime)]);
     onChange([moment(start), moment(endTime)]);
   }, []);

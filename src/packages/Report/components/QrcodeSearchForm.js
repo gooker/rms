@@ -12,16 +12,19 @@ const QrcodeSearchComponent = (props) => {
   const [form] = Form.useForm();
 
   function submitSearch() {
-    form.validateFields().then((values) => {
-      const currentValues = { ...values };
-      const { timeRange } = currentValues;
-      if (!isNull(timeRange)) {
-        currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:ss');
-        currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:ss');
-      }
-      delete currentValues.timeRange;
-      search(currentValues);
-    });
+    form
+      .validateFields()
+      .then((values) => {
+        const currentValues = { ...values };
+        const { timeRange } = currentValues;
+        if (!isNull(timeRange)) {
+          currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:ss');
+          currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:ss');
+        }
+        delete currentValues.timeRange;
+        search(currentValues);
+      })
+      .catch(() => {});
   }
 
   return (
@@ -31,6 +34,12 @@ const QrcodeSearchComponent = (props) => {
           <Form.Item
             label={<FormattedMessage id="app.form.dateRange" />}
             name="timeRange"
+            rules={[
+              {
+                required: true,
+                message: <FormattedMessage id="reportCenter.time.required" />,
+              },
+            ]}
             getValueFromEvent={(value) => {
               return value;
             }}

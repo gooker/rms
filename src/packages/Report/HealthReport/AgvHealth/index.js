@@ -5,7 +5,13 @@ import XLSX from 'xlsx';
 import { getDatBysortTime } from '@/packages/Report/components/GroundQrcodeEcharts';
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
-import { isStrictNull, convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import {
+  isStrictNull,
+  convertToUserTimezone,
+  dealResponse,
+  formatMessage,
+  isNull,
+} from '@/utils/util';
 import ScanCodeComponent from './RobotScanCodeTab';
 import AgvOfflineComponent from './RobotOfflineTab';
 import RobotFaultComponent from './RobotFaultTab';
@@ -175,9 +181,7 @@ const HealthCar = (props) => {
   }
   return (
     <div className={commonStyles.commonPageStyle}>
-      <div style={{ marginBottom: 10 }}>
-        <HealthCarSearchForm search={submitSearch} downloadVisible={true} exportData={exportData} />
-      </div>
+      <HealthCarSearchForm search={submitSearch} downloadVisible={true} exportData={exportData} />
 
       <div style={{ display: 'flex', height: '40px' }}>
         {TabCollection.map(({ value, label }) => (

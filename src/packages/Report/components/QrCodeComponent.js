@@ -23,6 +23,7 @@ import {
   transformCodeData,
   getOriginalDataBycode,
   commonOption,
+  noDataGragraphic,
 } from './GroundQrcodeEcharts';
 import commonStyles from '@/common.module.less';
 import style from '../report.module.less';
@@ -49,7 +50,6 @@ const QrCodeComponent = (props) => {
     initCodeData();
   }, []); // 默认一进来就有数据
 
-  // useEffect(initChart, []);
   useEffect(refreshChart, [originData]);
 
   function initChart() {
@@ -89,10 +89,17 @@ const QrCodeComponent = (props) => {
     if (currentCodeData) {
       const { yAxis, series, legend } = currentCodeData;
       const newCodeHistoryLine = codeHistoryLine.getOption();
+
       newCodeHistoryLine.yAxis = yAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
-      codeHistoryLine.setOption(newCodeHistoryLine, true);
+      codeHistoryLine.setOption(
+        {
+          ...newCodeHistoryLine,
+          ...noDataGragraphic(series.length),
+        },
+        true,
+      );
     }
 
     if (currenTimeData) {
@@ -101,7 +108,10 @@ const QrCodeComponent = (props) => {
       newTimeHistoryLine.xAxis = xAxis;
       newTimeHistoryLine.series = series;
       newTimeHistoryLine.legend = legend;
-      timeHistoryLine.setOption(newTimeHistoryLine, true);
+      timeHistoryLine.setOption(
+        { ...newTimeHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
   }
 
@@ -253,13 +263,11 @@ const QrCodeComponent = (props) => {
 
   return (
     <div className={commonStyles.commonPageStyle}>
-      <div style={{ marginBottom: 10 }}>
-        <QrcodeSearchForm search={submitSearch} exportData={exportData} />
-      </div>
+      <QrcodeSearchForm search={submitSearch} exportData={exportData} />
 
       <div className={style.body}>
         <Row gutter={16}>
-          <Col span={22}>
+          <Col span={24}>
             {/* 按照码号 */}
             <Card
               actions={
@@ -276,7 +284,7 @@ const QrCodeComponent = (props) => {
               <div id={codeDomId} style={{ minHeight: 350 }} />
             </Card>
           </Col>
-          <Col span={22} style={{ marginTop: 10 }}>
+          <Col span={24} style={{ marginTop: 10 }}>
             {/* 按照日期 */}
             <Card
               actions={
