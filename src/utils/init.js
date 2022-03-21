@@ -80,7 +80,7 @@ export function checkPermission(router, permissionMap, appCode) {
     if (routerElement.path && appCode !== AppCode.SSO) {
       let authKey = null;
       authKey = routerElement.path;
-      if (isStrictNull(routerElement.hook) && !permissionMap[authKey]) {
+      if (isStrictNull(routerElement.hooks) && !permissionMap[authKey]) {
         continue;
       }
     }
@@ -133,8 +133,8 @@ export function convertAllMenu(adminType, allModuleMenuData, permissionMap) {
     if (appCode === AppCode.SSO) {
       appMenu = appMenu.filter((route) => {
         // 权限控制基于 authority 和 hooks，且hooks优先
-        if (Array.isArray(route.hook)) {
-          return validateHookPermission(route.hook);
+        if (Array.isArray(route.hooks)) {
+          return validateHookPermission(route.hooks);
         }
         if (Array.isArray(route.authority)) {
           return route.authority.includes(adminType);

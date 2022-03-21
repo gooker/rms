@@ -83,11 +83,11 @@ const HealthCar = (props) => {
       true,
     );
     taskNumberHistoryLine.setOption(
-      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskNumber' }), keyTimes),
+      taskLineOption(formatMessage({ id: 'reportCenter.agvload.taskNumber' }), keyTimes),
       true,
     );
     diatanceHistoryLine.setOption(
-      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskDistance' }), keyDisatance),
+      taskLineOption(formatMessage({ id: 'reportCenter.agvload.taskDistance' }), keyDisatance),
       true,
     );
     actionPieHistoryLine.setOption(

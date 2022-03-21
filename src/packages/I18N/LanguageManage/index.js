@@ -360,6 +360,7 @@ class LanguageManage extends React.Component {
       displayMode,
       imporVisible,
       backVisible,
+      diffToVisible,
       showMissingTranslate,
       editList,
       loading,
@@ -537,6 +538,7 @@ class LanguageManage extends React.Component {
             </Checkbox>
           </Col>
         </Row>
+
         <EditableTable
           loading={loading}
           value={filterLanguage}
@@ -546,7 +548,7 @@ class LanguageManage extends React.Component {
 
         {/*新增语言  */}
         <AddSysLangModal
-          allLanguage={allLanguage}
+          existKeys={Object.values(allLanguage).map(({ code }) => code)}
           onAddLang={this.submitLanguage}
           visible={this.state.addLangVisible}
           onCancel={() => {
@@ -585,18 +587,20 @@ class LanguageManage extends React.Component {
         )}
 
         {/* 对比 */}
-        <DiffToSaveModal
-          visible={this.state.diffToVisible}
-          originData={this.state.mergeData}
-          editList={editList}
-          allLanguage={allLanguage.map(({ code }) => code)}
-          makeSureUpdate={this.makeSureUpdate}
-          onCancel={() => {
-            this.setState({
-              diffToVisible: false,
-            });
-          }}
-        />
+        {diffToVisible && (
+          <DiffToSaveModal
+            visible={diffToVisible}
+            originData={this.state.mergeData}
+            editList={editList}
+            allLanguage={allLanguage.map(({ code }) => code)}
+            makeSureUpdate={this.makeSureUpdate}
+            onCancel={() => {
+              this.setState({
+                diffToVisible: false,
+              });
+            }}
+          />
+        )}
 
         {/* 导入 */}
         <ImportApplicationModal

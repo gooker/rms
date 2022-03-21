@@ -5,7 +5,13 @@ import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
 import { getDatBysortTime } from '../components/GroundQrcodeEcharts';
-import { formatMessage, convertToUserTimezone, dealResponse, isStrictNull, isNull } from '@/utils/util';
+import {
+  formatMessage,
+  convertToUserTimezone,
+  dealResponse,
+  isStrictNull,
+  isNull,
+} from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
@@ -82,11 +88,11 @@ const HealthCar = (props) => {
       true,
     );
     taskNumberHistoryLine.setOption(
-      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskNumber' }), keyTimes),
+      taskLineOption(formatMessage({ id: 'reportCenter.agvload.taskNumber' }), keyTimes),
       true,
     );
     diatanceHistoryLine.setOption(
-      taskLineOption(formatMessage({ id: 'reportCenter.robot.load.taskDistance' }), keyDisatance),
+      taskLineOption(formatMessage({ id: 'reportCenter.agvload.taskDistance' }), keyDisatance),
       true,
     );
     actionPieHistoryLine.setOption(
@@ -209,8 +215,6 @@ const HealthCar = (props) => {
         let loadData = response?.AGVLoadData || {};
         const newLoadData = getDatBysortTime(loadData);
 
-        // console.log(Object.keys(loadData).sort((a, b) => (a >= b ? 1 : -1)));
-        // console.log(newLoadData);
         setLoadOriginData(newLoadData);
         setFilterData(newLoadData);
         setSelectedKeys([]);
@@ -229,11 +233,11 @@ const HealthCar = (props) => {
         });
 
         setTimes({
-          taskNumber: '任务次数',
+          taskNumber: formatMessage({ id: 'reportCenter.agvload.taskNumber' }),
         });
 
         setKeyDisatance({
-          taskDistance: '任务距离',
+          taskDistance: formatMessage({ id: 'reportCenter.agvload.taskDistance' }),
         });
       }
     }
@@ -282,12 +286,32 @@ const HealthCar = (props) => {
     const taskDistanceWs = XLSX.utils.json_to_sheet(
       generateEveryType(loadOriginData, 'taskDistance', keyDisatance),
     );
-    XLSX.utils.book_append_sheet(wb, statusWs, '状态时长');
-    XLSX.utils.book_append_sheet(wb, taskWs, '任务时长');
-    XLSX.utils.book_append_sheet(wb, actionWs, '动作时长');
-    XLSX.utils.book_append_sheet(wb, taskNumWs, '任务次数');
-    XLSX.utils.book_append_sheet(wb, taskDistanceWs, '任务距离');
-    XLSX.writeFile(wb, `小车负载.xlsx`);
+    XLSX.utils.book_append_sheet(
+      wb,
+      statusWs,
+      formatMessage({ id: 'reportCenter.robot.load.statusduration' }),
+    );
+    XLSX.utils.book_append_sheet(
+      wb,
+      taskWs,
+      formatMessage({ id: 'reportCenter.agvload.taskduration' }),
+    );
+    XLSX.utils.book_append_sheet(
+      wb,
+      actionWs,
+      formatMessage({ id: 'reportCenter.robot.load.action' }),
+    );
+    XLSX.utils.book_append_sheet(
+      wb,
+      taskNumWs,
+      formatMessage({ id: 'reportCenter.agvload.taskNumber' }),
+    );
+    XLSX.utils.book_append_sheet(
+      wb,
+      taskDistanceWs,
+      formatMessage({ id: 'reportCenter.agvload.taskDistance' }),
+    );
+    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.loadReport.agvLoad' })}.xlsx`);
   }
 
   // 124
@@ -337,7 +361,7 @@ const HealthCar = (props) => {
       },
     },
     {
-      title: '充电耗时',
+      title: <FormattedMessage id="reportCenter.agvload.chargingtime" />,
       dataIndex: 'statusAllTime',
       sorter: (a, b) => a.statusAllTime - b.statusAllTime,
       render: (text) => {
@@ -345,11 +369,11 @@ const HealthCar = (props) => {
       },
     },
     {
-      title: '行走距离',
+      title: <FormattedMessage id="reportCenter.agvload.walkingdistance" />,
       dataIndex: 'taskDistance',
       sorter: (a, b) => a.taskDistance - b.taskDistance,
       render: (text) => {
-        return text ? formatNumber(text) + '米' : '-';
+        return text ? formatNumber(text) + formatMessage({id:'app.report.mile'}) : '-';
       },
     },
   ];

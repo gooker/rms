@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button, Row, Col, Menu, Modal, Dropdown } from 'antd';
+import { Form, Input, Button, Row, Col, Menu, Modal, Dropdown, Select } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import LocalsKeys from '@/locales/LocaleKeys';
@@ -15,27 +15,16 @@ const formItemLayout = {
 
 export default class AddSysLangModal extends Component {
   formRef = React.createRef();
-  
-  renderMenu = () => {
-    this.selectedKeys = null;
-    const { allLanguage } = this.props;
-    const existKeys = Object.values(allLanguage).map(({ code }) => code);
-    let menuData = [];
 
+  renderOption = () => {
+    const { existKeys } = this.props;
+    let data = [];
     Object.keys(LocalsKeys).forEach((key) => {
       if (!existKeys.includes(key)) {
-        return menuData.push(<Menu.Item key={key}>{LocalsKeys[key]}</Menu.Item>);
+        return data.push(<Select.Option key={key}>{LocalsKeys[key]}</Select.Option>);
       }
     });
-    return (
-      <Menu
-        style={{ maxHeight: '350px', overflow: 'auto' }}
-        selectedKeys={[this.selectedKey]}
-        onClick={this.changeLang}
-      >
-        {menuData}
-      </Menu>
-    );
+    return data;
   };
 
   changeLang = (e) => {
@@ -48,23 +37,14 @@ export default class AddSysLangModal extends Component {
     });
   };
 
-  typeValidator = (_, value) => {
-    // 大小写 下划线
-    var regex = /^[A-Za-z_-]+$/gi;
-    if (value && !regex.test(value)) {
-      return Promise.reject(
-        new Error(formatMessage({ id: 'translator.languageManage.langtypeValidate' })),
-      );
-    }
-    return Promise.resolve();
-  };
-
   onSubmitLang = () => {
     const { validateFields } = this.formRef.current;
     const { onAddLang } = this.props;
     validateFields()
       .then((allValues) => {
-        onAddLang(allValues);
+        const currentValue = { ...allValues };
+        currentValue.name = LocalsKeys[allValues.code];
+        onAddLang(currentValue);
       })
       .catch(() => {});
   };
@@ -85,31 +65,15 @@ export default class AddSysLangModal extends Component {
           visible={visible}
         >
           <Form {...formItemLayout} ref={this.formRef}>
-            <Row>
-              <Col flex="auto" style={{ textAlign: 'end' }}>
-                <Dropdown overlay={this.renderMenu} trigger={['click']} placement="bottomCenter">
-                  <Button type="link">
-                    <FormattedMessage id="translator.languageManage.shortcut" />
-                  </Button>
-                </Dropdown>
-              </Col>
-            </Row>
             <Form.Item
               name="code"
               label={<FormattedMessage id="translator.languageManage.langtype" />}
-              rules={[{ required: true }, { validator: this.typeValidator }]}
-            >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="name"
-              label={<FormattedMessage id="app.common.name" />}
               rules={[{ required: true }]}
             >
-              <Input />
+              <Select style={{ width: '100%' }}>{this.renderOption()}</Select>
             </Form.Item>
 
-            <Button style={{ margin: '40px 0 0 47%' }} onClick={this.onSubmitLang} type="primary">
+            <Button style={{ margin: '30px 0 0 44%' }} onClick={this.onSubmitLang} type="primary">
               {<FormattedMessage id="app.button.save" />}
             </Button>
           </Form>

@@ -153,7 +153,7 @@ const DatePickerSelector = (props) => {
           break;
       }
       setPickVisible(false);
-      console.log(result);
+     
       setDateValue([moment(result.startTime), moment(result.endTime)]);
       onChange([moment(result.startTime), moment(result.endTime)]);
     }

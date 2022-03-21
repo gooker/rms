@@ -1,4 +1,4 @@
-import { isStrictNull } from '@/utils/util';
+import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull } from 'lodash';
 import { AgvStateColor } from '@/config/consts';
 import { getAllCellId } from '../../components/GroundQrcodeEcharts';
@@ -27,22 +27,8 @@ export const Types = [
   { label: '重车回存储区', value: 'HEARVY_CARRY_POD_TO_STORE' },
   { label: '自定义任务', value: 'CUSTOM_TASK' },
 
-  { label: '离线', value: 'Offline' },
-  { label: '空闲', value: 'Free' },
-  { label: '执行', value: 'Working' },
-  { label: '待命', value: 'StandBy' },
-  { label: '充电', value: 'Charging' },
-  { label: '异常', value: 'Error' },
-  { label: '连接中', value: 'Connecting' },
 ];
 
-export const getLabelByValue = (value) => {
-  const item = Types.filter((item) => item.value === value);
-  if (item.length < 1) {
-    return value;
-  }
-  return item[0].label;
-};
 
 // 任务时长 状态时长
 const commonOption = {
@@ -323,8 +309,7 @@ export const taskLineOption = (title, keyMap) => ({
  */
 export const generateDurationDataByTime = (allData, type, translate, colorFlag) => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData, legendData } = sumloadData(allData, type, translate);
-
+  const { currentSery, xAxisData, legendData } = sumloadData(allData, type, translate, 'average');
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
       ...commonOption,
@@ -435,7 +420,6 @@ export const generateActionPieData = (allData, type, translate) => {
   });
 
   forIn(currentActionSum, (v, key) => {
-    console.log(v);
     const value = v === 0 ? '' : v;
     seryData.push({ name: key, value, label: translate[key] });
   });
@@ -521,7 +505,7 @@ export const generateActionBarData = (allData, type, translate) => {
   return { xAxis, series, legend };
 };
 
-export const sumloadData = (allData, type, translate) => {
+export const sumloadData = (allData, type, translate, average) => {
   const xAxisData = Object.keys(allData).sort(); // 横坐标-日期
 
   const typeResult = [];
@@ -539,7 +523,20 @@ export const sumloadData = (allData, type, translate) => {
           currentTime[parameter] = existValue * 1 + _value * 1;
         });
       });
-      typeResult.push(currentTime);
+
+      // 状态时长和任务时长 需要求平均值
+      let newTimes = {};
+      if (!isNull(average) && average === 'average') {
+        const _length = typeData.length;
+        forIn(currentTime, (value, parameter) => {
+          const _value = isStrictNull(value) ? 0 : value / _length;
+          newTimes[parameter] = Number.parseFloat(_value.toFixed(3));
+        });
+      } else {
+        newTimes = currentTime;
+      }
+
+      typeResult.push(newTimes);
     }
   });
 
@@ -608,7 +605,7 @@ export const generateTableData = (originalData = {}) => {
 
 // 1234->1,234
 export const formatNumber = (n) => {
-  let num = n.toString();
+  let num = Number.parseFloat(n.toFixed(3)).toString();
   let decimals = '';
   // 判断是否有小数
   if (num.indexOf('.') > -1) {
@@ -639,20 +636,21 @@ export const formatNumber = (n) => {
  * hours
  *
  * */
+
 export const MinuteFormat = (value) => {
   const d = moment.duration(value, 'seconds');
   let currentValue = '';
   if (Math.floor(d.asDays()) > 0) {
-    currentValue += Math.floor(d.asDays()) + '天';
+    currentValue += Math.floor(d.asDays()) + formatMessage({ id: 'app.time.day' });
   }
   if (d.hours() > 0) {
-    currentValue += d.hours() + '时';
+    currentValue += d.hours() + formatMessage({ id: 'app.time.hours' });
   }
   if (d.minutes() > 0) {
-    currentValue += d.minutes() + '分';
+    currentValue += d.minutes() + formatMessage({ id: 'app.time.minutes' });
   }
   if (d.seconds() > 0) {
-    currentValue += d.seconds() + '秒';
+    currentValue += d.seconds() + formatMessage({ id: 'app.time.seconds' });
   }
   return currentValue;
   // const currentValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';

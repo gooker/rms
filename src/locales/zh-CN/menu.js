@@ -132,7 +132,7 @@ export default {
   'menu.healthReport.qrcode': '二维码健康',
   'menu.healthReport.qrcode.ground': '地面',
   'menu.healthReport.qrcode.latentPod': '潜伏货架',
-  'menu.healthReport.qrcode.toteQrcode': '料箱',
+  'menu.healthReport.qrcode.tote': '料箱',
   'menu.healthReport.chargerHealth': '充电桩健康',
   'menu.healthReport.automationHealth': '自动化设备健康',
   'menu.loadReport': '负载报表',

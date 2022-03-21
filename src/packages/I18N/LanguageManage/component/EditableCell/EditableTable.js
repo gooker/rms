@@ -30,7 +30,7 @@ const EditableTable = (props) => {
     }
     return [];
   }
-
+  
   return (
     <div className={styles.editableTable}>
       <Table

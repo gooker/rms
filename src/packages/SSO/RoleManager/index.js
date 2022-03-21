@@ -245,7 +245,7 @@ export default class index extends Component {
           visible={addRoleVisible}
           destroyOnClose
           title={
-            updateRoleFlag ? (
+            !updateRoleFlag ? (
               <FormattedMessage id="app.button.add" />
             ) : (
               <FormattedMessage id="app.button.edit" />
