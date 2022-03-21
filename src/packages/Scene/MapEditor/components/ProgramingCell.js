@@ -16,7 +16,7 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import ActionDefiner from './ActionDefiner';
 import ScopeProgramList from './ScopeProgramList';
 import FormattedMessage from '@/components/FormattedMessage';
-import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
+import SuperMultiSelect from '@/packages/Scene/components/SuperMultiSelect';
 
 const ProgramingCell = (props) => {
   const { scopeLoad, actions, selections } = props;

@@ -16,7 +16,7 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import { saveScopeProgram } from '@/services/XIHE';
 import { debounce, find } from 'lodash';
 import ScopeProgramList from '@/packages/Scene/MapEditor/components/ScopeProgramList';
-import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
+import SuperMultiSelect from '@/packages/Scene/components/SuperMultiSelect';
 
 const ProgramingRelation = (props) => {
   const { scopeLoad, actions, selections } = props;

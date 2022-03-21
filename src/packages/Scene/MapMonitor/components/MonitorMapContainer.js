@@ -6,10 +6,10 @@ import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
-import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
 import commonStyles from '@/common.module.less';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
+import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {

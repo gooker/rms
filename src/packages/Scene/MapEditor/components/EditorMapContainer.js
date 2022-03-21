@@ -7,10 +7,10 @@ import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
 import { Elevator } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';
-import MapRatioSlider from '@/packages/XIHE/components/MapRatioSlider';
 import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import styles from '../editorLayout.module.less';
+import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {

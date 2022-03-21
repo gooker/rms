@@ -251,7 +251,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 35, height: 35 }}
-                src={require('@/packages/XIHE/icons/electricity.png').default}
+                src={require('@/packages/Scene/icons/electricity.png').default}
               />
               <span>
                 <FormattedMessage id={'app.agv.electricity'} />
@@ -266,7 +266,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 25, height: 25 }}
-                src={require('@/packages/XIHE/icons/state.png').default}
+                src={require('@/packages/Scene/icons/state.png').default}
               />
               <span>
                 <FormattedMessage id={'app.common.status'} />
@@ -281,7 +281,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 25, height: 25 }}
-                src={require('@/packages/XIHE/icons/pod.png').default}
+                src={require('@/packages/Scene/icons/pod.png').default}
               />
               <span>
                 <FormattedMessage id={'app.pod'} />
@@ -296,7 +296,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 25, height: 25 }}
-                src={require('@/packages/XIHE/icons/task.png').default}
+                src={require('@/packages/Scene/icons/task.png').default}
               />
               <span>
                 <FormattedMessage id={'app.task'} />
@@ -322,7 +322,7 @@ const AGVElementProp = (props) => {
               <img
                 alt={'agv'}
                 style={{ width: 25, height: 25 }}
-                src={require('@/packages/XIHE/icons/error.png').default}
+                src={require('@/packages/Scene/icons/error.png').default}
               />
               <span>
                 <FormattedMessage id={'app.agv.exception'} />
@@ -343,13 +343,13 @@ const AGVElementProp = (props) => {
           {/* 充电、休息 */}
           <div className={styles.rightSideAgvContentOperation}>
             <div className={styles.rightSideAgvContentOperationItem} onClick={goCharge}>
-              <img alt={'agv'} src={require('@/packages/XIHE/icons/charger.png').default} />
+              <img alt={'agv'} src={require('@/packages/Scene/icons/charger.png').default} />
               <div>
                 <FormattedMessage id={'monitor.right.charge'} />
               </div>
             </div>
             <div className={styles.rightSideAgvContentOperationItem} onClick={toRest}>
-              <img alt={'agv'} src={require('@/packages/XIHE/icons/rest.png').default} />
+              <img alt={'agv'} src={require('@/packages/Scene/icons/rest.png').default} />
               <div>
                 <FormattedMessage id={'monitor.right.goRest'} />
               </div>
@@ -361,7 +361,7 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideAgvContentOperation}>
             <div className={styles.rightSideAgvContentOperationItem2} onClick={agvPthchanged}>
               <div style={{ background: pathChecked ? checkedColor : '' }}>
-                <img alt={'agv'} src={require('@/packages/XIHE/icons/path.png').default} />
+                <img alt={'agv'} src={require('@/packages/Scene/icons/path.png').default} />
               </div>
               <div>
                 <FormattedMessage id={'monitor.path'} />
@@ -381,7 +381,7 @@ const AGVElementProp = (props) => {
             >
               <div className={styles.rightSideAgvContentOperationItem2}>
                 <div style={{ background: mainTain ? checkedColor : '' }}>
-                  <img alt={'agv'} src={require('@/packages/XIHE/icons/maintain.png').default} />
+                  <img alt={'agv'} src={require('@/packages/Scene/icons/maintain.png').default} />
                 </div>
                 <div>
                   <FormattedMessage id={'monitor.maintain'} />
@@ -402,7 +402,7 @@ const AGVElementProp = (props) => {
             >
               <div className={styles.rightSideAgvContentOperationItem2}>
                 <div style={{ background: manualMode ? checkedColor : '' }}>
-                  <img alt={'agv'} src={require('@/packages/XIHE/icons/manual.png').default} />
+                  <img alt={'agv'} src={require('@/packages/Scene/icons/manual.png').default} />
                 </div>
                 <div>
                   <FormattedMessage id={'monitor.manual'} />
@@ -425,7 +425,7 @@ const AGVElementProp = (props) => {
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideAgvContentOperationItem}>
-                <img alt={'agv'} src={require('@/packages/XIHE/icons/reset.png').default} />
+                <img alt={'agv'} src={require('@/packages/Scene/icons/reset.png').default} />
                 <div>
                   <FormattedMessage id={'app.button.reset'} />
                 </div>
@@ -441,7 +441,7 @@ const AGVElementProp = (props) => {
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideAgvContentOperationItem}>
-                <img alt={'agv'} src={require('@/packages/XIHE/icons/reboot.png').default} />
+                <img alt={'agv'} src={require('@/packages/Scene/icons/reboot.png').default} />
                 <div>
                   <FormattedMessage id={'monitor.reboot'} />
                 </div>
@@ -449,7 +449,7 @@ const AGVElementProp = (props) => {
             </Popconfirm>
 
             <div className={styles.rightSideAgvContentOperationItem} onClick={showRunInfo}>
-              <img alt={'agv'} src={require('@/packages/XIHE/icons/runTime.png').default} />
+              <img alt={'agv'} src={require('@/packages/Scene/icons/runTime.png').default} />
               <div>
                 <FormattedMessage id={'monitor.runTime'} />
               </div>

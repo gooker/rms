@@ -2,9 +2,9 @@ import React, { memo, useEffect } from 'react';
 import { Form, Select, InputNumber, Button } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
-import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../popoverPanel.module.less';
+import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 
 const AdjustCellSpace = (props) => {
   const { dispatch, selectCells, mapContext } = props;

@@ -9,9 +9,9 @@ import {
   covertDumpFormData2Param,
 } from '@/utils/mapUtil';
 import { formatMessage, isNull, isStrictNull } from '@/utils/util';
-import DirectionSelector from '@/packages/XIHE/components/DirectionSelector';
 import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 
 const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const formLayout2 = { labelCol: { span: 7 }, wrapperCol: { span: 17 } };

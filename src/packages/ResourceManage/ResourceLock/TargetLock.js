@@ -6,10 +6,10 @@ import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/servi
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import TargetLockSearch from '../../XIHE/LockManage/components/TargetLockSearch';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
+import TargetLockSearch from '@/packages/Tool/AlertCenter/QuestionSearch';
 
 const TargetLock = (props) => {
   const [loading, setLoading] = useState(false);
@@ -118,7 +118,6 @@ const TargetLock = (props) => {
       result = result.filter((item) => item.cellId === Number(cellId));
     }
     setCurrentTargetLockList(result);
-    return;
   }
 
   return (

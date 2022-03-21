@@ -247,7 +247,7 @@ const ChargeProperty = (props) => {
             >
               <div className={styles.rightSideAgvContentOperationItem2}>
                 <div style={{ background: enabled ? checkedColor : '' }}>
-                  <img alt={'agv'} src={require('@/packages/XIHE/icons/maintain.png').default} />
+                  <img alt={'agv'} src={require('@/packages/Scene/icons/maintain.png').default} />
                 </div>
                 <div>
                   <FormattedMessage id={'app.common.enabled'} />

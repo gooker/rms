@@ -5,9 +5,9 @@ import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/ut
 import { MapSelectableSpriteType, WorkStationSize } from '@/config/consts';
 import AngleSelector from '@/components/AngleSelector';
 import FormattedMessage from '@/components/FormattedMessage';
-import RichInput from '@/packages/XIHE/components/RichInput';
-import CardRadio from '@/packages/XIHE/components/CardRadio';
-import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
+import RichInput from '@/packages/Scene/components/RichInput';
+import CardRadio from '@/packages/Scene/components/CardRadio';
+import SuperMultiSelect from '@/packages/Scene/components/SuperMultiSelect';
 
 const WorkStationForm = (props) => {
   const { flag, workStation, dispatch, mapContext, selectCellIds, allWorkstations } = props;

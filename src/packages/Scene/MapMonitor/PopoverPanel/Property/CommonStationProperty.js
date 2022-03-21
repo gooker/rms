@@ -233,7 +233,7 @@ const CommonStationProperty = (props) => {
               <img
                 alt={'station'}
                 style={{ width: 25, height: 25 }}
-                src={require('@/packages/XIHE/icons/state.png').default}
+                src={require('@/packages/Scene/icons/state.png').default}
               />
               <span>
                 <FormattedMessage id={'app.common.status'} />
@@ -254,7 +254,7 @@ const CommonStationProperty = (props) => {
               <img
                 alt={'station'}
                 style={{ width: 25, height: 25 }}
-                src={require('@/packages/XIHE/icons/task.png').default}
+                src={require('@/packages/Scene/icons/task.png').default}
               />
               <span>
                 <FormattedMessage id={'app.task'} />

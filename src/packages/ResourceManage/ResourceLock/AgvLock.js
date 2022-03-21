@@ -1,5 +1,5 @@
 import React from 'react';
-import RobotLockComponent from '../../XIHE/LockManage/components/RobotLockComponent';
+import RobotLockComponent from '../component/AgvLockComponent';
 import { AGVType } from '@/config/config';
 
 const AgvLock = () => {

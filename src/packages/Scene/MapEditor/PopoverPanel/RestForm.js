@@ -2,8 +2,8 @@ import React, { memo } from 'react';
 import { Form, Select, InputNumber } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import SuperMultiSelect from '@/packages/XIHE/components/SuperMultiSelect';
 import { MapSelectableSpriteType } from '@/config/consts';
+import SuperMultiSelect from '@/packages/Scene/components/SuperMultiSelect';
 
 const { formItemLayout } = getFormLayout(5, 19);
 

@@ -4,10 +4,10 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import RichInput from '@/packages/XIHE/components/RichInput';
 import AngleSelector from '@/components/AngleSelector';
-import CardRadio from '@/packages/XIHE/components/CardRadio';
 import { MapSelectableSpriteType } from '@/config/consts';
+import RichInput from '@/packages/Scene/components/RichInput';
+import CardRadio from '@/packages/Scene/components/CardRadio';
 
 const { Option } = Select;
 
