@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import CommonPortal from './PortalEntry';
@@ -8,7 +8,7 @@ import { formatMessage } from '@/utils/util';
 const Portal = (props) => {
   const { dispatch, isAdmin, grantedAPP, currentApp } = props;
 
-  async function checkoutApp(appCode) {
+  function checkoutApp(appCode) {
     dispatch({ type: 'global/saveCurrentApp', payload: appCode });
   }
 

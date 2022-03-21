@@ -24,19 +24,19 @@ const Apps = [
   {
     code: AppCode.LatentTote,
     color: '#03a9f4',
-    width: '95%',
-    height: '70%',
+    width: '90%',
+    height: '65%',
   },
   {
     code: AppCode.LatentPod,
     color: '#2bb656',
-    width: '95%',
-    height: '70%',
+    width: '90%',
+    height: '65%',
   },
   {
     code: AppCode.Tote,
     color: '#4caf50',
-    width: '80%',
+    width: '60%',
     height: '80%',
   },
   {
@@ -48,12 +48,12 @@ const Apps = [
   {
     code: AppCode.ForkLift,
     color: '#80b600',
-    width: '95%',
+    width: '90%',
     height: '80%',
   },
   {
     code: AppCode.ResourceManage,
-    color: '#0099FF',
+    color: '#e6d833',
     width: '80%',
     height: '80%',
   },
@@ -65,45 +65,45 @@ const Apps = [
   },
   {
     code: AppCode.Scene,
-    color: '#0099FF',
+    color: '#b25500',
     width: '80%',
     height: '80%',
   },
   {
     code: AppCode.Cleaning,
-    color: '#0099FF',
+    color: '#76c7fd',
     width: '80%',
     height: '80%',
   },
   {
     code: AppCode.AgvManned,
     color: '#c4c43b',
-    width: '80%',
-    height: '80%',
+    width: '75%',
+    height: '77%',
   },
   {
     code: AppCode.Tool,
-    color: '#0099FF',
+    color: '#3f51b5',
     width: '80%',
     height: '80%',
   },
   {
     code: AppCode.Strategy,
-    color: '#0099FF',
+    color: '#00c424',
     width: '80%',
     height: '70%',
   },
   {
     code: AppCode.Report,
-    color: '#0099FF',
-    width: '80%',
-    height: '80%',
+    color: '#298914',
+    width: '73%',
+    height: '73%',
   },
   {
     code: AppCode.Customized,
     color: '#0099FF',
-    width: '80%',
-    height: '80%',
+    width: '70%',
+    height: '70%',
   },
 ];
 
@@ -129,7 +129,7 @@ const CommonPortal = (props) => {
           </div>
         </div>
         <div />
-        <div>11</div>
+        <div style={currentApp === code ? { background: color } : {}} />
       </div>
     </Tooltip>
   );
