@@ -18,7 +18,7 @@ import BatchAddCells from './BatchAddCells';
 import GenerateCellCode from './GenerateCellCode';
 import MoveCell from './MoveCell';
 import AdjustCellSpace from './AdjustCellSpace';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };

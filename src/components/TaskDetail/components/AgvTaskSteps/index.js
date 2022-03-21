@@ -77,12 +77,12 @@ class AgvTaskSteps extends PureComponent {
         {/* 预计完成时间 */}
         {subTask.predictEndTime && (
           <div style={{ color: 'rgba(0, 0, 0, 0.85', marginBottom: 15 }}>{`${formatMessage({
-            id: 'app.taskDetail.finishTime',
+            id: 'app.taskDetail.estimatedFinishTime',
           })} ${parseInt(subTask.predictEndTime / 1000, 10)}s`}</div>
         )}
 
         {/* 操作时间 */}
-        <Form.Item label={`${formatMessage({ id: 'app.taskDetail.operatingTime' })}:`}>
+        <Form.Item label={`${formatMessage({ id: 'app.common.operationTime' })}:`}>
           <Steps current={current}>
             <Step
               title={'NEW'}
@@ -115,7 +115,7 @@ class AgvTaskSteps extends PureComponent {
         </Form.Item>
 
         {/* 任务步骤 */}
-        <Form.Item label={`${formatMessage({ id: 'app.taskDetail.taskSteps' })}:`}>
+        <Form.Item label={`${formatMessage({ id: 'app.task.step' })}:`}>
           <RenderAgvTaskActions subTask={subTask} translation={translateMap} />
         </Form.Item>
       </Form>

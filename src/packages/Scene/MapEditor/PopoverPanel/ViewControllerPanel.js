@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { CostOptions, DirectionOption } from '../enums';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const { formItemLayout } = getFormLayout(7, 17);
