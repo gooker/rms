@@ -1,17 +1,11 @@
 import React, { useEffect, memo } from 'react';
-import { Row, Col, Card } from 'antd';
+import { Row, Col } from 'antd';
 import echarts from 'echarts';
-import moment from 'moment';
-import { isNull, isStrictNull } from '@/utils/util';
-import FilterSearchBydate from '../../../components/FilterSearchByDate';
-import FilterSearch from '../../../components/FilterSearch';
 import {
   codeHistoryLineOption,
   dateHistoryLineOption,
   generateTimeData,
   transformCodeData,
-  getOriginalDataBycode,
-  commonOption,
   noDataGragraphic,
 } from '@/packages/Report/components/GroundQrcodeEcharts';
 
@@ -58,7 +52,10 @@ const ScanOrFaultComponent = (props) => {
       newCodeHistoryLine.yAxis = yAxis;
       newCodeHistoryLine.series = series;
       newCodeHistoryLine.legend = legend;
-      codeHistoryLine.setOption({...newCodeHistoryLine,...noDataGragraphic(series.length)}, true);
+      codeHistoryLine.setOption(
+        { ...newCodeHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
 
     if (currenTimeData) {
@@ -67,140 +64,25 @@ const ScanOrFaultComponent = (props) => {
       newTimeHistoryLine.xAxis = xAxis;
       newTimeHistoryLine.series = series;
       newTimeHistoryLine.legend = legend;
-      timeHistoryLine.setOption({...newTimeHistoryLine,...noDataGragraphic(series.length)}, true);
+      timeHistoryLine.setOption(
+        { ...newTimeHistoryLine, ...noDataGragraphic(series.length) },
+        true,
+      );
     }
   }
 
-  // 先根据agvId 过滤数据
-  const filterDataById = (Ids) => {
-    const _data = { ...originData };
-    const newData = {};
-    Object.entries(_data).forEach(([key, allIdData]) => {
-      const _allIdData = [];
-      allIdData.forEach((item) => {
-        if (Ids.includes(item.agvId)) {
-          _allIdData.push(item);
-        }
-      });
-      newData[key] = _allIdData;
-    });
-    return newData;
-  };
 
-  // 根据时间 过滤数据
-  const filterDataByTime = (data, startT, endT) => {
-    const _data = { ...data };
-    const newData = {};
-    Object.entries(_data).forEach(([key, allIdData]) => {
-      if (moment(key).isBetween(moment(startT), moment(endT))) {
-        newData[key] = [...allIdData];
-      }
-    });
-    return newData;
-  };
-
-  // 按照码号搜索
-  const qrcodeSearch = (allValues) => {
-    // 1.先对allValues筛选 为null就delete  eg:过滤丢码次数>=9的数据
-    const newChanged = {};
-    let newOriginalData = { ...originData };
-    Object.entries(allValues).forEach(([key, v]) => {
-      if (!isStrictNull(v)) {
-        if (key === 'agvId' && v.length > 0) {
-          newOriginalData = filterDataById(v);
-        } else {
-          newChanged[key] = v;
-        }
-      }
-    });
-
-    // filter
-    const { currentSery, yxisData } = getOriginalDataBycode(newOriginalData, keyData, 'agvId');
-    const newSourceData = {};
-    Object.entries(currentSery).forEach(([key, typeData]) => {
-      let newKeydata = [];
-      if (!isNull(typeData)) {
-        typeData.forEach((record) => {
-          if (record < newChanged[key]) {
-            newKeydata.push(0);
-          } else {
-            newKeydata.push(record);
-          }
-        });
-      }
-      newSourceData[key] = newKeydata;
-    });
-
-    const series = [];
-    Object.entries(newSourceData).forEach((key) => {
-      series.push({
-        ...commonOption,
-        data: key[1],
-        name: key[0],
-        type: 'bar',
-      });
-    });
-    const newCodeHistoryLine = codeHistoryLine.getOption();
-    newCodeHistoryLine.series = series;
-    newCodeHistoryLine.yAxis[0].data = yxisData;
-    codeHistoryLine.setOption(newCodeHistoryLine, true);
-  };
-
-  // 按日期二次搜索
-  function qrcodeTimeSearch(allValues) {
-    let newOriginalData = { ...originData };
-    const { endByTime, startByTime, agvId } = allValues;
-
-    if (agvId?.length > 0) {
-      newOriginalData = filterDataById(agvId);
-    }
-
-    if (!isStrictNull(startByTime) && !isStrictNull(endByTime)) {
-      newOriginalData = filterDataByTime(newOriginalData, startByTime, endByTime);
-    }
-
-    const currenTimeData = generateTimeData(newOriginalData, keyData);
-    if (currenTimeData) {
-      const { xAxis, series, legend } = currenTimeData;
-      const newTimeHistoryLine = timeHistoryLine.getOption();
-      newTimeHistoryLine.xAxis = xAxis;
-      newTimeHistoryLine.series = series;
-      newTimeHistoryLine.legend = legend;
-      timeHistoryLine.setOption(newTimeHistoryLine, true);
-    }
-  }
 
   return (
     <>
       <Row gutter={16}>
         <Col span={24}>
           {/* 按照码号 */}
-          <Card
-            actions={
-              Object.keys(originData).length > 0 && [
-                <FilterSearch
-                  key={'a'}
-                  showAgvId={true}
-                  searchKey={keyData}
-                  qrcodeSearch={qrcodeSearch}
-                />,
-              ]
-            }
-          >
-            <div id={codeDomId} style={{ minHeight: 350 }} />
-          </Card>
+          <div id={codeDomId} style={{ minHeight: 350 }} />
         </Col>
         <Col span={24} style={{ marginTop: 10 }}>
           {/* 按照日期 */}
-          <Card
-            actions={
-              Object.keys(originData).length > 0 && [
-                <FilterSearchBydate key={'b'} refreshCharts={qrcodeTimeSearch} showAgvId={true} />,
-              ]
-            }
-          >
-            <div id={dateDomId} style={{ minHeight: 350 }} />
-          </Card>
+          <div id={dateDomId} style={{ minHeight: 350 }} />
         </Col>
       </Row>
     </>
