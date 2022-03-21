@@ -28,16 +28,19 @@ export default [
             path: `/${AppCode.Report}/healthReport/groundQrcodeHealth`,
             name: 'ground',
             component: '/Report/HealthReport/GroundQrcodeHealth',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
             path: `/${AppCode.Report}/healthReport/latentPodQrcodeHealth`,
             name: 'latentPod',
             component: '/Report/HealthReport/LatentPodQrcodeHealth',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
           {
             path: `/${AppCode.Report}/healthReport/toteQrcodeHealth`,
             name: 'tote',
             component: '/Report/HealthReport/ToteQrcodeHealth',
+            authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
           },
         ],
       },
@@ -59,23 +62,20 @@ export default [
     path: `/${AppCode.Report}/loadReport`,
     name: 'loadReport',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    hooks: ['dev'],
     routes: [
       {
         path: `/${AppCode.Report}/loadReport/agvLoad`,
         name: 'agvLoad',
         component: '/Report/LoadReport/AgvLoadReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        hooks: ['dev'],
+        hooks:['dev'],
       },
       {
         path: `/${AppCode.Report}/loadReport/taskLoad`,
         name: 'taskLoad',
         component: '/Report/LoadReport/TaskLoadReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        hooks: ['dev'],
       },
-
       {
         path: `/${AppCode.Report}/loadReport/containerLoad`,
         name: 'containerLoad',

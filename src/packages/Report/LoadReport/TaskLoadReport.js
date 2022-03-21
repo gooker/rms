@@ -3,21 +3,21 @@ import { Row, Col, Divider, Card } from 'antd';
 import echarts from 'echarts';
 import XLSX from 'xlsx';
 import moment from 'moment';
-import { getDatBysortTime } from '../../XIHE/ReportCenter/components/groundQrcodeEcharts';
 import { isStrictNull, convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchTaskLoad } from '@/services/api';
+import { sortBy, forIn } from 'lodash';
+import { getDatBysortTime } from '../components/GroundQrcodeEcharts';
 import {
   actionPieOption,
   generateActionPieData,
   actionBarOption,
   generateActionBarData,
-} from '../../XIHE/ReportCenter/Load/components/loadRobotEcharts';
-import HealthCarSearchForm from '../../XIHE/ReportCenter/HealthRobot/components/HealthCarSearchForm';
-import FilterTaskLoadSearch from '../../XIHE/ReportCenter/Load/components/FilterTaskLoadSearch';
-
+} from './components/loadRobotEcharts';
+import HealthCarSearchForm from '../components/HealthCarSearchForm';
+import FilterTaskLoadSearch from './components/FilterTaskLoadSearch';
 import commonStyles from '@/common.module.less';
-import style from '../../XIHE/ReportCenter/HealthQrcode/qrcode.module.less';
-import { sortBy, forIn } from 'lodash';
+import style from '../report.module.less';
+
 
 const colums = {
   time: formatMessage({ id: 'app.time' }),
@@ -54,24 +54,24 @@ const TaskLoadComponent = (props) => {
   function initChart() {
     // 任务动作负载 -pie
     taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
-    taskActionPieLine.setOption(actionPieOption('任务动作负载 ', keyAction), true);
+    taskActionPieLine.setOption(actionPieOption(formatMessage({id:'reportCenter.taskload.action'}), keyAction), true);
     //-bar
     taskActionBarLine = echarts.init(document.getElementById('load_taskActionBar'));
-    taskActionBarLine.setOption(actionBarOption('任务动作负载', keyAction), true);
+    taskActionBarLine.setOption(actionBarOption(formatMessage({id:'reportCenter.taskload.action'}), keyAction), true);
 
     // 任务作业负载 -pie
     taskWorkPieLine = echarts.init(document.getElementById('load_taskWorkPie'));
-    taskWorkPieLine.setOption(actionPieOption('任务作业负载', keyWork), true);
+    taskWorkPieLine.setOption(actionPieOption(formatMessage({id:'reportCenter.taskload.workload'}), keyWork), true);
     // -bar
     taskWorkBarLine = echarts.init(document.getElementById('load_taskWorkBar'));
-    taskWorkBarLine.setOption(actionBarOption('任务作业负载', keyWork), true);
+    taskWorkBarLine.setOption(actionBarOption(formatMessage({id:'reportCenter.taskload.workload'}), keyWork), true);
 
     // 拣选工作站任务作业负载 -pie
     taskPickworkPieLine = echarts.init(document.getElementById('load_taskPickworkPie'));
-    taskPickworkPieLine.setOption(actionPieOption('拣选工作站任务作业负载', keyStation), true);
+    taskPickworkPieLine.setOption(actionPieOption(formatMessage({id:'reportCenter.taskload.pickingWorkstation'}), keyStation), true);
     // -bar
     taskPickworkBarLine = echarts.init(document.getElementById('load_taskPickworkBar'));
-    taskPickworkBarLine.setOption(actionBarOption('拣选工作站任务作业负载', keyStation), true);
+    taskPickworkBarLine.setOption(actionBarOption(formatMessage({id:'reportCenter.taskload.pickingWorkstation'}), keyStation), true);
 
     return () => {
       taskActionPieLine.dispose();
@@ -283,9 +283,9 @@ const TaskLoadComponent = (props) => {
     const pickStation = XLSX.utils.json_to_sheet(
       generateEveryType(loadOriginData, 'pickingWorkstationWorkload', keyStation),
     );
-    XLSX.utils.book_append_sheet(wb, action, '任务动作负载');
-    XLSX.utils.book_append_sheet(wb, work, '任务作业负载');
-    XLSX.utils.book_append_sheet(wb, pickStation, '拣选工作站任务作业负载');
+    XLSX.utils.book_append_sheet(wb, action, formatMessage({id:'reportCenter.taskload.action'}));
+    XLSX.utils.book_append_sheet(wb, work, formatMessage({id:'reportCenter.taskload.workload'}));
+    XLSX.utils.book_append_sheet(wb, pickStation, formatMessage({id:'reportCenter.taskload.pickingWorkstation'}));
 
     XLSX.writeFile(wb, `${formatMessage({ id: 'menu.reportCenter.loadReport.taskLoad' })}.xlsx`);
   }

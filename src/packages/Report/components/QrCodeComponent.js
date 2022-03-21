@@ -5,7 +5,13 @@ import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
 import { getDatBysortTime } from './GroundQrcodeEcharts';
-import { formatMessage, isNull, isStrictNull, convertToUserTimezone, dealResponse } from '@/utils/util';
+import {
+  formatMessage,
+  isNull,
+  isStrictNull,
+  convertToUserTimezone,
+  dealResponse,
+} from '@/utils/util';
 import { fetchCodeHealth } from '@/services/api';
 import FilterSearchByDate from './FilterSearchByDate';
 import FilterSearch from './FilterSearch';
@@ -221,7 +227,8 @@ const QrCodeComponent = (props) => {
     const typeResult = [];
     Object.entries(originData).forEach(([key, typeData]) => {
       if (!isStrictNull(typeData)) {
-        typeData.forEach((record) => {
+        const currentTypeData = sortBy(typeData, 'cellId');
+        currentTypeData.forEach((record) => {
           let currentTime = {};
           let _record = { ...record };
           currentTime[colums.time] = key;
@@ -235,7 +242,7 @@ const QrCodeComponent = (props) => {
         });
       }
     });
-    return sortBy(typeResult, 'cellId');
+    return typeResult;
   }
   function exportData() {
     const wb = XLSX.utils.book_new(); /*新建book*/

@@ -52,29 +52,17 @@ export default {
   'reportCenter.offlineTime': '时长',
   'reportCenter.robot.load.statusduration': '状态时长',
   'reportCenter.agvload.taskduration': '任务时长',
-  'reportCenter.robot.load.taskNumber': '任务次数',
-  'reportCenter.robot.load.taskDistance': '任务距离',
+  'reportCenter.agvload.taskNumber': '任务次数',
+  'reportCenter.agvload.taskDistance': '任务距离',
 
   'reportCenter.robot.load.action': '动作负载',
 
+  'reportCenter.agvload.walkingdistance': '行走距离',
+  'reportCenter.agvload.chargingtime': '充电耗时',
 
-  // 负载-tootip
-  'reportCenter.load.action.NO_ACTION': '无动作',
-  'reportCenter.load.action.UP': '顶升',
-  'reportCenter.load.action.DOWN': '下降',
+  'reportCenter.taskload.action': '任务动作负载',
+  'reportCenter.taskload.workload': '任务作业负载',
+  'reportCenter.taskload.pickingWorkstation': '拣选工作站任务作业负载',
 
-  'reportCenter.load.action.waitingForAMR': '等分车时间',
-  'reportCenter.load.action.waitCommand': '等命令时间',
-  'reportCenter.load.action.actionAMR': '车辆动作时间',
-  'reportCenter.load.action.abnormalTime': '异常时间',
-  'reportCenter.load.action.dullTime': '车辆呆滞时间',
 
-  'reportCenter.load.action.putTime': '放料时间',
-  'reportCenter.load.action.dealTime': '处理料时间',
-
-  'reportCenter.load.action.waitingRelease': '等释放时间',
-  'reportCenter.load.action.waitingAtStation': '进站等待时间',
-  'reportCenter.load.action.fetchTime': '取料时间',
-  'reportCenter.load.action.carryTime': '搬料时间',
-  'reportCenter.load.action.backtoTime': '送回时间',
 };

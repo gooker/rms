@@ -435,7 +435,7 @@ export const generateActionPieData = (allData, type, translate) => {
   });
 
   forIn(currentActionSum, (v, key) => {
-    console.log(v);
+    // console.log(v);
     const value = v === 0 ? '' : v;
     seryData.push({ name: key, value, label: translate[key] });
   });

@@ -73,8 +73,6 @@ const HealthCar = (props) => {
         return { ...item, ...item.errorCodeMap };
       });
     });
-    console.log('current', data);
-    console.log('new', newData);
   }
 
   // 获取所有的故障key
@@ -138,13 +136,14 @@ const HealthCar = (props) => {
     const typeResult = [];
     Object.entries(data).forEach(([key, typeData]) => {
       if (!isStrictNull(typeData)) {
-        typeData.forEach((record) => {
+        const currentTypeData = sortBy(typeData, 'agvId');
+        currentTypeData.forEach((record) => {
           let currentTime = {};
           let _record = { ...record };
           currentTime.agvId = record.agvId;
           currentTime[colums.time] = key;
           if (record?.robotType) {
-            currentTime.robotType = formatMessage({ id: `app.app.module.${record.robotType}` });
+            currentTime.robotType = formatMessage({ id: `app.module.${record.robotType}` });
           }
 
           forIn(_record, (value, parameter) => {
@@ -156,7 +155,7 @@ const HealthCar = (props) => {
         });
       }
     });
-    return sortBy(typeResult, 'agvId');
+    return typeResult;
   }
 
   // 下载数据
@@ -172,7 +171,7 @@ const HealthCar = (props) => {
     XLSX.utils.book_append_sheet(wb, offline, formatMessage({ id: 'reportCenter.agv.offline' }));
     XLSX.utils.book_append_sheet(wb, error, formatMessage({ id: 'reportCenter.agv.error' }));
     XLSX.utils.book_append_sheet(wb, fault, formatMessage({ id: 'reportCenter.agv.fault' }));
-    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.reportCenter.healthRobot' })}.xlsx`);
+    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.healthReport.agv' })}.xlsx`);
   }
   return (
     <div className={commonStyles.commonPageStyle}>

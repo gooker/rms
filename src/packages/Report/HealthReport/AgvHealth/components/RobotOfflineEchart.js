@@ -111,7 +111,7 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
     },
     {
       type: 'value',
-      name: '时长',
+      name: '时长(s)',
       min: 0,
       position: 'right', // 时长 折线
       axisLine: {
