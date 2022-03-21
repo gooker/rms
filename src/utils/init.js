@@ -223,3 +223,18 @@ export function validateHookPermission(hook) {
 export function validateRouteAuthority(record, adminType) {
   return Array.isArray(record?.authority) && record.authority.includes(adminType);
 }
+
+export function sortAppList(appList) {
+  //资源管理在最上, I18N,SSO 排在最后
+  let list = appList.filter(
+    (item) => ![AppCode.ResourceManage, AppCode.SSO, AppCode.I18N].includes(item),
+  );
+  if (appList.includes(AppCode.ResourceManage)) {
+    list.unshift(AppCode.ResourceManage);
+  }
+  if (appList.includes(AppCode.I18N)) {
+    list.push(AppCode.I18N);
+  }
+  list.push(AppCode.SSO);
+  return list;
+}

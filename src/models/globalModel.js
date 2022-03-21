@@ -2,7 +2,7 @@ import moment from 'moment';
 import { fetchAlertCount, fetchAppVersion, fetchUpdateEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
 import { dealResponse, formatMessage, convertMenuData2RouteData } from '@/utils/util';
-import { convertAllMenu } from '@/utils/init';
+import { convertAllMenu, sortAppList } from '@/utils/init';
 import allModuleRouter from '@/config/router';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
@@ -216,7 +216,7 @@ export default {
       // 保存信息
       yield put({ type: 'saveLogo', payload: null }); // 保存Logo数据
       yield put({ type: 'saveCopyRight', payload: null }); // 保存CopyRight数据
-      yield put({ type: 'saveGrantedAPx', payload: grantedAPP }); // 所有授权的APP
+      yield put({ type: 'saveGrantedAPx', payload: sortAppList(grantedAPP) }); // 所有授权的APP
 
       // 保存菜单相关
       yield put({ type: 'menu/saveAllMenuData', payload: allModuleFormattedMenuData }); // 所有子应用的菜单数据

@@ -11,7 +11,8 @@ import style from '@/layout/homeLayout.module.less';
 const { TabPane } = Tabs;
 
 const Content = (props) => {
-  const { dispatch, tabs, activeTab, currentApp, routeLocaleKeyMap, currentUser } = props;
+  const { dispatch, tabs, activeTab, grantedAPP, currentApp, routeLocaleKeyMap, currentUser } =
+    props;
   const history = useHistory();
 
   useEffect(() => {
@@ -20,7 +21,7 @@ const Content = (props) => {
       if (activeTab === '/') {
         dispatch({
           type: 'global/saveCurrentApp',
-          payload: currentUser.username === 'admin' ? AppCode.SSO : AppCode.XIHE,
+          payload: currentUser.username === 'admin' ? AppCode.SSO : grantedAPP[0],
         });
       } else {
         const _currentApp = activeTab.split('/')[1];
@@ -72,6 +73,7 @@ const Content = (props) => {
 export default connect(({ global, menu, user }) => ({
   currentUser: user.currentUser,
   currentApp: global.currentApp,
+  grantedAPP: global.grantedAPP,
   tabs: menu.tabs,
   activeTab: menu.activeTab,
   routeLocaleKeyMap: menu.routeLocaleKeyMap,

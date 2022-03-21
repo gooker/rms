@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import CommonPortal from './PortalEntry';
@@ -19,14 +19,7 @@ const Portal = (props) => {
     if (isAdmin) {
       return grantedAPP.filter((item) => item === AppCode.SSO);
     }
-
-    // I18N,SSO 排在最后
-    const appList = [...grantedAPP].filter((item) => ![AppCode.SSO, AppCode.I18N].includes(item));
-    if (grantedAPP.includes(AppCode.I18N)) {
-      appList.push(AppCode.I18N);
-    }
-    appList.push(AppCode.SSO);
-    return appList;
+    return grantedAPP;
   }
 
   function renderAppInfo() {

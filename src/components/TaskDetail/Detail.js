@@ -2,7 +2,6 @@ import React, { PureComponent } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
 import { adjustModalWidth, formatMessage } from '@/utils/util';
-import { hasPermission } from '@/utils/Permission';
 import Dictionary from '@/utils/Dictionary';
 import AgvTaskSteps from './components/AgvTaskSteps';
 import AgvTaskHistory from './components/AgvTaskHistorys';
@@ -10,6 +9,7 @@ import DetailInfo from './components/DetailInfo';
 import TaskRecordOrAlarm from './components/TaskRecordOrAlarm';
 import TaskDetail from './TaskDetail';
 import { AGVType } from '@/config/config';
+import intl from 'react-intl-universal';
 
 const { red } = Dictionary('color');
 const { confirm } = Modal;
@@ -199,7 +199,6 @@ class Detail extends PureComponent {
         <Spin spinning={loadingTaskDetail}>
           <Tabs defaultActiveKey="a">
             {/** ******* 任务详情 ******** */}
-            {/* {hasPermission('/map/monitor/taskDetail/taskDetail') && ( */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
               <TaskDetail
                 currentType={taskAgvType}
@@ -213,21 +212,19 @@ class Detail extends PureComponent {
                 confirmToteHolding={this.confirmToteHolding}
               />
             </Tabs.TabPane>
-            {/* )} */}
 
             {/** ******* 任务路径 ******** */}
-            {/* {hasPermission('/map/monitor/taskDetail/taskPath') && ( */}
-            <Tabs.TabPane tab={formatMessage({ id: 'app.task.path' })} key="b">
-              {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTasks ? (
-                <AgvTaskSteps robotType={taskAgvType} step={detailInfo.taskDetail.agvStepTasks} />
+            <Tabs.TabPane tab={intl.formatMessage({ id: 'app.task.path' })} key="b">
+              {Array.isArray(detailInfo?.taskDetail?.agvStepTasks) ? (
+                <Card bordered={false}>
+                  <AgvTaskSteps taskDetail={detailInfo.taskDetail} />
+                </Card>
               ) : (
                 <Empty />
               )}
             </Tabs.TabPane>
-            {/* )} */}
 
             {/** ******* 历史任务 ******** */}
-            {/* {hasPermission('/map/monitor/taskDetail/historyRecord') && ( */}
             <Tabs.TabPane key="c" tab={formatMessage({ id: 'app.task.record' })}>
               <Col span={24}>
                 {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTaskHistorys ? (
@@ -242,25 +239,23 @@ class Detail extends PureComponent {
                 )}
               </Col>
             </Tabs.TabPane>
-            {/* )} */}
 
             {/********* 任务日志 *********/}
-            {/* {hasPermission('/map/monitor/taskDetail/taskDetail') && ( */}
-            <Tabs.TabPane tab={formatMessage({ id: 'app.taskRecord.log' })} key="d">
-              <Col span={24}>
-                {taskRecord.length > 0 ? (
-                  <Card bordered={true}>
-                    <TaskRecordOrAlarm taskRecord={taskRecord} />
-                  </Card>
-                ) : (
-                  <Empty />
-                )}
-              </Col>
-            </Tabs.TabPane>
-            {/* )} */}
+            {window.localStorage.getItem('dev') === 'true' && (
+              <Tabs.TabPane tab={formatMessage({ id: 'app.taskRecord.log' })} key="d">
+                <Col span={24}>
+                  {taskRecord.length > 0 ? (
+                    <Card bordered={true}>
+                      <TaskRecordOrAlarm taskRecord={taskRecord} />
+                    </Card>
+                  ) : (
+                    <Empty />
+                  )}
+                </Col>
+              </Tabs.TabPane>
+            )}
 
             {/********* 任务告警 *********/}
-            {/* {hasPermission('/map/monitor/taskDetail/taskDetail') && ( */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.taskAlarm.log' })} key="e">
               <Col span={24}>
                 {taskAlaram.length > 0 ? (
@@ -272,7 +267,6 @@ class Detail extends PureComponent {
                 )}
               </Col>
             </Tabs.TabPane>
-            {/* )} */}
           </Tabs>
         </Spin>
       </DetailInfo>

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Form, Steps, Divider, Tooltip } from 'antd';
+import { Form, Steps, Divider, Tooltip } from 'antd';
 import {
   MehOutlined,
   LoadingOutlined,
@@ -28,9 +28,39 @@ const TaskStatusIcon = {
 };
 
 class AgvTaskSteps extends PureComponent {
-  renderDescription = (records) => {
-    const { robotType } = this.props;
-    const { stepTaskStatus } = records;
+  renderSteps = () => {
+    const {
+      taskDetail: { agvStepTasks },
+    } = this.props;
+    if (Array.isArray(agvStepTasks)) {
+      return agvStepTasks.map((subTask, key) => (
+        <Step
+          key={key}
+          title={
+            <Divider style={{ lineHeight: 0 }} orientation="left">
+              {subTask.stepTaskType}
+            </Divider>
+          }
+          status={TaskStatus[subTask.stepTaskStatus]} // 决定任务步骤进度
+          icon={
+            <Tooltip placement="bottom" title={subTask.stepTaskStatus}>
+              {TaskStatusIcon[subTask.stepTaskStatus]}
+            </Tooltip>
+          }
+          description={
+            <div style={{ width: '100%', marginBottom: 20 }}>{this.renderTaskStep(subTask)}</div>
+          }
+        />
+      ));
+    }
+    return [];
+  };
+
+  renderTaskStep = (subTask) => {
+    const {
+      taskDetail: { translateMap },
+    } = this.props;
+    const { stepTaskStatus } = subTask;
     let current = 0;
     if (stepTaskStatus === 'New') {
       current = 1;
@@ -45,10 +75,10 @@ class AgvTaskSteps extends PureComponent {
     return (
       <Form style={{ marginTop: 20 }} layout={'vertical'}>
         {/* 预计完成时间 */}
-        {records.predictEndTime && (
+        {subTask.predictEndTime && (
           <div style={{ color: 'rgba(0, 0, 0, 0.85', marginBottom: 15 }}>{`${formatMessage({
             id: 'app.taskDetail.finishTime',
-          })} ${parseInt(records.predictEndTime / 1000, 10)}s`}</div>
+          })} ${parseInt(subTask.predictEndTime / 1000, 10)}s`}</div>
         )}
 
         {/* 操作时间 */}
@@ -58,8 +88,8 @@ class AgvTaskSteps extends PureComponent {
               title={'NEW'}
               status={current === 1 ? 'process' : 'finish'}
               description={
-                records.createTime
-                  ? convertToUserTimezone(records.createTime).format('MM-DD HH:mm:ss')
+                subTask.createTime
+                  ? convertToUserTimezone(subTask.createTime).format('MM-DD HH:mm:ss')
                   : null
               }
             />
@@ -67,8 +97,8 @@ class AgvTaskSteps extends PureComponent {
               title={'START'}
               status={current === 2 ? 'process' : current === 3 ? 'finish' : 'wait'}
               description={
-                records.startTime
-                  ? convertToUserTimezone(records.startTime).format('MM-DD HH:mm:ss')
+                subTask.startTime
+                  ? convertToUserTimezone(subTask.startTime).format('MM-DD HH:mm:ss')
                   : null
               }
             />
@@ -76,49 +106,24 @@ class AgvTaskSteps extends PureComponent {
               title={'END'}
               status={current === 3 ? 'finish' : 'wait'}
               description={
-                records.endTime ? convertToUserTimezone(records.endTime).format('MM-DD HH:mm:ss') : null
+                subTask.endTime
+                  ? convertToUserTimezone(subTask.endTime).format('MM-DD HH:mm:ss')
+                  : null
               }
             />
           </Steps>
         </Form.Item>
 
         {/* 任务步骤 */}
-        <Form.Item label={`${formatMessage({ id: 'app.task.step' })}:`}>
-          <Row>
-            <RenderAgvTaskActions currentType={robotType} taskActions={records.taskActions} />
-          </Row>
+        <Form.Item label={`${formatMessage({ id: 'app.taskDetail.taskSteps' })}:`}>
+          <RenderAgvTaskActions subTask={subTask} translation={translateMap} />
         </Form.Item>
       </Form>
     );
   };
 
-  renderStep = () => {
-    const { step = [] } = this.props;
-    const result = [];
-    step.forEach((record, key) => {
-      result.push(
-        <Step
-          key={key}
-          icon={
-            <Tooltip placement="bottom" title={record.stepTaskStatus}>
-              {TaskStatusIcon[record.stepTaskStatus]}
-            </Tooltip>
-          }
-          title={
-            <Divider style={{ lineHeight: 0 }} orientation="left">
-              {record.stepTaskType}
-            </Divider>
-          }
-          status={TaskStatus[record.stepTaskStatus]} // 决定任务步骤进度
-          description={this.renderDescription(record)}
-        />,
-      );
-    });
-    return result;
-  };
-
   render() {
-    return <Steps direction="vertical">{this.renderStep()}</Steps>;
+    return <Steps direction="vertical">{this.renderSteps()}</Steps>;
   }
 }
 export default AgvTaskSteps;

@@ -80,7 +80,7 @@ export function isItemOfArray(baseArray, array) {
   return result;
 }
 
-export function formatMessage({ id }, values) {
+export function formatMessage({ id }, values = {}) {
   if (id) {
     const content = intl.get(id, values);
     return content || id;
