@@ -17,7 +17,7 @@ export default {
   'app.executionQ.isReleased': '是否释放',
   'app.executionQ.unreleased': '未释放',
   'app.executionQ.lastExecutedTimestamp': '最近执行时间',
-  'app.executionQ.notAvailable': '暂无',//@有重复
+  'app.executionQ.notAvailable': '暂无', //@有重复
   'app.executionQ.released': '已释放',
   'app.executionQ.retrieval': '全属性检索',
   'app.executionQ.target': '目标点',
@@ -42,9 +42,7 @@ export default {
   'app.taskQueue.renice': '调整优先级',
 
   //  任务详情
-  'app.taskDetail.finishTime': '预计完成时间:',
-  'app.taskDetail.operatingTime': '操作时间',
-  'app.taskDetail.operationTime': '操作时间',
+  'app.taskDetail.estimatedFinishTime': '预计完成时间:',
   'app.taskDetail.cancelTask': '取消任务',
   'app.taskDetail.cancelTaskSubmit': '取消任务请求已提交',
   'app.taskDetail.chargerId': '充电ID',
@@ -85,7 +83,7 @@ export default {
   'app.taskDetail.startTime': '开始时间',
   'app.taskDetail.startingPower': '开始电量',
   'app.taskDetail.stepId': '步骤',
-  'app.taskDetail.stopPoints': '停止点',//@重复
+  'app.taskDetail.stopPoints': '停止点', //@重复
   'app.taskDetail.superCarryPodToSpot': '高级搬运任务',
   'app.taskDetail.systemHint': '系统提示',
   'app.taskDetail.targetSpotDirection': '目标点方位',
@@ -124,14 +122,14 @@ export default {
 
   // 料箱池任务
   'app.taskPool.code': '料箱码',
-  'app.taskPool.fetchLocation':'取料箱货位码',
-  'app.taskPool.putLocation':'放料箱货位码',
-  'app.taskPool.createTime':'添加时间',
-  'app.taskPool.targetTime':'目标完成时间',
-  'app.taskPool.fetchStatus':'取货状态',
+  'app.taskPool.fetchLocation': '取料箱货位码',
+  'app.taskPool.putLocation': '放料箱货位码',
+  'app.taskPool.createTime': '添加时间',
+  'app.taskPool.targetTime': '目标完成时间',
+  'app.taskPool.fetchStatus': '取货状态',
   'app.taskPool.lockStatus': '是否锁定',
-  'app.taskPool.FetchDetail':'FETCH 详情',
-  'app.taskPool.PutDetail':'PUT 详情',
+  'app.taskPool.FetchDetail': 'FETCH 详情',
+  'app.taskPool.PutDetail': 'PUT 详情',
   'app.taskPool.mountedBin': '已挂载的料箱',
 
   // 任务日志
@@ -145,5 +143,4 @@ export default {
   'app.taskAlarm.count': '告警次数',
   'app.taskAlarm.alertName': '告警名称',
   'app.taskAlarm.alertContent': '告警内容',
-
 };

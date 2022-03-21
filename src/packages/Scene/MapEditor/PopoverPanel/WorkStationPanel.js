@@ -7,7 +7,7 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import WorkStationForm from './WorkStationForm';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const WorkStationPanel = (props) => {

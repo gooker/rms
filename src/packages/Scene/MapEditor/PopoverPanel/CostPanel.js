@@ -6,7 +6,7 @@ import CostConfigure from '../components/CostConfigure';
 import CreateDefaultRoute from '../components/CreateDefaultRoute';
 import FormattedMessage from '@/components/FormattedMessage';
 import { MapSelectableSpriteType } from '@/config/consts';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const CostPanel = (props) => {

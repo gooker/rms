@@ -6,9 +6,9 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchScopeProgram } from '@/services/XIHE';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingZone from './ProgramingZone';
-import ProgramingCell from '../../../XIHE/ProgramingCell';
+import ProgramingCell from '../components/ProgramingCell';
 import ProgramingRelation from './ProgramingRelation';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const { TabPane } = Tabs;

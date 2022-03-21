@@ -6,7 +6,7 @@ import { CellTypeSetting } from '../enums';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData, getCurrentRouteMapData } from '@/utils/mapUtil';
 import { MapSelectableSpriteType } from '@/config/consts';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const CellTypeConfigurePanel = (props) => {

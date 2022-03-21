@@ -1,18 +1,49 @@
-.tableBar {
-  text-decoration: underline;
+// TaskStepItem
+.taskStepItem {
+  display: flex;
+  height: 30px;
+  line-height: 30px;
   cursor: pointer;
 }
 
-.tableBar:hover {
-  color: #1cb7ff;
+.cellId {
+  padding: 0 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
 }
 
-.agvTaskSteps {
-  .ant-steps-item-process {
-    .ant-steps-item-icon {
-      .ant-steps-item-container {
-        color: #1cb7ff !important;
-      }
-    }
+.actions {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+// Popover Content
+.popoverContent {
+  display: flex;
+  width: 300px;
+  border: 1px solid #e8e8e8;
+  border-bottom: none;
+
+  > span {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    font-weight: 500;
+    font-size: 15px;
+  }
+
+  span:not(:last-child) {
+    border-right: 1px solid #e8e8e8;
+  }
+
+  &:last-child {
+    border-bottom: 1px solid #e8e8e8;
   }
 }

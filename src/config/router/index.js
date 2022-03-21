@@ -13,7 +13,7 @@ import Scene from './scene.router';
 import Strategy from './strategy.router';
 import Tool from './tool.router';
 import Tote from './tote.router';
-import I18N from './I18N.router';
+import I18N from './i18n.router';
 import Customized from './customized.router';
 
 export default {

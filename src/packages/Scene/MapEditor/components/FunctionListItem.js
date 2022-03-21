@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Divider, Row, Col, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import styles from '../../../XIHE/popoverPanel.module.less';
+import styles from '../popoverPanel.module.less';
 import LabelComponent from '@/components/LabelComponent';
 import { isNull } from '@/utils/util';
 
