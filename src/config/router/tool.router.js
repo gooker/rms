@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.Tool}/operationLog`,
     name: 'operationLog',
-    icon: 'environment',
+    icon: 'log',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Tool/OperationLog/index',
   },
@@ -24,7 +24,6 @@ export default [
   },
   {
     path: `/${AppCode.Tool}/alertCenter`,
-    icon: 'line-chart',
     name: 'alertCenter',
     component: '/Tool/AlertCenter/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
@@ -33,7 +32,7 @@ export default [
   {
     path: `/${AppCode.Tool}/notificationCenter`,
     name: 'notificationCenter',
-    icon: 'environment',
+    icon: 'notification',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {

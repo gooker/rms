@@ -3,11 +3,11 @@ import { fetchAlertCount, fetchAppVersion, fetchUpdateEnvironment } from '@/serv
 import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
 import { dealResponse, formatMessage, convertMenuData2RouteData } from '@/utils/util';
 import { convertAllMenu, sortAppList } from '@/utils/init';
+import { AppCode } from '@/config/config';
 import allModuleRouter from '@/config/router';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
-import { AppCode } from '@/config/config';
 
 export default {
   namespace: 'global',

@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.Scene}/map`,
     name: 'map',
-    icon: 'environment',
+    icon: 'map',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -30,7 +30,7 @@ export default [
   {
     path: `/${AppCode.Scene}/customDashboard`,
     name: 'customDashboard',
-    icon: 'environment',
+    icon: 'screenReport',
     component: '/Scene/CustomDashboard/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },

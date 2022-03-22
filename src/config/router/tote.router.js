@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.Tote}/task`,
     name: 'task',
-    icon: 'environment',
+    icon: 'taskManage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
