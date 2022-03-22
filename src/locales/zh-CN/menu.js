@@ -92,7 +92,7 @@ export default {
   'menu.map.recorder': '地图回放',
   'menu.customDashboard': '自定义大屏',
 
-  // 料箱存取
+  // 料箱存取 && 潜伏货架存取
   'menu.task': '任务',
   'menu.task.toteTaskPool': '料箱池订单',
   'menu.task.waitingQueue': '等待队列',
@@ -148,5 +148,4 @@ export default {
   'menu.flowReport': '流量报表',
 
   // 定制
-
 };

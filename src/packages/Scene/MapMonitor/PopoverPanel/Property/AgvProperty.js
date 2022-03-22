@@ -86,7 +86,7 @@ const AGVElementProp = (props) => {
   function checkTaskDetail(taskId, agvType) {
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType: agvType },
+      payload: { taskId, agvType },
     });
   }
 

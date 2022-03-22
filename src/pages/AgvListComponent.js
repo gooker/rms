@@ -139,7 +139,7 @@ class AgvListComponent extends Component {
   };
 
   checkAgvDetail = (agvId) => {
-    const { dispatch, agvType, history } = this.props;
+    const { agvType, history } = this.props;
     const route = `/${NameSpace[agvType]}/agv/agvRealTime`;
     history.push({ pathname: route, search: `agvId=${agvId}` });
   };
@@ -155,7 +155,12 @@ class AgvListComponent extends Component {
       <TablePageWrapper>
         <div>
           <Row className={commonStyles.tableToolLeft}>
-            <LabelComponent label={formatMessage({ id: 'app.agv.id' })} width={500}>
+            <LabelComponent
+              label={formatMessage({ id: 'app.agv.id' })}
+              width={500}
+              color={'#000000'}
+              weight={400}
+            >
               <Select
                 allowClear
                 showSearch
@@ -173,7 +178,12 @@ class AgvListComponent extends Component {
                 ))}
               </Select>
             </LabelComponent>
-            <LabelComponent label={formatMessage({ id: 'app.agv.status' })} width={500}>
+            <LabelComponent
+              label={formatMessage({ id: 'app.agv.status' })}
+              width={500}
+              color={'#000000'}
+              weight={400}
+            >
               <Select
                 allowClear
                 mode="multiple"

@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Steps, Form, Divider, Row } from 'antd';
+import { Steps, Form, Divider, Row, Tooltip } from 'antd';
 import {
   MehOutlined,
   LoadingOutlined,
@@ -9,9 +9,10 @@ import {
 } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
 import RenderAgvTaskActions from '../AgvTaskSteps/RenderAgvTaskActions';
+import intl from 'react-intl-universal';
 
 const Step = Steps.Step;
-const taskStatus = {
+const TaskStatus = {
   New: 'wait',
   Executing: 'process',
   Finished: 'finish',
@@ -28,42 +29,47 @@ const TaskStatusIcon = {
 };
 
 class AgvTaskHistory extends PureComponent {
-  renderDescription = (records) => {
+  renderTaskStep = (subTask) => {
+    const { taskDetail } = this.props;
+    const { translateMap } = taskDetail;
     return (
       <Form style={{ width: '100%', marginBottom: 20 }} layout={'vertical'}>
-        <Form.Item label={formatMessage({ id: 'app.task.step' })}>
-          <Row>
-            {<RenderAgvTaskActions taskActions={records} currentType={this.props.currentType} />}
-          </Row>
+        <Form.Item label={intl.formatMessage({ id: 'app.taskDetail.taskSteps' })}>
+          <RenderAgvTaskActions subTask={subTask} translation={translateMap} />
         </Form.Item>
       </Form>
     );
   };
 
   renderSteps = () => {
-    const result = [];
-    const { step = [] } = this.props;
-    step.forEach((record, key) => {
-      result.push(
+    const { taskDetail } = this.props;
+    const { agvStepTasks } = taskDetail;
+    if (Array.isArray(agvStepTasks)) {
+      return agvStepTasks.map((taskStep, key) => (
         <Step
           key={key}
           title={
             <Divider style={{ lineHeight: 0 }} orientation="left">
-              {record.stepTaskType}
+              {taskStep.stepTaskType}
             </Divider>
           }
-          status={taskStatus[record.stepTaskStatus]}
-          icon={TaskStatusIcon[record.stepTaskStatus]}
-          description={this.renderDescription(record.taskActions)}
-        />,
-      );
-    });
-    return result;
+          status={TaskStatus[taskStep.stepTaskStatus]} // 决定任务步骤进度
+          icon={
+            <Tooltip placement="bottom" title={taskStep.stepTaskStatus}>
+              {TaskStatusIcon[taskStep.stepTaskStatus]}
+            </Tooltip>
+          }
+          description={
+            <div style={{ width: '100%', marginBottom: 20 }}>{this.renderTaskStep(taskStep)}</div>
+          }
+        />
+      ));
+    }
+    return [];
   };
 
   render() {
     return <Steps direction="vertical">{this.renderSteps()}</Steps>;
   }
 }
-// 历史任务组件
 export default AgvTaskHistory;

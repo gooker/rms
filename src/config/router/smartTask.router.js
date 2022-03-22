@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.SmartTask}/customOrderPool`,
     name: 'customOrderPool',
-    icon: 'pool',
+    icon: 'taskQueue',
     component: '/SmartTask/CustomOrderPool',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },

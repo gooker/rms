@@ -14,7 +14,7 @@ const statusTransform = {
   ERROR: 'Error',
 };
 
-const TotePoolTask = () => {
+const ToteTaskPool = () => {
   function getColumn(checkDetail) {
     return [
       {
@@ -199,4 +199,4 @@ const TotePoolTask = () => {
   );
 };
 
-export default React.memo(TotePoolTask);
+export default React.memo(ToteTaskPool);

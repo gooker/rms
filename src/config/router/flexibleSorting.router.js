@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.FlexibleSorting}/sortTask`,
     name: 'sortTaskQueue',
-    icon: 'pool',
+    icon: 'taskQueue',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/FlexibleSorting/SortTaskQueue',
   },
@@ -18,7 +18,7 @@ export default [
   {
     path: `/${AppCode.FlexibleSorting}/sortTaskManagement`,
     name: 'sortTaskManagement',
-    icon: 'taskSearch',
+    icon: 'taskExecuted',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/FlexibleSorting/SortTaskManagement',
   },

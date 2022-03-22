@@ -10,25 +10,25 @@ export default [
       {
         path: `/${AppCode.Tote}/task/toteTaskPool`,
         name: 'toteTaskPool',
-        component: '/Tote/TotePoolTask',
+        component: '/Tote/ToteTaskPool',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
         path: `/${AppCode.Tote}/task/waitingQueue`,
         name: 'waitingQueue',
-        component: '/Tote/WaitingQueue',
+        component: '/Tote/TaskQueue',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
         path: `/${AppCode.Tote}/task/executingQueue`,
         name: 'executingQueue',
-        component: '/Tote/ExecutingQueue',
+        component: '/Tote/TaskExecuting',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
         path: `/${AppCode.Tote}/task/taskManagement`,
         name: 'taskManagement',
-        component: '/Tote/TaskManagement',
+        component: '/Tote/TaskExecuted',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {

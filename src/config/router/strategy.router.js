@@ -25,7 +25,7 @@ export default [
   {
     path: `/${AppCode.Strategy}/SystemParameters`,
     name: 'systemParameters',
-    icon: 'pool',
+    icon: 'list',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Strategy/SystemParameters',
   },

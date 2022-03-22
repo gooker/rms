@@ -66,7 +66,7 @@ const TargetLock = (props) => {
     const { dispatch } = props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType: agvType },
+      payload: { taskId, agvType },
     });
   }
 

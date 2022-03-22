@@ -91,20 +91,6 @@ const AgvList = () => {
           );
         },
       },
-      //   {
-      //     title: <FormattedMessage id="app.agv.manualMode" />,
-      //     dataIndex: 'manualMode',
-      //     align: 'center',
-      //     width: 100,
-      //     ListCardRender: true,
-      //     render: (text) => {
-      //       return text ? (
-      //         <FormattedMessage id="app.common.true" />
-      //       ) : (
-      //         <FormattedMessage id="app.common.false" />
-      //       );
-      //     },
-      //   },
       {
         title: <FormattedMessage id="app.agv.type" />,
         dataIndex: 'robotType',
@@ -195,7 +181,7 @@ const AgvList = () => {
         },
       },
       {
-        title: <FormattedMessage id="app.button.operation" />,
+        title: <FormattedMessage id="app.common.operation" />,
         width: 100,
         align: 'center',
         render: (text, record) => {

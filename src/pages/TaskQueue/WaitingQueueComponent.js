@@ -212,10 +212,10 @@ class WaitingQueueComponent extends Component {
   };
 
   checkDetail = (taskId) => {
-    const { dispatch, AGVType } = this.props;
+    const { dispatch, agvType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, AGVType },
+      payload: { taskId, agvType },
     });
   };
 
@@ -343,7 +343,7 @@ class WaitingQueueComponent extends Component {
                   this.switchTaskPriorityModal(true);
                 }}
               >
-                <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.renice" />
+                <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.reorderPriority" />
               </Button>
             ) : null}
             <Button onClick={this.getData}>
