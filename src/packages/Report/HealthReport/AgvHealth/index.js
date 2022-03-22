@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import HealthCarSearchForm from '../../components/HealthCarSearchForm';
 import moment from 'moment';
 import XLSX from 'xlsx';
-import { getDatBysortTime } from '@/packages/Report/components/GroundQrcodeEcharts';
+import { getDatBysortTime, getAllCellId } from '@/packages/Report/components/GroundQrcodeEcharts';
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
 import {
@@ -64,8 +64,9 @@ const HealthCar = (props) => {
 
   useEffect(() => {
     async function initCodeData() {
-      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const defaultHour = moment().subtract(1, 'hours');
+      const startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
       submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
     }
     initCodeData();
@@ -125,15 +126,15 @@ const HealthCar = (props) => {
         const newError = getDatBysortTime(response?.error ?? {});
         const newMalfunction = getDatBysortTime(response?.malfunction ?? {});
 
-        setScanOriginData(newCode);
-        setOfflineOriginData(newOffline);
-        setStatuserrorOriginData(newError);
-        setFaultOriginData(newMalfunction);
-
         setKeyCodeData(response?.codeTranslate ?? {});
         setKeyFaultData(getFaultKey(response?.errorCode ?? {})); // // 获取返回的故障码key;
         setKeyOfflineData(getOfflineKey());
         setKeyErrorData(getErrorKey());
+
+        setScanOriginData(newCode);
+        setOfflineOriginData(newOffline);
+        setStatuserrorOriginData(newError);
+        setFaultOriginData(newMalfunction);
       }
     }
   }
@@ -199,6 +200,7 @@ const HealthCar = (props) => {
         {activeTab === 'scan' && (
           <ScanCodeComponent
             originData={scanOriginData}
+            originIds={getAllCellId(scanOriginData, 'agvId')}
             keyDataMap={keyCodeData}
             activeTab={activeTab}
           />
@@ -206,6 +208,7 @@ const HealthCar = (props) => {
         {activeTab === 'offline' && (
           <AgvOfflineComponent
             originData={offlineOriginData}
+            originIds={getAllCellId(offlineOriginData, 'agvId')}
             keyDataMap={keyOfflineData}
             activeTab={activeTab}
           />
@@ -213,6 +216,7 @@ const HealthCar = (props) => {
         {activeTab === 'statuserror' && (
           <AgvErrorComponent
             originData={statuserrorOriginData}
+            originIds={getAllCellId(statuserrorOriginData, 'agvId')}
             keyDataMap={keyErrorData}
             activeTab={activeTab}
           />
@@ -220,6 +224,7 @@ const HealthCar = (props) => {
         {activeTab === 'fault' && (
           <RobotFaultComponent
             originData={faultOriginData}
+            originIds={getAllCellId(faultOriginData, 'agvId')}
             keyDataMap={keyFaultData}
             activeTab={activeTab}
           />
