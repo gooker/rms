@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Button, Empty, Tabs, Tree } from 'antd';
+import { CheckOutlined } from '@ant-design/icons';
 import { difference, transform } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { AppCode } from '@/config/config';
-import FormattedMessage from '@/components/FormattedMessage';
-import { generateMenuNodeLocaleKey, validateMenuNodePermission } from '@/utils/init';
 import { formatMessage, isNull } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
+import { AppCode } from '@/config/config';
+import FormattedMessage from '@/components/FormattedMessage';
+import { generateMenuNodeLocaleKey, validateRouteAuthority } from '@/utils/init';
 import allModuleRouter from '@/config/router';
-import { CheckOutlined } from '@ant-design/icons';
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -49,9 +49,9 @@ class RoleAssignModal extends Component {
         //   },
         //   {},
         // );
-        const codePermissionMap = {};
 
         // 将路由与自定义权限合并
+        const codePermissionMap = {};
         const authRoutes = this.combineMenuAndPermission(menuData, codePermissionMap) || [];
         return {
           appCode,
@@ -96,7 +96,13 @@ class RoleAssignModal extends Component {
     const { currentUser } = this.props;
     const adminType = currentUser.adminType || 'USER';
 
-    if (validateMenuNodePermission(item, adminType)) {
+    // 不显示存在 hooks 属性的路由节点
+    if (Array.isArray(item.hooks) && item.hooks.length > 0) {
+      return null;
+    }
+
+    // 对 authority 字段进行验证
+    if (validateRouteAuthority(item, adminType)) {
       if (Array.isArray(item.routes)) {
         return {
           ...item,
@@ -116,10 +122,8 @@ class RoleAssignModal extends Component {
   };
 
   combineMenuAndPermission = (menuData, codePermission) => {
-    if (!menuData) {
-      return [];
-    }
-    return menuData.map((item) => this.getSubMenu(item, codePermission));
+    if (!menuData) return [];
+    return menuData.map((item) => this.getSubMenu(item, codePermission)).filter(Boolean);
   };
 
   hasParentNode = (node, permissionsMap) => {
