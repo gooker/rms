@@ -15,6 +15,7 @@ import SelectSection from './SelectSection';
 import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel';
 import styles from './Header.module.less';
+import { AppCode } from '@/config/config';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -100,7 +101,7 @@ class Header extends React.Component {
 
   goToQuestionCenter = async () => {
     const { history } = this.props;
-    history.push('/XIHE/questionCenter');
+    history.push(`/${AppCode.Tool}/alertCenter`);
   };
 
   changeLocale = async ({ key }) => {

@@ -21,7 +21,7 @@ const Content = (props) => {
       if (activeTab === '/') {
         dispatch({
           type: 'global/saveCurrentApp',
-          payload: currentUser.username === 'admin' ? AppCode.SSO : grantedAPP[0],
+          payload: currentUser.username === 'admin' ? AppCode.SSO : currentApp ?? grantedAPP[0],
         });
       } else {
         const _currentApp = activeTab.split('/')[1];

@@ -214,7 +214,7 @@ class ExecutionQueueComponent extends Component {
     const { dispatch, agvType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType: agvType },
+      payload: { taskId, agvType },
     });
   };
 

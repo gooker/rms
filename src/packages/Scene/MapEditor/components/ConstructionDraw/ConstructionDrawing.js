@@ -320,7 +320,7 @@ const ConstructionDrawing = (props) => {
       {
         x: 270 + 260 * 1,
         y: 10,
-        text: `${formatMessage({ id: 'app.taskRecord.date' })}:   ${convertToUserTimezone(new Date()).format(
+        text: `${formatMessage({ id: 'app.time' })}:   ${convertToUserTimezone(new Date()).format(
           'YYYYMMDD',
         )}`,
       },

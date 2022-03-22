@@ -4,6 +4,42 @@ import { AppCode } from '@/config/config';
 import requestAPI from '@/utils/requestAPI';
 import { fetchAllEnvironmentList } from '@/services/SSO';
 
+export async function initI18nInstance() {
+  const language = getLanguage();
+  // TODO: 如果只拉取当前语种 这个应该不需要
+  const localLocales = ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'];
+  // 1. 读取本地国际化数据
+  const locales = {};
+  try {
+    locales[language] = require(`@/locales/${language}`).default;
+  } catch (e) {
+    locales[language] = {};
+  }
+
+  // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
+  // TODO: 只拉取当前语种的国际化 appCode;
+  const i18nData = []; //await fetchLanguageByAppCode({ appCode: 'portal' });
+  if (!dealResponse(i18nData) && Array.isArray(i18nData)) {
+    i18nData.forEach(({ languageKey, languageMap }) => {
+      const DBLocales = Object.keys(languageMap);
+      DBLocales.forEach((dbLocale) => {
+        if (!localLocales.includes(dbLocale)) {
+          localLocales.push(dbLocale);
+          locales[dbLocale] = {};
+        }
+        locales[dbLocale][languageKey] = languageMap[dbLocale];
+      });
+    });
+
+    //  远程覆盖本地
+    return intl.init({ currentLocale: language, locales });
+  } else {
+    // 用本地国际化数据先初始化
+    console.info('Failed to fetch remote I18N Data, will use local I18n Data');
+    return intl.init({ currentLocale: language, locales });
+  }
+}
+
 export function handleNameSpace(dispatch) {
   return new Promise(async (resolve, reject) => {
     // 获取所有环境配置信息
@@ -33,6 +69,34 @@ export function handleNameSpace(dispatch) {
       reject();
     }
   });
+}
+
+export function sortAppList(appList) {
+  //资源管理在最上, I18N,SSO 排在最后
+  let list = appList.filter(
+    (item) => ![AppCode.ResourceManage, AppCode.SSO, AppCode.I18N].includes(item),
+  );
+  if (appList.includes(AppCode.ResourceManage)) {
+    list.unshift(AppCode.ResourceManage);
+  }
+  if (appList.includes(AppCode.I18N)) {
+    list.push(AppCode.I18N);
+  }
+  list.push(AppCode.SSO);
+  return list;
+}
+
+export function generateRouteLocaleKeyMap(data, result, parentName) {
+  if (Array.isArray(data)) {
+    data.forEach((record) => {
+      const { path, routes, name } = record;
+      if (Array.isArray(routes)) {
+        generateRouteLocaleKeyMap(routes, result, `${parentName}.${name}`);
+      } else {
+        result[path] = parentName ? `${parentName}.${name}` : `${name}`;
+      }
+    });
+  }
 }
 
 export function generateMenuNodeLocaleKey(data, parentName) {
@@ -76,36 +140,28 @@ export function checkPermission(router, permissionMap, appCode) {
   const result = [];
   for (let i = 0; i < router.length; i++) {
     const routerElement = router[i];
-    // SSO菜单不参与权限控制
-    if (routerElement.path && appCode !== AppCode.SSO) {
-      let authKey = null;
-      authKey = routerElement.path;
-      if (isStrictNull(routerElement.hooks) && !permissionMap[authKey]) {
-        continue;
+    const { path, hooks, routes } = routerElement;
+    if (path && appCode !== AppCode.SSO) {
+      // 如果父节点无法验证通过就直接跳过该节点的所有子节点
+      if (Array.isArray(hooks)) {
+        if (!validateHookPermission(hooks)) {
+          continue;
+        }
+      } else {
+        if (!permissionMap[path]) {
+          continue;
+        }
       }
     }
 
-    if (routerElement.routes != null) {
-      const routes = checkPermission(routerElement.routes, permissionMap, appCode);
-      result.push({ ...routerElement, routes });
+    if (routes != null) {
+      const grantedRoutes = checkPermission(routes, permissionMap, appCode);
+      result.push({ ...routerElement, routes: grantedRoutes });
     } else {
       result.push(routerElement);
     }
   }
   return result;
-}
-
-function generateRouteLocaleKeyMap(data, result, parentName) {
-  if (Array.isArray(data)) {
-    data.forEach((record) => {
-      const { path, routes, name } = record;
-      if (Array.isArray(routes)) {
-        generateRouteLocaleKeyMap(routes, result, `${parentName}.${name}`);
-      } else {
-        result[path] = parentName ? `${parentName}.${name}` : `${name}`;
-      }
-    });
-  }
 }
 
 export function convertToRoute(data, baseContext) {
@@ -146,6 +202,7 @@ export function convertAllMenu(adminType, allModuleMenuData, permissionMap) {
     generateRouteLocaleKeyMap(appMenu, routeLocaleKeyMap, 'menu');
     return { appMenu, appCode };
   });
+
   // 2. 将一般路由数据转换成最终路由数据, 包括格式化、权限等等
   const allModuleFormattedMenuData = allRoutes.map((appRoute) => {
     const { appMenu, appCode } = appRoute;
@@ -164,50 +221,6 @@ export function getLanguage() {
   return cachedLocale || browserLocale;
 }
 
-export async function initI18nInstance() {
-  const language = getLanguage();
-  // TODO: 如果只拉取当前语种 这个应该不需要
-  const localLocales = ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'];
-  // 1. 读取本地国际化数据
-  const locales = {};
-  try {
-    locales[language] = require(`@/locales/${language}`).default;
-  } catch (e) {
-    locales[language] = {};
-  }
-
-  // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
-  // TODO: 只拉取当前语种的国际化 appCode;
-  const i18nData = []; //await fetchLanguageByAppCode({ appCode: 'portal' });
-  if (!dealResponse(i18nData) && Array.isArray(i18nData)) {
-    i18nData.forEach(({ languageKey, languageMap }) => {
-      const DBLocales = Object.keys(languageMap);
-      DBLocales.forEach((dbLocale) => {
-        if (!localLocales.includes(dbLocale)) {
-          localLocales.push(dbLocale);
-          locales[dbLocale] = {};
-        }
-        locales[dbLocale][languageKey] = languageMap[dbLocale];
-      });
-    });
-
-    //  远程覆盖本地
-    return intl.init({ currentLocale: language, locales });
-  } else {
-    // 用本地国际化数据先初始化
-    console.info('Failed to fetch remote I18N Data, will use local I18n Data');
-    return intl.init({ currentLocale: language, locales });
-  }
-}
-
-export function validateMenuNodePermission(menuNode, adminType) {
-  if (Array.isArray(menuNode.hooks)) {
-    return validateHookPermission(menuNode.hooks);
-  } else {
-    return validateRouteAuthority(menuNode, adminType);
-  }
-}
-
 export function validateHookPermission(hook) {
   if (isStrictNull(hook) || !Array.isArray(hook)) {
     return false;
@@ -222,19 +235,4 @@ export function validateHookPermission(hook) {
 
 export function validateRouteAuthority(record, adminType) {
   return Array.isArray(record?.authority) && record.authority.includes(adminType);
-}
-
-export function sortAppList(appList) {
-  //资源管理在最上, I18N,SSO 排在最后
-  let list = appList.filter(
-    (item) => ![AppCode.ResourceManage, AppCode.SSO, AppCode.I18N].includes(item),
-  );
-  if (appList.includes(AppCode.ResourceManage)) {
-    list.unshift(AppCode.ResourceManage);
-  }
-  if (appList.includes(AppCode.I18N)) {
-    list.push(AppCode.I18N);
-  }
-  list.push(AppCode.SSO);
-  return list;
 }

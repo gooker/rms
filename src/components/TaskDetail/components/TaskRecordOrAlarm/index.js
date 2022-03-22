@@ -16,9 +16,9 @@ class TaskRecordOrAlarm extends Component {
   }
 
   getTaskLog = () => {
-    const { taskRecord = [], taskAlaram = [] } = this.props;
+    const { taskRecord = [], taskAlarm = [] } = this.props;
     const newTaskAlarm = [];
-    taskAlaram.map(({ alertItemList }) => {
+    taskAlarm.map(({ alertItemList }) => {
       if (Array.isArray(alertItemList)) {
         alertItemList.map((item) => {
           newTaskAlarm.push({ ...item });
@@ -71,7 +71,7 @@ class TaskRecordOrAlarm extends Component {
 
   recordColumns = [
     {
-      title: formatMessage({ id: 'app.taskRecord.date' }), //日期
+      title: formatMessage({ id: 'app.time' }), //日期
       dataIndex: 'createTime',
       align: 'center',
       fixed: 'left',
@@ -95,7 +95,7 @@ class TaskRecordOrAlarm extends Component {
       align: 'center',
       render: (text) => {
         if (!isNull(text)) {
-          return formatMessage({ id: `app.activity.tasklog.${text}` });
+          return formatMessage({ id: `app.taskLog.${text}` });
         }
       },
     },

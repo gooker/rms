@@ -1,6 +1,36 @@
 // @有重复
 export default {
-  //  执行队列
+  // 料箱池任务
+  'app.taskPool.code': '料箱码',
+  'app.taskPool.fetchLocation': '取料箱货位码',
+  'app.taskPool.putLocation': '放料箱货位码',
+  'app.taskPool.createTime': '添加时间',
+  'app.taskPool.targetTime': '目标完成时间',
+  'app.taskPool.fetchStatus': '取货状态',
+  'app.taskPool.lockStatus': '是否锁定',
+  'app.taskPool.FetchDetail': 'FETCH 详情',
+  'app.taskPool.PutDetail': 'PUT 详情',
+  'app.taskPool.mountedBin': '已挂载的料箱',
+
+  // 等待队列
+  'app.taskQueue.appointedAgv': '必选小车',
+  'app.taskQueue.appointedTarget': '指定目标点',
+  'app.taskQueue.availableAgv': '可用小车',
+  'app.taskQueue.createTime': '加入时间',
+  'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
+  'app.taskQueue.notAvailable': '暂无',
+  'app.taskQueue.priority': '优先级',
+  'app.taskQueue.priorityMax': '最高优先级',
+  'app.taskQueue.priorityMin': '最低优先级',
+  'app.taskQueue.priorityNumber': '优先级 {number}',
+  'app.taskQueue.reorder': '调整优先级',
+  'app.taskQueue.resetPriority': '重新设置优先级',
+  'app.taskQueue.triedTimes': '累计次数',
+  'app.taskQueue.updateTaskPriority': '修改任务优先级操作成功',
+  'app.taskQueue.updateTaskPriority.failed': '修改任务优先级操作失败',
+  'app.taskQueue.reorderPriority': '调整优先级',
+
+  // 执行队列
   'app.executionQ.chargerSpotId': '充电点',
   'app.executionQ.chargerDirection': '充电方向',
   'app.executionQ.chargerHardwareId': '充电硬件ID',
@@ -23,25 +53,7 @@ export default {
   'app.executionQ.target': '目标点',
   'app.executionQ.triedTimes': '累计次数',
 
-  // 等待队列
-  'app.taskQueue.appointedAgv': '必选小车',
-  'app.taskQueue.appointedTarget': '指定目标点',
-  'app.taskQueue.availableAgv': '可用小车',
-  'app.taskQueue.createTime': '加入时间',
-  'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
-  'app.taskQueue.notAvailable': '暂无',
-  'app.taskQueue.priority': '优先级',
-  'app.taskQueue.priorityMax': '最高优先级',
-  'app.taskQueue.priorityMin': '最低优先级',
-  'app.taskQueue.priorityNumber': '优先级 {number}',
-  'app.taskQueue.reorder': '调整优先级',
-  'app.taskQueue.resetPriority': '重新设置优先级',
-  'app.taskQueue.triedTimes': '累计次数',
-  'app.taskQueue.updateTaskPriority': '修改任务优先级操作成功',
-  'app.taskQueue.updateTaskPriority.failed': '修改任务优先级操作失败',
-  'app.taskQueue.renice': '调整优先级',
-
-  //  任务详情
+  // 任务详情
   'app.taskDetail.estimatedFinishTime': '预计完成时间:',
   'app.taskDetail.cancelTask': '取消任务',
   'app.taskDetail.cancelTaskSubmit': '取消任务请求已提交',
@@ -99,6 +111,8 @@ export default {
   'app.taskDetail.trolleyErrorRecord': '小车错误记录',
   'app.taskDetail.layers': '层数',
   'app.taskDetail.unknown': '未知的',
+  'app.taskDetail.actionName': '动作名称',
+  'app.taskDetail.actionParam': '动作参数',
   'app.taskDetail.action': '动作',
   'app.taskDetail.action.fetch': '取',
   'app.taskDetail.action.put': '放',
@@ -120,24 +134,12 @@ export default {
   'app.taskDetail.confirmToteHolding': '请确定车体抱夹上的料箱信息',
   'app.taskDetail.taskStep': '任务步数',
 
-  // 料箱池任务
-  'app.taskPool.code': '料箱码',
-  'app.taskPool.fetchLocation': '取料箱货位码',
-  'app.taskPool.putLocation': '放料箱货位码',
-  'app.taskPool.createTime': '添加时间',
-  'app.taskPool.targetTime': '目标完成时间',
-  'app.taskPool.fetchStatus': '取货状态',
-  'app.taskPool.lockStatus': '是否锁定',
-  'app.taskPool.FetchDetail': 'FETCH 详情',
-  'app.taskPool.PutDetail': 'PUT 详情',
-  'app.taskPool.mountedBin': '已挂载的料箱',
-
   // 任务日志
-  'app.taskRecord.date': '日期',
-  'app.taskRecord.log': '任务日志',
+  'app.taskLog.AGV': '车辆',
+  'app.taskLog.SYSTEM': '系统',
 
   // 任务告警
-  'app.taskAlarm.log': '任务告警',
+  'app.taskAlarm': '任务告警',
   'app.taskAlarm.code': '告警编码',
   'app.taskAlarm.level': '告警等级',
   'app.taskAlarm.count': '告警次数',

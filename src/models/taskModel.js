@@ -22,29 +22,25 @@ export default {
     detailInfo: {},
     singleErrorTask: [],
     taskRecord: [], // 任务日志
-    taskAlaram: [], // 告警信息
+    taskAlarm: [], // 告警信息
   },
 
   effects: {
     *fetchTaskDetailByTaskId({ payload }, { call, put, select }) {
-      const { taskId, taskAgvType } = payload;
+      const { taskId, agvType } = payload;
       const sectionId = window.localStorage.getItem('sectionId');
 
-      const changeVisiblePayload = { taskId, taskAgvType, visible: true };
+      const changeVisiblePayload = { taskId, agvType, visible: true };
       yield put({ type: 'changeTaskDetailModalVisible', payload: changeVisiblePayload });
 
       // 获取任务详情
-      const response = yield call(fetchTaskDetailByTaskId, taskAgvType, { taskId });
+      const response = yield call(fetchTaskDetailByTaskId, agvType, { taskId });
       if (dealResponse(response)) {
         return;
       }
 
       // 获取任务日志
-      const responseLog = yield call(getAGVTaskLog, {
-        size: 10,
-        current: 1,
-        taskId,
-      });
+      const responseLog = yield call(getAGVTaskLog, { size: 10, current: 1, taskId });
       if (dealResponse(responseLog)) {
         return;
       }
@@ -59,7 +55,7 @@ export default {
 
       // 获取小车错误记录
       const params = { sectionId, taskId, size: 500, current: 1 };
-      const responseForError = yield call(fetchAgvErrorRecord, taskAgvType, params);
+      const responseForError = yield call(fetchAgvErrorRecord, agvType, params);
       if (dealResponse(responseForError)) {
         return;
       }
@@ -168,7 +164,7 @@ export default {
       return {
         ...state,
         taskId: payload.taskId,
-        taskAgvType: payload.taskAgvType,
+        taskAgvType: payload.agvType,
         taskDetailVisible: payload.visible,
       };
     },
@@ -188,7 +184,7 @@ export default {
     fetchTaskAlaramBytaskIdEffect(state, { payload }) {
       return {
         ...state,
-        taskAlaram: payload,
+        taskAlarm: payload,
       };
     },
   },

@@ -95,7 +95,7 @@ class AgvRealTimeComponent extends React.Component {
     const { dispatch, agvType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, taskAgvType: agvType },
+      payload: { taskId, agvType },
     });
   };
 

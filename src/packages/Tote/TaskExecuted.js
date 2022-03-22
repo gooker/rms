@@ -3,7 +3,7 @@ import { hasPermission } from '@/utils/Permission';
 import TaskLibraryComponent from '@/pages/TaskLibrary/TaskLibraryComponent';
 import { AGVType } from '@/config/config';
 
-const TaskManagement = () => {
+const TaskExecuted = () => {
   const cancelFlag = hasPermission('/tote/task/taskManger/cancel');
   return (
     <TaskLibraryComponent
@@ -12,4 +12,4 @@ const TaskManagement = () => {
     />
   );
 };
-export default memo(TaskManagement);
+export default memo(TaskExecuted);

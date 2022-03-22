@@ -11,21 +11,21 @@ export default [
   {
     path: `/${AppCode.SSO}/sectionManager`, // 区域管理
     name: 'sectionManger',
-    icon: 'file',
+    icon: 'section',
     component: '/SSO/SectionManager',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.SSO}/roleManager`, // 角色管理
     name: 'roleManager',
-    icon: 'user',
+    icon: 'userRole',
     component: '/SSO/RoleManager',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.SSO}/userLoginHistory`, // 用户登录历史
     name: 'userLoginHistory',
-    icon: 'clock-circle',
+    icon: 'history',
     component: '/SSO/UserLoginHistory',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
@@ -55,6 +55,6 @@ export default [
     name: 'environmentManger',
     icon: 'ie',
     component: '/SSO/EnvironmentManger',
-    hook: ['dev'],
+    hooks: ['dev'],
   },
 ];

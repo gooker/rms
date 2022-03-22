@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.I18N}/management`,
     name: 'languageManage',
-    icon: 'environment',
+    icon: 'translate',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/I18N/LanguageManage/index',
   },

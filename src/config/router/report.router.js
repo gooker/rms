@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.Report}/healthReport`,
     name: 'healthReport',
-    icon: 'icon-reportForm',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -61,6 +61,7 @@ export default [
   {
     path: `/${AppCode.Report}/loadReport`,
     name: 'loadReport',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -68,7 +69,7 @@ export default [
         name: 'agvLoad',
         component: '/Report/LoadReport/AgvLoadReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        hooks:['dev'],
+        hooks: ['dev'],
       },
       {
         path: `/${AppCode.Report}/loadReport/taskLoad`,
@@ -94,38 +95,42 @@ export default [
   {
     path: `/${AppCode.Report}/sourceDownload`,
     name: 'sourceDownload',
-    icon: 'environment',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Report/SourceDownload',
   },
   {
     path: `/${AppCode.Report}/customReport`,
     name: 'customReport',
-    icon: 'environment',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Report/CustomReport',
   },
   {
     path: `/${AppCode.Report}/taskReport`,
     name: 'taskReport',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Report/TaskReport/index',
   },
   {
     path: `/${AppCode.Report}/formManger/stationReport`,
     name: 'stationReport',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Report/StationReport/index',
   },
   {
     path: `/${AppCode.Report}/waitingReport`,
     name: 'waitingReport',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Report/WaitingReport/index',
   },
   {
     path: `/${AppCode.Report}/flowReport`,
     name: 'flowReport',
+    icon: 'report',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Report/FlowReport',
   },

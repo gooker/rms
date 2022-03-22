@@ -1,6 +1,5 @@
-import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { flattenDeep } from 'lodash';
-import { validateMenuNodePermission } from '@/utils/init';
+import { formatMessage, isStrictNull } from '@/utils/util';
 
 export function getSubPermission(item) {
   if (item.children) {
@@ -41,7 +40,6 @@ export function handlePermissions(record, result) {
       handlePermissions(children, result);
     }
   }
-
   if (Array.isArray(record)) {
     record.forEach((item) => {
       handleRecord(item);
@@ -54,28 +52,24 @@ export function handlePermissions(record, result) {
 export function generateTreeData(menu, adminType) {
   const { key, title, children } = menu;
 
-  return {
-    key,
-    title,
-    children: children.map((child) => recursionRenderChild(child, adminType)).filter(Boolean),
-  };
+  const childrenNode = children
+    .map((child) => recursionRenderChild(child, adminType))
+    .filter(Boolean);
+
+  return { key, title, children: childrenNode };
 }
 
 export function recursionRenderChild(child, adminType) {
   const { key, label, locale, children } = child;
-  // 原始菜单数据肯定有国际化key
-  const isAdditional = isNull(locale);
-  if (isAdditional || validateMenuNodePermission(child, adminType)) {
-    if (Array.isArray(children)) {
-      return {
-        key,
-        title: label || formatMessage({ id: locale }),
-        children: children.map((child) => recursionRenderChild(child, adminType)).filter(Boolean),
-      };
-    }
+  if (Array.isArray(children)) {
     return {
       key,
       title: label || formatMessage({ id: locale }),
+      children: children.map((child) => recursionRenderChild(child, adminType)).filter(Boolean),
     };
   }
+  return {
+    key,
+    title: label || formatMessage({ id: locale }),
+  };
 }

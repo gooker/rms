@@ -1,6 +1,7 @@
 import React from 'react';
 import { isNull } from '@/utils/util';
 
+// 难用死了，要重构或者直接删除
 const LabelComponent = (props) => {
   const {
     label,

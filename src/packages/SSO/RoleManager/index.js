@@ -206,7 +206,7 @@ export default class index extends Component {
                 this.setState({ authAssignVisible: true });
               }}
             >
-              <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.role.permissionAssign" />
+              <IconFont type="icon-assign" /> <FormattedMessage id="sso.role.permissionAssign" />
             </Button>
             <Button disabled={roleList.length === 0} onClick={this.export}>
               <ExportOutlined /> <FormattedMessage id="app.button.export" />
@@ -260,19 +260,19 @@ export default class index extends Component {
 
         {/* 权限分配 */}
         <Drawer
-          title={formatMessage({ id: 'sso.role.permissionAssign' })}
           destroyOnClose
-          onClose={() => {
-            this.setState({ authAssignVisible: false });
-          }}
           width={'35%'}
           visible={authAssignVisible}
           style={{ overflow: 'auto' }}
+          title={formatMessage({ id: 'sso.role.permissionAssign' })}
+          onClose={() => {
+            this.setState({ authAssignVisible: false });
+          }}
         >
-          <RoleAssignModal submitAuthKeys={this.submitAuthKeys} />
+          <RoleAssignModal submitAuthKeys={this.submitAuthKeys} data={selectedRow[0]} />
         </Drawer>
 
-        {/**角色导入***/}
+        {/* 角色导入 */}
         <Modal
           width={600}
           footer={null}

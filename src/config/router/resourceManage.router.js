@@ -4,7 +4,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/container`,
     name: 'container',
-    icon: 'environment',
+    icon: 'container',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -36,7 +36,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/storage`,
     name: 'storage',
-    icon: 'environment',
+    icon: 'storage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -74,7 +74,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/agv`,
     name: 'agv',
-    icon: 'environment',
+    icon: 'agv',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -148,7 +148,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/charger`,
     name: 'charger',
-    icon: 'environment',
+    icon: 'charger',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -204,7 +204,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/automation`,
     name: 'automation',
-    icon: 'environment',
+    icon: 'automation',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -248,7 +248,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/integration`,
     name: 'integration',
-    icon: 'environment',
+    icon: 'layout',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -268,7 +268,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/resourceLock`,
     name: 'resourceLock',
-    icon: 'environment',
+    icon: 'lock',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
@@ -318,7 +318,7 @@ export default [
   {
     path: `/${AppCode.ResourceManage}/resourceBind`,
     name: 'resourceBind',
-    icon: 'environment',
+    icon: 'binding',
     component: '/ResourceManage/ResourceBind',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },

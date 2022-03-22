@@ -24,8 +24,9 @@ import { fetchGetProblemDetail } from '@/services/global';
 import { handleNameSpace } from '@/utils/init';
 
 @withRouter
-@connect(({ global }) => ({
+@connect(({ global, user }) => ({
   textureLoaded: global.textureLoaded,
+  currentUser: user.currentUser,
 }))
 class MainLayout extends React.Component {
   notificationQueue = [];
@@ -56,7 +57,6 @@ class MainLayout extends React.Component {
           // 先验证授权
           const granted = await this.validateAuthority();
           if (!granted && userInfo.username !== 'admin') {
-            // dispatch({ type: 'global/clearEnvironments' });
             history.push('/login');
           } else {
             // 判断当前平台类型
@@ -168,11 +168,14 @@ class MainLayout extends React.Component {
   };
 
   goToQuestionCenter = () => {
-    this.props.history.push(`/${AppCode.XIHE}/questionCenter`);
+    this.props.history.push(`/${AppCode.Tool}/alertCenter`);
   };
 
   validateAuthority = async () => {
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      currentUser: { adminType },
+    } = this.props;
     const response = await getAuthorityInfo();
     if (dealResponse(response, null, formatMessage({ id: 'app.authCenter.fetchInfo.failed' }))) {
       return false;
@@ -185,7 +188,8 @@ class MainLayout extends React.Component {
        */
       if (isNull(response)) {
         message.error(formatMessage({ id: 'app.authCenter.unauthorized.message' }));
-        return false;
+        dispatch({ type: 'global/clearEnvironments' });
+        return ['SUPERMANAGER', 'ADMIN'].includes(adminType);
       } else {
         const isExpired = response.lastDay * 1000 <= new Date().valueOf();
         if (isExpired) {

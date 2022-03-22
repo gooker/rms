@@ -3,7 +3,7 @@ import { hasPermission } from '@/utils/Permission';
 import ExecutionQueueComponent from '@/pages/TaskQueue/ExecutionQueueComponent';
 import { AGVType } from '@/config/config';
 
-const ExecutionQueue = () => {
+const TaskExecuting = () => {
   const deleteFlag = hasPermission('/tote/task/executionQueue/delete');
   return (
     <ExecutionQueueComponent
@@ -12,4 +12,4 @@ const ExecutionQueue = () => {
     />
   );
 };
-export default memo(ExecutionQueue);
+export default memo(TaskExecuting);

@@ -9,7 +9,6 @@ import DetailInfo from './components/DetailInfo';
 import TaskRecordOrAlarm from './components/TaskRecordOrAlarm';
 import TaskDetail from './TaskDetail';
 import { AGVType } from '@/config/config';
-import intl from 'react-intl-universal';
 
 const { red } = Dictionary('color');
 const { confirm } = Modal;
@@ -187,7 +186,7 @@ class Detail extends PureComponent {
         taskAgvType,
         detailInfo,
         taskRecord,
-        taskAlaram,
+        taskAlarm,
       },
     } = this.props;
     return (
@@ -214,7 +213,7 @@ class Detail extends PureComponent {
             </Tabs.TabPane>
 
             {/** ******* 任务路径 ******** */}
-            <Tabs.TabPane tab={intl.formatMessage({ id: 'app.task.path' })} key="b">
+            <Tabs.TabPane tab={formatMessage({ id: 'app.task.path' })} key="b">
               {Array.isArray(detailInfo?.taskDetail?.agvStepTasks) ? (
                 <Card bordered={false}>
                   <AgvTaskSteps taskDetail={detailInfo.taskDetail} />
@@ -224,48 +223,39 @@ class Detail extends PureComponent {
               )}
             </Tabs.TabPane>
 
-            {/** ******* 历史任务 ******** */}
-            <Tabs.TabPane key="c" tab={formatMessage({ id: 'app.task.record' })}>
-              <Col span={24}>
-                {detailInfo.taskDetail && detailInfo.taskDetail.agvStepTaskHistorys ? (
+            {/********* 任务记录 *********/}
+            {window.localStorage.getItem('dev') === 'true' && (
+              <Tabs.TabPane key="c" tab={formatMessage({ id: 'app.task.record' })}>
+                {Array.isArray(detailInfo?.taskDetail?.agvStepTaskHistorys) ? (
                   <Card bordered={false}>
-                    <AgvTaskHistory
-                      robotType={taskAgvType}
-                      step={detailInfo.taskDetail.agvStepTaskHistorys}
-                    />
+                    <AgvTaskHistory taskDetail={detailInfo.taskDetail} />
                   </Card>
                 ) : (
                   <Empty />
                 )}
-              </Col>
-            </Tabs.TabPane>
-
-            {/********* 任务日志 *********/}
-            {window.localStorage.getItem('dev') === 'true' && (
-              <Tabs.TabPane tab={formatMessage({ id: 'app.taskRecord.log' })} key="d">
-                <Col span={24}>
-                  {taskRecord.length > 0 ? (
-                    <Card bordered={true}>
-                      <TaskRecordOrAlarm taskRecord={taskRecord} />
-                    </Card>
-                  ) : (
-                    <Empty />
-                  )}
-                </Col>
               </Tabs.TabPane>
             )}
 
+            {/********* 任务日志 *********/}
+            <Tabs.TabPane tab={formatMessage({ id: 'app.task.log' })} key="d">
+              {taskRecord.length > 0 ? (
+                <Card bordered={true}>
+                  <TaskRecordOrAlarm taskRecord={taskRecord} />
+                </Card>
+              ) : (
+                <Empty />
+              )}
+            </Tabs.TabPane>
+
             {/********* 任务告警 *********/}
-            <Tabs.TabPane tab={formatMessage({ id: 'app.taskAlarm.log' })} key="e">
-              <Col span={24}>
-                {taskAlaram.length > 0 ? (
-                  <Card bordered={true}>
-                    <TaskRecordOrAlarm taskAlaram={taskAlaram} />
-                  </Card>
-                ) : (
-                  <Empty />
-                )}
-              </Col>
+            <Tabs.TabPane tab={formatMessage({ id: 'app.taskAlarm' })} key="e">
+              {taskAlarm.length > 0 ? (
+                <Card bordered={true}>
+                  <TaskRecordOrAlarm taskAlarm={taskAlarm} />
+                </Card>
+              ) : (
+                <Empty />
+              )}
             </Tabs.TabPane>
           </Tabs>
         </Spin>

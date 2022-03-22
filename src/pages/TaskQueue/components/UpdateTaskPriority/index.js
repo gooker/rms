@@ -45,7 +45,7 @@ const Index = (props) => {
       visible={visible}
       onCancel={close}
       bodyStyle={{ padding: 12 }}
-      title={formatMessage({ id: 'app.taskQueue.renice' })}
+      title={formatMessage({ id: 'app.taskQueue.reorderPriority' })}
       footer={
         <Button type="primary" onClick={onSubmit} style={{ width: '100%' }}>
           <FormattedMessage id="app.button.confirm" />
