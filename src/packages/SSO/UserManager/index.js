@@ -461,7 +461,7 @@ class UserManager extends Component {
                   this.setState({ sectionAssignVisible: true });
                 }}
               >
-                <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.sectionAssign" />
+                <IconFont type="icon-assign" /> <FormattedMessage id="sso.user.sectionAssign" />
               </Button>
 
               {/* 分配角色 */}
@@ -471,7 +471,7 @@ class UserManager extends Component {
                   this.setState({ roleAssignVisible: true });
                 }}
               >
-                <IconFont type="icon-fenpei" /> <FormattedMessage id="sso.user.roleAssign" />
+                <IconFont type="icon-assign" /> <FormattedMessage id="sso.user.roleAssign" />
               </Button>
             </Col>
             <Col>

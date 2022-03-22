@@ -4,6 +4,7 @@ import global from './zh-CN/global';
 import common from './zh-CN/common';
 import agvList from './zh-CN/agvList';
 import request from './zh-CN/request';
+import requestor from './zh-CN/requestor';
 import collection from './zh-CN/collection';
 import agvRealTime from './zh-CN/agvRealTime';
 import chargingStrategy from './zh-CN/chargingStrategy';
@@ -26,7 +27,7 @@ import lockManage from './zh-CN/XIHE/lockManage';
 import mapEditor from './zh-CN/XIHE/editor';
 import mapMonitor from './zh-CN/XIHE/monitor';
 import notification from './zh-CN/XIHE/notification';
-import sourcemanage from './zh-CN/XIHE/sourcemanage';
+import sourceManage from './zh-CN/XIHE/sourcemanage';
 import alert from './zh-CN/XIHE/alert';
 
 export default {
@@ -37,6 +38,7 @@ export default {
   ...collection,
   ...agvList,
   ...request,
+  ...requestor,
   ...agvRealTime,
   ...chargingStrategy,
   ...systemParameters,
@@ -58,6 +60,6 @@ export default {
   ...mapEditor,
   ...mapMonitor,
   ...notification,
-  ...sourcemanage,
+  ...sourceManage,
   ...alert,
 };

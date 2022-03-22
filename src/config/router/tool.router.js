@@ -12,7 +12,7 @@ export default [
     path: `/${AppCode.Tool}/requestor`,
     name: 'requestor',
     icon: 'api',
-    component: '/Tool/Requestor/Requestor/index',
+    component: '/Tool/Requestor/index',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {

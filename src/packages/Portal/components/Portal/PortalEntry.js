@@ -5,6 +5,7 @@ import { Tooltip } from 'antd';
 import { GlobalOutlined, UserOutlined } from '@ant-design/icons';
 import { AppCode } from '@/config/config';
 import styles from './Portal.module.less';
+import { isNull } from '@/utils/util';
 
 const Apps = [
   {
@@ -109,7 +110,12 @@ const Apps = [
 
 const CommonPortal = (props) => {
   const { name, code, currentApp, checkoutApp } = props;
-  const { color, icon, width, height } = find(Apps, { code });
+  const appConfig = find(Apps, { code });
+  if (isNull(appConfig)) {
+    console.log(`未识别的应用编码: ${code}`);
+    return null;
+  }
+  const { color, icon, width, height } = appConfig;
   return (
     <Tooltip title={name} placement={'right'}>
       <div key={name} className={styles.portalItem}>

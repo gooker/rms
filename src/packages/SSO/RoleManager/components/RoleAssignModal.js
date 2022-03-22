@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
 import { generateMenuNodeLocaleKey, validateMenuNodePermission } from '@/utils/init';
-import { formatMessage } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
 import allModuleRouter from '@/config/router';
 import { CheckOutlined } from '@ant-design/icons';
@@ -22,9 +22,9 @@ class RoleAssignModal extends Component {
   };
 
   componentDidMount() {
-    const {
-      currentUser: { authorityKeys },
-    } = this.props;
+    const { data } = this.props;
+    if (isNull(data)) return;
+    const { authorityKeys } = data;
 
     const allRoutes = Object.keys(allModuleRouter).map((key) => {
       const currentRoutes = allModuleRouter[key] || [];
@@ -244,5 +244,4 @@ class RoleAssignModal extends Component {
     );
   }
 }
-
 export default RoleAssignModal;

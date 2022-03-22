@@ -106,10 +106,7 @@ export default class RoleAssign extends Component {
             render={(item) => `${item.code}(${item.label})`}
             rowKey={(record) => record.id}
             onChange={this.handleChange}
-            listStyle={{
-              width: '44%',
-              height: 400,
-            }}
+            listStyle={{ width: '44%', height: 400 }}
           />
         </Card>
       </div>

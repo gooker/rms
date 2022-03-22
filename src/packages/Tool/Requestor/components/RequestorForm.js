@@ -2,17 +2,15 @@ import React from 'react';
 import { Form, Input, Button, Row, Col, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { debounce, isPlainObject } from 'lodash';
+import { isStrictNull, getRequestorURLParams, formatMessage, getFormLayout } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import HeaderInput from './HeaderInput';
 import JSONEditor from './JSONEditor';
-import { isStrictNull, getRequestorURLParams, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../requestor.module.less';
 
 const { Option } = Select;
-
-const layout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
-const tailLayout = { wrapperCol: { offset: 4, span: 20 } };
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(3, 21);
 
 /**
  * string 字符串
@@ -175,7 +173,7 @@ class RequestForm extends React.Component {
   render() {
     const { allAgvTypes } = this.props;
     return (
-      <Form {...layout} ref={this.formRef}>
+      <Form {...formItemLayout} ref={this.formRef}>
         {/* 名称 */}
         <Form.Item
           label={formatMessage({ id: 'app.requestor.form.name' })}
@@ -231,7 +229,7 @@ class RequestForm extends React.Component {
                 <Form.Item
                   key={field.key}
                   required={true}
-                  {...(index === 0 ? layout : tailLayout)}
+                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
                   label={index === 0 ? formatMessage({ id: 'app.requestor.form.header' }) : ''}
                 >
                   <Row style={{ width: '80%' }}>
@@ -251,16 +249,9 @@ class RequestForm extends React.Component {
                   </Row>
                 </Form.Item>
               ))}
-              <Form.Item {...tailLayout}>
-                <Button
-                  block
-                  type="dashed"
-                  onClick={() => add()}
-                  icon={<PlusOutlined />}
-                  style={{ width: '27.5%' }}
-                >
-                  {' '}
-                  <FormattedMessage id="app.requestor.form.header.add" />
+              <Form.Item {...formItemLayoutNoLabel}>
+                <Button block type="dashed" onClick={() => add()} style={{ width: '27.5%' }}>
+                  <PlusOutlined /> <FormattedMessage id="app.requestor.form.header.add" />
                 </Button>
               </Form.Item>
             </>
@@ -290,7 +281,7 @@ class RequestForm extends React.Component {
                 <Form.Item
                   key={field.key}
                   required={true}
-                  {...(index === 0 ? layout : tailLayout)}
+                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
                   label={index === 0 ? formatMessage({ id: 'app.requestor.form.fieldsDesc' }) : ''}
                 >
                   <Row style={{ width: '80%' }}>
@@ -308,7 +299,7 @@ class RequestForm extends React.Component {
                   </Row>
                 </Form.Item>
               ))}
-              <Form.Item {...tailLayout}>
+              <Form.Item {...formItemLayoutNoLabel}>
                 <Button
                   block
                   type="dashed"
@@ -336,9 +327,9 @@ class RequestForm extends React.Component {
         </Form.Item>
 
         {/* 提交 */}
-        <Form.Item {...tailLayout}>
+        <Form.Item {...formItemLayoutNoLabel}>
           <Button type="primary" onClick={this.submit}>
-            <FormattedMessage id="app.simulator.action.submit" />
+            <FormattedMessage id="app.button.submit" />
           </Button>
         </Form.Item>
       </Form>
