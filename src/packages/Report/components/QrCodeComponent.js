@@ -175,10 +175,11 @@ const QrCodeComponent = (props) => {
   }
 
   return (
-    <div className={commonStyles.commonPageStyle} style={{ padding: 12 }}>
+    <div className={commonStyles.commonPageStyle} style={{ padding: 12 }} key={'codeType'}>
       <QrcodeSearchForm search={submitSearch} exportData={exportData} />
-      <Spin spinning={loading}>
-        <div className={style.body}>
+
+      <div className={style.body}>
+        <Spin spinning={loading}>
           <FilterSearch showCellId={true} data={originData} filterSearch={filterDateOnChange} />
           <Row gutter={16}>
             <Col span={24}>
@@ -191,8 +192,8 @@ const QrCodeComponent = (props) => {
               <div id={dateDomId} style={{ minHeight: 350 }} />
             </Col>
           </Row>
-        </div>
-      </Spin>
+        </Spin>
+      </div>
     </div>
   );
 };

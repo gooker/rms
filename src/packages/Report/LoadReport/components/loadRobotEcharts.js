@@ -147,6 +147,11 @@ export const actionBarOption = (title, keyMap) => ({
     splitArea: {
       show: false,
     },
+    // axisLabel: {
+    //   formatter: function (value) {
+    //     return MinuteFormat(value);
+    //   },
+    // },
   },
   series: [], // 有几层数据 就放几层
 });

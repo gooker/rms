@@ -1,8 +1,8 @@
 import React, { useState, memo, useEffect } from 'react';
-import HealthCarSearchForm from '../../components/HealthCarSearchForm';
+import { Spin } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
-import { getDatBysortTime, getAllCellId } from '@/packages/Report/components/GroundQrcodeEcharts';
+
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
 import {
@@ -12,6 +12,8 @@ import {
   formatMessage,
   isNull,
 } from '@/utils/util';
+import { getDatBysortTime, getAllCellId } from '@/packages/Report/components/GroundQrcodeEcharts';
+import HealthCarSearchForm from '../../components/HealthCarSearchForm';
 import ScanCodeComponent from './RobotScanCodeTab';
 import AgvOfflineComponent from './RobotOfflineTab';
 import RobotFaultComponent from './RobotFaultTab';
@@ -48,6 +50,8 @@ const TabSelectedStyle = {
 };
 
 const HealthCar = (props) => {
+  const [loading, setLoading] = useState(false);
+
   const [scanOriginData, setScanOriginData] = useState({}); // 原始数据 小车扫码
   const [offlineOriginData, setOfflineOriginData] = useState({}); // 原始数据 小车离线
   const [statuserrorOriginData, setStatuserrorOriginData] = useState({}); // 原始数据 状态错误
@@ -114,6 +118,7 @@ const HealthCar = (props) => {
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
       const response = await fetchAGVHealth({
         startTime,
         endTime,
@@ -136,6 +141,7 @@ const HealthCar = (props) => {
         setStatuserrorOriginData(newError);
         setFaultOriginData(newMalfunction);
       }
+      setLoading(false);
     }
   }
 
@@ -197,38 +203,40 @@ const HealthCar = (props) => {
         ))}
       </div>
       <div className={style.body}>
-        {activeTab === 'scan' && (
-          <ScanCodeComponent
-            originData={scanOriginData}
-            originIds={getAllCellId(scanOriginData, 'agvId')}
-            keyDataMap={keyCodeData}
-            activeTab={activeTab}
-          />
-        )}
-        {activeTab === 'offline' && (
-          <AgvOfflineComponent
-            originData={offlineOriginData}
-            originIds={getAllCellId(offlineOriginData, 'agvId')}
-            keyDataMap={keyOfflineData}
-            activeTab={activeTab}
-          />
-        )}
-        {activeTab === 'statuserror' && (
-          <AgvErrorComponent
-            originData={statuserrorOriginData}
-            originIds={getAllCellId(statuserrorOriginData, 'agvId')}
-            keyDataMap={keyErrorData}
-            activeTab={activeTab}
-          />
-        )}
-        {activeTab === 'fault' && (
-          <RobotFaultComponent
-            originData={faultOriginData}
-            originIds={getAllCellId(faultOriginData, 'agvId')}
-            keyDataMap={keyFaultData}
-            activeTab={activeTab}
-          />
-        )}
+        <Spin spinning={loading}>
+          {activeTab === 'scan' && (
+            <ScanCodeComponent
+              originData={scanOriginData}
+              originIds={getAllCellId(scanOriginData, 'agvId')}
+              keyDataMap={keyCodeData}
+              activeTab={activeTab}
+            />
+          )}
+          {activeTab === 'offline' && (
+            <AgvOfflineComponent
+              originData={offlineOriginData}
+              originIds={getAllCellId(offlineOriginData, 'agvId')}
+              keyDataMap={keyOfflineData}
+              activeTab={activeTab}
+            />
+          )}
+          {activeTab === 'statuserror' && (
+            <AgvErrorComponent
+              originData={statuserrorOriginData}
+              originIds={getAllCellId(statuserrorOriginData, 'agvId')}
+              keyDataMap={keyErrorData}
+              activeTab={activeTab}
+            />
+          )}
+          {activeTab === 'fault' && (
+            <RobotFaultComponent
+              originData={faultOriginData}
+              originIds={getAllCellId(faultOriginData, 'agvId')}
+              keyDataMap={keyFaultData}
+              activeTab={activeTab}
+            />
+          )}
+        </Spin>
       </div>
     </div>
   );

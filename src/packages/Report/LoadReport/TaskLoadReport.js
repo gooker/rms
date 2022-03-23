@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Divider } from 'antd';
+import { Row, Col, Divider, Spin } from 'antd';
 import echarts from 'echarts';
 import XLSX from 'xlsx';
 import moment from 'moment';
@@ -43,6 +43,7 @@ let taskWorkBarLine = null;
 let taskPickworkBarLine = null;
 
 const TaskLoadComponent = (props) => {
+  const [loading, setLoading] = useState(false);
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
 
   const [timeType, setTimeType] = useState('hour');
@@ -67,11 +68,14 @@ const TaskLoadComponent = (props) => {
 
   function initChart() {
     // 任务动作负载 -pie
-    taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
-    taskActionPieLine.setOption(
-      actionPieOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
-      true,
-    );
+    if (Object.keys(keyAction).length > 0) {
+      taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
+
+      taskActionPieLine.setOption(
+        actionPieOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
+        true,
+      );
+    }
     //-bar
     taskActionBarLine = echarts.init(document.getElementById('load_taskActionBar'));
     taskActionBarLine.setOption(
@@ -160,7 +164,7 @@ const TaskLoadComponent = (props) => {
       newActionPieLine.series = series;
       newActionPieLine.legend = legend;
       taskActionPieLine.setOption(
-        { ...newActionPieLine, ...noDataGragraphic(series?.data?.length) },
+        { ...newActionPieLine, ...noDataGragraphic(series[0]?.data?.length) },
         true,
       );
     }
@@ -170,7 +174,7 @@ const TaskLoadComponent = (props) => {
       newWorkPieLine.series = series;
       newWorkPieLine.legend = legend;
       taskWorkPieLine.setOption(
-        { ...newWorkPieLine, ...noDataGragraphic(series?.data?.length) },
+        { ...newWorkPieLine, ...noDataGragraphic(series[0]?.data?.length) },
         true,
       );
     }
@@ -180,7 +184,7 @@ const TaskLoadComponent = (props) => {
       newPickPieLine.series = series;
       newPickPieLine.legend = legend;
       taskPickworkPieLine.setOption(
-        { ...newPickPieLine, ...noDataGragraphic(series?.data?.length) },
+        { ...newPickPieLine, ...noDataGragraphic(series[0]?.data?.length) },
         true,
       );
     }
@@ -229,6 +233,8 @@ const TaskLoadComponent = (props) => {
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
+
       const response = await fetchTaskLoad({
         startTime,
         endTime,
@@ -247,6 +253,7 @@ const TaskLoadComponent = (props) => {
 
         setLoadOriginData(newTaskLoad);
       }
+      setLoading(false);
     }
   }
 
@@ -314,34 +321,36 @@ const TaskLoadComponent = (props) => {
       />
 
       <div className={style.body}>
-        <FilterSearch
-          showCellId={false}
-          showTask={true}
-          data={loadOriginData}
-          filterSearch={filterDateOnChange}
-        />
-        <Row>
-          <Col span={12}>
-            <div id="load_taskActionPie" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_taskActionBar" style={{ minHeight: 340 }}></div>
-          </Col>
-          <Divider />
-          <Col span={12}>
-            <div id="load_taskWorkPie" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_taskWorkBar" style={{ minHeight: 340 }}></div>
-          </Col>
-          <Divider />
-          <Col span={12}>
-            <div id="load_taskPickworkPie" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_taskPickworkBar" style={{ minHeight: 340 }}></div>
-          </Col>
-        </Row>
+        <Spin spinning={loading}>
+          <FilterSearch
+            showCellId={false}
+            showTask={true}
+            data={loadOriginData}
+            filterSearch={filterDateOnChange}
+          />
+          <Row>
+            <Col span={12}>
+              <div id="load_taskActionPie" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_taskActionBar" style={{ minHeight: 340 }}></div>
+            </Col>
+            <Divider />
+            <Col span={12}>
+              <div id="load_taskWorkPie" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_taskWorkBar" style={{ minHeight: 340 }}></div>
+            </Col>
+            <Divider />
+            <Col span={12}>
+              <div id="load_taskPickworkPie" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_taskPickworkBar" style={{ minHeight: 340 }}></div>
+            </Col>
+          </Row>
+        </Spin>
       </div>
     </div>
   );

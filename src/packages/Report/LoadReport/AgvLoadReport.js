@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Table, Divider } from 'antd';
+import { Row, Col, Table, Divider, Spin } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
 import XLSX from 'xlsx';
@@ -47,6 +47,7 @@ let actionPieHistoryLine = null; // 动作负载-pie
 let actionBarHistoryLine = null; // 动作负载-bar
 
 const HealthCar = (props) => {
+  const [loading, setLoading] = useState(false);
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
 
   const [timeType, setTimeType] = useState('hour');
@@ -257,6 +258,8 @@ const HealthCar = (props) => {
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
+
       const response = await fetchAGVload({
         startTime,
         endTime,
@@ -293,6 +296,8 @@ const HealthCar = (props) => {
         setFilterData(newLoadData);
         setSelectedKeys([]);
       }
+
+      setLoading(false);
     }
   }
 
@@ -448,41 +453,47 @@ const HealthCar = (props) => {
       />
 
       <div className={style.body}>
-        <FilterSearch showCellId={false} data={loadOriginData} filterSearch={filterDateOnChange} />
-        <Row style={{ padding: 15 }}>
-          <Col span={12}>
-            <div id="load_statustimeHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_tasktimeHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Divider />
-          <Col span={12}>
-            <div id="load_actionPieHistory" style={{ minHeight: 380 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_actionBarHistory" style={{ minHeight: 380 }} />
-          </Col>
-          <Divider />
-          <Col span={12}>
-            <div id="load_taskTimesHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_taskDistanceHistory" style={{ minHeight: 340 }} />
-          </Col>
-        </Row>
-        <Row gutter={[26, 16]}>
-          <Col span={24}>
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={tableData}
-              rowKey={'robotId'}
-              pagination={false}
-              scroll={{ y: 300 }}
-            />
-          </Col>
-        </Row>
+        <Spin spinning={loading}>
+          <FilterSearch
+            showCellId={false}
+            data={loadOriginData}
+            filterSearch={filterDateOnChange}
+          />
+          <Row style={{ padding: 15 }}>
+            <Col span={12}>
+              <div id="load_statustimeHistory" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_tasktimeHistory" style={{ minHeight: 340 }} />
+            </Col>
+            <Divider />
+            <Col span={12}>
+              <div id="load_actionPieHistory" style={{ minHeight: 380 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_actionBarHistory" style={{ minHeight: 380 }} />
+            </Col>
+            <Divider />
+            <Col span={12}>
+              <div id="load_taskTimesHistory" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_taskDistanceHistory" style={{ minHeight: 340 }} />
+            </Col>
+          </Row>
+          <Row gutter={[26, 16]}>
+            <Col span={24}>
+              <Table
+                rowSelection={rowSelection}
+                columns={columns}
+                dataSource={tableData}
+                rowKey={'robotId'}
+                pagination={false}
+                scroll={{ y: 300 }}
+              />
+            </Col>
+          </Row>
+        </Spin>
       </div>
     </div>
   );
