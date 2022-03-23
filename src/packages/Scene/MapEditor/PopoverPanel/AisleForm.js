@@ -6,7 +6,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { formatMessage } from '@/utils/util';
-import styles from '../popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 
 const AisleForm = (props) => {
   const { dispatch, flag, aisle, aisles, mapContext, selectCellIds } = props;

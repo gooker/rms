@@ -46,36 +46,34 @@ const MessageCategorySecondaryPanel = (props) => {
 
   return (
     <div style={{ height, width: 60, top: top }} className={styles.popoverPanel}>
-      {MessageCategoryTools.map(({ label, icon, value, style, permissionFlag }) => {
-        if (hasAppPermission(permissionFlag)) {
-          return (
-            <Tooltip key={value} placement="left" title={label}>
-              <div
-                role={'category'}
-                style={{ position: 'relative' }}
-                onClick={() => {
-                  onClick(value);
-                }}
-              >
-                {renderIcon(icon, style)}
-                {value === 'podToWorkstationInfoMessage' && podToWorkstationInfo.length > 0 && (
-                  <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
-                    <span>
-                      {podToWorkstationInfo.length > 99 ? '99+' : podToWorkstationInfo.length}
-                    </span>
-                  </div>
-                )}
-                {value === 'stopMessage' && latentStopMessageList.length > 0 && (
-                  <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
-                    <span>
-                      {latentStopMessageList.length > 99 ? '99+' : latentStopMessageList.length}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </Tooltip>
-          );
-        }
+      {MessageCategoryTools.map(({ label, icon, value, style }) => {
+        return (
+          <Tooltip key={value} placement="left" title={label}>
+            <div
+              role={'category'}
+              style={{ position: 'relative' }}
+              onClick={() => {
+                onClick(value);
+              }}
+            >
+              {renderIcon(icon, style)}
+              {value === 'podToWorkstationInfoMessage' && podToWorkstationInfo.length > 0 && (
+                <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
+                  <span>
+                    {podToWorkstationInfo.length > 99 ? '99+' : podToWorkstationInfo.length}
+                  </span>
+                </div>
+              )}
+              {value === 'stopMessage' && latentStopMessageList.length > 0 && (
+                <div className={styles.categoryBadge} style={{ background: '#1870bd' }}>
+                  <span>
+                    {latentStopMessageList.length > 99 ? '99+' : latentStopMessageList.length}
+                  </span>
+                </div>
+              )}
+            </div>
+          </Tooltip>
+        );
       }).filter(Boolean)}
     </div>
   );

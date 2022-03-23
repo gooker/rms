@@ -1,7 +1,7 @@
 const { merge } = require('webpack-merge');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const paths = require('./paths');
-const BaseConfig = require('./webpack.config.base');
+const BaseConfig = require('./webpack.base.config');
 
 console.log('Starting RMS development server...\n');
 

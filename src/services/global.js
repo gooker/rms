@@ -37,7 +37,7 @@ export async function fetchAlertCount() {
 }
 
 export async function fetchGetProblemDetail(problemId) {
-  return request(`/${NameSpace.Coordinator}/problemHandling/getProblemHandlingById/${problemId}`, {
+  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCenterById/${problemId}`, {
     method: 'GET',
   });
 }

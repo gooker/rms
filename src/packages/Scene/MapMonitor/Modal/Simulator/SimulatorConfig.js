@@ -14,10 +14,10 @@ const layout2 = {
 };
 
 const agvTypeNameMap = {
-  LatentLifting: formatMessage({ id: 'app.module.LatentLifting' }),
-  Tote: formatMessage({ id: 'app.module.Tote' }),
-  ForkLifting: formatMessage({ id: 'app.module.ForkLifting' }),
-  Sorter: formatMessage({ id: 'app.module.Sorter' }),
+  LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
+  Tote: formatMessage({ id: 'app.agvType.Tote' }),
+  ForkLifting: formatMessage({ id: 'app.agvType.ForkLifting' }),
+  Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
 };
 
 export default function SimulatorConfig(props) {

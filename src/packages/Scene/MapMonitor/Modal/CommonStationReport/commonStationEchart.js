@@ -303,7 +303,7 @@ export const transformCommonWaitingData = (waitingDataResponse) => {
       ...commonOption,
       stack: '11',
       data: typeNum.reverse(),
-      name: formatMessage({ id: `app.module.${key}` }),
+      name: formatMessage({ id: `app.agvType.${key}` }),
     });
   });
   // 全部数据求平均值
@@ -407,7 +407,7 @@ export const transformCommonTrafficData = (allData = {}) => {
     series.push({
       ...commonOption,
       data: typeNum,
-      name: formatMessage({ id: `app.module.${key}` }),
+      name: formatMessage({ id: `app.agvType.${key}` }),
     });
   });
   // 全部数据求和

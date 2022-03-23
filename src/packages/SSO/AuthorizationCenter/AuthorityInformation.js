@@ -119,7 +119,7 @@ const AuthorityInformation = (props) => {
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.supportScenes' })}>
           {data.supportScenes.map((type) => (
             <Tag color="#1890FF" key={type}>
-              {formatMessage({ id: `app.module.${type}` })}
+              {formatMessage({ id: `app.agvType.${type}` })}
             </Tag>
           ))}
         </Descriptions.Item>

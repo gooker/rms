@@ -10,20 +10,20 @@ const TableWithPages = (props) => {
   delete newProps.expandColumns;
 
   if (Array.isArray(expandColumns) && expandColumns.length > 0) {
-    newProps.expandedRowRender = (record) => (
-      <ExpandPanel record={record} columns={expandColumns} />
-    );
+    newProps.expandable = {
+      expandedRowRender: (record) => <ExpandPanel record={record} columns={expandColumns} />,
+    };
   }
 
   return (
     <div className={commonStyles.tableWrapper}>
       <Table
-        {...newProps}
         pagination={{
           responsive: true,
           defaultPageSize: 10,
           showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
         }}
+        {...newProps}
       />
     </div>
   );

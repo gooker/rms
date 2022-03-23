@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import styles from '../popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 import { MapSelectableSpriteType } from '@/config/consts';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 

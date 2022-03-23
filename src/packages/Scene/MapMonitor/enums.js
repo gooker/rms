@@ -296,13 +296,11 @@ export const MessageCategoryTools = [
     value: 'podToWorkstationInfoMessage',
     icon: 'workStationTask_category.png',
     style: { width: '33px', height: 'auto' },
-    permissionFlag: AppCode.LatentLifting,
   },
   {
     label: <FormattedMessage id={'monitor.message.latentPauseMessage'} />,
     value: 'stopMessage',
     icon: 'latentPod.png',
     style: { width: '33px', height: 'auto' },
-    permissionFlag: AppCode.LatentLifting,
   },
 ];
