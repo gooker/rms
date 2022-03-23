@@ -75,7 +75,7 @@ const FilterSearch = (props) => {
               label={<FormattedMessage id="app.time" />}
               initialValue={'hour'}
             >
-              <Radio.Group buttonStyle="solid" defaultValue={'hour'}>
+              <Radio.Group buttonStyle="solid" defaultValue={'hour'} size={'small'}>
                 <Radio.Button value="hour">
                   <FormattedMessage id="reportCenter.hour" />
                 </Radio.Button>
