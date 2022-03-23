@@ -14,7 +14,7 @@ import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
 
 const MapMonitor = (props) => {
-  const { dispatch, socketClient, currentMap, mapContext, mapRendered } = props;
+  const { dispatch, socketClient, currentMap, mapContext } = props;
   const keyDown = useRef(false);
 
   useEffect(() => {
@@ -24,15 +24,14 @@ const MapMonitor = (props) => {
     return () => {
       socketClient.cancelMonitorRegistration();
       dispatch({
-        type: 'saveState',
-        payload: { mapContext: false },
+        type: 'monitor/saveMapContext',
+        payload: null,
       });
     };
   }, []);
 
   useEffect(() => {
     if (!isNull(mapContext)) {
-      // 初始化MQ回调
       setMonitorSocketCallback(socketClient, mapContext, dispatch);
       fetchStationRealTimeRate().then((response) => {
         if (!dealResponse(response)) {
@@ -51,10 +50,8 @@ const MapMonitor = (props) => {
         if (event.target instanceof HTMLInputElement) return;
         if (event.keyCode === 83 && !keyDown.current) {
           keyDown.current = true;
-          if (mapContext) {
-            mapContext.pixiUtils.viewport.drag({ pressDrag: false });
-            dispatch({ type: 'monitor/saveOperationType', payload: MonitorOperationType.Choose });
-          }
+          mapContext.pixiUtils.viewport.drag({ pressDrag: false });
+          dispatch({ type: 'monitor/saveOperationType', payload: MonitorOperationType.Choose });
         }
       }
       // 抬起S键
@@ -62,10 +59,8 @@ const MapMonitor = (props) => {
         if (event.target instanceof HTMLInputElement) return;
         if (event.keyCode === 83) {
           keyDown.current = false;
-          if (props.mapContext) {
-            props.mapContext.pixiUtils.viewport.drag({ pressDrag: true });
-            dispatch({ type: 'monitor/saveOperationType', payload: MonitorOperationType.Drag });
-          }
+          mapContext.pixiUtils.viewport.drag({ pressDrag: true });
+          dispatch({ type: 'monitor/saveOperationType', payload: MonitorOperationType.Drag });
         }
       }
 
@@ -82,41 +77,6 @@ const MapMonitor = (props) => {
       };
     }
   }, [mapContext]);
-
-  useEffect(() => {
-    if (mapRendered) {
-      renderMonitorLoad();
-    }
-  }, [mapRendered]);
-
-  // 渲染监控里的小车、货架等
-  async function renderMonitorLoad() {
-    const resource = await dispatch({ type: 'monitor/initMonitorLoad' });
-    if (!isNull(resource)) {
-      const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv } = resource;
-      mapContext.renderLatentAGV(latentAgv);
-      mapContext.renderLatentPod(latentPod);
-      mapContext.renderToteAGV(toteAgv);
-      mapContext.renderTotePod(toteRack);
-      mapContext.renderSorterAGV(sorterAgv);
-
-      const { temporaryBlock, emergencyStopList, chargerList } = resource;
-      // 临时不可走点
-      mapContext.renderTemporaryLock(temporaryBlock);
-
-      // 急停区
-      mapContext.renderEmergencyStopArea(emergencyStopList);
-      dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
-
-      // 渲染充电桩已绑定HardwareID标记(这里只是处理已经绑定HardwareId的情况)
-      if (Array.isArray(chargerList)) {
-        chargerList.forEach((item) => {
-          mapContext.updateChargerHardware(item.name, item.hardwareId);
-          mapContext.updateChargerState({ n: item.name, s: item.status });
-        });
-      }
-    }
-  }
 
   return (
     <div id={'mapMonitorPage'} className={commonStyles.commonPageStyleNoPadding}>
@@ -142,5 +102,4 @@ export default connect(({ monitor, global }) => ({
   socketClient: global.socketClient,
   currentMap: monitor.currentMap,
   mapContext: monitor.mapContext,
-  mapRendered: monitor.mapRendered,
 }))(memo(MapMonitor));

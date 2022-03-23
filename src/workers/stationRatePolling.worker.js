@@ -10,7 +10,8 @@ self.onmessage = ({ data: { state, url, token, sectionId } }) => {
     timeInterval = setInterval(() => {
       fetch(url, { headers })
         .then((response) => response.json())
-        .then((response) => self.postMessage(response));
+        .then((response) => self.postMessage(response))
+        .catch((err) => console.log(`Worker: stationRatePolling => ${err.message}`));
     }, 30 * 1000);
   } else if (state === 'end') {
     clearInterval(timeInterval);
