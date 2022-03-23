@@ -66,7 +66,7 @@ export default function notice(message, sectionId, notificationQueue) {
       );
       const notificationContent = (
         <>
-          <div style={{ marginTop: 15 }}>
+          <div style={{ marginTop: 10 }}>
             <span>{agvTypeName}</span>
             <span style={{ marginLeft: 10, fontSize: 18, fontWeight: 600, color: 'red' }}>
               {agvId}
@@ -74,13 +74,13 @@ export default function notice(message, sectionId, notificationQueue) {
           </div>
 
           {taskId != null && (
-            <div style={{ marginTop: 15 }}>
+            <div style={{ marginTop: 10 }}>
               <span>{formatMessage({ id: 'app.task.id' })}: </span>
               <span style={{ fontWeight: 700, color: 'red' }}>{taskId}</span>
             </div>
           )}
 
-          <ul style={{ marginTop: 15, paddingLeft: 20 }}>
+          <ul style={{ marginTop: 10, paddingLeft: 20 }}>
             {Array.isArray(alertItemList) &&
               alertItemList.map((item, index) => {
                 return (
@@ -94,7 +94,7 @@ export default function notice(message, sectionId, notificationQueue) {
               })}
           </ul>
 
-          <div style={{ textAlign: 'end', marginTop: 15 }}>
+          <div style={{ textAlign: 'end', marginTop: 10 }}>
             {convertToUserTimezone(updateTime).format('YY-MM-DD HH:mm:ss')}
           </div>
         </>

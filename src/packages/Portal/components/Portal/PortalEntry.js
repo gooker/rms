@@ -66,7 +66,7 @@ const Apps = [
   },
   {
     code: AppCode.Scene,
-    color: '#b25500',
+    color: '#3f51b5',
     width: '80%',
     height: '80%',
   },
@@ -84,9 +84,9 @@ const Apps = [
   },
   {
     code: AppCode.Tool,
-    color: '#3f51b5',
-    width: '80%',
-    height: '80%',
+    color: '#19a41c',
+    width: '70%',
+    height: '70%',
   },
   {
     code: AppCode.Strategy,

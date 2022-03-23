@@ -15,6 +15,8 @@ import {
   ShareAltOutlined,
   ProfileOutlined,
   ApiOutlined,
+  FundProjectionScreenOutlined,
+  ControlOutlined,
 } from '@ant-design/icons';
 import { IconFont } from '@/components/IconFont';
 
@@ -30,17 +32,15 @@ export default {
   automation: <IconFont type="icon-automation" />,
   binding: <IconFont type="icon-binding" />,
   dependency: <IconFont type="icon-dependency" />,
-  limit: <IconFont type="icon-limit" />,
   map: <IconFont type="icon-map" />,
-  screenReport: <IconFont type="icon-screenReport" />,
   section: <IconFont type="icon-section" />,
   trigger: <IconFont type="icon-trigger" />,
   userRole: <IconFont type="icon-role" />,
-
   taskQueue: <IconFont type="icon-taskQueue" />,
   executing: <IconFont type="icon-executing" />,
   taskExecuted: <IconFont type="icon-taskExecuted" />,
 
+  limit: <ControlOutlined />,
   api: <ApiOutlined />,
   list: <ProfileOutlined />,
   strategy: <ShareAltOutlined />,
@@ -56,4 +56,5 @@ export default {
   ie: <IeOutlined />,
   richEditor: <MediumOutlined />,
   notification: <NotificationOutlined />,
+  screenReport: <FundProjectionScreenOutlined />,
 };

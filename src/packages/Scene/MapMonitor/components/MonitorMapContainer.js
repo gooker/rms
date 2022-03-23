@@ -102,7 +102,6 @@ const MonitorMapContainer = (props) => {
   }, [currentRouteMap, mapContext]);
 
   function renderMap() {
-    dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
     // 渲染点位(不渲染电梯内部点)
     const elevatorInnerCells = [];
     if (Array.isArray(currentMap.elevatorList)) {
