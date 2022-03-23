@@ -68,14 +68,13 @@ const TaskLoadComponent = (props) => {
 
   function initChart() {
     // 任务动作负载 -pie
-    if (Object.keys(keyAction).length > 0) {
-      taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
 
-      taskActionPieLine.setOption(
-        actionPieOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
-        true,
-      );
-    }
+    taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
+
+    taskActionPieLine.setOption(
+      actionPieOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
+      true,
+    );
     //-bar
     taskActionBarLine = echarts.init(document.getElementById('load_taskActionBar'));
     taskActionBarLine.setOption(

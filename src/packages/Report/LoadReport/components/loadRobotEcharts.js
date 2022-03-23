@@ -698,5 +698,4 @@ export const MinuteFormat = (value) => {
     currentValue += d.seconds() + formatMessage({ id: 'app.time.seconds' });
   }
   return currentValue;
-  // const currentValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
 };
