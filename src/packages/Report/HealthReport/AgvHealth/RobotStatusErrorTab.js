@@ -3,7 +3,7 @@ import { formatMessage } from '@/utils/util';
 import OfflineOrStatusErrorComponent from './components/OfflineOrStatusErrorComponent';
 
 const AgvErrorComponent = (props) => {
-  const { originData, keyDataMap, activeTab } = props;
+  const { originData, keyDataMap, activeTab, originIds } = props;
   return (
     <>
       <OfflineOrStatusErrorComponent
@@ -14,6 +14,7 @@ const AgvErrorComponent = (props) => {
         originData={originData}
         keyData={keyDataMap}
         activeTab={activeTab}
+        originIds={originIds}
       />
     </>
   );

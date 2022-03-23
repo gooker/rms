@@ -3,7 +3,7 @@ import { formatMessage } from '@/utils/util';
 import ScanOrFaultComponent from './components/ScanOrFaultComponent';
 
 const RobotFaultComponent = (props) => {
-  const { originData, keyDataMap, activeTab } = props;
+  const { originData, keyDataMap, activeTab,originIds } = props;
   return (
     <>
       <ScanOrFaultComponent
@@ -14,6 +14,7 @@ const RobotFaultComponent = (props) => {
         originData={originData}
         keyData={keyDataMap}
         activeTab={activeTab}
+        originIds={originIds}
       />
     </>
   );

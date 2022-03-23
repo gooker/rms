@@ -1,11 +1,8 @@
 import { formatMessage, isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
-import { filterNewXAixsTime, getNewKey } from './reportUtil';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
-export const labelColor = '#564d4d';
-export const titleColor = 'rgb(77, 76, 76)';
 
 // Series
 export const labelOption = {
@@ -35,26 +32,6 @@ export const commonOption = {
   },
 };
 
-export const noDataGragraphic = (invisible) => {
-  return {
-    graphic: [
-      {
-        type: 'text',
-        left: 'center',
-        top: 'middle',
-        silent: true,
-        invisible,
-        style: {
-          fill: '#605e5e',
-          text: formatMessage({ id: 'reportCenter.noData' }),
-          fontWeight: 'bold',
-          font: '16px Microsoft YaHei',
-        },
-      },
-    ],
-  };
-};
-
 export const dateHistoryLineOption = (title, keyMap = {}) => ({
   title: {
     text: `${title}(${formatMessage({
@@ -63,8 +40,8 @@ export const dateHistoryLineOption = (title, keyMap = {}) => ({
     x: 'center',
     bottom: '3%',
     textStyle: {
-      fontWeight: 'bold',
-      color: titleColor,
+      fontWeight: 'normal',
+      color: LineChartsAxisColor,
       fontSize: 16,
     },
   },
@@ -108,20 +85,20 @@ export const dateHistoryLineOption = (title, keyMap = {}) => ({
       start: 0,
       end: 100,
     },
-    // {
-    //   start: 0,
-    //   end: 100,
-    //   handleIcon:
-    //     'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-    //   handleSize: '80%',
-    //   handleStyle: {
-    //     color: '#fff',
-    //     shadowBlur: 3,
-    //     shadowColor: 'rgba(0, 0, 0, 0.6)',
-    //     shadowOffsetX: 2,
-    //     shadowOffsetY: 2,
-    //   },
-    // },
+    {
+      start: 0,
+      end: 100,
+      handleIcon:
+        'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+      handleSize: '80%',
+      handleStyle: {
+        color: '#fff',
+        shadowBlur: 3,
+        shadowColor: 'rgba(0, 0, 0, 0.6)',
+        shadowOffsetX: 2,
+        shadowOffsetY: 2,
+      },
+    },
   ],
   xAxis: [
     {
@@ -162,8 +139,8 @@ export const codeHistoryLineOption = (title, keyMap = {}) => ({
     x: 'center',
     bottom: '3%',
     textStyle: {
-      fontWeight: 'bold',
-      color: titleColor,
+      fontWeight: 'normal',
+      color: LineChartsAxisColor,
       fontSize: 16,
     },
   },
@@ -241,13 +218,25 @@ export const codeHistoryLineOption = (title, keyMap = {}) => ({
 });
 
 // 根据原始数据 --处理日期数据(x轴：日期)
-/*
- *根据原始数据 --x日期数据- 数值:任务时长 状态时长
- *@param allData-源数据
- *@param translate-报表的legend {key:value}
- @param  timeType--(x轴：日期) 显示是按日/月/小时
- */
-export const generateTimeData = (allData, translate, timeType = 'hour') => {
+export const generateTimeData = (allData, translate) => {
+  const series = []; // 存放纵坐标数值
+  const xAxisData = Object.keys(allData).sort(); // 横坐标
+
+  const typeResult = [];
+  Object.entries(allData).forEach(([key, typeData]) => {
+    if (!isStrictNull(typeData)) {
+      let currentTime = {}; // 当前日期每个key 求和
+      typeData.forEach((record) => {
+        forIn(record, (value, parameter) => {
+          const _value = isStrictNull(value) ? 0 : value;
+          const existValue = currentTime[parameter] || 0;
+          currentTime[parameter] = existValue * 1 + _value * 1;
+        });
+      });
+      typeResult.push(currentTime);
+    }
+  });
+
   const keyDataMap = new Map(); // 存放key 比如车次 偏移等等的求和
   let legendData = [];
   if (Array.isArray(translate)) {
@@ -259,35 +248,14 @@ export const generateTimeData = (allData, translate, timeType = 'hour') => {
   legendData.map((item) => {
     keyDataMap.set(item, 0);
   });
-  const series = []; // 存放纵坐标数值
-  const xAxisData = filterNewXAixsTime(allData, timeType);
-  
-  let keyResult = {}; //
-  xAxisData.map((item) => {
-    keyResult[item] = {};
-  });
-
-  Object.entries(allData).forEach(([key, typeData]) => {
-    if (!isStrictNull(typeData)) {
-      const idKey = getNewKey(key, timeType);
-      typeData.forEach((record) => {
-        forIn(record, (value, parameter) => {
-          if (legendData.includes(parameter)) {
-            const _value = isStrictNull(value) ? 0 : value;
-            const existValue = keyResult[idKey][parameter] || 0;
-            keyResult[idKey][parameter] = existValue * 1 + _value * 1;
-          }
-        });
-      });
-    }
-  });
 
   const currentSery = {};
-  Object.values(keyResult).map((v, index) => {
-    legendData.map((key) => {
-      const _value = v[key] || 0;
-      let seryData = currentSery[key] || [];
-      currentSery[key] = [...seryData, _value];
+  typeResult.map((v) => {
+    forIn(v, (value, key) => {
+      if (keyDataMap.has(key)) {
+        let seryData = currentSery[key] || [];
+        currentSery[key] = [...seryData, value];
+      }
     });
   });
 
@@ -311,7 +279,6 @@ export const generateTimeData = (allData, translate, timeType = 'hour') => {
       fontSize: 12,
       interval: 0,
       rotate: 20,
-      color: labelColor,
     },
     splitLine: {
       show: false,
@@ -376,7 +343,6 @@ export const transformCodeData = (allData = {}, translate, idName = 'cellId') =>
     axisLabel: {
       fontSize: 12,
       interval: 0,
-      color: labelColor,
     },
     splitLine: {
       show: false,
@@ -446,19 +412,21 @@ export const getOriginalDataBycode = (originalData, translate, idName) => {
       });
     });
   });
-
   const currentSery = {};
   Object.entries(currentCellIdData).forEach(([_, v]) => {
-    legendData.map((key) => {
-      const _value = v[key] || 0;
-      let seryData = currentSery[key] || [];
-      currentSery[key] = [...seryData, _value];
+    forIn(v, (value, key) => {
+      if (keyDataMap.has(key)) {
+        let seryData = currentSery[key] || [];
+        currentSery[key] = [...seryData, value];
+      }
     });
   });
   return { legendData, yxisData, currentSery, commonOption };
 };
 
-/*获取数据里所有的cellId/agvId;*/
+// /*获取数据里所有的cellId/agvId;
+// *
+// /
 export const getAllCellId = (originalData, key) => {
   const result = new Set();
   Object.values(originalData).forEach((record) => {

@@ -1,5 +1,5 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Divider, Card } from 'antd';
+import { Row, Col, Divider, Spin } from 'antd';
 import echarts from 'echarts';
 import XLSX from 'xlsx';
 import moment from 'moment';
@@ -12,7 +12,13 @@ import {
 } from '@/utils/util';
 import { fetchTaskLoad } from '@/services/api';
 import { sortBy, forIn } from 'lodash';
-import { getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
+import FilterSearch from '@/packages/Report/components/FilterSearch';
+import { filterDataByParam } from '@/packages/Report/components/reportUtil';
+import {
+  getDatBysortTime,
+  noDataGragraphic,
+  getAllCellId,
+} from '../components/GroundQrcodeEcharts';
 import {
   actionPieOption,
   generateActionPieData,
@@ -20,7 +26,6 @@ import {
   generateActionBarData,
 } from './components/loadRobotEcharts';
 import HealthCarSearchForm from '../components/HealthCarSearchForm';
-import FilterTaskLoadSearch from './components/FilterTaskLoadSearch';
 import commonStyles from '@/common.module.less';
 import style from '../report.module.less';
 
@@ -38,8 +43,12 @@ let taskWorkBarLine = null;
 let taskPickworkBarLine = null;
 
 const TaskLoadComponent = (props) => {
+  const [loading, setLoading] = useState(false);
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
-  const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
+
+  const [timeType, setTimeType] = useState('hour');
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedTaskIds, setSelectedTaskIds] = useState([]);
 
   const [keyAction, setKeyAction] = useState({}); //actionTranslate
   const [keyStation, setKeyStation] = useState({}); //stationTranslate 拣选工作站
@@ -47,18 +56,21 @@ const TaskLoadComponent = (props) => {
 
   useEffect(() => {
     async function initCodeData() {
-      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const defaultHour = moment().subtract(1, 'hours');
+      const startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
       submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
     }
     initCodeData();
   }, []);
   // 源数据变化触发显重新拉取数据 二次搜索
-  useEffect(refreshChart, [filterData, loadOriginData]);
+  useEffect(refreshChart, [loadOriginData, timeType, selectedIds, selectedTaskIds]);
 
   function initChart() {
     // 任务动作负载 -pie
+
     taskActionPieLine = echarts.init(document.getElementById('load_taskActionPie'));
+
     taskActionPieLine.setOption(
       actionPieOption(formatMessage({ id: 'reportCenter.taskload.action' }), keyAction),
       true,
@@ -123,7 +135,10 @@ const TaskLoadComponent = (props) => {
     initChart();
     if (!taskPickworkPieLine || !taskWorkPieLine || !taskActionPieLine || !taskActionBarLine)
       return;
-    const sourceData = { ...filterData };
+
+    let sourceData = { ...loadOriginData };
+    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+    sourceData = filterDataByParam(sourceData, selectedTaskIds, 'agvTaskType');
 
     const actionPieData = generateActionPieData(sourceData, 'actionLoad', keyAction); //动作负载-pie
     const taskWorkPieData = generateActionPieData(sourceData, 'workLoad', keyWork);
@@ -133,12 +148,13 @@ const TaskLoadComponent = (props) => {
       keyStation,
     );
 
-    const actionBarData = generateActionBarData(sourceData, 'actionLoad', keyAction); //动作负载-bar
-    const taskWorkBarData = generateActionBarData(sourceData, 'workLoad', keyWork);
+    const actionBarData = generateActionBarData(sourceData, 'actionLoad', keyAction, timeType); //动作负载-bar
+    const taskWorkBarData = generateActionBarData(sourceData, 'workLoad', keyWork, timeType);
     const taskPickworkBarData = generateActionBarData(
       sourceData,
       'pickingWorkstationWorkload',
       keyStation,
+      timeType,
     );
 
     if (actionPieData) {
@@ -147,7 +163,7 @@ const TaskLoadComponent = (props) => {
       newActionPieLine.series = series;
       newActionPieLine.legend = legend;
       taskActionPieLine.setOption(
-        { ...newActionPieLine, ...noDataGragraphic(series?.data?.length) },
+        { ...newActionPieLine, ...noDataGragraphic(series[0]?.data?.length) },
         true,
       );
     }
@@ -157,7 +173,7 @@ const TaskLoadComponent = (props) => {
       newWorkPieLine.series = series;
       newWorkPieLine.legend = legend;
       taskWorkPieLine.setOption(
-        { ...newWorkPieLine, ...noDataGragraphic(series?.data?.length) },
+        { ...newWorkPieLine, ...noDataGragraphic(series[0]?.data?.length) },
         true,
       );
     }
@@ -167,7 +183,7 @@ const TaskLoadComponent = (props) => {
       newPickPieLine.series = series;
       newPickPieLine.legend = legend;
       taskPickworkPieLine.setOption(
-        { ...newPickPieLine, ...noDataGragraphic(series?.data?.length) },
+        { ...newPickPieLine, ...noDataGragraphic(series[0]?.data?.length) },
         true,
       );
     }
@@ -216,6 +232,8 @@ const TaskLoadComponent = (props) => {
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
+
       const response = await fetchTaskLoad({
         startTime,
         endTime,
@@ -225,74 +243,25 @@ const TaskLoadComponent = (props) => {
       if (!dealResponse(response)) {
         let taskLoad = response?.taskLoadData || {};
         const newTaskLoad = getDatBysortTime(taskLoad);
-        setLoadOriginData(newTaskLoad);
-        setFilterData(newTaskLoad);
+
+        setSelectedIds(getAllCellId(newTaskLoad, 'agvId'));
+        setSelectedTaskIds(getAllCellId(newTaskLoad, 'agvTaskType'));
         setKeyAction(response?.actionTranslate || {});
         setKeyStation(response?.stationTranslate || {});
         setKeyWork(response?.workTranslate || {});
+
+        setLoadOriginData(newTaskLoad);
       }
+      setLoading(false);
     }
   }
 
-  // 过滤时间
-  const filterDataByTime = (data, startT, endT) => {
-    const _data = { ...data };
-    const newData = {};
-    Object.entries(_data).forEach(([key, allcellData]) => {
-      const _allCellData = [...allcellData];
-      if (moment(key).isBetween(moment(startT), moment(endT))) {
-        newData[key] = _allCellData;
-      }
-    });
-    return newData;
-  };
-
-  /*
-   *@searchValues 搜索条件数据
-   *@param  在接口返回的数据中参数名
-   * */
-  const filterDataByParam = (searchValues, param) => {
-    const _data = { ...loadOriginData };
-    const newData = {};
-    Object.entries(_data).forEach(([key, allcellData]) => {
-      const _allCellData = [];
-      allcellData.forEach((item) => {
-        if (Array.isArray(searchValues)) {
-          if (searchValues.includes(item[param])) {
-            _allCellData.push(item);
-          }
-        } else {
-          if (searchValues === item[param]) {
-            _allCellData.push(item);
-          }
-        }
-      });
-      newData[key] = _allCellData;
-    });
-    return newData;
-  };
-
-  // 二次-search
-  function onDatefilterChange(allValues) {
-    let newOriginalData = { ...loadOriginData };
-    if (Object.keys(loadOriginData).length === 0) return;
-    const { endTime, startTime, agvId, taskType = [] } = allValues;
-
-    //TODO:要改
-    if (agvId?.length > 0) {
-      newOriginalData = filterDataByParam(agvId, 'agvId');
-    }
-
-    if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
-      newOriginalData = filterDataByTime(newOriginalData, startTime, endTime);
-    }
-
-    // 根据任务类型
-    if (taskType && taskType.length > 0) {
-      newOriginalData = filterDataByParam(taskType, 'taskType');
-    }
-
-    setFilterData(newOriginalData);
+  // 二次-filter
+  function filterDateOnChange(values) {
+    const { timeType, selectedIds, taskType } = values;
+    setSelectedIds(selectedIds);
+    setSelectedTaskIds(taskType);
+    setTimeType(timeType);
   }
 
   function generateEveryType(allData, type, keyData) {
@@ -351,7 +320,13 @@ const TaskLoadComponent = (props) => {
       />
 
       <div className={style.body}>
-        <Card actions={[<FilterTaskLoadSearch key={'2'} search={onDatefilterChange} />]}>
+        <Spin spinning={loading}>
+          <FilterSearch
+            showCellId={false}
+            showTask={true}
+            data={loadOriginData}
+            filterSearch={filterDateOnChange}
+          />
           <Row>
             <Col span={12}>
               <div id="load_taskActionPie" style={{ minHeight: 340 }} />
@@ -374,7 +349,7 @@ const TaskLoadComponent = (props) => {
               <div id="load_taskPickworkBar" style={{ minHeight: 340 }}></div>
             </Col>
           </Row>
-        </Card>
+        </Spin>
       </div>
     </div>
   );

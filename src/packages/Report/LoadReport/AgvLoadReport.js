@@ -1,10 +1,10 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Table, Divider } from 'antd';
+import { Row, Col, Table, Divider, Spin } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
-import { getDatBysortTime } from '../components/GroundQrcodeEcharts';
+import { getDatBysortTime, getAllCellId } from '../components/GroundQrcodeEcharts';
 import {
   formatMessage,
   convertToUserTimezone,
@@ -14,6 +14,8 @@ import {
 } from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
+import FilterSearch from '@/packages/Report/components/FilterSearch';
+import { filterDataByParam } from '@/packages/Report/components/reportUtil';
 import { noDataGragraphic } from '../components/GroundQrcodeEcharts';
 import {
   taskLineOption,
@@ -45,7 +47,12 @@ let actionPieHistoryLine = null; // 动作负载-pie
 let actionBarHistoryLine = null; // 动作负载-bar
 
 const HealthCar = (props) => {
+  const [loading, setLoading] = useState(false);
   const [loadOriginData, setLoadOriginData] = useState({}); // 这个放在这里--接口改变才会变
+
+  const [timeType, setTimeType] = useState('hour');
+  const [selectedIds, setSelectedIds] = useState([]);
+
   const [selectedKeys, setSelectedKeys] = useState([]); //
   const [tableData, setTableData] = useState([]); // table
   const [filterData, setFilterData] = useState({}); //筛选小车得到的数据--默认是源数据
@@ -58,14 +65,15 @@ const HealthCar = (props) => {
 
   useEffect(() => {
     async function initCodeData() {
-      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const defaultHour = moment().subtract(1, 'hours');
+      const startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
       submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
     }
     initCodeData();
   }, []);
   // 源数据变化触发显重新拉取数据 二次搜索
-  useEffect(refreshChart, [filterData, loadOriginData]);
+  useEffect(refreshChart, [filterData, loadOriginData, timeType, selectedIds]);
 
   function initChart() {
     // 状态时长
@@ -126,14 +134,33 @@ const HealthCar = (props) => {
     initChart();
     if (!statusHistoryLine || !taskHistoryLine || !taskNumberHistoryLine || !actionPieHistoryLine)
       return;
-    const sourceData = { ...filterData };
 
-    const statusData = generateDurationDataByTime(sourceData, 'statusAllTime', keyStatus, true); // 状态时长
-    const taskdurationData = generateDurationDataByTime(sourceData, 'taskAllTime', keyTask); // 任务时长
-    const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes', keyTimes);
-    const distanceData = generateNumOrDistanceData(sourceData, 'taskDistance', keyDisatance);
+    let sourceData = { ...filterData };
+    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+
+    const statusData = generateDurationDataByTime(
+      sourceData,
+      'statusAllTime',
+      keyStatus,
+      true,
+      timeType,
+    ); // 状态时长
+    const taskdurationData = generateDurationDataByTime(
+      sourceData,
+      'taskAllTime',
+      keyTask,
+      false,
+      timeType,
+    ); // 任务时长
+    const taskNumData = generateNumOrDistanceData(sourceData, 'taskTimes', keyTimes, timeType);
+    const distanceData = generateNumOrDistanceData(
+      sourceData,
+      'taskDistance',
+      keyDisatance,
+      timeType,
+    );
     const actionPieData = generateActionPieData(sourceData, 'actionLoad', keyAction); //动作负载-pie
-    const actionBarData = generateActionBarData(sourceData, 'actionLoad', keyAction); //动作负载-bar
+    const actionBarData = generateActionBarData(sourceData, 'actionLoad', keyAction, timeType); //动作负载-bar
 
     if (statusData) {
       const { radiusAxis, series, legend } = statusData;
@@ -211,7 +238,7 @@ const HealthCar = (props) => {
     }
 
     // table数据
-    const { currentRobotData } = generateTableData(loadOriginData);
+    const { currentRobotData } = generateTableData(loadOriginData, selectedIds);
     setTableData(currentRobotData);
   }
 
@@ -231,6 +258,8 @@ const HealthCar = (props) => {
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
+
       const response = await fetchAGVload({
         startTime,
         endTime,
@@ -240,10 +269,6 @@ const HealthCar = (props) => {
       if (!dealResponse(response)) {
         let loadData = response?.AGVLoadData || {};
         const newLoadData = getDatBysortTime(loadData);
-
-        setLoadOriginData(newLoadData);
-        setFilterData(newLoadData);
-        setSelectedKeys([]);
 
         setKeyAction(response?.translate || {});
         setKeyStatus(generateStatus(response?.status));
@@ -265,10 +290,18 @@ const HealthCar = (props) => {
         setKeyDisatance({
           taskDistance: formatMessage({ id: 'reportCenter.agvload.taskDistance' }),
         });
+
+        setSelectedIds(getAllCellId(newLoadData, 'agvId'));
+        setLoadOriginData(newLoadData);
+        setFilterData(newLoadData);
+        setSelectedKeys([]);
       }
+
+      setLoading(false);
     }
   }
 
+  // 下载
   function generateEveryType(allData, type, keyData) {
     const typeResult = [];
     Object.keys(allData).forEach((key) => {
@@ -404,6 +437,12 @@ const HealthCar = (props) => {
     },
   ];
 
+  function filterDateOnChange(values) {
+    const { timeType, selectedIds } = values;
+    setSelectedIds(selectedIds);
+    setTimeType(timeType);
+  }
+
   return (
     <div className={commonStyles.commonPageStyle}>
       <HealthCarSearchForm
@@ -414,40 +453,47 @@ const HealthCar = (props) => {
       />
 
       <div className={style.body}>
-        <Row style={{ padding: 15 }}>
-          <Col span={12}>
-            <div id="load_statustimeHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_tasktimeHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Divider />
-          <Col span={12}>
-            <div id="load_actionPieHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_actionBarHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Divider />
-          <Col span={12}>
-            <div id="load_taskTimesHistory" style={{ minHeight: 340 }} />
-          </Col>
-          <Col span={12}>
-            <div id="load_taskDistanceHistory" style={{ minHeight: 340 }} />
-          </Col>
-        </Row>
-        <Row gutter={[26, 16]}>
-          <Col span={24}>
-            <Table
-              rowSelection={rowSelection}
-              columns={columns}
-              dataSource={tableData}
-              rowKey={'robotId'}
-              pagination={false}
-              scroll={{ y: 300 }}
-            />
-          </Col>
-        </Row>
+        <Spin spinning={loading}>
+          <FilterSearch
+            showCellId={false}
+            data={loadOriginData}
+            filterSearch={filterDateOnChange}
+          />
+          <Row style={{ padding: 15 }}>
+            <Col span={12}>
+              <div id="load_statustimeHistory" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_tasktimeHistory" style={{ minHeight: 340 }} />
+            </Col>
+            <Divider />
+            <Col span={12}>
+              <div id="load_actionPieHistory" style={{ minHeight: 380 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_actionBarHistory" style={{ minHeight: 380 }} />
+            </Col>
+            <Divider />
+            <Col span={12}>
+              <div id="load_taskTimesHistory" style={{ minHeight: 340 }} />
+            </Col>
+            <Col span={12}>
+              <div id="load_taskDistanceHistory" style={{ minHeight: 340 }} />
+            </Col>
+          </Row>
+          <Row gutter={[26, 16]}>
+            <Col span={24}>
+              <Table
+                rowSelection={rowSelection}
+                columns={columns}
+                dataSource={tableData}
+                rowKey={'robotId'}
+                pagination={false}
+                scroll={{ y: 300 }}
+              />
+            </Col>
+          </Row>
+        </Spin>
       </div>
     </div>
   );

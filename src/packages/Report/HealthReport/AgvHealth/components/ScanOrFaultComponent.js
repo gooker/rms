@@ -1,4 +1,4 @@
-import React, { useEffect, memo } from 'react';
+import React, { useEffect, memo, useState } from 'react';
 import { Row, Col } from 'antd';
 import echarts from 'echarts';
 import {
@@ -8,14 +8,32 @@ import {
   transformCodeData,
   noDataGragraphic,
 } from '@/packages/Report/components/GroundQrcodeEcharts';
+import FilterSearch from '@/packages/Report/components/FilterSearch';
+import { filterDataByParam } from '@/packages/Report/components/reportUtil';
 
 let codeHistoryLine = null; // 根据码号
 let timeHistoryLine = null; // 根据日期
 
 const ScanOrFaultComponent = (props) => {
-  const { codeDomId, dateDomId, chartTitle, chartSubTitle, originData, keyData, activeTab } = props;
+  const {
+    codeDomId,
+    dateDomId,
+    chartTitle,
+    chartSubTitle,
+    originData,
+    keyData,
+    activeTab,
+    originIds,
+  } = props;
 
-  useEffect(refreshChart, [originData, keyData, activeTab]);
+  const [timeType, setTimeType] = useState('hour');
+  const [selectedIds, setSelectedIds] = useState([]);
+
+  useEffect(() => {
+    setSelectedIds(originIds);
+  }, [originIds]);
+
+  useEffect(refreshChart, [originData, keyData, activeTab, timeType, selectedIds]);
 
   function initChart() {
     // 根据码号报表
@@ -41,9 +59,11 @@ const ScanOrFaultComponent = (props) => {
   function refreshChart() {
     initChart();
     if (!codeHistoryLine || !timeHistoryLine) return;
-    const sourceData = { ...originData };
+    let sourceData = { ...originData };
 
-    const currenTimeData = generateTimeData(sourceData, keyData);
+    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+
+    const currenTimeData = generateTimeData(sourceData, keyData, timeType);
     const currentCodeData = transformCodeData(sourceData, keyData, 'agvId');
 
     if (currentCodeData) {
@@ -71,10 +91,15 @@ const ScanOrFaultComponent = (props) => {
     }
   }
 
-
+  function filterDateOnChange(values) {
+    const { timeType, selectedIds } = values;
+    setSelectedIds(selectedIds);
+    setTimeType(timeType);
+  }
 
   return (
     <>
+      <FilterSearch showCellId={false} data={originData} filterSearch={filterDateOnChange} />
       <Row gutter={16}>
         <Col span={24}>
           {/* 按照码号 */}

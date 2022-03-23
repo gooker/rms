@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from 'react';
 import echarts from 'echarts';
-import { Row, Col } from 'antd';
+import { Row, Col, Divider, Spin } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
@@ -13,6 +13,7 @@ import {
   dealResponse,
 } from '@/utils/util';
 import { fetchCodeHealth } from '@/services/api';
+import FilterSearch from './FilterSearch';
 import QrcodeSearchForm from './QrcodeSearchForm';
 import {
   codeHistoryLineOption,
@@ -20,7 +21,9 @@ import {
   generateTimeData,
   transformCodeData,
   noDataGragraphic,
+  getAllCellId,
 } from './GroundQrcodeEcharts';
+import { filterDataByParam } from './reportUtil';
 import commonStyles from '@/common.module.less';
 import style from '../report.module.less';
 
@@ -34,19 +37,24 @@ const colums = {
 
 const QrCodeComponent = (props) => {
   const { codeDomId, dateDomId, chartTitle, codeType } = props;
+  const [loading, setLoading] = useState(false);
   const [originData, setOriginData] = useState({}); // 原始数据
   const [keyData, setKeyData] = useState({}); // 所有 {key:value}
 
+  const [timeType, setTimeType] = useState('hour');
+  const [selectedIds, setSelectedIds] = useState([]);
+
   useEffect(() => {
     async function initCodeData() {
-      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const defaultHour = moment().subtract(1, 'hours');
+      const startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
       submitSearch({ startTime, endTime });
     }
     initCodeData();
   }, []); // 默认一进来就有数据
 
-  useEffect(refreshChart, [originData]);
+  useEffect(refreshChart, [originData, timeType, selectedIds]);
 
   function initChart() {
     // 根据码号报表
@@ -77,10 +85,12 @@ const QrCodeComponent = (props) => {
   function refreshChart() {
     initChart();
     if (!codeHistoryLine || !timeHistoryLine) return;
-    const sourceData = { ...originData };
+    let sourceData = { ...originData };
 
-    const currenTimeData = generateTimeData(sourceData, keyData);
-    const currentCodeData = transformCodeData(sourceData, keyData);
+    sourceData = filterDataByParam(sourceData, selectedIds, 'cellId');
+
+    const currenTimeData = generateTimeData(sourceData, keyData, timeType); // 按日期
+    const currentCodeData = transformCodeData(sourceData, keyData); // 按码号
 
     if (currentCodeData) {
       const { yAxis, series, legend } = currentCodeData;
@@ -115,20 +125,27 @@ const QrCodeComponent = (props) => {
   async function submitSearch(value) {
     const { startTime, endTime } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
       const response = await fetchCodeHealth({ ...value, codeType });
       if (!dealResponse(response)) {
         const { qrCodeData = {}, translate } = response;
 
         const newQrCodeData = getDatBysortTime(qrCodeData);
-        setOriginData(newQrCodeData);
+        setSelectedIds(getAllCellId(newQrCodeData, 'cellId'));
         setKeyData(translate);
+        setOriginData(newQrCodeData);
       }
+      setLoading(false);
     }
   }
 
+  function filterDateOnChange(values) {
+    const { timeType, selectedIds } = values;
+    setSelectedIds(selectedIds);
+    setTimeType(timeType);
+  }
 
   // 下载数据
-
   function generateEveryType() {
     const typeResult = [];
     Object.entries(originData).forEach(([key, typeData]) => {
@@ -158,20 +175,24 @@ const QrCodeComponent = (props) => {
   }
 
   return (
-    <div className={commonStyles.commonPageStyle}>
+    <div className={commonStyles.commonPageStyle} style={{ padding: 12 }} key={'codeType'}>
       <QrcodeSearchForm search={submitSearch} exportData={exportData} />
 
       <div className={style.body}>
-        <Row gutter={16}>
-          <Col span={24}>
-            {/* 按照码号 */}
-            <div id={codeDomId} style={{ minHeight: 350 }} />
-          </Col>
-          <Col span={24} style={{ marginTop: 10 }}>
-            {/* 按照日期 */}
-            <div id={dateDomId} style={{ minHeight: 350 }} />
-          </Col>
-        </Row>
+        <Spin spinning={loading}>
+          <FilterSearch showCellId={true} data={originData} filterSearch={filterDateOnChange} />
+          <Row gutter={16}>
+            <Col span={24}>
+              {/* 按照码号 */}
+              <div id={codeDomId} style={{ minHeight: 350 }} />
+            </Col>
+            <Divider />
+            <Col span={24} style={{ marginTop: 10 }}>
+              {/* 按照日期 */}
+              <div id={dateDomId} style={{ minHeight: 350 }} />
+            </Col>
+          </Row>
+        </Spin>
       </div>
     </div>
   );

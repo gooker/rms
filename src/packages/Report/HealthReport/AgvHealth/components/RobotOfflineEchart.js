@@ -1,10 +1,14 @@
 import { isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
-import { labelColor,titleColor,getOriginalDataBycode } from '@/packages/Report/components/GroundQrcodeEcharts';
+import {
+  labelColor,
+  titleColor,
+  getOriginalDataBycode,
+} from '@/packages/Report/components/GroundQrcodeEcharts';
+import { filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const colors = ['#91CC75', '#89c7f2'];
-
 
 // Series
 export const trafficLabelOption = {
@@ -143,20 +147,20 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
       start: 0,
       end: 100,
     },
-    {
-      start: 0,
-      end: 100,
-      handleIcon:
-        'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
-      handleSize: '80%',
-      handleStyle: {
-        color: '#fff',
-        shadowBlur: 3,
-        shadowColor: 'rgba(0, 0, 0, 0.6)',
-        shadowOffsetX: 2,
-        shadowOffsetY: 2,
-      },
-    },
+    // {
+    //   start: 0,
+    //   end: 100,
+    //   handleIcon:
+    //     'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+    //   handleSize: '80%',
+    //   handleStyle: {
+    //     color: '#fff',
+    //     shadowBlur: 3,
+    //     shadowColor: 'rgba(0, 0, 0, 0.6)',
+    //     shadowOffsetX: 2,
+    //     shadowOffsetY: 2,
+    //   },
+    // },
   ],
   series: [], // 有几层数据 就放几层
 });
@@ -165,38 +169,40 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
  *根据原始数据 --处理日期数据(x轴:日期)-小车离线
  *translate {key:value}
  */
-export const generatOfflineDataByTime = (allData, translate) => {
-  const series = []; // 存放纵坐标数值
-  const xAxisData = Object.keys(allData).sort(); // 横坐标
-
-  const typeResult = [];
-  Object.entries(allData).forEach(([key, typeData]) => {
-    if (!isStrictNull(typeData)) {
-      let currentTime = {}; // 当前日期每个key 求和
-      typeData.forEach((record) => {
-        forIn(record, (value, parameter) => {
-          const _value = isStrictNull(value) ? 0 : value;
-          const existValue = currentTime[parameter] || 0;
-          currentTime[parameter] = existValue * 1 + _value * 1;
-        });
-      });
-      typeResult.push(currentTime);
-    }
-  });
-
+export const generatOfflineDataByTime = (allData, translate, timeType = 'hour') => {
   const keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
   const legendData = Object.keys(translate);
   legendData.map((item) => {
     keyDataMap.set(item, 0);
   });
 
+  const series = []; // 存放纵坐标数值
+  const xAxisData = filterNewXAixsTime(allData, timeType); // 横坐标
+
+  let keyResult = {}; //
+  xAxisData.map((item) => {
+    keyResult[item] = {};
+  });
+
+  Object.entries(allData).forEach(([key, typeData]) => {
+    if (!isStrictNull(typeData)) {
+      const idKey = getNewKey(key, timeType);
+      typeData.forEach((record) => {
+        forIn(record, (value, parameter) => {
+          const _value = isStrictNull(value) ? 0 : value;
+          const existValue = keyResult[idKey][parameter] || 0;
+          keyResult[idKey][parameter] = existValue * 1 + _value * 1;
+        });
+      });
+    }
+  });
+
   const currentSery = {};
-  typeResult.map((v) => {
-    forIn(v, (value, key) => {
-      if (keyDataMap.has(key)) {
-        let seryData = currentSery[key] || [];
-        currentSery[key] = [...seryData, value];
-      }
+  Object.entries(keyResult).forEach(([_, v]) => {
+    legendData.map((key) => {
+      const _value = v[key] || 0;
+      let seryData = currentSery[key] || [];
+      currentSery[key] = [...seryData, _value];
     });
   });
 
@@ -219,7 +225,7 @@ export const generatOfflineDataByTime = (allData, translate) => {
     },
     axisLabel: {
       fontSize: 12,
-      interval: 2,
+      interval: 0, // 间隔
       rotate: 20,
       color: labelColor,
     },

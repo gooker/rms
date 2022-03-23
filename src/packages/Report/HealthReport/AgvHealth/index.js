@@ -1,8 +1,8 @@
 import React, { useState, memo, useEffect } from 'react';
-import HealthCarSearchForm from '../../components/HealthCarSearchForm';
+import { Spin } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
-import { getDatBysortTime } from '@/packages/Report/components/GroundQrcodeEcharts';
+
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
 import {
@@ -12,6 +12,8 @@ import {
   formatMessage,
   isNull,
 } from '@/utils/util';
+import { getDatBysortTime, getAllCellId } from '@/packages/Report/components/GroundQrcodeEcharts';
+import HealthCarSearchForm from '../../components/HealthCarSearchForm';
 import ScanCodeComponent from './RobotScanCodeTab';
 import AgvOfflineComponent from './RobotOfflineTab';
 import RobotFaultComponent from './RobotFaultTab';
@@ -48,6 +50,8 @@ const TabSelectedStyle = {
 };
 
 const HealthCar = (props) => {
+  const [loading, setLoading] = useState(false);
+
   const [scanOriginData, setScanOriginData] = useState({}); // 原始数据 小车扫码
   const [offlineOriginData, setOfflineOriginData] = useState({}); // 原始数据 小车离线
   const [statuserrorOriginData, setStatuserrorOriginData] = useState({}); // 原始数据 状态错误
@@ -64,8 +68,9 @@ const HealthCar = (props) => {
 
   useEffect(() => {
     async function initCodeData() {
-      const startTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:00:00');
-      const endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
+      const defaultHour = moment().subtract(1, 'hours');
+      const startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
       submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
     }
     initCodeData();
@@ -113,6 +118,7 @@ const HealthCar = (props) => {
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
+      setLoading(true);
       const response = await fetchAGVHealth({
         startTime,
         endTime,
@@ -125,16 +131,17 @@ const HealthCar = (props) => {
         const newError = getDatBysortTime(response?.error ?? {});
         const newMalfunction = getDatBysortTime(response?.malfunction ?? {});
 
-        setScanOriginData(newCode);
-        setOfflineOriginData(newOffline);
-        setStatuserrorOriginData(newError);
-        setFaultOriginData(newMalfunction);
-
         setKeyCodeData(response?.codeTranslate ?? {});
         setKeyFaultData(getFaultKey(response?.errorCode ?? {})); // // 获取返回的故障码key;
         setKeyOfflineData(getOfflineKey());
         setKeyErrorData(getErrorKey());
+
+        setScanOriginData(newCode);
+        setOfflineOriginData(newOffline);
+        setStatuserrorOriginData(newError);
+        setFaultOriginData(newMalfunction);
       }
+      setLoading(false);
     }
   }
 
@@ -196,34 +203,40 @@ const HealthCar = (props) => {
         ))}
       </div>
       <div className={style.body}>
-        {activeTab === 'scan' && (
-          <ScanCodeComponent
-            originData={scanOriginData}
-            keyDataMap={keyCodeData}
-            activeTab={activeTab}
-          />
-        )}
-        {activeTab === 'offline' && (
-          <AgvOfflineComponent
-            originData={offlineOriginData}
-            keyDataMap={keyOfflineData}
-            activeTab={activeTab}
-          />
-        )}
-        {activeTab === 'statuserror' && (
-          <AgvErrorComponent
-            originData={statuserrorOriginData}
-            keyDataMap={keyErrorData}
-            activeTab={activeTab}
-          />
-        )}
-        {activeTab === 'fault' && (
-          <RobotFaultComponent
-            originData={faultOriginData}
-            keyDataMap={keyFaultData}
-            activeTab={activeTab}
-          />
-        )}
+        <Spin spinning={loading}>
+          {activeTab === 'scan' && (
+            <ScanCodeComponent
+              originData={scanOriginData}
+              originIds={getAllCellId(scanOriginData, 'agvId')}
+              keyDataMap={keyCodeData}
+              activeTab={activeTab}
+            />
+          )}
+          {activeTab === 'offline' && (
+            <AgvOfflineComponent
+              originData={offlineOriginData}
+              originIds={getAllCellId(offlineOriginData, 'agvId')}
+              keyDataMap={keyOfflineData}
+              activeTab={activeTab}
+            />
+          )}
+          {activeTab === 'statuserror' && (
+            <AgvErrorComponent
+              originData={statuserrorOriginData}
+              originIds={getAllCellId(statuserrorOriginData, 'agvId')}
+              keyDataMap={keyErrorData}
+              activeTab={activeTab}
+            />
+          )}
+          {activeTab === 'fault' && (
+            <RobotFaultComponent
+              originData={faultOriginData}
+              originIds={getAllCellId(faultOriginData, 'agvId')}
+              keyDataMap={keyFaultData}
+              activeTab={activeTab}
+            />
+          )}
+        </Spin>
       </div>
     </div>
   );

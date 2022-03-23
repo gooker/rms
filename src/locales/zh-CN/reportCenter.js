@@ -65,6 +65,9 @@ export default {
   'reportCenter.taskload.pickingWorkstation': '拣选工作站任务作业负载',
   'reportCenter.time.required': '请选择时间',
   'reportCenter.noData': '暂无数据',
+  'reportCenter.hour': '时',
+  'reportCenter.day': '日',
+  'reportCenter.month': '月',
 
 
 };

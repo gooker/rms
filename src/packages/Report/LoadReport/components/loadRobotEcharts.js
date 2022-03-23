@@ -1,11 +1,8 @@
 import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull } from 'lodash';
 import { AgvStateColor } from '@/config/consts';
-import {
-  labelColor,
-  getAllCellId,
-  titleColor,
-} from '@/packages/Report/components/GroundQrcodeEcharts';
+import { labelColor, titleColor } from '@/packages/Report/components/GroundQrcodeEcharts';
+import { filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
 import moment from 'moment';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -65,14 +62,15 @@ export const actionPieOption = (title, keyMap) => ({
 // 动作负载-柱状图 横坐标是日期
 export const actionBarOption = (title, keyMap) => ({
   title: {
-    text: '',
-    subtext: '',
+    text: title,
+    subtext: '按天',
     subTextStyle: {
       fontWeight: 'bold',
       color: titleColor,
       fontSize: 16,
     },
-    left: 'center',
+    x: 'center',
+    y: 'top',
   },
   tooltip: {
     confine: true,
@@ -101,14 +99,16 @@ export const actionBarOption = (title, keyMap) => ({
     },
   },
   legend: {
-    right: 0,
-    top: 0,
-    bottom: 0,
+    // right: 0,
+    top: 110,
+    // bottom: 0,
+    // left: 5,
+    // orient: 'vertical',
   },
   grid: {
-    top: '8%',
-    left: '6%',
-    right: '2%',
+    // top: '2%',
+    left: '2%',
+    right: '10%',
     containLabel: true,
   },
 
@@ -147,6 +147,11 @@ export const actionBarOption = (title, keyMap) => ({
     splitArea: {
       show: false,
     },
+    // axisLabel: {
+    //   formatter: function (value) {
+    //     return MinuteFormat(value);
+    //   },
+    // },
   },
   series: [], // 有几层数据 就放几层
 });
@@ -299,15 +304,28 @@ export const taskLineOption = (title, keyMap) => ({
 });
 
 /*
- *根据原始数据 --x日期数据- 数值:任务时长 状态时长
+ *根据原始数据 --x日期数据- y数值:任务时长 状态时长
  *@param allData-源数据
  *@param type-用于从源数据中取报表对应的数据
  *@param translate-报表的legend {key:value}
  *@param colorFlag-目前只有状态时长传true
+ @param  timeType--(x轴：日期) 显示是按日/月/小时
  */
-export const generateDurationDataByTime = (allData, type, translate, colorFlag) => {
+export const generateDurationDataByTime = (
+  allData,
+  type,
+  translate,
+  colorFlag,
+  timeType = 'hour',
+) => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData, legendData } = sumloadData(allData, type, translate, 'average');
+  const { currentSery, xAxisData, legendData } = sumloadData(
+    allData,
+    type,
+    translate,
+    timeType,
+    'average',
+  );
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
       ...commonOption,
@@ -330,7 +348,6 @@ export const generateDurationDataByTime = (allData, type, translate, colorFlag) 
     },
     splitArea: {
       show: true,
-      interval: 0,
     },
     data: xAxisData,
     z: 10,
@@ -358,9 +375,9 @@ export const generateDurationDataByTime = (allData, type, translate, colorFlag) 
 };
 
 // 根据原始数据--x日期 y:数值 任务次数 任务距离
-export const generateNumOrDistanceData = (allData, type, translate) => {
+export const generateNumOrDistanceData = (allData, type, translate, timeType = 'hour') => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData } = sumloadData(allData, type, translate);
+  const { currentSery, xAxisData } = sumloadData(allData, type, translate, timeType);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -464,9 +481,9 @@ export const generateActionPieData = (allData, type, translate) => {
 };
 
 // 运动动作负载-bar  x:日期 y:数值 比如:无动作 顶升 下降
-export const generateActionBarData = (allData, type, translate) => {
+export const generateActionBarData = (allData, type, translate, timeType = 'hour') => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData } = sumloadData(allData, type, translate);
+  const { currentSery, xAxisData } = sumloadData(allData, type, translate, timeType);
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -502,28 +519,47 @@ export const generateActionBarData = (allData, type, translate) => {
     formatter: function (name) {
       return translate[name];
     },
+    top: 8,
+    right: 5,
+    orient: 'vertical',
     animation: true,
   };
 
   return { xAxis, series, legend };
 };
 
-export const sumloadData = (allData, type, translate, average) => {
-  const xAxisData = Object.keys(allData).sort(); // 横坐标-日期
+/*
+ * 小车负载/任务负载 调用
+ **/
+export const sumloadData = (allData, type, translate, timeType, average) => {
+  const legendData = Object.keys(translate);
+  const keyDataMap = new Map(); // 存放key 比如充电 空闲等的求和
+  legendData.map((item) => {
+    keyDataMap.set(item, 0);
+  });
 
-  const typeResult = [];
+  const xAxisData = filterNewXAixsTime(allData, timeType); // 横坐标-日期
+
+  let keyResult = {};
+  xAxisData.map((item) => {
+    keyResult[item] = {};
+  });
+
   Object.entries(allData).forEach(([key, typeData]) => {
     if (!isStrictNull(typeData)) {
+      const idKey = getNewKey(key, timeType);
       let currentTime = {}; // 当前日期key 求和
       typeData.forEach((record) => {
-        let _record = { ...record };
+        let _record = {};
         if (!isNull(type)) {
           _record = { ...record[type] };
         }
         forIn(_record, (value, parameter) => {
-          const _value = isStrictNull(value) ? 0 : value;
-          const existValue = currentTime[parameter] || 0;
-          currentTime[parameter] = existValue * 1 + _value * 1;
+          if (legendData.includes(parameter)) {
+            const _value = isStrictNull(value) ? 0 : value;
+            const existValue = currentTime[parameter] || 0;
+            currentTime[parameter] = existValue * 1 + _value * 1;
+          }
         });
       });
 
@@ -539,32 +575,33 @@ export const sumloadData = (allData, type, translate, average) => {
         newTimes = currentTime;
       }
 
-      typeResult.push(newTimes);
+      forIn(newTimes, (value, parameter) => {
+        const _value = isStrictNull(value) ? 0 : value;
+        const existValue = keyResult[idKey][parameter] || 0;
+        keyResult[idKey][parameter] = Number.parseFloat((existValue * 1 + _value * 1).toFixed(3));
+      });
     }
   });
 
-  const legendData = Object.keys(translate);
-  const keyDataMap = new Map(); // 存放key 比如充电 空闲等的求和
-
-  legendData.map((item) => {
-    keyDataMap.set(item, 0);
-  });
-
   const currentSery = {};
-  typeResult.map((v) => {
-    forIn(v, (value, key) => {
-      if (keyDataMap.has(key)) {
-        let seryData = currentSery[key] || [];
-        currentSery[key] = [...seryData, value];
-      }
+
+  Object.values(keyResult).map((v, index) => {
+    legendData.map((key) => {
+      const _value = v[key] || 0;
+      let seryData = currentSery[key] || [];
+      currentSery[key] = [...seryData, _value];
     });
   });
+
   return { currentSery, xAxisData, legendData };
 };
 
 // table数据--根据agvId
-export const generateTableData = (originalData = {}) => {
-  const currentAxisData = getAllCellId(originalData, 'agvId');
+export const generateTableData = (originalData = {}, agvData = []) => {
+  const currentAxisData = [...agvData];
+  if (currentAxisData?.length === 0) {
+    return {};
+  }
   let _key = {
     taskDistance: 'taskDistance',
     statusAllTime: 'Charging',
@@ -582,23 +619,25 @@ export const generateTableData = (originalData = {}) => {
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
       const { agvId, robotType } = item;
-      currentCellIdData[agvId]['robotType'] = robotType;
-      currentCellIdData[agvId]['agvId'] = agvId;
-      forIn(item, (value, key) => {
-        if (firstTimeDataMap.has(key)) {
-          let seryData = currentCellIdData[agvId][key] || 0;
-          if (_key[key]) {
-            let currentKey = _key[key];
-            currentCellIdData[agvId][key] = seryData * 1 + value[currentKey] * 1;
-          } else {
-            let _sum = 0;
-            forIn(value, (val2, k2) => {
-              _sum += val2;
-            });
-            currentCellIdData[agvId][key] = seryData * 1 + _sum * 1;
+      if (currentAxisData.includes(agvId)) {
+        currentCellIdData[agvId]['robotType'] = robotType;
+        currentCellIdData[agvId]['agvId'] = agvId;
+        forIn(item, (value, key) => {
+          if (firstTimeDataMap.has(key)) {
+            let seryData = currentCellIdData[agvId][key] || 0;
+            if (_key[key]) {
+              let currentKey = _key[key];
+              currentCellIdData[agvId][key] = seryData * 1 + (value[currentKey] ?? 0) * 1;
+            } else {
+              let _sum = 0;
+              forIn(value, (val2, k2) => {
+                _sum += val2;
+              });
+              currentCellIdData[agvId][key] = seryData * 1 + _sum * 1;
+            }
           }
-        }
-      });
+        });
+      }
     });
   });
   const currentRobotData = Object.values(currentCellIdData);
@@ -641,6 +680,9 @@ export const formatNumber = (n) => {
  * */
 
 export const MinuteFormat = (value) => {
+  if (value === 0) {
+    return 0;
+  }
   const d = moment.duration(value, 'seconds');
   let currentValue = '';
   if (Math.floor(d.asDays()) > 0) {
@@ -656,5 +698,4 @@ export const MinuteFormat = (value) => {
     currentValue += d.seconds() + formatMessage({ id: 'app.time.seconds' });
   }
   return currentValue;
-  // const currentValue = Math.floor(d.asDays()) + '天' + d.hours() + '时' + d.minutes() + '分';
 };
