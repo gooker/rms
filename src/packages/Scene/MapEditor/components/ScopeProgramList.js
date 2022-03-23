@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Divider, Popconfirm, Row, Col } from 'antd';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
-import styles2 from '../popoverPanel.module.less';
+import styles2 from '../../popoverPanel.module.less';
 import { formatMessage } from '@/utils/util';
 
 const LabelStyle = {

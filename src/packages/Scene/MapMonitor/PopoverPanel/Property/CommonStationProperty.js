@@ -176,7 +176,7 @@ const CommonStationProperty = (props) => {
               return (
                 <>
                   <Row key={`${type}-${value}`}>
-                    <Col>{formatMessage({ id: `app.module.${type}` })}:</Col>
+                    <Col>{formatMessage({ id: `app.agvType.${type}` })}:</Col>
                     <Col style={{ marginLeft: 10 }}>
                       {value.length > 0
                         ? value.map((id) => {

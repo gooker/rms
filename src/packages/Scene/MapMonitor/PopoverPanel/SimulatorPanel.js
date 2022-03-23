@@ -1,16 +1,15 @@
-import React, { memo, useState, useEffect } from 'react';
-import classnames from 'classnames';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Row, Switch, Col, Select, Button, Divider, Table, message } from 'antd';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Button, Divider, message, Select, Switch } from 'antd';
+import { LeftOutlined, ReloadOutlined, RightOutlined, SettingOutlined } from '@ant-design/icons';
 import {
-  openSimulator,
   closeSimulator,
+  fetchCloseAgv,
+  fetchOpenAGV,
+  fetchRunAGV,
   fetchSimulatorErrorMessage,
   fetchStopAGV,
-  fetchRunAGV,
-  fetchOpenAGV,
-  fetchCloseAgv,
+  openSimulator,
 } from '@/services/monitor';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
@@ -19,8 +18,11 @@ import AddSimulatorAgv from '../Modal/Simulator/AddSimulatorAgv';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
 import SimulatorError from '../Modal/Simulator/SimulatorError';
 import { AGVType } from '@/config/config';
-import { formatMessage, convertToUserTimezone, dealResponse } from '@/utils/util';
-import styles from '../monitorLayout.module.less';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
+import simulatorStyle from './simulator.module.less';
+import styles from '@/packages/Scene/popoverPanel.module.less';
+import commonStyles from '@/common.module.less';
+import TableWithPages from '@/components/TableWithPages';
 
 const size = 'small';
 
@@ -34,6 +36,7 @@ const SimulatorPanel = (props) => {
     loading,
     robotTypes,
   } = props;
+
   const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
   const [configurationVisible, setConfigurationVisible] = useState(false); // 配置
@@ -56,19 +59,33 @@ const SimulatorPanel = (props) => {
       title: 'ID',
       dataIndex: 'robotId',
       align: 'center',
-      width: '50',
     },
     {
       title: formatMessage({ id: 'app.common.type' }),
       dataIndex: 'robotType',
       align: 'center',
-      width: '50',
+      render: (text) => formatMessage({ id: `app.agvType.${text}` }),
     },
+    {
+      title: formatMessage({ id: 'monitor.simulator.list.movable' }),
+      dataIndex: 'canMove',
+      align: 'center',
+      render: (text, record) => (
+        <Switch
+          checked={text || false}
+          onChange={(checked) => {
+            changeAgvRunTask(record.robotId, checked);
+          }}
+        />
+      ),
+    },
+  ];
+
+  const expandColumns = [
     {
       title: formatMessage({ id: 'monitor.simulator.list.snapStop' }),
       dataIndex: 'isStop',
       align: 'center',
-      width: '80',
       render: (text) => {
         if (text) {
           return formatMessage({ id: 'monitor.simulator.list.snapStop' });
@@ -80,7 +97,6 @@ const SimulatorPanel = (props) => {
       title: formatMessage({ id: 'app.common.status' }),
       dataIndex: 'isOpen',
       align: 'center',
-      width: '80',
       render: (text, record) => {
         const { isOpen } = record;
         if (isOpen) {
@@ -89,24 +105,9 @@ const SimulatorPanel = (props) => {
         return formatMessage({ id: 'monitor.simulator.action.shutDown' });
       },
     },
-    {
-      title: formatMessage({ id: 'monitor.simulator.list.movable' }),
-      dataIndex: 'canMove',
-      align: 'center',
-      width: '100',
-      render: (text, record) => (
-        <Switch
-          checked={text || false}
-          checkedChildren={formatMessage({ id: 'monitor.simulator.list.movable' })}
-          unCheckedChildren={formatMessage({ id: 'monitor.simulator.list.unMovable' })}
-          onChange={(checked) => {
-            changeAgvRunTask(record.robotId, checked);
-          }}
-        />
-      ),
-    },
   ];
 
+  // 开启 & 关闭模拟器
   async function changeSimulatorStatus(status) {
     if (status) {
       const response = await openSimulator();
@@ -175,7 +176,7 @@ const SimulatorPanel = (props) => {
     }
   }
 
-  // 判断visible是不是有一个为true
+  // 判断是否打开了二级菜单
   function isExistVisibleDisplay() {
     return addVisit || addPodVisible || errorVisible;
   }
@@ -187,21 +188,11 @@ const SimulatorPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 330 }} className={classnames(styles.popoverPanel)}>
+    <div style={{ height, width: 330 }} className={commonStyles.categoryPanel}>
       {renderContent()}
 
       {/* 标题栏 */}
-      <div
-        style={{
-          height: 40,
-          lineHeight: '40px',
-          paddingLeft: 13,
-          color: '#fff',
-          fontSize: '16px',
-          background: '#051c28',
-          borderBottom: '1px solid #6c6c6c',
-        }}
-      >
+      <div>
         {isExistVisibleDisplay() ? (
           <LeftOutlined style={{ cursor: 'pointer', marginRight: 5 }} onClick={closeVisible} />
         ) : null}
@@ -215,8 +206,8 @@ const SimulatorPanel = (props) => {
         </span>
       </div>
 
-      <div style={{ marginLeft: 6, overflow: 'auto' }}>
-        {addVisit || addPodVisible || errorVisible ? (
+      <div>
+        {isExistVisibleDisplay() ? (
           <div style={{ marginTop: 20 }}>
             {addVisit && (
               <AddSimulatorAgv
@@ -247,54 +238,52 @@ const SimulatorPanel = (props) => {
         ) : (
           <>
             {/* 模拟器开关  */}
-            <Row style={{ margin: '10px 0px' }}>
-              <span>
-                <span style={{ marginRight: 10 }}>
+            <div className={styles.panelBlockBase}>
+              <div className={simulatorStyle.simulatorSwitch}>
+                <span style={{ marginRight: 10 }} className={commonStyles.popoverFontColor}>
                   <FormattedMessage id="monitor.right.simulator" />:
                 </span>
                 <Switch
+                  size={size}
+                  loading={loading}
                   onChange={changeSimulatorStatus}
                   checked={simulatorConfig.openSimulator}
-                  loading={loading}
-                  size={size}
                 />
-              </span>
-              <span>
-                <span style={{ marginLeft: 20 }}>
-                  <span>
-                    {convertToUserTimezone(simulatorConfig.timeStamp).format('MM-DD HH:mm')}
-                  </span>
-                  <span style={{ marginLeft: 10 }}>{simulatorConfig.createdByUser}</span>
+                <span style={{ marginLeft: 15 }} className={commonStyles.popoverFontColor}>
+                  {convertToUserTimezone(simulatorConfig.timeStamp).format('MM-DD HH:mm')}
+                  <span style={{ marginLeft: 10 }}>{simulatorConfig.updatedByUser}</span>
                 </span>
-              </span>
-            </Row>
+                <span style={{ margin: '3px 0 0 15px', color: '#fff', cursor: 'pointer' }}>
+                  <ReloadOutlined onClick={init} />
+                </span>
+              </div>
+            </div>
 
             {/* allType && 配置 */}
-            <Row style={{ margin: '10px 0px' }}>
-              <Col span={20}>
-                <Row>
-                  <span style={{ marginRight: 8 }}>
-                    <FormattedMessage id="app.agv.type" />:
-                  </span>
-                  <Select
-                    size={size}
-                    value={currentRobotType}
-                    style={{ width: '70%' }}
-                    onChange={(value) => {
-                      setCurrentRobotType(value);
-                    }}
-                  >
-                    {robotTypes.map((record) => (
-                      <Select.Option value={record} key={record}>
-                        {record}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Row>
-              </Col>
-              <Col span={4} style={{ textAlign: 'end' }}>
-                <Button
+            <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
+              <div style={{ padding: '0 0 0px 5px' }}>
+                <span
+                  style={{ marginRight: 10, fontWeight: 600, fontSize: 15 }}
+                  className={commonStyles.popoverFontColor}
+                >
+                  <FormattedMessage id="app.agv.type" />:
+                </span>
+                <Select
                   size={size}
+                  style={{ width: '60%' }}
+                  value={currentRobotType}
+                  onChange={(value) => {
+                    setCurrentRobotType(value);
+                  }}
+                >
+                  {robotTypes.map((record) => (
+                    <Select.Option value={record} key={record}>
+                      {record}
+                    </Select.Option>
+                  ))}
+                </Select>
+                <SettingOutlined
+                  style={{ color: '#fff', fontSize: 17, marginLeft: 10 }}
                   onClick={() => {
                     dispatch({
                       type: 'simulator/fetchSimulatorGetAGVConfig',
@@ -305,39 +294,34 @@ const SimulatorPanel = (props) => {
                       },
                     });
                   }}
+                />
+              </div>
+
+              {/* 小车添加 & 刷新 */}
+              <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
+                <Button
+                  size={size}
+                  onClick={() => {
+                    setAddVisit(true);
+                  }}
                 >
-                  <FormattedMessage id="monitor.simulator.config" />
+                  <FormattedMessage id="app.button.add" />
+                  <FormattedMessage id={'app.agv'} />
                 </Button>
-              </Col>
-            </Row>
+                <Button
+                  size={size}
+                  onClick={() => {
+                    setAddPodVisible(true);
+                  }}
+                  style={{ marginLeft: '5px' }}
+                >
+                  <FormattedMessage id="monitor.simulator.action.batchAddPods" />
+                </Button>
+              </div>
+            </div>
 
-            {/* 小车添加 & 刷新 */}
-            <Row style={{ margin: '10px 0px' }}>
-              <Button
-                size={size}
-                onClick={() => {
-                  setAddVisit(true);
-                }}
-              >
-                <FormattedMessage id="app.button.add" />
-              </Button>
-              <Button size={size} onClick={init} style={{ margin: '0px 10px' }}>
-                <FormattedMessage id="app.button.refresh" />
-              </Button>
-              <Button
-                size={size}
-                onClick={() => {
-                  setAddPodVisible(true);
-                }}
-                style={{ marginLeft: '5px' }}
-              >
-                <FormattedMessage id="monitor.simulator.action.batchAddPods" />
-              </Button>
-            </Row>
-
-            <Divider style={{ margin: '12px 0' }} />
             {/* 小车操作 */}
-            <Row>
+            <div style={{ marginTop: 10 }} className={styles.panelBlockBase}>
               <Button
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 disabled={selectedRowKeys.length === 0}
@@ -423,11 +407,8 @@ const SimulatorPanel = (props) => {
               >
                 <FormattedMessage id="app.common.Error" />
               </Button>
-            </Row>
-            <Divider style={{ margin: '12px 0' }} />
-
-            {/* 小车列表 */}
-            <Row>
+              <Divider style={{ margin: '10px 0 12px 0', background: '#c5c5c5' }} />
+              {/* 小车列表 */}
               <Select
                 size={size}
                 allowClear
@@ -448,22 +429,23 @@ const SimulatorPanel = (props) => {
                   );
                 })}
               </Select>
-              <Table
+              <TableWithPages
+                bordered
                 size={size}
-                dataSource={simulatorAgvList}
-                rowKey={(record) => record.robotId}
                 loading={loading}
                 columns={columns}
+                expandColumns={expandColumns}
+                dataSource={simulatorAgvList}
+                rowKey={(record) => record.robotId}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
                   onChange: (selectRowKey, selectRow) => {
                     setSelectedRowKeys(selectRowKey);
                   },
                 }}
-                scroll={{ y: 450 }}
                 pagination={false}
               />
-            </Row>
+            </div>
           </>
         )}
       </div>

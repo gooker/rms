@@ -134,7 +134,6 @@ export default {
   'monitor.simulator.action.bootUp': '开机',
   'monitor.simulator.list.snapStop': '急停',
   'monitor.simulator.list.movable': '可动',
-  'monitor.simulator.list.unMovable': '不可动',
 
   'monitor.controller.toRest.success': '回休息区命令发送成功',
   'monitor.controller.toRest.fail': '回休息区命令发送失败',

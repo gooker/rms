@@ -3,7 +3,7 @@ import { Form, Select, InputNumber, Button } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../popoverPanel.module.less';
+import styles from '../../popoverPanel.module.less';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 
 const AdjustCellSpace = (props) => {

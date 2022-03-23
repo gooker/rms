@@ -156,7 +156,7 @@ const HealthCar = (props) => {
           currentTime.agvId = record.agvId;
           currentTime[colums.time] = key;
           if (record?.robotType) {
-            currentTime.robotType = formatMessage({ id: `app.module.${record.robotType}` });
+            currentTime.robotType = formatMessage({ id: `app.agvType.${record.robotType}` });
           }
 
           forIn(_record, (value, parameter) => {

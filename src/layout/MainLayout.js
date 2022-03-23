@@ -10,14 +10,7 @@ import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
-import {
-  sleep,
-  isNull,
-  isStrictNull,
-  dealResponse,
-  formatMessage,
-  getPlateFormType,
-} from '@/utils/util';
+import { isNull, isStrictNull, dealResponse, formatMessage, getPlateFormType } from '@/utils/util';
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
@@ -27,6 +20,7 @@ import { handleNameSpace } from '@/utils/init';
 @connect(({ global, user }) => ({
   textureLoaded: global.textureLoaded,
   currentUser: user.currentUser,
+  currentSection: user.currentSection,
 }))
 class MainLayout extends React.Component {
   notificationQueue = [];
@@ -56,7 +50,7 @@ class MainLayout extends React.Component {
           const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
           // 先验证授权
           const granted = await this.validateAuthority();
-          if (!granted && userInfo.username !== 'admin') {
+          if (!granted) {
             history.push('/login');
           } else {
             // 判断当前平台类型
@@ -80,10 +74,9 @@ class MainLayout extends React.Component {
               socketClient.registerNotificationQuestion((message) => {
                 // 如果关闭提示，就直接不拉取接口
                 const sessionValue = window.sessionStorage.getItem('showErrorNotification');
-                const showErrorNotification =
-                  sessionValue === null ? true : JSON.parse(sessionValue);
+                const showErrorNotification = isNull(sessionValue) ? true : sessionValue === 'true';
                 if (!showErrorNotification) return;
-                this.showSystemProblem(message, currentSection);
+                this.showSystemAlert(message);
               });
               await dispatch({ type: 'global/saveSocketClient', payload: socketClient });
 
@@ -118,9 +111,6 @@ class MainLayout extends React.Component {
                 dispatch({ type: 'global/updateAlertCount', payload: value });
               });
             }
-
-            // 登录仪式感
-            await sleep(500);
             this.setState({ appReady: true });
           }
         } catch (error) {
@@ -150,7 +140,8 @@ class MainLayout extends React.Component {
     history.push('/login');
   };
 
-  showSystemProblem = async (message, currentSection) => {
+  showSystemAlert = async (message) => {
+    const { currentSection } = this.props;
     const { errorCountNumber, hasNewError, alertCenter } = message;
     if (hasNewError) {
       const response = await fetchGetProblemDetail(alertCenter.id);

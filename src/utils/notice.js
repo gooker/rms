@@ -36,7 +36,7 @@ export default function notice(message, sectionId, notificationQueue) {
     const { robotType, agvId, id, taskId, updateTime, alertType, alertItemList } = problemHandling;
     if (hasNewError) {
       // 浏览器级别提醒
-      const agvTypeName = formatMessage({ id: `app.module.${robotType}` });
+      const agvTypeName = formatMessage({ id: `app.agvType.${robotType}` });
       const content = `${agvTypeName} #${agvId} ${formatMessage({
         id: 'app.notification.reportProblem',
       })}`;
@@ -99,7 +99,7 @@ export default function notice(message, sectionId, notificationQueue) {
         duration: 10,
         onClose: () => closeNotification(key, notificationQueue),
         description: notificationContent,
-        message: <span>{formatMessage({ id: `app.module.${alertType}` })}</span>,
+        message: <span>{formatMessage({ id: `app.agvType.${alertType}` })}</span>,
       });
     }
   }
