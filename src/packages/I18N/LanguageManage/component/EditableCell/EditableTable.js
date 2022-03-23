@@ -1,14 +1,15 @@
 import React, { memo } from 'react';
 import { Table } from 'antd';
 import EditableCell from './EditableCell';
+import { formatMessage } from '@/utils/util';
 import styles from './editableTable.module.less';
 
 const EditableTable = (props) => {
-  const { value, columns, onChange, loading } = props;
+  const { value, columns, onChange, loading,pagination,handlePagination } = props;
 
   function generateColumns() {
     if (Array.isArray(columns) && columns.length > 0) {
-      return columns.map(({ title,field, disabled = false, fixed = false }) => ({
+      return columns.map(({ title, field, disabled = false, fixed = false }) => ({
         title: title,
         dataIndex: field,
         align: 'center',
@@ -30,7 +31,11 @@ const EditableTable = (props) => {
     }
     return [];
   }
-  
+
+  function handleTableChange({ current, pageSize }) {
+    handlePagination({current, pageSize });
+  }
+
   return (
     <div className={styles.editableTable}>
       <Table
@@ -42,6 +47,12 @@ const EditableTable = (props) => {
           return record.languageKey;
         }}
         scroll={{ x: 'max-content' }}
+        pagination={{
+          ...pagination,
+          showTotal: (total) =>
+            `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
+        }}
+        onChange={handleTableChange}
       />
     </div>
   );

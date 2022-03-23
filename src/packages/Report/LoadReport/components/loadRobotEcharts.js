@@ -530,6 +530,11 @@ export const generateActionBarData = (allData, type, translate, timeType = 'hour
 
 /*
  * 小车负载/任务负载 调用
+ *@param allData-源数据
+ *@param type-用于从源数据中取报表对应的数据
+ *@param translate-报表的legend {key:value}
+ *@param  timeType--(x轴：日期) 显示是按日/月/小时
+ *@param  average--(求平均值) 目前状态时长和任务时长 需要求平均值
  **/
 export const sumloadData = (allData, type, translate, timeType, average) => {
   const legendData = Object.keys(translate);

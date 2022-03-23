@@ -1,9 +1,9 @@
 // @有重复
 export default {
-  'translator.languageManage.displayMode': '显示模式',
+  'translator.languageManage.displayMode': '显示方式',
   'translator.languageManage.merge': '合并',
-  'translator.languageManage.standard': '标准模式',
-  'translator.languageManage.custom': '自定义模式',
+  'translator.languageManage.standard': '标准',
+  'translator.languageManage.custom': '自定义',
   'translator.languageManage.unsaved': '未保存',
   'translator.languageManage.enterSearchKeywords': '输入搜索关键字',
   'translator.languageManage.onlyShowMissing': '仅显示缺少翻译的条目',

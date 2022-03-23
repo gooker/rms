@@ -37,7 +37,7 @@ const { Item: FormItem } = Form;
 class LanguageManage extends React.Component {
   state = {
     StandardFE: [], // 前端原始数据
-    displayMode: 'merge',
+    displayMode: ['custom', 'standard'],
     appCode: 'FE',
 
     loading: false,
@@ -55,6 +55,10 @@ class LanguageManage extends React.Component {
     editList: {},
     filterValue: null,
     showMissingTranslate: false,
+    pagination: {
+      pageSize: 10,
+      current: 1,
+    },
   };
 
   componentDidMount() {
@@ -73,6 +77,13 @@ class LanguageManage extends React.Component {
           languageMap = require(`@/locales/${code}`)?.default;
         } catch (error) {
           languageMap = {};
+        }
+        // 当前语言没有翻译，可以直接从zh-CN拿key
+        if (Object.keys(languageMap).length === 0) {
+          const zhKeyMap = require(`@/locales/zh-CN`)?.default;
+          Object.entries(zhKeyMap).map(([key, value]) => {
+            languageMap[key] = '';
+          });
         }
         StandardFE.push({ languageKey: code, languageMap });
       });
@@ -124,8 +135,15 @@ class LanguageManage extends React.Component {
 
   onModeChange = (e) => {
     this.setState({
-      displayMode: e.target.value,
+      displayMode: e,
     });
+  };
+
+  isMerge = (mode) => {
+    if (mode.includes('standard') && mode.includes('custom')) {
+      return true;
+    }
+    return false;
   };
 
   tableColumns = () => {
@@ -142,7 +160,7 @@ class LanguageManage extends React.Component {
         columns.push({
           title: record,
           field: record,
-          disabled: displayMode === 'merge' ? false : true,
+          disabled: this.isMerge(displayMode) ? false : true,
         });
       });
     }
@@ -152,18 +170,18 @@ class LanguageManage extends React.Component {
   generateData = () => {
     const { displayMode, standardData, customData, mergeData, editList } = this.state;
     let allShowData = [];
-    if (displayMode === 'merge') {
+    if (this.isMerge(displayMode)) {
       allShowData = mergeData;
-    } else if (displayMode === 'standard') {
+    } else if (displayMode.toString() === 'standard') {
       allShowData = standardData;
-    } else {
+    } else if (displayMode.toString() === 'custom') {
       allShowData = customData;
     }
 
     const showData_ = [...allShowData].map((record, index) => {
       let _record = { ...record };
       if (
-        displayMode === 'merge' &&
+        this.isMerge(displayMode) &&
         editList &&
         Object.keys(editList).includes(record.languageKey)
       ) {
@@ -331,7 +349,10 @@ class LanguageManage extends React.Component {
         },
       });
     } else {
-      this.setState({ appCode: value }, this.getTranslateList);
+      this.setState(
+        { appCode: value, pagination: { pageSize: 10, current: 1 } },
+        this.getTranslateList,
+      );
     }
   };
 
@@ -364,6 +385,7 @@ class LanguageManage extends React.Component {
       showMissingTranslate,
       editList,
       loading,
+      pagination,
     } = this.state;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
@@ -514,17 +536,20 @@ class LanguageManage extends React.Component {
               label={<FormattedMessage id="translator.languageManage.displayMode" />}
               width={'100%'}
             >
-              <Radio.Group onChange={this.onModeChange} value={displayMode}>
-                <Radio value="merge">
-                  <FormattedMessage id="translator.languageManage.merge" />
-                </Radio>
-                <Radio value="standard">
+              <Checkbox.Group onChange={this.onModeChange} value={displayMode}>
+                <Checkbox
+                  value="standard"
+                  disabled={displayMode.length === 1 && displayMode.toString() === 'standard'}
+                >
                   <FormattedMessage id="translator.languageManage.standard" />
-                </Radio>
-                <Radio value="custom">
+                </Checkbox>
+                <Checkbox
+                  value="custom"
+                  disabled={displayMode.length === 1 && displayMode.toString() === 'custom'}
+                >
                   <FormattedMessage id="translator.languageManage.custom" />
-                </Radio>
-              </Radio.Group>
+                </Checkbox>
+              </Checkbox.Group>
             </FormItem>
           </Col>
           <Col>
@@ -544,6 +569,10 @@ class LanguageManage extends React.Component {
           value={filterLanguage}
           columns={this.tableColumns()}
           onChange={this.updateEditList}
+          pagination={pagination}
+          handlePagination={(value) => {
+            this.setState({ pagination: value });
+          }}
         />
 
         {/*新增语言  */}
