@@ -539,7 +539,7 @@ class DashboardComponent extends PureComponent {
 
         <div id="carStatePie" style={{ flex: 1, minHeight: '180px' }} />
         <div id="carBatteryStatePie" style={{ flex: 1, minHeight: '180px' }} />
-        <div style={{ display: 'flex', marginBottom: 84 }}></div>
+        {/* <div style={{ display: 'flex', marginBottom: 84 }}></div> */}
       </div>
     );
   }

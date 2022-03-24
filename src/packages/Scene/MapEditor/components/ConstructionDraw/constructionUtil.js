@@ -23,7 +23,7 @@ export const getAllallCellsMap = (
   // 配置选项是不带不可走点 要提前过滤
   let newCellMap = {};
   const blockCellIds = currentRouteMapData?.blockCellIds || []; // 不可走点
-  if (showBlockedallCellsFlag) {
+  if (!showBlockedallCellsFlag) {
     Object.keys(cellMap).forEach((id) => {
       const currentItem = cellMap[id];
       if (!blockCellIds.includes(currentItem.id)) {

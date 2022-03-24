@@ -25,10 +25,9 @@ import CommonStationReport from './CommonStationReport';
 import AgvAlert from './AgvInfo/AgvAlert';
 import AgvRunningInfo from './AgvInfo/AgvRunninInfo';
 import EmergencyManagerModal from './EmergencyStopModal';
-import DashBoard from '../DashBoard';
 
 const MonitorModals = (props) => {
-  const { categoryModal, categoryPanel, dispatch, dashBoardVisible } = props;
+  const { categoryModal, categoryPanel, dispatch } = props;
 
   return (
     <>
@@ -67,13 +66,10 @@ const MonitorModals = (props) => {
 
       {categoryModal === 'station' && <CommonStationReport />}
       {categoryModal === 'WorkStation' && <WorkStationReport />}
-
-      {dashBoardVisible && <DashBoard />}
     </>
   );
 };
 export default connect(({ monitor, monitorView }) => ({
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
-  dashBoardVisible: monitorView.dashBoardVisible,
 }))(memo(MonitorModals));

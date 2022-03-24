@@ -25,16 +25,16 @@ const Dashboard = (props) => {
         closable={false}
         placement="right"
         width={310}
-        style={{ top: 84, overflow: 'auto', height: `calc(100% - 84px)` }}
+        style={{ top: 84, height: `calc(100% - 84px)` }}
         bodyStyle={{ height: '100%', display: 'flex', flexFlow: 'column nowrap', padding: 0 }}
         onClose={close}
         className={style.dashDrawer}
       >
-        <div style={{ flex: 1, overflow: 'auto !important' }}>
-          <div className={style.drawerHeader}>
-            <FormattedMessage id="monitor.dashboard" />
-            <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
-          </div>
+        <div className={style.drawerHeader}>
+          <FormattedMessage id="monitor.dashboard" />
+          <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
+        </div>
+        <div style={{ flex: 1, overflow: 'auto', margin: '10px 0 30px 0px ' }}>
           <DashboardComponent />
         </div>
       </Drawer>
@@ -42,7 +42,7 @@ const Dashboard = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(550, 600)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(400, 550)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id="monitor.dashboard" />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />

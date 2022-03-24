@@ -85,7 +85,7 @@ const ConstructionInfoModal = (props) => {
         <Form.Item
           label={formatMessage({ id: 'editor.constructionDrawing.showBlockedCells' })}
           name="showBlockedCellsFlag"
-          initialValue={true}
+          initialValue={false}
           valuePropName={'checked'}
         >
           <Switch
