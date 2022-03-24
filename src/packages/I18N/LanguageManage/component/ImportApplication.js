@@ -66,7 +66,7 @@ export default class ImportApplicationModal extends Component {
               <ImportI18nLanguage accept={'.xlsx,.xls'} type={'addApp'} />
             </Form.Item>
             <Button
-              style={{ margin: '40px 0 0 200px' }}
+              style={{ margin: '20px 0 0 25%' }}
               onClick={this.onSubmitApplicate}
               type="primary"
             >

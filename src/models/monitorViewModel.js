@@ -64,6 +64,8 @@ export default {
     agvAlarmList: [],
     // 小车运行信息
     agvRunningInfoList: [],
+
+    dashBoardVisible: false, // dashboard
   },
   reducers: {
     saveViewState(state, action) {
@@ -117,6 +119,12 @@ export default {
       return {
         ...state,
         agvRunningInfoList: action.payload,
+      };
+    },
+    saveDashBoardVisible(state, action) {
+      return {
+        ...state,
+        dashBoardVisible: action.payload,
       };
     },
   },

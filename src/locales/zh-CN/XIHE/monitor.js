@@ -288,4 +288,12 @@ export default {
   'monitor.charger.release.confirm': '确定解除占用吗?',
 
   'monitor.runTime.info': '运行时信息',
+
+  'monitor.exhibition.tip.fetchDataFail': '获取图表数据失败',
+  'monitor.exhibition.agv.total': '总共',
+  'monitor.exhibition.taskState': '任务实时',
+  'monitor.exhibition.taskHistory': '任务历史',
+  'monitor.exhibition.agvPower': '车辆电量',
+  'app.map.store': '存储区',
+
 };

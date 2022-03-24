@@ -58,7 +58,7 @@ export default class AddSysLangModal extends Component {
           destroyOnClose
           maskClosable={false}
           mask={true}
-          width={420}
+          width={400}
           onCancel={onCancel}
           footer={null}
           visible={visible}
@@ -72,7 +72,7 @@ export default class AddSysLangModal extends Component {
               <Select style={{ width: '100%' }}>{this.renderOption()}</Select>
             </Form.Item>
 
-            <Button style={{ margin: '30px 0 0 44%' }} onClick={this.onSubmitLang} type="primary">
+            <Button style={{ margin: '20px 0 0 25%' }} onClick={this.onSubmitLang} type="primary">
               {<FormattedMessage id="app.button.save" />}
             </Button>
           </Form>

@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { Button, Modal } from 'antd';
+import { Button } from 'antd';
 import ReactDiffViewer from 'react-diff-viewer';
 import { sortBy } from 'lodash';
-import { adjustModalWidth } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../translator.module.less';
 
@@ -12,7 +11,7 @@ export default class DiffToSaveModal extends Component {
     loading: false,
   };
 
-  componentWillReceiveProps(nextProps) {
+  componentDidMount() {
     const result = this.getData();
     this.setState({
       diffData: result,
@@ -72,40 +71,32 @@ export default class DiffToSaveModal extends Component {
 
   render() {
     const { diffData, loading } = this.state;
-    const { onCancel, visible } = this.props;
+
     return (
       <div className={styles.diffJsoContent}>
-        <Modal
-          width={adjustModalWidth()}
-          footer={null}
-          destroyOnClose
-          visible={visible}
-          onCancel={onCancel}
-        >
-          <div className={styles.diffHeader}>
-            <Button
-              type="primary"
-              loading={loading}
-              onClick={() => {
-                this.setState({ loading: true });
-                const { makeSureUpdate } = this.props;
-                if (makeSureUpdate) {
-                  makeSureUpdate();
-                }
-                this.setState({ loading: false });
-              }}
-            >
-              <FormattedMessage id="app.button.save" />
-            </Button>
-          </div>
-          <ReactDiffViewer
-            splitView={true}
-            oldValue={JSON.stringify(diffData.oldSource, null, 4)}
-            newValue={JSON.stringify(diffData.newSource, null, 4)}
-            leftTitle="before"
-            rightTitle="after"
-          />
-        </Modal>
+        <div className={styles.diffHeader}>
+          <Button
+            type="primary"
+            loading={loading}
+            onClick={() => {
+              this.setState({ loading: true });
+              const { makeSureUpdate } = this.props;
+              if (makeSureUpdate) {
+                makeSureUpdate();
+              }
+              this.setState({ loading: false });
+            }}
+          >
+            <FormattedMessage id="app.button.save" />
+          </Button>
+        </div>
+        <ReactDiffViewer
+          splitView={true}
+          oldValue={JSON.stringify(diffData.oldSource, null, 4)}
+          newValue={JSON.stringify(diffData.newSource, null, 4)}
+          leftTitle="before"
+          rightTitle="after"
+        />
       </div>
     );
   }

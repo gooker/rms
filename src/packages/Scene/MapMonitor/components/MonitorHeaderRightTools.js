@@ -12,9 +12,10 @@ import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import LocationTracking from '../Modal/LocationTracking';
 import DownLoadMRV from '../Modal/DownLoadMRV';
+import DashBoard from '../DashBoard';
 
 const MonitorHeaderRightTools = (props) => {
-  const { dispatch, isInnerFullscreen, positionVisible } = props;
+  const { dispatch, isInnerFullscreen, positionVisible, dashBoardVisible } = props;
 
   const [downLoadVisible, setDownLoadVisble] = useState(false);
 
@@ -27,6 +28,10 @@ const MonitorHeaderRightTools = (props) => {
 
   function switchDownLoadnModal(visible) {
     setDownLoadVisble(visible);
+  }
+
+  function switchDashboard(visible) {
+    dispatch({ type: 'monitorView/saveDashBoardVisible', payload: visible });
   }
 
   return (
@@ -77,7 +82,11 @@ const MonitorHeaderRightTools = (props) => {
 
       {/* Dashboard */}
       <Tooltip title={formatMessage({ id: 'monitor.dashboard' })} placement={'bottom'}>
-        <DashboardOutlined />
+        <DashboardOutlined
+          onClick={() => {
+            switchDashboard(true);
+          }}
+        />
       </Tooltip>
 
       {/* 定位 */}
@@ -103,12 +112,16 @@ const MonitorHeaderRightTools = (props) => {
         title={'MRV'}
         footer={null}
       >
-       <DownLoadMRV  />
+        <DownLoadMRV />
       </Modal>
+
+      {/* 仪表盘 */}
+      {dashBoardVisible && <DashBoard />}
     </>
   );
 };
-export default connect(({ global, monitor }) => ({
+export default connect(({ global, monitor, monitorView }) => ({
   isInnerFullscreen: global.isInnerFullscreen,
   positionVisible: monitor.positionVisible,
+  dashBoardVisible: monitorView.dashBoardVisible,
 }))(memo(MonitorHeaderRightTools));

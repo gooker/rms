@@ -1,5 +1,17 @@
 import React from 'react';
-import { Row, Col, Form, Button, Dropdown, Menu, Checkbox, Radio, Input, Divider } from 'antd';
+import {
+  Row,
+  Col,
+  Form,
+  Button,
+  Dropdown,
+  Menu,
+  Checkbox,
+  Radio,
+  Input,
+  Divider,
+  Modal,
+} from 'antd';
 import {
   PlusCircleOutlined,
   ImportOutlined,
@@ -10,7 +22,7 @@ import {
 import classnames from 'classnames';
 import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage, isStrictNull } from '@/utils/util';
+import { dealResponse, isNull, formatMessage, isStrictNull, adjustModalWidth } from '@/utils/util';
 import {
   addSysLang,
   getSysLang,
@@ -616,20 +628,24 @@ class LanguageManage extends React.Component {
         )}
 
         {/* 对比 */}
-        {diffToVisible && (
+        <Modal
+          width={adjustModalWidth()}
+          footer={null}
+          destroyOnClose
+          visible={diffToVisible}
+          onCancel={() => {
+            this.setState({
+              diffToVisible: false,
+            });
+          }}
+        >
           <DiffToSaveModal
-            visible={diffToVisible}
             originData={this.state.mergeData}
             editList={editList}
             allLanguage={allLanguage.map(({ code }) => code)}
             makeSureUpdate={this.makeSureUpdate}
-            onCancel={() => {
-              this.setState({
-                diffToVisible: false,
-              });
-            }}
           />
-        )}
+        </Modal>
 
         {/* 导入 */}
         <ImportApplicationModal
