@@ -688,6 +688,9 @@ export const MinuteFormat = (value) => {
   if (value === 0) {
     return 0;
   }
+  if (value < 60) {
+    return value + formatMessage({ id: 'app.time.seconds' });
+  }
   const d = moment.duration(value, 'seconds');
   let currentValue = '';
   if (Math.floor(d.asDays()) > 0) {

@@ -147,5 +147,9 @@ export default {
   'menu.waitingReport': '空等报表',
   'menu.flowReport': '流量报表',
 
+  // 潜伏料箱
+  'menu.latentToteTaskManagement': '任务查询',
+  'menu.simulationTask': '模拟任务',
+
   // 定制
 };
