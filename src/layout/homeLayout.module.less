@@ -2,7 +2,6 @@
   display: flex;
   flex-flow: column nowrap;
   height: 100vh;
-  background: #00113e;
   background: linear-gradient(180deg, #00113e, #383a3c);
 }
 
@@ -10,12 +9,14 @@
   display: flex;
   flex: 1;
   padding-top: 20px;
-  overflow: hidden;
 }
 
 // 菜单
 .menu {
   display: flex;
+  flex: none;
+  width: 245px;
+  height: calc(100vh - 80px);
 
   & > div:nth-child(2) {
     width: 200px;

@@ -13,14 +13,14 @@ import {
   Modal,
 } from 'antd';
 import {
-  PlusCircleOutlined,
-  ImportOutlined,
-  ExportOutlined,
   DownOutlined,
+  ExportOutlined,
+  ImportOutlined,
+  PlusCircleOutlined,
   SaveOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
-import { cloneDeep, findIndex } from 'lodash';
+import { cloneDeep, find, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull, formatMessage, isStrictNull, adjustModalWidth } from '@/utils/util';
 import {
@@ -32,8 +32,8 @@ import {
 import RmsConfirm from '@/components/RmsConfirm';
 import {
   exportTranslate,
-  generateOriginData,
   generatefilterValue,
+  generateOriginData,
   generateUpdateDataToSave,
 } from './translateUtils';
 import EditableTable from './component/EditableCell/EditableTable';
@@ -48,12 +48,12 @@ import styles from './translator.module.less';
 const { Item: FormItem } = Form;
 class LanguageManage extends React.Component {
   state = {
-    StandardFE: [], // 前端原始数据
-    displayMode: ['custom', 'standard'],
     appCode: 'FE',
+    frontedStandard: [], // 前端原始数据
+    displayMode: ['custom', 'standard'],
 
     loading: false,
-    imporVisible: false,
+    importVisible: false,
     addLangVisible: false,
     diffToVisible: false,
     backVisible: false,
@@ -79,11 +79,12 @@ class LanguageManage extends React.Component {
 
   // 获取语言
   getSysLanguage = async () => {
-    const langData = await getSysLang();
-    if (!dealResponse(langData)) {
-      const currentLang = langData.map(({ code }) => code);
-      const StandardFE = [];
-      langData.map(({ code }) => {
+    let existLanguages = await getSysLang();
+    if (!dealResponse(existLanguages)) {
+      // Tips: 如果未来有一些特殊的操作，比如隐藏某些语言，可以在这里操作existLanguages
+      existLanguages = this.sortLanguages(existLanguages);
+      const frontedStandard = [];
+      existLanguages.map(({ code }) => {
         let languageMap = {};
         try {
           languageMap = require(`@/locales/${code}`)?.default;
@@ -97,28 +98,41 @@ class LanguageManage extends React.Component {
             languageMap[key] = '';
           });
         }
-        StandardFE.push({ languageKey: code, languageMap });
+        frontedStandard.push({ languageKey: code, languageMap });
       });
       this.setState(
         {
-          allLanguage: langData,
-          showLanguage: currentLang,
-          StandardFE,
+          allLanguage: existLanguages,
+          showLanguage: existLanguages.map(({ code }) => code),
+          frontedStandard,
         },
         this.getTranslateList,
       );
     }
   };
 
+  /**
+   * 语言顺序：中文、英文、其他
+   * @param languageList {Array}
+   */
+  sortLanguages(languageList) {
+    const zhCN = find(languageList, { code: 'zh-CN' });
+    const enUS = find(languageList, { code: 'en-US' });
+    const result = languageList.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
+    result.unshift(enUS);
+    result.unshift(zhCN);
+    return result;
+  }
+
   // 根据appcode获取翻译列表-list
   getTranslateList = async () => {
-    const { appCode, StandardFE } = this.state;
+    const { appCode, frontedStandard } = this.state;
     this.setState({ loading: true });
     const list = await getTranslationByCode({ appCode: appCode });
     if (!dealResponse(list)) {
       const currentList = { ...list };
       if (appCode === 'FE') {
-        currentList.Standard = StandardFE;
+        currentList.Standard = frontedStandard;
       }
       this.setState({ dataList: currentList }, this.getStandardAndCustomData);
     }
@@ -152,10 +166,7 @@ class LanguageManage extends React.Component {
   };
 
   isMerge = (mode) => {
-    if (mode.includes('standard') && mode.includes('custom')) {
-      return true;
-    }
-    return false;
+    return !!(mode.includes('standard') && mode.includes('custom'));
   };
 
   tableColumns = () => {
@@ -391,7 +402,7 @@ class LanguageManage extends React.Component {
       allLanguage,
       appCode,
       displayMode,
-      imporVisible,
+      importVisible,
       backVisible,
       diffToVisible,
       showMissingTranslate,
@@ -649,10 +660,10 @@ class LanguageManage extends React.Component {
 
         {/* 导入 */}
         <ImportApplicationModal
-          visible={imporVisible}
+          visible={importVisible}
           onCancel={() => {
             this.setState({
-              imporVisible: false,
+              importVisible: false,
             });
           }}
           importApplicate={this.importTranslation}

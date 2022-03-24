@@ -1,8 +1,7 @@
 import React, { useState, memo, useEffect } from 'react';
-import { Spin } from 'antd';
+import { Spin, Tabs } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
-
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
 import {
@@ -21,32 +20,10 @@ import AgvErrorComponent from './RobotStatusErrorTab';
 import commonStyles from '@/common.module.less';
 import style from '../../report.module.less';
 
+const { TabPane } = Tabs;
 const colums = {
   agvId: formatMessage({ id: 'app.agv' }),
   time: formatMessage({ id: 'app.time' }),
-};
-
-const TabCollection = [
-  {
-    value: 'scan',
-    label: formatMessage({ id: 'reportCenter.agv.scancode' }),
-  },
-  {
-    value: 'offline',
-    label: formatMessage({ id: 'reportCenter.agv.offline' }),
-  },
-  {
-    value: 'statuserror',
-    label: formatMessage({ id: 'reportCenter.agv.error' }),
-  },
-  {
-    value: 'fault',
-    label: formatMessage({ id: 'reportCenter.agv.fault' }),
-  },
-];
-const TabSelectedStyle = {
-  color: '#1890ff',
-  borderBottom: '2px solid #1890ff',
 };
 
 const HealthCar = (props) => {
@@ -64,7 +41,7 @@ const HealthCar = (props) => {
   const [keyOfflineData, setKeyOfflineData] = useState({}); // 离线key - {key:value}
   const [keyErrorData, setKeyErrorData] = useState({}); // 状态错误key - {key:value}
 
-  const [activeTab, setActivieTab] = useState('scan');
+  const [activeTab, setActiveTab] = useState('scan');
 
   useEffect(() => {
     async function initCodeData() {
@@ -186,58 +163,47 @@ const HealthCar = (props) => {
     XLSX.utils.book_append_sheet(wb, fault, formatMessage({ id: 'reportCenter.agv.fault' }));
     XLSX.writeFile(wb, `${formatMessage({ id: 'menu.healthReport.agv' })}.xlsx`);
   }
+
   return (
     <div className={commonStyles.commonPageStyle}>
       <HealthCarSearchForm search={submitSearch} downloadVisible={true} exportData={exportData} />
 
-      <div style={{ display: 'flex', height: '40px' }}>
-        {TabCollection.map(({ value, label }) => (
-          <span
-            key={value}
-            className={style.tab}
-            onClick={() => setActivieTab(value)}
-            style={{ ...(activeTab === value ? TabSelectedStyle : {}) }}
-          >
-            {label}
-          </span>
-        ))}
-      </div>
-      <div className={style.body}>
-        <Spin spinning={loading}>
-          {activeTab === 'scan' && (
+      <Spin spinning={loading}>
+        <Tabs centered defaultActiveKey="1" onChange={setActiveTab}>
+          <TabPane key={'scan'} tab={formatMessage({ id: 'reportCenter.agv.scancode' })}>
             <ScanCodeComponent
               originData={scanOriginData}
               originIds={getAllCellId(scanOriginData, 'agvId')}
               keyDataMap={keyCodeData}
               activeTab={activeTab}
             />
-          )}
-          {activeTab === 'offline' && (
+          </TabPane>
+          <TabPane key={'offline'} tab={formatMessage({ id: 'reportCenter.agv.offline' })}>
             <AgvOfflineComponent
               originData={offlineOriginData}
               originIds={getAllCellId(offlineOriginData, 'agvId')}
               keyDataMap={keyOfflineData}
               activeTab={activeTab}
             />
-          )}
-          {activeTab === 'statuserror' && (
+          </TabPane>
+          <TabPane key={'statuserror'} tab={formatMessage({ id: 'reportCenter.agv.error' })}>
             <AgvErrorComponent
               originData={statuserrorOriginData}
               originIds={getAllCellId(statuserrorOriginData, 'agvId')}
               keyDataMap={keyErrorData}
               activeTab={activeTab}
             />
-          )}
-          {activeTab === 'fault' && (
+          </TabPane>
+          <TabPane key={'fault'} tab={formatMessage({ id: 'reportCenter.agv.fault' })}>
             <RobotFaultComponent
               originData={faultOriginData}
               originIds={getAllCellId(faultOriginData, 'agvId')}
               keyDataMap={keyFaultData}
               activeTab={activeTab}
             />
-          )}
-        </Spin>
-      </div>
+          </TabPane>
+        </Tabs>
+      </Spin>
     </div>
   );
 };

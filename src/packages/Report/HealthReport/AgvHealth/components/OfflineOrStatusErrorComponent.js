@@ -1,9 +1,7 @@
-import React, { useEffect, memo,useState } from 'react';
+import React, { useEffect, memo, useState } from 'react';
 import { Row, Col } from 'antd';
 import echarts from 'echarts';
-import {
-  noDataGragraphic,
-} from '@/packages/Report/components/GroundQrcodeEcharts';
+import { noDataGragraphic } from '@/packages/Report/components/GroundQrcodeEcharts';
 import {
   offlineHistoryLineOption,
   generatOfflineDataByTime,
@@ -16,7 +14,16 @@ let codeHistoryLine = null; // 根据码号
 let timeHistoryLine = null; // 根据日期
 
 const OfflineOrStatusErrorComponent = (props) => {
-  const { codeDomId, dateDomId, chartTitle, chartSubTitle, originData, keyData, activeTab, originIds} = props;
+  const {
+    codeDomId,
+    dateDomId,
+    chartTitle,
+    chartSubTitle,
+    originData,
+    keyData,
+    activeTab,
+    originIds,
+  } = props;
   const [timeType, setTimeType] = useState('hour');
   const [selectedIds, setSelectedIds] = useState([]);
 
@@ -24,8 +31,7 @@ const OfflineOrStatusErrorComponent = (props) => {
     setSelectedIds(originIds);
   }, [originIds]);
 
-
-  useEffect(refreshChart, [originData, keyData, activeTab,timeType, selectedIds]);
+  useEffect(refreshChart, [originData, keyData, activeTab, timeType, selectedIds]);
 
   function initChart() {
     // 根据码号报表
@@ -58,7 +64,7 @@ const OfflineOrStatusErrorComponent = (props) => {
 
     sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
 
-    const currenTimeData = generatOfflineDataByTime(sourceData, keyData,timeType);
+    const currenTimeData = generatOfflineDataByTime(sourceData, keyData, timeType);
     const currentCodeData = generatOfflineDataByRobot(sourceData, keyData, 'agvId');
 
     if (currentCodeData) {
@@ -92,10 +98,9 @@ const OfflineOrStatusErrorComponent = (props) => {
     setTimeType(timeType);
   }
 
-
   return (
-    <>
-    <FilterSearch showCellId={false} data={originData} filterSearch={filterDateOnChange} />
+    <div style={{ margin: '20px 0' }}>
+      <FilterSearch showCellId={false} data={originData} filterSearch={filterDateOnChange} />
       <Row gutter={16}>
         <Col span={24}>
           {/* 按照码号 */}
@@ -106,7 +111,7 @@ const OfflineOrStatusErrorComponent = (props) => {
           <div id={dateDomId} style={{ minHeight: 350 }} />
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 export default memo(OfflineOrStatusErrorComponent);

@@ -81,7 +81,7 @@ const MapMonitor = (props) => {
   return (
     <div id={'mapMonitorPage'} className={commonStyles.commonPageStyleNoPadding}>
       <div
-        style={{ flex: `0 0 ${HeaderHeight}px` }}
+        style={{ height: `${HeaderHeight}px` }}
         className={classnames(commonStyles.mapLayoutHeader, styles.monitorHeader)}
       >
         {currentMap === undefined ? (
@@ -90,7 +90,7 @@ const MapMonitor = (props) => {
           <MonitorHeader />
         )}
       </div>
-      <div className={commonStyles.mapLayoutBody}>
+      <div className={styles.mapLayoutBody}>
         <MonitorMapContainer />
         <MonitorBodyRight />
       </div>

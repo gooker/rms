@@ -5,18 +5,16 @@ import OfflineOrStatusErrorComponent from './components/OfflineOrStatusErrorComp
 const AgvErrorComponent = (props) => {
   const { originData, keyDataMap, activeTab, originIds } = props;
   return (
-    <>
-      <OfflineOrStatusErrorComponent
-        codeDomId="statusErrorHealthByAgvIdHistory"
-        chartTitle={formatMessage({ id: 'reportCenter.agv.error' })}
-        chartSubTitle={formatMessage({ id: 'reportCenter.way.agv' })}
-        dateDomId="statusErrorHealthBydateHistory"
-        originData={originData}
-        keyData={keyDataMap}
-        activeTab={activeTab}
-        originIds={originIds}
-      />
-    </>
+    <OfflineOrStatusErrorComponent
+      codeDomId="statusErrorHealthByAgvIdHistory"
+      chartTitle={formatMessage({ id: 'reportCenter.agv.error' })}
+      chartSubTitle={formatMessage({ id: 'reportCenter.way.agv' })}
+      dateDomId="statusErrorHealthBydateHistory"
+      originData={originData}
+      keyData={keyDataMap}
+      activeTab={activeTab}
+      originIds={originIds}
+    />
   );
 };
 export default memo(AgvErrorComponent);

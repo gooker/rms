@@ -98,7 +98,7 @@ const ScanOrFaultComponent = (props) => {
   }
 
   return (
-    <>
+    <div style={{ margin: '20px 0' }}>
       <FilterSearch showCellId={false} data={originData} filterSearch={filterDateOnChange} />
       <Row gutter={16}>
         <Col span={24}>
@@ -110,7 +110,7 @@ const ScanOrFaultComponent = (props) => {
           <div id={dateDomId} style={{ minHeight: 350 }} />
         </Col>
       </Row>
-    </>
+    </div>
   );
 };
 export default memo(ScanOrFaultComponent);

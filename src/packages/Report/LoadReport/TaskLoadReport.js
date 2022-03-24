@@ -327,26 +327,26 @@ const TaskLoadComponent = (props) => {
             data={loadOriginData}
             filterSearch={filterDateOnChange}
           />
-          <Row>
+          <Row style={{ marginTop: 20 }}>
             <Col span={12}>
               <div id="load_taskActionPie" style={{ minHeight: 340 }} />
             </Col>
             <Col span={12}>
-              <div id="load_taskActionBar" style={{ minHeight: 340 }}></div>
+              <div id="load_taskActionBar" style={{ minHeight: 340 }} />
             </Col>
             <Divider />
             <Col span={12}>
               <div id="load_taskWorkPie" style={{ minHeight: 340 }} />
             </Col>
             <Col span={12}>
-              <div id="load_taskWorkBar" style={{ minHeight: 340 }}></div>
+              <div id="load_taskWorkBar" style={{ minHeight: 340 }} />
             </Col>
             <Divider />
             <Col span={12}>
               <div id="load_taskPickworkPie" style={{ minHeight: 340 }} />
             </Col>
             <Col span={12}>
-              <div id="load_taskPickworkBar" style={{ minHeight: 340 }}></div>
+              <div id="load_taskPickworkBar" style={{ minHeight: 340 }} />
             </Col>
           </Row>
         </Spin>
