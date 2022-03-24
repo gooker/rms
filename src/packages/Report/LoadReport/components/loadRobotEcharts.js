@@ -63,7 +63,7 @@ export const actionPieOption = (title, keyMap) => ({
 export const actionBarOption = (title, keyMap) => ({
   title: {
     text: title,
-    subtext: '按天',
+    subtext: '按时间',
     subTextStyle: {
       fontWeight: 'bold',
       color: titleColor,
@@ -127,6 +127,7 @@ export const actionBarOption = (title, keyMap) => ({
   ],
   yAxis: {
     type: 'value',
+    // name: '分',
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor,
@@ -149,7 +150,11 @@ export const actionBarOption = (title, keyMap) => ({
     },
     // axisLabel: {
     //   formatter: function (value) {
-    //     return MinuteFormat(value);
+    //     if (value === 0) {
+    //       return value;
+    //     } else {
+    //       return Number.parseFloat((value / 60).toFixed(5));
+    //     }
     //   },
     // },
   },
