@@ -145,4 +145,19 @@ export default {
   'app.taskAlarm.count': '告警次数',
   'app.taskAlarm.alertName': '告警名称',
   'app.taskAlarm.alertContent': '告警内容',
+
+  // 模拟任务
+  'app.simulateTask.state.START': '开始',
+  'app.simulateTask.state.STOP': '停止',
+
+  'app.simulateTask.callType': '呼叫类型',
+  'app.simulateTask.type.AUTO': '自动',
+  'app.simulateTask.type.Appoint': '指定',
+
+  'app.simulateTask.priority.list': '优先级集合',
+  'app.simulateTask.total': '订单总量',
+  'app.simulateTask.maxTask': '工作站最大任务量',
+  'app.simulateTask.pod.maxTask': '货架面最大任务量',
+
+  'app.simulateTask.generateInterval': '任务生成间隔',
 };

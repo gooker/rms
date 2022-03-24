@@ -21,11 +21,13 @@ const FilterSearch = (props) => {
   const { data = [], filterSearch, showCellId, showTask } = props;
 
   const [form] = Form.useForm();
-  const [selectedTags, setSelectedTags] = useState([]);
+
   const [agvTagsData, setAgvTagsData] = useState([]);
+  const [taskTypeData, setTaskTypeData] = useState([]);
 
   const [selectedTaskType, setSelectedTaskType] = useState([]);
-  const [taskTypeData, setTaskTypeData] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [timeType, setTimeType] = useState('hour');
 
   useEffect(() => {
     let tagsData = [];
@@ -44,6 +46,7 @@ const FilterSearch = (props) => {
     setSelectedTags(tagsData);
   }, [data]);
 
+  //selectedIds
   function handleChange(value, key) {
     let currentSelectedTags = [...selectedTags];
     if (key) {
@@ -51,8 +54,13 @@ const FilterSearch = (props) => {
     } else {
       currentSelectedTags.splice(currentSelectedTags.indexOf(value), 1);
     }
-    console.log(currentSelectedTags);
     setSelectedTags(currentSelectedTags);
+
+    filterSearch({
+      timeType,
+      selectedIds: currentSelectedTags,
+      taskType: selectedTaskType,
+    });
   }
 
   function taskChange(value, key) {
@@ -63,19 +71,40 @@ const FilterSearch = (props) => {
       currentTags.splice(currentTags.indexOf(value), 1);
     }
     setSelectedTaskType(currentTags);
+
+    filterSearch({
+      timeType,
+      selectedIds: selectedTags,
+      taskType: currentTags,
+    });
+  }
+
+  function dayChange(e) {
+    const type = e.target.value;
+    setTimeType(type);
+    filterSearch({
+      timeType: type,
+      selectedIds: selectedTags,
+      taskType: selectedTaskType,
+    });
   }
 
   return (
     <div key="a" style={{ marginTop: 8, fontSize: '13px', width: '100%' }}>
       <Form form={form} {...formLayout}>
         <Row style={{ height: '30px' }}>
-          <Col style={{ width: '250px' }}>
+          <Col style={{ width: '200px' }}>
             <Form.Item
               name={'timeType'}
               label={<FormattedMessage id="app.time" />}
               initialValue={'hour'}
             >
-              <Radio.Group buttonStyle="solid" defaultValue={'hour'} size={'small'}>
+              <Radio.Group
+                buttonStyle="solid"
+                defaultValue={'hour'}
+                size={'small'}
+                onChange={(e) => dayChange(e)}
+              >
                 <Radio.Button value="hour">
                   <FormattedMessage id="reportCenter.hour" />
                 </Radio.Button>
@@ -126,23 +155,6 @@ const FilterSearch = (props) => {
               </Form.Item>
             </Col>
           )}
-
-          <Col span={3}>
-            <Button
-              size={'small'}
-              onClick={() => {
-                form.validateFields().then((values) => {
-                  filterSearch({
-                    ...values,
-                    selectedIds: selectedTags,
-                    taskType: selectedTaskType,
-                  });
-                });
-              }}
-            >
-              <FormattedMessage id="app.button.check" />
-            </Button>
-          </Col>
         </Row>
       </Form>
       <Divider />
