@@ -307,7 +307,7 @@ const TaskLoadComponent = (props) => {
       formatMessage({ id: 'reportCenter.taskload.pickingWorkstation' }),
     );
 
-    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.reportCenter.loadReport.taskLoad' })}.xlsx`);
+    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.loadReport.taskLoad' })}.xlsx`);
   }
 
   return (

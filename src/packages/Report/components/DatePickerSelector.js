@@ -3,11 +3,11 @@ import { Row, Tag, DatePicker } from 'antd';
 import moment from 'moment';
 import { formatMessage, convertToUserTimezone, isStrictNull } from '@/utils/util';
 
-const MomentRangeFormat = 'YYYY-MM-DD HH:mm:ss';
+const MomentRangeFormat = 'YYYY-MM-DD HH';
 const { RangePicker } = DatePicker;
 //本小时，上1小时，今天，昨天，本周，上周，本月，上月，最近三个月
 const CustomData = {
-  currentHour: 'currentHour',
+  // currentHour: 'currentHour',
   lastHour: 'lastHour',
   today: 'today',
   yesterday: 'yesterday',
@@ -18,10 +18,10 @@ const CustomData = {
   lastthreeMonths: 'lastthreeMonths',
 };
 const CustomDay = [
-  {
-    key: CustomData.currentHour,
-    name: formatMessage({ id: 'reportCenter.currentHour' }),
-  },
+  // {
+  //   key: CustomData.currentHour,
+  //   name: formatMessage({ id: 'reportCenter.currentHour' }),
+  // },
   {
     key: CustomData.lastHour,
     name: formatMessage({ id: 'reportCenter.lastHour' }),
@@ -147,13 +147,14 @@ const DatePickerSelector = (props) => {
           result.endTime = convertToUserTimezone(lastMonthEnd).format('YYYY-MM-DD HH:mm:ss');
           break;
         default:
-          const defaultHour = moment();
+          // const defaultHour = moment();
+          const defaultHour = moment().subtract(1, 'hours');
           result.startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
           result.endTime = convertToUserTimezone(moment()).format('YYYY-MM-DD HH:mm:ss');
           break;
       }
       setPickVisible(false);
-     
+
       setDateValue([moment(result.startTime), moment(result.endTime)]);
       onChange([moment(result.startTime), moment(result.endTime)]);
     }
