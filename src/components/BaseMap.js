@@ -2,7 +2,6 @@ import React from 'react';
 import * as PIXI from 'pixi.js';
 import {
   getCoordinat,
-  createRelation,
   getLineEntityFromMap,
   getCurrentRouteMapData,
   getTextureFromResources,
@@ -42,7 +41,7 @@ function initState(context) {
   context.zoneMap = new Map(); // 区域标记
 }
 
-export default class BaseMap extends React.Component {
+export default class BaseMap extends React.PureComponent {
   constructor(props) {
     super(props);
     initState(this);

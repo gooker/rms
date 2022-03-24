@@ -47,14 +47,7 @@ export default {
     selectableType: ['AGV', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
 
     // 小车、货架等信息
-    allAGVs: [],
-    latentAgv: [],
-    latentPod: [],
-    toteAgv: [],
-    toteRack: null,
-    sorterAgv: [],
-    chargerList: [], // 硬件充电桩
-    temporaryBlock: [], // 临时不可走点
+    monitorLoad: null,
 
     // 二级面板
     categoryModal: null,
@@ -69,12 +62,9 @@ export default {
     categoryPanel: null, // 右侧展示哪个类型的菜单
     checkingElement: null, // 展示菜单的内容
 
-    // 监控地图是否渲染完成
-    mapRendered: false,
     // 定位功能弹窗
     positionVisible: false,
 
-    // TODO: 以下状态需要切分出去独立成model(运行信息)
     stationRealRate: [], // 站点实时速率
     podToWorkstationInfo: [],
     latentStopMessageList: [],
@@ -122,6 +112,12 @@ export default {
         mapRatio: action.payload,
       };
     },
+    saveMonitorLoad(state, action) {
+      return {
+        ...state,
+        monitorLoad: action.payload,
+      };
+    },
     saveMapMinRatio(state, action) {
       return {
         ...state,
@@ -152,12 +148,6 @@ export default {
       return {
         ...state,
         categoryModal: action.payload,
-      };
-    },
-    saveMapRendered(state, action) {
-      return {
-        ...state,
-        mapRendered: action.payload,
       };
     },
     saveCategoryPanel(state, action) {
@@ -302,6 +292,11 @@ export default {
           message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
           yield put({ type: 'saveCurrentMap', payload: null });
         } else {
+          // 加载地图被监控的元素
+          yield put.resolve({ type: 'initMonitorLoad', payload: activeMap.id });
+          yield put({ type: 'saveCurrentMap', payload: activeMap });
+
+          // 处理电梯点与地图点的Mapping关系
           const { elevatorList } = activeMap;
           if (!isNull(elevatorList)) {
             let elevatorCellMap = {};
@@ -316,20 +311,16 @@ export default {
             });
             yield put({ type: 'saveElevatorCellMap', payload: elevatorCellMap });
           }
-          yield put({ type: 'saveCurrentMap', payload: activeMap });
         }
       }
     },
 
     // ***************** 获取监控小车、货架等相关信息 ***************** //
-    *initMonitorLoad(_, { select, put }) {
-      const { currentMap } = yield select(({ monitor }) => monitor);
-      if (isNull(currentMap)) return null;
-
+    *initMonitorLoad({ payload: mapId }, { put }) {
       const promises = [];
       const promiseFields = []; // 每个Promise返回值对应的 state 字段
       // 潜伏车模块
-      if (hasAppPermission(AppCode.LatentLifting)) {
+      if (hasAppPermission(AppCode.LatentPod)) {
         promises.push(fetchAgvList(AGVType.LatentLifting));
         promiseFields.push('latentAgv');
         promises.push(fetchLatentPodList());
@@ -337,7 +328,7 @@ export default {
       }
 
       // 料箱车模块
-      if (hasAppPermission(AGVType.Tote)) {
+      if (hasAppPermission(AppCode.Tote)) {
         promises.push(fetchAgvList(AGVType.Tote));
         promiseFields.push('toteAgv');
         promises.push(fetchToteRackLayout());
@@ -345,13 +336,13 @@ export default {
       }
 
       // 分拣车模块
-      if (hasAppPermission(AGVType.Sorter)) {
+      if (hasAppPermission(AppCode.FlexibleSorting)) {
         promises.push(fetchAgvList(AGVType.Sorter));
         promiseFields.push('sorterAgv');
       }
 
       // 地图充电桩与硬件绑定关系
-      promises.push(fetchChargerList(currentMap.id));
+      promises.push(fetchChargerList(mapId));
       promiseFields.push('chargerList');
 
       // 地图临时不可走点
@@ -359,7 +350,7 @@ export default {
       promiseFields.push('temporaryBlock');
 
       // 地图急停区
-      promises.push(fetchEmergencyStopList(currentMap.id));
+      promises.push(fetchEmergencyStopList(mapId));
       promiseFields.push('emergencyStopList');
 
       /**
@@ -383,8 +374,7 @@ export default {
         }
       });
       additionalStates.allAGVs = allAGVs;
-      yield put({ type: 'saveState', payload: additionalStates });
-      return resource;
+      yield put({ type: 'saveMonitorLoad', payload: additionalStates });
     },
 
     // *****临时不可走点

@@ -24,7 +24,6 @@ import {
 } from '@/config/consts';
 import {
   convertToteLayoutData,
-  getCurrentLogicAreaData,
   getElevatorMapCellId,
   getTextureFromResources,
   hasLatentPod,
@@ -53,11 +52,6 @@ import { SelectionType } from '@/config/consts';
 class MonitorMapView extends BaseMap {
   constructor() {
     super();
-    // 料箱货架数据 (用来处理 重载地图 时候多个逻辑区的料箱货架渲染问题)
-    this.totePodsData = {};
-
-    // 储位组信息
-    this.storeCellGroup = {};
 
     // 记录显示控制的参数
     this.states = {
@@ -71,18 +65,28 @@ class MonitorMapView extends BaseMap {
       emergencyAreaShown: true, // 紧急区域
     };
 
+    // 料箱货架数据 (用来处理 重载地图 时候多个逻辑区的料箱货架渲染问题)
+    this.totePodsData = {};
+    // 选中的元素数据
+    this.selections = [];
+
     // 监控相关
     this.idAGVMap = new Map(); // {carID: [AGVEntity]}
     this.idLatentPodMap = new Map(); // {cellId: [PodEntity]}
     this.idLatentPodInCar = new Map(); // {podId:null} // 用来标识有哪些货架在小车身上
     this.idTotePodMap = new Map(); // {cellId_L: [PodEntity]} ||  {cellId_R: [PodEntity]}
-
-    this.selections = []; // 选中的元素数据
+    this.emergencyAreaMap = new Map(); // 紧急区域
 
     // Locks
     this.agvLocksMap = new Map();
     this.cellLocker = null;
     this.TemporaryLockMap = new Map(); // {[x${x}y${y}]: [LockEntity]}
+
+    // 热度
+    this.cellHeatMap = new Map();
+
+    // 站点实时速率
+    this.stationRealTimeRateMap = new Map();
 
     // 显示小车路径
     this.filteredAGV = [];
@@ -91,31 +95,19 @@ class MonitorMapView extends BaseMap {
     this.agvPathMap = new Map(); // {agvID:[TaskPathEntity]}
     this.agvTargetLineMap = new Map(); // {agvID:SmoothGraphics}
 
-    // 料箱实时任务
+    // 料箱实时
     this.toteTaskRealtimePath = [];
-
-    // 料箱实时状态信息
     this.toteTaskRealtimeState = [];
-
-    // 热度
-    this.cellHeatMap = new Map();
 
     // 小车追踪
     this.trackAGVId = null;
-
-    // 紧急区域
-    this.emergencyAreaMap = new Map();
-
-    // 背景图片
-    // this.backImgMap = new Map();
-    // 站点实时速率
-    this.stationRealTimeRateMap = new Map();
   }
 
   async componentDidMount() {
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    window.PixiUtils = this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
+    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
+    window.MonitorPixiUtils = window.PixiUtils = this.pixiUtils;
     window.$$dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
   }
@@ -127,6 +119,11 @@ class MonitorMapView extends BaseMap {
     this.idLatentPodMap.clear();
     this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
+
+  // 清除监控有关的地图数据
+  clearMonitorLoad = () => {
+    this.emergencyAreaMap.clear();
+  };
 
   // ************************ 可见性控制相关 **********************
   // 地图点位显示
@@ -1517,54 +1514,10 @@ class MonitorMapView extends BaseMap {
     chargerEntity && chargerEntity.updateHardwareId(hardwareId);
   };
 
-  // ************************ 渲染存储位组标识 ********************** //
-  renderStoreCellGroup = (storageConfigData) => {
-    this.storeCellGroup = storageConfigData; // 缓存储位组数据
-    const currentLogicId = getCurrentLogicAreaData('monitor')?.id;
-    const logicStorageCellGroup = storageConfigData?.[currentLogicId];
-    if (Array.isArray(logicStorageCellGroup)) {
-      logicStorageCellGroup.forEach((group) => {
-        const { name, cells, entry, exit } = group;
-        if (Array.isArray(cells)) {
-          this.renderCellGroupFlag(name, cells, entry, exit);
-        }
-      });
-      this.refresh();
-    }
-  };
-
-  // ************************ 渲染储位组标记 ********************** //
-  renderCellGroupFlag = (name, cells, entry, exit) => {
-    // 组名
-    [...cells, ...entry, ...exit].forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      const sprite = new BitText(name, 0, 0, 0xffffff, 200);
-      if (cellEntity) {
-        cellEntity.plusType(`store_group_cell_${name}_${cellId}`, sprite);
-        cellEntity.interact(true, true, this.props.checkStoreGroup);
-      }
-    });
-
-    // 入口
-    entry.forEach((cellId) => {
-      const entryCell = this.idCellMap.get(cellId);
-      if (entryCell) {
-        entryCell.plusType(`store_group_in_${cellId}`, getTextureFromResources('entrance_cell'));
-      }
-    });
-
-    // 出口
-    exit.forEach((cellId) => {
-      const exitCell = this.idCellMap.get(cellId);
-      if (exitCell) {
-        exitCell.plusType(`store_group_out_${cellId}`, getTextureFromResources('exit_cell'));
-      }
-    });
-  };
-
   // ************************ 渲染 清除 紧急停止区域 ********************** //
   renderEmergencyStopArea = (allData) => {
     const { globalActive, logicActive, currentLogicArea } = window.$$state().monitor;
+    const logicEStopData = allData.filter((item) => item.logicId === currentLogicArea);
     const showEmergency = this.states.emergencyAreaShown;
 
     // 根据store数据初步判定visible
@@ -1576,7 +1529,7 @@ class MonitorMapView extends BaseMap {
       logicEStopVisibleFlag = logicActive.includes(currentLogicArea);
     }
 
-    allData.forEach((currentData) => {
+    logicEStopData.forEach((currentData) => {
       if (!['Section', 'Logic', 'Area'].includes(currentData.estopType)) {
         return;
       }

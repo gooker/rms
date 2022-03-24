@@ -33,7 +33,7 @@ export default function notice(message, sectionId, notificationQueue) {
     problemHandling.agvId != null &&
     problemHandling.id != null
   ) {
-    const { robotType, agvId, id, taskId, updateTime, alertType, alertItemList } = problemHandling;
+    const { id, taskId, alertType, robotType, agvId, updateTime, alertItemList } = problemHandling;
     if (hasNewError) {
       // 浏览器级别提醒
       const agvTypeName = formatMessage({ id: `app.agvType.${robotType}` });
@@ -65,41 +65,48 @@ export default function notice(message, sectionId, notificationQueue) {
         </Button>
       );
       const notificationContent = (
-        <span>
-          <div style={{ marginTop: 15 }}>
+        <>
+          <div style={{ marginTop: 10 }}>
             <span>{agvTypeName}</span>
             <span style={{ marginLeft: 10, fontSize: 18, fontWeight: 600, color: 'red' }}>
               {agvId}
             </span>
           </div>
-          <div style={{ marginTop: 15 }}>
-            {taskId != null && (
-              <span>
-                <span>{formatMessage({ id: 'app.task.id' })}: </span>
-                <span style={{ fontWeight: 700, color: 'red' }}>{taskId}</span>
-              </span>
-            )}
-          </div>
-          <div style={{ marginTop: 15 }}>
-            <div style={{ wordBreak: 'break-all' }}>
-              {Array.isArray(alertItemList) &&
-                alertItemList.map((item) => {
-                  return <>{item.alertCode + ':' + item.alertNameI18NKey}</>;
-                })}
+
+          {taskId != null && (
+            <div style={{ marginTop: 10 }}>
+              <span>{formatMessage({ id: 'app.task.id' })}: </span>
+              <span style={{ fontWeight: 700, color: 'red' }}>{taskId}</span>
             </div>
-          </div>
-          <div style={{ textAlign: 'end', marginTop: 15 }}>
+          )}
+
+          <ul style={{ marginTop: 10, paddingLeft: 20 }}>
+            {Array.isArray(alertItemList) &&
+              alertItemList.map((item, index) => {
+                return (
+                  <li key={index}>
+                    <span style={{ marginRight: 5, fontWeight: 600, color: '#1890ff' }}>
+                      {item.alertNameI18NKey}:
+                    </span>
+                    <span>{item.alertContentI18NKey}</span>
+                  </li>
+                );
+              })}
+          </ul>
+
+          <div style={{ textAlign: 'end', marginTop: 10 }}>
             {convertToUserTimezone(updateTime).format('YY-MM-DD HH:mm:ss')}
           </div>
-        </span>
+        </>
       );
       notification.warning({
-        btn,
         key,
+        btn,
         duration: 10,
-        onClose: () => closeNotification(key, notificationQueue),
+        top: 65,
+        message: formatMessage({ id: `app.alertCenter.${alertType}` }),
         description: notificationContent,
-        message: <span>{formatMessage({ id: `app.agvType.${alertType}` })}</span>,
+        onClose: () => closeNotification(key, notificationQueue),
       });
     }
   }

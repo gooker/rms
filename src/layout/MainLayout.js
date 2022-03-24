@@ -144,6 +144,7 @@ class MainLayout extends React.Component {
     const { currentSection } = this.props;
     const { errorCountNumber, hasNewError, alertCenter } = message;
     if (hasNewError) {
+      // TODO: 这个后续需要用Web Worker的方式处理，防止大批量报错导致页面卡顿
       const response = await fetchGetProblemDetail(alertCenter.id);
       if (dealResponse(response)) {
         notice(message, currentSection.sectionId, this.notificationQueue);

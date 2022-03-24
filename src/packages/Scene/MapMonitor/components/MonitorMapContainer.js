@@ -14,7 +14,7 @@ import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
   const { dispatch, currentLogicArea, currentRouteMap, preRouteMap } = props;
-  const { mapContext, mapRatio, mapMinRatio, currentMap } = props;
+  const { mapContext, mapRatio, mapMinRatio, currentMap, monitorLoad } = props;
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
@@ -47,13 +47,14 @@ const MonitorMapContainer = (props) => {
 
     // 清空相关数据
     mapContext.clearMapStage();
+    mapContext.clearMonitorLoad();
     mapContext.refresh();
 
     if (currentMap) {
       renderMap();
       renderLogicArea();
       renderRouteMap();
-      dispatch({ type: 'monitor/saveMapRendered', payload: true });
+      renderMonitorLoad();
 
       const minMapRatio = mapContext.centerView('MONITOR_MAP');
       dispatch({ type: 'monitor/saveMapMinRatio', payload: minMapRatio });
@@ -101,7 +102,6 @@ const MonitorMapContainer = (props) => {
   }, [currentRouteMap, mapContext]);
 
   function renderMap() {
-    dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
     // 渲染点位(不渲染电梯内部点)
     const elevatorInnerCells = [];
     if (Array.isArray(currentMap.elevatorList)) {
@@ -227,8 +227,6 @@ const MonitorMapContainer = (props) => {
     // 紧急停止区
     if (Array.isArray(emergencyStopFixedList)) {
       mapContext.renderEmergencyStopArea(emergencyStopFixedList);
-
-      // TODO: 需要额外处理Monitor创建的急停区
     }
     mapContext.refresh();
   }
@@ -295,6 +293,34 @@ const MonitorMapContainer = (props) => {
     mapContext.refresh();
   }
 
+  // 渲染监控里的小车、货架等
+  function renderMonitorLoad() {
+    if (!isNull(monitorLoad)) {
+      const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv } = monitorLoad;
+      mapContext.renderLatentAGV(latentAgv);
+      mapContext.renderLatentPod(latentPod);
+      mapContext.renderToteAGV(toteAgv);
+      mapContext.renderTotePod(toteRack);
+      mapContext.renderSorterAGV(sorterAgv);
+
+      const { temporaryBlock, emergencyStopList, chargerList } = monitorLoad;
+      // 临时不可走点
+      mapContext.renderTemporaryLock(temporaryBlock);
+
+      // 急停区
+      mapContext.renderEmergencyStopArea(emergencyStopList);
+      dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
+
+      // 渲染充电桩已绑定HardwareID标记(这里只是处理已经绑定HardwareId的情况)
+      if (Array.isArray(chargerList)) {
+        chargerList.forEach((item) => {
+          mapContext.updateChargerHardware(item.name, item.hardwareId);
+          mapContext.updateChargerState({ n: item.name, s: item.status });
+        });
+      }
+    }
+  }
+
   function onSliderChange(value) {
     dispatch({ type: 'monitor/saveMapRatio', payload: value });
   }
@@ -327,6 +353,7 @@ export default connect(({ monitor }) => {
     mapContext,
     mapRatio,
     mapMinRatio,
+    monitorLoad,
   } = monitor;
   return {
     currentMap,
@@ -336,5 +363,6 @@ export default connect(({ monitor }) => {
     mapContext,
     mapRatio,
     mapMinRatio,
+    monitorLoad,
   };
 })(memo(MonitorMapContainer));

@@ -16,6 +16,8 @@ import SelectLang from './SelectLang';
 import AppConfigPanel from './AppConfigPanel';
 import styles from './Header.module.less';
 import { AppCode } from '@/config/config';
+import { Colors } from '@/config/consts';
+import { IconFont } from '@/components/IconFont';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -174,7 +176,7 @@ class Header extends React.Component {
           >
             <span className={styles.action} onClick={this.goToQuestionCenter}>
               <Badge size="small" showZero={false} count={alertCount} overflowCount={99}>
-                <BellOutlined />
+                {showErrorNotification ? <BellOutlined /> : <IconFont type="icon-bellOff" />}
               </Badge>
             </span>
           </Popover>

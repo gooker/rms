@@ -20,7 +20,8 @@ self.onmessage = ({ data: { state, url, token, sectionId, params } }) => {
         method: 'GET',
       })
         .then((response) => response.json())
-        .then((response) => self.postMessage(response));
+        .then((response) => self.postMessage(response))
+        .catch((err) => console.log(`Worker: costHeatPolling => ${err.message}`));
     }, 10 * 1000);
   } else if (state === 'end') {
     clearInterval(intervalInstance);

@@ -19,7 +19,13 @@ self.onmessage = ({ data: { state, requestParam = [], url, token, sectionId } })
           fetch(`${url}?stopCellId=${stopCellId}&stopDirection=${stopDirection}`, {
             headers,
             method: 'GET',
-          }).then((res) => res.json()),
+          })
+            .then((res) => res.json())
+            .catch((err) =>
+              console.log(
+                `Worker: workStationPolling(${stopCellId}-${stopDirection}) => ${err.message}`,
+              ),
+            ),
         );
       });
       Promise.all(newPromises).then((response) => {
