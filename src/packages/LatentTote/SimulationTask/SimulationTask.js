@@ -1,5 +1,5 @@
-import React, { memo, useState } from 'react';
-import { Tooltip, Badge, Row, Col, Button } from 'antd';
+import React, { memo, useState, useEffect } from 'react';
+import { Tooltip, Tag, Row, Col, Button } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -7,19 +7,87 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent';
 import { formatMessage, isStrictNull } from '@/utils/util';
+import SimulationTaskComponent from './SimulationTaskComponent';
 import commonStyles from '@/common.module.less';
 
+const taskList = [
+  {
+    id: '121212',
+    callStatus: 'START',
+    toteTaskType: 'TRANSPORT_IN ',
+    callType: 'Auto',
+    copySimulationId: '1222212121221',
+    workStationCallParms: [
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+    ],
+  },
+  {
+    id: '121213',
+    callStatus: 'START',
+    toteTaskType: 'TRANSPORT_IN ',
+    callType: 'Auto',
+    copySimulationId: '1222212121221',
+    workStationCallParms: [
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+    ],
+  },
+];
+
 const StatusColor = {
-  START: '0x00FFFF', // 亮蓝色
-  STOP: '0xFF0000', // 红色
+  START: '#2db7f5',
+  STOP: '#f50',
 };
 
 const SimulationTask = (props) => {
   const { allTaskTypes, agvType } = props;
   const [loading, setLoading] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
+  const [updateVisible, setUpdateVisible] = useState({});
 
   const [selectRowKey, setSelectRowKey] = useState([]);
+  const [dataList, setDataList] = useState([]);
+
+  useEffect(() => {
+    setDataList(taskList);
+  }, []);
 
   function checkDetail(taskId) {
     const { dispatch, agvType } = this.props;
@@ -29,16 +97,14 @@ const SimulationTask = (props) => {
     });
   }
 
-  function deleteTask(){
-
-  }
+  function deleteTask() {}
 
   const columns = [
     {
       title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'id',
       align: 'center',
-      width: 100,
+
       render: (text) => {
         return (
           <Tooltip title={text}>
@@ -58,14 +124,13 @@ const SimulationTask = (props) => {
       title: <FormattedMessage id="app.task.state" />,
       dataIndex: 'callStatus',
       align: 'center',
-      width: 120,
+
       render: (text) => {
         if (text != null) {
           return (
-            <Badge
-              status={StatusColor[text]}
-              text={formatMessage({ id: `app.simulateTask.state.${text}` })}
-            />
+            <Tag color={StatusColor[text]}>
+              {formatMessage({ id: `app.simulateTask.state.${text}` })}
+            </Tag>
           );
         } else {
           return <FormattedMessage id="app.taskDetail.notAvailable" />;
@@ -77,7 +142,7 @@ const SimulationTask = (props) => {
       title: <FormattedMessage id="app.simulateTask.callType" />,
       dataIndex: 'callType',
       align: 'center',
-      width: 150,
+
       render: (text) => formatMessage({ id: `app.simulateTask.type.${text}` }),
     },
 
@@ -85,7 +150,7 @@ const SimulationTask = (props) => {
       title: <FormattedMessage id="app.task.type" />,
       dataIndex: 'toteTaskType',
       align: 'center',
-      width: 150,
+
       render: (text) => {
         return allTaskTypes?.[agvType]?.[text] || text;
       },
@@ -148,25 +213,27 @@ const SimulationTask = (props) => {
   ];
 
   function expandedRowRender(currentItemData) {
-    if (currentItemData) {
-      return (
-        <>
-          {currentItemData.map((record) => {
-            <Row>
-              {expandColumns.map(({ title, dataIndex, render }, index) => (
-                <Col key={index} span={12}>
-                  <LabelComponent label={title} color={'#000'}>
-                    {typeof render === 'function'
-                      ? render(record[dataIndex], record)
-                      : record[dataIndex]}
-                  </LabelComponent>
-                </Col>
-              ))}
-            </Row>;
-          })}
-        </>
-      );
-    }
+    return (
+      <>
+        {currentItemData.map((record, i) => {
+          return (
+            <>
+              <Row style={{ margin: 10, borderBottom: '1px solid #f5efef', color: '#625f5f' }}>
+                {expandColumns.map(({ title, dataIndex, render }, index) => (
+                  <Col key={index} flex="auto">
+                    <LabelComponent label={title} color={'#625f5f'}>
+                      {typeof render === 'function'
+                        ? render(record[dataIndex], record)
+                        : record[dataIndex]}
+                    </LabelComponent>
+                  </Col>
+                ))}
+              </Row>
+            </>
+          );
+        })}
+      </>
+    );
   }
 
   return (
@@ -177,7 +244,7 @@ const SimulationTask = (props) => {
           <Button
             type="primary"
             onClick={() => {
-              setAddVisible(true)
+              setAddVisible(true);
             }}
           >
             <PlusOutlined /> <FormattedMessage id="app.button.add" />
@@ -187,7 +254,7 @@ const SimulationTask = (props) => {
           <Button
             disabled={selectRowKey.length !== 1}
             onClick={() => {
-              setAddVisible(true)
+              setAddVisible(true);
             }}
           >
             <EditOutlined /> <FormattedMessage id="app.button.edit" />
@@ -207,8 +274,8 @@ const SimulationTask = (props) => {
       <TableWithPages
         bordered
         columns={columns}
-        rowKey={(record) => record.id}
-        dataSource={[]}
+        rowKey={({ id }) => id}
+        dataSource={dataList}
         loading={loading}
         rowSelection={{
           selectedRowKeys: selectRowKey,
@@ -218,6 +285,14 @@ const SimulationTask = (props) => {
         }}
         expandable={{
           expandedRowRender: (record) => expandedRowRender(record?.workStationCallParms),
+        }}
+      />
+
+      <SimulationTaskComponent
+        visible={addVisible}
+        updateVisible={updateVisible}
+        onClose={() => {
+          setAddVisible(false);
         }}
       />
     </TablePageWrapper>
