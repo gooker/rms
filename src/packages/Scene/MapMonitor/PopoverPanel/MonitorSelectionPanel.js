@@ -138,9 +138,11 @@ const MonitorSelectionPanel = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
-  latentPod: monitor.latentPod,
-  selections: monitor.selections,
-  selectableType: monitor.selectableType,
-}))(memo(MonitorSelectionPanel));
+export default connect(({ monitor }) => {
+  const {
+    selections,
+    selectableType,
+    monitorLoad: { allAGVs, latentPod },
+  } = monitor;
+  return { allAGVs, latentPod, selections, selectableType };
+})(memo(MonitorSelectionPanel));

@@ -21,7 +21,6 @@ const MonitorBodyRight = (props) => {
   const { dispatch, selections, categoryPanel } = props;
   const { podToWorkstationInfo, latentStopMessageList } = props;
 
-  const [top, setTop] = useState(0);
   const [offsetTop, setOffsetTop] = useState(0);
 
   useMount(() => {
@@ -144,7 +143,7 @@ const MonitorBodyRight = (props) => {
                 className={categoryPanel === value ? styles.categoryActive : undefined}
                 onClick={(e) => {
                   const { top: categoryTop } = e?.target?.getBoundingClientRect();
-                  setOffsetTop(categoryTop - top);
+                  setOffsetTop(categoryTop);
                   if (value !== Category.Prop || categoryPanel === Category.Prop) {
                     updateEditPanelFlag(value);
                   }
