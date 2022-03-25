@@ -88,7 +88,7 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
   yAxis: [
     {
       type: 'value',
-      name: '次数',
+      name: '时长(s)',
       min: 0,
       position: 'left', // 次数 bar
       axisLine: {
@@ -115,7 +115,7 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
     },
     {
       type: 'value',
-      name: '时长(s)',
+      name: '次数',
       min: 0,
       position: 'right', // 时长 折线
       axisLine: {
@@ -168,6 +168,7 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
 /*
  *根据原始数据 --处理日期数据(x轴:日期)-小车离线
  *translate {key:value}
+ * * *yAxisIndex:0(时长-line) 1(次数-bar）
  */
 export const generatOfflineDataByTime = (allData, translate, timeType = 'hour') => {
   const keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
@@ -211,7 +212,7 @@ export const generatOfflineDataByTime = (allData, translate, timeType = 'hour') 
       ...commonOption,
       data: key[1],
       name: key[0],
-      yAxisIndex: i,
+      yAxisIndex: ['offlineTime', 'errorTime'].includes(key[0]) ? 0 : 1,
       type: ['offlineTime', 'errorTime'].includes(key[0]) ? 'line' : 'bar',
     });
   });
@@ -259,7 +260,10 @@ export const generatOfflineDataByTime = (allData, translate, timeType = 'hour') 
   return { xAxis, series, legend };
 };
 
-// 根据原始数据 --处理agvId数据-小车离线
+/**
+ * *根据原始数据 --处理agvId数据-小车离线
+ * *yAxisIndex:0(时长-line) 1(次数-bar）
+ * **/
 export const generatOfflineDataByRobot = (allData = {}, translate, idName = 'agvId') => {
   const series = []; // 存放纵坐标数值
   const {
@@ -273,7 +277,7 @@ export const generatOfflineDataByRobot = (allData = {}, translate, idName = 'agv
       ...commonOption,
       data: key[1],
       name: key[0],
-      yAxisIndex: i,
+      yAxisIndex: ['offlineTime', 'errorTime'].includes(key[0]) ? 0 : 1,
       type: ['offlineTime', 'errorTime'].includes(key[0]) ? 'line' : 'bar',
     });
   });

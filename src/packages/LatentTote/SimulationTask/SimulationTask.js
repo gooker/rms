@@ -1,5 +1,6 @@
 import React, { memo, useState } from 'react';
-import { Tooltip, Badge, Row, Col } from 'antd';
+import { Tooltip, Badge, Row, Col, Button } from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
@@ -16,6 +17,8 @@ const StatusColor = {
 const SimulationTask = (props) => {
   const { allTaskTypes, agvType } = props;
   const [loading, setLoading] = useState(false);
+  const [addVisible, setAddVisible] = useState(false);
+
   const [selectRowKey, setSelectRowKey] = useState([]);
 
   function checkDetail(taskId) {
@@ -24,6 +27,10 @@ const SimulationTask = (props) => {
       type: 'task/fetchTaskDetailByTaskId',
       payload: { taskId, agvType },
     });
+  }
+
+  function deleteTask(){
+
   }
 
   const columns = [
@@ -146,7 +153,7 @@ const SimulationTask = (props) => {
         <>
           {currentItemData.map((record) => {
             <Row>
-              {columns.map(({ title, dataIndex, render }, index) => (
+              {expandColumns.map(({ title, dataIndex, render }, index) => (
                 <Col key={index} span={12}>
                   <LabelComponent label={title} color={'#000'}>
                     {typeof render === 'function'
@@ -164,7 +171,39 @@ const SimulationTask = (props) => {
 
   return (
     <TablePageWrapper>
-      <div>111</div>
+      <Row>
+        <Col flex="auto" className={commonStyles.tableToolLeft}>
+          {/* 新增 */}
+          <Button
+            type="primary"
+            onClick={() => {
+              setAddVisible(true)
+            }}
+          >
+            <PlusOutlined /> <FormattedMessage id="app.button.add" />
+          </Button>
+
+          {/* 编辑 */}
+          <Button
+            disabled={selectRowKey.length !== 1}
+            onClick={() => {
+              setAddVisible(true)
+            }}
+          >
+            <EditOutlined /> <FormattedMessage id="app.button.edit" />
+          </Button>
+
+          {/* 删除 */}
+          <Button danger disabled={selectRowKey.length !== 1} onClick={deleteTask}>
+            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+          </Button>
+        </Col>
+        <Col>
+          <Button>
+            <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
+          </Button>
+        </Col>
+      </Row>
       <TableWithPages
         bordered
         columns={columns}
