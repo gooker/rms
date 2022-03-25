@@ -230,6 +230,7 @@ const TaskLoadComponent = (props) => {
       startTime,
       endTime,
       agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
+      taskType,
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
       setLoading(true);
@@ -239,6 +240,7 @@ const TaskLoadComponent = (props) => {
         endTime,
         agvSearchTypeValue,
         agvSearchType,
+        taskType,
       });
       if (!dealResponse(response)) {
         let taskLoad = response?.taskLoadData || {};
@@ -280,7 +282,8 @@ const TaskLoadComponent = (props) => {
             _record = { ...record[type] };
           }
           forIn(_record, (value, parameter) => {
-            currentTime[keyData[parameter]] = value;
+            const _param = keyData[parameter] ?? parameter;
+            currentTime[_param] = value;
           });
           typeResult.push(currentTime);
         });

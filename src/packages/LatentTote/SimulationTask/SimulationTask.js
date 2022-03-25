@@ -138,31 +138,21 @@ const SimulationTask = (props) => {
       title: <FormattedMessage id="app.simulateTask.generateInterval" />,
       dataIndex: 'taskGenerateIntervalMill',
     },
-
-    {
-      title: <FormattedMessage id="app.request.headers" />,
-      dataIndex: 'headers',
-      render: (text) => {
-        if (isStrictNull(text)) return '{}';
-        const content = JSON.stringify(text);
-        return content || '';
-      },
-    },
   ];
 
   function expandedRowRender(currentItemData) {
     if (currentItemData) {
       return (
         <>
-          {currentItemData.map((item) => {
+          {currentItemData.map((record) => {
             <Row>
               {columns.map(({ title, dataIndex, render }, index) => (
                 <Col key={index} span={12}>
-                  {/* <LabelComponent label={title} color={'#000'}>
+                  <LabelComponent label={title} color={'#000'}>
                     {typeof render === 'function'
                       ? render(record[dataIndex], record)
                       : record[dataIndex]}
-                  </LabelComponent> */}
+                  </LabelComponent>
                 </Col>
               ))}
             </Row>;

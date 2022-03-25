@@ -1,5 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Form, Button, Radio, Tag, Divider } from 'antd';
+import { Row, Col, Form, Radio, Tag, Divider } from 'antd';
 import { getAllCellId } from './GroundQrcodeEcharts';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -12,6 +12,10 @@ const taskTypes = {
   SUPER_CARRY_POD_TO_CELL: '高级搬运任务',
   HEARVY_CARRY_POD_TO_STORE: '重车回存储区',
   CUSTOM_TASK: '自定义任务',
+  FROCK_CARRY_TO_CELL: '工装车搬运',
+  HEARVY_CARRY_POD_TO_STATION: '重车去工作站',
+  ROLLER_CARRY_TO_CELL: '滚筒搬运',
+  RUN_TO_SAFETY_AREA: '异常车去安全区',
 };
 const { CheckableTag } = Tag;
 
