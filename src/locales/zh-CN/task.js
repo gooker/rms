@@ -150,11 +150,12 @@ export default {
   'app.taskAlarm.alertContent': '告警内容',
 
   // 模拟任务
+  'app.simulateTask': '模拟任务',
   'app.simulateTask.state.START': '开始',
   'app.simulateTask.state.STOP': '停止',
 
   'app.simulateTask.callType': '呼叫类型',
-  'app.simulateTask.type.AUTO': '自动',
+  'app.simulateTask.type.Auto': '自动',
   'app.simulateTask.type.Appoint': '指定',
 
   'app.simulateTask.priority.list': '优先级集合',

@@ -13,6 +13,6 @@ export default [
     name: 'simulationTask',
     icon: 'taskExecuted',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    component: '/LatentTote/simulationTask',
+    component: '/LatentTote/SimulationTask/SimulationTask',
   },
 ];
