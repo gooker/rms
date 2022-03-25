@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { throttle } from 'lodash';
+import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
@@ -18,15 +18,16 @@ const MonitorMapContainer = (props) => {
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
-      throttle(() => {
-        const htmlDOM = document.getElementById('mapMonitorPage');
-        if (htmlDOM && mapContext) {
-          const { width, height } = htmlDOM.getBoundingClientRect();
-          mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
+      debounce(() => {
+        const { mapContext: _mapContext } = window.$$state().monitor;
+        const monitorPixiContainer = document.getElementById('monitorPixiContainer');
+        if (monitorPixiContainer && _mapContext) {
+          const { width, height } = monitorPixiContainer.getBoundingClientRect();
+          _mapContext.resize(width, height);
         }
-      }, 500),
+      }, 200),
     );
-    resizeObserver.observe(document.getElementById('mapMonitorPage'));
+    resizeObserver.observe(document.body);
 
     return () => {
       resizeObserver.disconnect();

@@ -3,9 +3,9 @@
 @IconSize: 30px;
 
 .portal {
-  display: flex;
-  flex-flow: column nowrap;
   width: 45px;
+  padding-left: 5px;
+  overflow: hidden auto;
   background: #000f28;
 }
 
@@ -22,14 +22,16 @@
   align-items: center;
   width: 100%;
   height: @IconSize;
+  min-height: @IconSize;
   margin-bottom: 12px;
 
   div:nth-child(2) {
     flex: 1;
   }
+
   div:nth-child(3) {
-    width: 6px;
-    height: 80%;
+    width: 4px;
+    height: 70%;
     border-radius: 3px;
   }
 }

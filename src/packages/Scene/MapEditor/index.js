@@ -7,7 +7,7 @@ import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';
 import EditorMapContainer from './components/EditorMapContainer';
-import style from './components/component.module.less';
+import style from './editorLayout.module.less';
 import commonStyles from '@/common.module.less';
 
 const MapEditor = (props) => {
@@ -77,7 +77,7 @@ const MapEditor = (props) => {
   }, [mapContext]);
 
   return (
-    <div id={'mapEditorPage'} className={commonStyles.commonPageStyleNoPadding}>
+    <div className={commonStyles.commonPageStyleNoPadding}>
       <div
         style={{ flex: `0 0 ${HeaderHeight}px` }}
         className={classnames(commonStyles.mapLayoutHeader, style.editorHeader)}
@@ -88,7 +88,7 @@ const MapEditor = (props) => {
           <LoadingOutlined spin style={{ fontSize: 20 }} />
         )}
       </div>
-      <div className={commonStyles.mapLayoutBody}>
+      <div className={style.mapLayoutBody}>
         <EditorBodyLeft />
         <EditorMapContainer />
         <EditorBodyRight />

@@ -4,7 +4,7 @@ import { throttle } from 'lodash';
 import { isNull, dealResponse } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { AGVType, AppCode } from '@/config/config';
-import { Category, MonitorRightTools } from '../enums';
+import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
 import { useMount } from '@umijs/hooks';
 import { hasAppPermission } from '@/utils/Permission';
 import { fetchWorkStationPods } from '@/services/monitor';
@@ -18,32 +18,15 @@ import SimulatorPanel from '../PopoverPanel/SimulatorPanel';
 import styles from '../monitorLayout.module.less';
 
 const MonitorBodyRight = (props) => {
-  const { dispatch, selections, categoryPanel, podToWorkstationInfo, latentStopMessageList } =
-    props;
+  const { dispatch, selections, categoryPanel } = props;
+  const { podToWorkstationInfo, latentStopMessageList } = props;
 
-  const [height, setHeight] = useState(0);
   const [top, setTop] = useState(0);
   const [offsetTop, setOffsetTop] = useState(0);
 
-  useEffect(() => {
-    const htmlDOM = document.getElementById('monitorPixi');
-    const resizeObserver = new ResizeObserver(
-      throttle(() => {
-        const { height, top } = htmlDOM.getBoundingClientRect();
-        setHeight(height);
-        setTop(top);
-      }, 500),
-    );
-    resizeObserver.observe(htmlDOM);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
-
   useMount(() => {
     // 获取潜伏车到站信息和暂停消息
-    if (hasAppPermission(AppCode.LatentLifting)) {
+    if (hasAppPermission(AppCode.LatentPod)) {
       dispatch({ type: 'monitor/fetchLatentStopMessageList' });
       fetchWorkStationPods().then((res) => {
         if (!dealResponse(res)) {
@@ -76,7 +59,7 @@ const MonitorBodyRight = (props) => {
   function renderPanelContent() {
     switch (categoryPanel) {
       case Category.Prop:
-        return <Property height={height - 10} />;
+        return <Property />;
       case Category.LatentAGV:
         return <AgvCategorySecondaryPanel agvType={AGVType.LatentLifting} height={450} />;
       case Category.ToteAGV:
@@ -88,22 +71,22 @@ const MonitorBodyRight = (props) => {
           <ViewCategorySecondaryPanel
             type={Category.View}
             height={250}
-            pixHeight={height}
+            pixHeight={100}
             offsetTop={offsetTop}
           />
         );
       case Category.Select:
-        return <MonitorSelectionPanel height={height - 10} />;
+        return <MonitorSelectionPanel />;
       case Category.Simulator:
-        return <SimulatorPanel height={height - 10} />;
+        return <SimulatorPanel />;
       case Category.Emergency:
-        return <EmergencyStopPanel height={160} pixHeight={height} offsetTop={offsetTop} />;
+        return <EmergencyStopPanel height={160} pixHeight={100} offsetTop={offsetTop} />;
       case Category.Resource:
         return (
           <ViewCategorySecondaryPanel
             type={Category.Resource}
             height={210}
-            pixHeight={height}
+            pixHeight={100}
             offsetTop={offsetTop}
           />
         );
@@ -112,7 +95,7 @@ const MonitorBodyRight = (props) => {
           <MessageCategorySecondaryPanel
             type={Category.Message}
             height={110}
-            pixHeight={height}
+            pixHeight={100}
             offsetTop={offsetTop}
           />
         );
@@ -150,8 +133,8 @@ const MonitorBodyRight = (props) => {
   }
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div className={styles.bodyRightSide} style={{ height }}>
+    <div className={styles.bodyRightSideContainer} style={{ width: `${RightToolBarWidth}px` }}>
+      <div className={styles.bodyRightSide}>
         {MonitorRightTools.map(({ label, value, icon, style }) => {
           return (
             <Tooltip key={value} placement="right" title={label}>

@@ -91,27 +91,25 @@ const LogSearchForm = (props) => {
       <Row gutter={24}>
         <Form.Item hidden name={'startTime'} />
         <Form.Item hidden name={'endTime'} />
+
         {/* 日期 */}
-        <Col flex="auto">
+        <Col span={12}>
           <Form.Item
-            label={<FormattedMessage id="app.form.dateRange" />}
             name="timeRange"
+            label={<FormattedMessage id="app.form.dateRange" />}
             rules={[
               {
                 required: true,
                 message: <FormattedMessage id="reportCenter.time.required" />,
               },
             ]}
-            getValueFromEvent={(value) => {
-              return value;
-            }}
           >
             <DatePickerSelector />
           </Form.Item>
         </Col>
 
-        <Col>
-          {/* 分小车 */}
+        {/* 小车 */}
+        <Col span={12}>
           <Form.Item
             name={'agvSearch'}
             label={<FormattedMessage id="app.agv" />}
@@ -120,14 +118,10 @@ const LogSearchForm = (props) => {
             <SelectCarType data={optionsData} />
           </Form.Item>
         </Col>
-        {type === 'taskload' && (
-          <Col>
-            <Form.Item
-              name={'taskType'}
-              label={<FormattedMessage id="app.task.type" />}
-              {...formLayout}
-            >
-              {/* mode="multiple" */}
+
+        {type === 'taskload' ? (
+          <Col span={12}>
+            <Form.Item name={'taskType'} label={<FormattedMessage id="app.task.type" />}>
               <Select allowClear style={{ width: 200 }}>
                 {Object.keys(allTaskTypes).map((type) => (
                   <Select.Option key={type} value={type}>
@@ -137,32 +131,28 @@ const LogSearchForm = (props) => {
               </Select>
             </Form.Item>
           </Col>
+        ) : (
+          <Col span={12} />
         )}
 
-        <Col offset={1}>
-          <Form.Item {...NoLabelFormLayout}>
-            <Row justify="end">
-              <Button type="primary" onClick={submitSearch}>
-                <FormattedMessage id="app.button.search" />
+        <Col span={12}>
+          <Form.Item>
+            <Button type="primary" onClick={submitSearch}>
+              <FormattedMessage id="app.button.search" />
+            </Button>
+
+            {downloadVisible && (
+              <Button
+                style={{ marginLeft: 15 }}
+                onClick={() => {
+                  exportData ? exportData() : '';
+                }}
+              >
+                <FormattedMessage id="reportCenter.sourceData.download" />
               </Button>
-            </Row>
+            )}
           </Form.Item>
         </Col>
-        {downloadVisible && (
-          <Col>
-            <Form.Item {...NoLabelFormLayout}>
-              <Row justify="end">
-                <Button
-                  onClick={() => {
-                    exportData ? exportData() : '';
-                  }}
-                >
-                  <FormattedMessage id="reportCenter.sourceData.download" />
-                </Button>
-              </Row>
-            </Form.Item>
-          </Col>
-        )}
       </Row>
     </Form>
   );

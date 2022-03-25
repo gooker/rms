@@ -21,7 +21,6 @@ export default {
   'translator.languageManage.langpackage': '语言文件包',
   'translator.languageManage.frontend': '前端',
   'translator.languageManage.backend': '后端',
-  'translator.languageManage.back': '回退',
   'translator.languageManage.importType': '导入方式',
   'translator.languageManage.replace': '替换',
 };

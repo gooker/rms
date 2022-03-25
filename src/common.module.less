@@ -46,7 +46,8 @@
 .commonPageStyleNoPadding {
   display: flex;
   flex-flow: column nowrap;
-  height: 100%;
+  height: calc(100vh - 86px); // 80+6
+  overflow: hidden auto;
   background: transparent;
 }
 
@@ -139,11 +140,6 @@
   padding: 0 15px;
 }
 
-.mapLayoutBody {
-  display: flex;
-  flex: 1;
-}
-
 .monitorBackColor {
   background: radial-gradient(circle, rgb(0, 60, 72) 0%, rgb(14, 38, 62) 100%);
 }
@@ -173,6 +169,7 @@
   display: flex;
   flex-flow: column nowrap;
   width: 300px;
+  height: calc(100% - 10px);
   background: rgba(99, 99, 99, 0.9);
   border-radius: 5px;
   user-select: none;

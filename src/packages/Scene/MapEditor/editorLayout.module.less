@@ -9,6 +9,10 @@
 // 左侧
 @sideContentItemColor: #b0b0b0;
 
+.editorHeader {
+  color: #e8e8e8;
+}
+
 .bodyLeftSide {
   .bodySideToolStyle();
 
@@ -26,6 +30,11 @@
   }
 }
 
+.mapLayoutBody {
+  display: flex;
+  height: calc(100vh - 121px);
+}
+
 .contentActive {
   & > span > svg {
     fill: #1890ff !important;
@@ -37,6 +46,7 @@
   display: flex;
   flex: 1;
   flex-flow: column nowrap;
+  overflow: hidden;
   background: radial-gradient(circle, rgb(88, 88, 88) 0%, rgb(46, 46, 46) 100%);
   touch-action: none;
 }
@@ -45,6 +55,8 @@
 .bodyRightSide {
   .bodySideToolStyle();
 
+  // 头部:60、paddingTop: 20, 工具栏：35, marginBottom: 6
+  height: calc(100vh - 121px);
   overflow-y: auto;
 
   div[role='category'] {

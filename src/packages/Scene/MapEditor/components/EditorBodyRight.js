@@ -23,22 +23,6 @@ import styles from '../editorLayout.module.less';
 
 const EditorBodyRight = (props) => {
   const { dispatch, categoryPanel } = props;
-  const [height, setHeight] = useState(0);
-
-  useEffect(() => {
-    const htmlDOM = document.getElementById('mapEditorPage');
-    const resizeObserver = new ResizeObserver(
-      throttle(() => {
-        const { height } = htmlDOM.getBoundingClientRect();
-        setHeight(height - HeaderHeight);
-      }, 500),
-    );
-    resizeObserver.observe(htmlDOM);
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, []);
 
   function updateEditPanelFlag(category) {
     if (categoryPanel === category) {
@@ -51,35 +35,35 @@ const EditorBodyRight = (props) => {
   function renderPanelContent() {
     switch (categoryPanel) {
       case RightCategory.Prop:
-        return <Property height={height - 10} />;
+        return <Property />;
       case RightCategory.Cell:
-        return <CellPanel height={height - 10} />;
+        return <CellPanel />;
       case RightCategory.Cost:
-        return <CostPanel height={height - 10} />;
+        return <CostPanel />;
       case RightCategory.CellType:
-        return <CellTypeConfigurePanel height={height - 10} />;
+        return <CellTypeConfigurePanel />;
       case RightCategory.WorkStation:
-        return <WorkStationPanel height={height - 10} />;
+        return <WorkStationPanel />;
       case RightCategory.Charger:
-        return <ChargerPanel height={height - 10} />;
+        return <ChargerPanel />;
       case RightCategory.Station:
-        return <StationPanel height={height - 10} />;
+        return <StationPanel />;
       case RightCategory.View:
-        return <ViewControllerPanel height={height - 10} />;
+        return <ViewControllerPanel />;
       case RightCategory.Aisle:
-        return <AislePanel height={height - 10} />;
+        return <AislePanel />;
       case RightCategory.Rest:
-        return <RestPanel height={height - 10} />;
+        return <RestPanel />;
       case RightCategory.Delivery:
-        return <DeliveryPanel height={height - 10} />;
+        return <DeliveryPanel />;
       case RightCategory.Intersection:
-        return <IntersectionPanel height={height - 10} />;
+        return <IntersectionPanel />;
       case RightCategory.Elevator:
-        return <ElevatorPanel height={height - 10} />;
+        return <ElevatorPanel />;
       case RightCategory.EmergencyStop:
-        return <EmergencyStopPanel height={height - 10} />;
+        return <EmergencyStopPanel />;
       case RightCategory.Programing:
-        return <ProgramingPanel height={height - 10} />;
+        return <ProgramingPanel />;
       default:
         return null;
     }
@@ -87,7 +71,7 @@ const EditorBodyRight = (props) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <div style={{ width: `${RightToolBarWidth}px`, height }} className={styles.bodyRightSide}>
+      <div style={{ width: `${RightToolBarWidth}px` }} className={styles.bodyRightSide}>
         {EditorRightTools.map(({ label, value, icon }) => (
           <Tooltip key={value} placement="right" title={label}>
             <div

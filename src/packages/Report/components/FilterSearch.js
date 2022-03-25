@@ -94,8 +94,16 @@ const FilterSearch = (props) => {
   }
 
   return (
-    <div key="a" style={{ marginTop: 8, fontSize: '13px', width: '100%' }}>
-      <Form form={form} {...formLayout}>
+    <div
+      style={{
+        background: '#e6e6e6',
+        height: '50px',
+        border: '1px solid #e8e8e8',
+        display: 'flex',
+        alignItems: 'center',
+      }}
+    >
+      <Form form={form} {...formLayout} style={{ width: '100%' }}>
         <Row style={{ height: '30px' }}>
           <Col style={{ width: '200px' }}>
             <Form.Item
@@ -161,7 +169,6 @@ const FilterSearch = (props) => {
           )}
         </Row>
       </Form>
-      <Divider />
     </div>
   );
 };

@@ -1,17 +1,27 @@
-// reference: 使用文件，但不会输出其内容（即文件作为样式库使用）
 @import (reference) '../../../common.module';
 @import (reference) '../../../../node_modules/antd/dist/antd.dark.less';
 
 .monitorHeader {
   .monitorBackColor();
 
+  flex: none;
   border-bottom: 1px solid #5a5a5a;
 }
 
+.mapLayoutBody {
+  display: flex;
+  height: calc(100vh - 121px);
+}
+
 // 右侧
-.bodyRightSide {
+.bodyRightSideContainer {
   position: relative;
-  width: 60px;
+  flex: none;
+  height: calc(100vh - 121px);
+}
+
+.bodyRightSide {
+  height: 100%;
   overflow: auto;
   user-select: none;
 

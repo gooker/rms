@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { throttle } from 'lodash';
+import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
@@ -7,10 +7,10 @@ import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
 import { Elevator } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';
-import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
+import { LeftCategory } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
-import styles from '../editorLayout.module.less';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
+import styles from '../editorLayout.module.less';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
@@ -19,15 +19,16 @@ const EditorMapContainer = (props) => {
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(
-      throttle(() => {
-        const htmlDOM = document.getElementById('mapEditorPage');
-        if (htmlDOM && mapContext) {
-          const { width, height } = htmlDOM.getBoundingClientRect();
-          mapContext.resize(width - LeftToolBarWidth - RightToolBarWidth, height - HeaderHeight);
+      debounce(() => {
+        const { mapContext: _mapContext } = window.$$state().editor;
+        const editorPixiContainer = document.getElementById('editorPixiContainer');
+        if (editorPixiContainer && _mapContext) {
+          const { width, height } = editorPixiContainer.getBoundingClientRect();
+          _mapContext.resize(width, height);
         }
-      }, 500),
+      }, 200),
     );
-    resizeObserver.observe(document.getElementById('editorPixi'));
+    resizeObserver.observe(document.body);
 
     return () => {
       resizeObserver.disconnect();
