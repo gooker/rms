@@ -1,11 +1,13 @@
 import React from 'react';
-import { Badge, Modal, Popover, Switch } from 'antd';
+import { Badge, Popover, Switch } from 'antd';
 import { FullscreenExitOutlined, FullscreenOutlined, BellOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
+import { AppCode } from '@/config/config';
 import { dealResponse, isNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHE';
+import { IconFont } from '@/components/IconFont';
 import HA from '@/packages/Portal/components/HA';
 import ExpiredTip from '@/packages/Portal/components/ExpiredTip';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -13,11 +15,7 @@ import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
 import SelectLang from './SelectLang';
-import AppConfigPanel from './AppConfigPanel';
 import styles from './Header.module.less';
-import { AppCode } from '@/config/config';
-import { Colors } from '@/config/consts';
-import { IconFont } from '@/components/IconFont';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -33,7 +31,6 @@ import { IconFont } from '@/components/IconFont';
 class Header extends React.Component {
   state = {
     showErrorNotification: false,
-    apiListShow: false,
     isHA: false, // 是否是高可用模式
   };
 
@@ -113,7 +110,7 @@ class Header extends React.Component {
 
   render() {
     const { showErrorNotification, isHA, sysAuthInfo } = this.state;
-    const { history, alertCount, backendVersion, apiListShow } = this.props;
+    const { history, alertCount, backendVersion } = this.props;
     const { logo, environments, isFullscreen, currentUser } = this.props;
     if (isNull(currentUser)) return null;
 
@@ -183,19 +180,6 @@ class Header extends React.Component {
 
           {/* 切换语言 */}
           <SelectLang onChange={this.changeLocale} />
-
-          {/* API列表展示窗口 */}
-          <Modal
-            width={960}
-            footer={null}
-            closable={false}
-            visible={apiListShow}
-            onCancel={() => {
-              this.setState({ apiListShow: false });
-            }}
-          >
-            <AppConfigPanel />
-          </Modal>
         </div>
       </div>
     );

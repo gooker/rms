@@ -32,14 +32,14 @@ export default function requestAPI() {
       // coordinator: 'http://translation-api-ntdev-self-defining.mushiny.local',
 
       // NT-13 内网
-      // sso: 'http://192.168.0.13:8071',
-      // coordinator: 'http://192.168.0.13:8073',
-      // ws: 'ws://192.168.0.13:15654/ws',
+      sso: 'http://192.168.0.13:8071',
+      coordinator: 'http://192.168.0.13:8073',
+      ws: 'ws://192.168.0.13:15654/ws',
 
       // NT-13 外网
-      ws: 'ws://52.83.193.245:10216/ws',
-      sso: 'http://52.83.193.245:10217',
-      coordinator: 'http://52.83.193.245:10218',
+      // ws: 'ws://52.83.193.245:10216/ws',
+      // sso: 'http://52.83.193.245:10217',
+      // coordinator: 'http://52.83.193.245:10218',
 
       // 高可用 13 $ 14
       // sso: 'http://sso-api-ntdev-ha.mushiny.local',

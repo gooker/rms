@@ -211,7 +211,7 @@ export async function resumeLatentPausedTask(params) {
 // 潜伏自动释放
 export async function releaseLatentPod(params) {
   return request(`/${NameSpace.LatentLifting}/agv-task/releasePod`, {
-    method: 'GET',
+    method: 'POST',
     data: params,
   });
 }

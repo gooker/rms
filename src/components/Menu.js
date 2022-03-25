@@ -1,5 +1,6 @@
 import React, { useState, useEffect, memo } from 'react';
 import { Menu } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import MenuIcon from '@/utils/MenuIcon';
@@ -12,7 +13,15 @@ import commonStyles from '@/common.module.less';
 const { SubMenu } = Menu;
 
 const AppMenu = (prop) => {
-  const { dispatch, currentApp, allMenuData, updateOpenKeys, openKeys, selectedKeys } = prop;
+  const {
+    dispatch,
+    currentApp,
+    menuCollapsed,
+    allMenuData,
+    updateOpenKeys,
+    openKeys,
+    selectedKeys,
+  } = prop;
   const [currentModuleMenu, setCurrentModuleMenu] = useState([]);
   const { pathname } = window.location;
 
@@ -114,14 +123,19 @@ const AppMenu = (prop) => {
       .filter(Boolean);
   }
 
+  function switchMenuCollapsed() {
+    dispatch({ type: 'global/updateMenuCollapsed', payload: !menuCollapsed });
+  }
+
   return (
     <div className={styles.menu}>
       <Portal />
-      <div>
+      <div style={{ width: menuCollapsed ? 50 : 200 }}>
         <Menu
-          mode="inline"
           theme="dark"
+          mode="inline"
           openKeys={openKeys}
+          inlineCollapsed={menuCollapsed}
           onOpenChange={onOpenChange}
           selectedKeys={selectedKeys}
           onSelect={onSelectMenuItem}
@@ -129,6 +143,9 @@ const AppMenu = (prop) => {
         >
           {renderMenu(currentModuleMenu)}
         </Menu>
+        <div onClick={switchMenuCollapsed} className={styles.menuTrigger}>
+          {menuCollapsed ? <RightOutlined /> : <LeftOutlined />}
+        </div>
       </div>
     </div>
   );
@@ -136,8 +153,9 @@ const AppMenu = (prop) => {
 export default connect(({ global, menu }) => {
   return {
     currentApp: global.currentApp,
-    allMenuData: menu.allMenuData,
+    menuCollapsed: global.menuCollapsed,
     openKeys: menu.openKeys,
+    allMenuData: menu.allMenuData,
     selectedKeys: menu.selectedKeys,
     updateOpenKeys: menu.updateOpenKeys,
   };

@@ -103,7 +103,7 @@ const BroadcastChannelForm = (props) => {
           rules={[{ required: true }]}
           initialValue={data?.timeOut || null}
         >
-          <Input suffix={formatMessage({ id: 'app.customTask.form.second' })} />
+          <Input suffix={formatMessage({ id: 'app.time.seconds' })} />
         </Form.Item>
       )}
 
