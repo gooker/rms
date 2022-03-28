@@ -161,8 +161,16 @@ const DatePickerSelector = (props) => {
   }
 
   function dataRangePickerChanged(value, dateString) {
-    setDateValue(value);
-    onChange(value);
+    if (!isStrictNull(dateString[0]) && !isStrictNull(dateString[1])) {
+      const start = convertToUserTimezone(dateString[0]).format('YYYY-MM-DD HH:00:00');
+      const endTime = convertToUserTimezone(dateString[1]).format('YYYY-MM-DD HH:59:59');
+
+      setDateValue([moment(start), moment(endTime)]);
+      onChange([moment(start), moment(endTime)]);
+    } else {
+      setDateValue(value);
+      onChange(value);
+    }
   }
 
   return (

@@ -495,7 +495,7 @@ const HealthCar = (props) => {
               <div id="load_actionPieHistory" style={{ minHeight: 380 }} />
             </Col>
             <Col span={12}>
-              <div id="load_actionBarHistory" style={{ minHeight: 380 }} />
+              <div id="load_actionBarHistory" style={{ minHeight: 390 }} />
             </Col>
             <Divider />
             <Col span={12}>

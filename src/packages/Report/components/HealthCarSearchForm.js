@@ -77,8 +77,8 @@ const LogSearchForm = (props) => {
         const currentValues = { ...values };
         const { timeRange } = currentValues;
         if (!isNull(timeRange)) {
-          currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:00');
-          currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:00');
+          currentValues.startTime = timeRange[0].format('YYYY-MM-DD HH:mm:ss');
+          currentValues.endTime = timeRange[1].format('YYYY-MM-DD HH:mm:ss');
         }
         delete currentValues.timeRange;
         search && search(currentValues);

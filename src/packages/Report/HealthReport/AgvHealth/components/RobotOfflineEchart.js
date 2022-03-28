@@ -1,4 +1,4 @@
-import { isStrictNull } from '@/utils/util';
+import { isStrictNull, validateUrl } from '@/utils/util';
 import { forIn } from 'lodash';
 import {
   labelColor,
@@ -6,6 +6,7 @@ import {
   getOriginalDataBycode,
 } from '@/packages/Report/components/GroundQrcodeEcharts';
 import { filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
+import { MinuteFormat } from '@/packages/Report/LoadReport/components/loadRobotEcharts';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const colors = ['#91CC75', '#89c7f2'];
@@ -59,7 +60,10 @@ export const offlineHistoryLineOption = (title, keyMap) => ({
       var showHtm = name + '<br>';
       for (let i = 0; i < params.length; i++) {
         const { marker, seriesName, value } = params[i];
-        showHtm += marker + keyMap[seriesName] + '：' + value + '<br>';
+        const currentValue = ['offlineTime', 'errorTime'].includes(seriesName)
+          ? MinuteFormat(value)
+          : value;
+        showHtm += marker + keyMap[seriesName] + '：' + currentValue + '<br>';
       }
       return showHtm;
     },

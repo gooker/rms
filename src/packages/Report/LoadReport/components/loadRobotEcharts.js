@@ -2,7 +2,11 @@ import { isStrictNull, formatMessage } from '@/utils/util';
 import { forIn, isNull } from 'lodash';
 import { AgvStateColor } from '@/config/consts';
 import { labelColor, titleColor } from '@/packages/Report/components/GroundQrcodeEcharts';
-import { filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
+import {
+  filterNewXAixsTime,
+  getNewKey,
+  filterEqualTime,
+} from '@/packages/Report/components/reportUtil';
 import moment from 'moment';
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -107,7 +111,7 @@ export const actionBarOption = (title, keyMap) => ({
   },
   grid: {
     // top: '2%',
-    left: '2%',
+    left: 40,
     right: '10%',
     containLabel: true,
   },
@@ -259,7 +263,6 @@ export const taskLineOption = (title, keyMap) => ({
     },
   },
   grid: {
-    top: '2%',
     left: '6%',
     right: '2%',
     containLabel: true,
@@ -277,6 +280,10 @@ export const taskLineOption = (title, keyMap) => ({
   ],
   yAxis: {
     type: 'value',
+    name:
+      title === formatMessage({ id: 'reportCenter.agvload.taskDistance' })
+        ? formatMessage({ id: 'app.report.mile' })
+        : '',
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor,
@@ -381,7 +388,7 @@ export const generateDurationDataByTime = (
 // 根据原始数据--x日期 y:数值 任务次数 任务距离
 export const generateNumOrDistanceData = (allData, type, translate, timeType = 'hour') => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData } = sumloadData(allData, type, translate, timeType);
+  const { currentSery, xAxisData } = sumloadData(allData, type, translate, timeType, 'average');
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -404,7 +411,7 @@ export const generateNumOrDistanceData = (allData, type, translate, timeType = '
       show: false,
     },
     axisLabel: {
-      rotate: 20,
+      rotate: 25,
       color: labelColor,
     },
     data: xAxisData,
@@ -412,7 +419,8 @@ export const generateNumOrDistanceData = (allData, type, translate, timeType = '
   return { xAxis, series };
 };
 
-// 运动动作负载-pie
+// 小车负载-运动动作负载-pie -求平均值
+// 任务负载
 export const generateActionPieData = (allData, type, translate) => {
   const seryData = [];
   let legendData = Object.keys(translate); // 存放key数组
@@ -422,8 +430,12 @@ export const generateActionPieData = (allData, type, translate) => {
     currentActionSum[item] = 0;
   });
 
+  let sumLength = 0;
+
   Object.entries(allData).forEach(([key, typeData]) => {
     if (!isStrictNull(typeData)) {
+      const _length = typeData.length;
+      sumLength += _length;
       typeData.forEach((record) => {
         let _record = { ...record };
         if (!isNull(type)) {
@@ -441,8 +453,9 @@ export const generateActionPieData = (allData, type, translate) => {
   });
 
   forIn(currentActionSum, (v, key) => {
-    const value = v === 0 ? '' : v;
-   
+    const averageValue = isStrictNull(v) ? 0 : v / sumLength;
+    const value = v === 0 ? '' : Number.parseFloat(averageValue.toFixed(3));
+
     seryData.push({ name: key, value, label: translate[key] });
   });
 
@@ -484,9 +497,10 @@ export const generateActionPieData = (allData, type, translate) => {
 };
 
 // 运动动作负载-bar  x:日期 y:数值 比如:无动作 顶升 下降
+// 任务负载-bar  x:日期 y:数值
 export const generateActionBarData = (allData, type, translate, timeType = 'hour') => {
   const series = []; // 存放纵坐标数值
-  const { currentSery, xAxisData } = sumloadData(allData, type, translate, timeType);
+  const { currentSery, xAxisData } = sumloadData(allData, type, translate, timeType, 'average');
 
   Object.entries(currentSery).forEach((key, i) => {
     series.push({
@@ -511,7 +525,7 @@ export const generateActionBarData = (allData, type, translate, timeType = 'hour
       show: false,
     },
     axisLabel: {
-      rotate: 20,
+      rotate: 25,
       color: labelColor,
     },
     data: xAxisData,
@@ -532,12 +546,12 @@ export const generateActionBarData = (allData, type, translate, timeType = 'hour
 };
 
 /*
- * 小车负载/任务负载 调用
+ * 小车负载/任务负载 bar调用
  *@param allData-源数据
  *@param type-用于从源数据中取报表对应的数据
  *@param translate-报表的legend {key:value}
  *@param  timeType--(x轴：日期) 显示是按日/月/小时
- *@param  average--(求平均值) 目前状态时长和任务时长 需要求平均值
+ *@param  average--(求平均值) 目前状态时长和任务时长 动作负载(任务负载都要求平均) 需要求平均值
  **/
 export const sumloadData = (allData, type, translate, timeType, average) => {
   const legendData = Object.keys(translate);
@@ -552,6 +566,8 @@ export const sumloadData = (allData, type, translate, timeType, average) => {
   xAxisData.map((item) => {
     keyResult[item] = {};
   });
+
+  // 时间不同
 
   Object.entries(allData).forEach(([key, typeData]) => {
     if (!isStrictNull(typeData)) {
@@ -570,8 +586,9 @@ export const sumloadData = (allData, type, translate, timeType, average) => {
           }
         });
       });
-
-      // 状态时长和任务时长 需要求平均值
+      if (type === 'actionLoad') {
+      }
+      // 当前日期的求平均值
       let newTimes = {};
       if (!isNull(average) && average === 'average') {
         const _length = typeData.length;
@@ -592,10 +609,13 @@ export const sumloadData = (allData, type, translate, timeType, average) => {
   });
 
   const currentSery = {};
-
-  Object.values(keyResult).map((v, index) => {
+  // 求平均值 -value/相同的日期的长度
+  Object.entries(keyResult).map(([currentTime, v]) => {
+    const allTimeLength = filterEqualTime(allData, currentTime, timeType);
     legendData.map((key) => {
-      const _value = v[key] || 0;
+      let _value = isStrictNull(v[key]) ? 0 : v[key] / allTimeLength;
+      _value = Number.parseFloat(_value.toFixed(3));
+
       let seryData = currentSery[key] || [];
       currentSery[key] = [...seryData, _value];
     });

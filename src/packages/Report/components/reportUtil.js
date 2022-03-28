@@ -56,3 +56,14 @@ export const getNewKey = (key, type) => {
     return key.substring(0, 7);
   }
 };
+
+export const filterEqualTime = (allData, key, type) => {
+  let endString = 7;
+  if (type === 'hour') {
+    endString = 16;
+  } else if (type === 'day') {
+    endString = 10;
+  }
+  const filterData = Object.keys(allData).filter((time) => time.substring(0, endString) === key);
+  return filterData.length;
+};
