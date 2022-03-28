@@ -54,6 +54,12 @@ export async function fetchForkLiftPodLayout() {
 }
 
 // ************************************** 小车相关  ************************************** //
+export async function fetchAllAgvList() {
+  return request(`/${NameSpace.Coordinator}/traffic/getAllAGV`, {
+    method: 'GET',
+  });
+}
+
 // 获取所有车类型
 export async function fetchAllAgvType() {
   return request(`/${NameSpace.Coordinator}/map/getAllRobotType`, {

@@ -1,15 +1,16 @@
 import React, { memo, useEffect } from 'react';
-import { debounce, throttle } from 'lodash';
+import { throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { isNull } from '@/utils/util';
+import { getRandomString, isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
 import { Elevator } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';
-import { LeftCategory } from '../enums';
+import EventManager from '@/utils/EventManager';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
+import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
 import styles from '../editorLayout.module.less';
 
 const CLAMP_VALUE = 500;
@@ -18,20 +19,15 @@ const EditorMapContainer = (props) => {
   const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
 
   useEffect(() => {
-    const resizeObserver = new ResizeObserver(
-      debounce(() => {
-        const { mapContext: _mapContext } = window.$$state().editor;
-        const editorPixiContainer = document.getElementById('editorPixiContainer');
-        if (editorPixiContainer && _mapContext) {
-          const { width, height } = editorPixiContainer.getBoundingClientRect();
-          _mapContext.resize(width, height);
-        }
-      }, 200),
-    );
-    resizeObserver.observe(document.body);
-
+    const functionId = getRandomString(8);
+    function resize(rect) {
+      const { width, height } = rect;
+      const { mapContext: _mapContext } = window.$$state().editor;
+      _mapContext.resize(width - LeftToolBarWidth - RightToolBarWidth, height - HeaderHeight);
+    }
+    EventManager.subscribe('resize', resize, functionId);
     return () => {
-      resizeObserver.disconnect();
+      EventManager.unSubscribe('resize', functionId);
     };
   }, []);
 

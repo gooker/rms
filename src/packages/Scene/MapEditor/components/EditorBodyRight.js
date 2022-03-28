@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';

@@ -19,14 +19,13 @@ export default {
   'app.module.SSO': 'SSO',
 
   // 颜色
-  'app.cost.green': '绿色',
-  'app.cost.blue': '蓝色',
-  'app.cost.yellow': '黄色',
-  'app.cost.red': '红色',
+  'app.cost.green': '绿',
+  'app.cost.blue': '蓝',
+  'app.cost.yellow': '黄',
+  'app.cost.red': '红',
 
   // 通用表单数据
-  'app.form.cellId': '点位ID',
-  'app.form.agvId': '小车ID',
+  'app.form.target': '目标',
   'app.form.hardwareId': '硬件ID',
   'app.form.sectionId': '区域ID',
   'app.form.timeRange': '时间区间',
@@ -63,9 +62,6 @@ export default {
   'app.message.fileCorrupted': '文件已损坏',
   'app.message.upload.tip': '单击或拖动文件到该区域进行上传',
   'app.message.gotIt': '知道了',
-
-  // 告警
-  'app.alert': '告警',
 
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',
@@ -195,13 +191,6 @@ export default {
   'app.button.upload': '上传',
   'app.button.download': '下载',
 
-  // @下面5个可能需要从common中移除
-  'app.button.bind': '绑定',
-  'app.button.unbind': '解除绑定',
-  'app.button.forceReset': '强制重置',
-  'app.button.isbinding': '已绑定',
-  'app.button.unbounded': '未绑定',
-
   // 小车
   'app.agv': '小车',
   'app.agv.id': '小车ID',
@@ -321,11 +310,16 @@ export default {
   'app.fault.curDataDefinition': '附加数据2',
   'app.fault.extraData2': '附加数据2',
 
+  // @有重复: 下面需要从common中移除
+  'app.button.bind': '绑定',
+  'app.button.unbind': '解除绑定',
+  'app.button.forceReset': '强制重置',
+  'app.button.isbinding': '已绑定',
+  'app.button.unbounded': '未绑定',
   //触发器状态
   'app.common.status.end': '结束',
   'app.common.status.start': '开始',
   'app.common.status.pause': '暂停',
   'app.common.batchOperate': '批量操作',
   'app.common.timeInterval': '时间间隔',
-  'app.form.target': '目标',
 };

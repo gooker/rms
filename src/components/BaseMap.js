@@ -21,7 +21,7 @@ import {
 import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
-import { zIndex, ZoneMarkerType } from '@/config/consts';
+import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -82,7 +82,7 @@ export default class BaseMap extends React.PureComponent {
 
     let minMapRatio;
     if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
-      viewport.fit(true, width * 1.1, height * 1.1);
+      viewport.fit(true, width * MapScaleRatio, height * MapScaleRatio);
       viewport.moveCenter(x + width / 2, y + height / 2);
 
       // 动态限制地图缩放尺寸
@@ -314,6 +314,7 @@ export default class BaseMap extends React.PureComponent {
       }
     }
     nameSpace === 'editor' && this.pipeSwitchLinesShown();
+    this.refresh();
   }
 
   pipeSwitchLinesShown = () => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Input, Button, Col, Drawer, Form, InputNumber, Row } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -20,9 +20,9 @@ const agvTypeNameMap = {
   Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
 };
 
-export default function SimulatorConfig(props) {
-  const { simulatorConfig, robotType, onCancel, submit } = props;
-  const actionConfigId = simulatorConfig?.actionSpeed?.actionConfigId;
+export default function SimulatorConfigPanel(props) {
+  const { simulatorConfig: data, robotType, onCancel, submit } = props;
+  const actionConfigId = data?.actionSpeed?.actionConfigId;
 
   const config = actionConfigId || {};
   const runSpeed = config && config.runSpeed ? config.runSpeed : {};
@@ -190,7 +190,7 @@ export default function SimulatorConfig(props) {
           <Col span={8}>
             <Form.Item
               name={'consumePowerSpeed'}
-              initialValue={simulatorConfig?.consumePowerSpeed}
+              initialValue={data?.consumePowerSpeed}
               label={formatMessage({ id: 'monitor.simulator.config.consumePowerSpeed' })}
             >
               <Input suffix={'ms/%'} />
@@ -200,7 +200,7 @@ export default function SimulatorConfig(props) {
           <Col span={8}>
             <Form.Item
               name={'actionConsumePowerSpeed'}
-              initialValue={simulatorConfig?.actionConsumePowerSpeed}
+              initialValue={data?.actionConsumePowerSpeed}
               label={formatMessage({ id: 'monitor.simulator.config.actionConsumePowerSpeed' })}
             >
               <Input suffix={'ms/%'} />
@@ -210,7 +210,7 @@ export default function SimulatorConfig(props) {
           <Col span={8}>
             <Form.Item
               name={'chargeSpeed'}
-              initialValue={simulatorConfig?.chargeSpeed}
+              initialValue={data?.chargeSpeed}
               label={formatMessage({ id: 'monitor.simulator.config.chargeSpeed' })}
             >
               <Input suffix={'ms/%'} />

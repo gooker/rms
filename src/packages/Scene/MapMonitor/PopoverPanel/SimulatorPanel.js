@@ -7,35 +7,26 @@ import {
   fetchCloseAgv,
   fetchOpenAGV,
   fetchRunAGV,
-  fetchSimulatorErrorMessage,
   fetchStopAGV,
   openSimulator,
+  fetchSimulatorErrorMessage,
 } from '@/services/monitor';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import SimulatorConfig from '../Modal/Simulator/SimulatorConfig';
+import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';
 import AddSimulatorAgv from '../Modal/Simulator/AddSimulatorAgv';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
 import SimulatorError from '../Modal/Simulator/SimulatorError';
-import { AGVType } from '@/config/config';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
-import simulatorStyle from './simulator.module.less';
+import { AGVType } from '@/config/config';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
-import TableWithPages from '@/components/TableWithPages';
+import simulatorStyle from './simulator.module.less';
 
 const size = 'small';
 
 const SimulatorPanel = (props) => {
-  const {
-    height = 100,
-    dispatch,
-    simulatorConfig,
-    simulatorAgvList,
-    currentLogicArea,
-    loading,
-    robotTypes,
-  } = props;
+  const { dispatch, simulatorHistory, simulatorAgvList, currentLogicArea, robotTypes } = props;
 
   const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
@@ -127,7 +118,7 @@ const SimulatorPanel = (props) => {
   function changeAgvRunTask(robotId, checked) {
     const params = {
       robotId: `${robotId}`,
-      logicId: currentLogicArea?.id,
+      logicId: currentLogicArea,
       runTask: checked,
     };
     fetchSimulatorErrorMessage(params).then(() => {
@@ -157,15 +148,15 @@ const SimulatorPanel = (props) => {
   function renderContent() {
     if (configurationVisible) {
       return (
-        <SimulatorConfig
+        <SimulatorConfigPanel
           robotType={currentRobotType}
-          simulatorConfig={simulatorConfiguration}
+          data={simulatorConfiguration}
           submit={(obj) => {
             dispatch({
               type: 'simulator/fetchUpdateAGVConfig',
               payload: obj,
-            }).then(() => {
-              setConfigurationVisible(false);
+            }).then((result) => {
+              result && setConfigurationVisible(false);
             });
           }}
           onCancel={() => {
@@ -230,7 +221,7 @@ const SimulatorPanel = (props) => {
               <SimulatorError
                 dispatch={dispatch}
                 selectIds={selectedRowKeys}
-                logicId={currentLogicArea?.id}
+                logicId={currentLogicArea}
                 onCancel={setErrorVisible}
               />
             )}
@@ -245,13 +236,12 @@ const SimulatorPanel = (props) => {
                 </span>
                 <Switch
                   size={size}
-                  loading={loading}
                   onChange={changeSimulatorStatus}
-                  checked={simulatorConfig.openSimulator}
+                  checked={simulatorHistory.openSimulator}
                 />
                 <span style={{ marginLeft: 15 }} className={commonStyles.popoverFontColor}>
-                  {convertToUserTimezone(simulatorConfig.timeStamp).format('MM-DD HH:mm')}
-                  <span style={{ marginLeft: 10 }}>{simulatorConfig.updatedByUser}</span>
+                  {convertToUserTimezone(simulatorHistory.timeStamp).format('MM-DD HH:mm')}
+                  <span style={{ marginLeft: 10 }}>{simulatorHistory.updatedByUser}</span>
                 </span>
                 <span style={{ margin: '3px 0 0 15px', color: '#fff', cursor: 'pointer' }}>
                   <ReloadOutlined onClick={init} />
@@ -288,10 +278,11 @@ const SimulatorPanel = (props) => {
                     dispatch({
                       type: 'simulator/fetchSimulatorGetAGVConfig',
                       payload: currentRobotType,
-                      then: (res) => {
-                        setSimulatorConfiguration(res);
+                    }).then((result) => {
+                      if (result) {
+                        setSimulatorConfiguration(result);
                         setConfigurationVisible(true);
-                      },
+                      }
                     });
                   }}
                 />
@@ -331,10 +322,11 @@ const SimulatorPanel = (props) => {
                     payload: {
                       robotIds: selectedRowKeys,
                     },
-                    then: () => {
+                  }).then((result) => {
+                    if (result) {
                       setSelectedRowKeys([]);
                       dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
-                    },
+                    }
                   });
                 }}
                 size={size}
@@ -432,14 +424,13 @@ const SimulatorPanel = (props) => {
               <TableWithPages
                 bordered
                 size={size}
-                loading={loading}
                 columns={columns}
                 expandColumns={expandColumns}
                 dataSource={simulatorAgvList}
                 rowKey={(record) => record.robotId}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
-                  onChange: (selectRowKey, selectRow) => {
+                  onChange: (selectRowKey) => {
                     setSelectedRowKeys(selectRowKey);
                   },
                 }}
@@ -452,10 +443,9 @@ const SimulatorPanel = (props) => {
     </div>
   );
 };
-export default connect(({ global, simulator, loading }) => ({
+export default connect(({ global, simulator, loading, monitor }) => ({
   robotTypes: global.allAgvTypes,
-  simulatorAgvList: simulator?.simulatorAgvList,
-  simulatorConfig: simulator?.simulatorConfig,
-  currentLogicArea: getCurrentLogicAreaData('monitor'),
-  loading: loading.effects['simulator/fetchSimulatorLoginAGV'],
+  currentLogicArea: monitor.currentLogicArea,
+  simulatorAgvList: simulator.simulatorAgvList,
+  simulatorHistory: simulator.simulatorHistory,
 }))(memo(SimulatorPanel));

@@ -20,15 +20,15 @@ import environmentManager from './zh-CN/SSO/environmentManager';
 import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
 import latentLiftingReport from './zh-CN/LatentLifting/report';
-import customTasks from './zh-CN/XIHE/customTasks';
-import operationLog from './zh-CN/XIHE/operationlog';
-import charging from './zh-CN/XIHE/charging';
-import lockManage from './zh-CN/XIHE/lockManage';
-import mapEditor from './zh-CN/XIHE/editor';
-import mapMonitor from './zh-CN/XIHE/monitor';
-import notification from './zh-CN/XIHE/notification';
-import sourceManage from './zh-CN/XIHE/sourcemanage';
-import alert from './zh-CN/XIHE/alert';
+import customTasks from './zh-CN/Scene/customTasks';
+import operationLog from './zh-CN/Scene/operationlog';
+import charging from './zh-CN/Scene/charging';
+import lockManage from './zh-CN/Scene/lockManage';
+import mapEditor from './zh-CN/Scene/editor';
+import mapMonitor from './zh-CN/Scene/monitor';
+import notification from './zh-CN/Scene/notification';
+import sourceManage from './zh-CN/Scene/sourcemanage';
+import alert from './zh-CN/Scene/alert';
 
 export default {
   ...menu,

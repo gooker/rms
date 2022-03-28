@@ -2,9 +2,10 @@ import React, { memo } from 'react';
 import { Divider, Form, Checkbox, Radio, Switch, Select } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import { CostOptions, DirectionOption } from '../enums';
+import FormattedMessage from '@/components/FormattedMessage';
+import CostCheckBox from '@/packages/Scene/components/CostCheckBox';
+import { DirectionOption } from '../enums';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -15,7 +16,7 @@ const ViewControllerPanel = (props) => {
   function radioGroupChange(ev) {
     const changedMapMode = ev.target.value;
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { mapMode: changedMapMode },
     });
     mapContext.changeMapMode(changedMapMode);
@@ -23,7 +24,7 @@ const ViewControllerPanel = (props) => {
 
   function switchShowBlock(hideBlock) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { hideBlock },
     });
     mapContext.switchShowBlock(hideBlock);
@@ -31,7 +32,7 @@ const ViewControllerPanel = (props) => {
 
   function switchCoordShown(value) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { showCoordinate: value },
     });
     mapContext.switchCoordinationShown(value, false);
@@ -39,7 +40,7 @@ const ViewControllerPanel = (props) => {
 
   function switchDistanceShown(value) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { showDistance: value },
     });
     mapContext.switchDistanceShown(value, false);
@@ -47,7 +48,7 @@ const ViewControllerPanel = (props) => {
 
   function switchBackImgShown(value) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { showBackImg: value },
     });
     mapContext.switchBackImgShown(value);
@@ -55,7 +56,7 @@ const ViewControllerPanel = (props) => {
 
   function showPriority(value) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { shownPriority: value },
     });
     mapContext.filterRelations(value);
@@ -63,7 +64,7 @@ const ViewControllerPanel = (props) => {
 
   function filterRelationDir(value) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { showRelationsDir: value },
     });
     mapContext.filterRelationDir(value);
@@ -71,7 +72,7 @@ const ViewControllerPanel = (props) => {
 
   function filterRelationsByCells(value) {
     dispatch({
-      type: 'editor/saveState',
+      type: 'editorView/saveState',
       payload: { showRelationsCells: value },
     });
     mapContext.filterRelationCell(value);
@@ -165,15 +166,11 @@ const ViewControllerPanel = (props) => {
               {...formItemLayout}
               label={<FormattedMessage id={'editor.view.priorityDisplay'} />}
             >
-              <Checkbox.Group
+              <CostCheckBox
                 value={shownPriority}
                 onChange={(value) => {
                   showPriority(value);
                 }}
-                options={CostOptions.map((item) => ({
-                  ...item,
-                  label: formatMessage({ id: item.label }),
-                }))}
               />
             </Form.Item>
 

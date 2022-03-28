@@ -219,7 +219,7 @@ class EditorBodyLeft extends React.PureComponent {
   render() {
     const { activeKey } = this.props;
     return (
-      <div style={{ width: `${LeftToolBarWidth}px` }} className={styles.bodyLeftSide}>
+      <div style={{ flex: `0 0 ${LeftToolBarWidth}px` }} className={styles.bodyLeftSide}>
         {EditorLeftTools.map(({ label, value, icon }) => (
           <Tooltip key={value} placement="right" title={label}>
             <span

@@ -1,15 +1,15 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Switch, Button, Checkbox } from 'antd';
+import { Form, Row, Switch, Button } from 'antd';
 import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { StationRatePolling } from '@/workers/StationRateManager';
-import { CostOptions } from '../../MapEditor/enums';
 import styles from '../monitorLayout.module.less';
+import CostCheckBox from '@/packages/Scene/components/CostCheckBox';
 
 const width = 500;
-const height = 500;
+const height = 520;
 const { formItemLayout } = getFormLayout(6, 16);
 
 const ViewControlComponent = (props) => {
@@ -30,14 +30,10 @@ const ViewControlComponent = (props) => {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
   }
 
-  function onValuesChange(changedValues) {
-    const currentKey = Object.keys(changedValues)[0];
-    const currentValue = Object.values(changedValues)[0];
+  function onValuesChange(changedValue) {
     dispatch({
       type: 'monitorView/saveViewState',
-      payload: {
-        [currentKey]: currentValue,
-      },
+      payload: { ...changedValue },
     });
   }
 
@@ -93,16 +89,12 @@ const ViewControlComponent = (props) => {
             name="shownPriority"
             initialValue={shownPriority || []}
             label={<FormattedMessage id={'editor.view.priorityDisplay'} />}
+            getValueFromEvent={(value) => {
+              mapContext && mapContext.filterRelations(value, 'monitor');
+              return value;
+            }}
           >
-            <Checkbox.Group
-              onChange={(value) => {
-                mapContext && mapContext.filterRelations(value || [], 'monitor');
-              }}
-              options={CostOptions?.map((item) => ({
-                ...item,
-                label: formatMessage({ id: item.label }),
-              }))}
-            />
+            <CostCheckBox />
           </Form.Item>
 
           <Form.Item
@@ -231,7 +223,7 @@ const ViewControlComponent = (props) => {
               </Form.Item>
               <div style={{ paddingTop: 5, marginLeft: 5 }}>
                 <Button size="small" type={'link'} onClick={refreshEmergencyArea}>
-                  <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
+                  <ReloadOutlined />
                 </Button>
               </div>
             </Row>
@@ -244,6 +236,8 @@ const ViewControlComponent = (props) => {
 export default connect(({ monitor, monitorView }) => ({
   allAGVs: monitor.allAGVs,
   mapContext: monitor.mapContext,
+  currentLogicAreaId: monitor.currentLogicArea,
+
   shownPriority: monitorView.shownPriority,
   distanceShow: monitorView.distanceShow,
   cellPointShow: monitorView.cellPointShow,
@@ -251,5 +245,4 @@ export default connect(({ monitor, monitorView }) => ({
   stationRealTimeRateView: monitorView.stationRealTimeRateView,
   backImgeView: monitorView.backImgeView,
   emergencyAreaShow: monitorView.emergencyAreaShow,
-  currentLogicAreaId: monitor.currentLogicArea,
 }))(memo(ViewControlComponent));

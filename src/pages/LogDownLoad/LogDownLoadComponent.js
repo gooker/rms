@@ -45,7 +45,7 @@ const LogDownLoadComponent = (props) => {
       width: 150,
     },
     {
-      title: formatMessage({ id: 'app.form.agvId' }),
+      title: formatMessage({ id: 'app.agv.id' }),
       dataIndex: 'robotId',
       align: 'center',
       width: 150,

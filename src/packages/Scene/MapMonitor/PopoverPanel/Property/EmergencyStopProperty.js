@@ -16,7 +16,7 @@ const { formItemLayout: formItemLayout2 } = getFormLayout(9, 15);
 
 const descriptionStyle = {};
 const EmergencyStopProperty = (props) => {
-  const { data, mapId, mapContext } = props;
+  const { dispatch, data, mapId, mapContext } = props;
 
   const formData = useRef();
   const [editMode, setEditMode] = useState(false);
@@ -67,6 +67,7 @@ const EmergencyStopProperty = (props) => {
     const response = await deleteEmergencyStop({ code: dataReal.code });
     if (!dealResponse(response, 1)) {
       mapContext.removeCurrentEmergencyFunction(dataReal.code);
+      dispatch({ type: 'monitor/updateSelections', payload: [] });
     }
   }
 

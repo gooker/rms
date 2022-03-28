@@ -1,11 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { throttle } from 'lodash';
 import { isNull, dealResponse } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { AGVType, AppCode } from '@/config/config';
 import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
-import { useMount } from '@umijs/hooks';
 import { hasAppPermission } from '@/utils/Permission';
 import { fetchWorkStationPods } from '@/services/monitor';
 import Property from '../PopoverPanel/Property';
@@ -23,7 +21,7 @@ const MonitorBodyRight = (props) => {
 
   const [offsetTop, setOffsetTop] = useState(0);
 
-  useMount(() => {
+  useEffect(() => {
     // 获取潜伏车到站信息和暂停消息
     if (hasAppPermission(AppCode.LatentPod)) {
       dispatch({ type: 'monitor/fetchLatentStopMessageList' });
@@ -36,7 +34,7 @@ const MonitorBodyRight = (props) => {
         }
       });
     }
-  });
+  }, []);
 
   function updateEditPanelFlag(category) {
     if (categoryPanel === category) {
@@ -144,7 +142,11 @@ const MonitorBodyRight = (props) => {
                 onClick={(e) => {
                   const { top: categoryTop } = e?.target?.getBoundingClientRect();
                   setOffsetTop(categoryTop);
-                  if (value !== Category.Prop || categoryPanel === Category.Prop) {
+                  if (value === Category.Prop) {
+                    if (selections.length === 1) {
+                      updateEditPanelFlag(value);
+                    }
+                  } else {
                     updateEditPanelFlag(value);
                   }
                 }}
