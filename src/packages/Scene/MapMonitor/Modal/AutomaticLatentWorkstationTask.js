@@ -264,11 +264,15 @@ const AutomaticLatentWorkstationTask = (props) => {
       validateFields()
         .then((value) => {
           const params = collectRequestParam(value);
-          dispatch({ type: 'monitor/openAutomatCcall', payload: params }); // TODO:看着不需要放在monitor
+          dispatch({ type: 'monitor/openAutomatCcall', payload: params }).then(() => {
+            getData();
+          });
         })
         .catch(() => {});
     } else {
-      dispatch({ type: 'monitor/cancelAutomatiCcall' }); //  TODO:看着不需要放在monitor
+      dispatch({ type: 'monitor/cancelAutomatiCcall' }).then(() => {
+        getData();
+      });
     }
   }
 
@@ -281,11 +285,15 @@ const AutomaticLatentWorkstationTask = (props) => {
       validateFields()
         .then((value) => {
           const params = collectRequestParam(value);
-          dispatch({ type: 'monitor/openAutoReleasePod', payload: params });
+          dispatch({ type: 'monitor/openAutoReleasePod', payload: params }).then(() => {
+            getData();
+          });
         })
         .catch(() => {});
     } else {
-      dispatch({ type: 'monitor/cancelAutoReleasePod' });
+      dispatch({ type: 'monitor/cancelAutoReleasePod' }).then(() => {
+        getData();
+      });
     }
   }
 

@@ -1,7 +1,9 @@
 import React, { memo, useState } from 'react';
 import { Form, Input, Select, Modal, Radio, Row, Col, InputNumber, Button } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
 import { find } from 'lodash';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -13,9 +15,22 @@ const toteTaskType = [
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const SimulationTaskComponent = (props) => {
-  const { visible, onClose, updateVisible } = props;
+  const { visible, onClose, updateRecord, workstationList } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
+
+  function covertWorkstationArrayToFormData(workstationArray) {
+    const workStation = [];
+    if (workstationArray.length !== workstationList.length) {
+      workstationArray.forEach((record) => {
+        const { stopCellId } = record;
+        const workStationData = find(workstationList, { stopCellId });
+        workStationData &&
+          workStation.push(`${workStationData.stopCellId}-${workStationData.angle}`);
+      });
+    }
+    return workStation;
+  }
 
   function saveTasks() {
     formRef
@@ -35,10 +50,10 @@ const SimulationTaskComponent = (props) => {
       onCancel={onClose}
       onOk={saveTasks}
       visible={visible}
-      width={450}
+      width={500}
       title={
         <>
-          {Object.keys(updateVisible).length > 0 ? (
+          {Object.keys(updateRecord).length > 0 ? (
             <FormattedMessage id="app.button.add" />
           ) : (
             <FormattedMessage id="app.button.edit" />
@@ -46,7 +61,7 @@ const SimulationTaskComponent = (props) => {
           <FormattedMessage id="app.simulateTask" />
         </>
       }
-      bodyStyle={{ height: `600px`, overflow: 'auto' }}
+      bodyStyle={{ height: `300px`, overflow: 'auto' }}
     >
       <div style={{ marginTop: 10 }}>
         <Form labelWrap form={formRef} {...formItemLayout}>
@@ -83,9 +98,9 @@ const SimulationTaskComponent = (props) => {
           <Form.List name="workStationCallParms">
             {(fields, { add, remove }) => (
               <>
-                {fields.map((field) => (
+                {fields.map(({ key, name, fieldKey, ...restField }) => (
                   <Row
-                    key={field.key}
+                    key={key}
                     style={{
                       border: '1px solid #e0dcdc',
                       padding: '10px',
@@ -96,59 +111,47 @@ const SimulationTaskComponent = (props) => {
                   >
                     <Col span={22}>
                       <Form.Item
-                        {...field}
+                        {...restField}
                         label={formatMessage({
-                          id: 'app.taskDetail.action',
+                          id: 'app.common.priority',
                         })}
-                        initialValue={'FETCH'}
-                        name={[field.name, 'toteAGVTaskActionType']}
-                        fieldKey={[field.fieldKey, 'toteAGVTaskActionType']}
+                        initialValue={[]}
+                        name={[name, 'priorities']}
+                        fieldKey={[fieldKey, 'priorities']}
                       >
-                        <Radio.Group>
-                          <Radio.Button value="FETCH">
-                            <FormattedMessage id="app.taskDetail.action.fetch" />
-                          </Radio.Button>
-                          <Radio.Button value="PUT">
-                            <FormattedMessage id="app.taskDetail.action.put" />
-                          </Radio.Button>
-                        </Radio.Group>
+                        <Select allowClear mode="tags" />
                       </Form.Item>
                       <Form.Item
-                        {...field}
-                        label={formatMessage({
-                          id: 'lockManage.toteCode',
-                        })}
-                        name={[field.name, 'toteCode']}
-                        fieldKey={[field.fieldKey, 'toteCode']}
+                        {...restField}
+                        name={[name, 'workStationCodes']}
+                        fieldKey={[fieldKey, 'workStationCodes']}
+                        initialValue={
+                          updateRecord?.workstationArray
+                            ? covertWorkstationArrayToFormData(updateRecord.workstationArray)
+                            : []
+                        }
+                        label={formatMessage({ id: 'app.map.workStation' })}
                       >
-                        <Input />
-                      </Form.Item>
-                      <Form.Item
-                        {...field}
-                        label={formatMessage({
-                          id: 'monitor.automaticLatentWorkStationTask.toteWeight',
-                        })}
-                        name={[field.name, 'weight']}
-                        fieldKey={[field.fieldKey, 'weight']}
-                      >
-                        <InputNumber />
-                      </Form.Item>
-                      <Form.Item
-                        {...field}
-                        label={formatMessage({
-                          id: 'app.taskDetail.binCode',
-                        })}
-                        name={[field.name, 'binCode']}
-                        fieldKey={[field.fieldKey, 'binCode']}
-                      >
-                        <Input />
+                        <Select
+                          mode="multiple"
+                          placeholder={formatMessage({
+                            id: 'monitor.automaticLatentWorkStationTask.defaultAllStation',
+                          })}
+                          style={{ width: '80%' }}
+                        >
+                          {workstationList.map((record, index) => (
+                            <Select.Option value={record.stopCellId} key={index}>
+                              {record.stopCellId}-{record.angle}°
+                            </Select.Option>
+                          ))}
+                        </Select>
                       </Form.Item>
                     </Col>
                     <Col span={2}>
                       <Button
                         type="danger"
                         icon={<DeleteOutlined />}
-                        onClick={() => remove(field.name)}
+                        onClick={() => remove(name)}
                       />
                     </Col>
                   </Row>
@@ -172,4 +175,6 @@ const SimulationTaskComponent = (props) => {
     </Modal>
   );
 };
-export default memo(SimulationTaskComponent);
+export default connect(({ monitor }) => ({
+  workstationList: getCurrentLogicAreaData('monitor')?.workstationList || [],
+}))(memo(SimulationTaskComponent));
