@@ -3,7 +3,7 @@ import { findIndex } from 'lodash';
 import { hasAppPermission } from '@/utils/Permission';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
-import { AGVType, AppCode } from '@/config/config';
+import { AppCode } from '@/config/config';
 import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
 import {
   fetchChargerList,
@@ -24,7 +24,7 @@ import {
   saveLatentAutomaticTaskConfig,
   updateTemporaryBlockCell,
 } from '@/services/monitor';
-import { fetchActiveMap, fetchAgvList, fetchToteRackLayout } from '@/services/api';
+import { fetchActiveMap, fetchAllAgvList, fetchToteRackLayout } from '@/services/api';
 import { MonitorSelectableSpriteType } from '@/config/consts';
 
 export default {
@@ -324,28 +324,21 @@ export default {
 
     // ***************** 获取监控小车、货架等相关信息 ***************** //
     *initMonitorLoad({ payload: mapId }, { put }) {
+      yield put.resolve({ type: 'refreshAllAgvList' });
+
       const promises = [];
       const promiseFields = []; // 每个Promise返回值对应的 state 字段
+
       // 潜伏车模块
       if (hasAppPermission(AppCode.LatentPod)) {
-        promises.push(fetchAgvList(AGVType.LatentLifting));
-        promiseFields.push('latentAgv');
         promises.push(fetchLatentPodList());
         promiseFields.push('latentPod');
       }
 
       // 料箱车模块
       if (hasAppPermission(AppCode.Tote)) {
-        promises.push(fetchAgvList(AGVType.Tote));
-        promiseFields.push('toteAgv');
         promises.push(fetchToteRackLayout());
         promiseFields.push('toteRack');
-      }
-
-      // 分拣车模块
-      if (hasAppPermission(AppCode.FlexibleSorting)) {
-        promises.push(fetchAgvList(AGVType.Sorter));
-        promiseFields.push('sorterAgv');
       }
 
       // 地图充电桩与硬件绑定关系
@@ -365,27 +358,29 @@ export default {
        * result {status:'fulfilled|rejected', value:any}
        */
       const [...responses] = yield Promise.allSettled(promises);
-      const resource = {};
       const additionalStates = {};
-      let allAGVs = [];
       responses.forEach(({ status, value }, index) => {
         if (status === 'fulfilled' && !dealResponse(value)) {
-          resource[promiseFields[index]] = value;
           additionalStates[promiseFields[index]] = value;
-          if (['latentAgv', 'toteAgv', 'sorterAgv'].includes(promiseFields[index])) {
-            allAGVs = [...allAGVs, ...value];
-          }
         } else {
-          resource[promiseFields[index]] = null;
           additionalStates[promiseFields[index]] = null;
         }
       });
-      additionalStates.allAGVs = allAGVs;
-      yield put({ type: 'saveAllAGVs', payload: allAGVs });
       yield put({ type: 'saveMonitorLoad', payload: additionalStates });
     },
 
-    // *****临时不可走点
+    *refreshAllAgvList(_, { put, call }) {
+      const response = yield call(fetchAllAgvList);
+      if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchAgvListFail' }))) {
+        const allAGVs = Object.values(response);
+        yield put({ type: 'saveAllAGVs', payload: allAGVs });
+        return allAGVs;
+      } else {
+        return null;
+      }
+    },
+
+    // ***************** 临时不可走点 ***************** //
     *fetchTemporaryLockedCells(_, { call, put }) {
       const response = yield call(fetchTemporaryBlockCells);
       if (dealResponse(response)) {

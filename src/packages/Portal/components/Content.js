@@ -1,19 +1,37 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { Tabs } from 'antd';
+import { debounce } from 'lodash';
 import { Route, useHistory } from 'react-router-dom';
-import { connect } from '@/utils/RmsDva';
-import { formatMessage, isStrictNull } from '@/utils/util';
-import Detail from '@/components/TaskDetail/Detail';
 import { AppCode } from '@/config/config';
+import { connect } from '@/utils/RmsDva';
+import EventManager from '@/utils/EventManager';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import TabsBar from '@/components/TabsBar';
+import Detail from '@/components/TaskDetail/Detail';
 import style from '@/layout/homeLayout.module.less';
 
 const { TabPane } = Tabs;
 
 const Content = (props) => {
-  const { dispatch, tabs, activeTab, grantedAPP, currentApp, routeLocaleKeyMap, currentUser } =
-    props;
+  const { dispatch, grantedAPP, currentApp, currentUser } = props;
+  const { tabs, activeTab, routeLocaleKeyMap } = props;
+
+  const domRef = useRef();
   const history = useHistory();
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(
+      debounce((entries) => {
+        const { contentRect } = entries[0];
+        EventManager.dispatch('resize', contentRect);
+      }, 200),
+    );
+    resizeObserver.observe(domRef.current);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     if (!isStrictNull(activeTab)) {
@@ -50,7 +68,7 @@ const Content = (props) => {
   }
 
   return (
-    <div id={'layoutContent'} className={style.layoutContent}>
+    <div ref={domRef} id={'layoutContent'} className={style.layoutContent}>
       <Tabs activeKey={activeTab} renderTabBar={renderTabBar}>
         {tabs.map((item) => {
           return (

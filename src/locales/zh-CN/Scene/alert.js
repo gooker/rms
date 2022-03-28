@@ -1,5 +1,6 @@
 // 告警中心
 export default {
+  'app.alert': '告警',
   'app.alertCenter.requestHandle': '系统有 {response} 条问题未处理',
   'app.alertCenter.goHandle': '前往',
 

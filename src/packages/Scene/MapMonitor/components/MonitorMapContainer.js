@@ -1,15 +1,16 @@
 import React, { memo, useEffect } from 'react';
-import { debounce, throttle } from 'lodash';
+import { throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { isNull } from '@/utils/util';
+import { getRandomString, isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
-import commonStyles from '@/common.module.less';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
+import EventManager from '@/utils/EventManager';
+import commonStyles from '@/common.module.less';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
@@ -17,20 +18,15 @@ const MonitorMapContainer = (props) => {
   const { mapContext, mapRatio, mapMinRatio, currentMap, monitorLoad } = props;
 
   useEffect(() => {
-    const resizeObserver = new ResizeObserver(
-      debounce(() => {
-        const { mapContext: _mapContext } = window.$$state().monitor;
-        const monitorPixiContainer = document.getElementById('monitorPixiContainer');
-        if (monitorPixiContainer && _mapContext) {
-          const { width, height } = monitorPixiContainer.getBoundingClientRect();
-          _mapContext.resize(width, height);
-        }
-      }, 200),
-    );
-    resizeObserver.observe(document.body);
-
+    const functionId = getRandomString(8);
+    function resize(rect) {
+      const { width, height } = rect;
+      const { mapContext: _mapContext } = window.$$state().monitor;
+      _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
+    }
+    EventManager.subscribe('resize', resize, functionId);
     return () => {
-      resizeObserver.disconnect();
+      EventManager.unSubscribe('resize', functionId);
     };
   }, []);
 
@@ -327,20 +323,13 @@ const MonitorMapContainer = (props) => {
   }
 
   return (
-    <div
-      id={'monitorPixiContainer'}
-      className={commonStyles.monitorBodyMiddle}
-      style={{ position: 'relative' }}
-    >
+    <div id={'monitorPixiContainer'} className={commonStyles.monitorBodyMiddle}>
       <MonitorMapView />
       <MonitorMask />
 
-      {/* 平板不用显示滑条 */}
-      {!window.currentPlatForm.isTablet && (
-        <>
-          <OperationType />
-          <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
-        </>
+      <OperationType right={window.currentPlatForm.isPc ? 'calc(20% + 10px)' : '10px'} />
+      {window.currentPlatForm.isPc && (
+        <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
       )}
     </div>
   );

@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-export async function fetchAllScopeActions(sectionId) {
+export async function fetchAllScopeActions() {
   return request(`/${NameSpace.Coordinator}/actionScope/getAllActionScope`, {
     method: 'GET',
   });
@@ -342,13 +342,6 @@ export async function fetchUpdateAGVConfig(params) {
 // 获取车型模拟车配置
 export async function fetchSimulatorAGVConfig(robotType) {
   return request(`/${NameSpace.Coordinator}/simulator/getAGVConfig/${robotType}`, {
-    method: 'GET',
-  });
-}
-
-// 获取模拟器小车
-export async function fetchSimulatorLoginAGV() {
-  return request(`/${NameSpace.Coordinator}/traffic/getAllAGV`, {
     method: 'GET',
   });
 }

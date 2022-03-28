@@ -1,4 +1,5 @@
 export const GlobalAlpha = 0.6;
+export const MapScaleRatio = 1.3;
 
 export const SelectionType = {
   SINGLE: 'SINGLE',

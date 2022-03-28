@@ -77,9 +77,9 @@ const MapEditor = (props) => {
   }, [mapContext]);
 
   return (
-    <div className={commonStyles.commonPageStyleNoPadding}>
+    <div>
       <div
-        style={{ flex: `0 0 ${HeaderHeight}px` }}
+        style={{ height: `${HeaderHeight}px` }}
         className={classnames(commonStyles.mapLayoutHeader, style.editorHeader)}
       >
         {Array.isArray(mapList) ? (

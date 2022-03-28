@@ -2,13 +2,11 @@ import {
   addSimulationAgv,
   fetchUpdateAGVConfig,
   fetchSimulatorHistory,
-  fetchSimulatorLoginAGV,
   fetchSimulatorAGVConfig,
-  fetchSimulatorAgvOffLine,
   fetchBatchDeleteSimulatorAgv,
   fetchSimulatorLoginAGVControlState,
 } from '@/services/monitor';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
 export default {
@@ -16,13 +14,21 @@ export default {
 
   state: {
     simulatorAgvList: [],
-    simulatorConfig: {},
+    simulatorHistory: {},
   },
 
   reducers: {
     save(state, action) {
       return { ...state, ...action.payload };
     },
+
+    saveSimulatorHistory(state, action) {
+      return {
+        ...state,
+        simulatorHistory: action.payload,
+      };
+    },
+
     saveSimulatorAgvList(state, action) {
       return {
         ...state,
@@ -36,44 +42,34 @@ export default {
       const response = yield call(fetchSimulatorHistory);
       if (!dealResponse(response)) {
         yield put({
-          type: 'save',
-          payload: {
-            simulatorConfig: response,
-          },
+          type: 'saveSimulatorHistory',
+          payload: response,
         });
       }
     },
 
     *fetchSimulatorLoginAGV(_, { call, put }) {
-      // 获取Coodinator所有的小车信息
-      const response = yield call(fetchSimulatorLoginAGV);
-      if (dealResponse(response)) {
-        return false;
+      const allAGVs = yield put.resolve({ type: 'monitor/refreshAllAgvList' });
+      if (allAGVs !== null) {
+        // 获取Coordinator所有的小车控制状态信息
+        const allAgvControlState = yield call(fetchSimulatorLoginAGVControlState);
+        if (dealResponse(allAgvControlState)) {
+          return false;
+        }
+
+        // 将小车控制状态信息Map到小车数据中
+        const allSimulatorAgvList = allAGVs.map((item) => ({
+          ...item,
+          canMove: allAgvControlState[item.robotId],
+        }));
+
+        yield put({ type: 'saveSimulatorAgvList', payload: allSimulatorAgvList });
       }
-
-      // 获取Coodinator所有的小车控制状态信息
-      const allAgvControlState = yield call(fetchSimulatorLoginAGVControlState);
-      if (dealResponse(allAgvControlState)) {
-        return false;
-      }
-
-      // 将小车控制状态信息Map到小车数据中
-      const allSimulatorAgvList = Object.values(response).map((item) => {
-        const { robotId } = item;
-        return { ...item, canMove: allAgvControlState[robotId] };
-      });
-
-      yield put({
-        type: 'saveSimulatorAgvList',
-        payload: allSimulatorAgvList,
-      });
     },
 
     *fetchAddSimulatorAgv({ payload }, { call }) {
       const response = yield call(addSimulationAgv, payload);
-      if (dealResponse(response, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
-        return false;
-      }
+      return !dealResponse(response, true);
     },
 
     *fetchDeletedSimulatorAgv({ payload, then }, { call }) {
@@ -84,43 +80,21 @@ export default {
         robotIds: robotIds.join(','),
       };
       const response = yield call(fetchBatchDeleteSimulatorAgv, params);
-      if (dealResponse(response, 1, '删除小车成功')) return false;
-      then && then();
+      return !dealResponse(response, true);
     },
 
-    *fetchSimulatorAgvOffLine({ payload, then }, { call }) {
-      const { robotIds } = payload;
-      const currentLogicAreaData = getCurrentLogicAreaData('monitor');
-      for (let index = 0; index < robotIds.length; index++) {
-        const robotId = robotIds[index];
-        const params = {
-          logicId: currentLogicAreaData.id,
-          robotId,
-        };
-        const response = yield call(fetchSimulatorAgvOffLine, params);
-        if (dealResponse(response, 1, '小车下线成功')) {
-          return false;
-        }
-        then && then();
+    *fetchSimulatorGetAGVConfig({ payload, then }, { call }) {
+      const response = yield call(fetchSimulatorAGVConfig, payload);
+      if (!dealResponse(response)) {
+        return response;
+      } else {
+        return false;
       }
     },
 
     *fetchUpdateAGVConfig({ payload, then }, { call }) {
       const response = yield call(fetchUpdateAGVConfig, payload);
-      if (dealResponse(response, 1,  formatMessage({ id: 'app.message.operateSuccess' }))) {
-        return false;
-      }
-      if (then) {
-        then();
-      }
-    },
-
-    *fetchSimulatorGetAGVConfig({ payload, then }, { call }) {
-      const response = yield call(fetchSimulatorAGVConfig, payload);
-      if (dealResponse(response)) {
-        return false;
-      }
-      then && then(response);
+      return !dealResponse(response, true);
     },
   },
 };

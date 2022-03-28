@@ -1,44 +1,30 @@
-import React from 'react';
-import { getContentHeight } from '@/utils/util';
-import { debounce } from 'lodash';
+import React, { memo, useState, useEffect } from 'react';
 import commonStyles from '@/common.module.less';
+import { getContentHeight, getRandomString } from '@/utils/util';
+import EventManager from '@/utils/EventManager';
 
-class TablePageWrapper extends React.Component {
-  state = {
-    pageHeight: 0,
-  };
+const TablePageWrapper = (props) => {
+  const [tool, table, ...restChildren] = props.children;
 
-  componentDidMount() {
-    this.observeContentsSizeChange();
-    this.setState({ pageHeight: getContentHeight() });
-  }
+  const [pageHeight, setPageHeight] = useState(getContentHeight());
 
-  componentWillUnmount() {
-    this.resizeObserver.disconnect();
-  }
+  useEffect(() => {
+    const functionId = getRandomString(8);
+    function resize(rect) {
+      setPageHeight(rect.height);
+    }
+    EventManager.subscribe('resize', resize, functionId);
+    return () => {
+      EventManager.unSubscribe('resize', functionId);
+    };
+  }, []);
 
-  observeContentsSizeChange = () => {
-    const _this = this;
-    this.resizeObserver = new ResizeObserver(
-      debounce((entries) => {
-        const { contentRect } = entries[0];
-        const height = contentRect?.height ?? getContentHeight();
-        _this.setState({ pageHeight: height });
-      }, 200),
-    );
-    this.resizeObserver.observe(document.getElementById('layoutContent'));
-  };
-
-  render() {
-    const { pageHeight } = this.state;
-    const [tool, table, ...restChildren] = this.props.children;
-    return (
-      <div className={commonStyles.commonPageStyle} style={{ height: pageHeight }}>
-        <div style={{ marginBottom: 15 }}>{tool}</div>
-        <div className={commonStyles.tableWrapper}>{table}</div>
-        <div>{restChildren}</div>
-      </div>
-    );
-  }
-}
-export default TablePageWrapper;
+  return (
+    <div className={commonStyles.commonPageStyle} style={{ height: pageHeight }}>
+      <div style={{ marginBottom: 15 }}>{tool}</div>
+      <div className={commonStyles.tableWrapper}>{table}</div>
+      <div>{restChildren}</div>
+    </div>
+  );
+};
+export default memo(TablePageWrapper);

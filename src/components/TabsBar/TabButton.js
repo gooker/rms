@@ -22,6 +22,9 @@ const TabButton = (props) => {
 
   const menu = (
     <Menu onClick={onContextMenu}>
+      <Menu.Item key="refresh">
+        <FormattedMessage id={'app.button.refresh'} />
+      </Menu.Item>
       <Menu.Item key="left" disabled={index <= 1}>
         <FormattedMessage id={'app.tabs.closeLeft'} />
       </Menu.Item>

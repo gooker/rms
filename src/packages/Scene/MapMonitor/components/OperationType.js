@@ -188,9 +188,9 @@ class OperationType extends React.PureComponent {
   };
 
   render() {
-    const { operationType } = this.props;
+    const { operationType, right } = this.props;
     return (
-      <div className={styles.operationType}>
+      <div className={styles.operationType} style={{ right }}>
         <div
           className={
             operationType === MonitorOperationType.Choose ? styles.operationTypeActive : null

@@ -14,7 +14,7 @@ export default {
     },
     showCellLock: true,
 
-    shownPriority: [10, 20, 100, 1000],
+    shownPriority: [],
     distanceShow: false,
     cellPointShow: true,
     coordinationShow: false,
