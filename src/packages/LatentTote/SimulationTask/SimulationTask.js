@@ -80,7 +80,7 @@ const SimulationTask = (props) => {
   const { allTaskTypes, agvType } = props;
   const [loading, setLoading] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
-  const [updateVisible, setUpdateVisible] = useState({});
+  const [updateRecord, setUpdateRecord] = useState({});
 
   const [selectRowKey, setSelectRowKey] = useState([]);
   const [dataList, setDataList] = useState([]);
@@ -290,7 +290,7 @@ const SimulationTask = (props) => {
 
       <SimulationTaskComponent
         visible={addVisible}
-        updateVisible={updateVisible}
+        updateRecord={updateRecord}
         onClose={() => {
           setAddVisible(false);
         }}

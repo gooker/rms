@@ -69,7 +69,7 @@ export default [
         name: 'agvLoad',
         component: '/Report/LoadReport/AgvLoadReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        hooks: ['dev'],
+        // hooks: ['dev'],
       },
       {
         path: `/${AppCode.Report}/loadReport/taskLoad`,

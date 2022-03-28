@@ -127,7 +127,7 @@ export const actionBarOption = (title, keyMap) => ({
   ],
   yAxis: {
     type: 'value',
-    // name: '分',
+    name: '时间(s)',
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor,
@@ -277,7 +277,6 @@ export const taskLineOption = (title, keyMap) => ({
   ],
   yAxis: {
     type: 'value',
-
     axisLine: {
       lineStyle: {
         color: LineChartsAxisColor,
@@ -443,9 +442,8 @@ export const generateActionPieData = (allData, type, translate) => {
 
   forIn(currentActionSum, (v, key) => {
     const value = v === 0 ? '' : v;
-    if (v !== 0) {
-      seryData.push({ name: key, value, label: translate[key] });
-    }
+   
+    seryData.push({ name: key, value, label: translate[key] });
   });
 
   const legend = {

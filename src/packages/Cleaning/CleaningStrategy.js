@@ -1,137 +1,119 @@
-import React, { Component, useState, useEffect, forwardRef } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import {
   Form,
-  Row,
-  Col,
-  Checkbox,
-  Card,
-  InputNumber,
-  Input,
-  Select,
-  TimePicker,
   Button,
-  message,
-  Spin,
+  Input,
   Switch,
+  Spin,
+  Row,
+  Checkbox,
+  Select,
+  Col,
+  TimePicker,
+  InputNumber,
+  message,
 } from 'antd';
-import {
-  fetchActiveMap,
-  // fetchGetAllScopeActions,
-  saveCleanLatentStrategy,
-  getCleanStrategy,
-} from '@/services/api';
-
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { dealResponse, isNull, analysisMapData, isStrictNull, formatMessage } from '@/utils/util';
-// import DynamicForm from '../ChargeCenter/Components/DynamicForm';
-// import { DynamicFormCol } from '../ChargeCenter/Components/DynamicForm';
+import { getCleanStrategy, saveCleanLatentStrategy } from '@/services/api';
+import { fetchAllScopeActions } from '@/services/monitor';
+import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import DesignArea from './components/DesignArea';
-import CleaningDay from './components/CleaningDays';
+import CleaningDays from './components/CleaningDays';
 import FormattedMessage from '@/components/FormattedMessage';
+import commonStyles from '@/common.module.less';
+import styles from './index.module.less';
 
-const formlayout = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 16 },
-};
-const { Option } = Select;
+const { formItemLayoutNoLabel } = getFormLayout(6, 16);
+const tailFormItemLayout = { wrapperCol: { offset: 1, span: 23 } };
+const { RangePicker } = TimePicker;
 const Days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
-@Form.create()
-class CleaningCenter extends Component {
-  state = {
-    loading: false,
-    iconLoading: false, //保存按钮
-    cleaningData: {},
-    isOvertimeSkipFlag: false,
-    normalScopeFLag: false,
-    freeScopeFLag: false,
-    scope: [],
-    functionArea: [], //区域
-  };
+const CleaningStrategy = (props) => {
+  const [formRef] = Form.useForm();
+  const [executing, setExecuting] = useState(false);
+  const [cleaningData, setCleaningData] = useState({});
+  const [scope, setScope] = useState([]);
+  const [functionArea, setFunctionArea] = useState([]);
 
-  async componentDidMount() {
-    try {
-      // this.getStrategy();
-      // const response = await Promise.all([fetchActiveMap(), fetchGetAllScopeActions()]);
-      //
-      // // 获取scope
-      // const [originalMapData, areasData] = response;
-      // if (dealResponse(originalMapData) || dealResponse(areasData)) {
-      //   message.error(formatMessage({ id: 'app.mapRecorder.fail' }));
-      // } else {
-      //   let scopeMap = {};
-      //   if (originalMapData) {
-      //     const { currentLogicArea } = analysisMapData(originalMapData);
-      //     scopeMap = currentLogicArea?.routeMap || {};
-      //   }
-      //
-      //   const functionAreaSet = new Set();
-      //   areasData.forEach(({ sectionCellIdMap }) => {
-      //     if (sectionCellIdMap) {
-      //       Object.values(sectionCellIdMap).forEach((item) => {
-      //         functionAreaSet.add(item);
-      //       });
-      //     }
-      //   });
-      //
-      //   this.setState({ scope: Object.values(scopeMap), functionArea: [...functionAreaSet] });
-      // }
-    } catch (error) {
-      // message.error(error);
+  const [isOvertimeSkipFlag, setIsOvertimeSkipFlag] = useState(false);
+  const [normalScopeFLag, setNormalScopeFLag] = useState(false);
+  const [freeScopeFLag, setFreeScopeFLag] = useState(false);
+
+  const [pastMinuts, setPastMinuts] = useState(null);
+  const [percentage, setPercentage] = useState(null);
+  const [useAgvStandByPercent, setUseAgvStandByPercent] = useState(false); // 第一条策略
+  const [useIdleHours, setUseIdleHours] = useState(false); //空闲时段-允许默认时间段
+
+  useEffect(() => {
+    async function init() {
+      getStrategy();
+      await getScope();
     }
-  }
-  onSubmit = () => {
-    const {
-      form: { validateFields },
-    } = this.props;
-    const { isOvertimeSkipFlag, normalScopeFLag, freeScopeFLag } = this.state;
-    validateFields((error, value) => {
-      if (error) {
-        const messageErr = Object.values(error);
-        let _message = null;
-        messageErr?.map((err, index) => {
-          if (index === 0) {
-            _message = err.errors[index].message;
+    init();
+  }, []);
+
+  async function getScope() {
+    try {
+      const areasData = await fetchAllScopeActions();
+      // 获取scope
+      if (dealResponse(areasData)) {
+        message.error(formatMessage({ id: 'app.mapRecorder.fail' }));
+      } else {
+        const currentLogicArea = getCurrentLogicAreaData('monitor');
+        const scopeMap = currentLogicArea?.routeMap || {};
+
+        const functionAreaSet = new Set();
+        areasData.forEach(({ sectionCellIdMap }) => {
+          if (sectionCellIdMap) {
+            Object.values(sectionCellIdMap).forEach((item) => {
+              functionAreaSet.add(item);
+            });
           }
         });
-        message.error(_message);
-        return;
+        setScope(Object.values(scopeMap));
+        setFunctionArea([...functionAreaSet]);
       }
-      const currentValue = { ...value };
-      const { forbidTime, freeTime, cleanAreas } = value;
-      if (!isOvertimeSkipFlag) {
-        currentValue.timeOutJump = null;
-      }
-      if (!normalScopeFLag) {
-        currentValue.normalScopeCode = null;
-      }
-      if (!freeScopeFLag) {
-        currentValue.freeTimeScopeCode = null;
-      }
-      currentValue.forbidTime = this.transformTime(forbidTime);
-      currentValue.freeTime = this.transformTime(freeTime);
-      currentValue.cleanAreas = this.transformDayAndTime(cleanAreas);
+    } catch (error) {}
+  }
 
-      this.saveStrategy(currentValue);
-    });
-  };
-  // 保存时候转换
-  transformDayAndTime = (cleanAreas) => {
-    let result = [];
-    if (cleanAreas && cleanAreas.length > 0) {
-      cleanAreas.map((record) => {
-        const { daytime, area = [], ...others } = record;
-        let obj = { area, ...others };
-        if (daytime != null) {
-          obj.day = daytime[0] ? daytime[0] : null;
-          obj.times = daytime[1] ? daytime[1] : null;
-        }
-        result.push(obj);
-      });
+  // 获取保存后的策略
+  async function getStrategy() {
+    setExecuting(true);
+    // 获取清扫策略
+    const cleaningRes = await getCleanStrategy();
+    if (!dealResponse(cleaningRes)) {
+      const currentCleaningRes = { ...cleaningRes };
+      // 转换禁止和空闲时段数据
+      currentCleaningRes.forbidTime = generateTime(cleaningRes?.forbidTime);
+      currentCleaningRes.freeTime = generateTime(cleaningRes?.freeTime);
+      setCleaningData(currentCleaningRes || {});
+      setIsOvertimeSkipFlag(cleaningRes?.timeOutJump && cleaningRes?.timeOutJump > 0);
+      setNormalScopeFLag(!isNull(cleaningRes?.normalScopeCode));
+      setFreeScopeFLag(!isNull(cleaningRes?.freeTimeScopeCode));
+
+      setPastMinuts(cleaningRes?.agvStandbyMinute);
+      setPercentage(cleaningRes?.agvStandbyPercent);
+      setUseAgvStandByPercent(cleaningRes?.useAgvStandByPercent);
+      setUseIdleHours(cleaningRes?.useIdleHours);
+    } else {
+      message.error(formatMessage({ id: 'cleaningCenter.data.fail' }));
     }
-    return result;
-  };
-  transformTime = (dateTimes) => {
+    setExecuting(false);
+  }
+
+  function generateTime(dateTimes) {
+    const fieldsValue = dateTimes?.map(({ startTime, endTime, weeks }) => {
+      return {
+        weeks,
+        time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
+      };
+    });
+    return fieldsValue || [];
+  }
+
+  function transformTime(dateTimes) {
     let result = [];
     if (dateTimes != null) {
       dateTimes.map((record) => {
@@ -145,503 +127,449 @@ class CleaningCenter extends Component {
       });
     }
     return result;
-  };
-  // end
+  }
 
-  // 获取数据时候转换 禁止和空闲时段
-  generateTime = (dateTimes) => {
-    const fieldsValue = dateTimes?.map(({ startTime, endTime, weeks }) => {
-      return {
-        weeks,
-        time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
-      };
-    });
-    return fieldsValue || [];
-  };
-
-  // 清扫天数和次数
-  generateCleanAreas = (cleanDays) => {
-    let daytime = [];
-    if (cleanDays && cleanDays.length > 0) {
-      cleanDays.map((record) => {
-        const { day, times, ...others } = record;
-        daytime.push({ ...others, daytime: [day, times] });
-      });
+  function validateAreas(area) {
+    if (area.filter(Boolean).length === 0) {
+      return Promise.resolve();
     }
-    return daytime;
-  };
 
-  //保存清扫策略
-  saveStrategy = async (values) => {
-    this.setState({ iconLoading: true });
-    const { cleaningData } = this.state;
+    // 判断day或者times有没有空白
+    for (let i = 0; i < area.length; i++) {
+      const currentItem = area[i];
+      if (isStrictNull(currentItem.day) || isStrictNull(currentItem.times)) {
+        message.error(formatMessage({ id: 'cleaningCenter.cleanAreas.cycleRequired' }));
+        return;
+      }
+    }
+
+    return Promise.resolve();
+  }
+
+  function onSubmit() {
+    formRef
+      .validateFields()
+      .then((value) => {
+        const currentValue = { ...value };
+        if (validateAreas(value.cleanAreas)) {
+          const { forbidTime, freeTime, cleanAreas } = value;
+          if (!isOvertimeSkipFlag) {
+            currentValue.timeOutJump = null;
+          }
+          if (!normalScopeFLag) {
+            currentValue.normalScopeCode = null;
+          }
+          if (!freeScopeFLag) {
+            currentValue.freeTimeScopeCode = null;
+          }
+          currentValue.forbidTime = transformTime(forbidTime);
+          currentValue.freeTime = transformTime(freeTime);
+
+          currentValue.cleanAreas = cleanAreas?.map((record) => {
+            const { cleanPriority } = record;
+            return { ...record, cleanPriority: cleanPriority ?? 5 };
+          });
+
+          currentValue.agvStandbyMinute = pastMinuts;
+          currentValue.agvStandbyPercent = percentage;
+          currentValue.useAgvStandByPercent = useAgvStandByPercent;
+          currentValue.useIdleHours = useIdleHours;
+          console.log(currentValue);
+          return;
+          saveStrategy(currentValue);
+        }
+      })
+      .catch((err) => {});
+  }
+
+  async function saveStrategy(values) {
+    setExecuting(true);
     let _id = cleaningData?.id;
     const saveRes = await saveCleanLatentStrategy({ ...values, id: _id }, _id);
     if (dealResponse(saveRes)) {
-      message.error(formatMessage({ id: 'app.operate.fail' }));
+      message.error(formatMessage({ id: 'app.message.operateFailed' }));
     } else {
-      message.success(formatMessage({ id: 'app.car.operationSucceeded' }));
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       this.getStrategy();
     }
-    this.setState({ iconLoading: false });
-  };
 
-  // 获取保存后的策略
-  getStrategy = async () => {
-    this.setState({ loading: true });
-    // 获取清扫策略
-    const cleaningRes = await getCleanStrategy();
-    if (!dealResponse(cleaningRes)) {
-      const currentCleaningRes = { ...cleaningRes };
-      // 转换禁止和空闲时段数据
-      currentCleaningRes.forbidTime = this.generateTime(cleaningRes?.forbidTime);
-      currentCleaningRes.freeTime = this.generateTime(cleaningRes?.freeTime);
-      currentCleaningRes.cleanAreas = this.generateCleanAreas(cleaningRes?.cleanAreas);
-      this.setState({
-        cleaningData: currentCleaningRes || {},
-        isOvertimeSkipFlag: cleaningRes?.timeOutJump && cleaningRes?.timeOutJump > 0,
-        normalScopeFLag: !isNull(cleaningRes?.normalScopeCode),
-        freeScopeFLag: !isNull(cleaningRes?.freeTimeScopeCode),
-      });
-    } else {
-      message.error(formatMessage({ id: 'cleaningCenter.data.fail' }));
-    }
-    this.setState({ loading: false });
-  };
+    setExecuting(false);
+  }
 
-  render() {
-    const {
-      form: { getFieldDecorator },
-    } = this.props;
-    const {
-      loading,
-      iconLoading,
-      cleaningData,
-      isOvertimeSkipFlag,
-      normalScopeFLag,
-      freeScopeFLag,
-      scope,
-      functionArea,
-    } = this.state;
-    return (
-      <Spin spinning={loading}>
-        <div
-          style={{ padding: '20px', display: 'flex', overflow: 'auto', flexFlow: 'column wrap' }}
-        >
-          <Card>
-            {/*
-            <Form>
-            <Row gutter={10}>
-              <div style={{ margin: '15px 0px', display: 'flex', flexFlow: 'row nowrap' }}>
-                <span>
-                  <FormattedMessage id={'cleaninCenter.isOpen'} />:
-                </span>
-                <span style={{ margin: '0px 10px' }}>
-                  {getFieldDecorator('isOpenStrategy', {
-                    valuePropName: 'checked',
-                    initialValue: cleaningData?.isOpenStrategy || false,
-                  })(<Switch />)}
-                </span>
-              </div>
-              <Row>
-                <Input.Group compact>
-                  <Form.Item>
-                    {getFieldDecorator('isOvertimeSkipFlag', {
-                      valuePropName: 'checked',
-                      initialValue: isOvertimeSkipFlag || false,
-                    })(
-                      <Checkbox
-                        onChange={(v) => {
-                          this.setState({ isOvertimeSkipFlag: v.target.checked });
-                        }}
-                      >
-                        <FormattedMessage id={'cleaninCenter.overtimeskip'} />
-                      </Checkbox>,
-                    )}
-                  </Form.Item>
-
-                  <Form.Item hidden={!isOvertimeSkipFlag}>
-                    {getFieldDecorator('timeOutJump', {
-                      initialValue: cleaningData?.timeOutJump || 10,
-                      rules: [
-                        {
-                          pattern: /^[0-9]*$/,
-                          message: formatMessage({
-                            id: 'app.chargeManagement.timeIntervalRulesMessage',
-                          }),
-                        },
-                      ],
-                    })(<Input suffix={formatMessage({ id: 'app.chargeManagement.seconds' })} />)}
-                  </Form.Item>
-                </Input.Group>
-              </Row>
-              <Row>
-                <Input.Group compact>
-                  <Form.Item>
-                    {getFieldDecorator('normalScopeFLag', {
-                      valuePropName: 'checked',
-                      initialValue: normalScopeFLag,
-                    })(
-                      <Checkbox
-                        onChange={(v) => {
-                          this.setState({ normalScopeFLag: v.target.checked });
-                        }}
-                      >
-                        <FormattedMessage id={'cleaninCenter.normalScopeCode'} />
-                      </Checkbox>,
-                    )}
-                  </Form.Item>
-
-                  <Form.Item hidden={!normalScopeFLag}>
-                    {getFieldDecorator('normalScopeCode', {
-                      initialValue: cleaningData?.normalScopeCode,
-                    })(
-                      <Select style={{ width: '250px' }}>
-                        {scope &&
-                          scope.map((item) => (
-                            <Option key={item?.code} value={item?.code}>
-                              {item?.name}
-                            </Option>
-                          ))}
-                      </Select>,
-                    )}
-                  </Form.Item>
-                </Input.Group>
-              </Row>
-              <Row>
-                <Input.Group compact>
-                  <Form.Item>
-                    {getFieldDecorator('freeScopeFLag', {
-                      valuePropName: 'checked',
-                      initialValue: freeScopeFLag,
-                    })(
-                      <Checkbox
-                        onChange={(v) => {
-                          this.setState({ freeScopeFLag: v.target.checked });
-                        }}
-                      >
-                        <FormattedMessage id={'cleaninCenter.freeTimeScopeCode'} />
-                      </Checkbox>,
-                    )}
-                  </Form.Item>
-
-                  <Form.Item hidden={!freeScopeFLag}>
-                    {getFieldDecorator('freeTimeScopeCode', {
-                      initialValue: cleaningData?.freeTimeScopeCode,
-                    })(
-                      <Select style={{ width: '250px' }}>
-                        {scope &&
-                          scope.map((item) => (
-                            <Option key={item?.code} value={item?.code}>
-                              {item?.name}
-                            </Option>
-                          ))}
-                      </Select>,
-                    )}
-                  </Form.Item>
-                </Input.Group>
-              </Row>
-              <Row>
-                <Col span={24} style={{ paddingRight: 10 }}>
-                  <FormattedMessage id={'cleaninCenter.cleanAreas.set'} />
-                </Col>
-                <Col span={24}>
-                  {getFieldDecorator('cleanAreas', {
-                    initialValue: cleaningData?.cleanAreas || [],
-                    rules: [
-                      {
-                        validator: async (rules, value, callBack) => {
-                          let flag = true;
-                          Array.isArray(value) &&
-                            value?.forEach((element) => {
-                              const { daytime } = element;
-                              if (
-                                isStrictNull(daytime) ||
-                                isStrictNull(daytime[0]) ||
-                                isStrictNull(daytime[1])
-                              ) {
-                                flag = false;
-                                callBack(
-                                  formatMessage({ id: 'cleaningCenter.cleanAreas.cycleRequired' }),
-                                );
-                              }
-                            });
-                          if (flag) {
-                            callBack();
-                          }
-                        },
-                      },
-                    ],
-                  })(
-                    <DynamicForm
-                      Formstyle={{ display: 'flex', flexWrap: 'wrap' }}
-                      Rowstyle={{ display: 'flex', flexWrap: 'wrap', width: '480px' }}
-                      data={cleaningData?.cleanAreas || []}
-                    >
-                      <DynamicFormCol field="area">
-                        <DesignArea functionArea={functionArea} />
-                      </DynamicFormCol>
-                      <DynamicFormCol field="daytime">
-                        <CleaningDay />
-                      </DynamicFormCol>
-                      <DynamicFormCol
-                        field="isOnlyCleanLostCode"
-                        valuePropName={{ valuePropName: 'checked' }}
-                      >
-                        <Checkbox>
-                          <FormattedMessage id={'cleaninCenter.onlyCleanlostcode'} />
-                        </Checkbox>
-                      </DynamicFormCol>
-                      <DynamicFormCol
-                        field="isOnlyFreeTimeClean"
-                        valuePropName={{ valuePropName: 'checked' }}
-                      >
-                        <Checkbox>
-                          <FormattedMessage id={'cleaninCenter.onlyClean.free'} />
-                        </Checkbox>
-                      </DynamicFormCol>
-                      <DynamicFormCol
-                        field="cleanPriority"
-                        col={{ span: 21 }}
-                        formlayout={formlayout}
-                        label={<FormattedMessage id="cleaninCenter.cleanPriority" />}
-                        defaultValue={5}
-                      >
-                        <InputNumber style={{ marginLeft: 10 }} />
-                      </DynamicFormCol>
-                    </DynamicForm>,
-                  )}
-                </Col>
-              </Row>
-              <Row>
-                <Col span={15} style={{ marginTop: 20 }}>
-                  <div style={{ paddingBottom: 10 }}>
-                    <FormattedMessage id={'cleaninCenter.forbidTime'} />
-                  </div>
-                  <div>
-                    {getFieldDecorator('forbidTime', {
-                      initialValue: cleaningData?.forbidTime || [],
-                    })(
-                      <DynamicForm data={cleaningData?.forbidTime || []}>
-                        <DynamicFormCol field="time">
-                          <TimeRangePick />
-                        </DynamicFormCol>
-                        <DynamicFormCol field="weeks">
-                          <Checkbox.Group style={{ width: '100%', display: 'flex' }}>
-                            {Days.map((item) => (
-                              <Col key={item} span={3}>
-                                <Checkbox value={item}>{item.slice(0, 3)}</Checkbox>
-                              </Col>
-                            ))}
-                          </Checkbox.Group>
-                        </DynamicFormCol>
-                      </DynamicForm>,
-                    )}
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col span={15} style={{ marginTop: 20 }}>
-                  <div style={{ paddingBottom: 10 }}>
-                    <FormattedMessage id={'cleaninCenter.freeTime'} />
-                  </div>
-
-                  <div style={{ margin: '15px 0px', display: 'flex', flexFlow: 'row nowrap' }}>
-                    <div style={{ lineHeight: '24px' }}>
-                      {getFieldDecorator('useAgvStandByPercent', {
-                        valuePropName: 'checked',
-                        initialValue: cleaningData?.useAgvStandByPercent,
-                      })(<Checkbox />)}
-                    </div>
-                    <div style={{ flex: 1, marginLeft: 25 }}>
-                      <span>
-                        <FormattedMessage id="app.freeTimeRule.pass" />
-                      </span>
-                      <span style={{ margin: '0px 10px' }}>
-                        {getFieldDecorator('agvStandbyMinute', {
-                          initialValue: cleaningData?.agvStandbyMinute,
-                        })(<InputNumber min={0} size="small" />)}
-                      </span>
-                      <span>
-                        <FormattedMessage id="app.freeTimeRule.min" />
-                      </span>
-                      <span style={{ margin: '0px 10px' }}>
-                        <FormattedMessage id="app.freeTimeRule.agvStandbyPercent" />
-                      </span>
-                      <span>
-                        {getFieldDecorator('agvStandbyPercent', {
-                          initialValue: cleaningData?.agvStandbyPercent,
-                        })(<InputNumber max={100} min={1} size="small" />)}
-                      </span>
-                      %
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      margin: '15px 0px',
-                      display: 'flex',
-                      flexFlow: 'row nowrap',
-                      lineHeight: '24px',
-                    }}
-                  >
-                    <div style={{ lineHeight: '24px' }}>
-                      {getFieldDecorator('useIdleHours', {
-                        valuePropName: 'checked',
-                        initialValue: cleaningData?.useIdleHours,
-                      })(<Checkbox />)}
-                    </div>
-                    <div style={{ flex: 1, marginLeft: 25 }}>
-                      <FormattedMessage id="app.freeTimeRule.tip" />
-                    </div>
-                  </div>
-
-                  <div>
-                    {getFieldDecorator('freeTime', {
-                      initialValue: cleaningData?.freeTime || [],
-                    })(
-                      <DynamicForm data={cleaningData?.freeTime || []}>
-                        <DynamicFormCol field="time">
-                          <TimeRangePick />
-                        </DynamicFormCol>
-                        <DynamicFormCol field="weeks">
-                          <Checkbox.Group style={{ width: '100%', display: 'flex' }}>
-                            {Days.map((item) => (
-                              <Col key={item} span={3}>
-                                <Checkbox value={item}>{item.slice(0, 3)}</Checkbox>
-                              </Col>
-                            ))}
-                          </Checkbox.Group>
-                        </DynamicFormCol>
-                      </DynamicForm>,
-                    )}
-                  </div>
-                </Col>
-              </Row>
-            </Row>
-            */}
-            <Row
-              style={{
-                position: 'fixed',
-                height: 60,
-                display: 'flex',
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-                right: 20,
-                bottom: 30,
-              }}
+  return (
+    <div className={commonStyles.commonPageStyle}>
+      <Spin spinning={executing}>
+        <div className={styles.cleanStrategy}>
+          <Form labelWrap form={formRef}>
+            <Form.Item
+              name={'isOpenStrategy'}
+              label={formatMessage({ id: 'app.notification.isOpen' })}
+              valuePropName={'checked'}
+              initialValue={cleaningData?.isOpenStrategy || false}
             >
-              <Button type="primary" loading={iconLoading} onClick={this.onSubmit}>
-                <FormattedMessage id="form.save" />
-              </Button>
+              <Switch />
+            </Form.Item>
+            <Row>
+              <Input.Group compact>
+                <Form.Item
+                  name={'isOvertimeSkipFlag'}
+                  valuePropName={'checked'}
+                  initialValue={isOvertimeSkipFlag || false}
+                  getValueFromEvent={(v) => {
+                    setIsOvertimeSkipFlag(v.target.checked);
+                    return v.target.checked;
+                  }}
+                >
+                  <Checkbox>
+                    <FormattedMessage id={'cleaninCenter.overtimeskip'} />
+                  </Checkbox>
+                </Form.Item>
+
+                {isOvertimeSkipFlag && (
+                  <Form.Item
+                    name={'timeOutJump'}
+                    initialValue={cleaningData?.timeOutJump || 10}
+                    rules={[
+                      {
+                        pattern: /^[0-9]*$/,
+                        message: formatMessage({
+                          id: 'lockManage.robot.number.required',
+                        }),
+                      },
+                    ]}
+                  >
+                    <Input suffix={formatMessage({ id: 'app.time.seconds' })} />
+                  </Form.Item>
+                )}
+              </Input.Group>
             </Row>
-            {/* </Form> */}
-          </Card>
+
+            <Row>
+              <Input.Group compact>
+                <Form.Item
+                  name={'normalScopeFLag'}
+                  valuePropName={'checked'}
+                  initialValue={normalScopeFLag}
+                  getValueFromEvent={(v) => {
+                    setNormalScopeFLag(v.target.checked);
+                    return v.target.checked;
+                  }}
+                >
+                  <Checkbox>
+                    <FormattedMessage id={'cleaninCenter.normalScopeCode'} />
+                  </Checkbox>
+                </Form.Item>
+
+                {normalScopeFLag && (
+                  <Form.Item name={'normalScopeCode'} initialValue={cleaningData?.normalScopeCode}>
+                    <Select style={{ width: '250px' }}>
+                      {scope?.map((item) => (
+                        <Select.Option key={item?.code} value={item?.code}>
+                          {item?.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              </Input.Group>
+            </Row>
+            <Row>
+              <Input.Group compact>
+                <Form.Item
+                  name={'freeScopeFLag'}
+                  valuePropName={'checked'}
+                  initialValue={freeScopeFLag}
+                  getValueFromEvent={(e) => {
+                    const value = e.target.checked;
+                    setFreeScopeFLag(value);
+                    return value;
+                  }}
+                >
+                  <Checkbox>
+                    <FormattedMessage id={'cleaninCenter.freeTimeScopeCode'} />
+                  </Checkbox>
+                </Form.Item>
+                {freeScopeFLag && (
+                  <Form.Item
+                    name={'freeTimeScopeCode'}
+                    initialValue={cleaningData?.freeTimeScopeCode}
+                  >
+                    <Select style={{ width: '250px' }}>
+                      {scope.map((item) => (
+                        <Select.Option key={item?.code} value={item?.code}>
+                          {item?.name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                )}
+              </Input.Group>
+            </Row>
+            {/* 清扫区域设置 */}
+            <Form.Item label={formatMessage({ id: 'cleaninCenter.cleanAreas.set' })}>
+              <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+                <Form.List name="cleanAreas" initialValue={cleaningData?.cleanAreas || [{}]}>
+                  {(fields, { add, remove }, { errors }) => (
+                    <>
+                      {fields.map((field, index) => (
+                        <Row
+                          key={`${field.key}`}
+                          style={{
+                            border: '1px solid #e0dcdc',
+                            padding: '10px',
+                            borderRadius: '5px',
+                            marginBottom: '20px',
+                            marginLeft: 20,
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            width: '480px',
+                          }}
+                        >
+                          <Col span={22}>
+                            <Form.Item noStyle {...field} key={[field.fieldKey, 'area']}>
+                              <DesignArea functionArea={functionArea} />
+                            </Form.Item>
+                            <Form.Item noStyle {...field} key={[field.fieldKey, 'day']}>
+                              <CleaningDays />
+                            </Form.Item>
+
+                            <Form.Item
+                              valuePropName={'checked'}
+                              name={[field.name, 'isOnlyCleanLostCode']}
+                              fieldKey={[field.fieldKey, 'isOnlyCleanLostCode']}
+                            >
+                              <Checkbox>
+                                <FormattedMessage id={'cleaninCenter.onlyCleanlostcode'} />
+                              </Checkbox>
+                            </Form.Item>
+
+                            <Form.Item
+                              valuePropName={'checked'}
+                              name={[field.name, 'isOnlyFreeTimeClean']}
+                              fieldKey={[field.fieldKey, 'isOnlyFreeTimeClean']}
+                            >
+                              <Checkbox>
+                                <FormattedMessage id={'cleaninCenter.onlyClean.free'} />
+                              </Checkbox>
+                            </Form.Item>
+
+                            <Form.Item
+                              {...field}
+                              label={<FormattedMessage id="cleaninCenter.cleanPriority" />}
+                              initialValue={5}
+                              name={[field.name, 'cleanPriority']}
+                              fieldKey={[field.fieldKey, 'cleanPriority']}
+                            >
+                              <InputNumber style={{ marginLeft: 10 }} />
+                            </Form.Item>
+                          </Col>
+                          <Col span={2}>
+                            <Button
+                              type="danger"
+                              icon={<DeleteOutlined />}
+                              onClick={() => remove(field.name)}
+                            />
+                          </Col>
+                        </Row>
+                      ))}
+                      <Form.Item noStyle>
+                        <Button block type="dashed" onClick={() => add()} icon={<PlusOutlined />}>
+                          <FormattedMessage id="app.button.add" />
+                        </Button>
+                        {/* <Form.ErrorList errors={errors} /> */}
+                      </Form.Item>
+                    </>
+                  )}
+                </Form.List>
+              </div>
+            </Form.Item>
+
+            {/* 禁止时段 */}
+            <Form.Item label={formatMessage({ id: 'cleaninCenter.forbidTime' })}>
+              <Form.List name={'forbidTime'} initialValue={cleaningData?.forbidTime || []}>
+                {(fields, { add, remove }) => (
+                  <>
+                    {fields.map(({ key, name, fieldKey, ...restField }) => (
+                      <Row
+                        key={key}
+                        style={{
+                          border: '1px solid #e0dcdc',
+                          padding: '25px 10px 0 0',
+                          borderRadius: '5px',
+                          marginBottom: '20px',
+                        }}
+                      >
+                        <Col span={21}>
+                          {/* 时间区间 */}
+                          <Form.Item
+                            {...tailFormItemLayout}
+                            {...restField}
+                            name={[name, 'time']}
+                            fieldKey={[fieldKey, 'time']}
+                          >
+                            <RangePicker format={'HH:mm'} />
+                          </Form.Item>
+
+                          {/* 天 */}
+                          <Form.Item
+                            {...tailFormItemLayout}
+                            {...restField}
+                            name={[name, 'weeks']}
+                            fieldKey={[fieldKey, 'weeks']}
+                          >
+                            <Checkbox.Group style={{ width: '100%', display: 'flex' }}>
+                              {Days.map((item) => (
+                                <Col key={item} span={3}>
+                                  <Checkbox value={item}>{item.slice(0, 3)}</Checkbox>
+                                </Col>
+                              ))}
+                            </Checkbox.Group>
+                          </Form.Item>
+                        </Col>
+                        <Col span={3} style={{ textAlign: 'center' }}>
+                          <Button
+                            type="danger"
+                            icon={<DeleteOutlined />}
+                            onClick={() => remove(name)}
+                          />
+                        </Col>
+                      </Row>
+                    ))}
+                    <Form.Item>
+                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                        <FormattedMessage id="app.button.add" />
+                      </Button>
+                    </Form.Item>
+                  </>
+                )}
+              </Form.List>
+            </Form.Item>
+
+            {/* 空闲时段 */}
+            <Form.Item label={formatMessage({ id: 'cleaninCenter.freeTime' })}>
+              <div className={styles.strategyRow} style={{ marginLeft: 20 }}>
+                <div className={styles.checkBox}>
+                  <Checkbox
+                    checked={useAgvStandByPercent}
+                    onChange={(ev) => {
+                      setUseAgvStandByPercent(ev.target.checked);
+                    }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <FormattedMessage id="app.chargeStrategy.past" />
+                  <InputNumber
+                    style={{ margin: '0 10px' }}
+                    value={pastMinuts}
+                    onChange={setPastMinuts}
+                  />
+                  <FormattedMessage id="app.chargeStrategy.minute" />{' '}
+                  <FormattedMessage id="app.chargeStrategy.percentageOfFreeAgv" />
+                  <InputNumber
+                    style={{ margin: '0 10px' }}
+                    value={percentage}
+                    onChange={setPercentage}
+                  />
+                  %
+                </div>
+              </div>
+
+              <div className={styles.strategyRow}>
+                <div
+                  className={styles.checkBox}
+                  style={{ alignItems: 'flex-start', marginLeft: 20 }}
+                >
+                  <Checkbox
+                    checked={useIdleHours}
+                    onChange={(ev) => {
+                      setUseIdleHours(ev.target.checked);
+                    }}
+                  />
+                </div>
+                <div style={{ flex: 1 }}>
+                  <FormattedMessage id="app.chargeStrategy.idleTimeRangeTip" />
+                  <Form.List name={'freeTime'} initialValue={cleaningData?.freeTime || []}>
+                    {(fields, { add, remove }) => (
+                      <>
+                        {fields.map(({ key, name, fieldKey, ...restField }) => (
+                          <Row
+                            key={key}
+                            style={{
+                              border: '1px solid #e0dcdc',
+                              padding: '25px 10px 0 0',
+                              borderRadius: '5px',
+                              margin: '10px 0 20px 0',
+                            }}
+                          >
+                            <Col span={21}>
+                              {/* 时间区间 */}
+                              <Form.Item
+                                {...tailFormItemLayout}
+                                {...restField}
+                                name={[name, 'time']}
+                                fieldKey={[fieldKey, 'time']}
+                              >
+                                <RangePicker format={'HH:mm'} />
+                              </Form.Item>
+
+                              {/* 天 */}
+                              <Form.Item
+                                {...tailFormItemLayout}
+                                {...restField}
+                                name={[name, 'weeks']}
+                                fieldKey={[fieldKey, 'weeks']}
+                              >
+                                <Checkbox.Group style={{ width: '100%', display: 'flex' }}>
+                                  {Days.map((item) => (
+                                    <Col key={item} span={3}>
+                                      <Checkbox value={item}>{item.slice(0, 3)}</Checkbox>
+                                    </Col>
+                                  ))}
+                                </Checkbox.Group>
+                              </Form.Item>
+                            </Col>
+                            <Col span={3} style={{ textAlign: 'center' }}>
+                              <Button
+                                type="danger"
+                                icon={<DeleteOutlined />}
+                                onClick={() => remove(name)}
+                              />
+                            </Col>
+                          </Row>
+                        ))}
+                        <Form.Item style={{ marginTop: 10 }}>
+                          <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                            <FormattedMessage id="app.button.add" />
+                          </Button>
+                        </Form.Item>
+                      </>
+                    )}
+                  </Form.List>
+                </div>
+              </div>
+            </Form.Item>
+
+            <Form.Item {...formItemLayoutNoLabel}>
+              <Row
+                style={{
+                  position: 'fixed',
+                  height: 60,
+                  display: 'flex',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  right: 30,
+                  bottom: 30,
+                }}
+              >
+                <Button type="primary" loading={executing} onClick={onSubmit}>
+                  <FormattedMessage id="app.button.save" />
+                </Button>
+              </Row>
+            </Form.Item>
+          </Form>
         </div>
       </Spin>
-    );
-  }
-}
-export default CleaningCenter;
-
-{
-  /*
-const TimeRangePick = forwardRef((props, ref) => {
-  const { value } = props;
-  const [startDate, setStartDate] = useState(value ? value[0] : null);
-  const [endDate, setEndDate] = useState(value ? value[1] : null);
-  useEffect(() => {
-    const { onChange } = props;
-    if (onChange) {
-      onChange([startDate, endDate]);
-    }
-  }, [startDate, endDate]);
-  return (
-    <div
-      style={{
-        width: '100%',
-        display: 'flex',
-        flex: 1,
-      }}
-      ref={ref}
-    >
-      <div>
-        <TimePicker
-          placeholder={formatMessage({ id: 'app.taskDetail.startTime' })}
-          value={startDate}
-          disabledHours={() => {
-            const result = [];
-            if (endDate != null && endDate.hours) {
-              for (let index = 0; index < 23; index++) {
-                if (index > endDate.hours()) {
-                  result.push(index);
-                }
-              }
-              return result;
-            }
-            return [];
-          }}
-          disabledMinutes={(selectedHour) => {
-            const result = [];
-            if (endDate != null && endDate.hours) {
-              if (selectedHour == endDate.hours()) {
-                for (let index = 0; index < 60; index++) {
-                  if (index > endDate.minutes()) {
-                    result.push(index);
-                  }
-                }
-                return result;
-              } else {
-                return [];
-              }
-            }
-          }}
-          onChange={(value) => {
-            setStartDate(value);
-          }}
-          format="HH:mm"
-        />
-      </div>
-      <div style={{ padding: '0 10px' }}>-</div>
-      <div>
-        <TimePicker
-          placeholder={formatMessage({ id: 'app.taskDetail.endTime' })}
-          value={endDate}
-          disabledHours={() => {
-            const result = [];
-            if (startDate != null && startDate.hours) {
-              for (let index = 0; index < 23; index++) {
-                if (index < startDate.hours()) {
-                  result.push(index);
-                }
-              }
-              return result;
-            }
-            return [];
-          }}
-          disabledMinutes={(selectedHour) => {
-            const result = [];
-            if (startDate != null && startDate.hours) {
-              if (selectedHour == startDate.hours()) {
-                for (let index = 0; index < 60; index++) {
-                  if (index < startDate.minutes()) {
-                    result.push(index);
-                  }
-                }
-                return result;
-              } else {
-                return [];
-              }
-            }
-          }}
-          onChange={(value) => {
-            setEndDate(value);
-          }}
-          format="HH:mm"
-        />
-      </div>
     </div>
   );
-});
-*/
-}
+};
+export default memo(CleaningStrategy);
