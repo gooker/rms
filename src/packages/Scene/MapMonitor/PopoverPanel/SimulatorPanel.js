@@ -188,7 +188,7 @@ const SimulatorPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 330 }} className={commonStyles.categoryPanel}>
+    <div style={{ width: 330 }} className={commonStyles.categoryPanel}>
       {renderContent()}
 
       {/* 标题栏 */}

@@ -21,10 +21,13 @@ export default {
   'menu.account.roleList': '权限列表',
   'menu.account.apiList': '页面配置信息',
 
-  'app.configInfo.copy.tip': '复制应用配置信息成功',
+  // 页面配置信息弹窗
   'app.configInfo.header.moduleName': '模块名称',
   'app.configInfo.header.moduleURL': '模块地址',
-  'app.configInfo.header.moduleAPI': '模块接口',
+  'app.configInfo.header.moduleVersion': '模块版本',
+  'app.configInfo.header.adapter': '适配器',
+  'app.configInfo.header.adapterName': '适配器名称',
+  'app.configInfo.header.adapterURL': '适配器地址',
 
   'app.header.option.switchEnvSuccess': '环境切换成功',
   'app.header.option.switchSectionSuccess': 'Section切换成功',

@@ -47,6 +47,7 @@ export default {
     selectableType: ['AGV', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
 
     // 小车、货架等信息
+    allAGVs: [],
     monitorLoad: null,
 
     // 二级面板
@@ -116,6 +117,12 @@ export default {
       return {
         ...state,
         monitorLoad: action.payload,
+      };
+    },
+    saveAllAGVs(state, action) {
+      return {
+        ...state,
+        allAGVs: action.payload,
       };
     },
     saveMapMinRatio(state, action) {
@@ -374,6 +381,7 @@ export default {
         }
       });
       additionalStates.allAGVs = allAGVs;
+      yield put({ type: 'saveAllAGVs', payload: allAGVs });
       yield put({ type: 'saveMonitorLoad', payload: additionalStates });
     },
 

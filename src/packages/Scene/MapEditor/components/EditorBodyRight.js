@@ -1,9 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { throttle } from 'lodash';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { RightCategory, HeaderHeight, EditorRightTools, RightToolBarWidth } from '../enums';
+import { RightCategory, EditorRightTools, RightToolBarWidth } from '../enums';
 import RestPanel from '../PopoverPanel/RestPanel';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CostPanel from '../PopoverPanel/CostPanel';

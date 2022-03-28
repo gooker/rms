@@ -153,7 +153,7 @@ export default class RealtimeRate extends PIXI.Container {
     const _time = (time / 1000).toFixed(2);
 
     this.waitTimeSprite = new PIXI.Text(
-      `${_time} ${formatMessage({ id: 'app.customTask.form.second' })}`,
+      `${_time} ${formatMessage({ id: 'app.time.seconds' })}`,
       this.textStyle,
     );
     this.waitTimeSprite.visible = this.$visible;

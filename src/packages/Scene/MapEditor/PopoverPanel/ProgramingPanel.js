@@ -26,12 +26,7 @@ const ProgramingPanel = (props) => {
       logicId: currentLogicArea,
     }).then((response) => {
       if (
-        !dealResponse(
-          response,
-          false,
-          null,
-          formatMessage({ id: 'app.message.fetchScopeProgramFail' }),
-        )
+        !dealResponse(response, null, formatMessage({ id: 'app.message.fetchScopeProgramFail' }))
       ) {
         setScopeProgram(response);
       }

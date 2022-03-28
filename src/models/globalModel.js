@@ -17,6 +17,7 @@ export default {
     socketClient: null,
 
     // 标识符
+    menuCollapsed: false,
     isFullscreen: false,
     isInnerFullscreen: false,
     textureLoaded: false,
@@ -54,6 +55,12 @@ export default {
       return {
         ...state,
         socketClient: payload,
+      };
+    },
+    updateMenuCollapsed(state, { payload }) {
+      return {
+        ...state,
+        menuCollapsed: payload,
       };
     },
     updateTextureLoaded(state, { payload }) {

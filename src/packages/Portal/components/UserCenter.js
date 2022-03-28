@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { ApiOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import AppConfigPanel from '@/packages/Portal/components/AppConfigPanel';
+import ModuleInformationPanel from './ModuleInformationPanel';
 import styles from './Header.module.less';
 
 const UserCenter = (props) => {
@@ -61,7 +61,7 @@ const UserCenter = (props) => {
 
       {/* API列表展示窗口 */}
       <Modal
-        width={960}
+        width={888}
         footer={null}
         closable={false}
         visible={apiListVisible}
@@ -69,7 +69,7 @@ const UserCenter = (props) => {
           setApiListVisible(false);
         }}
       >
-        <AppConfigPanel />
+        <ModuleInformationPanel />
       </Modal>
     </>
   );

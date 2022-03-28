@@ -290,7 +290,7 @@ const MonitorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.renderCostLines(relations, relations, false);
+    // mapContext.renderCostLines(relations, relations, false);
     mapContext.refresh();
   }
 
