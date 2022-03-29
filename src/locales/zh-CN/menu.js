@@ -124,6 +124,7 @@ export default {
   'menu.speedStrategy': '速度策略',
   'menu.parkingStrategy': '停车策略',
   'menu.systemParameters': '参数列表',
+  'menu.scoringAlgorithm': '打分算法',
 
   // 报表数据
   'menu.healthReport': '健康报表',

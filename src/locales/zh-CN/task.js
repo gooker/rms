@@ -151,6 +151,7 @@ export default {
 
   // 模拟任务
   'app.simulateTask': '模拟任务',
+  'app.simulateTask.config': '模拟任务配置',
   'app.simulateTask.state.START': '开始',
   'app.simulateTask.state.STOP': '停止',
 

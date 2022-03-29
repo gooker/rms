@@ -24,6 +24,7 @@ export const AGVType = {
   Tote: 'Tote',
   ForkLifting: 'ForkLifting',
   Sorter: 'Sorter',
+  LatentTote: 'LatentTote',
 };
 
 // 各类车型的API namespace
@@ -35,6 +36,7 @@ export const NameSpace = {
   Tote: 'tote',
   ForkLifting: 'forklift',
   Sorter: 'sorter',
+  LatentTote:'latentTote'
 };
 
 // 后端接口的 Server 的集合

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Form, Input, Radio, Select, Button, Col, Row } from 'antd';
+import { MinusCircleOutlined } from '@ant-design/icons';
+import { throttle } from 'lodash';
+import { Form, Input, Radio, Select, Button, Col, Row, AutoComplete } from 'antd';
 import { formatMessage, getFormLayout, isStrictNull, validateUrl } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ApiNameSpace } from '@/config/config';
-import MenuIcon from '@/utils/MenuIcon';
 import { PlusOutlined } from '@ant-design/icons';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
@@ -13,6 +14,7 @@ class AddEnvironmentModal extends Component {
 
   state = {
     updateInfos: [],
+    apiNameSpace: ApiNameSpace,
   };
 
   componentDidMount() {
@@ -29,6 +31,13 @@ class AddEnvironmentModal extends Component {
       this.setState({ updateInfos: updateRow[0].additionalInfos });
     }
   }
+
+  // handleSearch = (value) => {
+  //   const { apiNameSpace } = this.state;
+  //   if (!isStrictNull(value) && !apiNameSpace.includes(value)) {
+  //     this.setState({ apiNameSpace: [...apiNameSpace, value] });
+  //   }
+  // };
 
   submit = () => {
     const { validateFields } = this.formRef.current;
@@ -49,6 +58,7 @@ class AddEnvironmentModal extends Component {
 
   render() {
     const { updateRow } = this.props;
+    const { apiNameSpace } = this.state;
     return (
       <div>
         <Form ref={this.formRef} {...formItemLayout}>
@@ -95,7 +105,21 @@ class AddEnvironmentModal extends Component {
                           label={formatMessage({ id: 'app.configInfo.header.moduleName' })}
                           rules={[{ required: true }]}
                         >
-                          <Select
+                          <AutoComplete
+                            style={{ width: 200 }}
+                            // onSearch={this.handleSearch}
+                            placeholder={formatMessage({
+                              id: 'environmentManager.module.required',
+                            })}
+                          >
+                            {apiNameSpace.map((item) => (
+                              <AutoComplete.Option key={item} value={item}>
+                                {item}
+                              </AutoComplete.Option>
+                            ))}
+                          </AutoComplete>
+
+                          {/* <Select
                             placeholder={formatMessage({
                               id: 'environmentManager.module.required',
                             })}
@@ -105,7 +129,7 @@ class AddEnvironmentModal extends Component {
                                 {item}
                               </Select.Option>
                             ))}
-                          </Select>
+                          </Select> */}
                         </Form.Item>
                       </Col>
                       <Col span={10}>
@@ -125,10 +149,9 @@ class AddEnvironmentModal extends Component {
                       </Col>
                       <Col span={4} style={{ textAlign: 'center' }}>
                         {fields.length > 1 ? (
-                          <Button
-                            type="danger"
-                            icon={MenuIcon.delete}
+                          <MinusCircleOutlined
                             onClick={() => remove(field.name)}
+                            style={{ fontSize: 16 }}
                           />
                         ) : null}
                       </Col>

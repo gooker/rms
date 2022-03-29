@@ -315,6 +315,28 @@ export async function updateSystemParams(agvType, params) {
   });
 }
 
+
+// 获取打分算法模版
+export async function fetchLatentToteParamFormData(agvType, params) {
+  return request(`/${NameSpace[agvType]}/paramTemplate/getParamTemplate`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 更新打分算法
+export async function updateLatentToteSystemParams(agvType, params) {
+  return request(`/${NameSpace[agvType]}/paramTemplate/updateParamTemplateValue`, {
+    method: 'POST',
+    data: params,
+  });
+}
+
+
+
+
+
+
 /******料箱池任务 start*********/
 // 数据库中所有料箱池任务-废弃
 export async function dbPoolTasks(agvType, params) {
