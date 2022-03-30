@@ -23,8 +23,8 @@ export async function updateSimulationTask(type, params) {
 }
 
 // 批量删除模拟任务
-export async function deleteSimulationTasks(params) {
-  return request(`/${Coordinator}simulationTasks?ids=${params.id}`, {
+export async function deleteSimulationTasks(ids) {
+  return request(`/${Coordinator}simulationTasks?ids=${ids}`, {
     method: 'DELETE',
   });
 }

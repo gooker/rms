@@ -1,14 +1,20 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Tooltip, Tag, Row, Col, Button } from 'antd';
+import { Tooltip, Tag, Row, Col, Button, Divider } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
+import {
+  deleteSimulationTasks,
+  fetchAllSimulationTasks,
+  updateSimulationTask,
+} from '@/services/latentTote';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent';
-import { formatMessage, isStrictNull } from '@/utils/util';
+import { formatMessage, isStrictNull, isNull, dealResponse } from '@/utils/util';
 import SimulationTaskComponent from './SimulationTaskComponent';
 import commonStyles from '@/common.module.less';
+import style from './simulationTask.module.less';
 
 const taskList = [
   {
@@ -42,7 +48,7 @@ const taskList = [
   },
   {
     id: '121213',
-    callStatus: 'START',
+    callStatus: 'STOP',
     toteTaskType: 'TRANSPORT_IN ',
     callType: 'Auto',
     copySimulationId: '1222212121221',
@@ -69,18 +75,83 @@ const taskList = [
       },
     ],
   },
+  {
+    id: '121214',
+    callStatus: 'STOP',
+    toteTaskType: 'TRANSPORT_IN ',
+    callType: 'Auto',
+    copySimulationId: '1222212121221',
+    workStationCallParms: [
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+    ],
+    laToteSimulationTaskRecords: [
+      {
+        createTime: '2022-03-28 16:47:27',
+        endTime: '2022-03-28 16:47:27',
+      },
+    ],
+  },
+  {
+    id: '121215',
+    callStatus: 'RETRY',
+    toteTaskType: 'TRANSPORT_IN ',
+    callType: 'Auto',
+    copySimulationId: '1222212121221',
+    workStationCallParms: [
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+      {
+        priorities: [1, 2],
+        workStationCodes: ['1', '2'],
+        stationOrderTaskTotalNum: 3,
+        stationMaxOrderTaskNum: 3,
+        podFaceMaxOrderTaskNum: 3,
+        appointPodIds: ['12', '23', '32'],
+        appointPodFaces: ['A', 'C'],
+        taskGenerateIntervalMill: '3000L',
+      },
+    ],
+    laToteSimulationTaskRecords: [
+      {
+        createTime: '2022-03-28 16:47:27',
+        endTime: '2022-03-28 16:47:27',
+      },
+    ],
+  },
 ];
-
-const StatusColor = {
-  START: '#2db7f5',
-  STOP: '#f50',
-};
 
 const SimulationTask = (props) => {
   const { allTaskTypes, agvType } = props;
   const [loading, setLoading] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
-  const [updateRecord, setUpdateRecord] = useState({});
+  const [updateRecord, setUpdateRecord] = useState(null);
 
   const [selectRowKey, setSelectRowKey] = useState([]);
   const [dataList, setDataList] = useState([]);
@@ -97,7 +168,39 @@ const SimulationTask = (props) => {
     });
   }
 
-  function deleteTask() {}
+  async function getData() {
+    setLoading(true);
+    const response = await fetchAllSimulationTasks();
+    if (!dealResponse(response)) {
+      setDataList(response);
+    }
+    setLoading(false);
+  }
+
+  async function statusSwitch(params) {
+    const updateRes = await updateSimulationTask(params);
+    if (!dealResponse(updateRes)) {
+      getData();
+    }
+  }
+
+  async function deleteTask(flag, id) {
+    let ids = [];
+    if (flag) {
+      ids = selectRowKey;
+    } else {
+      ids = [id];
+    }
+    const response = await deleteSimulationTasks(ids.toString());
+    if (!dealResponse(response)) {
+      getData();
+    }
+  }
+
+  function editRow(record) {
+    setAddVisible(true);
+    setUpdateRecord(record);
+  }
 
   const columns = [
     {
@@ -120,23 +223,6 @@ const SimulationTask = (props) => {
         );
       },
     },
-    {
-      title: <FormattedMessage id="app.task.state" />,
-      dataIndex: 'callStatus',
-      align: 'center',
-
-      render: (text) => {
-        if (text != null) {
-          return (
-            <Tag color={StatusColor[text]}>
-              {formatMessage({ id: `app.simulateTask.state.${text}` })}
-            </Tag>
-          );
-        } else {
-          return <FormattedMessage id="app.taskDetail.notAvailable" />;
-        }
-      },
-    },
 
     {
       title: <FormattedMessage id="app.simulateTask.callType" />,
@@ -154,6 +240,76 @@ const SimulationTask = (props) => {
       render: (text) => {
         return allTaskTypes?.[agvType]?.[text] || text;
       },
+    },
+    {
+      title: <FormattedMessage id="app.task.state" />,
+      dataIndex: 'callStatus',
+      align: 'center',
+      render: (text, record) => {
+        if (text != null) {
+          return <Tag>{text}</Tag>;
+        } else {
+          return <FormattedMessage id="app.taskDetail.notAvailable" />;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id="app.common.operation" />,
+      align: 'center',
+      fixed: 'right',
+      render: (text, record) => (
+        <div className={style.operateContent}>
+          {record.callStatus !== 'START' && record.callStatus !== 'RETRY' && (
+            <EditOutlined
+              onClick={() => {
+                editRow(record);
+              }}
+            />
+          )}
+          {record.callStatus === 'STOP' && (
+            <DeleteOutlined
+              onClick={() => {
+                deleteTask(false, record.id);
+              }}
+            />
+          )}
+
+          {record.callStatus !== 'STOP' && (
+            <Button
+              size={'small'}
+              type="link"
+              onClick={() => {
+                statusSwitch({ ...record, callStatus: 'STOP' });
+              }}
+            >
+              <FormattedMessage id="app.simulateTask.state.STOP" />
+            </Button>
+          )}
+
+          {record.laToteSimulationTaskRecords?.length > 0 && record.callStatus === 'STOP' && (
+            <Button
+              size={'small'}
+              type="link"
+              onClick={() => {
+                statusSwitch({ ...record, callStatus: 'RETRY' });
+              }}
+            >
+              <FormattedMessage id="app.taskDetail.restart" />
+            </Button>
+          )}
+          {record.laToteSimulationTaskRecords?.length === 0 && (
+            <Button
+              size={'small'}
+              type="link"
+              onClick={() => {
+                statusSwitch({ ...record, callStatus: 'START' });
+              }}
+            >
+              <FormattedMessage id="app.simulateTask.state.START" />
+            </Button>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -245,28 +401,18 @@ const SimulationTask = (props) => {
             type="primary"
             onClick={() => {
               setAddVisible(true);
+              setUpdateRecord(null);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="app.button.add" />
-          </Button>
-
-          {/* 编辑 */}
-          <Button
-            disabled={selectRowKey.length !== 1}
-            onClick={() => {
-              setAddVisible(true);
-            }}
-          >
-            <EditOutlined /> <FormattedMessage id="app.button.edit" />
+            <PlusOutlined /> <FormattedMessage id="app.simulateTask.config" />
           </Button>
 
           {/* 删除 */}
           <Button danger disabled={selectRowKey.length !== 1} onClick={deleteTask}>
-            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+            <DeleteOutlined /> <FormattedMessage id="app.simulateTask.batchDelete" />
           </Button>
-        </Col>
-        <Col>
-          <Button>
+
+          <Button onClick={getData}>
             <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
@@ -288,13 +434,16 @@ const SimulationTask = (props) => {
         }}
       />
 
-      <SimulationTaskComponent
-        visible={addVisible}
-        updateRecord={updateRecord}
-        onClose={() => {
-          setAddVisible(false);
-        }}
-      />
+      {addVisible && (
+        <SimulationTaskComponent
+          visible={addVisible}
+          updateRecord={updateRecord}
+          onClose={() => {
+            setAddVisible(false);
+          }}
+          onRefresh={getData}
+        />
+      )}
     </TablePageWrapper>
   );
 };
