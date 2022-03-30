@@ -372,9 +372,9 @@ const CleaningStrategy = (props) => {
                           </Col>
                         </Row>
                       ))}
-                      <Form.Item noStyle>
-                        <Button block type="dashed" onClick={() => add()} icon={<PlusOutlined />}>
-                          <FormattedMessage id="app.button.add" />
+                      <Form.Item noStyle >
+                        <Button block type="dashed" onClick={() => add()}>
+                          <PlusOutlined /> <FormattedMessage id="app.button.add" />
                         </Button>
                         {/* <Form.ErrorList errors={errors} /> */}
                       </Form.Item>

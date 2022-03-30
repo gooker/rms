@@ -29,4 +29,11 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/Strategy/SystemParameters',
   },
+  {
+    path: `/${AppCode.Strategy}/ScoringAlgorithm`,
+    name: 'scoringAlgorithm',
+    icon: 'list',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    component: '/Strategy/ScoringAlgorithm',
+  },
 ];

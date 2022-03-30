@@ -240,7 +240,7 @@ const SimulationTask = (props) => {
     <TablePageWrapper>
       <Row>
         <Col flex="auto" className={commonStyles.tableToolLeft}>
-          {/* 新增 */}
+          {/* 新增模拟配置 */}
           <Button
             type="primary"
             onClick={() => {
