@@ -17,6 +17,10 @@ import {
   ApiOutlined,
   FundProjectionScreenOutlined,
   ControlOutlined,
+  FileSearchOutlined,
+  ExceptionOutlined,
+  DeploymentUnitOutlined,
+  ProjectOutlined,
 } from '@ant-design/icons';
 import { IconFont } from '@/components/IconFont';
 
@@ -36,10 +40,12 @@ export default {
   section: <IconFont type="icon-section" />,
   trigger: <IconFont type="icon-trigger" />,
   userRole: <IconFont type="icon-role" />,
-  taskQueue: <IconFont type="icon-taskQueue" />,
   executing: <IconFont type="icon-executing" />,
-  taskExecuted: <IconFont type="icon-taskExecuted" />,
 
+  taskQueue: <ExceptionOutlined />,
+  taskExecuted: <FileSearchOutlined />,
+  mockTask: <ProjectOutlined />,
+  scoringAlgorithm: <DeploymentUnitOutlined />,
   limit: <ControlOutlined />,
   api: <ApiOutlined />,
   list: <ProfileOutlined />,

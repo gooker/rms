@@ -1,16 +1,20 @@
 export default {
   'menu.home': '首页',
-  'menu.languageManage': '翻译管理',
 
   // SSO
   'menu.userManager': '用户管理',
   'menu.sectionManger': '区域管理',
   'menu.roleManager': '角色',
-  'menu.userLoginHistory': '用户登录历史',
+  'menu.userLoginHistory': '登录历史',
   'menu.accountCenter': '个人中心',
   'menu.authorizationCenter': '授权中心',
   'menu.environmentManger': '自定义环境',
   'menu.customConfiguration': '定制化配置',
+  'menu.operationLog': '操作日志',
+  'menu.notificationCenter': '通知',
+  'menu.notificationCenter.broadcast': '广播频道',
+  'menu.notificationCenter.subscription': '频道订阅',
+  'menu.notificationCenter.alertCenter': '告警中心',
 
   // 载具
   'menu.container': '载具',
@@ -98,7 +102,7 @@ export default {
   'menu.task.waitingQueue': '等待队列',
   'menu.task.executingQueue': '执行队列',
   'menu.task.taskManagement': '任务查询',
-  'menu.task.systemParameters': '参数列表',
+  'menu.task.systemParameters': '参数配置',
 
   // 柔性分拣
   'menu.sortTaskQueue': '任务队列',
@@ -110,21 +114,17 @@ export default {
   'menu.cleaningPlan': '清扫计划',
   'menu.cleaningRecord': '清扫记录',
 
-  // 工具
-  'menu.operationLog': '操作日志',
-  'menu.requestor': '接口请求库',
-  'menu.richEditor': '富文本编辑',
-  'menu.alertCenter': '告警中心',
-  'menu.notificationCenter': '通知管理中心',
-  'menu.notificationCenter.broadcast': '广播频道',
-  'menu.notificationCenter.subscription': '频道订阅',
-
   // 策略配置
-  'menu.chargingStrategy': '充电策略',
-  'menu.speedStrategy': '速度策略',
-  'menu.parkingStrategy': '停车策略',
-  'menu.systemParameters': '参数列表',
-  'menu.scoringAlgorithm': '打分算法',
+  'menu.strategy': '策略',
+  'menu.strategy.chargingStrategy': '充电策略',
+  'menu.strategy.speedStrategy': '速度策略',
+  'menu.strategy.parkingStrategy': '停车策略',
+  'menu.systemConfig': '系统配置',
+  'menu.systemConfig.parameters': '参数配置',
+  'menu.systemConfig.requestor': '接口请求库',
+  'menu.systemConfig.richEditor': '富文本编辑',
+  'menu.systemConfig.timeZone': '系统时区',
+  'menu.systemConfig.i18n': '国际化',
 
   // 报表数据
   'menu.healthReport': '健康报表',
@@ -150,7 +150,6 @@ export default {
 
   // 潜伏料箱
   'menu.latentToteTaskManagement': '任务查询',
-  'menu.simulationTask': '模拟任务',
-
-  // 定制
+  'menu.mockTask': '模拟任务',
+  'menu.scoringAlgorithm': '打分算法',
 };

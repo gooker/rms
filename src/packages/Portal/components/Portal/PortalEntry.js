@@ -9,12 +9,6 @@ import { isNull } from '@/utils/util';
 
 const Apps = [
   {
-    code: AppCode.I18N,
-    icon: <GlobalOutlined />,
-    width: '80%',
-    height: '80%',
-  },
-  {
     code: AppCode.SSO,
     icon: <UserOutlined />,
     width: '80%',
@@ -99,7 +93,7 @@ const CommonPortal = (props) => {
     console.log(`未识别的应用编码: ${code}`);
     return null;
   }
-  const { color, icon, width, height } = appConfig;
+  const { icon, width, height } = appConfig;
   return (
     <Tooltip title={name} placement={'right'}>
       <div key={name} className={styles.portalItem}>

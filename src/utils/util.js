@@ -8,7 +8,7 @@ import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
-import requestorStyles from '@/packages/Tool/Requestor/requestor.module.less';
+import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 

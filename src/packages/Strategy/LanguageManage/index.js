@@ -22,20 +22,8 @@ import {
 import classnames from 'classnames';
 import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  adjustModalWidth,
-  dealResponse,
-  formatMessage,
-  isNull,
-  isStrictNull,
-  sortLanguages,
-} from '@/utils/util';
-import {
-  addSysLang,
-  getSysLang,
-  getTranslationByCode,
-  updateSysTranslation,
-} from '@/services/translator';
+import { adjustModalWidth, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translator';
 import RmsConfirm from '@/components/RmsConfirm';
 import {
   exportTranslate,

@@ -9,7 +9,7 @@ import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
-import TargetLockSearch from '@/packages/Tool/AlertCenter/QuestionSearch';
+import TargetLockSearch from '@/packages/SSO/AlertCenter/QuestionSearch';
 
 const TargetLock = (props) => {
   const [loading, setLoading] = useState(false);

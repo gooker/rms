@@ -13,7 +13,6 @@ import Scene from './scene.router';
 import Strategy from './strategy.router';
 import Tool from './tool.router';
 import Tote from './tote.router';
-import I18N from './i18n.router';
 import Customized from './customized.router';
 
 export default {
@@ -31,6 +30,5 @@ export default {
   [AppCode.Strategy]: Strategy,
   [AppCode.Tool]: Tool,
   [AppCode.Tote]: Tote,
-  [AppCode.I18N]: I18N,
   [AppCode.Customized]: Customized,
 };
