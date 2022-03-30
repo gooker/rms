@@ -160,7 +160,7 @@ class MainLayout extends React.Component {
   };
 
   goToQuestionCenter = () => {
-    this.props.history.push(`/${AppCode.Tool}/alertCenter`);
+    this.props.history.push(`/${AppCode.SSO}/alertCenter`);
   };
 
   validateAuthority = async () => {

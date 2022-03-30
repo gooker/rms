@@ -1,19 +1,20 @@
 import React, { PureComponent } from 'react';
 import { Menu, Dropdown } from 'antd';
-import LocalsKeys from '@/locales/LocaleKeys';
+import { connect } from '@/utils/RmsDva';
 import I18NIcon from '@/components/I18NIcon';
 import styles from './Header.module.less';
 
-export default class SelectLang extends PureComponent {
+@connect(({ global }) => ({
+  systemLanguage: global.systemLanguage,
+}))
+class SelectLang extends PureComponent {
   render() {
-    const { onChange } = this.props;
-    const localLocales =
-      window.localStorage.getItem('locales') || '["zh-CN","en-US","ko-KR","vi-VN"]';
+    const { onChange, systemLanguage } = this.props;
     const selectedLang = window.localStorage.getItem('currentLocale');
     const langMenu = (
-      <Menu className={styles.menu} selectedKeys={[selectedLang]} onClick={onChange}>
-        {JSON.parse(localLocales).map((locale) => (
-          <Menu.Item key={locale}>{LocalsKeys[locale]}</Menu.Item>
+      <Menu selectedKeys={[selectedLang]} onClick={onChange}>
+        {systemLanguage.map((record) => (
+          <Menu.Item key={record.code}>{record.name}</Menu.Item>
         ))}
       </Menu>
     );
@@ -26,3 +27,4 @@ export default class SelectLang extends PureComponent {
     );
   }
 }
+export default SelectLang;

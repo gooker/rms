@@ -28,6 +28,7 @@ export default {
     currentApp: null,
 
     // 国际化
+    systemLanguage: [], // 系统支持的语种
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
 
@@ -55,6 +56,12 @@ export default {
       return {
         ...state,
         socketClient: payload,
+      };
+    },
+    saveSystemLanguage(state, { payload }) {
+      return {
+        ...state,
+        systemLanguage: payload,
       };
     },
     updateMenuCollapsed(state, { payload }) {

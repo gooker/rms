@@ -8,7 +8,7 @@ import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
-import requestorStyles from '@/packages/Tool/Requestor/requestor.module.less';
+import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 
@@ -1208,4 +1208,17 @@ export function LatentSizeUpdaterValidator(_, value) {
     return Promise.reject(new Error(formatMessage({ id: 'monitor.pod.podSize.invalid' })));
   }
   return Promise.resolve();
+}
+
+/**
+ * 语言顺序：中文、英文、其他
+ * @param languageList {Array}
+ */
+export function sortLanguages(languageList) {
+  const zhCN = find(languageList, { code: 'zh-CN' });
+  const enUS = find(languageList, { code: 'en-US' });
+  const result = languageList.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
+  result.unshift(enUS);
+  result.unshift(zhCN);
+  return result;
 }

@@ -10,9 +10,16 @@ export default [
   },
   {
     path: `/${AppCode.LatentTote}/simulationTask`,
-    name: 'simulationTask',
-    icon: 'taskExecuted',
+    name: 'mockTask',
+    icon: 'mockTask',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/LatentTote/SimulationTask/SimulationTask',
+  },
+  {
+    path: `/${AppCode.LatentTote}/ScoringAlgorithm`,
+    icon: 'scoringAlgorithm',
+    name: 'scoringAlgorithm',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    component: '/LatentTote/ScoringAlgorithm',
   },
 ];

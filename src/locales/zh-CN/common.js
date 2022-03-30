@@ -34,6 +34,7 @@ export default {
   'app.form.name.duplicate': '名称重复',
 
   // 通用提醒内容
+  'app.message.initFailed': '系统初始化失败: {reason}',
   'app.message.systemHint': '系统提示',
   'app.message.fetchDataFailed': '获取数据失败',
   'app.message.fetchDataEmpty': '获取的数据为空',
@@ -97,6 +98,8 @@ export default {
   'app.common.report': '报表',
   'app.common.isRequired': '必填',
   'app.common.description': '描述',
+  'app.common.enable': '启用',
+  'app.common.disable': '禁用',
   'app.common.enabled': '启用中',
   'app.common.disabled': '已禁用',
   'app.common.list': '列表',

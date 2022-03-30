@@ -30,6 +30,13 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
+    path: `/${AppCode.SSO}/operationLog`, // 操作日志
+    name: 'operationLog',
+    icon: 'log',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    component: '/SSO/OperationLog/index',
+  },
+  {
     path: `/${AppCode.SSO}/accountCenter`, // 个人中心
     name: 'accountCenter',
     icon: 'home',
@@ -56,5 +63,31 @@ export default [
     icon: 'ie',
     component: '/SSO/EnvironmentManger',
     hooks: ['dev'],
+  },
+  {
+    path: `/${AppCode.SSO}/notificationCenter`,
+    name: 'notificationCenter',
+    icon: 'notification',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    routes: [
+      {
+        path: `/${AppCode.SSO}/notificationCenter/broadcast`,
+        name: 'broadcast',
+        component: '/SSO/NotificationCenter/BroadcastChannel',
+        authority: ['ADMIN', 'SUPERMANAGER'],
+      },
+      {
+        path: `/${AppCode.SSO}/notificationCenter/subscription`,
+        name: 'subscription',
+        component: '/SSO/NotificationCenter/ChannelSubscription',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      {
+        path: `/${AppCode.SSO}/alertCenter`,
+        name: 'alertCenter',
+        component: '/SSO/AlertCenter/index',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER', 'USER'],
+      },
+    ],
   },
 ];

@@ -1,16 +1,16 @@
 import React from 'react';
 import {
-  Row,
-  Col,
-  Form,
   Button,
-  Dropdown,
-  Menu,
   Checkbox,
-  Radio,
-  Input,
+  Col,
   Divider,
+  Dropdown,
+  Form,
+  Input,
+  Menu,
   Modal,
+  Radio,
+  Row,
 } from 'antd';
 import {
   DownOutlined,
@@ -20,15 +20,10 @@ import {
   SaveOutlined,
 } from '@ant-design/icons';
 import classnames from 'classnames';
-import { cloneDeep, find, findIndex } from 'lodash';
+import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage, isStrictNull, adjustModalWidth } from '@/utils/util';
-import {
-  addSysLang,
-  getSysLang,
-  getTranslationByCode,
-  updateSysTranslation,
-} from '@/services/translator';
+import { adjustModalWidth, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translator';
 import RmsConfirm from '@/components/RmsConfirm';
 import {
   exportTranslate,
@@ -44,8 +39,13 @@ import DiffToSaveModal from './component/DiffToSaveModal';
 import BackLangModal from './component/BackLangModal';
 import commonStyles from '@/common.module.less';
 import styles from './translator.module.less';
+import { connect } from '@/utils/RmsDva';
 
 const { Item: FormItem } = Form;
+
+@connect(({ global }) => ({
+  systemLanguage: global.systemLanguage,
+}))
 class LanguageManage extends React.Component {
   state = {
     appCode: 'FE',
@@ -59,7 +59,6 @@ class LanguageManage extends React.Component {
     backVisible: false,
 
     showLanguage: [],
-    allLanguage: [],
     dataList: {},
     standardData: [],
     customData: [],
@@ -79,50 +78,32 @@ class LanguageManage extends React.Component {
 
   // 获取语言
   getSysLanguage = async () => {
-    let existLanguages = await getSysLang();
-    if (!dealResponse(existLanguages)) {
-      // Tips: 如果未来有一些特殊的操作，比如隐藏某些语言，可以在这里操作existLanguages
-      existLanguages = this.sortLanguages(existLanguages);
-      const frontedStandard = [];
-      existLanguages.map(({ code }) => {
-        let languageMap = {};
-        try {
-          languageMap = require(`@/locales/${code}`)?.default;
-        } catch (error) {
-          languageMap = {};
-        }
-        // 当前语言没有翻译，可以直接从zh-CN拿key
-        if (Object.keys(languageMap).length === 0) {
-          const zhKeyMap = require(`@/locales/zh-CN`)?.default;
-          Object.entries(zhKeyMap).map(([key, value]) => {
-            languageMap[key] = '';
-          });
-        }
-        frontedStandard.push({ languageKey: code, languageMap });
-      });
-      this.setState(
-        {
-          allLanguage: existLanguages,
-          showLanguage: existLanguages.map(({ code }) => code),
-          frontedStandard,
-        },
-        this.getTranslateList,
-      );
-    }
+    const { systemLanguage } = this.props;
+    const frontedStandard = [];
+    systemLanguage.map(({ code }) => {
+      let languageMap = {};
+      try {
+        languageMap = require(`@/locales/${code}`)?.default;
+      } catch (error) {
+        languageMap = {};
+      }
+      // 当前语言没有翻译，可以直接从zh-CN拿key
+      if (Object.keys(languageMap).length === 0) {
+        const zhKeyMap = require(`@/locales/zh-CN`)?.default;
+        Object.entries(zhKeyMap).map(([key, value]) => {
+          languageMap[key] = '';
+        });
+      }
+      frontedStandard.push({ languageKey: code, languageMap });
+    });
+    this.setState(
+      {
+        frontedStandard,
+        showLanguage: systemLanguage.map(({ code }) => code),
+      },
+      this.getTranslateList,
+    );
   };
-
-  /**
-   * 语言顺序：中文、英文、其他
-   * @param languageList {Array}
-   */
-  sortLanguages(languageList) {
-    const zhCN = find(languageList, { code: 'zh-CN' });
-    const enUS = find(languageList, { code: 'en-US' });
-    const result = languageList.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
-    result.unshift(enUS);
-    result.unshift(zhCN);
-    return result;
-  }
 
   // 根据appcode获取翻译列表-list
   getTranslateList = async () => {
@@ -140,7 +121,8 @@ class LanguageManage extends React.Component {
   };
 
   getStandardAndCustomData = () => {
-    const { dataList, allLanguage } = this.state;
+    const { systemLanguage } = this.props;
+    const { dataList } = this.state;
     /*切换应用 根据后端返回的数据 以及目前前端勾选的语言 初始化数据
      *        后端返回的数据 没有该语言 前端赋值为null
      * 原因: 1.交互问题 保持所有数据的key一致;
@@ -149,7 +131,7 @@ class LanguageManage extends React.Component {
      *** custom里面的key一定在standard里面
      * *
      * */
-    const dataArray = generateOriginData(dataList, allLanguage);
+    const dataArray = generateOriginData(dataList, systemLanguage);
     const { standardData, customData, mergeData } = dataArray;
     this.setState({
       standardData: [...standardData],
@@ -183,7 +165,7 @@ class LanguageManage extends React.Component {
         columns.push({
           title: record,
           field: record,
-          disabled: this.isMerge(displayMode) ? false : true,
+          disabled: !this.isMerge(displayMode),
         });
       });
     }
@@ -201,7 +183,7 @@ class LanguageManage extends React.Component {
       allShowData = customData;
     }
 
-    const showData_ = [...allShowData].map((record, index) => {
+    return [...allShowData].map((record) => {
       let _record = { ...record };
       if (
         this.isMerge(displayMode) &&
@@ -216,7 +198,6 @@ class LanguageManage extends React.Component {
         ..._record.languageMap,
       };
     });
-    return showData_;
   };
 
   // 语种变化 应用变化 搜索 最后都调用此放大
@@ -301,8 +282,9 @@ class LanguageManage extends React.Component {
   importTranslation = async (data) => {
     // 1.判断key是否存在standard 不存在删除 (如果语种key不在系统中 也要删除)
     // 2.有修改的翻译留下来
-    const { standardData, allLanguage, appCode } = this.state;
-    const allSysLang = allLanguage.map(({ code }) => code);
+    const { standardData, appCode } = this.state;
+    const { systemLanguage } = this.props;
+    const allSysLang = systemLanguage.map(({ code }) => code);
     const { merge, languages: exportLanguages } = data;
     const newExportLanguages = [];
     const deleteLangKey = [];
@@ -335,12 +317,12 @@ class LanguageManage extends React.Component {
     });
 
     const translationDetail = generateUpdateDataToSave(newExportLanguages);
-    const respones = await updateSysTranslation({
+    const response = await updateSysTranslation({
       appCode,
       merge,
       translationDetail,
     });
-    if (!dealResponse(respones, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
+    if (!dealResponse(response, true)) {
       this.setState({ imporVisible: false }, this.getTranslateList);
     }
   };
@@ -390,8 +372,8 @@ class LanguageManage extends React.Component {
     });
 
     const translationDetail = generateUpdateDataToSave(currenUpdate);
-    const respones = await updateSysTranslation({ appCode, merge: true, translationDetail });
-    if (!dealResponse(respones, 1, formatMessage({ id: 'app.message.operateSuccess' }))) {
+    const response = await updateSysTranslation({ appCode, merge: true, translationDetail });
+    if (!dealResponse(response, true)) {
       this.setState({ diffToVisible: false, editList: {} }, this.getTranslateList);
     }
   };
@@ -399,17 +381,17 @@ class LanguageManage extends React.Component {
   render() {
     const {
       showLanguage,
-      allLanguage,
       appCode,
       displayMode,
       importVisible,
       backVisible,
       diffToVisible,
-      showMissingTranslate,
       editList,
       loading,
       pagination,
+      showMissingTranslate,
     } = this.state;
+    const { systemLanguage } = this.props;
     const filterLanguage = this.generateFilterLanguage() || [];
     return (
       <div className={classnames(commonStyles.commonPageStyle, styles.translator)}>
@@ -422,7 +404,7 @@ class LanguageManage extends React.Component {
                   this.setState({ showLanguage: value }, this.generateFilterLanguage);
                 }}
               >
-                {allLanguage.map((record) => (
+                {systemLanguage.map((record) => (
                   <Checkbox key={record.code} value={record.code}>
                     {record.name}
                   </Checkbox>
@@ -600,7 +582,7 @@ class LanguageManage extends React.Component {
 
         {/*新增语言  */}
         <AddSysLangModal
-          existKeys={Object.values(allLanguage).map(({ code }) => code)}
+          existKeys={Object.values(systemLanguage).map(({ code }) => code)}
           onAddLang={this.submitLanguage}
           visible={this.state.addLangVisible}
           onCancel={() => {
@@ -617,7 +599,7 @@ class LanguageManage extends React.Component {
             });
           }}
           source={editList}
-          columns={allLanguage}
+          columns={systemLanguage}
           deleteHandle={(values) => {
             this.setState({
               editList: values,
@@ -653,7 +635,7 @@ class LanguageManage extends React.Component {
           <DiffToSaveModal
             originData={this.state.mergeData}
             editList={editList}
-            allLanguage={allLanguage.map(({ code }) => code)}
+            allLanguage={systemLanguage.map(({ code }) => code)}
             makeSureUpdate={this.makeSureUpdate}
           />
         </Modal>

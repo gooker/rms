@@ -14,7 +14,6 @@ export const AppCode = {
   Strategy: 'Strategy',
   Report: 'Report',
   SSO: 'SSO',
-  I18N: 'I18N',
   Customized: 'Customized',
 };
 
@@ -36,7 +35,7 @@ export const NameSpace = {
   Tote: 'tote',
   ForkLifting: 'forklift',
   Sorter: 'sorter',
-  LatentTote:'latentTote'
+  LatentTote: 'latentTote',
 };
 
 // 后端接口的 Server 的集合
