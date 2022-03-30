@@ -1,22 +1,17 @@
-import React, { Component } from 'react';
+import React, { memo } from 'react';
 import { Form, Button, Modal, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import LocalsKeys from '@/locales/LocaleKeys';
+import { getFormLayout } from '@/utils/util';
 
-const formItemLayout = {
-  labelCol: {
-    span: 6,
-  },
-  wrapperCol: {
-    span: 15,
-  },
-};
+const { formItemLayout } = getFormLayout(6, 15);
 
-export default class AddSysLangModal extends Component {
-  formRef = React.createRef();
+const AddSysLang = (props) => {
+  const { onCancel, visible, existKeys, onAddLang } = props;
 
-  renderOption = () => {
-    const { existKeys } = this.props;
+  const [formRef] = Form.useForm();
+
+  function renderOption() {
     let data = [];
     Object.keys(LocalsKeys).forEach((key) => {
       if (!existKeys.includes(key)) {
@@ -24,60 +19,40 @@ export default class AddSysLangModal extends Component {
       }
     });
     return data;
-  };
+  }
 
-  changeLang = (e) => {
-    const { setFieldsValue } = this.formRef.current;
-    const { key } = e;
-    const name = LocalsKeys[key];
-    setFieldsValue({
-      code: key,
-      name,
-    });
-  };
-
-  onSubmitLang = () => {
-    const { validateFields } = this.formRef.current;
-    const { onAddLang } = this.props;
-    validateFields()
+  function onSubmitLang() {
+    formRef
+      .validateFields()
       .then((allValues) => {
         const currentValue = { ...allValues };
         currentValue.name = LocalsKeys[allValues.code];
         onAddLang(currentValue);
       })
       .catch(() => {});
-  };
-
-  render() {
-    const { onCancel, visible } = this.props;
-    return (
-      <>
-        {/*新增语言  */}
-        <Modal
-          title={<FormattedMessage id="translator.languageManage.addlanguage" />}
-          destroyOnClose
-          maskClosable={false}
-          mask={true}
-          width={400}
-          onCancel={onCancel}
-          footer={null}
-          visible={visible}
-        >
-          <Form {...formItemLayout} ref={this.formRef}>
-            <Form.Item
-              name="code"
-              label={<FormattedMessage id="translator.languageManage.langtype" />}
-              rules={[{ required: true }]}
-            >
-              <Select style={{ width: '100%' }}>{this.renderOption()}</Select>
-            </Form.Item>
-
-            <Button style={{ margin: '20px 0 0 25%' }} onClick={this.onSubmitLang} type="primary">
-              {<FormattedMessage id="app.button.save" />}
-            </Button>
-          </Form>
-        </Modal>
-      </>
-    );
   }
-}
+
+  return (
+    <Modal
+      destroyOnClose
+      title={<FormattedMessage id="translator.languageManage.addLanguage" />}
+      maskClosable={false}
+      closable={false}
+      width={400}
+      onCancel={onCancel}
+      onOk={onSubmitLang}
+      visible={visible}
+    >
+      <Form {...formItemLayout} form={formRef}>
+        <Form.Item
+          name="code"
+          label={<FormattedMessage id="translator.languageManage.langType" />}
+          rules={[{ required: true }]}
+        >
+          <Select style={{ width: '100%' }}>{renderOption()}</Select>
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+export default memo(AddSysLang);

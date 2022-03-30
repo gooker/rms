@@ -1,11 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import { Table } from 'antd';
 import EditableCell from './EditableCell';
 import { formatMessage } from '@/utils/util';
 import styles from './editableTable.module.less';
 
 const EditableTable = (props) => {
-  const { value, columns, onChange, loading,pagination,handlePagination } = props;
+  const { value, columns, onChange, loading, pagination, handlePagination } = props;
 
   function generateColumns() {
     if (Array.isArray(columns) && columns.length > 0) {
@@ -33,7 +33,7 @@ const EditableTable = (props) => {
   }
 
   function handleTableChange({ current, pageSize }) {
-    handlePagination({current, pageSize });
+    handlePagination({ current, pageSize });
   }
 
   return (
@@ -43,16 +43,13 @@ const EditableTable = (props) => {
         loading={loading}
         columns={generateColumns()}
         dataSource={value}
-        rowKey={(record) => {
-          return record.languageKey;
-        }}
-        scroll={{ x: 'max-content' }}
+        onChange={handleTableChange}
+        rowKey={({ languageKey }) => languageKey}
         pagination={{
           ...pagination,
           showTotal: (total) =>
             `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
         }}
-        onChange={handleTableChange}
       />
     </div>
   );

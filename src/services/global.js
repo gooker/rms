@@ -41,10 +41,3 @@ export async function fetchGetProblemDetail(problemId) {
     method: 'GET',
   });
 }
-
-export async function fetchLanguageByAppCode(params) {
-  return request(`${NameSpace.I18N}/getTranslationByParam`, {
-    method: 'POST',
-    data: params,
-  });
-}
