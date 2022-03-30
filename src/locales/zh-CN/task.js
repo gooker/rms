@@ -152,17 +152,18 @@ export default {
   // 模拟任务
   'app.simulateTask': '模拟任务',
   'app.simulateTask.config': '模拟任务配置',
+  'app.simulateTask.batchDelete': '批量删除',
   'app.simulateTask.state.START': '开始',
   'app.simulateTask.state.STOP': '停止',
-
   'app.simulateTask.callType': '呼叫类型',
   'app.simulateTask.type.Auto': '自动',
   'app.simulateTask.type.Appoint': '指定',
-
   'app.simulateTask.priority.list': '优先级集合',
   'app.simulateTask.total': '订单总量',
-  'app.simulateTask.maxTask': '工作站最大任务量',
-  'app.simulateTask.pod.maxTask': '货架面最大任务量',
+  'app.simulateTask.stationMaxOrderTaskNum': '工作站订单上限',
+  'app.simulateTask.pod.maxTask': '货架面任务上限',
+  'app.simulateTask.orderHitquantity': '订单命中数量',
+  'monitor.defaultAllPod': '默认使用所有货架',
 
-  'app.simulateTask.generateInterval': '任务生成间隔',
+  'app.simulateTask.generateInterval': '生成间隔',
 };

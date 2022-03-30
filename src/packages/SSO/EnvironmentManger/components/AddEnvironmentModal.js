@@ -119,17 +119,6 @@ class AddEnvironmentModal extends Component {
                             ))}
                           </AutoComplete>
 
-                          {/* <Select
-                            placeholder={formatMessage({
-                              id: 'environmentManager.module.required',
-                            })}
-                          >
-                            {ApiNameSpace.map((item) => (
-                              <Select.Option key={item} value={item}>
-                                {item}
-                              </Select.Option>
-                            ))}
-                          </Select> */}
                         </Form.Item>
                       </Col>
                       <Col span={10}>

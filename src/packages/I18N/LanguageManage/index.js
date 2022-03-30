@@ -552,7 +552,7 @@ class LanguageManage extends React.Component {
             </FormItem>
           </Col>
         </Row>
-        <Divider></Divider>
+        <Divider />
         <Row>
           <Col flex="auto">
             <FormItem
