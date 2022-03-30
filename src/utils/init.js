@@ -1,13 +1,30 @@
 import intl from 'react-intl-universal';
-import { dealResponse, extractNameSpaceInfoFromEnvs, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  extractNameSpaceInfoFromEnvs,
+  isStrictNull,
+  sortLanguages,
+} from '@/utils/util';
 import { AppCode } from '@/config/config';
 import requestAPI from '@/utils/requestAPI';
 import { fetchAllEnvironmentList } from '@/services/SSO';
+import { getSysLang } from '@/services/translator';
 
 export async function initI18nInstance() {
   const language = getLanguage();
-  // TODO: 如果只拉取当前语种 这个应该不需要
-  const localLocales = ['zh-CN', 'en-US', 'ko-KR', 'vi-VN'];
+
+  let systemLanguage = await getSysLang();
+  if (!dealResponse(systemLanguage)) {
+    // Tips: 如果未来有一些特殊的操作，比如隐藏某些语言，可以在这里操作existLanguages
+    systemLanguage = sortLanguages(systemLanguage);
+  } else {
+    systemLanguage = [
+      { code: 'zh-CN', name: '中文' },
+      { code: 'en-US', name: 'English' },
+    ];
+  }
+  window.$$dispatch({ type: 'global/saveSystemLanguage', payload: systemLanguage });
+
   // 1. 读取本地国际化数据
   const locales = {};
   try {
@@ -17,14 +34,13 @@ export async function initI18nInstance() {
   }
 
   // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
-  // TODO: 只拉取当前语种的国际化 appCode;
   const i18nData = []; //await fetchLanguageByAppCode({ appCode: 'portal' });
   if (!dealResponse(i18nData) && Array.isArray(i18nData)) {
     i18nData.forEach(({ languageKey, languageMap }) => {
       const DBLocales = Object.keys(languageMap);
       DBLocales.forEach((dbLocale) => {
-        if (!localLocales.includes(dbLocale)) {
-          localLocales.push(dbLocale);
+        if (!systemLanguage.includes(dbLocale)) {
+          systemLanguage.push(dbLocale);
           locales[dbLocale] = {};
         }
         locales[dbLocale][languageKey] = languageMap[dbLocale];

@@ -10,7 +10,7 @@ export const SelectionType = {
 export const Colors = {
   red: '#ff0000',
   blue: '#1890ff',
-  green: '#388e3c',
+  green: '#3cb371',
   yellow: '#ffc107',
   grey: '#9E9E9E',
 };

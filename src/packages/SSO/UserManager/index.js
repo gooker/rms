@@ -4,7 +4,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard, isNull } from '@/utils/util';
 import {
   fetchUserManagerList,
   updateUserManage,
@@ -17,13 +17,14 @@ import {
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
 import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
-import StatusChoice from './components/StatusChoice';
 import AddUserModal from './components/AddUser';
 import UpdatePasswordModal from './components/UpdatePassword';
 import SectionAssignModal from './components/SectionAssign';
 import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import { Colors } from '@/config/consts';
+import { Switch } from '_antd@4.18.3@antd';
 
 const AdminTypeLabelMap = AdminTLabelMap();
 const { Option } = Select;
@@ -91,45 +92,6 @@ class UserManager extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.common.status" />,
-      dataIndex: 'disable',
-      align: 'center',
-      render: (text, record) => {
-        let disable = null;
-        let content = (
-          <StatusChoice
-            onChange={() => {
-              this.changeStatus(record.id);
-            }}
-            status={!text}
-          />
-        );
-        if (text) {
-          disable = (
-            <span style={{ color: 'red', cursor: 'pointer' }}>
-              <FormattedMessage id="sso.user.tip.disabled" />
-            </span>
-          );
-        } else {
-          disable = (
-            <span style={{ color: 'green', cursor: 'pointer' }}>
-              <FormattedMessage id="sso.user.tip.enabled" />
-            </span>
-          );
-        }
-        return (
-          <Popover
-            content={content}
-            title={<FormattedMessage id="app.button.edit" />}
-            trigger="hover"
-            placement="left"
-          >
-            {disable}
-          </Popover>
-        );
-      },
-    },
-    {
       title: <FormattedMessage id="sso.user.email" />,
       dataIndex: 'email',
       align: 'center',
@@ -170,6 +132,13 @@ class UserManager extends Component {
       align: 'center',
       with: '150',
     },
+
+    {
+      title: <FormattedMessage id="app.common.creationTime" />,
+      dataIndex: 'createDate',
+      align: 'center',
+      fixed: 'right',
+    },
     {
       title: <FormattedMessage id="app.common.remark" />,
       dataIndex: 'description',
@@ -177,10 +146,22 @@ class UserManager extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.common.creationTime" />,
-      dataIndex: 'createDate',
+      title: <FormattedMessage id="app.common.operation" />,
+      dataIndex: 'disabled',
       align: 'center',
       fixed: 'right',
+      render: (text, record) => {
+        return (
+          <Switch
+            checked={!record.disable}
+            onClick={() => {
+              this.changeStatus(record.id);
+            }}
+            checkedChildren={formatMessage({ id: 'app.common.enabled' })}
+            unCheckedChildren={formatMessage({ id: 'app.common.disabled' })}
+          />
+        );
+      },
     },
   ];
 

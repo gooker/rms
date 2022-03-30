@@ -1209,3 +1209,16 @@ export function LatentSizeUpdaterValidator(_, value) {
   }
   return Promise.resolve();
 }
+
+/**
+ * 语言顺序：中文、英文、其他
+ * @param languageList {Array}
+ */
+export function sortLanguages(languageList) {
+  const zhCN = find(languageList, { code: 'zh-CN' });
+  const enUS = find(languageList, { code: 'en-US' });
+  const result = languageList.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
+  result.unshift(enUS);
+  result.unshift(zhCN);
+  return result;
+}

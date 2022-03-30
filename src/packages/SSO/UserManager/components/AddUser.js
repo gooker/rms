@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { Form, Select, Input, Button, Modal } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import LocalsKeys from '@/locales/LocaleKeys';
 import TimeZone from '@/components/TimeZone';
 import { generateAdminTypeOptions } from '../userManagerUtils';
 import { isStrictNull } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
 
 const { Option } = Select;
-
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 18);
 
-export default class AddUser extends Component {
+@connect(({ global }) => ({
+  systemLanguage: global.systemLanguage,
+}))
+class AddUser extends Component {
   formRef = React.createRef();
 
   state = {
@@ -65,10 +67,8 @@ export default class AddUser extends Component {
   };
 
   render() {
-    const { updateRow } = this.props;
+    const { updateRow, systemLanguage } = this.props;
     const { adminTypeOptions, timeZoneVisible, zoneValue } = this.state;
-    const localLocales =
-      window.localStorage.getItem('locales') || '["zh-CN","en-US","ko-KR","vi-VN"]';
     return (
       <div>
         <Form {...formItemLayout} ref={this.formRef}>
@@ -171,9 +171,9 @@ export default class AddUser extends Component {
             rules={[{ required: true }]}
           >
             <Select>
-              {JSON.parse(localLocales).map((locale) => (
-                <Option key={locale} value={locale}>
-                  {LocalsKeys[locale]}
+              {systemLanguage.map((record) => (
+                <Option key={record.code} value={record.code}>
+                  {record.name}
                 </Option>
               ))}
             </Select>
@@ -255,3 +255,4 @@ export default class AddUser extends Component {
     );
   }
 }
+export default AddUser;
