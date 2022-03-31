@@ -28,6 +28,8 @@ export default {
     currentApp: null,
 
     // 国际化
+    editI18NMode: false, // 标记是否是国际化编辑模式
+    editI18NKey: null, // 正在编辑的国际化key
     systemLanguage: [], // 系统支持的语种
     globalLocale: 'zh-CN',
     antdLocale: zhCN,
@@ -52,6 +54,27 @@ export default {
         adapterVersion: payload?.adapterServerMap || {},
       };
     },
+    updateEditI18NMode(state, { payload }) {
+      if (payload) {
+        return {
+          ...state,
+          editI18NMode: true,
+        };
+      } else {
+        return {
+          ...state,
+          editI18NMode: false,
+          editI18NKey: null,
+        };
+      }
+    },
+    updateEditI18NKey(state, { payload }) {
+      return {
+        ...state,
+        editI18NKey: payload,
+      };
+    },
+
     saveSocketClient(state, { payload }) {
       return {
         ...state,

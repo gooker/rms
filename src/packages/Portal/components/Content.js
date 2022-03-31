@@ -9,6 +9,7 @@ import { formatMessage, isStrictNull } from '@/utils/util';
 import TabsBar from '@/components/TabsBar';
 import Detail from '@/components/TaskDetail/Detail';
 import style from '@/layout/homeLayout.module.less';
+import I18nEditor from '@/components/I18nEditor';
 
 const { TabPane } = Tabs;
 
@@ -83,6 +84,8 @@ const Content = (props) => {
         })}
       </Tabs>
 
+      {/* 国际化编辑 */}
+      <I18nEditor />
       {/* 任务详情全局组件 */}
       <Detail />
     </div>

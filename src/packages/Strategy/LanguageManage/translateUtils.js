@@ -20,7 +20,7 @@ export function exportTranslate(allShowData, key, appcode, showLanguage) {
       ...currentlangMap,
     };
   });
-  const textlang = formatMessage({ id: 'translator.languageManage.langpackage' });
+  const textlang = formatMessage({ id: 'translator.languageManage.langPackage' });
   const ws = XLSX.utils.json_to_sheet(data_); /* 新建空workbook，然后加入worksheet */
   const wb = XLSX.utils.book_new(); /*新建book*/
   XLSX.utils.book_append_sheet(wb, ws, 'common'); /* 生成xlsx文件(book,sheet数据,sheet命名) */

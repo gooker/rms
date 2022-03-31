@@ -36,7 +36,6 @@ import AddSysLangModal from './component/AddSysLang.js';
 import ImportApplicationModal from './component/ImportApplication';
 import UpdateEditListModal from './component/UpdateEditListModal';
 import DiffToSaveModal from './component/DiffToSaveModal';
-import BackLangModal from './component/BackLangModal';
 import commonStyles from '@/common.module.less';
 import styles from './translator.module.less';
 import { connect } from '@/utils/RmsDva';
@@ -56,7 +55,6 @@ class LanguageManage extends React.Component {
     importVisible: false,
     addLangVisible: false,
     diffToVisible: false,
-    backVisible: false,
 
     showLanguage: [],
     dataList: {},
@@ -323,7 +321,7 @@ class LanguageManage extends React.Component {
       translationDetail,
     });
     if (!dealResponse(response, true)) {
-      this.setState({ imporVisible: false }, this.getTranslateList);
+      this.setState({ importVisible: false }, this.getTranslateList);
     }
   };
 
@@ -384,7 +382,6 @@ class LanguageManage extends React.Component {
       appCode,
       displayMode,
       importVisible,
-      backVisible,
       diffToVisible,
       editList,
       loading,
@@ -421,7 +418,7 @@ class LanguageManage extends React.Component {
                 this.setState({ addLangVisible: true });
               }}
             >
-              <PlusCircleOutlined /> <FormattedMessage id="translator.languageManage.addlanguage" />
+              <PlusCircleOutlined /> <FormattedMessage id="translator.languageManage.addLanguage" />
             </Button>
           </Col>
 
@@ -466,7 +463,7 @@ class LanguageManage extends React.Component {
               disabled={isNull(appCode)}
               onClick={() => {
                 this.setState({
-                  imporVisible: true,
+                  importVisible: true,
                 });
               }}
             >
@@ -508,16 +505,6 @@ class LanguageManage extends React.Component {
             >
               <SaveOutlined /> <FormattedMessage id="app.button.save" />
             </Button>
-
-            {/* <Button
-              style={{ marginLeft: 20 }}
-              disabled={isNull(appCode)}
-              onClick={() => {
-                this.setState({ backVisible: true });
-              }}
-            >
-              <RollbackOutlined /> <FormattedMessage id="translator.languageManage.back" />
-            </Button> */}
           </Col>
           <Col>
             <FormItem label={<FormattedMessage id="app.button.search" />}>
@@ -607,19 +594,6 @@ class LanguageManage extends React.Component {
           }}
         />
 
-        {/* 退回 */}
-        {backVisible && (
-          <BackLangModal
-            appCode={appCode}
-            visible={backVisible}
-            onCancel={() => {
-              this.setState({
-                backVisible: false,
-              });
-            }}
-          />
-        )}
-
         {/* 对比 */}
         <Modal
           width={adjustModalWidth()}
@@ -648,7 +622,7 @@ class LanguageManage extends React.Component {
               importVisible: false,
             });
           }}
-          importApplicate={this.importTranslation}
+          onOk={this.importTranslation}
         />
       </div>
     );
