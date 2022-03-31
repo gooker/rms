@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form } from 'antd';
+import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form, Switch } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
@@ -24,7 +24,6 @@ import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { Colors } from '@/config/consts';
-import { Switch } from '_antd@4.18.3@antd';
 
 const AdminTypeLabelMap = AdminTLabelMap();
 const { Option } = Select;

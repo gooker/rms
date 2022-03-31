@@ -15,6 +15,24 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     component: '/LatentTote/SimulationTask/SimulationTask',
   },
+
+  {
+    path: '/pod',
+    name: 'pod',
+    icon: 'pod',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    hooks: ['dev'],
+    routes: [
+      {
+        path: `/${AppCode.LatentTote}/podManagement`,
+        name: 'podManagement',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+        component: '/LatentTote/PodManagement',
+        hooks: ['dev'],
+      },
+    ],
+  },
+
   {
     path: `/${AppCode.LatentTote}/ScoringAlgorithm`,
     icon: 'scoringAlgorithm',

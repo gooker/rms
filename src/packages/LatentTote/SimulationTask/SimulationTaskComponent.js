@@ -20,30 +20,25 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { updateSimulationTask } from '@/services/latentTote';
 import FormattedMessage from '@/components/FormattedMessage';
+import { LatentToteTaskTypeOption } from '@/config/consts';
 import PodFaceOrderTaskRange from './PodFaceOrderTaskRange';
 
 const priorityOption = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-const toteTaskTypeOption = [
-  { label: '入库', value: 'STATION_TO_POD' },
-  { label: '出库', value: 'POD_TO_STATION' },
-];
 
 const callTypeOption = [
   { label: formatMessage({ id: 'app.simulateTask.type.Auto' }), value: 'Auto' },
   { label: formatMessage({ id: 'app.simulateTask.type.Appoint' }), value: 'Appoint' },
 ];
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout } = getFormLayout(6, 16);
 
 const SimulationTaskComponent = (props) => {
   const { visible, onClose, updateRecord, workstationList, onRefresh } = props;
   const [formRef] = Form.useForm();
-  const [executing, setExecuting] = useState(false);
   const [toteTaskType, setToteTaskType] = useState('STATION_TO_POD');
   const [callType, setCallType] = useState('Auto');
 
   useEffect(() => {
-    console.log('1');
+    // console.log('1');
   }, []);
 
   function covertWorkstationArrayToFormData(workstationArray) {
@@ -64,14 +59,12 @@ const SimulationTaskComponent = (props) => {
       .validateFields()
       .then(async (values) => {
         if (validateWorkStationCallParms(values?.workStationCallParms)) {
-          setExecuting(true);
           const methodType = isNull(updateRecord) ? 'POST' : 'PUT';
           const response = await updateSimulationTask(methodType, values);
           if (!dealResponse(response)) {
             onClose();
             onRefresh();
           }
-          setExecuting(false);
         }
       })
       .catch((err) => {
@@ -86,7 +79,7 @@ const SimulationTaskComponent = (props) => {
      *2.判断workStationCodes 数组重复
      * */
     if (stations?.length === 0) {
-      message.error('完善配置');
+      message.error(formatMessage({ id: 'app.simulateTask.configuration' }));
       return false;
     }
     if (stations?.length === 1) {
@@ -105,7 +98,7 @@ const SimulationTaskComponent = (props) => {
     codes = flatten(codes);
     if (codes.length !== new Set(codes).size || allCodes >= 1) {
       // return Promise.reject(new Error('工作站不能重复'));
-      message.error('工作站不能重复');
+      message.error(formatMessage({ id: 'app.simulateTask.stationDuplicate' }));
       return false;
     }
     return true;
@@ -153,9 +146,9 @@ const SimulationTaskComponent = (props) => {
             }}
           >
             <Select style={{ width: '250px' }}>
-              {toteTaskTypeOption.map((item) => (
+              {LatentToteTaskTypeOption.map((item) => (
                 <Select.Option key={item?.value} value={item?.value}>
-                  {item?.label}
+                  {formatMessage({ id: `${item?.label}` })}
                 </Select.Option>
               ))}
             </Select>
@@ -177,7 +170,7 @@ const SimulationTaskComponent = (props) => {
 
           <Form.List
             name="workStationCallParms"
-            initialValue={updateRecord?.workStationCallParms || []}
+            initialValue={updateRecord?.workStationCallParms || [{}]}
           >
             {(fields, { add, remove }, { errors }) => (
               <>
@@ -281,7 +274,7 @@ const SimulationTaskComponent = (props) => {
                             <Select
                               mode="multiple"
                               placeholder={formatMessage({
-                                id: 'monitor.defaultAllPod',
+                                id: 'app.simulateTask.defaultAllPod',
                               })}
                               style={{ width: '80%' }}
                             />

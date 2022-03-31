@@ -1,7 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
-import { Tooltip, Tag, Row, Col, Button, Divider } from 'antd';
+import { Tooltip, Tag, Row, Col, Button, Card, Badge } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RmsDva';
 import {
   deleteSimulationTasks,
   fetchAllSimulationTasks,
@@ -11,16 +10,21 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import LabelComponent from '@/components/LabelComponent';
-import { formatMessage, isStrictNull, isNull, dealResponse } from '@/utils/util';
+import RmsConfirm from '@/components/RmsConfirm';
+import { formatMessage, isStrictNull, dealResponse, convertToUserTimezone } from '@/utils/util';
 import SimulationTaskComponent from './SimulationTaskComponent';
 import commonStyles from '@/common.module.less';
 import style from './simulationTask.module.less';
+const callTypeOption = {
+  Auto: '#87d068',
+  Appoint: '#2db7f5',
+};
 
 const taskList = [
   {
     id: '121212',
     callStatus: 'START',
-    toteTaskType: 'TRANSPORT_IN ',
+    toteTaskType: 'POD_TO_STATION',
     callType: 'Auto',
     copySimulationId: '1222212121221',
     workStationCallParms: [
@@ -49,7 +53,7 @@ const taskList = [
   {
     id: '121213',
     callStatus: 'STOP',
-    toteTaskType: 'TRANSPORT_IN ',
+    toteTaskType: 'POD_TO_STATION',
     callType: 'Auto',
     copySimulationId: '1222212121221',
     workStationCallParms: [
@@ -78,7 +82,7 @@ const taskList = [
   {
     id: '121214',
     callStatus: 'STOP',
-    toteTaskType: 'TRANSPORT_IN ',
+    toteTaskType: 'POD_TO_STATION',
     callType: 'Auto',
     copySimulationId: '1222212121221',
     workStationCallParms: [
@@ -108,12 +112,132 @@ const taskList = [
         createTime: '2022-03-28 16:47:27',
         endTime: '2022-03-28 16:47:27',
       },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
+      {
+        createTime: '2022-03-28 18:47:27',
+        endTime: '2022-03-28 19:47:27',
+      },
     ],
   },
   {
     id: '121215',
     callStatus: 'RETRY',
-    toteTaskType: 'TRANSPORT_IN ',
+    toteTaskType: 'POD_TO_STATION',
     callType: 'Auto',
     copySimulationId: '1222212121221',
     workStationCallParms: [
@@ -148,7 +272,6 @@ const taskList = [
 ];
 
 const SimulationTask = (props) => {
-  const { allTaskTypes, agvType } = props;
   const [loading, setLoading] = useState(false);
   const [addVisible, setAddVisible] = useState(false);
   const [updateRecord, setUpdateRecord] = useState(null);
@@ -158,6 +281,7 @@ const SimulationTask = (props) => {
 
   useEffect(() => {
     setDataList(taskList);
+    // getData();
   }, []);
 
   function checkDetail(taskId) {
@@ -191,10 +315,21 @@ const SimulationTask = (props) => {
     } else {
       ids = [id];
     }
-    const response = await deleteSimulationTasks(ids.toString());
-    if (!dealResponse(response)) {
-      getData();
-    }
+
+    RmsConfirm({
+      content: flag
+        ? formatMessage({ id: 'app.message.batchDelete.confirm' })
+        : formatMessage({ id: 'app.message.delete.confirm' }),
+      onOk: async () => {
+        const response = await deleteSimulationTasks(ids.toString());
+        if (!dealResponse(response)) {
+          getData();
+        }
+      },
+      onCancel: () => {
+        setSelectRowKey([]);
+      },
+    });
   }
 
   function editRow(record) {
@@ -228,28 +363,41 @@ const SimulationTask = (props) => {
       title: <FormattedMessage id="app.simulateTask.callType" />,
       dataIndex: 'callType',
       align: 'center',
-
-      render: (text) => formatMessage({ id: `app.simulateTask.type.${text}` }),
+      render: (text) => (
+        <Tag color={callTypeOption[text]}>
+          {formatMessage({ id: `app.simulateTask.type.${text}` })}
+        </Tag>
+      ),
     },
 
     {
       title: <FormattedMessage id="app.task.type" />,
       dataIndex: 'toteTaskType',
       align: 'center',
-
-      render: (text) => {
-        return allTaskTypes?.[agvType]?.[text] || text;
-      },
+      render: (text) => formatMessage({ id: `app.simulateTask.toteTaskType.${text}` }),
     },
     {
       title: <FormattedMessage id="app.task.state" />,
       dataIndex: 'callStatus',
       align: 'center',
       render: (text, record) => {
-        if (text != null) {
-          return <Tag>{text}</Tag>;
-        } else {
-          return <FormattedMessage id="app.taskDetail.notAvailable" />;
+        if (text === 'START') {
+          return (
+            <Badge
+              color={'#87d068'}
+              text={<FormattedMessage id="app.simulateTask.state.START" />}
+            />
+          );
+        }
+        if (text === 'STOP') {
+          return (
+            <Badge color={'#108ee9'} text={<FormattedMessage id="app.simulateTask.state.STOP" />} />
+          );
+        }
+        if (text === 'RETRY') {
+          return (
+            <Badge status={'orange'} text={<FormattedMessage id="app.taskDetail.restart" />} />
+          );
         }
       },
     },
@@ -286,17 +434,19 @@ const SimulationTask = (props) => {
             </Button>
           )}
 
-          {record.laToteSimulationTaskRecords?.length > 0 && record.callStatus === 'STOP' && (
-            <Button
-              size={'small'}
-              type="link"
-              onClick={() => {
-                statusSwitch({ ...record, callStatus: 'RETRY' });
-              }}
-            >
-              <FormattedMessage id="app.taskDetail.restart" />
-            </Button>
-          )}
+          {record.laToteSimulationTaskRecords?.length > 0 &&
+            record.callStatus === 'STOP' &&
+            record.callType === 'Appoint' && (
+              <Button
+                size={'small'}
+                type="link"
+                onClick={() => {
+                  statusSwitch({ ...record, callStatus: 'RETRY' });
+                }}
+              >
+                <FormattedMessage id="app.taskDetail.restart" />
+              </Button>
+            )}
           {record.laToteSimulationTaskRecords?.length === 0 && (
             <Button
               size={'small'}
@@ -355,7 +505,7 @@ const SimulationTask = (props) => {
       dataIndex: 'stationOrderTaskTotalNum',
     },
     {
-      title: <FormattedMessage id="app.simulateTask.maxTask" />,
+      title: <FormattedMessage id="app.simulateTask.stationMaxOrderTaskNum" />,
       dataIndex: 'stationMaxOrderTaskNum',
     },
     {
@@ -368,19 +518,72 @@ const SimulationTask = (props) => {
     },
   ];
 
-  function expandedRowRender(currentItemData) {
+  function expandedRowRender(record) {
     return (
       <>
-        {currentItemData.map((record, i) => {
+        {record.laToteSimulationTaskRecords?.length > 0 && (
+          <Card
+            style={{ maxHeight: '300px', overflow: 'auto', marginBottom: 10 }}
+            className={style.recordCard}
+            title={formatMessage({ id: 'app.task.record' })}
+          >
+            {
+              <>
+                <Row
+                  style={{
+                    margin: 10,
+                    paddingBottom: 10,
+                    color: '#625f5f',
+                    borderBottom: '1px solid #f5efef',
+                  }}
+                >
+                  <Col span={12}>
+                    <span className={style.recordTitle}>
+                      <FormattedMessage id="app.common.startTime" />
+                    </span>
+                  </Col>
+                  <Col span={12}>
+                    <span className={style.recordTitle}>
+                      <FormattedMessage id="app.common.endTime" />
+                    </span>
+                  </Col>
+                </Row>
+              </>
+            }
+            {record.laToteSimulationTaskRecords?.map(({ createTime, endTime }, index) => {
+              return (
+                <>
+                  <Row
+                    style={{ margin: 10, color: '#625f5f', borderBottom: '1px solid #f5efef' }}
+                    key={index}
+                  >
+                    <Col span={12}>
+                      <span style={{ color: '#625f5f' }}>
+                        {convertToUserTimezone(createTime).format('YYYY-MM-DD HH:mm:ss')}
+                      </span>
+                    </Col>
+                    <Col span={12}>
+                      <span style={{ color: '#625f5f' }}>
+                        {convertToUserTimezone(endTime).format('YYYY-MM-DD HH:mm:ss')}
+                      </span>
+                    </Col>
+                  </Row>
+                </>
+              );
+            })}
+          </Card>
+        )}
+
+        {record?.workStationCallParms?.map((item, i) => {
           return (
             <>
-              <Row style={{ margin: 10, borderBottom: '1px solid #f5efef', color: '#625f5f' }}>
+              <Row className={style.workStationCallParms} key={i}>
                 {expandColumns.map(({ title, dataIndex, render }, index) => (
                   <Col key={index} flex="auto">
                     <LabelComponent label={title} color={'#625f5f'}>
                       {typeof render === 'function'
-                        ? render(record[dataIndex], record)
-                        : record[dataIndex]}
+                        ? render(item[dataIndex], item)
+                        : item[dataIndex]}
                     </LabelComponent>
                   </Col>
                 ))}
@@ -404,11 +607,11 @@ const SimulationTask = (props) => {
               setUpdateRecord(null);
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="app.simulateTask.config" />
+            <PlusOutlined /> <FormattedMessage id="app.button.add" />
           </Button>
 
           {/* 删除 */}
-          <Button danger disabled={selectRowKey.length !== 1} onClick={deleteTask}>
+          <Button danger disabled={selectRowKey.length === 0} onClick={deleteTask}>
             <DeleteOutlined /> <FormattedMessage id="app.simulateTask.batchDelete" />
           </Button>
 
@@ -423,6 +626,7 @@ const SimulationTask = (props) => {
         rowKey={({ id }) => id}
         dataSource={dataList}
         loading={loading}
+        scroll={{ x: 'max-content' }}
         rowSelection={{
           selectedRowKeys: selectRowKey,
           onChange: (selectRowKey, selectRow) => {
@@ -430,7 +634,7 @@ const SimulationTask = (props) => {
           },
         }}
         expandable={{
-          expandedRowRender: (record) => expandedRowRender(record?.workStationCallParms),
+          expandedRowRender: (record) => expandedRowRender(record),
         }}
       />
 
@@ -447,6 +651,4 @@ const SimulationTask = (props) => {
     </TablePageWrapper>
   );
 };
-export default connect(({ global }) => ({
-  allTaskTypes: global.allTaskTypes,
-}))(memo(SimulationTask));
+export default memo(SimulationTask);

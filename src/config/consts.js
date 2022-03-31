@@ -330,3 +330,9 @@ export const GridResponsive = {
   lg: 12,
   xl: 6,
 };
+
+// 潜伏料箱任务类型
+export const LatentToteTaskTypeOption = [
+  { label: 'app.simulateTask.toteTaskType.STATION_TO_POD', value: 'STATION_TO_POD' },
+  { label: 'app.simulateTask.toteTaskType.POD_TO_STATION', value: 'POD_TO_STATION' },
+];

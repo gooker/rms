@@ -1,11 +1,11 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator } = NameSpace;
+const { LatentTote } = NameSpace;
 
 // 查询所有模拟任务
 export async function fetchAllSimulationTasks() {
-  return request(`/${Coordinator}/latentTote/simulationTasks`, {
+  return request(`/${LatentTote}/simulationTasks`, {
     method: 'GET',
   });
 }
@@ -16,7 +16,7 @@ export async function fetchAllSimulationTasks() {
  *PUT(修改)
  */
 export async function updateSimulationTask(type, params) {
-  return request(`/${Coordinator}/latentTote/simulationTask`, {
+  return request(`/${LatentTote}/simulationTask`, {
     method: type,
     data: params,
   });
@@ -24,7 +24,7 @@ export async function updateSimulationTask(type, params) {
 
 // 批量删除模拟任务
 export async function deleteSimulationTasks(ids) {
-  return request(`/${Coordinator}simulationTasks?ids=${ids}`, {
+  return request(`/${LatentTote}/simulationTasks?ids=${ids}`, {
     method: 'DELETE',
   });
 }
