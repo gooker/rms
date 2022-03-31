@@ -43,20 +43,22 @@ nt11-dev-build-staging:
     - npm run build
     - mybuild_date=`date "+%m%d"`
     - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
-    - echo  $mybuild_version $mybuild_date
+    # 取版本号的前两位，如 2.7.2 取出后为 2.7
+    - version_prefix=`echo ${mybuild_version}|awk -F. '{print $1"."$2}'`
+    - echo $mybuild_date $mybuild_version ${version_prefix}
     - mkdir tmp_build
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
     - cp version.txt dist/
     - date_time_string=`date "+%Y%m%d%H%M%S"`
     - tar -zcv -f Sorter-GUI-${mybuild_version}.tar.gz dist/
-    - sudo -u mushiny rm -rf /home/mushiny/deployment/rms_installation_package/sorter_ui
-    - sudo -u mushiny mkdir -p /home/mushiny/deployment/rms_installation_package/sorter_ui
-    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/rms_installation_package/sorter_ui/
-    - sudo cp version.txt /home/mushiny/deployment/rms_installation_package/sorter_ui/
-    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/rms_installation_package/sorter_ui"
+    - sudo -u mushiny rm -rf /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
+    - sudo -u mushiny mkdir -p /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
+    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+    - sudo cp version.txt /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui"
   only:
-    - /^nt11-dev-build.*$/
+    - /^nt11-build.*$/
 
 # 发布到南通11服务器的开发环境
 nt11-dev-staging:
@@ -70,11 +72,11 @@ nt11-dev-staging:
     - npm run build
     - mybuild_date=`date "+%m%d"`
     - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
-    - echo  $mybuild_version $mybuild_date
-    - mkdir tmp_build
+    # 取版本号的前两位，如 2.7.2 取出后为 2.7
+    - version_prefix=`echo ${mybuild_version}|awk -F. '{print $1"."$2}'`
+    - echo $mybuild_date $mybuild_version ${version_prefix}
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
-    #    - zip maptool.zip dist
     - cp version.txt dist/
     - date_time_string=`date "+%Y%m%d%H%M%S"`
     - prefix=/usr/share/nginx/node/dev/sorter_wcs
@@ -82,11 +84,11 @@ nt11-dev-staging:
     - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
     - sudo sh -c "cp -r dist ${prefix}"
     - tar -zcv -f Sorter-GUI-${mybuild_version}.tar.gz dist/
-    - sudo -u mushiny rm -rf /home/mushiny/deployment/rms_installation_package/sorter_ui
-    - sudo -u mushiny mkdir -p /home/mushiny/deployment/rms_installation_package/sorter_ui
-    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/rms_installation_package/sorter_ui/
-    - sudo cp version.txt /home/mushiny/deployment/rms_installation_package/sorter_ui/
-    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/rms_installation_package/sorter_ui"
+    - sudo -u mushiny rm -rf /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
+    - sudo -u mushiny mkdir -p /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
+    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+    - sudo cp version.txt /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui"
     - chmod +x send_message_to_dingdion.sh
     - ./send_message_to_dingdion.sh
   only:
