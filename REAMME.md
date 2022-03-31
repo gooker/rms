@@ -68,3 +68,9 @@
   ]
 }
 ```
+
+### 如何新增场景
+1. src/config/config 新增AppCode
+2. src/config/router 新增路由数据
+3. 新增AppCode为名称的png图片
+4. PortalEntry文件新增图标配置

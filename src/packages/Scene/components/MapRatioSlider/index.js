@@ -9,7 +9,11 @@ const MapRatioSlider = (props) => {
 
   // viewport scale 值转换成百分比
   function inputValue() {
-    return Math.ceil(((mapRatio - mapMinRatio) / (1 - mapMinRatio)) * 100);
+    const value = Math.ceil(((mapRatio - mapMinRatio) / (1 - mapMinRatio)) * 100);
+    if (Number.isNaN(value)) {
+      return 0;
+    }
+    return value;
   }
 
   // 百分比转换成viewport scale 值

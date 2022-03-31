@@ -50,6 +50,7 @@ export default [
         name: 'richEditor',
         authority: ['ADMIN', 'SUPERMANAGER'],
         component: '/Strategy/RichEditor/index',
+        hooks: ['dev'],
       },
       {
         path: `/${AppCode.Strategy}/system/timeZone`,

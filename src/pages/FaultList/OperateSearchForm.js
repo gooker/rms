@@ -9,7 +9,6 @@ import { Parser } from 'json2csv';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm';
-const FormItemLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
 const LogSearchForm = (props) => {
   const { search, data } = props;
@@ -112,8 +111,8 @@ const LogSearchForm = (props) => {
   }
 
   return (
-    <Form form={formRef} {...FormItemLayout}>
-      <Row gutter={15}>
+    <Form form={formRef}>
+      <Row gutter={24}>
         <Col span={6}>
           <Form.Item name={'module'} label={<FormattedMessage id="app.activity.modelName" />}>
             <Select allowClear showSearch>
@@ -130,7 +129,6 @@ const LogSearchForm = (props) => {
             <Input allowClear />
           </Form.Item>
         </Col>
-
         <Col span={6}>
           <Form.Item name={'status'} label={<FormattedMessage id="app.common.status" />}>
             <Input allowClear />
@@ -151,7 +149,7 @@ const LogSearchForm = (props) => {
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col>
+        <Col span={12}>
           <Button type={'primary'} onClick={searchSubmit}>
             <SearchOutlined /> <FormattedMessage id={'app.button.search'} />
           </Button>

@@ -603,7 +603,7 @@ export function renderRequestBodyForm(dataSource, formRef, isHook = false, optio
                             <Row type={'flex'} justify={'end'} style={{ marginBottom: 10 }}>
                               <Button
                                 type="danger"
-                                icon={MenuIcon.delete}
+                                icon={<PlusOutlined />}
                                 onClick={() => remove(name)}
                               />
                             </Row>

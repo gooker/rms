@@ -14,6 +14,7 @@ import Strategy from './strategy.router';
 import Tool from './tool.router';
 import Tote from './tote.router';
 import Customized from './customized.router';
+import Carry from './carry.router';
 
 export default {
   [AppCode.SSO]: SSORouter,
@@ -31,4 +32,5 @@ export default {
   [AppCode.Tool]: Tool,
   [AppCode.Tote]: Tote,
   [AppCode.Customized]: Customized,
+  [AppCode.Carry]: Carry,
 };

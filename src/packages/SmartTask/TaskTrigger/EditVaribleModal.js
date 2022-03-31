@@ -5,12 +5,12 @@ import groupBy from 'lodash/groupBy';
 import cloneDeep from 'lodash/cloneDeep';
 import isPlainObject from 'lodash/isPlainObject';
 import { Modal, Form, Card, Divider, Row, Col, Button, Select } from 'antd';
-import { MinusCircleOutlined, ClearOutlined } from '@ant-design/icons';
+import { MinusCircleOutlined, ClearOutlined, DeleteOutlined } from '@ant-design/icons';
 import CascadeSelect from '../CustomTask/FormComponent/CascadeSelect';
 import ModelSelection from '../CustomTask/FormComponent/ModelSelection';
 // import AngleSelector from '@/pages/MapTool/components/AngleSelector';
 import { ModelTypeFieldMap } from '@/config/consts';
-import { isNull,formatMessage } from '@/utils/util';
+import { isNull, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from '../CustomTask/customTask.module.less';
@@ -32,16 +32,8 @@ Object.keys(ModelTypeFieldMap).forEach((key) => {
 });
 
 const EditVaribleModal = (props) => {
-  const {
-    data,
-    customTaskList,
-    modelTypes,
-    customTypes,
-    visible,
-    onCancel,
-    onSubmit,
-    backZones,
-  } = props;
+  const { data, customTaskList, modelTypes, customTypes, visible, onCancel, onSubmit, backZones } =
+    props;
 
   const [form] = Form.useForm();
 
@@ -130,7 +122,7 @@ const EditVaribleModal = (props) => {
               key={`${taskCode}@@${groupItem.field}@@${order}`}
               name={`${taskCode}@@${groupItem.field}@@${order}`}
               label={formatMessage({ id: 'app.form.target' })}
-              initialValue={{ type,code }}
+              initialValue={{ type, code }}
               rules={[{ validator: validateTarget }]}
             >
               <ModelSelection
@@ -141,7 +133,8 @@ const EditVaribleModal = (props) => {
             </Form.Item>,
           );
         }
-        if (groupItem.field === 'podAngle') {// pod特殊 没有resources
+        if (groupItem.field === 'podAngle') {
+          // pod特殊 没有resources
           body.push(
             <Form.Item
               {...formItemLayout}
@@ -203,9 +196,7 @@ const EditVaribleModal = (props) => {
                 >
                   <Form.Item
                     {...(index === 0 ? formItemLayout : NoLabelFormLayout)}
-                    label={
-                      index === 0 ? formatMessage({ id: 'customTasks.form.backZone' }) : null
-                    }
+                    label={index === 0 ? formatMessage({ id: 'customTasks.form.backZone' }) : null}
                   >
                     <Row gutter={10}>
                       <Col>
@@ -245,7 +236,7 @@ const EditVaribleModal = (props) => {
                   className={DynamicButton}
                   style={{ width: 460 }}
                 >
-                  {MenuIcon.plus}
+                  <DeleteOutlined />
                 </Button>
               </Form.Item>
             </>
@@ -273,17 +264,19 @@ const EditVaribleModal = (props) => {
           if (variable.field === 'podAngle') {
             variable.type = 'podAngle';
             variable.value = fieldValue;
-          }else if (variable.field === 'customEnd'){
+          } else if (variable.field === 'customEnd') {
             variable.type = null;
             variable.value = null;
-            variable.resources=fieldValue.resources;
+            variable.resources = fieldValue.resources;
           } else {
             variable.type = null;
             variable.value = null;
-            variable.resources=[{
-              type:fieldValue?.type,
-              code:fieldValue?.code
-            }]
+            variable.resources = [
+              {
+                type: fieldValue?.type,
+                code: fieldValue?.code,
+              },
+            ];
           }
         });
       });

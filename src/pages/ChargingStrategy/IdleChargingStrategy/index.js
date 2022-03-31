@@ -7,6 +7,7 @@ import { getIdleHoursBySectionId, saveIdleChargingStrategy } from '@/services/ap
 import MenuIcon from '@/utils/MenuIcon';
 import styles from './idleChargingStrategy.module.less';
 import { dealResponse } from '@/utils/util';
+import { PlusOutlined } from '_@ant-design_icons@4.7.0@@ant-design/icons';
 
 const tailFormItemLayout = { wrapperCol: { offset: 1, span: 23 } };
 const { RangePicker } = TimePicker;
@@ -148,12 +149,16 @@ const IdleChargingStrategy = (props) => {
                         </Form.Item>
                       </Col>
                       <Col span={3} style={{ textAlign: 'center' }}>
-                        <Button type="danger" icon={MenuIcon.delete} onClick={() => remove(name)} />
+                        <Button
+                          type="danger"
+                          icon={<PlusOutlined />}
+                          onClick={() => remove(name)}
+                        />
                       </Col>
                     </Row>
                   ))}
                   <Form.Item>
-                    <Button type="dashed" onClick={() => add()} block icon={MenuIcon.plus}>
+                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
                       <FormattedMessage id="app.button.add" />
                     </Button>
                   </Form.Item>

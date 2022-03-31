@@ -12,11 +12,12 @@ export default {
   'app.module.Cleaning': '清扫',
   'app.module.AgvManned': '载人车',
   'app.module.Tool': '工具',
-  'app.module.Strategy': '策略配置',
+  'app.module.Strategy': '策略&配置',
   'app.module.Report': '报表数据',
   'app.module.I18N': '国际化',
   'app.module.Customized': '定制',
   'app.module.SSO': 'SSO',
+  'app.module.Carry': '无人搬运',
 
   // 颜色
   'app.cost.green': '绿',

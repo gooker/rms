@@ -2,6 +2,7 @@ import React from 'react';
 import { Input, Select, Button, InputNumber } from 'antd';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from './ButtonInput.module.less';
+import { PlusOutlined } from '@ant-design/icons';
 
 /**
  * multi 是 true 的时候是 Select
@@ -58,7 +59,7 @@ export default class ButtonInput extends React.PureComponent {
         )}
         <Button
           style={{ marginLeft: 10 }}
-          icon={MenuIcon.plus}
+          icon={<PlusOutlined />}
           disabled={btnDisabled}
           onClick={() => {
             onChange(data);

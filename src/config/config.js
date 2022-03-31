@@ -15,6 +15,7 @@ export const AppCode = {
   Report: 'Report',
   SSO: 'SSO',
   Customized: 'Customized',
+  Carry: 'Carry',
 };
 
 // 小车类型
