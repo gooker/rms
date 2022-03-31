@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 import { InputNumber, Input, message } from 'antd';
 import style from './simulationTask.module.less';
+import { formatMessage } from '@/utils/util';
 
 const PodFaceOrderTaskRange = (props) => {
   const { value = [], onChange } = props;
@@ -15,7 +16,7 @@ const PodFaceOrderTaskRange = (props) => {
           onChange={(ev) => {
             const rightValue = value[1] ?? 0;
             if (ev >= rightValue) {
-              message.error('不能大于最大值');
+              message.error(formatMessage({ id: 'app.simulateTask.maxmumInvalid' }));
             }
 
             onChange([ev, rightValue]);
@@ -46,7 +47,7 @@ const PodFaceOrderTaskRange = (props) => {
           onChange={(ev) => {
             const leftValue = value[0] ?? 0;
             if (ev <= leftValue) {
-              message.error('不能小于最大值');
+              message.error(formatMessage({ id: 'app.simulateTask.minimumInvalid' }));
             }
 
             onChange([leftValue, ev]);

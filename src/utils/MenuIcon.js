@@ -41,6 +41,7 @@ export default {
   trigger: <IconFont type="icon-trigger" />,
   userRole: <IconFont type="icon-role" />,
   executing: <IconFont type="icon-executing" />,
+  pod: <IconFont type="icon-huojiaxinxi" />,
 
   taskQueue: <ExceptionOutlined />,
   taskExecuted: <FileSearchOutlined />,

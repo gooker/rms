@@ -152,4 +152,6 @@ export default {
   'menu.latentToteTaskManagement': '任务查询',
   'menu.mockTask': '模拟任务',
   'menu.scoringAlgorithm': '打分算法',
+  'menu.pod': '货架',
+  'menu.pod.podManagement': '货架管理',
 };

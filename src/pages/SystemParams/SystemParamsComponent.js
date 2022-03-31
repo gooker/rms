@@ -25,7 +25,7 @@ export default class SystemParamsManager extends Component {
     if (isNull(getApi)) {
       formData = await fetchSystemParamFormData(agvType, params);
     } else {
-      formData = await fetchSystemParamFormData(agvType, params);
+      formData = await getApi(agvType, params);
     }
 
     if (!dealResponse(formData)) {
@@ -35,11 +35,14 @@ export default class SystemParamsManager extends Component {
   };
 
   submit = async (value) => {
-    const { agvType,updateApi } = this.props;
-    // if (isNull(getApi)) {
+    const { agvType, updateApi } = this.props;
+    let responseData = null;
+    if (isNull(updateApi)) {
+      responseData = await updateSystemParams(agvType, value);
+    } else {
+      responseData = await updateApi(agvType, value);
+    }
 
-    // }
-    const responseData = await updateSystemParams(agvType, value);
     if (!dealResponse(responseData, true)) {
       this.getData();
     }

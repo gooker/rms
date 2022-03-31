@@ -163,7 +163,12 @@ export default {
   'app.simulateTask.stationMaxOrderTaskNum': '工作站订单上限',
   'app.simulateTask.pod.maxTask': '货架面任务上限',
   'app.simulateTask.orderHitquantity': '订单命中数量',
-  'monitor.defaultAllPod': '默认使用所有货架',
-
+  'app.simulateTask.defaultAllPod': '默认使用所有货架',
+  'app.simulateTask.maxmumInvalid': '不能大于最大值',
+  'app.simulateTask.minimumInvalid': '不能小于最小值',
+  'app.simulateTask.stationDuplicate': '工作站不能重复',
+  'app.simulateTask.configuration': '完善配置',
   'app.simulateTask.generateInterval': '生成间隔',
+  'app.simulateTask.toteTaskType.STATION_TO_POD': '入库',
+  'app.simulateTask.toteTaskType.POD_TO_STATION': '出库',
 };

@@ -51,6 +51,7 @@ export default function requestAPI() {
   apiMap[NameSpace.Tote] = apiMap.coordinator;
   apiMap[NameSpace.Sorter] = apiMap.coordinator;
   apiMap[NameSpace.I18N] = apiMap.coordinator;
+  apiMap[NameSpace.LatentTote] = apiMap.coordinator;
 
   return apiMap;
 }
