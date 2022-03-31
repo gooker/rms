@@ -1,4 +1,4 @@
-import { AppCode } from '../config';
+import { AppCode } from '@/config/config';
 
 export default [
   {
@@ -78,6 +78,12 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
+        path: `/${AppCode.ResourceManage}/agv/customType`,
+        name: 'customType',
+        component: '/ResourceManage/Agv/CustomAgvType',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      {
         path: `/${AppCode.ResourceManage}/agv/registration`,
         name: 'registration',
         component: '/ResourceManage/Agv/AgvRegistration',
@@ -89,46 +95,11 @@ export default [
         component: '/ResourceManage/Agv/AgvList',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
-      {
-        path: `/${AppCode.ResourceManage}/agv/group`,
-        name: 'group',
-        component: '/ResourceManage/Agv/AgvGroup',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/agv/customType`,
-        name: 'customType',
-        component: '/ResourceManage/Agv/CustomAgvType',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/agv/customIndustrial`,
-        name: 'customIndustrial',
-        component: '/ResourceManage/Agv/CustomIndustrial',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/agv/faultDefinition`,
-        name: 'faultDefinition',
-        component: '/ResourceManage/Agv/AgvFaultDefinition',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
+
       {
         path: `/${AppCode.ResourceManage}/agv/faultManagement`,
         name: 'faultManagement',
         component: '/ResourceManage/Agv/AgvFaultManagement',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/agv/OTA`,
-        name: 'OTA',
-        component: '/ResourceManage/Agv/OTA',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/agv/logDownLoad`,
-        name: 'logDownLoad',
-        component: '/ResourceManage/Agv/AgvLogDownLoad',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
@@ -141,6 +112,18 @@ export default [
         path: `/${AppCode.ResourceManage}/agv/adapter`,
         name: 'adapter',
         component: '/ResourceManage/Agv/AgvAdapter',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      {
+        path: `/${AppCode.ResourceManage}/agv/customIndustrial`,
+        name: 'customIndustrial',
+        component: '/ResourceManage/Agv/CustomIndustrial',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      {
+        path: `/${AppCode.ResourceManage}/agv/OTA`,
+        name: 'OTA',
+        component: '/ResourceManage/Agv/OTA',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
     ],
@@ -170,27 +153,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/charger/group`,
-        name: 'group',
-        component: '/ResourceManage/Charger/ChargerGroup',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/charger/logManagement`,
-        name: 'logManagement',
-        component: '/ResourceManage/Charger/ChargerLogManagement',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
         path: `/${AppCode.ResourceManage}/charger/adapter`,
         name: 'adapter',
         component: '/ResourceManage/Charger/ChargerAdapter',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/charger/faultDefinition`,
-        name: 'faultDefinition',
-        component: '/ResourceManage/Charger/ChargerFaultDefinition',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
@@ -202,66 +167,40 @@ export default [
     ],
   },
   {
-    path: `/${AppCode.ResourceManage}/automation`,
-    name: 'automation',
-    icon: 'automation',
+    path: `/${AppCode.ResourceManage}/equipment`,
+    name: 'equipment',
+    icon: 'equipment',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.ResourceManage}/automation/customType`,
+        path: `/${AppCode.ResourceManage}/equipment/customType`,
         name: 'customType',
-        component: '/ResourceManage/Automation/CustomAutomationType',
+        component: '/ResourceManage/Equipment/CustomEquipmentType',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/automation/registration`,
+        path: `/${AppCode.ResourceManage}/equipment/registration`,
         name: 'registration',
-        component: '/ResourceManage/Automation/AutomationRegistration',
+        component: '/ResourceManage/Equipment/EquipmentRegistration',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/automation/list`,
+        path: `/${AppCode.ResourceManage}/equipment/list`,
         name: 'list',
-        component: '/ResourceManage/Automation/AutomationList',
+        component: '/ResourceManage/Equipment/EquipmentList',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/automation/logManagement`,
-        name: 'logManagement',
-        component: '/ResourceManage/Automation/AutomationLogManagement',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/automation/faultDefinition`,
-        name: 'faultDefinition',
-        component: '/ResourceManage/Automation/AutomationFaultDefinition',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/automation/adapter`,
+        path: `/${AppCode.ResourceManage}/equipment/adapter`,
         name: 'adapter',
-        component: '/ResourceManage/Automation/AutomationAdapter',
+        component: '/ResourceManage/Equipment/EquipmentAdapter',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
-    ],
-  },
-  {
-    path: `/${AppCode.ResourceManage}/integration`,
-    name: 'integration',
-    icon: 'layout',
-    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    routes: [
       {
-        path: `/${AppCode.ResourceManage}/integration/webHook`,
-        name: 'webHook',
-        component: '/ResourceManage/Integration/WebHook/index',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/integration/logManagement`,
-        name: 'logManagement',
-        component: '/ResourceManage/Integration/IntegrationLogManagement',
-        authority: ['ADMIN', 'SUPERMANAGER'],
+        path: `/${AppCode.ResourceManage}/equipment/faultManagement`,
+        name: 'faultManagement',
+        component: '/ResourceManage/Equipment/EquipmentFaultManagement',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
     ],
   },
@@ -284,33 +223,41 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/liftContainerLock`,
-        name: 'liftContainerLock',
-        component: '/ResourceManage/ResourceLock/LiftContainerLock',
+        path: `/${AppCode.ResourceManage}/resourceLock/stationLock`,
+        name: 'stationLock',
+        component: '/ResourceManage/ResourceLock/StationLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/toteLock`,
-        name: 'toteLock',
-        component: '/ResourceManage/ResourceLock/ToteLock',
+        path: `/${AppCode.ResourceManage}/resourceLock/containerLock`,
+        name: 'containerLock',
+        component: '/ResourceManage/ResourceLock/ContainerLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/liftContainerStorageLock`,
-        name: 'liftContainerStorageLock',
-        component: '/ResourceManage/ResourceLock/LiftContainerStorageLock',
+        path: `/${AppCode.ResourceManage}/resourceLock/storageLock`,
+        name: 'storageLock',
+        component: '/ResourceManage/ResourceLock/StorageLock',
+        authority: ['ADMIN', 'SUPERMANAGER'],
+      },
+    ],
+  },
+  {
+    path: `/${AppCode.ResourceManage}/integration`,
+    name: 'integration',
+    icon: 'layout',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    routes: [
+      {
+        path: `/${AppCode.ResourceManage}/integration/webHook`,
+        name: 'webHook',
+        component: '/ResourceManage/Integration/WebHook/index',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/toteStorageLock`,
-        name: 'toteStorageLock',
-        component: '/ResourceManage/ResourceLock/ToteStorageLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/resourceLock/latentToteStorageLock`,
-        name: 'latentToteStorageLock',
-        component: '/ResourceManage/ResourceLock/LatentToteStorageLock',
+        path: `/${AppCode.ResourceManage}/integration/logManagement`,
+        name: 'logManagement',
+        component: '/ResourceManage/Integration/IntegrationLogManagement',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
     ],

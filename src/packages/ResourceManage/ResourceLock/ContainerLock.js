@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
-const LiftContainerLock = (props) => {
+const ContainerLock = (props) => {
   const {} = props;
   return <div>LiftContainerLock</div>;
 };
-export default memo(LiftContainerLock);
+export default memo(ContainerLock);

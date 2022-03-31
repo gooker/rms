@@ -33,7 +33,7 @@ export default {
   customConfig: <IconFont type="icon-customConfig" />,
   authorize: <IconFont type="icon-authorize" />,
   storage: <IconFont type="icon-storage" />,
-  automation: <IconFont type="icon-automation" />,
+  equipment: <IconFont type="icon-automation" />,
   binding: <IconFont type="icon-binding" />,
   dependency: <IconFont type="icon-dependency" />,
   map: <IconFont type="icon-map" />,

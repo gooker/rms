@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
-const AutomationRegistration = (props) => {
+const EquipmentRegistration = (props) => {
   const {} = props;
   return <div>AutomationRegistration</div>;
 };
-export default memo(AutomationRegistration);
+export default memo(EquipmentRegistration);

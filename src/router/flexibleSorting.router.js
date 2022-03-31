@@ -1,4 +1,4 @@
-import { AppCode } from '../config';
+import { AppCode } from '@/config/config';
 
 export default [
   {

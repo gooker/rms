@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
-const AutomationLogManagement = (props) => {
+const EquipmentFaultManagement = (props) => {
   const {} = props;
   return <div>AutomationLogManagement</div>;
 };
-export default memo(AutomationLogManagement);
+export default memo(EquipmentFaultManagement);
