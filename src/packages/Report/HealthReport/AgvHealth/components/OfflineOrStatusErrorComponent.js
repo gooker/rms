@@ -9,6 +9,7 @@ import {
 } from './RobotOfflineEchart';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
+import { formatMessage } from '@/utils/util';
 
 let codeHistoryLine = null; // 根据码号
 let timeHistoryLine = null; // 根据日期
@@ -44,7 +45,12 @@ const OfflineOrStatusErrorComponent = (props) => {
     // 根据日期报表
     timeHistoryLine = echarts.init(document.getElementById(`${dateDomId}`));
     timeHistoryLine.setOption(
-      offlineHistoryLineOption(`${chartTitle}(${chartSubTitle})`, keyData),
+      offlineHistoryLineOption(
+        `${chartTitle}(${formatMessage({
+          id: 'reportCenter.way.date',
+        })})`,
+        keyData,
+      ),
       true,
     );
 

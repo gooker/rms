@@ -37,7 +37,7 @@ const LatentTotePodTemplateDetail = (props) => {
   }
 
   function storageWeightChange(value, rowIndex) {
-    const avarageWeight = Number((value / (columns * 2)).toFixed(2));
+    const avarageWeight = Math.floor(value / (columns * 2));
     const currentIndex = rowIndex;
     let newBins = [];
     let totalWeight = 0;
@@ -77,11 +77,11 @@ const LatentTotePodTemplateDetail = (props) => {
 
   return (
     <div style={{ padding: 10 }}>
-      <div style={{ display: 'flex', background: '#ccc', justifyContent: 'center', flex: 1 }}>
+      {/* <div style={{ display: 'flex', background: '#ccc', justifyContent: 'center', flex: 1 }}>
         {rows}
         <FormattedMessage id="monitor.simulator.config.leve" />
         <FormattedMessage id="app.pod" />
-      </div>
+      </div> */}
       <div style={{ display: 'flex', marginTop: 20 }}>
         <div className={styles.floorWeight}>
           {' '}

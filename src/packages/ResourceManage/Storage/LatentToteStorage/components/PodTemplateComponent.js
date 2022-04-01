@@ -29,6 +29,7 @@ const LatentTotePodTemplate = (props) => {
     }
   }, []);
 
+  // 此方法大保存的时候 调用
   function dataTranslate(podParams) {
     const {
       rows,
@@ -43,14 +44,10 @@ const LatentTotePodTemplate = (props) => {
       isCapping,
     } = podParams;
     // 计算储位宽度
-    const binWidth = Number(
-      ((width - sideWidth * 2 - storageSpace * (columns + 1)) / columns).toFixed(2),
-    );
+    const binWidth = Math.floor((width - sideWidth * 2 - storageSpace * (columns + 1)) / columns);
     //储位高度
     const floorlength = isCapping ? rows : rows - 1;
-    const binHeight = Number(
-      ((height - bottomHeight - floorlength * floorSpace) / rows).toFixed(2),
-    );
+    const binHeight = Math.floor((height - bottomHeight - floorlength * floorSpace) / rows);
     const binDepth = depth;
 
     const binsA = [];
@@ -120,6 +117,31 @@ const LatentTotePodTemplate = (props) => {
       .catch(() => {});
   }
 
+  // 生成预览
+  function onValuesChange(_, allValues) {
+    const { rows, columns, weight } = allValues;
+    if (!isStrictNull(rows) && !isStrictNull(columns) && !isStrictNull(weight)) {
+      const binsA = [];
+      for (let r = 0; r < rows; r++) {
+        const currentRowArray = [];
+        for (let c = 0; c < columns; c++) {
+          currentRowArray.push({
+            code: `A${getCharCode(r, c + 1)}`,
+            height: 0,
+            width: 0,
+            depth: 0,
+            barycenterX: 0,
+            barycenterY: 0,
+            barycenterZ: 0,
+          });
+        }
+        binsA.push(currentRowArray);
+      }
+
+      setBinData({ bins: binsA, ...allValues });
+    }
+  }
+
   async function onSave() {
     const { bins, ...params } = binData;
     // 判断层重不为空
@@ -168,7 +190,7 @@ const LatentTotePodTemplate = (props) => {
     <Modal
       destroyOnClose
       style={{ top: 30 }}
-      footer={null}
+      // footer={null}
       onCancel={onClose}
       onOk={onSave}
       visible={visible}
@@ -189,7 +211,7 @@ const LatentTotePodTemplate = (props) => {
       <div style={{ marginTop: 10 }}>
         <Row>
           <Col span={11}>
-            <Form labelWrap form={formRef} {...formItemLayout}>
+            <Form labelWrap form={formRef} {...formItemLayout} onValuesChange={onValuesChange}>
               <Form.Item hidden name="code" initialValue={code}>
                 <Input />
               </Form.Item>
@@ -201,29 +223,38 @@ const LatentTotePodTemplate = (props) => {
                 <Input />
               </Form.Item>
 
-              <Form.Item
-                label={formatMessage({ id: 'latentTote.podTemplateStorage.weight' })}
-                name="weight"
-                rules={[{ required: true }]}
+              <div
+                style={{
+                  border: '1px solid #ededed',
+                  borderRadius: 6,
+                  padding: 10,
+                  margin: '0px 10px 10px 0px',
+                }}
               >
-                <InputNumber addonAfter={'kg'} />
-              </Form.Item>
+                <Form.Item
+                  label={formatMessage({ id: 'latentTote.podTemplateStorage.weight' })}
+                  name="weight"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber addonAfter={'kg'} />
+                </Form.Item>
 
-              <Form.Item
-                label={formatMessage({ id: 'editor.batchAddCell.rows' })}
-                name="rows"
-                rules={[{ required: true }]}
-              >
-                <InputNumber />
-              </Form.Item>
+                <Form.Item
+                  label={formatMessage({ id: 'editor.batchAddCell.rows' })}
+                  name="rows"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber />
+                </Form.Item>
 
-              <Form.Item
-                label={formatMessage({ id: 'editor.batchAddCell.columns' })}
-                name="columns"
-                rules={[{ required: true }]}
-              >
-                <InputNumber />
-              </Form.Item>
+                <Form.Item
+                  label={formatMessage({ id: 'editor.batchAddCell.columns' })}
+                  name="columns"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber />
+                </Form.Item>
+              </div>
 
               <Form.Item
                 label={formatMessage({ id: 'app.common.width' })}
@@ -292,11 +323,11 @@ const LatentTotePodTemplate = (props) => {
               </Form.Item>
             </Form>
 
-            <Form.Item {...formItemLayoutNoLabel}>
+            {/* <Form.Item {...formItemLayoutNoLabel}>
               <Button onClick={onExecuting}>
                 <FormattedMessage id={'app.button.execute'} />
               </Button>
-            </Form.Item>
+            </Form.Item> */}
           </Col>
           <Col span={13}>
             <div style={{ height: '100%', borderLeft: '1px solid #efefef' }}>
