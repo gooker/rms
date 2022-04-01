@@ -174,8 +174,6 @@ const CleaningStrategy = (props) => {
           currentValue.agvStandbyPercent = percentage;
           currentValue.useAgvStandByPercent = useAgvStandByPercent;
           currentValue.useIdleHours = useIdleHours;
-          console.log(currentValue);
-          return;
           saveStrategy(currentValue);
         }
       })

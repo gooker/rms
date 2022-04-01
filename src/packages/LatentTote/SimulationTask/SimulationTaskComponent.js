@@ -32,27 +32,16 @@ const callTypeOption = [
 const { formItemLayout } = getFormLayout(6, 16);
 
 const SimulationTaskComponent = (props) => {
-  const { visible, onClose, updateRecord, workstationList, onRefresh } = props;
+  const { visible, onClose, updateRecord, onRefresh } = props;
   const [formRef] = Form.useForm();
   const [toteTaskType, setToteTaskType] = useState('STATION_TO_POD');
   const [callType, setCallType] = useState('Auto');
 
+  const [reredner, setRerender] = useState({});
+
   useEffect(() => {
     // console.log('1');
   }, []);
-
-  function covertWorkstationArrayToFormData(workstationArray) {
-    const workStation = [];
-    if (workstationArray.length !== workstationList.length) {
-      workstationArray.forEach((record) => {
-        const { stopCellId } = record;
-        const workStationData = find(workstationList, { stopCellId });
-        workStationData &&
-          workStation.push(`${workStationData.stopCellId}-${workStationData.angle}`);
-      });
-    }
-    return workStation;
-  }
 
   function onSave() {
     formRef
@@ -105,6 +94,11 @@ const SimulationTaskComponent = (props) => {
     // return Promise.resolve();
   }
 
+  function getVisible(index) {
+    const values = formRef.getFieldsValue();
+    return values.workStationCallParms?.[index];
+  }
+
   return (
     <Modal
       destroyOnClose
@@ -136,25 +130,6 @@ const SimulationTaskComponent = (props) => {
           </Form.Item>
 
           <Form.Item
-            name={'toteTaskType'}
-            label={formatMessage({ id: 'app.task.type' })}
-            rules={[{ required: true }]}
-            initialValue={updateRecord ? updateRecord.toteTaskType : 'STATION_TO_POD'}
-            getValueFromEvent={(value) => {
-              setToteTaskType(value);
-              return value;
-            }}
-          >
-            <Select style={{ width: '250px' }}>
-              {LatentToteTaskTypeOption.map((item) => (
-                <Select.Option key={item?.value} value={item?.value}>
-                  {formatMessage({ id: `${item?.label}` })}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-
-          <Form.Item
             name={'callType'}
             label={formatMessage({ id: 'app.simulateTask.callType' })}
             rules={[{ required: true }]}
@@ -174,7 +149,7 @@ const SimulationTaskComponent = (props) => {
           >
             {(fields, { add, remove }, { errors }) => (
               <>
-                {fields.map(({ key, name, fieldKey, ...restField }) => (
+                {fields.map(({ key, name, fieldKey, ...restField }, index) => (
                   <Row
                     key={key}
                     style={{
@@ -186,6 +161,26 @@ const SimulationTaskComponent = (props) => {
                     }}
                   >
                     <Col span={22}>
+                      <Form.Item
+                        {...restField}
+                        label={formatMessage({ id: 'app.task.type' })}
+                        initialValue={'STATION_TO_POD'}
+                        name={[name, 'toteTaskType']}
+                        fieldKey={[fieldKey, 'toteTaskType']}
+                        getValueFromEvent={(value) => {
+                          setRerender({});
+                          return value;
+                        }}
+                      >
+                        <Select style={{ width: '250px' }}>
+                          {LatentToteTaskTypeOption.map((item) => (
+                            <Select.Option key={item?.value} value={item?.value}>
+                              {formatMessage({ id: `${item?.label}` })}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+
                       <Form.Item
                         {...restField}
                         label={formatMessage({
@@ -218,11 +213,11 @@ const SimulationTaskComponent = (props) => {
                           })}
                           style={{ width: '80%' }}
                         >
-                          {workstationList.map((record, index) => (
+                          {/* {workstationList.map((record, index) => (
                             <Select.Option value={record.stopCellId} key={index}>
                               {record.stopCellId}-{record.angle}°
                             </Select.Option>
-                          ))}
+                          ))} */}
                         </Select>
                       </Form.Item>
 
@@ -252,7 +247,8 @@ const SimulationTaskComponent = (props) => {
                       >
                         <InputNumber />
                       </Form.Item>
-                      {toteTaskType === 'POD_TO_STATION' && (
+
+                      {getVisible(index)?.toteTaskType === 'POD_TO_STATION' && (
                         <>
                           <Form.Item
                             {...restField}
@@ -329,6 +325,4 @@ const SimulationTaskComponent = (props) => {
     </Modal>
   );
 };
-export default connect(({ monitor }) => ({
-  workstationList: getCurrentLogicAreaData('monitor')?.workstationList || [],
-}))(memo(SimulationTaskComponent));
+export default memo(SimulationTaskComponent);

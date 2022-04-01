@@ -644,6 +644,7 @@ const SimulationTask = (props) => {
           updateRecord={updateRecord}
           onClose={() => {
             setAddVisible(false);
+            setUpdateRecord(null);
           }}
           onRefresh={getData}
         />

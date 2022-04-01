@@ -144,7 +144,7 @@ export default {
   'menu.flowReport': '流量报表',
 
   // 潜伏料箱
-  'menu.latentToteTaskManagement': '任务查询',
+  'menu.latentToteTaskManagement': '任务管理',
   'menu.mockTask': '模拟任务',
   'menu.scoringAlgorithm': '打分算法',
   'menu.pod': '货架',
