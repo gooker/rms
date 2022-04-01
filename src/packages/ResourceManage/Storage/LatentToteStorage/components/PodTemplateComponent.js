@@ -1,17 +1,25 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Modal, Row, Col, Switch } from 'antd';
+import { Form, Input, InputNumber, Modal, Row, Col, Switch, Button } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull, getFormLayout, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
+import {
+  isNull,
+  getFormLayout,
+  formatMessage,
+  getRandomString,
+  isStrictNull,
+  dealResponse,
+} from '@/utils/util';
 import LatentTotePodTemplateDetail from './PodTemplateDetail';
+import { addLatentTotePodType } from '@/services/latentTote';
 
-const { formItemLayout } = getFormLayout(7, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(7, 16);
 
 const LatentTotePodTemplate = (props) => {
   const { visible, onClose, updateRecord, onRefresh } = props;
   // 货架编码
   const [code, setCode] = useState(`ltp_${getRandomString(8)}`);
   const [isCapping, setIsCapping] = useState(false);
-  const [binData, setBinData] = useState({});
+  const [binData, setBinData] = useState(null);
   const [formRef] = Form.useForm();
 
   useEffect(() => {
@@ -25,7 +33,6 @@ const LatentTotePodTemplate = (props) => {
     const {
       rows,
       columns,
-      weight,
       width,
       height,
       depth,
@@ -46,14 +53,7 @@ const LatentTotePodTemplate = (props) => {
     );
     const binDepth = depth;
 
-    const podFace = {
-      bottomHeight,
-      name: 'A',
-      angle: 180,
-      bins: [],
-    };
     const binsA = [];
-
     for (let r = 0; r < rows; r++) {
       const currentRowArray = [];
       for (let c = 0; c < columns; c++) {
@@ -71,23 +71,6 @@ const LatentTotePodTemplate = (props) => {
     }
 
     setBinData({ bins: binsA, ...podParams });
-
-    let binsB = [...binsA];
-    let newBinsB = [];
-    binsB.forEach((rowBins) => {
-      const currentArray = [];
-      rowBins.forEach((currentCol) => {
-        currentArray.push({
-          ...currentCol,
-          code: currentCol.code.replace('A', 'C'),
-          barycenterY: -currentCol.barycenterY,
-        });
-      });
-
-      newBinsB.push(currentArray);
-    });
-    console.log(binsA);
-    console.log(newBinsB);
   }
 
   function getCharCode(i, c) {
@@ -124,7 +107,11 @@ const LatentTotePodTemplate = (props) => {
     return Number(barycenterZ);
   }
 
-  function onSave() {
+  function detailChange(data) {
+    setBinData(data);
+  }
+
+  function onExecuting() {
     formRef
       .validateFields()
       .then((values) => {
@@ -133,10 +120,55 @@ const LatentTotePodTemplate = (props) => {
       .catch(() => {});
   }
 
+  async function onSave() {
+    const { bins, ...params } = binData;
+    // 判断层重不为空
+    let binsB = [...bins];
+    let newBinsB = [];
+    binsB.forEach((rowBins) => {
+      const currentArray = [];
+      rowBins.forEach((currentCol) => {
+        currentArray.push({
+          ...currentCol,
+          code: currentCol.code.replace('A', 'C'),
+          barycenterY: -currentCol.barycenterY,
+        });
+      });
+      newBinsB.push(currentArray);
+    });
+
+    const podParams = { ...params };
+    delete podParams.bottomHeight;
+    const requsetBody = {
+      ...podParams,
+      podFaceList: [
+        {
+          bottomHeight: params.bottomHeight,
+          name: 'A',
+          angle: 0,
+          bins,
+        },
+        {
+          bottomHeight: params.bottomHeight,
+          name: 'C',
+          angle: 180,
+          newBinsB,
+        },
+      ],
+    };
+
+    const response = await addLatentTotePodType(requsetBody);
+    if (!dealResponse(response)) {
+      onClose();
+      onRefresh();
+    }
+  }
+
   return (
     <Modal
       destroyOnClose
       style={{ top: 30 }}
+      footer={null}
       onCancel={onClose}
       onOk={onSave}
       visible={visible}
@@ -259,10 +291,18 @@ const LatentTotePodTemplate = (props) => {
                 <Switch />
               </Form.Item>
             </Form>
+
+            <Form.Item {...formItemLayoutNoLabel}>
+              <Button onClick={onExecuting}>
+                <FormattedMessage id={'app.button.execute'} />
+              </Button>
+            </Form.Item>
           </Col>
           <Col span={13}>
             <div style={{ height: '100%', borderLeft: '1px solid #efefef' }}>
-              <LatentTotePodTemplateDetail binData={binData}/>
+              {binData && (
+                <LatentTotePodTemplateDetail binData={binData} detailChange={detailChange} />
+              )}
             </div>
           </Col>
         </Row>

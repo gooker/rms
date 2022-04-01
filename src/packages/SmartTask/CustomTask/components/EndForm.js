@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Form, Divider, Input } from 'antd';
-import { MinusOutlined, ClearOutlined } from '@ant-design/icons';
+import { MinusOutlined, ClearOutlined,PlusOutlined } from '@ant-design/icons';
 import { Row, Col, Switch } from 'antd';
 import StandbyConditions from '../FormComponent/StandbyConditions';
 import CascadeSelect from '../FormComponent/CascadeSelect';
@@ -9,7 +9,6 @@ import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from '../customTask.module.less';
-import { PlusOutlined } from '_@ant-design_icons@4.7.0@@ant-design/icons';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 6, span: 18 } };

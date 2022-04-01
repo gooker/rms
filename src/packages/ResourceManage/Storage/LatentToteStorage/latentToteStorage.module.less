@@ -7,3 +7,27 @@
   line-height: 26px;
   text-align: center;
 }
+
+.storageContainer {
+  flex: 1;
+  & > div.floorContainr {
+    height: 26px;
+    line-height: 26px;
+    border-bottom: 1px solid #ededed;
+  }
+
+  & > .floorContainr:nth-child(1) {
+    border-top: 1px solid #ededed;
+  }
+
+  .binContain {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+    border-right: 1px solid #ededed;
+  }
+
+  .binContain:nth-child(1) {
+    border-left: 1px solid #ededed;
+  }
+}

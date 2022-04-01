@@ -3,7 +3,7 @@ export default {
   'latentTote.podTemplateStorage.weight': '货架重量',
   'latentTote.podTemplateStorage.sideWidth': '货架边宽',
   'latentTote.podTemplateStorage.storageSpace': '储位间隔',
-  'latentTote.podTemplateStorage.rowSpace': '层间隔',
+  'latentTote.podTemplateStorage.rowSpace': '层板厚度',
   'latentTote.podTemplateStorage.bottomHeight': '底部高度',
   'latentTote.podTemplateStorage.isCapping': '是否封顶',
   'latentTote.podTemplateStorage.floorWeight': '层重',
