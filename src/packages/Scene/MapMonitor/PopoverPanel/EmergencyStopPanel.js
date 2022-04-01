@@ -52,7 +52,7 @@ const EmergencyStopPanel = (props) => {
       });
 
       function callback({ start, end }) {
-        EventManager.unSubscribe(subscribeType, functionId);
+        EventManager.unsubscribe(subscribeType, functionId);
         message.destroy(key);
 
         // 转换坐标确定选择区域

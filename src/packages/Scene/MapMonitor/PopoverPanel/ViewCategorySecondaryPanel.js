@@ -12,7 +12,7 @@ const ViewCategorySecondaryPanel = (props) => {
   useEffect(() => {
     let _top = 5;
     if (offsetTop) {
-      _top = offsetTop - height / 2;
+      _top = offsetTop;
       const _height = _top + height - pixHeight;
       if (_height > 0) {
         _top = _top - _height;
@@ -22,13 +22,14 @@ const ViewCategorySecondaryPanel = (props) => {
       }
     }
     setTop(_top);
+
     if (type === Category.View) {
       setCategoryTools(ViewCategoryTools);
     }
     if (type === Category.Resource) {
       setCategoryTools(ResourceCategoryTools);
     }
-  }, [height, offsetTop, pixHeight, type]);
+  }, [type, height, pixHeight, offsetTop]);
 
   function renderIcon(icon, style) {
     if (typeof icon === 'string') {
@@ -43,7 +44,7 @@ const ViewCategorySecondaryPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 60, top: top }} className={styles.popoverPanel}>
+    <div style={{ height, width: 60, top }} className={styles.popoverPanel}>
       {categoryTools
         .map(({ label, icon, value, style }) => {
           return (

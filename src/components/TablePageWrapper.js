@@ -15,7 +15,7 @@ const TablePageWrapper = (props) => {
     }
     EventManager.subscribe('resize', resize, functionId);
     return () => {
-      EventManager.unSubscribe('resize', functionId);
+      EventManager.unsubscribe('resize', functionId);
     };
   }, []);
 
