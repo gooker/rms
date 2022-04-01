@@ -269,14 +269,14 @@ export const ResourceCategoryTools = [
     style: { width: '33px', height: 'auto' },
   },
   {
-    label: <FormattedMessage id={'menu.sourceManage.latentPod'} />,
+    label: <FormattedMessage id={'app.map.latentPod'} />,
     value: 'setLatentPod',
     icon: 'latentPod.png',
     style: { width: '33px', height: 'auto' },
   },
 
   {
-    label: <FormattedMessage id={'monitor.view.toteRack'} />,
+    label: <FormattedMessage id={'app.map.tote'} />,
     value: 'setTotePod',
     icon: 'totePod.png',
     style: { width: '33px', height: 'auto' },

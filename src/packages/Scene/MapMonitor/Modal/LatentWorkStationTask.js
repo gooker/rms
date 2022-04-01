@@ -1,44 +1,89 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Select, InputNumber, Radio } from 'antd';
-import { CloseOutlined, SendOutlined } from '@ant-design/icons';
+import { CloseOutlined, SendOutlined, SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { latentPodToWorkStation } from '@/services/monitor';
-import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import {
+  dealResponse,
+  formatMessage,
+  getDirByAngle,
+  getFormLayout,
+  getMapModalPosition,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { MonitorSelectableSpriteType } from '@/config/consts';
 import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const LatentWorkStationTask = (props) => {
-  const { dispatch, workstationList } = props;
+  const { dispatch, selections, currentMap } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
+  const workstationList = getWorkstationList();
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
   }
 
-  function callRackToWorkstation() {
+  function getWorkstationList() {
+    const result = [];
+    currentMap.logicAreaList.forEach(({ workstationList }) => {
+      workstationList.forEach(({ station, name }) => {
+        result.push({ value: station, label: name });
+      });
+    });
+    return result;
+  }
+
+  function callPodToWorkstation() {
     formRef
       .validateFields()
       .then((values) => {
         setExecuting(true);
         const { workstation, ...otherParams } = values;
-        const currentworkstation = workstation.split('-');
+        const currentWorkstation = workstation.split('-');
         const currentParams = {
           ...otherParams,
-          stopCellId: currentworkstation[0],
-          direction: currentworkstation[1],
+          stopCellId: currentWorkstation[0],
+
+          // 注意：这里的direction不是角度，是0、1、2、3
+          direction: getDirByAngle(parseInt(currentWorkstation[1], 10)),
         };
         latentPodToWorkStation({ ...currentParams }).then((response) => {
           if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
             close();
+
+            // 取消选择
+            selections.map((item) => item.onUnSelect());
+            dispatch({
+              type: 'monitor/saveSelections',
+              payload: { selections: [] },
+            });
           }
         });
         setExecuting(false);
       })
       .catch(() => {});
+  }
+
+  function autoFillForm() {
+    const agv = selections.filter(
+      (item) => item.type === MonitorSelectableSpriteType.LatentLifting,
+    )[0];
+    const pod = selections.filter((item) => item.type === MonitorSelectableSpriteType.LatentPod)[0];
+    const station = selections.filter((item) =>
+      [MonitorSelectableSpriteType.WorkStation, MonitorSelectableSpriteType.Station].includes(
+        item.type,
+      ),
+    )[0];
+
+    formRef.resetFields();
+    formRef.setFieldsValue({
+      robotId: agv.id,
+      podId: pod.id,
+      workstation: station.code,
+    });
   }
 
   return (
@@ -86,8 +131,8 @@ const LatentWorkStationTask = (props) => {
             <Select style={{ width: '80%' }}>
               {workstationList.map((record, index) => {
                 return (
-                  <Select.Option value={`${record.stopCellId}-${record.direction}`} key={index}>
-                    {record.stopCellId}-{record.angle}°
+                  <Select.Option value={record.value} key={index}>
+                    {record.label}
                   </Select.Option>
                 );
               })}
@@ -96,7 +141,15 @@ const LatentWorkStationTask = (props) => {
 
           <Form.Item {...formItemLayoutNoLabel}>
             <Button
-              onClick={callRackToWorkstation}
+              onClick={autoFillForm}
+              disabled={selections.length === 0}
+              style={{ marginRight: 15 }}
+            >
+              <SyncOutlined /> <FormattedMessage id={'monitor.autoFill'} />
+            </Button>
+
+            <Button
+              onClick={callPodToWorkstation}
               loading={executing}
               disabled={executing}
               type="primary"
@@ -109,7 +162,7 @@ const LatentWorkStationTask = (props) => {
     </div>
   );
 };
-
 export default connect(({ monitor }) => ({
-  workstationList: getCurrentLogicAreaData('monitor')?.workstationList || [],
+  currentMap: monitor.currentMap,
+  selections: monitor.selections,
 }))(memo(LatentWorkStationTask));

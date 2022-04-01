@@ -5,7 +5,6 @@ import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
-import { Permission } from '@/utils/Permission';
 import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
 import { AGVType } from '@/config/config';
 import styles from '@/common.module.less';
@@ -80,59 +79,51 @@ class TaskDetail extends PureComponent {
     const cardExtra = (
       <div>
         {['Cancel', 'Finished'].includes(taskStatus) && (
-          <Permission id="/map/monitor/taskDetail/taskDetail/reset">
-            <Button
-              style={{ marginLeft: 15 }}
-              disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
-              onClick={() => {
-                forceStandBy(detailInfo.sectionId, detailInfo.taskId);
-              }}
-            >
-              <FormattedMessage id="app.taskDetail.reset" />
-            </Button>
-          </Permission>
+          <Button
+            style={{ marginLeft: 15 }}
+            disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
+            onClick={() => {
+              forceStandBy(detailInfo.sectionId, detailInfo.taskId);
+            }}
+          >
+            <FormattedMessage id="app.taskDetail.reset" />
+          </Button>
         )}
 
         {taskStatus === 'Error' && (
-          <Permission id="/map/monitor/taskDetail/taskDetail/restore">
-            <Button
-              style={{ marginLeft: 15 }}
-              disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
-              onClick={() => {
-                restoreTask(detailInfo.sectionId, detailInfo.taskId);
-              }}
-            >
-              <FormattedMessage id="app.taskDetail.restore" />
-            </Button>
-          </Permission>
+          <Button
+            style={{ marginLeft: 15 }}
+            disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
+            onClick={() => {
+              restoreTask(detailInfo.sectionId, detailInfo.taskId);
+            }}
+          >
+            <FormattedMessage id="app.taskDetail.restore" />
+          </Button>
         )}
 
         {taskStatus === 'Executing' && (
-          <Permission id="/map/monitor/taskDetail/taskDetail/repeat">
-            <Button
-              style={{ marginLeft: 15 }}
-              disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
-              onClick={() => {
-                restartTask(detailInfo.sectionId, detailInfo.taskId);
-              }}
-            >
-              <FormattedMessage id="app.taskDetail.restart" />
-            </Button>
-          </Permission>
+          <Button
+            style={{ marginLeft: 15 }}
+            disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
+            onClick={() => {
+              restartTask(detailInfo.sectionId, detailInfo.taskId);
+            }}
+          >
+            <FormattedMessage id="app.taskDetail.restart" />
+          </Button>
         )}
 
         {['Executing', 'New', 'Error'].includes(taskStatus) && (
-          <Permission id="/map/monitor/taskDetail/taskDetail/cancel">
-            <Button
-              disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
-              style={{ marginLeft: 15 }}
-              onClick={() => {
-                cancel(detailInfo.sectionId, detailInfo.taskId);
-              }}
-            >
-              <FormattedMessage id="app.button.cancel" />
-            </Button>
-          </Permission>
+          <Button
+            disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
+            style={{ marginLeft: 15 }}
+            onClick={() => {
+              cancel(detailInfo.sectionId, detailInfo.taskId);
+            }}
+          >
+            <FormattedMessage id="app.button.cancel" />
+          </Button>
         )}
         <span style={{ marginLeft: 15 }}>
           <TooltipRight

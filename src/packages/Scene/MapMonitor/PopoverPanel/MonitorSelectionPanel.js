@@ -58,7 +58,7 @@ const MonitorSelectionPanel = (props) => {
       }
       case ToteRack: {
         const selected = selections.filter((item) => item.type === ToteRack);
-        return `${formatMessage({ id: 'app.tote.rack' })} ${selected.length}/0`;
+        return `${formatMessage({ id: 'app.map.tote' })} ${selected.length}/0`;
       }
       case Station: {
         const selected = selections.filter((item) => item.type === Station);
@@ -140,9 +140,10 @@ const MonitorSelectionPanel = (props) => {
 };
 export default connect(({ monitor }) => {
   const {
+    allAGVs,
     selections,
     selectableType,
-    monitorLoad: { allAGVs, latentPod },
+    monitorLoad: { latentPod },
   } = monitor;
   return { allAGVs, latentPod, selections, selectableType };
 })(memo(MonitorSelectionPanel));

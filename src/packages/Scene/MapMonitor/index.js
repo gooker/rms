@@ -23,10 +23,8 @@ const MapMonitor = (props) => {
 
     return () => {
       socketClient.cancelMonitorRegistration();
-      dispatch({
-        type: 'monitor/saveMapContext',
-        payload: null,
-      });
+      dispatch({ type: 'monitor/unmount' });
+      window.sessionStorage.removeItem('MONITOR_MAP');
     };
   }, []);
 

@@ -26,14 +26,6 @@ export async function getSysLang() {
   });
 }
 
-// 获取上一次保存数据
-export async function getPreviousList(params) {
-  return request(`/${I18N}/getPreviousSaving`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
 // 导入
 export async function updateSysTranslation(params) {
   return request(`/${I18N}/importTranslation`, {

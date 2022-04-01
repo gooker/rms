@@ -4,7 +4,8 @@ import { Category, ViewCategoryTools, ResourceCategoryTools } from '../enums';
 import styles from '../monitorLayout.module.less';
 
 const ViewCategorySecondaryPanel = (props) => {
-  const { height, offsetTop, type, pixHeight } = props;
+  const { type, height, offsetTop, pixHeight } = props;
+
   const [categoryTools, setCategoryTools] = useState([]);
   const [top, setTop] = useState(5);
 

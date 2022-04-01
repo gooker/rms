@@ -24,10 +24,8 @@ const WorkStationForm = (props) => {
     // 配置工作站最少参数是 角度 & 停止点
     if (!isNull(allValues.angle) && !isNull(allValues.stopCellId)) {
       const currentWorkStation = { ...allValues };
-      // 如果此时没有输入编码，就是用默认值
-      if (isStrictNull(currentWorkStation.station)) {
-        currentWorkStation.station = `${allValues.stopCellId}-${allValues.angle}`;
-      }
+      // 编码默认使用 "停止点-角度" 的组合
+      currentWorkStation.station = `${allValues.stopCellId}-${allValues.angle}`;
       // 默认值(保证数据正确)和size字段
       currentWorkStation.size = `${currentWorkStation.iconWidth || WorkStationSize.width}@${
         currentWorkStation.iconHeight || WorkStationSize.height
@@ -54,39 +52,12 @@ const WorkStationForm = (props) => {
     }
   }
 
-  function checkCodeDuplicate(station) {
-    const existCodes = allWorkstations
-      .filter((item, index) => index !== flag - 1)
-      .map((item) => item.station);
-    return existCodes.includes(station);
-  }
-
   return (
     <Form form={formRef} onValuesChange={onValuesChange} layout={'vertical'}>
       {/* 隐藏字段 */}
       <Form.Item hidden name={'flag'} initialValue={flag} />
       <Form.Item hidden name={'direction'} initialValue={workStation?.direction} />
       <Form.Item hidden name={'angle'} initialValue={workStation?.angle} />
-
-      {/* 编码 */}
-      <Form.Item
-        name={'station'}
-        initialValue={workStation?.station || getRandomString(6)}
-        label={formatMessage({ id: 'app.common.code' })}
-        rules={[
-          () => ({
-            validator(_, value) {
-              const isDuplicate = checkCodeDuplicate(value);
-              if (!isDuplicate) {
-                return Promise.resolve();
-              }
-              return Promise.reject(new Error(formatMessage({ id: 'editor.code.duplicate' })));
-            },
-          }),
-        ]}
-      >
-        <Input />
-      </Form.Item>
 
       {/* 名称 */}
       <Form.Item
