@@ -1,24 +1,29 @@
 import FormattedMessage from '@/components/FormattedMessage';
 import React, { memo, useEffect, useState } from 'react';
 import { InputNumber } from 'antd';
-import EditableCell from '@/packages/Strategy/LanguageManage/component/EditableCell/EditableCell';
-
-import styles from '../latentToteStorage.module.less';
 import { formatMessage, isNull, isStrictNull } from '@/utils/util';
+import styles from '../latentToteStorage.module.less';
+
 const LatentTotePodTemplateDetail = (props) => {
-  const { binData } = props;
-  const [allColumnsNum, setAllColumnNum] = useState([]);
-  const [newBinsData, setNewBinsData] = useState(binData);
+  const {
+    binData,
+    binData: { rows, columns, weight, bins },
+    detailChange,
+  } = props;
+  const [allRowsNum, setAllRowsNum] = useState([]);
+  const [newBinsData, setNewBinsData] = useState([]); // 是反转后的binsdata
+  const [totalWeight, setTotalWeight] = useState(null); // 总承重+货架本身的重量
 
   useEffect(() => {
-    const { bins } = binData;
+    getTotalWeight();
     if (isNull(bins)) return;
     let firstRow = [];
+    const currentBins = [...bins];
     bins?.forEach((item, index) => {
       firstRow.push(index + 1);
     });
-    console.log(firstRow);
-    setAllColumnNum(firstRow.reverse());
+    setAllRowsNum(firstRow.reverse());
+    setNewBinsData(currentBins.reverse());
   }, [binData]);
 
   function getCurrentFloorWeight(rowdata) {
@@ -28,13 +33,52 @@ const LatentTotePodTemplateDetail = (props) => {
       allFloorWeight += Number(currentBearWeight);
     });
 
-    return allFloorWeight;
+    return allFloorWeight * 2;
+  }
+
+  function storageWeightChange(value, rowIndex) {
+    const avarageWeight = Number((value / (columns * 2)).toFixed(2));
+    const currentIndex = rowIndex;
+    let newBins = [];
+    let totalWeight = 0;
+    newBinsData.forEach((rowBins, index) => {
+      let currentArray = [];
+      rowBins.forEach((currentCol) => {
+        const currentBearWeight = currentIndex === index ? avarageWeight : currentCol.bearWeight;
+        currentArray.push({
+          ...currentCol,
+          bearWeight: currentBearWeight,
+        });
+
+        if (!isStrictNull(currentBearWeight)) {
+          totalWeight += currentBearWeight;
+        }
+      });
+
+      newBins.push(currentArray);
+    });
+    setNewBinsData(newBins);
+    setTotalWeight(totalWeight * 2 + weight);
+
+    detailChange({ ...binData, bins: [...newBins].reverse() });
+  }
+
+  function getTotalWeight() {
+    let totalWeight = 0;
+    bins?.forEach((rowBins, index) => {
+      rowBins.forEach((currentCol) => {
+        if (!isStrictNull(currentCol?.bearWeight)) {
+          totalWeight += currentCol?.bearWeight;
+        }
+      });
+    });
+    setTotalWeight(totalWeight * 2 + weight);
   }
 
   return (
     <div style={{ padding: 10 }}>
       <div style={{ display: 'flex', background: '#ccc', justifyContent: 'center', flex: 1 }}>
-        {binData?.rows}
+        {rows}
         <FormattedMessage id="monitor.simulator.config.leve" />
         <FormattedMessage id="app.pod" />
       </div>
@@ -52,7 +96,7 @@ const LatentTotePodTemplateDetail = (props) => {
       <div style={{ display: 'flex', marginTop: 10 }}>
         {/* 层 */}
         <div className={styles.floorWeight}>
-          {allColumnsNum.map((floor) => {
+          {allRowsNum.map((floor) => {
             return (
               <>
                 <div className={styles.floorHeight} key={floor}>
@@ -62,17 +106,17 @@ const LatentTotePodTemplateDetail = (props) => {
             );
           })}
         </div>
-        <div style={{ flex: 1 }}>
-          {Array.isArray(binData?.bins) &&
-            binData.bins.reverse()?.map((rowdata, rowindex) => {
+        <div className={styles.storageContainer}>
+          {Array.isArray(newBinsData) &&
+            newBinsData.map((rowdata, rowindex) => {
               return (
                 <>
-                  <div key={rowindex} style={{ display: 'flex' }}>
+                  <div key={rowindex} style={{ display: 'flex' }} className={styles.floorContainr}>
                     {rowdata.map((coldata, colindex) => {
                       return (
                         <>
-                          <div style={{ flex: 1, justifyContent: 'center', textAlign: 'center' }}>
-                            {isStrictNull(coldata?.bearWeight) ? '-' : coldata?.bearWeight}
+                          <div className={styles.binContain} key={colindex}>
+                            {isStrictNull(coldata?.bearWeight) ? '' : coldata?.bearWeight}
                           </div>
                         </>
                       );
@@ -84,20 +128,21 @@ const LatentTotePodTemplateDetail = (props) => {
         </div>
         {/* 层重 */}
         <div className={styles.floorWeight}>
-          {Array.isArray(binData?.bins) &&
-            binData.bins.reverse()?.map((rowdata, rowindex) => {
+          {Array.isArray(newBinsData) &&
+            newBinsData.map((rowdata, rowindex) => {
               const curentValue = getCurrentFloorWeight(rowdata);
               return (
                 <>
                   <div className={styles.floorHeight} key={`${rowindex}`}>
                     <InputNumber
+                      key={`${rowindex}`}
                       size={'small'}
                       bordered={false}
                       min={1}
                       value={curentValue === 0 ? '' : curentValue}
                       placeholder={formatMessage({ id: 'latentTote.podTemplateStorage.required' })}
-                      onChange={(content) => {
-                        // onChange(field, index, record, content, text);
+                      onBlur={(ev) => {
+                        storageWeightChange(ev.target.value, rowindex);
                       }}
                     />
                   </div>
@@ -112,14 +157,14 @@ const LatentTotePodTemplateDetail = (props) => {
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FormattedMessage id="latentTote.podTemplateStorage.weight" />
           <span style={{ marginLeft: 20 }}>
-            {binData.weight}
+            {weight}
             {'kg'}
           </span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FormattedMessage id="latentTote.podTemplateStorage.bearingTotalweight" />
           <span style={{ marginLeft: 20 }}>
-            {'21'}
+            {totalWeight}
             {'kg'}
           </span>
         </div>

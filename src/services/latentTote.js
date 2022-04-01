@@ -52,3 +52,15 @@ export async function updateLatentToteOrder(params) {
     data: params,
   });
 }
+
+
+/*
+*添加潜伏料箱货架类型
+*/ 
+
+export async function addLatentTotePodType(params) {
+  return request(`/${LatentTote}/podType`, {
+    method: 'POST',
+    data: params,
+  });
+}
