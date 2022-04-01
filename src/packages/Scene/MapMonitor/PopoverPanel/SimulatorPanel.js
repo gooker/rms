@@ -150,7 +150,7 @@ const SimulatorPanel = (props) => {
       return (
         <SimulatorConfigPanel
           robotType={currentRobotType}
-          data={simulatorConfiguration}
+          simulatorConfig={simulatorConfiguration}
           submit={(obj) => {
             dispatch({
               type: 'simulator/fetchUpdateAGVConfig',

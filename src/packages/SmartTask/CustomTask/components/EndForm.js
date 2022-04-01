@@ -9,6 +9,7 @@ import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import MenuIcon from '@/utils/MenuIcon';
 import styles from '../customTask.module.less';
+import { PlusOutlined } from '_@ant-design_icons@4.7.0@@ant-design/icons';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 6, span: 18 } };
@@ -100,13 +101,8 @@ const EndForm = (props) => {
                   </Form.Item>
                 ))}
                 <Form.Item hidden={hidden}>
-                  <Button
-                    type="primary"
-                    onClick={() => add()}
-                    className={styles.dynamicAddButton}
-                    style={{ width: 460 }}
-                  >
-                    {MenuIcon.plus}
+                  <Button type="primary" onClick={() => add()} style={{ width: 460 }}>
+                    <PlusOutlined />
                   </Button>
                 </Form.Item>
               </>
@@ -185,13 +181,8 @@ const EndForm = (props) => {
               </div>
             ))}
             <Form.Item hidden={hidden} style={{ paddingLeft: 120 }}>
-              <Button
-                type="dashed"
-                onClick={() => add()}
-                className={styles.dynamicAddButton}
-                style={{ width: 460 }}
-              >
-                {MenuIcon.plus}
+              <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
+                <PlusOutlined />
               </Button>
             </Form.Item>
           </>

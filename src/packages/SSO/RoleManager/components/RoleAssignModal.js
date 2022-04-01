@@ -8,7 +8,7 @@ import { generateTreeData, handlePermissions } from './assignUtils';
 import { AppCode } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
 import { generateMenuNodeLocaleKey, validateRouteAuthority } from '@/utils/init';
-import allModuleRouter from '@/config/router';
+import allModuleRouter from '@/router';
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,

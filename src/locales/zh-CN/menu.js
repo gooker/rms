@@ -18,7 +18,7 @@ export default {
 
   // 载具
   'menu.container': '载具',
-  'menu.container.customType': '自定义载具类型',
+  'menu.container.customType': '载具类型',
   'menu.container.management': '载具管理',
   'menu.container.group': '载具分组',
   'menu.container.circulation': '载具流转记录',
@@ -33,37 +33,30 @@ export default {
 
   // 车辆
   'menu.agv': '车辆',
+  'menu.agv.customType': '车辆类型',
   'menu.agv.registration': '车辆注册',
   'menu.agv.list': '车辆列表',
-  'menu.agv.group': '车辆分组',
-  'menu.agv.customType': '自定义车辆类型',
+  'menu.agv.faultManagement': '车辆故障查询',
+  'menu.agv.realTime': '车辆详情',
+  'menu.agv.adapter': '车辆适配器',
   'menu.agv.customIndustrial': '自定义工装',
-  'menu.agv.faultDefinition': '故障定义',
-  'menu.agv.faultManagement': '故障查询',
   'menu.agv.OTA': 'OTA',
-  'menu.agv.logDownLoad': '日志下载',
-  'menu.agv.realTime': '小车详情',
-  'menu.agv.adapter': '适配器',
 
   // 充电桩
   'menu.charger': '充电桩',
-  'menu.charger.customType': '自定义充电桩类型',
+  'menu.charger.customType': '充电桩类型',
   'menu.charger.registration': '充电桩注册',
   'menu.charger.list': '充电桩列表',
-  'menu.charger.group': '充电桩分组',
-  'menu.charger.logManagement': '日志查询',
-  'menu.charger.adapter': '适配器',
-  'menu.charger.faultDefinition': '故障定义',
-  'menu.charger.faultManagement': '故障管理',
+  'menu.charger.adapter': '充电桩适配器',
+  'menu.charger.faultManagement': '充电桩故障查询',
 
-  // 自动化设备
-  'menu.automation': '自动化设备',
-  'menu.automation.customType': '自定义设备类型',
-  'menu.automation.registration': '设备注册',
-  'menu.automation.list': '设备列表',
-  'menu.automation.logManagement': '日志查询',
-  'menu.automation.faultDefinition': '故障定义',
-  'menu.automation.adapter': '适配器',
+  // 设备
+  'menu.equipment': '设备',
+  'menu.equipment.customType': '设备类型',
+  'menu.equipment.registration': '设备注册',
+  'menu.equipment.list': '设备列表',
+  'menu.equipment.adapter': '设备适配器',
+  'menu.equipment.faultManagement': '故障查询',
 
   // 系统集成
   'menu.integration': '系统集成',
@@ -73,21 +66,23 @@ export default {
   // 资源锁
   'menu.resourceLock': '资源锁',
   'menu.resourceLock.targetLock': '目标锁',
-  'menu.resourceLock.agvLock': '小车锁',
-  'menu.resourceLock.liftContainerLock': '顶升式载具锁',
-  'menu.resourceLock.toteLock': '料箱锁',
-  'menu.resourceLock.liftContainerStorageLock': '顶升式载具储位锁',
-  'menu.resourceLock.toteStorageLock': '料箱货架储位锁',
-  'menu.resourceLock.latentToteStorageLock': '潜伏料箱货架储位锁',
+  'menu.resourceLock.agvLock': '车辆锁',
+  'menu.resourceLock.stationLock': '站点锁',
+  'menu.resourceLock.containerLock': '载具锁',
+  'menu.resourceLock.storageLock': '储位锁',
   'menu.resourceBind': '资源绑定',
 
   // 智能任务
-  'menu.customOrderPool': '自定义订单池',
-  'menu.taskDependency': '任务依赖',
   'menu.customTask': '自定义任务',
   'menu.taskRouteBind': '任务路线绑定',
-  'menu.limitEqualizer': '限流均衡器',
   'menu.trigger': '触发器',
+  'menu.limitEqualizer': '限流均衡器',
+  'menu.customOrderPool': '自定义订单池',
+  'menu.taskDependency': '任务依赖',
+
+  // 无人搬运
+  'menu.carryTaskPool': '订单池',
+  'menu.carryTaskManagement': '任务查询',
 
   // 场景
   'menu.map': '地图',

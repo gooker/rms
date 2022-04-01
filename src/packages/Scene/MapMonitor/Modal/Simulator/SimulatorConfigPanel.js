@@ -4,15 +4,8 @@ import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AGVType } from '@/config/config';
 
-const layout = {
-  labelCol: { span: 12 },
-  wrapperCol: { span: 12 },
-};
-const layout2 = {
-  labelCol: { span: 6 },
-  wrapperCol: { span: 18 },
-};
-
+const layout = { labelCol: { span: 12 }, wrapperCol: { span: 12 } };
+const layout2 = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 const agvTypeNameMap = {
   LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
   Tote: formatMessage({ id: 'app.agvType.Tote' }),
@@ -21,10 +14,8 @@ const agvTypeNameMap = {
 };
 
 export default function SimulatorConfigPanel(props) {
-  const { simulatorConfig: data, robotType, onCancel, submit } = props;
-  const actionConfigId = data?.actionSpeed?.actionConfigId;
-
-  const config = actionConfigId || {};
+  const { simulatorConfig, robotType, onCancel, submit } = props;
+  const config = simulatorConfig?.actionSpeed?.actionConfigId || {};
   const runSpeed = config && config.runSpeed ? config.runSpeed : {};
   const [formRef] = Form.useForm();
 
@@ -190,7 +181,7 @@ export default function SimulatorConfigPanel(props) {
           <Col span={8}>
             <Form.Item
               name={'consumePowerSpeed'}
-              initialValue={data?.consumePowerSpeed}
+              initialValue={simulatorConfig?.consumePowerSpeed}
               label={formatMessage({ id: 'monitor.simulator.config.consumePowerSpeed' })}
             >
               <Input suffix={'ms/%'} />
@@ -200,7 +191,7 @@ export default function SimulatorConfigPanel(props) {
           <Col span={8}>
             <Form.Item
               name={'actionConsumePowerSpeed'}
-              initialValue={data?.actionConsumePowerSpeed}
+              initialValue={simulatorConfig?.actionConsumePowerSpeed}
               label={formatMessage({ id: 'monitor.simulator.config.actionConsumePowerSpeed' })}
             >
               <Input suffix={'ms/%'} />
@@ -210,7 +201,7 @@ export default function SimulatorConfigPanel(props) {
           <Col span={8}>
             <Form.Item
               name={'chargeSpeed'}
-              initialValue={data?.chargeSpeed}
+              initialValue={simulatorConfig?.chargeSpeed}
               label={formatMessage({ id: 'monitor.simulator.config.chargeSpeed' })}
             >
               <Input suffix={'ms/%'} />

@@ -84,6 +84,11 @@ const Apps = [
     width: '70%',
     height: '70%',
   },
+  {
+    code: AppCode.Carry,
+    width: '70%',
+    height: '70%',
+  },
 ];
 
 const CommonPortal = (props) => {

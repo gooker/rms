@@ -33,4 +33,10 @@ export default {
   'richEditor.content': '内容',
   'richEditor.code.duplicate': '编码已经存在,请重新命名',
   'richEditor.text.detail': '富文本详情',
+
+  // 用户中心
+  'accountCenter.userInfo': '用户信息',
+  'accountCenter.modifyPassword': '修改密码',
+  'accountCenter.modifyTimezone': '修改时区',
+  'accountCenter.oldPassword': '原始密码',
 };

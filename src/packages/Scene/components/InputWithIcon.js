@@ -1,6 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Row, Input, Button, Col, InputNumber } from 'antd';
 import MenuIcon from '@/utils/MenuIcon';
+import { PlusOutlined } from '@ant-design/icons';
 
 export default memo(function MapInput(props) {
   const { currentCellId, icon, btnDisabled = false, type = 'string' } = props;
@@ -48,7 +49,7 @@ export default memo(function MapInput(props) {
               setValue(currentCellId[0]);
               props.onChange(currentCellId[0]);
             }}
-            icon={MenuIcon.plus}
+            icon={<PlusOutlined />}
             disabled={currentCellId.length === 0 || btnDisabled}
           />
         ) : null}
