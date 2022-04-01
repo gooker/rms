@@ -16,7 +16,7 @@ class EventManager {
     }
   }
 
-  unSubscribe(type, id) {
+  unsubscribe(type, id) {
     if (Array.isArray(this.callbacks[type])) {
       this.callbacks[type] = this.callbacks[type].filter((func) => func.id !== id);
     }

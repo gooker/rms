@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
-import { isNull, dealResponse } from '@/utils/util';
+import { isNull, dealResponse, getRandomString } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { AGVType, AppCode } from '@/config/config';
 import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
@@ -14,11 +14,14 @@ import MonitorSelectionPanel from '../PopoverPanel/MonitorSelectionPanel';
 import EmergencyStopPanel from '../PopoverPanel/EmergencyStopPanel';
 import SimulatorPanel from '../PopoverPanel/SimulatorPanel';
 import styles from '../monitorLayout.module.less';
+import EventManager from '@/utils/EventManager';
 
+const functionId = getRandomString(6);
 const MonitorBodyRight = (props) => {
   const { dispatch, selections, categoryPanel } = props;
   const { podToWorkstationInfo, latentStopMessageList } = props;
 
+  const [pixHeight, setPixHeight] = useState(0); // 地图区域高度
   const [offsetTop, setOffsetTop] = useState(0);
 
   useEffect(() => {
@@ -34,6 +37,20 @@ const MonitorBodyRight = (props) => {
         }
       });
     }
+
+    // 初始化高度
+    const { height } = document.getElementById('monitorPixi').getBoundingClientRect();
+    setPixHeight(height);
+
+    // 动态计算pixHeight 和 offsetTop
+    function calculate({ height }) {
+      setPixHeight(height - 35);
+    }
+    EventManager.subscribe('resize', calculate, functionId);
+
+    return () => {
+      EventManager.unsubscribe('resize', functionId);
+    };
   }, []);
 
   function updateEditPanelFlag(category) {
@@ -63,39 +80,42 @@ const MonitorBodyRight = (props) => {
         return <AgvCategorySecondaryPanel agvType={AGVType.Tote} height={350} />;
       case Category.SorterAGV:
         return <AgvCategorySecondaryPanel agvType={AGVType.Sorter} height={450} />;
-      case Category.View:
-        return (
-          <ViewCategorySecondaryPanel
-            type={Category.View}
-            height={250}
-            pixHeight={100}
-            offsetTop={offsetTop}
-          />
-        );
       case Category.Select:
         return <MonitorSelectionPanel />;
       case Category.Simulator:
         return <SimulatorPanel />;
       case Category.Emergency:
-        return <EmergencyStopPanel height={160} pixHeight={100} offsetTop={offsetTop} />;
-      case Category.Resource:
+        return <EmergencyStopPanel height={160} pixHeight={pixHeight} offsetTop={offsetTop} />;
+      case Category.View: {
+        return (
+          <ViewCategorySecondaryPanel
+            type={Category.View}
+            height={250} // 面板实际高度
+            pixHeight={pixHeight}
+            offsetTop={offsetTop}
+          />
+        );
+      }
+      case Category.Resource: {
         return (
           <ViewCategorySecondaryPanel
             type={Category.Resource}
             height={210}
-            pixHeight={100}
+            pixHeight={pixHeight}
             offsetTop={offsetTop}
           />
         );
-      case Category.Message:
+      }
+      case Category.Message: {
         return (
           <MessageCategorySecondaryPanel
             type={Category.Message}
             height={110}
-            pixHeight={100}
+            pixHeight={pixHeight}
             offsetTop={offsetTop}
           />
         );
+      }
       default:
         return null;
     }
@@ -140,8 +160,8 @@ const MonitorBodyRight = (props) => {
                 style={{ position: 'relative' }}
                 className={categoryPanel === value ? styles.categoryActive : undefined}
                 onClick={(e) => {
-                  const { top: categoryTop } = e?.target?.getBoundingClientRect();
-                  setOffsetTop(categoryTop);
+                  const { top } = e?.target?.getBoundingClientRect();
+                  setOffsetTop(top - 80 - 35);
                   if (value === Category.Prop) {
                     if (selections.length === 1) {
                       updateEditPanelFlag(value);
