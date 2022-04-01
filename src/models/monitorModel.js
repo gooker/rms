@@ -27,59 +27,70 @@ import {
 import { fetchActiveMap, fetchAllAgvList, fetchToteRackLayout } from '@/services/api';
 import { MonitorSelectableSpriteType } from '@/config/consts';
 
+const MonitorModelState = {
+  // 地图信息
+  currentMap: undefined, // undefined还未去获取数据, null表示当前没有激活的地图
+  currentLogicArea: 0, // id
+  currentRouteMap: 'DEFAULT', // code
+  preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
+  currentCells: [], // 当前视图的点位数据
+  mapContext: null, // 地图实体对象
+  mapMinRatio: null, // 地图最小缩放比例
+  mapRatio: null, // 地图当前缩放比例
+  elevatorCellMap: null, // 保存电梯替换点与地图原始点位的Map关系
+
+  // 选择相关
+  selections: [],
+  selectableType: ['AGV', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
+
+  // 小车、货架等信息
+  allAGVs: [],
+  monitorLoad: null,
+
+  // 二级面板
+  categoryModal: null,
+
+  // 急停区
+  emergencyStopList: [], // 急停区
+  globalActive: null, // 全局急停开启关闭
+  logicActive: [], // 逻辑区急停开启关闭
+
+  // 操作栏
+  operationType: MonitorOperationType.Drag,
+  categoryPanel: null, // 右侧展示哪个类型的菜单
+  checkingElement: null, // 展示菜单的内容
+
+  // 定位功能弹窗
+  positionVisible: false,
+
+  stationRealRate: [], // 站点实时速率
+  podToWorkstationInfo: [],
+  latentStopMessageList: [],
+  autoCallPodToWorkstationStatus: '',
+  automaticToteWorkstationTaskStatus: '',
+  automaticForkLiftWorkstationTaskStatus: '',
+
+  // 自动呼叫 & 自动释放
+  latentAutomaticTaskConfig: null,
+  latentAutomaticTaskForm: null,
+  latentAutomaticTaskUsage: {},
+};
+
 export default {
   namespace: 'monitor',
 
   state: {
-    // 地图信息
-    currentMap: undefined, // undefined还未去获取数据, null表示当前没有激活的地图
-    currentLogicArea: 0, // id
-    currentRouteMap: 'DEFAULT', // code
-    preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
-    currentCells: [], // 当前视图的点位数据
-    mapContext: null, // 地图实体对象
-    mapMinRatio: null, // 地图最小缩放比例
-    mapRatio: null, // 地图当前缩放比例
-    elevatorCellMap: null, // 保存电梯替换点与地图原始点位的Map关系
-
-    // 选择相关
-    selections: [],
-    selectableType: ['AGV', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
-
-    // 小车、货架等信息
-    allAGVs: [],
-    monitorLoad: null,
-
-    // 二级面板
-    categoryModal: null,
-
-    // 急停区
-    emergencyStopList: [], // 急停区
-    globalActive: null, // 全局急停开启关闭
-    logicActive: [], // 逻辑区急停开启关闭
-
-    // 操作栏
-    operationType: MonitorOperationType.Drag,
-    categoryPanel: null, // 右侧展示哪个类型的菜单
-    checkingElement: null, // 展示菜单的内容
-
-    // 定位功能弹窗
-    positionVisible: false,
-
-    stationRealRate: [], // 站点实时速率
-    podToWorkstationInfo: [],
-    latentStopMessageList: [],
-    autoCallPodToWorkstationStatus: '',
-    automaticToteWorkstationTaskStatus: '',
-    automaticForkLiftWorkstationTaskStatus: '',
-
-    // 自动呼叫 & 自动释放
-    latentAutomaticTaskConfig: null,
-    latentAutomaticTaskForm: null,
-    latentAutomaticTaskUsage: {},
+    ...MonitorModelState,
   },
 
   reducers: {
+    unmount(state) {
+      return {
+        ...state,
+        ...MonitorModelState,
+      };
+    },
+
     saveState(state, action) {
       return { ...state, ...action.payload };
     },

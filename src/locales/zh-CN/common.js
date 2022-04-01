@@ -146,6 +146,9 @@ export default {
   'app.map.emergencyStop': '急停区',
   'app.map.intersection': '交汇点',
   'app.map.programing': '地图编程',
+  'app.map.latentPod': '潜伏货架',
+  'app.map.latentTote': '潜伏料箱',
+  'app.map.tote': '料箱货架',
 
   // 小车类型
   'app.agvType.LatentLifting': '潜伏车',
@@ -238,9 +241,6 @@ export default {
   'app.pod.side.B': 'B',
   'app.pod.side.C': 'C',
   'app.pod.side.D': 'D',
-
-  // 料箱货架
-  'app.tote.rack': '料箱货架',
 
   // 任务属性
   'app.task': '任务',

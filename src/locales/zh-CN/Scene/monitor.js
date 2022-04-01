@@ -3,6 +3,7 @@ export default {
   'monitor.dashboard': '仪表盘',
   'monitor.location': '定位',
   'monitor.reload': '重载地图',
+  'monitor.autoFill': '自动填充',
 
   'monitor.runTime': '运行时',
   'monitor.maintain': '维护',
@@ -113,7 +114,6 @@ export default {
   'monitor.view.mapCellView': '地图点位',
   'monitor.view.coordinateDisplay': '点位坐标',
   'monitor.view.stationRealtimeRate': '站点速率',
-  'monitor.view.toteRack': '料箱货架',
   'monitor.view.toteTaskPath': '料箱任务路径',
   'monitor.view.toteBinState': '料箱实时状态',
   'monitor.view.bothTaskCount': '实时任务分布',
@@ -191,7 +191,7 @@ export default {
   'monitor.simulator.AMRSubType': '小车子类',
   'monitor.simulator.addAMR': '添加小车',
   'monitor.simulator.AMRCount': '小车数量',
-  'monitor.simulator.incrementAdd': '增量添加',
+  'monitor.simulator.incrementAdd': '增量',
   'monitor.simulator.addAMR.success': '添加小车成功',
   'monitor.simulator.addAMR.failed': '添加小车失败',
 
@@ -295,5 +295,4 @@ export default {
   'monitor.exhibition.taskHistory': '任务历史',
   'monitor.exhibition.agvPower': '车辆电量',
   'app.map.store': '存储区',
-
 };

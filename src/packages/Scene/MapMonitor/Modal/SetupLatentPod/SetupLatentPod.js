@@ -27,7 +27,7 @@ const SetupLatentPod = (props) => {
       className={styles.monitorModal}
     >
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'menu.sourceManage.latentPod'} />
+        <FormattedMessage id={'app.map.latentPod'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20}}>

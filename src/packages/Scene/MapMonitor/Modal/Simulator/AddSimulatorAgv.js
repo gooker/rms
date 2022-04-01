@@ -1,17 +1,19 @@
 import React, { useState, useEffect, memo } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Form, Button, Row, Col, Checkbox, Select, Divider, InputNumber, message } from 'antd';
+import { Form, Button, Row, Checkbox, Select, Divider, InputNumber, message } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { addSimulationAgvs } from '@/services/monitor';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AGVSubTypeMap } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
+import { PlusOutlined } from '@ant-design/icons';
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
+const { formItemLayout: formItemLayout2 } = getFormLayout(8, 16);
 
 function AddSimulatorAgv(props) {
-  const { robotType, robotTypes, submit, logicId,onCancel } = props;
+  const { robotType, robotTypes, submit, logicId, onCancel } = props;
   const [executing, setExecuting] = useState(false);
   const [isIncrement, setIsIncrement] = useState(false); // 用于标记批量添加小车时候是否是增量添加
   const [selectedSubType, setSelectedSubType] = useState('Normal');
@@ -128,12 +130,14 @@ function AddSimulatorAgv(props) {
                   .catch(() => {});
               }}
             >
-              <FormattedMessage id={'app.button.execute'} />
+              <PlusOutlined /> <FormattedMessage id="app.button.add" />
             </Button>
           </Form.Item>
         </div>
       </Form>
-      <Form form={formRef2} {...formItemLayout} labelWrap>
+
+      {/* 批量添加 */}
+      <Form form={formRef2} {...formItemLayout2} labelWrap>
         <div className={styles.rightSimulator}>
           <Divider orientation="left" style={{ margin: '12px 0' }}>
             <FormattedMessage id="monitor.operation.batchAdd" />
@@ -143,24 +147,20 @@ function AddSimulatorAgv(props) {
             label={formatMessage({ id: 'monitor.simulator.AMRCount' })}
             rules={[{ required: true }]}
           >
-            <Row>
-              <Col span={12}>
-                <Form.Item noStyle name={'robotSize'} rules={[{ required: true }]}>
-                  <InputNumber />
-                </Form.Item>
-              </Col>
-              <Col span={12}>
-                <span style={{ marginLeft: 20 }}>
-                  <Checkbox
-                    checked={isIncrement}
-                    onChange={(ev) => {
-                      setIsIncrement(ev.target.checked);
-                    }}
-                  >
-                    <FormattedMessage id="monitor.simulator.incrementAdd" />
-                  </Checkbox>
-                </span>
-              </Col>
+            <Row align={'middle'}>
+              <Form.Item noStyle name={'robotSize'} rules={[{ required: true }]}>
+                <InputNumber />
+              </Form.Item>
+              <span style={{ marginLeft: 20 }}>
+                <Checkbox
+                  checked={isIncrement}
+                  onChange={(ev) => {
+                    setIsIncrement(ev.target.checked);
+                  }}
+                >
+                  <FormattedMessage id="monitor.simulator.incrementAdd" />
+                </Checkbox>
+              </span>
             </Row>
           </Form.Item>
 
@@ -172,8 +172,8 @@ function AddSimulatorAgv(props) {
             <InputNumber min={0} max={359} />
           </Form.Item>
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button type="primary" onClick={batchAddAGV}>
-              <FormattedMessage id="app.button.add" />
+            <Button onClick={batchAddAGV}>
+              <PlusOutlined /> <FormattedMessage id="app.button.add" />
             </Button>
           </Form.Item>
         </div>

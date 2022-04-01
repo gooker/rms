@@ -16,8 +16,8 @@ const SelectLang = (props) => {
       {systemLanguage.map((record) => (
         <Menu.Item key={record.code}>{record.name}</Menu.Item>
       ))}
-      <Menu.Divider />
-      <Menu.Item key={'editMode'}>{formatMessage({ id: 'app.selectLang.editMode' })}</Menu.Item>
+      {/*<Menu.Divider />*/}
+      {/*<Menu.Item key={'editMode'}>{formatMessage({ id: 'app.selectLang.editMode' })}</Menu.Item>*/}
     </Menu>
   );
 

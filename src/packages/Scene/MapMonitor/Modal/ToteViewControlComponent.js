@@ -87,7 +87,7 @@ const ToteViewControlComponent = (props) => {
           <Form.Item
             name={'toteBinShown'}
             valuePropName={'checked'}
-            label={<FormattedMessage id="monitor.view.toteRack" />}
+            label={<FormattedMessage id="app.map.tote" />}
             initialValue={toteBinShown}
           >
             <Switch
