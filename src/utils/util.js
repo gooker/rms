@@ -6,7 +6,6 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import MenuIcon from '@/utils/MenuIcon';
 import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -268,7 +267,6 @@ export function getAgvStatusTag(agvStatus) {
 /**
  * 根据秒数获取 {天数, 小时, 分钟}
  * @param {Number} second
- * @returns {}
  */
 export function getDay(second) {
   const mss = second * 1000;
@@ -306,28 +304,6 @@ export function copyToBoard(value) {
 }
 
 /**
- * 休眠 ms
- * @param {Number} milliseconds
- */
-export function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * 生成随机id
- * @param {Number} length
- */
-export function uuid(length) {
-  const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  length = length || 8;
-  let result = '';
-  for (let i = length; i > 0; --i) {
-    result += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return result;
-}
-
-/**
  * 保留小数点以后几位，默认2位
  * @param {*} number
  * @param {*} no
@@ -338,15 +314,6 @@ export function cutNumber(number, no = 2) {
     number = Number(number);
   }
   return Number(number.toFixed(no));
-}
-
-export function getPathname(route) {
-  if (route === '/' || !route) return '/';
-  const { hash } = new URL(route);
-  const pathname = hash.replace('#/', '');
-  const snippet = pathname.split('/').filter(Boolean);
-  snippet.shift();
-  return `/${snippet.join('/')}`;
 }
 
 export function extractNameSpaceInfoFromEnvs(env) {
