@@ -29,6 +29,7 @@ import mapMonitor from './zh-CN/Scene/monitor';
 import notification from './zh-CN/Scene/notification';
 import sourceManage from './zh-CN/Scene/sourcemanage';
 import alert from './zh-CN/Scene/alert';
+import latentTotStorage from './zh-CN/ResourceManage/latentTotStorage';
 
 export default {
   ...menu,
@@ -62,4 +63,5 @@ export default {
   ...notification,
   ...sourceManage,
   ...alert,
+  ...latentTotStorage,
 };

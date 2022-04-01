@@ -28,3 +28,27 @@ export async function deleteSimulationTasks(ids) {
     method: 'DELETE',
   });
 }
+
+/******料箱池订单任务*******/
+// 查询订单列表
+export async function fetchLatentToteOrders() {
+  return request(`/${LatentTote}/orders`, {
+    method: 'GET',
+  });
+}
+/*
+ *查询订单详情-GET
+ */
+export async function fetchLatentToteOrderDetail(id) {
+  return request(`/${LatentTote}/order/${id}`, {
+    method: 'GET',
+  });
+}
+
+// 取消任务/修改任务 editType编辑类型：edit(修改),cancel(取消任务)
+export async function updateLatentToteOrder(params) {
+  return request(`/${LatentTote}/order/${params.id}`, {
+    method: 'PUT',
+    data: params,
+  });
+}
