@@ -17,13 +17,13 @@ const EmergencyStopPanel = (props) => {
   useEffect(() => {
     let _top = 5;
     if (offsetTop) {
-      _top = offsetTop - height / 2;
-      const _height = _top + height - pixHeight;
-      if (_height > 0) {
-        _top = _top - _height;
-      }
-      if (_top < 5) {
+      _top = offsetTop;
+      // _top - 115 + height 表示弹窗在地图范围由上而下占据总高度
+      const _height = pixHeight - (_top - 115 + height);
+      if (_height <= 0) {
         _top = 5;
+      } else {
+        _top = _top - 115;
       }
     }
     setTop(_top);
