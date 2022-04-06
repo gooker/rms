@@ -180,7 +180,12 @@ const QrCodeComponent = (props) => {
 
       <div className={style.body}>
         <Spin spinning={loading}>
-          <FilterSearch showCellId={true} data={originData} filterSearch={filterDateOnChange} />
+          <FilterSearch
+            showCellId={false}
+            showCode={true}
+            data={originData}
+            filterSearch={filterDateOnChange}
+          />
           <Row gutter={16}>
             <Col span={24}>
               {/* 按照码号 */}

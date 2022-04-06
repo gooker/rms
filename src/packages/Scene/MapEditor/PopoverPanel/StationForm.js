@@ -1,5 +1,5 @@
-import React, { memo, useState } from 'react';
-import { Button, Col, Form, Input, InputNumber, Row, Select } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Col, Form, Input, InputNumber, message, Row, Select } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull, isStrictNull } from '@/utils/util';
@@ -21,12 +21,21 @@ const StationForm = (props) => {
 
   const [formRef] = Form.useForm();
   const [stationType, setStationType] = useState('COMMON');
+  const [latentToteVisible, setLatentToteVisible] = useState(false);
 
-  function checkCodeDuplicate(station) {
-    const { getFieldValue } = formRef;
-    const { tid } = getFieldValue();
-    const existCodes = allCommons.filter((item) => item.tid !== tid).map((item) => item.station);
-    return existCodes.includes(station);
+  useEffect(() => {
+    if (!isNull(station)) {
+      setStationType(station.customType);
+      setLatentToteVisible(station.customType === 'PICK' || station.customType === 'TALLY');
+    }
+  }, []);
+
+  function checkCodeDuplicate(key, keyValue) {
+    const tid = isNull(station) ? -1 : flag;
+    let newFunctionData = [...allCommons];
+    newFunctionData.splice(tid, 1);
+    const existCodes = newFunctionData.map((item) => item[key]);
+    return existCodes.includes(keyValue);
   }
 
   function onValuesChange(changedValues, allValues) {
@@ -34,6 +43,7 @@ const StationForm = (props) => {
     const currentCommon = { ...allValues };
     currentCommon.x = currentCommon.x || 0;
     currentCommon.y = currentCommon.y || 0;
+    if (latentToteVisible) return;
 
     if (!isNull(currentCommon.stopCellId) && !isNull(currentCommon.angle)) {
       // 如果没有编码字段就手动添加: 停止点-角度
@@ -75,6 +85,74 @@ const StationForm = (props) => {
     }
   }
 
+  function checkStopIdDuplicate(stopcellId) {
+    if (isStrictNull(stopcellId)) {
+      return Promise.reject(new Error(formatMessage({ id: 'app.common.select' })));
+    }
+    if (latentToteVisible && isNull(station) && !Array.isArray(stopcellId)) {
+      return Promise.reject(new Error('停止点要选择2个'));
+    }
+
+    return Promise.resolve();
+  }
+
+  function latentToteSubmit() {
+    const angle = formRef.getFieldValue('angle');
+    if (isStrictNull(angle)) {
+      // formRef.validateFields(['angle'], { force: true });
+      message.error('选择角度');
+      return;
+    }
+
+    formRef
+      .validateFields()
+      .then((values) => {
+        const currentCommon = { ...values };
+        currentCommon.x = currentCommon.x || 0;
+        currentCommon.y = currentCommon.y || 0;
+        // 默认值(保证数据正确)和size字段
+        currentCommon.size = `${currentCommon.iconWidth || currentCommon.width}@${
+          currentCommon.iconHeight || currentCommon.height
+        }`;
+
+        // 删除无用的字段
+        delete currentCommon['direction&&angle'];
+        delete currentCommon.iconWidth;
+        delete currentCommon.iconHeight;
+
+        const { stopCellId, flag } = currentCommon;
+        const newStopCellId = isNull(station) ? [...stopCellId] : [stopCellId];
+
+        newStopCellId.map((id, index) => {
+          dispatch({
+            type: 'editor/updateFunction',
+            payload: {
+              scope: 'logic',
+              type: 'commonList',
+              data: {
+                ...currentCommon,
+                station: isNull(station) ? getRandomString(6) : station.station,
+                name: isNull(station) ? `${currentCommon.groupCode}-${index}` : station.name,
+                stopCellId: id,
+                flag: index === 0 ? flag : flag + 1,
+              },
+            },
+          }).then((result) => {
+            if (result.type === 'add') {
+              mapContext.renderCommonFunction([result.payload], null);
+            }
+            if (result.type === 'update') {
+              const { pre, current } = result;
+              mapContext.removeCommonFunction(pre);
+              mapContext.renderCommonFunction([current]);
+            }
+            mapContext.refresh();
+          });
+        });
+      })
+      .catch(() => {});
+  }
+
   function freshAllWebHook() {
     //
   }
@@ -95,36 +173,6 @@ const StationForm = (props) => {
         <Form.Item hidden name={'flag'} initialValue={flag} />
         <Form.Item hidden name={'direction'} initialValue={station?.direction} />
         <Form.Item hidden name={'angle'} initialValue={station?.angle} />
-
-        {/* 编码 */}
-        <Form.Item
-          name={'station'}
-          initialValue={station?.station || getRandomString(6)}
-          label={formatMessage({ id: 'app.common.code' })}
-          rules={[
-            () => ({
-              validator(_, value) {
-                const isDuplicate = checkCodeDuplicate(value);
-                if (!isDuplicate) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error(formatMessage({ id: 'editor.code.duplicate' })));
-              },
-            }),
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        {/* 名称 */}
-        <Form.Item
-          name={'name'}
-          initialValue={station?.name}
-          label={<FormattedMessage id="app.common.name" />}
-        >
-          <Input />
-        </Form.Item>
-
         {/* 类型 */}
         <Form.Item
           name={'customType'}
@@ -132,17 +180,84 @@ const StationForm = (props) => {
           label={formatMessage({ id: 'app.common.type' })}
           getValueFromEvent={(value) => {
             setStationType(value);
+            setLatentToteVisible(value === 'PICK' || value === 'TALLY');
             return value;
           }}
         >
           <Select>{renderStationTypeOptions()}</Select>
         </Form.Item>
 
+        {/* 编码 */}
+        {!latentToteVisible && (
+          <>
+            <Form.Item
+              name={'station'}
+              initialValue={station?.station || getRandomString(6)}
+              label={formatMessage({ id: 'app.common.code' })}
+              rules={[
+                () => ({
+                  validator(_, value) {
+                    const isDuplicate = checkCodeDuplicate('station', value);
+                    if (!isDuplicate) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(formatMessage({ id: 'editor.code.duplicate' })),
+                    );
+                  },
+                }),
+              ]}
+            >
+              <Input />
+            </Form.Item>
+
+            {/* 名称 */}
+            <Form.Item
+              name={'name'}
+              initialValue={station?.name}
+              label={<FormattedMessage id="app.common.name" />}
+            >
+              <Input />
+            </Form.Item>
+          </>
+        )}
+
+        {latentToteVisible && (
+          <Form.Item
+            name={'groupCode'}
+            initialValue={station?.groupCode}
+            label={<FormattedMessage id="sourcemanage.agvgroup.name" />}
+            rules={[
+              { required: true },
+              () => ({
+                validator(_, value) {
+                  const isDuplicate = checkCodeDuplicate('groupCode', value);
+                  if (!isDuplicate) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(formatMessage({ id: 'groupManage.groupname.duplicate' })),
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input disabled={!isNull(station)} />
+          </Form.Item>
+        )}
+
         {/* 停止点 */}
         <Form.Item
           name={'stopCellId'}
           initialValue={station?.stopCellId}
           label={formatMessage({ id: 'editor.cellType.stop' })}
+          rules={[
+            () => ({
+              validator(_, value) {
+                return checkStopIdDuplicate(value);
+              },
+            }),
+          ]}
         >
           <RichInput
             currentCellId={selectCellIds}
@@ -153,6 +268,7 @@ const StationForm = (props) => {
                 src={require('../../../../../public/images/stop.png').default}
               />
             }
+            showlatentTote={latentToteVisible && isNull(station)}
           />
         </Form.Item>
 
@@ -293,6 +409,17 @@ const StationForm = (props) => {
         >
           <AngleSelector getAngle />
         </Form.Item>
+
+        {/* 保存 */}
+        {latentToteVisible && (
+          <Form.Item>
+            <Row justify="end">
+              <Button type="primary" onClick={latentToteSubmit}>
+                <FormattedMessage id="app.button.confirm" />
+              </Button>
+            </Row>
+          </Form.Item>
+        )}
       </Form>
     </div>
   );

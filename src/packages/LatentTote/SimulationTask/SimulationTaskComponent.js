@@ -14,9 +14,6 @@ import {
 } from 'antd';
 import { flatten } from 'lodash';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RmsDva';
-import { find } from 'lodash';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { updateSimulationTask } from '@/services/latentTote';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -34,31 +31,24 @@ const { formItemLayout } = getFormLayout(6, 16);
 const SimulationTaskComponent = (props) => {
   const { visible, onClose, updateRecord, onRefresh } = props;
   const [formRef] = Form.useForm();
-  const [toteTaskType, setToteTaskType] = useState('STATION_TO_POD');
   const [callType, setCallType] = useState('Auto');
 
   const [reredner, setRerender] = useState({});
-
-  useEffect(() => {
-    // console.log('1');
-  }, []);
 
   function onSave() {
     formRef
       .validateFields()
       .then(async (values) => {
-        if (validateWorkStationCallParms(values?.workStationCallParms)) {
-          const methodType = isNull(updateRecord) ? 'POST' : 'PUT';
-          const response = await updateSimulationTask(methodType, values);
-          if (!dealResponse(response)) {
-            onClose();
-            onRefresh();
-          }
+        // if (validateWorkStationCallParms(values?.workStationCallParms)) {
+        const methodType = isNull(updateRecord) ? 'POST' : 'PUT';
+        const response = await updateSimulationTask(methodType, values);
+        if (!dealResponse(response)) {
+          onClose();
+          onRefresh();
         }
+        // }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   }
 
   function validateWorkStationCallParms(stations = []) {

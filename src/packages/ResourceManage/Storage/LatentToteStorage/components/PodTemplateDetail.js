@@ -7,7 +7,7 @@ import styles from '../latentToteStorage.module.less';
 const LatentTotePodTemplateDetail = (props) => {
   const {
     binData,
-    binData: { rows, columns, weight, bins },
+    binData: { column: columns, weight, bins },
     detailChange,
   } = props;
   const [allRowsNum, setAllRowsNum] = useState([]);
@@ -37,7 +37,7 @@ const LatentTotePodTemplateDetail = (props) => {
   }
 
   function storageWeightChange(value, rowIndex) {
-    const avarageWeight = Number((value / (columns * 2)).toFixed(2));
+    const avarageWeight = Math.floor(value / (columns * 2));
     const currentIndex = rowIndex;
     let newBins = [];
     let totalWeight = 0;
@@ -77,11 +77,11 @@ const LatentTotePodTemplateDetail = (props) => {
 
   return (
     <div style={{ padding: 10 }}>
-      <div style={{ display: 'flex', background: '#ccc', justifyContent: 'center', flex: 1 }}>
+      {/* <div style={{ display: 'flex', background: '#ccc', justifyContent: 'center', flex: 1 }}>
         {rows}
         <FormattedMessage id="monitor.simulator.config.leve" />
         <FormattedMessage id="app.pod" />
-      </div>
+      </div> */}
       <div style={{ display: 'flex', marginTop: 20 }}>
         <div className={styles.floorWeight}>
           {' '}
@@ -89,7 +89,7 @@ const LatentTotePodTemplateDetail = (props) => {
         </div>
         <div style={{ flex: 1 }}></div>
         <div className={styles.floorWeight}>
-          <FormattedMessage id="latentTote.podTemplateStorage.floorWeight" />
+          <FormattedMessage id="latentTote.podTemplateStorage.storageWeight" />
         </div>
       </div>
       {/* 放具体数据 */}
@@ -126,8 +126,8 @@ const LatentTotePodTemplateDetail = (props) => {
               );
             })}
         </div>
-        {/* 层重 */}
-        <div className={styles.floorWeight}>
+        {/* 储位承重 */}
+        <div className={styles.floorWeight} style={{ marginLeft: 5 }}>
           {Array.isArray(newBinsData) &&
             newBinsData.map((rowdata, rowindex) => {
               const curentValue = getCurrentFloorWeight(rowdata);
@@ -137,7 +137,6 @@ const LatentTotePodTemplateDetail = (props) => {
                     <InputNumber
                       key={`${rowindex}`}
                       size={'small'}
-                      bordered={false}
                       min={1}
                       value={curentValue === 0 ? '' : curentValue}
                       placeholder={formatMessage({ id: 'latentTote.podTemplateStorage.required' })}

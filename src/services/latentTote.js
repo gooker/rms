@@ -53,14 +53,27 @@ export async function updateLatentToteOrder(params) {
   });
 }
 
-
 /*
-*添加潜伏料箱货架类型
-*/ 
+ *添加/修改 潜伏料箱货架类型
+ *POST(新增)
+ *PUT(修改)
+ */
 
-export async function addLatentTotePodType(params) {
+export async function addOrUpdateLatentTotePodType(type, params) {
   return request(`/${LatentTote}/podType`, {
-    method: 'POST',
+    method: type,
     data: params,
+  });
+}
+
+export async function fetchLatentTotePodTypes() {
+  return request(`/${LatentTote}/podTypes`, {
+    method: 'GET',
+  });
+}
+
+export async function deleteLatentTotePodTypes(ids) {
+  return request(`/${LatentTote}/podTypes?ids=${ids}`, {
+    method: 'DELETE',
   });
 }

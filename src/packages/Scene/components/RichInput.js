@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import commonStyles from '@/common.module.less';
 
 export default memo(function MapInput(props) {
-  const { currentCellId, icon, btnDisabled = false, type = 'string' } = props;
+  const { currentCellId, icon, btnDisabled = false, type = 'string', showlatentTote } = props;
 
   const [value, setValue] = useState(props.value);
 
@@ -46,8 +46,13 @@ export default memo(function MapInput(props) {
         {currentCellId ? (
           <Button
             onClick={() => {
-              setValue(currentCellId[0]);
-              props.onChange(currentCellId[0]);
+              let curentValue = currentCellId[0];
+              if (showlatentTote && currentCellId.length >= 2) {
+                const newCurrentCellId = [...currentCellId].reverse();
+                curentValue = [newCurrentCellId[0], newCurrentCellId[1]];
+              }
+              setValue(curentValue);
+              props.onChange(curentValue);
             }}
             icon={<PlusOutlined />}
             disabled={currentCellId.length === 0 || btnDisabled}

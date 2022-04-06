@@ -22,7 +22,7 @@ const { CheckableTag } = Tag;
 const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
 const FilterSearch = (props) => {
-  const { data = [], filterSearch, showCellId, showTask } = props;
+  const { data = [], filterSearch, showCellId, showTask, showCode } = props;
 
   const [form] = Form.useForm();
 
@@ -136,7 +136,13 @@ const FilterSearch = (props) => {
                 showCellId ? (
                   <FormattedMessage id="app.map.cell" />
                 ) : (
-                  <FormattedMessage id="app.agv" />
+                  <>
+                    {showCode ? (
+                      <FormattedMessage id="app.common.code" />
+                    ) : (
+                      <FormattedMessage id="app.agv" />
+                    )}
+                  </>
                 )
               }
             >
