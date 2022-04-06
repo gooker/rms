@@ -238,7 +238,7 @@ const taskList = [
     id: '121215',
     callStatus: 'RETRY',
     toteTaskType: 'POD_TO_STATION',
-    callType: 'Auto',
+    callType: 'Appoint',
     copySimulationId: '1222212121221',
     workStationCallParms: [
       {
@@ -371,12 +371,6 @@ const SimulationTask = (props) => {
     },
 
     {
-      title: <FormattedMessage id="app.task.type" />,
-      dataIndex: 'toteTaskType',
-      align: 'center',
-      render: (text) => formatMessage({ id: `app.simulateTask.toteTaskType.${text}` }),
-    },
-    {
       title: <FormattedMessage id="app.task.state" />,
       dataIndex: 'callStatus',
       align: 'center',
@@ -480,6 +474,14 @@ const SimulationTask = (props) => {
         if (isStrictNull(text)) return '-';
         const content = text.toString();
         return content || '';
+      },
+    },
+    {
+      title: <FormattedMessage id="app.task.type" />,
+      dataIndex: 'toteTaskType',
+      render: (text) => {
+        if (isStrictNull(text)) return '-';
+        return formatMessage({ id: `app.simulateTask.toteTaskType.${text}` });
       },
     },
     {
