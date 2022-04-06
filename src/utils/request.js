@@ -6,8 +6,9 @@ import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from
 axios.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('token')}`;
   config.headers['Content-Type'] = 'application/json; charset=utf-8';
-  if (config.attachSection && isNull(config.headers.sectionId)) {
-    config.headers.sectionId = window.localStorage.getItem('sectionId');
+  const sectionId = window.localStorage.getItem('sectionId');
+  if (config.attachSection && isNull(config.headers.sectionId) && !isNull(sectionId)) {
+    config.headers.sectionId = sectionId;
   }
   return config;
 });

@@ -94,6 +94,21 @@ const DictionaryDataSource = {
     type: 'app.task.type',
     agvTaskType: 'app.task.type',
   },
+
+  // toteOrderStatus
+  latentToteOrdertatus: {
+    NEW: 'app.chargeManger.ERROR', // 新建
+    SENT: 'app.chargeManger.OFFLINE',// 已发送
+    GRABBING: 'app.chargeManger.ASSIGNED', // 机械臂抓取中
+    GRABBING_FINISH: 'app.chargeManger.CHARGING', // 机械臂抓取完成
+    FINISH: 'app.chargeManger.AVAILABLE',//完成
+    CANCEL: 'app.chargeManger.CONNECTED',//取消
+    TALLY_TRANSPORTING: 'app.chargeManger.CONNECTING', // 理货运输中
+    TALLYING: 'app.chargeManger.CONNECTING', // 理货中
+    TALLIED: 'app.chargeManger.CONNECTING', // 理货完成
+    PICK_STATION_TRANSPORTING: 'app.chargeManger.CONNECTING', // 出库运输中
+    PICK_STATION_WORKING: 'app.chargeManger.CONNECTING', // 出库中
+  },
 };
 
 function Dictionary(namespace, key) {

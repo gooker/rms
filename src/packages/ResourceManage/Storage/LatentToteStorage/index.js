@@ -7,7 +7,6 @@ import { fetchLatentTotePodTypes, deleteLatentTotePodTypes } from '@/services/la
 import LatentTotePodTemplate from './components/PodTemplateComponent';
 import commonStyles from '@/common.module.less';
 import { dealResponse, getSuffix, formatMessage } from '@/utils/util';
-import { GridResponsive } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
 
 const colResponsive = {

@@ -17,7 +17,7 @@ const WorkStationForm = (props) => {
   let iconWidth = null;
   let iconHeight = null;
   if (!isStrictNull(workStation)) {
-    [iconWidth, iconHeight] = workStation.size.split('@').map((item) => parseInt(item));
+    [iconWidth, iconHeight] = workStation?.size?.split('@').map((item) => parseInt(item));
   }
 
   function onValuesChange(changedValues, allValues) {

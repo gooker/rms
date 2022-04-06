@@ -5,7 +5,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
-import TaskSearch from './TaskSearch';
+import LatentToteOrderSearch from './LatentToteOrderSearch';
 import commonStyles from '@/common.module.less';
 import { TaskStateBageType } from '@/config/consts';
 import styles from '../taskOrder.module.less';
@@ -19,7 +19,6 @@ class LatentToteOrderComponent extends Component {
     selectedRows: [],
     selectedRowKeys: [],
 
-    agvList: [],
     dataSource: [],
     page: { currentPage: 1, size: 10, totalElements: 0 },
   };
@@ -51,7 +50,7 @@ class LatentToteOrderComponent extends Component {
       align: 'center',
       width: 100,
     },
-   
+
     {
       title: formatMessage({ id: 'app.task.state' }),
       dataIndex: 'taskStatus',
@@ -111,7 +110,6 @@ class LatentToteOrderComponent extends Component {
 
   componentDidMount() {
     this.getData();
-    this.getAgvList();
   }
 
   /**
@@ -135,8 +133,7 @@ class LatentToteOrderComponent extends Component {
       requestValues = { ...this.state.formValues };
     }
 
-    const sectionId = window.localStorage.getItem('sectionId');
-    const params = { sectionId, current: !!firstPage ? 1 : currentPage, size, ...requestValues };
+    const params = { current: !!firstPage ? 1 : currentPage, size, ...requestValues };
     const response = await fetchAgvTaskList(agvType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
@@ -150,16 +147,6 @@ class LatentToteOrderComponent extends Component {
     this.setState({ page }, () => {
       this.getData(null, false);
     });
-  };
-
-  getAgvList = async () => {
-    const { agvType } = this.props;
-    const response = await fetchAgvList(agvType);
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.agv.getListFail' }));
-    } else {
-      this.setState({ agvList: response });
-    }
   };
 
   //任务详情
@@ -183,7 +170,6 @@ class LatentToteOrderComponent extends Component {
     const { agvType } = this.props;
 
     const requestBody = {
-      sectionId: window.localStorage.getItem('sectionId'),
       taskIds: selectedRows.map((record) => record.taskId),
     };
     const response = await fetchBatchCancelTask(agvType, requestBody);
@@ -198,26 +184,20 @@ class LatentToteOrderComponent extends Component {
   };
 
   render() {
-    const { loading, selectedRowKeys, agvList, dataSource, page } = this.state;
-    const { cancel } = this.props;
+    const { loading, selectedRowKeys, dataSource, page } = this.state;
     return (
       <TablePageWrapper>
-        <TaskSearch
-          search={this.getData}
-          agvList={agvList.map(({ robotId }) => robotId)}
-          allTaskTypes={{}}
-        />
-        <div className={styles.taskSearchDivider} >
-          <Divider/>
-          {cancel && (
-            <Button
-              disabled={selectedRowKeys.length === 0}
-              onClick={this.openCancelTaskConfirm}
-              style={{ marginBottom: 10 }}
-            >
-              <FormattedMessage id={'app.taskDetail.cancelTask'} />
-            </Button>
-          )}
+        <LatentToteOrderSearch search={this.getData} />
+        <div className={styles.taskSearchDivider}>
+          <Divider />
+
+          <Button
+            disabled={selectedRowKeys.length === 0}
+            onClick={this.openCancelTaskConfirm}
+            style={{ marginBottom: 10 }}
+          >
+            <FormattedMessage id={'app.taskDetail.cancelTask'} />
+          </Button>
           <Table
             loading={loading}
             scroll={{ x: 'max-content' }}
