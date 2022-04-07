@@ -3,11 +3,11 @@ import { Row, Col } from 'antd';
 import LabelComponent from '@/components/LabelComponent';
 
 const ExpandPanel = (props) => {
-  const { record, columns } = props;
+  const { record, columns,span=12, } = props;
   return (
     <Row>
       {columns.map(({ title, dataIndex, render }, index) => (
-        <Col key={index} span={12}>
+        <Col key={index} span={span}>
           <LabelComponent label={title} color={'#000'}>
             {typeof render === 'function' ? render(record[dataIndex], record) : record[dataIndex]}
           </LabelComponent>

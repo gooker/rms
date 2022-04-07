@@ -207,7 +207,7 @@ export const durationLineOption = (title, keyMap) => ({
     data: [],
   },
   polar: {},
-  angleAxis: {}, // 数值
+  angleAxis: { max: 3600 }, // 4.x有bug
   radiusAxis: {
     // name: title,
     type: 'category',
@@ -708,13 +708,20 @@ export const formatNumber = (n) => {
  * */
 
 export const MinuteFormat = (value) => {
+  if (isStrictNull(value)) return;
   if (value === 0) {
     return 0;
   }
   if (value < 60) {
     return value + formatMessage({ id: 'app.time.seconds' });
   }
-  const d = moment.duration(value, 'seconds');
+  let newValue = value;
+  let decimals = '';
+  if (value.toString().indexOf('.') > -1) {
+    decimals = value.toString().split('.')[1];
+    newValue = Number(value.toString().split('.')[0]);
+  }
+  const d = moment.duration(newValue, 'seconds');
   let currentValue = '';
   if (Math.floor(d.asDays()) > 0) {
     currentValue += Math.floor(d.asDays()) + formatMessage({ id: 'app.time.day' });
@@ -726,7 +733,9 @@ export const MinuteFormat = (value) => {
     currentValue += d.minutes() + formatMessage({ id: 'app.time.minutes' });
   }
   if (d.seconds() > 0) {
-    currentValue += d.seconds() + formatMessage({ id: 'app.time.seconds' });
+    const currentMills = isStrictNull(decimals) ? '' : `.${decimals}`;
+    currentValue += d.seconds() + `${currentMills}` + formatMessage({ id: 'app.time.seconds' });
   }
+
   return currentValue;
 };

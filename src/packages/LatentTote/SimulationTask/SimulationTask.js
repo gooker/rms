@@ -109,110 +109,6 @@ const taskList = [
     ],
     laToteSimulationTaskRecords: [
       {
-        createTime: '2022-03-28 16:47:27',
-        endTime: '2022-03-28 16:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
-        createTime: '2022-03-28 18:47:27',
-        endTime: '2022-03-28 19:47:27',
-      },
-      {
         createTime: '2022-03-28 18:47:27',
         endTime: '2022-03-28 19:47:27',
       },
@@ -236,7 +132,7 @@ const taskList = [
   },
   {
     id: '121215',
-    callStatus: 'RETRY',
+    callStatus: 'STOP',
     toteTaskType: 'POD_TO_STATION',
     callType: 'Appoint',
     copySimulationId: '1222212121221',
@@ -386,11 +282,6 @@ const SimulationTask = (props) => {
         if (text === 'STOP') {
           return (
             <Badge color={'#108ee9'} text={<FormattedMessage id="app.simulateTask.state.STOP" />} />
-          );
-        }
-        if (text === 'RETRY') {
-          return (
-            <Badge status={'orange'} text={<FormattedMessage id="app.taskDetail.restart" />} />
           );
         }
       },

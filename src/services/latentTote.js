@@ -31,9 +31,10 @@ export async function deleteSimulationTasks(ids) {
 
 /******料箱池订单任务*******/
 // 查询订单列表
-export async function fetchLatentToteOrders() {
+export async function fetchLatentToteOrders(params) {
   return request(`/${LatentTote}/orders`, {
     method: 'GET',
+    data: params,
   });
 }
 /*
