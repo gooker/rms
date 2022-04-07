@@ -1,29 +1,14 @@
 import intl from 'react-intl-universal';
-import {
-  dealResponse,
-  isStrictNull,
-  sortLanguages,
-  extractNameSpaceInfoFromEnvs,
-  isNull,
-} from '@/utils/util';
+import { dealResponse, isStrictNull, extractNameSpaceInfoFromEnvs } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import requestAPI from '@/utils/requestAPI';
-import { getSysLang, getTranslationByCode } from '@/services/translator';
+import { getTranslationByCode } from '@/services/translator';
 import { fetchAllEnvironmentList } from '@/services/SSO';
+import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 
 export async function initI18nInstance() {
   const language = getLanguage();
-
-  let systemLanguage = await getSysLang();
-  if (!dealResponse(systemLanguage, null, null)) {
-    // Tips: 如果未来有一些特殊的操作，比如隐藏某些语言，可以在这里操作existLanguages
-    systemLanguage = sortLanguages(systemLanguage);
-  } else {
-    systemLanguage = [
-      { code: 'zh-CN', name: '中文' },
-      { code: 'en-US', name: 'English' },
-    ];
-  }
+  const systemLanguage = await getSystemLanguage();
   window.$$dispatch({ type: 'global/saveSystemLanguage', payload: systemLanguage });
 
   // 1. 读取本地国际化数据

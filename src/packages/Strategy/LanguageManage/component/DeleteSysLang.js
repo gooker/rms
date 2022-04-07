@@ -1,7 +1,9 @@
 import React, { memo } from 'react';
-import { Modal, List } from 'antd';
+import { Modal, List, Popover, Popconfirm } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { connect } from '@/utils/RmsDva';
+import { DeleteOutlined } from '@ant-design/icons';
+import { formatMessage } from '@/utils/util';
 
 /**
  * @description: 删除系统语言
@@ -10,7 +12,17 @@ import { connect } from '@/utils/RmsDva';
  * @constructor
  */
 const DeleteSysLang = (props) => {
-  const { systemLanguage, visible, onDelete, onCancel } = props;
+  const { dispatch, systemLanguage, visible, onCancel } = props;
+
+  // 筛选掉中文和英文
+  const filterLang = systemLanguage.filter((item) => !['zh-CN', 'en-US'].includes(item.code));
+
+  function deleteSysLang(code) {
+    dispatch({
+      type: 'global/deleteSystemLang',
+      payload: code,
+    });
+  }
 
   return (
     <Modal
@@ -23,8 +35,22 @@ const DeleteSysLang = (props) => {
     >
       <List
         size="small"
-        dataSource={systemLanguage}
-        renderItem={(item) => <List.Item>{item.name}</List.Item>}
+        dataSource={filterLang}
+        renderItem={(item) => (
+          <List.Item
+            actions={[
+              <Popconfirm
+                key={'delete'}
+                title={formatMessage({ id: 'app.message.delete.confirm' })}
+                onConfirm={() => deleteSysLang(item.code)}
+              >
+                <DeleteOutlined style={{ color: 'red', fontSize: 15 }} />
+              </Popconfirm>,
+            ]}
+          >
+            {item.name}
+          </List.Item>
+        )}
       />
     </Modal>
   );

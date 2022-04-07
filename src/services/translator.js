@@ -26,6 +26,13 @@ export async function getSysLang() {
   });
 }
 
+export async function deleteSysLang(code) {
+  return request(`/${I18N}/deleteSysLang`, {
+    method: 'GET',
+    data: { type: code },
+  });
+}
+
 // 导入
 export async function updateSysTranslation(params) {
   return request(`/${I18N}/importTranslation`, {

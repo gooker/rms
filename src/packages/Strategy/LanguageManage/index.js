@@ -36,11 +36,11 @@ import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLangModal from './component/AddSysLang.js';
 import ImportApplicationModal from './component/ImportApplication';
 import UpdateEditListModal from './component/UpdateEditListModal';
+import DeleteSysLang from './component/DeleteSysLang';
 import DiffToSaveModal from './component/DiffToSaveModal';
-import commonStyles from '@/common.module.less';
-import styles from './translator.module.less';
 import { connect } from '@/utils/RmsDva';
-import DeleteSysLang from '@/packages/Strategy/LanguageManage/component/DeleteSysLang';
+import styles from './translator.module.less';
+import commonStyles from '@/common.module.less';
 
 const { Item: FormItem } = Form;
 
@@ -413,6 +413,7 @@ class LanguageManage extends React.Component {
             </FormItem>
           </Col>
           <Col offset={1}>
+            {/* 新增语种 */}
             <Button
               type="link"
               onClick={() => {
@@ -421,11 +422,11 @@ class LanguageManage extends React.Component {
             >
               <PlusCircleOutlined /> <FormattedMessage id="translator.languageManage.addLanguage" />
             </Button>
-          </Col>
 
-          {window.localStorage.getItem('dev') === 'true' && (
-            <Col offset={1}>
+            {/* 删除语种 */}
+            {window.localStorage.getItem('dev') === 'true' && (
               <Button
+                danger
                 type="link"
                 onClick={() => {
                   this.setState({ deleteLangVisible: true });
@@ -434,8 +435,8 @@ class LanguageManage extends React.Component {
                 <DeleteOutlined />{' '}
                 <FormattedMessage id="translator.languageManage.deleteLanguage" />
               </Button>
-            </Col>
-          )}
+            )}
+          </Col>
 
           <Col flex={1}>
             <Row justify={'end'}>

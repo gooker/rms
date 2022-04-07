@@ -5,6 +5,8 @@ import { dealResponse, formatMessage, convertMenuData2RouteData } from '@/utils/
 import { convertAllMenu, sortAppList } from '@/utils/init';
 import { AppCode } from '@/config/config';
 import allModuleRouter from '@/router';
+import { deleteSysLang } from '@/services/translator';
+import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
@@ -298,6 +300,15 @@ export default {
         setTimeout(() => {
           window.location.reload();
         }, 500);
+      }
+    },
+
+    // 删除语种
+    *deleteSystemLang({ payload }, { call, put }) {
+      const response = yield call(deleteSysLang, payload);
+      if (!dealResponse(response, true)) {
+        const systemLanguage = yield call(getSystemLanguage);
+        yield put({ type: 'saveSystemLanguage', payload: systemLanguage });
       }
     },
   },
