@@ -4,10 +4,10 @@ import { NameSpace } from '@/config/config';
 const { I18N } = NameSpace;
 
 // 应用-对应的翻译内容展示
-export async function getTranslationByCode(params) {
+export async function getTranslationByCode(appCode) {
   return request(`/${I18N}/getTranslationByAppCode`, {
     method: 'GET',
-    data: params,
+    data: { appCode },
   });
 }
 

@@ -4,10 +4,11 @@ import {
   isStrictNull,
   sortLanguages,
   extractNameSpaceInfoFromEnvs,
+  isNull,
 } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import requestAPI from '@/utils/requestAPI';
-import { getSysLang } from '@/services/translator';
+import { getSysLang, getTranslationByCode } from '@/services/translator';
 import { fetchAllEnvironmentList } from '@/services/SSO';
 
 export async function initI18nInstance() {
@@ -34,24 +35,18 @@ export async function initI18nInstance() {
   }
 
   // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
-  const i18nData = []; //await getTranslationByCode('FE');
-  if (!dealResponse(i18nData) && Array.isArray(i18nData)) {
-    i18nData.forEach(({ languageKey, languageMap }) => {
-      const DBLocales = Object.keys(languageMap);
-      DBLocales.forEach((dbLocale) => {
-        if (!systemLanguage.includes(dbLocale)) {
-          systemLanguage.push(dbLocale);
-          locales[dbLocale] = {};
-        }
-        locales[dbLocale][languageKey] = languageMap[dbLocale];
-      });
+  const i18nData = await getTranslationByCode('FE');
+  if (!dealResponse(i18nData) && Array.isArray(i18nData?.Custom)) {
+    const { Custom } = i18nData;
+    Custom.forEach(({ languageKey, languageMap }) => {
+      locales[language][languageKey] = languageMap[language];
     });
 
     //  远程覆盖本地
     await intl.init({ currentLocale: language, locales });
   } else {
     // 用本地国际化数据先初始化
-    console.info('Failed to fetch remote I18N Data, will use local I18n Data');
+    console.warn('Failed to fetch remote I18N Data, will use local I18n Data');
     await intl.init({ currentLocale: language, locales });
   }
   return true;
