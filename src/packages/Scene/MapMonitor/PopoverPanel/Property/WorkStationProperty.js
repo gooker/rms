@@ -1,6 +1,5 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Tag, Switch, InputNumber } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchWorkStationInstrument } from '@/services/monitor';

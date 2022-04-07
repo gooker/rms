@@ -220,6 +220,7 @@ export default {
   'app.agvState.Waiting': '等待',
   'app.agvState.lowPower': '低电量',
 
+  // 这几个存在重复可能
   'app.activity.StandBy': '待命',
   'app.activity.TaskExecuting': '执行中',
   'app.activity.TaskFinished': '已完成',

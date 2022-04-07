@@ -21,7 +21,7 @@ import {
   formatMessage,
 } from '@/utils/util';
 import {
-  fetchGetAPI,
+  fetchRequestorList,
   fetchSaveAPI,
   fetchUpdateAPI,
   fetchDeleteAPI,
@@ -59,7 +59,7 @@ class Index extends React.Component {
   }
 
   getApiList = async () => {
-    const response = await fetchGetAPI();
+    const response = await fetchRequestorList();
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.requestor.tip.getApi.fail' }));
     } else {

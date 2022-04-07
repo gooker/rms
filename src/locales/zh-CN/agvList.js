@@ -63,22 +63,12 @@ export default {
   'app.activity.batteryTemperatureTwo': '电池温度2',
   'app.agv.lastFullChargeTime': '上次充满时间',
   'app.agv.currentCoefficient': '当前电池温度',
-  'app.agv.getListFail':'获取小车失败',
+  'app.agv.getListFail': '获取小车失败',
 
-  // 小车状态
-  'app.activity.Error': '异常',
-  'app.activity.Offline': '离线',
-  'app.activity.StandBy': '待命',
-  'app.activity.Working': '执行任务',
-  'app.activity.Charging': '充电中',
-  'app.activity.Connecting': '连接中',
-  'app.activity.Waiting': '等待任务',
-
-   // 固件状态
+  // 固件状态
   'app.activity.upgradeSuccessed': '升级成功',
   'app.activity.upgradeUnsuccessful': '升级失败',
   'app.activity.duringUpgrade': '升级中',
-
   'app.activity.downloadSuccessful': '下载成功',
   'app.activity.downloadLog': '下载日志',
   'app.activity.downloadFailed': '下载失败',
@@ -97,5 +87,4 @@ export default {
   'app.activity.selectFirmware': '请选择固件',
   'app.activity.firmwareVersion': '固件版本',
   'app.activity.enterFirmwareVersion': '请输入固件版本',
-
 };

@@ -260,16 +260,12 @@ const RemoteControl = (props) => {
 
           {/* 自定义命令 */}
           <Form.Item label={formatMessage({ id: 'app.agv.batchCommand.Modal.Title' })}>
-            <div>
-              <Form.Item name={'hexCommand'}>
-                <Input.TextArea style={{ width: 400, height: 95 }} />
-              </Form.Item>
-              <div style={{ marginTop: 10 }}>
-                <Button onClick={sendCustomCommand}>
-                  <SendOutlined /> <FormattedMessage id={'app.agv.batchCommand.Modal.confirm'} />
-                </Button>
-              </div>
-            </div>
+            <Form.Item name={'hexCommand'}>
+              <Input.TextArea style={{ width: 400, height: 95 }} />
+            </Form.Item>
+            <Button onClick={sendCustomCommand}>
+              <SendOutlined /> <FormattedMessage id={'app.agv.batchCommand.Modal.confirm'} />
+            </Button>
           </Form.Item>
         </Form>
       </div>
