@@ -97,17 +97,17 @@ const DictionaryDataSource = {
 
   // toteOrderStatus
   latentToteOrdertatus: {
-    NEW: 'app.chargeManger.ERROR', // 新建
-    SENT: 'app.chargeManger.OFFLINE',// 已发送
-    GRABBING: 'app.chargeManger.ASSIGNED', // 机械臂抓取中
-    GRABBING_FINISH: 'app.chargeManger.CHARGING', // 机械臂抓取完成
-    FINISH: 'app.chargeManger.AVAILABLE',//完成
-    CANCEL: 'app.chargeManger.CONNECTED',//取消
-    TALLY_TRANSPORTING: 'app.chargeManger.CONNECTING', // 理货运输中
-    TALLYING: 'app.chargeManger.CONNECTING', // 理货中
-    TALLIED: 'app.chargeManger.CONNECTING', // 理货完成
-    PICK_STATION_TRANSPORTING: 'app.chargeManger.CONNECTING', // 出库运输中
-    PICK_STATION_WORKING: 'app.chargeManger.CONNECTING', // 出库中
+    NEW: 'app.activity.TaskNew', // 新建
+    SENT: 'latentTote.orderStatus.SENT',// 已发送
+    GRABBING: 'latentTote.orderStatus.GRABBING', // 机械臂抓取中
+    GRABBING_FINISH: 'latentTote.orderStatus.GRABBING_FINISH', // 机械臂抓取完成
+    FINISH: 'app.activity.TaskFinished',//完成
+    CANCEL: 'app.task.state.Cancel',//取消
+    TALLY_TRANSPORTING: 'latentTote.orderStatus.TALLY_TRANSPORTING', // 理货运输中
+    TALLYING: 'latentTote.orderStatus.TALLYING', // 理货中
+    TALLIED: 'latentTote.orderStatus.TALLIED', // 理货完成
+    PICK_STATION_TRANSPORTING: 'latentTote.orderStatus.PICK_STATION_TRANSPORTING', // 出库运输中
+    PICK_STATION_WORKING: 'latentTote.orderStatus.PICK_STATION_WORKING', // 出库中
   },
 };
 

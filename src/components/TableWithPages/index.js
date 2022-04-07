@@ -1,17 +1,21 @@
 import React, { memo } from 'react';
 import { Table } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { formatMessage,isNull } from '@/utils/util';
 import ExpandPanel from '@/components/TableWithPages/ExpandPanel';
 import commonStyles from '@/common.module.less';
 
 const TableWithPages = (props) => {
   const newProps = { ...props };
   const expandColumns = newProps.expandColumns;
+  const expandColumnsKey = newProps.expandColumnsKey;
+  const colspan = newProps.expandColumnsSpan;
   delete newProps.expandColumns;
+  delete newProps.expandColumnsKey;
+  delete newProps.expandColumnsSpan;
 
   if (Array.isArray(expandColumns) && expandColumns.length > 0) {
     newProps.expandable = {
-      expandedRowRender: (record) => <ExpandPanel record={record} columns={expandColumns} />,
+      expandedRowRender: (record) => <ExpandPanel record={isNull(expandColumnsKey)?record:record[expandColumnsKey]} columns={expandColumns} span={colspan}/>,
     };
   }
 

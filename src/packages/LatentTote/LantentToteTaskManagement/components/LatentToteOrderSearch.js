@@ -42,7 +42,7 @@ const LatentToteOrderSearch = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'mainStationCode'} label={formatMessage({ id: 'app.map.workStation' })}>
+          <Form.Item name={'mainStationCode'} label={formatMessage({ id: 'latentTote.mainStationCode' })}>
             <Input allowClear />
           </Form.Item>
         </Col>

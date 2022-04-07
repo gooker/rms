@@ -1,92 +1,92 @@
 import React, { Component } from 'react';
-import { Button, message, Table, Divider, Tooltip, Badge } from 'antd';
-import { formatMessage, dealResponse, convertToUserTimezone } from '@/utils/util';
+import { Button, Divider, Tooltip, Row, Col } from 'antd';
+import { formatMessage, dealResponse, convertToUserTimezone, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvTaskList, fetchBatchCancelTask, fetchAgvList } from '@/services/api';
+import { fetchLatentToteOrders, updateLatentToteOrder } from '@/services/latentTote';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
+import Dictionary from '@/utils/Dictionary';
 import LatentToteOrderSearch from './LatentToteOrderSearch';
+import UpdateToteOrderTaskComponent from './UpdateToteOrderTaskComponent';
 import commonStyles from '@/common.module.less';
-import { TaskStateBageType } from '@/config/consts';
 import styles from '../taskOrder.module.less';
+const TaskStatus = Dictionary('latentToteOrdertatus');
 
 class LatentToteOrderComponent extends Component {
   state = {
     formValues: {}, // 保存查询表单的值
-
     loading: false,
-
     selectedRows: [],
     selectedRowKeys: [],
 
     dataSource: [],
     page: { currentPage: 1, size: 10, totalElements: 0 },
+    updateVisible: false,
   };
+
+  componentDidMount() {
+    this.getData();
+  }
 
   columns = [
     {
       title: formatMessage({ id: 'app.task.id' }),
-      dataIndex: 'taskId',
+      dataIndex: 'id',
       align: 'center',
-      width: 100,
+      fixed: 'left',
       render: (text) => {
         return (
           <Tooltip title={text}>
-            <span
-              className={commonStyles.textLinks}
-              onClick={() => {
-                this.checkDetail(text);
-              }}
-            >
+            <span className={commonStyles.textLinks}>
               {text ? '*' + text.substr(text.length - 6, 6) : null}
             </span>
           </Tooltip>
         );
       },
     },
-    {
-      title: formatMessage({ id: 'app.agv.id' }),
-      dataIndex: 'robotId',
-      align: 'center',
-      width: 100,
-    },
 
     {
-      title: formatMessage({ id: 'app.task.state' }),
-      dataIndex: 'taskStatus',
+      title: formatMessage({ id: 'latentTote.mainStationCode' }),
+      dataIndex: 'mainStationCode',
       align: 'center',
-      width: 120,
+    },
+    {
+      title: formatMessage({ id: 'app.task.state' }),
+      dataIndex: 'toteOrderStatus',
+      align: 'center',
       render: (text) => {
-        if (text != null) {
-          return (
-            <Badge
-              status={TaskStateBageType[text]}
-              text={formatMessage({ id: `app.task.state.${text}` })}
-            />
-          );
+        if (!isStrictNull(text)) {
+          return formatMessage({ id: TaskStatus[text] });
         } else {
           return <FormattedMessage id="app.taskDetail.notAvailable" />;
         }
       },
     },
     {
-      title: formatMessage({ id: 'app.taskDetail.targetSpotId' }),
-      dataIndex: 'targetCellId',
-      align: 'center',
-      width: 100,
+      title: <FormattedMessage id="app.task.type" />,
+      dataIndex: 'toteHandleType',
+      render: (text) => {
+        if (isStrictNull(text)) return '-';
+        return formatMessage({ id: `app.simulateTask.toteTaskType.${text}` });
+      },
     },
+    {
+      title: formatMessage({ id: 'app.common.priority' }),
+      dataIndex: 'priority',
+      align: 'center',
+    },
+
     {
       title: formatMessage({ id: 'app.taskDetail.createUser' }),
       dataIndex: 'createdByUser',
       align: 'center',
-      width: 100,
     },
 
     {
       title: formatMessage({ id: 'app.common.creationTime' }),
       dataIndex: 'createTime',
       align: 'center',
-      width: 150,
       render: (text) => {
         if (!text) {
           return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
@@ -98,7 +98,6 @@ class LatentToteOrderComponent extends Component {
       title: formatMessage({ id: 'app.common.updateTime' }),
       dataIndex: 'updateTime',
       align: 'center',
-      width: 150,
       render: (text) => {
         if (!text) {
           return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
@@ -108,9 +107,42 @@ class LatentToteOrderComponent extends Component {
     },
   ];
 
-  componentDidMount() {
-    this.getData();
-  }
+  expandColumns = [
+    {
+      title: formatMessage({ id: 'app.pod.id' }),
+      dataIndex: 'podId',
+    },
+    {
+      title: formatMessage({ id: 'app.taskDetail.binCode' }),
+      dataIndex: 'binCode',
+    },
+    {
+      title: formatMessage({ id: 'app.taskDetail.toteCode' }),
+      dataIndex: 'toteCode',
+    },
+    {
+      title: formatMessage({ id: 'app.pod.direction' }),
+      dataIndex: 'face',
+    },
+    {
+      title: formatMessage({ id: 'app.common.angle' }),
+      dataIndex: 'angle',
+    },
+    {
+      title: formatMessage({ id: 'app.map.workStation' }),
+      dataIndex: 'stationCode',
+    },
+    {
+      title: formatMessage({ id: 'latentTote.targetTime' }),
+      dataIndex: 'targetTimeStamp',
+      render: (text) => {
+        if (!text) {
+          return <span>{formatMessage({ id: 'app.taskDetail.notAvailable' })}</span>;
+        }
+        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+      },
+    },
+  ];
 
   /**
    * 查询方法
@@ -121,7 +153,6 @@ class LatentToteOrderComponent extends Component {
     const {
       page: { currentPage, size },
     } = this.state;
-    const { agvType } = this.props;
 
     this.setState({ loading: true, selectedRows: [], selectedRowKeys: [] });
 
@@ -134,10 +165,16 @@ class LatentToteOrderComponent extends Component {
     }
 
     const params = { current: !!firstPage ? 1 : currentPage, size, ...requestValues };
-    const response = await fetchAgvTaskList(agvType, params);
+    const response = await fetchLatentToteOrders(params);
     if (!dealResponse(response)) {
       const { list, page } = response;
-      this.setState({ dataSource: list, page });
+      const currentList = list?.map((item) => {
+        const {
+          binTote: { id, ...otherBintote },
+        } = item;
+        return { ...item, ...otherBintote, binToteId: id };
+      });
+      this.setState({ dataSource: currentList ?? [], page });
     }
     this.setState({ loading: false });
   };
@@ -149,32 +186,21 @@ class LatentToteOrderComponent extends Component {
     });
   };
 
-  //任务详情
-  checkDetail = (taskId) => {
-    const { dispatch, agvType } = this.props;
-    dispatch({
-      type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
-    });
-  };
-
-  openCancelTaskConfirm = () => {
+  openCancelTaskConfirm = async () => {
     RmsConfirm({
-      content: formatMessage({ id: 'app.taskAction.cancel.confirm' }),
+      content: formatMessage({ id: 'app.message.cancelTask.confirm' }),
       onOk: this.cancelTask,
     });
   };
 
   cancelTask = async () => {
-    const { selectedRows } = this.state;
-    const { agvType } = this.props;
-
+    const { selectedRowKeys } = this.state;
     const requestBody = {
-      taskIds: selectedRows.map((record) => record.taskId),
+      id: selectedRowKeys[0],
+      editType: 'CANCEL',
     };
-    const response = await fetchBatchCancelTask(agvType, requestBody);
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.taskAction.cancel.success' }));
+    const response = await updateLatentToteOrder(requestBody);
+    if (!dealResponse(response, 1)) {
       this.setState({ selectedRowKeys: [], selectedRows: [] }, this.getData);
     }
   };
@@ -184,24 +210,39 @@ class LatentToteOrderComponent extends Component {
   };
 
   render() {
-    const { loading, selectedRowKeys, dataSource, page } = this.state;
+    const { loading, selectedRowKeys, selectedRows, dataSource, page, updateVisible } = this.state;
     return (
       <TablePageWrapper>
         <LatentToteOrderSearch search={this.getData} />
         <div className={styles.taskSearchDivider}>
-          <Divider />
+          <Row>
+            <Divider />
 
-          <Button
-            disabled={selectedRowKeys.length === 0}
-            onClick={this.openCancelTaskConfirm}
-            style={{ marginBottom: 10 }}
-          >
-            <FormattedMessage id={'app.taskDetail.cancelTask'} />
-          </Button>
-          <Table
+            <Col flex="auto" className={commonStyles.tableToolLeft}>
+              <Button
+                danger
+                disabled={selectedRowKeys.length !== 1}
+                onClick={this.openCancelTaskConfirm}
+                style={{ marginBottom: 10 }}
+              >
+                <FormattedMessage id={'app.taskDetail.cancelTask'} />
+              </Button>
+              <Button
+                disabled={selectedRowKeys.length !== 1}
+                onClick={() => {
+                  this.setState({ updateVisible: true });
+                }}
+                style={{ marginBottom: 10 }}
+              >
+                <FormattedMessage id={'app.button.edit'} />
+              </Button>
+            </Col>
+          </Row>
+
+          <TableWithPages
             loading={loading}
             scroll={{ x: 'max-content' }}
-            rowKey={(record) => record.taskId}
+            rowKey={(record) => record.id}
             dataSource={dataSource}
             columns={this.columns}
             rowSelection={{ selectedRowKeys, onChange: this.rowSelectChange }}
@@ -213,7 +254,21 @@ class LatentToteOrderComponent extends Component {
                 formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
             }}
             onChange={this.handleTableChange}
+            expandColumns={this.expandColumns}
+            // expandColumnsKey={'binTote'}
+            expandColumnsSpan={6}
           />
+
+          {updateVisible && (
+            <UpdateToteOrderTaskComponent
+              visible={updateVisible}
+              updateRecord={selectedRows[0]}
+              onClose={() => {
+                this.setState({ updateVisible: false, selectedRows: [], selectedRowKeys: [] });
+              }}
+              onRefresh={this.getData}
+            />
+          )}
         </div>
       </TablePageWrapper>
     );

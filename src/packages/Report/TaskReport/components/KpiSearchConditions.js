@@ -30,7 +30,7 @@ class KpiSearchConditions extends PureComponent {
     const MomentRangeFormat = isBaseHour ? 'YYYY-MM-DD HH:00:00' : 'YYYY-MM-DD HH:mm:ss';
     let RangePickerValue = [];
     if (startTime || endTime) {
-      RangePickerValue = [moment(startTime, MomentRangeFormat), moment(endTime, MomentRangeFormat)];
+      RangePickerValue = [moment(startTime, RangeFormat), moment(endTime, MomentRangeFormat)];
     } else {
       RangePickerValue = [];
     }
