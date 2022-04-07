@@ -37,6 +37,7 @@ const Content = (props) => {
   useEffect(() => {
     if (!isStrictNull(activeTab)) {
       history.push(activeTab);
+      // 首页状态下默认显示的APP菜单
       if (activeTab === '/') {
         dispatch({
           type: 'global/saveCurrentApp',
@@ -62,6 +63,8 @@ const Content = (props) => {
     props.panes.forEach((item) => {
       tabInfo.push({ path: item.key, title: item.props.tab });
     });
+
+    // 不显示"首页"Tab
     if (props.panes.length <= 1) {
       return null;
     }

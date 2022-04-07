@@ -17,7 +17,7 @@ import DashBoard from '../DashBoard';
 const MonitorHeaderRightTools = (props) => {
   const { dispatch, isInnerFullscreen, positionVisible, dashBoardVisible } = props;
 
-  const [downLoadVisible, setDownLoadVisble] = useState(false);
+  const [MRVVisible, setMRVVisible] = useState(false);
 
   function changeInnerFullScreen(payload) {
     dispatch({ type: 'global/changeInnerFullScreen', payload });
@@ -26,8 +26,8 @@ const MonitorHeaderRightTools = (props) => {
     dispatch({ type: 'monitor/savePositionVisible', payload: visible });
   }
 
-  function switchDownLoadnModal(visible) {
-    setDownLoadVisble(visible);
+  function switchMRVModalVisible(visible) {
+    setMRVVisible(visible);
   }
 
   function switchDashboard(visible) {
@@ -37,13 +37,13 @@ const MonitorHeaderRightTools = (props) => {
   return (
     <>
       {/* 重载 */}
-      <Tooltip title={formatMessage({ id: 'monitor.reload' })} placement={'bottom'}>
+      <Tooltip title={formatMessage({ id: 'monitor.reload' })} placement={'top'}>
         <ReloadOutlined />
       </Tooltip>
       <Divider type="vertical" />
 
       {/* 地图全屏 */}
-      <Tooltip title={formatMessage({ id: 'app.common.fullScreen' })} placement={'bottom'}>
+      <Tooltip title={formatMessage({ id: 'app.common.fullScreen' })} placement={'top'}>
         {isInnerFullscreen ? (
           <FullscreenExitOutlined
             onClick={() => {
@@ -61,7 +61,7 @@ const MonitorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* 定位 */}
-      <Tooltip title={formatMessage({ id: 'monitor.location' })} placement={'bottom'}>
+      <Tooltip title={formatMessage({ id: 'monitor.location' })} placement={'top'}>
         <AimOutlined
           onClick={() => {
             switchPositionModal(true);
@@ -71,17 +71,17 @@ const MonitorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* MRV */}
-      <Tooltip title={formatMessage({ id: 'monitor.MRV' })} placement={'bottom'}>
+      <Tooltip title={formatMessage({ id: 'monitor.MRV' })} placement={'top'}>
         <CloudDownloadOutlined
           onClick={() => {
-            switchDownLoadnModal(true);
+            switchMRVModalVisible(true);
           }}
         />
       </Tooltip>
       <Divider type="vertical" />
 
       {/* Dashboard */}
-      <Tooltip title={formatMessage({ id: 'monitor.dashboard' })} placement={'bottom'}>
+      <Tooltip title={formatMessage({ id: 'monitor.dashboard' })} placement={'top'}>
         <DashboardOutlined
           onClick={() => {
             switchDashboard(true);
@@ -104,10 +104,10 @@ const MonitorHeaderRightTools = (props) => {
       </Modal>
       <Modal
         destroyOnClose
-        visible={downLoadVisible}
+        visible={MRVVisible}
         width={400}
         onCancel={() => {
-          switchDownLoadnModal(false);
+          switchMRVModalVisible(false);
         }}
         title={'MRV'}
         footer={null}

@@ -13,7 +13,7 @@ import {
 import FormattedMessage from '@/components/FormattedMessage';
 import { AGVType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
-import { fetchGetAPI } from '@/services/XIHE';
+import { fetchRequestorList } from '@/services/api';
 
 const TabAgvMap = {
   LatentAGV: AGVType.LatentLifting,
@@ -33,11 +33,11 @@ const CustomComponent = (props) => {
 
   useEffect(() => {
     getApis();
-  });
+  }, []);
 
   function getApis() {
     // 获取自定义API
-    fetchGetAPI().then((response) => {
+    fetchRequestorList().then((response) => {
       if (!dealResponse(response)) {
         setApiList(response);
       }

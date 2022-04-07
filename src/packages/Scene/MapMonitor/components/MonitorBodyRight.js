@@ -85,7 +85,9 @@ const MonitorBodyRight = (props) => {
       case Category.Simulator:
         return <SimulatorPanel />;
       case Category.Emergency:
-        return <EmergencyStopPanel height={160} pixHeight={pixHeight} offsetTop={offsetTop} />;
+        return (
+          <EmergencyStopPanel height={160} pixHeight={pixHeight - 115} offsetTop={offsetTop} />
+        );
       case Category.View: {
         return (
           <ViewCategorySecondaryPanel
@@ -160,8 +162,17 @@ const MonitorBodyRight = (props) => {
                 style={{ position: 'relative' }}
                 className={categoryPanel === value ? styles.categoryActive : undefined}
                 onClick={(e) => {
-                  const { top } = e?.target?.getBoundingClientRect();
-                  setOffsetTop(top - 80 - 35);
+                  let top;
+                  if (e.target.tagName === 'IMG') {
+                    top = e.target.parentElement.getBoundingClientRect().top;
+                  } else if (e.target.tagName === 'svg') {
+                    top =
+                      e.target.parentElement.parentElement.parentElement.getBoundingClientRect()
+                        .top;
+                  } else {
+                    top = e.target.getBoundingClientRect().top;
+                  }
+                  setOffsetTop(top);
                   if (value === Category.Prop) {
                     if (selections.length === 1) {
                       updateEditPanelFlag(value);

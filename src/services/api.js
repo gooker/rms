@@ -1222,7 +1222,7 @@ export async function fetchCleaningPlanMode() {
 }
 
 // 请求器
-export async function fetchGetAPI(params) {
+export async function fetchRequestorList(params) {
   return request(`/${NameSpace.Coordinator}/api/getDataApi`, {
     method: 'GET',
     data: params,

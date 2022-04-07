@@ -142,16 +142,6 @@ class SocketClient {
     );
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
-    /// /////////////////////////// 叉车  /////////////////////////////////////////
-    // unsubscription = this.client.subscribe(
-    //   `/topic/fork_lifting_ui_monitor_agv.s${sectionId}`,
-    //   (response) => {
-    //     const p = JSON.parse(response.body);
-    //     if (this.forkLiftAgvStatusCallback) this.forkLiftAgvStatusCallback(p);
-    //   },
-    // );
-    // this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
-
     /// /////////////////////////// 分拣车  /////////////////////////////////////////
     unsubscription = this.client.subscribe(
       `/topic/sorter_ui_monitor_agv.s${sectionId}`,
@@ -226,11 +216,6 @@ class SocketClient {
   registerToteStatusCallback(cb) {
     // 料箱车货架状态
     this.toteStatusCallback = cb;
-  }
-
-  // 叉车
-  registerForkLiftAGVStatus(cb) {
-    this.forkLiftAgvStatusCallback = cb;
   }
 
   // 分拣车

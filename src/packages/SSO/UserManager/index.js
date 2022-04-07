@@ -1,10 +1,16 @@
 import React, { Component } from 'react';
 import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form, Switch } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth, copyToBoard, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
 import {
   fetchUserManagerList,
   updateUserManage,
@@ -23,7 +29,6 @@ import SectionAssignModal from './components/SectionAssign';
 import RoleAssignModal from './components/RoleAssign';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Colors } from '@/config/consts';
 
 const AdminTypeLabelMap = AdminTLabelMap();
 const { Option } = Select;
@@ -33,18 +38,19 @@ const { Option } = Select;
 }))
 class UserManager extends Component {
   state = {
-    loading: false,
-    // 标记当前是否是编辑操作
-    updateUserFlag: false,
-    // 是否可以更新账户信息
-    updateEnabled: false,
-    updateItem: null,
-
     selectRow: [],
     selectRowKey: [],
-
     searchUsers: [],
     dataList: [],
+    adminType: null,
+    loading: false,
+
+    // 是否可以更新账户信息
+    updateEnabled: false,
+
+    // 标记当前是否是编辑操作
+    updateUserFlag: false,
+    updateItem: null,
 
     // 新增 & 更新用户Modal
     addUserVisible: false,
@@ -54,8 +60,6 @@ class UserManager extends Component {
     sectionAssignVisible: false,
     // 角色分配Modal
     roleAssignVisible: false,
-
-    adminType: null,
   };
 
   columns = [
@@ -131,24 +135,10 @@ class UserManager extends Component {
       align: 'center',
       with: '150',
     },
-
     {
-      title: <FormattedMessage id="app.common.creationTime" />,
-      dataIndex: 'createDate',
-      align: 'center',
-      fixed: 'right',
-    },
-    {
-      title: <FormattedMessage id="app.common.remark" />,
-      dataIndex: 'description',
-      ellipsis: true,
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.operation" />,
+      title: <FormattedMessage id="app.common.status" />,
       dataIndex: 'disabled',
       align: 'center',
-      fixed: 'right',
       render: (text, record) => {
         return (
           <Switch
@@ -161,6 +151,21 @@ class UserManager extends Component {
           />
         );
       },
+    },
+  ];
+
+  expandColumns = [
+    {
+      title: <FormattedMessage id="app.common.creationTime" />,
+      dataIndex: 'createDate',
+      align: 'center',
+      fixed: 'right',
+    },
+    {
+      title: <FormattedMessage id="app.common.remark" />,
+      dataIndex: 'description',
+      ellipsis: true,
+      align: 'center',
     },
   ];
 
@@ -422,7 +427,7 @@ class UserManager extends Component {
                   this.setState({ updatePwdVisible: true });
                 }}
               >
-                <EditOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
+                <SyncOutlined /> <FormattedMessage id="sso.user.action.resetPwd" />
               </Button>
 
               {/* 删除用户 */}
@@ -453,8 +458,8 @@ class UserManager extends Component {
               >
                 <IconFont type="icon-assign" /> <FormattedMessage id="sso.user.roleAssign" />
               </Button>
-            </Col>
-            <Col>
+
+              {/* 刷新 */}
               <Button onClick={this.getUserDataList}>
                 <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
               </Button>
@@ -464,6 +469,7 @@ class UserManager extends Component {
         <TableWithPages
           bordered
           columns={this.columns}
+          expandColumns={this.expandColumns}
           rowKey={(record) => record.id}
           dataSource={showUsersList}
           loading={loading}

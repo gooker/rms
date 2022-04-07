@@ -246,15 +246,6 @@ export async function fetchChargerList(mapId) {
   });
 }
 
-//////////////////////////**** Requestor页面 ****//////////////////////////
-// 请求器
-export async function fetchGetAPI(params) {
-  return request(`/${NameSpace.Coordinator}/api/getDataApi`, {
-    method: 'GET',
-    data: params,
-  });
-}
-
 //////////////////////////**** Web Hook页面 ****//////////////////////////
 // 查询所有已创建的Web Hook类型
 export async function getAllWebHookTypes() {

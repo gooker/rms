@@ -1,12 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
 import { throttle } from 'lodash';
-import { connect } from '@/utils/RmsDva';
 import TabButton from '@/components/TabsBar/TabButton';
 import styles from './tabsBar.module.less';
 
 const TabsBar = (props) => {
-  const { dispatch, tabInfo, activeTab } = props;
-  const [width, setWidth] = useState();
+  const { tabInfo } = props;
+  const [width, setWidth] = useState(0);
 
   useEffect(() => {
     // 监听容器Resize事件
@@ -35,17 +34,7 @@ const TabsBar = (props) => {
         {tabInfo
           .map(({ path, title }, index) => {
             if (path !== '/') {
-              return (
-                <TabButton
-                  key={path}
-                  index={index}
-                  tabCount={tabInfo.length}
-                  active={path === activeTab}
-                  menuKey={path}
-                  label={title}
-                  dispatch={dispatch}
-                />
-              );
+              return <TabButton key={path} index={index} menuKey={path} label={title} />;
             }
           })
           .filter(Boolean)}
@@ -53,6 +42,4 @@ const TabsBar = (props) => {
     </div>
   );
 };
-export default connect(({ menu }) => ({
-  activeTab: menu.activeTab,
-}))(memo(TabsBar));
+export default memo(TabsBar);
