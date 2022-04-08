@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
-const TaskStatus = Dictionary('latentToteOrdertatus');
+const TaskStatus = Dictionary('latentToteOrderStatus');
 
 const LatentToteOrderSearch = (props) => {
   const { search } = props;

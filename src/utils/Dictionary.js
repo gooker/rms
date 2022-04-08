@@ -96,18 +96,32 @@ const DictionaryDataSource = {
   },
 
   // toteOrderStatus
-  latentToteOrdertatus: {
+  latentToteOrderStatus: {
     NEW: 'app.activity.TaskNew', // 新建
-    SENT: 'latentTote.orderStatus.SENT',// 已发送
+    SENT: 'latentTote.orderStatus.SENT', // 已发送
     GRABBING: 'latentTote.orderStatus.GRABBING', // 机械臂抓取中
     GRABBING_FINISH: 'latentTote.orderStatus.GRABBING_FINISH', // 机械臂抓取完成
-    FINISH: 'app.activity.TaskFinished',//完成
-    CANCEL: 'app.task.state.Cancel',//取消
+    FINISH: 'app.activity.TaskFinished', //完成
+    CANCEL: 'app.task.state.Cancel', //取消
     TALLY_TRANSPORTING: 'latentTote.orderStatus.TALLY_TRANSPORTING', // 理货运输中
     TALLYING: 'latentTote.orderStatus.TALLYING', // 理货中
     TALLIED: 'latentTote.orderStatus.TALLIED', // 理货完成
     PICK_STATION_TRANSPORTING: 'latentTote.orderStatus.PICK_STATION_TRANSPORTING', // 出库运输中
     PICK_STATION_WORKING: 'latentTote.orderStatus.PICK_STATION_WORKING', // 出库中
+  },
+
+  latentToteStatusColor: {
+    NEW: 'blue',
+    SENT: 'cyan',
+    GRABBING: 'lime',
+    GRABBING_FINISH: 'lime',
+    FINISH: 'green',
+    CANCEL: '#b3b2b2',
+    TALLY_TRANSPORTING: 'orange',
+    TALLYING: 'orange',
+    TALLIED: 'cyan',
+    PICK_STATION_TRANSPORTING: 'yellow',
+    PICK_STATION_WORKING: 'yellow',
   },
 };
 

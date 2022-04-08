@@ -324,6 +324,15 @@ const LatentTotePodTemplate = (props) => {
                 >
                   <InputNumber />
                 </Form.Item>
+
+                {/* 货架底部高度 */}
+                <Form.Item
+                  label={formatMessage({ id: 'latentTote.podTemplateStorage.bottomHeight' })}
+                  name="bottomHeight"
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber addonAfter={'mm'} />
+                </Form.Item>
               </div>
 
               <Form.Item
@@ -331,21 +340,21 @@ const LatentTotePodTemplate = (props) => {
                 name="width"
                 rules={[{ required: true }]}
               >
-                <InputNumber />
+                <InputNumber addonAfter={'mm'} />
               </Form.Item>
               <Form.Item
                 label={formatMessage({ id: 'app.common.height' })}
                 name="height"
                 rules={[{ required: true }]}
               >
-                <InputNumber />
+                <InputNumber addonAfter={'mm'} />
               </Form.Item>
               <Form.Item
                 label={formatMessage({ id: 'app.common.depth' })}
                 name="depth"
                 rules={[{ required: true }]}
               >
-                <InputNumber />
+                <InputNumber addonAfter={'mm'} />
               </Form.Item>
 
               {/* 货架边宽 */}
@@ -354,7 +363,7 @@ const LatentTotePodTemplate = (props) => {
                 name="edgeWidth"
                 rules={[{ required: true }]}
               >
-                <InputNumber />
+                <InputNumber addonAfter={'mm'} />
               </Form.Item>
 
               {/* 货位间隔 */}
@@ -363,7 +372,7 @@ const LatentTotePodTemplate = (props) => {
                 name="binInterval"
                 rules={[{ required: true }]}
               >
-                <InputNumber />
+                <InputNumber addonAfter={'mm'} />
               </Form.Item>
 
               {/* 层板厚度 */}
@@ -372,16 +381,7 @@ const LatentTotePodTemplate = (props) => {
                 name="laminateHeight"
                 rules={[{ required: true }]}
               >
-                <InputNumber />
-              </Form.Item>
-
-              {/* 货架底部高度 */}
-              <Form.Item
-                label={formatMessage({ id: 'latentTote.podTemplateStorage.bottomHeight' })}
-                name="bottomHeight"
-                rules={[{ required: true }]}
-              >
-                <InputNumber />
+                <InputNumber addonAfter={'mm'} />
               </Form.Item>
 
               {/* 是否封顶 */}

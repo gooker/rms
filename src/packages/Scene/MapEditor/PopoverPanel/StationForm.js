@@ -198,7 +198,7 @@ const StationForm = (props) => {
                 () => ({
                   validator(_, value) {
                     const isDuplicate = checkCodeDuplicate('station', value);
-                    if (!isDuplicate) {
+                    if (!isDuplicate || isNull(station)) {
                       return Promise.resolve();
                     }
                     return Promise.reject(
