@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Divider, Tooltip, Row, Col } from 'antd';
+import { Button, Divider, Tooltip, Row, Col, Badge } from 'antd';
 import { formatMessage, dealResponse, convertToUserTimezone, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchLatentToteOrders, updateLatentToteOrder } from '@/services/latentTote';
@@ -11,7 +11,8 @@ import LatentToteOrderSearch from './LatentToteOrderSearch';
 import UpdateToteOrderTaskComponent from './UpdateToteOrderTaskComponent';
 import commonStyles from '@/common.module.less';
 import styles from '../taskOrder.module.less';
-const TaskStatus = Dictionary('latentToteOrdertatus');
+const TaskStatus = Dictionary('latentToteOrderStatus');
+const TaskStatusColor = Dictionary('latentToteStatusColor');
 
 class LatentToteOrderComponent extends Component {
   state = {
@@ -57,7 +58,9 @@ class LatentToteOrderComponent extends Component {
       align: 'center',
       render: (text) => {
         if (!isStrictNull(text)) {
-          return formatMessage({ id: TaskStatus[text] });
+          return (
+            <Badge color={TaskStatusColor[text]} text={formatMessage({ id: TaskStatus[text] })} />
+          );
         } else {
           return <FormattedMessage id="app.taskDetail.notAvailable" />;
         }

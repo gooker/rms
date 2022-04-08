@@ -6,7 +6,7 @@ export default {
   'latentTote.podTemplateStorage.rowSpace': '层板厚度',
   'latentTote.podTemplateStorage.bottomHeight': '底部高度',
   'latentTote.podTemplateStorage.isCapping': '是否封顶',
-  'latentTote.podTemplateStorage.storageWeight': '货架承重',
+  'latentTote.podTemplateStorage.storageWeight': '储位承重',
   'latentTote.podTemplateStorage.binTotalWeight': '料箱总重',
   'latentTote.podTemplateStorage.bearingTotalweight': '承载总重',
   'latentTote.podTemplateStorage.required': '输入',
@@ -25,6 +25,22 @@ export default {
   'latentTote.orderStatus.TALLIED': '理货完成',
   'latentTote.orderStatus.PICK_STATION_TRANSPORTING': '出库运输中',
   'latentTote.orderStatus.PICK_STATION_WORKING': '出库中',
+
+  // 工作站
+  'latentTote.station.type.PICK': '捡货工作站',
+  'latentTote.station.type.PUT_AWAY': '上架工作站',
+
+  'latentTote.station.maxPod': '最大接pod数量',
+  'latentTote.station.simulatedStatus': '是否模拟工作站',
+  'latentTote.station.workStatus': '工作状态',
+  'latentTote.station.workModel': '工作模式',
+
+  'latentTote.station.workModel.PICK': '捡货',
+  'latentTote.station.workModel.TALLY': '理货',
+  'latentTote.station.workModel.STORE_PREPARE': '上架-开班呼叫',
+  'latentTote.station.workModel.STORE': '上架',
+
+
 
 
 

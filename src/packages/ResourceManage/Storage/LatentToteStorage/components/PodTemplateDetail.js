@@ -88,7 +88,7 @@ const LatentTotePodTemplateDetail = (props) => {
           <FormattedMessage id="monitor.simulator.config.leve" />
         </div>
         <div style={{ flex: 1 }}></div>
-        <div className={styles.floorWeight}>
+        <div className={styles.storgelabel}>
           <FormattedMessage id="latentTote.podTemplateStorage.storageWeight" />
         </div>
       </div>
@@ -127,7 +127,7 @@ const LatentTotePodTemplateDetail = (props) => {
             })}
         </div>
         {/* 储位承重 */}
-        <div className={styles.floorWeight} style={{ marginLeft: 5 }}>
+        <div className={styles.storgelabel}>
           {Array.isArray(newBinsData) &&
             newBinsData.map((rowdata, rowindex) => {
               const curentValue = getCurrentFloorWeight(rowdata);
