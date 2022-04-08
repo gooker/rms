@@ -1,8 +1,8 @@
-/* eslint-disable no-console */
 import Stomp from 'stompjs';
 import { formatMessage, isStrictNull } from '@/utils/util';
-import { message } from 'antd';
+import { message, notification } from 'antd';
 
+const SOCKET_RECONNECT_MESSAGE_ID = 'SOCKET_RECONNECT_MESSAGE_ID';
 class SocketClient {
   constructor({ login, passcode }) {
     const nameSpacesInfo = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
@@ -13,6 +13,7 @@ class SocketClient {
     };
     this.client = null;
     this.unsubscribeueueQueue = [];
+    this.isReconnect = false;
   }
 
   getInstance() {
@@ -43,6 +44,14 @@ class SocketClient {
 
   onConnect() {
     console.log('[Socket]: 连接成功!');
+    if (this.isReconnect) {
+      message.success({
+        content: formatMessage({ id: 'app.socket.reConnected' }),
+        key: SOCKET_RECONNECT_MESSAGE_ID,
+        duration: 2,
+      });
+    }
+
     const sectionId = window.localStorage.getItem('sectionId');
 
     /// /////////////////////////////// 全局  //////////////////////////////////
@@ -53,14 +62,30 @@ class SocketClient {
     });
   }
 
-  onError(message) {
-    if (message && message === `${message}` && message.indexOf('Whoops! Lost connection') > -1) {
-      console.error(`[Socket]: ${message}, 正在尝试重连...`); // 断线重连
+  onError(errorMessage) {
+    console.error(`[Socket]: ${errorMessage}`);
+    this.isReconnect = true;
+    if (typeof errorMessage === 'string' && errorMessage.indexOf('Whoops! Lost connection') > -1) {
+      message.loading({
+        content: formatMessage({ id: 'app.socket.reconnecting' }),
+        key: SOCKET_RECONNECT_MESSAGE_ID,
+      });
+      this.client = null;
       this.connect();
-    } else if (message && message.body && message.body.indexOf('Access refused for user') > -1) {
-      console.error('[Socket]: 当前使用的账号没有权限');
+    } else if (errorMessage?.body?.indexOf('Access refused for user') > -1) {
+      notification.warn({
+        placement: 'top',
+        message: formatMessage({ id: 'app.message.systemHint' }),
+        description: formatMessage({ id: 'app.socket.accountNoAuth' }),
+        duration: 0,
+      });
     } else {
-      console.error('[Socket]: 连接出错, 连接断开');
+      notification.error({
+        placement: 'top',
+        message: formatMessage({ id: 'app.message.systemHint' }),
+        description: formatMessage({ id: 'app.socket.connectFailed' }),
+        duration: 0,
+      });
     }
   }
 

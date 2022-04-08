@@ -4,6 +4,12 @@ export default {
   'app.global.chrome.suggested': '使用谷歌浏览器可获得更好的使用体验',
   'app.section.not.exist': '当前用户没有已激活的Section',
 
+  // Socket
+  'app.socket.reconnecting': 'Socket重连中...',
+  'app.socket.reConnected': 'Socket连接成功',
+  'app.socket.accountNoAuth': '当前使用的账号没有权限',
+  'app.socket.connectFailed': '连接出错, 连接断开',
+
   // 多标签页
   'app.tabs.closeLeft': '关闭左侧所有',
   'app.tabs.closeRight': '关闭右侧所有',
