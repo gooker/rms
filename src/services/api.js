@@ -315,6 +315,14 @@ export async function updateSystemParams(agvType, params) {
   });
 }
 
+//// 更新系统时区
+export async function updateSystemTimezone(timeZone) {
+  return request(`/${NameSpace.Coordinator}/formTemplate/updateFormTemplateValue`, {
+    method: 'POST',
+    data: { client_timezone_id: timeZone },
+  });
+}
+
 // 获取打分算法模版
 export async function fetchLatentToteParamFormData(agvType, params) {
   return request(`/${NameSpace[agvType]}/paramTemplate/getParamTemplate`, {

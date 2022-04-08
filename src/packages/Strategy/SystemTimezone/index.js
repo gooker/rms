@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, Button } from 'antd';
 import TimeZone from '@/components/TimeZone';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchSystemParamByKey, updateSystemParams } from '@/services/api';
+import { fetchSystemParamByKey, updateSystemTimezone } from '@/services/api';
 import { dealResponse } from '@/utils/util';
 
 class SystemTimezone extends Component {
@@ -21,9 +21,7 @@ class SystemTimezone extends Component {
 
   submit = () => {
     const { timeZone } = this.state;
-    updateSystemParams({
-      client_timezone_id: timeZone,
-    }).then((res) => {
+    updateSystemTimezone(timeZone).then((res) => {
       if (!dealResponse(res, true)) {
         this.getData();
       }

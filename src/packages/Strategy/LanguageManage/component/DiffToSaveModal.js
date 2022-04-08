@@ -1,24 +1,22 @@
-import React, { Component } from 'react';
-import { Button } from 'antd';
+import React, { memo, useEffect } from 'react';
+import { Button, Modal } from 'antd';
 import ReactDiffViewer from 'react-diff-viewer';
 import { sortBy } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../translator.module.less';
+import { adjustModalWidth } from '@/utils/util';
 
-export default class DiffToSaveModal extends Component {
-  state = {
-    diffData: {},
-    loading: false,
-  };
+const DiffToSaveModal = (props) => {
+  const { visible, onCancel, makeSureUpdate, originData, allLanguage, editList } = props;
 
-  componentDidMount() {
-    const result = this.getData();
-    this.setState({
-      diffData: result,
-    });
-  }
+  const [diffData, setDiffData] = React.useState([]);
 
-  generateKey(record, keys) {
+  useEffect(() => {
+    if (visible) {
+      setDiffData(getData());
+    }
+  }, [visible]);
+
+  function generateKey(record, keys) {
     const result = {};
     for (let index = 0; index < keys.length; index++) {
       const element = keys[index];
@@ -28,9 +26,8 @@ export default class DiffToSaveModal extends Component {
     }
     return result;
   }
-  getData = () => {
-    const { originData, allLanguage, editList } = this.props;
 
+  function getData() {
     //将俩个数据的格式统一，方便对比
     let oldSource = [];
     originData &&
@@ -61,35 +58,27 @@ export default class DiffToSaveModal extends Component {
     keys.unshift('languageKey');
     return {
       oldSource: oldSource.map((record) => {
-        return this.generateKey(record, keys);
+        return generateKey(record, keys);
       }),
       newSource: newSource.map((record) => {
-        return this.generateKey(record, keys);
+        return generateKey(record, keys);
       }),
     };
-  };
+  }
 
-  render() {
-    const { diffData, loading } = this.state;
-
-    return (
-      <div className={styles.diffJsoContent}>
-        <div className={styles.diffHeader}>
-          <Button
-            type="primary"
-            loading={loading}
-            onClick={() => {
-              this.setState({ loading: true });
-              const { makeSureUpdate } = this.props;
-              if (makeSureUpdate) {
-                makeSureUpdate();
-              }
-              this.setState({ loading: false });
-            }}
-          >
-            <FormattedMessage id="app.button.save" />
-          </Button>
-        </div>
+  return (
+    <Modal
+      destroyOnClose
+      width={adjustModalWidth()}
+      title={<FormattedMessage id={'translator.languageManage.diffResult'} />}
+      style={{ top: 20 }}
+      maskClosable={false}
+      closable={false}
+      visible={visible}
+      onCancel={onCancel}
+      onOk={makeSureUpdate}
+    >
+      <div style={{ height: '73vh', overflow: 'auto' }}>
         <ReactDiffViewer
           splitView={true}
           oldValue={JSON.stringify(diffData.oldSource, null, 4)}
@@ -98,6 +87,7 @@ export default class DiffToSaveModal extends Component {
           rightTitle="after"
         />
       </div>
-    );
-  }
-}
+    </Modal>
+  );
+};
+export default memo(DiffToSaveModal);
