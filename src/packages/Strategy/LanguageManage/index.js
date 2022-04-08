@@ -13,6 +13,7 @@ import {
   Row,
 } from 'antd';
 import {
+  DeleteOutlined,
   DownOutlined,
   ExportOutlined,
   ImportOutlined,
@@ -35,10 +36,11 @@ import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLangModal from './component/AddSysLang.js';
 import ImportApplicationModal from './component/ImportApplication';
 import UpdateEditListModal from './component/UpdateEditListModal';
+import DeleteSysLang from './component/DeleteSysLang';
 import DiffToSaveModal from './component/DiffToSaveModal';
-import commonStyles from '@/common.module.less';
-import styles from './translator.module.less';
 import { connect } from '@/utils/RmsDva';
+import styles from './translator.module.less';
+import commonStyles from '@/common.module.less';
 
 const { Item: FormItem } = Form;
 
@@ -54,6 +56,7 @@ class LanguageManage extends React.Component {
     loading: false,
     importVisible: false,
     addLangVisible: false,
+    deleteLangVisible: false,
     diffToVisible: false,
 
     showLanguage: [],
@@ -107,7 +110,7 @@ class LanguageManage extends React.Component {
   getTranslateList = async () => {
     const { appCode, frontedStandard } = this.state;
     this.setState({ loading: true });
-    const list = await getTranslationByCode({ appCode: appCode });
+    const list = await getTranslationByCode(appCode);
     if (!dealResponse(list)) {
       const currentList = { ...list };
       if (appCode === 'FE') {
@@ -409,10 +412,9 @@ class LanguageManage extends React.Component {
               </Checkbox.Group>
             </FormItem>
           </Col>
-
           <Col offset={1}>
+            {/* 新增语种 */}
             <Button
-              style={{ width: '100%' }}
               type="link"
               onClick={() => {
                 this.setState({ addLangVisible: true });
@@ -420,19 +422,34 @@ class LanguageManage extends React.Component {
             >
               <PlusCircleOutlined /> <FormattedMessage id="translator.languageManage.addLanguage" />
             </Button>
+
+            {/* 删除语种 */}
+            {window.localStorage.getItem('dev') === 'true' && (
+              <Button
+                danger
+                type="link"
+                onClick={() => {
+                  this.setState({ deleteLangVisible: true });
+                }}
+              >
+                <DeleteOutlined />{' '}
+                <FormattedMessage id="translator.languageManage.deleteLanguage" />
+              </Button>
+            )}
           </Col>
 
-          <Col flex="auto">
-            <Button
-              type="link"
-              style={{ cursor: 'pointer', color: '#1890FF', marginLeft: 40 }}
-              onClick={() => {
-                this.setState({ showEditVisible: true });
-              }}
-            >
-              <FormattedMessage id="translator.languageManage.unsaved" />:
-              {Object.keys(editList).length}
-            </Button>
+          <Col flex={1}>
+            <Row justify={'end'}>
+              <Button
+                type="link"
+                onClick={() => {
+                  this.setState({ showEditVisible: true });
+                }}
+              >
+                <FormattedMessage id="translator.languageManage.unsaved" />:{' '}
+                {Object.keys(editList).length}
+              </Button>
+            </Row>
           </Col>
         </Row>
         <Row>
@@ -567,13 +584,21 @@ class LanguageManage extends React.Component {
           }}
         />
 
-        {/*新增语言  */}
+        {/* 新增语言  */}
         <AddSysLangModal
           existKeys={Object.values(systemLanguage).map(({ code }) => code)}
           onAddLang={this.submitLanguage}
           visible={this.state.addLangVisible}
           onCancel={() => {
             this.setState({ addLangVisible: false });
+          }}
+        />
+
+        {/* 删除语言 */}
+        <DeleteSysLang
+          visible={this.state.deleteLangVisible}
+          onCancel={() => {
+            this.setState({ deleteLangVisible: false });
           }}
         />
 
