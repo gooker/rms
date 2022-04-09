@@ -448,7 +448,6 @@ export default class BaseMap extends React.PureComponent {
       angle,
       station, // 编码
       direction,
-      scanCellId,
       stopCellId,
       bufferCellId,
       rotateCellIds,
@@ -476,7 +475,7 @@ export default class BaseMap extends React.PureComponent {
     this.workStationMap.set(`${stopCellId}`, workStation);
 
     // 扫描点
-    const scanCell = this.idCellMap.get(scanCellId);
+    const scanCell = this.idCellMap.get(stopCellId);
     scanCell && scanCell.plusType('scan_cell', getTextureFromResources('scan_cell'));
 
     // 停止点

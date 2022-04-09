@@ -1,5 +1,6 @@
 import { isPlainObject } from 'lodash';
 import { NameSpace } from '@/config/config';
+import { getLocalStorageEnv } from '@/utils/init';
 
 export default function requestAPI() {
   let apiMap;
@@ -53,5 +54,8 @@ export default function requestAPI() {
   apiMap[NameSpace.I18N] = apiMap.coordinator;
   apiMap[NameSpace.LatentTote] = apiMap.coordinator;
 
+  // 合并本地自定义的SSO配置
+  const envs = getLocalStorageEnv();
+  apiMap = { ...apiMap, ...envs };
   return apiMap;
 }

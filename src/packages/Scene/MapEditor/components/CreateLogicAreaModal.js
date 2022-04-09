@@ -7,26 +7,26 @@ import FormattedMessage from '@/components/FormattedMessage';
 const { formItemLayout } = getFormLayout(6, 18);
 
 const CreateLogicAreaModal = (props) => {
-  const [form] = Form.useForm();
+  const [formRef] = Form.useForm();
   const { dispatch, data, visible, close, currentMap } = props;
   const isUpdate = !!data;
 
   useEffect(() => {
     if (visible) {
       if (!isNull(data)) {
-        form.setFieldsValue({
+        formRef.setFieldsValue({
           name: data?.name,
           rangeStart: data?.rangeStart,
           rangeEnd: data?.rangeEnd,
         });
       } else {
         const maxRange = currentMap.logicAreaList.at(-1).rangeEnd;
-        form.setFieldsValue({
+        formRef.setFieldsValue({
           rangeStart: maxRange + 1,
         });
       }
     } else {
-      form.resetFields();
+      formRef.resetFields();
     }
   }, [visible]);
 
@@ -38,7 +38,7 @@ const CreateLogicAreaModal = (props) => {
   };
 
   const submit = () => {
-    form
+    formRef
       .validateFields()
       .then((value) => {
         const payload = { ...value, id: isUpdate ? data.id : null };
@@ -96,7 +96,7 @@ const CreateLogicAreaModal = (props) => {
         </Row>,
       ]}
     >
-      <Form form={form} {...formItemLayout}>
+      <Form form={formRef} {...formItemLayout}>
         {/* 名称 */}
         <Form.Item
           name={'name'}

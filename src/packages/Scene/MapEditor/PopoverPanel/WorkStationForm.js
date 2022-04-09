@@ -129,18 +129,13 @@ const WorkStationForm = (props) => {
           return value;
         }}
       >
-        <AngleSelector />
-      </Form.Item>
-
-      {/* 扫描点 */}
-      <Form.Item
-        name={'scanCellId'}
-        initialValue={workStation?.scanCellId}
-        label={<FormattedMessage id="editor.cellType.scan" />}
-      >
-        <RichInput
-          icon={<img alt={'scan_cell'} style={{ width: 25 }} src={'/images/scan_cell.png'} />}
-          currentCellId={selectCellIds}
+        <AngleSelector
+          addonLabel={{
+            0: formatMessage({ id: 'app.direction.topSide' }),
+            90: formatMessage({ id: 'app.direction.rightSide' }),
+            180: formatMessage({ id: 'app.direction.bottomSide' }),
+            270: formatMessage({ id: 'app.direction.leftSide' }),
+          }}
         />
       </Form.Item>
 

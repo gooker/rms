@@ -14,9 +14,10 @@ import { getEnvOptionData, getActiveEnv } from './selector';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
+import { handleNameSpace } from '@/utils/init';
 
 const Login = (props) => {
-  const { environments, activeEnv, history } = props;
+  const { dispatch, environments, activeEnv, history } = props;
   const [loading, setLoading] = useState(false);
   const [logo, setLogo] = useState(null);
   const [appVersion, setAppVersion] = useState(null);
@@ -30,6 +31,9 @@ const Login = (props) => {
 
   async function init() {
     const address = window.location.host;
+    // 刚进入页面需要首先处理namespace数据
+    await handleNameSpace(dispatch);
+
     const [appLogo, _appVersion] = await Promise.all([
       fetchFindLogoByWebAddress(address),
       fetchAppVersion(),
