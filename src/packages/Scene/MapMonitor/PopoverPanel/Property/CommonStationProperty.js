@@ -60,10 +60,10 @@ const CommonStationProperty = (props) => {
         Object.values(robotIdMap).map((ids) => {
           robotIds.push(...ids);
         });
-        setRobotIds([1, 2, 4]);
-        setAgvTypes({
-          LatentLifting: [1, 2, 4],
-        });
+        // setRobotIds([1, 2, 4]);
+        // setAgvTypes({
+        //   LatentLifting: [1, 2, 4],
+        // });
         dispatch({
           type: 'monitorView/saveCommonStationView',
           payload: {

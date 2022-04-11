@@ -150,7 +150,5 @@ export default {
   'menu.pod': '货架',
   'menu.pod.podManagement': '货架管理',
 
-  'menu.latentToteStation': '工作站',
-  'menu.latentToteStation.stationList': '工作站列表',
-  'menu.latentToteStation.stationFaultManage': '工作站故障管理',
+  'menu.latentToteStationList': '工作站列表',
 };

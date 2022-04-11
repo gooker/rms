@@ -42,22 +42,9 @@ export default [
   },
   {
     path: `/${AppCode.LatentTote}/latentToteStation`,
-    name: 'latentToteStation',
+    name: 'latentToteStationList',
     icon: 'home',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-    routes: [
-      {
-        path: `/${AppCode.LatentTote}/latentToteStation/stationList`,
-        name: 'stationList',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        component: '/LatentTote/Station/StationList',
-      },
-      {
-        path: `/${AppCode.LatentTote}/latentToteStation/stationFaultManage`,
-        name: 'stationFaultManage',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        component: '/LatentTote/Station/StationFaultManage',
-      },
-    ],
+    component: '/LatentTote/StationManage',
   },
 ];

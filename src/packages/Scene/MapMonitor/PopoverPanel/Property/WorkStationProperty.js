@@ -50,7 +50,7 @@ const WorkStationProperty = (props) => {
       });
       if (!dealResponse(taskHistoryResponse)) {
         const { robotIds = [] } = taskHistoryResponse;
-        setRobotIds([1, 2, 3, 5]);
+        // setRobotIds([1, 2, 3, 5]);
 
         dispatch({
           type: 'monitorView/saveWorkStationView',

@@ -79,7 +79,6 @@ export async function deleteLatentTotePodTypes(ids) {
   });
 }
 
-
 /******工作站接口*******/
 // 查询工作站列表
 export async function fetchLatentToteStations(params) {
@@ -98,15 +97,16 @@ export async function fetchLatentToteStationDetail(id) {
 
 // 修改工作站
 export async function updateLatentToteStation(params) {
-  return request(`/${LatentTote}/stations/${params.id}`, {
+  return request(`/${LatentTote}/station/${params.id}`, {
     method: 'PUT',
     data: params,
   });
 }
 
 // 查询异常工作站列表
-export async function fetchLatentToteFaultStations() {
+export async function fetchLatentToteFaultStations(params) {
   return request(`/${LatentTote}/stationErrors`, {
     method: 'GET',
+    data: params,
   });
 }

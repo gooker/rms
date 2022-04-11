@@ -1,12 +1,15 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Button, Form, Select } from 'antd';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
+import { getFormLayout } from '@/utils/util';
+import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { Option } = Select;
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
+const { formItemLayout } = getFormLayout(5, 19);
+const formItemLayoutNoLabel = { wrapperCol: { offset: 12, span: 12 } };
 
-const StationEditComponent = (props) => {
+const StationBindingComponent = (props) => {
   const { submit, data, cancel } = props;
   const [formRef] = Form.useForm();
   const [podList, setPodList] = useState([]);
@@ -20,22 +23,27 @@ const StationEditComponent = (props) => {
 
   function onSubmit() {
     formRef.validateFields().then((value) => {
-      submit(value);
+      submit({ ...value, id: data.id, editType: 'BIND' });
     });
   }
 
   async function getAllPod() {
-    //TODO: 根据站点获取groupCode
-    setPodList([]);
+    const allLatentToteStation = [];
+    const commonList = getCurrentLogicAreaData()?.commonList ?? [];
+    commonList.forEach((item) => {
+      if (['PICK', 'TALLY'].includes(item?.customType)) allLatentToteStation.push(item.groupCode);
+    });
+
+    setPodList([...new Set(allLatentToteStation)]);
   }
 
   return (
     <Form ref={formRef}>
       <Form.Item
         {...formItemLayout}
-        name={'id'}
+        name={'stationCode'}
         label={<FormattedMessage id="latentTote.mainStationCode" />}
-        initialValue={data?.data}
+        initialValue={data?.stationCode}
         rules={[
           {
             required: true,
@@ -62,4 +70,6 @@ const StationEditComponent = (props) => {
     </Form>
   );
 };
-export default memo(StationEditComponent);
+export default connect(({ global }) => ({
+  editI18NKey: global.editI18NKey,
+}))(memo(StationBindingComponent));

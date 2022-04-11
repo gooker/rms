@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Tag, Badge, Button, Row, Col, message, Modal, Form, Checkbox } from 'antd';
+import { Tag, Badge, Button, Row, Col, Modal, Form, Checkbox, Tooltip, message } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import Dictionary from '@/utils/Dictionary';
 import { fetchLatentToteStations, updateLatentToteStation } from '@/services/latentTote';
@@ -9,8 +9,33 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';
 import TableWithPages from '@/components/TableWithPages';
 import StationBindingComponent from './components/StationBindingComponent';
+import StationEditComponent from './components/StationEditComponent';
+import StationFaultInfo from './components/StationFaultInfo';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
+const mockdata = [
+  {
+    id: '111',
+    stationCode: '3',
+    hardwareId: '44',
+    ip: '8080',
+    port: 0,
+    manufacturer: 'hha',
+    hardwareVersion: '2.2',
+    softwareVersion: '2.3',
+    stationType: 'PICK',
+    status: 'NORMAL',
+    otherParameterMap: {
+      key1: 'v1',
+      key12: 'v12',
+      key13: 'v13',
+    },
+    simulatedStatus: true,
+    workStatus: 'START',
+    workModel: 'PICK',
+    maxPod: 10,
+  },
+];
 
 const { green, blue } = Dictionary('color');
 const stationType = {
@@ -23,37 +48,59 @@ const ChargerList = () => {
   const [searchValue, setSearchValue] = useState(['BINDING', 'UNBINDING']);
   const [stationList, setStationList] = useState([]);
   const [bindVisible, setBindVisible] = useState(false);
+  const [editVisible, setEditVisible] = useState(false);
+  const [detailRecord, setDetailRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRows, setSelectedRows] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     async function init() {
-      await getList();
+      //   await getList();
+      setStationList(mockdata);
     }
     init();
   }, []);
 
   const columns = [
     {
+      title: <FormattedMessage id="app.form.hardwareId" />,
+      dataIndex: 'hardwareId',
+      align: 'center',
+      fixed: 'left',
+      render: (text, record) => {
+        return (
+          <Tooltip title={text}>
+            <span
+              className={commonStyles.textLinks}
+              onClick={() => {
+                setDetailRecord(record);
+              }}
+            >
+              {text ?? null}
+            </span>
+          </Tooltip>
+        );
+      },
+    },
+    {
       title: <FormattedMessage id="app.map.station" />,
       dataIndex: 'stationCode',
       align: 'center',
-      fixed: 'left',
     },
-    {
-      title: <FormattedMessage id="app.common.type" />,
-      dataIndex: 'stationType',
-      align: 'center',
-      render: (type) => {
-        if (!isNull(type)) {
-          return (
-            <Tag color={stationType[type]} key={type}>
-              {formatMessage({ id: `latentTote.station.type.${type}` })}
-            </Tag>
-          );
-        }
-      },
-    },
+    // {
+    //   title: <FormattedMessage id="app.common.type" />,
+    //   dataIndex: 'stationType',
+    //   align: 'center',
+    //   render: (type) => {
+    //     if (!isNull(type)) {
+    //       return (
+    //         <Tag color={stationType[type]} key={type}>
+    //           {formatMessage({ id: `latentTote.station.type.${type}` })}
+    //         </Tag>
+    //       );
+    //     }
+    //   },
+    // },
 
     {
       title: <FormattedMessage id="app.common.status" />,
@@ -70,33 +117,6 @@ const ChargerList = () => {
     },
 
     {
-      title: <FormattedMessage id="app.agv.ip" />,
-      dataIndex: 'ip',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.form.hardwareId" />,
-      dataIndex: 'hardwareId',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.agv.port" />,
-      dataIndex: 'port',
-      align: 'center',
-    },
-
-    {
-      title: <FormattedMessage id="app.activity.hardwareVersion" />,
-      dataIndex: 'hardwareVersion',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.activity.softwareVersion" />,
-      dataIndex: 'softwareVersion',
-      align: 'center',
-    },
-
-    {
       title: <FormattedMessage id="latentTote.station.simulatedStatus" />,
       align: 'center',
       dataIndex: 'simulatedStatus',
@@ -105,7 +125,7 @@ const ChargerList = () => {
           if (text) {
             return <FormattedMessage id="app.common.true" />;
           }
-          return <FormattedMessage id="app.commom.false" />;
+          return <FormattedMessage id="app.common.false" />;
         }
       },
     },
@@ -140,8 +160,8 @@ const ChargerList = () => {
 
     {
       title: <FormattedMessage id="latentTote.station.maxPod" />,
-      width: 200,
       dataIndex: 'maxPod',
+      align: 'center',
     },
     {
       title: <FormattedMessage id="latentTote.station.workModel" />,
@@ -155,44 +175,13 @@ const ChargerList = () => {
     },
 
     {
-      title: <FormattedMessage id="chargeManager.bindStatus" />,
-      align: 'center',
-      width: 200,
-      dataIndex: 'name',
-      render: (text) => {
-        if (!isNull(text)) {
-          return (
-            <Button type="link">
-              <FormattedMessage id="app.button.isbinding" />
-            </Button>
-          );
-        }
-        return (
-          <Button type="text">
-            <FormattedMessage id="app.button.unbounded" />
-          </Button>
-        );
-      },
-    },
-    {
       title: <FormattedMessage id="app.common.operation" />,
       dataIndex: 'id',
       align: 'center',
-      width: 250,
       fixed: 'right',
       render: (text, record) => (
         <div>
-          {record.workStatus === 'STOP' ? (
-            <Button
-              size={'small'}
-              type="link"
-              onClick={() => {
-                deleteStation({ id: record.id, editType: 'REMOVE' });
-              }}
-            >
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-            </Button>
-          ) : (
+          {record.workStatus !== 'STOP' && (
             <>
               <Button
                 size={'small'}
@@ -232,6 +221,59 @@ const ChargerList = () => {
     },
   ];
 
+  const expandColumns = [
+    {
+      title: <FormattedMessage id="app.agv.ip" />,
+      dataIndex: 'ip',
+    },
+
+    {
+      title: <FormattedMessage id="app.agv.port" />,
+      dataIndex: 'port',
+    },
+
+    {
+      title: <FormattedMessage id="app.activity.hardwareVersion" />,
+      dataIndex: 'hardwareVersion',
+    },
+    {
+      title: <FormattedMessage id="app.activity.softwareVersion" />,
+      dataIndex: 'softwareVersion',
+    },
+  ];
+
+  function expandedRowRender(record) {
+    return (
+      <Row>
+        {Object.keys(record?.otherParameterMap).length > 0 && (
+          <>
+            {/* <Row> */}
+            {Object.entries(record?.otherParameterMap).map(([key, value]) => (
+              <Col key={key} flex="auto" style={{ marginRight: 20 }}>
+                <span>{key}</span>
+                <span>:</span>
+                <span style={{ marginLeft: 5 }}>{value}</span>
+              </Col>
+            ))}
+            {/* </Row> */}
+          </>
+        )}
+
+        {/* <Row style={{ margin: '10px 0px' }}> */}
+        {expandColumns.map(({ title, dataIndex, render }, index) => (
+          <Col key={index} flex="auto" style={{ marginRight: 20 }}>
+            <span>{title}</span>
+            <span>:</span>
+            <span style={{ marginLeft: 5 }}>
+              {typeof render === 'function' ? render(record[dataIndex], record) : record[dataIndex]}
+            </span>
+          </Col>
+        ))}
+        {/* </Row> */}
+      </Row>
+    );
+  }
+
   async function getList(value) {
     setLoading(true);
     setSelectedRowKeys([]);
@@ -264,11 +306,19 @@ const ChargerList = () => {
   }
 
   // 删除
-  function deleteStation(params) {
+  function deleteStation() {
+    // const workStatus = selectedRows[0]?.workStatus;
+    // if (workStatus !== 'STOP') {
+    //   message.error('非停止状态不能删除');
+    //   return;
+    // }
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await updateLatentToteStation(params);
+        const response = await updateLatentToteStation({
+          id: selectedRowKeys[0],
+          editType: 'REMOVE',
+        });
         if (!dealResponse(response, 1)) {
           getList();
         }
@@ -276,15 +326,21 @@ const ChargerList = () => {
     });
   }
 
-  //   绑定
-  async function bindSubmit(currentData) {
+  //   绑定 && 编辑
+  async function handleSubmit(currentData) {
     const response = await updateLatentToteStation(currentData);
     if (!dealResponse(response, 1)) {
-      setBindVisible(false);
-      setSelectedRowKeys([]);
-      setSelectedRows(null);
+      handelCancel();
       getList();
     }
+  }
+
+  function handelCancel() {
+    setBindVisible(false);
+    setEditVisible(false);
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
+    setDetailRecord(null);
   }
 
   // search
@@ -318,20 +374,28 @@ const ChargerList = () => {
             </Checkbox.Group>
           </Form.Item>
         </Row>
-        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
+        <Row style={{ display: 'flex', padding: '0 0 10px 0' }}>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button
               type="primary"
-              //   disabled={stationList.length !== 1}
+              disabled={selectedRowKeys.length !== 1}
               onClick={() => {
                 setBindVisible(true);
               }}
             >
-              <IconFont type="icon-assign" />
-              <FormattedMessage id="app.button.bind" />
+              <IconFont type="icon-assign" /> <FormattedMessage id="app.button.bind" />
             </Button>
-            <Button disabled={selectedRowKeys.length === 0}>
+            <Button
+              disabled={selectedRowKeys.length !== 1}
+              onClick={() => {
+                setEditVisible(true);
+              }}
+            >
               <EditOutlined /> <FormattedMessage id="app.button.edit" />
+            </Button>
+
+            <Button disabled={selectedRowKeys.length !== 1} onClick={deleteStation}>
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
             <Button
@@ -341,8 +405,7 @@ const ChargerList = () => {
                 getList();
               }}
             >
-              <ReloadOutlined />
-              <FormattedMessage id="app.button.refresh" />
+              <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </Col>
         </Row>
@@ -360,24 +423,47 @@ const ChargerList = () => {
           selectedRows,
           onChange: onSelectChange,
         }}
+        expandable={{
+          expandedRowRender: (record) => expandedRowRender(record),
+        }}
       />
-      {/* 绑定 & 编辑 */}
+      {/* 绑定  */}
       <Modal
         destroyOnClose
         title={<FormattedMessage id="latentTote.mainStationCode" />}
         visible={bindVisible}
-        onCancel={() => {
-          setBindVisible(false);
-        }}
+        onCancel={handelCancel}
+        width={420}
         footer={null}
       >
         <StationBindingComponent
-          submit={bindSubmit}
-          cancel={() => {
-            setBindVisible(false);
-          }}
-          data={selectedRowKeys}
+          submit={handleSubmit}
+          cancel={handelCancel}
+          data={selectedRows[0]}
         />
+      </Modal>
+      {/* 编辑 */}
+      <Modal
+        destroyOnClose
+        title={<FormattedMessage id="app.button.edit" />}
+        visible={editVisible}
+        onCancel={handelCancel}
+        width={420}
+        footer={null}
+      >
+        <StationEditComponent submit={handleSubmit} cancel={handelCancel} data={selectedRows[0]} />
+      </Modal>
+
+      {/* 工作站异常信息 */}
+      <Modal
+        destroyOnClose
+        title={<FormattedMessage id="latentTote.station.errorInfo" />}
+        visible={!isNull(detailRecord)}
+        onCancel={handelCancel}
+        width={520}
+        footer={null}
+      >
+        <StationFaultInfo cancel={handelCancel} record={detailRecord} />
       </Modal>
     </TablePageWrapper>
   );
