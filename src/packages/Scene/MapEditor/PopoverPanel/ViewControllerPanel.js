@@ -112,12 +112,7 @@ const ViewControllerPanel = (props) => {
               {...formItemLayout}
               label={<FormattedMessage id={'editor.view.hideBlock'} />}
             >
-              <Switch
-                checked={props.hideBlock}
-                onChange={(ev) => switchShowBlock(ev)}
-                checkedChildren={<CheckOutlined />}
-                unCheckedChildren={<CloseOutlined />}
-              />
+              <Switch checked={props.hideBlock} onChange={(ev) => switchShowBlock(ev)} />
             </Form.Item>
 
             {/* 坐标显示 */}

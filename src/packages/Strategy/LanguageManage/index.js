@@ -365,13 +365,10 @@ class LanguageManage extends React.Component {
   // 保存-update
   makeSureUpdate = async () => {
     const { editList, appCode } = this.state;
-    const currenUpdate = Object.values(editList).map((record) => {
-      return {
-        languageKey: record.languageKey,
-        ...record.languageMap,
-      };
-    });
-
+    const currenUpdate = Object.values(editList).map((record) => ({
+      languageKey: record.languageKey,
+      ...record.languageMap,
+    }));
     const translationDetail = generateUpdateDataToSave(currenUpdate);
     const response = await updateSysTranslation({ appCode, merge: true, translationDetail });
     if (!dealResponse(response, true)) {
@@ -620,24 +617,18 @@ class LanguageManage extends React.Component {
         />
 
         {/* 对比 */}
-        <Modal
-          width={adjustModalWidth()}
-          footer={null}
-          destroyOnClose
+        <DiffToSaveModal
           visible={diffToVisible}
+          editList={editList}
+          originData={this.state.mergeData}
+          makeSureUpdate={this.makeSureUpdate}
+          allLanguage={systemLanguage.map(({ code }) => code)}
           onCancel={() => {
             this.setState({
               diffToVisible: false,
             });
           }}
-        >
-          <DiffToSaveModal
-            originData={this.state.mergeData}
-            editList={editList}
-            allLanguage={systemLanguage.map(({ code }) => code)}
-            makeSureUpdate={this.makeSureUpdate}
-          />
-        </Modal>
+        />
 
         {/* 导入 */}
         <ImportApplicationModal

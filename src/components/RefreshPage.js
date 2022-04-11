@@ -7,9 +7,7 @@ const RefreshPage = () => {
         height: '100%',
         background: '#fff',
       }}
-    >
-      RefreshPage
-    </div>
+    />
   );
 };
 export default memo(RefreshPage);

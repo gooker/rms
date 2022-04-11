@@ -40,9 +40,6 @@ class MainLayout extends React.Component {
     if (isStrictNull(token)) {
       this.logout();
     } else {
-      // 刚进入页面需要首先处理namespace数据
-      await handleNameSpace(dispatch);
-
       // 开始初始化应用
       const validateResult = await queryUserByToken();
       if (validateResult && !dealResponse(validateResult)) {

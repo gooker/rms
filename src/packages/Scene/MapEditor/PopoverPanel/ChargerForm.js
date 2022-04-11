@@ -88,7 +88,14 @@ const ChargerForm = (props) => {
           });
         }}
       >
-        <AngleSelector />
+        <AngleSelector
+          addonLabel={{
+            0: formatMessage({ id: 'app.direction.topSide' }),
+            90: formatMessage({ id: 'app.direction.rightSide' }),
+            180: formatMessage({ id: 'app.direction.bottomSide' }),
+            270: formatMessage({ id: 'app.direction.leftSide' }),
+          }}
+        />
       </Form.Item>
 
       {/* 充电点 */}
