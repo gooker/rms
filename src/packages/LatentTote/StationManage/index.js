@@ -1,8 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Tag, Badge, Button, Row, Col, Modal, Form, Checkbox, Tooltip, message } from 'antd';
+import { Badge, Button, Row, Col, Modal, Form, Checkbox, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import Dictionary from '@/utils/Dictionary';
 import { fetchLatentToteStations, updateLatentToteStation } from '@/services/latentTote';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -13,35 +12,6 @@ import StationEditComponent from './components/StationEditComponent';
 import StationFaultInfo from './components/StationFaultInfo';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
-const mockdata = [
-  {
-    id: '111',
-    stationCode: '3',
-    hardwareId: '44',
-    ip: '8080',
-    port: 0,
-    manufacturer: 'hha',
-    hardwareVersion: '2.2',
-    softwareVersion: '2.3',
-    stationType: 'PICK',
-    status: 'NORMAL',
-    otherParameterMap: {
-      key1: 'v1',
-      key12: 'v12',
-      key13: 'v13',
-    },
-    simulatedStatus: true,
-    workStatus: 'START',
-    workModel: 'PICK',
-    maxPod: 10,
-  },
-];
-
-const { green, blue } = Dictionary('color');
-const stationType = {
-  PICK: green,
-  PUT_AWAY: blue,
-};
 
 const ChargerList = () => {
   const [loading, setLoading] = useState(false);
@@ -55,8 +25,7 @@ const ChargerList = () => {
 
   useEffect(() => {
     async function init() {
-      //   await getList();
-      setStationList(mockdata);
+      await getList();
     }
     init();
   }, []);
@@ -87,20 +56,6 @@ const ChargerList = () => {
       dataIndex: 'stationCode',
       align: 'center',
     },
-    // {
-    //   title: <FormattedMessage id="app.common.type" />,
-    //   dataIndex: 'stationType',
-    //   align: 'center',
-    //   render: (type) => {
-    //     if (!isNull(type)) {
-    //       return (
-    //         <Tag color={stationType[type]} key={type}>
-    //           {formatMessage({ id: `latentTote.station.type.${type}` })}
-    //         </Tag>
-    //       );
-    //     }
-    //   },
-    // },
 
     {
       title: <FormattedMessage id="app.common.status" />,

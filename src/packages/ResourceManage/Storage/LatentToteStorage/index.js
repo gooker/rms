@@ -5,6 +5,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchLatentTotePodTypes, deleteLatentTotePodTypes } from '@/services/latentTote';
 import LatentTotePodTemplate from './components/PodTemplateComponent';
+import StorageTemplateComponent from './components/StorageTemplateComponent';
 import commonStyles from '@/common.module.less';
 import { dealResponse, getSuffix, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -15,7 +16,7 @@ const colResponsive = {
   md: 12,
   lg: 12,
   xl: 8,
-  xxl:6,
+  xxl: 6,
 };
 const DescriptionItem = ({ span = 12, label, content }) => (
   <Col span={span} style={{ margin: '5px 0' }}>
@@ -177,7 +178,7 @@ const LatentToteStorage = () => {
       </div>
 
       {addVisible && (
-        <LatentTotePodTemplate
+        <StorageTemplateComponent
           visible={addVisible}
           updateRecord={editRecord}
           onClose={() => {

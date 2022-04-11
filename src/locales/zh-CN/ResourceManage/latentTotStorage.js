@@ -10,7 +10,9 @@ export default {
   'latentTote.podTemplateStorage.binTotalWeight': '料箱总重',
   'latentTote.podTemplateStorage.bearingTotalweight': '承载总重',
   'latentTote.podTemplateStorage.required': '输入',
-  'latentTote.podTemplateStorage.bearWeight.required': '请检查储位承重',
+  'latentTote.podTemplateStorage.bearWeight.required': '请检查储位承重', 
+  'latentTote.podTemplateStorage.column': '列',
+  'latentTote.podTemplateStorage.storage.tip': '必须选择连续层',
 
   // 任务管理
   'latentTote.mainStationCode': '工作站组',
