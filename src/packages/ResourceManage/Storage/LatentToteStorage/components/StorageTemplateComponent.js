@@ -9,13 +9,14 @@ import {
   isStrictNull,
   dealResponse,
 } from '@/utils/util';
+import { findIndex } from 'lodash';
 import StorageTemplateDetail from './StorageTemplateDetail';
 import { addOrUpdateLatentTotePodType } from '@/services/latentTote';
 
 const { formItemLayout } = getFormLayout(7, 16);
 
 const LatentTotePodTemplate = (props) => {
-  const { visible, onClose, updateRecord, onRefresh } = props;
+  const { visible, onClose, updateRecord, allData, onRefresh } = props;
   // 货架编码
   const [binData, setBinData] = useState(null);
   const [formRef] = Form.useForm();
@@ -57,7 +58,6 @@ const LatentTotePodTemplate = (props) => {
       rowBins.forEach((currentCol, c) => {
         currentArray.push({
           ...currentCol,
-          height,
           width: allWidth / currentColumn,
           depth: binDepth,
           barycenterX: getBaryX(c + 1, width, currentColumn),
@@ -84,7 +84,7 @@ const LatentTotePodTemplate = (props) => {
       if (columIndex <= ceilNum) {
         barycenterx = (1 / 2) * w + (ceilNum - columIndex) * w;
       } else {
-        barycenterx = (1 / 2) * w + (ceilNum - (columIndex - 1)) * w;
+        barycenterx = -((1 / 2) * w + (ceilNum - (columIndex - 1)) * w);
       }
     } else {
       if (columIndex === ceilNum) {
@@ -116,26 +116,38 @@ const LatentTotePodTemplate = (props) => {
   function onValuesChange(changedKey, allValues) {
     const { row: rows, column: columns, height } = allValues;
 
-    let currentBin = binData?.bins || [];
-    if (changedKey.hasOwnProperty('column')) {
-      currentBin = []; // 列变更重量不保留
+    let currentBin = binData || [];
+    // 列或者高度变更 不保留
+    if (changedKey.hasOwnProperty('column') || changedKey.hasOwnProperty('height')) {
+      currentBin = [];
     }
-    if (!isStrictNull(rows) && !isStrictNull(columns) && !isStrictNull(height)) {
+    const binLength = currentBin.length;
+
+    if (
+      ['column', 'row', 'height'].includes(Object.keys(changedKey)[0]) &&
+      !isStrictNull(rows) &&
+      !isStrictNull(columns) &&
+      !isStrictNull(height)
+    ) {
       const binsA = [];
       for (let r = 0; r < rows; r++) {
-        const currentRowArray = [];
-        for (let c = 0; c < columns; c++) {
-          const existItem = currentBin[r]?.[c] ?? {};
-          currentRowArray.push({
-            ...existItem,
-            code: `A${getCharCode(r, c + 1)}`,
-            height: height,
-            width: 0,
-            depth: 0,
-            barycenterX: 0,
-            barycenterY: 0,
-            barycenterZ: 0,
-          });
+        let currentRowArray = [];
+        if (binLength >= 1 && r < binLength) {
+          currentRowArray = [...currentBin[r]];
+        } else {
+          for (let c = 0; c < columns; c++) {
+            const existItem = currentBin[r]?.[c] ?? {};
+            currentRowArray.push({
+              ...existItem,
+              code: `A${getCharCode(r, c + 1)}`,
+              height: height,
+              width: 0,
+              depth: 0,
+              barycenterX: 0,
+              barycenterY: 0,
+              barycenterZ: 0,
+            });
+          }
         }
         binsA.push(currentRowArray);
       }
@@ -149,10 +161,10 @@ const LatentTotePodTemplate = (props) => {
       .validateFields()
       .then((values) => {
         // // 判断层重不为空
-        if (!validateWeight()) {
-          message.error(formatMessage({ id: 'latentTote.podTemplateStorage.bearWeight.required' }));
-          return;
-        }
+        // if (!validateWeight()) {
+        //   message.error(formatMessage({ id: 'latentTote.podTemplateStorage.bearWeight.required' }));
+        //   return;
+        // }
         sendRquset(values);
       })
       .catch(() => {});
@@ -215,6 +227,14 @@ const LatentTotePodTemplate = (props) => {
     }
   }
 
+  function checkNameDuplicate(name) {
+    const recordIndex = findIndex(allData, { name: updateRecord?.name });
+    const existNames = allData
+      .filter((item, index) => index !== recordIndex)
+      .map((item) => item.name);
+    return existNames.includes(name);
+  }
+
   return (
     <Modal
       destroyOnClose
@@ -242,6 +262,7 @@ const LatentTotePodTemplate = (props) => {
             <Form labelWrap form={formRef} {...formItemLayout} onValuesChange={onValuesChange}>
               <Form.Item
                 hidden
+                label={formatMessage({ id: 'app.common.code' })}
                 name="code"
                 initialValue={updateRecord?.code ?? `ltp_${getRandomString(8)}`}
               >
@@ -250,7 +271,20 @@ const LatentTotePodTemplate = (props) => {
               <Form.Item
                 label={formatMessage({ id: 'app.common.name' })}
                 name="name"
-                rules={[{ required: true }]}
+                rules={[
+                  { required: true },
+                  () => ({
+                    validator(_, value) {
+                      const isDuplicate = checkNameDuplicate(value);
+                      if (!isDuplicate) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(formatMessage({ id: 'app.form.name.duplicate' })),
+                      );
+                    },
+                  }),
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -314,7 +348,13 @@ const LatentTotePodTemplate = (props) => {
           </Col>
           <Col span={13}>
             <div style={{ height: '100%', borderLeft: '1px solid #efefef' }}>
-              {binData && <StorageTemplateDetail binData={binData} detailChange={detailChange} />}
+              {binData && (
+                <StorageTemplateDetail
+                  binData={binData}
+                  detailChange={detailChange}
+                  defaultHeight={formRef?.getFieldValue('height')}
+                />
+              )}
             </div>
           </Col>
         </Row>

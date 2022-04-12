@@ -4,7 +4,6 @@ import { PlusOutlined, ReloadOutlined, EditOutlined, DeleteOutlined } from '@ant
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchLatentTotePodTypes, deleteLatentTotePodTypes } from '@/services/latentTote';
-import LatentTotePodTemplate from './components/PodTemplateComponent';
 import StorageTemplateComponent from './components/StorageTemplateComponent';
 import commonStyles from '@/common.module.less';
 import { dealResponse, getSuffix, formatMessage } from '@/utils/util';
@@ -143,30 +142,8 @@ const LatentToteStorage = () => {
                       />
 
                       <DescriptionItem
-                        label={<FormattedMessage id={'latentTote.podTemplateStorage.sideWidth'} />}
-                        content={getSuffix(podType?.edgeWidth || 0, 'mm')}
-                      />
-
-                      <DescriptionItem
-                        label={
-                          <FormattedMessage id={'latentTote.podTemplateStorage.storageSpace'} />
-                        }
-                        content={getSuffix(podType?.binInterval || 0, 'mm')}
-                      />
-                      <DescriptionItem
                         label={<FormattedMessage id={'latentTote.podTemplateStorage.rowSpace'} />}
                         content={getSuffix(podType?.laminateHeight || 0, 'mm')}
-                      />
-
-                      <DescriptionItem
-                        label={<FormattedMessage id={'latentTote.podTemplateStorage.isCapping'} />}
-                        content={
-                          podType.isCapping ? (
-                            <FormattedMessage id="app.common.true" />
-                          ) : (
-                            <FormattedMessage id="app.common.false" />
-                          )
-                        }
                       />
                     </Row>
                   </Card>
@@ -186,6 +163,7 @@ const LatentToteStorage = () => {
             setEditRecord(null);
           }}
           onRefresh={getData}
+          allData={podTypesList}
         />
       )}
     </TablePageWrapper>

@@ -5,7 +5,7 @@ import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import styles from '../latentToteStorage.module.less';
 
 const LatentTotePodTemplateDetail = (props) => {
-  const { binData, detailChange } = props;
+  const { binData, defaultHeight, detailChange } = props;
   const [allRowsNum, setAllRowsNum] = useState([]);
   const [newBinsData, setNewBinsData] = useState([]); // 是反转后的binsdata
   const [totalWeight, setTotalWeight] = useState(null); // 总承重+货架本身的重量
@@ -135,6 +135,13 @@ const LatentTotePodTemplateDetail = (props) => {
     const columNum = c >= 10 ? c : `0${c}`;
     return `${charcode}${columNum}`;
   }
+  function getFloorHeight(idx) {
+    let rowHeight = defaultHeight;
+    newBinsData.map((rowdata, rowindex) => {
+      if (rowindex === idx) rowHeight = rowdata[0]?.height;
+    });
+    return (rowHeight / defaultHeight) * 26;
+  }
 
   function storageWeightChange(value, rowIndex) {
     const avarageWeight = value;
@@ -179,7 +186,7 @@ const LatentTotePodTemplateDetail = (props) => {
     <div style={{ padding: 10 }}>
       <div style={{ display: 'flex', marginTop: 20 }}>
         <div style={{ flex: 1 }}></div>
-        <div className={styles.floorWeight}>
+        <div className={styles.floorWeight} style={{ height: '28px' }}>
           {mergeVisible && (
             <Popover content={content} trigger="click" visible={popVisible}>
               <Button
@@ -205,9 +212,18 @@ const LatentTotePodTemplateDetail = (props) => {
         <div className={styles.storageContainer}>
           {Array.isArray(newBinsData) &&
             newBinsData.map((rowdata, rowindex) => {
+              let curentH = ((rowdata[0]?.height ?? 0) / defaultHeight) * 26; //每行的高度是一样
               return (
                 <>
-                  <div key={rowindex} style={{ display: 'flex' }} className={styles.floorContainr}>
+                  <div
+                    key={rowindex}
+                    style={{
+                      display: 'flex',
+                      height: `${curentH}px`,
+                      lineHeight: `${curentH}px`,
+                    }}
+                    className={styles.floorContainr}
+                  >
                     {rowdata.map((coldata, colindex) => {
                       return (
                         <>
@@ -225,8 +241,13 @@ const LatentTotePodTemplateDetail = (props) => {
         {/* 层 */}
         <div className={styles.floorWeight}>
           {allRowsNum.map((floor, findex) => {
+            let curentH = getFloorHeight(findex); //每行的高度是一样
             return (
-              <div style={{ display: 'flex' }} key={findex} className={styles.floorHeight}>
+              <div
+                style={{ display: 'flex', height: `${curentH}px`, lineHeight: `${curentH}px` }}
+                key={findex}
+                className={styles.floorHeight}
+              >
                 <Checkbox
                   onChange={(e) => {
                     onCheckChange(e, findex);
@@ -265,7 +286,7 @@ const LatentTotePodTemplateDetail = (props) => {
       </div>
 
       {/* 合计 */}
-      <div style={{ marginTop: 20 }}>
+      {/* <div style={{ marginTop: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <FormattedMessage id="latentTote.podTemplateStorage.bearingTotalweight" />
           <span style={{ marginLeft: 20 }}>
@@ -273,7 +294,7 @@ const LatentTotePodTemplateDetail = (props) => {
             {'kg'}
           </span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
