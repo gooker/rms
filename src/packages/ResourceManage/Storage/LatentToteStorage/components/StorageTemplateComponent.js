@@ -161,10 +161,10 @@ const LatentTotePodTemplate = (props) => {
       .validateFields()
       .then((values) => {
         // // 判断层重不为空
-        // if (!validateWeight()) {
-        //   message.error(formatMessage({ id: 'latentTote.podTemplateStorage.bearWeight.required' }));
-        //   return;
-        // }
+        if (!validateWeight()) {
+          message.error(formatMessage({ id: 'latentTote.podTemplateStorage.bearWeight.required' }));
+          return;
+        }
         sendRquset(values);
       })
       .catch(() => {});
@@ -227,12 +227,12 @@ const LatentTotePodTemplate = (props) => {
     }
   }
 
-  function checkNameDuplicate(name) {
-    const recordIndex = findIndex(allData, { name: updateRecord?.name });
+  function checkNameDuplicate(value, key) {
+    const recordIndex = findIndex(allData, { [key]: updateRecord?.[key] });
     const existNames = allData
       .filter((item, index) => index !== recordIndex)
-      .map((item) => item.name);
-    return existNames.includes(name);
+      .map((item) => item[key]);
+    return existNames.includes(value);
   }
 
   return (
@@ -261,10 +261,23 @@ const LatentTotePodTemplate = (props) => {
           <Col span={10}>
             <Form labelWrap form={formRef} {...formItemLayout} onValuesChange={onValuesChange}>
               <Form.Item
-                hidden
                 label={formatMessage({ id: 'app.common.code' })}
                 name="code"
                 initialValue={updateRecord?.code ?? `ltp_${getRandomString(8)}`}
+                rules={[
+                  { required: true },
+                  () => ({
+                    validator(_, value) {
+                      const isDuplicate = checkNameDuplicate(value, 'code');
+                      if (!isDuplicate) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error(formatMessage({ id: 'app.form.code.duplicate' })),
+                      );
+                    },
+                  }),
+                ]}
               >
                 <Input />
               </Form.Item>
@@ -275,7 +288,7 @@ const LatentTotePodTemplate = (props) => {
                   { required: true },
                   () => ({
                     validator(_, value) {
-                      const isDuplicate = checkNameDuplicate(value);
+                      const isDuplicate = checkNameDuplicate(value, 'name');
                       if (!isDuplicate) {
                         return Promise.resolve();
                       }
