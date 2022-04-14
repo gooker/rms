@@ -121,6 +121,7 @@ export default {
   'app.common.hidden': '隐藏',
   'app.common.notAvailable': '暂无',
   'app.common.loading': '加载中...',
+  'app.common.file': '文件',
 
   // 地图相关
   'app.map': '地图',

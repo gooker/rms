@@ -20,6 +20,8 @@ export default {
   'editor.cell.notExist': '点位不存在',
   'editor.logic.rangeStart': '范围起始值',
   'editor.logic.rangeEnd': '范围结束值',
+  'editor.navigationCellType': '导航点类型',
+  'editor.navigationCellType.none': '无',
 
   // 操作提示
   'editor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',

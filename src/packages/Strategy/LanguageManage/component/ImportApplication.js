@@ -48,7 +48,7 @@ const ImportApplication = (props) => {
           </Radio.Group>
         </Form.Item>
         <Form.Item
-          label={<FormattedMessage id="translator.languageManage.langFile" />}
+          label={<FormattedMessage id="app.common.file" />}
           name="languages"
           rules={[
             {

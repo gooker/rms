@@ -45,7 +45,7 @@ export default class Cell extends PIXI.Container {
       },
     };
 
-    this.addQR();
+    this.addQR('qrcode');
     this.addCellId();
     this.addCoordination();
     this.addSelectedBackGround(450, 400);
@@ -56,8 +56,13 @@ export default class Cell extends PIXI.Container {
     return this.states.mode;
   }
 
-  addQR() {
-    const QrTexture = getTextureFromResources('qrcode');
+  addQR(textureKey) {
+    if (!isNull(this.QR)) {
+      this.removeChild(this.QR);
+      this.QR.destroy();
+      this.QR = null;
+    }
+    const QrTexture = getTextureFromResources(textureKey);
     this.QR = new PIXI.Sprite(QrTexture);
     this.QR.anchor.set(0.5);
     this.QR.width = CellSize.width;
@@ -237,37 +242,33 @@ export default class Cell extends PIXI.Container {
 
     // typeData 有可能是 Texture 也有可能是 Sprite
     if (typeData) {
-      let sprite;
-      if (typeData instanceof PIXI.Texture) {
-        sprite = new PIXI.Sprite(typeData);
-        sprite.width = isStandard ? CellTypeSize.width : ScaledTypeIconSize;
+      if (['store_cell', 'block_cell'].includes(type)) {
+        this.data.types.set(type, null);
+        this.addQR(type);
       } else {
-        sprite = typeData;
-        sprite.scale.x = 1.5;
-      }
-      sprite.height = isStandard ? CellTypeSize.height : ScaledTypeIconSize;
-      sprite.anchor.set(0.5);
-      sprite.zIndex = InnerIndex.type;
+        let sprite;
+        if (typeData instanceof PIXI.Texture) {
+          sprite = new PIXI.Sprite(typeData);
+          sprite.width = isStandard ? CellTypeSize.width : ScaledTypeIconSize;
+        } else {
+          sprite = typeData;
+          sprite.scale.x = 1.5;
+        }
+        sprite.height = isStandard ? CellTypeSize.height : ScaledTypeIconSize;
+        sprite.anchor.set(0.5);
+        sprite.zIndex = InnerIndex.type;
 
-      // Y轴定位
-      sprite.y = isStandard
-        ? CellSize.height * 1.9
-        : CellSize.height / 2 - ScaledTypeIconSize / 2 - 40;
+        // Y轴定位
+        sprite.y = isStandard
+          ? CellSize.height * 1.9
+          : CellSize.height / 2 - ScaledTypeIconSize / 2 - 40;
 
-      this.data.types.set(type, sprite);
-      // 渲染当前添加的类型
-      this.addChild(sprite);
-      // 重算每一个类型Sprite的位置
-      this.reCalculatePosition();
-      // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
-      let tint = ClearCellTint;
-      if (this.data.types.has('store_cell')) {
-        tint = CellTypeColor.storeType;
+        this.data.types.set(type, sprite);
+        // 渲染当前添加的类型
+        this.addChild(sprite);
+        // 重算每一个类型Sprite的位置
+        this.reCalculatePosition();
       }
-      if (this.data.types.has('block_cell')) {
-        tint = CellTypeColor.blockType;
-      }
-      this.QR.tint = tint;
     }
   }
 

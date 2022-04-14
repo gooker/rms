@@ -43,7 +43,7 @@ export function handleNameSpace(dispatch) {
     try {
       let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
       let allEnvironment = await fetchAllEnvironmentList();
-      if (dealResponse(allEnvironment)) {
+      if (dealResponse(allEnvironment, null, false)) {
         allEnvironment = [];
       } else {
         dispatch({ type: 'global/saveAllEnvironments', payload: allEnvironment });

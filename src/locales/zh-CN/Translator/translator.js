@@ -11,7 +11,6 @@ export default {
   'translator.languageManage.addLanguage': '新增语种',
   'translator.languageManage.deleteLanguage': '删除语种',
   'translator.languageManage.langType': '语种类型',
-  'translator.languageManage.langFile': '文件',
   'translator.languageManage.applicationTips': '存在未保存的更新,是否保存?',
   'translator.languageManage.attention': '注意: ',
   'translator.languageManage.importTips': '导入会覆盖之前模式下的全部翻译',

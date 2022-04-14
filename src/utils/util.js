@@ -121,6 +121,7 @@ export function isStandardApiResponse(response) {
 export function dealResponse(response, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
   const successNotify = successMessage === true || !isStrictNull(successMessage);
+  const failNotify = failedMessage !== false;
   if (Array.isArray(response)) {
     let failed = false;
     for (let i = 0; i < response.length; i++) {
@@ -129,7 +130,7 @@ export function dealResponse(response, successMessage, failedMessage) {
         break;
       }
     }
-    if (failed) {
+    if (failed && failNotify) {
       message.error(formatMessage({ id: 'app.request.concurrent.failed' }));
       return true;
     }
@@ -137,7 +138,7 @@ export function dealResponse(response, successMessage, failedMessage) {
     if (response && isStandardApiResponse(response)) {
       const { message: errorMessage } = response;
       const defaultMessage = formatMessage({ id: 'app.message.operateFailed' });
-      message.error(failedMessage || errorMessage || defaultMessage);
+      failNotify && message.error(failedMessage || errorMessage || defaultMessage);
       return true;
     }
   }

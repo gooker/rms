@@ -50,7 +50,7 @@ const RichEditorFormModal = (props) => {
 
   const title = `${formatMessage({
     id: !data.errorCode ? 'app.button.add' : 'app.button.update',
-  })}${formatMessage({ id: 'richEditor.richtext' })}`;
+  })}${formatMessage({ id: 'richEditor.richText' })}`;
 
   return (
     <Modal

@@ -16,6 +16,7 @@ import PositionCell from '../components/PositionCell';
 import UploadPanel from '@/components/UploadPanel';
 import ConstructionInfoModal from '../components/ConstructionDraw/ConstructionInfoModal';
 import ConstructionDrawing from '../components/ConstructionDraw/ConstructionDrawing';
+import UploadMapModal from '@/packages/Scene/MapEditor/components/UploadMapModal';
 
 const EditorHeaderRightTools = (props) => {
   const {
@@ -55,25 +56,6 @@ const EditorHeaderRightTools = (props) => {
     } else {
       message.warn(formatMessage({ id: 'app.mapTool.saveMap' }));
     }
-  }
-
-  async function importMap(evt) {
-    let mapData = JSON.parse(evt.target.result);
-    // if (isCad) {
-    //   try {
-    //     mapData = await convertCadToMap(mapData);
-    //   } catch (error) {
-    //     message.error(error);
-    //     return;
-    //   }
-    // }
-    if (isNull(mapData.logicAreaList) || isNull(mapData.cellMap)) {
-      message.error(formatMessage({ id: 'editor.map.upload.mapIncomplete' }));
-      setUploadVisible(false);
-      return false;
-    }
-    dispatch({ type: 'editor/saveMap', payload: { ...mapData } });
-    setUploadVisible(false);
   }
 
   function exportMap() {
@@ -196,24 +178,13 @@ const EditorHeaderRightTools = (props) => {
       </span>
 
       {/* 上传地图 */}
-      <Modal
-        destroyOnClose
-        width={500}
+      <UploadMapModal
+        dispatch={dispatch}
         visible={uploadVisible}
         onCancel={() => {
           setUploadVisible(false);
         }}
-        title={formatMessage({ id: 'editor.map.upload' })}
-        footer={null}
-      >
-        <UploadPanel
-          onCancel={() => {
-            setUploadVisible(false);
-          }}
-          fileType={isCad}
-          analyzeFunction={importMap}
-        />
-      </Modal>
+      />
 
       {/* 定位点位 */}
       <Modal
