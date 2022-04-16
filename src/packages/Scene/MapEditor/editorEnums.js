@@ -11,6 +11,7 @@ import {
 import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
+export const FooterHeight = 25;
 export const LeftToolBarWidth = 65;
 export const RightToolBarWidth = 50;
 

@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { LoadingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { HeaderHeight, LeftCategory } from './enums';
+import { HeaderHeight, LeftCategory } from './editorEnums';
 import MapEditorHeader from './components/EditorHeader';
 import EditorBodyLeft from './components/EditorBodyLeft';
 import EditorBodyRight from './components/EditorBodyRight';

@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import { ZoneMarkerType } from '@/config/consts';
 import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { LeftCategory } from '@/packages/Scene/MapEditor/enums';
+import { LeftCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 20);

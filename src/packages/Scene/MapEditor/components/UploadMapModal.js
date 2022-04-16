@@ -3,11 +3,11 @@ import { formatMessage, getFormLayout } from '@/utils/util';
 import { Form, Modal, Select, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { NavigationCellType } from '@/mockData';
+import { connect } from '@/utils/RmsDva';
 
 const { formItemLayout } = getFormLayout(5, 18);
 const UploadMapModal = (props) => {
-  const { dispatch, visible, onCancel } = props;
+  const { dispatch, visible, onCancel, navigationCellType } = props;
   const [formRef] = Form.useForm();
 
   const normFile = (e) => {
@@ -78,7 +78,7 @@ const UploadMapModal = (props) => {
             <Select.Option value={'NONE'}>
               <FormattedMessage id={'editor.navigationCellType.none'} />
             </Select.Option>
-            {NavigationCellType.map(({ code, name }, index) => (
+            {navigationCellType.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>
@@ -89,4 +89,6 @@ const UploadMapModal = (props) => {
     </Modal>
   );
 };
-export default memo(UploadMapModal);
+export default connect(({ global }) => ({
+  navigationCellType: global.navigationCellType,
+}))(memo(UploadMapModal));

@@ -6,7 +6,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { EmergencyStopMode, MapSelectableSpriteType } from '@/config/consts';
 import { fetchEmergencyStopList } from '@/services/XIHE';
 import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
-import { LeftCategory } from '@/packages/Scene/MapEditor/enums';
+import { LeftCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
 import ButtonInput from '@/components/ButtonInput/ButtonInput';
 

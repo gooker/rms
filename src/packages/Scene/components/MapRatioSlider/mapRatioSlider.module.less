@@ -1,14 +1,18 @@
 .mapRatioSlider {
-  position: absolute;
-  right: 10px;
-  bottom: 5px;
   width: 20%;
-  height: 40px;
   padding: 0 10px;
-  background: #4f4f4f;
+  height: 100%;
   min-width: 333px;
-}
 
-.slider {
-  padding-top: 4px;
+  & > div {
+    height: 100%;
+  }
+
+  & > div:nth-child(2) {
+    :global {
+      .ant-slider {
+        padding: 1px 0 0 0;
+      }
+    }
+  }
 }

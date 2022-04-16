@@ -1,16 +1,22 @@
 import React from 'react';
+import { find } from 'lodash';
 import {
   getLineFromIdLineMap,
   getCurrentRouteMapData,
   getTextureFromResources,
   loadEditorExtraTextures,
 } from '@/utils/mapUtil';
-import { Cell, ResizeableEmergencyStop } from '@/entities';
+import { isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
+import { Cell, ResizeableEmergencyStop } from '@/entities';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
-import { isNull } from '@/utils/util';
+import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
+import { connect } from '@/utils/RmsDva';
 
+@connect(({ global }) => ({
+  navigationCellType: global.navigationCellType,
+}))
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
@@ -92,20 +98,25 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位相关 **********************
-  renderCells = (cells) => {
-    cells.forEach(({ id, x, y }) => {
+  renderCells = (payload) => {
+    const { navigationCellType } = this.props;
+    const { type, cells } = payload;
+    const color = find(navigationCellType, { code: type })?.color || '#ffffff';
+    cells.forEach((item) => {
       const cell = new Cell({
-        id,
-        x,
-        y,
+        type, // 标记是哪个厂商小车用的导航点
+        id: item.id, // 原始自增ID
+        oId: item.oId, // 导航点原始id
+        x: item.x,
+        y: item.y,
+        isControl: item.isControl, // 是否是管控点
+        color, // 导航点背景色
+
         interactive: true,
         select: this.select,
         showCoordinate: this.states.showCoordinate,
       });
-      if (cell.mode !== this.states.mapMode) {
-        cell.switchMode(this.states.mapMode);
-      }
-      this.idCellMap.set(id, cell);
+      this.idCellMap.set(item.id, cell); // Map关系保持不变
       this.pixiUtils.viewportAddChild(cell);
     });
   };
@@ -128,6 +139,15 @@ class EditorMapView extends BaseMap {
     // 新增点位
     if (type === 'add') {
       this.renderCells(payload);
+    }
+    // 取消管控点
+    if (type === 'cancelControl') {
+      if (Array.isArray(payload)) {
+        payload.forEach((xyId) => {
+          const cellEntity = this.idCellMap.get(xyId);
+          cellEntity && cellEntity.removeControl();
+        });
+      }
     }
     // 删除点位
     if (type === 'remove') {
@@ -451,7 +471,9 @@ class EditorMapView extends BaseMap {
 
   render() {
     // FBI WARNING: 这里一定要给canvas父容器一个"font-size:0", 否则会被撑开5px左右
-    return <div id="editorPixi" style={{ height: '100%', fontSize: 0 }} />;
+    return (
+      <div id="editorPixi" style={{ height: `calc(100% - ${FooterHeight}px)`, fontSize: 0 }} />
+    );
   }
 }
 export default EditorMapView;

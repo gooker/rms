@@ -7,6 +7,7 @@ import {
   addTemporaryId,
   batchGenerateLine,
   calculateCellDistance,
+  checkControlUsageByXY,
   generateCellId,
   generateCellIds,
   generateCellMapByRowsAndCols,
@@ -38,8 +39,9 @@ import {
   updateMap,
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
-import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/enums';
+import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
+import { MockMapData } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -83,128 +85,6 @@ export default {
 
   state: { ...EditorState },
 
-  reducers: {
-    unmount(state) {
-      return {
-        ...EditorState,
-      };
-    },
-    saveState(state, action) {
-      return {
-        ...state,
-        ...action.payload,
-      };
-    },
-    saveMapRatio(state, action) {
-      return {
-        ...state,
-        mapRatio: action.payload,
-      };
-    },
-    saveMapMinRatio(state, action) {
-      return {
-        ...state,
-        mapMinRatio: action.payload,
-        mapRatio: action.payload,
-      };
-    },
-    updateEditPanelVisible(state, action) {
-      if (action.payload === null) {
-        return {
-          ...state,
-          categoryPanel: null,
-          categoryProps: null,
-          lockedProps: null,
-        };
-      } else {
-        if (action.payload === RightCategory.Prop) {
-          const selection = state.selections[0];
-          return {
-            ...state,
-            categoryPanel: action.payload,
-            categoryProps: selection,
-            lockedProps: [CELL, ROUTE].includes(selection?.type) ? null : selection?.type,
-          };
-        }
-        return {
-          ...state,
-          categoryPanel: action.payload,
-        };
-      }
-    },
-    saveMapContext(state, action) {
-      return {
-        ...state,
-        mapContext: action.payload,
-      };
-    },
-
-    saveMapList(state, action) {
-      return {
-        ...state,
-        mapList: action.payload,
-      };
-    },
-
-    // 用于保存地图
-    saveCurrentMapOnly(state, action) {
-      return {
-        ...state,
-        currentMap: action.payload,
-      };
-    },
-    // 用于切换地图
-    saveCurrentMap(state, action) {
-      return {
-        ...state,
-        currentMap: action.payload,
-        currentLogicArea: 0,
-        currentRouteMap: 'DEFAULT',
-        preRouteMap: null,
-        selections: [],
-      };
-    },
-    saveCurrentLogicArea(state, action) {
-      // 电梯配置的特殊性，需要切换逻辑区，所以这里切换逻辑区就不删除selections中的电梯，并且在重新渲染电梯数据的时候替换掉
-      const { selections, categoryProps } = state;
-      let newSelections = [];
-      if (selections.length === 1 && selections[0] instanceof Elevator) {
-        newSelections = selections;
-      } else if (categoryProps instanceof Elevator) {
-        newSelections = [categoryProps];
-      }
-
-      return {
-        ...state,
-        currentLogicArea: action.payload,
-        currentRouteMap: 'DEFAULT',
-        preRouteMap: null,
-        selections: newSelections,
-      };
-    },
-    saveCurrentRouteMap(state, action) {
-      const currentLogicAreaData = state.currentMap.logicAreaList[state.currentLogicArea];
-      const currentRouteMapData = currentLogicAreaData.routeMap[state.currentRouteMap];
-      return {
-        ...state,
-        currentRouteMap: action.payload,
-        preRouteMap: currentRouteMapData,
-      };
-    },
-    savePreRouteMap(state, action) {
-      return {
-        ...state,
-        preRouteMap: action.payload,
-      };
-    },
-    saveCurrentCells(state, action) {
-      return {
-        ...state,
-        currentCells: action.payload,
-      };
-    },
-  },
-
   effects: {
     *editorInitial(_, { put, call }) {
       const mapList = yield call(fetchSectionMaps);
@@ -223,11 +103,12 @@ export default {
           message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
         } else {
           // 获取已激活地图数据并保存相关状态
-          const mapId = activeMap[0].id;
-          const currentMap = yield call(fetchMapDetail, mapId);
-          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-            yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
-          }
+          // const mapId = activeMap[0].id;
+          // const currentMap = yield call(fetchMapDetail, mapId);
+          // if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+          //   yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
+          // }
+          yield put({ type: 'saveCurrentMap', payload: addTemporaryId(MockMapData) });
         }
 
         /**
@@ -648,13 +529,12 @@ export default {
     // ********************************* 点位操作 ********************************* //
     // 新增点位
     *batchAddCells({ payload }, { select, put }) {
-      const { currentMap, currentCells } = yield select(({ editor }) => editor);
+      const { currentMap, currentCells, currentLogicArea } = yield select(({ editor }) => editor);
       const { rangeStart, rangeEnd } = getCurrentLogicAreaData();
-      const { cellMap } = currentMap;
+      const { cellMap, naviCellMap } = currentMap;
+      const { addWay, navigationCellType, syncAsController } = payload;
 
       let additionalCells = [];
-      const { addWay } = payload;
-      // 绝对值
       if (addWay === 'absolute') {
         const { rows, cols, autoGenCellIdStart, x, y, distanceX, distanceY } = payload;
         if (rows != null && cols != null) {
@@ -670,7 +550,6 @@ export default {
           );
         }
       } else {
-        // 偏移
         const { cellIds, dir, count, distance } = payload;
         const selectedCellsData = cellIds.map((cellId) => cellMap[cellId]);
         selectedCellsData.forEach((cellData) => {
@@ -685,21 +564,85 @@ export default {
         }));
       }
 
-      // 更新 cellMap & currentCells
+      // 再转换一次 additionalCells, 向数据里添加 naviId 和 logicId
+      additionalCells = additionalCells.map((cell) => ({
+        ...cell,
+        naviId: `${cell.x}_${cell.y}`,
+        logicId: currentLogicArea,
+      }));
+
+      // 更新 cellMap & currentCells & naviCellMap
       const centerMap = currentCells?.length === 0;
       const newCellMap = { ...cellMap };
-      const _currentCells = [...currentCells];
+      const newCurrentCells = [...currentCells];
+      const newNaviCellMap = { ...naviCellMap };
+      if (isNull(newNaviCellMap[navigationCellType])) {
+        newNaviCellMap[navigationCellType] = {};
+      }
 
+      // 新增流程只需要返回新增的naviCellMap即可
+      const result = [];
       additionalCells.forEach((cell) => {
-        newCellMap[cell.id] = { ...cell };
-        _currentCells.push({ ...cell });
+        const xyId = `${cell.x}_${cell.y}`;
+        // 这里加上逻辑区ID是因为多个逻辑区会存在相同坐标的点位
+        newCellMap[`${currentLogicArea}_${xyId}`] = { ...cell };
+        newCurrentCells.push({ ...cell });
+
+        const oId = `${navigationCellType}${cell.id}`;
+        const mapValue = {
+          ...cell,
+          oId,
+          id: xyId,
+          ox: cell.x,
+          oy: cell.y,
+          isControl: JSON.parse(syncAsController),
+        };
+        delete mapValue.naviId;
+        newNaviCellMap[navigationCellType][oId] = mapValue;
+        result.push({ ...mapValue, id: cell.id }); // 渲染点位不关注 x_y
       });
       currentMap.cellMap = newCellMap;
+      currentMap.naviCellMap = newNaviCellMap;
 
-      yield put({ type: 'saveCurrentCells', payload: _currentCells });
-      return { centerMap, additionalCells };
+      yield put({ type: 'saveCurrentCells', payload: newCurrentCells });
+      return { centerMap, additionalCells: result };
     },
 
+    // 新增管控点
+    *addControlFunction({ payload }, { select, put }) {},
+
+    // 取消管控点
+    *cancelControlFunction({ payload }, { select, put }) {
+      const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+
+      // 首先筛选出具有管控点属性的点位
+      const cellToHandle = selections.filter(
+        (item) => item.type === MapSelectableSpriteType.CELL && item.isControl,
+      );
+      if (cellToHandle.length === 0) {
+        message.info('所选点位不具有管控点属性');
+        return null;
+      } else {
+        const result = []; // number id
+        cellToHandle.forEach((cellEntity) => {
+          const { id, oId, naviCellType, x, y } = cellEntity;
+          result.push(id);
+          // 将对应车型的导航点的isControl置为false
+          const naviCells = currentMap.naviCellMap[naviCellType];
+          naviCells[oId].isControl = false;
+
+          // 对应cellMap中的管控点，如果已经不被引用则需要删除（方法是根据xy去其他车型的导航点查询是否有相同坐标的）
+          const restNaviCellMap = { ...currentMap.naviCellMap };
+          delete restNaviCellMap[naviCellType];
+          if (!checkControlUsageByXY(restNaviCellMap, x, y)) {
+            delete currentMap.cellMap[`${currentLogicArea}_${x}_${y}`];
+          }
+        });
+        return result;
+      }
+    },
+
+    // ********************************* 待调整 ********************************* //
     // 生成地址码
     *generateCellCode({ payload }, { select, put }) {
       // 取值轮询次数，保证不取到重复值且保证取值效率
@@ -1651,6 +1594,128 @@ export default {
         type: 'saveState',
         payload: { leftActiveCategory: payload },
       });
+    },
+  },
+
+  reducers: {
+    unmount(state) {
+      return {
+        ...EditorState,
+      };
+    },
+    saveState(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
+    saveMapRatio(state, action) {
+      return {
+        ...state,
+        mapRatio: action.payload,
+      };
+    },
+    saveMapMinRatio(state, action) {
+      return {
+        ...state,
+        mapMinRatio: action.payload,
+        mapRatio: action.payload,
+      };
+    },
+    updateEditPanelVisible(state, action) {
+      if (action.payload === null) {
+        return {
+          ...state,
+          categoryPanel: null,
+          categoryProps: null,
+          lockedProps: null,
+        };
+      } else {
+        if (action.payload === RightCategory.Prop) {
+          const selection = state.selections[0];
+          return {
+            ...state,
+            categoryPanel: action.payload,
+            categoryProps: selection,
+            lockedProps: [CELL, ROUTE].includes(selection?.type) ? null : selection?.type,
+          };
+        }
+        return {
+          ...state,
+          categoryPanel: action.payload,
+        };
+      }
+    },
+    saveMapContext(state, action) {
+      return {
+        ...state,
+        mapContext: action.payload,
+      };
+    },
+
+    saveMapList(state, action) {
+      return {
+        ...state,
+        mapList: action.payload,
+      };
+    },
+
+    // 用于保存地图
+    saveCurrentMapOnly(state, action) {
+      return {
+        ...state,
+        currentMap: action.payload,
+      };
+    },
+    // 用于切换地图
+    saveCurrentMap(state, action) {
+      return {
+        ...state,
+        currentMap: action.payload,
+        currentLogicArea: 0,
+        currentRouteMap: 'DEFAULT',
+        preRouteMap: null,
+        selections: [],
+      };
+    },
+    saveCurrentLogicArea(state, action) {
+      // 电梯配置的特殊性，需要切换逻辑区，所以这里切换逻辑区就不删除selections中的电梯，并且在重新渲染电梯数据的时候替换掉
+      const { selections, categoryProps } = state;
+      let newSelections = [];
+      if (selections.length === 1 && selections[0] instanceof Elevator) {
+        newSelections = selections;
+      } else if (categoryProps instanceof Elevator) {
+        newSelections = [categoryProps];
+      }
+
+      return {
+        ...state,
+        currentLogicArea: action.payload,
+        currentRouteMap: 'DEFAULT',
+        preRouteMap: null,
+        selections: newSelections,
+      };
+    },
+    saveCurrentRouteMap(state, action) {
+      const currentLogicAreaData = state.currentMap.logicAreaList[state.currentLogicArea];
+      const currentRouteMapData = currentLogicAreaData.routeMap[state.currentRouteMap];
+      return {
+        ...state,
+        currentRouteMap: action.payload,
+        preRouteMap: currentRouteMapData,
+      };
+    },
+    savePreRouteMap(state, action) {
+      return {
+        ...state,
+        preRouteMap: action.payload,
+      };
+    },
+    saveCurrentCells(state, action) {
+      return {
+        ...state,
+        currentCells: action.payload,
+      };
     },
   },
 };

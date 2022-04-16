@@ -20,6 +20,7 @@ export default {
     settingEStop: false, // 绘制区域用于配置地图功能
     saveMapLoading: false, // 保存地图
     activeMapLoading: false, // 激活地图
+    shownNavigationCellType: 'AA', // 显示的导航点类型
   },
 
   reducers: {
@@ -33,6 +34,12 @@ export default {
       return {
         ...state,
         positionVisible: action.payload,
+      };
+    },
+    updateShownNavigationCellType(state, action) {
+      return {
+        ...state,
+        shownNavigationCellType: action.payload,
       };
     },
     saveForceUpdate(state, action) {

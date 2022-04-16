@@ -9,21 +9,24 @@ import {
   SelectionType,
   MapSelectableSpriteType,
 } from '@/config/consts';
-import { getTextureFromResources } from '@/utils/mapUtil';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;
 const ClearCellTint = '0xFFFFFF';
 const NormalScaledCellTint = '0xD8BFD8';
-const InnerIndex = { QR: 1, type: 2, text: 3, bg: 4 };
+const InnerIndex = { navigation: 2, control: 1, type: 3, text: 3, bg: 4 };
 
 export default class Cell extends PIXI.Container {
   constructor(props) {
     super(props);
     this.type = MapSelectableSpriteType.CELL;
-    this.id = props.id;
+    this.naviCellType = props.type; // 导航点类型
+    this.id = props.id; // Integer ID
+    this.oId = props.oId;
     this.x = props.x;
     this.y = props.y;
+    this.color = props.color.replace('#', '0x');
+    this.isControl = props.isControl;
     this.width = CellSize.width;
     this.height = CellSize.height;
     this.zIndex = zIndex.cell;
@@ -41,12 +44,13 @@ export default class Cell extends PIXI.Container {
       mode: 'standard',
       shownData: {
         shown: true,
-        coord: props.showCoordinate,
       },
     };
 
-    this.addQR('qrcode');
-    this.addCellId();
+    this.addNavigation();
+    if (this.isControl) {
+      this.addControl();
+    }
     this.addCoordination();
     this.addSelectedBackGround(450, 400);
     this.interact(props.interactive);
@@ -56,80 +60,66 @@ export default class Cell extends PIXI.Container {
     return this.states.mode;
   }
 
-  addQR(textureKey) {
-    if (!isNull(this.QR)) {
-      this.removeChild(this.QR);
-      this.QR.destroy();
-      this.QR = null;
-    }
-    const QrTexture = getTextureFromResources(textureKey);
-    this.QR = new PIXI.Sprite(QrTexture);
-    this.QR.anchor.set(0.5);
-    this.QR.width = CellSize.width;
-    this.QR.height = CellSize.height;
-    this.QR.zIndex = InnerIndex.QR;
-    this.addChild(this.QR);
+  // 导航点标记（实心圆）
+  addNavigation() {
+    this.navigation = new PIXI.Graphics();
+    this.navigation.lineStyle(0);
+    this.navigation.beginFill(this.color.replace('#', '0x'));
+    this.navigation.drawCircle(0, 0, CellSize.width / 4);
+    this.navigation.endFill();
+    this.navigation.zIndex = InnerIndex.navigation;
+    this.addChild(this.navigation);
+
+    // 导航点id
+    this.navigationId = new BitText(this.oId, 0, 0, 0xffffff);
+    this.navigationId.anchor.set(0.5);
+    this.navigationId.y = CellSize.height + 5;
+    this.addChild(this.navigationId);
   }
 
-  addCellId(cellId) {
-    this.idText = new BitText(cellId ?? this.id, 0, CellSize.height / 2 + 5, 0xffffff, 70);
-    this.idText.anchor.set(0.5, 0);
-    this.idText.zIndex = InnerIndex.text;
-    this.addChild(this.idText);
+  // 管控点标记（空心圆）
+  addControl() {
+    const color = 0xffffff;
+    this.control = new PIXI.Graphics();
+    this.control.lineStyle(0);
+    this.control.beginFill(color);
+    this.control.drawCircle(0, 0, CellSize.width / 2);
+    this.control.endFill();
+    this.control.zIndex = InnerIndex.control;
+    this.addChild(this.control);
+
+    this.controlText = new BitText(this.id, 0, 0, 0xffffff);
+    this.controlText.anchor.set(0.5);
+    this.controlText.y = -CellSize.height - 5;
+    this.addChild(this.controlText);
   }
 
-  updateCellId(cellId) {
-    const { mode } = this.states;
-    let cellIdX = 0;
-    let cellIdY = CellSize.height / 2 + 5;
-    let textColor = 0xffffff;
-    let cellIdFontSize = 70;
-    if (mode === 'scaled') {
-      textColor = 0x000000;
-      cellIdFontSize = 140;
-      cellIdX = -ScaledCellSize / 2 + 20;
-      cellIdY = ScaledCellSize / 2;
+  // 移除管控点标记
+  removeControl() {
+    if (this.control) {
+      this.removeChild(this.control);
+      this.control.destroy(true);
+      this.control = null;
     }
 
-    this.id = cellId;
-    if (!isNull(this.idText)) {
-      this.removeChild(this.idText);
-      this.idText.destroy(true);
-      this.idText = null;
+    if (this.controlText) {
+      this.removeChild(this.controlText);
+      this.controlText.destroy(true);
+      this.controlText = null;
     }
-
-    // 更新点位ID文本位置和样式
-    this.idText = new BitText(cellId ?? this.id, cellIdX, cellIdY, textColor, cellIdFontSize);
-    mode === 'standard' ? this.idText.anchor.set(0.5, 0) : this.idText.anchor.set(0, 1);
-    this.idText.zIndex = InnerIndex.text;
-    this.addChild(this.idText);
   }
 
+  // 坐标
   addCoordination() {
     this.coordX = new BitText(this.x, -CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
     this.coordX.anchor.set(1, 1);
     this.coordX.zIndex = InnerIndex.text;
-    this.coordX.visible = this.states.shownData.coord;
     this.addChild(this.coordX);
 
     this.coordY = new BitText(this.y, CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
     this.coordY.anchor.set(0, 1);
     this.coordY.zIndex = InnerIndex.text;
-    this.coordY.visible = this.states.shownData.coord;
     this.addChild(this.coordY);
-  }
-
-  updateCoordination(x, y) {
-    this.removeChild(this.coordX);
-    this.removeChild(this.coordY);
-    this.coordX.destroy(true);
-    this.coordY.destroy(true);
-    this.coordX = null;
-    this.coordY = null;
-
-    this.x = x;
-    this.y = y;
-    this.addCoordination();
   }
 
   addSelectedBackGround(width, height, isStandard = true) {
@@ -150,14 +140,6 @@ export default class Cell extends PIXI.Container {
       this.removeChild(this.selectedBorderSprite);
       this.selectedBorderSprite = null;
     }
-  }
-
-  switchCoordinationShown(flag) {
-    if (this.states.shownData.shown) {
-      this.coordX.visible = flag;
-      this.coordY.visible = flag;
-    }
-    this.states.shownData.coord = flag;
   }
 
   /**
@@ -423,23 +405,6 @@ export default class Cell extends PIXI.Container {
       this.replaceId.anchor.set(0.5);
       this.replaceId.zIndex = InnerIndex.text;
       this.addChild(this.replaceId);
-    }
-  }
-
-  // 置灰(与高亮相反)
-  obscure(flag) {
-    if (flag) {
-      this.QR.tint = CellTypeColor.blockType;
-    } else {
-      // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
-      let tint = this.states.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
-      if (this.data.types.has('store_cell')) {
-        tint = CellTypeColor.storeType;
-      }
-      if (this.data.types.has('block_cell')) {
-        tint = CellTypeColor.blockType;
-      }
-      this.QR.tint = tint;
     }
   }
 }

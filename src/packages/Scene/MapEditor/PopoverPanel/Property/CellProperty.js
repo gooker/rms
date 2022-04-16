@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import { getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
-import { CellTypeSetting } from '@/packages/Scene/MapEditor/enums';
+import { CellTypeSetting } from '@/packages/Scene/MapEditor/editorEnums';
 import EditorCard from '../../components/EditorCard';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(7, 17);

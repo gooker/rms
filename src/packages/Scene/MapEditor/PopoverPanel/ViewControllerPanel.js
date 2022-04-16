@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import CostCheckBox from '@/packages/Scene/components/CostCheckBox';
-import { DirectionOption } from '../enums';
+import { DirectionOption } from '../editorEnums';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -154,8 +154,11 @@ const ViewControllerPanel = (props) => {
                 }}
               />
             </Form.Item>
+          </Form>
+        </div>
 
-            <Divider />
+        <div className={styles.panelBlock} style={{ marginTop: 5 }}>
+          <Form labelWrap>
             {/* 优先级显示 */}
             <Form.Item
               {...formItemLayout}

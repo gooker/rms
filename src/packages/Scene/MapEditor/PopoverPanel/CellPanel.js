@@ -44,6 +44,14 @@ const CellPanel = (props) => {
     }
   }
 
+  function addControl() {}
+
+  function cancelControl() {
+    dispatch({ type: 'editor/cancelControlFunction' }).then((result) => {
+      mapContext.updateCells({ type: 'cancelControl', payload: result });
+    });
+  }
+
   return (
     <div style={{ height }} className={commonStyles.categoryPanel}>
       <div>
@@ -66,10 +74,22 @@ const CellPanel = (props) => {
         ) : (
           <>
             <div className={styles.panelBlock}>
-              <div>
-                <FormattedMessage id={'editor.cell.batchOperation'} />
-              </div>
+              <div />
               <Row gutter={[10, 10]}>
+                {/* 批量添加 */}
+                <Col span={12}>
+                  <Button
+                    style={ButtonStyle}
+                    disabled={currentMap == null}
+                    onClick={() => {
+                      setFormCategory('batchAdd');
+                      setSecondTitle(formatMessage({ id: 'editor.cell.batchAdd' }));
+                    }}
+                  >
+                    <PlusCircleOutlined /> <FormattedMessage id="editor.cell.batchAdd" />
+                  </Button>
+                </Col>
+
                 {/* 批量添加 */}
                 <Col span={12}>
                   <Button
@@ -143,6 +163,68 @@ const CellPanel = (props) => {
                 </Col>
               </Row>
             </div>
+
+            {/* 导航点操作栏 */}
+            <div style={{ marginTop: 15 }} className={styles.panelBlock}>
+              <div>
+                <FormattedMessage id={'app.map.navigationCell'} />
+              </div>
+              <div>
+                <Row gutter={[10, 10]}>
+                  {/* 新增导航点*/}
+                  <Col span={12}>
+                    <Button
+                      style={ButtonStyle}
+                      disabled={currentMap == null}
+                      onClick={() => {
+                        setFormCategory('batchAdd');
+                        setSecondTitle(formatMessage({ id: 'editor.cell.batchAdd' }));
+                      }}
+                    >
+                      <PlusCircleOutlined /> <FormattedMessage id="editor.cell.batchAdd" />
+                    </Button>
+                  </Col>
+
+                  {/* 删除导航点*/}
+                  <Col span={12}>
+                    <Button
+                      style={ButtonStyle}
+                      disabled={currentMap == null}
+                      onClick={() => {
+                        setFormCategory('batchAdd');
+                        setSecondTitle(formatMessage({ id: 'editor.cell.batchAdd' }));
+                      }}
+                    >
+                      <PlusCircleOutlined /> <FormattedMessage id="editor.cell.batchAdd" />
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+
+            {/* 管控点操作栏 */}
+            <div style={{ marginTop: 15 }} className={styles.panelBlock}>
+              <div>
+                <FormattedMessage id={'app.map.controlCell'} />
+              </div>
+              <div>
+                <Row gutter={[10, 10]}>
+                  <Col span={12}>
+                    {/* 添加管控点 */}
+                    <Button style={ButtonStyle} onClick={addControl}>
+                      <PlusCircleOutlined /> <FormattedMessage id="editor.cell.addControl" />
+                    </Button>
+                  </Col>
+                  <Col span={12}>
+                    {/* 取消管控点 */}
+                    <Button style={ButtonStyle} onClick={cancelControl}>
+                      <PlusCircleOutlined /> <FormattedMessage id="editor.cell.cancelControl" />
+                    </Button>
+                  </Col>
+                </Row>
+              </div>
+            </div>
+
             <div style={{ marginTop: 15 }} className={styles.panelBlock}>
               <div>
                 <FormattedMessage id={'editor.cell.batchSelection'} />

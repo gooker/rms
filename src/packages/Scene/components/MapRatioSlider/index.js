@@ -54,9 +54,9 @@ const MapRatioSlider = (props) => {
   return (
     <Row className={styles.mapRatioSlider} gutter={10}>
       <Col className={commonStyle.flexCenter}>
-        <MinusOutlined onClick={onDecrease} />
+        <MinusOutlined onClick={onDecrease} style={{ color: '#e8e8e8' }} />
       </Col>
-      <Col flex={1} className={styles.slider}>
+      <Col flex={1}>
         <Slider
           min={0}
           max={100}
@@ -67,7 +67,7 @@ const MapRatioSlider = (props) => {
         />
       </Col>
       <Col className={commonStyle.flexCenter}>
-        <PlusOutlined onClick={onIncrease} />
+        <PlusOutlined onClick={onIncrease} style={{ color: '#e8e8e8' }} />
       </Col>
       <Col className={commonStyle.flexCenter}>
         <Dropdown overlay={menu} trigger={['click']}>

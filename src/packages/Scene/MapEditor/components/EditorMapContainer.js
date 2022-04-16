@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { throttle } from 'lodash';
+import { isPlainObject, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
@@ -9,21 +9,38 @@ import { Elevator } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
 import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
-import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
-import { HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../enums';
+import {
+  FooterHeight,
+  HeaderHeight,
+  LeftCategory,
+  LeftToolBarWidth,
+  RightToolBarWidth,
+} from '../editorEnums';
 import styles from '../editorLayout.module.less';
+import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
-  const { dispatch, mapRatio, mapMinRatio, mapContext, shortcutToolVisible, selections } = props;
-  const { currentMap, currentLogicArea, currentRouteMap, preRouteMap, leftActiveCategory } = props;
+  const { dispatch, mapRatio, mapContext, shortcutToolVisible, selections } = props;
+  const {
+    currentMap,
+    currentLogicArea,
+    currentRouteMap,
+    preRouteMap,
+    leftActiveCategory,
+    navigationCellType,
+    shownNavigationCellType,
+  } = props;
 
   useEffect(() => {
     const functionId = getRandomString(8);
     function resize(rect) {
       const { width, height } = rect;
       const { mapContext: _mapContext } = window.$$state().editor;
-      _mapContext.resize(width - LeftToolBarWidth - RightToolBarWidth, height - HeaderHeight);
+      _mapContext.resize(
+        width - LeftToolBarWidth - RightToolBarWidth,
+        height - HeaderHeight - FooterHeight,
+      );
     }
     EventManager.subscribe('resize', resize, functionId);
     return () => {
@@ -101,45 +118,48 @@ const EditorMapContainer = (props) => {
   function renderMap() {
     dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
     // 渲染点位(不渲染电梯内部点)
-    const elevatorInnerCells = [];
-    if (Array.isArray(currentMap.elevatorList)) {
-      currentMap.elevatorList.forEach((item) => {
-        elevatorInnerCells.push(...item.innerCellId);
-      });
-    }
+    // const elevatorInnerCells = [];
+    // if (Array.isArray(currentMap.elevatorList)) {
+    //   currentMap.elevatorList.forEach((item) => {
+    //     elevatorInnerCells.push(...item.innerCellId);
+    //   });
+    // }
 
-    const cellsToRender = [];
-    const { rangeStart, rangeEnd } = currentMap?.logicAreaList?.[currentLogicArea];
-    for (let index = rangeStart; index <= rangeEnd; index++) {
-      const cellData = currentMap.cellMap[index];
-      if (cellData && !elevatorInnerCells.includes(cellData.id)) {
-        cellsToRender.push(cellData);
-      }
+    let cellsToRender = [];
+    const naviCellMap = currentMap.naviCellMap?.[shownNavigationCellType];
+    if (isPlainObject(naviCellMap)) {
+      // 将naviCells中的id(xyId)替换为number ID
+      cellsToRender = Object.values(naviCellMap)
+        .filter((item) => item.logicId === currentLogicArea)
+        .map((item) => ({
+          ...item,
+          id: currentMap.cellMap[`${currentLogicArea}_${item.id}`]?.id,
+        }));
     }
-    mapContext.renderCells(cellsToRender);
+    mapContext.renderCells({ type: 'AA', cells: cellsToRender });
     dispatch({ type: 'editor/saveCurrentCells', payload: cellsToRender });
 
     // 渲染电梯
-    if (Array.isArray(currentMap.elevatorList)) {
-      const elevatorData = renderElevatorList(
-        currentMap.elevatorList,
-        cellsToRender,
-        currentLogicArea,
-      );
-      const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
-      const elevators = mapContext.renderElevator(logicElevator, false);
-
-      // 判断是否有需要在切换逻辑区时候自动选中的电梯
-      if (
-        logicElevator.length > 0 &&
-        selections.length === 1 &&
-        selections[0] instanceof Elevator
-      ) {
-        const currentElevator = elevators[selections[0].id];
-        currentElevator.onSelect();
-        window.$$dispatch({ type: 'editor/updateSelections', payload: [currentElevator] });
-      }
-    }
+    // if (Array.isArray(currentMap.elevatorList)) {
+    //   const elevatorData = renderElevatorList(
+    //     currentMap.elevatorList,
+    //     cellsToRender,
+    //     currentLogicArea,
+    //   );
+    //   const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
+    //   const elevators = mapContext.renderElevator(logicElevator, false);
+    //
+    //   // 判断是否有需要在切换逻辑区时候自动选中的电梯
+    //   if (
+    //     logicElevator.length > 0 &&
+    //     selections.length === 1 &&
+    //     selections[0] instanceof Elevator
+    //   ) {
+    //     const currentElevator = elevators[selections[0].id];
+    //     currentElevator.onSelect();
+    //     window.$$dispatch({ type: 'editor/updateSelections', payload: [currentElevator] });
+    //   }
+    // }
   }
 
   function renderLogicArea() {
@@ -330,21 +350,17 @@ const EditorMapContainer = (props) => {
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
-      <EditorMapView />
+      <EditorMapView navigationCellType={navigationCellType} />
+      <EditorFooter mapRatio={mapRatio} onSliderChange={onSliderChange} />
       <EditorMask />
 
       {shortcutToolVisible && <EditorShortcutTool />}
-      {/* 平板不用显示滑条 */}
-      {!window.currentPlatForm.isTablet && (
-        <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
-      )}
     </div>
   );
 };
 export default connect(({ editor, editorView }) => {
   const {
     mapRatio,
-    mapMinRatio,
     currentMap,
     currentLogicArea,
     currentRouteMap,
@@ -355,7 +371,6 @@ export default connect(({ editor, editorView }) => {
   } = editor;
   return {
     mapRatio,
-    mapMinRatio,
     currentMap,
     currentLogicArea,
     currentRouteMap,
@@ -364,5 +379,6 @@ export default connect(({ editor, editorView }) => {
     leftActiveCategory,
     selections,
     shortcutToolVisible: editorView.shortcutToolVisible,
+    shownNavigationCellType: editorView.shownNavigationCellType,
   };
 })(memo(EditorMapContainer));

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Checkbox } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { CostOptions } from '@/packages/Scene/MapEditor/enums';
+import { CostOptions } from '@/packages/Scene/MapEditor/editorEnums';
 import { formatMessage } from '@/utils/util';
 
 const CostCheckBox = (props) => {

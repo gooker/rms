@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { RightCategory, EditorRightTools, RightToolBarWidth } from '../enums';
+import { RightCategory, EditorRightTools, RightToolBarWidth } from '../editorEnums';
 import RestPanel from '../PopoverPanel/RestPanel';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CostPanel from '../PopoverPanel/CostPanel';

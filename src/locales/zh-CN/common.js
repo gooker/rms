@@ -150,6 +150,8 @@ export default {
   'app.map.latentPod': '潜伏货架',
   'app.map.latentTote': '潜伏料箱',
   'app.map.tote': '料箱货架',
+  'app.map.navigationCell': '导航点',
+  'app.map.controlCell': '管控点',
 
   // 小车类型
   'app.agvType.LatentLifting': '潜伏车',

@@ -3,7 +3,7 @@ import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { DumpBasket } from '@/entities';
-import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../enums';
+import { EditorLeftTools, LeftCategory, LeftToolBarWidth } from '../editorEnums';
 import styles from '../editorLayout.module.less';
 
 // 这里使用class组件原因在于需要对renderer.plugins.interaction进行绑定&解绑事件, class组件处理起来更方便

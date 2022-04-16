@@ -10,6 +10,7 @@ import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateU
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
+import { NavigationCellType } from '@/mockData';
 
 export default {
   namespace: 'global',
@@ -46,6 +47,7 @@ export default {
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
+    navigationCellType: [...NavigationCellType],
   },
 
   reducers: {

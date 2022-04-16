@@ -1505,3 +1505,20 @@ export function adaptLabelSize({ width, height }, labelSize, isRect) {
   }
   return [textWidth, textHeight];
 }
+
+export function checkControlUsageByXY(naviCellMap, x, y) {
+  // {AA:{ AA1: {} }, }
+  const naviCellGroup = Object.values(naviCellMap);
+  for (let i = 0; i < naviCellGroup.length; i++) {
+    // { AA1: {} }
+    const naviCells = Object.values(naviCellGroup[i]);
+    for (let j = 0; j < naviCells.length; j++) {
+      const naviCell = naviCells[j];
+      if (naviCell.x === x && naviCell.y === y) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}

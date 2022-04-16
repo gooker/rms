@@ -8,7 +8,7 @@ import {
   getUploadedImageDetail,
 } from '@/utils/util';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
-import { LeftCategory } from '@/packages/Scene/MapEditor/enums';
+import { LeftCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ZoneMarkerType } from '@/config/consts';
 import LabelInputModal from './LabelInputModal';
