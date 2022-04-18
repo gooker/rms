@@ -46,7 +46,7 @@ const TabButton = (props) => {
     setTimeout(() => {
       _tabs.splice(index, 1, originTab);
       dispatch({ type: 'menu/saveState', payload: { tabs: [..._tabs] } });
-    }, 0);
+    });
   }
 
   const menu = (

@@ -27,6 +27,8 @@ const AllPriorities = [10, 20, 100, 1000];
 
 function initState(context) {
   context.idCellMap = new Map(); // {cellId: [CellEntity]}
+  context.xyidCellMap = new Map(); // {xyId: [CellEntity]}
+
   context.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
   context.workStationMap = new Map(); // {stopCellId: [Entity]}
   context.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}

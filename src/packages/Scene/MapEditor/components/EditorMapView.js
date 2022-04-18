@@ -116,7 +116,9 @@ class EditorMapView extends BaseMap {
         select: this.select,
         showCoordinate: this.states.showCoordinate,
       });
-      this.idCellMap.set(item.id, cell); // Map关系保持不变
+      // 为了后续获取点位实体方便，这里使用两个维度维护cell的Mapping关系
+      this.idCellMap.set(item.id, cell);
+      this.xyidCellMap.set(`${item.x}_${item.y}`, cell);
       this.pixiUtils.viewportAddChild(cell);
     });
   };
@@ -140,15 +142,26 @@ class EditorMapView extends BaseMap {
     if (type === 'add') {
       this.renderCells(payload);
     }
+    // 新增管控点
+    if (type === 'addControl') {
+      if (Array.isArray(payload)) {
+        payload.forEach(({ id, xyId }) => {
+          const cellEntity = this.xyidCellMap.get(xyId);
+          cellEntity && cellEntity.addControl(id);
+        });
+      }
+    }
     // 取消管控点
     if (type === 'cancelControl') {
       if (Array.isArray(payload)) {
         payload.forEach((xyId) => {
-          const cellEntity = this.idCellMap.get(xyId);
+          const cellEntity = this.xyidCellMap.get(xyId);
           cellEntity && cellEntity.removeControl();
         });
       }
     }
+
+    // *************** 以下待调整 *************** //
     // 删除点位
     if (type === 'remove') {
       this.removeCells(payload);

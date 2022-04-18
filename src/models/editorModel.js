@@ -12,16 +12,17 @@ import {
   generateCellIds,
   generateCellMapByRowsAndCols,
   getAngle,
+  getCellMapId,
+  getCellMapItem,
   getCurrentLogicAreaData,
   getCurrentRouteMapData,
-  getCurveMapKey,
   getDistance,
+  getNaviCellMapItem,
   moveCell,
   renderChargerList,
   renderElevatorList,
   renderWorkStationList,
   syncLineState,
-  transformCurveData,
   validateMapData,
 } from '@/utils/mapUtil';
 import { Elevator, LogicArea } from '@/entities';
@@ -62,7 +63,6 @@ const EditorState = {
   currentMap: null,
   currentLogicArea: 0, // id
   currentRouteMap: 'DEFAULT', // code
-  currentCells: [], // 当前视图的点位数据
   preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
   mapContext: null, // 地图实体对象
   mapMinRatio: null, // 地图最小缩放比例
@@ -87,6 +87,7 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
+      // TODO: 获取所有导航点类型数据
       const mapList = yield call(fetchSectionMaps);
       if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
         // 检查是否有地图数据
@@ -402,29 +403,7 @@ export default {
     },
 
     // 高级删除, 选择多种元素进行同意删除
-    *advancedDeletion({ payload }, { select, put }) {
-      const { currentMap, currentCells } = yield select(({ editor }) => editor);
-      const groupedSelections = groupBy(payload, 'type');
-      const types = Object.keys(groupedSelections);
-      for (let i = 0; i < types.length; i++) {
-        const type = types[i];
-        switch (type) {
-          case MapSelectableSpriteType.CELL: {
-            const cells = groupedSelections[type];
-            const cellIds = cells.map(({ id }) => id);
-            cellIds.forEach((id) => {
-              delete currentMap.cellMap[id];
-            });
-            const _currentCells = currentCells.filter((item) => !cellIds.includes(item.id));
-            yield put({ type: 'saveCurrentCells', payload: _currentCells });
-            break;
-          }
-          // TODO:
-          default:
-            break;
-        }
-      }
-    },
+    *advancedDeletion({ payload }, { select, put }) {},
 
     // ********************************* 逻辑区操作 ********************************* //
     *fetchCreateLogicArea({ payload }, { select, put }) {
@@ -527,9 +506,56 @@ export default {
     },
 
     // ********************************* 点位操作 ********************************* //
-    // 新增点位
+    // 新增单个导航点
+    *addNavigation({ payload }, { select }) {
+      const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+      const { navigationCellType, code, x, y, syncAsController } = payload;
+
+      if (isNull(currentMap.naviCellMap[navigationCellType])) {
+        currentMap.naviCellMap[navigationCellType] = {};
+      }
+      const typeNavigations = currentMap.naviCellMap[navigationCellType];
+      // 判断该车型下是否有相同导航点ID
+      if (!isNull(typeNavigations[code])) {
+        message.error('导航点编码已存在');
+        return null;
+      }
+      // 判断该车型下是否有相同的导航点坐标
+      const findResult = find(Object.values(typeNavigations), { x, y });
+      if (findResult) {
+        message.error('导航点坐标已存在');
+        return null;
+      }
+      // 保存数据
+      currentMap.naviCellMap[navigationCellType][code] = getNaviCellMapItem(
+        code,
+        currentLogicArea,
+        x,
+        y,
+        syncAsController,
+      );
+
+      let id;
+      if (isNull(currentMap.cellMap[`${currentLogicArea}_${x}_${y}`])) {
+        id = getCellMapId(Object.values(currentMap.cellMap));
+        currentMap.cellMap[`${currentLogicArea}_${x}_${y}`] = getCellMapItem(
+          id,
+          currentLogicArea,
+          x,
+          y,
+        );
+      } else {
+        id = currentMap.cellMap[`${currentLogicArea}_${x}_${y}`].id;
+      }
+      return {
+        type: navigationCellType,
+        cells: [{ ...currentMap.naviCellMap[navigationCellType][code], id }],
+      };
+    },
+
+    // 批量新增导航点
     *batchAddCells({ payload }, { select, put }) {
-      const { currentMap, currentCells, currentLogicArea } = yield select(({ editor }) => editor);
+      const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
       const { rangeStart, rangeEnd } = getCurrentLogicAreaData();
       const { cellMap, naviCellMap } = currentMap;
       const { addWay, navigationCellType, syncAsController } = payload;
@@ -570,11 +596,11 @@ export default {
         naviId: `${cell.x}_${cell.y}`,
         logicId: currentLogicArea,
       }));
-
-      // 更新 cellMap & currentCells & naviCellMap
-      const centerMap = currentCells?.length === 0;
+      // 只有一开始不存在点位时候批量新增完点位才需要居中
+      const centerMap =
+        Object.values(cellMap).filter((item) => item.logicId === currentLogicArea).length === 0;
+      // 更新 cellMap  & naviCellMap
       const newCellMap = { ...cellMap };
-      const newCurrentCells = [...currentCells];
       const newNaviCellMap = { ...naviCellMap };
       if (isNull(newNaviCellMap[navigationCellType])) {
         newNaviCellMap[navigationCellType] = {};
@@ -586,7 +612,6 @@ export default {
         const xyId = `${cell.x}_${cell.y}`;
         // 这里加上逻辑区ID是因为多个逻辑区会存在相同坐标的点位
         newCellMap[`${currentLogicArea}_${xyId}`] = { ...cell };
-        newCurrentCells.push({ ...cell });
 
         const oId = `${navigationCellType}${cell.id}`;
         const mapValue = {
@@ -595,7 +620,7 @@ export default {
           id: xyId,
           ox: cell.x,
           oy: cell.y,
-          isControl: JSON.parse(syncAsController),
+          isControl: syncAsController,
         };
         delete mapValue.naviId;
         newNaviCellMap[navigationCellType][oId] = mapValue;
@@ -604,15 +629,93 @@ export default {
       currentMap.cellMap = newCellMap;
       currentMap.naviCellMap = newNaviCellMap;
 
-      yield put({ type: 'saveCurrentCells', payload: newCurrentCells });
       return { centerMap, additionalCells: result };
     },
 
-    // 新增管控点
-    *addControlFunction({ payload }, { select, put }) {},
+    // 批量删除导航点
+    *deleteNavigations(_, { select }) {
+      const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+      const { shownNavigationCellType } = yield select(({ editorView }) => editorView);
 
-    // 取消管控点
-    *cancelControlFunction({ payload }, { select, put }) {
+      const selectCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
+      const result = { cell: [], line: [] };
+      selectCells.forEach((cell) => {
+        // 1. 删除 naviCellMap 中数据
+        const naviCell = currentMap.naviCellMap[shownNavigationCellType][cell.oId];
+        delete currentMap.naviCellMap[shownNavigationCellType][cell.oId];
+        result.cell.push(`${cell.x}_${cell.y}`);
+
+        // 2. 删除cellMap中数据: 如果该导航点也是管控点，那么需要删除对应的cellMap数据和对应的线条，前提是在cellMap的数据没被别的导航点引用
+        if (naviCell.isControl) {
+          const restNaviCellMap = { ...currentMap.naviCellMap };
+          delete restNaviCellMap[shownNavigationCellType];
+          if (!checkControlUsageByXY(restNaviCellMap, cell.x, cell.y)) {
+            const cellMapKey = `${currentLogicArea}_${cell.x}_${cell.y}`;
+            delete currentMap.cellMap[cellMapKey];
+          }
+        }
+      });
+
+      // 3. 删除相关线条
+      const currentRouteMapData = getCurrentRouteMapData();
+      let relations = [...(currentRouteMapData.relations || [])];
+      relations = relations.filter((item) => {
+        if (selectCells.includes(item.source) || selectCells.includes(item.target)) {
+          result.line.push(item);
+          return false;
+        }
+        return true;
+      });
+      currentRouteMapData.relations = relations;
+
+      return result;
+    },
+
+    // 新增管控点(针对这个坐标上的所有车型的导航点都会被被挂载管控功能)
+    *addControlFunction({ payload }, { select }) {
+      const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+
+      // 首先筛选出具有管控点属性的点位
+      const cellToHandle = selections.filter(
+        (item) => item.type === MapSelectableSpriteType.CELL && !item.isControl,
+      );
+      if (cellToHandle.length === 0) {
+        message.info('所选点位已具有管控点属性');
+        return null;
+      } else {
+        const result = []; // number id
+        cellToHandle.forEach((cellEntity) => {
+          const { oId, naviCellType, x, y } = cellEntity;
+
+          // 将对应车型的导航点的isControl置为true
+          const naviCells = currentMap.naviCellMap[naviCellType];
+          naviCells[oId].isControl = true;
+
+          // 根据 logicId_x_y 检查是否有对应的管控点数据存在
+          let id;
+          const cellMapId = `${currentLogicArea}_${x}_${y}`;
+          if (isNull(currentMap.cellMap[cellMapId])) {
+            // 页面新增的cellMap元素ID自增，导入产生新的cellMap元素ID从1千万开始（约定）
+            id = getCellMapId(Object.values(currentMap.cellMap));
+            currentMap.cellMap[cellMapId] = {
+              id,
+              logicId: currentLogicArea,
+              naviId: `${x}_${y}`,
+              x,
+              y,
+            };
+          } else {
+            id = currentMap.cellMap[cellMapId].id;
+          }
+
+          result.push({ id, xyId: `${x}_${y}` });
+        });
+        return result;
+      }
+    },
+
+    // 取消管控点(针对这个坐标上的所有车型的导航点都会被取消管控功能)
+    *cancelControlFunction({ payload }, { select }) {
       const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
 
       // 首先筛选出具有管控点属性的点位
@@ -625,8 +728,8 @@ export default {
       } else {
         const result = []; // number id
         cellToHandle.forEach((cellEntity) => {
-          const { id, oId, naviCellType, x, y } = cellEntity;
-          result.push(id);
+          const { oId, naviCellType, x, y } = cellEntity;
+          result.push(`${x}_${y}`);
           // 将对应车型的导航点的isControl置为false
           const naviCells = currentMap.naviCellMap[naviCellType];
           naviCells[oId].isControl = false;
@@ -790,42 +893,6 @@ export default {
       });
 
       return { type, payload: response };
-    },
-
-    // 删除点位
-    *batchDeleteCells(_, { select, put }) {
-      const { selections, currentMap, currentCells } = yield select(({ editor }) => editor);
-
-      const selectCells = selections
-        .filter((item) => item.type === MapSelectableSpriteType.CELL)
-        .map(({ id }) => id);
-      const result = { cell: selectCells, line: [] };
-
-      // 删除 currentMap 中的点位
-      const cellMap = { ...currentMap.cellMap };
-      selectCells.forEach((cellId) => {
-        delete cellMap[cellId];
-      });
-      currentMap.cellMap = cellMap;
-
-      // 删除 currentCells 数据
-      const _currentCells = currentCells.filter((item) => !selectCells.includes(item.id));
-
-      // 删除相关线条
-      const currentRouteMapData = getCurrentRouteMapData();
-      let relations = [...(currentRouteMapData.relations || [])];
-      // 1. 删除相关曲线
-      relations = relations.filter((item) => {
-        if (selectCells.includes(item.source) || selectCells.includes(item.target)) {
-          result.line.push(item);
-          return false;
-        }
-        return true;
-      });
-      currentRouteMapData.relations = relations;
-
-      yield put({ type: 'saveCurrentCells', payload: _currentCells });
-      return result;
     },
 
     // 移动点位
@@ -1039,8 +1106,9 @@ export default {
     *generateCostLines({ payload }, { select, put }) {
       const { selections, currentMap } = yield select(({ editor }) => editor);
 
+      // 筛选区具有管控点属性的点位
       const selectCells = selections
-        .filter((item) => item.type === MapSelectableSpriteType.CELL)
+        .filter((item) => item.type === MapSelectableSpriteType.CELL && item.isControl)
         .map(({ id }) => id);
 
       // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
@@ -1053,9 +1121,15 @@ export default {
         }
       });
 
+      // 生成 {[id]:Cell} 数据
+      const idCellMap = {};
+      Object.values(currentMap.cellMap).forEach((item) => {
+        idCellMap[item.id] = item;
+      });
+
       // 生成新线条
       const { dir, value } = payload;
-      const selectedCells = selectCells.map((cellId) => currentMap.cellMap[cellId]);
+      const selectedCells = selectCells.map((cellId) => idCellMap[cellId]);
       const newLines = batchGenerateLine(selectedCells, dir, value);
       const result = { add: [], remove: [] };
 
@@ -1084,107 +1158,6 @@ export default {
       currentRouteMapData.relations = [...Object.values(lineRelationsMap)];
       yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
       return result;
-    },
-
-    *generateCostCurve({ payload }, { select, put }) {
-      const { selections, currentMap } = yield select(({ editor }) => editor);
-      const cellMap = currentMap.cellMap;
-
-      const selectCells = selections
-        .filter((item) => item.type === MapSelectableSpriteType.CELL)
-        .map(({ id }) => id);
-
-      // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
-      const currentRouteMapData = getCurrentRouteMapData();
-      const relations = currentRouteMapData.relations || [];
-      const curveRelationsMap = {}; // 直线Map
-      const lines = [];
-      relations.forEach((relation) => {
-        if (relation.type === 'curve') {
-          curveRelationsMap[getCurveMapKey(relation)] = relation;
-        } else {
-          // 直线不和曲线放在一起处理
-          lines.push(relation);
-        }
-      });
-
-      const { dir: direction, value: cost } = payload;
-
-      // 已选点位
-      const cells = selectCells.map((cellId) => {
-        const { id, x, y } = cellMap[cellId];
-        return { id, x, y };
-      });
-
-      // 三个点位必须包括: 存储点, 入弯点和出弯点(约定: 离存储点最近的点是出弯点)
-      if (cells.length !== 3) return formatMessage({ id: 'app.models.specification' });
-      // 存储点和出弯点必定在一条直线上，要么是X轴要么是Y轴。所以最多要group两次
-      let coordBase = 'y';
-      let group = groupBy(cells, 'x');
-      if (Object.keys(group).length !== 2) {
-        coordBase = 'x';
-        group = groupBy(cells, 'y');
-        if (Object.keys(group).length !== 2)
-          return formatMessage({ id: 'app.models.specification' });
-      }
-
-      // NOTE: 找到贝塞尔线定位点. 这里只需要算出 secondary 的坐标, primary&third在地图上是实际存在的
-      const bezierPoints = {
-        primary: 0,
-        secondary: { x: 0, y: 0 },
-        third: 0,
-      };
-      const sortedCells = sortBy(cells, [coordBase]);
-      const exitPoint = sortedCells[1];
-      Object.values(group).forEach((item) => {
-        // 处理入弯点
-        if (item.length === 1) {
-          const entryPoint = item[0];
-          if (direction === 'IN') {
-            bezierPoints.primary = entryPoint.id;
-            bezierPoints.third = exitPoint.id;
-          } else {
-            bezierPoints.primary = exitPoint.id;
-            bezierPoints.third = entryPoint.id;
-          }
-          if (coordBase === 'y') {
-            bezierPoints.secondary.y = entryPoint.y;
-          } else {
-            bezierPoints.secondary.x = entryPoint.x;
-          }
-        }
-
-        // 处理出弯点和存储点
-        if (item.length === 2) {
-          if (coordBase === 'y') {
-            bezierPoints.secondary.x = exitPoint.x;
-          } else {
-            bezierPoints.secondary.y = exitPoint.y;
-          }
-        }
-      });
-
-      // 获取角度，只需要算 primary --> third 的角度
-      const primaryCell = cellMap[bezierPoints.primary];
-      const thirdCell = cellMap[bezierPoints.third];
-      const angle = getAngle(
-        { x: primaryCell.x, y: primaryCell.y },
-        { x: thirdCell.x, y: thirdCell.y },
-      );
-
-      // 为了配合后台数据接口，这里做一下数据转换
-      const bezier = transformCurveData({ ...bezierPoints, cost, angle, type: 'curve' });
-      const curveRelationsMapKey = getCurveMapKey(bezier);
-
-      // 新增或者删除
-      if (cost === -1) {
-        delete curveRelationsMap[curveRelationsMapKey];
-      } else {
-        curveRelationsMap[curveRelationsMapKey] = bezier;
-      }
-      currentRouteMapData.relations = [...Object.values(curveRelationsMap), ...lines];
-      yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
-      return bezier;
     },
 
     *deleteLines(_, { select, put }) {
@@ -1709,12 +1682,6 @@ export default {
       return {
         ...state,
         preRouteMap: action.payload,
-      };
-    },
-    saveCurrentCells(state, action) {
-      return {
-        ...state,
-        currentCells: action.payload,
       };
     },
   },

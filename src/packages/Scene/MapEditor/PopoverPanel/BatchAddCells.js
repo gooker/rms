@@ -70,7 +70,7 @@ const BatchAddCells = (props) => {
         <Form.Item
           name={'syncAsController'}
           label={formatMessage({ id: 'editor.batchAddCell.syncAsController' })}
-          initialValue={'true'}
+          initialValue={true}
           valuePropName={'checked'}
         >
           <Switch />

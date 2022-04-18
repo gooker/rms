@@ -49,7 +49,7 @@ export default class Cell extends PIXI.Container {
 
     this.addNavigation();
     if (this.isControl) {
-      this.addControl();
+      this.addControl(this.id);
     }
     this.addCoordination();
     this.addSelectedBackGround(450, 400);
@@ -72,13 +72,18 @@ export default class Cell extends PIXI.Container {
 
     // 导航点id
     this.navigationId = new BitText(this.oId, 0, 0, 0xffffff);
-    this.navigationId.anchor.set(0.5);
-    this.navigationId.y = CellSize.height + 5;
+    this.navigationId.anchor.set(0.5, 0);
+    this.navigationId.y = CellSize.height / 2 + 10;
     this.addChild(this.navigationId);
   }
 
   // 管控点标记（空心圆）
-  addControl() {
+  addControl(id) {
+    this.removeControl();
+
+    this.isControl = true;
+    this.id = id;
+
     const color = 0xffffff;
     this.control = new PIXI.Graphics();
     this.control.lineStyle(0);
@@ -90,12 +95,15 @@ export default class Cell extends PIXI.Container {
 
     this.controlText = new BitText(this.id, 0, 0, 0xffffff);
     this.controlText.anchor.set(0.5);
-    this.controlText.y = -CellSize.height - 5;
+    this.controlText.y = -CellSize.height;
     this.addChild(this.controlText);
   }
 
   // 移除管控点标记
   removeControl() {
+    this.isControl = false;
+    this.id = null;
+
     if (this.control) {
       this.removeChild(this.control);
       this.control.destroy(true);

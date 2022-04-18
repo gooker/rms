@@ -21,7 +21,7 @@ import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
-  const { dispatch, mapRatio, mapContext, shortcutToolVisible, selections } = props;
+  const { dispatch, mapRatio, mapContext, shortcutToolVisible } = props;
   const {
     currentMap,
     currentLogicArea,
@@ -379,6 +379,6 @@ export default connect(({ editor, editorView }) => {
     leftActiveCategory,
     selections,
     shortcutToolVisible: editorView.shortcutToolVisible,
-    shownNavigationCellType: editorView.shownNavigationCellType,
+    shownNavigationCellType: editorView.shownNavigationCellType[0], // FIXME:
   };
 })(memo(EditorMapContainer));

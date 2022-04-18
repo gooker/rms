@@ -1522,3 +1522,48 @@ export function checkControlUsageByXY(naviCellMap, x, y) {
 
   return false;
 }
+
+/**
+ * 顺序取值, 原理是基于reduce方法判断数组元素是否是顺序的，如果不是顺序的就是插值
+ * @param cellMapValues {Array}
+ */
+export function getCellMapId(cellMapValues) {
+  const sortedControlCellId = cellMapValues.map(({ id }) => id).sort((a, b) => a - b);
+  let result;
+  try {
+    sortedControlCellId.reduce((pre, next) => {
+      if (pre + 1 !== next) {
+        result = pre + 1;
+        throw new Error('found');
+      } else {
+        return next;
+      }
+    });
+    return sortedControlCellId[sortedControlCellId.length - 1] + 1;
+  } catch (e) {
+    return result;
+  }
+}
+
+export function getCellMapItem(id, logicId, x, y) {
+  return {
+    id,
+    logicId,
+    naviId: `${x}_${y}`,
+    x,
+    y,
+  };
+}
+
+export function getNaviCellMapItem(oId, logicId, x, y, isControl) {
+  return {
+    id: `${x}_${y}`,
+    isControl,
+    logicId,
+    oId,
+    ox: x,
+    oy: y,
+    x: x,
+    y: y,
+  };
+}

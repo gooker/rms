@@ -62,6 +62,9 @@ export default {
 
   // 点位操作
   'editor.cell.code': '地址码',
+  'editor.cell.abscissa': '横坐标',
+  'editor.cell.ordinate': '纵坐标',
+  'editor.cell.addNavigation': '添加导航点',
   'editor.cell.batchAdd': '批量添加',
   'editor.cell.delete': '删除点位',
   'editor.cell.move': '移动点位',
@@ -71,7 +74,6 @@ export default {
   'editor.cell.horizontalSelection': '横向选择',
   'editor.cell.verticalSelection': '纵向选择',
   'editor.cell.batchSelection': '批量选择',
-
   'editor.cell.addControl': '添加管控点',
   'editor.cell.cancelControl': '取消管控点',
 
