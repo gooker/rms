@@ -53,15 +53,19 @@ const CellPanel = (props) => {
   }
 
   function addControl() {
-    dispatch({ type: 'editor/addControlFunction' }).then((result) => {
-      mapContext.updateCells({ type: 'addControl', payload: result });
+    const naviCells = getSelectionNaviCells();
+    dispatch({ type: 'editor/addControlFunction', payload: naviCells }).then((result) => {
+      mapContext.updateCells({ type: 'addControl', payload: Object.entries(result) });
     });
   }
 
   function cancelControl() {
-    dispatch({ type: 'editor/cancelControlFunction' }).then((result) => {
-      mapContext.updateCells({ type: 'cancelControl', payload: result });
-    });
+    const naviCells = getSelectionNaviCells();
+    dispatch({ type: 'editor/cancelControlFunction', payload: naviCells }).then(
+      ({ cells, lines }) => {
+        mapContext.updateCells({ type: 'cancelControl', payload: Object.entries(cells) });
+      },
+    );
   }
 
   /**

@@ -146,7 +146,7 @@ class EditorMapView extends BaseMap {
     // 新增管控点
     if (type === 'addControl') {
       if (Array.isArray(payload)) {
-        payload.forEach(({ id, xyId }) => {
+        payload.forEach(([xyId, id]) => {
           const cells = this.xyCellMap.get(xyId);
           if (Array.isArray(cells)) {
             cells.forEach((cellEntity) => cellEntity.addControl(id));
@@ -157,10 +157,14 @@ class EditorMapView extends BaseMap {
     // 取消管控点
     if (type === 'cancelControl') {
       if (Array.isArray(payload)) {
-        payload.forEach((xyId) => {
+        payload.forEach(([xyId, oIds]) => {
           const cells = this.xyCellMap.get(xyId);
           if (Array.isArray(cells)) {
-            cells.forEach((cellEntity) => cellEntity.removeControl());
+            cells.forEach((cellEntity) => {
+              if (oIds.includes(cellEntity.oId)) {
+                cellEntity.removeControl();
+              }
+            });
           }
         });
       }

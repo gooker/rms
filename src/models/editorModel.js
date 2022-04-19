@@ -665,36 +665,24 @@ export default {
 
     // 新增管控点(针对这个坐标上的所有车型的导航点都会被被挂载管控功能)
     *addControlFunction({ payload }, { select }) {
-      const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+      const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
 
       // 首先筛选出具有管控点属性的点位
-      const cellToHandle = selections.filter(
-        (item) => item.type === MapSelectableSpriteType.CELL && !item.isControl,
-      );
+      const cellToHandle = payload.filter((item) => !item.isControl);
       if (cellToHandle.length === 0) {
         message.info('所选点位已具有管控点属性');
         return null;
       } else {
-        const result = []; // number id
+        const result = {}; // {x_y:id}
         cellToHandle.forEach((cellEntity) => {
           const { x, y } = cellEntity;
-          // 根据 logicId_x_y 检查是否有对应的管控点数据存在
-          let id;
           const cellMapId = `${currentLogicArea}_${x}_${y}`;
           if (isNull(currentMap.cellMap[cellMapId])) {
             // 页面新增的cellMap元素ID自增，导入产生新的cellMap元素ID从1千万开始（约定）
-            id = getCellMapId(Object.values(currentMap.cellMap));
-            currentMap.cellMap[cellMapId] = {
-              id,
-              logicId: currentLogicArea,
-              naviId: `${x}_${y}`,
-              x,
-              y,
-            };
-          } else {
-            id = currentMap.cellMap[cellMapId].id;
+            const id = getCellMapId(Object.values(currentMap.cellMap));
+            currentMap.cellMap[cellMapId] = getCellMapItem(id, currentLogicArea, x, y);
+            result[`${x}_${y}`] = id;
           }
-          result.push({ id, xyId: `${x}_${y}` });
         });
         return result;
       }
@@ -702,21 +690,22 @@ export default {
 
     // 取消管控点(针对这个坐标上的所有车型的导航点都会被取消管控功能)
     *cancelControlFunction({ payload }, { select }) {
-      const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+      const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
 
       // 首先筛选出具有管控点属性的点位
-      const cellToHandle = selections.filter(
-        (item) => item.type === MapSelectableSpriteType.CELL && item.isControl,
-      );
+      const cellToHandle = payload.filter((item) => item.isControl);
       if (cellToHandle.length === 0) {
         message.info('所选点位不具有管控点属性');
         return null;
       } else {
-        const result = []; // Number ID
+        const result = { cells: [], lines: [] }; // {x_y:[oId,...]}
         cellToHandle.forEach((cellEntity) => {
-          const { x, y } = cellEntity;
+          const { oId, x, y } = cellEntity;
           delete currentMap.cellMap[`${currentLogicArea}_${x}_${y}`];
-          result.push(`${x}_${y}`);
+          if (isNull(result.cells[`${x}_${y}`])) {
+            result.cells[`${x}_${y}`] = [];
+          }
+          result.cells[`${x}_${y}`].push(oId);
         });
 
         //TODO: 处理线条
