@@ -547,10 +547,13 @@ export default {
       } else {
         id = currentMap.cellMap[`${currentLogicArea}_${x}_${y}`].id;
       }
-      return {
-        type: navigationCellType,
-        cells: [{ ...currentMap.naviCellMap[navigationCellType][code], id }],
-      };
+      return [
+        {
+          ...currentMap.naviCellMap[navigationCellType][code],
+          id,
+          naviCellType: navigationCellType,
+        },
+      ];
     },
 
     // 批量新增导航点
@@ -633,41 +636,30 @@ export default {
     },
 
     // 批量删除导航点
-    *deleteNavigations(_, { select }) {
-      const { selections, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
-      const { shownNavigationCellType } = yield select(({ editorView }) => editorView);
+    *deleteNavigations({ payload }, { select }) {
+      const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+      const { types, naviCells } = payload;
+      const result = { cells: {}, lines: {} }; // {cells:{x_y:[oId]}, lines:{}}
 
-      const selectCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
-      const result = { cell: [], line: [] };
-      selectCells.forEach((cell) => {
-        // 1. 删除 naviCellMap 中数据
-        const naviCell = currentMap.naviCellMap[shownNavigationCellType][cell.oId];
-        delete currentMap.naviCellMap[shownNavigationCellType][cell.oId];
-        result.cell.push(`${cell.x}_${cell.y}`);
+      // 判断是否需要删除管控点相关数据
+      const removeControl =
+        naviCells.filter((item) => !types.includes(item.naviCellType)).length === 0;
 
-        // 2. 删除cellMap中数据: 如果该导航点也是管控点，那么需要删除对应的cellMap数据和对应的线条，前提是在cellMap的数据没被别的导航点引用
-        if (naviCell.isControl) {
-          const restNaviCellMap = { ...currentMap.naviCellMap };
-          delete restNaviCellMap[shownNavigationCellType];
-          if (!checkControlUsageByXY(restNaviCellMap, cell.x, cell.y)) {
-            const cellMapKey = `${currentLogicArea}_${cell.x}_${cell.y}`;
-            delete currentMap.cellMap[cellMapKey];
+      // 挨个删除naviCellMap、cellMap、线条数据
+      naviCells.forEach(({ x, y, naviCellType, oId }) => {
+        if (types.includes(naviCellType)) {
+          delete currentMap.naviCellMap[naviCellType][oId];
+          if (removeControl) {
+            // 管控点数据
+            delete currentMap.cellMap[`${currentLogicArea}_${x}_${y}`];
+            // TODO: 线条
           }
+          if (isNull(result.cells[`${x}_${y}`])) {
+            result.cells[`${x}_${y}`] = [];
+          }
+          result.cells[`${x}_${y}`].push(oId);
         }
       });
-
-      // 3. 删除相关线条
-      const currentRouteMapData = getCurrentRouteMapData();
-      let relations = [...(currentRouteMapData.relations || [])];
-      relations = relations.filter((item) => {
-        if (selectCells.includes(item.source) || selectCells.includes(item.target)) {
-          result.line.push(item);
-          return false;
-        }
-        return true;
-      });
-      currentRouteMapData.relations = relations;
-
       return result;
     },
 
@@ -685,12 +677,7 @@ export default {
       } else {
         const result = []; // number id
         cellToHandle.forEach((cellEntity) => {
-          const { oId, naviCellType, x, y } = cellEntity;
-
-          // 将对应车型的导航点的isControl置为true
-          const naviCells = currentMap.naviCellMap[naviCellType];
-          naviCells[oId].isControl = true;
-
+          const { x, y } = cellEntity;
           // 根据 logicId_x_y 检查是否有对应的管控点数据存在
           let id;
           const cellMapId = `${currentLogicArea}_${x}_${y}`;
@@ -707,7 +694,6 @@ export default {
           } else {
             id = currentMap.cellMap[cellMapId].id;
           }
-
           result.push({ id, xyId: `${x}_${y}` });
         });
         return result;
@@ -726,21 +712,14 @@ export default {
         message.info('所选点位不具有管控点属性');
         return null;
       } else {
-        const result = []; // number id
+        const result = []; // Number ID
         cellToHandle.forEach((cellEntity) => {
-          const { oId, naviCellType, x, y } = cellEntity;
+          const { x, y } = cellEntity;
+          delete currentMap.cellMap[`${currentLogicArea}_${x}_${y}`];
           result.push(`${x}_${y}`);
-          // 将对应车型的导航点的isControl置为false
-          const naviCells = currentMap.naviCellMap[naviCellType];
-          naviCells[oId].isControl = false;
-
-          // 对应cellMap中的管控点，如果已经不被引用则需要删除（方法是根据xy去其他车型的导航点查询是否有相同坐标的）
-          const restNaviCellMap = { ...currentMap.naviCellMap };
-          delete restNaviCellMap[naviCellType];
-          if (!checkControlUsageByXY(restNaviCellMap, x, y)) {
-            delete currentMap.cellMap[`${currentLogicArea}_${x}_${y}`];
-          }
         });
+
+        //TODO: 处理线条
         return result;
       }
     },

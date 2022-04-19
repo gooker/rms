@@ -14,7 +14,6 @@ import { isNull, isStrictNull, dealResponse, formatMessage, getPlateFormType } f
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
-import { handleNameSpace } from '@/utils/init';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -103,7 +102,7 @@ class MainLayout extends React.Component {
               // 获取所有车类型
               this.loadAllAgvTypes();
 
-              // 轮询告警数量
+              // FIXME:轮询告警数量(这个会引发一个问题，connect/mapStateToProps/selections)
               AlertCountPolling.start((value) => {
                 dispatch({ type: 'global/updateAlertCount', payload: value });
               });

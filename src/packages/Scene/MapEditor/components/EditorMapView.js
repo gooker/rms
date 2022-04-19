@@ -1,5 +1,4 @@
 import React from 'react';
-import { find } from 'lodash';
 import {
   getLineFromIdLineMap,
   getCurrentRouteMapData,
@@ -35,12 +34,9 @@ class EditorMapView extends BaseMap {
     };
 
     // 核心业务逻辑参数
-    this.cellXMap = new Map(); // {[x]:[Cell]}
-    this.cellYMap = new Map(); // {[y]:[Cell]}
     this.fixedEStopMap = new Map(); // 固定紧急避让区
-
-    // 选择相关
     this.selectedCells = []; // 缓存选中的点位ID
+    this.naviCellTypeColor = null; // 不同导航点类型颜色
   }
 
   async componentDidMount() {
@@ -59,9 +55,6 @@ class EditorMapView extends BaseMap {
 
   // 数据清理
   clearEditorMapData = () => {
-    this.cellXMap.clear();
-    this.cellYMap.clear();
-    this.selectedCells = [];
     this.clearEditorRouteData();
   };
 
@@ -100,41 +93,49 @@ class EditorMapView extends BaseMap {
   // ************************ 点位相关 **********************
   renderCells = (payload) => {
     const { navigationCellType } = this.props;
-    const { type, cells } = payload;
-    const color = find(navigationCellType, { code: type })?.color || '#ffffff';
-    cells.forEach((item) => {
+    if (isNull(this.naviCellTypeColor)) {
+      this.naviCellTypeColor = {};
+      navigationCellType.forEach(({ code, color }) => {
+        this.naviCellTypeColor[code] = color;
+      });
+    }
+
+    payload.forEach((item) => {
       const cell = new Cell({
-        type, // 标记是哪个厂商小车用的导航点
+        type: item.naviCellType, // 标记是哪个厂商小车用的导航点
         id: item.id, // 原始自增ID
         oId: item.oId, // 导航点原始id
         x: item.x,
         y: item.y,
         isControl: item.isControl, // 是否是管控点
-        color, // 导航点背景色
+        color: this.naviCellTypeColor[item.naviCellType], // 导航点背景色
 
         interactive: true,
         select: this.select,
         showCoordinate: this.states.showCoordinate,
       });
-      // 为了后续获取点位实体方便，这里使用两个维度维护cell的Mapping关系
-      this.idCellMap.set(item.id, cell);
-      this.xyidCellMap.set(`${item.x}_${item.y}`, cell);
+      const xyCellMapKey = `${item.x}_${item.y}`;
+      if (!Array.isArray(this.xyCellMap.get(xyCellMapKey))) {
+        this.xyCellMap.set(xyCellMapKey, [cell]);
+      } else {
+        this.xyCellMap.get(xyCellMapKey).push(cell);
+      }
       this.pixiUtils.viewportAddChild(cell);
     });
   };
 
-  removeCells = (cells) => {
-    if (cells.length > 0) {
-      cells.forEach((cellId) => {
-        const cellEntity = this.idCellMap.get(cellId);
-        // 首先从地图上移除
-        this.pixiUtils.viewportRemoveChild(cellEntity);
-        // 销毁对象
-        cellEntity.destroy({ children: true });
-        // 剔除对象
-        this.idCellMap.delete(cellId);
-      });
-    }
+  removeCells = ([xyId, oIds]) => {
+    const cells = this.xyCellMap.get(xyId);
+    const hold = [];
+    cells.forEach((item) => {
+      if (oIds.includes(item.oId)) {
+        this.pixiUtils.viewportRemoveChild(item);
+        item.destroy();
+      } else {
+        hold.push(item);
+      }
+    });
+    this.xyCellMap.set(xyId, hold);
   };
 
   updateCells = ({ type, payload }) => {
@@ -146,8 +147,10 @@ class EditorMapView extends BaseMap {
     if (type === 'addControl') {
       if (Array.isArray(payload)) {
         payload.forEach(({ id, xyId }) => {
-          const cellEntity = this.xyidCellMap.get(xyId);
-          cellEntity && cellEntity.addControl(id);
+          const cells = this.xyCellMap.get(xyId);
+          if (Array.isArray(cells)) {
+            cells.forEach((cellEntity) => cellEntity.addControl(id));
+          }
         });
       }
     }
@@ -155,17 +158,21 @@ class EditorMapView extends BaseMap {
     if (type === 'cancelControl') {
       if (Array.isArray(payload)) {
         payload.forEach((xyId) => {
-          const cellEntity = this.xyidCellMap.get(xyId);
-          cellEntity && cellEntity.removeControl();
+          const cells = this.xyCellMap.get(xyId);
+          if (Array.isArray(cells)) {
+            cells.forEach((cellEntity) => cellEntity.removeControl());
+          }
         });
       }
     }
-
-    // *************** 以下待调整 *************** //
     // 删除点位
     if (type === 'remove') {
-      this.removeCells(payload);
+      payload.forEach((item) => {
+        this.removeCells(item);
+      });
     }
+
+    // *************** 以下待调整 *************** //
     // 更新地址码
     if (type === 'code') {
       const selectedCells = [];

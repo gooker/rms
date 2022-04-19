@@ -27,6 +27,7 @@ export default {
   'editor.tip.storageWithoutBlock': '{value} 已经是存储点, 不可设置为Block点',
   'editor.tip.blockWithoutOthers': '{value} 点已经相关作用域是Block点, 不可设置为其它任意点位类型',
   'editor.tip.noLogicStorage': '当前逻辑区没有存储区',
+  'editor.tip.requireTypeForDeleting': '请选择需要删除的导航点类型',
   'editor.message.codeNotExit': '点位不存在',
   'editor.message.codeNotInRange': '点位ID不在该逻辑区范围',
   'editor.code.duplicate': '编码已存在',

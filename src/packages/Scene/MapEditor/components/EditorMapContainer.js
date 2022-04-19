@@ -99,7 +99,7 @@ const EditorMapContainer = (props) => {
         }, 200),
       );
     }
-  }, [currentMap, currentLogicArea, mapContext]);
+  }, [mapContext, currentMap, currentLogicArea, shownNavigationCellType]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
@@ -126,17 +126,25 @@ const EditorMapContainer = (props) => {
     // }
 
     let cellsToRender = [];
-    const naviCellMap = currentMap.naviCellMap?.[shownNavigationCellType];
-    if (isPlainObject(naviCellMap)) {
-      // 将naviCells中的id(xyId)替换为number ID
-      cellsToRender = Object.values(naviCellMap)
-        .filter((item) => item.logicId === currentLogicArea)
-        .map((item) => ({
-          ...item,
-          id: currentMap.cellMap[`${currentLogicArea}_${item.id}`]?.id,
-        }));
-    }
-    mapContext.renderCells({ type: 'AA', cells: cellsToRender });
+    shownNavigationCellType.forEach((type) => {
+      const naviCellMap = currentMap.naviCellMap?.[type];
+      if (isPlainObject(naviCellMap)) {
+        // 将naviCells中的id(xyId)替换为number ID
+        Object.values(naviCellMap)
+          .filter((item) => item.logicId === currentLogicArea)
+          .forEach((item) => {
+            const cellMapId = currentMap.cellMap[`${currentLogicArea}_${item.id}`]?.id;
+            cellsToRender.push({
+              ...item,
+              isControl: !isNull(cellMapId),
+              id: cellMapId, // 只用于显示
+              naviCellType: type,
+            });
+          });
+      }
+    });
+
+    mapContext.renderCells(cellsToRender);
     dispatch({ type: 'editor/saveCurrentCells', payload: cellsToRender });
 
     // 渲染电梯
@@ -379,6 +387,6 @@ export default connect(({ editor, editorView }) => {
     leftActiveCategory,
     selections,
     shortcutToolVisible: editorView.shortcutToolVisible,
-    shownNavigationCellType: editorView.shownNavigationCellType[0], // FIXME:
+    shownNavigationCellType: editorView.shownNavigationCellType,
   };
 })(memo(EditorMapContainer));

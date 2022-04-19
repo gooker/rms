@@ -11,12 +11,7 @@ const NavigationCellTypeSelector = (props) => {
   const menu = (
     <Menu selectedKeys={shownNavigationCellType} onClick={updateShownType}>
       {navigationCellType.map((item) => (
-        <Menu.Item
-          key={item.code}
-          disabled={
-            shownNavigationCellType.length === 1 && shownNavigationCellType.includes(item.code)
-          }
-        >
+        <Menu.Item key={item.code}>
           {shownNavigationCellType.includes(item.code) && <CheckOutlined />}
           <span style={{ marginLeft: 8 }}>{item.name}</span>
         </Menu.Item>

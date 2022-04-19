@@ -26,10 +26,11 @@ import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 const AllPriorities = [10, 20, 100, 1000];
 
 function initState(context) {
-  context.idCellMap = new Map(); // {cellId: [CellEntity]}
-  context.xyidCellMap = new Map(); // {xyId: [CellEntity]}
+  // 多种导航点类型一起显示的时候，同一个点位必定会出现多个导航点，所以value使用数组形式；该对象近用于处理地图元素属性，比如存储点等
+  context.xyCellMap = new Map(); // {x_y: [CellEntity1, CellEntity2,..]}
 
   context.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
+
   context.workStationMap = new Map(); // {stopCellId: [Entity]}
   context.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}
   context.intersectionMap = new Map(); // {stopCellId: [Entity]}

@@ -21,14 +21,19 @@ import AdjustCellSpace from './AdjustCellSpace';
 import GenerateCellCode from './GenerateCellCode';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
+import { MapSelectableSpriteType } from '@/config/consts';
+import DeleteNavigationModal from '@/packages/Scene/MapEditor/components/DeleteNavigationModal';
+import { uniq } from 'lodash';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
 const CellPanel = (props) => {
-  const { dispatch, height, currentMap, mapContext } = props;
+  const { dispatch, height, currentMap, mapContext, selections } = props;
 
+  const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
   const [formCategory, setFormCategory] = useState(null);
   const [secondTitle, setSecondTitle] = useState(null);
+  const [deleteNavVisible, setDeleteNavVisible] = useState(false);
 
   function renderFormContent() {
     switch (formCategory) {
@@ -57,6 +62,51 @@ const CellPanel = (props) => {
     dispatch({ type: 'editor/cancelControlFunction' }).then((result) => {
       mapContext.updateCells({ type: 'cancelControl', payload: result });
     });
+  }
+
+  /**
+   * 删除导航点
+   * 1. 如果多个导航点在一个坐标点上，需要用户确认删除哪些类型的导航点，如果是全部删除，那么一并删除所在点位的导航点
+   * 2. 如果只要一个导航点，那么导航点和管控点一并删除
+   */
+  function deleteNavigations() {
+    const types = getSelectionNaviCellTypes();
+    if (types.length === 0) return;
+    if (types.length === 1) {
+      executeDeleteNavi(types);
+    } else {
+      setDeleteNavVisible(true);
+    }
+  }
+
+  function executeDeleteNavi(types) {
+    const naviCells = getSelectionNaviCells();
+    dispatch({
+      type: 'editor/deleteNavigations',
+      payload: { types, naviCells },
+    }).then(({ cells, lines }) => {
+      mapContext.updateCells({ type: 'remove', payload: Object.entries(cells) });
+    });
+  }
+
+  function getSelectionNaviCells() {
+    // 选中的点位的下层可能还有别的导航点，所以需要把所有符合条件(坐标)的点位筛选出来
+    const { xyCellMap } = mapContext;
+    const allNaviCells = [];
+    selectedCells.forEach(({ x, y }) => {
+      const cells = xyCellMap.get(`${x}_${y}`);
+      if (Array.isArray(cells)) {
+        cells.forEach((item) => {
+          allNaviCells.push(item);
+        });
+      }
+    });
+    return allNaviCells;
+  }
+
+  function getSelectionNaviCellTypes() {
+    const types = getSelectionNaviCells().map(({ naviCellType }) => naviCellType);
+    return [...new Set(types)];
   }
 
   return (
@@ -120,12 +170,10 @@ const CellPanel = (props) => {
                     style={ButtonStyle}
                     disabled={currentMap == null}
                     onClick={() => {
-                      dispatch({ type: 'editor/deleteNavigations' }).then((result) => {
-                        console.log(result);
-                        // const { cell, line } = result;
-                        // mapContext.updateCells({ type: 'remove', payload: cell });
-                        // mapContext.updateLines({ type: 'remove', payload: line });
-                      });
+                      deleteNavigations();
+                      // dispatch({ type: 'editor/deleteNavigations' }).then((result) => {
+                      //   deleteNavigations(result);
+                      // });
                     }}
                   >
                     <MinusCircleOutlined /> <FormattedMessage id="editor.cell.delete" />
@@ -236,10 +284,20 @@ const CellPanel = (props) => {
           </>
         )}
       </div>
+
+      {/* 批量删除导航点 */}
+      <DeleteNavigationModal
+        visible={deleteNavVisible}
+        types={getSelectionNaviCellTypes()}
+        onDelete={executeDeleteNavi}
+        onCancel={() => {
+          setDeleteNavVisible(false);
+        }}
+      />
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  currentMap: editor.currentMap,
-  mapContext: editor.mapContext,
-}))(memo(CellPanel));
+export default connect(({ editor }) => {
+  const { selections, currentMap, mapContext } = editor;
+  return { currentMap, mapContext, selections };
+})(memo(CellPanel));

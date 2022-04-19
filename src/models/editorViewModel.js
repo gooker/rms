@@ -20,7 +20,7 @@ export default {
     settingEStop: false, // 绘制区域用于配置地图功能
     saveMapLoading: false, // 保存地图
     activeMapLoading: false, // 激活地图
-    shownNavigationCellType: ['AA', 'AB'], // 显示的导航点类型
+    shownNavigationCellType: ['MUSHINY', 'SEER'], // 显示的导航点类型
   },
 
   reducers: {
