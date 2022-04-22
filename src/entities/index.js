@@ -12,7 +12,6 @@ import TaskPath from './TaskPath';
 import LatentAGV from './LatentAGV';
 import LatentPod from './LatentPod';
 import LineArrow from './LineArrow';
-import LogicArea from './LogicArea';
 import ForkLiftAGV from './ForkLiftAGV';
 import WorkStation from './WorkStation';
 import WorkingState from './WorkingState';
@@ -28,6 +27,8 @@ import BackImg from './BackImg';
 import ResizeableEmergencyStop from './ResizeableEmergencyStop';
 import RealtimeRate from './RealtimeRate';
 import EmergencyStop from './EmergencyStop';
+import LogicArea from './LogicArea';
+import MapEntity from './MapEntity';
 
 export {
   Text,
@@ -60,4 +61,5 @@ export {
   ResizeableEmergencyStop,
   RealtimeRate,
   EmergencyStop,
+  MapEntity,
 };

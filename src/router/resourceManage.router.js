@@ -78,6 +78,12 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
+        path: `/${AppCode.ResourceManage}/agv/adapter`,
+        name: 'adapter',
+        component: '/ResourceManage/Agv/AgvAdapter',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      {
         path: `/${AppCode.ResourceManage}/agv/customType`,
         name: 'customType',
         component: '/ResourceManage/Agv/CustomAgvType',
@@ -95,13 +101,6 @@ export default [
         component: '/ResourceManage/Agv/AgvList',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
-
-      {
-        path: `/${AppCode.ResourceManage}/agv/faultManagement`,
-        name: 'faultManagement',
-        component: '/ResourceManage/Agv/AgvFaultManagement',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
       {
         path: `/${AppCode.ResourceManage}/agv/realTime`,
         name: 'realTime',
@@ -109,9 +108,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/agv/adapter`,
-        name: 'adapter',
-        component: '/ResourceManage/Agv/AgvAdapter',
+        path: `/${AppCode.ResourceManage}/agv/faultManagement`,
+        name: 'faultManagement',
+        component: '/ResourceManage/Agv/AgvFaultManagement',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {

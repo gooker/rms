@@ -7,7 +7,6 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import styles from './index.module.less';
 import CreateRouteMapModal from '@/packages/Scene/MapEditor/components/CreateRouteMapModal';
-import CreateLogicAreaModal from '@/packages/Scene/MapEditor/components/CreateLogicAreaModal';
 
 const SelectRouteMap = (props) => {
   const { dispatch, routeMapList, currentRouteMap } = props;
@@ -39,9 +38,10 @@ const SelectRouteMap = (props) => {
     }
     result.push(
       // 添加路线区
-      <Menu.Item key="add">
+      <Menu.Item key='add'>
         <PlusOutlined />
-        <FormattedMessage id="editor.addRouteMap" />
+        <FormattedMessage id='app.button.add' />
+        <FormattedMessage id='app.map.routeArea' />
       </Menu.Item>,
     );
     return result;
@@ -87,6 +87,7 @@ const SelectRouteMap = (props) => {
         data={editing}
         close={() => {
           setVisible(false);
+          setEditing(null);
         }}
       />
     </>

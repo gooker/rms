@@ -10,10 +10,9 @@ import {
   FullscreenExitOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, isNull, adjustModalWidth } from '@/utils/util';
+import { formatMessage, adjustModalWidth } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import PositionCell from '../components/PositionCell';
-import UploadPanel from '@/components/UploadPanel';
 import ConstructionInfoModal from '../components/ConstructionDraw/ConstructionInfoModal';
 import ConstructionDrawing from '../components/ConstructionDraw/ConstructionDrawing';
 import UploadMapModal from '@/packages/Scene/MapEditor/components/UploadMapModal';
@@ -29,7 +28,6 @@ const EditorHeaderRightTools = (props) => {
     isInnerFullscreen,
   } = props;
 
-  const [isCad, setIsCad] = useState(false);
   const [uploadVisible, setUploadVisible] = useState(false);
   const [exportConstruction, setExportConstruction] = useState(false);
   const [constructionInfo, setConstructionInfo] = useState(null);
@@ -237,7 +235,6 @@ const EditorHeaderRightTools = (props) => {
         }}
         footer={null}
       >
-        {/* <ConstructionDraw Info={constructionInfo} /> */}
         <ConstructionDrawing Info={constructionInfo} />
       </Modal>
     </>

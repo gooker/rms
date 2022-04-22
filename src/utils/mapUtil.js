@@ -1525,10 +1525,11 @@ export function checkControlUsageByXY(naviCellMap, x, y) {
 
 /**
  * 顺序取值, 原理是基于reduce方法判断数组元素是否是顺序的，如果不是顺序的就是插值
- * @param cellMapValues {Array}
+ * @param cellIds {Array}
  */
-export function getCellMapId(cellMapValues) {
-  const sortedControlCellId = cellMapValues.map(({ id }) => id).sort((a, b) => a - b);
+export function getCellMapId(cellIds) {
+  if (cellIds.length === 0) return 1;
+  const sortedControlCellId = cellIds.sort((a, b) => a - b);
   let result;
   try {
     sortedControlCellId.reduce((pre, next) => {

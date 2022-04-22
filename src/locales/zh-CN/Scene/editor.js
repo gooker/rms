@@ -1,6 +1,4 @@
 export default {
-  'editor.addLogicArea': '添加逻辑区',
-  'editor.addRouteMap': '添加路线区',
   'editor.addScope': '添加作用域',
   'editor.locate': '点位定位',
   'editor.map.active': '激活地图',

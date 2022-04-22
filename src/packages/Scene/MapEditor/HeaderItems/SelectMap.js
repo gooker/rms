@@ -71,12 +71,17 @@ const SelectMap = (props) => {
   async function deleteMap() {
     setDeleteLoading(true);
     await dispatch({ type: 'editor/fetchDeleteMap', payload: editing.id });
-    setDeleteLoading(false);
-    setCreationVisible(false);
+    closeModal();
   }
 
   function showSavingRecord() {
     setHistoryVisible(true);
+  }
+
+  function closeModal() {
+    setSaveLoading(false);
+    setCreationVisible(false);
+    setDeleteLoading(false);
   }
 
   function getMapListMenu() {
@@ -87,7 +92,7 @@ const SelectMap = (props) => {
         return (
           <Menu.Item key={record.id}>
             <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-              <div style={{ width: '15px' }}>{activeFlag && <Badge status="success" />}</div>
+              <div style={{ width: '15px' }}>{activeFlag && <Badge status='success' />}</div>
               <div>{record.name}</div>
               <div style={{ flex: 1, textAlign: 'end' }}>
                 <EditOutlined
@@ -190,9 +195,7 @@ const SelectMap = (props) => {
             key="cancel"
             loading={deleteLoading}
             disabled={deleteLoading}
-            onClick={() => {
-              setCreationVisible(false);
-            }}
+            onClick={closeModal}
           >
             <FormattedMessage id={'app.button.cancel'} />
           </Button>,

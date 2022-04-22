@@ -1,13 +1,15 @@
+/* TODO: I18N */
 import React, { memo } from 'react';
-import { formatMessage, getFormLayout } from '@/utils/util';
-import { Form, Modal, Select, Upload } from 'antd';
+import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
+import { formatMessage, getFormLayout } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
+import { MUSHINY, SEER } from '@/utils/mapParser';
 
 const { formItemLayout } = getFormLayout(5, 18);
 const UploadMapModal = (props) => {
-  const { dispatch, visible, onCancel, navigationCellType } = props;
+  const { dispatch, visible, onCancel, navigationCellType, currentMap, currentLogicArea } = props;
   const [formRef] = Form.useForm();
 
   const normFile = (e) => {
@@ -25,27 +27,43 @@ const UploadMapModal = (props) => {
   function handleFile() {
     formRef
       .validateFields()
-      .then(({ file, navigationCellType }) => {
+      .then(({ file, navigationCellType, ...rest }) => {
+        const existIds = Object.keys(currentMap.cellMap).map((item) => parseInt(item));
         const reader = new FileReader();
         // beforeUpload返回false情况下, antd选择后的文件file是经过包装的数据，获取真是文件对象需要取file.originFileObj. 日他妈...
         reader.readAsText(file[0].originFileObj, 'UTF-8');
         reader.onload = (evt) => {
-          const mapData = evt.target.result;
-          submit(navigationCellType, mapData);
+          let mapData = evt.target.result;
+          try {
+            mapData = JSON.parse(mapData);
+            switch (navigationCellType) {
+              case 'SEER':
+                mapData = SEER(mapData, existIds, currentLogicArea);
+                break;
+              case 'MUSHINY':
+                mapData = MUSHINY(mapData, existIds, currentLogicArea);
+                break;
+              default:
+                break;
+            }
+            dispatch({
+              type: 'editor/importMap',
+              payload: { mapData, transform: rest },
+            }).then((result) => {
+              result && cancel();
+            });
+          } catch (e) {
+            console.log('地图数据格式错误, 非标准JSON文件');
+          }
         };
       })
       .catch(() => {});
   }
 
-  function submit(param) {
-    // 校验地图数据
-    console.log(param);
-  }
-
   return (
     <Modal
       destroyOnClose
-      width={500}
+      width={600}
       visible={visible}
       onCancel={cancel}
       onOk={handleFile}
@@ -53,31 +71,32 @@ const UploadMapModal = (props) => {
     >
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
-          name="file"
+          name='file'
           label={formatMessage({ id: 'app.common.file' })}
-          valuePropName="fileList"
+          valuePropName='fileList'
           getValueFromEvent={normFile}
           rules={[{ required: true }]}
         >
-          <Upload.Dragger name="files" maxCount={1} accept={'.json'} beforeUpload={() => false}>
-            <p className="ant-upload-drag-icon">
+          <Upload.Dragger
+            name='files'
+            maxCount={1}
+            beforeUpload={() => false}
+            onRemove={() => true}
+          >
+            <p className='ant-upload-drag-icon'>
               <InboxOutlined />
             </p>
-            <p className="ant-upload-text">
+            <p className='ant-upload-text'>
               <FormattedMessage id={'app.message.upload.tip'} />
             </p>
           </Upload.Dragger>
         </Form.Item>
         <Form.Item
-          initialValue={'NONE'}
           name={'navigationCellType'}
           label={formatMessage({ id: 'editor.navigationCellType' })}
           rules={[{ required: true }]}
         >
-          <Select>
-            <Select.Option value={'NONE'}>
-              <FormattedMessage id={'editor.navigationCellType.none'} />
-            </Select.Option>
+          <Select style={{ width: 200 }}>
             {navigationCellType.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
@@ -85,10 +104,63 @@ const UploadMapModal = (props) => {
             ))}
           </Select>
         </Form.Item>
+        <Form.Item name={'coordType'} label={'坐标系类型'} rules={[{ required: true }]}>
+          <Select style={{ width: 200 }}>
+            <Select.Option value={'L'}>左手坐标系</Select.Option>
+            <Select.Option value={'R'}>右手坐标系</Select.Option>
+          </Select>
+        </Form.Item>
+        <Form.Item name={'zoom'} initialValue={1} label={'缩放系数'} rules={[{ required: true }]}>
+          <InputNumber />
+        </Form.Item>
+        <Form.Item label={'补偿偏移'}>
+          <Input.Group>
+            <Row gutter={10} style={{ width: '90%' }}>
+              <Col span={12}>
+                <Form.Item
+                  noStyle
+                  name={['compensationOffset', 'x']}
+                  initialValue={0}
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber addonBefore={'X'} addonAfter={'mm'} style={{ width: '100%' }} />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
+                  noStyle
+                  name={['compensationOffset', 'Y']}
+                  initialValue={0}
+                  rules={[{ required: true }]}
+                >
+                  <InputNumber addonBefore={'Y'} addonAfter={'mm'} style={{ width: '100%' }} />
+                </Form.Item>
+              </Col>
+            </Row>
+          </Input.Group>
+        </Form.Item>
+        <Form.Item
+          name={'compensationAngle'}
+          initialValue={0}
+          label={'补偿角度'}
+          rules={[{ required: true }]}
+        >
+          <InputNumber addonAfter={'°'} />
+        </Form.Item>
+        {/*<Form.Item*/}
+        {/*  name={'pixiAngle'}*/}
+        {/*  initialValue={0}*/}
+        {/*  label={'旋转角度'}*/}
+        {/*  rules={[{ required: true }]}*/}
+        {/*>*/}
+        {/*  <InputNumber addonAfter={'°'} />*/}
+        {/*</Form.Item>*/}
       </Form>
     </Modal>
   );
 };
-export default connect(({ global }) => ({
+export default connect(({ global, editor }) => ({
+  currentMap: editor.currentMap,
+  currentLogicArea: editor.currentLogicArea,
   navigationCellType: global.navigationCellType,
 }))(memo(UploadMapModal));

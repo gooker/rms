@@ -13,24 +13,22 @@ import { getCostArrow, getRelationSelectionBG } from '@/utils/mapUtil';
 export default class LineArrow extends PIXI.Container {
   constructor(props) {
     super();
-    this.type = MapSelectableSpriteType.ROUTE;
-    this.id = props.id;
-    this.x = props.fromX;
-    this.y = props.fromY;
-    this.angle = props.angle;
     this.alpha = 0.8;
     this.zIndex = props.isClassic ? zIndex.line : 100;
 
+    this.type = MapSelectableSpriteType.ROUTE;
+    this.source = props.source;
+    this.target = props.fromY;
+    this.$$angle = props.angle;
+    this.dir = getDirByAngle(props.angle);
     this.cost = props.cost;
     this.isClassic = props.isClassic;
     this.length = props.length; // Sprite长度
     this.distance = props.distance; // 显示的长度文本
-    this.dir = getDirByAngle(props.angle);
 
     this.select = props.select;
 
     this.createArrow();
-    // this.createHitArea();
     this.createLabel();
     this.createSelectionBG();
 

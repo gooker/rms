@@ -23,8 +23,8 @@ const CostPanel = (props) => {
       type: 'editor/generateCostLines',
       payload: params,
     }).then(({ remove, add }) => {
-      remove.length > 0 && mapContext.updateLines({ type: 'remove', payload: remove });
-      add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
+      // remove.length > 0 && mapContext.updateLines({ type: 'remove', payload: remove });
+      // add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
     });
   }
 

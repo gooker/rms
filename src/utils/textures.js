@@ -135,12 +135,11 @@ export function loadTexturesForMap() {
       .add('pod_FETCH', '/images/pod_FETCH.png')
       .add('pod_PUT', '/images/pod_PUT.png')
       .add('pod_grey', '/images/pod_grey.png')
-      .add('qrcode', '/images/qrcode.png')
       .add('rest_cell', '/images/rest_cell.png')
       .add('risk', '/images/risk.png')
       .add('rotate_lock', '/images/rorate_lock.png')
       .add('rotate_cell', '/images/round.png')
-      .add('safe_cell', '/images/safe_spot.png')
+      .add('safe_cell', '/images/safe_cell.png')
       .add('scan_cell', '/images/scan_cell.png')
       .add('sorter', '/images/sorter.png')
       .add('sorter_agv', '/images/sorter.png')
@@ -180,6 +179,10 @@ export function loadTexturesForMap() {
       .add('delivery', '/images/delivery.png')
       .add('basket', '/images/basket.png')
       .add('pin', '/images/pin.png')
+      .add('cost_10', '/images/cost_10.png')
+      .add('cost_20', '/images/cost_20.png')
+      .add('cost_100', '/images/cost_100.png')
+      .add('cost_1000', '/images/cost_1000.png')
       .load(() => {
         resolve();
       });

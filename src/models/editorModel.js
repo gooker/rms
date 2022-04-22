@@ -1,13 +1,12 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, isEqual, isPlainObject, some, sortBy } from 'lodash';
+import { find, findIndex, groupBy, isEqual, isPlainObject, some } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
   addTemporaryId,
   batchGenerateLine,
   calculateCellDistance,
-  checkControlUsageByXY,
   generateCellId,
   generateCellIds,
   generateCellMapByRowsAndCols,
@@ -25,7 +24,7 @@ import {
   syncLineState,
   validateMapData,
 } from '@/utils/mapUtil';
-import { Elevator, LogicArea } from '@/entities';
+import { Elevator, LogicArea, MapEntity } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
   deleteMapById,
@@ -104,19 +103,19 @@ export default {
           message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
         } else {
           // 获取已激活地图数据并保存相关状态
-          // const mapId = activeMap[0].id;
-          // const currentMap = yield call(fetchMapDetail, mapId);
-          // if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-          //   yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
-          // }
-          yield put({ type: 'saveCurrentMap', payload: addTemporaryId(MockMapData) });
+          const mapId = activeMap[0].id;
+          const currentMap = yield call(fetchMapDetail, mapId);
+          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+            yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
+          }
+          // yield put({ type: 'saveCurrentMap', payload: addTemporaryId(MockMapData) });
         }
 
         /**
          * 1. 获取所有站点类型
          * 2. 获取已配置的 Web Hook
          */
-        const [allWebHooks, allWebHookTypes, allStationTypes, scopeActions] = yield Promise.all([
+        const [allWebHooks, allWebHookTypes, allStationTypes, scopeUActions] = yield Promise.all([
           getAllWebHooks(),
           getAllWebHookTypes(),
           fetchAllStationTypes(),
@@ -163,35 +162,17 @@ export default {
       const { mapList } = yield select((state) => state.editor);
 
       // 创建默认的逻辑区
-      const routeMap = {
-        DEFAULT: {
-          name: 'DEFAULT',
-          code: 'DEFAULT',
-          desc: 'DEFAULT',
-          relations: [],
-          blockCellIds: [],
-          followCellIds: [],
-          nonStopCellIds: [],
-          tunnels: [],
-          waitCellIds: [],
-        },
-      };
-      const defaultLogicArea = new LogicArea({ routeMap });
-      const logicAreaList = [defaultLogicArea];
+      const logicAreaList = [new LogicArea()];
 
       // 添加默认的scopeMap
       const { version } = packageJSON;
-      const newMap = {
+      const newMap = new MapEntity({
         name,
         description,
         sectionId,
-        cellMap: {},
         logicAreaList,
-        elevatorList: [],
-        mver: version,
-        ever: version,
-        activeFlag: false,
-      };
+        version,
+      });
       const response = yield call(saveMap, newMap);
       if (dealResponse(response)) {
         return;
@@ -260,8 +241,28 @@ export default {
       }
     },
 
+    // 导入导航点
+    * importMap({ payload }, { call, put, select }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      const {
+        transform,
+        mapData: { cells, relations },
+      } = payload;
+      const brand = cells[0].brand;
+      // 将地图转换的参数合并到地图数据
+      currentMap.transform = { [brand]: transform };
+      // 合并点位和线条
+      cells.forEach((cell) => {
+        currentMap.cellMap[cell.id] = { ...cell };
+      });
+      const currentRouteMap = getCurrentRouteMapData();
+      currentRouteMap.relations = currentRouteMap.relations.concat(relations);
+      yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
+      return true;
+    },
+
     // 导出地图
-    *exportMap(_, { select }) {
+    * exportMap(_, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
       //TODO: 验证地图数据
       const mapData = { ...currentMap };
@@ -410,15 +411,7 @@ export default {
       const currentMap = yield select(({ editor }) => editor.currentMap);
       const { logicAreaList } = currentMap;
       const newLogicAreaId = logicAreaList[logicAreaList.length - 1].id + 1;
-      const routeMap = {
-        DEFAULT: {
-          name: 'DEFAULT',
-          code: 'DEFAULT',
-          desc: null,
-          relations: [],
-        },
-      };
-      const newLogicArea = new LogicArea({ routeMap, ...payload, id: newLogicAreaId });
+      const newLogicArea = new LogicArea({ id: newLogicAreaId, ...payload });
       logicAreaList.push(newLogicArea);
       yield put({ type: 'saveCurrentLogicArea', payload: newLogicAreaId });
     },
@@ -426,14 +419,12 @@ export default {
     *fetchUpdateLogicDetail({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
       const { logicAreaList } = currentMap;
-      const { id, name, rangeStart, rangeEnd } = payload;
+      const { id, name } = payload;
 
       const editingLogicAreaIndex = findIndex(logicAreaList, { id });
       currentMap.logicAreaList = update(logicAreaList, {
         [editingLogicAreaIndex]: {
           name: { $set: name },
-          rangeStart: { $set: rangeStart },
-          rangeEnd: { $set: rangeEnd },
         },
       });
       message.success(formatMessage({ id: 'app.message.operateSuccess' }));
@@ -897,8 +888,6 @@ export default {
       // 处理线条
       const currentRouteMapData = getCurrentRouteMapData();
       currentRouteMapData.relations = syncLineState(cellIds, newCellMap, result);
-
-      yield put({ type: 'saveCurrentCells', payload: _currentCells });
       return result;
     },
 
@@ -959,7 +948,6 @@ export default {
       // 对操作点位的线条进行调整，直线线条修改distance和angle数值，曲线线条直接删除
       const currentRouteMapData = getCurrentRouteMapData();
       currentRouteMapData.relations = syncLineState(cellIds, newCellMap, result);
-      yield put({ type: 'saveCurrentCells', payload: _currentCells });
       return result;
     },
 

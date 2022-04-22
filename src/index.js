@@ -9,7 +9,7 @@ import { isPlainObject } from 'lodash';
 
 // https://github.com/pixijs/graphics-smooth
 settings.PIXEL_LINE = 1;
-settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
+// settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
 
 // 判定当前是否是产品环境
 window.$$isProduction = isPlainObject(window.extraConfig);

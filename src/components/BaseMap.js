@@ -1,11 +1,13 @@
 import React from 'react';
 import * as PIXI from 'pixi.js';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import {
   getCoordinat,
   getLineEntityFromMap,
   getCurrentRouteMapData,
   getTextureFromResources,
-  getLineAnchor,
+  getAngle,
+  getDistance,
 } from '@/utils/mapUtil';
 import {
   Dump,
@@ -16,9 +18,8 @@ import {
   WorkStation,
   Intersection,
   CommonFunction,
-  LineArrow,
 } from '@/entities';
-import { isNull, isItemOfArray } from '@/utils/util';
+import { isNull, isItemOfArray, isStrictNull, convertArrayToMap } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
@@ -28,7 +29,9 @@ const AllPriorities = [10, 20, 100, 1000];
 function initState(context) {
   // 多种导航点类型一起显示的时候，同一个点位必定会出现多个导航点，所以value使用数组形式；该对象近用于处理地图元素属性，比如存储点等
   context.xyCellMap = new Map(); // {x_y: [CellEntity1, CellEntity2,..]}
+  context.idXYMap = new Map(); // {1:x_y}
 
+  context.xyRelationMap = new Map(); // {x1_y1_x2_y2: graphics}
   context.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
 
   context.workStationMap = new Map(); // {stopCellId: [Entity]}
@@ -204,53 +207,54 @@ export default class BaseMap extends React.PureComponent {
 
   // ************************ 线条相关 **********************
   /**
-   * 绘制线条核心逻辑
+   * 绘制线条核心逻辑, 线条只与xy产生绑定关系
    * @param {*} relationsToRender 即将渲染的线条数据
-   * @param {*} relations 已渲染的线条数据
    * @param {*} shownPriority 当前展示的成本类型
    * @param {*} interactive 是否可交互  默认false
    * @param {*} shownMode 显示模式  默认standard
    */
-  renderCostLines(
-    relationsToRender,
-    relations,
-    interactive = false,
-    shownMode = 'standard',
-    shownPriority,
-  ) {
+  renderCostLines(relationsToRender, interactive = false, shownMode = 'standard', shownPriority) {
     const priority = shownPriority || this.states.shownPriority;
     relationsToRender.forEach((lineData) => {
       const { type, cost } = lineData;
-      if (!priority.includes(parseInt(cost))) return;
       if (type === 'line') {
-        const { source, target, angle } = lineData;
-        const sourceCell = this.idCellMap.get(source);
-        const targetCell = this.idCellMap.get(target);
-        // 此时 sourceCell 和 targetCell 可能是电梯点
-        if (sourceCell && targetCell) {
-          const { fromX, fromY, length, distance } = getLineAnchor(
-            relations,
-            sourceCell,
-            targetCell,
-            angle,
+        const { source, target } = lineData;
+        const sourceXY = this.idXYMap.get(source);
+        const targetXY = this.idXYMap.get(target);
+        if (!isStrictNull(sourceXY) && !isStrictNull(targetXY)) {
+          // 先渲染两个导航点之间的连线
+          const source = convertArrayToMap(
+            sourceXY.split('_').map((item) => parseInt(item)),
+            ['x', 'y'],
           );
-          const line = new LineArrow({
-            id: `${sourceCell.id}-${targetCell.id}`,
-            fromX,
-            fromY,
-            angle,
-            cost,
-            length,
-            distance,
-            interactive,
-            select: this.select,
-            isClassic: shownMode === 'standard',
-          });
-          if (line) {
-            line.switchDistanceShown(this.states.showDistance);
-            this.pixiUtils.viewportAddChild(line);
-            this.idLineMap[cost].set(`${source}-${target}`, line);
-          }
+          const target = convertArrayToMap(
+            targetXY.split('_').map((item) => parseInt(item)),
+            ['x', 'y'],
+          );
+
+          // 绘制点位之间的线条
+          const relationLine = new SmoothGraphics();
+          relationLine.lineStyle(30, 0xffffff);
+          relationLine.moveTo(source.x, source.y);
+          relationLine.lineTo(target.x, target.y);
+          this.pixiUtils.viewportAddChild(relationLine);
+          this.xyRelationMap.set(`${source.x}_${source.y}_${target.x}_${target.y}`, relationLine);
+
+          // 绘制箭头(箭头位置在起始点和终点的连线上，靠近起始点，箭头指向终点)
+          const angle = getAngle(source, target);
+          const distance = getDistance(source, target);
+          const offset = distance > 1000 ? 1000 : distance / 2;
+          const arrowPosition = getCoordinat(source, angle, offset);
+          const costTexture = getTextureFromResources(`cost_${cost}`);
+          const arrow = new PIXI.Sprite(costTexture);
+          arrow.anchor.set(0.5, 0);
+          arrow.angle = angle;
+          arrow.height = arrow.height * 1.5;
+          arrow.width = arrow.width * 1.5;
+          arrow.x = arrowPosition.x;
+          arrow.y = arrowPosition.y;
+          this.pixiUtils.viewportAddChild(arrow);
+          this.idLineMap[cost]?.set(`${source}-${target}`, arrow);
         }
       }
     });

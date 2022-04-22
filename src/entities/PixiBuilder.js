@@ -12,7 +12,7 @@ export default class PixiBuilder {
     this.renderer = new PIXI.Renderer({
       width,
       height,
-      antialias: false,
+      antialias: true, //抗锯齿
       autoDensity: true,
       backgroundAlpha: 0,
       resolution: window.devicePixelRatio || 1.0,

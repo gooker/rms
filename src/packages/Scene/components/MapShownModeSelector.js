@@ -1,12 +1,13 @@
+/* TODO: I18N */
 import React, { memo } from 'react';
 import { Dropdown, Menu } from 'antd';
-import { CheckOutlined } from '@ant-design/icons';
+import { CheckOutlined, UpOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './sceneComponentStyle.module.less';
 
-const NavigationCellTypeSelector = (props) => {
-  const { dispatch, navigationCellType, shownNavigationCellType } = props;
+const MapShownModeSelector = (props) => {
+  const { dispatch, navigationCellType, shownNavigationCellType, shownCellCoordinateType } = props;
 
   const menu = (
     <Menu selectedKeys={shownNavigationCellType} onClick={updateShownType}>
@@ -18,6 +19,17 @@ const NavigationCellTypeSelector = (props) => {
       ))}
     </Menu>
   );
+
+  const cellCoordinateTypeMenu = (
+    <Menu selectedKeys={[shownCellCoordinateType]} onClick={updateShownCellCoordinateType}>
+      <Menu.Item key={'land'}>物理点位</Menu.Item>
+      <Menu.Item key={'navi'}>导航点位</Menu.Item>
+    </Menu>
+  );
+
+  function updateShownCellCoordinateType({ key }) {
+    dispatch({ type: 'editorView/updateShownCellCoordinateType', payload: key });
+  }
 
   function updateShownType({ key }) {
     let _shownNavigationCellType = [...shownNavigationCellType];
@@ -34,12 +46,20 @@ const NavigationCellTypeSelector = (props) => {
 
   return (
     <div className={styles.navigationCellTypeSelector}>
+      <Dropdown overlay={cellCoordinateTypeMenu} trigger={['click']}>
+        <span className={styles.navigationCellTypeSelectorContent}>
+          {shownCellCoordinateType === 'land' ? '物理点位' : '导航点位'}
+          <UpOutlined style={{ marginLeft: 5 }} />
+        </span>
+      </Dropdown>
+      <div className={styles.divider} />
       <Dropdown overlay={menu} trigger={['click']}>
         <span className={styles.navigationCellTypeSelectorContent}>
-          <FormattedMessage id={'editor.navigationCellType'} />:
+          <FormattedMessage id={'editor.navigationCellType'} />
           <span style={{ color: '#1890ff', marginLeft: 3, fontWeight: 600 }}>
             ({shownNavigationCellType.length})
           </span>
+          <UpOutlined style={{ marginLeft: 5 }} />
         </span>
       </Dropdown>
     </div>
@@ -48,4 +68,5 @@ const NavigationCellTypeSelector = (props) => {
 export default connect(({ global, editorView }) => ({
   navigationCellType: global.navigationCellType,
   shownNavigationCellType: editorView.shownNavigationCellType,
-}))(memo(NavigationCellTypeSelector));
+  shownCellCoordinateType: editorView.shownCellCoordinateType,
+}))(memo(MapShownModeSelector));

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Divider, Form, Checkbox, Radio, Switch, Select } from 'antd';
-import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { Form, Checkbox, Radio, Switch, Select, InputNumber, Input, Row, Col } from 'antd';
+import { debounce } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -11,7 +11,7 @@ import commonStyles from '@/common.module.less';
 
 const { formItemLayout } = getFormLayout(7, 17);
 const ViewControllerPanel = (props) => {
-  const { dispatch, height, mapContext, shownPriority } = props;
+  const { dispatch, height, mapContext, shownPriority, mapRotation } = props;
 
   function radioGroupChange(ev) {
     const changedMapMode = ev.target.value;
@@ -76,6 +76,10 @@ const ViewControllerPanel = (props) => {
       payload: { showRelationsCells: value },
     });
     mapContext.filterRelationCell(value);
+  }
+
+  function rotateMapView(angle) {
+    dispatch({ type: 'editorView/updateMapRotation', payload: angle });
   }
 
   return (
@@ -156,7 +160,6 @@ const ViewControllerPanel = (props) => {
             </Form.Item>
           </Form>
         </div>
-
         <div className={styles.panelBlock} style={{ marginTop: 5 }}>
           <Form labelWrap>
             {/* 优先级显示 */}
@@ -197,7 +200,7 @@ const ViewControllerPanel = (props) => {
             >
               <Select
                 allowClear
-                mode="tags"
+                mode='tags'
                 style={{ width: '95%' }}
                 value={props.showRelationsCells}
                 disabled={shownPriority.length === 0}
@@ -206,6 +209,38 @@ const ViewControllerPanel = (props) => {
               />
             </Form.Item>
           </Form>
+        </div>
+        <div className={styles.panelBlock} style={{ marginTop: 5 }}>
+          <Form.Item label={'缩放系数'}>
+            <InputNumber />
+          </Form.Item>
+          <Form.Item label={'补偿偏移'}>
+            <Input.Group>
+              <Row gutter={10} style={{ width: '90%' }}>
+                <Col span={12}>
+                  <Form.Item noStyle>
+                    <InputNumber addonBefore={'X'} addonAfter={'mm'} style={{ width: '100%' }} />
+                  </Form.Item>
+                </Col>
+                <Col span={12}>
+                  <Form.Item noStyle>
+                    <InputNumber addonBefore={'Y'} addonAfter={'mm'} style={{ width: '100%' }} />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Input.Group>
+          </Form.Item>
+          <Form.Item label={'补偿角度'}>
+            <InputNumber addonAfter={'°'} />
+          </Form.Item>
+          <Form.Item label={'地图旋转'}>
+            <InputNumber
+              value={mapRotation}
+              onChange={debounce((value) => {
+                rotateMapView(value);
+              }, 200)}
+            />
+          </Form.Item>
         </div>
       </div>
     </div>
@@ -221,5 +256,6 @@ export default connect(({ editor, editorView }) => ({
   showRelationsDir: editorView.showRelationsDir,
   showEmergencyStop: editorView.showEmergencyStop,
   showRelationsCells: editorView.showRelationsCells,
+  mapRotation: editorView.mapRotation,
   mapContext: editor.mapContext,
 }))(memo(ViewControllerPanel));

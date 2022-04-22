@@ -3,7 +3,7 @@ import { Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
-import NavigationCellTypeSelector from '@/packages/Scene/components/NavigationCellTypeSelector';
+import MapShownModeSelector from '@/packages/Scene/components/MapShownModeSelector';
 import styles from './editorFooter.module.less';
 
 const EditorFooter = (props) => {
@@ -15,7 +15,7 @@ const EditorFooter = (props) => {
       justify={'space-between'}
     >
       <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
-      <NavigationCellTypeSelector />
+      <MapShownModeSelector />
     </Row>
   );
 };

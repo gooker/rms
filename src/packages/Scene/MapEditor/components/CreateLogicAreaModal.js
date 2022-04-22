@@ -1,32 +1,23 @@
 import React, { useEffect, memo } from 'react';
-import { Input, Row, Form, Modal, Button, InputNumber, Col, Popconfirm } from 'antd';
+import { Input, Row, Form, Modal, Button, Col, Popconfirm } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
-const { formItemLayout } = getFormLayout(6, 18);
+const { formItemLayout } = getFormLayout(4, 18);
 
 const CreateLogicAreaModal = (props) => {
   const [formRef] = Form.useForm();
-  const { dispatch, data, visible, close, currentMap } = props;
+  const { dispatch, data, visible, close } = props;
   const isUpdate = !!data;
 
   useEffect(() => {
     if (visible) {
       if (!isNull(data)) {
-        formRef.setFieldsValue({
-          name: data?.name,
-          rangeStart: data?.rangeStart,
-          rangeEnd: data?.rangeEnd,
-        });
+        formRef.setFieldsValue({ name: data.name });
       } else {
-        const maxRange = currentMap.logicAreaList.at(-1).rangeEnd;
-        formRef.setFieldsValue({
-          rangeStart: maxRange + 1,
-        });
+        formRef.resetFields();
       }
-    } else {
-      formRef.resetFields();
     }
   }, [visible]);
 
@@ -63,16 +54,10 @@ const CreateLogicAreaModal = (props) => {
       title={title}
       visible={visible}
       onCancel={close}
+      mask
       width={500}
       footer={[
         <Row key={'xxx'} gutter={12} justify={'end'}>
-          {/* 保存 */}
-          <Col>
-            <Button type="primary" onClick={submit}>
-              <FormattedMessage id="app.button.save" />
-            </Button>
-          </Col>
-
           {/* 取消 */}
           <Col>
             <Button onClick={close}>
@@ -87,12 +72,19 @@ const CreateLogicAreaModal = (props) => {
                 title={formatMessage({ id: 'app.createLogicArea.deleteLogicArea.confirm' })}
                 onConfirm={onDelete}
               >
-                <Button type="danger">
-                  <FormattedMessage id="app.button.delete" />
+                <Button type='danger'>
+                  <FormattedMessage id='app.button.delete' />
                 </Button>
               </Popconfirm>
             </Col>
           ) : null}
+
+          {/* 保存 */}
+          <Col>
+            <Button type='primary' onClick={submit}>
+              <FormattedMessage id='app.button.save' />
+            </Button>
+          </Col>
         </Row>,
       ]}
     >
@@ -104,24 +96,6 @@ const CreateLogicAreaModal = (props) => {
           label={formatMessage({ id: 'app.common.name' })}
         >
           <Input style={{ width: 300 }} />
-        </Form.Item>
-
-        {/* 范围起始值 */}
-        <Form.Item
-          name={'rangeStart'}
-          rules={[{ required: true }]}
-          label={formatMessage({ id: 'editor.logic.rangeStart' })}
-        >
-          <InputNumber style={{ width: 300 }} min={1} />
-        </Form.Item>
-
-        {/* 范围结束值 */}
-        <Form.Item
-          name={'rangeEnd'}
-          rules={[{ required: true }]}
-          label={formatMessage({ id: 'editor.logic.rangeEnd' })}
-        >
-          <InputNumber style={{ width: 300 }} />
         </Form.Item>
       </Form>
     </Modal>

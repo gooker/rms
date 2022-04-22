@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { isNull } from '@/utils/util';
 import {
   zIndex,
@@ -20,13 +21,16 @@ export default class Cell extends PIXI.Container {
   constructor(props) {
     super(props);
     this.type = MapSelectableSpriteType.CELL;
-    this.naviCellType = props.type; // 导航点类型
+
+    this.brand = props.brand; // 导航点类型
     this.id = props.id; // Integer ID
-    this.oId = props.oId;
+    this.naviId = props.naviId; // 车型导航点的原始ID
     this.x = props.x;
     this.y = props.y;
+    this.xLabel = props.xLabel;
+    this.yLabel = props.yLabel;
     this.color = props.color.replace('#', '0x');
-    this.isControl = props.isControl;
+
     this.width = CellSize.width;
     this.height = CellSize.height;
     this.zIndex = zIndex.cell;
@@ -48,9 +52,6 @@ export default class Cell extends PIXI.Container {
     };
 
     this.addNavigation();
-    if (this.isControl) {
-      this.addControl(this.id);
-    }
     this.addCoordination();
     this.addSelectedBackGround(450, 400);
     this.interact(props.interactive);
@@ -62,69 +63,36 @@ export default class Cell extends PIXI.Container {
 
   // 导航点标记（实心圆）
   addNavigation() {
-    this.navigation = new PIXI.Graphics();
-    this.navigation.lineStyle(0);
-    this.navigation.beginFill(this.color.replace('#', '0x'));
-    this.navigation.drawCircle(0, 0, CellSize.width / 4);
+    const brandColor = this.color.replace('#', '0x');
+    this.navigation = new SmoothGraphics();
+    this.navigation.lineStyle(CellSize.width * 0.4, 0xffffff);
+    this.navigation.beginFill(brandColor);
+    this.navigation.drawCircle(0, 0, CellSize.width / 2);
     this.navigation.endFill();
     this.navigation.zIndex = InnerIndex.navigation;
     this.addChild(this.navigation);
 
     // 导航点id
-    this.navigationId = new BitText(this.oId, 0, 0, 0xffffff);
+    this.navigationId = new BitText(this.naviId, 0, 0, brandColor);
     this.navigationId.anchor.set(0.5, 0);
-    this.navigationId.y = CellSize.height / 2 + 10;
+    this.navigationId.y = CellSize.height / 2 + 30;
     this.addChild(this.navigationId);
-  }
 
-  // 管控点标记（空心圆）
-  addControl(id) {
-    this.removeControl();
-
-    this.isControl = true;
-    this.id = id;
-
-    const color = 0xffffff;
-    this.control = new PIXI.Graphics();
-    this.control.lineStyle(0);
-    this.control.beginFill(color);
-    this.control.drawCircle(0, 0, CellSize.width / 2);
-    this.control.endFill();
-    this.control.zIndex = InnerIndex.control;
-    this.addChild(this.control);
-
-    this.controlText = new BitText(this.id, 0, 0, 0xffffff);
-    this.controlText.anchor.set(0.5);
-    this.controlText.y = -CellSize.height;
-    this.addChild(this.controlText);
-  }
-
-  // 移除管控点标记
-  removeControl() {
-    this.isControl = false;
-    this.id = null;
-
-    if (this.control) {
-      this.removeChild(this.control);
-      this.control.destroy(true);
-      this.control = null;
-    }
-
-    if (this.controlText) {
-      this.removeChild(this.controlText);
-      this.controlText.destroy(true);
-      this.controlText = null;
-    }
+    // 二维码点
+    this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
+    this.qrId.anchor.set(0.5, 1);
+    this.qrId.y = -CellSize.height / 2 - 30;
+    this.addChild(this.qrId);
   }
 
   // 坐标
   addCoordination() {
-    this.coordX = new BitText(this.x, -CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
+    this.coordX = new BitText(this.xLabel, -CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
     this.coordX.anchor.set(1, 1);
     this.coordX.zIndex = InnerIndex.text;
     this.addChild(this.coordX);
 
-    this.coordY = new BitText(this.y, CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
+    this.coordY = new BitText(this.yLabel, CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
     this.coordY.anchor.set(0, 1);
     this.coordY.zIndex = InnerIndex.text;
     this.addChild(this.coordY);

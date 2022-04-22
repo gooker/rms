@@ -215,7 +215,7 @@ export const CellTypeSetting = [
   // 安全区
   {
     type: 'safeAreaCellIds',
-    picture: 'safe_spot.png',
+    picture: 'safe_cell.png',
     i18n: 'editor.cellType.safe',
     scope: 'logic',
     texture: 'safe_cell',

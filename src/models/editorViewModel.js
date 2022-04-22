@@ -21,6 +21,8 @@ export default {
     saveMapLoading: false, // 保存地图
     activeMapLoading: false, // 激活地图
     shownNavigationCellType: ['MUSHINY', 'SEER'], // 显示的导航点类型
+    shownCellCoordinateType: 'land', // land 表示物理点位、navi表示导航点位
+    mapRotation: 0, // 手动旋转地图
   },
 
   reducers: {
@@ -36,10 +38,22 @@ export default {
         positionVisible: action.payload,
       };
     },
+    updateMapRotation(state, action) {
+      return {
+        ...state,
+        mapRotation: action.payload,
+      };
+    },
     updateShownNavigationCellType(state, action) {
       return {
         ...state,
         shownNavigationCellType: action.payload,
+      };
+    },
+    updateShownCellCoordinateType(state, action) {
+      return {
+        ...state,
+        shownCellCoordinateType: action.payload,
       };
     },
     saveForceUpdate(state, action) {

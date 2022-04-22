@@ -1,10 +1,12 @@
+import RouteMap from '@/entities/RouteMap';
+
 export default class LogicArea {
-  constructor(props) {
+  constructor(props = {}) {
     this.id = props.id || 0;
     this.name = props.name || 'DEFAULT';
-    this.rangeStart = props.rangeStart || 1;
-    this.rangeEnd = props.rangeEnd || 10000;
-    this.routeMap = props.routeMap || {};
+    this.routeMap = {
+      DEFAULT: new RouteMap(),
+    };
     this.restCells = props.restCells || [];
     this.obstacles = props.obstacles || [];
     this.commonList = props.commonList || [];

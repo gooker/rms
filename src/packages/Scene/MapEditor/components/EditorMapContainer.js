@@ -1,14 +1,14 @@
 import React, { memo, useEffect } from 'react';
-import { isPlainObject, throttle } from 'lodash';
+import { throttle } from 'lodash';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
-import { Elevator } from '@/entities';
 import { ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
-import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
+import { renderChargerList, renderWorkStationList } from '@/utils/mapUtil';
 import {
   FooterHeight,
   HeaderHeight,
@@ -18,6 +18,7 @@ import {
 } from '../editorEnums';
 import styles from '../editorLayout.module.less';
 import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
+import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
@@ -27,6 +28,7 @@ const EditorMapContainer = (props) => {
     currentLogicArea,
     currentRouteMap,
     preRouteMap,
+    mapRotation,
     leftActiveCategory,
     navigationCellType,
     shownNavigationCellType,
@@ -99,7 +101,7 @@ const EditorMapContainer = (props) => {
         }, 200),
       );
     }
-  }, [mapContext, currentMap, currentLogicArea, shownNavigationCellType]);
+  }, [mapContext, currentMap, currentLogicArea, shownNavigationCellType, mapRotation]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {
@@ -116,62 +118,29 @@ const EditorMapContainer = (props) => {
   }, [mapRatio]);
 
   function renderMap() {
-    dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
-    // 渲染点位(不渲染电梯内部点)
-    // const elevatorInnerCells = [];
-    // if (Array.isArray(currentMap.elevatorList)) {
-    //   currentMap.elevatorList.forEach((item) => {
-    //     elevatorInnerCells.push(...item.innerCellId);
-    //   });
-    // }
-
-    let cellsToRender = [];
-    shownNavigationCellType.forEach((type) => {
-      const naviCellMap = currentMap.naviCellMap?.[type];
-      if (isPlainObject(naviCellMap)) {
-        // 将naviCells中的id(xyId)替换为number ID
-        Object.values(naviCellMap)
-          .filter((item) => item.logicId === currentLogicArea)
-          .forEach((item) => {
-            const cellMapId = currentMap.cellMap[`${currentLogicArea}_${item.id}`]?.id;
-            cellsToRender.push({
-              ...item,
-              isControl: !isNull(cellMapId),
-              id: cellMapId, // 只用于显示
-              naviCellType: type,
-            });
-          });
-      }
-    });
-
+    const cellsToRender = Object.values(currentMap.cellMap)
+      .filter((item) => shownNavigationCellType.includes(item.brand))
+      .map((item) =>
+        coordinateTransformer(item, {
+          ...currentMap.transform[item.brand],
+          pixiAngle: mapRotation,
+        }),
+      );
     mapContext.renderCells(cellsToRender);
-    dispatch({ type: 'editor/saveCurrentCells', payload: cellsToRender });
 
-    // 渲染电梯
-    // if (Array.isArray(currentMap.elevatorList)) {
-    //   const elevatorData = renderElevatorList(
-    //     currentMap.elevatorList,
-    //     cellsToRender,
-    //     currentLogicArea,
-    //   );
-    //   const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
-    //   const elevators = mapContext.renderElevator(logicElevator, false);
-    //
-    //   // 判断是否有需要在切换逻辑区时候自动选中的电梯
-    //   if (
-    //     logicElevator.length > 0 &&
-    //     selections.length === 1 &&
-    //     selections[0] instanceof Elevator
-    //   ) {
-    //     const currentElevator = elevators[selections[0].id];
-    //     currentElevator.onSelect();
-    //     window.$$dispatch({ type: 'editor/updateSelections', payload: [currentElevator] });
-    //   }
-    // }
+    // TODO: 画原点坐标系
+    // const { viewport } = mapContext.pixiUtils;
+    // const { width, height } = viewport.getLocalBounds();
+    // const coordinatorSystem = new SmoothGraphics();
+    // coordinatorSystem.lineStyle(30, 0xffffff);
+    // coordinatorSystem.moveTo(0, -height / 2);
+    // coordinatorSystem.lineTo(0, height / 2);
+    // coordinatorSystem.moveTo(-width / 2, 0);
+    // coordinatorSystem.lineTo(width / 2, 0);
+    // mapContext.pixiUtils.viewportAddChild(coordinatorSystem);
   }
 
   function renderLogicArea() {
-    dispatch({ type: 'editor/saveState', payload: { selectCells: [], selectLines: [] } });
     const currentLogicAreaData = currentMap?.logicAreaList?.[currentLogicArea];
     if (!currentLogicAreaData) return;
 
@@ -326,7 +295,7 @@ const EditorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.renderCostLines(relations, relations, true);
+    mapContext.renderCostLines(relations, true);
   }
 
   // 地图区域鼠标样式
@@ -386,6 +355,7 @@ export default connect(({ editor, editorView }) => {
     mapContext,
     leftActiveCategory,
     selections,
+    mapRotation: editorView.mapRotation,
     shortcutToolVisible: editorView.shortcutToolVisible,
     shownNavigationCellType: editorView.shownNavigationCellType,
   };

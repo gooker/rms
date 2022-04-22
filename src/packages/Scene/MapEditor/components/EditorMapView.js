@@ -35,10 +35,11 @@ class EditorMapView extends BaseMap {
 
     // 核心业务逻辑参数
     this.fixedEStopMap = new Map(); // 固定紧急避让区
-    this.selectedCells = []; // 缓存选中的点位ID
+    this.selectedCells = []; // 缓存选中的点位ID, 用于shift选择
     this.naviCellTypeColor = null; // 不同导航点类型颜色
   }
 
+  B;
   async componentDidMount() {
     // 禁用右键菜单
     document.oncontextmenu = (event) => {
@@ -102,19 +103,14 @@ class EditorMapView extends BaseMap {
 
     payload.forEach((item) => {
       const cell = new Cell({
-        type: item.naviCellType, // 标记是哪个厂商小车用的导航点
-        id: item.id, // 原始自增ID
-        oId: item.oId, // 导航点原始id
-        x: item.x,
-        y: item.y,
-        isControl: item.isControl, // 是否是管控点
-        color: this.naviCellTypeColor[item.naviCellType], // 导航点背景色
-
+        ...item,
+        color: this.naviCellTypeColor[item.brand], // 导航点背景色
         interactive: true,
         select: this.select,
         showCoordinate: this.states.showCoordinate,
       });
       const xyCellMapKey = `${item.x}_${item.y}`;
+      this.idXYMap.set(item.id, xyCellMapKey);
       if (!Array.isArray(this.xyCellMap.get(xyCellMapKey))) {
         this.xyCellMap.set(xyCellMapKey, [cell]);
       } else {

@@ -889,6 +889,25 @@ export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value
   }
 }
 
+/**
+ * 将数组元素整合为对象
+ * @param data {Array}
+ * @param labels {Array}
+ * @return Object
+ */
+export function convertArrayToMap(data, labels) {
+  if (Array.isArray(data) && Array.isArray(labels)) {
+    const result = {};
+    data.forEach((item, index) => {
+      if (!isStrictNull(labels[index])) {
+        result[labels[index]] = item;
+      }
+    });
+    return result;
+  }
+  return {};
+}
+
 // Modal 长宽自适应，以这个为主
 export function adaptModalHeight() {
   const { clientHeight } = document.body;
