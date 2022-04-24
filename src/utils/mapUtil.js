@@ -21,6 +21,7 @@ import {
   getTaskPathTexture,
 } from '@/utils/textures';
 import json from '../../package.json';
+import CellEntity from '@/entities/CellEntity';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -42,7 +43,7 @@ export function generateCellMapByRowsAndCols(
       let innerX = firstPosition.x;
       innerX += col * distanceX;
       if (parseInt(id, 10) >= start && parseInt(id, 10) <= end) {
-        cells.push({ id, x: innerX, y: innerY });
+        cells.push(new CellEntity({ id, x: innerX, y: innerY }));
         id += 1;
       }
     }
@@ -396,7 +397,6 @@ export function countChargerCellWeight(array) {
  * @param {*} target 点位JSON数据
  * @param {*} distance 移动距离
  * @param {*} dir 移动方向
- * @returns 新增的点位JSON数据
  */
 export function moveCell(target, distance, dir) {
   const result = { ...target };
@@ -1544,27 +1544,4 @@ export function getCellMapId(cellIds) {
   } catch (e) {
     return result;
   }
-}
-
-export function getCellMapItem(id, logicId, x, y) {
-  return {
-    id,
-    logicId,
-    naviId: `${x}_${y}`,
-    x,
-    y,
-  };
-}
-
-export function getNaviCellMapItem(oId, logicId, x, y, isControl) {
-  return {
-    id: `${x}_${y}`,
-    isControl,
-    logicId,
-    oId,
-    ox: x,
-    oy: y,
-    x: x,
-    y: y,
-  };
 }

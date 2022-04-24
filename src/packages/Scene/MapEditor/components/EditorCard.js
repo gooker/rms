@@ -1,12 +1,13 @@
 import React, { memo } from 'react';
 import styles from '../../popoverPanel.module.less';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const EditorCard = (props) => {
   const { label, children } = props;
 
   return (
     <div className={styles.editorCard}>
-      <div>{label}</div>
+      <div style={{ color: '#e8e8e8' }}>{label}</div>
       <div>{children}</div>
     </div>
   );

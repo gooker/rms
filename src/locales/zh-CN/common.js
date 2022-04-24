@@ -151,7 +151,8 @@ export default {
   'app.map.latentTote': '潜伏料箱',
   'app.map.tote': '料箱货架',
   'app.map.navigationCell': '导航点',
-  'app.map.controlCell': '管控点',
+  'app.map.landCoordinator': '物理坐标',
+  'app.map.naviCoordinator': '导航坐标',
 
   // 小车类型
   'app.agvType.LatentLifting': '潜伏车',

@@ -27,6 +27,8 @@ export default class Cell extends PIXI.Container {
     this.naviId = props.naviId; // 车型导航点的原始ID
     this.x = props.x;
     this.y = props.y;
+    this.nx = props.nx;
+    this.ny = props.ny;
     this.xLabel = props.xLabel;
     this.yLabel = props.yLabel;
     this.color = props.color.replace('#', '0x');

@@ -1,4 +1,6 @@
 // 用于保存显示与全局loading标识符
+import { AgvBrand, CoordinationType } from '@/config/consts';
+
 export default {
   namespace: 'editorView',
 
@@ -20,8 +22,10 @@ export default {
     settingEStop: false, // 绘制区域用于配置地图功能
     saveMapLoading: false, // 保存地图
     activeMapLoading: false, // 激活地图
-    shownNavigationCellType: ['MUSHINY', 'SEER'], // 显示的导航点类型
-    shownCellCoordinateType: 'land', // land 表示物理点位、navi表示导航点位
+
+    // 地图控制
+    shownNavigationCellType: [AgvBrand.MUSHINY, AgvBrand.SEER], // 显示的导航点类型
+    shownCellCoordinateType: CoordinationType.LAND, // land 表示物理点位、navi表示导航点位
     mapRotation: 0, // 手动旋转地图
   },
 

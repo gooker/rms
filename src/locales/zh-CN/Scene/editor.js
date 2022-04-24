@@ -73,8 +73,6 @@ export default {
   'editor.cell.horizontalSelection': '横向选择',
   'editor.cell.verticalSelection': '纵向选择',
   'editor.cell.batchSelection': '批量选择',
-  'editor.cell.addControl': '添加管控点',
-  'editor.cell.cancelControl': '取消管控点',
 
   // 批量新增点位
   'editor.batchAddCell.addWay': '添加方式',
@@ -88,7 +86,6 @@ export default {
   'editor.batchAddCell.rows': '行数',
   'editor.batchAddCell.columns': '列数',
   'editor.batchAddCell.offsetsNumber': '偏移个数',
-  'editor.batchAddCell.syncAsController': '同步为管控点',
 
   'editor.generateCode.way': '生成方式',
   'editor.generateCode.way.increment': '递增',

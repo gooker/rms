@@ -1,13 +1,14 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
-import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col } from 'antd';
+import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { MUSHINY, SEER } from '@/utils/mapParser';
+import { AgvBrand } from '@/config/consts';
 
-const { formItemLayout } = getFormLayout(5, 18);
+const { formItemLayout } = getFormLayout(5, 19);
 const UploadMapModal = (props) => {
   const { dispatch, visible, onCancel, navigationCellType, currentMap, currentLogicArea } = props;
   const [formRef] = Form.useForm();
@@ -33,14 +34,15 @@ const UploadMapModal = (props) => {
         // beforeUpload返回false情况下, antd选择后的文件file是经过包装的数据，获取真是文件对象需要取file.originFileObj. 日他妈...
         reader.readAsText(file[0].originFileObj, 'UTF-8');
         reader.onload = (evt) => {
-          let mapData = evt.target.result;
           try {
+            // catch文件格式错误
+            let mapData = evt.target.result;
             mapData = JSON.parse(mapData);
             switch (navigationCellType) {
-              case 'SEER':
+              case AgvBrand.SEER:
                 mapData = SEER(mapData, existIds, currentLogicArea);
                 break;
-              case 'MUSHINY':
+              case AgvBrand.MUSHINY:
                 mapData = MUSHINY(mapData, existIds, currentLogicArea);
                 break;
               default:
@@ -52,8 +54,8 @@ const UploadMapModal = (props) => {
             }).then((result) => {
               result && cancel();
             });
-          } catch (e) {
-            console.log('地图数据格式错误, 非标准JSON文件');
+          } catch (err) {
+            message.error(err.message);
           }
         };
       })
@@ -63,7 +65,7 @@ const UploadMapModal = (props) => {
   return (
     <Modal
       destroyOnClose
-      width={600}
+      width={550}
       visible={visible}
       onCancel={cancel}
       onOk={handleFile}
@@ -104,7 +106,7 @@ const UploadMapModal = (props) => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item name={'coordType'} label={'坐标系类型'} rules={[{ required: true }]}>
+        <Form.Item name={'coordinationType'} label={'坐标系类型'} rules={[{ required: true }]}>
           <Select style={{ width: 200 }}>
             <Select.Option value={'L'}>左手坐标系</Select.Option>
             <Select.Option value={'R'}>右手坐标系</Select.Option>
@@ -147,14 +149,6 @@ const UploadMapModal = (props) => {
         >
           <InputNumber addonAfter={'°'} />
         </Form.Item>
-        {/*<Form.Item*/}
-        {/*  name={'pixiAngle'}*/}
-        {/*  initialValue={0}*/}
-        {/*  label={'旋转角度'}*/}
-        {/*  rules={[{ required: true }]}*/}
-        {/*>*/}
-        {/*  <InputNumber addonAfter={'°'} />*/}
-        {/*</Form.Item>*/}
       </Form>
     </Modal>
   );

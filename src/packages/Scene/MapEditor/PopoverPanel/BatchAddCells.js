@@ -23,10 +23,7 @@ const BatchAddCells = (props) => {
       }).then(({ centerMap, additionalCells }) => {
         mapContext.updateCells({
           type: 'add',
-          payload: {
-            type: values.navigationCellType,
-            cells: additionalCells,
-          },
+          payload: additionalCells,
         });
         centerMap && mapContext.centerView();
       });
@@ -38,19 +35,19 @@ const BatchAddCells = (props) => {
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
           name={'addWay'}
-          label={<FormattedMessage id="editor.batchAddCell.addWay" />}
+          label={<FormattedMessage id='editor.batchAddCell.addWay' />}
           initialValue={'absolute'}
-          getValueFromEvent={(value) => {
-            setAddWay(value);
-            return value;
+          getValueFromEvent={(evt) => {
+            setAddWay(evt.target.value);
+            return evt.target.value;
           }}
         >
-          <Radio.Group buttonStyle="solid">
+          <Radio.Group buttonStyle='solid'>
             <Radio.Button value={'absolute'}>
-              <FormattedMessage id="editor.batchAddCell.addWay.absolute" />
+              <FormattedMessage id='editor.batchAddCell.addWay.absolute' />
             </Radio.Button>
             <Radio.Button value={'offset'}>
-              <FormattedMessage id="editor.batchAddCell.addWay.offset" />
+              <FormattedMessage id='editor.batchAddCell.addWay.offset' />
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
@@ -66,14 +63,6 @@ const BatchAddCells = (props) => {
               </Select.Option>
             ))}
           </Select>
-        </Form.Item>
-        <Form.Item
-          name={'syncAsController'}
-          label={formatMessage({ id: 'editor.batchAddCell.syncAsController' })}
-          initialValue={true}
-          valuePropName={'checked'}
-        >
-          <Switch />
         </Form.Item>
       </Form>
       <Divider style={{ margin: '15px 0' }} />

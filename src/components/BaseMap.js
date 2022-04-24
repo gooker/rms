@@ -19,7 +19,7 @@ import {
   Intersection,
   CommonFunction,
 } from '@/entities';
-import { isNull, isItemOfArray, isStrictNull, convertArrayToMap } from '@/utils/util';
+import { isNull, isItemOfArray } from '@/utils/util';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
@@ -28,11 +28,11 @@ const AllPriorities = [10, 20, 100, 1000];
 
 function initState(context) {
   // 多种导航点类型一起显示的时候，同一个点位必定会出现多个导航点，所以value使用数组形式；该对象近用于处理地图元素属性，比如存储点等
-  context.xyCellMap = new Map(); // {x_y: [CellEntity1, CellEntity2,..]}
-  context.idXYMap = new Map(); // {1:x_y}
+  context.idCellMap = new Map(); // {1:Cell}
+  context.xyCellMap = new Map(); // {x_y:[Cell]} // 主要用于处理点击某个点位，查看该坐标下有几个点位
 
-  context.xyRelationMap = new Map(); // {x1_y1_x2_y2: graphics}
-  context.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() }; //  { cost: new Map({[startCellID-endCellID]: [LineEntity]})}
+  context.idLineMap = new Map(); // {x1_y1_x2_y2: graphics}
+  context.idArrowMap = new Map(); // {x_y:arrow}
 
   context.workStationMap = new Map(); // {stopCellId: [Entity]}
   context.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}
@@ -126,7 +126,7 @@ export default class BaseMap extends React.PureComponent {
   // 切换是否显示优先级距离
   switchDistanceShown = (flag) => {
     this.states.showDistance = flag;
-    Object.values(this.idLineMap).forEach((innerMap) => {
+    Object.values(this.idArrowMap).forEach((innerMap) => {
       innerMap.forEach((line) => {
         if (line.type === 'line') {
           line.switchDistanceShown(flag);
@@ -147,7 +147,7 @@ export default class BaseMap extends React.PureComponent {
 
   // 清空并销毁所有优先级线条
   destroyAllLines = () => {
-    Object.values(this.idLineMap).forEach((lineMap) => {
+    Object.values(this.idArrowMap).forEach((lineMap) => {
       lineMap.forEach((line) => {
         line.parent && line.parent.removeChild(line);
         line.destroy({ children: true });
@@ -218,33 +218,22 @@ export default class BaseMap extends React.PureComponent {
     relationsToRender.forEach((lineData) => {
       const { type, cost } = lineData;
       if (type === 'line') {
-        const { source, target } = lineData;
-        const sourceXY = this.idXYMap.get(source);
-        const targetXY = this.idXYMap.get(target);
-        if (!isStrictNull(sourceXY) && !isStrictNull(targetXY)) {
+        const sourceCell = this.idCellMap.get(lineData.source);
+        const targetCell = this.idCellMap.get(lineData.target);
+        if (!isNull(sourceCell) && !isNull(targetCell)) {
           // 先渲染两个导航点之间的连线
-          const source = convertArrayToMap(
-            sourceXY.split('_').map((item) => parseInt(item)),
-            ['x', 'y'],
-          );
-          const target = convertArrayToMap(
-            targetXY.split('_').map((item) => parseInt(item)),
-            ['x', 'y'],
-          );
-
-          // 绘制点位之间的线条
           const relationLine = new SmoothGraphics();
           relationLine.lineStyle(30, 0xffffff);
-          relationLine.moveTo(source.x, source.y);
-          relationLine.lineTo(target.x, target.y);
+          relationLine.moveTo(sourceCell.x, sourceCell.y);
+          relationLine.lineTo(targetCell.x, targetCell.y);
           this.pixiUtils.viewportAddChild(relationLine);
-          this.xyRelationMap.set(`${source.x}_${source.y}_${target.x}_${target.y}`, relationLine);
+          this.idLineMap.set(`${sourceCell.id}_${targetCell.id}`, relationLine);
 
           // 绘制箭头(箭头位置在起始点和终点的连线上，靠近起始点，箭头指向终点)
-          const angle = getAngle(source, target);
-          const distance = getDistance(source, target);
+          const angle = getAngle(sourceCell, targetCell);
+          const distance = getDistance(sourceCell, targetCell);
           const offset = distance > 1000 ? 1000 : distance / 2;
-          const arrowPosition = getCoordinat(source, angle, offset);
+          const arrowPosition = getCoordinat(sourceCell, angle, offset);
           const costTexture = getTextureFromResources(`cost_${cost}`);
           const arrow = new PIXI.Sprite(costTexture);
           arrow.anchor.set(0.5, 0);
@@ -254,7 +243,7 @@ export default class BaseMap extends React.PureComponent {
           arrow.x = arrowPosition.x;
           arrow.y = arrowPosition.y;
           this.pixiUtils.viewportAddChild(arrow);
-          this.idLineMap[cost]?.set(`${source}-${target}`, arrow);
+          this.idArrowMap.set(`${sourceCell.id}_${targetCell.id}`, arrow);
         }
       }
     });
@@ -275,9 +264,9 @@ export default class BaseMap extends React.PureComponent {
     // 把需要隐藏优先级线条透明度置0
     const hiddenCosts = AllPriorities.filter((item) => !uiFilterData.includes(item));
     hiddenCosts.forEach((cost) => {
-      const idLineMap = this.idLineMap[cost];
-      if (idLineMap instanceof Map) {
-        idLineMap.forEach((line) => {
+      const idArrowMap = this.idArrowMap[cost];
+      if (idArrowMap instanceof Map) {
+        idArrowMap.forEach((line) => {
           line.switchShown(false);
         });
       }
@@ -285,8 +274,8 @@ export default class BaseMap extends React.PureComponent {
     // 如果指定优先级已经被渲染就修改透明度；如果没有渲染就放到数组中待渲染
     const priorityToRender = [];
     uiFilterData.forEach((cost) => {
-      // 首先从 this.idLineMap 中获取该优先级的线段是否显示
-      const specificCostLinesMap = this.idLineMap[cost];
+      // 首先从 this.idArrowMap 中获取该优先级的线段是否显示
+      const specificCostLinesMap = this.idArrowMap[cost];
       if (!(specificCostLinesMap instanceof Map) || specificCostLinesMap.size === 0) {
         priorityToRender.push(cost);
       } else {
@@ -327,7 +316,7 @@ export default class BaseMap extends React.PureComponent {
   pipeSwitchLinesShown = () => {
     const { blockCellIds } = getCurrentRouteMapData();
     const { hideBlock, shownPriority, shownRelationDir, shownRelationCell } = this.states;
-    Object.values(this.idLineMap).forEach((innerMap) => {
+    Object.values(this.idArrowMap).forEach((innerMap) => {
       innerMap.forEach((line) => {
         if (line.type === 'line') {
           const { id, cost, dir } = line;
@@ -360,7 +349,7 @@ export default class BaseMap extends React.PureComponent {
   // 渲染线条特殊标志
   renderLineSpecialFlag = (status, value, textureName, key, size) => {
     const [source, target] = value.split('-');
-    const lineEntity = getLineEntityFromMap(this.idLineMap, source, target);
+    const lineEntity = getLineEntityFromMap(this.idArrowMap, source, target);
     if (!lineEntity) return;
     status
       ? lineEntity.plusAction(getTextureFromResources(textureName), key, size)

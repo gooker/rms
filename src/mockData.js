@@ -1,16 +1,3 @@
-export const NavigationCellType = [
-  {
-    code: 'MUSHINY',
-    name: '牧星导航',
-    color: '#037ef3',
-  },
-  {
-    code: 'SEER',
-    name: '仙工导航',
-    color: '#34bf49',
-  },
-];
-
 export const MockMapData = {
   id: '62610273cb323062a3cefafa',
   name: '测试2',
@@ -2857,7 +2844,7 @@ export const MockMapData = {
   assistRotateCellIds: null,
   deepStoreCellMap: null,
   targetCellRelationMap: null,
-  localUpdateTime: '2022-04-22T10:37:51.043',
+  localUpdateTime: '2022-04-24T15:12:18.895',
   createdByUser: 'chengcheng.zhou',
   createTime: '2022-04-21 15:06:27',
   updatedByUser: 'chengcheng.zhou',
@@ -2873,7 +2860,6 @@ export const MockMapData = {
         Y: 0,
       },
       compensationAngle: 0,
-      pixiAngle: 0,
     },
   },
 };

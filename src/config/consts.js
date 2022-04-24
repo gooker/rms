@@ -336,3 +336,31 @@ export const LatentToteTaskTypeOption = [
   { label: 'app.simulateTask.toteTaskType.STATION_TO_POD', value: 'STATION_TO_POD' },
   { label: 'app.simulateTask.toteTaskType.POD_TO_STATION', value: 'POD_TO_STATION' },
 ];
+
+// 车型
+export const AgvBrand = {
+  MUSHINY: 'MUSHINY',
+  SEER: 'SEER',
+};
+
+// 平台支持的导航点类型，每次新增支持需要手动加，且必须要配置坐标类型
+export const NavigationCellType = [
+  {
+    code: AgvBrand.MUSHINY,
+    name: 'Mushiny',
+    color: '#037ef3',
+    coordinationType: 'L',
+  },
+  {
+    code: AgvBrand.SEER,
+    name: 'SEER',
+    color: '#34bf49',
+    coordinationType: 'R',
+  },
+];
+
+// 坐标类型
+export const CoordinationType = {
+  LAND: 'land',
+  NAVI: 'navi',
+};

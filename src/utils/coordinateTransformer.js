@@ -1,4 +1,5 @@
 import { scale, rotateDEG, translate, compose, applyToPoint, flipX } from 'transformation-matrix';
+import { NavigationCellType } from '@/config/consts';
 
 /**
  * 右手坐标系
@@ -12,18 +13,26 @@ import { scale, rotateDEG, translate, compose, applyToPoint, flipX } from 'trans
  * 2. 缩放转换
  * 4. 偏移转换
  * 5. 坐标转换(转换为左手坐标系坐标)
- * 6. 显示时旋转(最终生成的点位坐标为PIXI坐标)
  * @tip 页面操作输入的补偿角度和旋转角度，默认顺时针为正，此时需要取反
  * @3rd-util https://github.com/chrvadala/transformation-matrix#readme
- * @param coordinate {{x:Number, y:Number}}
- * @param transformParams {{type:String, rotation:Number, zoom:Number, offset:{x:number, y:number}, pixiRotation:Number}}
  */
-export function coordinateTransformer(coordinate, transformParams) {
-  const { coordType, zoom, compensationOffset, compensationAngle, pixiAngle } = transformParams;
+// 获取转换参数默认值(navigationCellType就是brand)
+function getDefaultTransformParams(brand) {
+  return {
+    coordinationType: NavigationCellType.filter((item) => item.code === brand).coordinationType,
+    zoom: 1,
+    compensationOffset: { x: 0, y: 0 },
+    compensationAngle: 0,
+  };
+}
+
+export function coordinateTransformer(coordinate, navigationCellType, transformParams) {
+  const { coordinationType, zoom, compensationOffset, compensationAngle } =
+  transformParams || getDefaultTransformParams();
   let cell = { ...coordinate };
   const matrixParams = [];
   let xLabel, yLabel;
-  if (coordType === 'L') {
+  if (coordinationType === 'L') {
     matrixParams.push(flipX());
     const matrix = compose(...matrixParams);
     const { x, y } = applyToPoint(matrix, coordinate);
@@ -36,7 +45,6 @@ export function coordinateTransformer(coordinate, transformParams) {
   matrixParams.push(scale(zoom));
   matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
   matrixParams.push(flipX());
-  matrixParams.push(rotateDEG(-pixiAngle));
   const matrix = compose(...matrixParams);
   const matrixResult = applyToPoint(matrix, cell);
   const x = Math.round(matrixResult.x);

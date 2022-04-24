@@ -13,17 +13,16 @@ import {
   LeftOutlined,
   RightOutlined,
 } from '@ant-design/icons';
-import { formatMessage, isNull } from '@/utils/util';
 import MoveCell from './MoveCell';
 import AddNavigation from './AddNavigation';
 import BatchAddCells from './BatchAddCells';
 import AdjustCellSpace from './AdjustCellSpace';
 import GenerateCellCode from './GenerateCellCode';
+import DeleteNavigationModal from '../components/DeleteNavigationModal';
+import { formatMessage, isNull } from '@/utils/util';
+import { MapSelectableSpriteType } from '@/config/consts';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
-import { MapSelectableSpriteType } from '@/config/consts';
-import DeleteNavigationModal from '@/packages/Scene/MapEditor/components/DeleteNavigationModal';
-import { uniq } from 'lodash';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
@@ -52,22 +51,6 @@ const CellPanel = (props) => {
     }
   }
 
-  function addControl() {
-    const naviCells = getSelectionNaviCells();
-    dispatch({ type: 'editor/addControlFunction', payload: naviCells }).then((result) => {
-      mapContext.updateCells({ type: 'addControl', payload: Object.entries(result) });
-    });
-  }
-
-  function cancelControl() {
-    const naviCells = getSelectionNaviCells();
-    dispatch({ type: 'editor/cancelControlFunction', payload: naviCells }).then(
-      ({ cells, lines }) => {
-        mapContext.updateCells({ type: 'cancelControl', payload: Object.entries(cells) });
-      },
-    );
-  }
-
   /**
    * 删除导航点
    * 1. 如果多个导航点在一个坐标点上，需要用户确认删除哪些类型的导航点，如果是全部删除，那么一并删除所在点位的导航点
@@ -88,29 +71,28 @@ const CellPanel = (props) => {
     dispatch({
       type: 'editor/deleteNavigations',
       payload: { types, naviCells },
-    }).then(({ cells, lines }) => {
-      mapContext.updateCells({ type: 'remove', payload: Object.entries(cells) });
+    }).then(({ cells, lines, arrow }) => {
+      mapContext.updateCells({ type: 'remove', payload: cells });
+      mapContext.updateLines({ type: 'remove', payload: { lines, arrow } });
     });
+  }
+
+  function getSelectionNaviCellTypes() {
+    const types = getSelectionNaviCells().map(({ brand }) => brand);
+    return [...new Set(types)];
   }
 
   function getSelectionNaviCells() {
     // 选中的点位的下层可能还有别的导航点，所以需要把所有符合条件(坐标)的点位筛选出来
     const { xyCellMap } = mapContext;
-    const allNaviCells = [];
+    let allNaviCells = [];
     selectedCells.forEach(({ x, y }) => {
       const cells = xyCellMap.get(`${x}_${y}`);
       if (Array.isArray(cells)) {
-        cells.forEach((item) => {
-          allNaviCells.push(item);
-        });
+        allNaviCells = allNaviCells.concat(cells);
       }
     });
     return allNaviCells;
-  }
-
-  function getSelectionNaviCellTypes() {
-    const types = getSelectionNaviCells().map(({ naviCellType }) => naviCellType);
-    return [...new Set(types)];
   }
 
   return (
@@ -173,12 +155,7 @@ const CellPanel = (props) => {
                   <Button
                     style={ButtonStyle}
                     disabled={currentMap == null}
-                    onClick={() => {
-                      deleteNavigations();
-                      // dispatch({ type: 'editor/deleteNavigations' }).then((result) => {
-                      //   deleteNavigations(result);
-                      // });
-                    }}
+                    onClick={deleteNavigations}
                   >
                     <MinusCircleOutlined /> <FormattedMessage id="editor.cell.delete" />
                   </Button>
@@ -226,29 +203,6 @@ const CellPanel = (props) => {
                   </Button>
                 </Col>
               </Row>
-            </div>
-
-            {/* 管控点操作栏 */}
-            <div style={{ marginTop: 15 }} className={styles.panelBlock}>
-              <div>
-                <FormattedMessage id={'app.map.controlCell'} />
-              </div>
-              <div>
-                <Row gutter={[10, 10]}>
-                  <Col span={12}>
-                    {/* 添加管控点 */}
-                    <Button style={ButtonStyle} onClick={addControl}>
-                      <PlusCircleOutlined /> <FormattedMessage id="editor.cell.addControl" />
-                    </Button>
-                  </Col>
-                  <Col span={12}>
-                    {/* 取消管控点 */}
-                    <Button style={ButtonStyle} onClick={cancelControl}>
-                      <PlusCircleOutlined /> <FormattedMessage id="editor.cell.cancelControl" />
-                    </Button>
-                  </Col>
-                </Row>
-              </div>
             </div>
 
             {/* 批量选择工具栏 */}

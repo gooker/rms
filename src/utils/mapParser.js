@@ -1,6 +1,7 @@
 import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import CellEntity from '@/entities/CellEntity';
+import RelationEntity from '@/entities/RelationEntity';
 
 /**
  * 仙工地图数据转化工具
@@ -15,50 +16,55 @@ export function SEER(mapData, existIds, currentLogicArea) {
   const result = { cells: [], relations: [] };
   const instanceNameIdMap = {};
   const { advancedPointList, advancedCurveList } = mapData;
-  advancedPointList.forEach(({ className, instanceName, pos }) => {
-    // 导航点只关注LandMark
-    if (className === 'LandMark') {
-      const id = getCellMapId(ids);
-      ids.push(id);
-      const cellMapItem = new CellEntity({
-        id,
-        naviId: instanceName,
-        brand: 'SEER',
-        x: Math.round(pos.x * 1000),
-        y: Math.round(pos.y * 1000),
-        nx: Math.round(pos.x * 1000),
-        ny: Math.round(pos.y * 1000),
-        logicId: currentLogicArea,
-      });
-      instanceNameIdMap[cellMapItem.naviId] = cellMapItem.id;
-      result.cells.push(cellMapItem);
-    }
-  });
+  if (Array.isArray(advancedPointList)) {
+    advancedPointList.forEach(({ className, instanceName, pos }) => {
+      // 导航点只关注LandMark
+      if (className === 'LandMark') {
+        const id = getCellMapId(ids);
+        ids.push(id);
+        const cellMapItem = new CellEntity({
+          id,
+          naviId: instanceName,
+          brand: 'SEER',
+          x: Math.round(pos.x * 1000),
+          y: Math.round(pos.y * 1000),
+          nx: Math.round(pos.x * 1000),
+          ny: Math.round(pos.y * 1000),
+          logicId: currentLogicArea,
+        });
+        instanceNameIdMap[cellMapItem.naviId] = cellMapItem.id;
+        result.cells.push(cellMapItem);
+      }
+    });
+  } else {
+    throw new Error('"advancedPointList"字段缺失');
+  }
 
   // relations: 直线、圆弧、贝塞尔
-  advancedCurveList.forEach(({ startPos, endPos }) => {
-    if (
-      !isNull(instanceNameIdMap[startPos.instanceName]) &&
-      !isNull(instanceNameIdMap[endPos.instanceName])
-    ) {
-      const relationItem = {
-        type: 'line',
-        cost: 10,
-        angle: getAngle(startPos.pos, endPos.pos),
-        source: instanceNameIdMap[startPos.instanceName],
-        target: instanceNameIdMap[endPos.instanceName],
-        distance: getDistance(
-          { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
-          { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
-        ),
-        bparam1: null,
-        bparam2: null,
-      };
-      relationItem.angle = Math.round(relationItem.angle);
-      relationItem.distance = Math.round(relationItem.distance);
-      result.relations.push(relationItem);
-    }
-  });
+  if (Array.isArray(advancedCurveList)) {
+    advancedCurveList.forEach(({ startPos, endPos }) => {
+      if (
+        !isNull(instanceNameIdMap[startPos.instanceName]) &&
+        !isNull(instanceNameIdMap[endPos.instanceName])
+      ) {
+        // 实际地图渲染时候只会用到这里的source & target属性
+        const relationItem = new RelationEntity({
+          angle: getAngle(startPos.pos, endPos.pos),
+          source: instanceNameIdMap[startPos.instanceName],
+          target: instanceNameIdMap[endPos.instanceName],
+          distance: getDistance(
+            { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
+            { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
+          ),
+        });
+        relationItem.angle = Math.round(relationItem.angle);
+        relationItem.distance = Math.round(relationItem.distance);
+        result.relations.push(relationItem);
+      }
+    });
+  } else {
+    throw new Error('"advancedCurveList"字段缺失');
+  }
   return result;
 }
 

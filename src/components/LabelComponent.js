@@ -1,7 +1,6 @@
 import React from 'react';
-import { isNull } from '@/utils/util';
 
-// 难用死了，要重构或者直接删除
+// FIXME: 难用死了，要重构或者直接删除
 const LabelComponent = (props) => {
   const {
     label,
@@ -35,7 +34,7 @@ const LabelComponent = (props) => {
       >
         {label}:
       </div>
-      <div style={{ flex: 1 }}>{children}</div>
+      <div style={{ flex: 1, color: '#e8e8e8' }}>{children}</div>
     </div>
   );
 };

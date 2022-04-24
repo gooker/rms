@@ -39,7 +39,6 @@ class EditorMapView extends BaseMap {
     this.naviCellTypeColor = null; // 不同导航点类型颜色
   }
 
-  B;
   async componentDidMount() {
     // 禁用右键菜单
     document.oncontextmenu = (event) => {
@@ -110,28 +109,30 @@ class EditorMapView extends BaseMap {
         showCoordinate: this.states.showCoordinate,
       });
       const xyCellMapKey = `${item.x}_${item.y}`;
-      this.idXYMap.set(item.id, xyCellMapKey);
       if (!Array.isArray(this.xyCellMap.get(xyCellMapKey))) {
         this.xyCellMap.set(xyCellMapKey, [cell]);
       } else {
         this.xyCellMap.get(xyCellMapKey).push(cell);
       }
+      this.idCellMap.set(item.id, cell);
       this.pixiUtils.viewportAddChild(cell);
     });
   };
 
-  removeCells = ([xyId, oIds]) => {
-    const cells = this.xyCellMap.get(xyId);
-    const hold = [];
-    cells.forEach((item) => {
-      if (oIds.includes(item.oId)) {
-        this.pixiUtils.viewportRemoveChild(item);
-        item.destroy();
-      } else {
-        hold.push(item);
-      }
+  removeCells = (cellIds) => {
+    cellIds.forEach((cellId) => {
+      // idCellMap
+      const cell = this.idCellMap.get(cellId);
+      const xyKey = `${cell.x}_${cell.y}`;
+      this.pixiUtils.viewportRemoveChild(cell);
+      cell.destroy();
+      this.idCellMap.delete(cellId);
+
+      // xyCellMap
+      let xyCells = this.xyCellMap.get(xyKey);
+      xyCells = xyCells.filter((item) => item.id !== cellId);
+      this.xyCellMap.set(xyKey, xyCells);
     });
-    this.xyCellMap.set(xyId, hold);
   };
 
   updateCells = ({ type, payload }) => {
@@ -139,37 +140,9 @@ class EditorMapView extends BaseMap {
     if (type === 'add') {
       this.renderCells(payload);
     }
-    // 新增管控点
-    if (type === 'addControl') {
-      if (Array.isArray(payload)) {
-        payload.forEach(([xyId, id]) => {
-          const cells = this.xyCellMap.get(xyId);
-          if (Array.isArray(cells)) {
-            cells.forEach((cellEntity) => cellEntity.addControl(id));
-          }
-        });
-      }
-    }
-    // 取消管控点
-    if (type === 'cancelControl') {
-      if (Array.isArray(payload)) {
-        payload.forEach(([xyId, oIds]) => {
-          const cells = this.xyCellMap.get(xyId);
-          if (Array.isArray(cells)) {
-            cells.forEach((cellEntity) => {
-              if (oIds.includes(cellEntity.oId)) {
-                cellEntity.removeControl();
-              }
-            });
-          }
-        });
-      }
-    }
     // 删除点位
     if (type === 'remove') {
-      payload.forEach((item) => {
-        this.removeCells(item);
-      });
+      this.removeCells(payload);
     }
 
     // *************** 以下待调整 *************** //
@@ -368,19 +341,30 @@ class EditorMapView extends BaseMap {
     }
     // 删除
     if (type === 'remove') {
-      payload.forEach((line) => {
-        let relationMapKey;
-        if (line.type === 'line') {
-          relationMapKey = `${line.source}-${line.target}`;
-        }
-        const [cost, lineEntity] = getLineFromIdLineMap(relationMapKey, this.idLineMap);
-        if (cost && lineEntity) {
+      // 删除线条分
+      const { lines, arrow } = payload;
+
+      lines.forEach((lineKey) => {
+        const lineEntity = this.idLineMap.get(lineKey);
+        if (lineEntity) {
           // 首先从地图上移除
           this.pixiUtils.viewportRemoveChild(lineEntity);
           // 销毁对象
-          lineEntity.destroy({ children: true });
+          lineEntity.destroy();
           // 剔除对象
-          this.idLineMap[cost].delete(relationMapKey);
+          this.idLineMap.delete(lineKey);
+        }
+      });
+
+      arrow.forEach((arrowKey) => {
+        const arrowEntity = this.idArrowMap.get(arrowKey);
+        if (arrowEntity) {
+          // 首先从地图上移除
+          this.pixiUtils.viewportRemoveChild(arrowEntity);
+          // 销毁对象
+          arrowEntity.destroy();
+          // 剔除对象
+          this.idArrowMap.delete(arrowKey);
         }
       });
     }

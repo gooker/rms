@@ -120,24 +120,10 @@ const EditorMapContainer = (props) => {
   function renderMap() {
     const cellsToRender = Object.values(currentMap.cellMap)
       .filter((item) => shownNavigationCellType.includes(item.brand))
-      .map((item) =>
-        coordinateTransformer(item, {
-          ...currentMap.transform[item.brand],
-          pixiAngle: mapRotation,
-        }),
-      );
+      .map((item) => coordinateTransformer(item, currentMap.transform[item.brand]));
     mapContext.renderCells(cellsToRender);
 
     // TODO: 画原点坐标系
-    // const { viewport } = mapContext.pixiUtils;
-    // const { width, height } = viewport.getLocalBounds();
-    // const coordinatorSystem = new SmoothGraphics();
-    // coordinatorSystem.lineStyle(30, 0xffffff);
-    // coordinatorSystem.moveTo(0, -height / 2);
-    // coordinatorSystem.lineTo(0, height / 2);
-    // coordinatorSystem.moveTo(-width / 2, 0);
-    // coordinatorSystem.lineTo(width / 2, 0);
-    // mapContext.pixiUtils.viewportAddChild(coordinatorSystem);
   }
 
   function renderLogicArea() {

@@ -10,7 +10,7 @@ import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateU
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';
 import 'moment/locale/ko';
-import { NavigationCellType } from '@/mockData';
+import { NavigationCellType } from '@/config/consts';
 
 export default {
   namespace: 'global',
@@ -47,6 +47,8 @@ export default {
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
+
+    // 全局导航点类型，默认只有牧星二维码点
     navigationCellType: [...NavigationCellType],
   },
 

@@ -1,24 +1,23 @@
-import React, { memo } from 'react';
-import { Form, Switch, InputNumber, Button, Input, Select } from 'antd';
+import React, { memo, useState } from 'react';
+import { Form, InputNumber, Button, Input, Select } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import { connect } from '@/utils/RmsDva';
+import { AgvBrand } from '@/config/consts';
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(7, 14);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const AddNavigation = (props) => {
   const { dispatch, mapContext, navigationCellType } = props;
   const [formRef] = Form.useForm();
+  const [type, setType] = useState(navigationCellType[0].code);
 
   function submit() {
     formRef.validateFields().then((values) => {
       dispatch({ type: 'editor/addNavigation', payload: values }).then((result) => {
         if (result) {
           formRef.resetFields();
-          mapContext.updateCells({
-            type: 'add',
-            payload: result,
-          });
+          mapContext.updateCells({ type: 'add', payload: [result] });
         }
       });
     });
@@ -30,7 +29,11 @@ const AddNavigation = (props) => {
         <Form.Item
           name={'navigationCellType'}
           label={formatMessage({ id: 'editor.navigationCellType' })}
-          initialValue={navigationCellType[0].code}
+          initialValue={type}
+          getValueFromEvent={(value) => {
+            setType(value);
+            return value;
+          }}
         >
           <Select style={{ width: 133 }}>
             {navigationCellType.map(({ code, name }, index) => (
@@ -40,13 +43,18 @@ const AddNavigation = (props) => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          name={'code'}
-          label={formatMessage({ id: 'app.common.code' })}
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
+
+        {/* 牧星点位不要code, code就是Number ID*/}
+        {type !== AgvBrand.MUSHINY && (
+          <Form.Item
+            name={'code'}
+            label={formatMessage({ id: 'app.common.code' })}
+            rules={[{ required: true }]}
+          >
+            <Input style={{ width: 133 }} />
+          </Form.Item>
+        )}
+
         <Form.Item
           name={'x'}
           label={formatMessage({ id: 'editor.cell.abscissa' })}
@@ -60,14 +68,6 @@ const AddNavigation = (props) => {
           rules={[{ required: true }]}
         >
           <InputNumber />
-        </Form.Item>
-        <Form.Item
-          name={'syncAsController'}
-          label={formatMessage({ id: 'editor.batchAddCell.syncAsController' })}
-          initialValue={true}
-          valuePropName={'checked'}
-        >
-          <Switch />
         </Form.Item>
         <Form.Item {...formItemLayoutNoLabel}>
           <Button type="primary" onClick={submit}>
