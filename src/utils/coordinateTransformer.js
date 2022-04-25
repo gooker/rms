@@ -19,7 +19,7 @@ import { NavigationCellType } from '@/config/consts';
 // 获取转换参数默认值(navigationCellType就是brand)
 function getDefaultTransformParams(brand) {
   return {
-    coordinationType: NavigationCellType.filter((item) => item.code === brand).coordinationType,
+    coordinationType: NavigationCellType.filter((item) => item.code === brand)[0].coordinationType,
     zoom: 1,
     compensationOffset: { x: 0, y: 0 },
     compensationAngle: 0,
@@ -28,7 +28,7 @@ function getDefaultTransformParams(brand) {
 
 export function coordinateTransformer(coordinate, navigationCellType, transformParams) {
   const { coordinationType, zoom, compensationOffset, compensationAngle } =
-  transformParams || getDefaultTransformParams();
+  transformParams || getDefaultTransformParams(navigationCellType);
   let cell = { ...coordinate };
   const matrixParams = [];
   let xLabel, yLabel;
@@ -37,10 +37,10 @@ export function coordinateTransformer(coordinate, navigationCellType, transformP
     const matrix = compose(...matrixParams);
     const { x, y } = applyToPoint(matrix, coordinate);
     cell = { ...cell, x, y };
-  } else {
-    xLabel = cell.x;
-    yLabel = cell.y;
   }
+  xLabel = cell.x;
+  yLabel = cell.y;
+
   matrixParams.push(rotateDEG(-compensationAngle));
   matrixParams.push(scale(zoom));
   matrixParams.push(translate(compensationOffset.x, compensationOffset.y));

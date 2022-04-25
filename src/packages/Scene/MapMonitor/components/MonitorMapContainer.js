@@ -4,26 +4,29 @@ import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
-import { renderChargerList, renderElevatorList, renderWorkStationList } from '@/utils/mapUtil';
+import { renderChargerList, renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 import EventManager from '@/utils/EventManager';
 import commonStyles from '@/common.module.less';
+import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
-  const { dispatch, currentLogicArea, currentRouteMap, preRouteMap } = props;
-  const { mapContext, mapRatio, mapMinRatio, currentMap, monitorLoad } = props;
+  const { dispatch, mapContext, currentLogicArea, currentRouteMap, preRouteMap } = props;
+  const { mapRatio, mapMinRatio, currentMap, monitorLoad, shownNavigationCellType } = props;
 
   useEffect(() => {
     const functionId = getRandomString(8);
+
     function resize(rect) {
       const { width, height } = rect;
       const { mapContext: _mapContext } = window.$$state().monitor;
       _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
     }
+
     EventManager.subscribe('resize', resize, functionId);
     return () => {
       EventManager.unsubscribe('resize', functionId);
@@ -99,35 +102,10 @@ const MonitorMapContainer = (props) => {
   }, [currentRouteMap, mapContext]);
 
   function renderMap() {
-    // 渲染点位(不渲染电梯内部点)
-    const elevatorInnerCells = [];
-    if (Array.isArray(currentMap.elevatorList)) {
-      currentMap.elevatorList.forEach((item) => {
-        elevatorInnerCells.push(...item.innerCellId);
-      });
-    }
-
-    const cellsToRender = [];
-    const { rangeStart, rangeEnd } = currentMap?.logicAreaList?.[currentLogicArea];
-    for (let index = rangeStart; index <= rangeEnd; index++) {
-      const cellData = currentMap.cellMap[index];
-      if (cellData && !elevatorInnerCells.includes(cellData.id)) {
-        cellsToRender.push(cellData);
-      }
-    }
+    const cellsToRender = Object.values(currentMap.cellMap)
+      .filter((item) => shownNavigationCellType.includes(item.brand))
+      .map((item) => coordinateTransformer(item, item.brand, currentMap.transform?.[item.brand]));
     mapContext.renderCells(cellsToRender);
-    dispatch({ type: 'monitor/saveCurrentCells', payload: cellsToRender });
-
-    // 渲染电梯
-    if (Array.isArray(currentMap.elevatorList)) {
-      const elevatorData = renderElevatorList(
-        currentMap.elevatorList,
-        cellsToRender,
-        currentLogicArea,
-      );
-      const logicElevator = elevatorData?.filter((item) => item.logicAreaId === currentLogicArea);
-      mapContext.renderElevator(logicElevator || []);
-    }
   }
 
   function renderLogicArea() {
@@ -286,7 +264,7 @@ const MonitorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    // mapContext.renderCostLines(relations, relations, false);
+    mapContext.renderCostLines(relations);
     mapContext.refresh();
   }
 
@@ -294,7 +272,7 @@ const MonitorMapContainer = (props) => {
   function renderMonitorLoad() {
     if (!isNull(monitorLoad)) {
       const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv } = monitorLoad;
-      mapContext.renderLatentAGV(latentAgv);
+      // mapContext.renderLatentAGV(latentAgv);
       mapContext.renderLatentPod(latentPod);
       mapContext.renderToteAGV(toteAgv);
       mapContext.renderTotePod(toteRack);
@@ -302,19 +280,19 @@ const MonitorMapContainer = (props) => {
 
       const { temporaryBlock, emergencyStopList, chargerList } = monitorLoad;
       // 临时不可走点
-      mapContext.renderTemporaryLock(temporaryBlock);
+      // mapContext.renderTemporaryLock(temporaryBlock);
 
       // 急停区
-      mapContext.renderEmergencyStopArea(emergencyStopList);
-      dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
+      // mapContext.renderEmergencyStopArea(emergencyStopList);
+      // dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
 
       // 渲染充电桩已绑定HardwareID标记(这里只是处理已经绑定HardwareId的情况)
-      if (Array.isArray(chargerList)) {
-        chargerList.forEach((item) => {
-          mapContext.updateChargerHardware(item.name, item.hardwareId);
-          mapContext.updateChargerState({ n: item.name, s: item.status });
-        });
-      }
+      // if (Array.isArray(chargerList)) {
+      //   chargerList.forEach((item) => {
+      //     mapContext.updateChargerHardware(item.name, item.hardwareId);
+      //     mapContext.updateChargerState({ n: item.name, s: item.status });
+      //   });
+      // }
     }
   }
 
@@ -334,7 +312,7 @@ const MonitorMapContainer = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => {
+export default connect(({ monitor, monitorView }) => {
   const {
     currentMap,
     currentLogicArea,
@@ -354,5 +332,6 @@ export default connect(({ monitor }) => {
     mapRatio,
     mapMinRatio,
     monitorLoad,
+    shownNavigationCellType: monitorView.shownNavigationCellType,
   };
 })(memo(MonitorMapContainer));

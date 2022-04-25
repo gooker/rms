@@ -1,9 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Divider, Form, Radio, InputNumber, Select, Button, Switch } from 'antd';
+import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import styles from '../../popoverPanel.module.less';
 import { MapSelectableSpriteType } from '@/config/consts';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
@@ -83,25 +82,8 @@ export default connect(({ global, editor }) => {
   };
 })(memo(BatchAddCells));
 
-const BatchAddCellWithAbsolut = connect(({ editor }) => ({
-  currentLogicArea: editor.currentLogicArea,
-}))((props) => {
-  const { currentLogicArea } = props;
+const BatchAddCellWithAbsolut = (props) => {
   const [formRef] = Form.useForm();
-
-  const [rangeStart, setRangeStart] = useState(0);
-  const [rangeEnd, setRangeEnd] = useState(0);
-
-  useEffect(() => {
-    const currentLogicAreaData = getCurrentLogicAreaData();
-    if (currentLogicAreaData) {
-      formRef.setFieldsValue({
-        autoGenCellIdStart: currentLogicAreaData.rangeStart,
-      });
-      setRangeStart(currentLogicAreaData.rangeStart);
-      setRangeEnd(currentLogicAreaData.rangeEnd);
-    }
-  }, [currentLogicArea]);
 
   function submit() {
     formRef.validateFields().then((value) => {
@@ -113,11 +95,12 @@ const BatchAddCellWithAbsolut = connect(({ editor }) => ({
     <Form labelWrap form={formRef} {...formItemLayout}>
       {/* 起始点 */}
       <Form.Item
-        name="autoGenCellIdStart"
+        name='autoGenCellIdStart'
+        initialValue={1}
         label={formatMessage({ id: 'editor.batchAddCell.firstCode' })}
         rules={[{ required: true }]}
       >
-        <InputNumber min={rangeStart} max={rangeEnd} style={{ width: 150 }} />
+        <InputNumber style={{ width: 150 }} />
       </Form.Item>
 
       {/* 起始X轴坐标 */}
@@ -182,13 +165,13 @@ const BatchAddCellWithAbsolut = connect(({ editor }) => ({
 
       {/* 生成 */}
       <Form.Item {...formItemLayoutNoLabel}>
-        <Button type="primary" onClick={submit}>
-          <FormattedMessage id="app.button.generate" />
+        <Button type='primary' onClick={submit}>
+          <FormattedMessage id='app.button.generate' />
         </Button>
       </Form.Item>
     </Form>
   );
-});
+};
 
 const BatchAddCellWithOffset = connect(({ editor }) => {
   const { selections } = editor;

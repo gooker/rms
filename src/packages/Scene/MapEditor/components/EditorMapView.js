@@ -1,6 +1,6 @@
 import React from 'react';
+import { reverse } from 'lodash';
 import {
-  getLineFromIdLineMap,
   getCurrentRouteMapData,
   getTextureFromResources,
   loadEditorExtraTextures,
@@ -12,7 +12,6 @@ import { Cell, ResizeableEmergencyStop } from '@/entities';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { connect } from '@/utils/RmsDva';
-import { reverse } from 'lodash';
 
 @connect(({ global }) => ({
   navigationCellType: global.navigationCellType,
@@ -251,9 +250,6 @@ class EditorMapView extends BaseMap {
   shiftSelectCell = (cell) => {
     if (isNull(this.currentClickedCell)) return;
     const _this = this;
-    const { editor } = window.$$state();
-    const cells = editor.currentCells;
-
     const pre = _this.currentClickedCell;
     const next = cell;
 
@@ -264,7 +260,9 @@ class EditorMapView extends BaseMap {
     const yEnd = pre.y > next.y ? pre.y : next.y;
 
     // 提取选择范围内的点位ID
-    const includedCellIds = Object.values(cells)
+    const cells = [..._this.idCellMap.values()];
+    const includedCellIds = cells
+      .filter((item) => item.type === MapSelectableSpriteType.CELL)
       .filter(({ x, y }) => x >= xStart && x <= xEnd && y >= yStart && y <= yEnd)
       .map(({ id }) => id);
 

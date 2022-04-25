@@ -32,8 +32,6 @@ export function generateCellMapByRowsAndCols(
   firstPosition,
   distanceX,
   distanceY,
-  start,
-  end,
 ) {
   let id = firstID;
   const cells = [];
@@ -43,10 +41,8 @@ export function generateCellMapByRowsAndCols(
     for (let col = 0; col < cols; col++) {
       let innerX = firstPosition.x;
       innerX += col * distanceX;
-      if (parseInt(id, 10) >= start && parseInt(id, 10) <= end) {
-        cells.push(new CellEntity({ id, x: innerX, y: innerY }));
-        id += 1;
-      }
+      cells.push(new CellEntity({ id, x: innerX, y: innerY }));
+      id += 1;
     }
   }
   return cells;
@@ -1275,6 +1271,7 @@ export function unifyAgvState(agv) {
     x: agv.x,
     y: agv.y,
     currentCellId,
+    brand: agv.bd ?? agv.brand,
     battery: agv.b ?? agv.battery,
     robotId: agv.r ?? agv.robotId,
     mainTain: agv.m ?? agv.maintain,

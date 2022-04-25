@@ -28,6 +28,18 @@ function AddSimulatorAgv(props) {
     }
   }, []);
 
+  function addAGV() {
+    formRef
+      .validateFields()
+      .then((value) => {
+        setExecuting(true);
+        submit && submit(value);
+        setExecuting(false);
+      })
+      .catch(() => {
+      });
+  }
+
   function batchAddAGV() {
     formRef2
       .validateFields()
@@ -91,7 +103,7 @@ function AddSimulatorAgv(props) {
             <FormattedMessage id="monitor.simulator.addAMR" />
           </Divider>
           <Form.Item
-            name={'robotId'}
+            name={'agvId'}
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
@@ -99,7 +111,7 @@ function AddSimulatorAgv(props) {
           </Form.Item>
 
           <Form.Item
-            name={'currentCellId'}
+            name={'cellId'}
             label={formatMessage({ id: 'app.map.cell' })}
             rules={[{ required: true }]}
           >
@@ -107,7 +119,7 @@ function AddSimulatorAgv(props) {
           </Form.Item>
 
           <Form.Item
-            name={'currentDirection'}
+            name={'angle'}
             initialValue={0}
             label={formatMessage({ id: 'app.direction' })}
             rules={[{ required: true }]}
@@ -116,21 +128,8 @@ function AddSimulatorAgv(props) {
           </Form.Item>
 
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button
-              loading={executing}
-              disabled={executing}
-              onClick={() => {
-                formRef
-                  .validateFields()
-                  .then((value) => {
-                    setExecuting(true);
-                    submit && submit({ ...value, robotType, robotModel: selectedSubType });
-                    setExecuting(false);
-                  })
-                  .catch(() => {});
-              }}
-            >
-              <PlusOutlined /> <FormattedMessage id="app.button.add" />
+            <Button loading={executing} disabled={executing} onClick={addAGV}>
+              <PlusOutlined /> <FormattedMessage id='app.button.add' />
             </Button>
           </Form.Item>
         </div>

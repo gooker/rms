@@ -3,8 +3,12 @@ import { Menu, Dropdown } from 'antd';
 import { IeOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import styles from './Header.module.less';
+import { connect } from '@/utils/RmsDva';
 
-export default class SelectUrl extends PureComponent {
+@connect(({ global }) => ({
+  environments: global.environments,
+}))
+class SelectUrl extends PureComponent {
   changeEnvironment = ({ key }) => {
     const { environments } = this.props;
     const environment = find(environments, ({ id }) => id === key);
@@ -16,7 +20,8 @@ export default class SelectUrl extends PureComponent {
     }
   };
 
-  renderMenus = (environments) => {
+  renderMenus = () => {
+    const { environments = [] } = this.props;
     const data = [];
     for (let index = 0; index < environments.length; index++) {
       const element = environments[index];
@@ -45,7 +50,7 @@ export default class SelectUrl extends PureComponent {
           this.changeEnvironment(key);
         }}
       >
-        {this.renderMenus(environments)}
+        {this.renderMenus()}
       </Menu>
     );
     return (
@@ -61,3 +66,5 @@ export default class SelectUrl extends PureComponent {
     );
   }
 }
+
+export default SelectUrl;

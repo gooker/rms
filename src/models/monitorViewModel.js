@@ -1,4 +1,5 @@
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
+import { AgvBrand, CoordinationType } from '@/config/consts';
 export default {
   namespace: 'monitorView',
   state: {
@@ -66,6 +67,10 @@ export default {
     agvRunningInfoList: [],
 
     dashBoardVisible: false, // dashboard
+
+    // 地图显示模式
+    shownNavigationCellType: [AgvBrand.MUSHINY, AgvBrand.SEER], // 显示的导航点类型
+    shownCellCoordinateType: CoordinationType.LAND, // land 表示物理点位、navi表示导航点位
   },
   reducers: {
     saveViewState(state, action) {

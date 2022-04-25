@@ -48,7 +48,12 @@ import {
 import BaseMap from '@/components/BaseMap';
 import { fetchAgvInfo } from '@/services/api';
 import { SelectionType } from '@/config/consts';
+import { connect } from '@/utils/RmsDva';
+import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
+@connect(({ global }) => ({
+  navigationCellType: global.navigationCellType,
+}))
 class MonitorMapView extends BaseMap {
   constructor() {
     super();
@@ -221,20 +226,29 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 点位相关 **********************
   renderCells = (cells) => {
-    if (cells.length > 0) {
-      this.idCellMap.clear();
-      cells.forEach(({ id, x, y }) => {
-        const cell = new Cell({
-          id,
-          x,
-          y,
-          interactive: false,
-          showCoordinate: this.states.showCoordinate,
-        });
-        this.idCellMap.set(id, cell);
-        this.pixiUtils.viewportAddChild(cell);
+    const { navigationCellType } = this.props;
+    if (isNull(this.naviCellTypeColor)) {
+      this.naviCellTypeColor = {};
+      navigationCellType.forEach(({ code, color }) => {
+        this.naviCellTypeColor[code] = color;
       });
     }
+
+    cells.forEach((item) => {
+      const cell = new Cell({
+        ...item,
+        color: this.naviCellTypeColor[item.brand], // 导航点背景色
+        showCoordinate: this.states.showCoordinate,
+      });
+      const xyCellMapKey = `${item.x}_${item.y}`;
+      if (!Array.isArray(this.xyCellMap.get(xyCellMapKey))) {
+        this.xyCellMap.set(xyCellMapKey, [cell]);
+      } else {
+        this.xyCellMap.get(xyCellMapKey).push(cell);
+      }
+      this.idCellMap.set(item.id, cell);
+      this.pixiUtils.viewportAddChild(cell);
+    });
   };
 
   select = (entity, mode) => {
@@ -355,7 +369,7 @@ class MonitorMapView extends BaseMap {
   // ************************ 小车 & 货架相关 **********************
   updateAgvCommonState = (agvc, agvState, agvEntity, agvType) => {
     const { x, y, robotId, battery, mainTain, manualMode, errorLevel } = agvState;
-    const { agvStatus, currentCellId, currentDirection } = agvState;
+    const { brand, agvStatus, currentCellId, currentDirection } = agvState;
 
     // 判断该 robotId 对应的小车是否是潜伏车
     if (agvEntity.type !== agvType) {
@@ -389,8 +403,9 @@ class MonitorMapView extends BaseMap {
     }
 
     // 更新位置
-    agvEntity.x = x;
-    agvEntity.y = y;
+    const pixiCoordinate = coordinateTransformer({ x, y }, brand);
+    agvEntity.x = pixiCoordinate.x;
+    agvEntity.y = pixiCoordinate.y;
     agvEntity.currentCellId = currentCellId;
 
     // 更新小车状态
@@ -1200,28 +1215,28 @@ class MonitorMapView extends BaseMap {
       if (showFullPath) {
         const tmpPassed = pathCellIds.slice(0, currentCellIdIndex + 1);
         tmpPassed.length > 0 &&
-          tmpPassed.reduce((pre, next) => {
-            types.passed.push({ start: pre, end: next });
-            return next;
-          });
+        tmpPassed.reduce((pre, next) => {
+          types.passed.push({ start: pre, end: next });
+          return next;
+        });
       }
 
       // 已经锁中的为绿色
       const tmpLocked = pathCellIds.slice(currentCellIdIndex, endIndex + 1);
       tmpLocked.length > 0 &&
-        tmpLocked.reduce((pre, next) => {
-          types.locked.push({ start: pre, end: next });
-          return next;
-        });
+      tmpLocked.reduce((pre, next) => {
+        types.locked.push({ start: pre, end: next });
+        return next;
+      });
 
       // 将要走的是黄色
       if (showFullPath) {
         const tmpFuture = pathCellIds.slice(endIndex, pathCellIds.length + 1);
         tmpFuture.length > 0 &&
-          tmpFuture.reduce((pre, next) => {
-            types.future.push({ start: pre, end: next });
-            return next;
-          });
+        tmpFuture.reduce((pre, next) => {
+          types.future.push({ start: pre, end: next });
+          return next;
+        });
       }
 
       // 开始渲染

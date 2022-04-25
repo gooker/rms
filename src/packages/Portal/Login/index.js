@@ -14,10 +14,11 @@ import { getEnvOptionData, getActiveEnv } from './selector';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
-import { handleNameSpace } from '@/utils/init';
+import requestAPI from '@/utils/requestAPI';
+import { getLocalStorageEnv } from '@/utils/init';
 
 const Login = (props) => {
-  const { dispatch, environments, activeEnv, history } = props;
+  const { environments, activeEnv, history } = props;
   const [loading, setLoading] = useState(false);
   const [logo, setLogo] = useState(null);
   const [appVersion, setAppVersion] = useState(null);
@@ -32,20 +33,23 @@ const Login = (props) => {
   async function init() {
     const address = window.location.host;
     // 刚进入页面需要首先处理namespace数据
-    await handleNameSpace(dispatch);
+    let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
+    const envs = getLocalStorageEnv();
+    urlDir = { ...urlDir, ...envs };
+    window.sessionStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
 
     const [appLogo, _appVersion] = await Promise.all([
       fetchFindLogoByWebAddress(address),
-      fetchAppVersion(),
+      // fetchAppVersion(),
     ]);
     if (!dealResponse(appLogo)) {
       if (appLogo.code !== '2') {
         setLogo(appLogo);
       }
     }
-    if (!dealResponse(_appVersion)) {
-      setAppVersion(_appVersion);
-    }
+    // if (!dealResponse(_appVersion)) {
+    //   setAppVersion(_appVersion);
+    // }
   }
 
   async function onFinish(values) {

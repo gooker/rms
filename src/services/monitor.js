@@ -128,9 +128,9 @@ export async function fetchPodToCell(params) {
 }
 
 // 小车空跑
-export async function agvEmptyRun(AGVType, params) {
+export async function agvEmptyRun(params) {
   const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[AGVType]}/agv-task/empty-run`, {
+  return request(`/${NameSpace.Platform}/agv-task/empty-run`, {
     method: 'POST',
     data: { ...params, sectionId },
   });

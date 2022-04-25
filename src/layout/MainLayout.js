@@ -14,6 +14,7 @@ import { isNull, isStrictNull, dealResponse, formatMessage, getPlateFormType } f
 import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
+import { handleNameSpace } from '@/utils/init';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -39,13 +40,16 @@ class MainLayout extends React.Component {
     if (isStrictNull(token)) {
       this.logout();
     } else {
+      // 优先处理后台接口信息
+      await handleNameSpace(dispatch);
       // 开始初始化应用
       const validateResult = await queryUserByToken();
       if (validateResult && !dealResponse(validateResult)) {
         try {
           const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
           // 先验证授权
-          const granted = await this.validateAuthority();
+          // const granted = await this.validateAuthority();
+          const granted = true;
           if (!granted) {
             history.push('/login');
           } else {

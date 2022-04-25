@@ -23,7 +23,6 @@ import styles from './Header.module.less';
   alertCount: global.alertCount,
   sysAuthInfo: global.sysAuthInfo,
   globalLocale: global.globalLocale,
-  environments: global.environments,
   isFullscreen: global.isFullscreen,
   backendVersion: global.backendVersion,
   currentUser: user.currentUser,
@@ -111,7 +110,7 @@ class Header extends React.Component {
   render() {
     const { showErrorNotification, isHA, sysAuthInfo } = this.state;
     const { history, alertCount, backendVersion } = this.props;
-    const { logo, environments, isFullscreen, currentUser } = this.props;
+    const { logo, isFullscreen, currentUser } = this.props;
     if (isNull(currentUser)) return null;
 
     const mainVersion = backendVersion?.MixRobot?.version;
@@ -135,7 +134,6 @@ class Header extends React.Component {
 
           {/* 环境切换 */}
           <SelectEnvironment
-            environments={environments || []}
             changeEnvironment={(record) => {
               this.changeEnvironment(record);
             }}

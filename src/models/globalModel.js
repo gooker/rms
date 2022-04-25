@@ -217,12 +217,12 @@ export default {
       const adminType = currentUser?.adminType ?? 'USER'; // 用来对SSO菜单进行筛选
 
       // 版本信息
-      if (currentUser.username !== 'admin') {
-        const version = yield call(fetchAppVersion);
-        if (version && !dealResponse(version)) {
-          yield put({ type: 'saveBackendVersion', payload: version });
-        }
-      }
+      // if (currentUser.username !== 'admin') {
+      //   const version = yield call(fetchAppVersion);
+      //   if (version && !dealResponse(version)) {
+      //     yield put({ type: 'saveBackendVersion', payload: version });
+      //   }
+      // }
 
       // 权限数据重新组装
       const permissionMap = {};

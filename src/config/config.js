@@ -29,7 +29,8 @@ export const AGVType = {
 
 // 各类车型的API namespace
 export const NameSpace = {
-  Coordinator: 'coordinator',
+  Platform: 'platform',
+  Coordinator: 'platform',
   SSO: 'sso',
   I18N: 'translation',
   LatentLifting: 'latent-lifting',

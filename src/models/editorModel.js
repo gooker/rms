@@ -103,12 +103,12 @@ export default {
           message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
         } else {
           // 获取已激活地图数据并保存相关状态
-          // const mapId = activeMap[0].id;
-          // const currentMap = yield call(fetchMapDetail, mapId);
-          // if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-          //   yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
-          // }
-          yield put({ type: 'saveCurrentMap', payload: addTemporaryId(MockMapData) });
+          const mapId = activeMap[0].id;
+          const currentMap = yield call(fetchMapDetail, mapId);
+          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+            yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
+          }
+          // yield put({ type: 'saveCurrentMap', payload: addTemporaryId(MockMapData) });
         }
 
         /**
@@ -306,28 +306,24 @@ export default {
           loopLogicAreaData.chargerList = chargerList;
 
           // 优先级线条
-          const { rangeStart, rangeEnd } = loopLogicAreaData;
           const logicRouteMap = loopLogicAreaData.routeMap;
           Object.keys(logicRouteMap).forEach((routeMapKey) => {
             const loopRouteMapData = logicRouteMap[routeMapKey];
             if (Array.isArray(loopRouteMapData.relations)) {
               loopRouteMapData.relations = loopRouteMapData.relations
                 .map((relation) => {
-                  const { type, source, target } = relation;
+                  const { source, target } = relation;
                   // 筛掉不合法的线条
-                  if (cellMap[source] === undefined || cellMap[target] === undefined) {
+                  if (isNull(cellMap[source]) || isNull(cellMap[target])) {
                     return null;
                   }
                   // 对线条进行筛选: 根据Range进行判断
-                  if (source >= rangeStart && target <= rangeEnd) {
-                    // [只]重算直线的距离
-                    if (type === 'line') {
-                      relation.distance = calculateCellDistance(cellMap[source], cellMap[target]);
-                    }
-                    relation.angle = getAngle(cellMap[source], cellMap[target]);
-                    return { ...relation };
-                  }
-                  return null;
+                  // [只]重算直线的距离
+                  // if (type === 'line') {
+                  //   relation.distance = calculateCellDistance(cellMap[source], cellMap[target]);
+                  // }
+                  // relation.angle = getAngle(cellMap[source], cellMap[target]);
+                  return relation;
                 })
                 .filter(Boolean);
             } else {
@@ -540,7 +536,6 @@ export default {
     // 批量新增导航点（一般只针对二维码导航点）
     * batchAddCells({ payload }, { select }) {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
-      const { rangeStart, rangeEnd } = getCurrentLogicAreaData();
       const { cellMap } = currentMap;
       const { addWay, navigationCellType } = payload;
 
@@ -555,8 +550,6 @@ export default {
             { x, y },
             distanceX,
             distanceY,
-            rangeStart,
-            rangeEnd,
           );
         }
       } else {
@@ -591,7 +584,11 @@ export default {
       const newCellMap = { ...cellMap };
       additionalCells.forEach((cell) => {
         newCellMap[cell.id] = { ...cell };
-        const transformedXY = coordinateTransformer(cell, currentMap.transform[navigationCellType]);
+        const transformedXY = coordinateTransformer(
+          cell,
+          navigationCellType,
+          currentMap.transform?.[navigationCellType],
+        );
         result.push({ cell, ...transformedXY });
       });
       currentMap.cellMap = newCellMap;

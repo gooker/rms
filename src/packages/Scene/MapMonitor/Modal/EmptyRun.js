@@ -1,9 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Input, Switch } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { find } from 'lodash';
 import { agvEmptyRun } from '@/services/monitor';
-import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
@@ -11,7 +9,7 @@ import styles from '../monitorLayout.module.less';
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const EmptyRun = (props) => {
-  const { dispatch, allAGVs } = props;
+  const { dispatch } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -24,15 +22,15 @@ const EmptyRun = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { robotId: values.robotId });
-        if (agv) {
-          agvEmptyRun(agv.robotType, { ...values }).then((response) => {
+        agvEmptyRun({ ...values })
+          .then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
+          })
+          .finally(() => {
+            setExecuting(false);
           });
-        }
-        setExecuting(false);
       })
       .catch(() => {});
   }
@@ -79,6 +77,4 @@ const EmptyRun = (props) => {
     </div>
   );
 };
-export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
-}))(memo(EmptyRun));
+export default memo(EmptyRun);
