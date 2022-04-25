@@ -602,7 +602,7 @@ export default {
     *deleteNavigations({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
       const { types, naviCells } = payload;
-      const result = { cells: [], lines: [], arrow: [] }; // {cells:{x_y:[id]}, lines:[x1_y1_x2_y2], arrow:[sourceId]}
+      const result = { cells: [], lines: [], arrows: [] }; // {cells:{x_y:[id]}, lines:[x1_y1_x2_y2], arrows:[sourceId]}
       naviCells.forEach(({ id, brand }) => {
         if (types.includes(brand)) {
           const { relations } = getCurrentRouteMapData();
@@ -610,7 +610,7 @@ export default {
             (item) => item.source === id || item.target === id,
           );
           relevantRelations.forEach(({ source, target }) => {
-            result.arrow.push(`${source}_${target}`);
+            result.arrows.push(`${source}_${target}`);
             result.lines.push(`${source}_${target}`);
           });
 
@@ -902,60 +902,36 @@ export default {
     },
 
     // ********************************* 线条操作 ********************************* //
-    *generateCostLines({ payload }, { select, put }) {
-      const { selections, currentMap } = yield select(({ editor }) => editor);
-
-      // 筛选区具有管控点属性的点位
-      const selectCells = selections
-        .filter((item) => item.type === MapSelectableSpriteType.CELL && item.isControl)
-        .map(({ id }) => id);
-
-      // 获取已存在的 relations 数据并且生成直线数据的 Map 用于方便整合新旧直线数据
-      const currentRouteMapData = getCurrentRouteMapData();
-      const relations = currentRouteMapData.relations || [];
-      const lineRelationsMap = {}; // 直线Map
-      relations.forEach((relation) => {
-        if (relation.type === 'line') {
-          lineRelationsMap[`${relation.source}-${relation.target}`] = relation;
-        }
+    generateCostLines({ payload }) {
+      const {
+        cells,
+        params: { dir, value },
+      } = payload;
+      const result = { remove: [], add: [] };
+      const currentRouteMap = getCurrentRouteMapData();
+      let currentRouteRelations = currentRouteMap.relations;
+      // 为了防止重复添加，预先将已存在的cost生成一个map结构供校验
+      const idCostMap = {};
+      currentRouteRelations.forEach((item) => {
+        idCostMap[`${item.source}_${item.target}`] = item;
       });
-
-      // 生成 {[id]:Cell} 数据
-      const idCellMap = {};
-      Object.values(currentMap.cellMap).forEach((item) => {
-        idCellMap[item.id] = item;
-      });
-
-      // 生成新线条
-      const { dir, value } = payload;
-      const selectedCells = selectCells.map((cellId) => idCellMap[cellId]);
-      const newLines = batchGenerateLine(selectedCells, dir, value);
-      const result = { add: [], remove: [] };
-
-      // 整合 Store 数据
-      Object.keys(newLines).forEach((relationKey) => {
-        const newLine = newLines[relationKey];
-        const { source, target, cost } = newLine;
-
-        // 如果 cost 为 -1, 表示删除
-        if (cost === -1) {
-          delete lineRelationsMap[relationKey];
-          result.remove.push(newLine);
+      const newLines = batchGenerateLine(cells, dir, value);
+      Object.entries(newLines).forEach(([mapKey, relation]) => {
+        if (relation.cost === -1) {
+          result.remove.push(mapKey);
         } else {
-          lineRelationsMap[relationKey] = newLine;
-          result.add.push(newLine);
-        }
-
-        // 处理对头线
-        const oppositeKey = `${target}-${source}`;
-        const oppositeLineEntity = lineRelationsMap[oppositeKey];
-        if (oppositeLineEntity) {
-          result.remove.push(oppositeLineEntity);
-          result.add.push(oppositeLineEntity);
+          result.add.push(relation);
         }
       });
-      currentRouteMapData.relations = [...Object.values(lineRelationsMap)];
-      yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
+
+      // 处理地图原数据
+      result.remove.forEach((key) => {
+        delete idCostMap[key];
+      });
+      result.add.forEach((item) => {
+        idCostMap[`${item.source}_${item.target}`] = item;
+      });
+      currentRouteMap.relations = Object.values(idCostMap);
       return result;
     },
 

@@ -1,9 +1,12 @@
 import React, { memo } from 'react';
-import { Button, Col, Row } from 'antd';
+import { Button, Col, Modal, Row } from 'antd';
 import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
+import { useMap } from '@umijs/hooks';
 import { connect } from '@/utils/RmsDva';
+import { getCellSelections } from '@/utils/mapUtil';
 import CostConfigure from '../components/CostConfigure';
 import CreateDefaultRoute from '../components/CreateDefaultRoute';
+import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import FormattedMessage from '@/components/FormattedMessage';
 import { MapSelectableSpriteType } from '@/config/consts';
 import styles from '../../popoverPanel.module.less';
@@ -12,19 +15,40 @@ import commonStyles from '@/common.module.less';
 const CostPanel = (props) => {
   const { dispatch, height, selectLines, mapContext } = props;
 
+  const [modalMap, { set, setAll }] = useMap([
+    ['visible', false],
+    ['types', []],
+  ]);
+
   function deleteLines() {
     dispatch({ type: 'editor/deleteLines' }).then((result) => {
       mapContext.updateLines({ type: 'remove', payload: result });
     });
   }
 
-  function createLines(params) {
+  // 相同导航点类型的点位之间才能创建线条
+  function validateBeforeCreatLines(params) {
+    const { cells, types } = getCellSelections();
+    if (types.length === 0) return;
+    if (types.length === 1) {
+      createLines(cells, params);
+    } else {
+      Modal.confirm({});
+      setAll([
+        ['visible', true],
+        ['types', types],
+      ]);
+    }
+  }
+
+  function createLines(cells, params) {
     dispatch({
       type: 'editor/generateCostLines',
-      payload: params,
+      payload: { cells, params },
     }).then(({ remove, add }) => {
-      // remove.length > 0 && mapContext.updateLines({ type: 'remove', payload: remove });
-      // add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
+      remove.length > 0 &&
+      mapContext.updateLines({ type: 'remove', payload: { lines: remove, arrows: remove } });
+      add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
     });
   }
 
@@ -75,7 +99,7 @@ const CostPanel = (props) => {
               <Col span={7}>
                 <CostConfigure
                   onChange={(value) => {
-                    createLines({ dir: 0, value });
+                    validateBeforeCreatLines({ dir: 0, value });
                   }}
                 />
               </Col>
@@ -85,7 +109,7 @@ const CostPanel = (props) => {
               <Col span={7} style={{ textAlign: 'left' }}>
                 <CostConfigure
                   onChange={(value) => {
-                    createLines({ dir: 270, value });
+                    validateBeforeCreatLines({ dir: 270, value });
                   }}
                 />
               </Col>
@@ -95,7 +119,7 @@ const CostPanel = (props) => {
               <Col span={7} style={{ textAlign: 'right' }}>
                 <CostConfigure
                   onChange={(value) => {
-                    createLines({ dir: 90, value });
+                    validateBeforeCreatLines({ dir: 90, value });
                   }}
                 />
               </Col>
@@ -104,7 +128,7 @@ const CostPanel = (props) => {
               <Col span={7}>
                 <CostConfigure
                   onChange={(value) => {
-                    createLines({ dir: 180, value });
+                    validateBeforeCreatLines({ dir: 180, value });
                   }}
                 />
               </Col>
@@ -120,12 +144,22 @@ const CostPanel = (props) => {
               onClick={deleteLines}
               disabled={selectLines.length === 0}
             >
-              <DeleteOutlined /> <FormattedMessage id="editor.cost.delete" />
+              <DeleteOutlined /> <FormattedMessage id='editor.cost.delete' />
             </Button>
           </Col>
         </Row>
         <CreateDefaultRoute style={{ marginTop: 10, padding: '10px 15px' }} />
       </div>
+
+      {/* 批量删除导航点 */}
+      <StackCellConfirmModal
+        types={modalMap.get('types')}
+        visible={modalMap.get('visible')}
+        onConfirm={createLines}
+        onCancel={() => {
+          set('visible', false);
+        }}
+      />
     </div>
   );
 };

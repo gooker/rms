@@ -22,6 +22,7 @@ import {
 } from '@/utils/textures';
 import json from '../../package.json';
 import CellEntity from '@/entities/CellEntity';
+import RelationEntity from '@/entities/RelationEntity';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -267,7 +268,7 @@ export function createRelation(
     lineAngle,
   );
   return new LineArrow({
-    id: `${beginCell.id}-${endCell.id}`,
+    id: `${beginCell.id}_${endCell.id}`,
     fromX,
     fromY,
     lineAngle,
@@ -296,7 +297,7 @@ export function batchGenerateLine(targetPoints, dir, value) {
       const element = targetPoints[index];
       for (let j = 0; j < targetPoints.length; j++) {
         const point = targetPoints[j];
-        const key = `${element.id}-${dir}`; // 标记key值
+        const key = `${element.id}_${dir}`; // 标记key值
         if (element.id === point.id) {
           continue;
         }
@@ -304,25 +305,23 @@ export function batchGenerateLine(targetPoints, dir, value) {
           if (result[key]) {
             const newDistance = getDistance(element, point);
             if (result[key].distance > newDistance) {
-              result[key] = {
+              result[key] = new RelationEntity({
                 source: element.id,
                 target: point.id,
-                type: 'line',
                 angle: getAngle(element, point),
                 cost: value,
                 distance: newDistance,
-              };
+              });
             }
           } else {
             const newDistance = getDistance(element, point);
-            result[key] = {
+            result[key] = new RelationEntity({
               source: element.id,
               target: point.id,
-              type: 'line',
               angle: getAngle(element, point),
               cost: value,
               distance: newDistance,
-            };
+            });
           }
         }
       }
@@ -330,42 +329,41 @@ export function batchGenerateLine(targetPoints, dir, value) {
     const endResult = {};
     Object.keys(result).map((key) => {
       const { source, target } = result[key];
-      const newkey = `${source}-${target}`;
-      endResult[newkey] = result[key];
+      endResult[`${source}_${target}`] = result[key];
     });
     return endResult;
   }
   if (targetPoints.length === 2) {
     if (dir === 0) {
       if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       }
     } else if (dir === 90) {
       if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       } else if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       }
     } else if (dir === 180) {
       if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       }
     } else {
       if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       } else if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       }
     }
@@ -1544,4 +1542,34 @@ export function getCellMapId(cellIds) {
   } catch (e) {
     return result;
   }
+}
+
+///// ******************* 地图点位选择 ********************* /////
+export function getCellSelections(namespace = 'editor') {
+  const allCells = getSelectionNaviCells(namespace);
+  const types = allCells.map(({ brand }) => brand);
+  return {
+    cells: allCells,
+    types: [...new Set(types)],
+  };
+}
+
+// 获取选中的所有点位，包括重合的点位
+export function getSelectionNaviCells(namespace = 'editor') {
+  const { mapContext, selections } = window.$$state()[namespace];
+  const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
+  const { xyCellMap } = mapContext;
+  let allNaviCells = [];
+  selectedCells.forEach(({ x, y }) => {
+    const cells = xyCellMap.get(`${x}_${y}`);
+    if (Array.isArray(cells)) {
+      allNaviCells = allNaviCells.concat(cells);
+    }
+  });
+  return allNaviCells;
+}
+
+export function getSelectionNaviCellTypes(namespace = 'editor') {
+  const types = getSelectionNaviCells(namespace).map(({ brand }) => brand);
+  return [...new Set(types)];
 }

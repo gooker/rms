@@ -12,6 +12,7 @@ import { Cell, ResizeableEmergencyStop } from '@/entities';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { connect } from '@/utils/RmsDva';
+import { reverse } from 'lodash';
 
 @connect(({ global }) => ({
   navigationCellType: global.navigationCellType,
@@ -332,31 +333,28 @@ class EditorMapView extends BaseMap {
   updateLines = ({ type, payload }) => {
     // 新增
     if (type === 'add') {
-      this.renderCostLines(
-        payload,
-        getCurrentRouteMapData().relations || [],
-        true,
-        this.states.mapMode,
-      );
+      this.renderCostLines(payload);
     }
     // 删除
     if (type === 'remove') {
       // 删除线条分
-      const { lines, arrow } = payload;
+      const { lines, arrows } = payload;
 
       lines.forEach((lineKey) => {
+        const reverseLineMapKey = reverse(lineKey.split('_')).join('_');
+        const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         const lineEntity = this.idLineMap.get(lineKey);
-        if (lineEntity) {
+        // 注意不要删除被共用的关系线
+        if (isNull(reverseLineEntity) && !isNull(lineEntity)) {
           // 首先从地图上移除
           this.pixiUtils.viewportRemoveChild(lineEntity);
           // 销毁对象
           lineEntity.destroy();
-          // 剔除对象
-          this.idLineMap.delete(lineKey);
         }
+        this.idLineMap.delete(lineKey);
       });
 
-      arrow.forEach((arrowKey) => {
+      arrows.forEach((arrowKey) => {
         const arrowEntity = this.idArrowMap.get(arrowKey);
         if (arrowEntity) {
           // 首先从地图上移除

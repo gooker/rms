@@ -3,18 +3,12 @@ import { Checkbox, Col, Modal, Row } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { connect } from '@/utils/RmsDva';
 
-/**
- * @param props { {navigationCellType: Array, visible:Boolean, types:Array } }
- * @returns {JSX.Element}
- * @constructor
- */
-const DeleteNavigationModal = (props) => {
-  const { visible, onCancel, onDelete, types, navigationCellType } = props;
-
+const StackCellConfirmModal = (props) => {
+  const { visible, onCancel, onConfirm, types, navigationCellType } = props;
   const [selectedTypes, setSelectedTypes] = useState([]);
 
   function submit() {
-    onDelete(selectedTypes);
+    onConfirm(selectedTypes);
     onClose();
   }
 
@@ -51,4 +45,4 @@ const DeleteNavigationModal = (props) => {
 };
 export default connect(({ global }) => ({
   navigationCellType: global.navigationCellType,
-}))(memo(DeleteNavigationModal));
+}))(memo(StackCellConfirmModal));

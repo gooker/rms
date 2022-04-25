@@ -1,7 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import FormattedMessage from '@/components/FormattedMessage';
 import {
   CodeOutlined,
   DragOutlined,
@@ -18,21 +17,22 @@ import AddNavigation from './AddNavigation';
 import BatchAddCells from './BatchAddCells';
 import AdjustCellSpace from './AdjustCellSpace';
 import GenerateCellCode from './GenerateCellCode';
-import DeleteNavigationModal from '../components/DeleteNavigationModal';
+import FormattedMessage from '@/components/FormattedMessage';
+import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import { formatMessage, isNull } from '@/utils/util';
-import { MapSelectableSpriteType } from '@/config/consts';
+import { getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
 const CellPanel = (props) => {
-  const { dispatch, height, currentMap, mapContext, selections } = props;
+  const { dispatch, height, currentMap, mapContext } = props;
 
-  const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
   const [formCategory, setFormCategory] = useState(null);
   const [secondTitle, setSecondTitle] = useState(null);
   const [deleteNavVisible, setDeleteNavVisible] = useState(false);
+  const [types, setTypes] = useState([]);
 
   function renderFormContent() {
     switch (formCategory) {
@@ -57,12 +57,13 @@ const CellPanel = (props) => {
    * 2. 如果只要一个导航点，那么导航点和管控点一并删除
    */
   function deleteNavigations() {
-    const types = getSelectionNaviCellTypes();
-    if (types.length === 0) return;
-    if (types.length === 1) {
-      executeDeleteNavi(types);
+    const selectionsTypes = getSelectionNaviCellTypes();
+    if (selectionsTypes.length === 0) return;
+    if (selectionsTypes.length === 1) {
+      executeDeleteNavi(selectionsTypes);
     } else {
       setDeleteNavVisible(true);
+      setTypes(selectionsTypes);
     }
   }
 
@@ -71,28 +72,10 @@ const CellPanel = (props) => {
     dispatch({
       type: 'editor/deleteNavigations',
       payload: { types, naviCells },
-    }).then(({ cells, lines, arrow }) => {
+    }).then(({ cells, lines, arrows }) => {
       mapContext.updateCells({ type: 'remove', payload: cells });
-      mapContext.updateLines({ type: 'remove', payload: { lines, arrow } });
+      mapContext.updateLines({ type: 'remove', payload: { lines, arrows } });
     });
-  }
-
-  function getSelectionNaviCellTypes() {
-    const types = getSelectionNaviCells().map(({ brand }) => brand);
-    return [...new Set(types)];
-  }
-
-  function getSelectionNaviCells() {
-    // 选中的点位的下层可能还有别的导航点，所以需要把所有符合条件(坐标)的点位筛选出来
-    const { xyCellMap } = mapContext;
-    let allNaviCells = [];
-    selectedCells.forEach(({ x, y }) => {
-      const cells = xyCellMap.get(`${x}_${y}`);
-      if (Array.isArray(cells)) {
-        allNaviCells = allNaviCells.concat(cells);
-      }
-    });
-    return allNaviCells;
   }
 
   return (
@@ -234,7 +217,7 @@ const CellPanel = (props) => {
                       mapContext.batchSelectCellByDirection('x');
                     }}
                   >
-                    <ColumnHeightOutlined /> <FormattedMessage id="editor.cell.verticalSelection" />
+                    <ColumnHeightOutlined /> <FormattedMessage id='editor.cell.verticalSelection' />
                   </Button>
                 </Col>
               </Row>
@@ -244,10 +227,10 @@ const CellPanel = (props) => {
       </div>
 
       {/* 批量删除导航点 */}
-      <DeleteNavigationModal
+      <StackCellConfirmModal
+        types={types}
         visible={deleteNavVisible}
-        types={getSelectionNaviCellTypes()}
-        onDelete={executeDeleteNavi}
+        onConfirm={executeDeleteNavi}
         onCancel={() => {
           setDeleteNavVisible(false);
         }}
@@ -256,6 +239,6 @@ const CellPanel = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selections, currentMap, mapContext } = editor;
-  return { currentMap, mapContext, selections };
+  const { currentMap, mapContext } = editor;
+  return { currentMap, mapContext };
 })(memo(CellPanel));

@@ -9,7 +9,7 @@ import EditorCard from '../../components/EditorCard';
 import LabelComponent from '@/components/LabelComponent';
 
 const CellProperty = (props) => {
-  const { data, selections } = props;
+  const { data, selections, cellMap } = props;
   const currentLogicArea = getCurrentLogicAreaData();
   const currentRouteMap = getCurrentLogicAreaData();
 
@@ -28,6 +28,7 @@ const CellProperty = (props) => {
   }
 
   const cellTypeTags = renderCellTypeEnum();
+  const cellProps = cellMap[selections[0]?.id];
   return (
     <>
       <div>
@@ -42,13 +43,13 @@ const CellProperty = (props) => {
           })}`}
         >
           <LabelComponent label={formatMessage({ id: 'app.common.type' })}>
-            {selections[0]?.brand}
+            {cellProps?.brand}
           </LabelComponent>
           <LabelComponent label={formatMessage({ id: 'app.map.landCoordinator' })}>
-            {selections[0]?.x}, {selections[0]?.y}
+            {cellProps?.x}, {cellProps?.y}
           </LabelComponent>
           <LabelComponent label={formatMessage({ id: 'app.map.naviCoordinator' })}>
-            {selections[0]?.nx}, {selections[0]?.ny}
+            {cellProps?.nx}, {cellProps?.ny}
           </LabelComponent>
         </EditorCard>
 
@@ -71,4 +72,5 @@ const CellProperty = (props) => {
 };
 export default connect(({ editor }) => ({
   selections: editor.selections,
+  cellMap: editor.currentMap.cellMap,
 }))(memo(CellProperty));
