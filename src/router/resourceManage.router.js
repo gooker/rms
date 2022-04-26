@@ -90,15 +90,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/agv/registration`,
-        name: 'registration',
-        component: '/ResourceManage/Agv/AgvRegistration',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
         path: `/${AppCode.ResourceManage}/agv/list`,
         name: 'list',
-        component: '/ResourceManage/Agv/AgvList',
+        component: '/ResourceManage/Agv/AgvList/index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {

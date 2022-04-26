@@ -4,7 +4,7 @@ import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import { connect } from '@/utils/RmsDva';
-import { AgvBrand } from '@/config/consts';
+import { RobotBrand } from '@/config/consts';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const AddNavigation = (props) => {
@@ -45,7 +45,7 @@ const AddNavigation = (props) => {
         </Form.Item>
 
         {/* 牧星点位不要code, code就是Number ID*/}
-        {type !== AgvBrand.MUSHINY && (
+        {type !== RobotBrand.MUSHINY && (
           <Form.Item
             name={'code'}
             label={formatMessage({ id: 'app.common.code' })}

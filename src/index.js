@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { LINE_SCALE_MODE, settings } from '@pixi/graphics-smooth';
+import { isPlainObject } from 'lodash';
+import { settings } from '@pixi/graphics-smooth';
 import createRcsDva from '@/utils/RmsDva';
 import App from '@/pages/App';
 import models from '@/models';
 import './global.less';
-import { isPlainObject } from 'lodash';
 
 // https://github.com/pixijs/graphics-smooth
 settings.PIXEL_LINE = 1;

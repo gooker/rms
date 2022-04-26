@@ -19,6 +19,7 @@ import {
   EStopStateColor,
   GeoLockColor,
   LatentPodSize,
+  NavigationCellType,
   ToteAGVSize,
   zIndex,
 } from '@/config/consts';
@@ -51,9 +52,6 @@ import { SelectionType } from '@/config/consts';
 import { connect } from '@/utils/RmsDva';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
-@connect(({ global }) => ({
-  navigationCellType: global.navigationCellType,
-}))
 class MonitorMapView extends BaseMap {
   constructor() {
     super();
@@ -226,10 +224,9 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 点位相关 **********************
   renderCells = (cells) => {
-    const { navigationCellType } = this.props;
     if (isNull(this.naviCellTypeColor)) {
       this.naviCellTypeColor = {};
-      navigationCellType.forEach(({ code, color }) => {
+      NavigationCellType.forEach(({ code, color }) => {
         this.naviCellTypeColor[code] = color;
       });
     }
@@ -369,7 +366,8 @@ class MonitorMapView extends BaseMap {
   // ************************ 小车 & 货架相关 **********************
   updateAgvCommonState = (agvc, agvState, agvEntity, agvType) => {
     const { x, y, robotId, battery, mainTain, manualMode, errorLevel } = agvState;
-    const { brand, agvStatus, currentCellId, currentDirection } = agvState;
+    // TODO: 测试
+    const { brand = 'MUSHINY', agvStatus, currentCellId, currentDirection } = agvState;
 
     // 判断该 robotId 对应的小车是否是潜伏车
     if (agvEntity.type !== agvType) {

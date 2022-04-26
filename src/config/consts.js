@@ -337,8 +337,15 @@ export const LatentToteTaskTypeOption = [
   { label: 'app.simulateTask.toteTaskType.POD_TO_STATION', value: 'POD_TO_STATION' },
 ];
 
+// 线条类型
+export const RelationType = {
+  StraightPath: 'StraightPath',
+  BezierPath: 'BezierPath',
+  ArcPath: 'ArcPath',
+};
+
 // 车型
-export const AgvBrand = {
+export const RobotBrand = {
   MUSHINY: 'MUSHINY',
   SEER: 'SEER',
 };
@@ -346,13 +353,13 @@ export const AgvBrand = {
 // 平台支持的导航点类型，每次新增支持需要手动加，且必须要配置坐标类型
 export const NavigationCellType = [
   {
-    code: AgvBrand.MUSHINY,
-    name: 'Mushiny',
+    code: RobotBrand.MUSHINY,
+    name: 'MUSHINY',
     color: '#037ef3',
     coordinationType: 'L',
   },
   {
-    code: AgvBrand.SEER,
+    code: RobotBrand.SEER,
     name: 'SEER',
     color: '#34bf49',
     coordinationType: 'R',

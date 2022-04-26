@@ -9,13 +9,14 @@ import { isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
-import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
+import {
+  CellSize,
+  MapSelectableSpriteType,
+  NavigationCellType,
+  SelectionType,
+} from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
-import { connect } from '@/utils/RmsDva';
 
-@connect(({ global }) => ({
-  navigationCellType: global.navigationCellType,
-}))
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
@@ -81,9 +82,9 @@ class EditorMapView extends BaseMap {
     });
 
     // 处理Cost线条
-    this.destroyAllLines();
-    const relations = getCurrentRouteMapData()?.relations ?? [];
-    this.renderCostLines(relations, relations, true, mode, this.states.shownPriority);
+    // this.destroyAllLines();
+    // const relations = getCurrentRouteMapData()?.relations ?? [];
+    // this.renderCostLines(relations, relations, true, mode, this.states.shownPriority);
 
     // 保证是否显示不可走点 状态一致
     this.switchShowBlock(this.states.hideBlock);
@@ -92,10 +93,9 @@ class EditorMapView extends BaseMap {
 
   // ************************ 点位相关 **********************
   renderCells = (payload) => {
-    const { navigationCellType } = this.props;
     if (isNull(this.naviCellTypeColor)) {
       this.naviCellTypeColor = {};
-      navigationCellType.forEach(({ code, color }) => {
+      NavigationCellType.forEach(({ code, color }) => {
         this.naviCellTypeColor[code] = color;
       });
     }

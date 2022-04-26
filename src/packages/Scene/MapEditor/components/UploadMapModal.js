@@ -4,13 +4,13 @@ import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message } fr
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
+import { NavigationCellType, RobotBrand } from '@/config/consts';
 import { connect } from '@/utils/RmsDva';
 import { MUSHINY, SEER } from '@/utils/mapParser';
-import { AgvBrand } from '@/config/consts';
 
 const { formItemLayout } = getFormLayout(5, 19);
 const UploadMapModal = (props) => {
-  const { dispatch, visible, onCancel, navigationCellType, currentMap, currentLogicArea } = props;
+  const { dispatch, visible, onCancel, currentMap, currentLogicArea } = props;
   const [formRef] = Form.useForm();
 
   const normFile = (e) => {
@@ -35,14 +35,13 @@ const UploadMapModal = (props) => {
         reader.readAsText(file[0].originFileObj, 'UTF-8');
         reader.onload = (evt) => {
           try {
-            // catch文件格式错误
             let mapData = evt.target.result;
             mapData = JSON.parse(mapData);
             switch (navigationCellType) {
-              case AgvBrand.SEER:
+              case RobotBrand.SEER:
                 mapData = SEER(mapData, existIds, currentLogicArea);
                 break;
-              case AgvBrand.MUSHINY:
+              case RobotBrand.MUSHINY:
                 mapData = MUSHINY(mapData, existIds, currentLogicArea);
                 break;
               default:
@@ -99,7 +98,7 @@ const UploadMapModal = (props) => {
           rules={[{ required: true }]}
         >
           <Select style={{ width: 200 }}>
-            {navigationCellType.map(({ code, name }, index) => (
+            {NavigationCellType.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>
@@ -156,5 +155,4 @@ const UploadMapModal = (props) => {
 export default connect(({ global, editor }) => ({
   currentMap: editor.currentMap,
   currentLogicArea: editor.currentLogicArea,
-  navigationCellType: global.navigationCellType,
 }))(memo(UploadMapModal));

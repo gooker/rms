@@ -1,7 +1,7 @@
 import React from 'react';
 import * as core from 'dva-core';
 import { Provider, connect } from 'react-redux';
-import createLoading from 'dva-loading';
+import createLoading from 'dva-loading/dist';
 
 // https://github.com/dvajs/dva/tree/master/packages/dva-core/src
 function getPureProvider(store) {
@@ -11,8 +11,8 @@ function getPureProvider(store) {
 
 function createRmsDva(opts = {}, models) {
   const app = core.create(opts);
-  models.forEach((model) => app.model(model));
   app.use(createLoading());
+  models.forEach((model) => app.model(model));
   app.start();
 
   window.$$dispatch = app._store.dispatch;

@@ -38,7 +38,7 @@ import {
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
-import { AgvBrand, MapSelectableSpriteType } from '@/config/consts';
+import { RobotBrand, MapSelectableSpriteType } from '@/config/consts';
 import { MockMapData } from '@/mockData';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
@@ -501,7 +501,7 @@ export default {
       const cells = Object.values(currentMap.cellMap);
       let findResult;
       // 判断该车型下是否有相同导航点ID
-      if (navigationCellType !== AgvBrand.MUSHINY) {
+      if (navigationCellType !== RobotBrand.MUSHINY) {
         findResult = find(cells, { naviId: code, brand: navigationCellType });
         if (findResult) {
           message.error('导航点编码已存在');
@@ -521,7 +521,7 @@ export default {
         id,
         x,
         y,
-        naviId: navigationCellType === AgvBrand.MUSHINY ? id : code,
+        naviId: navigationCellType === RobotBrand.MUSHINY ? id : code,
         brand: navigationCellType,
         logicId: currentLogicArea,
       });

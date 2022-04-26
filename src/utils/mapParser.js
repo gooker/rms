@@ -2,6 +2,7 @@ import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
+import { RobotBrand } from '@/config/consts';
 
 /**
  * 仙工地图数据转化工具
@@ -25,7 +26,7 @@ export function SEER(mapData, existIds, currentLogicArea) {
         const cellMapItem = new CellEntity({
           id,
           naviId: instanceName,
-          brand: 'SEER',
+          brand: RobotBrand.SEER,
           x: Math.round(pos.x * 1000),
           y: Math.round(pos.y * 1000),
           nx: Math.round(pos.x * 1000),
@@ -42,20 +43,23 @@ export function SEER(mapData, existIds, currentLogicArea) {
 
   // relations: 直线、圆弧、贝塞尔
   if (Array.isArray(advancedCurveList)) {
-    advancedCurveList.forEach(({ startPos, endPos }) => {
+    advancedCurveList.forEach(({ className, startPos, endPos, controlPos1, controlPos2 }) => {
       if (
         !isNull(instanceNameIdMap[startPos.instanceName]) &&
         !isNull(instanceNameIdMap[endPos.instanceName])
       ) {
         // 实际地图渲染时候只会用到这里的source & target属性
         const relationItem = new RelationEntity({
-          angle: getAngle(startPos.pos, endPos.pos),
+          type: className,
           source: instanceNameIdMap[startPos.instanceName],
           target: instanceNameIdMap[endPos.instanceName],
+          angle: getAngle(startPos.pos, endPos.pos),
           distance: getDistance(
             { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
             { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
           ),
+          control1: controlPos1,
+          control2: controlPos2,
         });
         relationItem.angle = Math.round(relationItem.angle);
         relationItem.distance = Math.round(relationItem.distance);

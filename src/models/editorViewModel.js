@@ -1,5 +1,5 @@
 // 用于保存显示与全局loading标识符
-import { AgvBrand, CoordinationType } from '@/config/consts';
+import { RobotBrand, CoordinationType } from '@/config/consts';
 
 export default {
   namespace: 'editorView',
@@ -24,7 +24,7 @@ export default {
     activeMapLoading: false, // 激活地图
 
     // 地图控制
-    shownNavigationCellType: [AgvBrand.MUSHINY, AgvBrand.SEER], // 显示的导航点类型
+    shownNavigationCellType: [RobotBrand.MUSHINY, RobotBrand.SEER], // 显示的导航点类型
     shownCellCoordinateType: CoordinationType.LAND, // land 表示物理点位、navi表示导航点位
     mapRotation: 0, // 手动旋转地图
   },

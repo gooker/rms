@@ -1,4 +1,8 @@
+// FIXME: 冗余翻译
 export default {
+  // 小车注册
+  'app.agvList.found': '发现',
+
   // 小车列表
   'app.agv.addingTime': '加入时间',
   'app.agv.battery': '电量',
@@ -27,8 +31,6 @@ export default {
   'app.agv.hardwareError': '车辆 [{robotId}] 硬件信息丢失',
   'app.agv.moveout': '移出地图',
   'app.agv.moveOut.confirm': '确认要将所选小车从地图移出吗',
-  'app.agv.moveOut.success': '所选小车移出地图成功',
-  'app.agv.moveOut.failed': '所选小车移出地图失败',
   'app.agv.delete.confirm': '确认要删除小车的数据吗',
   'app.agv.delete.success': '删除小车成功',
   'app.agv.delete.failed': '删除小车失败',

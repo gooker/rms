@@ -10,15 +10,15 @@ import agvRealTime from './zh-CN/agvRealTime';
 import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
 import reportCenter from './zh-CN/reportCenter';
-import translator from './zh-CN/Translator/translator';
-import portal from './zh-CN/Portal/portal';
+import translator from './zh-CN/translator';
+import portal from './zh-CN/portal';
 import userManager from './zh-CN/SSO/userManager';
 import sectionManager from './zh-CN/SSO/sectionManager';
 import userLoginHistory from './zh-CN/SSO/userHistory';
 import environmentManager from './zh-CN/SSO/environmentManager';
 import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
-import latentLiftingReport from './zh-CN/LatentLifting/report';
+import latentLiftingReport from './zh-CN/report';
 import customTasks from './zh-CN/Scene/customTasks';
 import operationLog from './zh-CN/Scene/operationlog';
 import charging from './zh-CN/Scene/charging';
@@ -28,7 +28,7 @@ import mapMonitor from './zh-CN/Scene/monitor';
 import notification from './zh-CN/Scene/notification';
 import sourceManage from './zh-CN/Scene/sourcemanage';
 import alert from './zh-CN/Scene/alert';
-import latentTotStorage from './zh-CN/ResourceManage/latentTotStorage';
+import latentTotStorage from './zh-CN/latentTotStorage';
 
 export default {
   ...menu,

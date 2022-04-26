@@ -20,7 +20,10 @@ const TablePageWrapper = (props) => {
   }, []);
 
   return (
-    <div className={commonStyles.commonPageStyle} style={{ height: pageHeight }}>
+    <div
+      className={commonStyles.commonPageStyle}
+      style={{ height: pageHeight, ...(props.style || {}) }}
+    >
       <div style={{ marginBottom: 15 }}>{tool}</div>
       <div className={commonStyles.tableWrapper}>{table}</div>
       <div>{restChildren}</div>

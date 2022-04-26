@@ -34,7 +34,6 @@ export default {
   // 车辆
   'menu.agv': '车辆',
   'menu.agv.customType': '车辆类型',
-  'menu.agv.registration': '车辆注册',
   'menu.agv.list': '车辆列表',
   'menu.agv.faultManagement': '车辆故障查询',
   'menu.agv.realTime': '车辆详情',

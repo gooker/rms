@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip, Row, Button, Input, message, Form, Tag, InputNumber, Select, Switch } from 'antd';
-import { isPlainObject, find, isEqual as deepEqual } from 'lodash';
+import { isPlainObject, find, isEqual as deepEqual, isString } from 'lodash';
 import { InfoOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
@@ -120,7 +120,6 @@ export function isStandardApiResponse(response) {
 
 export function dealResponse(response, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
-  const successNotify = successMessage === true || !isStrictNull(successMessage);
   const failNotify = failedMessage !== false;
   if (Array.isArray(response)) {
     let failed = false;
@@ -144,7 +143,7 @@ export function dealResponse(response, successMessage, failedMessage) {
   }
 
   // 正常请求后返回false, 表示当前请求无错误
-  if (successNotify) {
+  if (successMessage) {
     message.success(
       typeof successMessage === 'string'
         ? successMessage

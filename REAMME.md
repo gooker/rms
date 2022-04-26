@@ -11,7 +11,7 @@
 - src/workers: Web Worker 函数集
 - src/common.module.less: 项目通用样式文件
 - src/global.less: 项目顶层样式文件
-- src/index.js: 项目入口文件
+- src/AgvAdapter.js: 项目入口文件
 
 ### config.js 与 consts.js
 
