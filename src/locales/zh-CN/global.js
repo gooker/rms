@@ -7,8 +7,8 @@ export default {
   // Socket
   'app.socket.reconnecting': 'Socket重连中...',
   'app.socket.reConnected': 'Socket连接成功',
-  'app.socket.accountNoAuth': '当前使用的账号没有权限',
-  'app.socket.connectFailed': '连接出错, 连接断开',
+  'app.socket.accountNoAuth': 'Socket当前使用的账号没有权限',
+  'app.socket.connectFailed': 'Socket连接出错, 连接断开',
 
   // 多标签页
   'app.tabs.closeLeft': '关闭左侧所有',

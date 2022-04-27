@@ -74,14 +74,12 @@ class SocketClient {
       this.connect();
     } else if (errorMessage?.body?.indexOf('Access refused for user') > -1) {
       notification.warn({
-        placement: 'top',
         message: formatMessage({ id: 'app.message.systemHint' }),
         description: formatMessage({ id: 'app.socket.accountNoAuth' }),
         duration: 0,
       });
     } else {
       notification.error({
-        placement: 'top',
         message: formatMessage({ id: 'app.message.systemHint' }),
         description: formatMessage({ id: 'app.socket.connectFailed' }),
         duration: 0,

@@ -1,20 +1,7 @@
-import React, { memo, useEffect, useState } from 'react';
-import commonStyle from '@/common.module.less';
-import { fetchAllAdaptor } from '@/services/resourceManageAPI';
-import { dealResponse, formatMessage } from '@/utils/util';
+import React, { memo } from 'react';
 
 const AgvAdapter = (props) => {
   const {} = props;
-  const [datasource, setDatasource] = useState([]);
-
-  useEffect(() => {
-    fetchAllAdaptor().then((response) => {
-      if (!dealResponse(response, false, formatMessage({ id: 'app.message.fetchDataFailed' }))) {
-        setDatasource(response);
-      }
-    });
-  }, []);
-
-  return <div className={commonStyle.commonPageStyle}>111</div>;
+  return <div>AgvAdapter</div>;
 };
 export default memo(AgvAdapter);

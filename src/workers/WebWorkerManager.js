@@ -18,7 +18,9 @@ AlertCountPolling.getInstance = function (dispatcher) {
        * 2. 处理错误
        */
       if (data.code === '0') {
-        dispatcher(data.data);
+        if (typeof data.data === 'number') {
+          dispatcher(data.data);
+        }
       }
     };
     AlertCountPolling.instance = worker;

@@ -1,8 +1,5 @@
 // FIXME: 冗余翻译
 export default {
-  // 小车注册
-  'app.agvList.found': '发现',
-
   // 小车列表
   'app.agv.addingTime': '加入时间',
   'app.agv.battery': '电量',
@@ -24,7 +21,6 @@ export default {
   'app.agv.batchCommand.Modal.Placeholder': '小车二进制命令(HEX表示)',
   'app.agv.batchCommand.Modal.confirm': '发送',
   'app.agv.batchCommand.require': '请输入小车命令',
-  'app.agv.batchCommand.success': '成功发送小车命令',
   'app.agv.infoExport': '信息导出',
   'app.agv.exportHardwareInfo': '硬件信息导出',
   'app.agv.exportAgvInfo': '车辆信息导出',
@@ -32,8 +28,6 @@ export default {
   'app.agv.moveout': '移出地图',
   'app.agv.moveOut.confirm': '确认要将所选小车从地图移出吗',
   'app.agv.delete.confirm': '确认要删除小车的数据吗',
-  'app.agv.delete.success': '删除小车成功',
-  'app.agv.delete.failed': '删除小车失败',
   'app.agv.speed': '速度',
   'app.agv.currentDirection': '车头朝向',
   'app.agv.currentSpotId': '当前位置',

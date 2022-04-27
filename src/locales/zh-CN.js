@@ -3,10 +3,11 @@ import task from './zh-CN/task';
 import global from './zh-CN/global';
 import common from './zh-CN/common';
 import agvList from './zh-CN/agvList';
+import agvModel from './zh-CN/agvModel';
+import agvRealTime from './zh-CN/agvRealTime';
 import request from './zh-CN/request';
 import requestor from './zh-CN/requestor';
 import collection from './zh-CN/collection';
-import agvRealTime from './zh-CN/agvRealTime';
 import chargingStrategy from './zh-CN/chargingStrategy';
 import systemParameters from './zh-CN/systemParameters';
 import reportCenter from './zh-CN/reportCenter';
@@ -37,6 +38,7 @@ export default {
   ...common,
   ...collection,
   ...agvList,
+  ...agvModel,
   ...request,
   ...requestor,
   ...agvRealTime,

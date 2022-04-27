@@ -77,12 +77,12 @@ export default [
     icon: 'agv',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
-      {
-        path: `/${AppCode.ResourceManage}/agv/adapter`,
-        name: 'adapter',
-        component: '/ResourceManage/Agv/AgvAdapter',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
+      // {
+      //   path: `/${AppCode.ResourceManage}/agv/adapter`,
+      //   name: 'adapter',
+      //   component: '/ResourceManage/Agv/AgvAdapter',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      // },
       {
         path: `/${AppCode.ResourceManage}/agv/customType`,
         name: 'customType',

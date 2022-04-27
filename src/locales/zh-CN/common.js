@@ -103,6 +103,8 @@ export default {
   'app.common.disable': '禁用',
   'app.common.enabled': '启用中',
   'app.common.disabled': '已禁用',
+  'app.common.on': '已开启',
+  'app.common.off': '已关闭',
   'app.common.list': '列表',
   'app.common.width': '宽度',
   'app.common.height': '高度',
@@ -154,12 +156,6 @@ export default {
   'app.map.landCoordinator': '物理坐标',
   'app.map.naviCoordinator': '导航坐标',
 
-  // 小车类型
-  'app.agvType.LatentLifting': '潜伏车',
-  'app.agvType.Tote': '料箱车',
-  'app.agvType.ForkLifting': '叉车',
-  'app.agvType.Sorter': '分拣车',
-
   // 方向
   'app.direction': '方向',
   'app.direction.current': '当前方向',
@@ -182,6 +178,9 @@ export default {
   'app.button.save': '保存',
   'app.button.copy': '复制',
   'app.button.past': '粘贴',
+  'app.button.export': '导出',
+  'app.button.import': '导入',
+  'app.button.turnOn': '开启',
   'app.button.close': '关闭',
   'app.button.check': '查看',
   'app.button.reset': '重置',
@@ -192,44 +191,11 @@ export default {
   'app.button.submit': '提交',
   'app.button.return': '返回',
   'app.button.search': '搜索',
-  'app.button.export': '导出',
-  'app.button.import': '导入',
-  'app.button.turnOn': '开启',
   'app.button.confirm': '确定',
   'app.button.refresh': '刷新',
-  'app.button.turnOff': '关闭',
   'app.button.execute': '执行',
   'app.button.upload': '上传',
   'app.button.download': '下载',
-
-  // 小车
-  'app.agv': '小车',
-  'app.agv.id': '小车ID',
-  'app.agv.ip': 'IP',
-  'app.agv.port': '端口号',
-  'app.agv.type': '小车类型',
-  'app.agv.status': '小车状态',
-  'app.agv.on': '已开启',
-  'app.agv.off': '已关闭',
-  'app.agv.direction': '车方向',
-  'app.agv.electricity': '电量',
-
-  'app.agvState.available': '可用',
-  'app.agvState.StandBy': '待命',
-  'app.agvState.Working': '任务中',
-  'app.agvState.Charging': '充电中',
-  'app.agvState.Offline': '离线',
-  'app.agvState.Error': '错误',
-  'app.agvState.Connecting': '连接中',
-  'app.agvState.Waiting': '等待',
-  'app.agvState.lowPower': '低电量',
-
-  // 这几个存在重复可能
-  'app.activity.StandBy': '待命',
-  'app.activity.TaskExecuting': '执行中',
-  'app.activity.TaskFinished': '已完成',
-  'app.activity.TaskNew': '新建',
-  'app.activity.Working': '执行任务',
 
   // 电池
   'app.battery.full': '充足',
