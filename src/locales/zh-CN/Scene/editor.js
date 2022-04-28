@@ -86,13 +86,6 @@ export default {
   'editor.batchAddCell.rows': '行数',
   'editor.batchAddCell.columns': '列数',
   'editor.batchAddCell.offsetsNumber': '偏移个数',
-
-  'editor.generateCode.way': '生成方式',
-  'editor.generateCode.way.increment': '递增',
-  'editor.generateCode.way.increment.value': '递增值',
-  'editor.generateCode.way.decrease': '递减',
-  'editor.generateCode.way.decrease.value': '递减值',
-
   'editor.moveCell.offsetDistance': '偏移距离',
   'editor.adjustSpace.baseLine': '调整基线',
 

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import * as XLSX from 'xlsx';
-import { find, groupBy, sortBy } from 'lodash';
+import { find, groupBy, pickBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import {
@@ -23,7 +23,7 @@ import {
 import json from '../../package.json';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
-import { LineType } from '@/config/config';
+import { LineType, RobotBrand } from '@/config/config';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -431,12 +431,24 @@ export function generateCellId(cellMap, start, loopStep, step, way) {
 }
 
 /**
- * 无参数获取点位ID
- * @param cellMap
- * @param requiredCount
- * @returns {[]}
+ * 获取二维码ID。该方法只能用来处理牧星点位批量获取ID的场景
  */
 export function generateCellIds(cellMap, requiredCount) {
+  // 获取已存在的牧星点位导航ID
+  const mushinyCells = pickBy(cellMap, { brand: RobotBrand.MUSHINY });
+  const existNaviIds = Object.values(mushinyCells)
+    .map(({ naviId }) => naviId)
+    .map((item) => parseInt(item));
+
+  const naviId = [];
+  let value = 1;
+  for (let i = 0; i < requiredCount; i++) {
+    while (existNaviIds.includes(value) || naviId.includes(value)) {
+      value += 1;
+    }
+    naviId.push(value);
+  }
+
   const cellId = [];
   let step = 1;
   for (let i = 0; i < requiredCount; i++) {
@@ -445,7 +457,7 @@ export function generateCellIds(cellMap, requiredCount) {
     }
     cellId.push(step);
   }
-  return cellId;
+  return { cellId, naviId };
 }
 
 export function transform(object, oldValue, newValue, isUpdate) {

@@ -1,28 +1,26 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Row } from 'antd';
-import { connect } from '@/utils/RmsDva';
 import {
-  CodeOutlined,
   DragOutlined,
+  LeftOutlined,
+  RightOutlined,
   LineHeightOutlined,
   PlusCircleOutlined,
   MinusCircleOutlined,
   ColumnWidthOutlined,
   ColumnHeightOutlined,
-  LeftOutlined,
-  RightOutlined,
 } from '@ant-design/icons';
 import MoveCell from './MoveCell';
 import AddNavigation from './AddNavigation';
 import BatchAddCells from './BatchAddCells';
 import AdjustCellSpace from './AdjustCellSpace';
-import GenerateCellCode from './GenerateCellCode';
 import FormattedMessage from '@/components/FormattedMessage';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage, isNull } from '@/utils/util';
 import { getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
-import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
+import styles from '../../popoverPanel.module.less';
 
 const ButtonStyle = { width: 120, height: 50, borderRadius: 5 };
 
@@ -40,8 +38,6 @@ const CellPanel = (props) => {
         return <AddNavigation />;
       case 'batchAdd':
         return <BatchAddCells />;
-      case 'cellCode':
-        return <GenerateCellCode />;
       case 'moveCell':
         return <MoveCell />;
       case 'adjustSpace':
@@ -141,20 +137,6 @@ const CellPanel = (props) => {
                     onClick={deleteNavigations}
                   >
                     <MinusCircleOutlined /> <FormattedMessage id="editor.cell.delete" />
-                  </Button>
-                </Col>
-
-                {/* 地址码 */}
-                <Col span={12}>
-                  <Button
-                    style={ButtonStyle}
-                    disabled={currentMap == null}
-                    onClick={() => {
-                      setFormCategory('cellCode');
-                      setSecondTitle(formatMessage({ id: 'editor.cell.code' }));
-                    }}
-                  >
-                    <CodeOutlined /> <FormattedMessage id="editor.cell.code" />
                   </Button>
                 </Col>
 

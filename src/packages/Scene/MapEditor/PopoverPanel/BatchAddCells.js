@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
+import { isPlainObject } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
@@ -20,12 +21,15 @@ const BatchAddCells = (props) => {
       dispatch({
         type: 'editor/batchAddCells',
         payload: { ...value, ...values },
-      }).then(({ centerMap, additionalCells }) => {
-        mapContext.updateCells({
-          type: 'add',
-          payload: additionalCells,
-        });
-        centerMap && mapContext.centerView();
+      }).then((result) => {
+        if (isPlainObject(result)) {
+          const { centerMap, additionalCells } = result;
+          mapContext.updateCells({
+            type: 'add',
+            payload: additionalCells,
+          });
+          centerMap && mapContext.centerView();
+        }
       });
     });
   }
@@ -170,69 +174,69 @@ const BatchAddCellWithAbsolut = (props) => {
   );
 };
 
-const BatchAddCellWithOffset = connect(({ editor }) => {
-  const { selections } = editor;
-  const selectCells = selections
-    .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
-  return { selectCells };
-})((props) => {
-  const { selectCells } = props;
-  const [formRef] = Form.useForm();
+const BatchAddCellWithOffset = connect(({ editor }) => ({ selections: editor.selections }))(
+  (props) => {
+    const { selections } = props;
+    const [formRef] = Form.useForm();
 
-  useEffect(() => {
-    formRef.setFieldsValue({ cellIds: selectCells });
-  }, [selectCells]);
+    const selectCells = selections
+      .filter((item) => item.type === MapSelectableSpriteType.CELL)
+      .map(({ id }) => id);
 
-  function submit() {
-    formRef.validateFields().then((value) => {
-      props.submit(value);
-    });
-  }
+    useEffect(() => {
+      formRef.setFieldsValue({ cellIds: selectCells });
+    }, [selectCells]);
 
-  return (
-    <Form labelWrap form={formRef} {...formItemLayout}>
-      {/* 基准点位 */}
-      <Form.Item
-        name={'cellIds'}
-        initialValue={selectCells}
-        label={formatMessage({ id: 'editor.cell.bases' })}
-        rules={[{ required: true }]}
-      >
-        <Select disabled mode={'tags'} maxTagCount={4} style={{ width: '90%' }} />
-      </Form.Item>
+    function submit() {
+      formRef.validateFields().then((value) => {
+        props.submit(value);
+      });
+    }
 
-      {/* 方向 */}
-      <Form.Item name={'dir'} initialValue={0} label={formatMessage({ id: 'app.direction' })}>
-        <DirectionSelector />
-      </Form.Item>
+    return (
+      <Form labelWrap form={formRef} {...formItemLayout}>
+        {/* 基准点位 */}
+        <Form.Item
+          name={'cellIds'}
+          initialValue={selectCells}
+          label={formatMessage({ id: 'editor.cell.bases' })}
+          rules={[{ required: true }]}
+        >
+          <Select disabled mode={'tags'} maxTagCount={4} style={{ width: '90%' }} />
+        </Form.Item>
 
-      {/* 码间距 */}
-      <Form.Item
-        name={'distance'}
-        initialValue={0}
-        label={formatMessage({ id: 'editor.cell.space' })}
-        rules={[{ required: true }]}
-      >
-        <InputNumber style={{ width: 150 }} />
-      </Form.Item>
+        {/* 方向 */}
+        <Form.Item name={'dir'} initialValue={0} label={formatMessage({ id: 'app.direction' })}>
+          <DirectionSelector />
+        </Form.Item>
 
-      {/* 偏移个数 */}
-      <Form.Item
-        name={'count'}
-        initialValue={0}
-        label={formatMessage({ id: 'editor.batchAddCell.offsetsNumber' })}
-        rules={[{ required: true }]}
-      >
-        <InputNumber style={{ width: 150 }} />
-      </Form.Item>
+        {/* 码间距 */}
+        <Form.Item
+          name={'distance'}
+          initialValue={1000}
+          label={formatMessage({ id: 'editor.cell.space' })}
+          rules={[{ required: true }]}
+        >
+          <InputNumber style={{ width: 150 }} />
+        </Form.Item>
 
-      {/* 生成 */}
-      <Form.Item {...formItemLayoutNoLabel}>
-        <Button type="primary" onClick={submit} disabled={selectCells.length === 0}>
-          <FormattedMessage id="app.button.generate" />
-        </Button>
-      </Form.Item>
-    </Form>
-  );
-});
+        {/* 偏移个数 */}
+        <Form.Item
+          name={'count'}
+          initialValue={0}
+          label={formatMessage({ id: 'editor.batchAddCell.offsetsNumber' })}
+          rules={[{ required: true }]}
+        >
+          <InputNumber style={{ width: 150 }} />
+        </Form.Item>
+
+        {/* 生成 */}
+        <Form.Item {...formItemLayoutNoLabel}>
+          <Button type='primary' onClick={submit} disabled={selectCells.length === 0}>
+            <FormattedMessage id='app.button.generate' />
+          </Button>
+        </Form.Item>
+      </Form>
+    );
+  },
+);

@@ -6,7 +6,6 @@ import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/ut
 import {
   addTemporaryId,
   batchGenerateLine,
-  generateCellId,
   generateCellIds,
   generateCellMapByRowsAndCols,
   getAngle,
@@ -40,7 +39,7 @@ import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEn
 import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
-import { LineType, RobotBrand } from '@/config/config';
+import { LineType, NavigationCellType, RobotBrand } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -546,18 +545,33 @@ export default {
           );
         }
       } else {
-        const { cellIds, dir, count, distance } = payload;
+        /**
+         * 偏移功能需要注意:
+         * 因为地图显示方式的右手坐标系，所以如果点位所对应的地图是左手坐标系，那么左右偏移没有影响
+         * 但是上下偏移则在计算的时候是相反的
+         */
+        const configNavigationCellType = find(NavigationCellType, { code: navigationCellType });
+        if (isNull(configNavigationCellType)) {
+          message.error(`无法识别的导航点类型: ${navigationCellType}`);
+          return;
+        }
+        const coordinateSystemType = configNavigationCellType.coordinationType;
+        const { cellIds, count, distance } = payload;
+        let dir = payload.dir;
+        if ([0, 2].includes(dir) && coordinateSystemType === 'L') {
+          dir = dir === 0 ? 2 : 0;
+        }
         const selectedCellsData = cellIds.map((cellId) => cellMap[cellId]);
         selectedCellsData.forEach((cellData) => {
           for (let index = 1; index < count + 1; index++) {
             additionalCells.push(moveCell(cellData, distance * index, dir));
           }
         });
-        const newCellIds = generateCellIds(cellMap, additionalCells.length);
+        const { cellId, naviId } = generateCellIds(cellMap, additionalCells.length);
         additionalCells = additionalCells.map((cell, index) => ({
           ...cell,
-          id: newCellIds[index],
-          naviId: newCellIds[index],
+          id: cellId[index],
+          naviId: naviId[index],
         }));
       }
 
@@ -637,80 +651,6 @@ export default {
     },
 
     // ********************************* 待调整 ********************************* //
-    // 生成地址码
-    * generateCellCode({ payload }, { select, put }) {
-      // 取值轮询次数，保证不取到重复值且保证取值效率
-      const loopStep = { loop: 0 };
-
-      const { cellIds, way, step, startCode } = payload;
-      const { currentMap, currentCells } = yield select(({ editor }) => editor);
-
-      const { rangeEnd, rangeStart } = getCurrentLogicAreaData();
-
-      const result = {};
-      const currentCellMap = {};
-      currentCells.forEach(({ id }) => {
-        currentCellMap[id] = id;
-      });
-
-      /** start* */
-      // 根据x y 对cellIds排序
-      const currentCellIds = [...cellIds];
-      const sortCellIds = [];
-      for (let index = 0; index < currentCellIds.length; index++) {
-        const indexCellId = currentCellIds[index];
-        const data = currentMap.cellMap[indexCellId];
-        if (!isNull(data)) {
-          sortCellIds.push(data);
-        }
-      }
-
-      sortCellIds.sort((a, b) => {
-        if (a.y === b.y) {
-          return a.x - b.x;
-        }
-        return a.y - b.y;
-      });
-
-      const newSelectedCellIds = sortCellIds.map(({ id }) => id);
-      /** end* */
-
-      for (let index = 0; index < newSelectedCellIds.length; index++) {
-        const originCellId = newSelectedCellIds[index];
-        const newCellId = generateCellId(currentCellMap, startCode, loopStep, step, way);
-        if (newCellId > rangeEnd) {
-          message.error('app.cellMap.code.exceedLogicAreaLimit');
-          return false;
-        }
-
-        if (newCellId < rangeStart) {
-          message.error(formatMessage({ id: 'app.cellMap.code.lessThanLogicAreaLimit' }));
-          return false;
-        }
-        result[originCellId] = newCellId;
-      }
-
-      // 更新 currentCells 和 currentMap 数据
-      const _currentCells = currentCells.filter((item) => !newSelectedCellIds.includes(item.id));
-      const newCellMap = { ...currentMap.cellMap };
-      newSelectedCellIds.forEach((cellId) => {
-        const newCellItem = { ...currentMap.cellMap[cellId], id: result[cellId], costs: null };
-        _currentCells.push(newCellItem);
-
-        delete newCellMap[cellId];
-        newCellMap[newCellItem.id] = newCellItem;
-      });
-      currentMap.cellMap = newCellMap;
-
-      yield put({
-        type: 'saveState',
-        payload: {
-          currentCells: _currentCells,
-        },
-      });
-      return result;
-    },
-
     // 移动点位
     *moveCells({ payload }, { select, put }) {
       const { cellIds, distance, dir } = payload;

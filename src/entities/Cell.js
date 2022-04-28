@@ -80,10 +80,10 @@ export default class Cell extends PIXI.Container {
     this.addChild(this.navigationId);
 
     // 二维码点
-    // this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
-    // this.qrId.anchor.set(0.5, 1);
-    // this.qrId.y = -CellSize.height / 2 - 30;
-    // this.addChild(this.qrId);
+    this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
+    this.qrId.anchor.set(0.5, 1);
+    this.qrId.y = -CellSize.height / 2 - 30;
+    this.addChild(this.qrId);
   }
 
   updateNaviId(naviId) {

@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env NODE_ENV=development webpack serve --config webpack/webpack.dev.config.js --open",
-    "build": "rm -rf dist && cross-env NODE_ENV=production webpack --config webpack/webpack.prod.config.js && node ./scripts/addDefaultConfig.js",
+    "pack": "rm -rf dist && cross-env NODE_ENV=production webpack --config webpack/webpack.prod.config.js",
+    "build": "npm run pack && node ./scripts/addDefaultConfig.js",
+    "build:local": "npm run pack && node ./scripts/addDebuggerConfig.js",
     "analyzer": "cross-env ANALYZE=1 NODE_ENV=production webpack --config webpack/webpack.prod.config.js",
     "lint": "npm run lint:js && npm run lint:style && npm run lint:prettier",
     "lint-staged": "lint-staged",
