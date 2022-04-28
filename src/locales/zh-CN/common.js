@@ -32,6 +32,7 @@ export default {
   'app.form.timeRange': '时间区间',
   'app.form.dateRange': '日期区间',
   'app.form.code.duplicate': '编码重复',
+  'app.form.id.duplicate': 'ID重复',
   'app.form.name.duplicate': '名称重复',
 
   // 通用提醒内容

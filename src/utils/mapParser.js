@@ -2,7 +2,7 @@ import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
-import { RobotBrand } from '@/config/consts';
+import { RobotBrand } from '@/config/config';
 
 /**
  * 仙工地图数据转化工具
@@ -58,8 +58,8 @@ export function SEER(mapData, existIds, currentLogicArea) {
             { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
             { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
           ),
-          control1: controlPos1,
-          control2: controlPos2,
+          control1: { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
+          control2: { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
         });
         relationItem.angle = Math.round(relationItem.angle);
         relationItem.distance = Math.round(relationItem.distance);

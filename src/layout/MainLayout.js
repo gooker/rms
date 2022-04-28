@@ -239,7 +239,7 @@ class MainLayout extends React.Component {
         message.error(
           `${formatMessage(
             { id: 'app.message.fetchFailTemplate' },
-            { type: formatMessage({ id: 'app.agv.type' }) },
+            { type: formatMessage({ id: 'app.agvType' }) },
           )}`,
         );
       }

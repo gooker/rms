@@ -3,7 +3,7 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { AGVType } from '@/config/config';
+import { AGVType, NavigationCellType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
 import {
   dealResponse,
@@ -19,7 +19,6 @@ import {
   EStopStateColor,
   GeoLockColor,
   LatentPodSize,
-  NavigationCellType,
   ToteAGVSize,
   zIndex,
 } from '@/config/consts';
@@ -49,7 +48,6 @@ import {
 import BaseMap from '@/components/BaseMap';
 import { fetchAgvInfo } from '@/services/api';
 import { SelectionType } from '@/config/consts';
-import { connect } from '@/utils/RmsDva';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 class MonitorMapView extends BaseMap {

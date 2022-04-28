@@ -24,6 +24,7 @@ import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 import CostArrow from '@/entities/CostArrow';
+import { LineType } from '@/config/config';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -31,6 +32,7 @@ function initState(context) {
   // 多种导航点类型一起显示的时候，同一个点位必定会出现多个导航点，所以value使用数组形式；该对象近用于处理地图元素属性，比如存储点等
   context.idCellMap = new Map(); // {1:Cell}
   context.xyCellMap = new Map(); // {x_y:[Cell]} // 主要用于处理点击某个点位，查看该坐标下有几个点位
+  context.idNaviMap = new Map();
 
   context.idLineMap = new Map(); // {x1_y1_x2_y2: graphics}
   context.idArrowMap = new Map(); // {x_y:arrow}
@@ -129,7 +131,7 @@ export default class BaseMap extends React.PureComponent {
     this.states.showDistance = flag;
     Object.values(this.idArrowMap).forEach((innerMap) => {
       innerMap.forEach((line) => {
-        if (line.type === 'line') {
+        if (line.type === LineType.StraightPath) {
           line.switchDistanceShown(flag);
         }
       });
@@ -223,7 +225,7 @@ export default class BaseMap extends React.PureComponent {
     const priority = shownPriority || this.states.shownPriority;
     relationsToRender.forEach((lineData) => {
       const { type, cost } = lineData;
-      if (type === 'line') {
+      if (type === LineType.StraightPath) {
         const sourceCell = this.idCellMap.get(lineData.source);
         const targetCell = this.idCellMap.get(lineData.target);
         if (!isNull(sourceCell) && !isNull(targetCell)) {
@@ -337,7 +339,7 @@ export default class BaseMap extends React.PureComponent {
     const { hideBlock, shownPriority, shownRelationDir, shownRelationCell } = this.states;
     Object.values(this.idArrowMap).forEach((innerMap) => {
       innerMap.forEach((line) => {
-        if (line.type === 'line') {
+        if (line.type === LineType.StraightPath) {
           const { id, cost, dir } = line;
           const [source, target] = id.split('-');
           // 是否在显示的优先级Cost范围内

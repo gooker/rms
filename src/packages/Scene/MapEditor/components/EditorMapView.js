@@ -9,13 +9,9 @@ import { isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
-import {
-  CellSize,
-  MapSelectableSpriteType,
-  NavigationCellType,
-  SelectionType,
-} from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
+import { NavigationCellType } from '@/config/config';
 
 class EditorMapView extends BaseMap {
   constructor(props) {
@@ -144,25 +140,17 @@ class EditorMapView extends BaseMap {
     if (type === 'remove') {
       this.removeCells(payload);
     }
+    // 更新导航ID
+    if (type === 'updateNaviId') {
+      const { cellId, naviId } = payload;
+      const cellEntity = this.idCellMap.get(cellId);
+      if (cellEntity) {
+        cellEntity.updateNaviId(naviId);
+      }
+    }
 
     // *************** 以下待调整 *************** //
-    // 更新地址码
-    if (type === 'code') {
-      const selectedCells = [];
-      Object.keys(payload).forEach((cellId) => {
-        const newCellId = payload[cellId];
-        selectedCells.push(newCellId);
-        const cellEntity = this.idCellMap.get(parseInt(cellId));
-        if (cellEntity) {
-          cellEntity.updateCellId(newCellId);
 
-          // 更新 idCellMap
-          this.idCellMap.delete(cellId);
-          this.idCellMap.set(newCellId, cellEntity);
-        }
-      });
-      this.selectedCells = selectedCells;
-    }
     // 移动点位
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {

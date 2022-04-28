@@ -4,7 +4,7 @@ import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message } fr
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import { NavigationCellType, RobotBrand } from '@/config/consts';
+import { NavigationCellType, RobotBrand } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
 import { MUSHINY, SEER } from '@/utils/mapParser';
 

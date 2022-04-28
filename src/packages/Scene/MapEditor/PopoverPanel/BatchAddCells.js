@@ -3,13 +3,14 @@ import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import styles from '../../popoverPanel.module.less';
 import { MapSelectableSpriteType } from '@/config/consts';
+import { NavigationCellType } from '@/config/config';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
+import styles from '../../popoverPanel.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(9, 15);
 const BatchAddCells = (props) => {
-  const { dispatch, mapContext, navigationCellType } = props;
+  const { dispatch, mapContext } = props;
   const [formRef] = Form.useForm();
 
   const [addWay, setAddWay] = useState('absolute');
@@ -53,10 +54,10 @@ const BatchAddCells = (props) => {
         <Form.Item
           name={'navigationCellType'}
           label={formatMessage({ id: 'editor.navigationCellType' })}
-          initialValue={navigationCellType[0].code}
+          initialValue={NavigationCellType[0].code}
         >
           <Select style={{ width: 133 }}>
-            {navigationCellType.map(({ code, name }, index) => (
+            {NavigationCellType.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>
@@ -73,13 +74,9 @@ const BatchAddCells = (props) => {
     </div>
   );
 };
-export default connect(({ global, editor }) => {
+export default connect(({ editor }) => {
   const { mapContext } = editor;
-
-  return {
-    mapContext,
-    navigationCellType: global.navigationCellType,
-  };
+  return { mapContext };
 })(memo(BatchAddCells));
 
 const BatchAddCellWithAbsolut = (props) => {

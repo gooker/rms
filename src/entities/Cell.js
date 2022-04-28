@@ -21,15 +21,16 @@ export default class Cell extends PIXI.Container {
   constructor(props) {
     super(props);
     this.type = MapSelectableSpriteType.CELL;
-
     this.brand = props.brand; // 导航点类型
+    this.color = props.color.replace('#', '0x');
+
     this.id = props.id; // Integer ID
     this.naviId = props.naviId; // 车型导航点的原始ID
+
     this.x = props.x;
     this.y = props.y;
     this.xLabel = props.xLabel;
     this.yLabel = props.yLabel;
-    this.color = props.color.replace('#', '0x');
 
     this.width = CellSize.width;
     this.height = CellSize.height;
@@ -79,10 +80,23 @@ export default class Cell extends PIXI.Container {
     this.addChild(this.navigationId);
 
     // 二维码点
-    this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
-    this.qrId.anchor.set(0.5, 1);
-    this.qrId.y = -CellSize.height / 2 - 30;
-    this.addChild(this.qrId);
+    // this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
+    // this.qrId.anchor.set(0.5, 1);
+    // this.qrId.y = -CellSize.height / 2 - 30;
+    // this.addChild(this.qrId);
+  }
+
+  updateNaviId(naviId) {
+    if (this.navigationId) {
+      this.removeChild(this.navigationId);
+      this.navigationId.destroy(true);
+      this.navigationId = null;
+    }
+    const brandColor = this.color.replace('#', '0x');
+    this.navigationId = new BitText(naviId, 0, 0, brandColor);
+    this.navigationId.anchor.set(0.5, 0);
+    this.navigationId.y = CellSize.height / 2 + 30;
+    this.addChild(this.navigationId);
   }
 
   // 坐标

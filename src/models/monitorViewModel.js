@@ -1,5 +1,6 @@
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
-import { RobotBrand, CoordinationType } from '@/config/consts';
+import { RobotBrand, CoordinationType } from '@/config/config';
+
 export default {
   namespace: 'monitorView',
   state: {

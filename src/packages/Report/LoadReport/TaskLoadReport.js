@@ -31,7 +31,7 @@ import style from '../report.module.less';
 
 const colums = {
   time: formatMessage({ id: 'app.time' }),
-  robotType: formatMessage({ id: 'app.agv.type' }),
+  robotType: formatMessage({ id: 'app.agvType' }),
 };
 
 let taskActionPieLine = null; // 任务动作负载-pie

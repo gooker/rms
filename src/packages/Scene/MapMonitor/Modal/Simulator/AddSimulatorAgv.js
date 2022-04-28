@@ -66,7 +66,7 @@ function AddSimulatorAgv(props) {
 
   return (
     <div style={{ marginTop: 20 }}>
-      <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agv.type' })}>
+      <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agvType' })}>
         <Select disabled value={robotType} style={{ width: '130px' }}>
           {robotTypes.map((record) => (
             <Select.Option value={record} key={record}>

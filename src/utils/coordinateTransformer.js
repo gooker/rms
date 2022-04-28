@@ -1,5 +1,5 @@
 import { scale, rotateDEG, translate, compose, applyToPoint, flipX } from 'transformation-matrix';
-import { NavigationCellType } from '@/config/consts';
+import { NavigationCellType } from '@/config/config';
 
 /**
  * 右手坐标系

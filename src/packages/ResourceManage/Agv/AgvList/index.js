@@ -32,7 +32,7 @@ const AgvList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.type' />,
+      title: <FormattedMessage id='app.agvType' />,
       dataIndex: 'robotType',
       align: 'center',
       render: (text, record) => {

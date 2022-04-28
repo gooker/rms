@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import styles from '../../popoverPanel.module.less';
-import FormattedMessage from '@/components/FormattedMessage';
 
 const EditorCard = (props) => {
   const { label, children } = props;

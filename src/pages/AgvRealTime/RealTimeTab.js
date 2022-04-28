@@ -159,7 +159,7 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 小车类型 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.type' })}>
+        <LabelComponent label={formatMessage({ id: 'app.agvType' })}>
           {renderAgvType()}
         </LabelComponent>
 

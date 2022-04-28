@@ -1,12 +1,11 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, isEqual, isPlainObject, some } from 'lodash';
+import { find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
   addTemporaryId,
   batchGenerateLine,
-  calculateCellDistance,
   generateCellId,
   generateCellIds,
   generateCellMapByRowsAndCols,
@@ -38,10 +37,10 @@ import {
 } from '@/services/XIHE';
 import { activeMap } from '@/services/api';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
-import { RobotBrand, MapSelectableSpriteType } from '@/config/consts';
-import { MockMapData } from '@/mockData';
+import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { LineType, RobotBrand } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -317,12 +316,6 @@ export default {
                   if (isNull(cellMap[source]) || isNull(cellMap[target])) {
                     return null;
                   }
-                  // 对线条进行筛选: 根据Range进行判断
-                  // [只]重算直线的距离
-                  // if (type === 'line') {
-                  //   relation.distance = calculateCellDistance(cellMap[source], cellMap[target]);
-                  // }
-                  // relation.angle = getAngle(cellMap[source], cellMap[target]);
                   return relation;
                 })
                 .filter(Boolean);
@@ -619,9 +612,33 @@ export default {
       return result;
     },
 
+    // 修改点位导航ID
+    * updateCellNaviId({ payload }, { select }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      const { originId, newId } = payload;
+      const { cellMap } = currentMap;
+      // 首先检测ID是否重复
+      const pickResult1 = pickBy(cellMap, (item) => item.naviId === newId);
+      if (Object.keys(pickResult1).length > 0) {
+        message.error(formatMessage({ id: 'app.form.id.duplicate' }));
+      } else {
+        // 只需要到cellMap将对应点位的navId值替换为newId
+        const pickResult2 = pickBy(cellMap, (item) => item.naviId === originId);
+        const keys = Object.keys(pickResult2);
+        if (keys.length > 1) {
+          message.error(`地图点位数据异常, 导航点ID(${originId})存在重复: ${keys.join()}`);
+        } else if (keys.length === 1) {
+          cellMap[keys[0]].naviId = newId;
+          return { cellId: parseInt(keys[0]), naviId: newId };
+        } else {
+          message.error(`点位数据丢失, 导航点ID位: ${originId}`);
+        }
+      }
+    },
+
     // ********************************* 待调整 ********************************* //
     // 生成地址码
-    *generateCellCode({ payload }, { select, put }) {
+    * generateCellCode({ payload }, { select, put }) {
       // 取值轮询次数，保证不取到重复值且保证取值效率
       const loopStep = { loop: 0 };
 
@@ -1006,7 +1023,7 @@ export default {
             additionalRelations.push({
               source: pre.id,
               target: next.id,
-              type: 'line',
+              type: LineType.StraightPath,
               cost: payload[isOdd ? 1 : 3],
               angle: getAngle(pre, next),
               distance: getDistance(pre, next),
@@ -1014,7 +1031,7 @@ export default {
             additionalRelations.push({
               source: next.id,
               target: pre.id,
-              type: 'line',
+              type: LineType.StraightPath,
               cost: payload[isOdd ? 3 : 1],
               angle: getAngle(next, pre),
               distance: getDistance(next, pre),
@@ -1036,7 +1053,7 @@ export default {
             additionalRelations.push({
               source: pre.id,
               target: next.id,
-              type: 'line',
+              type: LineType.StraightPath,
               cost: payload[isOdd ? 2 : 0],
               angle: getAngle(pre, next),
               distance: getDistance(pre, next),
@@ -1044,7 +1061,7 @@ export default {
             additionalRelations.push({
               source: next.id,
               target: pre.id,
-              type: 'line',
+              type: LineType.StraightPath,
               cost: payload[isOdd ? 0 : 2],
               angle: getAngle(next, pre),
               distance: getDistance(next, pre),

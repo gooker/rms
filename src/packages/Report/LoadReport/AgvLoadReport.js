@@ -36,7 +36,7 @@ import style from '../report.module.less';
 
 const colums = {
   time: formatMessage({ id: 'app.time' }),
-  robotType: formatMessage({ id: 'app.agv.type' }),
+  robotType: formatMessage({ id: 'app.agvType' }),
 };
 
 const taskTypes = {
@@ -432,7 +432,7 @@ const HealthCar = (props) => {
       sorter: (a, b) => a.robotId - b.robotId,
     },
     {
-      title: <FormattedMessage id="app.agv.type" />,
+      title: <FormattedMessage id='app.agvType' />,
       dataIndex: 'robotType',
     },
     {

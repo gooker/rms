@@ -75,7 +75,7 @@ const ChargerMultiForm = (props) => {
       <Form.Item
         {...formItemLayout}
         name={'agvTypes'}
-        label={formatMessage({ id: 'app.agv.type' })}
+        label={formatMessage({ id: 'app.agvType' })}
       >
         <Select mode="multiple">
           {robotTypes.map((record) => (

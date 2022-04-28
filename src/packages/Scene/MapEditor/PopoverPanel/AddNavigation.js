@@ -4,13 +4,13 @@ import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import { connect } from '@/utils/RmsDva';
-import { RobotBrand } from '@/config/consts';
+import { NavigationCellType, RobotBrand } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const AddNavigation = (props) => {
-  const { dispatch, mapContext, navigationCellType } = props;
+  const { dispatch, mapContext } = props;
   const [formRef] = Form.useForm();
-  const [type, setType] = useState(navigationCellType[0].code);
+  const [type, setType] = useState(NavigationCellType[0].code);
 
   function submit() {
     formRef.validateFields().then((values) => {
@@ -36,7 +36,7 @@ const AddNavigation = (props) => {
           }}
         >
           <Select style={{ width: 133 }}>
-            {navigationCellType.map(({ code, name }, index) => (
+            {NavigationCellType.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>
@@ -80,5 +80,4 @@ const AddNavigation = (props) => {
 };
 export default connect(({ editor, global }) => ({
   mapContext: editor.mapContext,
-  navigationCellType: global.navigationCellType,
 }))(memo(AddNavigation));

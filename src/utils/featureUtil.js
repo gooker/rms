@@ -144,7 +144,7 @@ export function exportAgvInfo(agvList) {
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.type' }),
+        label: formatMessage({ id: 'app.agvType' }),
         align: 'center',
         value: (row) => {
           if (row.isDummy) {

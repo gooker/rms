@@ -23,6 +23,7 @@ import {
 import json from '../../package.json';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
+import { LineType } from '@/config/config';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -79,11 +80,11 @@ export function getCoordinat(target, angle, r) {
   return { x, y };
 }
 
-export function getLineJson(source, target, cost) {
+export function getLineJson(source, target, cost, type) {
   return {
     source: source.id,
     target: target.id,
-    type: 'line',
+    type: type || LineType.StraightPath,
     angle: getAngle(source, target),
     cost,
     distance: getDistance(source, target),

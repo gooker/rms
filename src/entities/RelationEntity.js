@@ -1,8 +1,8 @@
-import { RelationType } from '@/config/consts';
+import { LineType } from '@/config/config';
 
 export default class RelationEntity {
   constructor(props) {
-    this.type = props.type || RelationType.StraightPath;
+    this.type = props.type || LineType.StraightPath;
     this.cost = props.cost || 10;
     this.angle = props.angle;
     this.source = props.source;

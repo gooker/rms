@@ -1,10 +1,10 @@
 import React, { memo, useState } from 'react';
 import { Checkbox, Col, Modal, Row } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { connect } from '@/utils/RmsDva';
+import { NavigationCellType } from '@/config/config';
 
 const StackCellConfirmModal = (props) => {
-  const { visible, onCancel, onConfirm, types, navigationCellType } = props;
+  const { visible, onCancel, onConfirm, types } = props;
   const [selectedTypes, setSelectedTypes] = useState([]);
 
   function submit() {
@@ -20,13 +20,11 @@ const StackCellConfirmModal = (props) => {
   function renderOptions() {
     return (
       <Row gutter={[10, 10]}>
-        {navigationCellType
-          .filter((item) => types.includes(item.code))
-          .map(({ code, name }) => (
-            <Col key={code} span={12}>
-              <Checkbox value={code}>{name}</Checkbox>
-            </Col>
-          ))}
+        {NavigationCellType.filter((item) => types.includes(item.code)).map(({ code, name }) => (
+          <Col key={code} span={12}>
+            <Checkbox value={code}>{name}</Checkbox>
+          </Col>
+        ))}
       </Row>
     );
   }
@@ -43,6 +41,4 @@ const StackCellConfirmModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ global }) => ({
-  navigationCellType: global.navigationCellType,
-}))(memo(StackCellConfirmModal));
+export default memo(StackCellConfirmModal);

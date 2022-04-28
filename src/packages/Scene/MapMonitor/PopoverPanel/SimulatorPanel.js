@@ -256,7 +256,7 @@ const SimulatorPanel = (props) => {
                   style={{ marginRight: 10, fontWeight: 600, fontSize: 15 }}
                   className={commonStyles.popoverFontColor}
                 >
-                  <FormattedMessage id="app.agv.type" />:
+                  <FormattedMessage id='app.agvType' />:
                 </span>
                 <Select
                   size={size}

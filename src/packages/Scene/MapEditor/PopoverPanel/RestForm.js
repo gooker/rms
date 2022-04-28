@@ -46,7 +46,7 @@ const RestForm = (props) => {
       </Form.Item>
       <Form.Item
         name={'agvTypes'}
-        label={formatMessage({ id: 'app.agv.type' })}
+        label={formatMessage({ id: 'app.agvType' })}
         initialValue={rest?.agvTypes}
       >
         <Select style={{ width: '100%' }} mode="multiple">

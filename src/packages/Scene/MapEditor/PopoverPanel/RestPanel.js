@@ -52,7 +52,7 @@ const RestPanel = (props) => {
           },
           {
             field: 'agvTypes',
-            label: <FormattedMessage id={'app.agv.type'} />,
+            label: <FormattedMessage id={'app.agvType'} />,
             value: agvTypes,
           },
         ],

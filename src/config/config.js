@@ -50,3 +50,38 @@ export const ApiNameSpace = [
   'sorter',
   'translation',
 ];
+
+// 线条类型
+export const LineType = {
+  StraightPath: 'StraightPath',
+  BezierPath: 'BezierPath',
+  ArcPath: 'ArcPath',
+};
+
+// 车型
+export const RobotBrand = {
+  MUSHINY: 'MUSHINY',
+  SEER: 'SEER',
+};
+
+// 平台支持的导航点类型，每次新增支持需要手动加，且必须要配置坐标类型
+export const NavigationCellType = [
+  {
+    code: RobotBrand.MUSHINY,
+    name: 'MUSHINY',
+    color: '#037ef3',
+    coordinationType: 'L',
+  },
+  {
+    code: RobotBrand.SEER,
+    name: 'SEER',
+    color: '#34bf49',
+    coordinationType: 'R',
+  },
+];
+
+// 坐标类型
+export const CoordinationType = {
+  LAND: 'land',
+  NAVI: 'navi',
+};

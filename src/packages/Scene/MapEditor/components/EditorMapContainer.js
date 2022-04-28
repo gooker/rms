@@ -30,7 +30,6 @@ const EditorMapContainer = (props) => {
     preRouteMap,
     mapRotation,
     leftActiveCategory,
-    navigationCellType,
     shownNavigationCellType,
   } = props;
 
@@ -281,7 +280,7 @@ const EditorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.renderCostLines(relations, true);
+    mapContext.renderCostLines(relations || [], true);
   }
 
   // 地图区域鼠标样式
@@ -313,7 +312,7 @@ const EditorMapContainer = (props) => {
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
-      <EditorMapView navigationCellType={navigationCellType} />
+      <EditorMapView />
       <EditorFooter mapRatio={mapRatio} onSliderChange={onSliderChange} />
       <EditorMask />
 

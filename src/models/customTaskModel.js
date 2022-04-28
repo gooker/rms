@@ -1,23 +1,17 @@
 import { message } from 'antd';
-import {
-  dealResponse,
-  convertMapToArrayMap,
-  convertScopeDataToUiOptions,
-  formatMessage,
-  isNull,
-} from '@/utils/util';
+import { convertMapToArrayMap, convertScopeDataToUiOptions, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchAllScopeActions } from '@/services/monitor';
 import {
   fetchActiveMap,
-  getBackZone,
-  getTaskTypes,
-  getTurnProtocol,
-  getLatentActions,
-  getCustomTaskList,
-  getFormModelTypes,
   getAgvRunProtocol,
+  getBackZone,
+  getCustomTaskList,
   getCustomTaskNodes,
   getFormModelLockResource,
+  getFormModelTypes,
+  getLatentActions,
+  getTaskTypes,
+  getTurnProtocol,
 } from '@/services/api';
 
 export default {

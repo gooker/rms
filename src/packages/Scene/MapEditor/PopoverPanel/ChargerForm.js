@@ -131,7 +131,7 @@ const ChargerForm = (props) => {
                     {...restField}
                     name={[name, 'agvTypes']}
                     fieldKey={[fieldKey, 'agvTypes']}
-                    label={formatMessage({ id: 'app.agv.type' })}
+                    label={formatMessage({ id: 'app.agvType' })}
                   >
                     <Select mode="multiple">
                       {robotTypes.map((record) => (
