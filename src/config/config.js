@@ -81,7 +81,7 @@ export const NavigationCellType = [
 ];
 
 // 坐标类型
-export const CoordinationType = {
+export const CoordinateType = {
   LAND: 'land',
   NAVI: 'navi',
 };

@@ -9,7 +9,7 @@ import { isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
-import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { NavigationCellType } from '@/config/config';
 

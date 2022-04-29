@@ -40,6 +40,7 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 import { LineType, NavigationCellType, RobotBrand } from '@/config/config';
+import { MockMapData } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -84,6 +85,9 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
+      // yield put({ type: 'saveCurrentMap', payload: MockMapData3 });
+      // yield put({ type: 'saveMapList', payload: [] });
+
       // TODO: 获取所有导航点类型数据
       const mapList = yield call(fetchSectionMaps);
       if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
@@ -106,7 +110,6 @@ export default {
           if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
             yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
           }
-          // yield put({ type: 'saveCurrentMap', payload: addTemporaryId(MockMapData) });
         }
 
         /**
@@ -139,7 +142,7 @@ export default {
 
     *checkoutMap({ payload }, { put, call }) {
       const currentMap = yield call(fetchMapDetail, payload);
-      yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
+      yield put({ type: 'saveCurrentMap', payload: currentMap });
     },
 
     *reloadMap(_, { select, call, put }) {
@@ -240,22 +243,62 @@ export default {
     },
 
     // 导入导航点
-    * importMap({ payload }, { put, select }) {
-      const { currentMap } = yield select(({ editor }) => editor);
+    * importMap({ payload }, { put, call, select }) {
+      const { mapList, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
       const {
+        addMap,
+        mapName,
         transform,
         mapData: { cells, relations },
       } = payload;
-      const brand = cells[0].brand;
-      // 将地图转换的参数合并到地图数据
-      currentMap.transform = { [brand]: transform };
-      // 合并点位和线条
-      cells.forEach((cell) => {
-        currentMap.cellMap[cell.id] = { ...cell };
-      });
-      const currentRouteMap = getCurrentRouteMapData();
-      currentRouteMap.relations = currentRouteMap.relations.concat(relations);
-      yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
+      if (cells.length === 0 || relations.length === 0) {
+        message.error('提取的数据为空');
+        return;
+      }
+
+      // 判断是否新增为一个新地图
+      if (addMap) {
+        const { version } = packageJSON;
+        const newMap = new MapEntity({
+          name: mapName,
+          sectionId: currentLogicArea,
+          logicAreaList: [new LogicArea()],
+          version,
+        });
+
+        // 合并地图数据
+        const brand = cells[0].brand;
+        newMap.transform = { [brand]: transform };
+        // 合并点位和线条
+        cells.forEach((cell) => {
+          newMap.cellMap[cell.id] = { ...cell };
+        });
+        newMap.logicAreaList[0].routeMap.DEFAULT.relations = relations;
+
+        // 保存并缓存新的地图ID
+        const response = yield call(saveMap, newMap);
+        if (dealResponse(response)) {
+          return;
+        }
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+        newMap.id = response.id;
+        yield put({ type: 'saveCurrentMap', payload: newMap });
+
+        // 更新地图列表
+        const newMapList = [...mapList, newMap];
+        yield put({ type: 'saveMapList', payload: newMapList });
+      } else {
+        const brand = cells[0].brand;
+        // 将地图转换的参数合并到地图数据
+        currentMap.transform = { [brand]: transform };
+        // 合并点位和线条
+        cells.forEach((cell) => {
+          currentMap.cellMap[cell.id] = { ...cell };
+        });
+        const currentRouteMap = getCurrentRouteMapData();
+        currentRouteMap.relations = currentRouteMap.relations.concat(relations);
+        yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
+      }
       return true;
     },
 
@@ -361,13 +404,18 @@ export default {
 
     // 激活地图
     *activeMap({ payload }, { select, call, put }) {
-      const { currentMap } = yield select((state) => state.editor);
+      const { currentMap, mapList } = yield select((state) => state.editor);
       yield put({ type: 'saveActiveMapLoading', payload: true });
       const response = yield call(activeMap, payload);
       if (!dealResponse(response)) {
+        const newMapList = mapList.map((item) => ({
+          ...item,
+          activeFlag: item.id === payload,
+        }));
         currentMap.activeFlag = true;
-        yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
         yield put({ type: 'editorView/saveActiveMapLoading', payload: false });
+        yield put({ type: 'saveCurrentMapOnly', payload: currentMap });
+        yield put({ type: 'saveMapList', payload: newMapList });
         message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       } else {
         message.error(formatMessage({ id: 'app.message.operateFailed' }));

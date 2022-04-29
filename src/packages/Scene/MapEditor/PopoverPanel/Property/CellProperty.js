@@ -8,7 +8,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { CellTypeSetting } from '@/packages/Scene/MapEditor/editorEnums';
 import EditorCard from '../../components/EditorCard';
 import LabelComponent from '@/components/LabelComponent';
-import { CoordinationType } from '@/config/config';
+import { CoordinateType } from '@/config/config';
 import { isPlainObject } from 'lodash';
 
 const { formItemLayout } = getFormLayout(6, 18);
@@ -22,8 +22,8 @@ const CellProperty = (props) => {
   useEffect(() => {
     formRef.setFieldsValue({
       naviId: cellProps.naviId,
-      x: shownCellCoordinateType === CoordinationType.LAND ? cellProps.x : cellProps.nx,
-      y: shownCellCoordinateType === CoordinationType.LAND ? cellProps.y : cellProps.ny,
+      x: shownCellCoordinateType === CoordinateType.LAND ? cellProps.x : cellProps.nx,
+      y: shownCellCoordinateType === CoordinateType.LAND ? cellProps.y : cellProps.ny,
     });
   }, [cellProps]);
 

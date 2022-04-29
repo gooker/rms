@@ -5,7 +5,7 @@ import { CheckOutlined, UpOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './sceneComponentStyle.module.less';
-import { CoordinationType, NavigationCellType } from '@/config/config';
+import { CoordinateType, NavigationCellType } from '@/config/config';
 
 const MapShownModeSelector = (props) => {
   const { dispatch, shownNavigationCellType, shownCellCoordinateType } = props;
@@ -49,7 +49,7 @@ const MapShownModeSelector = (props) => {
     <div className={styles.navigationCellTypeSelector}>
       <Dropdown overlay={cellCoordinateTypeMenu} trigger={['click']}>
         <span className={styles.navigationCellTypeSelectorContent}>
-          {shownCellCoordinateType === CoordinationType.LAND ? '物理点位' : '导航点位'}
+          {shownCellCoordinateType === CoordinateType.LAND ? '物理点位' : '导航点位'}
           <UpOutlined style={{ marginLeft: 5 }} />
         </span>
       </Dropdown>

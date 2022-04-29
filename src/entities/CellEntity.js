@@ -9,5 +9,8 @@ export default class CellEntity {
     this.nx = props.nx || props.x;
     this.ny = props.ny || props.y;
     this.logicId = props.logicId;
+
+    // 各品牌地图点位特有属性集
+    this.additional = props.additional || {};
   }
 }

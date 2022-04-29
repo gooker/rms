@@ -14,57 +14,69 @@ import { RobotBrand } from '@/config/config';
  */
 export function SEER(mapData, existIds, currentLogicArea) {
   const ids = [...existIds];
-  const result = { cells: [], relations: [] };
   const instanceNameIdMap = {};
+  const result = { cells: [], relations: [] };
   const { advancedPointList, advancedCurveList } = mapData;
+
+  const advancedPointMap = {};
   if (Array.isArray(advancedPointList)) {
-    advancedPointList.forEach(({ className, instanceName, pos }) => {
-      // 导航点只关注LandMark
-      if (className === 'LandMark') {
-        const id = getCellMapId(ids);
-        ids.push(id);
-        const cellMapItem = new CellEntity({
-          id,
-          naviId: instanceName,
-          brand: RobotBrand.SEER,
-          x: Math.round(pos.x * 1000),
-          y: Math.round(pos.y * 1000),
-          nx: Math.round(pos.x * 1000),
-          ny: Math.round(pos.y * 1000),
-          logicId: currentLogicArea,
-        });
-        instanceNameIdMap[cellMapItem.naviId] = cellMapItem.id;
-        result.cells.push(cellMapItem);
-      }
+    advancedPointList.forEach((item) => {
+      advancedPointMap[item.instanceName] = item;
     });
-  } else {
-    throw new Error('"advancedPointList"字段缺失');
+  }
+
+  function createCellEntity(advancedPoint) {
+    const { instanceName, pos, dir, ignoreDir } = advancedPoint;
+    const id = getCellMapId(ids);
+    ids.push(id);
+    const cellMapItem = new CellEntity({
+      id,
+      naviId: instanceName,
+      brand: RobotBrand.SEER,
+      x: Math.round(pos.x * 1000),
+      y: Math.round(pos.y * 1000),
+      nx: Math.round(pos.x * 1000),
+      ny: Math.round(pos.y * 1000),
+      logicId: currentLogicArea,
+      additional: { dir: !isNull(dir) ? Math.round(dir * 100) / 100 : undefined, ignoreDir },
+    });
+    instanceNameIdMap[instanceName] = id;
+    result.cells.push(cellMapItem);
+    return id;
   }
 
   // relations: 直线、圆弧、贝塞尔
   if (Array.isArray(advancedCurveList)) {
-    advancedCurveList.forEach(({ className, startPos, endPos, controlPos1, controlPos2 }) => {
-      if (
-        !isNull(instanceNameIdMap[startPos.instanceName]) &&
-        !isNull(instanceNameIdMap[endPos.instanceName])
-      ) {
-        // 实际地图渲染时候只会用到这里的source & target属性
-        const relationItem = new RelationEntity({
-          type: className,
-          source: instanceNameIdMap[startPos.instanceName],
-          target: instanceNameIdMap[endPos.instanceName],
-          angle: getAngle(startPos.pos, endPos.pos),
-          distance: getDistance(
-            { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
-            { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
-          ),
-          control1: { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
-          control2: { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
-        });
-        relationItem.angle = Math.round(relationItem.angle);
-        relationItem.distance = Math.round(relationItem.distance);
-        result.relations.push(relationItem);
+    advancedCurveList.forEach((advancedCurve) => {
+      const { className, startPos, endPos, controlPos1, controlPos2 } = advancedCurve;
+      let source, target;
+      if (isNull(instanceNameIdMap[startPos.instanceName])) {
+        source = createCellEntity({ ...advancedPointMap[startPos.instanceName], ...startPos });
+      } else {
+        source = instanceNameIdMap[startPos.instanceName];
       }
+
+      if (isNull(instanceNameIdMap[endPos.instanceName])) {
+        target = createCellEntity(endPos);
+      } else {
+        target = instanceNameIdMap[endPos.instanceName];
+      }
+
+      const relationItem = new RelationEntity({
+        type: className,
+        source,
+        target,
+        angle: getAngle(startPos.pos, endPos.pos),
+        distance: getDistance(
+          { x: startPos.pos.x * 1000, y: startPos.pos.y * 1000 },
+          { x: endPos.pos.x * 1000, y: endPos.pos.y * 1000 },
+        ),
+        control1: { x: controlPos1.x * 1000, y: controlPos1.y * 1000 },
+        control2: { x: controlPos2.x * 1000, y: controlPos2.y * 1000 },
+      });
+      relationItem.angle = Math.round(relationItem.angle);
+      relationItem.distance = Math.round(relationItem.distance);
+      result.relations.push(relationItem);
     });
   } else {
     throw new Error('"advancedCurveList"字段缺失');

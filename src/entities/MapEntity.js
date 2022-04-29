@@ -5,7 +5,7 @@ export default class MapEntity {
     this.sectionId = props.sectionId;
     this.cellMap = {};
     this.logicAreaList = props.logicAreaList || [];
-    this.elevatorList = props.elevatorList || [];
+    this.transform = props.transform || {};
     this.mver = props.version;
     this.ever = props.version;
     this.activeFlag = false;

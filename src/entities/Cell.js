@@ -80,10 +80,10 @@ export default class Cell extends PIXI.Container {
     this.addChild(this.navigationId);
 
     // 二维码点
-    this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
-    this.qrId.anchor.set(0.5, 1);
-    this.qrId.y = -CellSize.height / 2 - 30;
-    this.addChild(this.qrId);
+    // this.qrId = new BitText(this.id, 0, 0, 0x00aeff);
+    // this.qrId.anchor.set(0.5, 1);
+    // this.qrId.y = -CellSize.height / 2 - 30;
+    // this.addChild(this.qrId);
   }
 
   updateNaviId(naviId) {
@@ -101,12 +101,25 @@ export default class Cell extends PIXI.Container {
 
   // 坐标
   addCoordination() {
-    this.coordX = new BitText(this.xLabel, -CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
+    const brandColor = this.color.replace('#', '0x');
+    this.coordX = new BitText(
+      this.xLabel,
+      -CellSize.width / 2,
+      -CellSize.height / 2,
+      brandColor,
+      40,
+    );
     this.coordX.anchor.set(1, 1);
     this.coordX.zIndex = InnerIndex.text;
     this.addChild(this.coordX);
 
-    this.coordY = new BitText(this.yLabel, CellSize.width / 2, -CellSize.height / 2, 0xffffff, 40);
+    this.coordY = new BitText(
+      this.yLabel,
+      CellSize.width / 2,
+      -CellSize.height / 2,
+      brandColor,
+      40,
+    );
     this.coordY.anchor.set(0, 1);
     this.coordY.zIndex = InnerIndex.text;
     this.addChild(this.coordY);

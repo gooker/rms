@@ -1,5 +1,5 @@
 // 用于保存显示与全局loading标识符
-import { RobotBrand, CoordinationType } from '@/config/config';
+import { RobotBrand, CoordinateType } from '@/config/config';
 
 export default {
   namespace: 'editorView',
@@ -25,7 +25,7 @@ export default {
 
     // 地图控制
     mapRotation: 0, // 手动旋转地图
-    shownCellCoordinateType: CoordinationType.NAVI, // land 表示物理点位、navi表示导航点位
+    shownCellCoordinateType: CoordinateType.NAVI, // land 表示物理点位、navi表示导航点位
     shownNavigationCellType: [RobotBrand.MUSHINY, RobotBrand.SEER], // 显示的导航点类型
   },
 

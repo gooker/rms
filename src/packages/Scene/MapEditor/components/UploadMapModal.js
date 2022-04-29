@@ -1,6 +1,6 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
-import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message } from 'antd';
+import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message, Checkbox } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
@@ -8,7 +8,7 @@ import { NavigationCellType, RobotBrand } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
 import { MUSHINY, SEER } from '@/utils/mapParser';
 
-const { formItemLayout } = getFormLayout(5, 19);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
 const UploadMapModal = (props) => {
   const { dispatch, visible, onCancel, currentMap, currentLogicArea } = props;
   const [formRef] = Form.useForm();
@@ -28,7 +28,7 @@ const UploadMapModal = (props) => {
   function handleFile() {
     formRef
       .validateFields()
-      .then(({ file, navigationCellType, ...rest }) => {
+      .then(({ file, navigationCellType, addMap, ...rest }) => {
         const existIds = Object.keys(currentMap.cellMap).map((item) => parseInt(item));
         const reader = new FileReader();
         // beforeUpload返回false情况下, antd选择后的文件file是经过包装的数据，获取真是文件对象需要取file.originFileObj. 日他妈...
@@ -37,6 +37,7 @@ const UploadMapModal = (props) => {
           try {
             let mapData = evt.target.result;
             mapData = JSON.parse(mapData);
+            const mapName = mapData.header.mapName;
             switch (navigationCellType) {
               case RobotBrand.SEER:
                 mapData = SEER(mapData, existIds, currentLogicArea);
@@ -49,7 +50,7 @@ const UploadMapModal = (props) => {
             }
             dispatch({
               type: 'editor/importMap',
-              payload: { mapData, transform: rest },
+              payload: { mapName, mapData, addMap, transform: rest },
             }).then((result) => {
               result && cancel();
             });
@@ -147,6 +148,14 @@ const UploadMapModal = (props) => {
           rules={[{ required: true }]}
         >
           <InputNumber addonAfter={'°'} />
+        </Form.Item>
+        <Form.Item
+          name='addMap'
+          initialValue={true}
+          valuePropName='checked'
+          {...formItemLayoutNoLabel}
+        >
+          <Checkbox>保存为新地图</Checkbox>
         </Form.Item>
       </Form>
     </Modal>

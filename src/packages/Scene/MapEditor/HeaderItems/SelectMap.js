@@ -191,12 +191,7 @@ const SelectMap = (props) => {
           id: editing ? 'app.button.edit' : 'app.button.add',
         })}${formatMessage({ id: 'app.map' })}`}
         footer={[
-          <Button
-            key="cancel"
-            loading={deleteLoading}
-            disabled={deleteLoading}
-            onClick={closeModal}
-          >
+          <Button key='cancel' onClick={closeModal}>
             <FormattedMessage id={'app.button.cancel'} />
           </Button>,
 
@@ -206,7 +201,7 @@ const SelectMap = (props) => {
               title={formatMessage({ id: 'editor.deleteMapConfirm' })}
               onConfirm={deleteMap}
             >
-              <Button danger>
+              <Button danger loading={deleteLoading} disabled={deleteLoading}>
                 <FormattedMessage id={'app.button.delete'} />
               </Button>
             </Popconfirm>

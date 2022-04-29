@@ -20,11 +20,12 @@ import {
   CommonFunction,
 } from '@/entities';
 import { isNull, isItemOfArray } from '@/utils/util';
+import { coordinateTransformer } from '@/utils/coordinateTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
-import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 import CostArrow from '@/entities/CostArrow';
-import { LineType } from '@/config/config';
+import { CoordinateType, LineType } from '@/config/config';
+import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
 
 const AllPriorities = [10, 20, 100, 1000];
 
@@ -211,61 +212,82 @@ export default class BaseMap extends React.PureComponent {
   // ************************ 线条相关 **********************
   /**
    * 绘制线条核心逻辑, 线条只与xy产生绑定关系
-   * @param {*} relationsToRender 即将渲染的线条数据
-   * @param {*} shownPriority 当前展示的成本类型
-   * @param {*} interactive 是否可交互  默认false
-   * @param {*} shownMode 显示模式  默认standard
+   * @param {Array} relationsToRender 即将渲染的线条数据
+   * @param { 'land'| 'navi'} renderType 渲染物理坐标的线条还是导航坐标的线条
+   * @param {{}} transform 各个地图的转换参数
    */
-  renderCostLines(
-    relationsToRender,
-    interactive = false,
-    shownMode = 'standard',
-    shownPriority = null,
-  ) {
-    const priority = shownPriority || this.states.shownPriority;
+  renderCostLines(relationsToRender, renderType, transform) {
+    // const priority = shownPriority || this.states.shownPriority;
     relationsToRender.forEach((lineData) => {
-      const { type, cost } = lineData;
-      if (type === LineType.StraightPath) {
-        const sourceCell = this.idCellMap.get(lineData.source);
-        const targetCell = this.idCellMap.get(lineData.target);
-        if (!isNull(sourceCell) && !isNull(targetCell)) {
-          // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
-          const lineMapKey = `${sourceCell.id}_${targetCell.id}`;
-          const lineEntity = this.idLineMap.get(lineMapKey);
-          const reverseLineMapKey = `${targetCell.id}_${sourceCell.id}`;
-          const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
-          if (isNull(lineEntity) && isNull(reverseLineEntity)) {
-            const relationLine = new SmoothGraphics();
-            relationLine.lineStyle(30, 0xffffff);
-            relationLine.moveTo(sourceCell.x, sourceCell.y);
-            relationLine.lineTo(targetCell.x, targetCell.y);
-            this.pixiUtils.viewportAddChild(relationLine);
-            this.idLineMap.set(lineMapKey, relationLine);
-          } else {
-            this.idLineMap.set(lineMapKey, reverseLineEntity || lineEntity);
-          }
+      const { type, cost, source, target } = lineData;
+      const sourceCell = this.idCellMap.get(source);
+      const targetCell = this.idCellMap.get(target);
+      if (isNull(sourceCell) && isNull(targetCell)) return;
 
-          // 绘制箭头(箭头位置在起始点和终点的连线上，靠近起始点，箭头指向终点)
-          const arrowMapKey = `${sourceCell.id}_${targetCell.id}`;
-          const arrowExist = this.idArrowMap.get(arrowMapKey);
-          if (!isNull(arrowExist)) {
-            this.pixiUtils.viewportRemoveChild(arrowExist);
-            arrowExist.destroy();
-            this.idArrowMap.delete(arrowMapKey);
-          }
-          const angle = getAngle(sourceCell, targetCell);
-          const distance = getDistance(sourceCell, targetCell);
-          const offset = distance > 1000 ? 1000 : distance / 2;
-          const arrowPosition = getCoordinat(sourceCell, angle, offset);
-          const arrow = new CostArrow({
-            ...arrowPosition,
-            id: arrowMapKey,
-            angle,
-            cost,
-          });
-          this.pixiUtils.viewportAddChild(arrow);
-          this.idArrowMap.set(arrowMapKey, arrow);
+      // 只有显示物理坐标和直线类型线条才会显示直线
+      if (renderType === CoordinateType.LAND || type === LineType.StraightPath) {
+        // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
+        const lineMapKey = `${sourceCell.id}_${targetCell.id}`;
+        const lineEntity = this.idLineMap.get(lineMapKey);
+        const reverseLineMapKey = `${targetCell.id}_${sourceCell.id}`;
+        const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
+        if (isNull(lineEntity) && isNull(reverseLineEntity)) {
+          const relationLine = new SmoothGraphics();
+          relationLine.lineStyle(30, 0xffffff);
+          relationLine.moveTo(sourceCell.x, sourceCell.y);
+          relationLine.lineTo(targetCell.x, targetCell.y);
+          this.pixiUtils.viewportAddChild(relationLine);
+          this.idLineMap.set(lineMapKey, relationLine);
+        } else {
+          this.idLineMap.set(lineMapKey, reverseLineEntity || lineEntity);
         }
+
+        // 绘制箭头(箭头位置在起始点和终点的连线上，靠近起始点，箭头指向终点)
+        const arrowMapKey = `${sourceCell.id}_${targetCell.id}`;
+        const arrowExist = this.idArrowMap.get(arrowMapKey);
+        if (!isNull(arrowExist)) {
+          this.pixiUtils.viewportRemoveChild(arrowExist);
+          arrowExist.destroy();
+          this.idArrowMap.delete(arrowMapKey);
+        }
+        const angle = getAngle(sourceCell, targetCell);
+        const distance = getDistance(sourceCell, targetCell);
+        const offset = distance > 1000 ? 1000 : distance / 2;
+        const arrowPosition = getCoordinat(sourceCell, angle, offset);
+        const arrow = new CostArrow({
+          ...arrowPosition,
+          id: arrowMapKey,
+          angle,
+          cost,
+        });
+        this.pixiUtils.viewportAddChild(arrow);
+        this.idArrowMap.set(arrowMapKey, arrow);
+      }
+
+      // 绘制曲线(贝塞尔和圆弧)
+      const brand = sourceCell.brand;
+      if (renderType === CoordinateType.NAVI && type === LineType.BezierPath) {
+        const { control1, control2 } = lineData;
+        const lineMapKey = `${source}_${target}`;
+        const transformedCP1 = coordinateTransformer(control1, brand, transform[brand]);
+        const transformedCP2 = coordinateTransformer(control2, brand, transform[brand]);
+
+        const bezier = new SmoothGraphics();
+        bezier.lineStyle(30, 0xffffff);
+        bezier.moveTo(sourceCell.x, sourceCell.y);
+        bezier.bezierCurveTo(
+          transformedCP1.x,
+          transformedCP1.y,
+          transformedCP2.x,
+          transformedCP2.y,
+          targetCell.x,
+          targetCell.y,
+        );
+        this.pixiUtils.viewportAddChild(bezier);
+        this.idLineMap.set(lineMapKey, bezier);
+      }
+      if (renderType === CoordinateType.NAVI && type === LineType.ArcPath) {
+        //
       }
     });
   }

@@ -1,6 +1,5 @@
 import React, { memo, useEffect } from 'react';
 import { throttle } from 'lodash';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
@@ -31,6 +30,7 @@ const EditorMapContainer = (props) => {
     mapRotation,
     leftActiveCategory,
     shownNavigationCellType,
+    shownCellCoordinateType,
   } = props;
 
   useEffect(() => {
@@ -280,7 +280,11 @@ const EditorMapContainer = (props) => {
       mapContext.renderTunnel(tunnels);
     }
     // 渲染线条
-    mapContext.renderCostLines(relations || [], true);
+    mapContext.renderCostLines(
+      relations || [],
+      shownCellCoordinateType,
+      currentMap.transform || {},
+    );
   }
 
   // 地图区域鼠标样式
@@ -342,6 +346,7 @@ export default connect(({ editor, editorView }) => {
     selections,
     mapRotation: editorView.mapRotation,
     shortcutToolVisible: editorView.shortcutToolVisible,
+    shownCellCoordinateType: editorView.shownCellCoordinateType,
     shownNavigationCellType: editorView.shownNavigationCellType,
   };
 })(memo(EditorMapContainer));
