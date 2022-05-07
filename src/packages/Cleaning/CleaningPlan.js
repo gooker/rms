@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Table, Row, message, Button, Modal, Tag, Icon } from 'antd';
+import { Row, message, Button, Modal, Tag } from 'antd';
 import { fetchCleaningPlan, fetchCleaningPlanMode } from '@/services/api';
+import { ReloadOutlined } from '@ant-design/icons';
 import {
   dealResponse,
   adaptModalWidth,
@@ -8,8 +9,10 @@ import {
   formatMessage,
   convertToUserTimezone,
 } from '@/utils/util';
-import CleaningPlanCells from './components/CleaningPlanCells';
+import TablePageWrapper from '@/components/TablePageWrapper';
+import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
+import CleaningPlanCells from './components/CleaningPlanCells';
 
 class CleaningPlan extends Component {
   state = {
@@ -128,7 +131,7 @@ class CleaningPlan extends Component {
   render() {
     const { dataList, loading, modalRecord, cellPlanVisible, currentMode } = this.state;
     return (
-      <div style={{ padding: 24 }}>
+      <TablePageWrapper>
         <Row style={{ display: 'flex', flexFlow: 'row nowrap' }}>
           <Button
             type="primary"
@@ -136,7 +139,7 @@ class CleaningPlan extends Component {
               this.getRenderData();
             }}
           >
-            <Icon type="reload" /> <FormattedMessage id="form.flash" />
+            <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
           <div style={{ flex: 1, textAlign: 'end' }}>
             <span>
@@ -163,18 +166,16 @@ class CleaningPlan extends Component {
             </span>
           </div>
         </Row>
-        <Row style={{ marginBottom: 5, paddingTop: 5 }}>
-          <Table
-            dataSource={dataList}
-            columns={this.renderColumn}
-            scroll={{ x: 'max-content' }}
-            loading={loading}
-            rowKey={(_, index) => {
-              return index;
-            }}
-          />
-        </Row>
 
+        <TableWithPages
+          dataSource={dataList}
+          columns={this.renderColumn}
+          scroll={{ x: 'max-content' }}
+          loading={loading}
+          rowKey={(_, index) => {
+            return index;
+          }}
+        />
         <Modal
           destroyOnClose
           width={adaptModalWidth()}
@@ -186,7 +187,7 @@ class CleaningPlan extends Component {
         >
           <CleaningPlanCells data={modalRecord} />
         </Modal>
-      </div>
+      </TablePageWrapper>
     );
   }
 }

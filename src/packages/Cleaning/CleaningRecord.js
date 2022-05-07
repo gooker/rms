@@ -1,25 +1,21 @@
-import React, { Component } from 'react';
-import { Table, Row, message, Tag, Button, Icon } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Row, message, Tag } from 'antd';
 import { fetchCleaningTaskHistory } from '@/services/api';
-import { dealResponse, convertToUserTimezone, formatMessage } from '@/utils/util';
-import CleaningRecordSearch from './components/CleaningRecordSearch';
+import { dealResponse, convertToUserTimezone, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import TablePageWrapper from '@/components/TablePageWrapper';
+import TableWithPages from '@/components/TableWithPages';
+import CleaningRecordSearch from './components/CleaningRecordSearch';
 
-class CleaningRecord extends Component {
-  state = {
-    dataList: [],
-    loading: false,
-    page: {
-      current: 1,
-      size: 10,
-    },
-    searchParams: {},
-    sectionId: window.localStorage.getItem('sectionId'),
-  };
+const CleaningRecord = () => {
+  const [loading, setLoading] = useState(false);
+  const [nowPage, setNowPage] = useState({ current: 1, size: 10, totalElements: 0 });
+  const [searchParams, setSearchParams] = useState({});
+  const [dataList, setDataList] = useState([]);
 
-  renderColumn = [
+  const renderColumn = [
     {
-      title: formatMessage({ id: 'app.lock.cellId' }),
+      title: formatMessage({ id: 'app.map.cell' }),
       dataIndex: 'cellId',
       fixed: 'left',
     },
@@ -88,33 +84,48 @@ class CleaningRecord extends Component {
     },
   ];
 
-  componentDidMount() {
-    const { page } = this.state;
-    this.getRenderData({ ...page });
-  }
+  useEffect(() => {
+    async function init() {
+      getRenderData();
+    }
+    init();
+  }, []);
 
-  getRenderData = async (params) => {
-    const { page, searchParams } = this.state;
-    this.setState({ loading: true });
-    const currentParams = { ...page, ...searchParams, ...params };
-    const resData = await fetchCleaningTaskHistory(currentParams);
+  /**
+   * 查询方法
+   * @param {*} values 查询条件
+   * @param {*} pages 当前页数
+   */
+  async function getRenderData(values, pages) {
+    setLoading(true);
+
+    const { current, size } = nowPage;
+    let requestParams;
+    if (values) {
+      requestParams = { ...values };
+      setSearchParams(values);
+    } else {
+      requestParams = { ...searchParams };
+    }
+    const currentPages = isNull(pages)
+      ? { current, size }
+      : { current: pages.current, size: pages.size };
+
+    const params = { ...currentPages, ...requestParams };
+
+    const resData = await fetchCleaningTaskHistory(params);
 
     if (resData && !dealResponse(resData)) {
-      this.setState({
-        dataList: [...resData?.list],
-        page: {
-          current: resData?.page?.currentPage,
-          size: resData?.page?.size,
-          totalElements: resData?.page?.totalElements,
-        },
-      });
+      const { list, page } = resData;
+      setDataList(list);
+      setNowPage(page);
     } else {
       message.error(formatMessage({ id: 'cleaningCenter.history.fetchFailed' }));
     }
-    this.setState({ loading: false });
-  };
+    setLoading(false);
+  }
 
-  searchHandle = (values) => {
+  function searchHandle(values) {
     const { cellId, cleaningDate } = values;
     let cleaningTimeStart = null;
     let cleaningTimeEnd = null;
@@ -127,52 +138,37 @@ class CleaningRecord extends Component {
       );
     }
     const searchParams = { cellId, cleaningTimeStart, cleaningTimeEnd };
-    this.setState({ searchParams });
-  };
-
-  render() {
-    const { dataList, page, loading } = this.state;
-    return (
-      <div style={{ padding: 24 }}>
-        <Row style={{ marginBottom: 5, paddingTop: 5 }}>
-          <CleaningRecordSearch searchData={this.getRenderData} searchHandle={this.searchHandle} />
-        </Row>
-        <Row>
-          <Button
-            type="primary"
-            onClick={() => {
-              this.getRenderData();
-            }}
-          >
-            <Icon type="reload" /> <FormattedMessage id="form.flash" />
-          </Button>
-        </Row>
-        <Row style={{ margin: 5, paddingTop: 5 }}>
-          <Table
-            dataSource={dataList}
-            columns={this.renderColumn}
-            scroll={{ x: 'max-content' }}
-            loading={loading}
-            rowKey={(record) => {
-              return record.id;
-            }}
-            pagination={{
-              showTotal: (total) =>
-                `${formatMessage({ id: 'app.common.tableRowCount' }, { value: total })}`,
-              current: page?.current,
-              total: page?.totalElements,
-              onChange: (current, size) => {
-                let _this = this;
-                const _page = { current, size };
-                this.setState({ page: _page }, () => {
-                  _this.getRenderData(_page);
-                });
-              },
-            }}
-          />
-        </Row>
-      </div>
-    );
+    setSearchParams(searchParams);
   }
-}
-export default CleaningRecord;
+
+  function handleTableChange({ current, pageSize }) {
+    const page = { ...nowPage, current, size: pageSize };
+    setNowPage(page);
+    getRenderData(null, page);
+  }
+
+  return (
+    <TablePageWrapper>
+      <Row style={{ marginBottom: 5, paddingTop: 5 }}>
+        <CleaningRecordSearch searchData={getRenderData} searchHandle={searchHandle} />
+      </Row>
+      <TableWithPages
+        dataSource={dataList}
+        columns={renderColumn}
+        scroll={{ x: 'max-content' }}
+        loading={loading}
+        rowKey={(record) => {
+          return record.id;
+        }}
+        pagination={{
+          showTotal: (total) =>
+            `${formatMessage({ id: 'app.common.tableRowCount' }, { value: total })}`,
+          current: nowPage?.current,
+          total: nowPage?.totalElements,
+        }}
+        onChange={handleTableChange}
+      />
+    </TablePageWrapper>
+  );
+};
+export default memo(CleaningRecord);
