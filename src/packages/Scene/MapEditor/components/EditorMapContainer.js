@@ -67,40 +67,47 @@ const EditorMapContainer = (props) => {
       dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
 
       // 监听地图缩放比例
-      viewport.off('zoomed-end');
-      viewport.on('zoomed-end', function () {
-        dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
-      });
+      // viewport.off('zoomed-end');
+      // viewport.on('zoomed-end', function () {
+      //   dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
+      // });
 
       // 添加事件处理地图跑出Screen
-      viewport.off('moved');
-      viewport.on(
-        'moved',
-        throttle(function () {
-          const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
-          const topLimit = y + (height - CLAMP_VALUE);
-          if (this.top >= topLimit) {
-            this.top = topLimit;
-          }
-
-          const bottomLimit = y + CLAMP_VALUE;
-          if (this.bottom <= bottomLimit) {
-            this.bottom = bottomLimit;
-          }
-
-          const leftLimit = x + (width - CLAMP_VALUE);
-          if (this.left >= leftLimit) {
-            this.left = leftLimit;
-          }
-
-          const rightLimit = x + CLAMP_VALUE;
-          if (this.right <= rightLimit) {
-            this.right = rightLimit;
-          }
-        }, 200),
-      );
+      // viewport.off('moved');
+      // viewport.on(
+      //   'moved',
+      //   throttle(function () {
+      //     const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
+      //     const topLimit = y + (height - CLAMP_VALUE);
+      //     if (this.top >= topLimit) {
+      //       this.top = topLimit;
+      //     }
+      //
+      //     const bottomLimit = y + CLAMP_VALUE;
+      //     if (this.bottom <= bottomLimit) {
+      //       this.bottom = bottomLimit;
+      //     }
+      //
+      //     const leftLimit = x + (width - CLAMP_VALUE);
+      //     if (this.left >= leftLimit) {
+      //       this.left = leftLimit;
+      //     }
+      //
+      //     const rightLimit = x + CLAMP_VALUE;
+      //     if (this.right <= rightLimit) {
+      //       this.right = rightLimit;
+      //     }
+      //   }, 200),
+      // );
     }
-  }, [mapContext, currentMap, currentLogicArea, shownNavigationCellType, mapRotation]);
+  }, [
+    currentMap,
+    mapContext,
+    mapRotation,
+    currentLogicArea,
+    shownNavigationCellType,
+    shownCellCoordinateType,
+  ]);
 
   useEffect(() => {
     if (currentMap && !isNull(mapContext)) {

@@ -13,7 +13,8 @@ class SocketClient {
     };
     this.client = null;
     this.unsubscribeueueQueue = [];
-    this.isReconnect = false;
+    this.isReconnect = false; // 标记是否是重连
+    this.reconnectable = true; // 标记是否可以重连
   }
 
   getInstance() {
@@ -65,7 +66,11 @@ class SocketClient {
   onError(errorMessage) {
     console.error(`[Socket]: ${errorMessage}`);
     this.isReconnect = true;
-    if (typeof errorMessage === 'string' && errorMessage.indexOf('Whoops! Lost connection') > -1) {
+    if (
+      this.reconnectable &&
+      typeof errorMessage === 'string' &&
+      errorMessage.indexOf('Whoops! Lost connection') > -1
+    ) {
       message.loading({
         content: formatMessage({ id: 'app.socket.reconnecting' }),
         key: SOCKET_RECONNECT_MESSAGE_ID,
@@ -73,12 +78,14 @@ class SocketClient {
       this.client = null;
       this.connect();
     } else if (errorMessage?.body?.indexOf('Access refused for user') > -1) {
+      this.reconnectable = false;
       notification.warn({
         message: formatMessage({ id: 'app.message.systemHint' }),
         description: formatMessage({ id: 'app.socket.accountNoAuth' }),
         duration: 0,
       });
     } else {
+      this.reconnectable = false;
       notification.error({
         message: formatMessage({ id: 'app.message.systemHint' }),
         description: formatMessage({ id: 'app.socket.connectFailed' }),

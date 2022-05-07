@@ -1,15 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { isPlainObject } from 'lodash';
-import { settings } from '@pixi/graphics-smooth';
+import { LINE_SCALE_MODE, settings } from '@pixi/graphics-smooth';
 import createRcsDva from '@/utils/RmsDva';
 import App from '@/pages/App';
 import models from '@/models';
 import './global.less';
 
 // https://github.com/pixijs/graphics-smooth
-settings.PIXEL_LINE = 1;
-// settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
+settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
 
 // 判定当前是否是产品环境
 window.$$isProduction = isPlainObject(window.extraConfig);

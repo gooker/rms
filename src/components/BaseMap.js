@@ -233,9 +233,11 @@ export default class BaseMap extends React.PureComponent {
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
           const relationLine = new SmoothGraphics();
-          relationLine.lineStyle(30, 0xffffff);
+          relationLine.lineStyle(2, 0xffffff);
           relationLine.moveTo(sourceCell.x, sourceCell.y);
           relationLine.lineTo(targetCell.x, targetCell.y);
+          // 做个标记，标识该线条是点连线
+          relationLine.$$cellRelation = true;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
         } else {
@@ -273,7 +275,7 @@ export default class BaseMap extends React.PureComponent {
         const transformedCP2 = coordinateTransformer(control2, brand, transform[brand]);
 
         const bezier = new SmoothGraphics();
-        bezier.lineStyle(30, 0xffffff);
+        bezier.lineStyle(3, 0xffffff);
         bezier.moveTo(sourceCell.x, sourceCell.y);
         bezier.bezierCurveTo(
           transformedCP1.x,
@@ -286,6 +288,8 @@ export default class BaseMap extends React.PureComponent {
         this.pixiUtils.viewportAddChild(bezier);
         this.idLineMap.set(lineMapKey, bezier);
       }
+
+      // TODO: 绘制圆弧
       if (renderType === CoordinateType.NAVI && type === LineType.ArcPath) {
         //
       }

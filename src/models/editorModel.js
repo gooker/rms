@@ -85,7 +85,7 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      // yield put({ type: 'saveCurrentMap', payload: MockMapData3 });
+      // yield put({ type: 'saveCurrentMap', payload: MockMapData });
       // yield put({ type: 'saveMapList', payload: [] });
 
       // TODO: 获取所有导航点类型数据
@@ -405,7 +405,7 @@ export default {
     // 激活地图
     *activeMap({ payload }, { select, call, put }) {
       const { currentMap, mapList } = yield select((state) => state.editor);
-      yield put({ type: 'saveActiveMapLoading', payload: true });
+      yield put({ type: 'editorView/saveActiveMapLoading', payload: true });
       const response = yield call(activeMap, payload);
       if (!dealResponse(response)) {
         const newMapList = mapList.map((item) => ({

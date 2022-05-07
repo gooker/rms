@@ -10,14 +10,17 @@ import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const CellTypeConfigurePanel = (props) => {
-  const { dispatch, height, mapContext, selectCells } = props;
+  const { dispatch, height, mapContext, selections } = props;
+
+  const selectCells = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
 
   function setCellType(type, value, scope, texture) {
     dispatch({
       type: 'editor/setCellType',
       payload: { type, scope, operation: value, texture },
     }).then((result) => {
-      dispatch({ type: 'editorView/saveForceUpdate' });
       mapContext.updateCells({ type: 'type', payload: result });
     });
   }
@@ -96,13 +99,9 @@ export default connect(({ editor }) => {
   const followCellIds = currentRouteMap.followCellIds || [];
   const waitCellIds = currentRouteMap.waitCellIds || [];
 
-  const selectCells = selections
-    .filter((item) => item.type === MapSelectableSpriteType.CELL)
-    .map(({ id }) => id);
-
   return {
     mapContext,
-    selectCells,
+    selections,
     blockCellIds,
     storeCellIds,
     followCellIds,

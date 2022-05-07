@@ -229,10 +229,7 @@ const EditorHeaderRightTools = (props) => {
           switchConstructionDraw(false);
           setConstructionInfo(null);
         }}
-        bodyStyle={{
-          height: 600,
-          overflow: 'auto',
-        }}
+        bodyStyle={{ height: 600, overflow: 'auto' }}
         footer={null}
       >
         <ConstructionDrawing Info={constructionInfo} />

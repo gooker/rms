@@ -1,6 +1,5 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { isNull } from '@/utils/util';
 import {
   zIndex,
@@ -10,6 +9,7 @@ import {
   SelectionType,
   MapSelectableSpriteType,
 } from '@/config/consts';
+import { isPlainObject } from 'lodash';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;
@@ -22,7 +22,7 @@ export default class Cell extends PIXI.Container {
     super(props);
     this.type = MapSelectableSpriteType.CELL;
     this.brand = props.brand; // 导航点类型
-    this.color = props.color.replace('#', '0x');
+    this.brandColor = props.color.replace('#', '0x');
 
     this.id = props.id; // Integer ID
     this.naviId = props.naviId; // 车型导航点的原始ID
@@ -31,13 +31,14 @@ export default class Cell extends PIXI.Container {
     this.y = props.y;
     this.xLabel = props.xLabel;
     this.yLabel = props.yLabel;
+    this.additional = props.additional;
 
     this.width = CellSize.width;
     this.height = CellSize.height;
     this.zIndex = zIndex.cell;
     this.sortableChildren = true;
     this.interactiveChildren = false;
-    this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
+    this.hitArea = new PIXI.Rectangle(-175, -175, 350, 350);
     this.selected = false; // 标记点位是否被选中
     this.select = props.select;
 
@@ -47,14 +48,13 @@ export default class Cell extends PIXI.Container {
 
     this.states = {
       mode: 'standard',
-      shownData: {
-        shown: true,
-      },
+      shown: true,
+      coordinatorVisible: false,
     };
 
     this.addNavigation();
     this.addCoordination();
-    this.addSelectedBackGround(450, 400);
+    this.addSelectedBackGround(350, 350);
     this.interact(props.interactive);
   }
 
@@ -62,19 +62,25 @@ export default class Cell extends PIXI.Container {
     return this.states.mode;
   }
 
+  get $$size() {
+    return this.states.coordinatorVisible ? 218 : 90;
+  }
+
   // 导航点标记（实心圆）
   addNavigation() {
-    const brandColor = this.color.replace('#', '0x');
-    this.navigation = new SmoothGraphics();
-    this.navigation.lineStyle(CellSize.width * 0.4, 0xffffff);
-    this.navigation.beginFill(brandColor);
-    this.navigation.drawCircle(0, 0, CellSize.width / 2);
-    this.navigation.endFill();
-    this.navigation.zIndex = InnerIndex.navigation;
-    this.addChild(this.navigation);
+    if (
+      isPlainObject(this.additional) &&
+      !isNull(this.additional.dir) &&
+      this.additional.ignoreDir !== true
+    ) {
+      // this.renderNavigationWithDir();
+      this.renderNavigationWithoutDir();
+    } else {
+      this.renderNavigationWithoutDir();
+    }
 
     // 导航点id
-    this.navigationId = new BitText(this.naviId, 0, 0, brandColor);
+    this.navigationId = new BitText(this.naviId, 0, 0, this.brandColor, 70);
     this.navigationId.anchor.set(0.5, 0);
     this.navigationId.y = CellSize.height / 2 + 30;
     this.addChild(this.navigationId);
@@ -86,14 +92,27 @@ export default class Cell extends PIXI.Container {
     // this.addChild(this.qrId);
   }
 
+  renderNavigationWithDir() {
+    //
+  }
+
+  renderNavigationWithoutDir(flagColor = 0xffffff) {
+    this.navigation = new PIXI.Graphics();
+    this.navigation.lineStyle(CellSize.width * 0.4, flagColor, 1);
+    this.navigation.beginFill(this.brandColor);
+    this.navigation.drawCircle(0, 0, CellSize.width / 2);
+    this.navigation.endFill();
+    this.navigation.zIndex = InnerIndex.navigation;
+    this.addChild(this.navigation);
+  }
+
   updateNaviId(naviId) {
     if (this.navigationId) {
       this.removeChild(this.navigationId);
       this.navigationId.destroy(true);
       this.navigationId = null;
     }
-    const brandColor = this.color.replace('#', '0x');
-    this.navigationId = new BitText(naviId, 0, 0, brandColor);
+    this.navigationId = new BitText(naviId, 0, 0, this.brandColor);
     this.navigationId.anchor.set(0.5, 0);
     this.navigationId.y = CellSize.height / 2 + 30;
     this.addChild(this.navigationId);
@@ -101,36 +120,41 @@ export default class Cell extends PIXI.Container {
 
   // 坐标
   addCoordination() {
-    const brandColor = this.color.replace('#', '0x');
     this.coordX = new BitText(
       this.xLabel,
       -CellSize.width / 2,
       -CellSize.height / 2,
-      brandColor,
-      40,
+      this.brandColor,
+      70,
     );
     this.coordX.anchor.set(1, 1);
     this.coordX.zIndex = InnerIndex.text;
+    this.coordX.visible = false;
     this.addChild(this.coordX);
 
     this.coordY = new BitText(
       this.yLabel,
       CellSize.width / 2,
       -CellSize.height / 2,
-      brandColor,
-      40,
+      this.brandColor,
+      70,
     );
     this.coordY.anchor.set(0, 1);
     this.coordY.zIndex = InnerIndex.text;
+    this.coordY.visible = false;
     this.addChild(this.coordY);
   }
 
-  addSelectedBackGround(width, height, isStandard = true) {
+  switchCoordinationShown(visible) {
+    this.states.coordinatorVisible = visible;
+    this.coordX.visible = visible;
+    this.coordY.visible = visible;
+  }
+
+  addSelectedBackGround(width, height) {
     this.removeSelectedBackGround();
     this.selectedBorderSprite = new PIXI.Sprite(PIXI.utils.TextureCache.cellSelectBorderTexture);
-    isStandard
-      ? this.selectedBorderSprite.anchor.set(0.5, 0.4)
-      : this.selectedBorderSprite.anchor.set(0.5);
+    this.selectedBorderSprite.anchor.set(0.5);
     this.selectedBorderSprite.width = width;
     this.selectedBorderSprite.height = height;
     this.selectedBorderSprite.visible = false;
@@ -220,41 +244,21 @@ export default class Cell extends PIXI.Container {
     });
   }
 
-  // 点位类型编辑
-  plusType(type, typeData) {
+  // 点位类型展示现在不需要显示具体的小图标，只需要把点位外圈改个颜色
+  plusType(type) {
     if (this.data.types.has(type)) return;
-    const isStandard = this.states.mode === 'standard';
+    this.data.types.set(type, null);
 
-    // typeData 有可能是 Texture 也有可能是 Sprite
-    if (typeData) {
-      if (['store_cell', 'block_cell'].includes(type)) {
-        this.data.types.set(type, null);
-        this.addQR(type);
-      } else {
-        let sprite;
-        if (typeData instanceof PIXI.Texture) {
-          sprite = new PIXI.Sprite(typeData);
-          sprite.width = isStandard ? CellTypeSize.width : ScaledTypeIconSize;
-        } else {
-          sprite = typeData;
-          sprite.scale.x = 1.5;
-        }
-        sprite.height = isStandard ? CellTypeSize.height : ScaledTypeIconSize;
-        sprite.anchor.set(0.5);
-        sprite.zIndex = InnerIndex.type;
-
-        // Y轴定位
-        sprite.y = isStandard
-          ? CellSize.height * 1.9
-          : CellSize.height / 2 - ScaledTypeIconSize / 2 - 40;
-
-        this.data.types.set(type, sprite);
-        // 渲染当前添加的类型
-        this.addChild(sprite);
-        // 重算每一个类型Sprite的位置
-        this.reCalculatePosition();
-      }
+    let flagColor = 0xffdd00;
+    if (type === 'store_cell') {
+      flagColor = CellTypeColor.storeType;
     }
+    if (type === 'block_cell') {
+      flagColor = CellTypeColor.blockType;
+    }
+    this.removeChild(this.navigation);
+    this.navigation.destroy();
+    this.renderNavigationWithoutDir(flagColor);
   }
 
   removeType(type, destroyAll = false) {
@@ -379,8 +383,7 @@ export default class Cell extends PIXI.Container {
   }
 
   switchShown(selected) {
-    const { shownData } = this.states;
-    this.states.shownData.shown = selected; // 用来标记当前Cell是否显示
+    this.states.shown = selected; // 用来标记当前Cell是否显示
     if (this.QR) this.QR.visible = selected;
     if (this.idText) this.idText.visible = selected;
     this.data.types.forEach((type) => {
@@ -388,8 +391,8 @@ export default class Cell extends PIXI.Container {
     });
 
     if (selected) {
-      if (this.coordX) this.coordX.visible = shownData.coord;
-      if (this.coordY) this.coordY.visible = shownData.coord;
+      if (this.coordX) this.coordX.visible = this.states.coordinatorVisible;
+      if (this.coordY) this.coordY.visible = this.states.coordinatorVisible;
       if (this.selectedBorderSprite) this.selectedBorderSprite.visible = this.selected;
     } else {
       if (this.coordX) this.coordX.visible = false;

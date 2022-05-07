@@ -1,14 +1,14 @@
 /* TODO: I18N */
-import React, { useEffect, useState, memo } from 'react';
-import { Badge, Tag, Button, Drawer } from 'antd';
-import { ToolOutlined, InfoOutlined, CloseOutlined } from '@ant-design/icons';
+import React, { memo, useEffect, useState } from 'react';
+import { Badge, Button, Drawer, Tag } from 'antd';
+import { CloseOutlined, InfoOutlined, ToolOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   convertToUserTimezone,
-  getSuffix,
-  getDirectionLocale,
-  getAgvStatusTag,
   formatMessage,
+  getAgvStatusTag,
+  getDirectionLocale,
+  getSuffix,
   isNull,
 } from '@/utils/util';
 import dictionary from '@/utils/Dictionary';
@@ -46,7 +46,7 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id='app.agv.ip' />,
+      title: 'IP',
       dataIndex: 'ip',
       align: 'center',
     },
@@ -88,7 +88,7 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id='app.agv.status' />,
+      title: <FormattedMessage id='app.agvStatus' />,
       dataIndex: 'agvStatus',
       align: 'center',
       render: (agvStatus) => getAgvStatusTag(agvStatus),

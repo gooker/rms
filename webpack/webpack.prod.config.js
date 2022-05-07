@@ -11,7 +11,7 @@ console.log('Creating an optimized RMS production build...');
 
 module.exports = merge(BaseConfig.getWebPackBaseConfig('production'), {
   mode: 'production',
-  devtool: 'source-map',
+  // devtool: 'source-map',
 
   entry: paths.appIndexJs,
 

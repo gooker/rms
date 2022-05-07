@@ -1,5 +1,6 @@
 import React from 'react';
 import { reverse } from 'lodash';
+import * as PIXI from 'pixi.js';
 import {
   getCurrentRouteMapData,
   getTextureFromResources,
@@ -9,13 +10,15 @@ import { isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
-import { CellSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { NavigationCellType } from '@/config/config';
 
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
+    this.scale = 30;
+    this.lastScale = null;
 
     // 记录显示控制的参数
     this.states = {
@@ -44,11 +47,54 @@ class EditorMapView extends BaseMap {
 
     const htmlDOM = document.getElementById('editorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
+    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, this.adaptiveMapItem);
     window.EditorPixiUtils = window.PixiUtils = this.pixiUtils;
     window.$$dispatch({ type: 'editor/saveMapContext', payload: this });
     await loadEditorExtraTextures(this.pixiUtils.renderer);
   }
+
+  /**
+   * 自适应(scale=0.4为分界线，低于0.4需要做自适应，大于0.4情况下viewport已经可以看清全貌，可以不用自适应)
+   * 基准参数: 看清楚点位情况下的pixel值
+   * 1. const CellHeight = 217.2;
+   *    -- window.EditorPixiUtils.viewport.scale.set(0.4)
+   *    -- window.EditorPixiUtils.viewport.options.screenWidth/window.EditorPixiUtils.viewport.worldScreenWidth * 267
+   *    -- window.EditorPixiUtils.viewport.children.at(-1).height
+   * 2. const navCircleWorldWidth = 140; // 0.4 -- 56px
+   *
+   *  世界长度转Pixel: viewport.screenWidth / viewport.worldScreenWidth * [世界长度]
+   *  Pixel转世界长度: viewport.worldScreenWidth / viewport.screenWidth * [Pixel]
+   */
+  adaptiveMapItem = () => {
+    const { viewport } = this.pixiUtils;
+    const { children, screenWidth, worldScreenWidth, scale } = viewport;
+    const navCirclePixelWidth = (screenWidth / worldScreenWidth) * 140;
+
+    // 取样
+    let worldVisibleBaseSize;
+    for (const child of children) {
+      if (child instanceof Cell) {
+        worldVisibleBaseSize = child.$$size;
+        break;
+      }
+    }
+    let cellVisibleBasePixel = (screenWidth / worldScreenWidth) * worldVisibleBaseSize;
+    cellVisibleBasePixel = (0.4 / scale.x) * cellVisibleBasePixel;
+    const visibleWorldWidth = (worldScreenWidth / screenWidth) * cellVisibleBasePixel;
+
+    // 根据navigationCircleWidth判断是否需要自适应
+    if (navCirclePixelWidth < 56) {
+      children.forEach((child) => {
+        if (child instanceof Cell) {
+          // 根据 width和height确定该点位的长宽比
+          const { width, height } = child.getBounds();
+          const visibleWorldHeight = (visibleWorldWidth * height) / width;
+          child.width = visibleWorldWidth;
+          child.height = visibleWorldHeight;
+        }
+      });
+    }
+  };
 
   // 数据清理
   clearEditorMapData = () => {
@@ -148,9 +194,20 @@ class EditorMapView extends BaseMap {
         cellEntity.updateNaviId(naviId);
       }
     }
+    // 配置点位类型
+    if (type === 'type') {
+      const { cellIds, cellType, texture } = payload;
+      cellIds.forEach((cellId) => {
+        const cellEntity = this.idCellMap.get(cellId);
+        if (texture) {
+          cellEntity.plusType(cellType);
+        } else {
+          cellEntity.removeType(cellType);
+        }
+      });
+    }
 
     // *************** 以下待调整 *************** //
-
     // 移动点位
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {
@@ -161,6 +218,7 @@ class EditorMapView extends BaseMap {
         }
       });
     }
+
     // 调整码间距
     if (type === 'adjustSpace') {
       Object.keys(payload)
@@ -177,18 +235,7 @@ class EditorMapView extends BaseMap {
           }
         });
     }
-    // 配置点位类型
-    if (type === 'type') {
-      const { cellIds, cellType, texture } = payload;
-      cellIds.forEach((cellId) => {
-        const cellEntity = this.idCellMap.get(cellId);
-        if (texture) {
-          cellEntity.plusType(cellType, getTextureFromResources(texture));
-        } else {
-          cellEntity.removeType(cellType);
-        }
-      });
-    }
+
     this.refresh();
   };
 

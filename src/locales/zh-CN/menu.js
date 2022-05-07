@@ -37,25 +37,19 @@ export default {
   'menu.agv.list': '车辆列表',
   'menu.agv.faultManagement': '车辆故障查询',
   'menu.agv.realTime': '车辆详情',
-  'menu.agv.adapter': '车辆适配器',
-  'menu.agv.customIndustrial': '自定义工装',
   'menu.agv.OTA': 'OTA',
 
   // 充电桩
   'menu.charger': '充电桩',
   'menu.charger.customType': '充电桩类型',
-  'menu.charger.registration': '充电桩注册',
   'menu.charger.list': '充电桩列表',
-  'menu.charger.adapter': '充电桩适配器',
   'menu.charger.faultManagement': '充电桩故障查询',
 
   // 设备
   'menu.equipment': '设备',
   'menu.equipment.customType': '设备类型',
-  'menu.equipment.registration': '设备注册',
   'menu.equipment.list': '设备列表',
-  'menu.equipment.adapter': '设备适配器',
-  'menu.equipment.faultManagement': '故障查询',
+  'menu.equipment.faultManagement': '设备故障查询',
 
   // 系统集成
   'menu.integration': '系统集成',

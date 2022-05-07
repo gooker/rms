@@ -38,7 +38,7 @@ export function SEER(mapData, existIds, currentLogicArea) {
       nx: Math.round(pos.x * 1000),
       ny: Math.round(pos.y * 1000),
       logicId: currentLogicArea,
-      additional: { dir: !isNull(dir) ? Math.round(dir * 100) / 100 : undefined, ignoreDir },
+      additional: { dir: !isNull(dir) ? Math.round(dir * 1000) / 1000 : undefined, ignoreDir },
     });
     instanceNameIdMap[instanceName] = id;
     result.cells.push(cellMapItem);
@@ -91,5 +91,5 @@ export function SEER(mapData, existIds, currentLogicArea) {
  * @param currentLogicArea {Number}
  */
 export function MUSHINY(mapData, existIds, currentLogicArea) {
-  return mapData;
+  return { cells: [], relations: [] };
 }

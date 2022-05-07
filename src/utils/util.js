@@ -153,6 +153,16 @@ export function dealResponse(response, successMessage, failedMessage) {
   return false;
 }
 
+// 弧度转角度
+export function radToAngle(rad) {
+  return (rad * 180) / Math.PI;
+}
+
+// 角度转弧度
+export function angleToRad(angle) {
+  return (angle * Math.PI) / 180;
+}
+
 export function getSuffix(value, suffix, props) {
   if (value != null) {
     return (

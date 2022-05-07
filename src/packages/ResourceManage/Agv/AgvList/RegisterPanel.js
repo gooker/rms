@@ -28,7 +28,7 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.ip' />,
+      title: 'IP',
       dataIndex: 'ip',
       align: 'center',
     },
@@ -43,7 +43,7 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: '车辆系列',
+      title: '品牌',
       dataIndex: 'brand',
       align: 'center',
     },

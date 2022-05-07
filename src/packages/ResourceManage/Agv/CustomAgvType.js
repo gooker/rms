@@ -4,18 +4,16 @@ import { Button, Card, Empty, Modal, Space, Spin } from 'antd';
 import { CopyOutlined, EyeOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import AgvTypeDetail from './components/AgvTypeDetail';
 import { fetchAllAdaptor } from '@/services/resourceManageAPI';
 import styles from './agv.module.less';
 import commonStyle from '@/common.module.less';
 import { AllAdapters } from '@/mockData';
-import AgvTypeDetail from '@/packages/ResourceManage/Agv/components/AgvTypeDetail';
 
-const CustomAgvType = (props) => {
-  const {} = props;
-
+const CustomAgvType = () => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [datasource, setDatasource] = useState([]);
+  const [datasource, setDatasource] = useState(Object.values(AllAdapters));
   const [detail, setDetail] = useState(null);
 
   useEffect(() => {
@@ -31,7 +29,6 @@ const CustomAgvType = (props) => {
         }
       })
       .finally(() => {
-        // setDatasource(Object.values(AllAdapters));
         setLoading(false);
       });
   }
@@ -56,12 +53,12 @@ const CustomAgvType = (props) => {
         )}
         {datasource.length > 0 &&
           datasource.map(({ adapterType }, index) => (
-            <Card key={index} title={adapterType.name}>
+            <Card key={index} title={`适配器: ${adapterType.name}`}>
               {adapterType.agvTypes?.map((agvType, innerIndex) => (
                 <Card
                   key={innerIndex}
                   type='inner'
-                  title={agvType.name}
+                  title={`车辆类型: ${agvType.name}`}
                   extra={
                     <Space>
                       {agvType.isReadOnly ? (

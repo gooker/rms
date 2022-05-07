@@ -2,11 +2,12 @@
 import React, { memo } from 'react';
 import { Button, Col, Dropdown, Form, Menu, Row, Select } from 'antd';
 import {
-  DownOutlined,
-  RedoOutlined,
-  ToTopOutlined,
-  GroupOutlined,
   DisconnectOutlined,
+  DownOutlined,
+  GroupOutlined,
+  RedoOutlined,
+  ScanOutlined,
+  ToTopOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
@@ -75,7 +76,7 @@ const AgvListTools = (props) => {
             {renderAgvIdFilter()}
           </Select>
         </Form.Item>
-        <Form.Item label={formatMessage({ id: 'app.agv.status' })}>
+        <Form.Item label={formatMessage({ id: 'app.agvStatus' })}>
           <Select
             allowClear
             mode='multiple'
@@ -139,10 +140,12 @@ const AgvListTools = (props) => {
               dispatch({ type: 'agvList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <FormattedMessage id='app.agvList.found' />
-            <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
-              [{unregisterRobots.length}]
-            </span>
+            <ScanOutlined /> <FormattedMessage id='app.agvList.found' />
+            {unregisterRobots.length > 0 && (
+              <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
+                [{unregisterRobots.length}]
+              </span>
+            )}
           </Button>
         </Col>
       </Row>

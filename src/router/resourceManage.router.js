@@ -77,12 +77,6 @@ export default [
     icon: 'agv',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
-      // {
-      //   path: `/${AppCode.ResourceManage}/agv/adapter`,
-      //   name: 'adapter',
-      //   component: '/ResourceManage/Agv/AgvAdapter',
-      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      // },
       {
         path: `/${AppCode.ResourceManage}/agv/customType`,
         name: 'customType',
@@ -108,12 +102,6 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/agv/customIndustrial`,
-        name: 'customIndustrial',
-        component: '/ResourceManage/Agv/CustomIndustrial',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
         path: `/${AppCode.ResourceManage}/agv/OTA`,
         name: 'OTA',
         component: '/ResourceManage/Agv/OTA',
@@ -134,21 +122,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/charger/registration`,
-        name: 'registration',
-        component: '/ResourceManage/Charger/ChargeRegistration',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
         path: `/${AppCode.ResourceManage}/charger/list`,
         name: 'list',
         component: '/ResourceManage/Charger/ChargeList',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/charger/adapter`,
-        name: 'adapter',
-        component: '/ResourceManage/Charger/ChargerAdapter',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
@@ -172,21 +148,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/equipment/registration`,
-        name: 'registration',
-        component: '/ResourceManage/Equipment/EquipmentRegistration',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
         path: `/${AppCode.ResourceManage}/equipment/list`,
         name: 'list',
         component: '/ResourceManage/Equipment/EquipmentList',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
-      {
-        path: `/${AppCode.ResourceManage}/equipment/adapter`,
-        name: 'adapter',
-        component: '/ResourceManage/Equipment/EquipmentAdapter',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
