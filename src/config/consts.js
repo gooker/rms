@@ -147,8 +147,9 @@ export const TaskPathColor = {
 };
 
 export const CellTypeColor = {
-  storeType: '0x0abf53', // 绿色
-  blockType: '0xcaccd1', // 灰色
+  storeType: '0x49a942', // 绿色
+  blockType: '0x6d6e70', // 灰色
+  normal: '0xffdd00', // 黄色
 };
 
 export const GeoLockColor = {

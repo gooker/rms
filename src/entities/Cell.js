@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
-import { isNull } from '@/utils/util';
+import { isNull, isStrictNull } from '@/utils/util';
 import {
   zIndex,
   CellSize,
@@ -43,7 +43,7 @@ export default class Cell extends PIXI.Container {
     this.select = props.select;
 
     this.data = {
-      types: new Map(),
+      types: new Set(),
     };
 
     this.states = {
@@ -244,12 +244,16 @@ export default class Cell extends PIXI.Container {
     });
   }
 
-  // 点位类型展示现在不需要显示具体的小图标，只需要把点位外圈改个颜色
+  /**
+   * 点位类型展示现在不需要显示具体的小图标，只需要把点位外圈改个颜色
+   * 1. 不可走点与其他类型互斥
+   * 2. 点位只要存在存储点属性，就显示存储点颜色
+   */
   plusType(type) {
     if (this.data.types.has(type)) return;
-    this.data.types.set(type, null);
+    if (this.data.types.has('store_cell')) return;
 
-    let flagColor = 0xffdd00;
+    let flagColor = CellTypeColor.normal;
     if (type === 'store_cell') {
       flagColor = CellTypeColor.storeType;
     }
@@ -259,28 +263,33 @@ export default class Cell extends PIXI.Container {
     this.removeChild(this.navigation);
     this.navigation.destroy();
     this.renderNavigationWithoutDir(flagColor);
+    this.data.types.add(type);
   }
 
-  removeType(type, destroyAll = false) {
-    if (!type) return;
-    const sprite = this.data.types.get(type);
-    if (!sprite) return;
-    this.removeChild(sprite);
-    destroyAll ? sprite.destroy(true) : sprite.destroy({ children: true });
+  removeType(type) {
+    if (isStrictNull(type)) return;
     this.data.types.delete(type);
 
-    // 对于不同类型的点位可能需要添加不同的颜色, 比如: 存储点是绿色、不可走点灰色; 优先不可走点
-    let tint = this.states.mode === 'scaled' ? NormalScaledCellTint : ClearCellTint;
-    if (this.data.types.has('store_cell')) {
-      tint = CellTypeColor.storeType;
+    let flagColor;
+    if (type === 'block_cell') {
+      flagColor = 0xffffff;
+    } else if (type === 'store_cell') {
+      if (this.data.types.size === 0) {
+        flagColor = 0xffffff;
+      } else {
+        flagColor = CellTypeColor.normal;
+      }
+    } else {
+      if (this.data.types.size === 0) {
+        flagColor = 0xffffff;
+      }
     }
-    if (this.data.types.has('block_cell')) {
-      tint = CellTypeColor.blockType;
-    }
-    this.QR.tint = tint;
 
-    // 重算每一个类型Sprite的位置
-    this.reCalculatePosition();
+    if (!isNull(flagColor)) {
+      this.removeChild(this.navigation);
+      this.navigation.destroy();
+      this.renderNavigationWithoutDir(flagColor);
+    }
   }
 
   // ************ 模式切换  ************ //
