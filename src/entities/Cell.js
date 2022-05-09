@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
-import { isNull, isStrictNull } from '@/utils/util';
+import { isNull, isStrictNull, radToAngle } from '@/utils/util';
 import {
   zIndex,
   CellSize,
@@ -9,13 +9,14 @@ import {
   SelectionType,
   MapSelectableSpriteType,
 } from '@/config/consts';
-import { isPlainObject } from 'lodash';
+import { find, isPlainObject } from 'lodash';
+import { NavigationCellType } from '@/config/config';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;
 const ClearCellTint = '0xFFFFFF';
 const NormalScaledCellTint = '0xD8BFD8';
-const InnerIndex = { navigation: 2, control: 1, type: 3, text: 3, bg: 4 };
+const InnerIndex = { direction: 1, navigation: 2, type: 3, text: 3, bg: 4 };
 
 export default class Cell extends PIXI.Container {
   constructor(props) {
@@ -53,6 +54,7 @@ export default class Cell extends PIXI.Container {
     };
 
     this.addNavigation();
+    this.addDirection();
     this.addCoordination();
     this.addSelectedBackGround(350, 350);
     this.interact(props.interactive);
@@ -68,16 +70,7 @@ export default class Cell extends PIXI.Container {
 
   // 导航点标记（实心圆）
   addNavigation() {
-    if (
-      isPlainObject(this.additional) &&
-      !isNull(this.additional.dir) &&
-      this.additional.ignoreDir !== true
-    ) {
-      // this.renderNavigationWithDir();
-      this.renderNavigationWithoutDir();
-    } else {
-      this.renderNavigationWithoutDir();
-    }
+    this.renderNavigation();
 
     // 导航点id
     this.navigationId = new BitText(this.naviId, 0, 0, this.brandColor, 70);
@@ -92,11 +85,7 @@ export default class Cell extends PIXI.Container {
     // this.addChild(this.qrId);
   }
 
-  renderNavigationWithDir() {
-    //
-  }
-
-  renderNavigationWithoutDir(flagColor = 0xffffff) {
+  renderNavigation(flagColor = 0xffffff) {
     this.navigation = new PIXI.Graphics();
     this.navigation.lineStyle(CellSize.width * 0.4, flagColor, 1);
     this.navigation.beginFill(this.brandColor);
@@ -104,6 +93,47 @@ export default class Cell extends PIXI.Container {
     this.navigation.endFill();
     this.navigation.zIndex = InnerIndex.navigation;
     this.addChild(this.navigation);
+  }
+
+  addDirection() {
+    if (isPlainObject(this.additional) && !isNull(this.additional.dir)) {
+      const brandConfig = find(NavigationCellType, { code: this.brand });
+      if (!isNull(brandConfig)) {
+        const { coordinationType } = brandConfig;
+        let angle; // 这里的角度基准是标准数学坐标系
+        if (coordinationType === 'R') {
+          angle = radToAngle(-this.additional.dir);
+        } else {
+          angle = radToAngle(this.additional.dir);
+        }
+        const polygonPath = [
+          0,
+          0,
+
+          0,
+          -CellSize.width / 2,
+
+          CellSize.width * 1.2,
+          0,
+
+          0,
+          CellSize.width / 2,
+
+          0,
+          0,
+        ];
+        this.direction = new PIXI.Graphics();
+        this.direction.lineStyle(0);
+        this.direction.beginFill(this.brandColor);
+        this.direction.drawPolygon(polygonPath);
+        this.direction.angle = angle;
+        this.direction.alpha = 0.8;
+        this.direction.zIndex = InnerIndex.direction;
+        this.addChild(this.direction);
+      } else {
+        console.error(`RMS: 发现未知的导航点类型[${this.brand}]`);
+      }
+    }
   }
 
   updateNaviId(naviId) {
@@ -166,6 +196,54 @@ export default class Cell extends PIXI.Container {
     if (this.selectedBorderSprite) {
       this.removeChild(this.selectedBorderSprite);
       this.selectedBorderSprite = null;
+    }
+  }
+
+  /**
+   * 点位类型展示现在不需要显示具体的小图标，只需要把点位外圈改个颜色
+   * 1. 不可走点与其他类型互斥
+   * 2. 点位只要存在存储点属性，就显示存储点颜色
+   */
+  plusType(type) {
+    if (this.data.types.has(type)) return;
+    if (this.data.types.has('store_cell')) return;
+
+    let flagColor = CellTypeColor.normal;
+    if (type === 'store_cell') {
+      flagColor = CellTypeColor.storeType;
+    }
+    if (type === 'block_cell') {
+      flagColor = CellTypeColor.blockType;
+    }
+    this.removeChild(this.navigation);
+    this.navigation.destroy();
+    this.renderNavigation(flagColor);
+    this.data.types.add(type);
+  }
+
+  removeType(type) {
+    if (isStrictNull(type)) return;
+    this.data.types.delete(type);
+
+    let flagColor;
+    if (type === 'block_cell') {
+      flagColor = 0xffffff;
+    } else if (type === 'store_cell') {
+      if (this.data.types.size === 0) {
+        flagColor = 0xffffff;
+      } else {
+        flagColor = CellTypeColor.normal;
+      }
+    } else {
+      if (this.data.types.size === 0) {
+        flagColor = 0xffffff;
+      }
+    }
+
+    if (!isNull(flagColor)) {
+      this.removeChild(this.navigation);
+      this.navigation.destroy();
+      this.renderNavigation(flagColor);
     }
   }
 
@@ -242,54 +320,6 @@ export default class Cell extends PIXI.Container {
       sprite.x = beginX;
       beginX = beginX + typeIconWidth + offset;
     });
-  }
-
-  /**
-   * 点位类型展示现在不需要显示具体的小图标，只需要把点位外圈改个颜色
-   * 1. 不可走点与其他类型互斥
-   * 2. 点位只要存在存储点属性，就显示存储点颜色
-   */
-  plusType(type) {
-    if (this.data.types.has(type)) return;
-    if (this.data.types.has('store_cell')) return;
-
-    let flagColor = CellTypeColor.normal;
-    if (type === 'store_cell') {
-      flagColor = CellTypeColor.storeType;
-    }
-    if (type === 'block_cell') {
-      flagColor = CellTypeColor.blockType;
-    }
-    this.removeChild(this.navigation);
-    this.navigation.destroy();
-    this.renderNavigationWithoutDir(flagColor);
-    this.data.types.add(type);
-  }
-
-  removeType(type) {
-    if (isStrictNull(type)) return;
-    this.data.types.delete(type);
-
-    let flagColor;
-    if (type === 'block_cell') {
-      flagColor = 0xffffff;
-    } else if (type === 'store_cell') {
-      if (this.data.types.size === 0) {
-        flagColor = 0xffffff;
-      } else {
-        flagColor = CellTypeColor.normal;
-      }
-    } else {
-      if (this.data.types.size === 0) {
-        flagColor = 0xffffff;
-      }
-    }
-
-    if (!isNull(flagColor)) {
-      this.removeChild(this.navigation);
-      this.navigation.destroy();
-      this.renderNavigationWithoutDir(flagColor);
-    }
   }
 
   // ************ 模式切换  ************ //

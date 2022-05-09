@@ -32,6 +32,8 @@ export function coordinateTransformer(coordinate, navigationCellType, transformP
   let cell = { ...coordinate };
   const matrixParams = [];
   let xLabel, yLabel;
+
+  // 这里保证任何类型的地图都会被转换成右手坐标系
   if (coordinationType === 'L') {
     matrixParams.push(flipX());
     const matrix = compose(...matrixParams);
@@ -44,7 +46,7 @@ export function coordinateTransformer(coordinate, navigationCellType, transformP
   matrixParams.push(rotateDEG(-compensationAngle));
   matrixParams.push(scale(zoom));
   matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
-  matrixParams.push(flipX());
+  matrixParams.push(flipX()); // 页面显示为左手坐标系
   const matrix = compose(...matrixParams);
   const matrixResult = applyToPoint(matrix, cell);
   const x = Math.round(matrixResult.x);
