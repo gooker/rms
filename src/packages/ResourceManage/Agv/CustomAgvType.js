@@ -2,13 +2,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, Empty, Modal, Space, Spin } from 'antd';
 import { CopyOutlined, EyeOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import AgvTypeDetail from './components/AgvTypeDetail';
 import { fetchAllAdaptor } from '@/services/resourceManageAPI';
 import styles from './agv.module.less';
 import commonStyle from '@/common.module.less';
 import { AllAdapters } from '@/mockData';
+import { version } from 'less';
 
 const CustomAgvType = () => {
   const [loading, setLoading] = useState(false);
@@ -38,6 +39,18 @@ const CustomAgvType = () => {
     setDetail(adapterType);
   }
 
+  function renderExtra(otherInfo) {
+    if (isNull(otherInfo)) return;
+    return Object.keys(otherInfo)?.forEach((key) => {
+      return (
+        <div key={key}>
+          <span>{key}</span>
+          {/* <span>{otherInfo[key]}</span> */}
+        </div>
+      );
+    });
+  }
+
   return (
     <Spin spinning={loading}>
       <div className={commonStyle.commonPageStyle}>
@@ -53,11 +66,20 @@ const CustomAgvType = () => {
         )}
         {datasource.length > 0 &&
           datasource.map(({ adapterType }, index) => (
-            <Card key={index} title={`适配器: ${adapterType.name}`}>
+            <Card
+              key={index}
+              title={`适配器: ${adapterType.name}`}
+              extra={
+                <>
+                  {!isNull(adapterType?.otherInfo?.version) &&
+                    `版本:${adapterType?.otherInfo?.version}`}
+                </>
+              }
+            >
               {adapterType.agvTypes?.map((agvType, innerIndex) => (
                 <Card
                   key={innerIndex}
-                  type='inner'
+                  type="inner"
                   title={`车辆类型: ${agvType.name}`}
                   extra={
                     <Space>

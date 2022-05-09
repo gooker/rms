@@ -31,3 +31,19 @@ export function registerRobot(param) {
     data: param,
   });
 }
+
+// 添加发现
+export function findRobot(param) {
+  return request(`/${NameSpace.Platform}/agv/findAGV`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 解绑
+export function logOutRobot(param) {
+  return request(`/${NameSpace.Platform}/agv/robotLogout`, {
+    method: 'POST',
+    data: param,
+  });
+}
