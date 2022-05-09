@@ -75,7 +75,7 @@ export const NavigationCellType = [
   {
     code: RobotBrand.SEER,
     name: 'SEER',
-    color: '#34bf49',
+    color: '#00aeff',
     coordinationType: 'R',
   },
 ];
