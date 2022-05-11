@@ -210,6 +210,7 @@ const CellPanel = (props) => {
 
       {/* 批量删除导航点 */}
       <StackCellConfirmModal
+        title={<FormattedMessage id={'editor.tip.requireTypeForDeleting'} />}
         types={types}
         visible={deleteNavVisible}
         onConfirm={executeDeleteNavi}

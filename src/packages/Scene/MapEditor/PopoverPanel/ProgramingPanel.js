@@ -1,54 +1,16 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo } from 'react';
 import { Tabs } from 'antd';
-import { find } from 'lodash';
-import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchScopeProgram } from '@/services/XIHE';
 import FormattedMessage from '@/components/FormattedMessage';
-import ProgramingZone from './ProgramingZone';
-import ProgramingCell from '../components/ProgramingCell';
-import ProgramingRelation from './ProgramingRelation';
+import ProgramingZone from '../Programing/ProgramingZoneTab';
+import ProgramingCell from '../Programing/ProgramingCellTab';
+import ProgramingRelation from '../Programing/ProgramingRelationTab';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
 const { TabPane } = Tabs;
 
 const ProgramingPanel = (props) => {
-  const { height, currentMap, currentLogicArea, currentRouteMap, scopeActions } = props;
-  const [scopeProgram, setScopeProgram] = useState([]); // 已保存的地图编程数据
-  const scopeLoad = getScopeLoad();
-
-  useEffect(refresh, [currentMap, currentLogicArea]);
-
-  function refresh() {
-    fetchScopeProgram({
-      mapId: currentMap.id,
-      logicId: currentLogicArea,
-    }).then((response) => {
-      if (
-        !dealResponse(response, null, formatMessage({ id: 'app.message.fetchScopeProgramFail' }))
-      ) {
-        setScopeProgram(response);
-      }
-    });
-  }
-
-  // 获取指定编程数据
-  function getScopeLoad() {
-    return find(scopeProgram, {
-      routeCode: currentRouteMap,
-      scopeCode: 'GLO',
-    });
-  }
-
-  // 获取不同类型的可配置动作
-  function getActions(groupName) {
-    const actions = find(scopeActions, { groupName });
-    if (actions) {
-      return actions.actionList;
-    }
-    return [];
-  }
+  const { height } = props;
 
   return (
     <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
@@ -59,24 +21,19 @@ const ProgramingPanel = (props) => {
 
       {/* Tab栏 */}
       <div className={styles.programTabs}>
-        <Tabs defaultActiveKey="zone">
-          <TabPane tab={<FormattedMessage id={'app.map.zone'} />} key="zone">
-            <ProgramingZone scopeLoad={scopeLoad} actions={getActions('zone')} />
+        <Tabs defaultActiveKey='cell'>
+          <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key='cell'>
+            <ProgramingCell />
           </TabPane>
-          <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key="cell">
-            <ProgramingCell scopeLoad={scopeLoad} actions={getActions('cell')} />
+          <TabPane tab={<FormattedMessage id={'app.map.route'} />} key='relation'>
+            <ProgramingRelation />
           </TabPane>
-          <TabPane tab={<FormattedMessage id={'app.map.route'} />} key="relation">
-            <ProgramingRelation scopeLoad={scopeLoad} actions={getActions('relation')} />
+          <TabPane tab={<FormattedMessage id={'app.map.zone'} />} key='zone'>
+            <ProgramingZone />
           </TabPane>
         </Tabs>
       </div>
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  currentMap: editor.currentMap,
-  scopeActions: editor.scopeActions,
-  currentLogicArea: editor.currentLogicArea,
-  currentRouteMap: editor.currentRouteMap,
-}))(memo(ProgramingPanel));
+export default memo(ProgramingPanel);

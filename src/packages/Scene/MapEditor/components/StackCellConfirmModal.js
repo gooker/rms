@@ -1,10 +1,9 @@
 import React, { memo, useState } from 'react';
 import { Checkbox, Col, Modal, Row } from 'antd';
-import FormattedMessage from '@/components/FormattedMessage';
 import { NavigationCellType } from '@/config/config';
 
 const StackCellConfirmModal = (props) => {
-  const { visible, onCancel, onConfirm, types } = props;
+  const { visible, onCancel, onConfirm, types, title } = props;
   const [selectedTypes, setSelectedTypes] = useState([]);
 
   function submit() {
@@ -21,7 +20,7 @@ const StackCellConfirmModal = (props) => {
     return (
       <Row gutter={[10, 10]}>
         {NavigationCellType.filter((item) => types.includes(item.code)).map(({ code, name }) => (
-          <Col key={code} span={12}>
+          <Col key={code} span={8}>
             <Checkbox value={code}>{name}</Checkbox>
           </Col>
         ))}
@@ -31,13 +30,17 @@ const StackCellConfirmModal = (props) => {
 
   return (
     <Modal
+      destroyOnClose
+      closable={false}
       width={400}
       visible={visible}
       onCancel={onCancel}
       onOk={submit}
-      title={<FormattedMessage id={'editor.tip.requireTypeForDeleting'} />}
+      title={title}
     >
-      <Checkbox.Group onChange={setSelectedTypes}>{renderOptions()}</Checkbox.Group>
+      <Checkbox.Group onChange={setSelectedTypes} style={{ width: '100%' }}>
+        {renderOptions()}
+      </Checkbox.Group>
     </Modal>
   );
 };

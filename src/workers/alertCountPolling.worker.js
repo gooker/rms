@@ -13,10 +13,14 @@ self.onmessage = ({ data: { state, url, token, sectionId } }) => {
       'Content-Type': 'application/json; charset=utf-8',
     };
     intervalInstance = setInterval(() => {
-      fetch(url, { headers })
-        .then((response) => response.json())
-        .then((response) => self.postMessage(response))
-        .catch((err) => console.log(`Worker: alertCountPolling => ${err.message}`));
+      if (typeof url === 'string') {
+        fetch(url, { headers })
+          .then((response) => response.json())
+          .then((response) => self.postMessage(response))
+          .catch((err) => console.error(`Worker Error: alertCountPolling => ${err.message}`));
+      } else {
+        console.error('Worker Error: alertCountPolling => nameSpace丢失');
+      }
     }, 10 * 1000);
   } else if (state === 'end') {
     clearInterval(intervalInstance);

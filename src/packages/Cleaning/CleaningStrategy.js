@@ -16,9 +16,7 @@ import {
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
 import { getCleanStrategy, saveCleanLatentStrategy } from '@/services/api';
-import { fetchAllScopeActions } from '@/services/monitor';
 import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import DesignArea from './components/DesignArea';
 import CleaningDays from './components/CleaningDays';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -48,35 +46,10 @@ const CleaningStrategy = (props) => {
 
   useEffect(() => {
     async function init() {
-      getStrategy();
-      await getScope();
+      await getStrategy();
     }
     init();
   }, []);
-
-  async function getScope() {
-    try {
-      const areasData = await fetchAllScopeActions();
-      // 获取scope
-      if (dealResponse(areasData)) {
-        message.error(formatMessage({ id: 'app.mapRecorder.fail' }));
-      } else {
-        const currentLogicArea = getCurrentLogicAreaData('monitor');
-        const scopeMap = currentLogicArea?.routeMap || {};
-
-        const functionAreaSet = new Set();
-        areasData.forEach(({ sectionCellIdMap }) => {
-          if (sectionCellIdMap) {
-            Object.values(sectionCellIdMap).forEach((item) => {
-              functionAreaSet.add(item);
-            });
-          }
-        });
-        setScope(Object.values(scopeMap));
-        setFunctionArea([...functionAreaSet]);
-      }
-    } catch (error) {}
-  }
 
   // 获取保存后的策略
   async function getStrategy() {
@@ -370,9 +343,9 @@ const CleaningStrategy = (props) => {
                           </Col>
                         </Row>
                       ))}
-                      <Form.Item noStyle >
-                        <Button block type="dashed" onClick={() => add()}>
-                          <PlusOutlined /> <FormattedMessage id="app.button.add" />
+                      <Form.Item noStyle>
+                        <Button block type='dashed' onClick={() => add()}>
+                          <PlusOutlined /> <FormattedMessage id='app.button.add' />
                         </Button>
                         {/* <Form.ErrorList errors={errors} /> */}
                       </Form.Item>

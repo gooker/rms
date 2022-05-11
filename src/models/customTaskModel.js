@@ -1,6 +1,11 @@
 import { message } from 'antd';
-import { convertMapToArrayMap, convertScopeDataToUiOptions, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { fetchAllScopeActions } from '@/services/monitor';
+import {
+  convertMapToArrayMap,
+  convertScopeDataToUiOptions,
+  dealResponse,
+  formatMessage,
+  isNull,
+} from '@/utils/util';
 import {
   fetchActiveMap,
   getAgvRunProtocol,
@@ -82,7 +87,6 @@ export default {
           getTurnProtocol(),
           getAgvRunProtocol(),
           getTaskTypes(),
-          fetchAllScopeActions(),
           getBackZone({ mapId: id }),
           getFormModelLockResource({ modelType: '' }),
         ])
@@ -94,7 +98,6 @@ export default {
               turnProtocol,
               agvRunProtocol,
               allTaskTypes,
-              scopeData,
               backZones,
               modelLocks,
             ]) => {
@@ -105,7 +108,6 @@ export default {
                 !dealResponse(turnProtocol) &&
                 !dealResponse(agvRunProtocol) &&
                 !dealResponse(allTaskTypes) &&
-                !dealResponse(scopeData) &&
                 !dealResponse(backZones) &&
                 !dealResponse(modelLocks)
               ) {
@@ -118,7 +120,6 @@ export default {
                     modelLocks,
                     allActions,
                     allTaskTypes,
-                    scopeData: convertScopeDataToUiOptions(scopeData),
                     customTypes: convertMapToArrayMap(customTypes, 'type', 'label'),
                     turnProtocol: convertMapToArrayMap(turnProtocol, 'action', 'label'),
                     agvRunProtocol: convertMapToArrayMap(agvRunProtocol, 'action', 'label'),

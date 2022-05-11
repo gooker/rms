@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Col, Modal, Row } from 'antd';
 import { DeleteOutlined, DragOutlined } from '@ant-design/icons';
-import { useMap } from '@umijs/hooks';
+import { useMap } from 'ahooks';
 import { connect } from '@/utils/RmsDva';
 import { getCellSelections } from '@/utils/mapUtil';
 import CostConfigure from '../components/CostConfigure';
@@ -139,7 +139,7 @@ const CostPanel = (props) => {
           <Col span={8}>
             <Button
               danger
-              size="small"
+              size='small'
               style={{ width: '100%', height: 50, borderRadius: 5 }}
               onClick={deleteLines}
               disabled={selectLines.length === 0}
@@ -153,6 +153,7 @@ const CostPanel = (props) => {
 
       {/* 批量删除导航点 */}
       <StackCellConfirmModal
+        title={<FormattedMessage id={'editor.tip.requireTypeForDeleting'} />}
         types={modalMap.get('types')}
         visible={modalMap.get('visible')}
         onConfirm={createLines}

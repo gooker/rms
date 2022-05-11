@@ -1,11 +1,6 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-export async function fetchAllScopeActions() {
-  return request(`/${NameSpace.Coordinator}/actionScope/getAllActionScope`, {
-    method: 'GET',
-  });
-}
 
 // 新增地图临时不可走点
 export async function updateTemporaryBlockCell(payload) {

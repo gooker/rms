@@ -8,6 +8,7 @@ import {
   getTextureFromResources,
   getAngle,
   getDistance,
+  getArrowDistance,
 } from '@/utils/mapUtil';
 import {
   Dump,
@@ -236,8 +237,6 @@ export default class BaseMap extends React.PureComponent {
           relationLine.lineStyle(2, 0xffffff);
           relationLine.moveTo(sourceCell.x, sourceCell.y);
           relationLine.lineTo(targetCell.x, targetCell.y);
-          // 做个标记，标识该线条是点连线
-          relationLine.$$cellRelation = true;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
         } else {
@@ -254,13 +253,14 @@ export default class BaseMap extends React.PureComponent {
         }
         const angle = getAngle(sourceCell, targetCell);
         const distance = getDistance(sourceCell, targetCell);
-        const offset = distance > 1000 ? 1000 : distance / 2;
+        const offset = getArrowDistance(distance);
         const arrowPosition = getCoordinat(sourceCell, angle, offset);
         const arrow = new CostArrow({
           ...arrowPosition,
           id: arrowMapKey,
           angle,
           cost,
+          select: this.select,
         });
         this.pixiUtils.viewportAddChild(arrow);
         this.idArrowMap.set(arrowMapKey, arrow);

@@ -8,7 +8,7 @@ import { RobotBrand } from '@/config/config';
  * 仙工地图数据转化工具
  * 1. 第一版只需要关注物理坐标，即线条只关注关系，不关注具体形式，比如: 直线、贝塞尔、圆弧
  * 2. 地图中的坐标点的单位均为米，会保留三位或三位以上小数，即精确到0.001m
- * @param mapData {{advancedPointList:Array, advancedLineList:Array, advancedCurveList:Array}}
+ * @param mapData {{}}
  * @param existIds {Array}
  * @param currentLogicArea {Number}
  */
@@ -88,8 +88,7 @@ export function SEER(mapData, existIds, currentLogicArea) {
  * 牧星地图数据转化工具，实际就是重新生成id
  * @param mapData {{}}
  * @param existIds {Array}
- * @param currentLogicArea {Number}
  */
-export function MUSHINY(mapData, existIds, currentLogicArea) {
+export function MUSHINY(mapData, existIds) {
   return { cells: [], relations: [] };
 }

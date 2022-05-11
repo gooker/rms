@@ -5,7 +5,7 @@ import { message, notification } from 'antd';
 const SOCKET_RECONNECT_MESSAGE_ID = 'SOCKET_RECONNECT_MESSAGE_ID';
 class SocketClient {
   constructor({ login, passcode }) {
-    const nameSpacesInfo = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
+    const nameSpacesInfo = window.nameSpacesInfo;
     this.ws = nameSpacesInfo?.ws;
     this.headers = {
       login: login,

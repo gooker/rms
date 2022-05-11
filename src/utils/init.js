@@ -64,7 +64,7 @@ export function handleNameSpace(dispatch) {
       // 合并本地自定义的SSO配置
       const envs = getLocalStorageEnv();
       urlDir = { ...urlDir, ...envs };
-      window.sessionStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
+      window.nameSpacesInfo = urlDir;
       resolve();
     } catch (e) {
       reject();

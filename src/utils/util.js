@@ -96,11 +96,7 @@ export const htmlFormatMessage = ({ id }, values) => {
 };
 
 export function getDomainNameByUrl(url) {
-  // TODO: 这里可以处理LocalStorage里配置的SSO
-  let apis = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
-  if (isStrictNull(apis) || !isPlainObject(apis)) {
-    apis = requestAPI();
-  }
+  const apis = window.nameSpacesInfo;
   const array = url.split('/');
   if (array.length < 2) {
     message.error(formatMessage({ id: 'app.request.addressError' }));
@@ -1217,4 +1213,22 @@ export function sortLanguages(languageList) {
   result.unshift(enUS);
   result.unshift(zhCN);
   return result;
+}
+
+export function convertPrograming2Cascader(programing) {
+  return Object.keys(programing).map((typeKey) => {
+    const body = programing[typeKey];
+    const option = {
+      value: typeKey,
+      label: formatMessage({ id: `editor.program.${typeKey}` }),
+      children: [],
+    };
+    body.forEach((item) => {
+      option.children.push({
+        value: item.actionId,
+        label: item.actionDescription,
+      });
+    });
+    return option;
+  });
 }

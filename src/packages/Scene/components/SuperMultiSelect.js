@@ -2,13 +2,14 @@ import React, { PureComponent } from 'react';
 import { Select, Row, Col, Button } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import commonStyle from '@/common.module.less';
-import { isNull } from '@/utils/util';
+import { isNull, isStrictNull } from '@/utils/util';
 
 class SelectTagComponent extends PureComponent {
   render() {
-    const { value, currentCellId, icon, onChange } = this.props;
+    const { value, onChange, currentCellId, icon } = this.props;
+
     let newValue = [];
-    if (value != null) {
+    if (!isStrictNull(value) && Array.isArray(value)) {
       newValue = value;
     } else {
       newValue = [];
@@ -25,6 +26,7 @@ class SelectTagComponent extends PureComponent {
             onChange={(changedValue) => {
               onChange && onChange(changedValue);
             }}
+            style={{ width: '100%' }}
           />
         </Col>
         {!isNull(icon) && (
@@ -32,7 +34,6 @@ class SelectTagComponent extends PureComponent {
             {icon}
           </Col>
         )}
-
         <Col span={3}>
           <Button
             onClick={() => {

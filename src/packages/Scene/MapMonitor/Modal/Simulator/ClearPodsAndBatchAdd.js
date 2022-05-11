@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import LatentPodUpdater from './LatentPodUpdater';
 import { find } from 'lodash';
-import { useMap, useMount } from '@umijs/hooks';
+import { useMap, useMount } from 'ahooks';
 import {
   formatMessage,
   dealResponse,

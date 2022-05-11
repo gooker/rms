@@ -25,15 +25,7 @@ const ModuleInformationPanel = (props) => {
   }
 
   function formatAppVersionData() {
-    let namespace = window.sessionStorage.getItem('nameSpacesInfo');
-    if (!isStrictNull(namespace)) {
-      try {
-        namespace = JSON.parse(namespace);
-      } catch (e) {
-        namespace = {};
-      }
-    }
-
+    const namespace = window.nameSpacesInfo;
     const versions = { ...backendVersion };
     delete versions.MixRobot;
     const result = [];

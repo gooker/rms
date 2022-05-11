@@ -31,7 +31,7 @@ stages:
   - release
   - deploy
 
-# 发布到南通11服务器的开发环境
+# 在南通11服务器打包
 nt11-dev-build-staging:
   stage: build
   tags:
@@ -51,48 +51,14 @@ nt11-dev-build-staging:
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
     - cp version.txt dist/
     - date_time_string=`date "+%Y%m%d%H%M%S"`
-    - tar -zcv -f Sorter-GUI-${mybuild_version}.tar.gz dist/
+    - tar -zcv -f RMS-GUI-${mybuild_version}.tar.gz dist/
     - sudo -u mushiny rm -rf /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
     - sudo -u mushiny mkdir -p /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
-    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+    - sudo cp RMS-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
     - sudo cp version.txt /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
     - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui"
   only:
     - /^nt11-build.*$/
-
-# 发布到南通11服务器的开发环境
-nt11-dev-staging:
-  stage: build
-  tags:
-    - prod_group_nt_node1
-  script:
-    - node -v
-    - npm -v
-    - cnpm install
-    - npm run build
-    - mybuild_date=`date "+%m%d"`
-    - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
-    # 取版本号的前两位，如 2.7.2 取出后为 2.7
-    - version_prefix=`echo ${mybuild_version}|awk -F. '{print $1"."$2}'`
-    - echo $mybuild_date $mybuild_version ${version_prefix}
-    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
-    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
-    - cp version.txt dist/
-    - date_time_string=`date "+%Y%m%d%H%M%S"`
-    - prefix=/usr/share/nginx/node/dev/sorter_wcs
-    - sudo sh -c "mkdir -p ${prefix}/dist"
-    - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
-    - sudo sh -c "cp -r dist ${prefix}"
-    - tar -zcv -f Sorter-GUI-${mybuild_version}.tar.gz dist/
-    - sudo -u mushiny rm -rf /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
-    - sudo -u mushiny mkdir -p /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
-    - sudo cp Sorter-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
-    - sudo cp version.txt /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
-    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui"
-    - chmod +x send_message_to_dingdion.sh
-    - ./send_message_to_dingdion.sh
-  only:
-    - /^nt11-dev.*$/
 
 # 发布到南通13服务器的开发环境
 nt13-dev-staging:
@@ -115,38 +81,12 @@ nt13-dev-staging:
     - sed -i "s|COORDINATOR_API|http://52.83.193.245:10218|" dist/config.js
     - sed -i "s|WS_URL|ws://52.83.193.245:10216/ws|" dist/config.js
     - date_time_string=`date "+%Y%m%d%H%M%S"`
-    - prefix=/usr/share/nginx/node/dev/portal_ui
+    - prefix=/usr/share/nginx/node/dev/rms_ui
     - sudo sh -c "mkdir -p ${prefix}/dist"
     - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
     - sudo sh -c "cp -r dist ${prefix}"
   only:
     - /^nt13-dev.*$/
-
-# 发布到南通11服务器的月度发布环境
-nt11-monthly_release-staging:
-  stage: build
-  tags:
-    - prod_group_nt_node1
-  script:
-    - node -v
-    - npm -v
-    - cnpm install
-    - npm run build
-    - mybuild_date=`date "+%m%d"`
-    - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
-    - echo  $mybuild_version $mybuild_date
-    - mkdir tmp_build
-    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
-    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
-    #    - zip maptool.zip dist
-    - cp version.txt dist/
-    - date_time_string=`date "+%Y%m%d%H%M%S"`
-    - prefix=/usr/share/nginx/node/monthly_release/sorter_wcs
-    - sudo sh -c "mkdir -p ${prefix}/dist"
-    - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
-    - sudo sh -c "cp -r dist ${prefix}"
-  only:
-    - /^nt11-monthly_release.*$/
 
 # 在南通12服务器上打包
 nt-local-build-staging:
@@ -218,7 +158,7 @@ nt-docker-images-build-staging:
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
     - cp version.txt dist/
     - cp -r dist docker_image/
-    - docker_name_version=reg.mushiny.com/mushiny/portal-gui:${mybuild_version}
+    - docker_name_version=reg.mushiny.com/mushiny/rms-gui:${mybuild_version}
     - echo ${docker_name_version}
     - unset DOCKER_HOST
     - docker build -t ${docker_name_version} docker_image/
@@ -283,7 +223,7 @@ docker-images-package-staging:
   script:
     - 'mybuild_version="$(cat dist/version.txt | grep version | awk -F: ''{ print $2 }'')"'
     - cp -r dist docker_image/
-    - docker_name_version=reg.mushiny.com/mushiny/portal-gui:${mybuild_version}
+    - docker_name_version=reg.mushiny.com/mushiny/rms-gui:${mybuild_version}
     - echo ${docker_name_version}
     - docker build -t ${docker_name_version} docker_image/
     - docker login -u ${MUSHINY_DOCKER_REG_USER} -p ${MUSHINY_DOCKER_REG_PASSWORD} reg.mushiny.com

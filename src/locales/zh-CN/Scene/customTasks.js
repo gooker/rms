@@ -70,7 +70,6 @@ export default {
   'app.customTask.form.heavy': '重车',
   'app.customTask.form.empty': '空车',
   'app.customTask.form.pathCode': '地图路线',
-  'app.customTask.form.scopeCode': '地图编程',
   'app.customTask.form.isPathWithPod': '车辆状态',
   'app.customTask.form.speed': '速度档位',
   'app.customTask.form.canReCalculatePath': '自动切换路线',
