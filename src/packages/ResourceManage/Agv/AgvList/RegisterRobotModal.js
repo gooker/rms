@@ -21,12 +21,12 @@ const RegisterRobotModal = (props) => {
       .then((values) => {
         onSubmit(values);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 
   return (
     <Modal
+      destroyOnClose
       visible={visible}
       title={'车辆注册'}
       maskClosable={false}

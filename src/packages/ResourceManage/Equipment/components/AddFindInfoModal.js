@@ -1,5 +1,5 @@
 /* TODO: I18N */
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Form, Modal, Select, Input, InputNumber } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { getFormLayout, dealResponse } from '@/utils/util';
@@ -10,6 +10,12 @@ const { formItemLayout } = getFormLayout(5, 17);
 const AddRegistrationModal = (props) => {
   const { dispatch, visible, allAdaptors } = props;
   const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    if (!visible) {
+      formRef.resetFields();
+    }
+  }, [visible]);
 
   function onSubmit() {
     formRef
@@ -34,6 +40,7 @@ const AddRegistrationModal = (props) => {
 
   return (
     <Modal
+      destroyOnClose
       visible={visible}
       title={'添加发现'}
       maskClosable={false}
@@ -47,9 +54,9 @@ const AddRegistrationModal = (props) => {
           rules={[{ required: true }]}
         >
           <Select>
-            {allAdaptors?.map(({ name }) => {
+            {allAdaptors?.map(({ name, code }) => {
               return (
-                <Select.Option key={name} value={name}>
+                <Select.Option key={code} value={code}>
                   {name}
                 </Select.Option>
               );
@@ -57,14 +64,11 @@ const AddRegistrationModal = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item name={'IP'} label={'IP'}>
+        <Form.Item name={'ip'} label={'IP'}>
           <Input />
         </Form.Item>
 
-        <Form.Item
-          name={'port'}
-          label={<FormattedMessage id={'app.agv.port'} />}
-        >
+        <Form.Item name={'port'} label={<FormattedMessage id={'app.agv.port'} />}>
           <InputNumber />
         </Form.Item>
       </Form>

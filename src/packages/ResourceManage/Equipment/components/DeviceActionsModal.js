@@ -13,55 +13,52 @@ import {
   Radio,
   Divider,
 } from 'antd';
-import { dealResponse, getFormLayout, adaptModalHeight } from '@/utils/util';
-import { saveDeviceActions } from '@/services/resourceManageAPI';
-import { forIn } from 'lodash';
+import { getFormLayout, adaptModalHeight } from '@/utils/util';
+import { forIn, find } from 'lodash';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout } = getFormLayout(5, 17);
 const DeviceActionsModal = (props) => {
-  const { visible, deviceActions, onCancelModal, onRefresh } = props;
+  const { visible, deviceActions, onCancelModal, onSave, isEdit } = props;
   const [formRef] = Form.useForm();
-  const [currentTypeAction, setCurrentTypeAction] = useState([]);
+  const [currentTypeAction, setCurrentTypeAction] = useState([]); //
+
+  // useEffect(() => {
+  //   if (!visible) {
+  //     formRef.resetFields();
+  //   }
+  // }, [visible]);
 
   useEffect(() => {
-    if (!visible) {
-      formRef.resetFields();
-      setCurrentTypeAction([]);
-    } else {
-      setCurrentTypeAction(deviceActions);
-    }
-  }, [visible]);
+    setCurrentTypeAction(deviceActions);
+  }, [deviceActions]);
 
   function onSubmit() {
     formRef
       .validateFields()
       .then((values) => {
-        console.log(values);
-        submitActions(values);
+        generateDefinitions(values);
       })
       .catch(() => {});
   }
 
   function generateDefinitions(param) {
-    const deviceActions = [];
+    const newDeviceActions = [];
     Object.keys(param).forEach((id) => {
       const items = param[id];
+      const currentActionParam = find(currentTypeAction, (param) => {
+        return param.id === id;
+      });
+      const deviceActionDefinitionList = currentActionParam.deviceActionParamsDefinitionList;
       const deviceActionParamsDefinitionList = [];
       forIn(items, (value, key) => {
-        deviceActionParamsDefinitionList.push({ key, value });
+        const currentOptions = find(deviceActionDefinitionList, (define) => define.key === key);
+        deviceActionParamsDefinitionList.push({ ...currentOptions, key, value });
       });
-      deviceActions.push({ id, deviceActionParamsDefinitionList });
+      newDeviceActions.push({ ...currentActionParam, id, deviceActionParamsDefinitionList });
     });
-    return deviceActions;
-  }
-
-  async function submitActions(values) {
-    const params = generateDefinitions(values);
-    const response = await saveDeviceActions(params);
-    if (!dealResponse(response, 1)) {
-      onRefresh();
-      onCancelModal();
-    }
+    onSave(newDeviceActions);
+    onCancelModal();
   }
 
   function renderFormItemContent(content) {
@@ -107,7 +104,7 @@ const DeviceActionsModal = (props) => {
         }
         const param = { type };
         const valuePropName = type === 'BOOL' ? 'checked' : 'value';
-        let defaultValue = value;
+        let defaultValue = type === 'BOOL' ? value ?? false : value;
         return (
           <Form.Item
             label={labelName}
@@ -126,10 +123,18 @@ const DeviceActionsModal = (props) => {
 
   return (
     <Modal
+      destroyOnClose
       visible={visible}
       title={'设备动作'}
       maskClosable={false}
       onCancel={onCancelModal}
+      okText={
+        isEdit ? (
+          <FormattedMessage id="app.button.submit" />
+        ) : (
+          <FormattedMessage id="app.button.confirm" />
+        )
+      }
       onOk={onSubmit}
       bodyStyle={{ maxHeight: adaptModalHeight() * 0.9, overflow: 'auto' }}
     >

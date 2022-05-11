@@ -23,11 +23,6 @@ const EquipmentRegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: '设备ID',
-      dataIndex: 'deviceID',
-      align: 'center',
-    },
-    {
       title: 'IP',
       dataIndex: 'ip',
       align: 'center',
@@ -64,15 +59,14 @@ const EquipmentRegisterPanel = (props) => {
     setSelectedRowKeys(selectedRowKeys);
   }
 
-  function onRegister(values) {
-    const [deviceAdapterTypeCode, deviceTypeCode] = values.deviceType.split('@');
-    registerDevice([{ deviceAdapterTypeCode, deviceTypeCode, ids: selectedRowKeys }]).then((response) => {
-      if (!dealResponse(response, true)) {
-        setSelectedRowKeys([]);
-        dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: false });
-        dispatch({ type: 'equipList/fetchInitialData' });
-      }
-    });
+  // 注册
+  async function onRegister(values) {
+    const response = registerDevice({ ...values, id: selectedRowKeys[0] }); //ids: selectedRowKeys
+    if (!dealResponse(response, true)) {
+      setSelectedRowKeys([]);
+      dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: false });
+      onRefresh();
+    }
   }
 
   return (
@@ -83,7 +77,7 @@ const EquipmentRegisterPanel = (props) => {
           onClick={() => {
             dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: true });
           }}
-        //   disabled={selectedRowKeys.length === 0}
+          disabled={selectedRowKeys.length !== 1}
         >
           <SwapOutlined /> 注册
         </Button>

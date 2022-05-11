@@ -86,7 +86,7 @@ const EquipmentListTools = (props) => {
       </Row>
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
-          <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
+          <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 取消注册
           </Button>
 
