@@ -1,17 +1,15 @@
 /* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Divider, Empty, Modal } from 'antd';
+import { find } from 'lodash';
 import { Container } from 'react-smooth-dnd';
 import { customTaskApplyDrag, formatMessage } from '@/utils/util';
 import ProgramingDndCard from './components/ProgramingDndCard';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import styles from './programing.module.less';
 import { connect } from '@/utils/RmsDva';
-import { find } from 'lodash';
+import { ProgramingItemType } from '@/config/config';
 
-/**
- * 暂不支持编辑
- */
 const ProgramingCellModal = (props) => {
   const { dispatch, cells, visible, onCancel, onConfirm, programing } = props;
   const [configuration, setConfiguration] = useState([]);
@@ -43,8 +41,10 @@ const ProgramingCellModal = (props) => {
   }
 
   function confirm() {
-    // 将configuration数据同步到地图
-    dispatch({ type: 'editor/updateMapPrograming', payload: { cells, configuration } });
+    dispatch({
+      type: 'editor/updateMapPrograming',
+      payload: { type: ProgramingItemType.cell, items: cells, configuration },
+    });
   }
 
   function generateDndData() {

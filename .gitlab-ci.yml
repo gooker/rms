@@ -115,7 +115,7 @@ nt13-dev-staging:
     - sed -i "s|COORDINATOR_API|http://52.83.193.245:10218|" dist/config.js
     - sed -i "s|WS_URL|ws://52.83.193.245:10216/ws|" dist/config.js
     - date_time_string=`date "+%Y%m%d%H%M%S"`
-    - prefix=/usr/share/nginx/node/dev/portal_ui
+    - prefix=/usr/share/nginx/node/dev/rms_ui
     - sudo sh -c "mkdir -p ${prefix}/dist"
     - sudo sh -c "mv ${prefix}/dist ${prefix}/dist_${date_time_string}"
     - sudo sh -c "cp -r dist ${prefix}"
@@ -218,7 +218,7 @@ nt-docker-images-build-staging:
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
     - cp version.txt dist/
     - cp -r dist docker_image/
-    - docker_name_version=reg.mushiny.com/mushiny/portal-gui:${mybuild_version}
+    - docker_name_version=reg.mushiny.com/mushiny/rms-gui:${mybuild_version}
     - echo ${docker_name_version}
     - unset DOCKER_HOST
     - docker build -t ${docker_name_version} docker_image/
@@ -283,7 +283,7 @@ docker-images-package-staging:
   script:
     - 'mybuild_version="$(cat dist/version.txt | grep version | awk -F: ''{ print $2 }'')"'
     - cp -r dist docker_image/
-    - docker_name_version=reg.mushiny.com/mushiny/portal-gui:${mybuild_version}
+    - docker_name_version=reg.mushiny.com/mushiny/rms-gui:${mybuild_version}
     - echo ${docker_name_version}
     - docker build -t ${docker_name_version} docker_image/
     - docker login -u ${MUSHINY_DOCKER_REG_USER} -p ${MUSHINY_DOCKER_REG_PASSWORD} reg.mushiny.com

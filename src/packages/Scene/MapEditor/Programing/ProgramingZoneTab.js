@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Select, Divider, Empty } from 'antd';
-import { SettingOutlined } from '@ant-design/icons';
+import { Button, Select, Divider, Empty, Col, Row } from 'antd';
+import { PlusOutlined, ReloadOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
@@ -15,12 +15,14 @@ const ProgramingZoneTab = (props) => {
   const [zoneMarkers, setZoneMarkers] = useState([]);
   const [selection, setSelection] = useState([]);
 
-  useEffect(() => {
+  useEffect(getZoomMarkers, [currentLogicArea]);
+
+  function getZoomMarkers() {
     // 暂时只处理矩形区域
     let zoneMarker = getCurrentLogicAreaData()?.zoneMarker || [];
     zoneMarker = zoneMarker.filter((item) => item.type === ZoneMarkerType.RECT);
     setZoneMarkers(zoneMarker);
-  }, [currentLogicArea]);
+  }
 
   function save(payload) {
     //
@@ -44,15 +46,20 @@ const ProgramingZoneTab = (props) => {
 
   return (
     <div style={{ paddingTop: 20 }}>
-      <div>
-        <Select allowClear mode={'multiple'} onChange={setSelection} style={{ width: '100%' }}>
-          {zoneMarkers.map((item) => (
-            <Select.Option key={item.code} value={item.code}>
-              {item.text || item.code}
-            </Select.Option>
-          ))}
-        </Select>
-      </div>
+      <Row gutter={4}>
+        <Col span={21}>
+          <Select allowClear mode={'multiple'} onChange={setSelection} style={{ width: '100%' }}>
+            {zoneMarkers.map((item) => (
+              <Select.Option key={item.code} value={item.code}>
+                {item.text || item.code}
+              </Select.Option>
+            ))}
+          </Select>
+        </Col>
+        <Col span={3}>
+          <Button onClick={getZoomMarkers} icon={<ReloadOutlined />} />
+        </Col>
+      </Row>
       <Button
         type='primary'
         onClick={startConfiguration}
