@@ -693,19 +693,34 @@ export default {
 
     // ********************************* 地图编程 ********************************* //
     * updateMapPrograming({ payload }, { put, select }) {
-      const { currentMap, currentRouteMap } = yield select(({ editor }) => editor);
-      const { programing } = currentMap;
+      const { currentMap, currentRouteMap, programing } = yield select(({ editor }) => editor);
 
-      const { cells, configuration } = payload;
-      const { actionType, ...rest } = configuration;
-      const [p1, p2] = actionType;
-      const action = find(programing[p1], { actionId: p2 });
-      // 将rest中数据同步到action
-      const copyAction = cloneDeep(action);
-      copyAction.forEach((item) => {
-        item.value = rest[item.code];
+      // 新增地图的编程节点
+      if (isNull(currentMap.programing)) {
+        currentMap.programing = { [currentRouteMap]: [] };
+      }
+
+      // 处理配置信息
+      const { type, items, configuration, timing } = payload;
+      const actions = configuration.map(({ actionType, ...rest }) => {
+        const [p1, p2] = actionType;
+        const action = find(programing[p1], { actionId: p2 });
+        const copyAction = cloneDeep(action);
+        // 将数据回填到action参数中
+        copyAction.actionParameters.forEach((item) => {
+          item.value = rest[item.code];
+        });
       });
 
+      // 如果某个点位已经存在配置，则覆盖
+      const existCellConfigList = currentMap.programing[currentRouteMap].filter(
+        (item) => item.type !== type && !item.includes(item.key),
+      );
+      items.forEach((cellId) => {
+        existCellConfigList.push({ key: cellId, type, actions, timing });
+      });
+      currentMap.programing[currentRouteMap] = existCellConfigList;
+      console.log(currentMap);
     },
 
     // ********************************* 待调整 ********************************* //

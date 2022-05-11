@@ -9,12 +9,15 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingCellModal from './ProgramingCellModal';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
+import { ProgramingItemType } from '@/config/config';
 
 const ProgramingCellTab = (props) => {
-  const { selections } = props;
+  const { dispatch, selections } = props;
 
+  // 这里之所以存在两个点位集是因为: 已选择的点位+筛选 =正在配置的点位, 筛选可以不存在
   const [selectedCells, setSelectedCells] = useState([]); // 已选择的点位
   const [configCells, setConfigCells] = useState([]); // 正在配置的点位
+
   const [naviTypeOption, setNaviTypeOption] = useState([]); // 点位类型Options数据
   const [searchKey, setSearchKey] = useState(null);
 
@@ -22,11 +25,19 @@ const ProgramingCellTab = (props) => {
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
 
-  function save(payload) {
-  }
-
   function getDatasource() {
     return [];
+  }
+
+  function save(configuration) {
+    dispatch({
+      type: 'editor/updateMapPrograming',
+      payload: {
+        type: ProgramingItemType.cell,
+        items: configCells.map((item) => item + ''),
+        configuration,
+      },
+    });
   }
 
   function onEdit(id) {
@@ -73,7 +84,7 @@ const ProgramingCellTab = (props) => {
       <Button
         type='primary'
         onClick={startConfiguration}
-        // disabled={selectedCells.length === 0}
+        disabled={selectedCells.length === 0}
         style={{ marginTop: 10 }}
       >
         <SettingOutlined /> 开始配置
@@ -100,7 +111,7 @@ const ProgramingCellTab = (props) => {
       <ProgramingCellModal
         cells={configCells}
         visible={configCells.length > 0}
-        onConfirm={save}
+        onOk={save}
         onCancel={terminateConfiguration}
       />
 

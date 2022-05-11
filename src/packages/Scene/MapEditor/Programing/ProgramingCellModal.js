@@ -8,10 +8,9 @@ import ProgramingDndCard from './components/ProgramingDndCard';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import styles from './programing.module.less';
 import { connect } from '@/utils/RmsDva';
-import { ProgramingItemType } from '@/config/config';
 
 const ProgramingCellModal = (props) => {
-  const { dispatch, cells, visible, onCancel, onConfirm, programing } = props;
+  const { cells, visible, onOk, onCancel, programing } = props;
   const [configuration, setConfiguration] = useState([]);
 
   function onDrop(dropResult) {
@@ -41,10 +40,7 @@ const ProgramingCellModal = (props) => {
   }
 
   function confirm() {
-    dispatch({
-      type: 'editor/updateMapPrograming',
-      payload: { type: ProgramingItemType.cell, items: cells, configuration },
-    });
+    onOk(configuration);
   }
 
   function generateDndData() {
@@ -67,7 +63,7 @@ const ProgramingCellModal = (props) => {
       maskClosable={false}
       visible={visible}
       onCancel={onCancel}
-      onOk={onConfirm}
+      onOk={confirm}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       {/*  点位编程配置信息 */}
