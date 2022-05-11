@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Form, InputNumber, Row, Col, Select } from 'antd';
-import { useMap, useMount } from '@umijs/hooks';
+import { useMap, useMount } from 'ahooks';
 import { find } from 'lodash';
 import LatentPodUpdater from '../Simulator/LatentPodUpdater';
 import FormattedMessage from '@/components/FormattedMessage';

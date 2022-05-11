@@ -1218,3 +1218,21 @@ export function sortLanguages(languageList) {
   result.unshift(zhCN);
   return result;
 }
+
+export function convertPrograming2Cascader(programing) {
+  return Object.keys(programing).map((typeKey) => {
+    const body = programing[typeKey];
+    const option = {
+      value: typeKey,
+      label: formatMessage({ id: `editor.program.${typeKey}` }),
+      children: [],
+    };
+    body.forEach((item) => {
+      option.children.push({
+        value: item.actionId,
+        label: item.actionDescription,
+      });
+    });
+    return option;
+  });
+}

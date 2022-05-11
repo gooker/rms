@@ -1,0 +1,51 @@
+.dndList {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  align-items: center;
+  padding-bottom: 8px;
+  overflow: auto;
+}
+
+.dndCard {
+  display: flex !important;
+  margin-top: 8px;
+  padding: 5px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  cursor: move;
+  transition: border 0.2s, opacity 0.2s;
+
+  & > div:nth-child(1) {
+    svg {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  & > div:nth-child(3) {
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.dndTitle {
+  margin-bottom: 4px;
+  color: #000000d9;
+  font-size: 14px;
+  line-height: 1.5715;
+}
+
+.dndSubTitle {
+  color: #00000073;
+  font-size: 14px;
+  line-height: 1.5715;
+}
+
+.dndPlaceholder {
+  background-color: rgba(150, 150, 200, 0.1);
+  border: 1px dashed #abc;
+  margin: 5px;
+}

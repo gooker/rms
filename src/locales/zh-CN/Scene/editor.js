@@ -167,15 +167,13 @@ export default {
   'editor.label.required': '请输入标签内容',
 
   // 地图编程
-  'editor.program.cell.beforeArrive': '到达前',
-  'editor.program.cell.arrived': '到达后',
-  'editor.program.cell.beforeLeave': '离开前',
+  'editor.program.SYSTEM': '系统动作',
+  'editor.program.VEHICLE': '车辆动作',
+  'editor.program.EQUIPMENT': '设备动作',
   'editor.program.relation': '线条',
-  'editor.program.relation.begin': '起点',
-  'editor.program.relation.end': '终点',
-  'editor.program.zone.configList': '区域配置列表',
-  'editor.program.action.required': '请选择动作类型',
-  'editor.program.param.required': '请完善动作参数',
+  'editor.program.relation.BEGIN': '起点',
+  'editor.program.relation.ONROAD': '行驶中',
+  'editor.program.relation.END': '终点',
 
   // 创建默认线条
   'editor.defaultRoute.title': '创建默认路线',

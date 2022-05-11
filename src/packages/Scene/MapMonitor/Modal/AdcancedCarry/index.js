@@ -3,7 +3,6 @@ import { Radio, message, Form } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAllScopeActions } from '@/services/monitor';
 import { dealResponse, getFormLayout, getMapModalPosition } from '@/utils/util';
 import AdvancedCarryComponent from './AdvancedCarryComponent';
 import AdvancedReleaseComponent from './AdvancedReleaseComponent';
@@ -20,20 +19,7 @@ const AdvancedCarry = (props) => {
   }, []);
 
   async function getArea() {
-    const response = await fetchAllScopeActions();
-    if (dealResponse(response)) {
-      message.error('获取地图功能区信息失败!');
-    } else {
-      const functionAreaSet = new Set();
-      response.forEach(({ sectionCellIdMap }) => {
-        if (sectionCellIdMap) {
-          Object.values(sectionCellIdMap).forEach((item) => {
-            functionAreaSet.add(item);
-          });
-        }
-      });
-      setFunctionArea([...functionAreaSet]);
-    }
+    return [];
   }
 
   function close() {

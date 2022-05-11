@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { Row, Col, Button } from 'antd';
 import echarts from 'echarts';
 import { CloseOutlined } from '@ant-design/icons';
-import { useMap } from '@umijs/hooks';
+import { useMap } from 'ahooks';
 import { connect } from '@/utils/RmsDva';
 import {
   waitingHistoryLineOption,
@@ -112,7 +112,6 @@ const WorkStationReport = (props) => {
     }
   }
 
-  
 
   return (
     <div

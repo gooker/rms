@@ -25,35 +25,58 @@ const UploadMapModal = (props) => {
     onCancel();
   }
 
+  function getMapName(mapData, navigationCellType) {
+    switch (navigationCellType) {
+      case RobotBrand.MUSHINY:
+        return mapData.name;
+      case RobotBrand.SEER:
+        return mapData.header.mapName;
+      default:
+        return null;
+    }
+  }
+
   function handleFile() {
     formRef
       .validateFields()
       .then(({ file, navigationCellType, addMap, ...rest }) => {
-        const existIds = Object.keys(currentMap.cellMap).map((item) => parseInt(item));
+        let existIds = [];
+        if (!addMap) {
+          existIds = Object.keys(currentMap.cellMap).map((item) => parseInt(item));
+        }
+
         const reader = new FileReader();
-        // beforeUpload返回false情况下, antd选择后的文件file是经过包装的数据，获取真是文件对象需要取file.originFileObj. 日他妈...
+        // beforeUpload返回false情况下, antd选择后的文件file是经过包装的数据，获取真是文件对象需要取file.originFileObj. WTF???
         reader.readAsText(file[0].originFileObj, 'UTF-8');
         reader.onload = (evt) => {
           try {
             let mapData = evt.target.result;
             mapData = JSON.parse(mapData);
-            const mapName = mapData.header.mapName;
-            switch (navigationCellType) {
-              case RobotBrand.SEER:
-                mapData = SEER(mapData, existIds, currentLogicArea);
-                break;
-              case RobotBrand.MUSHINY:
-                mapData = MUSHINY(mapData, existIds, currentLogicArea);
-                break;
-              default:
-                break;
+
+            // 如果是牧星地图且是新建地图逻辑，那么就把文件直接保存
+            if (navigationCellType === RobotBrand.MUSHINY && addMap) {
+              dispatch({ type: 'editor/importMushinyMap', payload: mapData }).then((result) => {
+                result && cancel();
+              });
+            } else {
+              const mapName = getMapName(mapData, navigationCellType);
+              switch (navigationCellType) {
+                case RobotBrand.SEER:
+                  mapData = SEER(mapData, existIds, currentLogicArea);
+                  break;
+                case RobotBrand.MUSHINY:
+                  mapData = MUSHINY(mapData, existIds);
+                  break;
+                default:
+                  break;
+              }
+              dispatch({
+                type: 'editor/importMap',
+                payload: { mapName, mapData, addMap, transform: rest },
+              }).then((result) => {
+                result && cancel();
+              });
             }
-            dispatch({
-              type: 'editor/importMap',
-              payload: { mapName, mapData, addMap, transform: rest },
-            }).then((result) => {
-              result && cancel();
-            });
           } catch (err) {
             message.error(err.message);
           }

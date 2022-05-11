@@ -1569,17 +1569,26 @@ export function getSelectionNaviCells(namespace = 'editor') {
   const { mapContext, selections } = window.$$state()[namespace];
   const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
   const { xyCellMap } = mapContext;
-  let allNaviCells = [];
+  const allNaviCells = {};
   selectedCells.forEach(({ x, y }) => {
     const cells = xyCellMap.get(`${x}_${y}`);
     if (Array.isArray(cells)) {
-      allNaviCells = allNaviCells.concat(cells);
+      for (const cell of cells) {
+        allNaviCells[cell.id] = cell;
+      }
     }
   });
-  return allNaviCells;
+  return Object.values(allNaviCells);
 }
 
 export function getSelectionNaviCellTypes(namespace = 'editor') {
   const types = getSelectionNaviCells(namespace).map(({ brand }) => brand);
   return [...new Set(types)];
+}
+
+export function getArrowDistance(distance) {
+  if (distance <= 1000) {
+    return distance / 2;
+  }
+  return 500;
 }

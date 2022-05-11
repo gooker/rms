@@ -1,4 +1,5 @@
 import * as PIXI from 'pixi.js';
+import { find, isPlainObject } from 'lodash';
 import { BitText } from '@/entities';
 import { isNull, isStrictNull, radToAngle } from '@/utils/util';
 import {
@@ -9,7 +10,6 @@ import {
   SelectionType,
   MapSelectableSpriteType,
 } from '@/config/consts';
-import { find, isPlainObject } from 'lodash';
 import { NavigationCellType } from '@/config/config';
 
 const ScaledCellSize = 800;
@@ -73,7 +73,7 @@ export default class Cell extends PIXI.Container {
     this.renderNavigation();
 
     // 导航点id
-    this.navigationId = new BitText(this.naviId, 0, 0, this.brandColor, 70);
+    this.navigationId = new BitText(this.naviId, 0, 0, 0xffffff, 100);
     this.navigationId.anchor.set(0.5, 0);
     this.navigationId.y = CellSize.height / 2 + 30;
     this.addChild(this.navigationId);

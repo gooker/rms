@@ -2,12 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { Form, Input, Select, Button, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import {
-  fetchLogin,
-  fetchAppVersion,
-  fetchUpdateEnvironment,
-  fetchFindLogoByWebAddress,
-} from '@/services/global';
+import { fetchLogin, fetchUpdateEnvironment } from '@/services/global';
 import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getEnvOptionData, getActiveEnv } from './selector';
@@ -20,8 +15,6 @@ import { getLocalStorageEnv } from '@/utils/init';
 const Login = (props) => {
   const { environments, activeEnv, history } = props;
   const [loading, setLoading] = useState(false);
-  const [logo, setLogo] = useState(null);
-  const [appVersion, setAppVersion] = useState(null);
 
   // 挂载push函数
   window.history.$$push = history.push;
@@ -31,25 +24,11 @@ const Login = (props) => {
   }, []);
 
   async function init() {
-    const address = window.location.host;
     // 刚进入页面需要首先处理namespace数据
     let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
     const envs = getLocalStorageEnv();
     urlDir = { ...urlDir, ...envs };
     window.sessionStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
-
-    const [appLogo, _appVersion] = await Promise.all([
-      fetchFindLogoByWebAddress(address),
-      // fetchAppVersion(),
-    ]);
-    if (!dealResponse(appLogo)) {
-      if (appLogo.code !== '2') {
-        setLogo(appLogo);
-      }
-    }
-    // if (!dealResponse(_appVersion)) {
-    //   setAppVersion(_appVersion);
-    // }
   }
 
   async function onFinish(values) {
@@ -78,7 +57,7 @@ const Login = (props) => {
       <img src={LoginBackPicture} alt={'login_picture'} className={styles.loginBackPicture} />
       <div className={styles.loginPanel}>
         <div className={styles.logo}>
-          <img src={logo || Logo} alt={'logo'} className={styles.logoPicture} />
+          <img src={Logo} alt={'logo'} className={styles.logoPicture} />
         </div>
         <div className={styles.loginForm}>
           <Form onFinish={onFinish}>
@@ -127,11 +106,6 @@ const Login = (props) => {
               )}
             </Form.Item>
           </Form>
-          {appVersion && (
-            <div style={{ textAlign: 'center', fontSize: 16, color: '#fff' }}>
-              v{appVersion.versionMap?.MixRobot?.version}
-            </div>
-          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
+import { cloneDeep, find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
 import update from 'immutability-helper';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
@@ -24,13 +24,9 @@ import { Elevator, LogicArea, MapEntity } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
   deleteMapById,
-  fetchAllStationTypes,
   fetchMapDetail,
   fetchMapHistoryDetail,
-  fetchScopeActionProtocol,
   fetchSectionMaps,
-  getAllWebHooks,
-  getAllWebHookTypes,
   saveMap,
   updateMap,
 } from '@/services/XIHE';
@@ -38,9 +34,9 @@ import { activeMap } from '@/services/api';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
 import { LineType, NavigationCellType, RobotBrand } from '@/config/config';
-import { MockMapData } from '@/mockData';
+import { MockMapDataMulti, MushinyMapData, ProgramingConfigurationList } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -69,7 +65,7 @@ const EditorState = {
   selections: [], // 选择相关
   allStationTypes: {}, // 所有站点类型
   allWebHooks: [], // 所有Web Hooks
-  scopeActions: [], // 地图编程动作集
+  programing: ProgramingConfigurationList, // 地图编程动作集
 
   // 侧边栏控制
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
@@ -85,59 +81,32 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      // yield put({ type: 'saveCurrentMap', payload: MockMapData });
-      // yield put({ type: 'saveMapList', payload: [] });
+      yield put({ type: 'saveCurrentMap', payload: MockMapDataMulti });
+      yield put({ type: 'saveMapList', payload: [] });
 
-      // TODO: 获取所有导航点类型数据
-      const mapList = yield call(fetchSectionMaps);
-      if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-        // 检查是否有地图数据
-        if (mapList.length === 0) {
-          message.info(formatMessage({ id: 'app.message.noMap' }));
-          yield put({ type: 'saveMapList', payload: [] });
-          return;
-        }
-        yield put({ type: 'saveMapList', payload: mapList });
-
-        // 检查是否有激活地图
-        const activeMap = mapList.filter((map) => map.activeFlag);
-        if (activeMap.length === 0) {
-          message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
-        } else {
-          // 获取已激活地图数据并保存相关状态
-          const mapId = activeMap[0].id;
-          const currentMap = yield call(fetchMapDetail, mapId);
-          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-            yield put({ type: 'saveCurrentMap', payload: addTemporaryId(currentMap) });
-          }
-        }
-
-        /**
-         * 1. 获取所有站点类型
-         * 2. 获取已配置的 Web Hook
-         */
-        const [allWebHooks, allWebHookTypes, allStationTypes, scopeActions] = yield Promise.all([
-          getAllWebHooks(),
-          getAllWebHookTypes(),
-          fetchAllStationTypes(),
-          fetchScopeActionProtocol(),
-        ]);
-
-        const state = {};
-        if (!dealResponse(allWebHooks) && !dealResponse(allWebHookTypes)) {
-          state.allWebHooks = allWebHooks.map((hook) => ({
-            ...hook,
-            label: allWebHookTypes[hook.webHookType],
-          }));
-        }
-        if (!dealResponse(allStationTypes)) {
-          state.allStationTypes = allStationTypes;
-        }
-        if (!dealResponse(scopeActions)) {
-          state.scopeActions = scopeActions;
-        }
-        yield put({ type: 'saveState', payload: state });
-      }
+      // const mapList = yield call(fetchSectionMaps);
+      // if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+      //   // 检查是否有地图数据
+      //   if (mapList.length === 0) {
+      //     message.info(formatMessage({ id: 'app.message.noMap' }));
+      //     yield put({ type: 'saveMapList', payload: [] });
+      //     return;
+      //   }
+      //   yield put({ type: 'saveMapList', payload: mapList });
+      //
+      //   // 检查是否有激活地图
+      //   const activeMap = mapList.filter((map) => map.activeFlag);
+      //   if (activeMap.length === 0) {
+      //     message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
+      //   } else {
+      //     // 获取已激活地图数据并保存相关状态
+      //     const mapId = activeMap[0].id;
+      //     const currentMap = yield call(fetchMapDetail, mapId);
+      //     if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+      //       yield put({ type: 'saveCurrentMap', payload: currentMap });
+      //     }
+      //   }
+      // }
     },
 
     *checkoutMap({ payload }, { put, call }) {
@@ -159,8 +128,8 @@ export default {
     // 创建地图
     *fetchCreateMap({ payload }, { put, call, select }) {
       const { name, description } = payload;
-      const { sectionId } = yield select((state) => state.user);
       const { mapList } = yield select((state) => state.editor);
+      const sectionId = window.localStorage.getItem('sectionId');
 
       // 创建默认的逻辑区
       const logicAreaList = [new LogicArea()];
@@ -189,7 +158,7 @@ export default {
       yield put({ type: 'saveMapList', payload: newMapList });
     },
 
-    // 更新地图
+    // 更新地图信息
     *fetchUpdateMap({ payload }, { put, call, select }) {
       const { id, name, desc: description } = payload;
       const requestBody = { id, name, description };
@@ -240,6 +209,27 @@ export default {
           }
         }
       }
+    },
+
+    // 导入牧星地图
+    * importMushinyMap({ payload }, { call, put, select }) {
+      const { mapList } = yield select(({ editor }) => editor);
+      const response = yield call(saveMap, payload);
+      const newMapList = [...mapList];
+      newMapList.push({
+        sectionId: window.localStorage.getItem('sectionId'),
+        activeFlag: false,
+        description: payload.description,
+        id: response.id,
+        logicId: null,
+        logicName: null,
+        name: payload.name,
+        scopeCode: null,
+        scopeName: null,
+      });
+      yield put({ type: 'saveMapList', payload: newMapList });
+      yield put({ type: 'saveCurrentMapOnly', payload: { ...payload, id: response.id } });
+      return true;
     },
 
     // 导入导航点
@@ -319,10 +309,10 @@ export default {
     // 保存地图
     *saveMap({ payload }, { select, call, put }) {
       const { currentMap, mapList } = yield select(({ editor }) => editor);
-      const { sectionId } = yield select((state) => state.user);
       const mapData = payload || currentMap;
       yield put({ type: 'editorView/saveMapLoading', payload: true });
 
+      const sectionId = window.localStorage.getItem('sectionId');
       // 1. 校验地图数据
       if (validateMapData(mapData)) {
         // 2. 更新地图部分信息
@@ -540,6 +530,7 @@ export default {
 
       const cells = Object.values(currentMap.cellMap);
       let findResult;
+
       // 判断该车型下是否有相同导航点ID
       if (navigationCellType !== RobotBrand.MUSHINY) {
         findResult = find(cells, { naviId: code, brand: navigationCellType });
@@ -557,6 +548,8 @@ export default {
       }
 
       const id = getCellMapId(Object.values(currentMap.cellMap).map(({ id }) => id));
+
+      // 将xy转换成对应导航点类型的实际坐标
       const cell = new CellEntity({
         id,
         x,
@@ -565,12 +558,12 @@ export default {
         brand: navigationCellType,
         logicId: currentLogicArea,
       });
-      currentMap.cellMap[id] = cell;
-      return coordinateTransformer(
+      currentMap.cellMap[id] = reverseCoordinateTransformer(
         cell,
         navigationCellType,
-        currentMap.transform[navigationCellType],
+        currentMap?.transform?.[navigationCellType],
       );
+      return cell;
     },
 
     // 批量新增导航点（一般只针对二维码导航点）
@@ -698,9 +691,26 @@ export default {
       }
     },
 
+    // ********************************* 地图编程 ********************************* //
+    * updateMapPrograming({ payload }, { put, select }) {
+      const { currentMap, currentRouteMap } = yield select(({ editor }) => editor);
+      const { programing } = currentMap;
+
+      const { cells, configuration } = payload;
+      const { actionType, ...rest } = configuration;
+      const [p1, p2] = actionType;
+      const action = find(programing[p1], { actionId: p2 });
+      // 将rest中数据同步到action
+      const copyAction = cloneDeep(action);
+      copyAction.forEach((item) => {
+        item.value = rest[item.code];
+      });
+
+    },
+
     // ********************************* 待调整 ********************************* //
     // 移动点位
-    *moveCells({ payload }, { select, put }) {
+    * moveCells({ payload }, { select, put }) {
       const { cellIds, distance, dir } = payload;
       const { currentMap, currentCells } = yield select((state) => state.editor);
 
@@ -1363,6 +1373,12 @@ export default {
       return {
         ...state,
         mapRatio: action.payload,
+      };
+    },
+    savePrograming(state, action) {
+      return {
+        ...state,
+        programing: action.payload,
       };
     },
     saveMapMinRatio(state, action) {

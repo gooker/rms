@@ -30,14 +30,8 @@ export const AGVType = {
 // 各类车型的API namespace
 export const NameSpace = {
   Platform: 'platform',
-  Coordinator: 'platform',
   SSO: 'sso',
   I18N: 'translation',
-  LatentLifting: 'latent-lifting',
-  Tote: 'tote',
-  ForkLifting: 'forklift',
-  Sorter: 'sorter',
-  LatentTote: 'latentTote',
 };
 
 // 后端接口的 Server 的集合
@@ -68,14 +62,14 @@ export const RobotBrand = {
 export const NavigationCellType = [
   {
     code: RobotBrand.MUSHINY,
-    name: 'MUSHINY',
+    name: RobotBrand.MUSHINY,
     color: '#037ef3',
     coordinationType: 'L',
   },
   {
     code: RobotBrand.SEER,
-    name: 'SEER',
-    color: '#00aeff',
+    name: RobotBrand.SEER,
+    color: '#8e43e7',
     coordinationType: 'R',
   },
 ];
@@ -84,4 +78,18 @@ export const NavigationCellType = [
 export const CoordinateType = {
   LAND: 'land',
   NAVI: 'navi',
+};
+
+// 地图编程的对象
+export const ProgramingItemType = {
+  cell: 'cell',
+  relation: 'relation',
+  area: 'area',
+};
+
+// 地图编程-线条的timing枚举
+export const RelationTiming = {
+  begin: 'BEGIN',
+  onRoad: 'ONROAD',
+  end: 'END',
 };

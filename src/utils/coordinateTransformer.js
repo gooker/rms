@@ -55,6 +55,19 @@ export function coordinateTransformer(coordinate, navigationCellType, transformP
 }
 
 // coordinateTransformer的逆运算
-export function reverseCoordinateTransformer(coordinate, params) {
-  // 左右手，
+export function reverseCoordinateTransformer(coordinate, navigationCellType, transformParams) {
+  const { coordinationType, zoom, compensationOffset, compensationAngle } =
+  transformParams || getDefaultTransformParams(navigationCellType);
+
+  const matrixParams = [];
+  matrixParams.push(flipX());
+  matrixParams.push(translate(-compensationOffset.x, -compensationOffset.y));
+  matrixParams.push(scale(1 / zoom));
+  matrixParams.push(rotateDEG(compensationAngle));
+  if (coordinationType === 'L') {
+    matrixParams.push(flipX());
+  }
+  const matrix = compose(...matrixParams);
+  const { x, y } = applyToPoint(matrix, coordinate);
+  return { ...coordinate, x, y, nx: x, ny: y };
 }

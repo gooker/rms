@@ -16,13 +16,6 @@ export async function fetchUpdateEnvironment(params) {
   });
 }
 
-export async function fetchFindLogoByWebAddress(webAddress) {
-  return request(`/${NameSpace.SSO}/mainApp/findLogoByWebAddress`, {
-    method: 'GET',
-    data: { webAddress },
-  });
-}
-
 export async function fetchAppVersion() {
   return request(`/${NameSpace.Coordinator}/api/getAppVersion`, {
     method: 'GET',
