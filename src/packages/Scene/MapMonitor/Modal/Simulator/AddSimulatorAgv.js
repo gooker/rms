@@ -13,7 +13,7 @@ const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const { formItemLayout: formItemLayout2 } = getFormLayout(8, 16);
 
 function AddSimulatorAgv(props) {
-  const { robotType, robotTypes, submit, logicId, onCancel } = props;
+  const { robotType, robotTypes, submit, logicId, onCancel, agvAdapter } = props;
   const [executing, setExecuting] = useState(false);
   const [isIncrement, setIsIncrement] = useState(false); // 用于标记批量添加小车时候是否是增量添加
   const [selectedSubType, setSelectedSubType] = useState('Normal');
@@ -33,11 +33,11 @@ function AddSimulatorAgv(props) {
       .validateFields()
       .then((value) => {
         setExecuting(true);
-        submit && submit(value);
+        const params = { agvAdapter, isSimulator: true, agvStatusDTO: { ...value } };
+        submit && submit(params);
         setExecuting(false);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 
   function batchAddAGV() {
@@ -66,7 +66,7 @@ function AddSimulatorAgv(props) {
 
   return (
     <div style={{ marginTop: 20 }}>
-      <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agvType' })}>
+      {/* <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agvType' })}>
         <Select disabled value={robotType} style={{ width: '130px' }}>
           {robotTypes.map((record) => (
             <Select.Option value={record} key={record}>
@@ -95,7 +95,7 @@ function AddSimulatorAgv(props) {
             ))}
           </Select>
         </Form.Item>
-      )}
+      )} */}
 
       <Form form={formRef} {...formItemLayout} labelWrap>
         <div className={styles.rightSimulator}>
@@ -111,7 +111,7 @@ function AddSimulatorAgv(props) {
           </Form.Item>
 
           <Form.Item
-            name={'cellId'}
+            name={'currentNaviId'}
             label={formatMessage({ id: 'app.map.cell' })}
             rules={[{ required: true }]}
           >
@@ -129,7 +129,7 @@ function AddSimulatorAgv(props) {
 
           <Form.Item {...formItemLayoutNoLabel}>
             <Button loading={executing} disabled={executing} onClick={addAGV}>
-              <PlusOutlined /> <FormattedMessage id='app.button.add' />
+              <PlusOutlined /> <FormattedMessage id="app.button.add" />
             </Button>
           </Form.Item>
         </div>

@@ -26,9 +26,17 @@ import simulatorStyle from './simulator.module.less';
 const size = 'small';
 
 const SimulatorPanel = (props) => {
-  const { dispatch, simulatorHistory, simulatorAgvList, currentLogicArea, robotTypes } = props;
+  const {
+    dispatch,
+    simulatorHistory,
+    simulatorAgvList,
+    currentLogicArea,
+    robotTypes,
+    allAdaptors,
+  } = props;
 
   const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
+  const [agvAdapter, setAgvAdapter] = useState(null); // 适配器
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
   const [configurationVisible, setConfigurationVisible] = useState(false); // 配置
   const [addVisit, setAddVisit] = useState(false); // 添加模拟器
@@ -40,7 +48,12 @@ const SimulatorPanel = (props) => {
     init();
   }, []);
 
+  useEffect(() => {
+    setAgvAdapter(Object.values(allAdaptors)?.[0]?.adapterType?.id);
+  }, [allAdaptors]);
+
   function init() {
+    dispatch({ type: 'simulator/fetchAllAdaptors' });
     dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
     dispatch({ type: 'simulator/fetchSimulatorHistory' });
   }
@@ -204,6 +217,7 @@ const SimulatorPanel = (props) => {
               <AddSimulatorAgv
                 robotType={currentRobotType}
                 robotTypes={robotTypes}
+                agvAdapter={agvAdapter}
                 submit={(value) => {
                   dispatch({
                     type: 'simulator/fetchAddSimulatorAgv',
@@ -256,21 +270,24 @@ const SimulatorPanel = (props) => {
                   style={{ marginRight: 10, fontWeight: 600, fontSize: 15 }}
                   className={commonStyles.popoverFontColor}
                 >
-                  <FormattedMessage id='app.agvType' />:
+                  <FormattedMessage id="app.configInfo.header.adapter" />:
                 </span>
                 <Select
                   size={size}
                   style={{ width: '60%' }}
-                  value={currentRobotType}
+                  value={agvAdapter}
                   onChange={(value) => {
-                    setCurrentRobotType(value);
+                    setAgvAdapter(value);
                   }}
                 >
-                  {robotTypes.map((record) => (
-                    <Select.Option value={record} key={record}>
-                      {record}
-                    </Select.Option>
-                  ))}
+                  {Object.values(allAdaptors).map(({ adapterType }) => {
+                    const { id, name } = adapterType;
+                    return (
+                      <Select.Option key={id} value={id}>
+                        {name}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
                 <SettingOutlined
                   style={{ color: '#fff', fontSize: 17, marginLeft: 10 }}
@@ -448,4 +465,5 @@ export default connect(({ global, simulator, loading, monitor }) => ({
   currentLogicArea: monitor.currentLogicArea,
   simulatorAgvList: simulator.simulatorAgvList,
   simulatorHistory: simulator.simulatorHistory,
+  allAdaptors: simulator.allAdaptors,
 }))(memo(SimulatorPanel));

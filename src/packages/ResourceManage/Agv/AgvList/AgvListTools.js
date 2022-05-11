@@ -10,8 +10,9 @@ import {
   ToTopOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
+import { logOutRobot } from '@/services/resourceManageAPI';
 import Dictionary from '@/utils/Dictionary';
-import { formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
@@ -52,6 +53,19 @@ const AgvListTools = (props) => {
     dispatch({ type: 'agvList/updateSearchParams', payload: { ...searchParams, [key]: value } });
   }
 
+  function cancelRegister() {
+    const agvIds = selectedRows.map(({ robotId }) => robotId);
+    RmsConfirm({
+      content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
+      onOk: async () => {
+        const response = await logOutRobot({ ids: agvIds });
+        if (!dealResponse(response, 1)) {
+          dispatch({ type: 'agvList/fetchInitialData' });
+        }
+      },
+    });
+  }
+
   async function exportAgvHardwareInfo() {
     //
   }
@@ -66,7 +80,7 @@ const AgvListTools = (props) => {
         <Form.Item label={formatMessage({ id: 'app.agv.id' })}>
           <Select
             allowClear
-            mode='multiple'
+            mode="multiple"
             style={{ width: 300 }}
             value={searchParams.id}
             onChange={(value) => {
@@ -79,7 +93,7 @@ const AgvListTools = (props) => {
         <Form.Item label={formatMessage({ id: 'app.agvStatus' })}>
           <Select
             allowClear
-            mode='multiple'
+            mode="multiple"
             style={{ width: 300 }}
             value={searchParams.state}
             onChange={(value) => {
@@ -95,11 +109,11 @@ const AgvListTools = (props) => {
           <Button disabled={selectedRows.length === 0}>
             <GroupOutlined /> 车辆分组
           </Button>
-          <Button disabled={selectedRows.length === 0}>
+          <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 取消注册
           </Button>
           <Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>
-            <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />
+            <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
           </Button>
           <Dropdown
             overlay={
@@ -112,10 +126,10 @@ const AgvListTools = (props) => {
                   }
                 }}
               >
-                <Menu.Item key='hardware'>
+                <Menu.Item key="hardware">
                   <FormattedMessage id={'app.agv.exportHardwareInfo'} />
                 </Menu.Item>
-                <Menu.Item key='carInfo'>
+                <Menu.Item key="carInfo">
                   <FormattedMessage id={'app.agv.exportAgvInfo'} />
                 </Menu.Item>
               </Menu>
@@ -130,17 +144,17 @@ const AgvListTools = (props) => {
               dispatch({ type: 'agvList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
         <Col>
           <Button
-            type='dashed'
+            type="dashed"
             onClick={() => {
               dispatch({ type: 'agvList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id='app.agvList.found' />
+            <ScanOutlined /> <FormattedMessage id="app.agvList.found" />
             {unregisterRobots.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterRobots.length}]
