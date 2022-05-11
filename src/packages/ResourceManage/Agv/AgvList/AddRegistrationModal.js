@@ -1,19 +1,16 @@
 /* TODO: I18N */
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import {
   Form,
   Radio,
   Modal,
   Select,
   Input,
+  InputNumber,
   Row,
   Col,
   AutoComplete,
-  Space,
   Button,
-  Switch,
-  InputNumber,
-  Checkbox,
 } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { getFormLayout, formatMessage, dealResponse } from '@/utils/util';
@@ -24,25 +21,31 @@ import { findRobot } from '@/services/resourceManageAPI';
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const AddRegistrationModal = (props) => {
   const { dispatch, visible, allAdaptors } = props;
+  const [findType, setFindType] = useState('bonjour');
   const [formRef] = Form.useForm();
   function onSubmit() {
     formRef
       .validateFields()
       .then((values) => {
-        console.log(values);
         const { infos, agvAdapter, type } = values;
-        const params = {};
-        infos.map(({ key, value }) => {
-          params[key] = value;
-        });
-        sendfindRobot({ agvAdapter, type,params });
+        let params = {};
+        if (type === 'ip') {
+          params.ip = values.ip;
+          params.port = values.port;
+        } else {
+          infos.map(({ key, value }) => {
+            params[key] = value;
+          });
+        }
+
+        sendfindRobot({ agvAdapter, type, params, isSimulator: false });
       })
       .catch(() => {});
   }
 
   async function sendfindRobot(param) {
     const response = await findRobot(param);
-    if (!dealResponse(response)) {
+    if (!dealResponse(response, 1)) {
       await dispatch({ type: 'agvList/fetchInitialData' });
       dispatch({ type: 'agvList/updateAddRegistrationModalShown', payload: false });
     }
@@ -63,7 +66,11 @@ const AddRegistrationModal = (props) => {
           name={'type'}
           label={'方式'}
           rules={[{ required: true }]}
-          initialValue={'bonjour'}
+          initialValue={findType}
+          getValueFromEvent={(e) => {
+            setFindType(e.target.value);
+            return e.target.value;
+          }}
         >
           <Radio.Group optionType="button" buttonStyle="solid">
             <Radio.Button value={'bonjour'}>查找</Radio.Button>
@@ -88,65 +95,81 @@ const AddRegistrationModal = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.List name={'infos'} initialValue={[{ key: null, value: null }]}>
-          {(fields, { add, remove }, { errors }) => (
-            <>
-              {fields.map((field, index) => (
-                <Form.Item
-                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                  label={index === 0 ? <FormattedMessage id="environmentManager.apis" /> : ''}
-                  required={true}
-                  key={field.key}
-                >
-                  <Row gutter={10}>
-                    <Col span={9}>
-                      <Form.Item
-                        noStyle
-                        {...field}
-                        name={[field.name, 'key']}
-                        rules={[{ required: true }]}
-                      >
-                        <AutoComplete
-                          placeholder={formatMessage({
-                            id: 'key',
-                          })}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={11}>
-                      <Form.Item
-                        noStyle
-                        {...field}
-                        name={[field.name, 'value']}
-                        rules={[{ required: true }]}
-                      >
-                        <Input
-                          placeholder={formatMessage({
-                            id: 'value',
-                          })}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={4} style={{ textAlign: 'center' }}>
-                      {fields.length > 1 ? (
-                        <MinusCircleOutlined
-                          onClick={() => remove(field.name)}
-                          style={{ fontSize: 16 }}
-                        />
-                      ) : null}
-                    </Col>
-                  </Row>
+        {findType === 'ip' ? (
+          <>
+            <Form.Item name={'ip'} label={'IP'} rules={[{ required: true }]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              name={'port'}
+              label={<FormattedMessage id={'app.agv.port'} />}
+              rules={[{ required: true }]}
+            >
+              <InputNumber />
+            </Form.Item>
+          </>
+        ) : (
+          <Form.List name={'infos'} initialValue={[{ key: null, value: null }]}>
+            {(fields, { add, remove }, { errors }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item
+                    {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                    label={index === 0 ? '查找信息' : ''}
+                    required={true}
+                    key={field.key}
+                  >
+                    <Row gutter={10}>
+                      <Col span={9}>
+                        <Form.Item
+                          noStyle
+                          {...field}
+                          name={[field.name, 'key']}
+                          rules={[{ required: true }]}
+                        >
+                          <AutoComplete
+                            placeholder={formatMessage({
+                              id: 'key',
+                            })}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={11}>
+                        <Form.Item
+                          noStyle
+                          {...field}
+                          name={[field.name, 'value']}
+                          rules={[{ required: true }]}
+                        >
+                          <Input
+                            placeholder={formatMessage({
+                              id: 'value',
+                            })}
+                          />
+                        </Form.Item>
+                      </Col>
+                      <Col span={4} style={{ textAlign: 'center' }}>
+                        {fields.length > 1 ? (
+                          <MinusCircleOutlined
+                            onClick={() => remove(field.name)}
+                            style={{ fontSize: 16 }}
+                          />
+                        ) : null}
+                      </Col>
+                    </Row>
+                  </Form.Item>
+                ))}
+                <Form.Item {...formItemLayoutNoLabel}>
+                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
+                    <PlusOutlined />
+                  </Button>
+                  <Form.ErrorList errors={errors} />
                 </Form.Item>
-              ))}
-              <Form.Item {...formItemLayoutNoLabel}>
-                <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                  <PlusOutlined />
-                </Button>
-                <Form.ErrorList errors={errors} />
-              </Form.Item>
-            </>
-          )}
-        </Form.List>
+              </>
+            )}
+          </Form.List>
+        )}
       </Form>
     </Modal>
   );

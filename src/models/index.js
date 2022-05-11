@@ -11,6 +11,7 @@ import menuModel from './menuModel';
 import monitorViewModel from './monitorViewModel';
 import groupManageModel from './groupManageModel';
 import agvListModel from './agvListModel';
+import equipmentListModel from './equipmentListModel';
 
 export default [
   globalModel,
@@ -26,4 +27,5 @@ export default [
   monitorViewModel,
   groupManageModel,
   agvListModel,
+  equipmentListModel,
 ];

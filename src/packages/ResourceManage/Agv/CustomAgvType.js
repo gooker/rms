@@ -9,7 +9,6 @@ import { fetchAllAdaptor } from '@/services/resourceManageAPI';
 import styles from './agv.module.less';
 import commonStyle from '@/common.module.less';
 import { AllAdapters } from '@/mockData';
-import { version } from 'less';
 
 const CustomAgvType = () => {
   const [loading, setLoading] = useState(false);
@@ -39,17 +38,6 @@ const CustomAgvType = () => {
     setDetail(adapterType);
   }
 
-  function renderExtra(otherInfo) {
-    if (isNull(otherInfo)) return;
-    return Object.keys(otherInfo)?.forEach((key) => {
-      return (
-        <div key={key}>
-          <span>{key}</span>
-          {/* <span>{otherInfo[key]}</span> */}
-        </div>
-      );
-    });
-  }
 
   return (
     <Spin spinning={loading}>

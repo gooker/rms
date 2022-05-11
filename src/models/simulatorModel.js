@@ -6,6 +6,7 @@ import {
   fetchBatchDeleteSimulatorAgv,
   fetchSimulatorLoginAGVControlState,
 } from '@/services/monitor';
+import { fetchAllAdaptor, findRobot } from '@/services/resourceManageAPI';
 import { dealResponse } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
@@ -15,6 +16,7 @@ export default {
   state: {
     simulatorAgvList: [],
     simulatorHistory: {},
+    allAdaptors: {},
   },
 
   reducers: {
@@ -38,6 +40,15 @@ export default {
   },
 
   effects: {
+    *fetchAllAdaptors(_, { call, put }) {
+      const response = yield call(fetchAllAdaptor);
+      if (!dealResponse(response)) {
+        yield put({
+          type: 'save',
+          payload: { allAdaptors: response },
+        });
+      }
+    },
     *fetchSimulatorHistory(_, { call, put }) {
       const response = yield call(fetchSimulatorHistory);
       if (!dealResponse(response)) {
@@ -67,8 +78,9 @@ export default {
       }
     },
 
+    // 配置适配器的模拟小车
     *fetchAddSimulatorAgv({ payload }, { call }) {
-      const response = yield call(addSimulationAgv, payload);
+      const response = yield call(findRobot, payload);
       return !dealResponse(response, true);
     },
 
