@@ -96,11 +96,7 @@ export const htmlFormatMessage = ({ id }, values) => {
 };
 
 export function getDomainNameByUrl(url) {
-  // TODO: 这里可以处理LocalStorage里配置的SSO
-  let apis = JSON.parse(window.sessionStorage.getItem('nameSpacesInfo'));
-  if (isStrictNull(apis) || !isPlainObject(apis)) {
-    apis = requestAPI();
-  }
+  const apis = window.nameSpacesInfo;
   const array = url.split('/');
   if (array.length < 2) {
     message.error(formatMessage({ id: 'app.request.addressError' }));

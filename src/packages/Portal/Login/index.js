@@ -28,7 +28,7 @@ const Login = (props) => {
     let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
     const envs = getLocalStorageEnv();
     urlDir = { ...urlDir, ...envs };
-    window.sessionStorage.setItem('nameSpacesInfo', JSON.stringify(urlDir));
+    window.nameSpacesInfo = urlDir;
   }
 
   async function onFinish(values) {
