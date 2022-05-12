@@ -7,13 +7,20 @@ import { dealResponse, getFormLayout, adaptModalHeight } from '@/utils/util';
 import { findDeviceActionsByDeviceType } from '@/services/resourceManageAPI';
 import DeviceActionsModal from './DeviceActionsModal';
 
+const connectTypes = {
+  MODBUS_TCP: 'MODBUS_TCP',
+  MODBUS_RTU: 'MODBUS_RTU',
+  HTTP: 'HTTP',
+  TCP: 'TCP',
+  UDP: 'UDP',
+};
+
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const RegisterDeviceModal = (props) => {
   const { dispatch, visible, allDeviceTypes, onSubmit } = props;
   const [formRef] = Form.useForm();
-  const [deviceActions, setDeviceActions] = useState([]);
+  const [deviceActions, setDeviceActions] = useState([]); // 设备动作
   const [actionVisible, setActionVisible] = useState(false); // 设备动作modal
-  const [deviceType, setDeviceType] = useState(null); // 设备动作
 
   useEffect(() => {
     if (!visible) {
@@ -26,25 +33,30 @@ const RegisterDeviceModal = (props) => {
     formRef
       .validateFields()
       .then((values) => {
-        const { actionentitys, infos, deviceType } = values;
-
-        console.log(values);
-        let actionConfigurationsEntity = { keyValue: {} };
+        const { infos } = values;
+        const newParams = { ...values };
         const configs = {};
         infos?.map(({ key, value }) => {
           configs[key] = value;
         });
-        actionentitys?.map(({ key, value }) => {
-          actionConfigurationsEntity.keyValue[key] = value;
-        });
+        delete newParams.infos;
 
-        onSubmit({ actionConfigurationsEntity, configs, deviceType });
+        const deviceActionDTO = [];
+        deviceActions.map((item) => {
+          const { id, deviceActionParamsDefinitionList } = item;
+          const newDefinition = [];
+          deviceActionParamsDefinitionList?.map(({ key, value }) => {
+            newDefinition.push({ key, value });
+          });
+          deviceActionDTO.push({ id, deviceActionParamsDefinitionList: newDefinition });
+        });
+        onSubmit({ ...newParams, deviceActionDTO });
       })
       .catch(() => {});
   }
 
   async function onDeviceTypeChange(e) {
-    const response = await findDeviceActionsByDeviceType({ deviceType: e });
+    const response = await findDeviceActionsByDeviceType({ deviceTypeCode: e, deviceId: '' });
     if (!dealResponse(response)) {
       setDeviceActions(response);
     }
@@ -56,6 +68,7 @@ const RegisterDeviceModal = (props) => {
 
   return (
     <Modal
+      destroyOnClose
       visible={visible}
       title={'设备注册'}
       maskClosable={false}
@@ -68,7 +81,6 @@ const RegisterDeviceModal = (props) => {
         </Button>,
         <Button
           key="set"
-          type="primary"
           disabled={deviceActions?.length === 0}
           onClick={() => {
             setActionVisible(true);
@@ -77,23 +89,22 @@ const RegisterDeviceModal = (props) => {
           配置设备动作
         </Button>,
         <Button key="submit" type="primary" onClick={submit}>
-          确定
+          注册
         </Button>,
       ]}
     >
       <Form form={formRef} {...formItemLayout} labelWrap>
         <Form.Item
-          name={'deviceType'}
+          name={'deviceTypeCode'}
           label={'设备类型'}
           rules={[{ required: true }]}
           getValueFromEvent={(e) => {
             onDeviceTypeChange(e);
-            setDeviceType(e);
             return e;
           }}
         >
           <Select>
-            {allDeviceTypes.map(({ code, name, deviceAdapterTypeCode }) => {
+            {allDeviceTypes.map(({ code, name }) => {
               return (
                 <Select.Option key={code} value={code}>
                   {name}
@@ -103,6 +114,27 @@ const RegisterDeviceModal = (props) => {
           </Select>
         </Form.Item>
 
+        <Form.Item name={'deviceID'} label={'设备Id'} rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+
+        <Form.Item name={'deviceName'} label={'设备名称'} rules={[{ required: true }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name={'connectionType'} label={'连接方式'} rules={[{ required: true }]}>
+          <Select>
+            {Object.keys(connectTypes)?.map((item) => (
+              <Select.Option key={item} value={item}>
+                {connectTypes[item]}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+
+        <Form.Item name={'deviceDescription'} label={'设备描述'}>
+          <Input />
+        </Form.Item>
+
         <Form.List name={'infos'} initialValue={[{ key: null, value: null }]}>
           {(fields, { add, remove }, { errors }) => (
             <>
@@ -110,27 +142,16 @@ const RegisterDeviceModal = (props) => {
                 <Form.Item
                   {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
                   label={index === 0 ? '设备配置信息' : ''}
-                  required={true}
                   key={field.key}
                 >
                   <Row gutter={10}>
                     <Col span={9}>
-                      <Form.Item
-                        noStyle
-                        {...field}
-                        name={[field.name, 'key']}
-                        rules={[{ required: true }]}
-                      >
+                      <Form.Item noStyle {...field} name={[field.name, 'key']}>
                         <AutoComplete placeholder={'key'} />
                       </Form.Item>
                     </Col>
                     <Col span={11}>
-                      <Form.Item
-                        noStyle
-                        {...field}
-                        name={[field.name, 'value']}
-                        rules={[{ required: true }]}
-                      >
+                      <Form.Item noStyle {...field} name={[field.name, 'value']}>
                         <Input placeholder={'value'} />
                       </Form.Item>
                     </Col>
@@ -156,17 +177,18 @@ const RegisterDeviceModal = (props) => {
         </Form.List>
       </Form>
 
-      <DeviceActionsModal
-        visible={actionVisible}
-        deviceActions={deviceActions}
-        onCancelModal={() => {
-          setActionVisible(false);
-        }}
-        deviceType={deviceType}
-        onRefresh={() => {
-          onDeviceTypeChange(deviceType);
-        }}
-      />
+      {actionVisible && (
+        <DeviceActionsModal
+          visible={actionVisible}
+          deviceActions={deviceActions}
+          onCancelModal={() => {
+            setActionVisible(false);
+          }}
+          onSave={(values) => {
+            setDeviceActions(values);
+          }}
+        />
+      )}
     </Modal>
   );
 };

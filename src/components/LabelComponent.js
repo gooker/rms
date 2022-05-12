@@ -34,7 +34,7 @@ const LabelComponent = (props) => {
       >
         {label}:
       </div>
-      <div style={{ flex: 1, color: '#e8e8e8' }}>{children}</div>
+      <div style={{ flex: 1, color: '' }}>{children}</div>
     </div>
   );
 };

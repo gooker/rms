@@ -1,14 +1,16 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Badge, Button, Drawer } from 'antd';
-import { CloseOutlined } from '@ant-design/icons';
+import { Button, Drawer } from 'antd';
+import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, getDirectionLocale, getSuffix } from '@/utils/util';
+import { findDeviceActionsByDeviceType, saveDeviceActions } from '@/services/resourceManageAPI';
+import { convertToUserTimezone, isNull, dealResponse } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import EquipmentListTools from './components/EquipmentListTools';
 import EquipmentRegisterPanel from './components/EquipmentRegisterPanel';
+import DeviceActionsModal from './components/DeviceActionsModal';
 
 const EquipmentList = (props) => {
   const { dispatch, allDevices, searchParams, loading, showRegisterPanel } = props;
@@ -16,6 +18,9 @@ const EquipmentList = (props) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataSource, setDatasource] = useState([]);
+
+  const [deviceActions, setDeviceActions] = useState([]); // 设备动作数据
+  const [visible, setVisible] = useState(false); // 设备动作visible
 
   const columns = [
     {
@@ -30,7 +35,7 @@ const EquipmentList = (props) => {
     },
     {
       title: 'IP',
-      dataIndex: 'IP',
+      dataIndex: 'ip',
       align: 'center',
     },
     {
@@ -39,24 +44,42 @@ const EquipmentList = (props) => {
       align: 'center',
     },
     {
-      title: '信号强度',
-      dataIndex: 'signalStrength',
-      align: 'center',
-      render: (text) => getDirectionLocale(text),
-    },
-    {
       title: '连接方式',
       dataIndex: 'connectionType',
       align: 'center',
     },
+
     {
       title: '是否忽略',
-      dataIndex: 'isIgnored',
+      dataIndex: 'ignored',
       align: 'center',
+      render: (text) => {
+        if (!isNull(text)) {
+          if (text) {
+            return <FormattedMessage id="app.common.true" />;
+          }
+          return <FormattedMessage id="app.common.false" />;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id="app.common.operation" />,
+      align: 'center',
+      render: (text, record) => {
+        return (
+          <Button
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => {
+              showDeviceActionModal(record);
+            }}
+          />
+        );
+      },
     },
   ];
 
-  const expandColumnsKey = [
+  const expandColumns = [
     {
       title: <FormattedMessage id="app.agv.addingTime" />,
       dataIndex: 'createDate',
@@ -69,20 +92,14 @@ const EquipmentList = (props) => {
       },
     },
     {
+      title: '信号强度',
+      dataIndex: 'signalStrength',
+      align: 'center',
+    },
+    {
       title: '设备描述',
       align: 'center',
       dataIndex: 'deviceDescription',
-      render: (text) => {
-        if (text != null) {
-          if (parseInt(text) > 50) {
-            return <Badge status="success" text={getSuffix(text, '%')} />;
-          } else if (parseInt(text) > 10) {
-            return <Badge status="warning" text={getSuffix(text, '%')} />;
-          } else {
-            return <Badge status="error" text={getSuffix(text, '%')} />;
-          }
-        }
-      },
     },
     {
       title: '在线状态',
@@ -100,7 +117,7 @@ const EquipmentList = (props) => {
   }, [allDevices, searchParams]);
 
   function filterDatasource() {
-    let nowAllDevices = [...allDevices].filter((item) => item.register);
+    let nowAllDevices = [...allDevices].filter((item) => item.hasRegistered);
     const { id, connectionType } = searchParams;
     if (id?.length > 0) {
       nowAllDevices = nowAllDevices.filter(({ deviceID }) => id.includes(deviceID));
@@ -117,6 +134,35 @@ const EquipmentList = (props) => {
     dispatch({ type: 'equipList/fetchInitialData' });
   }
 
+  // 修改设备动作弹框 start
+  async function showDeviceActionModal(record) {
+    const { deviceTypeCode, deviceID: deviceId } = record;
+    const response = await findDeviceActionsByDeviceType({ deviceTypeCode, deviceId });
+    if (!dealResponse(response)) {
+      setDeviceActions(response);
+      setVisible(true);
+    }
+  }
+
+  async function onSaveActions(values) {
+    const deviceActionDTO = [];
+    values.map((item) => {
+      const { id, deviceActionParamsDefinitionList } = item;
+      const newDefinition = [];
+      deviceActionParamsDefinitionList?.map(({ key, value }) => {
+        newDefinition.push({ key, value });
+      });
+      deviceActionDTO.push({ id, deviceActionParamsDefinitionList: newDefinition });
+    });
+    const res = await saveDeviceActions(deviceActionDTO);
+    if (!dealResponse(res, 1)) {
+      setVisible(false);
+      setDeviceActions([]);
+      fetchRegisteredDevice();
+    }
+  }
+  // 修改设备动作弹框end
+
   function onSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRows(selectedRows);
     setSelectedRowKeys(selectedRowKeys);
@@ -128,7 +174,7 @@ const EquipmentList = (props) => {
       <TableWithPages
         loading={loading}
         columns={columns}
-        expandColumnsKey={expandColumnsKey}
+        expandColumns={expandColumns}
         dataSource={dataSource}
         rowKey={(record) => record.deviceID}
         rowSelection={{
@@ -160,6 +206,19 @@ const EquipmentList = (props) => {
       >
         <EquipmentRegisterPanel onRefresh={fetchRegisteredDevice} />
       </Drawer>
+
+      {/* 编辑设备动作 */}
+      {visible && (
+        <DeviceActionsModal
+          visible={visible}
+          deviceActions={deviceActions}
+          onCancelModal={() => {
+            setVisible(false);
+          }}
+          isEdit={true}
+          onSave={onSaveActions}
+        />
+      )}
     </TablePageWrapper>
   );
 };

@@ -119,7 +119,7 @@ export function findAllDevices() {
   });
 }
 
-// 查找所有注册的设备类型
+// 查找所有设备类型
 export function findAllDeviceTypes() {
   return request(`/${NameSpace.Platform}/device/findAllDeviceType`, {
     method: 'GET',
@@ -141,7 +141,10 @@ export function deleteDeviceType(param) {
   });
 }
 
-// 根据设备类型查询设备动作
+/**根据设备类型查询设备动作 
+ * 1.注册前只传deviceTypeCode
+ * 2.注册成功后还需要传deviceId
+ * ****/ 
 export function findDeviceActionsByDeviceType(param) {
   return request(`/${NameSpace.Platform}/device/findDeviceActionsByDeviceType`, {
     method: 'GET',

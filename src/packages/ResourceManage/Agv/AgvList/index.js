@@ -27,19 +27,19 @@ const AgvList = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id='app.agv.id' />,
+      title: <FormattedMessage id="app.agv.id" />,
       dataIndex: 'agvId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agvType' />,
+      title: <FormattedMessage id="app.agvType" />,
       dataIndex: 'robotType',
       align: 'center',
       render: (text, record) => {
         if (record.isDummy) {
-          return <FormattedMessage id='app.agv.threeGenerationsOfVehicles(Virtual)' />;
+          return <FormattedMessage id="app.agv.threeGenerationsOfVehicles(Virtual)" />;
         } else if (text === 3) {
-          return <FormattedMessage id='app.agv.threeGenerationOfTianma' />;
+          return <FormattedMessage id="app.agv.threeGenerationOfTianma" />;
         } else {
           return <span>{text}</span>;
         }
@@ -51,75 +51,75 @@ const AgvList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.port' />,
+      title: <FormattedMessage id="app.agv.port" />,
       dataIndex: 'port',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.direction' />,
+      title: <FormattedMessage id="app.agv.direction" />,
       dataIndex: 'currentDirection',
       align: 'center',
       render: (text) => getDirectionLocale(text),
     },
     {
-      title: <FormattedMessage id='app.common.position' />,
+      title: <FormattedMessage id="app.common.position" />,
       dataIndex: 'currentCellId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.maintenanceState' />,
+      title: <FormattedMessage id="app.agv.maintenanceState" />,
       dataIndex: 'disabled',
       align: 'center',
       render: (text) => {
         return (
           <span>
             {text ? (
-              <Tag color='red'>
+              <Tag color="red">
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id='app.agv.underMaintenance' />
+                  <FormattedMessage id="app.agv.underMaintenance" />
                 </span>
               </Tag>
             ) : (
-              <Tag color='green'>{<FormattedMessage id='app.agv.normal' />}</Tag>
+              <Tag color="green">{<FormattedMessage id="app.agv.normal" />}</Tag>
             )}
           </span>
         );
       },
     },
     {
-      title: <FormattedMessage id='app.agvStatus' />,
+      title: <FormattedMessage id="app.agvStatus" />,
       dataIndex: 'agvStatus',
       align: 'center',
       render: (agvStatus) => getAgvStatusTag(agvStatus),
     },
     {
-      title: <FormattedMessage id='app.agv.serverIdentity' />,
+      title: <FormattedMessage id="app.agv.serverIdentity" />,
       dataIndex: 'clusterIndex',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.operation' />,
+      title: <FormattedMessage id="app.common.operation" />,
       align: 'center',
       render: (text, record) => {
         return (
           <Button
-            type='link'
+            type="link"
             icon={<InfoOutlined />}
             onClick={() => {
               checkAgvDetail(record.robotId);
             }}
           >
-            <FormattedMessage id='app.agv.details' />
+            <FormattedMessage id="app.agv.details" />
           </Button>
         );
       },
     },
   ];
 
-  const expandColumnsKey = [
+  const expandColumns = [
     {
-      title: <FormattedMessage id='app.agv.addingTime' />,
+      title: <FormattedMessage id="app.agv.addingTime" />,
       dataIndex: 'createDate',
       align: 'center',
       render: (text, record, index, flag) => {
@@ -130,44 +130,44 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id='app.agv.battery' />,
+      title: <FormattedMessage id="app.agv.battery" />,
       align: 'center',
       dataIndex: 'battery',
       render: (text) => {
         if (text != null) {
           if (parseInt(text) > 50) {
-            return <Badge status='success' text={getSuffix(text, '%')} />;
+            return <Badge status="success" text={getSuffix(text, '%')} />;
           } else if (parseInt(text) > 10) {
-            return <Badge status='warning' text={getSuffix(text, '%')} />;
+            return <Badge status="warning" text={getSuffix(text, '%')} />;
           } else {
-            return <Badge status='error' text={getSuffix(text, '%')} />;
+            return <Badge status="error" text={getSuffix(text, '%')} />;
           }
         }
       },
     },
     {
-      title: <FormattedMessage id='app.agv.batteryVoltage' />,
+      title: <FormattedMessage id="app.agv.batteryVoltage" />,
       align: 'center',
       dataIndex: 'batteryVoltage',
       render: (text) => {
         if (text != null) {
           if (parseInt(text) > 47000) {
-            return <Badge status='success' text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status="success" text={getSuffix(text / 1000, 'v')} />;
           } else if (parseInt(text) > 45000) {
-            return <Badge status='warning' text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status="warning" text={getSuffix(text / 1000, 'v')} />;
           } else {
-            return <Badge status='error' text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status="error" text={getSuffix(text / 1000, 'v')} />;
           }
         }
       },
     },
     {
-      title: <FormattedMessage id='app.agv.version' />,
+      title: <FormattedMessage id="app.agv.version" />,
       align: 'center',
       dataIndex: 'version',
     },
     {
-      title: <FormattedMessage id='app.agv.batteryType' />,
+      title: <FormattedMessage id="app.agv.batteryType" />,
       align: 'center',
       dataIndex: 'batteryType',
       render: (text) => {
@@ -177,12 +177,12 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id='app.agv.maxChargeCurrent' />,
+      title: <FormattedMessage id="app.agv.maxChargeCurrent" />,
       align: 'center',
       dataIndex: 'maxChargingCurrent',
       render: (text) => {
         if (!isNull(text)) {
-          return <Badge status='success' text={getSuffix(text, ' A')} />;
+          return <Badge status="success" text={getSuffix(text, ' A')} />;
         }
       },
     },
@@ -223,7 +223,7 @@ const AgvList = (props) => {
       <TableWithPages
         loading={loading}
         columns={columns}
-        expandColumnsKey={expandColumnsKey}
+        expandColumns={expandColumns}
         dataSource={dataSource}
         rowKey={(record) => record.id}
         rowSelection={{
@@ -234,9 +234,9 @@ const AgvList = (props) => {
 
       {/* 注册小车 */}
       <Drawer
-        title='车辆注册'
-        placement='top'
-        height='50%'
+        title="车辆注册"
+        placement="top"
+        height="50%"
         closable={false}
         maskClosable={false}
         getContainer={false}
