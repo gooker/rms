@@ -5,7 +5,7 @@ import { getSysLang } from '@/services/translator';
 
 export async function getSystemLanguage() {
   let systemLanguage = await getSysLang();
-  if (!dealResponse(systemLanguage, null, null)) {
+  if (!dealResponse(systemLanguage, false, false)) {
     // Tips: 如果未来有一些特殊的操作，比如隐藏某些语言，可以在这里操作existLanguages
     systemLanguage = sortLanguages(systemLanguage);
   } else {

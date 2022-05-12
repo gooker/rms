@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Checkbox, Col, Modal, Row } from 'antd';
-import { NavigationCellType } from '@/config/config';
+import { NavigationTypeView } from '@/config/config';
 
 const StackCellConfirmModal = (props) => {
   const { visible, onCancel, onConfirm, types, title } = props;
@@ -19,7 +19,7 @@ const StackCellConfirmModal = (props) => {
   function renderOptions() {
     return (
       <Row gutter={[10, 10]}>
-        {NavigationCellType.filter((item) => types.includes(item.code)).map(({ code, name }) => (
+        {NavigationTypeView.filter((item) => types.includes(item.code)).map(({ code, name }) => (
           <Col key={code} span={8}>
             <Checkbox value={code}>{name}</Checkbox>
           </Col>

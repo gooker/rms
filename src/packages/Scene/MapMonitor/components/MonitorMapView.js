@@ -3,7 +3,7 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { AGVType, NavigationCellType } from '@/config/config';
+import { AGVType, NavigationTypeView } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
 import {
   dealResponse,
@@ -224,7 +224,7 @@ class MonitorMapView extends BaseMap {
   renderCells = (cells) => {
     if (isNull(this.naviCellTypeColor)) {
       this.naviCellTypeColor = {};
-      NavigationCellType.forEach(({ code, color }) => {
+      NavigationTypeView.forEach(({ code, color }) => {
         this.naviCellTypeColor[code] = color;
       });
     }
@@ -232,7 +232,7 @@ class MonitorMapView extends BaseMap {
     cells.forEach((item) => {
       const cell = new Cell({
         ...item,
-        color: this.naviCellTypeColor[item.brand], // 导航点背景色
+        color: this.naviCellTypeColor[item.navigationType], // 导航点背景色
         showCoordinate: this.states.showCoordinate,
       });
       const xyCellMapKey = `${item.x}_${item.y}`;
@@ -365,7 +365,7 @@ class MonitorMapView extends BaseMap {
   updateAgvCommonState = (agvc, agvState, agvEntity, agvType) => {
     const { x, y, robotId, battery, mainTain, manualMode, errorLevel } = agvState;
     // TODO: 测试
-    const { brand = 'MUSHINY', agvStatus, currentCellId, currentDirection } = agvState;
+    const { navigationType = 'MUSHINY', agvStatus, currentCellId, currentDirection } = agvState;
 
     // 判断该 robotId 对应的小车是否是潜伏车
     if (agvEntity.type !== agvType) {
@@ -399,7 +399,7 @@ class MonitorMapView extends BaseMap {
     }
 
     // 更新位置
-    const pixiCoordinate = coordinateTransformer({ x, y }, brand);
+    const pixiCoordinate = coordinateTransformer({ x, y }, navigationType);
     agvEntity.x = pixiCoordinate.x;
     agvEntity.y = pixiCoordinate.y;
     agvEntity.currentCellId = currentCellId;

@@ -4,13 +4,13 @@ import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import { connect } from '@/utils/RmsDva';
-import { NavigationCellType, RobotBrand } from '@/config/config';
+import { NavigationTypeView, NavigationType } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const AddNavigation = (props) => {
   const { dispatch, mapContext } = props;
   const [formRef] = Form.useForm();
-  const [type, setType] = useState(NavigationCellType[0].code);
+  const [type, setType] = useState(NavigationTypeView[0].code);
 
   function submit() {
     formRef.validateFields().then((values) => {
@@ -36,7 +36,7 @@ const AddNavigation = (props) => {
           }}
         >
           <Select style={{ width: 133 }}>
-            {NavigationCellType.map(({ code, name }, index) => (
+            {NavigationTypeView.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>
@@ -45,7 +45,7 @@ const AddNavigation = (props) => {
         </Form.Item>
 
         {/* 牧星点位不要code, code就是Number ID*/}
-        {type !== RobotBrand.MUSHINY && (
+        {type !== NavigationType.M_QRCODE && (
           <Form.Item
             name={'code'}
             label={formatMessage({ id: 'app.common.code' })}

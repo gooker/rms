@@ -29,21 +29,14 @@ export const AGVType = {
 
 // 各类车型的API namespace
 export const NameSpace = {
+  Coordinator: 'platform', // 兼容之前版本
   Platform: 'platform',
   SSO: 'sso',
   I18N: 'translation',
 };
 
 // 后端接口的 Server 的集合
-export const ApiNameSpace = [
-  'latent-lifting',
-  'tote',
-  'forklift',
-  'coordinator',
-  'ws',
-  'sorter',
-  'translation',
-];
+export const ConfigurableNameSpace = [NameSpace.Platform, 'ws'];
 
 // 线条类型
 export const LineType = {
@@ -52,23 +45,23 @@ export const LineType = {
   ArcPath: 'ArcPath',
 };
 
-// 车型
-export const RobotBrand = {
-  MUSHINY: 'MUSHINY',
-  SEER: 'SEER',
+// 导航类型枚举
+export const NavigationType = {
+  M_QRCODE: 'mqrcode',
+  SEER_SLAM: 'seerslam',
 };
 
-// 平台支持的导航点类型，每次新增支持需要手动加，且必须要配置坐标类型
-export const NavigationCellType = [
+// 导航类型枚举所对应的具体信息，比如：点位颜色、坐标系类型
+export const NavigationTypeView = [
   {
-    code: RobotBrand.MUSHINY,
-    name: RobotBrand.MUSHINY,
+    code: NavigationType.M_QRCODE,
+    name: NavigationType.M_QRCODE,
     color: '#037ef3',
     coordinationType: 'L',
   },
   {
-    code: RobotBrand.SEER,
-    name: RobotBrand.SEER,
+    code: NavigationType.SEER_SLAM,
+    name: NavigationType.SEER_SLAM,
     color: '#8e43e7',
     coordinationType: 'R',
   },

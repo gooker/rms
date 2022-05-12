@@ -21,7 +21,7 @@ export async function initI18nInstance() {
 
   // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
   const i18nData = await getTranslationByCode('FE');
-  if (!dealResponse(i18nData) && Array.isArray(i18nData?.Custom)) {
+  if (!dealResponse(i18nData, false, false) && Array.isArray(i18nData?.Custom)) {
     const { Custom } = i18nData;
     Custom.forEach(({ languageKey, languageMap }) => {
       locales[language][languageKey] = languageMap[language];

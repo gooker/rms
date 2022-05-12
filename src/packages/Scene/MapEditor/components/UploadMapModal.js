@@ -4,7 +4,7 @@ import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message, Che
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import { NavigationCellType, RobotBrand } from '@/config/config';
+import { NavigationTypeView, NavigationType } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
 import { MUSHINY, SEER } from '@/utils/mapParser';
 
@@ -27,9 +27,9 @@ const UploadMapModal = (props) => {
 
   function getMapName(mapData, navigationCellType) {
     switch (navigationCellType) {
-      case RobotBrand.MUSHINY:
+      case NavigationType.M_QRCODE:
         return mapData.name;
-      case RobotBrand.SEER:
+      case NavigationType.SEER_SLAM:
         return mapData.header.mapName;
       default:
         return null;
@@ -54,17 +54,17 @@ const UploadMapModal = (props) => {
             mapData = JSON.parse(mapData);
 
             // 如果是牧星地图且是新建地图逻辑，那么就把文件直接保存
-            if (navigationCellType === RobotBrand.MUSHINY && addMap) {
+            if (navigationCellType === NavigationType.M_QRCODE && addMap) {
               dispatch({ type: 'editor/importMushinyMap', payload: mapData }).then((result) => {
                 result && cancel();
               });
             } else {
               const mapName = getMapName(mapData, navigationCellType);
               switch (navigationCellType) {
-                case RobotBrand.SEER:
+                case NavigationType.SEER_SLAM:
                   mapData = SEER(mapData, existIds, currentLogicArea);
                   break;
-                case RobotBrand.MUSHINY:
+                case NavigationType.M_QRCODE:
                   mapData = MUSHINY(mapData, existIds);
                   break;
                 default:
@@ -122,7 +122,7 @@ const UploadMapModal = (props) => {
           rules={[{ required: true }]}
         >
           <Select style={{ width: 200 }}>
-            {NavigationCellType.map(({ code, name }, index) => (
+            {NavigationTypeView.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>

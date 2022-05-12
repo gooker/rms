@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { NavigationCellType } from '@/config/config';
+import { NavigationTypeView } from '@/config/config';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import styles from '../../popoverPanel.module.less';
 
@@ -58,10 +58,10 @@ const BatchAddCells = (props) => {
         <Form.Item
           name={'navigationCellType'}
           label={formatMessage({ id: 'editor.navigationCellType' })}
-          initialValue={NavigationCellType[0].code}
+          initialValue={NavigationTypeView[0].code}
         >
           <Select style={{ width: 133 }}>
-            {NavigationCellType.map(({ code, name }, index) => (
+            {NavigationTypeView.map(({ code, name }, index) => (
               <Select.Option key={index} value={code}>
                 {name}
               </Select.Option>

@@ -1,8 +1,15 @@
 import { message } from 'antd';
 import { saveAs } from 'file-saver';
-import { cloneDeep, find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
+import { find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
 import update from 'immutability-helper';
-import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
+import {
+  dealResponse,
+  dropWhile,
+  fillProgramAction,
+  formatMessage,
+  getRandomString,
+  isNull,
+} from '@/utils/util';
 import {
   addTemporaryId,
   batchGenerateLine,
@@ -35,8 +42,8 @@ import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEn
 import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
-import { LineType, NavigationCellType, RobotBrand } from '@/config/config';
-import { MockMapDataMulti, MushinyMapData, ProgramingConfigurationList } from '@/mockData';
+import { LineType, NavigationTypeView, ProgramingItemType, NavigationType } from '@/config/config';
+import { MockMapDataMulti, ProgramingConfigurationList } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -257,8 +264,8 @@ export default {
         });
 
         // 合并地图数据
-        const brand = cells[0].brand;
-        newMap.transform = { [brand]: transform };
+        const navigationType = cells[0].navigationType;
+        newMap.transform = { [navigationType]: transform };
         // 合并点位和线条
         cells.forEach((cell) => {
           newMap.cellMap[cell.id] = { ...cell };
@@ -278,9 +285,9 @@ export default {
         const newMapList = [...mapList, newMap];
         yield put({ type: 'saveMapList', payload: newMapList });
       } else {
-        const brand = cells[0].brand;
+        const navigationType = cells[0].navigationType;
         // 将地图转换的参数合并到地图数据
-        currentMap.transform = { [brand]: transform };
+        currentMap.transform = { [navigationType]: transform };
         // 合并点位和线条
         cells.forEach((cell) => {
           currentMap.cellMap[cell.id] = { ...cell };
@@ -532,8 +539,8 @@ export default {
       let findResult;
 
       // 判断该车型下是否有相同导航点ID
-      if (navigationCellType !== RobotBrand.MUSHINY) {
-        findResult = find(cells, { naviId: code, brand: navigationCellType });
+      if (navigationCellType !== NavigationType.M_QRCODE) {
+        findResult = find(cells, { naviId: code, navigationType: navigationCellType });
         if (findResult) {
           message.error('导航点编码已存在');
           return null;
@@ -541,7 +548,7 @@ export default {
       }
 
       // 判断该车型下是否有相同的导航点坐标
-      findResult = find(cells, { x, y, brand: navigationCellType });
+      findResult = find(cells, { x, y, navigationType: navigationCellType });
       if (findResult) {
         message.error('导航点坐标已存在');
         return null;
@@ -554,8 +561,8 @@ export default {
         id,
         x,
         y,
-        naviId: navigationCellType === RobotBrand.MUSHINY ? id : code,
-        brand: navigationCellType,
+        naviId: navigationCellType === NavigationType.M_QRCODE ? id : code,
+        navigationType: navigationCellType,
         logicId: currentLogicArea,
       });
       currentMap.cellMap[id] = reverseCoordinateTransformer(
@@ -588,10 +595,10 @@ export default {
       } else {
         /**
          * 偏移功能需要注意:
-         * 因为地图显示方式的右手坐标系，所以如果点位所对应的地图是左手坐标系，那么左右偏移没有影响
-         * 但是上下偏移则在计算的时候是相反的
+         * 因为地图显示方式的左手坐标系
+         * 所以如果点位所对应的地图是右手坐标系, 那么左右偏移没有影响， 但是上下偏移则在计算的时候是相反的
          */
-        const configNavigationCellType = find(NavigationCellType, { code: navigationCellType });
+        const configNavigationCellType = find(NavigationTypeView, { code: navigationCellType });
         if (isNull(configNavigationCellType)) {
           message.error(`无法识别的导航点类型: ${navigationCellType}`);
           return;
@@ -599,7 +606,7 @@ export default {
         const coordinateSystemType = configNavigationCellType.coordinationType;
         const { cellIds, count, distance } = payload;
         let dir = payload.dir;
-        if ([0, 2].includes(dir) && coordinateSystemType === 'L') {
+        if ([0, 2].includes(dir) && coordinateSystemType === 'R') {
           dir = dir === 0 ? 2 : 0;
         }
         const selectedCellsData = cellIds.map((cellId) => cellMap[cellId]);
@@ -619,7 +626,7 @@ export default {
       // 再转换一次 additionalCells, 向数据里添加 naviId 和 logicId
       additionalCells = additionalCells.map((cell) => ({
         ...cell,
-        brand: navigationCellType,
+        navigationType: navigationCellType,
         logicId: currentLogicArea,
       }));
 
@@ -648,8 +655,8 @@ export default {
       const { currentMap } = yield select(({ editor }) => editor);
       const { types, naviCells } = payload;
       const result = { cells: [], lines: [], arrows: [] }; // {cells:{x_y:[id]}, lines:[x1_y1_x2_y2], arrows:[sourceId]}
-      naviCells.forEach(({ id, brand }) => {
-        if (types.includes(brand)) {
+      naviCells.forEach(({ id, navigationType }) => {
+        if (types.includes(navigationType)) {
           const { relations } = getCurrentRouteMapData();
           const relevantRelations = relations.filter(
             (item) => item.source === id || item.target === id,
@@ -699,28 +706,44 @@ export default {
       if (isNull(currentMap.programing)) {
         currentMap.programing = { [currentRouteMap]: [] };
       }
+      const { type, items, configuration } = payload;
+      if (type === ProgramingItemType.cell) {
+        // 如果某个点位已经存在配置，则覆盖
+        const existCellConfigList = dropWhile(
+          currentMap.programing[currentRouteMap],
+          (item) => item.type === type && items.includes(item.key),
+        );
+        // 回填数据
+        if (Array.isArray(configuration) && configuration.length > 0) {
+          const actions = fillProgramAction(configuration, programing);
+          items.forEach((cellId) => {
+            existCellConfigList.push({ key: cellId, type, actions, timing: null });
+          });
+        }
+        currentMap.programing[currentRouteMap] = existCellConfigList;
+      }
 
-      // 处理配置信息
-      const { type, items, configuration, timing } = payload;
-      const actions = configuration.map(({ actionType, ...rest }) => {
-        const [p1, p2] = actionType;
-        const action = find(programing[p1], { actionId: p2 });
-        const copyAction = cloneDeep(action);
-        // 将数据回填到action参数中
-        copyAction.actionParameters.forEach((item) => {
-          item.value = rest[item.code];
+      if (type === ProgramingItemType.relation) {
+        [...configuration.keys()].forEach((timing, index, timings) => {
+          // 如果某个线条已经存在配置，则覆盖
+          const existCellConfigList = dropWhile(
+            currentMap.programing[currentRouteMap],
+            (item) => item.type === type && items.includes(item.key) && item.timing === timing,
+          );
+          // 回填数据
+          const configurationItem = configuration.get(timing);
+          if (Array.isArray(configurationItem) && configurationItem.length > 0) {
+            const actions = fillProgramAction(configurationItem, programing);
+            items.forEach((cellId) => {
+              existCellConfigList.push({ key: cellId, type, actions, timing });
+            });
+          }
+
+          currentMap.programing[currentRouteMap] = existCellConfigList;
         });
-      });
+      }
 
-      // 如果某个点位已经存在配置，则覆盖
-      const existCellConfigList = currentMap.programing[currentRouteMap].filter(
-        (item) => item.type !== type && !item.includes(item.key),
-      );
-      items.forEach((cellId) => {
-        existCellConfigList.push({ key: cellId, type, actions, timing });
-      });
-      currentMap.programing[currentRouteMap] = existCellConfigList;
-      console.log(currentMap);
+      console.log(currentMap.programing);
     },
 
     // ********************************* 待调整 ********************************* //

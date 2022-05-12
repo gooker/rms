@@ -44,7 +44,7 @@ const RegisterPanel = (props) => {
     },
     {
       title: '品牌',
-      dataIndex: 'brand',
+      dataIndex: 'navigationType',
       align: 'center',
     },
     {

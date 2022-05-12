@@ -111,7 +111,7 @@ function AddSimulatorAgv(props) {
           </Form.Item>
 
           <Form.Item
-            name={'currentNaviId'}
+            name={'cellId'}
             label={formatMessage({ id: 'app.map.cell' })}
             rules={[{ required: true }]}
           >

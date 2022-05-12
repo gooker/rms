@@ -123,7 +123,7 @@ const ProgramingCellTab = (props) => {
         onConfirm={(types) => {
           setConfigCells(
             getSelectionNaviCells()
-              .filter((item) => types.includes(item.brand))
+              .filter((item) => types.includes(item.navigationType))
               .map(({ id }) => id),
           );
         }}

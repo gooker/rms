@@ -2,7 +2,7 @@ import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
-import { RobotBrand } from '@/config/config';
+import { NavigationType } from '@/config/config';
 
 /**
  * 仙工地图数据转化工具
@@ -32,7 +32,7 @@ export function SEER(mapData, existIds, currentLogicArea) {
     const cellMapItem = new CellEntity({
       id,
       naviId: instanceName,
-      brand: RobotBrand.SEER,
+      navigationType: NavigationType.SEER_SLAM,
       x: Math.round(pos.x * 1000),
       y: Math.round(pos.y * 1000),
       nx: Math.round(pos.x * 1000),

@@ -1,5 +1,5 @@
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
-import { RobotBrand, CoordinateType } from '@/config/config';
+import { NavigationType, CoordinateType } from '@/config/config';
 
 export default {
   namespace: 'monitorView',
@@ -70,7 +70,7 @@ export default {
     dashBoardVisible: false, // dashboard
 
     // 地图显示模式
-    shownNavigationCellType: [RobotBrand.MUSHINY, RobotBrand.SEER], // 显示的导航点类型
+    shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
     shownCellCoordinateType: CoordinateType.LAND, // land 表示物理点位、navi表示导航点位
   },
   reducers: {
