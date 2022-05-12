@@ -1,15 +1,17 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Spin, Button, Empty, Row, Col, Space, Card } from 'antd';
-import { ReloadOutlined, CopyOutlined, EditOutlined } from '@ant-design/icons';
+import { ReloadOutlined, CopyOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
 import { dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { findAllDeviceTypes } from '@/services/resourceManageAPI';
+import EquipmentTypeConfigsModal from './components/EquipmentTypeConfigsModal';
 import commonStyle from '@/common.module.less';
 import styles from './equip.module.less';
 
 const CustomEquipmentType = () => {
   const [loading, setLoading] = useState(false);
   const [datasource, setDatasource] = useState([]);
+  const [configVisible, setConfigVisible] = useState(false); //
 
   useEffect(() => {
     fetchData();
@@ -43,8 +45,13 @@ const CustomEquipmentType = () => {
               key={index}
               extra={
                 <Space>
-                  <CopyOutlined className={styles.toolItem} />
-                  <EditOutlined className={styles.toolItem} />
+                  <FormOutlined
+                    className={styles.toolItem}
+                    onClick={() => {
+                      setConfigVisible(true);
+                    }}
+                  />
+                  {/* <EditOutlined className={styles.toolItem} /> */}
                 </Space>
               }
               style={index > 0 ? { marginTop: 16 } : {}}
@@ -73,6 +80,16 @@ const CustomEquipmentType = () => {
               </Row>
             </Card>
           ))}
+
+        {/* 配置设备类型的config */}
+        {configVisible && (
+          <EquipmentTypeConfigsModal
+            visible={configVisible}
+            cancelModal={() => {
+              setConfigVisible(false);
+            }}
+          />
+        )}
       </div>
     </Spin>
   );
