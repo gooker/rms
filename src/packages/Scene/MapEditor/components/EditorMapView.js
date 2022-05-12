@@ -12,7 +12,7 @@ import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
-import { NavigationCellType } from '@/config/config';
+import { NavigationTypeView } from '@/config/config';
 
 class EditorMapView extends BaseMap {
   constructor(props) {
@@ -137,7 +137,7 @@ class EditorMapView extends BaseMap {
   renderCells = (payload) => {
     if (isNull(this.naviCellTypeColor)) {
       this.naviCellTypeColor = {};
-      NavigationCellType.forEach(({ code, color }) => {
+      NavigationTypeView.forEach(({ code, color }) => {
         this.naviCellTypeColor[code] = color;
       });
     }
@@ -145,7 +145,7 @@ class EditorMapView extends BaseMap {
     payload.forEach((item) => {
       const cell = new Cell({
         ...item,
-        color: this.naviCellTypeColor[item.brand], // 导航点背景色
+        color: this.naviCellTypeColor[item.navigationType], // 导航点背景色
         interactive: true,
         select: this.select,
         showCoordinate: this.states.showCoordinate,

@@ -23,7 +23,7 @@ import {
 import json from '../../package.json';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
-import { LineType, RobotBrand } from '@/config/config';
+import { LineType, NavigationType } from '@/config/config';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -435,7 +435,7 @@ export function generateCellId(cellMap, start, loopStep, step, way) {
  */
 export function generateCellIds(cellMap, requiredCount) {
   // 获取已存在的牧星点位导航ID
-  const mushinyCells = pickBy(cellMap, { brand: RobotBrand.MUSHINY });
+  const mushinyCells = pickBy(cellMap, { navigationType: NavigationType.M_QRCODE });
   const existNaviIds = Object.values(mushinyCells)
     .map(({ naviId }) => naviId)
     .map((item) => parseInt(item));
@@ -1284,7 +1284,7 @@ export function unifyAgvState(agv) {
     x: agv.x,
     y: agv.y,
     currentCellId,
-    brand: agv.bd ?? agv.brand,
+    navigationType: agv.bd ?? agv.navigationType,
     battery: agv.b ?? agv.battery,
     robotId: agv.r ?? agv.robotId,
     mainTain: agv.m ?? agv.maintain,

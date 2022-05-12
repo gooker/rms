@@ -10,7 +10,7 @@ import {
   SelectionType,
   MapSelectableSpriteType,
 } from '@/config/consts';
-import { NavigationCellType } from '@/config/config';
+import { NavigationTypeView } from '@/config/config';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;
@@ -22,7 +22,7 @@ export default class Cell extends PIXI.Container {
   constructor(props) {
     super(props);
     this.type = MapSelectableSpriteType.CELL;
-    this.brand = props.brand; // 导航点类型
+    this.navigationType = props.navigationType; // 导航点类型
     this.brandColor = props.color.replace('#', '0x');
 
     this.id = props.id; // Integer ID
@@ -97,7 +97,7 @@ export default class Cell extends PIXI.Container {
 
   addDirection() {
     if (isPlainObject(this.additional) && !isNull(this.additional.dir)) {
-      const brandConfig = find(NavigationCellType, { code: this.brand });
+      const brandConfig = find(NavigationTypeView, { code: this.navigationType });
       if (!isNull(brandConfig)) {
         const { coordinationType } = brandConfig;
         let angle; // 这里的角度基准是标准数学坐标系
@@ -131,7 +131,7 @@ export default class Cell extends PIXI.Container {
         this.direction.zIndex = InnerIndex.direction;
         this.addChild(this.direction);
       } else {
-        console.error(`RMS: 发现未知的导航点类型[${this.brand}]`);
+        console.error(`RMS: 发现未知的导航点类型[${this.navigationType}]`);
       }
     }
   }

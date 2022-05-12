@@ -2,7 +2,7 @@ export default class CellEntity {
   constructor(props) {
     this.id = props.id;
     this.naviId = props.naviId || props.id;
-    this.brand = props.brand;
+    this.navigationType = props.navigationType;
     this.type = props.type || 'Normal';
     this.x = props.x;
     this.y = props.y;

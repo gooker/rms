@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState } from 'react';
 import { Form, Input, Select, Button, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
@@ -9,8 +9,6 @@ import { getEnvOptionData, getActiveEnv } from './selector';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
-import requestAPI from '@/utils/requestAPI';
-import { getLocalStorageEnv } from '@/utils/init';
 
 const Login = (props) => {
   const { environments, activeEnv, history } = props;
@@ -18,18 +16,6 @@ const Login = (props) => {
 
   // 挂载push函数
   window.history.$$push = history.push;
-
-  useEffect(() => {
-    init();
-  }, []);
-
-  async function init() {
-    // 刚进入页面需要首先处理namespace数据
-    let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
-    const envs = getLocalStorageEnv();
-    urlDir = { ...urlDir, ...envs };
-    window.nameSpacesInfo = urlDir;
-  }
 
   async function onFinish(values) {
     setLoading(true);

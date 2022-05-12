@@ -5,14 +5,14 @@ import { CheckOutlined, UpOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './sceneComponentStyle.module.less';
-import { CoordinateType, NavigationCellType } from '@/config/config';
+import { CoordinateType, NavigationTypeView } from '@/config/config';
 
 const MapShownModeSelector = (props) => {
   const { dispatch, shownNavigationCellType, shownCellCoordinateType } = props;
 
   const menu = (
     <Menu selectedKeys={shownNavigationCellType} onClick={updateShownType}>
-      {NavigationCellType.map((item) => (
+      {NavigationTypeView.map((item) => (
         <Menu.Item key={item.code}>
           {shownNavigationCellType.includes(item.code) && <CheckOutlined />}
           <span style={{ marginLeft: 8 }}>{item.name}</span>

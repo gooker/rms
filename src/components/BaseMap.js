@@ -267,12 +267,12 @@ export default class BaseMap extends React.PureComponent {
       }
 
       // 绘制曲线(贝塞尔和圆弧)
-      const brand = sourceCell.brand;
+      const navigationType = sourceCell.navigationType;
       if (renderType === CoordinateType.NAVI && type === LineType.BezierPath) {
         const { control1, control2 } = lineData;
         const lineMapKey = `${source}_${target}`;
-        const transformedCP1 = coordinateTransformer(control1, brand, transform[brand]);
-        const transformedCP2 = coordinateTransformer(control2, brand, transform[brand]);
+        const transformedCP1 = coordinateTransformer(control1, navigationType, transform[navigationType]);
+        const transformedCP2 = coordinateTransformer(control2, navigationType, transform[navigationType]);
 
         const bezier = new SmoothGraphics();
         bezier.lineStyle(3, 0xffffff);

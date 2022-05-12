@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
 import { MinusCircleOutlined } from '@ant-design/icons';
-import { throttle } from 'lodash';
-import { Form, Input, Radio, Select, Button, Col, Row, AutoComplete } from 'antd';
+import { Form, Input, Radio, Button, Col, Row, AutoComplete } from 'antd';
 import { formatMessage, getFormLayout, isStrictNull, validateUrl } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { ApiNameSpace } from '@/config/config';
+import { ConfigurableNameSpace } from '@/config/config';
 import { PlusOutlined } from '@ant-design/icons';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
@@ -14,7 +13,7 @@ class AddEnvironmentModal extends Component {
 
   state = {
     updateInfos: [],
-    apiNameSpace: ApiNameSpace,
+    apiNameSpace: ConfigurableNameSpace,
   };
 
   componentDidMount() {

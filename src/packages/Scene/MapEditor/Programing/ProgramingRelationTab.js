@@ -7,9 +7,10 @@ import { connect } from '@/utils/RmsDva';
 import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingRelationModal from './ProgramingRelationModal';
+import { ProgramingItemType } from '@/config/config';
 
 const ProgramingRelationTab = (props) => {
-  const { scopeLoad, actions, selections } = props;
+  const { dispatch, selections } = props;
 
   const [selectedRoutes, setSelectedRoutes] = useState([]);
   const [configurationVisible, setConfigurationVisible] = useState(false);
@@ -19,7 +20,15 @@ const ProgramingRelationTab = (props) => {
     .filter((item) => item.type === MapSelectableSpriteType.ROUTE)
     .map(({ id }) => id);
 
-  function save(payload) {
+  function save(configuration) {
+    dispatch({
+      type: 'editor/updateMapPrograming',
+      payload: {
+        type: ProgramingItemType.relation,
+        items: selectedRoutes,
+        configuration,
+      },
+    });
   }
 
   function getDatasource() {

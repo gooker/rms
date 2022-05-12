@@ -1,5 +1,5 @@
 import { scale, rotateDEG, translate, compose, applyToPoint, flipX } from 'transformation-matrix';
-import { NavigationCellType } from '@/config/config';
+import { NavigationTypeView } from '@/config/config';
 
 /**
  * 右手坐标系
@@ -17,9 +17,9 @@ import { NavigationCellType } from '@/config/config';
  * @3rd-util https://github.com/chrvadala/transformation-matrix#readme
  */
 // 获取转换参数默认值(navigationCellType就是brand)
-function getDefaultTransformParams(brand) {
+function getDefaultTransformParams(navigationType) {
   return {
-    coordinationType: NavigationCellType.filter((item) => item.code === brand)[0].coordinationType,
+    coordinationType: NavigationTypeView.filter((item) => item.code === navigationType)[0].coordinationType,
     zoom: 1,
     compensationOffset: { x: 0, y: 0 },
     compensationAngle: 0,

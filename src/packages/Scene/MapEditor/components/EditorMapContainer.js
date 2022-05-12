@@ -125,8 +125,8 @@ const EditorMapContainer = (props) => {
 
   function renderMap() {
     const cellsToRender = Object.values(currentMap.cellMap)
-      .filter((item) => shownNavigationCellType.includes(item.brand))
-      .map((item) => coordinateTransformer(item, item.brand, currentMap?.transform?.[item.brand]));
+      .filter((item) => shownNavigationCellType.includes(item.navigationType))
+      .map((item) => coordinateTransformer(item, item.navigationType, currentMap?.transform?.[item.navigationType]));
     mapContext.renderCells(cellsToRender);
 
     // TODO: 画原点坐标系

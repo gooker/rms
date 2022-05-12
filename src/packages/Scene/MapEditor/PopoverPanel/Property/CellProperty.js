@@ -98,7 +98,7 @@ const CellProperty = (props) => {
           })}`}
         >
           <LabelComponent label={formatMessage({ id: 'app.common.type' })}>
-            {cellProps?.brand}
+            {cellProps?.navigationType}
           </LabelComponent>
           <LabelComponent label={formatMessage({ id: 'app.map.landCoordinator' })}>
             {cellProps?.x}, {cellProps?.y}

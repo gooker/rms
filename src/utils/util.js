@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tooltip, Row, Button, Input, message, Form, Tag, InputNumber, Select, Switch } from 'antd';
-import { isPlainObject, find, isEqual as deepEqual, isString } from 'lodash';
+import { isPlainObject, find, isEqual as deepEqual, cloneDeep } from 'lodash';
 import { InfoOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
@@ -1231,4 +1231,29 @@ export function convertPrograming2Cascader(programing) {
     });
     return option;
   });
+}
+
+// 将地图编程配置的值回填到action中
+export function fillProgramAction(configuration, programing) {
+  return configuration.map(({ actionType, ...rest }) => {
+    const [p1, p2] = actionType;
+    const action = find(programing[p1], { actionId: p2 });
+    const copyAction = cloneDeep(action);
+    // 将数据回填到action参数中
+    copyAction.actionParameters.forEach((item) => {
+      item.value = rest[item.code];
+    });
+    return copyAction;
+  });
+}
+
+// 将数组中符合条件的元素删掉， Lodash中同名方法有问题-->遇到第一个不符合条件的会直接break
+export function dropWhile(array, predicate) {
+  const result = [];
+  for (const arrayElement of array) {
+    if (!predicate(arrayElement)) {
+      result.push(arrayElement);
+    }
+  }
+  return result;
 }

@@ -15,7 +15,7 @@ const ProgramingRelationModal = (props) => {
   const { relations, visible, onCancel, onConfirm, programing } = props;
 
   const [current, setCurrent] = useState(RelationTiming.begin);
-  const [, { set: setConfiguration, get: getConfiguration }] = useMap([
+  const [configuration, { set: setConfiguration, get: getConfiguration }] = useMap([
     [RelationTiming.begin, []],
     [RelationTiming.onRoad, []],
     [RelationTiming.end, []],
@@ -79,7 +79,9 @@ const ProgramingRelationModal = (props) => {
       maskClosable={false}
       visible={visible}
       onCancel={onCancel}
-      onOk={onConfirm}
+      onOk={() => {
+        onConfirm(configuration);
+      }}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       <Radio.Group

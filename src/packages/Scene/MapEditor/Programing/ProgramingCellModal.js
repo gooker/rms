@@ -80,7 +80,7 @@ const ProgramingCellModal = (props) => {
         >
           {generateDndData().map(({ title, subTitle }, index) => (
             <ProgramingDndCard
-              key={title}
+              key={`${title}-${index}`}
               index={index}
               title={title}
               subTitle={subTitle}
