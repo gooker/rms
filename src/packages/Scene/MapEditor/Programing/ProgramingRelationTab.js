@@ -2,19 +2,21 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
-import { debounce } from 'lodash';
+import { debounce, groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingRelationModal from './ProgramingRelationModal';
 import { ProgramingItemType } from '@/config/config';
+import { convertMapToArrayMap } from '@/utils/util';
 
 const ProgramingRelationTab = (props) => {
-  const { dispatch, selections } = props;
+  const { dispatch, selections, programing } = props;
 
-  const [selectedRoutes, setSelectedRoutes] = useState([]);
+  const [configRoutes, setConfigRoutes] = useState([]);
   const [configurationVisible, setConfigurationVisible] = useState(false);
   const [searchKey, setSearchKey] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   const selectRoutes = selections
     .filter((item) => item.type === MapSelectableSpriteType.ROUTE)
@@ -25,20 +27,32 @@ const ProgramingRelationTab = (props) => {
       type: 'editor/updateMapPrograming',
       payload: {
         type: ProgramingItemType.relation,
-        items: selectedRoutes,
+        items: configRoutes,
         configuration,
       },
     });
   }
 
   function getDatasource() {
-    return [];
+    // 将相同线条的数据进行合并
+    const relationPrograming = programing.filter(
+      (item) => item.type === ProgramingItemType.relation,
+    );
+    return convertMapToArrayMap(groupBy(relationPrograming, 'key'), 'key', 'programing');
   }
 
-  function onEdit(id) {
+  function onEdit(item) {
+    setEditing(item);
+    setConfigurationVisible(true);
   }
 
-  function onDelete(id) {
+  function onDelete(item) {
+    dispatch({
+      type: 'editor/deleteMapPrograming',
+      payload: { type: ProgramingItemType.relation, key: item.cellId, timing: item.timing },
+    }).then(({ type, key, timing }) => {
+      console.log(type, key, timing);
+    });
   }
 
   function startConfiguration() {
@@ -55,16 +69,17 @@ const ProgramingRelationTab = (props) => {
       <Row gutter={4}>
         <Col span={21}>
           <Select
+            allowClear
             mode={'tags'}
-            value={selectedRoutes}
-            onChange={setSelectedRoutes}
+            value={configRoutes}
+            onChange={setConfigRoutes}
             style={{ width: '100%' }}
           />
         </Col>
         <Col span={3}>
           <Button
             onClick={() => {
-              setSelectedRoutes(selectRoutes);
+              setConfigRoutes(selectRoutes);
             }}
             disabled={selectRoutes.length === 0}
             icon={<PlusOutlined />}
@@ -74,7 +89,7 @@ const ProgramingRelationTab = (props) => {
       <Button
         type='primary'
         onClick={startConfiguration}
-        // disabled={selectRoutes.length === 0}
+        disabled={configRoutes.length === 0}
         style={{ marginTop: 10 }}
       >
         <SettingOutlined /> 开始配置
@@ -99,6 +114,7 @@ const ProgramingRelationTab = (props) => {
 
       {/* 配置弹窗 */}
       <ProgramingRelationModal
+        editing={editing}
         relations={selectRoutes}
         visible={configurationVisible}
         onConfirm={save}
@@ -107,6 +123,10 @@ const ProgramingRelationTab = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  selections: editor.selections,
-}))(memo(ProgramingRelationTab));
+export default connect(({ editor }) => {
+  const { selections, currentMap, currentRouteMap } = editor;
+  return {
+    selections,
+    programing: currentMap.programing?.[currentRouteMap] || [],
+  };
+})(memo(ProgramingRelationTab));

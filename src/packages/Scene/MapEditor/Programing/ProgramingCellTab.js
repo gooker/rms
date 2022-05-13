@@ -5,28 +5,27 @@ import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons
 import { debounce } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
+import { ProgramingItemType } from '@/config/config';
 import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingCellModal from './ProgramingCellModal';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
-import { ProgramingItemType } from '@/config/config';
 
 const ProgramingCellTab = (props) => {
-  const { dispatch, selections } = props;
+  const { dispatch, selections, programing } = props;
 
-  // 这里之所以存在两个点位集是因为: 已选择的点位+筛选 =正在配置的点位, 筛选可以不存在
-  const [selectedCells, setSelectedCells] = useState([]); // 已选择的点位
+  const [configVisible, setConfigVisible] = useState(false);
   const [configCells, setConfigCells] = useState([]); // 正在配置的点位
-
   const [naviTypeOption, setNaviTypeOption] = useState([]); // 点位类型Options数据
   const [searchKey, setSearchKey] = useState(null);
+  const [editing, setEditing] = useState(null);
 
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
 
   function getDatasource() {
-    return [];
+    return programing.filter((item) => item.type === ProgramingItemType.cell);
   }
 
   function save(configuration) {
@@ -40,13 +39,21 @@ const ProgramingCellTab = (props) => {
     });
   }
 
-  function onEdit(id) {
+  function onEdit(item) {
+    setEditing(item);
+    setConfigVisible(true);
   }
 
-  function onDelete(id) {
+  function onDelete(item) {
+    dispatch({
+      type: 'editor/deleteMapPrograming',
+      payload: { type: ProgramingItemType.cell, key: item.cellId, timing: null },
+    }).then(({ type, key, timing }) => {
+      console.log(type, key, timing);
+    });
   }
 
-  function startConfiguration() {
+  function addConfigCell() {
     const selectionsTypes = getSelectionNaviCellTypes();
     if (selectionsTypes.length === 1) {
       setConfigCells(selectCellIds);
@@ -55,8 +62,13 @@ const ProgramingCellTab = (props) => {
     }
   }
 
+  function startConfiguration() {
+    setEditing(null);
+    setConfigVisible(true);
+  }
+
   function terminateConfiguration() {
-    setConfigCells([]);
+    setConfigVisible(false);
   }
 
   const dataSource = getDatasource();
@@ -65,17 +77,16 @@ const ProgramingCellTab = (props) => {
       <Row gutter={4}>
         <Col span={21}>
           <Select
+            allowClear
             mode={'tags'}
-            value={selectedCells}
-            onChange={setSelectedCells}
+            value={configCells}
+            onChange={setConfigCells}
             style={{ width: '100%' }}
           />
         </Col>
         <Col span={3}>
           <Button
-            onClick={() => {
-              setSelectedCells(selectCellIds);
-            }}
+            onClick={addConfigCell}
             disabled={selectCellIds.length === 0}
             icon={<PlusOutlined />}
           />
@@ -84,7 +95,7 @@ const ProgramingCellTab = (props) => {
       <Button
         type='primary'
         onClick={startConfiguration}
-        disabled={selectedCells.length === 0}
+        disabled={configCells.length === 0}
         style={{ marginTop: 10 }}
       >
         <SettingOutlined /> 开始配置
@@ -102,15 +113,16 @@ const ProgramingCellTab = (props) => {
         }, 200)}
       />
       {dataSource.length === 0 ? (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: 'white' }} />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: '#fff' }} />
       ) : (
         <ScopeProgramList datasource={dataSource} onEdit={onEdit} onDelete={onDelete} />
       )}
 
       {/* 配置弹窗 */}
       <ProgramingCellModal
+        editing={editing}
         cells={configCells}
-        visible={configCells.length > 0}
+        visible={configVisible}
         onOk={save}
         onCancel={terminateConfiguration}
       />
@@ -134,6 +146,10 @@ const ProgramingCellTab = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  selections: editor.selections,
-}))(memo(ProgramingCellTab));
+export default connect(({ editor }) => {
+  const { selections, currentMap, currentRouteMap } = editor;
+  return {
+    selections,
+    programing: currentMap.programing?.[currentRouteMap] || [],
+  };
+})(memo(ProgramingCellTab));

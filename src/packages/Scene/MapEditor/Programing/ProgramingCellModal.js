@@ -1,17 +1,34 @@
 /* TODO: I18N */
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Divider, Empty, Modal } from 'antd';
 import { find } from 'lodash';
 import { Container } from 'react-smooth-dnd';
-import { customTaskApplyDrag, formatMessage } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
+import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
 import ProgramingDndCard from './components/ProgramingDndCard';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import styles from './programing.module.less';
-import { connect } from '@/utils/RmsDva';
 
 const ProgramingCellModal = (props) => {
-  const { cells, visible, onOk, onCancel, programing } = props;
+  const { editing, cells, visible, onOk, onCancel, programing } = props;
   const [configuration, setConfiguration] = useState([]);
+
+  useEffect(() => {
+    if (visible && !isNull(editing)) {
+      const { actions } = editing;
+      const configurations = [];
+      actions.forEach(({ adapterType, actionType, actionParameters }) => {
+        const addedItem = { actionType: [adapterType, actionType] };
+        actionParameters.forEach(({ code, value }) => {
+          addedItem[code] = value;
+        });
+        configurations.push(addedItem);
+      });
+      setConfiguration(configurations);
+    } else {
+      setConfiguration([]);
+    }
+  }, [visible]);
 
   function onDrop(dropResult) {
     const { removedIndex, addedIndex } = dropResult;
@@ -31,8 +48,12 @@ const ProgramingCellModal = (props) => {
       .join('; ');
   }
 
-  function add(value) {
-    setConfiguration([...configuration, value]);
+  function addConfiguration(value) {
+    if (Array.isArray(value)) {
+      setConfiguration([...configuration, ...value]);
+    } else {
+      setConfiguration([...configuration, value]);
+    }
   }
 
   function deleteConfiguration(inputIndex) {
@@ -41,6 +62,7 @@ const ProgramingCellModal = (props) => {
 
   function confirm() {
     onOk(configuration);
+    onCancel();
   }
 
   function generateDndData() {
@@ -57,6 +79,7 @@ const ProgramingCellModal = (props) => {
 
   return (
     <Modal
+      destroyOnClose
       title={`编辑点位编程: [ ${cells.join()} ]`}
       width={'60%'}
       closable={false}
@@ -68,7 +91,7 @@ const ProgramingCellModal = (props) => {
     >
       {/*  点位编程配置信息 */}
       {configuration.length === 0 ? (
-        <Empty />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : (
         <Container
           dropPlaceholder={{
@@ -92,7 +115,7 @@ const ProgramingCellModal = (props) => {
 
       {/*  点位编程配置面板 */}
       <Divider orientation={'left'}>配置工具</Divider>
-      <ProgramingConfigure programing={programing} onAdd={add} />
+      <ProgramingConfigure programing={programing} onAdd={addConfiguration} />
     </Modal>
   );
 };

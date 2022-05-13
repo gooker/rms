@@ -10,7 +10,7 @@ import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm
 import styles from './programing.module.less';
 
 const ProgramingZoneTab = (props) => {
-  const { dispatch, visible, onCancel, onConfirm, programing } = props;
+  const { visible, onCancel, onConfirm, programing } = props;
   const [configuration, setConfiguration] = useState([]);
 
   function onDrop(dropResult) {
@@ -39,11 +39,6 @@ const ProgramingZoneTab = (props) => {
     setConfiguration(configuration.filter((item, index) => index !== inputIndex));
   }
 
-  function confirm() {
-    // 将configuration数据同步到地图
-    // dispatch({ type: 'editor/updateMapPrograming', payload: { zones, configuration } });
-  }
-
   function generateDndData() {
     return configuration.map((item) => {
       const { actionType, ...rest } = item;
@@ -64,7 +59,9 @@ const ProgramingZoneTab = (props) => {
       maskClosable={false}
       visible={visible}
       onCancel={onCancel}
-      onOk={onConfirm}
+      onOk={() => {
+        onConfirm(configuration);
+      }}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       {/*  点位编程配置信息 */}

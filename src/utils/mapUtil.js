@@ -1582,7 +1582,7 @@ export function getSelectionNaviCells(namespace = 'editor') {
 }
 
 export function getSelectionNaviCellTypes(namespace = 'editor') {
-  const types = getSelectionNaviCells(namespace).map(({ brand }) => brand);
+  const types = getSelectionNaviCells(namespace).map(({ navigationType }) => navigationType);
   return [...new Set(types)];
 }
 

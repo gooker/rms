@@ -47,9 +47,16 @@ export default class CostArrow extends PIXI.Container {
     }
   };
 
-  click = () => {
-    this.selected ? this.onUnSelect() : this.onSelect();
-    this.select && this.select(this, SelectionType.SINGLE);
+  click = (event) => {
+    if (event?.data.originalEvent.ctrlKey || event?.data.originalEvent.metaKey) {
+      if (!this.selected) {
+        this.onSelect();
+        this.select && this.select(this, SelectionType.CTRL);
+      }
+    } else {
+      this.selected ? this.onUnSelect() : this.onSelect();
+      this.select && this.select(this, SelectionType.SINGLE);
+    }
   };
 
   createSelectionBorder() {
