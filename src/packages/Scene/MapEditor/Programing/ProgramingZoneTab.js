@@ -8,11 +8,12 @@ import ScopeProgramList from './ScopeProgramList';
 import ProgramingZoneModal from './ProgramingZoneModal';
 import { ProgramingItemType } from '@/config/config';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { convertMapToArrayMap } from '@/utils/util';
 
 const ProgramingZoneTab = (props) => {
   const { dispatch, selections, zonePrograming } = props;
 
-  const [configurationVisible, setConfigurationVisible] = useState(false);
+  const [configVisible, setConfigVisible] = useState(false);
   const [configZone, setConfigZone] = useState([]);
   const [editing, setEditing] = useState(null);
 
@@ -37,11 +38,13 @@ const ProgramingZoneTab = (props) => {
   }
 
   function startConfiguration() {
-    setConfigurationVisible(true);
+    setConfigVisible(true);
   }
 
-  function onEdit(id) {
-    //
+  function onEdit(item) {
+    setEditing(item);
+    setConfigZone([item.key]);
+    setConfigVisible(true);
   }
 
   function onDelete(item) {
@@ -54,7 +57,7 @@ const ProgramingZoneTab = (props) => {
   }
 
   function terminateConfiguration() {
-    setConfigurationVisible(false);
+    setConfigVisible(false);
   }
 
   return (
@@ -91,7 +94,8 @@ const ProgramingZoneTab = (props) => {
       )}
 
       <ProgramingZoneModal
-        visible={configurationVisible}
+        editing={editing}
+        visible={configVisible}
         onConfirm={save}
         onCancel={terminateConfiguration}
       />
@@ -101,6 +105,7 @@ const ProgramingZoneTab = (props) => {
 export default connect(({ editor }) => {
   const { selections } = editor;
   const currentRouteMap = getCurrentRouteMapData();
-  const zonePrograming = currentRouteMap.programing?.zones || {};
+  let zonePrograming = currentRouteMap.programing?.zones || {};
+  zonePrograming = convertMapToArrayMap(zonePrograming, 'key', 'actions');
   return { selections, zonePrograming };
 })(memo(ProgramingZoneTab));

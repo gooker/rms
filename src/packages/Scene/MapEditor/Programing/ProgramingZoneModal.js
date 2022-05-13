@@ -1,17 +1,34 @@
 /* TODO: I18N */
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Divider, Empty, Modal } from 'antd';
 import { find } from 'lodash';
 import { Container } from 'react-smooth-dnd';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, customTaskApplyDrag } from '@/utils/util';
+import { formatMessage, customTaskApplyDrag, isNull } from '@/utils/util';
 import ProgramingDndCard from './components/ProgramingDndCard';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import styles from './programing.module.less';
 
 const ProgramingZoneTab = (props) => {
-  const { visible, onCancel, onConfirm, programing } = props;
+  const { visible, onCancel, onConfirm, programing, editing } = props;
   const [configuration, setConfiguration] = useState([]);
+
+  useEffect(() => {
+    if (visible && !isNull(editing)) {
+      const { actions } = editing;
+      const configurations = [];
+      actions.forEach(({ adapterType, actionType, actionParameters }) => {
+        const addedItem = { actionType: [adapterType, actionType] };
+        actionParameters.forEach(({ code, value }) => {
+          addedItem[code] = value;
+        });
+        configurations.push(addedItem);
+      });
+      setConfiguration(configurations);
+    } else {
+      setConfiguration([]);
+    }
+  }, [visible]);
 
   function onDrop(dropResult) {
     const { removedIndex, addedIndex } = dropResult;
@@ -51,6 +68,11 @@ const ProgramingZoneTab = (props) => {
     });
   }
 
+  function confirm() {
+    onConfirm(configuration);
+    onCancel();
+  }
+
   return (
     <Modal
       title={'编辑区域编程'}
@@ -59,9 +81,7 @@ const ProgramingZoneTab = (props) => {
       maskClosable={false}
       visible={visible}
       onCancel={onCancel}
-      onOk={() => {
-        onConfirm(configuration);
-      }}
+      onOk={confirm}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       {/*  点位编程配置信息 */}
