@@ -244,7 +244,7 @@ export default class BaseMap extends React.PureComponent {
         }
 
         // 绘制箭头(箭头位置在起始点和终点的连线上，靠近起始点，箭头指向终点)
-        const arrowMapKey = `${sourceCell.id}_${targetCell.id}`;
+        const arrowMapKey = `${sourceCell.id}-${targetCell.id}`;
         const arrowExist = this.idArrowMap.get(arrowMapKey);
         if (!isNull(arrowExist)) {
           this.pixiUtils.viewportRemoveChild(arrowExist);

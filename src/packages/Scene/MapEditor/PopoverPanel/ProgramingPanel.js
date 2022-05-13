@@ -1,5 +1,7 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Tabs } from 'antd';
+import { connect } from '@/utils/RmsDva';
+import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingZone from '../Programing/ProgramingZoneTab';
 import ProgramingCell from '../Programing/ProgramingCellTab';
@@ -10,7 +12,12 @@ import commonStyles from '@/common.module.less';
 const { TabPane } = Tabs;
 
 const ProgramingPanel = (props) => {
-  const { height } = props;
+  const { height, currentMap, currentLogicArea, currentRouteMap } = props;
+  const [programing, setPrograming] = useState([]);
+
+  useEffect(() => {
+    setPrograming(getCurrentRouteMapData()?.programing || []);
+  }, [currentMap, currentLogicArea, currentRouteMap]);
 
   return (
     <div style={{ height, width: 350 }} className={commonStyles.categoryPanel}>
@@ -23,17 +30,20 @@ const ProgramingPanel = (props) => {
       <div className={styles.programTabs}>
         <Tabs defaultActiveKey='cell'>
           <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key='cell'>
-            <ProgramingCell />
+            <ProgramingCell programing={programing} />
           </TabPane>
           <TabPane tab={<FormattedMessage id={'app.map.route'} />} key='relation'>
-            <ProgramingRelation />
+            <ProgramingRelation programing={programing} />
           </TabPane>
           <TabPane tab={<FormattedMessage id={'app.map.zone'} />} key='zone'>
-            <ProgramingZone />
+            <ProgramingZone programing={programing} />
           </TabPane>
         </Tabs>
       </div>
     </div>
   );
 };
-export default memo(ProgramingPanel);
+export default connect(({ editor }) => {
+  const { currentMap, currentLogicArea, currentRouteMap } = editor;
+  return { currentMap, currentLogicArea, currentRouteMap };
+})(memo(ProgramingPanel));

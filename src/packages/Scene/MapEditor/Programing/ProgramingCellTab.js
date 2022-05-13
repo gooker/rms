@@ -4,15 +4,20 @@ import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
+import {
+  getCurrentRouteMapData,
+  getSelectionNaviCells,
+  getSelectionNaviCellTypes,
+} from '@/utils/mapUtil';
 import { ProgramingItemType } from '@/config/config';
 import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingCellModal from './ProgramingCellModal';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
+import { convertMapToArrayMap } from '@/utils/util';
 
 const ProgramingCellTab = (props) => {
-  const { dispatch, selections, programing } = props;
+  const { dispatch, selections, cellPrograming } = props;
 
   const [configVisible, setConfigVisible] = useState(false);
   const [configCells, setConfigCells] = useState([]); // 正在配置的点位
@@ -23,10 +28,6 @@ const ProgramingCellTab = (props) => {
   const selectCellIds = selections
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
-
-  function getDatasource() {
-    return programing.filter((item) => item.type === ProgramingItemType.cell);
-  }
 
   function save(configuration) {
     dispatch({
@@ -41,15 +42,16 @@ const ProgramingCellTab = (props) => {
 
   function onEdit(item) {
     setEditing(item);
+    setConfigCells([item.key]);
     setConfigVisible(true);
   }
 
   function onDelete(item) {
     dispatch({
       type: 'editor/deleteMapPrograming',
-      payload: { type: ProgramingItemType.cell, key: item.cellId, timing: null },
-    }).then(({ type, key, timing }) => {
-      console.log(type, key, timing);
+      payload: { type: ProgramingItemType.cell, key: item.key },
+    }).then(({ type, key }) => {
+      console.log(type, key);
     });
   }
 
@@ -71,7 +73,6 @@ const ProgramingCellTab = (props) => {
     setConfigVisible(false);
   }
 
-  const dataSource = getDatasource();
   return (
     <div style={{ paddingTop: 20 }}>
       <Row gutter={4}>
@@ -112,10 +113,10 @@ const ProgramingCellTab = (props) => {
           setSearchKey(value);
         }, 200)}
       />
-      {dataSource.length === 0 ? (
+      {cellPrograming.length === 0 ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: '#fff' }} />
       ) : (
-        <ScopeProgramList datasource={dataSource} onEdit={onEdit} onDelete={onDelete} />
+        <ScopeProgramList datasource={cellPrograming} onEdit={onEdit} onDelete={onDelete} />
       )}
 
       {/* 配置弹窗 */}
@@ -147,9 +148,9 @@ const ProgramingCellTab = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selections, currentMap, currentRouteMap } = editor;
-  return {
-    selections,
-    programing: currentMap.programing?.[currentRouteMap] || [],
-  };
+  const { selections } = editor;
+  const currentRouteMap = getCurrentRouteMapData();
+  let cellPrograming = currentRouteMap.programing?.cells || {};
+  cellPrograming = convertMapToArrayMap(cellPrograming, 'key', 'actions');
+  return { selections, cellPrograming };
 })(memo(ProgramingCellTab));

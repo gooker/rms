@@ -1,40 +1,39 @@
 /* TODO: I18N */
-import React, { memo, useEffect, useState } from 'react';
-import { Button, Select, Divider, Empty, Col, Row, InputNumber } from 'antd';
-import { ReloadOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
+import React, { memo, useState } from 'react';
+import { Button, Select, Divider, Empty, Col, Row } from 'antd';
+import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingZoneModal from './ProgramingZoneModal';
 import { ProgramingItemType } from '@/config/config';
-import { debounce } from 'lodash';
+import { getCurrentRouteMapData } from '@/utils/mapUtil';
 
 const ProgramingZoneTab = (props) => {
-  const { dispatch, currentLogicArea } = props;
+  const { dispatch, selections, zonePrograming } = props;
 
   const [configurationVisible, setConfigurationVisible] = useState(false);
-  const [zoneMarkers, setZoneMarkers] = useState([]);
-  const [selection, setSelection] = useState([]);
+  const [configZone, setConfigZone] = useState([]);
+  const [editing, setEditing] = useState(null);
 
-  useEffect(getZoomMarkers, [currentLogicArea]);
-
-  function getZoomMarkers() {
-    // 暂时只处理矩形区域
-    let zoneMarker = getCurrentLogicAreaData()?.zoneMarker || [];
-    zoneMarker = zoneMarker.filter((item) => item.type === ZoneMarkerType.RECT);
-    setZoneMarkers(zoneMarker);
-  }
+  // 暂时只处理矩形区域
+  const selectZones = selections
+    .filter((item) => item.type === ZoneMarkerType.RECT)
+    .map(({ code }) => code);
 
   function save(configuration) {
     dispatch({
       type: 'editor/updateMapPrograming',
       payload: {
-        type: ProgramingItemType.area,
-        items: selection,
+        type: ProgramingItemType.zone,
+        items: configZone,
         configuration,
       },
     });
+  }
+
+  function addConfigZone() {
+    setConfigZone([...selectZones]);
   }
 
   function startConfiguration() {
@@ -48,9 +47,9 @@ const ProgramingZoneTab = (props) => {
   function onDelete(item) {
     dispatch({
       type: 'editor/deleteMapPrograming',
-      payload: { type: ProgramingItemType.area, key: item.cellId, timing: null },
-    }).then(({ type, key, timing }) => {
-      console.log(type, key, timing);
+      payload: { type: ProgramingItemType.zone, key: item.key },
+    }).then(({ type, key }) => {
+      console.log(type, key);
     });
   }
 
@@ -62,22 +61,22 @@ const ProgramingZoneTab = (props) => {
     <div style={{ paddingTop: 20 }}>
       <Row gutter={4}>
         <Col span={21}>
-          <Select allowClear mode={'multiple'} onChange={setSelection} style={{ width: '100%' }}>
-            {zoneMarkers.map((item) => (
-              <Select.Option key={item.code} value={item.code}>
-                {item.text || item.code}
-              </Select.Option>
-            ))}
-          </Select>
+          <Select
+            allowClear
+            mode={'tags'}
+            value={configZone}
+            onChange={setConfigZone}
+            style={{ width: '100%' }}
+          />
         </Col>
         <Col span={3}>
-          <Button onClick={getZoomMarkers} icon={<ReloadOutlined />} />
+          <Button onClick={addConfigZone} icon={<PlusOutlined />} />
         </Col>
       </Row>
       <Button
         type='primary'
         onClick={startConfiguration}
-        disabled={selection.length === 0}
+        disabled={configZone.length === 0}
         style={{ marginTop: 10 }}
       >
         <SettingOutlined /> 开始配置
@@ -85,10 +84,10 @@ const ProgramingZoneTab = (props) => {
 
       {/* 区域配置列表 */}
       <Divider style={{ background: '#a3a3a3' }} />
-      {startConfiguration.length === 0 ? (
+      {zonePrograming.length === 0 ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: 'white' }} />
       ) : (
-        <ScopeProgramList datasource={[]} onEdit={onEdit} onDelete={onDelete} />
+        <ScopeProgramList datasource={zonePrograming} onEdit={onEdit} onDelete={onDelete} />
       )}
 
       <ProgramingZoneModal
@@ -99,6 +98,9 @@ const ProgramingZoneTab = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  currentLogicArea: editor.currentLogicArea,
-}))(memo(ProgramingZoneTab));
+export default connect(({ editor }) => {
+  const { selections } = editor;
+  const currentRouteMap = getCurrentRouteMapData();
+  const zonePrograming = currentRouteMap.programing?.zones || {};
+  return { selections, zonePrograming };
+})(memo(ProgramingZoneTab));
