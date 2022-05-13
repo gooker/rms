@@ -1,10 +1,10 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Divider, Empty, Modal, Radio } from 'antd';
 import { Container } from 'react-smooth-dnd';
 import { useMap } from 'ahooks';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { customTaskApplyDrag, formatMessage } from '@/utils/util';
+import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
 import { RelationTiming } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
@@ -12,7 +12,7 @@ import ProgramingDndCard from './components/ProgramingDndCard';
 import styles from './programing.module.less';
 
 const ProgramingRelationModal = (props) => {
-  const { relations, visible, onCancel, onConfirm, programing } = props;
+  const { editing, relations, visible, onCancel, onConfirm, programing } = props;
 
   const [current, setCurrent] = useState(RelationTiming.begin);
   const [configuration, { set: setConfiguration, get: getConfiguration }] = useMap([
@@ -20,6 +20,31 @@ const ProgramingRelationModal = (props) => {
     [RelationTiming.onRoad, []],
     [RelationTiming.end, []],
   ]);
+
+  useEffect(() => {
+    if (visible && !isNull(editing)) {
+      const { programing } = editing;
+      const configurations = [];
+      programing.forEach(({ timing, actions }) => {
+        const configuration = [timing];
+        actions.forEach(({ adapterType, actionType, actionParameters }) => {
+          const addedItem = { actionType: [adapterType, actionType] };
+          actionParameters.forEach(({ code, value }) => {
+            addedItem[code] = value;
+          });
+          configuration.push(addedItem);
+        });
+        configurations.push(configuration);
+      });
+      setConfiguration(configurations);
+    } else {
+      setConfiguration([
+        [RelationTiming.begin, []],
+        [RelationTiming.onRoad, []],
+        [RelationTiming.end, []],
+      ]);
+    }
+  }, [visible]);
 
   function switchViewModel(checked) {
     setCurrent(checked);
@@ -73,6 +98,7 @@ const ProgramingRelationModal = (props) => {
 
   return (
     <Modal
+      destroyOnClose
       title={`编辑线条编程: [ ${relations.join()} ]`}
       width={'60%'}
       closable={false}

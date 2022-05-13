@@ -1,15 +1,17 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Select, Divider, Empty, Col, Row } from 'antd';
-import { PlusOutlined, ReloadOutlined, SettingOutlined } from '@ant-design/icons';
+import { Button, Select, Divider, Empty, Col, Row, InputNumber } from 'antd';
+import { ReloadOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import ProgramingZoneModal from './ProgramingZoneModal';
+import { ProgramingItemType } from '@/config/config';
+import { debounce } from 'lodash';
 
 const ProgramingZoneTab = (props) => {
-  const { currentLogicArea } = props;
+  const { dispatch, currentLogicArea } = props;
 
   const [configurationVisible, setConfigurationVisible] = useState(false);
   const [zoneMarkers, setZoneMarkers] = useState([]);
@@ -24,8 +26,15 @@ const ProgramingZoneTab = (props) => {
     setZoneMarkers(zoneMarker);
   }
 
-  function save(payload) {
-    //
+  function save(configuration) {
+    dispatch({
+      type: 'editor/updateMapPrograming',
+      payload: {
+        type: ProgramingItemType.area,
+        items: selection,
+        configuration,
+      },
+    });
   }
 
   function startConfiguration() {
@@ -36,8 +45,13 @@ const ProgramingZoneTab = (props) => {
     //
   }
 
-  function onDelete(id) {
-    //
+  function onDelete(item) {
+    dispatch({
+      type: 'editor/deleteMapPrograming',
+      payload: { type: ProgramingItemType.area, key: item.cellId, timing: null },
+    }).then(({ type, key, timing }) => {
+      console.log(type, key, timing);
+    });
   }
 
   function terminateConfiguration() {

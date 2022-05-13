@@ -33,7 +33,6 @@ import {
   deleteMapById,
   fetchMapDetail,
   fetchMapHistoryDetail,
-  fetchSectionMaps,
   saveMap,
   updateMap,
 } from '@/services/XIHE';
@@ -42,8 +41,8 @@ import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEn
 import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
-import { LineType, NavigationTypeView, ProgramingItemType, NavigationType } from '@/config/config';
-import { MockMapDataMulti, ProgramingConfigurationList } from '@/mockData';
+import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
+import { MockMapDataMulti, MockMapWithProgram, ProgramingConfigurationList } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -88,7 +87,7 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      yield put({ type: 'saveCurrentMap', payload: MockMapDataMulti });
+      yield put({ type: 'saveCurrentMap', payload: MockMapWithProgram });
       yield put({ type: 'saveMapList', payload: [] });
 
       // const mapList = yield call(fetchSectionMaps);
@@ -699,7 +698,7 @@ export default {
     },
 
     // ********************************* 地图编程 ********************************* //
-    * updateMapPrograming({ payload }, { put, select }) {
+    * updateMapPrograming({ payload }, { select }) {
       const { currentMap, currentRouteMap, programing } = yield select(({ editor }) => editor);
 
       // 新增地图的编程节点
@@ -707,11 +706,13 @@ export default {
         currentMap.programing = { [currentRouteMap]: [] };
       }
       const { type, items, configuration } = payload;
-      if (type === ProgramingItemType.cell) {
-        // 如果某个点位已经存在配置，则覆盖
+      if ([ProgramingItemType.cell, ProgramingItemType.area].includes(type)) {
+        // 如果某个点位或者区域已经存在配置，则覆盖
         const existCellConfigList = dropWhile(
           currentMap.programing[currentRouteMap],
-          (item) => item.type === type && items.includes(item.key),
+          function(item) {
+            return item.type === type && items.includes(item.key);
+          },
         );
         // 回填数据
         if (Array.isArray(configuration) && configuration.length > 0) {
@@ -742,8 +743,16 @@ export default {
           currentMap.programing[currentRouteMap] = existCellConfigList;
         });
       }
+    },
 
-      console.log(currentMap.programing);
+    * deleteMapPrograming({ payload }, { select }) {
+      const { currentMap, currentRouteMap } = yield select(({ editor }) => editor);
+      const { type, key, timing } = payload;
+      currentMap.programing[currentRouteMap] = dropWhile(
+        currentMap.programing[currentRouteMap],
+        (item) => item.type === type && item.key === key && item.timing === timing,
+      );
+      return { type, key, timing };
     },
 
     // ********************************* 待调整 ********************************* //

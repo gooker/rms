@@ -5,7 +5,7 @@ import { find } from 'lodash';
 import { convertPrograming2Cascader } from '@/utils/util';
 
 const ProgramingForm = (props) => {
-  const { programing, onAdd } = props; // system
+  const { programing, onAdd } = props;
 
   const [formRef] = Form.useForm();
   const [actionType, setActionType] = useState(null); // 已选择动作类型
