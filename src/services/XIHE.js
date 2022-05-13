@@ -277,6 +277,31 @@ export async function deleteWebHooks(param) {
   });
 }
 
+
+// 保存topic和webhook的注册关系
+export async function registerWebhooksTopic() {
+  return request(`/${NameSpace.Coordinator}/registerTopic/saveRegisterTopic`, {
+    method: 'GET',
+  });
+}
+
+// 解绑topic 绑定
+
+export async function unBoundRegisterTopic() {
+  return request(`/${NameSpace.Coordinator}/registerTopic/saveRegisterTopic`, {
+    method: 'GET',
+  });
+}
+
+
+// 根据topic查绑定的消息
+export async function fetchRegisterMessageByTopic() {
+  return request(`/${NameSpace.Coordinator}/registerTopic/getRegisterMessageByTopic`, {
+    method: 'GET',
+  });
+}
+
+
 //////////////////////////**** 告警中心 ****//////////////////////////
 //获取数据库告警中心 分页
 export async function fetchAlertCenterList(params) {
