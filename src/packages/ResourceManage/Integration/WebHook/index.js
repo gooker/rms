@@ -1,14 +1,22 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Button, Modal } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+  SwapOutlined,
+} from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getAllWebHookTypes, getAllWebHooks, deleteWebHooks, getAllQueues } from '@/services/api';
+import { registerWebhooksTopic } from '@/services/XIHE';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import RcsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import WebHookFormModal from './WebHookFormModal';
+import RegisterTopicModal from './RegisterTopicModal';
 import useTablePageLoading from '@/RmsHooks/UseTablePageLoading';
 
 const WebHook = () => {
@@ -19,11 +27,14 @@ const WebHook = () => {
   const [mqQueue, setMqQueue] = useState([]); // MQ Queue
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [registerVisible, setRegisterVisible] = useState(false);
+  const [registerRows, setRegisterRows] = useState([]);
   const [editingRow, setEditingRow] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(refresh, []);
 
+  // TODO: 获取所有topic绑定的webhook 放到webhook数据里展示
   function refresh() {
     setLoading(true);
     Promise.all([getAllWebHooks(), getAllWebHookTypes(), getAllQueues()])
@@ -73,6 +84,31 @@ const WebHook = () => {
     });
   }
 
+  // 注册
+  async function registerTopic(values) {
+    const response = await registerWebhooksTopic({ ...values, webHookMapping: selectedRowKeys });
+    if (!dealResponse(response)) {
+      refresh();
+      setRegisterVisible(false);
+      setSelectedRowKeys([]);
+    }
+  }
+
+  function getRegisterData(ids) {
+    const selectedRows = webHooks.filter(({ id }) => ids.includes(id));
+    // 过滤未绑定过的数据
+    const unRegisteredData = selectedRows.filter(({ registered }) => !registered);
+
+    // 过滤绑定过的数据
+    const registeredData = selectedRows.filter(({ registered }) => registered);
+
+    if (unRegisteredData.length === 0 && registeredData.length === 1) {
+      setRegisterRows(registeredData); // 此时是编辑
+    } else {
+      setRegisterRows(unRegisteredData); // 此时是第一次注册
+    }
+  }
+
   const tableColumn = [
     {
       title: <FormattedMessage id="app.common.name" />,
@@ -106,6 +142,7 @@ const WebHook = () => {
 
   function onSelectChange(_selectedRowKeys) {
     setSelectedRowKeys(_selectedRowKeys);
+    getRegisterData(_selectedRowKeys);
   }
 
   const expandColumns = [
@@ -151,6 +188,14 @@ const WebHook = () => {
         <Button danger onClick={deleteWebhook} disabled={selectedRowKeys.length === 0}>
           <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
         </Button>
+        <Button
+          onClick={() => {
+            setRegisterVisible(true);
+          }}
+          disabled={registerRows.length === 0}
+        >
+          <SwapOutlined /> <FormattedMessage id="app.register" />
+        </Button>
         <Button onClick={refresh}>
           <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />
         </Button>
@@ -175,7 +220,6 @@ const WebHook = () => {
       >
         <WebHookFormModal
           editing={editingRow}
-          mqQueue={mqQueue}
           webHooksType={webHooksType}
           onClose={(refresh = true) => {
             setModalVisible(false);
@@ -183,6 +227,18 @@ const WebHook = () => {
           }}
         />
       </Modal>
+
+      {registerVisible && (
+        <RegisterTopicModal
+          data={registerRows}
+          mqQueue={mqQueue}
+          visible={registerVisible}
+          onClose={() => {
+            setRegisterVisible(false);
+          }}
+          onSubmit={registerTopic}
+        />
+      )}
     </TablePageWrapper>
   );
 };

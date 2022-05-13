@@ -145,15 +145,7 @@ const EquipmentList = (props) => {
   }
 
   async function onSaveActions(values) {
-    const deviceActionDTO = [];
-    values.map((item) => {
-      const { id, deviceActionParamsDefinitionList } = item;
-      const newDefinition = [];
-      deviceActionParamsDefinitionList?.map(({ key, value }) => {
-        newDefinition.push({ key, value });
-      });
-      deviceActionDTO.push({ id, deviceActionParamsDefinitionList: newDefinition });
-    });
+    const deviceActionDTO = [...values];
     const res = await saveDeviceActions(deviceActionDTO);
     if (!dealResponse(res, 1)) {
       setVisible(false);

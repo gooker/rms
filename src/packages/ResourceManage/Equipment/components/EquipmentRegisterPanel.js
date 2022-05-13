@@ -61,7 +61,7 @@ const EquipmentRegisterPanel = (props) => {
 
   // 注册
   async function onRegister(values) {
-    const response = registerDevice({ ...values, id: selectedRowKeys[0] }); //ids: selectedRowKeys
+    const response = await registerDevice({ ...values, id: selectedRowKeys[0] }); //ids: selectedRowKeys
     if (!dealResponse(response, true)) {
       setSelectedRowKeys([]);
       dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: false });

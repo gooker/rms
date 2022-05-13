@@ -40,17 +40,7 @@ const RegisterDeviceModal = (props) => {
           configs[key] = value;
         });
         delete newParams.infos;
-
-        const deviceActionDTO = [];
-        deviceActions.map((item) => {
-          const { id, deviceActionParamsDefinitionList } = item;
-          const newDefinition = [];
-          deviceActionParamsDefinitionList?.map(({ key, value }) => {
-            newDefinition.push({ key, value });
-          });
-          deviceActionDTO.push({ id, deviceActionParamsDefinitionList: newDefinition });
-        });
-        onSubmit({ ...newParams, deviceActionDTO });
+        onSubmit({ ...newParams, deviceActionDTO: deviceActions });
       })
       .catch(() => {});
   }
@@ -58,7 +48,8 @@ const RegisterDeviceModal = (props) => {
   async function onDeviceTypeChange(e) {
     const response = await findDeviceActionsByDeviceType({ deviceTypeCode: e, deviceId: '' });
     if (!dealResponse(response)) {
-      setDeviceActions(response);
+      const actions = [...response];
+      setDeviceActions(actions);
     }
   }
 

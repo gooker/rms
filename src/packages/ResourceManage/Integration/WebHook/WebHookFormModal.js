@@ -18,18 +18,12 @@ const { Option } = Select;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
 
 const WebHookFormModal = (props) => {
-  const { editing, webHooksType, mqQueue, onClose } = props;
+  const { editing, webHooksType, onClose } = props;
   const options = Object.entries(webHooksType).map(([type, label]) => ({ type, label }));
 
   const [formRef] = Form.useForm();
-  const [isMqType, setIsMqType] = useState(false); // 标记当前类型是否是 MQ
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  useEffect(() => {
-    if (!isStrictNull(editing)) {
-      setIsMqType(editing.webHookType === 'MQ_PUSH');
-    }
-  }, []);
 
   function submit() {
     setSubmitLoading(true);
@@ -104,10 +98,6 @@ const WebHookFormModal = (props) => {
         initialValue={editing?.webHookType}
         label={<FormattedMessage id="app.common.type" />}
         rules={[{ required: true }]}
-        getValueFromEvent={(value) => {
-          setIsMqType(value === 'MQ_PUSH');
-          return value;
-        }}
       >
         <Select style={{ width: 200 }}>
           {options.map(({ type, label }) => (
@@ -117,23 +107,6 @@ const WebHookFormModal = (props) => {
           ))}
         </Select>
       </Form.Item>
-
-      {isMqType && (
-        <Form.Item
-          name="topic"
-          label={<FormattedMessage id={'webHook.queue'} />}
-          initialValue={editing?.topic}
-          rules={[{ required: true }]}
-        >
-          <Select>
-            {mqQueue.map((queue) => (
-              <Option key={queue} value={queue}>
-                {queue}
-              </Option>
-            ))}
-          </Select>
-        </Form.Item>
-      )}
 
       <Form.Item
         name="url"

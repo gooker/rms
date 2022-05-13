@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Spin, Button, Empty, Row, Col, Space, Card } from 'antd';
-import { ReloadOutlined, CopyOutlined, EditOutlined, FormOutlined } from '@ant-design/icons';
+import { ReloadOutlined, FormOutlined } from '@ant-design/icons';
 import { dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { findAllDeviceTypes } from '@/services/resourceManageAPI';
