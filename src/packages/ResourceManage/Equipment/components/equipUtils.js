@@ -18,16 +18,16 @@ export const renderFormItemContent = (content) => {
     return <InputNumber min={1} />;
   }
 
-  if (type === 'select') {
+  if (type === 'SELECT') {
     return <Select options={options} />;
   }
-  if (type === 'checkbox') {
+  if (type === 'CHECKBOX') {
     if (options.length === 0) {
       return <Checkbox />;
     }
     return <Checkbox.Group options={options} />;
   }
-  if (type === 'radio') {
+  if (type === 'RADIO') {
     return <Radio.Group options={options} />;
   }
 };

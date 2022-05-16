@@ -34,12 +34,7 @@ const EquipmentRegisterPanel = (props) => {
     },
     {
       title: <FormattedMessage id="app.configInfo.header.adapter" />,
-      dataIndex: 'agvAdapter',
-      align: 'center',
-    },
-    {
-      title: '品牌',
-      dataIndex: 'brand',
+      dataIndex: 'deviceAdapterCode',
       align: 'center',
     },
     {
