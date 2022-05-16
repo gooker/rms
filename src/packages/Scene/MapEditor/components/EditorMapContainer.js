@@ -122,10 +122,20 @@ const EditorMapContainer = (props) => {
     viewport.setZoom(mapRatio, true);
   }, [mapRatio]);
 
+  /**
+   * 点位定位基于左手坐标系
+   * 点位坐标显示基于右手坐标系
+   */
   function renderMap() {
     const cellsToRender = Object.values(currentMap.cellMap)
       .filter((item) => shownNavigationCellType.includes(item.navigationType))
-      .map((item) => coordinateTransformer(item, item.navigationType, currentMap?.transform?.[item.navigationType]));
+      .map((item) =>
+        coordinateTransformer(
+          item,
+          item.navigationType,
+          currentMap?.transform?.[item.navigationType],
+        ),
+      );
     mapContext.renderCells(cellsToRender);
 
     // TODO: 画原点坐标系

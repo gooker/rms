@@ -1,15 +1,12 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
 import { Divider, Empty, Modal, Radio } from 'antd';
-import { Container } from 'react-smooth-dnd';
 import { useMap } from 'ahooks';
-import { find } from 'lodash';
+import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
 import { RelationTiming } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
-import ProgramingDndCard from '../../../../components/ProgramingConfiguer/ProgramingDndCard';
-import styles from '../../../../components/ProgramingConfiguer/programing.module.less';
+import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
 
 const ProgramingRelationModal = (props) => {
   const { editing, relations, visible, onCancel, onConfirm, programing } = props;
@@ -27,17 +24,23 @@ const ProgramingRelationModal = (props) => {
   useEffect(() => {
     if (visible && !isNull(editing)) {
       const { actions } = editing;
-      actions.forEach(({ timing, actions: innerActions }) => {
-        const value = [];
-        innerActions.forEach(({ adapterType, actionType, actionParameters }) => {
-          const addedItem = { actionType: [adapterType, actionType] };
-          actionParameters.forEach(({ code, value }) => {
-            addedItem[code] = value;
-          });
-          value.push(addedItem);
+      const begin = [],
+        onRoad = [],
+        end = [];
+
+      actions.forEach((item) => {
+        const { timing, adapterType, actionType, actionParameters } = item;
+        const addedItem = { actionType: [adapterType, actionType] };
+        actionParameters.forEach(({ code, value }) => {
+          addedItem[code] = value;
         });
-        setConfiguration(timing, value);
+        timing === RelationTiming.begin && begin.push(addedItem);
+        timing === RelationTiming.onRoad && onRoad.push(addedItem);
+        timing === RelationTiming.end && end.push(addedItem);
       });
+      setConfiguration(RelationTiming.begin, begin);
+      setConfiguration(RelationTiming.onRoad, onRoad);
+      setConfiguration(RelationTiming.end, end);
     } else {
       setCurrent(RelationTiming.begin);
       resetConfiguration();
@@ -46,15 +49,6 @@ const ProgramingRelationModal = (props) => {
 
   function switchViewModel(checked) {
     setCurrent(checked);
-  }
-
-  function onDrop(dropResult) {
-    const { removedIndex, addedIndex } = dropResult;
-    if (removedIndex !== null || addedIndex !== null) {
-      let newConfiguration = [...getConfiguration(current)];
-      newConfiguration = customTaskApplyDrag(newConfiguration, dropResult);
-      setConfiguration(current, newConfiguration);
-    }
   }
 
   const add = useCallback(
@@ -68,35 +62,6 @@ const ProgramingRelationModal = (props) => {
   function confirm() {
     onConfirm(configuration);
     onCancel();
-  }
-
-  function deleteConfiguration(inputIndex) {
-    const configuration = getConfiguration(current);
-    setConfiguration(
-      current,
-      configuration.filter((item, index) => index !== inputIndex),
-    );
-  }
-
-  function renderSubTitle(rest, actionParameters) {
-    return Object.keys(rest)
-      .map((code) => {
-        const specific = find(actionParameters, { code });
-        return `${specific.name}: ${rest[code]}`;
-      })
-      .join('; ');
-  }
-
-  function generateDndData() {
-    return getConfiguration(current).map((item) => {
-      const { actionType, ...rest } = item;
-      const [p1, p2] = actionType;
-      const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
-      return {
-        title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
-        subTitle: renderSubTitle(rest, actionParameters),
-      };
-    });
   }
 
   return (
@@ -133,24 +98,13 @@ const ProgramingRelationModal = (props) => {
       {getConfiguration(current).length === 0 ? (
         <Empty />
       ) : (
-        <Container
-          dropPlaceholder={{
-            showOnTop: true,
-            animationDuration: 150,
-            className: styles.dndPlaceholder,
+        <ProgramingDnd
+          value={getConfiguration(current)}
+          onChane={(payLoad) => {
+            setConfiguration(current, payLoad);
           }}
-          onDrop={(e) => onDrop(e)}
-        >
-          {generateDndData().map(({ title, subTitle }, index) => (
-            <ProgramingDndCard
-              key={`${title}-${index}`}
-              index={index}
-              title={title}
-              subTitle={subTitle}
-              onDelete={deleteConfiguration}
-            />
-          ))}
-        </Container>
+          programing={programing}
+        />
       )}
 
       {/*  点位编程配置面板 */}

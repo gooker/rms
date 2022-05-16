@@ -1234,17 +1234,31 @@ export function convertPrograming2Cascader(programing) {
 }
 
 // 将地图编程配置的值回填到action中
-export function fillProgramAction(configuration, programing) {
-  return configuration.map(({ actionType, ...rest }) => {
-    const [p1, p2] = actionType;
-    const action = find(programing[p1], { actionId: p2 });
-    const copyAction = cloneDeep(action);
-    // 将数据回填到action参数中
-    copyAction.actionParameters.forEach((item) => {
-      item.value = rest[item.code];
+export function fillProgramAction(configuration, programing, withTiming = false) {
+  function fill(configs, timing) {
+    return configs.map(({ actionType, ...rest }) => {
+      const [p1, p2] = actionType;
+      const action = find(programing[p1], { actionId: p2 });
+      const copyAction = cloneDeep(action);
+      // 将数据回填到action参数中
+      copyAction.actionParameters.forEach((item) => {
+        item.value = rest[item.code];
+      });
+      if (!isStrictNull(timing)) {
+        copyAction.timing = timing;
+      }
+      return copyAction;
     });
-    return copyAction;
-  });
+  }
+
+  if (withTiming) {
+    const result = [];
+    configuration.forEach(({ timing, value }) => {
+      result.push(...fill(value, timing));
+    });
+    return result;
+  }
+  return fill(configuration);
 }
 
 // 将数组中符合条件的元素删掉， Lodash中同名方法有问题-->遇到第一个不符合条件的会直接break

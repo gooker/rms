@@ -3,21 +3,21 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
-import { connect } from '@/utils/RmsDva';
 import {
-  getCurrentRouteMapData,
   getSelectionNaviCells,
+  getCurrentRouteMapData,
   getSelectionNaviCellTypes,
 } from '@/utils/mapUtil';
+import { connect } from '@/utils/RmsDva';
+import { convertMapToArrayMap } from '@/utils/util';
 import { ProgramingItemType } from '@/config/config';
 import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
-import ProgramingCellModal from './ProgramingCellModal';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
-import { convertMapToArrayMap } from '@/utils/util';
+import ProgramingConfiguerModal from '@/components/ProgramingConfiguer';
 
 const ProgramingCellTab = (props) => {
-  const { dispatch, selections, cellPrograming } = props;
+  const { dispatch, cellMap, selections, programing, cellPrograming } = props;
 
   const [configVisible, setConfigVisible] = useState(false);
   const [configCells, setConfigCells] = useState([]); // 正在配置的点位
@@ -73,17 +73,35 @@ const ProgramingCellTab = (props) => {
     setConfigVisible(false);
   }
 
+  function getOptions() {
+    if (configCells.length === 0) {
+      return [];
+    }
+    return configCells.map((item) => {
+      const { id, naviId, navigationType } = cellMap[item];
+      return (
+        <Select.Option key={`${navigationType}_${id}`} value={id}>
+          {naviId}
+        </Select.Option>
+      );
+    });
+  }
+
   return (
     <div style={{ paddingTop: 20 }}>
       <Row gutter={4}>
         <Col span={21}>
           <Select
+            disabled
             allowClear
-            mode={'tags'}
+            mode={'multiple'}
             value={configCells}
             onChange={setConfigCells}
             style={{ width: '100%' }}
-          />
+            notFoundContent={null}
+          >
+            {getOptions()}
+          </Select>
         </Col>
         <Col span={3}>
           <Button
@@ -120,9 +138,10 @@ const ProgramingCellTab = (props) => {
       )}
 
       {/* 配置弹窗 */}
-      <ProgramingCellModal
+      <ProgramingConfiguerModal
+        title={`编辑点位编程: [ ${configCells.join()} ]`}
         editing={editing}
-        cells={configCells}
+        programing={programing}
         visible={configVisible}
         onOk={save}
         onCancel={terminateConfiguration}
@@ -147,10 +166,10 @@ const ProgramingCellTab = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
-  const { selections } = editor;
+export default connect(({ editor, global }) => {
+  const { selections, currentMap } = editor;
   const currentRouteMap = getCurrentRouteMapData();
   let cellPrograming = currentRouteMap.programing?.cells || {};
   cellPrograming = convertMapToArrayMap(cellPrograming, 'key', 'actions');
-  return { selections, cellPrograming };
+  return { selections, cellMap: currentMap.cellMap, cellPrograming, programing: global.programing };
 })(memo(ProgramingCellTab));

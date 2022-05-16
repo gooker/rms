@@ -404,6 +404,8 @@ export function moveCell(target, distance, dir) {
   } else {
     result.x = target.x + flag * distance;
   }
+  result.nx = result.x;
+  result.ny = result.y;
   return result;
 }
 

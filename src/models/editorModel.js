@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import {
   dealResponse,
   fillProgramAction,
+  fillProgramActionWithTiming,
   formatMessage,
   getRandomString,
   isNull,
@@ -32,6 +33,7 @@ import {
   deleteMapById,
   fetchMapDetail,
   fetchMapHistoryDetail,
+  fetchSectionMaps,
   saveMap,
   updateMap,
 } from '@/services/XIHE';
@@ -85,32 +87,32 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      yield put({ type: 'saveCurrentMap', payload: MockMapWithProgram });
-      yield put({ type: 'saveMapList', payload: [] });
+      // yield put({ type: 'saveCurrentMap', payload: MockMapWithProgram });
+      // yield put({ type: 'saveMapList', payload: [] });
 
-      // const mapList = yield call(fetchSectionMaps);
-      // if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-      //   // 检查是否有地图数据
-      //   if (mapList.length === 0) {
-      //     message.info(formatMessage({ id: 'app.message.noMap' }));
-      //     yield put({ type: 'saveMapList', payload: [] });
-      //     return;
-      //   }
-      //   yield put({ type: 'saveMapList', payload: mapList });
-      //
-      //   // 检查是否有激活地图
-      //   const activeMap = mapList.filter((map) => map.activeFlag);
-      //   if (activeMap.length === 0) {
-      //     message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
-      //   } else {
-      //     // 获取已激活地图数据并保存相关状态
-      //     const mapId = activeMap[0].id;
-      //     const currentMap = yield call(fetchMapDetail, mapId);
-      //     if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-      //       yield put({ type: 'saveCurrentMap', payload: currentMap });
-      //     }
-      //   }
-      // }
+      const mapList = yield call(fetchSectionMaps);
+      if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+        // 检查是否有地图数据
+        if (mapList.length === 0) {
+          message.info(formatMessage({ id: 'app.message.noMap' }));
+          yield put({ type: 'saveMapList', payload: [] });
+          return;
+        }
+        yield put({ type: 'saveMapList', payload: mapList });
+
+        // 检查是否有激活地图
+        const activeMap = mapList.filter((map) => map.activeFlag);
+        if (activeMap.length === 0) {
+          message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
+        } else {
+          // 获取已激活地图数据并保存相关状态
+          const mapId = activeMap[0].id;
+          const currentMap = yield call(fetchMapDetail, mapId);
+          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+            yield put({ type: 'saveCurrentMap', payload: currentMap });
+          }
+        }
+      }
     },
 
     *checkoutMap({ payload }, { put, call }) {
@@ -616,7 +618,7 @@ export default {
         additionalCells = additionalCells.map((cell, index) => ({
           ...cell,
           id: cellId[index],
-          naviId: naviId[index],
+          naviId: naviId[index] + '',
         }));
       }
 
@@ -705,53 +707,28 @@ export default {
         currentRouteMap.programing = { cells: {}, relations: {}, zones: {} };
       }
 
+      // 如果某个对象已经存在配置则覆盖
       const { type, items, configuration } = payload;
-      if ([ProgramingItemType.cell, ProgramingItemType.zone].includes(type)) {
-        if (!Array.isArray(configuration)) return;
-        // 如果某个点位或者区域已经存在配置则覆盖
-        const existCellConfigList = { ...currentRouteMap.programing[`${type}s`] };
-        if (configuration.length > 0) {
-          const actions = fillProgramAction(configuration, programing);
-          items.forEach((cellId) => {
-            existCellConfigList[cellId] = actions;
-          });
-        } else {
-          items.forEach((cellId) => {
-            delete existCellConfigList[cellId];
-          });
-        }
-        currentRouteMap.programing[`${type}s`] = existCellConfigList;
+      if (!Array.isArray(configuration)) return;
+      const existCellConfigList = { ...currentRouteMap.programing[`${type}s`] };
+      if (configuration.length > 0) {
+        const actions = fillProgramAction(
+          configuration,
+          programing,
+          type === ProgramingItemType.relation,
+        );
+        items.forEach((cellId) => {
+          existCellConfigList[cellId] = actions;
+        });
       } else {
-        const existRelationConfigList = { ...currentRouteMap.programing.relations };
-        items.forEach((relationCode) => {
-          existRelationConfigList[relationCode] = [];
+        items.forEach((cellId) => {
+          delete existCellConfigList[cellId];
         });
-        // 如果某个线条已经存在配置，则覆盖
-        [...configuration.keys()].forEach((timing) => {
-          const configurationItem = configuration.get(timing);
-          if (configurationItem.length > 0) {
-            const actions = fillProgramAction(configurationItem, programing);
-            items.forEach((relationCode) => {
-              existRelationConfigList[relationCode].push({
-                key: relationCode,
-                type,
-                actions,
-                timing,
-              });
-            });
-          } else {
-            items.forEach((relationCode) => {
-              existRelationConfigList[relationCode] = existRelationConfigList[relationCode].filter(
-                (item) => item.timing !== timing,
-              );
-            });
-          }
-        });
-        currentRouteMap.programing.relations = existRelationConfigList;
       }
+      currentRouteMap.programing[`${type}s`] = existCellConfigList;
     },
 
-    * deleteMapPrograming({ payload }) {
+    deleteMapPrograming({ payload }) {
       const currentRouteMap = getCurrentRouteMapData();
       const { type, key } = payload;
       const existConfigList = { ...currentRouteMap.programing[`${type}s`] };

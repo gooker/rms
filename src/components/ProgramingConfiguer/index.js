@@ -1,12 +1,9 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Modal, Empty, Divider } from 'antd';
-import { Container } from 'react-smooth-dnd';
-import { find } from 'lodash';
-import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
-import ProgramingDndCard from './ProgramingDndCard';
+import { isNull } from '@/utils/util';
 import ProgramingConfigure from './ProgramingForm';
-import styles from './programing.module.less';
+import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
 
 /**
  * 默认导出一个弹窗组件
@@ -20,7 +17,7 @@ import styles from './programing.module.less';
  * @param programing 编程元数据
  */
 const ProgramingConfiguerModal = (props) => {
-  const { editing, title, visible, onOk, onCancel, width, programing } = props;
+  const { title, visible, onOk, onCancel, programing, editing, width = '60%' } = props;
   const [configuration, setConfiguration] = useState([]);
 
   useEffect(() => {
@@ -40,15 +37,6 @@ const ProgramingConfiguerModal = (props) => {
     }
   }, [visible]);
 
-  function onDrop(dropResult) {
-    const { removedIndex, addedIndex } = dropResult;
-    if (removedIndex !== null || addedIndex !== null) {
-      let newConfiguration = [...configuration];
-      newConfiguration = customTaskApplyDrag(newConfiguration, dropResult);
-      setConfiguration(newConfiguration);
-    }
-  }
-
   function addConfiguration(value) {
     if (Array.isArray(value)) {
       setConfiguration([...configuration, ...value]);
@@ -57,62 +45,28 @@ const ProgramingConfiguerModal = (props) => {
     }
   }
 
-  function deleteConfiguration(inputIndex) {
-    setConfiguration(configuration.filter((item, index) => index !== inputIndex));
-  }
-
-  function renderSubTitle(rest, actionParameters) {
-    return Object.keys(rest)
-      .map((code) => {
-        const specific = find(actionParameters, { code });
-        return `${specific.name}: ${rest[code]}`;
-      })
-      .join('; ');
-  }
-
-  function generateDndData() {
-    return configuration.map((item) => {
-      const { actionType, ...rest } = item;
-      const [p1, p2] = actionType;
-      const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
-      return {
-        title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
-        subTitle: renderSubTitle(rest, actionParameters),
-      };
-    });
+  function confirm() {
+    onOk(configuration);
+    onCancel();
   }
 
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={visible}
-      onOk={onOk}
-      onCancel={onCancel}
       width={width}
+      closable={false}
+      maskClosable={false}
+      onOk={confirm}
+      onCancel={onCancel}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       {/*  点位编程配置信息 */}
       {configuration.length === 0 ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : (
-        <Container
-          dropPlaceholder={{
-            showOnTop: true,
-            animationDuration: 150,
-            className: styles.dndPlaceholder,
-          }}
-          onDrop={(e) => onDrop(e)}
-        >
-          {generateDndData().map(({ title, subTitle }, index) => (
-            <ProgramingDndCard
-              key={`${title}-${index}`}
-              index={index}
-              title={title}
-              subTitle={subTitle}
-              onDelete={deleteConfiguration}
-            />
-          ))}
-        </Container>
+        <ProgramingDnd value={configuration} onChane={setConfiguration} programing={programing} />
       )}
 
       {/*  点位编程配置面板 */}
@@ -122,10 +76,3 @@ const ProgramingConfiguerModal = (props) => {
   );
 };
 export default memo(ProgramingConfiguerModal);
-
-// eslint-disable-next-line react/display-name
-const ProgramingConfiguer = memo((props) => {
-
-  //
-});
-export { ProgramingConfiguer };

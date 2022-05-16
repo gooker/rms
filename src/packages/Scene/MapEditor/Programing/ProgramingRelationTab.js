@@ -29,9 +29,18 @@ const ProgramingRelationTab = (props) => {
       payload: {
         type: ProgramingItemType.relation,
         items: configRoutes,
-        configuration,
+        configuration: flatConfiguration(configuration),
       },
     });
+  }
+
+  function flatConfiguration(configuration) {
+    const result = [];
+    [...configuration.keys()].forEach((timing) => {
+      const value = configuration.get(timing);
+      result.push({ timing, value });
+    });
+    return result;
   }
 
   function onEdit(item) {
