@@ -21,7 +21,7 @@ const connectTypes = {
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const RegisterDeviceModal = (props) => {
-  const { dispatch, visible, allDeviceTypes, onSubmit } = props;
+  const { dispatch, deviceMonitorData,visible, allDeviceTypes, onSubmit } = props;
   const [formRef] = Form.useForm();
   const [deviceActions, setDeviceActions] = useState([]); // 设备动作
   const [actionVisible, setActionVisible] = useState(false); // 设备动作modal
@@ -48,7 +48,7 @@ const RegisterDeviceModal = (props) => {
           configs[key] = value;
         });
         delete newParams.infos;
-        onSubmit({ ...newParams, deviceActionDTO: deviceActions });
+        onSubmit({ ...newParams, deviceActionDTO: deviceActions,DeviceMonitorDTO:deviceMonitorData });
       })
       .catch(() => {});
   }
@@ -69,6 +69,7 @@ const RegisterDeviceModal = (props) => {
 
   function cancelModal() {
     dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: false });
+    dispatch({ type: 'equipList/saveState', payload: { deviceMonitorData: [] } });
   }
 
   return (

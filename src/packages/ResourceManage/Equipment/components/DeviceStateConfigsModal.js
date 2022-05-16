@@ -129,7 +129,11 @@ const DeviceStateConfigsModal = (props) => {
           actionList = fillProgramAction(configuration, programing);
         }
         const DeviceMonitorDTO = [];
-        DeviceMonitorDTO.push({ deviceMonitorParamsDefinitionList, actionList ,id:});
+        DeviceMonitorDTO.push({
+          deviceMonitorParamsDefinitionList,
+          actionList,
+          id: allOptions[0]?.id,
+        });
         console.log(DeviceMonitorDTO);
         dispatch({ type: 'equipList/saveState', payload: { deviceMonitorData: DeviceMonitorDTO } });
         onCancel();
