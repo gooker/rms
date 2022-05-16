@@ -46,9 +46,16 @@ export default {
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
+    programing: [], // 所有地图编程元数据
   },
 
   reducers: {
+    updateStateInBatch(state, action) {
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
     saveBackendVersion(state, { payload }) {
       return {
         ...state,
@@ -188,13 +195,6 @@ export default {
       return {
         ...state,
         globalLocale: payload,
-      };
-    },
-
-    updateAllTaskTypes(state, { payload }) {
-      return {
-        ...state,
-        allTaskTypes: payload,
       };
     },
 

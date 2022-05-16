@@ -5,9 +5,9 @@ import { find } from 'lodash';
 import { Container } from 'react-smooth-dnd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, customTaskApplyDrag, isNull } from '@/utils/util';
-import ProgramingDndCard from './components/ProgramingDndCard';
+import ProgramingDndCard from '../../../../components/ProgramingConfiguer/ProgramingDndCard';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
-import styles from './programing.module.less';
+import styles from '../../../../components/ProgramingConfiguer/programing.module.less';
 
 const ProgramingZoneTab = (props) => {
   const { visible, onCancel, onConfirm, programing, editing } = props;
@@ -114,6 +114,6 @@ const ProgramingZoneTab = (props) => {
     </Modal>
   );
 };
-export default connect(({ editor }) => ({
-  programing: editor.programing,
+export default connect(({ global }) => ({
+  programing: global.programing || {},
 }))(memo(ProgramingZoneTab));
