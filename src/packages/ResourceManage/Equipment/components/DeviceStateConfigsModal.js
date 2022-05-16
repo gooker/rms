@@ -12,8 +12,8 @@ import {
 } from '@/utils/util';
 import { renderFormItemContent } from './equipUtils';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
-import ProgramingDndCard from '@/packages/Scene/MapEditor/Programing/components/ProgramingDndCard';
-import styles from '@/packages/Scene/MapEditor/Programing/programing.module.less';
+import ProgramingDndCard from '@/components/ProgramingConfiguer/ProgramingDndCard';
+import styles from '@/components/ProgramingConfiguer/programing.module.less';
 
 const DeviceStateConfigsModal = (props) => {
   const { deviceMonitorData, visible, configs, onCancel, dispatch, programing, onSave } = props;
@@ -25,17 +25,18 @@ const DeviceStateConfigsModal = (props) => {
 
   useEffect(() => {
     if (visible && !isNull(deviceMonitorData)) {
-      const { actionList } = deviceMonitorData;
-      const configurations = [];
-      actionList.forEach(({ adapterType, actionType, actionId, actionParameters }) => {
-        const addedItem = { actionType: [adapterType, actionId] };
-        actionParameters.forEach(({ code, value }) => {
-          addedItem[code] = value;
+      deviceMonitorData?.map(({ actionList }) => {
+        const configurations = [];
+        actionList.forEach(({ adapterType, actionType, actionId, actionParameters }) => {
+          const addedItem = { actionType: [adapterType, actionId] };
+          actionParameters.forEach(({ code, value }) => {
+            addedItem[code] = value;
+          });
+          configurations.push(addedItem);
         });
-        configurations.push(addedItem);
-      });
 
-      setConfiguration(configurations);
+        setConfiguration(configurations);
+      });
     } else {
       setConfiguration([]);
     }
@@ -44,29 +45,32 @@ const DeviceStateConfigsModal = (props) => {
   useEffect(() => {
     let newConfigs = [...configs];
     if (newConfigs?.length > 0 && !isNull(deviceMonitorData)) {
-      const { deviceMonitorParamsDefinitionList } = deviceMonitorData;
-      newConfigs[0].deviceMonitorParamsDefinitionList = deviceMonitorParamsDefinitionList;
+      deviceMonitorData?.map(({ deviceMonitorParamsDefinitionList }) => {
+        // const currentConfigIndex = findIndex(newConfigs, { id });
+        // 目前只会有一条数据！！！
+        newConfigs[0].deviceMonitorParamsDefinitionList = deviceMonitorParamsDefinitionList;
+      });
     }
     setCurrent(configs[0]?.code);
-    setAllOptionsOptions(configs);
+    setAllOptionsOptions(newConfigs);
   }, [configs]);
 
   function renderItem() {
     const currentContent = find(allOptions, { code: current });
     return currentContent?.deviceMonitorParamsDefinitionList?.map(
-      ({ name: labelName, code, isRequired, valueDataType: type, value }, index) => {
+      ({ name, code, valueDataType: type, value, isOptional }, index) => {
         const param = { type };
         const valuePropName = type === 'BOOL' ? 'checked' : 'value';
         let defaultValue = type === 'BOOL' ? JSON.parse(value) ?? false : value;
         return (
           <Col key={`${current}-${index}`} span={8}>
             <Form.Item
-              label={labelName}
+              label={name}
               name={code}
               key={`${current}-${index}-${code}`}
               valuePropName={valuePropName}
               initialValue={defaultValue}
-              rules={[{ required: true }]}
+              rules={[{ required: isOptional === false }]}
             >
               {renderFormItemContent(param)}
             </Form.Item>
@@ -210,5 +214,5 @@ const DeviceStateConfigsModal = (props) => {
 };
 export default connect(({ global, equipList }) => ({
   programing: global.programing ?? {},
-  deviceMonitorData: equipList.deviceMonitorData?.[0],
+  deviceMonitorData: equipList.deviceMonitorData ?? [], // 目前只会有一条数据！！！
 }))(memo(DeviceStateConfigsModal));

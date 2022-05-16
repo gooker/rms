@@ -11,14 +11,16 @@ const ProgramingForm = (props) => {
   const [actionType, setActionType] = useState(null); // 已选择动作类型
   const cascaderOption = convertPrograming2Cascader(programing);
 
-  function renderItemInput(valueDataType) {
+  function renderItemInput(valueDataType, isReadOnly) {
     switch (valueDataType) {
       case 'ARRAY':
-        return <Select mode={'tags'} maxTagCount={4} notFoundContent={null} />;
+        return (
+          <Select mode={'tags'} maxTagCount={4} notFoundContent={null} disabled={isReadOnly} />
+        );
       case 'BOOL':
-        return <Switch />;
+        return <Switch disabled={isReadOnly} />;
       default:
-        return <Input />;
+        return <Input disabled={isReadOnly} />;
     }
   }
 
@@ -26,20 +28,23 @@ const ProgramingForm = (props) => {
     if (Array.isArray(actionType) && actionType.length > 1) {
       const [p1, p2] = actionType;
       const { actionParameters } = find(programing[p1], { actionId: p2 });
-      return actionParameters.map(({ code, name, valueDataType, isOptional }, index) => {
-        return (
-          <Col key={index} span={8}>
-            <Form.Item
-              name={code}
-              label={name}
-              rules={[{ required: isOptional === false }]}
-              valuePropName={valueDataType === 'BOOL' ? 'checked' : 'value'}
-            >
-              {renderItemInput(valueDataType)}
-            </Form.Item>
-          </Col>
-        );
-      });
+      return actionParameters.map(
+        ({ code, name, valueDataType, isOptional, isReadOnly, value }, index) => {
+          return (
+            <Col key={index} span={8}>
+              <Form.Item
+                name={code}
+                label={name}
+                rules={[{ required: isOptional === false }]}
+                valuePropName={valueDataType === 'BOOL' ? 'checked' : 'value'}
+                initialValue={valueDataType === 'BOOL' ? JSON.parse(value) ?? false : value}
+              >
+                {renderItemInput(valueDataType, isReadOnly)}
+              </Form.Item>
+            </Col>
+          );
+        },
+      );
     } else {
       return [];
     }
@@ -52,8 +57,7 @@ const ProgramingForm = (props) => {
         onAdd({ actionType, ...value });
         formRef.resetFields();
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 
   return (

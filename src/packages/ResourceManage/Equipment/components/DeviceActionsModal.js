@@ -45,31 +45,22 @@ const DeviceActionsModal = (props) => {
   }
 
   function renderItem(keyid, record) {
-    return record.map(
-      ({ name: labelName, code: fieldName, isRequired, valueDataType: type, value }, index) => {
-        const rules = [];
-        if (isRequired) {
-          rules.push({
-            required: true,
-          });
-        }
-        const param = { type };
-        const valuePropName = type === 'BOOL' ? 'checked' : 'value';
-        let defaultValue = type === 'BOOL' ? JSON.parse(value) ?? false : value;
-        return (
-          <Form.Item
-            label={labelName}
-            name={[keyid, fieldName]}
-            key={`${keyid}-${index}-${fieldName}`}
-            valuePropName={valuePropName}
-            initialValue={defaultValue}
-            rules={rules}
-          >
-            {renderFormItemContent(param)}
-          </Form.Item>
-        );
-      },
-    );
+    return record.map(({ name, code, isOptional, valueDataType: type, value }, index) => {
+      const valuePropName = type === 'BOOL' ? 'checked' : 'value';
+      let defaultValue = type === 'BOOL' ? JSON.parse(value) ?? false : value;
+      return (
+        <Form.Item
+          label={name}
+          name={[keyid, code]}
+          key={`${keyid}-${index}-${code}`}
+          valuePropName={valuePropName}
+          initialValue={defaultValue}
+          rules={[{ required: isOptional === false }]}
+        >
+          {renderFormItemContent({ type })}
+        </Form.Item>
+      );
+    });
   }
 
   return (
