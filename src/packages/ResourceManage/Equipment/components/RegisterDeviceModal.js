@@ -4,8 +4,12 @@ import { Form, Modal, Select, Row, Col, AutoComplete, Input, Button } from 'antd
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, getFormLayout, adaptModalHeight } from '@/utils/util';
-import { findDeviceActionsByDeviceType } from '@/services/resourceManageAPI';
+import {
+  findDeviceActionsByDeviceType,
+  findDeviceMonitorsByDeviceType,
+} from '@/services/resourceManageAPI';
 import DeviceActionsModal from './DeviceActionsModal';
+import DeviceStateConfigsModal from './DeviceStateConfigsModal';
 
 const connectTypes = {
   MODBUS_TCP: 'MODBUS_TCP',
@@ -17,15 +21,19 @@ const connectTypes = {
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const RegisterDeviceModal = (props) => {
-  const { dispatch, visible, allDeviceTypes, onSubmit } = props;
+  const { dispatch, deviceMonitorData,visible, allDeviceTypes, onSubmit } = props;
   const [formRef] = Form.useForm();
   const [deviceActions, setDeviceActions] = useState([]); // 设备动作
   const [actionVisible, setActionVisible] = useState(false); // 设备动作modal
+
+  const [configState, setConfigState] = useState([]); // 配置状态options
+  const [configStateVisible, setConfigStateVisible] = useState(false); // 配置状态动作modal
 
   useEffect(() => {
     if (!visible) {
       formRef.resetFields();
       setDeviceActions([]);
+      setConfigState([]);
     }
   }, [visible]);
 
@@ -40,21 +48,28 @@ const RegisterDeviceModal = (props) => {
           configs[key] = value;
         });
         delete newParams.infos;
-        onSubmit({ ...newParams, deviceActionDTO: deviceActions });
+        onSubmit({ ...newParams, deviceActionDTO: deviceActions,DeviceMonitorDTO:deviceMonitorData });
       })
       .catch(() => {});
   }
 
   async function onDeviceTypeChange(e) {
-    const response = await findDeviceActionsByDeviceType({ deviceTypeCode: e, deviceId: '' });
-    if (!dealResponse(response)) {
+    const params = { deviceTypeCode: e, deviceId: '' };
+    const [response, stateData] = await Promise.all([
+      findDeviceActionsByDeviceType(params),
+      findDeviceMonitorsByDeviceType(params),
+    ]);
+    if (!dealResponse(response) && !dealResponse(stateData)) {
       const actions = [...response];
+      const configState = [...stateData];
       setDeviceActions(actions);
+      setConfigState(configState);
     }
   }
 
   function cancelModal() {
     dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: false });
+    dispatch({ type: 'equipList/saveState', payload: { deviceMonitorData: [] } });
   }
 
   return (
@@ -69,6 +84,15 @@ const RegisterDeviceModal = (props) => {
       footer={[
         <Button key="back" onClick={cancelModal}>
           取消
+        </Button>,
+        <Button
+          key="set"
+          disabled={configState?.length === 0}
+          onClick={() => {
+            setConfigStateVisible(true);
+          }}
+        >
+          配置状态动作
         </Button>,
         <Button
           key="set"
@@ -168,6 +192,7 @@ const RegisterDeviceModal = (props) => {
         </Form.List>
       </Form>
 
+      {/* 设备动作 */}
       {actionVisible && (
         <DeviceActionsModal
           visible={actionVisible}
@@ -180,10 +205,22 @@ const RegisterDeviceModal = (props) => {
           }}
         />
       )}
+
+      {/* 状态动作 */}
+      {configStateVisible && (
+        <DeviceStateConfigsModal
+          visible={configStateVisible}
+          onCancel={() => {
+            setConfigStateVisible(false);
+          }}
+          configs={configState}
+        />
+      )}
     </Modal>
   );
 };
 export default connect(({ equipList }) => ({
   allDeviceTypes: equipList.allDeviceTypes,
   visible: equipList.registerDeviceModalShown,
+  deviceMonitorData: equipList.deviceMonitorData,
 }))(memo(RegisterDeviceModal));

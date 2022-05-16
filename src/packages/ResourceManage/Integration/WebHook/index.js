@@ -192,7 +192,7 @@ const WebHook = () => {
           onClick={() => {
             setRegisterVisible(true);
           }}
-          disabled={registerRows.length === 0}
+          // disabled={registerRows.length === 0}
         >
           <SwapOutlined /> <FormattedMessage id="app.register" />
         </Button>

@@ -65,6 +65,7 @@ const EquipmentRegisterPanel = (props) => {
     if (!dealResponse(response, true)) {
       setSelectedRowKeys([]);
       dispatch({ type: 'equipList/updateRegisterDeviceModalShown', payload: false });
+      dispatch({ type: 'equipList/saveState', payload: { deviceMonitorData: [] } });
       onRefresh();
     }
   }

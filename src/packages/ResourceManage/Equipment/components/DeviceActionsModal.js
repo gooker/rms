@@ -1,20 +1,9 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import {
-  Form,
-  Modal,
-  Select,
-  Row,
-  Col,
-  Input,
-  Switch,
-  InputNumber,
-  Checkbox,
-  Radio,
-  Divider,
-} from 'antd';
+import { Form, Modal, Row, Col, Divider } from 'antd';
 import { getFormLayout, adaptModalHeight } from '@/utils/util';
 import { forIn, find } from 'lodash';
+import { renderFormItemContent } from './equipUtils';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout } = getFormLayout(5, 17);
@@ -22,12 +11,6 @@ const DeviceActionsModal = (props) => {
   const { visible, deviceActions, onCancelModal, onSave, isEdit } = props;
   const [formRef] = Form.useForm();
   const [currentTypeAction, setCurrentTypeAction] = useState([]); //
-
-  // useEffect(() => {
-  //   if (!visible) {
-  //     formRef.resetFields();
-  //   }
-  // }, [visible]);
 
   useEffect(() => {
     setCurrentTypeAction(deviceActions);
@@ -52,8 +35,8 @@ const DeviceActionsModal = (props) => {
       const deviceActionDefinitionList = currentActionParam.deviceActionParamsDefinitionList;
       const deviceActionParamsDefinitionList = [];
       forIn(items, (value, key) => {
-        const currentOptions = find(deviceActionDefinitionList, (define) => define.key === key);
-        deviceActionParamsDefinitionList.push({ ...currentOptions, key, value });
+        const currentOptions = find(deviceActionDefinitionList, (define) => define.code === key);
+        deviceActionParamsDefinitionList.push({ ...currentOptions, value });
       });
       newDeviceActions.push({ ...currentActionParam, id, deviceActionParamsDefinitionList });
     });
@@ -61,41 +44,9 @@ const DeviceActionsModal = (props) => {
     onCancelModal();
   }
 
-  function renderFormItemContent(content) {
-    const { type, options, isisabled } = content;
-
-    if (type === 'ARRAY') {
-      return <Select mode="tags" options={options} maxTagCount={4} />;
-    }
-
-    if (type === 'BOOL') {
-      return <Switch />;
-    }
-    if (type === 'STRING') {
-      return <Input disabled={!!isisabled} />;
-    }
-
-    if (type === 'NUMBER') {
-      return <InputNumber min={1} />;
-    }
-
-    if (type === 'select') {
-      return <Select options={options} />;
-    }
-    if (type === 'checkbox') {
-      if (options.length === 0) {
-        return <Checkbox />;
-      }
-      return <Checkbox.Group options={options} />;
-    }
-    if (type === 'radio') {
-      return <Radio.Group options={options} />;
-    }
-  }
-
   function renderItem(keyid, record) {
     return record.map(
-      ({ name: labelName, key: fieldName, isRequired, valueDataType: type, value }, index) => {
+      ({ name: labelName, code: fieldName, isRequired, valueDataType: type, value }, index) => {
         const rules = [];
         if (isRequired) {
           rules.push({
@@ -104,7 +55,7 @@ const DeviceActionsModal = (props) => {
         }
         const param = { type };
         const valuePropName = type === 'BOOL' ? 'checked' : 'value';
-        let defaultValue = type === 'BOOL' ? value ?? false : value;
+        let defaultValue = type === 'BOOL' ? JSON.parse(value) ?? false : value;
         return (
           <Form.Item
             label={labelName}
@@ -154,7 +105,9 @@ const DeviceActionsModal = (props) => {
                 }}
               >
                 <Divider orientation="left">{name}</Divider>
-                <Col span={22}>{renderItem(id, deviceActionParamsDefinitionList)}</Col>
+                <Col span={22} key={id}>
+                  {renderItem(id, deviceActionParamsDefinitionList)}
+                </Col>
               </Row>
             );
           })}

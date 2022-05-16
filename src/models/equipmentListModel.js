@@ -18,6 +18,8 @@ export default {
     allAdaptors: [],
     allDevices: [],
     searchParams: { id: [], connectionType: [] },
+
+    deviceMonitorData:[],
   },
 
   effects: {
