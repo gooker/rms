@@ -87,32 +87,32 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      yield put({ type: 'saveCurrentMap', payload: MockMapWithProgram });
-      yield put({ type: 'saveMapList', payload: [] });
+      // yield put({ type: 'saveCurrentMap', payload: MockMapWithProgram });
+      // yield put({ type: 'saveMapList', payload: [] });
 
-      // const mapList = yield call(fetchSectionMaps);
-      // if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-      //   // 检查是否有地图数据
-      //   if (mapList.length === 0) {
-      //     message.info(formatMessage({ id: 'app.message.noMap' }));
-      //     yield put({ type: 'saveMapList', payload: [] });
-      //     return;
-      //   }
-      //   yield put({ type: 'saveMapList', payload: mapList });
-      //
-      //   // 检查是否有激活地图
-      //   const activeMap = mapList.filter((map) => map.activeFlag);
-      //   if (activeMap.length === 0) {
-      //     message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
-      //   } else {
-      //     // 获取已激活地图数据并保存相关状态
-      //     const mapId = activeMap[0].id;
-      //     const currentMap = yield call(fetchMapDetail, mapId);
-      //     if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
-      //       yield put({ type: 'saveCurrentMap', payload: currentMap });
-      //     }
-      //   }
-      // }
+      const mapList = yield call(fetchSectionMaps);
+      if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+        // 检查是否有地图数据
+        if (mapList.length === 0) {
+          message.info(formatMessage({ id: 'app.message.noMap' }));
+          yield put({ type: 'saveMapList', payload: [] });
+          return;
+        }
+        yield put({ type: 'saveMapList', payload: mapList });
+
+        // 检查是否有激活地图
+        const activeMap = mapList.filter((map) => map.activeFlag);
+        if (activeMap.length === 0) {
+          message.warn(formatMessage({ id: 'app.message.noActiveMap' }));
+        } else {
+          // 获取已激活地图数据并保存相关状态
+          const mapId = activeMap[0].id;
+          const currentMap = yield call(fetchMapDetail, mapId);
+          if (!dealResponse(currentMap, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
+            yield put({ type: 'saveCurrentMap', payload: currentMap });
+          }
+        }
+      }
     },
 
     *checkoutMap({ payload }, { put, call }) {

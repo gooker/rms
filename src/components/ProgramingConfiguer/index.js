@@ -1,12 +1,9 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Modal, Empty, Divider } from 'antd';
-import { Container } from 'react-smooth-dnd';
-import { find } from 'lodash';
-import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
-import ProgramingDndCard from './ProgramingDndCard';
+import { isNull } from '@/utils/util';
 import ProgramingConfigure from './ProgramingForm';
-import styles from './programing.module.less';
+import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
 
 /**
  * 默认导出一个弹窗组件
@@ -40,46 +37,12 @@ const ProgramingConfiguerModal = (props) => {
     }
   }, [visible]);
 
-  function onDrop(dropResult) {
-    const { removedIndex, addedIndex } = dropResult;
-    if (removedIndex !== null || addedIndex !== null) {
-      let newConfiguration = [...configuration];
-      newConfiguration = customTaskApplyDrag(newConfiguration, dropResult);
-      setConfiguration(newConfiguration);
-    }
-  }
-
   function addConfiguration(value) {
     if (Array.isArray(value)) {
       setConfiguration([...configuration, ...value]);
     } else {
       setConfiguration([...configuration, value]);
     }
-  }
-
-  function deleteConfiguration(inputIndex) {
-    setConfiguration(configuration.filter((item, index) => index !== inputIndex));
-  }
-
-  function renderSubTitle(rest, actionParameters) {
-    return Object.keys(rest)
-      .map((code) => {
-        const specific = find(actionParameters, { code });
-        return `${specific.name}: ${rest[code]}`;
-      })
-      .join('; ');
-  }
-
-  function generateDndData() {
-    return configuration.map((item) => {
-      const { actionType, ...rest } = item;
-      const [p1, p2] = actionType;
-      const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
-      return {
-        title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
-        subTitle: renderSubTitle(rest, actionParameters),
-      };
-    });
   }
 
   function confirm() {
@@ -103,24 +66,7 @@ const ProgramingConfiguerModal = (props) => {
       {configuration.length === 0 ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : (
-        <Container
-          dropPlaceholder={{
-            showOnTop: true,
-            animationDuration: 150,
-            className: styles.dndPlaceholder,
-          }}
-          onDrop={(e) => onDrop(e)}
-        >
-          {generateDndData().map(({ title, subTitle }, index) => (
-            <ProgramingDndCard
-              key={`${title}-${index}`}
-              index={index}
-              title={title}
-              subTitle={subTitle}
-              onDelete={deleteConfiguration}
-            />
-          ))}
-        </Container>
+        <ProgramingDnd value={configuration} onChane={setConfiguration} programing={programing} />
       )}
 
       {/*  点位编程配置面板 */}
@@ -130,86 +76,3 @@ const ProgramingConfiguerModal = (props) => {
   );
 };
 export default memo(ProgramingConfiguerModal);
-
-// eslint-disable-next-line react/display-name
-const ProgramingConfiguer = memo((props) => {
-  const { programing, configuration, onChange } = props;
-
-  function onDrop(dropResult) {
-    const { removedIndex, addedIndex } = dropResult;
-    if (removedIndex !== null || addedIndex !== null) {
-      let newConfiguration = [...configuration];
-      newConfiguration = customTaskApplyDrag(newConfiguration, dropResult);
-      onChange(newConfiguration);
-    }
-  }
-
-  function addConfiguration(value) {
-    let newConfiguration;
-    if (Array.isArray(value)) {
-      newConfiguration = [...configuration, ...value];
-    } else {
-      newConfiguration = [...configuration, value];
-    }
-    onChange(newConfiguration);
-  }
-
-  function deleteConfiguration(inputIndex) {
-    const newConfiguration = configuration.filter((item, index) => index !== inputIndex);
-    onChange(newConfiguration);
-  }
-
-  function renderSubTitle(rest, actionParameters) {
-    return Object.keys(rest)
-      .map((code) => {
-        const specific = find(actionParameters, { code });
-        return `${specific.name}: ${rest[code]}`;
-      })
-      .join('; ');
-  }
-
-  function generateDndData() {
-    return configuration.map((item) => {
-      const { actionType, ...rest } = item;
-      const [p1, p2] = actionType;
-      const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
-      return {
-        title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
-        subTitle: renderSubTitle(rest, actionParameters),
-      };
-    });
-  }
-
-  return (
-    <div>
-      {/*  点位编程配置信息 */}
-      {configuration.length === 0 ? (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      ) : (
-        <Container
-          dropPlaceholder={{
-            showOnTop: true,
-            animationDuration: 150,
-            className: styles.dndPlaceholder,
-          }}
-          onDrop={(e) => onDrop(e)}
-        >
-          {generateDndData().map(({ title, subTitle }, index) => (
-            <ProgramingDndCard
-              key={`${title}-${index}`}
-              index={index}
-              title={title}
-              subTitle={subTitle}
-              onDelete={deleteConfiguration}
-            />
-          ))}
-        </Container>
-      )}
-
-      {/*  点位编程配置面板 */}
-      <Divider orientation={'left'}>配置工具</Divider>
-      <ProgramingConfigure programing={programing} onAdd={addConfiguration} />
-    </div>
-  );
-});
-export { ProgramingConfiguer };
