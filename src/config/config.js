@@ -77,7 +77,7 @@ export const CoordinateType = {
 export const ProgramingItemType = {
   cell: 'cell',
   relation: 'relation',
-  area: 'area',
+  zone: 'zone',
 };
 
 // 地图编程-线条的timing枚举

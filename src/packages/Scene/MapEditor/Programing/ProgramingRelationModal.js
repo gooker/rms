@@ -15,7 +15,10 @@ const ProgramingRelationModal = (props) => {
   const { editing, relations, visible, onCancel, onConfirm, programing } = props;
 
   const [current, setCurrent] = useState(RelationTiming.begin);
-  const [configuration, { set: setConfiguration, get: getConfiguration }] = useMap([
+  const [
+    configuration,
+    { set: setConfiguration, get: getConfiguration, reset: resetConfiguration },
+  ] = useMap([
     [RelationTiming.begin, []],
     [RelationTiming.onRoad, []],
     [RelationTiming.end, []],
@@ -23,26 +26,21 @@ const ProgramingRelationModal = (props) => {
 
   useEffect(() => {
     if (visible && !isNull(editing)) {
-      const { programing } = editing;
-      const configurations = [];
-      programing.forEach(({ timing, actions }) => {
-        const configuration = [timing];
-        actions.forEach(({ adapterType, actionType, actionParameters }) => {
+      const { actions } = editing;
+      actions.forEach(({ timing, actions: innerActions }) => {
+        const value = [];
+        innerActions.forEach(({ adapterType, actionType, actionParameters }) => {
           const addedItem = { actionType: [adapterType, actionType] };
           actionParameters.forEach(({ code, value }) => {
             addedItem[code] = value;
           });
-          configuration.push(addedItem);
+          value.push(addedItem);
         });
-        configurations.push(configuration);
+        setConfiguration(timing, value);
       });
-      setConfiguration(configurations);
     } else {
-      setConfiguration([
-        [RelationTiming.begin, []],
-        [RelationTiming.onRoad, []],
-        [RelationTiming.end, []],
-      ]);
+      setCurrent(RelationTiming.begin);
+      resetConfiguration();
     }
   }, [visible]);
 
@@ -66,6 +64,11 @@ const ProgramingRelationModal = (props) => {
     },
     [current],
   );
+
+  function confirm() {
+    onConfirm(configuration);
+    onCancel();
+  }
 
   function deleteConfiguration(inputIndex) {
     const configuration = getConfiguration(current);
@@ -105,9 +108,7 @@ const ProgramingRelationModal = (props) => {
       maskClosable={false}
       visible={visible}
       onCancel={onCancel}
-      onOk={() => {
-        onConfirm(configuration);
-      }}
+      onOk={confirm}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       <Radio.Group

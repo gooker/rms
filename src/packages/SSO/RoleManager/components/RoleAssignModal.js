@@ -24,8 +24,7 @@ class RoleAssignModal extends Component {
   componentDidMount() {
     const { data } = this.props;
     if (isNull(data)) return;
-    const { authorityKeys } = data;
-
+    const authorityKeys = data.authorityKeys || [];
     const allRoutes = Object.keys(allModuleRouter).map((key) => {
       const currentRoutes = allModuleRouter[key] || [];
       return { appCode: key, appMenu: currentRoutes };

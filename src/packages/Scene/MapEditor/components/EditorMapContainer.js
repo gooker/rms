@@ -1,5 +1,4 @@
 import React, { memo, useEffect } from 'react';
-import { throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import EditorMask from './EditorMask';

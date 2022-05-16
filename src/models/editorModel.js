@@ -699,60 +699,67 @@ export default {
 
     // ********************************* 地图编程 ********************************* //
     * updateMapPrograming({ payload }, { select }) {
-      const { currentMap, currentRouteMap, programing } = yield select(({ editor }) => editor);
+      const { programing } = yield select(({ editor }) => editor);
+      const currentRouteMap = getCurrentRouteMapData();
 
       // 新增地图的编程节点
-      if (isNull(currentMap.programing)) {
-        currentMap.programing = { [currentRouteMap]: [] };
+      if (isNull(currentRouteMap.programing)) {
+        currentRouteMap.programing = { cells: {}, relations: {}, zones: {} };
       }
+
       const { type, items, configuration } = payload;
-      if ([ProgramingItemType.cell, ProgramingItemType.area].includes(type)) {
-        // 如果某个点位或者区域已经存在配置，则覆盖
-        const existCellConfigList = dropWhile(
-          currentMap.programing[currentRouteMap],
-          function(item) {
-            return item.type === type && items.includes(item.key);
-          },
-        );
-        // 回填数据
-        if (Array.isArray(configuration) && configuration.length > 0) {
+      if ([ProgramingItemType.cell, ProgramingItemType.zone].includes(type)) {
+        if (!Array.isArray(configuration)) return;
+        // 如果某个点位或者区域已经存在配置则覆盖
+        const existCellConfigList = { ...currentRouteMap.programing[`${type}s`] };
+        if (configuration.length > 0) {
           const actions = fillProgramAction(configuration, programing);
           items.forEach((cellId) => {
-            existCellConfigList.push({ key: cellId, type, actions, timing: null });
+            existCellConfigList[cellId] = actions;
+          });
+        } else {
+          items.forEach((cellId) => {
+            delete existCellConfigList[cellId];
           });
         }
-        currentMap.programing[currentRouteMap] = existCellConfigList;
-      }
-
-      if (type === ProgramingItemType.relation) {
-        [...configuration.keys()].forEach((timing, index, timings) => {
-          // 如果某个线条已经存在配置，则覆盖
-          const existCellConfigList = dropWhile(
-            currentMap.programing[currentRouteMap],
-            (item) => item.type === type && items.includes(item.key) && item.timing === timing,
-          );
-          // 回填数据
+        currentRouteMap.programing[`${type}s`] = existCellConfigList;
+      } else {
+        const existRelationConfigList = { ...currentRouteMap.programing.relations };
+        items.forEach((relationCode) => {
+          existRelationConfigList[relationCode] = [];
+        });
+        // 如果某个线条已经存在配置，则覆盖
+        [...configuration.keys()].forEach((timing) => {
           const configurationItem = configuration.get(timing);
-          if (Array.isArray(configurationItem) && configurationItem.length > 0) {
+          if (configurationItem.length > 0) {
             const actions = fillProgramAction(configurationItem, programing);
-            items.forEach((cellId) => {
-              existCellConfigList.push({ key: cellId, type, actions, timing });
+            items.forEach((relationCode) => {
+              existRelationConfigList[relationCode].push({
+                key: relationCode,
+                type,
+                actions,
+                timing,
+              });
+            });
+          } else {
+            items.forEach((relationCode) => {
+              existRelationConfigList[relationCode] = existRelationConfigList[relationCode].filter(
+                (item) => item.timing !== timing,
+              );
             });
           }
-
-          currentMap.programing[currentRouteMap] = existCellConfigList;
         });
+        currentRouteMap.programing.relations = existRelationConfigList;
       }
     },
 
-    * deleteMapPrograming({ payload }, { select }) {
-      const { currentMap, currentRouteMap } = yield select(({ editor }) => editor);
-      const { type, key, timing } = payload;
-      currentMap.programing[currentRouteMap] = dropWhile(
-        currentMap.programing[currentRouteMap],
-        (item) => item.type === type && item.key === key && item.timing === timing,
-      );
-      return { type, key, timing };
+    * deleteMapPrograming({ payload }) {
+      const currentRouteMap = getCurrentRouteMapData();
+      const { type, key } = payload;
+      const existConfigList = { ...currentRouteMap.programing[`${type}s`] };
+      delete existConfigList[key];
+      currentRouteMap.programing[`${type}s`] = existConfigList;
+      return { type, key };
     },
 
     // ********************************* 待调整 ********************************* //
