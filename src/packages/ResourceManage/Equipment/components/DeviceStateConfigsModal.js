@@ -16,7 +16,7 @@ import ProgramingDndCard from '@/packages/Scene/MapEditor/Programing/components/
 import styles from '@/packages/Scene/MapEditor/Programing/programing.module.less';
 
 const DeviceStateConfigsModal = (props) => {
-  const { deviceMonitorData, visible, configs, onCancel, dispatch, programing } = props;
+  const { deviceMonitorData, visible, configs, onCancel, dispatch, programing, onSave } = props;
   const [formRef1] = Form.useForm();
 
   const [allOptions, setAllOptionsOptions] = useState([]);
@@ -43,7 +43,7 @@ const DeviceStateConfigsModal = (props) => {
 
   useEffect(() => {
     let newConfigs = [...configs];
-    if (newConfigs && !isNull(deviceMonitorData)) {
+    if (newConfigs?.length > 0 && !isNull(deviceMonitorData)) {
       const { deviceMonitorParamsDefinitionList } = deviceMonitorData;
       newConfigs[0].deviceMonitorParamsDefinitionList = deviceMonitorParamsDefinitionList;
     }
@@ -110,6 +110,9 @@ const DeviceStateConfigsModal = (props) => {
     return configuration.map((item) => {
       const { actionType, ...rest } = item;
       const [p1, p2] = actionType;
+      if (Object.keys(programing)?.length === 0) {
+        return {};
+      }
       const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
       return {
         title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
@@ -128,14 +131,16 @@ const DeviceStateConfigsModal = (props) => {
         if (Array.isArray(configuration) && configuration.length > 0) {
           actionList = fillProgramAction(configuration, programing);
         }
-        const DeviceMonitorDTO = [];
-        DeviceMonitorDTO.push({
+        const deviceMonitorDTO = [];
+        deviceMonitorDTO.push({
           deviceMonitorParamsDefinitionList,
           actionList,
           id: allOptions[0]?.id,
+          deviceId: allOptions[0]?.deviceId,
         });
-        console.log(DeviceMonitorDTO);
-        dispatch({ type: 'equipList/saveState', payload: { deviceMonitorData: DeviceMonitorDTO } });
+        dispatch({ type: 'equipList/saveState', payload: { deviceMonitorData: deviceMonitorDTO } });
+
+        onSave && onSave(deviceMonitorDTO);
         onCancel();
         formRef1.resetFields();
       })
@@ -203,7 +208,7 @@ const DeviceStateConfigsModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ editor, equipList }) => ({
-  programing: editor.programing,
+export default connect(({ global, equipList }) => ({
+  programing: global.programing ?? {},
   deviceMonitorData: equipList.deviceMonitorData?.[0],
 }))(memo(DeviceStateConfigsModal));

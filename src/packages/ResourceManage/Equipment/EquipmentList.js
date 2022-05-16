@@ -4,13 +4,19 @@ import { Button, Drawer, message } from 'antd';
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { findDeviceActionsByDeviceType, saveDeviceActions } from '@/services/resourceManageAPI';
+import {
+  findDeviceActionsByDeviceType,
+  saveDeviceActions,
+  findDeviceMonitorsByDeviceType,
+  saveDeviceMonitors,
+} from '@/services/resourceManageAPI';
 import { convertToUserTimezone, isNull, dealResponse } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import EquipmentListTools from './components/EquipmentListTools';
 import EquipmentRegisterPanel from './components/EquipmentRegisterPanel';
 import DeviceActionsModal from './components/DeviceActionsModal';
+import DeviceStateConfigsModal from './components/DeviceStateConfigsModal';
 
 const EquipmentList = (props) => {
   const { dispatch, allDevices, searchParams, loading, showRegisterPanel } = props;
@@ -21,6 +27,9 @@ const EquipmentList = (props) => {
 
   const [deviceActions, setDeviceActions] = useState([]); // 设备动作数据
   const [visible, setVisible] = useState(false); // 设备动作visible
+
+  const [deviceConfig, setDeviceConfig] = useState([]); // 设备状态 option 地址数据
+  const [configVisible, setConfigVisible] = useState(false); // 设备状态配置visible
 
   const columns = [
     {
@@ -48,32 +57,34 @@ const EquipmentList = (props) => {
       dataIndex: 'connectionType',
       align: 'center',
     },
-
-    {
-      title: '是否忽略',
-      dataIndex: 'ignored',
-      align: 'center',
-      render: (text) => {
-        if (!isNull(text)) {
-          if (text) {
-            return <FormattedMessage id="app.common.true" />;
-          }
-          return <FormattedMessage id="app.common.false" />;
-        }
-      },
-    },
     {
       title: <FormattedMessage id="app.common.operation" />,
       align: 'center',
       render: (text, record) => {
         return (
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => {
-              showDeviceActionModal(record);
-            }}
-          />
+          <>
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={() => {
+                showDeviceActionModal(record);
+              }}
+            >
+              {' '}
+              设备动作
+            </Button>
+
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={() => {
+                showDeviceConfigModal(record);
+              }}
+            >
+              {' '}
+              设备状态
+            </Button>
+          </>
         );
       },
     },
@@ -105,6 +116,20 @@ const EquipmentList = (props) => {
       title: '在线状态',
       align: 'center',
       dataIndex: 'onlineStatus',
+    },
+
+    {
+      title: '是否忽略',
+      dataIndex: 'ignored',
+      align: 'center',
+      render: (text) => {
+        if (!isNull(text)) {
+          if (text) {
+            return <FormattedMessage id="app.common.true" />;
+          }
+          return <FormattedMessage id="app.common.false" />;
+        }
+      },
     },
   ];
 
@@ -160,6 +185,41 @@ const EquipmentList = (props) => {
   }
   // 修改设备动作弹框end
 
+  // 修改设备状态弹框 start
+  async function showDeviceConfigModal(record) {
+    const { deviceTypeCode, deviceID: deviceId } = record;
+    const response = await findDeviceMonitorsByDeviceType({ deviceTypeCode, deviceId });
+    if (!dealResponse(response)) {
+      const data = [...response];
+      if (data?.length > 0) {
+        dispatch({
+          type: 'equipList/saveState',
+          payload: { deviceMonitorData: data },
+        });
+        setConfigVisible(true);
+        setDeviceConfig(data);
+      } else {
+        message.info('暂无设备状态');
+      }
+    }
+  }
+
+  async function onSaveConfig(param) {
+    const response = await saveDeviceMonitors(param);
+    if (!dealResponse(response, 1)) {
+      fetchRegisteredDevice();
+    }
+  }
+
+  function cancelConfig() {
+    dispatch({
+      type: 'equipList/saveState',
+      payload: { deviceMonitorData: [] },
+    });
+    setConfigVisible(false);
+    setDeviceConfig([]);
+  }
+
   function onSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRows(selectedRows);
     setSelectedRowKeys(selectedRowKeys);
@@ -214,6 +274,16 @@ const EquipmentList = (props) => {
           }}
           isEdit={true}
           onSave={onSaveActions}
+        />
+      )}
+
+      {/* 编辑设备状态 */}
+      {configVisible && (
+        <DeviceStateConfigsModal
+          visible={configVisible}
+          onCancel={cancelConfig}
+          configs={deviceConfig}
+          onSave={onSaveConfig}
         />
       )}
     </TablePageWrapper>

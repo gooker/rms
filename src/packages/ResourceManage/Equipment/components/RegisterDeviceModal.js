@@ -3,7 +3,8 @@ import React, { memo, useEffect, useState } from 'react';
 import { Form, Modal, Select, Row, Col, AutoComplete, Input, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, getFormLayout, adaptModalHeight } from '@/utils/util';
+import { find } from 'lodash';
+import { dealResponse, getFormLayout, adaptModalHeight, formatMessage } from '@/utils/util';
 import {
   findDeviceActionsByDeviceType,
   findDeviceMonitorsByDeviceType,
@@ -21,7 +22,7 @@ const connectTypes = {
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const RegisterDeviceModal = (props) => {
-  const { dispatch, deviceMonitorData,visible, allDeviceTypes, onSubmit } = props;
+  const { dispatch, deviceMonitorData, visible, allDeviceTypes, allDevices, onSubmit } = props;
   const [formRef] = Form.useForm();
   const [deviceActions, setDeviceActions] = useState([]); // 设备动作
   const [actionVisible, setActionVisible] = useState(false); // 设备动作modal
@@ -48,7 +49,11 @@ const RegisterDeviceModal = (props) => {
           configs[key] = value;
         });
         delete newParams.infos;
-        onSubmit({ ...newParams, deviceActionDTO: deviceActions,DeviceMonitorDTO:deviceMonitorData });
+        onSubmit({
+          ...newParams,
+          deviceActionDTO: deviceActions,
+          deviceMonitorDTO: deviceMonitorData,
+        });
       })
       .catch(() => {});
   }
@@ -65,6 +70,15 @@ const RegisterDeviceModal = (props) => {
       setDeviceActions(actions);
       setConfigState(configState);
     }
+  }
+
+  function duplicateId(_, value) {
+    const recordIndex = find(allDevices, { deviceID: value });
+    if (recordIndex && Object.keys(recordIndex)?.length > 0) {
+      return Promise.reject(new Error(formatMessage({ id: 'app.form.id.duplicate' })));
+    }
+
+    return Promise.resolve();
   }
 
   function cancelModal() {
@@ -86,7 +100,7 @@ const RegisterDeviceModal = (props) => {
           取消
         </Button>,
         <Button
-          key="set"
+          key="setAction"
           disabled={configState?.length === 0}
           onClick={() => {
             setConfigStateVisible(true);
@@ -95,7 +109,7 @@ const RegisterDeviceModal = (props) => {
           配置状态动作
         </Button>,
         <Button
-          key="set"
+          key="setConfig"
           disabled={deviceActions?.length === 0}
           onClick={() => {
             setActionVisible(true);
@@ -129,7 +143,11 @@ const RegisterDeviceModal = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item name={'deviceID'} label={'设备Id'} rules={[{ required: true }]}>
+        <Form.Item
+          name={'deviceID'}
+          label={'设备Id'}
+          rules={[{ required: true }, { validator: duplicateId }]}
+        >
           <Input />
         </Form.Item>
 
@@ -220,6 +238,7 @@ const RegisterDeviceModal = (props) => {
   );
 };
 export default connect(({ equipList }) => ({
+  allDevices: equipList.allDevices,
   allDeviceTypes: equipList.allDeviceTypes,
   visible: equipList.registerDeviceModalShown,
   deviceMonitorData: equipList.deviceMonitorData,
