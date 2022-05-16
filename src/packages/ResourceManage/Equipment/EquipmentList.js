@@ -1,6 +1,6 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Drawer } from 'antd';
+import { Button, Drawer, message } from 'antd';
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -139,8 +139,13 @@ const EquipmentList = (props) => {
     const { deviceTypeCode, deviceID: deviceId } = record;
     const response = await findDeviceActionsByDeviceType({ deviceTypeCode, deviceId });
     if (!dealResponse(response)) {
-      setDeviceActions(response);
-      setVisible(true);
+      const data = [...response];
+      if (data?.length > 0) {
+        setDeviceActions(response);
+        setVisible(true);
+      } else {
+        message.info('暂无设备动作');
+      }
     }
   }
 

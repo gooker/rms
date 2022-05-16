@@ -169,7 +169,7 @@ export default {
   // 地图编程
   'editor.program.SYSTEM': '系统动作',
   'editor.program.VEHICLE': '车辆动作',
-  'editor.program.EQUIPMENT': '设备动作',
+  'editor.program.DEVICE': '设备动作',
   'editor.program.relation': '线条',
   'editor.program.relation.BEGIN': '起点',
   'editor.program.relation.ONROAD': '行驶中',

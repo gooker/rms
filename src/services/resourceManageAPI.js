@@ -141,10 +141,10 @@ export function deleteDeviceType(param) {
   });
 }
 
-/**根据设备类型查询设备动作 
+/**根据设备类型查询设备动作
  * 1.注册前只传deviceTypeCode
  * 2.注册成功后还需要传deviceId
- * ****/ 
+ * ****/
 export function findDeviceActionsByDeviceType(param) {
   return request(`/${NameSpace.Platform}/device/findDeviceActionsByDeviceType`, {
     method: 'GET',
@@ -160,6 +160,16 @@ export function saveDeviceActions(param) {
   });
 }
 
+/** 根据设备类型查询状态动作
+ * 1.注册前只传deviceTypeCode
+ * 2.注册成功后还需要传deviceId
+ * */
+export function findDeviceMonitorsByDeviceType(param) {
+  return request(`/${NameSpace.Platform}/device/findDeviceMonitorsByDeviceType`, {
+    method: 'GET',
+    data: param,
+  });
+}
 
 export function handleDevice(param) {
   return request(`/${NameSpace.Platform}/device/action/handle`, {
@@ -167,4 +177,3 @@ export function handleDevice(param) {
     data: param,
   });
 }
-

@@ -4,7 +4,7 @@ import { Button, Col, Form, Row, Select } from 'antd';
 import { DisconnectOutlined, ExportOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { unRegisterDevice } from '@/services/resourceManageAPI';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
@@ -44,9 +44,9 @@ const EquipmentListTools = (props) => {
   function cancelRegister() {
     const ids = selectedRows.map(({ deviceID }) => deviceID);
     RmsConfirm({
-      content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
+      content: '确定取消注册该设备吗',
       onOk: async () => {
-        const response = await unRegisterDevice({ ids });
+        const response = await unRegisterDevice(ids);
         if (!dealResponse(response, 1)) {
           dispatch({ type: 'equipList/fetchInitialData' });
         }

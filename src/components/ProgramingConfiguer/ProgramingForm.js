@@ -1,8 +1,9 @@
 import React, { memo, useState } from 'react';
-import { Button, Cascader, Col, Form, Input, Row } from 'antd';
+import { Button, Cascader, Col, Form, Row } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { convertPrograming2Cascader } from '@/utils/util';
+import { renderFormItemContent } from '@/packages/ResourceManage/Equipment/components/equipUtils';
 
 const ProgramingForm = (props) => {
   const { programing, onAdd } = props;
@@ -15,14 +16,23 @@ const ProgramingForm = (props) => {
     if (Array.isArray(actionType) && actionType.length > 1) {
       const [p1, p2] = actionType;
       const { actionParameters } = find(programing[p1], { actionId: p2 });
-      // 数值类型目前都认为是string
-      return actionParameters.map(({ code, name }, index) => (
-        <Col key={index} span={8}>
-          <Form.Item name={code} label={name} rules={[{ required: true }]}>
-            <Input />
-          </Form.Item>
-        </Col>
-      ));
+      return actionParameters.map(({ code, name, valueDataType, value }, index) => {
+        const valuePropName = valueDataType === 'BOOL' ? 'checked' : 'value';
+        let defaultValue = valueDataType === 'BOOL' ? JSON.parse(value) ?? false : value;
+        return (
+          <Col key={index} span={8}>
+            <Form.Item
+              name={code}
+              label={name}
+              valuePropName={valuePropName}
+              initialValue={defaultValue}
+              rules={[{ required: true }]}
+            >
+              {renderFormItemContent({ type: valueDataType })}
+            </Form.Item>
+          </Col>
+        );
+      });
     } else {
       return [];
     }
@@ -35,8 +45,7 @@ const ProgramingForm = (props) => {
         onAdd({ actionType, ...value });
         formRef.resetFields();
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 
   return (
@@ -50,7 +59,7 @@ const ProgramingForm = (props) => {
         style={{ width: '30%' }}
       />
 
-      <Form form={formRef} style={{ marginTop: 15 }}>
+      <Form form={formRef} style={{ marginTop: 15 }} labelWrap>
         <Row gutter={10}>
           {renderFormItem()}
           {Array.isArray(actionType) && actionType.length > 0 && (
