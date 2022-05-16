@@ -60,23 +60,9 @@ export async function fetchAllAgvList() {
   });
 }
 
-// 获取所有车类型
-export async function fetchAllAgvType() {
-  return request(`/${NameSpace.Coordinator}/map/getAllRobotType`, {
-    method: 'GET',
-  });
-}
-
 // 获取WCS端小车列表-1
 export async function fetchAgvList(agvType) {
   return request(`/${NameSpace[agvType]}/agv/${window.localStorage.getItem('sectionId')}`, {
-    method: 'GET',
-  });
-}
-
-// 获取WCS端小车列表-2
-export async function fetchWCSAgvList(agvType) {
-  return request(`/${NameSpace[agvType]}/agv/monitor/all_agv`, {
     method: 'GET',
   });
 }

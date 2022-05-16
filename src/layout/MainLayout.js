@@ -11,10 +11,11 @@ import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
 import { isNull, isStrictNull, dealResponse, formatMessage, getPlateFormType } from '@/utils/util';
-import { fetchAllAgvType, fetchAllTaskTypes } from '@/services/api';
+import { fetchAllTaskTypes } from '@/services/api';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
 import { handleNameSpace } from '@/utils/init';
+import { fetchAllPrograming } from '@/services/XIHE';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -47,6 +48,8 @@ class MainLayout extends React.Component {
       if (validateResult && !dealResponse(validateResult)) {
         try {
           const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
+          const { currentSection, username } = userInfo;
+
           // 先验证授权
           // const granted = await this.validateAuthority();
           const granted = true;
@@ -64,8 +67,8 @@ class MainLayout extends React.Component {
 
             // 初始化应用基础信息
             await dispatch({ type: 'global/initPlatformState' });
-            const { currentSection, username } = userInfo;
 
+            // 初始化页面长链接、告警相关功能
             if (username !== 'admin') {
               // 初始化Socket客户端
               const { name, password } = currentSection;
@@ -100,13 +103,10 @@ class MainLayout extends React.Component {
                 await dispatch({ type: 'global/updateTextureLoaded', payload: true });
               }
 
-              // 获取所有车类任务类型数据
-              this.loadAllTaskTypes();
+              // 获取一些非立即需要的系统数据
+              this.fetchAdditionalData();
 
-              // 获取所有车类型
-              this.loadAllAgvTypes();
-
-              // FIXME:轮询告警数量(这个会引发一个问题，connect/mapStateToProps/selections)
+              // FIXME:轮询告警数量(这个会引发一个问题: connect/mapStateToProps/selections)
               AlertCountPolling.start((value) => {
                 dispatch({ type: 'global/updateAlertCount', payload: value });
               });
@@ -214,36 +214,41 @@ class MainLayout extends React.Component {
     }
   };
 
-  loadAllTaskTypes = () => {
+  fetchAdditionalData = () => {
     const { dispatch } = this.props;
-    fetchAllTaskTypes().then((response) => {
-      if (!dealResponse(response)) {
-        dispatch({ type: 'global/updateAllTaskTypes', payload: response });
-      } else {
-        message.error(
-          `${formatMessage(
-            { id: 'app.message.fetchFailTemplate' },
-            { type: formatMessage({ id: 'app.task.type' }) },
-          )}`,
-        );
-      }
-    });
-  };
+    Promise.all([fetchAllTaskTypes(), fetchAllPrograming()])
+      .then(([allTaskTypes, allPrograming]) => {
+        const states = {};
 
-  loadAllAgvTypes = () => {
-    const { dispatch } = this.props;
-    fetchAllAgvType().then((response) => {
-      if (!dealResponse(response)) {
-        dispatch({ type: 'global/saveAllAgvTypes', payload: response });
-      } else {
-        message.error(
-          `${formatMessage(
-            { id: 'app.message.fetchFailTemplate' },
-            { type: formatMessage({ id: 'app.agvType' }) },
-          )}`,
-        );
-      }
-    });
+        // 小车类型
+        if (!dealResponse(allTaskTypes)) {
+          states.allTaskTypes = allTaskTypes;
+        } else {
+          message.error(
+            `${formatMessage(
+              { id: 'app.message.fetchFailTemplate' },
+              { type: formatMessage({ id: 'app.task.type' }) },
+            )}`,
+          );
+        }
+
+        // 编程元数据
+        if (!dealResponse(allPrograming)) {
+          states.programing = allPrograming;
+        } else {
+          message.error(
+            `${formatMessage(
+              { id: 'app.message.fetchFailTemplate' },
+              { type: formatMessage({ id: 'app.map.programing' }) },
+            )}`,
+          );
+        }
+
+        dispatch({ type: 'global/updateStateInBatch', payload: states });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   render() {

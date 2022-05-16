@@ -1,9 +1,8 @@
 import React, { memo, useState } from 'react';
-import { Button, Cascader, Col, Form, Row } from 'antd';
+import { Button, Select, Switch, Cascader, Col, Form, Input, Row } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { convertPrograming2Cascader } from '@/utils/util';
-import { renderFormItemContent } from '@/packages/ResourceManage/Equipment/components/equipUtils';
 
 const ProgramingForm = (props) => {
   const { programing, onAdd } = props;
@@ -12,23 +11,31 @@ const ProgramingForm = (props) => {
   const [actionType, setActionType] = useState(null); // 已选择动作类型
   const cascaderOption = convertPrograming2Cascader(programing);
 
+  function renderItemInput(valueDataType) {
+    switch (valueDataType) {
+      case 'ARRAY':
+        return <Select mode={'tags'} maxTagCount={4} notFoundContent={null} />;
+      case 'BOOL':
+        return <Switch />;
+      default:
+        return <Input />;
+    }
+  }
+
   function renderFormItem() {
     if (Array.isArray(actionType) && actionType.length > 1) {
       const [p1, p2] = actionType;
       const { actionParameters } = find(programing[p1], { actionId: p2 });
-      return actionParameters.map(({ code, name, valueDataType, value }, index) => {
-        const valuePropName = valueDataType === 'BOOL' ? 'checked' : 'value';
-        let defaultValue = valueDataType === 'BOOL' ? JSON.parse(value) ?? false : value;
+      return actionParameters.map(({ code, name, valueDataType, isOptional }, index) => {
         return (
           <Col key={index} span={8}>
             <Form.Item
               name={code}
               label={name}
-              valuePropName={valuePropName}
-              initialValue={defaultValue}
-              rules={[{ required: true }]}
+              rules={[{ required: isOptional === false }]}
+              valuePropName={valueDataType === 'BOOL' ? 'checked' : 'value'}
             >
-              {renderFormItemContent({ type: valueDataType })}
+              {renderItemInput(valueDataType)}
             </Form.Item>
           </Col>
         );
@@ -45,7 +52,8 @@ const ProgramingForm = (props) => {
         onAdd({ actionType, ...value });
         formRef.resetFields();
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   }
 
   return (
@@ -59,7 +67,7 @@ const ProgramingForm = (props) => {
         style={{ width: '30%' }}
       />
 
-      <Form form={formRef} style={{ marginTop: 15 }} labelWrap>
+      <Form form={formRef} style={{ marginTop: 15 }}>
         <Row gutter={10}>
           {renderFormItem()}
           {Array.isArray(actionType) && actionType.length > 0 && (

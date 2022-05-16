@@ -4,7 +4,6 @@ import { find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from '
 import update from 'immutability-helper';
 import {
   dealResponse,
-  dropWhile,
   fillProgramAction,
   formatMessage,
   getRandomString,
@@ -42,7 +41,7 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
-import { MockMapDataMulti, MockMapWithProgram, ProgramingConfigurationList } from '@/mockData';
+import { MockMapWithProgram, ProgramingConfigurationList } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -71,7 +70,6 @@ const EditorState = {
   selections: [], // 选择相关
   allStationTypes: {}, // 所有站点类型
   allWebHooks: [], // 所有Web Hooks
-  programing: ProgramingConfigurationList, // 地图编程动作集
 
   // 侧边栏控制
   leftActiveCategory: LeftCategory.Drag, // 左侧菜单选中项
@@ -699,7 +697,7 @@ export default {
 
     // ********************************* 地图编程 ********************************* //
     * updateMapPrograming({ payload }, { select }) {
-      const { programing } = yield select(({ editor }) => editor);
+      const { programing } = yield select(({ global }) => global);
       const currentRouteMap = getCurrentRouteMapData();
 
       // 新增地图的编程节点
@@ -1427,12 +1425,6 @@ export default {
       return {
         ...state,
         mapRatio: action.payload,
-      };
-    },
-    savePrograming(state, action) {
-      return {
-        ...state,
-        programing: action.payload,
       };
     },
     saveMapMinRatio(state, action) {

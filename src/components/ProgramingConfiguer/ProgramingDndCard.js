@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { HolderOutlined, CloseOutlined } from '@ant-design/icons';
 import { Draggable } from 'react-smooth-dnd';
 import { Colors } from '@/config/consts';
-import styles from '../programing.module.less';
+import styles from './programing.module.less';
 import { Row } from 'antd';
 
 const ProgramingDndCard = (props) => {

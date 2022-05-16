@@ -8,8 +8,8 @@ import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
 import { RelationTiming } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
-import ProgramingDndCard from './components/ProgramingDndCard';
-import styles from './programing.module.less';
+import ProgramingDndCard from '../../../../components/ProgramingConfiguer/ProgramingDndCard';
+import styles from '../../../../components/ProgramingConfiguer/programing.module.less';
 
 const ProgramingRelationModal = (props) => {
   const { editing, relations, visible, onCancel, onConfirm, programing } = props;
@@ -159,6 +159,6 @@ const ProgramingRelationModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ editor }) => ({
-  programing: editor.programing,
+export default connect(({ global }) => ({
+  programing: global.programing || {},
 }))(memo(ProgramingRelationModal));
