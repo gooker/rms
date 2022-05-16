@@ -17,7 +17,7 @@ import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import ProgramingConfiguerModal from '@/components/ProgramingConfiguer';
 
 const ProgramingCellTab = (props) => {
-  const { dispatch, cellMap, selections, programing, cellPrograming } = props;
+  const { dispatch, mapContext, cellMap, selections, programing, cellPrograming } = props;
 
   const [configVisible, setConfigVisible] = useState(false);
   const [configCells, setConfigCells] = useState([]); // 正在配置的点位
@@ -37,6 +37,27 @@ const ProgramingCellTab = (props) => {
         items: configCells.map((item) => item + ''),
         configuration,
       },
+    }).then((cellIds) => {
+      mapContext.renderCellsType(
+        cellIds.map((i) => parseInt(i)),
+        'programing',
+        'add',
+      );
+      mapContext.refresh();
+    });
+  }
+
+  function onDelete(item) {
+    dispatch({
+      type: 'editor/deleteMapPrograming',
+      payload: { type: ProgramingItemType.cell, key: item.key },
+    }).then((cellIds) => {
+      mapContext.renderCellsType(
+        cellIds.map((i) => parseInt(i)),
+        'programing',
+        'remove',
+      );
+      mapContext.refresh();
     });
   }
 
@@ -44,15 +65,6 @@ const ProgramingCellTab = (props) => {
     setEditing(item);
     setConfigCells([item.key]);
     setConfigVisible(true);
-  }
-
-  function onDelete(item) {
-    dispatch({
-      type: 'editor/deleteMapPrograming',
-      payload: { type: ProgramingItemType.cell, key: item.key },
-    }).then(({ type, key }) => {
-      console.log(type, key);
-    });
   }
 
   function addConfigCell() {
@@ -167,9 +179,15 @@ const ProgramingCellTab = (props) => {
   );
 };
 export default connect(({ editor, global }) => {
-  const { selections, currentMap } = editor;
+  const { selections, currentMap, mapContext } = editor;
   const currentRouteMap = getCurrentRouteMapData();
   let cellPrograming = currentRouteMap.programing?.cells || {};
   cellPrograming = convertMapToArrayMap(cellPrograming, 'key', 'actions');
-  return { selections, cellMap: currentMap.cellMap, cellPrograming, programing: global.programing };
+  return {
+    selections,
+    cellMap: currentMap.cellMap,
+    cellPrograming,
+    programing: global.programing,
+    mapContext,
+  };
 })(memo(ProgramingCellTab));

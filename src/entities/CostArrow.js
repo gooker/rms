@@ -15,8 +15,22 @@ export default class CostArrow extends PIXI.Container {
     this.selected = false; // 标记是否被选中
     this.select = props.select;
 
-    this.drawArrow();
+    this.drawArrow(false);
     this.createSelectionBorder();
+  }
+
+  drawArrow(withPrograming) {
+    if (this.arrow) {
+      this.removeChild(this.arrow);
+      this.arrow.destroy();
+      this.arrow = null;
+    }
+    this.arrow = new PIXI.Sprite(
+      getTextureFromResources(`cost_${this.cost}${withPrograming ? '_p' : ''}`),
+    );
+    this.arrow.anchor.set(0.5, 0);
+    this.arrow.scale.set(0.6);
+    this.addChild(this.arrow);
 
     // 处理点击事件
     this.arrow.interactive = true;
@@ -25,11 +39,12 @@ export default class CostArrow extends PIXI.Container {
     this.arrow.on('pointerdown', this.click);
   }
 
-  drawArrow() {
-    this.arrow = new PIXI.Sprite(getTextureFromResources(`cost_${this.cost}`));
-    this.arrow.anchor.set(0.5, 0);
-    this.arrow.scale.set(0.6);
-    this.addChild(this.arrow);
+  setProgramingFlag() {
+    this.drawArrow(true);
+  }
+
+  resetProgramingFlag() {
+    this.drawArrow(false);
   }
 
   // 选择相关

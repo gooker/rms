@@ -183,6 +183,10 @@ export function loadTexturesForMap() {
       .add('cost_20', '/images/cost_20.png')
       .add('cost_100', '/images/cost_100.png')
       .add('cost_1000', '/images/cost_1000.png')
+      .add('cost_10_p', '/images/cost_10_p.png')
+      .add('cost_20_p', '/images/cost_20_p.png')
+      .add('cost_100_p', '/images/cost_100_p.png')
+      .add('cost_1000_p', '/images/cost_1000_p.png')
       .load(() => {
         resolve();
       });
