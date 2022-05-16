@@ -171,6 +171,13 @@ export function findDeviceMonitorsByDeviceType(param) {
   });
 }
 
+export function saveDeviceMonitors(param) {
+  return request(`/${NameSpace.Platform}/device/saveDeviceMonitors`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
 export function handleDevice(param) {
   return request(`/${NameSpace.Platform}/device/action/handle`, {
     method: 'POST',
