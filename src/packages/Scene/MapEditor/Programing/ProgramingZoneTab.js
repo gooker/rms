@@ -5,13 +5,13 @@ import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { ZoneMarkerType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
-import ProgramingZoneModal from './ProgramingZoneModal';
 import { ProgramingItemType } from '@/config/config';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { convertMapToArrayMap } from '@/utils/util';
+import ProgramingConfiguerModal from '@/components/ProgramingConfiguer';
 
 const ProgramingZoneTab = (props) => {
-  const { dispatch, selections, zonePrograming } = props;
+  const { dispatch, selections, zonePrograming, programing } = props;
 
   const [configVisible, setConfigVisible] = useState(false);
   const [configZone, setConfigZone] = useState([]);
@@ -93,19 +93,21 @@ const ProgramingZoneTab = (props) => {
         <ScopeProgramList datasource={zonePrograming} onEdit={onEdit} onDelete={onDelete} />
       )}
 
-      <ProgramingZoneModal
+      <ProgramingConfiguerModal
+        title={'编辑区域编程'}
         editing={editing}
+        programing={programing}
         visible={configVisible}
-        onConfirm={save}
+        onOk={save}
         onCancel={terminateConfiguration}
       />
     </div>
   );
 };
-export default connect(({ editor }) => {
+export default connect(({ editor, global }) => {
   const { selections } = editor;
   const currentRouteMap = getCurrentRouteMapData();
   let zonePrograming = currentRouteMap.programing?.zones || {};
   zonePrograming = convertMapToArrayMap(zonePrograming, 'key', 'actions');
-  return { selections, zonePrograming };
+  return { selections, zonePrograming, programing: global.programing };
 })(memo(ProgramingZoneTab));

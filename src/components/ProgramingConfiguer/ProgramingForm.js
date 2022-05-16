@@ -26,14 +26,17 @@ const ProgramingForm = (props) => {
     if (Array.isArray(actionType) && actionType.length > 1) {
       const [p1, p2] = actionType;
       const { actionParameters } = find(programing[p1], { actionId: p2 });
-      return actionParameters.map(({ code, name, valueDataType, isOptional }, index) => {
+      return actionParameters.map(({ code, name, value, valueDataType, isOptional }, index) => {
+        const valuePropName = valueDataType === 'BOOL' ? 'checked' : 'value';
+        const defaultValue = valueDataType === 'BOOL' ? JSON.parse(value) ?? false : value;
         return (
           <Col key={index} span={8}>
             <Form.Item
               name={code}
               label={name}
               rules={[{ required: isOptional === false }]}
-              valuePropName={valueDataType === 'BOOL' ? 'checked' : 'value'}
+              initialValue={defaultValue}
+              valuePropName={valuePropName}
             >
               {renderItemInput(valueDataType)}
             </Form.Item>

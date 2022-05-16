@@ -20,7 +20,7 @@ import styles from './programing.module.less';
  * @param programing 编程元数据
  */
 const ProgramingConfiguerModal = (props) => {
-  const { editing, title, visible, onOk, onCancel, width, programing } = props;
+  const { title, visible, onOk, onCancel, programing, editing, width = '60%' } = props;
   const [configuration, setConfiguration] = useState([]);
 
   useEffect(() => {
@@ -82,13 +82,21 @@ const ProgramingConfiguerModal = (props) => {
     });
   }
 
+  function confirm() {
+    onOk(configuration);
+    onCancel();
+  }
+
   return (
     <Modal
+      destroyOnClose
       title={title}
       visible={visible}
-      onOk={onOk}
-      onCancel={onCancel}
       width={width}
+      closable={false}
+      maskClosable={false}
+      onOk={confirm}
+      onCancel={onCancel}
       style={{ maxWidth: 1000, top: '5%' }}
     >
       {/*  点位编程配置信息 */}
@@ -125,7 +133,83 @@ export default memo(ProgramingConfiguerModal);
 
 // eslint-disable-next-line react/display-name
 const ProgramingConfiguer = memo((props) => {
+  const { programing, configuration, onChange } = props;
 
-  //
+  function onDrop(dropResult) {
+    const { removedIndex, addedIndex } = dropResult;
+    if (removedIndex !== null || addedIndex !== null) {
+      let newConfiguration = [...configuration];
+      newConfiguration = customTaskApplyDrag(newConfiguration, dropResult);
+      onChange(newConfiguration);
+    }
+  }
+
+  function addConfiguration(value) {
+    let newConfiguration;
+    if (Array.isArray(value)) {
+      newConfiguration = [...configuration, ...value];
+    } else {
+      newConfiguration = [...configuration, value];
+    }
+    onChange(newConfiguration);
+  }
+
+  function deleteConfiguration(inputIndex) {
+    const newConfiguration = configuration.filter((item, index) => index !== inputIndex);
+    onChange(newConfiguration);
+  }
+
+  function renderSubTitle(rest, actionParameters) {
+    return Object.keys(rest)
+      .map((code) => {
+        const specific = find(actionParameters, { code });
+        return `${specific.name}: ${rest[code]}`;
+      })
+      .join('; ');
+  }
+
+  function generateDndData() {
+    return configuration.map((item) => {
+      const { actionType, ...rest } = item;
+      const [p1, p2] = actionType;
+      const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
+      return {
+        title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
+        subTitle: renderSubTitle(rest, actionParameters),
+      };
+    });
+  }
+
+  return (
+    <div>
+      {/*  点位编程配置信息 */}
+      {configuration.length === 0 ? (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+      ) : (
+        <Container
+          dropPlaceholder={{
+            showOnTop: true,
+            animationDuration: 150,
+            className: styles.dndPlaceholder,
+          }}
+          onDrop={(e) => onDrop(e)}
+        >
+          {generateDndData().map(({ title, subTitle }, index) => (
+            <ProgramingDndCard
+              key={`${title}-${index}`}
+              index={index}
+              title={title}
+              subTitle={subTitle}
+              onDelete={deleteConfiguration}
+            />
+          ))}
+        </Container>
+      )}
+
+      {/*  点位编程配置面板 */}
+      <Divider orientation={'left'}>配置工具</Divider>
+      <ProgramingConfigure programing={programing} onAdd={addConfiguration} />
+    </div>
+  );
 });
 export { ProgramingConfiguer };

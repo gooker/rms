@@ -19,7 +19,8 @@ import { NavigationTypeView } from '@/config/config';
 // 获取转换参数默认值(navigationCellType就是brand)
 function getDefaultTransformParams(navigationType) {
   return {
-    coordinationType: NavigationTypeView.filter((item) => item.code === navigationType)[0].coordinationType,
+    coordinationType: NavigationTypeView.filter((item) => item.code === navigationType)[0]
+      .coordinationType,
     zoom: 1,
     compensationOffset: { x: 0, y: 0 },
     compensationAngle: 0,
@@ -29,29 +30,28 @@ function getDefaultTransformParams(navigationType) {
 export function coordinateTransformer(coordinate, navigationCellType, transformParams) {
   const { coordinationType, zoom, compensationOffset, compensationAngle } =
   transformParams || getDefaultTransformParams(navigationCellType);
-  let cell = { ...coordinate };
-  const matrixParams = [];
-  let xLabel, yLabel;
+  let xLabel = coordinate.x;
+  let yLabel = coordinate.y;
 
   // 这里保证任何类型的地图都会被转换成右手坐标系
   if (coordinationType === 'L') {
-    matrixParams.push(flipX());
-    const matrix = compose(...matrixParams);
+    const matrix = compose(flipX());
     const { x, y } = applyToPoint(matrix, coordinate);
-    cell = { ...cell, x, y };
+    xLabel = x;
+    yLabel = y;
   }
-  xLabel = cell.x;
-  yLabel = cell.y;
 
+  const matrixParams = [];
+  matrixParams.push(flipX());
   matrixParams.push(rotateDEG(-compensationAngle));
   matrixParams.push(scale(zoom));
   matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
   matrixParams.push(flipX()); // 页面显示为左手坐标系
   const matrix = compose(...matrixParams);
-  const matrixResult = applyToPoint(matrix, cell);
+  const matrixResult = applyToPoint(matrix, coordinate);
   const x = Math.round(matrixResult.x);
   const y = Math.round(matrixResult.y);
-  return { ...cell, x, y, nx: x, ny: y, xLabel, yLabel };
+  return { ...coordinate, x, y, nx: x, ny: y, xLabel, yLabel };
 }
 
 // coordinateTransformer的逆运算

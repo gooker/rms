@@ -27,17 +27,23 @@ const ProgramingRelationModal = (props) => {
   useEffect(() => {
     if (visible && !isNull(editing)) {
       const { actions } = editing;
-      actions.forEach(({ timing, actions: innerActions }) => {
-        const value = [];
-        innerActions.forEach(({ adapterType, actionType, actionParameters }) => {
-          const addedItem = { actionType: [adapterType, actionType] };
-          actionParameters.forEach(({ code, value }) => {
-            addedItem[code] = value;
-          });
-          value.push(addedItem);
+      const begin = [],
+        onRoad = [],
+        end = [];
+
+      actions.forEach((item) => {
+        const { timing, adapterType, actionType, actionParameters } = item;
+        const addedItem = { actionType: [adapterType, actionType] };
+        actionParameters.forEach(({ code, value }) => {
+          addedItem[code] = value;
         });
-        setConfiguration(timing, value);
+        timing === RelationTiming.begin && begin.push(addedItem);
+        timing === RelationTiming.onRoad && onRoad.push(addedItem);
+        timing === RelationTiming.end && end.push(addedItem);
       });
+      setConfiguration(RelationTiming.begin, begin);
+      setConfiguration(RelationTiming.onRoad, onRoad);
+      setConfiguration(RelationTiming.end, end);
     } else {
       setCurrent(RelationTiming.begin);
       resetConfiguration();

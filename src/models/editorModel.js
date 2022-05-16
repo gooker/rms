@@ -5,6 +5,7 @@ import update from 'immutability-helper';
 import {
   dealResponse,
   fillProgramAction,
+  fillProgramActionWithTiming,
   formatMessage,
   getRandomString,
   isNull,
@@ -32,6 +33,7 @@ import {
   deleteMapById,
   fetchMapDetail,
   fetchMapHistoryDetail,
+  fetchSectionMaps,
   saveMap,
   updateMap,
 } from '@/services/XIHE';
@@ -616,7 +618,7 @@ export default {
         additionalCells = additionalCells.map((cell, index) => ({
           ...cell,
           id: cellId[index],
-          naviId: naviId[index],
+          naviId: naviId[index] + '',
         }));
       }
 
@@ -705,53 +707,28 @@ export default {
         currentRouteMap.programing = { cells: {}, relations: {}, zones: {} };
       }
 
+      // 如果某个对象已经存在配置则覆盖
       const { type, items, configuration } = payload;
-      if ([ProgramingItemType.cell, ProgramingItemType.zone].includes(type)) {
-        if (!Array.isArray(configuration)) return;
-        // 如果某个点位或者区域已经存在配置则覆盖
-        const existCellConfigList = { ...currentRouteMap.programing[`${type}s`] };
-        if (configuration.length > 0) {
-          const actions = fillProgramAction(configuration, programing);
-          items.forEach((cellId) => {
-            existCellConfigList[cellId] = actions;
-          });
-        } else {
-          items.forEach((cellId) => {
-            delete existCellConfigList[cellId];
-          });
-        }
-        currentRouteMap.programing[`${type}s`] = existCellConfigList;
+      if (!Array.isArray(configuration)) return;
+      const existCellConfigList = { ...currentRouteMap.programing[`${type}s`] };
+      if (configuration.length > 0) {
+        const actions = fillProgramAction(
+          configuration,
+          programing,
+          type === ProgramingItemType.relation,
+        );
+        items.forEach((cellId) => {
+          existCellConfigList[cellId] = actions;
+        });
       } else {
-        const existRelationConfigList = { ...currentRouteMap.programing.relations };
-        items.forEach((relationCode) => {
-          existRelationConfigList[relationCode] = [];
+        items.forEach((cellId) => {
+          delete existCellConfigList[cellId];
         });
-        // 如果某个线条已经存在配置，则覆盖
-        [...configuration.keys()].forEach((timing) => {
-          const configurationItem = configuration.get(timing);
-          if (configurationItem.length > 0) {
-            const actions = fillProgramAction(configurationItem, programing);
-            items.forEach((relationCode) => {
-              existRelationConfigList[relationCode].push({
-                key: relationCode,
-                type,
-                actions,
-                timing,
-              });
-            });
-          } else {
-            items.forEach((relationCode) => {
-              existRelationConfigList[relationCode] = existRelationConfigList[relationCode].filter(
-                (item) => item.timing !== timing,
-              );
-            });
-          }
-        });
-        currentRouteMap.programing.relations = existRelationConfigList;
       }
+      currentRouteMap.programing[`${type}s`] = existCellConfigList;
     },
 
-    * deleteMapPrograming({ payload }) {
+    deleteMapPrograming({ payload }) {
       const currentRouteMap = getCurrentRouteMapData();
       const { type, key } = payload;
       const existConfigList = { ...currentRouteMap.programing[`${type}s`] };

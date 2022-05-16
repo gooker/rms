@@ -12,8 +12,8 @@ import {
 } from '@/utils/util';
 import { renderFormItemContent } from './equipUtils';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
-import ProgramingDndCard from '@/packages/Scene/MapEditor/Programing/components/ProgramingDndCard';
-import styles from '@/packages/Scene/MapEditor/Programing/programing.module.less';
+import ProgramingDndCard from '@/components/ProgramingConfiguer/ProgramingDndCard';
+import styles from '@/components/ProgramingConfiguer/programing.module.less';
 
 const DeviceStateConfigsModal = (props) => {
   const { deviceMonitorData, visible, configs, onCancel, dispatch, programing } = props;

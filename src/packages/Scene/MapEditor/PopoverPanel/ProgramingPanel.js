@@ -3,9 +3,9 @@ import { Tabs } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
-import ProgramingZone from '../Programing/ProgramingZoneTab';
 import ProgramingCell from '../Programing/ProgramingCellTab';
 import ProgramingRelation from '../Programing/ProgramingRelationTab';
+import ProgramingZone from '../Programing/ProgramingZoneTab';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -35,9 +35,9 @@ const ProgramingPanel = (props) => {
           <TabPane tab={<FormattedMessage id={'app.map.route'} />} key='relation'>
             <ProgramingRelation programing={programing} />
           </TabPane>
-          <TabPane tab={<FormattedMessage id={'app.map.zone'} />} key='zone'>
-            <ProgramingZone programing={programing} />
-          </TabPane>
+          {/*<TabPane tab={<FormattedMessage id={'app.map.zone'} />} key='zone'>*/}
+          {/*  <ProgramingZone programing={programing} />*/}
+          {/*</TabPane>*/}
         </Tabs>
       </div>
     </div>
