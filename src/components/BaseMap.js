@@ -197,17 +197,17 @@ export default class BaseMap extends React.PureComponent {
         opt === 'remove' && cellEntity.removeType(type);
       }
     });
-    cells.forEach((item) => {
-      item.cellIds.forEach((cellId) => {
-        this.renderLineSpecialFlag(
-          opt === 'add',
-          `${item.nonStopCell}-${cellId}`,
-          type,
-          '$nonStop',
-          'S',
-        );
-      });
-    });
+    // cells.forEach((item) => {
+    //   item.cellIds.forEach((cellId) => {
+    //     this.renderLineSpecialFlag(
+    //       opt === 'add',
+    //       `${item.nonStopCell}-${cellId}`,
+    //       type,
+    //       '$nonStop',
+    //       'S',
+    //     );
+    //   });
+    // });
   };
 
   // ************************ 线条相关 **********************
@@ -228,9 +228,9 @@ export default class BaseMap extends React.PureComponent {
       // 只有显示物理坐标和直线类型线条才会显示直线
       if (renderType === CoordinateType.LAND || type === LineType.StraightPath) {
         // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
-        const lineMapKey = `${sourceCell.id}_${targetCell.id}`;
+        const lineMapKey = `${sourceCell.id}-${targetCell.id}`;
         const lineEntity = this.idLineMap.get(lineMapKey);
-        const reverseLineMapKey = `${targetCell.id}_${sourceCell.id}`;
+        const reverseLineMapKey = `${targetCell.id}-${sourceCell.id}`;
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
           const relationLine = new SmoothGraphics();
@@ -270,9 +270,17 @@ export default class BaseMap extends React.PureComponent {
       const navigationType = sourceCell.navigationType;
       if (renderType === CoordinateType.NAVI && type === LineType.BezierPath) {
         const { control1, control2 } = lineData;
-        const lineMapKey = `${source}_${target}`;
-        const transformedCP1 = coordinateTransformer(control1, navigationType, transform[navigationType]);
-        const transformedCP2 = coordinateTransformer(control2, navigationType, transform[navigationType]);
+        const lineMapKey = `${source}-${target}`;
+        const transformedCP1 = coordinateTransformer(
+          control1,
+          navigationType,
+          transform[navigationType],
+        );
+        const transformedCP2 = coordinateTransformer(
+          control2,
+          navigationType,
+          transform[navigationType],
+        );
 
         const bezier = new SmoothGraphics();
         bezier.lineStyle(3, 0xffffff);
@@ -287,6 +295,8 @@ export default class BaseMap extends React.PureComponent {
         );
         this.pixiUtils.viewportAddChild(bezier);
         this.idLineMap.set(lineMapKey, bezier);
+
+        // TODO: 绘制箭头
       }
 
       // TODO: 绘制圆弧
@@ -342,19 +352,19 @@ export default class BaseMap extends React.PureComponent {
         priorityToRender,
       ); // TODO: 目前只针对编辑器可点击
       // 渲染不可逗留点Flag
-      if (nonStopCellIds) {
-        nonStopCellIds.forEach((item) => {
-          item.cellIds.forEach((cellId) => {
-            this.renderLineSpecialFlag(
-              true,
-              `${item.nonStopCell}-${cellId}`,
-              'non_stop',
-              '$nonStop',
-              'S',
-            );
-          });
-        });
-      }
+      // if (nonStopCellIds) {
+      //   nonStopCellIds.forEach((item) => {
+      //     item.cellIds.forEach((cellId) => {
+      //       this.renderLineSpecialFlag(
+      //         true,
+      //         `${item.nonStopCell}-${cellId}`,
+      //         'non_stop',
+      //         '$nonStop',
+      //         'S',
+      //       );
+      //     });
+      //   });
+      // }
     }
     nameSpace === 'editor' && this.pipeSwitchLinesShown();
     this.refresh();
@@ -391,6 +401,18 @@ export default class BaseMap extends React.PureComponent {
       });
     });
     this.refresh();
+  };
+
+  renderRelationProgramingFlag = (ids, opt = 'add') => {
+    if (Array.isArray(ids)) {
+      ids.forEach((lineMapKey) => {
+        const relationEntity = this.idArrowMap.get(lineMapKey);
+        if (relationEntity) {
+          opt === 'add' && relationEntity.setProgramingFlag();
+          opt === 'remove' && relationEntity.resetProgramingFlag();
+        }
+      });
+    }
   };
 
   // 渲染线条特殊标志

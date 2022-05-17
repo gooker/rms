@@ -12,7 +12,7 @@ import { convertMapToArrayMap } from '@/utils/util';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 
 const ProgramingRelationTab = (props) => {
-  const { dispatch, selections, relationPrograming } = props;
+  const { dispatch, selections, mapContext, relationPrograming } = props;
 
   const [configRoutes, setConfigRoutes] = useState([]);
   const [configurationVisible, setConfigurationVisible] = useState(false);
@@ -31,6 +31,19 @@ const ProgramingRelationTab = (props) => {
         items: configRoutes,
         configuration: flatConfiguration(configuration),
       },
+    }).then((lineMapKeys) => {
+      mapContext.renderRelationProgramingFlag(lineMapKeys, 'add');
+      mapContext.refresh();
+    });
+  }
+
+  function onDelete(item) {
+    dispatch({
+      type: 'editor/deleteMapPrograming',
+      payload: { type: ProgramingItemType.relation, key: item.key },
+    }).then((lineMapKeys) => {
+      mapContext.renderRelationProgramingFlag(lineMapKeys, 'remove');
+      mapContext.refresh();
     });
   }
 
@@ -47,15 +60,6 @@ const ProgramingRelationTab = (props) => {
     setEditing(item);
     setConfigRoutes([item.key]);
     setConfigurationVisible(true);
-  }
-
-  function onDelete(item) {
-    dispatch({
-      type: 'editor/deleteMapPrograming',
-      payload: { type: ProgramingItemType.relation, key: item.key },
-    }).then(({ type, key }) => {
-      console.log(type, key);
-    });
   }
 
   function startConfiguration() {
@@ -126,9 +130,9 @@ const ProgramingRelationTab = (props) => {
   );
 };
 export default connect(({ editor }) => {
-  const { selections } = editor;
+  const { selections, mapContext } = editor;
   const currentRouteMap = getCurrentRouteMapData();
   let relationPrograming = currentRouteMap.programing?.relations || {};
   relationPrograming = convertMapToArrayMap(relationPrograming, 'key', 'actions');
-  return { selections, relationPrograming };
+  return { selections, relationPrograming, mapContext };
 })(memo(ProgramingRelationTab));

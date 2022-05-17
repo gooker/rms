@@ -17,6 +17,7 @@ import {
 import styles from '../editorLayout.module.less';
 import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { isPlainObject } from 'lodash';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
@@ -301,6 +302,17 @@ const EditorMapContainer = (props) => {
       shownCellCoordinateType,
       currentMap.transform || {},
     );
+
+    // 标记地图编程
+    const { programing } = currentRouteMapData;
+    if (isPlainObject(programing)) {
+      const { cells, relations } = programing;
+      mapContext.renderCellsType(
+        Object.keys(cells).map((item) => parseInt(item)),
+        'programing',
+      );
+      mapContext.renderRelationProgramingFlag(Object.keys(relations));
+    }
   }
 
   // 地图区域鼠标样式

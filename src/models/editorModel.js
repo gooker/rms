@@ -726,15 +726,16 @@ export default {
         });
       }
       currentRouteMap.programing[`${type}s`] = existCellConfigList;
+      return items;
     },
 
     deleteMapPrograming({ payload }) {
       const currentRouteMap = getCurrentRouteMapData();
-      const { type, key } = payload;
+      const { key, type } = payload;
       const existConfigList = { ...currentRouteMap.programing[`${type}s`] };
       delete existConfigList[key];
       currentRouteMap.programing[`${type}s`] = existConfigList;
-      return { type, key };
+      return [key];
     },
 
     // ********************************* 待调整 ********************************* //
