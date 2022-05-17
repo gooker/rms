@@ -157,6 +157,8 @@ const EquipmentList = (props) => {
 
   function fetchRegisteredDevice() {
     dispatch({ type: 'equipList/fetchInitialData' });
+    setSelectedRows([]);
+    setSelectedRowKeys([]);
   }
 
   // 修改设备动作弹框 start
