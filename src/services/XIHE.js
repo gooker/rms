@@ -278,16 +278,24 @@ export async function deleteWebHooks(param) {
 }
 
 // 保存topic和webhook的注册关系
-export async function registerWebhooksTopic() {
+export async function registerWebhooksTopic(param) {
   return request(`/${NameSpace.Coordinator}/registerTopic/saveRegisterTopic`, {
-    method: 'GET',
+    method: 'POST',
+    data: param,
   });
 }
 
 // 解绑topic 绑定
+export async function unBoundRegisterTopic(param) {
+  return request(`/${NameSpace.Coordinator}/registerTopic/unBoundRegisterTopic`, {
+    method: 'POST',
+    data: param,
+  });
+}
 
-export async function unBoundRegisterTopic() {
-  return request(`/${NameSpace.Coordinator}/registerTopic/saveRegisterTopic`, {
+// 根据sectionId获取所有的绑定关系
+export async function fetchAllRegisterData() {
+  return request(`/${NameSpace.Coordinator}/registerTopic/getAllBindingMessageBySectionId`, {
     method: 'GET',
   });
 }

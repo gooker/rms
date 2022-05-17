@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Form, Modal, Select, Input, Row, Col, Button } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { getFormLayout } from '@/utils/util';
@@ -9,11 +9,20 @@ const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const RegisterTopicModal = (props) => {
   const { onClose, visible, mqQueue, onSubmit, data } = props;
   const [formRef] = Form.useForm();
-  const [editRecord, setEditRecord] = useState({});
 
   useEffect(() => {
     if (data?.length === 1) {
-      setEditRecord(data[0]);
+      const { desc, name, nameSpace, topic } = data[0].topicData;
+      const mappings = [];
+      nameSpace?.map((value) => {
+        mappings.push({ value });
+      });
+      formRef.setFieldsValue({
+        topic,
+        name,
+        desc,
+        mappings,
+      });
     }
   }, [data]);
 
@@ -30,7 +39,7 @@ const RegisterTopicModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={<FormattedMessage id="app.register" />}
+      title={<FormattedMessage id="app.button.bind" />}
       maskClosable={false}
       onCancel={onClose}
       onOk={submit}

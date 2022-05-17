@@ -6,14 +6,16 @@ import {
   PlusOutlined,
   ReloadOutlined,
   SwapOutlined,
+  DisconnectOutlined,
 } from '@ant-design/icons';
+import { find, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getAllWebHookTypes, getAllWebHooks, deleteWebHooks, getAllQueues } from '@/services/api';
-import { registerWebhooksTopic } from '@/services/XIHE';
+import { registerWebhooksTopic, fetchAllRegisterData, unBoundRegisterTopic } from '@/services/XIHE';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import RcsConfirm from '@/components/RmsConfirm';
+import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import WebHookFormModal from './WebHookFormModal';
 import RegisterTopicModal from './RegisterTopicModal';
@@ -28,7 +30,8 @@ const WebHook = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [registerVisible, setRegisterVisible] = useState(false);
-  const [registerRows, setRegisterRows] = useState([]);
+  const [registerRows, setRegisterRows] = useState([]); // 绑定
+  const [unRegisterRows, setUnRegisterRows] = useState([]); // 解除绑定
   const [editingRow, setEditingRow] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
@@ -37,10 +40,19 @@ const WebHook = () => {
   // TODO: 获取所有topic绑定的webhook 放到webhook数据里展示
   function refresh() {
     setLoading(true);
-    Promise.all([getAllWebHooks(), getAllWebHookTypes(), getAllQueues()])
-      .then(([allWebHooks, allWebHookTypes, allMqQueue]) => {
-        if (!dealResponse([allWebHookTypes, allWebHooks, allMqQueue])) {
-          setWebHooks(allWebHooks);
+    Promise.all([getAllWebHooks(), getAllWebHookTypes(), getAllQueues(), fetchAllRegisterData()])
+      .then(([allWebHooks, allWebHookTypes, allMqQueue, allTopicData]) => {
+        if (!dealResponse([allWebHookTypes, allWebHooks, allMqQueue, allTopicData])) {
+          const newWebHooks = [...allWebHooks];
+          allTopicData?.map((item) => {
+            item?.mappingRelation.map(({ id, nameSpace }) => {
+              const bindTopic = find(newWebHooks, { id });
+              const bindIndex = findIndex(newWebHooks, { id });
+              newWebHooks.splice(bindIndex, 1, { ...bindTopic, topicData: { ...item, nameSpace } });
+            });
+          });
+          console.log(newWebHooks);
+          setWebHooks(newWebHooks);
           setWebHooksType(allWebHookTypes);
           setMqQueue(allMqQueue);
         }
@@ -68,7 +80,7 @@ const WebHook = () => {
   }
 
   function deleteWebhook() {
-    RcsConfirm({
+    RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       okButtonProps: { loading: deleteLoading, disabled: deleteLoading },
       onOk() {
@@ -86,26 +98,63 @@ const WebHook = () => {
 
   // 注册
   async function registerTopic(values) {
-    const response = await registerWebhooksTopic({ ...values, webHookMapping: selectedRowKeys });
-    if (!dealResponse(response)) {
+    const { mappings, ...rest } = values;
+    const newsMappings = mappings?.map(({ value }) => value);
+    const mappingRelation = [];
+    registerRows?.map(({ id }) => {
+      mappingRelation.push({ id, nameSpace: newsMappings, type: 'WebHook' });
+    });
+    const response = await registerWebhooksTopic({ ...rest, mappingRelation });
+    if (!dealResponse(response, 1)) {
       refresh();
       setRegisterVisible(false);
       setSelectedRowKeys([]);
+      setRegisterRows([]);
+      setUnRegisterRows([]);
     }
+  }
+
+  // 取消注册
+  function cancelRegister() {
+    RmsConfirm({
+      content: formatMessage({ id: 'app.message.doubleConfirm' }),
+      okButtonProps: { loading: deleteLoading, disabled: deleteLoading },
+      onOk: async () => {
+        setDeleteLoading(true);
+        const ids = unRegisterRows.map(({ id }) => id);
+        const response = await unBoundRegisterTopic({ ids, type: 'WebHook' });
+        if (!dealResponse(response, true)) {
+          setSelectedRowKeys([]);
+          setRegisterRows([]);
+          setUnRegisterRows([]);
+          refreshTable();
+        }
+        setDeleteLoading(false);
+      },
+    });
   }
 
   function getRegisterData(ids) {
     const selectedRows = webHooks.filter(({ id }) => ids.includes(id));
     // 过滤未绑定过的数据
-    const unRegisteredData = selectedRows.filter(({ registered }) => !registered);
+    const unRegisteredData = selectedRows.filter(
+      ({ topicData }) => Object.keys(topicData)?.length === 0,
+    );
 
     // 过滤绑定过的数据
-    const registeredData = selectedRows.filter(({ registered }) => registered);
+    const registeredData = selectedRows.filter(
+      ({ topicData }) => Object.keys(topicData)?.length > 0,
+    );
 
     if (unRegisteredData.length === 0 && registeredData.length === 1) {
       setRegisterRows(registeredData); // 此时是编辑
     } else {
       setRegisterRows(unRegisteredData); // 此时是第一次注册
+    }
+
+    // 解除绑定
+    if (registeredData.length > 0) {
+      setUnRegisterRows(registeredData);
     }
   }
 
@@ -168,6 +217,38 @@ const WebHook = () => {
         return content || '';
       },
     },
+    {
+      title: <FormattedMessage id="webHook.queue" />,
+      dataIndex: 'topic',
+      render: (_, record) => {
+        return record?.topicData?.topic || '';
+      },
+    },
+    {
+      title: 'topic 描述',
+      dataIndex: 'topicDesc',
+      render: (_, record) => {
+        return record?.topicData?.desc || '';
+      },
+    },
+    {
+      title: 'topic 名称',
+      dataIndex: 'topicName',
+      render: (_, record) => {
+        return record?.topicData?.name || '';
+      },
+    },
+    {
+      title: '订阅方',
+      dataIndex: 'topicNameSpace',
+      render: (_, record) => {
+        const { topicData } = record;
+        const topicNameSpace =
+          find(topicData?.mappingRelation ?? [], { id: record.id })?.nameSpace || [];
+        const content = topicNameSpace.join(',');
+        return content || '';
+      },
+    },
   ];
 
   const rowSelection = {
@@ -192,9 +273,12 @@ const WebHook = () => {
           onClick={() => {
             setRegisterVisible(true);
           }}
-          // disabled={registerRows.length === 0}
+          disabled={registerRows.length === 0}
         >
-          <SwapOutlined /> <FormattedMessage id="app.register" />
+          <SwapOutlined /> <FormattedMessage id="app.button.bind" />
+        </Button>
+        <Button disabled={unRegisterRows.length === 0} onClick={cancelRegister}>
+          <DisconnectOutlined /> <FormattedMessage id="app.button.unbind" />
         </Button>
         <Button onClick={refresh}>
           <ReloadOutlined /> <FormattedMessage id="app.button.refresh" />

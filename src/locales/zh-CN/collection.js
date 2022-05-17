@@ -27,7 +27,6 @@ export default {
   'webHook.queue': '队列',
   'webHook.headerItem.empty': '请求头配置不完整',
   'webHook.headerItem.keyDuplicate': '请求头存在重复Key',
-  'app.register': '注册',
 
   // 富文本编辑
   'richEditor.richText': '富文本',
