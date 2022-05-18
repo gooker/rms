@@ -7,10 +7,10 @@ import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/
 import {
   AGVState,
   CellSize,
-  ToteAGVSize,
+  MapSelectableSpriteType,
   SorterAGVSize,
   TaskPathColor,
-  MapSelectableSpriteType,
+  ToteAGVSize,
 } from '@/config/consts';
 import {
   getAgvSelectBorderTexture,
@@ -565,26 +565,31 @@ export function generateChargerXY(charger, cellMap) {
   }
 }
 
+// 将SupportTypes数据转换成DTO数据结构
+export function convertSupportTypesToDTO(supportTypes) {
+  const $supportTypes = supportTypes
+    .map((item) => item.split('@'))
+    .map(([key, value]) => ({
+      adapterType: key,
+      agvType: value,
+    }));
+  const groupedSupportTypes = groupBy($supportTypes, 'adapterType');
+  const $$supportTypes = [];
+  Object.keys(groupedSupportTypes).forEach((adapterType) => {
+    $$supportTypes.push({
+      adapterType,
+      agvTypes: groupedSupportTypes[adapterType].map(({ agvType }) => agvType),
+    });
+  });
+  return $$supportTypes;
+}
+
 // 将充电桩数据转换成后台数据结构
 export function convertChargerToDTO(charger, cellMap) {
   const _charger = cloneDeep(charger);
   _charger.chargingCells.forEach((item) => {
     if (Array.isArray(item.supportTypes)) {
-      const supportTypes = item.supportTypes
-        .map((item) => item.split('@'))
-        .map(([key, value]) => ({
-          adapterType: key,
-          agvType: value,
-        }));
-      const groupedSupportTypes = groupBy(supportTypes, 'adapterType');
-      const _supportTypes = [];
-      Object.keys(groupedSupportTypes).forEach((adapterType) => {
-        _supportTypes.push({
-          adapterType,
-          agvTypes: groupedSupportTypes[adapterType].map(({ agvType }) => agvType),
-        });
-      });
-      item.supportTypes = _supportTypes;
+      item.supportTypes = convertSupportTypesToDTO(item.supportTypes);
     } else {
       item.supportTypes = [];
     }
@@ -607,6 +612,17 @@ export function convertChargerToView(charger) {
   return { ...charger, chargingCells };
 }
 
+export function convertRestToView(rest) {
+  if (isStrictNull(rest)) return null;
+  const { cellIds, supportTypes } = rest;
+  const _supportTypes = supportTypes.map(({ adapterType, agvTypes }) =>
+    agvTypes.map((item) => `${adapterType}@${item}`),
+  );
+  return {
+    cellIds,
+    supportTypes: _supportTypes.flat(),
+  };
+}
 // ********************* 充电桩 ********************* //
 
 export function renderElevatorList(elevatorList) {
