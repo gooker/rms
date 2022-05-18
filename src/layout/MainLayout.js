@@ -16,6 +16,7 @@ import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
 import { handleNameSpace } from '@/utils/init';
 import { fetchAllPrograming } from '@/services/XIHE';
+import { fetchAllAdaptor } from '@/services/resourceManageAPI';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -216,8 +217,8 @@ class MainLayout extends React.Component {
 
   fetchAdditionalData = () => {
     const { dispatch } = this.props;
-    Promise.all([fetchAllTaskTypes(), fetchAllPrograming()])
-      .then(([allTaskTypes, allPrograming]) => {
+    Promise.all([fetchAllTaskTypes(), fetchAllPrograming(), fetchAllAdaptor()])
+      .then(([allTaskTypes, allPrograming, allAdaptors]) => {
         const states = {};
 
         // 小车类型
@@ -240,6 +241,18 @@ class MainLayout extends React.Component {
             `${formatMessage(
               { id: 'app.message.fetchFailTemplate' },
               { type: formatMessage({ id: 'app.map.programing' }) },
+            )}`,
+          );
+        }
+
+        // 适配器
+        if (!dealResponse(allAdaptors)) {
+          states.allAdaptors = allAdaptors;
+        } else {
+          message.error(
+            `${formatMessage(
+              { id: 'app.message.fetchFailTemplate' },
+              { type: formatMessage({ id: 'app.configInfo.header.adapter' }) },
             )}`,
           );
         }

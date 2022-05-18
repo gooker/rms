@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import * as XLSX from 'xlsx';
-import { find, groupBy, pickBy, sortBy } from 'lodash';
+import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
 import {
@@ -370,23 +370,6 @@ export function batchGenerateLine(targetPoints, dir, value) {
   return result;
 }
 
-export function countChargerCellWeight(array) {
-  if (array.length === 0) {
-    return 0;
-  }
-  let count = 0;
-  if (array.includes('All')) {
-    count += 1000;
-  }
-  if (array.includes('AGV-800')) {
-    count += 100;
-  }
-  if (array.includes('TOTE')) {
-    count += 10;
-  }
-  return count;
-}
-
 /**
  * 移动点位位置
  * @param {*} target 点位JSON数据
@@ -545,42 +528,86 @@ export function renderWorkStationList(workstationList, cellMap) {
   });
 }
 
-export function renderChargerList(chargerList, cellMap) {
-  return chargerList
-    .map((record) => {
-      if (!record) return null;
-      const { chargingCells, angle } = record;
-      if (isNull(chargingCells) || isNull(angle)) return null;
-      if (Array.isArray(chargingCells)) {
-        const result = [];
-        for (let index = 0; index < chargingCells.length; index++) {
-          const element = chargingCells[index];
-          if (element && element.cellId) {
-            const agvTypes = element.agvTypes || [];
-            result.push({
-              agvTypes,
-              cellId: element.cellId,
-              zIndex: countChargerCellWeight(agvTypes || []),
-            });
-          }
-        }
-        if (result.length > 0) {
-          const { cellId, agvTypes } = sortBy(result, 'zIndex')[result.length - 1];
-          if (cellMap[cellId]) {
-            let distance = 850;
-            if (agvTypes.includes('All') || agvTypes.includes('AGV800')) {
-              distance = 650;
-            }
-            const { x, y } = getCoordinat(cellMap[cellId], angle, distance);
-            return { ...record, x, y };
-          }
-        }
-        return null;
+/**
+ // ********************** 充电桩 ********************* //
+ **/
+export function generateChargerXY(charger, cellMap) {
+  const { angle, chargingCells } = charger;
+  const stopCellCollection = chargingCells
+    .map(({ cellId }) => cellId)
+    .map((cellId) => cellMap[cellId]);
+  if (stopCellCollection.length === 1) {
+    const stopCell = stopCellCollection[0];
+    if (!isNull(stopCell)) {
+      const { x, y } = getCoordinat({ x: stopCell.x, y: stopCell.y }, angle, 1000);
+      return { x, y, ...charger };
+    }
+  } else {
+    // 如果存在多个充电点，那么充电桩和充电点应该在一条直线，且充电桩距离最近的充电点是1000
+    let stopCell;
+    if ([0, 180].includes(angle)) {
+      const sorted = orderBy(stopCellCollection, 'y'); // 递增排序
+      if (angle === 0) {
+        stopCell = sorted[0];
+      } else {
+        stopCell = sorted.at(-1);
       }
-      return null;
-    })
-    .filter(Boolean);
+    } else {
+      const sorted = orderBy(stopCellCollection, 'x'); // 递增排序
+      if (angle === 90) {
+        stopCell = sorted.at(-1);
+      } else {
+        stopCell = sorted[0];
+      }
+    }
+    const { x, y } = getCoordinat({ x: stopCell.x, y: stopCell.y }, angle, 1000);
+    return { x, y, ...charger };
+  }
 }
+
+// 将充电桩数据转换成后台数据结构
+export function convertChargerToDTO(charger, cellMap) {
+  const _charger = cloneDeep(charger);
+  _charger.chargingCells.forEach((item) => {
+    if (Array.isArray(item.supportTypes)) {
+      const supportTypes = item.supportTypes
+        .map((item) => item.split('@'))
+        .map(([key, value]) => ({
+          adapterType: key,
+          agvType: value,
+        }));
+      const groupedSupportTypes = groupBy(supportTypes, 'adapterType');
+      const _supportTypes = [];
+      Object.keys(groupedSupportTypes).forEach((adapterType) => {
+        _supportTypes.push({
+          adapterType,
+          agvTypes: groupedSupportTypes[adapterType].map(({ agvType }) => agvType),
+        });
+      });
+      item.supportTypes = _supportTypes;
+    } else {
+      item.supportTypes = [];
+    }
+  });
+  return generateChargerXY(_charger, cellMap);
+}
+
+// 将充电桩后台数据转换成前端数据
+export function convertChargerToView(charger) {
+  if (isStrictNull(charger)) return null;
+  const chargingCells = charger.chargingCells.map(({ cellId, supportTypes }) => {
+    const _supportTypes = supportTypes.map(({ adapterType, agvTypes }) =>
+      agvTypes.map((item) => `${adapterType}@${item}`),
+    );
+    return {
+      cellId,
+      supportTypes: _supportTypes.flat(),
+    };
+  });
+  return { ...charger, chargingCells };
+}
+
+// ********************* 充电桩 ********************* //
 
 export function renderElevatorList(elevatorList) {
   const result = [];

@@ -21,7 +21,7 @@ AgvPollingTaskPathManager.start = function (agvIds = [], dispatcher) {
     AgvPollingTaskPathManager.getInstance(dispatcher);
   }
   const agvPathURL = getDomainNameByUrl(
-    `/${NameSpace.Coordinator}/traffic/getAllPath/${agvIds.join()}`,
+    `/${NameSpace.Platform}/traffic/getAllPath/${agvIds.join()}`,
   );
   AgvPollingTaskPathManager.instance.postMessage({
     state: 'start',

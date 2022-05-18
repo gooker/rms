@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Row, Col, Form, Input, InputNumber, Select, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
@@ -23,7 +23,6 @@ const WebHookFormModal = (props) => {
 
   const [formRef] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState(false);
-
 
   function submit() {
     setSubmitLoading(true);

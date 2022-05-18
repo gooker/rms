@@ -30,7 +30,7 @@ LockCellPolling.start = function (params, dispatcher) {
   if (isNull(LockCellPolling.instance)) {
     LockCellPolling.getInstance(dispatcher);
   }
-  const lockCellURL = getDomainNameByUrl(`/${NameSpace.Coordinator}/ui/getLockCellsByRobotIds`);
+  const lockCellURL = getDomainNameByUrl(`/${NameSpace.Platform}/ui/getLockCellsByRobotIds`);
   LockCellPolling.instance.postMessage({
     state: 'start',
     url: lockCellURL,

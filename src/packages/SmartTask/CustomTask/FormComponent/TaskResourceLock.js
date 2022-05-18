@@ -6,12 +6,12 @@ import styles from '../customTask.module.less';
 
 const { Option } = Select;
 const LockTime = {
-  BeginTaskStart: 'app.customTask.form.beginTaskStart',
-  AfterTaskEnd: 'app.customTask.form.afterTaskEnd',
-  BeginActionStart: 'app.customTask.form.BeginActionStart',
-  AfterActionEnd: 'app.customTask.form.AfterActionEnd',
-  NOLOCK: 'app.customTask.form.noLock', // 不锁
-  DONRUNLOCK: 'app.customTask.form.dontUnLock', // 不解锁
+  BeginTaskStart: 'customTask.form.beginTaskStart',
+  AfterTaskEnd: 'customTask.form.afterTaskEnd',
+  BeginActionStart: 'customTask.form.BeginActionStart',
+  AfterActionEnd: 'customTask.form.AfterActionEnd',
+  NOLOCK: 'customTask.form.noLock', // 不锁
+  DONRUNLOCK: 'customTask.form.dontUnLock', // 不解锁
 };
 
 const TaskResourceLock = (props) => {
@@ -73,13 +73,13 @@ const TaskResourceLock = (props) => {
     <div className={styles.taskResourceLock}>
       <div className={styles.taskResourceLockTitle}>
         <span style={{ flex: 1 }}>
-          <FormattedMessage id="app.customTask.form.resourceType" />
+          <FormattedMessage id='customTask.form.resourceType' />
         </span>
         <span style={{ flex: 2 }}>
-          <FormattedMessage id="app.customTask.form.lockTime" />
+          <FormattedMessage id='customTask.form.lockTime' />
         </span>
         <span style={{ flex: 2 }}>
-          <FormattedMessage id="app.customTask.form.unLockTime" />
+          <FormattedMessage id='customTask.form.unLockTime' />
         </span>
       </div>
       <div>{renderBody()}</div>

@@ -4,7 +4,7 @@ import { NameSpace } from '@/config/config';
 
 // 新增地图临时不可走点
 export async function updateTemporaryBlockCell(payload) {
-  return request(`/${NameSpace.Coordinator}/lock/saveTemporaryCell`, {
+  return request(`/${NameSpace.Platform}/lock/saveTemporaryCell`, {
     method: 'POST',
     data: payload,
   });
@@ -12,7 +12,7 @@ export async function updateTemporaryBlockCell(payload) {
 
 // 删除地图临时不可走点
 export async function deleteTemporaryBlockCell(payload) {
-  return request(`/${NameSpace.Coordinator}/lock/deleteTemporaryCell`, {
+  return request(`/${NameSpace.Platform}/lock/deleteTemporaryCell`, {
     method: 'POST',
     data: payload,
   });
@@ -20,14 +20,14 @@ export async function deleteTemporaryBlockCell(payload) {
 
 // 获取地图所有临时不可走点
 export async function fetchTemporaryBlockCells() {
-  return request(`/${NameSpace.Coordinator}/lock/getTemporaryLockedCells`, {
+  return request(`/${NameSpace.Platform}/lock/getTemporaryLockedCells`, {
     method: 'GET',
   });
 }
 
 // 获取小车任务路径
 export async function fetchAgvTaskPath(robotIds) {
-  return request(`/${NameSpace.Coordinator}/traffic/getAllPath/${robotIds.join()}`, {
+  return request(`/${NameSpace.Platform}/traffic/getAllPath/${robotIds.join()}`, {
     method: 'GET',
   });
 }
@@ -99,7 +99,7 @@ export async function toteToWorkstation(map) {
 
 // 料箱自动任务
 export async function autoCallToteTask(params) {
-  return request(`/${NameSpace.Tote}/agv-task/autoCallWorkstationTask`, {
+  return request(`/${NameSpace.Platform}/agv-task/autoCallWorkstationTask`, {
     method: 'POST',
     data: params,
   });
@@ -107,7 +107,7 @@ export async function autoCallToteTask(params) {
 
 // 自动释放料箱自动任务
 export async function autoReleaseToteTask(params) {
-  return request(`/${NameSpace.Tote}/agv-task/autoReleaseWorkstationTask`, {
+  return request(`/${NameSpace.Platform}/agv-task/autoReleaseWorkstationTask`, {
     method: 'POST',
     data: params,
   });
@@ -228,7 +228,7 @@ export async function fetchLatentAutoTaskConfig() {
 
 // 工作站自动任务(料箱)
 export async function fetchToteAutoTaskConfig() {
-  return request(`/${NameSpace.Tote}/agv-task/autoCallConfig`, {
+  return request(`/${NameSpace.Platform}/agv-task/autoCallConfig`, {
     method: 'GET',
   });
 }
@@ -298,21 +298,21 @@ export async function fetchSorterToThrow(params) {
 /////////////////////////******** 模拟器 ******** //////////////////////////
 // 开启模拟器
 export async function openSimulator() {
-  return request(`/${NameSpace.Coordinator}/simulator/openSimulator`, {
+  return request(`/${NameSpace.Platform}/simulator/openSimulator`, {
     method: 'GET',
   });
 }
 
 // 关闭模拟器
 export async function closeSimulator() {
-  return request(`/${NameSpace.Coordinator}/simulator/closeSimulator`, {
+  return request(`/${NameSpace.Platform}/simulator/closeSimulator`, {
     method: 'GET',
   });
 }
 
 // 添加虚拟车
 export async function addSimulationAgv(params) {
-  return request(`/${NameSpace.Coordinator}/simulator/agvLogin`, {
+  return request(`/${NameSpace.Platform}/simulator/agvLogin`, {
     method: 'POST',
     data: params,
   });
@@ -320,7 +320,7 @@ export async function addSimulationAgv(params) {
 
 // 批量添加模拟车
 export async function addSimulationAgvs(params) {
-  return request(`/${NameSpace.Coordinator}/simulator/batchAgvLogin`, {
+  return request(`/${NameSpace.Platform}/simulator/batchAgvLogin`, {
     method: 'POST',
     data: params,
   });
@@ -328,7 +328,7 @@ export async function addSimulationAgvs(params) {
 
 // 更新模拟配置
 export async function fetchUpdateAGVConfig(params) {
-  return request(`/${NameSpace.Coordinator}/simulator/saveAGVConfig`, {
+  return request(`/${NameSpace.Platform}/simulator/saveAGVConfig`, {
     method: 'POST',
     data: params,
   });
@@ -336,14 +336,14 @@ export async function fetchUpdateAGVConfig(params) {
 
 // 获取车型模拟车配置
 export async function fetchSimulatorAGVConfig(robotType) {
-  return request(`/${NameSpace.Coordinator}/simulator/getAGVConfig/${robotType}`, {
+  return request(`/${NameSpace.Platform}/simulator/getAGVConfig/${robotType}`, {
     method: 'GET',
   });
 }
 
 // 获取模拟器小车相关状态
 export async function fetchSimulatorLoginAGVControlState() {
-  return request(`/${NameSpace.Coordinator}/simulator/getAGVControl`, {
+  return request(`/${NameSpace.Platform}/simulator/getAGVControl`, {
     method: 'GET',
   });
 }
@@ -379,7 +379,7 @@ export async function fetchCloseAgv(robotId) {
 // 下线小车
 export async function fetchSimulatorAgvOffLine(params) {
   return request(
-    `/${NameSpace.Coordinator}/simulator/agvOffLine/${params.sectionId}/${params.robotId}`,
+    `/${NameSpace.Platform}/simulator/agvOffLine/${params.sectionId}/${params.robotId}`,
     { method: 'GET' },
   );
 }
@@ -387,7 +387,7 @@ export async function fetchSimulatorAgvOffLine(params) {
 // 批量删除小车
 export async function fetchBatchDeleteSimulatorAgv(params) {
   return request(
-    `/${NameSpace.Coordinator}/simulator/batchAgvDelete/${params.logicId}/${params.robotIds}`,
+    `/${NameSpace.Platform}/simulator/batchAgvDelete/${params.logicId}/${params.robotIds}`,
     {
       method: 'DELETE',
     },
@@ -396,28 +396,28 @@ export async function fetchBatchDeleteSimulatorAgv(params) {
 
 // 获取模拟器错误消息
 export async function fetchSimulatorErrorMessage(params) {
-  return request(`/${NameSpace.Coordinator}/simulator/errorMessage`, {
+  return request(`/${NameSpace.Platform}/simulator/errorMessage`, {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fetchSimulatorHistory() {
-  return request(`/${NameSpace.Coordinator}/simulator/getSimulator`, {
+  return request(`/${NameSpace.Platform}/simulator/getSimulator`, {
     method: 'GET',
   });
 }
 
 // 获取通道锁信息
 export async function getTunnelState() {
-  return request(`/${NameSpace.Coordinator}/traffic/getTunnelLock`, {
+  return request(`/${NameSpace.Platform}/traffic/getTunnelLock`, {
     method: 'GET',
   });
 }
 
 // 删除通道锁
 export async function deleteTunnelAgvLock(robotId) {
-  return request(`/${NameSpace.Coordinator}/traffic/clearTunnelLock/${robotId}`, {
+  return request(`/${NameSpace.Platform}/traffic/clearTunnelLock/${robotId}`, {
     method: 'GET',
   });
 }
@@ -441,14 +441,14 @@ export async function fetchWorkStationPre30Waiting(params) {
 
 // 获取通用站点的到站次数在途小车
 export async function fetchCommonPointInstrument(params) {
-  return request(`/${NameSpace.Coordinator}/stationProxy/getStationReport`, {
+  return request(`/${NameSpace.Platform}/stationProxy/getStationReport`, {
     method: 'GET',
     data: params,
   });
 }
 // 获取通用站点30s数据
 export async function fetchCommonPointPre30Waiting(params) {
-  return request(`/${NameSpace.Coordinator}/stationProxy/getStopWaitKpiDTO`, {
+  return request(`/${NameSpace.Platform}/stationProxy/getStopWaitKpiDTO`, {
     method: 'POST',
     data: params,
   });
@@ -456,7 +456,7 @@ export async function fetchCommonPointPre30Waiting(params) {
 
 // 获取站点查询实时速率
 export async function fetchStationRealTimeRate(params) {
-  return request(`/${NameSpace.Coordinator}/stationProxy/getRealTimeRate`, {
+  return request(`/${NameSpace.Platform}/stationProxy/getRealTimeRate`, {
     method: 'GET',
     data: params,
   });

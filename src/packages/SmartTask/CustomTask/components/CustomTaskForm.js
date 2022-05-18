@@ -1,74 +1,129 @@
 import React, { memo, useState, useEffect } from 'react';
-import { connect } from '@/utils/RmsDva';
-import { Form, Modal, message, Button } from 'antd';
-import { SnippetsOutlined, RedoOutlined, CloseOutlined, SaveOutlined } from '@ant-design/icons';
-import classnames from 'classnames';
+import { Form, Modal, message, Button, Menu, Dropdown, Space } from 'antd';
+import {
+  PlusOutlined,
+  RedoOutlined,
+  SaveOutlined,
+  CloseOutlined,
+  SnippetsOutlined,
+  BranchesOutlined,
+  HourglassOutlined,
+  ShoppingCartOutlined,
+} from '@ant-design/icons';
+import { useMemoizedFn } from 'ahooks';
+import update from 'immutability-helper';
+import { isEmpty, findIndex } from 'lodash';
 import { Container } from 'react-smooth-dnd';
-import find from 'lodash/find';
-import isEmpty from 'lodash/isEmpty';
-import findIndex from 'lodash/findIndex';
 import {
   isNull,
   dealResponse,
+  formatMessage,
   getRandomString,
   customTaskApplyDrag,
-  restoreCustomTaskForm,
 } from '@/utils/util';
-import { formatMessage } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
-import { ModelTypeFieldMap } from '@/config/consts';
+import { connect } from '@/utils/RmsDva';
 import { saveCustomTask } from '@/services/api';
+import { CustomType } from '../customTaskConfig';
+import { ModelTypeFieldMap, PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
+import FormattedMessage from '@/components/FormattedMessage';
 import DndCard from './DndCard';
 import InformationForm from './InformationForm';
 import StartForm from './StartForm';
-import ActionForm from './ActionForm';
-import EventForm from './EventForm';
+import SubTaskForm from './SubTaskForm';
 import WaitForm from './WaitForm';
-import PodStatusForm from './PodStatusForm';
+import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
 
-const CustomTaskForm = (props) => {
-  const { dispatch, customTypes, editingRow, listVisible } = props;
+const CustomTypeIconMap = {
+  [CustomType.ACTION]: <BranchesOutlined />,
+  [CustomType.WAIT]: <HourglassOutlined />,
+  [CustomType.PODSTATUS]: <ShoppingCartOutlined />,
+};
 
+const CustomTaskForm = (props) => {
+  const { dispatch, editingRow, listVisible } = props;
   const [form] = Form.useForm();
-  // 自定义任务编码
+
+  // 当前自定义任务编码
   const [taskCode, setTaskCode] = useState(`cst_${getRandomString(8)}`);
   // 已配置的任务节点
   const [taskSteps, setTaskSteps] = useState([]);
   // 当前选中的任务流程节点, 用于切换右侧表单中的数据
-  const [currentCode, setCurrentCode] = useState(null);
+  const [currentCode, setCurrentCode] = useState(CustomType.BASE);
 
   useEffect(() => {
-    if (editingRow) {
-      const result = restoreCustomTaskForm(editingRow, customTypes);
-      setTaskCode(editingRow.code);
-
-      // 此时 result.taskSteps 肯定不包含 BASE
-      const newTaskSteps = [...result.taskSteps];
-      newTaskSteps.unshift({
-        type: 'BASE',
-        code: `BASE_${getRandomString(6)}`,
-        label: formatMessage({ id: 'customTasks.form.baseInfo' }),
-      });
-      setTaskSteps(newTaskSteps);
-      setCurrentCode(newTaskSteps[0].code);
-      form.setFieldsValue(result.fieldsValue);
-    } else {
-      // 默认有"开始"、"结束"、”基础信息“
-      const initialTaskSteps = getInitialTaskSteps();
-      setTaskSteps(initialTaskSteps);
-      setCurrentCode(initialTaskSteps[0].code);
-    }
+    setTaskSteps(getInitialTaskSteps());
   }, []);
 
+  function getInitialTaskSteps() {
+    return [
+      {
+        type: CustomType.BASE,
+        code: CustomType.BASE,
+        label: formatMessage({ id: 'customTask.type.BASE' }),
+      },
+      {
+        type: CustomType.START,
+        code: CustomType.START,
+        label: formatMessage({ id: 'customTask.type.START' }),
+      },
+      {
+        type: CustomType.END,
+        code: CustomType.END,
+        label: formatMessage({ id: 'customTask.type.END' }),
+      },
+    ];
+  }
+
   function isStandardTab(type) {
-    return ['START', 'END', 'BASE'].includes(type);
+    return [CustomType.BASE, CustomType.START, CustomType.END].includes(type);
   }
 
   function spliceUselessValue(list) {
     return list.filter((item) => !(isEmpty(item) || isNull(item)));
+  }
+
+  function addTaskFlowNode({ key }) {
+    // 加在倒数第二个位置
+    const step = {
+      type: key,
+      code: `${key}_${getRandomString(6)}`,
+      label: formatMessage({ id: `customTask.type.${key}` }),
+    };
+    const newTaskSteps = [...taskSteps];
+    newTaskSteps.splice(newTaskSteps.length - 1, 0, step);
+    setTaskSteps(newTaskSteps);
+    setCurrentCode(step.code);
+  }
+
+  // 删除 “任务流程” 栏的某一节点
+  function deleteTaskFlowNode(index) {
+    RmsConfirm({
+      content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
+      onOk: () => {
+        const newTaskSteps = [...taskSteps];
+        newTaskSteps.splice(index, 1);
+        setTaskSteps(newTaskSteps);
+        setCurrentCode(newTaskSteps[index - 1].code);
+      },
+    });
+  }
+
+  function gotoListPage() {
+    Modal.confirm({
+      title: formatMessage({ id: 'customTask.backToList' }),
+      content: formatMessage({ id: 'customTasks.form.clear.warn' }),
+      onOk: () => {
+        const initialTaskSteps = getInitialTaskSteps();
+        setTaskSteps(initialTaskSteps);
+        setCurrentCode(initialTaskSteps[0].code);
+        form.resetFields();
+        dispatch({ type: 'customTask/saveEditingRow', payload: null });
+        dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
+      },
+    });
   }
 
   async function generateTaskData() {
@@ -150,28 +205,11 @@ const CustomTaskForm = (props) => {
     }
   }
 
-  function getInitialTaskSteps() {
-    const initialTaskSteps = [];
-    // 新增”基础信息“
-    initialTaskSteps.push({
-      type: 'BASE',
-      code: `BASE_${getRandomString(6)}`,
-      label: formatMessage({ id: 'customTasks.form.baseInfo' }),
-    });
-    ['START', 'END'].map((item) => {
-      const customType = find(customTypes, { type: item });
-      initialTaskSteps.push({ ...customType, code: `${item}_${getRandomString(6)}` });
-    });
-
-    return initialTaskSteps;
-  }
-
-  // Drop到任务流程栏
   function onDropInTaskFlow(dropResult) {
     const { removedIndex, addedIndex, payload } = dropResult;
 
-    const startIndex = findIndex(taskSteps, { type: 'START' });
-    const endIndex = findIndex(taskSteps, { type: 'END' });
+    const startIndex = findIndex(taskSteps, { type: CustomType.START });
+    const endIndex = findIndex(taskSteps, { type: CustomType.END });
     let jumpToDrop = false; // 是否立即跳转到拖拽的节点表单
 
     // 如果payload存在, 就是新增节点
@@ -195,27 +233,14 @@ const CustomTaskForm = (props) => {
     }
   }
 
-  // 删除 “任务流程” 栏的某一节点
-  function deleteTaskFlowNode(index) {
-    RmsConfirm({
-      content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
-      onOk: () => {
-        const newTaskSteps = [...taskSteps];
-        newTaskSteps.splice(index, 1);
-        setTaskSteps(newTaskSteps);
-        setCurrentCode(newTaskSteps[index - 1].code);
-      },
-    });
-  }
-
   // 渲染表单主体
   function renderFormBody() {
     return taskSteps.map((step) => {
       if (!step) return null;
       switch (step.type) {
-        case 'BASE':
+        case CustomType.BASE:
           return <InformationForm hidden={currentCode !== step.code} isEdit={!!editingRow} />;
-        case 'START':
+        case CustomType.START:
           return (
             <StartForm
               form={form}
@@ -224,7 +249,7 @@ const CustomTaskForm = (props) => {
               hidden={currentCode !== step.code}
             />
           );
-        case 'END':
+        case CustomType.END:
           return (
             <EndForm
               form={form}
@@ -233,22 +258,28 @@ const CustomTaskForm = (props) => {
               hidden={currentCode !== step.code}
             />
           );
-        case 'ACTION':
+        case CustomType.ACTION:
           return (
-            <ActionForm
+            <SubTaskForm
               form={form}
               code={step.code}
               type={step.type}
               hidden={currentCode !== step.code}
+              updateTab={updateTabName}
             />
           );
-        case 'EVENT':
-          return <EventForm hidden={currentCode !== step.code} code={step.code} type={step.type} />;
-        case 'WAIT':
-          return <WaitForm hidden={currentCode !== step.code} code={step.code} type={step.type} />;
-        case 'PODSTATUS':
+        case CustomType.WAIT:
           return (
-            <PodStatusForm
+            <WaitForm
+              hidden={currentCode !== step.code}
+              code={step.code}
+              type={step.type}
+              updateTab={updateTabName}
+            />
+          );
+        case CustomType.PODSTATUS:
+          return (
+            <PodSimulation
               form={form}
               code={step.code}
               type={step.type}
@@ -264,7 +295,7 @@ const CustomTaskForm = (props) => {
   async function submit() {
     const requestBody = await generateTaskData();
     if (requestBody === null) {
-      message.error(formatMessage({ id: 'app.customTask.form.invalid' }));
+      message.error(formatMessage({ id: 'customTask.form.invalid' }));
       return;
     }
 
@@ -277,102 +308,108 @@ const CustomTaskForm = (props) => {
     }
     const response = await saveCustomTask(requestBody);
     if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.customTask.save.fail' }));
+      message.error(formatMessage({ id: 'customTask.save.fail' }));
     } else {
-      message.success(formatMessage({ id: 'app.customTask.save.success' }));
+      message.success(formatMessage({ id: 'customTask.save.success' }));
     }
   }
 
-  function gotoListPage() {
-    Modal.confirm({
-      title: formatMessage({ id: 'app.customTask.backToList' }),
-      content: formatMessage({ id: 'customTasks.form.clear.warn' }),
-      onOk: () => {
-        const initialTaskSteps = getInitialTaskSteps();
-        setTaskSteps(initialTaskSteps);
-        setCurrentCode(initialTaskSteps[0].code);
-        form.resetFields();
-        dispatch({ type: 'customTask/saveEditingRow', payload: null });
-        dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
-      },
-    });
+  const updateTabName = useMemoizedFn(function(code, name) {
+    const index = findIndex(taskSteps, { code });
+    if (index > -1) {
+      const newTaskSteps = update(taskSteps, { [index]: { label: { $set: name } } });
+      setTaskSteps(newTaskSteps);
+    }
+  });
+
+  function getRichName({ type, label }) {
+    return (
+      <Space size={2}>
+        {CustomTypeIconMap[type]}
+        {label}
+      </Space>
+    );
   }
 
-  // 任务节点不需要显示”开始“和”结束“
-  const renderedCustomTypes = customTypes.filter((item) => !isStandardTab(item.type));
+  const plusMenu = (
+    <Menu onClick={addTaskFlowNode}>
+      <Menu.Item key={CustomType.ACTION}>
+        {CustomTypeIconMap[CustomType.ACTION]} <FormattedMessage id={'customTask.type.ACTION'} />
+      </Menu.Item>
+      <Menu.Item key={CustomType.WAIT}>
+        {CustomTypeIconMap[CustomType.WAIT]} <FormattedMessage id={'customTask.type.WAIT'} />
+      </Menu.Item>
+      <Menu.Item key={CustomType.PODSTATUS}>
+        {CustomTypeIconMap[CustomType.PODSTATUS]}{' '}
+        <FormattedMessage id={'customTask.type.PODSTATUS'} />
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className={styles.customTaskForm}>
-      <div style={{ display: 'flex', overflow: 'auto', height: '100%' }}>
-        <div className={styles.dndPanel}>
-          <div className={styles.dndColumn} style={{ marginBottom: 10 }}>
-            <div className={classnames(styles.dndTitle, styles.taskNodeColor)}>
-              <FormattedMessage id="app.customTask.customTypes" />
-            </div>
-            {/*
-             * 参考: https://www.jianshu.com/p/342647b69809
-             * getChildPayload: 记录当前拖动元素的信息，使用该函数返回一个 payload 的值。当 onDrop 触发时，会自动带入该函数返回的信息，用于做数据的处理
-             * 因为两个Container的groupName是相同的，所以两个Container的onDrop事件可以共享getChildPayload返回值(我猜的！！！！)
-             */}
-            <Container
-              groupName="dnd"
-              behaviour="copy"
-              getChildPayload={(index) => ({ ...renderedCustomTypes[index] })}
-            >
-              {renderedCustomTypes.map((item) => (
-                <DndCard key={item.type} name={item.label} />
-              ))}
-            </Container>
-          </div>
-          <div className={styles.dndColumn} style={{ flex: 1, marginTop: 10, overflow: 'auto' }}>
-            <div className={classnames(styles.dndTitle, styles.taskFlowColor)}>
-              <FormattedMessage id="app.task.flow" />
-            </div>
-            <Container
-              groupName="dnd"
-              dropPlaceholder={true}
-              onDrop={(e) => onDropInTaskFlow(e)}
-              nonDragAreaSelector={'.dndDisabled'} // 禁止拖拽
-            >
-              {taskSteps.map((item, index) => (
-                <DndCard
-                  key={item.code}
-                  name={item.label}
-                  active={currentCode === item.code}
-                  disabled={isStandardTab(item.type)}
-                  onDelete={() => {
-                    deleteTaskFlowNode(index);
-                  }}
-                  onClick={() => {
-                    setCurrentCode(item.code);
-                  }}
-                />
-              ))}
-            </Container>
-          </div>
+      <div className={styles.dndColumn}>
+        <div className={styles.dndTitle}>
+          <FormattedMessage id='app.task.flow' />
         </div>
-        <div className={styles.layoutDivider}></div>
-        <div className={styles.viewContent}>
-          <div id="customTaskFormBody" style={{ flex: 1, overflow: 'auto' }}>
-            <Form form={form}>{renderFormBody()}</Form>
-          </div>
-          <div className={styles.topTool}>
-            <Button danger onClick={gotoListPage}>
-              <CloseOutlined /> <FormattedMessage id="app.button.return" />
-            </Button>
-            <Button
-              onClick={() => {
-                dispatch({ type: 'customTask/initPage' });
+        <Container
+          groupName='dnd'
+          dropPlaceholder={{
+            showOnTop: true,
+            animationDuration: 150,
+            className: styles.dndPlaceholder,
+          }}
+          onDrop={(e) => onDropInTaskFlow(e)}
+          nonDragAreaSelector={'.dndDisabled'} // 禁止拖拽
+        >
+          {taskSteps.map((item, index) => (
+            <DndCard
+              key={item.code}
+              name={getRichName(item)}
+              active={currentCode === item.code}
+              disabled={isStandardTab(item.type)}
+              onDelete={() => {
+                deleteTaskFlowNode(index);
               }}
-            >
-              <RedoOutlined /> <FormattedMessage id="customTasks.button.updateModel" />
-            </Button>
-            <Button>
-              <SnippetsOutlined /> <FormattedMessage id="customTasks.button.temporarySave" />
-            </Button>
-            <Button type="primary" onClick={submit}>
-              <SaveOutlined /> <FormattedMessage id="app.button.save" />
-            </Button>
+              onClick={() => {
+                setCurrentCode(item.code);
+              }}
+            />
+          ))}
+          <div style={{ textAlign: 'center' }}>
+            <Dropdown arrow overlay={plusMenu} trigger={['click']}>
+              <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }}>
+                <PlusOutlined />
+              </Button>
+            </Dropdown>
           </div>
+        </Container>
+      </div>
+      <div className={styles.layoutDivider} />
+      <div
+        className={styles.viewContent}
+        style={{ height: `calc(100vh - ${PageContentPadding}px)` }}
+      >
+        <div className={styles.customTaskFormBody}>
+          <Form form={form}>{renderFormBody()}</Form>
+        </div>
+        <div className={styles.topTool}>
+          <Button danger onClick={gotoListPage}>
+            <CloseOutlined /> <FormattedMessage id='app.button.return' />
+          </Button>
+          <Button
+            onClick={() => {
+              dispatch({ type: 'customTask/initPage' });
+            }}
+          >
+            <RedoOutlined /> <FormattedMessage id='customTasks.button.updateModel' />
+          </Button>
+          <Button>
+            <SnippetsOutlined /> <FormattedMessage id='customTasks.button.temporarySave' />
+          </Button>
+          <Button type='primary' onClick={submit}>
+            <SaveOutlined /> <FormattedMessage id='app.button.save' />
+          </Button>
         </div>
       </div>
     </div>
@@ -380,6 +417,5 @@ const CustomTaskForm = (props) => {
 };
 export default connect(({ customTask }) => ({
   editingRow: customTask.editingRow,
-  customTypes: customTask.customTypes,
   listVisible: customTask.listVisible,
 }))(memo(CustomTaskForm));

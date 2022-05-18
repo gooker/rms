@@ -337,3 +337,6 @@ export const LatentToteTaskTypeOption = [
   { label: 'app.simulateTask.toteTaskType.STATION_TO_POD', value: 'STATION_TO_POD' },
   { label: 'app.simulateTask.toteTaskType.POD_TO_STATION', value: 'POD_TO_STATION' },
 ];
+
+// 页面垂直方向content以外的尺寸
+export const PageContentPadding = 134;

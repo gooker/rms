@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Empty } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { convertChargerToView, getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ChargerForm from './ChargerForm';
@@ -36,7 +36,7 @@ const ChargerPanel = (props) => {
   }
 
   function renderChargingCells(chargingCells) {
-    return chargingCells.map(({ cellId, agvTypes }) => (
+    return chargingCells.map(({ cellId, supportTypes }) => (
       <Col key={getRandomString(6)} span={24}>
         <LabelComponent
           label={
@@ -45,7 +45,10 @@ const ChargerPanel = (props) => {
             </>
           }
         >
-          {agvTypes.join()}
+          {supportTypes
+            .map(({ agvTypes }) => agvTypes)
+            .flat()
+            .join()}
         </LabelComponent>
       </Col>
     ));
@@ -110,7 +113,7 @@ const ChargerPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <ChargerForm charger={editing} flag={addFlag} />
+          <ChargerForm charger={convertChargerToView(editing)} flag={addFlag} />
         ) : multiFormVisible ? (
           <ChargerMultiForm
             back={() => {
@@ -140,7 +143,7 @@ const ChargerPanel = (props) => {
               </Button>
             </div>
             {listData.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: '#fff' }} />
             ) : (
               listData.map((item) => (
                 <FunctionListItem
@@ -159,7 +162,9 @@ const ChargerPanel = (props) => {
 };
 export default connect(({ editor }) => {
   const { mapContext } = editor;
+
   const currentLogicAreaData = getCurrentLogicAreaData();
   const chargerList = currentLogicAreaData?.chargerList ?? [];
-  return { chargerList, mapContext };
+
+  return { mapContext, chargerList };
 })(memo(ChargerPanel));

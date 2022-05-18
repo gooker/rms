@@ -12,7 +12,15 @@ const directionAngleMap = {
 };
 
 const AngleSelector = (props) => {
-  const { addonLabel, value, onChange, getAngle } = props;
+  const {
+    addonLabel,
+    value,
+    onChange,
+    getAngle,
+    disabled = false,
+    beforeWidth = 100,
+    width = 100,
+  } = props;
   const [angle, setAngle] = useState(null); // 角度
   const [direction, setDirection] = useState(null); // 方向
 
@@ -58,26 +66,35 @@ const AngleSelector = (props) => {
   }
 
   const addonBefore = (
-    <Select value={direction} onChange={addonBeforeChanged} style={{ width: '100px' }}>
+    <Select value={direction} onChange={addonBeforeChanged} style={{ width: beforeWidth }}>
       <Option value={0}>
         {/* 上方 */}
-        {addonLabel ? addonLabel[0] : <FormattedMessage id="app.direction.toTop" />}
+        {addonLabel ? addonLabel[0] : <FormattedMessage id='app.direction.toTop' />}
       </Option>
       <Option value={1}>
         {/* 右方 */}
-        {addonLabel ? addonLabel[90] : <FormattedMessage id="app.direction.toRight" />}
+        {addonLabel ? addonLabel[90] : <FormattedMessage id='app.direction.toRight' />}
       </Option>
       <Option value={2}>
         {/* 下方 */}
-        {addonLabel ? addonLabel[180] : <FormattedMessage id="app.direction.toBottom" />}
+        {addonLabel ? addonLabel[180] : <FormattedMessage id='app.direction.toBottom' />}
       </Option>
       <Option value={3}>
         {/* 左方 */}
-        {addonLabel ? addonLabel[270] : <FormattedMessage id="app.direction.toLeft" />}
+        {addonLabel ? addonLabel[270] : <FormattedMessage id='app.direction.toLeft' />}
       </Option>
     </Select>
   );
 
-  return <Input addonBefore={addonBefore} addonAfter="°" value={angle} onChange={inputChanged} />;
+  return (
+    <Input
+      disabled={disabled}
+      addonBefore={addonBefore}
+      addonAfter='°'
+      value={angle}
+      onChange={inputChanged}
+      style={{ width }}
+    />
+  );
 };
 export default memo(AngleSelector);

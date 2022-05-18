@@ -41,16 +41,16 @@ const EditVaribleModal = (props) => {
   const OptionsData = [
     // {
     //   code: 'AUTO',
-    //   name: <FormattedMessage id="app.customTask.form.AUTO" />,
+    //   name: <FormattedMessage id="customTask.form.AUTO" />,
     // },
     {
       code: 'AGV',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
       value: modelTypes?.AGV.options ?? {},
     },
     {
       code: 'AGV_GROUP',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
       value: modelTypes?.AGV_GROUP.options ?? {},
     },
   ];
@@ -59,7 +59,7 @@ const EditVaribleModal = (props) => {
     if (!value || !isNull(value.type)) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error(formatMessage({ id: 'app.customTask.require.target' })));
+    return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
   }
 
   function renderPanelContent(taskCode, content) {
@@ -95,7 +95,7 @@ const EditVaribleModal = (props) => {
           key={`${taskCode}@@${customStart.field}`}
           name={`${taskCode}@@${customStart.field}`}
           initialValue={{ type, code }}
-          label={<FormattedMessage id="app.customTasks.form.robot" />}
+          label={<FormattedMessage id='customTasks.form.robot' />}
         >
           <CascadeSelect data={OptionsData} />
         </Form.Item>,

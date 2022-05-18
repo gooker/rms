@@ -1,31 +1,28 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Form, Input } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { Form, Input, Checkbox } from 'antd';
+import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import CascadeSelect from '../FormComponent/CascadeSelect';
+import style from '../customTask.module.less';
 
-const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
+const { formItemLayout } = getFormLayout(6, 18);
 
 const StartForm = (props) => {
   const { form, code, type, hidden, modelTypes } = props;
 
-  const [seconOptionDisabled, setSeconOptionDisabled] = useState(false);
+  const [secondOptionDisabled, setSecondOptionDisabled] = useState(false);
 
   const OptionsData = [
-    // {
-    //   code: 'AUTO',
-    //   name: <FormattedMessage id="app.customTask.form.AUTO" />,
-    // },
     {
       code: 'AGV',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
-      value: modelTypes?.AGV.options ?? {},
+      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
+      value: {},
     },
     {
       code: 'AGV_GROUP',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
-      value: modelTypes?.AGV_GROUP.options ?? {},
+      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
+      value: {},
     },
   ];
 
@@ -33,7 +30,7 @@ const StartForm = (props) => {
     const fieldValue = form.getFieldValue(code);
     if (fieldValue) {
       const { robot } = fieldValue;
-      setSeconOptionDisabled(robot.type === 'AUTO');
+      setSecondOptionDisabled(robot.type === 'AUTO');
     }
   }, []);
 
@@ -41,7 +38,7 @@ const StartForm = (props) => {
     <>
       <Form.Item
         hidden
-        {...FormLayout}
+        {...formItemLayout}
         name={[code, 'customType']}
         initialValue={type}
         label={formatMessage({ id: 'app.common.type' })}
@@ -50,10 +47,10 @@ const StartForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden
-        {...FormLayout}
+        {...formItemLayout}
         name={[code, 'code']}
         initialValue={code}
-        label={formatMessage({ id: 'app.customTask.form.code' })}
+        label={formatMessage({ id: 'app.common.code' })}
         rules={[{ required: true }]}
       >
         <Input style={{ width: 300 }} />
@@ -63,22 +60,41 @@ const StartForm = (props) => {
       {/* 分小车 */}
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
+        {...formItemLayout}
         name={[code, 'robot']}
         initialValue={{ type: 'AUTO', code: [] }}
-        label={<FormattedMessage id="app.customTask.form.robot" />}
+        label={<FormattedMessage id='customTask.form.robot' />}
         getValueFromEvent={(value) => {
-          setSeconOptionDisabled(value.type === 'AUTO');
+          setSecondOptionDisabled(value.type === 'AUTO');
           return value;
         }}
       >
-        <CascadeSelect data={OptionsData} disabled={[false, seconOptionDisabled]} />
+        <CascadeSelect data={OptionsData} disabled={[false, secondOptionDisabled]} />
+      </Form.Item>
+
+      <Form.Item
+        hidden={hidden}
+        {...formItemLayout}
+        label={formatMessage({ id: 'customTask.form.limit' })}
+      >
+        <div className={style.limitDiv}>
+          <Form.Item noStyle name={[code, 'limit']}>
+            <Checkbox.Group
+              options={[
+                {
+                  label: formatMessage({ id: 'customTask.form.limit.podWithStandbyAgv' }),
+                  value: 'podWithStandbyAgv',
+                },
+              ]}
+            />
+          </Form.Item>
+        </div>
       </Form.Item>
 
       {/* 备注 */}
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
+        {...formItemLayout}
         name={[code, 'remark']}
         label={formatMessage({ id: 'app.common.remark' })}
       >

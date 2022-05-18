@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import { covertIntersectionFormData2Param, getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, isNull } from '@/utils/util';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import ButtonInput from '@/components/ButtonInput';
 import Dictionary from '@/utils/Dictionary';
 
 const FormLayout = { labelCol: { span: 5 }, wrapperCol: { span: 19 } };

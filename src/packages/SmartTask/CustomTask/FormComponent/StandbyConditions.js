@@ -36,7 +36,7 @@ const StandbyConditions = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={'agvTaskTypes'}
-        label={formatMessage({ id: 'app.customTask.form.agvTaskTypes' })}
+        label={formatMessage({ id: 'customTask.form.agvTaskTypes' })}
       >
         <Select
           showSearch
@@ -66,7 +66,7 @@ const StandbyConditions = (props) => {
                   {...(index === 0 ? FormLayout : NoLabelFormLayout)}
                   label={
                     index === 0
-                      ? formatMessage({ id: 'app.customTask.form.appointResources' })
+                      ? formatMessage({ id: 'customTask.form.appointResources' })
                       : null
                   }
                 >

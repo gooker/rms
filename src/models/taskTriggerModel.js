@@ -18,7 +18,7 @@ export default {
       if (!dealResponse(activeMap)) {
         yield put({ type: 'saveActiveMap', payload: activeMap });
       } else {
-        message.error(formatMessage({ id: 'app.customTask.fetch.map.fail' }));
+        message.error(formatMessage({ id: 'customTask.fetch.map.fail' }));
       }
     },
 

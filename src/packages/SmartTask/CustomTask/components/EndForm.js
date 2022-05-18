@@ -38,7 +38,7 @@ const EndForm = (props) => {
         {...FormLayout}
         name={[code, 'customType']}
         initialValue={type}
-        label={<FormattedMessage id="app.customTask.form.type" />}
+        label={<FormattedMessage id='app.common.type' />}
       >
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
@@ -60,7 +60,7 @@ const EndForm = (props) => {
         name={[code, 'robotWait']}
         valuePropName={'checked'}
         initialValue={false}
-        label={formatMessage({ id: 'app.customTask.form.robotWait' })}
+        label={formatMessage({ id: 'customTask.form.robotWait' })}
         getValueFromEvent={(checked) => {
           setRobotStandby(checked);
           return checked;
@@ -115,7 +115,7 @@ const EndForm = (props) => {
             name={[code, 'agvWaitTask', 'robotCanCharge']}
             valuePropName={'checked'}
             initialValue={true}
-            label={formatMessage({ id: 'app.customTask.form.robotAutoCharge' })}
+            label={formatMessage({ id: 'customTask.form.robotAutoCharge' })}
           >
             <Switch />
           </Form.Item>
@@ -126,7 +126,7 @@ const EndForm = (props) => {
             {...FormLayout}
             name={[code, 'agvWaitTask', 'waitTime']}
             initialValue={180}
-            label={formatMessage({ id: 'app.customTask.form.waitTime' })}
+            label={formatMessage({ id: 'customTask.form.waitTime' })}
           >
             <Input
               allowClear
@@ -146,7 +146,7 @@ const EndForm = (props) => {
                 <Form.Item
                   hidden={hidden}
                   {...(index === 0 ? FormLayout : NoLabelFormLayout)}
-                  label={index === 0 ? formatMessage({ id: 'app.customTask.form.backZone' }) : null}
+                  label={index === 0 ? formatMessage({ id: 'customTask.form.backZone' }) : null}
                 >
                   <Row gutter={10}>
                     <Col>

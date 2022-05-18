@@ -2,6 +2,8 @@ export default {
   'app.global.initFailed': '应用初始化失败',
   'app.global.wsInvalid': 'Socket URL配置错误',
   'app.global.chrome.suggested': '使用谷歌浏览器可获得更好的使用体验',
+  'app.global.browser.clipboardNotSupport':
+    '当前浏览器不支持 Clipboard API; 请更换Chrome浏览器再次尝试',
   'app.section.not.exist': '当前用户没有已激活的Section',
 
   // Socket

@@ -1,11 +1,11 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull ,formatMessage} from '@/utils/util';
+import { isNull, formatMessage } from '@/utils/util';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
-const PodStatusForm = (props) => {
+const PodSimulationForm = (props) => {
   const { code, type, form, hidden } = props;
   const { setFieldsValue } = form;
 
@@ -26,7 +26,7 @@ const PodStatusForm = (props) => {
         {...FormLayout}
         name={[code, 'customType']}
         initialValue={type}
-        label={formatMessage({ id: 'app.customTask.form.type' })}
+        label={formatMessage({ id: 'app.common.type' })}
       >
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
@@ -35,7 +35,7 @@ const PodStatusForm = (props) => {
         {...FormLayout}
         name={[code, 'code']}
         initialValue={code}
-        label={formatMessage({ id: 'app.customTask.form.code' })}
+        label={formatMessage({ id: 'app.common.code' })}
       >
         <Input style={{ width: 300 }} />
       </Form.Item>
@@ -46,7 +46,7 @@ const PodStatusForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'status']}
-        label={formatMessage({ id: 'app.customTask.form.podStatus' })}
+        label={formatMessage({ id: 'customTask.form.podStatus' })}
         rules={[{ required: true }]}
         getValueFromEvent={(ev) => {
           const value = ev.target.value;
@@ -58,10 +58,10 @@ const PodStatusForm = (props) => {
       >
         <Radio.Group optionType="button" buttonStyle="solid">
           <Radio.Button value="GENERATE">
-            <FormattedMessage id="app.customTask.form.generate" />
+            <FormattedMessage id='customTask.form.generate' />
           </Radio.Button>
           <Radio.Button value="DISAPPEAR">
-            <FormattedMessage id="app.customTask.form.disappear" />
+            <FormattedMessage id='customTask.form.disappear' />
           </Radio.Button>
         </Radio.Group>
       </Form.Item>
@@ -72,7 +72,7 @@ const PodStatusForm = (props) => {
           hidden={hidden}
           {...FormLayout}
           name={[code, 'isRandom']}
-          label={formatMessage({ id: 'app.customTask.form.generateType' })}
+          label={formatMessage({ id: 'customTask.form.generateType' })}
           rules={[{ required: true }]}
           getValueFromEvent={(ev) => {
             const value = ev.target.value;
@@ -83,10 +83,10 @@ const PodStatusForm = (props) => {
         >
           <Radio.Group optionType="button" buttonStyle="solid">
             <Radio.Button value={false}>
-              <FormattedMessage id="app.customTask.form.specify" />
+              <FormattedMessage id='customTask.form.specify' />
             </Radio.Button>
             <Radio.Button value={true}>
-              <FormattedMessage id="app.customTask.form.random" />
+              <FormattedMessage id='customTask.form.random' />
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
@@ -121,11 +121,11 @@ const PodStatusForm = (props) => {
         {...FormLayout}
         name={[code, 'skip']}
         initialValue={false}
-        label={formatMessage({ id: 'app.customTask.form.skip' })}
+        label={formatMessage({ id: 'customTask.form.skip' })}
       >
         <Switch />
       </Form.Item>
     </>
   );
 };
-export default memo(PodStatusForm);
+export default memo(PodSimulationForm);

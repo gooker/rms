@@ -104,7 +104,13 @@ const MonitorMapContainer = (props) => {
   function renderMap() {
     const cellsToRender = Object.values(currentMap.cellMap)
       .filter((item) => shownNavigationCellType.includes(item.navigationType))
-      .map((item) => coordinateTransformer(item, item.navigationType, currentMap.transform?.[item.navigationType]));
+      .map((item) =>
+        coordinateTransformer(
+          item,
+          item.navigationType,
+          currentMap.transform?.[item.navigationType],
+        ),
+      );
     mapContext.renderCells(cellsToRender);
   }
 
@@ -150,8 +156,7 @@ const MonitorMapContainer = (props) => {
     const { workstationList, chargerList, commonList } = currentLogicAreaData;
     // 充电桩
     if (Array.isArray(chargerList)) {
-      const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
-      mapContext.renderChargers(chargerListData);
+      mapContext.renderChargers(chargerList);
     }
     // 工作站
     if (Array.isArray(workstationList)) {

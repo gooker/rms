@@ -159,7 +159,7 @@ const TaskTriggerModal = (props) => {
             disabled={editVariableDisabled}
             loading={loading}
           >
-            <FormattedMessage id={'customTasks.taskTrigger.editVariable'} />
+            <FormattedMessage id={'taskTrigger.editVariable'} />
           </Button>
           <Button type="primary" onClick={submit} style={{ marginLeft: 13 }}>
             <FormattedMessage id={'app.button.save'} />
@@ -182,8 +182,8 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 触发的任务 */}
         <FormItem
-          name="codes"
-          label={formatMessage({ id: 'customTasks.taskTrigger.triggerTasks' })}
+          name='codes'
+          label={formatMessage({ id: 'taskTrigger.triggerTasks' })}
           rules={[{ required: true }]}
           getValueFromEvent={(value) => {
             setVariables(null); // 触发任务变了就清空变量信息
@@ -202,7 +202,7 @@ const TaskTriggerModal = (props) => {
         <FormItem
           name="variable"
           initialValue={'random'}
-          label={formatMessage({ id: 'customTasks.taskTrigger.variable' })}
+          label={formatMessage({ id: 'taskTrigger.variable' })}
           getValueFromEvent={(ev) => {
             setEditVariableDisabled(ev.target.value !== 'fixed');
             return ev.target.value;
@@ -210,10 +210,10 @@ const TaskTriggerModal = (props) => {
         >
           <Radio.Group>
             <Radio.Button value="random">
-              {formatMessage({ id: 'customTasks.taskTrigger.randomVariable' })}
+              {formatMessage({ id: 'taskTrigger.randomVariable' })}
             </Radio.Button>
             <Radio.Button value="fixed">
-              {formatMessage({ id: 'customTasks.taskTrigger.fixedVariable' })}
+              {formatMessage({ id: 'taskTrigger.fixedVariable' })}
             </Radio.Button>
           </Radio.Group>
         </FormItem>
@@ -233,8 +233,8 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 总下发次数 */}
         <FormItem
-          name="totalCount"
-          label={formatMessage({ id: 'customTasks.taskTrigger.totaTimes' })}
+          name='totalCount'
+          label={formatMessage({ id: 'taskTrigger.totaTimes' })}
           rules={[
             {
               pattern: /^[0-9]*$/,

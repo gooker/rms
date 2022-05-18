@@ -33,7 +33,7 @@ AlertCountPolling.start = function (dispatcher) {
     AlertCountPolling.getInstance(dispatcher);
   }
   const alertCountURL = getDomainNameByUrl(
-    `/${NameSpace.Coordinator}/alertCenter/getAlertCenterCount`,
+    `/${NameSpace.Platform}/alertCenter/getAlertCenterCount`,
   );
   AlertCountPolling.instance.postMessage({
     state: 'start',

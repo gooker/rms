@@ -1,22 +1,11 @@
 import { message } from 'antd';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
-  convertMapToArrayMap,
-  convertScopeDataToUiOptions,
-  dealResponse,
-  formatMessage,
-  isNull,
-} from '@/utils/util';
-import {
-  fetchActiveMap,
-  getAgvRunProtocol,
   getBackZone,
-  getCustomTaskList,
-  getCustomTaskNodes,
-  getFormModelLockResource,
+  fetchActiveMap,
   getFormModelTypes,
-  getLatentActions,
-  getTaskTypes,
-  getTurnProtocol,
+  getCustomTaskList,
+  getFormModelLockResource,
 } from '@/services/api';
 
 export default {
@@ -33,17 +22,9 @@ export default {
     customTaskList: [],
     editingRow: null,
 
-    customTypes: [], // 任务节点数据
     modelTypes: {}, // 业务模型数据
     modelLocks: {}, // 业务模型可锁资源
-    turnProtocol: [], // 转弯协议
-    agvRunProtocol: [], // 空跑协议
-    scopeData: [], // section 地图编程数据
     backZones: [], // 结束--返回指定区域
-
-    // TODO: 提升到 global
-    allTaskTypes: {}, // 所有车型任务类型
-    allActions: [], // 地图编程 --动作列表信息
   },
 
   reducers: {
@@ -74,72 +55,42 @@ export default {
   },
 
   effects: {
-    *initPage(_, { call }) {
+    * initPage(_, { call, put }) {
       const mapData = yield call(fetchActiveMap);
       if (isNull(mapData) || dealResponse(mapData)) {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
       } else {
-        const { id } = mapData;
-        Promise.all([
-          getCustomTaskNodes(),
-          getFormModelTypes({ mapId: id }),
-          getLatentActions(),
-          getTurnProtocol(),
-          getAgvRunProtocol(),
-          getTaskTypes(),
-          getBackZone({ mapId: id }),
-          getFormModelLockResource({ modelType: '' }),
-        ])
-          .then(
-            ([
-              customTypes,
-              modelTypes,
-              allActions,
-              turnProtocol,
-              agvRunProtocol,
-              allTaskTypes,
-              backZones,
-              modelLocks,
-            ]) => {
-              if (
-                !dealResponse(customTypes) &&
-                !dealResponse(modelTypes) &&
-                !dealResponse(allActions) &&
-                !dealResponse(turnProtocol) &&
-                !dealResponse(agvRunProtocol) &&
-                !dealResponse(allTaskTypes) &&
-                !dealResponse(backZones) &&
-                !dealResponse(modelLocks)
-              ) {
-                window.$$dispatch({
-                  type: 'customTask/saveState',
-                  payload: {
-                    mapData,
-                    backZones,
-                    modelTypes,
-                    modelLocks,
-                    allActions,
-                    allTaskTypes,
-                    customTypes: convertMapToArrayMap(customTypes, 'type', 'label'),
-                    turnProtocol: convertMapToArrayMap(turnProtocol, 'action', 'label'),
-                    agvRunProtocol: convertMapToArrayMap(agvRunProtocol, 'action', 'label'),
-                  },
-                });
-              } else {
-                throw new Error();
-              }
-            },
-          )
-          .catch(() => {
-            message.error(formatMessage({ id: 'app.customTask.fetch.global.fail' }));
-          });
+        try {
+          const [
+            // modelTypes,
+            // backZones,
+            modelLocks,
+          ] = yield Promise.all([
+            // getFormModelTypes({ mapId: mapData.id }),
+            // getBackZone({ mapId: mapData.id }),
+            getFormModelLockResource({ modelType: '' }),
+          ]);
+
+          const state = { mapData };
+          if (!dealResponse(modelLocks)) {
+            state.modelLocks = modelLocks;
+          }
+          yield put({ type: 'saveState', payload: state });
+        } catch (error) {
+          message.error(formatMessage({ id: 'app.message.initFailed' }, { reason: error.message }));
+        }
       }
     },
 
     *getCustomTaskList(_, { call, put }) {
       const response = yield call(getCustomTaskList);
       if (dealResponse(response)) {
-        message.error(formatMessage({ id: 'app.customTask.fetch.list.fail' }));
+        message.error(
+          formatMessage(
+            { id: 'app.message.fetchFailTemplate' },
+            { type: formatMessage({ id: 'menu.customTask' }) },
+          ),
+        );
       } else {
         yield put({ type: 'saveCustomTaskList', payload: response });
       }

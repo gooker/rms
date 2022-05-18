@@ -63,7 +63,7 @@ const TaskBodyModal = (props) => {
               <span
                 onClick={() => {
                   loadTreeNodeDetail({
-                    label: formatMessage({ id: `app.customTask.form.${key}` }), // 字段名
+                    label: formatMessage({ id: `customTask.form.${key}` }), // 字段名
                     field: key, // 字段
                     default: data[taskTypeCode][key], // 默认值
                     required: false, // 是否必须
@@ -73,7 +73,7 @@ const TaskBodyModal = (props) => {
                 {key}{' '}
                 {key !== 'customType' ? (
                   <span className={styles.treeNodeLabel}>
-                    <FormattedMessage id={`app.customTask.form.${key}`} />
+                    <FormattedMessage id={`customTask.form.${key}`} />
                   </span>
                 ) : (
                   <span style={{ color: 'red' }}>
@@ -109,7 +109,7 @@ const TaskBodyModal = (props) => {
                     <span
                       onClick={() => {
                         loadTreeNodeDetail({
-                          label: formatMessage({ id: `app.customTask.form.${key2}` }), // 字段名
+                          label: formatMessage({ id: `customTask.form.${key2}` }), // 字段名
                           field: key2, // 字段
                           default: data[taskTypeCode][subTaskCode][key][key2], // 默认值
                           required: key2 === 'target', // 是否必须
@@ -119,7 +119,7 @@ const TaskBodyModal = (props) => {
                       {/* 只有 targetAction/target 字段是必填的 */}
                       {key2}{' '}
                       <span className={styles.treeNodeLabel}>
-                        <FormattedMessage id={`app.customTask.form.${key2}`} />
+                        <FormattedMessage id={`customTask.form.${key2}`} />
                       </span>{' '}
                       {key === 'targetAction' && key2 === 'target' ? (
                         <span style={{ color: 'red' }}>
@@ -137,7 +137,7 @@ const TaskBodyModal = (props) => {
                   <span
                     onClick={() => {
                       loadTreeNodeDetail({
-                        label: formatMessage({ id: `app.customTask.form.${key}` }), // 字段名
+                        label: formatMessage({ id: `customTask.form.${key}` }), // 字段名
                         field: key, // 字段
                         default: data[taskTypeCode][subTaskCode][key], // 默认值
                         required: false, // 是否必须
@@ -147,7 +147,7 @@ const TaskBodyModal = (props) => {
                     {key}{' '}
                     {key !== 'customType' ? (
                       <span className={styles.treeNodeLabel}>
-                        <FormattedMessage id={`app.customTask.form.${key}`} />
+                        <FormattedMessage id={`customTask.form.${key}`} />
                       </span>
                     ) : (
                       <span>

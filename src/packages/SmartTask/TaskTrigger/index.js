@@ -113,13 +113,13 @@ class TaskTrigger extends Component {
       let statusText;
       switch (type) {
         case 'start':
-          statusText = formatMessage({ id: 'customTasks.taskTrigger.startTaskTrigger.tip' });
+          statusText = formatMessage({ id: 'taskTrigger.startTaskTrigger.tip' });
           break;
         case 'pause':
-          statusText = formatMessage({ id: 'customTasks.taskTrigger.pauseTaskTrigger.tip' });
+          statusText = formatMessage({ id: 'taskTrigger.pauseTaskTrigger.tip' });
           break;
         default:
-          statusText = formatMessage({ id: 'customTasks.taskTrigger.endTaskrigger.tip' });
+          statusText = formatMessage({ id: 'taskTrigger.endTaskrigger.tip' });
       }
       return statusText;
     };
@@ -190,7 +190,7 @@ class TaskTrigger extends Component {
     } else {
       const newTask = currentTaskTriggerList.filter((item) => item.id !== record.id);
       RmsConfirm({
-        content: formatMessage({ id: 'customTasks.taskTrigger.deleteTaskrigger.tip' }),
+        content: formatMessage({ id: 'taskTrigger.deleteTaskrigger.tip' }),
         onOk: async () => {
           // delete 调接口
           const deleteResult = await deleteTaskTrigger({ id: record.id });
@@ -339,17 +339,17 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id="customTasks.taskTrigger.triggerTasks" />}
+              title={<FormattedMessage id='taskTrigger.triggerTasks' />}
               content={this.renderTrigerTasks(record.codes)}
             />
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id="customTasks.taskTrigger.variable" />}
+              title={<FormattedMessage id='taskTrigger.variable' />}
               content={
                 record.variable === 'fixed'
-                  ? formatMessage({ id: 'customTasks.taskTrigger.fixedVariable' })
-                  : formatMessage({ id: 'customTasks.taskTrigger.randomVariable' })
+                  ? formatMessage({ id: 'taskTrigger.fixedVariable' })
+                  : formatMessage({ id: 'taskTrigger.randomVariable' })
               }
             />
           </Col>
@@ -361,7 +361,7 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={<FormattedMessage id="customTasks.taskTrigger.totaTimes" />}
+              title={<FormattedMessage id='taskTrigger.totaTimes' />}
               content={<span>{record.totalCount}</span>}
             />
           </Col>
@@ -423,13 +423,13 @@ class TaskTrigger extends Component {
                 value={selectSearchItem}
                 onChange={this.handleStatusSearch}
                 style={{ marginRight: 13, width: 150 }}
-                placeholder={formatMessage({ id: 'customTasks.taskTrigger.stateQuery' })}
+                placeholder={formatMessage({ id: 'taskTrigger.stateQuery' })}
               >
                 <Select.Option value="start">
                   {<FormattedMessage id="app.activity.TaskExecuting" />}
                 </Select.Option>
                 <Select.Option value="pause">
-                  {<FormattedMessage id="customTasks.taskTrigger.paused" />}
+                  {<FormattedMessage id='taskTrigger.paused' />}
                 </Select.Option>
                 <Select.Option value="end">
                   {<FormattedMessage id="app.common.status.end" />}

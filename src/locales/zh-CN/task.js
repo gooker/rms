@@ -19,8 +19,6 @@ export default {
   'app.taskQueue.createTime': '加入时间',
   'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
   'app.taskQueue.notAvailable': '暂无',
-  'app.taskQueue.priority': '优先级',
-  'app.taskQueue.priorityMax': '最高优先级',
   'app.taskQueue.priorityMin': '最低优先级',
   'app.taskQueue.priorityNumber': '优先级 {number}',
   'app.taskQueue.reorder': '调整优先级',
