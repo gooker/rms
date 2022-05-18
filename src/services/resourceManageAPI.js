@@ -178,6 +178,24 @@ export function saveDeviceMonitors(param) {
   });
 }
 
+
+// 保存设备类型 配置信息
+export function saveDeviceTypeConfigs(param) {
+  return request(`/${NameSpace.Platform}/device/saveDeviceTypeConfigs`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 保存设备类型动作配置
+export function saveDeviceTypeActions(param) {
+  return request(`/${NameSpace.Platform}/device/saveCustomDeviceAction`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
 export function handleDevice(param) {
   return request(`/${NameSpace.Platform}/device/action/handle`, {
     method: 'POST',
