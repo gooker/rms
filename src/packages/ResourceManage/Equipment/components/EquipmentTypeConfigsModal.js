@@ -3,10 +3,11 @@ import React, { memo, useEffect } from 'react';
 import { Form, Modal, Row, Col, AutoComplete, Input, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { getFormLayout, adaptModalHeight } from '@/utils/util';
+import { forIn } from 'lodash';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const EquipmentTypeConfigsModal = (props) => {
-  const { cancelModal, visible, onSubmit } = props;
+  const { cancelModal, visible, onSubmit, data } = props;
   const [formRef] = Form.useForm();
 
   useEffect(() => {
@@ -14,6 +15,21 @@ const EquipmentTypeConfigsModal = (props) => {
       formRef.resetFields();
     }
   }, [visible]);
+
+  useEffect(() => {
+    const configs = [];
+    forIn(data?.keyValue, (value, key) => {
+      configs.push({ key, value });
+    });
+
+    if (configs.length === 0) {
+      configs.push({ key: null, value: null });
+    }
+
+    formRef.setFieldsValue({
+      configs,
+    });
+  }, [data]);
 
   function submit() {
     formRef
@@ -33,7 +49,7 @@ const EquipmentTypeConfigsModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'设备类型配置信息'}
+      title={'配置信息'}
       maskClosable={false}
       onCancel={cancelModal}
       onOk={submit}

@@ -187,6 +187,15 @@ export function saveDeviceTypeConfigs(param) {
   });
 }
 
+// 保存设备类型动作配置
+export function saveDeviceTypeActions(param) {
+  return request(`/${NameSpace.Platform}/device/saveCustomDeviceAction`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
 export function handleDevice(param) {
   return request(`/${NameSpace.Platform}/device/action/handle`, {
     method: 'POST',

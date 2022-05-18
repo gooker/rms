@@ -133,10 +133,10 @@ const RegisterDeviceModal = (props) => {
           }}
         >
           <Select>
-            {allDeviceTypes.map(({ code, name }) => {
+            {allDeviceTypes.map(({ deviceType }) => {
               return (
-                <Select.Option key={code} value={code}>
-                  {name}
+                <Select.Option key={deviceType.code} value={deviceType.code}>
+                  {deviceType.name}
                 </Select.Option>
               );
             })}
