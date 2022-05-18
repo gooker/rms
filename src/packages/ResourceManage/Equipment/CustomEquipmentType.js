@@ -1,9 +1,9 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Spin, Button, Empty, Row, Col, Space, Card } from 'antd';
-import { ReloadOutlined, FormOutlined } from '@ant-design/icons';
-import { dealResponse } from '@/utils/util';
+import { ReloadOutlined, FormOutlined, SnippetsOutlined } from '@ant-design/icons';
+import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { findAllDeviceTypes } from '@/services/resourceManageAPI';
+import { findAllDeviceTypes, saveDeviceTypeConfigs } from '@/services/resourceManageAPI';
 import EquipmentTypeConfigsModal from './components/EquipmentTypeConfigsModal';
 import commonStyle from '@/common.module.less';
 import styles from './equip.module.less';
@@ -11,7 +11,7 @@ import styles from './equip.module.less';
 const CustomEquipmentType = () => {
   const [loading, setLoading] = useState(false);
   const [datasource, setDatasource] = useState([]);
-  const [configVisible, setConfigVisible] = useState(false); //
+  const [currentConfig, setCurrentConfig] = useState(null); //
 
   useEffect(() => {
     fetchData();
@@ -29,11 +29,25 @@ const CustomEquipmentType = () => {
         setLoading(false);
       });
   }
+
+  async function onSave(values) {
+    const response = await saveDeviceTypeConfigs({
+      deviceTypeCode: currentConfig.code,
+      keyValue: values,
+    });
+
+    if (!dealResponse(response, 1)) {
+      setCurrentConfig(null);
+    }
+  }
   return (
     <Spin spinning={loading}>
       <div className={commonStyle.commonPageStyle}>
         <div className={commonStyle.tableToolLeft}>
           <Button type={'primary'} onClick={fetchData}>
+            <SnippetsOutlined /> 配置动作模版
+          </Button>
+          <Button onClick={fetchData}>
             <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
           </Button>
         </div>
@@ -48,7 +62,7 @@ const CustomEquipmentType = () => {
                   <FormOutlined
                     className={styles.toolItem}
                     onClick={() => {
-                      setConfigVisible(true);
+                      setCurrentConfig(deviceType);
                     }}
                   />
                   {/* <EditOutlined className={styles.toolItem} /> */}
@@ -82,12 +96,13 @@ const CustomEquipmentType = () => {
           ))}
 
         {/* 配置设备类型的config */}
-        {configVisible && (
+        {!isNull(currentConfig) && (
           <EquipmentTypeConfigsModal
-            visible={configVisible}
+            visible={!isNull(currentConfig)}
             cancelModal={() => {
-              setConfigVisible(false);
+              setCurrentConfig(null);
             }}
+            onSubmit={onSave}
           />
         )}
       </div>

@@ -12,11 +12,15 @@ const RegisterTopicModal = (props) => {
 
   useEffect(() => {
     if (data?.length === 1) {
-      const { desc, name, nameSpace, topic } = data[0].topicData;
+      const { desc, name, nameSpace, topic } = data[0]?.topicData ?? {};
       const mappings = [];
       nameSpace?.map((value) => {
         mappings.push({ value });
       });
+      if (mappings.length === 0) {
+        mappings.push({ value: null });
+      }
+
       formRef.setFieldsValue({
         topic,
         name,

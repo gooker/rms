@@ -40,14 +40,6 @@ const EquipmentTypeConfigsModal = (props) => {
       bodyStyle={{ maxHeight: adaptModalHeight() * 0.9, overflow: 'auto' }}
     >
       <Form form={formRef} {...formItemLayout} labelWrap>
-        <Form.Item
-          name={'deviceTypeConfigurationCode'}
-          label={'信息标识'}
-          rules={[{ required: true }]}
-        >
-          <Input />
-        </Form.Item>
-
         <Form.List name={'configs'} initialValue={[{ key: null, value: null }]}>
           {(fields, { add, remove }, { errors }) => (
             <>

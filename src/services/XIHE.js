@@ -287,7 +287,7 @@ export async function registerWebhooksTopic(param) {
 
 // 解绑topic 绑定
 export async function unBoundRegisterTopic(param) {
-  return request(`/${NameSpace.Coordinator}/registerTopic/unBoundRegisterTopic`, {
+  return request(`/${NameSpace.Coordinator}/registerTopic/UnboundRegisterTopic`, {
     method: 'POST',
     data: param,
   });

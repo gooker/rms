@@ -121,8 +121,12 @@ const WebHook = () => {
       okButtonProps: { loading: deleteLoading, disabled: deleteLoading },
       onOk: async () => {
         setDeleteLoading(true);
-        const ids = unRegisterRows.map(({ id }) => id);
-        const response = await unBoundRegisterTopic({ ids, type: 'WebHook' });
+        const params = [];
+        unRegisterRows.map(({ id, topicData }) => {
+          const { topic } = topicData;
+          params.push({ topic, registerId: topicData.id, configId: id });
+        });
+        const response = await unBoundRegisterTopic(params);
         if (!dealResponse(response, true)) {
           setSelectedRowKeys([]);
           setRegisterRows([]);
@@ -138,22 +142,20 @@ const WebHook = () => {
     const selectedRows = webHooks.filter(({ id }) => ids.includes(id));
     // 过滤未绑定过的数据
     const unRegisteredData = selectedRows.filter(
-      ({ topicData }) => Object.keys(topicData)?.length === 0,
+      ({ topicData }) => isNull(topicData) || Object.keys(topicData)?.length === 0,
     );
 
     // 过滤绑定过的数据
     const registeredData = selectedRows.filter(
-      ({ topicData }) => Object.keys(topicData)?.length > 0,
+      ({ topicData }) => !isNull(topicData) && Object.keys(topicData)?.length > 0,
     );
 
-    if (unRegisteredData.length === 0 && registeredData.length === 1) {
-      setRegisterRows(registeredData); // 此时是编辑
+    if (unRegisteredData.length > 0 && registeredData.length > 0) {
+      setRegisterRows([]);
+      setUnRegisterRows([]);
     } else {
       setRegisterRows(unRegisteredData); // 此时是第一次注册
-    }
-
-    // 解除绑定
-    if (registeredData.length > 0) {
+      // 解除绑定
       setUnRegisterRows(registeredData);
     }
   }
@@ -173,6 +175,13 @@ const WebHook = () => {
     },
     { title: 'URL', dataIndex: 'url', align: 'center' },
     { title: 'Token', dataIndex: 'token', align: 'center' },
+    {
+      title: <FormattedMessage id="webHook.queue" />,
+      dataIndex: 'topic',
+      render: (_, record) => {
+        return record?.topicData?.topic || '';
+      },
+    },
     { title: <FormattedMessage id="app.common.description" />, dataIndex: 'desc', align: 'center' },
     {
       title: <FormattedMessage id="app.button.edit" />,
@@ -217,29 +226,23 @@ const WebHook = () => {
         return content || '';
       },
     },
+
     {
-      title: <FormattedMessage id="webHook.queue" />,
-      dataIndex: 'topic',
-      render: (_, record) => {
-        return record?.topicData?.topic || '';
-      },
-    },
-    {
-      title: 'topic 描述',
+      title: <FormattedMessage id="webHook.queue.desc" />,
       dataIndex: 'topicDesc',
       render: (_, record) => {
         return record?.topicData?.desc || '';
       },
     },
     {
-      title: 'topic 名称',
+      title: <FormattedMessage id="webHook.queue.name" />,
       dataIndex: 'topicName',
       render: (_, record) => {
         return record?.topicData?.name || '';
       },
     },
     {
-      title: '订阅方',
+      title: <FormattedMessage id="webHook.queue.subscribe" />,
       dataIndex: 'topicNameSpace',
       render: (_, record) => {
         const { topicData } = record;
