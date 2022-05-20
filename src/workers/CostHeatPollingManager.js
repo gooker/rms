@@ -30,7 +30,7 @@ CostHeatPollingManager.start = function (params, dispatcher) {
   if (isNull(CostHeatPollingManager.instance)) {
     CostHeatPollingManager.getInstance(dispatcher);
   }
-  const getHeatURL = getDomainNameByUrl(`/${NameSpace.Coordinator}/heat/getHeatMap`);
+  const getHeatURL = getDomainNameByUrl(`/${NameSpace.Platform}/heat/getHeatMap`);
   CostHeatPollingManager.instance.postMessage({
     state: 'start',
     url: getHeatURL,

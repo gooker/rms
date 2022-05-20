@@ -3,7 +3,7 @@ import { Button, Empty } from 'antd';
 import { LeftOutlined, PlusOutlined, RightOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getRandomString, isNull } from '@/utils/util';
-import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { convertRestToView, getCurrentLogicAreaData } from '@/utils/mapUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import FunctionListItem from '../components/FunctionListItem';
 import RestForm from './RestForm';
@@ -34,17 +34,12 @@ const RestPanel = (props) => {
 
   function getListData() {
     return restCells.map((item, index) => {
-      const { agvTypes, cellIds, priority } = item;
+      const { supportTypes, cellIds } = item;
       return {
-        name: index + 1,
+        name: `#${index + 1}`,
         index,
         rawData: item,
         fields: [
-          {
-            field: 'priority',
-            label: <FormattedMessage id={'app.common.priority'} />,
-            value: priority,
-          },
           {
             field: 'cellIds',
             label: <FormattedMessage id={'editor.cellType.rest'} />,
@@ -53,7 +48,10 @@ const RestPanel = (props) => {
           {
             field: 'agvTypes',
             label: <FormattedMessage id={'app.agvType'} />,
-            value: agvTypes,
+            value: supportTypes
+              .map(({ agvTypes }) => agvTypes)
+              .flat()
+              .join(),
           },
         ],
       };
@@ -88,7 +86,7 @@ const RestPanel = (props) => {
       {/* 列表区 */}
       <div>
         {formVisible ? (
-          <RestForm rest={editing} flag={addFlag} />
+          <RestForm rest={convertRestToView(editing)} flag={addFlag} />
         ) : (
           <>
             <div style={{ width: '100%', textAlign: 'end' }}>
@@ -104,7 +102,7 @@ const RestPanel = (props) => {
               </Button>
             </div>
             {listData.length === 0 ? (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: '#fff' }} />
             ) : (
               listData.map((item) => (
                 <FunctionListItem

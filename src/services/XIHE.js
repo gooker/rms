@@ -4,14 +4,14 @@ import { isStrictNull } from '@/utils/util';
 
 //////////////////////////**** 高可用 ****//////////////////////////
 export async function getHAInfo() {
-  return request(`/${NameSpace.Coordinator}/serverInfo/getServerInfo`, {
+  return request(`/${NameSpace.Platform}/serverInfo/getServerInfo`, {
     method: 'GET',
     attachSection: false,
   });
 }
 
 export async function getHAChangeHistory() {
-  return request(`/${NameSpace.Coordinator}/serverInfo/getHaServerChange`, {
+  return request(`/${NameSpace.Platform}/serverInfo/getHaServerChange`, {
     method: 'GET',
   });
 }
@@ -27,14 +27,14 @@ export async function fetchLatentPodList() {
 
 // 获取料箱布局尺寸数据
 export async function fetchToteSizeList() {
-  return request(`/${NameSpace.Tote}/rack/size/getSizeList`, {
+  return request(`/${NameSpace.Platform}/rack/size/getSizeList`, {
     method: 'GET',
   });
 }
 
 // 获取所有站点类型
 export async function fetchAllStationTypes() {
-  return request(`/${NameSpace.Coordinator}/map/getAllStationType`, {
+  return request(`/${NameSpace.Platform}/map/getAllStationType`, {
     method: 'GET',
   });
 }
@@ -42,21 +42,21 @@ export async function fetchAllStationTypes() {
 //////////////////////////**** 急停区 ****//////////////////////////
 // 获取Section急停配置信息
 export async function fetchEmergencyStopList(mapId) {
-  return request(`/${NameSpace.Coordinator}/eStop/getEStops/${mapId}`, {
+  return request(`/${NameSpace.Platform}/eStop/getEStops/${mapId}`, {
     method: 'GET',
   });
 }
 
 // 根据编码获取急停配置信息
 export async function getEmergencyStopByCode(code) {
-  return request(`/${NameSpace.Coordinator}/eStop/getEStopByCode/${code}`, {
+  return request(`/${NameSpace.Platform}/eStop/getEStopByCode/${code}`, {
     method: 'GET',
   });
 }
 
 // 保存急停配置信息
 export async function saveEmergencyStop(params) {
-  return request(`/${NameSpace.Coordinator}/eStop/saveEStop`, {
+  return request(`/${NameSpace.Platform}/eStop/saveEStop`, {
     method: 'POST',
     data: params,
   });
@@ -64,7 +64,7 @@ export async function saveEmergencyStop(params) {
 
 // 启用 | 禁用
 export async function changeEmergencyStopStatus(params) {
-  return request(`/${NameSpace.Coordinator}/eStop/changeStatus`, {
+  return request(`/${NameSpace.Platform}/eStop/changeStatus`, {
     method: 'POST',
     data: params,
   });
@@ -72,7 +72,7 @@ export async function changeEmergencyStopStatus(params) {
 
 // 删除急停配置信息
 export async function deleteEmergencyStop(params) {
-  return request(`/${NameSpace.Coordinator}/eStop/removeEStop`, {
+  return request(`/${NameSpace.Platform}/eStop/removeEStop`, {
     method: 'POST',
     data: params,
   });
@@ -80,7 +80,7 @@ export async function deleteEmergencyStop(params) {
 
 // 获取Section急停操作日志
 export async function fetchEStopLogs(params) {
-  return request(`/${NameSpace.Coordinator}/eStop/getEStopLogs`, {
+  return request(`/${NameSpace.Platform}/eStop/getEStopLogs`, {
     method: 'POST',
     data: params,
   });
@@ -88,43 +88,43 @@ export async function fetchEStopLogs(params) {
 
 //////////////////////////**** 地图编辑 ****//////////////////////////
 export async function fetchSectionMaps() {
-  return request(`/${NameSpace.Coordinator}/map/getSectionMaps`, { method: 'GET' });
+  return request(`/${NameSpace.Platform}/map/getSectionMaps`, { method: 'GET' });
 }
 
 export async function fetchMapDetail(id) {
-  return request(`/${NameSpace.Coordinator}/map/detail/${id}`, {
+  return request(`/${NameSpace.Platform}/map/detail/${id}`, {
     method: 'GET',
   });
 }
 
 export async function updateMap(param) {
-  return request(`/${NameSpace.Coordinator}/map/updateMap`, {
+  return request(`/${NameSpace.Platform}/map/updateMap`, {
     method: 'POST',
     data: param,
   });
 }
 
 export async function saveMap(map) {
-  return request(`/${NameSpace.Coordinator}/map`, {
+  return request(`/${NameSpace.Platform}/map`, {
     method: 'POST',
     data: map,
   });
 }
 
 export async function deleteMapById(id) {
-  return request(`/${NameSpace.Coordinator}/map/delete/${id}`, {
+  return request(`/${NameSpace.Platform}/map/delete/${id}`, {
     method: 'DELETE',
   });
 }
 
 export async function fetchMapHistory(mapId) {
-  return request(`/${NameSpace.Coordinator}/map/getMapHistory/${mapId}`, {
+  return request(`/${NameSpace.Platform}/map/getMapHistory/${mapId}`, {
     method: 'GET',
   });
 }
 
 export async function fetchMapHistoryDetail(historyId) {
-  return request(`/${NameSpace.Coordinator}/map/getMapHistoryDetail/${historyId}`, {
+  return request(`/${NameSpace.Platform}/map/getMapHistoryDetail/${historyId}`, {
     method: 'GET',
   });
 }
@@ -132,7 +132,7 @@ export async function fetchMapHistoryDetail(historyId) {
 //////////////////////////**** 地图监控 ****//////////////////////////
 // 点位热度
 export async function fetchCellHeat(params) {
-  return request(`/${NameSpace.Coordinator}/heat/getHeatMap`, {
+  return request(`/${NameSpace.Platform}/heat/getHeatMap`, {
     method: 'GET',
     data: params,
   });
@@ -140,21 +140,21 @@ export async function fetchCellHeat(params) {
 
 // 获取点位锁格
 export async function fetchCellLocks(logicId, cellId) {
-  return request(`/${NameSpace.Coordinator}/ui/getRobotByLockedCell/${logicId}/${cellId}`, {
+  return request(`/${NameSpace.Platform}/ui/getRobotByLockedCell/${logicId}/${cellId}`, {
     method: 'GET',
   });
 }
 
 // 获取料箱任务实时路径
 export async function getToteTaskRealtimePath() {
-  return request(`/${NameSpace.Tote}/run-info/target-bins`, {
+  return request(`/${NameSpace.Platform}/run-info/target-bins`, {
     method: 'GET',
   });
 }
 
 // 获取料箱实时状态信息，包括: 存放任务、货位占用
 export async function getToteTaskRealtimeState(type) {
-  return request(`/${NameSpace.Tote}/run-info/bins-info`, {
+  return request(`/${NameSpace.Platform}/run-info/bins-info`, {
     method: 'GET',
     data: { type },
   });
@@ -179,7 +179,7 @@ export async function updateLatentPodSize(payload) {
 //////////////////////////**** 地图锁相关 ****//////////////////////////
 export async function fetchMapAGVLocks(logicId, lockTypes, robotIds) {
   return request(
-    `/${NameSpace.Coordinator}/ui/getLockCellsByRobotIds/${logicId}/${lockTypes}/${robotIds}`,
+    `/${NameSpace.Platform}/ui/getLockCellsByRobotIds/${logicId}/${lockTypes}/${robotIds}`,
     { method: 'GET' },
   );
 }
@@ -187,7 +187,7 @@ export async function fetchMapAGVLocks(logicId, lockTypes, robotIds) {
 //////////////////////////**** 充电桩管理 ****//////////////////////////
 // 获取地图充电桩状态信息
 export async function fetchChargerState(param) {
-  return request(`/${NameSpace.Coordinator}/charger/getMapChargerByName`, {
+  return request(`/${NameSpace.Platform}/charger/getMapChargerByName`, {
     method: 'POST',
     data: param,
   });
@@ -195,14 +195,14 @@ export async function fetchChargerState(param) {
 
 // 获取实际上报的物理充电桩数据
 export async function fetchPhysicChargers() {
-  return request(`/${NameSpace.Coordinator}/api/loginCharger`, {
+  return request(`/${NameSpace.Platform}/api/loginCharger`, {
     method: 'GET',
   });
 }
 
 // 地图充电桩绑定物理充电桩
 export async function fetchBindPhysicCharger(param) {
-  return request(`/${NameSpace.Coordinator}/api/saveBindingAvailableCharger`, {
+  return request(`/${NameSpace.Platform}/api/saveBindingAvailableCharger`, {
     method: 'POST',
     data: param,
   });
@@ -210,7 +210,7 @@ export async function fetchBindPhysicCharger(param) {
 
 // 请求解绑充电桩
 export async function fetchBatchUnbindHardware(params) {
-  return request(`/${NameSpace.Coordinator}/charger/batchUnbundlingByHardwareIds`, {
+  return request(`/${NameSpace.Platform}/charger/batchUnbundlingByHardwareIds`, {
     method: 'POST',
     data: params,
   });
@@ -218,21 +218,21 @@ export async function fetchBatchUnbindHardware(params) {
 
 // 清除充电桩故障
 export async function clearChargerFault(hardwareId) {
-  return request(`/${NameSpace.Coordinator}/charger/actions/clearError/${hardwareId}`, {
+  return request(`/${NameSpace.Platform}/charger/actions/clearError/${hardwareId}`, {
     method: 'GET',
   });
 }
 
 // 重置充电桩状态
 export async function resetCharger(hardwareId) {
-  return request(`/${NameSpace.Coordinator}/charger/actions/resetChargerStatus/${hardwareId}`, {
+  return request(`/${NameSpace.Platform}/charger/actions/resetChargerStatus/${hardwareId}`, {
     method: 'GET',
   });
 }
 
 // 切换充电桩可用
 export async function fetchUpdateCharger(params) {
-  return request(`/${NameSpace.Coordinator}/charger/actions/updateEnableStatus`, {
+  return request(`/${NameSpace.Platform}/charger/actions/updateEnableStatus`, {
     method: 'POST',
     data: params,
   });
@@ -240,7 +240,7 @@ export async function fetchUpdateCharger(params) {
 
 // 根据地图ID查询所有充电桩接口
 export async function fetchChargerList(mapId) {
-  return request(`/${NameSpace.Coordinator}/charger/getChargerListByMapId`, {
+  return request(`/${NameSpace.Platform}/charger/getChargerListByMapId`, {
     method: 'GET',
     data: { mapId },
   });
@@ -249,14 +249,14 @@ export async function fetchChargerList(mapId) {
 //////////////////////////**** Web Hook页面 ****//////////////////////////
 // 查询所有已创建的Web Hook类型
 export async function getAllWebHookTypes() {
-  return request(`/${NameSpace.Coordinator}/webHook/getType`, {
+  return request(`/${NameSpace.Platform}/webHook/getType`, {
     method: 'GET',
   });
 }
 
 // 保存Web Hook接口
 export async function saveWebHook(param) {
-  return request(`/${NameSpace.Coordinator}/webHook/saveWebHook`, {
+  return request(`/${NameSpace.Platform}/webHook/saveWebHook`, {
     method: 'POST',
     data: param,
   });
@@ -264,14 +264,14 @@ export async function saveWebHook(param) {
 
 // 查询所有已创建的Web Hook接口
 export async function getAllWebHooks() {
-  return request(`/${NameSpace.Coordinator}/webHook/getAllWebHook`, {
+  return request(`/${NameSpace.Platform}/webHook/getAllWebHook`, {
     method: 'GET',
   });
 }
 
 // 删除 Web Hook
 export async function deleteWebHooks(param) {
-  return request(`/${NameSpace.Coordinator}/webHook/deleteWebHookById`, {
+  return request(`/${NameSpace.Platform}/webHook/deleteWebHookById`, {
     method: 'POST',
     data: param,
   });
@@ -279,7 +279,7 @@ export async function deleteWebHooks(param) {
 
 // 保存topic和webhook的注册关系
 export async function registerWebhooksTopic(param) {
-  return request(`/${NameSpace.Coordinator}/registerTopic/saveRegisterTopic`, {
+  return request(`/${NameSpace.Platform}/registerTopic/saveRegisterTopic`, {
     method: 'POST',
     data: param,
   });
@@ -287,7 +287,7 @@ export async function registerWebhooksTopic(param) {
 
 // 解绑topic 绑定
 export async function unBoundRegisterTopic(param) {
-  return request(`/${NameSpace.Coordinator}/registerTopic/UnboundRegisterTopic`, {
+  return request(`/${NameSpace.Platform}/registerTopic/UnboundRegisterTopic`, {
     method: 'POST',
     data: param,
   });
@@ -295,14 +295,14 @@ export async function unBoundRegisterTopic(param) {
 
 // 根据sectionId获取所有的绑定关系
 export async function fetchAllRegisterData() {
-  return request(`/${NameSpace.Coordinator}/registerTopic/getAllBindingMessageBySectionId`, {
+  return request(`/${NameSpace.Platform}/registerTopic/getAllBindingMessageBySectionId`, {
     method: 'GET',
   });
 }
 
 // 根据topic查绑定的消息
 export async function fetchRegisterMessageByTopic() {
-  return request(`/${NameSpace.Coordinator}/registerTopic/getRegisterMessageByTopic`, {
+  return request(`/${NameSpace.Platform}/registerTopic/getRegisterMessageByTopic`, {
     method: 'GET',
   });
 }
@@ -310,7 +310,7 @@ export async function fetchRegisterMessageByTopic() {
 //////////////////////////**** 告警中心 ****//////////////////////////
 //获取数据库告警中心 分页
 export async function fetchAlertCenterList(params) {
-  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCenter`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenter`, {
     method: 'GET',
     data: params,
   });
@@ -318,7 +318,7 @@ export async function fetchAlertCenterList(params) {
 
 // 全部完成处理
 export async function allUpdateProblemHandling(params) {
-  return request(`/${NameSpace.Coordinator}/alertCenter/updateAllAlertCenter`, {
+  return request(`/${NameSpace.Platform}/alertCenter/updateAllAlertCenter`, {
     method: 'POST',
     data: params,
   });
@@ -326,7 +326,7 @@ export async function allUpdateProblemHandling(params) {
 
 // 批量完成处理(选中的)
 export async function batchUpdateAlertCenter(params) {
-  return request(`/${NameSpace.Coordinator}/alertCenter/batchUpdateAlertCenter`, {
+  return request(`/${NameSpace.Platform}/alertCenter/batchUpdateAlertCenter`, {
     method: 'POST',
     data: params,
   });
@@ -335,21 +335,21 @@ export async function batchUpdateAlertCenter(params) {
 //////////////////////////**** MixRobot系统参数 ****//////////////////////////
 // 获取参数模版
 export async function fetchSystemParamFormData() {
-  return request(`/${NameSpace.Coordinator}/formTemplate/getFormTemplate`, {
+  return request(`/${NameSpace.Platform}/formTemplate/getFormTemplate`, {
     method: 'GET',
   });
 }
 
 // 更新系统参数
 export async function updateSystemParams(params) {
-  return request(`/${NameSpace.Coordinator}/formTemplate/updateFormTemplateValue`, {
+  return request(`/${NameSpace.Platform}/formTemplate/updateFormTemplateValue`, {
     method: 'POST',
     data: params,
   });
 }
 // 根据key获取系统参数
 export async function fetchGetParameterByKey(key) {
-  return request(`/${NameSpace.Coordinator}/formTemplate/getParameter/${key}`, {
+  return request(`/${NameSpace.Platform}/formTemplate/getParameter/${key}`, {
     method: 'GET',
   });
 }
@@ -364,7 +364,7 @@ export function fetchAllPrograming() {
 
 // 保存地图编程
 export function saveScopeProgram(params) {
-  return request(`/${NameSpace.Coordinator}/actionScope/saveActionScopes`, {
+  return request(`/${NameSpace.Platform}/actionScope/saveActionScopes`, {
     method: 'POST',
     data: params,
   });
@@ -385,7 +385,7 @@ export function fetchScopeProgram({ mapId, logicId, routeCode, scopeCode }) {
   if (!isStrictNull(scopeCode)) {
     sub = `${sub}/${scopeCode}`;
   }
-  return request(`/${NameSpace.Coordinator}${sub}`, {
+  return request(`/${NameSpace.Platform}${sub}`, {
     method: 'GET',
   });
 }

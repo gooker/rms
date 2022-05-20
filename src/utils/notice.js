@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, notification } from 'antd';
-import { formatMessage, convertToUserTimezone } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 
 const LimitedNotification = 1;
 
@@ -61,7 +61,7 @@ export default function notice(message, sectionId, notificationQueue) {
           size="small"
           onClick={() => closeNotification(key, notificationQueue)}
         >
-          {formatMessage({ id: 'app.button.close' })}
+          {formatMessage({ id: 'app.button.turnOff' })}
         </Button>
       );
       const notificationContent = (

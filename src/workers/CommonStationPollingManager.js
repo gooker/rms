@@ -26,7 +26,7 @@ CommonStationStatePolling.start = function (promises, dispatcher) {
   }
 
   const workStationURL = getDomainNameByUrl(
-    `/${NameSpace.Coordinator}/stationProxy/getStationReport`,
+    `/${NameSpace.Platform}/stationProxy/getStationReport`,
   );
 
   CommonStationStatePolling.instance.postMessage({

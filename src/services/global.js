@@ -17,20 +17,20 @@ export async function fetchUpdateEnvironment(params) {
 }
 
 export async function fetchAppVersion() {
-  return request(`/${NameSpace.Coordinator}/api/getAppVersion`, {
+  return request(`/${NameSpace.Platform}/api/getAppVersion`, {
     method: 'GET',
     attachSection: false,
   });
 }
 
 export async function fetchAlertCount() {
-  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCenterCount`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterCount`, {
     method: 'GET',
   });
 }
 
 export async function fetchGetProblemDetail(problemId) {
-  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCenterById/${problemId}`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterById/${problemId}`, {
     method: 'GET',
   });
 }

@@ -1,27 +1,23 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Table, Button, Modal, message, Row, Col } from 'antd';
-import {
-  FileTextOutlined,
-  EyeOutlined,
-  RedoOutlined,
-  DeleteOutlined,
-  EditOutlined,
-} from '@ant-design/icons';
+import { Button, message, Modal } from 'antd';
+import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
+  adaptModalHeight,
+  adaptModalWidth,
   convertToUserTimezone,
   dealResponse,
-  adaptModalWidth,
-  adaptModalHeight,
-  isNull,
   formatMessage,
+  isNull,
 } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/api';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
 import TaskBodyModal from './TaskBodyModal';
+import TablePageWrapper from '@/components/TablePageWrapper';
+import TableWithPages from '@/components/TableWithPages';
 
 const messageKey = 'MESSAGE_KEY';
 
@@ -44,7 +40,7 @@ const CustomTaskTable = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="customTasks.table.taskCode" />,
+      title: <FormattedMessage id='app.common.code' />,
       align: 'center',
       dataIndex: 'code',
     },
@@ -54,7 +50,7 @@ const CustomTaskTable = (props) => {
       dataIndex: 'name',
     },
     {
-      title: <FormattedMessage id="app.taskQueue.priority" />,
+      title: <FormattedMessage id='app.common.priority' />,
       align: 'center',
       dataIndex: 'priority',
     },
@@ -179,40 +175,41 @@ const CustomTaskTable = (props) => {
   }
 
   function copyTaskBody() {
-    const input = document.createElement('input');
-    input.setAttribute('readonly', 'readonly');
-
     // 去掉字符串中的转义符
-    let inputValue = JSON.stringify(exampleStructure);
-    inputValue = inputValue.replace(/\\"/g, "'");
+    let copiedString = JSON.stringify(exampleStructure);
+    copiedString = copiedString.replace(/\\"/g, '\'');
 
-    input.setAttribute('value', inputValue);
-    document.body.appendChild(input);
-    input.setSelectionRange(0, 99999);
-    input.select();
-    document.execCommand('copy');
-    document.body.removeChild(input);
-    message.success(formatMessage({ id: 'app.message.copy.successfully' }));
+    if (navigator.clipboard === undefined) {
+      message.warn(formatMessage({ id: 'app.global.browser.clipboardNotSupport' }));
+      return;
+    }
+
+    navigator.clipboard
+      .writeText(copiedString)
+      .then(() => {
+        message.success(formatMessage({ id: 'app.message.copy.successfully' }));
+      })
+      .catch((err) => {
+        console.log(`Copy Body: ${err.message}`);
+      });
   }
 
   return (
-    <div>
-      <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
-        <Col flex="auto" className={commonStyles.tableToolLeft}>
-          <Button type="primary" onClick={gotoFormPage}>
-            <FileTextOutlined /> <FormattedMessage id="app.task.state.New" />
-          </Button>
-          <Button disabled={selectedRowKeys.length === 0} onClick={deleteListItem}>
-            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-          </Button>
-          <Button onClick={refreshPage}>
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
-          </Button>
-        </Col>
-      </Row>
+    <TablePageWrapper>
+      <div className={commonStyles.tableToolLeft}>
+        <Button type='primary' onClick={gotoFormPage}>
+          <FileTextOutlined /> <FormattedMessage id='app.task.state.New' />
+        </Button>
+        <Button disabled={selectedRowKeys.length === 0} onClick={deleteListItem}>
+          <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+        </Button>
+        <Button onClick={refreshPage}>
+          <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+        </Button>
+      </div>
 
       {/* 自定义任务列表 */}
-      <Table
+      <TableWithPages
         bordered
         columns={columns}
         dataSource={listData}
@@ -240,16 +237,16 @@ const CustomTaskTable = (props) => {
               setExampleStructure(null);
             }}
           >
-            <FormattedMessage id="app.button.close" />
+            <FormattedMessage id='app.button.turnOff' />
           </Button>,
-          <Button key="copy" type="primary" onClick={copyTaskBody}>
-            <FormattedMessage id="app.button.copy" />
+          <Button key='copy' type='primary' onClick={copyTaskBody}>
+            <FormattedMessage id='app.button.copy' />
           </Button>,
         ]}
       >
         <TaskBodyModal data={exampleStructure} />
       </Modal>
-    </div>
+    </TablePageWrapper>
   );
 };
 export default connect(({ customTask }) => ({

@@ -450,14 +450,11 @@ export default class BaseMap extends React.PureComponent {
       this.pixiUtils.viewportAddChild(charger);
       this.chargerMap.set(name, charger);
 
-      // 二维码添加充电点图标
+      // 渲染充电桩到充电点之间的关系线
       chargingCells.forEach((chargingCell) => {
         if (chargingCell) {
           const cellEntity = this.idCellMap.get(chargingCell.cellId);
           if (cellEntity) {
-            cellEntity.plusType('charger_cell', getTextureFromResources('charger_cell'));
-
-            // 渲染充电桩到充电点之间的关系线
             const relationLine = new PIXI.Graphics();
             relationLine.lineStyle(40, 0x0389ff);
             relationLine.moveTo(x, y);
@@ -479,8 +476,6 @@ export default class BaseMap extends React.PureComponent {
       if (chargingCell) {
         const cellEntity = this.idCellMap.get(chargingCell.cellId);
         if (cellEntity) {
-          cellEntity.removeType('charger_cell');
-
           // 删除工作站到停止点之间的关系线
           const relationshipLine = this.relationshipLines.get(`charger_${name}-${cellEntity.id}`);
           if (relationshipLine) {

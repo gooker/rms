@@ -1,6 +1,6 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Modal, Empty, Divider } from 'antd';
+import { Divider, Empty, Modal } from 'antd';
 import { isNull } from '@/utils/util';
 import ProgramingConfigure from './ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
@@ -66,7 +66,7 @@ const ProgramingConfiguerModal = (props) => {
       {configuration.length === 0 ? (
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
       ) : (
-        <ProgramingDnd value={configuration} onChane={setConfiguration} programing={programing} />
+        <ProgramingDnd value={configuration} onChange={setConfiguration} programing={programing} />
       )}
 
       {/*  点位编程配置面板 */}

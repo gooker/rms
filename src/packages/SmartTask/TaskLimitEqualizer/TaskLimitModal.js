@@ -69,7 +69,7 @@ class TaskTriggerModal extends Component {
 
   limitColumns = [
     {
-      title: formatMessage({ id: 'customTasks.taskLimit.currentlimiting' }),
+      title: formatMessage({ id: 'taskLimit.currentlimiting' }),
       dataIndex: 'groupName',
       width: '60%',
       render: (text, record) => {
@@ -80,7 +80,7 @@ class TaskTriggerModal extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'customTasks.taskLimit.num' }),
+      title: formatMessage({ id: 'taskLimit.num' }),
       dataIndex: 'limitNum',
       render: (text, record) => (
         <InputNumber
@@ -326,16 +326,16 @@ class TaskTriggerModal extends Component {
         >
           {/* 类型选择 */}
           <Form.Item
-            label={formatMessage({ id: 'customTasks.taskLimit.currentlimiting' })}
-            name="type"
+            label={formatMessage({ id: 'taskLimit.currentlimiting' })}
+            name='type'
             initialValue={keyType}
           >
             <Radio.Group disabled={!!updateItem} onChange={this.onTypeChange}>
               <Radio value="sourceLimit">
-                {formatMessage({ id: 'customTasks.taskLimit.sourcelimitng' })}
+                {formatMessage({ id: 'taskLimit.sourcelimitng' })}
               </Radio>
               <Radio value="taskLimit">
-                {formatMessage({ id: 'customTasks.taskLimit.tasklimiting' })}
+                {formatMessage({ id: 'taskLimit.tasklimiting' })}
               </Radio>
             </Radio.Group>
           </Form.Item>
@@ -343,8 +343,8 @@ class TaskTriggerModal extends Component {
           {keyType === 'sourceLimit' ? (
             <>
               <FormItem
-                name="sourcegroup"
-                label={formatMessage({ id: 'customTasks.taskLimit.sourcelimitng' })}
+                name='sourcegroup'
+                label={formatMessage({ id: 'taskLimit.sourcelimitng' })}
                 rules={[{ required: true }]}
                 initialValue={this.state.treeSelectValue}
               >
@@ -364,8 +364,8 @@ class TaskTriggerModal extends Component {
             </>
           ) : (
             <Form.Item
-              label={formatMessage({ id: 'customTasks.taskLimit.tasklimiting' })}
-              name="sourceType"
+              label={formatMessage({ id: 'taskLimit.tasklimiting' })}
+              name='sourceType'
               rules={[{ required: true }]}
             >
               <Select allowClear mode="multiple" maxTagCount={4} onChange={this.onAGVTypeChange}>
@@ -412,13 +412,13 @@ class TaskTriggerModal extends Component {
         {limitNumData && limitNumData.length > 0 ? (
           <Card style={{ marginBottom: 15 }}>
             <div style={{ marginBottom: 15 }}>
-              <span>{formatMessage({ id: 'customTasks.taskLimit.limitTips' })}</span>
+              <span>{formatMessage({ id: 'taskLimit.limitTips' })}</span>
               <Popover
                 destroyTooltipOnHide
                 arrowPointAtCenter={true}
                 content={this.popNumContent}
-                title={formatMessage({ id: 'customTasks.taskLimit.updateSelectedNum' })}
-                trigger="click"
+                title={formatMessage({ id: 'taskLimit.updateSelectedNum' })}
+                trigger='click'
                 visible={batchUpdateNumvisible}
               >
                 <Button
@@ -430,7 +430,7 @@ class TaskTriggerModal extends Component {
                     float: 'right',
                   }}
                 >
-                  <FormattedMessage id="customTasks.taskLimit.batchUpdateNum" />
+                  <FormattedMessage id='taskLimit.batchUpdateNum' />
                 </Button>
               </Popover>
             </div>

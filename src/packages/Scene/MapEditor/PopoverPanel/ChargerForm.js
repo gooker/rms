@@ -1,31 +1,38 @@
 import React, { memo } from 'react';
-import { Button, Form, Input, Select } from 'antd';
+import { Button, Form, Input, InputNumber, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, isNull } from '@/utils/util';
-import AngleSelector from '@/components/AngleSelector';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import {
+  formatMessage,
+  getFormLayout,
+  getRandomString,
+  isEmptyPlainObject,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
+import FormattedMessage from '@/components/FormattedMessage';
+import AngleSelector from '@/components/AngleSelector';
+import ButtonInput from '@/components/ButtonInput';
 import styles from '../../popoverPanel.module.less';
 
-const ChargerForm = (props) => {
-  const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, robotTypes } = props;
+const { formItemLayout } = getFormLayout(4, 20);
+const { formItemLayout: formItemLayout2 } = getFormLayout(6, 18);
 
+const ChargerForm = (props) => {
+  const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, allAdaptors } = props;
   const [formRef] = Form.useForm();
 
   function onValueChange(changedValues, allValues) {
     if (
       !checkNameDuplicate(allValues.name) &&
       !isNull(allValues.angle) &&
-      Array.isArray(allValues.chargingCells) &&
-      JSON.stringify(allValues.chargingCells[0]) !== '{}'
+      validateChargingCells(allValues.chargingCells)
     ) {
-      const currentCharger = { ...allValues };
       dispatch({
         type: 'editor/updateFunction',
-        payload: { scope: 'logic', type: 'chargerList', data: currentCharger },
+        payload: { scope: 'logic', type: 'chargerList', data: allValues },
       }).then((result) => {
         const currentLogicAreaData = getCurrentLogicAreaData();
         if (result.type === 'add') {
@@ -41,6 +48,22 @@ const ChargerForm = (props) => {
     }
   }
 
+  function validateChargingCells(chargingCells) {
+    if (!Array.isArray(chargingCells)) return false;
+    if (chargingCells.includes(undefined)) return false;
+
+    for (const chargingCell of chargingCells) {
+      if (isEmptyPlainObject(chargingCell)) return;
+      if (isStrictNull(chargingCell.cellId)) return;
+      if (!Array.isArray(chargingCell.supportTypes) || chargingCell.supportTypes.length === 0) {
+        return;
+      }
+    }
+
+    // TODO: 校验多个充电点与图标必须在一条直线
+    return true;
+  }
+
   function checkNameDuplicate(name) {
     const existNames = allChargers
       .filter((item, index) => index !== flag - 1)
@@ -48,12 +71,38 @@ const ChargerForm = (props) => {
     return existNames.includes(name);
   }
 
+  function renderSupportTypesOptions() {
+    return Object.values(allAdaptors).map(({ adapterType }) => {
+      const { agvTypes } = adapterType;
+      return (
+        <Select.OptGroup
+          key={adapterType.code}
+          label={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${adapterType.name}`}
+        >
+          {agvTypes.map((agvType, index) => (
+            <Select.Option key={index} value={`${adapterType.code}@${agvType.code}`}>
+              {agvType.name}
+            </Select.Option>
+          ))}
+        </Select.OptGroup>
+      );
+    });
+  }
+
   return (
-    <Form form={formRef} onValuesChange={onValueChange} style={{ width: '100%' }}>
+    <Form
+      form={formRef}
+      onValuesChange={onValueChange}
+      style={{ width: '100%' }}
+      {...formItemLayout}
+    >
       {/* 隐藏字段 */}
       <Form.Item hidden name={'flag'} initialValue={flag} />
-      <Form.Item hidden name={'direction'} initialValue={charger?.direction} />
-      <Form.Item hidden name={'angle'} initialValue={charger?.angle} />
+      <Form.Item
+        hidden
+        name={'code'}
+        initialValue={charger?.code || `charger_${getRandomString(6)}`}
+      />
 
       {/* 名称 */}
       <Form.Item
@@ -78,17 +127,15 @@ const ChargerForm = (props) => {
 
       {/* 角度 */}
       <Form.Item
-        name={'extraAngle'}
+        name={'angle'}
         initialValue={charger?.angle}
-        label={<FormattedMessage id="app.common.angle" />}
-        getValueFromEvent={(value) => {
-          formRef.setFieldsValue({
-            direction: value.dir,
-            angle: value.angle,
-          });
-        }}
+        label={<FormattedMessage id='app.common.angle' />}
+        rules={[{ required: true }]}
       >
         <AngleSelector
+          disabled
+          getAngle
+          width={'100%'}
           addonLabel={{
             0: formatMessage({ id: 'app.direction.topSide' }),
             90: formatMessage({ id: 'app.direction.rightSide' }),
@@ -96,6 +143,15 @@ const ChargerForm = (props) => {
             270: formatMessage({ id: 'app.direction.leftSide' }),
           }}
         />
+      </Form.Item>
+
+      {/* 优先级 */}
+      <Form.Item
+        name={'priority'}
+        initialValue={5}
+        label={formatMessage({ id: 'app.common.priority' })}
+      >
+        <InputNumber min={1} max={10} />
       </Form.Item>
 
       {/* 充电点 */}
@@ -115,8 +171,8 @@ const ChargerForm = (props) => {
                   {/* 充电点 */}
                   <Form.Item
                     {...restField}
+                    {...formItemLayout2}
                     name={[name, 'cellId']}
-                    fieldKey={[fieldKey, 'cellId']}
                     label={formatMessage({ id: 'editor.cellType.charging' })}
                   >
                     <ButtonInput
@@ -129,22 +185,16 @@ const ChargerForm = (props) => {
                   {/* 小车类型 */}
                   <Form.Item
                     {...restField}
-                    name={[name, 'agvTypes']}
-                    fieldKey={[fieldKey, 'agvTypes']}
+                    {...formItemLayout2}
+                    name={[name, 'supportTypes']}
                     label={formatMessage({ id: 'app.agvType' })}
                   >
-                    <Select mode="multiple">
-                      {robotTypes.map((record) => (
-                        <Select.Option value={record} key={record}>
-                          {record}
-                        </Select.Option>
-                      ))}
-                    </Select>
+                    <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
                   </Form.Item>
                 </div>
                 <Button
                   size={'small'}
-                  type="danger"
+                  type='danger'
                   onClick={() => remove(name)}
                   style={{ width: '100%' }}
                 >
@@ -152,11 +202,9 @@ const ChargerForm = (props) => {
                 </Button>
               </div>
             ))}
-            <Form.Item>
-              <Button block type="dashed" onClick={() => add()}>
-                <PlusOutlined />
-              </Button>
-            </Form.Item>
+            <Button onClick={() => add()} style={{ width: '100%' }}>
+              <PlusOutlined />
+            </Button>
           </>
         )}
       </Form.List>
@@ -178,5 +226,10 @@ export default connect(({ global, editor }) => {
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
 
-  return { allChargers, mapContext, selectCellIds, robotTypes: global.allAgvTypes };
+  return {
+    mapContext,
+    allChargers,
+    selectCellIds,
+    allAdaptors: global.allAdaptors,
+  };
 })(memo(ChargerForm));

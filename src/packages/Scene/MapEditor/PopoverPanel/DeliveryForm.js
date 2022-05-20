@@ -10,7 +10,7 @@ import {
 } from '@/utils/mapUtil';
 import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import ButtonInput from '@/components/ButtonInput';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 
 const formLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };

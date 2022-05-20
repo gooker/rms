@@ -3,28 +3,28 @@ import { NameSpace } from '@/config/config';
 
 // 任务报表
 export async function fetchKpiView(params) {
-  return request(`/${NameSpace.Coordinator}/traffic/getTaskKpiDTO`, {
+  return request(`/${NameSpace.Platform}/traffic/getTaskKpiDTO`, {
     method: 'POST',
     data: params,
   });
 }
 
 export async function saveSearchSeek(params) {
-  return request(`/${NameSpace.Coordinator}/traffic/saveTaskKpi`, {
+  return request(`/${NameSpace.Platform}/traffic/saveTaskKpi`, {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fetchAllSearchSeeds(params) {
-  return request(`/${NameSpace.Coordinator}/traffic/findAllTaskKpi`, {
+  return request(`/${NameSpace.Platform}/traffic/findAllTaskKpi`, {
     method: 'POST',
     data: params,
   });
 }
 
 export async function deleteSearchSeek(id) {
-  return request(`/${NameSpace.Coordinator}/traffic/deleteTaskKpi/${id}`, {
+  return request(`/${NameSpace.Platform}/traffic/deleteTaskKpi/${id}`, {
     method: 'DELETE',
   });
 }

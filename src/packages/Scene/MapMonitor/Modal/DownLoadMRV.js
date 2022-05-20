@@ -25,7 +25,7 @@ const DownLoadMRV = (props) => {
     const sectionId = window.localStorage.getItem('sectionId');
     const _startTime = startTime ?? '';
     const _endTime = endTime ?? '';
-    const unzipURL = `/${NameSpace.Coordinator}/traffic/getRcsHistoryGZip?sectionId=${sectionId}&startTime=${_startTime}&endTime=${_endTime}&type=`;
+    const unzipURL = `/${NameSpace.Platform}/traffic/getRcsHistoryGZip?sectionId=${sectionId}&startTime=${_startTime}&endTime=${_endTime}&type=`;
     const url = getDomainNameByUrl(unzipURL);
     window.open(url);
   }

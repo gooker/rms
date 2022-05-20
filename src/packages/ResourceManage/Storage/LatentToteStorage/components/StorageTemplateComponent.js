@@ -1,14 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Input, InputNumber, Modal, Row, Col, message } from 'antd';
+import { Col, Form, Input, InputNumber, message, Modal, Row } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  isNull,
-  getFormLayout,
-  formatMessage,
-  getRandomString,
-  isStrictNull,
-  dealResponse,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull, isStrictNull } from '@/utils/util';
 import { findIndex } from 'lodash';
 import StorageTemplateDetail from './StorageTemplateDetail';
 import { addOrUpdateLatentTotePodType } from '@/services/latentTote';
@@ -243,15 +236,15 @@ const LatentTotePodTemplate = (props) => {
       onOk={onSubmit}
       visible={visible}
       width={840}
-      cancelText={formatMessage({ id: 'app.button.close' })}
+      cancelText={formatMessage({ id: 'app.button.turnOff' })}
       title={
         <>
           {isNull(updateRecord) ? (
-            <FormattedMessage id="app.button.add" />
+            <FormattedMessage id='app.button.add' />
           ) : (
-            <FormattedMessage id="app.button.edit" />
+            <FormattedMessage id='app.button.edit' />
           )}
-          <FormattedMessage id="latentTote.podTemplateStorage" />
+          <FormattedMessage id='latentTote.podTemplateStorage' />
         </>
       }
       bodyStyle={{ height: `500px`, overflow: 'auto' }}

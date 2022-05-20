@@ -1,6 +1,6 @@
 import { message } from 'antd';
-import { getCustomTaskList, getCustomTaskNodes, getFormModelTypes,fetchActiveMap } from '@/services/api';
-import { dealResponse,formatMessage } from '@/utils/util';
+import { fetchActiveMap, getCustomTaskList, getFormModelTypes } from '@/services/api';
+import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {
   namespace: 'taskTriger',
@@ -18,7 +18,7 @@ export default {
       if (!dealResponse(activeMap)) {
         yield put({ type: 'saveActiveMap', payload: activeMap });
       } else {
-        message.error(formatMessage({ id: 'app.customTask.fetch.map.fail' }));
+        message.error(formatMessage({ id: 'customTask.fetch.map.fail' }));
       }
     },
 
@@ -28,15 +28,6 @@ export default {
         yield put({ type: 'saveCustomTaskList', payload: customTaskList });
       } else {
         message.error(formatMessage({ id: 'app.taskTrigger.getCustomTaskFailed' }));
-      }
-    },
-
-    *fetchCustomTyps(_, { call, put }) {
-      const customTypes = yield call(getCustomTaskNodes);
-      if (!dealResponse(customTypes)) {
-        yield put({ type: 'saveCustomTypes', payload: customTypes });
-      } else {
-        // message.error(formatMessage({ id: 'app.taskTrigger.getCustomTaskFailed' }));
       }
     },
 

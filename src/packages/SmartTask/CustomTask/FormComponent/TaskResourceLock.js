@@ -1,89 +1,113 @@
-import React from 'react';
-import { Select } from 'antd';
+import React, { memo } from 'react';
+import { Button, Col, Row, Select } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-
 import styles from '../customTask.module.less';
-
-const { Option } = Select;
-const LockTime = {
-  BeginTaskStart: 'app.customTask.form.beginTaskStart',
-  AfterTaskEnd: 'app.customTask.form.afterTaskEnd',
-  BeginActionStart: 'app.customTask.form.BeginActionStart',
-  AfterActionEnd: 'app.customTask.form.AfterActionEnd',
-  NOLOCK: 'app.customTask.form.noLock', // 不锁
-  DONRUNLOCK: 'app.customTask.form.dontUnLock', // 不解锁
-};
 
 const TaskResourceLock = (props) => {
   const { dataSource, value, onChange } = props;
-  const currentValue = value ? { ...value } : {};
+  const currentValue = Array.isArray(value) ? [...value] : [];
 
-  function onLockTimeChange(changedValue, field, lockTime) {
-    currentValue[field][lockTime] = changedValue;
+  function onLockTimeChange(index, fieldIndex, value) {
+    currentValue[index][fieldIndex] = value;
     onChange(currentValue);
   }
 
+  function addConfigRow() {
+    currentValue.push([]);
+    onChange(currentValue);
+  }
+
+  function minusConfigRow(__index) {
+    onChange(currentValue.filter((item, index) => index !== __index));
+  }
+
   function renderBody() {
-    if (dataSource) {
-      return Object.keys(dataSource).map((field) => {
-        const content = dataSource[field];
-        return (
-          <div key={field} className={styles.taskResourceLockBodyRow}>
-            <span style={{ flex: 1 }}>{content.label}</span>
-            <span style={{ flex: 2 }}>
-              <Select
-                value={currentValue[field]?.LOCK}
-                onChange={(lockTime) => onLockTimeChange(lockTime, field, 'LOCK')}
-              >
-                <Option value={'BeginTaskStart'}>
-                  <FormattedMessage id={LockTime.BeginTaskStart} />
-                </Option>
-                <Option value={'BeginActionStart'}>
-                  <FormattedMessage id={LockTime.BeginActionStart} />
-                </Option>
-                <Option value={'NO'}>
-                  <FormattedMessage id={LockTime.NOLOCK} />
-                </Option>
-              </Select>
-            </span>
-            <span style={{ flex: 2 }}>
-              <Select
-                value={currentValue[field]?.UNLOCK}
-                onChange={(lockTime) => onLockTimeChange(lockTime, field, 'UNLOCK')}
-              >
-                <Option value={'AfterTaskEnd'}>
-                  <FormattedMessage id={LockTime.AfterTaskEnd} />
-                </Option>
-                <Option value={'AfterActionEnd'}>
-                  <FormattedMessage id={LockTime.AfterActionEnd} />
-                </Option>
-                <Option value={'NO'}>
-                  <FormattedMessage id={LockTime.DONRUNLOCK} />
-                </Option>
-              </Select>
-            </span>
-          </div>
-        );
-      });
-    }
-    return null;
+    return currentValue.map((item, index) => {
+      return (
+        <Row key={index} className={styles.taskResourceLockBodyRow} gutter={10}>
+          <Col span={6}>
+            <Select
+              value={currentValue[index][0]}
+              onChange={(type) => onLockTimeChange(index, 0, type)}
+            >
+              {Object.keys(dataSource).map((type) => (
+                <Select.Option key={type} value={type}>
+                  <FormattedMessage id={`customTask.lock.${type}`} />
+                </Select.Option>
+              ))}
+            </Select>
+          </Col>
+          <Col span={9}>
+            <Select
+              value={currentValue[index][1]}
+              onChange={(lockTime) => onLockTimeChange(index, 1, lockTime)}
+            >
+              <Select.Option value={'BeginTaskStart'}>
+                <FormattedMessage id={'customTask.lock.BeginTaskStart'} />
+              </Select.Option>
+              <Select.Option value={'BeginActionStart'}>
+                <FormattedMessage id={'customTask.lock.BeginActionStart'} />
+              </Select.Option>
+              <Select.Option value={'NO'}>
+                <FormattedMessage id={'customTask.lock.LOCK.NO'} />
+              </Select.Option>
+            </Select>
+          </Col>
+          <Col span={9}>
+            <Select
+              value={currentValue[index][2]}
+              onChange={(lockTime) => onLockTimeChange(index, 2, lockTime)}
+            >
+              <Select.Option value={'AfterTaskEnd'}>
+                <FormattedMessage id={'customTask.lock.AfterTaskEnd'} />
+              </Select.Option>
+              <Select.Option value={'AfterActionEnd'}>
+                <FormattedMessage id={'customTask.lock.AfterActionEnd'} />
+              </Select.Option>
+              <Select.Option value={'NO'}>
+                <FormattedMessage id={'customTask.lock.UNLOCK.NO'} />
+              </Select.Option>
+            </Select>
+          </Col>
+          <Button
+            style={{ position: 'absolute', right: -38 }}
+            icon={<MinusOutlined />}
+            onClick={() => {
+              minusConfigRow(index);
+            }}
+          />
+        </Row>
+      );
+    });
   }
 
   return (
     <div className={styles.taskResourceLock}>
       <div className={styles.taskResourceLockTitle}>
-        <span style={{ flex: 1 }}>
-          <FormattedMessage id="app.customTask.form.resourceType" />
-        </span>
         <span style={{ flex: 2 }}>
-          <FormattedMessage id="app.customTask.form.lockTime" />
+          <FormattedMessage id='customTask.lock.resourceType' />
         </span>
-        <span style={{ flex: 2 }}>
-          <FormattedMessage id="app.customTask.form.unLockTime" />
+        <span style={{ flex: 3 }}>
+          <FormattedMessage id='customTask.lock.LOCK' />
+        </span>
+        <span style={{ flex: 3 }}>
+          <FormattedMessage id='customTask.lock.UNLOCK' />
         </span>
       </div>
       <div>{renderBody()}</div>
+      <Button
+        type={'dashed'}
+        onClick={addConfigRow}
+        style={{ width: '100%', marginTop: 8 }}
+        disabled={Object.keys(dataSource).length === currentValue.length}
+      >
+        <PlusOutlined />
+      </Button>
     </div>
   );
 };
-export default TaskResourceLock;
+export default connect(({ customTask }) => ({
+  dataSource: customTask.modelLocks,
+}))(memo(TaskResourceLock));

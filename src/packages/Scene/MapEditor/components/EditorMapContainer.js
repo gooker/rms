@@ -6,7 +6,7 @@ import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
 import { ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
-import { renderChargerList, renderWorkStationList } from '@/utils/mapUtil';
+import { renderWorkStationList } from '@/utils/mapUtil';
 import {
   FooterHeight,
   HeaderHeight,
@@ -183,9 +183,8 @@ const EditorMapContainer = (props) => {
 
     const { chargerList, workstationList, commonList } = currentLogicAreaData;
     // 充电桩
-    if (Array.isArray(chargerList)) {
-      const chargerListData = renderChargerList(chargerList, currentMap.cellMap);
-      mapContext.renderChargers(chargerListData);
+    if (Array.isArray(chargerList) && chargerList.length > 0) {
+      mapContext.renderChargers(chargerList);
     }
     // 工作站
     if (Array.isArray(workstationList)) {

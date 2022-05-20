@@ -46,10 +46,18 @@ export default {
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
+
+    allAdaptors: {}, // 所有的适配器
     programing: [], // 所有地图编程元数据
   },
 
   reducers: {
+    saveAllAdaptors(state, { payload }) {
+      return {
+        ...state,
+        ...payload,
+      };
+    },
     updateStateInBatch(state, action) {
       return {
         ...state,

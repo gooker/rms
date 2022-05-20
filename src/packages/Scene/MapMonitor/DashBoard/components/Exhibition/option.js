@@ -231,7 +231,7 @@ export function getCarStatePieOption() {
       formatter: `{b}: {c}${formatMessage({ id: 'monitor.workstation.label.piece' })}`,
     },
     title: {
-      text: formatMessage({ id: 'app.customTask.form.isPathWithPod' }),
+      text: formatMessage({ id: 'customTask.form.isPathWithPod' }),
       x: 'center',
       textStyle: {
         fontWeight: 'normal',
@@ -261,7 +261,7 @@ export function getCarStatePieOption() {
     },
     series: [
       {
-        name: formatMessage({ id: 'app.customTask.form.isPathWithPod' }),
+        name: formatMessage({ id: 'customTask.form.isPathWithPod' }),
         type: 'pie',
         radius: [`${radiusInner * getDpr()}%`, `${radiusOutside * getDpr()}%`],
         center,

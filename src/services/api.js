@@ -2,17 +2,9 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 import { isStrictNull } from '@/utils/util';
 
-const { Coordinator, Tote, LatentLifting } = NameSpace;
-
-export async function fetchAllTaskTypes() {
-  return request(`/${NameSpace.Coordinator}/traffic/getTaskTypeByRobot`, {
-    method: 'GET',
-  });
-}
-
 // ************************************** 国际化  ************************************** //
 export async function fetchLanguageByAppCode(params) {
-  return request(`/translation/getTranslationByParam`, {
+  return request(`/${NameSpace.I18N}/getTranslationByParam`, {
     method: 'POST',
     data: params,
   });
@@ -21,7 +13,7 @@ export async function fetchLanguageByAppCode(params) {
 // ************************************** 地图  ************************************** //
 export async function activeMap(mapId) {
   const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace.Coordinator}/map/active`, {
+  return request(`/${NameSpace.Platform}/map/active`, {
     method: 'POST',
     data: { id: mapId, sectionId },
   });
@@ -29,33 +21,33 @@ export async function activeMap(mapId) {
 
 // 获取当前已激活的地图
 export async function fetchActiveMap() {
-  return request(`/${NameSpace.Coordinator}/map/getActiveMap`, { method: 'GET' });
+  return request(`/${NameSpace.Platform}/map/getActiveMap`, { method: 'GET' });
 }
 
 // 获取存储区组
 export async function fetchStoreCellGroup(mapId) {
-  return request(`/${NameSpace.Coordinator}/map/getStoreCellGroup/${mapId}`, {
+  return request(`/${NameSpace.Platform}/map/getStoreCellGroup/${mapId}`, {
     method: 'GET',
   });
 }
 
 // 获取料箱货架布局
 export async function fetchToteRackLayout() {
-  return request(`/${NameSpace.Tote}/rack/getRackLayoutDetail`, {
+  return request(`/${NameSpace.Platform}/rack/getRackLayoutDetail`, {
     method: 'GET',
   });
 }
 
 // 获取叉车货架布局
 export async function fetchForkLiftPodLayout() {
-  return request(`/${NameSpace.ForkLifting}/rack/rackLayout/getRackLayout`, {
+  return request(`/${NameSpace.Platform}/rack/rackLayout/getRackLayout`, {
     method: 'GET',
   });
 }
 
 // ************************************** 小车相关  ************************************** //
 export async function fetchAllAgvList() {
-  return request(`/${NameSpace.Coordinator}/traffic/getAllAGV`, {
+  return request(`/${NameSpace.Platform}/traffic/getAllAGV`, {
     method: 'GET',
   });
 }
@@ -77,7 +69,7 @@ export async function fetchAgvInfo(agvType, agvId) {
 
 // 请求Coordinator端小车实时信息
 export async function fetchCoordAgvInfo(agvId) {
-  return request(`/${NameSpace.Coordinator}/traffic/getAGV/${agvId}`, {
+  return request(`/${NameSpace.Platform}/traffic/getAGV/${agvId}`, {
     method: `GET`,
   });
 }
@@ -107,7 +99,7 @@ export async function fetchMoveoutAGVs(agvType, params) {
 
 // 获取当前小车实时运行信息
 export async function fetchAgvRunningInfo(params) {
-  return request(`/${NameSpace.Coordinator}/problemHandling/getAgvErrorMessage`, {
+  return request(`/${NameSpace.Platform}/problemHandling/getAgvErrorMessage`, {
     method: 'GET',
     data: params,
   });
@@ -182,7 +174,7 @@ export async function fetchAgvTaskList(agvType, params) {
 
 // 小车-任务日志
 export async function getAGVTaskLog(param) {
-  return request(`/${NameSpace.Coordinator}/alertCenter/getAGVTaskLog`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getAGVTaskLog`, {
     method: 'GET',
     data: param,
   });
@@ -190,7 +182,7 @@ export async function getAGVTaskLog(param) {
 
 // 小车详情-告警信息
 export async function getAlertCentersByTaskIdOrAgvId(param) {
-  return request(`/${NameSpace.Coordinator}/alertCenter/getAlertCentersByTaskIdOrAgvId`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCentersByTaskIdOrAgvId`, {
     method: 'GET',
     data: param,
   });
@@ -303,7 +295,7 @@ export async function updateSystemParams(agvType, params) {
 
 //// 更新系统时区
 export async function updateSystemTimezone(timeZone) {
-  return request(`/${NameSpace.Coordinator}/formTemplate/updateFormTemplateValue`, {
+  return request(`/${NameSpace.Platform}/formTemplate/updateFormTemplateValue`, {
     method: 'POST',
     data: { client_timezone_id: timeZone },
   });
@@ -580,27 +572,27 @@ export async function fetchReportDetailByUrl(params) {
 
 // 资源分组-分组管理
 export async function getCustomGroupJson() {
-  return request(`/${Coordinator}/custom/getCustomGroupJson`, {
+  return request(`/${NameSpace.Platform}/custom/getCustomGroupJson`, {
     method: 'GET',
   });
 }
 
 export async function saveCustomGroup(param) {
-  return request(`/${Coordinator}/custom/saveCustomGroup `, {
+  return request(`/${NameSpace.Platform}/custom/saveCustomGroup `, {
     method: 'POST',
     data: param,
   });
 }
 
 export async function getCustomGroup(params) {
-  return request(`/${Coordinator}/custom/getCustomGroup`, {
+  return request(`/${NameSpace.Platform}/custom/getCustomGroup`, {
     method: 'GET',
     data: params,
   });
 }
 // 根据mapId和Id删除 [{}]
 export async function deleteCustomGroup(param) {
-  return request(`/${Coordinator}/custom/batchDeleteCustomGroup `, {
+  return request(`/${NameSpace.Platform}/custom/batchDeleteCustomGroup `, {
     method: 'POST',
     data: param,
   });
@@ -608,7 +600,7 @@ export async function deleteCustomGroup(param) {
 
 // 保存单条数据
 export async function saveOneCustomGroup(param) {
-  return request(`/${Coordinator}/custom/saveOneCustomGroup `, {
+  return request(`/${NameSpace.Platform}/custom/saveOneCustomGroup `, {
     method: 'POST',
     data: param,
   });
@@ -617,7 +609,7 @@ export async function saveOneCustomGroup(param) {
 // 资源分组-分组绑定
 // 保存绑定关系
 export async function fechSaveUnBind(param) {
-  return request(`/${Coordinator}/custom/saveUnBindGroup`, {
+  return request(`/${NameSpace.Platform}/custom/saveUnBindGroup`, {
     method: 'POST',
     data: param,
   });
@@ -625,7 +617,7 @@ export async function fechSaveUnBind(param) {
 
 // 删除绑定关系
 export async function deleteUnBindGroup(param) {
-  return request(`/${Coordinator}/custom/deleteUnBindGroupById`, {
+  return request(`/${NameSpace.Platform}/custom/deleteUnBindGroupById`, {
     method: 'GET',
     data: param,
   });
@@ -633,7 +625,7 @@ export async function deleteUnBindGroup(param) {
 
 // 根据mapId查询绑定关系
 export async function getUnBindGroupData(param) {
-  return request(`/${Coordinator}/custom/getUnBindGroupByMapId`, {
+  return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
     method: 'GET',
     data: param,
   });
@@ -642,7 +634,7 @@ export async function getUnBindGroupData(param) {
 // ********************** 任务触发器  ********************** //
 // 保存任务触发器
 export async function saveTaskTrigger(param) {
-  return request(`/${Coordinator}/customTrigger/saveCustomTaskTrigger`, {
+  return request(`/${NameSpace.Platform}/customTrigger/saveCustomTaskTrigger`, {
     method: 'POST',
     data: param,
   });
@@ -650,7 +642,7 @@ export async function saveTaskTrigger(param) {
 
 // 获取所有新增的任务触发器(参数status可选)
 export async function getAllTaskTriggers(param) {
-  return request(`/${Coordinator}/customTrigger/getAllCustomTaskTrigger`, {
+  return request(`/${NameSpace.Platform}/customTrigger/getAllCustomTaskTrigger`, {
     method: 'GET',
     data: param,
   });
@@ -658,7 +650,7 @@ export async function getAllTaskTriggers(param) {
 
 // 删除任务触发器   GET(id)
 export async function deleteTaskTrigger(param) {
-  return request(`/${Coordinator}/customTrigger/deleteCustomTaskTriggerById`, {
+  return request(`/${NameSpace.Platform}/customTrigger/deleteCustomTaskTriggerById`, {
     method: 'GET',
     data: param,
   });
@@ -666,7 +658,7 @@ export async function deleteTaskTrigger(param) {
 
 // 切换任务触发器状态
 export async function switchTriggerState(param) {
-  return request(`/${Coordinator}/customTrigger/customTrigger`, {
+  return request(`/${NameSpace.Platform}/customTrigger/customTrigger`, {
     method: 'POST',
     data: param,
   });
@@ -675,97 +667,61 @@ export async function switchTriggerState(param) {
 // ********************** 自定义任务  ********************** //
 // 获取自定义任务-用于选择任务触发
 export async function getCustomTaskList() {
-  return request(`/${LatentLifting}/agv-custom-task/getAllCustomTaskBySectionId`, {
+  return request(`/${NameSpace.Platform}/custom-task/getAllCustomTaskBySectionId`, {
     method: 'GET',
   });
 }
 
 // 获取自定义任务可配置参数
 export async function fetchCstParams(param) {
-  return request(`/${LatentLifting}/agv-custom-task/getFixedVariable`, {
+  return request(`/${NameSpace.Platform}/agv-custom-task/getFixedVariable`, {
     method: 'POST',
     data: param,
   });
 }
-
-// 资源分组-自定义任务
 // 保存自定义任务
 export async function saveCustomTask(param) {
-  return request(`/${LatentLifting}/agv-custom-task/saveCustomTask`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 获取 编辑富文本list
-export async function getAllRichText() {
-  return request(`/${Coordinator}/richText/getAllRichText`, {
-    method: 'GET',
-  });
-}
-
-// 删除 编辑富文本
-export async function deleteByRichIds(param) {
-  return request(`/${Coordinator}/richText/deleteByIds`, {
+  return request(`/${NameSpace.Platform}/custom-task/saveCustomTask`, {
     method: 'POST',
     data: param,
   });
 }
 // 获取任务节点列表
 export async function deleteCustomTasksById(param) {
-  return request(`/${LatentLifting}/agv-custom-task/deleteAllCustomTaskByIds`, {
+  return request(`/${NameSpace.Platform}/agv-custom-task/deleteAllCustomTaskByIds`, {
     method: 'POST',
     data: param,
   });
 }
-// 获取任务节点列表
-export async function getCustomTaskNodes() {
-  return request(`/${LatentLifting}/agv-custom-task/getCustomType`, {
-    method: 'GET',
-  });
-}
 // 获取业务模型数据
 export async function getFormModelTypes(param) {
-  return request(`/${LatentLifting}/agv-custom-task/getModelType`, {
+  return request(`/${NameSpace.Platform}/agv-custom-task/getModelType`, {
     method: 'GET',
     data: param,
   });
 }
 // 获取业务模型可锁资源
-export async function getFormModelLockResource(param) {
-  return request(`/${LatentLifting}/agv-custom-task/getLockResource`, {
-    method: 'GET',
-    data: param,
-  });
-}
-// 获取转弯协议
-export async function getTurnProtocol() {
-  return request(`/${LatentLifting}/agv-custom-task/getTurnAction`, {
-    method: 'GET',
-  });
-}
-// 获取空跑协议
-export async function getAgvRunProtocol() {
-  return request(`/${LatentLifting}/agv-custom-task/getRunAction`, {
+export async function getFormModelLockResource() {
+  return request(`/${NameSpace.Platform}/custom-task/getLockResource`, {
     method: 'GET',
   });
 }
 // 获取小车任务类型集合
-export async function getTaskTypes() {
-  return request(`/${Coordinator}/api/getAgvTaskType`, {
+export async function fetchTaskTypes() {
+  return request(`/${NameSpace.Platform}/task/getTaskType`, {
     method: 'GET',
   });
 }
 // 获取小车返回指定的区域集合
 export async function getBackZone(param) {
-  return request(`/${LatentLifting}/agv-custom-task/getBackZone`, {
+  return request(`/${NameSpace.Platform}/agv-custom-task/getBackZone`, {
     method: 'GET',
     data: param,
   });
 }
 // 获取潜伏车动作集
 export async function getLatentActions() {
-  return request(`/${LatentLifting}/agv-custom-task/getAddActions`, {
+  return request(`/${NameSpace.Platform}/agv-custom-task/getAddActions`, {
     method: 'GET',
   });
 }
@@ -773,13 +729,13 @@ export async function getLatentActions() {
 // ********************** 任务限流器  ********************** //
 // 任务类型限流
 export async function getAgvTasksByType() {
-  return request(`/${Coordinator}/customLimiter/getAgvTaskType`, {
+  return request(`/${NameSpace.Platform}/customLimiter/getAgvTaskType`, {
     method: 'GET',
   });
 }
 // 资源组限流
 export async function getAgvTasksByCustomGroup(param) {
-  return request(`/${Coordinator}/customLimiter/getCustomGroup`, {
+  return request(`/${NameSpace.Platform}/customLimiter/getCustomGroup`, {
     method: 'GET',
     data: param,
   });
@@ -787,22 +743,15 @@ export async function getAgvTasksByCustomGroup(param) {
 
 // 限流保存-编辑
 export async function saveTaskLimit(param) {
-  return request(`/${Coordinator}/customLimiter/saveTaskLimit`, {
+  return request(`/${NameSpace.Platform}/customLimiter/saveTaskLimit`, {
     method: 'POST',
     data: param,
   });
 }
 
-// 保存 编辑富文本
-export async function saveRichText(param) {
-  return request(`/${Coordinator}/richText/saveRichText`, {
-    method: 'POST',
-    data: param,
-  });
-}
 // 任务限流器列表 参数mapId 选填type
 export async function getTaskLimit(param) {
-  return request(`/${Coordinator}/customLimiter/getTaskLimitByMapId`, {
+  return request(`/${NameSpace.Platform}/customLimiter/getTaskLimitByMapId`, {
     method: 'GET',
     data: param,
   });
@@ -810,7 +759,7 @@ export async function getTaskLimit(param) {
 
 // 任务限流器列表 ids
 export async function deleteTaskLimit(param) {
-  return request(`/${Coordinator}/customLimiter/deleteTaskLimitById`, {
+  return request(`/${NameSpace.Platform}/customLimiter/deleteTaskLimitById`, {
     method: 'POST',
     data: param,
   });
@@ -818,14 +767,14 @@ export async function deleteTaskLimit(param) {
 
 // 操作日志
 export async function fetchUserActionLogs(params) {
-  return request(`/${Coordinator}/apiLog/getApiLogs`, {
+  return request(`/${NameSpace.Platform}/apiLog/getApiLogs`, {
     method: 'POST',
     data: params,
   });
 }
 
 export async function fetchAppModules(params) {
-  return request(`/${Coordinator}/apiLog/getModules`, {
+  return request(`/${NameSpace.Platform}/apiLog/getModules`, {
     method: 'GET',
     data: params,
   });
@@ -833,7 +782,7 @@ export async function fetchAppModules(params) {
 
 // 查询充电桩信息API
 export async function fetchChargeManagerList(params) {
-  return request(`/${Coordinator}/api/charger`, {
+  return request(`/${NameSpace.Platform}/api/charger`, {
     method: 'GET',
     data: params,
   });
@@ -841,7 +790,7 @@ export async function fetchChargeManagerList(params) {
 
 // 批量解绑充电桩
 export async function batchUnbundChargerPile(params) {
-  return request(`/${Coordinator}/charger/batchUnbundlingByHardwareIds`, {
+  return request(`/${NameSpace.Platform}/charger/batchUnbundlingByHardwareIds`, {
     method: 'POST',
     data: params,
   });
@@ -849,7 +798,7 @@ export async function batchUnbundChargerPile(params) {
 
 // 批量删除充电桩
 export async function batchDeleteChargerPile(params) {
-  return request(`/${Coordinator}/charger/batchDeleteByHardwareIds`, {
+  return request(`/${NameSpace.Platform}/charger/batchDeleteByHardwareIds`, {
     method: 'POST',
     data: params,
   });
@@ -857,27 +806,27 @@ export async function batchDeleteChargerPile(params) {
 
 // 新增充电桩
 export async function AddChargerPile(params) {
-  return request(`/${Coordinator}/api/saveBindingMapCharger`, {
+  return request(`/${NameSpace.Platform}/api/saveBindingMapCharger`, {
     method: 'POST',
     data: params,
   });
 }
 // 清除故障
 export async function clearChargerPileFaultById(id) {
-  return request(`/${Coordinator}/charger/actions/clearError/${id}`, {
+  return request(`/${NameSpace.Platform}/charger/actions/clearError/${id}`, {
     method: 'GET',
   });
 }
 // 查询可用充电桩
 export async function fetchAvailableMapChargerList() {
-  return request(`/${Coordinator}/api/availableMapCharger`, {
+  return request(`/${NameSpace.Platform}/api/availableMapCharger`, {
     method: 'GET',
   });
 }
 
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {
-  return request(`/${Coordinator}/charger/getChargerError`, {
+  return request(`/${NameSpace.Platform}/charger/getChargerError`, {
     method: 'POST',
     data: params,
   });
@@ -885,7 +834,7 @@ export async function fetchChargerFaultList(params) {
 
 // 系统管理-时区设置
 export async function fetchSystemParamByKey(key) {
-  return request(`/${Coordinator}/formTemplate/getParameter/${key}`, {
+  return request(`/${NameSpace.Platform}/formTemplate/getParameter/${key}`, {
     method: 'GET',
   });
 }
@@ -893,28 +842,28 @@ export async function fetchSystemParamByKey(key) {
 // Web Hook
 // 查询所有已创建的Web Hook类型
 export async function getAllWebHookTypes() {
-  return request(`/${Coordinator}/webHook/getType`, {
+  return request(`/${NameSpace.Platform}/webHook/getType`, {
     method: 'GET',
   });
 }
 
 // 查询所有MQ Queue
 export async function getAllQueues() {
-  return request(`/${Coordinator}/webHook/getAllQueue`, {
+  return request(`/${NameSpace.Platform}/webHook/getAllQueue`, {
     method: 'GET',
   });
 }
 
 // 查询所有已创建的Web Hook接口
 export async function getAllWebHooks() {
-  return request(`/${Coordinator}/webHook/getAllWebHook`, {
+  return request(`/${NameSpace.Platform}/webHook/getAllWebHook`, {
     method: 'GET',
   });
 }
 
 // 保存Web Hook接口
 export async function saveWebHook(param) {
-  return request(`/${Coordinator}/webHook/saveWebHook`, {
+  return request(`/${NameSpace.Platform}/webHook/saveWebHook`, {
     method: 'POST',
     data: param,
   });
@@ -922,7 +871,7 @@ export async function saveWebHook(param) {
 
 // 删除 Web Hook
 export async function deleteWebHooks(param) {
-  return request(`/${Coordinator}/webHook/deleteWebHookById`, {
+  return request(`/${NameSpace.Platform}/webHook/deleteWebHookById`, {
     method: 'POST',
     data: param,
   });
@@ -930,14 +879,14 @@ export async function deleteWebHooks(param) {
 
 // 获取目标点锁
 export async function fetchTargetCellLockList() {
-  return request(`/${Coordinator}/lock/getTargetCellLockList`, {
+  return request(`/${NameSpace.Platform}/lock/getTargetCellLockList`, {
     method: 'GET',
   });
 }
 
 // 批量删除目标点锁
 export async function fetchBatchDeleteTargetCellLock(params) {
-  return request(`/${Coordinator}/lock/batchDeleteTargetCellLock`, {
+  return request(`/${NameSpace.Platform}/lock/batchDeleteTargetCellLock`, {
     method: 'POST',
     data: params,
   });
@@ -962,14 +911,14 @@ export async function batchDeleteAgvTaskLock(agvType, params) {
 
 // 潜伏类---获取存储点锁
 export async function fetchStorageLockList() {
-  return request(`/${Coordinator}/lock/getStoreCellLockList`, {
+  return request(`/${NameSpace.Platform}/lock/getStoreCellLockList`, {
     method: 'GET',
   });
 }
 
 // 潜伏类---批量删除存储点锁
 export async function batchDeleteStorageLock(params) {
-  return request(`/${Coordinator}/redis/batchDeleteStoreCellLock`, {
+  return request(`/${NameSpace.Platform}/redis/batchDeleteStoreCellLock`, {
     method: 'POST',
     data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
   });
@@ -977,13 +926,13 @@ export async function batchDeleteStorageLock(params) {
 
 // 潜伏类---获取货架任务锁
 export async function fetchPodTaskLockList() {
-  return request(`/${Coordinator}/lock/getPodTaskLockList`, {
+  return request(`/${NameSpace.Platform}/lock/getPodTaskLockList`, {
     method: 'GET',
   });
 }
 // 潜伏类---批量删除货架任务锁
 export async function batchDeletePodTaskLock(params) {
-  return request(`/${Coordinator}/lock/batchDeletePodTaskLock`, {
+  return request(`/${NameSpace.Platform}/lock/batchDeletePodTaskLock`, {
     method: 'POST',
     data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
   });
@@ -991,28 +940,28 @@ export async function batchDeletePodTaskLock(params) {
 
 // 料箱类-料箱锁
 export async function fetchToteLockList() {
-  return request(`/${Tote}/lock/getToteLockBySectionId`, {
+  return request(`/${NameSpace.Platform}/lock/getToteLockBySectionId`, {
     method: 'GET',
   });
 }
 
 // 料箱类-料箱锁删除
 export async function batchDeleteToteLock(params) {
-  return request(`/${Tote}/lock/batchDeleteToteLock`, {
+  return request(`/${NameSpace.Platform}/lock/batchDeleteToteLock`, {
     method: 'POST',
     data: params,
   });
 }
 // 料箱类-货位锁
 export async function fetchToteBinLock() {
-  return request(`/${Tote}/lock/getBinLockBySectionId`, {
+  return request(`/${NameSpace.Platform}/lock/getBinLockBySectionId`, {
     method: 'GET',
   });
 }
 
 // 料箱类-货位锁删除
 export async function batchDeleteToteBinLock(params) {
-  return request(`/${Tote}/lock/batchDeleteBinLock`, {
+  return request(`/${NameSpace.Platform}/lock/batchDeleteBinLock`, {
     method: 'POST',
     data: params,
   });
@@ -1020,35 +969,38 @@ export async function batchDeleteToteBinLock(params) {
 
 // 资源管理--潜伏货架-货架管理列表
 export async function fetchPodListBySectionId(params) {
-  return request(`/${LatentLifting}/pod/list/${window.localStorage.getItem('sectionId')}`, {
+  return request(`/${NameSpace.Platform}/pod/list/${window.localStorage.getItem('sectionId')}`, {
     method: 'GET',
   });
 }
 // 资源管理--潜伏货架-货架管理新增
 export async function savePod(params) {
-  return request(`/${LatentLifting}/pod`, {
+  return request(`/${NameSpace.Platform}/pod`, {
     method: 'POST',
     data: params,
   });
 }
 // 资源管理--潜伏货架-货架管理批量删除
 export async function batchDeletePod(params) {
-  return request(`/${LatentLifting}/pod/deletePod/${window.localStorage.getItem('sectionId')}`, {
-    method: 'POST',
-    data: params,
-  });
+  return request(
+    `/${NameSpace.Platform}/pod/deletePod/${window.localStorage.getItem('sectionId')}`,
+    {
+      method: 'POST',
+      data: params,
+    },
+  );
 }
 
 // 资源管理--潜伏货架--货架分配列表
 export async function fetchPodAssignData(params) {
-  return request(`/${LatentLifting}/podAndAgvMatch/getBySectionId`, {
+  return request(`/${NameSpace.Platform}/podAndAgvMatch/getBySectionId`, {
     method: 'GET',
     data: params,
   });
 }
 // 资源管理--潜伏货架--货架分配保存
 export async function savePodAssign(params) {
-  return request(`/${LatentLifting}/podAndAgvMatch/save`, {
+  return request(`/${NameSpace.Platform}/podAndAgvMatch/save`, {
     method: 'POST',
     data: params,
   });
@@ -1056,7 +1008,7 @@ export async function savePodAssign(params) {
 
 // 资源管理--潜伏货架--货架分配删除
 export async function batchDeletePodAssign(params) {
-  return request(`/${LatentLifting}/podAndAgvMatch/deleteByIdIn`, {
+  return request(`/${NameSpace.Platform}/podAndAgvMatch/deleteByIdIn`, {
     method: 'POST',
     data: params,
   });
@@ -1064,14 +1016,14 @@ export async function batchDeletePodAssign(params) {
 
 // 资源管理--小车分组列表
 export async function fetchAllMonitorAgvGroup() {
-  return request(`/${Coordinator}/mapScope/getAllMonitorAgvGroup`, {
+  return request(`/${NameSpace.Platform}/mapScope/getAllMonitorAgvGroup`, {
     method: 'GET',
   });
 }
 
 // 资源管理--小车分组新增保存
 export async function saveMonitorAgvGroup(param) {
-  return request(`/${Coordinator}/mapScope/saveMonitorAgvGroup`, {
+  return request(`/${NameSpace.Platform}/mapScope/saveMonitorAgvGroup`, {
     method: 'POST',
     data: param,
   });
@@ -1079,7 +1031,7 @@ export async function saveMonitorAgvGroup(param) {
 
 // 资源管理--小车分组更新保存
 export async function updateMonitorAgvGroup(param) {
-  return request(`/${Coordinator}/mapScope/updateMonitorAgvGroup`, {
+  return request(`/${NameSpace.Platform}/mapScope/updateMonitorAgvGroup`, {
     method: 'POST',
     data: param,
   });
@@ -1087,7 +1039,7 @@ export async function updateMonitorAgvGroup(param) {
 
 // 资源管理--小车分组 批量删除
 export async function batchDeleteMonitorAgvGroup(param) {
-  return request(`/${Coordinator}/mapScope/batchDeleteMonitorAgvGroup`, {
+  return request(`/${NameSpace.Platform}/mapScope/batchDeleteMonitorAgvGroup`, {
     method: 'POST',
     data: param,
   });
@@ -1096,14 +1048,14 @@ export async function batchDeleteMonitorAgvGroup(param) {
 /******* 广播频道  *******/
 // 查看已创建的广播频道
 export async function fetchBroadCastChannel() {
-  return request(`/${Coordinator}/alertCenter/getBroadCastChannel`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getBroadCastChannel`, {
     method: 'GET',
   });
 }
 
 // 保存广播频道
 export async function saveBroadCastChannel(params) {
-  return request(`/${Coordinator}/alertCenter/saveBroadCastChannel`, {
+  return request(`/${NameSpace.Platform}/alertCenter/saveBroadCastChannel`, {
     method: 'POST',
     data: params,
   });
@@ -1111,7 +1063,7 @@ export async function saveBroadCastChannel(params) {
 
 // 删除广播频道
 export async function deleteBroadCastChannels(params) {
-  return request(`/${Coordinator}/alertCenter/deleteBroadCastChannel`, {
+  return request(`/${NameSpace.Platform}/alertCenter/deleteBroadCastChannel`, {
     method: 'POST',
     data: params,
   });
@@ -1119,7 +1071,7 @@ export async function deleteBroadCastChannels(params) {
 
 // 获取用户频道订阅信息
 export async function fetchChannelSubscription(userId) {
-  return request(`/${Coordinator}/alertCenter/getChannelSubscription`, {
+  return request(`/${NameSpace.Platform}/alertCenter/getChannelSubscription`, {
     method: 'GET',
     data: { userId },
   });
@@ -1127,7 +1079,7 @@ export async function fetchChannelSubscription(userId) {
 
 // 保存用户订阅
 export async function saveChannelSubscription(params) {
-  return request(`/${Coordinator}/alertCenter/saveChannelSubscription`, {
+  return request(`/${NameSpace.Platform}/alertCenter/saveChannelSubscription`, {
     method: 'POST',
     data: params,
   });
@@ -1135,7 +1087,7 @@ export async function saveChannelSubscription(params) {
 
 // 删除用户订阅
 export async function deleteChannelSubscription(params) {
-  return request(`/${Coordinator}/alertCenter/deleteChannelSubscription`, {
+  return request(`/${NameSpace.Platform}/alertCenter/deleteChannelSubscription`, {
     method: 'POST',
     data: params,
   });
@@ -1144,7 +1096,7 @@ export async function deleteChannelSubscription(params) {
 /******报表**********/
 // 二维码健康
 export async function fetchCodeHealth(params) {
-  return request(`/${Coordinator}/statistic/getCellCode`, {
+  return request(`/${NameSpace.Platform}/statistic/getCellCode`, {
     method: 'POST',
     data: params,
   });
@@ -1152,7 +1104,7 @@ export async function fetchCodeHealth(params) {
 
 // 小车健康
 export async function fetchAGVHealth(params) {
-  return request(`/${Coordinator}/statistic/getAgvHealth`, {
+  return request(`/${NameSpace.Platform}/statistic/getAgvHealth`, {
     method: 'POST',
     data: params,
   });
@@ -1160,14 +1112,14 @@ export async function fetchAGVHealth(params) {
 
 // 小车负载报表
 export async function fetchAGVload(params) {
-  return request(`/${Coordinator}/statistic/getAgvLoad`, {
+  return request(`/${NameSpace.Platform}/statistic/getAgvLoad`, {
     method: 'POST',
     data: params,
   });
 }
 //任务负载报表
 export async function fetchTaskLoad(params) {
-  return request(`/${Coordinator}/statistic/getTaskLoad`, {
+  return request(`/${NameSpace.Platform}/statistic/getTaskLoad`, {
     method: 'POST',
     data: params,
   });
@@ -1180,7 +1132,7 @@ export async function saveCleanLatentStrategy(params, id) {
   if (!isStrictNull(id)) {
     _urlStitching = `/${id}`;
   }
-  return request(`/${NameSpace.LatentLifting}/cleanLatent/saveStrategy${_urlStitching}`, {
+  return request(`/${NameSpace.Platform}/cleanLatent/saveStrategy${_urlStitching}`, {
     method: 'PUT',
     body: params,
   });
@@ -1188,14 +1140,14 @@ export async function saveCleanLatentStrategy(params, id) {
 
 // 查询清扫策略
 export async function getCleanStrategy() {
-  return request(`/${NameSpace.LatentLifting}/cleanLatent/getCleanStrategy`, {
+  return request(`/${NameSpace.Platform}/cleanLatent/getCleanStrategy`, {
     method: 'GET',
   });
 }
 
 // 查询清扫记录
 export async function fetchCleaningTaskHistory(params) {
-  return request(`/${NameSpace.LatentLifting}/cleanLatent/cleaningTaskHistory`, {
+  return request(`/${NameSpace.Platform}/cleanLatent/cleaningTaskHistory`, {
     method: 'POST',
     body: params,
   });
@@ -1203,47 +1155,71 @@ export async function fetchCleaningTaskHistory(params) {
 
 // 查询清扫计划
 export async function fetchCleaningPlan() {
-  return request(`/${NameSpace.LatentLifting}/cleanLatent/cleaningPlan`, {
+  return request(`/${NameSpace.Platform}/cleanLatent/cleaningPlan`, {
     method: 'GET',
   });
 }
 
 // 查询清扫计划当前模式
 export async function fetchCleaningPlanMode() {
-  return request(`/${NameSpace.LatentLifting}/cleanLatent/cleaningPlanSchema`, {
+  return request(`/${NameSpace.Platform}/cleanLatent/cleaningPlanSchema`, {
     method: 'GET',
   });
 }
 
 // 请求器
 export async function fetchRequestorList(params) {
-  return request(`/${NameSpace.Coordinator}/api/getDataApi`, {
+  return request(`/${NameSpace.Platform}/api/getDataApi`, {
     method: 'GET',
     data: params,
   });
 }
 export async function fetchSaveAPI(params) {
-  return request(`/${NameSpace.Coordinator}/api/saveDataApi`, {
+  return request(`/${NameSpace.Platform}/api/saveDataApi`, {
     method: 'POST',
     data: params,
   });
 }
 export async function fetchBatchSaveAPI(params) {
-  return request(`/${NameSpace.Coordinator}/api/batchSaveDataApi`, {
+  return request(`/${NameSpace.Platform}/api/batchSaveDataApi`, {
     method: 'POST',
     data: params,
   });
 }
 // robotType
 export async function fetchUpdateAPI(params) {
-  return request(`/${NameSpace.Coordinator}/api/updateDataApi`, {
+  return request(`/${NameSpace.Platform}/api/updateDataApi`, {
     method: 'POST',
     data: params,
   });
 }
+
 export async function fetchDeleteAPI(params) {
-  return request(`/${NameSpace.Coordinator}/api/batchDeleteDataApi`, {
+  return request(`/${NameSpace.Platform}/api/batchDeleteDataApi`, {
     method: 'DELETE',
     data: params,
+  });
+}
+
+// 获取 编辑富文本list
+export async function getAllRichText() {
+  return request(`/${NameSpace.Platform}/richText/getAllRichText`, {
+    method: 'GET',
+  });
+}
+
+// 删除 编辑富文本
+export async function deleteByRichIds(param) {
+  return request(`/${NameSpace.Platform}/richText/deleteByIds`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 保存 编辑富文本
+export async function saveRichText(param) {
+  return request(`/${NameSpace.Platform}/richText/saveRichText`, {
+    method: 'POST',
+    data: param,
   });
 }

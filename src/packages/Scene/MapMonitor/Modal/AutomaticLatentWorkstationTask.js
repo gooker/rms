@@ -1,20 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import {
-  Form,
-  Button,
-  Divider,
-  Row,
-  Col,
-  Select,
-  Checkbox,
-  Input,
-  Table,
-  Tag,
-  Card,
-  Switch,
-  message,
-} from 'antd';
-import { CloseOutlined, PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Card, Checkbox, Col, Divider, Form, Input, message, Row, Select, Switch, Table, Tag } from 'antd';
+import { CloseOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { find } from 'lodash';
 import { formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
@@ -446,7 +432,7 @@ const AutomaticLatentWorkstationTask = (props) => {
                     id: 'app.button.turnOn',
                   })}
                   unCheckedChildren={formatMessage({
-                    id: 'app.button.close',
+                    id: 'app.button.turnOff',
                   })}
                   checked={autoCallState}
                   onChange={handleAutoCallChanged}
@@ -470,7 +456,7 @@ const AutomaticLatentWorkstationTask = (props) => {
                     id: 'app.button.turnOn',
                   })}
                   unCheckedChildren={formatMessage({
-                    id: 'app.button.close',
+                    id: 'app.button.turnOff',
                   })}
                   checked={autoReleaseState}
                   onChange={handleAutoReleaseChanged}

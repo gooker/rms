@@ -8,7 +8,7 @@ import { fetchEmergencyStopList } from '@/services/XIHE';
 import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import ButtonInput from '@/components/ButtonInput';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 20);
 const key = 'updatable';

@@ -17,12 +17,12 @@ const LogSearchForm = (props) => {
   const [optionsData, setOptionsData] = useState([
     {
       code: 'AGV_ID',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
       value: {},
     },
     {
       code: 'AGV_GROUP',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
       value: {},
     },
     {
@@ -46,12 +46,12 @@ const LogSearchForm = (props) => {
           const optionsData = [
             {
               code: 'AGV_ID',
-              name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+              name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
               value: {},
             },
             {
               code: 'AGV_GROUP',
-              name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+              name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
               value: modelTypes?.AGV_GROUP.options ?? {},
             },
             {

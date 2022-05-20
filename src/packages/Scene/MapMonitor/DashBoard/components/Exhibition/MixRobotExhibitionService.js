@@ -9,7 +9,7 @@ export default class MixRobotExhibitionService {
   }
 
   refreshToteCharts() {
-    return request(`/${NameSpace.Tote}/agv-task/getInstrumentData`, { method: 'GET' });
+    return request(`/${NameSpace.Platform}/agv-task/getInstrumentData`, { method: 'GET' });
   }
 
   refreshForkLiftCharts() {}

@@ -1027,38 +1027,7 @@ export function extractRoutes(mapData) {
 
 // 将后台返回的自定义任务数据转化为表单数据
 export function restoreCustomTaskForm(customTask, customTypes) {
-  const result = { taskSteps: [], fieldsValue: {} };
-  const { codes } = customTask;
-
-  // 提取基本信息
-  result.fieldsValue.name = customTask.name;
-  result.fieldsValue.desc = customTask.desc;
-  result.fieldsValue.priority = customTask.priority;
-  result.fieldsValue.robot = customTask.robot;
-
-  codes.forEach((code) => {
-    const customTypeKey = code.split('_')[0];
-    const customType = find(customTypes, { type: customTypeKey });
-    result.taskSteps.push({ ...customType, code });
-
-    // 收集表单数据
-    if (['START', 'END'].includes(customTypeKey)) {
-      result.fieldsValue[code] = customTask[ModelTypeFieldMap[customTypeKey]];
-    } else {
-      const stepPayload = customTask[ModelTypeFieldMap[customTypeKey]];
-      const subTaskConfig = stepPayload[code];
-      if (subTaskConfig.customType === 'ACTION') {
-        subTaskConfig.trayActionProtocol = {
-          upAction: subTaskConfig.upAction,
-          downAction: subTaskConfig.downAction,
-        };
-        delete subTaskConfig.upAction;
-        delete subTaskConfig.downAction;
-      }
-      result.fieldsValue[code] = subTaskConfig;
-    }
-  });
-  return result;
+  //
 }
 
 // 十六进制转RGB

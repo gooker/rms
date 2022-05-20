@@ -90,7 +90,7 @@ const AdvancedCarryComponent = (props) => {
         <Form.Item
           name={'direction'}
           label={formatMessage({
-            id: 'app.customTask.form.operatorDirection',
+            id: 'customTask.form.operatorDirection',
           })}
         >
           <Radio.Group

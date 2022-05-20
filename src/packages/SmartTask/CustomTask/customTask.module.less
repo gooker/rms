@@ -1,20 +1,15 @@
 @commonHeight: 32px;
 @layoutBorderColor: rgb(184, 181, 181);
-@antFormLabelWidth: 120px;
-
-.customTaskContainer {
-  display: flex;
-  flex-flow: row nowrap;
-  height: 100%;
-  padding: 20px;
-}
+@highlightColor: #1890ff;
+@antFormLabelWidth: 140px;
 
 .tableIcon {
   :global {
     span {
       svg {
-        fill: #1890ff;
+        fill: @highlightColor;
       }
+
       svg[data-icon='eye'] {
         width: 20px;
         height: 20px;
@@ -30,9 +25,10 @@
 .customTaskForm {
   position: relative;
   display: flex;
-  flex-flow: column nowrap;
-  width: 100%;
-  height:100%;
+  flex-flow: row nowrap;
+  height: 100%;
+  padding: 24px;
+  background: #fff;
 
   :global {
     .ant-page-header {
@@ -47,21 +43,15 @@
 }
 
 .layoutDivider {
-  width: 50px;
+  width: 40px;
   border-right: 1px solid #b8b5b5;
 }
 
 // 拖拽区
-.dndPanel {
-  display: flex;
-  flex-flow: column nowrap;
-  width: 155px;
-  transition: 0.5s;
-}
-
 .dndColumn {
   display: flex;
   flex-flow: column nowrap;
+  width: 180px;
   border: 1px solid @layoutBorderColor;
 
   :global {
@@ -82,6 +72,7 @@
   height: 40px;
   font-weight: 500;
   font-size: 16px;
+  background: @highlightColor;
   border-bottom: 1px solid @layoutBorderColor;
   user-select: none;
 }
@@ -95,22 +86,13 @@
   overflow: auto;
 }
 
-.taskNodeColor {
-  background: #fdc137;
-}
-
-.taskFlowColor {
-  background: #0ad986;
-}
-
 // 右侧展示 & 操作区
 .viewContent {
   display: flex;
   flex: 1;
   flex-flow: column nowrap;
-  width: 100%;
-  height: 100%;
-  padding-top: 40px;
+  padding-left: 20px;
+  overflow: auto;
   border-bottom: 1px solid @layoutBorderColor;
 
   :global {
@@ -171,7 +153,7 @@
   width: 90%;
   margin: 8px auto 0 auto;
   text-align: center;
-  border: 1px solid #ebebeb;
+  border: 1px solid #b8b5b5;
   border-radius: 2px;
   cursor: move;
   transition: border 0.2s, opacity 0.2s;
@@ -188,15 +170,23 @@
     flex: 1;
     align-items: center;
     justify-content: center;
+    word-break: break-all;
   }
+}
+
+.limitDiv {
+  width: fit-content;
+  padding: 5px 10px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
 }
 
 .dndCardDelete {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  border-left: 1px solid #e3e3e3;
+  width: 30px;
+  border-left: 1px solid #b8b5b5;
   cursor: pointer;
 
   :global {
@@ -232,12 +222,11 @@
   }
 }
 
-
 .priority {
   :global {
     .ant-rate-star-full {
       svg {
-        fill: #1890ff;
+        fill: @highlightColor;
       }
     }
   }
@@ -256,7 +245,7 @@
       zoom: 1.2;
     }
     .ant-divider-inner-text {
-      color: rgb(24, 144, 255);
+      color: @highlightColor;
       font-weight: 400;
     }
   }
@@ -273,7 +262,7 @@
 
 // 动态参数Tip样式
 .dynamicParamTip {
-  color: #1890ff;
+  color: @highlightColor;
   font-weight: 500;
   font-size: 15px;
 }
@@ -282,7 +271,7 @@
 .unUsedField {
   padding: 5px;
   color: #ffffff;
-  background: #1890ff;
+  background: @highlightColor;
   border-radius: 4px;
 }
 
@@ -301,7 +290,7 @@
 
 // 任务资源锁
 .taskResourceLock {
-  width: 600px;
+  width: 450px;
 }
 
 .taskResourceLockTitle {
@@ -311,7 +300,7 @@
   color: rgba(0, 0, 0, 0.85);
   font-weight: 500;
   background: rgb(250, 250, 250);
-  border-bottom: 1px solid rgb(240, 240, 240);
+  border: 1px solid rgb(240, 240, 240);
 
   & > span {
     display: flex;
@@ -323,8 +312,8 @@
 }
 
 .taskResourceLockBodyRow {
-  display: flex;
-  height: 50px;
+  position: relative;
+  margin-top: 8px;
 
   & > span {
     display: flex;
@@ -381,7 +370,13 @@
 }
 
 .treeNodeLabel {
-  color: rgb(24, 144, 255);
+  color: @highlightColor;
   font-style: italic;
   text-decoration: underline;
+}
+
+.dndPlaceholder {
+  margin: 5px;
+  background-color: rgba(150, 150, 200, 0.1);
+  border: 1px dashed #abc;
 }

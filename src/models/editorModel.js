@@ -5,7 +5,6 @@ import update from 'immutability-helper';
 import {
   dealResponse,
   fillProgramAction,
-  fillProgramActionWithTiming,
   formatMessage,
   getRandomString,
   isNull,
@@ -13,15 +12,16 @@ import {
 import {
   addTemporaryId,
   batchGenerateLine,
+  convertChargerToDTO,
   generateCellIds,
   generateCellMapByRowsAndCols,
+  generateChargerXY,
   getAngle,
   getCellMapId,
   getCurrentLogicAreaData,
   getCurrentRouteMapData,
   getDistance,
   moveCell,
-  renderChargerList,
   renderElevatorList,
   renderWorkStationList,
   syncLineState,
@@ -335,7 +335,7 @@ export default {
 
           // 充电桩重新计算坐标
           const chargerList = loopLogicAreaData?.chargerList || [];
-          const chargerVMs = renderChargerList(chargerList, cellMap);
+          const chargerVMs = chargerList.map((charger) => generateChargerXY(charger, cellMap));
           for (let chargerIndex = 0; chargerIndex < chargerList.length; chargerIndex++) {
             chargerList[chargerIndex].x = chargerVMs[chargerIndex].x;
             chargerList[chargerIndex].y = chargerVMs[chargerIndex].y;
@@ -1164,7 +1164,7 @@ export default {
       const isAdding = functionData.length < data.flag;
 
       // 当前传入的"功能"数据
-      const currentFunction = { ...data };
+      let currentFunction = { ...data };
       const index = data.flag - 1;
       delete currentFunction.flag;
 
@@ -1173,7 +1173,8 @@ export default {
         returnPayload = renderWorkStationList([currentFunction], currentMap.cellMap)[0];
       }
       if (type === 'chargerList') {
-        returnPayload = renderChargerList([currentFunction], currentMap.cellMap)[0];
+        returnPayload = generateChargerXY(currentFunction, currentMap.cellMap);
+        currentFunction = convertChargerToDTO(currentFunction, currentMap.cellMap);
       }
       if (type === 'elevatorList') {
         returnPayload = renderElevatorList([currentFunction])[currentLogicAreaData.id];
@@ -1229,7 +1230,7 @@ export default {
         returnPayload = renderWorkStationList([removedFunctionItem], currentMap.cellMap)[0];
       }
       if (type === 'chargerList') {
-        returnPayload = renderChargerList([removedFunctionItem], currentMap.cellMap)[0];
+        // returnPayload = renderChargerList([removedFunctionItem], currentMap.cellMap)[0];
       }
       if (type === 'elevatorList') {
         returnPayload = renderElevatorList([removedFunctionItem], currentMap.cellMap)[
@@ -1242,27 +1243,31 @@ export default {
     // 批量添加充电桩
     *addChargerInBatches({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
-      const { name, agvTypes, cellIds, riceDirection } = payload;
+
+      const { name, angle, priority, supportTypes, cellIds } = payload;
       const scopeData = getCurrentLogicAreaData();
       const functionData = scopeData.chargerList || [];
 
-      const tempCharger = [];
+      let tempCharger = [];
       cellIds.forEach((cellId, index) => {
         let nameWillBeUse = `${name}-${index + 1}`;
         // 判断该名称是否可用
         const isExist = findIndex(functionData, { name: nameWillBeUse }) >= 0;
         if (isExist) {
-          nameWillBeUse = `${name}-${getRandomString(3)}`;
+          nameWillBeUse = `${name}-${getRandomString(6)}`;
         }
+
         tempCharger.push({
+          code: `charger_${getRandomString(6)}`,
           name: nameWillBeUse,
-          direction: riceDirection.dir,
-          angle: riceDirection.angle,
-          chargingCells: [{ cellId, agvTypes }],
+          angle,
+          priority,
+          chargingCells: [{ cellId, supportTypes }],
         });
       });
+      tempCharger = tempCharger.map((item) => convertChargerToDTO(item, currentMap.cellMap));
       scopeData.chargerList = [...functionData, ...tempCharger];
-      return renderChargerList(tempCharger, currentMap.cellMap);
+      return tempCharger;
     },
 
     // 不可逗留点只需要简单的全部替换就行

@@ -4,15 +4,14 @@ import find from 'lodash/find';
 import groupBy from 'lodash/groupBy';
 import cloneDeep from 'lodash/cloneDeep';
 import isPlainObject from 'lodash/isPlainObject';
-import { Modal, Form, Card, Divider, Row, Col, Button, Select } from 'antd';
-import { MinusCircleOutlined, ClearOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Card, Col, Divider, Form, Modal, Row, Select } from 'antd';
+import { ClearOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import CascadeSelect from '../CustomTask/FormComponent/CascadeSelect';
 import ModelSelection from '../CustomTask/FormComponent/ModelSelection';
 // import AngleSelector from '@/pages/MapTool/components/AngleSelector';
 import { ModelTypeFieldMap } from '@/config/consts';
-import { isNull, formatMessage } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import MenuIcon from '@/utils/MenuIcon';
 import styles from '../CustomTask/customTask.module.less';
 
 const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
@@ -39,18 +38,14 @@ const EditVaribleModal = (props) => {
 
   // 分车数据
   const OptionsData = [
-    // {
-    //   code: 'AUTO',
-    //   name: <FormattedMessage id="app.customTask.form.AUTO" />,
-    // },
     {
       code: 'AGV',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_AGV" />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
       value: modelTypes?.AGV.options ?? {},
     },
     {
       code: 'AGV_GROUP',
-      name: <FormattedMessage id="app.customTask.form.SPECIFY_GROUP" />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
       value: modelTypes?.AGV_GROUP.options ?? {},
     },
   ];
@@ -59,7 +54,7 @@ const EditVaribleModal = (props) => {
     if (!value || !isNull(value.type)) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error(formatMessage({ id: 'app.customTask.require.target' })));
+    return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
   }
 
   function renderPanelContent(taskCode, content) {
@@ -95,7 +90,7 @@ const EditVaribleModal = (props) => {
           key={`${taskCode}@@${customStart.field}`}
           name={`${taskCode}@@${customStart.field}`}
           initialValue={{ type, code }}
-          label={<FormattedMessage id="app.customTasks.form.robot" />}
+          label={<FormattedMessage id='customTasks.form.robot' />}
         >
           <CascadeSelect data={OptionsData} />
         </Form.Item>,

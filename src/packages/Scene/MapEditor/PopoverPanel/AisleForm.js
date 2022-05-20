@@ -3,7 +3,7 @@ import { Form, Input } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { MapSelectableSpriteType } from '@/config/consts';
 import FormattedMessage from '@/components/FormattedMessage';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import ButtonInput from '@/components/ButtonInput';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { formatMessage } from '@/utils/util';
 import styles from '../../popoverPanel.module.less';

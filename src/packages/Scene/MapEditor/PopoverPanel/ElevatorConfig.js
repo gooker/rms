@@ -7,7 +7,7 @@ import { connect } from '@/utils/RmsDva';
 import { formatMessage, isNull } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
 import FormattedMessage from '@/components/FormattedMessage';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import ButtonInput from '@/components/ButtonInput';
 
 const ElevatorConfig = (props) => {
   const { dispatch, mapContext } = props;

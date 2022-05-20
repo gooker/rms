@@ -1,16 +1,16 @@
 import React, { memo } from 'react';
-import { Button, Form, Input, Row, Select } from 'antd';
+import { Button, Form, Input, InputNumber, Select } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';
-import ButtonInput from '@/components/ButtonInput/ButtonInput';
+import ButtonInput from '@/components/ButtonInput';
 import { MapSelectableSpriteType } from '@/config/consts';
 
-const { formItemLayout } = getFormLayout(5, 19);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 
 const ChargerMultiForm = (props) => {
-  const { dispatch, allChargers, selectCellIds, mapContext, robotTypes, back } = props;
+  const { dispatch, allChargers, selectCellIds, mapContext, allAdaptors, back } = props;
 
   const [formRef] = Form.useForm();
 
@@ -30,11 +30,28 @@ const ChargerMultiForm = (props) => {
     });
   }
 
+  function renderSupportTypesOptions() {
+    return Object.values(allAdaptors).map(({ adapterType }) => {
+      const { agvTypes } = adapterType;
+      return (
+        <Select.OptGroup
+          key={adapterType.code}
+          label={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${adapterType.name}`}
+        >
+          {agvTypes.map((agvType, index) => (
+            <Select.Option key={index} value={`${adapterType.code}@${agvType.code}`}>
+              {agvType.name}
+            </Select.Option>
+          ))}
+        </Select.OptGroup>
+      );
+    });
+  }
+
   return (
-    <Form form={formRef} style={{ width: '100%' }}>
+    <Form form={formRef} style={{ width: '100%' }} {...formItemLayout}>
       {/* 名称 */}
       <Form.Item
-        {...formItemLayout}
         name={'name'}
         label={formatMessage({ id: 'app.common.name' })}
         rules={[
@@ -54,40 +71,43 @@ const ChargerMultiForm = (props) => {
       </Form.Item>
 
       {/* 角度 */}
+      <Form.Item name={'angle'} label={<FormattedMessage id='app.common.angle' />}>
+        <AngleSelector
+          disabled
+          getAngle
+          width={'100%'}
+          addonLabel={{
+            0: formatMessage({ id: 'app.direction.topSide' }),
+            90: formatMessage({ id: 'app.direction.rightSide' }),
+            180: formatMessage({ id: 'app.direction.bottomSide' }),
+            270: formatMessage({ id: 'app.direction.leftSide' }),
+          }}
+        />
+      </Form.Item>
+
+      {/* 优先级 */}
       <Form.Item
-        {...formItemLayout}
-        name={'riceDirection'}
-        label={<FormattedMessage id="app.common.angle" />}
+        name={'priority'}
+        initialValue={5}
+        label={formatMessage({ id: 'app.common.priority' })}
       >
-        <AngleSelector />
+        <InputNumber min={1} max={10} />
       </Form.Item>
 
       {/* 充电点 */}
-      <Form.Item
-        {...formItemLayout}
-        name={'cellIds'}
-        label={<FormattedMessage id="editor.cellType.charging" />}
-      >
+      <Form.Item name={'cellIds'} label={<FormattedMessage id='editor.cellType.charging' />}>
         <ButtonInput multi data={selectCellIds} btnDisabled={selectCellIds.length === 0} />
       </Form.Item>
 
       {/* 小车类型 */}
-      <Form.Item {...formItemLayout} name={'agvTypes'} label={formatMessage({ id: 'app.agvType' })}>
-        <Select mode='multiple'>
-          {robotTypes.map((record) => (
-            <Select.Option value={record} key={record}>
-              {record}
-            </Select.Option>
-          ))}
-        </Select>
+      <Form.Item name={'supportTypes'} label={formatMessage({ id: 'app.agvType' })}>
+        <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
       </Form.Item>
 
-      <Form.Item>
-        <Row justify="end">
-          <Button type="primary" onClick={multiSubmit}>
-            <FormattedMessage id="app.button.confirm" />
-          </Button>
-        </Row>
+      <Form.Item {...formItemLayoutNoLabel}>
+        <Button type='primary' onClick={multiSubmit}>
+          <FormattedMessage id='app.button.confirm' />
+        </Button>
       </Form.Item>
     </Form>
   );
@@ -107,5 +127,5 @@ export default connect(({ editor, global }) => {
     .filter((item) => item.type === MapSelectableSpriteType.CELL)
     .map(({ id }) => id);
 
-  return { allChargers, mapContext, selectCellIds, robotTypes: global.allAgvTypes };
+  return { allChargers, mapContext, selectCellIds, allAdaptors: global.allAdaptors };
 })(memo(ChargerMultiForm));

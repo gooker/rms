@@ -20,7 +20,7 @@ StationRatePolling.start = function (dispatcher) {
   if (isNull(StationRatePolling.instance)) {
     StationRatePolling.getInstance(dispatcher);
   }
-  const rateURL = getDomainNameByUrl(`/${NameSpace.Coordinator}/stationProxy/getRealTimeRate`);
+  const rateURL = getDomainNameByUrl(`/${NameSpace.Platform}/stationProxy/getRealTimeRate`);
   StationRatePolling.instance.postMessage({
     state: 'start',
     url: rateURL,

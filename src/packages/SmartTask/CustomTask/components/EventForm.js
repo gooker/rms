@@ -14,7 +14,7 @@ const EventForm = (props) => {
         {...FormLayout}
         name={[code, 'customType']}
         initialValue={type}
-        label={formatMessage({ id: 'app.customTask.form.type' })}
+        label={formatMessage({ id: 'app.common.type' })}
       >
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
@@ -23,7 +23,7 @@ const EventForm = (props) => {
         {...FormLayout}
         name={[code, 'code']}
         initialValue={code}
-        label={formatMessage({ id: 'app.customTask.form.code' })}
+        label={formatMessage({ id: 'app.common.code' })}
       >
         <Input style={{ width: 300 }} />
       </Form.Item>
@@ -39,7 +39,7 @@ const EventForm = (props) => {
         hidden={hidden}
         {...FormLayout}
         name={[code, 'payLoad']}
-        label={formatMessage({ id: 'app.customTask.form.payLoad' })}
+        label={formatMessage({ id: 'customTask.form.payLoad' })}
       >
         <CodeEditor mode={'json'} />
       </Form.Item>
@@ -60,7 +60,7 @@ const EventForm = (props) => {
         {...FormLayout}
         name={[code, 'skip']}
         initialValue={false}
-        label={formatMessage({ id: 'app.customTask.form.skip' })}
+        label={formatMessage({ id: 'customTask.form.skip' })}
       >
         <Switch />
       </Form.Item>

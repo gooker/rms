@@ -126,7 +126,7 @@ const RichEditor = () => {
 
   const tableColumn = [
     {
-      title: <FormattedMessage id="app.customTask.form.code" />,
+      title: <FormattedMessage id='app.common.code' />,
       dataIndex: 'errorCode',
       align: 'center',
     },
