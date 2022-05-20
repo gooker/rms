@@ -81,7 +81,7 @@ const CustomEquipmentType = () => {
                       }}
                     />
                   </Tooltip>
-                  {deviceType.hasCustomAction && (
+                  {deviceType?.hasCustomAction && (
                     <Tooltip title={'配置动作'}>
                       <SnippetsOutlined
                         className={styles.toolItem}
@@ -102,22 +102,22 @@ const CustomEquipmentType = () => {
               <Row>
                 <Col span={12}>
                   <span>
-                    {'名称'}: {deviceType.name}
+                    {'名称'}: {deviceType?.name}
                   </span>
                 </Col>
                 <Col span={12}>
                   <span>
-                    {'code'}: {deviceType.code}
+                    {'code'}: {deviceType?.code}
                   </span>
                 </Col>
                 <Col span={12}>
                   <span>
-                    {'描述'}: {deviceType.desc}
+                    {'描述'}: {deviceType?.desc}
                   </span>
                 </Col>
                 <Col span={12}>
                   <span>
-                    {'适配器'}: {deviceType.deviceAdapterTypeCode}
+                    {'适配器'}: {deviceType?.deviceAdapterTypeCode}
                   </span>
                 </Col>
               </Row>

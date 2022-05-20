@@ -7,8 +7,13 @@ import { formatMessage, isNull } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
 import { AppCode } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
-import { generateMenuNodeLocaleKey, validateRouteAuthority } from '@/utils/init';
+import {
+  generateMenuNodeLocaleKey,
+  validateRouteAuthority,
+  getNewMenuDataByMergeCustomNodes,
+} from '@/utils/init';
 import allModuleRouter from '@/router';
+import { mockData } from '../../CustomMenuManager/components/mockData';
 
 @connect(({ user }) => ({
   currentUser: user.currentUser,
@@ -37,7 +42,13 @@ class RoleAssignModal extends Component {
         if (appCode === AppCode.SSO) {
           return null;
         }
-        const menuData = generateMenuNodeLocaleKey(appMenu);
+
+        // 处理自定义的菜单 start
+        let newAppMenu = [...appMenu];
+        newAppMenu = getNewMenuDataByMergeCustomNodes(newAppMenu, mockData, appCode);
+        // end
+
+        const menuData = generateMenuNodeLocaleKey(newAppMenu);
 
         // TODO: 处理自定义的权限数据
         // const codePermissionMap = transform(

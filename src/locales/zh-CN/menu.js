@@ -15,6 +15,7 @@ export default {
   'menu.notificationCenter.broadcast': '广播频道',
   'menu.notificationCenter.subscription': '频道订阅',
   'menu.notificationCenter.alertCenter': '告警中心',
+  'menu.customMenuManager': '自定义菜单',
 
   // 载具
   'menu.container': '载具',

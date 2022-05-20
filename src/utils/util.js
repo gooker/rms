@@ -1145,14 +1145,14 @@ export function convertMenuData2RouteData(allMenuData) {
 }
 
 function flatMenuData(currentModuleRouter, result) {
-  currentModuleRouter.forEach(({ path, component, routes }) => {
+  currentModuleRouter.forEach(({ path, component, routes, customNode }) => {
     if (Array.isArray(routes)) {
       flatMenuData(routes, result);
     } else {
       result.push({
         path,
         component,
-        $$component: Loadable(() => import(`@/packages${component}`)),
+        $$component: Loadable(() => import(`@/packages${component}`), { customNode, component }),
       });
     }
   });

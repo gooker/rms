@@ -141,7 +141,7 @@ const DeviceStateConfigsModal = (props) => {
       {isStrictNull(current) || configuration?.length === 0 ? (
         <Empty />
       ) : (
-        <ProgramingDnd value={configuration} onChane={setConfiguration} programing={programing} />
+        <ProgramingDnd value={configuration} onChange={setConfiguration} programing={programing} />
       )}
 
       {/*  点位编程配置面板 */}
