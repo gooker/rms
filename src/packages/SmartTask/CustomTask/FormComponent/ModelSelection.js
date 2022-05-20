@@ -1,11 +1,10 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Select, Row, Col, Checkbox } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Checkbox, Col, Row, Select } from 'antd';
 import sortBy from 'lodash/sortBy';
 import flatten from 'lodash/flatten';
 import isPlainObject from 'lodash/isPlainObject';
-import { convertMapToArrayMap, isNull,formatMessage } from '@/utils/util';
+import { convertMapToArrayMap, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-
 
 const { Option } = Select;
 
@@ -118,16 +117,10 @@ const ModelSelection = (props) => {
   // 下拉框是否禁用，disabled 属性优先级最高
   const selectDisabled = disabled === undefined ? !isSpecify : disabled;
   return (
-    <Row>
+    <Row gutter={10}>
       {/* type */}
-      <Col>
-        <Select
-          allowClear
-          value={value?.type}
-          onChange={onTypeChange}
-          style={{ width: 150 }}
-          disabled={selectDisabled}
-        >
+      <Col span={8}>
+        <Select allowClear value={value?.type} onChange={onTypeChange} disabled={selectDisabled}>
           {typeOptions.map(({ type, name }) => (
             <Option key={type} value={type}>
               {name}
@@ -137,7 +130,7 @@ const ModelSelection = (props) => {
       </Col>
 
       {/* code */}
-      <Col style={{ marginLeft: 10, width: 300 }}>{renderCodeForm(selectDisabled)}</Col>
+      <Col span={16}>{renderCodeForm(selectDisabled)}</Col>
       {specify ? (
         <Col style={{ marginLeft: 10, display: 'flex', alignItems: 'center' }}>
           <Checkbox checked={isSpecify} onChange={(ev) => setSpecify(ev.target.checked)} />

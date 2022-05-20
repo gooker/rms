@@ -1,14 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Form, Button, Select } from 'antd';
+import { Button, Col, Form, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { getFormModelTypes, fetchActiveMap } from '@/services/api';
+import { fetchActiveMap, fetchCustomParamType } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import SelectCarType from '../HealthReport/AgvHealth/components/SelectCarType';
 import DatePickerSelector from '@/packages/Report/components/DatePickerSelector';
-
-const formLayout = { labelCol: { span: 9 }, wrapperCol: { span: 14 } };
-const NoLabelFormLayout = { wrapperCol: { offset: 10, span: 12 } };
 
 const LogSearchForm = (props) => {
   const { search, type, downloadVisible, allTaskTypes, exportData } = props;
@@ -41,7 +38,7 @@ const LogSearchForm = (props) => {
       if (!dealResponse(mapData)) {
         if (isNull(mapData)) return;
         const { id } = mapData;
-        const modelTypes = await getFormModelTypes({ mapId: id });
+        const modelTypes = await fetchCustomParamType({ mapId: id });
         if (!dealResponse(modelTypes)) {
           const optionsData = [
             {

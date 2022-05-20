@@ -109,5 +109,5 @@ const TaskResourceLock = (props) => {
   );
 };
 export default connect(({ customTask }) => ({
-  dataSource: customTask.modelLocks,
+  dataSource: customTask.modelLocks ?? {},
 }))(memo(TaskResourceLock));

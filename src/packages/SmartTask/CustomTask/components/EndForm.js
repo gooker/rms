@@ -1,13 +1,10 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Form, Divider, Input } from 'antd';
-import { MinusOutlined, ClearOutlined,PlusOutlined } from '@ant-design/icons';
-import { Row, Col, Switch } from 'antd';
-import StandbyConditions from '../FormComponent/StandbyConditions';
+import { Button, Col, Form, Input, Row, Switch } from 'antd';
+import { ClearOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import CascadeSelect from '../FormComponent/CascadeSelect';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import MenuIcon from '@/utils/MenuIcon';
 import styles from '../customTask.module.less';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
@@ -68,74 +65,6 @@ const EndForm = (props) => {
       >
         <Switch />
       </Form.Item>
-
-      {/* 进入待命状态条件 */}
-      {robotStandby && !hidden ? (
-        <div className={styles.robotStandbyCondition}>
-          <Form.List name={[code, 'agvWaitTask', 'taskCriteria']} initialValue={[{}]}>
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map((field) => (
-                  <Form.Item
-                    key={field.key}
-                    hidden={hidden}
-                    className={styles.standbyDynamicFormItem}
-                  >
-                    <div style={{ display: 'flex' }}>
-                      <div style={{ width: 32 }}>
-                        {fields.length > 1 ? (
-                          <Button
-                            type="primary"
-                            onClick={() => remove(field.name)}
-                            style={DynamicButton}
-                          >
-                            <MinusOutlined />
-                          </Button>
-                        ) : null}
-                      </div>
-                      <Form.Item noStyle {...field}>
-                        <StandbyConditions />
-                      </Form.Item>
-                    </div>
-                  </Form.Item>
-                ))}
-                <Form.Item hidden={hidden}>
-                  <Button type="primary" onClick={() => add()} style={{ width: 460 }}>
-                    <PlusOutlined />
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
-          <Divider />
-          {/* 可自动退出待命去充电 */}
-          <Form.Item
-            hidden={hidden}
-            {...FormLayout}
-            name={[code, 'agvWaitTask', 'robotCanCharge']}
-            valuePropName={'checked'}
-            initialValue={true}
-            label={formatMessage({ id: 'customTask.form.robotAutoCharge' })}
-          >
-            <Switch />
-          </Form.Item>
-
-          {/* 等待时间 */}
-          <Form.Item
-            hidden={hidden}
-            {...FormLayout}
-            name={[code, 'agvWaitTask', 'waitTime']}
-            initialValue={180}
-            label={formatMessage({ id: 'customTask.form.waitTime' })}
-          >
-            <Input
-              allowClear
-              style={{ width: 130 }}
-              addonAfter={formatMessage({ id: 'app.time.seconds' })}
-            />
-          </Form.Item>
-        </div>
-      ) : null}
 
       {/* 无任务返回区域 */}
       <Form.List hidden={hidden} name={[code, 'backZone']} initialValue={[{}]}>

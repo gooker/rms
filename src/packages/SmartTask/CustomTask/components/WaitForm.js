@@ -1,10 +1,17 @@
 import React, { memo } from 'react';
-import { Form, Row, Input, InputNumber, Switch } from 'antd';
+import { Button, Form, Input, InputNumber, Switch } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
+import StandbyConditions from '../FormComponent/StandbyConditions';
 import styles from '../customTask.module.less';
 
 const { formItemLayout } = getFormLayout(6, 19);
+const DynamicButton = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '32px',
+};
 
 const WaitForm = (props) => {
   const { code, type, hidden, updateTab } = props;
@@ -21,7 +28,18 @@ const WaitForm = (props) => {
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
 
+      {/* 子任务编码 */}
+      <Form.Item
+        hidden
+        {...formItemLayout}
+        name={[code, 'code']}
+        initialValue={code}
+        label={formatMessage({ id: 'app.common.code' })}
+      >
+        <Input style={{ width: 300 }} />
+      </Form.Item>
       {/* --------------------------------------------------------------- */}
+
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
@@ -46,30 +64,74 @@ const WaitForm = (props) => {
       >
         <Input style={{ width: 500 }} />
       </Form.Item>
+      {/* --------------------------------------------------------------- */}
+
+      {/* 可自动退出待命去充电 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={[code, 'code']}
-        initialValue={code}
-        label={formatMessage({ id: 'customTask.form.recover' })}
+        name={[code, 'agvWaitTask', 'robotCanCharge']}
+        valuePropName={'checked'}
+        initialValue={true}
+        label={formatMessage({ id: 'customTask.form.robotAutoCharge' })}
       >
-        <Input disabled style={{ width: 300 }} />
-      </Form.Item>
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        label={formatMessage({ id: 'customTask.form.waitTime' })}
-      >
-        <Row>
-          <Form.Item noStyle name={[code, 'waitTime']} initialValue={-1}>
-            <InputNumber style={{ width: 300 }} />
-          </Form.Item>
-          <div className={styles.inputUnitLabel}>
-            <FormattedMessage id='app.time.seconds' />
-          </div>
-        </Row>
+        <Switch />
       </Form.Item>
 
+      {/* 等待时间 */}
+      <Form.Item
+        hidden={hidden}
+        {...formItemLayout}
+        name={[code, 'agvWaitTask', 'waitTime']}
+        initialValue={180}
+        label={formatMessage({ id: 'customTask.form.waitTime' })}
+      >
+        <InputNumber
+          style={{ width: 130 }}
+          addonAfter={formatMessage({ id: 'app.time.seconds' })}
+        />
+      </Form.Item>
+
+      {/* 进入待命状态条件 */}
+      <div className={styles.robotStandbyCondition}>
+        <Form.List name={[code, 'agvWaitTask', 'taskCriteria']} initialValue={[{}]}>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map((field) => (
+                <Form.Item
+                  key={field.key}
+                  hidden={hidden}
+                  className={styles.standbyDynamicFormItem}
+                >
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ width: 32, marginRight: 5 }}>
+                      {fields.length > 1 ? (
+                        <Button
+                          type='primary'
+                          onClick={() => remove(field.name)}
+                          style={DynamicButton}
+                        >
+                          <MinusOutlined />
+                        </Button>
+                      ) : null}
+                    </div>
+                    <Form.Item noStyle {...field}>
+                      <StandbyConditions />
+                    </Form.Item>
+                  </div>
+                </Form.Item>
+              ))}
+              <Form.Item hidden={hidden}>
+                <Button type='dashed' onClick={() => add()} style={{ width: '100%' }}>
+                  <PlusOutlined />
+                </Button>
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
+      </div>
+
+      {/* --------------------------------------------------------------- */}
       {/* 备注 */}
       <Form.Item
         hidden={hidden}

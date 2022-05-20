@@ -671,14 +671,6 @@ export async function getCustomTaskList() {
     method: 'GET',
   });
 }
-
-// 获取自定义任务可配置参数
-export async function fetchCstParams(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getFixedVariable`, {
-    method: 'POST',
-    data: param,
-  });
-}
 // 保存自定义任务
 export async function saveCustomTask(param) {
   return request(`/${NameSpace.Platform}/custom-task/saveCustomTask`, {
@@ -686,16 +678,16 @@ export async function saveCustomTask(param) {
     data: param,
   });
 }
-// 获取任务节点列表
+// 删除自定义任务
 export async function deleteCustomTasksById(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/deleteAllCustomTaskByIds`, {
+  return request(`/${NameSpace.Platform}/custom-task/deleteAllCustomTaskByIds`, {
     method: 'POST',
     data: param,
   });
 }
 // 获取业务模型数据
-export async function getFormModelTypes(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getModelType`, {
+export async function fetchCustomParamType(param) {
+  return request(`/${NameSpace.Platform}/custom-task/getCustomParamType`, {
     method: 'GET',
     data: param,
   });
@@ -712,6 +704,7 @@ export async function fetchTaskTypes() {
     method: 'GET',
   });
 }
+
 // 获取小车返回指定的区域集合
 export async function getBackZone(param) {
   return request(`/${NameSpace.Platform}/agv-custom-task/getBackZone`, {
@@ -719,6 +712,15 @@ export async function getBackZone(param) {
     data: param,
   });
 }
+
+// 获取自定义任务可配置参数
+export async function fetchCstParams(param) {
+  return request(`/${NameSpace.Platform}/custom-task/getFixedVariable`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
 // 获取潜伏车动作集
 export async function getLatentActions() {
   return request(`/${NameSpace.Platform}/agv-custom-task/getAddActions`, {

@@ -1,17 +1,15 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Checkbox, Form, Input } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import CascadeSelect from '../FormComponent/CascadeSelect';
 import style from '../customTask.module.less';
+import RobotSelector from '@/packages/SmartTask/CustomTask/components/RobotSelector';
 
 const { formItemLayout } = getFormLayout(6, 18);
 
 const StartForm = (props) => {
-  const { form, code, type, hidden, modelTypes } = props;
-
-  const [secondOptionDisabled, setSecondOptionDisabled] = useState(false);
+  const { form, code, type, hidden } = props;
 
   const OptionsData = [
     {
@@ -25,14 +23,6 @@ const StartForm = (props) => {
       value: {},
     },
   ];
-
-  useEffect(() => {
-    const fieldValue = form.getFieldValue(code);
-    if (fieldValue) {
-      const { robot } = fieldValue;
-      setSecondOptionDisabled(robot.type === 'AUTO');
-    }
-  }, []);
 
   return (
     <>
@@ -57,19 +47,15 @@ const StartForm = (props) => {
       </Form.Item>
 
       {/* --------------------------------------------------------------- */}
-      {/* 分小车 */}
+      {/* 分小车: 当前执行任务的指定robot资源-->小车/小车组/无 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
         name={[code, 'robot']}
         initialValue={{ type: 'AUTO', code: [] }}
         label={<FormattedMessage id='customTask.form.robot' />}
-        getValueFromEvent={(value) => {
-          setSecondOptionDisabled(value.type === 'AUTO');
-          return value;
-        }}
       >
-        <CascadeSelect data={OptionsData} disabled={[false, secondOptionDisabled]} />
+        <RobotSelector />
       </Form.Item>
 
       {/* 约束 */}
