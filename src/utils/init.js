@@ -5,6 +5,8 @@ import requestAPI from '@/utils/requestAPI';
 import { getTranslationByCode } from '@/services/translator';
 import { fetchAllEnvironmentList } from '@/services/SSO';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
+import { find } from 'lodash';
+import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
 
 export async function initI18nInstance() {
   const language = getLanguage();
@@ -99,17 +101,21 @@ export function sortAppList(appList) {
 export function generateRouteLocaleKeyMap(data, result, parentName) {
   if (Array.isArray(data)) {
     data.forEach((record) => {
-      const { path, routes, name } = record;
+      const { path, routes, name, customNode } = record;
       if (Array.isArray(routes)) {
         generateRouteLocaleKeyMap(routes, result, `${parentName}.${name}`);
       } else {
-        result[path] = parentName ? `${parentName}.${name}` : `${name}`;
+        if (customNode) {
+          result[path] = `${name}`;
+        } else {
+          result[path] = parentName ? `${parentName}.${name}` : `${name}`;
+        }
       }
     });
   }
 }
 
-export function generateMenuNodeLocaleKey(data, parentName) {
+export function generateMenuNodeLocaleKey(data = [], parentName) {
   return data
     .map((item) => {
       if (!item.name) {
@@ -117,10 +123,14 @@ export function generateMenuNodeLocaleKey(data, parentName) {
       }
 
       let locale;
-      if (!isStrictNull(parentName)) {
-        locale = `${parentName}.${item.name}`;
+      if (item.customNode) {
+        locale = item.name;
       } else {
-        locale = `menu.${item.name}`;
+        if (!isStrictNull(parentName)) {
+          locale = `${parentName}.${item.name}`;
+        } else {
+          locale = `menu.${item.name}`;
+        }
       }
 
       const result = { ...item, locale };
@@ -195,6 +205,11 @@ export function convertAllMenu(adminType, allModuleMenuData, permissionMap) {
   // 1. 根据菜单的hook和authority字段进行第一次权限筛选
   const allRoutes = Object.keys(allModuleMenuData).map((appCode) => {
     let appMenu = allModuleMenuData[appCode];
+
+    // 处理自定义的菜单 start
+    appMenu = getNewMenuDataByMergeCustomNodes([...appMenu], mockData, appCode);
+    // end
+
     // 如果是SSO, 需要根据adminType对菜单数据进行筛选
     if (appCode === AppCode.SSO) {
       appMenu = appMenu.filter((route) => {
@@ -245,4 +260,60 @@ export function validateHookPermission(hook) {
 
 export function validateRouteAuthority(record, adminType) {
   return Array.isArray(record?.authority) && record.authority.includes(adminType);
+}
+
+/*
+ *自定义的节点菜单与现有菜单合并
+ *@params {*} appMenu 前端本地的菜单
+ *@params {*} mockData 自定义的菜单节点
+ *@params {*} filterCustom  当前的appCode
+ */
+export function getNewMenuDataByMergeCustomNodes(appMenu, mockData, appCode) {
+  // 处理自定义的菜单 start
+  const startsBase = '@@_';
+  const primaryNodes = mockData.filter(({ parentPath }) => parentPath.startsWith(startsBase));
+
+  let newAppMenu = [...appMenu];
+  primaryNodes?.map((primaryNode) => {
+    const newPath = primaryNode.parentPath.replace(startsBase, '');
+    if (appCode === newPath) {
+      newAppMenu.push({
+        ...primaryNode,
+        path: `/${newPath}/${primaryNode.key}`,
+        component: primaryNode.url,
+        customNode: true, // 标志自定义
+      });
+    }
+  });
+
+  const filterCustom = mockData?.filter((data) => data.appCode === appCode);
+  newAppMenu = generateAllMenuData(newAppMenu, filterCustom);
+  return newAppMenu;
+  // end
+}
+
+// 把自定义的节点 添加到对应的routes
+export function generateAllMenuData(currentMenuData, filterData = []) {
+  return currentMenuData
+    ?.map((item) => {
+      const result = { ...item };
+      const findObj = find(filterData, { parentPath: item.path });
+
+      if (findObj && Object.keys(findObj).length > 0) {
+        const itemRoutes = [...item.routes];
+        itemRoutes.push({
+          ...findObj,
+          path: `${findObj.parentPath}/${findObj.key}`,
+          component: findObj.url,
+          customNode: true, // 标志自定义
+        });
+        result.routes = [...itemRoutes];
+      } else {
+        if (item.routes) {
+          result.routes = generateAllMenuData(item.routes, filterData);
+        }
+      }
+      return result;
+    })
+    .filter(Boolean);
 }

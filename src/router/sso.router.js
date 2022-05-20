@@ -65,6 +65,13 @@ export default [
     hooks: ['dev'],
   },
   {
+    path: `/${AppCode.SSO}/customMenuManager`, // 自定义菜单
+    name: 'customMenuManager',
+    icon: 'ie',
+    component: '/SSO/CustomMenuManager',
+    hooks: ['dev'],
+  },
+  {
     path: `/${AppCode.SSO}/notificationCenter`,
     name: 'notificationCenter',
     icon: 'notification',

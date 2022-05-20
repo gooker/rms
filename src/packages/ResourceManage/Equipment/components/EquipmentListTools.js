@@ -10,7 +10,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
 
 const EquipmentListTools = (props) => {
-  const { dispatch, allDevices, selectedRows, searchParams, onCancel } = props;
+  const { dispatch, allDevices, selectedRows, searchParams } = props;
   const unregisterDevices = allDevices.filter((item) => !item.hasRegistered);
   const registerDevices = allDevices.filter((item) => item.hasRegistered);
 
@@ -49,7 +49,6 @@ const EquipmentListTools = (props) => {
         const response = await unRegisterDevice(ids);
         if (!dealResponse(response, 1)) {
           dispatch({ type: 'equipList/fetchInitialData' });
-          onCancel();
         }
       },
     });

@@ -1,0 +1,35 @@
+export const mockData = [
+  {
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    parentPath: '/ResourceManage/container',
+    appCode: 'ResourceManage',
+    name: '1测试topic',
+    url: 'http://52.83.193.245:10065/web/#/35?page_id=1710',
+    key: 'test',
+    path: '/ResourceManage/container/test',
+  },
+  {
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    parentPath: '/ResourceManage/storage',
+    appCode: 'ResourceManage',
+    name: '2储位测试',
+    url: 'https://fanyi.youdao.com/',
+    key: 'chuweitest',
+  },
+  {
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    parentPath: '/Report/healthReport/qrcode',
+    appCode: 'Report',
+    name: '3二维码测试',
+    url: 'http://52.83.193.245:10065/web/#/35?page_id=1708',
+    key: 'codeTest',
+  },
+  {
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+    parentPath: '@@_ResourceManage',
+    appCode: 'ResourceManage',
+    name: '4应用是父级',
+    url: 'http://192.168.0.80:8088/platform/log-explorer/file-explorer?dir=/Users/wangrifeng/logs/adapter-s',
+    key: 'parentTest',
+  },
+];

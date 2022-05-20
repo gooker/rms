@@ -1,9 +1,14 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 
-export default (loader) => {
+export default (loader, item) => {
+  let newloadable = loader;
+  if (item?.customNode) {
+    newloadable = () => import(`@/components/LoadIframeComponent`);
+  }
+
   return Loadable({
-    loader,
+    loader: newloadable,
     loading: () => <div style={{ height: '100%' }} />,
   });
 };
