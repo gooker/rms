@@ -182,7 +182,7 @@ export default {
   'app.button.export': '导出',
   'app.button.import': '导入',
   'app.button.turnOn': '开启',
-  'app.button.close': '关闭',
+  'app.button.turnOff': '关闭',
   'app.button.check': '查看',
   'app.button.reset': '重置',
   'app.button.update': '更新',

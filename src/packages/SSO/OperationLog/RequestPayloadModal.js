@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
-import { Modal, Button } from 'antd';
+import { Button, Modal } from 'antd';
 
 const RequestPayloadModal = (props) => {
   const { visible, data, onCancel } = props;
@@ -17,7 +17,7 @@ const RequestPayloadModal = (props) => {
       bodyStyle={{ height: '500px', overflow: 'auto' }}
       footer={[
         <Button key="back" onClick={onCancel}>
-          <FormattedMessage id="app.button.close" />
+          <FormattedMessage id='app.button.turnOff' />
         </Button>,
       ]}
     >

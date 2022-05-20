@@ -1,13 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, message, Modal } from 'antd';
-import {
-  DeleteOutlined,
-  EditOutlined,
-  EyeOutlined,
-  FileTextOutlined,
-  RedoOutlined,
-} from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   adaptModalHeight,
@@ -56,7 +50,7 @@ const CustomTaskTable = (props) => {
       dataIndex: 'name',
     },
     {
-      title: <FormattedMessage id="app.taskQueue.priority" />,
+      title: <FormattedMessage id='app.common.priority' />,
       align: 'center',
       dataIndex: 'priority',
     },
@@ -243,7 +237,7 @@ const CustomTaskTable = (props) => {
               setExampleStructure(null);
             }}
           >
-            <FormattedMessage id='app.button.close' />
+            <FormattedMessage id='app.button.turnOff' />
           </Button>,
           <Button key='copy' type='primary' onClick={copyTaskBody}>
             <FormattedMessage id='app.button.copy' />

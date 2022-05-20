@@ -1,28 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import find from 'lodash/find';
-import {
-  Row,
-  Col,
-  Tag,
-  Card,
-  Menu,
-  Spin,
-  Empty,
-  Button,
-  Select,
-  message,
-  Checkbox,
-  Dropdown,
-} from 'antd';
+import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, message, Row, Select, Spin, Tag } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import TaskTriggerModal from './TaskTriggerModal';
-import {
-  getAllTaskTriggers,
-  saveTaskTrigger,
-  deleteTaskTrigger,
-  switchTriggerState,
-} from '@/services/api';
+import { deleteTaskTrigger, getAllTaskTriggers, saveTaskTrigger, switchTriggerState } from '@/services/api';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -57,7 +39,6 @@ class TaskTrigger extends Component {
     const { dispatch } = this.props;
     await dispatch({ type: 'taskTriger/fetchActiveMap' });
     dispatch({ type: 'taskTriger/fetchModelTypes' });
-    dispatch({ type: 'taskTriger/fetchCustomTyps' });
     this.initData();
   }
 

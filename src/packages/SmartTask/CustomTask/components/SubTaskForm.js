@@ -1,14 +1,16 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { Fragment, memo, useState } from 'react';
+import { Button, Checkbox, Form, Input, InputNumber, Radio, Select, Space, Switch } from 'antd';
+import { groupBy } from 'lodash';
+import { ReloadOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { Form, Input, InputNumber, Radio, Checkbox, Switch, Select } from 'antd';
-import groupBy from 'lodash/groupBy';
-import { extractRoutes, isNull, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import { extractRoutes, fillProgramAction, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
 import ModelSelection from '../FormComponent/ModelSelection';
-import ActionDefiner from '../FormComponent/ActionDefiner';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import CodeEditor from '@/components/CodeEditor';
 import AngleSelector from '@/components/AngleSelector';
+import TitleCard from '@/components/TitleCard';
 import styles from '../customTask.module.less';
 
 const { Option, OptGroup } = Select;
@@ -16,35 +18,17 @@ const { formItemLayout } = getFormLayout(6, 18);
 
 const SubTaskForm = (props) => {
   const { form, code, type, hidden, updateTab } = props;
-  const { routes, modelTypes, modelLocks } = props;
-
-  const [programCode, setProgramCode] = useState(false); // 是否使用任务编程
-  const [target, setTarget] = useState(1); // 目标区域
-
+  const { routes, modelTypes, modelLocks, programing } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
 
-  useEffect(() => {
-    // const fieldValue = getFieldValue(code);
-    // if (fieldValue) {
-    //   // 目标区域
-    //   setTarget(fieldValue?.targetAction?.target?.type);
-    //   // 是否使用编程
-    //   setProgramCode(fieldValue.programCode);
-    //   // 路线和编程
-    //   if (!isNull(fieldValue.pathCode)) {
-    //     updateScopeOptions(fieldValue.pathCode);
-    //   } else {
-    //     // 如果不是编辑模式, “地图路线”和“地图编程”显示默认值
-    //     const firstRoute = routes[0];
-    //     const pathCode = `${firstRoute.logicId}-${firstRoute.code}`;
-    //     form.setFieldsValue({ [code]: { pathCode } });
-    //     const scopeOptions = updateScopeOptions(pathCode);
-    //     if (scopeOptions.length > 0) {
-    //       form.setFieldsValue({ [code]: { scopeCode: scopeOptions[0].scopeCode } });
-    //     }
-    //   }
-    // }
-  }, []);
+  const [target, setTarget] = useState(null); // 目标区域
+  const [programCode, setProgramCode] = useState(false); // 是否使用任务编程
+
+  // ************** 关键点动作配置 ************** //
+  const [, rerender] = useState({}); // 用于触发组件重渲染
+  const [namePath, setNamePath] = useState(null); // 正在编辑的条目的namePath
+  const [actionList, setActionList] = useState(null); // 正在编辑的关键点动作列表
+  const [actionVisible, setActionVisible] = useState(false); // 配置关键点动作弹窗
 
   function updateTarget(targetType) {
     setTarget(targetType);
@@ -85,6 +69,88 @@ const SubTaskForm = (props) => {
       return Promise.resolve();
     }
     return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
+  }
+
+  // 获取某个字段的值
+  function getActionConfig(_namePath) {
+    let actionConfigList = form.getFieldValue(_namePath);
+    if (!Array.isArray(actionConfigList)) {
+      actionConfigList = [];
+    }
+    return actionConfigList;
+  }
+
+  // 清空某个字段的值
+  function clearPointAction(_namePath) {
+    let setter = null;
+    for (const pathItem of _namePath.reverse()) {
+      setter = { [pathItem]: setter };
+    }
+    form.setFieldsValue(setter);
+    rerender({});
+  }
+
+  // 开始配置动作
+  function configKeyPointAction(_namePath) {
+    let actionConfigList = form.getFieldValue(_namePath);
+    if (Array.isArray(actionConfigList)) {
+      // 兼容组件内部逻辑
+      actionConfigList = fillProgramAction(actionConfigList, programing);
+      setActionList({ actions: actionConfigList });
+    } else {
+      setActionList(null);
+    }
+    setActionVisible(true);
+    setNamePath(_namePath);
+  }
+
+  // 保存配置弹窗中的内容
+  function saveKeyPointAction(value) {
+    let setter = value;
+    for (const pathItem of namePath.reverse()) {
+      setter = { [pathItem]: setter };
+    }
+    form.setFieldsValue(setter);
+  }
+
+  function renderActionConfigButton(_namePath) {
+    const existConfigs = getActionConfig(_namePath);
+    if (existConfigs.length === 0) {
+      return (
+        <Button
+          onClick={() => {
+            configKeyPointAction(_namePath);
+          }}
+        >
+          <Space>
+            <SettingOutlined />
+            {existConfigs.length}
+          </Space>
+        </Button>
+      );
+    } else {
+      return (
+        <Space>
+          <Button
+            onClick={() => {
+              configKeyPointAction(_namePath);
+            }}
+          >
+            <Space>
+              <SettingOutlined />
+              {existConfigs.length}
+            </Space>
+          </Button>
+          <Button
+            onClick={() => {
+              clearPointAction(_namePath);
+            }}
+          >
+            <ReloadOutlined />
+          </Button>
+        </Space>
+      );
+    }
   }
 
   return (
@@ -139,11 +205,12 @@ const SubTaskForm = (props) => {
 
       {/* 目标区域 */}
       <Form.Item
+        required
         hidden={hidden}
         {...formItemLayout}
         name={[code, 'targetAction', 'target']}
-        label={formatMessage({ id: 'customTask.form.targetArea' })}
-        rules={[{ required: true }, { validator: validateTarget }]}
+        label={formatMessage({ id: 'customTask.form.target' })}
+        rules={[{ validator: validateTarget }]}
         getValueFromEvent={(value) => {
           updateTarget(value.type);
           return value;
@@ -152,7 +219,108 @@ const SubTaskForm = (props) => {
         <ModelSelection modelTypes={modelTypes} exclude={['AGV', 'AGV_GROUP']} disabled={false} />
       </Form.Item>
 
-      {/* 货架/托盘方向 */}
+      {/* 资源锁 */}
+      <Form.Item
+        hidden={hidden}
+        {...formItemLayout}
+        name={[code, 'lockTime']}
+        label={formatMessage({ id: 'customTask.lock.resourceLock' })}
+      >
+        <TaskResourceLock />
+      </Form.Item>
+
+      {/* 路线策略 */}
+      <TitleCard
+        hidden={hidden}
+        width={746}
+        title={<FormattedMessage id={'customTask.form.pathStrategy'} />}
+      >
+        <Fragment>
+          {/* 地图路线 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'pathCode']}
+            label={formatMessage({ id: 'customTask.form.pathCode' })}
+          >
+            <Select style={{ width: 200 }}>{renderPathCodeOptions()}</Select>
+          </Form.Item>
+
+          {/* 自动切换路线 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'canReCalculatePath']}
+            initialValue={true}
+            valuePropName={'checked'}
+            label={formatMessage({ id: 'customTask.form.canReCalculatePath' })}
+          >
+            <Switch
+              checkedChildren={formatMessage({ id: 'app.button.turnOn' })}
+              unCheckedChildren={formatMessage({ id: 'app.button.turnOff' })}
+            />
+          </Form.Item>
+        </Fragment>
+      </TitleCard>
+
+      {/* 任务级动作属性配置  */}
+      <TitleCard
+        hidden={hidden}
+        width={746}
+        title={<FormattedMessage id={'customTask.form.taskLevelActionConfig'} />}
+      >
+        111
+      </TitleCard>
+
+      {/* 关键点动作配置 */}
+      <TitleCard
+        hidden={hidden}
+        width={746}
+        title={<FormattedMessage id={'customTask.form.keyPointActionConfig'} />}
+      >
+        <Fragment>
+          {/* 起始点位动作 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'targetAction', 'firstActions']}
+            label={formatMessage({ id: 'customTask.form.firstActions' })}
+          >
+            {renderActionConfigButton([code, 'targetAction', 'firstActions'])}
+          </Form.Item>
+
+          {/* 第二个点位动作 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'targetAction', 'afterFirstActions']}
+            label={formatMessage({ id: 'customTask.form.afterFirstActions' })}
+          >
+            {renderActionConfigButton([code, 'targetAction', 'afterFirstActions'])}
+          </Form.Item>
+
+          {/* 终点前一个点位动作 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'targetAction', 'beforeLastActions']}
+            label={formatMessage({ id: 'customTask.form.beforeLastActions' })}
+          >
+            {renderActionConfigButton([code, 'targetAction', 'beforeLastActions'])}
+          </Form.Item>
+
+          {/* 终点动作 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'targetAction', 'lastActions']}
+            label={formatMessage({ id: 'customTask.form.lastActions' })}
+          >
+            {renderActionConfigButton([code, 'targetAction', 'lastActions'])}
+          </Form.Item>
+        </Fragment>
+      </TitleCard>
+
+      {/* 载具方向 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
@@ -173,55 +341,28 @@ const SubTaskForm = (props) => {
         />
       </Form.Item>
 
-      {/* 操作点方向 --选择了货架面  不是站点 站点组 STATION STATION_GROUP */}
-      {target && !['STATION', 'STATION_GROUP'].includes(target) ? (
-        <Form.Item
-          hidden={hidden}
-          {...formItemLayout}
-          name={[code, 'targetAction', 'operatorDirection']}
-          initialValue={null}
-          label={formatMessage({ id: 'customTask.form.operatorDirection' })}
-        >
-          <AngleSelector
-            getAngle
-            beforeWidth={80}
-            width={200}
-            addonLabel={{
-              0: formatMessage({ id: 'app.direction.top' }),
-              90: formatMessage({ id: 'app.direction.right' }),
-              180: formatMessage({ id: 'app.direction.bottom' }),
-              270: formatMessage({ id: 'app.direction.left' }),
-            }}
-          />
-        </Form.Item>
-      ) : null}
-
-      {/* 升降动作 */}
+      {/* 操作者方向 */}
+      {/*{target && !['STATION', 'STATION_GROUP'].includes(target) ? (*/}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={[code, 'targetAction', 'isDownOrUp']}
-        label={formatMessage({ id: 'customTask.form.isDownOrUp' })}
+        name={[code, 'targetAction', 'operatorDirection']}
+        initialValue={null}
+        label={formatMessage({ id: 'customTask.form.operatorDirection' })}
       >
-        <Select style={{ width: 200 }}>
-          <Option value={'Up'}>
-            <FormattedMessage id='customTask.form.lift' />
-          </Option>
-          <Option value={'Down'}>
-            <FormattedMessage id='customTask.form.down' />
-          </Option>
-        </Select>
+        <AngleSelector
+          getAngle
+          beforeWidth={80}
+          width={200}
+          addonLabel={{
+            0: formatMessage({ id: 'app.direction.top' }),
+            90: formatMessage({ id: 'app.direction.right' }),
+            180: formatMessage({ id: 'app.direction.bottom' }),
+            270: formatMessage({ id: 'app.direction.left' }),
+          }}
+        />
       </Form.Item>
-
-      {/* 地图路线 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'pathCode']}
-        label={formatMessage({ id: 'customTask.form.pathCode' })}
-      >
-        <Select style={{ width: 200 }}>{renderPathCodeOptions()}</Select>
-      </Form.Item>
+      {/*) : null}*/}
 
       {/* 速度档位 */}
       <Form.Item
@@ -234,18 +375,6 @@ const SubTaskForm = (props) => {
         <InputNumber min={1} step={1} />
       </Form.Item>
 
-      {/* 自动切换路线 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'canReCalculatePath']}
-        initialValue={true}
-        valuePropName={'checked'}
-        label={formatMessage({ id: 'customTask.form.canReCalculatePath' })}
-      >
-        <Switch />
-      </Form.Item>
-
       {/* 协同旋转 */}
       <Form.Item
         hidden={hidden}
@@ -255,7 +384,27 @@ const SubTaskForm = (props) => {
         valuePropName={'checked'}
         label={formatMessage({ id: 'customTask.form.synergisticRotation' })}
       >
-        <Switch />
+        <Switch
+          checkedChildren={formatMessage({ id: 'app.button.turnOn' })}
+          unCheckedChildren={formatMessage({ id: 'app.button.turnOff' })}
+        />
+      </Form.Item>
+
+      {/* 升降动作 */}
+      <Form.Item
+        hidden={hidden}
+        {...formItemLayout}
+        name={[code, 'targetAction', 'isDownOrUp']}
+        label={formatMessage({ id: 'customTask.form.isDownOrUp' })}
+      >
+        <Radio.Group
+          optionType='button'
+          buttonStyle='solid'
+          options={[
+            { value: 'Up', label: formatMessage({ id: 'customTask.form.lift' }) },
+            { value: 'Down', label: formatMessage({ id: 'customTask.form.down' }) },
+          ]}
+        />
       </Form.Item>
 
       {/* 行驶方向 */}
@@ -292,62 +441,6 @@ const SubTaskForm = (props) => {
             { value: true, label: formatMessage({ id: 'customTask.form.empty' }) },
           ]}
         />
-      </Form.Item>
-
-      {/* 配置资源锁 */}
-      {target ? (
-        <Form.Item
-          hidden={hidden}
-          {...formItemLayout}
-          name={[code, 'lockTime']}
-          label={formatMessage({ id: 'customTask.form.resourceLock' })}
-        >
-          <TaskResourceLock dataSource={modelLocks[target] ?? {}} />
-        </Form.Item>
-      ) : null}
-
-      {/* 起始点位动作 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'firstActions']}
-        label={formatMessage({ id: 'customTask.form.firstActions' })}
-        initialValue={[{}]}
-      >
-        <ActionDefiner data={[]} />
-      </Form.Item>
-
-      {/* 第二个点位动作 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'afterFirstActions']}
-        label={formatMessage({ id: 'customTask.form.afterFirstActions' })}
-        initialValue={[{}]}
-      >
-        <ActionDefiner data={[]} />
-      </Form.Item>
-
-      {/* 终点前一个点位动作 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'beforeLastActions']}
-        label={formatMessage({ id: 'customTask.form.beforeLastActions' })}
-        initialValue={[{}]}
-      >
-        <ActionDefiner data={[]} />
-      </Form.Item>
-
-      {/* 终点动作 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'lastActions']}
-        label={formatMessage({ id: 'customTask.form.lastActions' })}
-        initialValue={[{}]}
-      >
-        <ActionDefiner data={[]} />
       </Form.Item>
 
       {/* 任务编程 */}
@@ -399,11 +492,28 @@ const SubTaskForm = (props) => {
       >
         <Switch />
       </Form.Item>
+
+      {/*  配置关键点动作弹窗 */}
+      <ProgramingConfiguer
+        title={<FormattedMessage id={'customTask.form.keyPointActionConfig'} />}
+        editing={actionList}
+        visible={actionVisible}
+        programing={programing}
+        onCancel={() => {
+          setActionVisible(false);
+          setActionList(null);
+          setNamePath(null);
+        }}
+        onOk={(value) => {
+          saveKeyPointAction(value);
+        }}
+      />
     </>
   );
 };
-export default connect(({ customTask }) => ({
+export default connect(({ customTask, global }) => ({
   modelLocks: customTask.modelLocks,
   routes: extractRoutes(customTask.mapData),
   modelTypes: customTask.modelTypes,
+  programing: global.programing,
 }))(memo(SubTaskForm));

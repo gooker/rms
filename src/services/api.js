@@ -2,12 +2,6 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 import { isStrictNull } from '@/utils/util';
 
-export async function fetchAllTaskTypes() {
-  return request(`/${NameSpace.Platform}/traffic/getTaskTypeByRobot`, {
-    method: 'GET',
-  });
-}
-
 // ************************************** 国际化  ************************************** //
 export async function fetchLanguageByAppCode(params) {
   return request(`/${NameSpace.I18N}/getTranslationByParam`, {
@@ -673,7 +667,7 @@ export async function switchTriggerState(param) {
 // ********************** 自定义任务  ********************** //
 // 获取自定义任务-用于选择任务触发
 export async function getCustomTaskList() {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getAllCustomTaskBySectionId`, {
+  return request(`/${NameSpace.Platform}/custom-task/getAllCustomTaskBySectionId`, {
     method: 'GET',
   });
 }
@@ -685,26 +679,18 @@ export async function fetchCstParams(param) {
     data: param,
   });
 }
-
 // 保存自定义任务
 export async function saveCustomTask(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/saveCustomTask`, {
+  return request(`/${NameSpace.Platform}/custom-task/saveCustomTask`, {
     method: 'POST',
     data: param,
   });
 }
-
 // 获取任务节点列表
 export async function deleteCustomTasksById(param) {
   return request(`/${NameSpace.Platform}/agv-custom-task/deleteAllCustomTaskByIds`, {
     method: 'POST',
     data: param,
-  });
-}
-// 获取任务节点列表
-export async function getCustomTaskNodes() {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getCustomType`, {
-    method: 'GET',
   });
 }
 // 获取业务模型数据
@@ -715,15 +701,14 @@ export async function getFormModelTypes(param) {
   });
 }
 // 获取业务模型可锁资源
-export async function getFormModelLockResource(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getLockResource`, {
+export async function getFormModelLockResource() {
+  return request(`/${NameSpace.Platform}/custom-task/getLockResource`, {
     method: 'GET',
-    data: param,
   });
 }
 // 获取小车任务类型集合
-export async function getTaskTypes() {
-  return request(`/${NameSpace.Platform}/api/getAgvTaskType`, {
+export async function fetchTaskTypes() {
+  return request(`/${NameSpace.Platform}/task/getTaskType`, {
     method: 'GET',
   });
 }

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Form, Input, Checkbox } from 'antd';
+import { Checkbox, Form, Input } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import CascadeSelect from '../FormComponent/CascadeSelect';
@@ -72,21 +72,22 @@ const StartForm = (props) => {
         <CascadeSelect data={OptionsData} disabled={[false, secondOptionDisabled]} />
       </Form.Item>
 
+      {/* 约束 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
         label={formatMessage({ id: 'customTask.form.limit' })}
       >
         <div className={style.limitDiv}>
-          <Form.Item noStyle name={[code, 'limit']}>
-            <Checkbox.Group
-              options={[
-                {
-                  label: formatMessage({ id: 'customTask.form.limit.podWithStandbyAgv' }),
-                  value: 'podWithStandbyAgv',
-                },
-              ]}
-            />
+          <Form.Item
+            noStyle
+            name={[code, 'isLimitStandBy']}
+            initialValue={true}
+            valuePropName={'checked'}
+          >
+            <Checkbox>
+              <FormattedMessage id={'customTask.form.limit.podWithStandbyAgv'} />
+            </Checkbox>
           </Form.Item>
         </div>
       </Form.Item>

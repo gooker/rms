@@ -57,7 +57,6 @@ export default {
   'app.taskDetail.cancelTaskSubmit': '取消任务请求已提交',
   'app.taskDetail.chargerId': '充电ID',
   'app.taskDetail.chargingRecord': '充电记录',
-  'app.taskDetail.close': '关闭',
   'app.taskDetail.common': '共',
   'app.taskDetail.createUser': '创建人',
   'app.taskDetail.endCondition': '结束条件',

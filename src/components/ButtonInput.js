@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Select, Button, InputNumber, Row, Col } from 'antd';
+import { Button, Input, InputNumber, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 
 /**

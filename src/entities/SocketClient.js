@@ -13,8 +13,8 @@ class SocketClient {
     };
     this.client = null;
     this.unsubscribeueueQueue = [];
-    this.isReconnect = false; // 标记是否是重连
     this.reconnectable = true; // 标记是否可以重连
+    this.isReconnecting = false; // 标记是否正在重连
   }
 
   getInstance() {
@@ -44,14 +44,12 @@ class SocketClient {
   }
 
   onConnect() {
-    console.log('[Socket]: 连接成功!');
-    if (this.isReconnect) {
-      message.success({
-        content: formatMessage({ id: 'app.socket.reConnected' }),
-        key: SOCKET_RECONNECT_MESSAGE_ID,
-        duration: 2,
-      });
-    }
+    this.isReconnecting = false;
+    message.success({
+      content: formatMessage({ id: 'app.socket.reConnected' }),
+      key: SOCKET_RECONNECT_MESSAGE_ID,
+      duration: 2,
+    });
 
     const sectionId = window.localStorage.getItem('sectionId');
 
@@ -65,12 +63,14 @@ class SocketClient {
 
   onError(errorMessage) {
     console.error(`[Socket]: ${errorMessage}`);
-    this.isReconnect = true;
+    this.reconnectable = true;
     if (
       this.reconnectable &&
+      !this.isReconnecting &&
       typeof errorMessage === 'string' &&
       errorMessage.indexOf('Whoops! Lost connection') > -1
     ) {
+      this.isReconnecting = true;
       message.loading({
         content: formatMessage({ id: 'app.socket.reconnecting' }),
         key: SOCKET_RECONNECT_MESSAGE_ID,

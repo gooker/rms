@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, message, notification } from 'antd';
+import { message, Modal, notification } from 'antd';
 import { withRouter } from 'react-router-dom';
 import { connect } from '@/utils/RmsDva';
 import HomeLayout from '@/layout/HomeLayout';
@@ -10,13 +10,13 @@ import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
-import { isNull, isStrictNull, dealResponse, formatMessage, getPlateFormType } from '@/utils/util';
-import { fetchAllTaskTypes } from '@/services/api';
+import { dealResponse, formatMessage, getPlateFormType, isNull, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
 import { handleNameSpace } from '@/utils/init';
 import { fetchAllPrograming } from '@/services/XIHE';
 import { fetchAllAdaptor } from '@/services/resourceManageAPI';
+import { fetchTaskTypes } from '@/services/api';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -217,7 +217,7 @@ class MainLayout extends React.Component {
 
   fetchAdditionalData = () => {
     const { dispatch } = this.props;
-    Promise.all([fetchAllTaskTypes(), fetchAllPrograming(), fetchAllAdaptor()])
+    Promise.all([fetchTaskTypes(), fetchAllPrograming(), fetchAllAdaptor()])
       .then(([allTaskTypes, allPrograming, allAdaptors]) => {
         const states = {};
 

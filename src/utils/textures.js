@@ -141,7 +141,7 @@ export function loadTexturesForMap() {
       .add('rotate_cell', '/images/round.png')
       .add('safe_cell', '/images/safe_cell.png')
       .add('scan_cell', '/images/scan_cell.png')
-      .add('sorter', '/images/sorter.png')
+      // .add('sorter', '/images/sorter.png')
       .add('sorter_agv', '/images/sorter.png')
       .add('sorter_green', '/images/sorter_green.png')
       .add('sorter_grey', '/images/sorter_grey.png')

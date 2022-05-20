@@ -1,28 +1,21 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Form, Modal, message, Button, Menu, Dropdown, Space } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Dropdown, Form, Menu, Modal, Space } from 'antd';
 import {
+  BranchesOutlined,
+  CloseOutlined,
+  HourglassOutlined,
   PlusOutlined,
   RedoOutlined,
   SaveOutlined,
-  CloseOutlined,
-  SnippetsOutlined,
-  BranchesOutlined,
-  HourglassOutlined,
   ShoppingCartOutlined,
+  SnippetsOutlined,
 } from '@ant-design/icons';
 import { useMemoizedFn } from 'ahooks';
 import update from 'immutability-helper';
-import { isEmpty, findIndex } from 'lodash';
+import { findIndex, isEmpty } from 'lodash';
 import { Container } from 'react-smooth-dnd';
-import {
-  isNull,
-  dealResponse,
-  formatMessage,
-  getRandomString,
-  customTaskApplyDrag,
-} from '@/utils/util';
+import { customTaskApplyDrag, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { saveCustomTask } from '@/services/api';
 import { CustomType } from '../customTaskConfig';
 import { ModelTypeFieldMap, PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -235,14 +228,17 @@ const CustomTaskForm = (props) => {
 
   // 渲染表单主体
   function renderFormBody() {
-    return taskSteps.map((step) => {
+    return taskSteps.map((step, index) => {
       if (!step) return null;
       switch (step.type) {
         case CustomType.BASE:
-          return <InformationForm hidden={currentCode !== step.code} isEdit={!!editingRow} />;
+          return (
+            <InformationForm key={index} hidden={currentCode !== step.code} isEdit={!!editingRow} />
+          );
         case CustomType.START:
           return (
             <StartForm
+              key={index}
               form={form}
               code={step.code}
               type={step.type}
@@ -252,6 +248,7 @@ const CustomTaskForm = (props) => {
         case CustomType.END:
           return (
             <EndForm
+              key={index}
               form={form}
               code={step.code}
               type={step.type}
@@ -261,6 +258,7 @@ const CustomTaskForm = (props) => {
         case CustomType.ACTION:
           return (
             <SubTaskForm
+              key={index}
               form={form}
               code={step.code}
               type={step.type}
@@ -271,6 +269,7 @@ const CustomTaskForm = (props) => {
         case CustomType.WAIT:
           return (
             <WaitForm
+              key={index}
               hidden={currentCode !== step.code}
               code={step.code}
               type={step.type}
@@ -280,6 +279,7 @@ const CustomTaskForm = (props) => {
         case CustomType.PODSTATUS:
           return (
             <PodSimulation
+              key={index}
               form={form}
               code={step.code}
               type={step.type}
@@ -293,25 +293,26 @@ const CustomTaskForm = (props) => {
   }
 
   async function submit() {
-    const requestBody = await generateTaskData();
-    if (requestBody === null) {
-      message.error(formatMessage({ id: 'customTask.form.invalid' }));
-      return;
-    }
-
-    // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
-    if (editingRow) {
-      requestBody.id = editingRow.id;
-      requestBody.code = editingRow.code;
-      requestBody.createTime = editingRow.createTime;
-      requestBody.createdByUser = editingRow.createdByUser;
-    }
-    const response = await saveCustomTask(requestBody);
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'customTask.save.fail' }));
-    } else {
-      message.success(formatMessage({ id: 'customTask.save.success' }));
-    }
+    form.validateFields().then((value) => console.log(value));
+    // const requestBody = await generateTaskData();
+    // if (requestBody === null) {
+    //   message.error(formatMessage({ id: 'customTask.form.invalid' }));
+    //   return;
+    // }
+    //
+    // // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
+    // if (editingRow) {
+    //   requestBody.id = editingRow.id;
+    //   requestBody.code = editingRow.code;
+    //   requestBody.createTime = editingRow.createTime;
+    //   requestBody.createdByUser = editingRow.createdByUser;
+    // }
+    // const response = await saveCustomTask(requestBody);
+    // if (dealResponse(response)) {
+    //   message.error(formatMessage({ id: 'customTask.save.fail' }));
+    // } else {
+    //   message.success(formatMessage({ id: 'customTask.save.success' }));
+    // }
   }
 
   const updateTabName = useMemoizedFn(function(code, name) {
@@ -390,7 +391,7 @@ const CustomTaskForm = (props) => {
         className={styles.viewContent}
         style={{ height: `calc(100vh - ${PageContentPadding}px)` }}
       >
-        <div className={styles.customTaskFormBody}>
+        <div style={{ flex: 1 }}>
           <Form form={form}>{renderFormBody()}</Form>
         </div>
         <div className={styles.topTool}>

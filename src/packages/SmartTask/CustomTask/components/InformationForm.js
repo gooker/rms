@@ -44,10 +44,10 @@ const InformationForm = (props) => {
         {...FormLayout}
         name="priority"
         initialValue={5}
-        label={formatMessage({ id: 'app.taskQueue.priority' })}
+        label={formatMessage({ id: 'app.common.priority' })}
       >
         <Rate
-          tooltips={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+          tooltips={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
           allowClear={false}
           count={10}
           className={styles.priority}

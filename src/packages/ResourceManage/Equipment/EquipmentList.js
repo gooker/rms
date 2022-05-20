@@ -6,11 +6,11 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   findDeviceActionsByDeviceType,
-  saveDeviceActions,
   findDeviceMonitorsByDeviceType,
+  saveDeviceActions,
   saveDeviceMonitors,
 } from '@/services/resourceManageAPI';
-import { convertToUserTimezone, isNull, dealResponse } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, isNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import EquipmentListTools from './components/EquipmentListTools';
@@ -259,7 +259,7 @@ const EquipmentList = (props) => {
               dispatch({ type: 'equipList/updateShowRegisterPanel', payload: false });
             }}
           >
-            <CloseOutlined /> <FormattedMessage id={'app.button.close'} />
+            <CloseOutlined /> <FormattedMessage id={'app.button.turnOff'} />
           </Button>
         }
       >

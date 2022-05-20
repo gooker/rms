@@ -249,7 +249,7 @@ const AgvList = (props) => {
               dispatch({ type: 'agvList/updateShowRegisterPanel', payload: false });
             }}
           >
-            <CloseOutlined /> <FormattedMessage id={'app.button.close'} />
+            <CloseOutlined /> <FormattedMessage id={'app.button.turnOff'} />
           </Button>
         }
       >

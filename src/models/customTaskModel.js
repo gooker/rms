@@ -1,12 +1,6 @@
 import { message } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import {
-  getBackZone,
-  fetchActiveMap,
-  getFormModelTypes,
-  getCustomTaskList,
-  getFormModelLockResource,
-} from '@/services/api';
+import { fetchActiveMap, getCustomTaskList, getFormModelLockResource } from '@/services/api';
 
 export default {
   namespace: 'customTask',
@@ -17,14 +11,10 @@ export default {
     currentLogicArea: 0, // id
     currentRouteMap: 'DEFAULT', // code
     preRouteMap: null, // 记录上一个路线区数据, 用于切换路线区时候拿到上一次路线区的数据做清理工作
-
     listVisible: true,
     customTaskList: [],
     editingRow: null,
-
-    modelTypes: {}, // 业务模型数据
     modelLocks: {}, // 业务模型可锁资源
-    backZones: [], // 结束--返回指定区域
   },
 
   reducers: {
@@ -61,16 +51,7 @@ export default {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
       } else {
         try {
-          const [
-            // modelTypes,
-            // backZones,
-            modelLocks,
-          ] = yield Promise.all([
-            // getFormModelTypes({ mapId: mapData.id }),
-            // getBackZone({ mapId: mapData.id }),
-            getFormModelLockResource({ modelType: '' }),
-          ]);
-
+          const [modelLocks] = yield Promise.all([getFormModelLockResource()]);
           const state = { mapData };
           if (!dealResponse(modelLocks)) {
             state.modelLocks = modelLocks;
