@@ -6,19 +6,19 @@ import { connect } from '@/utils/RmsDva';
 import { extractRoutes, fillProgramAction, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
-import ModelSelection from '../FormComponent/ModelSelection';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import CodeEditor from '@/components/CodeEditor';
 import AngleSelector from '@/components/AngleSelector';
 import TitleCard from '@/components/TitleCard';
 import styles from '../customTask.module.less';
+import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 
 const { Option, OptGroup } = Select;
 const { formItemLayout } = getFormLayout(6, 18);
 
 const SubTaskForm = (props) => {
   const { form, code, type, hidden, updateTab } = props;
-  const { routes, modelTypes, modelLocks, programing } = props;
+  const { routes, modelLocks, programing } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
 
   const [target, setTarget] = useState(null); // 目标区域
@@ -216,7 +216,7 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <ModelSelection modelTypes={modelTypes} exclude={['AGV', 'AGV_GROUP']} disabled={false} />
+        <TargetSelector />
       </Form.Item>
 
       {/* 资源锁 */}
@@ -514,6 +514,5 @@ const SubTaskForm = (props) => {
 export default connect(({ customTask, global }) => ({
   modelLocks: customTask.modelLocks,
   routes: extractRoutes(customTask.mapData),
-  modelTypes: customTask.modelTypes,
   programing: global.programing,
 }))(memo(SubTaskForm));

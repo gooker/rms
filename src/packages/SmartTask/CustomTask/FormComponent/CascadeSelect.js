@@ -19,9 +19,9 @@ const CascadeSelect = (props) => {
   }
 
   // 第一个下拉框选项
-  let firstSelecOptions = [];
+  let firstSelectOptions = [];
   if (Array.isArray(data)) {
-    firstSelecOptions = data.map(({ code, name }) => (
+    firstSelectOptions = data.map(({ code, name }) => (
       <Option key={code} value={code}>
         {name}
       </Option>
@@ -29,12 +29,12 @@ const CascadeSelect = (props) => {
   }
 
   // 第二个下拉框选项
-  let secondSelecOptions = [];
+  let secondSelectOptions = [];
   if (!isNull(currentValue?.type)) {
     const targetType = data.find((item) => item.code === currentValue.type);
     if (!isNull(targetType?.value)) {
-      secondSelecOptions = convertMapToArrayMap(targetType.value, 'code', 'name');
-      secondSelecOptions = secondSelecOptions.map(({ code, name }) => {
+      secondSelectOptions = convertMapToArrayMap(targetType.value, 'code', 'name');
+      secondSelectOptions = secondSelectOptions.map(({ code, name }) => {
         return (
           <Option key={code} value={code}>
             {name}
@@ -47,22 +47,23 @@ const CascadeSelect = (props) => {
   return (
     <div>
       <Select
-        disabled={!!disabled?.[0]}
-        style={{ width: 150 }}
+        allowClear
         value={currentValue?.type}
         onChange={onTypeChange}
-        allowClear
+        disabled={!!disabled?.[0]}
+        style={{ width: 150 }}
       >
-        {firstSelecOptions}
+        {firstSelectOptions}
       </Select>
       <Select
-        mode="multiple"
-        disabled={!!disabled?.[1]}
+        allowClear
+        mode='multiple'
         onChange={onCodeChange}
         value={currentValue?.code || []}
+        disabled={!!disabled?.[1]}
         style={{ marginLeft: 10, width: 300 }}
       >
-        {secondSelecOptions}
+        {secondSelectOptions}
       </Select>
     </div>
   );

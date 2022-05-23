@@ -93,6 +93,7 @@ export default {
   'editor.cellType': '点位类型',
   'editor.cellType.forbid': '不可走点',
   'editor.cellType.storage': '存储点',
+  'editor.cellType.storageGroup': '存储点组',
   'editor.cellType.follow': '跟车点',
   'editor.cellType.waiting': '等待点',
   'editor.cellType.getTask': '接任务点',

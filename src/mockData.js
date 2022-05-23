@@ -1368,3 +1368,54 @@ export const ProgramingConfigurationList = {
     },
   ],
 };
+
+export const CustomParamType = {
+  AGV: {
+    TYPE: [
+      {
+        code: 'agvType',
+        ids: ['agvId'],
+        types: ['loadTypes'],
+      },
+    ],
+    GROUP: [
+      {
+        code: 'groupKey',
+        ids: ['agvIds'],
+        types: ['loadTypes'],
+      },
+    ],
+  },
+  LOAD: {
+    TYPE: [
+      {
+        code: 'loadType',
+        ids: ['loadIds'],
+      },
+    ],
+    GROUP: [
+      {
+        code: 'groupKey',
+        ids: ['loadIds'],
+        types: ['loadTypes'],
+      },
+    ],
+  },
+  TARGET: {
+    STORE_GROUP: [
+      {
+        code: 'groupKey',
+      },
+    ],
+    station: [
+      {
+        code: 'stationCode',
+      },
+    ],
+    STATION_GROUP: [
+      {
+        code: 'groupKey',
+      },
+    ],
+  },
+};

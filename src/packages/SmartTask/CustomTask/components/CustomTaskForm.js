@@ -392,7 +392,9 @@ const CustomTaskForm = (props) => {
         style={{ height: `calc(100vh - ${PageContentPadding}px)` }}
       >
         <div style={{ flex: 1 }}>
-          <Form form={form}>{renderFormBody()}</Form>
+          <Form form={form} labelWrap>
+            {renderFormBody()}
+          </Form>
         </div>
         <div className={styles.topTool}>
           <Button danger onClick={gotoListPage}>

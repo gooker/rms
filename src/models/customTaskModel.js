@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import { fetchActiveMap, getCustomTaskList, getFormModelLockResource } from '@/services/api';
+import { fetchActiveMap, fetchCustomParamType, getCustomTaskList, getFormModelLockResource } from '@/services/api';
 
 export default {
   namespace: 'customTask',
@@ -14,7 +14,9 @@ export default {
     listVisible: true,
     customTaskList: [],
     editingRow: null,
-    modelLocks: {}, // 业务模型可锁资源
+
+    modelParams: null, // 配置参数数据
+    modelLocks: null, // 业务可锁资源
   },
 
   reducers: {
@@ -51,10 +53,16 @@ export default {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
       } else {
         try {
-          const [modelLocks] = yield Promise.all([getFormModelLockResource()]);
+          const [modelLocks, modelParams] = yield Promise.all([
+            getFormModelLockResource(),
+            fetchCustomParamType(),
+          ]);
           const state = { mapData };
           if (!dealResponse(modelLocks)) {
             state.modelLocks = modelLocks;
+          }
+          if (!dealResponse(modelParams)) {
+            state.modelParams = modelParams;
           }
           yield put({ type: 'saveState', payload: state });
         } catch (error) {

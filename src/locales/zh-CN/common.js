@@ -142,6 +142,7 @@ export default {
   'app.map.function': '功能',
   'app.map.workStation': '工作站',
   'app.map.station': '站点',
+  'app.map.stationGroup': '站点组',
   'app.map.charger': '充电桩',
   'app.map.elevator': '电梯',
   'app.map.delivery': '投递点',

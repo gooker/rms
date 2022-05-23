@@ -1,17 +1,13 @@
 // 小车进入待命状态的条件输入框
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Form, Select, Row, Col, Button } from 'antd';
-import { MinusOutlined, ClearOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Row, Select } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import ModelSelection from '../FormComponent/ModelSelection';
-import { convertMapToArrayMap, formatMessage } from '@/utils/util';
-import MenuIcon from '@/utils/MenuIcon';
-import { AGVType } from '@/config/config';
-import styles from '../customTask.module.less';
+import { convertMapToArrayMap, formatMessage, getFormLayout } from '@/utils/util';
 
 const { Option } = Select;
-const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
-const NoLabelFormLayout = { wrapperCol: { offset: 6, span: 18 } };
+const { formItemLayoutNoLabel, formItemLayout } = getFormLayout(4, 18);
 
 const StandbyConditions = (props) => {
   const { hidden, modelTypes, allTaskTypes, value, onChange } = props;
@@ -20,7 +16,7 @@ const StandbyConditions = (props) => {
     onChange(allValues);
   }
 
-  const taskTypeOptions = convertMapToArrayMap(allTaskTypes[AGVType.LatentLifting], 'code', 'name');
+  const taskTypeOptions = convertMapToArrayMap(allTaskTypes, 'code', 'name');
   const initialValue = { ...value };
   if (!Array.isArray(initialValue.agvTaskTypes)) {
     initialValue.agvTaskTypes = [];
@@ -30,11 +26,11 @@ const StandbyConditions = (props) => {
   }
 
   return (
-    <Form onValuesChange={onValuesChange} initialValues={initialValue}>
+    <Form onValuesChange={onValuesChange} initialValues={initialValue} style={{ width: '100%' }}>
       {/* 可接任务类型 */}
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
+        {...formItemLayout}
         name={'agvTaskTypes'}
         label={formatMessage({ id: 'customTask.form.agvTaskTypes' })}
       >
@@ -42,7 +38,6 @@ const StandbyConditions = (props) => {
           showSearch
           allowClear
           mode="multiple"
-          style={{ width: 460 }}
           filterOption={(input, option) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
@@ -60,18 +55,16 @@ const StandbyConditions = (props) => {
         {(fields, { add, remove }) => (
           <>
             {fields.map((field, index) => (
-              <div key={field.key} className={index !== 0 ? styles.dynamicNoLabel : undefined}>
+              <div key={field.key}>
                 <Form.Item
                   hidden={hidden}
-                  {...(index === 0 ? FormLayout : NoLabelFormLayout)}
+                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
                   label={
-                    index === 0
-                      ? formatMessage({ id: 'customTask.form.appointResources' })
-                      : null
+                    index === 0 ? formatMessage({ id: 'customTask.form.appointResources' }) : null
                   }
                 >
                   <Row gutter={10}>
-                    <Col>
+                    <Col span={fields.length > 1 ? 22 : 24}>
                       <Form.Item noStyle {...field}>
                         <ModelSelection
                           modelTypes={modelTypes}
@@ -80,42 +73,18 @@ const StandbyConditions = (props) => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col style={{ display: 'flex', alignItems: 'center' }}>
-                      {fields.length > 1 ? (
-                        <Button
-                          onClick={() => remove(field.name)}
-                          style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: '32px',
-                          }}
-                        >
-                          <MinusOutlined />
-                        </Button>
-                      ) : null}
-                    </Col>
-                    {index === 0 && (
-                      <Col style={{ display: 'flex', alignItems: 'center' }}>
-                        <ClearOutlined
-                          style={{ fontSize: 18 }}
-                          onClick={(ev) => {
-                            if (!ev.target.checked) {
-                              for (let loopIndex = fields.length; loopIndex > 0; loopIndex--) {
-                                remove(loopIndex);
-                              }
-                            }
-                          }}
-                        />
+                    {fields.length > 1 ? (
+                      <Col span={2}>
+                        <Button onClick={() => remove(field.name)} icon={<MinusOutlined />} />
                       </Col>
-                    )}
+                    ) : null}
                   </Row>
                 </Form.Item>
               </div>
             ))}
 
-            <Form.Item hidden={hidden} style={{ paddingLeft: 120 }}>
-              <Button onClick={() => add()} style={{ width: 460 }}>
+            <Form.Item hidden={hidden} {...formItemLayoutNoLabel}>
+              <Button onClick={() => add()} style={{ width: '100%' }}>
                 <PlusOutlined />
               </Button>
             </Form.Item>
@@ -125,7 +94,7 @@ const StandbyConditions = (props) => {
     </Form>
   );
 };
-export default connect(({ customTask }) => ({
+export default connect(({ customTask, global }) => ({
   modelTypes: customTask.modelTypes,
-  allTaskTypes: customTask.allTaskTypes,
+  allTaskTypes: global.allTaskTypes,
 }))(memo(StandbyConditions));

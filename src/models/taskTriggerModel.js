@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { fetchActiveMap, getCustomTaskList, getFormModelTypes } from '@/services/api';
+import { fetchActiveMap, fetchCustomParamType, getCustomTaskList } from '@/services/api';
 import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {
@@ -33,7 +33,7 @@ export default {
 
     *fetchModelTypes(_, { call, select, put }) {
       const { activeMap } = yield select((state) => state.taskTriger);
-      const modelTypes = yield call(getFormModelTypes, { mapId: activeMap.id });
+      const modelTypes = yield call(fetchCustomParamType, { mapId: activeMap.id });
       if (!dealResponse(modelTypes)) {
         yield put({ type: 'saveModelTypes', payload: modelTypes });
       } else {

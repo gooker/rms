@@ -50,6 +50,7 @@ export default {
 
   // 开始
   'customTask.form.robot': '分车',
+  'customTask.form.NO_SPECIFY': '自动分车',
   'customTask.form.SPECIFY_AGV': '指定小车',
   'customTask.form.SPECIFY_GROUP': '指定小车组',
   'customTask.form.limit': '约束',
@@ -117,8 +118,7 @@ export default {
   'customTask.form.operatorDirection': '操作者方向',
 
   // 待命子任务
-  'customTask.form.recover': '等待恢复命令',
-  'customTask.form.waitTime': '待命时间',
+  'customTask.form.waitTime': '待命时长',
 
   // 载具模拟
   'customTask.form.podStatus': '载具状态',
