@@ -269,6 +269,7 @@ const CustomTaskForm = (props) => {
           return (
             <WaitForm
               key={index}
+              form={form}
               hidden={currentCode !== step.code}
               code={step.code}
               type={step.type}
@@ -292,7 +293,11 @@ const CustomTaskForm = (props) => {
   }
 
   async function submit() {
-    form.validateFields().then((value) => console.log(value));
+    form
+      .validateFields()
+      .then((value) => console.log(value))
+      .catch(() => {
+      });
     // const requestBody = await generateTaskData();
     // if (requestBody === null) {
     //   message.error(formatMessage({ id: 'customTask.form.invalid' }));
@@ -406,7 +411,7 @@ const CustomTaskForm = (props) => {
       </div>
       <Button
         type={'dashed'}
-        style={{ position: 'absolute', top: 24, right: 24 }}
+        style={{ position: 'absolute', top: 24, right: 30 }}
         onClick={() => {
           dispatch({ type: 'customTask/initPage' });
         }}

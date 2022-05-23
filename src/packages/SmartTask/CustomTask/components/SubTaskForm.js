@@ -1,5 +1,5 @@
 import React, { Fragment, memo, useState } from 'react';
-import { Button, Checkbox, Form, Input, InputNumber, Radio, Select, Space, Switch } from 'antd';
+import { Button, Checkbox, Form, Input, InputNumber, Select, Space, Switch } from 'antd';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
@@ -11,7 +11,6 @@ import AngleSelector from '@/components/AngleSelector';
 import CodeEditor from '@/components/CodeEditor';
 import TitleCard from '@/components/TitleCard';
 import TargetSelector from '../components/TargetSelector';
-import styles from '../customTask.module.less';
 
 const { Option, OptGroup } = Select;
 const { formItemLayout } = getFormLayout(6, 18);
@@ -22,30 +21,13 @@ const SubTaskForm = (props) => {
   const groupedRoutes = groupBy(routes, 'logicId');
 
   const [target, setTarget] = useState(null); // 目标区域
-  const [programCode, setProgramCode] = useState(false); // 是否使用任务编程
+  const [useTaskPrograming, setUseTaskPrograming] = useState(false); // 是否使用任务编程
 
   // ************** 关键点动作配置 ************** //
   const [, rerender] = useState({}); // 用于触发组件重渲染
   const [namePath, setNamePath] = useState(null); // 正在编辑的条目的namePath
   const [actionList, setActionList] = useState(null); // 正在编辑的关键点动作列表
   const [actionVisible, setActionVisible] = useState(false); // 配置关键点动作弹窗
-
-  function updateTarget(targetType) {
-    setTarget(targetType);
-    if (targetType) {
-      const lockTimeValue = {};
-      const modelLocksContent = modelLocks[targetType];
-      Object.keys(modelLocksContent).forEach((field) => {
-        lockTimeValue[field] = {
-          LOCK: modelLocksContent[field].LOCK,
-          UNLOCK: modelLocksContent[field].UNLOCK,
-        };
-      });
-      form.setFieldsValue({ [code]: { lockTime: lockTimeValue } });
-    } else {
-      form.setFieldsValue({ [code]: { lockTime: null } });
-    }
-  }
 
   function renderPathCodeOptions() {
     return Object.keys(groupedRoutes).map((logicId) => {
@@ -194,6 +176,7 @@ const SubTaskForm = (props) => {
         <Input style={{ width: 300 }} />
       </Form.Item>
 
+      {/* 描述 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
@@ -212,12 +195,56 @@ const SubTaskForm = (props) => {
         label={formatMessage({ id: 'customTask.form.target' })}
         rules={[{ validator: validateTarget }]}
         getValueFromEvent={(value) => {
-          updateTarget(value.type);
+          setTarget(value.type);
           return value;
         }}
       >
         <TargetSelector />
       </Form.Item>
+
+      {/* 载具方向 */}
+      <Form.Item
+        hidden={hidden}
+        {...formItemLayout}
+        name={[code, 'targetAction', 'podAngle']}
+        initialValue={null}
+        label={formatMessage({ id: 'customTask.form.podAngle' })}
+      >
+        <AngleSelector
+          getAngle
+          beforeWidth={80}
+          width={200}
+          addonLabel={{
+            0: formatMessage({ id: 'app.pod.side.A' }),
+            90: formatMessage({ id: 'app.pod.side.B' }),
+            180: formatMessage({ id: 'app.pod.side.C' }),
+            270: formatMessage({ id: 'app.pod.side.D' }),
+          }}
+        />
+      </Form.Item>
+
+      {/* 操作者方向 */}
+      {target && ['STATION', 'STATION_GROUP'].includes(target) ? (
+        <Form.Item
+          hidden={hidden}
+          {...formItemLayout}
+          name={[code, 'targetAction', 'operatorDirection']}
+          initialValue={null}
+          label={formatMessage({ id: 'customTask.form.operatorDirection' })}
+        >
+          <AngleSelector
+            getAngle
+            beforeWidth={80}
+            width={200}
+            addonLabel={{
+              0: formatMessage({ id: 'app.direction.top' }),
+              90: formatMessage({ id: 'app.direction.right' }),
+              180: formatMessage({ id: 'app.direction.bottom' }),
+              270: formatMessage({ id: 'app.direction.left' }),
+            }}
+          />
+        </Form.Item>
+      ) : null}
 
       {/* 资源锁 */}
       <Form.Item
@@ -260,15 +287,6 @@ const SubTaskForm = (props) => {
             />
           </Form.Item>
         </Fragment>
-      </TitleCard>
-
-      {/* 任务级动作属性配置  */}
-      <TitleCard
-        hidden={hidden}
-        width={746}
-        title={<FormattedMessage id={'customTask.form.taskLevelActionConfig'} />}
-      >
-        111
       </TitleCard>
 
       {/* 关键点动作配置 */}
@@ -320,127 +338,14 @@ const SubTaskForm = (props) => {
         </Fragment>
       </TitleCard>
 
-      {/* 载具方向 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'podAngle']}
-        initialValue={null}
-        label={formatMessage({ id: 'customTask.form.podAngle' })}
-      >
-        <AngleSelector
-          getAngle
-          beforeWidth={80}
-          width={200}
-          addonLabel={{
-            0: formatMessage({ id: 'app.pod.side.A' }),
-            90: formatMessage({ id: 'app.pod.side.B' }),
-            180: formatMessage({ id: 'app.pod.side.C' }),
-            270: formatMessage({ id: 'app.pod.side.D' }),
-          }}
-        />
-      </Form.Item>
-
-      {/* 操作者方向 */}
-      {/*{target && !['STATION', 'STATION_GROUP'].includes(target) ? (*/}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'operatorDirection']}
-        initialValue={null}
-        label={formatMessage({ id: 'customTask.form.operatorDirection' })}
-      >
-        <AngleSelector
-          getAngle
-          beforeWidth={80}
-          width={200}
-          addonLabel={{
-            0: formatMessage({ id: 'app.direction.top' }),
-            90: formatMessage({ id: 'app.direction.right' }),
-            180: formatMessage({ id: 'app.direction.bottom' }),
-            270: formatMessage({ id: 'app.direction.left' }),
-          }}
-        />
-      </Form.Item>
-      {/*) : null}*/}
-
-      {/* 速度档位 */}
+      {/* 行驶速度 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
         name={[code, 'speed']}
-        initialValue={4}
         label={formatMessage({ id: 'customTask.form.speed' })}
       >
         <InputNumber min={1} step={1} />
-      </Form.Item>
-
-      {/* 协同旋转 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'isTurnWith']}
-        initialValue={false}
-        valuePropName={'checked'}
-        label={formatMessage({ id: 'customTask.form.synergisticRotation' })}
-      >
-        <Switch
-          checkedChildren={formatMessage({ id: 'app.button.turnOn' })}
-          unCheckedChildren={formatMessage({ id: 'app.button.turnOff' })}
-        />
-      </Form.Item>
-
-      {/* 升降动作 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'targetAction', 'isDownOrUp']}
-        label={formatMessage({ id: 'customTask.form.isDownOrUp' })}
-      >
-        <Radio.Group
-          optionType='button'
-          buttonStyle='solid'
-          options={[
-            { value: 'Up', label: formatMessage({ id: 'customTask.form.lift' }) },
-            { value: 'Down', label: formatMessage({ id: 'customTask.form.down' }) },
-          ]}
-        />
-      </Form.Item>
-
-      {/* 行驶方向 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'isForward']}
-        initialValue={true}
-        label={formatMessage({ id: 'customTask.form.runDirection' })}
-      >
-        <Radio.Group
-          optionType='button'
-          buttonStyle='solid'
-          options={[
-            { value: true, label: formatMessage({ id: 'customTask.form.runDirection.forward' }) },
-            { value: false, label: formatMessage({ id: 'customTask.form.runDirection.reverse' }) },
-          ]}
-        />
-      </Form.Item>
-
-      {/* 车辆状态 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'isPathWithPod']}
-        initialValue={false}
-        label={formatMessage({ id: 'customTask.form.isPathWithPod' })}
-      >
-        <Radio.Group
-          optionType='button'
-          buttonStyle='solid'
-          options={[
-            { value: false, label: formatMessage({ id: 'customTask.form.heavy' }) },
-            { value: true, label: formatMessage({ id: 'customTask.form.empty' }) },
-          ]}
-        />
       </Form.Item>
 
       {/* 任务编程 */}
@@ -451,9 +356,9 @@ const SubTaskForm = (props) => {
         initialValue={null}
         label={
           <Checkbox
-            checked={programCode}
+            checked={useTaskPrograming}
             onChange={(ev) => {
-              setProgramCode(ev.target.checked);
+              setUseTaskPrograming(ev.target.checked);
               form.setFieldsValue({ [code]: { programCode: null } });
             }}
           >
@@ -461,13 +366,7 @@ const SubTaskForm = (props) => {
           </Checkbox>
         }
       >
-        {programCode ? (
-          <CodeEditor />
-        ) : (
-          <span className={styles.unUsedField}>
-            <FormattedMessage id='customTask.form.programCode.no' />
-          </span>
-        )}
+        {useTaskPrograming && <CodeEditor />}
       </Form.Item>
 
       {/* 备注 */}

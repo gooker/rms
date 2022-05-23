@@ -1,45 +1,28 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
+import { connect } from '@/utils/RmsDva';
 
 const TargetSelector = (props) => {
-  const { dataSource, value, onChange } = props;
-  const currentValue = { ...value }; // {type:xxx, code:[]}
-
-  const [type, setType] = useState('CELL');
+  const { modelParams, value, onChange } = props;
+  const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
   function onTypeChange(_value) {
-    setType(_value);
     currentValue.type = _value;
     currentValue.code = [];
-    onChange(currentValue);
+    onChange({ ...currentValue });
   }
 
   function onCodeChange(_value) {
     currentValue.code = _value;
-    onChange(currentValue);
+    onChange({ ...currentValue });
   }
 
   // 第二个下拉框选项
   function renderSecondaryOptions() {
-    if (currentValue.type === 'AGV') {
-      const result = [];
-      dataSource.TYPE.forEach(({ code, ids }, index1) =>
-        result.push(
-          <Select.OptGroup key={index1} label={code}>
-            {ids.map((id) => (
-              <Select.Option key={id} value={id}>
-                {id}
-              </Select.Option>
-            ))}
-          </Select.OptGroup>,
-        ),
-      );
-      return result;
-    }
-    if (currentValue.type === 'AGV_GROUP') {
-      return dataSource.GROUP.map(({ code, ids }, index) => (
-        <Select.Option key={index} value={ids}>
+    if (currentValue.type) {
+      return modelParams[currentValue.type].map(({ code }, index) => (
+        <Select.Option key={index} value={code}>
           {code}
         </Select.Option>
       ));
@@ -64,7 +47,7 @@ const TargetSelector = (props) => {
         </Select.Option>
       </Select>
 
-      {type === 'CELL' ? (
+      {currentValue.type === 'CELL' ? (
         <Select
           mode='tags'
           value={currentValue?.code || []}
@@ -85,4 +68,10 @@ const TargetSelector = (props) => {
     </div>
   );
 };
-export default memo(TargetSelector);
+export default connect(({ customTask }) => ({
+  modelParams: customTask.modelParams?.TARGET || {
+    STATION: [],
+    STATION_GROUP: [],
+    STORE_GROUP: [],
+  },
+}))(memo(TargetSelector));

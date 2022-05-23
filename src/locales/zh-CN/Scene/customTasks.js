@@ -67,18 +67,13 @@ export default {
   'customTask.form.target': '目标',
   'customTask.form.pathCode': '路线区',
   'customTask.form.pathStrategy': '路线策略',
-  'customTask.form.taskLevelActionConfig': '任务级动作属性配置 ',
   'customTask.form.keyPointActionConfig': '关键点动作配置 ',
 
   'customTask.form.heavy': '重车',
   'customTask.form.empty': '空车',
   'customTask.form.isPathWithPod': '车辆状态',
-  'customTask.form.speed': '速度档位',
+  'customTask.form.speed': '行驶速度',
   'customTask.form.canReCalculatePath': '自动切换路线',
-  'customTask.form.synergisticRotation': '协同旋转',
-  'customTask.form.runDirection': '行驶方向',
-  'customTask.form.runDirection.forward': '前进',
-  'customTask.form.runDirection.reverse': '倒车',
   'customTask.form.runAction': '行走动作',
   'customTask.form.turnAction': '转弯动作',
   'customTask.form.podAngle': '载具方向',
@@ -87,7 +82,7 @@ export default {
   'customTask.form.beforeLastActions': '倒数第二动作',
   'customTask.form.lastActions': '终点动作',
   'customTask.form.programCode': '任务编程',
-  'customTask.form.programCode.no': '不使用任务编程',
+  'customTask.form.goToPointForPickupTask': '是否去接任务点',
 
   //// 资源锁 ////
   'customTask.lock.resourceLock': '资源锁',
@@ -113,7 +108,6 @@ export default {
   'customTask.form.blindDown': '盲降',
   'customTask.form.upAction': '顶升协议',
   'customTask.form.downAction': '下降协议',
-  'customTask.form.isDownOrUp': '升降动作',
   'customTask.form.operatorDirection': '操作者方向',
 
   // 待命子任务

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Form, Input, Rate } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { formatMessage, getRandomString } from '@/utils/util';
 import styles from '../customTask.module.less';
 
 const FormLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
@@ -27,6 +27,7 @@ const InformationForm = (props) => {
         {...FormLayout}
         name="name"
         label={formatMessage({ id: 'app.common.name' })}
+        initialValue={`cst_${getRandomString(6)}`}
         rules={nameRuls}
       >
         <Input style={{ width: 300 }} />
