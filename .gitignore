@@ -11,6 +11,7 @@ pnpm-lock.yaml
 /build
 /dist
 /tmp_build
+*.zip
 
 # IDE
 .vscode

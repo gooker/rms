@@ -28,7 +28,6 @@ export default {
   'customTasks.example.default': '默认值',
   'customTask.backToList': '返回列表',
   'customTask.customTypes': '任务节点',
-  'customTasks.button.temporarySave': '暂存',
   'customTasks.button.updateModel': '更新关联信息',
   'customTasks.form.delete.confirm': '即将删除该节点并清空表单数据, 是否确定?',
   'customTask.form.skip': '跳过',

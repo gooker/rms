@@ -1,17 +1,17 @@
 import React, { Fragment, memo, useState } from 'react';
 import { Button, Checkbox, Form, Input, InputNumber, Radio, Select, Space, Switch } from 'antd';
+import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { groupBy } from 'lodash';
-import { ReloadOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { extractRoutes, fillProgramAction, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
-import TaskResourceLock from '../FormComponent/TaskResourceLock';
-import CodeEditor from '@/components/CodeEditor';
 import AngleSelector from '@/components/AngleSelector';
+import CodeEditor from '@/components/CodeEditor';
 import TitleCard from '@/components/TitleCard';
+import TargetSelector from '../components/TargetSelector';
 import styles from '../customTask.module.less';
-import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 
 const { Option, OptGroup } = Select;
 const { formItemLayout } = getFormLayout(6, 18);
@@ -146,7 +146,7 @@ const SubTaskForm = (props) => {
               clearPointAction(_namePath);
             }}
           >
-            <ReloadOutlined />
+            <DeleteOutlined />
           </Button>
         </Space>
       );

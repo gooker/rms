@@ -8,7 +8,6 @@ import {
   RedoOutlined,
   SaveOutlined,
   ShoppingCartOutlined,
-  SnippetsOutlined,
 } from '@ant-design/icons';
 import { useMemoizedFn } from 'ahooks';
 import update from 'immutability-helper';
@@ -400,21 +399,20 @@ const CustomTaskForm = (props) => {
           <Button danger onClick={gotoListPage}>
             <CloseOutlined /> <FormattedMessage id='app.button.return' />
           </Button>
-          <Button
-            onClick={() => {
-              dispatch({ type: 'customTask/initPage' });
-            }}
-          >
-            <RedoOutlined /> <FormattedMessage id='customTasks.button.updateModel' />
-          </Button>
-          <Button>
-            <SnippetsOutlined /> <FormattedMessage id='customTasks.button.temporarySave' />
-          </Button>
           <Button type='primary' onClick={submit}>
             <SaveOutlined /> <FormattedMessage id='app.button.save' />
           </Button>
         </div>
       </div>
+      <Button
+        type={'dashed'}
+        style={{ position: 'absolute', top: 24, right: 24 }}
+        onClick={() => {
+          dispatch({ type: 'customTask/initPage' });
+        }}
+      >
+        <RedoOutlined /> <FormattedMessage id='customTasks.button.updateModel' />
+      </Button>
     </div>
   );
 };

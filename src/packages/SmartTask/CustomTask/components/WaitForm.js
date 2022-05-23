@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Button, Form, Input, InputNumber, Switch } from 'antd';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import StandbyConditions from '../FormComponent/StandbyConditions';
 import styles from '../customTask.module.less';
@@ -111,7 +111,7 @@ const WaitForm = (props) => {
                           onClick={() => remove(field.name)}
                           style={DynamicButton}
                         >
-                          <MinusOutlined />
+                          <DeleteOutlined />
                         </Button>
                       ) : null}
                     </div>

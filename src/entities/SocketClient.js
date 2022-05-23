@@ -1,6 +1,6 @@
 import Stomp from 'stompjs';
-import { formatMessage, isStrictNull } from '@/utils/util';
 import { message, notification } from 'antd';
+import { formatMessage, isStrictNull } from '@/utils/util';
 
 const SOCKET_RECONNECT_MESSAGE_ID = 'SOCKET_RECONNECT_MESSAGE_ID';
 class SocketClient {
@@ -14,7 +14,7 @@ class SocketClient {
     this.client = null;
     this.unsubscribeueueQueue = [];
     this.reconnectable = true; // 标记是否可以重连
-    this.isReconnecting = false; // 标记是否正在重连
+    this.monitor = false; // 是否已经订阅了监控页面的topic
   }
 
   getInstance() {
@@ -44,7 +44,6 @@ class SocketClient {
   }
 
   onConnect() {
-    this.isReconnecting = false;
     message.success({
       content: formatMessage({ id: 'app.socket.reConnected' }),
       key: SOCKET_RECONNECT_MESSAGE_ID,
@@ -59,22 +58,24 @@ class SocketClient {
       const p = JSON.parse(response.body);
       if (this.notificationQuestion) this.notificationQuestion(p);
     });
+
+    if (this.monitor) {
+      this.applyMonitorRegistration();
+    }
   }
 
   onError(errorMessage) {
     console.error(`[Socket]: ${errorMessage}`);
-    this.reconnectable = true;
     if (
       this.reconnectable &&
-      !this.isReconnecting &&
       typeof errorMessage === 'string' &&
       errorMessage.indexOf('Whoops! Lost connection') > -1
     ) {
-      this.isReconnecting = true;
       message.loading({
         content: formatMessage({ id: 'app.socket.reconnecting' }),
         key: SOCKET_RECONNECT_MESSAGE_ID,
       });
+      this.reconnectable = true;
       this.client = null;
       this.connect();
     } else if (errorMessage?.body?.indexOf('Access refused for user') > -1) {
@@ -96,6 +97,7 @@ class SocketClient {
 
   // 只有在监控页面才会使用到以下topic
   applyMonitorRegistration() {
+    this.monitor = true;
     const sectionId = window.localStorage.getItem('sectionId');
     let unsubscription;
 
@@ -204,6 +206,7 @@ class SocketClient {
   }
 
   cancelMonitorRegistration() {
+    this.monitor = false;
     this.unsubscribeueueQueue.map((func) => {
       if (typeof func === 'function') {
         func();
