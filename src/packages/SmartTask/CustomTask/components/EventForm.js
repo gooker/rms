@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Form, Input, Switch } from 'antd';
-import {formatMessage } from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import CodeEditor from '@/components/CodeEditor';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
@@ -60,6 +60,7 @@ const EventForm = (props) => {
         {...FormLayout}
         name={[code, 'skip']}
         initialValue={false}
+        valuePropName={'checked'}
         label={formatMessage({ id: 'customTask.form.skip' })}
       >
         <Switch />

@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
-import { forIn, sortBy, findIndex } from 'lodash';
-import { isStrictNull, formatMessage, dealResponse, sortLanguages } from '@/utils/util';
+import { findIndex, forIn, sortBy } from 'lodash';
+import { dealResponse, formatMessage, isStrictNull, sortLanguages } from '@/utils/util';
 import { getSysLang } from '@/services/translator';
 
 export async function getSystemLanguage() {
@@ -24,15 +24,15 @@ export function exportTranslate(allShowData, key, appcode, showLanguage) {
     custom: formatMessage({ id: 'translator.languageManage.custom' }),
   };
   const data_ = allShowData.map((record) => {
-    const currentlangMap = {};
+    const currentLangMap = {};
     forIn(record.languageMap, (value, key) => {
       if (showLanguage.includes(key)) {
-        currentlangMap[key] = value;
+        currentLangMap[key] = value;
       }
     });
     return {
       languageKey: record.languageKey,
-      ...currentlangMap,
+      ...currentLangMap,
     };
   });
   const textlang = formatMessage({ id: 'translator.languageManage.langPackage' });

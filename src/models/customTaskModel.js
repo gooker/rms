@@ -17,6 +17,7 @@ export default {
 
     modelParams: null, // 配置参数数据
     modelLocks: null, // 业务可锁资源
+    variable: {}, // 自定义任务使用的变量
   },
 
   reducers: {
@@ -24,6 +25,12 @@ export default {
       return {
         ...state,
         ...payload,
+      };
+    },
+    updateVariable(state, { payload }) {
+      return {
+        ...state,
+        variable: payload,
       };
     },
     saveCustomTaskList(state, { payload }) {

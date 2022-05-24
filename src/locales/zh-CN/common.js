@@ -137,6 +137,7 @@ export default {
   'app.map.zone': '区域',
   'app.map.label': '区域标签',
   'app.map.cell': '点位',
+  'app.map.cellGroup': '点位组',
   'app.map.route': '路线',
   'app.map.view': '显示',
   'app.map.function': '功能',
@@ -157,6 +158,10 @@ export default {
   'app.map.navigationCell': '导航点',
   'app.map.landCoordinator': '物理坐标',
   'app.map.naviCoordinator': '导航坐标',
+
+  // 场景元素
+  'app.object.load': '载具',
+  'app.object.loadGroup': '载具组',
 
   // 方向
   'app.direction': '方向',

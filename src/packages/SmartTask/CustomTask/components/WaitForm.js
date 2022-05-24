@@ -70,18 +70,6 @@ const WaitForm = (props) => {
       </Form.Item>
       {/* --------------------------------------------------------------- */}
 
-      {/* 可自动退出待命去充电 */}
-      {/*<Form.Item*/}
-      {/*  hidden={hidden}*/}
-      {/*  {...formItemLayout}*/}
-      {/*  name={[code, 'agvWaitTask', 'robotCanCharge']}*/}
-      {/*  valuePropName={'checked'}*/}
-      {/*  initialValue={true}*/}
-      {/*  label={formatMessage({ id: 'customTask.form.robotAutoCharge' })}*/}
-      {/*>*/}
-      {/*  <Switch />*/}
-      {/*</Form.Item>*/}
-
       {/* 等待时间 */}
       <Form.Item
         hidden={hidden}
@@ -131,6 +119,18 @@ const WaitForm = (props) => {
         </div>
       </Form.Item>
 
+      {/* 可自动退出待命去充电 */}
+      <Form.Item
+        hidden={hidden}
+        {...formItemLayout}
+        name={[code, 'agvWaitTask', 'robotCanCharge']}
+        valuePropName={'checked'}
+        initialValue={true}
+        label={formatMessage({ id: 'customTask.form.robotAutoCharge' })}
+      >
+        <Switch />
+      </Form.Item>
+
       {/* 是否去接任务点  */}
       <Form.Item
         hidden={hidden}
@@ -140,15 +140,15 @@ const WaitForm = (props) => {
             checked={goToPickupPoint}
             onChange={(ev) => {
               setGotoPickupPoint(ev.target.checked);
-              form.setFieldsValue({ [code]: { goToPointForPickupTask: null } });
+              form.setFieldsValue({ [code]: { waitTaskCell: null } });
             }}
           >
-            <FormattedMessage id='customTask.form.goToPointForPickupTask' />
+            <FormattedMessage id='customTask.form.waitTaskCell' />
           </Checkbox>
         }
       >
         {goToPickupPoint && (
-          <Form.List name={[code, 'goToPointForPickupTask']} initialValue={[{}]}>
+          <Form.List name={[code, 'waitTaskCell']} initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <>
                 {fields.map((field, index) => (

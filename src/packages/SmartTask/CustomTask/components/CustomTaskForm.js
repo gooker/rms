@@ -11,11 +11,12 @@ import {
 } from '@ant-design/icons';
 import { useMemoizedFn } from 'ahooks';
 import update from 'immutability-helper';
-import { findIndex, isEmpty } from 'lodash';
+import { findIndex } from 'lodash';
 import { Container } from 'react-smooth-dnd';
-import { customTaskApplyDrag, formatMessage, getRandomString, isNull } from '@/utils/util';
+import { customTaskApplyDrag, formatMessage, getRandomString } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { CustomType } from '../customTaskConfig';
+import { getInitialTaskSteps, isStandardTab, spliceUselessValue } from '../customTaskUtil';
 import { ModelTypeFieldMap, PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -49,34 +50,6 @@ const CustomTaskForm = (props) => {
     setTaskSteps(getInitialTaskSteps());
   }, []);
 
-  function getInitialTaskSteps() {
-    return [
-      {
-        type: CustomType.BASE,
-        code: CustomType.BASE,
-        label: formatMessage({ id: 'customTask.type.BASE' }),
-      },
-      {
-        type: CustomType.START,
-        code: CustomType.START,
-        label: formatMessage({ id: 'customTask.type.START' }),
-      },
-      {
-        type: CustomType.END,
-        code: CustomType.END,
-        label: formatMessage({ id: 'customTask.type.END' }),
-      },
-    ];
-  }
-
-  function isStandardTab(type) {
-    return [CustomType.BASE, CustomType.START, CustomType.END].includes(type);
-  }
-
-  function spliceUselessValue(list) {
-    return list.filter((item) => !(isEmpty(item) || isNull(item)));
-  }
-
   function addTaskFlowNode({ key }) {
     // 加在倒数第二个位置
     const step = {
@@ -90,7 +63,6 @@ const CustomTaskForm = (props) => {
     setCurrentCode(step.code);
   }
 
-  // 删除 “任务流程” 栏的某一节点
   function deleteTaskFlowNode(index) {
     RmsConfirm({
       content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
@@ -101,6 +73,34 @@ const CustomTaskForm = (props) => {
         setCurrentCode(newTaskSteps[index - 1].code);
       },
     });
+  }
+
+  function onDropInTaskFlow(dropResult) {
+    const { removedIndex, addedIndex, payload } = dropResult;
+
+    const startIndex = findIndex(taskSteps, { type: CustomType.START });
+    const endIndex = findIndex(taskSteps, { type: CustomType.END });
+    let jumpToDrop = false; // 是否立即跳转到拖拽的节点表单
+
+    // 如果payload存在, 就是新增节点
+    if (payload) {
+      jumpToDrop = true;
+      // 节点只能在”开始“和”结束“之间
+      if (addedIndex <= startIndex || addedIndex > endIndex) {
+        return;
+      }
+    } else {
+      // 在“任务流程“栏拖拽, 理由同上
+      if (addedIndex <= startIndex || addedIndex + 1 > endIndex) {
+        return;
+      }
+    }
+    if (removedIndex !== null || addedIndex !== null) {
+      let newTaskSteps = [...taskSteps];
+      newTaskSteps = customTaskApplyDrag(newTaskSteps, dropResult);
+      jumpToDrop && setCurrentCode(newTaskSteps[addedIndex].code);
+      setTaskSteps(newTaskSteps);
+    }
   }
 
   function gotoListPage() {
@@ -115,6 +115,72 @@ const CustomTaskForm = (props) => {
         dispatch({ type: 'customTask/saveEditingRow', payload: null });
         dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
       },
+    });
+  }
+
+  function renderFormBody() {
+    return taskSteps.map((step, index) => {
+      if (!step) return null;
+      switch (step.type) {
+        case CustomType.BASE:
+          return (
+            <InformationForm key={index} hidden={currentCode !== step.code} isEdit={!!editingRow} />
+          );
+        case CustomType.START:
+          return (
+            <StartForm
+              key={index}
+              form={form}
+              code={step.code}
+              type={step.type}
+              hidden={currentCode !== step.code}
+            />
+          );
+        case CustomType.END:
+          return (
+            <EndForm
+              key={index}
+              form={form}
+              code={step.code}
+              type={step.type}
+              hidden={currentCode !== step.code}
+            />
+          );
+        case CustomType.ACTION:
+          return (
+            <SubTaskForm
+              key={index}
+              form={form}
+              code={step.code}
+              type={step.type}
+              hidden={currentCode !== step.code}
+              updateTab={updateTabName}
+            />
+          );
+        case CustomType.WAIT:
+          return (
+            <WaitForm
+              key={index}
+              form={form}
+              hidden={currentCode !== step.code}
+              code={step.code}
+              type={step.type}
+              updateTab={updateTabName}
+            />
+          );
+        case CustomType.PODSTATUS:
+          return (
+            <PodSimulation
+              key={index}
+              form={form}
+              code={step.code}
+              type={step.type}
+              hidden={currentCode !== step.code}
+            />
+          );
+        default:
+          return null;
+      }
     });
   }
 
@@ -195,101 +261,6 @@ const CustomTaskForm = (props) => {
     } catch (error) {
       return null;
     }
-  }
-
-  function onDropInTaskFlow(dropResult) {
-    const { removedIndex, addedIndex, payload } = dropResult;
-
-    const startIndex = findIndex(taskSteps, { type: CustomType.START });
-    const endIndex = findIndex(taskSteps, { type: CustomType.END });
-    let jumpToDrop = false; // 是否立即跳转到拖拽的节点表单
-
-    // 如果payload存在, 就是新增节点
-    if (payload) {
-      jumpToDrop = true;
-      // 节点只能在”开始“和”结束“之间
-      if (addedIndex <= startIndex || addedIndex > endIndex) {
-        return;
-      }
-    } else {
-      // 在“任务流程“栏拖拽, 理由同上
-      if (addedIndex <= startIndex || addedIndex + 1 > endIndex) {
-        return;
-      }
-    }
-    if (removedIndex !== null || addedIndex !== null) {
-      let newTaskSteps = [...taskSteps];
-      newTaskSteps = customTaskApplyDrag(newTaskSteps, dropResult);
-      jumpToDrop && setCurrentCode(newTaskSteps[addedIndex].code);
-      setTaskSteps(newTaskSteps);
-    }
-  }
-
-  // 渲染表单主体
-  function renderFormBody() {
-    return taskSteps.map((step, index) => {
-      if (!step) return null;
-      switch (step.type) {
-        case CustomType.BASE:
-          return (
-            <InformationForm key={index} hidden={currentCode !== step.code} isEdit={!!editingRow} />
-          );
-        case CustomType.START:
-          return (
-            <StartForm
-              key={index}
-              form={form}
-              code={step.code}
-              type={step.type}
-              hidden={currentCode !== step.code}
-            />
-          );
-        case CustomType.END:
-          return (
-            <EndForm
-              key={index}
-              form={form}
-              code={step.code}
-              type={step.type}
-              hidden={currentCode !== step.code}
-            />
-          );
-        case CustomType.ACTION:
-          return (
-            <SubTaskForm
-              key={index}
-              form={form}
-              code={step.code}
-              type={step.type}
-              hidden={currentCode !== step.code}
-              updateTab={updateTabName}
-            />
-          );
-        case CustomType.WAIT:
-          return (
-            <WaitForm
-              key={index}
-              form={form}
-              hidden={currentCode !== step.code}
-              code={step.code}
-              type={step.type}
-              updateTab={updateTabName}
-            />
-          );
-        case CustomType.PODSTATUS:
-          return (
-            <PodSimulation
-              key={index}
-              form={form}
-              code={step.code}
-              type={step.type}
-              hidden={currentCode !== step.code}
-            />
-          );
-        default:
-          return null;
-      }
-    });
   }
 
   async function submit() {

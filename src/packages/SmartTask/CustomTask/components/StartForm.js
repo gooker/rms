@@ -3,26 +3,13 @@ import { connect } from '@/utils/RmsDva';
 import { Checkbox, Form, Input } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import RobotSelector from '../components/RobotSelector';
 import style from '../customTask.module.less';
-import RobotSelector from '@/packages/SmartTask/CustomTask/components/RobotSelector';
 
 const { formItemLayout } = getFormLayout(6, 18);
 
 const StartForm = (props) => {
-  const { form, code, type, hidden } = props;
-
-  const OptionsData = [
-    {
-      code: 'AGV',
-      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
-      value: {},
-    },
-    {
-      code: 'AGV_GROUP',
-      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-      value: {},
-    },
-  ];
+  const { code, type, hidden } = props;
 
   return (
     <>
@@ -55,7 +42,7 @@ const StartForm = (props) => {
         initialValue={{ type: 'AUTO', code: [] }}
         label={<FormattedMessage id='customTask.form.robot' />}
       >
-        <RobotSelector />
+        <RobotSelector subTaskCode={code} />
       </Form.Item>
 
       {/* 约束 */}

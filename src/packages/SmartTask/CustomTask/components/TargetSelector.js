@@ -36,14 +36,20 @@ const TargetSelector = (props) => {
         <Select.Option value={'CELL'}>
           <FormattedMessage id={'app.map.cell'} />
         </Select.Option>
+        <Select.Option value={'CELL_GROUP'}>
+          <FormattedMessage id={'app.map.cellGroup'} />
+        </Select.Option>
         <Select.Option value={'STATION'}>
           <FormattedMessage id={'app.map.station'} />
         </Select.Option>
         <Select.Option value={'STATION_GROUP'}>
           <FormattedMessage id={'app.map.stationGroup'} />
         </Select.Option>
-        <Select.Option value={'STORE_GROUP'}>
-          <FormattedMessage id={'editor.cellType.storageGroup'} />
+        <Select.Option value={'LOAD'}>
+          <FormattedMessage id={'app.object.load'} />
+        </Select.Option>
+        <Select.Option value={'LOAD_GROUP'}>
+          <FormattedMessage id={'app.object.loadGroup'} />
         </Select.Option>
       </Select>
 
@@ -70,8 +76,11 @@ const TargetSelector = (props) => {
 };
 export default connect(({ customTask }) => ({
   modelParams: customTask.modelParams?.TARGET || {
+    CELL: [],
+    CELL_GROUP: [],
     STATION: [],
     STATION_GROUP: [],
-    STORE_GROUP: [],
+    LOAD: [],
+    LOAD_GROUP: [],
   },
 }))(memo(TargetSelector));

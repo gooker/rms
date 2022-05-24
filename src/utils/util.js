@@ -1,12 +1,12 @@
 import React from 'react';
-import { Tooltip, Row, Button, Input, message, Form, Tag, InputNumber, Select, Switch } from 'antd';
-import { isPlainObject, find, isEqual as deepEqual, cloneDeep } from 'lodash';
-import { InfoOutlined, ReadOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Form, Input, InputNumber, message, Row, Select, Switch, Tag, Tooltip } from 'antd';
+import { cloneDeep, find, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { AgvStateColor, Colors, ToteOffset, ModelTypeFieldMap } from '@/config/consts';
+import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -213,7 +213,7 @@ export function isStrictNull(value) {
 
 export function getContentHeight() {
   const layoutContentDOM = document.getElementById('layoutContent');
-  return layoutContentDOM.getBoundingClientRect().height;
+  return layoutContentDOM?.getBoundingClientRect()?.height || 0;
 }
 
 // 根据direction, distance对obj的坐标进行更新操作

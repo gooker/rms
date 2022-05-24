@@ -97,12 +97,7 @@ const TaskResourceLock = (props) => {
         </span>
       </div>
       <div>{renderBody()}</div>
-      <Button
-        type={'dashed'}
-        onClick={addConfigRow}
-        style={{ width: '100%', marginTop: 8 }}
-        disabled={Object.keys(dataSource).length === currentValue.length}
-      >
+      <Button type={'dashed'} onClick={addConfigRow} style={{ width: '100%', marginTop: 8 }}>
         <PlusOutlined />
       </Button>
     </div>

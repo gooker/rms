@@ -1,6 +1,6 @@
 import React from 'react';
 import { Badge, Popover, Switch } from 'antd';
-import { FullscreenExitOutlined, FullscreenOutlined, BellOutlined } from '@ant-design/icons';
+import { BellOutlined, FullscreenExitOutlined, FullscreenOutlined } from '@ant-design/icons';
 import { withRouter } from 'react-router-dom';
 import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
@@ -34,7 +34,7 @@ class Header extends React.Component {
   };
 
   componentDidMount() {
-    this.getHAInformation();
+    // this.getHAInformation();
     const sessionValue = window.sessionStorage.getItem('showErrorNotification');
     const showErrorNotification = sessionValue === null ? true : JSON.parse(sessionValue);
     this.setState({ showErrorNotification });

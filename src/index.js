@@ -45,7 +45,9 @@ const DvaProvider = createRcsDva(dvaOption, models);
 
 ReactDOM.render(
   <DvaProvider>
+    {/*<ErrorBoundary>*/}
     <App />
+    {/*</ErrorBoundary>*/}
   </DvaProvider>,
   document.getElementById('root'),
 );

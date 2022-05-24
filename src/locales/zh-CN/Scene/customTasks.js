@@ -38,6 +38,7 @@ export default {
   'customTasks.requestBodyDemo': '请求体示例',
   'customTasks.cannotEdit': '不可更改',
   'customTasks.form.dependencies': '任务依赖',
+  'customTasks.form.useVariable': '使用变量',
 
   // 任务节点名称
   'customTask.type.BASE': '基础信息',
@@ -56,12 +57,13 @@ export default {
   'customTask.form.limit.podWithStandbyAgv': '接任务约束: 要求的载具ID必须有待命车辆持有',
 
   // 结束
-  'customTask.form.robotWait': '进入待命状态',
   'customTask.form.agvWaitTask': '小车待命',
   'customTask.form.agvTaskTypes': '可接任务类型',
   'customTask.form.appointResources': '可接资源任务',
   'customTask.form.robotAutoCharge': '可自动退出待命去充电',
-  'customTask.form.backZone': '无任务返回区域',
+  'customTask.form.backZone': '返回区域',
+  'customTask.form.heavyBackZone': '重车返回区域',
+  'customTask.form.robotNeedCharge': '是否需要充电',
 
   // 子任务
   'customTask.form.target': '目标',
@@ -82,7 +84,7 @@ export default {
   'customTask.form.beforeLastActions': '倒数第二动作',
   'customTask.form.lastActions': '终点动作',
   'customTask.form.programCode': '任务编程',
-  'customTask.form.goToPointForPickupTask': '是否去接任务点',
+  'customTask.form.waitTaskCell': '是否去接任务点',
 
   //// 资源锁 ////
   'customTask.lock.resourceLock': '资源锁',

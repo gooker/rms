@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Form, Input, Rate } from 'antd';
-import { formatMessage, getRandomString } from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import styles from '../customTask.module.less';
 
 const FormLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
@@ -16,9 +16,9 @@ const InformationForm = (props) => {
     return Promise.reject(new Error(formatMessage({ id: 'customTask.form.name.duplicate' })));
   }
 
-  const nameRuls = [{ required: true }];
+  const nameRules = [{ required: true }];
   if (!isEdit) {
-    nameRuls.push({ validator: validateDuplicateName });
+    nameRules.push({ validator: validateDuplicateName });
   }
   return (
     <>
@@ -27,8 +27,7 @@ const InformationForm = (props) => {
         {...FormLayout}
         name="name"
         label={formatMessage({ id: 'app.common.name' })}
-        initialValue={`cst_${getRandomString(6)}`}
-        rules={nameRuls}
+        rules={nameRules}
       >
         <Input style={{ width: 300 }} />
       </Form.Item>

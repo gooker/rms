@@ -51,7 +51,7 @@ const StandbyConditions = (props) => {
       </Form.Item>
 
       {/* 指定资源 */}
-      <Form.List name={'appointResources'} initialValue={[{}]}>
+      <Form.List name={'appointResources'}>
         {(fields, { add, remove }) => (
           <>
             {fields.map((field, index) => (

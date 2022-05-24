@@ -1,7 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Form, Input, Radio, Switch } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull, formatMessage } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 
 const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
@@ -121,6 +121,7 @@ const PodSimulationForm = (props) => {
         {...FormLayout}
         name={[code, 'skip']}
         initialValue={false}
+        valuePropName={'checked'}
         label={formatMessage({ id: 'customTask.form.skip' })}
       >
         <Switch />

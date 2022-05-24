@@ -1,5 +1,5 @@
 import intl from 'react-intl-universal';
-import { dealResponse, isStrictNull, extractNameSpaceInfoFromEnvs } from '@/utils/util';
+import { dealResponse, extractNameSpaceInfoFromEnvs, isStrictNull } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import requestAPI from '@/utils/requestAPI';
 import { getTranslationByCode } from '@/services/translator';
@@ -9,34 +9,48 @@ import { find } from 'lodash';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
 
 export async function initI18nInstance() {
-  const language = getLanguage();
-  const systemLanguage = await getSystemLanguage();
-  window.$$dispatch({ type: 'global/saveSystemLanguage', payload: systemLanguage });
+  return new Promise(async (resolve) => {
+    const language = getLanguage();
 
-  // 1. 读取本地国际化数据
-  const locales = {};
-  try {
-    locales[language] = require(`@/locales/${language}`).default;
-  } catch (e) {
-    locales[language] = {};
-  }
-
-  // 2. 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
-  const i18nData = await getTranslationByCode('FE');
-  if (!dealResponse(i18nData, false, false) && Array.isArray(i18nData?.Custom)) {
-    const { Custom } = i18nData;
-    Custom.forEach(({ languageKey, languageMap }) => {
-      locales[language][languageKey] = languageMap[language];
-    });
-
-    //  远程覆盖本地
+    // 1. 读取本地国际化数据
+    const locales = {};
+    try {
+      locales[language] = require(`@/locales/${language}`).default;
+    } catch (e) {
+      locales[language] = {};
+    }
     await intl.init({ currentLocale: language, locales });
-  } else {
-    // 用本地国际化数据先初始化
-    console.warn('Failed to fetch remote I18N Data, will use local I18n Data');
-    await intl.init({ currentLocale: language, locales });
-  }
-  return true;
+
+    // 2. 批量获取国际化相关数据
+    const [systemLanguage, i18nData] = await Promise.allSettled([
+      getSystemLanguage(),
+      getTranslationByCode('FE'),
+    ]);
+    if (systemLanguage.status === 'fulfilled' && !dealResponse(systemLanguage.value)) {
+      window.$$dispatch({ type: 'global/saveSystemLanguage', payload: systemLanguage.value });
+    }
+
+    // 2.1 拉取远程国际化数据并进行merge操作 --> 远程覆盖本地
+    if (
+      i18nData.status === 'fulfilled' &&
+      !dealResponse(i18nData.value, false, false) &&
+      Array.isArray(i18nData.value.Custom)
+    ) {
+      const { Custom } = i18nData.value;
+      Custom.forEach(({ languageKey, languageMap }) => {
+        locales[language][languageKey] = languageMap[language];
+      });
+
+      //  远程覆盖本地
+      await intl.init({ currentLocale: language, locales });
+    } else {
+      // 用本地国际化数据先初始化
+      console.warn('Failed to fetch remote I18N Data, will use local I18n Data');
+      await intl.init({ currentLocale: language, locales });
+    }
+
+    resolve();
+  });
 }
 
 export function handleNameSpace(dispatch) {
