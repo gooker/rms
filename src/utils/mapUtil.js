@@ -1637,3 +1637,14 @@ export function getArrowDistance(distance) {
   }
   return 500;
 }
+
+//
+export function getLockCellBounds(dimension, angle) {
+  const { front, rear, left, right } = dimension;
+  let width = null;
+  let height = null;
+  // if ([0, 180].includes(angle)) {
+  width = Math.abs(right - left);
+  height = Math.abs(rear - front);
+  return { width, height };
+}

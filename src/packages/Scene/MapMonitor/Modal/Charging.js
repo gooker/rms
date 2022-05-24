@@ -24,7 +24,7 @@ const Charging = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { robotId: values.robotId });
+        const agv = find(allAGVs, { agvId: values.robotId });
         if (agv) {
           agvTryToCharge(agv.robotType, { ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {

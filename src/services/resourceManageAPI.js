@@ -32,7 +32,11 @@ export function registerRobot(param) {
   });
 }
 
-// 添加发现
+/*
+ *1.注册小车:添加发现
+ *2.模拟器新增小车
+ */
+
 export function findRobot(param) {
   return request(`/${NameSpace.Platform}/agv/findAGV`, {
     method: 'POST',
@@ -178,7 +182,6 @@ export function saveDeviceMonitors(param) {
   });
 }
 
-
 // 保存设备类型 配置信息
 export function saveDeviceTypeConfigs(param) {
   return request(`/${NameSpace.Platform}/device/saveDeviceTypeConfigs`, {
@@ -194,7 +197,6 @@ export function saveDeviceTypeActions(param) {
     data: param,
   });
 }
-
 
 export function handleDevice(param) {
   return request(`/${NameSpace.Platform}/device/action/handle`, {

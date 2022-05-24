@@ -7,8 +7,8 @@ import { SmoothGraphics } from '@pixi/graphics-smooth';
 export default class GeoLock extends PIXI.Sprite {
   constructor(props) {
     super();
-    this.x = props.posX;
-    this.y = props.posY;
+    this.x = props.x;
+    this.y = props.y;
     this.robotId = props.robotId;
     this.$width = props.width;
     this.$height = props.height;

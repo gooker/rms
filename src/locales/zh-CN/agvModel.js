@@ -20,6 +20,7 @@ export default {
   // 小车状态
   'app.agvStatus': '小车状态',
   'app.agvState.available': '可用',
+  'app.agvState.Idle': '空闲',
   'app.agvState.StandBy': '待命',
   'app.agvState.Working': '任务中',
   'app.agvState.Charging': '充电中',

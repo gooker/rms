@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Input, Select, Checkbox, Card, message } from 'antd';
+import { Form, Button, Input, Select, Checkbox, Card, message, Divider } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { fetchSorterToThrow } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
@@ -57,7 +57,7 @@ const SorterThrow = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(500, 300)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(500, 500)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.sorterThrow'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -97,11 +97,15 @@ const SorterThrow = (props) => {
           </Form.Item>
 
           {checkBoxValue.map((item) => (
-            <Card
+            <div
               key={item}
               title={formatMessage({ id: `monitor.dumpCargo.${item}` })}
-              style={{ marginTop: 20 }}
+              className={styles.sorterThrow}
+              style={{ marginTop: 20, width: '100%' }}
             >
+              <Divider orientation="left">
+                {formatMessage({ id: `monitor.dumpCargo.${item}` })}
+              </Divider>
               <Form.Item
                 name={[item, 'goods']}
                 label={formatMessage({ id: 'monitor.operate.goodsCode' })}
@@ -148,7 +152,7 @@ const SorterThrow = (props) => {
                   </Select.Option>
                 </Select>
               </Form.Item>
-            </Card>
+            </div>
           ))}
           <Form.Item {...formItemLayoutNoLabel} style={{ marginTop: 35 }}>
             <Button type={'primary'} onClick={sendCommand} loading={executing} disabled={executing}>

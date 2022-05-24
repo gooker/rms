@@ -37,11 +37,11 @@ const LocationTracking = (props) => {
               <Form.Item name={'trackingCar'} initialValue={trackingCar} noStyle>
                 <Select size="small" optionLabelProp="value">
                   {allAGVs?.map((record) => (
-                    <Select.Option value={record.robotId} key={record.robotId}>
+                    <Select.Option value={record.agvId} key={record.agvId}>
                       <Row>
-                        <Col span={12}>{record.robotId}</Col>
+                        <Col span={12}>{record.agvId}</Col>
                         <Col span={12} style={{ textAlign: 'end' }}>
-                          <FormattedMessage id={Dictionary('agvStatus', record.agvStatus)} />
+                          <FormattedMessage id={Dictionary('agvStatus', record?.agvWorkStatusDTO?.agvStatus)} />
                         </Col>
                       </Row>
                     </Select.Option>

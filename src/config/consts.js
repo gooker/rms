@@ -39,6 +39,7 @@ export const AGVState = {
 // 小车状态颜色
 export const AgvStateColor = {
   available: '#7ac143',
+  Idle: '#7ac143',
   StandBy: '#0092FF',
   Working: '#2F8949',
   Charging: '#eba954',

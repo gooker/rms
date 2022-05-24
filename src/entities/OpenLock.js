@@ -7,8 +7,8 @@ import { SmoothGraphics } from '@pixi/graphics-smooth';
 export default class OpenLock extends PIXI.Container {
   constructor(props) {
     super();
-    this.x = props.posX;
-    this.y = props.posY;
+    this.x = props.x;
+    this.y = props.y;
     this.robotId = props.robotId;
     this.openAngle = props.openAngle;
     this.color = props.color;

@@ -104,8 +104,8 @@ const ToteViewControlComponent = (props) => {
                 <Form.Item noStyle name={'toteTaskRealtimePath'}>
                   <Select size="small" style={{ width: 150 }}>
                     {allAGVs.map((element) => (
-                      <Select.Option key={element.robotId} value={element.robotId}>
-                        {element.robotId}
+                      <Select.Option key={element.agvId} value={element.agvId}>
+                        {element.agvId}
                       </Select.Option>
                     ))}
                   </Select>

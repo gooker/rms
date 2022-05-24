@@ -114,6 +114,17 @@ export function isStandardApiResponse(response) {
   return response.hasOwnProperty('code') && response.hasOwnProperty('message');
 }
 
+export function parseUrlParams(url, params) {
+  const paramsArray = [];
+  Object.keys(params).forEach((key) => params[key] && paramsArray.push(`${key}=${params[key]}`));
+  if (url.search(/\?/) === -1) {
+    url += `?${paramsArray.join('&')}`;
+  } else {
+    url += `&${paramsArray.join('&')}`;
+  }
+  return url;
+}
+
 export function dealResponse(response, successMessage, failedMessage) {
   // 如果后台发错误，那么response对象就会是标准的后台返回对象, {code:'-1', data:***, message:****}
   const failNotify = failedMessage !== false;

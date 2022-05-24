@@ -100,6 +100,7 @@ export default {
 
   'monitor.view.selectAgvall': '全部',
   'monitor.view.lockView': '显示锁格',
+  'monitor.view.logicLocked': '逻辑区路径锁格',
   'monitor.view.lock.path': '一般锁',
   'monitor.view.lock.rotation': '旋转锁',
   'monitor.view.lock.special': '特殊锁',
