@@ -44,7 +44,7 @@ const EquipmentListTools = (props) => {
   function cancelRegister() {
     const ids = selectedRows.map(({ deviceID }) => deviceID);
     RmsConfirm({
-      content: '确定取消注册该设备吗',
+      content: '确定注销该设备吗',
       onOk: async () => {
         const response = await unRegisterDevice(ids);
         if (!dealResponse(response, 1)) {
@@ -87,7 +87,7 @@ const EquipmentListTools = (props) => {
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
-            <DisconnectOutlined /> 取消注册
+            <DisconnectOutlined /> 注销
           </Button>
 
           <Button>

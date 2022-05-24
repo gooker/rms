@@ -12,12 +12,11 @@ import CodeEditor from '@/components/CodeEditor';
 import TitleCard from '@/components/TitleCard';
 import TargetSelector from '../components/TargetSelector';
 
-const { Option, OptGroup } = Select;
 const { formItemLayout } = getFormLayout(6, 18);
 
 const SubTaskForm = (props) => {
   const { form, code, type, hidden, updateTab } = props;
-  const { routes, modelLocks, programing } = props;
+  const { routes, programing } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
 
   const [target, setTarget] = useState(null); // 目标区域
@@ -35,13 +34,13 @@ const SubTaskForm = (props) => {
         groupedRoutes[logicId][0].logicName
       }`;
       return (
-        <OptGroup key={logicId} label={label}>
+        <Select.OptGroup key={logicId} label={label}>
           {groupedRoutes[logicId].map((route) => (
-            <Option key={route.code} value={`${route.logicId}-${route.code}`}>
+            <Select.Option key={route.code} value={`${route.logicId}-${route.code}`}>
               {route.name}
-            </Option>
+            </Select.Option>
           ))}
-        </OptGroup>
+        </Select.OptGroup>
       );
     });
   }
@@ -88,7 +87,7 @@ const SubTaskForm = (props) => {
 
   // 保存配置弹窗中的内容
   function saveKeyPointAction(value) {
-    let setter = value;
+    let setter = value.length === 0 ? null : value;
     for (const pathItem of namePath.reverse()) {
       setter = { [pathItem]: setter };
     }
@@ -181,6 +180,7 @@ const SubTaskForm = (props) => {
         hidden={hidden}
         {...formItemLayout}
         name={[code, 'desc']}
+        initialValue={null}
         label={formatMessage({ id: 'app.common.description' })}
       >
         <Input style={{ width: 500 }} />
@@ -199,14 +199,14 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <TargetSelector subTaskCode={code} form={form} />
+        <TargetSelector showVar subTaskCode={code} form={form} />
       </Form.Item>
 
       {/* 载具方向 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={[code, 'targetAction', 'podAngle']}
+        name={[code, 'targetAction', 'loadAngle']}
         initialValue={null}
         label={formatMessage({ id: 'customTask.form.podAngle' })}
       >
@@ -228,7 +228,7 @@ const SubTaskForm = (props) => {
         <Form.Item
           hidden={hidden}
           {...formItemLayout}
-          name={[code, 'targetAction', 'operatorDirection']}
+          name={[code, 'targetAction', 'operatorAngle']}
           initialValue={null}
           label={formatMessage({ id: 'customTask.form.operatorDirection' })}
         >
@@ -301,6 +301,7 @@ const SubTaskForm = (props) => {
             hidden={hidden}
             {...formItemLayout}
             name={[code, 'targetAction', 'firstActions']}
+            initialValue={null}
             label={formatMessage({ id: 'customTask.form.firstActions' })}
           >
             {renderActionConfigButton([code, 'targetAction', 'firstActions'])}
@@ -311,6 +312,7 @@ const SubTaskForm = (props) => {
             hidden={hidden}
             {...formItemLayout}
             name={[code, 'targetAction', 'afterFirstActions']}
+            initialValue={null}
             label={formatMessage({ id: 'customTask.form.afterFirstActions' })}
           >
             {renderActionConfigButton([code, 'targetAction', 'afterFirstActions'])}
@@ -321,6 +323,7 @@ const SubTaskForm = (props) => {
             hidden={hidden}
             {...formItemLayout}
             name={[code, 'targetAction', 'beforeLastActions']}
+            initialValue={null}
             label={formatMessage({ id: 'customTask.form.beforeLastActions' })}
           >
             {renderActionConfigButton([code, 'targetAction', 'beforeLastActions'])}
@@ -331,6 +334,7 @@ const SubTaskForm = (props) => {
             hidden={hidden}
             {...formItemLayout}
             name={[code, 'targetAction', 'lastActions']}
+            initialValue={null}
             label={formatMessage({ id: 'customTask.form.lastActions' })}
           >
             {renderActionConfigButton([code, 'targetAction', 'lastActions'])}
@@ -411,7 +415,6 @@ const SubTaskForm = (props) => {
   );
 };
 export default connect(({ customTask, global }) => ({
-  modelLocks: customTask.modelLocks,
   routes: extractRoutes(customTask.mapData),
   programing: global.programing,
 }))(memo(SubTaskForm));

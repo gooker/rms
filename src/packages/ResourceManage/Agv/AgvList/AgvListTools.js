@@ -110,10 +110,10 @@ const AgvListTools = (props) => {
             <GroupOutlined /> 车辆分组
           </Button>
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
-            <DisconnectOutlined /> 取消注册
+            <DisconnectOutlined /> 注销
           </Button>
           <Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>
-            <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
+            <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />
           </Button>
           <Dropdown
             overlay={

@@ -39,37 +39,6 @@ const EndForm = (props) => {
       </Form.Item>
 
       {/* --------------------------------------------------------------- */}
-      {/* 返回区域 */}
-      <Form.Item
-        hidden={hidden}
-        label={formatMessage({ id: 'customTask.form.backZone' })}
-        {...formItemLayout}
-      >
-        <Form.List name={[code, 'backZone']} initialValue={[]}>
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map((field, index) => (
-                <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
-                  <Col>
-                    <Form.Item noStyle {...field}>
-                      <BackZoneSelector />
-                    </Form.Item>
-                  </Col>
-                  <Col style={{ display: 'flex', alignItems: 'center' }}>
-                    <Button onClick={() => remove(field.name)} style={DynamicButton}>
-                      <MinusOutlined />
-                    </Button>
-                  </Col>
-                </Row>
-              ))}
-              <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
-                <PlusOutlined />
-              </Button>
-            </>
-          )}
-        </Form.List>
-      </Form.Item>
-
       {/* 重车返回区域 */}
       <Form.Item
         hidden={hidden}
@@ -101,7 +70,38 @@ const EndForm = (props) => {
         </Form.List>
       </Form.Item>
 
-      {/* 是否需要充电 */}
+      {/* 返回区域 */}
+      <Form.Item
+        hidden={hidden}
+        label={formatMessage({ id: 'customTask.form.backZone' })}
+        {...formItemLayout}
+      >
+        <Form.List name={[code, 'backZone']} initialValue={[]}>
+          {(fields, { add, remove }) => (
+            <>
+              {fields.map((field, index) => (
+                <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
+                  <Col>
+                    <Form.Item noStyle {...field}>
+                      <BackZoneSelector />
+                    </Form.Item>
+                  </Col>
+                  <Col style={{ display: 'flex', alignItems: 'center' }}>
+                    <Button onClick={() => remove(field.name)} style={DynamicButton}>
+                      <MinusOutlined />
+                    </Button>
+                  </Col>
+                </Row>
+              ))}
+              <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                <PlusOutlined />
+              </Button>
+            </>
+          )}
+        </Form.List>
+      </Form.Item>
+
+      {/* 自动充电 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}

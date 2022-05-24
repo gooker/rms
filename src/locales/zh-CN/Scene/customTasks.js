@@ -61,9 +61,9 @@ export default {
   'customTask.form.agvTaskTypes': '可接任务类型',
   'customTask.form.appointResources': '可接资源任务',
   'customTask.form.robotAutoCharge': '可自动退出待命去充电',
-  'customTask.form.backZone': '返回区域',
-  'customTask.form.heavyBackZone': '重车返回区域',
-  'customTask.form.robotNeedCharge': '是否需要充电',
+  'customTask.form.backZone': '自动找停车点',
+  'customTask.form.heavyBackZone': '载具自动放回储位',
+  'customTask.form.robotNeedCharge': '自动充电',
 
   // 子任务
   'customTask.form.target': '目标',
