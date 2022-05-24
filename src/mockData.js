@@ -1369,53 +1369,70 @@ export const ProgramingConfigurationList = {
   ],
 };
 
-export const CustomParamType = {
-  AGV: {
-    TYPE: [
-      {
-        code: 'agvType',
-        ids: ['agvId'],
-        types: ['loadTypes'],
-      },
-    ],
-    GROUP: [
-      {
-        code: 'groupKey',
-        ids: ['agvIds'],
-        types: ['loadTypes'],
-      },
-    ],
+export const AgvModelData = [
+  {
+    code: 'agvType1',
+    ids: [1, 2, 3, 4],
+    types: ['loadA', 'loadB', 'loadC', 'loadD'],
   },
-  LOAD: {
-    TYPE: [
-      {
-        code: 'loadType',
-        ids: ['loadIds'],
-      },
-    ],
-    GROUP: [
-      {
-        code: 'groupKey',
-        ids: ['loadIds'],
-        types: ['loadTypes'],
-      },
-    ],
+  {
+    code: 'agvType2',
+    ids: [5, 6, 7, 8],
+    types: ['loadB'],
   },
-  TARGET: {
-    STORE_GROUP: [
-      {
-        code: 'groupKey',
-      },
-    ],
-    station: [
-      {
-        code: 'stationCode',
-      },
-    ],
-    STATION_GROUP: [
-      {
-        code: 'groupKey',
-      },
-    ],
+];
+
+export const AgvGroupModelData = [
+  {
+    code: 'group1',
+    ids: [1, 2, 3, 4],
+    types: ['loadA', 'loadB'],
   },
-};
+  {
+    code: 'group2',
+    ids: [5, 6, 7, 8],
+    types: ['loadC', 'loadD'],
+  },
+];
+
+export const LoadModelData = [
+  {
+    code: 'loadTypeA',
+    ids: ['loadTypeA1', 'loadTypeA2', 'loadTypeA3'],
+  },
+  {
+    code: 'loadTypeB',
+    ids: ['loadTypeB1', 'loadTypeB2', 'loadTypeB3'],
+  },
+  {
+    code: 'loadTypeC',
+    ids: ['loadTypeC1', 'loadTypeC2', 'loadTypeC3'],
+  },
+  {
+    code: 'loadTypeD',
+    ids: ['loadTypeD1', 'loadTypeD2', 'loadTypeD3'],
+  },
+];
+
+export const LoadGroupModelData = [
+  {
+    code: 'loadGroup1',
+    ids: ['loadIds'],
+    types: ['loadTypeA', 'loadTypeB', 'loadTypeD'],
+  },
+  {
+    code: 'loadGroup2',
+    ids: ['loadIds'],
+    types: ['loadTypeA', 'loadTypeB'],
+  },
+  {
+    code: 'loadGroup3',
+    ids: ['loadIds'],
+    types: ['loadTypeA', 'loadTypeE'],
+  },
+  {
+    code: 'loadGroup4',
+    ids: ['loadIds'],
+    types: ['loadTypeB', 'loadTypeE'],
+  },
+];

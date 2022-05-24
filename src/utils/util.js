@@ -211,6 +211,10 @@ export function isStrictNull(value) {
   return isNull(value) || value === '';
 }
 
+export function isSubArray(childArr, fatherArr) {
+  return childArr.every((v) => fatherArr.includes(v));
+}
+
 export function getContentHeight() {
   const layoutContentDOM = document.getElementById('layoutContent');
   return layoutContentDOM?.getBoundingClientRect()?.height || 0;

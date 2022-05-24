@@ -15,8 +15,8 @@ export default {
     customTaskList: [],
     editingRow: null,
 
-    modelParams: null, // 配置参数数据
     modelLocks: null, // 业务可锁资源
+    modelParams: null, // 配置参数数据
     variable: {}, // 自定义任务使用的变量
   },
 

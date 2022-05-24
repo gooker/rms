@@ -199,7 +199,7 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <TargetSelector />
+        <TargetSelector subTaskCode={code} form={form} />
       </Form.Item>
 
       {/* 载具方向 */}
