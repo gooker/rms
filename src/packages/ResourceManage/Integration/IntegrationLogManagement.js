@@ -1,11 +1,15 @@
 import React, { memo } from 'react';
+import { connect } from '@/utils/RmsDva';
+import { NameSpace } from '@/config/config';
+import { getDomainNameByUrl } from '@/utils/util';
 import commonStyle from '@/common.module.less';
 
 const IntegrationLogManagement = (props) => {
-  const {} = props;
+  const { currentUser } = props;
+  const currentUrl = `/${NameSpace.Platform}/log-explorer/file-explorer?dir=/Users/${currentUser.username}/logs`;
   const currentData = {
     name: '日志浏览',
-    url: 'http://192.168.0.80:8088/platform/log-explorer/file-explorer?dir=/Users/wangrifeng/logs',
+    url: getDomainNameByUrl(currentUrl),
     key: 'logView',
   };
   const iframeLoaded = () => {
@@ -48,4 +52,6 @@ const IntegrationLogManagement = (props) => {
     </div>
   );
 };
-export default memo(IntegrationLogManagement);
+export default connect(({ user }) => ({
+  currentUser: user.currentUser,
+}))(memo(IntegrationLogManagement));

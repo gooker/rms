@@ -71,7 +71,7 @@ const RemoteControl = (props) => {
       default:
         break;
     }
-    const agv = find(allAGVs, { robotId });
+    const agv = find(allAGVs, { agvId:robotId });
     if (agv) {
       agvRemoteControl(agv.robotType, params).then((response) => {
         if (dealResponse(response)) {
@@ -91,7 +91,7 @@ const RemoteControl = (props) => {
       formRef.validateFields(['robotId'], { force: true });
       return;
     }
-    const agv = find(allAGVs, { robotId });
+    const agv = find(allAGVs, { agvId:robotId });
     const hexCommand = formRef.getFieldValue('hexCommand');
     const params = {
       robotId,

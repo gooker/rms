@@ -140,7 +140,7 @@ export async function fetchCellHeat(params) {
 
 // 获取点位锁格
 export async function fetchCellLocks(logicId, cellId) {
-  return request(`/${NameSpace.Platform}/ui/getRobotByLockedCell/${logicId}/${cellId}`, {
+  return request(`/${NameSpace.Platform}/lock/getRobotByLockedCell/${logicId}/${cellId}`, {
     method: 'GET',
   });
 }
@@ -177,9 +177,17 @@ export async function updateLatentPodSize(payload) {
 }
 
 //////////////////////////**** 地图锁相关 ****//////////////////////////
-export async function fetchMapAGVLocks(logicId, lockTypes, robotIds) {
+export async function fetchMapAGVLocks(logicId, robotIds) {
   return request(
-    `/${NameSpace.Platform}/ui/getLockCellsByRobotIds/${logicId}/${lockTypes}/${robotIds}`,
+    `/${NameSpace.Platform}/lock/getLockedCellsByRobotId/${logicId}/${robotIds}`,
+    { method: 'GET' },
+  );
+}
+
+// 获取逻辑区的路径锁格信息
+export async function fetchLogicAllAGVLocks(logicId) {
+  return request(
+    `/${NameSpace.Platform}/lock/getAllLockedCells/${logicId}`,
     { method: 'GET' },
   );
 }

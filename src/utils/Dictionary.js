@@ -10,6 +10,7 @@ const DictionaryDataSource = {
     Charging: 'app.agvState.Charging',
     Connecting: 'app.agvState.Connecting',
     Waiting: 'app.agvState.Waiting',
+    Idle: 'app.agvState.Idle',
   },
 
   // 充电桩方向

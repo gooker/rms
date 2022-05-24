@@ -34,7 +34,7 @@ const MonitorModals = (props) => {
       {categoryModal === 'AgvAlert' && <AgvAlert />}
       {categoryModal === 'AgvRunInfo' && <AgvRunningInfo />}
 
-      {categoryModal === 'emptyRun' && <EmptyRun />}
+      {categoryModal === 'emptyRun' && <EmptyRun dispatch={dispatch} />}
       {categoryModal === 'charge' && <Charging />}
       {categoryModal === 'goRest' && <ToRest />}
       {categoryModal === 'carry' && <CarryPod />}
@@ -69,7 +69,7 @@ const MonitorModals = (props) => {
     </>
   );
 };
-export default connect(({ monitor, monitorView }) => ({
+export default connect(({ monitor }) => ({
   categoryModal: monitor.categoryModal,
   categoryPanel: monitor.categoryPanel,
 }))(memo(MonitorModals));

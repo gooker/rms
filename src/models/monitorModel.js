@@ -383,7 +383,10 @@ export default {
     *refreshAllAgvList(_, { put, call }) {
       const response = yield call(fetchAllAgvList);
       if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchAgvListFail' }))) {
-        const allAGVs = Object.values(response);
+        const allAGVs = [];
+        response?.map((item) => {
+          allAGVs.push({ ...item, agvType: item?.agvType || item?.agv?.agvType });
+        });
         yield put({ type: 'saveAllAGVs', payload: allAGVs });
         return allAGVs;
       } else {
@@ -585,8 +588,8 @@ export default {
     },
     *fetchAllLockCells({ payload, then }, { call, select }) {
       const { currentLogicArea } = yield select((state) => state.monitor);
-      const { lockTypes, robotIds } = payload;
-      return yield call(fetchMapAGVLocks, currentLogicArea, lockTypes, robotIds);
+      const { robotIds } = payload;
+      return yield call(fetchMapAGVLocks, currentLogicArea, robotIds);
     },
 
     // ************************ 急停区 ************************ //

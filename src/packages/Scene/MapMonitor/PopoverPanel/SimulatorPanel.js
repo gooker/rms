@@ -61,12 +61,12 @@ const SimulatorPanel = (props) => {
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'robotId',
+      dataIndex: 'agvId',
       align: 'center',
     },
     {
       title: formatMessage({ id: 'app.common.type' }),
-      dataIndex: 'robotType',
+      dataIndex: 'agvType',
       align: 'center',
       render: (text) => formatMessage({ id: `app.agvType.${text}` }),
     },
@@ -430,10 +430,10 @@ const SimulatorPanel = (props) => {
                   setSelectedRowKeys(value);
                 }}
               >
-                {simulatorAgvList.map(({ robotId }) => {
+                {simulatorAgvList.map(({ agvId }) => {
                   return (
-                    <Select.Option value={robotId} key={robotId}>
-                      {robotId}
+                    <Select.Option value={agvId} key={agvId}>
+                      {agvId}
                     </Select.Option>
                   );
                 })}

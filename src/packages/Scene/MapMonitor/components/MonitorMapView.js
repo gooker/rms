@@ -3,7 +3,7 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { AGVType, NavigationTypeView } from '@/config/config';
+import { AGVType, NavigationType, NavigationTypeView } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
 import {
   dealResponse,
@@ -29,6 +29,7 @@ import {
   hasLatentPod,
   loadMonitorExtraTextures,
   unifyAgvState,
+  getLockCellBounds,
 } from '@/utils/mapUtil';
 import {
   BitText,
@@ -365,7 +366,12 @@ class MonitorMapView extends BaseMap {
   updateAgvCommonState = (agvc, agvState, agvEntity, agvType) => {
     const { x, y, robotId, battery, mainTain, manualMode, errorLevel } = agvState;
     // TODO: 测试
-    const { navigationType = 'MUSHINY', agvStatus, currentCellId, currentDirection } = agvState;
+    const {
+      navigationType = NavigationType.M_QRCODE,
+      agvStatus,
+      currentCellId,
+      currentDirection,
+    } = agvState;
 
     // 判断该 robotId 对应的小车是否是潜伏车
     if (agvEntity.type !== agvType) {
@@ -1027,27 +1033,46 @@ class MonitorMapView extends BaseMap {
 
     // 渲染新的所有指定类型的锁
     inputData.forEach((lockData) => {
+      const {
+        geoModel: {
+          dimension,
+          position: { x, y },
+          angle,
+        },
+      } = lockData;
+      // 更新位置
+      const navigationType = NavigationType.M_QRCODE;
+      const currentPosition = coordinateTransformer({ x, y }, navigationType);
+      const { width, height } = getLockCellBounds(dimension);
       // 校验锁格数据，尤其是宽高
-      if (!lockData.height || !lockData.width) {
+      if (!height || !width) {
         message.error(
           formatMessage(
             { id: 'monitor.tip.LockDataAbnormal' },
             {
-              detail: `robotId: ${lockData.robotId}; Height: ${lockData.height}; Width: ${lockData.width}`,
+              detail: `robotId: ${lockData.robotId}; Height: ${height}; Width: ${width}`,
             },
           ),
         );
       }
-      const { lockType, locked } = lockData;
-      const color = locked ? GeoLockColor[lockType] : GeoLockColor.WillLocked;
+      const { locked } = lockData;
+      const color = locked ? GeoLockColor['PATH'] : GeoLockColor.WillLocked;
       let geoLock;
-      if (lockData.boxAction === 'GOTO_ROTATING') {
-        geoLock = new OpenLock({ ...lockData, color });
+      const currentLockData = {
+        ...lockData,
+        ...currentPosition,
+        ...dimension,
+        width,
+        height,
+        angle,
+      };
+      if (lockData.boxType === 'GOTO_ROTATING') {
+        geoLock = new OpenLock({ ...currentLockData, color });
       } else {
-        geoLock = new GeoLock({ ...lockData, color });
+        geoLock = new GeoLock({ ...currentLockData, color });
       }
       this.agvLocksMap.set(
-        `r${lockData.robotId}x${lockData.posX}y${lockData.posY}t${Math.random()}`, // 防止重复key导致覆盖
+        `r${lockData.robotId}x${currentPosition.x}y${currentPosition.y}t${Math.random()}`, // 防止重复key导致覆盖
         geoLock,
       );
       this.pixiUtils.viewportAddChild(geoLock);
@@ -1076,25 +1101,38 @@ class MonitorMapView extends BaseMap {
     this.clearCellLocks();
     if (!lockData) return;
 
+    const {
+      geoModel: {
+        dimension,
+        position: { x, y },
+        angle,
+      },
+    } = lockData;
+
+    const navigationType = NavigationType['M_QRCODE'];
+    const currentPosition = coordinateTransformer({ x, y }, navigationType);
+
+    const { width, height } = getLockCellBounds(dimension);
     // 渲染新的所有指定类型的锁
     // 校验锁格数据，尤其是宽高
-    if (!lockData.height || !lockData.width) {
+    if (!height || !width) {
       message.error(
         formatMessage(
           { id: 'monitor.tip.LockDataAbnormal' },
           {
-            detail: `robotId: ${lockData.robotId}; Height: ${lockData.height}; Width: ${lockData.width}`,
+            detail: `robotId: ${lockData.robotId}; Height: ${height}; Width: ${width}`,
           },
         ),
       );
     }
-    const { lockType, locked } = lockData;
-    const color = locked ? GeoLockColor[lockType] : GeoLockColor.WillLocked;
+    const { locked } = lockData;
+    const color = locked ? GeoLockColor['PATH'] : GeoLockColor.WillLocked;
     let geoLock;
+    const currentLockData = { ...lockData, ...currentPosition, ...dimension, width, height, angle };
     if (lockData.boxAction === 'GOTO_ROTATING') {
-      geoLock = new OpenLock({ ...lockData, color });
+      geoLock = new OpenLock({ ...currentLockData, color });
     } else {
-      geoLock = new GeoLock({ ...lockData, color });
+      geoLock = new GeoLock({ ...currentLockData, color });
     }
     this.cellLocker = geoLock;
     this.pixiUtils.viewportAddChild(geoLock);
@@ -1211,28 +1249,28 @@ class MonitorMapView extends BaseMap {
       if (showFullPath) {
         const tmpPassed = pathCellIds.slice(0, currentCellIdIndex + 1);
         tmpPassed.length > 0 &&
-        tmpPassed.reduce((pre, next) => {
-          types.passed.push({ start: pre, end: next });
-          return next;
-        });
+          tmpPassed.reduce((pre, next) => {
+            types.passed.push({ start: pre, end: next });
+            return next;
+          });
       }
 
       // 已经锁中的为绿色
       const tmpLocked = pathCellIds.slice(currentCellIdIndex, endIndex + 1);
       tmpLocked.length > 0 &&
-      tmpLocked.reduce((pre, next) => {
-        types.locked.push({ start: pre, end: next });
-        return next;
-      });
+        tmpLocked.reduce((pre, next) => {
+          types.locked.push({ start: pre, end: next });
+          return next;
+        });
 
       // 将要走的是黄色
       if (showFullPath) {
         const tmpFuture = pathCellIds.slice(endIndex, pathCellIds.length + 1);
         tmpFuture.length > 0 &&
-        tmpFuture.reduce((pre, next) => {
-          types.future.push({ start: pre, end: next });
-          return next;
-        });
+          tmpFuture.reduce((pre, next) => {
+            types.future.push({ start: pre, end: next });
+            return next;
+          });
       }
 
       // 开始渲染

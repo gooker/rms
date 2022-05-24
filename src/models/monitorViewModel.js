@@ -6,7 +6,6 @@ export default {
   state: {
     selectAgv: [],
     agvLockView: {
-      showAgvLock: [],
       showLockCellPolling: false,
     },
     routeView: {
@@ -15,6 +14,8 @@ export default {
       showTagetLine: false,
     },
     showCellLock: true,
+
+    showLogicLockedCell:false, // 逻辑区路径锁格
 
     shownPriority: [],
     distanceShow: false,
