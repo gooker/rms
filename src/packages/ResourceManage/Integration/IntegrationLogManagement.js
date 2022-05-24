@@ -1,15 +1,22 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { NameSpace } from '@/config/config';
-import { getDomainNameByUrl } from '@/utils/util';
+import { getDomainNameByUrl, parseUrlParams } from '@/utils/util';
 import commonStyle from '@/common.module.less';
 
 const IntegrationLogManagement = (props) => {
   const { currentUser } = props;
-  const currentUrl = `/${NameSpace.Platform}/log-explorer/file-explorer?dir=/Users/${currentUser.username}/logs`;
+  let currentUrl = `/${NameSpace.Platform}/log-explorer/file-explorer?dir=/Users/${currentUser.username}/logs`;
+  currentUrl = getDomainNameByUrl(currentUrl);
+  let params = {
+    sectionId: window.localStorage.getItem('sectionId'),
+    userName: currentUser.username,
+    token: window.sessionStorage.getItem('token'),
+  };
+
   const currentData = {
     name: '日志浏览',
-    url: getDomainNameByUrl(currentUrl),
+    url: parseUrlParams(currentUrl, params),
     key: 'logView',
   };
   const iframeLoaded = () => {
@@ -37,9 +44,7 @@ const IntegrationLogManagement = (props) => {
     <div className={commonStyle.commonPageStyle}>
       <iframe
         seamless
-        src={
-          'http://192.168.0.80:8088/platform/log-explorer/file-explorer?dir=/Users/wangrifeng/logs'
-        }
+        src={currentData.url}
         title={currentData.name}
         name={`${currentData.name}?${new Date().getTime()}`}
         id={`${currentData.name}${currentData.key}newTestLog`}

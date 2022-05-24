@@ -1,12 +1,20 @@
 import React, { memo, useEffect, useState } from 'react';
 import { useMount } from 'ahooks';
+import { connect } from '@/utils/RmsDva';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
+import { parseUrlParams } from '@/utils/util';
 import commonStyle from '@/common.module.less';
 import { find } from 'lodash';
 
 const LoadIframeComponent = (props) => {
   const [currentData, setCurrentData] = useState({});
-  const { location } = props;
+  const { location, currentUser } = props;
+
+  let params = {
+    sectionId: window.localStorage.getItem('sectionId'),
+    userName: currentUser.username,
+    token: window.sessionStorage.getItem('token'),
+  };
   useEffect(() => {
     if (location && location?.pathname) {
       let newMockData = [];
@@ -18,7 +26,11 @@ const LoadIframeComponent = (props) => {
         if (parentPath.startsWith(startsBase)) {
           newPath = parentPath.replace(startsBase, '/');
         }
-        newMockData.push({ ...data, newPathName: `${newPath}/${key}` });
+        newMockData.push({
+          ...data,
+          newPathName: `${newPath}/${key}`,
+          url: parseUrlParams(data.url, params),
+        });
       });
 
       const currentData = find(newMockData, { newPathName: location.pathname });
@@ -49,9 +61,6 @@ const LoadIframeComponent = (props) => {
     <div className={commonStyle.commonPageStyle}>
       <iframe
         seamless
-        // src={
-        //   'http://192.168.0.80:8088/platform/log-explorer/file-explorer?dir=/Users/wangrifeng/logs'
-        // }
         title={currentData.name}
         src={currentData?.url}
         name={`${currentData.name}?${new Date().getTime()}`}
@@ -59,10 +68,14 @@ const LoadIframeComponent = (props) => {
         width="100%"
         height="100%"
         frameBorder="0"
+        marginWidth="0"
+        marginHeight="0"
         onLoad={iframeLoaded}
-        style={{ width: '100%', border: 'medium none' }}
+        style={{ width: '100%', border: 'medium none', margin: 0, padding: 0 }}
       />
     </div>
   );
 };
-export default memo(LoadIframeComponent);
+export default connect(({ user }) => ({
+  currentUser: user.currentUser,
+}))(memo(LoadIframeComponent));
