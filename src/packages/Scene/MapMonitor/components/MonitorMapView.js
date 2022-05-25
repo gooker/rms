@@ -5,50 +5,43 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { AGVType, NavigationType, NavigationTypeView } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import {
-  dealResponse,
-  formatMessage,
-  getToteLayoutBaseParam,
-  isEqual,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
   AGVState,
   ElementType,
   EStopStateColor,
   GeoLockColor,
   LatentPodSize,
+  SelectionType,
   ToteAGVSize,
   zIndex,
 } from '@/config/consts';
 import {
   convertToteLayoutData,
   getElevatorMapCellId,
+  getLockCellBounds,
   getTextureFromResources,
   hasLatentPod,
   loadMonitorExtraTextures,
   unifyAgvState,
-  getLockCellBounds,
 } from '@/utils/mapUtil';
 import {
   BitText,
   Cell,
+  EmergencyStop,
   GeoLock,
   LatentAGV,
   LatentPod,
   OpenLock,
+  RealtimeRate,
   SorterAGV,
   TaskPath,
   TemporaryLock,
   ToteAGV,
   TotePod,
-  RealtimeRate,
-  EmergencyStop,
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import { fetchAgvInfo } from '@/services/api';
-import { SelectionType } from '@/config/consts';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 class MonitorMapView extends BaseMap {
@@ -108,7 +101,8 @@ class MonitorMapView extends BaseMap {
   async componentDidMount() {
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, true);
+    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, () => {
+    });
     window.MonitorPixiUtils = window.PixiUtils = this.pixiUtils;
     window.$$dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);

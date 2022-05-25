@@ -1,17 +1,17 @@
-import React, { memo, useEffect } from 'react';
-import { throttle } from 'lodash';
+import React, { memo, useCallback, useEffect } from 'react';
+import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
 import { HeaderHeight, RightToolBarWidth } from '../enums';
-import { renderChargerList, renderWorkStationList } from '@/utils/mapUtil';
+import { renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
+import { coordinateTransformer } from '@/utils/coordinateTransformer';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 import EventManager from '@/utils/EventManager';
 import commonStyles from '@/common.module.less';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
@@ -55,21 +55,23 @@ const MonitorMapContainer = (props) => {
       renderLogicArea();
       renderRouteMap();
       renderMonitorLoad();
-
-      const minMapRatio = mapContext.centerView('MONITOR_MAP');
-      dispatch({ type: 'monitor/saveMapMinRatio', payload: minMapRatio });
+      mapContext.centerView();
+      doClampZoom();
 
       // 监听地图缩放比例
-      viewport.off('zoomed-end');
-      viewport.on('zoomed-end', function () {
-        dispatch({ type: 'monitor/saveMapRatio', payload: this.scale.x });
-      });
+      viewport.off('zoomed');
+      viewport.on(
+        'zoomed',
+        debounce(function() {
+          dispatch({ type: 'monitor/saveMapRatio', payload: this.scale.x });
+        }, 100),
+      );
 
       // 添加事件处理地图跑出Screen
       viewport.off('moved');
       viewport.on(
         'moved',
-        throttle(function () {
+        throttle(function() {
           const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('MONITOR_MAP'));
           const topLimit = y + (height - CLAMP_VALUE);
           if (this.top >= topLimit) {
@@ -113,6 +115,15 @@ const MonitorMapContainer = (props) => {
       );
     mapContext.renderCells(cellsToRender);
   }
+
+  const doClampZoom = useCallback(
+    function() {
+      const { viewport } = mapContext.pixiUtils;
+      const minMapRatio = mapContext.clampZoom(viewport, 'MONITOR_MAP');
+      dispatch({ type: 'monitor/saveMapMinRatio', payload: minMapRatio });
+    },
+    [mapContext],
+  );
 
   function renderLogicArea() {
     const currentLogicAreaData = currentMap?.logicAreaList?.[currentLogicArea];

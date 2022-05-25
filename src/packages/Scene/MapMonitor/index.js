@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
-import { isNull, dealResponse, isStrictNull } from '@/utils/util';
+import { dealResponse, isNull, isStrictNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
@@ -13,6 +13,7 @@ import { HeaderHeight, MonitorOperationType } from './enums';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
+import { LockCellPolling } from '@/workers/LockCellPollingManager';
 
 const MapMonitor = (props) => {
   const { dispatch, socketClient, currentMap, mapContext } = props;
@@ -27,9 +28,8 @@ const MapMonitor = (props) => {
       dispatch({ type: 'monitor/unmount' });
       dispatch({ type: 'monitorView/unmount' });
       window.sessionStorage.removeItem('MONITOR_MAP');
-
-      //
-      AgvPollingTaskPathManager.terminate()
+      AgvPollingTaskPathManager.terminate();
+      LockCellPolling.terminate();
     };
   }, []);
 

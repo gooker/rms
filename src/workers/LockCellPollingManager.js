@@ -45,6 +45,7 @@ LockCellPolling.terminate = function () {
     LockCellPolling.instance.postMessage({
       state: 'end',
     });
+    LockCellPolling.instance = null;
   }
 };
 
