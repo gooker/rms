@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Dropdown, Form, Menu, Modal, Space } from 'antd';
+import { Button, Dropdown, Form, Menu, message, Modal, Space } from 'antd';
 import {
   BranchesOutlined,
   CloseOutlined,
@@ -13,10 +13,10 @@ import { useMemoizedFn } from 'ahooks';
 import update from 'immutability-helper';
 import { findIndex } from 'lodash';
 import { Container } from 'react-smooth-dnd';
-import { customTaskApplyDrag, formatMessage, getRandomString } from '@/utils/util';
+import { customTaskApplyDrag, dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { CustomType } from '../customTaskConfig';
-import { getInitialTaskSteps, isStandardTab, spliceUselessValue } from '../customTaskUtil';
+import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
 import { ModelTypeFieldMap, PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -28,6 +28,7 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
+import { saveCustomTask } from '@/services/api';
 
 const CustomTypeIconMap = {
   [CustomType.ACTION]: <BranchesOutlined />,
@@ -193,7 +194,6 @@ const CustomTaskForm = (props) => {
       const customTaskData = {
         name: value.name,
         desc: value.desc,
-        robot: value.robot,
         priority: value.priority,
 
         type: 'CUSTOM_TASK',
@@ -204,59 +204,29 @@ const CustomTaskForm = (props) => {
       Object.keys(value).forEach((key) => {
         if (key.includes('_')) {
           const modelType = key.split('_')[0];
-          if (isStandardTab(modelType)) {
-            if (modelType === 'START') {
-              // 如果分车是“自动分车”, type & code都为null
+          if (!customTaskData[ModelTypeFieldMap[modelType]]) {
+            customTaskData[ModelTypeFieldMap[modelType]] = {};
+          }
+          customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+        } else {
+          if (!isNull(ModelTypeFieldMap[key])) {
+            if (key === 'START') {
               const startConfig = { ...value[key] };
               const startConfigRobot = { ...startConfig.robot };
               if (startConfigRobot.type === 'AUTO') {
-                startConfig.robot = { type: null, code: null };
+                startConfig.robot = null;
               }
-              customTaskData[ModelTypeFieldMap[modelType]] = startConfig;
+              customTaskData[ModelTypeFieldMap[key]] = startConfig;
             } else {
-              customTaskData[ModelTypeFieldMap[modelType]] = value[key];
-            }
-          } else {
-            if (!customTaskData[ModelTypeFieldMap[modelType]]) {
-              customTaskData[ModelTypeFieldMap[modelType]] = {};
-            }
-            // 路径和动作的数据需要转化
-            if (modelType === 'ACTION') {
-              const subTaskConfig = { ...value[key] };
-
-              // 处理目标点动作
-              const targetAction = { ...subTaskConfig.targetAction };
-              targetAction.firstActions = spliceUselessValue(targetAction.firstActions);
-              targetAction.afterFirstActions = spliceUselessValue(targetAction.afterFirstActions);
-              targetAction.beforeLastActions = spliceUselessValue(targetAction.beforeLastActions);
-              targetAction.lastActions = spliceUselessValue(targetAction.lastActions);
-              targetAction.podAngle = targetAction.podAngle ? [targetAction.podAngle] : []; // 后端要传数组
-              subTaskConfig.targetAction = targetAction;
-
-              // 处理托盘动作协议
-              const trayActionProtocol = { ...subTaskConfig.trayActionProtocol };
-              delete subTaskConfig.trayActionProtocol;
-              subTaskConfig.upAction = trayActionProtocol.upAction;
-              subTaskConfig.downAction = trayActionProtocol.downAction;
-
-              customTaskData[ModelTypeFieldMap[modelType]][subTaskConfig.code] = subTaskConfig;
-            } else {
-              customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+              customTaskData[ModelTypeFieldMap[key]] = value[key];
             }
           }
         }
       });
 
       // sample
-      customTaskData.sample = JSON.stringify({
-        code: customTaskData.code,
-        customStart: customTaskData.customStart,
-        customActions: customTaskData.customActions,
-        customWaits: customTaskData.customWaits,
-        customEvents: customTaskData.customEvents,
-        customPodStatus: customTaskData.customPodStatus,
-        customEnd: customTaskData.customEnd,
-      });
+      const { variable } = window.$$state().customTask;
+      customTaskData.sample = JSON.stringify(variable);
       return customTaskData;
     } catch (error) {
       return null;
@@ -264,30 +234,26 @@ const CustomTaskForm = (props) => {
   }
 
   async function submit() {
-    form
-      .validateFields()
-      .then((value) => console.log(value))
-      .catch(() => {
-      });
-    // const requestBody = await generateTaskData();
-    // if (requestBody === null) {
-    //   message.error(formatMessage({ id: 'customTask.form.invalid' }));
-    //   return;
-    // }
-    //
-    // // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
-    // if (editingRow) {
-    //   requestBody.id = editingRow.id;
-    //   requestBody.code = editingRow.code;
-    //   requestBody.createTime = editingRow.createTime;
-    //   requestBody.createdByUser = editingRow.createdByUser;
-    // }
-    // const response = await saveCustomTask(requestBody);
-    // if (dealResponse(response)) {
-    //   message.error(formatMessage({ id: 'customTask.save.fail' }));
-    // } else {
-    //   message.success(formatMessage({ id: 'customTask.save.success' }));
-    // }
+    const requestBody = await generateTaskData();
+    if (requestBody === null) {
+      message.error(formatMessage({ id: 'customTask.form.invalid' }));
+      return;
+    }
+
+    // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
+    if (editingRow) {
+      requestBody.id = editingRow.id;
+      requestBody.code = editingRow.code;
+      requestBody.createTime = editingRow.createTime;
+      requestBody.createdByUser = editingRow.createdByUser;
+    }
+    const response = await saveCustomTask(requestBody);
+    if (dealResponse(response)) {
+      message.error(formatMessage({ id: 'app.message.operateFailed' }));
+    } else {
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+      dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
+    }
   }
 
   const updateTabName = useMemoizedFn(function(code, name) {

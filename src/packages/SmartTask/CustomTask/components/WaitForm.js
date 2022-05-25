@@ -155,7 +155,7 @@ const WaitForm = (props) => {
                   <Row key={field.key} gutter={10} style={{ marginBottom: 16, width: 520 }}>
                     <Col span={22}>
                       <Form.Item noStyle {...field}>
-                        <TargetSelector />
+                        <TargetSelector showVar={false} form={form} />
                       </Form.Item>
                     </Col>
                     <Col span={2}>

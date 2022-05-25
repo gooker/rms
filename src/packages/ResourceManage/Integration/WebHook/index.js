@@ -1,17 +1,17 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Button, Modal } from 'antd';
 import {
   DeleteOutlined,
+  DisconnectOutlined,
   EditOutlined,
   PlusOutlined,
   ReloadOutlined,
   SwapOutlined,
-  DisconnectOutlined,
 } from '@ant-design/icons';
 import { find, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getAllWebHookTypes, getAllWebHooks, deleteWebHooks, getAllQueues } from '@/services/api';
-import { registerWebhooksTopic, fetchAllRegisterData, unBoundRegisterTopic } from '@/services/XIHE';
+import { deleteWebHooks, getAllQueues, getAllWebHooks, getAllWebHookTypes } from '@/services/api';
+import { fetchAllRegisterData, registerWebhooksTopic, unBoundRegisterTopic } from '@/services/XIHE';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
@@ -114,7 +114,7 @@ const WebHook = () => {
     }
   }
 
-  // 取消注册
+  // 注销
   function cancelRegister() {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.doubleConfirm' }),

@@ -6,7 +6,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { AgvGroupModelData, AgvModelData, LoadGroupModelData, LoadModelData } from '@/mockData';
 
 const TargetSelector = (props) => {
-  const { dispatch, form, dataSource, value, onChange, variable, subTaskCode } = props;
+  const { dispatch, showVar, form, dataSource, value, onChange, variable, subTaskCode } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
   const [useVariable, setUseVariable] = useState(false);
@@ -28,11 +28,9 @@ const TargetSelector = (props) => {
       // 如果选择的载具，需要与对应的车型进行筛选
       if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type)) {
         const robotSelection = form.getFieldValue(['START', 'robot']);
-        console.log(robotSelection, dataSource);
-
         // 自动分车或者使用了变量，则不需要筛选
         if (robotSelection.type !== 'AUTO' && isNull(variable.START)) {
-          // 分车所支持的所有的载具类型
+          // 获取分车所支持的所有的载具类型
           let validLoadTypes = [];
           if (robotSelection.type === 'AGV' && robotSelection.code.length > 0) {
             const agvType = dataSource.AGV.filter((item) =>
@@ -48,6 +46,7 @@ const TargetSelector = (props) => {
             }
           }
 
+          // 生成返回值
           if (currentValue.type === 'LOAD') {
             return validLoadTypes.map((loadType) => (
               <Select.Option key={loadType} value={loadType}>
@@ -59,7 +58,11 @@ const TargetSelector = (props) => {
             const loadGroup = dataSource.LOAD_GROUP.filter((item) =>
               isSubArray(item.types, validLoadTypes),
             );
-            console.log(loadGroup);
+            return loadGroup.map(({ code }) => (
+              <Select.Option key={code} value={code}>
+                {code}
+              </Select.Option>
+            ));
           }
         }
       }
@@ -134,13 +137,16 @@ const TargetSelector = (props) => {
             {renderSecondaryOptions()}
           </Select>
         )}
-        <Checkbox
-          checked={useVariable}
-          onChange={onCheckboxChange}
-          disabled={isNull(currentValue.type)}
-        >
-          <FormattedMessage id={'customTasks.form.useVariable'} />
-        </Checkbox>
+
+        {showVar && (
+          <Checkbox
+            checked={useVariable}
+            onChange={onCheckboxChange}
+            disabled={isNull(currentValue.type)}
+          >
+            <FormattedMessage id={'customTasks.form.useVariable'} />
+          </Checkbox>
+        )}
       </Space>
     </div>
   );

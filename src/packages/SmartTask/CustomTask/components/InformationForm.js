@@ -34,7 +34,8 @@ const InformationForm = (props) => {
       <Form.Item
         hidden={hidden}
         {...FormLayout}
-        name="desc"
+        name='desc'
+        initialValue={null}
         label={formatMessage({ id: 'app.common.description' })}
       >
         <Input style={{ width: 500 }} />

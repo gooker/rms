@@ -1373,12 +1373,12 @@ export const AgvModelData = [
   {
     code: 'agvType1',
     ids: [1, 2, 3, 4],
-    types: ['loadA', 'loadB', 'loadC', 'loadD'],
+    types: ['loadTypeA', 'loadTypeB', 'loadTypeC', 'loadTypeD'],
   },
   {
     code: 'agvType2',
     ids: [5, 6, 7, 8],
-    types: ['loadB'],
+    types: ['loadTypeB'],
   },
 ];
 
