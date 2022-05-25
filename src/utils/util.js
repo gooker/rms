@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
+import { AgvStateColor, Colors, ModelTypeFieldMap, ToteOffset } from '@/config/consts';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -1041,8 +1041,77 @@ export function extractRoutes(mapData) {
 }
 
 // 将后台返回的自定义任务数据转化为表单数据
-export function restoreCustomTaskForm(customTask, customTypes) {
-  //
+const targetProgramingKeys = [
+  'afterFirstActions',
+  'beforeLastActions',
+  'firstActions',
+  'lastActions',
+];
+
+export function restoreCustomTaskForm(customTask) {
+  const result = { taskSteps: [], fieldsValue: {} };
+  const { codes } = customTask;
+
+  // 提取基本信息
+  result.fieldsValue.name = customTask.name;
+  result.fieldsValue.desc = customTask.desc;
+  result.fieldsValue.priority = customTask.priority;
+
+  codes.forEach((code) => {
+    let customTypeKey = code;
+
+    // 收集左侧的任务节点数据
+    if (code.includes('_')) {
+      customTypeKey = code.split('_')[0];
+      const configValue = customTask[ModelTypeFieldMap[customTypeKey]][code];
+      result.taskSteps.push({
+        type: customTypeKey,
+        code,
+        label: configValue.name ?? formatMessage({ id: `customTask.type.${customTypeKey}` }),
+      });
+    } else {
+      result.taskSteps.push({
+        type: customTypeKey,
+        code: customTypeKey,
+        label: formatMessage({ id: `customTask.type.${customTypeKey}` }),
+      });
+    }
+
+    // 收集表单数据
+    if (customTypeKey === 'START') {
+      const startValues = { ...customTask[ModelTypeFieldMap[customTypeKey]] };
+      if (isNull(startValues.robot)) {
+        delete startValues.robot;
+      }
+      result.fieldsValue[code] = startValues;
+    } else if (customTypeKey === 'END') {
+      result.fieldsValue[code] = customTask[ModelTypeFieldMap[customTypeKey]];
+    } else {
+      const stepPayload = customTask[ModelTypeFieldMap[customTypeKey]];
+      const subTaskConfig = { ...stepPayload[code] };
+      if (subTaskConfig.customType === 'ACTION') {
+        // 处理资源锁
+        const lockTimeFormValue = [];
+        if (subTaskConfig.lockTime) {
+          Object.entries(subTaskConfig.lockTime).forEach(([modelType, { LOCK, UNLOCK }]) => {
+            lockTimeFormValue.push([modelType, LOCK ?? null, UNLOCK ?? null]);
+          });
+        }
+        subTaskConfig.lockTime = lockTimeFormValue;
+
+        // 处理关键点动作配置
+        const _targetAction = { ...subTaskConfig.targetAction };
+        targetProgramingKeys.forEach((fieldKey) => {
+          if (!isNull(_targetAction[fieldKey])) {
+            _targetAction[fieldKey] = extractActionToFormValue(_targetAction[fieldKey]);
+          }
+        });
+        subTaskConfig.targetAction = _targetAction;
+      }
+      result.fieldsValue[code] = subTaskConfig;
+    }
+  });
+  return result;
 }
 
 // 十六进制转RGB
@@ -1218,7 +1287,7 @@ export function convertPrograming2Cascader(programing) {
 }
 
 // 将地图编程配置的值回填到action中
-export function fillProgramAction(configuration, programing, withTiming = false) {
+export function fillFormValueToAction(configuration, programing, withTiming = false) {
   function fill(configs, timing) {
     return configs.map(({ actionType, ...rest }) => {
       const [p1, p2] = actionType;
@@ -1243,6 +1312,19 @@ export function fillProgramAction(configuration, programing, withTiming = false)
     return result;
   }
   return fill(configuration);
+}
+
+// 将action数据提取成Form可用的数据结构
+export function extractActionToFormValue(actions) {
+  const configurations = [];
+  actions.forEach(({ adapterType, actionType, actionParameters }) => {
+    const addedItem = { actionType: [adapterType, actionType] };
+    actionParameters.forEach(({ code, value }) => {
+      addedItem[code] = value;
+    });
+    configurations.push(addedItem);
+  });
+  return configurations;
 }
 
 // 将数组中符合条件的元素删掉， Lodash中同名方法有问题-->遇到第一个不符合条件的会直接break

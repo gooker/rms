@@ -3,14 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Button, message, Modal } from 'antd';
 import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  adaptModalHeight,
-  adaptModalWidth,
-  convertToUserTimezone,
-  dealResponse,
-  formatMessage,
-  isNull,
-} from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/api';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyles from '@/common.module.less';
@@ -22,7 +15,7 @@ import TableWithPages from '@/components/TableWithPages';
 const messageKey = 'MESSAGE_KEY';
 
 const CustomTaskTable = (props) => {
-  const { dispatch, listVisible, listData } = props;
+  const { dispatch, listVisible, listData, loading } = props;
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [exampleStructure, setExampleStructure] = useState(null); // 示例结构
@@ -32,10 +25,7 @@ const CustomTaskTable = (props) => {
   }, []);
 
   function viewRequestBody(record) {
-    const _taskView = JSON.parse(record.sample);
-    _taskView.name = record.name;
-    _taskView.dependencies = [];
-    setExampleStructure(_taskView);
+    setExampleStructure(JSON.parse(record.sample));
   }
 
   const columns = [
@@ -55,25 +45,9 @@ const CustomTaskTable = (props) => {
       dataIndex: 'priority',
     },
     {
-      title: <FormattedMessage id="app.common.creationTime" />,
-      align: 'center',
-      dataIndex: 'createTime',
-      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
-    },
-    {
       title: <FormattedMessage id="app.common.creator" />,
       align: 'center',
       dataIndex: 'createdByUser',
-    },
-    {
-      title: <FormattedMessage id="app.common.updateTime" />,
-      align: 'center',
-      dataIndex: 'updateTime',
-    },
-    {
-      title: <FormattedMessage id="app.common.updater" />,
-      align: 'center',
-      dataIndex: 'updatedByUser',
     },
     {
       title: <FormattedMessage id="app.common.operator" />,
@@ -109,6 +83,25 @@ const CustomTaskTable = (props) => {
           />
         </span>
       ),
+    },
+  ];
+
+  const expandColumns = [
+    {
+      title: <FormattedMessage id='app.common.creationTime' />,
+      align: 'center',
+      dataIndex: 'createTime',
+      render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
+    },
+    {
+      title: <FormattedMessage id='app.common.updateTime' />,
+      align: 'center',
+      dataIndex: 'updateTime',
+    },
+    {
+      title: <FormattedMessage id='app.common.updater' />,
+      align: 'center',
+      dataIndex: 'updatedByUser',
     },
   ];
 
@@ -211,28 +204,28 @@ const CustomTaskTable = (props) => {
       {/* 自定义任务列表 */}
       <TableWithPages
         bordered
+        loading={loading}
         columns={columns}
+        expandColumns={expandColumns}
         dataSource={listData}
         rowSelection={rowSelection}
         rowKey={(record) => record.id}
         pagination={null}
-        scroll={{ x: 'max-content' }}
       />
 
       {/* 任务数据结构预览 */}
       <Modal
         destroyOnClose
         visible={!isNull(exampleStructure)}
-        width={adaptModalWidth() + 100}
+        width={600}
         title={formatMessage({ id: 'customTasks.requestBodyDemo' })}
         onCancel={() => {
           setExampleStructure(null);
         }}
         style={{ top: 30 }}
-        bodyStyle={{ height: Math.ceil(adaptModalHeight()) - 25, overflow: 'auto' }}
         footer={[
           <Button
-            key="back"
+            key='back'
             onClick={() => {
               setExampleStructure(null);
             }}
@@ -249,7 +242,8 @@ const CustomTaskTable = (props) => {
     </TablePageWrapper>
   );
 };
-export default connect(({ customTask }) => ({
+export default connect(({ customTask, loading }) => ({
+  loading: loading.effects['customTask/getCustomTaskList'],
   listVisible: customTask.listVisible,
   listData: customTask.customTaskList,
 }))(memo(CustomTaskTable));

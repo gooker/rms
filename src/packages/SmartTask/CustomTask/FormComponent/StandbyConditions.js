@@ -55,32 +55,31 @@ const StandbyConditions = (props) => {
         {(fields, { add, remove }) => (
           <>
             {fields.map((field, index) => (
-              <div key={field.key}>
-                <Form.Item
-                  hidden={hidden}
-                  {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                  label={
-                    index === 0 ? formatMessage({ id: 'customTask.form.appointResources' }) : null
-                  }
-                >
-                  <Row gutter={10}>
-                    <Col span={fields.length > 1 ? 22 : 24}>
-                      <Form.Item noStyle {...field}>
-                        <ModelSelection
-                          modelTypes={modelTypes}
-                          exclude={['AGV', 'AGV_GROUP']}
-                          disabled={false}
-                        />
-                      </Form.Item>
+              <Form.Item
+                key={field.key}
+                hidden={hidden}
+                {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
+                label={
+                  index === 0 ? formatMessage({ id: 'customTask.form.appointResources' }) : null
+                }
+              >
+                <Row gutter={10}>
+                  <Col span={fields.length > 1 ? 22 : 24}>
+                    <Form.Item noStyle {...field}>
+                      <ModelSelection
+                        modelTypes={modelTypes}
+                        exclude={['AGV', 'AGV_GROUP']}
+                        disabled={false}
+                      />
+                    </Form.Item>
+                  </Col>
+                  {fields.length > 1 ? (
+                    <Col span={2}>
+                      <Button onClick={() => remove(field.name)} icon={<MinusOutlined />} />
                     </Col>
-                    {fields.length > 1 ? (
-                      <Col span={2}>
-                        <Button onClick={() => remove(field.name)} icon={<MinusOutlined />} />
-                      </Col>
-                    ) : null}
-                  </Row>
-                </Form.Item>
-              </div>
+                  ) : null}
+                </Row>
+              </Form.Item>
             ))}
 
             <Form.Item hidden={hidden} {...formItemLayoutNoLabel}>

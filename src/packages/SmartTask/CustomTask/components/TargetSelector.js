@@ -1,15 +1,18 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Checkbox, Input, Select, Space } from 'antd';
 import { isNull, isSubArray } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { AgvGroupModelData, AgvModelData, LoadGroupModelData, LoadModelData } from '@/mockData';
 
 const TargetSelector = (props) => {
   const { dispatch, showVar, form, dataSource, value, onChange, variable, subTaskCode } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
   const [useVariable, setUseVariable] = useState(false);
+
+  useEffect(() => {
+    setUseVariable(!isNull(variable[subTaskCode]));
+  }, []);
 
   function onTypeChange(_value) {
     currentValue.type = _value;
@@ -153,14 +156,14 @@ const TargetSelector = (props) => {
 };
 export default connect(({ customTask }) => ({
   variable: customTask.variable,
-  dataSource: customTask.modelParams1 || {
-    AGV: AgvModelData,
-    AGV_GROUP: AgvGroupModelData,
+  dataSource: customTask.modelParams || {
+    AGV: [],
+    AGV_GROUP: [],
     CELL: [],
     CELL_GROUP: [],
     STATION: [],
     STATION_GROUP: [],
-    LOAD: LoadModelData,
-    LOAD_GROUP: LoadGroupModelData,
+    LOAD: [],
+    LOAD_GROUP: [],
   },
 }))(memo(TargetSelector));

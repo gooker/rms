@@ -2,13 +2,7 @@ import { message } from 'antd';
 import { saveAs } from 'file-saver';
 import { find, findIndex, groupBy, isEqual, isPlainObject, pickBy, some } from 'lodash';
 import update from 'immutability-helper';
-import {
-  dealResponse,
-  fillProgramAction,
-  formatMessage,
-  getRandomString,
-  isNull,
-} from '@/utils/util';
+import { dealResponse, fillFormValueToAction, formatMessage, getRandomString, isNull } from '@/utils/util';
 import {
   addTemporaryId,
   batchGenerateLine,
@@ -43,7 +37,6 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
-import { MockMapWithProgram, ProgramingConfigurationList } from '@/mockData';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
 
@@ -712,7 +705,7 @@ export default {
       if (!Array.isArray(configuration)) return;
       const existCellConfigList = { ...currentRouteMap.programing[`${type}s`] };
       if (configuration.length > 0) {
-        const actions = fillProgramAction(
+        const actions = fillFormValueToAction(
           configuration,
           programing,
           type === ProgramingItemType.relation,

@@ -13,7 +13,7 @@ const InformationForm = (props) => {
     if (!value || !existNames.includes(value)) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error(formatMessage({ id: 'customTask.form.name.duplicate' })));
+    return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
   }
 
   const nameRules = [{ required: true }];
