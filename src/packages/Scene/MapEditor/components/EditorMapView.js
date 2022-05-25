@@ -1,15 +1,10 @@
 import React from 'react';
 import { reverse } from 'lodash';
-import * as PIXI from 'pixi.js';
-import {
-  getCurrentRouteMapData,
-  getTextureFromResources,
-  loadEditorExtraTextures,
-} from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
+import { getCurrentRouteMapData, loadEditorExtraTextures } from '@/utils/mapUtil';
 import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { NavigationTypeView } from '@/config/config';
@@ -17,8 +12,6 @@ import { NavigationTypeView } from '@/config/config';
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
-    this.scale = 30;
-    this.lastScale = null;
 
     // 记录显示控制的参数
     this.states = {
@@ -178,13 +171,16 @@ class EditorMapView extends BaseMap {
   };
 
   updateCells = ({ type, payload }) => {
+    const { doClampZoom } = this.props;
     // 新增点位
     if (type === 'add') {
       this.renderCells(payload);
+      doClampZoom();
     }
     // 删除点位
     if (type === 'remove') {
       this.removeCells(payload);
+      doClampZoom();
     }
     // 更新导航ID
     if (type === 'updateNaviId') {

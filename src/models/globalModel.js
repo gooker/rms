@@ -1,10 +1,10 @@
 import moment from 'moment';
 import { fetchAlertCount, fetchUpdateEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
-import { dealResponse, formatMessage, convertMenuData2RouteData } from '@/utils/util';
+import { convertMenuData2RouteData, dealResponse, formatMessage } from '@/utils/util';
 import { convertAllMenu, sortAppList } from '@/utils/init';
 import { AppCode } from '@/config/config';
-import allModuleRouter from '@/router';
+import allModuleRouter from '@/config/router';
 import { deleteSysLang } from '@/services/translator';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 import zhCN from 'antd/lib/locale/zh_CN';

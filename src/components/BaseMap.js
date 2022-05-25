@@ -2,25 +2,16 @@ import React from 'react';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import {
-  getCoordinat,
-  getLineEntityFromMap,
-  getCurrentRouteMapData,
-  getTextureFromResources,
   getAngle,
-  getDistance,
   getArrowDistance,
+  getCoordinat,
+  getCurrentRouteMapData,
+  getDistance,
+  getLineEntityFromMap,
+  getTextureFromResources,
 } from '@/utils/mapUtil';
-import {
-  Dump,
-  Charger,
-  BitText,
-  Elevator,
-  DumpBasket,
-  WorkStation,
-  Intersection,
-  CommonFunction,
-} from '@/entities';
-import { isNull, isItemOfArray } from '@/utils/util';
+import { BitText, Charger, CommonFunction, Dump, DumpBasket, Elevator, Intersection, WorkStation } from '@/entities';
+import { isItemOfArray, isNull } from '@/utils/util';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
@@ -87,16 +78,21 @@ export default class BaseMap extends React.PureComponent {
     }
   };
 
-  centerView = (key) => {
+  centerView = () => {
     const { viewport } = this.pixiUtils;
     const { x, y, width, height } = viewport.getLocalBounds();
-
-    let minMapRatio;
     if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
       viewport.fit(true, width * MapScaleRatio, height * MapScaleRatio);
       viewport.moveCenter(x + width / 2, y + height / 2);
+    }
+    this.refresh();
+  };
 
-      // 动态限制地图缩放尺寸
+  // 动态限制地图缩放尺寸
+  clampZoom = (viewport, storageKey) => {
+    const { x, y, width, height } = viewport.getLocalBounds();
+    let minMapRatio;
+    if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
       viewport.clampZoom({
         minWidth: viewport.worldScreenWidth * viewport.scale.x,
         minHeight: viewport.worldScreenHeight * viewport.scale.y,
@@ -108,8 +104,7 @@ export default class BaseMap extends React.PureComponent {
       minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
     }
     // 记录当前地图世界宽度
-    window.sessionStorage.setItem(key, JSON.stringify({ x, y, width, height }));
-    this.refresh();
+    window.sessionStorage.setItem(storageKey, JSON.stringify({ x, y, width, height }));
     return minMapRatio;
   };
 

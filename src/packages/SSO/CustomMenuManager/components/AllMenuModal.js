@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Empty, Tabs, Tree } from 'antd';
-import { PlusCircleOutlined, DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { transform } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
@@ -8,12 +8,12 @@ import { generateTreeData, handlePermissions } from '../../RoleManager/component
 import { AppCode } from '@/config/config';
 import {
   generateMenuNodeLocaleKey,
-  validateRouteAuthority,
-  validateHookPermission,
   getNewMenuDataByMergeCustomNodes,
+  validateHookPermission,
+  validateRouteAuthority,
 } from '@/utils/init';
 import AddCustomMenuModal from './AddCustomMenuModal';
-import allModuleRouter from '@/router';
+import allModuleRouter from '@/config/router';
 import { mockData } from './mockData';
 
 @connect(({ user }) => ({

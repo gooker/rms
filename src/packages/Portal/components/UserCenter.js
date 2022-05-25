@@ -1,11 +1,12 @@
 import React, { memo, useState } from 'react';
-import { Menu, Dropdown, Modal } from 'antd';
+import { Dropdown, Menu, Modal } from 'antd';
 import { useHistory } from 'react-router-dom';
 import { ApiOutlined, LogoutOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import ModuleInformationPanel from './ModuleInformationPanel';
 import styles from './Header.module.less';
+import { AppCode } from '@/config/config';
 
 const UserCenter = (props) => {
   const { dispatch, currentUser, userRoleList } = props;
@@ -21,6 +22,9 @@ const UserCenter = (props) => {
     }
     if (key === 'apiList') {
       setApiListVisible(true);
+    }
+    if (key === 'loginName') {
+      history.push(`/${AppCode.SSO}/accountCenter`);
     }
   }
 
