@@ -1,80 +1,88 @@
 import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
 import { NavigationType, CoordinateType } from '@/config/config';
 
+const MonitorViewModelState = {
+  selectAgv: [], // 小车的uniqueId
+  agvLockView: {
+    showLockCellPolling: false,
+  },
+  routeView: {
+    showRoute: true,
+    showFullPath: false,
+    showTagetLine: false,
+  },
+  showCellLock: true,
+
+  showLogicLockedCell: false, // 逻辑区路径锁格
+
+  shownPriority: [],
+  distanceShow: false,
+  cellPointShow: true,
+  coordinationShow: false,
+  stationRealTimeRateView: false, // 站点实时速率显示
+  backImgeView: false, // 背景
+  emergencyAreaShow: true, // 紧急区域
+
+  // 自动轮询成本热度
+  showCostPolling: false,
+  // 热度类型
+  hotType: null,
+  costHeatOpacity: true,
+
+  // 临时不可走点
+  tempBlockShown: true,
+  temporaryCell: [],
+
+  // 料箱货架
+  toteBinShown: true,
+
+  // 追踪小车
+  trackingView: {
+    trackingCar: undefined,
+    trackingCarSure: false,
+    locationType: 'cell',
+    locationValue: null,
+  },
+
+  // 工作站
+  workStationView: {
+    workStationOB: {},
+    workStationPolling: [],
+    workStationWaitingData: {},
+    workStationTaskHistoryData: {},
+  },
+
+  // 通用工作站
+  commonStationView: {
+    commonPointOB: {},
+    commonPointPolling: [],
+    commonPointWaitingData: {},
+    commonPointTaskHistoryData: {},
+    commonPointTrafficData: {},
+  },
+
+  // 小车告警异常
+  agvAlarmList: [],
+  // 小车运行信息
+  agvRunningInfoList: [],
+
+  dashBoardVisible: false, // dashboard
+
+  // 地图显示模式
+  shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
+  shownCellCoordinateType: CoordinateType.LAND, // land 表示物理点位、navi表示导航点位
+};
 export default {
   namespace: 'monitorView',
   state: {
-    selectAgv: [],
-    agvLockView: {
-      showLockCellPolling: false,
-    },
-    routeView: {
-      showRoute: true,
-      showFullPath: false,
-      showTagetLine: false,
-    },
-    showCellLock: true,
-
-    showLogicLockedCell:false, // 逻辑区路径锁格
-
-    shownPriority: [],
-    distanceShow: false,
-    cellPointShow: true,
-    coordinationShow: false,
-    stationRealTimeRateView: false, // 站点实时速率显示
-    backImgeView: false, // 背景
-    emergencyAreaShow: true, // 紧急区域
-
-    // 自动轮询成本热度
-    showCostPolling: false,
-    // 热度类型
-    hotType: null,
-    costHeatOpacity: true,
-
-    // 临时不可走点
-    tempBlockShown: true,
-    temporaryCell: [],
-
-    // 料箱货架
-    toteBinShown: true,
-
-    // 追踪小车
-    trackingView: {
-      trackingCar: undefined,
-      trackingCarSure: false,
-      locationType: 'cell',
-      locationValue: null,
-    },
-
-    // 工作站
-    workStationView: {
-      workStationOB: {},
-      workStationPolling: [],
-      workStationWaitingData: {},
-      workStationTaskHistoryData: {},
-    },
-
-    // 通用工作站
-    commonStationView: {
-      commonPointOB: {},
-      commonPointPolling: [],
-      commonPointWaitingData: {},
-      commonPointTaskHistoryData: {},
-      commonPointTrafficData: {},
-    },
-
-    // 小车告警异常
-    agvAlarmList: [],
-    // 小车运行信息
-    agvRunningInfoList: [],
-
-    dashBoardVisible: false, // dashboard
-
-    // 地图显示模式
-    shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
-    shownCellCoordinateType: CoordinateType.LAND, // land 表示物理点位、navi表示导航点位
+    ...MonitorViewModelState,
   },
   reducers: {
+    unmount(state) {
+      return {
+        ...MonitorViewModelState,
+      };
+    },
     saveViewState(state, action) {
       return { ...state, ...action.payload };
     },
@@ -136,24 +144,20 @@ export default {
     },
   },
   effects: {
-    *routePolling({ payload }, { select, call, put }) {
-      const { flag, agvs } = payload;
+    *routePolling({ payload }, { select }) {
+      const { flag, ids } = payload;
       const { mapContext } = yield select(({ monitor }) => monitor);
       const { selectAgv } = yield select(({ monitorView }) => monitorView);
-      if (flag) {
-        const robotIds = agvs || selectAgv;
-        if (robotIds?.length > 0) {
-          AgvPollingTaskPathManager.start(robotIds, (response) => {
-            if (response && Array.isArray(response)) {
-              const tasks = response.filter(Boolean);
-              mapContext.registerShowTaskPath(tasks, true);
-            }
-          });
-        } else {
-          // 清理地图上的路径
-          mapContext?.registerShowTaskPath([], true);
-        }
+      const uniqueIds = ids || selectAgv;
+      if (flag && uniqueIds?.length > 0) {
+        AgvPollingTaskPathManager.start(uniqueIds, (response) => {
+          if (response && Array.isArray(response)) {
+            const tasks = response.filter(Boolean);
+            mapContext.registerShowTaskPath(tasks, true);
+          }
+        });
       } else {
+        mapContext?.registerShowTaskPath([], false);
         AgvPollingTaskPathManager.terminate();
       }
     },

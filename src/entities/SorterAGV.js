@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { switchAGVState, switchAGVBatteryState, getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, SorterAGVSize, SelectionType, MonitorSelectableSpriteType } from '@/config/consts';
+import { zIndex, SorterAGVSize, SelectionType } from '@/config/consts';
 import { AGVType } from '@/config/config';
 import { isNull } from '@/utils/util';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
@@ -12,10 +12,10 @@ const BoxHeight = 200;
 export default class SorterAGV extends PIXI.Container {
   constructor(props) {
     super();
-    this.type = MonitorSelectableSpriteType.Sorter;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
+    this.uniqueId = props.uniqueId;
     this.type = AGVType.Sorter;
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性

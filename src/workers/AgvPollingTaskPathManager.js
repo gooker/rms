@@ -7,8 +7,8 @@ AgvPollingTaskPathManager.getInstance = function (dispatcher) {
   if (isNull(AgvPollingTaskPathManager.instance)) {
     const worker = new Worker(new URL('./agvPathPolling.worker.js', import.meta.url));
     worker.onmessage = function ({ data }) {
-      if (data.code === '0') {
-        dispatcher(data.data);
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
       }
     };
     AgvPollingTaskPathManager.instance = worker;
@@ -16,18 +16,20 @@ AgvPollingTaskPathManager.getInstance = function (dispatcher) {
   return AgvPollingTaskPathManager.instance;
 };
 
-AgvPollingTaskPathManager.start = function (agvIds = [], dispatcher) {
+AgvPollingTaskPathManager.start = function (uniqueIds = [], dispatcher) {
   if (isNull(AgvPollingTaskPathManager.instance)) {
     AgvPollingTaskPathManager.getInstance(dispatcher);
   }
-  const agvPathURL = getDomainNameByUrl(
-    `/${NameSpace.Platform}/traffic/getAllPath/${agvIds.join()}`,
-  );
+  const params = {
+    uniqueIds,
+  };
+  const agvPathURL = getDomainNameByUrl(`/${NameSpace.Platform}/traffic/getPathByUniqueIds`);
   AgvPollingTaskPathManager.instance.postMessage({
     state: 'start',
     url: agvPathURL,
     token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
+    params,
   });
 };
 

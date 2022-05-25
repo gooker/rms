@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { orderBy } from 'lodash';
 import BitText from './BitText';
-import { GlobalAlpha, ToteAGVSize, ForkLiftAGVSize } from '@/config/consts';
+import { GlobalAlpha, } from '@/config/consts';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class GeoLock extends PIXI.Sprite {
@@ -63,10 +62,16 @@ export default class GeoLock extends PIXI.Sprite {
   }
 
   drawRectLock() {
-    this.texture = this.getNestTextureBySize(this.$width, this.$height);
-    this.tint = this.color;
-    this.width = this.$width;
+    const rect = new SmoothGraphics();
+    rect.clear();
+    this.width = this.$width + 10;
     this.height = this.$height;
+    this.tint = this.color;
+    rect.lineStyle(20, this.color, 1);
+    rect.beginFill('0xffffff', 0.1);
+    rect.drawRect(0, 0, this.width, this.height);
+    rect.endFill();
+    this.texture = window.PixiUtils.renderer.generateTexture(rect);
   }
 
   drawCircleLock() {
@@ -75,21 +80,5 @@ export default class GeoLock extends PIXI.Sprite {
     circle.lineStyle(30, this.color, 1);
     circle.drawCircle(0, 0, this.radius);
     this.texture = window.PixiUtils.renderer.generateTexture(circle);
-  }
-
-  getNestTextureBySize(width, height) {
-    const latent = Math.abs(1050 - width) + Math.abs(1050 - height);
-    const tote = Math.abs(ToteAGVSize.width - width) + Math.abs(ToteAGVSize.height - height);
-    const fork =
-      Math.abs(ForkLiftAGVSize.width - width) + Math.abs(ForkLiftAGVSize.height - height);
-
-    const array = [
-      { key: latent, texture: PIXI.utils.TextureCache.LatentRectLock },
-      { key: tote, texture: PIXI.utils.TextureCache.ToteRectLock },
-      { key: fork, texture: PIXI.utils.TextureCache.ForkRectLock },
-    ];
-
-    const sortedArray = orderBy(array, ['key']);
-    return sortedArray[0].texture;
   }
 }

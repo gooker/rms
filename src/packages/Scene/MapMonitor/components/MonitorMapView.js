@@ -91,11 +91,11 @@ class MonitorMapView extends BaseMap {
     this.stationRealTimeRateMap = new Map();
 
     // 显示小车路径
-    this.filteredAGV = [];
+    this.filteredAGV = []; // 存放小车的uniqueId
     this.showTaskPath = false;
-    this.agvTaskMap = new Map(); // {agvID: TaskActions}
-    this.agvPathMap = new Map(); // {agvID:[TaskPathEntity]}
-    this.agvTargetLineMap = new Map(); // {agvID:SmoothGraphics}
+    this.agvTaskMap = new Map(); // {uniqueId: TaskActions}
+    this.agvPathMap = new Map(); // {uniqueId:[TaskPathEntity]}
+    this.agvTargetLineMap = new Map(); // {uniqueId:SmoothGraphics}
 
     // 料箱实时
     this.toteTaskRealtimePath = [];
@@ -309,7 +309,7 @@ class MonitorMapView extends BaseMap {
   // 地图元素点击事件
   onAgvClick = async ({ type, id }) => {
     const { dispatch } = this.props;
-    const response = await fetchAgvInfo(type, id);
+    const response = await fetchAgvInfo(id, type);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.message.fetchDataFailed' }));
     } else {
@@ -328,7 +328,7 @@ class MonitorMapView extends BaseMap {
     allData.forEach((currentdata) => {
       const stopCellId = currentdata.stationCellId;
       const _station = currentMap.get(`${stopCellId}`);
-      const cellEntity = this.idCellMap.get(`${stopCellId}`);
+      const cellEntity = this.idCellMap.get(stopCellId);
       if (isNull(_station) || !cellEntity) return;
       // 如果4个显示都为null 则直接return
       const { goodsRate, agvRate, waitTime, agvAndTaskProportion } = currentdata;
@@ -364,7 +364,7 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 小车 & 货架相关 **********************
   updateAgvCommonState = (agvc, agvState, agvEntity, agvType) => {
-    const { x, y, robotId, battery, mainTain, manualMode, errorLevel } = agvState;
+    const { x, y, robotId, uniqueId, battery, mainTain, manualMode, errorLevel } = agvState;
     // TODO: 测试
     const {
       navigationType = NavigationType.M_QRCODE,
@@ -426,7 +426,7 @@ class MonitorMapView extends BaseMap {
     }
 
     // 刷新行驶路线
-    this.showTaskPath && this.updateTaskPath(`${robotId}`);
+    this.showTaskPath && this.updateTaskPath(`${uniqueId}`);
 
     // 更新小车电池状态
     if (battery && agvEntity.battery !== battery) {
@@ -463,6 +463,7 @@ class MonitorMapView extends BaseMap {
       id: latentAGVData.robotId,
       x: latentAGVData.x || cellEntity?.x,
       y: latentAGVData.y || cellEntity?.y,
+      uniqueId: latentAGVData.uniqueId,
       battery: latentAGVData.battery || 0,
       errorLevel: latentAGVData.errorLevel || 0,
       state: latentAGVData.agvStatus ?? AGVState.offline,
@@ -503,6 +504,7 @@ class MonitorMapView extends BaseMap {
         currentCellId,
         currentDirection,
         errorLevel,
+        uniqueId,
       } = unifiedAgvState;
 
       if (isNull(currentCellId)) return;
@@ -522,6 +524,7 @@ class MonitorMapView extends BaseMap {
           x,
           y,
           robotId,
+          uniqueId,
           mainTain,
           currentCellId,
           currentDirection,
@@ -936,6 +939,7 @@ class MonitorMapView extends BaseMap {
       id: sorterAGVData.robotId,
       x: sorterAGVData.x || cellEntity.x,
       y: sorterAGVData.y || cellEntity.y,
+      uniqueId: sorterAGVData.uniqueId,
       battery: sorterAGVData.battery || 0,
       errorLevel: sorterAGVData.errorLevel || 0,
       state: sorterAGVData.agvStatus ?? AGVState.offline,
@@ -977,6 +981,7 @@ class MonitorMapView extends BaseMap {
         currentCellId,
         currentDirection,
         errorLevel,
+        uniqueId,
       } = unifiedAgvState;
 
       if (isNull(currentCellId)) return;
@@ -996,6 +1001,7 @@ class MonitorMapView extends BaseMap {
           x,
           y,
           robotId,
+          uniqueId,
           mainTain,
           currentCellId,
           currentDirection,
@@ -1028,6 +1034,7 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 渲染小车锁格 ********************** //
   renderLockCell = (inputData) => {
+    const { allAGVs } = window.$$state().monitor;
     // 清除所有的几何锁
     this.clearAllLocks();
 
@@ -1055,8 +1062,8 @@ class MonitorMapView extends BaseMap {
           ),
         );
       }
-      const { locked } = lockData;
-      const color = locked ? GeoLockColor['PATH'] : GeoLockColor.WillLocked;
+
+      const color = GeoLockColor['PATH'];
       let geoLock;
       const currentLockData = {
         ...lockData,
@@ -1065,6 +1072,7 @@ class MonitorMapView extends BaseMap {
         width,
         height,
         angle,
+        uniqueId: find(allAGVs, { uniqueId: lockData.robotId }),
       };
       if (lockData.boxType === 'GOTO_ROTATING') {
         geoLock = new OpenLock({ ...currentLockData, color });
@@ -1097,6 +1105,7 @@ class MonitorMapView extends BaseMap {
 
   // ************************ 渲染点位锁格 ********************** //
   renderCellLocks = (lockData) => {
+    const { allAGVs } = window.$$state().monitor;
     // 清除所有的几何锁
     this.clearCellLocks();
     if (!lockData) return;
@@ -1125,10 +1134,18 @@ class MonitorMapView extends BaseMap {
         ),
       );
     }
-    const { locked } = lockData;
-    const color = locked ? GeoLockColor['PATH'] : GeoLockColor.WillLocked;
+
+    const color = GeoLockColor['PATH'];
     let geoLock;
-    const currentLockData = { ...lockData, ...currentPosition, ...dimension, width, height, angle };
+    const currentLockData = {
+      ...lockData,
+      ...currentPosition,
+      ...dimension,
+      width,
+      height,
+      angle,
+      uniqueId: find(allAGVs, { uniqueId: lockData.robotId }),
+    };
     if (lockData.boxAction === 'GOTO_ROTATING') {
       geoLock = new OpenLock({ ...currentLockData, color });
     } else {
@@ -1175,19 +1192,19 @@ class MonitorMapView extends BaseMap {
       // 根据最新的agvTasks来确定目前需要渲染的小车任务路径，删除不需要渲染的路径. 比如：搜索 100，101小车，但是101小车没有任务路径，所以返回值不会包含101小车的数据
       const agvToRenderPath = agvTasks.map((agvTask) => `${agvTask.r}`);
       const agvToSplit = [];
-      [...this.agvPathMap.keys()].forEach((agvId) => {
-        if (!agvToRenderPath.includes(agvId)) {
-          agvToSplit.push(agvId);
-          const paths = this.agvPathMap.get(agvId);
+      [...this.agvPathMap.keys()].forEach((id) => {
+        if (!agvToRenderPath.includes(id)) {
+          agvToSplit.push(id);
+          const paths = this.agvPathMap.get(id);
           paths.forEach((path) => {
             this.pixiUtils.viewportRemoveChild(path);
             path.destroy({ children: true });
           });
         }
       });
-      agvToSplit.forEach((agvId) => {
-        this.agvPathMap.delete(agvId);
-        this.agvTaskMap.delete(agvId);
+      agvToSplit.forEach((id) => {
+        this.agvPathMap.delete(id);
+        this.agvTaskMap.delete(id);
       });
     }
 
@@ -1208,46 +1225,46 @@ class MonitorMapView extends BaseMap {
     this.refresh();
   };
 
-  updateTaskPath = (robotId) => {
+  updateTaskPath = (uniqueId) => {
     // 清除路径线
-    const paths = this.agvPathMap.get(robotId);
+    const paths = this.agvPathMap.get(uniqueId);
     if (paths && paths.length > 0) {
       paths.forEach((path) => {
         this.pixiUtils.viewportRemoveChild(path);
         path.destroy({ children: true });
       });
     }
-    this.agvPathMap.delete(robotId);
+    this.agvPathMap.delete(uniqueId);
 
     // 清除目标线
-    const targetLineSprite = this.agvTargetLineMap.get(robotId);
+    const targetLineSprite = this.agvTargetLineMap.get(uniqueId);
     if (targetLineSprite) {
       this.pixiUtils.viewportRemoveChild(targetLineSprite);
       targetLineSprite.destroy(true);
-      this.agvTargetLineMap.delete(robotId);
+      this.agvTargetLineMap.delete(uniqueId);
     }
 
     // 渲染新的路线
-    if (!this.filteredAGV.includes(robotId)) return;
-    this.renderTaskPaths(robotId);
+    if (!this.filteredAGV.includes(uniqueId)) return;
+    this.renderTaskPaths(uniqueId);
     this.refresh();
   };
 
-  renderTaskPaths = (agvId) => {
+  renderTaskPaths = (uniqueId) => {
     const { showFullPath, showTagetLine } = window.$$state().monitorView.routeView;
-
+    const { allAGVs } = window.$$state().monitor;
     // 渲染新的路径
     const _this = this;
-    const agvTaskMessage = this.agvTaskMap.get(agvId);
+    const agvTaskMessage = this.agvTaskMap.get(uniqueId);
     if (agvTaskMessage) {
-      const { si: currentCellIdIndex, ei: endIndex, c: cellIds } = agvTaskMessage;
+      const { si: startIndex, ei: endIndex, c: cellIds } = agvTaskMessage;
       const types = { passed: [], locked: [], future: [] };
-      const pathCellIds = cellIds.map((id) => `${id}`);
+      const pathCellIds = cellIds.map((id) => id);
 
       // 确定区间
       // 只要是走过的线段都是灰色的
       if (showFullPath) {
-        const tmpPassed = pathCellIds.slice(0, currentCellIdIndex + 1);
+        const tmpPassed = pathCellIds.slice(0, startIndex + 1);
         tmpPassed.length > 0 &&
           tmpPassed.reduce((pre, next) => {
             types.passed.push({ start: pre, end: next });
@@ -1256,7 +1273,7 @@ class MonitorMapView extends BaseMap {
       }
 
       // 已经锁中的为绿色
-      const tmpLocked = pathCellIds.slice(currentCellIdIndex, endIndex + 1);
+      const tmpLocked = pathCellIds.slice(startIndex, endIndex + 1);
       tmpLocked.length > 0 &&
         tmpLocked.reduce((pre, next) => {
           types.locked.push({ start: pre, end: next });
@@ -1265,7 +1282,7 @@ class MonitorMapView extends BaseMap {
 
       // 将要走的是黄色
       if (showFullPath) {
-        const tmpFuture = pathCellIds.slice(endIndex, pathCellIds.length + 1);
+        const tmpFuture = pathCellIds.slice(endIndex, cellIds.length + 1);
         tmpFuture.length > 0 &&
           tmpFuture.reduce((pre, next) => {
             types.future.push({ start: pre, end: next });
@@ -1277,16 +1294,17 @@ class MonitorMapView extends BaseMap {
       Object.keys(types).forEach((typeKey) => {
         types[typeKey].forEach((path) => {
           _this.addTaskPath(
-            agvId,
             getElevatorMapCellId(path.start),
             getElevatorMapCellId(path.end),
             typeKey,
+            uniqueId,
           );
         });
       });
 
       // 渲染小车到目标点的连线
       if (showTagetLine) {
+        const { agvId } = find(allAGVs, { uniqueId });
         const agvData = this.idAGVMap.get(agvId);
         let lineEnd = pathCellIds[pathCellIds.length - 1];
         lineEnd = getElevatorMapCellId(lineEnd);
@@ -1298,12 +1316,12 @@ class MonitorMapView extends BaseMap {
         targetLineSprite.lineTo(targetCell.x, targetCell.y);
         targetLineSprite.zIndex = zIndex.targetLine;
         this.pixiUtils.viewportAddChild(targetLineSprite);
-        this.agvTargetLineMap.set(agvId, targetLineSprite);
+        this.agvTargetLineMap.set(uniqueId, targetLineSprite);
       }
     }
   };
 
-  addTaskPath = (agvId, start, end, type) => {
+  addTaskPath = (start, end, type, uniqueId) => {
     const startCell = this.idCellMap.get(start);
     const endCell = this.idCellMap.get(end);
     if (startCell && endCell) {
@@ -1311,14 +1329,15 @@ class MonitorMapView extends BaseMap {
         type,
         startPoint: { x: startCell.x, y: startCell.y },
         endPoint: { x: endCell.x, y: endCell.y },
+        uniqueId,
       });
-      let paths = this.agvPathMap.get(agvId);
+      let paths = this.agvPathMap.get(uniqueId);
       if (paths && Array.isArray(paths)) {
         paths.push(taskPath);
       } else {
         paths = [];
         paths.push(taskPath);
-        this.agvPathMap.set(agvId, paths);
+        this.agvPathMap.set(uniqueId, paths);
       }
       this.pixiUtils.viewportAddChild(taskPath);
     }

@@ -1,15 +1,17 @@
 import React, { memo, useState } from 'react';
 import { Form, Button, Input, Switch } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
 import { agvEmptyRun } from '@/services/monitor';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
+import AgvFormComponent from '@/components/AgvFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 
 const EmptyRun = (props) => {
-  const { dispatch } = props;
+  const { dispatch, allAGVs } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -22,7 +24,10 @@ const EmptyRun = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        agvEmptyRun({ ...values })
+        let newValues={...values}
+        newValues.robotId=values.agvId;
+        delete newValues.agvId;
+        agvEmptyRun({ ...newValues })
           .then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
@@ -42,17 +47,9 @@ const EmptyRun = (props) => {
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
-        <Form labelWrap form={formRef}>
+        <Form labelWrap form={formRef} {...formItemLayout}>
+          <AgvFormComponent uiType="column" allAGVs={allAGVs} />
           <Form.Item
-            {...formItemLayout}
-            name={'robotId'}
-            label={formatMessage({ id: 'app.agv.id' })}
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            {...formItemLayout}
             name={'targetCellId'}
             label={formatMessage({ id: 'app.common.targetCell' })}
             rules={[{ required: true }]}
@@ -77,4 +74,6 @@ const EmptyRun = (props) => {
     </div>
   );
 };
-export default memo(EmptyRun);
+export default connect(({ monitor }) => ({
+  allAGVs: monitor.allAGVs,
+}))(memo(EmptyRun));
