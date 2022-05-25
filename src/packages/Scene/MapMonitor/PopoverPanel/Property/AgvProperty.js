@@ -21,6 +21,7 @@ import {
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
+import { find } from 'lodash';
 
 const checkedColor = '#ff8400';
 const AGVCategory = {
@@ -30,7 +31,7 @@ const AGVCategory = {
 };
 
 const AGVElementProp = (props) => {
-  const { data, type, dispatch, history, selectAgv, showRoute } = props;
+  const { data, type, dispatch, history, selectAgv, showRoute, allAGVs } = props;
   const [agvInfo, setAgvInfo] = useState({});
   const [agvId, setAgvId] = useState(null);
   const [mainTain, setMainTain] = useState(false);
@@ -41,7 +42,7 @@ const AGVElementProp = (props) => {
   useEffect(() => {
     async function init() {
       setAgvId(JSON.parse(data.id));
-      if (selectAgv.includes(data.id) && showRoute) {
+      if (selectAgv.includes(data.uniqueId) && showRoute) {
         setPathChecked(true);
       } else {
         setPathChecked(false);
@@ -54,14 +55,20 @@ const AGVElementProp = (props) => {
 
   async function getAgvInfo() {
     const [response, alertResponse] = await Promise.all([
-      fetchAgvInfo(type, data.id),
+      fetchAgvInfo(data.id, 'sorter'),
       getAlertCentersByTaskIdOrAgvId({ agvId: JSON.parse(data.id) }),
     ]);
+
+    const filterAgvInfo = find(
+      allAGVs,
+      (item) => item.agvId === data.id && item?.agv?.id === data.uniqueId,
+    );
     if (!dealResponse(response)) {
-      const { mongodbAGV = {}, redisAGV = {} } = response;
-      setAgvInfo({ ...mongodbAGV, ...redisAGV });
-      setMainTain(mongodbAGV?.disabled);
-      setManualMode(mongodbAGV?.manualMode);
+      const { agv = {}, agvInfo = {}, agvWorkStatusDTO = {} } = filterAgvInfo;
+     
+      setAgvInfo({ ...agvInfo, ...agvWorkStatusDTO });
+      setMainTain(agv?.maintain); // 维护
+      setManualMode(agv?.manualMode); // 是否手动
     }
 
     if (alertResponse && !dealResponse(alertResponse)) {
@@ -187,13 +194,13 @@ const AGVElementProp = (props) => {
   }
 
   function agvPthchanged() {
-    let allSelectedAGVs = [...selectAgv];
+    let allSelectedAGVUniqueIds = [...selectAgv];
     showRoutePollingCallback(false);
     if (pathChecked) {
-      allSelectedAGVs.splice(allSelectedAGVs.indexOf(`${agvId}`), 1);
+      allSelectedAGVUniqueIds.splice(allSelectedAGVUniqueIds.indexOf(`${data.uniqueId}`), 1);
       setPathChecked(false);
     } else {
-      allSelectedAGVs.push(`${agvId}`);
+      allSelectedAGVUniqueIds.push(`${data.uniqueId}`);
       setPathChecked(true);
       dispatch({
         type: 'monitorView/saveRouteView',
@@ -204,19 +211,19 @@ const AGVElementProp = (props) => {
     }
     dispatch({
       type: 'monitorView/saveViewState',
-      payload: { selectAgv: allSelectedAGVs },
+      payload: { selectAgv: allSelectedAGVUniqueIds },
     });
 
-    if (allSelectedAGVs?.length > 0) {
-      showRoutePollingCallback(true, allSelectedAGVs); // 开启轮询
+    if (allSelectedAGVUniqueIds?.length > 0) {
+      showRoutePollingCallback(true, allSelectedAGVUniqueIds); // 开启轮询
     }
   }
 
   // 触发显示路径的轮询
-  function showRoutePollingCallback(flag, agvs) {
+  function showRoutePollingCallback(flag, ids) {
     dispatch({
       type: 'monitorView/routePolling',
-      payload: { flag, agvs },
+      payload: { flag, ids },
     });
   }
 
@@ -241,7 +248,7 @@ const AGVElementProp = (props) => {
               </span>
             </div>
             <div className={style.rightSideline} onClick={goToAgvDetail}>
-              {agvInfo?.robotId}
+              {agvInfo?.agvId}
             </div>
           </div>
 
@@ -460,7 +467,8 @@ const AGVElementProp = (props) => {
     </>
   );
 };
-export default connect(({ monitorView }) => ({
+export default connect(({ monitorView, monitor }) => ({
   selectAgv: monitorView.selectAgv ?? [],
   showRoute: monitorView.routeView?.showRoute,
+  allAGVs: monitor?.allAGVs,
 }))(withRouter(memo(AGVElementProp)));

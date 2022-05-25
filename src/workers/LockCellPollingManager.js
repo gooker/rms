@@ -17,8 +17,8 @@ LockCellPolling.getInstance = function (dispatcher) {
        * 1. 如果token过期就停止
        * 2. 处理错误
        */
-      if (data.code === '0') {
-        dispatcher(data.data);
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
       }
     };
     LockCellPolling.instance = worker;
@@ -30,7 +30,7 @@ LockCellPolling.start = function (params, dispatcher) {
   if (isNull(LockCellPolling.instance)) {
     LockCellPolling.getInstance(dispatcher);
   }
-  const lockCellURL = getDomainNameByUrl(`/${NameSpace.Platform}/lock/getLockedCellsByRobotId`);
+  const lockCellURL = getDomainNameByUrl(`/${NameSpace.Platform}/lock/getLockCellsByUniqueIds`);
   LockCellPolling.instance.postMessage({
     state: 'start',
     url: lockCellURL,

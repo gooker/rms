@@ -47,7 +47,7 @@ export async function fetchForkLiftPodLayout() {
 
 // ************************************** 小车相关  ************************************** //
 export async function fetchAllAgvList() {
-  return request(`/${NameSpace.Platform}/traffic/getAllAGV`, {
+  return request(`/${NameSpace.Platform}/traffic/getAllVehicles`, {
     method: 'GET',
   });
 }
@@ -59,10 +59,9 @@ export async function fetchAgvList(agvType) {
   });
 }
 
-// 请求WCS端小车实时信息
-export async function fetchAgvInfo(agvType, agvId) {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[agvType]}/agv/${sectionId}/${agvId}`, {
+// 获取section的指定小车当前信息
+export async function fetchAgvInfo(vehicleId,vehicleType) {
+  return request(`/${NameSpace.Platform}/traffic/getVehicle/${vehicleId}/${vehicleType}`, {
     method: `GET`,
   });
 }

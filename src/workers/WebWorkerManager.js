@@ -17,10 +17,8 @@ AlertCountPolling.getInstance = function (dispatcher) {
        * 1. 如果token过期就停止
        * 2. 处理错误
        */
-      if (data.code === '0') {
-        if (typeof data.data === 'number') {
-          dispatcher(data.data);
-        }
+      if (data && typeof data === 'number') {
+        dispatcher(data);
       }
     };
     AlertCountPolling.instance = worker;

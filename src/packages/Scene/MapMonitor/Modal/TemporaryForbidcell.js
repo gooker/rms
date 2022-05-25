@@ -48,9 +48,7 @@ const TemporaryForbidcel = (props) => {
       const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
       dispatch({
         type: 'monitor/fetchSaveTemporaryCell',
-        payload: {
-          temporaryCellList,
-        },
+        payload: temporaryCellList,
       }).then(refreshTemporaryLockedCells);
     } else {
       message.error(formatMessage({ id: 'monitor.view.temporaryBlock.required' }));
@@ -64,7 +62,7 @@ const TemporaryForbidcel = (props) => {
       const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
       dispatch({
         type: 'monitor/fetchDeleteTemporaryCell',
-        payload: { temporaryCellList },
+        payload: temporaryCellList,
       }).then(refreshTemporaryLockedCells);
     } else {
       message.error(formatMessage({ id: 'monitor.view.temporaryBlock.required' }));

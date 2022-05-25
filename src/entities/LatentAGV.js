@@ -12,6 +12,7 @@ export default class LatentAGV extends PIXI.Container {
     this.x = props.x;
     this.y = props.y;
     this.type = MonitorSelectableSpriteType.LatentLifting;
+    this.uniqueId = props.uniqueId;
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
     this.zIndex = zIndex.agv;

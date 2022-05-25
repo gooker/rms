@@ -177,20 +177,32 @@ export async function updateLatentPodSize(payload) {
 }
 
 //////////////////////////**** 地图锁相关 ****//////////////////////////
-export async function fetchMapAGVLocks(logicId, robotIds) {
-  return request(
-    `/${NameSpace.Platform}/lock/getLockedCellsByRobotId/${logicId}/${robotIds}`,
-    { method: 'GET' },
-  );
+
+/**显示锁格 start***/
+
+// 获取小车的路径锁格信息 （单个）
+export async function getLockedCellsByAgvId(logicId, vehicleId,vehicleType) {
+  return request(`/${NameSpace.Platform}/lock/getLockedCellsByVehicleId/${logicId}/${vehicleId}/${vehicleType}`, {
+    method: 'GET',
+  });
+}
+
+// 获取小车的路径锁格信息（批量）
+export async function fetchMapAGVLocks(logicId, param) {
+  return request(`/${NameSpace.Platform}/lock/getLockCellsByUniqueIds/${logicId}`, {
+    method: 'GET',
+    data: param,
+  });
 }
 
 // 获取逻辑区的路径锁格信息
 export async function fetchLogicAllAGVLocks(logicId) {
-  return request(
-    `/${NameSpace.Platform}/lock/getAllLockedCells/${logicId}`,
-    { method: 'GET' },
-  );
+  return request(`/${NameSpace.Platform}/lock/getAllLockedCells/${logicId}`, { method: 'GET' });
 }
+
+/****显示锁格 end******/
+
+/****显示路径 end****/
 
 //////////////////////////**** 充电桩管理 ****//////////////////////////
 // 获取地图充电桩状态信息

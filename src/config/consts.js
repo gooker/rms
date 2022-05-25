@@ -254,6 +254,7 @@ export const MonitorSelectableSpriteType = {
   ForkLifting: 'ForkLifting',
   Sorter: 'Sorter',
 
+  AGV: 'AGV',
   LatentPod: 'LatentPod',
   ToteRack: 'ToteRack',
 

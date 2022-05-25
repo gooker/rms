@@ -13,9 +13,9 @@ self.onmessage = ({ data: { state, url, token, sectionId, params } }) => {
       'Content-Type': 'application/json; charset=utf-8',
     };
 
-    const { logicId, robotIds } = params;
+    const { logicId, ids } = params;
     intervalInstance = setInterval(() => {
-      fetch(`${url}/${logicId}/${robotIds}`, {
+      fetch(`${url}/${logicId}?uniqueIds=${ids}`, {
         headers,
         method: 'GET',
       })

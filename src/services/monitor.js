@@ -1,7 +1,6 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-
 // 新增地图临时不可走点
 export async function updateTemporaryBlockCell(payload) {
   return request(`/${NameSpace.Platform}/lock/saveTemporaryCell`, {
@@ -25,11 +24,24 @@ export async function fetchTemporaryBlockCells() {
   });
 }
 
-// 获取小车任务路径
-export async function fetchAgvTaskPath(robotIds) {
-  return request(`/${NameSpace.Platform}/traffic/getAllPath/${robotIds.join()}`, {
+/****显示路径 start*****/
+// 根据小车 获取小车的任务路径(单个)
+export async function getPathActionByAgvId(vehicleId, vehicleType) {
+  return request(`/${NameSpace.Platform}/traffic/getPathByVehicleId/${vehicleId}/${vehicleType}`, {
     method: 'GET',
   });
+}
+//  根据小车 获取小车的任务路径(批量)
+export async function getAllPathByIds(params) {
+  return request(`/${NameSpace.Platform}/traffic/getPathByUniqueIds`, {
+    method: 'GET',
+    data: params,
+  });
+}
+
+// 获取小车的任务路径
+export async function getAllPath(logicId) {
+  return request(`/${NameSpace.Platform}/traffic/getAllLockedCells/${logicId}`, { method: 'GET' });
 }
 
 ///////////////////////// ******** 潜伏相关接口 ******** //////////////////////////
@@ -125,7 +137,7 @@ export async function fetchPodToCell(params) {
 // 小车空跑
 export async function agvEmptyRun(params) {
   const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace.Platform}/agv-task/empty-run`, {
+  return request(`/${NameSpace.Platform}/task/empty-run`, {
     method: 'POST',
     data: { ...params, sectionId },
   });

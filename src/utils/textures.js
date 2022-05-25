@@ -69,12 +69,6 @@ export function getAgvSelectBorderTexture() {
   return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
-export function getRectLock(width, height) {
-  graphics.clear();
-  graphics.lineStyle(20, 0xffffff, 1);
-  graphics.drawRect(0, 0, width, height);
-  return window.PixiUtils.renderer.generateTexture(graphics);
-}
 
 export function loadTexturesForMap() {
   return new Promise((resolve) => {

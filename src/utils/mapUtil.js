@@ -17,7 +17,6 @@ import {
   getCellHeatTexture,
   getIntersectionDirectionTexture,
   getQrCodeSelectBorderTexture,
-  getRectLock,
   getTaskPathTexture,
 } from '@/utils/textures';
 import json from '../../package.json';
@@ -1125,7 +1124,7 @@ export function getElevatorMapCellId(currentCellId) {
   if (elevatorCellMap && elevatorCellMap[currentCellId]) {
     currentCellId = elevatorCellMap[currentCellId][currentLogicId];
   }
-  return currentCellId;
+  return Number(currentCellId);
 }
 
 /**
@@ -1330,6 +1329,7 @@ export function unifyAgvState(agv) {
     y: agv.y,
     currentCellId,
     navigationType: agv.bd ?? agv.navigationType,
+    uniqueId: agv.rId,
     battery: agv.b ?? agv.battery,
     robotId: agv.r ?? agv.robotId,
     mainTain: agv.m ?? agv.maintain,
@@ -1456,14 +1456,6 @@ export function loadMonitorExtraTextures(renderer) {
     PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed), '_passedTaskPath');
     PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.locked), '_lockedTaskPath');
     PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.future), '_futureTaskPath');
-
-    // 小车锁格
-    PIXI.Texture.addToCache(getRectLock(1050, 1050), 'LatentRectLock');
-    PIXI.Texture.addToCache(getRectLock(ToteAGVSize.width, ToteAGVSize.height), 'ToteRectLock');
-    PIXI.Texture.addToCache(
-      getRectLock(SorterAGVSize.width, SorterAGVSize.height),
-      'SorterRectLock',
-    );
 
     // 点位成本热度
     PIXI.Texture.addToCache(getCellHeatTexture('0x3366FF'), '_cellHeat1');
@@ -1641,10 +1633,8 @@ export function getArrowDistance(distance) {
 //
 export function getLockCellBounds(dimension, angle) {
   const { front, rear, left, right } = dimension;
-  let width = null;
-  let height = null;
+  let width = right + left;
+  let height = rear + front;
   // if ([0, 180].includes(angle)) {
-  width = Math.abs(right - left);
-  height = Math.abs(rear - front);
   return { width, height };
 }

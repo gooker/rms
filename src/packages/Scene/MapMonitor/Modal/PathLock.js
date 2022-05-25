@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Form, Row, Col, Switch, Select, Button, message, Checkbox, InputNumber } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { fetchCellLocks } from '@/services/XIHE';
+import { fetchCellLocks, fetchLogicAllAGVLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -49,33 +49,30 @@ const PathLock = (props) => {
     }
   }
 
-  function onAgvListChanged(changedAgvList) {
+  function onAgvListChanged(changedIdList) {
     if (!mapContext) return;
 
     dispatch({
       type: 'monitorView/saveViewState',
-      payload: { selectAgv: changedAgvList },
+      payload: { selectAgv: changedIdList },
     });
     // 更新地图锁格显示
     lockcellPollingCallback(false);
     showRoutePollingCallback(false);
 
-    if (changedAgvList.length > 0) {
-    } else {
-    }
-    if (changedAgvList.length > 0) {
-      lockcellPollingCallback(agvLockView.showLockCellPolling, changedAgvList);
-      showRoutePollingCallback(routeView.showRoute, changedAgvList);
+    if (changedIdList.length > 0) {
+      lockcellPollingCallback(agvLockView.showLockCellPolling, changedIdList);
+      showRoutePollingCallback(routeView.showRoute, changedIdList);
     } else {
       mapContext.clearAllLocks(); // 清理锁格
 
       // 清理地图上的路径
-      mapContext?.registerShowTaskPath([], true);
+      mapContext?.registerShowTaskPath([], false);
     }
   }
 
   function selectAllAgvs() {
-    const selectAgv = allAGVs.map(({ agvId }) => agvId);
+    const selectAgv = allAGVs.map(({ uniqueId }) => uniqueId);
     form.setFieldsValue({ selectAgv });
     onAgvListChanged(selectAgv);
     dispatch({
@@ -86,15 +83,15 @@ const PathLock = (props) => {
 
   // 显示锁格-刷新
   function refreshMapAgvLock() {
-    const selectAgv = form.getFieldValue('selectAgv');
-    if (selectAgv.length === 0) {
+    const selectedIds = form.getFieldValue('selectAgv');
+    if (selectedIds.length === 0) {
       message.error(formatMessage({ id: 'monitor.view.require.AGV' }));
       return false;
     }
     if (agvLockView?.showLockCellPolling) {
       dispatch({
         type: 'monitor/fetchAllLockCells',
-        payload: { robotIds: selectAgv },
+        payload: { uniqueIds: selectedIds },
       }).then((response) => {
         if (!dealResponse(response, null, formatMessage({ id: 'monitor.tip.fetchLockFail' }))) {
           mapContext.renderLockCell(response);
@@ -116,19 +113,18 @@ const PathLock = (props) => {
 
   // start 轮询显示锁格
   function lockcellPollingCallback(flag, agvs) {
-    if (flag) {
-      openLockcellPolling(agvs);
+    const allAgvs = agvs || selectAgv;
+    if (flag && allAgvs?.length > 0) {
+      openLockcellPolling(allAgvs);
     } else {
       closeLockcellPolling();
     }
   }
-  function openLockcellPolling(agvs) {
-    const robotIds = agvs || selectAgv;
-    if (robotIds?.length > 0) {
-      LockCellPolling.start({ logicId: currentLogicAreaId, robotIds }, (response) => {
-        mapContext?.renderLockCell(response);
-      });
-    }
+  
+  function openLockcellPolling(ids) {
+    LockCellPolling.start({ logicId: currentLogicAreaId, ids }, (response) => {
+      mapContext?.renderLockCell(response);
+    });
   }
 
   function closeLockcellPolling() {
@@ -137,10 +133,10 @@ const PathLock = (props) => {
   //end 显示锁格
 
   /*****start 显示路径**/
-  function showRoutePollingCallback(flag, agvs) {
+  function showRoutePollingCallback(flag, ids) {
     dispatch({
       type: 'monitorView/routePolling',
-      payload: { flag, agvs },
+      payload: { flag, ids },
     });
   }
   /*****end*****/
@@ -176,7 +172,7 @@ const PathLock = (props) => {
   }
 
   async function viewLogicLocked() {
-    const response = await fetchCellLocks(currentLogicAreaId);
+    const response = await fetchLogicAllAGVLocks(currentLogicAreaId);
     if (!dealResponse(response)) {
       mapContext?.renderLockCell(response);
     }
@@ -210,10 +206,19 @@ const PathLock = (props) => {
                     return value;
                   }}
                 >
-                  <Select allowClear showSearch size="small" mode="tags" maxTagCount={5}>
+                  <Select
+                    allowClear
+                    showSearch
+                    size="small"
+                    maxTagCount={5}
+                    mode="multiple"
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
                     {allAGVs.map((element) => (
-                      <Select.Option key={element.agvId} value={element.agvId}>
-                        {element.agvId}
+                      <Select.Option key={element.agvId} value={element.uniqueId}>
+                        {`${element.agvType}-${element.agvId}`}
                       </Select.Option>
                     ))}
                   </Select>
