@@ -1,10 +1,11 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, InputNumber } from 'antd';
+import { Form, Button } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { agvToRest } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
+import AgvFormComponent from '@/components/AgvFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
@@ -24,9 +25,10 @@ const ToRest = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { agvId: values.robotId });
+        const agv = find(allAGVs, { vehicleId: values.vehicleId });
         if (agv) {
-          agvToRest(agv.robotType, { ...values }).then((response) => {
+        
+          agvToRest({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -44,15 +46,8 @@ const ToRest = (props) => {
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
-        <Form form={formRef}>
-          <Form.Item
-            {...formItemLayout}
-            name={'robotId'}
-            label={formatMessage({ id: 'app.agv.id' })}
-            rules={[{ required: true }]}
-          >
-            <InputNumber style={{ width: '100%' }} />
-          </Form.Item>
+        <Form form={formRef} {...formItemLayout}>
+          <AgvFormComponent />
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />

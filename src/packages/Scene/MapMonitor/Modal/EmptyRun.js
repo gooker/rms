@@ -24,8 +24,8 @@ const EmptyRun = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        let newValues={...values}
-        newValues.robotId=values.agvId;
+        let newValues = { ...values };
+        newValues.robotId = values.agvId;
         delete newValues.agvId;
         agvEmptyRun({ ...newValues })
           .then((response) => {
@@ -48,7 +48,7 @@ const EmptyRun = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form labelWrap form={formRef} {...formItemLayout}>
-          <AgvFormComponent uiType="column" allAGVs={allAGVs} />
+          <AgvFormComponent />
           <Form.Item
             name={'targetCellId'}
             label={formatMessage({ id: 'app.common.targetCell' })}

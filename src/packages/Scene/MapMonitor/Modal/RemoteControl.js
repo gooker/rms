@@ -27,9 +27,9 @@ const RemoteControl = (props) => {
 
   function prefabricatedCommand(code, value) {
     let params = null;
-    const robotId = formRef.getFieldValue('robotId');
-    if (isStrictNull(robotId)) {
-      formRef.validateFields(['robotId'], { force: true });
+    const uniqueIds = formRef.getFieldValue('uniqueIds');
+    if (isStrictNull(uniqueIds)) {
+      formRef.validateFields(['uniqueIds'], { force: true });
       return;
     }
     switch (code) {
@@ -38,7 +38,7 @@ const RemoteControl = (props) => {
       case 0x03: {
         const distance = formRef.getFieldValue('distance');
         params = {
-          robotId,
+          uniqueIds,
           commandCode: code,
           commandParameter: distance,
           rawCommandHex: null,
@@ -49,7 +49,7 @@ const RemoteControl = (props) => {
       case 0x10:
       case 0x11: {
         params = {
-          robotId,
+          uniqueIds,
           commandCode: code,
           commandParameter: value,
           rawCommandHex: null,
@@ -61,7 +61,7 @@ const RemoteControl = (props) => {
       case 0x21: {
         const podId = formRef.getFieldValue('podId');
         params = {
-          robotId,
+          uniqueIds,
           commandCode: code,
           commandParameter: podId,
           rawCommandHex: null,
@@ -71,7 +71,7 @@ const RemoteControl = (props) => {
       default:
         break;
     }
-    const agv = find(allAGVs, { agvId:robotId });
+    const agv = true; // TODO:到底是多选还是单选//find(allAGVs, { uniqueId:uniqueIds });
     if (agv) {
       agvRemoteControl(agv.robotType, params).then((response) => {
         if (dealResponse(response)) {
@@ -86,15 +86,15 @@ const RemoteControl = (props) => {
   }
 
   function sendCustomCommand() {
-    const robotId = formRef.getFieldValue('robotId');
-    if (isStrictNull(robotId)) {
-      formRef.validateFields(['robotId'], { force: true });
+    const uniqueIds = formRef.getFieldValue('uniqueIds');
+    if (isStrictNull(uniqueIds)) {
+      formRef.validateFields(['uniqueIds'], { force: true });
       return;
     }
-    const agv = find(allAGVs, { agvId:robotId });
+    const agv = true; // TODO:find(allAGVs, { agvId: uniqueIds });
     const hexCommand = formRef.getFieldValue('hexCommand');
     const params = {
-      robotId,
+      uniqueIds,
       commandCode: null,
       commandParameter: null,
       rawCommandHex: hexCommand,
@@ -121,11 +121,26 @@ const RemoteControl = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
-            name={'robotId'}
+            name={'uniqueIds'}
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
-            <Select mode={'tags'} style={{ width: 400 }} />
+            <Select
+              allowClear
+              showSearch
+              size="small"
+              maxTagCount={5}
+              mode="multiple"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {allAGVs.map((element) => (
+                <Select.Option key={element.agvId} value={element.uniqueId}>
+                  {`${element.agvType}-${element.agvId}`}
+                </Select.Option>
+              ))}
+            </Select>
           </Form.Item>
 
           {/* 小车直行 */}

@@ -1,11 +1,12 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, InputNumber } from 'antd';
+import { Form, Button } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import { agvTryToCharge } from '@/services/monitor';
 import FormattedMessage from '@/components/FormattedMessage';
+import AgvFormComponent from '@/components/AgvFormComponent';
 import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
@@ -24,9 +25,9 @@ const Charging = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { agvId: values.robotId });
+        const agv = find(allAGVs, { vehicleId: values.vehicleId });
         if (agv) {
-          agvTryToCharge(agv.robotType, { ...values }).then((response) => {
+          agvTryToCharge({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -44,15 +45,8 @@ const Charging = (props) => {
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
-        <Form form={formRef}>
-          <Form.Item
-            {...formItemLayout}
-            name={'robotId'}
-            label={formatMessage({ id: 'app.agv.id' })}
-            rules={[{ required: true }]}
-          >
-            <InputNumber style={{ width: '100%' }} />
-          </Form.Item>
+        <Form form={formRef} {...formItemLayout}>
+          <AgvFormComponent />
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
