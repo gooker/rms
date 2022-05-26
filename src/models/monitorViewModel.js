@@ -1,4 +1,4 @@
-import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
+import { AgvPollingTaskPathManager } from '@/workers/WebWorkerManager';
 import { NavigationType, CoordinateType } from '@/config/config';
 
 const MonitorViewModelState = {

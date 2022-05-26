@@ -5,7 +5,7 @@ import { fetchCellLocks, fetchLogicAllAGVLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { LockCellPolling } from '@/workers/LockCellPollingManager';
+import { LockCellPolling } from '@/workers/WebWorkerManager';
 import styles from '../monitorLayout.module.less';
 
 const width = 500;

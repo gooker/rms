@@ -4,7 +4,7 @@ import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { StationRatePolling } from '@/workers/StationRateManager';
+import { StationRatePolling } from '@/workers/WebWorkerManager';
 import styles from '../monitorLayout.module.less';
 import CostCheckBox from '@/packages/Scene/components/CostCheckBox';
 

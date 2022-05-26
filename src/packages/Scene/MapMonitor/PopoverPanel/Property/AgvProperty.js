@@ -143,7 +143,7 @@ const AGVElementProp = (props) => {
       robotId: agvId,
       rawCommandHex: hexCommand,
     };
-    const response = agvRemoteControl(type, params);
+    const response = await agvRemoteControl(type, params);
     if (dealResponse(response)) {
       message.error(
         formatMessage(

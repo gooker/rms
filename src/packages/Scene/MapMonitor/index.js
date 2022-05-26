@@ -12,8 +12,7 @@ import MonitorModals from './Modal';
 import { HeaderHeight, MonitorOperationType } from './enums';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
-import { AgvPollingTaskPathManager } from '@/workers/AgvPollingTaskPathManager';
-import { LockCellPolling } from '@/workers/LockCellPollingManager';
+import { AgvPollingTaskPathManager,LockCellPolling } from '@/workers/WebWorkerManager';
 
 const MapMonitor = (props) => {
   const { dispatch, socketClient, currentMap, mapContext } = props;

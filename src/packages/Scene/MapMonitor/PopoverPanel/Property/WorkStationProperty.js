@@ -3,7 +3,7 @@ import { Tag, Switch, InputNumber } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchWorkStationInstrument } from '@/services/monitor';
-import { WorkStationStatePolling } from '@/workers/WorkStationPollingManager';
+import { WorkStationStatePolling } from '@/workers/WebWorkerManager';
 import { covertData2ChartsData } from '@/packages/Scene/MapMonitor/Modal/WorkStationReport/workStationEchart';
 import { isStrictNull, formatMessage, isNull, dealResponse } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
