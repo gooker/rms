@@ -22,7 +22,7 @@ self.onmessage = ({ data: { state, url, token, sectionId, params } }) => {
         .then((response) => response.json())
         .then((response) => self.postMessage(response))
         .catch((err) => console.log(`Worker: lockCellPolling => ${err.message}`));
-    }, 10 * 1000);
+    }, 1000);
   } else if (state === 'end') {
     clearInterval(intervalInstance);
     intervalInstance = null;
