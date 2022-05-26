@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Switch, Select, Button, message, Checkbox, InputNumber } from 'antd';
+import { Button, Checkbox, Col, Form, InputNumber, message, Row, Select, Switch } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { fetchCellLocks, fetchLogicAllAGVLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
@@ -120,10 +120,10 @@ const PathLock = (props) => {
       closeLockcellPolling();
     }
   }
-  
+
   function openLockcellPolling(ids) {
     LockCellPolling.start({ logicId: currentLogicAreaId, ids }, (response) => {
-      mapContext?.renderLockCell(response);
+      props?.mapContext?.renderLockCell(response);
     });
   }
 

@@ -46,6 +46,8 @@ AlertCountPolling.terminate = function () {
     AlertCountPolling.instance.postMessage({
       state: 'end',
     });
+    AlertCountPolling.instance.terminate();
+    AlertCountPolling.instance = null;
   }
 };
 

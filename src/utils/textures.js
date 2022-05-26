@@ -69,7 +69,6 @@ export function getAgvSelectBorderTexture() {
   return window.PixiUtils.renderer.generateTexture(graphics);
 }
 
-
 export function loadTexturesForMap() {
   return new Promise((resolve) => {
     PIXI.Loader.shared
@@ -137,11 +136,11 @@ export function loadTexturesForMap() {
       .add('scan_cell', '/images/scan_cell.png')
       // .add('sorter', '/images/sorter.png')
       .add('sorter_agv', '/images/sorter.png')
-      .add('sorter_green', '/images/sorter_green.png')
-      .add('sorter_grey', '/images/sorter_grey.png')
-      .add('sorter_purple', '/images/sorter_purple.png')
-      .add('sorter_red', '/images/sorter_red.png')
-      .add('sorter_yellow', '/images/sorter_yellow.png')
+      .add('sorter_agv_green', '/images/sorter_green.png')
+      .add('sorter_agv_grey', '/images/sorter_grey.png')
+      .add('sorter_agv_purple', '/images/sorter_purple.png')
+      .add('sorter_agv_red', '/images/sorter_red.png')
+      .add('sorter_agv_yellow', '/images/sorter_yellow.png')
       .add('stop', '/images/stop.png')
       .add('store_cell', '/images/store_cell.png')
       .add('tmp_block_lock', '/images/tmp_block_lock.png')
