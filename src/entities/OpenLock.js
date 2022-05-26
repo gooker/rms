@@ -9,7 +9,7 @@ export default class OpenLock extends PIXI.Container {
     super();
     this.x = props.x;
     this.y = props.y;
-    this.robotId = props.robotId;
+    this.vehicleId = props.vehicleId;
     this.openAngle = props.openAngle;
     this.color = props.color;
     this.radius = props.radius;
@@ -20,7 +20,7 @@ export default class OpenLock extends PIXI.Container {
     this.$height = props.height;
 
     this.drawShape();
-    !isNull(this.robotId) && this.addRobotId();
+    !isNull(this.vehicleId) && this.addRobotId();
   }
 
   getRadBase(dx, dy) {
@@ -115,7 +115,7 @@ export default class OpenLock extends PIXI.Container {
   addRobotId() {
     const width = -this.$width / 2 + 30;
     const height = this.$height / 2 - 20;
-    this.robotIdText = new BitText(this.robotId, width + 20, height - 40, this.color, 70);
+    this.robotIdText = new BitText(this.vehicleId, width + 20, height - 40, this.color, 70);
     this.robotIdText.anchor.set(0.5);
     this.robotIdText.angle = -this.angle;
     this.addChild(this.robotIdText);

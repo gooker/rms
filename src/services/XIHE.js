@@ -181,18 +181,23 @@ export async function updateLatentPodSize(payload) {
 /**显示锁格 start***/
 
 // 获取小车的路径锁格信息 （单个）
-export async function getLockedCellsByAgvId(logicId, vehicleId,vehicleType) {
-  return request(`/${NameSpace.Platform}/lock/getLockedCellsByVehicleId/${logicId}/${vehicleId}/${vehicleType}`, {
-    method: 'GET',
-  });
+export async function getLockedCellsByAgvId(logicId, vehicleId, vehicleType) {
+  return request(
+    `/${NameSpace.Platform}/lock/getLockedCellsByVehicleId/${logicId}/${vehicleId}/${vehicleType}`,
+    {
+      method: 'GET',
+    },
+  );
 }
 
 // 获取小车的路径锁格信息（批量）
-export async function fetchMapAGVLocks(logicId, param) {
-  return request(`/${NameSpace.Platform}/lock/getLockCellsByUniqueIds/${logicId}`, {
-    method: 'GET',
-    data: param,
-  });
+export async function fetchMapAGVLocks(logicId, uniqueIds) {
+  return request(
+    `/${NameSpace.Platform}/lock/getLockCellsByUniqueIds/${logicId}/?uniqueIds=${uniqueIds}`,
+    {
+      method: 'GET',
+    },
+  );
 }
 
 // 获取逻辑区的路径锁格信息

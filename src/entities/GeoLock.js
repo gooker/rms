@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { GlobalAlpha, } from '@/config/consts';
+import { GlobalAlpha } from '@/config/consts';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class GeoLock extends PIXI.Sprite {
@@ -8,7 +8,7 @@ export default class GeoLock extends PIXI.Sprite {
     super();
     this.x = props.x;
     this.y = props.y;
-    this.robotId = props.robotId;
+    this.vehicleId = props.vehicleId;
     this.$width = props.width;
     this.$height = props.height;
     this.angle = props.angle;
@@ -55,7 +55,7 @@ export default class GeoLock extends PIXI.Sprite {
       width = -(this.radius - 15) * Math.cos((45 * Math.PI) / 180);
       height = (this.radius - 15) * Math.sin((45 * Math.PI) / 180);
     }
-    const robotIdText = new BitText(this.robotId, width + 20, height - 40, this.color, 70);
+    const robotIdText = new BitText(this.vehicleId, width + 20, height - 40, this.color, 70);
     robotIdText.anchor.set(0.5);
     robotIdText.angle = -this.angle;
     this.addChild(robotIdText);

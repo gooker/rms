@@ -1066,7 +1066,8 @@ class MonitorMapView extends BaseMap {
         width,
         height,
         angle,
-        uniqueId: find(allAGVs, { uniqueId: lockData.robotId }),
+        uniqueId:lockData.robotId,
+        vehicleId: find(allAGVs, { uniqueId: lockData.robotId })?.agvId,
       };
       if (lockData.boxType === 'GOTO_ROTATING') {
         geoLock = new OpenLock({ ...currentLockData, color });
@@ -1138,7 +1139,8 @@ class MonitorMapView extends BaseMap {
       width,
       height,
       angle,
-      uniqueId: find(allAGVs, { uniqueId: lockData.robotId }),
+      uniqueId:lockData.robotId,
+      vehicleId: find(allAGVs, { uniqueId: lockData.robotId })?.agvId,
     };
     if (lockData.boxAction === 'GOTO_ROTATING') {
       geoLock = new OpenLock({ ...currentLockData, color });
@@ -1304,7 +1306,7 @@ class MonitorMapView extends BaseMap {
         lineEnd = getElevatorMapCellId(lineEnd);
         const targetCell = this.idCellMap.get(lineEnd);
 
-        const targetLineSprite = new SmoothGraphics();
+        const targetLineSprite = new PIXI.Graphics();
         targetLineSprite.lineStyle(20, 0x287ada, 1);
         targetLineSprite.moveTo(agvData.x, agvData.y);
         targetLineSprite.lineTo(targetCell.x, targetCell.y);

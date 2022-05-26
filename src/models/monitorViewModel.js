@@ -146,18 +146,18 @@ export default {
   effects: {
     *routePolling({ payload }, { select }) {
       const { flag, ids } = payload;
-      const { mapContext } = yield select(({ monitor }) => monitor);
+      const props = yield select(({ monitor }) => monitor);
       const { selectAgv } = yield select(({ monitorView }) => monitorView);
       const uniqueIds = ids || selectAgv;
       if (flag && uniqueIds?.length > 0) {
         AgvPollingTaskPathManager.start(uniqueIds, (response) => {
           if (response && Array.isArray(response)) {
             const tasks = response.filter(Boolean);
-            mapContext.registerShowTaskPath(tasks, true);
+            props.mapContext.registerShowTaskPath(tasks, true);
           }
         });
       } else {
-        mapContext?.registerShowTaskPath([], false);
+        props.mapContext?.registerShowTaskPath([], false);
         AgvPollingTaskPathManager.terminate();
       }
     },

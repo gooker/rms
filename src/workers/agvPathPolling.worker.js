@@ -18,7 +18,7 @@ self.onmessage = ({ data: { state, url, token, sectionId, params } }) => {
         .then((response) => response.json())
         .then((response) => self.postMessage(response))
         .catch((err) => console.log(`Worker: agvPathPolling => ${err.message}`));
-    }, 5 * 1000);
+    }, 1000);
   } else if (state === 'end') {
     clearInterval(timeInterval);
     timeInterval = null;

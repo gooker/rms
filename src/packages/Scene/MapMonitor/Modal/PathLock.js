@@ -65,7 +65,6 @@ const PathLock = (props) => {
       showRoutePollingCallback(routeView.showRoute, changedIdList);
     } else {
       mapContext.clearAllLocks(); // 清理锁格
-
       // 清理地图上的路径
       mapContext?.registerShowTaskPath([], false);
     }
@@ -91,7 +90,7 @@ const PathLock = (props) => {
     if (agvLockView?.showLockCellPolling) {
       dispatch({
         type: 'monitor/fetchAllLockCells',
-        payload: { uniqueIds: selectedIds },
+        payload: selectedIds,
       }).then((response) => {
         if (!dealResponse(response, null, formatMessage({ id: 'monitor.tip.fetchLockFail' }))) {
           mapContext.renderLockCell(response);
@@ -128,6 +127,7 @@ const PathLock = (props) => {
   }
 
   function closeLockcellPolling() {
+    mapContext.clearAllLocks(); // 清理锁格
     LockCellPolling.terminate();
   }
   //end 显示锁格
