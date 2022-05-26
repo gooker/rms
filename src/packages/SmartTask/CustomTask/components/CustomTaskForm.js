@@ -11,10 +11,19 @@ import {
 } from '@ant-design/icons';
 import { useMemoizedFn } from 'ahooks';
 import update from 'immutability-helper';
-import { findIndex } from 'lodash';
+import { findIndex, isEmpty } from 'lodash';
 import { Container } from 'react-smooth-dnd';
-import { customTaskApplyDrag, dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
+import {
+  customTaskApplyDrag,
+  dealResponse,
+  fillFormValueToAction,
+  formatMessage,
+  getRandomString,
+  isNull,
+  restoreCustomTaskForm,
+} from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
+import { saveCustomTask } from '@/services/api';
 import { CustomType } from '../customTaskConfig';
 import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
 import { ModelTypeFieldMap, PageContentPadding } from '@/config/consts';
@@ -28,16 +37,21 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
-import { saveCustomTask } from '@/services/api';
 
 const CustomTypeIconMap = {
   [CustomType.ACTION]: <BranchesOutlined />,
   [CustomType.WAIT]: <HourglassOutlined />,
   [CustomType.PODSTATUS]: <ShoppingCartOutlined />,
 };
+const targetProgramingKeys = [
+  'afterFirstActions',
+  'beforeLastActions',
+  'firstActions',
+  'lastActions',
+];
 
 const CustomTaskForm = (props) => {
-  const { dispatch, editingRow, listVisible } = props;
+  const { dispatch, editingRow, programing, listVisible } = props;
   const [form] = Form.useForm();
 
   // 当前自定义任务编码
@@ -48,7 +62,25 @@ const CustomTaskForm = (props) => {
   const [currentCode, setCurrentCode] = useState(CustomType.BASE);
 
   useEffect(() => {
-    setTaskSteps(getInitialTaskSteps());
+    if (editingRow) {
+      const { code, sample } = editingRow;
+      setTaskCode(code);
+      dispatch({ type: 'customTask/updateVariable', payload: JSON.parse(sample) });
+
+      const result = restoreCustomTaskForm(editingRow);
+      // 此时 result.taskSteps 肯定不包含 BASE
+      const newTaskSteps = [...result.taskSteps];
+      newTaskSteps.unshift({
+        type: CustomType.BASE,
+        code: CustomType.BASE,
+        label: formatMessage({ id: 'customTask.type.BASE' }),
+      });
+      setTaskSteps(newTaskSteps);
+      setCurrentCode(newTaskSteps[0].code);
+      form.setFieldsValue(result.fieldsValue);
+    } else {
+      setTaskSteps(getInitialTaskSteps());
+    }
   }, []);
 
   function addTaskFlowNode({ key }) {
@@ -207,7 +239,43 @@ const CustomTaskForm = (props) => {
           if (!customTaskData[ModelTypeFieldMap[modelType]]) {
             customTaskData[ModelTypeFieldMap[modelType]] = {};
           }
-          customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+          if (modelType === 'ACTION') {
+            let configValue = { ...value[key] };
+            // 检查资源锁
+            if (isEmpty(configValue.lockTime)) {
+              configValue.lockTime = null;
+            } else {
+              const lockTimeMapValue = {};
+              for (const item of configValue.lockTime) {
+                if (!isNull(item[0])) {
+                  lockTimeMapValue[item[0]] = {};
+                  if (!isNull(item[1])) {
+                    lockTimeMapValue[item[0]].LOCK = item[1];
+                  }
+                  if (!isNull(item[2])) {
+                    lockTimeMapValue[item[0]].UNLOCK = item[2];
+                  }
+                }
+              }
+              configValue.lockTime = lockTimeMapValue;
+            }
+
+            // 检查关键点动作配置
+            const _targetAction = { ...configValue.targetAction };
+            targetProgramingKeys.forEach((fieldKey) => {
+              if (!isNull(_targetAction[fieldKey])) {
+                _targetAction[fieldKey] = fillFormValueToAction(
+                  _targetAction[fieldKey],
+                  programing,
+                );
+              }
+            });
+            configValue.targetAction = _targetAction;
+
+            customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = configValue;
+          } else {
+            customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+          }
         } else {
           if (!isNull(ModelTypeFieldMap[key])) {
             if (key === 'START') {
@@ -229,6 +297,7 @@ const CustomTaskForm = (props) => {
       customTaskData.sample = JSON.stringify(variable);
       return customTaskData;
     } catch (error) {
+      console.log('validate custom form:', error);
       return null;
     }
   }
@@ -358,7 +427,8 @@ const CustomTaskForm = (props) => {
     </div>
   );
 };
-export default connect(({ customTask }) => ({
+export default connect(({ customTask, global }) => ({
   editingRow: customTask.editingRow,
   listVisible: customTask.listVisible,
+  programing: global.programing,
 }))(memo(CustomTaskForm));

@@ -1,10 +1,9 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Checkbox, Input, Select, Space } from 'antd';
+import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { AgvGroupModelData, AgvModelData } from '@/mockData';
 import { isNull } from '@/utils/util';
-import { find } from 'lodash';
 
 /**
  * agv: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
@@ -16,6 +15,11 @@ const RobotSelector = (props) => {
   const [useVariable, setUseVariable] = useState(false);
   const [secondaryVisible, setSecondaryVisible] = useState(false);
   const [agvType, setAgvType] = useState(null);
+
+  useEffect(() => {
+    setUseVariable(!isNull(variable[subTaskCode]));
+    setSecondaryVisible(currentValue.type !== 'AUTO');
+  }, []);
 
   function onTypeChange(_value) {
     setSecondaryVisible(_value !== 'AUTO');
@@ -172,8 +176,8 @@ const RobotSelector = (props) => {
   );
 };
 export default connect(({ customTask }) => {
-  const dataSource = { agv: AgvModelData, agvGroup: AgvGroupModelData };
-  if (customTask.modelParams1) {
+  const dataSource = { agv: [], agvGroup: [] };
+  if (customTask.modelParams) {
     dataSource.agv = customTask.modelParams?.AGV || [];
     dataSource.agvGroup = customTask.modelParams?.AGV_GROUP || [];
   }

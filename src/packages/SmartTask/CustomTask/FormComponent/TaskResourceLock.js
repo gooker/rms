@@ -41,6 +41,7 @@ const TaskResourceLock = (props) => {
           </Col>
           <Col span={9}>
             <Select
+              allowClear
               value={currentValue[index][1]}
               onChange={(lockTime) => onLockTimeChange(index, 1, lockTime)}
             >
@@ -57,6 +58,7 @@ const TaskResourceLock = (props) => {
           </Col>
           <Col span={9}>
             <Select
+              allowClear
               value={currentValue[index][2]}
               onChange={(lockTime) => onLockTimeChange(index, 2, lockTime)}
             >

@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Divider, Empty, Modal, Form, Row, Col } from 'antd';
+import { Col, Divider, Empty, Form, Modal, Row } from 'antd';
 import { find, forIn } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { fillProgramAction, isNull, isStrictNull } from '@/utils/util';
+import { fillFormValueToAction, isNull, isStrictNull } from '@/utils/util';
 import { renderFormItemContent } from './equipUtils';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
@@ -88,7 +88,7 @@ const DeviceStateConfigsModal = (props) => {
         // 回填数据
         let actionList = [];
         if (Array.isArray(configuration) && configuration.length > 0) {
-          actionList = fillProgramAction(configuration, programing);
+          actionList = fillFormValueToAction(configuration, programing);
         }
         const deviceMonitorDTO = [];
         deviceMonitorDTO.push({

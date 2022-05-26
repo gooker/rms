@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Divider, Empty, Modal } from 'antd';
-import { isNull } from '@/utils/util';
+import { extractActionToFormValue, isNull } from '@/utils/util';
 import ProgramingConfigure from './ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
 
@@ -22,15 +22,7 @@ const ProgramingConfiguerModal = (props) => {
 
   useEffect(() => {
     if (visible && !isNull(editing)) {
-      const { actions } = editing;
-      const configurations = [];
-      actions.forEach(({ adapterType, actionType, actionParameters }) => {
-        const addedItem = { actionType: [adapterType, actionType] };
-        actionParameters.forEach(({ code, value }) => {
-          addedItem[code] = value;
-        });
-        configurations.push(addedItem);
-      });
+      const configurations = extractActionToFormValue(editing.actions ?? []);
       setConfiguration(configurations);
     } else {
       setConfiguration([]);

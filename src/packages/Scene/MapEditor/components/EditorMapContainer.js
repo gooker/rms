@@ -1,23 +1,17 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
+import { debounce, isPlainObject, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { getRandomString, isNull } from '@/utils/util';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
 import { ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
+import { getRandomString, isNull } from '@/utils/util';
 import { renderWorkStationList } from '@/utils/mapUtil';
-import {
-  FooterHeight,
-  HeaderHeight,
-  LeftCategory,
-  LeftToolBarWidth,
-  RightToolBarWidth,
-} from '../editorEnums';
-import styles from '../editorLayout.module.less';
-import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
-import { isPlainObject } from 'lodash';
+import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
+import { FooterHeight, HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../editorEnums';
+import styles from '../editorLayout.module.less';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
@@ -52,7 +46,7 @@ const EditorMapContainer = (props) => {
   useEffect(() => {
     if (isNull(mapContext)) return;
     const { viewport } = mapContext.pixiUtils;
-    // 很重要: 一定要先取消旧的clamp，不然新的会无法生效
+    // TIPS: 一定要先取消旧的clamp，不然新的会无法生效
     viewport.clampZoom(null);
 
     // 清空相关数据
@@ -63,42 +57,45 @@ const EditorMapContainer = (props) => {
       renderMap();
       renderLogicArea();
       renderRouteMap();
-      const minMapRatio = mapContext.centerView('EDITOR_MAP');
-      dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
+      mapContext.centerView();
+      doClampZoom();
 
       // 监听地图缩放比例
-      // viewport.off('zoomed-end');
-      // viewport.on('zoomed-end', function () {
-      //   dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
-      // });
+      viewport.off('zoomed');
+      viewport.on(
+        'zoomed',
+        debounce(function() {
+          dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
+        }, 100),
+      );
 
       // 添加事件处理地图跑出Screen
-      // viewport.off('moved');
-      // viewport.on(
-      //   'moved',
-      //   throttle(function () {
-      //     const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
-      //     const topLimit = y + (height - CLAMP_VALUE);
-      //     if (this.top >= topLimit) {
-      //       this.top = topLimit;
-      //     }
-      //
-      //     const bottomLimit = y + CLAMP_VALUE;
-      //     if (this.bottom <= bottomLimit) {
-      //       this.bottom = bottomLimit;
-      //     }
-      //
-      //     const leftLimit = x + (width - CLAMP_VALUE);
-      //     if (this.left >= leftLimit) {
-      //       this.left = leftLimit;
-      //     }
-      //
-      //     const rightLimit = x + CLAMP_VALUE;
-      //     if (this.right <= rightLimit) {
-      //       this.right = rightLimit;
-      //     }
-      //   }, 200),
-      // );
+      viewport.off('moved');
+      viewport.on(
+        'moved',
+        throttle(function() {
+          const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
+          const topLimit = y + (height - CLAMP_VALUE);
+          if (this.top >= topLimit) {
+            this.top = topLimit;
+          }
+
+          const bottomLimit = y + CLAMP_VALUE;
+          if (this.bottom <= bottomLimit) {
+            this.bottom = bottomLimit;
+          }
+
+          const leftLimit = x + (width - CLAMP_VALUE);
+          if (this.left >= leftLimit) {
+            this.left = leftLimit;
+          }
+
+          const rightLimit = x + CLAMP_VALUE;
+          if (this.right <= rightLimit) {
+            this.right = rightLimit;
+          }
+        }, 200),
+      );
     }
   }, [
     currentMap,
@@ -122,6 +119,15 @@ const EditorMapContainer = (props) => {
     const { viewport } = mapContext.pixiUtils;
     viewport.setZoom(mapRatio, true);
   }, [mapRatio]);
+
+  const doClampZoom = useCallback(
+    function() {
+      const { viewport } = mapContext.pixiUtils;
+      const minMapRatio = mapContext.clampZoom(viewport, 'EDITOR_MAP');
+      dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
+    },
+    [mapContext],
+  );
 
   /**
    * 点位定位基于左手坐标系
@@ -343,7 +349,7 @@ const EditorMapContainer = (props) => {
       className={styles.editorBodyMiddle}
       style={{ cursor: getCursorStyle() }}
     >
-      <EditorMapView />
+      <EditorMapView doClampZoom={doClampZoom} />
       <EditorFooter mapRatio={mapRatio} onSliderChange={onSliderChange} />
       <EditorMask />
 

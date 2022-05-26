@@ -3,7 +3,14 @@ import { Button, Checkbox, Form, Input, InputNumber, Select, Space, Switch } fro
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { extractRoutes, fillProgramAction, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import {
+  extractRoutes,
+  fillFormValueToAction,
+  formatMessage,
+  getFormLayout,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -76,7 +83,7 @@ const SubTaskForm = (props) => {
     let actionConfigList = form.getFieldValue(_namePath);
     if (Array.isArray(actionConfigList)) {
       // 兼容组件内部逻辑
-      actionConfigList = fillProgramAction(actionConfigList, programing);
+      actionConfigList = fillFormValueToAction(actionConfigList, programing);
       setActionList({ actions: actionConfigList });
     } else {
       setActionList(null);

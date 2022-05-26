@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import { connect } from '@/utils/RmsDva';
 import { Checkbox, Form, Input } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -77,6 +76,4 @@ const StartForm = (props) => {
     </>
   );
 };
-export default connect(({ customTask }) => {
-  return { modelTypes: customTask.modelTypes };
-})(memo(StartForm));
+export default memo(StartForm);

@@ -1,24 +1,24 @@
-import React, { memo, useState } from 'react';
-import { Button, Checkbox, Col, Form, Input, InputNumber, Row, Switch } from 'antd';
-import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Checkbox, Form, Input, InputNumber, Switch } from 'antd';
+import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import StandbyConditions from '../FormComponent/StandbyConditions';
 import FormattedMessage from '@/components/FormattedMessage';
 import TargetSelector from '../components/TargetSelector';
 import styles from '../customTask.module.less';
 
 const { formItemLayout } = getFormLayout(6, 19);
-const DynamicButton = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: '32px',
-};
 
 const WaitForm = (props) => {
   const { code, form, type, hidden, updateTab } = props;
-
   const [goToPickupPoint, setGotoPickupPoint] = useState(false);
+
+  useEffect(() => {
+    if (!hidden) {
+      const waitTaskCell = form.getFieldValue([code, 'waitTaskCell']);
+      setGotoPickupPoint(!isNull(waitTaskCell));
+    }
+  }, [hidden]);
 
   return (
     <>
@@ -70,7 +70,7 @@ const WaitForm = (props) => {
       </Form.Item>
       {/* --------------------------------------------------------------- */}
 
-      {/* 等待时间 */}
+      {/* 待命时长 */}
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
@@ -98,7 +98,12 @@ const WaitForm = (props) => {
                           <Button
                             type='primary'
                             onClick={() => remove(field.name)}
-                            style={DynamicButton}
+                            style={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '32px',
+                            }}
                           >
                             <DeleteOutlined />
                           </Button>
@@ -148,31 +153,9 @@ const WaitForm = (props) => {
         }
       >
         {goToPickupPoint && (
-          <Form.List name={[code, 'waitTaskCell']} initialValue={[{}]}>
-            {(fields, { add, remove }) => (
-              <>
-                {fields.map((field, index) => (
-                  <Row key={field.key} gutter={10} style={{ marginBottom: 16, width: 520 }}>
-                    <Col span={22}>
-                      <Form.Item noStyle {...field}>
-                        <TargetSelector showVar={false} form={form} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={2}>
-                      {fields.length > 1 ? (
-                        <Button onClick={() => remove(field.name)} icon={<MinusOutlined />} />
-                      ) : null}
-                    </Col>
-                  </Row>
-                ))}
-                <Form.Item noStyle>
-                  <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
-                    <PlusOutlined />
-                  </Button>
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
+          <Form.Item noStyle name={[code, 'waitTaskCell']} initialValue={null}>
+            <TargetSelector showVar={false} form={form} />
+          </Form.Item>
         )}
       </Form.Item>
 

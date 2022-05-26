@@ -37,7 +37,7 @@ export default {
   'customTasks.requesting': '请求中',
   'customTasks.requestBodyDemo': '请求体示例',
   'customTasks.cannotEdit': '不可更改',
-  'customTasks.form.dependencies': '任务依赖',
+  'customTask.form.invalid': '表单数据错误',
   'customTasks.form.useVariable': '使用变量',
 
   // 任务节点名称

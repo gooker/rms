@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { DatePicker, Input, Button } from 'antd';
+import { Button, DatePicker, Input } from 'antd';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
 import moment from 'moment';
@@ -8,6 +8,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchUserLoginHistory } from '@/services/SSO';
 import TableWithPages from '@/components/TableWithPages';
+import commonStyle from '@/common.module.less';
 
 const { RangePicker } = DatePicker;
 
@@ -112,7 +113,7 @@ export default class UserLoginHistory extends Component {
     const { loading, pagination, historySource } = this.state;
     return (
       <TablePageWrapper>
-        <div>
+        <div className={commonStyle.tableToolLeft}>
           <Input
             allowClear
             style={{ width: 150, marginRight: 15 }}
