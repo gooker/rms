@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Checkbox, Input, Select, Space } from 'antd';
+import { Checkbox, Select, Space } from 'antd';
 import { isNull, isSubArray } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -82,6 +82,7 @@ const TargetSelector = (props) => {
   function onCheckboxChange({ target: { checked } }) {
     setUseVariable(checked);
     updateVariable(checked);
+    form.validateFields();
   }
 
   function updateVariable(checked) {
@@ -120,9 +121,7 @@ const TargetSelector = (props) => {
       </Select>
 
       <Space>
-        {useVariable ? (
-          <Input disabled value={`@@${currentValue.type}`} style={{ marginLeft: 10, width: 200 }} />
-        ) : currentValue.type === 'CELL' ? (
+        {currentValue.type === 'CELL' ? (
           <Select
             mode='tags'
             value={currentValue?.code || []}

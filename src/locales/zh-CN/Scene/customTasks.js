@@ -38,11 +38,13 @@ export default {
   'customTasks.requestBodyDemo': '请求体示例',
   'customTasks.cannotEdit': '不可更改',
   'customTask.form.invalid': '表单数据错误',
-  'customTasks.form.useVariable': '使用变量',
+  'customTasks.form.useVariable': '可使用变量',
   'customTasks.operationType.add': '新增动作',
   'customTasks.operationType.update': '替换动作',
   'customTasks.operationType.delete': '删除动作',
   'customTasks.operationType.param': '替换动作参数',
+  'customTask.require.robot': '请指定分车',
+  'customTask.require.target': '请指定目标点',
 
   // 任务节点名称
   'customTask.type.BASE': '基础信息',

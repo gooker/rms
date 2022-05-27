@@ -11,19 +11,19 @@ import {
   isNull,
   isStrictNull,
 } from '@/utils/util';
+import TargetSelector from '../components/TargetSelector';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';
 import CodeEditor from '@/components/CodeEditor';
 import TitleCard from '@/components/TitleCard';
-import TargetSelector from '../components/TargetSelector';
 
 const { formItemLayout } = getFormLayout(6, 18);
 
 const SubTaskForm = (props) => {
   const { form, code, type, hidden, updateTab } = props;
-  const { routes, programing } = props;
+  const { routes, programing, variable } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
 
   const [operationType, setOperationType] = useState(null); // 路径配置函数操作类型
@@ -54,10 +54,14 @@ const SubTaskForm = (props) => {
   }
 
   function validateTarget(_, value) {
-    if (!value || !isNull(value.type)) {
-      return Promise.resolve();
+    if (isNull(value)) {
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
+    } else {
+      if (value.code.length > 0 || variable[code]) {
+        return Promise.resolve();
+      }
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
     }
-    return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
   }
 
   // 获取某个字段的值
@@ -484,4 +488,5 @@ const SubTaskForm = (props) => {
 export default connect(({ customTask, global }) => ({
   routes: extractRoutes(customTask.mapData),
   programing: global.programing,
+  variable: customTask.variable,
 }))(memo(SubTaskForm));

@@ -6,7 +6,8 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { AgvStateColor, Colors, ModelTypeFieldMap, ToteOffset } from '@/config/consts';
+import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
+import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -1235,8 +1236,8 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
   Object.keys(value).forEach((key) => {
     if (key.includes('_')) {
       const modelType = key.split('_')[0];
-      if (!customTaskData[ModelTypeFieldMap[modelType]]) {
-        customTaskData[ModelTypeFieldMap[modelType]] = {};
+      if (!customTaskData[CustomNodeTypeFieldMap[modelType]]) {
+        customTaskData[CustomNodeTypeFieldMap[modelType]] = {};
       }
       if (modelType === 'ACTION') {
         let configValue = { ...value[key] };
@@ -1277,21 +1278,21 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
         });
         configValue.targetAction = _targetAction;
 
-        customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = configValue;
+        customTaskData[CustomNodeTypeFieldMap[modelType]][value[key].code] = configValue;
       } else {
-        customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+        customTaskData[CustomNodeTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
       }
     } else {
-      if (!isNull(ModelTypeFieldMap[key])) {
+      if (!isNull(CustomNodeTypeFieldMap[key])) {
         if (key === 'START') {
           const startConfig = { ...value[key] };
           const startConfigRobot = { ...startConfig.robot };
           if (startConfigRobot.type === 'AUTO') {
             startConfig.robot = null;
           }
-          customTaskData[ModelTypeFieldMap[key]] = startConfig;
+          customTaskData[CustomNodeTypeFieldMap[key]] = startConfig;
         } else {
-          customTaskData[ModelTypeFieldMap[key]] = value[key];
+          customTaskData[CustomNodeTypeFieldMap[key]] = value[key];
         }
       }
     }
@@ -1319,7 +1320,7 @@ export function restoreCustomTaskForm(customTask) {
     // 收集左侧的任务节点数据
     if (code.includes('_')) {
       customTypeKey = code.split('_')[0];
-      const configValue = customTask[ModelTypeFieldMap[customTypeKey]][code];
+      const configValue = customTask[CustomNodeTypeFieldMap[customTypeKey]][code];
       result.taskSteps.push({
         type: customTypeKey,
         code,
@@ -1335,15 +1336,15 @@ export function restoreCustomTaskForm(customTask) {
 
     // 收集表单数据
     if (customTypeKey === 'START') {
-      const startValues = { ...customTask[ModelTypeFieldMap[customTypeKey]] };
+      const startValues = { ...customTask[CustomNodeTypeFieldMap[customTypeKey]] };
       if (isNull(startValues.robot)) {
         delete startValues.robot;
       }
       result.fieldsValue[code] = startValues;
     } else if (customTypeKey === 'END') {
-      result.fieldsValue[code] = customTask[ModelTypeFieldMap[customTypeKey]];
+      result.fieldsValue[code] = customTask[CustomNodeTypeFieldMap[customTypeKey]];
     } else {
-      const stepPayload = customTask[ModelTypeFieldMap[customTypeKey]];
+      const stepPayload = customTask[CustomNodeTypeFieldMap[customTypeKey]];
       const subTaskConfig = { ...stepPayload[code] };
       if (subTaskConfig.customType === 'ACTION') {
         // 处理资源锁

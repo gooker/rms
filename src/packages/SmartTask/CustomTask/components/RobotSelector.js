@@ -1,5 +1,6 @@
+/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Checkbox, Input, Select, Space } from 'antd';
+import { Checkbox, Select, Space } from 'antd';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -9,12 +10,12 @@ import { isNull } from '@/utils/util';
  * agv: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
  */
 const RobotSelector = (props) => {
-  const { dispatch, dataSource, variable, value, onChange, subTaskCode } = props;
+  const { dispatch, form, dataSource, variable, value, onChange, subTaskCode } = props;
   const currentValue = { ...value }; // {type:xxx, code:[]}
 
+  const [agvType, setAgvType] = useState(null);
   const [useVariable, setUseVariable] = useState(false);
   const [secondaryVisible, setSecondaryVisible] = useState(false);
-  const [agvType, setAgvType] = useState(null);
 
   useEffect(() => {
     setUseVariable(!isNull(variable[subTaskCode]));
@@ -50,12 +51,11 @@ const RobotSelector = (props) => {
     ));
   }
 
-  // 使用变量
+  // 可使用变量
   function onCheckboxChange({ target: { checked } }) {
     setUseVariable(checked);
     updateVariable(checked);
-    setAgvType(null);
-    onCodeChange([]);
+    form.validateFields();
   }
 
   function updateVariable(checked) {
@@ -157,16 +157,7 @@ const RobotSelector = (props) => {
 
       {secondaryVisible && (
         <Space>
-          {useVariable ? (
-            <Input
-              disabled
-              value={`@@${currentValue.type}`}
-              style={{ marginLeft: 10, width: 160 }}
-            />
-          ) : (
-            renderSecondComponent()
-          )}
-
+          {renderSecondComponent()}
           <Checkbox checked={useVariable} onChange={onCheckboxChange}>
             <FormattedMessage id={'customTasks.form.useVariable'} />
           </Checkbox>

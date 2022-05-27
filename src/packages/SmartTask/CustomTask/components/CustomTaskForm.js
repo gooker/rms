@@ -23,7 +23,7 @@ import {
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { saveCustomTask } from '@/services/api';
-import { CustomType } from '../customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '../customTaskConfig';
 import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
 import { PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -38,9 +38,9 @@ import EndForm from './EndForm';
 import styles from '../customTask.module.less';
 
 const CustomTypeIconMap = {
-  [CustomType.ACTION]: <BranchesOutlined />,
-  [CustomType.WAIT]: <HourglassOutlined />,
-  [CustomType.PODSTATUS]: <ShoppingCartOutlined />,
+  [CustomNodeType.ACTION]: <BranchesOutlined />,
+  [CustomNodeType.WAIT]: <HourglassOutlined />,
+  [CustomNodeType.PODSTATUS]: <ShoppingCartOutlined />,
 };
 const CustomTaskForm = (props) => {
   const { dispatch, editingRow, programing, listVisible } = props;
@@ -51,7 +51,7 @@ const CustomTaskForm = (props) => {
   // 已配置的任务节点
   const [taskSteps, setTaskSteps] = useState([]);
   // 当前选中的任务流程节点, 用于切换右侧表单中的数据
-  const [currentCode, setCurrentCode] = useState(CustomType.BASE);
+  const [currentCode, setCurrentCode] = useState(CustomNodeType.BASE);
 
   useEffect(() => {
     if (editingRow) {
@@ -63,8 +63,8 @@ const CustomTaskForm = (props) => {
       // 此时 result.taskSteps 肯定不包含 BASE
       const newTaskSteps = [...result.taskSteps];
       newTaskSteps.unshift({
-        type: CustomType.BASE,
-        code: CustomType.BASE,
+        type: CustomNodeType.BASE,
+        code: CustomNodeType.BASE,
         label: formatMessage({ id: 'customTask.type.BASE' }),
       });
       setTaskSteps(newTaskSteps);
@@ -103,8 +103,8 @@ const CustomTaskForm = (props) => {
   function onDropInTaskFlow(dropResult) {
     const { removedIndex, addedIndex, payload } = dropResult;
 
-    const startIndex = findIndex(taskSteps, { type: CustomType.START });
-    const endIndex = findIndex(taskSteps, { type: CustomType.END });
+    const startIndex = findIndex(taskSteps, { type: CustomNodeType.START });
+    const endIndex = findIndex(taskSteps, { type: CustomNodeType.END });
     let jumpToDrop = false; // 是否立即跳转到拖拽的节点表单
 
     // 如果payload存在, 就是新增节点
@@ -147,11 +147,11 @@ const CustomTaskForm = (props) => {
     return taskSteps.map((step, index) => {
       if (!step) return null;
       switch (step.type) {
-        case CustomType.BASE:
+        case CustomNodeType.BASE:
           return (
             <InformationForm key={index} hidden={currentCode !== step.code} isEdit={!!editingRow} />
           );
-        case CustomType.START:
+        case CustomNodeType.START:
           return (
             <StartForm
               key={index}
@@ -161,7 +161,7 @@ const CustomTaskForm = (props) => {
               hidden={currentCode !== step.code}
             />
           );
-        case CustomType.END:
+        case CustomNodeType.END:
           return (
             <EndForm
               key={index}
@@ -171,7 +171,7 @@ const CustomTaskForm = (props) => {
               hidden={currentCode !== step.code}
             />
           );
-        case CustomType.ACTION:
+        case CustomNodeType.ACTION:
           return (
             <SubTaskForm
               key={index}
@@ -182,7 +182,7 @@ const CustomTaskForm = (props) => {
               updateTab={updateTabName}
             />
           );
-        case CustomType.WAIT:
+        case CustomNodeType.WAIT:
           return (
             <WaitForm
               key={index}
@@ -193,7 +193,7 @@ const CustomTaskForm = (props) => {
               updateTab={updateTabName}
             />
           );
-        case CustomType.PODSTATUS:
+        case CustomNodeType.PODSTATUS:
           return (
             <PodSimulation
               key={index}
@@ -210,25 +210,38 @@ const CustomTaskForm = (props) => {
   }
 
   async function generateTaskData() {
-    // BASE 不属于子任务范畴所以去掉
-    const _taskSteps = [...taskSteps];
-    _taskSteps.shift();
-    try {
-      const value = await form.validateFields();
-      return generateCustomTaskForm(value, taskCode, _taskSteps, programing);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log('validate custom form:', error);
-      return null;
-    }
+    return new Promise((resolve) => {
+      const _taskSteps = [...taskSteps];
+      _taskSteps.shift();
+      form
+        .validateFields()
+        .then((value) => {
+          const formValue = generateCustomTaskForm(value, taskCode, _taskSteps, programing);
+          resolve(formValue);
+        })
+        .catch(() => {
+        });
+    });
   }
 
   async function submit() {
-    const requestBody = await generateTaskData();
+    let requestBody = await generateTaskData();
     if (requestBody === null) {
       message.error(formatMessage({ id: 'customTask.form.invalid' }));
       return;
     }
+
+    // 校验sample是否合法
+    const sample = JSON.parse(requestBody.sample);
+    Object.keys(sample).forEach((taskCode) => {
+      if (taskCode !== CustomNodeType.START) {
+        const [customNodeType] = taskCode.split('_');
+        if (!requestBody[CustomNodeTypeFieldMap[customNodeType]][taskCode]) {
+          delete sample[taskCode];
+        }
+      }
+    });
+    requestBody.sample = JSON.stringify(sample);
 
     // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
     if (editingRow) {
@@ -265,14 +278,15 @@ const CustomTaskForm = (props) => {
 
   const plusMenu = (
     <Menu onClick={addTaskFlowNode}>
-      <Menu.Item key={CustomType.ACTION}>
-        {CustomTypeIconMap[CustomType.ACTION]} <FormattedMessage id={'customTask.type.ACTION'} />
+      <Menu.Item key={CustomNodeType.ACTION}>
+        {CustomTypeIconMap[CustomNodeType.ACTION]}{' '}
+        <FormattedMessage id={'customTask.type.ACTION'} />
       </Menu.Item>
-      <Menu.Item key={CustomType.WAIT}>
-        {CustomTypeIconMap[CustomType.WAIT]} <FormattedMessage id={'customTask.type.WAIT'} />
+      <Menu.Item key={CustomNodeType.WAIT}>
+        {CustomTypeIconMap[CustomNodeType.WAIT]} <FormattedMessage id={'customTask.type.WAIT'} />
       </Menu.Item>
-      <Menu.Item key={CustomType.PODSTATUS}>
-        {CustomTypeIconMap[CustomType.PODSTATUS]}{' '}
+      <Menu.Item key={CustomNodeType.PODSTATUS}>
+        {CustomTypeIconMap[CustomNodeType.PODSTATUS]}{' '}
         <FormattedMessage id={'customTask.type.PODSTATUS'} />
       </Menu.Item>
     </Menu>

@@ -5,12 +5,13 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlin
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/api';
+import { CustomNodeType } from '../customTaskConfig';
 import RmsConfirm from '@/components/RmsConfirm';
-import commonStyles from '@/common.module.less';
-import styles from '../customTask.module.less';
 import TaskBodyModal from './TaskBodyModal';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
+import commonStyles from '@/common.module.less';
+import styles from '../customTask.module.less';
 
 const messageKey = 'MESSAGE_KEY';
 
@@ -41,7 +42,16 @@ const CustomTaskTable = (props) => {
     Object.keys(sample).forEach((taskCode) => {
       const fields = Object.keys(sample[taskCode]);
       fields.forEach((field) => {
-        requestBody.customParams.push({ code: `${taskCode}-${field}`, param: [] });
+        if (taskCode === CustomNodeType.START) {
+          requestBody.customParams.push({
+            code: `${taskCode}-${field}`,
+            param: record.customStart?.robot?.code ?? [],
+          });
+        } else {
+          // ACTION
+          const param = record.customActions[taskCode]?.targetAction?.target?.code ?? [];
+          requestBody.customParams.push({ code: `${taskCode}-${field}`, param });
+        }
       });
     });
     setExampleStructure(requestBody);
@@ -135,13 +145,13 @@ const CustomTaskTable = (props) => {
     } else {
       if (isSuccess) {
         message.success({
-          content: formatMessage({ id: 'customTasks.delete.success' }),
+          content: formatMessage({ id: 'app.message.operateSuccess' }),
           key: messageKey,
           duration: 2,
         });
       } else {
         message.error({
-          content: formatMessage({ id: 'customTasks.delete.failed' }),
+          content: formatMessage({ id: 'app.message.operateFailed' }),
           key: messageKey,
           duration: 2,
         });
@@ -156,7 +166,6 @@ const CustomTaskTable = (props) => {
 
   function deleteListItem() {
     RmsConfirm({
-      content: formatMessage({ id: 'customTasks.deleteList.confirm' }),
       onOk: async () => {
         switchDeleteSpin(true);
         const response = await deleteCustomTasksById(selectedRowKeys);
