@@ -1,62 +1,62 @@
 import React from 'react';
-import { Form, Button, Input, Row, Col, DatePicker } from 'antd';
+import { Form, Button, Input, Row, Col, Select } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { formatMessage, convertToUserTimezone } from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
-const { RangePicker } = DatePicker;
-
-const TargetLockSearch = (props) => {
-  const { search, resetValues } = props;
+const SearchTargetLock = (props) => {
+  const { search, verhicleHide, allAdapter } = props;
   const [form] = Form.useForm();
 
   function onFinish() {
     form.validateFields().then((values) => {
       const params = { ...values };
-      if (values.createDate && values.createDate[0] && values.createDate[1]) {
-        params.createTimeStart = convertToUserTimezone(values.createDate[0], 1).format(
-          'YYYY-MM-DD HH:mm:ss',
-        );
-        params.createTimeEnd = convertToUserTimezone(values.createDate[1], 1).format(
-          'YYYY-MM-DD HH:mm:ss',
-        );
-        params.createDate = null;
-        delete params.createDate;
-      }
       search({ ...params });
     });
   }
 
   function onClear() {
     form.resetFields();
-    resetValues();
+    search({});
   }
 
   return (
     <Form form={form}>
       <Row style={{ width: '100%' }} gutter={24}>
-        <Col span={4}>
-          {/* 小车id */}
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
-            <Input allowClear />
-          </Form.Item>
-        </Col>
+        {!verhicleHide && (
+          <Col span={4}>
+            {/* 小车id */}
+            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+              <Input allowClear />
+            </Form.Item>
+          </Col>
+        )}
         <Col span={4}>
           {/* 小车类型 */}
           <Form.Item name={'vehicleType'} label={formatMessage({ id: 'app.common.type' })}>
             <Input allowClear />
+            {/* <Select
+              allowClear
+              showSearch
+              size="small"
+              maxTagCount={5}
+              mode="multiple"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {allAdapter?.map((element) => (
+                <Select.Option key={element.agvType} value={element.agvType}>
+                  {element.agvType}
+                </Select.Option>
+              ))}
+            </Select> */}
           </Form.Item>
         </Col>
         {/* 任务id */}
         <Col span={4}>
           <Form.Item name="taskId" label={formatMessage({ id: 'app.task.id' })}>
             <Input allowClear />
-          </Form.Item>
-        </Col>
-        {/* 查询日期 */}
-        <Col span={8}>
-          <Form.Item name={'createDate'} label={formatMessage({ id: 'app.taskDetail.firstTime' })}>
-            <RangePicker showTime style={{ width: '100%' }} />
           </Form.Item>
         </Col>
         <Col>
@@ -79,4 +79,4 @@ const TargetLockSearch = (props) => {
     </Form>
   );
 };
-export default React.memo(TargetLockSearch);
+export default React.memo(SearchTargetLock);

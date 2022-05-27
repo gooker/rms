@@ -137,7 +137,7 @@ const RemoteControl = (props) => {
             >
               {allAGVs.map((element) => (
                 <Select.Option key={element.agvId} value={element.uniqueId}>
-                  {`${element.agvType}-${element.agvId}`}
+                  {`${element.agvId}-${element.agvType}`}
                 </Select.Option>
               ))}
             </Select>

@@ -98,14 +98,18 @@ const HardwareTab = (props) => {
     <Row gutter={{ xs: 4, sm: 8, md: 14, lg: 16 }}>
       <Col span={12}>
         {/* 小车ID */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>{data?.robotId}</LabelComponent>
+        <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
+          {data?.agv?.agvId}
+        </LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
-          {data && data.battery != null ? getSuffix(parseInt(data.battery), '%') : null}
+          {data && data.battery != null ? getSuffix(parseInt(data?.agvInfo?.battery), '%') : null}
         </LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
-          {data && data.batteryVoltage ? getSuffix(data.batteryVoltage / 1000, 'V') : null}
+          {data && data.batteryVoltage
+            ? getSuffix(data?.agvInfo?.batteryVoltage / 1000, 'V')
+            : null}
         </LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.activity.batteryStatus' })}>

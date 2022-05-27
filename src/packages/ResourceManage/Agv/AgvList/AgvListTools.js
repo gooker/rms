@@ -20,12 +20,13 @@ import commonStyles from '@/common.module.less';
 const AgvListTools = (props) => {
   const { dispatch, allRobots, selectedRows, searchParams } = props;
 
+  const registerRobots = allRobots.filter((item) => item.register);
   const unregisterRobots = allRobots.filter((item) => !item.register);
 
   function renderAgvIdFilter() {
-    return unregisterRobots.map(({ agvId }) => (
-      <Select.Option key={agvId} value={agvId}>
-        {agvId}
+    return registerRobots.map(({ agvId, agvType, id }) => (
+      <Select.Option key={id} value={id}>
+        {`${agvId}-${agvType}`}
       </Select.Option>
     ));
   }
@@ -113,7 +114,7 @@ const AgvListTools = (props) => {
             <DisconnectOutlined /> 注销
           </Button>
           <Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>
-            <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />
+            <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
           </Button>
           <Dropdown
             overlay={

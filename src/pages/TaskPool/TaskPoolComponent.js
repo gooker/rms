@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Button, message, Table, Divider } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchPoolTasks, cancelTotePoolTask, fetchAgvList } from '@/services/api';
+import { fetchPoolTasks, cancelTotePoolTask, fetchAllAgvList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import { dealResponse } from '@/utils/util';
@@ -63,8 +63,7 @@ class TaskLibraryComponent extends Component {
 
   // 小车id
   getAgvList = async () => {
-    const { agvType } = this.props;
-    const response = await fetchAgvList(agvType);
+    const response = await fetchAllAgvList();
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.agv.getListFail' }));
     } else {

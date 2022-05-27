@@ -86,8 +86,8 @@ const AGVElementProp = (props) => {
   }
 
   function goToAgvDetail() {
-    const route = `/${AppCode[type]}/agv/agvRealTime`;
-    history.push({ pathname: route, search: `agvId=${agvId}` });
+    const route = `/ResourceManage/Agv/AgvRealTime`;
+    history.push({ pathname: route, search: `uniqueId=${data.uniqueId}` });
   }
 
   function checkTaskDetail(taskId, agvType) {

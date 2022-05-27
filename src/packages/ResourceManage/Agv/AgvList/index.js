@@ -19,7 +19,7 @@ import { connect } from '@/utils/RmsDva';
 import RegisterPanel from '@/packages/ResourceManage/Agv/AgvList/RegisterPanel';
 
 const AgvList = (props) => {
-  const { dispatch, allRobots, searchParams, loading, showRegisterPanel } = props;
+  const { dispatch, allRobots, searchParams, loading, showRegisterPanel, history } = props;
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -107,7 +107,7 @@ const AgvList = (props) => {
             type="link"
             icon={<InfoOutlined />}
             onClick={() => {
-              checkAgvDetail(record.robotId);
+              checkAgvDetail(record.id);
             }}
           >
             <FormattedMessage id="app.agv.details" />
@@ -197,15 +197,26 @@ const AgvList = (props) => {
   }, [allRobots, searchParams]);
 
   function filterDatasource() {
-    setDatasource(allRobots.filter((item) => item.register));
+    let nowAllVehicels = [...allRobots].filter((item) => item.register);
+    const { id: uniqueIds, state } = searchParams;
+    if (uniqueIds?.length > 0) {
+      nowAllVehicels = nowAllVehicels.filter(({ id }) => uniqueIds.includes(id));
+    }
+
+    if (state?.length > 0) {
+      nowAllVehicels = nowAllVehicels.filter((item) => state.includes(item.agvStatus));
+    }
+
+    setDatasource(nowAllVehicels);
   }
 
   function fetchRegisteredRobot() {
     //
   }
 
-  function checkAgvDetail() {
-    //
+  function checkAgvDetail(uniqueId) {
+    const route = `/ResourceManage/Agv/AgvRealTime`;
+    history.push({ pathname: route, search: `uniqueId=${uniqueId}` });
   }
 
   function onSelectChange(selectedRowKeys, selectedRows) {
