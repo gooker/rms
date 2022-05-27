@@ -362,28 +362,28 @@ export async function fetchSimulatorLoginAGVControlState() {
 
 // 模拟小车松急停
 export async function fetchRunAGV(robotId) {
-  return request(`/coordinator/simulator/runAGV/${robotId}`, {
+  return request(`/${NameSpace.Platform}/simulator/runAGV/${robotId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车拍急停
 export async function fetchStopAGV(robotId) {
-  return request(`/coordinator/simulator/stopAGV/${robotId}`, {
+  return request(`/${NameSpace.Platform}/simulator/stopAGV/${robotId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车开机
 export async function fetchOpenAGV(robotId) {
-  return request(`/coordinator/simulator/openAGV/${robotId}`, {
+  return request(`/${NameSpace.Platform}/simulator/openAGV/${robotId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车关机
 export async function fetchCloseAgv(robotId) {
-  return request(`/coordinator/simulator/closeAGV/${robotId}`, {
+  return request(`/${NameSpace.Platform}/simulator/closeAGV/${robotId}`, {
     method: 'GET',
   });
 }

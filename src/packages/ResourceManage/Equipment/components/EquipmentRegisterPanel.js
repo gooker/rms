@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button } from 'antd';
-import { PlusOutlined, ReloadOutlined, SwapOutlined } from '@ant-design/icons';
+import { PlusOutlined, SwapOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
@@ -83,9 +83,6 @@ const EquipmentRegisterPanel = (props) => {
           }}
         >
           <PlusOutlined /> 添加发现
-        </Button>
-        <Button onClick={onRefresh}>
-          <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
         </Button>
       </div>
       <TableWithPages

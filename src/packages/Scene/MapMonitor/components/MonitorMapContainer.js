@@ -137,7 +137,7 @@ const MonitorMapContainer = (props) => {
       safeAreaCellIds,
       intersectionList,
     } = currentLogicAreaData;
-    // 休息区
+    // 停车点
     if (Array.isArray(restCells)) {
       restCells.forEach((item) => {
         mapContext.renderRestCells(item);

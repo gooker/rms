@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button } from 'antd';
-import { PlusOutlined, ReloadOutlined, SwapOutlined } from '@ant-design/icons';
+import { PlusOutlined, SwapOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
@@ -10,7 +10,6 @@ import AddRegistrationModal from '@/packages/ResourceManage/Agv/AgvList/AddRegis
 import RegisterRobotModal from '@/packages/ResourceManage/Agv/AgvList/RegisterRobotModal';
 import { registerRobot } from '@/services/resourceManageAPI';
 import commonStyle from '@/common.module.less';
-import styles from '../agv.module.less';
 
 const RegisterPanel = (props) => {
   const { dispatch, loading, allRobots, showRegisterPanel } = props;
@@ -76,7 +75,7 @@ const RegisterPanel = (props) => {
   }
 
   return (
-    <div className={styles.registerPanel}>
+    <div>
       <div className={commonStyle.tableToolLeft} style={{ marginBottom: 15 }}>
         <Button
           type={'primary'}
@@ -93,13 +92,6 @@ const RegisterPanel = (props) => {
           }}
         >
           <PlusOutlined /> 添加发现
-        </Button>
-        <Button
-          onClick={() => {
-            dispatch({ type: 'agvList/fetchInitialData' });
-          }}
-        >
-          <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
         </Button>
       </div>
       <TableWithPages

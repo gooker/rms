@@ -11,22 +11,21 @@ import {
 } from '@ant-design/icons';
 import { useMemoizedFn } from 'ahooks';
 import update from 'immutability-helper';
-import { findIndex, isEmpty } from 'lodash';
+import { findIndex } from 'lodash';
 import { Container } from 'react-smooth-dnd';
 import {
   customTaskApplyDrag,
   dealResponse,
-  fillFormValueToAction,
   formatMessage,
+  generateCustomTaskForm,
   getRandomString,
-  isNull,
   restoreCustomTaskForm,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { saveCustomTask } from '@/services/api';
 import { CustomType } from '../customTaskConfig';
 import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
-import { ModelTypeFieldMap, PageContentPadding } from '@/config/consts';
+import { PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import DndCard from './DndCard';
@@ -43,13 +42,6 @@ const CustomTypeIconMap = {
   [CustomType.WAIT]: <HourglassOutlined />,
   [CustomType.PODSTATUS]: <ShoppingCartOutlined />,
 };
-const targetProgramingKeys = [
-  'afterFirstActions',
-  'beforeLastActions',
-  'firstActions',
-  'lastActions',
-];
-
 const CustomTaskForm = (props) => {
   const { dispatch, editingRow, programing, listVisible } = props;
   const [form] = Form.useForm();
@@ -223,80 +215,9 @@ const CustomTaskForm = (props) => {
     _taskSteps.shift();
     try {
       const value = await form.validateFields();
-      const customTaskData = {
-        name: value.name,
-        desc: value.desc,
-        priority: value.priority,
-
-        type: 'CUSTOM_TASK',
-        code: taskCode,
-        codes: _taskSteps.map(({ code }) => code),
-        sectionId: window.localStorage.getItem('sectionId'),
-      };
-      Object.keys(value).forEach((key) => {
-        if (key.includes('_')) {
-          const modelType = key.split('_')[0];
-          if (!customTaskData[ModelTypeFieldMap[modelType]]) {
-            customTaskData[ModelTypeFieldMap[modelType]] = {};
-          }
-          if (modelType === 'ACTION') {
-            let configValue = { ...value[key] };
-            // 检查资源锁
-            if (isEmpty(configValue.lockTime)) {
-              configValue.lockTime = null;
-            } else {
-              const lockTimeMapValue = {};
-              for (const item of configValue.lockTime) {
-                if (!isNull(item[0])) {
-                  lockTimeMapValue[item[0]] = {};
-                  if (!isNull(item[1])) {
-                    lockTimeMapValue[item[0]].LOCK = item[1];
-                  }
-                  if (!isNull(item[2])) {
-                    lockTimeMapValue[item[0]].UNLOCK = item[2];
-                  }
-                }
-              }
-              configValue.lockTime = lockTimeMapValue;
-            }
-
-            // 检查关键点动作配置
-            const _targetAction = { ...configValue.targetAction };
-            targetProgramingKeys.forEach((fieldKey) => {
-              if (!isNull(_targetAction[fieldKey])) {
-                _targetAction[fieldKey] = fillFormValueToAction(
-                  _targetAction[fieldKey],
-                  programing,
-                );
-              }
-            });
-            configValue.targetAction = _targetAction;
-
-            customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = configValue;
-          } else {
-            customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
-          }
-        } else {
-          if (!isNull(ModelTypeFieldMap[key])) {
-            if (key === 'START') {
-              const startConfig = { ...value[key] };
-              const startConfigRobot = { ...startConfig.robot };
-              if (startConfigRobot.type === 'AUTO') {
-                startConfig.robot = null;
-              }
-              customTaskData[ModelTypeFieldMap[key]] = startConfig;
-            } else {
-              customTaskData[ModelTypeFieldMap[key]] = value[key];
-            }
-          }
-        }
-      });
-
-      // sample
-      const { variable } = window.$$state().customTask;
-      customTaskData.sample = JSON.stringify(variable);
-      return customTaskData;
+      return generateCustomTaskForm(value, taskCode, _taskSteps, programing);
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log('validate custom form:', error);
       return null;
     }

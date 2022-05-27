@@ -18,14 +18,33 @@ const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [exampleStructure, setExampleStructure] = useState(null); // 示例结构
+  const [exampleStructure, setExampleStructure] = useState(null); // 请求体结构
 
   useEffect(() => {
     dispatch({ type: 'customTask/getCustomTaskList' });
   }, []);
 
   function viewRequestBody(record) {
-    setExampleStructure(JSON.parse(record.sample));
+    const { code, customStart } = record;
+    const sample = JSON.parse(record.sample);
+    const requestBody = {
+      sectionId: window.localStorage.getItem('sectionId'),
+      code,
+      createCode: null,
+      customParams: [],
+    };
+    // 如果是自动分车，动态参数类型是"指定小车"
+    if (isNull(customStart.robot)) {
+      requestBody.customParams.push({ code: 'START-AGV', param: [] });
+    }
+    // 将sample数据合并到customParams中
+    Object.keys(sample).forEach((taskCode) => {
+      const fields = Object.keys(sample[taskCode]);
+      fields.forEach((field) => {
+        requestBody.customParams.push({ code: `${taskCode}-${field}`, param: [] });
+      });
+    });
+    setExampleStructure(requestBody);
   }
 
   const columns = [

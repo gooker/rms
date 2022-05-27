@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, Input, InputNumber, message, Row, Select, Switch, Tag, Tooltip } from 'antd';
-import { cloneDeep, find, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
 import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
@@ -1040,80 +1040,6 @@ export function extractRoutes(mapData) {
   return routes;
 }
 
-// 将后台返回的自定义任务数据转化为表单数据
-const targetProgramingKeys = [
-  'afterFirstActions',
-  'beforeLastActions',
-  'firstActions',
-  'lastActions',
-];
-
-export function restoreCustomTaskForm(customTask) {
-  const result = { taskSteps: [], fieldsValue: {} };
-  const { codes } = customTask;
-
-  // 提取基本信息
-  result.fieldsValue.name = customTask.name;
-  result.fieldsValue.desc = customTask.desc;
-  result.fieldsValue.priority = customTask.priority;
-
-  codes.forEach((code) => {
-    let customTypeKey = code;
-
-    // 收集左侧的任务节点数据
-    if (code.includes('_')) {
-      customTypeKey = code.split('_')[0];
-      const configValue = customTask[ModelTypeFieldMap[customTypeKey]][code];
-      result.taskSteps.push({
-        type: customTypeKey,
-        code,
-        label: configValue.name ?? formatMessage({ id: `customTask.type.${customTypeKey}` }),
-      });
-    } else {
-      result.taskSteps.push({
-        type: customTypeKey,
-        code: customTypeKey,
-        label: formatMessage({ id: `customTask.type.${customTypeKey}` }),
-      });
-    }
-
-    // 收集表单数据
-    if (customTypeKey === 'START') {
-      const startValues = { ...customTask[ModelTypeFieldMap[customTypeKey]] };
-      if (isNull(startValues.robot)) {
-        delete startValues.robot;
-      }
-      result.fieldsValue[code] = startValues;
-    } else if (customTypeKey === 'END') {
-      result.fieldsValue[code] = customTask[ModelTypeFieldMap[customTypeKey]];
-    } else {
-      const stepPayload = customTask[ModelTypeFieldMap[customTypeKey]];
-      const subTaskConfig = { ...stepPayload[code] };
-      if (subTaskConfig.customType === 'ACTION') {
-        // 处理资源锁
-        const lockTimeFormValue = [];
-        if (subTaskConfig.lockTime) {
-          Object.entries(subTaskConfig.lockTime).forEach(([modelType, { LOCK, UNLOCK }]) => {
-            lockTimeFormValue.push([modelType, LOCK ?? null, UNLOCK ?? null]);
-          });
-        }
-        subTaskConfig.lockTime = lockTimeFormValue;
-
-        // 处理关键点动作配置
-        const _targetAction = { ...subTaskConfig.targetAction };
-        targetProgramingKeys.forEach((fieldKey) => {
-          if (!isNull(_targetAction[fieldKey])) {
-            _targetAction[fieldKey] = extractActionToFormValue(_targetAction[fieldKey]);
-          }
-        });
-        subTaskConfig.targetAction = _targetAction;
-      }
-      result.fieldsValue[code] = subTaskConfig;
-    }
-  });
-  return result;
-}
-
 // 十六进制转RGB
 export function getColorRGB(_color, opacity = 1) {
   if (isNull(_color)) return null;
@@ -1286,10 +1212,177 @@ export function convertPrograming2Cascader(programing) {
   });
 }
 
-// 将地图编程配置的值回填到action中
+// ****************** 自定义任务 ****************** //
+const targetProgramingKeys = [
+  'afterFirstActions',
+  'beforeLastActions',
+  'firstActions',
+  'lastActions',
+];
+
+// 将表单数据转化为后台数据结构
+export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
+  const customTaskData = {
+    name: value.name,
+    desc: value.desc,
+    priority: value.priority,
+
+    type: 'CUSTOM_TASK',
+    code: taskCode,
+    codes: taskSteps.map(({ code }) => code),
+    sectionId: window.localStorage.getItem('sectionId'),
+  };
+  Object.keys(value).forEach((key) => {
+    if (key.includes('_')) {
+      const modelType = key.split('_')[0];
+      if (!customTaskData[ModelTypeFieldMap[modelType]]) {
+        customTaskData[ModelTypeFieldMap[modelType]] = {};
+      }
+      if (modelType === 'ACTION') {
+        let configValue = { ...value[key] };
+        // 检查资源锁
+        if (isEmpty(configValue.lockTime)) {
+          configValue.lockTime = null;
+        } else {
+          const lockTimeMapValue = {};
+          for (const item of configValue.lockTime) {
+            if (!isNull(item[0])) {
+              lockTimeMapValue[item[0]] = {};
+              if (!isNull(item[1])) {
+                lockTimeMapValue[item[0]].LOCK = item[1];
+              }
+              if (!isNull(item[2])) {
+                lockTimeMapValue[item[0]].UNLOCK = item[2];
+              }
+            }
+          }
+          configValue.lockTime = lockTimeMapValue;
+        }
+
+        // 检查路径函数配置
+        const _pathProgramming = { ...configValue.pathProgramming };
+        Object.keys(_pathProgramming).forEach((type) => {
+          if (!isNull(_pathProgramming[type])) {
+            _pathProgramming[type] = fillFormValueToAction(_pathProgramming[type], programing);
+          }
+        });
+        configValue.pathProgramming = _pathProgramming;
+
+        // 检查关键点动作配置
+        const _targetAction = { ...configValue.targetAction };
+        targetProgramingKeys.forEach((fieldKey) => {
+          if (!isNull(_targetAction[fieldKey])) {
+            _targetAction[fieldKey] = fillFormValueToAction(_targetAction[fieldKey], programing);
+          }
+        });
+        configValue.targetAction = _targetAction;
+
+        customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = configValue;
+      } else {
+        customTaskData[ModelTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+      }
+    } else {
+      if (!isNull(ModelTypeFieldMap[key])) {
+        if (key === 'START') {
+          const startConfig = { ...value[key] };
+          const startConfigRobot = { ...startConfig.robot };
+          if (startConfigRobot.type === 'AUTO') {
+            startConfig.robot = null;
+          }
+          customTaskData[ModelTypeFieldMap[key]] = startConfig;
+        } else {
+          customTaskData[ModelTypeFieldMap[key]] = value[key];
+        }
+      }
+    }
+  });
+
+  // sample
+  const { variable } = window.$$state().customTask;
+  customTaskData.sample = JSON.stringify(variable);
+  return customTaskData;
+}
+
+// 将后台返回的自定义任务数据转化为表单数据
+export function restoreCustomTaskForm(customTask) {
+  const result = { taskSteps: [], fieldsValue: {} };
+  const { codes } = customTask;
+
+  // 提取基本信息
+  result.fieldsValue.name = customTask.name;
+  result.fieldsValue.desc = customTask.desc;
+  result.fieldsValue.priority = customTask.priority;
+
+  codes.forEach((code) => {
+    let customTypeKey = code;
+
+    // 收集左侧的任务节点数据
+    if (code.includes('_')) {
+      customTypeKey = code.split('_')[0];
+      const configValue = customTask[ModelTypeFieldMap[customTypeKey]][code];
+      result.taskSteps.push({
+        type: customTypeKey,
+        code,
+        label: configValue.name ?? formatMessage({ id: `customTask.type.${customTypeKey}` }),
+      });
+    } else {
+      result.taskSteps.push({
+        type: customTypeKey,
+        code: customTypeKey,
+        label: formatMessage({ id: `customTask.type.${customTypeKey}` }),
+      });
+    }
+
+    // 收集表单数据
+    if (customTypeKey === 'START') {
+      const startValues = { ...customTask[ModelTypeFieldMap[customTypeKey]] };
+      if (isNull(startValues.robot)) {
+        delete startValues.robot;
+      }
+      result.fieldsValue[code] = startValues;
+    } else if (customTypeKey === 'END') {
+      result.fieldsValue[code] = customTask[ModelTypeFieldMap[customTypeKey]];
+    } else {
+      const stepPayload = customTask[ModelTypeFieldMap[customTypeKey]];
+      const subTaskConfig = { ...stepPayload[code] };
+      if (subTaskConfig.customType === 'ACTION') {
+        // 处理资源锁
+        const lockTimeFormValue = [];
+        if (subTaskConfig.lockTime) {
+          Object.entries(subTaskConfig.lockTime).forEach(([modelType, { LOCK, UNLOCK }]) => {
+            lockTimeFormValue.push([modelType, LOCK ?? null, UNLOCK ?? null]);
+          });
+        }
+        subTaskConfig.lockTime = lockTimeFormValue;
+
+        // 处理路径函数配置
+        const _pathProgramming = { ...subTaskConfig.pathProgramming };
+        Object.keys(_pathProgramming).forEach((type) => {
+          if (!isNull(_pathProgramming[type])) {
+            _pathProgramming[type] = extractActionToFormValue(_pathProgramming[type]);
+          }
+        });
+        subTaskConfig.pathProgramming = _pathProgramming;
+
+        // 处理关键点动作配置
+        const _targetAction = { ...subTaskConfig.targetAction };
+        targetProgramingKeys.forEach((fieldKey) => {
+          if (!isNull(_targetAction[fieldKey])) {
+            _targetAction[fieldKey] = extractActionToFormValue(_targetAction[fieldKey]);
+          }
+        });
+        subTaskConfig.targetAction = _targetAction;
+      }
+      result.fieldsValue[code] = subTaskConfig;
+    }
+  });
+  return result;
+}
+
+// 将地图编程配置的值回填到原action中
 export function fillFormValueToAction(configuration, programing, withTiming = false) {
   function fill(configs, timing) {
-    return configs.map(({ actionType, ...rest }) => {
+    return configs.map(({ actionType, operateType, ...rest }) => {
       const [p1, p2] = actionType;
       const action = find(programing[p1], { actionId: p2 });
       const copyAction = cloneDeep(action);
@@ -1297,6 +1390,7 @@ export function fillFormValueToAction(configuration, programing, withTiming = fa
       copyAction.actionParameters.forEach((item) => {
         item.value = rest[item.code];
       });
+      copyAction.operateType = operateType;
       if (!isStrictNull(timing)) {
         copyAction.timing = timing;
       }
@@ -1314,11 +1408,11 @@ export function fillFormValueToAction(configuration, programing, withTiming = fa
   return fill(configuration);
 }
 
-// 将action数据提取成Form可用的数据结构
+// 将action数据提取成编程弹窗可用的数据结构
 export function extractActionToFormValue(actions) {
   const configurations = [];
-  actions.forEach(({ adapterType, actionType, actionParameters }) => {
-    const addedItem = { actionType: [adapterType, actionType] };
+  actions.forEach(({ actionId, adapterType, actionParameters }) => {
+    const addedItem = { actionType: [adapterType, actionId] };
     actionParameters.forEach(({ code, value }) => {
       addedItem[code] = value;
     });

@@ -13,18 +13,18 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
         component: '/Strategy/ChargingStrategy',
       },
-      {
-        path: `/${AppCode.Strategy}/strategy/speed`,
-        name: 'speedStrategy',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        component: '/Strategy/SpeedStrategy',
-      },
-      {
-        path: `/${AppCode.Strategy}/strategy/parking`,
-        name: 'parkingStrategy',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-        component: '/Strategy/ParkingStrategy',
-      },
+      // {
+      //   path: `/${AppCode.Strategy}/strategy/speed`,
+      //   name: 'speedStrategy',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //   component: '/Strategy/SpeedStrategy',
+      // },
+      // {
+      //   path: `/${AppCode.Strategy}/strategy/parking`,
+      //   name: 'parkingStrategy',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      //   component: '/Strategy/ParkingStrategy',
+      // },
     ],
   },
   {

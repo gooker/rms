@@ -148,7 +148,7 @@ export default {
   'app.map.elevator': '电梯',
   'app.map.delivery': '投递点',
   'app.map.aisle': '通道',
-  'app.map.restArea': '休息区',
+  'app.map.restArea': '停车点',
   'app.map.emergencyStop': '急停区',
   'app.map.intersection': '交汇点',
   'app.map.programing': '地图编程',

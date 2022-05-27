@@ -39,6 +39,10 @@ export default {
   'customTasks.cannotEdit': '不可更改',
   'customTask.form.invalid': '表单数据错误',
   'customTasks.form.useVariable': '使用变量',
+  'customTasks.operationType.add': '新增动作',
+  'customTasks.operationType.update': '替换动作',
+  'customTasks.operationType.delete': '删除动作',
+  'customTasks.operationType.param': '替换动作参数',
 
   // 任务节点名称
   'customTask.type.BASE': '基础信息',
@@ -69,7 +73,8 @@ export default {
   'customTask.form.target': '目标',
   'customTask.form.pathCode': '路线区',
   'customTask.form.pathStrategy': '路线策略',
-  'customTask.form.keyPointActionConfig': '关键点动作配置 ',
+  'customTask.form.keyPointActionConfig': '关键点动作配置',
+  'customTask.form.pathProgramming': '路径函数配置',
 
   'customTask.form.heavy': '重车',
   'customTask.form.empty': '空车',

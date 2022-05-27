@@ -22,19 +22,9 @@
 1. size-sensor
 2. bizCharts
 
-### 菜单hook
+### 菜单 hook
+
 > 渲染角色权限树时候用到
-
-### extraConfig 设计
-
-```json
-{
-  "sso": "http://...",
-  "coordinator": "http://...",
-  "i18n": ["zh-CN", "en-US"],
-  "name": "Mushiny"
-}
-```
 
 > i18n 可显示的语种; name 平台主体名称
 
@@ -44,23 +34,23 @@
 {
   "zoneMarker": [
     {
-      "code":"string",
+      "code": "string",
       "type": "string",
       "x": 0,
       "y": 0,
       "width": 0,
       "height": 0,
       "radius": 0,
-      "color":"string",
+      "color": "string",
       "data": "string"
     }
   ],
   "labels": [
     {
-      "code":"string",
+      "code": "string",
       "x": 0,
       "y": 0,
-      "color":"string",
+      "color": "string",
       "text": "string",
       "width": 0,
       "height": 0
@@ -70,7 +60,8 @@
 ```
 
 ### 如何新增场景
-1. src/config/config 新增AppCode
+
+1. src/config/config 新增 AppCode
 2. src/config/router 新增路由数据
-3. 新增AppCode为名称的png图片
-4. PortalEntry文件新增图标配置
+3. 新增 AppCode 为名称的 png 图片
+4. PortalEntry 文件新增图标配置

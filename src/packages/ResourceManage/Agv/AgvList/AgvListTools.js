@@ -1,14 +1,7 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
-import { Button, Col, Dropdown, Form, Menu, Row, Select } from 'antd';
-import {
-  DisconnectOutlined,
-  DownOutlined,
-  GroupOutlined,
-  RedoOutlined,
-  ScanOutlined,
-  ToTopOutlined,
-} from '@ant-design/icons';
+import { Button, Col, Form, Row, Select } from 'antd';
+import { DisconnectOutlined, GroupOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { logOutRobot } from '@/services/resourceManageAPI';
 import Dictionary from '@/utils/Dictionary';
@@ -112,45 +105,46 @@ const AgvListTools = (props) => {
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 注销
           </Button>
-          <Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>
-            <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />
-          </Button>
-          <Dropdown
-            overlay={
-              <Menu
-                onClick={({ key }) => {
-                  if (key === 'hardware') {
-                    exportAgvHardwareInfo();
-                  } else {
-                    exportAgvInfo();
-                  }
-                }}
-              >
-                <Menu.Item key="hardware">
-                  <FormattedMessage id={'app.agv.exportHardwareInfo'} />
-                </Menu.Item>
-                <Menu.Item key="carInfo">
-                  <FormattedMessage id={'app.agv.exportAgvInfo'} />
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button>
-              <FormattedMessage id={'app.agv.infoExport'} /> <DownOutlined />
-            </Button>
-          </Dropdown>
+          {/*<Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>*/}
+          {/*  <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />*/}
+          {/*</Button>*/}
+          {/*<Dropdown*/}
+          {/*  overlay={*/}
+          {/*    <Menu*/}
+          {/*      onClick={({ key }) => {*/}
+          {/*        if (key === 'hardware') {*/}
+          {/*          exportAgvHardwareInfo();*/}
+          {/*        } else {*/}
+          {/*          exportAgvInfo();*/}
+          {/*        }*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      <Menu.Item key="hardware">*/}
+          {/*        <FormattedMessage id={'app.agv.exportHardwareInfo'} />*/}
+          {/*      </Menu.Item>*/}
+          {/*      <Menu.Item key="carInfo">*/}
+          {/*        <FormattedMessage id={'app.agv.exportAgvInfo'} />*/}
+          {/*      </Menu.Item>*/}
+          {/*    </Menu>*/}
+          {/*  }*/}
+          {/*>*/}
+          {/*  <Button>*/}
+          {/*    <FormattedMessage id={'app.agv.infoExport'} /> <DownOutlined />*/}
+          {/*  </Button>*/}
+          {/*</Dropdown>*/}
           <Button
             onClick={() => {
               dispatch({ type: 'agvList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>
           <Button
             type="dashed"
             onClick={() => {
+              dispatch({ type: 'agvList/fetchInitialData' });
               dispatch({ type: 'agvList/updateShowRegisterPanel', payload: true });
             }}
           >

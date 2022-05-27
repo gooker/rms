@@ -17,7 +17,9 @@ import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
  * @param programing 编程元数据
  */
 const ProgramingConfiguerModal = (props) => {
-  const { title, visible, onOk, onCancel, programing, editing, width = '60%' } = props;
+  const { title, visible, width = '60%' } = props;
+  const { onOk, onCancel, programing, operationType, editing } = props;
+
   const [configuration, setConfiguration] = useState([]);
 
   useEffect(() => {
@@ -63,7 +65,11 @@ const ProgramingConfiguerModal = (props) => {
 
       {/*  点位编程配置面板 */}
       <Divider orientation={'left'}>配置工具</Divider>
-      <ProgramingConfigure programing={programing} onAdd={addConfiguration} />
+      <ProgramingConfigure
+        programing={programing}
+        operationType={operationType}
+        onAdd={addConfiguration}
+      />
     </Modal>
   );
 };

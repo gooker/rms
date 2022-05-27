@@ -69,7 +69,7 @@ export default [
     name: 'customMenuManager',
     icon: 'ie',
     component: '/SSO/CustomMenuManager',
-    hooks: ['dev'],
+    authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.SSO}/notificationCenter`,

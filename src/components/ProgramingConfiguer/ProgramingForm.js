@@ -1,16 +1,24 @@
 /* TODO: I18N */
-import React, { memo, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Button, Cascader, Col, Form, Input, Row, Select, Switch } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { convertPrograming2Cascader } from '@/utils/util';
+import { convertPrograming2Cascader, isNull } from '@/utils/util';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const ProgramingForm = (props) => {
-  const { programing, onAdd } = props;
+  const { programing, operationType, onAdd } = props;
 
   const [formRef] = Form.useForm();
+  const [operateType, setOperateType] = useState('add');
   const [actionType, setActionType] = useState(null); // 已选择动作类型
   const cascaderOption = convertPrograming2Cascader(programing);
+
+  useEffect(() => {
+    if (!isNull(operationType)) {
+      setOperateType(operationType);
+    }
+  }, []);
 
   function renderItemInput(valueDataType, isReadOnly) {
     switch (valueDataType) {
@@ -57,7 +65,7 @@ const ProgramingForm = (props) => {
     formRef
       .validateFields()
       .then((value) => {
-        onAdd({ actionType, ...value });
+        onAdd({ operateType, actionType, ...value });
         formRef.resetFields();
       })
       .catch(() => {});
@@ -65,12 +73,31 @@ const ProgramingForm = (props) => {
 
   return (
     <div>
+      <Select
+        value={operateType}
+        onChange={setOperateType}
+        style={{ marginRight: 16, width: 150 }}
+        disabled={!isNull(operationType)}
+      >
+        <Select.Option value={'add'}>
+          <FormattedMessage id={'customTasks.operationType.add'} />
+        </Select.Option>
+        <Select.Option value={'update'}>
+          <FormattedMessage id={'customTasks.operationType.update'} />
+        </Select.Option>
+        <Select.Option value={'delete'}>
+          <FormattedMessage id={'customTasks.operationType.delete'} />
+        </Select.Option>
+        <Select.Option value={'param'}>
+          <FormattedMessage id={'customTasks.operationType.param'} />
+        </Select.Option>
+      </Select>
       <Cascader
         allowClear
         value={actionType}
         options={cascaderOption}
         onChange={setActionType}
-        placeholder={'请选择具体配置项'}
+        placeholder={'选择具体配置项'}
         style={{ width: '30%' }}
       />
 

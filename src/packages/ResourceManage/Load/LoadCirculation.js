@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
-const ContainerCirculation = (props) => {
+const LoadCirculation = (props) => {
   const {} = props;
   return <div>ContainerCirculation</div>;
 };
-export default memo(ContainerCirculation);
+export default memo(LoadCirculation);

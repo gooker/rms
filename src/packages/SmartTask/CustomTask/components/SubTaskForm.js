@@ -26,6 +26,7 @@ const SubTaskForm = (props) => {
   const { routes, programing } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
 
+  const [operationType, setOperationType] = useState(null); // 路径配置函数操作类型
   const [target, setTarget] = useState(null); // 目标区域
   const [useTaskPrograming, setUseTaskPrograming] = useState(false); // 是否使用任务编程
 
@@ -101,13 +102,14 @@ const SubTaskForm = (props) => {
     form.setFieldsValue(setter);
   }
 
-  function renderActionConfigButton(_namePath) {
+  function renderActionConfigButton(_namePath, cb) {
     const existConfigs = getActionConfig(_namePath);
     if (existConfigs.length === 0) {
       return (
         <Button
           onClick={() => {
             configKeyPointAction(_namePath);
+            typeof cb === 'function' && cb();
           }}
         >
           <Space>
@@ -122,6 +124,7 @@ const SubTaskForm = (props) => {
           <Button
             onClick={() => {
               configKeyPointAction(_namePath);
+              typeof cb === 'function' && cb();
             }}
           >
             <Space>
@@ -296,6 +299,54 @@ const SubTaskForm = (props) => {
         </Fragment>
       </TitleCard>
 
+      {/* 路径函数配置 */}
+      <TitleCard
+        hidden={hidden}
+        width={746}
+        title={<FormattedMessage id={'customTask.form.pathProgramming'} />}
+      >
+        <Fragment>
+          {/* 替换动作 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'pathProgramming', 'actionDelete']}
+            initialValue={null}
+            label={<FormattedMessage id={'customTasks.operationType.delete'} />}
+          >
+            {renderActionConfigButton([code, 'pathProgramming', 'actionDelete'], () => {
+              setOperationType('delete');
+            })}
+          </Form.Item>
+
+          {/* 替换动作 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'pathProgramming', 'actionReplace']}
+            initialValue={null}
+            label={<FormattedMessage id={'customTasks.operationType.update'} />}
+          >
+            {renderActionConfigButton([code, 'pathProgramming', 'actionReplace'], () => {
+              setOperationType('update');
+            })}
+          </Form.Item>
+
+          {/* 替换动作参数 */}
+          <Form.Item
+            hidden={hidden}
+            {...formItemLayout}
+            name={[code, 'pathProgramming', 'paramReplace']}
+            initialValue={null}
+            label={<FormattedMessage id={'customTasks.operationType.param'} />}
+          >
+            {renderActionConfigButton([code, 'pathProgramming', 'paramReplace'], () => {
+              setOperationType('param');
+            })}
+          </Form.Item>
+        </Fragment>
+      </TitleCard>
+
       {/* 关键点动作配置 */}
       <TitleCard
         hidden={hidden}
@@ -311,7 +362,9 @@ const SubTaskForm = (props) => {
             initialValue={null}
             label={formatMessage({ id: 'customTask.form.firstActions' })}
           >
-            {renderActionConfigButton([code, 'targetAction', 'firstActions'])}
+            {renderActionConfigButton([code, 'targetAction', 'firstActions'], () => {
+              setOperationType(null);
+            })}
           </Form.Item>
 
           {/* 第二个点位动作 */}
@@ -322,7 +375,9 @@ const SubTaskForm = (props) => {
             initialValue={null}
             label={formatMessage({ id: 'customTask.form.afterFirstActions' })}
           >
-            {renderActionConfigButton([code, 'targetAction', 'afterFirstActions'])}
+            {renderActionConfigButton([code, 'targetAction', 'afterFirstActions'], () => {
+              setOperationType(null);
+            })}
           </Form.Item>
 
           {/* 终点前一个点位动作 */}
@@ -333,7 +388,9 @@ const SubTaskForm = (props) => {
             initialValue={null}
             label={formatMessage({ id: 'customTask.form.beforeLastActions' })}
           >
-            {renderActionConfigButton([code, 'targetAction', 'beforeLastActions'])}
+            {renderActionConfigButton([code, 'targetAction', 'beforeLastActions'], () => {
+              setOperationType(null);
+            })}
           </Form.Item>
 
           {/* 终点动作 */}
@@ -344,7 +401,9 @@ const SubTaskForm = (props) => {
             initialValue={null}
             label={formatMessage({ id: 'customTask.form.lastActions' })}
           >
-            {renderActionConfigButton([code, 'targetAction', 'lastActions'])}
+            {renderActionConfigButton([code, 'targetAction', 'lastActions'], () => {
+              setOperationType(null);
+            })}
           </Form.Item>
         </Fragment>
       </TitleCard>
@@ -409,6 +468,7 @@ const SubTaskForm = (props) => {
         editing={actionList}
         visible={actionVisible}
         programing={programing}
+        operationType={operationType}
         onCancel={() => {
           setActionVisible(false);
           setActionList(null);

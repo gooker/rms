@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 import { dealResponse } from '@/utils/util';
+import { NameSpace } from '@/config/config';
 
 export default class ExhibitionService {
   /**
@@ -8,7 +9,7 @@ export default class ExhibitionService {
    * @param {Function} falCb 失败后回调
    */
   refreshTaskStatePie(sucCb, falCb) {
-    request(`/coordinator/map/detail`, { method: 'GET' })
+    request(`/${NameSpace.Platform}/map/detail`, { method: 'GET' })
       .then((response) => {
         if (dealResponse(response)) {
           falCb && falCb(response);
@@ -27,7 +28,7 @@ export default class ExhibitionService {
    * @param {Function} falCb 失败后回调
    */
   refreshTaskTypePie(sucCb, falCb) {
-    request(`/coordinator/map/detail`, { method: 'GET' })
+    request(`/${NameSpace.Platform}/map/detail`, { method: 'GET' })
       .then((response) => {
         if (dealResponse(response)) {
           falCb && falCb(response);
@@ -46,7 +47,7 @@ export default class ExhibitionService {
    * @param {Function} falCb 失败后回调
    */
   refreshTaskTrendLine(sucCb, falCb) {
-    request(`/coordinator/map/detail`, { method: 'GET' })
+    request(`/${NameSpace.Platform}/map/detail`, { method: 'GET' })
       .then((response) => {
         if (dealResponse(response)) {
           falCb && falCb(response);
@@ -65,7 +66,7 @@ export default class ExhibitionService {
    * @param {Function} falCb 失败后回调
    */
   refreshCarStatePie(sucCb, falCb) {
-    request(`/coordinator/map/detail`, { method: 'GET' })
+    request(`/${NameSpace.Platform}/map/detail`, { method: 'GET' })
       .then((response) => {
         if (dealResponse(response)) {
           falCb && falCb(response);
@@ -84,7 +85,7 @@ export default class ExhibitionService {
    * @param {Function} falCb 失败后回调
    */
   refreshCarBatteryStatePie(sucCb, falCb) {
-    request(`/coordinator/map/detail`, { method: 'GET' })
+    request(`/${NameSpace.Platform}/map/detail`, { method: 'GET' })
       .then((response) => {
         if (dealResponse(response)) {
           falCb && falCb(response);
@@ -103,7 +104,7 @@ export default class ExhibitionService {
    * @param {Function} falCb 失败后回调
    */
   refreshOverview(sucCb, falCb) {
-    request(`/coordinator/map/detail`, { method: 'GET' })
+    request(`/${NameSpace.Platform}/map/detail`, { method: 'GET' })
       .then((response) => {
         if (dealResponse(response)) {
           falCb && falCb(response);
