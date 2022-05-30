@@ -19,7 +19,7 @@ const ContainerLock = (props) => {
 
   const columns = [
     {
-      title:  <FormattedMessage id="lock.container.id" />,
+      title: <FormattedMessage id="lock.container.id" />,
       dataIndex: 'loadId	',
       align: 'center',
     },
@@ -92,31 +92,34 @@ const ContainerLock = (props) => {
     setLoading(false);
   }
 
-  function filterData(list, formValues) {
+  function filterData(list,formValues) {
     let result = [...list];
     if (isNull(formValues)) {
       setCurrentLockList(result);
       return;
     }
-    const { vehicleId, cellId, vehicleType } = formValues;
-    if (!isStrictNull(vehicleId)) {
+    const { taskId, vehicleType: loadType } = formValues;
+    if (!isStrictNull(taskId)) {
       result = result.filter((item) => {
-        return item.vehicleId === vehicleId;
+        return item.taskId === taskId;
       });
     }
-    if (!isStrictNull(vehicleType)) {
-      result = result.filter((item) => item.vehicleType === vehicleType);
+    if (!isStrictNull(loadType)) {
+      result = result.filter((item) => loadType.includes(item.vehicleType));
     }
-    if (!isStrictNull(cellId)) {
-      result = result.filter((item) => item.cellId === Number(cellId));
-    }
+
     setCurrentLockList(result);
   }
 
   return (
     <TablePageWrapper>
       <div>
-        <SearchTargetLock search={filterData} data={containerLockList} verhicleHide={true} />
+        <SearchTargetLock
+          search={filterData}
+          data={containerLockList}
+          verhicleHide={true}
+          loadType={true}
+        />
         <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>

@@ -108,17 +108,17 @@ const TargetLock = (props) => {
       setCurrentTargetLockList(result);
       return;
     }
-    const { vehicleId, cellId, vehicleType } = formValues;
+    const { vehicleId, vehicleType, taskId } = formValues;
     if (!isStrictNull(vehicleId)) {
       result = result.filter((item) => {
         return item.vehicleId === vehicleId;
       });
     }
     if (!isStrictNull(vehicleType)) {
-      result = result.filter((item) => item.vehicleType === vehicleType);
+      result = result.filter((item) => vehicleType.includes(item.vehicleType));
     }
-    if (!isStrictNull(cellId)) {
-      result = result.filter((item) => item.cellId === Number(cellId));
+    if (!isStrictNull(taskId)) {
+      result = result.filter((item) => item.taskId === taskId);
     }
     setCurrentTargetLockList(result);
   }

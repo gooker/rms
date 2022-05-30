@@ -97,31 +97,34 @@ const StorageLock = (props) => {
     setLoading(false);
   }
 
-  function filterData(list, formValues) {
+  function filterData(list,formValues) {
     let result = [...list];
     if (isNull(formValues)) {
       setCurrentDataList(result);
       return;
     }
-    const { vehicleId, cellId, vehicleType: loadType } = formValues;
-    if (!isStrictNull(vehicleId)) {
+    const { taskId, vehicleType: loadType } = formValues;
+    if (!isStrictNull(taskId)) {
       result = result.filter((item) => {
-        return item.vehicleId === vehicleId;
+        return item.taskId === taskId;
       });
     }
     if (!isStrictNull(loadType)) {
-      result = result.filter((item) => item.vehicleType === loadType);
+      result = result.filter((item) => loadType.includes(item.vehicleType));
     }
-    if (!isStrictNull(cellId)) {
-      result = result.filter((item) => item.cellId === Number(cellId));
-    }
+
     setCurrentDataList(result);
   }
 
   return (
     <TablePageWrapper>
       <div>
-        <SearchTargetLock search={filterData} data={dataSourceList} verhicleHide={true} />
+        <SearchTargetLock
+          search={filterData}
+          data={dataSourceList}
+          verhicleHide={true}
+          loadType={true}
+        />
         <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>

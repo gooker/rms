@@ -1,17 +1,36 @@
-import React from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Form, Button, Input, Row, Col, Select } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { isNull } from 'lodash';
 
 const SearchTargetLock = (props) => {
-  const { search, verhicleHide, allAdapter } = props;
+  const { search, verhicleHide, data, loadType, dispatch } = props;
   const [form] = Form.useForm();
+  const [allType, setAllType] = useState([]);
+
+  useEffect(() => {
+    async function init() {
+      const allVehicles = await dispatch({
+        type: 'monitor/refreshAllAgvList',
+      });
+
+      let allType = allVehicles.map(({ agvType }) => agvType);
+      if (!isNull(data) && loadType) {
+        allType = data.map(({ loadType }) => loadType);
+      }
+      setAllType([...new Set(allType)]);
+    }
+
+    init();
+  }, []);
 
   function onFinish() {
     form.validateFields().then((values) => {
       const params = { ...values };
-      search({ ...params });
+      search(data, { ...params });
     });
   }
 
@@ -34,27 +53,26 @@ const SearchTargetLock = (props) => {
         <Col span={4}>
           {/* 小车类型 */}
           <Form.Item name={'vehicleType'} label={formatMessage({ id: 'app.common.type' })}>
-            <Input allowClear />
-            {/* <Select
+            {/* <Input allowClear /> */}
+            <Select
               allowClear
               showSearch
-              size="small"
               maxTagCount={5}
               mode="multiple"
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
             >
-              {allAdapter?.map((element) => (
-                <Select.Option key={element.agvType} value={element.agvType}>
-                  {element.agvType}
+              {allType?.map((agvType) => (
+                <Select.Option key={agvType} value={agvType}>
+                  {agvType}
                 </Select.Option>
               ))}
-            </Select> */}
+            </Select>
           </Form.Item>
         </Col>
         {/* 任务id */}
-        <Col span={4}>
+        <Col span={7}>
           <Form.Item name="taskId" label={formatMessage({ id: 'app.task.id' })}>
             <Input allowClear />
           </Form.Item>
@@ -79,4 +97,4 @@ const SearchTargetLock = (props) => {
     </Form>
   );
 };
-export default React.memo(SearchTargetLock);
+export default connect()(memo(SearchTargetLock));
