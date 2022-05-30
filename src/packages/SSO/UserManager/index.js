@@ -240,18 +240,12 @@ class UserManager extends Component {
   // 用户表单提交
   onSubmit = async (values) => {
     const { updateItem, selectRow } = this.state;
-
-    // 后台不支持 adminType===USER, 这里删除
-    const requestParams = { ...values };
-    if (requestParams.adminType === 'USER') {
-      delete requestParams.adminType;
-    }
     let response;
     // 编辑
     if (!isNull(updateItem)) {
-      response = await updateUserManage({ ...requestParams, id: selectRow[0].id });
+      response = await updateUserManage({ ...values, id: selectRow[0].id });
     } else {
-      response = await addUserManager(requestParams);
+      response = await addUserManager(values);
     }
     if (!dealResponse(response, true)) {
       this.setState(
