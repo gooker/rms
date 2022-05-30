@@ -3,6 +3,9 @@ import { find, debounce } from 'lodash';
 import { Form, Select, Switch, Card, Row, Col, message, Empty, Button, Spin } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { fechSaveUnBind, getUnBindGroupData } from '@/services/resourceManageAPI';
+import { getCustomGroup, fetchActiveMap } from '@/services/api';
+import commonStyles from '@/common.module.less';
 import styles from './resourceBind.module.less';
 
 const ResourceBind = (props) => {
@@ -20,7 +23,7 @@ const ResourceBind = (props) => {
 
   useEffect(() => {
     async function init() {
-      const originalMapData = await fetchGetActiveMap();
+      const originalMapData = await fetchActiveMap();
       if (originalMapData) {
         const payload = { mapId: originalMapData.id };
         // 根据mapId 获取所有分组信息
@@ -67,7 +70,7 @@ const ResourceBind = (props) => {
     const yValues = formRef.getFieldValue('yType');
     if (yValues?.includes(values)) {
       formRef.setFieldsValue({ xType: currentXvalue });
-      message.info('不能和纵轴重复');
+      message.info(formatMessage({ id: 'resourceBind.repeat.vertivalaxis' }));
       return;
     }
 
@@ -86,7 +89,7 @@ const ResourceBind = (props) => {
       const index = values.findIndex((item) => {
         return item === xValues;
       });
-      message.info('不能和横轴重复');
+      message.info(formatMessage({ id: 'resourceBind.repeat.horizeontalaxis' }));
       values.splice(index, 1);
       setCurrentYvalue(values);
       return;
@@ -229,162 +232,150 @@ const ResourceBind = (props) => {
   }
 
   return (
-    <div>
-      <div>
-        <Card bordered={false} style={{ margin: '0px 10px' }}>
-          {/* 搜索 */}
-          <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-            <div style={{ flex: 10, display: 'flex' }}>
-              <Form form={formRef}>
-                <Row>
-                  <Col span={8}>
-                    <Form.Item
-                      label={formatMessage({ id: 'app.groupBinding.horizontalaxis' })}
-                      name="xType"
-                    >
-                      <Select
-                        placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
-                        style={{ width: '100%' }}
-                        showSearch
-                        onChange={groupXTypeChange}
-                        options={xOptions}
-                      ></Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={8} style={{ padding: '0 12px' }}>
-                    <Form.Item
-                      label={formatMessage({ id: 'app.groupBinding.verticalaxis' })}
-                      name="yType"
-                    >
-                      <Select
-                        allowClear
-                        placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
-                        style={{ width: '100%' }}
-                        // showSearch
-                        filterOption={false}
-                        onChange={groupYTypeChange}
-                        mode="multiple"
-                        maxTagCount={5}
-                      >
-                        {yOptions &&
-                          yOptions.map(({ label, value }, index) => (
-                            <Select.Option key={index} value={value}>
-                              {label}
-                            </Select.Option>
-                          ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
+    <div className={commonStyles.commonPageStyle}>
+      <Card bordered={false}>
+        {/* 搜索 */}
+        <Form form={formRef}>
+          <Row>
+            <Col span={8}>
+              <Form.Item label={formatMessage({ id: 'resourceBind.horizontalaxis' })} name="xType">
+                <Select
+                  placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
+                  style={{ width: '100%' }}
+                  showSearch
+                  onChange={groupXTypeChange}
+                  options={xOptions}
+                ></Select>
+              </Form.Item>
+            </Col>
+            <Col span={8} style={{ padding: '0 12px' }}>
+              <Form.Item label={formatMessage({ id: 'resourceBind.verticalaxis' })} name="yType">
+                <Select
+                  allowClear
+                  placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
+                  style={{ width: '100%' }}
+                  // showSearch
+                  filterOption={false}
+                  onChange={groupYTypeChange}
+                  mode="multiple"
+                  maxTagCount={5}
+                >
+                  {yOptions &&
+                    yOptions.map(({ label, value }, index) => (
+                      <Select.Option key={index} value={value}>
+                        {label}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>
 
-                  <Col offset={3}>
-                    <Button type={'primary'} onClick={submitSave}>
-                      <FormattedMessage id={'app.storageManage.save'} />
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </div>
-          </div>
+            <Col offset={6} style={{ textAlign: 'right' }}>
+              <Button type={'primary'} onClick={submitSave}>
+                <FormattedMessage id={'app.button.save'} />
+              </Button>
+            </Col>
+          </Row>
+        </Form>
 
-          {/* 内容区 */}
-          <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
-            {xData && yData?.length > 0 ? (
-              <Row style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <table
-                    style={{
-                      width: '96%',
-                      border: '1px solid #efefef',
-                      textAlign: 'center',
-                      borderCollapse: 'collapse',
-                      borderSpacing: 0,
-                      tableLayout: 'fixed',
-                    }}
+        {/* 内容区 */}
+        <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
+          {xData && yData?.length > 0 ? (
+            <Row style={{ marginTop: 20 }}>
+              <Col span={24}>
+                <table
+                  style={{
+                    width: '96%',
+                    border: '1px solid #efefef',
+                    textAlign: 'center',
+                    borderCollapse: 'collapse',
+                    borderSpacing: 0,
+                    tableLayout: 'fixed',
+                  }}
+                >
+                  <thead
+                    className={styles.fixColumn}
+                    style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
                   >
-                    <thead
-                      className={styles.fixColumn}
-                      style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                    >
-                      <tr className={styles.body}>
-                        <th className={styles.tdBorder} colSpan="2">
-                          {' '}
-                        </th>
-                        {xData &&
-                          xData.map((item) => {
-                            return (
-                              <th key={item.id} className={styles.tdBorder}>
-                                {item.groupName}
+                    <tr className={styles.body}>
+                      <th className={styles.tdBorder} colSpan="2">
+                        {' '}
+                      </th>
+                      {xData &&
+                        xData.map((item) => {
+                          return (
+                            <th key={item.id} className={styles.tdBorder}>
+                              {item.groupName}
 
+                              <Switch
+                                checked={() => {
+                                  theadIsChecked(item.key);
+                                }}
+                                style={{ marginLeft: '10px' }}
+                                size="small"
+                                onClick={(checked) => {
+                                  switchXtoYChange(item.key, checked);
+                                }}
+                              />
+                            </th>
+                          );
+                        })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {yData?.map((y) => {
+                      let typeTimes = statisticalTypeTimes(yData);
+                      return (
+                        <tr key={y.id} className={styles.thbodyHeight}>
+                          {Object.keys(typeTimes)?.map((i) => {
+                            if (i === y.typeName) {
+                              const rowslength = typeTimes[i];
+                              delete typeTimes[i];
+                              return (
+                                <th
+                                  key={y.key}
+                                  rowSpan={rowslength}
+                                  className={styles.contentBorder}
+                                >
+                                  {y.typeName}
+                                </th>
+                              );
+                            }
+                          })}
+
+                          <th
+                            className={styles.tdBorder}
+                            style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
+                          >
+                            {y.groupName}
+                          </th>
+
+                          {/* 下面td的长度 应该用xData遍历 */}
+                          {xData?.map((x) => {
+                            return (
+                              <th key={x.id} className={styles.contentBorder}>
                                 <Switch
-                                  checked={() => {
-                                    theadIsChecked(item.key);
-                                  }}
-                                  style={{ marginLeft: '10px' }}
                                   size="small"
-                                  onClick={(checked) => {
-                                    switchXtoYChange(item.key, checked);
-                                  }}
+                                  checked={switchChecked(x.key, y.key)}
+                                  data-x={x.key}
+                                  data-y={y.key}
+                                  onChange={switchChange(x.key, y.key)}
                                 />
                               </th>
                             );
                           })}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {yData?.map((y) => {
-                        let typeTimes = statisticalTypeTimes(yData);
-                        return (
-                          <tr key={y.id} className={styles.thbodyHeight}>
-                            {Object.keys(typeTimes)?.map((i) => {
-                              if (i === y.typeName) {
-                                const rowslength = typeTimes[i];
-                                delete typeTimes[i];
-                                return (
-                                  <th
-                                    key={y.key}
-                                    rowSpan={rowslength}
-                                    className={styles.contentBorder}
-                                  >
-                                    {y.typeName}
-                                  </th>
-                                );
-                              }
-                            })}
-
-                            <th
-                              className={styles.tdBorder}
-                              style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                            >
-                              {y.groupName}
-                            </th>
-
-                            {/* 下面td的长度 应该用xData遍历 */}
-                            {xData?.map((x) => {
-                              return (
-                                <th key={x.id} className={styles.contentBorder}>
-                                  <Switch
-                                    size="small"
-                                    checked={switchChecked(x.key, y.key)}
-                                    data-x={x.key}
-                                    data-y={y.key}
-                                    onChange={switchChange(x.key, y.key)}
-                                  />
-                                </th>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </Col>
-              </Row>
-            ) : (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
-            )}
-          </div>
-        </Card>
-      </div>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
+          )}
+        </div>
+      </Card>
     </div>
   );
 };

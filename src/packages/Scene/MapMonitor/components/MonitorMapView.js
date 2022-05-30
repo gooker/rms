@@ -1187,7 +1187,7 @@ class MonitorMapView extends BaseMap {
       this.agvPathMap.clear();
     } else {
       // 根据最新的agvTasks来确定目前需要渲染的小车任务路径，删除不需要渲染的路径. 比如：搜索 100，101小车，但是101小车没有任务路径，所以返回值不会包含101小车的数据
-      const agvToRenderPath = agvTasks.map((agvTask) => `${agvTask.r}`);
+      const agvToRenderPath = agvTasks.map((agvTask) => `${agvTask.v}`);
       const agvToSplit = [];
       [...this.agvPathMap.keys()].forEach((id) => {
         if (!agvToRenderPath.includes(id)) {
@@ -1209,10 +1209,10 @@ class MonitorMapView extends BaseMap {
     agvTasks.forEach((agvTask) => {
       // 现在只会在路径发生变化的时候才会发送路径点位cId, 所以这里只会保存包含cId的消息, 不包含cId的消息只会用来更新si和ei字段
       if (agvTask.hasOwnProperty('c')) {
-        this.agvTaskMap.set(`${agvTask.r}`, agvTask);
+        this.agvTaskMap.set(`${agvTask.v}`, agvTask);
       } else {
         // 否则只是更改 startIndex(si) 和 endIndex(ei)
-        const storedAGVTask = this.agvTaskMap.get(`${agvTask.r}`);
+        const storedAGVTask = this.agvTaskMap.get(`${agvTask.v}`);
         if (storedAGVTask) {
           storedAGVTask.si = agvTask.si;
           storedAGVTask.ei = agvTask.ei;

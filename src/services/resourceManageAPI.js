@@ -204,3 +204,28 @@ export function handleDevice(param) {
     data: param,
   });
 }
+
+// 资源绑定
+// 保存绑定关系
+export async function fechSaveUnBind(param) {
+  return request(`/${NameSpace.Platform}/custom/saveUnBindGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 删除绑定关系
+export async function deleteUnBindGroup(param) {
+  return request(`/${NameSpace.Platform}/custom/deleteUnBindGroupById`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 根据mapId查询绑定关系
+export async function getUnBindGroupData(param) {
+  return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
+    method: 'GET',
+    data: param,
+  });
+}
