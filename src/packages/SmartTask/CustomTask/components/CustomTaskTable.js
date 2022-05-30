@@ -166,6 +166,7 @@ const CustomTaskTable = (props) => {
 
   function deleteListItem() {
     RmsConfirm({
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
         switchDeleteSpin(true);
         const response = await deleteCustomTasksById(selectedRowKeys);

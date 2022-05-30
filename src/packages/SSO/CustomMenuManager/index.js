@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useState } from 'react';
-import { Button, Space, Drawer } from 'antd';
-import { ReloadOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Drawer } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -23,9 +23,9 @@ const CustomMenuManager = () => {
       title: '应用',
       dataIndex: 'appCode',
       align: 'center',
-    //   render: (text, record) => {
-    //     return record?.parentPath?.split('/')[1];
-    //   },
+      //   render: (text, record) => {
+      //     return record?.parentPath?.split('/')[1];
+      //   },
     },
     {
       title: '父节点',
@@ -43,19 +43,19 @@ const CustomMenuManager = () => {
       align: 'center',
       render: (text, record) => {
         return (
-          <Space>
-            <Button type="link" onClick={deleteMenu}>
-              <DeleteOutlined />
-            </Button>
+          <>
             <Button
-              type="link"
+              type='link'
               onClick={() => {
                 setEdit(record);
               }}
             >
-              <EditOutlined />
+              <EditOutlined style={{ fontSize: 17 }} />
             </Button>
-          </Space>
+            <Button type='link' onClick={deleteMenu}>
+              <DeleteOutlined style={{ fontSize: 17 }} />
+            </Button>
+          </>
         );
       },
     },

@@ -52,7 +52,7 @@ export function convertToUserTimezone(value) {
 }
 
 export function isEmptyPlainObject(obj) {
-  return isPlainObject(obj) && Object.keys(obj).length === 0;
+  return isPlainObject(obj) && isEmpty(obj);
 }
 
 export function isEmptyArray(arr) {
@@ -322,6 +322,15 @@ export function copyToBoard(value) {
     document.body.removeChild(input);
     message.warn(formatMessage({ id: 'app.copyboard.unsupportCopyAPI' }));
     return false;
+  }
+}
+
+export async function addToClipBoard(value) {
+  try {
+    await navigator.clipboard.writeText(value);
+    message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+  } catch (err) {
+    message.success(formatMessage({ id: 'app.message.operateFailed' }));
   }
 }
 

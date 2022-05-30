@@ -1,5 +1,5 @@
 import React, { Fragment, memo, useState } from 'react';
-import { Button, Checkbox, Form, Input, InputNumber, Select, Space, Switch } from 'antd';
+import { Button, Checkbox, Form, Input, Select, Space, Switch } from 'antd';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
@@ -411,16 +411,6 @@ const SubTaskForm = (props) => {
           </Form.Item>
         </Fragment>
       </TitleCard>
-
-      {/* 行驶速度 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'speed']}
-        label={formatMessage({ id: 'customTask.form.speed' })}
-      >
-        <InputNumber min={1} step={1} />
-      </Form.Item>
 
       {/* 任务编程 */}
       <Form.Item

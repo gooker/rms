@@ -1,21 +1,8 @@
 import React, { Component } from 'react';
-import { Row, Button, Col, Switch, message, Modal } from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  CopyOutlined,
-  ExportOutlined,
-} from '@ant-design/icons';
-import {
-  fetchAllEnvironmentList,
-  fetchAddEnvironment,
-  deleteEnvironmentById,
-  fetchUpdateEnvironment,
-} from '@/services/SSO';
+import { Button, Col, message, Modal, Row, Switch } from 'antd';
+import { BgColorsOutlined, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
+import { addToClipBoard, adjustModalWidth, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
@@ -23,20 +10,19 @@ import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from './environmentManager.module.less';
 
+const StorageKey = 'customEnvs';
 export default class index extends Component {
+  formRef = React.createRef();
+
   state = {
+    dataList: [],
     selectRow: [],
     selectRowKey: [],
-    loading: false,
-    pasteVisble: false,
+    editingRow: null,
+    pasteVisible: false,
     addEnvironVisible: false,
     updateFlag: false,
-    dataList: [],
   };
-
-  componentDidMount() {
-    this.getData();
-  }
 
   columns = [
     {
@@ -51,35 +37,48 @@ export default class index extends Component {
       render: (text, record) => (
         <Switch
           checked={text === '1'}
-          checkedChildren={<FormattedMessage id="app.common.true" />}
-          unCheckedChildren={<FormattedMessage id="app.common.false" />}
+          checkedChildren={<FormattedMessage id='app.common.true' />}
+          unCheckedChildren={<FormattedMessage id='app.common.false' />}
           onChange={(checked) => {
             this.changeStatus(record, checked);
           }}
         />
       ),
     },
+    {
+      title: <FormattedMessage id={'app.common.operation'} />,
+      key: 'action',
+      align: 'center',
+      render: (_, record) => (
+        <>
+          <Button
+            type={'link'}
+            onClick={() => {
+              this.setState({
+                addEnvironVisible: true,
+                editingRow: record,
+              });
+            }}
+          >
+            <EditOutlined style={{ fontSize: 17 }} />
+          </Button>
+          <Button type={'link'} onClick={() => this.deleteEnvironment(record)}>
+            <DeleteOutlined style={{ fontSize: 17 }} />
+          </Button>
+        </>
+      ),
+    },
   ];
 
-  getData = async () => {
-    this.setState({ loading: true });
-    const response = await fetchAllEnvironmentList();
-    if (!dealResponse(response)) {
-      this.setState({ dataList: response });
+  componentDidMount() {
+    let dataList = window.localStorage.getItem(StorageKey);
+    if (isStrictNull(dataList)) {
+      dataList = [];
+    } else {
+      dataList = JSON.parse(dataList);
     }
-    this.setState({ loading: false });
-  };
-
-  changeStatus = async (record, flag) => {
-    const params = {
-      ...record,
-      flag: flag ? 1 : 0,
-    };
-    const updateRes = await fetchUpdateEnvironment(params);
-    if (!dealResponse(updateRes, true)) {
-      this.getData();
-    }
-  };
+    this.setState({ dataList });
+  }
 
   renderExpandedRowRender = (row) => {
     const result = [];
@@ -99,114 +98,103 @@ export default class index extends Component {
   copyJson = () => {
     const { selectRow } = this.state;
     const str = JSON.stringify(selectRow);
-    copyToBoard(str);
+    addToClipBoard(str);
   };
 
-  onAddEnvironment = async (values) => {
-    const { updateFlag, selectRow } = this.state;
-    if (updateFlag) {
-      values.id = selectRow[0].id;
+  onAddEnvironment = (values) => {
+    const { dataList, editingRow } = this.state;
+    let _dataList = [...dataList];
+    if (editingRow) {
+      values.id = editingRow.id;
+      _dataList = dataList.filter((item) => item.id !== editingRow.id);
+      _dataList.unshift(values);
+    } else {
+      values.id = getRandomString(10);
+      _dataList.push(values);
     }
-    const response = await fetchAddEnvironment(values);
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-      this.getData();
-      this.setState(
-        {
-          pasteVisble: false,
-          addEnvironVisible: false,
-          updateFlag: false,
-          selectRow: [],
-          selectRowKey: [],
-        },
-        this.getData,
-      );
-    }
+    message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    this.setState({
+      dataList: _dataList,
+      addEnvironVisible: false,
+      editingRow: null,
+    });
+    window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
   };
 
-  deleteEnvironment = () => {
-    const this_ = this;
-    const { selectRowKey } = this.state;
+  pasteEnvironment = (envs) => {
+    const { dataList } = this.state;
+    const _dataList = dataList.concat(envs);
+    this.setState({ dataList: _dataList, selectRow: [], selectRowKey: [], pasteVisible: false });
+    window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
+  };
+
+  changeStatus = (record, flag) => {
+    const { dataList } = this.state;
+    const _dataList = dataList.map((item) => {
+      return {
+        ...item,
+        flag: item.id === record.id && flag ? '1' : '0',
+      };
+    });
+    this.setState({ dataList: _dataList });
+    window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
+  };
+
+  deleteEnvironment = (record) => {
+    const _this = this;
+    const { dataList } = this.state;
     RmsConfirm({
       content: formatMessage({ id: 'environmentManager.deleteConfirmContent' }),
       onOk: async () => {
-        const deleteRes = await deleteEnvironmentById({ id: selectRowKey[0] });
-        if (!dealResponse(deleteRes)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-          this_.getData();
-        }
+        const _dataList = dataList.filter((item) => item.id !== record.id);
+        _this.setState({ dataList: _dataList });
+        window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       },
     });
   };
 
+  submit = () => {
+    const { validateFields } = this.formRef.current;
+    validateFields()
+      .then((allValues) => {
+        this.onAddEnvironment(allValues);
+      })
+      .catch(() => {
+      });
+  };
+
   render() {
-    const {
-      selectRowKey,
-      selectRow,
-      loading,
-      dataList,
-      pasteVisble,
-      addEnvironVisible,
-      updateFlag,
-    } = this.state;
-    const updateRow = updateFlag ? selectRow : null;
+    const { selectRowKey, editingRow, dataList, pasteVisible, addEnvironVisible } = this.state;
     return (
       <div className={commonStyles.commonPageStyle}>
-        <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
-          <Col flex="auto" className={commonStyles.tableToolLeft}>
-            <Button
-              type="primary"
-              onClick={() => {
-                this.setState({
-                  addEnvironVisible: true,
-                });
-              }}
-            >
-              <PlusOutlined /> <FormattedMessage id="app.button.add" />
-            </Button>
-            <Button
-              disabled={selectRowKey.length !== 1}
-              onClick={() => {
-                this.setState({
-                  addEnvironVisible: true,
-                  updateFlag: true,
-                });
-              }}
-            >
-              <EditOutlined /> <FormattedMessage id="app.button.update" />
-            </Button>
-
-            <Button danger disabled={selectRowKey.length !== 1} onClick={this.deleteEnvironment}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-            </Button>
-            <Button
-              disabled={selectRowKey.length !== 1}
-              onClick={() => {
-                this.copyJson();
-              }}
-            >
-              <ExportOutlined /> <FormattedMessage id="app.button.copy" />
-            </Button>
-            <Button
-              onClick={() => {
-                this.setState({ pasteVisble: true });
-              }}
-            >
-              <CopyOutlined /> <FormattedMessage id="app.button.past" />
-            </Button>
-          </Col>
-          <Col>
-            <Button type="primary" ghost icon={<ReloadOutlined />} onClick={this.getData}>
-              <FormattedMessage id="app.button.refresh" />
-            </Button>
-          </Col>
-        </Row>
+        <div className={commonStyles.tableToolLeft}>
+          <Button
+            type='primary'
+            onClick={() => {
+              this.setState({
+                addEnvironVisible: true,
+              });
+            }}
+          >
+            <PlusOutlined /> <FormattedMessage id='app.button.add' />
+          </Button>
+          <Button disabled={selectRowKey.length === 0} onClick={this.copyJson}>
+            <CopyOutlined /> <FormattedMessage id='app.button.copy' />
+          </Button>
+          <Button
+            onClick={() => {
+              this.setState({ pasteVisible: true });
+            }}
+          >
+            <BgColorsOutlined /> <FormattedMessage id='app.button.past' />
+          </Button>
+        </div>
 
         <TableWithPages
           columns={this.columns}
-          rowKey="id"
           dataSource={dataList}
-          loading={loading}
+          rowKey={({ id }) => id}
           rowSelection={{
             selectedRowKeys: selectRowKey,
             onChange: (selectRowKey, selectRow) => {
@@ -220,42 +208,42 @@ export default class index extends Component {
 
         {/* 新增 */}
         <Modal
+          destroyOnClose
           width={adjustModalWidth() * 0.7}
           visible={addEnvironVisible}
-          destroyOnClose
-          footer={null}
           title={
-            updateRow ? (
-              <FormattedMessage id="environmentManager.update" />
+            editingRow ? (
+              <FormattedMessage id='environmentManager.update' />
             ) : (
-              <FormattedMessage id="environmentManager.add" />
+              <FormattedMessage id='environmentManager.add' />
             )
           }
+          onOk={this.submit}
           onCancel={() => {
             this.setState({
               addEnvironVisible: false,
-              updateFlag: false,
+              editingRow: null,
             });
           }}
         >
-          <AddEnvironmentModal onSubmit={this.onAddEnvironment} updateRow={updateRow} />
+          <AddEnvironmentModal formRef={this.formRef} updateRow={editingRow} />
         </Modal>
 
         {/* 粘贴 */}
         <Modal
-          width={adjustModalWidth() * 0.7}
-          visible={pasteVisble}
-          maskClosable={false}
           destroyOnClose
+          width={adjustModalWidth() * 0.7}
+          visible={pasteVisible}
+          maskClosable={false}
           footer={null}
           title={<FormattedMessage id="environmentManager.tip.pasteTip" />}
           onCancel={() => {
             this.setState({
-              pasteVisble: false,
+              pasteVisible: false,
             });
           }}
         >
-          <PasteModal onAddEnvironment={this.onAddEnvironment} />
+          <PasteModal onPaste={this.pasteEnvironment} />
         </Modal>
       </div>
     );
