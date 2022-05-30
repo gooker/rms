@@ -16,6 +16,8 @@ export default class SorterVehicle extends PIXI.Container {
     this.x = props.x;
     this.y = props.y;
     this.uniqueId = props.uniqueId;
+    this.vehicleType = props.vehicleType;
+    this.vehicleIcon = props.vehicleIcon;
     this.type = VehicleType.Sorter;
     this.vehicleType = 'sorter';
     this.alpha = 0.8;

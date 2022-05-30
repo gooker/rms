@@ -13,6 +13,8 @@ export default class LatentVehicle extends PIXI.Container {
     this.y = props.y;
     this.type = MonitorSelectableSpriteType.LatentLifting;
     this.uniqueId = props.uniqueId;
+    this.vehicleType = props.vehicleType;
+    this.vehicleIcon = props.vehicleIcon;
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
     this.zIndex = zIndex.vehicle;

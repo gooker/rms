@@ -75,7 +75,9 @@ const MonitorBodyRight = (props) => {
       case Category.Prop:
         return <Property />;
       case Category.LatentVehicle:
-        return <VehicleCategorySecondaryPanel vehicleType={VehicleType.LatentLifting} height={450} />;
+        return (
+          <VehicleCategorySecondaryPanel vehicleType={VehicleType.LatentLifting} height={450} />
+        );
       case Category.ToteVehicle:
         return <VehicleCategorySecondaryPanel vehicleType={VehicleType.Tote} height={350} />;
       case Category.SorterVehicle:
