@@ -27,7 +27,6 @@ const ToRest = (props) => {
         setExecuting(true);
         const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
         if (vehicle) {
-        
           vehicleToRest({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();

@@ -389,7 +389,6 @@ export default {
             ...item,
             vehicleType: item?.vehicleType || item?.vehicle?.vehicleType,
             uniqueId: item?.vehicle?.id,
-            vehicleId: item.vehicleId,
           });
         });
         yield put({ type: 'saveAllVehicles', payload: allVehicles });
