@@ -23,7 +23,7 @@ const {
 
 const MonitorSelectionPanel = (props) => {
   const { dispatch, height, selections, selectableType } = props;
-  const { allAGVs, latentPod } = props;
+  const { allVehicles, latentPod } = props;
   const currentLogic = getCurrentLogicAreaData('monitor');
 
   function filterSelectable(event, type) {
@@ -46,11 +46,11 @@ const MonitorSelectionPanel = (props) => {
 
   function renderHeader(type) {
     switch (type) {
-      case 'AGV': {
+      case 'Vehicle': {
         const selected = selections.filter((item) =>
           [LatentLifting, Tote, Sorter, ForkLifting].includes(item.type),
         );
-        return `${formatMessage({ id: 'app.agv' })} ${selected.length}/${allAGVs.length}`;
+        return `${formatMessage({ id: 'app.vehicle' })} ${selected.length}/${allVehicles.length}`;
       }
       case LatentPod: {
         const selected = selections.filter((item) => item.type === LatentPod);
@@ -90,7 +90,7 @@ const MonitorSelectionPanel = (props) => {
   }
 
   function renderList(type) {
-    if (type === 'AGV') {
+    if (type === 'Vehicle') {
       const selected = selections.filter((item) =>
         [LatentLifting, Tote, Sorter, ForkLifting].includes(item.type),
       );
@@ -108,8 +108,8 @@ const MonitorSelectionPanel = (props) => {
       </div>
       <div>
         <Collapse accordion>
-          <Panel key="AGV" header={renderHeader('AGV')} extra={renderExtra('AGV')}>
-            {renderList('AGV')}
+          <Panel key="Vehicle" header={renderHeader('Vehicle')} extra={renderExtra('Vehicle')}>
+            {renderList('Vehicle')}
           </Panel>
           <Panel key={LatentPod} header={renderHeader(LatentPod)} extra={renderExtra(LatentPod)}>
             {renderList(LatentPod)}
@@ -140,10 +140,10 @@ const MonitorSelectionPanel = (props) => {
 };
 export default connect(({ monitor }) => {
   const {
-    allAGVs,
+    allVehicles,
     selections,
     selectableType,
     monitorLoad: { latentPod },
   } = monitor;
-  return { allAGVs, latentPod, selections, selectableType };
+  return { allVehicles, latentPod, selections, selectableType };
 })(memo(MonitorSelectionPanel));

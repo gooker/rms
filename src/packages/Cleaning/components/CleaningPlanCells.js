@@ -58,7 +58,7 @@ const CleaningPlanCells = (props) => {
 
   function content(item) {
     const { cumulativeCycle } = originalRecord;
-    const { skipTimes, successTimes, isMissCode, allocationedAgv } = item;
+    const { skipTimes, successTimes, isMissCode, allocationedVehicle } = item;
     return (
       <Row>
         {!isNull(skipTimes) && (
@@ -96,13 +96,13 @@ const CleaningPlanCells = (props) => {
             </div>
           </Col>
         )}
-        {!isNull(allocationedAgv) && (
+        {!isNull(allocationedVehicle) && (
           <Col span={24} className={styles.mb10}>
             <div className={[styles.tips, styles.tips_rect, styles.allotcolor].join(' ')}>
-              {allocationedAgv}
+              {allocationedVehicle}
             </div>
             <div className={styles.tips}>
-              {formatMessage({ id: 'cleaningCenter.allot.tips' }, { value: allocationedAgv })}
+              {formatMessage({ id: 'cleaningCenter.allot.tips' }, { value: allocationedVehicle })}
             </div>
           </Col>
         )}
@@ -183,7 +183,7 @@ const CleaningPlanCells = (props) => {
                           <div>{item.successTimes}</div>
                         </div>
                       )}
-                      {!isNull(item?.allocationedAgv) && (
+                      {!isNull(item?.allocationedVehicle) && (
                         <div
                           className={[styles.commonStyle, styles.rect, styles.allotcolor].join(' ')}
                           style={{
@@ -193,11 +193,11 @@ const CleaningPlanCells = (props) => {
                         >
                           <div
                             style={{
-                              transform: `scale(${getSacleNum(item?.allocationedAgv)})`,
+                              transform: `scale(${getSacleNum(item?.allocationedVehicle)})`,
                               textAlign: 'center',
                             }}
                           >
-                            {item.allocationedAgv}
+                            {item.allocationedVehicle}
                           </div>
                         </div>
                       )}

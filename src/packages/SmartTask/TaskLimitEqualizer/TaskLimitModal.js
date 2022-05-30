@@ -176,7 +176,7 @@ class TaskTriggerModal extends Component {
     });
   };
 
-  onAGVTypeChange = (value) => {
+  onVehicleTypeChange = (value) => {
     const { tasksByTypeOptions } = this.props;
     const currentValue = [...value];
     const limitNumList = [];
@@ -368,7 +368,7 @@ class TaskTriggerModal extends Component {
               name='sourceType'
               rules={[{ required: true }]}
             >
-              <Select allowClear mode="multiple" maxTagCount={4} onChange={this.onAGVTypeChange}>
+              <Select allowClear mode="multiple" maxTagCount={4} onChange={this.onVehicleTypeChange}>
                 {Object.entries(tasksByTypeOptions)?.map(([key, value]) => (
                   <Select.Option key={key} value={key}>
                     {value}

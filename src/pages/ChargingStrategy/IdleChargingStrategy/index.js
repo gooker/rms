@@ -14,21 +14,21 @@ const { RangePicker } = TimePicker;
 const Days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 const IdleChargingStrategy = (props) => {
-  const { agvType, onCancel } = props;
+  const { vehicleType, onCancel } = props;
 
   const [form] = Form.useForm();
   const [pastMinuts, setPastMinuts] = useState(null);
   const [percentage, setPercentage] = useState(null);
-  const [useAgvStandByPercent, setUseAgvStandByPercent] = useState(false); // 第一条策略
+  const [useVehicleStandByPercent, setUseVehicleStandByPercent] = useState(false); // 第一条策略
   const [useIdleHours, setUseIdleHours] = useState(false); // 第二条策略
 
   useEffect(() => {
-    getIdleHoursBySectionId(agvType).then((response) => {
+    getIdleHoursBySectionId(vehicleType).then((response) => {
       if (!dealResponse(response)) {
         const { idleHoursQuantumDTOS } = response;
-        setPastMinuts(response.agvStandbyMinute);
-        setPercentage(response.agvStandbyPercent);
-        setUseAgvStandByPercent(response.useAgvStandByPercent);
+        setPastMinuts(response.vehicleStandbyMinute);
+        setPercentage(response.vehicleStandbyPercent);
+        setUseVehicleStandByPercent(response.useVehicleStandByPercent);
         setUseIdleHours(response.useIdleHours);
 
         const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
@@ -61,12 +61,12 @@ const IdleChargingStrategy = (props) => {
       const requestBody = {
         sectionId: window.localStorage.getItem('sectionId'),
         idleHoursQuantumDTOS: result,
-        agvStandbyMinute: pastMinuts,
-        agvStandbyPercent: percentage,
-        useAgvStandByPercent,
+        vehicleStandbyMinute: pastMinuts,
+        vehicleStandbyPercent: percentage,
+        useVehicleStandByPercent,
         useIdleHours,
       };
-      saveIdleChargingStrategy(agvType, requestBody).then((response) => {
+      saveIdleChargingStrategy(vehicleType, requestBody).then((response) => {
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.chargeStrategy.idle.save.success' }));
           onCancel();
@@ -82,9 +82,9 @@ const IdleChargingStrategy = (props) => {
       <div className={styles.strategyRow}>
         <div className={styles.checkBox}>
           <Checkbox
-            checked={useAgvStandByPercent}
+            checked={useVehicleStandByPercent}
             onChange={(ev) => {
-              setUseAgvStandByPercent(ev.target.checked);
+              setUseVehicleStandByPercent(ev.target.checked);
             }}
           />
         </div>
@@ -92,7 +92,7 @@ const IdleChargingStrategy = (props) => {
           <FormattedMessage id="app.chargeStrategy.past" />
           <InputNumber style={{ margin: '0 10px' }} value={pastMinuts} onChange={setPastMinuts} />
           <FormattedMessage id="app.chargeStrategy.minute" />{' '}
-          <FormattedMessage id="app.chargeStrategy.percentageOfFreeAgv" />
+          <FormattedMessage id="app.chargeStrategy.percentageOfFreeVehicle" />
           <InputNumber style={{ margin: '0 10px' }} value={percentage} onChange={setPercentage} />%
         </div>
       </div>

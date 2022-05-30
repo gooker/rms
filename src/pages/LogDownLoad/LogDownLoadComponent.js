@@ -4,11 +4,11 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import { AGVState, Colors, LogFileTypes } from '@/config/consts';
+import { VehicleState, Colors, LogFileTypes } from '@/config/consts';
 import {
   downloadLogFromSFTP,
-  fetchAgvLog,
-  fetchAllAgvList,
+  fetchVehicleLog,
+  fetchAllVehicleList,
   forceResetLogGeneration,
   startCreatingLog,
 } from '@/services/api';
@@ -17,7 +17,7 @@ import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 const StatusLabelStyle = { marginLeft: 15, fontSize: 15, fontWeight: 600 };
 
 const LogDownLoadComponent = (props) => {
-  const { agvType } = props;
+  const { vehicleType } = props;
 
   const [formRef] = Form.useForm();
 
@@ -28,11 +28,11 @@ const LogDownLoadComponent = (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRow, setSelectedRow] = useState([]);
 
-  const [agvList, setAgvList] = useState([]);
+  const [vehicleList, setVehicleList] = useState([]);
   const [fileList, setFileList] = useState([]);
 
   useEffect(() => {
-    getAgvList();
+    getVehicleList();
     fetchFileList();
   }, []);
 
@@ -44,7 +44,7 @@ const LogDownLoadComponent = (props) => {
       width: 150,
     },
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 150,
@@ -127,10 +127,10 @@ const LogDownLoadComponent = (props) => {
     fetchFileList({ current, size: pageSize });
   }
 
-  async function getAgvList() {
-    const response = await fetchAllAgvList();
+  async function getVehicleList() {
+    const response = await fetchAllVehicleList();
     if (!dealResponse(response)) {
-      setAgvList(response);
+      setVehicleList(response);
     }
   }
 
@@ -144,7 +144,7 @@ const LogDownLoadComponent = (props) => {
       ? inputParam
       : { current: pagination.current, size: pagination.pageSize };
 
-    const fileListRes = await fetchAgvLog(agvType, { ...requestParam, fileTaskTypes: 'DOWNLOAD' });
+    const fileListRes = await fetchVehicleLog(vehicleType, { ...requestParam, fileTaskTypes: 'DOWNLOAD' });
     if (!dealResponse(fileListRes)) {
       const { list, page } = fileListRes;
       setFileList(list);
@@ -157,7 +157,7 @@ const LogDownLoadComponent = (props) => {
     setCreateLoading(true);
     try {
       const values = await formRef.validateFields();
-      const response = await startCreatingLog(agvType, values);
+      const response = await startCreatingLog(vehicleType, values);
       if (
         !dealResponse(
           response,
@@ -178,7 +178,7 @@ const LogDownLoadComponent = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.logDownload.forceResetConfirm' }),
       onOk: async () => {
-        const response = await forceResetLogGeneration(agvType, {
+        const response = await forceResetLogGeneration(vehicleType, {
           ...record,
           fileStatus: 2,
         });
@@ -193,7 +193,7 @@ const LogDownLoadComponent = (props) => {
   }
 
   async function downloadLog(record) {
-    const response = await downloadLogFromSFTP(agvType, record);
+    const response = await downloadLogFromSFTP(vehicleType, record);
     dealResponse(
       response,
       true,
@@ -207,14 +207,14 @@ const LogDownLoadComponent = (props) => {
     setSelectedRow(selectRow);
   }
 
-  function renderAgvOptions() {
-    return agvList.map((agv) => (
+  function renderVehicleOptions() {
+    return vehicleList.map((vehicle) => (
       <Select.Option
-        key={agv.vehicleId}
-        value={agv.vehicleId}
-        disabled={agv.agvStatus === AGVState.offline}
+        key={vehicle.vehicleId}
+        value={vehicle.vehicleId}
+        disabled={vehicle.vehicleStatus === VehicleState.offline}
       >
-        {agv.vehicleId}
+        {vehicle.vehicleId}
       </Select.Option>
     ));
   }
@@ -239,11 +239,11 @@ const LogDownLoadComponent = (props) => {
             <Col style={{ width: '200px' }}>
               <Form.Item
                 name={'vehicleId'}
-                label={formatMessage({ id: 'app.agv.id' })}
+                label={formatMessage({ id: 'app.vehicle.id' })}
                 rules={[{ required: true }]}
               >
                 <Select allowClear style={{ width: '100%' }}>
-                  {renderAgvOptions()}
+                  {renderVehicleOptions()}
                 </Select>
               </Form.Item>
             </Col>

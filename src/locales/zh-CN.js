@@ -2,9 +2,9 @@ import menu from './zh-CN/menu';
 import task from './zh-CN/task';
 import global from './zh-CN/global';
 import common from './zh-CN/common';
-import agvList from './zh-CN/agvList';
-import agvModel from './zh-CN/agvModel';
-import agvRealTime from './zh-CN/agvRealTime';
+import vehicleList from './zh-CN/vehicleList';
+import vehicleModel from './zh-CN/vehicleModel';
+import vehicleRealTime from './zh-CN/vehicleRealTime';
 import request from './zh-CN/request';
 import requestor from './zh-CN/requestor';
 import collection from './zh-CN/collection';
@@ -38,11 +38,11 @@ export default {
   ...global,
   ...common,
   ...collection,
-  ...agvList,
-  ...agvModel,
+  ...vehicleList,
+  ...vehicleModel,
   ...request,
   ...requestor,
-  ...agvRealTime,
+  ...vehicleRealTime,
   ...chargingStrategy,
   ...systemParameters,
   ...reportCenter,

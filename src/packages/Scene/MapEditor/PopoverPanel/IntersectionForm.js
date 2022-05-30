@@ -95,7 +95,7 @@ const IntersectionForm = (props) => {
             {...FormLayout}
             name={'ip0'}
             initialValue={ipInputValue.ip0}
-            label={<FormattedMessage id={Dictionary('agvDirection', 0)} />}
+            label={<FormattedMessage id={Dictionary('vehicleDirection', 0)} />}
           >
             <Input style={{ width: '100%' }} allowClear />
           </Form.Item>
@@ -104,7 +104,7 @@ const IntersectionForm = (props) => {
             {...FormLayout}
             name={'ip1'}
             initialValue={ipInputValue.ip90}
-            label={<FormattedMessage id={Dictionary('agvDirection', 90)} />}
+            label={<FormattedMessage id={Dictionary('vehicleDirection', 90)} />}
           >
             <Input style={{ width: '100%' }} allowClear />
           </Form.Item>
@@ -113,7 +113,7 @@ const IntersectionForm = (props) => {
             {...FormLayout}
             name={'ip2'}
             initialValue={ipInputValue.ip180}
-            label={<FormattedMessage id={Dictionary('agvDirection', 180)} />}
+            label={<FormattedMessage id={Dictionary('vehicleDirection', 180)} />}
           >
             <Input style={{ width: '100%' }} allowClear />
           </Form.Item>
@@ -122,7 +122,7 @@ const IntersectionForm = (props) => {
             {...FormLayout}
             name={'ip3'}
             initialValue={ipInputValue.ip270}
-            label={<FormattedMessage id={Dictionary('agvDirection', 270)} />}
+            label={<FormattedMessage id={Dictionary('vehicleDirection', 270)} />}
           >
             <Input style={{ width: '100%' }} allowClear />
           </Form.Item>

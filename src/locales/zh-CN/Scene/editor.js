@@ -151,7 +151,7 @@ export default {
 
   // 急停区
   'editor.emergency.mode': '模式',
-  'editor.emergency.AGVPathFinished': '完成下发路径',
+  'editor.emergency.VehiclePathFinished': '完成下发路径',
   'editor.emergency.NearestQRCode': '紧急停在最近二维码 ',
   'editor.emergency.ImmediateStop': '立即停止',
   'editor.emergency.LockPath': '暂停锁格',

@@ -6,7 +6,7 @@ import Line from './Line';
 import Bar3d from './Bar3d';
 
 const MatchReportsComponents = (props) => {
-  const { type, description, data, remove, extra, deletable, filterDateOnChange, agvType } = props;
+  const { type, description, data, remove, extra, deletable, filterDateOnChange, vehicleType } = props;
 
   const [toggle, setToggle] = useState(false);
 
@@ -15,7 +15,7 @@ const MatchReportsComponents = (props) => {
       return (
         <Col span={12} style={{ marginBottom: 0, padding: '10px' }}>
           <FormTable
-            agvType={agvType}
+            vehicleType={vehicleType}
             onShow={() => {
               setToggle(true);
             }}
@@ -33,7 +33,7 @@ const MatchReportsComponents = (props) => {
               subtext={description.subtext}
               description={description}
               info={extra}
-              agvType={agvType}
+              vehicleType={vehicleType}
             />
           </FormTable>
         </Col>
@@ -60,7 +60,7 @@ const MatchReportsComponents = (props) => {
               subtext={description.subtext}
               description={description}
               type={type}
-              agvType={agvType}
+              vehicleType={vehicleType}
             />
           </FormTable>
         </Col>

@@ -90,7 +90,7 @@ const EquipmentListTools = (props) => {
             <DisconnectOutlined /> 注销
           </Button>
           {/*<Button>*/}
-          {/*  <ExportOutlined /> <FormattedMessage id={'app.agv.infoExport'} />*/}
+          {/*  <ExportOutlined /> <FormattedMessage id={'app.vehicle.infoExport'} />*/}
           {/*</Button>*/}
           <Button
             onClick={() => {
@@ -108,7 +108,7 @@ const EquipmentListTools = (props) => {
               dispatch({ type: 'equipList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id="app.agvList.found" />
+            <ScanOutlined /> <FormattedMessage id="app.vehicleList.found" />
             {unregisterDevices.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterDevices.length}]

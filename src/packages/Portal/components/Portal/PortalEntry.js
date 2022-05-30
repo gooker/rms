@@ -60,7 +60,7 @@ const Apps = [
     height: '80%',
   },
   {
-    code: AppCode.AgvManned,
+    code: AppCode.VehicleManned,
     width: '75%',
     height: '77%',
   },

@@ -38,7 +38,7 @@ const SorterPick = (props) => {
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
             name={'vehicleId'}
-            label={formatMessage({ id: 'app.agv.id' })}
+            label={formatMessage({ id: 'app.vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Input />

@@ -15,7 +15,7 @@ import { dealResponse } from '@/utils/util';
 const { TabPane } = Tabs;
 
 const ChargingStrategyComponent = (prop) => {
-  const { agvType } = prop;
+  const { vehicleType } = prop;
 
   const [spinning, setSpinning] = useState(false);
   const [activeKey, setActiveKey] = useState('Normal'); // Tab
@@ -31,8 +31,8 @@ const ChargingStrategyComponent = (prop) => {
     setSpinning(true);
     try {
       const [currentStatus, currentStrategy] = await Promise.all([
-        getCurrentChargerType(agvType),
-        getChargeStrategy(agvType, activeKey),
+        getCurrentChargerType(vehicleType),
+        getChargeStrategy(vehicleType, activeKey),
       ]);
       setCurrent(currentStatus);
       setChargeStrategy(currentStrategy);
@@ -62,7 +62,7 @@ const ChargingStrategyComponent = (prop) => {
 
   async function switchTab(key) {
     setActiveKey(key);
-    const currentStrategy = await getChargeStrategy(agvType, key);
+    const currentStrategy = await getChargeStrategy(vehicleType, key);
     if (!dealResponse(currentStrategy)) {
       setChargeStrategy(currentStrategy);
     }
@@ -77,12 +77,12 @@ const ChargingStrategyComponent = (prop) => {
         onChange={switchTab}
       >
         <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeStrategy.normal' })}>
-          <ChargingStrategyForm type="Normal" agvType={agvType} data={chargeStrategy} />
+          <ChargingStrategyForm type="Normal" vehicleType={vehicleType} data={chargeStrategy} />
         </TabPane>
         <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="IdleHours">
           <ChargingStrategyForm
             type="IdleHours"
-            agvType={agvType}
+            vehicleType={vehicleType}
             data={chargeStrategy}
             openIdle={setIdleChargingStrategyVisible}
           />
@@ -100,7 +100,7 @@ const ChargingStrategyComponent = (prop) => {
         }}
       >
         <IdleChargingStrategy
-          agvType={agvType}
+          vehicleType={vehicleType}
           onCancel={() => {
             setIdleChargingStrategyVisible(false);
           }}

@@ -287,12 +287,12 @@ const MonitorMapContainer = (props) => {
   // 渲染监控里的小车、货架等
   function renderMonitorLoad() {
     if (!isNull(monitorLoad)) {
-      const { latentAgv, latentPod, toteAgv, toteRack, sorterAgv } = monitorLoad;
-      // mapContext.renderLatentAGV(latentAgv);
+      const { latentVehicle, latentPod, toteVehicle, toteRack, sorterVehicle } = monitorLoad;
+      // mapContext.renderLatentVehicle(latentVehicle);
       mapContext.renderLatentPod(latentPod);
-      mapContext.renderToteAGV(toteAgv);
+      mapContext.renderToteVehicle(toteVehicle);
       mapContext.renderTotePod(toteRack);
-      mapContext.renderSorterAGV(sorterAgv);
+      mapContext.renderSorterVehicle(sorterVehicle);
 
       const { temporaryBlock, emergencyStopList, chargerList } = monitorLoad;
       // 临时不可走点

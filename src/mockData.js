@@ -534,7 +534,7 @@ export const MockMapWithProgram = {
                       description: '小车Id',
                       isOptional: null,
                       name: '小车Id',
-                      code: 'AGV',
+                      code: 'Vehicle',
                     },
                     {
                       key: null,
@@ -589,7 +589,7 @@ export const MockMapWithProgram = {
                       description: '小车Id',
                       isOptional: null,
                       name: '小车Id',
-                      code: 'AGV',
+                      code: 'Vehicle',
                     },
                     {
                       key: null,
@@ -644,7 +644,7 @@ export const MockMapWithProgram = {
                       description: '小车Id',
                       isOptional: null,
                       name: '小车Id',
-                      code: 'AGV',
+                      code: 'Vehicle',
                     },
                     {
                       key: null,
@@ -736,8 +736,8 @@ export const AllAdapters = {
       code: 'MUSHINY_SORTER_ADAPTER',
       name: '分拣',
       description: null,
-      agvConnectType: '',
-      agvTypes: [
+      vehicleConnectType: '',
+      vehicleTypes: [
         {
           id: null,
           code: 'sorter',
@@ -746,7 +746,7 @@ export const AllAdapters = {
           isUserVisible: true,
           name: '分拣',
           fixTureModel: null,
-          robotModel: {
+          vehicleModel: {
             code: 'sorter',
             name: '分拣模型',
             icon: null,
@@ -765,7 +765,7 @@ export const AllAdapters = {
                 id: null,
                 actionCode: 'A',
                 actionName: '行驶',
-                robotAction: {
+                vehicleAction: {
                   params: null,
                   priority: 0,
                   indActionCmdAndMsg: null,
@@ -775,18 +775,18 @@ export const AllAdapters = {
                   blockingType: 'NONE',
                   simulatorIndex: null,
                   simulatorSpeed: null,
-                  robotActionMsg: null,
+                  vehicleActionMsg: null,
                   indAction: false,
                   slowAction: false,
                 },
-                robotActionRelation: null,
+                vehicleActionRelation: null,
                 mutualExclusiveActionType: null,
               },
               Turn: {
                 id: null,
                 actionCode: 'B',
                 actionName: '转弯',
-                robotAction: {
+                vehicleAction: {
                   params: null,
                   priority: 0,
                   indActionCmdAndMsg: null,
@@ -796,18 +796,18 @@ export const AllAdapters = {
                   blockingType: 'SOFT',
                   simulatorIndex: null,
                   simulatorSpeed: null,
-                  robotActionMsg: null,
+                  vehicleActionMsg: null,
                   indAction: false,
                   slowAction: false,
                 },
-                robotActionRelation: null,
+                vehicleActionRelation: null,
                 mutualExclusiveActionType: null,
               },
               Finish: {
                 id: null,
                 actionCode: 'H2',
                 actionName: '完成',
-                robotAction: {
+                vehicleAction: {
                   params: null,
                   priority: 0,
                   indActionCmdAndMsg: null,
@@ -817,17 +817,17 @@ export const AllAdapters = {
                   blockingType: 'SOFT',
                   simulatorIndex: null,
                   simulatorSpeed: null,
-                  robotActionMsg: null,
+                  vehicleActionMsg: null,
                   indAction: false,
                   slowAction: false,
                 },
-                robotActionRelation: null,
+                vehicleActionRelation: null,
                 mutualExclusiveActionType: null,
               },
             },
           },
           navigationType: 'cell',
-          agvAdapter: 'MUSHINY_SORTER_ADAPTER',
+          vehicleAdapter: 'MUSHINY_SORTER_ADAPTER',
           lockStrategy: null,
           supportScene: ['EMPTY_RUN', 'CHARGE_RUN', 'REST_RUN'],
         },
@@ -863,7 +863,7 @@ export const ProgramingConfigurationList = {
           description: '小车Id',
           isOptional: null,
           name: '小车Id',
-          code: 'AGV',
+          code: 'Vehicle',
         },
         {
           key: null,
@@ -917,7 +917,7 @@ export const ProgramingConfigurationList = {
           description: '小车id',
           isOptional: null,
           name: '小车id',
-          code: 'AGV',
+          code: 'Vehicle',
         },
         {
           key: null,
@@ -1369,20 +1369,20 @@ export const ProgramingConfigurationList = {
   ],
 };
 
-export const AgvModelData = [
+export const VehicleModelData = [
   {
-    code: 'agvType1',
+    code: 'vehicleType1',
     ids: [1, 2, 3, 4],
     types: ['loadTypeA', 'loadTypeB', 'loadTypeC', 'loadTypeD'],
   },
   {
-    code: 'agvType2',
+    code: 'vehicleType2',
     ids: [5, 6, 7, 8],
     types: ['loadTypeB'],
   },
 ];
 
-export const AgvGroupModelData = [
+export const VehicleGroupModelData = [
   {
     code: 'group1',
     ids: [1, 2, 3, 4],

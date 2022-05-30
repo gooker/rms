@@ -7,7 +7,7 @@ import { fetchCommonPointInstrument } from '@/services/monitor';
 import { CommonStationStatePolling } from '@/workers/WebWorkerManager';
 import {
   transformCommonTrafficData,
-  transitionRobots,
+  transitionVehicles,
 } from '../../Modal/CommonStationReport/commonStationEchart';
 import { isStrictNull, formatMessage, isNull, dealResponse } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
@@ -23,8 +23,8 @@ const CommonStationProperty = (props) => {
   } = props;
   const [checked, setChecked] = useState(false);
   const [color, setColor] = useState('#efa283');
-  const [robotIds, setRobotIds] = useState([]);
-  const [agvTypes, setAgvTypes] = useState({});
+  const [vehicleIds, setVehicleIds] = useState([]);
+  const [vehicleTypes, setVehicleTypes] = useState({});
   const [popVisible, setPopVisible] = useState(false);
 
   useEffect(() => {
@@ -55,13 +55,13 @@ const CommonStationProperty = (props) => {
       });
       if (!dealResponse(taskResponse)) {
         const taskCountData = { ...taskResponse };
-        const robotIdMap = transitionRobots(taskCountData);
-        const robotIds = [];
-        Object.values(robotIdMap).map((ids) => {
-          robotIds.push(...ids);
+        const vehicleIdMap = transitionVehicles(taskCountData);
+        const vehicleIds = [];
+        Object.values(vehicleIdMap).map((ids) => {
+          vehicleIds.push(...ids);
         });
-        // setRobotIds([1, 2, 4]);
-        // setAgvTypes({
+        // setVehicleIds([1, 2, 4]);
+        // setVehicleTypes({
         //   LatentLifting: [1, 2, 4],
         // });
         dispatch({
@@ -85,13 +85,13 @@ const CommonStationProperty = (props) => {
   function operateStatus(status) {}
 
   // 标记
-  function markerStation(agvs, checked, commonOB) {
+  function markerStation(vehicles, checked, commonOB) {
     const { stopCellId, color, angle: direction } = commonOB;
     const currentStopCellId = `${stopCellId}`;
 
     // 更新地图显示
     mapContext.markCommonPoint(currentStopCellId, checked, color);
-    mapContext.markCommonPointAgv(agvs, checked, color, currentStopCellId);
+    mapContext.markCommonPointVehicle(vehicles, checked, color, currentStopCellId);
 
     let _currenyPollingData = [...commonPointPolling];
     if (checked) {
@@ -136,10 +136,10 @@ const CommonStationProperty = (props) => {
         if (!dealResponse(data)) {
           const stopCellId = data?.stopCellId; // 轮询返回结果 前端加上的
           const TaskCountData = { ...data };
-          const robotIdMap = transitionRobots(TaskCountData);
+          const vehicleIdMap = transitionVehicles(TaskCountData);
           const taskHistoryData = transformCommonTrafficData(TaskCountData);
           _commonPointTaskHistoryData[stopCellId] = {
-            robotIdMap,
+            vehicleIdMap,
             taskHistoryData,
           };
         }
@@ -152,12 +152,12 @@ const CommonStationProperty = (props) => {
       });
       // 根据返回数据刷新小车标记
       Object.keys(_commonPointTaskHistoryData).forEach((stopId) => {
-        const { robotIdMap } = _commonPointTaskHistoryData[stopId];
-        const robotIds = [];
-        Object.values(robotIdMap).map((ids) => {
-          robotIds.push(...ids);
+        const { vehicleIdMap } = _commonPointTaskHistoryData[stopId];
+        const vehicleIds = [];
+        Object.values(vehicleIdMap).map((ids) => {
+          vehicleIds.push(...ids);
         });
-        mapContext.markCommonPointAgv(robotIds, true, null, stopId);
+        mapContext.markCommonPointVehicle(vehicleIds, true, null, stopId);
       });
     });
   }
@@ -167,16 +167,16 @@ const CommonStationProperty = (props) => {
   }
   /**轮询结束***/
 
-  function renderAgvTypesContent() {
-    if (robotIds?.length > 0) {
+  function renderVehicleTypesContent() {
+    if (vehicleIds?.length > 0) {
       return (
         <div>
-          {Object.entries(agvTypes).map(([type, value]) => {
-            if (agvTypes[type]) {
+          {Object.entries(vehicleTypes).map(([type, value]) => {
+            if (vehicleTypes[type]) {
               return (
                 <>
                   <Row key={`${type}-${value}`}>
-                    <Col>{formatMessage({ id: `app.agvType.${type}` })}:</Col>
+                    <Col>{formatMessage({ id: `app.vehicleType.${type}` })}:</Col>
                     <Col style={{ marginLeft: 10 }}>
                       {value.length > 0
                         ? value.map((id) => {
@@ -281,7 +281,7 @@ const CommonStationProperty = (props) => {
             <Popover
               content={
                 <Row style={{ maxWidth: 250, wordBreak: 'break-all' }}>
-                  {renderAgvTypesContent()}
+                  {renderVehicleTypesContent()}
                 </Row>
               }
               placement="bottom"
@@ -293,14 +293,14 @@ const CommonStationProperty = (props) => {
               style={{ minWidth: 260 }}
               title={<FormattedMessage id="monitor.workstation.label.serviceAMR" />}
             >
-              <div>{robotIds?.length}</div>
+              <div>{vehicleIds?.length}</div>
             </Popover>
           </div>
 
-          {!isStrictNull(robotIds) && robotIds.length > 0 && (
+          {!isStrictNull(vehicleIds) && vehicleIds.length > 0 && (
             <div>
               <div className={styles.allocatedContent}>
-                {robotIds.map((item, index) => {
+                {vehicleIds.map((item, index) => {
                   if (index < 10) {
                     return <span key={item}>{item}</span>;
                   } else if (index === 10) {
@@ -324,7 +324,7 @@ const CommonStationProperty = (props) => {
               <div className={styles.markedContent}>
                 <div className={styles.marked}>
                   <input
-                    disabled={checked || !robotIds || robotIds.length === 0}
+                    disabled={checked || !vehicleIds || vehicleIds.length === 0}
                     type="color"
                     value={color}
                     onChange={(e) => {
@@ -343,7 +343,7 @@ const CommonStationProperty = (props) => {
                       })}
                       onChange={(value) => {
                         setChecked(value);
-                        markerStation(robotIds, value, {
+                        markerStation(vehicleIds, value, {
                           ...commonPointOB,
                           color,
                           flag: value,
@@ -377,8 +377,8 @@ const CommonStationProperty = (props) => {
         {/* 操作区域*/}
         <div style={{ marginTop: 30 }}>
           {/* 开启结束暂停 查看报表 */}
-          <div className={styles.rightSideAgvContentOperation}>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+          <div className={styles.rightSideVehicleContentOperation}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div
                 onClick={() => {
                   operateStatus('start');
@@ -386,7 +386,7 @@ const CommonStationProperty = (props) => {
                 style={{ background: data?.status === 'start' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/start.png').default}
                 />
               </div>
@@ -394,7 +394,7 @@ const CommonStationProperty = (props) => {
                 <FormattedMessage id={'app.button.turnOn'} />
               </div>
             </div>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div
                 onClick={() => {
                   operateStatus('paused');
@@ -402,7 +402,7 @@ const CommonStationProperty = (props) => {
                 style={{ background: data?.status === 'paused' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/paused.png').default}
                 />
               </div>
@@ -410,7 +410,7 @@ const CommonStationProperty = (props) => {
                 <FormattedMessage id={'app.common.status.pause'} />
               </div>
             </div>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div
                 onClick={() => {
                   operateStatus('end');
@@ -418,7 +418,7 @@ const CommonStationProperty = (props) => {
                 style={{ background: data?.status === 'end' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/end.png').default}
                 />
               </div>
@@ -428,8 +428,8 @@ const CommonStationProperty = (props) => {
             </div>
           </div>
 
-          <div className={styles.rightSideAgvContentOperation}>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+          <div className={styles.rightSideVehicleContentOperation}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div onClick={showStationReport}>
                 <img
                   alt={'station'}

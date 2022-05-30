@@ -14,10 +14,10 @@ const SearchTargetLock = (props) => {
   useEffect(() => {
     async function init() {
       const allVehicles = await dispatch({
-        type: 'monitor/refreshAllAgvList',
+        type: 'monitor/refreshAllVehicleList',
       });
 
-      let allType = allVehicles.map(({ agvType }) => agvType);
+      let allType = allVehicles.map(({ vehicleType }) => vehicleType);
       if (!isNull(data) && loadType) {
         allType = data.map(({ loadType }) => loadType);
       }
@@ -45,7 +45,7 @@ const SearchTargetLock = (props) => {
         {!verhicleHide && (
           <Col span={4}>
             {/* 小车id */}
-            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
               <Input allowClear />
             </Form.Item>
           </Col>
@@ -63,9 +63,9 @@ const SearchTargetLock = (props) => {
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
             >
-              {allType?.map((agvType) => (
-                <Select.Option key={agvType} value={agvType}>
-                  {agvType}
+              {allType?.map((vehicleType) => (
+                <Select.Option key={vehicleType} value={vehicleType}>
+                  {vehicleType}
                 </Select.Option>
               ))}
             </Select>

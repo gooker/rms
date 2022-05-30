@@ -6,16 +6,16 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { hasAppPermission } from '@/utils/Permission';
 import Dictionary from '@/utils/Dictionary';
 import initDashboard from './Exhibition/ECharts';
-import MixRobotExhibitionService from './Exhibition/MixRobotExhibitionService';
+import MixVehicleExhibitionService from './Exhibition/MixVehicleExhibitionService';
 import { convertToUserTimezone, getDpr, formatMessage } from '@/utils/util';
 import {
-  agvStateColor,
-  getAgvStatusMap,
-  getAgvPowerStateMap,
-  agvPowerStateColor,
+  vehicleStateColor,
+  getVehicleStatusMap,
+  getVehiclePowerStateMap,
+  vehiclePowerStateColor,
   LineChartsAxisColor,
 } from './Exhibition/option';
-import { AGVType, AppCode } from '@/config/config';
+import { VehicleType, AppCode } from '@/config/config';
 import Style from '../dashboard.module.less';
 
 const PieInnerFontSize = 12;
@@ -32,10 +32,10 @@ class DashboardComponent extends PureComponent {
     this.promises = [];
     this.promisesType = [];
 
-    this.AGVTypeName = {
-      [AGVType.LatentLifting]: formatMessage({ id: 'app.agvType.LatentLifting' }),
-      [AGVType.Tote]: formatMessage({ id: 'app.agvType.Tote' }),
-      [AGVType.ForkLifting]: formatMessage({ id: 'app.agvType.ForkLifting' }),
+    this.VehicleTypeName = {
+      [VehicleType.LatentLifting]: formatMessage({ id: 'app.vehicleType.LatentLifting' }),
+      [VehicleType.Tote]: formatMessage({ id: 'app.vehicleType.Tote' }),
+      [VehicleType.ForkLifting]: formatMessage({ id: 'app.vehicleType.ForkLifting' }),
     };
 
     this.state = {
@@ -56,7 +56,7 @@ class DashboardComponent extends PureComponent {
       kpiHeight: 60 * getDpr(),
     });
 
-    this.MixRobotExhibitionService = new MixRobotExhibitionService();
+    this.MixVehicleExhibitionService = new MixVehicleExhibitionService();
     // 获取参数列表数据
     let rateMinuteSpan = 5; // 秒
 
@@ -106,32 +106,32 @@ class DashboardComponent extends PureComponent {
   };
 
   collectReqPromise = () => {
-    // @权限控制: 创建刷新数据的接口请求器 --> 只拉取有权限的AGV数据
+    // @权限控制: 创建刷新数据的接口请求器 --> 只拉取有权限的Vehicle数据
     this.promises = [];
     this.promisesType = [];
 
     // 潜伏车
     if (hasAppPermission(AppCode.LatentLifting)) {
-      this.promisesType.push(AGVType.LatentLifting);
-      this.promises.push(this.MixRobotExhibitionService.refreshLatentLiftCharts());
+      this.promisesType.push(VehicleType.LatentLifting);
+      this.promises.push(this.MixVehicleExhibitionService.refreshLatentLiftCharts());
     }
 
     // 料箱车
     // if (hasAppPermission(AppCode.Tote)) {
-    //   this.promisesType.push(AGVType.Tote);
-    //   this.promises.push(this.MixRobotExhibitionService.refreshToteCharts());
+    //   this.promisesType.push(VehicleType.Tote);
+    //   this.promises.push(this.MixVehicleExhibitionService.refreshToteCharts());
     // }
 
     // 叉车
     // if (hasAppPermission(AppCode.ForkLifting)) {
-    // this.promisesType.push(AGVType.ForkLifting);
-    //   this.promises.push(this.MixRobotExhibitionService.refreshForkLiftCharts());
+    // this.promisesType.push(VehicleType.ForkLifting);
+    //   this.promises.push(this.MixVehicleExhibitionService.refreshForkLiftCharts());
     // }
 
     // 分拣车
     // if (hasAppPermission(AppCode.Sorter)) {
-    // this.promisesType.push(AGVType.sorter);
-    //   this.promises.push(this.MixRobotExhibitionService.refreshSorterCharts());
+    // this.promisesType.push(VehicleType.sorter);
+    //   this.promises.push(this.MixVehicleExhibitionService.refreshSorterCharts());
     // }
   };
 
@@ -244,7 +244,7 @@ class DashboardComponent extends PureComponent {
       {
         name: formatMessage({ id: 'app.task.state.New' }),
         type: 'bar',
-        stack: formatMessage({ id: 'monitor.exhibition.agv.total' }),
+        stack: formatMessage({ id: 'monitor.exhibition.vehicle.total' }),
         itemStyle: {
           color: 'rgba(1,141,246,0.7)',
         },
@@ -254,7 +254,7 @@ class DashboardComponent extends PureComponent {
       {
         name: formatMessage({ id: 'app.task.state.Executing' }),
         type: 'bar',
-        stack: formatMessage({ id: 'monitor.exhibition.agv.total' }),
+        stack: formatMessage({ id: 'monitor.exhibition.vehicle.total' }),
         itemStyle: {
           color: 'rgba(47,137,73,0.7)',
         },
@@ -263,7 +263,7 @@ class DashboardComponent extends PureComponent {
       {
         name: formatMessage({ id: 'app.task.state.Error' }),
         type: 'bar',
-        stack: formatMessage({ id: 'monitor.exhibition.agv.total' }),
+        stack: formatMessage({ id: 'monitor.exhibition.vehicle.total' }),
         itemStyle: {
           color: 'rgba(186,47,53,0.7)',
         },
@@ -281,9 +281,9 @@ class DashboardComponent extends PureComponent {
       Object.keys(categoryTasks).forEach((taskType) => {
         // yAxis
         const taskTypeName = formatMessage({
-          id: Dictionary('agvTaskType', taskType),
+          id: Dictionary('vehicleTaskType', taskType),
         });
-        yAxis.data.push(`${this.AGVTypeName[category]}: ${taskTypeName}`);
+        yAxis.data.push(`${this.VehicleTypeName[category]}: ${taskTypeName}`);
 
         // Series
         const taskStates = categoryTasks[taskType]; // New, Executing, Error
@@ -324,7 +324,7 @@ class DashboardComponent extends PureComponent {
   generateTaskTrendData = (response) => {
     const result = {};
     response.forEach((category, index) => {
-      const currentAgvType = this.promisesType[index];
+      const currentVehicleType = this.promisesType[index];
       const { taskNumberMap } = category;
       const timeKey = Object.keys(taskNumberMap).sort();
       timeKey.forEach((dateTime) => {
@@ -335,7 +335,7 @@ class DashboardComponent extends PureComponent {
         }
         const dateTimeTasks = taskNumberMap[dateTime];
         Object.keys(dateTimeTasks).forEach((taskType) => {
-          const _taskType = `${this.AGVTypeName[currentAgvType]}:${taskType}`;
+          const _taskType = `${this.VehicleTypeName[currentVehicleType]}:${taskType}`;
           if (!result[time][_taskType]) {
             result[time][_taskType] = 0;
           }
@@ -370,12 +370,12 @@ class DashboardComponent extends PureComponent {
     const series = [];
     xAxisData.forEach((item, index) => {
       const dateTimeTasksOV = result[item]; // {潜伏: REST_UNDER_POD: 40, 潜伏: CHARGE_RUN: 40}
-      Object.keys(dateTimeTasksOV).forEach((taskTypeWithAgvType) => {
-        const [agvType, taskType] = taskTypeWithAgvType.split(':');
+      Object.keys(dateTimeTasksOV).forEach((taskTypeWithVehicleType) => {
+        const [vehicleType, taskType] = taskTypeWithVehicleType.split(':');
         const taskTypeName = formatMessage({
-          id: Dictionary('agvTaskType', taskType),
+          id: Dictionary('vehicleTaskType', taskType),
         });
-        const seriesItemName = `${agvType}: ${taskTypeName}`;
+        const seriesItemName = `${vehicleType}: ${taskTypeName}`;
         let seriesItem = find(series, { name: seriesItemName });
         if (!seriesItem) {
           seriesItem = {
@@ -390,7 +390,7 @@ class DashboardComponent extends PureComponent {
           };
           series.push(seriesItem);
         }
-        seriesItem.data[index] = dateTimeTasksOV[taskTypeWithAgvType];
+        seriesItem.data[index] = dateTimeTasksOV[taskTypeWithVehicleType];
       });
     });
     return { xAxis, series };
@@ -403,7 +403,7 @@ class DashboardComponent extends PureComponent {
     let workStation = 0;
     let charger = 0;
     let store = 0;
-    const latentIndex = this.promisesType.indexOf(AGVType.LatentLifting);
+    const latentIndex = this.promisesType.indexOf(VehicleType.LatentLifting);
     if (latentIndex !== -1) {
       pod = response[latentIndex].podNumber;
     }
@@ -421,8 +421,8 @@ class DashboardComponent extends PureComponent {
   };
 
   generateCarStateData = (response) => {
-    const AgvStatusMap = getAgvStatusMap();
-    const agvState = {
+    const VehicleStatusMap = getVehicleStatusMap();
+    const vehicleState = {
       Offline: 0,
       Connecting: 0,
       StandBy: 0,
@@ -432,47 +432,47 @@ class DashboardComponent extends PureComponent {
     };
     const result = [];
     response.forEach((category) => {
-      const { agvStatusMap } = category;
-      Object.keys(agvStatusMap).forEach((state) => {
-        const value = agvState[state];
-        agvState[state] = value + agvStatusMap[state];
+      const { vehicleStatusMap } = category;
+      Object.keys(vehicleStatusMap).forEach((state) => {
+        const value = vehicleState[state];
+        vehicleState[state] = value + vehicleStatusMap[state];
       });
     });
-    Object.keys(agvState).forEach((state) => {
-      const stateName = AgvStatusMap[state];
+    Object.keys(vehicleState).forEach((state) => {
+      const stateName = VehicleStatusMap[state];
       result.push({
         name: stateName,
-        value: agvState[state],
-        itemStyle: { color: agvStateColor[state] },
+        value: vehicleState[state],
+        itemStyle: { color: vehicleStateColor[state] },
       });
     });
     return result;
   };
 
   generateCarBatteryStateData = (response) => {
-    const agvState = {
+    const vehicleState = {
       full: 0,
       good: 0,
       normal: 0,
       low: 0,
       danger: 0,
     };
-    const AgvPowerStateMap = getAgvPowerStateMap();
+    const VehiclePowerStateMap = getVehiclePowerStateMap();
     const result = [];
     response.forEach((category) => {
-      const { monitorOverallAgvPower } = category;
-      Object.keys(monitorOverallAgvPower).forEach((state) => {
+      const { monitorOverallVehiclePower } = category;
+      Object.keys(monitorOverallVehiclePower).forEach((state) => {
         if (state === 'total') return;
-        const value = agvState[state];
-        agvState[state] = value + monitorOverallAgvPower[state];
+        const value = vehicleState[state];
+        vehicleState[state] = value + monitorOverallVehiclePower[state];
       });
     });
-    Object.keys(agvState).forEach((state) => {
-      const stateName = AgvPowerStateMap[state];
+    Object.keys(vehicleState).forEach((state) => {
+      const stateName = VehiclePowerStateMap[state];
       result.push({
         name: stateName,
-        value: agvState[state],
-        itemStyle: { color: agvPowerStateColor[state] },
+        value: vehicleState[state],
+        itemStyle: { color: vehiclePowerStateColor[state] },
       });
     });
     return result;

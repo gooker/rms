@@ -155,7 +155,7 @@ export default class Charger extends PIXI.Container {
 
   // 故障图标
   addErrorMaskState() {
-    const ErrorMaskTexture = getTextureFromResources('agv_error');
+    const ErrorMaskTexture = getTextureFromResources('vehicle_error');
     this.ErrorMaskSprite = new PIXI.Sprite(ErrorMaskTexture);
     this.ErrorMaskSprite.visible = false;
     this.ErrorMaskSprite.zIndex = 5;

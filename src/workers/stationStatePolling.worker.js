@@ -7,7 +7,7 @@ let timeInterval;
 self.onmessage = ({ data }) => {
   if (data === 'start') {
     timeInterval = setInterval(() => {
-      self.postMessage('agvPath');
+      self.postMessage('vehiclePath');
     }, 1000);
   } else {
     timeInterval && clearInterval(timeInterval);

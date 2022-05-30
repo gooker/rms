@@ -90,7 +90,7 @@ const LogSearchForm = (props) => {
         value: 'responseTx',
       },
       {
-        label: formatMessage({ id: 'app.agv.ip' }),
+        label: formatMessage({ id: 'app.vehicle.ip' }),
         value: 'ip',
       },
       {

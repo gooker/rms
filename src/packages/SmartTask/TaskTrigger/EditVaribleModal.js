@@ -38,14 +38,14 @@ const EditVaribleModal = (props) => {
   // 分车数据
   const OptionsData = [
     {
-      code: 'AGV',
-      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
-      value: modelTypes?.AGV.options ?? {},
+      code: 'Vehicle',
+      name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
+      value: modelTypes?.Vehicle.options ?? {},
     },
     {
-      code: 'AGV_GROUP',
+      code: 'Vehicle_GROUP',
       name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-      value: modelTypes?.AGV_GROUP.options ?? {},
+      value: modelTypes?.Vehicle_GROUP.options ?? {},
     },
   ];
 
@@ -89,7 +89,7 @@ const EditVaribleModal = (props) => {
           key={`${taskCode}@@${customStart.field}`}
           name={`${taskCode}@@${customStart.field}`}
           initialValue={{ type, code }}
-          label={<FormattedMessage id='customTasks.form.robot' />}
+          label={<FormattedMessage id='customTasks.form.vehicle' />}
         >
           <CascadeSelect data={OptionsData} />
         </Form.Item>,
@@ -121,7 +121,7 @@ const EditVaribleModal = (props) => {
             >
               <ModelSelection
                 modelTypes={modelTypes}
-                exclude={['AGV', 'AGV_GROUP']}
+                exclude={['Vehicle', 'Vehicle_GROUP']}
                 disabled={false}
               />
             </Form.Item>,

@@ -3,17 +3,17 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { AGVType, NavigationType, NavigationTypeView } from '@/config/config';
+import { VehicleType, NavigationType, NavigationTypeView } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
-  AGVState,
+  VehicleState,
   ElementType,
   EStopStateColor,
   GeoLockColor,
   LatentPodSize,
   SelectionType,
-  ToteAGVSize,
+  ToteVehicleSize,
   zIndex,
 } from '@/config/consts';
 import {
@@ -23,25 +23,25 @@ import {
   getTextureFromResources,
   hasLatentPod,
   loadMonitorExtraTextures,
-  unifyAgvState,
+  unifyVehicleState,
 } from '@/utils/mapUtil';
 import {
   BitText,
   Cell,
   EmergencyStop,
   GeoLock,
-  LatentAGV,
+  LatentVehicle,
   LatentPod,
   OpenLock,
   RealtimeRate,
-  SorterAGV,
+  SorterVehicle,
   TaskPath,
   TemporaryLock,
-  ToteAGV,
+  ToteVehicle,
   TotePod,
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
-import { fetchAgvInfo } from '@/services/api';
+import { fetchVehicleInfo } from '@/services/api';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 class MonitorMapView extends BaseMap {
@@ -66,14 +66,14 @@ class MonitorMapView extends BaseMap {
     this.selections = [];
 
     // 监控相关
-    this.idAGVMap = new Map(); // {carID: [AGVEntity]}
+    this.idVehicleMap = new Map(); // {carID: [VehicleEntity]}
     this.idLatentPodMap = new Map(); // {cellId: [PodEntity]}
     this.idLatentPodInCar = new Map(); // {podId:null} // 用来标识有哪些货架在小车身上
     this.idTotePodMap = new Map(); // {cellId_L: [PodEntity]} ||  {cellId_R: [PodEntity]}
     this.emergencyAreaMap = new Map(); // 紧急区域
 
     // Locks
-    this.agvLocksMap = new Map();
+    this.vehicleLocksMap = new Map();
     this.cellLocker = null;
     this.TemporaryLockMap = new Map(); // {[x${x}y${y}]: [LockEntity]}
 
@@ -84,18 +84,18 @@ class MonitorMapView extends BaseMap {
     this.stationRealTimeRateMap = new Map();
 
     // 显示小车路径
-    this.filteredAGV = []; // 存放小车的uniqueId
+    this.filteredVehicle = []; // 存放小车的uniqueId
     this.showTaskPath = false;
-    this.agvTaskMap = new Map(); // {uniqueId: TaskActions}
-    this.agvPathMap = new Map(); // {uniqueId:[TaskPathEntity]}
-    this.agvTargetLineMap = new Map(); // {uniqueId:SmoothGraphics}
+    this.vehicleTaskMap = new Map(); // {uniqueId: TaskActions}
+    this.vehiclePathMap = new Map(); // {uniqueId:[TaskPathEntity]}
+    this.vehicleTargetLineMap = new Map(); // {uniqueId:SmoothGraphics}
 
     // 料箱实时
     this.toteTaskRealtimePath = [];
     this.toteTaskRealtimeState = [];
 
     // 小车追踪
-    this.trackAGVId = null;
+    this.trackVehicleId = null;
   }
 
   async componentDidMount() {
@@ -111,7 +111,7 @@ class MonitorMapView extends BaseMap {
   componentWillUnmount() {
     this.clearMapStage();
     this.idCellMap.clear();
-    this.idAGVMap.clear();
+    this.idVehicleMap.clear();
     this.idLatentPodMap.clear();
     this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
@@ -161,8 +161,8 @@ class MonitorMapView extends BaseMap {
   };
 
   // 追踪小车
-  trackAGV = (vehicleId) => {
-    this.trackAGVId = vehicleId;
+  trackVehicle = (vehicleId) => {
+    this.trackVehicleId = vehicleId;
   };
 
   // 定位:type --> 小车、点位、货架
@@ -180,11 +180,11 @@ class MonitorMapView extends BaseMap {
         }
         break;
       }
-      case 'robot': {
-        const robot = this.idAGVMap.get(`${id}`);
-        if (robot) {
-          x = robot.x;
-          y = robot.y;
+      case 'vehicle': {
+        const vehicle = this.idVehicleMap.get(`${id}`);
+        if (vehicle) {
+          x = vehicle.x;
+          y = vehicle.y;
           scaled = 0.3;
         }
         break;
@@ -199,9 +199,9 @@ class MonitorMapView extends BaseMap {
           // 如果地上的潜伏货架没有符合条件的就查看潜伏车身上的货架
           const vehicleId = this.idLatentPodInCar.get(id);
           if (isNull(vehicleId)) return;
-          const agvEntity = this.idAGVMap.get(`${vehicleId}`);
-          x = agvEntity.x;
-          y = agvEntity.y;
+          const vehicleEntity = this.idVehicleMap.get(`${vehicleId}`);
+          x = vehicleEntity.x;
+          y = vehicleEntity.y;
           scaled = 0.3;
         }
         break;
@@ -301,16 +301,16 @@ class MonitorMapView extends BaseMap {
   };
 
   // 地图元素点击事件
-  onAgvClick = async ({ type, id }) => {
+  onVehicleClick = async ({ type, id }) => {
     const { dispatch } = this.props;
-    const response = await fetchAgvInfo(id, type);
+    const response = await fetchVehicleInfo(id, type);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.message.fetchDataFailed' }));
     } else {
-      const { mongodbAGV = {}, redisAGV = {} } = response;
+      const { mongodbVehicle = {}, redisVehicle = {} } = response;
       dispatch({
         type: 'monitor/saveCheckingElement',
-        payload: { type: ElementType.AGV, payload: { ...mongodbAGV, ...redisAGV } },
+        payload: { type: ElementType.Vehicle, payload: { ...mongodbVehicle, ...redisVehicle } },
       });
     }
   };
@@ -325,12 +325,12 @@ class MonitorMapView extends BaseMap {
       const cellEntity = this.idCellMap.get(stopCellId);
       if (isNull(_station) || !cellEntity) return;
       // 如果4个显示都为null 则直接return
-      const { goodsRate, agvRate, waitTime, agvAndTaskProportion } = currentdata;
+      const { goodsRate, vehicleRate, waitTime, vehicleAndTaskProportion } = currentdata;
       if (
-        isStrictNull(agvRate) &&
+        isStrictNull(vehicleRate) &&
         isStrictNull(goodsRate) &&
         isStrictNull(waitTime) &&
-        isStrictNull(agvAndTaskProportion)
+        isStrictNull(vehicleAndTaskProportion)
       )
         return;
       const _currentdata = {
@@ -357,66 +357,66 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 小车 & 货架相关 **********************
-  updateAgvCommonState = (agvc, agvState, agvEntity, agvType) => {
-    const { x, y, vehicleId, uniqueId, battery, mainTain, manualMode, errorLevel } = agvState;
+  updateVehicleCommonState = (vehiclec, vehicleState, vehicleEntity, vehicleType) => {
+    const { x, y, vehicleId, uniqueId, battery, mainTain, manualMode, errorLevel } = vehicleState;
     // TODO: 测试
     const {
       navigationType = NavigationType.M_QRCODE,
-      agvStatus,
+      vehicleStatus,
       currentCellId,
       currentDirection,
-    } = agvState;
+    } = vehicleState;
 
-    // 判断该 robotId 对应的小车是否是潜伏车
-    if (agvEntity.type !== agvType) {
+    // 判断该 vehicleId 对应的小车是否是潜伏车
+    if (vehicleEntity.type !== vehicleType) {
       console.warn(
-        `检测到小车ID冲突. 目标ID: [${vehicleId}], 目标小车类型: [${agvEntity.type}]; 实际应该是: [${agvType}]`,
+        `检测到小车ID冲突. 目标ID: [${vehicleId}], 目标小车类型: [${vehicleEntity.type}]; 实际应该是: [${vehicleType}]`,
       );
       return;
     }
 
-    // 1. 如果小车数据【agv.c】与 currentCellId 不一致说小车当前在电梯中；
+    // 1. 如果小车数据【vehicle.c】与 currentCellId 不一致说小车当前在电梯中；
     // 2. 此时需要对比 currentCellId 对应的点位位置与 x,y 是否一样; 一样表示在当前逻辑区，不一样表示当前小车不在这个逻辑区需要隐藏
     // 3. 但是有个隐藏bug，如果楼层间的电梯都处于同一个点位那么这个逻辑就会失效，就得要求后台在小车消息中加sectionId
     const cellEntity = this.idCellMap.get(currentCellId);
     if (cellEntity) {
-      if (agvc !== currentCellId) {
+      if (vehiclec !== currentCellId) {
         if (cellEntity.x !== x || cellEntity.y !== y) {
-          this.pixiUtils.viewportRemoveChild(agvEntity);
-          agvEntity.__gui__on__map = false;
+          this.pixiUtils.viewportRemoveChild(vehicleEntity);
+          vehicleEntity.__gui__on__map = false;
           return;
         }
       }
-      if (!agvEntity.__gui__on__map) {
-        agvEntity.__gui__on__map = true;
-        this.pixiUtils.viewportAddChild(agvEntity);
+      if (!vehicleEntity.__gui__on__map) {
+        vehicleEntity.__gui__on__map = true;
+        this.pixiUtils.viewportAddChild(vehicleEntity);
       }
     } else {
       // 如果找不到点位，那就说明现在小车在别的逻辑区
-      this.pixiUtils.viewportRemoveChild(agvEntity);
-      agvEntity.__gui__on__map = false;
+      this.pixiUtils.viewportRemoveChild(vehicleEntity);
+      vehicleEntity.__gui__on__map = false;
       return;
     }
 
     // 更新位置
     const pixiCoordinate = coordinateTransformer({ x, y }, navigationType);
-    agvEntity.x = pixiCoordinate.x;
-    agvEntity.y = pixiCoordinate.y;
-    agvEntity.currentCellId = currentCellId;
+    vehicleEntity.x = pixiCoordinate.x;
+    vehicleEntity.y = pixiCoordinate.y;
+    vehicleEntity.currentCellId = currentCellId;
 
     // 更新小车状态
-    if (agvStatus && agvEntity.state !== agvStatus) {
-      agvEntity.updateAGVState(agvStatus);
+    if (vehicleStatus && vehicleEntity.state !== vehicleStatus) {
+      vehicleEntity.updateVehicleState(vehicleStatus);
     }
 
     // 手动模式
-    if (manualMode !== agvEntity.manualMode) {
-      agvEntity.updateManuallyMode(manualMode);
+    if (manualMode !== vehicleEntity.manualMode) {
+      vehicleEntity.updateManuallyMode(manualMode);
     }
 
     // 更新小车方向
     if (!isNull(currentDirection)) {
-      agvEntity.angle = currentDirection;
+      vehicleEntity.angle = currentDirection;
     }
 
     // 刷新行驶路线
@@ -424,69 +424,69 @@ class MonitorMapView extends BaseMap {
     console.log(this.showTaskPath);
 
     // 更新小车电池状态
-    if (battery && agvEntity.battery !== battery) {
-      agvEntity.updateBatteryState(battery);
+    if (battery && vehicleEntity.battery !== battery) {
+      vehicleEntity.updateBatteryState(battery);
     }
 
     // 更新小车错误等级(0:无错误; 1:error错误;  2:warn错误; 3:info错误)
-    if (agvEntity.errorLevel !== errorLevel) {
-      agvEntity.updateErrorLevel(errorLevel);
+    if (vehicleEntity.errorLevel !== errorLevel) {
+      vehicleEntity.updateErrorLevel(errorLevel);
     }
 
     // 更新小车维护中状态
-    if (agvEntity.mainTain !== !!mainTain) {
-      agvEntity.updateMainTainState(mainTain);
+    if (vehicleEntity.mainTain !== !!mainTain) {
+      vehicleEntity.updateMainTainState(mainTain);
     }
 
     // 执行跟踪
-    vehicleId === `${this.trackAGVId}` && this.moveTo(agvEntity.x, agvEntity.y, 0.1);
+    vehicleId === `${this.trackVehicleId}` && this.moveTo(vehicleEntity.x, vehicleEntity.y, 0.1);
   };
 
   // ********** 潜伏车 ********** //
-  addLatentAGV = (latentAGVData) => {
+  addLatentVehicle = (latentVehicleData) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
-    // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**AGV就会创建一台车[offline]
+    // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
-    let latentAGV = this.idAGVMap.get(`${latentAGVData.vehicleId}`);
-    const cellEntity = this.idCellMap.get(latentAGVData.currentCellId);
-    if (latentAGV) {
-      this.updateLatentAGV([latentAGVData]);
-      return latentAGV;
+    let latentVehicle = this.idVehicleMap.get(`${latentVehicleData.vehicleId}`);
+    const cellEntity = this.idCellMap.get(latentVehicleData.currentCellId);
+    if (latentVehicle) {
+      this.updateLatentVehicle([latentVehicleData]);
+      return latentVehicle;
     }
-    latentAGV = new LatentAGV({
-      id: latentAGVData.vehicleId,
-      x: latentAGVData.x || cellEntity?.x,
-      y: latentAGVData.y || cellEntity?.y,
-      uniqueId: latentAGVData.uniqueId,
-      battery: latentAGVData.battery || 0,
-      errorLevel: latentAGVData.errorLevel || 0,
-      state: latentAGVData.agvStatus ?? AGVState.offline,
-      mainTain: latentAGVData.mainTain,
-      manualMode: latentAGVData.manualMode,
-      cellId: latentAGVData.currentCellId,
-      angle: latentAGVData.currentDirection,
+    latentVehicle = new LatentVehicle({
+      id: latentVehicleData.vehicleId,
+      x: latentVehicleData.x || cellEntity?.x,
+      y: latentVehicleData.y || cellEntity?.y,
+      uniqueId: latentVehicleData.uniqueId,
+      battery: latentVehicleData.battery || 0,
+      errorLevel: latentVehicleData.errorLevel || 0,
+      state: latentVehicleData.vehicleStatus ?? VehicleState.offline,
+      mainTain: latentVehicleData.mainTain,
+      manualMode: latentVehicleData.manualMode,
+      cellId: latentVehicleData.currentCellId,
+      angle: latentVehicleData.currentDirection,
       select: this.select,
     });
-    cellEntity && this.pixiUtils.viewportAddChild(latentAGV);
-    this.idAGVMap.set(`${latentAGVData.vehicleId}`, latentAGV);
-    return latentAGV;
+    cellEntity && this.pixiUtils.viewportAddChild(latentVehicle);
+    this.idVehicleMap.set(`${latentVehicleData.vehicleId}`, latentVehicle);
+    return latentVehicle;
   };
 
-  renderLatentAGV = (latentAGVList) => {
-    if (Array.isArray(latentAGVList)) {
-      latentAGVList.forEach((latentAGVData) => {
-        const latentAGV = this.idAGVMap.get(`${latentAGVData.vehicleId}`);
-        if (isNull(latentAGV)) {
-          this.addLatentAGV(latentAGVData);
+  renderLatentVehicle = (latentVehicleList) => {
+    if (Array.isArray(latentVehicleList)) {
+      latentVehicleList.forEach((latentVehicleData) => {
+        const latentVehicle = this.idVehicleMap.get(`${latentVehicleData.vehicleId}`);
+        if (isNull(latentVehicle)) {
+          this.addLatentVehicle(latentVehicleData);
         }
       });
     }
   };
 
-  updateLatentAGV = (allAgvStatus) => {
-    for (const agv of allAgvStatus) {
-      const unifiedAgvState = unifyAgvState(agv);
+  updateLatentVehicle = (allVehicleStatus) => {
+    for (const vehicle of allVehicleStatus) {
+      const unifiedVehicleState = unifyVehicleState(vehicle);
       const {
         x,
         y,
@@ -494,28 +494,28 @@ class MonitorMapView extends BaseMap {
         vehicleId,
         battery,
         mainTain,
-        agvStatus,
+        vehicleStatus,
         podDirection,
         currentCellId,
         currentDirection,
         errorLevel,
         uniqueId,
-      } = unifiedAgvState;
+      } = unifiedVehicleState;
 
       if (isNull(currentCellId)) return;
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeLatentAGV(vehicleId);
+        this.removeLatentVehicle(vehicleId);
         this.refresh();
         return;
       }
 
-      let latentAGV = this.idAGVMap.get(`${vehicleId}`);
+      let latentVehicle = this.idVehicleMap.get(`${vehicleId}`);
       // 如果小车不存在
-      if (isNull(latentAGV)) {
+      if (isNull(latentVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
-        latentAGV = this.addLatentAGV({
+        latentVehicle = this.addLatentVehicle({
           x,
           y,
           vehicleId,
@@ -524,19 +524,19 @@ class MonitorMapView extends BaseMap {
           currentCellId,
           currentDirection,
           battery: battery || 0,
-          agvStatus: agvStatus || 'Offline',
+          vehicleStatus: vehicleStatus || 'Offline',
           errorLevel: errorLevel || 0,
         });
       }
-      if (isNull(latentAGV)) return;
+      if (isNull(latentVehicle)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, latentAGV, AGVType.LatentLifting);
+      this.updateVehicleCommonState(vehicle.c, unifiedVehicleState, latentVehicle, VehicleType.LatentLifting);
 
-      // 卸货: podId不存在但是小车还有货物的时候需要卸货 --> {robotId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, podId: 0}
-      if (!hasLatentPod(podId) && latentAGV && latentAGV.pod) {
-        this.idLatentPodInCar.delete(latentAGV.pod.id);
-        latentAGV.downPod();
+      // 卸货: podId不存在但是小车还有货物的时候需要卸货 --> {vehicleId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, podId: 0}
+      if (!hasLatentPod(podId) && latentVehicle && latentVehicle.pod) {
+        this.idLatentPodInCar.delete(latentVehicle.pod.id);
+        latentVehicle.downPod();
       }
 
       // 刷新小车上货架的状态
@@ -551,27 +551,27 @@ class MonitorMapView extends BaseMap {
         });
       }
 
-      latentAGV.dirty = true;
+      latentVehicle.dirty = true;
       this.refresh();
     }
   };
 
-  removeLatentAGV = (vehicleId) => {
-    const latentAGV = this.idAGVMap.get(`${vehicleId}`);
-    if (latentAGV) {
+  removeLatentVehicle = (vehicleId) => {
+    const latentVehicle = this.idVehicleMap.get(`${vehicleId}`);
+    if (latentVehicle) {
       // 如果现在身上驮着货架就要放下
-      if (latentAGV.podId) {
-        const podId = latentAGV.podId;
-        const podAngle = latentAGV.pod.angle;
-        latentAGV.downPod();
+      if (latentVehicle.podId) {
+        const podId = latentVehicle.podId;
+        const podAngle = latentVehicle.pod.angle;
+        latentVehicle.downPod();
         // 删除该货架在车身的标记
         this.idLatentPodInCar.delete(podId);
         // 将该货架刷新到地上
-        this.refreshLatentPod({ podId, cellId: latentAGV.currentCellId, direction: podAngle });
+        this.refreshLatentPod({ podId, cellId: latentVehicle.currentCellId, direction: podAngle });
       }
-      this.pixiUtils.viewportRemoveChild(latentAGV);
-      latentAGV.destroy({ children: true });
-      this.idAGVMap.delete(`${vehicleId}`);
+      this.pixiUtils.viewportRemoveChild(latentVehicle);
+      latentVehicle.destroy({ children: true });
+      this.idVehicleMap.delete(`${vehicleId}`);
     }
   };
 
@@ -633,12 +633,12 @@ class MonitorMapView extends BaseMap {
 
     if (vehicleId) {
       // 如果有货架绑定在车上，那么此时货架要么在点位上要么在车上
-      const latentAGV = this.idAGVMap.get(`${vehicleId}`);
-      if (latentAGV) {
+      const latentVehicle = this.idVehicleMap.get(`${vehicleId}`);
+      if (latentVehicle) {
         let latentPod;
-        if (latentAGV.pod) {
+        if (latentVehicle.pod) {
           // 如果在小车上只需要更新部分数据
-          latentPod = latentAGV.pod;
+          latentPod = latentVehicle.pod;
         } else {
           // 地上的货架和新建的货架都需要更新大量的数据，所以这里放在一起无差别处理
           latentPod = this.idLatentPodMap.get(`${podId}`);
@@ -664,7 +664,7 @@ class MonitorMapView extends BaseMap {
           latentPod.height = LatentPodSize.height / 2;
           // 标记该潜伏货架正在小车身上
           this.idLatentPodInCar.set(`${podId}`, vehicleId);
-          latentAGV.upPod(latentPod);
+          latentVehicle.upPod(latentPod);
           this.idLatentPodMap.delete(`${podId}`);
         }
         latentPod.visible = true;
@@ -693,63 +693,63 @@ class MonitorMapView extends BaseMap {
   };
 
   // ********** 料箱车 ********** //
-  addToteAGV = (toteAGVData) => {
+  addToteVehicle = (toteVehicleData) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
-    // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**AGV就会创建一台车[offline]
+    // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
-    let toteAGV = this.idAGVMap.get(`${toteAGVData.vehicleId}`);
-    const cellEntity = this.idCellMap.get(toteAGVData.currentCellId);
-    if (toteAGV) {
-      this.updateToteAGV([toteAGVData]);
-      return toteAGV;
+    let toteVehicle = this.idVehicleMap.get(`${toteVehicleData.vehicleId}`);
+    const cellEntity = this.idCellMap.get(toteVehicleData.currentCellId);
+    if (toteVehicle) {
+      this.updateToteVehicle([toteVehicleData]);
+      return toteVehicle;
     }
-    const { checkAGV, simpleCheckAgv } = this.props;
-    toteAGV = new ToteAGV({
-      x: toteAGVData.x || cellEntity.x,
-      y: toteAGVData.y || cellEntity.y,
-      id: toteAGVData.vehicleId,
-      cellId: toteAGVData.currentCellId,
-      angle: toteAGVData.currentDirection,
-      shelfs: toteAGVData.shelfs || 0,
-      battery: toteAGVData.battery || 0,
-      errorLevel: toteAGVData.errorLevel || 0,
-      state: toteAGVData.agvStatus || AGVState.offline,
-      manualMode: toteAGVData.manualMode,
-      toteCodes: toteAGVData.toteCodes || [null],
+    const { checkVehicle, simpleCheckVehicle } = this.props;
+    toteVehicle = new ToteVehicle({
+      x: toteVehicleData.x || cellEntity.x,
+      y: toteVehicleData.y || cellEntity.y,
+      id: toteVehicleData.vehicleId,
+      cellId: toteVehicleData.currentCellId,
+      angle: toteVehicleData.currentDirection,
+      shelfs: toteVehicleData.shelfs || 0,
+      battery: toteVehicleData.battery || 0,
+      errorLevel: toteVehicleData.errorLevel || 0,
+      state: toteVehicleData.vehicleStatus || VehicleState.offline,
+      manualMode: toteVehicleData.manualMode,
+      toteCodes: toteVehicleData.toteCodes || [null],
       active: true,
-      checkAGV,
-      simpleCheckAgv,
+      checkVehicle,
+      simpleCheckVehicle,
     });
-    cellEntity && this.pixiUtils.viewportAddChild(toteAGV);
-    this.idAGVMap.set(`${toteAGVData.vehicleId}`, toteAGV);
+    cellEntity && this.pixiUtils.viewportAddChild(toteVehicle);
+    this.idVehicleMap.set(`${toteVehicleData.vehicleId}`, toteVehicle);
 
-    return toteAGV;
+    return toteVehicle;
   };
 
-  renderToteAGV = (toteAGVList) => {
-    if (Array.isArray(toteAGVList)) {
-      toteAGVList.forEach((toteAGVData) => {
-        const toteAGV = this.idAGVMap.get(`${toteAGVData.vehicleId}`);
-        if (isNull(toteAGV)) {
-          this.addToteAGV(toteAGVData);
+  renderToteVehicle = (toteVehicleList) => {
+    if (Array.isArray(toteVehicleList)) {
+      toteVehicleList.forEach((toteVehicleData) => {
+        const toteVehicle = this.idVehicleMap.get(`${toteVehicleData.vehicleId}`);
+        if (isNull(toteVehicle)) {
+          this.addToteVehicle(toteVehicleData);
         }
       });
     }
   };
 
-  removeToteAGV = (vehicleId) => {
-    const toteAGV = this.idAGVMap.get(`${vehicleId}`);
-    if (toteAGV) {
-      this.pixiUtils.viewportRemoveChild(toteAGV);
-      toteAGV.destroy({ children: true });
-      this.idAGVMap.delete(`${vehicleId}`);
+  removeToteVehicle = (vehicleId) => {
+    const toteVehicle = this.idVehicleMap.get(`${vehicleId}`);
+    if (toteVehicle) {
+      this.pixiUtils.viewportRemoveChild(toteVehicle);
+      toteVehicle.destroy({ children: true });
+      this.idVehicleMap.delete(`${vehicleId}`);
     }
   };
 
-  updateToteAGV = (toteAGVStatus) => {
-    for (const agv of toteAGVStatus) {
-      const unifiedAgvState = unifyAgvState(agv);
+  updateToteVehicle = (toteVehicleStatus) => {
+    for (const vehicle of toteVehicleStatus) {
+      const unifiedVehicleState = unifyVehicleState(vehicle);
       const {
         x,
         y,
@@ -759,75 +759,75 @@ class MonitorMapView extends BaseMap {
         mainTain,
         holdTote,
         toteCodes,
-        agvStatus,
+        vehicleStatus,
         currentCellId,
         currentDirection,
         errorLevel,
-      } = unifiedAgvState;
+      } = unifiedVehicleState;
 
       if (isNull(currentCellId)) return;
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeToteAGV(robotId);
+        this.removeToteVehicle(vehicleId);
         this.refresh();
         return;
       }
 
-      let toteAGV = this.idAGVMap.get(`${robotId}`);
+      let toteVehicle = this.idVehicleMap.get(`${vehicleId}`);
       // 如果小车不存在
-      if (isNull(toteAGV)) {
+      if (isNull(toteVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
-        toteAGV = this.addToteAGV({
+        toteVehicle = this.addToteVehicle({
           x,
           y,
-          robotId,
+          vehicleId,
           shelfs,
           mainTain,
           toteCodes,
           currentCellId,
           currentDirection,
           battery: battery || 0,
-          agvStatus: agvStatus || 'Offline',
+          vehicleStatus: vehicleStatus || 'Offline',
           errorLevel: errorLevel || 0,
         });
       }
-      if (isNull(toteAGV)) return;
+      if (isNull(toteVehicle)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, toteAGV, AGVType.Tote);
+      this.updateVehicleCommonState(vehicle.c, unifiedVehicleState, toteVehicle, VehicleType.Tote);
 
       // 更新料箱车货架
-      if (shelfs && toteAGV.shelfs !== shelfs) {
-        toteAGV.refreshShelfs(shelfs);
+      if (shelfs && toteVehicle.shelfs !== shelfs) {
+        toteVehicle.refreshShelfs(shelfs);
       }
 
       // 更新料箱车料箱
-      if (toteCodes && !isEqual(toteAGV.toteCodes, toteCodes)) {
-        toteAGV.updateTotes(toteCodes);
+      if (toteCodes && !isEqual(toteVehicle.toteCodes, toteCodes)) {
+        toteVehicle.updateTotes(toteCodes);
       }
 
       // 更新抱夹料箱
-      toteAGV.updateHolding(holdTote);
+      toteVehicle.updateHolding(holdTote);
 
       // 渲染料箱任务实时路径(北斗七星图)
       if (Array.isArray(this.toteTaskRealtimeData) && this.toteTaskRealtimeData.length > 0) {
-        const realtime = find(this.toteTaskRealtimeData, { rid: robotId });
-        realtime && this.renderToteTaskRealtimePaths(robotId, x, y, realtime.bcodes ?? []);
+        const realtime = find(this.toteTaskRealtimeData, { rid: vehicleId });
+        realtime && this.renderToteTaskRealtimePaths(vehicleId, x, y, realtime.bcodes ?? []);
       }
 
-      toteAGV.dirty = true;
+      toteVehicle.dirty = true;
       this.refresh();
     }
   };
 
   // 更新料箱车车上货架显示效果和抱夹显示效果
   updateToteState = (toteState) => {
-    const { robotId, toteCodes, holdingTote } = toteState;
-    const toteAGV = this.idAGVMap.get(`${robotId}`);
-    if (toteAGV) {
-      toteAGV.updateTotes(toteCodes);
-      toteAGV.updateHolding(holdingTote);
+    const { vehicleId, toteCodes, holdingTote } = toteState;
+    const toteVehicle = this.idVehicleMap.get(`${vehicleId}`);
+    if (toteVehicle) {
+      toteVehicle.updateTotes(toteCodes);
+      toteVehicle.updateHolding(holdingTote);
       this.refresh();
     }
   };
@@ -837,10 +837,10 @@ class MonitorMapView extends BaseMap {
     /**
      * @Update 更新方法使其支持四个方向: 2020年07月28日
      * @Tip 这里的 leftRack 和 rightRack 是相当于小车的方向
-     * @agvDirection === 0 向上
-     * @agvDirection === 1 向右
-     * @agvDirection === 2 向下
-     * @agvDirection === 3 向左
+     * @vehicleDirection === 0 向上
+     * @vehicleDirection === 1 向右
+     * @vehicleDirection === 2 向下
+     * @vehicleDirection === 3 向左
      */
     this.totePodsData = totePodData;
     const _this = this;
@@ -848,21 +848,21 @@ class MonitorMapView extends BaseMap {
     Object.keys(totePodData.rackGroups).forEach((rack) => {
       // 巷道数据, 包含车辆方向和料箱数据
       const rackGroupData = totePodData.rackGroups[rack];
-      const { agvDirection, leftRack, rightRack } = rackGroupData;
+      const { vehicleDirection, leftRack, rightRack } = rackGroupData;
       // 左侧料箱货架
       if (leftRack && leftRack.bins) {
-        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(agvDirection, 'L');
+        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(vehicleDirection, 'L');
         leftRack.bins.forEach((bin) => {
           const cellEntity = _this.idCellMap.get(bin.binCellId);
           if (cellEntity && !bin.disable) {
             let x;
             let y;
             if (adapte === 'X') {
-              x = cellEntity.x + XBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
+              x = cellEntity.x + XBase * (bin.depth / 2 + ToteVehicleSize.width / 2 + 150);
               y = cellEntity.y + YBase * offset;
             } else {
               x = cellEntity.x + XBase * offset;
-              y = cellEntity.y + YBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
+              y = cellEntity.y + YBase * (bin.depth / 2 + ToteVehicleSize.width / 2 + 150);
             }
             const totePod = new TotePod({
               x,
@@ -880,18 +880,18 @@ class MonitorMapView extends BaseMap {
       }
       // 右侧料箱货架
       if (rightRack && rightRack.bins) {
-        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(agvDirection, 'R');
+        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(vehicleDirection, 'R');
         rightRack.bins.forEach((bin) => {
           const cellEntity = _this.idCellMap.get(bin.binCellId);
           if (cellEntity && !bin.disable) {
             let x;
             let y;
             if (adapte === 'X') {
-              x = cellEntity.x + XBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
+              x = cellEntity.x + XBase * (bin.depth / 2 + ToteVehicleSize.width / 2 + 150);
               y = cellEntity.y + YBase * offset;
             } else {
               x = cellEntity.x + XBase * offset;
-              y = cellEntity.y + YBase * (bin.depth / 2 + ToteAGVSize.width / 2 + 150);
+              y = cellEntity.y + YBase * (bin.depth / 2 + ToteVehicleSize.width / 2 + 150);
             }
             const totePod = new TotePod({
               x,
@@ -917,119 +917,119 @@ class MonitorMapView extends BaseMap {
   };
 
   // ********** 分拣车 ********** //
-  addSorterAGV = (sorterAGVData, callback) => {
+  addSorterVehicle = (sorterVehicleData, callback) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
-    // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**AGV就会创建一台车[offline]
+    // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
-    let sorterAGV = this.idAGVMap.get(`${sorterAGVData.robotId}`);
-    const cellEntity = this.idCellMap.get(sorterAGVData.currentCellId);
-    if (sorterAGV) {
-      this.updateSorterAGV([sorterAGVData]);
-      return sorterAGV;
+    let sorterVehicle = this.idVehicleMap.get(`${sorterVehicleData.vehicleId}`);
+    const cellEntity = this.idCellMap.get(sorterVehicleData.currentCellId);
+    if (sorterVehicle) {
+      this.updateSorterVehicle([sorterVehicleData]);
+      return sorterVehicle;
     }
-    const { simpleCheckAgv } = this.props;
-    sorterAGV = new SorterAGV({
-      $$formData: sorterAGVData, // 原始DB数据
-      id: sorterAGVData.robotId,
-      x: sorterAGVData.x || cellEntity.x,
-      y: sorterAGVData.y || cellEntity.y,
-      uniqueId: sorterAGVData.uniqueId,
-      battery: sorterAGVData.battery || 0,
-      errorLevel: sorterAGVData.errorLevel || 0,
-      state: sorterAGVData.agvStatus ?? AGVState.offline,
-      mainTain: sorterAGVData.mainTain,
-      manualMode: sorterAGVData.manualMode,
-      cellId: sorterAGVData.currentCellId,
-      angle: sorterAGVData.currentDirection,
+    const { simpleCheckVehicle } = this.props;
+    sorterVehicle = new SorterVehicle({
+      $$formData: sorterVehicleData, // 原始DB数据
+      id: sorterVehicleData.vehicleId,
+      x: sorterVehicleData.x || cellEntity.x,
+      y: sorterVehicleData.y || cellEntity.y,
+      uniqueId: sorterVehicleData.uniqueId,
+      battery: sorterVehicleData.battery || 0,
+      errorLevel: sorterVehicleData.errorLevel || 0,
+      state: sorterVehicleData.vehicleStatus ?? VehicleState.offline,
+      mainTain: sorterVehicleData.mainTain,
+      manualMode: sorterVehicleData.manualMode,
+      cellId: sorterVehicleData.currentCellId,
+      angle: sorterVehicleData.currentDirection,
       active: true,
       select: typeof callback === 'function' ? callback : this.select,
-      simpleCheckAgv,
+      simpleCheckVehicle,
     });
-    cellEntity && this.pixiUtils.viewportAddChild(sorterAGV);
-    this.idAGVMap.set(`${sorterAGVData.robotId}`, sorterAGV);
-    return sorterAGV;
+    cellEntity && this.pixiUtils.viewportAddChild(sorterVehicle);
+    this.idVehicleMap.set(`${sorterVehicleData.vehicleId}`, sorterVehicle);
+    return sorterVehicle;
   };
 
-  renderSorterAGV = (sorterAGVList) => {
-    if (Array.isArray(sorterAGVList)) {
-      sorterAGVList.forEach((sorterAGVData) => {
-        const sorterAGV = this.idAGVMap.get(`${sorterAGVData.robotId}`);
-        if (isNull(sorterAGV)) {
-          this.addSorterAGV(sorterAGVData);
+  renderSorterVehicle = (sorterVehicleList) => {
+    if (Array.isArray(sorterVehicleList)) {
+      sorterVehicleList.forEach((sorterVehicleData) => {
+        const sorterVehicle = this.idVehicleMap.get(`${sorterVehicleData.vehicleId}`);
+        if (isNull(sorterVehicle)) {
+          this.addSorterVehicle(sorterVehicleData);
         }
       });
     }
   };
 
-  updateSorterAGV = (allAgvStatus) => {
-    for (const agv of allAgvStatus) {
-      const unifiedAgvState = unifyAgvState(agv);
+  updateSorterVehicle = (allVehicleStatus) => {
+    for (const vehicle of allVehicleStatus) {
+      const unifiedVehicleState = unifyVehicleState(vehicle);
       const {
         x,
         y,
-        robotId,
+        vehicleId,
         battery,
         mainTain,
-        agvStatus,
+        vehicleStatus,
         sorterPod,
         currentCellId,
         currentDirection,
         errorLevel,
         uniqueId,
-      } = unifiedAgvState;
+      } = unifiedVehicleState;
 
       if (isNull(currentCellId)) return;
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeSorterAGV(robotId);
+        this.removeSorterVehicle(vehicleId);
         this.refresh();
         return;
       }
 
-      let sorterAGV = this.idAGVMap.get(`${robotId}`);
+      let sorterVehicle = this.idVehicleMap.get(`${vehicleId}`);
       // 如果小车不存在
-      if (isNull(sorterAGV)) {
+      if (isNull(sorterVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
-        sorterAGV = this.addSorterAGV({
+        sorterVehicle = this.addSorterVehicle({
           x,
           y,
-          robotId,
+          vehicleId,
           uniqueId,
           mainTain,
           currentCellId,
           currentDirection,
           battery: battery || 0,
           errorLevel: errorLevel || 0,
-          agvStatus: agvStatus || 'Offline',
+          vehicleStatus: vehicleStatus || 'Offline',
         });
       }
-      if (isNull(sorterAGV)) return;
+      if (isNull(sorterVehicle)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, sorterAGV, AGVType.Sorter);
+      this.updateVehicleCommonState(vehicle.c, unifiedVehicleState, sorterVehicle, VehicleType.Sorter);
 
       // 更新小车车身货架
-      sorterAGV.updatePod(sorterPod);
+      sorterVehicle.updatePod(sorterPod);
 
-      sorterAGV.dirty = true;
+      sorterVehicle.dirty = true;
       this.refresh();
     }
   };
 
-  removeSorterAGV = (robotId) => {
-    const sorterAGV = this.idAGVMap.get(`${robotId}`);
-    if (sorterAGV) {
-      this.pixiUtils.viewportRemoveChild(sorterAGV);
-      sorterAGV.destroy({ children: true });
-      this.idAGVMap.delete(`${robotId}`);
+  removeSorterVehicle = (vehicleId) => {
+    const sorterVehicle = this.idVehicleMap.get(`${vehicleId}`);
+    if (sorterVehicle) {
+      this.pixiUtils.viewportRemoveChild(sorterVehicle);
+      sorterVehicle.destroy({ children: true });
+      this.idVehicleMap.delete(`${vehicleId}`);
     }
   };
 
   // ************************ 渲染小车锁格 ********************** //
   renderLockCell = (inputData) => {
-    const { allAGVs } = window.$$state().monitor;
+    const { allVehicles } = window.$$state().monitor;
     // 清除所有的几何锁
     this.clearAllLocks();
 
@@ -1052,7 +1052,7 @@ class MonitorMapView extends BaseMap {
           formatMessage(
             { id: 'monitor.tip.LockDataAbnormal' },
             {
-              detail: `robotId: ${lockData.robotId}; Height: ${height}; Width: ${width}`,
+              detail: `vehicleId: ${lockData.vehicleId}; Height: ${height}; Width: ${width}`,
             },
           ),
         );
@@ -1067,16 +1067,16 @@ class MonitorMapView extends BaseMap {
         width,
         height,
         angle,
-        uniqueId: lockData.robotId,
-        vehicleId: find(allAGVs, { uniqueId: lockData.vehicleId })?.vehicleId,
+        uniqueId: lockData.vehicleId,
+        vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
       };
       if (lockData.boxType === 'GOTO_ROTATING') {
         geoLock = new OpenLock({ ...currentLockData, color });
       } else {
         geoLock = new GeoLock({ ...currentLockData, color });
       }
-      this.agvLocksMap.set(
-        `r${lockData.robotId}x${currentPosition.x}y${currentPosition.y}t${Math.random()}`, // 防止重复key导致覆盖
+      this.vehicleLocksMap.set(
+        `r${lockData.vehicleId}x${currentPosition.x}y${currentPosition.y}t${Math.random()}`, // 防止重复key导致覆盖
         geoLock,
       );
       this.pixiUtils.viewportAddChild(geoLock);
@@ -1084,7 +1084,7 @@ class MonitorMapView extends BaseMap {
   };
 
   clearAllLocks = () => {
-    this.agvLocksMap.forEach((locker) => {
+    this.vehicleLocksMap.forEach((locker) => {
       this.pixiUtils.viewportRemoveChild(locker);
       if (locker instanceof OpenLock) {
         locker.destroy(true);
@@ -1096,12 +1096,12 @@ class MonitorMapView extends BaseMap {
         }
       }
     });
-    this.agvLocksMap.clear();
+    this.vehicleLocksMap.clear();
   };
 
   // ************************ 渲染点位锁格 ********************** //
   renderCellLocks = (lockData) => {
-    const { allAGVs } = window.$$state().monitor;
+    const { allVehicles } = window.$$state().monitor;
     // 清除所有的几何锁
     this.clearCellLocks();
     if (!lockData) return;
@@ -1125,7 +1125,7 @@ class MonitorMapView extends BaseMap {
         formatMessage(
           { id: 'monitor.tip.LockDataAbnormal' },
           {
-            detail: `robotId: ${lockData.robotId}; Height: ${height}; Width: ${width}`,
+            detail: `vehicleId: ${lockData.vehicleId}; Height: ${height}; Width: ${width}`,
           },
         ),
       );
@@ -1140,8 +1140,8 @@ class MonitorMapView extends BaseMap {
       width,
       height,
       angle,
-      uniqueId: lockData.robotId,
-      vehicleId: find(allAGVs, { uniqueId: lockData.vehicleId })?.vehicleId,
+      uniqueId: lockData.vehicleId,
+      vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
     };
     if (lockData.boxAction === 'GOTO_ROTATING') {
       geoLock = new OpenLock({ ...currentLockData, color });
@@ -1168,54 +1168,54 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 渲染小车行驶路径路径 ********************** //
-  registerShowTaskPath = (agvTasks = [], showTaskPath) => {
-    this.filteredAGV = window.$$state().monitorView.selectAgv;
+  registerShowTaskPath = (vehicleTasks = [], showTaskPath) => {
+    this.filteredVehicle = window.$$state().monitorView.selectVehicle;
     this.showTaskPath = showTaskPath;
 
     // 前置处理
     if (!this.showTaskPath) {
       // 清除所有路线数据缓存
-      this.agvTaskMap.clear();
+      this.vehicleTaskMap.clear();
       // 清除掉所有的路线
-      this.agvPathMap.forEach((paths) => {
+      this.vehiclePathMap.forEach((paths) => {
         paths.forEach((path) => {
           this.pixiUtils.viewportRemoveChild(path);
           path.destroy({ children: true });
         });
         paths.length = 0;
       });
-      this.agvPathMap.clear();
+      this.vehiclePathMap.clear();
     } else {
-      // 根据最新的agvTasks来确定目前需要渲染的小车任务路径，删除不需要渲染的路径. 比如：搜索 100，101小车，但是101小车没有任务路径，所以返回值不会包含101小车的数据
-      const agvToRenderPath = agvTasks.map((agvTask) => `${agvTask.r}`);
-      const agvToSplit = [];
-      [...this.agvPathMap.keys()].forEach((id) => {
-        if (!agvToRenderPath.includes(id)) {
-          agvToSplit.push(id);
-          const paths = this.agvPathMap.get(id);
+      // 根据最新的vehicleTasks来确定目前需要渲染的小车任务路径，删除不需要渲染的路径. 比如：搜索 100，101小车，但是101小车没有任务路径，所以返回值不会包含101小车的数据
+      const vehicleToRenderPath = vehicleTasks.map((vehicleTask) => `${vehicleTask.v}`);
+      const vehicleToSplit = [];
+      [...this.vehiclePathMap.keys()].forEach((id) => {
+        if (!vehicleToRenderPath.includes(id)) {
+          vehicleToSplit.push(id);
+          const paths = this.vehiclePathMap.get(id);
           paths.forEach((path) => {
             this.pixiUtils.viewportRemoveChild(path);
             path.destroy({ children: true });
           });
         }
       });
-      agvToSplit.forEach((id) => {
-        this.agvPathMap.delete(id);
-        this.agvTaskMap.delete(id);
+      vehicleToSplit.forEach((id) => {
+        this.vehiclePathMap.delete(id);
+        this.vehicleTaskMap.delete(id);
       });
     }
 
     // 缓存当前执行的任务
-    agvTasks.forEach((agvTask) => {
+    vehicleTasks.forEach((vehicleTask) => {
       // 现在只会在路径发生变化的时候才会发送路径点位cId, 所以这里只会保存包含cId的消息, 不包含cId的消息只会用来更新si和ei字段
-      if (agvTask.hasOwnProperty('c')) {
-        this.agvTaskMap.set(`${agvTask.r}`, agvTask);
+      if (vehicleTask.hasOwnProperty('c')) {
+        this.vehicleTaskMap.set(`${vehicleTask.v}`, vehicleTask);
       } else {
         // 否则只是更改 startIndex(si) 和 endIndex(ei)
-        const storedAGVTask = this.agvTaskMap.get(`${agvTask.r}`);
-        if (storedAGVTask) {
-          storedAGVTask.si = agvTask.si;
-          storedAGVTask.ei = agvTask.ei;
+        const storedVehicleTask = this.vehicleTaskMap.get(`${vehicleTask.v}`);
+        if (storedVehicleTask) {
+          storedVehicleTask.si = vehicleTask.si;
+          storedVehicleTask.ei = vehicleTask.ei;
         }
       }
     });
@@ -1224,37 +1224,37 @@ class MonitorMapView extends BaseMap {
 
   updateTaskPath = (uniqueId) => {
     // 清除路径线
-    const paths = this.agvPathMap.get(uniqueId);
+    const paths = this.vehiclePathMap.get(uniqueId);
     if (paths && paths.length > 0) {
       paths.forEach((path) => {
         this.pixiUtils.viewportRemoveChild(path);
         path.destroy({ children: true });
       });
     }
-    this.agvPathMap.delete(uniqueId);
+    this.vehiclePathMap.delete(uniqueId);
 
     // 清除目标线
-    const targetLineSprite = this.agvTargetLineMap.get(uniqueId);
+    const targetLineSprite = this.vehicleTargetLineMap.get(uniqueId);
     if (targetLineSprite) {
       this.pixiUtils.viewportRemoveChild(targetLineSprite);
       targetLineSprite.destroy(true);
-      this.agvTargetLineMap.delete(uniqueId);
+      this.vehicleTargetLineMap.delete(uniqueId);
     }
 
     // 渲染新的路线
-    if (!this.filteredAGV.includes(uniqueId)) return;
+    if (!this.filteredVehicle.includes(uniqueId)) return;
     this.renderTaskPaths(uniqueId);
     this.refresh();
   };
 
   renderTaskPaths = (uniqueId) => {
     const { showFullPath, showTagetLine } = window.$$state().monitorView.routeView;
-    const { allAGVs } = window.$$state().monitor;
+    const { allVehicles } = window.$$state().monitor;
     // 渲染新的路径
     const _this = this;
-    const agvTaskMessage = this.agvTaskMap.get(uniqueId);
-    if (agvTaskMessage) {
-      const { si: startIndex, ei: endIndex, c: cellIds } = agvTaskMessage;
+    const vehicleTaskMessage = this.vehicleTaskMap.get(uniqueId);
+    if (vehicleTaskMessage) {
+      const { si: startIndex, ei: endIndex, c: cellIds } = vehicleTaskMessage;
       const types = { passed: [], locked: [], future: [] };
       const pathCellIds = cellIds.map((id) => id);
 
@@ -1301,19 +1301,19 @@ class MonitorMapView extends BaseMap {
 
       // 渲染小车到目标点的连线
       if (showTagetLine) {
-        const { vehicleId } = find(allAGVs, { uniqueId });
-        const agvData = this.idAGVMap.get(vehicleId);
+        const { vehicleId } = find(allVehicles, { uniqueId });
+        const vehicleData = this.idVehicleMap.get(vehicleId);
         let lineEnd = pathCellIds[pathCellIds.length - 1];
         lineEnd = getElevatorMapCellId(lineEnd);
         const targetCell = this.idCellMap.get(lineEnd);
 
         const targetLineSprite = new PIXI.Graphics();
         targetLineSprite.lineStyle(20, 0x287ada, 1);
-        targetLineSprite.moveTo(agvData.x, agvData.y);
+        targetLineSprite.moveTo(vehicleData.x, vehicleData.y);
         targetLineSprite.lineTo(targetCell.x, targetCell.y);
         targetLineSprite.zIndex = zIndex.targetLine;
         this.pixiUtils.viewportAddChild(targetLineSprite);
-        this.agvTargetLineMap.set(uniqueId, targetLineSprite);
+        this.vehicleTargetLineMap.set(uniqueId, targetLineSprite);
       }
     }
   };
@@ -1328,13 +1328,13 @@ class MonitorMapView extends BaseMap {
         endPoint: { x: endCell.x, y: endCell.y },
         uniqueId,
       });
-      let paths = this.agvPathMap.get(uniqueId);
+      let paths = this.vehiclePathMap.get(uniqueId);
       if (paths && Array.isArray(paths)) {
         paths.push(taskPath);
       } else {
         paths = [];
         paths.push(taskPath);
-        this.agvPathMap.set(uniqueId, paths);
+        this.vehiclePathMap.set(uniqueId, paths);
       }
       this.pixiUtils.viewportAddChild(taskPath);
     }
@@ -1354,9 +1354,9 @@ class MonitorMapView extends BaseMap {
     this.toteTaskRealtimePath = [];
   };
 
-  renderToteTaskRealtimePaths = (robotId, agvX, agvY, data) => {
+  renderToteTaskRealtimePaths = (vehicleId, vehicleX, vehicleY, data) => {
     // 绘制
-    const pathXY = [{ x: agvX, y: agvY }];
+    const pathXY = [{ x: vehicleX, y: vehicleY }];
     data.forEach(({ bc, t }) => {
       const toteEntity = this.idTotePodMap.get(bc);
       toteEntity && pathXY.push({ x: toteEntity.x, y: toteEntity.y, action: t });
@@ -1519,21 +1519,21 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 小车标记 ********************** //
-  markWorkStationAgv = (agvs, isShown, color, workStationId) => {
+  markWorkStationVehicle = (vehicles, isShown, color, workStationId) => {
     // 先做清理操作, 只重置正在为该工作站服务的小车
-    this.idAGVMap.forEach((agv) => {
-      if (agv.employer === workStationId) {
-        agv.switchMarkerShown(false, null, null);
+    this.idVehicleMap.forEach((vehicle) => {
+      if (vehicle.employer === workStationId) {
+        vehicle.switchMarkerShown(false, null, null);
       }
     });
     const workStation = this.workStationMap.get(workStationId);
     const renderColor = color ?? workStation.employeeColor; // 边缘Case: 请求发送完成到请求返回中间时间工作站被取消显示小车
     if (isShown && renderColor) {
-      agvs.forEach((vehicleId) => {
-        const agv = this.idAGVMap.get(vehicleId);
-        if (agv && workStation) {
+      vehicles.forEach((vehicleId) => {
+        const vehicle = this.idVehicleMap.get(vehicleId);
+        if (vehicle && workStation) {
           // 这里 color有可能是null, 是因为该方法是轮询机制调用的
-          agv.switchMarkerShown(true, workStationId, renderColor);
+          vehicle.switchMarkerShown(true, workStationId, renderColor);
         }
       });
     }
@@ -1546,22 +1546,22 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 通用站点标记 小车标记 ********************** //
-  markCommonPointAgv = (agvs, isShown, color, commonPointId) => {
+  markCommonPointVehicle = (vehicles, isShown, color, commonPointId) => {
     // 先做清理操作, 只重置正在为该工作站服务的小车
-    this.idAGVMap.forEach((agv) => {
-      if (agv.employer === commonPointId) {
-        agv.switchMarkerShown(false, null, null);
+    this.idVehicleMap.forEach((vehicle) => {
+      if (vehicle.employer === commonPointId) {
+        vehicle.switchMarkerShown(false, null, null);
       }
     });
 
     const commonPoint = this.commonFunctionMap.get(commonPointId);
     const renderColor = color ?? commonPoint.employeeColor; // 边缘Case: 请求发送完成到请求返回中间时间工作站被取消显示小车
     if (isShown && renderColor) {
-      agvs.forEach((vehicleId) => {
-        const agv = this.idAGVMap.get(vehicleId);
-        if (agv && commonPoint) {
+      vehicles.forEach((vehicleId) => {
+        const vehicle = this.idVehicleMap.get(vehicleId);
+        if (vehicle && commonPoint) {
           // 这里 color有可能是null, 是因为该方法是轮询机制调用的
-          agv.switchMarkerShown(true, commonPointId, renderColor);
+          vehicle.switchMarkerShown(true, commonPointId, renderColor);
         }
       });
     }

@@ -197,7 +197,7 @@ const CommonStationReport = (props) => {
                 </span>
               </div>
             )}
-            {!isStrictNull(currentRealRate?.agvRate) && (
+            {!isStrictNull(currentRealRate?.vehicleRate) && (
               <div>
                 <span style={{ fontSize: '16px', color: LineChartsAxisColor }}>
                   <FormattedMessage id="monitor.workstation.label.arrivalRate" />:
@@ -205,12 +205,12 @@ const CommonStationReport = (props) => {
                 <span
                   style={{ fontSize: '16px', marginLeft: '8px', fontWeight: 500, color: DataColor }}
                 >
-                  {currentRealRate?.agvRate || 0}
+                  {currentRealRate?.vehicleRate || 0}
                   <FormattedMessage id={'monitor.workstation.label.rate'} />
                 </span>
               </div>
             )}
-            {currentRealRate?.agvAndTaskProportion && (
+            {currentRealRate?.vehicleAndTaskProportion && (
               <div>
                 <span style={{ fontSize: '16px', color: LineChartsAxisColor }}>
                   <FormattedMessage id="monitor.workstation.label.num" />:
@@ -218,7 +218,7 @@ const CommonStationReport = (props) => {
                 <span
                   style={{ fontSize: '16px', marginLeft: '8px', fontWeight: 500, color: DataColor }}
                 >
-                  {currentRealRate?.agvAndTaskProportion}
+                  {currentRealRate?.vehicleAndTaskProportion}
                 </span>
               </div>
             )}

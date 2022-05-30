@@ -52,8 +52,8 @@ const EStopList = (props) => {
           >
             <Switch
               checked={record.activated}
-              checkedChildren={formatMessage({ id: 'app.agv.on' })}
-              unCheckedChildren={formatMessage({ id: 'app.agv.off' })}
+              checkedChildren={formatMessage({ id: 'app.vehicle.on' })}
+              unCheckedChildren={formatMessage({ id: 'app.vehicle.off' })}
             />
           </Popconfirm>
         );

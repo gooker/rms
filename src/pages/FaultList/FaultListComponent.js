@@ -1,13 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { message, Table } from 'antd';
-import { fetchAgvErrorRecord, fetchDefinedFaults } from '@/services/api';
+import { fetchVehicleErrorRecord, fetchDefinedFaults } from '@/services/api';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';
 
 const FaultListComponent = (props) => {
-  const { agvType } = props;
+  const { vehicleType } = props;
 
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ pageSize: 10, current: 1, total: 0 });
@@ -25,7 +25,7 @@ const FaultListComponent = (props) => {
 
   const columns = [
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 100,
@@ -99,9 +99,9 @@ const FaultListComponent = (props) => {
       current: pagination.current,
       size: pagination.pageSize,
       type: 'All',
-      agvErrorTypes: ['HARDWARE_ERROR'],
+      vehicleErrorTypes: ['HARDWARE_ERROR'],
     };
-    const response = await fetchAgvErrorRecord(agvType, requestParam);
+    const response = await fetchVehicleErrorRecord(vehicleType, requestParam);
     if (!dealResponse(response)) {
       const { list, page } = response;
       setFaultList(list);
@@ -112,7 +112,7 @@ const FaultListComponent = (props) => {
 
   // 获取已定义的故障数据
   async function fetchDefinedFaultList() {
-    const response = await fetchDefinedFaults(agvType);
+    const response = await fetchDefinedFaults(vehicleType);
     if (!dealResponse(response)) {
       const _definedFaults = {};
       if (Array.isArray(response)) {
@@ -138,7 +138,7 @@ const FaultListComponent = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <FaultListSearchForm agvType={agvType} search={fetchFaultList} faults={definedFaults} />
+        <FaultListSearchForm vehicleType={vehicleType} search={fetchFaultList} faults={definedFaults} />
       </div>
       <Table
         bordered

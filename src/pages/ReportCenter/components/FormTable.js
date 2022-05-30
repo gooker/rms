@@ -13,7 +13,7 @@ import styles from '../ReportCenter.module.less';
 
 const FormTable = (props) => {
   const { data, description, children, remove, info, deletable, filterDateOnChange } = props;
-  const { agvType, allTaskTypes } = props;
+  const { vehicleType, allTaskTypes } = props;
 
   const [defaultValue, setDefaultValue] = useState(1);
   const [toggles, setToggles] = useState(0);
@@ -61,7 +61,7 @@ const FormTable = (props) => {
   // 将数据数据里的任务类型替换成翻译
   newData = newData.map((item) => ({
     ...item,
-    agvTaskType: allTaskTypes[agvType]?.[item.agvTaskType] || item.agvTaskType,
+    vehicleTaskType: allTaskTypes[vehicleType]?.[item.vehicleTaskType] || item.vehicleTaskType,
   }));
 
   // 生成表格 column 模板

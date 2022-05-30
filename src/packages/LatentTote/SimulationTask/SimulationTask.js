@@ -181,10 +181,10 @@ const SimulationTask = (props) => {
   }, []);
 
   function checkDetail(taskId) {
-    const { dispatch, agvType } = this.props;
+    const { dispatch, vehicleType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
+      payload: { taskId, vehicleType },
     });
   }
 

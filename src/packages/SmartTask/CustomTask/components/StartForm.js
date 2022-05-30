@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Checkbox, Form, Input } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import RobotSelector from '../components/RobotSelector';
+import VehicleSelector from '../components/VehicleSelector';
 import style from '../customTask.module.less';
 import { connect } from '@/utils/RmsDva';
 
@@ -11,14 +11,14 @@ const { formItemLayout } = getFormLayout(6, 18);
 const StartForm = (props) => {
   const { code, form, type, hidden, variable } = props;
 
-  function validateRobot(_, value) {
+  function validateVehicle(_, value) {
     if (value.type === 'AUTO') {
       return Promise.resolve();
     } else {
       if (value.code.length > 0 || variable.START) {
         return Promise.resolve();
       }
-      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.robot' })));
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.vehicle' })));
     }
   }
 
@@ -45,17 +45,17 @@ const StartForm = (props) => {
       </Form.Item>
 
       {/* --------------------------------------------------------------- */}
-      {/* 分小车: 当前执行任务的指定robot资源-->小车/小车组/无 */}
+      {/* 分小车: 当前执行任务的指定vehicle资源-->小车/小车组/无 */}
       <Form.Item
         hidden={hidden}
         required
         {...formItemLayout}
-        name={[code, 'robot']}
+        name={[code, 'vehicle']}
         initialValue={{ type: 'AUTO', code: [] }}
-        label={<FormattedMessage id='customTask.form.robot' />}
-        rules={[{ validator: validateRobot }]}
+        label={<FormattedMessage id='customTask.form.vehicle' />}
+        rules={[{ validator: validateVehicle }]}
       >
-        <RobotSelector form={form} subTaskCode={code} />
+        <VehicleSelector form={form} subTaskCode={code} />
       </Form.Item>
 
       {/* 约束 */}
@@ -72,7 +72,7 @@ const StartForm = (props) => {
             valuePropName={'checked'}
           >
             <Checkbox>
-              <FormattedMessage id={'customTask.form.limit.podWithStandbyAgv'} />
+              <FormattedMessage id={'customTask.form.limit.podWithStandbyVehicle'} />
             </Checkbox>
           </Form.Item>
         </div>

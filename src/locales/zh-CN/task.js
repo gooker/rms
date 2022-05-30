@@ -13,9 +13,9 @@ export default {
   'app.taskPool.mountedBin': '已挂载的料箱',
 
   // 等待队列
-  'app.taskQueue.appointedAgv': '必选小车',
+  'app.taskQueue.appointedVehicle': '必选小车',
   'app.taskQueue.appointedTarget': '指定目标点',
-  'app.taskQueue.availableAgv': '可用小车',
+  'app.taskQueue.availableVehicle': '可用小车',
   'app.taskQueue.createTime': '加入时间',
   'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
   'app.taskQueue.notAvailable': '暂无',
@@ -72,7 +72,7 @@ export default {
   'app.taskDetail.isReleased': '是否释放',
   'app.taskDetail.isTask': '的任务',
   'app.taskDetail.makeSure': '请确定要',
-  'app.taskDetail.makeSureRobotNotLoadedPodBeforeRedoing': '重做前，请先确保当前小车没有驮着货架',
+  'app.taskDetail.makeSureVehicleNotLoadedPodBeforeRedoing': '重做前，请先确保当前小车没有驮着货架',
   'app.taskDetail.operationComplete': '操作完成',
   'app.taskDetail.notAvailable': '暂无',
   'app.taskDetail.reason': '原因',
@@ -85,10 +85,10 @@ export default {
   'app.taskDetail.retransmission': '重发',
   'app.taskDetail.retransmissionArea': '重发区域',
   'app.taskDetail.retransmissionTaskSubmit': '重发任务请求已提交',
-  'app.taskDetail.robotStatus': '的小车状态',
+  'app.taskDetail.vehicleStatus': '的小车状态',
   'app.taskDetail.searchDate': '查询时间',
   'app.taskDetail.sectionId': '区域ID',
-  'app.taskDetail.selectAgvPlaceholder': '请选择小车',
+  'app.taskDetail.selectVehiclePlaceholder': '请选择小车',
   'app.taskDetail.startTime': '开始时间',
   'app.taskDetail.startingPower': '开始电量',
   'app.taskDetail.stepId': '步骤',
@@ -104,7 +104,7 @@ export default {
   'app.taskDetail.workStationStopSpotId': '工作站停止点',
   'app.taskDetail.workStationTask': '工作站任务',
   'app.taskDetail.queryTime': '查询时间',
-  'app.taskDetail.realTime': 'AGV实时料仓',
+  'app.taskDetail.realTime': 'Vehicle实时料仓',
   'app.taskDetail.trolleyErrorRecord': '小车错误记录',
   'app.taskDetail.layers': '层数',
   'app.taskDetail.unknown': '未知的',
@@ -135,7 +135,7 @@ export default {
   'app.taskDetail.taskStep': '任务步数',
 
   // 任务日志
-  'app.taskLog.AGV': '车辆',
+  'app.taskLog.Vehicle': '车辆',
   'app.taskLog.SYSTEM': '系统',
 
   // 任务告警

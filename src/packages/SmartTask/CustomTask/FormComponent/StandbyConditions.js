@@ -18,8 +18,8 @@ const StandbyConditions = (props) => {
 
   const taskTypeOptions = convertMapToArrayMap(allTaskTypes, 'code', 'name');
   const initialValue = { ...value };
-  if (!Array.isArray(initialValue.agvTaskTypes)) {
-    initialValue.agvTaskTypes = [];
+  if (!Array.isArray(initialValue.vehicleTaskTypes)) {
+    initialValue.vehicleTaskTypes = [];
   }
   if (!Array.isArray(initialValue.appointResources)) {
     initialValue.appointResources = [{}];
@@ -31,8 +31,8 @@ const StandbyConditions = (props) => {
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={'agvTaskTypes'}
-        label={formatMessage({ id: 'customTask.form.agvTaskTypes' })}
+        name={'vehicleTaskTypes'}
+        label={formatMessage({ id: 'customTask.form.vehicleTaskTypes' })}
       >
         <Select
           showSearch
@@ -68,7 +68,7 @@ const StandbyConditions = (props) => {
                     <Form.Item noStyle {...field}>
                       <ModelSelection
                         modelTypes={modelTypes}
-                        exclude={['AGV', 'AGV_GROUP']}
+                        exclude={['Vehicle', 'Vehicle_GROUP']}
                         disabled={false}
                       />
                     </Form.Item>

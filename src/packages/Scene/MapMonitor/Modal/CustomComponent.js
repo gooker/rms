@@ -11,14 +11,14 @@ import {
   renderRequestBodyForm,
 } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
 import { fetchRequestorList } from '@/services/api';
 
-const TabAgvMap = {
-  LatentAGV: AGVType.LatentLifting,
-  ToteAGV: AGVType.Tote,
-  SorterAGV: AGVType.Sorter,
+const TabVehicleMap = {
+  LatentVehicle: VehicleType.LatentLifting,
+  ToteVehicle: VehicleType.Tote,
+  SorterVehicle: VehicleType.Sorter,
 };
 
 const { formItemLayout } = getFormLayout(6, 16);
@@ -49,19 +49,19 @@ const CustomComponent = (props) => {
   }
 
   const renderCustomButton = () => {
-    const agvType = TabAgvMap[category];
-    const agvApiList = apiList
-      .filter((item) => item.agvType === agvType)
+    const vehicleType = TabVehicleMap[category];
+    const vehicleApiList = apiList
+      .filter((item) => item.vehicleType === vehicleType)
       .map(({ id, name }) => ({ id, name }));
 
-    if (agvApiList.length > 0) {
+    if (vehicleApiList.length > 0) {
       return (
         <Form.Item
           {...formItemLayout}
           style={{ width: '100%' }}
           label={formatMessage({ id: 'app.common.custom' })}
         >
-          {agvApiList.map(({ id, name }) => (
+          {vehicleApiList.map(({ id, name }) => (
             <Button
               key={id}
               size="small"
@@ -137,7 +137,7 @@ const CustomComponent = (props) => {
                 loading={executing}
                 disabled={executing}
               >
-                <FormattedMessage id="app.agv.batchCommand.Modal.confirm" />
+                <FormattedMessage id="app.vehicle.batchCommand.Modal.confirm" />
               </Button>
             </div>
           )}
@@ -147,6 +147,6 @@ const CustomComponent = (props) => {
   );
 };
 export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   category: monitor.categoryPanel,
 }))(memo(CustomComponent));

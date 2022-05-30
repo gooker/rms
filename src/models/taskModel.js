@@ -4,9 +4,9 @@ import {
   fetchResetTask,
   fetchCancelTask,
   fetchRestoreTask,
-  fetchAgvErrorRecord,
-  getAGVTaskLog,
-  getAlertCentersByTaskIdOrAgvId,
+  fetchVehicleErrorRecord,
+  getVehicleTaskLog,
+  getAlertCentersByTaskIdOrVehicleId,
 } from '@/services/api';
 import { dealResponse, formatMessage } from '@/utils/util';
 
@@ -15,7 +15,7 @@ export default {
 
   state: {
     taskId: null, // 标记当前正在查看的任务ID
-    taskAgvType: null, // 标记当前正在查看任务的小车类型
+    taskVehicleType: null, // 标记当前正在查看任务的小车类型
     taskDetailVisible: false,
     loadingTaskDetail: true, // 标记加载任务详情Spin
 
@@ -27,26 +27,26 @@ export default {
 
   effects: {
     *fetchTaskDetailByTaskId({ payload }, { call, put, select }) {
-      const { taskId, agvType } = payload;
+      const { taskId, vehicleType } = payload;
       const sectionId = window.localStorage.getItem('sectionId');
 
-      const changeVisiblePayload = { taskId, agvType, visible: true };
+      const changeVisiblePayload = { taskId, vehicleType, visible: true };
       yield put({ type: 'changeTaskDetailModalVisible', payload: changeVisiblePayload });
 
       // 获取任务详情
-      const response = yield call(fetchTaskDetailByTaskId, agvType, { taskId });
+      const response = yield call(fetchTaskDetailByTaskId, vehicleType, { taskId });
       if (dealResponse(response)) {
         return;
       }
 
       // 获取任务日志
-      const responseLog = yield call(getAGVTaskLog, { size: 10, current: 1, taskId });
+      const responseLog = yield call(getVehicleTaskLog, { size: 10, current: 1, taskId });
       if (dealResponse(responseLog)) {
         return;
       }
 
       // 获取告警信息
-      const responseAlaram = yield call(getAlertCentersByTaskIdOrAgvId, {
+      const responseAlaram = yield call(getAlertCentersByTaskIdOrVehicleId, {
         taskId,
       });
       if (dealResponse(responseAlaram)) {
@@ -55,7 +55,7 @@ export default {
 
       // 获取小车错误记录
       const params = { sectionId, taskId, size: 500, current: 1 };
-      const responseForError = yield call(fetchAgvErrorRecord, agvType, params);
+      const responseForError = yield call(fetchVehicleErrorRecord, vehicleType, params);
       if (dealResponse(responseForError)) {
         return;
       }
@@ -72,7 +72,7 @@ export default {
         type: 'commonSetTaskState',
         payload: {
           taskId: null,
-          taskAgvType: null,
+          taskVehicleType: null,
           taskDetailVisible: false,
           loadingTaskDetail: true,
           detailInfo: {},
@@ -82,8 +82,8 @@ export default {
     },
 
     *fetchRestartTask({ payload }, { call }) {
-      const { agvType, ...rest } = payload;
-      const response = yield call(fetchRestartTask, agvType, rest);
+      const { vehicleType, ...rest } = payload;
+      const response = yield call(fetchRestartTask, vehicleType, rest);
       if (
         dealResponse(
           response,
@@ -96,8 +96,8 @@ export default {
     },
 
     *fetchResetTask({ payload }, { call }) {
-      const { agvType, ...rest } = payload;
-      const response = yield call(fetchResetTask, agvType, rest);
+      const { vehicleType, ...rest } = payload;
+      const response = yield call(fetchResetTask, vehicleType, rest);
       if (
         dealResponse(
           response,
@@ -110,8 +110,8 @@ export default {
     },
 
     *fetchCancelTask({ payload }, { call }) {
-      const { agvType, ...rest } = payload;
-      const response = yield call(fetchCancelTask, agvType, rest);
+      const { vehicleType, ...rest } = payload;
+      const response = yield call(fetchCancelTask, vehicleType, rest);
       if (
         dealResponse(
           response,
@@ -124,8 +124,8 @@ export default {
     },
 
     *fetchRestoreTask({ payload }, { call }) {
-      const { agvType, ...rest } = payload;
-      const response = yield call(fetchRestoreTask, agvType, rest);
+      const { vehicleType, ...rest } = payload;
+      const response = yield call(fetchRestoreTask, vehicleType, rest);
       if (
         dealResponse(
           response,
@@ -164,7 +164,7 @@ export default {
       return {
         ...state,
         taskId: payload.taskId,
-        taskAgvType: payload.agvType,
+        taskVehicleType: payload.vehicleType,
         taskDetailVisible: payload.visible,
       };
     },

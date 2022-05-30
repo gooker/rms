@@ -3,7 +3,7 @@ import ReportGroupList from './components/ReportGroupList';
 import ReportGroup from '@/pages/ReportCenter/components/ReportGroupDetail';
 
 const ReportCenterComponent = (props) => {
-  const { agvType } = props;
+  const { vehicleType } = props;
   const [view, setView] = useState(0);
   const [reportGroup, setReportGroup] = useState(null);
 
@@ -11,7 +11,7 @@ const ReportCenterComponent = (props) => {
     <div style={{ height: '100%' }}>
       {view === 0 && (
         <ReportGroupList
-          agvType={agvType}
+          vehicleType={vehicleType}
           gotoDetail={(record) => {
             setView(1);
             setReportGroup(record);
@@ -21,7 +21,7 @@ const ReportCenterComponent = (props) => {
       {view === 1 && (
         <ReportGroup
           data={reportGroup}
-          agvType={agvType}
+          vehicleType={vehicleType}
           gotoList={() => {
             setView(0);
             setReportGroup(null);

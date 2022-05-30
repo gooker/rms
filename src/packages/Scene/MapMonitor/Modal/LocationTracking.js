@@ -11,7 +11,7 @@ const LocationTracking = (props) => {
   const {
     dispatch,
     mapRef,
-    allAGVs,
+    allVehicles,
     trackingView: { trackingCar, trackingCarSure, locationType, locationValue },
   } = props;
   const [form] = Form.useForm();
@@ -36,12 +36,12 @@ const LocationTracking = (props) => {
             <Col span={15}>
               <Form.Item name={'trackingCar'} initialValue={trackingCar} noStyle>
                 <Select size="small" optionLabelProp="value">
-                  {allAGVs?.map((record) => (
+                  {allVehicles?.map((record) => (
                     <Select.Option value={record.vehicleId} key={record.vehicleId}>
                       <Row>
                         <Col span={12}>{record.vehicleId}</Col>
                         <Col span={12} style={{ textAlign: 'end' }}>
-                          <FormattedMessage id={Dictionary('agvStatus', record?.agvWorkStatusDTO?.agvStatus)} />
+                          <FormattedMessage id={Dictionary('vehicleStatus', record?.vehicleWorkStatusDTO?.vehicleStatus)} />
                         </Col>
                       </Row>
                     </Select.Option>
@@ -56,7 +56,7 @@ const LocationTracking = (props) => {
                   if (trackingCarSure) {
                     isTracking = false;
                     if (mapRef) {
-                      mapRef.trackAGV(null);
+                      mapRef.trackVehicle(null);
                       mapRef.centerView();
                     }
                   } else {
@@ -66,7 +66,7 @@ const LocationTracking = (props) => {
                       return false;
                     }
                     isTracking = true;
-                    mapRef && mapRef.trackAGV(trackingCar);
+                    mapRef && mapRef.trackVehicle(trackingCar);
                   }
                   dispatch({
                     type: 'monitorView/saveTrackingView',
@@ -97,8 +97,8 @@ const LocationTracking = (props) => {
                   <Select.Option key="pod" value={'pod'}>
                     <FormattedMessage id="app.pod" />
                   </Select.Option>
-                  <Select.Option key="robot" value={'robot'}>
-                    <FormattedMessage id="app.agv" />
+                  <Select.Option key="vehicle" value={'vehicle'}>
+                    <FormattedMessage id="app.vehicle" />
                   </Select.Option>
                 </Select>
               </Form.Item>
@@ -131,7 +131,7 @@ const LocationTracking = (props) => {
   );
 };
 export default connect(({ monitor, monitorView }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   mapRef: monitor.mapContext,
   trackingView: monitorView.trackingView,
   currentLogicAreaId: monitor.currentLogicArea,

@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { AgvStateColor, Colors, ToteOffset } from '@/config/consts';
+import { VehicleStateColor, Colors, ToteOffset } from '@/config/consts';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -198,11 +198,11 @@ export function renderBattery(battery) {
   });
 }
 
-export function renderAgvState(state) {
+export function renderVehicleState(state) {
   if (!isStrictNull(state)) {
     return (
-      <Tag color={AgvStateColor[state]}>
-        <FormattedMessage id={`app.agvState.${state}`} />
+      <Tag color={VehicleStateColor[state]}>
+        <FormattedMessage id={`app.vehicleState.${state}`} />
       </Tag>
     );
   }
@@ -264,7 +264,7 @@ export function getDirectionLocale(angle) {
     return <span style={{ color: 'red' }}>{formatMessage({ id: 'app.common.noRecord' })}</span>;
   }
   if ([0, 90, 180, 270].includes(angle)) {
-    return formatMessage({ id: Dictionary('agvDirection', angle) });
+    return formatMessage({ id: Dictionary('vehicleDirection', angle) });
   } else {
     return `${angle}°`;
   }
@@ -272,14 +272,14 @@ export function getDirectionLocale(angle) {
 
 /**
  * 渲染小车状态标识
- * @param {String} agvStatus
+ * @param {String} vehicleStatus
  * @returns
  */
-export function getAgvStatusTag(agvStatus) {
-  if (agvStatus != null) {
-    const agvStateMap = Dictionary('agvStatus');
+export function getVehicleStatusTag(vehicleStatus) {
+  if (vehicleStatus != null) {
+    const vehicleStateMap = Dictionary('vehicleStatus');
     return (
-      <Tag color={AgvStateColor[agvStatus]}>{formatMessage({ id: agvStateMap[agvStatus] })}</Tag>
+      <Tag color={VehicleStateColor[vehicleStatus]}>{formatMessage({ id: vehicleStateMap[vehicleStatus] })}</Tag>
     );
   } else {
     return null;
@@ -737,13 +737,13 @@ export function renderRequestBodyForm(dataSource, formRef, isHook = false, optio
   }
 }
 
-export function getToteLayoutBaseParam(agvDirection, side) {
+export function getToteLayoutBaseParam(vehicleDirection, side) {
   let angle;
   let XBase;
   let YBase;
   let offset;
   let adapte; // adapte: 用于判断料箱在哪个方向进行距离调整, 非offset
-  switch (agvDirection) {
+  switch (vehicleDirection) {
     // 向上
     case 0:
       angle = side === 'L' ? 90 : 270;
@@ -1295,9 +1295,9 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
       if (!isNull(CustomNodeTypeFieldMap[key])) {
         if (key === 'START') {
           const startConfig = { ...value[key] };
-          const startConfigRobot = { ...startConfig.robot };
-          if (startConfigRobot.type === 'AUTO') {
-            startConfig.robot = null;
+          const startConfigVehicle = { ...startConfig.vehicle };
+          if (startConfigVehicle.type === 'AUTO') {
+            startConfig.vehicle = null;
           }
           customTaskData[CustomNodeTypeFieldMap[key]] = startConfig;
         } else {
@@ -1346,8 +1346,8 @@ export function restoreCustomTaskForm(customTask) {
     // 收集表单数据
     if (customTypeKey === 'START') {
       const startValues = { ...customTask[CustomNodeTypeFieldMap[customTypeKey]] };
-      if (isNull(startValues.robot)) {
-        delete startValues.robot;
+      if (isNull(startValues.vehicle)) {
+        delete startValues.vehicle;
       }
       result.fieldsValue[code] = startValues;
     } else if (customTypeKey === 'END') {

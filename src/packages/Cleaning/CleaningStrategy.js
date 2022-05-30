@@ -41,7 +41,7 @@ const CleaningStrategy = (props) => {
 
   const [pastMinuts, setPastMinuts] = useState(null);
   const [percentage, setPercentage] = useState(null);
-  const [useAgvStandByPercent, setUseAgvStandByPercent] = useState(false); // 第一条策略
+  const [useVehicleStandByPercent, setUseVehicleStandByPercent] = useState(false); // 第一条策略
   const [useIdleHours, setUseIdleHours] = useState(false); //空闲时段-允许默认时间段
 
   useEffect(() => {
@@ -66,9 +66,9 @@ const CleaningStrategy = (props) => {
       setNormalScopeFLag(!isNull(cleaningRes?.normalScopeCode));
       setFreeScopeFLag(!isNull(cleaningRes?.freeTimeScopeCode));
 
-      setPastMinuts(cleaningRes?.agvStandbyMinute);
-      setPercentage(cleaningRes?.agvStandbyPercent);
-      setUseAgvStandByPercent(cleaningRes?.useAgvStandByPercent);
+      setPastMinuts(cleaningRes?.vehicleStandbyMinute);
+      setPercentage(cleaningRes?.vehicleStandbyPercent);
+      setUseVehicleStandByPercent(cleaningRes?.useVehicleStandByPercent);
       setUseIdleHours(cleaningRes?.useIdleHours);
     } else {
       message.error(formatMessage({ id: 'cleaningCenter.data.fail' }));
@@ -143,9 +143,9 @@ const CleaningStrategy = (props) => {
             return { ...record, cleanPriority: cleanPriority ?? 5 };
           });
 
-          currentValue.agvStandbyMinute = pastMinuts;
-          currentValue.agvStandbyPercent = percentage;
-          currentValue.useAgvStandByPercent = useAgvStandByPercent;
+          currentValue.vehicleStandbyMinute = pastMinuts;
+          currentValue.vehicleStandbyPercent = percentage;
+          currentValue.useVehicleStandByPercent = useVehicleStandByPercent;
           currentValue.useIdleHours = useIdleHours;
           saveStrategy(currentValue);
         }
@@ -204,7 +204,7 @@ const CleaningStrategy = (props) => {
                       {
                         pattern: /^[0-9]*$/,
                         message: formatMessage({
-                          id: 'lockManage.robot.number.required',
+                          id: 'lockManage.vehicle.number.required',
                         }),
                       },
                     ]}
@@ -421,9 +421,9 @@ const CleaningStrategy = (props) => {
               <div className={styles.strategyRow} style={{ marginLeft: 20 }}>
                 <div className={styles.checkBox}>
                   <Checkbox
-                    checked={useAgvStandByPercent}
+                    checked={useVehicleStandByPercent}
                     onChange={(ev) => {
-                      setUseAgvStandByPercent(ev.target.checked);
+                      setUseVehicleStandByPercent(ev.target.checked);
                     }}
                   />
                 </div>
@@ -435,7 +435,7 @@ const CleaningStrategy = (props) => {
                     onChange={setPastMinuts}
                   />
                   <FormattedMessage id="app.chargeStrategy.minute" />{' '}
-                  <FormattedMessage id="app.chargeStrategy.percentageOfFreeAgv" />
+                  <FormattedMessage id="app.chargeStrategy.percentageOfFreeVehicle" />
                   <InputNumber
                     style={{ margin: '0 10px' }}
                     value={percentage}

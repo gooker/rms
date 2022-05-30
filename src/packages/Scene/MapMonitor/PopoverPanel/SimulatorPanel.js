@@ -4,21 +4,21 @@ import { Button, Divider, message, Select, Switch } from 'antd';
 import { LeftOutlined, ReloadOutlined, RightOutlined, SettingOutlined } from '@ant-design/icons';
 import {
   closeSimulator,
-  fetchCloseAgv,
-  fetchOpenAGV,
-  fetchRunAGV,
+  fetchCloseVehicle,
+  fetchOpenVehicle,
+  fetchRunVehicle,
   fetchSimulatorErrorMessage,
-  fetchStopAGV,
+  fetchStopVehicle,
   openSimulator,
 } from '@/services/monitor';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';
-import AddSimulatorAgv from '../Modal/Simulator/AddSimulatorAgv';
+import AddSimulatorVehicle from '../Modal/Simulator/AddSimulatorVehicle';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
 import SimulatorError from '../Modal/Simulator/SimulatorError';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 import simulatorStyle from './simulator.module.less';
@@ -29,14 +29,14 @@ const SimulatorPanel = (props) => {
   const {
     dispatch,
     simulatorHistory,
-    simulatorAgvList,
+    simulatorVehicleList,
     currentLogicArea,
-    robotTypes,
+    vehicleTypes,
     allAdaptors,
   } = props;
 
-  const [currentRobotType, setCurrentRobotType] = useState(AGVType.LatentLifting);
-  const [agvAdapter, setAgvAdapter] = useState(null); // 适配器
+  const [currentVehicleType, setCurrentVehicleType] = useState(VehicleType.LatentLifting);
+  const [vehicleAdapter, setVehicleAdapter] = useState(null); // 适配器
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
   const [configurationVisible, setConfigurationVisible] = useState(false); // 配置
   const [addVisit, setAddVisit] = useState(false); // 添加模拟器
@@ -49,12 +49,12 @@ const SimulatorPanel = (props) => {
   }, []);
 
   useEffect(() => {
-    setAgvAdapter(Object.values(allAdaptors)?.[0]?.adapterType?.id);
+    setVehicleAdapter(Object.values(allAdaptors)?.[0]?.adapterType?.id);
   }, [allAdaptors]);
 
   function init() {
     dispatch({ type: 'simulator/fetchAllAdaptors' });
-    dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+    dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
     dispatch({ type: 'simulator/fetchSimulatorHistory' });
   }
 
@@ -66,9 +66,9 @@ const SimulatorPanel = (props) => {
     },
     {
       title: formatMessage({ id: 'app.common.type' }),
-      dataIndex: 'agvType',
+      dataIndex: 'vehicleType',
       align: 'center',
-      render: (text) => formatMessage({ id: `app.agvType.${text}` }),
+      render: (text) => formatMessage({ id: `app.vehicleType.${text}` }),
     },
     {
       title: formatMessage({ id: 'monitor.simulator.list.movable' }),
@@ -78,7 +78,7 @@ const SimulatorPanel = (props) => {
         <Switch
           checked={text || false}
           onChange={(checked) => {
-            changeAgvRunTask(record.vehicleId, checked);
+            changeVehicleRunTask(record.vehicleId, checked);
           }}
         />
       ),
@@ -94,7 +94,7 @@ const SimulatorPanel = (props) => {
         if (text) {
           return formatMessage({ id: 'monitor.simulator.list.snapStop' });
         }
-        return formatMessage({ id: 'app.agv.normal' });
+        return formatMessage({ id: 'app.vehicle.normal' });
       },
     },
     {
@@ -128,18 +128,18 @@ const SimulatorPanel = (props) => {
     init();
   }
 
-  function changeAgvRunTask(vehicleId, checked) {
+  function changeVehicleRunTask(vehicleId, checked) {
     const params = {
       vehicleId: `${vehicleId}`,
       logicId: currentLogicArea,
       runTask: checked,
     };
     fetchSimulatorErrorMessage(params).then(() => {
-      dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+      dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
     });
   }
 
-  function agvOperate(api, successMes, failedMes) {
+  function vehicleOperate(api, successMes, failedMes) {
     const currentMessage = successMes || formatMessage({ id: 'app.message.operateSuccess' });
     const failMessage = failedMes || formatMessage({ id: 'app.message.operateFailed' });
     const promises = [];
@@ -151,7 +151,7 @@ const SimulatorPanel = (props) => {
       .then(() => {
         message.success(currentMessage);
         setSelectedRowKeys([]);
-        dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+        dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
       })
       .catch(() => {
         message.error(failMessage);
@@ -162,11 +162,11 @@ const SimulatorPanel = (props) => {
     if (configurationVisible) {
       return (
         <SimulatorConfigPanel
-          robotType={currentRobotType}
+          vehicleType={currentVehicleType}
           simulatorConfig={simulatorConfiguration}
           submit={(obj) => {
             dispatch({
-              type: 'simulator/fetchUpdateAGVConfig',
+              type: 'simulator/fetchUpdateVehicleConfig',
               payload: obj,
             }).then((result) => {
               result && setConfigurationVisible(false);
@@ -214,16 +214,16 @@ const SimulatorPanel = (props) => {
         {isExistVisibleDisplay() ? (
           <div style={{ marginTop: 20 }}>
             {addVisit && (
-              <AddSimulatorAgv
-                robotType={currentRobotType}
-                robotTypes={robotTypes}
-                agvAdapter={agvAdapter}
+              <AddSimulatorVehicle
+                vehicleType={currentVehicleType}
+                vehicleTypes={vehicleTypes}
+                vehicleAdapter={vehicleAdapter}
                 submit={(value) => {
                   dispatch({
-                    type: 'simulator/fetchAddSimulatorAgv',
+                    type: 'simulator/fetchAddSimulatorVehicle',
                     payload: { ...value },
                   }).then(() => {
-                    dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+                    dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
                     setAddVisit(false);
                   });
                 }}
@@ -275,9 +275,9 @@ const SimulatorPanel = (props) => {
                 <Select
                   size={size}
                   style={{ width: '60%' }}
-                  value={agvAdapter}
+                  value={vehicleAdapter}
                   onChange={(value) => {
-                    setAgvAdapter(value);
+                    setVehicleAdapter(value);
                   }}
                 >
                   {Object.values(allAdaptors).map(({ adapterType }) => {
@@ -293,8 +293,8 @@ const SimulatorPanel = (props) => {
                   style={{ color: '#fff', fontSize: 17, marginLeft: 10 }}
                   onClick={() => {
                     dispatch({
-                      type: 'simulator/fetchSimulatorGetAGVConfig',
-                      payload: currentRobotType,
+                      type: 'simulator/fetchSimulatorGetVehicleConfig',
+                      payload: currentVehicleType,
                     }).then((result) => {
                       if (result) {
                         setSimulatorConfiguration(result);
@@ -314,7 +314,7 @@ const SimulatorPanel = (props) => {
                   }}
                 >
                   <FormattedMessage id="app.button.add" />
-                  <FormattedMessage id={'app.agv'} />
+                  <FormattedMessage id={'app.vehicle'} />
                 </Button>
                 <Button
                   size={size}
@@ -335,14 +335,14 @@ const SimulatorPanel = (props) => {
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
                   dispatch({
-                    type: 'simulator/fetchDeletedSimulatorAgv',
+                    type: 'simulator/fetchDeletedSimulatorVehicle',
                     payload: {
-                      robotIds: selectedRowKeys,
+                      vehicleIds: selectedRowKeys,
                     },
                   }).then((result) => {
                     if (result) {
                       setSelectedRowKeys([]);
-                      dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+                      dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
                     }
                   });
                 }}
@@ -355,8 +355,8 @@ const SimulatorPanel = (props) => {
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
-                  agvOperate(
-                    fetchStopAGV,
+                  vehicleOperate(
+                    fetchStopVehicle,
                     formatMessage({ id: 'app.simulator.tip.beatStopSuccess' }),
                     formatMessage({ id: 'app.simulator.tip.beatStopFail' }),
                   );
@@ -369,8 +369,8 @@ const SimulatorPanel = (props) => {
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
-                  agvOperate(
-                    fetchRunAGV,
+                  vehicleOperate(
+                    fetchRunVehicle,
                     formatMessage({ id: 'app.simulator.tip.loosenStopSuccess' }),
                     formatMessage({ id: 'app.simulator.tip.loosenStopFail' }),
                   );
@@ -383,8 +383,8 @@ const SimulatorPanel = (props) => {
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
-                  agvOperate(
-                    fetchCloseAgv,
+                  vehicleOperate(
+                    fetchCloseVehicle,
                     formatMessage({ id: 'app.simulator.tip.shutdownSuccess' }),
                     formatMessage({ id: 'app.simulator.tip.shutdownFail' }),
                   );
@@ -397,8 +397,8 @@ const SimulatorPanel = (props) => {
                 style={{ marginRight: '5px', marginBottom: '5px' }}
                 disabled={selectedRowKeys.length === 0}
                 onClick={() => {
-                  agvOperate(
-                    fetchOpenAGV,
+                  vehicleOperate(
+                    fetchOpenVehicle,
                     formatMessage({ id: 'app.simulator.tip.bootUpSuccess' }),
                     formatMessage({ id: 'app.simulator.tip.bootUpFail' }),
                   );
@@ -430,7 +430,7 @@ const SimulatorPanel = (props) => {
                   setSelectedRowKeys(value);
                 }}
               >
-                {simulatorAgvList.map(({ vehicleId }) => {
+                {simulatorVehicleList.map(({ vehicleId }) => {
                   return (
                     <Select.Option value={vehicleId} key={vehicleId}>
                       {vehicleId}
@@ -443,7 +443,7 @@ const SimulatorPanel = (props) => {
                 size={size}
                 columns={columns}
                 expandColumns={expandColumns}
-                dataSource={simulatorAgvList}
+                dataSource={simulatorVehicleList}
                 rowKey={(record) => record.vehicleId}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
@@ -461,9 +461,9 @@ const SimulatorPanel = (props) => {
   );
 };
 export default connect(({ global, simulator, loading, monitor }) => ({
-  robotTypes: global.allAgvTypes,
+  vehicleTypes: global.allVehicleTypes,
   currentLogicArea: monitor.currentLogicArea,
-  simulatorAgvList: simulator.simulatorAgvList,
+  simulatorVehicleList: simulator.simulatorVehicleList,
   simulatorHistory: simulator.simulatorHistory,
   allAdaptors: simulator.allAdaptors,
 }))(memo(SimulatorPanel));

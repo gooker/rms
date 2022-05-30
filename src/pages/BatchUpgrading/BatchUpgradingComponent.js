@@ -4,11 +4,11 @@ import { Button, Modal } from 'antd';
 import { DownloadOutlined, HistoryOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchAgvFileStatusList,
+  fetchVehicleFileStatusList,
   fetchMaintain,
   fetchUpdateFileTask,
   fetchUpgradeFirmwareFile,
-  upgradeAGV,
+  upgradeVehicle,
 } from '@/services/api';
 import TableWithPages from '@/components/TableWithPages';
 import UploadUtil from '@/components/UploadPanel';
@@ -36,9 +36,9 @@ class BatchUpgradingComponent extends Component {
   }
 
   getData = async () => {
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     this.setState({ loading: true });
-    const response = await fetchAgvFileStatusList(agvType);
+    const response = await fetchVehicleFileStatusList(vehicleType);
 
     if (!dealResponse(response)) {
       const dataSource = response.map((item) => ({ key: item.taskId, ...item }));
@@ -53,13 +53,13 @@ class BatchUpgradingComponent extends Component {
 
   // 取消维护
   maintainStatus = () => {
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     const { selectedRow, sectionId } = this.state;
     const _this = this;
     RmsConfirm({
       content: formatMessage({ id: 'app.activity.switchmaintenanceStatus' }),
       onOk: async () => {
-        const resetRes = await fetchMaintain(agvType, {
+        const resetRes = await fetchMaintain(vehicleType, {
           sectionId,
           vehicleId: selectedRow[0].vehicleId,
           disabled: !selectedRow[0].disabled,
@@ -74,8 +74,8 @@ class BatchUpgradingComponent extends Component {
   // 下载固件--上传
   downloadFireware = async (value) => {
     const { selectedRow, sectionId } = this.state;
-    const { agvType } = this.props;
-    const submitRes = await fetchUpgradeFirmwareFile(agvType, {
+    const { vehicleType } = this.props;
+    const submitRes = await fetchUpgradeFirmwareFile(vehicleType, {
       ...value,
       vehicleId: selectedRow[0].vehicleId,
       sectionId,
@@ -86,10 +86,10 @@ class BatchUpgradingComponent extends Component {
   };
 
   // 升级
-  upgradeAgv = async () => {
+  upgradeVehicle = async () => {
     const { selectedRow, sectionId } = this.state;
-    const { agvType } = this.props;
-    const upgradeRes = await upgradeAGV(agvType, { sectionId, vehicleId: selectedRow[0].vehicleId });
+    const { vehicleType } = this.props;
+    const upgradeRes = await upgradeVehicle(vehicleType, { sectionId, vehicleId: selectedRow[0].vehicleId });
     if (!dealResponse(upgradeRes)) {
       this.getData();
     }
@@ -108,16 +108,16 @@ class BatchUpgradingComponent extends Component {
   //强制重置
   forceSet = (record) => {
     const _this = this;
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
 
     RmsConfirm({
       content: (
         <div>
-          {formatMessage({ id: 'app.agv.id' })}:{record.vehicleId}
+          {formatMessage({ id: 'app.vehicle.id' })}:{record.vehicleId}
         </div>
       ),
       onOk: async () => {
-        const resetRes = await fetchUpdateFileTask(agvType, {
+        const resetRes = await fetchUpdateFileTask(vehicleType, {
           ...record,
           fileStatus: 2,
         });
@@ -130,7 +130,7 @@ class BatchUpgradingComponent extends Component {
 
   render() {
     const { loading, selectedRowKeys, selectedRow, downloadFirmwareVisible } = this.state;
-    const { getColumn, maintainFlag, uploadFlag, upgradeFlag, agvType, uploadVisible } = this.props;
+    const { getColumn, maintainFlag, uploadFlag, upgradeFlag, vehicleType, uploadVisible } = this.props;
     return (
       <TablePageWrapper>
         <div className={commonStyles.tableToolLeft}>
@@ -145,7 +145,7 @@ class BatchUpgradingComponent extends Component {
             </Button>
           )}
           {upgradeFlag && (
-            <Button onClick={this.upgradeAgv} disabled={selectedRowKeys.length !== 1}>
+            <Button onClick={this.upgradeVehicle} disabled={selectedRowKeys.length !== 1}>
               <IconFont type={'icon-shengji'} /> <FormattedMessage id="app.activity.upgrade" />
             </Button>
           )}
@@ -197,7 +197,7 @@ class BatchUpgradingComponent extends Component {
         >
           <DownloadFirmwareModal
             selectedRow={selectedRow}
-            agvType={agvType}
+            vehicleType={vehicleType}
             downloadFireware={this.downloadFireware}
           />
         </Modal>

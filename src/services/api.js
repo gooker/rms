@@ -46,52 +46,52 @@ export async function fetchForkLiftPodLayout() {
 }
 
 // ************************************** 小车相关  ************************************** //
-export async function fetchAllAgvList() {
+export async function fetchAllVehicleList() {
   return request(`/${NameSpace.Platform}/traffic/getAllVehicles`, {
     method: 'GET',
   });
 }
 
 // 获取section的指定小车当前信息
-export async function fetchAgvInfo(vehicleId, vehicleType) {
+export async function fetchVehicleInfo(vehicleId, vehicleType) {
   return request(`/${NameSpace.Platform}/traffic/getVehicle/${vehicleId}/${vehicleType}`, {
     method: `GET`,
   });
 }
 
 // 请求Coordinator端小车实时信息
-export async function fetchCoordAgvInfo(vehicleId) {
-  return request(`/${NameSpace.Platform}/traffic/getAGV/${vehicleId}`, {
+export async function fetchCoordVehicleInfo(vehicleId) {
+  return request(`/${NameSpace.Platform}/traffic/getVehicle/${vehicleId}`, {
     method: `GET`,
   });
 }
 
 // 请求小车的硬件状态
-export async function fetchAgvHardwareInfo(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.vehicleId}`, {
+export async function fetchVehicleHardwareInfo(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/vehicleHardware/${params.sectionId}/${params.vehicleId}`, {
     method: `GET`,
   });
 }
 
 // 请求删除小车(批量)
-export async function fetchDeleteAgvList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/deleteAgv`, {
+export async function fetchDeleteVehicleList(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/deleteVehicle`, {
     method: `POST`,
     data: params,
   });
 }
 
 // 小车移出地图
-export async function fetchMoveoutAGVs(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/robotRemoveFromMap`, {
+export async function fetchMoveoutVehicles(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/vehicleRemoveFromMap`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 获取当前小车实时运行信息
-export async function fetchAgvRunningInfo(params) {
-  return request(`/${NameSpace.Platform}/problemHandling/getAgvErrorMessage`, {
+export async function fetchVehicleRunningInfo(params) {
+  return request(`/${NameSpace.Platform}/problemHandling/getVehicleErrorMessage`, {
     method: 'GET',
     data: params,
   });
@@ -99,9 +99,9 @@ export async function fetchAgvRunningInfo(params) {
 
 // ************************************** 执行队列  ************************************** //
 // 获取执行队列数据
-export async function fetchExecutingTaskList(agvType, params) {
+export async function fetchExecutingTaskList(vehicleType, params) {
   return request(
-    `/${NameSpace[agvType]}/redis/getExecutingTaskList/${window.localStorage.getItem('sectionId')}`,
+    `/${NameSpace[vehicleType]}/redis/getExecutingTaskList/${window.localStorage.getItem('sectionId')}`,
     {
       method: `GET`,
     },
@@ -109,8 +109,8 @@ export async function fetchExecutingTaskList(agvType, params) {
 }
 
 // 删除执行队列任务
-export async function deleteExecutionQTasks(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/batchDeleteExecutingTask`, {
+export async function deleteExecutionQTasks(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/redis/batchDeleteExecutingTask`, {
     method: `POST`,
     data: params,
   });
@@ -118,9 +118,9 @@ export async function deleteExecutionQTasks(agvType, params) {
 
 // ************************************** 等待队列  ************************************** //
 // 获取等待队列任务
-export async function fetchTaskQueueList(agvType) {
+export async function fetchTaskQueueList(vehicleType) {
   return request(
-    `/${NameSpace[agvType]}/redis/getPipeLineTaskList/${window.localStorage.getItem('sectionId')}`,
+    `/${NameSpace[vehicleType]}/redis/getPipeLineTaskList/${window.localStorage.getItem('sectionId')}`,
     {
       method: `GET`,
     },
@@ -128,17 +128,17 @@ export async function fetchTaskQueueList(agvType) {
 }
 
 // 删除等待队列任务
-export async function deleteTaskQueueItems(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/batchDeletePipeLineTask`, {
+export async function deleteTaskQueueItems(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/redis/batchDeletePipeLineTask`, {
     method: `POST`,
     data: params,
   });
 }
 
 // 获取当前区域小车状态总体数据
-export async function fetchAgvOverallStatus(agvType) {
+export async function fetchVehicleOverallStatus(vehicleType) {
   return request(
-    `/${NameSpace[agvType]}/agv/getStandByAndAvailableAgvNumber/${window.localStorage.getItem(
+    `/${NameSpace[vehicleType]}/vehicle/getStandByAndAvailableVehicleNumber/${window.localStorage.getItem(
       'sectionId',
     )}`,
     {
@@ -148,8 +148,8 @@ export async function fetchAgvOverallStatus(agvType) {
 }
 
 // 修改任务优先级
-export async function fetchUpdateTaskPriority(agvType, params) {
-  return request(`/${NameSpace[agvType]}/redis/batchUpdatePipeLineTaskPriority`, {
+export async function fetchUpdateTaskPriority(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/redis/batchUpdatePipeLineTaskPriority`, {
     method: 'POST',
     data: params,
   });
@@ -157,72 +157,72 @@ export async function fetchUpdateTaskPriority(agvType, params) {
 
 // ************************************** 任务查询 ************************************** //
 // 查询当前区域小车任务列表
-export async function fetchAgvTaskList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/api/agvTask`, {
+export async function fetchVehicleTaskList(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/api/vehicleTask`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 小车-任务日志
-export async function getAGVTaskLog(param) {
-  return request(`/${NameSpace.Platform}/alertCenter/getAGVTaskLog`, {
+export async function getVehicleTaskLog(param) {
+  return request(`/${NameSpace.Platform}/alertCenter/getVehicleTaskLog`, {
     method: 'GET',
     data: param,
   });
 }
 
 // 小车详情-告警信息
-export async function getAlertCentersByTaskIdOrAgvId(param) {
-  return request(`/${NameSpace.Platform}/alertCenter/getAlertCentersByTaskIdOrAgvId`, {
+export async function getAlertCentersByTaskIdOrVehicleId(param) {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCentersByTaskIdOrVehicleId`, {
     method: 'GET',
     data: param,
   });
 }
 
 // 获取任务详情数据
-export async function fetchTaskDetailByTaskId(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/agvTaskDetail`, {
+export async function fetchTaskDetailByTaskId(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle-task/vehicleTaskDetail`, {
     method: `GET`,
     data: params,
   });
 }
 
 // 请求取消任务
-export async function fetchBatchCancelTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/batchCancelTask`, {
+export async function fetchBatchCancelTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle-task/batchCancelTask`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 请求重发任务
-export async function fetchRestartTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/restartTask`, {
+export async function fetchRestartTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle-task/action/restartTask`, {
     method: `GET`,
     data: params,
   });
 }
 
 // 请求重置任务
-export async function fetchResetTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/resetTask`, {
+export async function fetchResetTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle-task/action/resetTask`, {
     method: `GET`,
     data: params,
   });
 }
 
 // 请求取消任务
-export async function fetchCancelTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/cancelTask`, {
+export async function fetchCancelTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle-task/action/cancelTask`, {
     method: `GET`,
     data: params,
   });
 }
 
 // 请求恢复任务
-export async function fetchRestoreTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/restoreTask`, {
+export async function fetchRestoreTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle-task/action/restoreTask`, {
     method: `GET`,
     data: params,
   });
@@ -230,56 +230,56 @@ export async function fetchRestoreTask(agvType, params) {
 
 // ************************************** 充电策略 ************************************** //
 // 查询充电策略
-export async function getChargeStrategy(agvType, type) {
+export async function getChargeStrategy(vehicleType, type) {
   const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[agvType]}/charger/getChargingStrategy/${sectionId}/${type}`, {
+  return request(`/${NameSpace[vehicleType]}/charger/getChargingStrategy/${sectionId}/${type}`, {
     method: 'GET',
   });
 }
 // 获取当前状态
-export async function getCurrentChargerType(agvType) {
-  return request(`/${NameSpace[agvType]}/charger/getCurrentChargerType`, {
+export async function getCurrentChargerType(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/charger/getCurrentChargerType`, {
     method: 'GET',
   });
 }
 // 保存充电策略
-export async function saveChargeStrategy(agvType, params) {
-  return request(`/${NameSpace[agvType]}/charger/updateChargingStrategy`, {
+export async function saveChargeStrategy(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/charger/updateChargingStrategy`, {
     method: 'POST',
     data: params,
   });
 }
 // 默认充电策略
-export async function getDefaultChargingStrategy(agvType) {
-  return request(`/${NameSpace[agvType]}/charger/getDefaultChargingStrategy`, {
+export async function getDefaultChargingStrategy(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/charger/getDefaultChargingStrategy`, {
     method: 'GET',
   });
 }
 // 保存闲时充电策略
-export async function saveIdleChargingStrategy(agvType, params) {
-  return request(`/${NameSpace[agvType]}/charger/updateIdleHours`, {
+export async function saveIdleChargingStrategy(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/charger/updateIdleHours`, {
     method: 'POST',
     data: params,
   });
 }
 // 获取已配置的闲时充电策略信息
-export async function getIdleHoursBySectionId(agvType) {
-  return request(`/${NameSpace[agvType]}/charger/getIdleHoursBySectionId`, {
+export async function getIdleHoursBySectionId(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/charger/getIdleHoursBySectionId`, {
     method: 'GET',
   });
 }
 
 //// 获取参数模版
-export async function fetchSystemParamFormData(agvType, params) {
-  return request(`/${NameSpace[agvType]}/formTemplate/getFormTemplate`, {
+export async function fetchSystemParamFormData(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/formTemplate/getFormTemplate`, {
     method: 'GET',
     data: params,
   });
 }
 
 //// 更新系统参数
-export async function updateSystemParams(agvType, params) {
-  return request(`/${NameSpace[agvType]}/formTemplate/updateFormTemplateValue`, {
+export async function updateSystemParams(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/formTemplate/updateFormTemplateValue`, {
     method: 'POST',
     data: params,
   });
@@ -294,16 +294,16 @@ export async function updateSystemTimezone(timeZone) {
 }
 
 // 获取打分算法模版
-export async function fetchLatentToteParamFormData(agvType, params) {
-  return request(`/${NameSpace[agvType]}/paramTemplate/getParamTemplate`, {
+export async function fetchLatentToteParamFormData(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/paramTemplate/getParamTemplate`, {
     method: 'GET',
     data: params,
   });
 }
 
 // 更新打分算法
-export async function updateLatentToteSystemParams(agvType, params) {
-  return request(`/${NameSpace[agvType]}/paramTemplate/updateParamTemplateValue`, {
+export async function updateLatentToteSystemParams(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/paramTemplate/updateParamTemplateValue`, {
     method: 'POST',
     data: params,
   });
@@ -311,29 +311,29 @@ export async function updateLatentToteSystemParams(agvType, params) {
 
 /******料箱池任务 start*********/
 // 数据库中所有料箱池任务-废弃
-export async function dbPoolTasks(agvType, params) {
-  return request(`/${NameSpace[agvType]}/pool/queryDbTotePoolTaskInfo`, {
+export async function dbPoolTasks(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/pool/queryDbTotePoolTaskInfo`, {
     method: 'GET',
     data: params,
   });
 }
 //内存中的料箱池任务信息-废弃
-export async function memPoolTasks(agvType, params) {
-  return request(`/${NameSpace[agvType]}/pool/queryMemoryTotePoolTaskInfo`, {
+export async function memPoolTasks(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/pool/queryMemoryTotePoolTaskInfo`, {
     method: 'GET',
     data: params,
   });
 }
 //红外料箱任务池任务查询
-export async function fetchPoolTasks(agvType, params) {
-  return request(`/${NameSpace[agvType]}/pool/queryTotePoolTaskInfo`, {
+export async function fetchPoolTasks(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/pool/queryTotePoolTaskInfo`, {
     method: 'GET',
     data: params,
   });
 }
 //任务取消
-export async function cancelTotePoolTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/pool/cancelTotePoolTasks`, {
+export async function cancelTotePoolTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/pool/cancelTotePoolTasks`, {
     method: 'POST',
     data: params,
   });
@@ -341,62 +341,62 @@ export async function cancelTotePoolTask(agvType, params) {
 
 /******料箱池任务 end*********/
 
-/**tote agv列表***/
+/**tote vehicle列表***/
 
-export async function fetchToteAgvList(agvType) {
-  return request(`/${NameSpace[agvType]}/agv/getToteAGV`, {
+export async function fetchToteVehicleList(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/getToteVehicle`, {
     method: 'GET',
   });
 }
 
 /***批量升级***/
-export async function fetchAgvFileStatusList(agvType) {
-  return request(`/${NameSpace[agvType]}/agv/getAgvFileStatusList`, {
+export async function fetchVehicleFileStatusList(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/getVehicleFileStatusList`, {
     method: 'GET',
   });
 }
-export async function fetchUpdateFileTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/updateFileTask`, {
+export async function fetchUpdateFileTask(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/updateFileTask`, {
     method: 'POST',
     data: params,
   });
 }
 
 //维护/取消维护
-export async function fetchMaintain(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/action/maintain`, {
+export async function fetchMaintain(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/action/maintain`, {
     method: 'GET',
     data: params,
   });
 }
 
 // 请求切换小车手动模式
-export async function fetchManualMode(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/action/manualMode`, {
+export async function fetchManualMode(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/vehicle/action/manualMode`, {
     method: 'GET',
     data: params,
   });
 }
 
 // 下载固件--固件 查询SFTP上上传的文件名称
-export async function fetchFirmWarList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/selectUploadFileNameList`, {
+export async function fetchFirmWarList(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/selectUploadFileNameList`, {
     method: 'GET',
     data: params,
   });
 }
 
 // 下载固件--提交
-export async function fetchUpgradeFirmwareFile(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/upLoadFirmwareFile`, {
+export async function fetchUpgradeFirmwareFile(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/upLoadFirmwareFile`, {
     method: 'GET',
     data: params,
   });
 }
 
 // 升级
-export async function upgradeAGV(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/upgradeAGV`, {
+export async function upgradeVehicle(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/upgradeVehicle`, {
     method: 'GET',
     data: params,
   });
@@ -404,8 +404,8 @@ export async function upgradeAGV(agvType, params) {
 
 /**** 日志下载 ****/
 // 下载小车上的日志文件到云端SFTP
-export async function startCreatingLog(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/downLoadLogToSFTP`, {
+export async function startCreatingLog(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/downLoadLogToSFTP`, {
     method: `GET`,
     data: {
       sectionId: window.localStorage.getItem('sectionId'),
@@ -415,24 +415,24 @@ export async function startCreatingLog(agvType, params) {
 }
 
 // SFTP上查询下载日志文件
-export async function fetchAgvLog(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/selectFileTaskList`, {
+export async function fetchVehicleLog(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/selectFileTaskList`, {
     method: 'GET',
     data: { sectionId: window.localStorage.getItem('sectionId'), ...params },
   });
 }
 
 // 强制重置
-export async function forceResetLogGeneration(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/updateFileTask`, {
+export async function forceResetLogGeneration(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/updateFileTask`, {
     method: `POST`,
     data: params,
   });
 }
 
 // 下载日志
-export async function downloadLogFromSFTP(agvType, params) {
-  return request(`/${NameSpace[agvType]}/file/downloadFileFromSFTP`, {
+export async function downloadLogFromSFTP(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/file/downloadFileFromSFTP`, {
     method: `GET`,
     data: { sectionId: window.localStorage.getItem('sectionId'), ...params },
   });
@@ -440,9 +440,9 @@ export async function downloadLogFromSFTP(agvType, params) {
 
 /**** 故障信息 ****/
 // 提交故障定义
-export async function submitFaultDefinition(agvType, params) {
+export async function submitFaultDefinition(vehicleType, params) {
   return request(
-    `/${NameSpace[agvType]}/api/addErrorDefinition/${window.localStorage.getItem('sectionId')}`,
+    `/${NameSpace[vehicleType]}/api/addErrorDefinition/${window.localStorage.getItem('sectionId')}`,
     {
       method: `POST`,
       data: params,
@@ -451,9 +451,9 @@ export async function submitFaultDefinition(agvType, params) {
 }
 
 // 删除故障定义
-export async function deleteFaultDefinition(agvType, params) {
+export async function deleteFaultDefinition(vehicleType, params) {
   return request(
-    `/${NameSpace[agvType]}/api/batchDeleteErrorDefinition/${window.localStorage.getItem(
+    `/${NameSpace[vehicleType]}/api/batchDeleteErrorDefinition/${window.localStorage.getItem(
       'sectionId',
     )}`,
     {
@@ -464,16 +464,16 @@ export async function deleteFaultDefinition(agvType, params) {
 }
 
 // 获取故障定义
-export async function fetchDefinedFaults(agvType) {
-  return request(`/${NameSpace[agvType]}/api/selectErrorDefinitionList`, {
+export async function fetchDefinedFaults(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/api/selectErrorDefinitionList`, {
     method: `GET`,
     data: { sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
 // 获取小车故障信息
-export async function fetchAgvErrorRecord(agvType, params) {
-  return request(`/${NameSpace[agvType]}/api/agvErrorRecord`, {
+export async function fetchVehicleErrorRecord(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/api/vehicleErrorRecord`, {
     method: 'POST',
     data: {
       ...params,
@@ -483,9 +483,9 @@ export async function fetchAgvErrorRecord(agvType, params) {
 }
 
 // 初始化故障定义列表
-export async function initFaultDefinition(agvType) {
+export async function initFaultDefinition(vehicleType) {
   return request(
-    `/${NameSpace[agvType]}/api/addErrorDefinitionFormJsonFile/${window.localStorage.getItem(
+    `/${NameSpace[vehicleType]}/api/addErrorDefinitionFormJsonFile/${window.localStorage.getItem(
       'sectionId',
     )}`,
     { method: `GET` },
@@ -493,8 +493,8 @@ export async function initFaultDefinition(agvType) {
 }
 
 // 原始数据
-export async function downloadMetaData(agvType, params) {
-  return request(`/${NameSpace[agvType]}/excel/getAgvTraceExcel`, {
+export async function downloadMetaData(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/excel/getVehicleTraceExcel`, {
     method: 'POST',
     data: {
       ...params,
@@ -504,51 +504,51 @@ export async function downloadMetaData(agvType, params) {
 }
 
 /**** 报表中心 ****/
-export async function saveReportGroup(agvType, params) {
-  return request(`/${NameSpace[agvType]}/reportForm/saveFormTemplate`, {
+export async function saveReportGroup(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/saveFormTemplate`, {
     method: 'POST',
     body: { ...params, sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
-export async function deleteReportGroup(agvType, id) {
-  return request(`/${NameSpace[agvType]}/reportForm/deleteFormTemplateById`, {
+export async function deleteReportGroup(vehicleType, id) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/deleteFormTemplateById`, {
     method: 'GET',
     body: { id, sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
-export async function fetchReportGroupList(agvType) {
-  return request(`/${NameSpace[agvType]}/reportForm/getFormTemplateByUserId`, {
+export async function fetchReportGroupList(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/getFormTemplateByUserId`, {
     method: 'GET',
     data: { sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
-export async function fetchDimensionDictionary(agvType) {
-  return request(`/${NameSpace[agvType]}/reportForm/getDimensionDictionary`, {
+export async function fetchDimensionDictionary(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/getDimensionDictionary`, {
     method: `GET`,
   });
 }
 
-export async function fetchReportGroupDataById(agvType, params) {
-  return request(`/${NameSpace[agvType]}/reportForm/getFormTemplateById`, {
+export async function fetchReportGroupDataById(vehicleType, params) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/getFormTemplateById`, {
     method: `GET`,
     data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
 //获取报表数据源
-export async function fetchReportSourceURL(agvType) {
-  return request(`/${NameSpace[agvType]}/reportForm/getFormSource`, {
+export async function fetchReportSourceURL(vehicleType) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/getFormSource`, {
     method: 'GET',
     data: { sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
 //获取报表数据源详情(包含维度、筛选等等)
-export async function fetchReportSourceDetail(agvType, id) {
-  return request(`/${NameSpace[agvType]}/reportForm/getSourceDescribe`, {
+export async function fetchReportSourceDetail(vehicleType, id) {
+  return request(`/${NameSpace[vehicleType]}/reportForm/getSourceDescribe`, {
     method: `GET`,
     body: { id, sectionId: window.localStorage.getItem('sectionId') },
   });
@@ -594,31 +594,6 @@ export async function deleteCustomGroup(param) {
 export async function saveOneCustomGroup(param) {
   return request(`/${NameSpace.Platform}/custom/saveOneCustomGroup `, {
     method: 'POST',
-    data: param,
-  });
-}
-
-// 资源分组-分组绑定
-// 保存绑定关系
-export async function fechSaveUnBind(param) {
-  return request(`/${NameSpace.Platform}/custom/saveUnBindGroup`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 删除绑定关系
-export async function deleteUnBindGroup(param) {
-  return request(`/${NameSpace.Platform}/custom/deleteUnBindGroupById`, {
-    method: 'GET',
-    data: param,
-  });
-}
-
-// 根据mapId查询绑定关系
-export async function getUnBindGroupData(param) {
-  return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
-    method: 'GET',
     data: param,
   });
 }
@@ -699,7 +674,7 @@ export async function fetchTaskTypes() {
 
 // 获取小车返回指定的区域集合
 export async function getBackZone(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getBackZone`, {
+  return request(`/${NameSpace.Platform}/vehicle-custom-task/getBackZone`, {
     method: 'GET',
     data: param,
   });
@@ -715,20 +690,20 @@ export async function fetchCstParams(param) {
 
 // 获取潜伏车动作集
 export async function getLatentActions() {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getAddActions`, {
+  return request(`/${NameSpace.Platform}/vehicle-custom-task/getAddActions`, {
     method: 'GET',
   });
 }
 
 // ********************** 任务限流器  ********************** //
 // 任务类型限流
-export async function getAgvTasksByType() {
-  return request(`/${NameSpace.Platform}/customLimiter/getAgvTaskType`, {
+export async function getVehicleTasksByType() {
+  return request(`/${NameSpace.Platform}/customLimiter/getVehicleTaskType`, {
     method: 'GET',
   });
 }
 // 资源组限流
-export async function getAgvTasksByCustomGroup(param) {
+export async function getVehicleTasksByCustomGroup(param) {
   return request(`/${NameSpace.Platform}/customLimiter/getCustomGroup`, {
     method: 'GET',
     data: param,
@@ -887,13 +862,13 @@ export async function fetchBatchDeleteTargetCellLock(params) {
 }
 
 // 获取车辆锁
-export async function fetchAgvTaskLockList() {
+export async function fetchVehicleTaskLockList() {
   return request(`/${NameSpace.Platform}/resource/lock/getVehicleTaskLockList`, {
     method: `GET`,
   });
 }
 //车辆锁删除
-export async function batchDeleteAgvTaskLock(params) {
+export async function batchDeleteVehicleTaskLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteVehicleTaskLock`, {
     method: 'POST',
     data: params,
@@ -984,14 +959,14 @@ export async function batchDeletePod(params) {
 
 // 资源管理--潜伏货架--货架分配列表
 export async function fetchPodAssignData(params) {
-  return request(`/${NameSpace.Platform}/podAndAgvMatch/getBySectionId`, {
+  return request(`/${NameSpace.Platform}/podAndVehicleMatch/getBySectionId`, {
     method: 'GET',
     data: params,
   });
 }
 // 资源管理--潜伏货架--货架分配保存
 export async function savePodAssign(params) {
-  return request(`/${NameSpace.Platform}/podAndAgvMatch/save`, {
+  return request(`/${NameSpace.Platform}/podAndVehicleMatch/save`, {
     method: 'POST',
     data: params,
   });
@@ -999,38 +974,38 @@ export async function savePodAssign(params) {
 
 // 资源管理--潜伏货架--货架分配删除
 export async function batchDeletePodAssign(params) {
-  return request(`/${NameSpace.Platform}/podAndAgvMatch/deleteByIdIn`, {
+  return request(`/${NameSpace.Platform}/podAndVehicleMatch/deleteByIdIn`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 资源管理--小车分组列表
-export async function fetchAllMonitorAgvGroup() {
-  return request(`/${NameSpace.Platform}/mapScope/getAllMonitorAgvGroup`, {
+export async function fetchAllMonitorVehicleGroup() {
+  return request(`/${NameSpace.Platform}/mapScope/getAllMonitorVehicleGroup`, {
     method: 'GET',
   });
 }
 
 // 资源管理--小车分组新增保存
-export async function saveMonitorAgvGroup(param) {
-  return request(`/${NameSpace.Platform}/mapScope/saveMonitorAgvGroup`, {
+export async function saveMonitorVehicleGroup(param) {
+  return request(`/${NameSpace.Platform}/mapScope/saveMonitorVehicleGroup`, {
     method: 'POST',
     data: param,
   });
 }
 
 // 资源管理--小车分组更新保存
-export async function updateMonitorAgvGroup(param) {
-  return request(`/${NameSpace.Platform}/mapScope/updateMonitorAgvGroup`, {
+export async function updateMonitorVehicleGroup(param) {
+  return request(`/${NameSpace.Platform}/mapScope/updateMonitorVehicleGroup`, {
     method: 'POST',
     data: param,
   });
 }
 
 // 资源管理--小车分组 批量删除
-export async function batchDeleteMonitorAgvGroup(param) {
-  return request(`/${NameSpace.Platform}/mapScope/batchDeleteMonitorAgvGroup`, {
+export async function batchDeleteMonitorVehicleGroup(param) {
+  return request(`/${NameSpace.Platform}/mapScope/batchDeleteMonitorVehicleGroup`, {
     method: 'POST',
     data: param,
   });
@@ -1094,16 +1069,16 @@ export async function fetchCodeHealth(params) {
 }
 
 // 小车健康
-export async function fetchAGVHealth(params) {
-  return request(`/${NameSpace.Platform}/statistic/getAgvHealth`, {
+export async function fetchVehicleHealth(params) {
+  return request(`/${NameSpace.Platform}/statistic/getVehicleHealth`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 小车负载报表
-export async function fetchAGVload(params) {
-  return request(`/${NameSpace.Platform}/statistic/getAgvLoad`, {
+export async function fetchVehicleload(params) {
+  return request(`/${NameSpace.Platform}/statistic/getVehicleLoad`, {
     method: 'POST',
     data: params,
   });
@@ -1177,7 +1152,7 @@ export async function fetchBatchSaveAPI(params) {
     data: params,
   });
 }
-// robotType
+// vehicleType
 export async function fetchUpdateAPI(params) {
   return request(`/${NameSpace.Platform}/api/updateDataApi`, {
     method: 'POST',

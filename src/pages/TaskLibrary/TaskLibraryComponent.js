@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Badge, Button, Divider, message, Table, Tooltip } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvTaskList, fetchAllAgvList, fetchBatchCancelTask } from '@/services/api';
+import { fetchVehicleTaskList, fetchAllVehicleList, fetchBatchCancelTask } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from './TaskSearch';
@@ -23,7 +23,7 @@ class TaskLibraryComponent extends Component {
     selectedRows: [],
     selectedRowKeys: [],
 
-    agvList: [],
+    vehicleList: [],
     dataSource: [],
     page: { currentPage: 1, size: 10, totalElements: 0 },
   };
@@ -50,7 +50,7 @@ class TaskLibraryComponent extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 100,
@@ -61,8 +61,8 @@ class TaskLibraryComponent extends Component {
       align: 'center',
       width: 150,
       render: (text) => {
-        const { allTaskTypes, agvType } = this.props;
-        return allTaskTypes?.[agvType]?.[text] || text;
+        const { allTaskTypes, vehicleType } = this.props;
+        return allTaskTypes?.[vehicleType]?.[text] || text;
       },
     },
     {
@@ -124,7 +124,7 @@ class TaskLibraryComponent extends Component {
 
   componentDidMount() {
     this.getData();
-    this.getAgvList();
+    this.getVehicleList();
   }
 
   /**
@@ -136,7 +136,7 @@ class TaskLibraryComponent extends Component {
     const {
       page: { currentPage, size },
     } = this.state;
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
 
     this.setState({ loading: true, selectedRows: [], selectedRowKeys: [] });
 
@@ -150,7 +150,7 @@ class TaskLibraryComponent extends Component {
 
     const sectionId = window.localStorage.getItem('sectionId');
     const params = { sectionId, current: !!firstPage ? 1 : currentPage, size, ...requestValues };
-    const response = await fetchAgvTaskList(agvType, params);
+    const response = await fetchVehicleTaskList(vehicleType, params);
     if (!dealResponse(response)) {
       const { list, page } = response;
       this.setState({ dataSource: list, page });
@@ -165,21 +165,21 @@ class TaskLibraryComponent extends Component {
     });
   };
 
-  getAgvList = async () => {
-    const response = await fetchAllAgvList();
+  getVehicleList = async () => {
+    const response = await fetchAllVehicleList();
     if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.agv.getListFail' }));
+      message.error(formatMessage({ id: 'app.vehicle.getListFail' }));
     } else {
-      this.setState({ agvList: response });
+      this.setState({ vehicleList: response });
     }
   };
 
   //任务详情
   checkDetail = (taskId) => {
-    const { dispatch, agvType } = this.props;
+    const { dispatch, vehicleType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
+      payload: { taskId, vehicleType },
     });
   };
 
@@ -192,13 +192,13 @@ class TaskLibraryComponent extends Component {
 
   cancelTask = async () => {
     const { selectedRows } = this.state;
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
 
     const requestBody = {
       sectionId: window.localStorage.getItem('sectionId'),
       taskIds: selectedRows.map((record) => record.taskId),
     };
-    const response = await fetchBatchCancelTask(agvType, requestBody);
+    const response = await fetchBatchCancelTask(vehicleType, requestBody);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.taskAction.cancel.success' }));
       this.setState({ selectedRowKeys: [], selectedRows: [] }, this.getData);
@@ -210,14 +210,14 @@ class TaskLibraryComponent extends Component {
   };
 
   render() {
-    const { loading, selectedRowKeys, agvList, dataSource, page } = this.state;
-    const { cancel, agvType, allTaskTypes } = this.props;
+    const { loading, selectedRowKeys, vehicleList, dataSource, page } = this.state;
+    const { cancel, vehicleType, allTaskTypes } = this.props;
     return (
       <TablePageWrapper>
         <TaskSearch
           search={this.getData}
-          agvList={agvList.map(({ vehicleId }) => vehicleId)}
-          allTaskTypes={allTaskTypes?.[agvType] || {}}
+          vehicleList={vehicleList.map(({ vehicleId }) => vehicleId)}
+          allTaskTypes={allTaskTypes?.[vehicleType] || {}}
         />
         <div className={styles.taskSearchDivider} >
           <Divider/>

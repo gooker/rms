@@ -1,11 +1,11 @@
 import {
-  fetchBatchDeleteSimulatorAgv,
-  fetchSimulatorAGVConfig,
+  fetchBatchDeleteSimulatorVehicle,
+  fetchSimulatorVehicleConfig,
   fetchSimulatorHistory,
-  fetchSimulatorLoginAGVControlState,
-  fetchUpdateAGVConfig,
+  fetchSimulatorLoginVehicleControlState,
+  fetchUpdateVehicleConfig,
 } from '@/services/monitor';
-import { fetchAllAdaptor, findRobot } from '@/services/resourceManageAPI';
+import { fetchAllAdaptor, findVehicle } from '@/services/resourceManageAPI';
 import { dealResponse } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 
@@ -13,7 +13,7 @@ export default {
   namespace: 'simulator',
 
   state: {
-    simulatorAgvList: [],
+    simulatorVehicleList: [],
     simulatorHistory: {},
     allAdaptors: {},
   },
@@ -30,10 +30,10 @@ export default {
       };
     },
 
-    saveSimulatorAgvList(state, action) {
+    saveSimulatorVehicleList(state, action) {
       return {
         ...state,
-        simulatorAgvList: action.payload,
+        simulatorVehicleList: action.payload,
       };
     },
   },
@@ -58,44 +58,44 @@ export default {
       }
     },
 
-    *fetchSimulatorLoginAGV(_, { call, put }) {
-      const allAGVs = yield put.resolve({ type: 'monitor/refreshAllAgvList' });
-      if (allAGVs !== null) {
+    *fetchSimulatorLoginVehicle(_, { call, put }) {
+      const allVehicles = yield put.resolve({ type: 'monitor/refreshAllVehicleList' });
+      if (allVehicles !== null) {
         // 获取Coordinator所有的小车控制状态信息
-        const allAgvControlState = yield call(fetchSimulatorLoginAGVControlState);
-        if (dealResponse(allAgvControlState)) {
+        const allVehicleControlState = yield call(fetchSimulatorLoginVehicleControlState);
+        if (dealResponse(allVehicleControlState)) {
           return false;
         }
 
         // 将小车控制状态信息Map到小车数据中
-        const allSimulatorAgvList = allAGVs.map((item) => ({
+        const allSimulatorVehicleList = allVehicles.map((item) => ({
           ...item,
-          canMove: allAgvControlState[item.vehicleId],
+          canMove: allVehicleControlState[item.vehicleId],
         }));
 
-        yield put({ type: 'saveSimulatorAgvList', payload: allSimulatorAgvList });
+        yield put({ type: 'saveSimulatorVehicleList', payload: allSimulatorVehicleList });
       }
     },
 
     // 配置适配器的模拟小车
-    *fetchAddSimulatorAgv({ payload }, { call }) {
-      const response = yield call(findRobot, payload);
+    *fetchAddSimulatorVehicle({ payload }, { call }) {
+      const response = yield call(findVehicle, payload);
       return !dealResponse(response, true);
     },
 
-    *fetchDeletedSimulatorAgv({ payload, then }, { call }) {
-      const { robotIds } = payload;
+    *fetchDeletedSimulatorVehicle({ payload, then }, { call }) {
+      const { vehicleIds } = payload;
       const currentLogicAreaData = getCurrentLogicAreaData('monitor');
       const params = {
         logicId: currentLogicAreaData.id,
-        robotIds: robotIds.join(','),
+        vehicleIds: vehicleIds.join(','),
       };
-      const response = yield call(fetchBatchDeleteSimulatorAgv, params);
+      const response = yield call(fetchBatchDeleteSimulatorVehicle, params);
       return !dealResponse(response, true);
     },
 
-    *fetchSimulatorGetAGVConfig({ payload, then }, { call }) {
-      const response = yield call(fetchSimulatorAGVConfig, payload);
+    *fetchSimulatorGetVehicleConfig({ payload, then }, { call }) {
+      const response = yield call(fetchSimulatorVehicleConfig, payload);
       if (!dealResponse(response)) {
         return response;
       } else {
@@ -103,8 +103,8 @@ export default {
       }
     },
 
-    *fetchUpdateAGVConfig({ payload, then }, { call }) {
-      const response = yield call(fetchUpdateAGVConfig, payload);
+    *fetchUpdateVehicleConfig({ payload, then }, { call }) {
+      const response = yield call(fetchUpdateVehicleConfig, payload);
       return !dealResponse(response, true);
     },
   },

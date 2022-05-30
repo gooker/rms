@@ -140,7 +140,7 @@ export async function fetchCellHeat(params) {
 
 // 获取点位锁格
 export async function fetchCellLocks(logicId, cellId) {
-  return request(`/${NameSpace.Platform}/lock/getRobotByLockedCell/${logicId}/${cellId}`, {
+  return request(`/${NameSpace.Platform}/lock/getVehicleByLockedCell/${logicId}/${cellId}`, {
     method: 'GET',
   });
 }
@@ -181,7 +181,7 @@ export async function updateLatentPodSize(payload) {
 /**显示锁格 start***/
 
 // 获取小车的路径锁格信息 （单个）
-export async function getLockedCellsByAgvId(logicId, vehicleId, vehicleType) {
+export async function getLockedCellsByVehicleId(logicId, vehicleId, vehicleType) {
   return request(
     `/${NameSpace.Platform}/lock/getLockedCellsByVehicleId/${logicId}/${vehicleId}/${vehicleType}`,
     {
@@ -191,7 +191,7 @@ export async function getLockedCellsByAgvId(logicId, vehicleId, vehicleType) {
 }
 
 // 获取小车的路径锁格信息（批量）
-export async function fetchMapAGVLocks(logicId, uniqueIds) {
+export async function fetchMapVehicleLocks(logicId, uniqueIds) {
   return request(
     `/${NameSpace.Platform}/lock/getLockCellsByUniqueIds/${logicId}/?uniqueIds=${uniqueIds}`,
     {
@@ -201,7 +201,7 @@ export async function fetchMapAGVLocks(logicId, uniqueIds) {
 }
 
 // 获取逻辑区的路径锁格信息
-export async function fetchLogicAllAGVLocks(logicId) {
+export async function fetchLogicAllVehicleLocks(logicId) {
   return request(`/${NameSpace.Platform}/lock/getAllLockedCells/${logicId}`, { method: 'GET' });
 }
 
@@ -357,7 +357,7 @@ export async function batchUpdateAlertCenter(params) {
   });
 }
 
-//////////////////////////**** MixRobot系统参数 ****//////////////////////////
+//////////////////////////**** MixVehicle系统参数 ****//////////////////////////
 // 获取参数模版
 export async function fetchSystemParamFormData() {
   return request(`/${NameSpace.Platform}/formTemplate/getFormTemplate`, {

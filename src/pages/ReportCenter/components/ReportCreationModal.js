@@ -10,7 +10,7 @@ const { RangePicker } = DatePicker;
 const formLayout = getFormLayout(6, 18);
 
 const ReportCreationModal = (props) => {
-  const { creationLoading, agvType, source } = props;
+  const { creationLoading, vehicleType, source } = props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -18,7 +18,7 @@ const ReportCreationModal = (props) => {
 
   async function changeDataSource(sourceId) {
     setLoading(true);
-    const response = await fetchReportSourceDetail(agvType, sourceId);
+    const response = await fetchReportSourceDetail(vehicleType, sourceId);
     if (
       !dealResponse(
         response,

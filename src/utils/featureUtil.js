@@ -3,17 +3,17 @@ import { message } from 'antd';
 import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
-import { fetchAgvHardwareInfo } from '@/services/api';
+import { fetchVehicleHardwareInfo } from '@/services/api';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 
 /**
  * 导出小车模块信息
  * @param {*} nameSpace
- * @param {*} agvList
+ * @param {*} vehicleList
  * @returns
  */
-export function exportAgvModuleInfo(nameSpace, agvList) {
+export function exportVehicleModuleInfo(nameSpace, vehicleList) {
   return new Promise(async (resolve, reject) => {
     let nameArray = [
       'app.activity.model.LeftWheelMotor',
@@ -25,11 +25,11 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
       'app.activity.model.ins',
       'app.activity.model.wifi',
     ];
-    const AgvInfos = [];
+    const VehicleInfos = [];
     const fields = [];
     fields.push({
       value: 'vehicleId',
-      label: formatMessage({ id: 'app.chargeManger.AgvId' }),
+      label: formatMessage({ id: 'app.chargeManger.VehicleId' }),
     });
     nameArray.forEach((record) => {
       fields.push({
@@ -49,10 +49,10 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
         label: formatMessage({ id: 'app.activity.firewareVersion' }),
       });
     });
-    for (let index = 0; index < agvList.length; index++) {
-      const element = agvList[index];
+    for (let index = 0; index < vehicleList.length; index++) {
+      const element = vehicleList[index];
       const { vehicleId, sectionId } = element;
-      const response = await fetchAgvHardwareInfo(nameSpace, { vehicleId, sectionId });
+      const response = await fetchVehicleHardwareInfo(nameSpace, { vehicleId, sectionId });
       if (dealResponse(response)) {
         continue;
       }
@@ -67,15 +67,15 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
           info[`${modelInfo}.softVersion`] = softVersion;
           info[`${modelInfo}.hardwareVersion`] = hardwareVersion;
         });
-        AgvInfos.push(info);
+        VehicleInfos.push(info);
       } else {
-        message.warning(formatMessage({ id: 'app.agv.hardwareError' }, { vehicleId }));
+        message.warning(formatMessage({ id: 'app.vehicle.hardwareError' }, { vehicleId }));
       }
     }
     const opts = { fields };
     try {
       const parser = new Parser(opts);
-      const csv = parser.parse(AgvInfos);
+      const csv = parser.parse(VehicleInfos);
       const splitString = '\n';
       const arrayCSV = split(csv, splitString).map((record) => {
         return split(record, ',').map((obj) => {
@@ -84,7 +84,7 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
       });
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(arrayCSV);
-      XLSX.utils.book_append_sheet(wb, ws, 'AGV');
+      XLSX.utils.book_append_sheet(wb, ws, 'Vehicle');
       XLSX.writeFile(wb, `Hardware Information.xlsx`);
       resolve();
     } catch (err) {
@@ -95,18 +95,18 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
 
 /**
  * 导出小车实时信息
- * @param {*} agvList
+ * @param {*} vehicleList
  * @returns
  */
-export function exportAgvInfo(agvList) {
+export function exportVehicleInfo(vehicleList) {
   return new Promise((resolve, reject) => {
     const fields = [
       {
-        label: formatMessage({ id: 'app,agv.id' }),
-        value: 'robotId',
+        label: formatMessage({ id: 'app,vehicle.id' }),
+        value: 'vehicleId',
       },
       {
-        label: formatMessage({ id: 'app.agv.serverIdentity' }),
+        label: formatMessage({ id: 'app.vehicle.serverIdentity' }),
         value: 'clusterIndex',
       },
       {
@@ -122,91 +122,91 @@ export function exportAgvInfo(agvList) {
         value: 'currentCellId',
       },
       {
-        label: formatMessage({ id: 'app.agv.direction' }),
+        label: formatMessage({ id: 'app.vehicle.direction' }),
         value: (row) => {
-          return formatMessage({ id: Dictionary('agvDirection', row.currentDirection) });
+          return formatMessage({ id: Dictionary('vehicleDirection', row.currentDirection) });
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.addingTime' }),
+        label: formatMessage({ id: 'app.vehicle.addingTime' }),
         value: (row) => {
           return convertToUserTimezone(row.createDate).format('YYYY-MM-DD HH:mm:ss');
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.maintenanceState' }),
+        label: formatMessage({ id: 'app.vehicle.maintenanceState' }),
         value: (row) => {
           if (row.disabled) {
-            return formatMessage({ id: 'app.agv.underMaintenance' });
+            return formatMessage({ id: 'app.vehicle.underMaintenance' });
           } else {
-            return formatMessage({ id: 'app.agv.normal' });
+            return formatMessage({ id: 'app.vehicle.normal' });
           }
         },
       },
       {
-        label: formatMessage({ id: 'app.agvType' }),
+        label: formatMessage({ id: 'app.vehicleType' }),
         align: 'center',
         value: (row) => {
           if (row.isDummy) {
             return formatMessage({
-              id: 'app.agv.threeGenerationsOfVehicles(Virtual)',
+              id: 'app.vehicle.threeGenerationsOfVehicles(Virtual)',
             });
-          } else if (row.robotType === 3) {
+          } else if (row.vehicleType === 3) {
             return formatMessage({
-              id: 'app.agv.threeGenerationOfTianma',
+              id: 'app.vehicle.threeGenerationOfTianma',
             });
           } else {
-            return row.robotType;
+            return row.vehicleType;
           }
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.state' }),
+        label: formatMessage({ id: 'app.vehicle.state' }),
         value: (row) => {
-          const { agvStatus } = row;
-          const key = Dictionary('agvStatus', agvStatus);
+          const { vehicleStatus } = row;
+          const key = Dictionary('vehicleStatus', vehicleStatus);
           return formatMessage({ id: key });
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.battery' }),
+        label: formatMessage({ id: 'app.vehicle.battery' }),
         value: (row) => {
           return `${row.battery} %`;
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.batteryVoltage' }),
+        label: formatMessage({ id: 'app.vehicle.batteryVoltage' }),
         value: (row) => {
           return `${row.batteryVoltage / 1000} v`;
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.version' }),
+        label: formatMessage({ id: 'app.vehicle.version' }),
         value: 'version',
       },
       {
-        label: formatMessage({ id: 'app.agv.batteryType' }),
+        label: formatMessage({ id: 'app.vehicle.batteryType' }),
         value: (row) => {
           return formatMessage({ id: Dictionary('batteryType', row.batteryType) });
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.maxChargeCurrent' }),
+        label: formatMessage({ id: 'app.vehicle.maxChargeCurrent' }),
         value: 'maxChargingCurrent',
       },
     ];
     try {
       const opts = { fields };
       const parser = new Parser(opts);
-      const csv = parser.parse(agvList);
+      const csv = parser.parse(vehicleList);
       const splitString = '\n';
       const arrayCSV = split(csv, splitString).map((record) => {
         return split(record, ',').map((obj) => obj.replace(/"/g, ''));
       });
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(arrayCSV);
-      XLSX.utils.book_append_sheet(wb, ws, 'AGV');
-      XLSX.writeFile(wb, `AGV Information.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, 'Vehicle');
+      XLSX.writeFile(wb, `Vehicle Information.xlsx`);
       resolve();
     } catch (e) {
       reject(e);

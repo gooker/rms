@@ -41,7 +41,7 @@ export default {
     copyRight: null,
     alertCount: 0,
     allTaskTypes: {},
-    allAgvTypes: [],
+    allVehicleTypes: [],
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
@@ -115,10 +115,10 @@ export default {
         textureLoaded: payload,
       };
     },
-    saveAllAgvTypes(state, { payload }) {
+    saveAllVehicleTypes(state, { payload }) {
       return {
         ...state,
-        allAgvTypes: payload,
+        allVehicleTypes: payload,
       };
     },
     changeFullScreen(state, { payload }) {
@@ -265,9 +265,9 @@ export default {
     *fetchUpdateEnvironment({ payload }, { call }) {
       let response = null;
       if (payload.id === 0) {
-        response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: '' });
+        response = yield call(fetchUpdateEnvironment, { appCode: 'MixVehicle', id: '' });
       } else {
-        response = yield call(fetchUpdateEnvironment, { appCode: 'MixRobot', id: payload.id });
+        response = yield call(fetchUpdateEnvironment, { appCode: 'MixVehicle', id: payload.id });
       }
       return !dealResponse(response, formatMessage({ id: 'app.header.option.switchEnvSuccess' }));
     },

@@ -59,24 +59,24 @@ export default class RealtimeRate extends PIXI.Container {
       if (key === 'goodsRate' && !isStrictNull(value)) {
         dataLength.push('goodsRate_1');
       }
-      if (key === 'agvRate' && !isStrictNull(value)) {
-        dataLength.push('agvRate');
+      if (key === 'vehicleRate' && !isStrictNull(value)) {
+        dataLength.push('vehicleRate');
       }
       if (key === 'waitTime' && !isStrictNull(value)) {
         dataLength.push('waitTime');
       }
-      if (key === 'agvAndTaskProportion' && !isStrictNull(value)) {
-        dataLength.push('agvAndTaskProportion');
+      if (key === 'vehicleAndTaskProportion' && !isStrictNull(value)) {
+        dataLength.push('vehicleAndTaskProportion');
       }
     });
     this.count = dataLength.length;
     this.$height = this.count * 325;
     this.$commonNumY = this.count * 62.5;
     !isStrictNull(props.goodsRate) && this.addFreight(props.goodsRate); // 货物速率 30.22个/小时
-    !isStrictNull(props.agvRate) && this.addAgvRate(props.agvRate); // 车次速率 3.50次小时
+    !isStrictNull(props.vehicleRate) && this.addVehicleRate(props.vehicleRate); // 车次速率 3.50次小时
     !isStrictNull(props.waitTime) && this.addWaitingTime(props.waitTime); // 已等待 30 秒
-    !isStrictNull(props.agvAndTaskProportion) &&
-      this.addTaskAllocation(props.agvAndTaskProportion, props.allocated); // 任务执行比 3/20
+    !isStrictNull(props.vehicleAndTaskProportion) &&
+      this.addTaskAllocation(props.vehicleAndTaskProportion, props.allocated); // 任务执行比 3/20
   }
 
   drawFrame() {
@@ -114,28 +114,28 @@ export default class RealtimeRate extends PIXI.Container {
     this.addChild(this.rateFreightSprite);
   }
 
-  addAgvRate(rate) {
+  addVehicleRate(rate) {
     const _y = -(this.$height / 2).toFixed(2) + this.$commonNumY * 2; //count
     const _x = (this.$width / 2).toFixed(2);
-    this.labelAgvRateSprite = new PIXI.Text(
+    this.labelVehicleRateSprite = new PIXI.Text(
       formatMessage({ id: 'app.monitor.view.stationRealtimeRate.trainsrate' }),
       this.$style,
     );
-    this.labelAgvRateSprite.visible = this.$visible;
-    this.labelAgvRateSprite.anchor.set(0.5);
-    this.labelAgvRateSprite.x = -_x + this.$commonNum;
-    this.labelAgvRateSprite.y = _y;
+    this.labelVehicleRateSprite.visible = this.$visible;
+    this.labelVehicleRateSprite.anchor.set(0.5);
+    this.labelVehicleRateSprite.x = -_x + this.$commonNum;
+    this.labelVehicleRateSprite.y = _y;
 
-    this.rateAgvRateSprite = new PIXI.Text(
+    this.rateVehicleRateSprite = new PIXI.Text(
       `${rate} ${formatMessage({ id: 'monitor.workstation.label.rate' })}`,
       this.textStyle,
     );
-    this.rateAgvRateSprite.visible = this.$visible;
-    this.rateAgvRateSprite.anchor.set(0.5);
-    this.rateAgvRateSprite.x = _x - this.$commonNum;
-    this.rateAgvRateSprite.y = _y;
-    this.addChild(this.labelAgvRateSprite);
-    this.addChild(this.rateAgvRateSprite);
+    this.rateVehicleRateSprite.visible = this.$visible;
+    this.rateVehicleRateSprite.anchor.set(0.5);
+    this.rateVehicleRateSprite.x = _x - this.$commonNum;
+    this.rateVehicleRateSprite.y = _y;
+    this.addChild(this.labelVehicleRateSprite);
+    this.addChild(this.rateVehicleRateSprite);
   }
 
   addWaitingTime(time) {
@@ -163,7 +163,7 @@ export default class RealtimeRate extends PIXI.Container {
     this.addChild(this.labelWaitSprite);
     this.addChild(this.waitTimeSprite);
   }
-  addTaskAllocation(agvAndTaskProportion) {
+  addTaskAllocation(vehicleAndTaskProportion) {
     const _y = -(this.$height / 2).toFixed(2) + this.$commonNumY * 4;
     const _x = (this.$width / 2).toFixed(2);
     this.labelAllocatedSprite = new PIXI.Text(
@@ -175,7 +175,7 @@ export default class RealtimeRate extends PIXI.Container {
     this.labelAllocatedSprite.x = -_x + this.$commonNum;
     this.labelAllocatedSprite.y = _y;
 
-    this.numAllocatedSprite = new PIXI.Text(`${agvAndTaskProportion}`, this.textStyle);
+    this.numAllocatedSprite = new PIXI.Text(`${vehicleAndTaskProportion}`, this.textStyle);
     this.numAllocatedSprite.visible = this.$visible;
     this.numAllocatedSprite.anchor.set(0.5);
     this.numAllocatedSprite.x = _x - this.$commonNum;

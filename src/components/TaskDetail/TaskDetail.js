@@ -5,8 +5,8 @@ import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
-import ToteAGVWorkBinInfoMap from './components/ToteAGVWorkBinInfoMap';
-import { AGVType } from '@/config/config';
+import ToteVehicleWorkBinInfoMap from './components/ToteVehicleWorkBinInfoMap';
+import { VehicleType } from '@/config/config';
 import styles from '@/common.module.less';
 import { connect } from '@/utils/RmsDva';
 
@@ -210,11 +210,11 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.agv.id" />}
-                    content={<span>{detailInfo.currentRobotId}</span>}
+                    title={<FormattedMessage id="app.vehicle.id" />}
+                    content={<span>{detailInfo.currentVehicleId}</span>}
                   />
                 </Col>
-                {currentType === AGVType.LatentLifting && (
+                {currentType === VehicleType.LatentLifting && (
                   <Col {...colProps}>
                     <DescriptionItem
                       title={<span>{formatMessage({ id: 'app.pod.id' })}</span>}
@@ -225,13 +225,13 @@ class TaskDetail extends PureComponent {
               </Row>
             )}
 
-            {/** ******************************* AGV实时料仓 *********************************** */}
-            {(detailInfo.toteAGVWorkBinInfoMap || detailInfo.toteAGVTaskActionDTOS) && (
+            {/** ******************************* Vehicle实时料仓 *********************************** */}
+            {(detailInfo.toteVehicleWorkBinInfoMap || detailInfo.toteVehicleTaskActionDTOS) && (
               <div>
                 <Divider orientation="left">
                   {formatMessage({ id: 'app.taskDetail.realTime' })}
                 </Divider>
-                <ToteAGVWorkBinInfoMap {...detailInfo} />
+                <ToteVehicleWorkBinInfoMap {...detailInfo} />
               </div>
             )}
 

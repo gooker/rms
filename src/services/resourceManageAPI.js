@@ -3,30 +3,30 @@ import { NameSpace } from '@/config/config';
 
 // 获取所有的适配器
 export function fetchAllAdaptor() {
-  return request(`/${NameSpace.Platform}/agv/findAllAdapter`, {
+  return request(`/${NameSpace.Platform}/vehicle/findAllAdapter`, {
     method: 'GET',
   });
 }
 
 // 获取所有小车类型(如果传适配器参数就给适配器对应的小车类型，如果不传就给所有) 但是只给非预定义的类型
-export function fetchAllRobotType(agvAdapter) {
-  return request(`/${NameSpace.Platform}/agv/findAllAGVType`, {
+export function fetchAllVehicleType(vehicleAdapter) {
+  return request(`/${NameSpace.Platform}/vehicle/findAllVehicleType`, {
     method: 'GET',
-    data: { agvAdapter },
+    data: { vehicleAdapter },
   });
 }
 
 // 获取所有小车(如果传适配器参数就给适配器对应的小车，如果不传就给所有)
-export function fetchAllRobot(agvAdapter) {
-  return request(`/${NameSpace.Platform}/agv/getAGV`, {
+export function fetchAllVehicle(vehicleAdapter) {
+  return request(`/${NameSpace.Platform}/vehicle/getVehicle`, {
     method: 'GET',
-    data: { agvAdapter },
+    data: { vehicleAdapter },
   });
 }
 
 // 注册小车
-export function registerRobot(param) {
-  return request(`/${NameSpace.Platform}/agv/robotRegister`, {
+export function registerVehicle(param) {
+  return request(`/${NameSpace.Platform}/vehicle/vehicleRegister`, {
     method: 'POST',
     data: param,
   });
@@ -37,16 +37,16 @@ export function registerRobot(param) {
  *2.模拟器新增小车
  */
 
-export function findRobot(param) {
-  return request(`/${NameSpace.Platform}/agv/findAGV`, {
+export function findVehicle(param) {
+  return request(`/${NameSpace.Platform}/vehicle/findVehicle`, {
     method: 'POST',
     data: param,
   });
 }
 
 // 解绑
-export function logOutRobot(param) {
-  return request(`/${NameSpace.Platform}/agv/robotLogout`, {
+export function logOutVehicle(param) {
+  return request(`/${NameSpace.Platform}/vehicle/vehicleLogout`, {
     method: 'POST',
     data: param,
   });
@@ -201,6 +201,31 @@ export function saveDeviceTypeActions(param) {
 export function handleDevice(param) {
   return request(`/${NameSpace.Platform}/device/action/handle`, {
     method: 'POST',
+    data: param,
+  });
+}
+
+// 资源绑定
+// 保存绑定关系
+export async function fechSaveUnBind(param) {
+  return request(`/${NameSpace.Platform}/custom/saveUnBindGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 删除绑定关系
+export async function deleteUnBindGroup(param) {
+  return request(`/${NameSpace.Platform}/custom/deleteUnBindGroupById`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 根据mapId查询绑定关系
+export async function getUnBindGroupData(param) {
+  return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
+    method: 'GET',
     data: param,
   });
 }

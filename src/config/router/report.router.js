@@ -8,9 +8,9 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.Report}/healthReport/agv`,
-        name: 'agv',
-        component: '/Report/HealthReport/AgvHealth/index',
+        path: `/${AppCode.Report}/healthReport/vehicle`,
+        name: 'vehicle',
+        component: '/Report/HealthReport/VehicleHealth/index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
@@ -65,9 +65,9 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.Report}/loadReport/agvLoad`,
-        name: 'agvLoad',
-        component: '/Report/LoadReport/AgvLoadReport',
+        path: `/${AppCode.Report}/loadReport/vehicleLoad`,
+        name: 'vehicleLoad',
+        component: '/Report/LoadReport/VehicleLoadReport',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {

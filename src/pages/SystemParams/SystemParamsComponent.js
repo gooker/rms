@@ -15,7 +15,7 @@ export default class SystemParamsManager extends Component {
   }
 
   getData = async () => {
-    const { agvType, getApi } = this.props;
+    const { vehicleType, getApi } = this.props;
     this.setState({ spinning: true });
 
     let formData = [];
@@ -23,9 +23,9 @@ export default class SystemParamsManager extends Component {
       language: window.localStorage.getItem('currentLocale'),
     };
     if (isNull(getApi)) {
-      formData = await fetchSystemParamFormData(agvType, params);
+      formData = await fetchSystemParamFormData(vehicleType, params);
     } else {
-      formData = await getApi(agvType, params);
+      formData = await getApi(vehicleType, params);
     }
 
     if (!dealResponse(formData)) {
@@ -35,12 +35,12 @@ export default class SystemParamsManager extends Component {
   };
 
   submit = async (value) => {
-    const { agvType, updateApi } = this.props;
+    const { vehicleType, updateApi } = this.props;
     let responseData = null;
     if (isNull(updateApi)) {
-      responseData = await updateSystemParams(agvType, value);
+      responseData = await updateSystemParams(vehicleType, value);
     } else {
-      responseData = await updateApi(agvType, value);
+      responseData = await updateApi(vehicleType, value);
     }
 
     if (!dealResponse(responseData, true)) {

@@ -5,7 +5,7 @@ import ReactEcharts from './EchartsForReact';
 import { formatMessage, match } from '@/utils/util';
 
 const Line = (props) => {
-  const { description, type, info, agvType, allTaskTypes } = props;
+  const { description, type, info, vehicleType, allTaskTypes } = props;
   const { descriptionKeys, descriptionValues } = description;
   const { data, style } = props;
 
@@ -133,8 +133,8 @@ const Line = (props) => {
         animation: true,
         data: legend,
         formatter: function (name) {
-          if (allTaskTypes?.[agvType]?.[name]) {
-            return allTaskTypes[agvType][name];
+          if (allTaskTypes?.[vehicleType]?.[name]) {
+            return allTaskTypes[vehicleType][name];
           }
           const Legend = info[descriptionKeys[1]];
           return Legend + '  ' + name;

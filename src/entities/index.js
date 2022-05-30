@@ -2,17 +2,17 @@ import Cell from './Cell';
 import Text from './Text';
 import ForkFreight from './ForkFreight';
 import GeoLock from './GeoLock';
-import ToteAGV from './ToteAGV';
+import ToteVehicle from './ToteVehicle';
 import TotePod from './TotePod';
 import Charger from './Charger';
 import BitText from './BitText';
 import OpenLock from './OpenLock';
 import Elevator from './Elevator';
 import TaskPath from './TaskPath';
-import LatentAGV from './LatentAGV';
+import LatentVehicle from './LatentVehicle';
 import LatentPod from './LatentPod';
 import LineArrow from './LineArrow';
-import ForkLiftAGV from './ForkLiftAGV';
+import ForkLiftVehicle from './ForkLiftVehicle';
 import WorkStation from './WorkStation';
 import WorkingState from './WorkingState';
 import ForkPallet from './ForkPallet';
@@ -22,7 +22,7 @@ import CommonFunction from './CommonFunction';
 import Intersection from './Intersection';
 import Dump from './Dump';
 import DumpBasket from './DumpBasket';
-import SorterAGV from './SorterAGV';
+import SorterVehicle from './SorterVehicle';
 import BackImg from './BackImg';
 import ResizeableEmergencyStop from './ResizeableEmergencyStop';
 import RealtimeRate from './RealtimeRate';
@@ -34,7 +34,7 @@ export {
   Text,
   Cell,
   Dump,
-  ToteAGV,
+  ToteVehicle,
   TotePod,
   GeoLock,
   BitText,
@@ -42,14 +42,14 @@ export {
   DumpBasket,
   Charger,
   OpenLock,
-  SorterAGV,
+  SorterVehicle,
   TaskPath,
   Elevator,
-  LatentAGV,
+  LatentVehicle,
   LatentPod,
   LineArrow,
   LogicArea,
-  ForkLiftAGV,
+  ForkLiftVehicle,
   WorkStation,
   WorkingState,
   ForkPallet,

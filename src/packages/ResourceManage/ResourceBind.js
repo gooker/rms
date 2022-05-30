@@ -1,8 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
-import { find, debounce } from 'lodash';
+import { find } from 'lodash';
 import { Form, Select, Switch, Card, Row, Col, message, Empty, Button, Spin } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { fechSaveUnBind, getUnBindGroupData } from '@/services/resourceManageAPI';
+import { getCustomGroup, fetchActiveMap } from '@/services/api';
+import commonStyles from '@/common.module.less';
 import styles from './resourceBind.module.less';
 
 const ResourceBind = (props) => {
@@ -13,14 +16,14 @@ const ResourceBind = (props) => {
   const [yOptions, setYOptions] = useState(null); //select的options y 正常和x轴一样 但是搜索的时候就不一样 (正常的values是type 搜索的values是key)
   const [xData, setXData] = useState(null); // 根据选择下拉框的类型拿到该类型下的所有组
   const [yData, setYData] = useState(null);
-  const [bindUnData, setBindUnData] = useState(null);
+  const [unBindData, setUnBindData] = useState(null);
   const [groupConfigData, setGroupConfigData] = useState(null);
   const [currentXvalue, setCurrentXvalue] = useState(null);
   const [currentYvalue, setCurrentYvalue] = useState(null);
 
   useEffect(() => {
     async function init() {
-      const originalMapData = await fetchGetActiveMap();
+      const originalMapData = await fetchActiveMap();
       if (originalMapData) {
         const payload = { mapId: originalMapData.id };
         // 根据mapId 获取所有分组信息
@@ -42,7 +45,7 @@ const ResourceBind = (props) => {
   async function getUnBindData(params) {
     const result = await getUnBindGroupData(params);
     if (!dealResponse(result, 1)) {
-      setBindUnData([...result]);
+      setUnBindData([...result]);
     }
   }
 
@@ -67,7 +70,7 @@ const ResourceBind = (props) => {
     const yValues = formRef.getFieldValue('yType');
     if (yValues?.includes(values)) {
       formRef.setFieldsValue({ xType: currentXvalue });
-      message.info('不能和纵轴重复');
+      message.info(formatMessage({ id: 'resourceBind.repeat.vertivalaxis' }));
       return;
     }
 
@@ -86,7 +89,7 @@ const ResourceBind = (props) => {
       const index = values.findIndex((item) => {
         return item === xValues;
       });
-      message.info('不能和横轴重复');
+      message.info(formatMessage({ id: 'resourceBind.repeat.horizeontalaxis' }));
       values.splice(index, 1);
       setCurrentYvalue(values);
       return;
@@ -128,10 +131,10 @@ const ResourceBind = (props) => {
    *  全部绑定->关  否则就是开
    * */
   function theadIsChecked(key) {
-    if (bindUnData?.length === 0) {
+    if (unBindData?.length === 0) {
       return true;
     }
-    const xyUnbindData = bindUnData.filter((record) => {
+    const xyUnbindData = unBindData.filter((record) => {
       return record.firstUnBindKey === key;
     });
     return !(xyUnbindData?.length === yData?.length);
@@ -149,7 +152,7 @@ const ResourceBind = (props) => {
           secondUnBindKey: item.key,
         });
       });
-      const currentData = [...bindUnData, ...newUnbindData];
+      const currentData = [...unBindData, ...newUnbindData];
       const newCurrentData = currentData.reduce((pre, cur) => {
         if (
           find(pre, (o) => {
@@ -163,10 +166,10 @@ const ResourceBind = (props) => {
         return pre.concat(cur);
       }, []);
 
-      setBindUnData([...newCurrentData]);
+      setUnBindData([...newCurrentData]);
     } else {
       // true 移除  删除未绑定
-      const currentUnBindData = [...bindUnData];
+      const currentUnBindData = [...unBindData];
       yData.forEach((yitem) => {
         const bindKeys = [x, yitem.key];
         currentUnBindData.map((item, key) => {
@@ -175,18 +178,18 @@ const ResourceBind = (props) => {
           }
         });
       });
-      setBindUnData(currentUnBindData);
+      setUnBindData(currentUnBindData);
     }
   }
 
   // 默认开关与否
   function switchChecked(x, y) {
     const bindKeys = [x, y];
-    if (bindUnData?.length === 0) {
+    if (unBindData?.length === 0) {
       return true;
     }
 
-    const findUndata = find(bindUnData, (item) => {
+    const findUndata = find(unBindData, (item) => {
       return bindKeys.includes(item.firstUnBindKey) && bindKeys.includes(item.secondUnBindKey);
     });
     return findUndata == null;
@@ -196,7 +199,7 @@ const ResourceBind = (props) => {
   function switchChange(x, y) {
     return async (checked) => {
       // false 放入 保存未绑定的分组关系
-      const currentUnBindData = [...bindUnData];
+      const currentUnBindData = [...unBindData];
       if (!checked) {
         const currentBindStatus = {
           mapId,
@@ -216,175 +219,163 @@ const ResourceBind = (props) => {
         });
         currentUnBindData.splice(index, 1);
       }
-      setBindUnData([...currentUnBindData]);
+      setUnBindData([...currentUnBindData]);
     };
   }
 
   // 大保存
   async function submitSave() {
-    const saveResult = await fechSaveUnBind(bindUnData);
+    const saveResult = await fechSaveUnBind(unBindData);
     if (!dealResponse(saveResult, true)) {
-      setBindUnData([...saveResult]);
+      setUnBindData([...saveResult]);
     }
   }
 
   return (
-    <div>
-      <div>
-        <Card bordered={false} style={{ margin: '0px 10px' }}>
-          {/* 搜索 */}
-          <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-            <div style={{ flex: 10, display: 'flex' }}>
-              <Form form={formRef}>
-                <Row>
-                  <Col span={8}>
-                    <Form.Item
-                      label={formatMessage({ id: 'app.groupBinding.horizontalaxis' })}
-                      name="xType"
-                    >
-                      <Select
-                        placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
-                        style={{ width: '100%' }}
-                        showSearch
-                        onChange={groupXTypeChange}
-                        options={xOptions}
-                      ></Select>
-                    </Form.Item>
-                  </Col>
-                  <Col span={8} style={{ padding: '0 12px' }}>
-                    <Form.Item
-                      label={formatMessage({ id: 'app.groupBinding.verticalaxis' })}
-                      name="yType"
-                    >
-                      <Select
-                        allowClear
-                        placeholder={formatMessage({ id: 'app.groupManage.pleaseSelect' })}
-                        style={{ width: '100%' }}
-                        // showSearch
-                        filterOption={false}
-                        onChange={groupYTypeChange}
-                        mode="multiple"
-                        maxTagCount={5}
-                      >
-                        {yOptions &&
-                          yOptions.map(({ label, value }, index) => (
-                            <Select.Option key={index} value={value}>
-                              {label}
-                            </Select.Option>
-                          ))}
-                      </Select>
-                    </Form.Item>
-                  </Col>
+    <div className={commonStyles.commonPageStyle}>
+      <Card bordered={false}>
+        {/* 搜索 */}
+        <Form form={formRef}>
+          <Row>
+            <Col span={8}>
+              <Form.Item label={formatMessage({ id: 'resourceBind.horizontalaxis' })} name="xType">
+                <Select
+                  placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
+                  style={{ width: '100%' }}
+                  showSearch
+                  onChange={groupXTypeChange}
+                  options={xOptions}
+                ></Select>
+              </Form.Item>
+            </Col>
+            <Col span={8} style={{ padding: '0 12px' }}>
+              <Form.Item label={formatMessage({ id: 'resourceBind.verticalaxis' })} name="yType">
+                <Select
+                  allowClear
+                  placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
+                  style={{ width: '100%' }}
+                  // showSearch
+                  filterOption={false}
+                  onChange={groupYTypeChange}
+                  mode="multiple"
+                  maxTagCount={5}
+                >
+                  {yOptions &&
+                    yOptions.map(({ label, value }, index) => (
+                      <Select.Option key={index} value={value}>
+                        {label}
+                      </Select.Option>
+                    ))}
+                </Select>
+              </Form.Item>
+            </Col>
 
-                  <Col offset={3}>
-                    <Button type={'primary'} onClick={submitSave}>
-                      <FormattedMessage id={'app.storageManage.save'} />
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </div>
-          </div>
+            <Col offset={6} style={{ textAlign: 'right' }}>
+              <Button type={'primary'} onClick={submitSave}>
+                <FormattedMessage id={'app.button.save'} />
+              </Button>
+            </Col>
+          </Row>
+        </Form>
 
-          {/* 内容区 */}
-          <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
-            {xData && yData?.length > 0 ? (
-              <Row style={{ marginTop: 20 }}>
-                <Col span={24}>
-                  <table
-                    style={{
-                      width: '96%',
-                      border: '1px solid #efefef',
-                      textAlign: 'center',
-                      borderCollapse: 'collapse',
-                      borderSpacing: 0,
-                      tableLayout: 'fixed',
-                    }}
+        {/* 内容区 */}
+        <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
+          {xData && yData?.length > 0 ? (
+            <Row style={{ marginTop: 20 }}>
+              <Col span={24}>
+                <table
+                  style={{
+                    width: '96%',
+                    border: '1px solid #efefef',
+                    textAlign: 'center',
+                    borderCollapse: 'collapse',
+                    borderSpacing: 0,
+                    tableLayout: 'fixed',
+                  }}
+                >
+                  <thead
+                    className={styles.fixColumn}
+                    style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
                   >
-                    <thead
-                      className={styles.fixColumn}
-                      style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                    >
-                      <tr className={styles.body}>
-                        <th className={styles.tdBorder} colSpan="2">
-                          {' '}
-                        </th>
-                        {xData &&
-                          xData.map((item) => {
-                            return (
-                              <th key={item.id} className={styles.tdBorder}>
-                                {item.groupName}
+                    <tr className={styles.body}>
+                      <th className={styles.tdBorder} colSpan="2">
+                        {' '}
+                      </th>
+                      {xData &&
+                        xData.map((item) => {
+                          return (
+                            <th key={item.id} className={styles.tdBorder}>
+                              {item.groupName}
 
+                              <Switch
+                                checked={() => {
+                                  theadIsChecked(item.key);
+                                }}
+                                style={{ marginLeft: '10px' }}
+                                size="small"
+                                onClick={(checked) => {
+                                  switchXtoYChange(item.key, checked);
+                                }}
+                              />
+                            </th>
+                          );
+                        })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {yData?.map((y) => {
+                      let typeTimes = statisticalTypeTimes(yData);
+                      return (
+                        <tr key={y.id} className={styles.thbodyHeight}>
+                          {Object.keys(typeTimes)?.map((i) => {
+                            if (i === y.typeName) {
+                              const rowslength = typeTimes[i];
+                              delete typeTimes[i];
+                              return (
+                                <th
+                                  key={y.key}
+                                  rowSpan={rowslength}
+                                  className={styles.contentBorder}
+                                >
+                                  {y.typeName}
+                                </th>
+                              );
+                            }
+                          })}
+
+                          <th
+                            className={styles.tdBorder}
+                            style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
+                          >
+                            {y.groupName}
+                          </th>
+
+                          {/* 下面td的长度 应该用xData遍历 */}
+                          {xData?.map((x) => {
+                            return (
+                              <th key={x.id} className={styles.contentBorder}>
                                 <Switch
-                                  checked={() => {
-                                    theadIsChecked(item.key);
-                                  }}
-                                  style={{ marginLeft: '10px' }}
                                   size="small"
-                                  onClick={(checked) => {
-                                    switchXtoYChange(item.key, checked);
-                                  }}
+                                  checked={switchChecked(x.key, y.key)}
+                                  data-x={x.key}
+                                  data-y={y.key}
+                                  onChange={switchChange(x.key, y.key)}
                                 />
                               </th>
                             );
                           })}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {yData?.map((y) => {
-                        let typeTimes = statisticalTypeTimes(yData);
-                        return (
-                          <tr key={y.id} className={styles.thbodyHeight}>
-                            {Object.keys(typeTimes)?.map((i) => {
-                              if (i === y.typeName) {
-                                const rowslength = typeTimes[i];
-                                delete typeTimes[i];
-                                return (
-                                  <th
-                                    key={y.key}
-                                    rowSpan={rowslength}
-                                    className={styles.contentBorder}
-                                  >
-                                    {y.typeName}
-                                  </th>
-                                );
-                              }
-                            })}
-
-                            <th
-                              className={styles.tdBorder}
-                              style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                            >
-                              {y.groupName}
-                            </th>
-
-                            {/* 下面td的长度 应该用xData遍历 */}
-                            {xData?.map((x) => {
-                              return (
-                                <th key={x.id} className={styles.contentBorder}>
-                                  <Switch
-                                    size="small"
-                                    checked={switchChecked(x.key, y.key)}
-                                    data-x={x.key}
-                                    data-y={y.key}
-                                    onChange={switchChange(x.key, y.key)}
-                                  />
-                                </th>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </Col>
-              </Row>
-            ) : (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
-            )}
-          </div>
-        </Card>
-      </div>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          ) : (
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
+          )}
+        </div>
+      </Card>
     </div>
   );
 };

@@ -11,23 +11,23 @@ import { dealResponse } from '@/utils/util';
 
 const PanelHeight = 400; // 表单行的高度
 const ChargingStrategyForm = (props) => {
-  const { agvType, type, data, openIdle } = props;
+  const { vehicleType, type, data, openIdle } = props;
 
   const [strategyId, setStrategyId] = useState(null);
-  const [robotChargingBatteryMinValue, setChargingBatteryMinValue] = useState(0); //起始电量
-  const [robotChargingVoltageMinValue, setChargingVoltageMinValue] = useState(35); // 起始电压
-  const [robotChargingBatteryMaxValue, setChargingBatteryMaxValue] = useState(0); //终止电量
-  const [robotChargingVoltageMaxValue, setChargingVoltageMaxValue] = useState(35); //终止电压
-  const [robotFullChargingBatteryMaxValue, setFullChargingBatteryMaxValue] = useState(0); //满充电量
-  const [robotFullChargingVoltageMaxValue, setFullChargingVoltageMaxValue] = useState(35); //满充电压
-  const [robotTaskAcceptableBatteryMinValue, setTaskAcceptableBatteryMinValue] = useState(0); //最低电量
-  const [robotTaskAcceptableVoltageMinValue, setTaskAcceptableVoltageMinValue] = useState(35); //最低电压
-  const [robotChargingBatteryWarningValue, setChargingBatteryWarningValue] = useState(0); //低电量报警
-  const [robotChargingBatteryRunnableValue, setChargingBatteryRunnableValue] = useState(0); //可换充电量
-  const [robotFullChargingDuration, setFullChargingDuration] = useState(null); //两次满充时间间隔
-  const [robotNormalChargingMaxTimes, setNormalChargingMaxTimes] = useState(null); //普通充电最大连续次数
-  const [agvMinChargingTime, setMinChargingTime] = useState(null); //最短充电时间
-  const [robotCancelChargerAndReceiveTaskBattery, setCancelChargerAndReceiveTaskBattery] =
+  const [vehicleChargingBatteryMinValue, setChargingBatteryMinValue] = useState(0); //起始电量
+  const [vehicleChargingVoltageMinValue, setChargingVoltageMinValue] = useState(35); // 起始电压
+  const [vehicleChargingBatteryMaxValue, setChargingBatteryMaxValue] = useState(0); //终止电量
+  const [vehicleChargingVoltageMaxValue, setChargingVoltageMaxValue] = useState(35); //终止电压
+  const [vehicleFullChargingBatteryMaxValue, setFullChargingBatteryMaxValue] = useState(0); //满充电量
+  const [vehicleFullChargingVoltageMaxValue, setFullChargingVoltageMaxValue] = useState(35); //满充电压
+  const [vehicleTaskAcceptableBatteryMinValue, setTaskAcceptableBatteryMinValue] = useState(0); //最低电量
+  const [vehicleTaskAcceptableVoltageMinValue, setTaskAcceptableVoltageMinValue] = useState(35); //最低电压
+  const [vehicleChargingBatteryWarningValue, setChargingBatteryWarningValue] = useState(0); //低电量报警
+  const [vehicleChargingBatteryRunnableValue, setChargingBatteryRunnableValue] = useState(0); //可换充电量
+  const [vehicleFullChargingDuration, setFullChargingDuration] = useState(null); //两次满充时间间隔
+  const [vehicleNormalChargingMaxTimes, setNormalChargingMaxTimes] = useState(null); //普通充电最大连续次数
+  const [vehicleMinChargingTime, setMinChargingTime] = useState(null); //最短充电时间
+  const [vehicleCancelChargerAndReceiveTaskBattery, setCancelChargerAndReceiveTaskBattery] =
     useState(null); //最短充电时间
 
   useEffect(() => {
@@ -36,7 +36,7 @@ const ChargingStrategyForm = (props) => {
 
   // 默认配置
   async function configDefaultValue() {
-    const response = await getDefaultChargingStrategy(agvType);
+    const response = await getDefaultChargingStrategy(vehicleType);
     if (!dealResponse(response)) {
       response.id = strategyId;
       refreshState(response);
@@ -54,24 +54,24 @@ const ChargingStrategyForm = (props) => {
 
   function refreshState(data) {
     setStrategyId(data?.id || null);
-    setChargingBatteryMinValue(data?.robotChargingBatteryMinValue || 0);
-    setChargingVoltageMinValue(data ? parseFloat(data.robotChargingVoltageMinValue / 1000) : 35);
-    setChargingBatteryMaxValue(data?.robotChargingBatteryMaxValue || 0);
-    setChargingVoltageMaxValue(data ? parseFloat(data.robotChargingVoltageMaxValue / 1000) : 35);
-    setFullChargingBatteryMaxValue(data?.robotFullChargingBatteryMaxValue || 0);
+    setChargingBatteryMinValue(data?.vehicleChargingBatteryMinValue || 0);
+    setChargingVoltageMinValue(data ? parseFloat(data.vehicleChargingVoltageMinValue / 1000) : 35);
+    setChargingBatteryMaxValue(data?.vehicleChargingBatteryMaxValue || 0);
+    setChargingVoltageMaxValue(data ? parseFloat(data.vehicleChargingVoltageMaxValue / 1000) : 35);
+    setFullChargingBatteryMaxValue(data?.vehicleFullChargingBatteryMaxValue || 0);
     setFullChargingVoltageMaxValue(
-      data ? parseFloat(data.robotFullChargingVoltageMaxValue / 1000) : 35,
+      data ? parseFloat(data.vehicleFullChargingVoltageMaxValue / 1000) : 35,
     );
-    setTaskAcceptableBatteryMinValue(data?.robotTaskAcceptableBatteryMinValue || 0);
+    setTaskAcceptableBatteryMinValue(data?.vehicleTaskAcceptableBatteryMinValue || 0);
     setTaskAcceptableVoltageMinValue(
-      data ? parseFloat(data.robotTaskAcceptableVoltageMinValue / 1000) : 35,
+      data ? parseFloat(data.vehicleTaskAcceptableVoltageMinValue / 1000) : 35,
     );
-    setChargingBatteryWarningValue(data?.robotChargingBatteryWarningValue || 0);
-    setChargingBatteryRunnableValue(data?.robotChargingBatteryRunnableValue);
-    setFullChargingDuration(data?.robotFullChargingDuration);
-    setNormalChargingMaxTimes(data?.robotNormalChargingMaxTimes);
-    setMinChargingTime(data?.agvMinChargingTime);
-    setCancelChargerAndReceiveTaskBattery(data?.robotCancelChargerAndReceiveTaskBattery || 0);
+    setChargingBatteryWarningValue(data?.vehicleChargingBatteryWarningValue || 0);
+    setChargingBatteryRunnableValue(data?.vehicleChargingBatteryRunnableValue);
+    setFullChargingDuration(data?.vehicleFullChargingDuration);
+    setNormalChargingMaxTimes(data?.vehicleNormalChargingMaxTimes);
+    setMinChargingTime(data?.vehicleMinChargingTime);
+    setCancelChargerAndReceiveTaskBattery(data?.vehicleCancelChargerAndReceiveTaskBattery || 0);
   }
 
   async function saveChargerStrategy() {
@@ -80,23 +80,23 @@ const ChargingStrategyForm = (props) => {
       type,
       sectionId,
       id: strategyId,
-      agvMinChargingTime,
-      robotFullChargingDuration,
-      robotNormalChargingMaxTimes,
-      robotChargingBatteryMinValue,
-      robotChargingBatteryMaxValue,
-      robotChargingBatteryWarningValue,
-      robotFullChargingBatteryMaxValue,
-      robotChargingBatteryRunnableValue,
-      robotTaskAcceptableBatteryMinValue,
-      robotCancelChargerAndReceiveTaskBattery,
-      robotChargingVoltageMinValue: parseInt(robotChargingVoltageMinValue * 1000),
-      robotChargingVoltageMaxValue: parseInt(robotChargingVoltageMaxValue * 1000),
-      robotFullChargingVoltageMaxValue: parseInt(robotFullChargingVoltageMaxValue * 1000),
-      robotTaskAcceptableVoltageMinValue: parseInt(robotTaskAcceptableVoltageMinValue * 1000),
+      vehicleMinChargingTime,
+      vehicleFullChargingDuration,
+      vehicleNormalChargingMaxTimes,
+      vehicleChargingBatteryMinValue,
+      vehicleChargingBatteryMaxValue,
+      vehicleChargingBatteryWarningValue,
+      vehicleFullChargingBatteryMaxValue,
+      vehicleChargingBatteryRunnableValue,
+      vehicleTaskAcceptableBatteryMinValue,
+      vehicleCancelChargerAndReceiveTaskBattery,
+      vehicleChargingVoltageMinValue: parseInt(vehicleChargingVoltageMinValue * 1000),
+      vehicleChargingVoltageMaxValue: parseInt(vehicleChargingVoltageMaxValue * 1000),
+      vehicleFullChargingVoltageMaxValue: parseInt(vehicleFullChargingVoltageMaxValue * 1000),
+      vehicleTaskAcceptableVoltageMinValue: parseInt(vehicleTaskAcceptableVoltageMinValue * 1000),
     };
 
-    const response = await saveChargeStrategy(agvType, params);
+    const response = await saveChargeStrategy(vehicleType, params);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.chargeStrategy.save.failed' }));
     } else {
@@ -133,7 +133,7 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.initialPowerTip',
                     }),
-                    value: robotChargingBatteryMinValue,
+                    value: vehicleChargingBatteryMinValue,
                     onChange: setChargingBatteryMinValue,
                   }}
                   voltage={{
@@ -141,7 +141,7 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.startingVoltageTip',
                     }),
-                    value: robotChargingVoltageMinValue,
+                    value: vehicleChargingVoltageMinValue,
                     onChange: setChargingVoltageMinValue,
                   }}
                 />
@@ -154,7 +154,7 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.terminationOfPowerTip',
                     }),
-                    value: robotChargingBatteryMaxValue,
+                    value: vehicleChargingBatteryMaxValue,
                     onChange: setChargingBatteryMaxValue,
                   }}
                   voltage={{
@@ -162,7 +162,7 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.terminationVoltageTip',
                     }),
-                    value: robotChargingVoltageMaxValue,
+                    value: vehicleChargingVoltageMaxValue,
                     onChange: setChargingVoltageMaxValue,
                   }}
                 />
@@ -181,7 +181,7 @@ const ChargingStrategyForm = (props) => {
                     tip: formatMessage({
                       id: 'app.chargeStrategy.replaceablePowerTip',
                     }),
-                    value: robotChargingBatteryRunnableValue,
+                    value: vehicleChargingBatteryRunnableValue,
                     onChange: setChargingBatteryRunnableValue,
                   }}
                 />
@@ -195,7 +195,7 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.lowPowerWarningTip',
                       }),
-                      value: robotChargingBatteryWarningValue,
+                      value: vehicleChargingBatteryWarningValue,
                       onChange: setChargingBatteryWarningValue,
                     }}
                   />
@@ -220,7 +220,7 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.fullChargePowerTip',
                       }),
-                      value: robotFullChargingBatteryMaxValue,
+                      value: vehicleFullChargingBatteryMaxValue,
                       onChange: setFullChargingBatteryMaxValue,
                     }}
                     voltage={{
@@ -228,7 +228,7 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.fullChargeVoltageTip',
                       }),
-                      value: robotFullChargingVoltageMaxValue,
+                      value: vehicleFullChargingVoltageMaxValue,
                       onChange: setFullChargingVoltageMaxValue,
                     }}
                   />
@@ -246,7 +246,7 @@ const ChargingStrategyForm = (props) => {
                       <InfoCircleOutlined />
                     </Tooltip>
                     <Input
-                      value={robotFullChargingDuration}
+                      value={vehicleFullChargingDuration}
                       style={{ marginTop: 5 }}
                       addonAfter={formatMessage({ id: 'app.time.day' })}
                       onChange={(ev) => {
@@ -267,7 +267,7 @@ const ChargingStrategyForm = (props) => {
                     </Tooltip>
                     <Input
                       style={{ marginTop: 5 }}
-                      value={robotNormalChargingMaxTimes}
+                      value={vehicleNormalChargingMaxTimes}
                       addonAfter={formatMessage({ id: 'app.common.times' })}
                       onChange={(ev) => {
                         setNormalChargingMaxTimes(ev.target.value);
@@ -292,7 +292,7 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.minimumPowerTip',
                       }),
-                      value: robotTaskAcceptableBatteryMinValue,
+                      value: vehicleTaskAcceptableBatteryMinValue,
                       onChange: setTaskAcceptableBatteryMinValue,
                     }}
                     voltage={{
@@ -300,7 +300,7 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.minimumVoltageTip',
                       }),
-                      value: robotTaskAcceptableVoltageMinValue,
+                      value: vehicleTaskAcceptableVoltageMinValue,
                       onChange: setTaskAcceptableVoltageMinValue,
                     }}
                   />
@@ -318,7 +318,7 @@ const ChargingStrategyForm = (props) => {
                       <InfoCircleOutlined />
                     </Tooltip>
                     <Input
-                      value={agvMinChargingTime}
+                      value={vehicleMinChargingTime}
                       style={{ marginTop: 5 }}
                       addonAfter={formatMessage({ id: 'app.time.seconds' })}
                       onChange={(ev) => {
@@ -351,7 +351,7 @@ const ChargingStrategyForm = (props) => {
                       tip: formatMessage({
                         id: 'app.chargeStrategy.cancelChargerAndReceiveTaskTip',
                       }),
-                      value: robotCancelChargerAndReceiveTaskBattery,
+                      value: vehicleCancelChargerAndReceiveTaskBattery,
                       onChange: setCancelChargerAndReceiveTaskBattery,
                     }}
                   />

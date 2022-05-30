@@ -28,7 +28,7 @@ const Index = (props) => {
       return (
         <Badge showZero count={jobPriority} style={{ background: '#2FC25B' }}>
           <span
-            className={taskQueueStyles.agvStatusBadge}
+            className={taskQueueStyles.vehicleStatusBadge}
             style={{ color: '#000', background: '#ccc' }}
           >
             *{taskId.substr(taskId.length - 6, 6)}

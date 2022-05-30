@@ -37,7 +37,7 @@ const TargetLockSearch = (props) => {
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={4}>
           {/* 小车id */}
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>

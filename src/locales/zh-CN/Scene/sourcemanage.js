@@ -10,8 +10,8 @@ export default {
   'sourcemanage.podManager.exportPod': '导出货架信息',
   'sourcemanage.podAssign': '货架配置',
 
-  'sourcemanage.agvgroup.name': '组名',
-  'sourcemanage.require.agvgroup': '请输入组名',
+  'sourcemanage.vehiclegroup.name': '组名',
+  'sourcemanage.require.vehiclegroup': '请输入组名',
 
 
 };

@@ -22,8 +22,8 @@ import PodToStationMessage from './PodToStationMessage';
 import LatentStopMessage from './LatentPauseMessage';
 import WorkStationReport from './WorkStationReport';
 import CommonStationReport from './CommonStationReport';
-import AgvAlert from './AgvInfo/AgvAlert';
-import AgvRunningInfo from './AgvInfo/AgvRunninInfo';
+import VehicleAlert from './VehicleInfo/VehicleAlert';
+import VehicleRunningInfo from './VehicleInfo/VehicleRunninInfo';
 import EmergencyManagerModal from './EmergencyStopModal';
 
 const MonitorModals = (props) => {
@@ -31,8 +31,8 @@ const MonitorModals = (props) => {
 
   return (
     <>
-      {categoryModal === 'AgvAlert' && <AgvAlert />}
-      {categoryModal === 'AgvRunInfo' && <AgvRunningInfo />}
+      {categoryModal === 'VehicleAlert' && <VehicleAlert />}
+      {categoryModal === 'VehicleRunInfo' && <VehicleRunningInfo />}
 
       {categoryModal === 'emptyRun' && <EmptyRun dispatch={dispatch} />}
       {categoryModal === 'charge' && <Charging />}
@@ -40,13 +40,13 @@ const MonitorModals = (props) => {
       {categoryModal === 'carry' && <CarryPod />}
       {categoryModal === 'advancedCarry' && <AdvancedCarry />}
 
-      {categoryModal === 'workStationTask' && categoryPanel === 'LatentAGV' && (
+      {categoryModal === 'workStationTask' && categoryPanel === 'LatentVehicle' && (
         <LatentWorkStationTask />
       )}
-      {categoryModal === 'autoCall' && categoryPanel === 'LatentAGV' && (
+      {categoryModal === 'autoCall' && categoryPanel === 'LatentVehicle' && (
         <AutomaticLatentWorkstationTask />
       )}
-      {categoryModal === 'workStationTask' && categoryPanel === 'ToteAGV' && (
+      {categoryModal === 'workStationTask' && categoryPanel === 'ToteVehicle' && (
         <AutomaticToteWorkstationTask />
       )}
 

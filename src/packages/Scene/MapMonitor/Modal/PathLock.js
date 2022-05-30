@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Checkbox, Col, Form, InputNumber, message, Row, Select, Switch } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { fetchCellLocks, fetchLogicAllAGVLocks } from '@/services/XIHE';
+import { fetchCellLocks, fetchLogicAllVehicleLocks } from '@/services/XIHE';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -15,10 +15,10 @@ const { formItemLayout } = getFormLayout(6, 16);
 const PathLock = (props) => {
   const {
     dispatch,
-    allAGVs,
+    allVehicles,
     mapContext,
-    selectAgv,
-    agvLockView,
+    selectVehicle,
+    vehicleLockView,
     routeView,
     showCellLock,
     showLogicLockedCell,
@@ -49,19 +49,19 @@ const PathLock = (props) => {
     }
   }
 
-  function onAgvListChanged(changedIdList) {
+  function onVehicleListChanged(changedIdList) {
     if (!mapContext) return;
 
     dispatch({
       type: 'monitorView/saveViewState',
-      payload: { selectAgv: changedIdList },
+      payload: { selectVehicle: changedIdList },
     });
     // 更新地图锁格显示
     lockcellPollingCallback(false);
     showRoutePollingCallback(false);
 
     if (changedIdList.length > 0) {
-      lockcellPollingCallback(agvLockView.showLockCellPolling, changedIdList);
+      lockcellPollingCallback(vehicleLockView.showLockCellPolling, changedIdList);
       showRoutePollingCallback(routeView.showRoute, changedIdList);
     } else {
       mapContext.clearAllLocks(); // 清理锁格
@@ -70,24 +70,24 @@ const PathLock = (props) => {
     }
   }
 
-  function selectAllAgvs() {
-    const selectAgv = allAGVs.map(({ uniqueId }) => uniqueId);
-    form.setFieldsValue({ selectAgv });
-    onAgvListChanged(selectAgv);
+  function selectAllVehicles() {
+    const selectVehicle = allVehicles.map(({ uniqueId }) => uniqueId);
+    form.setFieldsValue({ selectVehicle });
+    onVehicleListChanged(selectVehicle);
     dispatch({
       type: 'monitorView/saveViewState',
-      payload: { selectAgv },
+      payload: { selectVehicle },
     });
   }
 
   // 显示锁格-刷新
-  function refreshMapAgvLock() {
-    const selectedIds = form.getFieldValue('selectAgv');
+  function refreshMapVehicleLock() {
+    const selectedIds = form.getFieldValue('selectVehicle');
     if (selectedIds.length === 0) {
-      message.error(formatMessage({ id: 'monitor.view.require.AGV' }));
+      message.error(formatMessage({ id: 'monitor.view.require.Vehicle' }));
       return false;
     }
-    if (agvLockView?.showLockCellPolling) {
+    if (vehicleLockView?.showLockCellPolling) {
       dispatch({
         type: 'monitor/fetchAllLockCells',
         payload: selectedIds,
@@ -105,16 +105,16 @@ const PathLock = (props) => {
   function switchLockCellPolling(checked) {
     lockcellPollingCallback(checked);
     dispatch({
-      type: 'monitorView/saveAgvLockView',
+      type: 'monitorView/saveVehicleLockView',
       payload: { showLockCellPolling: checked },
     });
   }
 
   // start 轮询显示锁格
-  function lockcellPollingCallback(flag, agvs) {
-    const allAgvs = agvs || selectAgv;
-    if (flag && allAgvs?.length > 0) {
-      openLockcellPolling(allAgvs);
+  function lockcellPollingCallback(flag, vehicles) {
+    const allVehicles = vehicles || selectVehicle;
+    if (flag && allVehicles?.length > 0) {
+      openLockcellPolling(allVehicles);
     } else {
       closeLockcellPolling();
     }
@@ -172,7 +172,7 @@ const PathLock = (props) => {
   }
 
   async function viewLogicLocked() {
-    const response = await fetchLogicAllAGVLocks(currentLogicAreaId);
+    const response = await fetchLogicAllVehicleLocks(currentLogicAreaId);
     if (!dealResponse(response)) {
       mapContext?.renderLockCell(response);
     }
@@ -194,15 +194,15 @@ const PathLock = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={form} onValuesChange={onValuesChange}>
           {/* 小车ID */}
-          <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agv.id' })} labelWrap>
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.vehicle.id' })} labelWrap>
             <Row gutter={10}>
               <Col span={18}>
                 <Form.Item
                   noStyle
-                  name={'selectAgv'}
-                  initialValue={selectAgv || []}
+                  name={'selectVehicle'}
+                  initialValue={selectVehicle || []}
                   getValueFromEvent={(value) => {
-                    onAgvListChanged(value);
+                    onVehicleListChanged(value);
                     return value;
                   }}
                 >
@@ -216,17 +216,17 @@ const PathLock = (props) => {
                       option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
                     }
                   >
-                    {allAGVs.map((element) => (
+                    {allVehicles.map((element) => (
                       <Select.Option key={element.vehicleId} value={element.uniqueId}>
-                        {`${element.agvType}-${element.vehicleId}`}
+                        {`${element.vehicleType}-${element.vehicleId}`}
                       </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Button size="small" onClick={selectAllAgvs}>
-                  <FormattedMessage id="monitor.view.selectAgvall" />
+                <Button size="small" onClick={selectAllVehicles}>
+                  <FormattedMessage id="monitor.view.selectVehicleall" />
                 </Button>
               </Col>
             </Row>
@@ -241,21 +241,21 @@ const PathLock = (props) => {
                   {...formItemLayout}
                   name={'showLockCellPolling'}
                   valuePropName={'checked'}
-                  initialValue={agvLockView?.showLockCellPolling}
+                  initialValue={vehicleLockView?.showLockCellPolling}
                   getValueFromEvent={(ev) => {
                     switchLockCellPolling(ev);
                     return ev;
                   }}
                 >
                   <Switch
-                    disabled={selectAgv?.length === 0}
+                    disabled={selectVehicle?.length === 0}
                     checkedChildren={formatMessage({ id: 'app.common.true' })}
                     unCheckedChildren={formatMessage({ id: 'app.common.false' })}
                   />
                 </Form.Item>
               </Col>
               <Col span={7}>
-                <Button size="small" onClick={refreshMapAgvLock}>
+                <Button size="small" onClick={refreshMapVehicleLock}>
                   <FormattedMessage id="app.button.refresh" />
                 </Button>
               </Col>
@@ -393,10 +393,10 @@ const PathLock = (props) => {
   );
 };
 export default connect(({ monitor, monitorView }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   mapContext: monitor.mapContext,
-  selectAgv: monitorView.selectAgv,
-  agvLockView: monitorView.agvLockView,
+  selectVehicle: monitorView.selectVehicle,
+  vehicleLockView: monitorView.vehicleLockView,
   routeView: monitorView.routeView,
   showCellLock: monitorView.showCellLock,
   showLogicLockedCell: monitorView.showLogicLockedCell,

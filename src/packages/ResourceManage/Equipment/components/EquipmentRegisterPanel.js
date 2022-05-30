@@ -10,7 +10,7 @@ import AddFindInfoModal from './AddFindInfoModal';
 import RegisterDeviceModal from './RegisterDeviceModal';
 import { registerDevice } from '@/services/resourceManageAPI';
 import commonStyle from '@/common.module.less';
-import styles from '@/packages/ResourceManage/Agv/agv.module.less';
+import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 
 const EquipmentRegisterPanel = (props) => {
   const { dispatch, loading, allDevices, showRegisterPanel, onRefresh } = props;
@@ -28,7 +28,7 @@ const EquipmentRegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv.port" />,
+      title: <FormattedMessage id="app.vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },

@@ -10,7 +10,7 @@ const { Option } = Select;
 const TaskStatus = Dictionary('taskStatus');
 
 const TaskSearch = (props) => {
-  const { search, agvList, allTaskTypes } = props;
+  const { search, vehicleList, allTaskTypes } = props;
 
   const [form] = Form.useForm();
 
@@ -28,7 +28,7 @@ const TaskSearch = (props) => {
     });
   }
 
-  function renderAgvTaskTypeOption() {
+  function renderVehicleTaskTypeOption() {
     return Object.keys(allTaskTypes).map((type) => (
       <Option key={type} value={type}>
         {allTaskTypes[type]}
@@ -40,9 +40,9 @@ const TaskSearch = (props) => {
     <Form form={form} onFinish={onFinish}>
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={8}>
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <Select allowClear showSearch>
-              {agvList.map((vehicleId) => (
+              {vehicleList.map((vehicleId) => (
                 <Option key={vehicleId} value={vehicleId}>
                   {vehicleId}
                 </Option>
@@ -74,9 +74,9 @@ const TaskSearch = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'agvTaskType'} label={formatMessage({ id: 'app.task.type' })}>
+          <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.type' })}>
             <Select mode="multiple" allowClear>
-              {renderAgvTaskTypeOption()}
+              {renderVehicleTaskTypeOption()}
             </Select>
           </Form.Item>
         </Col>

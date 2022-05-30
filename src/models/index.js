@@ -10,7 +10,7 @@ import customTaskModel from './customTaskModel';
 import menuModel from './menuModel';
 import monitorViewModel from './monitorViewModel';
 import groupManageModel from './groupManageModel';
-import agvListModel from './agvListModel';
+import vehicleListModel from './vehicleListModel';
 import equipmentListModel from './equipmentListModel';
 
 export default [
@@ -26,6 +26,6 @@ export default [
   menuModel,
   monitorViewModel,
   groupManageModel,
-  agvListModel,
+  vehicleListModel,
   equipmentListModel,
 ];

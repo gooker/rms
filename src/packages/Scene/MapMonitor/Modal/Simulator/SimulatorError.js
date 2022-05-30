@@ -16,11 +16,11 @@ export default function SimulatorError(props) {
       .validateFields()
       .then((values) => {
         const { msgCode } = values;
-        const params = { logicId, msgCode, robotId: selectIds.join(',') };
+        const params = { logicId, msgCode, vehicleId: selectIds.join(',') };
         setExecuting(true);
         fetchSimulatorErrorMessage(params).then((res) => {
           if (!dealResponse(res, 1, formatMessage({ id: 'monitor.simulator.errorCode.success' }))) {
-            dispatch({ type: 'simulator/fetchSimulatorLoginAGV' });
+            dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
             onCancel(false);
           }
         });
@@ -35,7 +35,7 @@ export default function SimulatorError(props) {
       <Form form={formRef}>
         <Form.Item
           {...formItemLayout}
-          name={'robotId'}
+          name={'vehicleId'}
           label={formatMessage({ id: 'monitor.simulator.errorCode' })}
           rules={[{ required: true }]}
         >

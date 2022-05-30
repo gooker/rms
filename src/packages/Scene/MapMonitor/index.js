@@ -12,7 +12,7 @@ import MonitorModals from './Modal';
 import { HeaderHeight, MonitorOperationType } from './enums';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
-import { AgvPollingTaskPathManager,LockCellPolling } from '@/workers/WebWorkerManager';
+import { VehiclePollingTaskPathManager,LockCellPolling } from '@/workers/WebWorkerManager';
 
 const MapMonitor = (props) => {
   const { dispatch, socketClient, currentMap, mapContext } = props;
@@ -27,7 +27,7 @@ const MapMonitor = (props) => {
       dispatch({ type: 'monitor/unmount' });
       dispatch({ type: 'monitorView/unmount' });
       window.sessionStorage.removeItem('MONITOR_MAP');
-      AgvPollingTaskPathManager.terminate();
+      VehiclePollingTaskPathManager.terminate();
       LockCellPolling.terminate();
     };
   }, []);

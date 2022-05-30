@@ -19,7 +19,7 @@ const WorkStationProperty = (props) => {
   } = props;
   const [checked, setChecked] = useState(false);
   const [color, setColor] = useState('#1da1a3');
-  const [robotIds, setRobotIds] = useState([]);
+  const [vehicleIds, setVehicleIds] = useState([]);
 
   useEffect(() => {
     async function init() {
@@ -49,8 +49,8 @@ const WorkStationProperty = (props) => {
         stopDirection: direction,
       });
       if (!dealResponse(taskHistoryResponse)) {
-        const { robotIds = [] } = taskHistoryResponse;
-        // setRobotIds([1, 2, 3, 5]);
+        const { vehicleIds = [] } = taskHistoryResponse;
+        // setVehicleIds([1, 2, 3, 5]);
 
         dispatch({
           type: 'monitorView/saveWorkStationView',
@@ -72,13 +72,13 @@ const WorkStationProperty = (props) => {
   // 动作操作
   function operateStatus(status) {}
 
-  function markerWorkStation(agvs, checked, stationOB) {
+  function markerWorkStation(vehicles, checked, stationOB) {
     const { stopCellId, color, direction } = stationOB;
     const currentStopCellId = `${stopCellId}`;
 
     // 更新地图显示
     mapContext.markWorkStation(currentStopCellId, checked, color);
-    mapContext.markWorkStationAgv(agvs, checked, color, currentStopCellId);
+    mapContext.markWorkStationVehicle(vehicles, checked, color, currentStopCellId);
 
     let _currenyWorkStations = [...workStationPolling];
     if (checked) {
@@ -121,9 +121,9 @@ const WorkStationProperty = (props) => {
       currentResponse.map((data, index) => {
         if (!dealResponse(data)) {
           const stopCellId = data?.stopCellId; // 轮询返回结果 前端加上的
-          const { robotIds, taskCountMap } = data;
+          const { vehicleIds, taskCountMap } = data;
           const taskHistoryData = covertData2ChartsData(taskCountMap);
-          _workStationTaskHistoryData[stopCellId] = { robotIds, taskHistoryData };
+          _workStationTaskHistoryData[stopCellId] = { vehicleIds, taskHistoryData };
         }
       });
       dispatch({
@@ -134,8 +134,8 @@ const WorkStationProperty = (props) => {
       });
       // 根据返回数据刷新小车标记
       Object.keys(_workStationTaskHistoryData).forEach((stopId) => {
-        const { robotIds } = _workStationTaskHistoryData[stopId];
-        mapContext?.markWorkStationAgv(robotIds, true, null, stopId);
+        const { vehicleIds } = _workStationTaskHistoryData[stopId];
+        mapContext?.markWorkStationVehicle(vehicleIds, true, null, stopId);
       });
     });
   }
@@ -219,20 +219,20 @@ const WorkStationProperty = (props) => {
                 <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
               </span>
             </div>
-            <div>{robotIds?.length > 0}</div>
+            <div>{vehicleIds?.length > 0}</div>
           </div>
 
-          {!isStrictNull(robotIds) && robotIds.length > 0 && (
+          {!isStrictNull(vehicleIds) && vehicleIds.length > 0 && (
             <div>
               <div className={styles.allocatedContent}>
-                {robotIds.map((item, index) => {
+                {vehicleIds.map((item, index) => {
                   return <span key={index}>{item}</span>;
                 })}
               </div>
               <div className={styles.markedContent}>
                 <div className={styles.marked}>
                   <input
-                    disabled={checked || !robotIds || robotIds.length === 0}
+                    disabled={checked || !vehicleIds || vehicleIds.length === 0}
                     type="color"
                     value={color}
                     onChange={(e) => {
@@ -251,7 +251,7 @@ const WorkStationProperty = (props) => {
                       })}
                       onChange={(value) => {
                         setChecked(value);
-                        markerWorkStation(robotIds, value, {
+                        markerWorkStation(vehicleIds, value, {
                           ...workStationOB,
                           color,
                           flag: value,
@@ -285,8 +285,8 @@ const WorkStationProperty = (props) => {
         {/* 操作区域*/}
         <div style={{ marginTop: 30 }}>
           {/* 开启结束暂停 */}
-          <div className={styles.rightSideAgvContentOperation}>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+          <div className={styles.rightSideVehicleContentOperation}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div
                 onClick={() => {
                   operateStatus('start');
@@ -294,7 +294,7 @@ const WorkStationProperty = (props) => {
                 style={{ background: data?.status === 'start' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/start.png').default}
                 />
               </div>
@@ -302,7 +302,7 @@ const WorkStationProperty = (props) => {
                 <FormattedMessage id={'app.button.turnOn'} />
               </div>
             </div>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div
                 onClick={() => {
                   operateStatus('paused');
@@ -310,7 +310,7 @@ const WorkStationProperty = (props) => {
                 style={{ background: data?.status === 'paused' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/paused.png').default}
                 />
               </div>
@@ -318,7 +318,7 @@ const WorkStationProperty = (props) => {
                 <FormattedMessage id={'app.common.status.pause'} />
               </div>
             </div>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div
                 onClick={() => {
                   operateStatus('end');
@@ -326,7 +326,7 @@ const WorkStationProperty = (props) => {
                 style={{ background: data?.status === 'end' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/end.png').default}
                 />
               </div>
@@ -337,8 +337,8 @@ const WorkStationProperty = (props) => {
           </div>
 
           {/* 报表 */}
-          <div className={styles.rightSideAgvContentOperation}>
-            <div className={styles.rightSideAgvContentOperationItem2}>
+          <div className={styles.rightSideVehicleContentOperation}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div onClick={showStationReport}>
                 <img
                   alt={'station'}

@@ -113,7 +113,7 @@ class Header extends React.Component {
     const { logo, isFullscreen, currentUser } = this.props;
     if (isNull(currentUser)) return null;
 
-    const mainVersion = backendVersion?.MixRobot?.version;
+    const mainVersion = backendVersion?.MixVehicle?.version;
     const isAdmin = currentUser.username === 'admin';
     return (
       <div className={styles.header}>

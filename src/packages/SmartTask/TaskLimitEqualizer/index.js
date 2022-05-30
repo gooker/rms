@@ -5,8 +5,8 @@ import { dealResponse, isNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import {
   fetchActiveMap,
-  getAgvTasksByCustomGroup,
-  getAgvTasksByType,
+  getVehicleTasksByCustomGroup,
+  getVehicleTasksByType,
   saveTaskLimit,
   getTaskLimit,
   deleteTaskLimit,
@@ -75,17 +75,17 @@ class TaskTrigger extends Component {
   ];
 
   componentDidMount() {
-    this.getAgvTasks();
+    this.getVehicleTasks();
   }
 
-  getAgvTasks = async () => {
+  getVehicleTasks = async () => {
     this.setState({ spinningFlag: true });
     const originalMapData = await fetchActiveMap();
     if (originalMapData) {
       const payload = { mapId: originalMapData.id };
-      this.getAgvTaskLists(originalMapData.id);
+      this.getVehicleTaskLists(originalMapData.id);
       // 根据mapId 获取资源组限流
-      const response = await getAgvTasksByCustomGroup(payload);
+      const response = await getVehicleTasksByCustomGroup(payload);
       if (!dealResponse(response)) {
         this.setState({
           getTasksByCustomGroup: response,
@@ -97,7 +97,7 @@ class TaskTrigger extends Component {
       message.error(formatMessage({ id: 'app.storageManage.map.fetchFailed' }));
     }
     this.setState({ spinningFlag: false });
-    const getTasksByType = await getAgvTasksByType(); // 类型限流
+    const getTasksByType = await getVehicleTasksByType(); // 类型限流
     if (!dealResponse(getTasksByType)) {
       this.setState({
         getTasksByType,
@@ -106,7 +106,7 @@ class TaskTrigger extends Component {
     }
   };
 
-  getAgvTaskLists = async (mapId, type) => {
+  getVehicleTaskLists = async (mapId, type) => {
     // 列表接口
     const query = {};
     if (!isNull(mapId)) query.mapId = mapId;
@@ -162,7 +162,7 @@ class TaskTrigger extends Component {
         limitModalVisible: false,
         updateLimitRecord: null,
       });
-      this.getAgvTaskLists(mapId);
+      this.getVehicleTaskLists(mapId);
     }
   };
 
@@ -180,7 +180,7 @@ class TaskTrigger extends Component {
 
   search = () => {
     const { mapId } = this.state;
-    this.getAgvTaskLists(mapId);
+    this.getVehicleTaskLists(mapId);
   };
 
   // 任务取消

@@ -2,17 +2,17 @@ import React, { memo, useState } from 'react';
 import { Form, Button } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { agvToRest } from '@/services/monitor';
+import { vehicleToRest } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
-import AgvFormComponent from '@/components/AgvFormComponent';
+import VehicleFormComponent from '@/components/VehicleFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const ToRest = (props) => {
-  const { dispatch, allAGVs } = props;
+  const { dispatch, allVehicles } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -25,10 +25,10 @@ const ToRest = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { vehicleId: values.vehicleId });
-        if (agv) {
+        const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
+        if (vehicle) {
         
-          agvToRest({ ...values }).then((response) => {
+          vehicleToRest({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -47,7 +47,7 @@ const ToRest = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <AgvFormComponent />
+          <VehicleFormComponent />
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
@@ -59,5 +59,5 @@ const ToRest = (props) => {
   );
 };
 export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
 }))(memo(ToRest));

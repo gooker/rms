@@ -4,7 +4,7 @@ import MatchReportsComponents from './MatchReportsComponents';
 
 export default class Reports extends Component {
   renderForm = (groupReports) => {
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     const result = [];
     const { remove, deletable, filterDateOnChange } = this.props;
     if (groupReports && groupReports.length > 0) {
@@ -20,7 +20,7 @@ export default class Reports extends Component {
 
         result.push(
           <MatchReportsComponents
-            agvType={agvType}
+            vehicleType={vehicleType}
             remove={() => {
               remove({ ...element });
             }}

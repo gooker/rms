@@ -104,10 +104,10 @@ class SocketClient {
     /// /////////////////////////////// 潜伏式  //////////////////////////////////
     // 潜伏式车状态
     unsubscription = this.client.subscribe(
-      `/topic/latent_lifting_ui_monitor_agv.s${sectionId}`,
+      `/topic/latent_lifting_ui_monitor_vehicle.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);
-        if (this.agvStatusCallback) this.agvStatusCallback(p);
+        if (this.vehicleStatusCallback) this.vehicleStatusCallback(p);
       },
     );
     // 将返回的"取消订阅"的函数缓存起来
@@ -156,17 +156,17 @@ class SocketClient {
     /// /////////////////////////// 料箱  /////////////////////////////////////////
     // 料箱车状态信息
     unsubscription = this.client.subscribe(
-      `/topic/tote_ui_monitor_agv.s${sectionId}`,
+      `/topic/tote_ui_monitor_vehicle.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);
-        if (this.toteAgvStatusCallback) this.toteAgvStatusCallback(p);
+        if (this.toteVehicleStatusCallback) this.toteVehicleStatusCallback(p);
       },
     );
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
     // 料箱车上料箱[tote]状态
     unsubscription = this.client.subscribe(
-      `/topic/tote_monitor_agv_tote_status.s${sectionId}`,
+      `/topic/tote_monitor_vehicle_tote_status.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);
         if (this.toteStatusCallback) this.toteStatusCallback(p);
@@ -176,10 +176,10 @@ class SocketClient {
 
     /// /////////////////////////// 分拣车  /////////////////////////////////////////
     unsubscription = this.client.subscribe(
-      `/topic/sorter_ui_monitor_agv.s${sectionId}`,
+      `/topic/sorter_ui_monitor_vehicle.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);
-        if (this.sorterAgvStatusCallback) this.sorterAgvStatusCallback(p);
+        if (this.sorterVehicleStatusCallback) this.sorterVehicleStatusCallback(p);
       },
     );
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
@@ -220,9 +220,9 @@ class SocketClient {
     this.notificationQuestion = cb;
   }
 
-  // Latent AGV
-  registerLatentAGVStatus(cb) {
-    this.agvStatusCallback = cb;
+  // Latent Vehicle
+  registerLatentVehicleStatus(cb) {
+    this.vehicleStatusCallback = cb;
   }
 
   registerLatentPodStatus(cb) {
@@ -241,9 +241,9 @@ class SocketClient {
     this.podInStation = cb;
   }
 
-  // Tote AGV
-  registerToteAGVStatus(cb) {
-    this.toteAgvStatusCallback = cb;
+  // Tote Vehicle
+  registerToteVehicleStatus(cb) {
+    this.toteVehicleStatusCallback = cb;
   }
 
   registerToteStatusCallback(cb) {
@@ -252,8 +252,8 @@ class SocketClient {
   }
 
   // 分拣车
-  registerSorterAGVStatus(cb) {
-    this.sorterAgvStatusCallback = cb;
+  registerSorterVehicleStatus(cb) {
+    this.sorterVehicleStatusCallback = cb;
   }
 
   // 充电桩

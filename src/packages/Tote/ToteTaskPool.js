@@ -3,7 +3,7 @@ import { Badge, Tag, Button, Tooltip } from 'antd';
 import { convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/pages/TaskPool/TaskPoolComponent';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import { TaskStateBageType } from '@/config/consts';
 
 const statusTransform = {
@@ -18,8 +18,8 @@ const ToteTaskPool = () => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id="app.agv.id" />,
-        dataIndex: 'robotId',
+        title: <FormattedMessage id="app.vehicle.id" />,
+        dataIndex: 'vehicleId',
         align: 'center',
         width: 100,
         fixed: 'left',
@@ -168,7 +168,7 @@ const ToteTaskPool = () => {
                 <Button
                   type="link"
                   onClick={() => {
-                    checkDetail(record.relationToteTaskIds[k], AGVType.Tote);
+                    checkDetail(record.relationToteTaskIds[k], VehicleType.Tote);
                   }}
                 >
                   <FormattedMessage id="app.taskPool.FetchDetail" />
@@ -180,7 +180,7 @@ const ToteTaskPool = () => {
                   type="link"
                   style={{ paddingLeft: 10 }}
                   onClick={() => {
-                    checkDetail(record.relationToteTaskIds[k], AGVType.Tote);
+                    checkDetail(record.relationToteTaskIds[k], VehicleType.Tote);
                   }}
                 >
                   <FormattedMessage id="app.taskPool.PutDetail" />
@@ -193,7 +193,7 @@ const ToteTaskPool = () => {
   return (
     <TaskPoolComponent
       getColumn={getColumn} // 提供表格列数据
-      agvType={AGVType.Tote} // 标记当前页面的车型
+      vehicleType={VehicleType.Tote} // 标记当前页面的车型
       cancel={true} // 标记该页面是否允许执行取消操作
     />
   );

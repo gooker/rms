@@ -9,7 +9,7 @@ import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
 import commonStyles from '@/common.module.less';
 import styles from './taskQueue.module.less';
@@ -43,7 +43,7 @@ class ExecutionQueueComponent extends Component {
             <span
               className={commonStyles.textLinks}
               onClick={() => {
-                this.checkTaskDetail(text, AGVType.Tote);
+                this.checkTaskDetail(text, VehicleType.Tote);
               }}
             >
               {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -54,12 +54,12 @@ class ExecutionQueueComponent extends Component {
     },
     {
       title: <FormattedMessage id="app.task.type" />,
-      dataIndex: 'agvTaskType',
+      dataIndex: 'vehicleTaskType',
       align: 'center',
       width: 150,
       render: (text) => {
-        const { allTaskTypes, agvType } = this.props;
-        return allTaskTypes?.[agvType]?.[text] || text;
+        const { allTaskTypes, vehicleType } = this.props;
+        return allTaskTypes?.[vehicleType]?.[text] || text;
       },
     },
     {
@@ -84,8 +84,8 @@ class ExecutionQueueComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.agv" />,
-      dataIndex: 'appointedAGVId',
+      title: <FormattedMessage id="app.vehicle" />,
+      dataIndex: 'appointedVehicleId',
       align: 'center',
       width: 100,
       render: (text) => {
@@ -164,9 +164,9 @@ class ExecutionQueueComponent extends Component {
   }
 
   getData = async () => {
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     this.setState({ loading: true });
-    const response = await fetchExecutingTaskList(agvType);
+    const response = await fetchExecutingTaskList(vehicleType);
     if (!dealResponse(response)) {
       this.setState({ dataSource: response });
     }
@@ -176,7 +176,7 @@ class ExecutionQueueComponent extends Component {
   deleteQueueTasks = () => {
     const _this = this;
     const { selectedRow, dataSource } = this.state;
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
@@ -185,7 +185,7 @@ class ExecutionQueueComponent extends Component {
       content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
-        const response = await deleteExecutionQTasks(agvType, requestParam);
+        const response = await deleteExecutionQTasks(vehicleType, requestParam);
         if (
           !dealResponse(
             response,
@@ -211,10 +211,10 @@ class ExecutionQueueComponent extends Component {
   };
 
   checkTaskDetail = (taskId) => {
-    const { dispatch, agvType } = this.props;
+    const { dispatch, vehicleType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
+      payload: { taskId, vehicleType },
     });
   };
 
@@ -225,15 +225,15 @@ class ExecutionQueueComponent extends Component {
       currentFilterValue.taskId = filterValue.taskId;
     }
     if (!isStrictNull(filterValue.vehicleId)) {
-      currentFilterValue.appointedAGVId = filterValue.vehicleId;
+      currentFilterValue.appointedVehicleId = filterValue.vehicleId;
     }
     if (Object.keys(currentFilterValue).length === 0) {
       return dataSource;
     }
 
     let currentSources = [];
-    if (!isStrictNull(filterValue.agvTaskType)) {
-      const filterType = filterValue.agvTaskType;
+    if (!isStrictNull(filterValue.vehicleTaskType)) {
+      const filterType = filterValue.vehicleTaskType;
       currentSources = dataSource.filter(({ type }) => filterType.includes(type));
     }
     Object.values(currentFilterValue).map((value) => {
@@ -248,12 +248,12 @@ class ExecutionQueueComponent extends Component {
 
   render() {
     const { loading, deleteLoading, selectedRowKeys } = this.state;
-    const { deleteFlag, allTaskTypes, agvType } = this.props;
+    const { deleteFlag, allTaskTypes, vehicleType } = this.props;
     return (
       <TablePageWrapper>
         <div className={styles.taskSearchDivider}>
           <ExecutionQueueSearch
-            allTaskTypes={allTaskTypes?.[agvType] || {}}
+            allTaskTypes={allTaskTypes?.[vehicleType] || {}}
             search={this.filterTableList}
           />
           <Divider />

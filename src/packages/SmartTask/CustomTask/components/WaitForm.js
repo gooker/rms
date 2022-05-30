@@ -74,7 +74,7 @@ const WaitForm = (props) => {
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={[code, 'agvWaitTask', 'waitTime']}
+        name={[code, 'vehicleWaitTask', 'waitTime']}
         initialValue={180}
         label={formatMessage({ id: 'customTask.form.waitTime' })}
       >
@@ -86,8 +86,8 @@ const WaitForm = (props) => {
 
       {/* 进入待命状态条件 */}
       <Form.Item noStyle hidden={hidden}>
-        <div className={styles.robotStandbyCondition}>
-          <Form.List name={[code, 'agvWaitTask', 'taskCriteria']} initialValue={[{}]}>
+        <div className={styles.vehicleStandbyCondition}>
+          <Form.List name={[code, 'vehicleWaitTask', 'taskCriteria']} initialValue={[{}]}>
             {(fields, { add, remove }) => (
               <>
                 {fields.map((field) => (
@@ -128,10 +128,10 @@ const WaitForm = (props) => {
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={[code, 'agvWaitTask', 'robotCanCharge']}
+        name={[code, 'vehicleWaitTask', 'vehicleCanCharge']}
         valuePropName={'checked'}
         initialValue={true}
-        label={formatMessage({ id: 'customTask.form.robotAutoCharge' })}
+        label={formatMessage({ id: 'customTask.form.vehicleAutoCharge' })}
       >
         <Switch />
       </Form.Item>

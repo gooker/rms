@@ -349,7 +349,7 @@ export const generateTimeData = (allData, translate, timeType = 'hour') => {
 };
 
 /*
- * idName- 是cellId或者agvId
+ * idName- 是cellId或者vehicleId
  *根据原始数据 --处理idName数据(y轴) 横坐标是key的sum
  *translate-是翻译{key:value}
  *
@@ -411,7 +411,7 @@ export const transformCodeData = (allData = {}, translate, idName = 'cellId') =>
   return { yAxis, series, legend };
 };
 
-/**拿到原始数据的 所有参数 所有根据cellId/agvId的参数求和
+/**拿到原始数据的 所有参数 所有根据cellId/vehicleId的参数求和
  * @param {*} originalData 数据
  * *@param {*} translate 报表所有的key和对应的翻译 {key:value}
  * *@param {*} idName 根据id求合 可以是cellId/vehicleId

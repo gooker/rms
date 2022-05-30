@@ -35,8 +35,8 @@ const CustomTaskTable = (props) => {
       customParams: [],
     };
     // 如果是自动分车，动态参数类型是"指定小车"
-    if (isNull(customStart.robot)) {
-      requestBody.customParams.push({ code: 'START-AGV', param: [] });
+    if (isNull(customStart.vehicle)) {
+      requestBody.customParams.push({ code: 'START-Vehicle', param: [] });
     }
     // 将sample数据合并到customParams中
     Object.keys(sample).forEach((taskCode) => {
@@ -45,7 +45,7 @@ const CustomTaskTable = (props) => {
         if (taskCode === CustomNodeType.START) {
           requestBody.customParams.push({
             code: `${taskCode}-${field}`,
-            param: record.customStart?.robot?.code ?? [],
+            param: record.customStart?.vehicle?.code ?? [],
           });
         } else {
           // ACTION

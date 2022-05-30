@@ -26,7 +26,7 @@ export async function fetchTemporaryBlockCells() {
 
 /****显示路径 start*****/
 // 根据小车 获取小车的任务路径(单个)
-export async function getPathActionByAgvId(vehicleId, vehicleType) {
+export async function getPathActionByVehicleId(vehicleId, vehicleType) {
   return request(`/${NameSpace.Platform}/traffic/getPathByVehicleId/${vehicleId}/${vehicleType}`, {
     method: 'GET',
   });
@@ -47,7 +47,7 @@ export async function getAllPath(logicId) {
 ///////////////////////// ******** 潜伏相关接口 ******** //////////////////////////
 // 获取已到站的潜伏货架
 export async function fetchWorkStationPods() {
-  return request(`/${NameSpace.LatentLifting}/agv-task/getWorkStationPods`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/getWorkStationPods`, {
     method: 'GET',
   });
 }
@@ -62,7 +62,7 @@ export async function fetchLatentLiftingSystemParam(params) {
 
 // 获取地图潜伏任务暂停事件
 export async function fetchLatentPausedEventList(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/getPauseTaskEvent`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/getPauseTaskEvent`, {
     method: 'GET',
     data: params,
   });
@@ -70,7 +70,7 @@ export async function fetchLatentPausedEventList(params) {
 
 // 潜伏车自动释放
 export async function fetchAutoReleasePod(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/autoReleasePod`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/autoReleasePod`, {
     method: 'POST',
     data: params,
   });
@@ -103,7 +103,7 @@ export async function batchUpdateLatentPod(params) {
 ///////////////////////// ******** 料箱相关接口 ******** //////////////////////////
 // 料箱搬运
 export async function toteToWorkstation(map) {
-  return request(`/tote/agv-task/tote-to-workstation`, {
+  return request(`/tote/vehicle-task/tote-to-workstation`, {
     method: 'POST',
     data: map,
   });
@@ -111,7 +111,7 @@ export async function toteToWorkstation(map) {
 
 // 料箱自动任务
 export async function autoCallToteTask(params) {
-  return request(`/${NameSpace.Platform}/agv-task/autoCallWorkstationTask`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/autoCallWorkstationTask`, {
     method: 'POST',
     data: params,
   });
@@ -119,7 +119,7 @@ export async function autoCallToteTask(params) {
 
 // 自动释放料箱自动任务
 export async function autoReleaseToteTask(params) {
-  return request(`/${NameSpace.Platform}/agv-task/autoReleaseWorkstationTask`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/autoReleaseWorkstationTask`, {
     method: 'POST',
     data: params,
   });
@@ -128,14 +128,14 @@ export async function autoReleaseToteTask(params) {
 /////////////////////////******** 小车动作相关 ******** //////////////////////////
 // 潜伏车搬运
 export async function fetchPodToCell(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/pod-to-cell`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/pod-to-cell`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 小车空跑
-export async function agvEmptyRun(params) {
+export async function vehicleEmptyRun(params) {
   const sectionId = window.localStorage.getItem('sectionId');
   return request(`/${NameSpace.Platform}/task/empty-run`, {
     method: 'POST',
@@ -144,7 +144,7 @@ export async function agvEmptyRun(params) {
 }
 
 // 小车充电
-export async function agvTryToCharge(params) {
+export async function vehicleTryToCharge(params) {
   return request(`/${NameSpace.Platform}/task/tryToCharge`, {
     method: 'POST',
     data: params,
@@ -152,7 +152,7 @@ export async function agvTryToCharge(params) {
 }
 
 // 小车回休息区
-export async function agvToRest(params) {
+export async function vehicleToRest(params) {
   return request(`/${NameSpace.Platform}/task/rest`, {
     method: 'POST',
     data: params,
@@ -160,16 +160,16 @@ export async function agvToRest(params) {
 }
 
 // 小车命令
-export async function agvCommand(AGVType, params) {
-  return request(`/${NameSpace[AGVType]}/agv/batchSendCommand`, {
+export async function vehicleCommand(VehicleType, params) {
+  return request(`/${NameSpace[VehicleType]}/vehicle/batchSendCommand`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 发送小车命令
-export async function agvRemoteControl(AGVType, params) {
-  return request(`/${NameSpace[AGVType]}/agv/command`, {
+export async function vehicleRemoteControl(VehicleType, params) {
+  return request(`/${NameSpace[VehicleType]}/vehicle/command`, {
     method: 'POST',
     data: params,
   });
@@ -177,7 +177,7 @@ export async function agvRemoteControl(AGVType, params) {
 
 // 呼叫潜伏货架到工作站
 export async function latentPodToWorkStation(payload) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/pod-to-workstation`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/pod-to-workstation`, {
     method: 'POST',
     data: payload,
   });
@@ -185,7 +185,7 @@ export async function latentPodToWorkStation(payload) {
 
 // 潜伏高级搬运
 export async function advancedLatnetHandling(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/super-pod-to-cell`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/super-pod-to-cell`, {
     method: 'POST',
     data: params,
   });
@@ -193,7 +193,7 @@ export async function advancedLatnetHandling(params) {
 
 // 潜伏高级搬运（释放）
 export async function releaseAdvancedLatnetHandling(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/superCarryReleasePod`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/superCarryReleasePod`, {
     method: 'POST',
     data: params,
   });
@@ -201,7 +201,7 @@ export async function releaseAdvancedLatnetHandling(params) {
 
 // 工作站自动任务(潜伏)
 export async function autoCallLatentPodToWorkstation(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/autoCallPodToWorkstation`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/autoCallPodToWorkstation`, {
     method: 'POST',
     data: params,
   });
@@ -209,7 +209,7 @@ export async function autoCallLatentPodToWorkstation(params) {
 
 // 恢复潜伏暂停的任务
 export async function resumeLatentPausedTask(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/agvResumeTaskRun`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/vehicleResumeTaskRun`, {
     method: 'POST',
     data: params,
   });
@@ -217,7 +217,7 @@ export async function resumeLatentPausedTask(params) {
 
 // 潜伏自动释放
 export async function releaseLatentPod(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/releasePod`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/releasePod`, {
     method: 'POST',
     data: params,
   });
@@ -225,7 +225,7 @@ export async function releaseLatentPod(params) {
 
 // 保存工作站自动任务配置(潜伏)
 export async function saveLatentAutomaticTaskConfig(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/saveAutoConfig`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/saveAutoConfig`, {
     method: 'POST',
     data: params,
   });
@@ -233,28 +233,28 @@ export async function saveLatentAutomaticTaskConfig(params) {
 
 // @Refact: 工作站自动任务(潜伏)
 export async function fetchLatentAutoTaskConfig() {
-  return request(`/${NameSpace.LatentLifting}/agv-task/getAutoTaskConfig`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/getAutoTaskConfig`, {
     method: 'GET',
   });
 }
 
 // 工作站自动任务(料箱)
 export async function fetchToteAutoTaskConfig() {
-  return request(`/${NameSpace.Platform}/agv-task/autoCallConfig`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/autoCallConfig`, {
     method: 'GET',
   });
 }
 
 // 工作站自动任务(叉车)
 export async function fetchForkliftAutoTaskConfig() {
-  return request(`/${NameSpace.ForkLifting}/agv-task/autoCallConfig`, {
+  return request(`/${NameSpace.ForkLifting}/vehicle-task/autoCallConfig`, {
     method: 'GET',
   });
 }
 
 // 切换叉车自动呼叫状态
 export async function fetchForkLiftAutoCall(params) {
-  return request(`/${NameSpace.ForkLifting}/agv-task/autoCarryTask`, {
+  return request(`/${NameSpace.ForkLifting}/vehicle-task/autoCarryTask`, {
     method: 'POST',
     data: params,
   });
@@ -262,7 +262,7 @@ export async function fetchForkLiftAutoCall(params) {
 
 // 分拣车去拣货
 export async function sorterToPick(params) {
-  return request(`/${NameSpace.Sorter}/agv-task/fetch-pod`, {
+  return request(`/${NameSpace.Sorter}/vehicle-task/fetch-pod`, {
     method: 'POST',
     data: params,
   });
@@ -270,7 +270,7 @@ export async function sorterToPick(params) {
 
 // 分拣车去抛货
 export async function sorterToThrow(params) {
-  return request(`/${NameSpace.Sorter}/agv-task/throw-pod`, {
+  return request(`/${NameSpace.Sorter}/vehicle-task/throw-pod`, {
     method: 'POST',
     data: params,
   });
@@ -285,7 +285,7 @@ export async function fetchEmptyAndFullStorage() {
 
 // 叉车搬运
 export async function forkPodToTarget(param) {
-  return request(`/${NameSpace.ForkLifting}/agv-task/forkPalletToTarget`, {
+  return request(`/${NameSpace.ForkLifting}/vehicle-task/forkPalletToTarget`, {
     method: 'POST',
     data: param,
   });
@@ -293,7 +293,7 @@ export async function forkPodToTarget(param) {
 
 // 分拣车去拣货
 export async function fetchSorterToPick(params) {
-  return request(`/${NameSpace.Sorter}/agv-task/pick-up`, {
+  return request(`/${NameSpace.Sorter}/vehicle-task/pick-up`, {
     method: 'POST',
     data: params,
   });
@@ -301,7 +301,7 @@ export async function fetchSorterToPick(params) {
 
 // 分拣车去抛货
 export async function fetchSorterToThrow(params) {
-  return request(`/${NameSpace.Sorter}/agv-task/deliver`, {
+  return request(`/${NameSpace.Sorter}/vehicle-task/deliver`, {
     method: 'POST',
     data: params,
   });
@@ -323,83 +323,83 @@ export async function closeSimulator() {
 }
 
 // 添加虚拟车
-export async function addSimulationAgv(params) {
-  return request(`/${NameSpace.Platform}/simulator/agvLogin`, {
+export async function addSimulationVehicle(params) {
+  return request(`/${NameSpace.Platform}/simulator/vehicleLogin`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 批量添加模拟车
-export async function addSimulationAgvs(params) {
-  return request(`/${NameSpace.Platform}/simulator/batchAgvLogin`, {
+export async function addSimulationVehicles(params) {
+  return request(`/${NameSpace.Platform}/simulator/batchVehicleLogin`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 更新模拟配置
-export async function fetchUpdateAGVConfig(params) {
-  return request(`/${NameSpace.Platform}/simulator/saveAGVConfig`, {
+export async function fetchUpdateVehicleConfig(params) {
+  return request(`/${NameSpace.Platform}/simulator/saveVehicleConfig`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 获取车型模拟车配置
-export async function fetchSimulatorAGVConfig(robotType) {
-  return request(`/${NameSpace.Platform}/simulator/getAGVConfig/${robotType}`, {
+export async function fetchSimulatorVehicleConfig(vehicleType) {
+  return request(`/${NameSpace.Platform}/simulator/getVehicleConfig/${vehicleType}`, {
     method: 'GET',
   });
 }
 
 // 获取模拟器小车相关状态
-export async function fetchSimulatorLoginAGVControlState() {
-  return request(`/${NameSpace.Platform}/simulator/getAGVControl`, {
+export async function fetchSimulatorLoginVehicleControlState() {
+  return request(`/${NameSpace.Platform}/simulator/getVehicleControl`, {
     method: 'GET',
   });
 }
 
 // 模拟小车松急停
-export async function fetchRunAGV(vehicleId) {
-  return request(`/${NameSpace.Platform}/simulator/runAGV/${vehicleId}`, {
+export async function fetchRunVehicle(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/runVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车拍急停
-export async function fetchStopAGV(vehicleId) {
-  return request(`/${NameSpace.Platform}/simulator/stopAGV/${vehicleId}`, {
+export async function fetchStopVehicle(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/stopVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车开机
-export async function fetchOpenAGV(vehicleId) {
-  return request(`/${NameSpace.Platform}/simulator/openAGV/${vehicleId}`, {
+export async function fetchOpenVehicle(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/openVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车关机
-export async function fetchCloseAgv(vehicleId) {
-  return request(`/${NameSpace.Platform}/simulator/closeAGV/${vehicleId}`, {
+export async function fetchCloseVehicle(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/closeVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 下线小车
-export async function fetchSimulatorAgvOffLine(params) {
+export async function fetchSimulatorVehicleOffLine(params) {
   return request(
-    `/${NameSpace.Platform}/simulator/agvOffLine/${params.sectionId}/${params.vehicleId}`,
+    `/${NameSpace.Platform}/simulator/vehicleOffLine/${params.sectionId}/${params.vehicleId}`,
     { method: 'GET' },
   );
 }
 
 // 批量删除小车
-export async function fetchBatchDeleteSimulatorAgv(params) {
+export async function fetchBatchDeleteSimulatorVehicle(params) {
   return request(
-    `/${NameSpace.Platform}/simulator/batchAgvDelete/${params.logicId}/${params.robotIds}`,
+    `/${NameSpace.Platform}/simulator/batchVehicleDelete/${params.logicId}/${params.vehicleIds}`,
     {
       method: 'DELETE',
     },
@@ -428,7 +428,7 @@ export async function getTunnelState() {
 }
 
 // 删除通道锁
-export async function deleteTunnelAgvLock(vehicleId) {
+export async function deleteTunnelVehicleLock(vehicleId) {
   return request(`/${NameSpace.Platform}/traffic/clearTunnelLock/${vehicleId}`, {
     method: 'GET',
   });
@@ -437,7 +437,7 @@ export async function deleteTunnelAgvLock(vehicleId) {
 // 工作站
 // 任务数据
 export async function fetchWorkStationInstrument(params) {
-  return request(`/${NameSpace.LatentLifting}/agv-task/getWorkStationInstrument`, {
+  return request(`/${NameSpace.LatentLifting}/vehicle-task/getWorkStationInstrument`, {
     method: 'GET',
     data: params,
   });

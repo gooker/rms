@@ -7,7 +7,7 @@ import { submitFaultDefinition } from '@/services/api';
 const formLayout = getFormLayout(6, 18);
 
 const FaultDefinitionForm = (props) => {
-  const { agvType, refresh, onCancel, data } = props;
+  const { vehicleType, refresh, onCancel, data } = props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ const FaultDefinitionForm = (props) => {
       if (!isNull(data)) {
         requestParam.id = data.id;
       }
-      const response = await submitFaultDefinition(agvType, requestParam);
+      const response = await submitFaultDefinition(vehicleType, requestParam);
       if (!dealResponse(response)) {
         message.success(formatMessage({ id: 'app.message.operateSuccess' }));
         onCancel();

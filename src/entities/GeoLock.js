@@ -20,7 +20,7 @@ export default class GeoLock extends PIXI.Sprite {
     this.anchor.set(0.5);
 
     this.drawShape();
-    this.addRobotId();
+    this.addVehicleId();
   }
 
   drawShape() {
@@ -45,7 +45,7 @@ export default class GeoLock extends PIXI.Sprite {
     return shape;
   }
 
-  addRobotId() {
+  addVehicleId() {
     let width;
     let height;
     if (this.shape === 'Rectangle') {
@@ -55,10 +55,10 @@ export default class GeoLock extends PIXI.Sprite {
       width = -(this.radius - 15) * Math.cos((45 * Math.PI) / 180);
       height = (this.radius - 15) * Math.sin((45 * Math.PI) / 180);
     }
-    const robotIdText = new BitText(this.vehicleId, width + 20, height - 40, this.color, 70);
-    robotIdText.anchor.set(0.5);
-    robotIdText.angle = -this.angle;
-    this.addChild(robotIdText);
+    const vehicleIdText = new BitText(this.vehicleId, width + 20, height - 40, this.color, 70);
+    vehicleIdText.anchor.set(0.5);
+    vehicleIdText.angle = -this.angle;
+    this.addChild(vehicleIdText);
   }
 
   drawRectLock() {
