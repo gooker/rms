@@ -1,28 +1,22 @@
 import React, { Component } from 'react';
-import { Row, Col, Select, Button, Tag, Popover, message, Modal, Form, Switch } from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  ReloadOutlined,
-  SyncOutlined,
-} from '@ant-design/icons';
+import { Button, Col, Form, message, Modal, Popover, Row, Select, Switch, Tag } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth, copyToBoard } from '@/utils/util';
+import { adjustModalWidth, copyToBoard, dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
-  fetchUserManagerList,
-  updateUserManage,
   addUserManager,
-  updateUserPassword,
   fetchDeleteUser,
-  saveUserSections,
+  fetchUserManagerList,
   saveUsersAssignedRole,
+  saveUserSections,
+  updateUserManage,
+  updateUserPassword,
 } from '@/services/SSO';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
-import { UserTColor, AdminTColor, AdminTLabelMap } from './userManagerUtils';
+import { AdminTColor, AdminTLabelMap, UserTColor } from './userManagerUtils';
 import AddUserModal from './components/AddUser';
 import UpdatePasswordModal from './components/UpdatePassword';
 import SectionAssignModal from './components/SectionAssign';
@@ -44,14 +38,10 @@ class UserManager extends Component {
     dataList: [],
     adminType: null,
     loading: false,
+    updateItem: null,
 
     // 是否可以更新账户信息
     updateEnabled: false,
-
-    // 标记当前是否是编辑操作
-    updateUserFlag: false,
-    updateItem: null,
-
     // 新增 & 更新用户Modal
     addUserVisible: false,
     // 重置用户密码Modal
@@ -188,20 +178,16 @@ class UserManager extends Component {
   tableRowSelection = (selectRowKey, selectRow) => {
     const { currentUser } = this.props;
     let updateEnabled = false;
-    if (selectRow === 0) {
-      //
+    if (selectRow.length > 1) {
+      this.setState({ updateItem: null, selectRowKey, selectRow });
     } else {
-      if (selectRow.length > 1) {
-        this.setState({ updateItem: null, selectRowKey, selectRow });
-      } else {
-        const updateItem = { ...selectRow[0] };
-        updateItem.adminType = updateItem.adminType ? updateItem.adminType : 'USER';
+      const updateItem = { ...selectRow[0] };
+      updateItem.adminType = updateItem.adminType ? updateItem.adminType : 'USER';
 
-        // 当前管理员只能修改小于自己level的账户信息 或者 修改本身
-        updateEnabled =
-          currentUser.level > updateItem.level || updateItem.username === currentUser.username;
-        this.setState({ updateItem, selectRowKey, selectRow, updateEnabled });
-      }
+      // 当前管理员只能修改小于自己level的账户信息 或者 修改本身
+      updateEnabled =
+        currentUser.level > updateItem.level || updateItem.username === currentUser.username;
+      this.setState({ updateItem, selectRowKey, selectRow, updateEnabled });
     }
   };
 
@@ -253,7 +239,7 @@ class UserManager extends Component {
 
   // 用户表单提交
   onSubmit = async (values) => {
-    const { updateUserFlag, selectRow } = this.state;
+    const { updateItem, selectRow } = this.state;
 
     // 后台不支持 adminType===USER, 这里删除
     const requestParams = { ...values };
@@ -262,7 +248,7 @@ class UserManager extends Component {
     }
     let response;
     // 编辑
-    if (updateUserFlag) {
+    if (!isNull(updateItem)) {
       response = await updateUserManage({ ...requestParams, id: selectRow[0].id });
     } else {
       response = await addUserManager(requestParams);
@@ -271,7 +257,7 @@ class UserManager extends Component {
       this.setState(
         {
           addUserVisible: false,
-          updateUserFlag: false,
+          updateItem: null,
           selectRow: [],
           selectRowKey: [],
         },
@@ -358,11 +344,10 @@ class UserManager extends Component {
       dataList,
       selectRow,
       selectRowKey,
-      updateUserFlag,
+      updateItem,
       updateEnabled,
       searchUsers,
       adminType,
-      updateItem,
       addUserVisible,
       roleAssignVisible,
       sectionAssignVisible,
@@ -404,7 +389,7 @@ class UserManager extends Component {
               <Button
                 type="primary"
                 onClick={() => {
-                  this.setState({ addUserVisible: true, updateUserFlag: false });
+                  this.setState({ addUserVisible: true, updateItem: null });
                 }}
               >
                 <PlusOutlined /> <FormattedMessage id="app.button.add" />
@@ -414,7 +399,7 @@ class UserManager extends Component {
               <Button
                 disabled={selectRowKey.length !== 1 || !updateEnabled}
                 onClick={() => {
-                  this.setState({ addUserVisible: true, updateUserFlag: true });
+                  this.setState({ addUserVisible: true, updateItem: selectRow[0] });
                 }}
               >
                 <EditOutlined /> <FormattedMessage id="app.button.edit" />
@@ -488,14 +473,14 @@ class UserManager extends Component {
           width={600}
           visible={addUserVisible}
           title={
-            updateUserFlag ? (
-              <FormattedMessage id="sso.user.updateUserInfo" />
+            !isNull(updateItem) ? (
+              <FormattedMessage id='sso.user.updateUserInfo' />
             ) : (
-              <FormattedMessage id="sso.user.newUser" />
+              <FormattedMessage id='sso.user.newUser' />
             )
           }
           onCancel={() => {
-            this.setState({ addUserVisible: false, updateUserFlag: false });
+            this.setState({ addUserVisible: false, updateItem: null });
           }}
         >
           <AddUserModal type={adminType} updateRow={updateItem} onAddUser={this.onSubmit} />

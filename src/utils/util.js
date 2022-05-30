@@ -6,7 +6,7 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { VehicleStateColor, Colors, ToteOffset } from '@/config/consts';
+import { Colors, ToteOffset, VehicleStateColor } from '@/config/consts';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -279,7 +279,9 @@ export function getVehicleStatusTag(vehicleStatus) {
   if (vehicleStatus != null) {
     const vehicleStateMap = Dictionary('vehicleStatus');
     return (
-      <Tag color={VehicleStateColor[vehicleStatus]}>{formatMessage({ id: vehicleStateMap[vehicleStatus] })}</Tag>
+      <Tag color={VehicleStateColor[vehicleStatus]}>
+        {formatMessage({ id: vehicleStateMap[vehicleStatus] })}
+      </Tag>
     );
   } else {
     return null;
@@ -1442,7 +1444,8 @@ export function dropWhile(array, predicate) {
   return result;
 }
 
-export function getCustomEnvs() {
+// 自定义环境
+export function getCustomEnvironments() {
   let customEnvs = window.localStorage.getItem('customEnvs');
   if (isStrictNull(customEnvs)) {
     return [];
@@ -1454,4 +1457,15 @@ export function getCustomEnvs() {
     }
     return customEnvs;
   }
+}
+
+export function getAllEnvironments() {
+  const customEnvs = getCustomEnvironments();
+  const allEnvs = [{ envName: 'default', id: 'default' }].concat(customEnvs);
+  const activeAPI = allEnvs.filter((item) => item.flag === '1')[0];
+  let activeEnv = 'default';
+  if (activeAPI) {
+    activeEnv = activeAPI.id;
+  }
+  return { allEnvs, activeEnv };
 }
