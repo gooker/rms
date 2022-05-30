@@ -1,8 +1,10 @@
 import { isEmpty, isPlainObject } from 'lodash';
-import { getLocalStorageEnv } from '@/utils/init';
 import { NameSpace } from '@/config/config';
 import { isStrictNull } from '@/utils/util';
 
+/**
+ * 自定义环境数据目前保存在LocalStorage，如果后续发现不方便的话，就改成使用IndexDB
+ */
 function getApiURL(namespace, prefix) {
   const configValue = window.extraConfig[namespace];
   if (!isStrictNull(configValue)) {
@@ -62,9 +64,5 @@ export default function requestAPI() {
     };
   }
   apiMap[NameSpace.I18N] = apiMap[NameSpace.Platform];
-
-  // 合并本地自定义的SSO配置
-  const envs = getLocalStorageEnv();
-  apiMap = { ...apiMap, ...envs };
   return apiMap;
 }

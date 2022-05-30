@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ConfigProvider, message } from 'antd';
+import { isEmpty } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
 import { initI18nInstance } from '@/utils/init';
-import { formatMessage } from '@/utils/util';
+import { extractNameSpaceInfoFromEnvs, formatMessage, isStrictNull } from '@/utils/util';
+import requestAPI from '@/utils/requestAPI';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {
@@ -15,6 +17,16 @@ class App extends Component {
 
   async componentDidMount() {
     try {
+      const defaultAPI = requestAPI();
+      let storedAPIs = window.localStorage.getItem('customEnvs');
+      if (!isStrictNull(storedAPIs)) {
+        storedAPIs = JSON.parse(storedAPIs);
+      }
+      const activeAPI = storedAPIs.filter((item) => item.flag === '1');
+      window.nameSpacesInfo = isEmpty(activeAPI)
+        ? defaultAPI
+        : extractNameSpaceInfoFromEnvs(activeAPI[0]);
+
       await initI18nInstance();
       this.setState({ initDone: true });
     } catch (e) {

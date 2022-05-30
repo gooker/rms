@@ -6,8 +6,6 @@ import createRcsDva from '@/utils/RmsDva';
 import App from '@/pages/App';
 import models from '@/models';
 import './global.less';
-import requestAPI from '@/utils/requestAPI';
-import { getLocalStorageEnv } from '@/utils/init';
 
 // https://github.com/pixijs/graphics-smooth
 settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
@@ -17,12 +15,6 @@ window.$$isProduction = isPlainObject(window.extraConfig);
 if (!window.$$isProduction) {
   window.localStorage.setItem('dev', 'true');
 }
-
-// 刚进入页面需要首先处理namespace数据
-let urlDir = { ...requestAPI() }; // 所有的url链接地址信息
-const envs = getLocalStorageEnv();
-urlDir = { ...urlDir, ...envs };
-window.nameSpacesInfo = urlDir;
 
 // 全局错误处理(尝试版)
 // window.onerror = function (message, source, lineno, colno, error) {

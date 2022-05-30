@@ -1,12 +1,7 @@
 import { message } from 'antd';
 import { find } from 'lodash';
-import {
-  fetchLogout,
-  fetchUserAssignedRoleList,
-  fetchUpdateUserCurrentSection,
-  getCurrentUser,
-} from '@/services/SSO';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { fetchLogout, fetchUpdateUserCurrentSection, fetchUserAssignedRoleList, getCurrentUser } from '@/services/SSO';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 
 export default {
   namespace: 'user',
@@ -100,7 +95,11 @@ export default {
         token: window.sessionStorage.getItem('token'),
       });
       if (!dealResponse(response)) {
+        const customEnvs = window.localStorage.getItem('customEnvs');
         window.localStorage.clear();
+        if (!isStrictNull(customEnvs)) {
+          window.localStorage.setItem('customEnvs', customEnvs);
+        }
         window.sessionStorage.clear();
         window.history.$$push('/login');
       }

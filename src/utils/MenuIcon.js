@@ -20,6 +20,7 @@ import {
   ScheduleOutlined,
   ShareAltOutlined,
   TranslationOutlined,
+  UnorderedListOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 import { IconFont } from '@/components/IconFont';
@@ -64,4 +65,5 @@ export default {
   richEditor: <MediumOutlined />,
   notification: <NotificationOutlined />,
   screenReport: <FundProjectionScreenOutlined />,
+  menu: <UnorderedListOutlined />,
 };

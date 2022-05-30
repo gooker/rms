@@ -1441,3 +1441,17 @@ export function dropWhile(array, predicate) {
   }
   return result;
 }
+
+export function getCustomEnvs() {
+  let customEnvs = window.localStorage.getItem('customEnvs');
+  if (isStrictNull(customEnvs)) {
+    return [];
+  } else {
+    try {
+      customEnvs = JSON.parse(customEnvs);
+    } catch (e) {
+      customEnvs = [];
+    }
+    return customEnvs;
+  }
+}

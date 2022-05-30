@@ -13,7 +13,6 @@ import { loadTexturesForMap } from '@/utils/textures';
 import { dealResponse, formatMessage, getPlateFormType, isNull, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
 import { fetchGetProblemDetail } from '@/services/global';
-import { handleNameSpace } from '@/utils/init';
 import { fetchAllPrograming } from '@/services/XIHE';
 import { fetchAllAdaptor } from '@/services/resourceManageAPI';
 import { fetchTaskTypes } from '@/services/api';
@@ -42,8 +41,6 @@ class MainLayout extends React.Component {
     if (isStrictNull(token)) {
       this.logout();
     } else {
-      // 优先处理后台接口信息
-      await handleNameSpace(dispatch);
       // 开始初始化应用
       const validateResult = await queryUserByToken();
       if (validateResult && !dealResponse(validateResult)) {
@@ -136,7 +133,11 @@ class MainLayout extends React.Component {
 
   logout = () => {
     const { history } = this.props;
+    const customEnvs = window.localStorage.getItem('customEnvs');
     window.localStorage.clear();
+    if (!isStrictNull(customEnvs)) {
+      window.localStorage.setItem('customEnvs', customEnvs);
+    }
     window.sessionStorage.clear();
     history.push('/login');
   };

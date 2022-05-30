@@ -42,7 +42,6 @@ export default {
     alertCount: 0,
     allTaskTypes: {},
     allAgvTypes: [],
-    environments: [],
     backendVersion: null,
     adapterVersion: null,
     sysAuthInfo: null,
@@ -122,20 +121,6 @@ export default {
         allAgvTypes: payload,
       };
     },
-    saveAllEnvironments(state, { payload }) {
-      return {
-        ...state,
-        environments: [{ envName: 'default', id: 0 }, ...payload],
-      };
-    },
-
-    clearEnvironments(state) {
-      return {
-        ...state,
-        environments: [],
-      };
-    },
-
     changeFullScreen(state, { payload }) {
       return {
         ...state,
