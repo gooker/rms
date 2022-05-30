@@ -67,7 +67,7 @@ export default [
   {
     path: `/${AppCode.SSO}/customMenuManager`, // 自定义菜单
     name: 'customMenuManager',
-    icon: 'ie',
+    icon: 'menu',
     component: '/SSO/CustomMenuManager',
     authority: ['ADMIN', 'SUPERMANAGER'],
   },

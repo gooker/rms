@@ -1,43 +1,71 @@
-import React, { memo, useState } from 'react';
-import { Form, Input, Select, Button, Spin } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Form, Input, Select, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RmsDva';
-import { fetchLogin, fetchUpdateEnvironment } from '@/services/global';
-import { dealResponse, isNull } from '@/utils/util';
+import { fetchLogin } from '@/services/global';
+import requestAPI from '@/utils/requestAPI';
+import { dealResponse, extractNameSpaceInfoFromEnvs, getCustomEnvs, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getEnvOptionData, getActiveEnv } from './selector';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
 
 const Login = (props) => {
-  const { environments, activeEnv, history } = props;
+  const { history } = props;
+
+  const [formRef] = Form.useForm();
+  const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // 挂载push函数
-  window.history.$$push = history.push;
+  useEffect(() => {
+    // 挂载push函数
+    window.history.$$push = history.push;
 
-  async function onFinish(values) {
-    setLoading(true);
-    const _values = { ...values };
-    delete _values.environment;
-    const response = await fetchLogin({ ..._values, type: 'admin' });
-    if (!dealResponse(response)) {
-      window.sessionStorage.setItem('token', response.authorization);
-      // 如果有environment字段说明需要重新激活一个环境
+    const customEnvs = getCustomEnvs();
+    let optionsData = [{ envName: 'default', id: 'default' }];
+    optionsData = optionsData.concat(customEnvs);
+    setOptions(optionsData);
+
+    const activeAPI = customEnvs.filter((item) => item.flag === '1')[0];
+    let environment = 'default';
+    if (activeAPI) {
+      environment = activeAPI.id;
+    }
+    formRef.setFieldsValue({ environment });
+  }, []);
+
+  async function goLogin() {
+    formRef.validateFields().then(async (values) => {
+      setLoading(true);
       if (!isNull(values.environment)) {
-        const requestBody = { id: values.environment === 0 ? null : values.environment };
-        const updateEnvResponse = await fetchUpdateEnvironment(requestBody);
-        if (dealResponse(updateEnvResponse)) {
-          return;
+        let active;
+        const customEnvs = getCustomEnvs().map((item) => {
+          if (item.id === values.environment) {
+            active = { ...item, flag: '1' };
+            return active;
+          } else {
+            return { ...item, flag: '0' };
+          }
+        });
+        window.localStorage.setItem('customEnvs', JSON.stringify(customEnvs));
+        if (values.environment === 'default') {
+          window.nameSpacesInfo = requestAPI();
+        } else {
+          window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(active);
         }
       }
-      setLoading(false);
-      history.push('/');
-    } else {
-      setLoading(false);
-    }
+
+      const response = await fetchLogin({ ...values, type: 'admin' });
+      if (!dealResponse(response)) {
+        window.sessionStorage.setItem('token', response.authorization);
+
+        setLoading(false);
+        history.push('/');
+      } else {
+        setLoading(false);
+      }
+    });
   }
+
   return (
     <div className={styles.loginPage}>
       <img src={LoginBackPicture} alt={'login_picture'} className={styles.loginBackPicture} />
@@ -46,47 +74,45 @@ const Login = (props) => {
           <img src={Logo} alt={'logo'} className={styles.logoPicture} />
         </div>
         <div className={styles.loginForm}>
-          <Form onFinish={onFinish}>
+          <Form form={formRef}>
             <Form.Item
-              name="username"
+              name='username'
               rules={[
                 {
                   required: true,
-                  message: <FormattedMessage id="app.login.username.required" />,
+                  message: <FormattedMessage id='app.login.username.required' />,
                 },
               ]}
             >
               <Input prefix={<UserOutlined />} />
             </Form.Item>
             <Form.Item
-              name="password"
+              name='password'
               rules={[
                 {
                   required: true,
-                  message: <FormattedMessage id="app.login.password.required" />,
+                  message: <FormattedMessage id='app.login.password.required' />,
                 },
               ]}
             >
               <Input.Password prefix={<LockOutlined />} />
             </Form.Item>
-            {environments.length > 0 && (
-              <Form.Item name="environment" initialValue={activeEnv?.id}>
-                <Select>
-                  {environments.map(({ label, value }) => (
-                    <Select.Option key={value} value={value}>
-                      {label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-            )}
+            <Form.Item name='environment'>
+              <Select>
+                {options.map(({ envName, id }) => (
+                  <Select.Option key={id} value={id}>
+                    {envName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
             <Form.Item>
               {loading ? (
                 <div style={{ width: '100%', textAlign: 'center' }}>
                   <Spin indicator={<LoadingOutlined spin style={{ color: '#fff' }} />} />
                 </div>
               ) : (
-                <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
+                <Button type='primary' onClick={goLogin} style={{ width: '100%' }}>
                   <FormattedMessage id={'app.login.button'} />
                 </Button>
               )}
@@ -97,7 +123,4 @@ const Login = (props) => {
     </div>
   );
 };
-export default connect(({ global }) => ({
-  environments: getEnvOptionData(global.environments),
-  activeEnv: getActiveEnv(global.environments),
-}))(memo(Login));
+export default memo(Login);
