@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
-import { dealResponse, formatMessage, convertToUserTimezone, isNull } from '@/utils/util';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchAllAgvList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
@@ -53,11 +53,11 @@ const FaultListSearchForm = (props) => {
     <Form form={formRef}>
       <Row gutter={15}>
         <Col span={8}>
-          <Form.Item name={'agvId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
             <Select allowClear showSearch>
-              {agvList.map(({ robotId }) => (
-                <Select.Option key={robotId} value={robotId}>
-                  {robotId}
+              {agvList.map(({ vehicleId }) => (
+                <Select.Option key={vehicleId} value={vehicleId}>
+                  {vehicleId}
                 </Select.Option>
               ))}
             </Select>

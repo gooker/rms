@@ -1,12 +1,8 @@
-import React, { useEffect, memo, useState } from 'react';
-import { Row, Col } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Col, Row } from 'antd';
 import echarts from 'echarts';
 import { noDataGragraphic } from '@/packages/Report/components/GroundQrcodeEcharts';
-import {
-  offlineHistoryLineOption,
-  generatOfflineDataByTime,
-  generatOfflineDataByRobot,
-} from './RobotOfflineEchart';
+import { generatOfflineDataByRobot, generatOfflineDataByTime, offlineHistoryLineOption } from './RobotOfflineEchart';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
 import { formatMessage } from '@/utils/util';
@@ -68,10 +64,10 @@ const OfflineOrStatusErrorComponent = (props) => {
     if (!codeHistoryLine || !timeHistoryLine) return;
     let sourceData = { ...originData };
 
-    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+    sourceData = filterDataByParam(sourceData, selectedIds, 'vehicleId');
 
     const currenTimeData = generatOfflineDataByTime(sourceData, keyData, timeType);
-    const currentCodeData = generatOfflineDataByRobot(sourceData, keyData, 'agvId');
+    const currentCodeData = generatOfflineDataByRobot(sourceData, keyData, 'vehicleId');
 
     if (currentCodeData) {
       const { xAxis, series, legend } = currentCodeData;

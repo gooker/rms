@@ -217,8 +217,8 @@ const PathLock = (props) => {
                     }
                   >
                     {allAGVs.map((element) => (
-                      <Select.Option key={element.agvId} value={element.uniqueId}>
-                        {`${element.agvType}-${element.agvId}`}
+                      <Select.Option key={element.vehicleId} value={element.uniqueId}>
+                        {`${element.agvType}-${element.vehicleId}`}
                       </Select.Option>
                     ))}
                   </Select>

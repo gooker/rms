@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, message, Table, Divider } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { Button, Divider, message, Table } from 'antd';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchPoolTasks, cancelTotePoolTask, fetchAllAgvList } from '@/services/api';
+import { cancelTotePoolTask, fetchAllAgvList, fetchPoolTasks } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
-import { dealResponse } from '@/utils/util';
 import TaskPoolSearch from './TaskPoolSearch';
-import commonStyles from '@/common.module.less';
 import styles from '../TaskQueue/taskQueue.module.less';
 
 @connect()
@@ -108,7 +106,7 @@ class TaskLibraryComponent extends Component {
     return (
       <TablePageWrapper>
         <div className={styles.taskSearchDivider}>
-          <TaskPoolSearch search={this.getData} agvList={agvList.map(({ robotId }) => robotId)} />
+          <TaskPoolSearch search={this.getData} agvList={agvList.map(({ vehicleId }) => vehicleId)} />
           <Divider />
           {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.cancelTaskConfirm}>

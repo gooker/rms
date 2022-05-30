@@ -1,9 +1,8 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Input, Select } from 'antd';
+import { Button, Form, Input, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { agvEmptyRun } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
+import { formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
@@ -38,7 +37,7 @@ const SorterPick = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
-            name={'robotId'}
+            name={'vehicleId'}
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >

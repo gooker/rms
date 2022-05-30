@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
-import { Table, Row, Button, Divider, Tag } from 'antd';
+import { Button, Divider, Row, Table, Tag } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import QuestionSearch from './QuestionSearch';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, convertToUserTimezone, isNull } from '@/utils/util';
-import {
-  allUpdateProblemHandling,
-  batchUpdateAlertCenter,
-  fetchAlertCenterList,
-} from '@/services/XIHE';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList } from '@/services/XIHE';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 
@@ -93,7 +89,7 @@ class QuestionCenter extends Component {
   column = [
     {
       title: formatMessage({ id: 'app.agv.id' }),
-      dataIndex: 'agvId',
+      dataIndex: 'vehicleId',
       align: 'center',
       fixed: 'left',
       render: (text, record) => {

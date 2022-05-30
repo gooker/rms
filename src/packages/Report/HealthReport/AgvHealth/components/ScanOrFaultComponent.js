@@ -1,12 +1,12 @@
-import React, { useEffect, memo, useState } from 'react';
-import { Row, Col } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Col, Row } from 'antd';
 import echarts from 'echarts';
 import {
   codeHistoryLineOption,
   dateHistoryLineOption,
   generateTimeData,
-  transformCodeData,
   noDataGragraphic,
+  transformCodeData,
 } from '@/packages/Report/components/GroundQrcodeEcharts';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
@@ -61,10 +61,10 @@ const ScanOrFaultComponent = (props) => {
     if (!codeHistoryLine || !timeHistoryLine) return;
     let sourceData = { ...originData };
 
-    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+    sourceData = filterDataByParam(sourceData, selectedIds, 'vehicleId');
 
     const currenTimeData = generateTimeData(sourceData, keyData, timeType);
-    const currentCodeData = transformCodeData(sourceData, keyData, 'agvId');
+    const currentCodeData = transformCodeData(sourceData, keyData, 'vehicleId');
 
     if (currentCodeData) {
       const { yAxis, series, legend } = currentCodeData;

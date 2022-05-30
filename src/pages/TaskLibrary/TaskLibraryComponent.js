@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, message, Table, Divider, Tooltip, Badge } from 'antd';
-import { formatMessage, dealResponse, convertToUserTimezone } from '@/utils/util';
+import { Badge, Button, Divider, message, Table, Tooltip } from 'antd';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAgvTaskList, fetchBatchCancelTask, fetchAllAgvList } from '@/services/api';
+import { fetchAgvTaskList, fetchAllAgvList, fetchBatchCancelTask } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from './TaskSearch';
 import commonStyles from '@/common.module.less';
-import { AGVType } from '@/config/config';
 import { TaskStateBageType } from '@/config/consts';
 import styles from '../TaskQueue/taskQueue.module.less';
 
@@ -52,7 +51,7 @@ class TaskLibraryComponent extends Component {
     },
     {
       title: formatMessage({ id: 'app.agv.id' }),
-      dataIndex: 'robotId',
+      dataIndex: 'vehicleId',
       align: 'center',
       width: 100,
     },
@@ -217,7 +216,7 @@ class TaskLibraryComponent extends Component {
       <TablePageWrapper>
         <TaskSearch
           search={this.getData}
-          agvList={agvList.map(({ robotId }) => robotId)}
+          agvList={agvList.map(({ vehicleId }) => vehicleId)}
           allTaskTypes={allTaskTypes?.[agvType] || {}}
         />
         <div className={styles.taskSearchDivider} >

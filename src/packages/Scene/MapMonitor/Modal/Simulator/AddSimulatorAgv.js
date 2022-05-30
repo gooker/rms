@@ -1,6 +1,6 @@
-import React, { useState, useEffect, memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Form, Button, Row, Checkbox, Select, Divider, InputNumber, message } from 'antd';
+import { Button, Checkbox, Divider, Form, InputNumber, message, Row } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { addSimulationAgvs } from '@/services/monitor';
@@ -103,7 +103,7 @@ function AddSimulatorAgv(props) {
             <FormattedMessage id="monitor.simulator.addAMR" />
           </Divider>
           <Form.Item
-            name={'agvId'}
+            name={'vehicleId'}
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >

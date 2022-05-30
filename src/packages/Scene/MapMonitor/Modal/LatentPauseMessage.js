@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Button, Row, Form, Col, List } from 'antd';
+import { Button, Col, Form, List, Row } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { resumeLatentPausedTask } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
@@ -27,14 +27,14 @@ const LatentPauseMessage = (props) => {
           itemLayout="horizontal"
           dataSource={latentStopMessageList || []}
           renderItem={(item) => {
-            const { robotId, cellId, stepTaskId, taskId } = item;
+            const { vehicleId, cellId, stepTaskId, taskId } = item;
             return (
               <Row>
                 <Col span={20}>
                   <Row>
                     <Col span={12}>
                       <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agv.id' })}>
-                        {robotId}
+                        {vehicleId}
                       </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -62,7 +62,7 @@ const LatentPauseMessage = (props) => {
                     size="small"
                     onClick={() => {
                       const params = {
-                        robotId,
+                        vehicleId,
                         taskId,
                         cellId,
                         taskStepId: stepTaskId,

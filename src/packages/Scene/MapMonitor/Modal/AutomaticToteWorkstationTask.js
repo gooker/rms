@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Input, Select, Row, Col, Radio, InputNumber } from 'antd';
-import { CloseOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, InputNumber, Radio, Row, Select } from 'antd';
+import { CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { agvEmptyRun } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
@@ -27,7 +27,7 @@ const AutomaticToteWorkstationTask = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { agvId: values.robotId });
+        const agv = find(allAGVs, { vehicleId: values.vehicleId });
         if (agv) {
           agvEmptyRun(agv.robotType, { ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {

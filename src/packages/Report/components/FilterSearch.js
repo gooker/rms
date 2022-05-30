@@ -1,5 +1,5 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Form, Radio, Tag, Divider } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Col, Form, Radio, Row, Tag } from 'antd';
 import { getAllCellId } from './GroundQrcodeEcharts';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -38,7 +38,7 @@ const FilterSearch = (props) => {
     if (showCellId) {
       tagsData = getAllCellId(data, 'cellId');
     } else {
-      tagsData = getAllCellId(data, 'agvId');
+      tagsData = getAllCellId(data, 'vehicleId');
     }
 
     if (showTask) {

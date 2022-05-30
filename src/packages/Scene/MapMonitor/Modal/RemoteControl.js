@@ -1,16 +1,9 @@
 import React, { memo } from 'react';
-import { Form, Button, Input, Select, InputNumber, message } from 'antd';
+import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { find } from 'lodash';
 import { agvRemoteControl } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
-import {
-  dealResponse,
-  formatMessage,
-  getFormLayout,
-  getMapModalPosition,
-  isStrictNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { Category } from '../enums';
 import styles from '../monitorLayout.module.less';
@@ -91,7 +84,7 @@ const RemoteControl = (props) => {
       formRef.validateFields(['uniqueIds'], { force: true });
       return;
     }
-    const agv = true; // TODO:find(allAGVs, { agvId: uniqueIds });
+    const agv = true; // TODO:find(allAGVs, { vehicleId: uniqueIds });
     const hexCommand = formRef.getFieldValue('hexCommand');
     const params = {
       uniqueIds,
@@ -136,8 +129,8 @@ const RemoteControl = (props) => {
               }
             >
               {allAGVs.map((element) => (
-                <Select.Option key={element.agvId} value={element.uniqueId}>
-                  {`${element.agvId}-${element.agvType}`}
+                <Select.Option key={element.vehicleId} value={element.uniqueId}>
+                  {`${element.vehicleId}-${element.agvType}`}
                 </Select.Option>
               ))}
             </Select>

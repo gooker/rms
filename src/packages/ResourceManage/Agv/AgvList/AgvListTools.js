@@ -17,9 +17,9 @@ const AgvListTools = (props) => {
   const unregisterRobots = allRobots.filter((item) => !item.register);
 
   function renderAgvIdFilter() {
-    return registerRobots.map(({ agvId, agvType, id }) => (
+    return registerRobots.map(({ vehicleId, agvType, id }) => (
       <Select.Option key={id} value={id}>
-        {`${agvId}-${agvType}`}
+        {`${vehicleId}-${agvType}`}
       </Select.Option>
     ));
   }
@@ -34,7 +34,7 @@ const AgvListTools = (props) => {
   }
 
   function moveOutAgv() {
-    const agvIds = selectedRows.map(({ robotId }) => robotId);
+    const agvIds = selectedRows.map(({ vehicleId }) => vehicleId);
     RmsConfirm({
       content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
       onOk: async () => {
@@ -48,7 +48,7 @@ const AgvListTools = (props) => {
   }
 
   function cancelRegister() {
-    const agvIds = selectedRows.map(({ robotId }) => robotId);
+    const agvIds = selectedRows.map(({ vehicleId }) => vehicleId);
     RmsConfirm({
       content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
       onOk: async () => {

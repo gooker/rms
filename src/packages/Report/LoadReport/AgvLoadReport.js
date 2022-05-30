@@ -1,34 +1,27 @@
-import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Table, Divider, Spin } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Col, Divider, Row, Spin, Table } from 'antd';
 import echarts from 'echarts';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
-import { getDatBysortTime, getAllCellId } from '../components/GroundQrcodeEcharts';
-import {
-  formatMessage,
-  convertToUserTimezone,
-  dealResponse,
-  isStrictNull,
-  isNull,
-} from '@/utils/util';
+import { getAllCellId, getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { fetchAGVload } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
-import { noDataGragraphic } from '../components/GroundQrcodeEcharts';
 import {
-  taskLineOption,
-  durationLineOption,
-  actionPieOption,
   actionBarOption,
+  actionPieOption,
+  durationLineOption,
+  formatNumber,
+  generateActionBarData,
+  generateActionPieData,
   generateDurationDataByTime,
   generateNumOrDistanceData,
-  generateActionPieData,
-  generateActionBarData,
   generateTableData,
-  formatNumber,
   MinuteFormat,
+  taskLineOption,
 } from './components/loadRobotEcharts';
 import HealthCarSearchForm from '../components/HealthCarSearchForm';
 import commonStyles from '@/common.module.less';
@@ -151,7 +144,7 @@ const HealthCar = (props) => {
       return;
 
     let sourceData = { ...filterData };
-    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+    sourceData = filterDataByParam(sourceData, selectedIds, 'vehicleId');
 
     const statusData = generateDurationDataByTime(
       sourceData,
@@ -315,7 +308,7 @@ const HealthCar = (props) => {
           taskDistance: formatMessage({ id: 'reportCenter.agvload.taskDistance' }),
         });
 
-        setSelectedIds(getAllCellId(newLoadData, 'agvId'));
+        setSelectedIds(getAllCellId(newLoadData, 'vehicleId'));
         setLoadOriginData(newLoadData);
         setFilterData(newLoadData);
         setSelectedKeys([]);
@@ -331,12 +324,12 @@ const HealthCar = (props) => {
     Object.keys(allData).forEach((key) => {
       const typeData = allData[key];
       if (!isStrictNull(typeData)) {
-        const currentTypeData = sortBy(typeData, 'agvId');
+        const currentTypeData = sortBy(typeData, 'vehicleId');
         currentTypeData.forEach((record) => {
           let currentTime = {};
           let _record = {};
           currentTime[colums.time] = key;
-          currentTime.agvId = record.agvId;
+          currentTime.vehicleId = record.vehicleId;
           currentTime[colums.robotType] = record.robotType;
           if (!isNull(type)) {
             _record = { ...record[type] };
@@ -404,7 +397,7 @@ const HealthCar = (props) => {
     Object.entries(_data).forEach(([key, allcellData]) => {
       const _allCellData = [];
       allcellData.forEach((item) => {
-        if (ids.includes(item.robotId)) {
+        if (ids.includes(item.vehicleId)) {
           _allCellData.push(item);
         }
       });
@@ -427,9 +420,9 @@ const HealthCar = (props) => {
   };
   const columns = [
     {
-      title: <FormattedMessage id="app.agv.id" />,
-      dataIndex: 'agvId',
-      sorter: (a, b) => a.robotId - b.robotId,
+      title: <FormattedMessage id='app.agv.id' />,
+      dataIndex: 'vehicleId',
+      sorter: (a, b) => a.vehicleId - b.vehicleId,
     },
     {
       title: <FormattedMessage id='app.agvType' />,
@@ -511,7 +504,7 @@ const HealthCar = (props) => {
                 rowSelection={rowSelection}
                 columns={columns}
                 dataSource={tableData}
-                rowKey={'robotId'}
+                rowKey={'vehicleId'}
                 pagination={false}
                 scroll={{ y: 300 }}
               />

@@ -14,8 +14,8 @@ const OTA = (props) => {
   function getColumn(operate) {
     return [
       {
-        title: <FormattedMessage id="app.agv.id" />,
-        dataIndex: 'robotId',
+        title: <FormattedMessage id='app.agv.id' />,
+        dataIndex: 'vehicleId',
         align: 'center',
       },
       {

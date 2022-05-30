@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Form, Select, Button, Input, Row, Col } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 
@@ -30,8 +30,7 @@ const TaskSearch = (props) => {
     <Form form={form} onFinish={onFinish}>
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={5}>
-          <Form.Item name={'agvId'} label={formatMessage({ id: 'app.agv.id' })}>
-            {/* <Select allowClear showSearch></Select> */}
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>

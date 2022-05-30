@@ -1,13 +1,10 @@
-import { isStrictNull, formatMessage } from '@/utils/util';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import { forIn, isNull } from 'lodash';
 import { AgvStateColor } from '@/config/consts';
 import { labelColor, titleColor } from '@/packages/Report/components/GroundQrcodeEcharts';
-import {
-  filterNewXAixsTime,
-  getNewKey,
-  filterEqualTime,
-} from '@/packages/Report/components/reportUtil';
+import { filterEqualTime, filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
 import moment from 'moment';
+
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const Color = [
@@ -646,22 +643,22 @@ export const generateTableData = (originalData = {}, agvData = []) => {
 
   Object.values(originalData).forEach((record) => {
     record.forEach((item) => {
-      const { agvId, robotType } = item;
-      if (currentAxisData.includes(agvId)) {
-        currentCellIdData[agvId]['robotType'] = robotType;
-        currentCellIdData[agvId]['agvId'] = agvId;
+      const { vehicleId, robotType } = item;
+      if (currentAxisData.includes(vehicleId)) {
+        currentCellIdData[vehicleId]['robotType'] = robotType;
+        currentCellIdData[vehicleId]['vehicleId'] = vehicleId;
         forIn(item, (value, key) => {
           if (firstTimeDataMap.has(key)) {
-            let seryData = currentCellIdData[agvId][key] || 0;
+            let seryData = currentCellIdData[vehicleId][key] || 0;
             if (_key[key]) {
               let currentKey = _key[key];
-              currentCellIdData[agvId][key] = seryData * 1 + (value[currentKey] ?? 0) * 1;
+              currentCellIdData[vehicleId][key] = seryData * 1 + (value[currentKey] ?? 0) * 1;
             } else {
               let _sum = 0;
               forIn(value, (val2, k2) => {
                 _sum += val2;
               });
-              currentCellIdData[agvId][key] = seryData * 1 + _sum * 1;
+              currentCellIdData[vehicleId][key] = seryData * 1 + _sum * 1;
             }
           }
         });

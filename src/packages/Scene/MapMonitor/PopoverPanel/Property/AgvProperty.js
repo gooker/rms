@@ -5,19 +5,13 @@ import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchAgvInfo,
+  fetchAgvRunningInfo,
   fetchMaintain,
   fetchManualMode,
-  fetchAgvRunningInfo,
   getAlertCentersByTaskIdOrAgvId,
 } from '@/services/api';
-import { agvTryToCharge, agvToRest, agvRemoteControl } from '@/services/monitor';
-import {
-  isStrictNull,
-  renderAgvState,
-  renderBattery,
-  dealResponse,
-  formatMessage,
-} from '@/utils/util';
+import { agvRemoteControl, agvToRest, agvTryToCharge } from '@/services/monitor';
+import { dealResponse, formatMessage, isStrictNull, renderAgvState, renderBattery } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
@@ -33,7 +27,7 @@ const AGVCategory = {
 const AGVElementProp = (props) => {
   const { data, type, dispatch, history, selectAgv, showRoute, allAGVs } = props;
   const [agvInfo, setAgvInfo] = useState({});
-  const [agvId, setAgvId] = useState(null);
+  const [vehicleId, setVehicleId] = useState(null);
   const [mainTain, setMainTain] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const [pathChecked, setPathChecked] = useState(false);
@@ -41,7 +35,7 @@ const AGVElementProp = (props) => {
 
   useEffect(() => {
     async function init() {
-      setAgvId(JSON.parse(data.id));
+      setVehicleId(JSON.parse(data.id));
       if (selectAgv.includes(data.uniqueId) && showRoute) {
         setPathChecked(true);
       } else {
@@ -56,12 +50,12 @@ const AGVElementProp = (props) => {
   async function getAgvInfo() {
     const [response, alertResponse] = await Promise.all([
       fetchAgvInfo(data.id, 'sorter'),
-      getAlertCentersByTaskIdOrAgvId({ agvId: JSON.parse(data.id) }),
+      getAlertCentersByTaskIdOrAgvId({ vehicleId: JSON.parse(data.id) }),
     ]);
 
     const filterAgvInfo = find(
       allAGVs,
-      (item) => item.agvId === data.id && item?.agv?.id === data.uniqueId,
+      (item) => item.vehicleId === data.id && item?.agv?.id === data.uniqueId,
     );
     if (!dealResponse(response)) {
       const { agv = {}, agvInfo = {}, agvWorkStatusDTO = {} } = filterAgvInfo;
@@ -106,7 +100,7 @@ const AGVElementProp = (props) => {
 
   // 运行时
   async function showRunInfo() {
-    const response = await fetchAgvRunningInfo({ robotId: agvId });
+    const response = await fetchAgvRunningInfo({ vehicleId: vehicleId });
     if (!dealResponse(response)) {
       const newInfoList = [];
       Object.values(response).forEach(({ agvRunningStatus, agvInfoTypeI18n, detailFormat }) => {
@@ -118,7 +112,7 @@ const AGVElementProp = (props) => {
   }
 
   function goCharge() {
-    agvTryToCharge({ vehicleId: agvId, agvType: data.agvType }).then((response) => {
+    agvTryToCharge({ vehicleId: vehicleId, agvType: data.agvType }).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.controller.goCharge.fail' }));
       } else {
@@ -128,7 +122,7 @@ const AGVElementProp = (props) => {
   }
 
   function toRest() {
-    agvToRest({ vehicleId: agvId, agvType: data.agvType }).then((response) => {
+    agvToRest({ vehicleId: vehicleId, agvType: data.agvType }).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.controller.toRest.fail' }));
       } else {
@@ -140,7 +134,7 @@ const AGVElementProp = (props) => {
   // 发送小车Hex命令
   async function sendAgvHexCommand(hexCommand, actionContent) {
     const params = {
-      robotId: agvId,
+      vehicleId,
       rawCommandHex: hexCommand,
     };
     const response = await agvRemoteControl(type, params);
@@ -165,7 +159,7 @@ const AGVElementProp = (props) => {
   async function mainTainAgv() {
     const params = {
       sectionId: window.localStorage.getItem('sectionId'),
-      agvId,
+      vehicleId,
       disabled: !mainTain,
     };
     const response = await fetchMaintain(type, params);
@@ -181,7 +175,7 @@ const AGVElementProp = (props) => {
   async function switchManualMode() {
     const params = {
       sectionId: window.localStorage.getItem('sectionId'),
-      agvId,
+      vehicleId,
       manualMode: !manualMode,
     };
     const response = await fetchManualMode(type, params);
@@ -248,7 +242,7 @@ const AGVElementProp = (props) => {
               </span>
             </div>
             <div className={style.rightSideline} onClick={goToAgvDetail}>
-              {agvInfo?.agvId}
+              {agvInfo?.vehicleId}
             </div>
           </div>
 

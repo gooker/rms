@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FormattedMessage from '@/components/FormattedMessage';
-import { Button, Input, Row } from 'antd';
+import { Button, Input } from 'antd';
 import { getRandomString, isStrictNull } from '@/utils/util';
 
 export default class PasteModal extends Component {
@@ -35,14 +35,12 @@ export default class PasteModal extends Component {
     const { value } = this.state;
     return (
       <div>
-        <Row>
-          <Input.TextArea allowClear onChange={this.onChange} />
-        </Row>
-        <Row style={{ marginTop: 20 }}>
-          <Button type="primary" disabled={isStrictNull(value)} onClick={this.submit}>
-            <FormattedMessage id="app.button.confirm" />
+        <Input.TextArea allowClear style={{ height: 200 }} onChange={this.onChange} />
+        <div style={{ marginTop: 20, textAlign: 'end' }}>
+          <Button type='primary' disabled={isStrictNull(value)} onClick={this.submit}>
+            <FormattedMessage id='app.button.confirm' />
           </Button>
-        </Row>
+        </div>
       </div>
     );
   }

@@ -23,7 +23,7 @@ const RegisterPanel = (props) => {
     },
     {
       title: <FormattedMessage id='app.agv.id' />,
-      dataIndex: 'agvId',
+      dataIndex: 'vehicleId',
       align: 'center',
     },
     {

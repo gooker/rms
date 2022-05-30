@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Input, Select, Checkbox, Card, message, Divider } from 'antd';
+import { Button, Checkbox, Divider, Form, Input, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { fetchSorterToThrow } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
@@ -40,7 +40,7 @@ const SorterThrow = (props) => {
       .then((values) => {
         setExecuting(true);
         const requestParam = {
-          robotId: values.robotId,
+          vehicleId: values.vehicleId,
           beltAction: {},
         };
         requestParam.beltAction['front'] = values.frontRoller || null;
@@ -65,7 +65,7 @@ const SorterThrow = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
-            name={'robotId'}
+            name={'vehicleId'}
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >

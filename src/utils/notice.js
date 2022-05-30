@@ -30,14 +30,14 @@ export default function notice(message, sectionId, notificationQueue) {
   if (
     problemHandling != null &&
     problemHandling.robotType != null &&
-    problemHandling.agvId != null &&
+    problemHandling.vehicleId != null &&
     problemHandling.id != null
   ) {
-    const { id, taskId, alertType, robotType, agvId, updateTime, alertItemList } = problemHandling;
+    const { id, taskId, alertType, robotType, vehicleId, updateTime, alertItemList } = problemHandling;
     if (hasNewError) {
       // 浏览器级别提醒
       const agvTypeName = formatMessage({ id: `app.agvType.${robotType}` });
-      const content = `${agvTypeName} #${agvId} ${formatMessage({
+      const content = `${agvTypeName} #${vehicleId} ${formatMessage({
         id: 'app.notification.reportProblem',
       })}`;
       showBrowserNotification(formatMessage({ id: 'app.notification.central' }), content);
@@ -69,7 +69,7 @@ export default function notice(message, sectionId, notificationQueue) {
           <div style={{ marginTop: 10 }}>
             <span>{agvTypeName}</span>
             <span style={{ marginLeft: 10, fontSize: 18, fontWeight: 600, color: 'red' }}>
-              {agvId}
+              {vehicleId}
             </span>
           </div>
 

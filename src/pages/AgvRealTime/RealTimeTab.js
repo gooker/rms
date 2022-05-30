@@ -1,9 +1,16 @@
 import React, { memo } from 'react';
-import { Row, Col, Tag, Popover, Button } from 'antd';
+import { Button, Col, Popover, Row, Tag } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
-import { formatMessage, getSuffix, isNull, renderBattery } from '@/utils/util';
+import {
+  convertToUserTimezone,
+  formatMessage,
+  getAgvStatusTag,
+  getDirectionLocale,
+  getSuffix,
+  isNull,
+  renderBattery,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getDirectionLocale, getAgvStatusTag, convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent.js';
 import styles from './index.module.less';
@@ -117,7 +124,7 @@ const RealTimeTab = (props) => {
             size="small"
             style={{ marginLeft: 10 }}
             onClick={() => {
-              unbindPod(redisAGV.sectionId, redisAGV.robotId);
+              unbindPod(redisAGV.sectionId, redisAGV.vehicleId);
             }}
           >
             <FormattedMessage id="app.button.unbind" />
@@ -133,7 +140,7 @@ const RealTimeTab = (props) => {
       <Col span={12}>
         {/************ 小车ID ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
-          {data?.agv?.agvId}
+          {data?.agv?.vehicleId}
         </LabelComponent>
 
         {/************ IP ************/}

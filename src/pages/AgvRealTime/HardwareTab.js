@@ -1,8 +1,7 @@
 import React from 'react';
-import { Row, Col, Card, Popover } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { Card, Col, Popover, Row } from 'antd';
+import { convertToUserTimezone, formatMessage, getDay, getSuffix } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, getSuffix, getDay } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent';
 import styles from './index.module.less';
@@ -99,7 +98,7 @@ const HardwareTab = (props) => {
       <Col span={12}>
         {/* 小车ID */}
         <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
-          {data?.agv?.agvId}
+          {data?.agv?.vehicleId}
         </LabelComponent>
 
         <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>

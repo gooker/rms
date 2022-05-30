@@ -1,12 +1,9 @@
-import { isStrictNull, validateUrl } from '@/utils/util';
+import { isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
-import {
-  labelColor,
-  titleColor,
-  getOriginalDataBycode,
-} from '@/packages/Report/components/GroundQrcodeEcharts';
+import { getOriginalDataBycode, labelColor, titleColor } from '@/packages/Report/components/GroundQrcodeEcharts';
 import { filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
 import { MinuteFormat } from '@/packages/Report/LoadReport/components/loadRobotEcharts';
+
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const colors = ['#91CC75', '#89c7f2'];
@@ -268,7 +265,7 @@ export const generatOfflineDataByTime = (allData, translate, timeType = 'hour') 
  * *根据原始数据 --处理agvId数据-小车离线
  * *yAxisIndex:0(时长-line) 1(次数-bar）
  * **/
-export const generatOfflineDataByRobot = (allData = {}, translate, idName = 'agvId') => {
+export const generatOfflineDataByRobot = (allData = {}, translate, idName = 'vehicleId') => {
   const series = []; // 存放纵坐标数值
   const {
     legendData,

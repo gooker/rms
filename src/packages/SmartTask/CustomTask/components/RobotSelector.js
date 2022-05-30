@@ -94,9 +94,9 @@ const RobotSelector = (props) => {
   function renderCascadeSecondOption() {
     if (!isNull(agvType)) {
       const agv = find(dataSource.agv, { code: agvType });
-      return agv.ids.map((agvId) => (
-        <Select.Option key={agvId} value={agvId}>
-          {agvId}
+      return agv.ids.map((vehicleId) => (
+        <Select.Option key={vehicleId} value={vehicleId}>
+          {vehicleId}
         </Select.Option>
       ));
     }

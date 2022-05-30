@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, InputNumber, Radio, Switch, Checkbox, Select } from 'antd';
+import { Button, Checkbox, Form, InputNumber, Radio, Select, Switch } from 'antd';
 import { advancedLatnetHandling } from '@/services/monitor';
 
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
@@ -63,7 +63,7 @@ const AdvancedCarryComponent = (props) => {
           <InputNumber />
         </Form.Item>
         <Form.Item
-          name={'robotId'}
+          name={'vehicleId'}
           label={formatMessage({ id: 'app.agv.id' })}
           rules={[{ required: true }]}
         >

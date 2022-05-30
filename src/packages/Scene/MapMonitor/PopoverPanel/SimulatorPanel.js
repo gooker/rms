@@ -7,9 +7,9 @@ import {
   fetchCloseAgv,
   fetchOpenAGV,
   fetchRunAGV,
+  fetchSimulatorErrorMessage,
   fetchStopAGV,
   openSimulator,
-  fetchSimulatorErrorMessage,
 } from '@/services/monitor';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -61,7 +61,7 @@ const SimulatorPanel = (props) => {
   const columns = [
     {
       title: 'ID',
-      dataIndex: 'agvId',
+      dataIndex: 'vehicleId',
       align: 'center',
     },
     {
@@ -78,7 +78,7 @@ const SimulatorPanel = (props) => {
         <Switch
           checked={text || false}
           onChange={(checked) => {
-            changeAgvRunTask(record.robotId, checked);
+            changeAgvRunTask(record.vehicleId, checked);
           }}
         />
       ),
@@ -128,9 +128,9 @@ const SimulatorPanel = (props) => {
     init();
   }
 
-  function changeAgvRunTask(robotId, checked) {
+  function changeAgvRunTask(vehicleId, checked) {
     const params = {
-      robotId: `${robotId}`,
+      vehicleId: `${vehicleId}`,
       logicId: currentLogicArea,
       runTask: checked,
     };
@@ -430,10 +430,10 @@ const SimulatorPanel = (props) => {
                   setSelectedRowKeys(value);
                 }}
               >
-                {simulatorAgvList.map(({ agvId }) => {
+                {simulatorAgvList.map(({ vehicleId }) => {
                   return (
-                    <Select.Option value={agvId} key={agvId}>
-                      {agvId}
+                    <Select.Option value={vehicleId} key={vehicleId}>
+                      {vehicleId}
                     </Select.Option>
                   );
                 })}
@@ -444,7 +444,7 @@ const SimulatorPanel = (props) => {
                 columns={columns}
                 expandColumns={expandColumns}
                 dataSource={simulatorAgvList}
-                rowKey={(record) => record.robotId}
+                rowKey={(record) => record.vehicleId}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
                   onChange: (selectRowKey) => {

@@ -1,6 +1,7 @@
 import { formatMessage, isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
 import { filterNewXAixsTime, getNewKey } from './reportUtil';
+
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
 export const timesColor = ['#1890ff', '#0389ff'];
@@ -261,7 +262,7 @@ export const generateTimeData = (allData, translate, timeType = 'hour') => {
   });
   const series = []; // 存放纵坐标数值
   const xAxisData = filterNewXAixsTime(allData, timeType);
-  
+
   let keyResult = {}; //
   xAxisData.map((item) => {
     keyResult[item] = {};
@@ -413,7 +414,7 @@ export const transformCodeData = (allData = {}, translate, idName = 'cellId') =>
 /**拿到原始数据的 所有参数 所有根据cellId/agvId的参数求和
  * @param {*} originalData 数据
  * *@param {*} translate 报表所有的key和对应的翻译 {key:value}
- * *@param {*} idName 根据id求合 可以是cellId/agvId
+ * *@param {*} idName 根据id求合 可以是cellId/vehicleId
  * */
 export const getOriginalDataBycode = (originalData, translate, idName) => {
   let keyDataMap = new Map(); // 存放key 比如车次 偏移等的求和
@@ -458,7 +459,7 @@ export const getOriginalDataBycode = (originalData, translate, idName) => {
   return { legendData, yxisData, currentSery, commonOption };
 };
 
-/*获取数据里所有的cellId/agvId;*/
+/*获取数据里所有的cellId/vehicleId;*/
 export const getAllCellId = (originalData, key) => {
   const result = new Set();
   Object.values(originalData).forEach((record) => {

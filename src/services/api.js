@@ -60,15 +60,15 @@ export async function fetchAgvInfo(vehicleId, vehicleType) {
 }
 
 // 请求Coordinator端小车实时信息
-export async function fetchCoordAgvInfo(agvId) {
-  return request(`/${NameSpace.Platform}/traffic/getAGV/${agvId}`, {
+export async function fetchCoordAgvInfo(vehicleId) {
+  return request(`/${NameSpace.Platform}/traffic/getAGV/${vehicleId}`, {
     method: `GET`,
   });
 }
 
 // 请求小车的硬件状态
 export async function fetchAgvHardwareInfo(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.agvId}`, {
+  return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.vehicleId}`, {
     method: `GET`,
   });
 }
