@@ -115,7 +115,12 @@ const TargetLock = (props) => {
       });
     }
     if (!isStrictNull(vehicleType)) {
-      result = result.filter((item) => vehicleType.includes(item.vehicleType));
+      const currentVehicleType = [];
+      vehicleType?.map((value) => {
+        currentVehicleType.push(value.split('@')[1]);
+      });
+
+      result = result.filter((item) => currentVehicleType.includes(item.vehicleType));
     }
     if (!isStrictNull(taskId)) {
       result = result.filter((item) => item.taskId === taskId);

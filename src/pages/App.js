@@ -22,7 +22,7 @@ class App extends Component {
       if (!isStrictNull(storedAPIs)) {
         storedAPIs = JSON.parse(storedAPIs);
       }
-      const activeAPI = storedAPIs.filter((item) => item.flag === '1');
+      const activeAPI = storedAPIs?.filter((item) => item.flag === '1');
       window.nameSpacesInfo = isEmpty(activeAPI)
         ? defaultAPI
         : extractNameSpaceInfoFromEnvs(activeAPI[0]);

@@ -104,7 +104,7 @@ class SocketClient {
   
     // 小车状态
     unsubscription = this.client.subscribe(
-      `/topic/ui_monitor_ vehicle.s${sectionId}`,
+      `/topic/ui_monitor_vehicle.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);
         if (this.vehicleStatusCallback) this.vehicleStatusCallback(p);

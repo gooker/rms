@@ -1323,7 +1323,7 @@ export function unifyVehicleState(vehicle) {
     currentCellId,
     navigationType: vehicle.bd ?? vehicle.navigationType,
     uniqueId: vehicle.rId,
-    vehicleType: vehicle.rt,
+    vehicleType: vehicle.rT,
     vehicleIcon: vehicle.ico,
     battery: vehicle.b ?? vehicle.battery,
     vehicleId: vehicle.r ?? vehicle.vehicleId,
@@ -1370,19 +1370,19 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
   socketClient.registerVehicleStatus((data) => {
     data?.map((item) => {
       ///fock/slamLatent
-      if (item.rt === 'sorter') {
+      if (item.rT === 'sorter') {
+        // 分拣车状态
+        mapContext.updateSorterVehicle([item]);
+      }
+
+      if (item.rT === 'latent') {
         // 潜伏式车状态
         mapContext.updateLatentVehicle([item]);
       }
 
-      if (item.rt === 'latent') {
+      if (item.rT === 'tote') {
         // 料箱车状态
         mapContext.updateToteVehicle([item]);
-      }
-
-      if (item.rt === 'tote') {
-        // 分拣车状态
-        mapContext.updateSorterVehicle([item]);
       }
     });
   });
