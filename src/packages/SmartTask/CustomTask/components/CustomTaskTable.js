@@ -5,12 +5,13 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlin
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/api';
+import { CustomNodeType } from '../customTaskConfig';
 import RmsConfirm from '@/components/RmsConfirm';
-import commonStyles from '@/common.module.less';
-import styles from '../customTask.module.less';
 import TaskBodyModal from './TaskBodyModal';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
+import commonStyles from '@/common.module.less';
+import styles from '../customTask.module.less';
 
 const messageKey = 'MESSAGE_KEY';
 
@@ -18,14 +19,42 @@ const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [exampleStructure, setExampleStructure] = useState(null); // 示例结构
+  const [exampleStructure, setExampleStructure] = useState(null); // 请求体结构
 
   useEffect(() => {
     dispatch({ type: 'customTask/getCustomTaskList' });
   }, []);
 
   function viewRequestBody(record) {
-    setExampleStructure(JSON.parse(record.sample));
+    const { code, customStart } = record;
+    const sample = JSON.parse(record.sample);
+    const requestBody = {
+      sectionId: window.localStorage.getItem('sectionId'),
+      code,
+      createCode: null,
+      customParams: [],
+    };
+    // 如果是自动分车，动态参数类型是"指定小车"
+    if (isNull(customStart.robot)) {
+      requestBody.customParams.push({ code: 'START-AGV', param: [] });
+    }
+    // 将sample数据合并到customParams中
+    Object.keys(sample).forEach((taskCode) => {
+      const fields = Object.keys(sample[taskCode]);
+      fields.forEach((field) => {
+        if (taskCode === CustomNodeType.START) {
+          requestBody.customParams.push({
+            code: `${taskCode}-${field}`,
+            param: record.customStart?.robot?.code ?? [],
+          });
+        } else {
+          // ACTION
+          const param = record.customActions[taskCode]?.targetAction?.target?.code ?? [];
+          requestBody.customParams.push({ code: `${taskCode}-${field}`, param });
+        }
+      });
+    });
+    setExampleStructure(requestBody);
   }
 
   const columns = [
@@ -116,13 +145,13 @@ const CustomTaskTable = (props) => {
     } else {
       if (isSuccess) {
         message.success({
-          content: formatMessage({ id: 'customTasks.delete.success' }),
+          content: formatMessage({ id: 'app.message.operateSuccess' }),
           key: messageKey,
           duration: 2,
         });
       } else {
         message.error({
-          content: formatMessage({ id: 'customTasks.delete.failed' }),
+          content: formatMessage({ id: 'app.message.operateFailed' }),
           key: messageKey,
           duration: 2,
         });
@@ -137,7 +166,7 @@ const CustomTaskTable = (props) => {
 
   function deleteListItem() {
     RmsConfirm({
-      content: formatMessage({ id: 'customTasks.deleteList.confirm' }),
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
         switchDeleteSpin(true);
         const response = await deleteCustomTasksById(selectedRowKeys);

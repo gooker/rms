@@ -5,7 +5,6 @@ import { fetchAgvErrorRecord, fetchDefinedFaults } from '@/services/api';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';
-import commonStyles from '@/common.module.less';
 
 const FaultListComponent = (props) => {
   const { agvType } = props;
@@ -27,7 +26,7 @@ const FaultListComponent = (props) => {
   const columns = [
     {
       title: formatMessage({ id: 'app.agv.id' }),
-      dataIndex: 'agvId',
+      dataIndex: 'vehicleId',
       align: 'center',
       width: 100,
     },

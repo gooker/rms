@@ -8,8 +8,7 @@ import { Button, Card, Col, Divider, Form, Modal, Row, Select } from 'antd';
 import { ClearOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import CascadeSelect from '../CustomTask/FormComponent/CascadeSelect';
 import ModelSelection from '../CustomTask/FormComponent/ModelSelection';
-// import AngleSelector from '@/pages/MapTool/components/AngleSelector';
-import { ModelTypeFieldMap } from '@/config/consts';
+import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../CustomTask/customTask.module.less';
@@ -25,8 +24,8 @@ const DynamicButton = {
 };
 
 const reversedModelTypeFieldMap = {};
-Object.keys(ModelTypeFieldMap).forEach((key) => {
-  const value = ModelTypeFieldMap[key];
+Object.keys(CustomNodeTypeFieldMap).forEach((key) => {
+  const value = CustomNodeTypeFieldMap[key];
   reversedModelTypeFieldMap[value] = key;
 });
 

@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Divider, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
-import { formatMessage, dealResponse, convertToUserTimezone, isStrictNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchExecutingTaskList, deleteExecutionQTasks } from '@/services/api';
+import { deleteExecutionQTasks, fetchExecutingTaskList } from '@/services/api';
 import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';
@@ -224,8 +224,8 @@ class ExecutionQueueComponent extends Component {
     if (!isStrictNull(filterValue.taskId)) {
       currentFilterValue.taskId = filterValue.taskId;
     }
-    if (!isStrictNull(filterValue.agvId)) {
-      currentFilterValue.appointedAGVId = filterValue.agvId;
+    if (!isStrictNull(filterValue.vehicleId)) {
+      currentFilterValue.appointedAGVId = filterValue.vehicleId;
     }
     if (Object.keys(currentFilterValue).length === 0) {
       return dataSource;

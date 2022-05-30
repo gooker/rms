@@ -4,11 +4,23 @@ import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RobotSelector from '../components/RobotSelector';
 import style from '../customTask.module.less';
+import { connect } from '@/utils/RmsDva';
 
 const { formItemLayout } = getFormLayout(6, 18);
 
 const StartForm = (props) => {
-  const { code, type, hidden } = props;
+  const { code, form, type, hidden, variable } = props;
+
+  function validateRobot(_, value) {
+    if (value.type === 'AUTO') {
+      return Promise.resolve();
+    } else {
+      if (value.code.length > 0 || variable.START) {
+        return Promise.resolve();
+      }
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.robot' })));
+    }
+  }
 
   return (
     <>
@@ -36,12 +48,14 @@ const StartForm = (props) => {
       {/* 分小车: 当前执行任务的指定robot资源-->小车/小车组/无 */}
       <Form.Item
         hidden={hidden}
+        required
         {...formItemLayout}
         name={[code, 'robot']}
         initialValue={{ type: 'AUTO', code: [] }}
         label={<FormattedMessage id='customTask.form.robot' />}
+        rules={[{ validator: validateRobot }]}
       >
-        <RobotSelector subTaskCode={code} />
+        <RobotSelector form={form} subTaskCode={code} />
       </Form.Item>
 
       {/* 约束 */}
@@ -76,4 +90,6 @@ const StartForm = (props) => {
     </>
   );
 };
-export default memo(StartForm);
+export default connect(({ customTask }) => ({
+  variable: customTask.variable,
+}))(memo(StartForm));

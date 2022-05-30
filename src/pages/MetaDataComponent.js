@@ -1,13 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import moment from 'moment';
-import { Card, Select, DatePicker, Form, Button } from 'antd';
-import {
-  dealResponse,
-  formatMessage,
-  getFormLayout,
-  convertToUserTimezone,
-  isNull,
-} from '@/utils/util';
+import { Button, Card, DatePicker, Form, Select } from 'antd';
+import { convertToUserTimezone, dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { DownloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { downloadLogFromSFTP, fetchAllAgvList } from '@/services/api';
@@ -86,10 +80,10 @@ const MetaDataComponent = (props) => {
             label={formatMessage({ id: 'app.agv.id' })}
             rules={[{ required: true }]}
           >
-            <Select allowClear showSearch mode="multiple" maxTagCount={5} maxTagTextLength={4}>
-              {agvList.map(({ robotId }) => (
-                <Select.Option value={robotId} key={robotId}>
-                  {robotId}
+            <Select allowClear showSearch mode='multiple' maxTagCount={5} maxTagTextLength={4}>
+              {agvList.map(({ vehicleId }) => (
+                <Select.Option value={vehicleId} key={vehicleId}>
+                  {vehicleId}
                 </Select.Option>
               ))}
             </Select>

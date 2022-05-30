@@ -1,29 +1,14 @@
 import React from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Row, Col, Tabs, Button, Select, Form, Tag, message } from 'antd';
-import {
-  FileTextOutlined,
-  AndroidOutlined,
-  WarningOutlined,
-  AimOutlined,
-  SearchOutlined,
-} from '@ant-design/icons';
+import { Button, Col, Form, Row, Select, Tabs } from 'antd';
+import { AimOutlined, AndroidOutlined, SearchOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import LabelComponent from '@/components/LabelComponent';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import {
-  fetchAgvInfo,
-  fetchAgvTaskList,
-  fetchAgvErrorRecord,
-  fetchAgvHardwareInfo,
-} from '@/services/api';
+import { dealResponse } from '@/utils/util';
+import { fetchAgvErrorRecord, fetchAgvInfo, fetchAgvTaskList } from '@/services/api';
 import commonStyles from '@/common.module.less';
 import RealTimeTab from './RealTimeTab';
 import HardwareTab from './HardwareTab';
-import TaskRecordTab from './TaskRecordTab';
-import ErrorRecordTab from './ErrorRecordTab';
-import AGVActivityForm from './AGVActivityForm';
 import styles from './index.module.less';
 
 const { Option } = Select;
@@ -34,7 +19,7 @@ class AgvRealTimeComponent extends React.Component {
   state = {
     agvList: [],
 
-    agvId: null,
+    vehicleId: null,
     agvType: null,
     uniqueId: null,
     agvRealtimeData: null,
@@ -54,28 +39,28 @@ class AgvRealTimeComponent extends React.Component {
     });
     if (location && location?.search) {
       const uniqueId = location.search.split('=')[1];
-      const { agvId, agvType } = find(allVehicles, { uniqueId });
-      this.setState({ uniqueId, agvId, agvType }, this.fetchAgvMultivariateData);
+      const { vehicleId, agvType } = find(allVehicles, { uniqueId });
+      this.setState({ uniqueId, vehicleId, agvType }, this.fetchAgvMultivariateData);
     }
     this.setState({ agvList: allVehicles });
   }
 
   // 获取小车软件信息
   fetchAgvMultivariateData = async () => {
-    const { uniqueId, agvType, agvId } = this.state;
+    const { uniqueId, agvType, vehicleId } = this.state;
     this.setState({ isFetching: true });
     const [agvRealtimeData] = await Promise.all([
-      fetchAgvInfo(agvId, agvType),
-      // fetchAgvHardwareInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
+      fetchAgvInfo(vehicleId, agvType),
+      // fetchAgvHardwareInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), vehicleId }),
       // fetchAgvTaskList(agvType, {
       //   sectionId: window.localStorage.getItem('sectionId'),
-      //   agvId,
+      //   vehicleId,
       //   current: 1,
       //   size: 6,
       // }),
       // fetchAgvErrorRecord(agvType, {
       //   sectionId: window.localStorage.getItem('sectionId'),
-      //   agvId,
+      //   vehicleId,
       //   current: 1,
       //   size: 3,
       // }),
@@ -94,7 +79,7 @@ class AgvRealTimeComponent extends React.Component {
 
   // 分页 获取记录
   getRecords = async (type, params) => {
-    const { agvId, recordSearchParams, errorSearchParams } = this.state;
+    const { vehicleId, recordSearchParams, errorSearchParams } = this.state;
     const { agvType } = this.props;
     if (type === 'record') {
       const page = params
@@ -105,7 +90,7 @@ class AgvRealTimeComponent extends React.Component {
           };
       const recordsData = await fetchAgvTaskList(agvType, {
         sectionId: window.localStorage.getItem('sectionId'),
-        agvId,
+        vehicleId,
         ...page,
         ...recordSearchParams,
       });
@@ -121,7 +106,7 @@ class AgvRealTimeComponent extends React.Component {
           };
       const errorData = await fetchAgvErrorRecord(agvType, {
         sectionId: window.localStorage.getItem('sectionId'),
-        agvId,
+        vehicleId,
         ...page,
         ...errorSearchParams,
       });
@@ -132,7 +117,7 @@ class AgvRealTimeComponent extends React.Component {
   };
 
   render() {
-    const { agvId, agvType, agvList, agvRealtimeData, isFetching } = this.state;
+    const { vehicleId, agvType, agvList, agvRealtimeData, isFetching } = this.state;
 
     return (
       <div className={commonStyles.commonPageStyle}>
@@ -144,8 +129,8 @@ class AgvRealTimeComponent extends React.Component {
                 showSearch
                 style={{ width: '100%' }}
                 onChange={(uniqueId) => {
-                  const { agvId, agvType } = find(agvList, { uniqueId });
-                  this.setState({ uniqueId, agvId, agvType });
+                  const { vehicleId, agvType } = find(agvList, { uniqueId });
+                  this.setState({ uniqueId, vehicleId, agvType });
                   return uniqueId;
                 }}
               >
@@ -160,7 +145,7 @@ class AgvRealTimeComponent extends React.Component {
           <Col>
             <Button
               type={'primary'}
-              disabled={!agvId}
+              disabled={!vehicleId}
               loading={isFetching}
               onClick={this.fetchAgvMultivariateData}
             >
@@ -214,7 +199,7 @@ class AgvRealTimeComponent extends React.Component {
                   <Col span={22}>
                     <AGVActivityForm
                       agvType={agvType}
-                      disabled={isNull(agvId)}
+                      disabled={isNull(vehicleId)}
                       onChange={(value) =>
                         this.setState({ recordSearchParams: value }, () =>
                           this.getRecords('record'),
@@ -247,7 +232,7 @@ class AgvRealTimeComponent extends React.Component {
               >
                 <AGVActivityForm
                   agvType={agvType}
-                  disabled={isNull(agvId)}
+                  disabled={isNull(vehicleId)}
                   onChange={(value) =>
                     this.setState({ errorSearchParams: value }, () => this.getRecords('error'))
                   }

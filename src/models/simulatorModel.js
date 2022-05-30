@@ -1,10 +1,9 @@
 import {
-  addSimulationAgv,
-  fetchUpdateAGVConfig,
-  fetchSimulatorHistory,
-  fetchSimulatorAGVConfig,
   fetchBatchDeleteSimulatorAgv,
+  fetchSimulatorAGVConfig,
+  fetchSimulatorHistory,
   fetchSimulatorLoginAGVControlState,
+  fetchUpdateAGVConfig,
 } from '@/services/monitor';
 import { fetchAllAdaptor, findRobot } from '@/services/resourceManageAPI';
 import { dealResponse } from '@/utils/util';
@@ -71,7 +70,7 @@ export default {
         // 将小车控制状态信息Map到小车数据中
         const allSimulatorAgvList = allAGVs.map((item) => ({
           ...item,
-          canMove: allAgvControlState[item.robotId],
+          canMove: allAgvControlState[item.vehicleId],
         }));
 
         yield put({ type: 'saveSimulatorAgvList', payload: allSimulatorAgvList });

@@ -27,8 +27,8 @@ const AgvList = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="app.agv.id" />,
-      dataIndex: 'agvId',
+      title: <FormattedMessage id='app.agv.id' />,
+      dataIndex: 'vehicleId',
       align: 'center',
     },
     {

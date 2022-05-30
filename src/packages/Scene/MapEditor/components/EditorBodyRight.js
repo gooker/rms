@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Tooltip } from 'antd';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { RightCategory, EditorRightTools, RightToolBarWidth } from '../editorEnums';
+import { EditorRightTools, RightCategory, RightToolBarWidth } from '../editorEnums';
 import RestPanel from '../PopoverPanel/RestPanel';
 import CellPanel from '../PopoverPanel/CellPanel';
 import CostPanel from '../PopoverPanel/CostPanel';
@@ -11,7 +11,6 @@ import StationPanel from '../PopoverPanel/StationPanel';
 import ChargerPanel from '../PopoverPanel/ChargerPanel';
 import DeliveryPanel from '../PopoverPanel/DeliveryPanel';
 import ElevatorPanel from '../PopoverPanel/ElevatorPanel';
-import WorkStationPanel from '../PopoverPanel/WorkStationPanel';
 import IntersectionPanel from '../PopoverPanel/IntersectionPanel';
 import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
 import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
@@ -41,8 +40,8 @@ const EditorBodyRight = (props) => {
         return <CostPanel />;
       case RightCategory.CellType:
         return <CellTypeConfigurePanel />;
-      case RightCategory.WorkStation:
-        return <WorkStationPanel />;
+      // case RightCategory.WorkStation:
+      //   return <WorkStationPanel />;
       case RightCategory.Charger:
         return <ChargerPanel />;
       case RightCategory.Station:

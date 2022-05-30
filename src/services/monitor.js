@@ -361,29 +361,29 @@ export async function fetchSimulatorLoginAGVControlState() {
 }
 
 // 模拟小车松急停
-export async function fetchRunAGV(robotId) {
-  return request(`/coordinator/simulator/runAGV/${robotId}`, {
+export async function fetchRunAGV(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/runAGV/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车拍急停
-export async function fetchStopAGV(robotId) {
-  return request(`/coordinator/simulator/stopAGV/${robotId}`, {
+export async function fetchStopAGV(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/stopAGV/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车开机
-export async function fetchOpenAGV(robotId) {
-  return request(`/coordinator/simulator/openAGV/${robotId}`, {
+export async function fetchOpenAGV(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/openAGV/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车关机
-export async function fetchCloseAgv(robotId) {
-  return request(`/coordinator/simulator/closeAGV/${robotId}`, {
+export async function fetchCloseAgv(vehicleId) {
+  return request(`/${NameSpace.Platform}/simulator/closeAGV/${vehicleId}`, {
     method: 'GET',
   });
 }
@@ -391,7 +391,7 @@ export async function fetchCloseAgv(robotId) {
 // 下线小车
 export async function fetchSimulatorAgvOffLine(params) {
   return request(
-    `/${NameSpace.Platform}/simulator/agvOffLine/${params.sectionId}/${params.robotId}`,
+    `/${NameSpace.Platform}/simulator/agvOffLine/${params.sectionId}/${params.vehicleId}`,
     { method: 'GET' },
   );
 }
@@ -428,8 +428,8 @@ export async function getTunnelState() {
 }
 
 // 删除通道锁
-export async function deleteTunnelAgvLock(robotId) {
-  return request(`/${NameSpace.Platform}/traffic/clearTunnelLock/${robotId}`, {
+export async function deleteTunnelAgvLock(vehicleId) {
+  return request(`/${NameSpace.Platform}/traffic/clearTunnelLock/${vehicleId}`, {
     method: 'GET',
   });
 }

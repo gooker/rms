@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Input, Switch } from 'antd';
+import { Button, Form, Input, Switch } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { agvEmptyRun } from '@/services/monitor';
@@ -25,8 +25,8 @@ const EmptyRun = (props) => {
       .then((values) => {
         setExecuting(true);
         let newValues = { ...values };
-        newValues.robotId = values.agvId;
-        delete newValues.agvId;
+        newValues.vehicleId = values.vehicleId;
+        delete newValues.vehicleId;
         agvEmptyRun({ ...newValues })
           .then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {

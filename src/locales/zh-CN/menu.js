@@ -18,19 +18,15 @@ export default {
   'menu.customMenuManager': '自定义菜单',
 
   // 载具
-  'menu.container': '载具',
-  'menu.container.customType': '载具类型',
-  'menu.container.management': '载具管理',
-  'menu.container.group': '载具分组',
-  'menu.container.circulation': '载具流转记录',
+  'menu.load': '载具',
+  'menu.load.customType': '载具类型',
+  'menu.load.management': '载具列表',
+  'menu.load.circulation': '载具流转记录',
 
   // 储位
   'menu.storage': '储位',
-  'menu.storage.tote': '料箱货架储位',
-  'menu.storage.latentTote': '潜伏料箱货架储位',
-  'menu.storage.liftContainer': '顶升式载具储位',
-  'menu.storage.group': '储位分组',
-  'menu.storage.delivery': '投递口',
+  'menu.storage.customType': '储位类型',
+  'menu.storage.management': '储位列表',
 
   // 车辆
   'menu.agv': '车辆',
@@ -71,11 +67,13 @@ export default {
   'menu.taskRouteBind': '任务路线绑定',
   'menu.trigger': '触发器',
   'menu.limitEqualizer': '限流均衡器',
-  'menu.customOrderPool': '自定义订单池',
+  'menu.customOrderPool': '自定义排程池',
+  'menu.standardOrderPool': '标准排程池',
   'menu.taskDependency': '任务依赖',
+  'menu.taskManagement': '任务查询',
 
   // 无人搬运
-  'menu.carryTaskPool': '订单池',
+  'menu.carryTaskPool': '任务排程池',
   'menu.carryTaskManagement': '任务查询',
 
   // 场景
@@ -87,7 +85,7 @@ export default {
 
   // 料箱存取 && 潜伏货架存取
   'menu.task': '任务',
-  'menu.task.toteTaskPool': '料箱池订单',
+  'menu.task.toteTaskPool': '料箱任务排程池',
   'menu.task.waitingQueue': '等待队列',
   'menu.task.executingQueue': '执行队列',
   'menu.task.taskManagement': '任务查询',

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, message, Button, Select, Input } from 'antd';
+import { Button, Col, Form, Input, message, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { isStrictNull, getFormLayout, formatMessage } from '@/utils/util';
+import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -37,9 +37,9 @@ const LocationTracking = (props) => {
               <Form.Item name={'trackingCar'} initialValue={trackingCar} noStyle>
                 <Select size="small" optionLabelProp="value">
                   {allAGVs?.map((record) => (
-                    <Select.Option value={record.agvId} key={record.agvId}>
+                    <Select.Option value={record.vehicleId} key={record.vehicleId}>
                       <Row>
-                        <Col span={12}>{record.agvId}</Col>
+                        <Col span={12}>{record.vehicleId}</Col>
                         <Col span={12} style={{ textAlign: 'end' }}>
                           <FormattedMessage id={Dictionary('agvStatus', record?.agvWorkStatusDTO?.agvStatus)} />
                         </Col>

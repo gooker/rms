@@ -27,7 +27,7 @@ const ProgramingDnd = (props) => {
 
   function generateDndData() {
     return value.map((item) => {
-      const { actionType, ...rest } = item;
+      const { actionType, operateType, ...rest } = item;
       const [p1, p2] = actionType;
       const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
       return {

@@ -1,7 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-const { Coordinator, SSO } = NameSpace;
+const { Platform, SSO } = NameSpace;
 
 //获取当前登陆对象
 export async function getCurrentUser() {
@@ -241,7 +241,7 @@ export async function queryUserByToken() {
  * @return boolean
  */
 export async function getCertificateStatus() {
-  return request(`/${Coordinator}/certificate/getCertificateStatus`, {
+  return request(`/${Platform}/certificate/getCertificateStatus`, {
     method: 'GET',
     attachSection: false,
   });
@@ -249,7 +249,7 @@ export async function getCertificateStatus() {
 
 // 获取授权码
 export async function getApplyToken() {
-  return request(`/${Coordinator}/certificate/getApplyToken`, {
+  return request(`/${Platform}/certificate/getApplyToken`, {
     method: 'GET',
     attachSection: false,
   });
@@ -257,7 +257,7 @@ export async function getApplyToken() {
 
 // 上传证书
 export async function uploadCertification(param) {
-  return request(`/${Coordinator}/certificate/active`, {
+  return request(`/${Platform}/certificate/active`, {
     method: 'POST',
     body: param,
     attachSection: false,
@@ -266,7 +266,7 @@ export async function uploadCertification(param) {
 
 // 获取授权状态
 export async function getAuthorityInfo() {
-  return request(`/${Coordinator}/certificate/getSystemInfo`, {
+  return request(`/${Platform}/certificate/getSystemInfo`, {
     method: 'GET',
     attachSection: false,
   });

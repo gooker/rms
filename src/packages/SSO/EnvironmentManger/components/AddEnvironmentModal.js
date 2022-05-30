@@ -1,52 +1,27 @@
-import React, { Component } from 'react';
-import { MinusCircleOutlined } from '@ant-design/icons';
-import { Form, Input, Radio, Button, Col, Row, AutoComplete } from 'antd';
+import React, { PureComponent } from 'react';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { AutoComplete, Button, Col, Form, Input, Radio, Row } from 'antd';
 import { formatMessage, getFormLayout, isStrictNull, validateUrl } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { ConfigurableNameSpace } from '@/config/config';
-import { PlusOutlined } from '@ant-design/icons';
+import { NameSpace } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
+const ApiNameSpace = [NameSpace.Platform, NameSpace.SSO, NameSpace.WS];
 
-class AddEnvironmentModal extends Component {
-  formRef = React.createRef();
-
-  state = {
-    updateInfos: [],
-    apiNameSpace: ConfigurableNameSpace,
-  };
-
+class AddEnvironmentModal extends PureComponent {
   componentDidMount() {
-    const { updateRow } = this.props;
-    const { setFieldsValue } = this.formRef.current;
-    if (isStrictNull(updateRow)) {
-      setFieldsValue({ flag: '1' });
-    } else {
+    const { formRef, updateRow } = this.props;
+    const { setFieldsValue } = formRef.current;
+    if (updateRow) {
       setFieldsValue({
-        envName: updateRow[0].envName,
-        flag: updateRow[0].flag,
-        additionalInfos: updateRow[0].additionalInfos,
+        envName: updateRow.envName,
+        flag: updateRow.flag,
+        additionalInfos: updateRow.additionalInfos,
       });
-      this.setState({ updateInfos: updateRow[0].additionalInfos });
+    } else {
+      setFieldsValue({ flag: '0' });
     }
   }
-
-  // handleSearch = (value) => {
-  //   const { apiNameSpace } = this.state;
-  //   if (!isStrictNull(value) && !apiNameSpace.includes(value)) {
-  //     this.setState({ apiNameSpace: [...apiNameSpace, value] });
-  //   }
-  // };
-
-  submit = () => {
-    const { validateFields } = this.formRef.current;
-    const { onSubmit } = this.props;
-    validateFields()
-      .then((allValues) => {
-        onSubmit(allValues);
-      })
-      .catch(() => {});
-  };
 
   urlValidator(_, value) {
     if (!isStrictNull(value) && validateUrl(value)) {
@@ -56,119 +31,95 @@ class AddEnvironmentModal extends Component {
   }
 
   render() {
-    const { updateRow } = this.props;
-    const { apiNameSpace } = this.state;
+    const { formRef } = this.props;
     return (
       <div>
-        <Form ref={this.formRef} {...formItemLayout}>
+        <Form ref={formRef} {...formItemLayout}>
           <Form.Item
-            label={<FormattedMessage id="environmentManager.envName" />}
-            name="envName"
+            label={<FormattedMessage id='environmentManager.envName' />}
+            name='envName'
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            label={<FormattedMessage id="environmentManager.isDefault" />}
-            name="flag"
+            label={<FormattedMessage id='environmentManager.isDefault' />}
+            name='flag'
             rules={[{ required: true }]}
           >
             <Radio.Group>
-              <Radio value="0">
-                <FormattedMessage id="app.common.false" />
+              <Radio value='0'>
+                <FormattedMessage id='app.common.false' />
               </Radio>
-              <Radio value="1">
-                <FormattedMessage id="app.common.true" />
+              <Radio value='1'>
+                <FormattedMessage id='app.common.true' />
               </Radio>
             </Radio.Group>
           </Form.Item>
-          <Form.List
-            name={'additionalInfos'}
-            initialValue={updateRow ? updateRow[0].additionalInfos : [{ key: null, value: null }]}
-          >
-            {(fields, { add, remove }, { errors }) => (
-              <>
-                {fields.map((field, index) => (
-                  <Form.Item
-                    {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                    label={index === 0 ? <FormattedMessage id="environmentManager.apis" /> : ''}
-                    required={true}
-                    key={field.key}
-                  >
-                    <Row gutter={10}>
-                      <Col span={10}>
-                        <Form.Item
-                          noStyle
-                          {...field}
-                          name={[field.name, 'key']}
-                          label={formatMessage({ id: 'app.configInfo.header.moduleName' })}
-                          rules={[{ required: true }]}
-                        >
-                          <AutoComplete
-                            style={{ width: 200 }}
-                            // onSearch={this.handleSearch}
-                            placeholder={formatMessage({
-                              id: 'environmentManager.module.required',
-                            })}
-                          >
-                            {apiNameSpace.map((item) => (
-                              <AutoComplete.Option key={item} value={item}>
-                                {item}
-                              </AutoComplete.Option>
-                            ))}
-                          </AutoComplete>
 
-                        </Form.Item>
-                      </Col>
-                      <Col span={10}>
-                        <Form.Item
-                          noStyle
-                          {...field}
-                          name={[field.name, 'value']}
-                          label={formatMessage({ id: 'app.configInfo.header.moduleURL' })}
-                          rules={[{ required: true }, { validator: this.urlValidator }]}
-                        >
-                          <Input
-                            placeholder={formatMessage({
-                              id: 'environmentManager.url.required',
-                            })}
-                          />
-                        </Form.Item>
-                      </Col>
-                      <Col span={4} style={{ textAlign: 'center' }}>
-                        {fields.length > 1 ? (
-                          <MinusCircleOutlined
-                            onClick={() => remove(field.name)}
-                            style={{ fontSize: 16 }}
-                          />
-                        ) : null}
-                      </Col>
-                    </Row>
+          <Form.Item required label={formatMessage({ id: 'environmentManager.apis' })}>
+            <Form.List name={'additionalInfos'}>
+              {(fields, { add, remove }, { errors }) => (
+                <>
+                  {fields.map((field, index) => (
+                    <Form.Item required key={field.key}>
+                      <Row gutter={10}>
+                        <Col>
+                          <Form.Item
+                            noStyle
+                            {...field}
+                            name={[field.name, 'key']}
+                            label={formatMessage({ id: 'app.configInfo.header.moduleName' })}
+                            rules={[{ required: true }]}
+                          >
+                            <AutoComplete
+                              style={{ width: 200 }}
+                              placeholder={formatMessage({
+                                id: 'environmentManager.module.required',
+                              })}
+                            >
+                              {ApiNameSpace.map((item) => (
+                                <AutoComplete.Option key={item} value={item}>
+                                  {item}
+                                </AutoComplete.Option>
+                              ))}
+                            </AutoComplete>
+                          </Form.Item>
+                        </Col>
+                        <Col>
+                          <Form.Item
+                            noStyle
+                            {...field}
+                            name={[field.name, 'value']}
+                            label={formatMessage({ id: 'app.configInfo.header.moduleURL' })}
+                            rules={[{ required: true }, { validator: this.urlValidator }]}
+                          >
+                            <Input
+                              placeholder={formatMessage({
+                                id: 'environmentManager.url.required',
+                              })}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col style={{ textAlign: 'center' }}>
+                          {fields.length > 1 ? (
+                            <Button onClick={() => remove(field.name)} icon={<MinusOutlined />} />
+                          ) : null}
+                        </Col>
+                      </Row>
+                    </Form.Item>
+                  ))}
+                  <Form.Item>
+                    <Button type='dashed' onClick={() => add()} style={{ width: '60%' }}>
+                      <PlusOutlined />
+                    </Button>
+                    <Form.ErrorList errors={errors} />
                   </Form.Item>
-                ))}
-                <Form.Item {...formItemLayoutNoLabel}>
-                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
-                    <PlusOutlined />
-                  </Button>
-                  <Form.ErrorList errors={errors} />
-                </Form.Item>
-              </>
-            )}
-          </Form.List>
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
         </Form>
-        <div
-          style={{
-            marginTop: 20,
-            textAlign: 'center',
-            background: 'transparent',
-            borderTop: '1px solid #e8e8e8',
-            paddingTop: '20px',
-          }}
-        >
-          <Button onClick={this.submit} type="primary">
-            <FormattedMessage id="app.button.submit" />
-          </Button>
-        </div>
       </div>
     );
   }

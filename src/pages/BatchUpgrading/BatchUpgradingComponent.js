@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Modal } from 'antd';
-import { RedoOutlined, HistoryOutlined, UploadOutlined, DownloadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, HistoryOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchAgvFileStatusList,
-  fetchUpdateFileTask,
   fetchMaintain,
+  fetchUpdateFileTask,
   fetchUpgradeFirmwareFile,
   upgradeAGV,
 } from '@/services/api';
 import TableWithPages from '@/components/TableWithPages';
 import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';
-import { formatMessage, dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import commonStyles from '@/common.module.less';
@@ -61,7 +61,7 @@ class BatchUpgradingComponent extends Component {
       onOk: async () => {
         const resetRes = await fetchMaintain(agvType, {
           sectionId,
-          agvId: selectedRow[0].robotId,
+          vehicleId: selectedRow[0].vehicleId,
           disabled: !selectedRow[0].disabled,
         });
         if (!dealResponse(resetRes)) {
@@ -77,7 +77,7 @@ class BatchUpgradingComponent extends Component {
     const { agvType } = this.props;
     const submitRes = await fetchUpgradeFirmwareFile(agvType, {
       ...value,
-      robotId: selectedRow[0].robotId,
+      vehicleId: selectedRow[0].vehicleId,
       sectionId,
     });
     if (!dealResponse(submitRes)) {
@@ -89,7 +89,7 @@ class BatchUpgradingComponent extends Component {
   upgradeAgv = async () => {
     const { selectedRow, sectionId } = this.state;
     const { agvType } = this.props;
-    const upgradeRes = await upgradeAGV(agvType, { sectionId, robotId: selectedRow[0].robotId });
+    const upgradeRes = await upgradeAGV(agvType, { sectionId, vehicleId: selectedRow[0].vehicleId });
     if (!dealResponse(upgradeRes)) {
       this.getData();
     }
@@ -113,7 +113,7 @@ class BatchUpgradingComponent extends Component {
     RmsConfirm({
       content: (
         <div>
-          {formatMessage({ id: 'app.agv.id' })}:{record.robotId}
+          {formatMessage({ id: 'app.agv.id' })}:{record.vehicleId}
         </div>
       ),
       onOk: async () => {

@@ -1,14 +1,7 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
-import { Button, Col, Dropdown, Form, Menu, Row, Select } from 'antd';
-import {
-  DisconnectOutlined,
-  DownOutlined,
-  GroupOutlined,
-  RedoOutlined,
-  ScanOutlined,
-  ToTopOutlined,
-} from '@ant-design/icons';
+import { Button, Col, Form, Row, Select } from 'antd';
+import { DisconnectOutlined, GroupOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { logOutRobot } from '@/services/resourceManageAPI';
 import Dictionary from '@/utils/Dictionary';
@@ -24,9 +17,9 @@ const AgvListTools = (props) => {
   const unregisterRobots = allRobots.filter((item) => !item.register);
 
   function renderAgvIdFilter() {
-    return registerRobots.map(({ agvId, agvType, id }) => (
+    return registerRobots.map(({ vehicleId, agvType, id }) => (
       <Select.Option key={id} value={id}>
-        {`${agvId}-${agvType}`}
+        {`${vehicleId}-${agvType}`}
       </Select.Option>
     ));
   }
@@ -41,7 +34,7 @@ const AgvListTools = (props) => {
   }
 
   function moveOutAgv() {
-    const agvIds = selectedRows.map(({ robotId }) => robotId);
+    const agvIds = selectedRows.map(({ vehicleId }) => vehicleId);
     RmsConfirm({
       content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
       onOk: async () => {
@@ -55,7 +48,7 @@ const AgvListTools = (props) => {
   }
 
   function cancelRegister() {
-    const agvIds = selectedRows.map(({ robotId }) => robotId);
+    const agvIds = selectedRows.map(({ vehicleId }) => vehicleId);
     RmsConfirm({
       content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
       onOk: async () => {
@@ -113,33 +106,33 @@ const AgvListTools = (props) => {
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 注销
           </Button>
-          <Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>
-            <ToTopOutlined /> <FormattedMessage id="app.agv.moveout" />
-          </Button>
-          <Dropdown
-            overlay={
-              <Menu
-                onClick={({ key }) => {
-                  if (key === 'hardware') {
-                    exportAgvHardwareInfo();
-                  } else {
-                    exportAgvInfo();
-                  }
-                }}
-              >
-                <Menu.Item key="hardware">
-                  <FormattedMessage id={'app.agv.exportHardwareInfo'} />
-                </Menu.Item>
-                <Menu.Item key="carInfo">
-                  <FormattedMessage id={'app.agv.exportAgvInfo'} />
-                </Menu.Item>
-              </Menu>
-            }
-          >
-            <Button>
-              <FormattedMessage id={'app.agv.infoExport'} /> <DownOutlined />
-            </Button>
-          </Dropdown>
+          {/*<Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>*/}
+          {/*  <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />*/}
+          {/*</Button>*/}
+          {/*<Dropdown*/}
+          {/*  overlay={*/}
+          {/*    <Menu*/}
+          {/*      onClick={({ key }) => {*/}
+          {/*        if (key === 'hardware') {*/}
+          {/*          exportAgvHardwareInfo();*/}
+          {/*        } else {*/}
+          {/*          exportAgvInfo();*/}
+          {/*        }*/}
+          {/*      }}*/}
+          {/*    >*/}
+          {/*      <Menu.Item key="hardware">*/}
+          {/*        <FormattedMessage id={'app.agv.exportHardwareInfo'} />*/}
+          {/*      </Menu.Item>*/}
+          {/*      <Menu.Item key="carInfo">*/}
+          {/*        <FormattedMessage id={'app.agv.exportAgvInfo'} />*/}
+          {/*      </Menu.Item>*/}
+          {/*    </Menu>*/}
+          {/*  }*/}
+          {/*>*/}
+          {/*  <Button>*/}
+          {/*    <FormattedMessage id={'app.agv.infoExport'} /> <DownOutlined />*/}
+          {/*  </Button>*/}
+          {/*</Dropdown>*/}
           <Button
             onClick={() => {
               dispatch({ type: 'agvList/fetchInitialData' });

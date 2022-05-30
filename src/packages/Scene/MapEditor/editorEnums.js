@@ -1,13 +1,6 @@
 import React from 'react';
 import { IconFont } from '@/components/IconFont';
-import {
-  SettingOutlined,
-  BankOutlined,
-  StopOutlined,
-  NodeExpandOutlined,
-  EyeOutlined,
-  DropboxOutlined,
-} from '@ant-design/icons';
+import { BankOutlined, DropboxOutlined, EyeOutlined, SettingOutlined, StopOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
@@ -109,21 +102,21 @@ export const EditorRightTools = [
     value: RightCategory.CellType,
     icon: <IconFont type={'icon-feature'} />,
   },
-  {
-    label: <FormattedMessage id={'app.map.workStation'} />,
-    value: RightCategory.WorkStation,
-    icon: <IconFont type={'icon-station'} />,
-  },
+  // {
+  //   label: <FormattedMessage id={'app.map.workStation'} />,
+  //   value: RightCategory.WorkStation,
+  //   icon: <IconFont type={'icon-station'} />,
+  // },
   {
     label: <FormattedMessage id={'app.map.station'} />,
     value: RightCategory.Station,
     icon: <BankOutlined />,
   },
-  {
-    label: <FormattedMessage id={'app.map.elevator'} />,
-    value: RightCategory.Elevator,
-    icon: <IconFont type={'icon-elevator'} />,
-  },
+  // {
+  //   label: <FormattedMessage id={'app.map.elevator'} />,
+  //   value: RightCategory.Elevator,
+  //   icon: <IconFont type={'icon-elevator'} />,
+  // },
   {
     label: <FormattedMessage id={'app.map.charger'} />,
     value: RightCategory.Charger,
@@ -139,11 +132,11 @@ export const EditorRightTools = [
     value: RightCategory.Rest,
     icon: <IconFont type={'icon-rest2'} />,
   },
-  {
-    label: <FormattedMessage id={'app.map.aisle'} />,
-    value: RightCategory.Aisle,
-    icon: <NodeExpandOutlined />,
-  },
+  // {
+  //   label: <FormattedMessage id={'app.map.aisle'} />,
+  //   value: RightCategory.Aisle,
+  //   icon: <NodeExpandOutlined />,
+  // },
   {
     label: <FormattedMessage id={'app.map.delivery'} />,
     value: RightCategory.Delivery,

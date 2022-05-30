@@ -27,7 +27,7 @@ export const filterDataByParam = (loadOriginData, searchValues, param) => {
  * 时间: 按时 日 月
  * @param {*} allData 数据
  * @param {*} translate 报表所有的key和对应的翻译 {key:value}
- * @param {*} idName 根据id求合 可以是cellId/agvId
+ * @param {*} idName 根据id求合 可以是cellId/vehicleId
  * @param {*} timeType  时间: 按时 日 月
  *
  */

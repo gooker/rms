@@ -1,6 +1,6 @@
 import React from 'react';
-import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 
@@ -30,11 +30,11 @@ const TaskSearch = (props) => {
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={6}>
           {/* 小车id */}
-          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
             <Select allowClear showSearch>
-              {agvList.map((agvId) => (
-                <Option key={agvId} value={agvId}>
-                  {agvId}
+              {agvList.map((vehicleId) => (
+                <Option key={vehicleId} value={vehicleId}>
+                  {vehicleId}
                 </Option>
               ))}
             </Select>

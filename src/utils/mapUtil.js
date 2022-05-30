@@ -4,14 +4,7 @@ import * as XLSX from 'xlsx';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import {
-  AGVState,
-  CellSize,
-  MapSelectableSpriteType,
-  SorterAGVSize,
-  TaskPathColor,
-  ToteAGVSize,
-} from '@/config/consts';
+import { AGVState, CellSize, MapSelectableSpriteType, TaskPathColor } from '@/config/consts';
 import {
   getAgvSelectBorderTexture,
   getCellHeatTexture,
@@ -1331,7 +1324,7 @@ export function unifyAgvState(agv) {
     navigationType: agv.bd ?? agv.navigationType,
     uniqueId: agv.rId,
     battery: agv.b ?? agv.battery,
-    robotId: agv.r ?? agv.robotId,
+    vehicleId: agv.r ?? agv.vehicleId,
     mainTain: agv.m ?? agv.maintain,
     manualMode: agv.mly ?? agv.manualMode,
     agvStatus: explainAgvStatus(agv.s) ?? agv.agvStatus,

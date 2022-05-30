@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { DisconnectOutlined, ExportOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { unRegisterDevice } from '@/services/resourceManageAPI';
 import { dealResponse } from '@/utils/util';
@@ -89,22 +89,22 @@ const EquipmentListTools = (props) => {
           <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 注销
           </Button>
-
-          <Button>
-            <ExportOutlined /> <FormattedMessage id={'app.agv.infoExport'} />
-          </Button>
+          {/*<Button>*/}
+          {/*  <ExportOutlined /> <FormattedMessage id={'app.agv.infoExport'} />*/}
+          {/*</Button>*/}
           <Button
             onClick={() => {
               dispatch({ type: 'equipList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>
           <Button
             type="dashed"
             onClick={() => {
+              dispatch({ type: 'equipList/fetchInitialData' });
               dispatch({ type: 'equipList/updateShowRegisterPanel', payload: true });
             }}
           >

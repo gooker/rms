@@ -27,15 +27,13 @@ export const AGVType = {
   LatentTote: 'LatentTote',
 };
 
-// 各类车型的API namespace
+// namespace
 export const NameSpace = {
   Platform: 'platform',
   SSO: 'sso',
   I18N: 'translation',
+  WS: 'ws',
 };
-
-// 后端接口的 Server 的集合
-export const ConfigurableNameSpace = [NameSpace.Platform, 'ws'];
 
 // 线条类型
 export const LineType = {

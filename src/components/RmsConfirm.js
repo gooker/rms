@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { isNull, formatMessage } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 
 const { confirm } = Modal;
 
@@ -10,6 +10,7 @@ const { confirm } = Modal;
  * @param {*} content 提示内容
  * @param {*} okType 确定按钮类型(无 或者 'danger')
  * @param {*} okText 确认按钮文字
+ * @param {*} okButtonProps 确认按钮属性
  * @param {*} cancelText 取消按钮文字
  * @param {*} onOk 确认回调
  * @param {*} onCancel 取消回调

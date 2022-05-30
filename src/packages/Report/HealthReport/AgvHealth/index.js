@@ -1,28 +1,21 @@
-import React, { useState, memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Spin, Tabs } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
 import { fetchAGVHealth } from '@/services/api';
-import {
-  isStrictNull,
-  convertToUserTimezone,
-  dealResponse,
-  formatMessage,
-  isNull,
-} from '@/utils/util';
-import { getDatBysortTime, getAllCellId } from '@/packages/Report/components/GroundQrcodeEcharts';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { getAllCellId, getDatBysortTime } from '@/packages/Report/components/GroundQrcodeEcharts';
 import HealthCarSearchForm from '../../components/HealthCarSearchForm';
 import ScanCodeComponent from './RobotScanCodeTab';
 import AgvOfflineComponent from './RobotOfflineTab';
 import RobotFaultComponent from './RobotFaultTab';
 import AgvErrorComponent from './RobotStatusErrorTab';
 import commonStyles from '@/common.module.less';
-import style from '../../report.module.less';
 
 const { TabPane } = Tabs;
 const colums = {
-  agvId: formatMessage({ id: 'app.agv' }),
+  vehicleId: formatMessage({ id: 'app.agv' }),
   time: formatMessage({ id: 'app.time' }),
 };
 
@@ -126,11 +119,11 @@ const HealthCar = (props) => {
     const typeResult = [];
     Object.entries(data).forEach(([key, typeData]) => {
       if (!isStrictNull(typeData)) {
-        const currentTypeData = sortBy(typeData, 'agvId');
+        const currentTypeData = sortBy(typeData, 'vehicleId');
         currentTypeData.forEach((record) => {
           let currentTime = {};
           let _record = { ...record };
-          currentTime.agvId = record.agvId;
+          currentTime.vehicleId = record.vehicleId;
           currentTime[colums.time] = key;
           if (record?.robotType) {
             currentTime.robotType = formatMessage({ id: `app.agvType.${record.robotType}` });
@@ -173,7 +166,7 @@ const HealthCar = (props) => {
           <TabPane key={'scan'} tab={formatMessage({ id: 'reportCenter.agv.scancode' })}>
             <ScanCodeComponent
               originData={scanOriginData}
-              originIds={getAllCellId(scanOriginData, 'agvId')}
+              originIds={getAllCellId(scanOriginData, 'vehicleId')}
               keyDataMap={keyCodeData}
               activeTab={activeTab}
             />
@@ -181,7 +174,7 @@ const HealthCar = (props) => {
           <TabPane key={'offline'} tab={formatMessage({ id: 'reportCenter.agv.offline' })}>
             <AgvOfflineComponent
               originData={offlineOriginData}
-              originIds={getAllCellId(offlineOriginData, 'agvId')}
+              originIds={getAllCellId(offlineOriginData, 'vehicleId')}
               keyDataMap={keyOfflineData}
               activeTab={activeTab}
             />
@@ -189,7 +182,7 @@ const HealthCar = (props) => {
           <TabPane key={'statuserror'} tab={formatMessage({ id: 'reportCenter.agv.error' })}>
             <AgvErrorComponent
               originData={statuserrorOriginData}
-              originIds={getAllCellId(statuserrorOriginData, 'agvId')}
+              originIds={getAllCellId(statuserrorOriginData, 'vehicleId')}
               keyDataMap={keyErrorData}
               activeTab={activeTab}
             />
@@ -197,7 +190,7 @@ const HealthCar = (props) => {
           <TabPane key={'fault'} tab={formatMessage({ id: 'reportCenter.agv.fault' })}>
             <RobotFaultComponent
               originData={faultOriginData}
-              originIds={getAllCellId(faultOriginData, 'agvId')}
+              originIds={getAllCellId(faultOriginData, 'vehicleId')}
               keyDataMap={keyFaultData}
               activeTab={activeTab}
             />

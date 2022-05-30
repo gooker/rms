@@ -1,20 +1,20 @@
 import React, { memo, useEffect, useState } from 'react';
-import { message, Popconfirm, Select, Button, Col, Row } from 'antd';
+import { Button, Col, message, Popconfirm, Row, Select } from 'antd';
 import { ClearOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';
 import {
-  fetchPhysicChargers,
-  fetchChargerState,
-  fetchBindPhysicCharger,
-  fetchBatchUnbindHardware,
-  fetchUpdateCharger,
   clearChargerFault,
+  fetchBatchUnbindHardware,
+  fetchBindPhysicCharger,
+  fetchChargerState,
+  fetchPhysicChargers,
+  fetchUpdateCharger,
   resetCharger,
 } from '@/services/XIHE';
-import { isStrictNull, getSuffix, dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, getSuffix, isStrictNull } from '@/utils/util';
 import LabelColComponent from '@/components/LabelColComponent';
 import Dictionary from '@/utils/Dictionary';
 import styles from '../../monitorLayout.module.less';
@@ -140,9 +140,9 @@ const ChargeProperty = (props) => {
               : '-'}
           </LabelColComponent>
 
-          {!isStrictNull(chargerInfo?.robotId) && (
+          {!isStrictNull(chargerInfo?.vehicleId) && (
             <LabelColComponent label={<FormattedMessage id={'monitor.charge.assignedAMR'} />}>
-              {chargerInfo.robotId}
+              {chargerInfo.vehicleId}
             </LabelColComponent>
           )}
           <LabelColComponent label={<FormattedMessage id={'app.activity.batteryTemperature'} />}>

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { message, Modal } from 'antd';
+import { message, Modal, Result } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { getAuthorityInfo } from '@/services/SSO';
 import AuthorityPanel from './AuthorityPanel';
@@ -26,8 +26,6 @@ const AuthorizationCenter = () => {
     const response = await getAuthorityInfo();
     if (!dealResponse(response)) {
       setAuthorityInfo(response);
-    } else {
-      message.error(formatMessage({ id: 'app.authCenter.fetchInfo.failed' }));
     }
   }
 
@@ -54,13 +52,16 @@ const AuthorizationCenter = () => {
   }
 
   function renderContent() {
-    if (authorityInfo === 'NULL') return null;
-
-    // 没有授权证书
-    if (isNull(authorityInfo)) {
+    // 未获取到授权信息
+    if (authorityInfo === 'NULL') {
+      return (
+        <Result status='warning' title={formatMessage({ id: 'app.authCenter.fetchInfo.failed' })} />
+      );
+    } else if (isNull(authorityInfo)) {
+      // 没有授权
       return <AuthorityPanel autoDownload={autoDownloadToken} />;
     } else {
-      // 有授权证书
+      // 有授权
       return (
         <AuthorityInformation data={authorityInfo} reAuth={reAuthority} updateAuth={updateAuth} />
       );

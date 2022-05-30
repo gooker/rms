@@ -1,19 +1,18 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Progress, Form, Button, Select, Divider, Table, message } from 'antd';
+import { Button, Col, Divider, Form, message, Progress, Row, Select, Table } from 'antd';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import { AGVState, Colors, LogFileTypes } from '@/config/consts';
 import {
+  downloadLogFromSFTP,
   fetchAgvLog,
   fetchAllAgvList,
-  startCreatingLog,
   forceResetLogGeneration,
-  downloadLogFromSFTP,
+  startCreatingLog,
 } from '@/services/api';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import commonStyles from '@/common.module.less';
 
 const StatusLabelStyle = { marginLeft: 15, fontSize: 15, fontWeight: 600 };
 
@@ -46,7 +45,7 @@ const LogDownLoadComponent = (props) => {
     },
     {
       title: formatMessage({ id: 'app.agv.id' }),
-      dataIndex: 'robotId',
+      dataIndex: 'vehicleId',
       align: 'center',
       width: 150,
     },
@@ -211,11 +210,11 @@ const LogDownLoadComponent = (props) => {
   function renderAgvOptions() {
     return agvList.map((agv) => (
       <Select.Option
-        key={agv.robotId}
-        value={agv.robotId}
+        key={agv.vehicleId}
+        value={agv.vehicleId}
         disabled={agv.agvStatus === AGVState.offline}
       >
-        {agv.robotId}
+        {agv.vehicleId}
       </Select.Option>
     ));
   }
@@ -239,7 +238,7 @@ const LogDownLoadComponent = (props) => {
           <Row gutter={15}>
             <Col style={{ width: '200px' }}>
               <Form.Item
-                name={'robotId'}
+                name={'vehicleId'}
                 label={formatMessage({ id: 'app.agv.id' })}
                 rules={[{ required: true }]}
               >

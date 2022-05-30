@@ -1,9 +1,9 @@
 import React, { memo, useState } from 'react';
-import { Form, Row, Col, Switch, Button, Select } from 'antd';
+import { Button, Col, Form, Row, Select, Switch } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { getToteTaskRealtimePath, getToteTaskRealtimeState } from '@/services/XIHE';
-import { isStrictNull, getFormLayout, dealResponse, isNull } from '@/utils/util';
+import { dealResponse, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
@@ -104,8 +104,8 @@ const ToteViewControlComponent = (props) => {
                 <Form.Item noStyle name={'toteTaskRealtimePath'}>
                   <Select size="small" style={{ width: 150 }}>
                     {allAGVs.map((element) => (
-                      <Select.Option key={element.agvId} value={element.agvId}>
-                        {element.agvId}
+                      <Select.Option key={element.vehicleId} value={element.vehicleId}>
+                        {element.vehicleId}
                       </Select.Option>
                     ))}
                   </Select>

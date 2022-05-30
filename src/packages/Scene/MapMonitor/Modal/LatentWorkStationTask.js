@@ -1,15 +1,9 @@
 import React, { memo, useState } from 'react';
-import { Form, Button, Select, InputNumber, Radio } from 'antd';
+import { Button, Form, InputNumber, Radio, Select } from 'antd';
 import { CloseOutlined, SendOutlined, SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { latentPodToWorkStation } from '@/services/monitor';
-import {
-  dealResponse,
-  formatMessage,
-  getDirByAngle,
-  getFormLayout,
-  getMapModalPosition,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getDirByAngle, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { MonitorSelectableSpriteType } from '@/config/consts';
 import styles from '../monitorLayout.module.less';
@@ -80,7 +74,7 @@ const LatentWorkStationTask = (props) => {
 
     formRef.resetFields();
     formRef.setFieldsValue({
-      robotId: agv.id,
+      vehicleId: agv.vehicleId,
       podId: pod.id,
       workstation: station.code,
     });
@@ -94,7 +88,7 @@ const LatentWorkStationTask = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
             <InputNumber />
           </Form.Item>
 

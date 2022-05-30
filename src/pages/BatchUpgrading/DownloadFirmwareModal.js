@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Col, Select, Input, Button } from 'antd';
+import { Button, Col, Form, Input, Select } from 'antd';
 import { fetchFirmWarList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage } from '@/utils/util';
@@ -58,8 +58,8 @@ export default class DownloadFirmwareModal extends Component {
           <Form.Item label={<FormattedMessage id="app.activity.selectedAGV" />}>
             {selectedRow.map((record) => {
               return (
-                <Col span={3} key={record.robotId}>
-                  {record.robotId}
+                <Col span={3} key={record.vehicleId}>
+                  {record.vehicleId}
                 </Col>
               );
             })}

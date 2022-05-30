@@ -13,6 +13,7 @@ import {
   saveEmergencyStop,
 } from '@/services/XIHE';
 import {
+  addTemporaryBlockCell,
   autoCallLatentPodToWorkstation,
   batchUpdateLatentPod,
   deleteTemporaryBlockCell,
@@ -22,7 +23,6 @@ import {
   fetchSetPod,
   fetchTemporaryBlockCells,
   saveLatentAutomaticTaskConfig,
-  addTemporaryBlockCell,
 } from '@/services/monitor';
 import { fetchActiveMap, fetchAllAgvList, fetchToteRackLayout } from '@/services/api';
 import { MonitorSelectableSpriteType } from '@/config/consts';
@@ -389,7 +389,7 @@ export default {
             ...item,
             agvType: item?.agvType || item?.agv?.agvType,
             uniqueId: item?.agv?.id,
-            vehicleId: item.agvId,
+            vehicleId: item.vehicleId,
           });
         });
         yield put({ type: 'saveAllAGVs', payload: allAGVs });

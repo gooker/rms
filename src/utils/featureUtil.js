@@ -28,7 +28,7 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
     const AgvInfos = [];
     const fields = [];
     fields.push({
-      value: 'agvId',
+      value: 'vehicleId',
       label: formatMessage({ id: 'app.chargeManger.AgvId' }),
     });
     nameArray.forEach((record) => {
@@ -51,13 +51,13 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
     });
     for (let index = 0; index < agvList.length; index++) {
       const element = agvList[index];
-      const { robotId, sectionId } = element;
-      const response = await fetchAgvHardwareInfo(nameSpace, { agvId: robotId, sectionId });
+      const { vehicleId, sectionId } = element;
+      const response = await fetchAgvHardwareInfo(nameSpace, { vehicleId, sectionId });
       if (dealResponse(response)) {
         continue;
       }
       const { moduleInfoList } = response;
-      const info = { agvId: robotId };
+      const info = { vehicleId };
       if (moduleInfoList) {
         moduleInfoList.forEach((record) => {
           const { id, type, softVersion, hardwareVersion } = record;
@@ -69,7 +69,7 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
         });
         AgvInfos.push(info);
       } else {
-        message.warning(formatMessage({ id: 'app.agv.hardwareError' }, { robotId }));
+        message.warning(formatMessage({ id: 'app.agv.hardwareError' }, { vehicleId }));
       }
     }
     const opts = { fields };

@@ -1,29 +1,19 @@
-import React, { useState, memo, useEffect } from 'react';
-import { Row, Col, Divider, Spin } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Col, Divider, Row, Spin } from 'antd';
 import echarts from 'echarts';
 import XLSX from 'xlsx';
 import moment from 'moment';
-import {
-  isStrictNull,
-  convertToUserTimezone,
-  dealResponse,
-  formatMessage,
-  isNull,
-} from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { fetchTaskLoad } from '@/services/api';
-import { sortBy, forIn } from 'lodash';
+import { forIn, sortBy } from 'lodash';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
+import { getAllCellId, getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
 import {
-  getDatBysortTime,
-  noDataGragraphic,
-  getAllCellId,
-} from '../components/GroundQrcodeEcharts';
-import {
-  actionPieOption,
-  generateActionPieData,
   actionBarOption,
+  actionPieOption,
   generateActionBarData,
+  generateActionPieData,
 } from './components/loadRobotEcharts';
 import HealthCarSearchForm from '../components/HealthCarSearchForm';
 import commonStyles from '@/common.module.less';
@@ -137,7 +127,7 @@ const TaskLoadComponent = (props) => {
       return;
 
     let sourceData = { ...loadOriginData };
-    sourceData = filterDataByParam(sourceData, selectedIds, 'agvId');
+    sourceData = filterDataByParam(sourceData, selectedIds, 'vehicleId');
     sourceData = filterDataByParam(sourceData, selectedTaskIds, 'agvTaskType');
 
     const actionPieData = generateActionPieData(sourceData, 'actionLoad', keyAction); //动作负载-pie
@@ -246,7 +236,7 @@ const TaskLoadComponent = (props) => {
         let taskLoad = response?.taskLoadData || {};
         const newTaskLoad = getDatBysortTime(taskLoad);
 
-        setSelectedIds(getAllCellId(newTaskLoad, 'agvId'));
+        setSelectedIds(getAllCellId(newTaskLoad, 'vehicleId'));
         setSelectedTaskIds(getAllCellId(newTaskLoad, 'agvTaskType'));
         setKeyAction(response?.actionTranslate || {});
         setKeyStation(response?.stationTranslate || {});
@@ -270,12 +260,12 @@ const TaskLoadComponent = (props) => {
     const typeResult = [];
     Object.entries(allData).forEach(([key, typeData]) => {
       if (!isStrictNull(typeData)) {
-        const currentTypeData = sortBy(typeData, 'agvId');
+        const currentTypeData = sortBy(typeData, 'vehicleId');
         currentTypeData.forEach((record) => {
           let currentTime = {};
           let _record = {};
           currentTime[colums.time] = key;
-          currentTime.agvId = record.agvId;
+          currentTime.vehicleId = record.vehicleId;
           currentTime.agvTaskType = record.agvTaskType;
           currentTime[colums.robotType] = record.robotType;
           if (!isNull(type)) {
