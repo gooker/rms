@@ -26,7 +26,7 @@ export const ElementType = {
 };
 
 // 小车状态
-export const AGVState = {
+export const VehicleState = {
   error: 'Error', // error
   standBy: 'StandBy', // stand_by
   charging: 'Charging', // charging
@@ -37,7 +37,7 @@ export const AGVState = {
 };
 
 // 小车状态颜色
-export const AgvStateColor = {
+export const VehicleStateColor = {
   available: '#7ac143',
   Idle: '#7ac143',
   StandBy: '#0092FF',
@@ -85,12 +85,12 @@ export const CellSize = {
   height: 100,
 };
 
-export const LatentAGVSize = {
+export const LatentVehicleSize = {
   width: 690,
   height: 920,
 };
 
-export const ToteAGVSize = {
+export const ToteVehicleSize = {
   width: 860,
   height: 1560,
 };
@@ -100,13 +100,13 @@ export const ToteOffset = {
   right: 440,
 };
 
-export const ForkLiftAGVSize = {
+export const ForkLiftVehicleSize = {
   width: 1050,
   height: 1743.5,
   radius: 1219, // 因为叉车的锚点不是车的中心点，所以这里记录叉车锚点与车头的距离(非插齿)
 };
 
-export const SorterAGVSize = {
+export const SorterVehicleSize = {
   width: 480,
   height: 760,
 };
@@ -238,7 +238,7 @@ export const MapSelectableSpriteType = {
 
 // 监控地图可选的元素类型
 export const MonitorSelectableSpriteType = {
-  // 车型数据与 config.AGVType 保持一致
+  // 车型数据与 config.VehicleType 保持一致
   LatentLifting: 'LatentLifting',
   Tote: 'Tote',
   ForkLifting: 'ForkLifting',
@@ -256,14 +256,14 @@ export const MonitorSelectableSpriteType = {
 
 // 急停区类型枚举
 export const EmergencyStopMode = [
-  { label: 'editor.emergency.AGVPathFinished', value: 'AGVPathFinished' },
+  { label: 'editor.emergency.VehiclePathFinished', value: 'VehiclePathFinished' },
   { label: 'editor.emergency.NearestQRCode', value: 'NearestQRCode' },
   { label: 'editor.emergency.ImmediateStop', value: 'ImmediateStop' },
   { label: 'editor.emergency.LockPath', value: 'LockPath' },
 ];
 
 // 小车子类型
-export const AGVSubTypeMap = {
+export const VehicleSubTypeMap = {
   LatentLifting: [
     {
       label: 'monitor.simulator.subType.normal',

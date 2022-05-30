@@ -51,14 +51,14 @@ export default {
   'reportCenter.offlineTimes': '次数',
   'reportCenter.offlineTime': '时长',
   'reportCenter.vehicle.load.statusduration': '状态时长',
-  'reportCenter.agvload.taskduration': '任务时长',
-  'reportCenter.agvload.taskNumber': '任务次数',
-  'reportCenter.agvload.taskDistance': '任务距离',
+  'reportCenter.vehicleload.taskduration': '任务时长',
+  'reportCenter.vehicleload.taskNumber': '任务次数',
+  'reportCenter.vehicleload.taskDistance': '任务距离',
 
   'reportCenter.vehicle.load.action': '动作负载',
 
-  'reportCenter.agvload.walkingdistance': '行走距离',
-  'reportCenter.agvload.chargingtime': '充电耗时',
+  'reportCenter.vehicleload.walkingdistance': '行走距离',
+  'reportCenter.vehicleload.chargingtime': '充电耗时',
 
   'reportCenter.taskload.action': '任务动作负载',
   'reportCenter.taskload.workload': '任务作业负载',

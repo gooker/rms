@@ -7,7 +7,7 @@ import { NameSpace } from '@/config/config';
  */
 
 const AlertCountPolling = {}; // 告警中心告警信息数量轮询
-const AgvPollingTaskPathManager = {}; // 小车任务路径轮询
+const VehiclePollingTaskPathManager = {}; // 小车任务路径轮询
 const LockCellPolling = {}; // 点位锁格轮询
 const CommonStationStatePolling = {}; // 获取通用站点雇佣车
 const WorkStationStatePolling = {}; // 获取工作站雇佣车
@@ -59,43 +59,43 @@ AlertCountPolling.terminate = function () {
 };
 
 // @@@ 小车任务路径
-AgvPollingTaskPathManager.getInstance = function (dispatcher) {
-  if (isNull(AgvPollingTaskPathManager.instance)) {
-    const worker = new Worker(new URL('./agvPathPolling.worker.js', import.meta.url));
+VehiclePollingTaskPathManager.getInstance = function (dispatcher) {
+  if (isNull(VehiclePollingTaskPathManager.instance)) {
+    const worker = new Worker(new URL('./vehiclePathPolling.worker.js', import.meta.url));
     worker.onmessage = function ({ data }) {
       if (data && Array.isArray(data)) {
         dispatcher(data);
       }
     };
-    AgvPollingTaskPathManager.instance = worker;
+    VehiclePollingTaskPathManager.instance = worker;
   }
-  return AgvPollingTaskPathManager.instance;
+  return VehiclePollingTaskPathManager.instance;
 };
 
-AgvPollingTaskPathManager.start = function (uniqueIds = [], dispatcher) {
-  if (isNull(AgvPollingTaskPathManager.instance)) {
-    AgvPollingTaskPathManager.getInstance(dispatcher);
+VehiclePollingTaskPathManager.start = function (uniqueIds = [], dispatcher) {
+  if (isNull(VehiclePollingTaskPathManager.instance)) {
+    VehiclePollingTaskPathManager.getInstance(dispatcher);
   }
   const params = {
     uniqueIds,
   };
-  const agvPathURL = getDomainNameByUrl(`/${NameSpace.Platform}/traffic/getPathByUniqueIds`);
-  AgvPollingTaskPathManager.instance.postMessage({
+  const vehiclePathURL = getDomainNameByUrl(`/${NameSpace.Platform}/traffic/getPathByUniqueIds`);
+  VehiclePollingTaskPathManager.instance.postMessage({
     state: 'start',
-    url: agvPathURL,
+    url: vehiclePathURL,
     token: window.sessionStorage.getItem('token'),
     sectionId: window.localStorage.getItem('sectionId'),
     params,
   });
 };
 
-AgvPollingTaskPathManager.terminate = function () {
-  if (!isNull(AgvPollingTaskPathManager.instance)) {
-    AgvPollingTaskPathManager.instance.postMessage({
+VehiclePollingTaskPathManager.terminate = function () {
+  if (!isNull(VehiclePollingTaskPathManager.instance)) {
+    VehiclePollingTaskPathManager.instance.postMessage({
       state: 'end',
     });
-    AgvPollingTaskPathManager.instance.terminate();
-    AgvPollingTaskPathManager.instance = null;
+    VehiclePollingTaskPathManager.instance.terminate();
+    VehiclePollingTaskPathManager.instance = null;
   }
 };
 
@@ -313,7 +313,7 @@ StationRatePolling.terminate = function () {
 
 export {
   AlertCountPolling,
-  AgvPollingTaskPathManager,
+  VehiclePollingTaskPathManager,
   LockCellPolling,
   CommonStationStatePolling,
   WorkStationStatePolling,

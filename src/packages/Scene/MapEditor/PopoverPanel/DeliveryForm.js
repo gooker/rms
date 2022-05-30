@@ -20,17 +20,17 @@ const DeliveryForm = (props) => {
   const { flag, dispatch, delivery, mapContext, dumpStations, selectCellIds, cellMap } = props;
 
   const [formRef] = Form.useForm();
-  const [agvDirectionVisible, setAgvDirectionVisible] = useState(false);
+  const [vehicleDirectionVisible, setVehicleDirectionVisible] = useState(false);
 
   useEffect(() => {
-    setAgvDirectionVisible(isNull(delivery?.targetCellId));
+    setVehicleDirectionVisible(isNull(delivery?.targetCellId));
   }, []);
 
   function calculateDumpPosition(allFieldsValue) {
     if (allFieldsValue.baseCell) {
       const distance = parseInt(allFieldsValue.dumpDistance || 0, 10);
       if (allFieldsValue.targetCell) {
-        setAgvDirectionVisible(false);
+        setVehicleDirectionVisible(false);
         const result = getOffsetDistance(
           cellMap[`${allFieldsValue.baseCell}`],
           cellMap[`${allFieldsValue.targetCell}`],
@@ -44,7 +44,7 @@ const DeliveryForm = (props) => {
         }
         formRef.setFieldsValue({ dumpX: result.x, dumpY: result.y });
       } else {
-        setAgvDirectionVisible(true);
+        setVehicleDirectionVisible(true);
         const { x, y } = cellMap[`${allFieldsValue.baseCell}`];
         formRef.setFieldsValue({ dumpX: x, dumpY: y });
       }
@@ -132,19 +132,19 @@ const DeliveryForm = (props) => {
       </Form.Item>
 
       {/* 小车在第一个基准点的方向，如果存在第二个基准点就不需要输入 */}
-      {agvDirectionVisible && (
+      {vehicleDirectionVisible && (
         <Form.Item
           {...formLayout}
-          name={'agvDirection'}
+          name={'vehicleDirection'}
           label={formatMessage({ id: 'app.vehicle.direction' })}
-          initialValue={delivery?.agvDirection}
+          initialValue={delivery?.vehicleDirection}
         >
           <DirectionSelector />
         </Form.Item>
       )}
 
       {/* 相对于第一个基准点的偏移距离，与小车方向互斥 */}
-      {!agvDirectionVisible && (
+      {!vehicleDirectionVisible && (
         <Form.Item
           {...formLayout}
           name={'dumpDistance'}

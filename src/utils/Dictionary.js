@@ -2,15 +2,15 @@ import { isNull } from './util';
 
 const DictionaryDataSource = {
   // 小车状态
-  agvStatus: {
-    Error: 'app.agvState.Error',
-    Offline: 'app.agvState.Offline',
-    StandBy: 'app.agvState.StandBy',
-    Working: 'app.agvState.Working',
-    Charging: 'app.agvState.Charging',
-    Connecting: 'app.agvState.Connecting',
-    Waiting: 'app.agvState.Waiting',
-    Idle: 'app.agvState.Idle',
+  vehicleStatus: {
+    Error: 'app.vehicleState.Error',
+    Offline: 'app.vehicleState.Offline',
+    StandBy: 'app.vehicleState.StandBy',
+    Working: 'app.vehicleState.Working',
+    Charging: 'app.vehicleState.Charging',
+    Connecting: 'app.vehicleState.Connecting',
+    Waiting: 'app.vehicleState.Waiting',
+    Idle: 'app.vehicleState.Idle',
   },
 
   // 充电桩方向
@@ -47,7 +47,7 @@ const DictionaryDataSource = {
   },
 
   // 小车方向
-  agvDirection: {
+  vehicleDirection: {
     0: 'app.direction.toTop',
     90: 'app.direction.toRight',
     180: 'app.direction.toBottom',
@@ -85,15 +85,15 @@ const DictionaryDataSource = {
 
   //  报表中心
   reportCenterTable: {
-    agvId: 'app.vehicle.id',
-    currentRobotId: 'app.vehicle.id',
+    vehicleId: 'app.vehicle.id',
+    currentVehicleId: 'app.vehicle.id',
     count: 'app.reportCenter.reportCount',
     createTime: 'app.common.creationTime',
     errorDefinition_level: 'app.fault.level',
     errorCode: 'app.fault.code',
     taskStatus: 'app.task.state',
     type: 'app.task.type',
-    agvTaskType: 'app.task.type',
+    vehicleTaskType: 'app.task.type',
   },
 
   // toteOrderStatus

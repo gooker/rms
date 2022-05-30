@@ -1,6 +1,6 @@
 import { fetchCommonPointInstrument, fetchCommonPointPre30Waiting } from '@/services/monitor';
 import {
-  transitionRobots,
+  transitionVehicles,
   transformCommonTrafficData,
   generateGoodsCountData,
   transformCommonWaitingData,
@@ -25,10 +25,10 @@ export const commonStationCallback = async (commonOb, dispatch, commonPointTaskH
     if (!dealResponse(trafficDataRes)) {
       // 任务数据
       const TaskCountData = { ...trafficDataRes };
-      const robotIdMap = transitionRobots(TaskCountData);
+      const vehicleIdMap = transitionVehicles(TaskCountData);
       const taskHistoryData = transformCommonTrafficData(TaskCountData);
       _commonPointTaskHistoryData[`${stopCellId}`] = {
-        robotIdMap,
+        vehicleIdMap,
         taskHistoryData,
       };
     }

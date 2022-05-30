@@ -10,7 +10,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
 
 const ReportGroupList = (props) => {
-  const { agvType, gotoDetail } = props;
+  const { vehicleType, gotoDetail } = props;
 
   const [formRef] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -79,7 +79,7 @@ const ReportGroupList = (props) => {
 
   async function fetchList() {
     setLoading(true);
-    const response = await fetchReportGroupList(agvType);
+    const response = await fetchReportGroupList(vehicleType);
     if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchDataFailed' }))) {
       setReportGroup(response);
     }
@@ -89,7 +89,7 @@ const ReportGroupList = (props) => {
   function addGroup() {
     setCreationLoading(true);
     formRef.validateFields().then(async (values) => {
-      const response = await saveReportGroup(agvType, values);
+      const response = await saveReportGroup(vehicleType, values);
       if (!dealResponse(response, true)) {
         setModalVisible(false);
         fetchList();
@@ -102,7 +102,7 @@ const ReportGroupList = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.delete.confirm' }),
       onOk: async () => {
-        const response = await deleteReportGroup(agvType, groupId);
+        const response = await deleteReportGroup(vehicleType, groupId);
         if (!dealResponse(response, true)) {
           fetchList();
         }

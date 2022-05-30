@@ -18,7 +18,7 @@ const TaskSearch = (props) => {
     });
   }
 
-  function renderAgvTaskTypeOption() {
+  function renderVehicleTaskTypeOption() {
     return Object.keys(allTaskTypes).map((type) => (
       <Option key={type} value={type}>
         {allTaskTypes[type]}
@@ -40,9 +40,9 @@ const TaskSearch = (props) => {
           </Form.Item>
         </Col>
         <Col span={7}>
-          <Form.Item name={'agvTaskType'} label={formatMessage({ id: 'app.task.type' })}>
+          <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.type' })}>
             <Select mode="multiple" allowClear>
-              {renderAgvTaskTypeOption()}
+              {renderVehicleTaskTypeOption()}
             </Select>
           </Form.Item>
         </Col>

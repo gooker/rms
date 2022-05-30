@@ -3,12 +3,12 @@ import { connect } from '@/utils/RmsDva';
 import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
 import { adjustModalWidth, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
-import AgvTaskSteps from './components/AgvTaskSteps';
-import AgvTaskHistory from './components/AgvTaskHistorys';
+import VehicleTaskSteps from './components/VehicleTaskSteps';
+import VehicleTaskHistory from './components/VehicleTaskHistorys';
 import DetailInfo from './components/DetailInfo';
 import TaskRecordOrAlarm from './components/TaskRecordOrAlarm';
 import TaskDetail from './TaskDetail';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 
 const { red } = Dictionary('color');
 const { confirm } = Modal;
@@ -45,7 +45,7 @@ class Detail extends PureComponent {
       onOk() {
         dispatch({
           type: 'task/fetchRestartTask',
-          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
         });
       },
       okText: formatMessage({ id: 'app.button.confirm' }),
@@ -75,7 +75,7 @@ class Detail extends PureComponent {
       onOk() {
         dispatch({
           type: 'task/fetchRestoreTask',
-          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
         });
       },
       okText: formatMessage({ id: 'app.button.confirm' }),
@@ -109,7 +109,7 @@ class Detail extends PureComponent {
           </div>
           <div>
             <span style={{ marginTop: 10, color: red }}>
-              {formatMessage({ id: 'app.taskDetail.makeSureRobotNotLoadedPodBeforeRedoing' })}
+              {formatMessage({ id: 'app.taskDetail.makeSureVehicleNotLoadedPodBeforeRedoing' })}
             </span>
           </div>
         </div>
@@ -117,7 +117,7 @@ class Detail extends PureComponent {
       onOk() {
         dispatch({
           type: 'task/fetchResetTask',
-          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
         });
       },
       okText: formatMessage({ id: 'app.button.confirm' }),
@@ -147,7 +147,7 @@ class Detail extends PureComponent {
       onOk() {
         dispatch({
           type: 'task/fetchCancelTask',
-          payload: { agvType: AGVType.Sorter, sectionId, taskId },
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
         });
       },
       okText: formatMessage({ id: 'app.button.confirm' }),
@@ -183,7 +183,7 @@ class Detail extends PureComponent {
       task: {
         loadingTaskDetail,
         taskDetailVisible,
-        taskAgvType,
+        taskVehicleType,
         detailInfo,
         taskRecord,
         taskAlarm,
@@ -200,7 +200,7 @@ class Detail extends PureComponent {
             {/** ******* 任务详情 ******** */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
               <TaskDetail
-                currentType={taskAgvType}
+                currentType={taskVehicleType}
                 errorCodes={allErrorDefinitions}
                 detailInfo={detailInfo.taskDetail}
                 chargeRecord={detailInfo.chargeRecord}
@@ -214,9 +214,9 @@ class Detail extends PureComponent {
 
             {/** ******* 任务路径 ******** */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.task.path' })} key="b">
-              {Array.isArray(detailInfo?.taskDetail?.agvStepTasks) ? (
+              {Array.isArray(detailInfo?.taskDetail?.vehicleStepTasks) ? (
                 <Card bordered={false}>
-                  <AgvTaskSteps taskDetail={detailInfo.taskDetail} />
+                  <VehicleTaskSteps taskDetail={detailInfo.taskDetail} />
                 </Card>
               ) : (
                 <Empty />
@@ -226,9 +226,9 @@ class Detail extends PureComponent {
             {/********* 任务记录 *********/}
             {window.localStorage.getItem('dev') === 'true' && (
               <Tabs.TabPane key="c" tab={formatMessage({ id: 'app.task.record' })}>
-                {Array.isArray(detailInfo?.taskDetail?.agvStepTaskHistorys) ? (
+                {Array.isArray(detailInfo?.taskDetail?.vehicleStepTaskHistorys) ? (
                   <Card bordered={false}>
-                    <AgvTaskHistory taskDetail={detailInfo.taskDetail} />
+                    <VehicleTaskHistory taskDetail={detailInfo.taskDetail} />
                   </Card>
                 ) : (
                   <Empty />

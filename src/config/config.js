@@ -9,7 +9,7 @@ export const AppCode = {
   Tote: 'Tote',
   FlexibleSorting: 'FlexibleSorting',
   Cleaning: 'Cleaning',
-  AgvManned: 'AgvManned',
+  VehicleManned: 'VehicleManned',
   Tool: 'Tool',
   Strategy: 'Strategy',
   Report: 'Report',
@@ -19,7 +19,7 @@ export const AppCode = {
 };
 
 // 小车类型
-export const AGVType = {
+export const VehicleType = {
   LatentLifting: 'LatentLifting',
   Tote: 'Tote',
   ForkLifting: 'ForkLifting',

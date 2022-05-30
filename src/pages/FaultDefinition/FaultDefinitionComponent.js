@@ -13,7 +13,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import styles from './FaultDefinition.module.less';
 
 const FaultDefinitionComponent = (props) => {
-  const { agvType } = props;
+  const { vehicleType } = props;
 
   const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -28,7 +28,7 @@ const FaultDefinitionComponent = (props) => {
   async function getData(formatter) {
     setSelectedRowKeys([]);
     setLoading(true);
-    const response = await fetchDefinedFaults(agvType);
+    const response = await fetchDefinedFaults(vehicleType);
     if (!dealResponse(response)) {
       if (typeof formatter === 'function') {
         setDataSource(formatter(response));
@@ -54,7 +54,7 @@ const FaultDefinitionComponent = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await deleteFaultDefinition(agvType, selectedRowKeys);
+        const response = await deleteFaultDefinition(vehicleType, selectedRowKeys);
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           getData();
@@ -69,7 +69,7 @@ const FaultDefinitionComponent = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.fault.init.confirm' }),
       onOk: async () => {
-        const response = await initFaultDefinition(agvType);
+        const response = await initFaultDefinition(vehicleType);
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           getData();
@@ -229,7 +229,7 @@ const FaultDefinitionComponent = (props) => {
         closable={false}
       >
         <FaultDefinitionForm
-          agvType={agvType}
+          vehicleType={vehicleType}
           data={editing}
           refresh={getData}
           onCancel={() => {

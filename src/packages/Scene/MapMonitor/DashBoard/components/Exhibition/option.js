@@ -1,6 +1,6 @@
 import { getDpr, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
-import { AgvStateColor } from '@/config/consts';
+import { VehicleStateColor } from '@/config/consts';
 
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 
@@ -19,22 +19,22 @@ const TrendLineColor = [
   '#22ed7c',
 ];
 
-export const getAgvStatusMap = () => {
+export const getVehicleStatusMap = () => {
   return {
-    Working: formatMessage({ id: Dictionary('agvStatus', 'Working') }),
-    StandBy: formatMessage({ id: Dictionary('agvStatus', 'StandBy') }),
-    Charging: formatMessage({ id: Dictionary('agvStatus', 'Charging') }),
-    Offline: formatMessage({ id: Dictionary('agvStatus', 'Offline') }),
-    Connecting: formatMessage({ id: Dictionary('agvStatus', 'Connecting') }),
-    Error: formatMessage({ id: Dictionary('agvStatus', 'Error') }),
+    Working: formatMessage({ id: Dictionary('vehicleStatus', 'Working') }),
+    StandBy: formatMessage({ id: Dictionary('vehicleStatus', 'StandBy') }),
+    Charging: formatMessage({ id: Dictionary('vehicleStatus', 'Charging') }),
+    Offline: formatMessage({ id: Dictionary('vehicleStatus', 'Offline') }),
+    Connecting: formatMessage({ id: Dictionary('vehicleStatus', 'Connecting') }),
+    Error: formatMessage({ id: Dictionary('vehicleStatus', 'Error') }),
   };
 };
 
-export const agvStateColor = {
-  ...AgvStateColor,
+export const vehicleStateColor = {
+  ...VehicleStateColor,
 };
 
-export const getAgvPowerStateMap = () => {
+export const getVehiclePowerStateMap = () => {
   return {
     full: formatMessage({ id: 'app.battery.full' }),
     good: formatMessage({ id: 'app.battery.good' }),
@@ -44,7 +44,7 @@ export const getAgvPowerStateMap = () => {
   };
 };
 
-export const agvPowerStateColor = {
+export const vehiclePowerStateColor = {
   full: '#2F8949',
   good: '#21b6b9',
   normal: '#0092ff',
@@ -243,12 +243,12 @@ export function getCarStatePieOption() {
       x: 'center',
       bottom: '3%',
       data: [
-        formatMessage({ id: 'app.agvState.Offline' }),
-        formatMessage({ id: 'app.agvState.Working' }),
-        formatMessage({ id: 'app.agvState.StandBy' }),
-        formatMessage({ id: 'app.agvState.Charging' }),
-        formatMessage({ id: 'app.agvState.Error' }),
-        formatMessage({ id: 'app.agvState.Connecting' }),
+        formatMessage({ id: 'app.vehicleState.Offline' }),
+        formatMessage({ id: 'app.vehicleState.Working' }),
+        formatMessage({ id: 'app.vehicleState.StandBy' }),
+        formatMessage({ id: 'app.vehicleState.Charging' }),
+        formatMessage({ id: 'app.vehicleState.Error' }),
+        formatMessage({ id: 'app.vehicleState.Connecting' }),
       ],
       padding: [2, 4],
       itemWidth: 12 * getDpr(),
@@ -278,34 +278,34 @@ export function getCarStatePieOption() {
         },
         data: [
           {
-            name: formatMessage({ id: 'app.agvState.Offline' }),
+            name: formatMessage({ id: 'app.vehicleState.Offline' }),
             value: 0,
-            itemStyle: { color: agvStateColor.Offline },
+            itemStyle: { color: vehicleStateColor.Offline },
           },
           {
-            name: formatMessage({ id: 'app.agvState.Connecting' }),
+            name: formatMessage({ id: 'app.vehicleState.Connecting' }),
             value: 0,
-            itemStyle: { color: agvStateColor.Connecting },
+            itemStyle: { color: vehicleStateColor.Connecting },
           },
           {
-            name: formatMessage({ id: 'app.agvState.StandBy' }),
+            name: formatMessage({ id: 'app.vehicleState.StandBy' }),
             value: 0,
-            itemStyle: { color: agvStateColor.StandBy },
+            itemStyle: { color: vehicleStateColor.StandBy },
           },
           {
-            name: formatMessage({ id: 'app.agvState.Working' }),
+            name: formatMessage({ id: 'app.vehicleState.Working' }),
             value: 0,
-            itemStyle: { color: agvStateColor.Working },
+            itemStyle: { color: vehicleStateColor.Working },
           },
           {
-            name: formatMessage({ id: 'app.agvState.Charging' }),
+            name: formatMessage({ id: 'app.vehicleState.Charging' }),
             value: 0,
-            itemStyle: { color: agvStateColor.Charging },
+            itemStyle: { color: vehicleStateColor.Charging },
           },
           {
-            name: formatMessage({ id: 'app.agvState.Error' }),
+            name: formatMessage({ id: 'app.vehicleState.Error' }),
             value: 0,
-            itemStyle: { color: agvStateColor.Error },
+            itemStyle: { color: vehicleStateColor.Error },
           },
         ],
       },
@@ -320,7 +320,7 @@ export function getCarBatteryStatePieOption() {
       formatter: `{b}: {c}${formatMessage({ id: 'monitor.workstation.label.piece' })}`,
     },
     title: {
-      text: formatMessage({ id: 'monitor.exhibition.agvPower' }),
+      text: formatMessage({ id: 'monitor.exhibition.vehiclePower' }),
       x: 'center',
       textStyle: {
         fontWeight: 'normal',
@@ -349,7 +349,7 @@ export function getCarBatteryStatePieOption() {
     },
     series: [
       {
-        name: formatMessage({ id: 'monitor.exhibition.agvPower' }),
+        name: formatMessage({ id: 'monitor.exhibition.vehiclePower' }),
         type: 'pie',
         radius: [`${radiusInner * getDpr()}%`, `${radiusOutside * getDpr()}%`],
         center,
@@ -368,27 +368,27 @@ export function getCarBatteryStatePieOption() {
           {
             name: formatMessage({ id: 'app.battery.full' }),
             value: 0,
-            itemStyle: { color: agvPowerStateColor.full },
+            itemStyle: { color: vehiclePowerStateColor.full },
           },
           {
             name: formatMessage({ id: 'app.battery.good' }),
             value: 0,
-            itemStyle: { color: agvPowerStateColor.good },
+            itemStyle: { color: vehiclePowerStateColor.good },
           },
           {
             name: formatMessage({ id: 'app.battery.normal' }),
             value: 0,
-            itemStyle: { color: agvPowerStateColor.normal },
+            itemStyle: { color: vehiclePowerStateColor.normal },
           },
           {
             name: formatMessage({ id: 'app.battery.low' }),
             value: 0,
-            itemStyle: { color: agvPowerStateColor.low },
+            itemStyle: { color: vehiclePowerStateColor.low },
           },
           {
             name: formatMessage({ id: 'app.battery.danger' }),
             value: 0,
-            itemStyle: { color: agvPowerStateColor.danger },
+            itemStyle: { color: vehiclePowerStateColor.danger },
           },
         ],
       },

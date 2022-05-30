@@ -226,7 +226,7 @@ const StationForm = (props) => {
           <Form.Item
             name={'groupCode'}
             initialValue={station?.groupCode}
-            label={<FormattedMessage id="sourcemanage.agvgroup.name" />}
+            label={<FormattedMessage id="sourcemanage.vehiclegroup.name" />}
             rules={[
               { required: true },
               () => ({
@@ -318,8 +318,8 @@ const StationForm = (props) => {
 
             {/* 车头方向 */}
             <Form.Item
-              name={'toteAgvDirection'}
-              initialValue={station?.toteAgvDirection}
+              name={'toteVehicleDirection'}
+              initialValue={station?.toteVehicleDirection}
               label={formatMessage({ id: 'app.vehicle.direction' })}
             >
               <AngleSelector getAngle />
@@ -343,7 +343,7 @@ const StationForm = (props) => {
             <Form.Item label={formatMessage({ id: 'app.common.depth' })}>
               <Row gutter={10}>
                 <Col span={10}>
-                  <Form.Item noStyle name={'toteAGVDepth'} initialValue={station?.toteAGVDepth}>
+                  <Form.Item noStyle name={'toteVehicleDepth'} initialValue={station?.toteVehicleDepth}>
                     <InputNumber style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>

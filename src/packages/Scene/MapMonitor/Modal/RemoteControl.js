@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { agvRemoteControl } from '@/services/monitor';
+import { vehicleRemoteControl } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -11,7 +11,7 @@ import styles from '../monitorLayout.module.less';
 const { formItemLayout } = getFormLayout(4, 20);
 
 const RemoteControl = (props) => {
-  const { dispatch, allAGVs, categoryPanel } = props;
+  const { dispatch, allVehicles, categoryPanel } = props;
   const [formRef] = Form.useForm();
 
   function close() {
@@ -64,9 +64,9 @@ const RemoteControl = (props) => {
       default:
         break;
     }
-    const vehicle = true; // TODO:到底是多选还是单选//find(allAGVs, { uniqueId:uniqueIds });
+    const vehicle = true; // TODO:到底是多选还是单选//find(allVehicles, { uniqueId:uniqueIds });
     if (vehicle) {
-      agvRemoteControl(vehicle.robotType, params).then((response) => {
+      vehicleRemoteControl(vehicle.vehicleType, params).then((response) => {
         if (dealResponse(response)) {
           message.error(formatMessage({ id: 'app.message.operateFailed' }));
         } else {
@@ -84,7 +84,7 @@ const RemoteControl = (props) => {
       formRef.validateFields(['uniqueIds'], { force: true });
       return;
     }
-    const vehicle = true; // TODO:find(allAGVs, { vehicleId: uniqueIds });
+    const vehicle = true; // TODO:find(allVehicles, { vehicleId: uniqueIds });
     const hexCommand = formRef.getFieldValue('hexCommand');
     const params = {
       uniqueIds,
@@ -93,7 +93,7 @@ const RemoteControl = (props) => {
       rawCommandHex: hexCommand,
     };
     if (vehicle) {
-      agvRemoteControl(vehicle.robotType, params).then((response) => {
+      vehicleRemoteControl(vehicle.vehicleType, params).then((response) => {
         if (dealResponse(response)) {
           message.error(formatMessage({ id: 'app.message.operateFailed' }));
         } else {
@@ -128,16 +128,16 @@ const RemoteControl = (props) => {
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
             >
-              {allAGVs.map((element) => (
+              {allVehicles.map((element) => (
                 <Select.Option key={element.vehicleId} value={element.uniqueId}>
-                  {`${element.vehicleId}-${element.agvType}`}
+                  {`${element.vehicleId}-${element.vehicleType}`}
                 </Select.Option>
               ))}
             </Select>
           </Form.Item>
 
           {/* 小车直行 */}
-          <Form.Item label={formatMessage({ id: 'monitor.remoteControl.agvStraight' })}>
+          <Form.Item label={formatMessage({ id: 'monitor.remoteControl.vehicleStraight' })}>
             <div style={{ marginBottom: 5 }}>
               <Button
                 onClick={() => {
@@ -165,7 +165,7 @@ const RemoteControl = (props) => {
           </Form.Item>
 
           {/* 小车转向 */}
-          <Form.Item label={formatMessage({ id: 'monitor.remoteControl.agvTurn' })}>
+          <Form.Item label={formatMessage({ id: 'monitor.remoteControl.vehicleTurn' })}>
             <div>
               <Button
                 onClick={() => {
@@ -199,7 +199,7 @@ const RemoteControl = (props) => {
               </Button>
             </div>
           </Form.Item>
-          {categoryPanel !== Category.SorterAGV ? (
+          {categoryPanel !== Category.SorterVehicle ? (
             <>
               {/* 托盘旋转 */}
               <Form.Item label={formatMessage({ id: 'monitor.remoteControl.palletRotation' })}>
@@ -281,6 +281,6 @@ const RemoteControl = (props) => {
   );
 };
 export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   categoryPanel: monitor.categoryPanel,
 }))(memo(RemoteControl));

@@ -2,12 +2,12 @@ import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { isNull, dealResponse, getRandomString } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { AGVType, AppCode } from '@/config/config';
+import { VehicleType, AppCode } from '@/config/config';
 import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
 import { hasAppPermission } from '@/utils/Permission';
 import { fetchWorkStationPods } from '@/services/monitor';
 import Property from '../PopoverPanel/Property';
-import AgvCategorySecondaryPanel from '../PopoverPanel/AgvCategorySecondaryPanel';
+import VehicleCategorySecondaryPanel from '../PopoverPanel/VehicleCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
 import MessageCategorySecondaryPanel from '../PopoverPanel/MessageCategorySecondaryPanel';
 import MonitorSelectionPanel from '../PopoverPanel/MonitorSelectionPanel';
@@ -74,12 +74,12 @@ const MonitorBodyRight = (props) => {
     switch (categoryPanel) {
       case Category.Prop:
         return <Property />;
-      case Category.LatentAGV:
-        return <AgvCategorySecondaryPanel agvType={AGVType.LatentLifting} height={450} />;
-      case Category.ToteAGV:
-        return <AgvCategorySecondaryPanel agvType={AGVType.Tote} height={350} />;
-      case Category.SorterAGV:
-        return <AgvCategorySecondaryPanel agvType={AGVType.Sorter} height={450} />;
+      case Category.LatentVehicle:
+        return <VehicleCategorySecondaryPanel vehicleType={VehicleType.LatentLifting} height={450} />;
+      case Category.ToteVehicle:
+        return <VehicleCategorySecondaryPanel vehicleType={VehicleType.Tote} height={350} />;
+      case Category.SorterVehicle:
+        return <VehicleCategorySecondaryPanel vehicleType={VehicleType.Sorter} height={450} />;
       case Category.Select:
         return <MonitorSelectionPanel />;
       case Category.Simulator:

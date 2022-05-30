@@ -4,13 +4,13 @@ import { Button, Card, Empty, Modal, Space, Spin } from 'antd';
 import { CopyOutlined, EyeOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
 import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import AgvTypeDetail from './components/AgvTypeDetail';
+import VehicleTypeDetail from './components/VehicleTypeDetail';
 import { fetchAllAdaptor } from '@/services/resourceManageAPI';
-import styles from './agv.module.less';
+import styles from './vehicle.module.less';
 import commonStyle from '@/common.module.less';
 import { AllAdapters } from '@/mockData';
 
-const CustomAgvType = () => {
+const CustomVehicleType = () => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [datasource, setDatasource] = useState(Object.values(AllAdapters));
@@ -48,7 +48,7 @@ const CustomAgvType = () => {
           </Button>
         </div>
         {datasource.length === 0 && (
-          <div className={styles.customAgvTypesNoData}>
+          <div className={styles.customVehicleTypesNoData}>
             <Empty />
           </div>
         )}
@@ -64,23 +64,23 @@ const CustomAgvType = () => {
                 </>
               }
             >
-              {adapterType.agvTypes?.map((agvType, innerIndex) => (
+              {adapterType.vehicleTypes?.map((vehicleType, innerIndex) => (
                 <Card
                   key={innerIndex}
                   type="inner"
-                  title={`车辆类型: ${agvType.name}`}
+                  title={`车辆类型: ${vehicleType.name}`}
                   extra={
                     <Space>
-                      {agvType.isReadOnly ? (
-                        <CopyOutlined className={styles.customAgvTypeToolItem} />
+                      {vehicleType.isReadOnly ? (
+                        <CopyOutlined className={styles.customVehicleTypeToolItem} />
                       ) : (
-                        <EditOutlined className={styles.customAgvTypeToolItem} />
+                        <EditOutlined className={styles.customVehicleTypeToolItem} />
                       )}
                       <EyeOutlined
                         onClick={() => {
-                          checkTypeDetail(agvType);
+                          checkTypeDetail(vehicleType);
                         }}
-                        className={styles.customAgvTypeToolItem}
+                        className={styles.customVehicleTypeToolItem}
                         style={{ marginLeft: 8 }}
                       />
                     </Space>
@@ -105,9 +105,9 @@ const CustomAgvType = () => {
           setVisible(false);
         }}
       >
-        <AgvTypeDetail dataSource={detail} />
+        <VehicleTypeDetail dataSource={detail} />
       </Modal>
     </Spin>
   );
 };
-export default memo(CustomAgvType);
+export default memo(CustomVehicleType);

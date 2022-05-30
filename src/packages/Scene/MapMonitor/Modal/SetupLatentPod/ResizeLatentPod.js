@@ -73,7 +73,7 @@ const ResizeLatentPod = () => {
                 }}
               >
                 <FormattedMessage
-                  id={resizeAll ? 'app.button.cancel' : 'monitor.view.selectAgvall'}
+                  id={resizeAll ? 'app.button.cancel' : 'monitor.view.selectVehicleall'}
                 />
               </Button>
             </Col>

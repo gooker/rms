@@ -14,12 +14,12 @@ const DescriptionItem = ({ title, content, style }) => (
 );
 
 const ErrorList = React.memo((props) => {
-  const { agvErrorList } = props;
+  const { vehicleErrorList } = props;
   const renderDescription = (record) => {
     const { onDetail, errorCodes } = props;
     const keyName = {};
     const extraData = () => {
-      if (record.agvErrorType === 'SOFTWARE_ERR0R') {
+      if (record.vehicleErrorType === 'SOFTWARE_ERR0R') {
         return null;
       }
       if (errorCodes != null && record.errorCode != null && errorCodes[record.errorCode] != null) {
@@ -89,7 +89,7 @@ const ErrorList = React.memo((props) => {
         {extraData()}
 
         {/* 软件错误 */}
-        {record.agvErrorType === 'SOFTWARE_ERR0R' && (
+        {record.vehicleErrorType === 'SOFTWARE_ERR0R' && (
           <Col span={24}>
             <DescriptionItem
               title={<span>{formatMessage({ id: 'app.taskDetail.errorMessage' })}</span>}
@@ -103,7 +103,7 @@ const ErrorList = React.memo((props) => {
 
   // 错误名称
   const renderErrorName = (content) => {
-    if (content.agvErrorType === 'SOFTWARE_ERR0R') {
+    if (content.vehicleErrorType === 'SOFTWARE_ERR0R') {
       return content.errorCodeName;
     }
     if (content) {
@@ -115,7 +115,7 @@ const ErrorList = React.memo((props) => {
   return (
     <div style={{ width: '100%' }}>
       <List
-        dataSource={agvErrorList}
+        dataSource={vehicleErrorList}
         renderItem={(item) => (
           <List.Item>
             <List.Item.Meta

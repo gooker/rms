@@ -39,7 +39,7 @@ const IntersectionPanel = (props) => {
       <LabelComponent label={'IP'}>
         {ip.map((record, index) => (
           <div key={index}>{`${formatMessage({
-            id: `${Dictionary('agvDirection', [record.direction])}`,
+            id: `${Dictionary('vehicleDirection', [record.direction])}`,
           })}: ${record.value}`}</div>
         ))}
       </LabelComponent>

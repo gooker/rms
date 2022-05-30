@@ -89,14 +89,14 @@ const AuthorityInformation = (props) => {
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.version' })}>
           {data.version}
         </Descriptions.Item>
-        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.virtualAgvLimit' })}>
-          {data.virtualAgvLimit}
+        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.virtualVehicleLimit' })}>
+          {data.virtualVehicleLimit}
         </Descriptions.Item>
-        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.realAgvLimit' })}>
-          {data.realAgvLimit}
+        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.realVehicleLimit' })}>
+          {data.realVehicleLimit}
         </Descriptions.Item>
-        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.totalAgvLimit' })}>
-          {data.totalAgvLimit}
+        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.totalVehicleLimit' })}>
+          {data.totalVehicleLimit}
         </Descriptions.Item>
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.sectionLimit' })}>
           {data.sectionLimit}
@@ -119,7 +119,7 @@ const AuthorityInformation = (props) => {
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.supportScenes' })}>
           {data.supportScenes.map((type) => (
             <Tag color="#1890FF" key={type}>
-              {formatMessage({ id: `app.agvType.${type}` })}
+              {formatMessage({ id: `app.vehicleType.${type}` })}
             </Tag>
           ))}
         </Descriptions.Item>

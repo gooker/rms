@@ -2,19 +2,19 @@ import React from 'react';
 import { Input, Button, Col, Drawer, Form, InputNumber, Row } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 
 const layout = { labelCol: { span: 12 }, wrapperCol: { span: 12 } };
 const layout2 = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
-const agvTypeNameMap = {
-  LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
-  Tote: formatMessage({ id: 'app.agvType.Tote' }),
-  ForkLifting: formatMessage({ id: 'app.agvType.ForkLifting' }),
-  Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
+const vehicleTypeNameMap = {
+  LatentLifting: formatMessage({ id: 'app.vehicleType.LatentLifting' }),
+  Tote: formatMessage({ id: 'app.vehicleType.Tote' }),
+  ForkLifting: formatMessage({ id: 'app.vehicleType.ForkLifting' }),
+  Sorter: formatMessage({ id: 'app.vehicleType.Sorter' }),
 };
 
 export default function SimulatorConfigPanel(props) {
-  const { simulatorConfig, robotType, onCancel, submit } = props;
+  const { simulatorConfig, vehicleType, onCancel, submit } = props;
   const config = simulatorConfig?.actionSpeed?.actionConfigId || {};
   const runSpeed = config && config.runSpeed ? config.runSpeed : {};
   const [formRef] = Form.useForm();
@@ -22,9 +22,9 @@ export default function SimulatorConfigPanel(props) {
   function handleSave() {
     formRef.validateFields().then((value) => {
       let obj = null;
-      if (robotType === AGVType.LatentLifting) {
+      if (vehicleType === VehicleType.LatentLifting) {
         obj = {
-          robotType,
+          vehicleType,
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,
           chargeSpeed: value.chargeSpeed,
@@ -38,9 +38,9 @@ export default function SimulatorConfigPanel(props) {
               stopSpeed: value.stopSpeed,
               backSpeed: value.backSpeed,
               startStopSpeed: value.startStopSpeed,
-              agvEmptyRotateSpeed: value.agvEmptyRotateSpeed,
-              agvHeavyRotateSpeed: value.agvHeavyRotateSpeed,
-              podRobotRotateSpeed: value.podRobotRotateSpeed,
+              vehicleEmptyRotateSpeed: value.vehicleEmptyRotateSpeed,
+              vehicleHeavyRotateSpeed: value.vehicleHeavyRotateSpeed,
+              podVehicleRotateSpeed: value.podVehicleRotateSpeed,
               runSpeed: {
                 1: value.runSpeed1,
                 2: value.runSpeed2,
@@ -49,25 +49,25 @@ export default function SimulatorConfigPanel(props) {
                 5: value.runSpeed5,
                 6: value.runSpeed6,
               },
-              robotType,
+              vehicleType,
               consent: false,
             },
           },
         };
-      } else if (robotType === AGVType.Tote) {
+      } else if (vehicleType === VehicleType.Tote) {
         obj = {
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,
           chargeSpeed: value.chargeSpeed,
-          robotType,
+          vehicleType,
           actionSpeed: {
             actionControl: true,
             actionConfigId: {
               startSpeed: value.startSpeed,
               stopSpeed: value.stopSpeed,
               startStopSpeed: value.startStopSpeed,
-              agvEmptyRotateSpeed: value.agvEmptyRotateSpeed,
-              agvHeavyRotateSpeed: value.agvHeavyRotateSpeed,
+              vehicleEmptyRotateSpeed: value.vehicleEmptyRotateSpeed,
+              vehicleHeavyRotateSpeed: value.vehicleHeavyRotateSpeed,
               pickPlaceSpeed: value.pickPlaceSpeed,
               level: value.level,
               runSpeed: {
@@ -78,25 +78,25 @@ export default function SimulatorConfigPanel(props) {
                 5: value.runSpeed5,
                 6: value.runSpeed6,
               },
-              robotType,
+              vehicleType,
               consent: false,
             },
           },
         };
-      } else if (robotType === AGVType.ForkLifting) {
+      } else if (vehicleType === VehicleType.ForkLifting) {
         obj = {
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,
           chargeSpeed: value.chargeSpeed,
-          robotType,
+          vehicleType,
           actionSpeed: {
             actionControl: true,
             actionConfigId: {
               startSpeed: value.startSpeed,
               stopSpeed: value.stopSpeed,
               startStopSpeed: value.startStopSpeed,
-              agvEmptyRotateSpeed: value.agvEmptyRotateSpeed,
-              agvHeavyRotateSpeed: value.agvHeavyRotateSpeed,
+              vehicleEmptyRotateSpeed: value.vehicleEmptyRotateSpeed,
+              vehicleHeavyRotateSpeed: value.vehicleHeavyRotateSpeed,
               pickPlaceSpeed: value.pickPlaceSpeed,
               lineSpeed: value.lineSpeed,
               bezierSpeed: value.bezierSpeed,
@@ -109,17 +109,17 @@ export default function SimulatorConfigPanel(props) {
                 5: value.runSpeed5,
                 6: value.runSpeed6,
               },
-              robotType,
+              vehicleType,
               consent: false,
             },
           },
         };
-      } else if (robotType === AGVType.Sorter) {
+      } else if (vehicleType === VehicleType.Sorter) {
         obj = {
           consumePowerSpeed: value.consumePowerSpeed,
           actionConsumePowerSpeed: value.actionConsumePowerSpeed,
           chargeSpeed: value.chargeSpeed,
-          robotType,
+          vehicleType,
           actionSpeed: {
             actionControl: true,
             actionConfigId: {
@@ -130,9 +130,9 @@ export default function SimulatorConfigPanel(props) {
               stopSpeed: value.stopSpeed,
               backSpeed: value.backSpeed,
               startStopSpeed: value.startStopSpeed,
-              agvEmptyRotateSpeed: value.agvEmptyRotateSpeed,
-              agvHeavyRotateSpeed: value.agvHeavyRotateSpeed,
-              podRobotRotateSpeed: value.podRobotRotateSpeed,
+              vehicleEmptyRotateSpeed: value.vehicleEmptyRotateSpeed,
+              vehicleHeavyRotateSpeed: value.vehicleHeavyRotateSpeed,
+              podVehicleRotateSpeed: value.podVehicleRotateSpeed,
               runSpeed: {
                 1: value.runSpeed1,
                 2: value.runSpeed2,
@@ -141,7 +141,7 @@ export default function SimulatorConfigPanel(props) {
                 5: value.runSpeed5,
                 6: value.runSpeed6,
               },
-              robotType,
+              vehicleType,
               consent: false,
             },
           },
@@ -158,7 +158,7 @@ export default function SimulatorConfigPanel(props) {
           <h3 style={{ display: 'inline-block' }}>
             <FormattedMessage id="monitor.simulator.config.title" />
           </h3>
-          <span style={{ marginLeft: 20 }}>{agvTypeNameMap[robotType]}</span>
+          <span style={{ marginLeft: 20 }}>{vehicleTypeNameMap[vehicleType]}</span>
         </Col>
         <Col span={12} style={{ textAlign: 'end' }}>
           <Button type="primary" onClick={handleSave}>
@@ -220,9 +220,9 @@ export default function SimulatorConfigPanel(props) {
 
           <Col span={8}>
             <Form.Item
-              name={'agvEmptyRotateSpeed'}
-              initialValue={config?.agvEmptyRotateSpeed}
-              label={formatMessage({ id: 'monitor.simulator.config.agvEmptyRotateSpeed' })}
+              name={'vehicleEmptyRotateSpeed'}
+              initialValue={config?.vehicleEmptyRotateSpeed}
+              label={formatMessage({ id: 'monitor.simulator.config.vehicleEmptyRotateSpeed' })}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -230,9 +230,9 @@ export default function SimulatorConfigPanel(props) {
 
           <Col span={8}>
             <Form.Item
-              name={'agvHeavyRotateSpeed'}
-              initialValue={config?.agvHeavyRotateSpeed}
-              label={formatMessage({ id: 'monitor.simulator.config.agvHeavyRotateSpeed' })}
+              name={'vehicleHeavyRotateSpeed'}
+              initialValue={config?.vehicleHeavyRotateSpeed}
+              label={formatMessage({ id: 'monitor.simulator.config.vehicleHeavyRotateSpeed' })}
             >
               <Input suffix={'ms/°'} />
             </Form.Item>
@@ -240,13 +240,13 @@ export default function SimulatorConfigPanel(props) {
         </Row>
 
         {/* 潜伏车 */}
-        {robotType === 'LatentLifting' && (
+        {vehicleType === 'LatentLifting' && (
           <Row>
             <Col span={8}>
               <Form.Item
-                name={'podRobotRotateSpeed'}
-                initialValue={config?.podRobotRotateSpeed}
-                label={formatMessage({ id: 'monitor.simulator.config.podRobotRotateSpeed' })}
+                name={'podVehicleRotateSpeed'}
+                initialValue={config?.podVehicleRotateSpeed}
+                label={formatMessage({ id: 'monitor.simulator.config.podVehicleRotateSpeed' })}
               >
                 <Input suffix={'ms/°'} />
               </Form.Item>
@@ -295,7 +295,7 @@ export default function SimulatorConfigPanel(props) {
         )}
 
         {/* 料箱车 */}
-        {robotType === 'Tote' && (
+        {vehicleType === 'Tote' && (
           <Row>
             <Col span={8}>
               <Form.Item
@@ -320,7 +320,7 @@ export default function SimulatorConfigPanel(props) {
         )}
 
         {/* 叉车 */}
-        {robotType === 'ForkLifting' && (
+        {vehicleType === 'ForkLifting' && (
           <Row>
             <Col span={8}>
               <Form.Item

@@ -7,18 +7,18 @@ import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchTaskQueueList,
   deleteTaskQueueItems,
-  fetchAgvOverallStatus,
+  fetchVehicleOverallStatus,
   fetchUpdateTaskPriority,
 } from '@/services/api';
 import TableWithPages from '@/components/TableWithPages';
 import { dealResponse } from '@/utils/util';
-import { AgvStateColor } from '@/config/consts';
+import { VehicleStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import taskQueueStyles from './taskQueue.module.less';
 import commonStyles from '@/common.module.less';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
 
 const { red, green } = Dictionary('color');
@@ -32,7 +32,7 @@ class WaitingQueueComponent extends Component {
     selectedRow: [],
     selectedRowKeys: [],
 
-    agvOverallStatus: {},
+    vehicleOverallStatus: {},
 
     loading: false,
     deleteLoading: false,
@@ -62,12 +62,12 @@ class WaitingQueueComponent extends Component {
     },
     {
       title: <FormattedMessage id="app.task.type" />,
-      dataIndex: 'agvTaskType',
+      dataIndex: 'vehicleTaskType',
       align: 'center',
       width: 150,
       render: (text) => {
         const { allTaskTypes } = this.props;
-        return allTaskTypes?.[AGVType.LatentLifting]?.[text] || text;
+        return allTaskTypes?.[VehicleType.LatentLifting]?.[text] || text;
       },
     },
     {
@@ -87,12 +87,12 @@ class WaitingQueueComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.appointedAgv" />,
-      dataIndex: 'appointedAGVId',
+      title: <FormattedMessage id="app.taskQueue.appointedVehicle" />,
+      dataIndex: 'appointedVehicleId',
       align: 'center',
       width: 150,
       render: (text, record) => {
-        if (record.isLockAGV) {
+        if (record.isLockVehicle) {
           return <span style={{ color: green }}>{text}</span>;
         } else {
           return <span style={{ color: red }}>{text}</span>;
@@ -147,26 +147,26 @@ class WaitingQueueComponent extends Component {
   }
 
   getData = async () => {
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     this.setState({ loading: true });
 
     try {
-      const [taskQueueResponse, agvOverallStatusResponse] = await Promise.all([
-        fetchTaskQueueList(agvType),
-        fetchAgvOverallStatus(agvType),
+      const [taskQueueResponse, vehicleOverallStatusResponse] = await Promise.all([
+        fetchTaskQueueList(vehicleType),
+        fetchVehicleOverallStatus(vehicleType),
       ]);
-      if (!dealResponse(taskQueueResponse) && !dealResponse(agvOverallStatusResponse)) {
+      if (!dealResponse(taskQueueResponse) && !dealResponse(vehicleOverallStatusResponse)) {
         const dataSource = taskQueueResponse.map((record) => {
-          const { redisTaskDTO, isLockAGV, isLockPod, isLockTargetCell } = record;
+          const { redisTaskDTO, isLockVehicle, isLockPod, isLockTargetCell } = record;
           return {
             key: redisTaskDTO.taskId,
             ...redisTaskDTO,
-            isLockAGV,
+            isLockVehicle,
             isLockPod,
             isLockTargetCell,
           };
         });
-        this.setState({ dataSource, loading: false, agvOverallStatus: agvOverallStatusResponse });
+        this.setState({ dataSource, loading: false, vehicleOverallStatus: vehicleOverallStatusResponse });
       }
     } catch (err) {
       message.error(formatMessage({ id: 'app.message.networkError' }));
@@ -177,7 +177,7 @@ class WaitingQueueComponent extends Component {
   deleteQueueTasks = () => {
     const _this = this;
     const { selectedRow, dataSource } = this.state;
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
     const taskIdList = selectedRow.map((record) => record.taskId);
     const requestParam = { sectionId, taskIdList };
@@ -186,7 +186,7 @@ class WaitingQueueComponent extends Component {
       content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
       onOk: async () => {
         _this.setState({ deleteLoading: true });
-        const response = await deleteTaskQueueItems(agvType, requestParam);
+        const response = await deleteTaskQueueItems(vehicleType, requestParam);
         if (
           !dealResponse(
             response,
@@ -212,10 +212,10 @@ class WaitingQueueComponent extends Component {
   };
 
   checkDetail = (taskId) => {
-    const { dispatch, agvType } = this.props;
+    const { dispatch, vehicleType } = this.props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
+      payload: { taskId, vehicleType },
     });
   };
 
@@ -224,11 +224,11 @@ class WaitingQueueComponent extends Component {
   };
 
   submitTaskPriority = async () => {
-    const { agvType } = this.props;
+    const { vehicleType } = this.props;
     const { selectedRow, priorityValue } = this.state;
     const taskIdList = selectedRow.map((record) => record.taskId);
 
-    const response = await fetchUpdateTaskPriority(agvType, {
+    const response = await fetchUpdateTaskPriority(vehicleType, {
       taskIdList,
       value: priorityValue,
       sectionId: window.localStorage.getItem('sectionId'),
@@ -246,82 +246,82 @@ class WaitingQueueComponent extends Component {
   };
 
   render() {
-    const { loading, dataSource, deleteLoading, selectedRowKeys, agvOverallStatus } = this.state;
+    const { loading, dataSource, deleteLoading, selectedRowKeys, vehicleOverallStatus } = this.state;
     const { deleteFlag, priority } = this.props;
     return (
       <TablePageWrapper>
         <div>
-          <Row className={taskQueueStyles.agvStatusBadgeContainer}>
+          <Row className={taskQueueStyles.vehicleStatusBadgeContainer}>
             <Badge
               showZero
-              style={{ background: AgvStateColor.available }}
-              count={agvOverallStatus.availableAgvNumber || 0}
+              style={{ background: VehicleStateColor.available }}
+              count={vehicleOverallStatus.availableVehicleNumber || 0}
             >
               <span
-                className={taskQueueStyles.agvStatusBadge}
-                style={{ background: AgvStateColor.available }}
+                className={taskQueueStyles.vehicleStatusBadge}
+                style={{ background: VehicleStateColor.available }}
               >
-                <FormattedMessage id={'app.agvState.available'} />
+                <FormattedMessage id={'app.vehicleState.available'} />
               </span>
             </Badge>
             <Badge
               showZero
-              style={{ background: AgvStateColor.StandBy }}
-              count={agvOverallStatus.standByAgvNumber || 0}
+              style={{ background: VehicleStateColor.StandBy }}
+              count={vehicleOverallStatus.standByVehicleNumber || 0}
             >
               <span
-                className={taskQueueStyles.agvStatusBadge}
-                style={{ background: AgvStateColor.StandBy }}
+                className={taskQueueStyles.vehicleStatusBadge}
+                style={{ background: VehicleStateColor.StandBy }}
               >
-                <FormattedMessage id={'app.agvState.StandBy'} />
+                <FormattedMessage id={'app.vehicleState.StandBy'} />
               </span>
             </Badge>
             <Badge
               showZero
-              style={{ background: AgvStateColor.Working }}
-              count={agvOverallStatus.workAgvNumber || 0}
+              style={{ background: VehicleStateColor.Working }}
+              count={vehicleOverallStatus.workVehicleNumber || 0}
             >
               <span
-                className={taskQueueStyles.agvStatusBadge}
-                style={{ background: AgvStateColor.Working }}
+                className={taskQueueStyles.vehicleStatusBadge}
+                style={{ background: VehicleStateColor.Working }}
               >
-                <FormattedMessage id={'app.agvState.Working'} />
+                <FormattedMessage id={'app.vehicleState.Working'} />
               </span>
             </Badge>
             <Badge
               showZero
-              style={{ background: AgvStateColor.Charging }}
-              count={agvOverallStatus.chargerAgvNumber || 0}
+              style={{ background: VehicleStateColor.Charging }}
+              count={vehicleOverallStatus.chargerVehicleNumber || 0}
             >
               <span
-                className={taskQueueStyles.agvStatusBadge}
-                style={{ background: AgvStateColor.Charging }}
+                className={taskQueueStyles.vehicleStatusBadge}
+                style={{ background: VehicleStateColor.Charging }}
               >
-                <FormattedMessage id={'app.agvState.Charging'} />
+                <FormattedMessage id={'app.vehicleState.Charging'} />
               </span>
             </Badge>
             <Badge
               showZero
-              style={{ background: AgvStateColor.Error }}
-              count={agvOverallStatus.lowerBatteryAgvNumber || 0}
+              style={{ background: VehicleStateColor.Error }}
+              count={vehicleOverallStatus.lowerBatteryVehicleNumber || 0}
             >
               <span
-                className={taskQueueStyles.agvStatusBadge}
-                style={{ background: AgvStateColor.Error }}
+                className={taskQueueStyles.vehicleStatusBadge}
+                style={{ background: VehicleStateColor.Error }}
               >
                 <FormattedMessage id={'app.battery.low'} />
               </span>
             </Badge>
             <Badge
               showZero
-              style={{ background: AgvStateColor.Offline }}
-              count={agvOverallStatus.offlineAgvNumber || 0}
+              style={{ background: VehicleStateColor.Offline }}
+              count={vehicleOverallStatus.offlineVehicleNumber || 0}
             >
               <span
-                className={taskQueueStyles.agvStatusBadge}
-                style={{ background: AgvStateColor.Offline }}
+                className={taskQueueStyles.vehicleStatusBadge}
+                style={{ background: VehicleStateColor.Offline }}
               >
-                <FormattedMessage id={'app.agvState.Offline'} />
+                <FormattedMessage id={'app.vehicleState.Offline'} />
               </span>
             </Badge>
           </Row>

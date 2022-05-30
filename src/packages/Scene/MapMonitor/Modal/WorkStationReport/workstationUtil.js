@@ -22,10 +22,10 @@ export const workStationCallback = async (
       let _workStationWaitingData;
       // 任务数据
       if (!dealResponse(taskHistoryResponse)) {
-        const { robotIds = [], taskCountMap } = taskHistoryResponse;
+        const { vehicleIds = [], taskCountMap } = taskHistoryResponse;
         _workStationTaskHistoryData = { ...workStationTaskHistoryData };
         const taskHistoryData = covertData2ChartsData(taskCountMap);
-        _workStationTaskHistoryData[`${stopCellId}`] = { robotIds, taskHistoryData };
+        _workStationTaskHistoryData[`${stopCellId}`] = { vehicleIds, taskHistoryData };
       }
 
       // 最近30次等待时间

@@ -2,10 +2,10 @@ import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import WorkStationProperty from './WorkStationProperty';
 import CommonStationProperty from './CommonStationProperty';
-import AGVElementProp from './AgvProperty';
+import VehicleElementProp from './VehicleProperty';
 import ChargeProperty from './ChargeProperty';
 import EStopProperty from './EmergencyStopProperty';
 import commonStyle from '@/common.module.less';
@@ -23,10 +23,10 @@ const Property = (props) => {
           return <EStopProperty data={selection} />;
         case MapSelectableSpriteType.STATION:
           return <CommonStationProperty data={selection} />;
-        case AGVType.LatentLifting:
-          return <AGVElementProp data={selection} type={AGVType.LatentLifting} />;
-        case AGVType.Sorter:
-          return <AGVElementProp data={selection} type={AGVType.Sorter} />;
+        case VehicleType.LatentLifting:
+          return <VehicleElementProp data={selection} type={VehicleType.LatentLifting} />;
+        case VehicleType.Sorter:
+          return <VehicleElementProp data={selection} type={VehicleType.Sorter} />;
         case MapSelectableSpriteType.CHARGER:
           return <ChargeProperty data={selection} />;
         default:

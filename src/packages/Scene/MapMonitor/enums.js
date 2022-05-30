@@ -1,6 +1,6 @@
 import React from 'react';
 import { SettingOutlined } from '@ant-design/icons';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -14,9 +14,9 @@ export const MonitorOperationType = {
 
 export const Category = {
   Prop: 'Prop',
-  LatentAGV: 'LatentAGV',
-  ToteAGV: 'ToteAGV',
-  SorterAGV: 'SorterAGV',
+  LatentVehicle: 'LatentVehicle',
+  ToteVehicle: 'ToteVehicle',
+  SorterVehicle: 'SorterVehicle',
   Report: 'Report',
   View: 'View',
   Select: 'Select',
@@ -37,18 +37,18 @@ export const MonitorRightTools = [
   },
   {
     label: <FormattedMessage id={'monitor.right.latent'} />,
-    value: Category.LatentAGV,
+    value: Category.LatentVehicle,
     icon: 'latent_category.svg',
     style: { width: '38px' },
   },
   // {
   //   label: <FormattedMessage id={'monitor.right.tote'} />,
-  //   value: Category.ToteAGV,
+  //   value: Category.ToteVehicle,
   //   icon: 'tote_category.svg',
   // },
   {
     label: <FormattedMessage id={'monitor.right.sorter'} />,
-    value: Category.SorterAGV,
+    value: Category.SorterVehicle,
     icon: 'sorter_category.svg',
     style: { width: '33px', height: '45px' },
   },
@@ -109,45 +109,45 @@ export const MonitorRightTools = [
 ];
 
 // 车辆二级
-export const AgvCategoryTools = [
+export const VehicleCategoryTools = [
   {
     label: <FormattedMessage id={'monitor.right.emptyRun'} />,
     icon: 'emptyRun_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'emptyRun',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.charge'} />,
     icon: 'charge_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'charge',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.goRest'} />,
     icon: 'goRest_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'goRest',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.carry'} />,
     icon: 'carry_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'carry',
-    module: [AGVType.LatentLifting],
+    module: [VehicleType.LatentLifting],
   },
   {
     label: <FormattedMessage id={'monitor.right.advancedCarry'} />,
     icon: 'advancedCarry_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'advancedCarry',
-    module: [AGVType.LatentLifting],
+    module: [VehicleType.LatentLifting],
   },
   {
-    label: (agvType) => {
-      if (agvType === AGVType.LatentLifting) {
+    label: (vehicleType) => {
+      if (vehicleType === VehicleType.LatentLifting) {
         return <FormattedMessage id={'monitor.right.workStationTask'} />;
       } else {
         return <FormattedMessage id={'monitor.right.stationTask'} />;
@@ -156,21 +156,21 @@ export const AgvCategoryTools = [
     icon: 'workStationTask_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'workStationTask',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.autoCall'} />,
     icon: 'autoCall_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'autoCall',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.remoteControl'} />,
     icon: 'remoteCtrl_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'remoteControl',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
 
   {
@@ -178,14 +178,14 @@ export const AgvCategoryTools = [
     icon: 'quhuo.png',
     style: { width: '37px', height: 'auto' },
     value: 'pickCargo',
-    module: [AGVType.Sorter],
+    module: [VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.sorterThrow'} />,
     icon: 'paowu.png',
     style: { width: '37px', height: 'auto' },
     value: 'dumpCargo',
-    module: [AGVType.Sorter],
+    module: [VehicleType.Sorter],
   },
 
   {
@@ -193,7 +193,7 @@ export const AgvCategoryTools = [
     icon: 'custom_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'custom',
-    module: [AGVType.LatentLifting, AGVType.Tote, AGVType.Sorter],
+    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
 ];
 

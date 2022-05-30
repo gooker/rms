@@ -2,16 +2,16 @@ import React, { memo, useState } from 'react';
 import { Button, Form, Input, Switch } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { agvEmptyRun } from '@/services/monitor';
+import { vehicleEmptyRun } from '@/services/monitor';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
-import AgvFormComponent from '@/components/AgvFormComponent';
+import VehicleFormComponent from '@/components/VehicleFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 
 const EmptyRun = (props) => {
-  const { dispatch, allAGVs } = props;
+  const { dispatch, allVehicles } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -27,7 +27,7 @@ const EmptyRun = (props) => {
         let newValues = { ...values };
         newValues.vehicleId = values.vehicleId;
         delete newValues.vehicleId;
-        agvEmptyRun({ ...newValues })
+        vehicleEmptyRun({ ...newValues })
           .then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
@@ -48,7 +48,7 @@ const EmptyRun = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form labelWrap form={formRef} {...formItemLayout}>
-          <AgvFormComponent />
+          <VehicleFormComponent />
           <Form.Item
             name={'targetCellId'}
             label={formatMessage({ id: 'app.common.targetCell' })}
@@ -75,5 +75,5 @@ const EmptyRun = (props) => {
   );
 };
 export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
 }))(memo(EmptyRun));

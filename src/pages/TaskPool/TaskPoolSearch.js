@@ -8,7 +8,7 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 const TaskSearch = (props) => {
-  const { search, agvList } = props;
+  const { search, vehicleList } = props;
 
   const [form] = Form.useForm();
 
@@ -32,7 +32,7 @@ const TaskSearch = (props) => {
           {/* 小车id */}
           <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <Select allowClear showSearch>
-              {agvList.map((vehicleId) => (
+              {vehicleList.map((vehicleId) => (
                 <Option key={vehicleId} value={vehicleId}>
                   {vehicleId}
                 </Option>

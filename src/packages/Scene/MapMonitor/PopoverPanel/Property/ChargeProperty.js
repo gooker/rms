@@ -230,7 +230,7 @@ const ChargeProperty = (props) => {
         {/* 操作区域*/}
         <div style={{ marginTop: 30 }}>
           {/* 状态、清楚故障、接触占用 */}
-          <div className={styles.rightSideAgvContentOperation}>
+          <div className={styles.rightSideVehicleContentOperation}>
             {/* 状态 */}
             <Popconfirm
               title={formatMessage(
@@ -245,7 +245,7 @@ const ChargeProperty = (props) => {
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
-              <div className={styles.rightSideAgvContentOperationItem2}>
+              <div className={styles.rightSideVehicleContentOperationItem2}>
                 <div style={{ background: enabled ? checkedColor : '' }}>
                   <img alt={'vehicle'} src={require('@/packages/Scene/icons/maintain.png').default} />
                 </div>
@@ -256,7 +256,7 @@ const ChargeProperty = (props) => {
               </div>
             </Popconfirm>
 
-            <div className={styles.rightSideAgvContentOperationItem2}>
+            <div className={styles.rightSideVehicleContentOperationItem2}>
               <div onClick={clearFault} style={{ disabled: !chargerInfo?.hardwareId }}>
                 <ClearOutlined
                   style={{ fontSize: '17px', color: '#fff', height: 'auto', textAlign: 'center' }}
@@ -274,7 +274,7 @@ const ChargeProperty = (props) => {
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
-              <div className={styles.rightSideAgvContentOperationItem2}>
+              <div className={styles.rightSideVehicleContentOperationItem2}>
                 <div>
                   <IconFont
                     type={'icon-jiechuzhanyong'}

@@ -13,7 +13,7 @@ const { formItemLayout } = getFormLayout(6, 16);
 let toteTaskRealtimeImterval = null;
 
 const ToteViewControlComponent = (props) => {
-  const { dispatch, mapRef, toteBinShown, allAGVs } = props;
+  const { dispatch, mapRef, toteBinShown, allVehicles } = props;
   const [form] = Form.useForm();
   const [pullToteTaskRealtime, setPullToteTaskRealtime] = useState(false);
 
@@ -103,7 +103,7 @@ const ToteViewControlComponent = (props) => {
               <Col>
                 <Form.Item noStyle name={'toteTaskRealtimePath'}>
                   <Select size="small" style={{ width: 150 }}>
-                    {allAGVs.map((element) => (
+                    {allVehicles.map((element) => (
                       <Select.Option key={element.vehicleId} value={element.vehicleId}>
                         {element.vehicleId}
                       </Select.Option>
@@ -151,7 +151,7 @@ const ToteViewControlComponent = (props) => {
   );
 };
 export default connect(({ monitor, monitorView }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   mapRef: monitor.mapContext,
   toteBinShown: monitorView.toteBinShown,
   currentLogicAreaId: monitor.currentLogicArea,

@@ -12,7 +12,7 @@ const { Option } = Select;
  * @param {*} include 目标 Model
  * @param {*} exclude 不需要的 Model
  * @param {*} modelTypes Model元数据
- * @param {*} agvList 小车列表
+ * @param {*} vehicleList 小车列表
  */
 const ModelSelection = (props) => {
   const { value, onChange } = props; // form
@@ -40,8 +40,8 @@ const ModelSelection = (props) => {
 
   function onCodeChange(_value) {
     // 合并数组并去重
-    const agvIds = flatten(_value);
-    currentValue.code = [...new Set(agvIds)];
+    const vehicleIds = flatten(_value);
+    currentValue.code = [...new Set(vehicleIds)];
     onChange(currentValue);
   }
 

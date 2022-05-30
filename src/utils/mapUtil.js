@@ -4,9 +4,9 @@ import * as XLSX from 'xlsx';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import { AGVState, CellSize, MapSelectableSpriteType, TaskPathColor } from '@/config/consts';
+import { VehicleState, CellSize, MapSelectableSpriteType, TaskPathColor } from '@/config/consts';
 import {
-  getAgvSelectBorderTexture,
+  getVehicleSelectBorderTexture,
   getCellHeatTexture,
   getIntersectionDirectionTexture,
   getQrCodeSelectBorderTexture,
@@ -563,14 +563,14 @@ export function convertSupportTypesToDTO(supportTypes) {
     .map((item) => item.split('@'))
     .map(([key, value]) => ({
       adapterType: key,
-      agvType: value,
+      vehicleType: value,
     }));
   const groupedSupportTypes = groupBy($supportTypes, 'adapterType');
   const $$supportTypes = [];
   Object.keys(groupedSupportTypes).forEach((adapterType) => {
     $$supportTypes.push({
       adapterType,
-      agvTypes: groupedSupportTypes[adapterType].map(({ agvType }) => agvType),
+      vehicleTypes: groupedSupportTypes[adapterType].map(({ vehicleType }) => vehicleType),
     });
   });
   return $$supportTypes;
@@ -593,8 +593,8 @@ export function convertChargerToDTO(charger, cellMap) {
 export function convertChargerToView(charger) {
   if (isStrictNull(charger)) return null;
   const chargingCells = charger.chargingCells.map(({ cellId, supportTypes }) => {
-    const _supportTypes = supportTypes.map(({ adapterType, agvTypes }) =>
-      agvTypes.map((item) => `${adapterType}@${item}`),
+    const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
+      vehicleTypes.map((item) => `${adapterType}@${item}`),
     );
     return {
       cellId,
@@ -607,8 +607,8 @@ export function convertChargerToView(charger) {
 export function convertRestToView(rest) {
   if (isStrictNull(rest)) return null;
   const { cellIds, supportTypes } = rest;
-  const _supportTypes = supportTypes.map(({ adapterType, agvTypes }) =>
-    agvTypes.map((item) => `${adapterType}@${item}`),
+  const _supportTypes = supportTypes.map(({ adapterType, vehicleTypes }) =>
+    vehicleTypes.map((item) => `${adapterType}@${item}`),
   );
   return {
     cellIds,
@@ -726,24 +726,24 @@ export function getTunnelGateCells(entrance, exit) {
 export function formatTunnelStateDataSource(targetCunnelName, response) {
   const result = [];
   const tunnels = Object.values(response);
-  tunnels.forEach(({ tunnelName, in: entrance, out: exit, lockOn, lockOnRobot }) => {
+  tunnels.forEach(({ tunnelName, in: entrance, out: exit, lockOn, lockOnVehicle }) => {
     if (tunnelName !== targetCunnelName) return;
     const resultItem = { tunnelName, in: [], out: [] };
-    if (lockOn && lockOnRobot != null) {
+    if (lockOn && lockOnVehicle != null) {
       // 如果通道被锁，那么只需要简单显示该小车ID即可，不需要显示对应的入口或者出口
-      resultItem.in.push(lockOnRobot);
-      resultItem.out.push(lockOnRobot);
+      resultItem.in.push(lockOnVehicle);
+      resultItem.out.push(lockOnVehicle);
     } else {
       Object.keys(entrance).forEach((item) => {
         resultItem.in.push({
           code: item, // 入口或者出口ID
-          agvs: entrance[item],
+          vehicles: entrance[item],
         });
       });
       Object.keys(exit).forEach((item) => {
         resultItem.out.push({
           code: item,
-          agvs: exit[item],
+          vehicles: exit[item],
         });
       });
     }
@@ -1023,7 +1023,7 @@ export function covertDumpFormData2Param(currentDumpStation, existDumpStations) 
     newDumpStation.name = currentDumpStation.name;
     newDumpStation.cellId = currentDumpStation.baseCell;
     newDumpStation.targetCellId = currentDumpStation.targetCell;
-    newDumpStation.agvDirection = currentDumpStation.agvDirection;
+    newDumpStation.vehicleDirection = currentDumpStation.vehicleDirection;
 
     newDumpStation.distance = isNull(currentDumpStation.dumpDistance)
       ? null
@@ -1231,35 +1231,35 @@ export function getTextureFromResources(key) {
   return texture;
 }
 
-export function switchAGVState(key, carState) {
+export function switchVehicleState(key, carState) {
   const state = [];
   switch (carState) {
-    case AGVState.working:
-      state.push(`${key}_agv_green`);
+    case VehicleState.working:
+      state.push(`${key}_vehicle_green`);
       state.push('on_task');
       break;
-    case AGVState.offline:
-      state.push(`${key}_agv_grey`);
+    case VehicleState.offline:
+      state.push(`${key}_vehicle_grey`);
       state.push('offline');
       break;
-    case AGVState.connecting:
-      state.push(`${key}_agv_grey`);
+    case VehicleState.connecting:
+      state.push(`${key}_vehicle_grey`);
       state.push('offline');
       break;
-    case AGVState.waiting:
-      state.push(`${key}_agv_purple`);
+    case VehicleState.waiting:
+      state.push(`${key}_vehicle_purple`);
       state.push('waiting');
       break;
-    case AGVState.standBy:
-      state.push(`${key}_agv`);
+    case VehicleState.standBy:
+      state.push(`${key}_vehicle`);
       state.push('stand_by');
       break;
-    case AGVState.charging:
-      state.push(`${key}_agv_yellow`);
+    case VehicleState.charging:
+      state.push(`${key}_vehicle_yellow`);
       state.push('charging');
       break;
-    case AGVState.error:
-      state.push(`${key}_agv_red`);
+    case VehicleState.error:
+      state.push(`${key}_vehicle_red`);
       state.push('error');
       break;
     default:
@@ -1268,7 +1268,7 @@ export function switchAGVState(key, carState) {
   return state;
 }
 
-export function switchAGVBatteryState(battery) {
+export function switchVehicleBatteryState(battery) {
   let state;
   const batteryInt = parseInt(battery, 10);
   switch (true) {
@@ -1299,20 +1299,20 @@ export function switchAGVBatteryState(battery) {
   return state;
 }
 
-export function explainAgvStatus(value) {
+export function explainVehicleStatus(value) {
   const mapping = {
-    '-1': AGVState.offline,
-    0: AGVState.standBy,
-    1: AGVState.working,
-    2: AGVState.charging,
-    3: AGVState.error,
-    4: AGVState.offline,
-    5: AGVState.waiting,
+    '-1': VehicleState.offline,
+    0: VehicleState.standBy,
+    1: VehicleState.working,
+    2: VehicleState.charging,
+    3: VehicleState.error,
+    4: VehicleState.offline,
+    5: VehicleState.waiting,
   };
   return mapping[value];
 }
 
-export function unifyAgvState(vehicle) {
+export function unifyVehicleState(vehicle) {
   // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
   let currentCellId = vehicle.c ?? vehicle.currentCellId;
   currentCellId = getElevatorMapCellId(currentCellId);
@@ -1327,7 +1327,7 @@ export function unifyAgvState(vehicle) {
     vehicleId: vehicle.r ?? vehicle.vehicleId,
     mainTain: vehicle.m ?? vehicle.maintain,
     manualMode: vehicle.mly ?? vehicle.manualMode,
-    agvStatus: explainAgvStatus(vehicle.s) ?? vehicle.agvStatus,
+    vehicleStatus: explainVehicleStatus(vehicle.s) ?? vehicle.vehicleStatus,
     currentDirection: vehicle.rD ?? vehicle.currentDirection,
     podId: vehicle.p ?? vehicle.podId,
     podDirection: vehicle.pD ?? vehicle.podDirection,
@@ -1365,8 +1365,8 @@ export function getSelectionWorldCoordinator(mapDOM, maskDOM, viewportEntity) {
  */
 export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
   // 潜伏式车状态
-  socketClient.registerLatentAGVStatus((allAgvStatus) => {
-    mapContext.updateLatentAGV(allAgvStatus);
+  socketClient.registerLatentVehicleStatus((allVehicleStatus) => {
+    mapContext.updateLatentVehicle(allVehicleStatus);
   });
 
   // 潜伏式货架状态
@@ -1375,8 +1375,8 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
   });
 
   // 料箱车状态
-  socketClient.registerToteAGVStatus((toteAGVStatus) => {
-    mapContext.updateToteAGV(toteAGVStatus);
+  socketClient.registerToteVehicleStatus((toteVehicleStatus) => {
+    mapContext.updateToteVehicle(toteVehicleStatus);
   });
 
   // 料箱车身上的货架状态
@@ -1385,8 +1385,8 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
   });
 
   // 分拣车状态
-  socketClient.registerSorterAGVStatus((sorterStatus) => {
-    mapContext.updateSorterAGV(sorterStatus);
+  socketClient.registerSorterVehicleStatus((sorterStatus) => {
+    mapContext.updateSorterVehicle(sorterStatus);
   });
 
   // 充电桩状态
@@ -1440,7 +1440,7 @@ export function loadEditorExtraTextures(renderer) {
 export function loadMonitorExtraTextures(renderer) {
   return new Promise((resolve) => {
     // 背景
-    PIXI.Texture.addToCache(getAgvSelectBorderTexture(), 'agvSelectBorderTexture');
+    PIXI.Texture.addToCache(getVehicleSelectBorderTexture(), 'vehicleSelectBorderTexture');
 
     // 交汇点
     PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');

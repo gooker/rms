@@ -14,14 +14,14 @@ import {
   actionPieOption,
   generateActionBarData,
   generateActionPieData,
-} from './components/loadRobotEcharts';
+} from './components/loadVehicleEcharts';
 import HealthCarSearchForm from '../components/HealthCarSearchForm';
 import commonStyles from '@/common.module.less';
 import style from '../report.module.less';
 
 const colums = {
   time: formatMessage({ id: 'app.time' }),
-  robotType: formatMessage({ id: 'app.agvType' }),
+  vehicleType: formatMessage({ id: 'app.vehicleType' }),
 };
 
 let taskActionPieLine = null; // 任务动作负载-pie
@@ -49,7 +49,7 @@ const TaskLoadComponent = (props) => {
       const defaultHour = moment().subtract(1, 'hours');
       const startTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:00:00');
       const endTime = convertToUserTimezone(defaultHour).format('YYYY-MM-DD HH:59:59');
-      submitSearch({ startTime, endTime, agvSearch: { type: 'AGV_ID', code: [] } });
+      submitSearch({ startTime, endTime, vehicleSearch: { type: 'Vehicle_ID', code: [] } });
     }
     initCodeData();
   }, []);
@@ -128,7 +128,7 @@ const TaskLoadComponent = (props) => {
 
     let sourceData = { ...loadOriginData };
     sourceData = filterDataByParam(sourceData, selectedIds, 'vehicleId');
-    sourceData = filterDataByParam(sourceData, selectedTaskIds, 'agvTaskType');
+    sourceData = filterDataByParam(sourceData, selectedTaskIds, 'vehicleTaskType');
 
     const actionPieData = generateActionPieData(sourceData, 'actionLoad', keyAction); //动作负载-pie
     const taskWorkPieData = generateActionPieData(sourceData, 'workLoad', keyWork);
@@ -219,7 +219,7 @@ const TaskLoadComponent = (props) => {
     const {
       startTime,
       endTime,
-      agvSearch: { code: agvSearchTypeValue, type: agvSearchType },
+      vehicleSearch: { code: vehicleSearchTypeValue, type: vehicleSearchType },
       taskType,
     } = value;
     if (!isStrictNull(startTime) && !isStrictNull(endTime)) {
@@ -228,8 +228,8 @@ const TaskLoadComponent = (props) => {
       const response = await fetchTaskLoad({
         startTime,
         endTime,
-        agvSearchTypeValue,
-        agvSearchType,
+        vehicleSearchTypeValue,
+        vehicleSearchType,
         taskType,
       });
       if (!dealResponse(response)) {
@@ -237,7 +237,7 @@ const TaskLoadComponent = (props) => {
         const newTaskLoad = getDatBysortTime(taskLoad);
 
         setSelectedIds(getAllCellId(newTaskLoad, 'vehicleId'));
-        setSelectedTaskIds(getAllCellId(newTaskLoad, 'agvTaskType'));
+        setSelectedTaskIds(getAllCellId(newTaskLoad, 'vehicleTaskType'));
         setKeyAction(response?.actionTranslate || {});
         setKeyStation(response?.stationTranslate || {});
         setKeyWork(response?.workTranslate || {});
@@ -266,8 +266,8 @@ const TaskLoadComponent = (props) => {
           let _record = {};
           currentTime[colums.time] = key;
           currentTime.vehicleId = record.vehicleId;
-          currentTime.agvTaskType = record.agvTaskType;
-          currentTime[colums.robotType] = record.robotType;
+          currentTime.vehicleTaskType = record.vehicleTaskType;
+          currentTime[colums.vehicleType] = record.vehicleType;
           if (!isNull(type)) {
             _record = { ...record[type] };
           }

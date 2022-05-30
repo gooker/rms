@@ -27,7 +27,7 @@ const ModuleInformationPanel = (props) => {
   function formatAppVersionData() {
     const namespace = window.nameSpacesInfo;
     const versions = { ...backendVersion };
-    delete versions.MixRobot;
+    delete versions.MixVehicle;
     const result = [];
     result.push({
       module: 'FE',

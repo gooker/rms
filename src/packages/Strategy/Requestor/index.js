@@ -132,7 +132,7 @@ class Index extends React.Component {
   // 渲染接口列表
   renderListItem = (item) => {
     const { active, running } = this.state;
-    const { id, name, description, agvType } = item;
+    const { id, name, description, vehicleType } = item;
     return (
       <div
         onClick={() => {
@@ -165,7 +165,7 @@ class Index extends React.Component {
           <List.Item.Meta
             avatar={
               <div className={styles.avatar}>
-                {agvType ? agvType.substring(0, 1) : <ApiOutlined />}
+                {vehicleType ? vehicleType.substring(0, 1) : <ApiOutlined />}
               </div>
             }
             title={name}
@@ -427,7 +427,7 @@ class Index extends React.Component {
         {/*        header: item.header,*/}
         {/*        body: item.body,*/}
         {/*        comment: item.comment,*/}
-        {/*        agvType: item.agvType,*/}
+        {/*        vehicleType: item.vehicleType,*/}
         {/*      }));*/}
         {/*      const response = await fetchBatchSaveAPI(requestBody);*/}
         {/*      if (dealResponse(response)) {*/}

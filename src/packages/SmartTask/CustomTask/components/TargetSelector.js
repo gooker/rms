@@ -30,20 +30,20 @@ const TargetSelector = (props) => {
     if (currentValue.type) {
       // 如果选择的载具，需要与对应的车型进行筛选
       if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type)) {
-        const robotSelection = form.getFieldValue(['START', 'vehicle']);
+        const vehicleSelection = form.getFieldValue(['START', 'vehicle']);
         // 自动分车或者使用了变量，则不需要筛选
-        if (robotSelection.type !== 'AUTO' && isNull(variable.START)) {
+        if (vehicleSelection.type !== 'AUTO' && isNull(variable.START)) {
           // 获取分车所支持的所有的载具类型
           let validLoadTypes = [];
-          if (robotSelection.type === 'Vehicle' && robotSelection.code.length > 0) {
-            const agvType = dataSource.Vehicle.filter((item) =>
-              item.ids.includes(robotSelection.code[0]),
+          if (vehicleSelection.type === 'Vehicle' && vehicleSelection.code.length > 0) {
+            const vehicleType = dataSource.Vehicle.filter((item) =>
+              item.ids.includes(vehicleSelection.code[0]),
             );
-            validLoadTypes = validLoadTypes.concat(agvType[0]?.types || []);
+            validLoadTypes = validLoadTypes.concat(vehicleType[0]?.types || []);
           }
-          if (robotSelection.type === 'AGV_GROUP' && robotSelection.code.length > 0) {
-            for (const item of dataSource.AGV_GROUP) {
-              if (robotSelection.code.includes(item.code)) {
+          if (vehicleSelection.type === 'Vehicle_GROUP' && vehicleSelection.code.length > 0) {
+            for (const item of dataSource.Vehicle_GROUP) {
+              if (vehicleSelection.code.includes(item.code)) {
                 validLoadTypes.push(...(item.types ?? []));
               }
             }
@@ -88,7 +88,7 @@ const TargetSelector = (props) => {
   function updateVariable(checked) {
     const _variable = { ...variable };
     if (checked) {
-      // Vehicle 和 AGV_GROUP 互斥
+      // Vehicle 和 Vehicle_GROUP 互斥
       _variable[subTaskCode] = {};
       _variable[subTaskCode][currentValue.type] = [];
     } else {
@@ -157,7 +157,7 @@ export default connect(({ customTask }) => ({
   variable: customTask.variable,
   dataSource: customTask.modelParams || {
     Vehicle: [],
-    AGV_GROUP: [],
+    Vehicle_GROUP: [],
     CELL: [],
     CELL_GROUP: [],
     STATION: [],

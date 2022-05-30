@@ -55,7 +55,7 @@ export default {
   // 闲时充电策略
   'app.chargeStrategy.past': '过去',
   'app.chargeStrategy.minute': '分钟',
-  'app.chargeStrategy.percentageOfFreeAgv': '空闲车占比',
+  'app.chargeStrategy.percentageOfFreeVehicle': '空闲车占比',
   'app.chargeStrategy.idleTimeRangeTip': '允许时间段(默认任何时间段)',
   'app.chargeStrategy.idle.save.success': '闲时策略保存成功',
   'app.chargeStrategy.idle.save.failed': '闲时策略保存失败',

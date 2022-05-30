@@ -148,7 +148,7 @@ class ReportForEcharts extends PureComponent {
 
   getOption = () => {
     //维度and值 报表类型 报表标题
-    const { description, info, agvType, allTaskTypes } = this.props;
+    const { description, info, vehicleType, allTaskTypes } = this.props;
     const { descriptionKeys } = description;
 
     const data = this.getData();
@@ -195,8 +195,8 @@ class ReportForEcharts extends PureComponent {
         data: data.legendData,
         selected: data.selected,
         formatter: function (name) {
-          if (allTaskTypes?.[agvType]?.[name]) {
-            return allTaskTypes[agvType][name];
+          if (allTaskTypes?.[vehicleType]?.[name]) {
+            return allTaskTypes[vehicleType][name];
           }
           const Legend = info[descriptionKeys[0]];
           return Legend + '  ' + name;

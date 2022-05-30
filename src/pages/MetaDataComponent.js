@@ -4,38 +4,38 @@ import { Button, Card, DatePicker, Form, Select } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { DownloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { downloadLogFromSFTP, fetchAllAgvList } from '@/services/api';
+import { downloadLogFromSFTP, fetchAllVehicleList } from '@/services/api';
 import commonStyle from '@/common.module.less';
 
 const { RangePicker } = DatePicker;
 const formLayout = getFormLayout(4, 16);
 
 const MetaDataComponent = (props) => {
-  const { agvType } = props;
+  const { vehicleType } = props;
 
   const [formRef] = Form.useForm();
-  const [agvList, setAgvList] = useState([]);
+  const [vehicleList, setVehicleList] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchAllAgvList().then((response) => {
+    fetchAllVehicleList().then((response) => {
       if (
-        !dealResponse(response, false, null, formatMessage({ id: 'app.message.fetchAgvListFail' }))
+        !dealResponse(response, false, null, formatMessage({ id: 'app.message.fetchVehicleListFail' }))
       ) {
-        setAgvList(response);
+        setVehicleList(response);
       }
     });
   }, []);
 
   function exportData() {
-    formRef.validateFields().then(async ({ agvIds, createDate }) => {
+    formRef.validateFields().then(async ({ vehicleIds, createDate }) => {
       setLoading(true);
       const requestParam = {
-        agvIds,
+        vehicleIds,
         startDate: convertToUserTimezone(createDate[0]).format('YYYY-MM-DD HH:mm:ss'),
         endDate: convertToUserTimezone(createDate[1]).format('YYYY-MM-DD HH:mm:ss'),
       };
-      const response = await downloadLogFromSFTP(agvType, requestParam);
+      const response = await downloadLogFromSFTP(vehicleType, requestParam);
       dealResponse(
         response,
         false,
@@ -65,7 +65,7 @@ const MetaDataComponent = (props) => {
       <Card
         hoverable
         style={{ width: 600, border: '1px solid #e8e8e8' }}
-        title={<FormattedMessage id={'app.metaData.agvOffsetData'} />}
+        title={<FormattedMessage id={'app.metaData.vehicleOffsetData'} />}
         actions={[
           <Button key="a" type={'link'} onClick={exportData} loading={loading} disabled={loading}>
             <DownloadOutlined /> <FormattedMessage id="app.button.export" />
@@ -76,12 +76,12 @@ const MetaDataComponent = (props) => {
       >
         <Form {...formLayout.formItemLayout} form={formRef}>
           <Form.Item
-            name={'agvIds'}
+            name={'vehicleIds'}
             label={formatMessage({ id: 'app.vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Select allowClear showSearch mode='multiple' maxTagCount={5} maxTagTextLength={4}>
-              {agvList.map(({ vehicleId }) => (
+              {vehicleList.map(({ vehicleId }) => (
                 <Select.Option value={vehicleId} key={vehicleId}>
                   {vehicleId}
                 </Select.Option>

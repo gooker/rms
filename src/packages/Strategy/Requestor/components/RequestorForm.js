@@ -21,7 +21,7 @@ const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(3, 21);
  */
 
 @connect(({ global }) => ({
-  allAgvTypes: global.allAgvTypes,
+  allVehicleTypes: global.allVehicleTypes,
 }))
 class RequestForm extends React.Component {
   formRef = React.createRef();
@@ -60,7 +60,7 @@ class RequestForm extends React.Component {
       header: headers,
       url: propsValue.url,
       body: propsValue.body,
-      agvType: propsValue.agvType,
+      vehicleType: propsValue.vehicleType,
       description: propsValue.description,
       comment: comments,
     });
@@ -171,7 +171,7 @@ class RequestForm extends React.Component {
   };
 
   render() {
-    const { allAgvTypes } = this.props;
+    const { allVehicleTypes } = this.props;
     return (
       <Form {...formItemLayout} ref={this.formRef}>
         {/* 名称 */}
@@ -316,9 +316,9 @@ class RequestForm extends React.Component {
         </Form.List>
 
         {/* 车辆类型 */}
-        <Form.Item label={formatMessage({ id: 'app.requestor.form.agvType' })} name="agvType">
+        <Form.Item label={formatMessage({ id: 'app.requestor.form.vehicleType' })} name="vehicleType">
           <Select style={{ width: '80%' }}>
-            {allAgvTypes.map(({ name, key, standardName }) => (
+            {allVehicleTypes.map(({ name, key, standardName }) => (
               <Option key={key} value={standardName}>
                 <FormattedMessage id={name} />
               </Option>

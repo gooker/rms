@@ -56,25 +56,25 @@ export default [
       {
         path: `/${AppCode.ResourceManage}/vehicle/customType`,
         name: 'customType',
-        component: '/ResourceManage/Vehicle/CustomAgvType',
+        component: '/ResourceManage/Vehicle/CustomVehicleType',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
         path: `/${AppCode.ResourceManage}/vehicle/list`,
         name: 'list',
-        component: '/ResourceManage/Vehicle/AgvList/index',
+        component: '/ResourceManage/Vehicle/VehicleList/index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
         path: `/${AppCode.ResourceManage}/vehicle/realTime`,
         name: 'realTime',
-        component: '/ResourceManage/Vehicle/AgvRealTime',
+        component: '/ResourceManage/Vehicle/VehicleRealTime',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {
         path: `/${AppCode.ResourceManage}/vehicle/faultManagement`,
         name: 'faultManagement',
-        component: '/ResourceManage/Vehicle/AgvFaultManagement',
+        component: '/ResourceManage/Vehicle/VehicleFaultManagement',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       // {
@@ -150,9 +150,9 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/resourceLock/agvLock`,
-        name: 'agvLock',
-        component: '/ResourceManage/ResourceLock/AgvLock',
+        path: `/${AppCode.ResourceManage}/resourceLock/vehicleLock`,
+        name: 'vehicleLock',
+        component: '/ResourceManage/ResourceLock/VehicleLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {

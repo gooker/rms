@@ -45,7 +45,7 @@ const TemporaryForbidcel = (props) => {
   function addTemporaryLockedCells() {
     const temporaryCell = form.getFieldValue('temporaryCell');
     if (temporaryCell.length !== 0) {
-      const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
+      const temporaryCellList = temporaryCell.map((record) => ({ vehicleId: -1, cellId: record }));
       dispatch({
         type: 'monitor/fetchSaveTemporaryCell',
         payload: temporaryCellList,
@@ -59,7 +59,7 @@ const TemporaryForbidcel = (props) => {
   const deleteTemporaryLockedCells = () => {
     const temporaryCell = form.getFieldValue('temporaryCell');
     if (temporaryCell.length !== 0) {
-      const temporaryCellList = temporaryCell.map((record) => ({ robotId: -1, cellId: record }));
+      const temporaryCellList = temporaryCell.map((record) => ({ vehicleId: -1, cellId: record }));
       dispatch({
         type: 'monitor/fetchDeleteTemporaryCell',
         payload: temporaryCellList,

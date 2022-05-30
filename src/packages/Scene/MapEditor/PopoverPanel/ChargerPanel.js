@@ -46,7 +46,7 @@ const ChargerPanel = (props) => {
           }
         >
           {supportTypes
-            .map(({ agvTypes }) => agvTypes)
+            .map(({ vehicleTypes }) => vehicleTypes)
             .flat()
             .join()}
         </LabelComponent>

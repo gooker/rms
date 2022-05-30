@@ -303,7 +303,7 @@ export const transformCommonWaitingData = (waitingDataResponse) => {
       ...commonOption,
       stack: '11',
       data: typeNum.reverse(),
-      name: formatMessage({ id: `app.agvType.${key}` }),
+      name: formatMessage({ id: `app.vehicleType.${key}` }),
     });
   });
   // 全部数据求平均值
@@ -407,7 +407,7 @@ export const transformCommonTrafficData = (allData = {}) => {
     series.push({
       ...commonOption,
       data: typeNum,
-      name: formatMessage({ id: `app.agvType.${key}` }),
+      name: formatMessage({ id: `app.vehicleType.${key}` }),
     });
   });
   // 全部数据求和
@@ -455,13 +455,13 @@ export const transformCommonTrafficData = (allData = {}) => {
   return { xAxis, series };
 };
 
-export const transitionRobots = (data) => {
+export const transitionVehicles = (data) => {
   const result = {};
   Object.entries(data).forEach(([key, typeData]) => {
     let num = [];
     if (!isStrictNull(typeData)) {
-      const { robotIds } = typeData;
-      if (robotIds && robotIds.length > 0) num = robotIds;
+      const { vehicleIds } = typeData;
+      if (vehicleIds && vehicleIds.length > 0) num = vehicleIds;
     }
     result[key] = num;
   });

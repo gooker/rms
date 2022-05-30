@@ -9,23 +9,23 @@ export function fetchAllAdaptor() {
 }
 
 // 获取所有小车类型(如果传适配器参数就给适配器对应的小车类型，如果不传就给所有) 但是只给非预定义的类型
-export function fetchAllRobotType(agvAdapter) {
-  return request(`/${NameSpace.Platform}/vehicle/findAllAGVType`, {
+export function fetchAllVehicleType(vehicleAdapter) {
+  return request(`/${NameSpace.Platform}/vehicle/findAllVehicleType`, {
     method: 'GET',
-    data: { agvAdapter },
+    data: { vehicleAdapter },
   });
 }
 
 // 获取所有小车(如果传适配器参数就给适配器对应的小车，如果不传就给所有)
-export function fetchAllRobot(agvAdapter) {
+export function fetchAllVehicle(vehicleAdapter) {
   return request(`/${NameSpace.Platform}/vehicle/getVehicle`, {
     method: 'GET',
-    data: { agvAdapter },
+    data: { vehicleAdapter },
   });
 }
 
 // 注册小车
-export function registerRobot(param) {
+export function registerVehicle(param) {
   return request(`/${NameSpace.Platform}/vehicle/vehicleRegister`, {
     method: 'POST',
     data: param,
@@ -37,7 +37,7 @@ export function registerRobot(param) {
  *2.模拟器新增小车
  */
 
-export function findRobot(param) {
+export function findVehicle(param) {
   return request(`/${NameSpace.Platform}/vehicle/findVehicle`, {
     method: 'POST',
     data: param,
@@ -45,7 +45,7 @@ export function findRobot(param) {
 }
 
 // 解绑
-export function logOutRobot(param) {
+export function logOutVehicle(param) {
   return request(`/${NameSpace.Platform}/vehicle/vehicleLogout`, {
     method: 'POST',
     data: param,

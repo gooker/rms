@@ -56,7 +56,7 @@ export default {
   // 资源锁
   'menu.resourceLock': '资源锁',
   'menu.resourceLock.targetLock': '目标锁',
-  'menu.resourceLock.agvLock': '车辆锁',
+  'menu.resourceLock.vehicleLock': '车辆锁',
   'menu.resourceLock.stationLock': '站点锁',
   'menu.resourceLock.containerLock': '载具锁',
   'menu.resourceLock.storageLock': '储位锁',
@@ -124,7 +124,7 @@ export default {
   'menu.healthReport.chargerHealth': '充电桩健康',
   'menu.healthReport.automationHealth': '自动化设备健康',
   'menu.loadReport': '负载报表',
-  'menu.loadReport.agvLoad': '小车负载',
+  'menu.loadReport.vehicleLoad': '小车负载',
   'menu.loadReport.taskLoad': '任务负载',
   'menu.loadReport.containerLoad': '载具负载',
   'menu.loadReport.chargerLoad': '充电桩负载',

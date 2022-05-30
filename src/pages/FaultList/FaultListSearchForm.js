@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { fetchAllAgvList } from '@/services/api';
+import { fetchAllVehicleList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 
@@ -9,19 +9,19 @@ const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm';
 
 const FaultListSearchForm = (props) => {
-  const { agvType, search, faults } = props;
+  const { vehicleType, search, faults } = props;
 
   const [formRef] = Form.useForm();
-  const [agvList, setAgvList] = useState([]);
+  const [vehicleList, setVehicleList] = useState([]);
 
   useEffect(() => {
-    async function getAgvList() {
-      const response = await fetchAllAgvList();
+    async function getVehicleList() {
+      const response = await fetchAllVehicleList();
       if (!dealResponse(response)) {
-        setAgvList(response);
+        setVehicleList(response);
       }
     }
-    getAgvList();
+    getVehicleList();
   }, []);
 
   function fetchFaultList() {
@@ -55,7 +55,7 @@ const FaultListSearchForm = (props) => {
         <Col span={8}>
           <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <Select allowClear showSearch>
-              {agvList.map(({ vehicleId }) => (
+              {vehicleList.map(({ vehicleId }) => (
                 <Select.Option key={vehicleId} value={vehicleId}>
                   {vehicleId}
                 </Select.Option>

@@ -4,15 +4,15 @@ import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
-import { agvTryToCharge } from '@/services/monitor';
+import { vehicleTryToCharge } from '@/services/monitor';
 import FormattedMessage from '@/components/FormattedMessage';
-import AgvFormComponent from '@/components/AgvFormComponent';
+import VehicleFormComponent from '@/components/VehicleFormComponent';
 import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const Charging = (props) => {
-  const { dispatch, allAGVs } = props;
+  const { dispatch, allVehicles } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -25,9 +25,9 @@ const Charging = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const vehicle = find(allAGVs, { vehicleId: values.vehicleId });
+        const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
         if (vehicle) {
-          agvTryToCharge({ ...values }).then((response) => {
+          vehicleTryToCharge({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -46,7 +46,7 @@ const Charging = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <AgvFormComponent />
+          <VehicleFormComponent />
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
@@ -58,5 +58,5 @@ const Charging = (props) => {
   );
 };
 export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
 }))(memo(Charging));

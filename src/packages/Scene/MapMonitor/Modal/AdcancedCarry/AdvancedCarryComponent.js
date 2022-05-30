@@ -14,7 +14,7 @@ const AdvancedCarryComponent = (props) => {
   const { dispatch, functionArea } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
-  const [currentAgvAction, setCurrentAgvAction] = useState(null);
+  const [currentVehicleAction, setCurrentVehicleAction] = useState(null);
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
@@ -29,7 +29,7 @@ const AdvancedCarryComponent = (props) => {
           ...values,
           targetDirection: values.targetDirection === 5 ? null : values.targetDirection,
         };
-        if (params.agvAction !== 'DOWN_POD') {
+        if (params.vehicleAction !== 'DOWN_POD') {
           params.isBackToRestCellId = false;
         }
 
@@ -124,12 +124,12 @@ const AdvancedCarryComponent = (props) => {
         </Form.Item>
 
         <Form.Item
-          name={'agvAction'}
+          name={'vehicleAction'}
           label={formatMessage({
             id: 'monitor.advancedCarry.arrivalStatus',
           })}
           getValueFromEvent={(e) => {
-            setCurrentAgvAction(e.target.value);
+            setCurrentVehicleAction(e.target.value);
             return e.target.value;
           }}
         >
@@ -151,7 +151,7 @@ const AdvancedCarryComponent = (props) => {
           />
         </Form.Item>
 
-        {currentAgvAction === 'DOWN_POD' && (
+        {currentVehicleAction === 'DOWN_POD' && (
           <Form.Item
             name={'isBackToRestCellId'}
             initialValue={false}

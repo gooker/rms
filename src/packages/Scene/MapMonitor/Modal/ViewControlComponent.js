@@ -234,7 +234,7 @@ const ViewControlComponent = (props) => {
   );
 };
 export default connect(({ monitor, monitorView }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   mapContext: monitor.mapContext,
   currentLogicAreaId: monitor.currentLogicArea,
 

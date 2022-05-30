@@ -5,7 +5,7 @@ import { fetchPodToCell } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import AgvFormComponent from '@/components/AgvFormComponent';
+import VehicleFormComponent from '@/components/VehicleFormComponent';
 import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
@@ -44,7 +44,7 @@ const CarryPod = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <AgvFormComponent />
+          <VehicleFormComponent />
           <Form.Item
             {...formItemLayout}
             name={'podId'}

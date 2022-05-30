@@ -108,7 +108,7 @@ const EquipmentListTools = (props) => {
               dispatch({ type: 'equipList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id="app.agvList.found" />
+            <ScanOutlined /> <FormattedMessage id="app.vehicleList.found" />
             {unregisterDevices.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterDevices.length}]

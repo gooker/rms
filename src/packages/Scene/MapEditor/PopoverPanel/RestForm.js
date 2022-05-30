@@ -46,15 +46,15 @@ const RestForm = (props) => {
 
   function renderSupportTypesOptions() {
     return Object.values(allAdaptors).map(({ adapterType }) => {
-      const { agvTypes } = adapterType;
+      const { vehicleTypes } = adapterType;
       return (
         <Select.OptGroup
           key={adapterType.code}
           label={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${adapterType.name}`}
         >
-          {agvTypes.map((agvType, index) => (
-            <Select.Option key={index} value={`${adapterType.code}@${agvType.code}`}>
-              {agvType.name}
+          {vehicleTypes.map((vehicleType, index) => (
+            <Select.Option key={index} value={`${adapterType.code}@${vehicleType.code}`}>
+              {vehicleType.name}
             </Select.Option>
           ))}
         </Select.OptGroup>
@@ -78,7 +78,7 @@ const RestForm = (props) => {
 
       <Form.Item
         name={'supportTypes'}
-        label={formatMessage({ id: 'app.agvType' })}
+        label={formatMessage({ id: 'app.vehicleType' })}
         initialValue={rest?.supportTypes}
         rules={[{ required: true }]}
       >

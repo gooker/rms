@@ -14,7 +14,7 @@ export default {
   'app.requestor.form.body.formatError': '请求体格式错误',
   'app.requestor.form.fieldsDesc': '字段描述',
   'app.requestor.form.fieldsDesc.add': '新增字段描述',
-  'app.requestor.form.agvType': '小车类型',
+  'app.requestor.form.vehicleType': '小车类型',
 
   'app.requestor.tip.getApi.fail': '获取API接口列表失败',
   'app.requestor.tip.saveApi.fail': '保存API接口失败',

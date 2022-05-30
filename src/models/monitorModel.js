@@ -9,7 +9,7 @@ import {
   fetchChargerList,
   fetchEmergencyStopList,
   fetchLatentPodList,
-  fetchMapAGVLocks,
+  fetchMapVehicleLocks,
   saveEmergencyStop,
 } from '@/services/XIHE';
 import {
@@ -24,7 +24,7 @@ import {
   fetchTemporaryBlockCells,
   saveLatentAutomaticTaskConfig,
 } from '@/services/monitor';
-import { fetchActiveMap, fetchAllAgvList, fetchToteRackLayout } from '@/services/api';
+import { fetchActiveMap, fetchAllVehicleList, fetchToteRackLayout } from '@/services/api';
 import { MonitorSelectableSpriteType } from '@/config/consts';
 
 const MonitorModelState = {
@@ -44,7 +44,7 @@ const MonitorModelState = {
   selectableType: ['Vehicle', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
 
   // 小车、货架等信息
-  allAGVs: [],
+  allVehicles: [],
   monitorLoad: null,
 
   // 二级面板
@@ -130,10 +130,10 @@ export default {
         monitorLoad: action.payload,
       };
     },
-    saveAllAGVs(state, action) {
+    saveAllVehicles(state, action) {
       return {
         ...state,
-        allAGVs: action.payload,
+        allVehicles: action.payload,
       };
     },
     saveMapMinRatio(state, action) {
@@ -335,7 +335,7 @@ export default {
 
     // ***************** 获取监控小车、货架等相关信息 ***************** //
     *initMonitorLoad({ payload: mapId }, { put }) {
-      yield put.resolve({ type: 'refreshAllAgvList' });
+      yield put.resolve({ type: 'refreshAllVehicleList' });
 
       const promises = [];
       const promiseFields = []; // 每个Promise返回值对应的 state 字段
@@ -380,20 +380,20 @@ export default {
       yield put({ type: 'saveMonitorLoad', payload: additionalStates });
     },
 
-    *refreshAllAgvList(_, { put, call }) {
-      const response = yield call(fetchAllAgvList);
-      if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchAgvListFail' }))) {
-        const allAGVs = [];
+    *refreshAllVehicleList(_, { put, call }) {
+      const response = yield call(fetchAllVehicleList);
+      if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchVehicleListFail' }))) {
+        const allVehicles = [];
         response?.map((item) => {
-          allAGVs.push({
+          allVehicles.push({
             ...item,
-            agvType: item?.agvType || item?.vehicle?.agvType,
+            vehicleType: item?.vehicleType || item?.vehicle?.vehicleType,
             uniqueId: item?.vehicle?.id,
             vehicleId: item.vehicleId,
           });
         });
-        yield put({ type: 'saveAllAGVs', payload: allAGVs });
-        return allAGVs;
+        yield put({ type: 'saveAllVehicles', payload: allVehicles });
+        return allVehicles;
       } else {
         return null;
       }
@@ -593,7 +593,7 @@ export default {
     },
     *fetchAllLockCells({ payload, then }, { call, select }) {
       const { currentLogicArea } = yield select((state) => state.monitor);
-      return yield call(fetchMapAGVLocks, currentLogicArea, payload);
+      return yield call(fetchMapVehicleLocks, currentLogicArea, payload);
     },
 
     // ************************ 急停区 ************************ //

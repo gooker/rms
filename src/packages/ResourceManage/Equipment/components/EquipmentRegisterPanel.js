@@ -10,7 +10,7 @@ import AddFindInfoModal from './AddFindInfoModal';
 import RegisterDeviceModal from './RegisterDeviceModal';
 import { registerDevice } from '@/services/resourceManageAPI';
 import commonStyle from '@/common.module.less';
-import styles from '@/packages/ResourceManage/Vehicle/agv.module.less';
+import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 
 const EquipmentRegisterPanel = (props) => {
   const { dispatch, loading, allDevices, showRegisterPanel, onRefresh } = props;

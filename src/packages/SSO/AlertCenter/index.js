@@ -8,7 +8,7 @@ import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList 
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 
-const alertType = { TASK_ALERT: 'magenta', AGV_ALERT: 'red', SYSTEM_ALERT: 'volcano' };
+const alertType = { TASK_ALERT: 'magenta', Vehicle_ALERT: 'red', SYSTEM_ALERT: 'volcano' };
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
 
 @connect(({ user }) => ({

@@ -34,7 +34,7 @@ const DeliveryPanel = (props) => {
 
   function getListData() {
     return dumpStations.map((item, index) => {
-      const { name, agvDirection, x, y, dumpBasket } = item;
+      const { name, vehicleDirection, x, y, dumpBasket } = item;
       return {
         name,
         index,
@@ -46,9 +46,9 @@ const DeliveryPanel = (props) => {
             value: name,
           },
           {
-            field: 'agvDirection',
+            field: 'vehicleDirection',
             label: <FormattedMessage id={'app.vehicle.direction'} />,
-            value: agvDirection,
+            value: vehicleDirection,
           },
           { field: 'X', label: 'X', value: x },
           { field: 'Y', label: 'Y', value: y },

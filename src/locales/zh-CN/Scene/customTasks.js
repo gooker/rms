@@ -57,19 +57,19 @@ export default {
   // 开始
   'customTask.form.vehicle': '分车',
   'customTask.form.NO_SPECIFY': '自动分车',
-  'customTask.form.SPECIFY_AGV': '指定小车',
+  'customTask.form.SPECIFY_Vehicle': '指定小车',
   'customTask.form.SPECIFY_GROUP': '指定小车组',
   'customTask.form.limit': '约束',
-  'customTask.form.limit.podWithStandbyAgv': '接任务约束: 要求的载具ID必须有待命车辆持有',
+  'customTask.form.limit.podWithStandbyVehicle': '接任务约束: 要求的载具ID必须有待命车辆持有',
 
   // 结束
-  'customTask.form.agvWaitTask': '小车待命',
-  'customTask.form.agvTaskTypes': '可接任务类型',
+  'customTask.form.vehicleWaitTask': '小车待命',
+  'customTask.form.vehicleTaskTypes': '可接任务类型',
   'customTask.form.appointResources': '可接资源任务',
-  'customTask.form.robotAutoCharge': '可自动退出待命去充电',
+  'customTask.form.vehicleAutoCharge': '可自动退出待命去充电',
   'customTask.form.backZone': '自动找停车点',
   'customTask.form.heavyBackZone': '载具自动放回储位',
-  'customTask.form.robotNeedCharge': '自动充电',
+  'customTask.form.vehicleNeedCharge': '自动充电',
 
   // 子任务
   'customTask.form.target': '目标',

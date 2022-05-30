@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { find, debounce } from 'lodash';
+import { find } from 'lodash';
 import { Form, Select, Switch, Card, Row, Col, message, Empty, Button, Spin } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -16,7 +16,7 @@ const ResourceBind = (props) => {
   const [yOptions, setYOptions] = useState(null); //select的options y 正常和x轴一样 但是搜索的时候就不一样 (正常的values是type 搜索的values是key)
   const [xData, setXData] = useState(null); // 根据选择下拉框的类型拿到该类型下的所有组
   const [yData, setYData] = useState(null);
-  const [bindUnData, setBindUnData] = useState(null);
+  const [unBindData, setUnBindData] = useState(null);
   const [groupConfigData, setGroupConfigData] = useState(null);
   const [currentXvalue, setCurrentXvalue] = useState(null);
   const [currentYvalue, setCurrentYvalue] = useState(null);
@@ -45,7 +45,7 @@ const ResourceBind = (props) => {
   async function getUnBindData(params) {
     const result = await getUnBindGroupData(params);
     if (!dealResponse(result, 1)) {
-      setBindUnData([...result]);
+      setUnBindData([...result]);
     }
   }
 
@@ -131,10 +131,10 @@ const ResourceBind = (props) => {
    *  全部绑定->关  否则就是开
    * */
   function theadIsChecked(key) {
-    if (bindUnData?.length === 0) {
+    if (unBindData?.length === 0) {
       return true;
     }
-    const xyUnbindData = bindUnData.filter((record) => {
+    const xyUnbindData = unBindData.filter((record) => {
       return record.firstUnBindKey === key;
     });
     return !(xyUnbindData?.length === yData?.length);
@@ -152,7 +152,7 @@ const ResourceBind = (props) => {
           secondUnBindKey: item.key,
         });
       });
-      const currentData = [...bindUnData, ...newUnbindData];
+      const currentData = [...unBindData, ...newUnbindData];
       const newCurrentData = currentData.reduce((pre, cur) => {
         if (
           find(pre, (o) => {
@@ -166,10 +166,10 @@ const ResourceBind = (props) => {
         return pre.concat(cur);
       }, []);
 
-      setBindUnData([...newCurrentData]);
+      setUnBindData([...newCurrentData]);
     } else {
       // true 移除  删除未绑定
-      const currentUnBindData = [...bindUnData];
+      const currentUnBindData = [...unBindData];
       yData.forEach((yitem) => {
         const bindKeys = [x, yitem.key];
         currentUnBindData.map((item, key) => {
@@ -178,18 +178,18 @@ const ResourceBind = (props) => {
           }
         });
       });
-      setBindUnData(currentUnBindData);
+      setUnBindData(currentUnBindData);
     }
   }
 
   // 默认开关与否
   function switchChecked(x, y) {
     const bindKeys = [x, y];
-    if (bindUnData?.length === 0) {
+    if (unBindData?.length === 0) {
       return true;
     }
 
-    const findUndata = find(bindUnData, (item) => {
+    const findUndata = find(unBindData, (item) => {
       return bindKeys.includes(item.firstUnBindKey) && bindKeys.includes(item.secondUnBindKey);
     });
     return findUndata == null;
@@ -199,7 +199,7 @@ const ResourceBind = (props) => {
   function switchChange(x, y) {
     return async (checked) => {
       // false 放入 保存未绑定的分组关系
-      const currentUnBindData = [...bindUnData];
+      const currentUnBindData = [...unBindData];
       if (!checked) {
         const currentBindStatus = {
           mapId,
@@ -219,15 +219,15 @@ const ResourceBind = (props) => {
         });
         currentUnBindData.splice(index, 1);
       }
-      setBindUnData([...currentUnBindData]);
+      setUnBindData([...currentUnBindData]);
     };
   }
 
   // 大保存
   async function submitSave() {
-    const saveResult = await fechSaveUnBind(bindUnData);
+    const saveResult = await fechSaveUnBind(unBindData);
     if (!dealResponse(saveResult, true)) {
-      setBindUnData([...saveResult]);
+      setUnBindData([...saveResult]);
     }
   }
 

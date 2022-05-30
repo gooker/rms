@@ -105,10 +105,10 @@ const EndForm = (props) => {
       <Form.Item
         hidden={hidden}
         {...formItemLayout}
-        name={[code, 'robotNeedCharge']}
+        name={[code, 'vehicleNeedCharge']}
         initialValue={true}
         valuePropName={'checked'}
-        label={formatMessage({ id: 'customTask.form.robotNeedCharge' })}
+        label={formatMessage({ id: 'customTask.form.vehicleNeedCharge' })}
       >
         <Switch />
       </Form.Item>

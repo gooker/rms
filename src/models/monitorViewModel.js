@@ -1,9 +1,9 @@
-import { AgvPollingTaskPathManager } from '@/workers/WebWorkerManager';
+import { VehiclePollingTaskPathManager } from '@/workers/WebWorkerManager';
 import { NavigationType, CoordinateType } from '@/config/config';
 
 const MonitorViewModelState = {
-  selectAgv: [], // 小车的uniqueId
-  agvLockView: {
+  selectVehicle: [], // 小车的uniqueId
+  vehicleLockView: {
     showLockCellPolling: false,
   },
   routeView: {
@@ -62,9 +62,9 @@ const MonitorViewModelState = {
   },
 
   // 小车告警异常
-  agvAlarmList: [],
+  vehicleAlarmList: [],
   // 小车运行信息
-  agvRunningInfoList: [],
+  vehicleRunningInfoList: [],
 
   dashBoardVisible: false, // dashboard
 
@@ -93,10 +93,10 @@ export default {
         showCostPolling: action.payload,
       };
     },
-    saveAgvLockView(state, action) {
+    saveVehicleLockView(state, action) {
       return {
         ...state,
-        agvLockView: { ...state.agvLockView, ...action.payload },
+        vehicleLockView: { ...state.vehicleLockView, ...action.payload },
       };
     },
     saveRouteView(state, action) {
@@ -124,16 +124,16 @@ export default {
       };
     },
 
-    saveAgvAlarmList(state, action) {
+    saveVehicleAlarmList(state, action) {
       return {
         ...state,
-        agvAlarmList: action.payload,
+        vehicleAlarmList: action.payload,
       };
     },
-    saveAgvRunningInfoList(state, action) {
+    saveVehicleRunningInfoList(state, action) {
       return {
         ...state,
-        agvRunningInfoList: action.payload,
+        vehicleRunningInfoList: action.payload,
       };
     },
     saveDashBoardVisible(state, action) {
@@ -147,10 +147,10 @@ export default {
     *routePolling({ payload }, { select }) {
       const { flag, ids } = payload;
       const props = yield select(({ monitor }) => monitor);
-      const { selectAgv } = yield select(({ monitorView }) => monitorView);
-      const uniqueIds = ids || selectAgv;
+      const { selectVehicle } = yield select(({ monitorView }) => monitorView);
+      const uniqueIds = ids || selectVehicle;
       if (flag && uniqueIds?.length > 0) {
-        AgvPollingTaskPathManager.start(uniqueIds, (response) => {
+        VehiclePollingTaskPathManager.start(uniqueIds, (response) => {
           if (response && Array.isArray(response)) {
             const tasks = response.filter(Boolean);
             props.mapContext.registerShowTaskPath(tasks, true);
@@ -158,7 +158,7 @@ export default {
         });
       } else {
         props.mapContext?.registerShowTaskPath([], false);
-        AgvPollingTaskPathManager.terminate();
+        VehiclePollingTaskPathManager.terminate();
       }
     },
   },

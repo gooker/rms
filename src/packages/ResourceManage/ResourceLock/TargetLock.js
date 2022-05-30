@@ -46,7 +46,7 @@ const TargetLock = (props) => {
               <span
                 className={commonStyles.textLinks}
                 onClick={() => {
-                  checkTaskDetail(text, record.robotType);
+                  checkTaskDetail(text, record.vehicleType);
                 }}
               >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
@@ -65,11 +65,11 @@ const TargetLock = (props) => {
     init();
   }, []);
 
-  function checkTaskDetail(taskId, agvType) {
+  function checkTaskDetail(taskId, vehicleType) {
     const { dispatch } = props;
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
+      payload: { taskId, vehicleType },
     });
   }
 

@@ -26,7 +26,7 @@ const FilterSearch = (props) => {
 
   const [form] = Form.useForm();
 
-  const [agvTagsData, setAgvTagsData] = useState([]);
+  const [vehicleTagsData, setVehicleTagsData] = useState([]);
   const [taskTypeData, setTaskTypeData] = useState([]);
 
   const [selectedTaskType, setSelectedTaskType] = useState([]);
@@ -42,11 +42,11 @@ const FilterSearch = (props) => {
     }
 
     if (showTask) {
-      const typeTags = getAllCellId(data, 'agvTaskType');
+      const typeTags = getAllCellId(data, 'vehicleTaskType');
       setTaskTypeData(typeTags);
       setSelectedTaskType(typeTags);
     }
-    setAgvTagsData(tagsData);
+    setVehicleTagsData(tagsData);
     setSelectedTags(tagsData);
   }, [data]);
 
@@ -146,7 +146,7 @@ const FilterSearch = (props) => {
                 )
               }
             >
-              {agvTagsData.map((tag) => (
+              {vehicleTagsData.map((tag) => (
                 <CheckableTag
                   key={tag}
                   checked={selectedTags.indexOf(tag) > -1}

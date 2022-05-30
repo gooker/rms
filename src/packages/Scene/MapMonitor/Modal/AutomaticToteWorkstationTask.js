@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Form, Input, InputNumber, Radio, Row, Select } from 'antd';
 import { CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { agvEmptyRun } from '@/services/monitor';
+import { vehicleEmptyRun } from '@/services/monitor';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
@@ -14,7 +14,7 @@ const height = 500;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
 const AutomaticToteWorkstationTask = (props) => {
-  const { dispatch, allAGVs, workstationList } = props;
+  const { dispatch, allVehicles, workstationList } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -27,9 +27,9 @@ const AutomaticToteWorkstationTask = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const vehicle = find(allAGVs, { vehicleId: values.vehicleId });
+        const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
         if (vehicle) {
-          agvEmptyRun(vehicle.robotType, { ...values }).then((response) => {
+          vehicleEmptyRun(vehicle.vehicleType, { ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -68,14 +68,14 @@ const AutomaticToteWorkstationTask = (props) => {
           </Form.Item>
 
           <Form.Item
-            name={'robotId'}
+            name={'vehicleId'}
             label={formatMessage({ id: 'app.vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Input />
           </Form.Item>
 
-          <Form.List name="toteAGVTaskActionDTOS">
+          <Form.List name="toteVehicleTaskActionDTOS">
             {(fields, { add, remove }) => (
               <>
                 {fields.map((field) => (
@@ -96,8 +96,8 @@ const AutomaticToteWorkstationTask = (props) => {
                           id: 'app.taskDetail.action',
                         })}
                         initialValue={'FETCH'}
-                        name={[field.name, 'toteAGVTaskActionType']}
-                        fieldKey={[field.fieldKey, 'toteAGVTaskActionType']}
+                        name={[field.name, 'toteVehicleTaskActionType']}
+                        fieldKey={[field.fieldKey, 'toteVehicleTaskActionType']}
                       >
                         <Radio.Group>
                           <Radio.Button value="FETCH">
@@ -168,6 +168,6 @@ const AutomaticToteWorkstationTask = (props) => {
   );
 };
 export default connect(({ monitor }) => ({
-  allAGVs: monitor.allAGVs,
+  allVehicles: monitor.allVehicles,
   workstationList: getCurrentLogicAreaData('monitor')?.workstationList || [],
 }))(memo(AutomaticToteWorkstationTask));

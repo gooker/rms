@@ -26,7 +26,7 @@ export async function fetchTemporaryBlockCells() {
 
 /****显示路径 start*****/
 // 根据小车 获取小车的任务路径(单个)
-export async function getPathActionByAgvId(vehicleId, vehicleType) {
+export async function getPathActionByVehicleId(vehicleId, vehicleType) {
   return request(`/${NameSpace.Platform}/traffic/getPathByVehicleId/${vehicleId}/${vehicleType}`, {
     method: 'GET',
   });
@@ -135,7 +135,7 @@ export async function fetchPodToCell(params) {
 }
 
 // 小车空跑
-export async function agvEmptyRun(params) {
+export async function vehicleEmptyRun(params) {
   const sectionId = window.localStorage.getItem('sectionId');
   return request(`/${NameSpace.Platform}/task/empty-run`, {
     method: 'POST',
@@ -144,7 +144,7 @@ export async function agvEmptyRun(params) {
 }
 
 // 小车充电
-export async function agvTryToCharge(params) {
+export async function vehicleTryToCharge(params) {
   return request(`/${NameSpace.Platform}/task/tryToCharge`, {
     method: 'POST',
     data: params,
@@ -152,7 +152,7 @@ export async function agvTryToCharge(params) {
 }
 
 // 小车回休息区
-export async function agvToRest(params) {
+export async function vehicleToRest(params) {
   return request(`/${NameSpace.Platform}/task/rest`, {
     method: 'POST',
     data: params,
@@ -160,16 +160,16 @@ export async function agvToRest(params) {
 }
 
 // 小车命令
-export async function agvCommand(AGVType, params) {
-  return request(`/${NameSpace[AGVType]}/vehicle/batchSendCommand`, {
+export async function vehicleCommand(VehicleType, params) {
+  return request(`/${NameSpace[VehicleType]}/vehicle/batchSendCommand`, {
     method: 'POST',
     data: params,
   });
 }
 
 // 发送小车命令
-export async function agvRemoteControl(AGVType, params) {
-  return request(`/${NameSpace[AGVType]}/vehicle/command`, {
+export async function vehicleRemoteControl(VehicleType, params) {
+  return request(`/${NameSpace[VehicleType]}/vehicle/command`, {
     method: 'POST',
     data: params,
   });
@@ -323,7 +323,7 @@ export async function closeSimulator() {
 }
 
 // 添加虚拟车
-export async function addSimulationAgv(params) {
+export async function addSimulationVehicle(params) {
   return request(`/${NameSpace.Platform}/simulator/vehicleLogin`, {
     method: 'POST',
     data: params,
@@ -331,7 +331,7 @@ export async function addSimulationAgv(params) {
 }
 
 // 批量添加模拟车
-export async function addSimulationAgvs(params) {
+export async function addSimulationVehicles(params) {
   return request(`/${NameSpace.Platform}/simulator/batchVehicleLogin`, {
     method: 'POST',
     data: params,
@@ -339,7 +339,7 @@ export async function addSimulationAgvs(params) {
 }
 
 // 更新模拟配置
-export async function fetchUpdateAGVConfig(params) {
+export async function fetchUpdateVehicleConfig(params) {
   return request(`/${NameSpace.Platform}/simulator/saveVehicleConfig`, {
     method: 'POST',
     data: params,
@@ -347,49 +347,49 @@ export async function fetchUpdateAGVConfig(params) {
 }
 
 // 获取车型模拟车配置
-export async function fetchSimulatorAGVConfig(robotType) {
-  return request(`/${NameSpace.Platform}/simulator/getVehicleConfig/${robotType}`, {
+export async function fetchSimulatorVehicleConfig(vehicleType) {
+  return request(`/${NameSpace.Platform}/simulator/getVehicleConfig/${vehicleType}`, {
     method: 'GET',
   });
 }
 
 // 获取模拟器小车相关状态
-export async function fetchSimulatorLoginAGVControlState() {
+export async function fetchSimulatorLoginVehicleControlState() {
   return request(`/${NameSpace.Platform}/simulator/getVehicleControl`, {
     method: 'GET',
   });
 }
 
 // 模拟小车松急停
-export async function fetchRunAGV(vehicleId) {
+export async function fetchRunVehicle(vehicleId) {
   return request(`/${NameSpace.Platform}/simulator/runVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车拍急停
-export async function fetchStopAGV(vehicleId) {
+export async function fetchStopVehicle(vehicleId) {
   return request(`/${NameSpace.Platform}/simulator/stopVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车开机
-export async function fetchOpenAGV(vehicleId) {
+export async function fetchOpenVehicle(vehicleId) {
   return request(`/${NameSpace.Platform}/simulator/openVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 模拟小车关机
-export async function fetchCloseAgv(vehicleId) {
+export async function fetchCloseVehicle(vehicleId) {
   return request(`/${NameSpace.Platform}/simulator/closeVehicle/${vehicleId}`, {
     method: 'GET',
   });
 }
 
 // 下线小车
-export async function fetchSimulatorAgvOffLine(params) {
+export async function fetchSimulatorVehicleOffLine(params) {
   return request(
     `/${NameSpace.Platform}/simulator/vehicleOffLine/${params.sectionId}/${params.vehicleId}`,
     { method: 'GET' },
@@ -397,9 +397,9 @@ export async function fetchSimulatorAgvOffLine(params) {
 }
 
 // 批量删除小车
-export async function fetchBatchDeleteSimulatorAgv(params) {
+export async function fetchBatchDeleteSimulatorVehicle(params) {
   return request(
-    `/${NameSpace.Platform}/simulator/batchVehicleDelete/${params.logicId}/${params.robotIds}`,
+    `/${NameSpace.Platform}/simulator/batchVehicleDelete/${params.logicId}/${params.vehicleIds}`,
     {
       method: 'DELETE',
     },
@@ -428,7 +428,7 @@ export async function getTunnelState() {
 }
 
 // 删除通道锁
-export async function deleteTunnelAgvLock(vehicleId) {
+export async function deleteTunnelVehicleLock(vehicleId) {
   return request(`/${NameSpace.Platform}/traffic/clearTunnelLock/${vehicleId}`, {
     method: 'GET',
   });

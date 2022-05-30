@@ -23,7 +23,7 @@ const {
 
 const MonitorSelectionPanel = (props) => {
   const { dispatch, height, selections, selectableType } = props;
-  const { allAGVs, latentPod } = props;
+  const { allVehicles, latentPod } = props;
   const currentLogic = getCurrentLogicAreaData('monitor');
 
   function filterSelectable(event, type) {
@@ -50,7 +50,7 @@ const MonitorSelectionPanel = (props) => {
         const selected = selections.filter((item) =>
           [LatentLifting, Tote, Sorter, ForkLifting].includes(item.type),
         );
-        return `${formatMessage({ id: 'app.vehicle' })} ${selected.length}/${allAGVs.length}`;
+        return `${formatMessage({ id: 'app.vehicle' })} ${selected.length}/${allVehicles.length}`;
       }
       case LatentPod: {
         const selected = selections.filter((item) => item.type === LatentPod);
@@ -140,10 +140,10 @@ const MonitorSelectionPanel = (props) => {
 };
 export default connect(({ monitor }) => {
   const {
-    allAGVs,
+    allVehicles,
     selections,
     selectableType,
     monitorLoad: { latentPod },
   } = monitor;
-  return { allAGVs, latentPod, selections, selectableType };
+  return { allVehicles, latentPod, selections, selectableType };
 })(memo(MonitorSelectionPanel));

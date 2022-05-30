@@ -2,9 +2,9 @@ import React, { memo } from 'react';
 import { Badge, Button } from 'antd';
 import Dictionary from '@/utils/Dictionary';
 import BatchUpgradingComponent from '@/pages/BatchUpgrading/BatchUpgradingComponent';
-import { formatMessage, getAgvStatusTag, getSuffix } from '@/utils/util';
+import { formatMessage, getVehicleStatusTag, getSuffix } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { AGVType } from '@/config/config';
+import { VehicleType } from '@/config/config';
 
 const { red, green } = Dictionary('color');
 
@@ -40,9 +40,9 @@ const OTA = (props) => {
       },
       {
         title: <FormattedMessage id="app.common.status" />,
-        dataIndex: 'agvStatus',
+        dataIndex: 'vehicleStatus',
         align: 'center',
-        render: (agvStatus) => getAgvStatusTag(agvStatus),
+        render: (vehicleStatus) => getVehicleStatusTag(vehicleStatus),
       },
 
       {
@@ -86,7 +86,7 @@ const OTA = (props) => {
         title: <FormattedMessage id="app.vehicle.firmwareStatus" />,
         dataIndex: 'fileStatus',
         align: 'center',
-        render: (text, record) => getAgvStatusTag(record.fileTaskType, record.fileStatus, record),
+        render: (text, record) => getVehicleStatusTag(record.fileTaskType, record.fileStatus, record),
       },
       {
         title: <FormattedMessage id="app.task.type" />,
@@ -94,7 +94,7 @@ const OTA = (props) => {
         align: 'center',
         render: (text) => {
           if (text === 'UPGRADE') {
-            return formatMessage({ id: 'app.activity.upgradeAGV' });
+            return formatMessage({ id: 'app.activity.upgradeVehicle' });
           } else if (text === 'DOWNLOAD') {
             return formatMessage({ id: 'app.activity.downloadLog' });
           } else if (text === 'UPLOAD') {
@@ -128,7 +128,7 @@ const OTA = (props) => {
   return (
     <BatchUpgradingComponent
       getColumn={getColumn} // 提供表格列数据
-      agvType={AGVType.LatentLifting} // 标记当前页面的车型
+      vehicleType={VehicleType.LatentLifting} // 标记当前页面的车型
       maintainFlag={true} //维护/取消维护
       uploadFlag={true} //上传固件
       upgradeFlag={true} //升级

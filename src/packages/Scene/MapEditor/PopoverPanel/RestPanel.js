@@ -46,10 +46,10 @@ const RestPanel = (props) => {
             value: cellIds,
           },
           {
-            field: 'agvTypes',
-            label: <FormattedMessage id={'app.agvType'} />,
+            field: 'vehicleTypes',
+            label: <FormattedMessage id={'app.vehicleType'} />,
             value: supportTypes
-              .map(({ agvTypes }) => agvTypes)
+              .map(({ vehicleTypes }) => vehicleTypes)
               .flat()
               .join(),
           },

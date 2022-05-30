@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import { fetchActiveMap, fetchCustomParamType } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import SelectCarType from '../HealthReport/AgvHealth/components/SelectCarType';
+import SelectCarType from '../HealthReport/VehicleHealth/components/SelectCarType';
 import DatePickerSelector from '@/packages/Report/components/DatePickerSelector';
 
 const LogSearchForm = (props) => {
@@ -13,21 +13,21 @@ const LogSearchForm = (props) => {
   const [form] = Form.useForm();
   const [optionsData, setOptionsData] = useState([
     {
-      code: 'AGV_ID',
-      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
+      code: 'Vehicle_ID',
+      name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
       value: {},
     },
     {
-      code: 'AGV_GROUP',
+      code: 'Vehicle_GROUP',
       name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
       value: {},
     },
     {
-      code: 'AGV_TYPE',
+      code: 'Vehicle_TYPE',
       name: <FormattedMessage id="app.common.type" />,
       value: {
-        LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
-        Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
+        LatentLifting: formatMessage({ id: 'app.vehicleType.LatentLifting' }),
+        Sorter: formatMessage({ id: 'app.vehicleType.Sorter' }),
       },
     },
   ]);
@@ -42,21 +42,21 @@ const LogSearchForm = (props) => {
         if (!dealResponse(modelTypes)) {
           const optionsData = [
             {
-              code: 'AGV_ID',
-              name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
+              code: 'Vehicle_ID',
+              name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
               value: {},
             },
             {
-              code: 'AGV_GROUP',
+              code: 'Vehicle_GROUP',
               name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-              value: modelTypes?.AGV_GROUP.options ?? {},
+              value: modelTypes?.Vehicle_GROUP.options ?? {},
             },
             {
-              code: 'AGV_TYPE',
+              code: 'Vehicle_TYPE',
               name: <FormattedMessage id="app.common.type" />,
               value: {
-                LatentLifting: formatMessage({ id: 'app.agvType.LatentLifting' }),
-                Sorter: formatMessage({ id: 'app.agvType.Sorter' }),
+                LatentLifting: formatMessage({ id: 'app.vehicleType.LatentLifting' }),
+                Sorter: formatMessage({ id: 'app.vehicleType.Sorter' }),
               },
             },
           ];
@@ -108,9 +108,9 @@ const LogSearchForm = (props) => {
         {/* 小车 */}
         <Col span={12}>
           <Form.Item
-            name={'agvSearch'}
+            name={'vehicleSearch'}
             label={<FormattedMessage id="app.vehicle" />}
-            initialValue={{ type: 'AGV_ID', code: [] }}
+            initialValue={{ type: 'Vehicle_ID', code: [] }}
           >
             <SelectCarType data={optionsData} />
           </Form.Item>

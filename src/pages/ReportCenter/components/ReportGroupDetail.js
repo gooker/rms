@@ -17,7 +17,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
 
 const ReportGroupDetail = (props) => {
-  const { agvType, gotoList, data } = props;
+  const { vehicleType, gotoList, data } = props;
 
   const [loading, setLoading] = useState(false);
   const [creationLoading, setCreationLoading] = useState(false);
@@ -25,13 +25,13 @@ const ReportGroupDetail = (props) => {
 
   /**
    * 数据源
-   * [{id: 1, name: 'AGV错误数据', url: '/latent-lifting/reportForm/getAgvErrorFormData'}]
+   * [{id: 1, name: 'Vehicle错误数据', url: '/latent-lifting/reportForm/getVehicleErrorFormData'}]
    */
   const [sourceURL, setSourceURL] = useState([]);
 
   /**
    * 各个数据源的维度
-   * {'/latent-lifting/reportForm/getAgvErrorFormData': [{…}, {…}, {…}, {…}]}
+   * {'/latent-lifting/reportForm/getVehicleErrorFormData': [{…}, {…}, {…}, {…}]}
    */
   const [dimensionDictionary, setDimensionDictionary] = useState({});
 
@@ -45,9 +45,9 @@ const ReportGroupDetail = (props) => {
   async function init() {
     setLoading(true);
     const promises = [
-      fetchDimensionDictionary(agvType),
-      fetchReportGroupDataById(agvType, { id: data.id }),
-      fetchReportSourceURL(agvType),
+      fetchDimensionDictionary(vehicleType),
+      fetchReportGroupDataById(vehicleType, { id: data.id }),
+      fetchReportSourceURL(vehicleType),
     ];
 
     try {
@@ -118,7 +118,7 @@ const ReportGroupDetail = (props) => {
             })
             .filter(Boolean),
         };
-        const response = await saveReportGroup(agvType, formTemplate);
+        const response = await saveReportGroup(vehicleType, formTemplate);
         if (
           !dealResponse(
             response,
@@ -227,7 +227,7 @@ const ReportGroupDetail = (props) => {
           name: data.name,
           details: [_formValues, ...groupDetails] || [],
         };
-        const response = await saveReportGroup(agvType, requestParam);
+        const response = await saveReportGroup(vehicleType, requestParam);
         if (!dealResponse(response, true)) {
           setModalVisible(false);
         }
@@ -263,7 +263,7 @@ const ReportGroupDetail = (props) => {
           {groupReports.length > 0 ? (
             <Row gutter={20}>
               <Reports
-                agvType={agvType}
+                vehicleType={vehicleType}
                 deletable={true}
                 groupReports={groupReports}
                 remove={onRemove}
@@ -290,7 +290,7 @@ const ReportGroupDetail = (props) => {
       >
         <ReportCreationModal
           creationLoading={creationLoading}
-          agvType={agvType}
+          vehicleType={vehicleType}
           source={sourceURL}
           createReport={createReport}
         />

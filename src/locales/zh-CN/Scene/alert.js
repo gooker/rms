@@ -6,7 +6,7 @@ export default {
 
   'app.alertCenter.alert': '告警',
   'app.alertCenter.TASK_ALERT': '任务告警',
-  'app.alertCenter.AGV_ALERT': '小车告警',
+  'app.alertCenter.Vehicle_ALERT': '小车告警',
   'app.alertCenter.SYSTEM_ALERT': '系统告警',
   'app.alertCenter.dismissed': '已解除',
   'app.alertCenter.undismissed': '未解除',

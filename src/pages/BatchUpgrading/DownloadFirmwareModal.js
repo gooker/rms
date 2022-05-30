@@ -30,9 +30,9 @@ export default class DownloadFirmwareModal extends Component {
   };
   formRef = React.createRef();
   async componentDidMount() {
-    const { agvtype } = this.props;
+    const { vehicletype } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
-    const response = await fetchFirmWarList(agvtype, sectionId);
+    const response = await fetchFirmWarList(vehicletype, sectionId);
     if (!dealResponse(response)) {
       this.setState({
         FileWarList: response,
@@ -55,7 +55,7 @@ export default class DownloadFirmwareModal extends Component {
     return (
       <div>
         <Form {...formItemAddLayout} ref={this.formRef}>
-          <Form.Item label={<FormattedMessage id="app.activity.selectedAGV" />}>
+          <Form.Item label={<FormattedMessage id="app.activity.selectedVehicle" />}>
             {selectedRow.map((record) => {
               return (
                 <Col span={3} key={record.vehicleId}>

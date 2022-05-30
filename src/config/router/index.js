@@ -14,7 +14,7 @@ import Carry from './carry.router';
 export default {
   [AppCode.SSO]: SSORouter,
   [AppCode.ResourceManage]: SourceManager,
-  // [AppCode.AgvManned]: AgvManned,
+  // [AppCode.VehicleManned]: VehicleManned,
   // [AppCode.Cleaning]: Cleaning,
   [AppCode.FlexibleSorting]: FlexibleSorting,
   // [AppCode.ForkLift]: ForkLift,

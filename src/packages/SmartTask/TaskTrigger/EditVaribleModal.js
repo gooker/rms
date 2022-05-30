@@ -39,13 +39,13 @@ const EditVaribleModal = (props) => {
   const OptionsData = [
     {
       code: 'Vehicle',
-      name: <FormattedMessage id='customTask.form.SPECIFY_AGV' />,
+      name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
       value: modelTypes?.Vehicle.options ?? {},
     },
     {
-      code: 'AGV_GROUP',
+      code: 'Vehicle_GROUP',
       name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-      value: modelTypes?.AGV_GROUP.options ?? {},
+      value: modelTypes?.Vehicle_GROUP.options ?? {},
     },
   ];
 
@@ -121,7 +121,7 @@ const EditVaribleModal = (props) => {
             >
               <ModelSelection
                 modelTypes={modelTypes}
-                exclude={['Vehicle', 'AGV_GROUP']}
+                exclude={['Vehicle', 'Vehicle_GROUP']}
                 disabled={false}
               />
             </Form.Item>,

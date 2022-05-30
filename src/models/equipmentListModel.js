@@ -42,7 +42,7 @@ export default {
         ...action.payload,
       };
     },
-    saveAllRobots(state, action) {
+    saveAllVehicles(state, action) {
       return {
         ...state,
         allDevices: action.payload,
