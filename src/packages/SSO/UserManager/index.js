@@ -464,7 +464,7 @@ class UserManager extends Component {
           footer={null}
           maskClosable={false}
           style={{ top: 30 }}
-          width={600}
+          width={700}
           visible={addUserVisible}
           title={
             !isNull(updateItem) ? (

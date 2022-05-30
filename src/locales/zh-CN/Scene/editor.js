@@ -147,7 +147,8 @@ export default {
   'editor.intersection.isTrafficCell': '交通管控',
   'editor.elevator.location': '电梯点',
   'editor.elevator.singleDoor': '单门',
-  'editor.elevator.doubleDoor': '双门',
+  'editor.tunnel.giveWay': '避让方向',
+  'editor.tunnel.giveWayDirection': '避让规则',
 
   // 急停区
   'editor.emergency.mode': '模式',

@@ -12,9 +12,6 @@ settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
 
 // 判定当前是否是产品环境
 window.$$isProduction = isPlainObject(window.extraConfig);
-if (!window.$$isProduction) {
-  window.localStorage.setItem('dev', 'true');
-}
 
 // 全局错误处理(尝试版)
 // window.onerror = function (message, source, lineno, colno, error) {

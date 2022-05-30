@@ -1,6 +1,13 @@
 import React from 'react';
 import { IconFont } from '@/components/IconFont';
-import { BankOutlined, DropboxOutlined, EyeOutlined, SettingOutlined, StopOutlined } from '@ant-design/icons';
+import {
+  BankOutlined,
+  DropboxOutlined,
+  EyeOutlined,
+  NodeExpandOutlined,
+  SettingOutlined,
+  StopOutlined,
+} from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
@@ -132,11 +139,11 @@ export const EditorRightTools = [
     value: RightCategory.Rest,
     icon: <IconFont type={'icon-rest2'} />,
   },
-  // {
-  //   label: <FormattedMessage id={'app.map.aisle'} />,
-  //   value: RightCategory.Aisle,
-  //   icon: <NodeExpandOutlined />,
-  // },
+  {
+    label: <FormattedMessage id={'app.map.aisle'} />,
+    value: RightCategory.Aisle,
+    icon: <NodeExpandOutlined />,
+  },
   {
     label: <FormattedMessage id={'app.map.delivery'} />,
     value: RightCategory.Delivery,

@@ -16,6 +16,10 @@ class App extends Component {
   };
 
   async componentDidMount() {
+    if (!window.$$isProduction) {
+      window.localStorage.setItem('dev', 'true');
+    }
+
     try {
       const defaultAPI = requestAPI();
       const customEnvironments = getCustomEnvironments();

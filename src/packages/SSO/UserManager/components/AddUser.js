@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Form, Select, Input, Button, Modal } from 'antd';
+import { Button, Form, Input, Modal, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import TimeZone from '@/components/TimeZone';
 import { generateAdminTypeOptions } from '../userManagerUtils';
-import { isStrictNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 
 const { Option } = Select;
-const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 18);
+const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 
 @connect(({ global }) => ({
   systemLanguage: global.systemLanguage,
