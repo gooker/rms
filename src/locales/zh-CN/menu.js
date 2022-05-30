@@ -29,12 +29,12 @@ export default {
   'menu.storage.management': '储位列表',
 
   // 车辆
-  'menu.agv': '车辆',
-  'menu.agv.customType': '车辆类型',
-  'menu.agv.list': '车辆列表',
-  'menu.agv.faultManagement': '车辆故障查询',
-  'menu.agv.realTime': '车辆详情',
-  'menu.agv.OTA': 'OTA',
+  'menu.vehicle': '车辆',
+  'menu.vehicle.customType': '车辆类型',
+  'menu.vehicle.list': '车辆列表',
+  'menu.vehicle.faultManagement': '车辆故障查询',
+  'menu.vehicle.realTime': '车辆详情',
+  'menu.vehicle.OTA': 'OTA',
 
   // 充电桩
   'menu.charger': '充电桩',
@@ -115,7 +115,7 @@ export default {
 
   // 报表数据
   'menu.healthReport': '健康报表',
-  'menu.healthReport.agv': '小车健康',
+  'menu.healthReport.vehicle': '小车健康',
   'menu.healthReport.network': '网络健康',
   'menu.healthReport.qrcode': '二维码健康',
   'menu.healthReport.qrcode.ground': '地面',

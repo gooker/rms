@@ -34,7 +34,7 @@ const AGVFormComponent = (props) => {
     // >
     <>
       <Form.Item
-        label={formatMessage({ id: 'app.agv.id' })}
+        label={formatMessage({ id: 'app.vehicle.id' })}
         name={'vehicleId'}
         rules={[{ required: true }]}
         initialValue={value?.vehicleId}

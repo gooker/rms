@@ -7,8 +7,8 @@ const ToteQrcodeHealth = (props) => {
   return (
     <ScanOrFaultComponent
       codeDomId="codeHealthByAgvIdHistory"
-      chartTitle={formatMessage({ id: 'reportCenter.agv.scancode' })}
-      chartSubTitle={formatMessage({ id: 'reportCenter.way.agv' })}
+      chartTitle={formatMessage({ id: 'reportCenter.vehicle.scancode' })}
+      chartSubTitle={formatMessage({ id: 'reportCenter.way.vehicle' })}
       dateDomId="codeHealthByDateHistory"
       originData={originData}
       keyData={keyDataMap}

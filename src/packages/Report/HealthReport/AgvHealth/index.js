@@ -15,7 +15,7 @@ import commonStyles from '@/common.module.less';
 
 const { TabPane } = Tabs;
 const colums = {
-  vehicleId: formatMessage({ id: 'app.agv' }),
+  vehicleId: formatMessage({ id: 'app.vehicle' }),
   time: formatMessage({ id: 'app.time' }),
 };
 
@@ -150,11 +150,11 @@ const HealthCar = (props) => {
     const error = XLSX.utils.json_to_sheet(generateEveryType(statuserrorOriginData, keyErrorData));
     const fault = XLSX.utils.json_to_sheet(generateEveryType(faultOriginData, keyFaultData));
 
-    XLSX.utils.book_append_sheet(wb, code, formatMessage({ id: 'reportCenter.agv.scancode' }));
-    XLSX.utils.book_append_sheet(wb, offline, formatMessage({ id: 'reportCenter.agv.offline' }));
-    XLSX.utils.book_append_sheet(wb, error, formatMessage({ id: 'reportCenter.agv.error' }));
-    XLSX.utils.book_append_sheet(wb, fault, formatMessage({ id: 'reportCenter.agv.fault' }));
-    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.healthReport.agv' })}.xlsx`);
+    XLSX.utils.book_append_sheet(wb, code, formatMessage({ id: 'reportCenter.vehicle.scancode' }));
+    XLSX.utils.book_append_sheet(wb, offline, formatMessage({ id: 'reportCenter.vehicle.offline' }));
+    XLSX.utils.book_append_sheet(wb, error, formatMessage({ id: 'reportCenter.vehicle.error' }));
+    XLSX.utils.book_append_sheet(wb, fault, formatMessage({ id: 'reportCenter.vehicle.fault' }));
+    XLSX.writeFile(wb, `${formatMessage({ id: 'menu.healthReport.vehicle' })}.xlsx`);
   }
 
   return (
@@ -163,7 +163,7 @@ const HealthCar = (props) => {
 
       <Spin spinning={loading}>
         <Tabs centered defaultActiveKey="1" onChange={setActiveTab}>
-          <TabPane key={'scan'} tab={formatMessage({ id: 'reportCenter.agv.scancode' })}>
+          <TabPane key={'scan'} tab={formatMessage({ id: 'reportCenter.vehicle.scancode' })}>
             <ScanCodeComponent
               originData={scanOriginData}
               originIds={getAllCellId(scanOriginData, 'vehicleId')}
@@ -171,7 +171,7 @@ const HealthCar = (props) => {
               activeTab={activeTab}
             />
           </TabPane>
-          <TabPane key={'offline'} tab={formatMessage({ id: 'reportCenter.agv.offline' })}>
+          <TabPane key={'offline'} tab={formatMessage({ id: 'reportCenter.vehicle.offline' })}>
             <AgvOfflineComponent
               originData={offlineOriginData}
               originIds={getAllCellId(offlineOriginData, 'vehicleId')}
@@ -179,7 +179,7 @@ const HealthCar = (props) => {
               activeTab={activeTab}
             />
           </TabPane>
-          <TabPane key={'statuserror'} tab={formatMessage({ id: 'reportCenter.agv.error' })}>
+          <TabPane key={'statuserror'} tab={formatMessage({ id: 'reportCenter.vehicle.error' })}>
             <AgvErrorComponent
               originData={statuserrorOriginData}
               originIds={getAllCellId(statuserrorOriginData, 'vehicleId')}
@@ -187,7 +187,7 @@ const HealthCar = (props) => {
               activeTab={activeTab}
             />
           </TabPane>
-          <TabPane key={'fault'} tab={formatMessage({ id: 'reportCenter.agv.fault' })}>
+          <TabPane key={'fault'} tab={formatMessage({ id: 'reportCenter.vehicle.fault' })}>
             <RobotFaultComponent
               originData={faultOriginData}
               originIds={getAllCellId(faultOriginData, 'vehicleId')}

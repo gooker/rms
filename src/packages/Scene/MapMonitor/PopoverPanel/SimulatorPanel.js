@@ -94,7 +94,7 @@ const SimulatorPanel = (props) => {
         if (text) {
           return formatMessage({ id: 'monitor.simulator.list.snapStop' });
         }
-        return formatMessage({ id: 'app.agv.normal' });
+        return formatMessage({ id: 'app.vehicle.normal' });
       },
     },
     {
@@ -314,7 +314,7 @@ const SimulatorPanel = (props) => {
                   }}
                 >
                   <FormattedMessage id="app.button.add" />
-                  <FormattedMessage id={'app.agv'} />
+                  <FormattedMessage id={'app.vehicle'} />
                 </Button>
                 <Button
                   size={size}

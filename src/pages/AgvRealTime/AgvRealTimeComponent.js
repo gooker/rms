@@ -123,7 +123,7 @@ class AgvRealTimeComponent extends React.Component {
       <div className={commonStyles.commonPageStyle}>
         <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 20 }}>
           <Col span={16}>
-            <Form.Item label={<FormattedMessage id="app.agv.id" />}>
+            <Form.Item label={<FormattedMessage id="app.vehicle.id" />}>
               <Select
                 allowClear
                 showSearch
@@ -191,7 +191,7 @@ class AgvRealTimeComponent extends React.Component {
                 tab={
                   <span>
                     <FileTextOutlined />
-                    <FormattedMessage id={'app.agv.taskRecord'} />
+                    <FormattedMessage id={'app.vehicle.taskRecord'} />
                   </span>
                 }
               >
@@ -226,7 +226,7 @@ class AgvRealTimeComponent extends React.Component {
                 tab={
                   <span>
                     <WarningOutlined />
-                    <FormattedMessage id={'app.agv.errorRecord'} />
+                    <FormattedMessage id={'app.vehicle.errorRecord'} />
                   </span>
                 }
               >

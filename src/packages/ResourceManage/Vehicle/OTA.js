@@ -14,25 +14,25 @@ const OTA = (props) => {
   function getColumn(operate) {
     return [
       {
-        title: <FormattedMessage id='app.agv.id' />,
+        title: <FormattedMessage id='app.vehicle.id' />,
         dataIndex: 'vehicleId',
         align: 'center',
       },
       {
-        title: <FormattedMessage id="app.agv.maintenanceState" />,
+        title: <FormattedMessage id="app.vehicle.maintenanceState" />,
         dataIndex: 'disabled',
         align: 'center',
         render: (text) => {
           if (!text) {
             return (
               <span style={{ color: green }}>
-                <FormattedMessage id="app.agv.normal" />
+                <FormattedMessage id="app.vehicle.normal" />
               </span>
             );
           } else {
             return (
               <span style={{ color: red }}>
-                <FormattedMessage id="app.agv.underMaintenance" />
+                <FormattedMessage id="app.vehicle.underMaintenance" />
               </span>
             );
           }
@@ -46,7 +46,7 @@ const OTA = (props) => {
       },
 
       {
-        title: <FormattedMessage id="app.agv.battery" />,
+        title: <FormattedMessage id="app.vehicle.battery" />,
         dataIndex: 'battery',
         align: 'center',
         render: (text) => {
@@ -62,7 +62,7 @@ const OTA = (props) => {
         },
       },
       {
-        title: <FormattedMessage id="app.agv.batteryVoltage" />,
+        title: <FormattedMessage id="app.vehicle.batteryVoltage" />,
         dataIndex: 'batteryVoltage',
         align: 'center',
         render: (text) => {
@@ -78,12 +78,12 @@ const OTA = (props) => {
         },
       },
       {
-        title: <FormattedMessage id="app.agv.version" />,
+        title: <FormattedMessage id="app.vehicle.version" />,
         dataIndex: 'version',
         align: 'center',
       },
       {
-        title: <FormattedMessage id="app.agv.firmwareStatus" />,
+        title: <FormattedMessage id="app.vehicle.firmwareStatus" />,
         dataIndex: 'fileStatus',
         align: 'center',
         render: (text, record) => getAgvStatusTag(record.fileTaskType, record.fileStatus, record),

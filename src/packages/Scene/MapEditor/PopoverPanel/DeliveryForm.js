@@ -136,7 +136,7 @@ const DeliveryForm = (props) => {
         <Form.Item
           {...formLayout}
           name={'agvDirection'}
-          label={formatMessage({ id: 'app.agv.direction' })}
+          label={formatMessage({ id: 'app.vehicle.direction' })}
           initialValue={delivery?.agvDirection}
         >
           <DirectionSelector />

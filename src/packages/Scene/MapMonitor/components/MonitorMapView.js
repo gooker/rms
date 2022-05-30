@@ -180,11 +180,11 @@ class MonitorMapView extends BaseMap {
         }
         break;
       }
-      case 'robot': {
-        const robot = this.idAGVMap.get(`${id}`);
-        if (robot) {
-          x = robot.x;
-          y = robot.y;
+      case 'vehicle': {
+        const vehicle = this.idAGVMap.get(`${id}`);
+        if (vehicle) {
+          x = vehicle.x;
+          y = vehicle.y;
           scaled = 0.3;
         }
         break;
@@ -310,7 +310,7 @@ class MonitorMapView extends BaseMap {
       const { mongodbAGV = {}, redisAGV = {} } = response;
       dispatch({
         type: 'monitor/saveCheckingElement',
-        payload: { type: ElementType.AGV, payload: { ...mongodbAGV, ...redisAGV } },
+        payload: { type: ElementType.Vehicle, payload: { ...mongodbAGV, ...redisAGV } },
       });
     }
   };
@@ -485,8 +485,8 @@ class MonitorMapView extends BaseMap {
   };
 
   updateLatentAGV = (allAgvStatus) => {
-    for (const agv of allAgvStatus) {
-      const unifiedAgvState = unifyAgvState(agv);
+    for (const vehicle of allAgvStatus) {
+      const unifiedAgvState = unifyAgvState(vehicle);
       const {
         x,
         y,
@@ -531,7 +531,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(latentAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, latentAGV, AGVType.LatentLifting);
+      this.updateAgvCommonState(vehicle.c, unifiedAgvState, latentAGV, AGVType.LatentLifting);
 
       // 卸货: podId不存在但是小车还有货物的时候需要卸货 --> {robotId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, podId: 0}
       if (!hasLatentPod(podId) && latentAGV && latentAGV.pod) {
@@ -748,8 +748,8 @@ class MonitorMapView extends BaseMap {
   };
 
   updateToteAGV = (toteAGVStatus) => {
-    for (const agv of toteAGVStatus) {
-      const unifiedAgvState = unifyAgvState(agv);
+    for (const vehicle of toteAGVStatus) {
+      const unifiedAgvState = unifyAgvState(vehicle);
       const {
         x,
         y,
@@ -769,19 +769,19 @@ class MonitorMapView extends BaseMap {
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeToteAGV(robotId);
+        this.removeToteAGV(vehicleId);
         this.refresh();
         return;
       }
 
-      let toteAGV = this.idAGVMap.get(`${robotId}`);
+      let toteAGV = this.idAGVMap.get(`${vehicleId}`);
       // 如果小车不存在
       if (isNull(toteAGV)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
         toteAGV = this.addToteAGV({
           x,
           y,
-          robotId,
+          vehicleId,
           shelfs,
           mainTain,
           toteCodes,
@@ -795,7 +795,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(toteAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, toteAGV, AGVType.Tote);
+      this.updateAgvCommonState(vehicle.c, unifiedAgvState, toteAGV, AGVType.Tote);
 
       // 更新料箱车货架
       if (shelfs && toteAGV.shelfs !== shelfs) {
@@ -812,8 +812,8 @@ class MonitorMapView extends BaseMap {
 
       // 渲染料箱任务实时路径(北斗七星图)
       if (Array.isArray(this.toteTaskRealtimeData) && this.toteTaskRealtimeData.length > 0) {
-        const realtime = find(this.toteTaskRealtimeData, { rid: robotId });
-        realtime && this.renderToteTaskRealtimePaths(robotId, x, y, realtime.bcodes ?? []);
+        const realtime = find(this.toteTaskRealtimeData, { rid: vehicleId });
+        realtime && this.renderToteTaskRealtimePaths(vehicleId, x, y, realtime.bcodes ?? []);
       }
 
       toteAGV.dirty = true;
@@ -963,8 +963,8 @@ class MonitorMapView extends BaseMap {
   };
 
   updateSorterAGV = (allAgvStatus) => {
-    for (const agv of allAgvStatus) {
-      const unifiedAgvState = unifyAgvState(agv);
+    for (const vehicle of allAgvStatus) {
+      const unifiedAgvState = unifyAgvState(vehicle);
       const {
         x,
         y,
@@ -1008,7 +1008,7 @@ class MonitorMapView extends BaseMap {
       if (isNull(sorterAGV)) return;
 
       // 更新通用状态
-      this.updateAgvCommonState(agv.c, unifiedAgvState, sorterAGV, AGVType.Sorter);
+      this.updateAgvCommonState(vehicle.c, unifiedAgvState, sorterAGV, AGVType.Sorter);
 
       // 更新小车车身货架
       sorterAGV.updatePod(sorterPod);
@@ -1354,7 +1354,7 @@ class MonitorMapView extends BaseMap {
     this.toteTaskRealtimePath = [];
   };
 
-  renderToteTaskRealtimePaths = (robotId, agvX, agvY, data) => {
+  renderToteTaskRealtimePaths = (vehicleId, agvX, agvY, data) => {
     // 绘制
     const pathXY = [{ x: agvX, y: agvY }];
     data.forEach(({ bc, t }) => {
@@ -1521,19 +1521,19 @@ class MonitorMapView extends BaseMap {
   // ************************ 小车标记 ********************** //
   markWorkStationAgv = (agvs, isShown, color, workStationId) => {
     // 先做清理操作, 只重置正在为该工作站服务的小车
-    this.idAGVMap.forEach((agv) => {
-      if (agv.employer === workStationId) {
-        agv.switchMarkerShown(false, null, null);
+    this.idAGVMap.forEach((vehicle) => {
+      if (vehicle.employer === workStationId) {
+        vehicle.switchMarkerShown(false, null, null);
       }
     });
     const workStation = this.workStationMap.get(workStationId);
     const renderColor = color ?? workStation.employeeColor; // 边缘Case: 请求发送完成到请求返回中间时间工作站被取消显示小车
     if (isShown && renderColor) {
       agvs.forEach((vehicleId) => {
-        const agv = this.idAGVMap.get(vehicleId);
-        if (agv && workStation) {
+        const vehicle = this.idAGVMap.get(vehicleId);
+        if (vehicle && workStation) {
           // 这里 color有可能是null, 是因为该方法是轮询机制调用的
-          agv.switchMarkerShown(true, workStationId, renderColor);
+          vehicle.switchMarkerShown(true, workStationId, renderColor);
         }
       });
     }
@@ -1548,9 +1548,9 @@ class MonitorMapView extends BaseMap {
   // ************************ 通用站点标记 小车标记 ********************** //
   markCommonPointAgv = (agvs, isShown, color, commonPointId) => {
     // 先做清理操作, 只重置正在为该工作站服务的小车
-    this.idAGVMap.forEach((agv) => {
-      if (agv.employer === commonPointId) {
-        agv.switchMarkerShown(false, null, null);
+    this.idAGVMap.forEach((vehicle) => {
+      if (vehicle.employer === commonPointId) {
+        vehicle.switchMarkerShown(false, null, null);
       }
     });
 
@@ -1558,10 +1558,10 @@ class MonitorMapView extends BaseMap {
     const renderColor = color ?? commonPoint.employeeColor; // 边缘Case: 请求发送完成到请求返回中间时间工作站被取消显示小车
     if (isShown && renderColor) {
       agvs.forEach((vehicleId) => {
-        const agv = this.idAGVMap.get(vehicleId);
-        if (agv && commonPoint) {
+        const vehicle = this.idAGVMap.get(vehicleId);
+        if (vehicle && commonPoint) {
           // 这里 color有可能是null, 是因为该方法是轮询机制调用的
-          agv.switchMarkerShown(true, commonPointId, renderColor);
+          vehicle.switchMarkerShown(true, commonPointId, renderColor);
         }
       });
     }

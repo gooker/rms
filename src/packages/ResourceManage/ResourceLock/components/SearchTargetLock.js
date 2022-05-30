@@ -45,7 +45,7 @@ const SearchTargetLock = (props) => {
         {!verhicleHide && (
           <Col span={4}>
             {/* 小车id */}
-            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
               <Input allowClear />
             </Form.Item>
           </Col>

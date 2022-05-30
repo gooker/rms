@@ -637,8 +637,8 @@ export const generateTableData = (originalData = {}, agvData = []) => {
   firstTimeDataMap.set('taskAllTime', 0);
   let currentCellIdData = {}; // 根据agvId 每个key 求和
 
-  currentAxisData.map((agv) => {
-    currentCellIdData[agv] = {};
+  currentAxisData.map((vehicle) => {
+    currentCellIdData[vehicle] = {};
   });
 
   Object.values(originalData).forEach((record) => {

@@ -68,7 +68,7 @@ const StandbyConditions = (props) => {
                     <Form.Item noStyle {...field}>
                       <ModelSelection
                         modelTypes={modelTypes}
-                        exclude={['AGV', 'AGV_GROUP']}
+                        exclude={['Vehicle', 'AGV_GROUP']}
                         disabled={false}
                       />
                     </Form.Item>

@@ -36,7 +36,7 @@ const AgvListTools = (props) => {
   function moveOutAgv() {
     const agvIds = selectedRows.map(({ vehicleId }) => vehicleId);
     RmsConfirm({
-      content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
+      content: formatMessage({ id: 'app.vehicle.moveOut.confirm' }),
       onOk: async () => {
         //
       },
@@ -50,7 +50,7 @@ const AgvListTools = (props) => {
   function cancelRegister() {
     const agvIds = selectedRows.map(({ vehicleId }) => vehicleId);
     RmsConfirm({
-      content: formatMessage({ id: 'app.agv.moveOut.confirm' }),
+      content: formatMessage({ id: 'app.vehicle.moveOut.confirm' }),
       onOk: async () => {
         const response = await logOutRobot({ ids: agvIds });
         if (!dealResponse(response, 1)) {
@@ -71,7 +71,7 @@ const AgvListTools = (props) => {
   return (
     <div>
       <Row className={commonStyles.tableToolLeft}>
-        <Form.Item label={formatMessage({ id: 'app.agv.id' })}>
+        <Form.Item label={formatMessage({ id: 'app.vehicle.id' })}>
           <Select
             allowClear
             mode="multiple"
@@ -107,7 +107,7 @@ const AgvListTools = (props) => {
             <DisconnectOutlined /> 注销
           </Button>
           {/*<Button disabled={selectedRows.length === 0} onClick={moveOutAgv}>*/}
-          {/*  <ToTopOutlined /> <FormattedMessage id='app.agv.moveout' />*/}
+          {/*  <ToTopOutlined /> <FormattedMessage id='app.vehicle.moveout' />*/}
           {/*</Button>*/}
           {/*<Dropdown*/}
           {/*  overlay={*/}
@@ -121,16 +121,16 @@ const AgvListTools = (props) => {
           {/*      }}*/}
           {/*    >*/}
           {/*      <Menu.Item key="hardware">*/}
-          {/*        <FormattedMessage id={'app.agv.exportHardwareInfo'} />*/}
+          {/*        <FormattedMessage id={'app.vehicle.exportHardwareInfo'} />*/}
           {/*      </Menu.Item>*/}
           {/*      <Menu.Item key="carInfo">*/}
-          {/*        <FormattedMessage id={'app.agv.exportAgvInfo'} />*/}
+          {/*        <FormattedMessage id={'app.vehicle.exportAgvInfo'} />*/}
           {/*      </Menu.Item>*/}
           {/*    </Menu>*/}
           {/*  }*/}
           {/*>*/}
           {/*  <Button>*/}
-          {/*    <FormattedMessage id={'app.agv.infoExport'} /> <DownOutlined />*/}
+          {/*    <FormattedMessage id={'app.vehicle.infoExport'} /> <DownOutlined />*/}
           {/*  </Button>*/}
           {/*</Dropdown>*/}
           <Button

@@ -8,8 +8,8 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.Report}/healthReport/agv`,
-        name: 'agv',
+        path: `/${AppCode.Report}/healthReport/vehicle`,
+        name: 'vehicle',
         component: '/Report/HealthReport/AgvHealth/index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },

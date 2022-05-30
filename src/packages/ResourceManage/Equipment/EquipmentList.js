@@ -48,7 +48,7 @@ const EquipmentList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv.port" />,
+      title: <FormattedMessage id="app.vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },
@@ -92,7 +92,7 @@ const EquipmentList = (props) => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id="app.agv.addingTime" />,
+      title: <FormattedMessage id="app.vehicle.addingTime" />,
       dataIndex: 'createDate',
       align: 'center',
       render: (text, record, index, flag) => {

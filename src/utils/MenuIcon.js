@@ -57,7 +57,7 @@ export default {
   translate: <TranslationOutlined />,
   environment: <EnvironmentOutlined />,
   lock: <LockOutlined />,
-  agv: <CarOutlined />,
+  vehicle: <CarOutlined />,
   user: <UserOutlined />,
   home: <HomeOutlined />,
   ie: <IeOutlined />,

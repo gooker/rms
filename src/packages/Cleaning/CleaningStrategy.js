@@ -204,7 +204,7 @@ const CleaningStrategy = (props) => {
                       {
                         pattern: /^[0-9]*$/,
                         message: formatMessage({
-                          id: 'lockManage.robot.number.required',
+                          id: 'lockManage.vehicle.number.required',
                         }),
                       },
                     ]}

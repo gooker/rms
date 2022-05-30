@@ -7,8 +7,8 @@ const RobotFaultComponent = (props) => {
   return (
     <ScanOrFaultComponent
       codeDomId="malfunctionHealthByIdHistory"
-      chartTitle={formatMessage({ id: 'reportCenter.agv.fault' })}
-      chartSubTitle={formatMessage({ id: 'reportCenter.way.agv' })}
+      chartTitle={formatMessage({ id: 'reportCenter.vehicle.fault' })}
+      chartSubTitle={formatMessage({ id: 'reportCenter.way.vehicle' })}
       dateDomId="malfunctionHealthBydateHistory"
       originData={originData}
       keyData={keyDataMap}

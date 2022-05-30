@@ -244,7 +244,7 @@ class DashboardComponent extends PureComponent {
       {
         name: formatMessage({ id: 'app.task.state.New' }),
         type: 'bar',
-        stack: formatMessage({ id: 'monitor.exhibition.agv.total' }),
+        stack: formatMessage({ id: 'monitor.exhibition.vehicle.total' }),
         itemStyle: {
           color: 'rgba(1,141,246,0.7)',
         },
@@ -254,7 +254,7 @@ class DashboardComponent extends PureComponent {
       {
         name: formatMessage({ id: 'app.task.state.Executing' }),
         type: 'bar',
-        stack: formatMessage({ id: 'monitor.exhibition.agv.total' }),
+        stack: formatMessage({ id: 'monitor.exhibition.vehicle.total' }),
         itemStyle: {
           color: 'rgba(47,137,73,0.7)',
         },
@@ -263,7 +263,7 @@ class DashboardComponent extends PureComponent {
       {
         name: formatMessage({ id: 'app.task.state.Error' }),
         type: 'bar',
-        stack: formatMessage({ id: 'monitor.exhibition.agv.total' }),
+        stack: formatMessage({ id: 'monitor.exhibition.vehicle.total' }),
         itemStyle: {
           color: 'rgba(186,47,53,0.7)',
         },

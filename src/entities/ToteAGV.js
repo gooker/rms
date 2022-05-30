@@ -19,7 +19,7 @@ export default class ToteAGV extends PIXI.Container {
     this.currentCellId = props.cellId;
     this.angle = props.angle;
     this.alpha = GlobalAlpha;
-    this.zIndex = zIndex.agv;
+    this.zIndex = zIndex.vehicle;
     this.state = props.state;
     this.battery = props.battery;
     this.mainTain = props.mainTain;
@@ -46,11 +46,11 @@ export default class ToteAGV extends PIXI.Container {
     this.addErrorLevelIcon();
 
     if (props.active) {
-      this.agv.interactive = true;
-      this.agv.buttonMode = true;
-      this.agv.interactiveChildren = false;
-      this.agv.on('click', () => props.checkAGV(this.id, this.type));
-      this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
+      this.vehicle.interactive = true;
+      this.vehicle.buttonMode = true;
+      this.vehicle.interactiveChildren = false;
+      this.vehicle.on('click', () => props.checkAGV(this.id, this.type));
+      this.vehicle.on('rightclick', () => props.simpleCheckAgv(this.id));
     }
   }
 
@@ -66,11 +66,11 @@ export default class ToteAGV extends PIXI.Container {
       return;
     }
     const toteAGVTexture = getTextureFromResources(toteState);
-    this.agv = new PIXI.Sprite(toteAGVTexture);
-    this.agv.anchor.set(0.5);
-    this.agv.width = ToteAGVSize.width;
-    this.agv.height = ToteAGVSize.height;
-    this.addChild(this.agv);
+    this.vehicle = new PIXI.Sprite(toteAGVTexture);
+    this.vehicle.anchor.set(0.5);
+    this.vehicle.width = ToteAGVSize.width;
+    this.vehicle.height = ToteAGVSize.height;
+    this.addChild(this.vehicle);
   }
 
   addIdText() {
@@ -104,7 +104,7 @@ export default class ToteAGV extends PIXI.Container {
       console.warn(`无法识别的小车状态: ${agvState}, 小车: ${this.id}`);
       return;
     }
-    this.agv.texture = agvTexture;
+    this.vehicle.texture = agvTexture;
     this.stateIcon.texture = getTextureFromResources(state);
 
     if (state === 'offline') {
@@ -120,7 +120,7 @@ export default class ToteAGV extends PIXI.Container {
     this.AGVOfflineSprite.alpha = 0.8;
     this.AGVOfflineSprite.anchor.set(0.5);
     this.AGVOfflineSprite.zIndex = 100;
-    this.agv.addChild(this.AGVOfflineSprite);
+    this.vehicle.addChild(this.AGVOfflineSprite);
   }
 
   //  小车显示错误等级 0:无错误; 1:error错误;  2:warn错误; 3:info错误
@@ -132,7 +132,7 @@ export default class ToteAGV extends PIXI.Container {
       this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
       this.AGVErrorSprite.anchor.set(0.5);
       this.AGVErrorSprite.setTransform(0, 0, 0.5, 0.5);
-      this.agv.addChild(this.AGVErrorSprite);
+      this.vehicle.addChild(this.AGVErrorSprite);
     }
     if (this.errorLevel === 0) {
       this.AGVErrorSprite.visible = false;
@@ -174,11 +174,11 @@ export default class ToteAGV extends PIXI.Container {
     const spannerTexture = getTextureFromResources('maintain');
     const spannerSprite = new PIXI.Sprite(spannerTexture);
     spannerSprite.anchor.set(0.5);
-    const x = this.agv.width / 2 + 60;
+    const x = this.vehicle.width / 2 + 60;
     const y = 200;
     spannerSprite.setTransform(x, y, 0.25, 0.25, 0, 0, 0, 0);
     this.spannerSprite = spannerSprite;
-    this.agv.addChild(spannerSprite);
+    this.vehicle.addChild(spannerSprite);
   }
 
   updateMainTainState(mainTain) {
@@ -282,7 +282,7 @@ export default class ToteAGV extends PIXI.Container {
     this.agvManuallySprite.anchor.set(0.5);
     this.agvManuallySprite.zIndex = 100;
     this.agvManuallySprite.visible = this.manualMode;
-    this.agv.addChild(this.agvManuallySprite);
+    this.vehicle.addChild(this.agvManuallySprite);
   }
 
   updateManuallyMode(manualMode) {
@@ -296,7 +296,7 @@ export default class ToteAGV extends PIXI.Container {
     this.holdingSprite = new PIXI.Sprite(holdingTexture);
     this.holdingSprite.anchor.set(0.5);
     this.holdingSprite.setTransform(-20, -115, 0.6, 0.55, -Math.PI / 2);
-    this.agv.addChild(this.holdingSprite);
+    this.vehicle.addChild(this.holdingSprite);
   }
 
   // Marker

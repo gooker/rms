@@ -320,7 +320,7 @@ const StationForm = (props) => {
             <Form.Item
               name={'toteAgvDirection'}
               initialValue={station?.toteAgvDirection}
-              label={formatMessage({ id: 'app.agv.direction' })}
+              label={formatMessage({ id: 'app.vehicle.direction' })}
             >
               <AngleSelector getAngle />
             </Form.Item>

@@ -534,7 +534,7 @@ export const MockMapWithProgram = {
                       description: '小车Id',
                       isOptional: null,
                       name: '小车Id',
-                      code: 'AGV',
+                      code: 'Vehicle',
                     },
                     {
                       key: null,
@@ -589,7 +589,7 @@ export const MockMapWithProgram = {
                       description: '小车Id',
                       isOptional: null,
                       name: '小车Id',
-                      code: 'AGV',
+                      code: 'Vehicle',
                     },
                     {
                       key: null,
@@ -644,7 +644,7 @@ export const MockMapWithProgram = {
                       description: '小车Id',
                       isOptional: null,
                       name: '小车Id',
-                      code: 'AGV',
+                      code: 'Vehicle',
                     },
                     {
                       key: null,
@@ -863,7 +863,7 @@ export const ProgramingConfigurationList = {
           description: '小车Id',
           isOptional: null,
           name: '小车Id',
-          code: 'AGV',
+          code: 'Vehicle',
         },
         {
           key: null,
@@ -917,7 +917,7 @@ export const ProgramingConfigurationList = {
           description: '小车id',
           isOptional: null,
           name: '小车id',
-          code: 'AGV',
+          code: 'Vehicle',
         },
         {
           key: null,

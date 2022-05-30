@@ -25,7 +25,7 @@ const TargetLock = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv" />,
+      title: <FormattedMessage id="app.vehicle" />,
       dataIndex: 'vehicleId',
       align: 'center',
     },

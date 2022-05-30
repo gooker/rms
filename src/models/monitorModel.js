@@ -41,7 +41,7 @@ const MonitorModelState = {
 
   // 选择相关
   selections: [],
-  selectableType: ['AGV', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
+  selectableType: ['Vehicle', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
 
   // 小车、货架等信息
   allAGVs: [],
@@ -387,8 +387,8 @@ export default {
         response?.map((item) => {
           allAGVs.push({
             ...item,
-            agvType: item?.agvType || item?.agv?.agvType,
-            uniqueId: item?.agv?.id,
+            agvType: item?.agvType || item?.vehicle?.agvType,
+            uniqueId: item?.vehicle?.id,
             vehicleId: item.vehicleId,
           });
         });

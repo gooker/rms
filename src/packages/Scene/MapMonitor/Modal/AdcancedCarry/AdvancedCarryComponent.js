@@ -64,7 +64,7 @@ const AdvancedCarryComponent = (props) => {
         </Form.Item>
         <Form.Item
           name={'vehicleId'}
-          label={formatMessage({ id: 'app.agv.id' })}
+          label={formatMessage({ id: 'app.vehicle.id' })}
           rules={[{ required: true }]}
         >
           <InputNumber />

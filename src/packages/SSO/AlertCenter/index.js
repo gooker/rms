@@ -88,7 +88,7 @@ class QuestionCenter extends Component {
 
   column = [
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       fixed: 'left',

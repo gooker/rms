@@ -90,7 +90,7 @@ const EquipmentListTools = (props) => {
             <DisconnectOutlined /> 注销
           </Button>
           {/*<Button>*/}
-          {/*  <ExportOutlined /> <FormattedMessage id={'app.agv.infoExport'} />*/}
+          {/*  <ExportOutlined /> <FormattedMessage id={'app.vehicle.infoExport'} />*/}
           {/*</Button>*/}
           <Button
             onClick={() => {

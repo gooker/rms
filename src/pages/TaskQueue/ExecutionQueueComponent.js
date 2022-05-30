@@ -84,7 +84,7 @@ class ExecutionQueueComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.agv" />,
+      title: <FormattedMessage id="app.vehicle" />,
       dataIndex: 'appointedAGVId',
       align: 'center',
       width: 100,

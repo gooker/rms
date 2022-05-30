@@ -97,15 +97,15 @@ const HardwareTab = (props) => {
     <Row gutter={{ xs: 4, sm: 8, md: 14, lg: 16 }}>
       <Col span={12}>
         {/* 小车ID */}
-        <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
-          {data?.agv?.vehicleId}
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.id' })}>
+          {data?.vehicle?.vehicleId}
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.battery' })}>
           {data && data.battery != null ? getSuffix(parseInt(data?.agvInfo?.battery), '%') : null}
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.batteryVoltage' })}>
           {data && data.batteryVoltage
             ? getSuffix(data?.agvInfo?.batteryVoltage / 1000, 'V')
             : null}
@@ -116,11 +116,11 @@ const HardwareTab = (props) => {
             {data && data.batteryStatus != null ? (
               data.batteryStatus ? (
                 <span className={styles.main} style={{ color: 'green' }}>
-                  <FormattedMessage id="app.agv.normal" />
+                  <FormattedMessage id="app.vehicle.normal" />
                 </span>
               ) : (
                 <span style={{ color: 'red' }} className={styles.main}>
-                  <FormattedMessage id="app.agv.exception" />
+                  <FormattedMessage id="app.vehicle.exception" />
                 </span>
               )
             ) : null}
@@ -187,11 +187,11 @@ const HardwareTab = (props) => {
           </div>
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.lastFullChargeTime' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.lastFullChargeTime' })}>
           {data && data.lastFullChargeTime ? renderCreateTime(data.lastFullChargeTime) : null}
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.currentCoefficient' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.currentCoefficient' })}>
           <div className={styles.spanRight}>
             {data && data.currentCoefficient
               ? getSuffix(data.currentCoefficient, '°C', {
@@ -264,7 +264,7 @@ const HardwareTab = (props) => {
           {data?.upMotorTemperature}
         </LabelComponent>
 
-        <LabelComponent label={formatMessage({ id: 'app.agv.sensorStatusFlag' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.sensorStatusFlag' })}>
           {data?.sensorStatus}
         </LabelComponent>
 

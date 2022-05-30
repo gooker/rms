@@ -25,7 +25,7 @@ const FaultListComponent = (props) => {
 
   const columns = [
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 100,

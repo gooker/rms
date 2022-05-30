@@ -62,7 +62,7 @@ const LatentWorkStationTask = (props) => {
   }
 
   function autoFillForm() {
-    const agv = selections.filter(
+    const vehicle = selections.filter(
       (item) => item.type === MonitorSelectableSpriteType.LatentLifting,
     )[0];
     const pod = selections.filter((item) => item.type === MonitorSelectableSpriteType.LatentPod)[0];
@@ -74,7 +74,7 @@ const LatentWorkStationTask = (props) => {
 
     formRef.resetFields();
     formRef.setFieldsValue({
-      vehicleId: agv.vehicleId,
+      vehicleId: vehicle.vehicleId,
       podId: pod.id,
       workstation: station.code,
     });
@@ -88,7 +88,7 @@ const LatentWorkStationTask = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <InputNumber />
           </Form.Item>
 

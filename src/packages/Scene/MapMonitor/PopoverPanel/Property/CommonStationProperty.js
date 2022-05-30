@@ -386,7 +386,7 @@ const CommonStationProperty = (props) => {
                 style={{ background: data?.status === 'start' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/start.png').default}
                 />
               </div>
@@ -402,7 +402,7 @@ const CommonStationProperty = (props) => {
                 style={{ background: data?.status === 'paused' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/paused.png').default}
                 />
               </div>
@@ -418,7 +418,7 @@ const CommonStationProperty = (props) => {
                 style={{ background: data?.status === 'end' ? '#ff8400' : '' }}
               >
                 <img
-                  alt={'agv'}
+                  alt={'vehicle'}
                   src={require('@/packages/Scene/MapMonitor/category/end.png').default}
                 />
               </div>

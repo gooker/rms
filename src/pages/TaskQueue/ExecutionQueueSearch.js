@@ -30,7 +30,7 @@ const TaskSearch = (props) => {
     <Form form={form} onFinish={onFinish}>
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={5}>
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>

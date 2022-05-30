@@ -109,7 +109,7 @@ const LogSearchForm = (props) => {
         <Col span={12}>
           <Form.Item
             name={'agvSearch'}
-            label={<FormattedMessage id="app.agv" />}
+            label={<FormattedMessage id="app.vehicle" />}
             initialValue={{ type: 'AGV_ID', code: [] }}
           >
             <SelectCarType data={optionsData} />

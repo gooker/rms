@@ -135,7 +135,7 @@ export default {
   'app.taskDetail.taskStep': '任务步数',
 
   // 任务日志
-  'app.taskLog.AGV': '车辆',
+  'app.taskLog.Vehicle': '车辆',
   'app.taskLog.SYSTEM': '系统',
 
   // 任务告警

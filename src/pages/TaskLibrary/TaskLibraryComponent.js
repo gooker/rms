@@ -50,7 +50,7 @@ class TaskLibraryComponent extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 100,
@@ -168,7 +168,7 @@ class TaskLibraryComponent extends Component {
   getAgvList = async () => {
     const response = await fetchAllAgvList();
     if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.agv.getListFail' }));
+      message.error(formatMessage({ id: 'app.vehicle.getListFail' }));
     } else {
       this.setState({ agvList: response });
     }

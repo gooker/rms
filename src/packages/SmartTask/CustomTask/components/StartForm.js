@@ -18,7 +18,7 @@ const StartForm = (props) => {
       if (value.code.length > 0 || variable.START) {
         return Promise.resolve();
       }
-      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.robot' })));
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.vehicle' })));
     }
   }
 
@@ -50,9 +50,9 @@ const StartForm = (props) => {
         hidden={hidden}
         required
         {...formItemLayout}
-        name={[code, 'robot']}
+        name={[code, 'vehicle']}
         initialValue={{ type: 'AUTO', code: [] }}
-        label={<FormattedMessage id='customTask.form.robot' />}
+        label={<FormattedMessage id='customTask.form.vehicle' />}
         rules={[{ validator: validateRobot }]}
       >
         <RobotSelector form={form} subTaskCode={code} />

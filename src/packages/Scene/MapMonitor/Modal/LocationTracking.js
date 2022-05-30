@@ -97,8 +97,8 @@ const LocationTracking = (props) => {
                   <Select.Option key="pod" value={'pod'}>
                     <FormattedMessage id="app.pod" />
                   </Select.Option>
-                  <Select.Option key="robot" value={'robot'}>
-                    <FormattedMessage id="app.agv" />
+                  <Select.Option key="vehicle" value={'vehicle'}>
+                    <FormattedMessage id="app.vehicle" />
                   </Select.Option>
                 </Select>
               </Form.Item>

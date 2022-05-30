@@ -44,7 +44,7 @@ const LogDownLoadComponent = (props) => {
       width: 150,
     },
     {
-      title: formatMessage({ id: 'app.agv.id' }),
+      title: formatMessage({ id: 'app.vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 150,
@@ -208,13 +208,13 @@ const LogDownLoadComponent = (props) => {
   }
 
   function renderAgvOptions() {
-    return agvList.map((agv) => (
+    return agvList.map((vehicle) => (
       <Select.Option
-        key={agv.vehicleId}
-        value={agv.vehicleId}
-        disabled={agv.agvStatus === AGVState.offline}
+        key={vehicle.vehicleId}
+        value={vehicle.vehicleId}
+        disabled={vehicle.agvStatus === AGVState.offline}
       >
-        {agv.vehicleId}
+        {vehicle.vehicleId}
       </Select.Option>
     ));
   }
@@ -239,7 +239,7 @@ const LogDownLoadComponent = (props) => {
             <Col style={{ width: '200px' }}>
               <Form.Item
                 name={'vehicleId'}
-                label={formatMessage({ id: 'app.agv.id' })}
+                label={formatMessage({ id: 'app.vehicle.id' })}
                 rules={[{ required: true }]}
               >
                 <Select allowClear style={{ width: '100%' }}>

@@ -84,7 +84,7 @@ const PathLock = (props) => {
   function refreshMapAgvLock() {
     const selectedIds = form.getFieldValue('selectAgv');
     if (selectedIds.length === 0) {
-      message.error(formatMessage({ id: 'monitor.view.require.AGV' }));
+      message.error(formatMessage({ id: 'monitor.view.require.Vehicle' }));
       return false;
     }
     if (agvLockView?.showLockCellPolling) {
@@ -194,7 +194,7 @@ const PathLock = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={form} onValuesChange={onValuesChange}>
           {/* 小车ID */}
-          <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.agv.id' })} labelWrap>
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.vehicle.id' })} labelWrap>
             <Row gutter={10}>
               <Col span={18}>
                 <Form.Item

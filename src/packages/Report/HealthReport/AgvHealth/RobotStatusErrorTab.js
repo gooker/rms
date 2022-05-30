@@ -7,8 +7,8 @@ const AgvErrorComponent = (props) => {
   return (
     <OfflineOrStatusErrorComponent
       codeDomId="statusErrorHealthByAgvIdHistory"
-      chartTitle={formatMessage({ id: 'reportCenter.agv.error' })}
-      chartSubTitle={formatMessage({ id: 'reportCenter.way.agv' })}
+      chartTitle={formatMessage({ id: 'reportCenter.vehicle.error' })}
+      chartSubTitle={formatMessage({ id: 'reportCenter.way.vehicle' })}
       dateDomId="statusErrorHealthBydateHistory"
       originData={originData}
       keyData={keyDataMap}

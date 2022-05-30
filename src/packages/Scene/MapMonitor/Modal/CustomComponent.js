@@ -137,7 +137,7 @@ const CustomComponent = (props) => {
                 loading={executing}
                 disabled={executing}
               >
-                <FormattedMessage id="app.agv.batchCommand.Modal.confirm" />
+                <FormattedMessage id="app.vehicle.batchCommand.Modal.confirm" />
               </Button>
             </div>
           )}

@@ -68,14 +68,14 @@ export async function fetchCoordAgvInfo(vehicleId) {
 
 // 请求小车的硬件状态
 export async function fetchAgvHardwareInfo(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/agvHardware/${params.sectionId}/${params.vehicleId}`, {
+  return request(`/${NameSpace[agvType]}/vehicle/agvHardware/${params.sectionId}/${params.vehicleId}`, {
     method: `GET`,
   });
 }
 
 // 请求删除小车(批量)
 export async function fetchDeleteAgvList(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/deleteAgv`, {
+  return request(`/${NameSpace[agvType]}/vehicle/deleteAgv`, {
     method: `POST`,
     data: params,
   });
@@ -83,7 +83,7 @@ export async function fetchDeleteAgvList(agvType, params) {
 
 // 小车移出地图
 export async function fetchMoveoutAGVs(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/robotRemoveFromMap`, {
+  return request(`/${NameSpace[agvType]}/vehicle/robotRemoveFromMap`, {
     method: 'POST',
     data: params,
   });
@@ -138,7 +138,7 @@ export async function deleteTaskQueueItems(agvType, params) {
 // 获取当前区域小车状态总体数据
 export async function fetchAgvOverallStatus(agvType) {
   return request(
-    `/${NameSpace[agvType]}/agv/getStandByAndAvailableAgvNumber/${window.localStorage.getItem(
+    `/${NameSpace[agvType]}/vehicle/getStandByAndAvailableAgvNumber/${window.localStorage.getItem(
       'sectionId',
     )}`,
     {
@@ -182,7 +182,7 @@ export async function getAlertCentersByTaskIdOrAgvId(param) {
 
 // 获取任务详情数据
 export async function fetchTaskDetailByTaskId(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/agvTaskDetail`, {
+  return request(`/${NameSpace[agvType]}/vehicle-task/agvTaskDetail`, {
     method: `GET`,
     data: params,
   });
@@ -190,7 +190,7 @@ export async function fetchTaskDetailByTaskId(agvType, params) {
 
 // 请求取消任务
 export async function fetchBatchCancelTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/batchCancelTask`, {
+  return request(`/${NameSpace[agvType]}/vehicle-task/batchCancelTask`, {
     method: 'POST',
     data: params,
   });
@@ -198,7 +198,7 @@ export async function fetchBatchCancelTask(agvType, params) {
 
 // 请求重发任务
 export async function fetchRestartTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/restartTask`, {
+  return request(`/${NameSpace[agvType]}/vehicle-task/action/restartTask`, {
     method: `GET`,
     data: params,
   });
@@ -206,7 +206,7 @@ export async function fetchRestartTask(agvType, params) {
 
 // 请求重置任务
 export async function fetchResetTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/resetTask`, {
+  return request(`/${NameSpace[agvType]}/vehicle-task/action/resetTask`, {
     method: `GET`,
     data: params,
   });
@@ -214,7 +214,7 @@ export async function fetchResetTask(agvType, params) {
 
 // 请求取消任务
 export async function fetchCancelTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/cancelTask`, {
+  return request(`/${NameSpace[agvType]}/vehicle-task/action/cancelTask`, {
     method: `GET`,
     data: params,
   });
@@ -222,7 +222,7 @@ export async function fetchCancelTask(agvType, params) {
 
 // 请求恢复任务
 export async function fetchRestoreTask(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv-task/action/restoreTask`, {
+  return request(`/${NameSpace[agvType]}/vehicle-task/action/restoreTask`, {
     method: `GET`,
     data: params,
   });
@@ -344,14 +344,14 @@ export async function cancelTotePoolTask(agvType, params) {
 /**tote agv列表***/
 
 export async function fetchToteAgvList(agvType) {
-  return request(`/${NameSpace[agvType]}/agv/getToteAGV`, {
+  return request(`/${NameSpace[agvType]}/vehicle/getToteAGV`, {
     method: 'GET',
   });
 }
 
 /***批量升级***/
 export async function fetchAgvFileStatusList(agvType) {
-  return request(`/${NameSpace[agvType]}/agv/getAgvFileStatusList`, {
+  return request(`/${NameSpace[agvType]}/vehicle/getAgvFileStatusList`, {
     method: 'GET',
   });
 }
@@ -364,7 +364,7 @@ export async function fetchUpdateFileTask(agvType, params) {
 
 //维护/取消维护
 export async function fetchMaintain(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/action/maintain`, {
+  return request(`/${NameSpace[agvType]}/vehicle/action/maintain`, {
     method: 'GET',
     data: params,
   });
@@ -372,7 +372,7 @@ export async function fetchMaintain(agvType, params) {
 
 // 请求切换小车手动模式
 export async function fetchManualMode(agvType, params) {
-  return request(`/${NameSpace[agvType]}/agv/action/manualMode`, {
+  return request(`/${NameSpace[agvType]}/vehicle/action/manualMode`, {
     method: 'GET',
     data: params,
   });
@@ -674,7 +674,7 @@ export async function fetchTaskTypes() {
 
 // 获取小车返回指定的区域集合
 export async function getBackZone(param) {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getBackZone`, {
+  return request(`/${NameSpace.Platform}/vehicle-custom-task/getBackZone`, {
     method: 'GET',
     data: param,
   });
@@ -690,7 +690,7 @@ export async function fetchCstParams(param) {
 
 // 获取潜伏车动作集
 export async function getLatentActions() {
-  return request(`/${NameSpace.Platform}/agv-custom-task/getAddActions`, {
+  return request(`/${NameSpace.Platform}/vehicle-custom-task/getAddActions`, {
     method: 'GET',
   });
 }

@@ -30,7 +30,7 @@ const TaskSearch = (props) => {
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={6}>
           {/* 小车id */}
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
             <Select allowClear showSearch>
               {agvList.map((vehicleId) => (
                 <Option key={vehicleId} value={vehicleId}>

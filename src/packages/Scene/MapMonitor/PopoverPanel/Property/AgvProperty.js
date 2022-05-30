@@ -55,14 +55,14 @@ const AGVElementProp = (props) => {
 
     const filterAgvInfo = find(
       allAGVs,
-      (item) => item.vehicleId === data.id && item?.agv?.id === data.uniqueId,
+      (item) => item.vehicleId === data.id && item?.vehicle?.id === data.uniqueId,
     );
     if (!dealResponse(response)) {
-      const { agv = {}, agvInfo = {}, agvWorkStatusDTO = {} } = filterAgvInfo;
+      const { vehicle = {}, agvInfo = {}, agvWorkStatusDTO = {} } = filterAgvInfo;
 
       setAgvInfo({ ...agvInfo, ...agvWorkStatusDTO });
-      setMainTain(agv?.maintain); // 维护
-      setManualMode(agv?.manualMode); // 是否手动
+      setMainTain(vehicle?.maintain); // 维护
+      setManualMode(vehicle?.manualMode); // 是否手动
     }
 
     if (alertResponse && !dealResponse(alertResponse)) {
@@ -80,7 +80,7 @@ const AGVElementProp = (props) => {
   }
 
   function goToAgvDetail() {
-    const route = `/ResourceManage/Agv/AgvRealTime`;
+    const route = `/ResourceManage/Vehicle/AgvRealTime`;
     history.push({ pathname: route, search: `uniqueId=${data.uniqueId}` });
   }
 
@@ -141,14 +141,14 @@ const AGVElementProp = (props) => {
     if (dealResponse(response)) {
       message.error(
         formatMessage(
-          { id: 'monitor.controller.AGV.tip.customCommandSendFail' },
+          { id: 'monitor.controller.Vehicle.tip.customCommandSendFail' },
           { actionContent },
         ),
       );
     } else {
       message.success(
         formatMessage(
-          { id: 'monitor.controller.AGV.tip.customCommandSendSuccess' },
+          { id: 'monitor.controller.Vehicle.tip.customCommandSendSuccess' },
           { actionContent },
         ),
       );
@@ -233,12 +233,12 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
-                alt={'agv'}
+                alt={'vehicle'}
                 style={{ width: 45, height: 'auto' }}
                 src={require(`../../category/${AGVCategory[type]}_category.svg`).default}
               />
               <span>
-                <FormattedMessage id={'app.agv'} />
+                <FormattedMessage id={'app.vehicle'} />
               </span>
             </div>
             <div className={style.rightSideline} onClick={goToAgvDetail}>
@@ -250,12 +250,12 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
-                alt={'agv'}
+                alt={'vehicle'}
                 style={{ width: 35, height: 35 }}
                 src={require('@/packages/Scene/icons/electricity.png').default}
               />
               <span>
-                <FormattedMessage id={'app.agv.electricity'} />
+                <FormattedMessage id={'app.vehicle.electricity'} />
               </span>
             </div>
             <div>{agvInfo?.battery && renderBattery(agvInfo?.battery)}</div>
@@ -265,7 +265,7 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
-                alt={'agv'}
+                alt={'vehicle'}
                 style={{ width: 25, height: 25 }}
                 src={require('@/packages/Scene/icons/state.png').default}
               />
@@ -280,7 +280,7 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
-                alt={'agv'}
+                alt={'vehicle'}
                 style={{ width: 25, height: 25 }}
                 src={require('@/packages/Scene/icons/pod.png').default}
               />
@@ -295,7 +295,7 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
-                alt={'agv'}
+                alt={'vehicle'}
                 style={{ width: 25, height: 25 }}
                 src={require('@/packages/Scene/icons/task.png').default}
               />
@@ -321,12 +321,12 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
-                alt={'agv'}
+                alt={'vehicle'}
                 style={{ width: 25, height: 25 }}
                 src={require('@/packages/Scene/icons/error.png').default}
               />
               <span>
-                <FormattedMessage id={'app.agv.exception'} />
+                <FormattedMessage id={'app.vehicle.exception'} />
               </span>
             </div>
             <div
@@ -344,13 +344,13 @@ const AGVElementProp = (props) => {
           {/* 充电、休息 */}
           <div className={styles.rightSideAgvContentOperation}>
             <div className={styles.rightSideAgvContentOperationItem} onClick={goCharge}>
-              <img alt={'agv'} src={require('@/packages/Scene/icons/charger.png').default} />
+              <img alt={'vehicle'} src={require('@/packages/Scene/icons/charger.png').default} />
               <div>
                 <FormattedMessage id={'monitor.right.charge'} />
               </div>
             </div>
             <div className={styles.rightSideAgvContentOperationItem} onClick={toRest}>
-              <img alt={'agv'} src={require('@/packages/Scene/icons/rest.png').default} />
+              <img alt={'vehicle'} src={require('@/packages/Scene/icons/rest.png').default} />
               <div>
                 <FormattedMessage id={'monitor.right.goRest'} />
               </div>
@@ -362,7 +362,7 @@ const AGVElementProp = (props) => {
           <div className={styles.rightSideAgvContentOperation}>
             <div className={styles.rightSideAgvContentOperationItem2} onClick={agvPthchanged}>
               <div style={{ background: pathChecked ? checkedColor : '' }}>
-                <img alt={'agv'} src={require('@/packages/Scene/icons/path.png').default} />
+                <img alt={'vehicle'} src={require('@/packages/Scene/icons/path.png').default} />
               </div>
               <div>
                 <FormattedMessage id={'monitor.path'} />
@@ -373,8 +373,8 @@ const AGVElementProp = (props) => {
             <Popconfirm
               title={
                 mainTain
-                  ? formatMessage({ id: 'monitor.controller.AGV.tip.cancelMaintain' })
-                  : formatMessage({ id: 'monitor.controller.AGV.tip.confirmMaintain' })
+                  ? formatMessage({ id: 'monitor.controller.Vehicle.tip.cancelMaintain' })
+                  : formatMessage({ id: 'monitor.controller.Vehicle.tip.confirmMaintain' })
               }
               onConfirm={mainTainAgv}
               okText={formatMessage({ id: 'app.button.confirm' })}
@@ -382,7 +382,7 @@ const AGVElementProp = (props) => {
             >
               <div className={styles.rightSideAgvContentOperationItem2}>
                 <div style={{ background: mainTain ? checkedColor : '' }}>
-                  <img alt={'agv'} src={require('@/packages/Scene/icons/maintain.png').default} />
+                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/maintain.png').default} />
                 </div>
                 <div>
                   <FormattedMessage id={'monitor.maintain'} />
@@ -394,8 +394,8 @@ const AGVElementProp = (props) => {
             <Popconfirm
               title={
                 manualMode
-                  ? formatMessage({ id: 'monitor.controller.AGV.tip.turnOffManualMode' })
-                  : formatMessage({ id: 'monitor.controller.AGV.tip.turnOnManualMode' })
+                  ? formatMessage({ id: 'monitor.controller.Vehicle.tip.turnOffManualMode' })
+                  : formatMessage({ id: 'monitor.controller.Vehicle.tip.turnOnManualMode' })
               }
               onConfirm={switchManualMode}
               okText={formatMessage({ id: 'app.button.confirm' })}
@@ -403,7 +403,7 @@ const AGVElementProp = (props) => {
             >
               <div className={styles.rightSideAgvContentOperationItem2}>
                 <div style={{ background: manualMode ? checkedColor : '' }}>
-                  <img alt={'agv'} src={require('@/packages/Scene/icons/manual.png').default} />
+                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/manual.png').default} />
                 </div>
                 <div>
                   <FormattedMessage id={'monitor.manual'} />
@@ -415,7 +415,7 @@ const AGVElementProp = (props) => {
           {/* 重置、重启、运行时 */}
           <div className={styles.rightSideAgvContentOperation}>
             <Popconfirm
-              title={formatMessage({ id: 'monitor.controller.AGV.tip.resetAMR' })}
+              title={formatMessage({ id: 'monitor.controller.Vehicle.tip.resetAMR' })}
               onConfirm={() =>
                 sendAgvHexCommand(
                   type === AppCode.ForkLifting ? '02' : '80',
@@ -426,7 +426,7 @@ const AGVElementProp = (props) => {
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideAgvContentOperationItem}>
-                <img alt={'agv'} src={require('@/packages/Scene/icons/reset.png').default} />
+                <img alt={'vehicle'} src={require('@/packages/Scene/icons/reset.png').default} />
                 <div>
                   <FormattedMessage id={'app.button.reset'} />
                 </div>
@@ -434,7 +434,7 @@ const AGVElementProp = (props) => {
             </Popconfirm>
 
             <Popconfirm
-              title={formatMessage({ id: 'monitor.controller.AGV.tip.rebootAMR' })}
+              title={formatMessage({ id: 'monitor.controller.Vehicle.tip.rebootAMR' })}
               onConfirm={() =>
                 sendAgvHexCommand('02 60 00 00', formatMessage({ id: 'monitor.reboot' }))
               }
@@ -442,7 +442,7 @@ const AGVElementProp = (props) => {
               cancelText={formatMessage({ id: 'app.button.cancel' })}
             >
               <div className={styles.rightSideAgvContentOperationItem}>
-                <img alt={'agv'} src={require('@/packages/Scene/icons/reboot.png').default} />
+                <img alt={'vehicle'} src={require('@/packages/Scene/icons/reboot.png').default} />
                 <div>
                   <FormattedMessage id={'monitor.reboot'} />
                 </div>
@@ -450,7 +450,7 @@ const AGVElementProp = (props) => {
             </Popconfirm>
 
             <div className={styles.rightSideAgvContentOperationItem} onClick={showRunInfo}>
-              <img alt={'agv'} src={require('@/packages/Scene/icons/runTime.png').default} />
+              <img alt={'vehicle'} src={require('@/packages/Scene/icons/runTime.png').default} />
               <div>
                 <FormattedMessage id={'monitor.runTime'} />
               </div>

@@ -140,7 +140,7 @@ const FilterSearch = (props) => {
                     {showCode ? (
                       <FormattedMessage id="app.common.code" />
                     ) : (
-                      <FormattedMessage id="app.agv" />
+                      <FormattedMessage id="app.vehicle" />
                     )}
                   </>
                 )

@@ -86,7 +86,7 @@ const RobotLock = (props) => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id="app.agv.id" />,
+        title: <FormattedMessage id="app.vehicle.id" />,
         dataIndex: 'vehicleId',
         align: 'center',
         fixed: 'left',
@@ -98,17 +98,17 @@ const RobotLock = (props) => {
         fixed: 'left',
       },
       // {
-      //   title: <FormattedMessage id="lockManage.robot.status" />,
+      //   title: <FormattedMessage id="lockManage.vehicle.status" />,
       //   dataIndex: 'lockStatus',
       //   render: (text) => {
       //     if (text === 0) {
-      //       return <FormattedMessage id="lockManage.robot.fullLock" />;
+      //       return <FormattedMessage id="lockManage.vehicle.fullLock" />;
       //     }
       //     if (text === 1) {
-      //       return <FormattedMessage id="lockManage.robot.missingTaskLock" />;
+      //       return <FormattedMessage id="lockManage.vehicle.missingTaskLock" />;
       //     }
       //     if (text === 2) {
-      //       return <FormattedMessage id="lockManage.robot.missingRobotLock" />;
+      //       return <FormattedMessage id="lockManage.vehicle.missingRobotLock" />;
       //     }
       //     return <FormattedMessage id="app.common.notAvailable" />;
       //   },

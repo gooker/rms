@@ -64,9 +64,9 @@ const ChargerList = () => {
       render: (text) => {
         if (!isNull(text)) {
           if (text === 'NORMAL') {
-            return <Badge color={'red'} text={formatMessage({ id: 'app.agv.exception' })} />;
+            return <Badge color={'red'} text={formatMessage({ id: 'app.vehicle.exception' })} />;
           }
-          return <Badge color={'green'} text={formatMessage({ id: 'app.agv.normal' })} />;
+          return <Badge color={'green'} text={formatMessage({ id: 'app.vehicle.normal' })} />;
         }
       },
     },
@@ -178,12 +178,12 @@ const ChargerList = () => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id="app.agv.ip" />,
+      title: <FormattedMessage id="app.vehicle.ip" />,
       dataIndex: 'ip',
     },
 
     {
-      title: <FormattedMessage id="app.agv.port" />,
+      title: <FormattedMessage id="app.vehicle.port" />,
       dataIndex: 'port',
     },
 

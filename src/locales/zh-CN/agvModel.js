@@ -11,11 +11,11 @@ export default {
   'app.agvType.Sorter': '分拣车',
 
   // 小车参数
-  'app.agv': '小车',
-  'app.agv.id': '小车ID',
-  'app.agv.port': '端口号',
-  'app.agv.direction': '小车方向',
-  'app.agv.electricity': '电量',
+  'app.vehicle': '小车',
+  'app.vehicle.id': '小车ID',
+  'app.vehicle.port': '端口号',
+  'app.vehicle.direction': '小车方向',
+  'app.vehicle.electricity': '电量',
 
   // 小车状态
   'app.agvStatus': '小车状态',

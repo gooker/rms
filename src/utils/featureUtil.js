@@ -69,7 +69,7 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
         });
         AgvInfos.push(info);
       } else {
-        message.warning(formatMessage({ id: 'app.agv.hardwareError' }, { vehicleId }));
+        message.warning(formatMessage({ id: 'app.vehicle.hardwareError' }, { vehicleId }));
       }
     }
     const opts = { fields };
@@ -84,7 +84,7 @@ export function exportAgvModuleInfo(nameSpace, agvList) {
       });
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(arrayCSV);
-      XLSX.utils.book_append_sheet(wb, ws, 'AGV');
+      XLSX.utils.book_append_sheet(wb, ws, 'Vehicle');
       XLSX.writeFile(wb, `Hardware Information.xlsx`);
       resolve();
     } catch (err) {
@@ -102,11 +102,11 @@ export function exportAgvInfo(agvList) {
   return new Promise((resolve, reject) => {
     const fields = [
       {
-        label: formatMessage({ id: 'app,agv.id' }),
-        value: 'robotId',
+        label: formatMessage({ id: 'app,vehicle.id' }),
+        value: 'vehicleId',
       },
       {
-        label: formatMessage({ id: 'app.agv.serverIdentity' }),
+        label: formatMessage({ id: 'app.vehicle.serverIdentity' }),
         value: 'clusterIndex',
       },
       {
@@ -122,24 +122,24 @@ export function exportAgvInfo(agvList) {
         value: 'currentCellId',
       },
       {
-        label: formatMessage({ id: 'app.agv.direction' }),
+        label: formatMessage({ id: 'app.vehicle.direction' }),
         value: (row) => {
           return formatMessage({ id: Dictionary('agvDirection', row.currentDirection) });
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.addingTime' }),
+        label: formatMessage({ id: 'app.vehicle.addingTime' }),
         value: (row) => {
           return convertToUserTimezone(row.createDate).format('YYYY-MM-DD HH:mm:ss');
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.maintenanceState' }),
+        label: formatMessage({ id: 'app.vehicle.maintenanceState' }),
         value: (row) => {
           if (row.disabled) {
-            return formatMessage({ id: 'app.agv.underMaintenance' });
+            return formatMessage({ id: 'app.vehicle.underMaintenance' });
           } else {
-            return formatMessage({ id: 'app.agv.normal' });
+            return formatMessage({ id: 'app.vehicle.normal' });
           }
         },
       },
@@ -149,11 +149,11 @@ export function exportAgvInfo(agvList) {
         value: (row) => {
           if (row.isDummy) {
             return formatMessage({
-              id: 'app.agv.threeGenerationsOfVehicles(Virtual)',
+              id: 'app.vehicle.threeGenerationsOfVehicles(Virtual)',
             });
           } else if (row.robotType === 3) {
             return formatMessage({
-              id: 'app.agv.threeGenerationOfTianma',
+              id: 'app.vehicle.threeGenerationOfTianma',
             });
           } else {
             return row.robotType;
@@ -161,7 +161,7 @@ export function exportAgvInfo(agvList) {
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.state' }),
+        label: formatMessage({ id: 'app.vehicle.state' }),
         value: (row) => {
           const { agvStatus } = row;
           const key = Dictionary('agvStatus', agvStatus);
@@ -169,29 +169,29 @@ export function exportAgvInfo(agvList) {
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.battery' }),
+        label: formatMessage({ id: 'app.vehicle.battery' }),
         value: (row) => {
           return `${row.battery} %`;
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.batteryVoltage' }),
+        label: formatMessage({ id: 'app.vehicle.batteryVoltage' }),
         value: (row) => {
           return `${row.batteryVoltage / 1000} v`;
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.version' }),
+        label: formatMessage({ id: 'app.vehicle.version' }),
         value: 'version',
       },
       {
-        label: formatMessage({ id: 'app.agv.batteryType' }),
+        label: formatMessage({ id: 'app.vehicle.batteryType' }),
         value: (row) => {
           return formatMessage({ id: Dictionary('batteryType', row.batteryType) });
         },
       },
       {
-        label: formatMessage({ id: 'app.agv.maxChargeCurrent' }),
+        label: formatMessage({ id: 'app.vehicle.maxChargeCurrent' }),
         value: 'maxChargingCurrent',
       },
     ];
@@ -205,8 +205,8 @@ export function exportAgvInfo(agvList) {
       });
       const wb = XLSX.utils.book_new();
       const ws = XLSX.utils.aoa_to_sheet(arrayCSV);
-      XLSX.utils.book_append_sheet(wb, ws, 'AGV');
-      XLSX.writeFile(wb, `AGV Information.xlsx`);
+      XLSX.utils.book_append_sheet(wb, ws, 'Vehicle');
+      XLSX.writeFile(wb, `Vehicle Information.xlsx`);
       resolve();
     } catch (e) {
       reject(e);

@@ -210,7 +210,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.agv.id" />}
+                    title={<FormattedMessage id="app.vehicle.id" />}
                     content={<span>{detailInfo.currentRobotId}</span>}
                   />
                 </Col>

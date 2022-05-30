@@ -113,7 +113,7 @@ class BatchUpgradingComponent extends Component {
     RmsConfirm({
       content: (
         <div>
-          {formatMessage({ id: 'app.agv.id' })}:{record.vehicleId}
+          {formatMessage({ id: 'app.vehicle.id' })}:{record.vehicleId}
         </div>
       ),
       onOk: async () => {

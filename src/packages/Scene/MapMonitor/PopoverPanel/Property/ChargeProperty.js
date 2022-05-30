@@ -155,7 +155,7 @@ const ChargeProperty = (props) => {
               ? getSuffix((chargerInfo.currentElectricity || 0) / 10, 'A')
               : '-'}
           </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.agv.maxChargeCurrent'} />}>
+          <LabelColComponent label={<FormattedMessage id={'app.vehicle.maxChargeCurrent'} />}>
             {chargerInfo?.maxChargerElectricity
               ? getSuffix((chargerInfo.maxChargerElectricity || 0) / 10, 'A')
               : '-'}
@@ -163,7 +163,7 @@ const ChargeProperty = (props) => {
           <LabelColComponent label={<FormattedMessage id={'IP'} />}>
             {chargerInfo?.ip}
           </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.agv.port'} />}>
+          <LabelColComponent label={<FormattedMessage id={'app.vehicle.port'} />}>
             {chargerInfo?.type ? data.port : '-'}
           </LabelColComponent>
           <LabelColComponent label={<FormattedMessage id={'app.activity.hardwareVersion'} />}>
@@ -247,7 +247,7 @@ const ChargeProperty = (props) => {
             >
               <div className={styles.rightSideAgvContentOperationItem2}>
                 <div style={{ background: enabled ? checkedColor : '' }}>
-                  <img alt={'agv'} src={require('@/packages/Scene/icons/maintain.png').default} />
+                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/maintain.png').default} />
                 </div>
                 <div>
                   <FormattedMessage id={'app.common.enabled'} />

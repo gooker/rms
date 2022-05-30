@@ -16,7 +16,7 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import AgvListTools from './AgvListTools';
 import { connect } from '@/utils/RmsDva';
-import RegisterPanel from '@/packages/ResourceManage/Agv/AgvList/RegisterPanel';
+import RegisterPanel from '@/packages/ResourceManage/Vehicle/AgvList/RegisterPanel';
 
 const AgvList = (props) => {
   const { dispatch, allRobots, searchParams, loading, showRegisterPanel, history } = props;
@@ -27,7 +27,7 @@ const AgvList = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id='app.agv.id' />,
+      title: <FormattedMessage id='app.vehicle.id' />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
@@ -37,9 +37,9 @@ const AgvList = (props) => {
       align: 'center',
       render: (text, record) => {
         if (record.isDummy) {
-          return <FormattedMessage id="app.agv.threeGenerationsOfVehicles(Virtual)" />;
+          return <FormattedMessage id="app.vehicle.threeGenerationsOfVehicles(Virtual)" />;
         } else if (text === 3) {
-          return <FormattedMessage id="app.agv.threeGenerationOfTianma" />;
+          return <FormattedMessage id="app.vehicle.threeGenerationOfTianma" />;
         } else {
           return <span>{text}</span>;
         }
@@ -51,12 +51,12 @@ const AgvList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv.port" />,
+      title: <FormattedMessage id="app.vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv.direction" />,
+      title: <FormattedMessage id="app.vehicle.direction" />,
       dataIndex: 'currentDirection',
       align: 'center',
       render: (text) => getDirectionLocale(text),
@@ -67,7 +67,7 @@ const AgvList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv.maintenanceState" />,
+      title: <FormattedMessage id="app.vehicle.maintenanceState" />,
       dataIndex: 'disabled',
       align: 'center',
       render: (text) => {
@@ -77,11 +77,11 @@ const AgvList = (props) => {
               <Tag color="red">
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id="app.agv.underMaintenance" />
+                  <FormattedMessage id="app.vehicle.underMaintenance" />
                 </span>
               </Tag>
             ) : (
-              <Tag color="green">{<FormattedMessage id="app.agv.normal" />}</Tag>
+              <Tag color="green">{<FormattedMessage id="app.vehicle.normal" />}</Tag>
             )}
           </span>
         );
@@ -94,7 +94,7 @@ const AgvList = (props) => {
       render: (agvStatus) => getAgvStatusTag(agvStatus),
     },
     {
-      title: <FormattedMessage id="app.agv.serverIdentity" />,
+      title: <FormattedMessage id="app.vehicle.serverIdentity" />,
       dataIndex: 'clusterIndex',
       align: 'center',
     },
@@ -110,7 +110,7 @@ const AgvList = (props) => {
               checkAgvDetail(record.id);
             }}
           >
-            <FormattedMessage id="app.agv.details" />
+            <FormattedMessage id="app.vehicle.details" />
           </Button>
         );
       },
@@ -119,7 +119,7 @@ const AgvList = (props) => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id="app.agv.addingTime" />,
+      title: <FormattedMessage id="app.vehicle.addingTime" />,
       dataIndex: 'createDate',
       align: 'center',
       render: (text, record, index, flag) => {
@@ -130,7 +130,7 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.agv.battery" />,
+      title: <FormattedMessage id="app.vehicle.battery" />,
       align: 'center',
       dataIndex: 'battery',
       render: (text) => {
@@ -146,7 +146,7 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.agv.batteryVoltage" />,
+      title: <FormattedMessage id="app.vehicle.batteryVoltage" />,
       align: 'center',
       dataIndex: 'batteryVoltage',
       render: (text) => {
@@ -162,12 +162,12 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.agv.version" />,
+      title: <FormattedMessage id="app.vehicle.version" />,
       align: 'center',
       dataIndex: 'version',
     },
     {
-      title: <FormattedMessage id="app.agv.batteryType" />,
+      title: <FormattedMessage id="app.vehicle.batteryType" />,
       align: 'center',
       dataIndex: 'batteryType',
       render: (text) => {
@@ -177,7 +177,7 @@ const AgvList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.agv.maxChargeCurrent" />,
+      title: <FormattedMessage id="app.vehicle.maxChargeCurrent" />,
       align: 'center',
       dataIndex: 'maxChargingCurrent',
       render: (text) => {
@@ -215,7 +215,7 @@ const AgvList = (props) => {
   }
 
   function checkAgvDetail(uniqueId) {
-    const route = `/ResourceManage/Agv/AgvRealTime`;
+    const route = `/ResourceManage/Vehicle/AgvRealTime`;
     history.push({ pathname: route, search: `uniqueId=${uniqueId}` });
   }
 

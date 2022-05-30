@@ -53,12 +53,12 @@ const ChargerList = () => {
       fixed: 'left',
     },
     {
-      title: <FormattedMessage id="app.agv.ip" />,
+      title: <FormattedMessage id="app.vehicle.ip" />,
       dataIndex: 'ip',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.agv.port" />,
+      title: <FormattedMessage id="app.vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },

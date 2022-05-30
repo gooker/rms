@@ -43,7 +43,7 @@ export default {
   'customTasks.operationType.update': '替换动作',
   'customTasks.operationType.delete': '删除动作',
   'customTasks.operationType.param': '替换动作参数',
-  'customTask.require.robot': '请指定分车',
+  'customTask.require.vehicle': '请指定分车',
   'customTask.require.target': '请指定目标点',
 
   // 任务节点名称
@@ -55,7 +55,7 @@ export default {
   'customTask.type.END': '任务结束',
 
   // 开始
-  'customTask.form.robot': '分车',
+  'customTask.form.vehicle': '分车',
   'customTask.form.NO_SPECIFY': '自动分车',
   'customTask.form.SPECIFY_AGV': '指定小车',
   'customTask.form.SPECIFY_GROUP': '指定小车组',

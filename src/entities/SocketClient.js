@@ -220,7 +220,7 @@ class SocketClient {
     this.notificationQuestion = cb;
   }
 
-  // Latent AGV
+  // Latent Vehicle
   registerLatentAGVStatus(cb) {
     this.agvStatusCallback = cb;
   }
@@ -241,7 +241,7 @@ class SocketClient {
     this.podInStation = cb;
   }
 
-  // Tote AGV
+  // Tote Vehicle
   registerToteAGVStatus(cb) {
     this.toteAgvStatusCallback = cb;
   }

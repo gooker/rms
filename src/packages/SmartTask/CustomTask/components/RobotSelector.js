@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/util';
 
 /**
- * agv: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
+ * vehicle: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
  */
 const RobotSelector = (props) => {
   const { dispatch, form, dataSource, variable, value, onChange, subTaskCode } = props;
@@ -65,7 +65,7 @@ const RobotSelector = (props) => {
       delete _variable[subTaskCode];
     } else {
       if (checked) {
-        // AGV 和 AGV_GROUP 互斥
+        // Vehicle 和 AGV_GROUP 互斥
         _variable[subTaskCode] = {};
         _variable[subTaskCode][currentValue.type] = [];
       } else {
@@ -83,7 +83,7 @@ const RobotSelector = (props) => {
 
   // 小车类型下拉列表
   function renderCascadeFirstOption() {
-    return dataSource.agv.map(({ code }) => (
+    return dataSource.vehicle.map(({ code }) => (
       <Select.Option key={code} value={code}>
         {code}
       </Select.Option>
@@ -93,8 +93,8 @@ const RobotSelector = (props) => {
   // 类型小车下拉列表
   function renderCascadeSecondOption() {
     if (!isNull(agvType)) {
-      const agv = find(dataSource.agv, { code: agvType });
-      return agv.ids.map((vehicleId) => (
+      const vehicle = find(dataSource.vehicle, { code: agvType });
+      return vehicle.ids.map((vehicleId) => (
         <Select.Option key={vehicleId} value={vehicleId}>
           {vehicleId}
         </Select.Option>
@@ -105,7 +105,7 @@ const RobotSelector = (props) => {
 
   function renderSecondComponent() {
     switch (currentValue.type) {
-      case 'AGV':
+      case 'Vehicle':
         return (
           <Space style={{ marginLeft: 10 }}>
             <Select
@@ -147,7 +147,7 @@ const RobotSelector = (props) => {
         <Select.Option value={'AUTO'}>
           <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
         </Select.Option>
-        <Select.Option value={'AGV'}>
+        <Select.Option value={'Vehicle'}>
           <FormattedMessage id={'customTask.form.SPECIFY_AGV'} />
         </Select.Option>
         <Select.Option value={'AGV_GROUP'}>
@@ -167,9 +167,9 @@ const RobotSelector = (props) => {
   );
 };
 export default connect(({ customTask }) => {
-  const dataSource = { agv: [], agvGroup: [] };
+  const dataSource = { vehicle: [], agvGroup: [] };
   if (customTask.modelParams) {
-    dataSource.agv = customTask.modelParams?.AGV || [];
+    dataSource.vehicle = customTask.modelParams?.Vehicle || [];
     dataSource.agvGroup = customTask.modelParams?.AGV_GROUP || [];
   }
   return { dataSource, variable: customTask.variable };

@@ -30,13 +30,13 @@ const TargetSelector = (props) => {
     if (currentValue.type) {
       // 如果选择的载具，需要与对应的车型进行筛选
       if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type)) {
-        const robotSelection = form.getFieldValue(['START', 'robot']);
+        const robotSelection = form.getFieldValue(['START', 'vehicle']);
         // 自动分车或者使用了变量，则不需要筛选
         if (robotSelection.type !== 'AUTO' && isNull(variable.START)) {
           // 获取分车所支持的所有的载具类型
           let validLoadTypes = [];
-          if (robotSelection.type === 'AGV' && robotSelection.code.length > 0) {
-            const agvType = dataSource.AGV.filter((item) =>
+          if (robotSelection.type === 'Vehicle' && robotSelection.code.length > 0) {
+            const agvType = dataSource.Vehicle.filter((item) =>
               item.ids.includes(robotSelection.code[0]),
             );
             validLoadTypes = validLoadTypes.concat(agvType[0]?.types || []);
@@ -88,7 +88,7 @@ const TargetSelector = (props) => {
   function updateVariable(checked) {
     const _variable = { ...variable };
     if (checked) {
-      // AGV 和 AGV_GROUP 互斥
+      // Vehicle 和 AGV_GROUP 互斥
       _variable[subTaskCode] = {};
       _variable[subTaskCode][currentValue.type] = [];
     } else {
@@ -156,7 +156,7 @@ const TargetSelector = (props) => {
 export default connect(({ customTask }) => ({
   variable: customTask.variable,
   dataSource: customTask.modelParams || {
-    AGV: [],
+    Vehicle: [],
     AGV_GROUP: [],
     CELL: [],
     CELL_GROUP: [],

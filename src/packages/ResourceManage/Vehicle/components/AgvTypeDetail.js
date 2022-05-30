@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Card, Descriptions, List, Tag } from 'antd';
-import RobotModelViewer from '@/packages/ResourceManage/Agv/components/RobotModelViewer';
+import RobotModelViewer from '@/packages/ResourceManage/Vehicle/components/RobotModelViewer';
 
 const responsiveGrid = {
   gutter: 8,

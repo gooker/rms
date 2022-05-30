@@ -1295,9 +1295,9 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
       if (!isNull(CustomNodeTypeFieldMap[key])) {
         if (key === 'START') {
           const startConfig = { ...value[key] };
-          const startConfigRobot = { ...startConfig.robot };
+          const startConfigRobot = { ...startConfig.vehicle };
           if (startConfigRobot.type === 'AUTO') {
-            startConfig.robot = null;
+            startConfig.vehicle = null;
           }
           customTaskData[CustomNodeTypeFieldMap[key]] = startConfig;
         } else {
@@ -1346,8 +1346,8 @@ export function restoreCustomTaskForm(customTask) {
     // 收集表单数据
     if (customTypeKey === 'START') {
       const startValues = { ...customTask[CustomNodeTypeFieldMap[customTypeKey]] };
-      if (isNull(startValues.robot)) {
-        delete startValues.robot;
+      if (isNull(startValues.vehicle)) {
+        delete startValues.vehicle;
       }
       result.fieldsValue[code] = startValues;
     } else if (customTypeKey === 'END') {

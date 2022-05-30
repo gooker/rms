@@ -18,7 +18,7 @@ const ToteTaskPool = () => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id="app.agv.id" />,
+        title: <FormattedMessage id="app.vehicle.id" />,
         dataIndex: 'robotId',
         align: 'center',
         width: 100,

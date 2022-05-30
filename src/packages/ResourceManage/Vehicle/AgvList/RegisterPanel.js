@@ -6,8 +6,8 @@ import { connect } from '@/utils/RmsDva';
 import { dealResponse } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import AddRegistrationModal from '@/packages/ResourceManage/Agv/AgvList/AddRegistrationModal';
-import RegisterRobotModal from '@/packages/ResourceManage/Agv/AgvList/RegisterRobotModal';
+import AddRegistrationModal from '@/packages/ResourceManage/Vehicle/AgvList/AddRegistrationModal';
+import RegisterRobotModal from '@/packages/ResourceManage/Vehicle/AgvList/RegisterRobotModal';
 import { registerRobot } from '@/services/resourceManageAPI';
 import commonStyle from '@/common.module.less';
 
@@ -22,7 +22,7 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.id' />,
+      title: <FormattedMessage id='app.vehicle.id' />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
@@ -32,7 +32,7 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.agv.port' />,
+      title: <FormattedMessage id='app.vehicle.port' />,
       dataIndex: 'port',
       align: 'center',
     },

@@ -95,7 +95,7 @@ const HealthCar = (props) => {
 
     statusHistoryLine.setOption(
       durationLineOption(
-        formatMessage({ id: 'reportCenter.robot.load.statusduration' }),
+        formatMessage({ id: 'reportCenter.vehicle.load.statusduration' }),
         keyStatus,
       ),
       true,
@@ -113,12 +113,12 @@ const HealthCar = (props) => {
       true,
     );
     actionPieHistoryLine.setOption(
-      actionPieOption(formatMessage({ id: 'reportCenter.robot.load.action' }), keyAction),
+      actionPieOption(formatMessage({ id: 'reportCenter.vehicle.load.action' }), keyAction),
       true,
     );
 
     actionBarHistoryLine.setOption(
-      actionBarOption(formatMessage({ id: 'reportCenter.robot.load.action' }), keyAction),
+      actionBarOption(formatMessage({ id: 'reportCenter.vehicle.load.action' }), keyAction),
       true,
     );
 
@@ -365,7 +365,7 @@ const HealthCar = (props) => {
     XLSX.utils.book_append_sheet(
       wb,
       statusWs,
-      formatMessage({ id: 'reportCenter.robot.load.statusduration' }),
+      formatMessage({ id: 'reportCenter.vehicle.load.statusduration' }),
     );
     XLSX.utils.book_append_sheet(
       wb,
@@ -375,7 +375,7 @@ const HealthCar = (props) => {
     XLSX.utils.book_append_sheet(
       wb,
       actionWs,
-      formatMessage({ id: 'reportCenter.robot.load.action' }),
+      formatMessage({ id: 'reportCenter.vehicle.load.action' }),
     );
     XLSX.utils.book_append_sheet(
       wb,
@@ -420,7 +420,7 @@ const HealthCar = (props) => {
   };
   const columns = [
     {
-      title: <FormattedMessage id='app.agv.id' />,
+      title: <FormattedMessage id='app.vehicle.id' />,
       dataIndex: 'vehicleId',
       sorter: (a, b) => a.vehicleId - b.vehicleId,
     },

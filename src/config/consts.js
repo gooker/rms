@@ -17,7 +17,7 @@ export const Colors = {
 
 // 地图元素枚举
 export const ElementType = {
-  AGV: 'AGV',
+  Vehicle: 'Vehicle',
   workStation: 'WORK_STATION',
   station: 'STATION',
   charger: 'CHARGER',
@@ -186,7 +186,7 @@ export const zIndex = {
   targetLine: 3,
   cell: 4,
   temporaryLock: 6,
-  agv: 7,
+  vehicle: 7,
   pod: 8,
   cellHeat: 9,
   functionIcon: 10,
@@ -244,7 +244,7 @@ export const MonitorSelectableSpriteType = {
   ForkLifting: 'ForkLifting',
   Sorter: 'Sorter',
 
-  AGV: 'AGV',
+  Vehicle: 'Vehicle',
   LatentPod: 'LatentPod',
   ToteRack: 'ToteRack',
 

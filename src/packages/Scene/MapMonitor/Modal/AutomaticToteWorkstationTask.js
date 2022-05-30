@@ -27,9 +27,9 @@ const AutomaticToteWorkstationTask = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { vehicleId: values.vehicleId });
-        if (agv) {
-          agvEmptyRun(agv.robotType, { ...values }).then((response) => {
+        const vehicle = find(allAGVs, { vehicleId: values.vehicleId });
+        if (vehicle) {
+          agvEmptyRun(vehicle.robotType, { ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -69,7 +69,7 @@ const AutomaticToteWorkstationTask = (props) => {
 
           <Form.Item
             name={'robotId'}
-            label={formatMessage({ id: 'app.agv.id' })}
+            label={formatMessage({ id: 'app.vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Input />

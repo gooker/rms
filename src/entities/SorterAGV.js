@@ -20,7 +20,7 @@ export default class SorterAGV extends PIXI.Container {
     this.agvType = 'sorter';
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
-    this.zIndex = zIndex.agv;
+    this.zIndex = zIndex.vehicle;
     this.state = props.state;
     this.battery = props.battery;
     this.mainTain = props.mainTain;
@@ -47,17 +47,17 @@ export default class SorterAGV extends PIXI.Container {
     this.createSelectionBorder();
 
     if (props.active) {
-      this.agv.interactive = true;
-      this.agv.buttonMode = true;
-      this.agv.interactiveChildren = false;
-      this.agv.on('pointerdown', this.click);
-      // this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
+      this.vehicle.interactive = true;
+      this.vehicle.buttonMode = true;
+      this.vehicle.interactiveChildren = false;
+      this.vehicle.on('pointerdown', this.click);
+      // this.vehicle.on('rightclick', () => props.simpleCheckAgv(this.id));
     }
   }
 
   set angle(value) {
     this.$angle = value;
-    if (this.agv) this.agv.angle = value;
+    if (this.vehicle) this.vehicle.angle = value;
     if (this.idText) this.idText.angle = -value;
   }
 
@@ -108,30 +108,30 @@ export default class SorterAGV extends PIXI.Container {
     const agvTexture = getTextureFromResources(sorterState);
     const scaleX = SorterAGVSize.width / agvTexture?.width;
     const scaleY = SorterAGVSize.height / agvTexture?.height;
-    this.agv = new PIXI.Sprite(agvTexture);
-    this.agv.anchor.set(0.5);
-    this.agv.setTransform(0, 0, scaleX, scaleY);
-    this.agv.angle = this.$angle;
-    this.agv.zIndex = 2;
-    this.addChild(this.agv);
+    this.vehicle = new PIXI.Sprite(agvTexture);
+    this.vehicle.anchor.set(0.5);
+    this.vehicle.setTransform(0, 0, scaleX, scaleY);
+    this.vehicle.angle = this.$angle;
+    this.vehicle.zIndex = 2;
+    this.addChild(this.vehicle);
   }
 
   addIdText() {
     const x = 0;
-    const y = -this.agv.height / 3.5;
+    const y = -this.vehicle.height / 3.5;
     this.idText = new BitText(this.id, x, y, 0xffffff, 100);
     this.idText.anchor.set(0.5);
     this.idText.angle = -this.$angle;
-    this.agv.addChild(this.idText);
+    this.vehicle.addChild(this.idText);
   }
 
   addAGVStateIcon() {
-    const x = this.agv.width / 2 - 100;
-    const y = -this.agv.height / 2 + 40;
+    const x = this.vehicle.width / 2 - 100;
+    const y = -this.vehicle.height / 2 + 40;
     this.stateIcon = new PIXI.Sprite();
     this.stateIcon.anchor.set(0.5);
     this.stateIcon.setTransform(x, y, 0.08, 0.08, 0, 0, 0, 0);
-    this.agv.addChild(this.stateIcon);
+    this.vehicle.addChild(this.stateIcon);
     this.updateAGVState(this.state);
   }
 
@@ -145,7 +145,7 @@ export default class SorterAGV extends PIXI.Container {
       console.warn(`无法识别的小车状态: ${agvState}, 小车: ${this.id}`);
       return;
     }
-    this.agv.texture = agvTexture;
+    this.vehicle.texture = agvTexture;
     this.stateIcon.texture = getTextureFromResources(state);
 
     if (state === 'offline') {
@@ -164,7 +164,7 @@ export default class SorterAGV extends PIXI.Container {
       this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
       this.AGVErrorSprite.anchor.set(0.5);
       this.AGVErrorSprite.setTransform(0, 0, 0.7, 0.7);
-      this.agv.addChild(this.AGVErrorSprite);
+      this.vehicle.addChild(this.AGVErrorSprite);
     }
     if (this.errorLevel === 0) {
       this.AGVErrorSprite.visible = false;
@@ -184,7 +184,7 @@ export default class SorterAGV extends PIXI.Container {
 
   addBatteryIcon() {
     if (this.battery === undefined || this.battery === null) return;
-    const x = this.agv.width / 2 - 40;
+    const x = this.vehicle.width / 2 - 40;
     const y = 30;
     const batteryState = switchAGVBatteryState(this.battery);
     const texture = getTextureFromResources(batteryState);
@@ -193,7 +193,7 @@ export default class SorterAGV extends PIXI.Container {
     batteryIcon.setTransform(x, y, 0.2, 0.2);
     batteryIcon.angle = 90;
     this.batteryIcon = batteryIcon;
-    this.agv.addChild(batteryIcon);
+    this.vehicle.addChild(batteryIcon);
   }
 
   updateBatteryState(batteryState) {
@@ -214,7 +214,7 @@ export default class SorterAGV extends PIXI.Container {
     this.frontBox.anchor.set(0.5);
     this.frontBox.angle = -this.$angle;
     this.frontBox.visible = false;
-    this.agv.addChild(this.frontBox);
+    this.vehicle.addChild(this.frontBox);
 
     // 后货物
     this.rearBox = new PIXI.Sprite(boxTexture);
@@ -225,7 +225,7 @@ export default class SorterAGV extends PIXI.Container {
     this.rearBox.anchor.set(0.5);
     this.rearBox.angle = -this.$angle;
     this.rearBox.visible = false;
-    this.agv.addChild(this.rearBox);
+    this.vehicle.addChild(this.rearBox);
 
     // 大件货
     this.bigBox = new PIXI.Sprite(boxTexture);
@@ -236,7 +236,7 @@ export default class SorterAGV extends PIXI.Container {
     this.bigBox.anchor.set(0.5);
     this.bigBox.angle = -this.$angle;
     this.bigBox.visible = false;
-    this.agv.addChild(this.bigBox);
+    this.vehicle.addChild(this.bigBox);
   }
 
   /**
@@ -262,7 +262,7 @@ export default class SorterAGV extends PIXI.Container {
     this.spannerSprite.alpha = 0.8;
     this.spannerSprite.anchor.set(0.5);
     this.spannerSprite.zIndex = 100;
-    this.agv.addChild(this.spannerSprite);
+    this.vehicle.addChild(this.spannerSprite);
   }
 
   addOfflineIcon() {
@@ -271,7 +271,7 @@ export default class SorterAGV extends PIXI.Container {
     this.AGVOfflineSprite.alpha = 0.8;
     this.AGVOfflineSprite.anchor.set(0.5);
     this.AGVOfflineSprite.zIndex = 100;
-    this.agv.addChild(this.AGVOfflineSprite);
+    this.vehicle.addChild(this.AGVOfflineSprite);
   }
 
   updateMainTainState(mainTain) {
@@ -289,7 +289,7 @@ export default class SorterAGV extends PIXI.Container {
     this.agvManuallySprite.anchor.set(0.5);
     this.agvManuallySprite.zIndex = 100;
     this.agvManuallySprite.visible = this.manualMode;
-    this.agv.addChild(this.agvManuallySprite);
+    this.vehicle.addChild(this.agvManuallySprite);
   }
 
   updateManuallyMode(manualMode) {

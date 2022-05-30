@@ -103,7 +103,7 @@ const AddRegistrationModal = (props) => {
 
             <Form.Item
               name={'port'}
-              label={<FormattedMessage id={'app.agv.port'} />}
+              label={<FormattedMessage id={'app.vehicle.port'} />}
               rules={[{ required: true }]}
             >
               <InputNumber />

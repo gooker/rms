@@ -46,11 +46,11 @@ export default {
   'app.activity.workTime': '运行时长',
 
   // 小车任务记录Tab
-  'app.agv.taskRecord': '小车任务记录',
+  'app.vehicle.taskRecord': '小车任务记录',
   'app.activity.searchTime': '查询时间',
 
   // 小车错误记录
-  'app.agv.errorRecord': '小车错误记录',
+  'app.vehicle.errorRecord': '小车错误记录',
 
   // 维护相关
   'app.activity.maintain': '维护',

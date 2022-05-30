@@ -63,7 +63,7 @@ class TaskLibraryComponent extends Component {
   getAgvList = async () => {
     const response = await fetchAllAgvList();
     if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.agv.getListFail' }));
+      message.error(formatMessage({ id: 'app.vehicle.getListFail' }));
     } else {
       this.setState({ agvList: response });
     }

@@ -70,18 +70,18 @@ const RealTimeTab = (props) => {
           <Tag color="red">
             <ToolOutlined />
             <span style={{ marginLeft: 3 }}>
-              {formatMessage({ id: 'app.agv.underMaintenance' })}
+              {formatMessage({ id: 'app.vehicle.underMaintenance' })}
             </span>
           </Tag>
         );
       } else {
-        return <Tag color="green">{formatMessage({ id: 'app.agv.normal' })}</Tag>;
+        return <Tag color="green">{formatMessage({ id: 'app.vehicle.normal' })}</Tag>;
       }
     }
   }
 
   function renderManualMode() {
-    return data?.agv?.manualMode ? (
+    return data?.vehicle?.manualMode ? (
       <FormattedMessage id="app.common.true" />
     ) : (
       <FormattedMessage id="app.common.false" />
@@ -139,26 +139,26 @@ const RealTimeTab = (props) => {
       {/* 左侧 */}
       <Col span={12}>
         {/************ 小车ID ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
-          {data?.agv?.vehicleId}
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.id' })}>
+          {data?.vehicle?.vehicleId}
         </LabelComponent>
 
         {/************ IP ************/}
-        <LabelComponent label={'ip'}>{data?.agv?.ip}</LabelComponent>
+        <LabelComponent label={'ip'}>{data?.vehicle?.ip}</LabelComponent>
 
         {/************ 端口号 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.port' })}>
-          {data?.agv?.port}
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.port' })}>
+          {data?.vehicle?.port}
         </LabelComponent>
 
         {/************ 小车类型 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agvType' })}>
-          {data?.agv?.agvType}
+          {data?.vehicle?.agvType}
         </LabelComponent>
 
         {/* 是否是模拟车 */}
         <LabelComponent label={formatMessage({ id: 'app.agvType' })}>
-          {data?.agv?.isSimulator ? (
+          {data?.vehicle?.isSimulator ? (
             <FormattedMessage id="app.common.true" />
           ) : (
             <FormattedMessage id="app.common.false" />
@@ -166,17 +166,17 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 服务器标识 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.serverIdentity' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.serverIdentity' })}>
           {data?.agvInfo?.clusterIndex}
         </LabelComponent>
 
         {/************ 所在位置 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.currentSpotId' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.currentSpotId' })}>
           {data?.agvInfo?.currentCellId}
         </LabelComponent>
 
         {/************ 加入时间 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.addingTime' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.addingTime' })}>
           {renderAddingTime()}
         </LabelComponent>
 
@@ -186,12 +186,12 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 维护状态 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.maintenanceState' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.maintenanceState' })}>
           {renderMaintenanceState()}
         </LabelComponent>
 
         {/************ 手动模式 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.manualMode' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.manualMode' })}>
           {renderManualMode()}
         </LabelComponent>
 
@@ -202,22 +202,22 @@ const RealTimeTab = (props) => {
       {/* 右侧 */}
       <Col span={12}>
         {/************ 电压 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.batteryVoltage' })}>
           {data?.agvInfo?.batteryVoltage && renderVoltage()}
         </LabelComponent>
 
         {/************ 电量 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.battery' })}>
           {data?.battery?.battery && renderBattery(data.battery.battery)}
         </LabelComponent>
 
         {/************ 当前速度 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.speed' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.speed' })}>
           {data?.agvInfo?.speed}
         </LabelComponent>
 
         {/************ 手动模式 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.manualMode' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicle.manualMode' })}>
           {renderManualMode()}
         </LabelComponent>
 
@@ -234,7 +234,7 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 车头朝向 ************/}
-        <LabelComponent label={<FormattedMessage id="app.agv.currentDirection" />}>
+        <LabelComponent label={<FormattedMessage id="app.vehicle.currentDirection" />}>
           {renderAGVDirection(data?.agvInfo?.direction, getDirectionLocale)}
         </LabelComponent>
 
@@ -255,7 +255,7 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 绑定充电桩 ************/}
-        <LabelComponent label={<FormattedMessage id="app.agv.lockedCharger" />}>
+        <LabelComponent label={<FormattedMessage id="app.vehicle.lockedCharger" />}>
           {data.redisAGV && data.redisAGV.lockedChargerId ? (
             <span>
               <span

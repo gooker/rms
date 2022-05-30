@@ -1312,33 +1312,33 @@ export function explainAgvStatus(value) {
   return mapping[value];
 }
 
-export function unifyAgvState(agv) {
+export function unifyAgvState(vehicle) {
   // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
-  let currentCellId = agv.c ?? agv.currentCellId;
+  let currentCellId = vehicle.c ?? vehicle.currentCellId;
   currentCellId = getElevatorMapCellId(currentCellId);
 
   return {
-    x: agv.x,
-    y: agv.y,
+    x: vehicle.x,
+    y: vehicle.y,
     currentCellId,
-    navigationType: agv.bd ?? agv.navigationType,
-    uniqueId: agv.rId,
-    battery: agv.b ?? agv.battery,
-    vehicleId: agv.r ?? agv.vehicleId,
-    mainTain: agv.m ?? agv.maintain,
-    manualMode: agv.mly ?? agv.manualMode,
-    agvStatus: explainAgvStatus(agv.s) ?? agv.agvStatus,
-    currentDirection: agv.rD ?? agv.currentDirection,
-    podId: agv.p ?? agv.podId,
-    podDirection: agv.pD ?? agv.podDirection,
-    hasPod: agv.hp,
-    longSide: agv.lS,
-    shortSide: agv.sS,
-    shelfs: agv.sf ?? agv.shelfs,
-    toteCodes: agv.tc ?? agv.toteCodes, // 车身的料箱
-    holdTote: agv.ht, // 抱夹的料箱
-    sorterPod: agv.ro ?? '0,0',
-    errorLevel: agv.e ?? 0,
+    navigationType: vehicle.bd ?? vehicle.navigationType,
+    uniqueId: vehicle.rId,
+    battery: vehicle.b ?? vehicle.battery,
+    vehicleId: vehicle.r ?? vehicle.vehicleId,
+    mainTain: vehicle.m ?? vehicle.maintain,
+    manualMode: vehicle.mly ?? vehicle.manualMode,
+    agvStatus: explainAgvStatus(vehicle.s) ?? vehicle.agvStatus,
+    currentDirection: vehicle.rD ?? vehicle.currentDirection,
+    podId: vehicle.p ?? vehicle.podId,
+    podDirection: vehicle.pD ?? vehicle.podDirection,
+    hasPod: vehicle.hp,
+    longSide: vehicle.lS,
+    shortSide: vehicle.sS,
+    shelfs: vehicle.sf ?? vehicle.shelfs,
+    toteCodes: vehicle.tc ?? vehicle.toteCodes, // 车身的料箱
+    holdTote: vehicle.ht, // 抱夹的料箱
+    sorterPod: vehicle.ro ?? '0,0',
+    errorLevel: vehicle.e ?? 0,
   };
 }
 

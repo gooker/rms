@@ -164,7 +164,7 @@ class OperationType extends React.PureComponent {
 
     // 筛选出区域内的元素
     const selectable = [...selectableType];
-    if (selectable.includes('AGV')) {
+    if (selectable.includes('Vehicle')) {
       selectable.push(LatentLifting, Tote, Sorter, ForkLifting);
     }
     const selections = mapContext.pixiUtils.viewport.children

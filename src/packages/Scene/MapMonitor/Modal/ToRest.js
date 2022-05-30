@@ -25,8 +25,8 @@ const ToRest = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        const agv = find(allAGVs, { vehicleId: values.vehicleId });
-        if (agv) {
+        const vehicle = find(allAGVs, { vehicleId: values.vehicleId });
+        if (vehicle) {
         
           agvToRest({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {

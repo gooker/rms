@@ -68,7 +68,7 @@ const DictionaryDataSource = {
     2: 'app.batteryType.enumeration2', //Latent vehicle (lithium ternary)
     3: 'app.batteryType.enumeration3',
     4: 'app.batteryType.enumeration4', //Sorting car (lithium iron phosphate)
-    5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin robot (lithium iron phosphate)
+    5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin vehicle (lithium iron phosphate)
   },
 
   // 业务颜色
@@ -85,8 +85,8 @@ const DictionaryDataSource = {
 
   //  报表中心
   reportCenterTable: {
-    agvId: 'app.agv.id',
-    currentRobotId: 'app.agv.id',
+    agvId: 'app.vehicle.id',
+    currentRobotId: 'app.vehicle.id',
     count: 'app.reportCenter.reportCount',
     createTime: 'app.common.creationTime',
     errorDefinition_level: 'app.fault.level',

@@ -23,7 +23,7 @@ export default class ForkLiftAGV extends PIXI.Container {
     this.battery = props.battery;
     this.mainTain = props.mainTain;
     this.manualMode = props.manualMode;
-    this.zIndex = zIndex.agv;
+    this.zIndex = zIndex.vehicle;
     this.inCharging = props.inCharging;
     this.anchorPercent = ForkLiftAGVSize.radius / ForkLiftAGVSize.height;
 
@@ -38,11 +38,11 @@ export default class ForkLiftAGV extends PIXI.Container {
     this.mainTain && this.addMaintainIcon();
 
     if (props.active) {
-      this.agv.interactive = true;
-      this.agv.buttonMode = true;
-      this.agv.interactiveChildren = false;
-      this.agv.on('click', () => props.checkAGV(this.id, this.type));
-      this.agv.on('rightclick', () => props.simpleCheckAgv(this.id));
+      this.vehicle.interactive = true;
+      this.vehicle.buttonMode = true;
+      this.vehicle.interactiveChildren = false;
+      this.vehicle.on('click', () => props.checkAGV(this.id, this.type));
+      this.vehicle.on('rightclick', () => props.simpleCheckAgv(this.id));
     }
   }
 
@@ -60,15 +60,15 @@ export default class ForkLiftAGV extends PIXI.Container {
     const agvTexture = getTextureFromResources(forliftState);
     const scaleX = ForkLiftAGVSize.width / agvTexture.width;
     const scaleY = ForkLiftAGVSize.height / agvTexture.height;
-    this.agv = new PIXI.Sprite(agvTexture);
-    this.agv.anchor.set(0.5, this.anchorPercent);
-    this.agv.setTransform(0, 0, scaleX, scaleY);
-    this.addChild(this.agv);
+    this.vehicle = new PIXI.Sprite(agvTexture);
+    this.vehicle.anchor.set(0.5, this.anchorPercent);
+    this.vehicle.setTransform(0, 0, scaleX, scaleY);
+    this.addChild(this.vehicle);
   }
 
   addIdText() {
     const x = 0;
-    const y = -this.agv.height * 0.8;
+    const y = -this.vehicle.height * 0.8;
     this.idText = new BitText(this.id, x, y, 0xffffff, 200);
     this.idText.anchor.set(0.5);
     this.idText.angle = -this.angle;
@@ -76,8 +76,8 @@ export default class ForkLiftAGV extends PIXI.Container {
   }
 
   addAGVStateIcon() {
-    const x = this.agv.width / 2 - 70;
-    const y = -this.agv.height * 0.75;
+    const x = this.vehicle.width / 2 - 70;
+    const y = -this.vehicle.height * 0.75;
     this.stateIcon = new PIXI.Sprite();
     this.stateIcon.anchor.set(0.5);
     this.stateIcon.setTransform(x, y, 0.15, 0.15);
@@ -97,7 +97,7 @@ export default class ForkLiftAGV extends PIXI.Container {
       console.warn(`无法识别的小车状态: ${agvState}, 小车: ${this.id}`);
       return;
     }
-    this.agv.texture = agvTexture;
+    this.vehicle.texture = agvTexture;
     this.stateIcon.texture = getTextureFromResources(state);
 
     // 如果是 error或者offline 小车要添加特殊纹理
@@ -120,7 +120,7 @@ export default class ForkLiftAGV extends PIXI.Container {
     this.AGVOfflineSprite.alpha = 0.8;
     this.AGVOfflineSprite.anchor.set(0.5);
     this.AGVOfflineSprite.zIndex = 100;
-    this.agv.addChild(this.AGVOfflineSprite);
+    this.vehicle.addChild(this.AGVOfflineSprite);
   }
 
   addErrorMaskState() {
@@ -128,7 +128,7 @@ export default class ForkLiftAGV extends PIXI.Container {
       const ErrorMaskTexture = getTextureFromResources('agv_error');
       this.AGVErrorSprite = new PIXI.Sprite(ErrorMaskTexture);
       this.AGVErrorSprite.anchor.set(0.5);
-      this.AGVErrorSprite.setTransform(0, -this.agv.height * 0.45, 1, 1);
+      this.AGVErrorSprite.setTransform(0, -this.vehicle.height * 0.45, 1, 1);
       this.addChild(this.AGVErrorSprite);
     } else {
       this.AGVErrorSprite.visible = true;
@@ -137,8 +137,8 @@ export default class ForkLiftAGV extends PIXI.Container {
 
   addBatteryIcon() {
     if (isNull(this.battery)) return;
-    const x = this.agv.width / 1.7;
-    const y = -this.agv.height * 0.5;
+    const x = this.vehicle.width / 1.7;
+    const y = -this.vehicle.height * 0.5;
     const batteryState = switchAGVBatteryState(this.battery);
     const texture = getTextureFromResources(batteryState);
     const batteryIcon = new PIXI.Sprite(texture);
@@ -160,8 +160,8 @@ export default class ForkLiftAGV extends PIXI.Container {
     const spannerTexture = getTextureFromResources('maintain');
     const spannerSprite = new PIXI.Sprite(spannerTexture);
     spannerSprite.anchor.set(0.5);
-    const x = this.agv.width / 1.7;
-    const y = -this.agv.height / 4.3;
+    const x = this.vehicle.width / 1.7;
+    const y = -this.vehicle.height / 4.3;
     spannerSprite.setTransform(x, y, 0.4, 0.4);
     this.spannerSprite = spannerSprite;
     this.addChild(spannerSprite);
@@ -182,7 +182,7 @@ export default class ForkLiftAGV extends PIXI.Container {
     this.agvManuallySprite.anchor.set(0.5);
     this.agvManuallySprite.zIndex = 100;
     this.agvManuallySprite.visible = this.manualMode;
-    this.agv.addChild(this.agvManuallySprite);
+    this.vehicle.addChild(this.agvManuallySprite);
   }
 
   updateManuallyMode(manualMode) {
