@@ -2,8 +2,8 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
 // 新增地图临时不可走点
-export async function updateTemporaryBlockCell(payload) {
-  return request(`/${NameSpace.Platform}/lock/saveTemporaryCell`, {
+export async function addTemporaryBlockCell(payload) {
+  return request(`/${NameSpace.Platform}/resource/lock/saveTemporaryCell`, {
     method: 'POST',
     data: payload,
   });
@@ -11,7 +11,7 @@ export async function updateTemporaryBlockCell(payload) {
 
 // 删除地图临时不可走点
 export async function deleteTemporaryBlockCell(payload) {
-  return request(`/${NameSpace.Platform}/lock/deleteTemporaryCell`, {
+  return request(`/${NameSpace.Platform}/resource/lock/deleteTemporaryCell`, {
     method: 'POST',
     data: payload,
   });
@@ -19,7 +19,7 @@ export async function deleteTemporaryBlockCell(payload) {
 
 // 获取地图所有临时不可走点
 export async function fetchTemporaryBlockCells() {
-  return request(`/${NameSpace.Platform}/lock/getTemporaryLockedCells`, {
+  return request(`/${NameSpace.Platform}/resource/lock/getTemporaryLockedCells`, {
     method: 'GET',
   });
 }
@@ -144,17 +144,17 @@ export async function agvEmptyRun(params) {
 }
 
 // 小车充电
-export async function agvTryToCharge(AGVType, params) {
-  return request(`/${NameSpace[AGVType]}/agv/action/tryToCharge`, {
-    method: 'GET',
+export async function agvTryToCharge(params) {
+  return request(`/${NameSpace.Platform}/task/tryToCharge`, {
+    method: 'POST',
     data: params,
   });
 }
 
 // 小车回休息区
-export async function agvToRest(AGVType, params) {
-  return request(`/${NameSpace[AGVType]}/agv-task/goToRest`, {
-    method: 'GET',
+export async function agvToRest(params) {
+  return request(`/${NameSpace.Platform}/task/rest`, {
+    method: 'POST',
     data: params,
   });
 }

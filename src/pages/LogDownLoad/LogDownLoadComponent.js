@@ -7,7 +7,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import { AGVState, Colors, LogFileTypes } from '@/config/consts';
 import {
   fetchAgvLog,
-  fetchAgvList,
+  fetchAllAgvList,
   startCreatingLog,
   forceResetLogGeneration,
   downloadLogFromSFTP,
@@ -129,7 +129,7 @@ const LogDownLoadComponent = (props) => {
   }
 
   async function getAgvList() {
-    const response = await fetchAgvList(agvType);
+    const response = await fetchAllAgvList();
     if (!dealResponse(response)) {
       setAgvList(response);
     }

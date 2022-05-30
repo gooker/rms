@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Row, Col, Tag, Popover, Button } from 'antd';
 import { ToolOutlined } from '@ant-design/icons';
-import { formatMessage, getSuffix, renderBattery } from '@/utils/util';
+import { formatMessage, getSuffix, isNull, renderBattery } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getDirectionLocale, getAgvStatusTag, convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
@@ -13,13 +13,13 @@ import { connect } from '@/utils/RmsDva';
 const { red, green, yellow } = Dictionary('color');
 
 const RealTimeTab = (props) => {
-  const { data, agvType, allTaskTypes } = props;
+  const { data, allTaskTypes } = props;
 
-  function renderAGVDirection(redisRecord, mongoRecord, format) {
-    if (redisRecord == null && mongoRecord == null) {
+  function renderAGVDirection(value, format) {
+    if (isNull(value)) {
       return null;
     }
-    return format(mongoRecord || redisRecord);
+    return format(value);
   }
 
   function renderArray(data) {
@@ -51,14 +51,14 @@ const RealTimeTab = (props) => {
   }
 
   function renderAddingTime() {
-    if (data.mongodbAGV) {
-      return convertToUserTimezone(data.mongodbAGV.createDate).format('YYYY-MM-DD HH:mm:ss');
+    if (data.agvInfo) {
+      return convertToUserTimezone(data.agvInfo.createDate).format('YYYY-MM-DD HH:mm:ss');
     }
   }
 
   function renderMaintenanceState() {
-    if (data.mongodbAGV) {
-      if (data.mongodbAGV.disabled) {
+    if (data.agvWorkStatusDTO) {
+      if (data.agvWorkStatusDTO.disabled) {
         return (
           <Tag color="red">
             <ToolOutlined />
@@ -74,34 +74,22 @@ const RealTimeTab = (props) => {
   }
 
   function renderManualMode() {
-    if (data.mongodbAGV) {
-      return data.mongodbAGV.manualMode ? (
-        <FormattedMessage id="app.common.true" />
-      ) : (
-        <FormattedMessage id="app.common.false" />
-      );
-    }
-  }
-
-  function renderAgvType() {
-    if (data.mongodbAGV) {
-      if (data.mongodbAGV.isDummy) {
-        return formatMessage({ id: 'app.agv.threeGenerationsOfVehicles(Virtual)' });
-      } else {
-        return formatMessage({ id: `app.agvType.${data.mongodbAGV.robotType}` });
-      }
-    }
+    return data?.agv?.manualMode ? (
+      <FormattedMessage id="app.common.true" />
+    ) : (
+      <FormattedMessage id="app.common.false" />
+    );
   }
 
   function renderAgvStatus() {
-    if (data.mongodbAGV) {
-      const { agvStatus } = data.mongodbAGV;
+    if (data.agvWorkStatusDTO) {
+      const { agvStatus } = data.agvWorkStatusDTO;
       return getAgvStatusTag(agvStatus);
     }
   }
 
   function renderVoltage() {
-    const batteryVoltage = data.mongodbAGV.batteryVoltage;
+    const batteryVoltage = data.agvInfo.batteryVoltage;
     let batteryVoltageColor;
     if (batteryVoltage > 47000) {
       batteryVoltageColor = green;
@@ -145,32 +133,39 @@ const RealTimeTab = (props) => {
       <Col span={12}>
         {/************ 小车ID ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
-          {data?.mongodbAGV?.robotId}
+          {data?.agv?.agvId}
         </LabelComponent>
 
         {/************ IP ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.ip' })}>
-          {data?.mongodbAGV?.ip}
-        </LabelComponent>
+        <LabelComponent label={'ip'}>{data?.agv?.ip}</LabelComponent>
 
         {/************ 端口号 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.port' })}>
-          {data?.mongodbAGV?.port}
+          {data?.agv?.port}
         </LabelComponent>
 
         {/************ 小车类型 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agvType' })}>
-          {renderAgvType()}
+          {data?.agv?.agvType}
+        </LabelComponent>
+
+        {/* 是否是模拟车 */}
+        <LabelComponent label={formatMessage({ id: 'app.agvType' })}>
+          {data?.agv?.isSimulator ? (
+            <FormattedMessage id="app.common.true" />
+          ) : (
+            <FormattedMessage id="app.common.false" />
+          )}
         </LabelComponent>
 
         {/************ 服务器标识 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.serverIdentity' })}>
-          {data?.mongodbAGV?.clusterIndex}
+          {data?.agvInfo?.clusterIndex}
         </LabelComponent>
 
         {/************ 所在位置 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.currentSpotId' })}>
-          {data?.mongodbAGV?.currentCellId}
+          {data?.agvInfo?.currentCellId}
         </LabelComponent>
 
         {/************ 加入时间 ************/}
@@ -179,7 +174,7 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 小车状态 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.agv.status' })}>
+        <LabelComponent label={formatMessage({ id: 'app.agvStatus' })}>
           {renderAgvStatus()}
         </LabelComponent>
 
@@ -194,38 +189,29 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 任务类型 ************/}
-        <LabelComponent label={<FormattedMessage id="app.task.type" />}>
-          {data?.redisAGV?.currentTaskType &&
-            (allTaskTypes?.[agvType]?.[data.redisAGV.currentTaskType] ||
-              data.redisAGV.currentTaskType)}
-        </LabelComponent>
+        <LabelComponent label={<FormattedMessage id="app.task.type" />}></LabelComponent>
       </Col>
 
       {/* 右侧 */}
       <Col span={12}>
         {/************ 电压 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.batteryVoltage' })}>
-          {data?.mongodbAGV?.batteryVoltage && renderVoltage()}
+          {data?.agvInfo?.batteryVoltage && renderVoltage()}
         </LabelComponent>
 
         {/************ 电量 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.battery' })}>
-          {data?.mongodbAGV?.battery && renderBattery(data.mongodbAGV.battery)}
+          {data?.battery?.battery && renderBattery(data.battery.battery)}
         </LabelComponent>
 
         {/************ 当前速度 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.speed' })}>
-          {data?.mongodbAGV?.speed}
+          {data?.agvInfo?.speed}
         </LabelComponent>
 
         {/************ 手动模式 ************/}
         <LabelComponent label={formatMessage({ id: 'app.agv.manualMode' })}>
           {renderManualMode()}
-        </LabelComponent>
-
-        {/************ 上方货架 ************/}
-        <LabelComponent label={<FormattedMessage id="app.activity.lockedPod" />}>
-          {data?.redisAGV?.lockedPodId ? renderAbovePodContent() : null}
         </LabelComponent>
 
         {/************ 任务ID ************/}
@@ -242,11 +228,7 @@ const RealTimeTab = (props) => {
 
         {/************ 车头朝向 ************/}
         <LabelComponent label={<FormattedMessage id="app.agv.currentDirection" />}>
-          {renderAGVDirection(
-            data.redisAGV && data.redisAGV.currentDirection,
-            data.mongodbAGV && data.mongodbAGV.currentDirection,
-            getDirectionLocale,
-          )}
+          {renderAGVDirection(data?.agvInfo?.direction, getDirectionLocale)}
         </LabelComponent>
 
         <LabelComponent label={<FormattedMessage id="app.activity.upliftPodId" />}>

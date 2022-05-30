@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Row, Col, Tabs, Button, Select, message } from 'antd';
+import { Row, Col, Tabs, Button, Select, Form, Tag, message } from 'antd';
 import {
   FileTextOutlined,
   AndroidOutlined,
@@ -8,11 +8,11 @@ import {
   AimOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
+import { find } from 'lodash';
 import LabelComponent from '@/components/LabelComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
-  fetchAgvList,
   fetchAgvInfo,
   fetchAgvTaskList,
   fetchAgvErrorRecord,
@@ -24,7 +24,7 @@ import HardwareTab from './HardwareTab';
 import TaskRecordTab from './TaskRecordTab';
 import ErrorRecordTab from './ErrorRecordTab';
 import AGVActivityForm from './AGVActivityForm';
-import agvRealTimeComponentStyles from './index.module.less';
+import styles from './index.module.less';
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -35,6 +35,8 @@ class AgvRealTimeComponent extends React.Component {
     agvList: [],
 
     agvId: null,
+    agvType: null,
+    uniqueId: null,
     agvRealtimeData: null,
     agvHardware: null,
     agvTask: null,
@@ -45,50 +47,41 @@ class AgvRealTimeComponent extends React.Component {
     isFetching: false,
   };
 
-  componentDidMount() {
-    const { agvId } = this.props;
-    this.fetchAgvList();
-    if (agvId) {
-      this.setState({ agvId }, this.fetchAgvMultivariateData);
+  async componentDidMount() {
+    const { dispatch, location } = this.props;
+    const allVehicles = await dispatch({
+      type: 'monitor/refreshAllAgvList',
+    });
+    if (location && location?.search) {
+      const uniqueId = location.search.split('=')[1];
+      const { agvId, agvType } = find(allVehicles, { uniqueId });
+      this.setState({ uniqueId, agvId, agvType }, this.fetchAgvMultivariateData);
     }
+    this.setState({ agvList: allVehicles });
   }
 
-  fetchAgvList = async () => {
-    const { agvType, location } = this.props;
-    if (location && location?.search) {
-      const robotId = location.search.split('=')[1];
-      this.setState({ agvId: robotId }, this.fetchAgvMultivariateData);
-    }
-    const response = await fetchAgvList(agvType);
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.agv.getListFail' }));
-    } else {
-      this.setState({ agvList: response });
-    }
-  };
-
-  // 获取小车软件信息、
+  // 获取小车软件信息
   fetchAgvMultivariateData = async () => {
-    const { agvId } = this.state;
-    const { agvType } = this.props;
+    const { uniqueId, agvType, agvId } = this.state;
     this.setState({ isFetching: true });
-    const [agvRealtimeData, agvHardware, agvTask, agvErrorRecord] = await Promise.all([
+    const [agvRealtimeData] = await Promise.all([
       fetchAgvInfo(agvId, agvType),
-      fetchAgvHardwareInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
-      fetchAgvTaskList(agvType, {
-        sectionId: window.localStorage.getItem('sectionId'),
-        agvId,
-        current: 1,
-        size: 6,
-      }),
-      fetchAgvErrorRecord(agvType, {
-        sectionId: window.localStorage.getItem('sectionId'),
-        agvId,
-        current: 1,
-        size: 3,
-      }),
+      // fetchAgvHardwareInfo(agvType, { sectionId: window.localStorage.getItem('sectionId'), agvId }),
+      // fetchAgvTaskList(agvType, {
+      //   sectionId: window.localStorage.getItem('sectionId'),
+      //   agvId,
+      //   current: 1,
+      //   size: 6,
+      // }),
+      // fetchAgvErrorRecord(agvType, {
+      //   sectionId: window.localStorage.getItem('sectionId'),
+      //   agvId,
+      //   current: 1,
+      //   size: 3,
+      // }),
     ]);
-    this.setState({ isFetching: false, agvRealtimeData, agvHardware, agvTask, agvErrorRecord });
+    // this.setState({ isFetching: false, agvRealtimeData, agvHardware, agvTask, agvErrorRecord });
+    this.setState({ isFetching: false, agvRealtimeData });
   };
 
   taskOnDetail = (taskId) => {
@@ -139,39 +132,44 @@ class AgvRealTimeComponent extends React.Component {
   };
 
   render() {
-    const { agvId, agvList, isFetching } = this.state;
-    const { agvRealtimeData, agvHardware, agvTask, agvErrorRecord, agvType } = this.state;
+    const { agvId, agvType, agvList, agvRealtimeData, isFetching } = this.state;
 
     return (
       <div className={commonStyles.commonPageStyle}>
         <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 20 }}>
-          <LabelComponent label={formatMessage({ id: 'app.agv.id' })}>
-            <Select
-              showSearch
-              value={agvId}
-              style={{ width: '100%' }}
-              onChange={(agvId) => {
-                this.setState({ agvId });
-              }}
+          <Col span={16}>
+            <Form.Item label={<FormattedMessage id="app.agv.id" />}>
+              <Select
+                allowClear
+                showSearch
+                style={{ width: '100%' }}
+                onChange={(uniqueId) => {
+                  const { agvId, agvType } = find(agvList, { uniqueId });
+                  this.setState({ uniqueId, agvId, agvType });
+                  return uniqueId;
+                }}
+              >
+                {agvList.map(({ vehicleId, agvType, uniqueId }) => (
+                  <Option key={`${vehicleId}-${agvType}`} value={uniqueId}>
+                    {`${vehicleId}-${agvType}`}
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </Col>
+          <Col>
+            <Button
+              type={'primary'}
+              disabled={!agvId}
+              loading={isFetching}
+              onClick={this.fetchAgvMultivariateData}
             >
-              {agvList.map(({ robotId }) => (
-                <Option key={robotId} value={robotId}>
-                  {robotId}
-                </Option>
-              ))}
-            </Select>
-          </LabelComponent>
-          <Button
-            type={'primary'}
-            disabled={!agvId}
-            loading={isFetching}
-            onClick={this.fetchAgvMultivariateData}
-          >
-            <SearchOutlined /> <FormattedMessage id={'app.button.check'} />
-          </Button>
+              <SearchOutlined /> <FormattedMessage id={'app.button.check'} />
+            </Button>
+          </Col>
         </Row>
-        <Row style={{ flex: 1 }} justify={'space-between'}>
-          <Col className={agvRealTimeComponentStyles.tabContainer}>
+        <Row className={styles.tabContainer}>
+          <Col span={24}>
             {/* 小车实时信息 */}
             <Tabs defaultActiveKey="realTime">
               <TabPane
@@ -196,14 +194,14 @@ class AgvRealTimeComponent extends React.Component {
                   </span>
                 }
               >
-                <HardwareTab agvType={agvType} data={agvHardware} />
+                <HardwareTab agvType={agvType} data={agvRealtimeData} />
               </TabPane>
             </Tabs>
           </Col>
-          <Col className={agvRealTimeComponentStyles.tabContainer}>
-            <Tabs defaultActiveKey="taskRecord">
-              {/* 小车任务记录 */}
-              <TabPane
+          {/* <Col className={agvRealTimeComponentStyles.tabContainer}> */}
+          {/* <Tabs defaultActiveKey="taskRecord"> */}
+          {/* 小车任务记录 */}
+          {/* <TabPane
                 key="taskRecord"
                 tab={
                   <span>
@@ -235,10 +233,10 @@ class AgvRealTimeComponent extends React.Component {
                   }}
                   onDetail={this.taskOnDetail}
                 />
-              </TabPane>
+              </TabPane> */}
 
-              {/* 小车错误记录 */}
-              <TabPane
+          {/* 小车错误记录 */}
+          {/* <TabPane
                 key="errorRecord"
                 tab={
                   <span>
@@ -263,9 +261,9 @@ class AgvRealTimeComponent extends React.Component {
                   }}
                   onDetail={this.taskOnDetail}
                 />
-              </TabPane>
-            </Tabs>
-          </Col>
+              </TabPane> */}
+          {/* </Tabs> */}
+          {/* </Col> */}
         </Row>
       </div>
     );

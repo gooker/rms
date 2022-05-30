@@ -1,17 +1,18 @@
 import React, { memo, useState } from 'react';
 import { Form, Input, Select } from 'antd';
 import { formatMessage } from '@/utils/util';
+import { connect } from '@/utils/RmsDva';
 
 const AGVFormComponent = (props) => {
   const { value, onChange, allAGVs } = props;
   const [typeOption, setTypeOption] = useState([]);
 
   function getAgvType(ev) {
-    const agvId = ev.target.value;
-    const allAgvType = allAGVs.filter((item) => item.agvId === agvId);
+    const vehicleId = ev.target.value;
+    const allAgvType = allAGVs.filter((item) => item.vehicleId === vehicleId);
 
     const newValue = { ...value };
-    newValue['agvId'] = agvId;
+    newValue['vehicleId'] = vehicleId;
     newValue['agvType'] = '';
     setTypeOption(allAgvType);
     onChange && onChange(newValue);
@@ -34,9 +35,9 @@ const AGVFormComponent = (props) => {
     <>
       <Form.Item
         label={formatMessage({ id: 'app.agv.id' })}
-        name={'agvId'}
+        name={'vehicleId'}
         rules={[{ required: true }]}
-        initialValue={value?.agvId}
+        initialValue={value?.vehicleId}
       >
         <Input onChange={getAgvType} style={{ width: '100%' }} />
       </Form.Item>
@@ -65,4 +66,6 @@ const AGVFormComponent = (props) => {
     // </div>
   );
 };
-export default memo(AGVFormComponent);
+export default connect(({ monitor }) => ({
+  allAGVs: monitor.allAGVs,
+}))(memo(AGVFormComponent));

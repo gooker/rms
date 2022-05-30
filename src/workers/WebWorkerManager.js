@@ -6,8 +6,15 @@ import { NameSpace } from '@/config/config';
  * 便有在不同地方使用同一个 Worker
  */
 
-// 告警中心告警信息数量轮询
-const AlertCountPolling = {};
+const AlertCountPolling = {}; // 告警中心告警信息数量轮询
+const AgvPollingTaskPathManager = {}; // 小车任务路径轮询
+const LockCellPolling = {}; // 点位锁格轮询
+const CommonStationStatePolling = {}; // 获取通用站点雇佣车
+const WorkStationStatePolling = {}; // 获取工作站雇佣车
+const CostHeatPollingManager = {}; // 点位热度轮询
+const StationRatePolling = {}; // 站点速率轮询
+
+// @@@ 告警中心告警信息数量轮询
 AlertCountPolling.getInstance = function (dispatcher) {
   if (isNull(AlertCountPolling.instance)) {
     const worker = new Worker(new URL('./alertCountPolling.worker.js', import.meta.url));
@@ -51,4 +58,265 @@ AlertCountPolling.terminate = function () {
   }
 };
 
-export { AlertCountPolling };
+// @@@ 小车任务路径
+AgvPollingTaskPathManager.getInstance = function (dispatcher) {
+  if (isNull(AgvPollingTaskPathManager.instance)) {
+    const worker = new Worker(new URL('./agvPathPolling.worker.js', import.meta.url));
+    worker.onmessage = function ({ data }) {
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
+      }
+    };
+    AgvPollingTaskPathManager.instance = worker;
+  }
+  return AgvPollingTaskPathManager.instance;
+};
+
+AgvPollingTaskPathManager.start = function (uniqueIds = [], dispatcher) {
+  if (isNull(AgvPollingTaskPathManager.instance)) {
+    AgvPollingTaskPathManager.getInstance(dispatcher);
+  }
+  const params = {
+    uniqueIds,
+  };
+  const agvPathURL = getDomainNameByUrl(`/${NameSpace.Platform}/traffic/getPathByUniqueIds`);
+  AgvPollingTaskPathManager.instance.postMessage({
+    state: 'start',
+    url: agvPathURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+    params,
+  });
+};
+
+AgvPollingTaskPathManager.terminate = function () {
+  if (!isNull(AgvPollingTaskPathManager.instance)) {
+    AgvPollingTaskPathManager.instance.postMessage({
+      state: 'end',
+    });
+    AgvPollingTaskPathManager.instance.terminate();
+    AgvPollingTaskPathManager.instance = null;
+  }
+};
+
+// @@@ 点位锁格轮询
+LockCellPolling.getInstance = function (dispatcher) {
+  if (isNull(LockCellPolling.instance)) {
+    const worker = new Worker(new URL('./lockCellPolling.worker.js', import.meta.url));
+    worker.onmessage = function ({ data }) {
+      /**
+       * TODO
+       * 1. 如果token过期就停止
+       * 2. 处理错误
+       */
+      if (data && Array.isArray(data)) {
+        dispatcher(data);
+      }
+    };
+    LockCellPolling.instance = worker;
+  }
+  return LockCellPolling.instance;
+};
+
+LockCellPolling.start = function (params, dispatcher) {
+  if (isNull(LockCellPolling.instance)) {
+    LockCellPolling.getInstance(dispatcher);
+  }
+  const lockCellURL = getDomainNameByUrl(`/${NameSpace.Platform}/lock/getLockCellsByUniqueIds`);
+  LockCellPolling.instance.postMessage({
+    state: 'start',
+    url: lockCellURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+    params,
+  });
+};
+
+LockCellPolling.terminate = function () {
+  if (!isNull(LockCellPolling.instance)) {
+    LockCellPolling.instance.postMessage({
+      state: 'end',
+    });
+    LockCellPolling.instance.terminate();
+    LockCellPolling.instance = null;
+  }
+};
+
+//  @@@ 获取通用站点雇佣车
+CommonStationStatePolling.getInstance = function (dispatcher) {
+  if (isNull(CommonStationStatePolling.instance)) {
+    const worker = new Worker(new URL('./workStationPolling.worker.js', import.meta.url));
+    worker.onmessage = function ({ data: { response, requestParam } }) {
+      const newData = [];
+      response.map(({ code, data }, index) => {
+        if (code === '0') {
+          newData.push({ ...data, ...requestParam[index] });
+        }
+      });
+      dispatcher(newData);
+    };
+    CommonStationStatePolling.instance = worker;
+  }
+  return CommonStationStatePolling.instance;
+};
+
+CommonStationStatePolling.start = function (promises, dispatcher) {
+  if (isNull(CommonStationStatePolling.instance)) {
+    CommonStationStatePolling.getInstance(dispatcher);
+  }
+
+  const workStationURL = getDomainNameByUrl(`/${NameSpace.Platform}/stationProxy/getStationReport`);
+
+  CommonStationStatePolling.instance.postMessage({
+    state: 'start',
+    requestParam: promises,
+    url: workStationURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+  });
+};
+
+CommonStationStatePolling.terminate = function () {
+  if (!isNull(CommonStationStatePolling.instance)) {
+    CommonStationStatePolling.instance.postMessage({
+      state: 'end',
+    });
+
+    CommonStationStatePolling.instance.terminate();
+    CommonStationStatePolling.instance = null;
+  }
+};
+
+//  @@@ 获取工作站雇佣车
+WorkStationStatePolling.getInstance = function (dispatcher) {
+  if (isNull(WorkStationStatePolling.instance)) {
+    const worker = new Worker(new URL('./workStationPolling.worker.js', import.meta.url));
+    worker.onmessage = function ({ data: { response, requestParam } }) {
+      const newData = [];
+      response.map(({ code, data }, index) => {
+        if (code === '0') {
+          newData.push({ ...data, ...requestParam[index] });
+        }
+      });
+      dispatcher(newData);
+    };
+    WorkStationStatePolling.instance = worker;
+  }
+  return WorkStationStatePolling.instance;
+};
+
+WorkStationStatePolling.start = function (promises, dispatcher) {
+  if (isNull(WorkStationStatePolling.instance)) {
+    WorkStationStatePolling.getInstance(dispatcher);
+  }
+
+  const workStationURL = getDomainNameByUrl(
+    `/${NameSpace.LatentLifting}/agv-task/getWorkStationInstrument`,
+  );
+
+  WorkStationStatePolling.instance.postMessage({
+    state: 'start',
+    requestParam: promises,
+    url: workStationURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+  });
+};
+
+WorkStationStatePolling.terminate = function () {
+  if (!isNull(WorkStationStatePolling.instance)) {
+    WorkStationStatePolling.instance.postMessage({
+      state: 'end',
+    });
+
+    WorkStationStatePolling.instance.terminate();
+    WorkStationStatePolling.instance = null;
+  }
+};
+
+//  @@@ 点位热度轮询
+CostHeatPollingManager.getInstance = function (dispatcher) {
+  if (isNull(CostHeatPollingManager.instance)) {
+    const worker = new Worker(new URL('./costHeatPolling.worker.js', import.meta.url));
+    worker.onmessage = function ({ data }) {
+      if (data.code === '0') {
+        dispatcher(data.data);
+      }
+    };
+    CostHeatPollingManager.instance = worker;
+  }
+  return CostHeatPollingManager.instance;
+};
+
+CostHeatPollingManager.start = function (params, dispatcher) {
+  if (isNull(CostHeatPollingManager.instance)) {
+    CostHeatPollingManager.getInstance(dispatcher);
+  }
+  const getHeatURL = getDomainNameByUrl(`/${NameSpace.Platform}/heat/getHeatMap`);
+  CostHeatPollingManager.instance.postMessage({
+    state: 'start',
+    url: getHeatURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+    params,
+  });
+};
+
+CostHeatPollingManager.terminate = function () {
+  if (!isNull(CostHeatPollingManager.instance)) {
+    CostHeatPollingManager.instance.postMessage({
+      state: 'end',
+    });
+
+    CostHeatPollingManager.instance.terminate();
+    CostHeatPollingManager.instance = null;
+  }
+};
+
+// @@@  站点速率轮询
+StationRatePolling.getInstance = function (dispatcher) {
+  if (isNull(StationRatePolling.instance)) {
+    const worker = new Worker(new URL('./stationRatePolling.worker.js', import.meta.url));
+    worker.onmessage = function ({ data }) {
+      if (data.code === '0') {
+        dispatcher(data.data);
+      }
+    };
+    StationRatePolling.instance = worker;
+  }
+  return StationRatePolling.instance;
+};
+
+StationRatePolling.start = function (dispatcher) {
+  if (isNull(StationRatePolling.instance)) {
+    StationRatePolling.getInstance(dispatcher);
+  }
+  const rateURL = getDomainNameByUrl(`/${NameSpace.Platform}/stationProxy/getRealTimeRate`);
+  StationRatePolling.instance.postMessage({
+    state: 'start',
+    url: rateURL,
+    token: window.sessionStorage.getItem('token'),
+    sectionId: window.localStorage.getItem('sectionId'),
+  });
+};
+
+StationRatePolling.terminate = function () {
+  if (!isNull(StationRatePolling.instance)) {
+    StationRatePolling.instance.postMessage({
+      state: 'end',
+    });
+
+    StationRatePolling.instance.terminate();
+    StationRatePolling.instance = null;
+  }
+};
+
+export {
+  AlertCountPolling,
+  AgvPollingTaskPathManager,
+  LockCellPolling,
+  CommonStationStatePolling,
+  WorkStationStatePolling,
+  CostHeatPollingManager,
+  StationRatePolling,
+};

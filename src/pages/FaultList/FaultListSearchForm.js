@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
 import { dealResponse, formatMessage, convertToUserTimezone, isNull } from '@/utils/util';
-import { fetchAgvList } from '@/services/api';
+import { fetchAllAgvList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 
@@ -16,12 +16,7 @@ const FaultListSearchForm = (props) => {
 
   useEffect(() => {
     async function getAgvList() {
-      const response = await fetchAgvList(
-        agvType,
-        false,
-        null,
-        formatMessage({ id: 'app.message.fetchAgvListFail' }),
-      );
+      const response = await fetchAllAgvList();
       if (!dealResponse(response)) {
         setAgvList(response);
       }

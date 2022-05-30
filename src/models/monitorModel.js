@@ -22,7 +22,7 @@ import {
   fetchSetPod,
   fetchTemporaryBlockCells,
   saveLatentAutomaticTaskConfig,
-  updateTemporaryBlockCell,
+  addTemporaryBlockCell,
 } from '@/services/monitor';
 import { fetchActiveMap, fetchAllAgvList, fetchToteRackLayout } from '@/services/api';
 import { MonitorSelectableSpriteType } from '@/config/consts';
@@ -389,6 +389,7 @@ export default {
             ...item,
             agvType: item?.agvType || item?.agv?.agvType,
             uniqueId: item?.agv?.id,
+            vehicleId: item.agvId,
           });
         });
         yield put({ type: 'saveAllAGVs', payload: allAGVs });
@@ -409,7 +410,7 @@ export default {
     },
 
     *fetchSaveTemporaryCell({ payload }, { call }) {
-      const response = yield call(updateTemporaryBlockCell, payload);
+      const response = yield call(addTemporaryBlockCell, payload);
       if (dealResponse(response)) {
         return false;
       }

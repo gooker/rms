@@ -65,7 +65,7 @@ const AGVElementProp = (props) => {
     );
     if (!dealResponse(response)) {
       const { agv = {}, agvInfo = {}, agvWorkStatusDTO = {} } = filterAgvInfo;
-     
+
       setAgvInfo({ ...agvInfo, ...agvWorkStatusDTO });
       setMainTain(agv?.maintain); // 维护
       setManualMode(agv?.manualMode); // 是否手动
@@ -86,8 +86,8 @@ const AGVElementProp = (props) => {
   }
 
   function goToAgvDetail() {
-    const route = `/${AppCode[type]}/agv/agvRealTime`;
-    history.push({ pathname: route, search: `agvId=${agvId}` });
+    const route = `/ResourceManage/Agv/AgvRealTime`;
+    history.push({ pathname: route, search: `uniqueId=${data.uniqueId}` });
   }
 
   function checkTaskDetail(taskId, agvType) {
@@ -118,7 +118,7 @@ const AGVElementProp = (props) => {
   }
 
   function goCharge() {
-    agvTryToCharge(type, { agvId }).then((response) => {
+    agvTryToCharge({ vehicleId: agvId, agvType: data.agvType }).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.controller.goCharge.fail' }));
       } else {
@@ -128,7 +128,7 @@ const AGVElementProp = (props) => {
   }
 
   function toRest() {
-    agvToRest(type, { robotId: agvId }).then((response) => {
+    agvToRest({ vehicleId: agvId, agvType: data.agvType }).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.controller.toRest.fail' }));
       } else {
@@ -143,7 +143,7 @@ const AGVElementProp = (props) => {
       robotId: agvId,
       rawCommandHex: hexCommand,
     };
-    const response = agvRemoteControl(type, params);
+    const response = await agvRemoteControl(type, params);
     if (dealResponse(response)) {
       message.error(
         formatMessage(

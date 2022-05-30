@@ -30,6 +30,7 @@ import notification from './zh-CN/Scene/notification';
 import sourceManage from './zh-CN/Scene/sourcemanage';
 import alert from './zh-CN/Scene/alert';
 import latentTotStorage from './zh-CN/latentTotStorage';
+import containerLock from './zh-CN/Res/containLock';
 
 export default {
   ...menu,
@@ -64,4 +65,5 @@ export default {
   ...sourceManage,
   ...alert,
   ...latentTotStorage,
+  ...containerLock,
 };

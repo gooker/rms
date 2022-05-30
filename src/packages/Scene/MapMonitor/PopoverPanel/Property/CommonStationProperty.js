@@ -4,7 +4,7 @@ import { EyeOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchCommonPointInstrument } from '@/services/monitor';
-import { CommonStationStatePolling } from '@/workers/CommonStationPollingManager';
+import { CommonStationStatePolling } from '@/workers/WebWorkerManager';
 import {
   transformCommonTrafficData,
   transitionRobots,

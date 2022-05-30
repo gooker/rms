@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import { fetchCellHeat } from '@/services/XIHE';
 import { getFormLayout, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { CellHeatType } from '@/config/consts';
-import { CostHeatPollingManager } from '@/workers/CostHeatPollingManager';
+import { CostHeatPollingManager } from '@/workers/WebWorkerManager';
 import FormattedMessage from '@/components/FormattedMessage';
 
 import styles from '../monitorLayout.module.less';

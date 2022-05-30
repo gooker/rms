@@ -12,7 +12,7 @@ import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util'
 import RmsConfirm from '@/components/RmsConfirm';
 
 const RobotLock = (props) => {
-  const { dispatch, agvType } = props;
+  const { dispatch } = props;
 
   const [loading, setLoading] = useState(false);
   const [robotLockList, setRobotLockList] = useState([]);
@@ -34,7 +34,7 @@ const RobotLock = (props) => {
 
   async function getData() {
     setLoading(true);
-    const response = await fetchAgvTaskLockList(agvType);
+    const response = await fetchAgvTaskLockList();
     if (!dealResponse(response)) {
       setRobotLockList(response);
       filterData(response);
@@ -48,10 +48,10 @@ const RobotLock = (props) => {
       setCurrentRobottLockList(result);
       return;
     }
-    const { robotId, taskId } = formValues;
-    if (!isStrictNull(robotId)) {
+    const { vehicleId, taskId } = formValues;
+    if (!isStrictNull(vehicleId)) {
       result = result.filter((item) => {
-        return item.robotId === robotId;
+        return item.vehicleId === vehicleId;
       });
     }
     if (!isStrictNull(taskId)) {
@@ -61,10 +61,10 @@ const RobotLock = (props) => {
     return;
   }
 
-  function checkTaskDetail(taskId, agvType) {
+  function checkTaskDetail(taskId) {
     dispatch({
       type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, agvType },
+      payload: { taskId },
     });
   }
 
@@ -72,9 +72,7 @@ const RobotLock = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await batchDeleteAgvTaskLock(agvType, {
-          agvTaskLockDTOList: selectedRow,
-        });
+        const response = await batchDeleteAgvTaskLock(selectedRow);
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           getData();
@@ -89,26 +87,32 @@ const RobotLock = (props) => {
     return [
       {
         title: <FormattedMessage id="app.agv.id" />,
-        dataIndex: 'robotId',
+        dataIndex: 'vehicleId',
         align: 'center',
         fixed: 'left',
       },
       {
-        title: <FormattedMessage id="lockManage.robot.status" />,
-        dataIndex: 'lockStatus',
-        render: (text) => {
-          if (text === 0) {
-            return <FormattedMessage id="lockManage.robot.fullLock" />;
-          }
-          if (text === 1) {
-            return <FormattedMessage id="lockManage.robot.missingTaskLock" />;
-          }
-          if (text === 2) {
-            return <FormattedMessage id="lockManage.robot.missingRobotLock" />;
-          }
-          return <FormattedMessage id="app.common.notAvailable" />;
-        },
+        title: <FormattedMessage id="app.agvType" />,
+        dataIndex: 'vehicleType',
+        align: 'center',
+        fixed: 'left',
       },
+      // {
+      //   title: <FormattedMessage id="lockManage.robot.status" />,
+      //   dataIndex: 'lockStatus',
+      //   render: (text) => {
+      //     if (text === 0) {
+      //       return <FormattedMessage id="lockManage.robot.fullLock" />;
+      //     }
+      //     if (text === 1) {
+      //       return <FormattedMessage id="lockManage.robot.missingTaskLock" />;
+      //     }
+      //     if (text === 2) {
+      //       return <FormattedMessage id="lockManage.robot.missingRobotLock" />;
+      //     }
+      //     return <FormattedMessage id="app.common.notAvailable" />;
+      //   },
+      // },
       {
         title: <FormattedMessage id="app.task.id" />,
         dataIndex: 'taskId',
@@ -120,7 +124,7 @@ const RobotLock = (props) => {
                 <span
                   className={commonStyles.textLinks}
                   onClick={() => {
-                    checkDetail(text, agvType);
+                    checkDetail(text);
                   }}
                 >
                   {text ? '*' + text.substr(text.length - 6, 6) : null}

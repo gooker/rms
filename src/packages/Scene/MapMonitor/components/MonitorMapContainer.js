@@ -296,7 +296,7 @@ const MonitorMapContainer = (props) => {
 
       const { temporaryBlock, emergencyStopList, chargerList } = monitorLoad;
       // 临时不可走点
-      // mapContext.renderTemporaryLock(temporaryBlock);
+      mapContext.renderTemporaryLock(temporaryBlock);
 
       // 急停区
       // mapContext.renderEmergencyStopArea(emergencyStopList);

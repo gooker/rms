@@ -13,12 +13,13 @@ import commonStyles from '@/common.module.less';
 const AgvListTools = (props) => {
   const { dispatch, allRobots, selectedRows, searchParams } = props;
 
+  const registerRobots = allRobots.filter((item) => item.register);
   const unregisterRobots = allRobots.filter((item) => !item.register);
 
   function renderAgvIdFilter() {
-    return unregisterRobots.map(({ agvId }) => (
-      <Select.Option key={agvId} value={agvId}>
-        {agvId}
+    return registerRobots.map(({ agvId, agvType, id }) => (
+      <Select.Option key={id} value={id}>
+        {`${agvId}-${agvType}`}
       </Select.Option>
     ));
   }
@@ -137,14 +138,13 @@ const AgvListTools = (props) => {
               dispatch({ type: 'agvList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
         <Col>
           <Button
             type="dashed"
             onClick={() => {
-              dispatch({ type: 'agvList/fetchInitialData' });
               dispatch({ type: 'agvList/updateShowRegisterPanel', payload: true });
             }}
           >

@@ -17,6 +17,7 @@ export default class SorterAGV extends PIXI.Container {
     this.y = props.y;
     this.uniqueId = props.uniqueId;
     this.type = AGVType.Sorter;
+    this.agvType = 'sorter';
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
     this.zIndex = zIndex.agv;

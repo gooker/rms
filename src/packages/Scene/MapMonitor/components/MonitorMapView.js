@@ -421,6 +421,7 @@ class MonitorMapView extends BaseMap {
 
     // 刷新行驶路线
     this.showTaskPath && this.updateTaskPath(`${uniqueId}`);
+    console.log(this.showTaskPath)
 
     // 更新小车电池状态
     if (battery && agvEntity.battery !== battery) {

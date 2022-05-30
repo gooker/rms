@@ -9,7 +9,7 @@ import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
-import TargetLockSearch from '@/packages/SSO/AlertCenter/QuestionSearch';
+import SearchTargetLock from './components/SearchTargetLock';
 
 const TargetLock = (props) => {
   const [loading, setLoading] = useState(false);
@@ -23,13 +23,16 @@ const TargetLock = (props) => {
       title: <FormattedMessage id="app.map.cell" />,
       dataIndex: 'cellId',
       align: 'center',
-      sorter: (a, b) => a.cellId - b.cellId,
     },
     {
       title: <FormattedMessage id="app.agv" />,
-      dataIndex: 'robotId',
+      dataIndex: 'vehicleId',
       align: 'center',
-      sorter: (a, b) => a.robotId - b.robotId,
+    },
+    {
+      title: <FormattedMessage id="app.common.type" />,
+      dataIndex: 'vehicleType',
+      align: 'center',
     },
 
     {
@@ -79,10 +82,7 @@ const TargetLock = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await fetchBatchDeleteTargetCellLock({
-          sectionId: window.localStorage.getItem('sectionId'),
-          lockTargetCellValueList: selectedRow,
-        });
+        const response = await fetchBatchDeleteTargetCellLock(selectedRow);
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.message.operateSuccess' }));
           freshData();
@@ -108,14 +108,17 @@ const TargetLock = (props) => {
       setCurrentTargetLockList(result);
       return;
     }
-    const { robotId, cellId } = formValues;
-    if (!isStrictNull(robotId)) {
+    const { vehicleId, vehicleType, taskId } = formValues;
+    if (!isStrictNull(vehicleId)) {
       result = result.filter((item) => {
-        return item.robotId === robotId;
+        return item.vehicleId === vehicleId;
       });
     }
-    if (!isStrictNull(cellId)) {
-      result = result.filter((item) => item.cellId === Number(cellId));
+    if (!isStrictNull(vehicleType)) {
+      result = result.filter((item) => vehicleType.includes(item.vehicleType));
+    }
+    if (!isStrictNull(taskId)) {
+      result = result.filter((item) => item.taskId === taskId);
     }
     setCurrentTargetLockList(result);
   }
@@ -123,7 +126,7 @@ const TargetLock = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <TargetLockSearch search={filterData} data={targetLockList} />
+        <SearchTargetLock search={filterData} data={targetLockList} />
         <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteTargetLock}>
@@ -141,7 +144,7 @@ const TargetLock = (props) => {
         loading={loading}
         columns={columns}
         dataSource={currentTargetLockList}
-        rowKey={(record, index) => index}
+        rowKey={(record) => record.vehicleUniqueId}
         rowSelection={{
           selectedRowKeys,
           onChange: onSelectChange,

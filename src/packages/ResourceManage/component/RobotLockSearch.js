@@ -18,11 +18,11 @@ const RobotLockSearch = (props) => {
   }
 
   return (
-    <Form form={form} onFinish={onFinish}>
+    <Form form={form}>
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={6}>
           {/* 小车id */}
-          <Form.Item name={'robotId'} label={formatMessage({ id: 'app.agv' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.agv' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
@@ -33,20 +33,9 @@ const RobotLockSearch = (props) => {
           </Form.Item>
         </Col>
         <Col>
-          <Form.Item>
-            <Row gutter={24}>
-              <Col>
-                <Button type="primary" htmlType="submit">
-                  <SearchOutlined /> <FormattedMessage id="app.button.search" />
-                </Button>
-              </Col>
-              <Col>
-                <Button htmlType="reset">
-                  <ReloadOutlined /> <FormattedMessage id="app.button.reset" />
-                </Button>
-              </Col>
-            </Row>
-          </Form.Item>
+          <Button type="primary" onClick={onFinish}>
+            <SearchOutlined /> <FormattedMessage id="app.button.search" />
+          </Button>
         </Col>
       </Row>
     </Form>

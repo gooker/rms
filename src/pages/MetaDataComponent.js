@@ -10,7 +10,7 @@ import {
 } from '@/utils/util';
 import { DownloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { downloadLogFromSFTP, fetchAgvList } from '@/services/api';
+import { downloadLogFromSFTP, fetchAllAgvList } from '@/services/api';
 import commonStyle from '@/common.module.less';
 
 const { RangePicker } = DatePicker;
@@ -24,7 +24,7 @@ const MetaDataComponent = (props) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchAgvList(agvType).then((response) => {
+    fetchAllAgvList().then((response) => {
       if (
         !dealResponse(response, false, null, formatMessage({ id: 'app.message.fetchAgvListFail' }))
       ) {
