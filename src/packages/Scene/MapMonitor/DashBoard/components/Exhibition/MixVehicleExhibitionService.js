@@ -3,7 +3,7 @@ import { NameSpace } from '@/config/config';
 
 export default class MixVehicleExhibitionService {
   refreshLatentLiftCharts() {
-    return request(`/${NameSpace.LatentLifting}/vehicle-task/getInstrumentData`, {
+    return request(`/${NameSpace.Platform}/vehicle-task/getInstrumentData`, {
       method: 'GET',
     });
   }

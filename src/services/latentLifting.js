@@ -31,7 +31,7 @@ export async function deleteSearchSeek(id) {
 
 // 空等 KPI
 export async function fetchWaitingKpiView(params) {
-  return request(`/${NameSpace.LatentLifting}/api/getTargetWaitKpiDTO`, {
+  return request(`/${NameSpace.Platform}/api/getTargetWaitKpiDTO`, {
     method: 'POST',
     body: params,
   });
@@ -39,20 +39,20 @@ export async function fetchWaitingKpiView(params) {
 
 // 站点KPI
 export async function getAllMonitorRegion() {
-  return request(`/${NameSpace.LatentLifting}/monitor/getAllMonitorRegion`, {
+  return request(`/${NameSpace.Platform}/monitor/getAllMonitorRegion`, {
     method: 'GET',
   });
 }
 
 export async function getRegionRealtimeReport(param) {
-  return request(`/${NameSpace.LatentLifting}/monitor/realtimeStationTaskReport`, {
+  return request(`/${NameSpace.Platform}/monitor/realtimeStationTaskReport`, {
     method: 'POST',
     body: param,
   });
 }
 
 export async function getRegionReport(param) {
-  return request(`/${NameSpace.LatentLifting}/monitor/stationTaskReport`, {
+  return request(`/${NameSpace.Platform}/monitor/stationTaskReport`, {
     method: 'POST',
     body: param,
   });

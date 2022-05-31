@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import { Row, Col, Pagination } from 'antd';
+import { Col, Pagination, Row } from 'antd';
 import { formatMessage } from '@/utils/util';
 import ErrorList from '@/components/TaskDetail/components/ErrorList';
 

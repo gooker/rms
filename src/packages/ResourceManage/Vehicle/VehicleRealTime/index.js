@@ -15,7 +15,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 @connect()
-class VehicleRealTimeComponent extends React.Component {
+class VehicleRealTime extends React.Component {
   state = {
     vehicleList: [],
 
@@ -254,4 +254,5 @@ class VehicleRealTimeComponent extends React.Component {
     );
   }
 }
-export default VehicleRealTimeComponent;
+
+export default VehicleRealTime;

@@ -4,9 +4,9 @@ import { ToolOutlined } from '@ant-design/icons';
 import {
   convertToUserTimezone,
   formatMessage,
-  getVehicleStatusTag,
   getDirectionLocale,
   getSuffix,
+  getVehicleStatusTag,
   isNull,
   renderBattery,
 } from '@/utils/util';

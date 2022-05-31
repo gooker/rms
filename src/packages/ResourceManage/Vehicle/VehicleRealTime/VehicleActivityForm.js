@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
-import { Form, DatePicker, Col, Select, Row, Collapse } from 'antd';
+import { Col, Collapse, DatePicker, Form, Row, Select } from 'antd';
 import { CaretRightOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone } from '@/utils/util';
-import Dictionary from '@/utils/Dictionary';
 import { connect } from '@/utils/RmsDva';
 
 const { Option } = Select;

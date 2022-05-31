@@ -5,9 +5,9 @@ import { isEmpty } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
+import requestAPI from '@/utils/requestAPI';
 import { initI18nInstance } from '@/utils/init';
 import { extractNameSpaceInfoFromEnvs, formatMessage, getCustomEnvironments } from '@/utils/util';
-import requestAPI from '@/utils/requestAPI';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {
@@ -16,10 +16,6 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    if (!window.$$isProduction) {
-      window.localStorage.setItem('dev', 'true');
-    }
-
     try {
       const defaultAPI = requestAPI();
       const customEnvironments = getCustomEnvironments();
