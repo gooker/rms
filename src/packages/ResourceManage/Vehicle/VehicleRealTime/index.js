@@ -1,137 +1,60 @@
 import React from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Col, Form, Row, Select, Tabs } from 'antd';
-import { AimOutlined, AndroidOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Divider, Form, Row, Select, Spin } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse } from '@/utils/util';
-import { fetchVehicleErrorRecord, fetchVehicleInfo, fetchVehicleTaskList } from '@/services/api';
-import commonStyles from '@/common.module.less';
-import RealTimeTab from './RealTimeTab';
-import HardwareTab from './HardwareTab';
+import { dealResponse, formatMessage } from '@/utils/util';
+import { fetchAllVehicleList } from '@/services/api';
+import VehicleInformationTab from './VehicleInformation';
+import VehicleRealTimeTab from './VehicleRealTime';
+import VehicleWorkStateTab from './VehicleWorkState';
 import styles from './index.module.less';
+import commonStyles from '@/common.module.less';
 
 const { Option } = Select;
-const { TabPane } = Tabs;
 
 @connect()
 class VehicleRealTime extends React.Component {
   state = {
-    vehicleList: [],
-
-    vehicleId: null,
-    vehicleType: null,
-    uniqueId: null,
-    vehicleRealtimeData: null,
-    vehicleHardware: null,
-    vehicleTask: null,
-    vehicleErrorRecord: null,
-
-    recordSearchParams: {},
-    errorSearchParams: {},
     isFetching: false,
+    vehicleList: [],
+    vehicle: null,
   };
 
-  async componentDidMount() {
-    const { dispatch, location } = this.props;
-    const allVehicles = await dispatch({
-      type: 'monitor/refreshAllVehicleList',
-    });
-    if (location && location?.search) {
-      const uniqueId = location.search.split('=')[1];
-      const { vehicleId, vehicleType } = find(allVehicles, { uniqueId });
-      this.setState({ uniqueId, vehicleId, vehicleType }, this.fetchVehicleMultivariateData);
-    }
-    this.setState({ vehicleList: allVehicles });
+  componentDidMount() {
+    this.getVehicleList();
   }
 
-  // 获取小车软件信息
-  fetchVehicleMultivariateData = async () => {
-    const { uniqueId, vehicleType, vehicleId } = this.state;
+  getVehicleList = async () => {
     this.setState({ isFetching: true });
-    const [vehicleRealtimeData] = await Promise.all([
-      fetchVehicleInfo(vehicleId, vehicleType),
-      // fetchVehicleHardwareInfo(vehicleType, { sectionId: window.localStorage.getItem('sectionId'), vehicleId }),
-      // fetchVehicleTaskList(vehicleType, {
-      //   sectionId: window.localStorage.getItem('sectionId'),
-      //   vehicleId,
-      //   current: 1,
-      //   size: 6,
-      // }),
-      // fetchVehicleErrorRecord(vehicleType, {
-      //   sectionId: window.localStorage.getItem('sectionId'),
-      //   vehicleId,
-      //   current: 1,
-      //   size: 3,
-      // }),
-    ]);
-    // this.setState({ isFetching: false, vehicleRealtimeData, vehicleHardware, vehicleTask, vehicleErrorRecord });
-    this.setState({ isFetching: false, vehicleRealtimeData });
-  };
-
-  taskOnDetail = (taskId) => {
-    const { dispatch, vehicleType } = this.props;
-    dispatch({
-      type: 'task/fetchTaskDetailByTaskId',
-      payload: { taskId, vehicleType },
-    });
-  };
-
-  // 分页 获取记录
-  getRecords = async (type, params) => {
-    const { vehicleId, recordSearchParams, errorSearchParams } = this.state;
-    const { vehicleType } = this.props;
-    if (type === 'record') {
-      const page = params
-        ? params
-        : {
-            current: 1,
-            size: 6,
-          };
-      const recordsData = await fetchVehicleTaskList(vehicleType, {
-        sectionId: window.localStorage.getItem('sectionId'),
-        vehicleId,
-        ...page,
-        ...recordSearchParams,
-      });
-      if (!dealResponse(recordsData)) {
-        this.setState({ isFetching: false, vehicleTask: recordsData });
-      }
-    } else {
-      const page = params
-        ? params
-        : {
-            current: 1,
-            size: 3,
-          };
-      const errorData = await fetchVehicleErrorRecord(vehicleType, {
-        sectionId: window.localStorage.getItem('sectionId'),
-        vehicleId,
-        ...page,
-        ...errorSearchParams,
-      });
-      if (!dealResponse(errorData)) {
-        this.setState({ isFetching: false, vehicleErrorRecord: errorData });
-      }
+    let vehicleList = await fetchAllVehicleList();
+    this.setState({ isFetching: false });
+    if (
+      !dealResponse(vehicleList, false, formatMessage({ id: 'app.message.fetchVehicleListFail' }))
+    ) {
+      vehicleList = vehicleList.map((item) => ({
+        ...item,
+        uniqueId: item.vehicle.id,
+      }));
+      this.setState({ vehicleList });
     }
   };
 
   render() {
-    const { vehicleId, vehicleType, vehicleList, vehicleRealtimeData, isFetching } = this.state;
-
+    const { isFetching, vehicle, vehicleList } = this.state;
     return (
-      <div className={commonStyles.commonPageStyle}>
-        <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 20 }}>
-          <Col span={16}>
-            <Form.Item label={<FormattedMessage id="app.vehicle.id" />}>
+      <Spin spinning={isFetching}>
+        <div className={commonStyles.commonPageStyle}>
+          <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
+            <Form.Item label={<FormattedMessage id='vehicle.id' />}>
               <Select
                 allowClear
                 showSearch
-                style={{ width: '100%' }}
+                style={{ width: 200 }}
                 onChange={(uniqueId) => {
-                  const { vehicleId, vehicleType } = find(vehicleList, { uniqueId });
-                  this.setState({ uniqueId, vehicleId, vehicleType });
-                  return uniqueId;
+                  const vehicle = find(vehicleList, { uniqueId });
+                  this.setState({ vehicle });
                 }}
               >
                 {vehicleList.map(({ vehicleId, vehicleType, uniqueId }) => (
@@ -141,118 +64,43 @@ class VehicleRealTime extends React.Component {
                 ))}
               </Select>
             </Form.Item>
-          </Col>
-          <Col>
-            <Button
-              type={'primary'}
-              disabled={!vehicleId}
-              loading={isFetching}
-              onClick={this.fetchVehicleMultivariateData}
-            >
-              <SearchOutlined /> <FormattedMessage id={'app.button.check'} />
+            <Button onClick={this.getVehicleList}>
+              <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
             </Button>
-          </Col>
-        </Row>
-        <Row className={styles.tabContainer}>
-          <Col span={24}>
-            {/* 小车实时信息 */}
-            <Tabs defaultActiveKey="realTime">
-              <TabPane
-                key="realTime"
-                tab={
-                  <span>
-                    <AimOutlined />
-                    <FormattedMessage id={'app.activity.realTimeVehicleState'} />
-                  </span>
-                }
-              >
-                <RealTimeTab vehicleType={vehicleType} data={vehicleRealtimeData ?? {}} />
-              </TabPane>
+          </Row>
+          <Row className={styles.viewContainer} justify={'space-between'}>
+            {/* 小车信息 */}
+            <div className={styles.tabContainer}>
+              <span style={{ fontSize: 17, fontWeight: 500 }}>
+                <FormattedMessage id={'vehicle.info'} />
+              </span>
+              <Divider style={{ margin: '5px 0 24px 0' }} />
+              <VehicleInformationTab data={vehicle ?? {}} />
+            </div>
+            <div style={{ width: 32 }}></div>
 
-              {/* 小车硬件信息 */}
-              <TabPane
-                key="hardWare"
-                tab={
-                  <span>
-                    <AndroidOutlined />
-                    <FormattedMessage id={'app.activity.vehicleHardwareState'} />
-                  </span>
-                }
-              >
-                <HardwareTab vehicleType={vehicleType} data={vehicleRealtimeData} />
-              </TabPane>
-            </Tabs>
-          </Col>
-          {/* <Col className={vehicleRealTimeComponentStyles.tabContainer}> */}
-          {/* <Tabs defaultActiveKey="taskRecord"> */}
-          {/* 小车任务记录 */}
-          {/* <TabPane
-                key="taskRecord"
-                tab={
-                  <span>
-                    <FileTextOutlined />
-                    <FormattedMessage id={'app.vehicle.taskRecord'} />
-                  </span>
-                }
-              >
-                <Row>
-                  <Col span={22}>
-                    <VehicleActivityForm
-                      vehicleType={vehicleType}
-                      disabled={isNull(vehicleId)}
-                      onChange={(value) =>
-                        this.setState({ recordSearchParams: value }, () =>
-                          this.getRecords('record'),
-                        )
-                      }
-                      mode={'expanded'}
-                    />
-                  </Col>
-                </Row>
+            {/* 小车实时状态*/}
+            <div className={styles.tabContainer}>
+              <span style={{ fontSize: 17, fontWeight: 500 }}>
+                <FormattedMessage id={'vehicle.realTime'} />
+              </span>
+              <Divider style={{ margin: '5px 0 24px 0' }} />
+              <VehicleRealTimeTab data={vehicle ?? {}} />
+            </div>
+            <div style={{ width: 32 }}></div>
 
-                <TaskRecordTab
-                  vehicleType={vehicleType}
-                  data={vehicleTask}
-                  pageOnchange={(value) => {
-                    this.getRecords('record', value);
-                  }}
-                  onDetail={this.taskOnDetail}
-                />
-              </TabPane> */}
-
-          {/* 小车错误记录 */}
-          {/* <TabPane
-                key="errorRecord"
-                tab={
-                  <span>
-                    <WarningOutlined />
-                    <FormattedMessage id={'app.vehicle.errorRecord'} />
-                  </span>
-                }
-              >
-                <VehicleActivityForm
-                  vehicleType={vehicleType}
-                  disabled={isNull(vehicleId)}
-                  onChange={(value) =>
-                    this.setState({ errorSearchParams: value }, () => this.getRecords('error'))
-                  }
-                  mode={'unexpanded'}
-                />
-                <ErrorRecordTab
-                  vehicleType={vehicleType}
-                  data={vehicleErrorRecord}
-                  pageOnchange={(value) => {
-                    this.getRecords('error', value);
-                  }}
-                  onDetail={this.taskOnDetail}
-                />
-              </TabPane> */}
-          {/* </Tabs> */}
-          {/* </Col> */}
-        </Row>
-      </div>
+            {/* 小车工作状态*/}
+            <div className={styles.tabContainer}>
+              <span style={{ fontSize: 17, fontWeight: 500 }}>
+                <FormattedMessage id={'vehicle.WorkState'} />
+              </span>
+              <Divider style={{ margin: '5px 0 24px 0' }} />
+              <VehicleWorkStateTab data={vehicle ?? {}} />
+            </div>
+          </Row>
+        </div>
+      </Spin>
     );
   }
 }
-
 export default VehicleRealTime;

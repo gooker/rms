@@ -3,11 +3,7 @@ import { Button, Col, Form, Input, message, Row } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { MapSelectableSpriteType } from '@/config/consts';
-import {
-  getOffsetDistance,
-  getCurrentLogicAreaData,
-  covertDumpFormData2Param,
-} from '@/utils/mapUtil';
+import { covertDumpFormData2Param, getCurrentLogicAreaData, getOffsetDistance } from '@/utils/mapUtil';
 import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ButtonInput from '@/components/ButtonInput';
@@ -136,7 +132,7 @@ const DeliveryForm = (props) => {
         <Form.Item
           {...formLayout}
           name={'vehicleDirection'}
-          label={formatMessage({ id: 'app.vehicle.direction' })}
+          label={formatMessage({ id: 'vehicle.direction' })}
           initialValue={delivery?.vehicleDirection}
         >
           <DirectionSelector />

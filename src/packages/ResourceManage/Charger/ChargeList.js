@@ -1,14 +1,14 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Tag, Badge, Button, Row, Col, Switch, message, Modal } from 'antd';
+import { Badge, Button, Col, message, Modal, Row, Switch, Tag } from 'antd';
 import Dictionary from '@/utils/Dictionary';
 import { Permission } from '@/utils/Permission';
 import {
-  fetchChargeManagerList,
+  AddChargerPile,
   batchDeleteChargerPile,
   batchUnbundChargerPile,
   clearChargerPileFaultById,
-  AddChargerPile,
+  fetchChargeManagerList,
 } from '@/services/api';
 import { fetchUpdateCharger } from '@/services/XIHE';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
@@ -58,7 +58,7 @@ const ChargerList = () => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.vehicle.port" />,
+      title: <FormattedMessage id='vehicle.port' />,
       dataIndex: 'port',
       align: 'center',
     },

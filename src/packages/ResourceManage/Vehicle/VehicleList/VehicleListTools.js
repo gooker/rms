@@ -78,10 +78,10 @@ const VehicleListTools = (props) => {
   return (
     <div>
       <Row className={commonStyles.tableToolLeft}>
-        <Form.Item label={formatMessage({ id: 'app.vehicle.id' })}>
+        <Form.Item label={formatMessage({ id: 'vehicle.id' })}>
           <Select
             allowClear
-            mode="multiple"
+            mode='multiple'
             style={{ width: 300 }}
             value={searchParams.id}
             onChange={(value) => {
@@ -91,10 +91,10 @@ const VehicleListTools = (props) => {
             {renderVehicleIdFilter()}
           </Select>
         </Form.Item>
-        <Form.Item label={formatMessage({ id: 'app.vehicleStatus' })}>
+        <Form.Item label={formatMessage({ id: 'app.vehicleState' })}>
           <Select
             allowClear
-            mode="multiple"
+            mode='multiple'
             style={{ width: 300 }}
             value={searchParams.state}
             onChange={(value) => {
@@ -174,12 +174,12 @@ const VehicleListTools = (props) => {
         </Col>
         <Col>
           <Button
-            type="dashed"
+            type='dashed'
             onClick={() => {
               dispatch({ type: 'vehicleList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id="app.vehicleList.found" />
+            <ScanOutlined /> <FormattedMessage id='app.vehicle.found' />
             {unregisterVehicles.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterVehicles.length}]

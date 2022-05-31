@@ -77,7 +77,7 @@ const MetaDataComponent = (props) => {
         <Form {...formLayout.formItemLayout} form={formRef}>
           <Form.Item
             name={'vehicleIds'}
-            label={formatMessage({ id: 'app.vehicle.id' })}
+            label={formatMessage({ id: 'vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Select allowClear showSearch mode='multiple' maxTagCount={5} maxTagTextLength={4}>

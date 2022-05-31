@@ -1,21 +1,18 @@
 import React, { memo } from 'react';
 import { Checkbox, Form, Input } from 'antd';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleSelector from '../components/VehicleSelector';
 import style from '../customTask.module.less';
-import { connect } from '@/utils/RmsDva';
-
-const { formItemLayout } = getFormLayout(6, 18);
 
 const StartForm = (props) => {
-  const { code, form, type, hidden, variable } = props;
+  const { code, type, hidden } = props;
 
   function validateVehicle(_, value) {
     if (value.type === 'AUTO') {
       return Promise.resolve();
     } else {
-      if (value.code.length > 0 || variable.START) {
+      if (value.code.length > 0) {
         return Promise.resolve();
       }
       return Promise.reject(new Error(formatMessage({ id: 'customTask.require.vehicle' })));
@@ -26,7 +23,6 @@ const StartForm = (props) => {
     <>
       <Form.Item
         hidden
-        {...formItemLayout}
         name={[code, 'customType']}
         initialValue={type}
         label={formatMessage({ id: 'app.common.type' })}
@@ -35,7 +31,6 @@ const StartForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden
-        {...formItemLayout}
         name={[code, 'code']}
         initialValue={code}
         label={formatMessage({ id: 'app.common.code' })}
@@ -49,21 +44,16 @@ const StartForm = (props) => {
       <Form.Item
         hidden={hidden}
         required
-        {...formItemLayout}
-        name={[code, 'vehicle']}
+        name={[code, 'robot']}
         initialValue={{ type: 'AUTO', code: [] }}
         label={<FormattedMessage id='customTask.form.vehicle' />}
         rules={[{ validator: validateVehicle }]}
       >
-        <VehicleSelector form={form} subTaskCode={code} />
+        <VehicleSelector />
       </Form.Item>
 
       {/* 约束 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        label={formatMessage({ id: 'customTask.form.limit' })}
-      >
+      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.limit' })}>
         <div className={style.limitDiv}>
           <Form.Item
             noStyle
@@ -81,7 +71,6 @@ const StartForm = (props) => {
       {/* 备注 */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'remark']}
         label={formatMessage({ id: 'app.common.remark' })}
       >
@@ -90,6 +79,4 @@ const StartForm = (props) => {
     </>
   );
 };
-export default connect(({ customTask }) => ({
-  variable: customTask.variable,
-}))(memo(StartForm));
+export default memo(StartForm);

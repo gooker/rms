@@ -98,6 +98,7 @@ export default {
   'editor.cellType.getTask': '接任务点',
   'editor.cellType.safe': '安全区',
   'editor.cellType.rotation': '旋转点',
+  'editor.cellType.rotationGroup': '旋转点组',
   'editor.cellType.stop': '停止点',
   'editor.cellType.scan': '扫描点',
   'editor.cellType.buffer': '缓冲点',

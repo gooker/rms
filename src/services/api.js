@@ -59,18 +59,14 @@ export async function fetchVehicleInfo(vehicleId, vehicleType) {
   });
 }
 
-// 请求Coordinator端小车实时信息
-export async function fetchCoordVehicleInfo(vehicleId) {
-  return request(`/${NameSpace.Platform}/traffic/getVehicle/${vehicleId}`, {
-    method: `GET`,
-  });
-}
-
 // 请求小车的硬件状态
 export async function fetchVehicleHardwareInfo(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/vehicleHardware/${params.sectionId}/${params.vehicleId}`, {
-    method: `GET`,
-  });
+  return request(
+    `/${NameSpace[vehicleType]}/vehicle/vehicleHardware/${params.sectionId}/${params.vehicleId}`,
+    {
+      method: `GET`,
+    },
+  );
 }
 
 // 请求删除小车(批量)
@@ -101,7 +97,9 @@ export async function fetchVehicleRunningInfo(params) {
 // 获取执行队列数据
 export async function fetchExecutingTaskList(vehicleType, params) {
   return request(
-    `/${NameSpace[vehicleType]}/redis/getExecutingTaskList/${window.localStorage.getItem('sectionId')}`,
+    `/${NameSpace[vehicleType]}/redis/getExecutingTaskList/${window.localStorage.getItem(
+      'sectionId',
+    )}`,
     {
       method: `GET`,
     },
@@ -120,7 +118,9 @@ export async function deleteExecutionQTasks(vehicleType, params) {
 // 获取等待队列任务
 export async function fetchTaskQueueList(vehicleType) {
   return request(
-    `/${NameSpace[vehicleType]}/redis/getPipeLineTaskList/${window.localStorage.getItem('sectionId')}`,
+    `/${NameSpace[vehicleType]}/redis/getPipeLineTaskList/${window.localStorage.getItem(
+      'sectionId',
+    )}`,
     {
       method: `GET`,
     },
@@ -138,9 +138,9 @@ export async function deleteTaskQueueItems(vehicleType, params) {
 // 获取当前区域小车状态总体数据
 export async function fetchVehicleOverallStatus(vehicleType) {
   return request(
-    `/${NameSpace[vehicleType]}/vehicle/getStandByAndAvailableVehicleNumber/${window.localStorage.getItem(
-      'sectionId',
-    )}`,
+    `/${
+      NameSpace[vehicleType]
+    }/vehicle/getStandByAndAvailableVehicleNumber/${window.localStorage.getItem('sectionId')}`,
     {
       method: `GET`,
     },

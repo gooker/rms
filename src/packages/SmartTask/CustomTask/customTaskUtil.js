@@ -1,6 +1,7 @@
-import { formatMessage, isNull } from '@/utils/util';
+import React from 'react';
+import { PlusOutlined } from '@ant-design/icons';
+import { formatMessage } from '@/utils/util';
 import { CustomNodeType } from './customTaskConfig';
-import { isEmpty } from 'lodash';
 
 export function getInitialTaskSteps() {
   return [
@@ -15,6 +16,11 @@ export function getInitialTaskSteps() {
       label: formatMessage({ id: 'customTask.type.START' }),
     },
     {
+      type: CustomNodeType.PLUS,
+      code: -1,
+      label: <PlusOutlined />,
+    },
+    {
       type: CustomNodeType.END,
       code: CustomNodeType.END,
       label: formatMessage({ id: 'customTask.type.END' }),
@@ -24,8 +30,4 @@ export function getInitialTaskSteps() {
 
 export function isStandardTab(type) {
   return [CustomNodeType.BASE, CustomNodeType.START, CustomNodeType.END].includes(type);
-}
-
-export function spliceUselessValue(list) {
-  return list.filter((item) => !(isEmpty(item) || isNull(item)));
 }

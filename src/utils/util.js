@@ -1433,6 +1433,39 @@ export function extractActionToFormValue(actions) {
   return configurations;
 }
 
+// 提取sample数据
+export function generateSample(customTask) {
+  const result = [];
+  // 任务开始
+  result.push({
+    code: 'START-AGV',
+    param: customTask.customStart?.robot?.code ?? [],
+  });
+  result.push({
+    code: 'START-isLimitStandBy',
+    param: customTask.customStart.isLimitStandBy,
+  });
+
+  // 子任务
+  if (!isNull(customTask.customActions)) {
+    Object.values(customTask.customActions).forEach((subTask) => {
+      const {
+        code,
+        targetAction: { loadAngle, target },
+      } = subTask;
+      result.push({
+        code: `${code}-loadAngle`,
+        param: isNull(loadAngle) ? null : loadAngle,
+      });
+      result.push({
+        code: `${code}-${target.type}`,
+        param: target?.code ?? [],
+      });
+    });
+  }
+  return result;
+}
+
 // 将数组中符合条件的元素删掉， Lodash中同名方法有问题-->遇到第一个不符合条件的会直接break
 export function dropWhile(array, predicate) {
   const result = [];

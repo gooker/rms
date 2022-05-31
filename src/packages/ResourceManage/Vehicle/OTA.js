@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Badge, Button } from 'antd';
 import Dictionary from '@/utils/Dictionary';
 import BatchUpgradingComponent from '@/pages/BatchUpgrading/BatchUpgradingComponent';
-import { formatMessage, getVehicleStatusTag, getSuffix } from '@/utils/util';
+import { formatMessage, getSuffix, getVehicleStatusTag } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { VehicleType } from '@/config/config';
 
@@ -14,7 +14,7 @@ const OTA = (props) => {
   function getColumn(operate) {
     return [
       {
-        title: <FormattedMessage id='app.vehicle.id' />,
+        title: <FormattedMessage id='vehicle.id' />,
         dataIndex: 'vehicleId',
         align: 'center',
       },

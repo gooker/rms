@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { message, Table } from 'antd';
-import { fetchVehicleErrorRecord, fetchDefinedFaults } from '@/services/api';
+import { fetchDefinedFaults, fetchVehicleErrorRecord } from '@/services/api';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';
@@ -25,7 +25,7 @@ const FaultListComponent = (props) => {
 
   const columns = [
     {
-      title: formatMessage({ id: 'app.vehicle.id' }),
+      title: formatMessage({ id: 'vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 100,

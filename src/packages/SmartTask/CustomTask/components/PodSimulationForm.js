@@ -1,9 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Input, Radio, Switch } from 'antd';
+import { Form, Input, Radio } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, isNull } from '@/utils/util';
-
-const FormLayout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 
 const PodSimulationForm = (props) => {
   const { code, type, form, hidden } = props;
@@ -23,7 +21,6 @@ const PodSimulationForm = (props) => {
     <>
       <Form.Item
         hidden
-        {...FormLayout}
         name={[code, 'customType']}
         initialValue={type}
         label={formatMessage({ id: 'app.common.type' })}
@@ -32,7 +29,6 @@ const PodSimulationForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden
-        {...FormLayout}
         name={[code, 'code']}
         initialValue={code}
         label={formatMessage({ id: 'app.common.code' })}
@@ -44,7 +40,6 @@ const PodSimulationForm = (props) => {
       {/* 货架状态 */}
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
         name={[code, 'status']}
         label={formatMessage({ id: 'customTask.form.podStatus' })}
         rules={[{ required: true }]}
@@ -70,7 +65,6 @@ const PodSimulationForm = (props) => {
       {status === 'GENERATE' ? (
         <Form.Item
           hidden={hidden}
-          {...FormLayout}
           name={[code, 'isRandom']}
           label={formatMessage({ id: 'customTask.form.generateType' })}
           rules={[{ required: true }]}
@@ -96,7 +90,6 @@ const PodSimulationForm = (props) => {
       {!isNull(isRandom) && !isRandom ? (
         <Form.Item
           hidden={hidden}
-          {...FormLayout}
           name={[code, 'podId']}
           label={formatMessage({ id: 'app.pod.id' })}
           rules={[{ required: true }]}
@@ -108,23 +101,10 @@ const PodSimulationForm = (props) => {
       {/* 备注 */}
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
         name={[code, 'remark']}
         label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
-      </Form.Item>
-
-      {/* 跳过 */}
-      <Form.Item
-        hidden={hidden}
-        {...FormLayout}
-        name={[code, 'skip']}
-        initialValue={false}
-        valuePropName={'checked'}
-        label={formatMessage({ id: 'customTask.form.skip' })}
-      >
-        <Switch />
       </Form.Item>
     </>
   );

@@ -1,9 +1,8 @@
-import React, { PureComponent, createRef } from 'react';
-import { Card, Input, Row, Col, Divider, Button, Tooltip, Badge } from 'antd';
+import React, { createRef, PureComponent } from 'react';
+import { Badge, Button, Card, Col, Divider, Input, Row, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import ToteVehicleWorkBinInfoMap from './components/ToteVehicleWorkBinInfoMap';
 import { VehicleType } from '@/config/config';
@@ -210,7 +209,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.vehicle.id" />}
+                    title={<FormattedMessage id='vehicle.id' />}
                     content={<span>{detailInfo.currentVehicleId}</span>}
                   />
                 </Col>

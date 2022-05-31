@@ -6,9 +6,9 @@ import FormattedMessage from '@/components/FormattedMessage';
 import {
   convertToUserTimezone,
   formatMessage,
-  getVehicleStatusTag,
   getDirectionLocale,
   getSuffix,
+  getVehicleStatusTag,
   isNull,
 } from '@/utils/util';
 import dictionary from '@/utils/Dictionary';
@@ -27,7 +27,7 @@ const VehicleList = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="app.vehicle.id" />,
+      title: <FormattedMessage id='vehicle.id' />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
@@ -51,12 +51,12 @@ const VehicleList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.vehicle.port" />,
+      title: <FormattedMessage id='vehicle.port' />,
       dataIndex: 'port',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.vehicle.direction" />,
+      title: <FormattedMessage id='vehicle.direction' />,
       dataIndex: 'currentDirection',
       align: 'center',
       render: (text) => getDirectionLocale(text),
@@ -88,7 +88,7 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.vehicleStatus" />,
+      title: <FormattedMessage id='app.vehicleState' />,
       dataIndex: 'vehicleStatus',
       align: 'center',
       render: (vehicleStatus) => getVehicleStatusTag(vehicleStatus),

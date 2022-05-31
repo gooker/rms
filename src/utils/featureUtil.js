@@ -122,7 +122,7 @@ export function exportVehicleInfo(vehicleList) {
         value: 'currentCellId',
       },
       {
-        label: formatMessage({ id: 'app.vehicle.direction' }),
+        label: formatMessage({ id: 'vehicle.direction' }),
         value: (row) => {
           return formatMessage({ id: Dictionary('vehicleDirection', row.currentDirection) });
         },

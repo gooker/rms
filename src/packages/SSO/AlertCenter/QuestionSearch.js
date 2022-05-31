@@ -1,7 +1,7 @@
 import React from 'react';
-import { Form, Button, Input, Row, Col, DatePicker } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
-import { formatMessage, convertToUserTimezone } from '@/utils/util';
+import { Button, Col, DatePicker, Form, Input, Row } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { RangePicker } = DatePicker;
@@ -37,7 +37,7 @@ const TargetLockSearch = (props) => {
       <Row style={{ width: '100%' }} gutter={24}>
         <Col span={4}>
           {/* 小车id */}
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>

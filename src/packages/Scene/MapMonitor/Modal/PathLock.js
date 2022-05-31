@@ -194,7 +194,7 @@ const PathLock = (props) => {
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={form} onValuesChange={onValuesChange}>
           {/* 小车ID */}
-          <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.vehicle.id' })} labelWrap>
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'vehicle.id' })} labelWrap>
             <Row gutter={10}>
               <Col span={18}>
                 <Form.Item

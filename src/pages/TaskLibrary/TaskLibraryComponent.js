@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Badge, Button, Divider, message, Table, Tooltip } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchVehicleTaskList, fetchAllVehicleList, fetchBatchCancelTask } from '@/services/api';
+import { fetchAllVehicleList, fetchBatchCancelTask, fetchVehicleTaskList } from '@/services/api';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from './TaskSearch';
@@ -50,7 +50,7 @@ class TaskLibraryComponent extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.vehicle.id' }),
+      title: formatMessage({ id: 'vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 100,

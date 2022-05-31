@@ -5,6 +5,7 @@ export const CustomNodeType = {
   WAIT: 'WAIT',
   PODSTATUS: 'PODSTATUS',
   END: 'END',
+  PLUS: 'PLUS', // 特殊节点
 };
 
 // 自定义任务: 任务类型 -- 任务数据字段

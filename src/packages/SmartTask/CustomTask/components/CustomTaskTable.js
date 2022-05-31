@@ -5,7 +5,6 @@ import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlin
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { deleteCustomTasksById } from '@/services/api';
-import { CustomNodeType } from '../customTaskConfig';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskBodyModal from './TaskBodyModal';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -24,38 +23,6 @@ const CustomTaskTable = (props) => {
   useEffect(() => {
     dispatch({ type: 'customTask/getCustomTaskList' });
   }, []);
-
-  function viewRequestBody(record) {
-    const { code, customStart } = record;
-    const sample = JSON.parse(record.sample);
-    const requestBody = {
-      sectionId: window.localStorage.getItem('sectionId'),
-      code,
-      createCode: null,
-      customParams: [],
-    };
-    // 如果是自动分车，动态参数类型是"指定小车"
-    if (isNull(customStart.vehicle)) {
-      requestBody.customParams.push({ code: 'START-Vehicle', param: [] });
-    }
-    // 将sample数据合并到customParams中
-    Object.keys(sample).forEach((taskCode) => {
-      const fields = Object.keys(sample[taskCode]);
-      fields.forEach((field) => {
-        if (taskCode === CustomNodeType.START) {
-          requestBody.customParams.push({
-            code: `${taskCode}-${field}`,
-            param: record.customStart?.vehicle?.code ?? [],
-          });
-        } else {
-          // ACTION
-          const param = record.customActions[taskCode]?.targetAction?.target?.code ?? [];
-          requestBody.customParams.push({ code: `${taskCode}-${field}`, param });
-        }
-      });
-    });
-    setExampleStructure(requestBody);
-  }
 
   const columns = [
     {
@@ -92,7 +59,7 @@ const CustomTaskTable = (props) => {
         <span className={styles.tableIcon}>
           <EyeOutlined
             onClick={() => {
-              viewRequestBody(record);
+              setExampleStructure(JSON.parse(record.sample));
             }}
           />
         </span>

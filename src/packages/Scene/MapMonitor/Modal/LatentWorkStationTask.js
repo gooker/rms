@@ -88,7 +88,7 @@ const LatentWorkStationTask = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
             <InputNumber />
           </Form.Item>
 

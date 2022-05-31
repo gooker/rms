@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, Tag, Button, Tooltip } from 'antd';
+import { Badge, Button, Tag, Tooltip } from 'antd';
 import { convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TaskPoolComponent from '@/pages/TaskPool/TaskPoolComponent';
@@ -18,7 +18,7 @@ const ToteTaskPool = () => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id="app.vehicle.id" />,
+        title: <FormattedMessage id='vehicle.id' />,
         dataIndex: 'vehicleId',
         align: 'center',
         width: 100,

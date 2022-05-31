@@ -85,8 +85,8 @@ const DictionaryDataSource = {
 
   //  报表中心
   reportCenterTable: {
-    vehicleId: 'app.vehicle.id',
-    currentVehicleId: 'app.vehicle.id',
+    vehicleId: 'vehicle.id',
+    currentVehicleId: 'vehicle.id',
     count: 'app.reportCenter.reportCount',
     createTime: 'app.common.creationTime',
     errorDefinition_level: 'app.fault.level',

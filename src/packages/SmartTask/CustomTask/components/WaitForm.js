@@ -1,13 +1,11 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Checkbox, Form, Input, InputNumber, Switch } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import { formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
+import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import StandbyConditions from '../FormComponent/StandbyConditions';
 import FormattedMessage from '@/components/FormattedMessage';
 import TargetSelector from '../components/TargetSelector';
 import styles from '../customTask.module.less';
-
-const { formItemLayout } = getFormLayout(6, 19);
 
 const WaitForm = (props) => {
   const { code, form, type, hidden, updateTab } = props;
@@ -24,7 +22,6 @@ const WaitForm = (props) => {
     <>
       <Form.Item
         hidden
-        {...formItemLayout}
         name={[code, 'customType']}
         initialValue={type}
         label={formatMessage({ id: 'app.common.type' })}
@@ -35,7 +32,6 @@ const WaitForm = (props) => {
       {/* 子任务编码 */}
       <Form.Item
         hidden
-        {...formItemLayout}
         name={[code, 'code']}
         initialValue={code}
         label={formatMessage({ id: 'app.common.code' })}
@@ -46,7 +42,6 @@ const WaitForm = (props) => {
 
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'name']}
         label={formatMessage({ id: 'app.common.name' })}
         getValueFromEvent={({ target: { value } }) => {
@@ -62,7 +57,6 @@ const WaitForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'desc']}
         label={formatMessage({ id: 'app.common.description' })}
       >
@@ -73,7 +67,6 @@ const WaitForm = (props) => {
       {/* 待命时长 */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'vehicleWaitTask', 'waitTime']}
         initialValue={180}
         label={formatMessage({ id: 'customTask.form.waitTime' })}
@@ -127,7 +120,6 @@ const WaitForm = (props) => {
       {/* 可自动退出待命去充电 */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'vehicleWaitTask', 'vehicleCanCharge']}
         valuePropName={'checked'}
         initialValue={true}
@@ -139,7 +131,6 @@ const WaitForm = (props) => {
       {/* 是否去接任务点  */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         label={
           <Checkbox
             checked={goToPickupPoint}
@@ -163,23 +154,10 @@ const WaitForm = (props) => {
       {/* 备注 */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'remark']}
         label={formatMessage({ id: 'app.common.remark' })}
       >
         <Input style={{ width: 500 }} />
-      </Form.Item>
-
-      {/* 跳过 */}
-      <Form.Item
-        hidden={hidden}
-        {...formItemLayout}
-        name={[code, 'skip']}
-        initialValue={false}
-        valuePropName={'checked'}
-        label={formatMessage({ id: 'customTask.form.skip' })}
-      >
-        <Switch />
       </Form.Item>
     </>
   );

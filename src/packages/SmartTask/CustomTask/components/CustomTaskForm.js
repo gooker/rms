@@ -18,12 +18,14 @@ import {
   dealResponse,
   formatMessage,
   generateCustomTaskForm,
+  generateSample,
+  getFormLayout,
   getRandomString,
   restoreCustomTaskForm,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { saveCustomTask } from '@/services/api';
-import { CustomNodeType, CustomNodeTypeFieldMap } from '../customTaskConfig';
+import { CustomNodeType } from '../customTaskConfig';
 import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
 import { PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -42,6 +44,8 @@ const CustomTypeIconMap = {
   [CustomNodeType.WAIT]: <HourglassOutlined />,
   [CustomNodeType.PODSTATUS]: <ShoppingCartOutlined />,
 };
+const { formItemLayout } = getFormLayout(6, 18);
+
 const CustomTaskForm = (props) => {
   const { dispatch, editingRow, programing, listVisible } = props;
   const [form] = Form.useForm();
@@ -55,17 +59,21 @@ const CustomTaskForm = (props) => {
 
   useEffect(() => {
     if (editingRow) {
-      const { code, sample } = editingRow;
-      setTaskCode(code);
-      dispatch({ type: 'customTask/updateVariable', payload: JSON.parse(sample) });
+      setTaskCode(editingRow.code);
 
       const result = restoreCustomTaskForm(editingRow);
-      // 此时 result.taskSteps 肯定不包含 BASE
       const newTaskSteps = [...result.taskSteps];
+      // 添加BASE节点
       newTaskSteps.unshift({
         type: CustomNodeType.BASE,
         code: CustomNodeType.BASE,
         label: formatMessage({ id: 'customTask.type.BASE' }),
+      });
+      // 添加PLUS节点
+      newTaskSteps.splice(newTaskSteps.length - 1, 0, {
+        type: CustomNodeType.PLUS,
+        code: -1,
+        label: <PlusOutlined />,
       });
       setTaskSteps(newTaskSteps);
       setCurrentCode(newTaskSteps[0].code);
@@ -83,7 +91,7 @@ const CustomTaskForm = (props) => {
       label: formatMessage({ id: `customTask.type.${key}` }),
     };
     const newTaskSteps = [...taskSteps];
-    newTaskSteps.splice(newTaskSteps.length - 1, 0, step);
+    newTaskSteps.splice(newTaskSteps.length - 2, 0, step);
     setTaskSteps(newTaskSteps);
     setCurrentCode(step.code);
   }
@@ -101,29 +109,17 @@ const CustomTaskForm = (props) => {
   }
 
   function onDropInTaskFlow(dropResult) {
-    const { removedIndex, addedIndex, payload } = dropResult;
+    const { removedIndex, addedIndex } = dropResult;
 
     const startIndex = findIndex(taskSteps, { type: CustomNodeType.START });
-    const endIndex = findIndex(taskSteps, { type: CustomNodeType.END });
-    let jumpToDrop = false; // 是否立即跳转到拖拽的节点表单
-
-    // 如果payload存在, 就是新增节点
-    if (payload) {
-      jumpToDrop = true;
-      // 节点只能在”开始“和”结束“之间
-      if (addedIndex <= startIndex || addedIndex > endIndex) {
-        return;
-      }
-    } else {
-      // 在“任务流程“栏拖拽, 理由同上
-      if (addedIndex <= startIndex || addedIndex + 1 > endIndex) {
-        return;
-      }
+    const endIndex = findIndex(taskSteps, { type: CustomNodeType.PLUS });
+    if (addedIndex <= startIndex || addedIndex + 1 > endIndex) {
+      return;
     }
     if (removedIndex !== null || addedIndex !== null) {
       let newTaskSteps = [...taskSteps];
       newTaskSteps = customTaskApplyDrag(newTaskSteps, dropResult);
-      jumpToDrop && setCurrentCode(newTaskSteps[addedIndex].code);
+      setCurrentCode(newTaskSteps[addedIndex].code);
       setTaskSteps(newTaskSteps);
     }
   }
@@ -155,7 +151,6 @@ const CustomTaskForm = (props) => {
           return (
             <StartForm
               key={index}
-              form={form}
               code={step.code}
               type={step.type}
               hidden={currentCode !== step.code}
@@ -211,8 +206,10 @@ const CustomTaskForm = (props) => {
 
   async function generateTaskData() {
     return new Promise((resolve) => {
-      const _taskSteps = [...taskSteps];
-      _taskSteps.shift();
+      // 去掉两个没用的任务节点
+      const _taskSteps = [...taskSteps].filter(
+        (item) => ![CustomNodeType.BASE, -1].includes(item.code),
+      );
       form
         .validateFields()
         .then((value) => {
@@ -231,16 +228,13 @@ const CustomTaskForm = (props) => {
       return;
     }
 
-    // 校验sample是否合法
-    const sample = JSON.parse(requestBody.sample);
-    Object.keys(sample).forEach((taskCode) => {
-      if (taskCode !== CustomNodeType.START) {
-        const [customNodeType] = taskCode.split('_');
-        if (!requestBody[CustomNodeTypeFieldMap[customNodeType]][taskCode]) {
-          delete sample[taskCode];
-        }
-      }
-    });
+    // 生成sample数据
+    const sample = {
+      sectionId: window.localStorage.getItem('sectionId'),
+      code: requestBody.code,
+      createCode: null,
+      customParams: generateSample(requestBody),
+    };
     requestBody.sample = JSON.stringify(sample);
 
     // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
@@ -308,27 +302,33 @@ const CustomTaskForm = (props) => {
           onDrop={(e) => onDropInTaskFlow(e)}
           nonDragAreaSelector={'.dndDisabled'} // 禁止拖拽
         >
-          {taskSteps.map((item, index) => (
-            <DndCard
-              key={item.code}
-              name={getRichName(item)}
-              active={currentCode === item.code}
-              disabled={isStandardTab(item.type)}
-              onDelete={() => {
-                deleteTaskFlowNode(index);
-              }}
-              onClick={() => {
-                setCurrentCode(item.code);
-              }}
-            />
-          ))}
-          <div style={{ textAlign: 'center' }}>
-            <Dropdown arrow overlay={plusMenu} trigger={['click']}>
-              <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }}>
-                <PlusOutlined />
-              </Button>
-            </Dropdown>
-          </div>
+          {taskSteps.map((item, index) => {
+            if (item.type === CustomNodeType.PLUS) {
+              return (
+                <div style={{ textAlign: 'center' }}>
+                  <Dropdown arrow overlay={plusMenu} trigger={['click']}>
+                    <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }}>
+                      <PlusOutlined />
+                    </Button>
+                  </Dropdown>
+                </div>
+              );
+            }
+            return (
+              <DndCard
+                key={item.code}
+                name={getRichName(item)}
+                active={currentCode === item.code}
+                disabled={isStandardTab(item.type)}
+                onDelete={() => {
+                  deleteTaskFlowNode(index);
+                }}
+                onClick={() => {
+                  setCurrentCode(item.code);
+                }}
+              />
+            );
+          })}
         </Container>
       </div>
       <div className={styles.layoutDivider} />
@@ -337,7 +337,7 @@ const CustomTaskForm = (props) => {
         style={{ height: `calc(100vh - ${PageContentPadding}px)` }}
       >
         <div style={{ flex: 1 }}>
-          <Form form={form} labelWrap>
+          <Form labelWrap form={form} {...formItemLayout}>
             {renderFormBody()}
           </Form>
         </div>

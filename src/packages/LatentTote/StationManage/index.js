@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Badge, Button, Row, Col, Modal, Form, Checkbox, Tooltip } from 'antd';
-import { EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Badge, Button, Checkbox, Col, Form, Modal, Row, Tooltip } from 'antd';
+import { DeleteOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
 import { fetchLatentToteStations, updateLatentToteStation } from '@/services/latentTote';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -183,7 +183,7 @@ const ChargerList = () => {
     },
 
     {
-      title: <FormattedMessage id="app.vehicle.port" />,
+      title: <FormattedMessage id='vehicle.port' />,
       dataIndex: 'port',
     },
 

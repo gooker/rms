@@ -1,14 +1,14 @@
-import React, { useState, memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Row, Col, message, Tooltip } from 'antd';
+import { Button, Col, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchVehicleTaskLockList, batchDeleteVehicleTaskLock } from '@/services/api';
+import { batchDeleteVehicleTaskLock, fetchVehicleTaskLockList } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import SearchTargetLock from '../ResourceLock/components/SearchTargetLock';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 
 const VehicleLock = (props) => {
@@ -91,7 +91,7 @@ const VehicleLock = (props) => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id="app.vehicle.id" />,
+        title: <FormattedMessage id='vehicle.id' />,
         dataIndex: 'vehicleId',
         align: 'center',
         fixed: 'left',
