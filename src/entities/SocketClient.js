@@ -101,10 +101,10 @@ class SocketClient {
     const sectionId = window.localStorage.getItem('sectionId');
     let unsubscription;
 
-    /// /////////////////////////////// 潜伏式  //////////////////////////////////
-    // 潜伏式车状态
+  
+    // 小车状态
     unsubscription = this.client.subscribe(
-      `/topic/latent_lifting_ui_monitor_vehicle.s${sectionId}`,
+      `/topic/ui_monitor_vehicle.s${sectionId}`,
       (response) => {
         const p = JSON.parse(response.body);
         if (this.vehicleStatusCallback) this.vehicleStatusCallback(p);
@@ -112,6 +112,8 @@ class SocketClient {
     );
     // 将返回的"取消订阅"的函数缓存起来
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
+
+    /// /////////////////////////////// 潜伏式  //////////////////////////////////
 
     // 潜伏货架状态
     unsubscription = this.client.subscribe(
@@ -154,15 +156,6 @@ class SocketClient {
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
     /// /////////////////////////// 料箱  /////////////////////////////////////////
-    // 料箱车状态信息
-    unsubscription = this.client.subscribe(
-      `/topic/tote_ui_monitor_vehicle.s${sectionId}`,
-      (response) => {
-        const p = JSON.parse(response.body);
-        if (this.toteVehicleStatusCallback) this.toteVehicleStatusCallback(p);
-      },
-    );
-    this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
     // 料箱车上料箱[tote]状态
     unsubscription = this.client.subscribe(
@@ -174,15 +167,7 @@ class SocketClient {
     );
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
-    /// /////////////////////////// 分拣车  /////////////////////////////////////////
-    unsubscription = this.client.subscribe(
-      `/topic/sorter_ui_monitor_vehicle.s${sectionId}`,
-      (response) => {
-        const p = JSON.parse(response.body);
-        if (this.sorterVehicleStatusCallback) this.sorterVehicleStatusCallback(p);
-      },
-    );
-    this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
+  
 
     /// /////////////////////////// 充电桩  /////////////////////////////////////////
     unsubscription = this.client.subscribe(
@@ -220,8 +205,8 @@ class SocketClient {
     this.notificationQuestion = cb;
   }
 
-  // Latent Vehicle
-  registerLatentVehicleStatus(cb) {
+  // Vehicle
+  registerVehicleStatus(cb) {
     this.vehicleStatusCallback = cb;
   }
 
@@ -241,21 +226,13 @@ class SocketClient {
     this.podInStation = cb;
   }
 
-  // Tote Vehicle
-  registerToteVehicleStatus(cb) {
-    this.toteVehicleStatusCallback = cb;
-  }
-
+  
   registerToteStatusCallback(cb) {
     // 料箱车货架状态
     this.toteStatusCallback = cb;
   }
 
-  // 分拣车
-  registerSorterVehicleStatus(cb) {
-    this.sorterVehicleStatusCallback = cb;
-  }
-
+  
   // 充电桩
   registerChargerStatusListener(cb) {
     this.chargerStatusCallback = cb;

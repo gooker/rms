@@ -1323,6 +1323,8 @@ export function unifyVehicleState(vehicle) {
     currentCellId,
     navigationType: vehicle.bd ?? vehicle.navigationType,
     uniqueId: vehicle.rId,
+    vehicleType: vehicle.rT,
+    vehicleIcon: vehicle.ico,
     battery: vehicle.b ?? vehicle.battery,
     vehicleId: vehicle.r ?? vehicle.vehicleId,
     mainTain: vehicle.m ?? vehicle.maintain,
@@ -1364,9 +1366,25 @@ export function getSelectionWorldCoordinator(mapDOM, maskDOM, viewportEntity) {
  * 注册监控地图Socket回调
  */
 export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
-  // 潜伏式车状态
-  socketClient.registerLatentVehicleStatus((allVehicleStatus) => {
-    mapContext.updateLatentVehicle(allVehicleStatus);
+  // 小车状态更新
+  socketClient.registerVehicleStatus((data) => {
+    data?.map((item) => {
+      ///fock/slamLatent
+      if (item.rT === 'sorter') {
+        // 分拣车状态
+        mapContext.updateSorterVehicle([item]);
+      }
+
+      if (item.rT === 'latent') {
+        // 潜伏式车状态
+        mapContext.updateLatentVehicle([item]);
+      }
+
+      if (item.rT === 'tote') {
+        // 料箱车状态
+        mapContext.updateToteVehicle([item]);
+      }
+    });
   });
 
   // 潜伏式货架状态
@@ -1374,19 +1392,9 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
     mapContext.refreshLatentPod(podStatus);
   });
 
-  // 料箱车状态
-  socketClient.registerToteVehicleStatus((toteVehicleStatus) => {
-    mapContext.updateToteVehicle(toteVehicleStatus);
-  });
-
   // 料箱车身上的货架状态
   socketClient.registerToteStatusCallback((toteStatus) => {
     mapContext.updateToteState(toteStatus);
-  });
-
-  // 分拣车状态
-  socketClient.registerSorterVehicleStatus((sorterStatus) => {
-    mapContext.updateSorterVehicle(sorterStatus);
   });
 
   // 充电桩状态

@@ -97,20 +97,20 @@ const StorageLock = (props) => {
     setLoading(false);
   }
 
-  function filterData(list,formValues) {
+  function filterData(list, formValues) {
     let result = [...list];
     if (isNull(formValues)) {
       setCurrentDataList(result);
       return;
     }
-    const { taskId, vehicleType: loadType } = formValues;
+    const { taskId, loadType } = formValues;
     if (!isStrictNull(taskId)) {
       result = result.filter((item) => {
         return item.taskId === taskId;
       });
     }
     if (!isStrictNull(loadType)) {
-      result = result.filter((item) => loadType.includes(item.vehicleType));
+      result = result.filter((item) => loadType === item.loadType);
     }
 
     setCurrentDataList(result);

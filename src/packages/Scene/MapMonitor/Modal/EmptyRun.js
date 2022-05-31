@@ -24,10 +24,7 @@ const EmptyRun = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        let newValues = { ...values };
-        newValues.vehicleId = values.vehicleId;
-        delete newValues.vehicleId;
-        vehicleEmptyRun({ ...newValues })
+        vehicleEmptyRun({ ...values })
           .then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();

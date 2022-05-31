@@ -11,11 +11,11 @@ export default {
 
     allAdaptors: {},
     allVehicles: [],
-    searchParams: { id: [], state: [] },
+    searchParams: { id: [], state: [], vehicleType: null },
   },
 
   effects: {
-    * fetchInitialData(_, { put }) {
+    *fetchInitialData(_, { put }) {
       const [allVehicles, allAdaptors] = yield Promise.all([fetchAllVehicle(), fetchAllAdaptor()]);
       if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
         yield put({ type: 'saveState', payload: { allVehicles, allAdaptors } });

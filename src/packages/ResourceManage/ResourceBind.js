@@ -233,149 +233,143 @@ const ResourceBind = (props) => {
 
   return (
     <div className={commonStyles.commonPageStyle}>
-      <Card bordered={false}>
-        {/* 搜索 */}
-        <Form form={formRef}>
-          <Row>
-            <Col span={8}>
-              <Form.Item label={formatMessage({ id: 'resourceBind.horizontalaxis' })} name="xType">
-                <Select
-                  placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
-                  style={{ width: '100%' }}
-                  showSearch
-                  onChange={groupXTypeChange}
-                  options={xOptions}
-                ></Select>
-              </Form.Item>
-            </Col>
-            <Col span={8} style={{ padding: '0 12px' }}>
-              <Form.Item label={formatMessage({ id: 'resourceBind.verticalaxis' })} name="yType">
-                <Select
-                  allowClear
-                  placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
-                  style={{ width: '100%' }}
-                  // showSearch
-                  filterOption={false}
-                  onChange={groupYTypeChange}
-                  mode="multiple"
-                  maxTagCount={5}
-                >
-                  {yOptions &&
-                    yOptions.map(({ label, value }, index) => (
-                      <Select.Option key={index} value={value}>
-                        {label}
-                      </Select.Option>
-                    ))}
-                </Select>
-              </Form.Item>
-            </Col>
+      {/* 搜索 */}
+      <Form form={formRef}>
+        <Row>
+          <Col span={8}>
+            <Form.Item label={formatMessage({ id: 'resourceBind.horizontalaxis' })} name="xType">
+              <Select
+                placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
+                style={{ width: '100%' }}
+                showSearch
+                onChange={groupXTypeChange}
+                options={xOptions}
+              ></Select>
+            </Form.Item>
+          </Col>
+          <Col span={8} style={{ padding: '0 12px' }}>
+            <Form.Item label={formatMessage({ id: 'resourceBind.verticalaxis' })} name="yType">
+              <Select
+                allowClear
+                placeholder={formatMessage({ id: 'cleaningCenter.pleaseSelect' })}
+                style={{ width: '100%' }}
+                // showSearch
+                filterOption={false}
+                onChange={groupYTypeChange}
+                mode="multiple"
+                maxTagCount={5}
+              >
+                {yOptions &&
+                  yOptions.map(({ label, value }, index) => (
+                    <Select.Option key={index} value={value}>
+                      {label}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
+          </Col>
 
-            <Col offset={6} style={{ textAlign: 'right' }}>
-              <Button type={'primary'} onClick={submitSave}>
-                <FormattedMessage id={'app.button.save'} />
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+          <Col offset={6} style={{ textAlign: 'right' }}>
+            <Button type={'primary'} onClick={submitSave}>
+              <FormattedMessage id={'app.button.save'} />
+            </Button>
+          </Col>
+        </Row>
+      </Form>
 
-        {/* 内容区 */}
-        <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
-          {xData && yData?.length > 0 ? (
-            <Row style={{ marginTop: 20 }}>
-              <Col span={24}>
-                <table
-                  style={{
-                    width: '96%',
-                    border: '1px solid #efefef',
-                    textAlign: 'center',
-                    borderCollapse: 'collapse',
-                    borderSpacing: 0,
-                    tableLayout: 'fixed',
-                  }}
+      {/* 内容区 */}
+      <div className={styles.tableWeapper} style={{ overflow: 'auto hidden' }}>
+        {xData && yData?.length > 0 ? (
+          <Row style={{ marginTop: 20 }}>
+            <Col span={24}>
+              <table
+                style={{
+                  width: '96%',
+                  border: '1px solid #efefef',
+                  textAlign: 'center',
+                  borderCollapse: 'collapse',
+                  borderSpacing: 0,
+                  tableLayout: 'fixed',
+                }}
+              >
+                <thead
+                  className={styles.fixColumn}
+                  style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
                 >
-                  <thead
-                    className={styles.fixColumn}
-                    style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                  >
-                    <tr className={styles.body}>
-                      <th className={styles.tdBorder} colSpan="2">
-                        {' '}
-                      </th>
-                      {xData &&
-                        xData.map((item) => {
+                  <tr className={styles.body}>
+                    <th className={styles.tdBorder} colSpan="2">
+                      {' '}
+                    </th>
+                    {xData &&
+                      xData.map((item) => {
+                        return (
+                          <th key={item.id} className={styles.tdBorder}>
+                            {item.groupName}
+
+                            <Switch
+                              checked={() => {
+                                theadIsChecked(item.key);
+                              }}
+                              style={{ marginLeft: '10px' }}
+                              size="small"
+                              onClick={(checked) => {
+                                switchXtoYChange(item.key, checked);
+                              }}
+                            />
+                          </th>
+                        );
+                      })}
+                  </tr>
+                </thead>
+                <tbody>
+                  {yData?.map((y) => {
+                    let typeTimes = statisticalTypeTimes(yData);
+                    return (
+                      <tr key={y.id} className={styles.thbodyHeight}>
+                        {Object.keys(typeTimes)?.map((i) => {
+                          if (i === y.typeName) {
+                            const rowslength = typeTimes[i];
+                            delete typeTimes[i];
+                            return (
+                              <th key={y.key} rowSpan={rowslength} className={styles.contentBorder}>
+                                {y.typeName}
+                              </th>
+                            );
+                          }
+                        })}
+
+                        <th
+                          className={styles.tdBorder}
+                          style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
+                        >
+                          {y.groupName}
+                        </th>
+
+                        {/* 下面td的长度 应该用xData遍历 */}
+                        {xData?.map((x) => {
                           return (
-                            <th key={item.id} className={styles.tdBorder}>
-                              {item.groupName}
-
+                            <th key={x.id} className={styles.contentBorder}>
                               <Switch
-                                checked={() => {
-                                  theadIsChecked(item.key);
-                                }}
-                                style={{ marginLeft: '10px' }}
                                 size="small"
-                                onClick={(checked) => {
-                                  switchXtoYChange(item.key, checked);
-                                }}
+                                checked={switchChecked(x.key, y.key)}
+                                data-x={x.key}
+                                data-y={y.key}
+                                onChange={switchChange(x.key, y.key)}
                               />
                             </th>
                           );
                         })}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {yData?.map((y) => {
-                      let typeTimes = statisticalTypeTimes(yData);
-                      return (
-                        <tr key={y.id} className={styles.thbodyHeight}>
-                          {Object.keys(typeTimes)?.map((i) => {
-                            if (i === y.typeName) {
-                              const rowslength = typeTimes[i];
-                              delete typeTimes[i];
-                              return (
-                                <th
-                                  key={y.key}
-                                  rowSpan={rowslength}
-                                  className={styles.contentBorder}
-                                >
-                                  {y.typeName}
-                                </th>
-                              );
-                            }
-                          })}
-
-                          <th
-                            className={styles.tdBorder}
-                            style={{ position: 'sticky', top: 0, left: 0, zIndex: 100 }}
-                          >
-                            {y.groupName}
-                          </th>
-
-                          {/* 下面td的长度 应该用xData遍历 */}
-                          {xData?.map((x) => {
-                            return (
-                              <th key={x.id} className={styles.contentBorder}>
-                                <Switch
-                                  size="small"
-                                  checked={switchChecked(x.key, y.key)}
-                                  data-x={x.key}
-                                  data-y={y.key}
-                                  onChange={switchChange(x.key, y.key)}
-                                />
-                              </th>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </Col>
-            </Row>
-          ) : (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
-          )}
-        </div>
-      </Card>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </Col>
+          </Row>
+        ) : (
+          <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ paddingTop: 100 }} />
+        )}
+      </div>
     </div>
   );
 };

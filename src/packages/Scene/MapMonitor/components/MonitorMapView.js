@@ -5,7 +5,14 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { VehicleType, NavigationType, NavigationTypeView } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import {
   VehicleState,
   ElementType,
@@ -101,8 +108,7 @@ class MonitorMapView extends BaseMap {
   async componentDidMount() {
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, () => {
-    });
+    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, () => {});
     window.MonitorPixiUtils = window.PixiUtils = this.pixiUtils;
     window.$$dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
@@ -421,7 +427,6 @@ class MonitorMapView extends BaseMap {
 
     // 刷新行驶路线
     this.showTaskPath && this.updateTaskPath(`${uniqueId}`);
-    console.log(this.showTaskPath);
 
     // 更新小车电池状态
     if (battery && vehicleEntity.battery !== battery) {
@@ -459,6 +464,8 @@ class MonitorMapView extends BaseMap {
       x: latentVehicleData.x || cellEntity?.x,
       y: latentVehicleData.y || cellEntity?.y,
       uniqueId: latentVehicleData.uniqueId,
+      vehicleType: latentVehicleData.vehicleType,
+      vehicleIcon: latentVehicleData.vehicleIcon,
       battery: latentVehicleData.battery || 0,
       errorLevel: latentVehicleData.errorLevel || 0,
       state: latentVehicleData.vehicleStatus ?? VehicleState.offline,
@@ -500,6 +507,8 @@ class MonitorMapView extends BaseMap {
         currentDirection,
         errorLevel,
         uniqueId,
+        vehicleType,
+        vehicleIcon,
       } = unifiedVehicleState;
 
       if (isNull(currentCellId)) return;
@@ -520,6 +529,8 @@ class MonitorMapView extends BaseMap {
           y,
           vehicleId,
           uniqueId,
+          vehicleType,
+          vehicleIcon,
           mainTain,
           currentCellId,
           currentDirection,
@@ -531,7 +542,12 @@ class MonitorMapView extends BaseMap {
       if (isNull(latentVehicle)) return;
 
       // 更新通用状态
-      this.updateVehicleCommonState(vehicle.c, unifiedVehicleState, latentVehicle, VehicleType.LatentLifting);
+      this.updateVehicleCommonState(
+        vehicle.c,
+        unifiedVehicleState,
+        latentVehicle,
+        VehicleType.LatentLifting,
+      );
 
       // 卸货: podId不存在但是小车还有货物的时候需要卸货 --> {vehicleId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, podId: 0}
       if (!hasLatentPod(podId) && latentVehicle && latentVehicle.pod) {
@@ -709,6 +725,9 @@ class MonitorMapView extends BaseMap {
       x: toteVehicleData.x || cellEntity.x,
       y: toteVehicleData.y || cellEntity.y,
       id: toteVehicleData.vehicleId,
+      uniqueId: toteVehicleData.uniqueId,
+      vehicleType: toteVehicleData.vehicleType,
+      vehicleIcon: toteVehicleData.vehicleIcon,
       cellId: toteVehicleData.currentCellId,
       angle: toteVehicleData.currentDirection,
       shelfs: toteVehicleData.shelfs || 0,
@@ -763,6 +782,9 @@ class MonitorMapView extends BaseMap {
         currentCellId,
         currentDirection,
         errorLevel,
+        uniqueId,
+        vehicleType,
+        vehicleIcon,
       } = unifiedVehicleState;
 
       if (isNull(currentCellId)) return;
@@ -790,6 +812,9 @@ class MonitorMapView extends BaseMap {
           battery: battery || 0,
           vehicleStatus: vehicleStatus || 'Offline',
           errorLevel: errorLevel || 0,
+          uniqueId,
+          vehicleType,
+          vehicleIcon,
         });
       }
       if (isNull(toteVehicle)) return;
@@ -851,7 +876,10 @@ class MonitorMapView extends BaseMap {
       const { vehicleDirection, leftRack, rightRack } = rackGroupData;
       // 左侧料箱货架
       if (leftRack && leftRack.bins) {
-        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(vehicleDirection, 'L');
+        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(
+          vehicleDirection,
+          'L',
+        );
         leftRack.bins.forEach((bin) => {
           const cellEntity = _this.idCellMap.get(bin.binCellId);
           if (cellEntity && !bin.disable) {
@@ -880,7 +908,10 @@ class MonitorMapView extends BaseMap {
       }
       // 右侧料箱货架
       if (rightRack && rightRack.bins) {
-        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(vehicleDirection, 'R');
+        const { angle, XBase, YBase, offset, adapte } = getToteLayoutBaseParam(
+          vehicleDirection,
+          'R',
+        );
         rightRack.bins.forEach((bin) => {
           const cellEntity = _this.idCellMap.get(bin.binCellId);
           if (cellEntity && !bin.disable) {
@@ -935,6 +966,8 @@ class MonitorMapView extends BaseMap {
       x: sorterVehicleData.x || cellEntity.x,
       y: sorterVehicleData.y || cellEntity.y,
       uniqueId: sorterVehicleData.uniqueId,
+      vehicleType: sorterVehicleData.vehicleType,
+      vehicleIcon: sorterVehicleData.vehicleIcon,
       battery: sorterVehicleData.battery || 0,
       errorLevel: sorterVehicleData.errorLevel || 0,
       state: sorterVehicleData.vehicleStatus ?? VehicleState.offline,
@@ -977,6 +1010,8 @@ class MonitorMapView extends BaseMap {
         currentDirection,
         errorLevel,
         uniqueId,
+        vehicleType,
+        vehicleIcon,
       } = unifiedVehicleState;
 
       if (isNull(currentCellId)) return;
@@ -997,6 +1032,8 @@ class MonitorMapView extends BaseMap {
           y,
           vehicleId,
           uniqueId,
+          vehicleType,
+          vehicleIcon,
           mainTain,
           currentCellId,
           currentDirection,
@@ -1008,7 +1045,12 @@ class MonitorMapView extends BaseMap {
       if (isNull(sorterVehicle)) return;
 
       // 更新通用状态
-      this.updateVehicleCommonState(vehicle.c, unifiedVehicleState, sorterVehicle, VehicleType.Sorter);
+      this.updateVehicleCommonState(
+        vehicle.c,
+        unifiedVehicleState,
+        sorterVehicle,
+        VehicleType.Sorter,
+      );
 
       // 更新小车车身货架
       sorterVehicle.updatePod(sorterPod);

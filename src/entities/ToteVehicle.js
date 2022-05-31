@@ -14,6 +14,9 @@ export default class ToteVehicle extends PIXI.Container {
     this.x = props.x;
     this.y = props.y;
     this.type = VehicleType.Tote;
+    this.uniqueId = props.uniqueId;
+    this.vehicleType = props.vehicleType;
+    this.vehicleIcon = props.vehicleIcon;
     this.width = ToteVehicleSize.width;
     this.height = ToteVehicleSize.height;
     this.currentCellId = props.cellId;

@@ -49,7 +49,7 @@ const VehicleElementProp = (props) => {
 
   async function getVehicleInfo() {
     const [response, alertResponse] = await Promise.all([
-      fetchVehicleInfo(data.id, 'sorter'),
+      fetchVehicleInfo(data.id, data.vehicleType),
       getAlertCentersByTaskIdOrVehicleId({ vehicleId: JSON.parse(data.id) }),
     ]);
 

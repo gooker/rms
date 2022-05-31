@@ -168,6 +168,7 @@ export function loadTexturesForMap() {
       .add('errorLevel_1', '/images/errorLevel_1.png')
       .add('errorLevel_2', '/images/errorLevel_2.png')
       .add('errorLevel_3', '/images/errorLevel_3.png')
+      .add('errorLevel_0', '/images/errorLevel_3.png')
       .add('tiny_rotate', '/images/tiny_rotate.png')
       .add('delivery', '/images/delivery.png')
       .add('basket', '/images/basket.png')

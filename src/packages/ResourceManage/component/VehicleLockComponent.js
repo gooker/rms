@@ -6,7 +6,7 @@ import { fetchVehicleTaskLockList, batchDeleteVehicleTaskLock } from '@/services
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import VehicleLockSearch from './VehicleLockSearch';
+import SearchTargetLock from '../ResourceLock/components/SearchTargetLock';
 import commonStyles from '@/common.module.less';
 import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -48,14 +48,19 @@ const VehicleLock = (props) => {
       setCurrentVehicletLockList(result);
       return;
     }
-    const { vehicleId, taskId } = formValues;
+    const { vehicleId, vehicleType } = formValues;
     if (!isStrictNull(vehicleId)) {
       result = result.filter((item) => {
         return item.vehicleId === vehicleId;
       });
     }
-    if (!isStrictNull(taskId)) {
-      result = result.filter((item) => item.taskId === taskId);
+    if (!isStrictNull(vehicleType)) {
+      const currentVehicleType = [];
+      vehicleType?.map((value) => {
+        currentVehicleType.push(value.split('@')[1]);
+      });
+
+      result = result.filter((item) => currentVehicleType.includes(item.vehicleType));
     }
     setCurrentVehicletLockList(result);
     return;
@@ -140,7 +145,7 @@ const VehicleLock = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <VehicleLockSearch search={filterData} data={vehicleLockList} />
+        <SearchTargetLock search={filterData} data={vehicleLockList} taskIdHide={true} />
         <Row>
           <Col flex="auto" className={commonStyles.tableToolLeft}>
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteVehicleLock}>

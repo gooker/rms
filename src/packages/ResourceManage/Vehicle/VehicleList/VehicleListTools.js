@@ -11,7 +11,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
 
 const VehicleListTools = (props) => {
-  const { dispatch, allVehicles, selectedRows, searchParams } = props;
+  const { dispatch, allVehicles, selectedRows, allAdaptors, searchParams } = props;
 
   const registerVehicles = allVehicles.filter((item) => item.register);
   const unregisterVehicles = allVehicles.filter((item) => !item.register);
@@ -44,15 +44,22 @@ const VehicleListTools = (props) => {
   }
 
   function updateSearchParam(key, value) {
-    dispatch({ type: 'vehicleList/updateSearchParams', payload: { ...searchParams, [key]: value } });
+    dispatch({
+      type: 'vehicleList/updateSearchParams',
+      payload: { ...searchParams, [key]: value },
+    });
   }
 
   function cancelRegister() {
-    const vehicleIds = selectedRows.map(({ vehicleId }) => vehicleId);
+    const params = selectedRows.map(({ vehicleId, vehicleType, adapterType }) => ({
+      vehicleId,
+      vehicleType,
+      vehicleAdapter: adapterType,
+    }));
     RmsConfirm({
       content: formatMessage({ id: 'app.vehicle.moveOut.confirm' }),
       onOk: async () => {
-        const response = await logOutVehicle({ ids: vehicleIds });
+        const response = await logOutVehicle(params);
         if (!dealResponse(response, 1)) {
           dispatch({ type: 'vehicleList/fetchInitialData' });
         }
@@ -95,6 +102,30 @@ const VehicleListTools = (props) => {
             }}
           >
             {renderVehicleStateFilter()}
+          </Select>
+        </Form.Item>
+
+        <Form.Item label={<FormattedMessage id={'app.common.type'} />}>
+          <Select
+            allowClear
+            style={{ width: 300 }}
+            value={searchParams.vehicleType}
+            onChange={(value) => {
+              updateSearchParam('vehicleType', value);
+            }}
+          >
+            {Object.values(allAdaptors).map(({ adapterType }) => {
+              const { id, name, vehicleTypes } = adapterType;
+              return (
+                <Select.OptGroup key={id} label={name}>
+                  {vehicleTypes.map((item, index) => (
+                    <Select.Option key={index} value={`${id}@${item.code}`}>
+                      {item.name}
+                    </Select.Option>
+                  ))}
+                </Select.OptGroup>
+              );
+            })}
           </Select>
         </Form.Item>
       </Row>
@@ -161,6 +192,7 @@ const VehicleListTools = (props) => {
   );
 };
 export default connect(({ vehicleList }) => ({
+  allAdaptors: vehicleList.allAdaptors,
   allVehicles: vehicleList.allVehicles,
   searchParams: vehicleList.searchParams,
 }))(memo(VehicleListTools));

@@ -27,7 +27,7 @@ const VehicleList = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id='app.vehicle.id' />,
+      title: <FormattedMessage id="app.vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
@@ -198,13 +198,20 @@ const VehicleList = (props) => {
 
   function filterDatasource() {
     let nowAllVehicels = [...allVehicles].filter((item) => item.register);
-    const { id: uniqueIds, state } = searchParams;
+    const { id: uniqueIds, state, vehicleType } = searchParams;
     if (uniqueIds?.length > 0) {
       nowAllVehicels = nowAllVehicels.filter(({ id }) => uniqueIds.includes(id));
     }
 
     if (state?.length > 0) {
       nowAllVehicels = nowAllVehicels.filter((item) => state.includes(item.vehicleStatus));
+    }
+
+    if (!isNull(vehicleType)) {
+      const currentType = vehicleType.split('@'); // adapterType@vehicleType
+      nowAllVehicels = nowAllVehicels.filter(
+        (item) => item.adapterType === currentType[0] && item.vehicleType === currentType[1],
+      );
     }
 
     setDatasource(nowAllVehicels);
