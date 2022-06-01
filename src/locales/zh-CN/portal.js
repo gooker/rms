@@ -2,6 +2,7 @@ export default {
   'app.login.button': '登录',
   'app.login.username.required': '请输入用户名',
   'app.login.password.required': '请输入密码',
+  'app.login.password.environment': '请选择登录环境',
 
   'app.mushiny.title': '牧星智能调度系统',
   'app.mushiny.purpose.smart': '灵动',

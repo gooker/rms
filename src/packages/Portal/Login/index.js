@@ -4,24 +4,30 @@ import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@a
 import { fetchLogin } from '@/services/global';
 import requestAPI from '@/utils/requestAPI';
 import {
+  adjustModalWidth,
   dealResponse,
   extractNameSpaceInfoFromEnvs,
   formatMessage,
   getAllEnvironments,
   getCustomEnvironments,
+  getRandomString,
   isNull,
 } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
+import AddEnvironmentModal from '@/packages/SSO/EnvironmentManger/components/AddEnvironmentModal';
+import { message, Modal } from '_antd@4.18.3@antd';
 
 const Login = (props) => {
   const { history } = props;
 
   const [formRef] = Form.useForm();
+  const [modalRef] = Form.useForm();
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     // 挂载push函数
@@ -30,6 +36,20 @@ const Login = (props) => {
     setOptions(allEnvs);
     formRef.setFieldsValue({ environment: activeEnv });
   }, []);
+
+  function addEnvironment() {
+    modalRef.validateFields().then((value) => {
+      const _options = [...options];
+      _options.push({ ...value, id: getRandomString(10) });
+      window.localStorage.setItem(
+        'customEnvs',
+        JSON.stringify(_options.filter((item) => item.id !== 'default')),
+      );
+      setOptions(_options);
+      setVisible(false);
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    });
+  }
 
   async function goLogin() {
     formRef.validateFields().then(async (values) => {
@@ -94,9 +114,17 @@ const Login = (props) => {
             >
               <Input.Password prefix={<LockOutlined />} />
             </Form.Item>
-            <Form.Item name='environment'>
-              <Row gutter={10}>
-                <Col flex={1}>
+            <Row gutter={10}>
+              <Col flex={1}>
+                <Form.Item
+                  name='environment'
+                  rules={[
+                    {
+                      required: true,
+                      message: formatMessage({ id: 'app.login.password.environment' }),
+                    },
+                  ]}
+                >
                   <Select>
                     {options.map(({ envName, id }) => (
                       <Select.Option key={id} value={id}>
@@ -104,12 +132,17 @@ const Login = (props) => {
                       </Select.Option>
                     ))}
                   </Select>
-                </Col>
-                <Col>
-                  <Button icon={<SettingOutlined style={{ color: '#7d7d7d' }} />} />
-                </Col>
-              </Row>
-            </Form.Item>
+                </Form.Item>
+              </Col>
+              <Col>
+                <Button
+                  icon={<SettingOutlined style={{ color: '#7d7d7d' }} />}
+                  onClick={() => {
+                    setVisible(true);
+                  }}
+                />
+              </Col>
+            </Row>
             <Form.Item>
               {loading ? (
                 <div style={{ width: '100%', textAlign: 'center' }}>
@@ -124,6 +157,20 @@ const Login = (props) => {
           </Form>
         </div>
       </div>
+
+      {/*  新增环境配置 */}
+      <Modal
+        destroyOnClose
+        width={adjustModalWidth() * 0.7}
+        visible={visible}
+        title={<FormattedMessage id='environmentManager.add' />}
+        onOk={addEnvironment}
+        onCancel={() => {
+          setVisible(false);
+        }}
+      >
+        <AddEnvironmentModal formRef={modalRef} />
+      </Modal>
     </div>
   );
 };

@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { AutoComplete, Button, Col, Form, Input, Radio, Row } from 'antd';
+import { AutoComplete, Button, Col, Form, Input, Row } from 'antd';
 import { formatMessage, getFormLayout, isStrictNull, validateUrl } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
 import { NameSpace } from '@/config/config';
 
 const { formItemLayout } = getFormLayout(4, 18);
@@ -15,11 +14,8 @@ class AddEnvironmentModal extends PureComponent {
     if (updateRow) {
       setFieldsValue({
         envName: updateRow.envName,
-        flag: updateRow.flag,
         additionalInfos: updateRow.additionalInfos,
       });
-    } else {
-      setFieldsValue({ flag: '0' });
     }
   }
 
@@ -30,34 +26,29 @@ class AddEnvironmentModal extends PureComponent {
     return Promise.reject(new Error(formatMessage({ id: 'environmentManager.url.invalid' })));
   }
 
+  additionalInfosValidator(_, value) {
+    if (!value || value.length < 1) {
+      return Promise.reject(new Error(formatMessage({ id: 'environmentManager.api.invalid' })));
+    }
+    return Promise.resolve();
+  }
+
   render() {
     const { formRef } = this.props;
     return (
       <Form ref={formRef} {...formItemLayout}>
         <Form.Item
-          label={<FormattedMessage id='environmentManager.envName' />}
+          label={formatMessage({ id: 'environmentManager.envName' })}
           name='envName'
           rules={[{ required: true }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          label={<FormattedMessage id='environmentManager.isDefault' />}
-          name='flag'
-          rules={[{ required: true }]}
-        >
-          <Radio.Group>
-            <Radio value='0'>
-              <FormattedMessage id='app.common.false' />
-            </Radio>
-            <Radio value='1'>
-              <FormattedMessage id='app.common.true' />
-            </Radio>
-          </Radio.Group>
-        </Form.Item>
-
         <Form.Item required label={formatMessage({ id: 'environmentManager.apis' })}>
-          <Form.List name={'additionalInfos'}>
+          <Form.List
+            name={'additionalInfos'}
+            rules={[{ validator: this.additionalInfosValidator }]}
+          >
             {(fields, { add, remove }, { errors }) => (
               <>
                 {fields.map((field, index) => (
