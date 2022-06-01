@@ -74,19 +74,19 @@ class MainLayout extends React.Component {
             if (username !== 'admin') {
               // 初始化Socket客户端
               const { name, password } = currentSection;
-              const socketClient = (this.socketClient = new SocketClient({
+              this.socketClient = new SocketClient({
                 login: name,
                 passcode: password,
-              }));
-              socketClient.connect();
-              socketClient.registerNotificationQuestion((message) => {
+              });
+              this.socketClient.connect();
+              this.socketClient.registerNotificationQuestion((message) => {
                 // 如果关闭提示，就直接不拉取接口
                 const sessionValue = window.sessionStorage.getItem('showErrorNotification');
                 const showErrorNotification = isNull(sessionValue) ? true : sessionValue === 'true';
                 if (!showErrorNotification) return;
                 this.showSystemAlert(message);
               });
-              await dispatch({ type: 'global/saveSocketClient', payload: socketClient });
+              await dispatch({ type: 'global/saveSocketClient', payload: this.socketClient });
 
               // 立即获取一次告警数量
               dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
@@ -136,7 +136,7 @@ class MainLayout extends React.Component {
   componentWillUnmount() {
     // 关闭所有 Web Worker
     AlertCountPolling.terminate();
-    this.socketClient.disconnect();
+    this.socketClient?.disconnect();
   }
 
   logout = () => {

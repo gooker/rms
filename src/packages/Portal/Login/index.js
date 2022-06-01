@@ -1,11 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Form, Input, Select, Spin } from 'antd';
-import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row, Select, Spin } from 'antd';
+import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { fetchLogin } from '@/services/global';
 import requestAPI from '@/utils/requestAPI';
 import {
   dealResponse,
   extractNameSpaceInfoFromEnvs,
+  formatMessage,
   getAllEnvironments,
   getCustomEnvironments,
   isNull,
@@ -76,7 +77,7 @@ const Login = (props) => {
               rules={[
                 {
                   required: true,
-                  message: <FormattedMessage id='app.login.username.required' />,
+                  message: formatMessage({ id: 'app.login.username.required' }),
                 },
               ]}
             >
@@ -87,20 +88,27 @@ const Login = (props) => {
               rules={[
                 {
                   required: true,
-                  message: <FormattedMessage id='app.login.password.required' />,
+                  message: formatMessage({ id: 'app.login.password.required' }),
                 },
               ]}
             >
               <Input.Password prefix={<LockOutlined />} />
             </Form.Item>
             <Form.Item name='environment'>
-              <Select>
-                {options.map(({ envName, id }) => (
-                  <Select.Option key={id} value={id}>
-                    {envName}
-                  </Select.Option>
-                ))}
-              </Select>
+              <Row gutter={10}>
+                <Col flex={1}>
+                  <Select>
+                    {options.map(({ envName, id }) => (
+                      <Select.Option key={id} value={id}>
+                        {envName}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Col>
+                <Col>
+                  <Button icon={<SettingOutlined style={{ color: '#7d7d7d' }} />} />
+                </Col>
+              </Row>
             </Form.Item>
             <Form.Item>
               {loading ? (

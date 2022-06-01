@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
-import { Button, Col, Form, Popconfirm, Row, Space, Tag } from 'antd';
-import { ToolOutlined } from '@ant-design/icons';
+import { Col, Form, Popconfirm, Row, Switch, Tag } from 'antd';
 import {
   convertToUserTimezone,
   formatMessage,
@@ -20,7 +19,14 @@ const { red, green, yellow } = Dictionary('color');
 const VehicleRealTime = (props) => {
   const { data } = props;
 
-  function renderVehicleStatus(value) {
+  function renderVehicleStatus(value, disabled) {
+    if (disabled) {
+      return (
+        <Tag color={red}>
+          <FormattedMessage id={'app.common.disabled'} />
+        </Tag>
+      );
+    }
     if (!isStrictNull(value)) {
       return getVehicleStatusTag(value);
     }
@@ -31,74 +37,49 @@ const VehicleRealTime = (props) => {
     if (isStrictNull(maintain)) return null;
     if (maintain) {
       return (
-        <Space>
-          <Tag color='red'>
-            <ToolOutlined />
-            <span style={{ marginLeft: 3 }}>
-              {formatMessage({ id: 'vehicle.underMaintenance' })}
-            </span>
-          </Tag>
-          <Popconfirm
-            title={formatMessage({ id: 'app.message.doubleConfirm' })}
-            onConfirm={() => {
-            }}
-          >
-            <Button danger size={'small'}>
-              <FormattedMessage id={'vehicle.turnOffMaintain'} />
-            </Button>
-          </Popconfirm>
-        </Space>
-      );
-    } else {
-      return (
-        <Space>
-          <Tag color='green'>{formatMessage({ id: 'vehicleState.normal' })}</Tag>
-          <Popconfirm
-            title={formatMessage({ id: 'app.message.doubleConfirm' })}
-            onConfirm={() => {
-            }}
-          >
-            <Button danger size={'small'}>
-              <FormattedMessage id={'vehicle.turnOnMaintain'} />
-            </Button>
-          </Popconfirm>
-        </Space>
+        <Switch
+          checked
+          onChange={(checked) => {
+          }}
+          unCheckedChildren={<FormattedMessage id={'app.common.off'} />}
+          checkedChildren={<FormattedMessage id={'app.common.on'} />}
+        />
       );
     }
+    return (
+      <Popconfirm title={formatMessage({ id: 'vehicle.turnOnMaintain.tip' })} onConfirm={() => {
+      }}>
+        <Switch
+          checked={false}
+          unCheckedChildren={<FormattedMessage id={'app.common.off'} />}
+          checkedChildren={<FormattedMessage id={'app.common.on'} />}
+        />
+      </Popconfirm>
+    );
   }
 
   function renderManualMode(inManualMod) {
     if (isNull(inManualMod)) return null;
     if (inManualMod) {
       return (
-        <Space>
-          <Tag>
-            <FormattedMessage id={'app.common.on'} />
-          </Tag>
-          <Popconfirm
-            title={formatMessage({ id: 'app.message.doubleConfirm' })}
-            onConfirm={() => {
-            }}
-          >
-            <Button danger size={'small'}>
-              <FormattedMessage id={'vehicle.turnOffManual'} />
-            </Button>
-          </Popconfirm>
-        </Space>
+        <Switch
+          checked
+          onChange={(checked) => {
+          }}
+          unCheckedChildren={<FormattedMessage id={'app.common.off'} />}
+          checkedChildren={<FormattedMessage id={'app.common.on'} />}
+        />
       );
     }
     return (
-      <Space>
-        <Tag>
-          <FormattedMessage id={'app.common.off'} />
-        </Tag>
-        <Popconfirm title={formatMessage({ id: 'app.message.doubleConfirm' })} onConfirm={() => {
-        }}>
-          <Button danger size={'small'}>
-            <FormattedMessage id={'vehicle.turnOnManual'} />
-          </Button>
-        </Popconfirm>
-      </Space>
+      <Popconfirm title={formatMessage({ id: 'app.message.doubleConfirm' })} onConfirm={() => {
+      }}>
+        <Switch
+          checked={false}
+          unCheckedChildren={<FormattedMessage id={'app.common.off'} />}
+          checkedChildren={<FormattedMessage id={'app.common.on'} />}
+        />
+      </Popconfirm>
     );
   }
 
@@ -181,7 +162,10 @@ const VehicleRealTime = (props) => {
           {/************ 小车状态 ************/}
           <Col span={6}>
             <Form.Item label={<FormattedMessage id={'app.vehicleState'} />}>
-              {renderVehicleStatus(data.vehicleWorkStatusDTO?.vehicleStatus)}
+              {renderVehicleStatus(
+                data.vehicleWorkStatusDTO?.vehicleStatus,
+                data.vehicle?.disabled,
+              )}
             </Form.Item>
           </Col>
 

@@ -1445,9 +1445,9 @@ export const VehicleList = [
     uniqueId: 'T_MUSHINY_LATENT_ADAPTER_A_1',
     vehicle: {
       id: 'T_MUSHINY_LATENT_ADAPTER_A_1',
-      disabled: false,
-      manualMode: false,
-      maintain: false,
+      disabled: true,
+      manualMode: true,
+      maintain: true,
       register: true,
       statusFlag: null,
       isSimulator: true,

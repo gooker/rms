@@ -62,7 +62,6 @@ export default {
   'app.activity.domaintain': '维护/取消维护',
   'app.activity.downloadFirmware': '下载固件',
   'app.activity.uploadFirmware': '上传固件',
-  'app.activity.switchmaintenanceStatus': '确定要切换以下小车的维护状态吗',
   'app.activity.sendFiles': '将文件传送至小车',
   'app.activity.selectedVehicle': '选中的小车',
   'app.activity.firmware': '固件',

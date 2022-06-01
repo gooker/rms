@@ -10,17 +10,16 @@ import VehicleInformationTab from './VehicleInformation';
 import VehicleRealTimeTab from './VehicleRealTime';
 import styles from './index.module.less';
 import commonStyles from '@/common.module.less';
-import { VehicleList } from '@/mockData';
 
 @connect()
 class VehicleRealTime extends React.Component {
   state = {
-    vehicleList: VehicleList,
+    vehicleList: [],
     vehicle: null,
   };
 
   componentDidMount() {
-    // this.getVehicleList();
+    this.getVehicleList();
   }
 
   getVehicleList = async () => {

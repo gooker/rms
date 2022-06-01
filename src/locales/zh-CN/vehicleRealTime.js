@@ -51,12 +51,9 @@ export default {
   // 维护相关
   'app.activity.maintain': '维护',
   'app.activity.cancelMaintenance': '取消维护',
-  'app.activity.maintainTip': '进入维护状态后,小车将不再被分配新的任务',
-  'app.activity.cancelMaintenanceTip': '进入维护状态后,小车将不再被分配新的任务',
   'app.activity.maintenance': '维护中',
   'app.activity.unMaintenance': '未维护',
   'app.activity.maintenanceArea': '维护区域',
-  'app.activity.maintenanceState': '维护状态',
 
   // 其他
   'app.activity.redoTip': '重做:任务重新开始，重新分配车辆',
