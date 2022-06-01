@@ -155,12 +155,12 @@ export default [
         component: '/ResourceManage/ResourceLock/VehicleLock',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
-      {
-        path: `/${AppCode.ResourceManage}/resourceLock/stationLock`,
-        name: 'stationLock',
-        component: '/ResourceManage/ResourceLock/StationLock',
-        authority: ['ADMIN', 'SUPERMANAGER'],
-      },
+      // {
+      //   path: `/${AppCode.ResourceManage}/resourceLock/stationLock`,
+      //   name: 'stationLock',
+      //   component: '/ResourceManage/ResourceLock/StationLock',
+      //   authority: ['ADMIN', 'SUPERMANAGER'],
+      // },
       {
         path: `/${AppCode.ResourceManage}/resourceLock/containerLock`,
         name: 'containerLock',

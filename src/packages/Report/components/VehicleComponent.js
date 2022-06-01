@@ -1,40 +1,23 @@
 /* TODO: I18N */
-import React, { memo, useEffect, useState } from 'react';
-import { Checkbox, Select, Space } from 'antd';
+import React, { memo, useState } from 'react';
+import { Select, Space } from 'antd';
 import { find } from 'lodash';
-import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { isNull } from '@/utils/util';
 
 /**
  * vehicle: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
  */
-const VehicleSelector = (props) => {
-  const { dispatch, form, dataSource, variable, value, onChange, subTaskCode } = props;
+const VehicleComponent = (props) => {
+  const { dataSource, value, onChange } = props;
   const currentValue = { ...value }; // {type:xxx, code:[]}
 
   const [vehicleType, setVehicleType] = useState(null);
-  const [useVariable, setUseVariable] = useState(false);
-  const [secondaryVisible, setSecondaryVisible] = useState(false);
-
-  useEffect(() => {
-    setUseVariable(!isNull(variable[subTaskCode]));
-    setSecondaryVisible(currentValue.type !== 'AUTO');
-  }, []);
 
   function onTypeChange(_value) {
-    setSecondaryVisible(_value !== 'AUTO');
     currentValue.type = _value;
     currentValue.code = [];
     onChange(currentValue);
-
-    // 处理下变量Key
-    if (useVariable) {
-      updateVariable(true);
-    }
-    if (_value === 'AUTO') {
-      setUseVariable(false);
-    }
   }
 
   function onCodeChange(_value) {
@@ -49,30 +32,6 @@ const VehicleSelector = (props) => {
         {code}
       </Select.Option>
     ));
-  }
-
-  // 可使用变量
-  function onCheckboxChange({ target: { checked } }) {
-    setUseVariable(checked);
-    updateVariable(checked);
-    form.validateFields();
-  }
-
-  function updateVariable(checked) {
-    const _variable = { ...variable };
-    // 自动分车不需要配置变量
-    if (currentValue.type === 'AUTO') {
-      delete _variable[subTaskCode];
-    } else {
-      if (checked) {
-        // Vehicle 和 Vehicle_GROUP 互斥
-        _variable[subTaskCode] = {};
-        _variable[subTaskCode][currentValue.type] = [];
-      } else {
-        delete _variable[subTaskCode];
-      }
-    }
-    dispatch({ type: 'customTask/updateVariable', payload: _variable });
   }
 
   // 选择小车类型
@@ -105,7 +64,7 @@ const VehicleSelector = (props) => {
 
   function renderSecondComponent() {
     switch (currentValue.type) {
-      case 'Vehicle':
+      case 'Vehicle_ID':
         return (
           <Space style={{ marginLeft: 10 }}>
             <Select
@@ -130,7 +89,7 @@ const VehicleSelector = (props) => {
       default:
         return (
           <Select
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 360 }}
@@ -144,10 +103,7 @@ const VehicleSelector = (props) => {
   return (
     <div>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
-        <Select.Option value={'AUTO'}>
-          <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
-        </Select.Option>
-        <Select.Option value={'Vehicle'}>
+        <Select.Option value={'Vehicle_ID'}>
           <FormattedMessage id={'customTask.form.SPECIFY_Vehicle'} />
         </Select.Option>
         <Select.Option value={'Vehicle_GROUP'}>
@@ -155,22 +111,8 @@ const VehicleSelector = (props) => {
         </Select.Option>
       </Select>
 
-      {secondaryVisible && (
-        <Space>
-          {renderSecondComponent()}
-          <Checkbox checked={useVariable} onChange={onCheckboxChange}>
-            <FormattedMessage id={'customTasks.form.useVariable'} />
-          </Checkbox>
-        </Space>
-      )}
+      <Space>{renderSecondComponent()}</Space>
     </div>
   );
 };
-export default connect(({ customTask }) => {
-  const dataSource = { vehicle: [], vehicleGroup: [] };
-  if (customTask.modelParams) {
-    dataSource.vehicle = customTask.modelParams?.VEHICLE || [];
-    dataSource.vehicleGroup = customTask.modelParams?.VEHICLE_GROUP || [];
-  }
-  return { dataSource, variable: customTask.variable };
-})(memo(VehicleSelector));
+export default memo(VehicleComponent);

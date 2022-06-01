@@ -62,7 +62,7 @@ const MonitorMapContainer = (props) => {
       viewport.off('zoomed');
       viewport.on(
         'zoomed',
-        debounce(function() {
+        debounce(function () {
           dispatch({ type: 'monitor/saveMapRatio', payload: this.scale.x });
         }, 100),
       );
@@ -71,7 +71,7 @@ const MonitorMapContainer = (props) => {
       viewport.off('moved');
       viewport.on(
         'moved',
-        throttle(function() {
+        throttle(function () {
           const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('MONITOR_MAP'));
           const topLimit = y + (height - CLAMP_VALUE);
           if (this.top >= topLimit) {
@@ -117,7 +117,7 @@ const MonitorMapContainer = (props) => {
   }
 
   const doClampZoom = useCallback(
-    function() {
+    function () {
       const { viewport } = mapContext.pixiUtils;
       const minMapRatio = mapContext.clampZoom(viewport, 'MONITOR_MAP');
       dispatch({ type: 'monitor/saveMapMinRatio', payload: minMapRatio });
@@ -302,13 +302,13 @@ const MonitorMapContainer = (props) => {
       // mapContext.renderEmergencyStopArea(emergencyStopList);
       // dispatch({ type: 'monitor/saveEmergencyStopList', payload: emergencyStopList });
 
-      // 渲染充电桩已绑定HardwareID标记(这里只是处理已经绑定HardwareId的情况)
-      // if (Array.isArray(chargerList)) {
-      //   chargerList.forEach((item) => {
-      //     mapContext.updateChargerHardware(item.name, item.hardwareId);
-      //     mapContext.updateChargerState({ n: item.name, s: item.status });
-      //   });
-      // }
+      // 渲染充电桩已绑定chargerId标记(这里只是处理已经绑定chargerId的情况)
+      if (Array.isArray(chargerList)) {
+        chargerList.forEach((item) => {
+          mapContext.updateChargerHardware(item.name, item.chargerId, item.id);
+          mapContext.updateChargerState({ n: item.name, s: item.chargerStatus });
+        });
+      }
     }
   }
 

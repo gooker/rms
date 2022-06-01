@@ -22,6 +22,7 @@ const { formItemLayout: formItemLayout2 } = getFormLayout(6, 18);
 
 const ChargerForm = (props) => {
   const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, allAdaptors } = props;
+  console.log(charger);
   const [formRef] = Form.useForm();
 
   function onValueChange(changedValues, allValues) {
@@ -89,6 +90,21 @@ const ChargerForm = (props) => {
     });
   }
 
+  function generateSupportTypes(data) {
+    const newData = [];
+    data?.map((item) => {
+      const newTypes = [];
+      item.supportTypes?.map(({ adapterType, vehicleTypes }) => {
+        newTypes.push(`${adapterType}@${vehicleTypes}`);
+      });
+      newData.push({
+        cellId: item.cellId,
+        supportTypes: [...newTypes],
+      });
+    });
+    return newData;
+  }
+
   return (
     <Form
       form={formRef}
@@ -129,7 +145,7 @@ const ChargerForm = (props) => {
       <Form.Item
         name={'angle'}
         initialValue={charger?.angle}
-        label={<FormattedMessage id='app.common.angle' />}
+        label={<FormattedMessage id="app.common.angle" />}
         rules={[{ required: true }]}
       >
         <AngleSelector
@@ -159,7 +175,7 @@ const ChargerForm = (props) => {
         name={'chargingCells'}
         initialValue={
           Array.isArray(charger?.chargingCells) && charger?.chargingCells.length > 0
-            ? charger?.chargingCells
+            ? generateSupportTypes(charger?.chargingCells)
             : [{}]
         }
       >
@@ -189,12 +205,12 @@ const ChargerForm = (props) => {
                     name={[name, 'supportTypes']}
                     label={formatMessage({ id: 'app.vehicleType' })}
                   >
-                    <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
+                    <Select mode="multiple">{renderSupportTypesOptions()}</Select>
                   </Form.Item>
                 </div>
                 <Button
                   size={'small'}
-                  type='danger'
+                  type="danger"
                   onClick={() => remove(name)}
                   style={{ width: '100%' }}
                 >

@@ -3,34 +3,15 @@ import { Button, Col, Form, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { fetchActiveMap, fetchCustomParamType } from '@/services/api';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import SelectCarType from '../HealthReport/VehicleHealth/components/SelectCarType';
+import { dealResponse, isNull } from '@/utils/util';
+import VehicleComponent from './VehicleComponent';
 import DatePickerSelector from '@/packages/Report/components/DatePickerSelector';
 
-const LogSearchForm = (props) => {
+const HealthCarSearchForm = (props) => {
   const { search, type, downloadVisible, allTaskTypes, exportData } = props;
 
   const [form] = Form.useForm();
-  const [optionsData, setOptionsData] = useState([
-    {
-      code: 'Vehicle_ID',
-      name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
-      value: {},
-    },
-    {
-      code: 'Vehicle_GROUP',
-      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-      value: {},
-    },
-    {
-      code: 'Vehicle_TYPE',
-      name: <FormattedMessage id="app.common.type" />,
-      value: {
-        LatentLifting: formatMessage({ id: 'app.vehicleType.LatentLifting' }),
-        Sorter: formatMessage({ id: 'app.vehicleType.Sorter' }),
-      },
-    },
-  ]);
+  const [optionsData, setOptionsData] = useState({ vehicle: [], vehicleGroup: [] });
 
   useEffect(() => {
     async function init() {
@@ -40,27 +21,10 @@ const LogSearchForm = (props) => {
         const { id } = mapData;
         const modelTypes = await fetchCustomParamType({ mapId: id });
         if (!dealResponse(modelTypes)) {
-          const optionsData = [
-            {
-              code: 'Vehicle_ID',
-              name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
-              value: {},
-            },
-            {
-              code: 'Vehicle_GROUP',
-              name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-              value: modelTypes?.Vehicle_GROUP.options ?? {},
-            },
-            {
-              code: 'Vehicle_TYPE',
-              name: <FormattedMessage id="app.common.type" />,
-              value: {
-                LatentLifting: formatMessage({ id: 'app.vehicleType.LatentLifting' }),
-                Sorter: formatMessage({ id: 'app.vehicleType.Sorter' }),
-              },
-            },
-          ];
-          setOptionsData(optionsData);
+          const dataSource = { vehicle: [], vehicleGroup: [] };
+          dataSource.vehicle = modelTypes?.VEHICLE || [];
+          dataSource.vehicleGroup = modelTypes?.VEHICLE_GROUP || [];
+          setOptionsData(dataSource);
         }
       }
     }
@@ -112,7 +76,7 @@ const LogSearchForm = (props) => {
             label={<FormattedMessage id="app.vehicle" />}
             initialValue={{ type: 'Vehicle_ID', code: [] }}
           >
-            <SelectCarType data={optionsData} />
+            <VehicleComponent dataSource={optionsData} />
           </Form.Item>
         </Col>
 
@@ -156,4 +120,4 @@ const LogSearchForm = (props) => {
 };
 export default connect(({ global }) => ({
   allTaskTypes: global?.allTaskTypes?.LatentLifting || {},
-}))(memo(LogSearchForm));
+}))(memo(HealthCarSearchForm));

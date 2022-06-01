@@ -12,6 +12,7 @@ import monitorViewModel from './monitorViewModel';
 import groupManageModel from './groupManageModel';
 import vehicleListModel from './vehicleListModel';
 import equipmentListModel from './equipmentListModel';
+import chargerListModel from './chargerListModel';
 
 export default [
   globalModel,
@@ -28,4 +29,5 @@ export default [
   groupManageModel,
   vehicleListModel,
   equipmentListModel,
+  chargerListModel,
 ];

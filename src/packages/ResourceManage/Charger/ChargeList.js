@@ -1,59 +1,57 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Tag, Badge, Button, Row, Col, Switch, message, Modal } from 'antd';
+import { Tag, Badge, Button, Switch, Drawer } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { Permission } from '@/utils/Permission';
-import {
-  fetchChargeManagerList,
-  batchDeleteChargerPile,
-  batchUnbundChargerPile,
-  clearChargerPileFaultById,
-  AddChargerPile,
-} from '@/services/api';
-import { fetchUpdateCharger } from '@/services/XIHE';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
-import BindingChargeComponent from './components/BindingChargeComponent';
-import RmsConfirm from '@/components/RmsConfirm';
-import commonStyles from '@/common.module.less';
+import { handleleChargers } from '@/services/resourceManageAPI';
+import ChargerListTools from './components/ChargerListTools';
+import ChargeRegisterPanel from './components/ChargeRegisterPanel';
+import { StatusColor, ChargerStatus } from './components/chargeConfig';
 
-const { green, blue, pink, cyan, yellow, gray, red } = Dictionary('color');
-const statusColor = {
-  DISABLED: green,
-  OFFLINE: gray,
-  AVAILABLE: green,
-  ASSIGNED: blue,
-  CONNECTING: pink,
-  CONNECTED: cyan,
-  CHARGER_TIME_OUT_EXCEPTION: pink,
-  CHARGING: yellow,
-  ERROR: red,
-};
+const ChargerList = (props) => {
+  const { dispatch, searchParams, allChargers, loading, showRegisterPanel } = props;
 
-const ChargerList = () => {
-  const [loading, setLoading] = useState(false);
-  const [chargeList, setChargeList] = useState([]);
-  const [chargeVisibleModal, setChargeVisibleModal] = useState(false);
+  const [dataSource, setDatasource] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRows, setSelectedRows] = useState(null);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     async function init() {
-      await fetchChargeList();
+      await fetchRegisteredCharge();
     }
     init();
   }, []);
 
+  useEffect(() => {
+    filterDatasource();
+  }, [allChargers, searchParams]);
+
+  function filterDatasource() {
+    let nowAllCharges = [...allChargers].filter((item) => item.register);
+    const { id, chargerStatus } = searchParams;
+    if (id?.length > 0) {
+      nowAllCharges = nowAllCharges.filter(({ chargerId }) => id.includes(chargerId));
+    }
+
+    if (chargerStatus?.length > 0) {
+      nowAllCharges = nowAllCharges.filter((item) => chargerStatus.includes(item.chargerStatus));
+    }
+
+    setDatasource(nowAllCharges);
+  }
+
   const columns = [
     {
-      title: <FormattedMessage id="app.form.hardwareId" />,
-      dataIndex: 'hardwareId',
+      title: '充电桩ID',
+      dataIndex: 'chargerId',
       align: 'center',
-      fixed: 'left',
     },
     {
-      title: <FormattedMessage id="app.vehicle.ip" />,
+      title: 'IP',
       dataIndex: 'ip',
       align: 'center',
     },
@@ -77,16 +75,61 @@ const ChargerList = () => {
       },
     },
     {
-      title: <FormattedMessage id="app.activity.hardwareVersion" />,
-      dataIndex: 'hardwareVersion',
+      title: <FormattedMessage id="app.common.status" />,
+      dataIndex: 'chargerStatus',
       align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.activity.softwareVersion" />,
-      dataIndex: 'softwareVersion',
-      align: 'center',
+      render: (text) => {
+        if (!isNull(text)) {
+          return (
+            <Tag color={StatusColor[text]} key={text}>
+              {ChargerStatus[text]}
+            </Tag>
+          );
+        }
+        return text;
+      },
     },
 
+    {
+      title: <FormattedMessage id="app.common.operation" />,
+      dataIndex: 'disabled',
+      align: 'center',
+      width: 250,
+      fixed: 'right',
+      render: (text, record) => {
+        return (
+          <Switch
+            checked={!isNull(text) && !text}
+            onClick={(checked) => {
+              statusSwitch({
+                ids: [record.id],
+                updateType: checked ? 'DISABLE' : 'ENABLE',
+              });
+            }}
+            checkedChildren={formatMessage({ id: 'app.common.enabled' })}
+            unCheckedChildren={formatMessage({ id: 'app.common.disabled' })}
+          />
+        );
+      },
+    },
+  ];
+
+  const expandColumns = [
+    {
+      title: '地图充电桩code',
+      align: 'center',
+      dataIndex: 'mapChargerCode',
+    },
+    {
+      title: <FormattedMessage id="chargeManager.temperature" />,
+      dataIndex: 'temperature',
+      align: 'center',
+      render: (text) => {
+        if (!isNull(text)) {
+          return <Badge status="success" text={getSuffix(text, '°c')} />;
+        }
+      },
+    },
     {
       title: <FormattedMessage id="chargeManager.chargeCurrent" />,
       align: 'center',
@@ -94,6 +137,16 @@ const ChargerList = () => {
       render: (text) => {
         if (!isNull(text)) {
           return <Badge status="success" text={getSuffix(text, ' A')} />;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id="app.activity.currentBatteryVoltage" />,
+      align: 'center',
+      dataIndex: 'currentVoltage',
+      render: (text) => {
+        if (!isNull(text)) {
+          return <Badge status="success" text={getSuffix(text, ' V')} />;
         }
       },
     },
@@ -112,95 +165,18 @@ const ChargerList = () => {
         return type;
       },
     },
-    {
-      title: <FormattedMessage id="chargeManager.chargingStatus" />,
-      dataIndex: 'statusMerge',
-      align: 'center',
-      render: (text) => {
-        if (!isNull(text)) {
-          return (
-            <Tag color={statusColor[text]}>
-              {formatMessage({ id: Dictionary('chargerStatus', text) })}
-            </Tag>
-          );
-        }
-      },
-    },
-    {
-      title: <FormattedMessage id="chargeManager.temperature" />,
-      dataIndex: 'chargerTemperature',
-      align: 'center',
-      render: (text) => {
-        if (!isNull(text)) {
-          return <Badge status="success" text={getSuffix(text, '°c')} />;
-        }
-      },
-    },
-    {
-      title: <FormattedMessage id="chargeManager.mapCharging" />,
-      align: 'name',
-      width: 200,
-      dataIndex: 'requestTx',
-    },
-    {
-      title: <FormattedMessage id="chargeManager.bindStatus" />,
-      align: 'center',
-      width: 200,
-      dataIndex: 'name',
-      render: (text) => {
-        if (!isNull(text)) {
-          return (
-            <Button type="link">
-              <FormattedMessage id="app.button.isbinding" />
-            </Button>
-          );
-        }
-        return (
-          <Button type="text">
-            <FormattedMessage id="app.button.unbounded" />
-          </Button>
-        );
-      },
-    },
-    {
-      title: <FormattedMessage id="app.common.operation" />,
-      dataIndex: 'disabled',
-      align: 'center',
-      width: 250,
-      fixed: 'right',
-      render: (text, record) => {
-        return (
-          <Permission id="/charge/chargeMangerBind/switchAvailable">
-            <Switch
-              checked={!isNull(text) && !text}
-              onClick={(checked) => {
-                statusSwitch({ ...record, disabled: !checked });
-              }}
-              checkedChildren={formatMessage({ id: 'app.common.enabled' })}
-              unCheckedChildren={formatMessage({ id: 'app.common.disabled' })}
-            />
-          </Permission>
-        );
-      },
-    },
   ];
 
-  async function fetchChargeList() {
-    setLoading(true);
-    setSelectedRowKeys([]);
+  async function fetchRegisteredCharge() {
+    await dispatch({ type: 'chargerList/fetchInitialData' });
     setSelectedRows([]);
-    const response = await fetchChargeManagerList();
-    if (!dealResponse(response)) {
-      setChargeList(response);
-    }
-    setLoading(false);
+    setSelectedRowKeys([]);
   }
 
   async function statusSwitch(params) {
-    const response = await fetchUpdateCharger(params);
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-      fetchChargeList();
+    const response = await handleleChargers(params);
+    if (!dealResponse(response, 1)) {
+      fetchRegisteredCharge();
     }
   }
 
@@ -209,98 +185,14 @@ const ChargerList = () => {
     setSelectedRows(selectedRows);
   }
 
-  function deleteCharge() {
-    RmsConfirm({
-      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
-      onOk: async () => {
-        const response = await batchDeleteChargerPile(selectedRowKeys);
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-          fetchChargeList();
-        }
-      },
-    });
-  }
-
-  // 清除故障
-  function clearFault() {
-    const _row = chargeList.filter(({ hardwareId }) => hardwareId);
-    RmsConfirm({
-      content: formatMessage({ id: 'chargeManager.clearFault.confirm' }),
-      onOk: async () => {
-        const response = await clearChargerPileFaultById(_row.hardwareId);
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-          fetchChargeList();
-        }
-      },
-    });
-  }
-
-  function unBindCharge() {
-    RmsConfirm({
-      content: formatMessage({ id: 'chargeManager.batchUnBind.confirm' }),
-      onOk: async () => {
-        const response = await batchUnbundChargerPile(selectedRowKeys);
-        if (!dealResponse(response)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-          fetchChargeList();
-        }
-      },
-    });
-  }
-
-  async function handleSubmit(values) {
-    const currentData = { ...values };
-    const { selectedRows } = this.state;
-    currentData.hardwareId = selectedRows[0].id;
-    const response = await AddChargerPile(currentData);
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-      setChargeVisibleModal(false);
-      fetchChargeList();
-    }
-  }
-
   return (
-    <TablePageWrapper>
-      <Row style={{ display: 'flex', padding: '0 0 20px 0' }}>
-        <Col flex="auto" className={commonStyles.tableToolLeft}>
-          <Button
-            type="primary"
-            disabled={chargeList.length === 0}
-            onClick={() => {
-              setChargeVisibleModal(true);
-            }}
-          >
-            <FormattedMessage id="app.button.bind" />
-          </Button>
-          <Button disabled={selectedRowKeys.length === 0}>
-            <FormattedMessage id="app.button.edit" />
-          </Button>
-          <Button disabled={selectedRowKeys.length === 0} onClick={unBindCharge}>
-            <FormattedMessage id="app.button.unbind" />
-          </Button>
-          <Button disabled={selectedRowKeys.length !== 1} onClick={clearFault}>
-            <FormattedMessage id="chargeManager.clearFault" />
-          </Button>
-
-          <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteCharge}>
-            <FormattedMessage id="app.button.delete" />
-          </Button>
-        </Col>
-        <Col>
-          <Button type="primary" ghost onClick={fetchChargeList}>
-            <FormattedMessage id="app.button.refresh" />
-          </Button>
-        </Col>
-      </Row>
+    <TablePageWrapper style={{ position: 'relative' }}>
+      <ChargerListTools selectedRows={selectedRows} onRefresh={fetchRegisteredCharge} />
       <TableWithPages
-        bordered
-        scroll={{ x: 'max-content' }}
         loading={loading}
         columns={columns}
-        dataSource={chargeList}
+        dataSource={dataSource}
+        expandColumns={expandColumns}
         rowKey={({ id }) => id}
         rowSelection={{
           selectedRowKeys,
@@ -308,31 +200,36 @@ const ChargerList = () => {
           onChange: onSelectChange,
         }}
       />
-      {/* 绑定 & 编辑 */}
-      <Modal
-        destroyOnClose
-        title={
-          selectedRowKeys.length === 1 ? (
-            <FormattedMessage id="app.button.edit" />
-          ) : (
-            <FormattedMessage id="app.button.add" />
-          )
+
+      {/* 注册充电桩 */}
+      <Drawer
+        title="适配器注册"
+        placement="top"
+        height="50%"
+        closable={false}
+        maskClosable={false}
+        getContainer={false}
+        visible={showRegisterPanel}
+        style={{ position: 'absolute' }}
+        extra={
+          <Button
+            type={'primary'}
+            onClick={() => {
+              dispatch({ type: 'chargerList/updateShowRegisterPanel', payload: false });
+            }}
+          >
+            <CloseOutlined /> <FormattedMessage id={'app.button.turnOff'} />
+          </Button>
         }
-        visible={chargeVisibleModal}
-        onCancel={() => {
-          setChargeVisibleModal(false);
-        }}
-        footer={null}
       >
-        <BindingChargeComponent
-          submit={handleSubmit}
-          cancel={() => {
-            setChargeVisibleModal(false);
-          }}
-          data={selectedRowKeys}
-        />
-      </Modal>
+        <ChargeRegisterPanel onRefresh={fetchRegisteredCharge} />
+      </Drawer>
     </TablePageWrapper>
   );
 };
-export default memo(ChargerList);
+export default connect(({ chargerList, loading }) => ({
+  loading: loading.effects['chargerList/fetchInitialData'],
+  allChargers: chargerList.allChargers,
+  searchParams: chargerList.searchParams,
+  showRegisterPanel: chargerList.showRegisterPanel,
+}))(memo(ChargerList));
