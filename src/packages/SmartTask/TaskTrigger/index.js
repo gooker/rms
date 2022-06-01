@@ -54,8 +54,6 @@ class TaskTrigger extends Component {
     }
     if (!dealResponse(taskTriggerList)) {
       this.setState({ taskTriggerList });
-    } else {
-      message.error(formatMessage({ id: 'app.taskTrigger.getTaskTriggersFailed' }));
     }
     this.setState({ loading: false });
   };

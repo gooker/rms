@@ -1,27 +1,20 @@
 /* TODO: I18N */
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 import { Select, Space } from 'antd';
 import { find } from 'lodash';
-import { isNull } from '@/utils/util';
-import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
+import { isNull } from '@/utils/util';
 
 /**
  * vehicle: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
  */
-const VehicleSelector = (props) => {
+const VehicleComponent = (props) => {
   const { dataSource, value, onChange } = props;
   const currentValue = { ...value }; // {type:xxx, code:[]}
 
   const [vehicleType, setVehicleType] = useState(null);
-  const [secondaryVisible, setSecondaryVisible] = useState(false);
-
-  useEffect(() => {
-    setSecondaryVisible(currentValue.type !== 'AUTO');
-  }, []);
 
   function onTypeChange(_value) {
-    setSecondaryVisible(_value !== 'AUTO');
     currentValue.type = _value;
     currentValue.code = [];
     onChange(currentValue);
@@ -71,7 +64,7 @@ const VehicleSelector = (props) => {
 
   function renderSecondComponent() {
     switch (currentValue.type) {
-      case 'Vehicle':
+      case 'Vehicle_ID':
         return (
           <Space style={{ marginLeft: 10 }}>
             <Select
@@ -85,7 +78,7 @@ const VehicleSelector = (props) => {
             <Select
               mode={'multiple'}
               onChange={onCodeChange}
-              style={{ width: 300 }}
+              style={{ width: 360 }}
               placeholder={'请选择小车'}
               value={currentValue.code}
             >
@@ -96,7 +89,7 @@ const VehicleSelector = (props) => {
       default:
         return (
           <Select
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 360 }}
@@ -110,25 +103,16 @@ const VehicleSelector = (props) => {
   return (
     <div>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
-        <Select.Option value={'AUTO'}>
-          <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
-        </Select.Option>
-        <Select.Option value={'Vehicle'}>
+        <Select.Option value={'Vehicle_ID'}>
           <FormattedMessage id={'customTask.form.SPECIFY_Vehicle'} />
         </Select.Option>
         <Select.Option value={'Vehicle_GROUP'}>
           <FormattedMessage id={'customTask.form.SPECIFY_GROUP'} />
         </Select.Option>
       </Select>
-      {secondaryVisible && renderSecondComponent()}
+
+      <Space>{renderSecondComponent()}</Space>
     </div>
   );
 };
-export default connect(({ customTask }) => {
-  const dataSource = { vehicle: [], vehicleGroup: [] };
-  if (customTask.modelParams) {
-    dataSource.vehicle = customTask.modelParams?.VEHICLE ?? [];
-    dataSource.vehicleGroup = customTask.modelParams?.VEHICLE_GROUP ?? [];
-  }
-  return { dataSource };
-})(memo(VehicleSelector));
+export default memo(VehicleComponent);

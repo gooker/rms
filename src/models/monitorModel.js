@@ -6,12 +6,12 @@ import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/ut
 import { AppCode } from '@/config/config';
 import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
 import {
-  fetchChargerList,
   fetchEmergencyStopList,
   fetchLatentPodList,
   fetchMapVehicleLocks,
   saveEmergencyStop,
 } from '@/services/XIHE';
+import { fetchChargerList } from '@/services/resourceManageAPI';
 import {
   addTemporaryBlockCell,
   autoCallLatentPodToWorkstation,
@@ -353,7 +353,7 @@ export default {
       }
 
       // 地图充电桩与硬件绑定关系
-      promises.push(fetchChargerList(mapId));
+      promises.push(fetchChargerList());
       promiseFields.push('chargerList');
 
       // 地图临时不可走点
@@ -382,7 +382,9 @@ export default {
 
     *refreshAllVehicleList(_, { put, call }) {
       const response = yield call(fetchAllVehicleList);
-      if (!dealResponse(response, null, formatMessage({ id: 'app.message.fetchVehicleListFail' }))) {
+      if (
+        !dealResponse(response, null, formatMessage({ id: 'app.message.fetchVehicleListFail' }))
+      ) {
         const allVehicles = [];
         response?.map((item) => {
           allVehicles.push({

@@ -283,7 +283,7 @@ class MonitorMapView extends BaseMap {
     this.clearTemporaryLock();
 
     // 渲染新的临时不可走点
-    inputData.forEach((lock) => {
+    inputData?.forEach((lock) => {
       const cellEntity = this.idCellMap.get(lock.cellId);
       if (cellEntity) {
         const { x, y } = cellEntity;
@@ -1615,10 +1615,10 @@ class MonitorMapView extends BaseMap {
     chargerEntity && chargerEntity.updateChargerState(state);
   };
 
-  // ************************ 充电桩HardwareId更新 ********************** //
-  updateChargerHardware = (name, hardwareId) => {
+  // ************************ 充电桩chargeId更新 ********************** //
+  updateChargerHardware = (name, chargerId,id) => {
     const chargerEntity = this.chargerMap.get(name);
-    chargerEntity && chargerEntity.updateHardwareId(hardwareId);
+    chargerEntity && chargerEntity.updateHardwareId(chargerId,id);
   };
 
   // ************************ 渲染 清除 紧急停止区域 ********************** //

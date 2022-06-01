@@ -749,49 +749,7 @@ export async function fetchAppModules(params) {
   });
 }
 
-// 查询充电桩信息API
-export async function fetchChargeManagerList(params) {
-  return request(`/${NameSpace.Platform}/api/charger`, {
-    method: 'GET',
-    data: params,
-  });
-}
 
-// 批量解绑充电桩
-export async function batchUnbundChargerPile(params) {
-  return request(`/${NameSpace.Platform}/charger/batchUnbundlingByHardwareIds`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 批量删除充电桩
-export async function batchDeleteChargerPile(params) {
-  return request(`/${NameSpace.Platform}/charger/batchDeleteByHardwareIds`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 新增充电桩
-export async function AddChargerPile(params) {
-  return request(`/${NameSpace.Platform}/api/saveBindingMapCharger`, {
-    method: 'POST',
-    data: params,
-  });
-}
-// 清除故障
-export async function clearChargerPileFaultById(id) {
-  return request(`/${NameSpace.Platform}/charger/actions/clearError/${id}`, {
-    method: 'GET',
-  });
-}
-// 查询可用充电桩
-export async function fetchAvailableMapChargerList() {
-  return request(`/${NameSpace.Platform}/api/availableMapCharger`, {
-    method: 'GET',
-  });
-}
 
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {

@@ -210,36 +210,6 @@ export async function fetchLogicAllVehicleLocks(logicId) {
 /****显示路径 end****/
 
 //////////////////////////**** 充电桩管理 ****//////////////////////////
-// 获取地图充电桩状态信息
-export async function fetchChargerState(param) {
-  return request(`/${NameSpace.Platform}/charger/getMapChargerByName`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 获取实际上报的物理充电桩数据
-export async function fetchPhysicChargers() {
-  return request(`/${NameSpace.Platform}/api/loginCharger`, {
-    method: 'GET',
-  });
-}
-
-// 地图充电桩绑定物理充电桩
-export async function fetchBindPhysicCharger(param) {
-  return request(`/${NameSpace.Platform}/api/saveBindingAvailableCharger`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 请求解绑充电桩
-export async function fetchBatchUnbindHardware(params) {
-  return request(`/${NameSpace.Platform}/charger/batchUnbundlingByHardwareIds`, {
-    method: 'POST',
-    data: params,
-  });
-}
 
 // 清除充电桩故障
 export async function clearChargerFault(hardwareId) {
@@ -252,22 +222,6 @@ export async function clearChargerFault(hardwareId) {
 export async function resetCharger(hardwareId) {
   return request(`/${NameSpace.Platform}/charger/actions/resetChargerStatus/${hardwareId}`, {
     method: 'GET',
-  });
-}
-
-// 切换充电桩可用
-export async function fetchUpdateCharger(params) {
-  return request(`/${NameSpace.Platform}/charger/actions/updateEnableStatus`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 根据地图ID查询所有充电桩接口
-export async function fetchChargerList(mapId) {
-  return request(`/${NameSpace.Platform}/charger/getChargerListByMapId`, {
-    method: 'GET',
-    data: { mapId },
   });
 }
 

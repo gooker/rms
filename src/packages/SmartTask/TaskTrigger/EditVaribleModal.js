@@ -6,7 +6,8 @@ import cloneDeep from 'lodash/cloneDeep';
 import isPlainObject from 'lodash/isPlainObject';
 import { Button, Card, Col, Divider, Form, Modal, Row, Select } from 'antd';
 import { ClearOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import CascadeSelect from '../CustomTask/FormComponent/CascadeSelect';
+import VehicleSelector from '../CustomTask/components/VehicleSelector';
+import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 import ModelSelection from '../CustomTask/FormComponent/ModelSelection';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import { formatMessage, isNull } from '@/utils/util';
@@ -34,20 +35,6 @@ const EditVaribleModal = (props) => {
     props;
 
   const [form] = Form.useForm();
-
-  // 分车数据
-  const OptionsData = [
-    {
-      code: 'Vehicle',
-      name: <FormattedMessage id='customTask.form.SPECIFY_Vehicle' />,
-      value: modelTypes?.Vehicle.options ?? {},
-    },
-    {
-      code: 'Vehicle_GROUP',
-      name: <FormattedMessage id='customTask.form.SPECIFY_GROUP' />,
-      value: modelTypes?.Vehicle_GROUP.options ?? {},
-    },
-  ];
 
   function validateTarget(_, value) {
     if (!value || !isNull(value.type)) {
@@ -89,9 +76,9 @@ const EditVaribleModal = (props) => {
           key={`${taskCode}@@${customStart.field}`}
           name={`${taskCode}@@${customStart.field}`}
           initialValue={{ type, code }}
-          label={<FormattedMessage id='customTasks.form.vehicle' />}
+          label={<FormattedMessage id="customTasks.form.vehicle" />}
         >
-          <CascadeSelect data={OptionsData} />
+          <VehicleSelector form={form} subTaskCode={code} />
         </Form.Item>,
       );
     }
@@ -121,7 +108,7 @@ const EditVaribleModal = (props) => {
             >
               <ModelSelection
                 modelTypes={modelTypes}
-                exclude={['Vehicle', 'Vehicle_GROUP']}
+                exclude={['VEHICLE', 'VEHICLE_GROUP']}
                 disabled={false}
               />
             </Form.Item>,
@@ -195,7 +182,7 @@ const EditVaribleModal = (props) => {
                     <Row gutter={10}>
                       <Col>
                         <Form.Item noStyle {...field}>
-                          <CascadeSelect data={backZones} />
+                          <BackZoneSelector />
                         </Form.Item>
                       </Col>
                       <Col style={{ display: 'flex', alignItems: 'center' }}>

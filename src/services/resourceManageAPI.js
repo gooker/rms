@@ -205,6 +205,51 @@ export function handleDevice(param) {
   });
 }
 
+// 充电桩适配器类型列表
+export function findChargerAdapter() {
+  return request(`/${NameSpace.Platform}/charger/adapterTypes`, {
+    method: 'GET',
+  });
+}
+
+// 地图充电桩列表接口
+export function findMapCharger() {
+  return request(`/${NameSpace.Platform}/charger/getMapChargers`, {
+    method: 'GET',
+  });
+}
+
+// 查询 充电桩列表
+export async function fetchChargerList(params) {
+  return request(`/${NameSpace.Platform}/chargers`, {
+    method: 'GET',
+    data: { filterType: 'ALL', ...params },
+  });
+}
+
+// 根据地图充电桩code查询充电桩信息
+export async function fetchChargeByCode(mapChargerCode) {
+  return request(`/${NameSpace.Platform}/platform/charger/${mapChargerCode}`, {
+    method: 'GET',
+  });
+}
+
+// 充电桩-发现
+export function findCharger(param) {
+  return request(`/${NameSpace.Platform}/charger/addDiscovery`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 充电桩批量修改（注册/注销/启用禁用）
+export function handleleChargers(param) {
+  return request(`/${NameSpace.Platform}/chargers`, {
+    method: 'PUT',
+    data: param,
+  });
+}
+
 // 资源绑定
 // 保存绑定关系
 export async function fechSaveUnBind(param) {

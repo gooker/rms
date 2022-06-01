@@ -5,88 +5,65 @@ import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';
+import { clearChargerFault, resetCharger } from '@/services/XIHE';
 import {
-  clearChargerFault,
-  fetchBatchUnbindHardware,
-  fetchBindPhysicCharger,
-  fetchChargerState,
-  fetchPhysicChargers,
-  fetchUpdateCharger,
-  resetCharger,
-} from '@/services/XIHE';
-import { dealResponse, formatMessage, getSuffix, isStrictNull } from '@/utils/util';
+  fetchChargeByCode,
+  handleleChargers,
+  fetchChargerList,
+} from '@/services/resourceManageAPI';
+import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import LabelColComponent from '@/components/LabelColComponent';
+import { ChargerStatus } from '@/packages/ResourceManage/Charger/components/chargeConfig';
 import Dictionary from '@/utils/Dictionary';
 import styles from '../../monitorLayout.module.less';
 
 const checkedColor = '#70df39';
 
 const ChargeProperty = (props) => {
-  const { data, mapId, mapContext } = props;
-  const [chargeData, setChargeData] = useState(null);
-  const [hardwareId, setHardwareId] = useState(null); // 绑定的硬件id select选择会发生变化
-  const [physicCharger, setPhysicCharger] = useState([]);
+  const { data, mapContext } = props;
+  const [unRegistedCharger, setUnRegistedCharger] = useState([]);
   const [chargerInfo, setChargerInfo] = useState(null);
-
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
     async function init() {
-      const $$formData = data.$$formData;
-      setChargeData($$formData);
-      if ($$formData && $$formData.type) {
-        setHardwareId(data.hardwareId);
-      }
       // 1.获取充电桩属性
       await fetchgChargeInfo();
-      // 2.获取硬件
-      await fetchPhysicCharger();
     }
     init();
   }, [data]);
 
   async function fetchgChargeInfo() {
-    const response = await fetchChargerState({ mapId, name: data?.name });
+    const [response, chargerList] = await Promise.all([
+      fetchChargeByCode(data?.$$formData?.code),
+      fetchChargerList({ filterType: 'UNREGISTER' }),
+    ]);
     if (!dealResponse(response)) {
       setChargerInfo(response);
       setEnabled(!response.disabled);
-      if (response?.type) {
-        setHardwareId(data.hardwareId);
-      }
+      setUnRegistedCharger(chargerList);
     }
   }
 
-  async function fetchPhysicCharger() {
-    fetchPhysicChargers().then((response) => {
-      if (!dealResponse(response)) {
-        setPhysicCharger(response);
-      }
-    });
-  }
-
-  async function bindHardware() {
-    const requestParam = { mapId, name: chargeData.name, hardwareId };
-    const response = await fetchBindPhysicCharger(requestParam);
+  // 注册/注销
+  async function updateCharger() {
+    const requestParam = {
+      updateType: chargerInfo?.chargerId ? 'LOGOUT' : 'REGISTER',
+      mapChargerCode: data?.$$formData?.code,
+      ids: [chargerInfo.id],
+    };
+    const response = await handleleChargers(requestParam);
     if (!dealResponse(response)) {
-      mapContext.updateChargerHardware(data.name, hardwareId);
+      mapContext.updateChargerHardware(data.name, chargerInfo.chargerId, chargerInfo.id);
       await fetchgChargeInfo();
     }
   }
 
-  async function unbindHardware() {
-    const response = await fetchBatchUnbindHardware([chargeData.id]);
-    if (!dealResponse(response)) {
-      mapContext.updateChargerHardware(data.name);
-      await fetchgChargeInfo();
-    }
-  }
-
-  // 启用状态
+  // 启用/禁用
   async function switchChargerEnable() {
-    if (!chargerInfo?.hardwareId) return;
-    const response = await fetchUpdateCharger({
-      hardwareId: chargerInfo.hardwareId,
-      disabled: !chargerInfo.disabled,
+    const response = await handleleChargers({
+      updateType: chargerInfo.disabled ? 'ENABLE' : 'DISABLE',
+      mapChargerCode: chargerInfo.mapChargerCode,
     });
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.message.operateFailed' }));
@@ -98,8 +75,7 @@ const ChargeProperty = (props) => {
 
   // 清除故障
   async function clearFault() {
-    if (!chargerInfo?.hardwareId) return;
-    const response = await clearChargerFault(chargerInfo.hardwareId);
+    const response = await clearChargerFault(chargerInfo.id);
     if (dealResponse(response)) {
       message.error(formatMessage({ id: 'app.message.operateFailed' }));
     } else {
@@ -109,8 +85,7 @@ const ChargeProperty = (props) => {
 
   // 解除占用
   async function release() {
-    if (!chargerInfo?.hardwareId) return;
-    const response = await resetCharger(chargerInfo.hardwareId);
+    const response = await resetCharger(chargerInfo.id);
     if (!dealResponse(response)) {
       message.success(formatMessage({ id: 'app.message.operateSuccess' }));
     }
@@ -126,12 +101,10 @@ const ChargeProperty = (props) => {
         {/* 充电桩详情 */}
         <div>
           <LabelColComponent label={<FormattedMessage id={'app.common.name'} />}>
-            {chargerInfo?.name}
+            {data?.$$formData?.name}
           </LabelColComponent>
           <LabelColComponent label={<FormattedMessage id={'app.common.status'} />}>
-            {chargerInfo?.statusMerge
-              ? formatMessage({ id: Dictionary('chargerStatus', chargerInfo.statusMerget) })
-              : '-'}
+            {chargerInfo?.chargerStatus ? ChargerStatus[chargerInfo?.chargerStatus] : '-'}
           </LabelColComponent>
 
           <LabelColComponent label={<FormattedMessage id={'chargeManager.fitbattery'} />}>
@@ -140,40 +113,25 @@ const ChargeProperty = (props) => {
               : '-'}
           </LabelColComponent>
 
-          {!isStrictNull(chargerInfo?.vehicleId) && (
-            <LabelColComponent label={<FormattedMessage id={'monitor.charge.assignedAMR'} />}>
-              {chargerInfo.vehicleId}
-            </LabelColComponent>
-          )}
           <LabelColComponent label={<FormattedMessage id={'app.activity.batteryTemperature'} />}>
-            {chargerInfo?.chargerTemperature
-              ? getSuffix(chargerInfo.chargerTemperature, '°c')
-              : '-'}
+            {chargerInfo?.temperature ? getSuffix(chargerInfo.temperature, '°c') : '-'}
           </LabelColComponent>
           <LabelColComponent label={<FormattedMessage id={'chargeManager.chargeCurrent'} />}>
             {chargerInfo?.currentElectricity
               ? getSuffix((chargerInfo.currentElectricity || 0) / 10, 'A')
               : '-'}
           </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.vehicle.maxChargeCurrent'} />}>
-            {chargerInfo?.maxChargerElectricity
-              ? getSuffix((chargerInfo.maxChargerElectricity || 0) / 10, 'A')
-              : '-'}
+          <LabelColComponent label={<FormattedMessage id={'app.activity.currentBatteryVoltage'} />}>
+            {chargerInfo?.currentVoltage ? getSuffix(chargerInfo.currentVoltage || 0, 'V') : '-'}
           </LabelColComponent>
           <LabelColComponent label={<FormattedMessage id={'IP'} />}>
             {chargerInfo?.ip}
           </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'vehicle.port'} />}>
-            {chargerInfo?.type ? data.port : '-'}
-          </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.activity.hardwareVersion'} />}>
-            {chargerInfo?.hardwareVersion}
-          </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.activity.softwareVersion'} />}>
-            {chargerInfo?.softwareVersion}
+          <LabelColComponent label={<FormattedMessage id={'app.vehicle.port'} />}>
+            {chargerInfo?.port}
           </LabelColComponent>
 
-          {/* 绑定-硬件id */}
+          {/* 绑定-chargerId */}
           <div
             style={{
               color: '#e8e8e8',
@@ -183,22 +141,19 @@ const ChargeProperty = (props) => {
           >
             <Row>
               <Col span={4}>
-                <FormattedMessage id={'app.form.hardwareId'} />
+                <FormattedMessage id={'chargeManager.fault. chargerId'} />
               </Col>
               <Col span={15}>
                 <Select
                   style={{ width: 180 }}
                   allowClear
                   size="small"
-                  value={hardwareId}
-                  onChange={(v) => {
-                    setHardwareId(v);
-                  }}
-                  disabled={chargerInfo?.hardwareId}
+                  value={`${chargerInfo?.id}@${chargerInfo?.mapChargerCode}`}
+                  disabled={chargerInfo?.chargerId}
                 >
-                  {physicCharger?.map(({ id, hardwareId, status }) => (
-                    <Select.Option key={id} value={hardwareId}>
-                      {status ? `${hardwareId}-${status}` : hardwareId}
+                  {unRegistedCharger?.map(({ id, chargerId, mapChargerCode, chargerStatus }) => (
+                    <Select.Option key={id} value={`${id}@${mapChargerCode}`}>
+                      {chargerStatus ? `${chargerId}-${chargerStatus}` : chargerId}
                     </Select.Option>
                   ))}
                 </Select>
@@ -206,21 +161,13 @@ const ChargeProperty = (props) => {
             </Row>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
               <Popconfirm
-                title={
-                  data.hardwareId
-                    ? formatMessage({ id: 'monitor.charger.unBind.confirm' })
-                    : formatMessage({ id: 'monitor.charger.bind.confirm' })
-                }
-                onConfirm={data.hardwareId ? unbindHardware : bindHardware}
+                title={chargerInfo?.chargerId ? '注销' : '注册'}
+                onConfirm={updateCharger}
                 okText={formatMessage({ id: 'app.button.confirm' })}
                 cancelText={formatMessage({ id: 'app.button.cancel' })}
               >
-                <Button size="small" disabled={!hardwareId}>
-                  {data.hardwareId ? (
-                    <FormattedMessage id="app.button.unBind" />
-                  ) : (
-                    <FormattedMessage id="app.button.bind" />
-                  )}
+                <Button size="small" disabled={!chargerInfo?.chargerId}>
+                  {chargerInfo?.chargerId ? '注销' : '注册'}
                 </Button>
               </Popconfirm>
             </div>
@@ -228,67 +175,78 @@ const ChargeProperty = (props) => {
         </div>
 
         {/* 操作区域*/}
-        <div style={{ marginTop: 30 }}>
-          {/* 状态、清楚故障、接触占用 */}
-          <div className={styles.rightSideVehicleContentOperation}>
-            {/* 状态 */}
-            <Popconfirm
-              title={formatMessage(
-                { id: 'monitor.charger.enable.confirm' },
-                {
-                  state: enabled
-                    ? formatMessage({ id: 'app.common.disabled' })
-                    : formatMessage({ id: 'app.common.enable' }),
-                },
-              )}
-              onConfirm={switchChargerEnable}
-              okText={formatMessage({ id: 'app.button.confirm' })}
-              cancelText={formatMessage({ id: 'app.button.cancel' })}
-            >
-              <div className={styles.rightSideVehicleContentOperationItem2}>
-                <div style={{ background: enabled ? checkedColor : '' }}>
-                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/maintain.png').default} />
+        {!isNull(chargerInfo) ? (
+          <div style={{ marginTop: 30 }}>
+            {/* 状态、清楚故障、解除占用 */}
+            <div className={styles.rightSideVehicleContentOperation}>
+              {/* 状态 */}
+              <Popconfirm
+                title={formatMessage(
+                  { id: 'monitor.charger.enable.confirm' },
+                  {
+                    state: enabled
+                      ? formatMessage({ id: 'app.common.disabled' })
+                      : formatMessage({ id: 'app.common.enable' }),
+                  },
+                )}
+                onConfirm={switchChargerEnable}
+                okText={formatMessage({ id: 'app.button.confirm' })}
+                cancelText={formatMessage({ id: 'app.button.cancel' })}
+              >
+                <div className={styles.rightSideVehicleContentOperationItem2}>
+                  <div style={{ background: enabled ? checkedColor : '' }}>
+                    <img
+                      alt={'vehicle'}
+                      src={require('@/packages/Scene/icons/maintain.png').default}
+                    />
+                  </div>
+                  <div>
+                    <FormattedMessage id={'app.common.status'} />
+                  </div>
                 </div>
-                <div>
-                  <FormattedMessage id={'app.common.enabled'} />
-                  <FormattedMessage id={'app.common.status'} />
-                </div>
-              </div>
-            </Popconfirm>
+              </Popconfirm>
 
-            <div className={styles.rightSideVehicleContentOperationItem2}>
-              <div onClick={clearFault} style={{ disabled: !chargerInfo?.hardwareId }}>
-                <ClearOutlined
-                  style={{ fontSize: '17px', color: '#fff', height: 'auto', textAlign: 'center' }}
-                />
-              </div>
-
-              <div>
-                <FormattedMessage id={'chargeManager.clearFault'} />
-              </div>
-            </div>
-
-            <Popconfirm
-              title={formatMessage({ id: 'monitor.charger.release.confirm' })}
-              onConfirm={release}
-              okText={formatMessage({ id: 'app.button.confirm' })}
-              cancelText={formatMessage({ id: 'app.button.cancel' })}
-            >
               <div className={styles.rightSideVehicleContentOperationItem2}>
-                <div>
-                  <IconFont
-                    type={'icon-jiechuzhanyong'}
+                <div onClick={clearFault} style={{ disabled: !chargerInfo?.chargerId }}>
+                  <ClearOutlined
                     style={{ fontSize: '17px', color: '#fff', height: 'auto', textAlign: 'center' }}
                   />
                 </div>
 
                 <div>
-                  <FormattedMessage id={'monitor.charger.release'} />
+                  <FormattedMessage id={'chargeManager.clearFault'} />
                 </div>
               </div>
-            </Popconfirm>
+
+              <Popconfirm
+                title={formatMessage({ id: 'monitor.charger.release.confirm' })}
+                onConfirm={release}
+                okText={formatMessage({ id: 'app.button.confirm' })}
+                cancelText={formatMessage({ id: 'app.button.cancel' })}
+              >
+                <div className={styles.rightSideVehicleContentOperationItem2}>
+                  <div>
+                    <IconFont
+                      type={'icon-jiechuzhanyong'}
+                      style={{
+                        fontSize: '17px',
+                        color: '#fff',
+                        height: 'auto',
+                        textAlign: 'center',
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <FormattedMessage id={'monitor.charger.release'} />
+                  </div>
+                </div>
+              </Popconfirm>
+            </div>
           </div>
-        </div>
+        ) : (
+          <></>
+        )}
       </div>
     </>
   );

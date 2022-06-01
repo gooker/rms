@@ -22,7 +22,8 @@ export default class Charger extends PIXI.Container {
     this.angle = props.angle;
     this.zIndex = zIndex.functionIcon;
     this.state = props.state;
-    this.hardwareId = props.hardwareId;
+    this.chargerId = props.chargerId;
+    this.id = props.id;
     this.sortableChildren = true;
 
     this.select = props.select;
@@ -94,9 +95,9 @@ export default class Charger extends PIXI.Container {
 
     const y = this.charger.height / 2 + 200;
     let name = this.name;
-    if (this.hardwareId) {
-      name = `${name} [${this.hardwareId}]`;
-    }
+    // if (this.chargerId) {
+    //   name = `${name} [${this.chargerId}]`;
+    // }
     this.nameSprite = new Text(name, 0, -y, 0xffffff, false, 150);
     this.nameSprite.angle = -this.angle;
     this.nameSprite.anchor.set(0.5);
@@ -179,10 +180,11 @@ export default class Charger extends PIXI.Container {
   }
 
   // 更新绑定的硬件ID
-  updateHardwareId = (hardwareId) => {
-    this.hardwareId = hardwareId;
+  updateHardwareId = (chargerId, id) => {
+    this.chargerId = chargerId;
+    this.id = id;
     this.addName();
-    this.UnbindMaskSprite.visible = isNull(hardwareId);
+    this.UnbindMaskSprite.visible = isNull(chargerId);
   };
 
   // 更新充电桩状态

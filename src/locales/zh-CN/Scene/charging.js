@@ -10,5 +10,5 @@ export default {
   'chargeManager.clearFault.confirm': '是否确定清除故障?',
   'chargeManager.fault.code': '故障编码',
   'chargeManager.fault.createTime': '上报时间',
-  'chargeManager.fault.hardwareId': '充电桩ID',
+  'chargeManager.fault. chargerId': '充电桩ID',
 };

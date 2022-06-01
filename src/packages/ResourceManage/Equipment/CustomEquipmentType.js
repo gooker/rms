@@ -71,6 +71,7 @@ const CustomEquipmentType = () => {
             <Card
               type="inner"
               key={index}
+              title={deviceType?.name}
               extra={
                 <Space>
                   <Tooltip title={'配置信息'}>
@@ -100,11 +101,6 @@ const CustomEquipmentType = () => {
               style={{ margin: '16px 16px 0 0' }}
             >
               <Row>
-                <Col span={12}>
-                  <span>
-                    {'名称'}: {deviceType?.name}
-                  </span>
-                </Col>
                 <Col span={12}>
                   <span>
                     {'code'}: {deviceType?.code}
