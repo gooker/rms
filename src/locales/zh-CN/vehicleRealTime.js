@@ -10,10 +10,8 @@ export default {
   'app.activity.liftingStatus': '顶升状态',
   'app.activity.modelInfo': '模块信息',
   'app.activity.distanceFromLastSpot': '当前位置距上个码距离',
-  'app.activity.clusterIndex': '服务器标识',
   'app.activity.createDate': '加入时间',
   'app.activity.manualMode': '手动模式',
-  'app.activity.currentSpotId': '当前位置',
   'app.activity.upliftPodId': '已举升货架',
   'app.activity.upliftPodDirection': '举升货架朝向',
   'app.activity.lockedPod': '上方货架',
@@ -38,7 +36,6 @@ export default {
 
   // 小车电池信息区域
   'app.activity.battery': '电池电量',
-  'app.activity.batteryTemperature': '电池温度',
   'app.activity.chargingCount': '充电次数',
   'app.activity.batteryCurrent': '电池电流',
   'app.activity.currentBatteryVoltage': '当前电压',

@@ -3,14 +3,14 @@ import { isNull } from './util';
 const DictionaryDataSource = {
   // 小车状态
   vehicleStatus: {
-    Error: 'app.vehicleState.Error',
-    Offline: 'app.vehicleState.Offline',
-    StandBy: 'app.vehicleState.StandBy',
-    Working: 'app.vehicleState.Working',
-    Charging: 'app.vehicleState.Charging',
-    Connecting: 'app.vehicleState.Connecting',
-    Waiting: 'app.vehicleState.Waiting',
-    Idle: 'app.vehicleState.Idle',
+    Error: 'vehicleState.Error',
+    Offline: 'vehicleState.Offline',
+    StandBy: 'vehicleState.StandBy',
+    Working: 'vehicleState.Working',
+    Charging: 'vehicleState.Charging',
+    Connecting: 'vehicleState.Connecting',
+    Waiting: 'vehicleState.Waiting',
+    Idle: 'vehicleState.Idle',
   },
 
   // 充电桩方向

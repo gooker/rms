@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Divider, Form, Row, Select, Spin } from 'antd';
+import { Button, Card, Form, Row, Select, Spin } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -68,36 +68,23 @@ class VehicleRealTime extends React.Component {
               <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
             </Button>
           </Row>
-          <Row className={styles.viewContainer} justify={'space-between'}>
+
+          <div className={styles.viewContainer}>
             {/* 小车信息 */}
-            <div className={styles.tabContainer}>
-              <span style={{ fontSize: 17, fontWeight: 500 }}>
-                <FormattedMessage id={'vehicle.info'} />
-              </span>
-              <Divider style={{ margin: '5px 0 24px 0' }} />
+            <Card title={<FormattedMessage id={'vehicle.info'} />}>
               <VehicleInformationTab data={vehicle ?? {}} />
-            </div>
-            <div style={{ width: 32 }}></div>
+            </Card>
 
             {/* 小车实时状态*/}
-            <div className={styles.tabContainer}>
-              <span style={{ fontSize: 17, fontWeight: 500 }}>
-                <FormattedMessage id={'vehicle.realTime'} />
-              </span>
-              <Divider style={{ margin: '5px 0 24px 0' }} />
+            <Card title={<FormattedMessage id={'vehicle.realTime'} />}>
               <VehicleRealTimeTab data={vehicle ?? {}} />
-            </div>
-            <div style={{ width: 32 }}></div>
+            </Card>
 
             {/* 小车工作状态*/}
-            <div className={styles.tabContainer}>
-              <span style={{ fontSize: 17, fontWeight: 500 }}>
-                <FormattedMessage id={'vehicle.WorkState'} />
-              </span>
-              <Divider style={{ margin: '5px 0 24px 0' }} />
+            <Card title={<FormattedMessage id={'vehicle.WorkState'} />}>
               <VehicleWorkStateTab data={vehicle ?? {}} />
-            </div>
-          </Row>
+            </Card>
+          </div>
         </div>
       </Spin>
     );

@@ -2,9 +2,9 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Select, Space } from 'antd';
 import { find } from 'lodash';
+import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull } from '@/utils/util';
 
 /**
  * vehicle: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
@@ -73,7 +73,7 @@ const VehicleSelector = (props) => {
     switch (currentValue.type) {
       case 'Vehicle':
         return (
-          <Space style={{ marginLeft: 10 }}>
+          <Space>
             <Select
               value={vehicleType}
               onChange={cascadeFirstChange}
@@ -99,7 +99,7 @@ const VehicleSelector = (props) => {
             mode='multiple'
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ marginLeft: 10, width: 360 }}
+            style={{ width: 360 }}
           >
             {renderVehicleGroupOptions()}
           </Select>
@@ -108,7 +108,7 @@ const VehicleSelector = (props) => {
   }
 
   return (
-    <div>
+    <Space>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
         <Select.Option value={'AUTO'}>
           <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
@@ -121,14 +121,14 @@ const VehicleSelector = (props) => {
         </Select.Option>
       </Select>
       {secondaryVisible && renderSecondComponent()}
-    </div>
+    </Space>
   );
 };
 export default connect(({ customTask }) => {
   const dataSource = { vehicle: [], vehicleGroup: [] };
   if (customTask.modelParams) {
-    dataSource.vehicle = customTask.modelParams?.Vehicle || [];
-    dataSource.vehicleGroup = customTask.modelParams?.Vehicle_GROUP || [];
+    dataSource.vehicle = customTask.modelParams?.VEHICLE ?? [];
+    dataSource.vehicleGroup = customTask.modelParams?.VEHICLE_GROUP ?? [];
   }
   return { dataSource };
 })(memo(VehicleSelector));

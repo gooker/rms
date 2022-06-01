@@ -1,4 +1,4 @@
-import { getDpr, formatMessage } from '@/utils/util';
+import { formatMessage, getDpr } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import { VehicleStateColor } from '@/config/consts';
 
@@ -243,12 +243,12 @@ export function getCarStatePieOption() {
       x: 'center',
       bottom: '3%',
       data: [
-        formatMessage({ id: 'app.vehicleState.Offline' }),
-        formatMessage({ id: 'app.vehicleState.Working' }),
-        formatMessage({ id: 'app.vehicleState.StandBy' }),
-        formatMessage({ id: 'app.vehicleState.Charging' }),
-        formatMessage({ id: 'app.vehicleState.Error' }),
-        formatMessage({ id: 'app.vehicleState.Connecting' }),
+        formatMessage({ id: 'vehicleState.Offline' }),
+        formatMessage({ id: 'vehicleState.Working' }),
+        formatMessage({ id: 'vehicleState.StandBy' }),
+        formatMessage({ id: 'vehicleState.Charging' }),
+        formatMessage({ id: 'vehicleState.Error' }),
+        formatMessage({ id: 'vehicleState.Connecting' }),
       ],
       padding: [2, 4],
       itemWidth: 12 * getDpr(),
@@ -278,32 +278,32 @@ export function getCarStatePieOption() {
         },
         data: [
           {
-            name: formatMessage({ id: 'app.vehicleState.Offline' }),
+            name: formatMessage({ id: 'vehicleState.Offline' }),
             value: 0,
             itemStyle: { color: vehicleStateColor.Offline },
           },
           {
-            name: formatMessage({ id: 'app.vehicleState.Connecting' }),
+            name: formatMessage({ id: 'vehicleState.Connecting' }),
             value: 0,
             itemStyle: { color: vehicleStateColor.Connecting },
           },
           {
-            name: formatMessage({ id: 'app.vehicleState.StandBy' }),
+            name: formatMessage({ id: 'vehicleState.StandBy' }),
             value: 0,
             itemStyle: { color: vehicleStateColor.StandBy },
           },
           {
-            name: formatMessage({ id: 'app.vehicleState.Working' }),
+            name: formatMessage({ id: 'vehicleState.Working' }),
             value: 0,
             itemStyle: { color: vehicleStateColor.Working },
           },
           {
-            name: formatMessage({ id: 'app.vehicleState.Charging' }),
+            name: formatMessage({ id: 'vehicleState.Charging' }),
             value: 0,
             itemStyle: { color: vehicleStateColor.Charging },
           },
           {
-            name: formatMessage({ id: 'app.vehicleState.Error' }),
+            name: formatMessage({ id: 'vehicleState.Error' }),
             value: 0,
             itemStyle: { color: vehicleStateColor.Error },
           },

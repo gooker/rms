@@ -2,16 +2,11 @@
 export default {
   // 小车列表
   'app.vehicle.addingTime': '加入时间',
-  'app.vehicle.battery': '电量',
   'app.vehicle.batteryType': '电池类型',
-  'app.vehicle.batteryVoltage': '电压',
   'app.vehicle.details': '详情',
-  'app.vehicle.maintenanceState': '维护状态',
-  'app.vehicle.manualMode': '手动模式',
   'app.vehicle.maxChargeCurrent': '最大充电电流',
   'app.vehicle.normal': '正常',
   'app.vehicle.exception': '异常',
-  'app.vehicle.serverIdentity': '服务器标识',
   'app.vehicle.threeGenerationOfTianma': '天马三代',
   'app.vehicle.threeGenerationsOfVehicles(Virtual)': '三代车(虚拟)',
   'app.vehicle.underMaintenance': '维护中',
@@ -30,7 +25,6 @@ export default {
   'app.vehicle.delete.confirm': '确认要删除小车的数据吗',
   'app.vehicle.speed': '速度',
   'app.vehicle.currentDirection': '车头朝向',
-  'app.vehicle.currentSpotId': '当前位置',
   'app.vehicle.lockedCharger': '绑定充电桩',
   'app.activity.theta': '惯导角度',
   'app.vehicle.sensorStatusFlag': '传感器状态标志',
@@ -55,10 +49,7 @@ export default {
   'app.activity.jackingUp': '顶升',
   'app.activity.unJckingUp': '非顶升',
   'app.activity.batteryStatus': '电池状态',
-  'app.activity.batteryTemperatureOne': '电池温度1',
-  'app.activity.batteryTemperatureTwo': '电池温度2',
   'app.vehicle.lastFullChargeTime': '上次充满时间',
-  'app.vehicle.currentCoefficient': '当前电池温度',
   'app.vehicle.getListFail': '获取小车失败',
 
   // 固件状态

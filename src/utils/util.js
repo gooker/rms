@@ -185,6 +185,7 @@ export function getSuffix(value, suffix, props) {
 }
 
 export function renderBattery(battery) {
+  if (isStrictNull(battery)) return null;
   let batteryColor;
   if (battery > 50) {
     batteryColor = Colors.green;
@@ -202,7 +203,7 @@ export function renderVehicleState(state) {
   if (!isStrictNull(state)) {
     return (
       <Tag color={VehicleStateColor[state]}>
-        <FormattedMessage id={`app.vehicleState.${state}`} />
+        <FormattedMessage id={`vehicleState.${state}`} />
       </Tag>
     );
   }
@@ -1434,21 +1435,23 @@ export function extractActionToFormValue(actions) {
 }
 
 // 提取sample数据
-export function generateSample(customTask) {
+export function generateSample({ customStart, customActions }) {
   const result = [];
   // 任务开始
-  result.push({
-    code: 'START-AGV',
-    param: customTask.customStart?.robot?.code ?? [],
-  });
+  if (isNull(customStart.robot)) {
+    result.push({ code: 'START-AGV', param: [] });
+  } else {
+    result.push({ code: customStart.robot.type, param: customStart.robot.code });
+  }
+
   result.push({
     code: 'START-isLimitStandBy',
-    param: customTask.customStart.isLimitStandBy,
+    param: customStart.isLimitStandBy,
   });
 
   // 子任务
-  if (!isNull(customTask.customActions)) {
-    Object.values(customTask.customActions).forEach((subTask) => {
+  if (!isNull(customActions)) {
+    Object.values(customActions).forEach((subTask) => {
       const {
         code,
         targetAction: { loadAngle, target },

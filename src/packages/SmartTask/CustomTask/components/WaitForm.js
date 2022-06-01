@@ -87,23 +87,15 @@ const WaitForm = (props) => {
                   <Form.Item key={field.key} className={styles.standbyDynamicFormItem}>
                     <div style={{ display: 'flex' }}>
                       <div style={{ width: 32, marginRight: 5 }}>
-                        {fields.length > 1 ? (
-                          <Button
-                            type='primary'
-                            onClick={() => remove(field.name)}
-                            style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              width: '32px',
-                            }}
-                          >
-                            <DeleteOutlined />
-                          </Button>
-                        ) : null}
+                        <Button
+                          type='primary'
+                          onClick={() => remove(field.name)}
+                          icon={<DeleteOutlined />}
+                          disabled={fields.length <= 1}
+                        />
                       </div>
                       <Form.Item noStyle {...field}>
-                        <StandbyConditions />
+                        <StandbyConditions form={form} />
                       </Form.Item>
                     </div>
                   </Form.Item>

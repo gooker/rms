@@ -3,14 +3,14 @@ import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import ModelSelection from '../FormComponent/ModelSelection';
 import { convertMapToArrayMap, formatMessage, getFormLayout } from '@/utils/util';
+import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 
 const { Option } = Select;
-const { formItemLayoutNoLabel, formItemLayout } = getFormLayout(4, 18);
+const { formItemLayoutNoLabel, formItemLayout } = getFormLayout(4, 20);
 
 const StandbyConditions = (props) => {
-  const { hidden, modelTypes, allTaskTypes, value, onChange } = props;
+  const { hidden, form, allTaskTypes, value, onChange } = props;
 
   function onValuesChange(changedValues, allValues) {
     onChange(allValues);
@@ -26,7 +26,12 @@ const StandbyConditions = (props) => {
   }
 
   return (
-    <Form onValuesChange={onValuesChange} initialValues={initialValue} style={{ width: '100%' }}>
+    <Form
+      labelWrap
+      onValuesChange={onValuesChange}
+      initialValues={initialValue}
+      style={{ width: '100%' }}
+    >
       {/* 可接任务类型 */}
       <Form.Item
         hidden={hidden}
@@ -66,11 +71,7 @@ const StandbyConditions = (props) => {
                 <Row gutter={10}>
                   <Col span={fields.length > 1 ? 22 : 24}>
                     <Form.Item noStyle {...field}>
-                      <ModelSelection
-                        modelTypes={modelTypes}
-                        exclude={['Vehicle', 'Vehicle_GROUP']}
-                        disabled={false}
-                      />
+                      <TargetSelector form={form} />
                     </Form.Item>
                   </Col>
                   {fields.length > 1 ? (
@@ -81,7 +82,6 @@ const StandbyConditions = (props) => {
                 </Row>
               </Form.Item>
             ))}
-
             <Form.Item hidden={hidden} {...formItemLayoutNoLabel}>
               <Button onClick={() => add()} style={{ width: '100%' }}>
                 <PlusOutlined />

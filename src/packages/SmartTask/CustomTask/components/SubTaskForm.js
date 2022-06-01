@@ -28,7 +28,7 @@ const SubTaskForm = (props) => {
     const { targetAction } = form.getFieldValue(code);
     const { operatorAngle } = targetAction;
     setSpecifyLoadAngle(isNull(operatorAngle));
-    setTarget(targetAction.target.type);
+    setTarget(targetAction?.target?.type);
   }, []);
 
   function renderPathCodeOptions() {
@@ -193,11 +193,11 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <TargetSelector showVar subTaskCode={code} form={form} />
+        <TargetSelector form={form} />
       </Form.Item>
 
       {/* 载具方向 */}
-      {['CELL', 'STATION', 'STATION_GROUP'].includes(target) ? (
+      {['ROTATION', 'ROTATION_GROUP'].includes(target) ? (
         <Form.Item
           hidden={hidden}
           label={formatMessage({
@@ -245,7 +245,7 @@ const SubTaskForm = (props) => {
       ) : null}
 
       {/* 操作者方向 */}
-      {['CELL', 'STATION', 'STATION_GROUP'].includes(target) && !specifyLoadAngle ? (
+      {['ROTATION', 'ROTATION_GROUP'].includes(target) && !specifyLoadAngle ? (
         <Form.Item
           hidden={hidden}
           name={[code, 'targetAction', 'operatorAngle']}

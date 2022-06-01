@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Badge, Row, Button, message, Tooltip } from 'antd';
-import { DeleteOutlined, RedoOutlined, OrderedListOutlined } from '@ant-design/icons';
-import { convertToUserTimezone, formatMessage } from '@/utils/util';
+import { Badge, Button, message, Row, Tooltip } from 'antd';
+import { DeleteOutlined, OrderedListOutlined, RedoOutlined } from '@ant-design/icons';
+import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchTaskQueueList,
   deleteTaskQueueItems,
-  fetchVehicleOverallStatus,
+  fetchTaskQueueList,
   fetchUpdateTaskPriority,
+  fetchVehicleOverallStatus,
 } from '@/services/api';
 import TableWithPages from '@/components/TableWithPages';
-import { dealResponse } from '@/utils/util';
 import { VehicleStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -261,7 +260,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.available }}
               >
-                <FormattedMessage id={'app.vehicleState.available'} />
+                <FormattedMessage id={'vehicleState.available'} />
               </span>
             </Badge>
             <Badge
@@ -273,7 +272,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.StandBy }}
               >
-                <FormattedMessage id={'app.vehicleState.StandBy'} />
+                <FormattedMessage id={'vehicleState.StandBy'} />
               </span>
             </Badge>
             <Badge
@@ -285,7 +284,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.Working }}
               >
-                <FormattedMessage id={'app.vehicleState.Working'} />
+                <FormattedMessage id={'vehicleState.Working'} />
               </span>
             </Badge>
             <Badge
@@ -297,7 +296,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.Charging }}
               >
-                <FormattedMessage id={'app.vehicleState.Charging'} />
+                <FormattedMessage id={'vehicleState.Charging'} />
               </span>
             </Badge>
             <Badge
@@ -321,7 +320,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.Offline }}
               >
-                <FormattedMessage id={'app.vehicleState.Offline'} />
+                <FormattedMessage id={'vehicleState.Offline'} />
               </span>
             </Badge>
           </Row>
