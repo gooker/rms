@@ -47,14 +47,14 @@ export async function getAllPath(logicId) {
 ///////////////////////// ******** 潜伏相关接口 ******** //////////////////////////
 // 获取已到站的潜伏货架
 export async function fetchWorkStationPods() {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/getWorkStationPods`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/getWorkStationPods`, {
     method: 'GET',
   });
 }
 
 // 获取潜伏车系统参数
 export async function fetchLatentLiftingSystemParam(params) {
-  return request(`/${NameSpace.LatentLifting}/formTemplate/getFormTemplate`, {
+  return request(`/${NameSpace.Platform}/formTemplate/getFormTemplate`, {
     method: 'GET',
     data: params,
   });
@@ -62,7 +62,7 @@ export async function fetchLatentLiftingSystemParam(params) {
 
 // 获取地图潜伏任务暂停事件
 export async function fetchLatentPausedEventList(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/getPauseTaskEvent`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/getPauseTaskEvent`, {
     method: 'GET',
     data: params,
   });
@@ -70,7 +70,7 @@ export async function fetchLatentPausedEventList(params) {
 
 // 潜伏车自动释放
 export async function fetchAutoReleasePod(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/autoReleasePod`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/autoReleasePod`, {
     method: 'POST',
     data: params,
   });
@@ -78,7 +78,7 @@ export async function fetchAutoReleasePod(params) {
 
 // 设置潜伏货架
 export async function fetchSetPod(params) {
-  return request(`/${NameSpace.LatentLifting}/pod/batch`, {
+  return request(`/${NameSpace.Platform}/pod/batch`, {
     method: 'POST',
     data: params,
   });
@@ -86,7 +86,7 @@ export async function fetchSetPod(params) {
 
 // 删除潜伏货架
 export async function fetchDeletePod(params) {
-  return request(`/${NameSpace.LatentLifting}/pod/deletePod/${params.sectionId}`, {
+  return request(`/${NameSpace.Platform}/pod/deletePod/${params.sectionId}`, {
     method: 'POST',
     data: [params.podId],
   });
@@ -94,7 +94,7 @@ export async function fetchDeletePod(params) {
 
 // 批量更新地图潜伏货架
 export async function batchUpdateLatentPod(params) {
-  return request(`/${NameSpace.LatentLifting}/pod/deletePodBySectionId/${params.sectionId}`, {
+  return request(`/${NameSpace.Platform}/pod/deletePodBySectionId/${params.sectionId}`, {
     method: 'DELETE',
     data: params,
   });
@@ -128,7 +128,7 @@ export async function autoReleaseToteTask(params) {
 /////////////////////////******** 小车动作相关 ******** //////////////////////////
 // 潜伏车搬运
 export async function fetchPodToCell(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/pod-to-cell`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/pod-to-cell`, {
     method: 'POST',
     data: params,
   });
@@ -177,7 +177,7 @@ export async function vehicleRemoteControl(VehicleType, params) {
 
 // 呼叫潜伏货架到工作站
 export async function latentPodToWorkStation(payload) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/pod-to-workstation`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/pod-to-workstation`, {
     method: 'POST',
     data: payload,
   });
@@ -185,7 +185,7 @@ export async function latentPodToWorkStation(payload) {
 
 // 潜伏高级搬运
 export async function advancedLatnetHandling(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/super-pod-to-cell`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/super-pod-to-cell`, {
     method: 'POST',
     data: params,
   });
@@ -193,7 +193,7 @@ export async function advancedLatnetHandling(params) {
 
 // 潜伏高级搬运（释放）
 export async function releaseAdvancedLatnetHandling(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/superCarryReleasePod`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/superCarryReleasePod`, {
     method: 'POST',
     data: params,
   });
@@ -201,7 +201,7 @@ export async function releaseAdvancedLatnetHandling(params) {
 
 // 工作站自动任务(潜伏)
 export async function autoCallLatentPodToWorkstation(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/autoCallPodToWorkstation`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/autoCallPodToWorkstation`, {
     method: 'POST',
     data: params,
   });
@@ -209,7 +209,7 @@ export async function autoCallLatentPodToWorkstation(params) {
 
 // 恢复潜伏暂停的任务
 export async function resumeLatentPausedTask(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/vehicleResumeTaskRun`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/vehicleResumeTaskRun`, {
     method: 'POST',
     data: params,
   });
@@ -217,7 +217,7 @@ export async function resumeLatentPausedTask(params) {
 
 // 潜伏自动释放
 export async function releaseLatentPod(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/releasePod`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/releasePod`, {
     method: 'POST',
     data: params,
   });
@@ -225,7 +225,7 @@ export async function releaseLatentPod(params) {
 
 // 保存工作站自动任务配置(潜伏)
 export async function saveLatentAutomaticTaskConfig(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/saveAutoConfig`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/saveAutoConfig`, {
     method: 'POST',
     data: params,
   });
@@ -233,7 +233,7 @@ export async function saveLatentAutomaticTaskConfig(params) {
 
 // @Refact: 工作站自动任务(潜伏)
 export async function fetchLatentAutoTaskConfig() {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/getAutoTaskConfig`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/getAutoTaskConfig`, {
     method: 'GET',
   });
 }
@@ -437,7 +437,7 @@ export async function deleteTunnelVehicleLock(vehicleId) {
 // 工作站
 // 任务数据
 export async function fetchWorkStationInstrument(params) {
-  return request(`/${NameSpace.LatentLifting}/vehicle-task/getWorkStationInstrument`, {
+  return request(`/${NameSpace.Platform}/vehicle-task/getWorkStationInstrument`, {
     method: 'GET',
     data: params,
   });
@@ -445,7 +445,7 @@ export async function fetchWorkStationInstrument(params) {
 
 // 最近30次等待时间
 export async function fetchWorkStationPre30Waiting(params) {
-  return request(`/${NameSpace.LatentLifting}/api/getStopWaitKpiDTO`, {
+  return request(`/${NameSpace.Platform}/api/getStopWaitKpiDTO`, {
     method: 'POST',
     data: params,
   });

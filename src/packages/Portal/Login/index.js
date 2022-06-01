@@ -3,7 +3,13 @@ import { Button, Form, Input, Select, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, UserOutlined } from '@ant-design/icons';
 import { fetchLogin } from '@/services/global';
 import requestAPI from '@/utils/requestAPI';
-import { dealResponse, extractNameSpaceInfoFromEnvs, getCustomEnvs, isNull } from '@/utils/util';
+import {
+  dealResponse,
+  extractNameSpaceInfoFromEnvs,
+  getAllEnvironments,
+  getCustomEnvironments,
+  isNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
@@ -19,18 +25,9 @@ const Login = (props) => {
   useEffect(() => {
     // 挂载push函数
     window.history.$$push = history.push;
-
-    const customEnvs = getCustomEnvs();
-    let optionsData = [{ envName: 'default', id: 'default' }];
-    optionsData = optionsData.concat(customEnvs);
-    setOptions(optionsData);
-
-    const activeAPI = customEnvs.filter((item) => item.flag === '1')[0];
-    let environment = 'default';
-    if (activeAPI) {
-      environment = activeAPI.id;
-    }
-    formRef.setFieldsValue({ environment });
+    const { allEnvs, activeEnv } = getAllEnvironments();
+    setOptions(allEnvs);
+    formRef.setFieldsValue({ environment: activeEnv });
   }, []);
 
   async function goLogin() {
@@ -38,7 +35,7 @@ const Login = (props) => {
       setLoading(true);
       if (!isNull(values.environment)) {
         let active;
-        const customEnvs = getCustomEnvs().map((item) => {
+        const customEnvs = getCustomEnvironments().map((item) => {
           if (item.id === values.environment) {
             active = { ...item, flag: '1' };
             return active;
@@ -57,7 +54,6 @@ const Login = (props) => {
       const response = await fetchLogin({ ...values, type: 'admin' });
       if (!dealResponse(response)) {
         window.sessionStorage.setItem('token', response.authorization);
-
         setLoading(false);
         history.push('/');
       } else {

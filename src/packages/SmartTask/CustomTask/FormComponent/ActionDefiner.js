@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Select, Input, Button } from 'antd';
-import { MinusOutlined, PlusOutlined, BarsOutlined } from '@ant-design/icons';
+import { Button, Input, Select } from 'antd';
+import { BarsOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Container, Draggable } from 'react-smooth-dnd';
 import styles from './formComponentStyle.module.less';
 

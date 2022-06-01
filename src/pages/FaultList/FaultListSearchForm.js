@@ -53,7 +53,7 @@ const FaultListSearchForm = (props) => {
     <Form form={formRef}>
       <Row gutter={15}>
         <Col span={8}>
-          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
+          <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
             <Select allowClear showSearch>
               {vehicleList.map(({ vehicleId }) => (
                 <Select.Option key={vehicleId} value={vehicleId}>

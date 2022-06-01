@@ -1,18 +1,12 @@
-import React, { memo, useEffect, useState } from 'react';
-import { Checkbox, Select, Space } from 'antd';
+import React, { memo } from 'react';
+import { Select, Space } from 'antd';
 import { isNull, isSubArray } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const TargetSelector = (props) => {
-  const { dispatch, showVar, form, dataSource, value, onChange, variable, subTaskCode } = props;
+  const { form, dataSource, value, onChange, variable } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
-
-  const [useVariable, setUseVariable] = useState(false);
-
-  useEffect(() => {
-    setUseVariable(!isNull(variable[subTaskCode]));
-  }, []);
 
   function onTypeChange(_value) {
     currentValue.type = _value;
@@ -79,24 +73,6 @@ const TargetSelector = (props) => {
     return [];
   }
 
-  function onCheckboxChange({ target: { checked } }) {
-    setUseVariable(checked);
-    updateVariable(checked);
-    form.validateFields();
-  }
-
-  function updateVariable(checked) {
-    const _variable = { ...variable };
-    if (checked) {
-      // Vehicle 和 Vehicle_GROUP 互斥
-      _variable[subTaskCode] = {};
-      _variable[subTaskCode][currentValue.type] = [];
-    } else {
-      delete _variable[subTaskCode];
-    }
-    dispatch({ type: 'customTask/updateVariable', payload: _variable });
-  }
-
   return (
     <div>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
@@ -105,6 +81,12 @@ const TargetSelector = (props) => {
         </Select.Option>
         <Select.Option value={'CELL_GROUP'}>
           <FormattedMessage id={'app.map.cellGroup'} />
+        </Select.Option>
+        <Select.Option value={'ROTATION'}>
+          <FormattedMessage id={'editor.cellType.rotation'} />
+        </Select.Option>
+        <Select.Option value={'ROTATION_GROUP'}>
+          <FormattedMessage id={'editor.cellType.rotationGroup'} />
         </Select.Option>
         <Select.Option value={'STATION'}>
           <FormattedMessage id={'app.map.station'} />
@@ -138,16 +120,6 @@ const TargetSelector = (props) => {
           >
             {renderSecondaryOptions()}
           </Select>
-        )}
-
-        {showVar && (
-          <Checkbox
-            checked={useVariable}
-            onChange={onCheckboxChange}
-            disabled={isNull(currentValue.type)}
-          >
-            <FormattedMessage id={'customTasks.form.useVariable'} />
-          </Checkbox>
         )}
       </Space>
     </div>

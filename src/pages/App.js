@@ -5,9 +5,9 @@ import { isEmpty } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
-import { initI18nInstance } from '@/utils/init';
-import { extractNameSpaceInfoFromEnvs, formatMessage, isStrictNull } from '@/utils/util';
 import requestAPI from '@/utils/requestAPI';
+import { initI18nInstance } from '@/utils/init';
+import { extractNameSpaceInfoFromEnvs, formatMessage, getCustomEnvironments } from '@/utils/util';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {
@@ -18,11 +18,8 @@ class App extends Component {
   async componentDidMount() {
     try {
       const defaultAPI = requestAPI();
-      let storedAPIs = window.localStorage.getItem('customEnvs');
-      if (!isStrictNull(storedAPIs)) {
-        storedAPIs = JSON.parse(storedAPIs);
-      }
-      const activeAPI = storedAPIs?.filter((item) => item.flag === '1');
+      const customEnvironments = getCustomEnvironments();
+      const activeAPI = customEnvironments.filter((item) => item.flag === '1');
       window.nameSpacesInfo = isEmpty(activeAPI)
         ? defaultAPI
         : extractNameSpaceInfoFromEnvs(activeAPI[0]);

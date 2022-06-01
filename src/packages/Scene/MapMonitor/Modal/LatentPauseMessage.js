@@ -33,7 +33,7 @@ const LatentPauseMessage = (props) => {
                 <Col span={20}>
                   <Row>
                     <Col span={12}>
-                      <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.vehicle.id' })}>
+                      <Form.Item {...formItemLayout} label={formatMessage({ id: 'vehicle.id' })}>
                         {vehicleId}
                       </Form.Item>
                     </Col>

@@ -34,7 +34,7 @@ const VehicleFormComponent = (props) => {
     // >
     <>
       <Form.Item
-        label={formatMessage({ id: 'app.vehicle.id' })}
+        label={formatMessage({ id: 'vehicle.id' })}
         name={'vehicleId'}
         rules={[{ required: true }]}
         initialValue={value?.vehicleId}

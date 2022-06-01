@@ -9,7 +9,6 @@ import { ZoneMarkerType } from '@/config/consts';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
-import MapRatioSlider from '@/packages/Scene/components/MapRatioSlider';
 import EventManager from '@/utils/EventManager';
 import commonStyles from '@/common.module.less';
 
@@ -296,7 +295,7 @@ const MonitorMapContainer = (props) => {
 
       const { temporaryBlock, emergencyStopList, chargerList } = monitorLoad;
       // 临时不可走点
-      mapContext.renderTemporaryLock(temporaryBlock);
+      mapContext.renderTemporaryLock(temporaryBlock ?? []);
 
       // 急停区
       // mapContext.renderEmergencyStopArea(emergencyStopList);
@@ -320,11 +319,10 @@ const MonitorMapContainer = (props) => {
     <div id={'monitorPixiContainer'} className={commonStyles.monitorBodyMiddle}>
       <MonitorMapView />
       <MonitorMask />
-
       <OperationType right={window.currentPlatForm.isPc ? 'calc(20% + 10px)' : '10px'} />
-      {window.currentPlatForm.isPc && (
-        <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />
-      )}
+      {/*{window.currentPlatForm.isPc && (*/}
+      {/*  <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />*/}
+      {/*)}*/}
     </div>
   );
 };

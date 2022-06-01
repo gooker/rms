@@ -9,7 +9,6 @@ import Report from './report.router';
 import Scene from './scene.router';
 import Strategy from './strategy.router';
 import Tote from './tote.router';
-import Carry from './carry.router';
 
 export default {
   [AppCode.SSO]: SSORouter,
@@ -27,5 +26,5 @@ export default {
   // [AppCode.Tool]: Tool,
   [AppCode.Tote]: Tote,
   // [AppCode.Customized]: Customized,
-  [AppCode.Carry]: Carry,
+  // [AppCode.Carry]: Carry,
 };

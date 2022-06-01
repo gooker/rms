@@ -6,7 +6,7 @@ import Dictionary from '@/utils/Dictionary';
 import LabelComponent from '@/components/LabelComponent';
 import styles from './index.module.less';
 
-const HardwareTab = (props) => {
+const VehicleWorkState = (props) => {
   const { data } = props;
 
   function renderCreateTime(time) {
@@ -97,7 +97,7 @@ const HardwareTab = (props) => {
     <Row gutter={{ xs: 4, sm: 8, md: 14, lg: 16 }}>
       <Col span={12}>
         {/* 小车ID */}
-        <LabelComponent label={formatMessage({ id: 'app.vehicle.id' })}>
+        <LabelComponent label={formatMessage({ id: 'vehicle.id' })}>
           {data?.vehicle?.vehicleId}
         </LabelComponent>
 
@@ -276,4 +276,4 @@ const HardwareTab = (props) => {
   );
 };
 
-export default React.memo(HardwareTab);
+export default React.memo(VehicleWorkState);

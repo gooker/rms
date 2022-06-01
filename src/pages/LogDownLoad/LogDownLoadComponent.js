@@ -4,11 +4,11 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import { VehicleState, Colors, LogFileTypes } from '@/config/consts';
+import { Colors, LogFileTypes, VehicleState } from '@/config/consts';
 import {
   downloadLogFromSFTP,
-  fetchVehicleLog,
   fetchAllVehicleList,
+  fetchVehicleLog,
   forceResetLogGeneration,
   startCreatingLog,
 } from '@/services/api';
@@ -44,7 +44,7 @@ const LogDownLoadComponent = (props) => {
       width: 150,
     },
     {
-      title: formatMessage({ id: 'app.vehicle.id' }),
+      title: formatMessage({ id: 'vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
       width: 150,
@@ -239,7 +239,7 @@ const LogDownLoadComponent = (props) => {
             <Col style={{ width: '200px' }}>
               <Form.Item
                 name={'vehicleId'}
-                label={formatMessage({ id: 'app.vehicle.id' })}
+                label={formatMessage({ id: 'vehicle.id' })}
                 rules={[{ required: true }]}
               >
                 <Select allowClear style={{ width: '100%' }}>

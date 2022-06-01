@@ -38,7 +38,6 @@ export default {
   'customTasks.requestBodyDemo': '请求体示例',
   'customTasks.cannotEdit': '不可更改',
   'customTask.form.invalid': '表单数据错误',
-  'customTasks.form.useVariable': '可使用变量',
   'customTasks.operationType.add': '新增动作',
   'customTasks.operationType.update': '替换动作',
   'customTasks.operationType.delete': '删除动作',
@@ -85,7 +84,8 @@ export default {
   'customTask.form.canReCalculatePath': '自动切换路线',
   'customTask.form.runAction': '行走动作',
   'customTask.form.turnAction': '转弯动作',
-  'customTask.form.podAngle': '载具方向',
+  'customTask.form.podAngle': '载具角度',
+  'customTask.form.podSide': '载具面',
   'customTask.form.firstActions': '起点动作',
   'customTask.form.afterFirstActions': '第二点位动作',
   'customTask.form.beforeLastActions': '倒数第二动作',
@@ -117,7 +117,7 @@ export default {
   'customTask.form.blindDown': '盲降',
   'customTask.form.upAction': '顶升协议',
   'customTask.form.downAction': '下降协议',
-  'customTask.form.operatorDirection': '操作者方向',
+  'customTask.form.operatorDirection': '操作者位置',
 
   // 待命子任务
   'customTask.form.waitTime': '待命时长',

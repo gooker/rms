@@ -20,7 +20,7 @@ export async function getHAChangeHistory() {
 // 获取潜伏车货架列表
 export async function fetchLatentPodList() {
   const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace.LatentLifting}/pod/list/${sectionId}`, {
+  return request(`/${NameSpace.Platform}/pod/list/${sectionId}`, {
     method: 'GET',
   });
 }
@@ -162,7 +162,7 @@ export async function getToteTaskRealtimeState(type) {
 
 // 更新货架位置
 export async function updateLatentPodPosition(payload) {
-  return request(`/${NameSpace.LatentLifting}/pod/updatePodCellId`, {
+  return request(`/${NameSpace.Platform}/pod/updatePodCellId`, {
     method: 'POST',
     data: payload,
   });
@@ -170,7 +170,7 @@ export async function updateLatentPodPosition(payload) {
 
 // 更新货架尺寸
 export async function updateLatentPodSize(payload) {
-  return request(`/${NameSpace.LatentLifting}/pod/updatePodSize`, {
+  return request(`/${NameSpace.Platform}/pod/updatePodSize`, {
     method: 'POST',
     data: payload,
   });

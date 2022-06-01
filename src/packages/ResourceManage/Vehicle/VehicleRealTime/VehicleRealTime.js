@@ -4,9 +4,9 @@ import { ToolOutlined } from '@ant-design/icons';
 import {
   convertToUserTimezone,
   formatMessage,
-  getVehicleStatusTag,
   getDirectionLocale,
   getSuffix,
+  getVehicleStatusTag,
   isNull,
   renderBattery,
 } from '@/utils/util';
@@ -19,8 +19,8 @@ import { connect } from '@/utils/RmsDva';
 
 const { red, green, yellow } = Dictionary('color');
 
-const RealTimeTab = (props) => {
-  const { data, allTaskTypes } = props;
+const VehicleRealTime = (props) => {
+  const { data } = props;
 
   function renderVehicleDirection(value, format) {
     if (isNull(value)) {
@@ -139,7 +139,7 @@ const RealTimeTab = (props) => {
       {/* 左侧 */}
       <Col span={12}>
         {/************ 小车ID ************/}
-        <LabelComponent label={formatMessage({ id: 'app.vehicle.id' })}>
+        <LabelComponent label={formatMessage({ id: 'vehicle.id' })}>
           {data?.vehicle?.vehicleId}
         </LabelComponent>
 
@@ -147,7 +147,7 @@ const RealTimeTab = (props) => {
         <LabelComponent label={'ip'}>{data?.vehicle?.ip}</LabelComponent>
 
         {/************ 端口号 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.vehicle.port' })}>
+        <LabelComponent label={formatMessage({ id: 'vehicle.port' })}>
           {data?.vehicle?.port}
         </LabelComponent>
 
@@ -181,7 +181,7 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 小车状态 ************/}
-        <LabelComponent label={formatMessage({ id: 'app.vehicleStatus' })}>
+        <LabelComponent label={formatMessage({ id: 'app.vehicleState' })}>
           {renderVehicleStatus()}
         </LabelComponent>
 
@@ -227,7 +227,10 @@ const RealTimeTab = (props) => {
             <Popover content={data.redisVehicle.currentTaskId} trigger="hover">
               <span style={{ cursor: 'pointer', color: 'blue' }}>
                 {'*' +
-                  data.redisVehicle.currentTaskId.substr(data.redisVehicle.currentTaskId.length - 6, 6)}
+                  data.redisVehicle.currentTaskId.substr(
+                    data.redisVehicle.currentTaskId.length - 6,
+                    6,
+                  )}
               </span>
             </Popover>
           ) : null}
@@ -271,19 +274,21 @@ const RealTimeTab = (props) => {
         </LabelComponent>
 
         {/************ 锁定目标点 ************/}
-        <LabelComponent label={<FormattedMessage id="app.activity.lockedTargetSpots" />}>
-          {data?.redisVehicle?.lockedTargetCells && data?.redisVehicle?.lockedTargetCells.length > 0 ? (
+        <LabelComponent label={<FormattedMessage id='app.activity.lockedTargetSpots' />}>
+          {data?.redisVehicle?.lockedTargetCells &&
+          data?.redisVehicle?.lockedTargetCells.length > 0 ? (
             <span>{renderArray(data.redisVehicle.lockedTargetCells)}</span>
           ) : null}
         </LabelComponent>
 
         {/************ 临时不可走点 ************/}
-        <LabelComponent label={<FormattedMessage id="app.activity.lockedTemporarySpots" />}>
-          {data?.redisVehicle?.lockedTemporaryCells && data.redisVehicle.lockedTemporaryCells.length > 0 ? (
+        <LabelComponent label={<FormattedMessage id='app.activity.lockedTemporarySpots' />}>
+          {data?.redisVehicle?.lockedTemporaryCells &&
+          data.redisVehicle.lockedTemporaryCells.length > 0 ? (
             <span>
               <span>{renderArray(data.redisVehicle.lockedTemporaryCells)}</span>
-              <Button danger size="small" style={styles.suffixStyle}>
-                <FormattedMessage id="app.button.unbind" />
+              <Button danger size='small' style={styles.suffixStyle}>
+                <FormattedMessage id='app.button.unbind' />
               </Button>
             </span>
           ) : null}
@@ -294,4 +299,4 @@ const RealTimeTab = (props) => {
 };
 export default connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
-}))(memo(RealTimeTab));
+}))(memo(VehicleRealTime));

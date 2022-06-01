@@ -4,10 +4,10 @@ import { Button, Modal } from 'antd';
 import { DownloadOutlined, HistoryOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchVehicleFileStatusList,
   fetchMaintain,
   fetchUpdateFileTask,
   fetchUpgradeFirmwareFile,
+  fetchVehicleFileStatusList,
   upgradeVehicle,
 } from '@/services/api';
 import TableWithPages from '@/components/TableWithPages';
@@ -113,7 +113,7 @@ class BatchUpgradingComponent extends Component {
     RmsConfirm({
       content: (
         <div>
-          {formatMessage({ id: 'app.vehicle.id' })}:{record.vehicleId}
+          {formatMessage({ id: 'vehicle.id' })}:{record.vehicleId}
         </div>
       ),
       onOk: async () => {

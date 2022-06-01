@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Button, Input, Row, Col, Select } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -41,7 +41,7 @@ const SearchTargetLock = (props) => {
         {!verhicleHide && (
           <Col span={4}>
             {/* 小车id */}
-            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'app.vehicle.id' })}>
+            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
               <Input allowClear />
             </Form.Item>
           </Col>

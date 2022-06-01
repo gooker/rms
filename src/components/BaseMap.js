@@ -28,7 +28,7 @@ function initState(context) {
   context.idNaviMap = new Map();
 
   context.idLineMap = new Map(); // {x1_y1_x2_y2: graphics}
-  context.idArrowMap = new Map(); // {x_y:arrow}
+  context.idArrowMap = new Map(); // {sourceCellId-targetCellId:arrow}
 
   context.workStationMap = new Map(); // {stopCellId: [Entity]}
   context.elevatorMap = new Map(); // {[x${x}y${y}]: [Entity]}
@@ -917,7 +917,7 @@ export default class BaseMap extends React.PureComponent {
    */
   renderTunnel = (newChannelList = [], interact = false, opt = 'add') => {
     newChannelList.forEach((channelData) => {
-      const { tunnelName, cells } = channelData;
+      const { tunnelName, cells, giveWayCellMap, giveWayRelationMap } = channelData;
       cells.forEach((cellId) => {
         const cellEntity = this.idCellMap.get(cellId);
         const sprite = new BitText(tunnelName, 0, 0, 0xf4f9f9);
@@ -933,6 +933,18 @@ export default class BaseMap extends React.PureComponent {
           }
         }
       });
+      if (!isNull(giveWayCellMap)) {
+        Object.entries(giveWayCellMap).forEach(([source, target]) => {
+          const arrowEntity = this.idArrowMap.get(`${source}-${target}`);
+          arrowEntity && arrowEntity.setProgramingFlag();
+        });
+      }
+      if (!isNull(giveWayRelationMap)) {
+        Object.values(giveWayRelationMap).forEach(({ source, target }) => {
+          const arrowEntity = this.idArrowMap.get(`${source}-${target}`);
+          arrowEntity && arrowEntity.setProgramingFlag();
+        });
+      }
     });
   };
 

@@ -102,13 +102,13 @@ const EquipmentListTools = (props) => {
         </Col>
         <Col>
           <Button
-            type="dashed"
+            type='dashed'
             onClick={() => {
               dispatch({ type: 'equipList/fetchInitialData' });
               dispatch({ type: 'equipList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id="app.vehicleList.found" />
+            <ScanOutlined /> <FormattedMessage id='app.vehicle.found' />
             {unregisterDevices.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterDevices.length}]

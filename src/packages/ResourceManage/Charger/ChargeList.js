@@ -56,7 +56,7 @@ const ChargerList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.vehicle.port" />,
+      title: <FormattedMessage id='vehicle.port' />,
       dataIndex: 'port',
       align: 'center',
     },

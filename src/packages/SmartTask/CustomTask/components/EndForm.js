@@ -2,11 +2,10 @@ import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Col, Form, Input, Row, Switch } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 
-const { formItemLayout } = getFormLayout(6, 18);
 const DynamicButton = {
   display: 'flex',
   alignItems: 'center',
@@ -21,7 +20,6 @@ const EndForm = (props) => {
     <>
       <Form.Item
         hidden
-        {...formItemLayout}
         name={[code, 'customType']}
         initialValue={type}
         label={<FormattedMessage id='app.common.type' />}
@@ -30,7 +28,6 @@ const EndForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden
-        {...formItemLayout}
         name={[code, 'code']}
         initialValue={code}
         label={formatMessage({ id: 'app.common.code' })}
@@ -40,11 +37,7 @@ const EndForm = (props) => {
 
       {/* --------------------------------------------------------------- */}
       {/* 重车返回区域 */}
-      <Form.Item
-        hidden={hidden}
-        label={formatMessage({ id: 'customTask.form.heavyBackZone' })}
-        {...formItemLayout}
-      >
+      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.heavyBackZone' })}>
         <Form.List name={[code, 'heavyBackZone']} initialValue={[]}>
           {(fields, { add, remove }) => (
             <>
@@ -71,11 +64,7 @@ const EndForm = (props) => {
       </Form.Item>
 
       {/* 返回区域 */}
-      <Form.Item
-        hidden={hidden}
-        label={formatMessage({ id: 'customTask.form.backZone' })}
-        {...formItemLayout}
-      >
+      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.backZone' })}>
         <Form.List name={[code, 'backZone']} initialValue={[]}>
           {(fields, { add, remove }) => (
             <>
@@ -104,7 +93,6 @@ const EndForm = (props) => {
       {/* 自动充电 */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'vehicleNeedCharge']}
         initialValue={true}
         valuePropName={'checked'}
@@ -116,7 +104,6 @@ const EndForm = (props) => {
       {/* 备注 */}
       <Form.Item
         hidden={hidden}
-        {...formItemLayout}
         name={[code, 'remark']}
         label={formatMessage({ id: 'app.common.remark' })}
       >

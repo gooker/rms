@@ -1,19 +1,8 @@
 /* TODO: I18N */
 import React, { memo, useState } from 'react';
-import {
-  Form,
-  Radio,
-  Modal,
-  Select,
-  Input,
-  InputNumber,
-  Row,
-  Col,
-  AutoComplete,
-  Button,
-} from 'antd';
+import { AutoComplete, Button, Col, Form, Input, InputNumber, Modal, Radio, Row, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { getFormLayout, formatMessage, dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { connect } from '@/utils/RmsDva';
 import { findVehicle } from '@/services/resourceManageAPI';
@@ -103,7 +92,7 @@ const AddRegistrationModal = (props) => {
 
             <Form.Item
               name={'port'}
-              label={<FormattedMessage id={'app.vehicle.port'} />}
+              label={<FormattedMessage id={'vehicle.port'} />}
               rules={[{ required: true }]}
             >
               <InputNumber />

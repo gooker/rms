@@ -66,7 +66,7 @@ const SorterThrow = (props) => {
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
             name={'vehicleId'}
-            label={formatMessage({ id: 'app.vehicle.id' })}
+            label={formatMessage({ id: 'vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Select mode={'tags'} />

@@ -92,7 +92,7 @@ export default [
       {
         path: `/${AppCode.ResourceManage}/vehicle/realTime`,
         name: 'realTime',
-        component: '/ResourceManage/Vehicle/VehicleRealTime',
+        component: '/ResourceManage/Vehicle/Index',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
       {

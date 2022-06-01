@@ -31,6 +31,10 @@ class MainLayout extends React.Component {
   };
 
   async componentDidMount() {
+    if (!window.$$isProduction) {
+      window.localStorage.setItem('dev', 'true');
+    }
+
     const _this = this;
     const { dispatch, history, textureLoaded } = this.props;
     // 挂载push函数

@@ -115,7 +115,7 @@ const RemoteControl = (props) => {
         <Form form={formRef} {...formItemLayout}>
           <Form.Item
             name={'uniqueIds'}
-            label={formatMessage({ id: 'app.vehicle.id' })}
+            label={formatMessage({ id: 'vehicle.id' })}
             rules={[{ required: true }]}
           >
             <Select

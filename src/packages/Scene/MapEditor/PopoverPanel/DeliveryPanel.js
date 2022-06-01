@@ -47,7 +47,7 @@ const DeliveryPanel = (props) => {
           },
           {
             field: 'vehicleDirection',
-            label: <FormattedMessage id={'app.vehicle.direction'} />,
+            label: <FormattedMessage id={'vehicle.direction'} />,
             value: vehicleDirection,
           },
           { field: 'X', label: 'X', value: x },

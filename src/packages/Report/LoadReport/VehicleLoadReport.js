@@ -420,7 +420,7 @@ const HealthCar = (props) => {
   };
   const columns = [
     {
-      title: <FormattedMessage id='app.vehicle.id' />,
+      title: <FormattedMessage id='vehicle.id' />,
       dataIndex: 'vehicleId',
       sorter: (a, b) => a.vehicleId - b.vehicleId,
     },

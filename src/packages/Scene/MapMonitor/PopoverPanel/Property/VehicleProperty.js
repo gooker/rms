@@ -4,14 +4,14 @@ import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchVehicleInfo,
-  fetchVehicleRunningInfo,
   fetchMaintain,
   fetchManualMode,
+  fetchVehicleInfo,
+  fetchVehicleRunningInfo,
   getAlertCentersByTaskIdOrVehicleId,
 } from '@/services/api';
 import { vehicleRemoteControl, vehicleToRest, vehicleTryToCharge } from '@/services/monitor';
-import { dealResponse, formatMessage, isStrictNull, renderVehicleState, renderBattery } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
@@ -255,7 +255,7 @@ const VehicleElementProp = (props) => {
                 src={require('@/packages/Scene/icons/electricity.png').default}
               />
               <span>
-                <FormattedMessage id={'app.vehicle.electricity'} />
+                <FormattedMessage id={'vehicle.electricity'} />
               </span>
             </div>
             <div>{vehicleInfo?.battery && renderBattery(vehicleInfo?.battery)}</div>

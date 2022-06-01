@@ -1,8 +1,8 @@
 /* TODO: I18N */
 import React, { memo, useEffect } from 'react';
-import { Form, Modal, Select, Input, InputNumber } from 'antd';
+import { Form, Input, InputNumber, Modal, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { getFormLayout, dealResponse } from '@/utils/util';
+import { dealResponse, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { addDevice } from '@/services/resourceManageAPI';
 
@@ -68,7 +68,7 @@ const AddRegistrationModal = (props) => {
           <Input />
         </Form.Item>
 
-        <Form.Item name={'port'} label={<FormattedMessage id={'app.vehicle.port'} />}>
+        <Form.Item name={'port'} label={<FormattedMessage id={'vehicle.port'} />}>
           <InputNumber />
         </Form.Item>
       </Form>

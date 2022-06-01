@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, Empty, Modal, Space, Spin } from 'antd';
-import { CopyOutlined, EyeOutlined, ReloadOutlined, EditOutlined } from '@ant-design/icons';
+import { CopyOutlined, EditOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
 import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleTypeDetail from './components/VehicleTypeDetail';

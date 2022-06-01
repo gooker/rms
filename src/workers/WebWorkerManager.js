@@ -211,7 +211,7 @@ WorkStationStatePolling.start = function (promises, dispatcher) {
   }
 
   const workStationURL = getDomainNameByUrl(
-    `/${NameSpace.LatentLifting}/vehicle-task/getWorkStationInstrument`,
+    `/${NameSpace.Platform}/vehicle-task/getWorkStationInstrument`,
   );
 
   WorkStationStatePolling.instance.postMessage({

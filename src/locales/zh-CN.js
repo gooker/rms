@@ -2,9 +2,6 @@ import menu from './zh-CN/menu';
 import task from './zh-CN/task';
 import global from './zh-CN/global';
 import common from './zh-CN/common';
-import vehicleList from './zh-CN/vehicleList';
-import vehicleModel from './zh-CN/vehicleModel';
-import vehicleRealTime from './zh-CN/vehicleRealTime';
 import request from './zh-CN/request';
 import requestor from './zh-CN/requestor';
 import collection from './zh-CN/collection';
@@ -31,6 +28,11 @@ import sourceManage from './zh-CN/Scene/sourcemanage';
 import alert from './zh-CN/Scene/alert';
 import latentTotStorage from './zh-CN/latentTotStorage';
 import containerLock from './zh-CN/Res/containLock';
+import vehicle from './zh-CN/vehicle';
+
+// TODO: 删除
+import vehicleList from './zh-CN/vehicleList';
+import vehicleRealTime from './zh-CN/vehicleRealTime';
 
 export default {
   ...menu,
@@ -38,11 +40,8 @@ export default {
   ...global,
   ...common,
   ...collection,
-  ...vehicleList,
-  ...vehicleModel,
   ...request,
   ...requestor,
-  ...vehicleRealTime,
   ...chargingStrategy,
   ...systemParameters,
   ...reportCenter,
@@ -66,4 +65,8 @@ export default {
   ...alert,
   ...latentTotStorage,
   ...containerLock,
+
+  ...vehicle,
+  ...vehicleList,
+  ...vehicleRealTime,
 };

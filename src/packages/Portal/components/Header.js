@@ -62,21 +62,6 @@ class Header extends React.Component {
     screenfull.toggle();
   };
 
-  changeEnvironment = (record) => {
-    const { dispatch } = this.props;
-    dispatch({
-      type: 'global/fetchUpdateEnvironment',
-      payload: record,
-    }).then((result) => {
-      if (result) {
-        window.sessionStorage.removeItem('nameSpacesInfo');
-        setTimeout(() => {
-          window.location.reload();
-        }, 500);
-      }
-    });
-  };
-
   changeSection = (record) => {
     const { key } = record;
     const { dispatch } = this.props;
@@ -133,11 +118,7 @@ class Header extends React.Component {
           {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
 
           {/* 环境切换 */}
-          <SelectEnvironment
-            changeEnvironment={(record) => {
-              this.changeEnvironment(record);
-            }}
-          />
+          <SelectEnvironment />
 
           {/* 用户中心 */}
           <UserCenter />
