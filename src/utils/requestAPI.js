@@ -5,8 +5,7 @@ import { isStrictNull } from '@/utils/util';
 /**
  * 自定义环境数据目前保存在LocalStorage，如果后续发现不方便的话，就改成使用IndexDB
  */
-function getApiURL(namespace, prefix) {
-  const configValue = window.extraConfig[namespace];
+export function getApiURL(namespace, configValue, prefix) {
   if (!isStrictNull(configValue)) {
     if (Number.isNaN(Number(configValue))) {
       // 完整的url
@@ -36,19 +35,21 @@ export default function requestAPI() {
       throw new Error('Please config valid url data in config.js');
     } else {
       // Platform
-      apiMap[NameSpace.Platform] = getApiURL(NameSpace.Platform);
+      apiMap[NameSpace.Platform] = getApiURL(
+        NameSpace.Platform,
+        window.extraConfig[NameSpace.Platform],
+      );
 
       // sso
       if (isStrictNull(window.extraConfig[NameSpace.SSO])) {
         apiMap[NameSpace.SSO] = apiMap[NameSpace.Platform];
       } else {
-        apiMap[NameSpace.SSO] = getApiURL(NameSpace.SSO);
+        apiMap[NameSpace.SSO] = getApiURL(NameSpace.SSO, window.extraConfig[NameSpace.SSO]);
       }
 
       // ws
-      apiMap[NameSpace.WS] = getApiURL(NameSpace.WS, 'ws');
+      apiMap[NameSpace.WS] = getApiURL(NameSpace.WS, window.extraConfig[NameSpace.WS]);
     }
-    apiMap[NameSpace.I18N] = apiMap.platform;
   } else {
     apiMap = {
       // NT-13 内网

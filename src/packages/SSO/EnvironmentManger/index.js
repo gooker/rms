@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Button, Col, message, Modal, Row, Switch } from 'antd';
+import { Button, Card, Col, Empty, Form, message, Modal, Row } from 'antd';
 import { BgColorsOutlined, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { addToClipBoard, adjustModalWidth, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
-import TableWithPages from '@/components/TableWithPages';
+import { GridResponsive } from '@/config/consts';
 import commonStyles from '@/common.module.less';
-import styles from './environmentManager.module.less';
 
 const StorageKey = 'customEnvs';
 export default class index extends Component {
@@ -16,59 +15,11 @@ export default class index extends Component {
 
   state = {
     dataList: [],
-    selectRow: [],
-    selectRowKey: [],
     editingRow: null,
     pasteVisible: false,
     addEnvironVisible: false,
     updateFlag: false,
   };
-
-  columns = [
-    {
-      title: <FormattedMessage id="environmentManager.envName" />,
-      dataIndex: 'envName',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="environmentManager.isDefault" />,
-      dataIndex: 'flag',
-      align: 'center',
-      render: (text, record) => (
-        <Switch
-          checked={text === '1'}
-          checkedChildren={<FormattedMessage id='app.common.true' />}
-          unCheckedChildren={<FormattedMessage id='app.common.false' />}
-          onChange={(checked) => {
-            this.changeStatus(record, checked);
-          }}
-        />
-      ),
-    },
-    {
-      title: <FormattedMessage id={'app.common.operation'} />,
-      key: 'action',
-      align: 'center',
-      render: (_, record) => (
-        <>
-          <Button
-            type={'link'}
-            onClick={() => {
-              this.setState({
-                addEnvironVisible: true,
-                editingRow: record,
-              });
-            }}
-          >
-            <EditOutlined style={{ fontSize: 17 }} />
-          </Button>
-          <Button type={'link'} onClick={() => this.deleteEnvironment(record)}>
-            <DeleteOutlined style={{ fontSize: 17 }} />
-          </Button>
-        </>
-      ),
-    },
-  ];
 
   componentDidMount() {
     let dataList = window.localStorage.getItem(StorageKey);
@@ -79,27 +30,6 @@ export default class index extends Component {
     }
     this.setState({ dataList });
   }
-
-  renderExpandedRowRender = (row) => {
-    const result = [];
-    if (row.additionalInfos != null) {
-      row.additionalInfos.map((item) => {
-        result.push(
-          <Col xs={24} sm={12} md={12} lg={8} xl={8} key={item.key}>
-            <span className={styles.additionalInfos}>{item.key}:</span>
-            <span> {item.value}</span>
-          </Col>,
-        );
-      });
-    }
-    return <Row gutter={12}>{result}</Row>;
-  };
-
-  copyJson = () => {
-    const { selectRow } = this.state;
-    const str = JSON.stringify(selectRow);
-    addToClipBoard(str);
-  };
 
   onAddEnvironment = (values) => {
     const { dataList, editingRow } = this.state;
@@ -121,22 +51,15 @@ export default class index extends Component {
     window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
   };
 
+  copyJson = (record) => {
+    const str = JSON.stringify([record]);
+    addToClipBoard(str);
+  };
+
   pasteEnvironment = (envs) => {
     const { dataList } = this.state;
     const _dataList = dataList.concat(envs);
-    this.setState({ dataList: _dataList, selectRow: [], selectRowKey: [], pasteVisible: false });
-    window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
-  };
-
-  changeStatus = (record, flag) => {
-    const { dataList } = this.state;
-    const _dataList = dataList.map((item) => {
-      return {
-        ...item,
-        flag: item.id === record.id && flag ? '1' : '0',
-      };
-    });
-    this.setState({ dataList: _dataList });
+    this.setState({ dataList: _dataList, pasteVisible: false });
     window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
   };
 
@@ -165,7 +88,7 @@ export default class index extends Component {
   };
 
   render() {
-    const { selectRowKey, editingRow, dataList, pasteVisible, addEnvironVisible } = this.state;
+    const { editingRow, dataList, pasteVisible, addEnvironVisible } = this.state;
     return (
       <div className={commonStyles.commonPageStyle}>
         <div className={commonStyles.tableToolLeft}>
@@ -179,9 +102,6 @@ export default class index extends Component {
           >
             <PlusOutlined /> <FormattedMessage id='app.button.add' />
           </Button>
-          <Button disabled={selectRowKey.length === 0} onClick={this.copyJson}>
-            <CopyOutlined /> <FormattedMessage id='app.button.copy' />
-          </Button>
           <Button
             onClick={() => {
               this.setState({ pasteVisible: true });
@@ -191,20 +111,51 @@ export default class index extends Component {
           </Button>
         </div>
 
-        <TableWithPages
-          columns={this.columns}
-          dataSource={dataList}
-          rowKey={({ id }) => id}
-          rowSelection={{
-            selectedRowKeys: selectRowKey,
-            onChange: (selectRowKey, selectRow) => {
-              this.setState({ selectRowKey, selectRow });
-            },
-          }}
-          expandedRowRender={(row) => {
-            return this.renderExpandedRowRender(row);
-          }}
-        />
+        {dataList.length === 0 ? (
+          <Empty />
+        ) : (
+          <Row gutter={32}>
+            {dataList.map((record, index) => {
+              const { envName, additionalInfos } = record;
+              return (
+                <Col key={index} {...GridResponsive}>
+                  <Card
+                    hoverable
+                    title={envName}
+                    actions={[
+                      <EditOutlined
+                        key='edit'
+                        onClick={() => {
+                          this.setState({
+                            addEnvironVisible: true,
+                            editingRow: record,
+                          });
+                        }}
+                      />,
+                      <DeleteOutlined
+                        key='setting'
+                        onClick={() => this.deleteEnvironment(record)}
+                      />,
+                      <CopyOutlined
+                        key='copy'
+                        onClick={() => {
+                          this.copyJson(record);
+                        }}
+                      />,
+                    ]}
+                    bodyStyle={{ height: 220 }}
+                  >
+                    {additionalInfos?.map(({ key, value }) => (
+                      <Form.Item key={key} label={key}>
+                        {value}
+                      </Form.Item>
+                    ))}
+                  </Card>
+                </Col>
+              );
+            })}
+          </Row>
+        )}
 
         {/* 新增 */}
         <Modal

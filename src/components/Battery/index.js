@@ -6,9 +6,9 @@ import styles from './battery.module.less';
 const { red, green, yellow } = Dictionary('color');
 
 const BatteryCharge = (props) => {
-  const { value, onChange } = props;
+  const { value, onChange, slider = false } = props;
 
-  let backgroundColor = '#FFF';
+  let backgroundColor;
   if (parseInt(value) > 50) {
     backgroundColor = green;
   } else if (parseInt(value) > 10) {
@@ -29,9 +29,11 @@ const BatteryCharge = (props) => {
           />
         </div>
       </div>
-      <div className={styles.slider}>
-        <Slider vertical value={value} onChange={onChange} tooltipVisible={false} />
-      </div>
+      {slider && (
+        <div className={styles.slider}>
+          <Slider vertical value={value} onChange={onChange} tooltipVisible={false} />
+        </div>
+      )}
     </div>
   );
 };

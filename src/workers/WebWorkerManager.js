@@ -49,6 +49,7 @@ AlertCountPolling.start = function (dispatcher) {
 };
 
 AlertCountPolling.terminate = function () {
+  console.log('Closing Alert Count Polling...');
   if (!isNull(AlertCountPolling.instance)) {
     AlertCountPolling.instance.postMessage({
       state: 'end',

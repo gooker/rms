@@ -106,7 +106,7 @@ export function exportVehicleInfo(vehicleList) {
         value: 'vehicleId',
       },
       {
-        label: formatMessage({ id: 'app.vehicle.serverIdentity' }),
+        label: formatMessage({ id: 'vehicle.serverIdentity' }),
         value: 'clusterIndex',
       },
       {
@@ -134,7 +134,7 @@ export function exportVehicleInfo(vehicleList) {
         },
       },
       {
-        label: formatMessage({ id: 'app.vehicle.maintenanceState' }),
+        label: formatMessage({ id: 'vehicle.maintenanceState' }),
         value: (row) => {
           if (row.disabled) {
             return formatMessage({ id: 'app.vehicle.underMaintenance' });

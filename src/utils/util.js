@@ -4,13 +4,14 @@ import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'l
 import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
-import requestAPI from '@/utils/requestAPI';
+import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { Colors, ToteOffset, VehicleStateColor } from '@/config/consts';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
+import { NameSpace } from '@/config/config';
 
 /**
  * 将服务器时间转化成本地时间
@@ -357,8 +358,12 @@ export function extractNameSpaceInfoFromEnvs(env) {
   }
   const nameSpaceInfoMap = {};
   additionalInfos.forEach(({ key, value }) => {
-    nameSpaceInfoMap[key] = value;
+    nameSpaceInfoMap[key] = getApiURL(key, value);
   });
+  if (isStrictNull(nameSpaceInfoMap[NameSpace.SSO])) {
+    nameSpaceInfoMap[NameSpace.SSO] = nameSpaceInfoMap[NameSpace.Platform];
+  }
+  nameSpaceInfoMap[NameSpace.I18N] = nameSpaceInfoMap[NameSpace.Platform];
   return nameSpaceInfoMap;
 }
 

@@ -2,6 +2,7 @@
 export default {
   'app.adapterType': '适配器类型',
   'app.isSimulator': '是否模拟',
+  'app.arriveTime': '到达时间',
 
   // 日志下载
   'app.logDownload.fileName': '文件名称',

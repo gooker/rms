@@ -104,10 +104,10 @@ const TargetSelector = (props) => {
           <FormattedMessage id={'app.map.stationGroup'} />
         </Select.Option>
         <Select.Option value={'LOAD'}>
-          <FormattedMessage id={'app.object.load'} />
+          <FormattedMessage id={'object.load'} />
         </Select.Option>
         <Select.Option value={'LOAD_GROUP'}>
-          <FormattedMessage id={'app.object.loadGroup'} />
+          <FormattedMessage id={'object.loadGroup'} />
         </Select.Option>
       </Select>
 

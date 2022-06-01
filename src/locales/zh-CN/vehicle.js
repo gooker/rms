@@ -6,22 +6,31 @@ export default {
 
   'vehicle.info': '车辆信息',
   'vehicle.realTime': '车辆实时状态',
-  'vehicle.workState': '车辆工作状态',
   'vehicle.id': '小车ID',
   'vehicle.uniqueId': '唯一ID',
   'vehicle.brand': '品牌',
   'vehicle.port': '端口号',
   'vehicle.direction': '小车方向',
   'vehicle.electricity': '电量',
-  'vehicle.clusterIndex': '服务器标识',
+  'vehicle.serverIdentity': '服务器标识',
+
   'vehicle.currentPosition': '当前位置',
   'vehicle.currentCoordinator': '当前坐标',
   'vehicle.maintenanceState': '维护状态',
+  'vehicle.onlineState': '网络状态',
+  'vehicle.batteryStatus': '电池状态',
   'vehicle.manualMode': '手动模式',
-  'vehicle.onlineState': '小车网络状态',
   'vehicle.battery': '电量',
   'vehicle.batteryVoltage': '电压',
   'vehicle.batteryTemperature': '电池温度',
+  'vehicle.speed': '小车速度',
+  'vehicle.underMaintenance': '维护中',
+
+  // 小车操作
+  'vehicle.turnOnMaintain': '进入维护模式',
+  'vehicle.turnOffMaintain': '退出维护模式',
+  'vehicle.turnOnManual': '进入手动模式',
+  'vehicle.turnOffManual': '退出手动模式',
 
   // 小车类型
   'vehicleType.LatentLifting': '潜伏车',
@@ -30,6 +39,8 @@ export default {
   'vehicleType.Sorter': '分拣车',
 
   // 小车状态
+  'vehicleState.normal': '正常',
+  'vehicleState.exception': '异常',
   'vehicleState.available': '可用',
   'vehicleState.Idle': '空闲',
   'vehicleState.StandBy': '待命',

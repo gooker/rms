@@ -76,7 +76,7 @@ const DictionaryDataSource = {
     red: '#f5222d',
     blue: '#1890FF',
     green: '#2FC25B',
-    yellow: 'rgb(255, 205, 54)',
+    yellow: '#ff9600',
     purple: '#9e2ace',
     pink: '#ce2a7d',
     gray: '#b3b2b2',

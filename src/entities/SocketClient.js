@@ -36,9 +36,10 @@ class SocketClient {
   }
 
   disconnect() {
+    const _this = this;
     if (this.client) {
-      this.client.disconnect(() => {
-        this.client = null;
+      this.client.disconnect(function() {
+        _this.client = null;
       });
     }
   }
@@ -101,7 +102,6 @@ class SocketClient {
     const sectionId = window.localStorage.getItem('sectionId');
     let unsubscription;
 
-  
     // 小车状态
     unsubscription = this.client.subscribe(
       `/topic/ui_monitor_vehicle.s${sectionId}`,
@@ -167,8 +167,6 @@ class SocketClient {
     );
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
-  
-
     /// /////////////////////////// 充电桩  /////////////////////////////////////////
     unsubscription = this.client.subscribe(
       `/topic/COORDINATOR_CHARGER_STATUS.s${sectionId}`,
@@ -226,13 +224,11 @@ class SocketClient {
     this.podInStation = cb;
   }
 
-  
   registerToteStatusCallback(cb) {
     // 料箱车货架状态
     this.toteStatusCallback = cb;
   }
 
-  
   // 充电桩
   registerChargerStatusListener(cb) {
     this.chargerStatusCallback = cb;

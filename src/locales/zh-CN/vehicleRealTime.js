@@ -11,7 +11,6 @@ export default {
   'app.activity.modelInfo': '模块信息',
   'app.activity.distanceFromLastSpot': '当前位置距上个码距离',
   'app.activity.createDate': '加入时间',
-  'app.activity.manualMode': '手动模式',
   'app.activity.upliftPodId': '已举升货架',
   'app.activity.upliftPodDirection': '举升货架朝向',
   'app.activity.lockedPod': '上方货架',

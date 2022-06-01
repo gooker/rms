@@ -31,8 +31,6 @@ import containerLock from './zh-CN/Res/containLock';
 import vehicle from './zh-CN/vehicle';
 
 // TODO: 删除
-import vehicleList from './zh-CN/vehicleList';
-import vehicleRealTime from './zh-CN/vehicleRealTime';
 
 export default {
   ...menu,
@@ -65,8 +63,7 @@ export default {
   ...alert,
   ...latentTotStorage,
   ...containerLock,
-
   ...vehicle,
-  ...vehicleList,
-  ...vehicleRealTime,
+  // ...vehicleList,
+  // ...vehicleRealTime,
 };

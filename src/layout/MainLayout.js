@@ -74,7 +74,10 @@ class MainLayout extends React.Component {
             if (username !== 'admin') {
               // 初始化Socket客户端
               const { name, password } = currentSection;
-              const socketClient = new SocketClient({ login: name, passcode: password });
+              const socketClient = (this.socketClient = new SocketClient({
+                login: name,
+                passcode: password,
+              }));
               socketClient.connect();
               socketClient.registerNotificationQuestion((message) => {
                 // 如果关闭提示，就直接不拉取接口
@@ -133,6 +136,7 @@ class MainLayout extends React.Component {
   componentWillUnmount() {
     // 关闭所有 Web Worker
     AlertCountPolling.terminate();
+    this.socketClient.disconnect();
   }
 
   logout = () => {

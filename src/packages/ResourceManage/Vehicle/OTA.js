@@ -19,14 +19,14 @@ const OTA = (props) => {
         align: 'center',
       },
       {
-        title: <FormattedMessage id="app.vehicle.maintenanceState" />,
+        title: <FormattedMessage id='vehicle.maintenanceState' />,
         dataIndex: 'disabled',
         align: 'center',
         render: (text) => {
           if (!text) {
             return (
               <span style={{ color: green }}>
-                <FormattedMessage id="app.vehicle.normal" />
+                <FormattedMessage id='app.vehicle.normal' />
               </span>
             );
           } else {

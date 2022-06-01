@@ -27,27 +27,14 @@ class SelectUrl extends PureComponent {
 
   render() {
     const { allEnvs, activeEnv } = getAllEnvironments();
-    const envMenu = (
-      <Menu
-        selectedKeys={[activeEnv]}
-        onClick={(key) => {
-          this.changeEnvironment(key);
-        }}
-      >
-        {this.renderMenus(allEnvs)}
-      </Menu>
-    );
-    return (
-      <>
-        {allEnvs.length > 1 ? (
-          <Dropdown overlay={envMenu}>
-            <span className={styles.action}>
-              <IeOutlined />
-            </span>
-          </Dropdown>
-        ) : null}
-      </>
-    );
+    const envMenu = <Menu selectedKeys={[activeEnv]}>{this.renderMenus(allEnvs)}</Menu>;
+    return allEnvs.length > 1 ? (
+      <Dropdown overlay={envMenu}>
+        <span className={styles.action}>
+          <IeOutlined />
+        </span>
+      </Dropdown>
+    ) : null;
   }
 }
 export default SelectUrl;

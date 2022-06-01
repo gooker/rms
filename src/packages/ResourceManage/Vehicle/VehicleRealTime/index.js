@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Card, Form, Row, Select, Spin } from 'antd';
+import { Button, Card, Form, Row, Select } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -8,28 +8,23 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllVehicleList } from '@/services/api';
 import VehicleInformationTab from './VehicleInformation';
 import VehicleRealTimeTab from './VehicleRealTime';
-import VehicleWorkStateTab from './VehicleWorkState';
 import styles from './index.module.less';
 import commonStyles from '@/common.module.less';
-
-const { Option } = Select;
+import { VehicleList } from '@/mockData';
 
 @connect()
 class VehicleRealTime extends React.Component {
   state = {
-    isFetching: false,
-    vehicleList: [],
+    vehicleList: VehicleList,
     vehicle: null,
   };
 
   componentDidMount() {
-    this.getVehicleList();
+    // this.getVehicleList();
   }
 
   getVehicleList = async () => {
-    this.setState({ isFetching: true });
     let vehicleList = await fetchAllVehicleList();
-    this.setState({ isFetching: false });
     if (
       !dealResponse(vehicleList, false, formatMessage({ id: 'app.message.fetchVehicleListFail' }))
     ) {
@@ -42,51 +37,44 @@ class VehicleRealTime extends React.Component {
   };
 
   render() {
-    const { isFetching, vehicle, vehicleList } = this.state;
+    const { vehicle, vehicleList } = this.state;
     return (
-      <Spin spinning={isFetching}>
-        <div className={commonStyles.commonPageStyle}>
-          <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
-            <Form.Item label={<FormattedMessage id='vehicle.id' />}>
-              <Select
-                allowClear
-                showSearch
-                style={{ width: 200 }}
-                onChange={(uniqueId) => {
-                  const vehicle = find(vehicleList, { uniqueId });
-                  this.setState({ vehicle });
-                }}
-              >
-                {vehicleList.map(({ vehicleId, vehicleType, uniqueId }) => (
-                  <Option key={`${vehicleId}-${vehicleType}`} value={uniqueId}>
-                    {`${vehicleId}-${vehicleType}`}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
-            <Button onClick={this.getVehicleList}>
-              <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
-            </Button>
-          </Row>
+      <div className={commonStyles.commonPageStyle}>
+        <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
+          <Form.Item label={<FormattedMessage id='vehicle.id' />}>
+            <Select
+              allowClear
+              showSearch
+              style={{ width: 200 }}
+              onChange={(uniqueId) => {
+                const vehicle = find(vehicleList, { uniqueId });
+                this.setState({ vehicle });
+              }}
+            >
+              {vehicleList.map(({ vehicleId, vehicleType, uniqueId }) => (
+                <Select.Option key={`${vehicleId}-${vehicleType}`} value={uniqueId}>
+                  {`${vehicleId}-${vehicleType}`}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Button type={'primary'} onClick={this.getVehicleList}>
+            <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
+          </Button>
+        </Row>
 
-          <div className={styles.viewContainer}>
-            {/* 小车信息 */}
-            <Card title={<FormattedMessage id={'vehicle.info'} />}>
-              <VehicleInformationTab data={vehicle ?? {}} />
-            </Card>
+        <div className={styles.viewContainer}>
+          {/* 小车信息 */}
+          <Card title={<FormattedMessage id={'vehicle.info'} />}>
+            <VehicleInformationTab data={vehicle ?? {}} />
+          </Card>
 
-            {/* 小车实时状态*/}
-            <Card title={<FormattedMessage id={'vehicle.realTime'} />}>
-              <VehicleRealTimeTab data={vehicle ?? {}} />
-            </Card>
-
-            {/* 小车工作状态*/}
-            <Card title={<FormattedMessage id={'vehicle.WorkState'} />}>
-              <VehicleWorkStateTab data={vehicle ?? {}} />
-            </Card>
-          </div>
+          {/* 小车实时状态*/}
+          <Card title={<FormattedMessage id={'vehicle.realTime'} />}>
+            <VehicleRealTimeTab data={vehicle ?? {}} />
+          </Card>
         </div>
-      </Spin>
+      </div>
     );
   }
 }

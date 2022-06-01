@@ -318,10 +318,11 @@ export const JspdfData = {
 // Grid响应式常用配置
 export const GridResponsive = {
   xs: 24,
-  sm: 12,
+  sm: 24,
   md: 12,
   lg: 12,
   xl: 6,
+  xxl: 4,
 };
 
 // 潜伏料箱任务类型

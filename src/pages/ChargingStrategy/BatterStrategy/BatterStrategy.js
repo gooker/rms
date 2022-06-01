@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
-import { Button, Tooltip, Slider } from 'antd';
-import { MinusOutlined, PlusOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import Battery from '@/components/Battery/Battery';
+import { Button, Slider, Tooltip } from 'antd';
+import { InfoCircleOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import Battery from '@/components/Battery';
 import styles from './batteryStrategy.module.less';
 
 const ButtonGroup = Button.Group;

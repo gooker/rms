@@ -67,17 +67,17 @@ const VehicleList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.vehicle.maintenanceState" />,
+      title: <FormattedMessage id='vehicle.maintenanceState' />,
       dataIndex: 'disabled',
       align: 'center',
       render: (text) => {
         return (
           <span>
             {text ? (
-              <Tag color="red">
+              <Tag color='red'>
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id="app.vehicle.underMaintenance" />
+                  <FormattedMessage id='app.vehicle.underMaintenance' />
                 </span>
               </Tag>
             ) : (
@@ -94,7 +94,7 @@ const VehicleList = (props) => {
       render: (vehicleStatus) => getVehicleStatusTag(vehicleStatus),
     },
     {
-      title: <FormattedMessage id="app.vehicle.serverIdentity" />,
+      title: <FormattedMessage id='vehicle.serverIdentity' />,
       dataIndex: 'clusterIndex',
       align: 'center',
     },

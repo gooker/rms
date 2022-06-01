@@ -160,8 +160,9 @@ export default {
   'app.map.naviCoordinator': '导航坐标',
 
   // 场景元素
-  'app.object.load': '载具',
-  'app.object.loadGroup': '载具组',
+  'object.load': '载具',
+  'object.load.direction': '载具方向',
+  'object.loadGroup': '载具组',
 
   // 方向
   'app.direction': '方向',
