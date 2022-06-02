@@ -116,7 +116,6 @@ const StationForm = (props) => {
         }`;
 
         // 删除无用的字段
-        delete currentCommon['direction&&angle'];
         delete currentCommon.iconWidth;
         delete currentCommon.iconHeight;
 
@@ -171,8 +170,7 @@ const StationForm = (props) => {
       <Form form={formRef} layout={'vertical'} onValuesChange={onValuesChange}>
         {/* 隐藏字段 */}
         <Form.Item hidden name={'flag'} initialValue={flag} />
-        <Form.Item hidden name={'direction'} initialValue={station?.direction} />
-        <Form.Item hidden name={'angle'} initialValue={station?.angle} />
+
         {/* 类型 */}
         <Form.Item
           name={'customType'}
@@ -274,7 +272,7 @@ const StationForm = (props) => {
 
         {/* 站点角度 */}
         <Form.Item
-          name={'direction&&angle'}
+          name={'angle'}
           initialValue={station?.angle}
           label={<FormattedMessage id="app.common.angle" />}
           getValueFromEvent={(value) => {
@@ -286,11 +284,13 @@ const StationForm = (props) => {
           }}
         >
           <AngleSelector
+            disabled
+            width={'100%'}
             addonLabel={{
-              0: formatMessage({ id: 'app.direction.topSide' }),
-              90: formatMessage({ id: 'app.direction.rightSide' }),
-              180: formatMessage({ id: 'app.direction.bottomSide' }),
-              270: formatMessage({ id: 'app.direction.leftSide' }),
+              0: formatMessage({ id: 'app.direction.rightSide' }),
+              90: formatMessage({ id: 'app.direction.topSide' }),
+              180: formatMessage({ id: 'app.direction.leftSide' }),
+              270: formatMessage({ id: 'app.direction.bottomSide' }),
             }}
           />
         </Form.Item>
@@ -343,7 +343,11 @@ const StationForm = (props) => {
             <Form.Item label={formatMessage({ id: 'app.common.depth' })}>
               <Row gutter={10}>
                 <Col span={10}>
-                  <Form.Item noStyle name={'toteVehicleDepth'} initialValue={station?.toteVehicleDepth}>
+                  <Form.Item
+                    noStyle
+                    name={'toteVehicleDepth'}
+                    initialValue={station?.toteVehicleDepth}
+                  >
                     <InputNumber style={{ width: '100%' }} />
                   </Form.Item>
                 </Col>
@@ -414,7 +418,7 @@ const StationForm = (props) => {
           initialValue={station?.iconAngle || 0}
           label={<FormattedMessage id="app.common.angle" />}
         >
-          <AngleSelector getAngle />
+          <AngleSelector disabled width={'100%'} />
         </Form.Item>
 
         {/* 保存 */}

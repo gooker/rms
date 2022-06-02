@@ -4,13 +4,13 @@ import * as XLSX from 'xlsx';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import { VehicleState, CellSize, MapSelectableSpriteType, TaskPathColor } from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, TaskPathColor, VehicleState } from '@/config/consts';
 import {
-  getVehicleSelectBorderTexture,
   getCellHeatTexture,
   getIntersectionDirectionTexture,
   getQrCodeSelectBorderTexture,
   getTaskPathTexture,
+  getVehicleSelectBorderTexture,
 } from '@/utils/textures';
 import json from '../../package.json';
 import CellEntity from '@/entities/CellEntity';
@@ -45,31 +45,25 @@ export function getDistance(pos, pos2) {
   return Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2);
 }
 
-/**
- * 计算 p2点相对p1地点的角度，，也就是相对y轴正方向(标准数学坐标系)的顺时针角度
- * @param p1 from
- * @param p2 to
- * @returns {number}
- */
-export function getAngle(p1, p2) {
-  const angle = Math.atan2(p2.y - p1.y, p2.x - p1.x); // 弧度 -0.6435011087932844, 即 2*Math.PI - 0.6435011087932844
-  const theta = angle * (180 / Math.PI) + 90; // Math.atan2是按x轴的逆向角度，转换为按Y轴的正向角度
-  if (theta < 0) {
-    return 360 + theta;
+export function getAngle(source, target) {
+  const angle = Math.atan2(target.y - source.y, target.x - source.x) * (180 / Math.PI);
+  if (angle > 0) {
+    return 360 - angle;
   }
-  return theta;
+  return -angle;
 }
 
-/**
- * 根据目标点、角度和距离计算坐标
- * @param {*} target 点对象
- * @param {*} angle 角度
- * @param {*} r 距离
- */
-export function getCoordinat(target, angle, r) {
-  const x = Math.floor(Math.cos(Math.PI * (angle / 180) - Math.PI / 2) * r) + target.x;
-  const y = Math.floor(Math.sin(Math.PI * (angle / 180) - Math.PI / 2) * r) + target.y;
+export function getCoordinator(source, angle, r) {
+  const rad = (angle * Math.PI) / 180;
+  const x = Math.trunc(Math.cos(rad) * r) + source.x;
+  const y = -Math.trunc(Math.sin(rad) * r) + source.y;
   return { x, y };
+}
+
+// 数学坐标系的角度转化成PIXI的角度
+export function convertAngleToPixiAngle(angle) {
+  if (angle === 0) return 0;
+  return 360 - angle;
 }
 
 export function getLineJson(source, target, cost, type) {
@@ -511,7 +505,7 @@ export function renderWorkStationList(workstationList, cellMap) {
     if (!isStrictNull(stopCellId) && !isStrictNull(angle)) {
       const stopCell = cellMap[stopCellId];
       if (!isNull(stopCell)) {
-        const { x, y } = getCoordinat({ x: stopCell.x, y: stopCell.y }, angle, offset || 1900);
+        const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, offset || 1900);
         return { ...record, x, y };
       }
       return record;
@@ -531,7 +525,7 @@ export function generateChargerXY(charger, cellMap) {
   if (stopCellCollection.length === 1) {
     const stopCell = stopCellCollection[0];
     if (!isNull(stopCell)) {
-      const { x, y } = getCoordinat({ x: stopCell.x, y: stopCell.y }, angle, 1000);
+      const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, 1000);
       return { x, y, ...charger };
     }
   } else {
@@ -552,7 +546,7 @@ export function generateChargerXY(charger, cellMap) {
         stopCell = sorted[0];
       }
     }
-    const { x, y } = getCoordinat({ x: stopCell.x, y: stopCell.y }, angle, 1000);
+    const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, 1000);
     return { x, y, ...charger };
   }
 }

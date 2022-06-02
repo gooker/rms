@@ -3,14 +3,7 @@ import { Button, Form, Input, InputNumber, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import {
-  formatMessage,
-  getFormLayout,
-  getRandomString,
-  isEmptyPlainObject,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { formatMessage, getFormLayout, getRandomString, isEmptyPlainObject, isNull, isStrictNull } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
 import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';
@@ -22,7 +15,6 @@ const { formItemLayout: formItemLayout2 } = getFormLayout(6, 18);
 
 const ChargerForm = (props) => {
   const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, allAdaptors } = props;
-  console.log(charger);
   const [formRef] = Form.useForm();
 
   function onValueChange(changedValues, allValues) {
@@ -150,13 +142,12 @@ const ChargerForm = (props) => {
       >
         <AngleSelector
           disabled
-          getAngle
           width={'100%'}
           addonLabel={{
-            0: formatMessage({ id: 'app.direction.topSide' }),
-            90: formatMessage({ id: 'app.direction.rightSide' }),
-            180: formatMessage({ id: 'app.direction.bottomSide' }),
-            270: formatMessage({ id: 'app.direction.leftSide' }),
+            0: formatMessage({ id: 'app.direction.rightSide' }),
+            90: formatMessage({ id: 'app.direction.topSide' }),
+            180: formatMessage({ id: 'app.direction.leftSide' }),
+            270: formatMessage({ id: 'app.direction.bottomSide' }),
           }}
         />
       </Form.Item>

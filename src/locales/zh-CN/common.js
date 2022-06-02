@@ -229,6 +229,7 @@ export default {
   'app.task.action': '任务细节',
   'app.task.step': '任务步骤',
   'app.task.flow': '任务流程',
+  'app.task.pre': '前置任务',
   'app.task.history': '历史任务',
   'app.task.path': '任务路径',
   'app.task.detail': '任务详情',

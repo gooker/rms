@@ -1,4 +1,7 @@
 export default {
+  'app.notification.central': '问题处理中心',
+  'app.notification.reportProblem': '上报了错误消息',
+
   'app.notification.broadCastChannel': '广播频道',
 
   'app.notification.broadCastPattern': '播报渠道',

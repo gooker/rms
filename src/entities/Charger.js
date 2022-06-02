@@ -3,13 +3,7 @@ import { SmoothGraphics } from '@pixi/graphics-smooth';
 import Text from './Text';
 import { isNull, isStrictNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import {
-  zIndex,
-  ChargerSize,
-  SelectionType,
-  ChargerStateColor,
-  MapSelectableSpriteType,
-} from '@/config/consts';
+import { ChargerSize, ChargerStateColor, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
 export default class Charger extends PIXI.Container {
   constructor(props) {
@@ -93,12 +87,8 @@ export default class Charger extends PIXI.Container {
       this.nameSprite = null;
     }
 
-    const y = this.charger.height / 2 + 200;
-    let name = this.name;
-    // if (this.chargerId) {
-    //   name = `${name} [${this.chargerId}]`;
-    // }
-    this.nameSprite = new Text(name, 0, -y, 0xffffff, false, 150);
+    const x = this.charger.width / 2 + 150;
+    this.nameSprite = new Text(this.name, x, 0, 0xffffff, false, 150);
     this.nameSprite.angle = -this.angle;
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);

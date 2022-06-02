@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
-import { getCoordinat } from '@/utils/mapUtil';
-import { isStrictNull, formatMessage } from '@/utils/util';
+import { getCoordinator } from '@/utils/mapUtil';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
 
 export default class RealtimeRate extends PIXI.Container {
@@ -37,7 +37,7 @@ export default class RealtimeRate extends PIXI.Container {
     if ((commonAngle >= 90 && commonAngle < 180) || (commonAngle >= 270 && commonAngle < 360)) {
       r = props.iconwidth + 500 || 1500;
     }
-    const { x, y } = getCoordinat({ x: commonX, y: commonY }, commonAngle, r);
+    const { x, y } = getCoordinator({ x: commonX, y: commonY }, commonAngle, r);
     this.x = x;
     this.y = y;
     this.$style = {

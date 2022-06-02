@@ -28,7 +28,7 @@ export default class CostArrow extends PIXI.Container {
     this.arrow = new PIXI.Sprite(
       getTextureFromResources(`cost_${this.cost}${withPrograming ? '_p' : ''}`),
     );
-    this.arrow.anchor.set(0.5, 0);
+    this.arrow.anchor.set(1, 0.5);
     this.arrow.scale.set(0.6);
     this.addChild(this.arrow);
 

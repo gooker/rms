@@ -42,7 +42,7 @@
   }
 }
 
-.layoutDivider {
+.layoutGap {
   width: 40px;
   border-right: 1px solid #b8b5b5;
 }
@@ -52,7 +52,6 @@
   display: flex;
   flex-flow: column nowrap;
   width: 180px;
-  border: 1px solid @layoutBorderColor;
 
   :global {
     .smooth-dnd-container {
@@ -65,6 +64,11 @@
   }
 }
 
+.dndItem {
+  overflow: auto;
+  border: 1px solid @layoutBorderColor;
+}
+
 .dndTitle {
   display: flex;
   align-items: center;
@@ -72,9 +76,7 @@
   height: 40px;
   font-weight: 500;
   font-size: 16px;
-  background: @highlightColor;
   border-bottom: 1px solid @layoutBorderColor;
-  user-select: none;
 }
 
 .dndList {
@@ -84,6 +86,12 @@
   align-items: center;
   padding-bottom: 8px;
   overflow: auto;
+}
+
+.preTask {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
 }
 
 // 右侧展示 & 操作区
