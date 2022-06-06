@@ -11,7 +11,6 @@ import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/Cus
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
-import { NameSpace } from '@/config/config';
 
 /**
  * 将服务器时间转化成本地时间
@@ -360,10 +359,6 @@ export function extractNameSpaceInfoFromEnvs(env) {
   additionalInfos.forEach(({ key, value }) => {
     nameSpaceInfoMap[key] = getApiURL(key, value);
   });
-  if (isStrictNull(nameSpaceInfoMap[NameSpace.SSO])) {
-    nameSpaceInfoMap[NameSpace.SSO] = nameSpaceInfoMap[NameSpace.Platform];
-  }
-  nameSpaceInfoMap[NameSpace.I18N] = nameSpaceInfoMap[NameSpace.Platform];
   return nameSpaceInfoMap;
 }
 

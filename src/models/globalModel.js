@@ -1,10 +1,10 @@
 import moment from 'moment';
-import { fetchAlertCount, fetchUpdateEnvironment } from '@/services/global';
 import { fetchUpdateUserCurrentLanguage } from '@/services/SSO';
 import { convertMenuData2RouteData, dealResponse, formatMessage } from '@/utils/util';
 import { convertAllMenu, sortAppList } from '@/utils/init';
 import { AppCode } from '@/config/config';
 import allModuleRouter from '@/config/router';
+import { fetchAlertCount } from '@/services/api';
 import { deleteSysLang } from '@/services/translator';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 import zhCN from 'antd/lib/locale/zh_CN';
@@ -260,16 +260,6 @@ export default {
       }
       yield put({ type: 'updateAlertCount', payload: response });
       return response;
-    },
-
-    *fetchUpdateEnvironment({ payload }, { call }) {
-      let response = null;
-      if (payload.id === 0) {
-        response = yield call(fetchUpdateEnvironment, { appCode: 'MixVehicle', id: '' });
-      } else {
-        response = yield call(fetchUpdateEnvironment, { appCode: 'MixVehicle', id: payload.id });
-      }
-      return !dealResponse(response, formatMessage({ id: 'app.header.option.switchEnvSuccess' }));
     },
 
     *updateGlobalLocale({ payload }, { call, put }) {

@@ -1,16 +1,17 @@
 // 前端模块编码
 export const AppCode = {
-  Scene: 'Scene',
   ResourceManage: 'ResourceManage',
   LatentPod: 'LatentPod',
   LatentTote: 'LatentTote',
   Tote: 'Tote',
   FlexibleSorting: 'FlexibleSorting',
   SmartTask: 'SmartTask',
-  Strategy: 'Strategy',
+  Scene: 'Scene',
   Report: 'Report',
+  Strategy: 'Strategy',
   SSO: 'SSO',
 
+  // 暂时用不到
   ForkLift: 'ForkLift',
   Cleaning: 'Cleaning',
   VehicleManned: 'VehicleManned',
@@ -31,8 +32,6 @@ export const VehicleType = {
 // namespace
 export const NameSpace = {
   Platform: 'platform',
-  SSO: 'sso',
-  I18N: 'translation',
   WS: 'ws',
 };
 

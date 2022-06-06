@@ -9,6 +9,6 @@ fs.access(distDir, (err) => {
   }
   fs.writeFileSync(
     path.resolve(__dirname, '../dist/config.js'),
-    'window.extraConfig = { sso: "http://52.83.193.245:10217", platform: "http://192.168.0.80:8088", ws: "ws://192.168.0.80:8081/ws" }',
+    'window.extraConfig = { platform: "http://192.168.0.80:8088", ws: "ws://192.168.0.80:8081/ws" }',
   );
 });

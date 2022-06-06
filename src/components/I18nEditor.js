@@ -1,14 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Input, Modal } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { fetchLanguageByAppCode } from '@/services/api';
-import {
-  convertMapToArrayMap,
-  dealResponse,
-  formatMessage,
-  getFormLayout,
-  isStrictNull,
-} from '@/utils/util';
+import { fetchLanguageByAppCode } from '@/services/translator';
+import { convertMapToArrayMap, dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 
 const { formItemLayout } = getFormLayout(5, 18);
 const I18NEditor = (props) => {

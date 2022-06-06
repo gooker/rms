@@ -2,11 +2,22 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 import { isStrictNull } from '@/utils/util';
 
-// ************************************** 国际化  ************************************** //
-export async function fetchLanguageByAppCode(params) {
-  return request(`/${NameSpace.I18N}/getTranslationByParam`, {
-    method: 'POST',
-    data: params,
+export async function fetchAppVersion() {
+  return request(`/${NameSpace.Platform}/api/getAppVersion`, {
+    method: 'GET',
+    attachSection: false,
+  });
+}
+
+export async function fetchAlertCount() {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterCount`, {
+    method: 'GET',
+  });
+}
+
+export async function fetchGetProblemDetail(problemId) {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterById/${problemId}`, {
+    method: 'GET',
   });
 }
 
@@ -748,8 +759,6 @@ export async function fetchAppModules(params) {
     data: params,
   });
 }
-
-
 
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {
