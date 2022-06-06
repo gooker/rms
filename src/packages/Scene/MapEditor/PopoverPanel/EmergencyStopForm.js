@@ -1,11 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Form, InputNumber, message, Input, Radio, Select } from 'antd';
+import { Button, Form, Input, InputNumber, message, Radio, Select } from 'antd';
 import { CheckOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { EmergencyStopMode, MapSelectableSpriteType } from '@/config/consts';
-import { fetchEmergencyStopList } from '@/services/XIHE';
-import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
+import { formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { getSelectionWorldCoordinator } from '@/utils/mapUtil';
 import ButtonInput from '@/components/ButtonInput';

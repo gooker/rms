@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { fetchAllVehicleList } from '@/services/api';
+import { fetchAllVehicleList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 

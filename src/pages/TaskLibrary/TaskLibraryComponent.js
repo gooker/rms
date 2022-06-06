@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Badge, Button, Divider, message, Table, Tooltip } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAllVehicleList, fetchBatchCancelTask, fetchVehicleTaskList } from '@/services/api';
+import { fetchAllVehicleList, fetchBatchCancelTask, fetchVehicleTaskList } from '@/services/commonService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskSearch from './TaskSearch';

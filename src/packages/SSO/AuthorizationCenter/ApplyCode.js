@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Button, message } from 'antd';
 import { saveAs } from 'file-saver';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getApplyToken } from '@/services/SSO';
+import { getApplyToken } from '@/services/SSOService';
 import { dealResponse, formatMessage } from '@/utils/util';
 import styles from './UploadSSOAppInfo.module.less';
 

@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { Badge, Button, Checkbox, Col, Form, Modal, Row, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchLatentToteStations, updateLatentToteStation } from '@/services/latentTote';
+import { fetchLatentToteStations, updateLatentToteStation } from '@/services/latentToteService';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';

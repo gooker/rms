@@ -1,16 +1,16 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Tag, Badge, Button, Switch, Drawer } from 'antd';
+import { Badge, Button, Drawer, Switch, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
-import { handleleChargers } from '@/services/resourceManageAPI';
+import { handleleChargers } from '@/services/resourceService';
 import ChargerListTools from './components/ChargerListTools';
 import ChargeRegisterPanel from './components/ChargeRegisterPanel';
-import { StatusColor, ChargerStatus } from './components/chargeConfig';
+import { ChargerStatus, StatusColor } from './components/chargeConfig';
 
 const ChargerList = (props) => {
   const { dispatch, searchParams, allChargers, loading, showRegisterPanel } = props;

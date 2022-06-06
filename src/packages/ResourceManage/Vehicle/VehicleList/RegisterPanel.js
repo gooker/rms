@@ -8,7 +8,7 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddRegistrationModal from '@/packages/ResourceManage/Vehicle/VehicleList/AddRegistrationModal';
 import RegisterVehicleModal from '@/packages/ResourceManage/Vehicle/VehicleList/RegisterVehicleModal';
-import { registerVehicle } from '@/services/resourceManageAPI';
+import { registerVehicle } from '@/services/resourceService';
 import commonStyle from '@/common.module.less';
 
 const RegisterPanel = (props) => {

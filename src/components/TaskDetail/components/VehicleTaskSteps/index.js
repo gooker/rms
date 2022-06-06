@@ -1,12 +1,6 @@
-import React, { PureComponent } from 'react';
-import { Form, Steps, Divider, Tooltip } from 'antd';
-import {
-  MehOutlined,
-  LoadingOutlined,
-  SmileOutlined,
-  FrownOutlined,
-  ClockCircleOutlined,
-} from '@ant-design/icons';
+import React, { memo } from 'react';
+import { Divider, Form, Steps, Tooltip } from 'antd';
+import { ClockCircleOutlined, FrownOutlined, LoadingOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import RenderVehicleTaskActions from './RenderVehicleTaskActions';
 
@@ -27,11 +21,12 @@ const TaskStatusIcon = {
   Cancel: <ClockCircleOutlined />,
 };
 
-class VehicleTaskSteps extends PureComponent {
-  renderSteps = () => {
-    const {
-      taskDetail: { vehicleStepTasks },
-    } = this.props;
+const VehicleTaskSteps = (props) => {
+  const {
+    taskDetail: { translateMap, vehicleStepTasks },
+  } = props;
+
+  function renderSteps() {
     if (Array.isArray(vehicleStepTasks)) {
       return vehicleStepTasks.map((subTask, key) => (
         <Step
@@ -48,18 +43,15 @@ class VehicleTaskSteps extends PureComponent {
             </Tooltip>
           }
           description={
-            <div style={{ width: '100%', marginBottom: 20 }}>{this.renderTaskStep(subTask)}</div>
+            <div style={{ width: '100%', marginBottom: 20 }}>{renderTaskStep(subTask)}</div>
           }
         />
       ));
     }
     return [];
-  };
+  }
 
-  renderTaskStep = (subTask) => {
-    const {
-      taskDetail: { translateMap },
-    } = this.props;
+  function renderTaskStep(subTask) {
     const { stepTaskStatus } = subTask;
     let current = 0;
     if (stepTaskStatus === 'New') {
@@ -120,10 +112,8 @@ class VehicleTaskSteps extends PureComponent {
         </Form.Item>
       </Form>
     );
-  };
-
-  render() {
-    return <Steps direction="vertical">{this.renderSteps()}</Steps>;
   }
-}
-export default VehicleTaskSteps;
+
+  return <Steps direction="vertical">{renderSteps()}</Steps>;
+};
+export default memo(VehicleTaskSteps);

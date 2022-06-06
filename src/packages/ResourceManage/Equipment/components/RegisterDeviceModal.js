@@ -8,7 +8,7 @@ import { dealResponse, getFormLayout, adaptModalHeight, formatMessage } from '@/
 import {
   findDeviceActionsByDeviceType,
   findDeviceMonitorsByDeviceType,
-} from '@/services/resourceManageAPI';
+} from '@/services/resourceService';
 import DeviceActionsModal from './DeviceActionsModal';
 import DeviceStateConfigsModal from './DeviceStateConfigsModal';
 

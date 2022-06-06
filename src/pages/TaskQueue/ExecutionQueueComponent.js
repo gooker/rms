@@ -4,7 +4,7 @@ import { Button, Divider, Tooltip } from 'antd';
 import { DeleteOutlined, RedoOutlined } from '@ant-design/icons';
 import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { deleteExecutionQTasks, fetchExecutingTaskList } from '@/services/api';
+import { deleteExecutionQTasks, fetchExecutingTaskList } from '@/services/commonService';
 import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
 import ExecutionQueueSearch from './ExecutionQueueSearch';

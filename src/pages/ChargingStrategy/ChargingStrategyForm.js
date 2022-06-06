@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Row, Col, Button, Input, Card, Tooltip, message } from 'antd';
+import { Button, Card, Col, Input, message, Row, Tooltip } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
-import { getDefaultChargingStrategy, saveChargeStrategy } from '@/services/api';
-import { formatMessage } from '@/utils/util';
+import { getDefaultChargingStrategy, saveChargeStrategy } from '@/services/commonService';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import BatterStrategy from './BatterStrategy/BatterStrategy';
-import { hasPermission, Permission } from '@/utils/Permission';
+import { Permission } from '@/utils/Permission';
 import styles from './chargingStrategy.module.less';
-import { dealResponse } from '@/utils/util';
 
 const PanelHeight = 400; // 表单行的高度
 const ChargingStrategyForm = (props) => {

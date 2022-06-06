@@ -2,7 +2,7 @@ import {
   covertData2ChartsData,
   convertWaitingData2Chart,
 } from '@/packages/Scene/MapMonitor/Modal/WorkStationReport/workStationEchart';
-import { fetchWorkStationInstrument, fetchWorkStationPre30Waiting } from '@/services/monitor';
+import { fetchWorkStationInstrument, fetchWorkStationPre30Waiting } from '@/services/monitorService';
 import { isNull, dealResponse } from '@/utils/util';
 
 export const workStationCallback = async (

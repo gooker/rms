@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Checkbox, Form, InputNumber, Radio, Select, Switch } from 'antd';
-import { advancedLatnetHandling } from '@/services/monitor';
+import { advancedLatnetHandling } from '@/services/monitorService';
 
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

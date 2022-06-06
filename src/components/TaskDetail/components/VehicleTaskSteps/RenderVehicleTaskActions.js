@@ -1,5 +1,5 @@
-import React from 'react';
-import { Row, Col } from 'antd';
+import React, { memo } from 'react';
+import { Col, Row } from 'antd';
 import TaskStepItems from './TaskStepItem';
 
 /**
@@ -8,7 +8,6 @@ import TaskStepItems from './TaskStepItem';
  * stepTaskStatus ==='Executing', 根据index标记颜色
  * 其他状态都显示 灰色
  */
-
 const RenderVehicleTaskActions = (props) => {
   const { subTask, translation } = props;
   const { stepTaskStatus, taskActionsDTO } = subTask;
@@ -64,4 +63,4 @@ const RenderVehicleTaskActions = (props) => {
     </Row>
   );
 };
-export default RenderVehicleTaskActions;
+export default memo(RenderVehicleTaskActions);

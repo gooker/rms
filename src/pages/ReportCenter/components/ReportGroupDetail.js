@@ -12,7 +12,7 @@ import {
   fetchReportGroupDataById,
   fetchReportSourceURL,
   saveReportGroup,
-} from '@/services/api';
+} from '@/services/reportService';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
 

@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select, message } from 'antd';
 import LatentPodUpdater from '../Simulator/LatentPodUpdater';
-import { updateLatentPodSize } from '@/services/XIHE';
+import { updateLatentPodSize } from '@/services/XIHEService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull, LatentSizeUpdaterValidator, formatMessage } from '@/utils/util';
 

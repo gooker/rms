@@ -7,12 +7,12 @@ import { setMonitorSocketCallback } from '@/utils/mapUtil';
 import MonitorMapContainer from './components/MonitorMapContainer';
 import MonitorBodyRight from './components/MonitorBodyRight';
 import MonitorHeader from './components/MonitorHeader';
-import { fetchStationRealTimeRate } from '@/services/monitor';
+import { fetchStationRealTimeRate } from '@/services/monitorService';
 import MonitorModals from './Modal';
 import { HeaderHeight, MonitorOperationType } from './enums';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
-import { VehiclePollingTaskPathManager,LockCellPolling } from '@/workers/WebWorkerManager';
+import { LockCellPolling, VehiclePollingTaskPathManager } from '@/workers/WebWorkerManager';
 
 const MapMonitor = (props) => {
   const { dispatch, socketClient, currentMap, mapContext } = props;

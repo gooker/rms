@@ -1,21 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import {
-  Form,
-  Button,
-  Input,
-  Switch,
-  Spin,
-  Row,
-  Checkbox,
-  Select,
-  Col,
-  TimePicker,
-  InputNumber,
-  message,
-} from 'antd';
+import { Button, Checkbox, Col, Form, Input, InputNumber, message, Row, Select, Spin, Switch, TimePicker } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import moment from 'moment';
-import { getCleanStrategy, saveCleanLatentStrategy } from '@/services/api';
+import { getCleanStrategy, saveCleanLatentStrategy } from '@/services/commonService';
 import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import DesignArea from './components/DesignArea';
 import CleaningDays from './components/CleaningDays';

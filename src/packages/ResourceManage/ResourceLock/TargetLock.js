@@ -2,7 +2,7 @@ import React, { useState, memo, useEffect } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Tooltip, Button, Row, Col, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/api';
+import { fetchTargetCellLockList, fetchBatchDeleteTargetCellLock } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';

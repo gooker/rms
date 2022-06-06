@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Form, Button } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { vehicleToRest } from '@/services/monitor';
+import { vehicleToRest } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import VehicleFormComponent from '@/components/VehicleFormComponent';

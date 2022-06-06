@@ -1,6 +1,6 @@
 import { message } from 'antd';
 import { find } from 'lodash';
-import { fetchLogout, fetchUpdateUserCurrentSection, fetchUserAssignedRoleList, getCurrentUser } from '@/services/SSO';
+import { fetchLogout, fetchUpdateUserCurrentSection, fetchUserAssignedRoleList, getCurrentUser } from '@/services/SSOService';
 import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 
 export default {

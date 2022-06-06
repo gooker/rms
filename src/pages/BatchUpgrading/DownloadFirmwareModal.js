@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Col, Form, Input, Select } from 'antd';
-import { fetchFirmWarList } from '@/services/api';
+import { fetchFirmWarList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage } from '@/utils/util';
 

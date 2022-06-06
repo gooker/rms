@@ -1,13 +1,13 @@
 import React, { createRef, PureComponent } from 'react';
 import { Badge, Button, Card, Col, Divider, Input, Row, Tooltip } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
+import Dictionary from '@/utils/Dictionary';
+import { VehicleType } from '@/config/config';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import Dictionary from '@/utils/Dictionary';
-import ToteVehicleWorkBinInfoMap from './components/ToteVehicleWorkBinInfoMap';
-import { VehicleType } from '@/config/config';
+import ToteVehicleWorkBinInfoMap from './ToteVehicleWorkBinInfoMap';
 import styles from '@/common.module.less';
-import { connect } from '@/utils/RmsDva';
 
 const colProps = { lg: 8, sm: 12 };
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
@@ -26,7 +26,7 @@ const TooltipRight = ({ content, placement }) => (
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
 }))
-class TaskDetail extends PureComponent {
+class TaskInformation extends PureComponent {
   toteHoldingInput = createRef();
 
   // 渲染任务状态
@@ -209,7 +209,7 @@ class TaskDetail extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='vehicle.id' />}
+                    title={<FormattedMessage id="vehicle.id" />}
                     content={<span>{detailInfo.currentVehicleId}</span>}
                   />
                 </Col>
@@ -452,4 +452,4 @@ class TaskDetail extends PureComponent {
     );
   }
 }
-export default TaskDetail;
+export default TaskInformation;

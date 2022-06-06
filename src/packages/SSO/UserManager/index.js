@@ -13,7 +13,7 @@ import {
   saveUserSections,
   updateUserManage,
   updateUserPassword,
-} from '@/services/SSO';
+} from '@/services/SSOService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
 import { AdminTColor, AdminTLabelMap, UserTColor } from './userManagerUtils';

@@ -12,7 +12,7 @@ import {
   convertToUserTimezone,
   dealResponse,
 } from '@/utils/util';
-import { fetchCodeHealth } from '@/services/api';
+import { fetchCodeHealth } from '@/services/commonService';
 import FilterSearch from './FilterSearch';
 import QrcodeSearchForm from './QrcodeSearchForm';
 import {

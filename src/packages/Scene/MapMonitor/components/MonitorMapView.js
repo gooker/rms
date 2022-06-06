@@ -42,7 +42,7 @@ import {
   ToteVehicle,
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
-import { fetchVehicleInfo } from '@/services/api';
+import { fetchVehicleInfo } from '@/services/commonService';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 
 class MonitorMapView extends BaseMap {

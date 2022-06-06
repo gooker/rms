@@ -3,7 +3,7 @@ import { Spin, Tabs } from 'antd';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
-import { fetchVehicleHealth } from '@/services/api';
+import { fetchVehicleHealth } from '@/services/commonService';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getAllCellId, getDatBysortTime } from '@/packages/Report/components/GroundQrcodeEcharts';
 import HealthCarSearchForm from '../../components/HealthCarSearchForm';

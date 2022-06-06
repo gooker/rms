@@ -9,8 +9,8 @@ import {
   fetchVehicleInfo,
   fetchVehicleRunningInfo,
   getAlertCentersByTaskIdOrVehicleId,
-} from '@/services/api';
-import { vehicleRemoteControl, vehicleToRest, vehicleTryToCharge } from '@/services/monitor';
+} from '@/services/commonService';
+import { vehicleRemoteControl, vehicleToRest, vehicleTryToCharge } from '@/services/monitorService';
 import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';

@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { vehicleRemoteControl } from '@/services/monitor';
+import { vehicleRemoteControl } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

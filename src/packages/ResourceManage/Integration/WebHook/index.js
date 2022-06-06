@@ -10,8 +10,8 @@ import {
 } from '@ant-design/icons';
 import { find, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { deleteWebHooks, getAllQueues, getAllWebHooks, getAllWebHookTypes } from '@/services/api';
-import { fetchAllRegisterData, registerWebhooksTopic, unBoundRegisterTopic } from '@/services/XIHE';
+import { deleteWebHooks, getAllQueues, getAllWebHooks, getAllWebHookTypes } from '@/services/commonService';
+import { fetchAllRegisterData, registerWebhooksTopic, unBoundRegisterTopic } from '@/services/XIHEService';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';

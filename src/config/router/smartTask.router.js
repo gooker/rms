@@ -16,6 +16,13 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   {
+    path: `/${AppCode.SmartTask}/executingQueue`,
+    name: 'executingQueue',
+    icon: 'executing',
+    component: '/SmartTask/ExecutingQueue',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  },
+  {
     path: `/${AppCode.SmartTask}/taskManagement`,
     name: 'taskManagement',
     icon: 'taskQueue',

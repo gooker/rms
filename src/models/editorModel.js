@@ -30,8 +30,8 @@ import {
   fetchSectionMaps,
   saveMap,
   updateMap,
-} from '@/services/XIHE';
-import { activeMap } from '@/services/api';
+} from '@/services/XIHEService';
+import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
 import CellEntity from '@/entities/CellEntity';

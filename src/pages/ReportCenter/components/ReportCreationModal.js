@@ -4,7 +4,7 @@ import { Button, Divider, message, DatePicker, Form, Input, Radio, Select, Spin 
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ReportConfigurationOfTime from '@/pages/ReportCenter/components/ReportConfigurationOfTime';
-import { fetchReportSourceDetail } from '@/services/api';
+import { fetchReportSourceDetail } from '@/services/reportService';
 
 const { RangePicker } = DatePicker;
 const formLayout = getFormLayout(6, 18);

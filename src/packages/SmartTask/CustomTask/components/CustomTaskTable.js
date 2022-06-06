@@ -4,7 +4,7 @@ import { Button, message, Modal } from 'antd';
 import { DeleteOutlined, EditOutlined, EyeOutlined, FileTextOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { deleteCustomTasksById } from '@/services/api';
+import { deleteCustomTasksById } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskBodyModal from './TaskBodyModal';
 import TablePageWrapper from '@/components/TablePageWrapper';

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { fetchActiveMap, fetchCustomParamType } from '@/services/api';
+import { fetchActiveMap, fetchCustomParamType } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, isNull } from '@/utils/util';
 import VehicleComponent from './VehicleComponent';

@@ -12,7 +12,7 @@ import {
   getRandomString,
   isNull,
 } from '@/utils/util';
-import { fetchLogin } from '@/services/SSO';
+import { fetchLogin } from '@/services/SSOService';
 import FormattedMessage from '@/components/FormattedMessage';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';

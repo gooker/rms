@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Col, message, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { batchDeleteVehicleTaskLock, fetchVehicleTaskLockList } from '@/services/api';
+import { batchDeleteVehicleTaskLock, fetchVehicleTaskLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';

@@ -6,7 +6,7 @@ import screenfull from 'screenfull';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
 import { dealResponse, isNull } from '@/utils/util';
-import { getHAInfo } from '@/services/XIHE';
+import { getHAInfo } from '@/services/XIHEService';
 import { IconFont } from '@/components/IconFont';
 import HA from '@/packages/Portal/components/HA';
 import ExpiredTip from '@/packages/Portal/components/ExpiredTip';

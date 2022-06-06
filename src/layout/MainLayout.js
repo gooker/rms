@@ -11,10 +11,10 @@ import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
 import { dealResponse, formatMessage, getPlateFormType, isNull, isStrictNull } from '@/utils/util';
-import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
-import { fetchAllPrograming } from '@/services/XIHE';
-import { fetchAllAdaptor } from '@/services/resourceManageAPI';
-import { fetchGetProblemDetail, fetchTaskTypes } from '@/services/api';
+import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
+import { fetchAllPrograming } from '@/services/XIHEService';
+import { fetchAllAdaptor } from '@/services/resourceService';
+import { fetchGetProblemDetail, fetchTaskTypes } from '@/services/commonService';
 
 @withRouter
 @connect(({ global, user }) => ({

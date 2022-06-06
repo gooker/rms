@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Form, InputNumber, Radio, Select } from 'antd';
 import { CloseOutlined, SendOutlined, SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { latentPodToWorkStation } from '@/services/monitor';
+import { latentPodToWorkStation } from '@/services/monitorService';
 import { dealResponse, formatMessage, getDirByAngle, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { MonitorSelectableSpriteType } from '@/config/consts';

@@ -5,7 +5,7 @@ import { Form, DatePicker, Modal, Button, InputNumber, Input, Radio, Select, mes
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
-import { fetchCstParams, getBackZone,fetchActiveMap } from '@/services/api';
+import { fetchCstParams, getBackZone,fetchActiveMap } from '@/services/commonService';
 import { dealResponse, isNull } from '@/utils/util';
 
 const FormItem = Form.Item;

@@ -11,7 +11,7 @@ import {
   fetchVehicleLog,
   forceResetLogGeneration,
   startCreatingLog,
-} from '@/services/api';
+} from '@/services/commonService';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 
 const StatusLabelStyle = { marginLeft: 15, fontSize: 15, fontWeight: 600 };

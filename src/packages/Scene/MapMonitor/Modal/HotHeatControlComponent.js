@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Switch, Button, Select, message } from 'antd';
+import { Button, Col, Form, message, Row, Select, Switch } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { fetchCellHeat } from '@/services/XIHE';
-import { getFormLayout, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { fetchCellHeat } from '@/services/XIHEService';
+import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import { CellHeatType } from '@/config/consts';
 import { CostHeatPollingManager } from '@/workers/WebWorkerManager';
 import FormattedMessage from '@/components/FormattedMessage';

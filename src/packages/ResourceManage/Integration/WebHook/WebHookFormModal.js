@@ -10,7 +10,7 @@ import {
   isStrictNull,
 } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { saveWebHook } from '@/services/api';
+import { saveWebHook } from '@/services/commonService';
 import RequestHeaderForm from '@/components/RequestHeaderForm';
 import commonStyle from '@/common.module.less';
 

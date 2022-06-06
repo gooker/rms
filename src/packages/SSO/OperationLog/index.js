@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
-import { Table, Tag, Button } from 'antd';
+import { Button, Table, Tag } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
-import { fetchUserActionLogs } from '@/services/api';
+import { fetchUserActionLogs } from '@/services/commonService';
 import { convertToUserTimezone, dealResponse, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RequestPayloadModal from './RequestPayloadModal';

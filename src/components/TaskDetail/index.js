@@ -1,20 +1,19 @@
 import React, { PureComponent } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Col, Card, Modal, Spin, Empty, Tabs } from 'antd';
-import { adjustModalWidth, formatMessage } from '@/utils/util';
+import { Card, Empty, Modal, Spin, Tabs } from 'antd';
+import { VehicleType } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
+import { adjustModalWidth, formatMessage } from '@/utils/util';
+import TaskInformation from './components/TaskInformation';
 import VehicleTaskSteps from './components/VehicleTaskSteps';
 import VehicleTaskHistory from './components/VehicleTaskHistorys';
-import DetailInfo from './components/DetailInfo';
 import TaskRecordOrAlarm from './components/TaskRecordOrAlarm';
-import TaskDetail from './TaskDetail';
-import { VehicleType } from '@/config/config';
 
 const { red } = Dictionary('color');
 const { confirm } = Modal;
 
 @connect(({ task }) => ({ task }))
-class Detail extends PureComponent {
+class Index extends PureComponent {
   state = {
     allErrorDefinitions: {},
   };
@@ -190,16 +189,18 @@ class Detail extends PureComponent {
       },
     } = this.props;
     return (
-      <DetailInfo
-        propsWidth={adjustModalWidth()}
-        visibleDetail={taskDetailVisible}
-        onClose={this.resetTaskDetailModal}
+      <Modal
+        style={{ top: 30 }}
+        width={adjustModalWidth()}
+        onCancel={this.resetTaskDetailModal}
+        visible={taskDetailVisible}
+        footer={null}
       >
         <Spin spinning={loadingTaskDetail}>
           <Tabs defaultActiveKey="a">
             {/** ******* 任务详情 ******** */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
-              <TaskDetail
+              <TaskInformation
                 currentType={taskVehicleType}
                 errorCodes={allErrorDefinitions}
                 detailInfo={detailInfo.taskDetail}
@@ -212,7 +213,7 @@ class Detail extends PureComponent {
               />
             </Tabs.TabPane>
 
-            {/** ******* 任务路径 ******** */}
+            {/******* 任务路径 ******** */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.task.path' })} key="b">
               {Array.isArray(detailInfo?.taskDetail?.vehicleStepTasks) ? (
                 <Card bordered={false}>
@@ -259,8 +260,8 @@ class Detail extends PureComponent {
             </Tabs.TabPane>
           </Tabs>
         </Spin>
-      </DetailInfo>
+      </Modal>
     );
   }
 }
-export default Detail;
+export default Index;

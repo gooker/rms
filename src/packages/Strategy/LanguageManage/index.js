@@ -1,17 +1,5 @@
 import React from 'react';
-import {
-  Button,
-  Checkbox,
-  Col,
-  Divider,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  Modal,
-  Radio,
-  Row,
-} from 'antd';
+import { Button, Checkbox, Col, Divider, Dropdown, Form, Input, Menu, Radio, Row } from 'antd';
 import {
   DeleteOutlined,
   DownOutlined,
@@ -23,15 +11,10 @@ import {
 import classnames from 'classnames';
 import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { adjustModalWidth, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
-import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translator';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translatorService';
 import RmsConfirm from '@/components/RmsConfirm';
-import {
-  exportTranslate,
-  generatefilterValue,
-  generateOriginData,
-  generateUpdateDataToSave,
-} from './translateUtils';
+import { exportTranslate, generatefilterValue, generateOriginData, generateUpdateDataToSave } from './translateUtils';
 import EditableTable from './component/EditableCell/EditableTable';
 import AddSysLangModal from './component/AddSysLang.js';
 import ImportApplicationModal from './component/ImportApplication';

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Tag, Table } from 'antd';
-import { convertToUserTimezone, isNull, formatMessage } from '@/utils/util';
+import { Table, Tag } from 'antd';
+import { convertToUserTimezone, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
 // 任务告警和任务日志公用一个组件
 class TaskRecordOrAlarm extends Component {

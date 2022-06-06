@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { message, Table } from 'antd';
-import { fetchDefinedFaults, fetchVehicleErrorRecord } from '@/services/api';
+import { fetchDefinedFaults, fetchVehicleErrorRecord } from '@/services/commonService';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';

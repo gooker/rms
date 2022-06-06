@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Row, Col, Input } from 'antd';
+import { Col, Input, Row } from 'antd';
 
 const RequestHeaderForm = (props) => {
   const { style = {}, value = {}, onChange } = props;

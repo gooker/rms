@@ -1,15 +1,11 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Tag, Switch, InputNumber, Popover, Row, Col } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
+import React, { memo, useEffect, useState } from 'react';
+import { Col, InputNumber, Popover, Row, Switch, Tag } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchCommonPointInstrument } from '@/services/monitor';
+import { fetchCommonPointInstrument } from '@/services/monitorService';
 import { CommonStationStatePolling } from '@/workers/WebWorkerManager';
-import {
-  transformCommonTrafficData,
-  transitionVehicles,
-} from '../../Modal/CommonStationReport/commonStationEchart';
-import { isStrictNull, formatMessage, isNull, dealResponse } from '@/utils/util';
+import { transformCommonTrafficData, transitionVehicles } from '../../Modal/CommonStationReport/commonStationEchart';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
 

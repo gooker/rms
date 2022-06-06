@@ -15,7 +15,7 @@ import {
 import { flatten } from 'lodash';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
-import { updateSimulationTask } from '@/services/latentTote';
+import { updateSimulationTask } from '@/services/latentToteService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { LatentToteTaskTypeOption } from '@/config/consts';
 import PodFaceOrderTaskRange from './PodFaceOrderTaskRange';

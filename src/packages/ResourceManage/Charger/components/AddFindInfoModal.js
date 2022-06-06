@@ -1,11 +1,10 @@
 /* TODO: I18N */
 import React, { memo, useEffect } from 'react';
-import { Form, Modal, Select, Input, InputNumber } from 'antd';
+import { Form, Input, InputNumber, Modal, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { getFormLayout, dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/util';
-import { findCharger } from '@/services/resourceManageAPI';
+import { findCharger } from '@/services/resourceService';
 
 const { formItemLayout } = getFormLayout(5, 17);
 const AddRegistrationModal = (props) => {

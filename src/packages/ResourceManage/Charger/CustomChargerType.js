@@ -1,9 +1,9 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Button, Card, Empty, Row, Col, Spin } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Card, Col, Empty, Row, Spin } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
 import { dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { findChargerAdapter } from '@/services/resourceManageAPI';
+import { findChargerAdapter } from '@/services/resourceService';
 import styles from '../Vehicle/vehicle.module.less';
 import commonStyle from '@/common.module.less';
 

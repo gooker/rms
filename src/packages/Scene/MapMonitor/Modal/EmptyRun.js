@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Form, Input, Switch } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { vehicleEmptyRun } from '@/services/monitor';
+import { vehicleEmptyRun } from '@/services/monitorService';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import VehicleFormComponent from '@/components/VehicleFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';

@@ -1,19 +1,12 @@
 import React, { memo, useState } from 'react';
-import { Button, Form, InputNumber, Row, Col, Select } from 'antd';
+import { Button, Col, Form, InputNumber, Row, Select } from 'antd';
 import { useMap, useMount } from 'ahooks';
 import { find } from 'lodash';
 import LatentPodUpdater from '../Simulator/LatentPodUpdater';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  dealResponse,
-  isNull,
-  LatentSizeUpdaterValidator,
-  formatMessage,
-  getFormLayout,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, isNull, LatentSizeUpdaterValidator } from '@/utils/util';
 import { hasAppPermission } from '@/utils/Permission';
-import { fetchSetPod, fetchDeletePod } from '@/services/monitor';
-import { fetchLatentLiftingSystemParam } from '@/services/monitor';
+import { fetchDeletePod, fetchLatentLiftingSystemParam, fetchSetPod } from '@/services/monitorService';
 import { AppCode } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);

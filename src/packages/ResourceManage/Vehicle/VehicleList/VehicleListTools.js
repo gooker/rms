@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DisconnectOutlined, GroupOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { logOutVehicle } from '@/services/resourceManageAPI';
+import { logOutVehicle } from '@/services/resourceService';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';

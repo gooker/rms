@@ -9,7 +9,7 @@ import {
   fetchTaskQueueList,
   fetchUpdateTaskPriority,
   fetchVehicleOverallStatus,
-} from '@/services/api';
+} from '@/services/commonService';
 import TableWithPages from '@/components/TableWithPages';
 import { VehicleStateColor } from '@/config/consts';
 import UpdateTaskPriority from './components/UpdateTaskPriority';

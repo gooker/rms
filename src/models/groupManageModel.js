@@ -1,12 +1,12 @@
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
+  deleteCustomGroup,
   fetchActiveMap,
-  saveCustomGroup,
   getCustomGroup,
   getCustomGroupJson,
+  saveCustomGroup,
   saveOneCustomGroup,
-  deleteCustomGroup,
-} from '@/services/api';
+} from '@/services/commonService';
 import { message } from 'antd';
 import { isPlainObject, some } from 'lodash';
 import { MapSelectableSpriteType } from '@/config/consts';

@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
-import { Tag, Popover, Table } from 'antd';
+import { Popover, Table, Tag } from 'antd';
 import { TagOutlined } from '@ant-design/icons';
 import { TaskPathColor } from '@/config/consts';
-import { convertToUserTimezone, isNull, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage, isNull } from '@/utils/util';
 import styles from './index.module.less';
 
 // 任务步骤的某个点位

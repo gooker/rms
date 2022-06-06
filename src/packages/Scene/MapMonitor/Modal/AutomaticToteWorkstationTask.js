@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Form, Input, InputNumber, Radio, Row, Select } from 'antd';
 import { CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { vehicleEmptyRun } from '@/services/monitor';
+import { vehicleEmptyRun } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';

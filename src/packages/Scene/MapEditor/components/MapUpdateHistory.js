@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Card } from 'antd';
 import { DownloadOutlined } from '@ant-design/icons';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
-import { fetchMapHistory } from '@/services/XIHE';
+import { fetchMapHistory } from '@/services/XIHEService';
 import TableWithPages from '@/components/TableWithPages';
 
 const MapUpdateHistory = (props) => {

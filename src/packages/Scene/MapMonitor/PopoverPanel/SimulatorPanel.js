@@ -10,7 +10,7 @@ import {
   fetchSimulatorErrorMessage,
   fetchStopVehicle,
   openSimulator,
-} from '@/services/monitor';
+} from '@/services/monitorService';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';

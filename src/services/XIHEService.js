@@ -1,6 +1,5 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
-import { isStrictNull } from '@/utils/util';
 
 //////////////////////////**** 高可用 ****//////////////////////////
 export async function getHAInfo() {
@@ -16,25 +15,10 @@ export async function getHAChangeHistory() {
   });
 }
 
-//////////////////////////**** 通用 ****//////////////////////////
 // 获取潜伏车货架列表
 export async function fetchLatentPodList() {
   const sectionId = window.localStorage.getItem('sectionId');
   return request(`/${NameSpace.Platform}/pod/list/${sectionId}`, {
-    method: 'GET',
-  });
-}
-
-// 获取料箱布局尺寸数据
-export async function fetchToteSizeList() {
-  return request(`/${NameSpace.Platform}/rack/size/getSizeList`, {
-    method: 'GET',
-  });
-}
-
-// 获取所有站点类型
-export async function fetchAllStationTypes() {
-  return request(`/${NameSpace.Platform}/map/getAllStationType`, {
     method: 'GET',
   });
 }
@@ -177,19 +161,6 @@ export async function updateLatentPodSize(payload) {
 }
 
 //////////////////////////**** 地图锁相关 ****//////////////////////////
-
-/**显示锁格 start***/
-
-// 获取小车的路径锁格信息 （单个）
-export async function getLockedCellsByVehicleId(logicId, vehicleId, vehicleType) {
-  return request(
-    `/${NameSpace.Platform}/lock/getLockedCellsByVehicleId/${logicId}/${vehicleId}/${vehicleType}`,
-    {
-      method: 'GET',
-    },
-  );
-}
-
 // 获取小车的路径锁格信息（批量）
 export async function fetchMapVehicleLocks(logicId, uniqueIds) {
   return request(
@@ -205,12 +176,7 @@ export async function fetchLogicAllVehicleLocks(logicId) {
   return request(`/${NameSpace.Platform}/lock/getAllLockedCells/${logicId}`, { method: 'GET' });
 }
 
-/****显示锁格 end******/
-
-/****显示路径 end****/
-
 //////////////////////////**** 充电桩管理 ****//////////////////////////
-
 // 清除充电桩故障
 export async function clearChargerFault(hardwareId) {
   return request(`/${NameSpace.Platform}/charger/actions/clearError/${hardwareId}`, {
@@ -222,37 +188,6 @@ export async function clearChargerFault(hardwareId) {
 export async function resetCharger(hardwareId) {
   return request(`/${NameSpace.Platform}/charger/actions/resetChargerStatus/${hardwareId}`, {
     method: 'GET',
-  });
-}
-
-//////////////////////////**** Web Hook页面 ****//////////////////////////
-// 查询所有已创建的Web Hook类型
-export async function getAllWebHookTypes() {
-  return request(`/${NameSpace.Platform}/webHook/getType`, {
-    method: 'GET',
-  });
-}
-
-// 保存Web Hook接口
-export async function saveWebHook(param) {
-  return request(`/${NameSpace.Platform}/webHook/saveWebHook`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 查询所有已创建的Web Hook接口
-export async function getAllWebHooks() {
-  return request(`/${NameSpace.Platform}/webHook/getAllWebHook`, {
-    method: 'GET',
-  });
-}
-
-// 删除 Web Hook
-export async function deleteWebHooks(param) {
-  return request(`/${NameSpace.Platform}/webHook/deleteWebHookById`, {
-    method: 'POST',
-    data: param,
   });
 }
 
@@ -275,13 +210,6 @@ export async function unBoundRegisterTopic(param) {
 // 根据sectionId获取所有的绑定关系
 export async function fetchAllRegisterData() {
   return request(`/${NameSpace.Platform}/registerTopic/getAllBindingMessageBySectionId`, {
-    method: 'GET',
-  });
-}
-
-// 根据topic查绑定的消息
-export async function fetchRegisterMessageByTopic() {
-  return request(`/${NameSpace.Platform}/registerTopic/getRegisterMessageByTopic`, {
     method: 'GET',
   });
 }
@@ -311,28 +239,6 @@ export async function batchUpdateAlertCenter(params) {
   });
 }
 
-//////////////////////////**** MixVehicle系统参数 ****//////////////////////////
-// 获取参数模版
-export async function fetchSystemParamFormData() {
-  return request(`/${NameSpace.Platform}/formTemplate/getFormTemplate`, {
-    method: 'GET',
-  });
-}
-
-// 更新系统参数
-export async function updateSystemParams(params) {
-  return request(`/${NameSpace.Platform}/formTemplate/updateFormTemplateValue`, {
-    method: 'POST',
-    data: params,
-  });
-}
-// 根据key获取系统参数
-export async function fetchGetParameterByKey(key) {
-  return request(`/${NameSpace.Platform}/formTemplate/getParameter/${key}`, {
-    method: 'GET',
-  });
-}
-
 //////////////////////////**** 地图编程 ****//////////////////////////
 // 获取地图编程动作协议接口
 export function fetchAllPrograming() {
@@ -346,25 +252,5 @@ export function saveScopeProgram(params) {
   return request(`/${NameSpace.Platform}/actionScope/saveActionScopes`, {
     method: 'POST',
     data: params,
-  });
-}
-
-// 根据参数获取地图编程数据
-export function fetchScopeProgram({ mapId, logicId, routeCode, scopeCode }) {
-  let sub = '/actionScope/getActionScope';
-  if (!isStrictNull(mapId)) {
-    sub = `${sub}/${mapId}`;
-  }
-  if (!isStrictNull(logicId)) {
-    sub = `${sub}/${logicId}`;
-  }
-  if (!isStrictNull(routeCode)) {
-    sub = `${sub}/${routeCode}`;
-  }
-  if (!isStrictNull(scopeCode)) {
-    sub = `${sub}/${scopeCode}`;
-  }
-  return request(`/${NameSpace.Platform}${sub}`, {
-    method: 'GET',
   });
 }

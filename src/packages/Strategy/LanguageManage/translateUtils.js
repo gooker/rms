@@ -1,7 +1,7 @@
 import XLSX from 'xlsx';
 import { findIndex, forIn, sortBy } from 'lodash';
 import { dealResponse, formatMessage, isStrictNull, sortLanguages } from '@/utils/util';
-import { getSysLang } from '@/services/translator';
+import { getSysLang } from '@/services/translatorService';
 
 export async function getSystemLanguage() {
   let systemLanguage = await getSysLang();

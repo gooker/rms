@@ -1,11 +1,11 @@
 // 前端模块编码
 export const AppCode = {
   ResourceManage: 'ResourceManage',
+  SmartTask: 'SmartTask',
   LatentPod: 'LatentPod',
   LatentTote: 'LatentTote',
   Tote: 'Tote',
   FlexibleSorting: 'FlexibleSorting',
-  SmartTask: 'SmartTask',
   Scene: 'Scene',
   Report: 'Report',
   Strategy: 'Strategy',

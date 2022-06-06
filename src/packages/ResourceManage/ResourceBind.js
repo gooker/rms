@@ -3,8 +3,8 @@ import { find } from 'lodash';
 import { Form, Select, Switch, Card, Row, Col, message, Empty, Button, Spin } from 'antd';
 import { formatMessage, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fechSaveUnBind, getUnBindGroupData } from '@/services/resourceManageAPI';
-import { getCustomGroup, fetchActiveMap } from '@/services/api';
+import { fechSaveUnBind, getUnBindGroupData } from '@/services/resourceService';
+import { getCustomGroup, fetchActiveMap } from '@/services/commonService';
 import commonStyles from '@/common.module.less';
 import styles from './resourceBind.module.less';
 

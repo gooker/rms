@@ -1,16 +1,14 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Tabs, Spin, Modal } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Modal, Spin, Tabs } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import ChargingStrategyForm from './ChargingStrategyForm';
 import IdleChargingStrategy from './IdleChargingStrategy';
-import { getCurrentChargerType, getChargeStrategy } from '@/services/api';
-import { formatMessage } from '@/utils/util';
+import { getChargeStrategy, getCurrentChargerType } from '@/services/commonService';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { hasPermission } from '@/utils/Permission';
 import commonStyles from '@/common.module.less';
 import styles from './chargingStrategy.module.less';
-import { dealResponse } from '@/utils/util';
 
 const { TabPane } = Tabs;
 

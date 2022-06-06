@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Card, Button, Transfer, Modal, message } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchAllUserRoleList, fetchUserAssignedRoleList } from '@/services/SSO';
+import { fetchAllUserRoleList, fetchUserAssignedRoleList } from '@/services/SSOService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { AdminTColor } from '../userManagerUtils';
 

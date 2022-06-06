@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Table } from 'antd';
-import { formatMessage,isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import ExpandPanel from '@/components/TableWithPages/ExpandPanel';
 import commonStyles from '@/common.module.less';
 

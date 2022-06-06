@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react';
-import FormRender ,{connectForm}from 'form-render';
+import FormRender, { connectForm } from 'form-render';
 import SelectTag from './SelectTag';
 import FormButton from './FormButton';
 import PassWord from './PassWord';
@@ -32,7 +32,7 @@ class FormRenderComponent extends PureComponent {
     // }
     return (
       <FormRender
-        form={form} 
+        form={form}
         onValuesChange={this.onValuesChange}
         onFinish={this.onFinish}
         schema={propsSchema}

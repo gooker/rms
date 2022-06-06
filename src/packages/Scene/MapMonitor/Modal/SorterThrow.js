@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Button, Checkbox, Divider, Form, Input, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
-import { fetchSorterToThrow } from '@/services/monitor';
+import { fetchSorterToThrow } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

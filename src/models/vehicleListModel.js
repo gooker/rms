@@ -1,4 +1,4 @@
-import { fetchAllAdaptor, fetchAllVehicle } from '@/services/resourceManageAPI';
+import { fetchAllAdaptor, fetchAllVehicle } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
 
 export default {

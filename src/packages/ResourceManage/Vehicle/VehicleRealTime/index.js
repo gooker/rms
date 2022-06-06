@@ -5,7 +5,7 @@ import { ReloadOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchAllVehicleList } from '@/services/api';
+import { fetchAllVehicleList } from '@/services/commonService';
 import VehicleInformationTab from './VehicleInformation';
 import VehicleRealTimeTab from './VehicleRealTime';
 import styles from './index.module.less';

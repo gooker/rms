@@ -1,9 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Modal, Timeline, Divider, Button } from 'antd';
+import { Button, Divider, Modal, Timeline } from 'antd';
 import { ClockCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import * as dayjs from 'dayjs';
 import ServerList from './ServerList';
-import { getHAChangeHistory, getHAInfo } from '@/services/XIHE';
+import { getHAChangeHistory, getHAInfo } from '@/services/XIHEService';
 import { dealResponse, formatMessage } from '@/utils/util';
 import styles from './ha.module.less';
 

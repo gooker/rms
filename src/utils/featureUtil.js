@@ -3,7 +3,7 @@ import { message } from 'antd';
 import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
-import { fetchVehicleHardwareInfo } from '@/services/api';
+import { fetchVehicleHardwareInfo } from '@/services/commonService';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 

@@ -6,7 +6,7 @@ import moment from 'moment';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchUserLoginHistory } from '@/services/SSO';
+import { fetchUserLoginHistory } from '@/services/SSOService';
 import TableWithPages from '@/components/TableWithPages';
 import commonStyle from '@/common.module.less';
 

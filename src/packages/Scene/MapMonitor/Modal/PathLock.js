@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Checkbox, Col, Form, InputNumber, message, Row, Select, Switch } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { fetchCellLocks, fetchLogicAllVehicleLocks } from '@/services/XIHE';
+import { fetchCellLocks, fetchLogicAllVehicleLocks } from '@/services/XIHEService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

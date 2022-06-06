@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Form, Input, message, Switch } from 'antd';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { submitFaultDefinition } from '@/services/api';
+import { submitFaultDefinition } from '@/services/commonService';
 
 const formLayout = getFormLayout(6, 18);
 

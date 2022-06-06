@@ -1,16 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Switch, Button, Modal, message } from 'antd';
+import { Button, message, Modal, Switch } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import BroadcastChannelForm from './components/BroadcastChannelForm';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, dealResponse, isNull, formatMessage } from '@/utils/util';
-import {
-  deleteBroadCastChannels,
-  fetchBroadCastChannel,
-  saveBroadCastChannel,
-} from '@/services/api';
-import { BroadCastType, BroadCastPattern, ContentType, BroadCastTiming } from './enum';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { deleteBroadCastChannels, fetchBroadCastChannel, saveBroadCastChannel } from '@/services/commonService';
+import { BroadCastPattern, BroadCastTiming, BroadCastType, ContentType } from './enum';
 import LocaleKeys from '@/locales/LocaleKeys';
 import RmsConfirm from '@/components/RmsConfirm';
 import TablePageWrapper from '@/components/TablePageWrapper';

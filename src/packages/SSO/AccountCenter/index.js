@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Card, Row, Col, Button, Modal } from 'antd';
+import { Button, Card, Col, Modal, Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage, adjustModalWidth } from '@/utils/util';
-import { updateUserManage } from '@/services/SSO';
+import { adjustModalWidth, dealResponse, formatMessage } from '@/utils/util';
+import { updateUserManage } from '@/services/SSOService';
 import UpdatePasswordModal from '../UserManager/components/UpdatePassword';
 import UpdateZoneModal from './components/UpdateZoneModal';
 import commonStyles from '@/common.module.less';

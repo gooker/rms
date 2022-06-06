@@ -7,7 +7,7 @@ import {
   fetchVehicleErrorRecord,
   getVehicleTaskLog,
   getAlertCentersByTaskIdOrVehicleId,
-} from '@/services/api';
+} from '@/services/commonService';
 import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {

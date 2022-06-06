@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, message, Tag } from 'antd';
-import { fetchCleaningTaskHistory } from '@/services/api';
-import { dealResponse, convertToUserTimezone, formatMessage, isNull } from '@/utils/util';
+import { message, Row, Tag } from 'antd';
+import { fetchCleaningTaskHistory } from '@/services/commonService';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';

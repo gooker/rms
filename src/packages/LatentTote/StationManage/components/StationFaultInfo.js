@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Row, Col } from 'antd';
 import { formatMessage, dealResponse, convertToUserTimezone } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchLatentToteFaultStations } from '@/services/latentTote';
+import { fetchLatentToteFaultStations } from '@/services/latentToteService';
 import TableWithPages from '@/components/TableWithPages';
 import StationFaultSearch from './StationFaultSearch';
 
