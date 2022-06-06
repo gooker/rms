@@ -30,6 +30,7 @@ const DictionaryDataSource = {
     CONNECTED: 'app.chargeManger.CONNECTED',
     CONNECTING: 'app.chargeManger.CONNECTING',
   },
+
   chargerType: {
     0: 'app.chargeManger.version0',
     1: 'app.chargeManger.version1',
@@ -48,10 +49,10 @@ const DictionaryDataSource = {
 
   // 小车方向
   vehicleDirection: {
-    0: 'app.direction.toTop',
-    90: 'app.direction.toRight',
-    180: 'app.direction.toBottom',
-    270: 'app.direction.toLeft',
+    0: 'app.direction.toRight',
+    90: 'app.direction.toTop',
+    180: 'app.direction.toLeft',
+    270: 'app.direction.toBottom',
   },
 
   // 货架方向

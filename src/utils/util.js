@@ -7,7 +7,7 @@ import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { Colors, ToteOffset, VehicleStateColor } from '@/config/consts';
-import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -1239,7 +1239,7 @@ const targetProgramingKeys = [
 ];
 
 // 将表单数据转化为后台数据结构
-export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
+export function generateCustomTaskForm(value, taskCode, taskSteps, programing, preTasksCode) {
   const customTaskData = {
     name: value.name,
     desc: value.desc,
@@ -1252,11 +1252,13 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
   };
   Object.keys(value).forEach((key) => {
     if (key.includes('_')) {
-      const modelType = key.split('_')[0];
-      if (!customTaskData[CustomNodeTypeFieldMap[modelType]]) {
-        customTaskData[CustomNodeTypeFieldMap[modelType]] = {};
+      let taskNodeType = key.split('_')[0];
+      const customTaskDataKey =
+        CustomNodeTypeFieldMap[preTasksCode.includes(key) ? CustomNodeType.PLUS : taskNodeType];
+      if (!customTaskData[customTaskDataKey]) {
+        customTaskData[customTaskDataKey] = {};
       }
-      if (modelType === 'ACTION') {
+      if (CustomNodeType.ACTION === taskNodeType) {
         let configValue = { ...value[key] };
         // 检查资源锁
         if (isEmpty(configValue.lockTime)) {
@@ -1294,10 +1296,9 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
           }
         });
         configValue.targetAction = _targetAction;
-
-        customTaskData[CustomNodeTypeFieldMap[modelType]][value[key].code] = configValue;
+        customTaskData[customTaskDataKey][value[key].code] = configValue;
       } else {
-        customTaskData[CustomNodeTypeFieldMap[modelType]][value[key].code] = { ...value[key] };
+        customTaskData[customTaskDataKey][value[key].code] = { ...value[key] };
       }
     } else {
       if (!isNull(CustomNodeTypeFieldMap[key])) {
@@ -1323,47 +1324,58 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing) {
 
 // 将后台返回的自定义任务数据转化为表单数据
 export function restoreCustomTaskForm(customTask) {
-  const result = { taskSteps: [], fieldsValue: {} };
+  const result = { taskSteps: [], preTaskSteps: [], fieldsValue: {} };
   const { codes } = customTask;
+  let preTaskCodes = [];
+  if (!isNull(customTask.customPreActions)) {
+    preTaskCodes = Object.keys(customTask.customPreActions);
+  }
 
   // 提取基本信息
   result.fieldsValue.name = customTask.name;
   result.fieldsValue.desc = customTask.desc;
   result.fieldsValue.priority = customTask.priority;
 
-  codes.forEach((code) => {
-    let customTypeKey = code;
-
-    // 收集左侧的任务节点数据
+  [...codes, ...preTaskCodes].forEach((code) => {
+    // 收集左侧的任务节点数据，区分正常任务节点和前置任务节点
+    let taskNodeType = code.split('_')[0];
+    if (preTaskCodes.includes(code)) {
+      taskNodeType = CustomNodeType.PLUS;
+    }
+    const customTaskKey = CustomNodeTypeFieldMap[taskNodeType];
     if (code.includes('_')) {
-      customTypeKey = code.split('_')[0];
-      const configValue = customTask[CustomNodeTypeFieldMap[customTypeKey]][code];
-      result.taskSteps.push({
-        type: customTypeKey,
+      taskNodeType = code.split('_')[0]; // 防止PLUS被赋值到节点数据
+      const configValue = customTask[customTaskKey][code];
+      let stepsKey = 'taskSteps';
+      if (preTaskCodes.includes(code)) {
+        stepsKey = 'preTaskSteps';
+      }
+      result[stepsKey].push({
         code,
-        label: configValue.name ?? formatMessage({ id: `customTask.type.${customTypeKey}` }),
+        type: taskNodeType,
+        label: configValue.name ?? formatMessage({ id: `customTask.type.${taskNodeType}` }),
       });
     } else {
       result.taskSteps.push({
-        type: customTypeKey,
-        code: customTypeKey,
-        label: formatMessage({ id: `customTask.type.${customTypeKey}` }),
+        code,
+        type: code,
+        label: formatMessage({ id: `customTask.type.${code}` }),
       });
     }
 
     // 收集表单数据
-    if (customTypeKey === 'START') {
-      const startValues = { ...customTask[CustomNodeTypeFieldMap[customTypeKey]] };
+    if (taskNodeType === CustomNodeType.START) {
+      const startValues = { ...customTask[customTaskKey] };
       if (isNull(startValues.vehicle)) {
         delete startValues.vehicle;
       }
-      result.fieldsValue[code] = startValues;
-    } else if (customTypeKey === 'END') {
-      result.fieldsValue[code] = customTask[CustomNodeTypeFieldMap[customTypeKey]];
+      result.fieldsValue[taskNodeType] = startValues;
+    } else if (taskNodeType === CustomNodeType.END) {
+      result.fieldsValue[taskNodeType] = customTask[customTaskKey];
     } else {
-      const stepPayload = customTask[CustomNodeTypeFieldMap[customTypeKey]];
-      const subTaskConfig = { ...stepPayload[code] };
-      if (subTaskConfig.customType === 'ACTION') {
+      let subTaskConfig = customTask[customTaskKey][code];
+      subTaskConfig = { ...subTaskConfig };
+      if (subTaskConfig.customType === CustomNodeType.ACTION) {
         // 处理资源锁
         const lockTimeFormValue = [];
         if (subTaskConfig.lockTime) {
@@ -1404,11 +1416,13 @@ export function fillFormValueToAction(configuration, programing, withTiming = fa
       const [p1, p2] = actionType;
       const action = find(programing[p1], { actionId: p2 });
       const copyAction = cloneDeep(action);
-      // 将数据回填到action参数中
-      copyAction.actionParameters.forEach((item) => {
-        item.value = rest[item.code];
-      });
       copyAction.operateType = operateType;
+      // 将数据回填到action参数中
+      if (Array.isArray(copyAction.actionParameters)) {
+        copyAction.actionParameters.forEach((item) => {
+          item.value = rest[item.code];
+        });
+      }
       if (!isStrictNull(timing)) {
         copyAction.timing = timing;
       }
@@ -1431,22 +1445,24 @@ export function extractActionToFormValue(actions) {
   const configurations = [];
   actions.forEach(({ actionId, adapterType, actionParameters }) => {
     const addedItem = { actionType: [adapterType, actionId] };
-    actionParameters.forEach(({ code, value }) => {
-      addedItem[code] = value;
-    });
+    if (Array.isArray(actionParameters)) {
+      actionParameters.forEach(({ code, value }) => {
+        addedItem[code] = value;
+      });
+    }
     configurations.push(addedItem);
   });
   return configurations;
 }
 
 // 提取sample数据
-export function generateSample({ customStart, customActions }) {
+export function generateSample({ customStart, customActions, customPreActions }) {
   const result = [];
   // 任务开始
   if (isNull(customStart.robot)) {
     result.push({ code: 'START-AGV', param: [] });
   } else {
-    result.push({ code: customStart.robot.type, param: customStart.robot.code });
+    result.push({ code: `START-${customStart.robot.type}`, param: customStart.robot.code });
   }
 
   result.push({
@@ -1455,22 +1471,20 @@ export function generateSample({ customStart, customActions }) {
   });
 
   // 子任务
-  if (!isNull(customActions)) {
-    Object.values(customActions).forEach((subTask) => {
-      const {
-        code,
-        targetAction: { loadAngle, target },
-      } = subTask;
-      result.push({
-        code: `${code}-loadAngle`,
-        param: isNull(loadAngle) ? null : loadAngle,
-      });
-      result.push({
-        code: `${code}-${target.type}`,
-        param: target?.code ?? [],
-      });
+  Object.values({ ...customActions, ...customPreActions }).forEach((subTask) => {
+    const {
+      code,
+      targetAction: { loadAngle, target },
+    } = subTask;
+    result.push({
+      code: `${code}-loadAngle`,
+      param: isNull(loadAngle) ? null : loadAngle,
     });
-  }
+    result.push({
+      code: `${code}-${target.type}`,
+      param: target?.code ?? [],
+    });
+  });
   return result;
 }
 

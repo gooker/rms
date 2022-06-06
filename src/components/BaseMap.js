@@ -2,9 +2,9 @@ import React from 'react';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import {
-  getAngle,
+  convertAngleToPixiAngle,
   getArrowDistance,
-  getCoordinat,
+  getCoordinator,
   getCurrentRouteMapData,
   getDistance,
   getLineEntityFromMap,
@@ -215,7 +215,7 @@ export default class BaseMap extends React.PureComponent {
   renderCostLines(relationsToRender, renderType, transform) {
     // const priority = shownPriority || this.states.shownPriority;
     relationsToRender.forEach((lineData) => {
-      const { type, cost, source, target } = lineData;
+      const { type, cost, source, target, angle } = lineData;
       const sourceCell = this.idCellMap.get(source);
       const targetCell = this.idCellMap.get(target);
       if (isNull(sourceCell) && isNull(targetCell)) return;
@@ -246,15 +246,14 @@ export default class BaseMap extends React.PureComponent {
           arrowExist.destroy();
           this.idArrowMap.delete(arrowMapKey);
         }
-        const angle = getAngle(sourceCell, targetCell);
         const distance = getDistance(sourceCell, targetCell);
         const offset = getArrowDistance(distance);
-        const arrowPosition = getCoordinat(sourceCell, angle, offset);
+        const arrowPosition = getCoordinator(sourceCell, angle, offset);
         const arrow = new CostArrow({
           ...arrowPosition,
           id: arrowMapKey,
-          angle,
           cost,
+          angle: convertAngleToPixiAngle(angle),
           select: this.select,
         });
         this.pixiUtils.viewportAddChild(arrow);
@@ -426,22 +425,20 @@ export default class BaseMap extends React.PureComponent {
    * @param {*} callback 点击回调
    * @param autoSelect
    */
-  renderChargers = (chargerList, callback = null, autoSelect = false) => {
+  renderChargers = (chargerList, callback = null) => {
     chargerList.forEach((chargerData, index) => {
       if (!chargerData) return;
       const { x, y, name, angle, chargingCells = [] } = chargerData;
       if (x === null || y === null) return;
-
       const charger = new Charger({
         x,
         y,
         name,
-        angle,
+        angle: convertAngleToPixiAngle(angle),
         $$formData: { flag: index + 1, ...chargerData },
         // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
         select: typeof callback === 'function' ? callback : this.select,
       });
-      autoSelect && charger.onSelect();
       this.pixiUtils.viewportAddChild(charger);
       this.chargerMap.set(name, charger);
 
@@ -511,16 +508,16 @@ export default class BaseMap extends React.PureComponent {
     } = workStationData;
 
     const workStationParam = {
-      $$formData: workStationData, // 原始DB数据
       x,
       y,
       name,
-      angle,
       direction,
       icon,
       size,
       stopCellId,
       station,
+      angle: convertAngleToPixiAngle(angle),
+      $$formData: workStationData, // 原始DB数据
       // 这里回调在编辑器和监控是不一样的，如果没有传入回调，则默认是编辑器的this.select
       select: typeof callback === 'function' ? callback : this.select,
     };
@@ -658,7 +655,7 @@ export default class BaseMap extends React.PureComponent {
           ...callbackOption,
         });
       } else {
-        const { x, y } = getCoordinat(stopCell, angle, offset);
+        const { x, y } = getCoordinator(stopCell, angle, offset);
         destinationX = x;
         destinationY = y;
         commonFunction = new CommonFunction({
@@ -666,7 +663,7 @@ export default class BaseMap extends React.PureComponent {
           y,
           name,
           angle, // 相对于停止点的方向
-          iconAngle, // 图标角度，仅用于渲染
+          iconAngle: convertAngleToPixiAngle(iconAngle), // 图标角度，仅用于渲染
           icon, // 图标类型
           size, // 图标尺寸
           $$formData: commonFunctionData,

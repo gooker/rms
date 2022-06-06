@@ -43,7 +43,7 @@ const WaitForm = (props) => {
       <Form.Item
         hidden={hidden}
         name={[code, 'name']}
-        label={formatMessage({ id: 'app.common.name' })}
+        label={formatMessage({ id: 'customTask.form.subTaskName' })}
         getValueFromEvent={({ target: { value } }) => {
           let name = value;
           if (isStrictNull(value)) {

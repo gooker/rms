@@ -74,13 +74,12 @@ const ChargerMultiForm = (props) => {
       <Form.Item name={'angle'} label={<FormattedMessage id='app.common.angle' />}>
         <AngleSelector
           disabled
-          getAngle
           width={'100%'}
           addonLabel={{
-            0: formatMessage({ id: 'app.direction.topSide' }),
-            90: formatMessage({ id: 'app.direction.rightSide' }),
-            180: formatMessage({ id: 'app.direction.bottomSide' }),
-            270: formatMessage({ id: 'app.direction.leftSide' }),
+            0: formatMessage({ id: 'app.direction.rightSide' }),
+            90: formatMessage({ id: 'app.direction.topSide' }),
+            180: formatMessage({ id: 'app.direction.leftSide' }),
+            270: formatMessage({ id: 'app.direction.bottomSide' }),
           }}
         />
       </Form.Item>

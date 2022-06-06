@@ -30,7 +30,7 @@ import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
 import { PageContentPadding } from '@/config/consts';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
-import DndCard from './DndCard';
+import TaskNodeCard from './TaskNodeCard';
 import InformationForm from './InformationForm';
 import StartForm from './StartForm';
 import SubTaskForm from './SubTaskForm';
@@ -38,6 +38,7 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
+import { IconFont } from '@/components/IconFont';
 
 const CustomTypeIconMap = {
   [CustomNodeType.ACTION]: <BranchesOutlined />,
@@ -54,6 +55,8 @@ const CustomTaskForm = (props) => {
   const [taskCode, setTaskCode] = useState(`cst_${getRandomString(8)}`);
   // 已配置的任务节点
   const [taskSteps, setTaskSteps] = useState([]);
+  // 已配置的前置任务节点
+  const [preTasks, setPreTasks] = useState([]);
   // 当前选中的任务流程节点, 用于切换右侧表单中的数据
   const [currentCode, setCurrentCode] = useState(CustomNodeType.BASE);
 
@@ -63,19 +66,21 @@ const CustomTaskForm = (props) => {
 
       const result = restoreCustomTaskForm(editingRow);
       const newTaskSteps = [...result.taskSteps];
+      const newPreTaskSteps = [...result.preTaskSteps];
       // 添加BASE节点
       newTaskSteps.unshift({
         type: CustomNodeType.BASE,
         code: CustomNodeType.BASE,
         label: formatMessage({ id: 'customTask.type.BASE' }),
       });
-      // 添加PLUS节点
+      // 添加按钮节点
       newTaskSteps.splice(newTaskSteps.length - 1, 0, {
         type: CustomNodeType.PLUS,
         code: -1,
         label: <PlusOutlined />,
       });
       setTaskSteps(newTaskSteps);
+      setPreTasks(newPreTaskSteps);
       setCurrentCode(newTaskSteps[0].code);
       form.setFieldsValue(result.fieldsValue);
     } else {
@@ -104,6 +109,30 @@ const CustomTaskForm = (props) => {
         newTaskSteps.splice(index, 1);
         setTaskSteps(newTaskSteps);
         setCurrentCode(newTaskSteps[index - 1].code);
+      },
+    });
+  }
+
+  function addPreTask() {
+    const step = {
+      type: CustomNodeType.ACTION,
+      code: `${CustomNodeType.ACTION}_${getRandomString(6)}`,
+      label: formatMessage({ id: `customTask.type.${CustomNodeType.ACTION}` }),
+      pre: true,
+    };
+    const newPreTasks = preTasks.concat([step]);
+    setPreTasks(newPreTasks);
+    setCurrentCode(step.code);
+  }
+
+  // TODO: 已经被子任务依赖的前置任务不可以被删除
+  function deletePreTaskNode(index) {
+    RmsConfirm({
+      content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
+      onOk: () => {
+        const newPreTasks = [...preTasks];
+        newPreTasks.splice(index, 1);
+        setPreTasks(newPreTasks);
       },
     });
   }
@@ -140,7 +169,7 @@ const CustomTaskForm = (props) => {
   }
 
   function renderFormBody() {
-    return taskSteps.map((step, index) => {
+    return [...taskSteps, ...preTasks].map((step, index) => {
       if (!step) return null;
       switch (step.type) {
         case CustomNodeType.BASE:
@@ -175,6 +204,7 @@ const CustomTaskForm = (props) => {
               type={step.type}
               hidden={currentCode !== step.code}
               updateTab={updateTabName}
+              preTasks={preTasks}
             />
           );
         case CustomNodeType.WAIT:
@@ -213,10 +243,17 @@ const CustomTaskForm = (props) => {
       form
         .validateFields()
         .then((value) => {
-          const formValue = generateCustomTaskForm(value, taskCode, _taskSteps, programing);
+          const formValue = generateCustomTaskForm(
+            value,
+            taskCode,
+            _taskSteps,
+            programing,
+            preTasks.map(({ code }) => code),
+          );
           resolve(formValue);
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
         });
     });
   }
@@ -254,10 +291,17 @@ const CustomTaskForm = (props) => {
   }
 
   const updateTabName = useMemoizedFn(function(code, name) {
-    const index = findIndex(taskSteps, { code });
+    let index = findIndex(taskSteps, { code });
     if (index > -1) {
       const newTaskSteps = update(taskSteps, { [index]: { label: { $set: name } } });
       setTaskSteps(newTaskSteps);
+      return;
+    }
+
+    index = findIndex(preTasks, { code });
+    if (index > -1) {
+      const newPreTasks = update(preTasks, { [index]: { label: { $set: name } } });
+      setPreTasks(newPreTasks);
     }
   });
 
@@ -289,49 +333,82 @@ const CustomTaskForm = (props) => {
   return (
     <div className={styles.customTaskForm}>
       <div className={styles.dndColumn}>
-        <div className={styles.dndTitle}>
-          <FormattedMessage id='app.task.flow' />
-        </div>
-        <Container
-          groupName='dnd'
-          dropPlaceholder={{
-            showOnTop: true,
-            animationDuration: 150,
-            className: styles.dndPlaceholder,
-          }}
-          onDrop={(e) => onDropInTaskFlow(e)}
-          nonDragAreaSelector={'.dndDisabled'} // 禁止拖拽
-        >
-          {taskSteps.map((item, index) => {
-            if (item.type === CustomNodeType.PLUS) {
+        <div className={styles.dndItem} style={{ flex: 5 }}>
+          <div className={styles.dndTitle}>
+            <IconFont type={'icon-flow'} style={{ fontSize: 20, marginRight: 5 }} />
+            <FormattedMessage id='app.task.flow' />
+          </div>
+          <Container
+            groupName='dnd'
+            dropPlaceholder={{
+              showOnTop: true,
+              animationDuration: 150,
+              className: styles.dndPlaceholder,
+            }}
+            onDrop={(e) => onDropInTaskFlow(e)}
+            nonDragAreaSelector={'.dndDisabled'} // 禁止拖拽
+          >
+            {taskSteps.map((item, index) => {
+              if (item.type === CustomNodeType.PLUS) {
+                return (
+                  <div style={{ textAlign: 'center' }}>
+                    <Dropdown arrow overlay={plusMenu} trigger={['click']}>
+                      <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }}>
+                        <PlusOutlined />
+                      </Button>
+                    </Dropdown>
+                  </div>
+                );
+              }
               return (
-                <div style={{ textAlign: 'center' }}>
-                  <Dropdown arrow overlay={plusMenu} trigger={['click']}>
-                    <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }}>
-                      <PlusOutlined />
-                    </Button>
-                  </Dropdown>
-                </div>
+                <TaskNodeCard
+                  dnd
+                  key={item.code}
+                  name={getRichName(item)}
+                  active={currentCode === item.code}
+                  disabled={isStandardTab(item.type)}
+                  onDelete={() => {
+                    deleteTaskFlowNode(index);
+                  }}
+                  onClick={() => {
+                    setCurrentCode(item.code);
+                  }}
+                />
               );
-            }
-            return (
-              <DndCard
-                key={item.code}
+            })}
+          </Container>
+        </div>
+        <div style={{ height: 24 }} />
+
+        {/* 前置任务 */}
+        <div className={styles.dndItem} style={{ flex: 3 }}>
+          <div className={styles.dndTitle}>
+            <IconFont type={'icon-pre'} style={{ fontSize: 20, marginRight: 5 }} />
+            <FormattedMessage id='app.task.pre' />
+          </div>
+          <div className={styles.preTask}>
+            {preTasks.map((item, index) => (
+              <TaskNodeCard
+                key={index}
                 name={getRichName(item)}
                 active={currentCode === item.code}
-                disabled={isStandardTab(item.type)}
                 onDelete={() => {
-                  deleteTaskFlowNode(index);
+                  deletePreTaskNode(index);
                 }}
                 onClick={() => {
                   setCurrentCode(item.code);
                 }}
               />
-            );
-          })}
-        </Container>
+            ))}
+            <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }} onClick={addPreTask}>
+              <PlusOutlined />
+            </Button>
+          </div>
+        </div>
       </div>
-      <div className={styles.layoutDivider} />
+      <div className={styles.layoutGap} />
+
+      {/* 表单部分 */}
       <div
         className={styles.viewContent}
         style={{ height: `calc(100vh - ${PageContentPadding}px)` }}

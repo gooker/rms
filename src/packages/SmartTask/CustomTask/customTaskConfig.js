@@ -16,4 +16,5 @@ export const CustomNodeTypeFieldMap = {
   EVENT: 'customEvents',
   WAIT: 'customWaits',
   PODSTATUS: 'customPodStatus',
+  PLUS: 'customPreActions',
 };

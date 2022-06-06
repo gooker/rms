@@ -26,6 +26,12 @@ export default {
         ...payload,
       };
     },
+    unmount(state) {
+      return {
+        ...state,
+        listVisible: true,
+      };
+    },
     saveCustomTaskList(state, { payload }) {
       return {
         ...state,
@@ -49,25 +55,28 @@ export default {
   effects: {
     * initPage(_, { call, put }) {
       const mapData = yield call(fetchActiveMap);
-      if (isNull(mapData) || dealResponse(mapData)) {
+      if (dealResponse(mapData)) {
+        return;
+      }
+      if (isNull(mapData)) {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
-      } else {
-        try {
-          const [modelLocks, modelParams] = yield Promise.all([
-            getFormModelLockResource(),
-            fetchCustomParamType(),
-          ]);
-          const state = { mapData };
-          if (!dealResponse(modelLocks)) {
-            state.modelLocks = modelLocks;
-          }
-          if (!dealResponse(modelParams)) {
-            state.modelParams = modelParams;
-          }
-          yield put({ type: 'saveState', payload: state });
-        } catch (error) {
-          message.error(formatMessage({ id: 'app.message.initFailed' }, { reason: error.message }));
+        return;
+      }
+      try {
+        const [modelLocks, modelParams] = yield Promise.all([
+          getFormModelLockResource(),
+          fetchCustomParamType(),
+        ]);
+        const state = { mapData };
+        if (!dealResponse(modelLocks)) {
+          state.modelLocks = modelLocks;
         }
+        if (!dealResponse(modelParams)) {
+          state.modelParams = modelParams;
+        }
+        yield put({ type: 'saveState', payload: state });
+      } catch (error) {
+        message.error(formatMessage({ id: 'app.message.initFailed' }, { reason: error.message }));
       }
     },
 

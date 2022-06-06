@@ -12,11 +12,10 @@ import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
 import styles from '../customTask.module.less';
 
-const messageKey = 'MESSAGE_KEY';
-
 const CustomTaskTable = (props) => {
   const { dispatch, listVisible, listData, loading } = props;
 
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [exampleStructure, setExampleStructure] = useState(null); // 请求体结构
 
@@ -101,31 +100,6 @@ const CustomTaskTable = (props) => {
     },
   ];
 
-  // 切换删除Loading状态
-  function switchDeleteSpin(visible, isSuccess) {
-    if (visible) {
-      message.loading({
-        content: formatMessage({ id: 'customTasks.requesting' }),
-        key: messageKey,
-        duration: 0,
-      });
-    } else {
-      if (isSuccess) {
-        message.success({
-          content: formatMessage({ id: 'app.message.operateSuccess' }),
-          key: messageKey,
-          duration: 2,
-        });
-      } else {
-        message.error({
-          content: formatMessage({ id: 'app.message.operateFailed' }),
-          key: messageKey,
-          duration: 2,
-        });
-      }
-    }
-  }
-
   const rowSelection = {
     selectedRowKeys,
     onChange: (rowKeys) => setSelectedRowKeys(rowKeys),
@@ -135,11 +109,12 @@ const CustomTaskTable = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        switchDeleteSpin(true);
+        setDeleteLoading(true);
         const response = await deleteCustomTasksById(selectedRowKeys);
-        switchDeleteSpin(false, !dealResponse(response));
-        dispatch({ type: 'customTask/getCustomTaskList' });
-        setSelectedRowKeys([]);
+        if (!dealResponse(response)) {
+          setSelectedRowKeys([]);
+        }
+        setDeleteLoading(false);
       },
     });
   }
@@ -200,7 +175,7 @@ const CustomTaskTable = (props) => {
       {/* 自定义任务列表 */}
       <TableWithPages
         bordered
-        loading={loading}
+        loading={loading || deleteLoading}
         columns={columns}
         expandColumns={expandColumns}
         dataSource={listData}
@@ -218,6 +193,7 @@ const CustomTaskTable = (props) => {
         onCancel={() => {
           setExampleStructure(null);
         }}
+        bodyStyle={{ height: '80vh' }}
         style={{ top: 30 }}
         footer={[
           <Button

@@ -8,6 +8,9 @@ const CustomTask = (props) => {
 
   useEffect(() => {
     dispatch({ type: 'customTask/initPage' });
+    return () => {
+      dispatch({ type: 'customTask/unmount' });
+    };
   }, []);
 
   if (listVisible) {

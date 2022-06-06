@@ -1,7 +1,7 @@
 import React, { Fragment, memo, useEffect, useState } from 'react';
 import { Button, Checkbox, Col, Form, Input, InputNumber, Row, Select, Space, Switch } from 'antd';
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
-import { groupBy } from 'lodash';
+import { find, groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { extractRoutes, fillFormValueToAction, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TargetSelector from '../components/TargetSelector';
@@ -11,8 +11,9 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TitleCard from '@/components/TitleCard';
 
 const SubTaskForm = (props) => {
-  const { hidden, form, code, type, updateTab, routes, programing } = props;
+  const { hidden, form, code, type, updateTab, routes, programing, preTasks } = props;
   const groupedRoutes = groupBy(routes, 'logicId');
+  const isPre = !!find(preTasks, { code });
 
   const [target, setTarget] = useState(null); // 目标区域
   const [operationType, setOperationType] = useState(null); // 路径配置函数操作类型
@@ -143,6 +144,14 @@ const SubTaskForm = (props) => {
     }
   }
 
+  function renderPreTaskOptions() {
+    return preTasks.map(({ code, label }) => (
+      <Select.Option key={code} value={code}>
+        {label}
+      </Select.Option>
+    ));
+  }
+
   return (
     <>
       <Form.Item
@@ -165,10 +174,22 @@ const SubTaskForm = (props) => {
       </Form.Item>
 
       {/* --------------------------------------------------------------- */}
+      {!isPre && (
+        <Form.Item
+          hidden={hidden}
+          name={[code, 'preActionCodes']}
+          label={formatMessage({ id: 'app.task.pre' })}
+        >
+          <Select mode={'multiple'} style={{ width: 300 }}>
+            {renderPreTaskOptions()}
+          </Select>
+        </Form.Item>
+      )}
+
       <Form.Item
         hidden={hidden}
         name={[code, 'name']}
-        label={formatMessage({ id: 'app.common.name' })}
+        label={formatMessage({ id: 'customTask.form.subTaskName' })}
         getValueFromEvent={({ target: { value } }) => {
           let name = value;
           if (isStrictNull(value)) {
@@ -273,14 +294,16 @@ const SubTaskForm = (props) => {
         </Form.Item>
       ) : null}
 
-      {/* 资源锁 */}
-      <Form.Item
-        hidden={hidden}
-        name={[code, 'lockTime']}
-        label={formatMessage({ id: 'customTask.lock.resourceLock' })}
-      >
-        <TaskResourceLock />
-      </Form.Item>
+      {/* 资源锁: 前置任务不需要配置资源锁 */}
+      {!isPre && (
+        <Form.Item
+          hidden={hidden}
+          name={[code, 'lockTime']}
+          label={formatMessage({ id: 'customTask.lock.resourceLock' })}
+        >
+          <TaskResourceLock />
+        </Form.Item>
+      )}
 
       {/* 路线策略 */}
       <TitleCard

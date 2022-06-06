@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useRef } from 'react';
 import * as PIXI from 'pixi.js';
-import { getCoordinat } from '@/utils/mapUtil';
+import { getCoordinator } from '@/utils/mapUtil';
 import { BitText } from '@/entities';
 
 const height = 400;
@@ -62,7 +62,7 @@ const VehicleModelViewer = ({ data }) => {
 
     // 画旋转半径线条
     graphics.lineStyle(2, 0x00aeff, 1);
-    const pos1 = getCoordinat({ x: anchorX, y: anchorY }, 45, radius * ratio);
+    const pos1 = getCoordinator({ x: anchorX, y: anchorY }, 45, radius * ratio);
     graphics.moveTo(anchorX, anchorY);
     graphics.lineTo(pos1.x, pos1.y);
 
@@ -103,7 +103,7 @@ const VehicleModelViewer = ({ data }) => {
     app.stage.addChild(rightText);
 
     // radius
-    const pos2 = getCoordinat({ x: anchorX, y: anchorY }, 45, (radius / 2) * ratio);
+    const pos2 = getCoordinator({ x: anchorX, y: anchorY }, 45, (radius / 2) * ratio);
     const radiusText = new BitText(radius, pos2.x, pos2.y, 0xfb8a2e, 20);
     radiusText.anchor.set(0.5);
     app.stage.addChild(radiusText);

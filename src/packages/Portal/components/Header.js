@@ -98,7 +98,7 @@ class Header extends React.Component {
     const { logo, isFullscreen, currentUser } = this.props;
     if (isNull(currentUser)) return null;
 
-    const mainVersion = backendVersion?.MixVehicle?.version;
+    const mainVersion = backendVersion?.MixRobot?.version;
     const isAdmin = currentUser.username === 'admin';
     return (
       <div className={styles.header}>
@@ -139,15 +139,12 @@ class Header extends React.Component {
           <Popover
             trigger="hover"
             content={
-              <span>
-                <FormattedMessage id="app.notification" />:{' '}
-                <Switch
-                  checkedChildren={<FormattedMessage id="app.notification.on" />}
-                  unCheckedChildren={<FormattedMessage id="app.notification.off" />}
-                  checked={showErrorNotification}
-                  onChange={this.switchShowErrorNotification}
-                />
-              </span>
+              <Switch
+                checkedChildren={<FormattedMessage id='app.common.on' />}
+                unCheckedChildren={<FormattedMessage id='app.common.off' />}
+                checked={showErrorNotification}
+                onChange={this.switchShowErrorNotification}
+              />
             }
           >
             <span className={styles.action} onClick={this.goToQuestionCenter}>

@@ -3,27 +3,21 @@ import { message } from 'antd';
 import { find } from 'lodash';
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
-import { VehicleType, NavigationType, NavigationTypeView } from '@/config/config';
+import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
+import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
-  dealResponse,
-  formatMessage,
-  getToteLayoutBaseParam,
-  isEqual,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
-import {
-  VehicleState,
   ElementType,
   EStopStateColor,
   GeoLockColor,
   LatentPodSize,
   SelectionType,
   ToteVehicleSize,
+  VehicleState,
   zIndex,
 } from '@/config/consts';
 import {
+  convertAngleToPixiAngle,
   convertToteLayoutData,
   getElevatorMapCellId,
   getLockCellBounds,
@@ -37,15 +31,15 @@ import {
   Cell,
   EmergencyStop,
   GeoLock,
-  LatentVehicle,
   LatentPod,
+  LatentVehicle,
   OpenLock,
   RealtimeRate,
   SorterVehicle,
   TaskPath,
   TemporaryLock,
-  ToteVehicle,
   TotePod,
+  ToteVehicle,
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import { fetchVehicleInfo } from '@/services/api';
@@ -339,7 +333,7 @@ class MonitorMapView extends BaseMap {
         isStrictNull(vehicleAndTaskProportion)
       )
         return;
-      const _currentdata = {
+      const _currentData = {
         ...currentdata,
         showRealTimeRate,
         x: _station?.x,
@@ -355,7 +349,7 @@ class MonitorMapView extends BaseMap {
         this.stationRealTimeRateMap.delete(`${stopCellId}`);
       }
       // 新增
-      const newEntity = new RealtimeRate(_currentdata);
+      const newEntity = new RealtimeRate(_currentData);
       this.pixiUtils.viewportAddChild(newEntity);
       this.stationRealTimeRateMap.set(`${stopCellId}`, newEntity);
     });
@@ -422,7 +416,7 @@ class MonitorMapView extends BaseMap {
 
     // 更新小车方向
     if (!isNull(currentDirection)) {
-      vehicleEntity.angle = currentDirection;
+      vehicleEntity.angle = convertAngleToPixiAngle(currentDirection);
     }
 
     // 刷新行驶路线
@@ -472,7 +466,7 @@ class MonitorMapView extends BaseMap {
       mainTain: latentVehicleData.mainTain,
       manualMode: latentVehicleData.manualMode,
       cellId: latentVehicleData.currentCellId,
-      angle: latentVehicleData.currentDirection,
+      angle: convertAngleToPixiAngle(latentVehicleData.currentDirection),
       select: this.select,
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentVehicle);
@@ -627,7 +621,8 @@ class MonitorMapView extends BaseMap {
 
   refreshLatentPod = (podStatus) => {
     // {"podId":"22","direction":0,"cellId":22,"h":1050,"w":1050}
-    const { podId, vehicleId, cellId: currentCellId, direction: podDirection = 0 } = podStatus;
+    const { podId, vehicleId, cellId: currentCellId } = podStatus;
+    const podDirection = convertAngleToPixiAngle(podStatus.direction ?? 90);
     const width = podStatus.w || LatentPodSize.width;
     const height = podStatus.h || LatentPodSize.height;
 
@@ -729,7 +724,7 @@ class MonitorMapView extends BaseMap {
       vehicleType: toteVehicleData.vehicleType,
       vehicleIcon: toteVehicleData.vehicleIcon,
       cellId: toteVehicleData.currentCellId,
-      angle: toteVehicleData.currentDirection,
+      angle: convertAngleToPixiAngle(toteVehicleData.currentDirection),
       shelfs: toteVehicleData.shelfs || 0,
       battery: toteVehicleData.battery || 0,
       errorLevel: toteVehicleData.errorLevel || 0,
@@ -895,7 +890,7 @@ class MonitorMapView extends BaseMap {
             const totePod = new TotePod({
               x,
               y,
-              angle,
+              angle: convertAngleToPixiAngle(angle),
               side: 'L',
               checkTote: this.props.checkTote,
               ...bin,
@@ -927,7 +922,7 @@ class MonitorMapView extends BaseMap {
             const totePod = new TotePod({
               x,
               y,
-              angle,
+              angle: convertAngleToPixiAngle(angle),
               side: 'R',
               checkTote: this.props.checkTote,
               ...bin,
@@ -974,7 +969,7 @@ class MonitorMapView extends BaseMap {
       mainTain: sorterVehicleData.mainTain,
       manualMode: sorterVehicleData.manualMode,
       cellId: sorterVehicleData.currentCellId,
-      angle: sorterVehicleData.currentDirection,
+      angle: convertAngleToPixiAngle(sorterVehicleData.currentDirection),
       active: true,
       select: typeof callback === 'function' ? callback : this.select,
       simpleCheckVehicle,
@@ -1079,9 +1074,9 @@ class MonitorMapView extends BaseMap {
     inputData.forEach((lockData) => {
       const {
         geoModel: {
+          angle,
           dimension,
           position: { x, y },
-          angle,
         },
       } = lockData;
       // 更新位置
@@ -1108,7 +1103,7 @@ class MonitorMapView extends BaseMap {
         ...dimension,
         width,
         height,
-        angle,
+        angle: convertAngleToPixiAngle(angle),
         uniqueId: lockData.vehicleId,
         vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
       };
@@ -1150,9 +1145,9 @@ class MonitorMapView extends BaseMap {
 
     const {
       geoModel: {
+        angle,
         dimension,
         position: { x, y },
-        angle,
       },
     } = lockData;
 
@@ -1181,7 +1176,7 @@ class MonitorMapView extends BaseMap {
       ...dimension,
       width,
       height,
-      angle,
+      angle: convertAngleToPixiAngle(angle),
       uniqueId: lockData.vehicleId,
       vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
     };
@@ -1616,9 +1611,9 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 充电桩chargeId更新 ********************** //
-  updateChargerHardware = (name, chargerId,id) => {
+  updateChargerHardware = (name, chargerId, id) => {
     const chargerEntity = this.chargerMap.get(name);
-    chargerEntity && chargerEntity.updateHardwareId(chargerId,id);
+    chargerEntity && chargerEntity.updateHardwareId(chargerId, id);
   };
 
   // ************************ 渲染 清除 紧急停止区域 ********************** //

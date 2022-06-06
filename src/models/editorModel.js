@@ -341,15 +341,18 @@ export default {
             const loopRouteMapData = logicRouteMap[routeMapKey];
             if (Array.isArray(loopRouteMapData.relations)) {
               loopRouteMapData.relations = loopRouteMapData.relations
-                .map((relation) => {
+                // 筛掉不合法的线条
+                .filter((relation) => {
                   const { source, target } = relation;
-                  // 筛掉不合法的线条
-                  if (isNull(cellMap[source]) || isNull(cellMap[target])) {
-                    return null;
-                  }
-                  return relation;
+                  return !isNull(cellMap[source]) && !isNull(cellMap[target]);
                 })
-                .filter(Boolean);
+                .map((relation) => {
+                  // 重新计算线条角度
+                  const _relation = { ...relation };
+                  const { source, target } = _relation;
+                  _relation.angle = getAngle(cellMap[source], cellMap[target]);
+                  return _relation;
+                });
             } else {
               loopRouteMapData.relations = [];
             }
@@ -636,7 +639,7 @@ export default {
           navigationCellType,
           currentMap.transform?.[navigationCellType],
         );
-        result.push({ cell, ...transformedXY });
+        result.push({ ...cell, ...transformedXY });
       });
       currentMap.cellMap = newCellMap;
       return { centerMap, additionalCells: result };
@@ -1162,12 +1165,12 @@ export default {
       delete currentFunction.flag;
 
       let returnPayload = currentFunction;
-      if (type === 'workstationList') {
-        returnPayload = renderWorkStationList([currentFunction], currentMap.cellMap)[0];
-      }
       if (type === 'chargerList') {
         returnPayload = generateChargerXY(currentFunction, currentMap.cellMap);
         currentFunction = convertChargerToDTO(currentFunction, currentMap.cellMap);
+      }
+      if (type === 'workstationList') {
+        returnPayload = renderWorkStationList([currentFunction], currentMap.cellMap)[0];
       }
       if (type === 'elevatorList') {
         returnPayload = renderElevatorList([currentFunction])[currentLogicAreaData.id];
