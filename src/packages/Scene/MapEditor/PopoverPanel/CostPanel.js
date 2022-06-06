@@ -99,7 +99,7 @@ const CostPanel = (props) => {
               <Col span={7}>
                 <CostConfigure
                   onChange={(value) => {
-                    validateBeforeCreatLines({ dir: 0, value });
+                    validateBeforeCreatLines({ dir: 90, value });
                   }}
                 />
               </Col>
@@ -109,7 +109,7 @@ const CostPanel = (props) => {
               <Col span={7} style={{ textAlign: 'left' }}>
                 <CostConfigure
                   onChange={(value) => {
-                    validateBeforeCreatLines({ dir: 270, value });
+                    validateBeforeCreatLines({ dir: 180, value });
                   }}
                 />
               </Col>
@@ -119,7 +119,7 @@ const CostPanel = (props) => {
               <Col span={7} style={{ textAlign: 'right' }}>
                 <CostConfigure
                   onChange={(value) => {
-                    validateBeforeCreatLines({ dir: 90, value });
+                    validateBeforeCreatLines({ dir: 0, value });
                   }}
                 />
               </Col>
@@ -128,7 +128,7 @@ const CostPanel = (props) => {
               <Col span={7}>
                 <CostConfigure
                   onChange={(value) => {
-                    validateBeforeCreatLines({ dir: 180, value });
+                    validateBeforeCreatLines({ dir: 270, value });
                   }}
                 />
               </Col>

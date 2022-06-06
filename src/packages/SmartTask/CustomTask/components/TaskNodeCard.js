@@ -10,6 +10,7 @@ const TaskNodeCard = (props) => {
   if (dnd) {
     return (
       <Draggable
+        style={{ cursor: 'move' }}
         className={disabled ? classnames(styles.dndCard, 'dndDisabled') : styles.dndCard}
         onClick={() => {
           onClick && onClick();
@@ -37,7 +38,7 @@ const TaskNodeCard = (props) => {
   }
   return (
     <div
-      className={disabled ? classnames(styles.dndCard, 'dndDisabled') : styles.dndCard}
+      className={styles.dndCard}
       onClick={() => {
         onClick && onClick();
       }}

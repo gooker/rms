@@ -137,8 +137,6 @@
   text-align: center;
   border: 1px solid #b8b5b5;
   border-radius: 2px;
-  cursor: move;
-  transition: border 0.2s, opacity 0.2s;
   user-select: none;
 }
 
@@ -324,9 +322,8 @@
 
 // 自定义任务请求体示例
 .taskBodyModal {
-  display: flex;
-  flex-flow: row nowrap;
   height: 100%;
+  overflow: auto;
 }
 
 .treeNodeLabel {

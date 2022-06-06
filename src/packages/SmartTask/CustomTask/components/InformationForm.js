@@ -4,8 +4,6 @@ import { Form, Input, Rate } from 'antd';
 import { formatMessage } from '@/utils/util';
 import styles from '../customTask.module.less';
 
-const FormLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
-
 const InformationForm = (props) => {
   const { hidden, existNames, isEdit } = props;
 
@@ -24,16 +22,14 @@ const InformationForm = (props) => {
     <>
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
-        name="name"
-        label={formatMessage({ id: 'app.common.name' })}
+        name='name'
+        label={formatMessage({ id: 'customTask.form.name' })}
         rules={nameRules}
       >
         <Input style={{ width: 300 }} />
       </Form.Item>
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
         name='desc'
         initialValue={null}
         label={formatMessage({ id: 'app.common.description' })}
@@ -42,7 +38,6 @@ const InformationForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden={hidden}
-        {...FormLayout}
         name="priority"
         initialValue={5}
         label={formatMessage({ id: 'app.common.priority' })}

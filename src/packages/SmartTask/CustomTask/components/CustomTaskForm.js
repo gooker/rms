@@ -66,19 +66,21 @@ const CustomTaskForm = (props) => {
 
       const result = restoreCustomTaskForm(editingRow);
       const newTaskSteps = [...result.taskSteps];
+      const newPreTaskSteps = [...result.preTaskSteps];
       // 添加BASE节点
       newTaskSteps.unshift({
         type: CustomNodeType.BASE,
         code: CustomNodeType.BASE,
         label: formatMessage({ id: 'customTask.type.BASE' }),
       });
-      // 添加PLUS节点
+      // 添加按钮节点
       newTaskSteps.splice(newTaskSteps.length - 1, 0, {
         type: CustomNodeType.PLUS,
         code: -1,
         label: <PlusOutlined />,
       });
       setTaskSteps(newTaskSteps);
+      setPreTasks(newPreTaskSteps);
       setCurrentCode(newTaskSteps[0].code);
       form.setFieldsValue(result.fieldsValue);
     } else {
@@ -111,6 +113,19 @@ const CustomTaskForm = (props) => {
     });
   }
 
+  function addPreTask() {
+    const step = {
+      type: CustomNodeType.ACTION,
+      code: `${CustomNodeType.ACTION}_${getRandomString(6)}`,
+      label: formatMessage({ id: `customTask.type.${CustomNodeType.ACTION}` }),
+      pre: true,
+    };
+    const newPreTasks = preTasks.concat([step]);
+    setPreTasks(newPreTasks);
+    setCurrentCode(step.code);
+  }
+
+  // TODO: 已经被子任务依赖的前置任务不可以被删除
   function deletePreTaskNode(index) {
     RmsConfirm({
       content: formatMessage({ id: 'customTasks.form.delete.confirm' }),
@@ -154,7 +169,7 @@ const CustomTaskForm = (props) => {
   }
 
   function renderFormBody() {
-    return taskSteps.map((step, index) => {
+    return [...taskSteps, ...preTasks].map((step, index) => {
       if (!step) return null;
       switch (step.type) {
         case CustomNodeType.BASE:
@@ -189,6 +204,7 @@ const CustomTaskForm = (props) => {
               type={step.type}
               hidden={currentCode !== step.code}
               updateTab={updateTabName}
+              preTasks={preTasks}
             />
           );
         case CustomNodeType.WAIT:
@@ -227,10 +243,17 @@ const CustomTaskForm = (props) => {
       form
         .validateFields()
         .then((value) => {
-          const formValue = generateCustomTaskForm(value, taskCode, _taskSteps, programing);
+          const formValue = generateCustomTaskForm(
+            value,
+            taskCode,
+            _taskSteps,
+            programing,
+            preTasks.map(({ code }) => code),
+          );
           resolve(formValue);
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
         });
     });
   }
@@ -268,10 +291,17 @@ const CustomTaskForm = (props) => {
   }
 
   const updateTabName = useMemoizedFn(function(code, name) {
-    const index = findIndex(taskSteps, { code });
+    let index = findIndex(taskSteps, { code });
     if (index > -1) {
       const newTaskSteps = update(taskSteps, { [index]: { label: { $set: name } } });
       setTaskSteps(newTaskSteps);
+      return;
+    }
+
+    index = findIndex(preTasks, { code });
+    if (index > -1) {
+      const newPreTasks = update(preTasks, { [index]: { label: { $set: name } } });
+      setPreTasks(newPreTasks);
     }
   });
 
@@ -282,16 +312,6 @@ const CustomTaskForm = (props) => {
         {label}
       </Space>
     );
-  }
-
-  function addPreTask() {
-    const step = {
-      type: CustomNodeType.ACTION,
-      code: `${CustomNodeType.ACTION}_${getRandomString(6)}`,
-      label: formatMessage({ id: `customTask.type.${CustomNodeType.ACTION}` }),
-    };
-    const newPreTasks = preTasks.concat([step]);
-    setPreTasks(newPreTasks);
   }
 
   const plusMenu = (
@@ -369,7 +389,6 @@ const CustomTaskForm = (props) => {
           <div className={styles.preTask}>
             {preTasks.map((item, index) => (
               <TaskNodeCard
-                dnd
                 key={index}
                 name={getRichName(item)}
                 active={currentCode === item.code}

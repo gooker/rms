@@ -87,8 +87,8 @@ export default class Charger extends PIXI.Container {
       this.nameSprite = null;
     }
 
-    const x = this.charger.width / 2 + 150;
-    this.nameSprite = new Text(this.name, x, 0, 0xffffff, false, 150);
+    const y = this.charger.height / 2 + 200;
+    this.nameSprite = new Text(this.name, 0, -y, 0xffffff, false, 150);
     this.nameSprite.angle = -this.angle;
     this.nameSprite.anchor.set(0.5);
     this.addChild(this.nameSprite);

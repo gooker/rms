@@ -663,7 +663,7 @@ export default class BaseMap extends React.PureComponent {
           y,
           name,
           angle, // 相对于停止点的方向
-          iconAngle, // 图标角度，仅用于渲染
+          iconAngle: convertAngleToPixiAngle(iconAngle), // 图标角度，仅用于渲染
           icon, // 图标类型
           size, // 图标尺寸
           $$formData: commonFunctionData,

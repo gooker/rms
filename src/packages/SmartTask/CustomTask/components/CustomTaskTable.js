@@ -193,6 +193,7 @@ const CustomTaskTable = (props) => {
         onCancel={() => {
           setExampleStructure(null);
         }}
+        bodyStyle={{ height: '80vh' }}
         style={{ top: 30 }}
         footer={[
           <Button

@@ -53,17 +53,29 @@ export function getAngle(source, target) {
   return -angle;
 }
 
+/**
+ * 现在元素角度显示按照数学坐标系转换
+ * 这个方法就是将数学坐标系角度转换成pixi地图的角度
+ * 比如: 地图数据里线条朝右是0度，那么地图显示就必须是90度
+ */
+export function convertAngleToPixiAngle(mathAngle) {
+  let pixi;
+  if (mathAngle >= 360) {
+    mathAngle = mathAngle - 360;
+  }
+  if (mathAngle >= 0 && mathAngle <= 90) {
+    pixi = 90 - mathAngle;
+  } else {
+    pixi = 450 - mathAngle;
+  }
+  return pixi;
+}
+
 export function getCoordinator(source, angle, r) {
   const rad = (angle * Math.PI) / 180;
   const x = Math.trunc(Math.cos(rad) * r) + source.x;
   const y = -Math.trunc(Math.sin(rad) * r) + source.y;
   return { x, y };
-}
-
-// 数学坐标系的角度转化成PIXI的角度
-export function convertAngleToPixiAngle(angle) {
-  if (angle === 0) return 0;
-  return 360 - angle;
 }
 
 export function getLineJson(source, target, cost, type) {
