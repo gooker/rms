@@ -18,7 +18,7 @@ import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
 import AddEnvironmentModal from '@/packages/SSO/EnvironmentManger/components/AddEnvironmentModal';
-import { message, Modal } from '_antd@4.18.3@antd';
+import { message, Modal } from 'antd';
 
 const Login = (props) => {
   const { history } = props;
