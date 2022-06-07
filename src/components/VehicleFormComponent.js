@@ -25,13 +25,6 @@ const VehicleFormComponent = (props) => {
   }
 
   return (
-    // <div
-    //   style={{
-    //     display: 'flex',
-    //     flex: 1,
-    //     flexFlow: `${uiType} nowrap`,
-    //   }}
-    // >
     <>
       <Form.Item
         label={formatMessage({ id: 'vehicle.id' })}
@@ -62,8 +55,6 @@ const VehicleFormComponent = (props) => {
         </Select>
       </Form.Item>
     </>
-
-    // </div>
   );
 };
 export default connect(({ monitor }) => ({

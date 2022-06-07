@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Form, Input, Switch } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { vehicleEmptyRun } from '@/services/monitorService';
+import { emptyRun } from '@/services/taskService';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import VehicleFormComponent from '@/components/VehicleFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -19,12 +19,12 @@ const EmptyRun = (props) => {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
   }
 
-  function emptyRun() {
+  function doEmptyRun() {
     formRef
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        vehicleEmptyRun({ ...values })
+        emptyRun({ ...values })
           .then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
@@ -62,7 +62,7 @@ const EmptyRun = (props) => {
             <Switch />
           </Form.Item>
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button type={'primary'} onClick={emptyRun} loading={executing} disabled={executing}>
+            <Button type={'primary'} onClick={doEmptyRun} loading={executing} disabled={executing}>
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>

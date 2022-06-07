@@ -13,14 +13,10 @@ const { red } = Dictionary('color');
 const { confirm } = Modal;
 
 @connect(({ task }) => ({ task }))
-class Index extends PureComponent {
+class TaskDetail extends PureComponent {
   state = {
     allErrorDefinitions: {},
   };
-
-  componentDidMount() {
-    // TODO:获取当前车类型的所有错误定义数据
-  }
 
   // 重发任务
   restartTask = (sectionId, taskId) => {
@@ -198,7 +194,7 @@ class Index extends PureComponent {
       >
         <Spin spinning={loadingTaskDetail}>
           <Tabs defaultActiveKey="a">
-            {/** ******* 任务详情 ******** */}
+            {/********* 任务详情 ******** */}
             <Tabs.TabPane tab={formatMessage({ id: 'app.task.detail' })} key="a">
               <TaskInformation
                 currentType={taskVehicleType}
@@ -264,4 +260,5 @@ class Index extends PureComponent {
     );
   }
 }
-export default Index;
+
+export default TaskDetail;

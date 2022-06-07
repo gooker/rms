@@ -2,10 +2,10 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Form, Input, InputNumber, Radio, Row, Select } from 'antd';
 import { CloseOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { vehicleEmptyRun } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { emptyRun } from '@/services/taskService';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
 
@@ -22,14 +22,14 @@ const AutomaticToteWorkstationTask = (props) => {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
   }
 
-  function emptyRun() {
+  function doEmptyRun() {
     formRef
       .validateFields()
       .then((values) => {
         setExecuting(true);
         const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
         if (vehicle) {
-          vehicleEmptyRun(vehicle.vehicleType, { ...values }).then((response) => {
+          emptyRun({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }
@@ -158,7 +158,7 @@ const AutomaticToteWorkstationTask = (props) => {
           </Form.List>
 
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button onClick={emptyRun} loading={executing} disabled={executing}>
+            <Button onClick={doEmptyRun} loading={executing} disabled={executing}>
               <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>

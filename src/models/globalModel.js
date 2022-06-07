@@ -5,7 +5,7 @@ import { convertAllMenu, sortAppList } from '@/utils/init';
 import { AppCode } from '@/config/config';
 import allModuleRouter from '@/config/router';
 import { fetchAlertCount } from '@/services/commonService';
-import { deleteSysLang } from '@/services/translatorService';
+import { deleteSysLang } from '@/services/translationService';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 import zhCN from 'antd/lib/locale/zh_CN';
 import 'moment/locale/zh-cn';

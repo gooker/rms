@@ -17,8 +17,7 @@ export async function getHAChangeHistory() {
 
 // 获取潜伏车货架列表
 export async function fetchLatentPodList() {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace.Platform}/pod/list/${sectionId}`, {
+  return request(`/${NameSpace.Platform}/pod/list`, {
     method: 'GET',
   });
 }

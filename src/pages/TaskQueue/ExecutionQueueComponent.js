@@ -7,12 +7,12 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { deleteExecutionQTasks, fetchExecutingTaskList } from '@/services/commonService';
 import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
-import ExecutionQueueSearch from './ExecutionQueueSearch';
+import ExecutionQueueSearch from '../../packages/SmartTask/components/ExecutionQueueSearch';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { VehicleType } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
 import commonStyles from '@/common.module.less';
-import styles from './taskQueue.module.less';
+import styles from '../../packages/SmartTask/task.module.less';
 
 const { red, green } = Dictionary('color');
 

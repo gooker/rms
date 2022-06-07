@@ -134,31 +134,6 @@ export async function fetchPodToCell(params) {
   });
 }
 
-// 小车空跑
-export async function vehicleEmptyRun(params) {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace.Platform}/task/empty-run`, {
-    method: 'POST',
-    data: { ...params, sectionId },
-  });
-}
-
-// 小车充电
-export async function vehicleTryToCharge(params) {
-  return request(`/${NameSpace.Platform}/task/tryToCharge`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 小车回休息区
-export async function vehicleToRest(params) {
-  return request(`/${NameSpace.Platform}/task/rest`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
 // 小车命令
 export async function vehicleCommand(VehicleType, params) {
   return request(`/${NameSpace[VehicleType]}/vehicle/batchSendCommand`, {

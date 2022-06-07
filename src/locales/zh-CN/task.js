@@ -13,10 +13,9 @@ export default {
   'app.taskPool.mountedBin': '已挂载的料箱',
 
   // 等待队列
-  'app.taskQueue.appointedVehicle': '必选小车',
+  'app.taskQueue.appointedVehicle': '指定小车',
   'app.taskQueue.appointedTarget': '指定目标点',
   'app.taskQueue.availableVehicle': '可用小车',
-  'app.taskQueue.createTime': '加入时间',
   'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
   'app.taskQueue.notAvailable': '暂无',
   'app.taskQueue.priorityMin': '最低优先级',

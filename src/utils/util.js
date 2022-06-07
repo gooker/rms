@@ -1519,3 +1519,16 @@ export function getAllEnvironments() {
   }
   return { allEnvs, activeEnv };
 }
+
+export function generateVehicleTypeOptions(vehicles) {
+  const vehicleTypes = vehicles.map((item) => item.vehicle.vehicleType);
+  return [...new Set(vehicleTypes)].map((item) => (
+    <Select.Option key={item} value={item}>
+      {item}
+    </Select.Option>
+  ));
+}
+
+export function generateVehicleOptions(vehicles) {
+  return;
+}

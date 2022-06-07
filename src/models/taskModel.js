@@ -1,21 +1,12 @@
-import {
-  fetchTaskDetailByTaskId,
-  fetchRestartTask,
-  fetchResetTask,
-  fetchCancelTask,
-  fetchRestoreTask,
-  fetchVehicleErrorRecord,
-  getVehicleTaskLog,
-  getAlertCentersByTaskIdOrVehicleId,
-} from '@/services/commonService';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { fetchCancelTask, fetchResetTask, fetchRestartTask, fetchRestoreTask } from '@/services/commonService';
+import { dealResponse } from '@/utils/util';
+import { fetchTaskDetail } from '@/services/taskService';
 
 export default {
   namespace: 'task',
 
   state: {
     taskId: null, // 标记当前正在查看的任务ID
-    taskVehicleType: null, // 标记当前正在查看任务的小车类型
     taskDetailVisible: false,
     loadingTaskDetail: true, // 标记加载任务详情Spin
 
@@ -26,45 +17,38 @@ export default {
   },
 
   effects: {
-    *fetchTaskDetailByTaskId({ payload }, { call, put, select }) {
-      const { taskId, vehicleType } = payload;
-      const sectionId = window.localStorage.getItem('sectionId');
-
-      const changeVisiblePayload = { taskId, vehicleType, visible: true };
-      yield put({ type: 'changeTaskDetailModalVisible', payload: changeVisiblePayload });
+    * fetchTaskDetailByTaskId({ payload }, { call, put }) {
+      const { taskId } = payload;
+      yield put({ type: 'changeTaskDetailModalVisible', payload: { taskId, visible: true } });
 
       // 获取任务详情
-      const response = yield call(fetchTaskDetailByTaskId, vehicleType, { taskId });
+      const response = yield call(fetchTaskDetail, taskId);
       if (dealResponse(response)) {
         return;
       }
 
-      // 获取任务日志
-      const responseLog = yield call(getVehicleTaskLog, { size: 10, current: 1, taskId });
-      if (dealResponse(responseLog)) {
-        return;
-      }
-
       // 获取告警信息
-      const responseAlaram = yield call(getAlertCentersByTaskIdOrVehicleId, {
-        taskId,
-      });
-      if (dealResponse(responseAlaram)) {
-        return;
-      }
+      // const responseAlarm = yield call(getAlertCentersByTaskIdOrVehicleId, { taskId });
+      // if (dealResponse(responseAlarm)) {
+      //   return;
+      // }
 
       // 获取小车错误记录
-      const params = { sectionId, taskId, size: 500, current: 1 };
-      const responseForError = yield call(fetchVehicleErrorRecord, vehicleType, params);
-      if (dealResponse(responseForError)) {
-        return;
-      }
+      // const params = { taskId, size: 500, current: 1 };
+      // const responseForError = yield call(fetchVehicleErrorRecord, params);
+      // if (dealResponse(responseForError)) {
+      //   return;
+      // }
 
-      yield put({ type: 'fetchTaskDetailByTaskIdEffect', payload: response });
-      yield put({ type: 'fetchTaskErrorTaskIdEffect', payload: responseForError.list });
-      yield put({ type: 'fetchTaskLogBytaskIdEffect', payload: responseLog.list || [] });
-      yield put({ type: 'fetchTaskAlaramBytaskIdEffect', payload: responseAlaram || [] });
-      yield put({ type: 'changeLoadingTaskDetail', payload: false });
+      yield put({
+        type: 'commonSetTaskState',
+        payload: {
+          detailInfo: response,
+          // singleErrorTask: responseForError.list,
+          // taskAlarm: responseAlarm ?? [],
+          loadingTaskDetail: false,
+        },
+      });
     },
 
     *fetchResetTaskDetailModal(_, { put }) {
@@ -72,7 +56,6 @@ export default {
         type: 'commonSetTaskState',
         payload: {
           taskId: null,
-          taskVehicleType: null,
           taskDetailVisible: false,
           loadingTaskDetail: true,
           detailInfo: {},
@@ -84,57 +67,25 @@ export default {
     *fetchRestartTask({ payload }, { call }) {
       const { vehicleType, ...rest } = payload;
       const response = yield call(fetchRestartTask, vehicleType, rest);
-      if (
-        dealResponse(
-          response,
-          formatMessage({ id: 'app.taskAction.resetTask.success' }),
-          formatMessage({ id: 'app.taskAction.resetTask.fail' }),
-        )
-      ) {
-        return;
-      }
+      dealResponse(response, true);
     },
 
     *fetchResetTask({ payload }, { call }) {
       const { vehicleType, ...rest } = payload;
       const response = yield call(fetchResetTask, vehicleType, rest);
-      if (
-        dealResponse(
-          response,
-          formatMessage({ id: 'app.taskAction.redoTask.success' }),
-          formatMessage({ id: 'app.taskAction.redoTask.fail' }),
-        )
-      ) {
-        return;
-      }
+      dealResponse(response, true);
     },
 
     *fetchCancelTask({ payload }, { call }) {
       const { vehicleType, ...rest } = payload;
       const response = yield call(fetchCancelTask, vehicleType, rest);
-      if (
-        dealResponse(
-          response,
-          formatMessage({ id: 'app.taskAction.cancelTask.success' }),
-          formatMessage({ id: 'app.taskAction.cancelTask.fail' }),
-        )
-      ) {
-        return;
-      }
+      dealResponse(response, true);
     },
 
     *fetchRestoreTask({ payload }, { call }) {
       const { vehicleType, ...rest } = payload;
       const response = yield call(fetchRestoreTask, vehicleType, rest);
-      if (
-        dealResponse(
-          response,
-          formatMessage({ id: 'app.taskAction.restoreTask.success' }),
-          formatMessage({ id: 'app.taskAction.restoreTask.fail' }),
-        )
-      ) {
-        return;
-      }
+      dealResponse(response, true);
     },
   },
 
@@ -164,7 +115,6 @@ export default {
       return {
         ...state,
         taskId: payload.taskId,
-        taskVehicleType: payload.vehicleType,
         taskDetailVisible: payload.visible,
       };
     },
@@ -173,12 +123,6 @@ export default {
       return {
         ...state,
         loadingTaskDetail: payload,
-      };
-    },
-    fetchTaskLogBytaskIdEffect(state, { payload }) {
-      return {
-        ...state,
-        taskRecord: payload,
       };
     },
     fetchTaskAlaramBytaskIdEffect(state, { payload }) {

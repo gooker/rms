@@ -12,7 +12,7 @@ import classnames from 'classnames';
 import { cloneDeep, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
-import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translatorService';
+import { addSysLang, getTranslationByCode, updateSysTranslation } from '@/services/translationService';
 import RmsConfirm from '@/components/RmsConfirm';
 import { exportTranslate, generatefilterValue, generateOriginData, generateUpdateDataToSave } from './translateUtils';
 import EditableTable from './component/EditableCell/EditableTable';

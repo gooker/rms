@@ -15,7 +15,7 @@ const TargetSelector = (props) => {
   }
 
   function onCodeChange(_value) {
-    currentValue.code = _value;
+    currentValue.code = _value ?? [];
     onChange({ ...currentValue });
   }
 

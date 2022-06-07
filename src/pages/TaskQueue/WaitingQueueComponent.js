@@ -12,10 +12,10 @@ import {
 } from '@/services/commonService';
 import TableWithPages from '@/components/TableWithPages';
 import { VehicleStateColor } from '@/config/consts';
-import UpdateTaskPriority from './components/UpdateTaskPriority';
+import UpdateTaskPriority from '../../packages/SmartTask/components/UpdateTaskPriority';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
-import taskQueueStyles from './taskQueue.module.less';
+import taskQueueStyles from '../../packages/SmartTask/task.module.less';
 import commonStyles from '@/common.module.less';
 import { VehicleType } from '@/config/config';
 import Dictionary from '@/utils/Dictionary';
@@ -165,7 +165,11 @@ class WaitingQueueComponent extends Component {
             isLockTargetCell,
           };
         });
-        this.setState({ dataSource, loading: false, vehicleOverallStatus: vehicleOverallStatusResponse });
+        this.setState({
+          dataSource,
+          loading: false,
+          vehicleOverallStatus: vehicleOverallStatusResponse,
+        });
       }
     } catch (err) {
       message.error(formatMessage({ id: 'app.message.networkError' }));
@@ -245,7 +249,8 @@ class WaitingQueueComponent extends Component {
   };
 
   render() {
-    const { loading, dataSource, deleteLoading, selectedRowKeys, vehicleOverallStatus } = this.state;
+    const { loading, dataSource, deleteLoading, selectedRowKeys, vehicleOverallStatus } =
+      this.state;
     const { deleteFlag, priority } = this.props;
     return (
       <TablePageWrapper>

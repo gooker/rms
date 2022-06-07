@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Row, Divider, Rate, Modal, Badge, Button } from 'antd';
+import { Badge, Button, Divider, Modal, Rate, Row } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import taskQueueStyles from '@/pages/TaskQueue/taskQueue.module.less';
+import taskQueueStyles from '@/packages/SmartTask/task.module.less';
 import updateTaskPriorityStyles from './updateTaskPriority.module.less';
 
 const Index = (props) => {
@@ -24,18 +24,16 @@ const Index = (props) => {
   ];
 
   function renderModalContent() {
-    return selectedRow.map(({ taskId, jobPriority }) => {
-      return (
-        <Badge showZero count={jobPriority} style={{ background: '#2FC25B' }}>
-          <span
-            className={taskQueueStyles.vehicleStatusBadge}
-            style={{ color: '#000', background: '#ccc' }}
-          >
-            *{taskId.substr(taskId.length - 6, 6)}
-          </span>
-        </Badge>
-      );
-    });
+    return selectedRow.map(({ taskId, jobPriority }) => (
+      <Badge showZero key={'taskId'} count={jobPriority} style={{ background: '#2FC25B' }}>
+        <span
+          className={taskQueueStyles.vehicleStatusBadge}
+          style={{ color: '#000', background: '#ccc' }}
+        >
+          *{taskId.substr(taskId.length - 6, 6)}
+        </span>
+      </Badge>
+    ));
   }
 
   return (

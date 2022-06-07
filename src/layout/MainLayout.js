@@ -14,7 +14,8 @@ import { dealResponse, formatMessage, getPlateFormType, isNull, isStrictNull } f
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
 import { fetchAllPrograming } from '@/services/XIHEService';
 import { fetchAllAdaptor } from '@/services/resourceService';
-import { fetchGetProblemDetail, fetchTaskTypes } from '@/services/commonService';
+import { fetchGetProblemDetail } from '@/services/commonService';
+import { fetchTaskTypes } from '@/services/taskService';
 
 @withRouter
 @connect(({ global, user }) => ({

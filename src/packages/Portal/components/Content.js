@@ -89,6 +89,7 @@ const Content = (props) => {
 
       {/* 国际化编辑 */}
       <I18nEditor />
+
       {/* 任务详情全局组件 */}
       <TaskDetail />
     </div>

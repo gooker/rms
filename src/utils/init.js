@@ -1,7 +1,7 @@
 import intl from 'react-intl-universal';
 import { dealResponse, isStrictNull } from '@/utils/util';
 import { AppCode } from '@/config/config';
-import { getTranslationByCode } from '@/services/translatorService';
+import { getTranslationByCode } from '@/services/translationService';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 import { find } from 'lodash';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';

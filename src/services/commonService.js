@@ -191,14 +191,6 @@ export async function getAlertCentersByTaskIdOrVehicleId(param) {
   });
 }
 
-// 获取任务详情数据
-export async function fetchTaskDetailByTaskId(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle-task/vehicleTaskDetail`, {
-    method: `GET`,
-    data: params,
-  });
-}
-
 // 请求取消任务
 export async function fetchBatchCancelTask(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/vehicle-task/batchCancelTask`, {
@@ -571,12 +563,6 @@ export async function fetchCustomParamType(param) {
 // 获取业务模型可锁资源
 export async function getFormModelLockResource() {
   return request(`/${NameSpace.Platform}/custom-task/getLockResource`, {
-    method: 'GET',
-  });
-}
-// 获取小车任务类型集合
-export async function fetchTaskTypes() {
-  return request(`/${NameSpace.Platform}/task/getTaskType`, {
     method: 'GET',
   });
 }
