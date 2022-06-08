@@ -103,7 +103,7 @@ const ChargerListTools = (props) => {
               dispatch({ type: 'chargerList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id="app.vehicleList.found" />
+            <ScanOutlined /> <FormattedMessage id="app.vehicle.found" />
             {unregisterCharges.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterCharges.length}]
