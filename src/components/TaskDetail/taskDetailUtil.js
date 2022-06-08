@@ -13,8 +13,9 @@ export function getTaskNodeColorFlag(item) {
   if (item.released) {
     if (item.actionState === ActionState.FINISHED) {
       flag = 'passed';
+    } else {
+      flag = 'locked';
     }
-    flag = 'locked';
   }
   return flag;
 }

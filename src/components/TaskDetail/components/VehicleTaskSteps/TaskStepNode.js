@@ -96,8 +96,6 @@ const TaskStepNode = (props) => {
           event: action.actionId,
           eventName: action.actionDescription ?? action.actionId,
           eventParam: action.actionParameters ?? [],
-          released: action.released,
-          actionState: action.actionState,
         };
         dataSourceItem.eventParam = dataSourceItem.eventParam.filter(Boolean);
         eventDataSource.push(dataSourceItem);
@@ -111,7 +109,6 @@ const TaskStepNode = (props) => {
             size={'small'}
             dataSource={actionDataSource}
             columns={actionColumns}
-            rowClassName={(record) => styles[getTaskNodeColorFlag(record)]}
             pagination={false}
           />
         )}
