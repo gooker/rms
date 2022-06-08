@@ -51,7 +51,9 @@ export default {
   'app.executionQ.triedTimes': '累计次数',
 
   // 任务详情
-  'app.taskDetail.estimatedFinishTime': '预计完成时间:',
+  'app.taskDetail.subTaskDetail': '子任务详情',
+  'app.taskDetail.externalCode': '运单号',
+  'app.taskDetail.estimatedFinishTime': '预计完成时间',
   'app.taskDetail.cancelTask': '取消任务',
   'app.taskDetail.cancelTaskSubmit': '取消任务请求已提交',
   'app.taskDetail.chargerId': '充电ID',

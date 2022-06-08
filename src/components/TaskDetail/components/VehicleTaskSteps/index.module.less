@@ -1,15 +1,12 @@
-// TaskStepItem
+// TaskStepNode
 .taskStepItem {
   display: flex;
   height: 30px;
   line-height: 30px;
-  cursor: pointer;
 }
 
 .cellId {
-  padding: 0 3px;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
+  padding: 0 8px;
 }
 
 .actions {
@@ -18,8 +15,6 @@
   align-items: center;
   justify-content: center;
   padding: 0 5px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
 }
 
 // Popover Content
@@ -46,4 +41,22 @@
   &:last-child {
     border-bottom: 1px solid #e8e8e8;
   }
+}
+
+.taskStepTitle {
+  color: rgba(0, 0, 0, 0.85);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.future {
+  background: #fbb034;
+}
+
+.locked {
+  background: #34bf49;
+}
+
+.passed {
+  background: #808080;
 }

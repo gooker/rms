@@ -1,12 +1,6 @@
 import React, { PureComponent } from 'react';
 import { Divider, Form, Steps, Tooltip } from 'antd';
-import {
-  ClockCircleOutlined,
-  FrownOutlined,
-  LoadingOutlined,
-  MehOutlined,
-  SmileOutlined,
-} from '@ant-design/icons';
+import { ClockCircleOutlined, FrownOutlined, LoadingOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
 import RenderVehicleTaskActions from './VehicleTaskSteps/RenderVehicleTaskActions';
 

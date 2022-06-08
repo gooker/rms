@@ -2,18 +2,20 @@ import { fetchCancelTask, fetchResetTask, fetchRestartTask, fetchRestoreTask } f
 import { dealResponse } from '@/utils/util';
 import { fetchTaskDetail } from '@/services/taskService';
 
+const InitState = {
+  taskId: null, // 标记当前正在查看的任务ID
+  taskDetailVisible: false,
+  loadingTaskDetail: true, // 标记加载任务详情Spin
+  detailInfo: {},
+  singleErrorTask: [],
+  taskRecord: [], // 任务日志
+  taskAlarm: [], // 告警信息
+};
 export default {
   namespace: 'task',
 
   state: {
-    taskId: null, // 标记当前正在查看的任务ID
-    taskDetailVisible: false,
-    loadingTaskDetail: true, // 标记加载任务详情Spin
-
-    detailInfo: {},
-    singleErrorTask: [],
-    taskRecord: [], // 任务日志
-    taskAlarm: [], // 告警信息
+    ...InitState,
   },
 
   effects: {
@@ -55,11 +57,7 @@ export default {
       yield put({
         type: 'commonSetTaskState',
         payload: {
-          taskId: null,
-          taskDetailVisible: false,
-          loadingTaskDetail: true,
-          detailInfo: {},
-          singleErrorTask: [],
+          ...InitState,
         },
       });
     },
@@ -96,21 +94,18 @@ export default {
         ...payload,
       };
     },
-
     fetchTaskDetailByTaskIdEffect(state, { payload }) {
       return {
         ...state,
         detailInfo: payload,
       };
     },
-
     fetchTaskErrorTaskIdEffect(state, { payload }) {
       return {
         ...state,
         singleErrorTask: payload,
       };
     },
-
     changeTaskDetailModalVisible(state, { payload }) {
       return {
         ...state,
@@ -118,14 +113,13 @@ export default {
         taskDetailVisible: payload.visible,
       };
     },
-
     changeLoadingTaskDetail(state, { payload }) {
       return {
         ...state,
         loadingTaskDetail: payload,
       };
     },
-    fetchTaskAlaramBytaskIdEffect(state, { payload }) {
+    fetchTaskAlarmByTaskIdEffect(state, { payload }) {
       return {
         ...state,
         taskAlarm: payload,

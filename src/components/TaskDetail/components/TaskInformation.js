@@ -1,15 +1,15 @@
 import React, { createRef, PureComponent } from 'react';
-import { Badge, Button, Card, Col, Divider, Input, Row, Tooltip } from 'antd';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, Col, Divider, Empty, Input, Modal, Row } from 'antd';
+import { VehicleType } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { VehicleType } from '@/config/config';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import ToteVehicleWorkBinInfoMap from './ToteVehicleWorkBinInfoMap';
 import styles from '@/common.module.less';
 
 const colProps = { lg: 8, sm: 12 };
+const { red } = Dictionary('color');
 const taskStatusMap = ['warning', 'processing', 'success', 'error', 'default'];
 const DescriptionItem = ({ title, content }) => (
   <div className={styles.descriptionItem}>
@@ -17,14 +17,11 @@ const DescriptionItem = ({ title, content }) => (
     {content}
   </div>
 );
-const TooltipRight = ({ content, placement }) => (
-  <Tooltip placement={placement || 'topRight'} title={<span>{content}</span>}>
-    <QuestionCircleOutlined style={{ fontSize: 17, marginLeft: 10, cursor: 'pointer' }} />
-  </Tooltip>
-);
 
-@connect(({ global }) => ({
+@connect(({ global, task }) => ({
   allTaskTypes: global.allTaskTypes,
+  detailInfo: task.detailInfo?.vehicleTask,
+  chargeRecord: task.detailInfo?.chargeRecord,
 }))
 class TaskInformation extends PureComponent {
   toteHoldingInput = createRef();
@@ -53,27 +50,160 @@ class TaskInformation extends PureComponent {
     }
   };
 
-  confirmHolding = () => {
-    const { detailInfo, confirmToteHolding } = this.props;
-    confirmToteHolding(
-      detailInfo.sectionId,
-      detailInfo.taskId,
-      this.toteHoldingInput.current.state.value,
-    );
+  // 重发任务
+  restartTask = (sectionId, taskId) => {
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: (
+        <span>
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
+          <span style={{ color: 'red', margin: '0px 10px' }}>
+            {formatMessage({ id: 'app.taskDetail.retransmission' })}
+          </span>
+          {formatMessage({ id: 'app.task' })}
+        </span>
+      ),
+      content: (
+        <div>
+          <span>{formatMessage({ id: 'app.task.id' })}:</span>
+          <span style={{ marginRight: 10 }}>{taskId}</span>
+        </div>
+      ),
+      onOk() {
+        dispatch({
+          type: 'task/fetchRestartTask',
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
+        });
+      },
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
+    });
+  };
+
+  // 恢复任务
+  restoreTask = (sectionId, taskId) => {
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: (
+        <span>
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
+          <span style={{ color: 'red', margin: '0px 10px' }}>
+            {formatMessage({ id: 'app.taskDetail.restore' })}
+          </span>
+          {formatMessage({ id: 'app.task' })}
+        </span>
+      ),
+      content: (
+        <div>
+          <span>{formatMessage({ id: 'app.task.id' })}:</span>
+          <span style={{ marginRight: 10 }}>{taskId}</span>
+        </div>
+      ),
+      onOk() {
+        dispatch({
+          type: 'task/fetchRestoreTask',
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
+        });
+      },
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
+    });
+  };
+
+  // 重做任务
+  forceResetTask = (sectionId, taskId) => {
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: (
+        <span>
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
+          <span
+            style={{
+              color: 'red',
+              margin: '0px 10px',
+            }}
+          >
+            {formatMessage({ id: 'app.taskDetail.reset' })}
+          </span>
+          {formatMessage({ id: 'app.task' })}
+        </span>
+      ),
+      content: (
+        <div>
+          <div>
+            <span>{formatMessage({ id: 'app.task.id' })}:</span>
+            <span style={{ marginRight: 10 }}>{taskId}</span>
+          </div>
+          <div>
+            <span style={{ marginTop: 10, color: red }}>
+              {formatMessage({ id: 'app.taskDetail.makeSureVehicleNotLoadedPodBeforeRedoing' })}
+            </span>
+          </div>
+        </div>
+      ),
+      onOk() {
+        dispatch({
+          type: 'task/fetchResetTask',
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
+        });
+      },
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
+    });
+  };
+
+  // 取消任务
+  cancelTask = (sectionId, taskId) => {
+    const { dispatch } = this.props;
+    Modal.confirm({
+      title: (
+        <span>
+          {formatMessage({ id: 'app.taskDetail.makeSure' })}
+          <span style={{ color: 'red', margin: '0px 10px' }}>
+            {formatMessage({ id: 'app.button.cancel' })}
+          </span>
+          {formatMessage({ id: 'app.task' })}
+        </span>
+      ),
+      content: (
+        <div>
+          <span>{formatMessage({ id: 'app.task.id' })}:</span>
+          <span style={{ marginRight: 10 }}>{taskId}</span>
+        </div>
+      ),
+      onOk() {
+        dispatch({
+          type: 'task/fetchCancelTask',
+          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
+        });
+      },
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
+    });
+  };
+
+  // 确认抱夹信息
+  confirmToteHolding = () => {
+    const { detailInfo, dispatch } = this.props;
+    const holdingTote = this.toteHoldingInput.current.state.value;
+    Modal.confirm({
+      title: formatMessage({ id: 'app.taskDetail.confirmToteHolding' }),
+      content: <span style={{ fontSize: '15px', color: 'red' }}>{holdingTote}</span>,
+      onOk() {
+        dispatch({
+          type: 'task/fetchConfirmToteHolding',
+          payload: { taskId: detailInfo.taskId, holdingTote },
+        });
+      },
+      okText: formatMessage({ id: 'app.button.confirm' }),
+      cancelText: formatMessage({ id: 'app.button.cancel' }),
+    });
   };
 
   render() {
-    const {
-      cancel,
-      detailInfo,
-      restartTask,
-      restoreTask,
-      currentType,
-      chargeRecord,
-      forceStandBy,
-      allTaskTypes,
-    } = this.props;
-    if (!detailInfo) return null;
+    const { detailInfo, chargeRecord, allTaskTypes } = this.props;
+    if (!detailInfo) return <Empty />;
+
     const { taskStatus } = detailInfo;
     const cardExtra = (
       <div>
@@ -82,7 +212,7 @@ class TaskInformation extends PureComponent {
             style={{ marginLeft: 15 }}
             disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
             onClick={() => {
-              forceStandBy(detailInfo.sectionId, detailInfo.taskId);
+              this.forceResetTask(detailInfo.sectionId, detailInfo.taskId);
             }}
           >
             <FormattedMessage id="app.taskDetail.reset" />
@@ -94,7 +224,7 @@ class TaskInformation extends PureComponent {
             style={{ marginLeft: 15 }}
             disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
             onClick={() => {
-              restoreTask(detailInfo.sectionId, detailInfo.taskId);
+              this.restoreTask(detailInfo.sectionId, detailInfo.taskId);
             }}
           >
             <FormattedMessage id="app.taskDetail.restore" />
@@ -106,38 +236,27 @@ class TaskInformation extends PureComponent {
             style={{ marginLeft: 15 }}
             disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
             onClick={() => {
-              restartTask(detailInfo.sectionId, detailInfo.taskId);
+              this.restartTask(detailInfo.sectionId, detailInfo.taskId);
             }}
           >
             <FormattedMessage id="app.taskDetail.restart" />
           </Button>
         )}
 
-        {['Executing', 'New', 'Error'].includes(taskStatus) && (
+        {['New', 'Executing', 'Error'].includes(taskStatus) && (
           <Button
             disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
             style={{ marginLeft: 15 }}
             onClick={() => {
-              cancel(detailInfo.sectionId, detailInfo.taskId);
+              this.cancelTask(detailInfo.sectionId, detailInfo.taskId);
             }}
           >
-            <FormattedMessage id="app.button.cancel" />
+            <FormattedMessage id='app.button.cancel' />
           </Button>
         )}
-        <span style={{ marginLeft: 15 }}>
-          <TooltipRight
-            placement="bottomRight"
-            content={
-              <div>
-                <section>{formatMessage({ id: 'app.taskAction.resetTip' })}</section>
-                <section>{formatMessage({ id: 'app.taskAction.restartTip' })}</section>
-                <section>{formatMessage({ id: 'app.taskAction.restoreTip' })}</section>
-              </div>
-            }
-          />
-        </span>
       </div>
     );
+
     return (
       <div>
         {detailInfo && (
@@ -147,52 +266,50 @@ class TaskInformation extends PureComponent {
               <Row>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.task.id" />}
-                    content={<span>{detailInfo.taskId}</span>}
+                    title={<FormattedMessage id='app.task.id' />}
+                    content={detailInfo.taskId}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.common.creationTime" />}
+                    title={<FormattedMessage id='app.common.creationTime' />}
+                    content={convertToUserTimezone(detailInfo.createTime).format(
+                      'YYYY-MM-DD HH:mm:ss',
+                    )}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='app.taskDetail.createUser' />}
+                    content={detailInfo.createdByUser}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='app.common.updateTime' />}
+                    content={convertToUserTimezone(detailInfo.updateTime).format(
+                      'YYYY-MM-DD HH:mm:ss',
+                    )}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='app.common.updater' />}
+                    content={detailInfo.updatedByUser}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='app.form.sectionId' />}
+                    content={detailInfo.sectionId}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='app.task.type' />}
                     content={
-                      <span>
-                        {convertToUserTimezone(detailInfo.createTime).format('YYYY-MM-DD HH:mm:ss')}
-                      </span>
+                      allTaskTypes?.[detailInfo.vehicleTaskType] || detailInfo.vehicleTaskType
                     }
-                  />
-                </Col>
-                <Col {...colProps}>
-                  <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.createUser" />}
-                    content={<span>{detailInfo.createdByUser}</span>}
-                  />
-                </Col>
-                <Col {...colProps}>
-                  <DescriptionItem
-                    title={<FormattedMessage id="app.common.updateTime" />}
-                    content={
-                      <span>
-                        {convertToUserTimezone(detailInfo.updateTime).format('YYYY-MM-DD HH:mm:ss')}
-                      </span>
-                    }
-                  />
-                </Col>
-                <Col {...colProps}>
-                  <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.updateUser" />}
-                    content={<span>{detailInfo.updatedByUser}</span>}
-                  />
-                </Col>
-                <Col {...colProps}>
-                  <DescriptionItem
-                    title={<FormattedMessage id="app.form.sectionId" />}
-                    content={<span>{detailInfo.sectionId}</span>}
-                  />
-                </Col>
-                <Col {...colProps}>
-                  <DescriptionItem
-                    title={<FormattedMessage id="app.task.type" />}
-                    content={allTaskTypes?.[currentType]?.[detailInfo.type] || detailInfo.type}
                   />
                 </Col>
                 <Col {...colProps}>
@@ -203,24 +320,34 @@ class TaskInformation extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.targetSpotId" />}
-                    content={<span>{detailInfo.targetCellId}</span>}
+                    title={<FormattedMessage id='app.common.targetCell' />}
+                    content={detailInfo.targetCellId}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="vehicle.id" />}
-                    content={<span>{detailInfo.currentVehicleId}</span>}
+                    title={<FormattedMessage id='vehicle.id' />}
+                    content={detailInfo.currentVehicleId}
                   />
                 </Col>
-                {currentType === VehicleType.LatentLifting && (
-                  <Col {...colProps}>
-                    <DescriptionItem
-                      title={<span>{formatMessage({ id: 'app.pod.id' })}</span>}
-                      content={<span>{detailInfo.podId}</span>}
-                    />
-                  </Col>
-                )}
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='app.vehicleType' />}
+                    content={detailInfo.vehicleType}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='object.load' />}
+                    content={detailInfo.loads?.join()}
+                  />
+                </Col>
+                <Col {...colProps}>
+                  <DescriptionItem
+                    title={<FormattedMessage id='object.load.direction' />}
+                    content={detailInfo.loadAngle}
+                  />
+                </Col>
               </Row>
             )}
 
@@ -237,13 +364,17 @@ class TaskInformation extends PureComponent {
             {/** ******************************* 料箱确认抱夹信息 *********************************** */}
             {detailInfo.toteHoldingCode && (
               <div>
-                <Divider orientation="left">
+                <Divider orientation='left'>
                   {formatMessage({ id: 'app.taskDetail.confirmHugTote' })}
                 </Divider>
                 <div style={{ display: 'flex', width: '30%' }}>
                   <Input defaultValue={detailInfo.toteHoldingCode} ref={this.toteHoldingInput} />
-                  <Button type="primary" style={{ marginLeft: 10 }} onClick={this.confirmHolding}>
-                    <FormattedMessage id="app.button.confirm" />
+                  <Button
+                    type='primary'
+                    style={{ marginLeft: 10 }}
+                    onClick={this.confirmToteHolding}
+                  >
+                    <FormattedMessage id='app.button.confirm' />
                   </Button>
                 </div>
               </div>
@@ -273,34 +404,28 @@ class TaskInformation extends PureComponent {
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.targetStopSpotId" />}
-                      content={<span>{detailInfo.targetCellId}</span>}
+                      title={<FormattedMessage id='app.taskDetail.targetStopSpotId' />}
+                      content={detailInfo.targetCellId}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.pod.direction" />}
-                      content={
-                        <>
-                          {formatMessage({
-                            id: Dictionary('podDirection', [detailInfo.podAngle]),
-                            defaultValue: detailInfo.podAngle,
-                          })}
-                        </>
-                      }
+                      title={<FormattedMessage id='app.pod.direction' />}
+                      content={formatMessage({
+                        id: Dictionary('podDirection', [detailInfo.podAngle]),
+                        defaultValue: detailInfo.podAngle,
+                      })}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
                       title={<FormattedMessage id="app.taskDetail.isReleased" />}
                       content={
-                        <>
-                          {detailInfo.isReleased != null
-                            ? detailInfo.isReleased
-                              ? `${formatMessage({ id: 'app.common.true' })}`
-                              : `${formatMessage({ id: 'app.common.false' })}`
-                            : null}
-                        </>
+                        detailInfo.isReleased != null
+                          ? detailInfo.isReleased
+                            ? `${formatMessage({ id: 'app.common.true' })}`
+                            : `${formatMessage({ id: 'app.common.false' })}`
+                          : null
                       }
                     />
                   </Col>
@@ -332,25 +457,17 @@ class TaskInformation extends PureComponent {
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={
-                        <>
-                          <FormattedMessage id="app.taskDetail.workStationStopSpotId" />
-                        </>
-                      }
-                      content={<span>{detailInfo.workStationStopCellId}</span>}
+                      title={<FormattedMessage id='app.taskDetail.workStationStopSpotId' />}
+                      content={detailInfo.workStationStopCellId}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.pod.direction" />}
-                      content={
-                        <>
-                          {formatMessage({
-                            id: Dictionary('podDirection', [detailInfo.podAngle]),
-                            defaultValue: detailInfo.podAngle,
-                          })}
-                        </>
-                      }
+                      title={<FormattedMessage id='app.pod.direction' />}
+                      content={formatMessage({
+                        id: Dictionary('podDirection', [detailInfo.podAngle]),
+                        defaultValue: detailInfo.podAngle,
+                      })}
                     />
                   </Col>
                   <Col {...colProps}>
@@ -382,47 +499,39 @@ class TaskInformation extends PureComponent {
 
                 <Col>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.chargerId" />}
-                    content={<span>{detailInfo.chargerId}</span>}
+                    title={<FormattedMessage id='app.taskDetail.chargerId' />}
+                    content={detailInfo.chargerId}
                   />
                 </Col>
                 <Row>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.startTime" />}
-                      content={
-                        <>
-                          {convertToUserTimezone(chargeRecord.startChargingTime).format(
-                            'YYYY-MM-DD HH:mm:ss',
-                          )}
-                        </>
-                      }
+                      title={<FormattedMessage id='app.taskDetail.startTime' />}
+                      content={convertToUserTimezone(chargeRecord.startChargingTime).format(
+                        'YYYY-MM-DD HH:mm:ss',
+                      )}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.endTime" />}
-                      content={
-                        <>
-                          {convertToUserTimezone(chargeRecord.stopChargingTime).format(
-                            'YYYY-MM-DD HH:mm:ss',
-                          )}
-                        </>
-                      }
+                      title={<FormattedMessage id='app.taskDetail.endTime' />}
+                      content={convertToUserTimezone(chargeRecord.stopChargingTime).format(
+                        'YYYY-MM-DD HH:mm:ss',
+                      )}
                     />
                   </Col>
                 </Row>
                 <Row>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.startingPower" />}
-                      content={<span>{chargeRecord.startChargingBattery}%</span>}
+                      title={<FormattedMessage id='app.taskDetail.startingPower' />}
+                      content={`${chargeRecord.startChargingBattery}%`}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id="app.taskDetail.endPower" />}
-                      content={<span>{chargeRecord.finishChargingBattery}%</span>}
+                      title={<FormattedMessage id='app.taskDetail.endPower' />}
+                      content={`${chargeRecord.finishChargingBattery}%`}
                     />
                   </Col>
                 </Row>
@@ -434,14 +543,14 @@ class TaskInformation extends PureComponent {
               <Row>
                 <Col>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.forkSourceStorageCode" />}
-                    content={<span>{detailInfo.forkPodParam.sourceStorageCode}</span>}
+                    title={<FormattedMessage id='app.taskDetail.forkSourceStorageCode' />}
+                    content={detailInfo.forkPodParam.sourceStorageCode}
                   />
                 </Col>
                 <Col>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.taskDetail.forkTargetStorageCode" />}
-                    content={<span>{detailInfo.forkPodParam.targetStorageCode}</span>}
+                    title={<FormattedMessage id='app.taskDetail.forkTargetStorageCode' />}
+                    content={detailInfo.forkPodParam.targetStorageCode}
                   />
                 </Col>
               </Row>

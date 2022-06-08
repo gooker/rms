@@ -216,6 +216,14 @@ export function adjustModalWidth() {
   return width >= maxWidth ? maxWidth : width;
 }
 
+export function adjustTaskDetailModalWidth() {
+  const width = document.body.clientWidth;
+  if (width <= 2048) {
+    return 1200;
+  }
+  return 1200 + Math.ceil((width - 2048) / 4);
+}
+
 export function isNull(value) {
   return value === null || value === undefined;
 }

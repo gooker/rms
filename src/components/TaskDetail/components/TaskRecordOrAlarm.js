@@ -1,14 +1,20 @@
 import React, { Component } from 'react';
 import { Table, Tag } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import { convertToUserTimezone, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
+
 // 任务告警和任务日志公用一个组件
+@connect(({ task }) => ({
+  taskRecord: task.taskRecord,
+  taskAlarm: task.taskAlarm,
+}))
 class TaskRecordOrAlarm extends Component {
   state = {
     currentTaskRecord: [],
-    currentTaskAlaram: [],
+    currentTaskAlarm: [],
     expandedRowKeys: [],
   };
 
@@ -28,18 +34,18 @@ class TaskRecordOrAlarm extends Component {
     });
     this.setState({
       currentTaskRecord: taskRecord,
-      currentTaskAlaram: newTaskAlarm,
+      currentTaskAlarm: newTaskAlarm,
     });
   };
 
-  alaramColumns = [
+  alarmColumns = [
     {
-      title: <FormattedMessage id="app.taskAlarm.code" />,
+      title: <FormattedMessage id='app.taskAlarm.code' />,
       dataIndex: 'alertCode',
       fixed: 'left',
     },
     {
-      title: <FormattedMessage id="app.taskAlarm.level" />,
+      title: <FormattedMessage id='app.taskAlarm.level' />,
       dataIndex: 'alertItemLevel',
       render: (text) => {
         if (!isNull(text)) {
@@ -114,14 +120,14 @@ class TaskRecordOrAlarm extends Component {
   ];
 
   render() {
-    const { currentTaskRecord, currentTaskAlaram } = this.state; // 2个参数不可能同时都有值
+    const { currentTaskRecord, currentTaskAlarm } = this.state; // 2个参数不可能同时都有值
     return (
       <div>
         {/* TODO考虑把这个提取出来 小车弹框也用到这个 */}
-        {currentTaskAlaram.length > 0 && (
+        {currentTaskAlarm.length > 0 && (
           <Table
-            columns={this.alaramColumns}
-            dataSource={currentTaskAlaram || []}
+            columns={this.alarmColumns}
+            dataSource={currentTaskAlarm || []}
             pagination={false}
             rowKey={(_, index) => index}
             scroll={{ x: 'max-content' }}
@@ -147,12 +153,12 @@ class TaskRecordOrAlarm extends Component {
                 <>
                   {!isNull(record.detail)
                     ? record.detail.map(({ key, value }) => {
-                        return (
-                          <>
-                            <span style={{ margin: '10px 12px' }}>{`${key} : ${value}`}</span>
-                          </>
-                        );
-                      })
+                      return (
+                        <>
+                          <span style={{ margin: '10px 12px' }}>{`${key} : ${value}`}</span>
+                        </>
+                      );
+                    })
                     : '-'}
                 </>
               );
