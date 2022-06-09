@@ -52,6 +52,5 @@ export default {
   'uk-UA': 'Україна',
   'vi-VN': 'Tiếng Việt',
   'zh-CN': '简体中文',
-  'zh-HK': '繁体中文',
-  // 'zh-TW': '繁体中文',
+  'zh-TW': '繁体中文',
 };

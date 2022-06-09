@@ -19,12 +19,6 @@ export default {
   'app.module.SSO': 'SSO',
   'app.module.Carry': '无人搬运',
 
-  // 颜色
-  'app.cost.green': '绿',
-  'app.cost.blue': '蓝',
-  'app.cost.yellow': '黄',
-  'app.cost.red': '红',
-
   // 通用表单数据
   'app.form.target': '目标',
   'app.form.hardwareId': '硬件ID',
@@ -130,44 +124,6 @@ export default {
   'app.common.available': '可用',
   'app.common.detail': '详情',
 
-  // 地图相关
-  'app.map': '地图',
-  'app.map.detail': '地图信息',
-  'app.map.ever': '编辑器版本',
-  'app.map.mver': '平台版本',
-  'app.map.logicArea': '逻辑区',
-  'app.map.routeArea': '路线区',
-  'app.map.scope': '编程',
-  'app.map.zone': '区域',
-  'app.map.label': '区域标签',
-  'app.map.cell': '点位',
-  'app.map.cellGroup': '点位组',
-  'app.map.route': '路线',
-  'app.map.view': '显示',
-  'app.map.function': '功能',
-  'app.map.workStation': '工作站',
-  'app.map.station': '站点',
-  'app.map.stationGroup': '站点组',
-  'app.map.charger': '充电桩',
-  'app.map.elevator': '电梯',
-  'app.map.delivery': '投递点',
-  'app.map.aisle': '通道',
-  'app.map.restArea': '停车点',
-  'app.map.emergencyStop': '急停区',
-  'app.map.intersection': '交汇点',
-  'app.map.programing': '地图编程',
-  'app.map.latentPod': '潜伏货架',
-  'app.map.latentTote': '潜伏料箱',
-  'app.map.tote': '料箱货架',
-  'app.map.navigationCell': '导航点',
-  'app.map.landCoordinator': '物理坐标',
-  'app.map.naviCoordinator': '导航坐标',
-
-  // 场景元素
-  'object.load': '载具',
-  'object.load.direction': '载具方向',
-  'object.loadGroup': '载具组',
-
   // 方向
   'app.direction': '方向',
   'app.direction.current': '当前方向',
@@ -209,69 +165,6 @@ export default {
   'app.button.upload': '上传',
   'app.button.download': '下载',
 
-  // 电池
-  'app.battery.full': '充足',
-  'app.battery.good': '良好',
-  'app.battery.normal': '一般',
-  'app.battery.low': '低电量',
-  'app.battery.danger': '馈电',
-
-  // 潜伏货架
-  'app.pod': '货架',
-  'app.pod.id': '货架ID',
-  'app.pod.direction': '货架面',
-  'app.pod.side.A': 'A',
-  'app.pod.side.B': 'B',
-  'app.pod.side.C': 'C',
-  'app.pod.side.D': 'D',
-
-  // 任务属性
-  'app.task': '任务',
-  'app.task.id': '任务ID',
-  'app.task.customId': '客户任务ID',
-  'app.task.poolId': '料箱池任务ID',
-  'app.task.action': '任务细节',
-  'app.task.step': '任务步骤',
-  'app.task.flow': '任务流程',
-  'app.task.pre': '前置任务',
-  'app.task.history': '历史任务',
-  'app.task.path': '任务路径',
-  'app.task.detail': '任务详情',
-  'app.task.info': '任务数据',
-  'app.task.record': '任务记录',
-  'app.task.type': '任务类型',
-  'app.task.log': '任务日志',
-
-  // 任务状态
-  'app.task.state': '任务状态',
-  'app.task.state.New': '新建',
-  'app.task.state.Executing': '执行中',
-  'app.task.state.Finished': '已完成',
-  'app.task.state.Cancel': '已取消',
-  'app.task.state.Error': '失败',
-
-  // 充电桩状态
-  'app.chargeManger.ERROR': '错误',
-  'app.chargeManger.OFFLINE': '离线',
-  'app.chargeManger.AVAILABLE': '可用',
-  'app.chargeManger.ASSIGNED': '已分配',
-  'app.chargeManger.CHARGING': '充电中',
-  'app.chargeManger.CONNECTING': '对接中',
-  'app.chargeManger.CONNECTED': '对接成功',
-
-  // 充电桩类型
-  'app.chargeManger.version0': '虚拟',
-  'app.chargeManger.version1': '第一代',
-  'app.chargeManger.version2': '第二代',
-  'app.chargeManger.version3': '第三代',
-
-  // 电池类型
-  'app.batteryType.enumeration1': '磷酸铁锂',
-  'app.batteryType.enumeration2': '潜伏车(三元锂)',
-  'app.batteryType.enumeration3': '保留',
-  'app.batteryType.enumeration4': '分拣车(磷酸铁锂)',
-  'app.batteryType.enumeration5': '潜伏车1.2吨和料箱机器人(磷酸铁锂)',
-
   // 时间相关
   'app.time': '时间',
   'app.time.year': '年',
@@ -280,34 +173,4 @@ export default {
   'app.time.hours': '时',
   'app.time.minutes': '分',
   'app.time.seconds': '秒',
-
-  // 故障相关
-  'app.fault.code': '故障码',
-  'app.fault.name': '故障名称',
-  'app.fault.type': '故障类型',
-  'app.fault.level': '故障等级',
-  'app.fault.step': '步骤',
-  'app.fault.version': '所属版本',
-  'app.fault.description': '故障描述',
-  'app.fault.firstReport': '首发时间',
-  'app.fault.lastReport': '最近上报',
-  'app.fault.autoRecover': '自动恢复',
-  'app.fault.additionalData': '额外信息',
-  'app.fault.preDataDefinition': '附加数据1',
-  'app.fault.extraData1': '附加数据1',
-  'app.fault.curDataDefinition': '附加数据2',
-  'app.fault.extraData2': '附加数据2',
-
-  // @有重复: 下面需要从common中移除
-  'app.button.bind': '绑定',
-  'app.button.unbind': '解除绑定',
-  'app.button.forceReset': '强制重置',
-  'app.button.isbinding': '已绑定',
-  'app.button.unbounded': '未绑定',
-  //触发器状态
-  'app.common.status.end': '结束',
-  'app.common.status.start': '开始',
-  'app.common.status.pause': '暂停',
-  'app.common.batchOperate': '批量操作',
-  'app.common.timeInterval': '时间间隔',
 };

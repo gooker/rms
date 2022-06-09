@@ -1,12 +1,11 @@
-import React, { useEffect, useState, memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
 import moment from 'moment';
-import { Form, DatePicker, Modal, Button, InputNumber, Input, Radio, Select, message } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { Button, DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } from 'antd';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
-import { fetchCstParams, getBackZone,fetchActiveMap } from '@/services/commonService';
-import { dealResponse, isNull } from '@/utils/util';
+import { fetchActiveMap, fetchCstParams, getBackZone } from '@/services/commonService';
 
 const FormItem = Form.Item;
 const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };
@@ -219,8 +218,8 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 时间间隔 */}
         <FormItem
-          name="timeInterval"
-          label={`${formatMessage({ id: 'app.common.timeInterval' })}(s)`}
+          name='timeInterval'
+          label={`${formatMessage({ id: 'app.trigger.timeInterval' })}(s)`}
           rules={[
             { required: true },
             {

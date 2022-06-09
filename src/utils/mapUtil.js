@@ -324,41 +324,41 @@ export function batchGenerateLine(targetPoints, dir, value) {
     const endResult = {};
     Object.keys(result).map((key) => {
       const { source, target } = result[key];
-      endResult[`${source}_${target}`] = result[key];
+      endResult[`${source}-${target}`] = result[key];
     });
     return endResult;
   }
   if (targetPoints.length === 2) {
-    if (dir === 0) {
+    if (dir === 90) {
       if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       }
-    } else if (dir === 90) {
+    } else if (dir === 0) {
       if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       } else if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       }
-    } else if (dir === 180) {
+    } else if (dir === 270) {
       if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       }
     } else {
       if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[1].id}_${targetPoints[0].id}`;
+        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
         result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
       } else if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[0].id}_${targetPoints[1].id}`;
+        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
         result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
       }
     }
@@ -966,14 +966,6 @@ export function addTemporaryId(currentMap) {
 
 export function hasLatentPod(value) {
   return !isNull(value) && value !== '0';
-}
-
-export function getCurveMapKey(lineData) {
-  return `${lineData.source}_${lineData.target}_${lineData.bparam1}_${lineData.bparam2}`;
-}
-
-export function getCurveString(lineData) {
-  return `${lineData.source}_${lineData.target}_${lineData.bparam1}_${lineData.bparam2}`;
 }
 
 /**

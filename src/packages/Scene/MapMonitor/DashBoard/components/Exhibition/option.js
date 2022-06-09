@@ -36,11 +36,11 @@ export const vehicleStateColor = {
 
 export const getVehiclePowerStateMap = () => {
   return {
-    full: formatMessage({ id: 'app.battery.full' }),
-    good: formatMessage({ id: 'app.battery.good' }),
-    normal: formatMessage({ id: 'app.battery.normal' }),
-    low: formatMessage({ id: 'app.battery.low' }),
-    danger: formatMessage({ id: 'app.battery.danger' }),
+    full: formatMessage({ id: 'vehicle.battery.full' }),
+    good: formatMessage({ id: 'vehicle.battery.good' }),
+    normal: formatMessage({ id: 'vehicle.battery.normal' }),
+    low: formatMessage({ id: 'vehicle.battery.low' }),
+    danger: formatMessage({ id: 'vehicle.battery.danger' }),
   };
 };
 
@@ -332,11 +332,11 @@ export function getCarBatteryStatePieOption() {
       x: 'center',
       bottom: '3%',
       data: [
-        formatMessage({ id: 'app.battery.full' }),
-        formatMessage({ id: 'app.battery.good' }),
-        formatMessage({ id: 'app.battery.normal' }),
-        formatMessage({ id: 'app.battery.low' }),
-        formatMessage({ id: 'app.battery.danger' }),
+        formatMessage({ id: 'vehicle.battery.full' }),
+        formatMessage({ id: 'vehicle.battery.good' }),
+        formatMessage({ id: 'vehicle.battery.normal' }),
+        formatMessage({ id: 'vehicle.battery.low' }),
+        formatMessage({ id: 'vehicle.battery.danger' }),
       ],
       padding: [2, 5],
       itemWidth: 14 * getDpr(),
@@ -366,27 +366,27 @@ export function getCarBatteryStatePieOption() {
         },
         data: [
           {
-            name: formatMessage({ id: 'app.battery.full' }),
+            name: formatMessage({ id: 'vehicle.battery.full' }),
             value: 0,
             itemStyle: { color: vehiclePowerStateColor.full },
           },
           {
-            name: formatMessage({ id: 'app.battery.good' }),
+            name: formatMessage({ id: 'vehicle.battery.good' }),
             value: 0,
             itemStyle: { color: vehiclePowerStateColor.good },
           },
           {
-            name: formatMessage({ id: 'app.battery.normal' }),
+            name: formatMessage({ id: 'vehicle.battery.normal' }),
             value: 0,
             itemStyle: { color: vehiclePowerStateColor.normal },
           },
           {
-            name: formatMessage({ id: 'app.battery.low' }),
+            name: formatMessage({ id: 'vehicle.battery.low' }),
             value: 0,
             itemStyle: { color: vehiclePowerStateColor.low },
           },
           {
-            name: formatMessage({ id: 'app.battery.danger' }),
+            name: formatMessage({ id: 'vehicle.battery.danger' }),
             value: 0,
             itemStyle: { color: vehiclePowerStateColor.danger },
           },

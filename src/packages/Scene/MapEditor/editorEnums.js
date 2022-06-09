@@ -231,10 +231,10 @@ export const CellTypeSetting = [
 ];
 
 export const CostOptions = [
-  { value: 10, label: 'app.cost.green' },
-  { value: 20, label: 'app.cost.blue' },
-  { value: 100, label: 'app.cost.yellow' },
-  { value: 1000, label: 'app.cost.red' },
+  { value: 10, label: 'map.cost.green' },
+  { value: 20, label: 'map.cost.blue' },
+  { value: 100, label: 'map.cost.yellow' },
+  { value: 1000, label: 'map.cost.red' },
 ];
 
 export const DirectionOption = [

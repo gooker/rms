@@ -114,7 +114,7 @@ class QuestionCenter extends Component {
       render: (text) => {
         if (!isNull(text)) {
           return (
-            <Tag color={alertType[text]}>{formatMessage({ id: `app.alertCenter.${text}` })}</Tag>
+            <Tag color={alertType[text]}>{formatMessage({ id: `app.alarmCenter.${text}` })}</Tag>
           );
         }
       },
@@ -138,18 +138,18 @@ class QuestionCenter extends Component {
     if (currentItemData) {
       const itemColumns = [
         {
-          title: <FormattedMessage id="app.alertCenter.code" />,
+          title: <FormattedMessage id='app.alarmCenter.code' />,
           dataIndex: 'alertCode',
           align: 'center',
         },
         { title: <FormattedMessage id="app.map.cell" />, dataIndex: 'cellId', align: 'center' },
         {
-          title: <FormattedMessage id="app.alertCenter.count" />,
+          title: <FormattedMessage id='app.alarmCenter.count' />,
           dataIndex: 'alertCount',
           align: 'center',
         },
         {
-          title: <FormattedMessage id="app.alertCenter.level" />,
+          title: <FormattedMessage id='app.alarmCenter.level' />,
           dataIndex: 'alertItemLevel',
           align: 'center',
           render: (text) => {
@@ -164,12 +164,12 @@ class QuestionCenter extends Component {
           align: 'center',
         },
         {
-          title: <FormattedMessage id="app.alertCenter.alertName" />,
+          title: <FormattedMessage id='app.alarmCenter.alertName' />,
           dataIndex: 'alertNameI18NKey',
           align: 'center',
         },
         {
-          title: <FormattedMessage id="app.alertCenter.alertContent" />,
+          title: <FormattedMessage id='app.alarmCenter.alertContent' />,
           dataIndex: 'alertContentI18NKey',
           align: 'center',
         },
@@ -215,7 +215,7 @@ class QuestionCenter extends Component {
                 this.onAllHandle();
               }}
             >
-              <FormattedMessage id={'app.alertCenter.dismissedAll'} />
+              <FormattedMessage id={'app.alarmCenter.dismissedAll'} />
             </Button>
             <Button
               onClick={() => {
@@ -223,7 +223,7 @@ class QuestionCenter extends Component {
               }}
               disabled={selectedRowKeys.length === 0}
             >
-              <FormattedMessage id={'app.alertCenter.dismissedSelected'} />
+              <FormattedMessage id={'app.alarmCenter.dismissedSelected'} />
             </Button>
             <Button type="primary" onClick={this.getData}>
               <FormattedMessage id="app.button.refresh" />

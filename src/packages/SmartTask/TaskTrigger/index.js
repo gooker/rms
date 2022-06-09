@@ -207,13 +207,13 @@ class TaskTrigger extends Component {
     let statusText;
     switch (status) {
       case 'start':
-        statusText = formatMessage({ id: 'app.common.status.start' });
+        statusText = formatMessage({ id: 'app.triggerState.start' });
         break;
       case 'pause':
-        statusText = formatMessage({ id: 'app.common.status.pause' });
+        statusText = formatMessage({ id: 'app.triggerState.pause' });
         break;
       default:
-        statusText = formatMessage({ id: 'app.common.status.end' });
+        statusText = formatMessage({ id: 'app.triggerState.end' });
     }
     return statusText;
   };
@@ -241,7 +241,7 @@ class TaskTrigger extends Component {
               this.handleSingleOperate(record, 'start');
             }}
           >
-            {<FormattedMessage id="app.common.status.start" />}
+            {<FormattedMessage id='app.triggerState.start' />}
           </Button>
         </div>
         <div
@@ -254,7 +254,7 @@ class TaskTrigger extends Component {
               this.handleSingleOperate(record, 'pause');
             }}
           >
-            {<FormattedMessage id="app.common.status.pause" />}
+            {<FormattedMessage id='app.triggerState.pause' />}
           </Button>
         </div>
         <div
@@ -267,7 +267,7 @@ class TaskTrigger extends Component {
               this.handleSingleOperate(record, 'end');
             }}
           >
-            {<FormattedMessage id="app.common.status.end" />}
+            {<FormattedMessage id='app.triggerState.end' />}
           </Button>
         </div>
         <Dropdown
@@ -334,7 +334,7 @@ class TaskTrigger extends Component {
           </Col>
           <Col span={24}>
             <DescriptionItem
-              title={`${formatMessage({ id: 'app.common.timeInterval' })}(s)`}
+              title={`${formatMessage({ id: 'app.trigger.timeInterval' })}(s)`}
               content={<span>{record.timeInterval}</span>}
             />
           </Col>
@@ -411,7 +411,7 @@ class TaskTrigger extends Component {
                   {<FormattedMessage id='taskTrigger.paused' />}
                 </Select.Option>
                 <Select.Option value="end">
-                  {<FormattedMessage id="app.common.status.end" />}
+                  {<FormattedMessage id='app.triggerState.end' />}
                 </Select.Option>
               </Select>
               <Dropdown
@@ -420,13 +420,13 @@ class TaskTrigger extends Component {
                 overlay={
                   <Menu onClick={this.handleBatchOperate}>
                     <Menu.Item key="start">
-                      {<FormattedMessage id="app.common.status.start" />}
+                      {<FormattedMessage id='app.triggerState.start' />}
                     </Menu.Item>
                     <Menu.Item key="pause">
-                      {<FormattedMessage id="app.common.status.pause" />}
+                      {<FormattedMessage id='app.triggerState.pause' />}
                     </Menu.Item>
                     <Menu.Item key="end">
-                      {<FormattedMessage id="app.common.status.end" />}
+                      {<FormattedMessage id='app.triggerState.end' />}
                     </Menu.Item>
                   </Menu>
                 }

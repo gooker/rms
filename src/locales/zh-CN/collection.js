@@ -5,6 +5,29 @@ export default {
   'app.arriveTime': '到达时间',
   'app.programing.noParam': '无参数',
 
+  // 故障相关
+  'app.fault.code': '故障码',
+  'app.fault.name': '故障名称',
+  'app.fault.type': '故障类型',
+  'app.fault.level': '故障等级',
+  'app.fault.step': '步骤',
+  'app.fault.version': '所属版本',
+  'app.fault.description': '故障描述',
+  'app.fault.firstReport': '首发时间',
+  'app.fault.lastReport': '最近上报',
+  'app.fault.autoRecover': '自动恢复',
+  'app.fault.additionalData': '额外信息',
+  'app.fault.preDataDefinition': '附加数据1',
+  'app.fault.extraData1': '附加数据1',
+  'app.fault.curDataDefinition': '附加数据2',
+  'app.fault.extraData2': '附加数据2',
+
+  // 触发器
+  'app.triggerState.start': '开始',
+  'app.triggerState.pause': '暂停',
+  'app.triggerState.end': '结束',
+  'app.trigger.timeInterval': '时间间隔',
+
   // 日志下载
   'app.logDownload.fileName': '文件名称',
   'app.logDownload.generateLog': '生成日志',

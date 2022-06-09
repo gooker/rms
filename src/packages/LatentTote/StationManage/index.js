@@ -158,7 +158,7 @@ const ChargerList = () => {
                 statusSwitch({ id: record.id, editType: 'EDIT_STATUS', workStatus: 'PAUSE' });
               }}
             >
-              <FormattedMessage id="app.common.status.pause" />
+              <FormattedMessage id='app.triggerState.pause' />
             </Button>
           ) : (
             <Button

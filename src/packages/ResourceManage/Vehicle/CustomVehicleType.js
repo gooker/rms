@@ -1,19 +1,18 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Card, Empty, Modal, Space, Spin } from 'antd';
+import { Button, Card, Col, Empty, Modal, Row, Space, Spin } from 'antd';
 import { CopyOutlined, EditOutlined, EyeOutlined, ReloadOutlined } from '@ant-design/icons';
-import { dealResponse, isNull } from '@/utils/util';
+import { isPlainObject } from 'lodash';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleTypeDetail from './components/VehicleTypeDetail';
 import { fetchAllAdaptor } from '@/services/resourceService';
-import styles from './vehicle.module.less';
 import commonStyle from '@/common.module.less';
-import { AllAdapters } from '@/mockData';
+import styles from './vehicle.module.less';
 
 const CustomVehicleType = () => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [datasource, setDatasource] = useState(Object.values(AllAdapters));
+  const [datasource, setDatasource] = useState([]);
   const [detail, setDetail] = useState(null);
 
   useEffect(() => {
@@ -38,6 +37,17 @@ const CustomVehicleType = () => {
     setDetail(adapterType);
   }
 
+  function renderOthersInfo(adapterType) {
+    if (isPlainObject(adapterType?.otherInfo)) {
+      return (
+        <Row gutter={24}>
+          {Object.entries(adapterType.otherInfo).map(([key, value], index) => (
+            <Col key={index}>{`${key}: ${value}`}</Col>
+          ))}
+        </Row>
+      );
+    }
+  }
 
   return (
     <Spin spinning={loading}>
@@ -56,19 +66,16 @@ const CustomVehicleType = () => {
           datasource.map(({ adapterType }, index) => (
             <Card
               key={index}
-              title={`适配器: ${adapterType.name}`}
-              extra={
-                <>
-                  {!isNull(adapterType?.otherInfo?.version) &&
-                    `版本:${adapterType?.otherInfo?.version}`}
-                </>
-              }
+              title={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${
+                adapterType.name
+              }`}
+              extra={renderOthersInfo(adapterType)}
             >
               {adapterType.vehicleTypes?.map((vehicleType, innerIndex) => (
                 <Card
                   key={innerIndex}
-                  type="inner"
-                  title={`车辆类型: ${vehicleType.name}`}
+                  type='inner'
+                  title={`${formatMessage({ id: 'app.vehicleType' })}: ${vehicleType.name}`}
                   extra={
                     <Space>
                       {vehicleType.isReadOnly ? (
@@ -96,7 +103,7 @@ const CustomVehicleType = () => {
 
       <Modal
         visible={visible}
-        title={'车辆类型详情'}
+        title={<FormattedMessage id={'app.vehicleType.detail'} />}
         width={'55%'}
         footer={null}
         style={{ top: 20 }}

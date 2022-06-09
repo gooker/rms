@@ -70,7 +70,7 @@ export const MonitorRightTools = [
     icon: 'selection_category.svg',
   },
   {
-    label: <FormattedMessage id={'app.alert'} />,
+    label: <FormattedMessage id={'app.alarm'} />,
     value: Category.Alert,
     icon: 'alert_category.svg',
     style: { width: '33px' },

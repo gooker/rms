@@ -403,7 +403,7 @@ const CommonStationProperty = (props) => {
                 />
               </div>
               <div>
-                <FormattedMessage id={'app.common.status.pause'} />
+                <FormattedMessage id={'app.triggerState.pause'} />
               </div>
             </div>
             <div className={styles.rightSideVehicleContentOperationItem2}>
@@ -419,7 +419,7 @@ const CommonStationProperty = (props) => {
                 />
               </div>
               <div>
-                <FormattedMessage id={'app.common.status.end'} />
+                <FormattedMessage id={'app.triggerState.end'} />
               </div>
             </div>
           </div>

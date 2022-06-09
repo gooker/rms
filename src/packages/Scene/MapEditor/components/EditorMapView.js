@@ -366,11 +366,9 @@ class EditorMapView extends BaseMap {
     }
     // 删除
     if (type === 'remove') {
-      // 删除线条分
       const { lines, arrows } = payload;
-
       lines.forEach((lineKey) => {
-        const reverseLineMapKey = reverse(lineKey.split('_')).join('_');
+        const reverseLineMapKey = reverse(lineKey.split('-')).join('-');
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         const lineEntity = this.idLineMap.get(lineKey);
         // 注意不要删除被共用的关系线

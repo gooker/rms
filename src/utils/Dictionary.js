@@ -22,20 +22,20 @@ const DictionaryDataSource = {
   },
 
   chargerStatus: {
-    ERROR: 'app.chargeManger.ERROR',
-    OFFLINE: 'app.chargeManger.OFFLINE',
-    ASSIGNED: 'app.chargeManger.ASSIGNED',
-    CHARGING: 'app.chargeManger.CHARGING',
-    AVAILABLE: 'app.chargeManger.AVAILABLE',
-    CONNECTED: 'app.chargeManger.CONNECTED',
-    CONNECTING: 'app.chargeManger.CONNECTING',
+    ERROR: 'app.chargerState.ERROR',
+    OFFLINE: 'app.chargerState.OFFLINE',
+    ASSIGNED: 'app.chargerState.ASSIGNED',
+    CHARGING: 'app.chargerState.CHARGING',
+    AVAILABLE: 'app.chargerState.AVAILABLE',
+    CONNECTED: 'app.chargerState.CONNECTED',
+    CONNECTING: 'app.chargerState.CONNECTING',
   },
 
   chargerType: {
-    0: 'app.chargeManger.version0',
-    1: 'app.chargeManger.version1',
-    2: 'app.chargeManger.version2',
-    3: 'app.chargeManger.version3',
+    0: 'app.chargerType.version0',
+    1: 'app.chargerType.version1',
+    2: 'app.chargerType.version2',
+    3: 'app.chargerType.version3',
   },
 
   // 任务状态

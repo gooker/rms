@@ -1,10 +1,11 @@
 export default {
-  'app.vehicle': '小车',
-  'app.vehicleType': '小车类型',
-  'app.vehicleState': '小车状态',
+  'app.vehicle': '车辆',
+  'app.vehicleState': '车辆状态',
   'app.vehicle.found': '发现',
 
-  // 小车类型
+  // 车辆类型
+  'app.vehicleType': '车辆类型',
+  'app.vehicleType.detail': '车辆类型详情',
   'vehicleType.LatentLifting': '潜伏车',
   'vehicleType.Tote': '料箱车',
   'vehicleType.ForkLifting': '叉车',
@@ -26,7 +27,7 @@ export default {
   'vehicle.realTime': '车辆实时状态',
   'vehicle.batteryRealTime': '电池实时状态',
   'vehicle.workingState': '车辆任务状态',
-  'vehicle.id': '小车ID',
+  'vehicle.id': '车辆ID',
   'vehicle.uniqueId': '唯一ID',
   'vehicle.brand': '品牌',
   'vehicle.port': '端口号',
@@ -55,6 +56,13 @@ export default {
   'vehicle.abnormalState.no': '无异常',
   'vehicle.abnormalState.warning': '警告异常',
   'vehicle.abnormalState.error': '错误异常',
+
+  // 电池
+  'vehicle.battery.full': '充足',
+  'vehicle.battery.good': '良好',
+  'vehicle.battery.normal': '一般',
+  'vehicle.battery.low': '低电量',
+  'vehicle.battery.danger': '馈电',
 
   // 小车电池
   'vehicle.battery': '电量',

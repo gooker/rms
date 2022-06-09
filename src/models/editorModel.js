@@ -951,7 +951,7 @@ export default {
       // 为了防止重复添加，预先将已存在的cost生成一个map结构供校验
       const idCostMap = {};
       currentRouteRelations.forEach((item) => {
-        idCostMap[`${item.source}_${item.target}`] = item;
+        idCostMap[`${item.source}-${item.target}`] = item;
       });
       const newLines = batchGenerateLine(cells, dir, value);
       Object.entries(newLines).forEach(([mapKey, relation]) => {
@@ -967,7 +967,7 @@ export default {
         delete idCostMap[key];
       });
       result.add.forEach((item) => {
-        idCostMap[`${item.source}_${item.target}`] = item;
+        idCostMap[`${item.source}-${item.target}`] = item;
       });
       currentRouteMap.relations = Object.values(idCostMap);
       return result;
@@ -975,22 +975,21 @@ export default {
 
     *deleteLines(_, { select, put }) {
       const { selections, currentMap } = yield select(({ editor }) => editor);
-      const selectLines = selections.filter((item) => item.type === MapSelectableSpriteType.ROUTE);
-      const result = [];
-
+      const selectRoutes = selections
+        .filter((item) => item.type === MapSelectableSpriteType.ROUTE)
+        .map(({ id }) => id);
       const currentRouteMapData = getCurrentRouteMapData();
-      let relations = [...(currentRouteMapData.relations ?? [])];
-      relations = relations.filter((relation) => {
-        const isIncludes = selectLines.includes(`${relation.source}-${relation.target}`);
-        if (isIncludes) {
-          result.push({ ...relation });
-        }
+
+      const result = [];
+      const relations = [...(currentRouteMapData.relations ?? [])];
+      currentRouteMapData.relations = relations.filter((relation) => {
+        const key = `${relation.source}-${relation.target}`;
+        const isIncludes = selectRoutes.includes(key);
+        isIncludes && result.push(key);
         return !isIncludes;
       });
-      currentRouteMapData.relations = relations;
-
       yield put({ type: 'saveState', payload: { currentMap, selectLines: [] } });
-      return result;
+      return { lines: result, arrows: result };
     },
 
     *updateCost({ payload }, { select, put }) {

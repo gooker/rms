@@ -92,8 +92,8 @@ class MainLayout extends React.Component {
               dispatch({ type: 'global/fetchAlertCount' }).then((response) => {
                 if (response > 0) {
                   RmsConfirm({
-                    content: formatMessage({ id: 'app.alertCenter.requestHandle' }, { response }),
-                    okText: formatMessage({ id: 'app.alertCenter.goHandle' }),
+                    content: formatMessage({ id: 'app.alarmCenter.requestHandle' }, { response }),
+                    okText: formatMessage({ id: 'app.alarmCenter.goHandle' }),
                     cancelText: formatMessage({ id: 'app.button.cancel' }),
                     onOk() {
                       _this.goToQuestionCenter();

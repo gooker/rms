@@ -27,7 +27,7 @@ function initState(context) {
   context.xyCellMap = new Map(); // {x_y:[Cell]} // 主要用于处理点击某个点位，查看该坐标下有几个点位
   context.idNaviMap = new Map();
 
-  context.idLineMap = new Map(); // {x1_y1_x2_y2: graphics}
+  context.idLineMap = new Map(); // {sourceCellId-targetCellId: graphics}
   context.idArrowMap = new Map(); // {sourceCellId-targetCellId:arrow}
 
   context.workStationMap = new Map(); // {stopCellId: [Entity]}

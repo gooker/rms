@@ -1,5 +1,29 @@
-// @有重复
 export default {
+  // 任务属性
+  'app.task': '任务',
+  'app.task.id': '任务ID',
+  'app.task.customId': '客户任务ID',
+  'app.task.poolId': '料箱池任务ID',
+  'app.task.action': '任务细节',
+  'app.task.step': '任务步骤',
+  'app.task.flow': '任务流程',
+  'app.task.pre': '前置任务',
+  'app.task.history': '历史任务',
+  'app.task.path': '任务路径',
+  'app.task.detail': '任务详情',
+  'app.task.info': '任务数据',
+  'app.task.record': '任务记录',
+  'app.task.type': '任务类型',
+  'app.task.log': '任务日志',
+
+  // 任务状态
+  'app.task.state': '任务状态',
+  'app.task.state.New': '新建',
+  'app.task.state.Executing': '执行中',
+  'app.task.state.Finished': '已完成',
+  'app.task.state.Cancel': '已取消',
+  'app.task.state.Error': '失败',
+
   // 料箱池任务
   'app.taskPool.code': '料箱码',
   'app.taskPool.fetchLocation': '取料箱货位码',

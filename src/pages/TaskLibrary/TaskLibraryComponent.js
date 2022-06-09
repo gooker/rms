@@ -168,7 +168,7 @@ class TaskLibraryComponent extends Component {
   getVehicleList = async () => {
     const response = await fetchAllVehicleList();
     if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.vehicle.getListFail' }));
+      message.error(formatMessage({ id: 'app.message.fetchVehicleListFail' }));
     } else {
       this.setState({ vehicleList: response });
     }

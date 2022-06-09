@@ -313,7 +313,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.Error }}
               >
-                <FormattedMessage id={'app.battery.low'} />
+                <FormattedMessage id={'vehicle.battery.low'} />
               </span>
             </Badge>
             <Badge

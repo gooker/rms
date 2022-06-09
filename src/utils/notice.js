@@ -104,7 +104,7 @@ export default function notice(message, sectionId, notificationQueue) {
         btn,
         duration: 10,
         top: 65,
-        message: formatMessage({ id: `app.alertCenter.${alertType}` }),
+        message: formatMessage({ id: `app.alarmCenter.${alertType}` }),
         description: notificationContent,
         onClose: () => closeNotification(key, notificationQueue),
       });

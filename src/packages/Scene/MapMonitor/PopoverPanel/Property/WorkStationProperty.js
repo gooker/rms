@@ -1,11 +1,11 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Tag, Switch, InputNumber } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { InputNumber, Switch, Tag } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchWorkStationInstrument } from '@/services/monitorService';
 import { WorkStationStatePolling } from '@/workers/WebWorkerManager';
 import { covertData2ChartsData } from '@/packages/Scene/MapMonitor/Modal/WorkStationReport/workStationEchart';
-import { isStrictNull, formatMessage, isNull, dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
 
@@ -315,7 +315,7 @@ const WorkStationProperty = (props) => {
                 />
               </div>
               <div>
-                <FormattedMessage id={'app.common.status.pause'} />
+                <FormattedMessage id={'app.triggerState.pause'} />
               </div>
             </div>
             <div className={styles.rightSideVehicleContentOperationItem2}>
@@ -331,7 +331,7 @@ const WorkStationProperty = (props) => {
                 />
               </div>
               <div>
-                <FormattedMessage id={'app.common.status.end'} />
+                <FormattedMessage id={'app.triggerState.end'} />
               </div>
             </div>
           </div>
