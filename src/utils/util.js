@@ -6,11 +6,13 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { Colors, ToteOffset, VehicleStateColor } from '@/config/consts';
+import { ToteOffset, VehicleStateColor } from '@/config/consts';
 import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
+
+const Colors = Dictionary().color;
 
 /**
  * 将服务器时间转化成本地时间
@@ -286,7 +288,7 @@ export function getDirectionLocale(angle) {
  */
 export function getVehicleStatusTag(vehicleStatus) {
   if (vehicleStatus != null) {
-    const vehicleStateMap = Dictionary('vehicleStatus');
+    const vehicleStateMap = Dictionary().vehicleStatus;
     return (
       <Tag color={VehicleStateColor[vehicleStatus]}>
         {formatMessage({ id: vehicleStateMap[vehicleStatus] })}

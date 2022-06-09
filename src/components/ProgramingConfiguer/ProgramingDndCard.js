@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
+import { Row } from 'antd';
 import { CloseOutlined, HolderOutlined } from '@ant-design/icons';
 import { Draggable } from 'react-smooth-dnd';
-import { Colors } from '@/config/consts';
+import Dictionary from '@/utils/Dictionary';
 import styles from './programing.module.less';
-import { Row } from 'antd';
 
+const Colors = Dictionary().color;
 const ProgramingDndCard = (props) => {
   const { index, title, subTitle, onDelete } = props;
 

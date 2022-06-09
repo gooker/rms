@@ -2,8 +2,10 @@ import React from 'react';
 import classnames from 'classnames';
 import { Draggable } from 'react-smooth-dnd';
 import { CloseOutlined } from '@ant-design/icons';
+import Dictionary from '@/utils/Dictionary';
 import styles from '../customTask.module.less';
-import { Colors } from '@/config/consts';
+
+const Colors = Dictionary().color;
 
 const TaskNodeCard = (props) => {
   const { name, active, disabled, onClick, onDelete, dnd } = props;

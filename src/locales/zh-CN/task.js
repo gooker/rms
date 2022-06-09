@@ -67,7 +67,6 @@ export default {
   'app.taskDetail.errorReason': '错误原因',
   'app.taskDetail.executing': '执行中',
   'app.taskDetail.finished': '已完成',
-  'app.taskDetail.info': '详情',
   'app.taskDetail.isAutoNextStep': '自动执行',
   'app.taskDetail.isRelease': '是否释放',
   'app.taskDetail.isReleased': '是否释放',

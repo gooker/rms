@@ -51,7 +51,6 @@ export default {
   // 维护相关
   'app.activity.maintain': '维护',
   'app.activity.cancelMaintenance': '取消维护',
-  'app.activity.maintenance': '维护中',
   'app.activity.unMaintenance': '未维护',
   'app.activity.maintenanceArea': '维护区域',
 

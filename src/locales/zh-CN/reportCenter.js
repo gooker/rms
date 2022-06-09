@@ -4,7 +4,6 @@ export default {
   'app.report.baseTaskType': '按任务类型',
   'app.report.baseTarget': '按目标点',
 
-  'app.report.detail': '详情',
   'app.report.overview': '总览',
   'app.report.summary': '汇总',
   'app.report.times': '次',

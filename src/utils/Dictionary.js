@@ -75,10 +75,16 @@ const DictionaryDataSource = {
   // 业务颜色
   color: {
     red: '#f5222d',
+    error: '#f5222d',
+
+    yellow: '#FFCA30',
+    warning: '#FFCA30',
+
+    orange: '#FF7409',
+
     blue: '#1890FF',
     green: '#2FC25B',
-    yellow: '#ff9600',
-    purple: '#9e2ace',
+    purple: '#a356f4',
     pink: '#ce2a7d',
     gray: '#b3b2b2',
     cyan: '#13c2c2',

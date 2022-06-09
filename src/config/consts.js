@@ -1,3 +1,7 @@
+import Dictionary from '@/utils/Dictionary';
+
+const Colors = Dictionary().color;
+
 export const GlobalAlpha = 0.6;
 export const MapScaleRatio = 1.3;
 
@@ -5,14 +9,6 @@ export const SelectionType = {
   SINGLE: 'SINGLE',
   CTRL: 'CTRL',
   SHIFT: 'SHIFT',
-};
-
-export const Colors = {
-  red: '#ff0000',
-  blue: '#1890ff',
-  green: '#3cb371',
-  yellow: '#ffc107',
-  grey: '#9E9E9E',
 };
 
 // 地图元素枚举
@@ -38,15 +34,15 @@ export const VehicleState = {
 
 // 小车状态颜色
 export const VehicleStateColor = {
-  available: '#7ac143',
-  Idle: '#7ac143',
-  StandBy: '#0092FF',
-  Working: '#2F8949',
-  Charging: '#eba954',
-  Offline: '#9E9E9E',
-  Connecting: '#9E9E9E',
-  Error: '#fe5000',
-  Waiting: '#a356f4',
+  Offline: Colors.gray,
+  Connecting: Colors.gray,
+  available: Colors.blue,
+  Idle: Colors.blue,
+  Working: Colors.green,
+  Charging: Colors.yellow,
+  Error: Colors.red,
+  StandBy: Colors.purple,
+  Waiting: Colors.purple,
 };
 
 // 任务状态(Bage组件)

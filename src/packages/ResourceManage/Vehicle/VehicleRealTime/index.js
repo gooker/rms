@@ -6,10 +6,11 @@ import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllVehicleList } from '@/services/commonService';
-import VehicleInformationTab from './VehicleInformation';
-import VehicleRealTimeTab from './VehicleRealTime';
-import styles from './index.module.less';
+import VehicleInformationCard from './VehicleInformation';
+import VehicleRealTimeCard from './VehicleRealTime';
+import VehicleBatteryStateCard from './VehicleBatteryState';
 import commonStyles from '@/common.module.less';
+import styles from './index.module.less';
 
 @connect()
 class VehicleRealTime extends React.Component {
@@ -65,12 +66,17 @@ class VehicleRealTime extends React.Component {
         <div className={styles.viewContainer}>
           {/* 小车信息 */}
           <Card title={<FormattedMessage id={'vehicle.info'} />}>
-            <VehicleInformationTab data={vehicle ?? {}} />
+            <VehicleInformationCard data={vehicle ?? {}} />
           </Card>
 
           {/* 小车实时状态*/}
           <Card title={<FormattedMessage id={'vehicle.realTime'} />}>
-            <VehicleRealTimeTab data={vehicle ?? {}} />
+            <VehicleRealTimeCard data={vehicle ?? {}} />
+          </Card>
+
+          {/* 小车电池状态 */}
+          <Card title={<FormattedMessage id={'vehicle.batteryRealTime'} />}>
+            <VehicleBatteryStateCard data={vehicle ?? {}} />
           </Card>
         </div>
       </div>

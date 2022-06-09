@@ -77,11 +77,11 @@ const VehicleList = (props) => {
               <Tag color='red'>
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id='app.vehicle.underMaintenance' />
+                  <FormattedMessage id='vehicle.underMaintenance' />
                 </span>
               </Tag>
             ) : (
-              <Tag color="green">{<FormattedMessage id="app.vehicle.normal" />}</Tag>
+              <Tag color='green'>{<FormattedMessage id='app.common.normal' />}</Tag>
             )}
           </span>
         );
@@ -110,7 +110,7 @@ const VehicleList = (props) => {
               checkVehicleDetail(record.id);
             }}
           >
-            <FormattedMessage id="app.vehicle.details" />
+            <FormattedMessage id='app.common.detail' />
           </Button>
         );
       },
@@ -146,17 +146,17 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.vehicle.batteryVoltage" />,
+      title: <FormattedMessage id='app.vehicle.battery.voltage' />,
       align: 'center',
       dataIndex: 'batteryVoltage',
       render: (text) => {
         if (text != null) {
           if (parseInt(text) > 47000) {
-            return <Badge status="success" text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status='success' text={getSuffix(text / 1000, 'v')} />;
           } else if (parseInt(text) > 45000) {
-            return <Badge status="warning" text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status='warning' text={getSuffix(text / 1000, 'v')} />;
           } else {
-            return <Badge status="error" text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status='error' text={getSuffix(text / 1000, 'v')} />;
           }
         }
       },
@@ -167,7 +167,7 @@ const VehicleList = (props) => {
       dataIndex: 'version',
     },
     {
-      title: <FormattedMessage id="app.vehicle.batteryType" />,
+      title: <FormattedMessage id='vehicle.battery.type' />,
       align: 'center',
       dataIndex: 'batteryType',
       render: (text) => {

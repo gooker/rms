@@ -32,7 +32,7 @@ const OTA = (props) => {
           } else {
             return (
               <span style={{ color: red }}>
-                <FormattedMessage id="app.vehicle.underMaintenance" />
+                <FormattedMessage id='vehicle.underMaintenance' />
               </span>
             );
           }
@@ -62,17 +62,17 @@ const OTA = (props) => {
         },
       },
       {
-        title: <FormattedMessage id="app.vehicle.batteryVoltage" />,
+        title: <FormattedMessage id='app.vehicle.battery.voltage' />,
         dataIndex: 'batteryVoltage',
         align: 'center',
         render: (text) => {
           if (text != null) {
             if (parseInt(text) > 47000) {
-              return <Badge status="success" text={getSuffix(text / 1000, 'v')} />;
+              return <Badge status='success' text={getSuffix(text / 1000, 'v')} />;
             } else if (parseInt(text) > 45000) {
-              return <Badge status="warning" text={getSuffix(text / 1000, 'v')} />;
+              return <Badge status='warning' text={getSuffix(text / 1000, 'v')} />;
             } else {
-              return <Badge status="error" text={getSuffix(text / 1000, 'v')} />;
+              return <Badge status='error' text={getSuffix(text / 1000, 'v')} />;
             }
           }
         },

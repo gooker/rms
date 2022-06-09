@@ -1,10 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Divider, Form, message, Progress, Row, Select, Table } from 'antd';
+import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import Dictionary from '@/utils/Dictionary';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import { Colors, LogFileTypes, VehicleState } from '@/config/consts';
+import { LogFileTypes, VehicleState } from '@/config/consts';
 import {
   downloadLogFromSFTP,
   fetchAllVehicleList,
@@ -12,8 +14,8 @@ import {
   forceResetLogGeneration,
   startCreatingLog,
 } from '@/services/commonService';
-import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 
+const Colors = Dictionary().color;
 const StatusLabelStyle = { marginLeft: 15, fontSize: 15, fontWeight: 600 };
 
 const LogDownLoadComponent = (props) => {
@@ -144,7 +146,10 @@ const LogDownLoadComponent = (props) => {
       ? inputParam
       : { current: pagination.current, size: pagination.pageSize };
 
-    const fileListRes = await fetchVehicleLog(vehicleType, { ...requestParam, fileTaskTypes: 'DOWNLOAD' });
+    const fileListRes = await fetchVehicleLog(vehicleType, {
+      ...requestParam,
+      fileTaskTypes: 'DOWNLOAD',
+    });
     if (!dealResponse(fileListRes)) {
       const { list, page } = fileListRes;
       setFileList(list);
