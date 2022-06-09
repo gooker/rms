@@ -1,15 +1,28 @@
-.chargerStrategy{
-  :global{
-    .ant-tabs{
-      overflow: hidden;
-    }
-    .ant-tabs-content-holder{
-      overflow: auto;
-    }
-  }
+.content {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #dbd9d9;
 }
 
-.tabToolBar{
+.chargerStrategy {
+  padding: 10px;
+  text-align: right;
+  background: transparent;
+  border-radius: 0 0 2px 2px;
+  margin-bottom: 60px;
+
+  :global {
+    .ant-card-head {
+      font-size: 14px;
+    }
+  }
+
+
+}
+
+.tabToolBar {
   cursor: pointer;
   height: 34px;
 }
@@ -25,14 +38,14 @@
   border: 1px solid #ccc;
 }
 
-.strategyInput{
+.strategyInput {
   span {
     color: rgba(0, 0, 0, 0.5);
   }
 }
 
-.footer{
-  height: 60px;
+.footer {
+  height: 48px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -40,5 +53,8 @@
   position: absolute;
   bottom: 0;
   right: 0;
+  border-radius: 2px 2px 0 0;
+  background-color: rgba(253, 251, 251, 0.953);
+  border-top: '1px solid #f0f0f0';
+ 
 }
-

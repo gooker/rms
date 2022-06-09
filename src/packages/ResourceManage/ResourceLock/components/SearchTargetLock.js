@@ -39,45 +39,51 @@ const SearchTargetLock = (props) => {
     <Form form={form}>
       <Row style={{ width: '100%' }} gutter={24}>
         {!verhicleHide && (
-          <Col span={4}>
-            {/* 小车id */}
-            <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
-              <Input allowClear />
-            </Form.Item>
-          </Col>
+          <>
+            <Col span={4}>
+              {/* 小车id */}
+              <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
+                <Input allowClear />
+              </Form.Item>
+            </Col>
+
+            <Col span={6}>
+              {/* 小车类型 */}
+              <Form.Item name={'vehicleType'} label={formatMessage({ id: 'app.common.type' })}>
+                <Select
+                  allowClear
+                  showSearch
+                  maxTagCount={5}
+                  mode="multiple"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                >
+                  {Object.values(allAdaptors).map(({ adapterType }) => {
+                    const { vehicleTypes } = adapterType;
+                    return (
+                      <Select.OptGroup
+                        key={adapterType.code}
+                        label={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${
+                          adapterType.name
+                        }`}
+                      >
+                        {vehicleTypes.map((vehicleType, index) => (
+                          <Select.Option
+                            key={index}
+                            value={`${adapterType.code}@${vehicleType.code}`}
+                          >
+                            {vehicleType.name}
+                          </Select.Option>
+                        ))}
+                      </Select.OptGroup>
+                    );
+                  })}
+                </Select>
+              </Form.Item>
+            </Col>
+          </>
         )}
-        <Col span={6}>
-          {/* 小车类型 */}
-          <Form.Item name={'vehicleType'} label={formatMessage({ id: 'app.common.type' })}>
-            <Select
-              allowClear
-              showSearch
-              maxTagCount={5}
-              mode="multiple"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-            >
-              {Object.values(allAdaptors).map(({ adapterType }) => {
-                const { vehicleTypes } = adapterType;
-                return (
-                  <Select.OptGroup
-                    key={adapterType.code}
-                    label={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${
-                      adapterType.name
-                    }`}
-                  >
-                    {vehicleTypes.map((vehicleType, index) => (
-                      <Select.Option key={index} value={`${adapterType.code}@${vehicleType.code}`}>
-                        {vehicleType.name}
-                      </Select.Option>
-                    ))}
-                  </Select.OptGroup>
-                );
-              })}
-            </Select>
-          </Form.Item>
-        </Col>
 
         {loadType && (
           <Col span={4}>

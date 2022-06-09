@@ -223,7 +223,7 @@ export function findMapCharger() {
 export async function fetchChargerList(params) {
   return request(`/${NameSpace.Platform}/chargers`, {
     method: 'GET',
-    data: { filterType: 'ALL', ...params },
+    data: { filterType: 'All', ...params },
   });
 }
 
@@ -237,7 +237,7 @@ export async function fetchChargeByCode(mapChargerCode) {
 // 充电桩-发现
 export function findCharger(param) {
   return request(`/${NameSpace.Platform}/charger/addDiscovery`, {
-    method: 'POST',
+    method: 'PUT',
     data: param,
   });
 }
@@ -271,6 +271,60 @@ export async function deleteUnBindGroup(param) {
 export async function getUnBindGroupData(param) {
   return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
     method: 'GET',
+    data: param,
+  });
+}
+
+// 充电策略-列表
+export async function fetchAllStrategyList() {
+  return request(`/${NameSpace.Platform}/getAllChargingStrategy`, {
+    method: 'GET',
+  });
+}
+
+// 保存充电策略
+export async function saveChargingStrategy(param) {
+  return request(`/${NameSpace.Platform}/saveChargeStrategy`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 根据充电策略Id获取充电策略
+export async function fetchChargingStrategyById(param) {
+  return request(`/${NameSpace.Platform}/getChargingStrategyById`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 删除充电策略
+export async function deleteChargingStrategyById(param) {
+  return request(`/${NameSpace.Platform}/deleteChargeStrategy`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 获取充电参数的默认值
+export async function fetchDefaultChargingStrategy() {
+  return request(`/${NameSpace.Platform}/getDefaultChargingStrategy`, {
+    method: 'GET',
+  });
+}
+
+// 根据充电策略Id查询闲时策略
+export async function fetchIdleHourChargeStrategy(param) {
+  return request(`/${NameSpace.Platform}/getIdleHoursStrategyById`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+// 保存闲时策略
+export async function saveIdleHoursStrategy(param) {
+  return request(`/${NameSpace.Platform}/saveIdleHoursStrategy`, {
+    method: 'POST',
     data: param,
   });
 }

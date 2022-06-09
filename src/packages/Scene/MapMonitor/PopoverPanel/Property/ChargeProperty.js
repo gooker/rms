@@ -127,7 +127,7 @@ const ChargeProperty = (props) => {
           <LabelColComponent label={<FormattedMessage id={'IP'} />}>
             {chargerInfo?.ip}
           </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.vehicle.port'} />}>
+          <LabelColComponent label={<FormattedMessage id={'vehicle.port'} />}>
             {chargerInfo?.port}
           </LabelColComponent>
 
