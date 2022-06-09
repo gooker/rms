@@ -1,8 +1,4 @@
-import {
-  findAllDeviceTypes,
-  findAllDevices,
-  findAllDeviceAdapter,
-} from '@/services/resourceManageAPI';
+import { findAllDeviceAdapter, findAllDevices, findAllDeviceTypes } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
 
 export default {

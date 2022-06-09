@@ -4,7 +4,7 @@ import { SearchOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, getFormLayout, formatMessage } from '@/utils/util';
 import commonStyles from '@/common.module.less';
-import { deleteChargingStrategyById } from '@/services/resourceManageAPI';
+import { deleteChargingStrategyById } from '@/services/resourceService';
 import RmsConfirm from '@/components/RmsConfirm';
 const { formItemLayout } = getFormLayout(5, 18);
 

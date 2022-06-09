@@ -1,4 +1,4 @@
-import { fetchChargerList, findChargerAdapter, findMapCharger } from '@/services/resourceManageAPI';
+import { fetchChargerList, findChargerAdapter, findMapCharger } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
 
 export default {

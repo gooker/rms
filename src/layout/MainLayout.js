@@ -11,11 +11,11 @@ import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
 import { dealResponse, formatMessage, getPlateFormType, isNull, isStrictNull } from '@/utils/util';
-import { getAuthorityInfo, queryUserByToken } from '@/services/SSO';
-import { fetchGetProblemDetail } from '@/services/global';
-import { fetchAllPrograming } from '@/services/XIHE';
-import { fetchAllAdaptor } from '@/services/resourceManageAPI';
-import { fetchTaskTypes } from '@/services/api';
+import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
+import { fetchAllPrograming } from '@/services/XIHEService';
+import { fetchAllAdaptor } from '@/services/resourceService';
+import { fetchGetProblemDetail } from '@/services/commonService';
+import { fetchTaskTypes } from '@/services/taskService';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -154,7 +154,6 @@ class MainLayout extends React.Component {
     const { currentSection } = this.props;
     const { errorCountNumber, hasNewError, alertCenter } = message;
     if (hasNewError) {
-      // TODO: 这个后续需要用Web Worker的方式处理，防止大批量报错导致页面卡顿
       const response = await fetchGetProblemDetail(alertCenter.id);
       if (dealResponse(response)) {
         notice(message, currentSection.sectionId, this.notificationQueue);

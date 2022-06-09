@@ -1,32 +1,26 @@
 import React from 'react';
 import { saveAs } from 'file-saver';
 import moment from 'moment';
-import { Menu, Button, message, Dropdown, Input, List, Tabs, Modal } from 'antd';
+import { Button, Dropdown, Input, List, Menu, message, Modal, Tabs } from 'antd';
 import {
-  EditOutlined,
-  DeleteOutlined,
   ApiOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  ExportOutlined,
+  ImportOutlined,
   PlusOutlined,
   ReloadOutlined,
-  ImportOutlined,
-  ExportOutlined,
 } from '@ant-design/icons';
 import {
+  adaptModalHeight,
+  dealResponse,
+  formatMessage,
+  getRequestorURLParams,
   getURL,
   isNull,
-  dealResponse,
-  adaptModalHeight,
-  getRequestorURLParams,
   renderRequestBodyForm,
-  formatMessage,
 } from '@/utils/util';
-import {
-  fetchRequestorList,
-  fetchSaveAPI,
-  fetchUpdateAPI,
-  fetchDeleteAPI,
-  fetchBatchSaveAPI,
-} from '@/services/api';
+import { fetchDeleteAPI, fetchRequestorList, fetchSaveAPI, fetchUpdateAPI } from '@/services/commonService';
 import RequestorForm from './components/RequestorForm';
 import RequestConfig from './components/RequestConfig';
 import request from '@/utils/request';

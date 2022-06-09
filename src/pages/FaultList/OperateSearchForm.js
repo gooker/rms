@@ -2,7 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { dealResponse, convertToUserTimezone, isNull, formatMessage } from '@/utils/util';
-import { fetchAppModules } from '@/services/api';
+import { fetchAppModules } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';

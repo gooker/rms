@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { Table, Button, Row, Modal, message, Spin } from 'antd';
+import { Button, message, Modal, Row, Spin, Table } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, isNull, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import {
+  deleteTaskLimit,
   fetchActiveMap,
+  getTaskLimit,
   getVehicleTasksByCustomGroup,
   getVehicleTasksByType,
   saveTaskLimit,
-  getTaskLimit,
-  deleteTaskLimit,
-} from '@/services/api';
+} from '@/services/commonService';
 import TaskLimitModal from './TaskLimitModal';
 import commonStyles from '@/common.module.less';
 

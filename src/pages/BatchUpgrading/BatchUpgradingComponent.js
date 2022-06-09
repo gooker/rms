@@ -9,7 +9,7 @@ import {
   fetchUpgradeFirmwareFile,
   fetchVehicleFileStatusList,
   upgradeVehicle,
-} from '@/services/api';
+} from '@/services/commonService';
 import TableWithPages from '@/components/TableWithPages';
 import UploadUtil from '@/components/UploadPanel';
 import DownloadFirmwareModal from './DownloadFirmwareModal';

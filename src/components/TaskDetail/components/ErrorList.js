@@ -1,10 +1,10 @@
-import React from 'react';
-import { List, Col, Row } from 'antd';
-import FormattedMessage from '@/components/FormattedMessage';
+import React, { memo } from 'react';
+import { Col, List, Row } from 'antd';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
+import FormattedMessage from '@/components/FormattedMessage';
 import ErrorCodeFault from './ErrorCodeFault';
+import styles from '../taskDetail.module.less';
 import commonStyles from '@/common.module.less';
-import styles from '../CenterOs.module.less';
 
 const DescriptionItem = ({ title, content, style }) => (
   <div className={commonStyles.descriptionItem} style={{ ...style }}>
@@ -13,9 +13,10 @@ const DescriptionItem = ({ title, content, style }) => (
   </div>
 );
 
-const ErrorList = React.memo((props) => {
+const ErrorList = (props) => {
   const { vehicleErrorList } = props;
-  const renderDescription = (record) => {
+
+  function renderDescription(record) {
     const { onDetail, errorCodes } = props;
     const keyName = {};
     const extraData = () => {
@@ -99,10 +100,10 @@ const ErrorList = React.memo((props) => {
         )}
       </Row>
     );
-  };
+  }
 
   // 错误名称
-  const renderErrorName = (content) => {
+  function renderErrorName(content) {
     if (content.vehicleErrorType === 'SOFTWARE_ERR0R') {
       return content.errorCodeName;
     }
@@ -110,7 +111,7 @@ const ErrorList = React.memo((props) => {
       return <ErrorCodeFault record={content} />;
     }
     return null;
-  };
+  }
 
   return (
     <div style={{ width: '100%' }}>
@@ -121,7 +122,9 @@ const ErrorList = React.memo((props) => {
             <List.Item.Meta
               title={
                 <Row key={item.uniqueKey}>
-                  <Col span={12}>{convertToUserTimezone(item.updateTime).format('MM-DD HH:mm:ss')}</Col>
+                  <Col span={12}>
+                    {convertToUserTimezone(item.updateTime).format('MM-DD HH:mm:ss')}
+                  </Col>
                   <Col span={12}>{renderErrorName(item)}</Col>
                 </Row>
               }
@@ -132,5 +135,5 @@ const ErrorList = React.memo((props) => {
       />
     </div>
   );
-});
-export default ErrorList;
+};
+export default memo(ErrorList);

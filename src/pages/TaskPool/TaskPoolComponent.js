@@ -3,11 +3,11 @@ import { connect } from '@/utils/RmsDva';
 import { Button, Divider, message, Table } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { cancelTotePoolTask, fetchAllVehicleList, fetchPoolTasks } from '@/services/api';
+import { cancelTotePoolTask, fetchAllVehicleList, fetchPoolTasks } from '@/services/commonService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
 import TaskPoolSearch from './TaskPoolSearch';
-import styles from '../TaskQueue/taskQueue.module.less';
+import styles from '../../packages/SmartTask/task.module.less';
 
 @connect()
 class TaskLibraryComponent extends Component {

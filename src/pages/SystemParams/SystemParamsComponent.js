@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Card, Spin } from 'antd';
 import { dealResponse, isNull } from '@/utils/util';
 import SystemParams from '@/components/SystemParams';
-import { fetchSystemParamFormData, updateSystemParams } from '@/services/api';
+import { fetchSystemParamFormData, updateSystemParams } from '@/services/commonService';
 
 export default class SystemParamsManager extends Component {
   state = {

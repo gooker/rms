@@ -3,13 +3,13 @@ import { connect } from '@/utils/RmsDva';
 import { Badge, Button, Divider, message, Table, Tooltip } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAllVehicleList, fetchBatchCancelTask, fetchVehicleTaskList } from '@/services/api';
+import { fetchAllVehicleList, fetchBatchCancelTask, fetchVehicleTaskList } from '@/services/commonService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import RmsConfirm from '@/components/RmsConfirm';
-import TaskSearch from './TaskSearch';
+import TaskSearch from '../../packages/SmartTask/components/TaskManagementSearch';
 import commonStyles from '@/common.module.less';
 import { TaskStateBageType } from '@/config/consts';
-import styles from '../TaskQueue/taskQueue.module.less';
+import styles from '../../packages/SmartTask/task.module.less';
 
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
@@ -219,8 +219,8 @@ class TaskLibraryComponent extends Component {
           vehicleList={vehicleList.map(({ vehicleId }) => vehicleId)}
           allTaskTypes={allTaskTypes?.[vehicleType] || {}}
         />
-        <div className={styles.taskSearchDivider} >
-          <Divider/>
+        <div className={styles.taskSearchDivider}>
+          <Divider />
           {cancel && (
             <Button
               disabled={selectedRowKeys.length === 0}

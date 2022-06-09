@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Button, Col, Form, List, Row } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { resumeLatentPausedTask } from '@/services/monitor';
+import { resumeLatentPausedTask } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

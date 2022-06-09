@@ -125,6 +125,10 @@ export default {
   'app.common.notAvailable': '暂无',
   'app.common.loading': '加载中...',
   'app.common.file': '文件',
+  'app.common.normal': '正常',
+  'app.common.abnormal': '异常',
+  'app.common.available': '可用',
+  'app.common.detail': '详情',
 
   // 地图相关
   'app.map': '地图',

@@ -4,7 +4,7 @@ import { Button, Card, DatePicker, Form, Select } from 'antd';
 import { convertToUserTimezone, dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { DownloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { downloadLogFromSFTP, fetchAllVehicleList } from '@/services/api';
+import { downloadLogFromSFTP, fetchAllVehicleList } from '@/services/commonService';
 import commonStyle from '@/common.module.less';
 
 const { RangePicker } = DatePicker;

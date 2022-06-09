@@ -5,7 +5,7 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { connect } from '@/utils/RmsDva';
-import { findVehicle } from '@/services/resourceManageAPI';
+import { findVehicle } from '@/services/resourceService';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 const AddRegistrationModal = (props) => {

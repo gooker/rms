@@ -1,19 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Button, Modal, message, Col } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
-import {
-  fetchSelectSectionList,
-  fetchAddSection,
-  updateSection,
-  deleteSectionById,
-} from '@/services/SSO';
+import { Button, Col, message, Modal, Row } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { deleteSectionById, fetchAddSection, fetchSelectSectionList, updateSection } from '@/services/SSOService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import UpdateSection from './components/UpdateSection';
 import commonStyles from '@/common.module.less';
-import { dealResponse } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 
 export default class SectionManager extends Component {

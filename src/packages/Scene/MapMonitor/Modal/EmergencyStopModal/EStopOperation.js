@@ -1,8 +1,8 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo } from 'react';
 import { Checkbox, Form, Popconfirm, Switch } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
-import { changeEmergencyStopStatus } from '@/services/XIHE';
+import { changeEmergencyStopStatus } from '@/services/XIHEService';
 
 const { formItemLayout } = getFormLayout(4, 20);
 const EStopOperation = (props) => {

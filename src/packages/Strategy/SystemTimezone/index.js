@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Card, Button } from 'antd';
+import { Button, Card } from 'antd';
 import TimeZone from '@/components/TimeZone';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchSystemParamByKey, updateSystemTimezone } from '@/services/api';
+import { fetchSystemParamByKey, updateSystemTimezone } from '@/services/commonService';
 import { dealResponse } from '@/utils/util';
 
 class SystemTimezone extends Component {

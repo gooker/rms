@@ -2,8 +2,6 @@
 export default {
   // 小车列表
   'app.vehicle.addingTime': '加入时间',
-  'app.vehicle.batteryType': '电池类型',
-  'app.vehicle.details': '详情',
   'app.vehicle.maxChargeCurrent': '最大充电电流',
   'app.vehicle.threeGenerationOfTianma': '天马三代',
   'app.vehicle.threeGenerationsOfVehicles(Virtual)': '三代车(虚拟)',

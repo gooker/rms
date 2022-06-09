@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select, Switch } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { getToteTaskRealtimePath, getToteTaskRealtimeState } from '@/services/XIHE';
+import { getToteTaskRealtimePath, getToteTaskRealtimeState } from '@/services/XIHEService';
 import { dealResponse, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';

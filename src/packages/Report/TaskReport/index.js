@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Button, Radio, Row, Col, message, Tooltip, Divider } from 'antd';
+import { Button, Col, Divider, message, Radio, Row, Tooltip } from 'antd';
 import { UnorderedListOutlined } from '@ant-design/icons';
-import { fetchKpiView, saveSearchSeek } from '@/services/latentLifting';
+import { fetchKpiView, saveSearchSeek } from '@/services/reportService';
 import {
-  transformTime,
-  convertResponseToChartVM,
-  convertComparisionToChartVM,
   convertComparisionOverViewToChartVM,
+  convertComparisionToChartVM,
+  convertResponseToChartVM,
+  transformTime,
 } from './utils';
 import Enum from './enum';
 import KpiSearchConditions from './components/KpiSearchConditions';

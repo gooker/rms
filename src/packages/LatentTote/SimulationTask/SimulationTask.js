@@ -5,7 +5,7 @@ import {
   deleteSimulationTasks,
   fetchAllSimulationTasks,
   updateSimulationTask,
-} from '@/services/latentTote';
+} from '@/services/latentToteService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';

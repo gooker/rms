@@ -5,7 +5,7 @@ import { CopyOutlined, EditOutlined, EyeOutlined, ReloadOutlined } from '@ant-de
 import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleTypeDetail from './components/VehicleTypeDetail';
-import { fetchAllAdaptor } from '@/services/resourceManageAPI';
+import { fetchAllAdaptor } from '@/services/resourceService';
 import styles from './vehicle.module.less';
 import commonStyle from '@/common.module.less';
 import { AllAdapters } from '@/mockData';

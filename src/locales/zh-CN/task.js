@@ -13,10 +13,9 @@ export default {
   'app.taskPool.mountedBin': '已挂载的料箱',
 
   // 等待队列
-  'app.taskQueue.appointedVehicle': '必选小车',
+  'app.taskQueue.appointedVehicle': '指定小车',
   'app.taskQueue.appointedTarget': '指定目标点',
   'app.taskQueue.availableVehicle': '可用小车',
-  'app.taskQueue.createTime': '加入时间',
   'app.taskQueue.lastExecutedTimestamp': '最近执行时间',
   'app.taskQueue.notAvailable': '暂无',
   'app.taskQueue.priorityMin': '最低优先级',
@@ -52,7 +51,9 @@ export default {
   'app.executionQ.triedTimes': '累计次数',
 
   // 任务详情
-  'app.taskDetail.estimatedFinishTime': '预计完成时间:',
+  'app.taskDetail.subTaskDetail': '子任务详情',
+  'app.taskDetail.externalCode': '运单号',
+  'app.taskDetail.estimatedFinishTime': '预计完成时间',
   'app.taskDetail.cancelTask': '取消任务',
   'app.taskDetail.cancelTaskSubmit': '取消任务请求已提交',
   'app.taskDetail.chargerId': '充电ID',
@@ -66,7 +67,6 @@ export default {
   'app.taskDetail.errorReason': '错误原因',
   'app.taskDetail.executing': '执行中',
   'app.taskDetail.finished': '已完成',
-  'app.taskDetail.info': '详情',
   'app.taskDetail.isAutoNextStep': '自动执行',
   'app.taskDetail.isRelease': '是否释放',
   'app.taskDetail.isReleased': '是否释放',

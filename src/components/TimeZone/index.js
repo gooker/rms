@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Select, Row, Col } from 'antd';
+import { Col, Row, Select } from 'antd';
 import _ from 'lodash';
 import timezones from './timezones.json';
 import WorldTimeMap from './WorldTimeMap';

@@ -63,14 +63,15 @@ export default {
   'menu.resourceBind': '资源绑定',
 
   // 智能任务
-  'menu.customTask': '自定义任务',
-  'menu.taskRouteBind': '任务路线绑定',
-  'menu.trigger': '触发器',
-  'menu.limitEqualizer': '限流均衡器',
-  'menu.customOrderPool': '自定义排程池',
   'menu.standardOrderPool': '标准排程池',
-  'menu.taskDependency': '任务依赖',
+  'menu.executingQueue': '执行队列',
   'menu.taskManagement': '任务查询',
+  'menu.customTask': '自定义任务',
+  'menu.limitEqualizer': '限流均衡器',
+  'menu.trigger': '触发器',
+  'menu.taskRouteBind': '任务路线绑定',
+  'menu.taskDependency': '任务依赖',
+  'menu.customOrderPool': '自定义排程池',
 
   // 无人搬运
   'menu.carryTaskPool': '任务排程池',

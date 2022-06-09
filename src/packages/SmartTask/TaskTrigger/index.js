@@ -4,7 +4,7 @@ import find from 'lodash/find';
 import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, message, Row, Select, Spin, Tag } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import TaskTriggerModal from './TaskTriggerModal';
-import { deleteTaskTrigger, getAllTaskTriggers, saveTaskTrigger, switchTriggerState } from '@/services/api';
+import { deleteTaskTrigger, getAllTaskTriggers, saveTaskTrigger, switchTriggerState } from '@/services/commonService';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';

@@ -7,7 +7,7 @@ import FaultDefinitionSearchForm from '@/pages/FaultDefinition/FaultDefinitionSe
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import { deleteFaultDefinition, fetchDefinedFaults } from '@/services/api';
+import { deleteFaultDefinition, fetchDefinedFaults } from '@/services/commonService';
 import FaultDefinitionForm from '@/pages/FaultDefinition/FaultDefinitionForm';
 import RmsConfirm from '@/components/RmsConfirm';
 import styles from './FaultDefinition.module.less';

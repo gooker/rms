@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js';
-import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
+import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { isNull } from '@/utils/util';
 import { LeftCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { getTextureFromResources } from '@/utils/mapUtil';

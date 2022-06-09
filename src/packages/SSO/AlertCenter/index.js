@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import QuestionSearch from './QuestionSearch';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList } from '@/services/XIHE';
+import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList } from '@/services/XIHEService';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 

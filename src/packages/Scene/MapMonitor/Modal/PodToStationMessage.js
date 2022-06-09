@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
 import { Table, Empty, Button, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { releaseLatentPod } from '@/services/monitor';
+import { releaseLatentPod } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getMapModalPosition } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

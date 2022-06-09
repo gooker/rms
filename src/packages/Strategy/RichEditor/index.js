@@ -1,7 +1,7 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Button, message, Divider } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Col, Divider, message, Row } from 'antd';
 import { EditOutlined, EyeOutlined } from '@ant-design/icons';
-import { getAllRichText, saveRichText, deleteByRichIds } from '@/services/api';
+import { deleteByRichIds, getAllRichText, saveRichText } from '@/services/commonService';
 import RichEditorFormModal from './component/RichEditorFormModal';
 import RichEditorDetailModal from './component/RichEditorDetailModal';
 import { dealResponse, formatMessage } from '@/utils/util';

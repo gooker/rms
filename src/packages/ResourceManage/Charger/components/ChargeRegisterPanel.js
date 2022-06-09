@@ -8,7 +8,7 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddFindInfoModal from './AddFindInfoModal';
 import RegisterChargeModal from './RegisterChargeModal';
-import { handleleChargers } from '@/services/resourceManageAPI';
+import { handleleChargers } from '@/services/resourceService';
 import commonStyle from '@/common.module.less';
 import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 

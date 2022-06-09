@@ -5,11 +5,11 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, getFormLayout, isNull, isStrictNull } from '@/utils/util';
 import {
+  changeEmergencyStopStatus,
   deleteEmergencyStop,
   getEmergencyStopByCode,
-  changeEmergencyStopStatus,
   saveEmergencyStop,
-} from '@/services/XIHE';
+} from '@/services/XIHEService';
 
 const { formItemLayout } = getFormLayout(7, 17);
 const { formItemLayout: formItemLayout2 } = getFormLayout(9, 15);

@@ -1,9 +1,9 @@
-import React, { Component } from 'react'
-import timezones from './timezones.json'
-import styles from './styles/styles.module.less'
+import React, { Component } from 'react';
+import timezones from './timezones.json';
+import styles from './styles/styles.module.less';
 
 export default class WorldTimeMap extends Component {
- 
+
   renderNode = (record) => {
     const { value } = this.props
     const style={}

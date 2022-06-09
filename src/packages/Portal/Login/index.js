@@ -1,7 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, Row, Select, Spin } from 'antd';
+import { Button, Col, Form, Input, message, Modal, Row, Select, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { fetchLogin } from '@/services/global';
 import requestAPI from '@/utils/requestAPI';
 import {
   adjustModalWidth,
@@ -18,7 +17,7 @@ import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
 import AddEnvironmentModal from '@/packages/SSO/EnvironmentManger/components/AddEnvironmentModal';
-import { message, Modal } from 'antd';
+import { fetchLogin } from '@/services/SSOService';
 
 const Login = (props) => {
   const { history } = props;

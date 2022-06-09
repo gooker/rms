@@ -7,7 +7,7 @@ import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
 import { formatMessage, isStrictNull } from '@/utils/util';
 import TabsBar from '@/components/TabsBar';
-import Detail from '@/components/TaskDetail/Detail';
+import TaskDetail from '@/components/TaskDetail';
 import style from '@/layout/homeLayout.module.less';
 import I18nEditor from '@/components/I18nEditor';
 
@@ -89,8 +89,9 @@ const Content = (props) => {
 
       {/* 国际化编辑 */}
       <I18nEditor />
+
       {/* 任务详情全局组件 */}
-      <Detail />
+      <TaskDetail />
     </div>
   );
 };

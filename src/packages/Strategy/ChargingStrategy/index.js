@@ -4,7 +4,7 @@ import { EditOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchAllStrategyList } from '@/services/resourceManageAPI';
+import { fetchAllStrategyList } from '@/services/resourceService';
 import SearchComponent from './SearchComponent';
 import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { isNull } from 'lodash';

@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Button, Divider, Form, InputNumber, message } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import LatentPodUpdater from '../Simulator/LatentPodUpdater';
-import { updateLatentPodPosition } from '@/services/XIHE';
+import { updateLatentPodPosition } from '@/services/XIHEService';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);

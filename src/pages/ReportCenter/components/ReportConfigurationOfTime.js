@@ -1,7 +1,9 @@
 import React, { memo } from 'react';
-import { Col, Row, InputNumber, Select } from 'antd';
+import { Col, InputNumber, Row, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { Colors } from '@/config/consts';
+import Dictionary from '@/utils/Dictionary';
+
+const Colors = Dictionary().color;
 
 const ReportConfigurationOfTime = (props) => {
   const { value, onChange } = props;

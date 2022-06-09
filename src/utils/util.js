@@ -6,12 +6,13 @@ import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
-import { Colors, ToteOffset, VehicleStateColor } from '@/config/consts';
+import { ToteOffset, VehicleStateColor } from '@/config/consts';
 import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
-import { NameSpace } from '@/config/config';
+
+const Colors = Dictionary().color;
 
 /**
  * 将服务器时间转化成本地时间
@@ -217,6 +218,14 @@ export function adjustModalWidth() {
   return width >= maxWidth ? maxWidth : width;
 }
 
+export function adjustTaskDetailModalWidth() {
+  const width = document.body.clientWidth;
+  if (width <= 2048) {
+    return 1200;
+  }
+  return 1200 + Math.ceil((width - 2048) / 4);
+}
+
 export function isNull(value) {
   return value === null || value === undefined;
 }
@@ -279,7 +288,7 @@ export function getDirectionLocale(angle) {
  */
 export function getVehicleStatusTag(vehicleStatus) {
   if (vehicleStatus != null) {
-    const vehicleStateMap = Dictionary('vehicleStatus');
+    const vehicleStateMap = Dictionary().vehicleStatus;
     return (
       <Tag color={VehicleStateColor[vehicleStatus]}>
         {formatMessage({ id: vehicleStateMap[vehicleStatus] })}
@@ -360,10 +369,6 @@ export function extractNameSpaceInfoFromEnvs(env) {
   additionalInfos.forEach(({ key, value }) => {
     nameSpaceInfoMap[key] = getApiURL(key, value);
   });
-  if (isStrictNull(nameSpaceInfoMap[NameSpace.SSO])) {
-    nameSpaceInfoMap[NameSpace.SSO] = nameSpaceInfoMap[NameSpace.Platform];
-  }
-  nameSpaceInfoMap[NameSpace.I18N] = nameSpaceInfoMap[NameSpace.Platform];
   return nameSpaceInfoMap;
 }
 
@@ -1523,4 +1528,17 @@ export function getAllEnvironments() {
     activeEnv = activeAPI.id;
   }
   return { allEnvs, activeEnv };
+}
+
+export function generateVehicleTypeOptions(vehicles) {
+  const vehicleTypes = vehicles.map((item) => item.vehicle.vehicleType);
+  return [...new Set(vehicleTypes)].map((item) => (
+    <Select.Option key={item} value={item}>
+      {item}
+    </Select.Option>
+  ));
+}
+
+export function generateVehicleOptions(vehicles) {
+  return;
 }

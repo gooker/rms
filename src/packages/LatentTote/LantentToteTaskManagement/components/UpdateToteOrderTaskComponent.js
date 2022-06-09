@@ -8,7 +8,7 @@ import {
   isStrictNull,
   convertToUserTimezone,
 } from '@/utils/util';
-import { updateLatentToteOrder } from '@/services/latentTote';
+import { updateLatentToteOrder } from '@/services/latentToteService';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout } = getFormLayout(6, 16);

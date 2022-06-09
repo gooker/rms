@@ -1,22 +1,19 @@
-import React, { PureComponent } from 'react';
-import { Form, Steps, Divider, Tooltip } from 'antd';
-import {
-  MehOutlined,
-  LoadingOutlined,
-  SmileOutlined,
-  FrownOutlined,
-  ClockCircleOutlined,
-} from '@ant-design/icons';
-import { convertToUserTimezone, formatMessage } from '@/utils/util';
+import React, { memo } from 'react';
+import { Col, Descriptions, Form, Row, Steps } from 'antd';
+import { ClockCircleOutlined, FrownOutlined, LoadingOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
+import { connect } from '@/utils/RmsDva';
+import { convertToUserTimezone, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RenderVehicleTaskActions from './RenderVehicleTaskActions';
+import styles from './index.module.less';
+import FormattedMessage from '@/components/FormattedMessage';
 
-const Step = Steps.Step;
+const { Step } = Steps;
 const TaskStatus = {
   New: 'wait',
+  Cancel: 'wait',
   Executing: 'process',
   Finished: 'finish',
   Error: 'error',
-  Cancel: 'wait',
 };
 const TaskStatusIcon = {
   New: <MehOutlined />,
@@ -27,103 +24,150 @@ const TaskStatusIcon = {
   Cancel: <ClockCircleOutlined />,
 };
 
-class VehicleTaskSteps extends PureComponent {
-  renderSteps = () => {
-    const {
-      taskDetail: { vehicleStepTasks },
-    } = this.props;
-    if (Array.isArray(vehicleStepTasks)) {
-      return vehicleStepTasks.map((subTask, key) => (
+const VehicleTaskSteps = (props) => {
+  const { vehicleTask, nowPath, allTaskTypes } = props;
+
+  /**
+   * @param taskType 任务类型
+   * @param subCustomCode 如果是自定义任务，那么就是任务节点的code
+   */
+  function renderTaskTypeTitle(taskType, subCustomCode) {
+    if (!isNull(subCustomCode)) {
+      return subCustomCode;
+    }
+    if (allTaskTypes[taskType]) {
+      return allTaskTypes[taskType];
+    }
+    return taskType;
+  }
+
+  function renderSteps() {
+    if (Array.isArray(vehicleTask.vehicleStepTaskList)) {
+      return vehicleTask.vehicleStepTaskList.map((subTask, index) => (
         <Step
-          key={key}
+          key={index}
+          status={TaskStatus[subTask.taskStatus]}
+          icon={TaskStatusIcon[subTask.taskStatus]}
           title={
-            <Divider style={{ lineHeight: 0 }} orientation="left">
-              {subTask.stepTaskType}
-            </Divider>
-          }
-          status={TaskStatus[subTask.stepTaskStatus]} // 决定任务步骤进度
-          icon={
-            <Tooltip placement="bottom" title={subTask.stepTaskStatus}>
-              {TaskStatusIcon[subTask.stepTaskStatus]}
-            </Tooltip>
+            <span className={styles.taskStepTitle}>
+              {renderTaskTypeTitle(subTask.taskType, subTask.customCode)}
+            </span>
           }
           description={
-            <div style={{ width: '100%', marginBottom: 20 }}>{this.renderTaskStep(subTask)}</div>
+            <div style={{ width: '100%', marginBottom: 20 }}>{renderTaskStep(subTask, index)}</div>
           }
         />
       ));
     }
     return [];
-  };
+  }
 
-  renderTaskStep = (subTask) => {
-    const {
-      taskDetail: { translateMap },
-    } = this.props;
-    const { stepTaskStatus } = subTask;
+  function renderTaskStep(subTask, stepIndex) {
+    const { taskStatus } = subTask;
     let current = 0;
-    if (stepTaskStatus === 'New') {
+    if (['New', 'Error'].includes(taskStatus)) {
       current = 1;
-    } else if (stepTaskStatus === 'Executing') {
+    } else if (taskStatus === 'Executing') {
       current = 2;
-    } else if (stepTaskStatus === 'Finished') {
+    } else if (taskStatus === 'Finished') {
       current = 3;
-    } else if (stepTaskStatus === 'Error') {
-      current = 1;
     }
 
     return (
-      <Form style={{ marginTop: 20 }} layout={'vertical'}>
-        {/* 预计完成时间 */}
-        {subTask.predictEndTime && (
-          <div style={{ color: 'rgba(0, 0, 0, 0.85', marginBottom: 15 }}>{`${formatMessage({
-            id: 'app.taskDetail.estimatedFinishTime',
-          })} ${parseInt(subTask.predictEndTime / 1000, 10)}s`}</div>
-        )}
+      <div style={{ marginTop: 20 }}>
+        {/* 子任务执行进度 */}
+        <Steps current={current} {...(taskStatus === 'Error' ? { status: 'error' } : {})}>
+          <Step
+            title={'NEW'}
+            description={
+              subTask.createTime
+                ? convertToUserTimezone(subTask.createTime).format('MM-DD HH:mm:ss')
+                : null
+            }
+            icon={current === 0 && <LoadingOutlined />}
+          />
+          <Step
+            title={'START'}
+            description={
+              subTask.startTime
+                ? convertToUserTimezone(subTask.startTime).format('MM-DD HH:mm:ss')
+                : null
+            }
+            icon={current === 1 && <LoadingOutlined />}
+          />
+          <Step
+            title={'END'}
+            description={
+              subTask.endTime
+                ? convertToUserTimezone(subTask.endTime).format('MM-DD HH:mm:ss')
+                : null
+            }
+            icon={current === 2 && <LoadingOutlined />}
+          />
+        </Steps>
 
-        {/* 操作时间 */}
-        <Form.Item label={`${formatMessage({ id: 'app.common.operationTime' })}:`}>
-          <Steps current={current}>
-            <Step
-              title={'NEW'}
-              status={current === 1 ? 'process' : 'finish'}
-              description={
-                subTask.createTime
-                  ? convertToUserTimezone(subTask.createTime).format('MM-DD HH:mm:ss')
-                  : null
-              }
-            />
-            <Step
-              title={'START'}
-              status={current === 2 ? 'process' : current === 3 ? 'finish' : 'wait'}
-              description={
-                subTask.startTime
-                  ? convertToUserTimezone(subTask.startTime).format('MM-DD HH:mm:ss')
-                  : null
-              }
-            />
-            <Step
-              title={'END'}
-              status={current === 3 ? 'finish' : 'wait'}
-              description={
-                subTask.endTime
-                  ? convertToUserTimezone(subTask.endTime).format('MM-DD HH:mm:ss')
-                  : null
-              }
-            />
-          </Steps>
-        </Form.Item>
+        {/* 子任务详情 */}
+        <h4>
+          <FormattedMessage id={'app.taskDetail.subTaskDetail'} />:
+        </h4>
+        <Descriptions bordered>
+          <Descriptions.Item label='最后发送时间'>
+            {subTask.lastSendTime
+              ? convertToUserTimezone(subTask.lastSendTime).format('MM-DD HH:mm:ss')
+              : null}
+          </Descriptions.Item>
+          <Descriptions.Item label='更新时间'>
+            {subTask.updateTime
+              ? convertToUserTimezone(subTask.updateTime).format('MM-DD HH:mm:ss')
+              : null}
+          </Descriptions.Item>
+          <Descriptions.Item label='路线区'>{subTask.routeMap ?? '--'}</Descriptions.Item>
+          <Descriptions.Item label='目标点'>{subTask.targetCellId}</Descriptions.Item>
+          <Descriptions.Item label='目标点方向'>
+            {!isNull(subTask.targetAngle) && `${subTask.targetAngle}°`}
+          </Descriptions.Item>
+          {!isStrictNull(subTask.skipReason) && (
+            <Descriptions.Item span={3} label='任务跳过原因'>
+              {subTask.skipReason}
+            </Descriptions.Item>
+          )}
+        </Descriptions>
 
         {/* 任务步骤 */}
-        <Form.Item label={`${formatMessage({ id: 'app.task.step' })}:`}>
-          <RenderVehicleTaskActions subTask={subTask} translation={translateMap} />
-        </Form.Item>
-      </Form>
+        <h4 style={{ marginTop: 16 }}>
+          <FormattedMessage id={'app.task.step'} />:
+        </h4>
+        <RenderVehicleTaskActions
+          subTask={nowPath?.step === stepIndex ? nowPath : subTask}
+          translation={{}}
+        />
+      </div>
     );
-  };
-
-  render() {
-    return <Steps direction="vertical">{this.renderSteps()}</Steps>;
   }
-}
-export default VehicleTaskSteps;
+
+  return (
+    <div>
+      {/* 如果是自定义任务，那么需要显示自定义任务的Code和运单号 */}
+      {vehicleTask.vehicleTaskType === 'CUSTOM' && (
+        <Row gutter={24}>
+          <Col span={8}>
+            <Form.Item label={formatMessage({ id: 'menu.customTask' })}>
+              {vehicleTask.customCode}
+            </Form.Item>
+          </Col>
+          <Col span={8}>
+            <Form.Item label={formatMessage({ id: 'app.taskDetail.externalCode' })}>
+              {vehicleTask.customTaskCode}
+            </Form.Item>
+          </Col>
+        </Row>
+      )}
+      <Steps direction='vertical'>{renderSteps()}</Steps>
+    </div>
+  );
+};
+export default connect(({ global, task }) => ({
+  allTaskTypes: global.allTaskTypes,
+  vehicleTask: task.detailInfo?.vehicleTask ?? {},
+  nowPath: task.detailInfo?.nowPath ?? {},
+}))(memo(VehicleTaskSteps));

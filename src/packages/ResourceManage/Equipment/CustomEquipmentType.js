@@ -1,17 +1,14 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Spin, Button, Empty, Row, Col, Space, Card, Tooltip } from 'antd';
-import { ReloadOutlined, FormOutlined, SnippetsOutlined } from '@ant-design/icons';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Card, Col, Empty, Row, Space, Spin, Tooltip } from 'antd';
+import { FormOutlined, ReloadOutlined, SnippetsOutlined } from '@ant-design/icons';
 import { dealResponse, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  findAllDeviceTypes,
-  saveDeviceTypeConfigs,
-  saveDeviceTypeActions,
-} from '@/services/resourceManageAPI';
+import { findAllDeviceTypes, saveDeviceTypeActions, saveDeviceTypeConfigs } from '@/services/resourceService';
 import EquipmentTypeConfigsModal from './components/EquipmentTypeConfigsModal';
 import EquipmentTypeActionsModal from './components/EquipmentTypeActionsModal';
 import commonStyle from '@/common.module.less';
 import styles from './equip.module.less';
+
 const CustomEquipmentType = () => {
   const [loading, setLoading] = useState(false);
   const [datasource, setDatasource] = useState([]);

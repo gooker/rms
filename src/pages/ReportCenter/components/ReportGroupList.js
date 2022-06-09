@@ -5,7 +5,7 @@ import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, convertToUserTimezone } from '@/utils/util';
-import { deleteReportGroup, fetchReportGroupList, saveReportGroup } from '@/services/api';
+import { deleteReportGroup, fetchReportGroupList, saveReportGroup } from '@/services/reportService';
 import RmsConfirm from '@/components/RmsConfirm';
 import commonStyle from '@/common.module.less';
 

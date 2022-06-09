@@ -2,6 +2,7 @@ import React, { memo, useEffect, useState } from 'react';
 import { message, Popconfirm } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
+import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchMaintain,
@@ -9,13 +10,13 @@ import {
   fetchVehicleInfo,
   fetchVehicleRunningInfo,
   getAlertCentersByTaskIdOrVehicleId,
-} from '@/services/api';
-import { vehicleRemoteControl, vehicleToRest, vehicleTryToCharge } from '@/services/monitor';
+} from '@/services/commonService';
+import { goToCharge, goToRest } from '@/services/taskService';
+import { vehicleRemoteControl } from '@/services/monitorService';
 import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
-import { find } from 'lodash';
 
 const checkedColor = '#ff8400';
 const VehicleCategory = {
@@ -103,16 +104,22 @@ const VehicleElementProp = (props) => {
     const response = await fetchVehicleRunningInfo({ vehicleId: vehicleId });
     if (!dealResponse(response)) {
       const newInfoList = [];
-      Object.values(response).forEach(({ vehicleRunningStatus, vehicleInfoTypeI18n, detailFormat }) => {
-        newInfoList.push({ type: vehicleRunningStatus, title: vehicleInfoTypeI18n, message: detailFormat });
-      });
+      Object.values(response).forEach(
+        ({ vehicleRunningStatus, vehicleInfoTypeI18n, detailFormat }) => {
+          newInfoList.push({
+            type: vehicleRunningStatus,
+            title: vehicleInfoTypeI18n,
+            message: detailFormat,
+          });
+        },
+      );
       dispatch({ type: 'monitor/saveVehicleRunningInfoList', payload: 'newInfoList' });
     }
     dispatch({ type: 'monitor/saveCategoryModal', payload: 'VehicleRunInfo' });
   }
 
   function goCharge() {
-    vehicleTryToCharge({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
+    goToCharge({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.controller.goCharge.fail' }));
       } else {
@@ -122,7 +129,7 @@ const VehicleElementProp = (props) => {
   }
 
   function toRest() {
-    vehicleToRest({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
+    goToRest({ vehicleId: vehicleId, vehicleType: data.vehicleType }).then((response) => {
       if (dealResponse(response)) {
         message.error(formatMessage({ id: 'monitor.controller.toRest.fail' }));
       } else {
@@ -191,7 +198,10 @@ const VehicleElementProp = (props) => {
     let allSelectedVehicleUniqueIds = [...selectVehicle];
     showRoutePollingCallback(false);
     if (pathChecked) {
-      allSelectedVehicleUniqueIds.splice(allSelectedVehicleUniqueIds.indexOf(`${data.uniqueId}`), 1);
+      allSelectedVehicleUniqueIds.splice(
+        allSelectedVehicleUniqueIds.indexOf(`${data.uniqueId}`),
+        1,
+      );
       setPathChecked(false);
     } else {
       allSelectedVehicleUniqueIds.push(`${data.uniqueId}`);
@@ -360,7 +370,10 @@ const VehicleElementProp = (props) => {
 
           {/* 路径、维护、手动 */}
           <div className={styles.rightSideVehicleContentOperation}>
-            <div className={styles.rightSideVehicleContentOperationItem2} onClick={vehiclePthchanged}>
+            <div
+              className={styles.rightSideVehicleContentOperationItem2}
+              onClick={vehiclePthchanged}
+            >
               <div style={{ background: pathChecked ? checkedColor : '' }}>
                 <img alt={'vehicle'} src={require('@/packages/Scene/icons/path.png').default} />
               </div>
@@ -382,7 +395,10 @@ const VehicleElementProp = (props) => {
             >
               <div className={styles.rightSideVehicleContentOperationItem2}>
                 <div style={{ background: mainTain ? checkedColor : '' }}>
-                  <img alt={'vehicle'} src={require('@/packages/Scene/icons/maintain.png').default} />
+                  <img
+                    alt={'vehicle'}
+                    src={require('@/packages/Scene/icons/maintain.png').default}
+                  />
                 </div>
                 <div>
                   <FormattedMessage id={'monitor.maintain'} />

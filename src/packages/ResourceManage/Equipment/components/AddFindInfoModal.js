@@ -4,7 +4,7 @@ import { Form, Input, InputNumber, Modal, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { addDevice } from '@/services/resourceManageAPI';
+import { addDevice } from '@/services/resourceService';
 
 const { formItemLayout } = getFormLayout(5, 17);
 const AddRegistrationModal = (props) => {

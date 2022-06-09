@@ -2,11 +2,22 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 import { isStrictNull } from '@/utils/util';
 
-// ************************************** 国际化  ************************************** //
-export async function fetchLanguageByAppCode(params) {
-  return request(`/${NameSpace.I18N}/getTranslationByParam`, {
-    method: 'POST',
-    data: params,
+export async function fetchAppVersion() {
+  return request(`/${NameSpace.Platform}/api/getAppVersion`, {
+    method: 'GET',
+    attachSection: false,
+  });
+}
+
+export async function fetchAlertCount() {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterCount`, {
+    method: 'GET',
+  });
+}
+
+export async function fetchGetProblemDetail(problemId) {
+  return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterById/${problemId}`, {
+    method: 'GET',
   });
 }
 
@@ -180,14 +191,6 @@ export async function getAlertCentersByTaskIdOrVehicleId(param) {
   });
 }
 
-// 获取任务详情数据
-export async function fetchTaskDetailByTaskId(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle-task/vehicleTaskDetail`, {
-    method: `GET`,
-    data: params,
-  });
-}
-
 // 请求取消任务
 export async function fetchBatchCancelTask(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/vehicle-task/batchCancelTask`, {
@@ -270,20 +273,6 @@ export async function updateLatentToteSystemParams(vehicleType, params) {
 }
 
 /******料箱池任务 start*********/
-// 数据库中所有料箱池任务-废弃
-export async function dbPoolTasks(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/pool/queryDbTotePoolTaskInfo`, {
-    method: 'GET',
-    data: params,
-  });
-}
-//内存中的料箱池任务信息-废弃
-export async function memPoolTasks(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/pool/queryMemoryTotePoolTaskInfo`, {
-    method: 'GET',
-    data: params,
-  });
-}
 //红外料箱任务池任务查询
 export async function fetchPoolTasks(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/pool/queryTotePoolTaskInfo`, {
@@ -298,17 +287,9 @@ export async function cancelTotePoolTask(vehicleType, params) {
     data: params,
   });
 }
-
 /******料箱池任务 end*********/
 
 /**tote vehicle列表***/
-
-export async function fetchToteVehicleList(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/getToteVehicle`, {
-    method: 'GET',
-  });
-}
-
 /***批量升级***/
 export async function fetchVehicleFileStatusList(vehicleType) {
   return request(`/${NameSpace[vehicleType]}/vehicle/getVehicleFileStatusList`, {
@@ -442,86 +423,6 @@ export async function fetchVehicleErrorRecord(vehicleType, params) {
   });
 }
 
-// 初始化故障定义列表
-export async function initFaultDefinition(vehicleType) {
-  return request(
-    `/${NameSpace[vehicleType]}/api/addErrorDefinitionFormJsonFile/${window.localStorage.getItem(
-      'sectionId',
-    )}`,
-    { method: `GET` },
-  );
-}
-
-// 原始数据
-export async function downloadMetaData(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/excel/getVehicleTraceExcel`, {
-    method: 'POST',
-    data: {
-      ...params,
-      sectionId: window.localStorage.getItem('sectionId'),
-    },
-  });
-}
-
-/**** 报表中心 ****/
-export async function saveReportGroup(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/saveFormTemplate`, {
-    method: 'POST',
-    body: { ...params, sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-export async function deleteReportGroup(vehicleType, id) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/deleteFormTemplateById`, {
-    method: 'GET',
-    body: { id, sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-export async function fetchReportGroupList(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/getFormTemplateByUserId`, {
-    method: 'GET',
-    data: { sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-export async function fetchDimensionDictionary(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/getDimensionDictionary`, {
-    method: `GET`,
-  });
-}
-
-export async function fetchReportGroupDataById(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/getFormTemplateById`, {
-    method: `GET`,
-    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-//获取报表数据源
-export async function fetchReportSourceURL(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/getFormSource`, {
-    method: 'GET',
-    data: { sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-//获取报表数据源详情(包含维度、筛选等等)
-export async function fetchReportSourceDetail(vehicleType, id) {
-  return request(`/${NameSpace[vehicleType]}/reportForm/getSourceDescribe`, {
-    method: `GET`,
-    body: { id, sectionId: window.localStorage.getItem('sectionId') },
-  });
-}
-
-// 获取报表组报表数据
-export async function fetchReportDetailByUrl(params) {
-  return request(params.url, {
-    method: 'POST',
-    data: params,
-  });
-}
-
 // 资源分组-分组管理
 export async function getCustomGroupJson() {
   return request(`/${NameSpace.Platform}/custom/getCustomGroupJson`, {
@@ -625,12 +526,6 @@ export async function getFormModelLockResource() {
     method: 'GET',
   });
 }
-// 获取小车任务类型集合
-export async function fetchTaskTypes() {
-  return request(`/${NameSpace.Platform}/task/getTaskType`, {
-    method: 'GET',
-  });
-}
 
 // 获取小车返回指定的区域集合
 export async function getBackZone(param) {
@@ -645,13 +540,6 @@ export async function fetchCstParams(param) {
   return request(`/${NameSpace.Platform}/custom-task/getFixedVariable`, {
     method: 'POST',
     data: param,
-  });
-}
-
-// 获取潜伏车动作集
-export async function getLatentActions() {
-  return request(`/${NameSpace.Platform}/vehicle-custom-task/getAddActions`, {
-    method: 'GET',
   });
 }
 
@@ -708,8 +596,6 @@ export async function fetchAppModules(params) {
     data: params,
   });
 }
-
-
 
 // 获取充电桩故障信息
 export async function fetchChargerFaultList(params) {
@@ -819,113 +705,6 @@ export async function batchDeletePodTaskLock(params) {
   return request(`/${NameSpace.Platform}/resource/lock/batchDeleteLoadTaskLock`, {
     method: 'POST',
     data: params,
-  });
-}
-
-// 料箱类-料箱锁
-export async function fetchToteLockList() {
-  return request(`/${NameSpace.Platform}/lock/getToteLockBySectionId`, {
-    method: 'GET',
-  });
-}
-
-// 料箱类-料箱锁删除
-export async function batchDeleteToteLock(params) {
-  return request(`/${NameSpace.Platform}/lock/batchDeleteToteLock`, {
-    method: 'POST',
-    data: params,
-  });
-}
-// 料箱类-货位锁
-export async function fetchToteBinLock() {
-  return request(`/${NameSpace.Platform}/lock/getBinLockBySectionId`, {
-    method: 'GET',
-  });
-}
-
-// 料箱类-货位锁删除
-export async function batchDeleteToteBinLock(params) {
-  return request(`/${NameSpace.Platform}/lock/batchDeleteBinLock`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 资源管理--潜伏货架-货架管理列表
-export async function fetchPodListBySectionId(params) {
-  return request(`/${NameSpace.Platform}/pod/list/${window.localStorage.getItem('sectionId')}`, {
-    method: 'GET',
-  });
-}
-// 资源管理--潜伏货架-货架管理新增
-export async function savePod(params) {
-  return request(`/${NameSpace.Platform}/pod`, {
-    method: 'POST',
-    data: params,
-  });
-}
-// 资源管理--潜伏货架-货架管理批量删除
-export async function batchDeletePod(params) {
-  return request(
-    `/${NameSpace.Platform}/pod/deletePod/${window.localStorage.getItem('sectionId')}`,
-    {
-      method: 'POST',
-      data: params,
-    },
-  );
-}
-
-// 资源管理--潜伏货架--货架分配列表
-export async function fetchPodAssignData(params) {
-  return request(`/${NameSpace.Platform}/podAndVehicleMatch/getBySectionId`, {
-    method: 'GET',
-    data: params,
-  });
-}
-// 资源管理--潜伏货架--货架分配保存
-export async function savePodAssign(params) {
-  return request(`/${NameSpace.Platform}/podAndVehicleMatch/save`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 资源管理--潜伏货架--货架分配删除
-export async function batchDeletePodAssign(params) {
-  return request(`/${NameSpace.Platform}/podAndVehicleMatch/deleteByIdIn`, {
-    method: 'POST',
-    data: params,
-  });
-}
-
-// 资源管理--小车分组列表
-export async function fetchAllMonitorVehicleGroup() {
-  return request(`/${NameSpace.Platform}/mapScope/getAllMonitorVehicleGroup`, {
-    method: 'GET',
-  });
-}
-
-// 资源管理--小车分组新增保存
-export async function saveMonitorVehicleGroup(param) {
-  return request(`/${NameSpace.Platform}/mapScope/saveMonitorVehicleGroup`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 资源管理--小车分组更新保存
-export async function updateMonitorVehicleGroup(param) {
-  return request(`/${NameSpace.Platform}/mapScope/updateMonitorVehicleGroup`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 资源管理--小车分组 批量删除
-export async function batchDeleteMonitorVehicleGroup(param) {
-  return request(`/${NameSpace.Platform}/mapScope/batchDeleteMonitorVehicleGroup`, {
-    method: 'POST',
-    data: param,
   });
 }
 

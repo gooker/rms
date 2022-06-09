@@ -1,15 +1,8 @@
 import React, { PureComponent } from 'react';
-import { Steps, Form, Divider, Row, Tooltip } from 'antd';
-import {
-  MehOutlined,
-  LoadingOutlined,
-  SmileOutlined,
-  FrownOutlined,
-  ClockCircleOutlined,
-} from '@ant-design/icons';
+import { Divider, Form, Steps, Tooltip } from 'antd';
+import { ClockCircleOutlined, FrownOutlined, LoadingOutlined, MehOutlined, SmileOutlined } from '@ant-design/icons';
 import { formatMessage } from '@/utils/util';
-import RenderVehicleTaskActions from '../VehicleTaskSteps/RenderVehicleTaskActions';
-import intl from 'react-intl-universal';
+import RenderVehicleTaskActions from './VehicleTaskSteps/RenderVehicleTaskActions';
 
 const Step = Steps.Step;
 const TaskStatus = {
@@ -34,7 +27,7 @@ class VehicleTaskHistory extends PureComponent {
     const { translateMap } = taskDetail;
     return (
       <Form style={{ width: '100%', marginBottom: 20 }} layout={'vertical'}>
-        <Form.Item label={intl.formatMessage({ id: 'app.taskDetail.taskSteps' })}>
+        <Form.Item label={formatMessage({ id: 'app.taskDetail.taskSteps' })}>
           <RenderVehicleTaskActions subTask={subTask} translation={translateMap} />
         </Form.Item>
       </Form>

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Popover, Descriptions } from 'antd';
+import { Descriptions, Popover } from 'antd';
 import { defineErrorColor, formatMessage } from '@/utils/util';
 
 const FaultCodeContent = (props) => {

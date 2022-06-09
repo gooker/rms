@@ -1,10 +1,10 @@
 import React, { memo, useState } from 'react';
-import { Form, Button } from 'antd';
+import { Button, Form } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
-import { vehicleTryToCharge } from '@/services/monitor';
+import { goToCharge } from '@/services/taskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleFormComponent from '@/components/VehicleFormComponent';
 import styles from '../monitorLayout.module.less';
@@ -27,7 +27,7 @@ const Charging = (props) => {
         setExecuting(true);
         const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
         if (vehicle) {
-          vehicleTryToCharge({ ...values }).then((response) => {
+          goToCharge({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }

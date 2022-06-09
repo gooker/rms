@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Button, Input } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
-import { fetchSimulatorErrorMessage } from '@/services/monitor';
+import { fetchSimulatorErrorMessage } from '@/services/monitorService';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);

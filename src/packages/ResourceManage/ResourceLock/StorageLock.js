@@ -1,7 +1,7 @@
 import React, { useState, memo, useEffect } from 'react';
 import { Tooltip, Button, Row, Col, message } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchStorageLockList, batchDeleteStorageLock } from '@/services/api';
+import { fetchStorageLockList, batchDeleteStorageLock } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';

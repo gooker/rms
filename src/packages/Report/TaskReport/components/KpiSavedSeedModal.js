@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Modal, Input, Table, Button, message, Popconfirm } from 'antd';
+import { Button, Input, message, Modal, Popconfirm, Table } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import { deleteSearchSeek, fetchAllSearchSeeds } from '@/services/latentLifting';
+import { deleteSearchSeek, fetchAllSearchSeeds } from '@/services/reportService';
 import { formatMessage } from '@/utils/util';
 import { getFirstSetItem, getLabelByValue } from '../utils.js';
 import FormattedMessage from '@/components/FormattedMessage';

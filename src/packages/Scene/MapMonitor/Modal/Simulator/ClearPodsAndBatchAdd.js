@@ -1,19 +1,14 @@
 import React, { memo, useState } from 'react';
-import { Button, Row, Col, Form, InputNumber, message } from 'antd';
+import { Button, Col, Form, InputNumber, message, Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import LatentPodUpdater from './LatentPodUpdater';
 import { find } from 'lodash';
 import { useMap, useMount } from 'ahooks';
-import {
-  formatMessage,
-  dealResponse,
-  LatentSizeUpdaterValidator,
-  htmlFormatMessage,
-} from '@/utils/util';
+import { dealResponse, formatMessage, htmlFormatMessage, LatentSizeUpdaterValidator } from '@/utils/util';
 import { hasAppPermission } from '@/utils/Permission';
 import { AppCode } from '@/config/config';
-import { fetchLatentLiftingSystemParam } from '@/services/monitor';
+import { fetchLatentLiftingSystemParam } from '@/services/monitorService';
 
 const layout = { labelCol: { span: 6 }, wrapperCol: { span: 18 } };
 

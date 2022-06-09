@@ -1,9 +1,10 @@
 import React, { memo } from 'react';
+import { sortBy } from 'lodash';
+import CommonPortal from './PortalEntry';
 import { connect } from '@/utils/RmsDva';
 import { AppCode } from '@/config/config';
-import CommonPortal from './PortalEntry';
-import styles from './Portal.module.less';
 import { formatMessage } from '@/utils/util';
+import styles from './Portal.module.less';
 
 const Portal = (props) => {
   const { dispatch, isAdmin, grantedAPP, currentApp } = props;
@@ -14,12 +15,18 @@ const Portal = (props) => {
 
   function getAppList() {
     if (!Array.isArray(grantedAPP) || grantedAPP.length === 0) return [];
-
-    // 如果是admin账户登录，就只显示SSO APP
     if (isAdmin) {
+      // 如果是admin账户登录，就只显示SSO APP
       return grantedAPP.filter((item) => item === AppCode.SSO);
     }
-    return grantedAPP;
+    // 对grantedAPP进行排序，提高与用户体验
+    const baseOrder = Object.keys(AppCode);
+    let sortedSeed = grantedAPP.map((item) => ({
+      code: item,
+      index: baseOrder.indexOf(item),
+    }));
+    sortedSeed = sortBy(sortedSeed, ['index']).map(({ code }) => code);
+    return sortedSeed;
   }
 
   function renderAppInfo() {

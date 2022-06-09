@@ -1,12 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Divider, Input, Popconfirm, Switch, Table } from 'antd';
-import { DeleteOutlined, EditOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Input, Popconfirm, Switch, Table } from 'antd';
+import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
-import {
-  changeEmergencyStopStatus,
-  deleteEmergencyStop,
-  fetchEmergencyStopList,
-} from '@/services/XIHE';
+import { changeEmergencyStopStatus, deleteEmergencyStop, fetchEmergencyStopList } from '@/services/XIHEService';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Divider, Tooltip, Row, Col, Badge } from 'antd';
-import { formatMessage, dealResponse, convertToUserTimezone, isStrictNull } from '@/utils/util';
+import { Badge, Button, Col, Divider, Row, Tooltip } from 'antd';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { fetchLatentToteOrders, updateLatentToteOrder } from '@/services/latentTote';
+import { fetchLatentToteOrders, updateLatentToteOrder } from '@/services/latentToteService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -11,6 +11,7 @@ import LatentToteOrderSearch from './LatentToteOrderSearch';
 import UpdateToteOrderTaskComponent from './UpdateToteOrderTaskComponent';
 import commonStyles from '@/common.module.less';
 import styles from '../taskOrder.module.less';
+
 const TaskStatus = Dictionary('latentToteOrderStatus');
 const TaskStatusColor = Dictionary('latentToteStatusColor');
 

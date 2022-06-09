@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import commonStyles from '@/common.module.less';
 import { getContentHeight, getRandomString } from '@/utils/util';
 import EventManager from '@/utils/EventManager';

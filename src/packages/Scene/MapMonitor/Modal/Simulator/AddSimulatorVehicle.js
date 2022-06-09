@@ -3,7 +3,7 @@ import { connect } from '@/utils/RmsDva';
 import { Button, Checkbox, Divider, Form, InputNumber, message, Row } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { addSimulationVehicles } from '@/services/monitor';
+import { addSimulationVehicles } from '@/services/monitorService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { VehicleSubTypeMap } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';

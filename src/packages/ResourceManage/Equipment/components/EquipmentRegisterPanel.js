@@ -8,7 +8,7 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddFindInfoModal from './AddFindInfoModal';
 import RegisterDeviceModal from './RegisterDeviceModal';
-import { registerDevice } from '@/services/resourceManageAPI';
+import { registerDevice } from '@/services/resourceService';
 import commonStyle from '@/common.module.less';
 import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 

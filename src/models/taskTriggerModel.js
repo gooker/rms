@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { fetchActiveMap, fetchCustomParamType, getCustomTaskList } from '@/services/api';
+import { fetchActiveMap, fetchCustomParamType, getCustomTaskList } from '@/services/commonService';
 import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {

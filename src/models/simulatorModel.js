@@ -4,8 +4,8 @@ import {
   fetchSimulatorHistory,
   fetchSimulatorLoginVehicleControlState,
   fetchUpdateVehicleConfig,
-} from '@/services/monitor';
-import { fetchAllAdaptor, findVehicle } from '@/services/resourceManageAPI';
+} from '@/services/monitorService';
+import { fetchAllAdaptor, findVehicle } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 

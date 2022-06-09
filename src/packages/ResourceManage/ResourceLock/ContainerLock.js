@@ -1,12 +1,12 @@
-import React, { useState, memo, useEffect } from 'react';
-import { Tooltip, Button, Row, Col } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Col, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchLoadTaskLockList, batchDeletePodTaskLock } from '@/services/api';
+import { batchDeletePodTaskLock, fetchLoadTaskLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import SearchTargetLock from './components/SearchTargetLock';
 

@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
-import { Menu, Dropdown } from 'antd';
+import { Dropdown, Menu } from 'antd';
 import { CloseCircleFilled } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './tabsBar.module.less';
 import commonStyle from '@/common.module.less';
 import Loadable from '@/components/Loadable';
+
 const LoadableRefreshPage = Loadable(() => import('@/components/RefreshPage'));
 
 const TabButton = (props) => {

@@ -5,7 +5,7 @@ import { connect } from '@/utils/RmsDva';
 import { VehicleType, AppCode } from '@/config/config';
 import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
 import { hasAppPermission } from '@/utils/Permission';
-import { fetchWorkStationPods } from '@/services/monitor';
+import { fetchWorkStationPods } from '@/services/monitorService';
 import Property from '../PopoverPanel/Property';
 import VehicleCategorySecondaryPanel from '../PopoverPanel/VehicleCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';

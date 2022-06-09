@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { message, Modal, Result } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import { getAuthorityInfo } from '@/services/SSO';
+import { getAuthorityInfo } from '@/services/SSOService';
 import AuthorityPanel from './AuthorityPanel';
 import AuthorityInformation from './AuthorityInformation';
 import commonStyles from '@/common.module.less';

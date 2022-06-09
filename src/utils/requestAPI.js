@@ -1,55 +1,37 @@
-import { isEmpty, isPlainObject } from 'lodash';
-import { NameSpace } from '@/config/config';
+import { isPlainObject } from 'lodash';
 import { isStrictNull } from '@/utils/util';
+import { NameSpace } from '@/config/config';
+
+const { Platform, WS } = NameSpace;
+const { origin, host, protocol, hostname } = window.location;
 
 /**
  * 自定义环境数据目前保存在LocalStorage，如果后续发现不方便的话，就改成使用IndexDB
  */
 export function getApiURL(namespace, configValue, prefix) {
-  if (!isStrictNull(configValue)) {
-    if (Number.isNaN(Number(configValue))) {
-      // 完整的url
-      return configValue;
-    } else {
-      // 端口
-      const { origin, host } = window.location;
-      if (isStrictNull(prefix)) {
-        return `${origin}:${configValue}`;
-      } else {
-        return `${prefix}://${host}:${configValue}`;
-      }
+  if (isStrictNull(configValue) || configValue === `${namespace.toUpperCase()}_API`) {
+    if (namespace === Platform) {
+      return origin;
     }
+    return `ws://${host}/ws`;
+  } else if (Number.isNaN(Number(configValue))) {
+    // 完整的url
+    return configValue;
   } else {
-    throw new Error(`Please config "${namespace}" in config.js`);
+    // 端口
+    return `${isStrictNull(prefix) ? protocol : prefix}//${hostname}:${configValue}`;
   }
 }
 
 /**
- * config.js 文件可配置的字段有: platform, sso, ws。且sso是dev环境调试用，产品环境只需要配置 platform 和 ws
- * 约定上三个字段可填的内容包括：端口号、完整的URL
+ * config.js 文件可配置的字段有: platform, ws
+ * 约定上三个字段可填的内容包括：端口号、完整的URL和空
  */
 export default function requestAPI() {
   let apiMap = {};
   if (isPlainObject(window.extraConfig)) {
-    if (isEmpty(window.extraConfig)) {
-      throw new Error('Please config valid url data in config.js');
-    } else {
-      // Platform
-      apiMap[NameSpace.Platform] = getApiURL(
-        NameSpace.Platform,
-        window.extraConfig[NameSpace.Platform],
-      );
-
-      // sso
-      if (isStrictNull(window.extraConfig[NameSpace.SSO])) {
-        apiMap[NameSpace.SSO] = apiMap[NameSpace.Platform];
-      } else {
-        apiMap[NameSpace.SSO] = getApiURL(NameSpace.SSO, window.extraConfig[NameSpace.SSO]);
-      }
-
-      // ws
-      apiMap[NameSpace.WS] = getApiURL(NameSpace.WS, window.extraConfig[NameSpace.WS]);
-    }
+    apiMap[Platform] = getApiURL(Platform, window.extraConfig[Platform]);
+    apiMap[WS] = getApiURL(WS, window.extraConfig[WS], 'ws:');
   } else {
     apiMap = {
       // NT-13 内网
@@ -64,6 +46,5 @@ export default function requestAPI() {
       ws: 'ws://52.83.193.245:10216/ws',
     };
   }
-  apiMap[NameSpace.I18N] = apiMap[NameSpace.Platform];
   return apiMap;
 }

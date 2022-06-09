@@ -1,12 +1,12 @@
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import moment from 'moment';
-import { Card, Form, Row, Col, Button, InputNumber, Checkbox, TimePicker, message } from 'antd';
+import { Button, Card, Checkbox, Col, Form, InputNumber, message, Row, TimePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { formatMessage, isStrictNull } from '@/utils/util';
+import { formatMessage, isStrictNull, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { saveIdleHoursStrategy, fetchIdleHourChargeStrategy } from '@/services/resourceManageAPI';
+import { saveIdleHoursStrategy, fetchIdleHourChargeStrategy } from '@/services/resourceService';
+
 import styles from './idleChargingStrategy.module.less';
-import { dealResponse } from '@/utils/util';
 
 const tailFormItemLayout = { wrapperCol: { offset: 1, span: 23 } };
 const { RangePicker } = TimePicker;

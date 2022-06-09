@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
-import { Row, message, Button, Modal, Tag } from 'antd';
-import { fetchCleaningPlan, fetchCleaningPlanMode } from '@/services/api';
+import { Button, message, Modal, Row, Tag } from 'antd';
+import { fetchCleaningPlan, fetchCleaningPlanMode } from '@/services/commonService';
 import { ReloadOutlined } from '@ant-design/icons';
-import {
-  dealResponse,
-  adaptModalWidth,
-  adaptModalHeight,
-  formatMessage,
-  convertToUserTimezone,
-} from '@/utils/util';
+import { adaptModalHeight, adaptModalWidth, convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';

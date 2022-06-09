@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Row, Col } from 'antd';
+import { Col, Row } from 'antd';
 import LabelComponent from '@/components/LabelComponent';
 
 const ExpandPanel = (props) => {

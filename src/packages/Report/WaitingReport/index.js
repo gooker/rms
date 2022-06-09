@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { message, Radio, Row, Col } from 'antd';
+import { Col, message, Radio, Row } from 'antd';
 import CustomChart from './components/CustomChart';
 import SearchConditionForm from './components/SearchConditionForm';
 import GanttModal from './components/GanttModal';
 import { convertWaitingToChartVM, transformTime } from './utils';
-import { fetchWaitingKpiView } from '@/services/latentLifting';
+import { fetchWaitingKpiView } from '@/services/reportService';
 import styles from './WaitingKpi.module.less';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';

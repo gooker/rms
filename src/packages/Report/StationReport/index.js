@@ -1,20 +1,11 @@
 import React, { Component } from 'react';
 import echarts from 'echarts';
-import { throttle, find } from 'lodash';
+import { find, throttle } from 'lodash';
 import { message } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import StationKpiSearchForm from './StationKpiSearchForm';
-import {
-  getRegionReport,
-  getAllMonitorRegion,
-  getRegionRealtimeReport,
-} from '@/services/latentLifting';
-import {
-  getGraphic,
-  HistoryChartX,
-  getRealTimePieConfig,
-  getHistoryTaskBarConfig,
-} from './echartConfig';
+import { getAllMonitorRegion, getRegionRealtimeReport, getRegionReport } from '@/services/reportService';
+import { getGraphic, getHistoryTaskBarConfig, getRealTimePieConfig, HistoryChartX } from './echartConfig';
 import commonStyles from '@/common.module.less';
 import styles from './StationKpi.module.less';
 

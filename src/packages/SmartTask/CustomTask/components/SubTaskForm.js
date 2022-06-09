@@ -52,12 +52,8 @@ const SubTaskForm = (props) => {
   function validateTarget(_, value) {
     if (isNull(value)) {
       return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
-    } else {
-      if (value.code.length > 0) {
-        return Promise.resolve();
-      }
-      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
     }
+    return Promise.resolve();
   }
 
   // 获取某个字段的值

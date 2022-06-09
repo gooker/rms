@@ -10,8 +10,8 @@ import {
   fetchLatentPodList,
   fetchMapVehicleLocks,
   saveEmergencyStop,
-} from '@/services/XIHE';
-import { fetchChargerList } from '@/services/resourceManageAPI';
+} from '@/services/XIHEService';
+import { fetchChargerList } from '@/services/resourceService';
 import {
   addTemporaryBlockCell,
   autoCallLatentPodToWorkstation,
@@ -23,8 +23,8 @@ import {
   fetchSetPod,
   fetchTemporaryBlockCells,
   saveLatentAutomaticTaskConfig,
-} from '@/services/monitor';
-import { fetchActiveMap, fetchAllVehicleList, fetchToteRackLayout } from '@/services/api';
+} from '@/services/monitorService';
+import { fetchActiveMap, fetchAllVehicleList, fetchToteRackLayout } from '@/services/commonService';
 import { MonitorSelectableSpriteType } from '@/config/consts';
 
 const MonitorModelState = {

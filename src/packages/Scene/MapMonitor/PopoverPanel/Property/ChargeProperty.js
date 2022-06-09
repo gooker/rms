@@ -5,12 +5,8 @@ import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';
-import { clearChargerFault, resetCharger } from '@/services/XIHE';
-import {
-  fetchChargeByCode,
-  handleleChargers,
-  fetchChargerList,
-} from '@/services/resourceManageAPI';
+import { clearChargerFault, resetCharger } from '@/services/XIHEService';
+import { fetchChargeByCode, fetchChargerList, handleleChargers } from '@/services/resourceService';
 import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
 import LabelColComponent from '@/components/LabelColComponent';
 import { ChargerStatus } from '@/packages/ResourceManage/Charger/components/chargeConfig';

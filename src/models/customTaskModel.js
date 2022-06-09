@@ -1,6 +1,11 @@
 import { message } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import { fetchActiveMap, fetchCustomParamType, getCustomTaskList, getFormModelLockResource } from '@/services/api';
+import {
+  fetchActiveMap,
+  fetchCustomParamType,
+  getCustomTaskList,
+  getFormModelLockResource,
+} from '@/services/commonService';
 
 export default {
   namespace: 'customTask',

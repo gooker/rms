@@ -9,7 +9,7 @@ import {
   findDeviceMonitorsByDeviceType,
   saveDeviceActions,
   saveDeviceMonitors,
-} from '@/services/resourceManageAPI';
+} from '@/services/resourceService';
 import { convertToUserTimezone, dealResponse, isNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';

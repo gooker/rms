@@ -5,7 +5,7 @@ import { formatMessage, getFormLayout, isStrictNull, validateUrl } from '@/utils
 import { NameSpace } from '@/config/config';
 
 const { formItemLayout } = getFormLayout(4, 18);
-const ApiNameSpace = [NameSpace.Platform, NameSpace.SSO, NameSpace.WS];
+const ApiNameSpace = [NameSpace.Platform, NameSpace.WS];
 
 class AddEnvironmentModal extends PureComponent {
   componentDidMount() {

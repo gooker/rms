@@ -1,19 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Button, message } from 'antd';
+import { Button, Form, message } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import request from '@/utils/request';
-import {
-  dealResponse,
-  formatMessage,
-  getFormLayout,
-  getMapModalPosition,
-  renderRequestBodyForm,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, renderRequestBodyForm } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { VehicleType } from '@/config/config';
 import styles from '../monitorLayout.module.less';
-import { fetchRequestorList } from '@/services/api';
+import { fetchRequestorList } from '@/services/commonService';
 
 const TabVehicleMap = {
   LatentVehicle: VehicleType.LatentLifting,

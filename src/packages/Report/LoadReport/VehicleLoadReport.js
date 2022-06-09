@@ -6,7 +6,7 @@ import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
 import { getAllCellId, getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
-import { fetchVehicleload } from '@/services/api';
+import { fetchVehicleload } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';

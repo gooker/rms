@@ -3,7 +3,7 @@ import { message } from 'antd';
 import XLSX from 'xlsx';
 import { Parser } from 'json2csv';
 import { split } from 'lodash';
-import { fetchVehicleHardwareInfo } from '@/services/api';
+import { fetchVehicleHardwareInfo } from '@/services/commonService';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 
@@ -137,7 +137,7 @@ export function exportVehicleInfo(vehicleList) {
         label: formatMessage({ id: 'vehicle.maintenanceState' }),
         value: (row) => {
           if (row.disabled) {
-            return formatMessage({ id: 'app.vehicle.underMaintenance' });
+            return formatMessage({ id: 'vehicle.underMaintenance' });
           } else {
             return formatMessage({ id: 'app.vehicle.normal' });
           }
@@ -175,7 +175,7 @@ export function exportVehicleInfo(vehicleList) {
         },
       },
       {
-        label: formatMessage({ id: 'app.vehicle.batteryVoltage' }),
+        label: formatMessage({ id: 'app.vehicle.battery.voltage' }),
         value: (row) => {
           return `${row.batteryVoltage / 1000} v`;
         },
@@ -185,7 +185,7 @@ export function exportVehicleInfo(vehicleList) {
         value: 'version',
       },
       {
-        label: formatMessage({ id: 'app.vehicle.batteryType' }),
+        label: formatMessage({ id: 'vehicle.battery.type' }),
         value: (row) => {
           return formatMessage({ id: Dictionary('batteryType', row.batteryType) });
         },

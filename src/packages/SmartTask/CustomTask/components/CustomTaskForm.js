@@ -24,7 +24,7 @@ import {
   restoreCustomTaskForm,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { saveCustomTask } from '@/services/api';
+import { saveCustomTask } from '@/services/commonService';
 import { CustomNodeType } from '../customTaskConfig';
 import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
 import { PageContentPadding } from '@/config/consts';

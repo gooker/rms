@@ -2,7 +2,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { Tabs, Modal } from 'antd';
 import ChargingStrategyForm from './ChargingStrategyForm';
 import IdleChargingStrategy from './IdleChargingStrategy';
-import { fetchChargingStrategyById } from '@/services/resourceManageAPI';
+import { fetchChargingStrategyById } from '@/services/resourceService';
 import { formatMessage } from '@/utils/util';
 import styles from './chargingStrategy.module.less';
 import { dealResponse, isNull } from '@/utils/util';
