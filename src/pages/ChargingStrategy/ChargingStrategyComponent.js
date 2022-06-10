@@ -1,110 +1,77 @@
-import React, { memo, useEffect, useState } from 'react';
-import { Modal, Spin, Tabs } from 'antd';
-import { RedoOutlined } from '@ant-design/icons';
-import classnames from 'classnames';
+import React, { memo, useState, useEffect } from 'react';
+import { Tabs, Modal } from 'antd';
 import ChargingStrategyForm from './ChargingStrategyForm';
 import IdleChargingStrategy from './IdleChargingStrategy';
-import { getChargeStrategy, getCurrentChargerType } from '@/services/commonService';
-import { dealResponse, formatMessage } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
-import commonStyles from '@/common.module.less';
+import { fetchChargingStrategyById } from '@/services/resourceService';
+import { formatMessage } from '@/utils/util';
 import styles from './chargingStrategy.module.less';
+import { dealResponse, isNull } from '@/utils/util';
 
 const { TabPane } = Tabs;
 
-const ChargingStrategyComponent = (prop) => {
-  const { vehicleType } = prop;
-
-  const [spinning, setSpinning] = useState(false);
+const ChargingStrategyComponent = (props) => {
+  const { title, visible, width = '60%' } = props;
+  const { onOk, onCancel, editing } = props;
   const [activeKey, setActiveKey] = useState('Normal'); // Tab
-  const [current, setCurrent] = useState(false); // 当前正在使用的策略
-  const [chargeStrategy, setChargeStrategy] = useState(null); // 当前策略详情
+  const [chargeStrategy, setChargeStrategy] = useState(null); // 当前策略详情 {code:'xx',name:'vvv',Normal:{},IdleHours:{}}
   const [idleChargingStrategyVisible, setIdleChargingStrategyVisible] = useState(false); // 闲时策略配置弹窗
 
   useEffect(() => {
-    refresh();
-  }, []);
+    if (visible && !isNull(editing)) {
+      refresh();
+    } else {
+      setChargeStrategy(null);
+    }
+  }, [visible]);
 
   async function refresh() {
-    setSpinning(true);
-    try {
-      const [currentStatus, currentStrategy] = await Promise.all([
-        getCurrentChargerType(vehicleType),
-        getChargeStrategy(vehicleType, activeKey),
-      ]);
-      setCurrent(currentStatus);
-      setChargeStrategy(currentStrategy);
-    } catch (error) {
-      //
-    }
-    setSpinning(false);
-  }
-
-  function renderTabToolBar() {
-    return (
-      <div className={styles.tabToolBar} onClick={refresh}>
-        {spinning ? <Spin /> : <RedoOutlined />}
-        <span>
-          <FormattedMessage id="app.chargeStrategy.currentStatus" />:
-        </span>
-        <span style={{ marginLeft: 5, zoom: 1.5, color: '#2FC25B' }}>
-          {current === 'Normal' ? (
-            <FormattedMessage id="app.chargeStrategy.normal" />
-          ) : (
-            <FormattedMessage id="app.chargeStrategy.idleHours" />
-          )}
-        </span>
-      </div>
-    );
-  }
-
-  async function switchTab(key) {
-    setActiveKey(key);
-    const currentStrategy = await getChargeStrategy(vehicleType, key);
+    const currentStrategy = await fetchChargingStrategyById();
     if (!dealResponse(currentStrategy)) {
       setChargeStrategy(currentStrategy);
     }
   }
 
-  return (
-    <div className={classnames(commonStyles.commonPageStyle, styles.chargerStrategy)}>
-      <Tabs
-        animated
-        activeKey={activeKey}
-        tabBarExtraContent={renderTabToolBar()}
-        onChange={switchTab}
-      >
-        <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeStrategy.normal' })}>
-          <ChargingStrategyForm type="Normal" vehicleType={vehicleType} data={chargeStrategy} />
-        </TabPane>
-        <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="IdleHours">
-          <ChargingStrategyForm
-            type="IdleHours"
-            vehicleType={vehicleType}
-            data={chargeStrategy}
-            openIdle={setIdleChargingStrategyVisible}
-          />
-        </TabPane>
-      </Tabs>
+  function cancelIdle() {
+    setIdleChargingStrategyVisible(false);
+  }
 
-      {/* 闲时策略 */}
-      <Modal
-        width={800}
-        footer={null}
-        destroyOnClose
-        visible={idleChargingStrategyVisible}
-        onCancel={() => {
-          setIdleChargingStrategyVisible(false);
-        }}
-      >
-        <IdleChargingStrategy
-          vehicleType={vehicleType}
-          onCancel={() => {
-            setIdleChargingStrategyVisible(false);
-          }}
+  return (
+    <Modal
+      destroyOnClose
+      title={title}
+      visible={visible}
+      width={width}
+      maskClosable={false}
+      onCancel={onCancel}
+      style={{ maxWidth: 1000, top: '5%', position: 'relative' }}
+      bodyStyle={{ height: '88vh', flex: 1, overflow: 'auto' }}
+      footer={null}
+    >
+      <div className={styles.chargerStrategy}>
+        {/* <TabPane key="Normal" tab={formatMessage({ id: 'app.chargeStrategy.normal' })}> */}
+        {/* <ChargingStrategyForm data={chargeStrategy} onSave={onOk} /> */}
+        {/* </TabPane> */}
+        {/* <TabPane tab={formatMessage({ id: 'app.chargeStrategy.idleHours' })} key="IdleHours"> */}
+        <ChargingStrategyForm
+          data={chargeStrategy}
+          openIdle={setIdleChargingStrategyVisible}
+          onSave={onOk}
         />
-      </Modal>
-    </div>
+        {/* </TabPane> */}
+
+        {/* 闲时策略 */}
+        <Modal
+          width={800}
+          footer={null}
+          destroyOnClose
+          visible={idleChargingStrategyVisible}
+          title={formatMessage({ id: 'app.chargeStrategy.idleHoursRules' })}
+          onCancel={cancelIdle}
+        >
+          <IdleChargingStrategy onCancel={cancelIdle} data={chargeStrategy} />
+        </Modal>
+      </div>
+    </Modal>
   );
 };
 export default memo(ChargingStrategyComponent);

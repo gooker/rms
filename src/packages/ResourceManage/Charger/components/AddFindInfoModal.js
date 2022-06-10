@@ -23,15 +23,15 @@ const AddRegistrationModal = (props) => {
       .then(async (values) => {
         const { adapterType, ip, port } = values;
         const params = {
+          adapterCode: adapterType[0],
+          typeCode: adapterType[1],
           parameter: {
-            adapterCode: adapterType[0],
-            typeCode: adapterType[1],
             ip,
             port,
           },
         };
         const response = await findCharger(params);
-        if (!dealResponse(response)) {
+        if (!dealResponse(response,1)) {
           await dispatch({ type: 'chargerList/fetchInitialData' });
           closeModal();
         }
@@ -87,7 +87,7 @@ const AddRegistrationModal = (props) => {
           <Input />
         </Form.Item>
 
-        <Form.Item name={'port'} label={<FormattedMessage id={'app.vehicle.port'} />}>
+        <Form.Item name={'port'} label={<FormattedMessage id={'vehicle.port'} />}>
           <InputNumber />
         </Form.Item>
       </Form>

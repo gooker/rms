@@ -2,9 +2,10 @@ import React, { memo, useEffect, useState } from 'react';
 import moment from 'moment';
 import { Button, Card, Checkbox, Col, Form, InputNumber, message, Row, TimePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { formatMessage, isStrictNull, dealResponse } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getIdleHoursBySectionId, saveIdleChargingStrategy } from '@/services/commonService';
+import { saveIdleHoursStrategy, fetchIdleHourChargeStrategy } from '@/services/resourceService';
+
 import styles from './idleChargingStrategy.module.less';
 
 const tailFormItemLayout = { wrapperCol: { offset: 1, span: 23 } };
@@ -12,32 +13,36 @@ const { RangePicker } = TimePicker;
 const Days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 const IdleChargingStrategy = (props) => {
-  const { vehicleType, onCancel } = props;
+  const { onCancel, data } = props;
 
   const [form] = Form.useForm();
   const [pastMinuts, setPastMinuts] = useState(null);
   const [percentage, setPercentage] = useState(null);
   const [useVehicleStandByPercent, setUseVehicleStandByPercent] = useState(false); // 第一条策略
   const [useIdleHours, setUseIdleHours] = useState(false); // 第二条策略
+  const [id, setId] = useState(false);
 
   useEffect(() => {
-    getIdleHoursBySectionId(vehicleType).then((response) => {
-      if (!dealResponse(response)) {
-        const { idleHoursQuantumDTOS } = response;
-        setPastMinuts(response.vehicleStandbyMinute);
-        setPercentage(response.vehicleStandbyPercent);
-        setUseVehicleStandByPercent(response.useVehicleStandByPercent);
-        setUseIdleHours(response.useIdleHours);
+    if (!isStrictNull(data) && data?.id) {
+      fetchIdleHourChargeStrategy({ Id: data.id }).then((response) => {
+        if (!dealResponse(response)) {
+          const { idleHoursQuantumDTOS } = response;
+          setPastMinuts(response.vehicleStandbyMinute);
+          setPercentage(response.vehicleStandbyPercent);
+          setUseVehicleStandByPercent(response.useVehicleStandByPercent);
+          setUseIdleHours(response.useIdleHours);
+          setId(response.id);
 
-        const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
-          return {
-            weeks,
-            time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
-          };
-        });
-        form.setFieldsValue({ idleHoursQuantumDTOS: fieldsValue || [] });
-      }
-    });
+          const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
+            return {
+              weeks,
+              time: [startTime && moment(startTime, 'HH:mm'), endTime && moment(endTime, 'HH:mm')],
+            };
+          });
+          form.setFieldsValue({ idleHoursQuantumDTOS: fieldsValue || [] });
+        }
+      });
+    }
   }, []);
 
   function submit() {
@@ -57,6 +62,8 @@ const IdleChargingStrategy = (props) => {
       }
 
       const requestBody = {
+        id,
+        chargeStrategyId: data?.id,
         sectionId: window.localStorage.getItem('sectionId'),
         idleHoursQuantumDTOS: result,
         vehicleStandbyMinute: pastMinuts,
@@ -64,7 +71,7 @@ const IdleChargingStrategy = (props) => {
         useVehicleStandByPercent,
         useIdleHours,
       };
-      saveIdleChargingStrategy(vehicleType, requestBody).then((response) => {
+      saveIdleHoursStrategy(requestBody).then((response) => {
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.chargeStrategy.idle.save.success' }));
           onCancel();
@@ -76,7 +83,7 @@ const IdleChargingStrategy = (props) => {
   }
 
   return (
-    <Card title={formatMessage({ id: 'app.chargeStrategy.idleHoursRules' })} bordered={false}>
+    <Card bordered={false}>
       <div className={styles.strategyRow}>
         <div className={styles.checkBox}>
           <Checkbox

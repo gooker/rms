@@ -231,46 +231,6 @@ export async function fetchRestoreTask(vehicleType, params) {
   });
 }
 
-// ************************************** 充电策略 ************************************** //
-// 查询充电策略
-export async function getChargeStrategy(vehicleType, type) {
-  const sectionId = window.localStorage.getItem('sectionId');
-  return request(`/${NameSpace[vehicleType]}/charger/getChargingStrategy/${sectionId}/${type}`, {
-    method: 'GET',
-  });
-}
-// 获取当前状态
-export async function getCurrentChargerType(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/charger/getCurrentChargerType`, {
-    method: 'GET',
-  });
-}
-// 保存充电策略
-export async function saveChargeStrategy(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/charger/updateChargingStrategy`, {
-    method: 'POST',
-    data: params,
-  });
-}
-// 默认充电策略
-export async function getDefaultChargingStrategy(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/charger/getDefaultChargingStrategy`, {
-    method: 'GET',
-  });
-}
-// 保存闲时充电策略
-export async function saveIdleChargingStrategy(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/charger/updateIdleHours`, {
-    method: 'POST',
-    data: params,
-  });
-}
-// 获取已配置的闲时充电策略信息
-export async function getIdleHoursBySectionId(vehicleType) {
-  return request(`/${NameSpace[vehicleType]}/charger/getIdleHoursBySectionId`, {
-    method: 'GET',
-  });
-}
 
 //// 获取参数模版
 export async function fetchSystemParamFormData(vehicleType, params) {

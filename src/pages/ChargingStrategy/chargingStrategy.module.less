@@ -1,17 +1,30 @@
+.content {
+  display: flex;
+  flex: 1;
+  flex-flow: column nowrap;
+  border-radius: 2px;
+  box-shadow: 0 0 8px #dbd9d9;
+}
+
 .chargerStrategy {
+  padding: 10px;
+  text-align: right;
+  background: transparent;
+  border-radius: 0 0 2px 2px;
+  margin-bottom: 60px;
+
   :global {
-    .ant-tabs {
-      overflow: hidden;
-    }
-    .ant-tabs-content-holder {
-      overflow: auto;
+    .ant-card-head {
+      font-size: 14px;
     }
   }
+
+
 }
 
 .tabToolBar {
-  height: 34px;
   cursor: pointer;
+  height: 34px;
 }
 
 .panelCardNoBoder {
@@ -32,12 +45,16 @@
 }
 
 .footer {
-  position: absolute;
-  right: 0;
-  bottom: 0;
+  height: 48px;
   display: flex;
-  align-items: center;
   justify-content: flex-end;
-  height: 60px;
+  align-items: center;
   padding-right: 20px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-radius: 2px 2px 0 0;
+  background-color: rgba(253, 251, 251, 0.953);
+  border-top: '1px solid #f0f0f0';
+ 
 }

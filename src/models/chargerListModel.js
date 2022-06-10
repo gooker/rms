@@ -23,7 +23,14 @@ export default {
         findMapCharger(),
       ]);
       if (!dealResponse(allChargers) && !dealResponse(allAdaptors)) {
-        yield put({ type: 'saveState', payload: { allChargers, allAdaptors, allMapChargers } });
+        yield put({
+          type: 'saveState',
+          payload: {
+            allChargers: [...allChargers],
+            allAdaptors: [...allAdaptors],
+            allMapChargers: [...allMapChargers],
+          },
+        });
       }
     },
   },

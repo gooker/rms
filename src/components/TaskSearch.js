@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Form, Row } from 'antd';
-import { Col, Select } from '_antd@4.18.3@antd';
+import { Col, Select } from 'antd';
 import { formatMessage, generateVehicleTypeOptions } from '@/utils/util';
 import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
