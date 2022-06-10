@@ -8,6 +8,7 @@ import { covertData2ChartsData } from '@/packages/Scene/MapMonitor/Modal/WorkSta
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
+import { CarOutlined } from '_@ant-design_icons@4.7.0@@ant-design/icons';
 
 const WorkStationProperty = (props) => {
   const {
@@ -209,16 +210,7 @@ const WorkStationProperty = (props) => {
 
           {/* 分车数 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'station'}
-                style={{ width: 35 }}
-                src={require('../../category/latent_category.svg').default}
-              />
-              <span>
-                <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
-              </span>
-            </div>
+            <CarOutlined /> <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
             <div>{vehicleIds?.length > 0}</div>
           </div>
 

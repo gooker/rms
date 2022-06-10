@@ -70,11 +70,11 @@ export function getBase64(file) {
   });
 }
 
+// 检查array中是否有元素在baseArray中存在
 export function isItemOfArray(baseArray, array) {
   let result = false;
-  for (let index = 0; index < array.length; index++) {
-    const element = array[index];
-    if (baseArray.includes(element)) {
+  for (const arrayElement of array) {
+    if (baseArray.includes(arrayElement)) {
       result = true;
       break;
     }

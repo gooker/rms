@@ -657,8 +657,8 @@ export default {
             (item) => item.source === id || item.target === id,
           );
           relevantRelations.forEach(({ source, target }) => {
-            result.arrows.push(`${source}_${target}`);
-            result.lines.push(`${source}_${target}`);
+            result.arrows.push(`${source}-${target}`);
+            result.lines.push(`${source}-${target}`);
           });
 
           // 处理cellMap数据
@@ -738,7 +738,7 @@ export default {
     // 移动点位
     * moveCells({ payload }, { select, put }) {
       const { cellIds, distance, dir } = payload;
-      const { currentMap, currentCells } = yield select((state) => state.editor);
+      const { currentMap } = yield select((state) => state.editor);
 
       const result = {
         cell: {},
@@ -757,14 +757,6 @@ export default {
         newCellMap[cellId] = { ...cell, x, y };
       });
       currentMap.cellMap = newCellMap;
-
-      // 更新 currentCells 数据
-      const _currentCells = currentCells.map((item) => {
-        if (cellIds.includes(item.id)) {
-          return { ...result.cell[item.id] };
-        }
-        return item;
-      });
 
       // 处理线条
       const currentRouteMapData = getCurrentRouteMapData();

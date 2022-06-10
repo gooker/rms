@@ -3,12 +3,9 @@ import { connect } from '@/utils/RmsDva';
 import { isNull } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import { DumpBasket } from '@/entities';
-import { MonitorSelectableSpriteType } from '@/config/consts';
 import { MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
 import EventManager from '@/utils/EventManager';
 import styles from './components.module.less';
-
-const { LatentLifting, Tote, Sorter, ForkLifting } = MonitorSelectableSpriteType;
 
 @connect(({ monitor }) => ({
   mapContext: monitor.mapContext,
@@ -164,9 +161,6 @@ class OperationType extends React.PureComponent {
 
     // 筛选出区域内的元素
     const selectable = [...selectableType];
-    if (selectable.includes('Vehicle')) {
-      selectable.push(LatentLifting, Tote, Sorter, ForkLifting);
-    }
     const selections = mapContext.pixiUtils.viewport.children
       .filter(
         (item) =>
@@ -188,9 +182,9 @@ class OperationType extends React.PureComponent {
   };
 
   render() {
-    const { operationType, right } = this.props;
+    const { operationType } = this.props;
     return (
-      <div className={styles.operationType} style={{ right }}>
+      <div className={styles.operationType}>
         <div
           className={
             operationType === MonitorOperationType.Choose ? styles.operationTypeActive : null

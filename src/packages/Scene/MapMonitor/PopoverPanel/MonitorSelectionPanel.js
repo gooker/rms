@@ -8,18 +8,8 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import commonStyles from '@/common.module.less';
 
 const { Panel } = Collapse;
-const {
-  LatentLifting,
-  Tote,
-  Sorter,
-  ForkLifting,
-  LatentPod,
-  ToteRack,
-  WorkStation,
-  Station,
-  Charger,
-  Delivery,
-} = MonitorSelectableSpriteType;
+const { Vehicle, LatentPod, ToteRack, WorkStation, Station, Charger, Delivery } =
+  MonitorSelectableSpriteType;
 
 const MonitorSelectionPanel = (props) => {
   const { dispatch, height, selections, selectableType } = props;
@@ -47,9 +37,7 @@ const MonitorSelectionPanel = (props) => {
   function renderHeader(type) {
     switch (type) {
       case 'Vehicle': {
-        const selected = selections.filter((item) =>
-          [LatentLifting, Tote, Sorter, ForkLifting].includes(item.type),
-        );
+        const selected = selections.filter((item) => item.type === Vehicle);
         return `${formatMessage({ id: 'app.vehicle' })} ${selected.length}/${allVehicles.length}`;
       }
       case LatentPod: {
@@ -91,9 +79,7 @@ const MonitorSelectionPanel = (props) => {
 
   function renderList(type) {
     if (type === 'Vehicle') {
-      const selected = selections.filter((item) =>
-        [LatentLifting, Tote, Sorter, ForkLifting].includes(item.type),
-      );
+      const selected = selections.filter((item) => item.type === Vehicle);
       return selected.map((item, index) => <Tag key={index}>{item.id}</Tag>);
     } else {
       const selected = selections.filter((item) => item.type === type);
@@ -145,5 +131,5 @@ export default connect(({ monitor }) => {
     selectableType,
     monitorLoad: { latentPod },
   } = monitor;
-  return { allVehicles, latentPod, selections, selectableType };
+  return { allVehicles, latentPod: latentPod ?? [], selections, selectableType };
 })(memo(MonitorSelectionPanel));

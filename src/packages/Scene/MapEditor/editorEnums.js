@@ -76,11 +76,11 @@ export const EditorLeftTools = [
     value: LeftCategory.Image,
     icon: <IconFont type={'icon-image'} />,
   },
-  {
-    label: <FormattedMessage id={'editor.tools.useTemplate'} />,
-    value: LeftCategory.Template,
-    icon: <IconFont type={'icon-template'} />,
-  },
+  // {
+  //   label: <FormattedMessage id={'editor.tools.useTemplate'} />,
+  //   value: LeftCategory.Template,
+  //   icon: <IconFont type={'icon-template'} />,
+  // },
 ];
 
 export const EditorRightTools = [
@@ -159,16 +159,16 @@ export const EditorRightTools = [
     value: RightCategory.Programing,
     icon: <IconFont type={'icon-programing'} />,
   },
-  {
-    label: <FormattedMessage id={'editor.tools.createTemplate'} />,
-    value: RightCategory.Template,
-    icon: <IconFont type={'icon-template'} />,
-  },
-  {
-    label: <FormattedMessage id={'editor.tools.history'} />,
-    value: RightCategory.History,
-    icon: <IconFont type={'icon-history'} />,
-  },
+  // {
+  //   label: <FormattedMessage id={'editor.tools.createTemplate'} />,
+  //   value: RightCategory.Template,
+  //   icon: <IconFont type={'icon-template'} />,
+  // },
+  // {
+  //   label: <FormattedMessage id={'editor.tools.history'} />,
+  //   value: RightCategory.History,
+  //   icon: <IconFont type={'icon-history'} />,
+  // },
 ];
 
 export const CellTypeSetting = [
@@ -237,9 +237,10 @@ export const CostOptions = [
   { value: 1000, label: 'map.cost.red' },
 ];
 
+// 筛选线条方向不需要关注业务上的角度转换，因为用户只会关注地图上实际显示的方向，所以这里角度数据中pixi角度
 export const DirectionOption = [
   { value: 0, label: 'app.direction.top' },
-  { value: 1, label: 'app.direction.right' },
-  { value: 2, label: 'app.direction.bottom' },
-  { value: 3, label: 'app.direction.left' },
+  { value: 180, label: 'app.direction.bottom' },
+  { value: 270, label: 'app.direction.left' },
+  { value: 90, label: 'app.direction.right' },
 ];

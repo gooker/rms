@@ -2,8 +2,8 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import BitText from './BitText';
 import { isNull } from '@/utils/util';
-import { switchVehicleState, switchVehicleBatteryState, getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, LatentVehicleSize, SelectionType, MonitorSelectableSpriteType } from '@/config/consts';
+import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
+import { LatentVehicleSize, MonitorSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
 export default class LatentVehicle extends PIXI.Container {
   constructor(props) {
@@ -11,7 +11,7 @@ export default class LatentVehicle extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.type = MonitorSelectableSpriteType.LatentLifting;
+    this.type = MonitorSelectableSpriteType.Vehicle;
     this.uniqueId = props.uniqueId;
     this.vehicleType = props.vehicleType;
     this.vehicleIcon = props.vehicleIcon;

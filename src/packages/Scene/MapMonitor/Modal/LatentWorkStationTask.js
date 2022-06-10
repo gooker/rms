@@ -63,7 +63,7 @@ const LatentWorkStationTask = (props) => {
 
   function autoFillForm() {
     const vehicle = selections.filter(
-      (item) => item.type === MonitorSelectableSpriteType.LatentLifting,
+      (item) => item.type === MonitorSelectableSpriteType.Vehicle,
     )[0];
     const pod = selections.filter((item) => item.type === MonitorSelectableSpriteType.LatentPod)[0];
     const station = selections.filter((item) =>

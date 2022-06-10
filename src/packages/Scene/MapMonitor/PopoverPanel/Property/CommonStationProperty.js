@@ -8,6 +8,7 @@ import { transformCommonTrafficData, transitionVehicles } from '../../Modal/Comm
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
+import { CarOutlined } from '@ant-design/icons';
 
 const CommonStationProperty = (props) => {
   const {
@@ -264,24 +265,15 @@ const CommonStationProperty = (props) => {
 
           {/* 分车数 */}
           <div className={styles.rightSideContentDetail}>
-            <div>
-              <img
-                alt={'station'}
-                style={{ width: 35 }}
-                src={require('../../category/latent_category.svg').default}
-              />
-              <span>
-                <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
-              </span>
-            </div>
+            <CarOutlined /> <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
             <Popover
               content={
                 <Row style={{ maxWidth: 250, wordBreak: 'break-all' }}>
                   {renderVehicleTypesContent()}
                 </Row>
               }
-              placement="bottom"
-              trigger="click"
+              placement='bottom'
+              trigger='click'
               visible={popVisible}
               onVisibleChange={(visible) => {
                 setPopVisible(visible);

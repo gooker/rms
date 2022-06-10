@@ -1,10 +1,10 @@
 import React from 'react';
-import { SettingOutlined } from '@ant-design/icons';
-import { VehicleType } from '@/config/config';
+import { SendOutlined, SettingOutlined } from '@ant-design/icons';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 
 export const HeaderHeight = 35;
+export const FooterHeight = 25;
 export const RightToolBarWidth = 60;
 
 export const MonitorOperationType = {
@@ -14,9 +14,7 @@ export const MonitorOperationType = {
 
 export const Category = {
   Prop: 'Prop',
-  LatentVehicle: 'LatentVehicle',
-  ToteVehicle: 'ToteVehicle',
-  SorterVehicle: 'SorterVehicle',
+  Control: 'Control',
   Report: 'Report',
   View: 'View',
   Select: 'Select',
@@ -36,28 +34,10 @@ export const MonitorRightTools = [
     icon: <SettingOutlined />,
   },
   {
-    label: <FormattedMessage id={'monitor.right.latent'} />,
-    value: Category.LatentVehicle,
-    icon: 'latent_category.svg',
-    style: { width: '38px' },
+    label: <FormattedMessage id={'app.common.operation'} />,
+    value: Category.Control,
+    icon: <SendOutlined />,
   },
-  // {
-  //   label: <FormattedMessage id={'monitor.right.tote'} />,
-  //   value: Category.ToteVehicle,
-  //   icon: 'tote_category.svg',
-  // },
-  {
-    label: <FormattedMessage id={'monitor.right.sorter'} />,
-    value: Category.SorterVehicle,
-    icon: 'sorter_category.svg',
-    style: { width: '33px', height: '45px' },
-  },
-  // {
-  //   label: <FormattedMessage id={'app.common.report'} />,
-  //   value: Category.Report,
-  //   icon: 'report_category.svg',
-  //   style: { width: '28px' },
-  // },
   {
     label: <FormattedMessage id={'app.map.view'} />,
     value: Category.View,
@@ -115,85 +95,54 @@ export const VehicleCategoryTools = [
     icon: 'emptyRun_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'emptyRun',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.charge'} />,
     icon: 'charge_category.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '35px', height: 'auto' },
     value: 'charge',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.goRest'} />,
     icon: 'goRest_category.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '33px', height: 'auto' },
     value: 'goRest',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.carry'} />,
     icon: 'carry_category.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '35px', height: 'auto' },
     value: 'carry',
-    module: [VehicleType.LatentLifting],
   },
   {
     label: <FormattedMessage id={'monitor.right.advancedCarry'} />,
     icon: 'advancedCarry_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'advancedCarry',
-    module: [VehicleType.LatentLifting],
   },
   {
-    label: (vehicleType) => {
-      if (vehicleType === VehicleType.LatentLifting) {
-        return <FormattedMessage id={'monitor.right.workStationTask'} />;
-      } else {
-        return <FormattedMessage id={'monitor.right.stationTask'} />;
-      }
-    },
+    label: <FormattedMessage id={'monitor.right.stationTask'} />,
     icon: 'workStationTask_category.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '35px', height: 'auto' },
     value: 'workStationTask',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.autoCall'} />,
     icon: 'autoCall_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'autoCall',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
   {
     label: <FormattedMessage id={'monitor.right.remoteControl'} />,
     icon: 'remoteCtrl_category.png',
     style: { width: '37px', height: 'auto' },
     value: 'remoteControl',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
-
-  {
-    label: <FormattedMessage id={'monitor.right.sorterPick'} />,
-    icon: 'quhuo.png',
-    style: { width: '37px', height: 'auto' },
-    value: 'pickCargo',
-    module: [VehicleType.Sorter],
-  },
-  {
-    label: <FormattedMessage id={'monitor.right.sorterThrow'} />,
-    icon: 'paowu.png',
-    style: { width: '37px', height: 'auto' },
-    value: 'dumpCargo',
-    module: [VehicleType.Sorter],
-  },
-
   {
     label: <FormattedMessage id={'app.common.custom'} />,
     icon: 'custom_category.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '35px', height: 'auto' },
     value: 'custom',
-    module: [VehicleType.LatentLifting, VehicleType.Tote, VehicleType.Sorter],
   },
 ];
 
@@ -202,37 +151,19 @@ export const ViewCategoryTools = [
   {
     label: <FormattedMessage id={'monitor.right.pathLock'} />,
     icon: 'pathView.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '30px', height: 'auto' },
     value: 'pathLock',
   },
   {
     label: <FormattedMessage id={'monitor.right.mapView'} />,
     icon: 'mapView.png',
-    style: { width: '37px', height: 'auto' },
+    style: { width: '30px', height: 'auto' },
     value: 'mapShow',
-  },
-  {
-    label: <FormattedMessage id={'monitor.right.latentDisplay'} />,
-    icon: 'latentView.png',
-    style: { width: '45px', height: 'auto' },
-    value: 'latentDisplay',
-  },
-  // {
-  //   label: <FormattedMessage id={'monitor.right.toteDisplay'} />,
-  //   icon: 'toteView.png',
-  //   style: { width: '30px', height: 'auto' },
-  //   value: 'toteDisplay',
-  // },
-  {
-    label: <FormattedMessage id={'monitor.right.sorterDisplay'} />,
-    icon: 'sorterView.png',
-    style: { width: '45px', height: 'auto' },
-    value: 'sorterDisplay',
   },
   {
     label: <FormattedMessage id={'monitor.right.heat'} />,
     icon: 'heatView.png',
-    style: { width: '33px', height: 'auto' },
+    style: { width: '37px', height: 'auto' },
     value: 'heatHeat',
   },
 ];

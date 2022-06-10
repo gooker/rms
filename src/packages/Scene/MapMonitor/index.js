@@ -2,17 +2,16 @@ import React, { memo, useEffect, useRef } from 'react';
 import { LoadingOutlined } from '@ant-design/icons';
 import classnames from 'classnames';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, isNull, isStrictNull } from '@/utils/util';
+import { isNull } from '@/utils/util';
 import { setMonitorSocketCallback } from '@/utils/mapUtil';
-import MonitorMapContainer from './components/MonitorMapContainer';
-import MonitorBodyRight from './components/MonitorBodyRight';
-import MonitorHeader from './components/MonitorHeader';
-import { fetchStationRealTimeRate } from '@/services/monitorService';
-import MonitorModals from './Modal';
 import { HeaderHeight, MonitorOperationType } from './enums';
+import MonitorModals from './Modal';
+import MonitorHeader from './components/MonitorHeader';
+import MonitorBodyRight from './components/MonitorBodyRight';
+import MonitorMapContainer from './components/MonitorMapContainer';
+import { LockCellPolling, VehiclePollingTaskPathManager } from '@/workers/WebWorkerManager';
 import styles from './monitorLayout.module.less';
 import commonStyles from '@/common.module.less';
-import { LockCellPolling, VehiclePollingTaskPathManager } from '@/workers/WebWorkerManager';
 
 const MapMonitor = (props) => {
   const { dispatch, socketClient, currentMap, mapContext } = props;
@@ -35,15 +34,16 @@ const MapMonitor = (props) => {
   useEffect(() => {
     if (!isNull(mapContext)) {
       setMonitorSocketCallback(socketClient, mapContext, dispatch);
-      fetchStationRealTimeRate().then((response) => {
-        if (!dealResponse(response)) {
-          // 后端类型返回 不为空 就存起来 return 目前理论上只会有一个类型有值
-          let currentData = Object.values(response).filter((item) => !isStrictNull(item));
-          currentData = currentData[0];
-          mapContext.renderCommonStationRate(currentData);
-          dispatch({ type: 'monitor/saveStationRate', payload: currentData });
-        }
-      });
+      // TODO: 展示实时
+      // fetchStationRealTimeRate().then((response) => {
+      //   if (!dealResponse(response)) {
+      //     // 后端类型返回 不为空 就存起来 return 目前理论上只会有一个类型有值
+      //     let currentData = Object.values(response).filter((item) => !isStrictNull(item));
+      //     currentData = currentData[0];
+      //     mapContext.renderCommonStationRate(currentData);
+      //     dispatch({ type: 'monitor/saveStationRate', payload: currentData });
+      //   }
+      // });
 
       // ****************************** S键 ****************************** //
       // 按下S键
@@ -87,7 +87,7 @@ const MapMonitor = (props) => {
         className={classnames(commonStyles.mapLayoutHeader, styles.monitorHeader)}
       >
         {currentMap === undefined ? (
-          <LoadingOutlined style={{ fontSize: 20, color: '#fff' }} spin />
+          <LoadingOutlined spin style={{ fontSize: 20, color: '#ffffff' }} />
         ) : (
           <MonitorHeader />
         )}

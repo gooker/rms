@@ -3,9 +3,7 @@ import { Tooltip } from 'antd';
 import { VehicleCategoryTools } from '../enums';
 import styles from '../monitorLayout.module.less';
 
-const VehicleCategorySecondaryPanel = (props) => {
-  const { vehicleType, height } = props;
-
+const VehicleCategorySecondaryPanel = () => {
   function renderIcon(icon, style) {
     if (typeof icon === 'string') {
       return <img alt={icon} src={require(`../category/${icon}`).default} style={style} />;
@@ -19,23 +17,20 @@ const VehicleCategorySecondaryPanel = (props) => {
   }
 
   return (
-    <div style={{ height, width: 60, overflow: 'auto' }} className={styles.popoverPanel}>
-      {VehicleCategoryTools.map(({ label, icon, value, style, module }) => {
-        if (module.includes(vehicleType)) {
-          const title = typeof label === 'function' ? label(vehicleType) : label;
-          return (
-            <Tooltip key={value} placement="left" title={title}>
-              <div
-                role={'category'}
-                onClick={() => {
-                  onClick(value);
-                }}
-              >
-                {renderIcon(icon, style)}
-              </div>
-            </Tooltip>
-          );
-        }
+    <div style={{ height: 450, width: 60, overflow: 'auto' }} className={styles.popoverPanel}>
+      {VehicleCategoryTools.map(({ label, icon, value, style }) => {
+        return (
+          <Tooltip key={value} placement='left' title={label}>
+            <div
+              role={'category'}
+              onClick={() => {
+                onClick(value);
+              }}
+            >
+              {renderIcon(icon, style)}
+            </div>
+          </Tooltip>
+        );
       }).filter(Boolean)}
     </div>
   );

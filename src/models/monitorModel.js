@@ -1,16 +1,9 @@
 import { message } from 'antd';
 import { findIndex } from 'lodash';
-import { hasAppPermission } from '@/utils/Permission';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
-import { AppCode } from '@/config/config';
 import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
-import {
-  fetchEmergencyStopList,
-  fetchLatentPodList,
-  fetchMapVehicleLocks,
-  saveEmergencyStop,
-} from '@/services/XIHEService';
+import { fetchEmergencyStopList, fetchMapVehicleLocks, saveEmergencyStop } from '@/services/XIHEService';
 import { fetchChargerList } from '@/services/resourceService';
 import {
   addTemporaryBlockCell,
@@ -24,7 +17,7 @@ import {
   fetchTemporaryBlockCells,
   saveLatentAutomaticTaskConfig,
 } from '@/services/monitorService';
-import { fetchActiveMap, fetchAllVehicleList, fetchToteRackLayout } from '@/services/commonService';
+import { fetchActiveMap, fetchAllVehicleList } from '@/services/commonService';
 import { MonitorSelectableSpriteType } from '@/config/consts';
 
 const MonitorModelState = {
@@ -41,7 +34,7 @@ const MonitorModelState = {
 
   // 选择相关
   selections: [],
-  selectableType: ['Vehicle', ...Object.values(MonitorSelectableSpriteType)], // 地图可选择的元素
+  selectableType: Object.values(MonitorSelectableSpriteType), // 地图可选择的元素
 
   // 小车、货架等信息
   allVehicles: [],
@@ -341,16 +334,16 @@ export default {
       const promiseFields = []; // 每个Promise返回值对应的 state 字段
 
       // 潜伏车模块
-      if (hasAppPermission(AppCode.LatentPod)) {
-        promises.push(fetchLatentPodList());
-        promiseFields.push('latentPod');
-      }
+      // if (hasAppPermission(AppCode.LatentPod)) {
+      //   promises.push(fetchLatentPodList());
+      //   promiseFields.push('latentPod');
+      // }
 
       // 料箱车模块
-      if (hasAppPermission(AppCode.Tote)) {
-        promises.push(fetchToteRackLayout());
-        promiseFields.push('toteRack');
-      }
+      // if (hasAppPermission(AppCode.Tote)) {
+      //   promises.push(fetchToteRackLayout());
+      //   promiseFields.push('toteRack');
+      // }
 
       // 地图充电桩与硬件绑定关系
       promises.push(fetchChargerList());

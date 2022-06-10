@@ -5,21 +5,18 @@ import {
   convertAngleToPixiAngle,
   getArrowDistance,
   getCoordinator,
-  getCurrentRouteMapData,
   getDistance,
-  getLineEntityFromMap,
   getTextureFromResources,
 } from '@/utils/mapUtil';
 import { BitText, Charger, CommonFunction, Dump, DumpBasket, Elevator, Intersection, WorkStation } from '@/entities';
-import { isItemOfArray, isNull } from '@/utils/util';
+import { isNull } from '@/utils/util';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import CostArrow from '@/entities/CostArrow';
 import { CoordinateType, LineType } from '@/config/config';
 import { MapScaleRatio, zIndex, ZoneMarkerType } from '@/config/consts';
-
-const AllPriorities = [10, 20, 100, 1000];
+import StraightPath from '@/entities/StraightPath';
 
 function initState(context) {
   // 多种导航点类型一起显示的时候，同一个点位必定会出现多个导航点，所以value使用数组形式；该对象近用于处理地图元素属性，比如存储点等
@@ -114,6 +111,7 @@ export default class BaseMap extends React.PureComponent {
     initState(this);
   };
 
+  ///////////////// 地图元素可见性设置 /////////////////
   // 地图点位坐标显示
   switchCoordinationShown = (flag) => {
     this.states.showCoordinate = flag;
@@ -126,12 +124,8 @@ export default class BaseMap extends React.PureComponent {
   // 切换是否显示优先级距离
   switchDistanceShown = (flag) => {
     this.states.showDistance = flag;
-    Object.values(this.idArrowMap).forEach((innerMap) => {
-      innerMap.forEach((line) => {
-        if (line.type === LineType.StraightPath) {
-          line.switchDistanceShown(flag);
-        }
-      });
+    this.idLineMap.forEach((line) => {
+      line.textVisible = flag;
     });
     this.refresh();
   };
@@ -144,6 +138,7 @@ export default class BaseMap extends React.PureComponent {
     });
     this.refresh();
   };
+  ///////////////// 地图元素可见性设置 /////////////////
 
   // 清空并销毁所有优先级线条
   destroyAllLines = () => {
@@ -192,17 +187,6 @@ export default class BaseMap extends React.PureComponent {
         opt === 'remove' && cellEntity.removeType(type);
       }
     });
-    // cells.forEach((item) => {
-    //   item.cellIds.forEach((cellId) => {
-    //     this.renderLineSpecialFlag(
-    //       opt === 'add',
-    //       `${item.nonStopCell}-${cellId}`,
-    //       type,
-    //       '$nonStop',
-    //       'S',
-    //     );
-    //   });
-    // });
   };
 
   // ************************ 线条相关 **********************
@@ -213,7 +197,6 @@ export default class BaseMap extends React.PureComponent {
    * @param {{}} transform 各个地图的转换参数
    */
   renderCostLines(relationsToRender, renderType, transform) {
-    // const priority = shownPriority || this.states.shownPriority;
     relationsToRender.forEach((lineData) => {
       const { type, cost, source, target, angle } = lineData;
       const sourceCell = this.idCellMap.get(source);
@@ -222,16 +205,15 @@ export default class BaseMap extends React.PureComponent {
 
       // 只有显示物理坐标和直线类型线条才会显示直线
       if (renderType === CoordinateType.LAND || type === LineType.StraightPath) {
+        const distance = getDistance(sourceCell, targetCell);
         // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
         const lineMapKey = `${sourceCell.id}-${targetCell.id}`;
         const lineEntity = this.idLineMap.get(lineMapKey);
         const reverseLineMapKey = `${targetCell.id}-${sourceCell.id}`;
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
-          const relationLine = new SmoothGraphics();
-          relationLine.lineStyle(2, 0xffffff);
-          relationLine.moveTo(sourceCell.x, sourceCell.y);
-          relationLine.lineTo(targetCell.x, targetCell.y);
+          const relationLine = new StraightPath({ sourceCell, targetCell, distance });
+          relationLine.textVisible = this.states.showDistance;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
         } else {
@@ -246,7 +228,6 @@ export default class BaseMap extends React.PureComponent {
           arrowExist.destroy();
           this.idArrowMap.delete(arrowMapKey);
         }
-        const distance = getDistance(sourceCell, targetCell);
         const offset = getArrowDistance(distance);
         const arrowPosition = getCoordinator(sourceCell, angle, offset);
         const arrow = new CostArrow({
@@ -256,6 +237,7 @@ export default class BaseMap extends React.PureComponent {
           angle: convertAngleToPixiAngle(angle),
           select: this.select,
         });
+        arrow.visible = this.getPipeShownValue(arrow);
         this.pixiUtils.viewportAddChild(arrow);
         this.idArrowMap.set(arrowMapKey, arrow);
       }
@@ -300,103 +282,6 @@ export default class BaseMap extends React.PureComponent {
     });
   }
 
-  /**
-   * 筛选线条
-   * @param {*} uiFilterData 筛选结果 e.g. [10,20,100,1000]
-   * @param {*} nameSpace 数据模块，默认editor
-   */
-  filterRelations(uiFilterData, nameSpace = 'editor') {
-    this.states.shownPriority = uiFilterData;
-    const currentRouteMapData = getCurrentRouteMapData(nameSpace);
-    const relations = currentRouteMapData.relations ?? [];
-    if (relations.length === 0) return;
-
-    const nonStopCellIds = currentRouteMapData.nonStopCellIds ?? [];
-    // 把需要隐藏优先级线条透明度置0
-    const hiddenCosts = AllPriorities.filter((item) => !uiFilterData.includes(item));
-    hiddenCosts.forEach((cost) => {
-      const idArrowMap = this.idArrowMap[cost];
-      if (idArrowMap instanceof Map) {
-        idArrowMap.forEach((line) => {
-          line.switchShown(false);
-        });
-      }
-    });
-    // 如果指定优先级已经被渲染就修改透明度；如果没有渲染就放到数组中待渲染
-    const priorityToRender = [];
-    uiFilterData.forEach((cost) => {
-      // 首先从 this.idArrowMap 中获取该优先级的线段是否显示
-      const specificCostLinesMap = this.idArrowMap[cost];
-      if (!(specificCostLinesMap instanceof Map) || specificCostLinesMap.size === 0) {
-        priorityToRender.push(cost);
-      } else {
-        // 说明该优先级的线段已经渲染过，直接设置透明度
-        specificCostLinesMap.forEach((line) => {
-          line.switchShown(true);
-        });
-      }
-    });
-    // 根据最新数据渲染线段
-    if (priorityToRender.length > 0) {
-      this.renderCostLines(
-        relations,
-        relations,
-        nameSpace === 'editor',
-        'standard',
-        priorityToRender,
-      ); // TODO: 目前只针对编辑器可点击
-      // 渲染不可逗留点Flag
-      // if (nonStopCellIds) {
-      //   nonStopCellIds.forEach((item) => {
-      //     item.cellIds.forEach((cellId) => {
-      //       this.renderLineSpecialFlag(
-      //         true,
-      //         `${item.nonStopCell}-${cellId}`,
-      //         'non_stop',
-      //         '$nonStop',
-      //         'S',
-      //       );
-      //     });
-      //   });
-      // }
-    }
-    nameSpace === 'editor' && this.pipeSwitchLinesShown();
-    this.refresh();
-  }
-
-  pipeSwitchLinesShown = () => {
-    const { blockCellIds } = getCurrentRouteMapData();
-    const { hideBlock, shownPriority, shownRelationDir, shownRelationCell } = this.states;
-    Object.values(this.idArrowMap).forEach((innerMap) => {
-      innerMap.forEach((line) => {
-        if (line.type === LineType.StraightPath) {
-          const { id, cost, dir } = line;
-          const [source, target] = id.split('-');
-          // 是否在显示的优先级Cost范围内
-          const priorityCostFlag = shownPriority.includes(cost);
-          // 是否在显示的优先级方向范围内
-          const priorityDirFlag = shownRelationDir.includes(parseInt(dir));
-          // 是否是不可走点的线条 & 没有隐藏显示不可走点
-          const isBlockLines = isItemOfArray(
-            blockCellIds ?? [],
-            [source, target].map((item) => parseInt(item)),
-          );
-          const blockCellFlag = isBlockLines ? !hideBlock : true;
-          // 是否是相关点的线条
-          let cellRelevantFlag = true;
-          if (shownRelationCell.length > 0) {
-            cellRelevantFlag = isItemOfArray(shownRelationCell, [source, target]);
-          }
-          // 切换显示
-          line.switchShown(
-            priorityCostFlag && priorityDirFlag && cellRelevantFlag && blockCellFlag,
-          );
-        }
-      });
-    });
-    this.refresh();
-  };
-
   renderRelationProgramingFlag = (ids, opt = 'add') => {
     if (Array.isArray(ids)) {
       ids.forEach((lineMapKey) => {
@@ -409,22 +294,6 @@ export default class BaseMap extends React.PureComponent {
     }
   };
 
-  // 渲染线条特殊标志
-  renderLineSpecialFlag = (status, value, textureName, key, size) => {
-    const [source, target] = value.split('-');
-    const lineEntity = getLineEntityFromMap(this.idArrowMap, source, target);
-    if (!lineEntity) return;
-    status
-      ? lineEntity.plusAction(getTextureFromResources(textureName), key, size)
-      : lineEntity.removeAction(key);
-  };
-
-  /**
-   * 充电桩
-   * @param {*} chargerList
-   * @param {*} callback 点击回调
-   * @param autoSelect
-   */
   renderChargers = (chargerList, callback = null) => {
     chargerList.forEach((chargerData, index) => {
       if (!chargerData) return;

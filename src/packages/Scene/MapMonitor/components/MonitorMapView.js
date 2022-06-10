@@ -144,14 +144,6 @@ class MonitorMapView extends BaseMap {
     });
   };
 
-  // 背景显示
-  switchBackImgShown = (flag) => {
-    this.states.showBackImg = flag;
-    this.backImgMap.forEach(function (value) {
-      value.switchBackImgEntityShown(flag);
-    });
-  };
-
   // 紧急区域
   emergencyAreaShown = (flag) => {
     this.states.emergencyAreaShown = flag;
@@ -213,6 +205,15 @@ class MonitorMapView extends BaseMap {
       this.moveTo(x, y, scaled);
       this.refresh();
     }
+  };
+
+  filterRelations(uiFilterData) {
+    this.states.shownPriority = uiFilterData;
+    this.pipeSwitchLinesShown();
+    this.refresh();
+  }
+
+  getPipeShownValue = () => {
   };
 
   // ************************ 点位相关 **********************

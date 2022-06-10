@@ -1,6 +1,6 @@
 import React from 'react';
 import { reverse } from 'lodash';
-import { isNull } from '@/utils/util';
+import { isItemOfArray, isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
 import PixiBuilder from '@/entities/PixiBuilder';
 import { Cell, ResizeableEmergencyStop } from '@/entities';
@@ -15,9 +15,10 @@ class EditorMapView extends BaseMap {
 
     // 记录显示控制的参数
     this.states = {
+      // 与 editorViewModel 中的同名变量需要保持一样的初始值
       mapMode: 'standard',
       shownPriority: [10, 20, 100, 1000],
-      shownRelationDir: [0, 1, 2, 3],
+      shownRelationDir: [0, 90, 180, 270],
       shownRelationCell: [],
       hideBlock: false,
       showCoordinate: false,
@@ -239,12 +240,14 @@ class EditorMapView extends BaseMap {
   switchShowBlock = (flag) => {
     this.states.hideBlock = flag;
     const { blockCellIds } = getCurrentRouteMapData();
-    blockCellIds.forEach((cellId) => {
-      const cellEntity = this.idCellMap.get(cellId);
-      if (cellEntity) cellEntity.switchShown(!flag);
-    });
-    this.pipeSwitchLinesShown();
-    this.refresh();
+    if (blockCellIds?.length > 0) {
+      blockCellIds.forEach((cellId) => {
+        const cellEntity = this.idCellMap.get(cellId);
+        if (cellEntity) cellEntity.switchShown(!flag);
+      });
+      this.pipeSwitchLinesShown();
+      this.refresh();
+    }
   };
 
   // ************************ 点位 & 线条选择 **********************
@@ -396,13 +399,60 @@ class EditorMapView extends BaseMap {
     this.refresh();
   };
 
+  // ************************ 地图元素可见性设置 **********************
+  getPipeShownValue = (arrow) => {
+    const { blockCellIds } = getCurrentRouteMapData('editor');
+    const { hideBlock, shownPriority, shownRelationDir, shownRelationCell } = this.states;
+
+    const { id, cost, angle } = arrow;
+    const [source, target] = id.split('-');
+    // 是否在显示的优先级Cost范围内L
+    const priorityCostFlag = shownPriority.includes(cost);
+    // 是否在显示的优先级方向范围内
+    const priorityDirFlag = shownRelationDir.includes(angle);
+    // 是否是不可走点的线条 & 没有隐藏显示不可走点
+    const isBlockLines = isItemOfArray(
+      blockCellIds ?? [],
+      [source, target].map((item) => parseInt(item)),
+    );
+    const blockCellFlag = isBlockLines ? !hideBlock : true;
+    // 是否是相关点的线条
+    let cellRelevantFlag = true;
+    if (shownRelationCell.length > 0) {
+      cellRelevantFlag = isItemOfArray(shownRelationCell, [source, target]);
+    }
+    // 切换显示
+    return priorityCostFlag && priorityDirFlag && cellRelevantFlag && blockCellFlag;
+  };
+
+  pipeSwitchLinesShown = () => {
+    this.idArrowMap.forEach((arrow) => {
+      arrow.visible = this.getPipeShownValue(arrow);
+    });
+    // 处理下线条隐藏, 基于this.idLineMap处理
+    const lineKeys = [...this.idLineMap.keys()];
+    lineKeys.forEach((lineKey) => {
+      const reverseLineKey = lineKey.split('-').reverse().join('-');
+      const arrow1 = this.idArrowMap.get(lineKey);
+      const arrow2 = this.idArrowMap.get(reverseLineKey);
+      const line = this.idLineMap.get(lineKey);
+      if (line) {
+        line.visible = arrow1?.visible || arrow2?.visible;
+      }
+    });
+
+    this.refresh();
+  };
+
+  filterRelations(uiFilterData) {
+    this.states.shownPriority = uiFilterData;
+    this.pipeSwitchLinesShown();
+    this.refresh();
+  }
+
   // 根据方向过滤地图上的优先级线条
   filterRelationDir = (dirs) => {
-    let _dirs = [...dirs];
-    if (dirs.length === 0 || dirs.length === 4) {
-      _dirs = [0, 1, 2, 3];
-    }
-    this.states.shownRelationDir = _dirs;
+    this.states.shownRelationDir = [...dirs];
     this.pipeSwitchLinesShown();
   };
 

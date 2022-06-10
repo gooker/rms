@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { switchVehicleState, switchVehicleBatteryState, getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, SorterVehicleSize, SelectionType } from '@/config/consts';
+import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
+import { MonitorSelectableSpriteType, SelectionType, SorterVehicleSize, zIndex } from '@/config/consts';
 import { VehicleType } from '@/config/config';
 import { isNull } from '@/utils/util';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
@@ -12,6 +12,7 @@ const BoxHeight = 200;
 export default class SorterVehicle extends PIXI.Container {
   constructor(props) {
     super();
+    this.type = MonitorSelectableSpriteType.Vehicle;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;

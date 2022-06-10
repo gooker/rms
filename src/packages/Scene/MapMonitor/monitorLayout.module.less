@@ -1,5 +1,4 @@
 @import (reference) '../../../common.module';
-@import (reference) '../../../../node_modules/antd/dist/antd.dark.less';
 
 .monitorHeader {
   .monitorBackColor();
@@ -10,7 +9,7 @@
 
 .mapLayoutBody {
   display: flex;
-  height: calc(100vh - 121px);
+  height: calc(100vh - 146px);
 }
 
 // 右侧
@@ -25,7 +24,7 @@
   overflow: auto;
   user-select: none;
 
-  &>div[role='category'] {
+  & > div[role='category'] {
     .flexCenter();
 
     min-height: 55px;
@@ -33,7 +32,7 @@
     border-bottom: 1px solid #6a6a6a;
     cursor: pointer;
 
-    span[role='img']>svg {
+    span[role='img'] > svg {
       width: 28px;
       height: 28px;
       fill: #fff;
@@ -74,7 +73,7 @@
   border-radius: 5px;
   user-select: none;
 
-  &>div[role='category'] {
+  & > div[role='category'] {
     .flexCenter();
 
     height: 50px;
@@ -91,7 +90,7 @@
   display: flex;
   flex-flow: column nowrap;
 
-  &>div:first-child {
+  & > div:first-child {
     height: 50px;
     padding-left: 13px;
     color: #fff;
@@ -103,7 +102,7 @@
     .flexVerticalCenter();
   }
 
-  &>div:nth-child(2) {
+  & > div:nth-child(2) {
     flex: 1;
     padding: 20px;
     overflow: auto;
@@ -116,7 +115,7 @@
   justify-content: space-between;
   margin-bottom: 10px;
 
-  &>div:first-child {
+  & > div:first-child {
     display: flex;
     flex-flow: column nowrap;
     align-items: center;
@@ -128,7 +127,7 @@
     }
   }
 
-  &>div:nth-child(2) {
+  & > div:nth-child(2) {
     color: #fff;
     font-weight: 500;
     font-size: 18px;
@@ -152,13 +151,13 @@
   border-radius: 5px;
   cursor: pointer;
 
-  &>img {
+  & > img {
     width: 23px;
     height: auto;
     text-align: center;
   }
 
-  &>div {
+  & > div {
     flex: 1 1;
     color: #fff;
     font-size: 16px;
@@ -173,7 +172,7 @@
   width: 65px;
   height: 65px;
 
-  &>div:nth-child(1) {
+  & > div:nth-child(1) {
     .flexRowCenter();
 
     flex: 1;
@@ -187,7 +186,7 @@
     }
   }
 
-  &>div:nth-child(2) {
+  & > div:nth-child(2) {
     .flexRowCenter();
 
     color: #fff;
@@ -214,7 +213,7 @@
       }
     }
 
-    .ant-checkbox+span {
+    .ant-checkbox + span {
       color: #fff;
     }
   }
@@ -231,13 +230,13 @@
   font-size: 16px;
   border-bottom: 1px solid #303030;
 
-  &>span[role='img'] {
+  & > span[role='img'] {
     svg {
       fill: rgba(255, 255, 255, 0.85);
     }
   }
 
-  &>span[role='img']:hover {
+  & > span[role='img']:hover {
     svg {
       width: 17px;
       height: 17px;
@@ -278,7 +277,6 @@
     .ant-tabs-tab {
       color: #fff;
     }
-
   }
 }
 
@@ -338,9 +336,8 @@
   }
 }
 
-
 .sorterThrow {
-  border: 1px solid #7e7d7d;
+  position: relative;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -348,7 +345,7 @@
   font-variant: tabular-nums;
   line-height: 1.5715;
   list-style: none;
-  font-feature-settings: 'tnum', "tnum";
-  position: relative;
+  border: 1px solid #7e7d7d;
   border-radius: 5px;
+  font-feature-settings: 'tnum', 'tnum';
 }

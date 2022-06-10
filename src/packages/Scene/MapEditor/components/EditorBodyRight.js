@@ -12,7 +12,7 @@ import ChargerPanel from '../PopoverPanel/ChargerPanel';
 import DeliveryPanel from '../PopoverPanel/DeliveryPanel';
 import ElevatorPanel from '../PopoverPanel/ElevatorPanel';
 import IntersectionPanel from '../PopoverPanel/IntersectionPanel';
-import ViewControllerPanel from '../PopoverPanel/ViewControllerPanel';
+import ViewControllerPanel from '../PopoverPanel/EditorViewControllerPanel';
 import CellTypeConfigurePanel from '../PopoverPanel/CellTypeConfigurePanel';
 import EmergencyStopPanel from '../PopoverPanel/EmergencyStopPanel';
 import ProgramingPanel from '../PopoverPanel/ProgramingPanel';

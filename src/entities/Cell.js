@@ -3,17 +3,18 @@ import { find, isPlainObject } from 'lodash';
 import { BitText } from '@/entities';
 import { isNull, isStrictNull, radToAngle } from '@/utils/util';
 import {
-  zIndex,
   CellSize,
-  CellTypeSize,
   CellTypeColor,
-  SelectionType,
+  CellTypeSize,
   MapSelectableSpriteType,
+  SelectionType,
+  zIndex,
 } from '@/config/consts';
 import { NavigationTypeView } from '@/config/config';
 
 const ScaledCellSize = 800;
 const ScaledTypeIconSize = 120;
+const HitAreaSize = 280;
 const ClearCellTint = '0xFFFFFF';
 const NormalScaledCellTint = '0xD8BFD8';
 const InnerIndex = { direction: 1, navigation: 2, type: 3, text: 3, bg: 4 };
@@ -39,7 +40,12 @@ export default class Cell extends PIXI.Container {
     this.zIndex = zIndex.cell;
     this.sortableChildren = true;
     this.interactiveChildren = false;
-    this.hitArea = new PIXI.Rectangle(-175, -175, 350, 350);
+    this.hitArea = new PIXI.Rectangle(
+      -HitAreaSize / 2,
+      -HitAreaSize / 2 + 50,
+      HitAreaSize,
+      HitAreaSize,
+    );
     this.selected = false; // 标记点位是否被选中
     this.select = props.select;
 
@@ -56,7 +62,7 @@ export default class Cell extends PIXI.Container {
     this.addNavigation();
     this.addDirection();
     this.addCoordination();
-    this.addSelectedBackGround(350, 350);
+    this.addSelectedBackGround(HitAreaSize, HitAreaSize);
     this.interact(props.interactive);
   }
 
@@ -187,6 +193,7 @@ export default class Cell extends PIXI.Container {
     this.selectedBorderSprite.anchor.set(0.5);
     this.selectedBorderSprite.width = width;
     this.selectedBorderSprite.height = height;
+    this.selectedBorderSprite.y = 50;
     this.selectedBorderSprite.visible = false;
     this.selectedBorderSprite.zIndex = InnerIndex.bg;
     this.addChild(this.selectedBorderSprite);

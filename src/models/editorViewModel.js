@@ -1,5 +1,5 @@
 // 用于保存显示与全局loading标识符
-import { NavigationType, CoordinateType } from '@/config/config';
+import { CoordinateType, NavigationType } from '@/config/config';
 
 export default {
   namespace: 'editorView',
@@ -9,7 +9,7 @@ export default {
     hideBlock: false,
     showDistance: false,
     showCoordinate: false,
-    showRelationsDir: [0, 1, 2, 3],
+    showRelationsDir: [0, 90, 180, 270],
     shownPriority: [10, 20, 100, 1000],
     showRelationsCells: [],
     forceUpdate: {}, // 部分组件需要手动渲染

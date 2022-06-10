@@ -3,14 +3,14 @@ import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString, isNull } from '@/utils/util';
 import MonitorMapView from './MonitorMapView';
-import { HeaderHeight, RightToolBarWidth } from '../enums';
+import { FooterHeight, HeaderHeight, RightToolBarWidth } from '../enums';
 import { renderWorkStationList } from '@/utils/mapUtil';
 import { ZoneMarkerType } from '@/config/consts';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
-import OperationType from '@/packages/Scene/MapMonitor/components/OperationType';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import EventManager from '@/utils/EventManager';
 import commonStyles from '@/common.module.less';
+import MonitorFooter from '@/packages/Scene/MapMonitor/components/MonitorFooter';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
@@ -23,7 +23,7 @@ const MonitorMapContainer = (props) => {
     function resize(rect) {
       const { width, height } = rect;
       const { mapContext: _mapContext } = window.$$state().monitor;
-      _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight);
+      _mapContext.resize(width - RightToolBarWidth, height - HeaderHeight - FooterHeight);
     }
 
     EventManager.subscribe('resize', resize, functionId);
@@ -318,11 +318,8 @@ const MonitorMapContainer = (props) => {
   return (
     <div id={'monitorPixiContainer'} className={commonStyles.monitorBodyMiddle}>
       <MonitorMapView />
+      <MonitorFooter mapRatio={mapRatio} onSliderChange={onSliderChange} />
       <MonitorMask />
-      <OperationType right={window.currentPlatForm.isPc ? 'calc(20% + 10px)' : '10px'} />
-      {/*{window.currentPlatForm.isPc && (*/}
-      {/*  <MapRatioSlider mapRatio={mapRatio} mapMinRatio={mapMinRatio} onChange={onSliderChange} />*/}
-      {/*)}*/}
     </div>
   );
 };

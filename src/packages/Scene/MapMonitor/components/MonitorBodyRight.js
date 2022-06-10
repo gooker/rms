@@ -1,11 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Tooltip } from 'antd';
-import { isNull, dealResponse, getRandomString } from '@/utils/util';
+import { getRandomString, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
-import { VehicleType, AppCode } from '@/config/config';
 import { Category, MonitorRightTools, RightToolBarWidth } from '../enums';
-import { hasAppPermission } from '@/utils/Permission';
-import { fetchWorkStationPods } from '@/services/monitorService';
 import Property from '../PopoverPanel/Property';
 import VehicleCategorySecondaryPanel from '../PopoverPanel/VehicleCategorySecondaryPanel';
 import ViewCategorySecondaryPanel from '../PopoverPanel/ViewCategorySecondaryPanel';
@@ -25,18 +21,18 @@ const MonitorBodyRight = (props) => {
   const [offsetTop, setOffsetTop] = useState(0);
 
   useEffect(() => {
-    // 获取潜伏车到站信息和暂停消息
-    if (hasAppPermission(AppCode.LatentPod)) {
-      dispatch({ type: 'monitor/fetchLatentStopMessageList' });
-      fetchWorkStationPods().then((res) => {
-        if (!dealResponse(res)) {
-          dispatch({
-            type: 'monitor/savePodToWorkStation',
-            payload: res,
-          });
-        }
-      });
-    }
+    // TODO: 获取潜伏车到站信息和暂停消息
+    // if (hasAppPermission(AppCode.LatentPod)) {
+    //   dispatch({ type: 'monitor/fetchLatentStopMessageList' });
+    //   fetchWorkStationPods().then((res) => {
+    //     if (!dealResponse(res)) {
+    //       dispatch({
+    //         type: 'monitor/savePodToWorkStation',
+    //         payload: res,
+    //       });
+    //     }
+    //   });
+    // }
 
     // 初始化高度
     const { height } = document.getElementById('monitorPixi').getBoundingClientRect();
@@ -46,6 +42,7 @@ const MonitorBodyRight = (props) => {
     function calculate({ height }) {
       setPixHeight(height - 35);
     }
+
     EventManager.subscribe('resize', calculate, functionId);
 
     return () => {
@@ -74,14 +71,18 @@ const MonitorBodyRight = (props) => {
     switch (categoryPanel) {
       case Category.Prop:
         return <Property />;
-      case Category.LatentVehicle:
+      case Category.Control:
+        return <VehicleCategorySecondaryPanel />;
+      case Category.View: {
         return (
-          <VehicleCategorySecondaryPanel vehicleType={VehicleType.LatentLifting} height={450} />
+          <ViewCategorySecondaryPanel
+            type={Category.View}
+            height={150} // 面板实际高度
+            pixHeight={pixHeight}
+            offsetTop={offsetTop}
+          />
         );
-      case Category.ToteVehicle:
-        return <VehicleCategorySecondaryPanel vehicleType={VehicleType.Tote} height={350} />;
-      case Category.SorterVehicle:
-        return <VehicleCategorySecondaryPanel vehicleType={VehicleType.Sorter} height={450} />;
+      }
       case Category.Select:
         return <MonitorSelectionPanel />;
       case Category.Simulator:
@@ -90,16 +91,7 @@ const MonitorBodyRight = (props) => {
         return (
           <EmergencyStopPanel height={160} pixHeight={pixHeight - 115} offsetTop={offsetTop} />
         );
-      case Category.View: {
-        return (
-          <ViewCategorySecondaryPanel
-            type={Category.View}
-            height={250} // 面板实际高度
-            pixHeight={pixHeight}
-            offsetTop={offsetTop}
-          />
-        );
-      }
+
       case Category.Resource: {
         return (
           <ViewCategorySecondaryPanel
@@ -158,36 +150,34 @@ const MonitorBodyRight = (props) => {
       <div className={styles.bodyRightSide}>
         {MonitorRightTools.map(({ label, value, icon, style }) => {
           return (
-            <Tooltip key={value} placement="right" title={label}>
-              <div
-                role={'category'}
-                style={{ position: 'relative' }}
-                className={categoryPanel === value ? styles.categoryActive : undefined}
-                onClick={(e) => {
-                  let top;
-                  if (e.target.tagName === 'IMG') {
-                    top = e.target.parentElement.getBoundingClientRect().top;
-                  } else if (e.target.tagName === 'svg') {
-                    top =
-                      e.target.parentElement.parentElement.parentElement.getBoundingClientRect()
-                        .top;
-                  } else {
-                    top = e.target.getBoundingClientRect().top;
-                  }
-                  setOffsetTop(top);
-                  if (value === Category.Prop) {
-                    if (selections.length === 1) {
-                      updateEditPanelFlag(value);
-                    }
-                  } else {
+            <div
+              key={value}
+              role={'category'}
+              style={{ position: 'relative' }}
+              className={categoryPanel === value ? styles.categoryActive : undefined}
+              onClick={(e) => {
+                let top;
+                if (e.target.tagName === 'IMG') {
+                  top = e.target.parentElement.getBoundingClientRect().top;
+                } else if (e.target.tagName === 'svg') {
+                  top =
+                    e.target.parentElement.parentElement.parentElement.getBoundingClientRect().top;
+                } else {
+                  top = e.target.getBoundingClientRect().top;
+                }
+                setOffsetTop(top);
+                if (value === Category.Prop) {
+                  if (selections.length === 1) {
                     updateEditPanelFlag(value);
                   }
-                }}
-              >
-                {renderIcon(icon, style)}
-                {renderBadge(value)}
-              </div>
-            </Tooltip>
+                } else {
+                  updateEditPanelFlag(value);
+                }
+              }}
+            >
+              {renderIcon(icon, style)}
+              {renderBadge(value)}
+            </div>
           );
         })}
       </div>

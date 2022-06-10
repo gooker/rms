@@ -1,11 +1,7 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import ForkFreight from './ForkFreight';
-import {
-  getTextureFromResources,
-  switchVehicleBatteryState,
-  switchVehicleState,
-} from '@/utils/mapUtil';
+import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
 import { isNull } from '@/utils/util';
 import { VehicleType } from '@/config/config';
 import { ForkLiftVehicleSize, MonitorSelectableSpriteType, zIndex } from '@/config/consts';
@@ -13,7 +9,7 @@ import { ForkLiftVehicleSize, MonitorSelectableSpriteType, zIndex } from '@/conf
 export default class ForkLiftVehicle extends PIXI.Container {
   constructor(props) {
     super();
-    this.type = MonitorSelectableSpriteType.ForkLifting;
+    this.type = MonitorSelectableSpriteType.Vehicle;
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
