@@ -27,7 +27,7 @@ const VehicleList = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id='vehicle.id' />,
+      title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
@@ -51,12 +51,12 @@ const VehicleList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.port' />,
+      title: <FormattedMessage id="vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.direction' />,
+      title: <FormattedMessage id="vehicle.direction" />,
       dataIndex: 'currentDirection',
       align: 'center',
       render: (text) => getDirectionLocale(text),
@@ -67,34 +67,34 @@ const VehicleList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.maintenanceState' />,
+      title: <FormattedMessage id="vehicle.maintenanceState" />,
       dataIndex: 'disabled',
       align: 'center',
       render: (text) => {
         return (
           <span>
             {text ? (
-              <Tag color='red'>
+              <Tag color="red">
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id='vehicle.underMaintenance' />
+                  <FormattedMessage id="vehicle.underMaintenance" />
                 </span>
               </Tag>
             ) : (
-              <Tag color='green'>{<FormattedMessage id='app.common.normal' />}</Tag>
+              <Tag color="green">{<FormattedMessage id="app.common.normal" />}</Tag>
             )}
           </span>
         );
       },
     },
     {
-      title: <FormattedMessage id='app.vehicleState' />,
+      title: <FormattedMessage id="app.vehicleState" />,
       dataIndex: 'vehicleStatus',
       align: 'center',
       render: (vehicleStatus) => getVehicleStatusTag(vehicleStatus),
     },
     {
-      title: <FormattedMessage id='vehicle.serverIdentity' />,
+      title: <FormattedMessage id="vehicle.serverIdentity" />,
       dataIndex: 'clusterIndex',
       align: 'center',
     },
@@ -110,7 +110,7 @@ const VehicleList = (props) => {
               checkVehicleDetail(record.id);
             }}
           >
-            <FormattedMessage id='app.common.detail' />
+            <FormattedMessage id="app.common.detail" />
           </Button>
         );
       },
@@ -146,17 +146,17 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id='app.vehicle.battery.voltage' />,
+      title: <FormattedMessage id="app.vehicle.battery.voltage" />,
       align: 'center',
       dataIndex: 'batteryVoltage',
       render: (text) => {
         if (text != null) {
           if (parseInt(text) > 47000) {
-            return <Badge status='success' text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status="success" text={getSuffix(text / 1000, 'v')} />;
           } else if (parseInt(text) > 45000) {
-            return <Badge status='warning' text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status="warning" text={getSuffix(text / 1000, 'v')} />;
           } else {
-            return <Badge status='error' text={getSuffix(text / 1000, 'v')} />;
+            return <Badge status="error" text={getSuffix(text / 1000, 'v')} />;
           }
         }
       },
@@ -167,7 +167,7 @@ const VehicleList = (props) => {
       dataIndex: 'version',
     },
     {
-      title: <FormattedMessage id='vehicle.battery.type' />,
+      title: <FormattedMessage id="vehicle.battery.type" />,
       align: 'center',
       dataIndex: 'batteryType',
       render: (text) => {

@@ -40,6 +40,7 @@ export default {
 
   // 场景元素
   'object.load': '载具',
+  'object.load.id': '载具ID',
   'object.load.direction': '载具方向',
   'object.loadGroup': '载具组',
 

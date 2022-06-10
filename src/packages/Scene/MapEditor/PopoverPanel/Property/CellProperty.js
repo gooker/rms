@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { Tag, Empty, Form, Row, Col, InputNumber, Button, Input } from 'antd';
+import { Button, Col, Empty, Form, Input, InputNumber, Row, Tag } from 'antd';
 import { SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout } from '@/utils/util';
@@ -33,7 +33,7 @@ const CellProperty = (props) => {
       const typeCells = scopeData[type] || [];
       if (typeCells.includes(data.id)) {
         return (
-          <Tag key={type} closable color='blue'>
+          <Tag key={type} closable color="blue">
             <FormattedMessage id={i18n} />
           </Tag>
         );
@@ -54,8 +54,7 @@ const CellProperty = (props) => {
           }
         });
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 
   const cellTypeTags = renderCellTypeEnum();

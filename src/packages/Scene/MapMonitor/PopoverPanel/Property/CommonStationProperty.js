@@ -272,8 +272,8 @@ const CommonStationProperty = (props) => {
                   {renderVehicleTypesContent()}
                 </Row>
               }
-              placement='bottom'
-              trigger='click'
+              placement="bottom"
+              trigger="click"
               visible={popVisible}
               onVisibleChange={(visible) => {
                 setPopVisible(visible);

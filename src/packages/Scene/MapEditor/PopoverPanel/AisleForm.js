@@ -91,7 +91,7 @@ const AisleForm = (props) => {
           name={'cells'}
           initialValue={aisle?.cells || []}
           rules={[{ required: true }]}
-          label={<FormattedMessage id='app.map.cell' />}
+          label={<FormattedMessage id="app.map.cell" />}
         >
           <ButtonInput
             maxTagCount={100}
@@ -106,7 +106,7 @@ const AisleForm = (props) => {
           name={'giveWayCellMap'}
           // initialValue={aisle?.cells || []}
           rules={[{ required: true }]}
-          label={<FormattedMessage id='editor.tunnel.giveWay' />}
+          label={<FormattedMessage id="editor.tunnel.giveWay" />}
         >
           <ButtonInput
             maxTagCount={100}
@@ -121,7 +121,7 @@ const AisleForm = (props) => {
           name={'giveWayRelationMap'}
           // initialValue={aisle?.cells || []}
           rules={[{ required: true }]}
-          label={<FormattedMessage id='editor.tunnel.giveWayDirection' />}
+          label={<FormattedMessage id="editor.tunnel.giveWayDirection" />}
         >
           <ButtonInput
             maxTagCount={100}

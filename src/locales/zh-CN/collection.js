@@ -4,6 +4,9 @@ export default {
   'app.isSimulator': '是否模拟',
   'app.arriveTime': '到达时间',
   'app.programing.noParam': '无参数',
+  'app.button.bind': '绑定',
+  'app.button.unbind': '解绑',
+  'app.common.batchOperate': '批量操作',
 
   // 故障相关
   'app.fault.code': '故障码',
@@ -23,8 +26,11 @@ export default {
   'app.fault.extraData2': '附加数据2',
 
   // 触发器
-  'app.triggerState.start': '开始',
-  'app.triggerState.pause': '暂停',
+  'app.triggerAction.start': '开始',
+  'app.triggerAction.pause': '暂停',
+  'app.triggerAction.terminate': '终止',
+  'app.triggerState.executing': '执行中',
+  'app.triggerState.paused': '已暂停',
   'app.triggerState.end': '结束',
   'app.trigger.timeInterval': '时间间隔',
 

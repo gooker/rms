@@ -3,7 +3,7 @@ import { Col, Row } from 'antd';
 import LabelComponent from '@/components/LabelComponent';
 
 const ExpandPanel = (props) => {
-  const { record, columns,span=12, } = props;
+  const { record, columns, span = 12 } = props;
   return (
     <Row>
       {columns.map(({ title, dataIndex, render }, index) => (

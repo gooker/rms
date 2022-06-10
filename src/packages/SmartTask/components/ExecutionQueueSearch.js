@@ -30,7 +30,7 @@ const ExecutionQueueSearch = (props) => {
   return (
     <TaskSearch form={form} gutter={24} span={8} vehicles={vehicles} onSearch={search}>
       <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.type' })}>
-        <Select allowClear mode='multiple'>
+        <Select allowClear mode="multiple">
           {renderVehicleTaskTypeOption()}
         </Select>
       </Form.Item>

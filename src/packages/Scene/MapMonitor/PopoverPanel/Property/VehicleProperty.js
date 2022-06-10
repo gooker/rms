@@ -13,7 +13,13 @@ import {
 } from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  isStrictNull,
+  renderBattery,
+  renderVehicleState,
+} from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';

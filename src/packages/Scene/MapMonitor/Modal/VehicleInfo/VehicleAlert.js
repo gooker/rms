@@ -19,7 +19,7 @@ const EmptyRun = (props) => {
 
   const column = [
     {
-      title: <FormattedMessage id='app.alarmCenter.code' />,
+      title: <FormattedMessage id="app.alarmCenter.code" />,
       dataIndex: 'alertCode',
       fixed: 'left',
     },
@@ -27,11 +27,11 @@ const EmptyRun = (props) => {
     { title: <FormattedMessage id="app.map.cell" />, dataIndex: 'cellId' },
 
     {
-      title: <FormattedMessage id='app.alarmCenter.alertName' />,
+      title: <FormattedMessage id="app.alarmCenter.alertName" />,
       dataIndex: 'alertNameI18NKey',
     },
     {
-      title: <FormattedMessage id='app.alarmCenter.alertContent' />,
+      title: <FormattedMessage id="app.alarmCenter.alertContent" />,
       dataIndex: 'alertContentI18NKey',
       fixed: 'right',
     },
@@ -39,7 +39,7 @@ const EmptyRun = (props) => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id='app.alarmCenter.level' />,
+      title: <FormattedMessage id="app.alarmCenter.level" />,
       dataIndex: 'alertItemLevel',
       render: (text) => {
         if (!isNull(text)) {
@@ -48,7 +48,7 @@ const EmptyRun = (props) => {
       },
     },
     {
-      title: <FormattedMessage id='app.alarmCenter.count' />,
+      title: <FormattedMessage id="app.alarmCenter.count" />,
       dataIndex: 'alertCount',
       render: (text) => text || '-',
     },

@@ -1,6 +1,10 @@
 import { isStrictNull } from '@/utils/util';
 import { forIn } from 'lodash';
-import { getOriginalDataBycode, labelColor, titleColor } from '@/packages/Report/components/GroundQrcodeEcharts';
+import {
+  getOriginalDataBycode,
+  labelColor,
+  titleColor,
+} from '@/packages/Report/components/GroundQrcodeEcharts';
 import { filterNewXAixsTime, getNewKey } from '@/packages/Report/components/reportUtil';
 import { MinuteFormat } from '@/packages/Report/LoadReport/components/loadVehicleEcharts';
 

@@ -46,7 +46,7 @@ const StartForm = (props) => {
         required
         name={[code, 'robot']}
         initialValue={{ type: 'AUTO', code: [] }}
-        label={<FormattedMessage id='customTask.form.vehicle' />}
+        label={<FormattedMessage id="customTask.form.vehicle" />}
         rules={[{ validator: validateVehicle }]}
       >
         <VehicleSelector />

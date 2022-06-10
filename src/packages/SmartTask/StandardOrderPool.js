@@ -34,7 +34,7 @@ class StandardOrderPool extends React.Component {
 
   columns = [
     {
-      title: <FormattedMessage id='app.task.id' />,
+      title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
       align: 'center',
       width: 200,
@@ -54,7 +54,7 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.task.type' />,
+      title: <FormattedMessage id="app.task.type" />,
       dataIndex: 'vehicleTaskType',
       align: 'center',
       width: 150,
@@ -64,7 +64,7 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.taskQueue.appointedTarget' />,
+      title: <FormattedMessage id="app.taskQueue.appointedTarget" />,
       dataIndex: 'appointedTargetCellId',
       align: 'center',
       width: 150,
@@ -80,7 +80,7 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.taskQueue.appointedVehicle' />,
+      title: <FormattedMessage id="app.taskQueue.appointedVehicle" />,
       dataIndex: 'appointedVehicleId',
       align: 'center',
       width: 150,
@@ -93,7 +93,7 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.common.priority' />,
+      title: <FormattedMessage id="app.common.priority" />,
       dataIndex: 'priority',
       align: 'center',
       width: 150,
@@ -101,7 +101,7 @@ class StandardOrderPool extends React.Component {
       render: (text) => <span>{text}</span>,
     },
     {
-      title: <FormattedMessage id='app.common.creationTime' />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createTimeMilliseconds',
       align: 'center',
       width: 200,
@@ -114,7 +114,7 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.taskQueue.lastExecutedTimestamp' />,
+      title: <FormattedMessage id="app.taskQueue.lastExecutedTimestamp" />,
       dataIndex: 'lastExecutedTimestamp',
       align: 'center',
       width: 150,
@@ -127,7 +127,7 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id='app.taskQueue.triedTimes' />,
+      title: <FormattedMessage id="app.taskQueue.triedTimes" />,
       dataIndex: 'triedTimes',
       align: 'center',
       width: 150,
@@ -257,7 +257,7 @@ class StandardOrderPool extends React.Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.available }}
               >
-                <FormattedMessage id={'vehicleState.available'} />
+                <FormattedMessage id={'app.common.available'} />
               </span>
             </Badge>
             <Badge
@@ -328,7 +328,7 @@ class StandardOrderPool extends React.Component {
               onClick={this.deleteQueueTasks}
               disabled={selectedRowKeys.length === 0}
             >
-              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
             <Button
               disabled={selectedRowKeys.length === 0}
@@ -336,10 +336,10 @@ class StandardOrderPool extends React.Component {
                 this.switchTaskPriorityModal(true);
               }}
             >
-              <OrderedListOutlined /> <FormattedMessage id='app.taskQueue.reorderPriority' />
+              <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.reorderPriority" />
             </Button>
             <Button onClick={this.getData}>
-              <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+              <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </Row>
         </div>

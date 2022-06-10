@@ -140,8 +140,8 @@ class Header extends React.Component {
             trigger="hover"
             content={
               <Switch
-                checkedChildren={<FormattedMessage id='app.common.on' />}
-                unCheckedChildren={<FormattedMessage id='app.common.off' />}
+                checkedChildren={<FormattedMessage id="app.common.on" />}
+                unCheckedChildren={<FormattedMessage id="app.common.off" />}
                 checked={showErrorNotification}
                 onChange={this.switchShowErrorNotification}
               />

@@ -64,7 +64,7 @@ const EditorMapContainer = (props) => {
       viewport.off('zoomed');
       viewport.on(
         'zoomed',
-        debounce(function() {
+        debounce(function () {
           dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
         }, 100),
       );
@@ -73,7 +73,7 @@ const EditorMapContainer = (props) => {
       viewport.off('moved');
       viewport.on(
         'moved',
-        throttle(function() {
+        throttle(function () {
           const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
           const topLimit = y + (height - CLAMP_VALUE);
           if (this.top >= topLimit) {
@@ -121,7 +121,7 @@ const EditorMapContainer = (props) => {
   }, [mapRatio]);
 
   const doClampZoom = useCallback(
-    function() {
+    function () {
       const { viewport } = mapContext.pixiUtils;
       const minMapRatio = mapContext.clampZoom(viewport, 'EDITOR_MAP');
       dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });

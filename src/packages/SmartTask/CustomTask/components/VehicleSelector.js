@@ -96,7 +96,7 @@ const VehicleSelector = (props) => {
       default:
         return (
           <Select
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 360 }}

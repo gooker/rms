@@ -71,7 +71,7 @@ const ChargerMultiForm = (props) => {
       </Form.Item>
 
       {/* 角度 */}
-      <Form.Item name={'angle'} label={<FormattedMessage id='app.common.angle' />}>
+      <Form.Item name={'angle'} label={<FormattedMessage id="app.common.angle" />}>
         <AngleSelector
           disabled
           width={'100%'}
@@ -94,18 +94,18 @@ const ChargerMultiForm = (props) => {
       </Form.Item>
 
       {/* 充电点 */}
-      <Form.Item name={'cellIds'} label={<FormattedMessage id='editor.cellType.charging' />}>
+      <Form.Item name={'cellIds'} label={<FormattedMessage id="editor.cellType.charging" />}>
         <ButtonInput multi data={selectCellIds} btnDisabled={selectCellIds.length === 0} />
       </Form.Item>
 
       {/* 小车类型 */}
       <Form.Item name={'supportTypes'} label={formatMessage({ id: 'app.vehicleType' })}>
-        <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
+        <Select mode="multiple">{renderSupportTypesOptions()}</Select>
       </Form.Item>
 
       <Form.Item {...formItemLayoutNoLabel}>
-        <Button type='primary' onClick={multiSubmit}>
-          <FormattedMessage id='app.button.confirm' />
+        <Button type="primary" onClick={multiSubmit}>
+          <FormattedMessage id="app.button.confirm" />
         </Button>
       </Form.Item>
     </Form>

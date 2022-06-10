@@ -36,7 +36,7 @@ class TaskTrigger extends Component {
 
   columns = [
     {
-      title: <FormattedMessage id='taskLimit' />,
+      title: <FormattedMessage id="taskLimit" />,
       dataIndex: 'groupName',
       width: '25%',
       // render: (text,record) => <a>{text}</a>,
@@ -47,7 +47,7 @@ class TaskTrigger extends Component {
       render: (text, record) => <>{record && record.children ? record.children[0].describe : ''}</>,
     },
     {
-      title: <FormattedMessage id='taskLimit.num' />,
+      title: <FormattedMessage id="taskLimit.num" />,
       dataIndex: 'limitNum',
     },
     {

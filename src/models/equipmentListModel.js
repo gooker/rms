@@ -15,7 +15,7 @@ export default {
     allDevices: [],
     searchParams: { id: [], connectionType: [] },
 
-    deviceMonitorData:[],
+    deviceMonitorData: [],
   },
 
   effects: {

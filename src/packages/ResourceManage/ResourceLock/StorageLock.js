@@ -24,7 +24,7 @@ const StorageLock = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="lock.container.id" />,
+      title: <FormattedMessage id="object.load.id" />,
       dataIndex: 'loadId',
       align: 'center',
     },

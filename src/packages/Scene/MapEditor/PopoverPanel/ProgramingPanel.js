@@ -28,11 +28,11 @@ const ProgramingPanel = (props) => {
 
       {/* Tab栏 */}
       <div className={styles.programTabs}>
-        <Tabs defaultActiveKey='cell'>
-          <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key='cell'>
+        <Tabs defaultActiveKey="cell">
+          <TabPane tab={<FormattedMessage id={'app.map.cell'} />} key="cell">
             <ProgramingCell programing={programing} />
           </TabPane>
-          <TabPane tab={<FormattedMessage id={'app.map.route'} />} key='relation'>
+          <TabPane tab={<FormattedMessage id={'app.map.route'} />} key="relation">
             <ProgramingRelation programing={programing} />
           </TabPane>
           {/*<TabPane tab={<FormattedMessage id={'app.map.zone'} />} key='zone'>*/}

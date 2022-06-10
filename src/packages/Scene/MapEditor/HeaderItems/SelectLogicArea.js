@@ -45,10 +45,10 @@ const SelectLogicArea = (props) => {
 
     // 新增 "添加逻辑区" 选项
     result.push(
-      <Menu.Item key='add'>
+      <Menu.Item key="add">
         <PlusOutlined />
-        <FormattedMessage id='app.button.add' />
-        <FormattedMessage id='app.map.logicArea' />
+        <FormattedMessage id="app.button.add" />
+        <FormattedMessage id="app.map.logicArea" />
       </Menu.Item>,
     );
     return result;

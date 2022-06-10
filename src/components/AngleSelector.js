@@ -10,16 +10,16 @@ const AngleSelector = (props) => {
   const addonBefore = (
     <Select value={value} onChange={onChange} style={{ width: beforeWidth }}>
       <Option value={0}>
-        {addonLabel ? addonLabel[0] : <FormattedMessage id='app.direction.toRight' />}
+        {addonLabel ? addonLabel[0] : <FormattedMessage id="app.direction.toRight" />}
       </Option>
       <Option value={90}>
-        {addonLabel ? addonLabel[90] : <FormattedMessage id='app.direction.toTop' />}
+        {addonLabel ? addonLabel[90] : <FormattedMessage id="app.direction.toTop" />}
       </Option>
       <Option value={180}>
-        {addonLabel ? addonLabel[180] : <FormattedMessage id='app.direction.toLeft' />}
+        {addonLabel ? addonLabel[180] : <FormattedMessage id="app.direction.toLeft" />}
       </Option>
       <Option value={270}>
-        {addonLabel ? addonLabel[270] : <FormattedMessage id='app.direction.toBottom' />}
+        {addonLabel ? addonLabel[270] : <FormattedMessage id="app.direction.toBottom" />}
       </Option>
     </Select>
   );
@@ -28,7 +28,7 @@ const AngleSelector = (props) => {
     <InputNumber
       disabled={disabled}
       addonBefore={addonBefore}
-      addonAfter='°'
+      addonAfter="°"
       value={value}
       onChange={onChange}
       style={{ width }}

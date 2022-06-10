@@ -130,7 +130,7 @@ const TaskStepNode = (props) => {
   if (hasAction || hasCellEventAction) {
     return (
       <Popover
-        trigger='click'
+        trigger="click"
         destroyTooltipOnHide={{ keepParent: false }}
         content={renderPopoverContent()}
       >

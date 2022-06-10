@@ -1,4 +1,4 @@
-import { convertToUserTimezone, isNull, isStrictNull, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage, isNull, isStrictNull } from '@/utils/util';
 
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -356,7 +356,7 @@ export const transformCommonTrafficData = (allData = {}) => {
     result[time] = currentTaskCountMap[dateTime];
   });
   // 横坐标
-  const xAxisData = Object.keys(result).sort((a,b)=>a=b);
+  const xAxisData = Object.keys(result).sort((a, b) => (a = b));
 
   // Series
   const trafficLabelOption = {

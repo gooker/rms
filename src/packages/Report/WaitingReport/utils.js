@@ -9,8 +9,8 @@ const Template = {
   waitSize: 0,
 };
 
-export const sortNumber = array => {
-  const first_step = sortBy(array, item => {
+export const sortNumber = (array) => {
+  const first_step = sortBy(array, (item) => {
     return item.target;
   });
   return sortBy(first_step, ['group']);
@@ -41,7 +41,7 @@ export const convertWaitingToChartVM = (isBaseHour, detail, viewMode = 'detail')
 
   const newDetail = [];
   if (viewMode === 'detail') {
-    Object.keys(detail).forEach(key => {
+    Object.keys(detail).forEach((key) => {
       const keyItems = key.split('#');
       const targetCellId = keyItems[0];
       const startTime = keyItems[1].replace('T', ' ');
@@ -52,17 +52,17 @@ export const convertWaitingToChartVM = (isBaseHour, detail, viewMode = 'detail')
     const overview = {};
     const targetCells = new Set();
     // 首先去重
-    Object.keys(detail).forEach(key => {
+    Object.keys(detail).forEach((key) => {
       const targetCellId = key.split('#')[0];
       targetCells.add(targetCellId);
     });
     // 根据目标点创建初始化数据
-    targetCells.forEach(targetCellId => {
+    targetCells.forEach((targetCellId) => {
       overview[targetCellId] = { ...Template };
     });
     // 填充数据
     const detailKeys = Object.keys(detail);
-    detailKeys.forEach(detailKey => {
+    detailKeys.forEach((detailKey) => {
       const targetCellId = detailKey.split('#')[0];
       const overviewValue = overview[targetCellId];
       const detailValue = detail[detailKey];
@@ -87,12 +87,12 @@ export const convertWaitingToChartVM = (isBaseHour, detail, viewMode = 'detail')
     });
 
     // 转化数据使其可被接下来的流程处理
-    Object.keys(overview).forEach(targetCellId => {
+    Object.keys(overview).forEach((targetCellId) => {
       newDetail.push({ ...overview[targetCellId], targetCellId });
     });
   }
 
-  newDetail.forEach(item => {
+  newDetail.forEach((item) => {
     const xName = item.targetCellId;
     // 平均空等时间
     if (viewMode === 'detail') {

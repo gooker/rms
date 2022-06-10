@@ -1,5 +1,5 @@
-import React, { useEffect, memo } from 'react';
-import { Input, Row, Form, Modal, Button, Col, Popconfirm } from 'antd';
+import React, { memo, useEffect } from 'react';
+import { Button, Col, Form, Input, Modal, Popconfirm, Row } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, getFormLayout, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -72,8 +72,8 @@ const CreateLogicAreaModal = (props) => {
                 title={formatMessage({ id: 'app.createLogicArea.deleteLogicArea.confirm' })}
                 onConfirm={onDelete}
               >
-                <Button type='danger'>
-                  <FormattedMessage id='app.button.delete' />
+                <Button type="danger">
+                  <FormattedMessage id="app.button.delete" />
                 </Button>
               </Popconfirm>
             </Col>
@@ -81,8 +81,8 @@ const CreateLogicAreaModal = (props) => {
 
           {/* 保存 */}
           <Col>
-            <Button type='primary' onClick={submit}>
-              <FormattedMessage id='app.button.save' />
+            <Button type="primary" onClick={submit}>
+              <FormattedMessage id="app.button.save" />
             </Button>
           </Col>
         </Row>,

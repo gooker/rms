@@ -5,12 +5,12 @@ const I18NIcon = () => {
   return (
     <i className={commonStyle.I18nIcon}>
       <svg
-        viewBox='0 0 24 24'
-        focusable='false'
-        width='1em'
-        height='1em'
-        fill='currentColor'
-        aria-hidden='true'
+        viewBox="0 0 24 24"
+        focusable="false"
+        width="1em"
+        height="1em"
+        fill="currentColor"
+        aria-hidden="true"
       >
         <path d="M0 0h24v24H0z" fill="none"></path>
         <path

@@ -57,7 +57,7 @@ const ChargerListTools = (props) => {
 
   return (
     <div>
-      <Row className={commonStyles.tableToolLeft}>
+      <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
         <Form.Item label={'充电桩ID'}>
           <Select
             allowClear

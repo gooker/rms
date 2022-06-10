@@ -82,7 +82,7 @@ const RestForm = (props) => {
         initialValue={rest?.supportTypes}
         rules={[{ required: true }]}
       >
-        <Select mode='multiple'>{renderSupportTypesOptions()}</Select>
+        <Select mode="multiple">{renderSupportTypesOptions()}</Select>
       </Form.Item>
 
       {/*<Form.Item*/}

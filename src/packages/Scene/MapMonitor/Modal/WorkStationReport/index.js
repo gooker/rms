@@ -1,15 +1,10 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Button } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Col, Row } from 'antd';
 import echarts from 'echarts';
 import { CloseOutlined } from '@ant-design/icons';
 import { useMap } from 'ahooks';
 import { connect } from '@/utils/RmsDva';
-import {
-  waitingHistoryLineOption,
-  taskHistoryLineOption,
-  LineChartsAxisColor,
-  DataColor,
-} from './workStationEchart';
+import { DataColor, LineChartsAxisColor, taskHistoryLineOption, waitingHistoryLineOption } from './workStationEchart';
 import { formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { workStationCallback } from './workstationUtil';
@@ -21,20 +16,14 @@ const clientHeightBase = 1.3;
 const clientWidthBase = 3;
 
 const WorkStationReport = (props) => {
-  const {
-    workStation,
-    dataSource = {},
-    waitingData = {},
-    stationRateData = [],
-    dispatch,
-  } = props;
+  const { workStation, dataSource = {}, waitingData = {}, stationRateData = [], dispatch } = props;
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
     // dispatch({ type: 'monitor/saveCategoryPanel', payload: null });
   }
 
-  const { name, angle, stopCellId} = workStation;
+  const { name, angle, stopCellId } = workStation;
   const monitorScreenDOM = document.body;
 
   const [currentRealRate, setCurrentRealRate] = useState({}); // 当前站点的速率和等待时间等
@@ -111,7 +100,6 @@ const WorkStationReport = (props) => {
       waitingHistoryLine.setOption(newWaitingHistoryLineOption, true);
     }
   }
-
 
   return (
     <div

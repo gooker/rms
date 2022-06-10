@@ -3,7 +3,13 @@ import { Button, Checkbox, Col, Form, Input, InputNumber, Row, Select, Space, Sw
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { find, groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { extractRoutes, fillFormValueToAction, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import {
+  extractRoutes,
+  fillFormValueToAction,
+  formatMessage,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import TargetSelector from '../components/TargetSelector';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
@@ -230,7 +236,7 @@ const SubTaskForm = (props) => {
                 initialValue={null}
               >
                 {specifyLoadAngle ? (
-                  <InputNumber addonAfter='°' />
+                  <InputNumber addonAfter="°" />
                 ) : (
                   <Select style={{ width: 207 }}>
                     <Select.Option value={0}>

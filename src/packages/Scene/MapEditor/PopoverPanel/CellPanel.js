@@ -1,14 +1,14 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Row } from 'antd';
 import {
+  ColumnHeightOutlined,
+  ColumnWidthOutlined,
   DragOutlined,
   LeftOutlined,
-  RightOutlined,
   LineHeightOutlined,
-  PlusCircleOutlined,
   MinusCircleOutlined,
-  ColumnWidthOutlined,
-  ColumnHeightOutlined,
+  PlusCircleOutlined,
+  RightOutlined,
 } from '@ant-design/icons';
 import MoveCell from './MoveCell';
 import AddNavigation from './AddNavigation';
@@ -199,7 +199,7 @@ const CellPanel = (props) => {
                       mapContext.batchSelectCellByDirection('x');
                     }}
                   >
-                    <ColumnHeightOutlined /> <FormattedMessage id='editor.cell.verticalSelection' />
+                    <ColumnHeightOutlined /> <FormattedMessage id="editor.cell.verticalSelection" />
                   </Button>
                 </Col>
               </Row>

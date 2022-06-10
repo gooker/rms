@@ -106,7 +106,10 @@ class TaskLibraryComponent extends Component {
     return (
       <TablePageWrapper>
         <div className={styles.taskSearchDivider}>
-          <TaskPoolSearch search={this.getData} vehicleList={vehicleList.map(({ vehicleId }) => vehicleId)} />
+          <TaskPoolSearch
+            search={this.getData}
+            vehicleList={vehicleList.map(({ vehicleId }) => vehicleId)}
+          />
           <Divider />
           {cancel && (
             <Button disabled={selectedRowKeys.length === 0} onClick={this.cancelTaskConfirm}>

@@ -25,7 +25,7 @@ class SelectTagComponent extends PureComponent {
   }
 }
 
-export default function SelectTag({value, onChange, options }) {
+export default function SelectTag({ value, onChange, options }) {
   return (
     <SelectTagComponent
       value={value}

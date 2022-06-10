@@ -1,6 +1,12 @@
 import React, { PureComponent } from 'react';
 import { Col, Pagination, Row, Timeline } from 'antd';
-import { CloseCircleOutlined, FrownOutlined, MehOutlined, SmileTwoTone, SyncOutlined } from '@ant-design/icons';
+import {
+  CloseCircleOutlined,
+  FrownOutlined,
+  MehOutlined,
+  SmileTwoTone,
+  SyncOutlined,
+} from '@ant-design/icons';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import { VehicleType } from '@/config/config';
 import { connect } from '@/utils/RmsDva';

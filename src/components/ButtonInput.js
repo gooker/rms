@@ -29,7 +29,7 @@ export default class ButtonInput extends React.PureComponent {
           {multi ? (
             <Select
               allowClear
-              mode='tags'
+              mode="tags"
               maxTagCount={maxTagCount}
               value={value}
               disabled={disabled}

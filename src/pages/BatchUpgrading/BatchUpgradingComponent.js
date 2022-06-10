@@ -89,7 +89,10 @@ class BatchUpgradingComponent extends Component {
   upgradeVehicle = async () => {
     const { selectedRow, sectionId } = this.state;
     const { vehicleType } = this.props;
-    const upgradeRes = await upgradeVehicle(vehicleType, { sectionId, vehicleId: selectedRow[0].vehicleId });
+    const upgradeRes = await upgradeVehicle(vehicleType, {
+      sectionId,
+      vehicleId: selectedRow[0].vehicleId,
+    });
     if (!dealResponse(upgradeRes)) {
       this.getData();
     }
@@ -130,7 +133,8 @@ class BatchUpgradingComponent extends Component {
 
   render() {
     const { loading, selectedRowKeys, selectedRow, downloadFirmwareVisible } = this.state;
-    const { getColumn, maintainFlag, uploadFlag, upgradeFlag, vehicleType, uploadVisible } = this.props;
+    const { getColumn, maintainFlag, uploadFlag, upgradeFlag, vehicleType, uploadVisible } =
+      this.props;
     return (
       <TablePageWrapper>
         <div className={commonStyles.tableToolLeft}>

@@ -6,7 +6,8 @@ import Line from './Line';
 import Bar3d from './Bar3d';
 
 const MatchReportsComponents = (props) => {
-  const { type, description, data, remove, extra, deletable, filterDateOnChange, vehicleType } = props;
+  const { type, description, data, remove, extra, deletable, filterDateOnChange, vehicleType } =
+    props;
 
   const [toggle, setToggle] = useState(false);
 

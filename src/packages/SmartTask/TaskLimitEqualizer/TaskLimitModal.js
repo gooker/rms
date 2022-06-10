@@ -327,23 +327,19 @@ class TaskTriggerModal extends Component {
           {/* 类型选择 */}
           <Form.Item
             label={formatMessage({ id: 'taskLimit.currentlimiting' })}
-            name='type'
+            name="type"
             initialValue={keyType}
           >
             <Radio.Group disabled={!!updateItem} onChange={this.onTypeChange}>
-              <Radio value="sourceLimit">
-                {formatMessage({ id: 'taskLimit.sourcelimitng' })}
-              </Radio>
-              <Radio value="taskLimit">
-                {formatMessage({ id: 'taskLimit.tasklimiting' })}
-              </Radio>
+              <Radio value="sourceLimit">{formatMessage({ id: 'taskLimit.sourcelimitng' })}</Radio>
+              <Radio value="taskLimit">{formatMessage({ id: 'taskLimit.tasklimiting' })}</Radio>
             </Radio.Group>
           </Form.Item>
 
           {keyType === 'sourceLimit' ? (
             <>
               <FormItem
-                name='sourcegroup'
+                name="sourcegroup"
                 label={formatMessage({ id: 'taskLimit.sourcelimitng' })}
                 rules={[{ required: true }]}
                 initialValue={this.state.treeSelectValue}
@@ -365,10 +361,15 @@ class TaskTriggerModal extends Component {
           ) : (
             <Form.Item
               label={formatMessage({ id: 'taskLimit.tasklimiting' })}
-              name='sourceType'
+              name="sourceType"
               rules={[{ required: true }]}
             >
-              <Select allowClear mode="multiple" maxTagCount={4} onChange={this.onVehicleTypeChange}>
+              <Select
+                allowClear
+                mode="multiple"
+                maxTagCount={4}
+                onChange={this.onVehicleTypeChange}
+              >
                 {Object.entries(tasksByTypeOptions)?.map(([key, value]) => (
                   <Select.Option key={key} value={key}>
                     {value}
@@ -418,7 +419,7 @@ class TaskTriggerModal extends Component {
                 arrowPointAtCenter={true}
                 content={this.popNumContent}
                 title={formatMessage({ id: 'taskLimit.updateSelectedNum' })}
-                trigger='click'
+                trigger="click"
                 visible={batchUpdateNumvisible}
               >
                 <Button
@@ -430,7 +431,7 @@ class TaskTriggerModal extends Component {
                     float: 'right',
                   }}
                 >
-                  <FormattedMessage id='taskLimit.batchUpdateNum' />
+                  <FormattedMessage id="taskLimit.batchUpdateNum" />
                 </Button>
               </Popover>
             </div>

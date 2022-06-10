@@ -1,4 +1,9 @@
-import { fetchCancelTask, fetchResetTask, fetchRestartTask, fetchRestoreTask } from '@/services/commonService';
+import {
+  fetchCancelTask,
+  fetchResetTask,
+  fetchRestartTask,
+  fetchRestoreTask,
+} from '@/services/commonService';
 import { dealResponse } from '@/utils/util';
 import { fetchTaskDetail } from '@/services/taskService';
 
@@ -19,7 +24,7 @@ export default {
   },
 
   effects: {
-    * fetchTaskDetailByTaskId({ payload }, { call, put }) {
+    *fetchTaskDetailByTaskId({ payload }, { call, put }) {
       const { taskId } = payload;
       yield put({ type: 'changeTaskDetailModalVisible', payload: { taskId, visible: true } });
 

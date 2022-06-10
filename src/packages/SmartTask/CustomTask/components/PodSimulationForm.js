@@ -53,10 +53,10 @@ const PodSimulationForm = (props) => {
       >
         <Radio.Group optionType="button" buttonStyle="solid">
           <Radio.Button value="GENERATE">
-            <FormattedMessage id='customTask.form.generate' />
+            <FormattedMessage id="customTask.form.generate" />
           </Radio.Button>
           <Radio.Button value="DISAPPEAR">
-            <FormattedMessage id='customTask.form.disappear' />
+            <FormattedMessage id="customTask.form.disappear" />
           </Radio.Button>
         </Radio.Group>
       </Form.Item>
@@ -77,10 +77,10 @@ const PodSimulationForm = (props) => {
         >
           <Radio.Group optionType="button" buttonStyle="solid">
             <Radio.Button value={false}>
-              <FormattedMessage id='customTask.form.specify' />
+              <FormattedMessage id="customTask.form.specify" />
             </Radio.Button>
             <Radio.Button value={true}>
-              <FormattedMessage id='customTask.form.random' />
+              <FormattedMessage id="customTask.form.random" />
             </Radio.Button>
           </Radio.Group>
         </Form.Item>

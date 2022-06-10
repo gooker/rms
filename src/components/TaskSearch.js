@@ -61,8 +61,8 @@ const TaskSearch = (props) => {
         )}
 
         <Form.Item>
-          <Button type='primary' onClick={search}>
-            <SearchOutlined /> <FormattedMessage id='app.button.search' />
+          <Button type="primary" onClick={search}>
+            <SearchOutlined /> <FormattedMessage id="app.button.search" />
           </Button>
           <Button
             style={{ marginLeft: 24 }}
@@ -71,7 +71,7 @@ const TaskSearch = (props) => {
               onSearch({}, true);
             }}
           >
-            <ReloadOutlined /> <FormattedMessage id='app.button.reset' />
+            <ReloadOutlined /> <FormattedMessage id="app.button.reset" />
           </Button>
         </Form.Item>
       </Row>

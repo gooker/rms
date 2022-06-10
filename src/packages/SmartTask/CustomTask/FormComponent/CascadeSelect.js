@@ -57,7 +57,7 @@ const CascadeSelect = (props) => {
       </Select>
       <Select
         allowClear
-        mode='multiple'
+        mode="multiple"
         onChange={onCodeChange}
         value={currentValue?.code || []}
         disabled={!!disabled?.[1]}

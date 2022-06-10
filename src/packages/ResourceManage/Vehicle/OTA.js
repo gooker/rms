@@ -14,25 +14,25 @@ const OTA = (props) => {
   function getColumn(operate) {
     return [
       {
-        title: <FormattedMessage id='vehicle.id' />,
+        title: <FormattedMessage id="vehicle.id" />,
         dataIndex: 'vehicleId',
         align: 'center',
       },
       {
-        title: <FormattedMessage id='vehicle.maintenanceState' />,
+        title: <FormattedMessage id="vehicle.maintenanceState" />,
         dataIndex: 'disabled',
         align: 'center',
         render: (text) => {
           if (!text) {
             return (
               <span style={{ color: green }}>
-                <FormattedMessage id='app.vehicle.normal' />
+                <FormattedMessage id="app.vehicle.normal" />
               </span>
             );
           } else {
             return (
               <span style={{ color: red }}>
-                <FormattedMessage id='vehicle.underMaintenance' />
+                <FormattedMessage id="vehicle.underMaintenance" />
               </span>
             );
           }
@@ -62,17 +62,17 @@ const OTA = (props) => {
         },
       },
       {
-        title: <FormattedMessage id='app.vehicle.battery.voltage' />,
+        title: <FormattedMessage id="app.vehicle.battery.voltage" />,
         dataIndex: 'batteryVoltage',
         align: 'center',
         render: (text) => {
           if (text != null) {
             if (parseInt(text) > 47000) {
-              return <Badge status='success' text={getSuffix(text / 1000, 'v')} />;
+              return <Badge status="success" text={getSuffix(text / 1000, 'v')} />;
             } else if (parseInt(text) > 45000) {
-              return <Badge status='warning' text={getSuffix(text / 1000, 'v')} />;
+              return <Badge status="warning" text={getSuffix(text / 1000, 'v')} />;
             } else {
-              return <Badge status='error' text={getSuffix(text / 1000, 'v')} />;
+              return <Badge status="error" text={getSuffix(text / 1000, 'v')} />;
             }
           }
         },
@@ -86,7 +86,8 @@ const OTA = (props) => {
         title: <FormattedMessage id="app.vehicle.firmwareStatus" />,
         dataIndex: 'fileStatus',
         align: 'center',
-        render: (text, record) => getVehicleStatusTag(record.fileTaskType, record.fileStatus, record),
+        render: (text, record) =>
+          getVehicleStatusTag(record.fileTaskType, record.fileStatus, record),
       },
       {
         title: <FormattedMessage id="app.task.type" />,

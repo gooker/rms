@@ -1,26 +1,26 @@
 .vehicleStatusBadgeContainer {
-    margin-bottom: 20px;
-    & > span:not(:first-child) {
-      margin-left: 25px;
+  margin-bottom: 20px;
+  & > span:not(:first-child) {
+    margin-left: 25px;
+  }
+}
+
+.vehicleStatusBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: 30px;
+  padding: 0 10px;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 5px;
+}
+
+.taskSearchDivider {
+  :global {
+    .ant-divider-horizontal {
+      margin: 0 0 12px 0;
     }
   }
-  
-  .vehicleStatusBadge {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: auto;
-    height: 30px;
-    padding: 0 10px;
-    color: #fff;
-    font-weight: 600;
-    border-radius: 5px;
-  }
-  
-  .taskSearchDivider {
-    :global {
-      .ant-divider-horizontal {
-        margin: 0 0 12px 0;
-      }
-    }
-  }
+}

@@ -22,7 +22,7 @@ const EndForm = (props) => {
         hidden
         name={[code, 'customType']}
         initialValue={type}
-        label={<FormattedMessage id='app.common.type' />}
+        label={<FormattedMessage id="app.common.type" />}
       >
         <Input disabled style={{ width: 300 }} />
       </Form.Item>
@@ -55,7 +55,7 @@ const EndForm = (props) => {
                   </Col>
                 </Row>
               ))}
-              <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+              <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                 <PlusOutlined />
               </Button>
             </>
@@ -82,7 +82,7 @@ const EndForm = (props) => {
                   </Col>
                 </Row>
               ))}
-              <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+              <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                 <PlusOutlined />
               </Button>
             </>

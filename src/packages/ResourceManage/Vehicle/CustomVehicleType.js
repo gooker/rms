@@ -74,7 +74,7 @@ const CustomVehicleType = () => {
               {adapterType.vehicleTypes?.map((vehicleType, innerIndex) => (
                 <Card
                   key={innerIndex}
-                  type='inner'
+                  type="inner"
                   title={`${formatMessage({ id: 'app.vehicleType' })}: ${vehicleType.name}`}
                   extra={
                     <Space>

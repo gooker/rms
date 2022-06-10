@@ -33,7 +33,8 @@ export default function notice(message, sectionId, notificationQueue) {
     problemHandling.vehicleId != null &&
     problemHandling.id != null
   ) {
-    const { id, taskId, alertType, vehicleType, vehicleId, updateTime, alertItemList } = problemHandling;
+    const { id, taskId, alertType, vehicleType, vehicleId, updateTime, alertItemList } =
+      problemHandling;
     if (hasNewError) {
       // 浏览器级别提醒
       const vehicleTypeName = formatMessage({ id: `app.vehicleType.${vehicleType}` });

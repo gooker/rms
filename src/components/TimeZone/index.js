@@ -32,7 +32,7 @@ export default class TimeZone extends Component {
     }
   }
 
-  onChange = value => {
+  onChange = (value) => {
     this.setState({ value: value.timezone }, () => {
       const { onChange } = this.props;
       const { value } = this.state;
@@ -43,7 +43,7 @@ export default class TimeZone extends Component {
   };
 
   renderOperation = () => {
-    const uniqueTimezone = _.uniqBy(timezones, record => {
+    const uniqueTimezone = _.uniqBy(timezones, (record) => {
       return record.timezone;
     });
     const result = [];
@@ -56,7 +56,7 @@ export default class TimeZone extends Component {
             <span style={{ marginLeft: 10, float: 'right' }}>{element.zonename}</span>
             <span style={{ marginLeft: 10 }}>({element.offset})</span>
           </div>
-        </Select.Option>
+        </Select.Option>,
       );
     }
     return result;
@@ -72,7 +72,7 @@ export default class TimeZone extends Component {
               showSearch
               style={{ width: 400 }}
               value={value}
-              onChange={value => {
+              onChange={(value) => {
                 this.setState({ value });
                 const { onChange } = this.props;
                 if (onChange) {
@@ -89,7 +89,7 @@ export default class TimeZone extends Component {
         </Row>
         <Row>
           <WorldTimeMap
-            onMouseOver={value => {
+            onMouseOver={(value) => {
               this.setState({ onMouseOverValue: value?.timezone });
             }}
             onMouseOut={() => {

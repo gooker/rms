@@ -3,7 +3,13 @@ import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { vehicleRemoteControl } from '@/services/monitorService';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getFormLayout,
+  getMapModalPosition,
+  isStrictNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { Category } from '../enums';
 import styles from '../monitorLayout.module.less';

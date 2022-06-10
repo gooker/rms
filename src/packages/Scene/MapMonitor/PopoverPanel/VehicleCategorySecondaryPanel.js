@@ -20,7 +20,7 @@ const VehicleCategorySecondaryPanel = () => {
     <div style={{ height: 450, width: 60, overflow: 'auto' }} className={styles.popoverPanel}>
       {VehicleCategoryTools.map(({ label, icon, value, style }) => {
         return (
-          <Tooltip key={value} placement='left' title={label}>
+          <Tooltip key={value} placement="left" title={label}>
             <div
               role={'category'}
               onClick={() => {

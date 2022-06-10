@@ -12,15 +12,15 @@ export const TaskTyps = [
   { label: '重车回存储区', value: 'HEARVY_CARRY_POD_TO_STORE' },
 ];
 
-export const getLabelByValue = value => {
-  const item = TaskTyps.filter(item => item.value === value);
+export const getLabelByValue = (value) => {
+  const item = TaskTyps.filter((item) => item.value === value);
   if (item.length < 1) {
     return null;
   }
   return item[0].label;
 };
 
-export const transformValue = value => {
+export const transformValue = (value) => {
   const result = (value / 1000).toString().match(/^\d+(?:\.\d{0,2})?/);
   if (result) {
     return Number.parseFloat(result[0]);
@@ -45,26 +45,26 @@ export const transformTime = (millisecond = 0) => {
   return `${mm}分${ss}秒`;
 };
 
-export const sortTaskType = array => {
-  const first_step = sortBy(array, item => {
+export const sortTaskType = (array) => {
+  const first_step = sortBy(array, (item) => {
     return item.target.length;
   });
   return sortBy(first_step, ['group']);
 };
 
-export const sortNumber = array => {
-  return sortBy(array, item => {
+export const sortNumber = (array) => {
+  return sortBy(array, (item) => {
     return item.target;
   });
 };
 
-export const getFirstSetItem = set => {
+export const getFirstSetItem = (set) => {
   const result = set.values().next();
   return result.value;
 };
 
-export const clearZeroValue = list => {
-  return list.filter(item => item.value > 0);
+export const clearZeroValue = (list) => {
+  return list.filter((item) => item.value > 0);
 };
 
 export const getSubTitleKey = (taskType, isBaseHour, targetCells) => {
@@ -104,7 +104,7 @@ export const convertResponseToChartVM = (isBaseHour, taskType, response) => {
     // @非按小时查询:
     //// 如果 TaskType === 'ALL' 横坐标是任务类型 (结果key: [Task_Type_Key]#2020-08-27T08:00)
     //// 如果 TaskType !== 'ALL' 横坐标是目标点 (结果key: [目标点]#2020-08-27T08:00)
-    Object.keys(detail).forEach(key => {
+    Object.keys(detail).forEach((key) => {
       const keyItems = key.split('#');
       const targetCellId = taskType === 'ALL' ? getLabelByValue(keyItems[0]) : keyItems[0];
       const startTime = keyItems[1].replace('T', ' ');
@@ -113,18 +113,18 @@ export const convertResponseToChartVM = (isBaseHour, taskType, response) => {
   } else {
     if (taskType === 'ALL') {
       // 所有任务类型查询，横坐标是任务类型
-      Object.keys(detail).forEach(taskType => {
+      Object.keys(detail).forEach((taskType) => {
         newDetail.push({ ...detail[taskType], targetCellId: getLabelByValue(taskType) });
       });
     } else {
       // 否则横坐标是目标点
-      Object.keys(detail).forEach(stopCellId => {
+      Object.keys(detail).forEach((stopCellId) => {
         newDetail.push({ ...detail[stopCellId], targetCellId: stopCellId + '' });
       });
     }
   }
   const sortFunction = taskType !== 'ALL' ? sortNumber : sortTaskType;
-  newDetail.forEach(item => {
+  newDetail.forEach((item) => {
     const xName = item.targetCellId;
     // 平均码数
     averageYards.data.push({ target: xName, value: item.averageYards, group: item.group });
@@ -289,18 +289,18 @@ export const convertComparisionToChartVM = (isBaseHour, taskType, selectedRows) 
     const newDetail = [];
     if (taskType === 'ALL') {
       // 所有任务类型查询，横坐标是任务类型
-      Object.keys(detail).forEach(taskType => {
+      Object.keys(detail).forEach((taskType) => {
         const item = detail[taskType];
         newDetail.push({ ...item, targetCellId: getLabelByValue(taskType), seedName: name });
       });
     } else {
       // 否则横坐标是目标点
-      Object.keys(detail).forEach(stopCellId => {
+      Object.keys(detail).forEach((stopCellId) => {
         const item = detail[stopCellId];
         newDetail.push({ ...item, targetCellId: stopCellId + '', seedName: name });
       });
     }
-    newDetail.forEach(item => {
+    newDetail.forEach((item) => {
       const xName = item.targetCellId;
       // 平均码数
       averageYards.data.push({ target: xName, value: item.averageYards, group: item.seedName });

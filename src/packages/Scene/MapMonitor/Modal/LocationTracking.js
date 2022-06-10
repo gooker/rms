@@ -41,7 +41,12 @@ const LocationTracking = (props) => {
                       <Row>
                         <Col span={12}>{record.vehicleId}</Col>
                         <Col span={12} style={{ textAlign: 'end' }}>
-                          <FormattedMessage id={Dictionary('vehicleStatus', record?.vehicleWorkStatusDTO?.vehicleStatus)} />
+                          <FormattedMessage
+                            id={Dictionary(
+                              'vehicleStatus',
+                              record?.vehicleWorkStatusDTO?.vehicleStatus,
+                            )}
+                          />
                         </Col>
                       </Row>
                     </Select.Option>
@@ -71,7 +76,7 @@ const LocationTracking = (props) => {
                   dispatch({
                     type: 'monitorView/saveTrackingView',
                     payload: {
-                      trackingCarSure:isTracking,
+                      trackingCarSure: isTracking,
                     },
                   });
                 }}

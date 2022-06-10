@@ -135,7 +135,7 @@ const ModelSelection = (props) => {
         <Col style={{ marginLeft: 10, display: 'flex', alignItems: 'center' }}>
           <Checkbox checked={isSpecify} onChange={(ev) => setSpecify(ev.target.checked)} />
           <span style={{ marginLeft: 5 }}>
-            <FormattedMessage id='customTask.form.specify' />
+            <FormattedMessage id="customTask.form.specify" />
           </span>
         </Col>
       ) : null}

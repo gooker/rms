@@ -138,18 +138,18 @@ class QuestionCenter extends Component {
     if (currentItemData) {
       const itemColumns = [
         {
-          title: <FormattedMessage id='app.alarmCenter.code' />,
+          title: <FormattedMessage id="app.alarmCenter.code" />,
           dataIndex: 'alertCode',
           align: 'center',
         },
         { title: <FormattedMessage id="app.map.cell" />, dataIndex: 'cellId', align: 'center' },
         {
-          title: <FormattedMessage id='app.alarmCenter.count' />,
+          title: <FormattedMessage id="app.alarmCenter.count" />,
           dataIndex: 'alertCount',
           align: 'center',
         },
         {
-          title: <FormattedMessage id='app.alarmCenter.level' />,
+          title: <FormattedMessage id="app.alarmCenter.level" />,
           dataIndex: 'alertItemLevel',
           align: 'center',
           render: (text) => {
@@ -164,12 +164,12 @@ class QuestionCenter extends Component {
           align: 'center',
         },
         {
-          title: <FormattedMessage id='app.alarmCenter.alertName' />,
+          title: <FormattedMessage id="app.alarmCenter.alertName" />,
           dataIndex: 'alertNameI18NKey',
           align: 'center',
         },
         {
-          title: <FormattedMessage id='app.alarmCenter.alertContent' />,
+          title: <FormattedMessage id="app.alarmCenter.alertContent" />,
           dataIndex: 'alertContentI18NKey',
           align: 'center',
         },

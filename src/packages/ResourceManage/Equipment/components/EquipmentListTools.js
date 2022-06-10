@@ -97,18 +97,18 @@ const EquipmentListTools = (props) => {
               dispatch({ type: 'equipList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
         <Col>
           <Button
-            type='dashed'
+            type="dashed"
             onClick={() => {
               dispatch({ type: 'equipList/fetchInitialData' });
               dispatch({ type: 'equipList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id='app.vehicle.found' />
+            <ScanOutlined /> <FormattedMessage id="app.vehicle.found" />
             {unregisterDevices.length > 0 && (
               <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
                 [{unregisterDevices.length}]

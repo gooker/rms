@@ -18,7 +18,7 @@ const ToteTaskPool = () => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id='vehicle.id' />,
+        title: <FormattedMessage id="vehicle.id" />,
         dataIndex: 'vehicleId',
         align: 'center',
         width: 100,
@@ -62,7 +62,7 @@ const ToteTaskPool = () => {
         },
       },
       {
-        title: <FormattedMessage id="app.taskQueue.priority" />,
+        title: <FormattedMessage id="app.common.priority" />,
         dataIndex: 'priority',
         width: 80,
       },

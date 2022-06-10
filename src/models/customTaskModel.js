@@ -58,7 +58,7 @@ export default {
   },
 
   effects: {
-    * initPage(_, { call, put }) {
+    *initPage(_, { call, put }) {
       const mapData = yield call(fetchActiveMap);
       if (dealResponse(mapData)) {
         return;

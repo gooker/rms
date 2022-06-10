@@ -18,7 +18,7 @@ class PassWordComponent extends Component {
   }
 }
 
-export default function PassWord({value, options = {}, onChange }) {
+export default function PassWord({ value, options = {}, onChange }) {
   return (
     <PassWordComponent
       onChange={(val) => {

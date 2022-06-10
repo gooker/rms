@@ -1,7 +1,16 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
-import { MonitorSelectableSpriteType, SelectionType, SorterVehicleSize, zIndex } from '@/config/consts';
+import {
+  getTextureFromResources,
+  switchVehicleBatteryState,
+  switchVehicleState,
+} from '@/utils/mapUtil';
+import {
+  MonitorSelectableSpriteType,
+  SelectionType,
+  SorterVehicleSize,
+  zIndex,
+} from '@/config/consts';
 import { VehicleType } from '@/config/config';
 import { isNull } from '@/utils/util';
 import { SmoothGraphics } from '@pixi/graphics-smooth';

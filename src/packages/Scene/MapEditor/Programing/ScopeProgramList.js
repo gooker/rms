@@ -30,7 +30,7 @@ const ScopeProgramList = (props) => {
                   onEdit(item);
                 }}
               />
-              <Divider type='vertical' />
+              <Divider type="vertical" />
               <Popconfirm
                 title={formatMessage({ id: 'app.message.doubleConfirm' })}
                 onConfirm={() => {

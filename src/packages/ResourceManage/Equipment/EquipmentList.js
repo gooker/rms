@@ -48,7 +48,7 @@ const EquipmentList = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.port' />,
+      title: <FormattedMessage id="vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },

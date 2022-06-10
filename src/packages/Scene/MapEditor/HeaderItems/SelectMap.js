@@ -92,7 +92,7 @@ const SelectMap = (props) => {
         return (
           <Menu.Item key={record.id}>
             <div style={{ display: 'flex', flexFlow: 'row nowrap' }}>
-              <div style={{ width: '15px' }}>{activeFlag && <Badge status='success' />}</div>
+              <div style={{ width: '15px' }}>{activeFlag && <Badge status="success" />}</div>
               <div>{record.name}</div>
               <div style={{ flex: 1, textAlign: 'end' }}>
                 <EditOutlined
@@ -191,7 +191,7 @@ const SelectMap = (props) => {
           id: editing ? 'app.button.edit' : 'app.button.add',
         })}${formatMessage({ id: 'app.map' })}`}
         footer={[
-          <Button key='cancel' onClick={closeModal}>
+          <Button key="cancel" onClick={closeModal}>
             <FormattedMessage id={'app.button.cancel'} />
           </Button>,
 

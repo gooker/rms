@@ -71,7 +71,7 @@ const ClearPodsAndBatchAdd = (props) => {
   };
 
   return (
-    <div style={{marginTop:20}}>
+    <div style={{ marginTop: 20 }}>
       <Form form={form} {...layout}>
         <Form.Item
           name={'size'}

@@ -20,7 +20,12 @@ const MetaDataComponent = (props) => {
   useEffect(() => {
     fetchAllVehicleList().then((response) => {
       if (
-        !dealResponse(response, false, null, formatMessage({ id: 'app.message.fetchVehicleListFail' }))
+        !dealResponse(
+          response,
+          false,
+          null,
+          formatMessage({ id: 'app.message.fetchVehicleListFail' }),
+        )
       ) {
         setVehicleList(response);
       }
@@ -80,7 +85,7 @@ const MetaDataComponent = (props) => {
             label={formatMessage({ id: 'vehicle.id' })}
             rules={[{ required: true }]}
           >
-            <Select allowClear showSearch mode='multiple' maxTagCount={5} maxTagTextLength={4}>
+            <Select allowClear showSearch mode="multiple" maxTagCount={5} maxTagTextLength={4}>
               {vehicleList.map(({ vehicleId }) => (
                 <Select.Option value={vehicleId} key={vehicleId}>
                   {vehicleId}

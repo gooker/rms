@@ -468,9 +468,9 @@ class UserManager extends Component {
           visible={addUserVisible}
           title={
             !isNull(updateItem) ? (
-              <FormattedMessage id='sso.user.updateUserInfo' />
+              <FormattedMessage id="sso.user.updateUserInfo" />
             ) : (
-              <FormattedMessage id='sso.user.newUser' />
+              <FormattedMessage id="sso.user.newUser" />
             )
           }
           onCancel={() => {

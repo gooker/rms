@@ -61,7 +61,7 @@ export function getHistoryTaskBarConfig() {
     },
     tooltip: {
       trigger: 'axis',
-      formatter: params => {
+      formatter: (params) => {
         const { data } = params[0];
         let nextHour = data.name.split(':')[0];
         nextHour = parseInt(nextHour, 10) + 1 + '';

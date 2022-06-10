@@ -114,7 +114,7 @@ const TargetSelector = (props) => {
       <Space>
         {['CELL', 'ROTATION'].includes(currentValue.type) ? (
           <Select
-            mode='tags'
+            mode="tags"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 300 }}
@@ -122,7 +122,7 @@ const TargetSelector = (props) => {
           />
         ) : (
           <Select
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 300 }}

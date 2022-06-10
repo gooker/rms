@@ -52,7 +52,7 @@ const ProgramingRelationModal = (props) => {
   }
 
   const add = useCallback(
-    function(value) {
+    function (value) {
       const newConfiguration = [...getConfiguration(current)];
       setConfiguration(current, [...newConfiguration, value]);
     },
@@ -77,7 +77,7 @@ const ProgramingRelationModal = (props) => {
       style={{ maxWidth: 1000, top: '5%' }}
     >
       <Radio.Group
-        buttonStyle='solid'
+        buttonStyle="solid"
         value={current}
         onChange={(evt) => {
           switchViewModel(evt.target.value);

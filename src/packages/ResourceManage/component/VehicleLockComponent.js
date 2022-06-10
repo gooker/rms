@@ -91,7 +91,7 @@ const VehicleLock = (props) => {
   function getColumn(checkDetail) {
     return [
       {
-        title: <FormattedMessage id='vehicle.id' />,
+        title: <FormattedMessage id="vehicle.id" />,
         dataIndex: 'vehicleId',
         align: 'center',
         fixed: 'left',

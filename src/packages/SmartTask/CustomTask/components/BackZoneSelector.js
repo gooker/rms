@@ -23,7 +23,7 @@ const BackZoneSelector = (props) => {
     if (currentValue.type === 'CELL') {
       return (
         <Select
-          mode='tags'
+          mode="tags"
           value={currentValue?.code || []}
           onChange={onCodeChange}
           style={{ marginLeft: 10, width: 400 }}
@@ -33,7 +33,7 @@ const BackZoneSelector = (props) => {
     } else {
       return (
         <Select
-          mode='multiple'
+          mode="multiple"
           value={currentValue?.code || []}
           onChange={onCodeChange}
           style={{ marginLeft: 10, width: 400 }}

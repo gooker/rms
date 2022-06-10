@@ -20,7 +20,7 @@ class FormRenderComponent extends PureComponent {
   };
 
   render() {
-    const { propsSchema ,form} = this.props;
+    const { propsSchema, form } = this.props;
     // const new1={
     //   properties:{
     //       defaultValue: {

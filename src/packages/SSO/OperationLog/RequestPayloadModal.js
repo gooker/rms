@@ -17,7 +17,7 @@ const RequestPayloadModal = (props) => {
       bodyStyle={{ height: '500px', overflow: 'auto' }}
       footer={[
         <Button key="back" onClick={onCancel}>
-          <FormattedMessage id='app.button.turnOff' />
+          <FormattedMessage id="app.button.turnOff" />
         </Button>,
       ]}
     >

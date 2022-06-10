@@ -29,7 +29,7 @@ class ExecutingQueue extends Component {
 
   columns = [
     {
-      title: <FormattedMessage id='app.task.id' />,
+      title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
       align: 'center',
       render: (text) => {
@@ -48,7 +48,7 @@ class ExecutingQueue extends Component {
       },
     },
     {
-      title: <FormattedMessage id='app.task.type' />,
+      title: <FormattedMessage id="app.task.type" />,
       dataIndex: 'vehicleTaskType',
       align: 'center',
       render: (text) => {
@@ -57,27 +57,27 @@ class ExecutingQueue extends Component {
       },
     },
     {
-      title: <FormattedMessage id='app.executionQ.isReleased' />,
+      title: <FormattedMessage id="app.executionQ.isReleased" />,
       dataIndex: 'isReleased',
       align: 'center',
       render: (text) => {
         if (text) {
           return (
             <span style={{ color: green }}>
-              <FormattedMessage id='app.executionQ.released' />
+              <FormattedMessage id="app.executionQ.released" />
             </span>
           );
         } else {
           return (
             <span style={{ color: red }}>
-              <FormattedMessage id='app.executionQ.unreleased' />
+              <FormattedMessage id="app.executionQ.unreleased" />
             </span>
           );
         }
       },
     },
     {
-      title: <FormattedMessage id='app.vehicle' />,
+      title: <FormattedMessage id="app.vehicle" />,
       dataIndex: 'appointedVehicleId',
       align: 'center',
       render: (text) => {
@@ -85,17 +85,17 @@ class ExecutingQueue extends Component {
       },
     },
     {
-      title: <FormattedMessage id='app.executionQ.target' />,
+      title: <FormattedMessage id="app.executionQ.target" />,
       dataIndex: 'appointedTargetCellId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.executionQ.chargerHardwareId' />,
+      title: <FormattedMessage id="app.executionQ.chargerHardwareId" />,
       dataIndex: 'chargerHardwareId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.executionQ.chargerDirection' />,
+      title: <FormattedMessage id="app.executionQ.chargerDirection" />,
       dataIndex: 'chargerDirection',
       align: 'center',
       render: (text) => {
@@ -107,17 +107,17 @@ class ExecutingQueue extends Component {
       },
     },
     {
-      title: <FormattedMessage id='app.executionQ.chargerSpotId' />,
+      title: <FormattedMessage id="app.executionQ.chargerSpotId" />,
       dataIndex: 'chargerCellId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.executionQ.createTime' />,
+      title: <FormattedMessage id="app.executionQ.createTime" />,
       dataIndex: 'createTimeMilliseconds',
       align: 'center',
       render: (text) => {
         if (!text) {
-          return <FormattedMessage id='app.executionQ.notAvailable' />;
+          return <FormattedMessage id="app.executionQ.notAvailable" />;
         }
         return (
           <span style={{ width: '100%' }}>
@@ -127,12 +127,12 @@ class ExecutingQueue extends Component {
       },
     },
     {
-      title: <FormattedMessage id='app.executionQ.lastExecutedTimestamp' />,
+      title: <FormattedMessage id="app.executionQ.lastExecutedTimestamp" />,
       dataIndex: 'lastExecutedTimestamp',
       align: 'center',
       render: (text) => {
         if (!text) {
-          return <FormattedMessage id='app.executionQ.notAvailable' />;
+          return <FormattedMessage id="app.executionQ.notAvailable" />;
         }
         return (
           <span style={{ width: '100%' }}>
@@ -221,7 +221,7 @@ class ExecutingQueue extends Component {
             onClick={this.deleteQueueTasks}
             disabled={selectedRowKeys.length === 0}
           >
-            <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
           </Button>
         </div>
         <TableWithPages

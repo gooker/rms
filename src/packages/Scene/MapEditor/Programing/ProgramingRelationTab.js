@@ -93,7 +93,7 @@ const ProgramingRelationTab = (props) => {
         </Col>
       </Row>
       <Button
-        type='primary'
+        type="primary"
         onClick={startConfiguration}
         disabled={configRoutes.length === 0}
         style={{ marginTop: 10 }}

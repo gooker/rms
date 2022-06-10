@@ -4,8 +4,18 @@ import echarts from 'echarts';
 import moment from 'moment';
 import XLSX from 'xlsx';
 import { forIn, sortBy } from 'lodash';
-import { getAllCellId, getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
-import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import {
+  getAllCellId,
+  getDatBysortTime,
+  noDataGragraphic,
+} from '../components/GroundQrcodeEcharts';
+import {
+  convertToUserTimezone,
+  dealResponse,
+  formatMessage,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import { fetchVehicleload } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
@@ -420,12 +430,12 @@ const HealthCar = (props) => {
   };
   const columns = [
     {
-      title: <FormattedMessage id='vehicle.id' />,
+      title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       sorter: (a, b) => a.vehicleId - b.vehicleId,
     },
     {
-      title: <FormattedMessage id='app.vehicleType' />,
+      title: <FormattedMessage id="app.vehicleType" />,
       dataIndex: 'vehicleType',
     },
     {

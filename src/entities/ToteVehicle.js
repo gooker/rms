@@ -2,7 +2,11 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { isNull, isStrictNull } from '@/utils/util';
-import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
+import {
+  getTextureFromResources,
+  switchVehicleBatteryState,
+  switchVehicleState,
+} from '@/utils/mapUtil';
 import { GlobalAlpha, MonitorSelectableSpriteType, ToteVehicleSize, zIndex } from '@/config/consts';
 import { VehicleType } from '@/config/config';
 

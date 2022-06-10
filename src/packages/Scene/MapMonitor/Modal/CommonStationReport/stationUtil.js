@@ -1,4 +1,7 @@
-import { fetchCommonPointInstrument, fetchCommonPointPre30Waiting } from '@/services/monitorService';
+import {
+  fetchCommonPointInstrument,
+  fetchCommonPointPre30Waiting,
+} from '@/services/monitorService';
 import {
   transitionVehicles,
   transformCommonTrafficData,

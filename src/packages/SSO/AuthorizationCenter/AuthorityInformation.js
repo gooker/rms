@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Descriptions, Badge, Tag, Button, Modal } from 'antd';
+import { Badge, Button, Descriptions, Modal, Tag } from 'antd';
 import { saveAs } from 'file-saver';
 import UploadCert from './UploadCert';
 import { formatMessage } from '@/utils/util';
@@ -89,7 +89,9 @@ const AuthorityInformation = (props) => {
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.version' })}>
           {data.version}
         </Descriptions.Item>
-        <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.virtualVehicleLimit' })}>
+        <Descriptions.Item
+          label={formatMessage({ id: 'app.authCenter.field.virtualVehicleLimit' })}
+        >
           {data.virtualVehicleLimit}
         </Descriptions.Item>
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.realVehicleLimit' })}>

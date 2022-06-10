@@ -124,7 +124,7 @@ const ProgramingCellTab = (props) => {
         </Col>
       </Row>
       <Button
-        type='primary'
+        type="primary"
         onClick={startConfiguration}
         disabled={configCells.length === 0}
         style={{ marginTop: 10 }}

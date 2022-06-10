@@ -83,8 +83,7 @@ export default class index extends Component {
       .then((allValues) => {
         this.onAddEnvironment(allValues);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   };
 
   render() {
@@ -93,21 +92,21 @@ export default class index extends Component {
       <div className={commonStyles.commonPageStyle}>
         <div className={commonStyles.tableToolLeft}>
           <Button
-            type='primary'
+            type="primary"
             onClick={() => {
               this.setState({
                 addEnvironVisible: true,
               });
             }}
           >
-            <PlusOutlined /> <FormattedMessage id='app.button.add' />
+            <PlusOutlined /> <FormattedMessage id="app.button.add" />
           </Button>
           <Button
             onClick={() => {
               this.setState({ pasteVisible: true });
             }}
           >
-            <BgColorsOutlined /> <FormattedMessage id='app.button.past' />
+            <BgColorsOutlined /> <FormattedMessage id="app.button.past" />
           </Button>
         </div>
 
@@ -124,7 +123,7 @@ export default class index extends Component {
                     title={envName}
                     actions={[
                       <EditOutlined
-                        key='edit'
+                        key="edit"
                         onClick={() => {
                           this.setState({
                             addEnvironVisible: true,
@@ -133,11 +132,11 @@ export default class index extends Component {
                         }}
                       />,
                       <DeleteOutlined
-                        key='setting'
+                        key="setting"
                         onClick={() => this.deleteEnvironment(record)}
                       />,
                       <CopyOutlined
-                        key='copy'
+                        key="copy"
                         onClick={() => {
                           this.copyJson(record);
                         }}
@@ -164,9 +163,9 @@ export default class index extends Component {
           visible={addEnvironVisible}
           title={
             editingRow ? (
-              <FormattedMessage id='environmentManager.update' />
+              <FormattedMessage id="environmentManager.update" />
             ) : (
-              <FormattedMessage id='environmentManager.add' />
+              <FormattedMessage id="environmentManager.add" />
             )
           }
           onOk={this.submit}

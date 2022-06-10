@@ -251,7 +251,7 @@ class TaskInformation extends PureComponent {
               this.cancelTask(detailInfo.sectionId, detailInfo.taskId);
             }}
           >
-            <FormattedMessage id='app.button.cancel' />
+            <FormattedMessage id="app.button.cancel" />
           </Button>
         )}
       </div>
@@ -266,13 +266,13 @@ class TaskInformation extends PureComponent {
               <Row>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.task.id' />}
+                    title={<FormattedMessage id="app.task.id" />}
                     content={detailInfo.taskId}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.common.creationTime' />}
+                    title={<FormattedMessage id="app.common.creationTime" />}
                     content={convertToUserTimezone(detailInfo.createTime).format(
                       'YYYY-MM-DD HH:mm:ss',
                     )}
@@ -280,13 +280,13 @@ class TaskInformation extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.taskDetail.createUser' />}
+                    title={<FormattedMessage id="app.taskDetail.createUser" />}
                     content={detailInfo.createdByUser}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.common.updateTime' />}
+                    title={<FormattedMessage id="app.common.updateTime" />}
                     content={convertToUserTimezone(detailInfo.updateTime).format(
                       'YYYY-MM-DD HH:mm:ss',
                     )}
@@ -294,19 +294,19 @@ class TaskInformation extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.common.updater' />}
+                    title={<FormattedMessage id="app.common.updater" />}
                     content={detailInfo.updatedByUser}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.form.sectionId' />}
+                    title={<FormattedMessage id="app.form.sectionId" />}
                     content={detailInfo.sectionId}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.task.type' />}
+                    title={<FormattedMessage id="app.task.type" />}
                     content={
                       allTaskTypes?.[detailInfo.vehicleTaskType] || detailInfo.vehicleTaskType
                     }
@@ -320,31 +320,31 @@ class TaskInformation extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.common.targetCell' />}
+                    title={<FormattedMessage id="app.common.targetCell" />}
                     content={detailInfo.targetCellId}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='vehicle.id' />}
+                    title={<FormattedMessage id="vehicle.id" />}
                     content={detailInfo.currentVehicleId}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.vehicleType' />}
+                    title={<FormattedMessage id="app.vehicleType" />}
                     content={detailInfo.vehicleType}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='object.load' />}
+                    title={<FormattedMessage id="object.load" />}
                     content={detailInfo.loads?.join()}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id='object.load.direction' />}
+                    title={<FormattedMessage id="object.load.direction" />}
                     content={detailInfo.loadAngle}
                   />
                 </Col>
@@ -364,17 +364,17 @@ class TaskInformation extends PureComponent {
             {/** ******************************* 料箱确认抱夹信息 *********************************** */}
             {detailInfo.toteHoldingCode && (
               <div>
-                <Divider orientation='left'>
+                <Divider orientation="left">
                   {formatMessage({ id: 'app.taskDetail.confirmHugTote' })}
                 </Divider>
                 <div style={{ display: 'flex', width: '30%' }}>
                   <Input defaultValue={detailInfo.toteHoldingCode} ref={this.toteHoldingInput} />
                   <Button
-                    type='primary'
+                    type="primary"
                     style={{ marginLeft: 10 }}
                     onClick={this.confirmToteHolding}
                   >
-                    <FormattedMessage id='app.button.confirm' />
+                    <FormattedMessage id="app.button.confirm" />
                   </Button>
                 </div>
               </div>
@@ -404,13 +404,13 @@ class TaskInformation extends PureComponent {
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.taskDetail.targetStopSpotId' />}
+                      title={<FormattedMessage id="app.taskDetail.targetStopSpotId" />}
                       content={detailInfo.targetCellId}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.pod.direction' />}
+                      title={<FormattedMessage id="app.pod.direction" />}
                       content={formatMessage({
                         id: Dictionary('podDirection', [detailInfo.podAngle]),
                         defaultValue: detailInfo.podAngle,
@@ -457,13 +457,13 @@ class TaskInformation extends PureComponent {
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.taskDetail.workStationStopSpotId' />}
+                      title={<FormattedMessage id="app.taskDetail.workStationStopSpotId" />}
                       content={detailInfo.workStationStopCellId}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.pod.direction' />}
+                      title={<FormattedMessage id="app.pod.direction" />}
                       content={formatMessage({
                         id: Dictionary('podDirection', [detailInfo.podAngle]),
                         defaultValue: detailInfo.podAngle,
@@ -499,14 +499,14 @@ class TaskInformation extends PureComponent {
 
                 <Col>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.taskDetail.chargerId' />}
+                    title={<FormattedMessage id="app.taskDetail.chargerId" />}
                     content={detailInfo.chargerId}
                   />
                 </Col>
                 <Row>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.taskDetail.startTime' />}
+                      title={<FormattedMessage id="app.taskDetail.startTime" />}
                       content={convertToUserTimezone(chargeRecord.startChargingTime).format(
                         'YYYY-MM-DD HH:mm:ss',
                       )}
@@ -514,7 +514,7 @@ class TaskInformation extends PureComponent {
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.taskDetail.endTime' />}
+                      title={<FormattedMessage id="app.taskDetail.endTime" />}
                       content={convertToUserTimezone(chargeRecord.stopChargingTime).format(
                         'YYYY-MM-DD HH:mm:ss',
                       )}
@@ -524,13 +524,13 @@ class TaskInformation extends PureComponent {
                 <Row>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.taskDetail.startingPower' />}
+                      title={<FormattedMessage id="app.taskDetail.startingPower" />}
                       content={`${chargeRecord.startChargingBattery}%`}
                     />
                   </Col>
                   <Col {...colProps}>
                     <DescriptionItem
-                      title={<FormattedMessage id='app.taskDetail.endPower' />}
+                      title={<FormattedMessage id="app.taskDetail.endPower" />}
                       content={`${chargeRecord.finishChargingBattery}%`}
                     />
                   </Col>
@@ -543,13 +543,13 @@ class TaskInformation extends PureComponent {
               <Row>
                 <Col>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.taskDetail.forkSourceStorageCode' />}
+                    title={<FormattedMessage id="app.taskDetail.forkSourceStorageCode" />}
                     content={detailInfo.forkPodParam.sourceStorageCode}
                   />
                 </Col>
                 <Col>
                   <DescriptionItem
-                    title={<FormattedMessage id='app.taskDetail.forkTargetStorageCode' />}
+                    title={<FormattedMessage id="app.taskDetail.forkTargetStorageCode" />}
                     content={detailInfo.forkPodParam.targetStorageCode}
                   />
                 </Col>

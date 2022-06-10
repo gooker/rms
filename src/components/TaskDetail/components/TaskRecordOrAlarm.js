@@ -40,12 +40,12 @@ class TaskRecordOrAlarm extends Component {
 
   alarmColumns = [
     {
-      title: <FormattedMessage id='app.taskAlarm.code' />,
+      title: <FormattedMessage id="app.taskAlarm.code" />,
       dataIndex: 'alertCode',
       fixed: 'left',
     },
     {
-      title: <FormattedMessage id='app.taskAlarm.level' />,
+      title: <FormattedMessage id="app.taskAlarm.level" />,
       dataIndex: 'alertItemLevel',
       render: (text) => {
         if (!isNull(text)) {
@@ -153,12 +153,12 @@ class TaskRecordOrAlarm extends Component {
                 <>
                   {!isNull(record.detail)
                     ? record.detail.map(({ key, value }) => {
-                      return (
-                        <>
-                          <span style={{ margin: '10px 12px' }}>{`${key} : ${value}`}</span>
-                        </>
-                      );
-                    })
+                        return (
+                          <>
+                            <span style={{ margin: '10px 12px' }}>{`${key} : ${value}`}</span>
+                          </>
+                        );
+                      })
                     : '-'}
                 </>
               );

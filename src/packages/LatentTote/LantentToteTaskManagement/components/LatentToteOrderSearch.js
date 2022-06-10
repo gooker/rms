@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Form, Select, Button, DatePicker, Input, Row, Col } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
 import Dictionary from '@/utils/Dictionary';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -42,7 +42,10 @@ const LatentToteOrderSearch = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'mainStationCode'} label={formatMessage({ id: 'latentTote.mainStationCode' })}>
+          <Form.Item
+            name={'mainStationCode'}
+            label={formatMessage({ id: 'latentTote.mainStationCode' })}
+          >
             <Input allowClear />
           </Form.Item>
         </Col>

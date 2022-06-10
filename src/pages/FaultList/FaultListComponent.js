@@ -138,7 +138,11 @@ const FaultListComponent = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <FaultListSearchForm vehicleType={vehicleType} search={fetchFaultList} faults={definedFaults} />
+        <FaultListSearchForm
+          vehicleType={vehicleType}
+          search={fetchFaultList}
+          faults={definedFaults}
+        />
       </div>
       <Table
         bordered

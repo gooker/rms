@@ -1,5 +1,5 @@
 import echarts from 'echarts';
-import { convertToUserTimezone,formatMessage } from '@/utils/util';
+import { convertToUserTimezone, formatMessage } from '@/utils/util';
 
 export const LineChartsAxisColor = 'rgb(189, 189, 189)';
 export const DataColor = '#0389ff';
@@ -176,7 +176,7 @@ export const covertData2ChartsData = (taskCountMap) => {
   });
 
   // 横坐标
-  const xAxisData = Object.keys(result).sort((a,b)=>a-b);
+  const xAxisData = Object.keys(result).sort((a, b) => a - b);
   const xAxis = {
     type: 'category',
     axisLine: {

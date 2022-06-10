@@ -16,8 +16,12 @@ const TaskSearch = (props) => {
     form.validateFields().then((values) => {
       const params = {};
       if (values.createDate && values.createDate[0] && values.createDate[1]) {
-        params.createTimeStart = convertToUserTimezone(values.createDate[0], 1).format('YYYY-MM-DD HH:mm:ss');
-        params.createTimeEnd = convertToUserTimezone(values.createDate[1], 1).format('YYYY-MM-DD HH:mm:ss');
+        params.createTimeStart = convertToUserTimezone(values.createDate[0], 1).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
+        params.createTimeEnd = convertToUserTimezone(values.createDate[1], 1).format(
+          'YYYY-MM-DD HH:mm:ss',
+        );
         params.createDate = null;
         delete params.createDate;
       }

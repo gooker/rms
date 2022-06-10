@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Divider, Form, Radio, InputNumber, Select, Button } from 'antd';
+import { Button, Divider, Form, InputNumber, Radio, Select } from 'antd';
 import { isPlainObject } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -39,19 +39,19 @@ const BatchAddCells = (props) => {
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
           name={'addWay'}
-          label={<FormattedMessage id='editor.batchAddCell.addWay' />}
+          label={<FormattedMessage id="editor.batchAddCell.addWay" />}
           initialValue={'absolute'}
           getValueFromEvent={(evt) => {
             setAddWay(evt.target.value);
             return evt.target.value;
           }}
         >
-          <Radio.Group buttonStyle='solid'>
+          <Radio.Group buttonStyle="solid">
             <Radio.Button value={'absolute'}>
-              <FormattedMessage id='editor.batchAddCell.addWay.absolute' />
+              <FormattedMessage id="editor.batchAddCell.addWay.absolute" />
             </Radio.Button>
             <Radio.Button value={'offset'}>
-              <FormattedMessage id='editor.batchAddCell.addWay.offset' />
+              <FormattedMessage id="editor.batchAddCell.addWay.offset" />
             </Radio.Button>
           </Radio.Group>
         </Form.Item>
@@ -96,7 +96,7 @@ const BatchAddCellWithAbsolut = (props) => {
     <Form labelWrap form={formRef} {...formItemLayout}>
       {/* 起始点 */}
       <Form.Item
-        name='autoGenCellIdStart'
+        name="autoGenCellIdStart"
         initialValue={1}
         label={formatMessage({ id: 'editor.batchAddCell.firstCode' })}
         rules={[{ required: true }]}
@@ -166,8 +166,8 @@ const BatchAddCellWithAbsolut = (props) => {
 
       {/* 生成 */}
       <Form.Item {...formItemLayoutNoLabel}>
-        <Button type='primary' onClick={submit}>
-          <FormattedMessage id='app.button.generate' />
+        <Button type="primary" onClick={submit}>
+          <FormattedMessage id="app.button.generate" />
         </Button>
       </Form.Item>
     </Form>
@@ -232,8 +232,8 @@ const BatchAddCellWithOffset = connect(({ editor }) => ({ selections: editor.sel
 
         {/* 生成 */}
         <Form.Item {...formItemLayoutNoLabel}>
-          <Button type='primary' onClick={submit} disabled={selectCells.length === 0}>
-            <FormattedMessage id='app.button.generate' />
+          <Button type="primary" onClick={submit} disabled={selectCells.length === 0}>
+            <FormattedMessage id="app.button.generate" />
           </Button>
         </Form.Item>
       </Form>

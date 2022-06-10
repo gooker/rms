@@ -89,13 +89,13 @@ const TaskResourceLock = (props) => {
     <div className={styles.taskResourceLock}>
       <div className={styles.taskResourceLockTitle}>
         <span style={{ flex: 2 }}>
-          <FormattedMessage id='customTask.lock.resourceType' />
+          <FormattedMessage id="customTask.lock.resourceType" />
         </span>
         <span style={{ flex: 3 }}>
-          <FormattedMessage id='customTask.lock.LOCK' />
+          <FormattedMessage id="customTask.lock.LOCK" />
         </span>
         <span style={{ flex: 3 }}>
-          <FormattedMessage id='customTask.lock.UNLOCK' />
+          <FormattedMessage id="customTask.lock.UNLOCK" />
         </span>
       </div>
       <div>{renderBody()}</div>

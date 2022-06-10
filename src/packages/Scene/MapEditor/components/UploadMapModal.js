@@ -96,22 +96,22 @@ const UploadMapModal = (props) => {
     >
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
-          name='file'
+          name="file"
           label={formatMessage({ id: 'app.common.file' })}
-          valuePropName='fileList'
+          valuePropName="fileList"
           getValueFromEvent={normFile}
           rules={[{ required: true }]}
         >
           <Upload.Dragger
-            name='files'
+            name="files"
             maxCount={1}
             beforeUpload={() => false}
             onRemove={() => true}
           >
-            <p className='ant-upload-drag-icon'>
+            <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className='ant-upload-text'>
+            <p className="ant-upload-text">
               <FormattedMessage id={'app.message.upload.tip'} />
             </p>
           </Upload.Dragger>
@@ -173,9 +173,9 @@ const UploadMapModal = (props) => {
           <InputNumber addonAfter={'°'} />
         </Form.Item>
         <Form.Item
-          name='addMap'
+          name="addMap"
           initialValue={true}
-          valuePropName='checked'
+          valuePropName="checked"
           {...formItemLayoutNoLabel}
         >
           <Checkbox>保存为新地图</Checkbox>

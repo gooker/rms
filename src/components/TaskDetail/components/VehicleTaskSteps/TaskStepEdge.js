@@ -73,7 +73,7 @@ const TaskStepEdge = (props) => {
 
   return (
     <Popover
-      trigger='click'
+      trigger="click"
       destroyTooltipOnHide={{ keepParent: false }}
       content={renderPopoverContent()}
     >

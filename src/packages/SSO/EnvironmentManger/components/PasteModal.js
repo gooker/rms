@@ -37,8 +37,8 @@ export default class PasteModal extends Component {
       <div>
         <Input.TextArea allowClear style={{ height: 200 }} onChange={this.onChange} />
         <div style={{ marginTop: 20, textAlign: 'end' }}>
-          <Button type='primary' disabled={isStrictNull(value)} onClick={this.submit}>
-            <FormattedMessage id='app.button.confirm' />
+          <Button type="primary" disabled={isStrictNull(value)} onClick={this.submit}>
+            <FormattedMessage id="app.button.confirm" />
           </Button>
         </div>
       </div>

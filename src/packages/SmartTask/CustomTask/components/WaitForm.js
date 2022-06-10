@@ -88,7 +88,7 @@ const WaitForm = (props) => {
                     <div style={{ display: 'flex' }}>
                       <div style={{ width: 32, marginRight: 5 }}>
                         <Button
-                          type='primary'
+                          type="primary"
                           onClick={() => remove(field.name)}
                           icon={<DeleteOutlined />}
                           disabled={fields.length <= 1}
@@ -100,7 +100,7 @@ const WaitForm = (props) => {
                     </div>
                   </Form.Item>
                 ))}
-                <Button type='dashed' onClick={() => add()} style={{ width: '100%' }}>
+                <Button type="dashed" onClick={() => add()} style={{ width: '100%' }}>
                   <PlusOutlined />
                 </Button>
               </>
@@ -131,7 +131,7 @@ const WaitForm = (props) => {
               form.setFieldsValue({ [code]: { waitTaskCell: null } });
             }}
           >
-            <FormattedMessage id='customTask.form.waitTaskCell' />
+            <FormattedMessage id="customTask.form.waitTaskCell" />
           </Checkbox>
         }
       >

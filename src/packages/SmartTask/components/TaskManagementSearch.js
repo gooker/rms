@@ -52,7 +52,7 @@ const TaskManagementSearch = (props) => {
         <Input allowClear />
       </Form.Item>
       <Form.Item name={'taskStatus'} label={formatMessage({ id: 'app.task.state' })}>
-        <Select mode='multiple' allowClear>
+        <Select mode="multiple" allowClear>
           {Object.keys(TaskStatus).map((item) => (
             <Option key={item} value={item}>
               <FormattedMessage id={TaskStatus[item]} />
@@ -64,7 +64,7 @@ const TaskManagementSearch = (props) => {
         <RangePicker showTime style={{ width: '100%' }} />
       </Form.Item>
       <Form.Item name={'vehicleTaskType'} label={formatMessage({ id: 'app.task.type' })}>
-        <Select mode='multiple' allowClear>
+        <Select mode="multiple" allowClear>
           {renderVehicleTaskTypeOption()}
         </Select>
       </Form.Item>

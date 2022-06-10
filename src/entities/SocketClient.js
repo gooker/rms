@@ -38,7 +38,7 @@ class SocketClient {
   disconnect() {
     const _this = this;
     if (this.client) {
-      this.client.disconnect(function() {
+      this.client.disconnect(function () {
         _this.client = null;
       });
     }

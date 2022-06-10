@@ -45,14 +45,14 @@ const CustomMenuManager = () => {
         return (
           <>
             <Button
-              type='link'
+              type="link"
               onClick={() => {
                 setEdit(record);
               }}
             >
               <EditOutlined style={{ fontSize: 17 }} />
             </Button>
-            <Button type='link' onClick={deleteMenu}>
+            <Button type="link" onClick={deleteMenu}>
               <DeleteOutlined style={{ fontSize: 17 }} />
             </Button>
           </>

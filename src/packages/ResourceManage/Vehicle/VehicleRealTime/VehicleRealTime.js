@@ -28,7 +28,7 @@ const VehicleRealTime = (props) => {
   function renderMaintenanceState(maintain) {
     if (isStrictNull(maintain)) return null;
     return (
-      <Radio.Group defaultValue={maintain} buttonStyle='solid'>
+      <Radio.Group defaultValue={maintain} buttonStyle="solid">
         <Radio.Button value={false}>
           <FormattedMessage id={'app.common.normal'} />
         </Radio.Button>
@@ -42,7 +42,7 @@ const VehicleRealTime = (props) => {
   function renderManualMode(inManualMod) {
     if (isNull(inManualMod)) return null;
     return (
-      <Radio.Group defaultValue={inManualMod} buttonStyle='solid'>
+      <Radio.Group defaultValue={inManualMod} buttonStyle="solid">
         <Radio.Button value={false}>
           <FormattedMessage id={'vehicle.manualMode.false'} />
         </Radio.Button>

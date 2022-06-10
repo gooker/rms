@@ -30,7 +30,7 @@ const SetupLatentPod = (props) => {
         <FormattedMessage id={'app.map.latentPod'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
-      <div className={styles.monitorModalBody} style={{ paddingTop: 20}}>
+      <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Tabs defaultActiveKey="1">
           {/* 移动货架 */}
           <TabPane tab={formatMessage({ id: 'monitor.operation.movePod' })} key="1">

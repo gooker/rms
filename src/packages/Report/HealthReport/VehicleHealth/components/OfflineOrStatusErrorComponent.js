@@ -2,7 +2,11 @@ import React, { memo, useEffect, useState } from 'react';
 import { Col, Row } from 'antd';
 import echarts from 'echarts';
 import { noDataGragraphic } from '@/packages/Report/components/GroundQrcodeEcharts';
-import { generatOfflineDataByVehicle, generatOfflineDataByTime, offlineHistoryLineOption } from './VehicleOfflineEchart';
+import {
+  generatOfflineDataByTime,
+  generatOfflineDataByVehicle,
+  offlineHistoryLineOption,
+} from './VehicleOfflineEchart';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
 import { formatMessage } from '@/utils/util';

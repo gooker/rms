@@ -77,7 +77,7 @@ const ProgramingZoneTab = (props) => {
         </Col>
       </Row>
       <Button
-        type='primary'
+        type="primary"
         onClick={startConfiguration}
         disabled={configZone.length === 0}
         style={{ marginTop: 10 }}

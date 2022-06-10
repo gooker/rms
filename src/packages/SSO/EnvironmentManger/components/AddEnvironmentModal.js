@@ -39,7 +39,7 @@ class AddEnvironmentModal extends PureComponent {
       <Form ref={formRef} {...formItemLayout}>
         <Form.Item
           label={formatMessage({ id: 'environmentManager.envName' })}
-          name='envName'
+          name="envName"
           rules={[{ required: true }]}
         >
           <Input />
@@ -91,7 +91,7 @@ class AddEnvironmentModal extends PureComponent {
                   </Form.Item>
                 ))}
                 <Form.Item>
-                  <Button type='dashed' onClick={() => add()} style={{ width: '60%' }}>
+                  <Button type="dashed" onClick={() => add()} style={{ width: '60%' }}>
                     <PlusOutlined />
                   </Button>
                   <Form.ErrorList errors={errors} />

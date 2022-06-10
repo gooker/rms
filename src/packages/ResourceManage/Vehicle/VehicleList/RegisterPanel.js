@@ -22,7 +22,7 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.id' />,
+      title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
@@ -32,12 +32,12 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='vehicle.port' />,
+      title: <FormattedMessage id="vehicle.port" />,
       dataIndex: 'port',
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.configInfo.header.adapter' />,
+      title: <FormattedMessage id="app.configInfo.header.adapter" />,
       dataIndex: 'vehicleAdapter',
       align: 'center',
     },

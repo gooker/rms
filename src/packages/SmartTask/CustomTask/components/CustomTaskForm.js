@@ -290,7 +290,7 @@ const CustomTaskForm = (props) => {
     }
   }
 
-  const updateTabName = useMemoizedFn(function(code, name) {
+  const updateTabName = useMemoizedFn(function (code, name) {
     let index = findIndex(taskSteps, { code });
     if (index > -1) {
       const newTaskSteps = update(taskSteps, { [index]: { label: { $set: name } } });
@@ -336,10 +336,10 @@ const CustomTaskForm = (props) => {
         <div className={styles.dndItem} style={{ flex: 5 }}>
           <div className={styles.dndTitle}>
             <IconFont type={'icon-flow'} style={{ fontSize: 20, marginRight: 5 }} />
-            <FormattedMessage id='app.task.flow' />
+            <FormattedMessage id="app.task.flow" />
           </div>
           <Container
-            groupName='dnd'
+            groupName="dnd"
             dropPlaceholder={{
               showOnTop: true,
               animationDuration: 150,
@@ -384,7 +384,7 @@ const CustomTaskForm = (props) => {
         <div className={styles.dndItem} style={{ flex: 3 }}>
           <div className={styles.dndTitle}>
             <IconFont type={'icon-pre'} style={{ fontSize: 20, marginRight: 5 }} />
-            <FormattedMessage id='app.task.pre' />
+            <FormattedMessage id="app.task.pre" />
           </div>
           <div className={styles.preTask}>
             {preTasks.map((item, index) => (
@@ -420,10 +420,10 @@ const CustomTaskForm = (props) => {
         </div>
         <div className={styles.topTool}>
           <Button danger onClick={gotoListPage}>
-            <CloseOutlined /> <FormattedMessage id='app.button.return' />
+            <CloseOutlined /> <FormattedMessage id="app.button.return" />
           </Button>
-          <Button type='primary' onClick={submit}>
-            <SaveOutlined /> <FormattedMessage id='app.button.save' />
+          <Button type="primary" onClick={submit}>
+            <SaveOutlined /> <FormattedMessage id="app.button.save" />
           </Button>
         </div>
       </div>
@@ -434,7 +434,7 @@ const CustomTaskForm = (props) => {
           dispatch({ type: 'customTask/initPage' });
         }}
       >
-        <RedoOutlined /> <FormattedMessage id='customTasks.button.updateModel' />
+        <RedoOutlined /> <FormattedMessage id="customTasks.button.updateModel" />
       </Button>
     </div>
   );

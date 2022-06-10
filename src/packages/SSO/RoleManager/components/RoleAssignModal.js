@@ -7,7 +7,11 @@ import { formatMessage, isNull } from '@/utils/util';
 import { generateTreeData, handlePermissions } from './assignUtils';
 import { AppCode } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
-import { generateMenuNodeLocaleKey, getNewMenuDataByMergeCustomNodes, validateRouteAuthority } from '@/utils/init';
+import {
+  generateMenuNodeLocaleKey,
+  getNewMenuDataByMergeCustomNodes,
+  validateRouteAuthority,
+} from '@/utils/init';
 import allModuleRouter from '@/config/router';
 import { mockData } from '../../CustomMenuManager/components/mockData';
 
@@ -41,7 +45,7 @@ class RoleAssignModal extends Component {
 
         // 处理自定义的菜单 start
         let newAppMenu = [...appMenu];
-        newAppMenu = getNewMenuDataByMergeCustomNodes(newAppMenu, mockData, appCode);
+        newAppMenu = getNewMenuDataByMergeCustomNodes(newAppMenu, [], appCode);
         // end
 
         const menuData = generateMenuNodeLocaleKey(newAppMenu);

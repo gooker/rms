@@ -38,10 +38,10 @@ const SelectRouteMap = (props) => {
     }
     result.push(
       // 添加路线区
-      <Menu.Item key='add'>
+      <Menu.Item key="add">
         <PlusOutlined />
-        <FormattedMessage id='app.button.add' />
-        <FormattedMessage id='app.map.routeArea' />
+        <FormattedMessage id="app.button.add" />
+        <FormattedMessage id="app.map.routeArea" />
       </Menu.Item>,
     );
     return result;

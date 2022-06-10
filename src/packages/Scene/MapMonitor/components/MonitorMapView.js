@@ -213,8 +213,7 @@ class MonitorMapView extends BaseMap {
     this.refresh();
   }
 
-  getPipeShownValue = () => {
-  };
+  getPipeShownValue = () => {};
 
   // ************************ 点位相关 **********************
   renderCells = (cells) => {

@@ -41,7 +41,7 @@ class VehicleRealTime extends React.Component {
     return (
       <div className={commonStyles.commonPageStyle}>
         <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
-          <Form.Item label={<FormattedMessage id='vehicle.id' />}>
+          <Form.Item label={<FormattedMessage id="vehicle.id" />}>
             <Select
               allowClear
               showSearch

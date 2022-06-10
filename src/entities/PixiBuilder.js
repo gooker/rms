@@ -33,7 +33,7 @@ export default class PixiBuilder {
     this.viewport.drag().pinch().wheel().decelerate();
 
     const _this = this;
-    this.viewport.on('zoomed-end', function() {
+    this.viewport.on('zoomed-end', function () {
       if (this.scale.x <= 0.4) {
         _this.adaptiveCB();
       } else {

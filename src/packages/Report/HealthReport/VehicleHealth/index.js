@@ -126,7 +126,9 @@ const HealthCar = (props) => {
           currentTime.vehicleId = record.vehicleId;
           currentTime[colums.time] = key;
           if (record?.vehicleType) {
-            currentTime.vehicleType = formatMessage({ id: `app.vehicleType.${record.vehicleType}` });
+            currentTime.vehicleType = formatMessage({
+              id: `app.vehicleType.${record.vehicleType}`,
+            });
           }
 
           forIn(_record, (value, parameter) => {
@@ -151,7 +153,11 @@ const HealthCar = (props) => {
     const fault = XLSX.utils.json_to_sheet(generateEveryType(faultOriginData, keyFaultData));
 
     XLSX.utils.book_append_sheet(wb, code, formatMessage({ id: 'reportCenter.vehicle.scancode' }));
-    XLSX.utils.book_append_sheet(wb, offline, formatMessage({ id: 'reportCenter.vehicle.offline' }));
+    XLSX.utils.book_append_sheet(
+      wb,
+      offline,
+      formatMessage({ id: 'reportCenter.vehicle.offline' }),
+    );
     XLSX.utils.book_append_sheet(wb, error, formatMessage({ id: 'reportCenter.vehicle.error' }));
     XLSX.utils.book_append_sheet(wb, fault, formatMessage({ id: 'reportCenter.vehicle.fault' }));
     XLSX.writeFile(wb, `${formatMessage({ id: 'menu.healthReport.vehicle' })}.xlsx`);

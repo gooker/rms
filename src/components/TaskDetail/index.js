@@ -59,7 +59,7 @@ class TaskDetail extends PureComponent {
             {/*)}*/}
 
             {/********* 任务日志 *********/}
-            <Tabs.TabPane tab={formatMessage({ id: 'app.task.log' })} key='d'>
+            <Tabs.TabPane tab={formatMessage({ id: 'app.task.log' })} key="d">
               {taskRecord.length > 0 ? (
                 <Card bordered={false}>
                   <TaskRecordOrAlarm />

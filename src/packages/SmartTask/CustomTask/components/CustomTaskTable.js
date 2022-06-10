@@ -25,7 +25,7 @@ const CustomTaskTable = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id='app.common.code' />,
+      title: <FormattedMessage id="app.common.code" />,
       align: 'center',
       dataIndex: 'code',
     },
@@ -35,7 +35,7 @@ const CustomTaskTable = (props) => {
       dataIndex: 'name',
     },
     {
-      title: <FormattedMessage id='app.common.priority' />,
+      title: <FormattedMessage id="app.common.priority" />,
       align: 'center',
       dataIndex: 'priority',
     },
@@ -83,18 +83,18 @@ const CustomTaskTable = (props) => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id='app.common.creationTime' />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       align: 'center',
       dataIndex: 'createTime',
       render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
-      title: <FormattedMessage id='app.common.updateTime' />,
+      title: <FormattedMessage id="app.common.updateTime" />,
       align: 'center',
       dataIndex: 'updateTime',
     },
     {
-      title: <FormattedMessage id='app.common.updater' />,
+      title: <FormattedMessage id="app.common.updater" />,
       align: 'center',
       dataIndex: 'updatedByUser',
     },
@@ -141,7 +141,7 @@ const CustomTaskTable = (props) => {
   function copyTaskBody() {
     // 去掉字符串中的转义符
     let copiedString = JSON.stringify(exampleStructure);
-    copiedString = copiedString.replace(/\\"/g, '\'');
+    copiedString = copiedString.replace(/\\"/g, "'");
 
     if (navigator.clipboard === undefined) {
       message.warn(formatMessage({ id: 'app.global.browser.clipboardNotSupport' }));
@@ -161,14 +161,14 @@ const CustomTaskTable = (props) => {
   return (
     <TablePageWrapper>
       <div className={commonStyles.tableToolLeft}>
-        <Button type='primary' onClick={gotoFormPage}>
-          <FileTextOutlined /> <FormattedMessage id='app.task.state.New' />
+        <Button type="primary" onClick={gotoFormPage}>
+          <FileTextOutlined /> <FormattedMessage id="app.task.state.New" />
         </Button>
         <Button disabled={selectedRowKeys.length === 0} onClick={deleteListItem}>
-          <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+          <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
         </Button>
         <Button onClick={refreshPage}>
-          <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+          <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
         </Button>
       </div>
 
@@ -197,15 +197,15 @@ const CustomTaskTable = (props) => {
         style={{ top: 30 }}
         footer={[
           <Button
-            key='back'
+            key="back"
             onClick={() => {
               setExampleStructure(null);
             }}
           >
-            <FormattedMessage id='app.button.turnOff' />
+            <FormattedMessage id="app.button.turnOff" />
           </Button>,
-          <Button key='copy' type='primary' onClick={copyTaskBody}>
-            <FormattedMessage id='app.button.copy' />
+          <Button key="copy" type="primary" onClick={copyTaskBody}>
+            <FormattedMessage id="app.button.copy" />
           </Button>,
         ]}
       >

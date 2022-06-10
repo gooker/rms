@@ -55,7 +55,7 @@ const AuthorizationCenter = () => {
     // 未获取到授权信息
     if (authorityInfo === 'NULL') {
       return (
-        <Result status='warning' title={formatMessage({ id: 'app.authCenter.fetchInfo.failed' })} />
+        <Result status="warning" title={formatMessage({ id: 'app.authCenter.fetchInfo.failed' })} />
       );
     } else if (isNull(authorityInfo)) {
       // 没有授权

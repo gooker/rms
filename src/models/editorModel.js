@@ -211,7 +211,7 @@ export default {
     },
 
     // 导入牧星地图
-    * importMushinyMap({ payload }, { call, put, select }) {
+    *importMushinyMap({ payload }, { call, put, select }) {
       const { mapList } = yield select(({ editor }) => editor);
       const response = yield call(saveMap, payload);
       const newMapList = [...mapList];
@@ -232,7 +232,7 @@ export default {
     },
 
     // 导入导航点
-    * importMap({ payload }, { put, call, select }) {
+    *importMap({ payload }, { put, call, select }) {
       const { mapList, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
       const {
         addMap,
@@ -292,7 +292,7 @@ export default {
     },
 
     // 导出地图
-    * exportMap(_, { select }) {
+    *exportMap(_, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
       //TODO: 验证地图数据
       const mapData = { ...currentMap };
@@ -569,7 +569,7 @@ export default {
     },
 
     // 批量新增导航点（一般只针对二维码导航点）
-    * batchAddCells({ payload }, { select }) {
+    *batchAddCells({ payload }, { select }) {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
       const { cellMap } = currentMap;
       const { addWay, navigationCellType } = payload;
@@ -670,7 +670,7 @@ export default {
     },
 
     // 修改点位导航ID
-    * updateCellNaviId({ payload }, { select }) {
+    *updateCellNaviId({ payload }, { select }) {
       const { currentMap } = yield select(({ editor }) => editor);
       const { originId, newId } = payload;
       const { cellMap } = currentMap;
@@ -694,7 +694,7 @@ export default {
     },
 
     // ********************************* 地图编程 ********************************* //
-    * updateMapPrograming({ payload }, { select }) {
+    *updateMapPrograming({ payload }, { select }) {
       const { programing } = yield select(({ global }) => global);
       const currentRouteMap = getCurrentRouteMapData();
 
@@ -736,7 +736,7 @@ export default {
 
     // ********************************* 待调整 ********************************* //
     // 移动点位
-    * moveCells({ payload }, { select, put }) {
+    *moveCells({ payload }, { select, put }) {
       const { cellIds, distance, dir } = payload;
       const { currentMap } = yield select((state) => state.editor);
 

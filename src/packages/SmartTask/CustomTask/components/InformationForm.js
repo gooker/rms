@@ -22,7 +22,7 @@ const InformationForm = (props) => {
     <>
       <Form.Item
         hidden={hidden}
-        name='name'
+        name="name"
         label={formatMessage({ id: 'customTask.form.name' })}
         rules={nameRules}
       >
@@ -30,7 +30,7 @@ const InformationForm = (props) => {
       </Form.Item>
       <Form.Item
         hidden={hidden}
-        name='desc'
+        name="desc"
         initialValue={null}
         label={formatMessage({ id: 'app.common.description' })}
       >

@@ -69,16 +69,13 @@ const ChargerFaultManagement = () => {
   return (
     <TablePageWrapper>
       <FaultSearchForm search={fetchChargeFaultList} />
-      <div>
-        <TableWithPages
-          bordered
-          scroll={{ x: 'max-content' }}
-          loading={loading}
-          columns={columns}
-          dataSource={chargeFaultList}
-          rowKey={({ id }) => id}
-        />
-      </div>
+      <TableWithPages
+        bordered
+        loading={loading}
+        columns={columns}
+        dataSource={chargeFaultList}
+        rowKey={({ id }) => id}
+      />
     </TablePageWrapper>
   );
 };

@@ -316,7 +316,10 @@ class RequestForm extends React.Component {
         </Form.List>
 
         {/* 车辆类型 */}
-        <Form.Item label={formatMessage({ id: 'app.requestor.form.vehicleType' })} name="vehicleType">
+        <Form.Item
+          label={formatMessage({ id: 'app.requestor.form.vehicleType' })}
+          name="vehicleType"
+        >
           <Select style={{ width: '80%' }}>
             {allVehicleTypes.map(({ name, key, standardName }) => (
               <Option key={key} value={standardName}>

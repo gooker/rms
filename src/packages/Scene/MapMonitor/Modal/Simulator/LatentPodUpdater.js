@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Input } from 'antd';
-import PodPicture from '../../../../../../public/images/latent_pod.png'
+import PodPicture from '../../../../../../public/images/latent_pod.png';
 import styles from './latentPodUpdater.module.less';
 
 const InputLength = 90;
@@ -53,7 +53,7 @@ const LatentPodUpdater = (props) => {
             )}
             <span className={styles.label}>B</span>
           </div>
-          <img src={PodPicture} style={{ width: 150, height: 'auto' }} alt=''/>
+          <img src={PodPicture} style={{ width: 150, height: 'auto' }} alt="" />
           <span className={styles.label} style={rotateStyle}>
             D
           </span>

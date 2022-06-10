@@ -181,7 +181,7 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 触发的任务 */}
         <FormItem
-          name='codes'
+          name="codes"
           label={formatMessage({ id: 'taskTrigger.triggerTasks' })}
           rules={[{ required: true }]}
           getValueFromEvent={(value) => {
@@ -218,7 +218,7 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 时间间隔 */}
         <FormItem
-          name='timeInterval'
+          name="timeInterval"
           label={`${formatMessage({ id: 'app.trigger.timeInterval' })}(s)`}
           rules={[
             { required: true },
@@ -232,7 +232,7 @@ const TaskTriggerModal = (props) => {
         </FormItem>
         {/* 总下发次数 */}
         <FormItem
-          name='totalCount'
+          name="totalCount"
           label={formatMessage({ id: 'taskTrigger.totaTimes' })}
           rules={[
             {

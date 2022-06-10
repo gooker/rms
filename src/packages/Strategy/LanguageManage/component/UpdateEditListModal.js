@@ -52,7 +52,7 @@ const UpdateEditListModal = (props) => {
         visible={visible}
         onCancel={onCancel}
       >
-        <Row style={{marginBottom:10}}>
+        <Row style={{ marginBottom: 10 }}>
           <Col span={4}>
             <Button
               onClick={() => {

@@ -111,23 +111,23 @@ const VehicleTaskSteps = (props) => {
           <FormattedMessage id={'app.taskDetail.subTaskDetail'} />:
         </h4>
         <Descriptions bordered>
-          <Descriptions.Item label='最后发送时间'>
+          <Descriptions.Item label="最后发送时间">
             {subTask.lastSendTime
               ? convertToUserTimezone(subTask.lastSendTime).format('MM-DD HH:mm:ss')
               : null}
           </Descriptions.Item>
-          <Descriptions.Item label='更新时间'>
+          <Descriptions.Item label="更新时间">
             {subTask.updateTime
               ? convertToUserTimezone(subTask.updateTime).format('MM-DD HH:mm:ss')
               : null}
           </Descriptions.Item>
-          <Descriptions.Item label='路线区'>{subTask.routeMap ?? '--'}</Descriptions.Item>
-          <Descriptions.Item label='目标点'>{subTask.targetCellId}</Descriptions.Item>
-          <Descriptions.Item label='目标点方向'>
+          <Descriptions.Item label="路线区">{subTask.routeMap ?? '--'}</Descriptions.Item>
+          <Descriptions.Item label="目标点">{subTask.targetCellId}</Descriptions.Item>
+          <Descriptions.Item label="目标点方向">
             {!isNull(subTask.targetAngle) && `${subTask.targetAngle}°`}
           </Descriptions.Item>
           {!isStrictNull(subTask.skipReason) && (
-            <Descriptions.Item span={3} label='任务跳过原因'>
+            <Descriptions.Item span={3} label="任务跳过原因">
               {subTask.skipReason}
             </Descriptions.Item>
           )}
@@ -162,7 +162,7 @@ const VehicleTaskSteps = (props) => {
           </Col>
         </Row>
       )}
-      <Steps direction='vertical'>{renderSteps()}</Steps>
+      <Steps direction="vertical">{renderSteps()}</Steps>
     </div>
   );
 };

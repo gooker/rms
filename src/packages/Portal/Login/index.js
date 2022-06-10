@@ -92,7 +92,7 @@ const Login = (props) => {
         <div className={styles.loginForm}>
           <Form form={formRef}>
             <Form.Item
-              name='username'
+              name="username"
               rules={[
                 {
                   required: true,
@@ -103,7 +103,7 @@ const Login = (props) => {
               <Input prefix={<UserOutlined />} />
             </Form.Item>
             <Form.Item
-              name='password'
+              name="password"
               rules={[
                 {
                   required: true,
@@ -116,7 +116,7 @@ const Login = (props) => {
             <Row gutter={10}>
               <Col flex={1}>
                 <Form.Item
-                  name='environment'
+                  name="environment"
                   rules={[
                     {
                       required: true,
@@ -148,7 +148,7 @@ const Login = (props) => {
                   <Spin indicator={<LoadingOutlined spin style={{ color: '#fff' }} />} />
                 </div>
               ) : (
-                <Button type='primary' onClick={goLogin} style={{ width: '100%' }}>
+                <Button type="primary" onClick={goLogin} style={{ width: '100%' }}>
                   <FormattedMessage id={'app.login.button'} />
                 </Button>
               )}
@@ -162,7 +162,7 @@ const Login = (props) => {
         destroyOnClose
         width={adjustModalWidth() * 0.7}
         visible={visible}
-        title={<FormattedMessage id='environmentManager.add' />}
+        title={<FormattedMessage id="environmentManager.add" />}
         onOk={addEnvironment}
         onCancel={() => {
           setVisible(false);

@@ -49,7 +49,7 @@ const SearchConditionForm = (props) => {
         </Col>
         <Col>
           <Button type="primary" onClick={validate} loading={loading}>
-            <SearchOutlined /> {' '}<FormattedMessage id="app.button.search" />
+            <SearchOutlined /> <FormattedMessage id="app.button.search" />
           </Button>
         </Col>
       </Row>

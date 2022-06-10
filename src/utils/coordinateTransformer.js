@@ -1,4 +1,4 @@
-import { scale, rotateDEG, translate, compose, applyToPoint, flipX } from 'transformation-matrix';
+import { applyToPoint, compose, flipX, rotateDEG, scale, translate } from 'transformation-matrix';
 import { NavigationTypeView } from '@/config/config';
 
 /**
@@ -29,7 +29,7 @@ function getDefaultTransformParams(navigationType) {
 
 export function coordinateTransformer(coordinate, navigationCellType, transformParams) {
   const { coordinationType, zoom, compensationOffset, compensationAngle } =
-  transformParams || getDefaultTransformParams(navigationCellType);
+    transformParams || getDefaultTransformParams(navigationCellType);
   let xLabel = coordinate.x;
   let yLabel = coordinate.y;
 
@@ -57,7 +57,7 @@ export function coordinateTransformer(coordinate, navigationCellType, transformP
 // coordinateTransformer的逆运算
 export function reverseCoordinateTransformer(coordinate, navigationCellType, transformParams) {
   const { coordinationType, zoom, compensationOffset, compensationAngle } =
-  transformParams || getDefaultTransformParams(navigationCellType);
+    transformParams || getDefaultTransformParams(navigationCellType);
 
   const matrixParams = [];
   matrixParams.push(flipX());

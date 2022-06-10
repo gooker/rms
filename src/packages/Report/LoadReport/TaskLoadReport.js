@@ -3,12 +3,22 @@ import { Col, Divider, Row, Spin } from 'antd';
 import echarts from 'echarts';
 import XLSX from 'xlsx';
 import moment from 'moment';
-import { convertToUserTimezone, dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
+import {
+  convertToUserTimezone,
+  dealResponse,
+  formatMessage,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import { fetchTaskLoad } from '@/services/commonService';
 import { forIn, sortBy } from 'lodash';
 import FilterSearch from '@/packages/Report/components/FilterSearch';
 import { filterDataByParam } from '@/packages/Report/components/reportUtil';
-import { getAllCellId, getDatBysortTime, noDataGragraphic } from '../components/GroundQrcodeEcharts';
+import {
+  getAllCellId,
+  getDatBysortTime,
+  noDataGragraphic,
+} from '../components/GroundQrcodeEcharts';
 import {
   actionBarOption,
   actionPieOption,

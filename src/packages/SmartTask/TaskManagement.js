@@ -54,7 +54,7 @@ class TaskManagement extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.task.type' />,
+      title: <FormattedMessage id="app.task.type" />,
       dataIndex: 'vehicleTaskType',
       align: 'center',
       render: (text) => {

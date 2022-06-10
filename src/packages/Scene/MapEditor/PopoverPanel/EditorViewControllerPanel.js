@@ -208,7 +208,7 @@ const EditorViewControllerPanel = (props) => {
             >
               <Select
                 allowClear
-                mode='tags'
+                mode="tags"
                 style={{ width: '95%' }}
                 value={props.showRelationsCells}
                 disabled={shownPriority.length === 0}

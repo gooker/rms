@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Input, Button } from 'antd';
+import { Button, Form, Input } from 'antd';
 import LogoUploader from './LogoUploader/LogoUploader';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
@@ -22,13 +22,12 @@ export default class customConfiguration extends Component {
     setFieldsValue({ logo: null });
   };
 
-  submit=()=>{
+  submit = () => {
     const { validateFields } = this.formRef.current;
-    validateFields()
-      .then((value) => {
-          console.log(value);
-      })
-  }
+    validateFields().then((value) => {
+      console.log(value);
+    });
+  };
   render() {
     return (
       <div className={commonStyles.commonPageStyle}>

@@ -1,7 +1,6 @@
 export default {
   // **********  任务触发器 ********** //
   'taskTrigger.stateQuery': '状态查询',
-  'taskTrigger.paused': '已暂停',
   'taskTrigger.startTaskTrigger.tip': '是否确定开始任务?',
   'taskTrigger.pauseTaskTrigger.tip': '是否确定暂停任务?',
   'taskTrigger.endTaskrigger.tip': '确定结束任务吗?',

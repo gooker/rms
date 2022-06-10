@@ -47,7 +47,7 @@ const CostPanel = (props) => {
       payload: { cells, params },
     }).then(({ remove, add }) => {
       remove.length > 0 &&
-      mapContext.updateLines({ type: 'remove', payload: { lines: remove, arrows: remove } });
+        mapContext.updateLines({ type: 'remove', payload: { lines: remove, arrows: remove } });
       add.length > 0 && mapContext.updateLines({ type: 'add', payload: add });
     });
   }
@@ -139,12 +139,12 @@ const CostPanel = (props) => {
           <Col span={8}>
             <Button
               danger
-              size='small'
+              size="small"
               style={{ width: '100%', height: 50, borderRadius: 5 }}
               onClick={deleteLines}
               disabled={selectLines.length === 0}
             >
-              <DeleteOutlined /> <FormattedMessage id='editor.cost.delete' />
+              <DeleteOutlined /> <FormattedMessage id="editor.cost.delete" />
             </Button>
           </Col>
         </Row>

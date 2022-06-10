@@ -99,7 +99,7 @@ class WaitingQueueComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.priority" />,
+      title: <FormattedMessage id="app.common.priority" />,
       dataIndex: 'priority',
       align: 'center',
       width: 150,
@@ -107,7 +107,7 @@ class WaitingQueueComponent extends Component {
       render: (text) => <span>{text}</span>,
     },
     {
-      title: <FormattedMessage id="app.taskQueue.createTime" />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createTimeMilliseconds',
       align: 'center',
       width: 200,
@@ -265,7 +265,7 @@ class WaitingQueueComponent extends Component {
                 className={taskQueueStyles.vehicleStatusBadge}
                 style={{ background: VehicleStateColor.available }}
               >
-                <FormattedMessage id={'vehicleState.available'} />
+                <FormattedMessage id={'app.common.available'} />
               </span>
             </Badge>
             <Badge
