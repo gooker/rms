@@ -8,14 +8,16 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddFindInfoModal from './AddFindInfoModal';
 import RegisterChargeModal from './RegisterChargeModal';
+import { fetchChargerList } from '@/services/resourceService';
 import { handleleChargers } from '@/services/resourceService';
 import commonStyle from '@/common.module.less';
 import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 
 const ChargeRegisterPanel = (props) => {
-  const { dispatch, loading, allChargers, showRegisterPanel, onRefresh } = props;
+  const { dispatch, showRegisterPanel } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const unregisterChargers = allChargers.filter((item) => !item.hasRegistered);
+  const [unregisterChargers, setUnregisterChargers] = useState([]);
+  const [loading, setLoading] = useState(false);
   const columns = [
     {
       title: '充电桩ID',
@@ -42,6 +44,8 @@ const ChargeRegisterPanel = (props) => {
   useEffect(() => {
     if (!showRegisterPanel) {
       setSelectedRowKeys([]);
+    } else {
+      getData();
     }
   }, [showRegisterPanel]);
 
@@ -49,16 +53,26 @@ const ChargeRegisterPanel = (props) => {
     setSelectedRowKeys(selectedRowKeys);
   }
 
+  async function getData() {
+    setLoading(true);
+    const response = await fetchChargerList({ filterType: 'UNREGISTER' });
+    if (!dealResponse(response)) {
+      setUnregisterChargers(response);
+    }
+    setLoading(false);
+  }
+
   // 注册
   async function onRegister(values) {
     const response = await handleleChargers({
       updateType: 'REGISTER',
       ...values,
-      ids: selectedRowKeys[0],
+      ids: [selectedRowKeys[0]],
     });
     if (!dealResponse(response, true)) {
       setSelectedRowKeys([]);
-      onRefresh();
+      getData();
+      shownedRegisterModal(false);
     }
   }
 
@@ -101,12 +115,15 @@ const ChargeRegisterPanel = (props) => {
       <AddFindInfoModal />
 
       {/* 注册 */}
-      <RegisterChargeModal onSubmit={onRegister} />
+      <RegisterChargeModal
+        onSubmit={onRegister}
+        onCancel={() => {
+          shownedRegisterModal(false);
+        }}
+      />
     </div>
   );
 };
-export default connect(({ chargerList, loading }) => ({
-  loading: loading.effects['chargerList/fetchInitialData'],
-  allChargers: chargerList.allChargers,
+export default connect(({ chargerList }) => ({
   showRegisterPanel: chargerList.showRegisterPanel,
 }))(memo(ChargeRegisterPanel));

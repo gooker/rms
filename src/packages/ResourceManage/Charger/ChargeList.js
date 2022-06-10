@@ -1,3 +1,4 @@
+/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { Badge, Button, Drawer, Switch, Tag } from 'antd';
@@ -46,7 +47,7 @@ const ChargerList = (props) => {
 
   const columns = [
     {
-      title: '充电桩ID',
+      title: 'ID',
       dataIndex: 'chargerId',
       align: 'center',
     },
@@ -103,7 +104,7 @@ const ChargerList = (props) => {
             onClick={(checked) => {
               statusSwitch({
                 ids: [record.id],
-                updateType: checked ? 'DISABLE' : 'ENABLE',
+                updateType: !text ? 'DISABLE' : 'ENABLE',
               });
             }}
             checkedChildren={formatMessage({ id: 'app.common.enabled' })}
@@ -141,7 +142,7 @@ const ChargerList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.activity.currentBatteryVoltage" />,
+      title: <FormattedMessage id="chargeManager.batteryVoltage" />,
       align: 'center',
       dataIndex: 'currentVoltage',
       render: (text) => {

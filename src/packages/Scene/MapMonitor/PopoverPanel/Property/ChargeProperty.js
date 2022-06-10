@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';
 import { clearChargerFault, resetCharger } from '@/services/XIHEService';
 import { fetchChargeByCode, fetchChargerList, handleleChargers } from '@/services/resourceService';
-import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, getSuffix, isNull, isStrictNull } from '@/utils/util';
 import LabelColComponent from '@/components/LabelColComponent';
 import { ChargerStatus } from '@/packages/ResourceManage/Charger/components/chargeConfig';
 import Dictionary from '@/utils/Dictionary';
@@ -20,6 +20,7 @@ const ChargeProperty = (props) => {
   const [unRegistedCharger, setUnRegistedCharger] = useState([]);
   const [chargerInfo, setChargerInfo] = useState(null);
   const [enabled, setEnabled] = useState(false);
+  const [currentChargeId, setCurrentChargeId] = useState(null);
 
   useEffect(() => {
     async function init() {
@@ -38,6 +39,7 @@ const ChargeProperty = (props) => {
       setChargerInfo(response);
       setEnabled(!response.disabled);
       setUnRegistedCharger(chargerList);
+      setCurrentChargeId(response?.id);
     }
   }
 
@@ -46,7 +48,7 @@ const ChargeProperty = (props) => {
     const requestParam = {
       updateType: chargerInfo?.chargerId ? 'LOGOUT' : 'REGISTER',
       mapChargerCode: data?.$$formData?.code,
-      ids: [chargerInfo.id],
+      ids: [currentChargeId],
     };
     const response = await handleleChargers(requestParam);
     if (!dealResponse(response)) {
@@ -58,14 +60,11 @@ const ChargeProperty = (props) => {
   // 启用/禁用
   async function switchChargerEnable() {
     const response = await handleleChargers({
-      updateType: chargerInfo.disabled ? 'ENABLE' : 'DISABLE',
-      mapChargerCode: chargerInfo.mapChargerCode,
+      updateType: !chargerInfo.disabled ? 'DISABLE' : 'ENABLE',
+      ids: [chargerInfo?.id],
     });
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.message.operateFailed' }));
-    } else {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-      setEnabled(!chargerInfo.disabled);
+    if (!dealResponse(response, 1)) {
+      fetchgChargeInfo();
     }
   }
 
@@ -109,7 +108,7 @@ const ChargeProperty = (props) => {
               : '-'}
           </LabelColComponent>
 
-          <LabelColComponent label={<FormattedMessage id={'app.activity.batteryTemperature'} />}>
+          <LabelColComponent label={<FormattedMessage id={'chargeManager.temperature'} />}>
             {chargerInfo?.temperature ? getSuffix(chargerInfo.temperature, '°c') : '-'}
           </LabelColComponent>
           <LabelColComponent label={<FormattedMessage id={'chargeManager.chargeCurrent'} />}>
@@ -117,7 +116,7 @@ const ChargeProperty = (props) => {
               ? getSuffix((chargerInfo.currentElectricity || 0) / 10, 'A')
               : '-'}
           </LabelColComponent>
-          <LabelColComponent label={<FormattedMessage id={'app.activity.currentBatteryVoltage'} />}>
+          <LabelColComponent label={<FormattedMessage id={'chargeManager.batteryVoltage'} />}>
             {chargerInfo?.currentVoltage ? getSuffix(chargerInfo.currentVoltage || 0, 'V') : '-'}
           </LabelColComponent>
           <LabelColComponent label={<FormattedMessage id={'IP'} />}>
@@ -144,12 +143,15 @@ const ChargeProperty = (props) => {
                   style={{ width: 180 }}
                   allowClear
                   size="small"
-                  value={`${chargerInfo?.id}@${chargerInfo?.mapChargerCode}`}
-                  disabled={chargerInfo?.chargerId}
+                  value={currentChargeId}
+                  disabled={!isStrictNull(chargerInfo?.chargerId)}
+                  onChange={(v) => {
+                    setCurrentChargeId(v);
+                  }}
                 >
-                  {unRegistedCharger?.map(({ id, chargerId, mapChargerCode, chargerStatus }) => (
-                    <Select.Option key={id} value={`${id}@${mapChargerCode}`}>
-                      {chargerStatus ? `${chargerId}-${chargerStatus}` : chargerId}
+                  {unRegistedCharger?.map(({ id, chargerId, chargerStatus }) => (
+                    <Select.Option key={id} value={id}>
+                      {chargerId}
                     </Select.Option>
                   ))}
                 </Select>
@@ -157,12 +159,12 @@ const ChargeProperty = (props) => {
             </Row>
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
               <Popconfirm
-                title={chargerInfo?.chargerId ? '注销' : '注册'}
+                title={formatMessage({ id: 'app.message.doubleConfirm' })}
                 onConfirm={updateCharger}
                 okText={formatMessage({ id: 'app.button.confirm' })}
                 cancelText={formatMessage({ id: 'app.button.cancel' })}
               >
-                <Button size="small" disabled={!chargerInfo?.chargerId}>
+                <Button size="small" disabled={isStrictNull(currentChargeId)}>
                   {chargerInfo?.chargerId ? '注销' : '注册'}
                 </Button>
               </Popconfirm>

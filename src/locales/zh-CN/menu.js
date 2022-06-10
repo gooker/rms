@@ -19,7 +19,7 @@ export default {
 
   // 载具
   'menu.load': '载具',
-  'menu.load.customType': '载具类型',
+  'menu.load.customSpecification': '载具规格',
   'menu.load.management': '载具列表',
   'menu.load.circulation': '载具流转记录',
 

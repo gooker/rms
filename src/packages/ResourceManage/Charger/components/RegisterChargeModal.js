@@ -6,7 +6,7 @@ import { getFormLayout } from '@/utils/util';
 
 const { formItemLayout } = getFormLayout(5, 17);
 const RegisterChargeModal = (props) => {
-  const { dispatch, visible, allMapChargers = [], onSubmit } = props;
+  const { visible, allMapChargers = [], onSubmit, onCancel } = props;
   const [formRef] = Form.useForm();
 
   useEffect(() => {
@@ -30,20 +30,18 @@ const RegisterChargeModal = (props) => {
       visible={visible}
       title={'充电桩注册'}
       maskClosable={false}
-      onCancel={() => {
-        dispatch({ type: 'vehicleList/updateRegisterVehicleModalShown', payload: false });
-      }}
+      onCancel={onCancel}
       onOk={submit}
     >
       <Form form={formRef} {...formItemLayout}>
         <Form.Item name={'mapChargerCode'} label={'地图充电桩'} rules={[{ required: true }]}>
           <Select>
             {Array.isArray(allMapChargers) &&
-              allMapChargers?.map(({ code, name }) => {
+              allMapChargers?.map(({ code, name }) => (
                 <Select.Option key={code} value={code}>
                   {name}
-                </Select.Option>;
-              })}
+                </Select.Option>
+              ))}
           </Select>
         </Form.Item>
       </Form>

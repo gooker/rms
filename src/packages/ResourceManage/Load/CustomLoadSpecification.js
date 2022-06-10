@@ -1,27 +1,27 @@
 /* TODO: I18N */
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Button } from 'antd';
 import { EditOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  deleteSelectedLoad,
-  fetchAllLoad,
+  fetchLoadSpecificationByType,
   fetchAllLoadSpecification,
+  fetchAllLoadType,
+  deleteLoadSpecification,
 } from '@/services/resourceService';
-import { dealResponse, isStrictNull } from '@/utils/util';
-import AddLoadModal from './component/AddLoadModal';
-import SearchLoadComponent from './component/SearchLoadComponent';
+import SearchSpecComponent from './component/SearchSpecComponent';
+import LoadSpecificationModal from './component/LoadSpecificationModal';
 import commonStyles from '@/common.module.less';
+import { dealResponse, isStrictNull } from '@/utils/util';
 
-const ContainerManage = (props) => {
-  const [allLoadSpec, setAllLoadSpec] = useState([]);
-  const [allData, setAllDllData] = useState([]);
+const CustomLoadType = (props) => {
+  const [allLoadType, setAllLoadType] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [formValues, setFormValues] = useState({});
+  const [loadTypeCode, setLoadTypeCode] = useState(null);
   const [updateRecord, setUpdateRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
@@ -29,38 +29,26 @@ const ContainerManage = (props) => {
     getData();
   }, []);
 
+  useEffect(() => {
+    getDataByType();
+  }, [loadTypeCode]);
+
   const columns = [
-    { title: 'ID', dataIndex: 'loadId', align: 'center' },
+    { title: '长', dataIndex: 'length', align: 'center' },
     {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'name',
+      title: '宽',
+      dataIndex: 'width',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.common.angle" />,
-      dataIndex: 'angle',
+      title: '高',
+      dataIndex: 'height',
       align: 'center',
     },
     {
-      title: '载具规格',
-      dataIndex: 'loadSpecificationCode',
+      title: '颜色',
+      dataIndex: 'color',
       align: 'center',
-    },
-    {
-      title: '位置',
-      dataIndex: 'cargoStorageSpace',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.status" />,
-      align: 'center',
-      dataIndex: 'disabled',
-      render: (text, record) => {
-        if (text) {
-          return <FormattedMessage id="app.common.disable" />;
-        }
-        return <FormattedMessage id="app.common.enable" />;
-      },
     },
     {
       title: <FormattedMessage id="app.button.edit" />,
@@ -77,7 +65,11 @@ const ContainerManage = (props) => {
     },
   ];
 
-  const expandColumns = [{ title: '组名', dataIndex: 'groups', align: 'center' }];
+  const expandColumns = [
+    { title: '类型Code', dataIndex: 'code', align: 'center' },
+    { title: '名称', dataIndex: 'name', align: 'center' },
+    { title: '描述', dataIndex: 'desc', align: 'center' },
+  ];
 
   function addSpec() {
     setVisible(true);
@@ -95,56 +87,44 @@ const ContainerManage = (props) => {
 
   function onSubmit() {
     onCancel();
-    getData();
+    onRefresh();
   }
 
-  // 删除载具
+  // 删除规格
   async function deleteSpec() {
-    const response = await deleteSelectedLoad(selectedRowKeys);
-    if (!dealResponse(response, 1)) {
-      getData();
+    const response = await deleteLoadSpecification(selectedRowKeys);
+    if (!dealResponse(response)) {
+      onRefresh();
     }
   }
 
   async function getData() {
     setLoading(true);
-    const [response, specResponse] = await Promise.all([
-      fetchAllLoad(),
-      fetchAllLoadSpecification(),
-    ]);
-    if (!dealResponse(response)) {
-      setAllDllData(response);
-      filterData(response);
+    const [allType, allSpec] = await Promise.all([fetchAllLoadType(), fetchAllLoadSpecification()]);
+    if (!dealResponse(allType)) {
+      setAllLoadType(allType);
     }
-
-    if (!dealResponse(specResponse)) {
-      setAllLoadSpec(specResponse);
+    if (!dealResponse(allSpec)) {
+      setDataSource(allSpec);
     }
     setLoading(false);
   }
 
-  // 搜索
-  async function filterData(list, values) {
-    let currentData = [...list];
-    const currentValues = { ...formValues, ...values };
-    const { id, loadSpecificationCode, cargoStorageSpace } = currentValues;
-    if (!isStrictNull(id)) {
-      currentData = currentData.filter(({ loadId }) => loadId === id);
+  async function getDataByType() {
+    setLoading(true);
+    const data = await fetchLoadSpecificationByType({ loadTypeCode });
+    if (!dealResponse(data)) {
+      setDataSource(data);
     }
+    setLoading(false);
+  }
 
-    if (!isStrictNull(loadSpecificationCode)) {
-      currentData = currentData.filter(
-        (item) => item.loadSpecificationCode === loadSpecificationCode,
-      );
+  function onRefresh() {
+    if (isStrictNull(loadTypeCode)) {
+      getDataByType();
+    } else {
+      getData();
     }
-
-    if (cargoStorageSpace?.length > 0) {
-      currentData = currentData.filter((item) =>
-        cargoStorageSpace.includes(item.loadSpecificationCode),
-      );
-    }
-
-    setDataSource(currentData);
   }
 
   function rowSelectChange(selectedRowKeys) {
@@ -154,7 +134,7 @@ const ContainerManage = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <SearchLoadComponent allLoadSpec={allLoadSpec} search={filterData} list={allData} />
+        <SearchSpecComponent setLoadType={setLoadTypeCode} />
         <Row justify={'space-between'} style={{ userSelect: 'none' }}>
           <Col className={commonStyles.tableToolLeft} flex="auto">
             <Button type="primary" onClick={addSpec}>
@@ -164,7 +144,7 @@ const ContainerManage = (props) => {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
-            <Button onClick={getData}>
+            <Button onClick={onRefresh}>
               <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
             </Button>
           </Col>
@@ -182,15 +162,15 @@ const ContainerManage = (props) => {
         }}
       />
 
-      {/*新增/编辑 载具 */}
-      <AddLoadModal
+      {/*新增/编辑 载具规格 */}
+      <LoadSpecificationModal
         visible={visible}
         onCancel={onCancel}
-        onOk={getData}
+        onOk={onRefresh}
         updateRecord={updateRecord}
-        allLoadSpec={allLoadSpec}
+        allLoadType={allLoadType}
       />
     </TablePageWrapper>
   );
 };
-export default memo(ContainerManage);
+export default memo(CustomLoadType);
