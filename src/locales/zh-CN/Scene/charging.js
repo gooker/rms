@@ -2,6 +2,7 @@ export default {
   'chargeManager.chargeCurrent': '当前电流',
   'chargeManager.fitbattery': '适配电池',
   'chargeManager.temperature': '内部温度',
+  'chargeManager.batteryVoltage': '电池电压',
   'chargeManager.mapCharging': '地图充电桩',
   'chargeManager.chargingStatus': '充电桩状态',
   'chargeManager.bindStatus': '绑定状态',

@@ -8,9 +8,9 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
       {
-        path: `/${AppCode.ResourceManage}/load/customType`,
-        name: 'customType',
-        component: '/ResourceManage/Load/CustomLoadType',
+        path: `/${AppCode.ResourceManage}/load/customSpecification`,
+        name: 'customSpecification',
+        component: '/ResourceManage/Load/CustomLoadSpecification',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {

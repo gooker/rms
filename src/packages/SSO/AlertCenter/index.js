@@ -4,7 +4,11 @@ import { connect } from '@/utils/RmsDva';
 import QuestionSearch from './QuestionSearch';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList } from '@/services/XIHEService';
+import {
+  allUpdateProblemHandling,
+  batchUpdateAlertCenter,
+  fetchAlertCenterList,
+} from '@/services/XIHEService';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
 
@@ -55,7 +59,11 @@ class QuestionCenter extends Component {
 
   search = (value) => {
     const formValue = { ...value };
-    this.setState({ formValue }, () => {
+    const pagination = {
+      pageSize: 10,
+      current: 1,
+    };
+    this.setState({ formValue, pagination }, () => {
       this.getData();
     });
   };
