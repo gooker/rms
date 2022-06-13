@@ -1,15 +1,27 @@
 import React, { memo } from 'react';
 import { ArrowRightOutlined } from '@ant-design/icons';
-import { Popover, Table } from 'antd';
+import { Popover } from 'antd';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
-import { getTaskNodeColorFlag } from '@/components/TaskDetail/taskDetailUtil';
-import styles from './index.module.less';
+import { getTaskNodeColor, getTaskNodeColorFlag } from '@/components/TaskDetail/taskDetailUtil';
+import SimpleTable from '@/components/SimpleTable';
+import { TaskPathColor } from '@/config/consts';
 
 const TaskStepEdge = (props) => {
-  const { edge } = props;
-  const { actions } = edge;
+  const {
+    edge: { actions },
+  } = props;
 
   const hasAction = Array.isArray(actions) && actions.length > 0;
+  let actionStates = actions.map((item) => getTaskNodeColorFlag(item));
+  actionStates = [...new Set(actionStates)];
+  let color = TaskPathColor.locked.replace('0x', '#');
+  // 未开始执行
+  if (actionStates.length === 1 && actionStates[0] === 'future') {
+    color = TaskPathColor.future.replace('0x', '#');
+  }
+  if (actionStates.length === 1 && actionStates[0] === 'passed') {
+    color = TaskPathColor.passed.replace('0x', '#');
+  }
 
   function renderPopoverContent() {
     if (hasAction) {
@@ -18,11 +30,13 @@ const TaskStepEdge = (props) => {
           title: formatMessage({ id: 'app.taskDetail.actionName' }),
           dataIndex: 'actionName',
           align: 'center',
+          width: 100,
         },
         {
           title: formatMessage({ id: 'app.taskDetail.action' }),
           dataIndex: 'action',
           align: 'center',
+          width: 100,
         },
         {
           title: formatMessage({ id: 'app.taskDetail.actionParam' }),
@@ -31,8 +45,8 @@ const TaskStepEdge = (props) => {
           render: (text) => {
             return (
               <ul style={{ listStyle: 'none' }}>
-                {text.map(({ description, key }, index) => (
-                  <li key={index}>{description ? `${description}: ${key}` : key}</li>
+                {text.map(({ description, value }, index) => (
+                  <li key={index}>{description ? `${description}: ${value}` : value}</li>
                 ))}
               </ul>
             );
@@ -42,12 +56,13 @@ const TaskStepEdge = (props) => {
           title: formatMessage({ id: 'app.taskDetail.endTime' }),
           dataIndex: 'finishTime',
           align: 'center',
+          width: 100,
         },
       ];
       const actionDataSource = [];
       actions.forEach((action) => {
         const dataSourceItem = {
-          actionName: action.actionDescription ?? action.actionType,
+          actionName: action.actionType,
           action: action.actionId,
           params: action.actionParameters ?? [],
           finishTime: action.finishTime
@@ -57,17 +72,10 @@ const TaskStepEdge = (props) => {
           actionState: action.actionState,
         };
         dataSourceItem.params = dataSourceItem.params.filter(Boolean);
+        dataSourceItem.$$color = getTaskNodeColor(dataSourceItem);
         actionDataSource.push(dataSourceItem);
       });
-      return (
-        <Table
-          size={'small'}
-          dataSource={actionDataSource}
-          columns={actionColumns}
-          pagination={false}
-          rowClassName={(record) => styles[getTaskNodeColorFlag(record)]}
-        />
-      );
+      return <SimpleTable marker dataSource={actionDataSource} columns={actionColumns} />;
     }
   }
 
@@ -78,7 +86,7 @@ const TaskStepEdge = (props) => {
       content={renderPopoverContent()}
     >
       <div style={{ height: '100%', display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-        <ArrowRightOutlined style={{ fontSize: 18 }} />
+        <ArrowRightOutlined style={{ fontSize: 18, color }} />
       </div>
     </Popover>
   );

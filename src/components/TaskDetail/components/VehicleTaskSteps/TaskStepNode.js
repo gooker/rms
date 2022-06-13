@@ -1,10 +1,11 @@
 import React, { memo } from 'react';
-import { Popover, Table, Tag } from 'antd';
+import { Popover, Tag } from 'antd';
 import { TagOutlined } from '@ant-design/icons';
 import { isEmpty, isPlainObject } from 'lodash';
 import { convertToUserTimezone, formatMessage } from '@/utils/util';
-import { getTaskNodeColor, getTaskNodeColorFlag } from '@/components/TaskDetail/taskDetailUtil';
+import { getTaskNodeColor } from '@/components/TaskDetail/taskDetailUtil';
 import styles from './index.module.less';
+import SimpleTable from '@/components/SimpleTable';
 
 const TaskStepNode = (props) => {
   const { node } = props;
@@ -20,11 +21,13 @@ const TaskStepNode = (props) => {
         title: formatMessage({ id: 'app.taskDetail.actionName' }),
         dataIndex: 'actionName',
         align: 'center',
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.taskDetail.action' }),
         dataIndex: 'action',
         align: 'center',
+        width: 100,
       },
       {
         title: formatMessage({ id: 'app.taskDetail.actionParam' }),
@@ -33,8 +36,8 @@ const TaskStepNode = (props) => {
         render: (text) => {
           return (
             <ul>
-              {text.map(({ name, value }, index) => (
-                <li key={index}>{name ? `${name}: ${value}` : value}</li>
+              {text.map(({ code, value }, index) => (
+                <li key={index}>{code ? `${code}: ${value}` : value}</li>
               ))}
             </ul>
           );
@@ -44,12 +47,13 @@ const TaskStepNode = (props) => {
         title: formatMessage({ id: 'app.taskDetail.endTime' }),
         dataIndex: 'finishTime',
         align: 'center',
+        width: 100,
       },
     ];
     const actionDataSource = [];
     actions.forEach((action) => {
       const dataSourceItem = {
-        actionName: action.actionDescription ?? action.actionType,
+        actionName: action.actionType,
         action: action.actionId,
         params: action.actionParameters ?? [],
         finishTime: action.finishTime
@@ -59,6 +63,7 @@ const TaskStepNode = (props) => {
         actionState: action.actionState,
       };
       dataSourceItem.params = dataSourceItem.params.filter(Boolean);
+      dataSourceItem.$$color = getTaskNodeColor(dataSourceItem);
       actionDataSource.push(dataSourceItem);
     });
 
@@ -68,11 +73,13 @@ const TaskStepNode = (props) => {
         title: formatMessage({ id: 'app.taskDetail.eventName' }),
         dataIndex: 'eventName',
         align: 'center',
+        width: 110,
       },
       {
         title: formatMessage({ id: 'app.taskDetail.event' }),
         dataIndex: 'event',
         align: 'center',
+        width: 150,
       },
       {
         title: formatMessage({ id: 'app.taskDetail.eventParam' }),
@@ -81,8 +88,8 @@ const TaskStepNode = (props) => {
         render: (text) => {
           return (
             <ul style={{ listStyle: 'none' }}>
-              {text.map(({ name, value }, index) => (
-                <li key={index}>{name ? `${name}: ${value}` : value}</li>
+              {text.map(({ code, value }, index) => (
+                <li key={index}>{code ? `${code}: ${value}` : value}</li>
               ))}
             </ul>
           );
@@ -94,7 +101,7 @@ const TaskStepNode = (props) => {
       Object.values(cellEventAction).forEach((action) => {
         const dataSourceItem = {
           eventName: action.actionType,
-          event: action.actionDescription ?? action.actionId,
+          event: action.actionId,
           eventParam: action.actionParameters ?? [],
         };
         dataSourceItem.eventParam = dataSourceItem.eventParam.filter(Boolean);
@@ -104,22 +111,12 @@ const TaskStepNode = (props) => {
 
     return (
       <div>
-        {hasAction && (
-          <Table
-            size={'small'}
-            dataSource={actionDataSource}
-            columns={actionColumns}
-            pagination={false}
-            rowClassName={(record) => styles[getTaskNodeColorFlag(record)]}
-          />
-        )}
+        {hasAction && <SimpleTable marker dataSource={actionDataSource} columns={actionColumns} />}
         {hasCellEventAction && (
-          <Table
-            size={'small'}
+          <SimpleTable
             dataSource={eventDataSource}
             columns={eventColumns}
-            pagination={false}
-            style={hasAction ? { marginTop: 20 } : {}}
+            style={{ marginTop: 24 }}
           />
         )}
       </div>
