@@ -1,30 +1,44 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Form, Input, Rate } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { formatMessage, getRandomString, isNull } from '@/utils/util';
 import styles from '../customTask.module.less';
 
 const InformationForm = (props) => {
-  const { hidden, existNames, isEdit } = props;
+  const { hidden, customTaskList } = props;
+
+  function validateDuplicateCode(_, value) {
+    const existCodes = customTaskList.map(({ code }) => code);
+    if (!value || !existCodes.includes(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error(formatMessage({ id: 'app.form.code.duplicate' })));
+  }
 
   function validateDuplicateName(_, value) {
+    const existNames = customTaskList.map(({ name }) => name);
     if (!value || !existNames.includes(value)) {
       return Promise.resolve();
     }
     return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
   }
 
-  const nameRules = [{ required: true }];
-  if (!isEdit) {
-    nameRules.push({ validator: validateDuplicateName });
-  }
   return (
     <>
       <Form.Item
         hidden={hidden}
-        name="name"
+        name='code'
+        label={formatMessage({ id: 'app.common.code' })}
+        initialValue={`cst_${getRandomString(8)}`}
+        rules={[{ required: true }, { validator: validateDuplicateCode }]}
+      >
+        <Input style={{ width: 300 }} />
+      </Form.Item>
+      <Form.Item
+        hidden={hidden}
+        name='name'
         label={formatMessage({ id: 'customTask.form.name' })}
-        rules={nameRules}
+        rules={[{ required: true }, { validator: validateDuplicateName }]}
       >
         <Input style={{ width: 300 }} />
       </Form.Item>
@@ -52,6 +66,12 @@ const InformationForm = (props) => {
     </>
   );
 };
-export default connect(({ customTask }) => ({
-  existNames: customTask.customTaskList.map(({ name }) => name),
-}))(memo(InformationForm));
+export default connect(({ customTask }) => {
+  const { customTaskList, editingRow } = customTask;
+  if (isNull(editingRow)) {
+    return { customTaskList };
+  }
+  return {
+    customTaskList: customTaskList.filter((item) => item !== editingRow),
+  };
+})(memo(InformationForm));

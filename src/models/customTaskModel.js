@@ -95,7 +95,10 @@ export default {
           ),
         );
       } else {
-        yield put({ type: 'saveCustomTaskList', payload: response });
+        yield put({
+          type: 'saveCustomTaskList',
+          payload: response.map((item, index) => ({ ...item, index })),
+        });
       }
     },
   },

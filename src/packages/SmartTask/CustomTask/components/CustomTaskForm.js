@@ -24,6 +24,7 @@ import {
   restoreCustomTaskForm,
 } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
+import { IconFont } from '@/components/IconFont';
 import { saveCustomTask } from '@/services/commonService';
 import { CustomNodeType } from '../customTaskConfig';
 import { getInitialTaskSteps, isStandardTab } from '../customTaskUtil';
@@ -38,7 +39,6 @@ import WaitForm from './WaitForm';
 import PodSimulation from './PodSimulationForm';
 import EndForm from './EndForm';
 import styles from '../customTask.module.less';
-import { IconFont } from '@/components/IconFont';
 
 const CustomTypeIconMap = {
   [CustomNodeType.ACTION]: <BranchesOutlined />,
@@ -51,8 +51,6 @@ const CustomTaskForm = (props) => {
   const { dispatch, editingRow, programing, listVisible } = props;
   const [form] = Form.useForm();
 
-  // 当前自定义任务编码
-  const [taskCode, setTaskCode] = useState(`cst_${getRandomString(8)}`);
   // 已配置的任务节点
   const [taskSteps, setTaskSteps] = useState([]);
   // 已配置的前置任务节点
@@ -62,8 +60,6 @@ const CustomTaskForm = (props) => {
 
   useEffect(() => {
     if (editingRow) {
-      setTaskCode(editingRow.code);
-
       const result = restoreCustomTaskForm(editingRow);
       const newTaskSteps = [...result.taskSteps];
       const newPreTaskSteps = [...result.preTaskSteps];
@@ -245,7 +241,6 @@ const CustomTaskForm = (props) => {
         .then((value) => {
           const formValue = generateCustomTaskForm(
             value,
-            taskCode,
             _taskSteps,
             programing,
             preTasks.map(({ code }) => code),
@@ -277,7 +272,6 @@ const CustomTaskForm = (props) => {
     // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
     if (editingRow) {
       requestBody.id = editingRow.id;
-      requestBody.code = editingRow.code;
       requestBody.createTime = editingRow.createTime;
       requestBody.createdByUser = editingRow.createdByUser;
     }

@@ -1244,14 +1244,14 @@ const targetProgramingKeys = [
 ];
 
 // 将表单数据转化为后台数据结构
-export function generateCustomTaskForm(value, taskCode, taskSteps, programing, preTasksCode) {
+export function generateCustomTaskForm(value, taskSteps, programing, preTasksCode) {
   const customTaskData = {
+    code: value.code,
     name: value.name,
     desc: value.desc,
     priority: value.priority,
 
     type: 'CUSTOM_TASK',
-    code: taskCode,
     codes: taskSteps.map(({ code }) => code),
     sectionId: window.localStorage.getItem('sectionId'),
   };
@@ -1338,6 +1338,7 @@ export function restoreCustomTaskForm(customTask) {
 
   // 提取基本信息
   result.fieldsValue.name = customTask.name;
+  result.fieldsValue.code = customTask.code;
   result.fieldsValue.desc = customTask.desc;
   result.fieldsValue.priority = customTask.priority;
 
@@ -1476,53 +1477,58 @@ export function generateSample({ customStart, customActions, customPreActions },
 
   // 转换前置任务
   const preTaskParams = {};
-  Object.values(customPreActions).forEach((subTask) => {
-    const {
-      code,
-      targetAction: { loadAngle, target },
-    } = subTask;
-    preTaskParams[code] = [];
-    preTaskParams[code].push({
-      code: 'loadAngle',
-      param: isNull(loadAngle) ? null : loadAngle,
+  if (isPlainObject(customPreActions)) {
+    Object.values(customPreActions).forEach((subTask) => {
+      const {
+        code,
+        targetAction: { loadAngle, target },
+      } = subTask;
+      preTaskParams[code] = [];
+      preTaskParams[code].push({
+        code: 'loadAngle',
+        param: isNull(loadAngle) ? null : loadAngle,
+      });
+      preTaskParams[code].push({
+        code: target.type,
+        param: target?.code ?? [],
+      });
     });
-    preTaskParams[code].push({
-      code: target.type,
-      param: target?.code ?? [],
-    });
-  });
+  }
 
   // 子任务
-  Object.values(customActions).forEach((subTask) => {
-    const {
-      code,
-      preActionCodes,
-      targetAction: { loadAngle, target },
-    } = subTask;
-    const { index } = find(taskNodes, { code });
-    result.push({
-      code: `step${index}-loadAngle`,
-      param: isNull(loadAngle) ? null : loadAngle,
-    });
-    result.push({
-      code: `step${index}-${target.type}`,
-      param: target?.code ?? [],
-    });
-
-    // 合并前置任务的参数
-    if (Array.isArray(preActionCodes)) {
-      preActionCodes.forEach((subTaskCode) => {
-        if (!isNull(preTaskParams[subTaskCode])) {
-          preTaskParams[subTaskCode].forEach(({ code, param }) => {
-            result.push({
-              code: `step${index}-${code}`,
-              param,
-            });
-          });
-        }
+  if (isPlainObject(customActions)) {
+    Object.values(customActions).forEach((subTask) => {
+      const {
+        code,
+        preActionCodes,
+        targetAction: { loadAngle, target },
+      } = subTask;
+      const { index } = find(taskNodes, { code });
+      result.push({
+        code: `step${index}-loadAngle`,
+        param: isNull(loadAngle) ? null : loadAngle,
       });
-    }
-  });
+      result.push({
+        code: `step${index}-${target.type}`,
+        param: target?.code ?? [],
+      });
+
+      // 合并前置任务的参数
+      if (Array.isArray(preActionCodes)) {
+        preActionCodes.forEach((subTaskCode) => {
+          if (!isNull(preTaskParams[subTaskCode])) {
+            preTaskParams[subTaskCode].forEach(({ code, param }) => {
+              result.push({
+                code: `step${index}-${code}`,
+                param,
+              });
+            });
+          }
+        });
+      }
+    });
+  }
+
   return result;
 }
 

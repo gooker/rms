@@ -1,10 +1,10 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
-import { Form, InputNumber, Modal, Select, Upload, Input, Row, Col, message, Checkbox } from 'antd';
+import { Checkbox, Col, Form, Input, InputNumber, message, Modal, Row, Select, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
-import { NavigationTypeView, NavigationType } from '@/config/config';
+import { NavigationType, NavigationTypeView } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
 import { MUSHINY, SEER } from '@/utils/mapParser';
 
@@ -96,11 +96,12 @@ const UploadMapModal = (props) => {
     >
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
-          name="file"
-          label={formatMessage({ id: 'app.common.file' })}
+          noStyle
+          name='file'
           valuePropName="fileList"
           getValueFromEvent={normFile}
           rules={[{ required: true }]}
+          style={{ marginBottom: 24 }}
         >
           <Upload.Dragger
             name="files"

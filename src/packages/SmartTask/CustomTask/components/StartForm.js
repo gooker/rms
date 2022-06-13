@@ -46,14 +46,14 @@ const StartForm = (props) => {
         required
         name={[code, 'robot']}
         initialValue={{ type: 'AUTO', code: [] }}
-        label={<FormattedMessage id="customTask.form.vehicle" />}
+        label={<FormattedMessage id='customTask.form.vehicle' />}
         rules={[{ validator: validateVehicle }]}
       >
         <VehicleSelector />
       </Form.Item>
 
-      {/* 约束 */}
-      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.limit' })}>
+      {/* 资源约束 */}
+      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.resourceLimit' })}>
         <div className={style.limitDiv}>
           <Form.Item
             noStyle
@@ -62,7 +62,7 @@ const StartForm = (props) => {
             valuePropName={'checked'}
           >
             <Checkbox>
-              <FormattedMessage id={'customTask.form.limit.podWithStandbyVehicle'} />
+              <FormattedMessage id={'customTask.form.resourceLimit.podWithStandbyVehicle'} />
             </Checkbox>
           </Form.Item>
         </div>
