@@ -270,7 +270,7 @@ const CustomTaskForm = (props) => {
       sectionId: window.localStorage.getItem('sectionId'),
       code: requestBody.code,
       createCode: null,
-      customParams: generateSample(requestBody),
+      customParams: generateSample(requestBody, attachNodeIndex()),
     };
     requestBody.sample = JSON.stringify(sample);
 
@@ -314,6 +314,21 @@ const CustomTaskForm = (props) => {
     );
   }
 
+  function attachNodeIndex() {
+    let index = 0;
+    return taskSteps.map((taskStep) => {
+      if (![CustomNodeType.BASE, CustomNodeType.PLUS].includes(taskStep.type)) {
+        index += 1;
+        return { ...taskStep, index };
+      }
+      return taskStep;
+    });
+  }
+
+  function isDragAble(item) {
+    return ![CustomNodeType.BASE, CustomNodeType.START, CustomNodeType.END].includes(item.type);
+  }
+
   const plusMenu = (
     <Menu onClick={addTaskFlowNode}>
       <Menu.Item key={CustomNodeType.ACTION}>
@@ -348,7 +363,7 @@ const CustomTaskForm = (props) => {
             onDrop={(e) => onDropInTaskFlow(e)}
             nonDragAreaSelector={'.dndDisabled'} // 禁止拖拽
           >
-            {taskSteps.map((item, index) => {
+            {attachNodeIndex().map((item, index) => {
               if (item.type === CustomNodeType.PLUS) {
                 return (
                   <div style={{ textAlign: 'center' }}>
@@ -362,9 +377,10 @@ const CustomTaskForm = (props) => {
               }
               return (
                 <TaskNodeCard
-                  dnd
                   key={item.code}
+                  dnd={isDragAble(item)}
                   name={getRichName(item)}
+                  index={item.index}
                   active={currentCode === item.code}
                   disabled={isStandardTab(item.type)}
                   onDelete={() => {

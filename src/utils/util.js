@@ -7,10 +7,7 @@ import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import {
-  CustomNodeType,
-  CustomNodeTypeFieldMap,
-} from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -1464,34 +1461,67 @@ export function extractActionToFormValue(actions) {
 }
 
 // 提取sample数据
-export function generateSample({ customStart, customActions, customPreActions }) {
+export function generateSample({ customStart, customActions, customPreActions }, taskNodes) {
   const result = [];
-  // 任务开始
+  // 任务开始(step1)
   if (isNull(customStart.robot)) {
-    result.push({ code: 'START-AGV', param: [] });
+    result.push({ code: 'step1-AGV', param: [] });
   } else {
-    result.push({ code: `START-${customStart.robot.type}`, param: customStart.robot.code });
+    result.push({ code: `step1-${customStart.robot.type}`, param: customStart.robot.code });
   }
-
   result.push({
-    code: 'START-isLimitStandBy',
+    code: 'step1-isLimitStandBy',
     param: customStart.isLimitStandBy,
   });
 
-  // 子任务
-  Object.values({ ...customActions, ...customPreActions }).forEach((subTask) => {
+  // 转换前置任务
+  const preTaskParams = {};
+  Object.values(customPreActions).forEach((subTask) => {
     const {
       code,
       targetAction: { loadAngle, target },
     } = subTask;
+    preTaskParams[code] = [];
+    preTaskParams[code].push({
+      code: 'loadAngle',
+      param: isNull(loadAngle) ? null : loadAngle,
+    });
+    preTaskParams[code].push({
+      code: target.type,
+      param: target?.code ?? [],
+    });
+  });
+
+  // 子任务
+  Object.values(customActions).forEach((subTask) => {
+    const {
+      code,
+      preActionCodes,
+      targetAction: { loadAngle, target },
+    } = subTask;
+    const { index } = find(taskNodes, { code });
     result.push({
-      code: `${code}-loadAngle`,
+      code: `step${index}-loadAngle`,
       param: isNull(loadAngle) ? null : loadAngle,
     });
     result.push({
-      code: `${code}-${target.type}`,
+      code: `step${index}-${target.type}`,
       param: target?.code ?? [],
     });
+
+    // 合并前置任务的参数
+    if (Array.isArray(preActionCodes)) {
+      preActionCodes.forEach((subTaskCode) => {
+        if (!isNull(preTaskParams[subTaskCode])) {
+          preTaskParams[subTaskCode].forEach(({ code, param }) => {
+            result.push({
+              code: `step${index}-${code}`,
+              param,
+            });
+          });
+        }
+      });
+    }
   });
   return result;
 }
