@@ -368,12 +368,12 @@ class MonitorMapView extends BaseMap {
     } = vehicleState;
 
     // 判断该 vehicleId 对应的小车是否是潜伏车
-    if (vehicleEntity.type !== vehicleType) {
-      console.warn(
-        `检测到小车ID冲突. 目标ID: [${vehicleId}], 目标小车类型: [${vehicleEntity.type}]; 实际应该是: [${vehicleType}]`,
-      );
-      return;
-    }
+    // if (vehicleEntity.type !== vehicleType) {
+    //   console.warn(
+    //     `检测到小车ID冲突. 目标ID: [${vehicleId}], 目标小车类型: [${vehicleEntity.type}]; 实际应该是: [${vehicleType}]`,
+    //   );
+    //   return;
+    // }
 
     // 1. 如果小车数据【vehicle.c】与 currentCellId 不一致说小车当前在电梯中；
     // 2. 此时需要对比 currentCellId 对应的点位位置与 x,y 是否一样; 一样表示在当前逻辑区，不一样表示当前小车不在这个逻辑区需要隐藏

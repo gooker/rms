@@ -7,7 +7,7 @@ import { getTaskNodeColor, getTaskNodeColorFlag } from '@/components/TaskDetail/
 import styles from './index.module.less';
 
 const TaskStepNode = (props) => {
-  const { node, translation } = props;
+  const { node } = props;
   const { nodeId, actions, cellEventAction } = node;
 
   const hasAction = Array.isArray(actions) && actions.length > 0;
@@ -93,8 +93,8 @@ const TaskStepNode = (props) => {
     if (hasCellEventAction) {
       Object.values(cellEventAction).forEach((action) => {
         const dataSourceItem = {
-          event: action.actionId,
-          eventName: action.actionDescription ?? action.actionId,
+          eventName: action.actionType,
+          event: action.actionDescription ?? action.actionId,
           eventParam: action.actionParameters ?? [],
         };
         dataSourceItem.eventParam = dataSourceItem.eventParam.filter(Boolean);
@@ -110,6 +110,7 @@ const TaskStepNode = (props) => {
             dataSource={actionDataSource}
             columns={actionColumns}
             pagination={false}
+            rowClassName={(record) => styles[getTaskNodeColorFlag(record)]}
           />
         )}
         {hasCellEventAction && (
@@ -118,7 +119,6 @@ const TaskStepNode = (props) => {
             dataSource={eventDataSource}
             columns={eventColumns}
             pagination={false}
-            rowClassName={(record) => styles[getTaskNodeColorFlag(record)]}
             style={hasAction ? { marginTop: 20 } : {}}
           />
         )}
@@ -138,7 +138,7 @@ const TaskStepNode = (props) => {
           <div className={styles.cellId} style={{ background: nodeColor }}>
             <span style={{ color: '#fff', fontSize: 15, fontWeight: 500 }}>{nodeId}</span>
           </div>
-          {(actions?.length > 0 || !isEmpty(cellEventAction)) && (
+          {(hasAction || hasCellEventAction) && (
             <div
               className={styles.actions}
               style={{ border: `1px solid ${nodeColor}`, borderLeft: 'none' }}
@@ -150,9 +150,7 @@ const TaskStepNode = (props) => {
                   </span>
                 </Tag>
               ))}
-              {cellEventAction && !isEmpty(cellEventAction) && (
-                <TagOutlined style={{ color: '#37A3FF' }} theme={'twoTone'} />
-              )}
+              {hasCellEventAction && <TagOutlined style={{ color: '#37A3FF' }} theme={'twoTone'} />}
             </div>
           )}
         </div>

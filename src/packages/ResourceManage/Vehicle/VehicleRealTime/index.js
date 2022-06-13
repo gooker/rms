@@ -1,11 +1,10 @@
 import React from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Card, Form, Row, Select } from 'antd';
+import { Button, Form, Row, Select, Spin } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchAllVehicleList } from '@/services/commonService';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { fetchAllVehicleList, fetchVehicleInfo } from '@/services/commonService';
 import VehicleInformationCard from './VehicleInformation';
 import VehicleRealTimeCard from './VehicleRealTime';
 import VehicleBatteryStateCard from './VehicleBatteryState';
@@ -15,6 +14,7 @@ import styles from './index.module.less';
 @connect()
 class VehicleRealTime extends React.Component {
   state = {
+    loading: false,
     vehicleList: [],
     vehicle: null,
   };
@@ -24,61 +24,61 @@ class VehicleRealTime extends React.Component {
   }
 
   getVehicleList = async () => {
-    let vehicleList = await fetchAllVehicleList();
+    this.setState({ loading: true });
+    const vehicleList = await fetchAllVehicleList();
     if (
       !dealResponse(vehicleList, false, formatMessage({ id: 'app.message.fetchVehicleListFail' }))
     ) {
-      vehicleList = vehicleList.map((item) => ({
-        ...item,
-        uniqueId: item.vehicle.id,
-      }));
       this.setState({ vehicleList });
+    }
+    this.setState({ loading: false });
+  };
+
+  fetchVehicleDetail = async (vehicle) => {
+    if (!isStrictNull(vehicle)) {
+      this.setState({ loading: true });
+      const [vehicleId, adapterType] = vehicle.split('-');
+      const vehicleDetail = await fetchVehicleInfo(vehicleId, adapterType);
+      this.setState({ vehicle: vehicleDetail });
+      this.setState({ loading: false });
+    } else {
+      this.setState({ vehicle: null });
     }
   };
 
   render() {
-    const { vehicle, vehicleList } = this.state;
+    const { vehicle, vehicleList, loading } = this.state;
     return (
       <div className={commonStyles.commonPageStyle}>
-        <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
-          <Form.Item label={<FormattedMessage id="vehicle.id" />}>
-            <Select
-              allowClear
-              showSearch
-              style={{ width: 200 }}
-              onChange={(uniqueId) => {
-                const vehicle = find(vehicleList, { uniqueId });
-                this.setState({ vehicle });
-              }}
-            >
-              {vehicleList.map(({ vehicleId, vehicleType, uniqueId }) => (
-                <Select.Option key={`${vehicleId}-${vehicleType}`} value={uniqueId}>
-                  {`${vehicleId}-${vehicleType}`}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Button type={'primary'} onClick={this.getVehicleList}>
-            <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
-          </Button>
-        </Row>
-
-        <div className={styles.viewContainer}>
-          {/* 小车信息 */}
-          <Card title={<FormattedMessage id={'vehicle.info'} />}>
+        <Spin spinning={loading}>
+          <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
+            <Form.Item label={<FormattedMessage id='vehicle.id' />}>
+              <Select
+                allowClear
+                showSearch
+                style={{ width: 200 }}
+                onChange={this.fetchVehicleDetail}
+              >
+                {vehicleList.map(({ vehicleId, vehicleType }) => (
+                  <Select.Option
+                    key={`${vehicleId}-${vehicleType}`}
+                    value={`${vehicleId}-${vehicleType}`}
+                  >
+                    {`${vehicleId}-${vehicleType}`}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Button type={'primary'} onClick={this.getVehicleList}>
+              <ReloadOutlined /> <FormattedMessage id={'app.button.refresh'} />
+            </Button>
+          </Row>
+          <div className={styles.viewContainer}>
             <VehicleInformationCard data={vehicle ?? {}} />
-          </Card>
-
-          {/* 小车实时状态*/}
-          <Card title={<FormattedMessage id={'vehicle.realTime'} />}>
             <VehicleRealTimeCard data={vehicle ?? {}} />
-          </Card>
-
-          {/* 小车电池状态 */}
-          <Card title={<FormattedMessage id={'vehicle.batteryRealTime'} />}>
             <VehicleBatteryStateCard data={vehicle ?? {}} />
-          </Card>
-        </div>
+          </div>
+        </Spin>
       </div>
     );
   }

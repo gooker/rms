@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Col, Form, Row } from 'antd';
+import { Card, Descriptions } from 'antd';
 import { getSuffix, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import Battery from '@/components/Battery';
@@ -60,78 +60,67 @@ const VehicleBatteryState = (props) => {
     return type;
   }
 
+  function renderBatteryState(state) {
+    if (isStrictNull(state)) return null;
+    return state;
+  }
+
   return (
-    <Row gutter={24}>
-      <Col>
+    <Card title={<FormattedMessage id={'vehicle.batteryRealTime'} />}>
+      <div style={{ display: 'flex' }}>
         <div className={styles.batteryState}>
           <Battery value={data.vehicleInfo?.battery ?? 0} />
         </div>
-      </Col>
-      <Col flex={1}>
-        <Row>
-          {/************ 电压 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.voltage'} />}>
+        <div style={{ flex: 1 }}>
+          <Descriptions>
+            {/************ 电压 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.voltage'} />}>
               {renderVoltage(data.vehicleInfo?.batteryVoltage)}
-            </Form.Item>
-          </Col>
+            </Descriptions.Item>
 
-          {/************ 电池状态 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.status'} />}>111</Form.Item>
-          </Col>
-
-          {/************ 电池温度 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.temperature'} />}>
+            {/************ 电池温度 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.temperature'} />}>
               {renderBatteryTemperature(data.vehicleInfo?.batteryTemperature)}
-            </Form.Item>
-          </Col>
+            </Descriptions.Item>
 
-          {/************ 电池容量 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.capacity'} />}>
+            {/************ 电池状态 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.status'} />}>
+              {renderBatteryState()}
+            </Descriptions.Item>
+
+            {/************ 电池容量 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.capacity'} />}>
               {renderBatteryCapacity()}
-            </Form.Item>
-          </Col>
+            </Descriptions.Item>
 
-          {/************ 电池电流 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.current'} />}>
+            {/************ 电池电流 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.current'} />}>
               {renderBatteryCurrent()}
-            </Form.Item>
-          </Col>
+            </Descriptions.Item>
 
-          {/************ 最大充电电流 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.maxCurrent'} />}>
+            {/************ 最大充电电流 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.maxCurrent'} />}>
               {renderBatteryCurrent()}
-            </Form.Item>
-          </Col>
+            </Descriptions.Item>
 
-          {/************ 电池类型 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.type'} />}>
+            {/************ 电池类型 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.type'} />}>
               {renderBatteryType()}
-            </Form.Item>
-          </Col>
+            </Descriptions.Item>
 
-          {/************ 充电曲线 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.chargingCurve'} />}>
-              TODO: 显示图表
-            </Form.Item>
-          </Col>
-
-          {/************ 电池寿命百分比 ************/}
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id={'vehicle.battery.lifePercentage'} />}>
+            {/************ 电池寿命百分比 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.lifePercentage'} />}>
               {renderBatteryLifePercentage()}
-            </Form.Item>
-          </Col>
-        </Row>
-      </Col>
-    </Row>
+            </Descriptions.Item>
+
+            {/************ 充电曲线 ************/}
+            <Descriptions.Item label={<FormattedMessage id={'vehicle.battery.chargingCurve'} />}>
+              TODO: 显示图表
+            </Descriptions.Item>
+          </Descriptions>
+        </div>
+      </div>
+    </Card>
   );
 };
 export default memo(VehicleBatteryState);

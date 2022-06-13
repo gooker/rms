@@ -137,10 +137,7 @@ const VehicleTaskSteps = (props) => {
         <h4 style={{ marginTop: 16 }}>
           <FormattedMessage id={'app.task.step'} />:
         </h4>
-        <RenderVehicleTaskActions
-          subTask={nowPath?.step === stepIndex ? nowPath : subTask}
-          translation={{}}
-        />
+        <RenderVehicleTaskActions subTask={nowPath?.step === stepIndex ? nowPath : subTask} />
       </div>
     );
   }

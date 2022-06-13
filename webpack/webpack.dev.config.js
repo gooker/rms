@@ -18,7 +18,7 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
     publicPath: '/',
   },
 
-  plugins: [new ReactRefreshWebpackPlugin()],
+  plugins: [new ReactRefreshWebpackPlugin({ overlay: false })],
 
   /**
    * webpack-dev-server v4.0.0+ 要求 node >= v12.13.0 和 webpack >= v4.37.0
@@ -31,13 +31,5 @@ module.exports = merge(BaseConfig.getWebPackBaseConfig('development'), {
     historyApiFallback: true,
     // 可访问开发服务器的地址
     allowedHosts: 'all',
-
-    // 当出现编译错误或警告时，在浏览器中显示全屏覆盖
-    client: {
-      overlay: {
-        errors: false,
-        warnings: false,
-      },
-    },
   },
 });
