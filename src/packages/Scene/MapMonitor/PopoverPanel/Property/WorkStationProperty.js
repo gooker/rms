@@ -8,7 +8,7 @@ import { covertData2ChartsData } from '@/packages/Scene/MapMonitor/Modal/WorkSta
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
-import { CarOutlined } from '_@ant-design_icons@4.7.0@@ant-design/icons';
+import { CarOutlined } from '@ant-design/icons';
 
 const WorkStationProperty = (props) => {
   const {

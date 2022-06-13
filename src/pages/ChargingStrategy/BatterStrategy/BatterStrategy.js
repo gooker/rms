@@ -21,6 +21,7 @@ const BatteryStrategy = (props) => {
         <div className={styles.electricityButton}>
           <ButtonGroup>
             <Button
+              size="small"
               icon={
                 <MinusOutlined
                   onClick={() => {
@@ -32,6 +33,7 @@ const BatteryStrategy = (props) => {
               }
             />
             <Button
+              size="small"
               icon={
                 <PlusOutlined
                   onClick={() => {
