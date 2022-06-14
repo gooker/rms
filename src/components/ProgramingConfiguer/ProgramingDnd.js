@@ -36,7 +36,9 @@ const ProgramingDnd = (props) => {
       const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
       return {
         title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
-        subTitle: renderSubTitle(rest, actionParameters),
+        subTitle: Array.isArray(actionParameters)
+          ? renderSubTitle(rest, actionParameters)
+          : formatMessage({ id: 'app.programing.noParam' }),
       };
     });
   }

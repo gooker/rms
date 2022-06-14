@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useEffect, useState } from 'react';
-import { Divider, Empty, Modal, Radio } from 'antd';
+import { Divider, Empty, message, Modal, Radio } from 'antd';
 import { useMap } from 'ahooks';
-import { isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import { RelationTiming } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -29,8 +29,8 @@ const ProgramingRelationModal = (props) => {
         end = [];
 
       actions.forEach((item) => {
-        const { timing, adapterType, actionType, actionParameters } = item;
-        const addedItem = { actionType: [adapterType, actionType] };
+        const { timing, adapterType, actionId, actionParameters } = item;
+        const addedItem = { actionType: [adapterType, actionId] };
         actionParameters.forEach(({ code, value }) => {
           addedItem[code] = value;
         });
@@ -60,6 +60,7 @@ const ProgramingRelationModal = (props) => {
   );
 
   function confirm() {
+    message.success(formatMessage({ id: 'app.message.operateSuccess' }));
     onConfirm(configuration);
     onCancel();
   }

@@ -3,11 +3,7 @@ import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
-import {
-  getSelectionNaviCells,
-  getCurrentRouteMapData,
-  getSelectionNaviCellTypes,
-} from '@/utils/mapUtil';
+import { getCurrentRouteMapData, getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
 import { connect } from '@/utils/RmsDva';
 import { convertMapToArrayMap } from '@/utils/util';
 import { ProgramingItemType } from '@/config/config';
@@ -15,6 +11,7 @@ import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import ProgramingConfiguerModal from '@/components/ProgramingConfiguer';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const ProgramingCellTab = (props) => {
   const { dispatch, mapContext, cellMap, selections, programing, cellPrograming } = props;
@@ -124,12 +121,12 @@ const ProgramingCellTab = (props) => {
         </Col>
       </Row>
       <Button
-        type="primary"
+        type='primary'
         onClick={startConfiguration}
         disabled={configCells.length === 0}
         style={{ marginTop: 10 }}
       >
-        <SettingOutlined /> 开始配置
+        <SettingOutlined /> <FormattedMessage id={'app.button.config'} />
       </Button>
 
       {/* 搜索部分 */}
