@@ -59,8 +59,12 @@ export default {
   'customTask.form.SPECIFY_Vehicle': '指定小车',
   'customTask.form.SPECIFY_GROUP': '指定小车组',
   'customTask.form.resourceLimit': '资源约束',
-  'customTask.form.resourceLimit.podWithStandbyVehicle':
-    '接任务约束: 要求的载具ID必须有待命车辆持有',
+  'customTask.form.resourceLimit.vehicleBattery': '车辆电量',
+  'customTask.form.resourceLimit.availableContainerCountLimit': '车辆容器可用数量',
+  'customTask.form.resourceLimit.containerTypeLimit': '车辆容器规格',
+  'customTask.form.resourceLimit.loadTypeLimit': '可用载具规格',
+  'customTask.form.resourceLimit.isLimitStandBy': '载具ID必须由待命车辆持有',
+  'customTask.form.resourceLimit.loadWorkLimit': '使用工作中的载具',
 
   // 结束
   'customTask.form.vehicleWaitTask': '小车待命',

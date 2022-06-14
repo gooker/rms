@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, Input, InputNumber, message, Row, Select, Switch, Tag, Tooltip } from 'antd';
-import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { cloneDeep, find, groupBy, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
 import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
@@ -57,8 +57,8 @@ export function isEmptyPlainObject(obj) {
   return isPlainObject(obj) && isEmpty(obj);
 }
 
-export function isEmptyArray(arr) {
-  return Array.isArray(arr) && arr.length === 0;
+export function isArray(value) {
+  return Array.isArray(value);
 }
 
 export function getBase64(file) {
@@ -1284,14 +1284,14 @@ export function generateCustomTaskForm(value, taskSteps, programing, preTasksCod
           configValue.lockTime = lockTimeMapValue;
         }
 
-        // 检查路径函数配置
-        const _pathProgramming = { ...configValue.pathProgramming };
-        Object.keys(_pathProgramming).forEach((type) => {
-          if (!isNull(_pathProgramming[type])) {
-            _pathProgramming[type] = fillFormValueToAction(_pathProgramming[type], programing);
+        // 检查路径函数配置，扁平化处理
+        const _pathProgramming = [];
+        Object.values(configValue.pathProgramming).forEach((configLoad) => {
+          if (!isNull(configLoad)) {
+            _pathProgramming.push(fillFormValueToAction(configLoad, programing));
           }
         });
-        configValue.pathProgramming = _pathProgramming;
+        configValue.pathProgramming = _pathProgramming.flat();
 
         // 检查关键点动作配置
         const _targetAction = { ...configValue.targetAction };
@@ -1391,14 +1391,17 @@ export function restoreCustomTaskForm(customTask) {
         }
         subTaskConfig.lockTime = lockTimeFormValue;
 
-        // 处理路径函数配置
-        const _pathProgramming = { ...subTaskConfig.pathProgramming };
-        Object.keys(_pathProgramming).forEach((type) => {
-          if (!isNull(_pathProgramming[type])) {
-            _pathProgramming[type] = extractActionToFormValue(_pathProgramming[type]);
-          }
-        });
-        subTaskConfig.pathProgramming = _pathProgramming;
+        // 处理路径函数配置，根据operateType分组处理
+        if (isArray(subTaskConfig.pathProgramming)) {
+          let _pathProgramming = [...subTaskConfig.pathProgramming];
+          _pathProgramming = groupBy(_pathProgramming, 'operateType');
+          Object.keys(_pathProgramming).forEach((type) => {
+            if (!isNull(_pathProgramming[type])) {
+              _pathProgramming[type] = extractActionToFormValue(_pathProgramming[type]);
+            }
+          });
+          subTaskConfig.pathProgramming = _pathProgramming;
+        }
 
         // 处理关键点动作配置
         const _targetAction = { ...subTaskConfig.targetAction };

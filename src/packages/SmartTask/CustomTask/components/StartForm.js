@@ -1,12 +1,13 @@
-import React, { memo } from 'react';
-import { Checkbox, Form, Input } from 'antd';
+import React, { Fragment, memo } from 'react';
+import { Form, Input, InputNumber, Select, Switch } from 'antd';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleSelector from '../components/VehicleSelector';
-import style from '../customTask.module.less';
+import TitleCard from '@/components/TitleCard';
+import { connect } from '@/utils/RmsDva';
 
 const StartForm = (props) => {
-  const { code, type, hidden } = props;
+  const { code, type, hidden, loadSpecification, storageSpecification } = props;
 
   function validateVehicle(_, value) {
     if (value.type === 'AUTO') {
@@ -52,21 +53,69 @@ const StartForm = (props) => {
         <VehicleSelector />
       </Form.Item>
 
-      {/* 资源约束 */}
-      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.resourceLimit' })}>
-        <div className={style.limitDiv}>
+      {/* 资源约束：customLimit */}
+      <TitleCard
+        hidden={hidden}
+        width={640}
+        title={<FormattedMessage id={'customTask.form.resourceLimit'} />}
+      >
+        <Fragment>
+          {/* 可接小车电量约束 */}
           <Form.Item
-            noStyle
-            name={[code, 'isLimitStandBy']}
-            initialValue={true}
+            hidden={hidden}
+            name={[code, 'customLimit', 'vehicleBatteryLimit']}
+            label={formatMessage({ id: 'customTask.form.resourceLimit.vehicleBattery' })}
+          >
+            <InputNumber allowClear style={{ width: 90 }} />
+          </Form.Item>
+          {/* 车身可用容器数量约束 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'customLimit', 'canUseContainerCountLimit']}
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.availableContainerCountLimit',
+            })}
+          >
+            <InputNumber allowClear style={{ width: 90 }} />
+          </Form.Item>
+          {/* 容器规格约束 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'customLimit', 'canUseContainerLimit']}
+            label={formatMessage({ id: 'customTask.form.resourceLimit.containerTypeLimit' })}
+          >
+            <Select allowClear></Select>
+          </Form.Item>
+          {/* 载具规格约束 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'customLimit', 'canUseLoadTypeLimit']}
+            label={formatMessage({ id: 'customTask.form.resourceLimit.loadTypeLimit' })}
+          >
+            <Select allowClear></Select>
+          </Form.Item>
+          {/* 是否要求的载具ID必须有待命车辆持有 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'customLimit', 'isLimitStandBy']}
+            label={formatMessage({ id: 'customTask.form.resourceLimit.isLimitStandBy' })}
+            initialValue={false}
             valuePropName={'checked'}
           >
-            <Checkbox>
-              <FormattedMessage id={'customTask.form.resourceLimit.podWithStandbyVehicle'} />
-            </Checkbox>
+            <Switch />
           </Form.Item>
-        </div>
-      </Form.Item>
+          {/* 是否可以使用工作中的载具 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'customLimit', 'canUseWorkLimit']}
+            label={formatMessage({ id: 'customTask.form.resourceLimit.loadWorkLimit' })}
+            initialValue={false}
+            valuePropName={'checked'}
+          >
+            <Switch />
+          </Form.Item>
+        </Fragment>
+      </TitleCard>
 
       {/* 备注 */}
       <Form.Item
@@ -79,4 +128,7 @@ const StartForm = (props) => {
     </>
   );
 };
-export default memo(StartForm);
+export default connect(({ customTask }) => ({
+  loadSpecification: customTask.loadSpecification,
+  storageSpecification: customTask.storageSpecification,
+}))(memo(StartForm));

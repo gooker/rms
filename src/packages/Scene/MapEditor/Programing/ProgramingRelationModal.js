@@ -101,7 +101,7 @@ const ProgramingRelationModal = (props) => {
       ) : (
         <ProgramingDnd
           value={getConfiguration(current)}
-          onChane={(payLoad) => {
+          onChange={(payLoad) => {
             setConfiguration(current, payLoad);
           }}
           programing={programing}

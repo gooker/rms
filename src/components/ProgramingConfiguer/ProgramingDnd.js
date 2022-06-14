@@ -3,8 +3,8 @@ import { Container } from 'react-smooth-dnd';
 import { find, isEmpty } from 'lodash';
 import { customTaskApplyDrag, formatMessage } from '@/utils/util';
 import ProgramingDndCard from './ProgramingDndCard';
-import styles from './programing.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
+import styles from './programing.module.less';
 
 const ProgramingDnd = (props) => {
   const { value, onChange, programing } = props;
