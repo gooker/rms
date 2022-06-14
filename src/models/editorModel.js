@@ -233,14 +233,14 @@ export default {
 
     // 导入导航点
     *importMap({ payload }, { put, call, select }) {
-      const { mapList, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
+      const { mapList, currentMap } = yield select(({ editor }) => editor);
       const {
         addMap,
         mapName,
         transform,
         mapData: { cells, relations },
       } = payload;
-      if (cells.length === 0 || relations.length === 0) {
+      if (cells.length === 0) {
         message.error('提取的数据为空');
         return;
       }
@@ -250,7 +250,7 @@ export default {
         const { version } = packageJSON;
         const newMap = new MapEntity({
           name: mapName,
-          sectionId: currentLogicArea,
+          sectionId: window.localStorage.getItem('sectionId'),
           logicAreaList: [new LogicArea()],
           version,
         });
@@ -528,14 +528,14 @@ export default {
     // 新增单个导航点
     *addNavigation({ payload }, { select }) {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
-      const { navigationCellType, code, x, y } = payload;
+      const { navigationCellType: navigationType, code, x, y } = payload;
 
       const cells = Object.values(currentMap.cellMap);
       let findResult;
 
       // 判断该车型下是否有相同导航点ID
-      if (navigationCellType !== NavigationType.M_QRCODE) {
-        findResult = find(cells, { naviId: code, navigationType: navigationCellType });
+      if (navigationType !== NavigationType.M_QRCODE) {
+        findResult = find(cells, { naviId: code, navigationType: navigationType });
         if (findResult) {
           message.error('导航点编码已存在');
           return null;
@@ -543,7 +543,7 @@ export default {
       }
 
       // 判断该车型下是否有相同的导航点坐标
-      findResult = find(cells, { x, y, navigationType: navigationCellType });
+      findResult = find(cells, { x, y, navigationType: navigationType });
       if (findResult) {
         message.error('导航点坐标已存在');
         return null;
@@ -556,14 +556,14 @@ export default {
         id,
         x,
         y,
-        naviId: navigationCellType === NavigationType.M_QRCODE ? id : code,
-        navigationType: navigationCellType,
+        naviId: navigationType === NavigationType.M_QRCODE ? id : code,
+        navigationType: navigationType,
         logicId: currentLogicArea,
       });
       currentMap.cellMap[id] = reverseCoordinateTransformer(
         cell,
-        navigationCellType,
-        currentMap?.transform?.[navigationCellType],
+        navigationType,
+        currentMap?.transform?.[navigationType],
       );
       return cell;
     },

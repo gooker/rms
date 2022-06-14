@@ -1,4 +1,5 @@
 import Cell from './Cell';
+import CellEntity from './CellEntity';
 import Text from './Text';
 import ForkFreight from './ForkFreight';
 import GeoLock from './GeoLock';
@@ -29,10 +30,13 @@ import RealtimeRate from './RealtimeRate';
 import EmergencyStop from './EmergencyStop';
 import LogicArea from './LogicArea';
 import MapEntity from './MapEntity';
+import RelationEntity from './RelationEntity';
+import RouteMap from './RouteMap';
 
 export {
   Text,
   Cell,
+  CellEntity,
   Dump,
   ToteVehicle,
   TotePod,
@@ -62,4 +66,6 @@ export {
   RealtimeRate,
   EmergencyStop,
   MapEntity,
+  RelationEntity,
+  RouteMap,
 };

@@ -57,7 +57,7 @@ const BatchAddCells = (props) => {
         </Form.Item>
         <Form.Item
           name={'navigationCellType'}
-          label={formatMessage({ id: 'editor.navigationCellType' })}
+          label={formatMessage({ id: 'editor.navigationType' })}
           initialValue={NavigationTypeView[0].code}
         >
           <Select style={{ width: 133 }}>

@@ -7,13 +7,19 @@ export default class LogicArea {
     this.routeMap = {
       DEFAULT: new RouteMap(),
     };
-    this.restCells = props.restCells || [];
-    this.obstacles = props.obstacles || [];
     this.commonList = props.commonList || [];
     this.chargerList = props.chargerList || [];
     this.dumpStations = props.dumpStations || [];
-    this.elevatorList = props.elevatorList || [];
+    this.emergencyStopFixedList = props.emergencyStopFixedList || [];
+    this.intersectionList = props.intersectionList || [];
+    this.obstacles = props.obstacles || [];
+    this.restCells = props.restCells || [];
+    this.rotateCellIds = props.rotateCellIds || [];
+    this.safeAreaCellIds = props.safeAreaCellIds || [];
     this.storeCellIds = props.storeCellIds || [];
+    this.taskCellIds = props.taskCellIds || [];
     this.workstationList = props.workstationList || [];
+    this.labels = props.labels || [];
+    this.zoneMarker = props.zoneMarker || [];
   }
 }

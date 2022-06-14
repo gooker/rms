@@ -56,7 +56,7 @@ const MapShownModeSelector = (props) => {
       <div className={styles.divider} />
       <Dropdown overlay={menu} trigger={['click']}>
         <span className={styles.navigationCellTypeSelectorContent}>
-          <FormattedMessage id={'editor.navigationCellType'} />
+          <FormattedMessage id={'editor.navigationType'} />
           <span style={{ color: '#1890ff', marginLeft: 3, fontWeight: 600 }}>
             ({shownNavigationCellType.length})
           </span>

@@ -1,8 +1,95 @@
-import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
+/* eslint-disable no-console */
+import { message } from 'antd';
 import { isNull } from '@/utils/util';
-import CellEntity from '@/entities/CellEntity';
-import RelationEntity from '@/entities/RelationEntity';
+import { getAngle, getCellMapId, getDistance } from '@/utils/mapUtil';
+import { CellEntity, LogicArea, MapEntity, RelationEntity, RouteMap } from '@/entities';
 import { NavigationType } from '@/config/config';
+import packageJSON from '../../package.json';
+
+export function getMapName(mapData, navigationCellType) {
+  switch (navigationCellType) {
+    case NavigationType.M_QRCODE:
+      return mapData.name;
+    case NavigationType.SEER_SLAM:
+      return mapData.header.mapName;
+    default:
+      return null;
+  }
+}
+
+export function isOldMushinyMap(mapData) {
+  const { cellMap } = mapData;
+  const firstKey = Object.keys(cellMap)[0];
+  return isNull(cellMap[firstKey].navigationType);
+}
+
+// 将旧版地图结构转换成新版地图结构
+export function convertMushinyOldMapToNew(mapData) {
+  try {
+    const { version } = packageJSON;
+    const { name, desc, cellMap, logicAreaList } = mapData;
+    const sectionId = window.localStorage.getItem('sectionId');
+    const newMap = new MapEntity({ name, desc, version, sectionId });
+    const cellMapValue = Object.values(cellMap);
+    logicAreaList.forEach((logic) => {
+      const { rangeStart, rangeEnd, routeMap } = logic;
+      // 提取点位
+      const logicCells = cellMapValue.filter(
+        (item) => item.id >= rangeStart && item.id <= rangeEnd,
+      );
+      logicCells.forEach(({ id, x, y }) => {
+        newMap.cellMap[id] = new CellEntity({
+          id,
+          naviId: id + '',
+          navigationType: NavigationType.SEER_SLAM,
+          x,
+          y,
+          nx: x,
+          ny: y,
+          logicId: logic.id,
+          additional: {},
+        });
+      });
+
+      // 提取逻辑区
+      const logicEntity = new LogicArea({ id: logic.id, name: logic.name });
+      newMap.logicAreaList.push(logicEntity);
+
+      // 提取逻辑区路线
+      Object.values(routeMap).forEach((routeMapItem) => {
+        const loopRouteMap = new RouteMap({
+          name: routeMapItem.name,
+          code: routeMapItem.code,
+          desc: routeMapItem.desc,
+        });
+        if (Array.isArray(routeMapItem.relations)) {
+          routeMapItem.relations.forEach((relation) => {
+            loopRouteMap.relations.push(
+              new RelationEntity({
+                cost: relation.cost,
+                angle: getAngle(newMap.cellMap[relation.source], newMap.cellMap[relation.target]),
+                source: relation.source,
+                target: relation.target,
+                distance: relation.distance,
+              }),
+            );
+          });
+        }
+        logicEntity.routeMap[routeMapItem.code] = loopRouteMap;
+      });
+    });
+    return newMap;
+  } catch (err) {
+    console.log(err);
+    message.error(err.message);
+    return null;
+  }
+}
+
+// 提取旧版地图结构中的关键数据: 点位、线条
+export function extractCellAndRelationFromOldMap(mapData) {
+  return {};
+}
 
 /**
  * 仙工地图数据转化工具
