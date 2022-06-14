@@ -14,7 +14,7 @@ import commonStyle from '@/common.module.less';
 import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 
 const ChargeRegisterPanel = (props) => {
-  const { dispatch, showRegisterPanel } = props;
+  const { dispatch, showRegisterPanel, onRefresh } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [unregisterChargers, setUnregisterChargers] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -117,7 +117,7 @@ const ChargeRegisterPanel = (props) => {
       {/* 注册 */}
       <RegisterChargeModal
         onSubmit={onRegister}
-        onCancel={() => {
+        onCancel={async () => {
           shownedRegisterModal(false);
         }}
       />

@@ -13,25 +13,23 @@ const { RangePicker } = TimePicker;
 const Days = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
 const IdleChargingStrategy = (props) => {
-  const { onCancel, data } = props;
+  const { onCancel, idleHoursStrategyId, chargeStrategyId, onSave } = props;
 
   const [form] = Form.useForm();
   const [pastMinuts, setPastMinuts] = useState(null);
   const [percentage, setPercentage] = useState(null);
   const [useVehicleStandByPercent, setUseVehicleStandByPercent] = useState(false); // 第一条策略
   const [useIdleHours, setUseIdleHours] = useState(false); // 第二条策略
-  const [id, setId] = useState(false);
 
   useEffect(() => {
-    if (!isStrictNull(data) && data?.id) {
-      fetchIdleHourChargeStrategy({ Id: data.id }).then((response) => {
+    if (!isStrictNull(idleHoursStrategyId)) {
+      fetchIdleHourChargeStrategy({ Id: idleHoursStrategyId }).then((response) => {
         if (!dealResponse(response)) {
           const { idleHoursQuantumDTOS } = response;
           setPastMinuts(response.vehicleStandbyMinute);
           setPercentage(response.vehicleStandbyPercent);
           setUseVehicleStandByPercent(response.useVehicleStandByPercent);
           setUseIdleHours(response.useIdleHours);
-          setId(response.id);
 
           const fieldsValue = idleHoursQuantumDTOS?.map(({ startTime, endTime, weeks }) => {
             return {
@@ -62,9 +60,8 @@ const IdleChargingStrategy = (props) => {
       }
 
       const requestBody = {
-        id,
-        chargeStrategyId: data?.id,
-        sectionId: window.localStorage.getItem('sectionId'),
+        id: idleHoursStrategyId,
+        chargeStrategyId,
         idleHoursQuantumDTOS: result,
         vehicleStandbyMinute: pastMinuts,
         vehicleStandbyPercent: percentage,
@@ -75,8 +72,7 @@ const IdleChargingStrategy = (props) => {
         if (!dealResponse(response)) {
           message.success(formatMessage({ id: 'app.chargeStrategy.idle.save.success' }));
           onCancel();
-        } else {
-          message.error(formatMessage({ id: 'app.chargeStrategy.idle.save.failed' }));
+          onSave(response.id);
         }
       });
     });

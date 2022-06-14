@@ -21,6 +21,7 @@ const ChargeProperty = (props) => {
   const [chargerInfo, setChargerInfo] = useState(null);
   const [enabled, setEnabled] = useState(false);
   const [currentChargeId, setCurrentChargeId] = useState(null);
+  const [currentId, setCurrentId] = useState(null);
 
   useEffect(() => {
     async function init() {
@@ -39,7 +40,8 @@ const ChargeProperty = (props) => {
       setChargerInfo(response);
       setEnabled(!response.disabled);
       setUnRegistedCharger(chargerList);
-      setCurrentChargeId(response?.id);
+      setCurrentChargeId(response?.chargerId);
+      setCurrentId(response?.id);
     }
   }
 
@@ -48,8 +50,9 @@ const ChargeProperty = (props) => {
     const requestParam = {
       updateType: chargerInfo?.chargerId ? 'LOGOUT' : 'REGISTER',
       mapChargerCode: data?.$$formData?.code,
-      ids: [currentChargeId],
+      ids: [currentId],
     };
+
     const response = await handleleChargers(requestParam);
     if (!dealResponse(response)) {
       mapContext.updateChargerHardware(data.name, chargerInfo.chargerId, chargerInfo.id);
@@ -146,11 +149,19 @@ const ChargeProperty = (props) => {
                   value={currentChargeId}
                   disabled={!isStrictNull(chargerInfo?.chargerId)}
                   onChange={(v) => {
-                    setCurrentChargeId(v);
+                    if (isStrictNull(v)) {
+                      setCurrentChargeId(null);
+                      setCurrentId(null);
+                    } else {
+                      const [id, chargerId] = v?.split('@');
+                      console.log(id, chargerId);
+                      setCurrentChargeId(chargerId);
+                      setCurrentId(id);
+                    }
                   }}
                 >
                   {unRegistedCharger?.map(({ id, chargerId, chargerStatus }) => (
-                    <Select.Option key={id} value={id}>
+                    <Select.Option key={id} value={`${id}@${chargerId}`}>
                       {chargerId}
                     </Select.Option>
                   ))}

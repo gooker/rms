@@ -47,7 +47,7 @@ const ChargerList = (props) => {
 
   const columns = [
     {
-      title: 'ID',
+      title: '充电桩ID',
       dataIndex: 'chargerId',
       align: 'center',
     },
@@ -166,7 +166,33 @@ const ChargerList = (props) => {
         return type;
       },
     },
+    {
+      title: <FormattedMessage id={'editor.cellType.charging'} />,
+      align: 'center',
+      dataIndex: 'chargingCells',
+      render: (text) => {
+        if (!isNull(text)) {
+          return renderChargingCells(text);
+        }
+      },
+    },
   ];
+
+  function renderChargingCells(chargingCells) {
+    return chargingCells.map(({ cellId, supportTypes }, index) => (
+      <>
+        <span>
+          <FormattedMessage id={'editor.cellType.charging'} />({cellId})
+        </span>
+        <span>
+          {supportTypes
+            .map(({ vehicleTypes }) => vehicleTypes)
+            .flat()
+            .join()}
+        </span>
+      </>
+    ));
+  }
 
   async function fetchRegisteredCharge() {
     await dispatch({ type: 'chargerList/fetchInitialData' });
@@ -217,6 +243,7 @@ const ChargerList = (props) => {
             type={'primary'}
             onClick={() => {
               dispatch({ type: 'chargerList/updateShowRegisterPanel', payload: false });
+              fetchRegisteredCharge();
             }}
           >
             <CloseOutlined /> <FormattedMessage id={'app.button.turnOff'} />

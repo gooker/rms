@@ -2,16 +2,17 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Modal } from 'antd';
 import { isNull } from '@/utils/util';
+import { fetchChargingStrategyById } from '@/services/resourceService';
 
 const IdleChargingStrategy = (props) => {
-  const { title, visible } = props;
+  const { title, visible, data } = props;
   const { onOk, onCancel } = props;
 
   const [configuration, setConfiguration] = useState([]);
 
   useEffect(() => {
     if (visible) {
-      const configurations = fetchChargingStrategyById({ id: editing.id });
+      const configurations = fetchChargingStrategyById({ id: data.id });
       setConfiguration(configurations);
     } else {
       setConfiguration([]);

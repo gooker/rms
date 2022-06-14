@@ -1,5 +1,4 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Form, Row } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
@@ -76,7 +75,7 @@ const ChargingStrategy = () => {
 
   function filterData(list, formValues) {
     let result = [...list];
-    if (isNull(formValues)) {
+    if (isStrictNull(formValues)) {
       setDataSource(result);
       return;
     }
@@ -135,17 +134,19 @@ const ChargingStrategy = () => {
       />
 
       {/* 充电策略 */}
-      <ChargingStrategyComponent
-        visible={visible}
-        title={
-          isNull(updateRecord)
-            ? formatMessage({ id: 'app.button.add' })
-            : formatMessage({ id: 'app.button.edit' })
-        }
-        onCancel={onCancel}
-        onOk={onSubmit}
-        editing={updateRecord}
-      />
+      {visible && (
+        <ChargingStrategyComponent
+          visible={visible}
+          title={
+            isNull(updateRecord)
+              ? formatMessage({ id: 'app.button.add' })
+              : formatMessage({ id: 'app.button.edit' })
+          }
+          onCancel={onCancel}
+          onOk={onSubmit}
+          editing={updateRecord}
+        />
+      )}
     </TablePageWrapper>
   );
 };

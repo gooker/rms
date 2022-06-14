@@ -65,11 +65,11 @@ const DictionaryDataSource = {
 
   // 电池类型
   batteryType: {
-    1: 'app.batteryType.enumeration1', //Lithium iron phosphate
-    2: 'app.batteryType.enumeration2', //Latent vehicle (lithium ternary)
-    3: 'app.batteryType.enumeration3',
-    4: 'app.batteryType.enumeration4', //Sorting car (lithium iron phosphate)
-    5: 'app.batteryType.enumeration5', //Latent vehicle 1.2t and bin vehicle (lithium iron phosphate)
+    1: 'batteryType.enumeration1', //Lithium iron phosphate
+    2: 'batteryType.enumeration2', //Latent vehicle (lithium ternary)
+    3: 'batteryType.enumeration3',
+    4: 'batteryType.enumeration4', //Sorting car (lithium iron phosphate)
+    5: 'batteryType.enumeration5', //Latent vehicle 1.2t and bin vehicle (lithium iron phosphate)
   },
 
   // 业务颜色
