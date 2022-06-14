@@ -211,7 +211,7 @@ export default {
     },
 
     // 导入牧星地图
-    *importMushinyMap({ payload }, { call, put, select }) {
+    * importMap({ payload }, { call, put, select }) {
       const { mapList } = yield select(({ editor }) => editor);
       const response = yield call(saveMap, payload);
       const newMapList = [...mapList];
@@ -231,63 +231,25 @@ export default {
       return true;
     },
 
-    // 导入导航点
-    *importMap({ payload }, { put, call, select }) {
-      const { mapList, currentMap } = yield select(({ editor }) => editor);
-      const {
-        addMap,
-        mapName,
-        transform,
-        mapData: { cells, relations },
-      } = payload;
+    // 增量导入地图数据
+    * incrementalImportMap({ payload }, { put, call, select }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      const { cells, relations, transform } = payload;
       if (cells.length === 0) {
         message.error('提取的数据为空');
         return;
       }
 
-      // 判断是否新增为一个新地图
-      if (addMap) {
-        const { version } = packageJSON;
-        const newMap = new MapEntity({
-          name: mapName,
-          sectionId: window.localStorage.getItem('sectionId'),
-          logicAreaList: [new LogicArea()],
-          version,
-        });
-
-        // 合并地图数据
-        const navigationType = cells[0].navigationType;
-        newMap.transform = { [navigationType]: transform };
-        // 合并点位和线条
-        cells.forEach((cell) => {
-          newMap.cellMap[cell.id] = { ...cell };
-        });
-        newMap.logicAreaList[0].routeMap.DEFAULT.relations = relations;
-
-        // 保存并缓存新的地图ID
-        const response = yield call(saveMap, newMap);
-        if (dealResponse(response)) {
-          return;
-        }
-        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-        newMap.id = response.id;
-        yield put({ type: 'saveCurrentMap', payload: newMap });
-
-        // 更新地图列表
-        const newMapList = [...mapList, newMap];
-        yield put({ type: 'saveMapList', payload: newMapList });
-      } else {
-        const navigationType = cells[0].navigationType;
-        // 将地图转换的参数合并到地图数据
-        currentMap.transform = { [navigationType]: transform };
-        // 合并点位和线条
-        cells.forEach((cell) => {
-          currentMap.cellMap[cell.id] = { ...cell };
-        });
-        const currentRouteMap = getCurrentRouteMapData();
-        currentRouteMap.relations = currentRouteMap.relations.concat(relations);
-        yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
-      }
+      const navigationType = cells[0].navigationType;
+      // 将地图转换的参数合并到地图数据
+      currentMap.transform = { [navigationType]: transform };
+      // 合并点位和线条
+      cells.forEach((cell) => {
+        currentMap.cellMap[cell.id] = { ...cell };
+      });
+      const currentRouteMap = getCurrentRouteMapData();
+      currentRouteMap.relations = currentRouteMap.relations.concat(relations);
+      yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
       return true;
     },
 

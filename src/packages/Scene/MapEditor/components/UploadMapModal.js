@@ -3,22 +3,23 @@ import React, { memo, useState } from 'react';
 import { Checkbox, Col, Form, Input, InputNumber, message, Modal, Row, Select, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { formatMessage, getFormLayout, isNull } from '@/utils/util';
-import { NavigationType, NavigationTypeView } from '@/config/config';
 import { connect } from '@/utils/RmsDva';
+import { formatMessage, getFormLayout, isNull } from '@/utils/util';
 import {
   convertMushinyOldMapToNew,
-  extractCellAndRelationFromOldMap,
+  extractFromOldMap,
   getMapName,
   isOldMushinyMap,
   MUSHINY,
   SEER,
 } from '@/utils/mapParser';
-import { isEmpty } from 'lodash';
+import { NavigationType, NavigationTypeView } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 19);
+
 const UploadMapModal = (props) => {
   const { dispatch, visible, onCancel, currentMap, currentLogicArea } = props;
+
   const [formRef] = Form.useForm();
   const [navigationType, setNavigationType] = useState(null);
 
@@ -31,62 +32,75 @@ const UploadMapModal = (props) => {
 
   function cancel() {
     formRef.resetFields();
+    setNavigationType(null);
     onCancel();
   }
 
   function handleFile() {
     formRef
       .validateFields()
-      .then(({ file, navigationType, addMap, ...rest }) => {
-        let existIds = [];
-        if (!addMap) {
-          existIds = Object.keys(currentMap.cellMap).map((item) => parseInt(item));
-        }
+      .then(({ file, navigationType, addMap, ...transform }) => {
         const reader = new FileReader();
         // beforeUpload返回false情况下, antd选择后的文件file是经过包装的数据，获取真是文件对象需要取file.originFileObj. WTF???
         reader.readAsText(file[0].originFileObj, 'UTF-8');
         reader.onload = async (evt) => {
           try {
             const fileMapData = JSON.parse(evt.target.result);
-            // "新增 + 牧星地图" 作为唯一一个特殊case进行处理
-            if (addMap && navigationType === NavigationType.M_QRCODE) {
-              if (isEmpty(fileMapData.cellMap)) {
-                message.error('地图点位数据为空');
-              } else {
-                let payload = fileMapData;
+            if (addMap) {
+              let mapData;
+              if (navigationType === NavigationType.M_QRCODE) {
                 if (isOldMushinyMap(fileMapData)) {
-                  payload = convertMushinyOldMapToNew(fileMapData);
+                  // 旧版牧星地图需要特地的转换逻辑
+                  mapData = convertMushinyOldMapToNew(fileMapData);
+                } else {
+                  mapData = fileMapData;
+                  // 新版地图数据结构只要改变下部分附属数据即可
+                  mapData.sectionId = window.localStorage.getItem('sectionId');
                 }
-                if (!isNull(payload)) {
-                  const result = await dispatch({ type: 'editor/importMushinyMap', payload });
-                  result && cancel();
+              } else {
+                const mapName = getMapName(fileMapData, navigationType);
+                if (navigationType === NavigationType.SEER_SLAM) {
+                  mapData = SEER(fileMapData, [], {
+                    getMap: true,
+                    mapName,
+                    currentLogicArea,
+                    transform: transform,
+                  });
+                } else {
+                  message.error(`未识别的导航类型: ${navigationType}`);
                 }
+              }
+              if (!isNull(mapData)) {
+                const result = await dispatch({ type: 'editor/importMap', payload: mapData });
+                result && cancel();
               }
             } else {
-              // 根据不同类型的地图数据-->提取出点位和线条数据
-              let mapData;
-              const mapName = getMapName(fileMapData, navigationType);
-              if (navigationType === NavigationType.SEER_SLAM) {
-                mapData = SEER(fileMapData, existIds, currentLogicArea);
-              } else if (navigationType === NavigationType.M_QRCODE) {
+              let payload;
+              const existIds = Object.keys(currentMap.cellMap).map((item) => parseInt(item));
+              if (navigationType === NavigationType.M_QRCODE) {
+                // 这个逻辑分支只会在增量导入情况下运行
                 if (isOldMushinyMap(fileMapData)) {
-                  // 提取旧版本地图数据
-                  mapData = extractCellAndRelationFromOldMap(fileMapData);
+                  payload = extractFromOldMap(fileMapData);
                 } else {
-                  // 提取新版本地图数据
-                  mapData = MUSHINY(fileMapData, existIds);
+                  payload = MUSHINY(fileMapData, existIds, { currentLogicArea });
                 }
+              } else if (navigationType === NavigationType.SEER_SLAM) {
+                payload = SEER(fileMapData, existIds, {
+                  currentLogicArea,
+                });
               } else {
-                mapData = fileMapData;
+                message.error(`未识别的导航类型: ${navigationType}`);
               }
-              dispatch({
-                type: 'editor/importMap',
-                payload: { addMap, mapName, mapData, transform: rest },
-              }).then((result) => {
+              if (!isNull(payload)) {
+                const result = await dispatch({
+                  type: 'editor/incrementalImportMap',
+                  payload: { ...payload, transform },
+                });
                 result && cancel();
-              });
+              }
             }
           } catch (err) {
+            // eslint-disable-next-line no-console
             console.log(err);
             message.error(err.message);
           }
@@ -113,7 +127,7 @@ const UploadMapModal = (props) => {
           rules={[{ required: true }]}
         >
           <Upload.Dragger
-            name="files"
+            name='files'
             maxCount={1}
             beforeUpload={() => false}
             onRemove={() => true}
@@ -149,6 +163,8 @@ const UploadMapModal = (props) => {
             ))}
           </Select>
         </Form.Item>
+
+        {/* 选择牧星地图时候就不需要选择坐标系类型了 */}
         {navigationType !== NavigationType.M_QRCODE && (
           <Form.Item name={'coordinationType'} label={'坐标系类型'} rules={[{ required: true }]}>
             <Select style={{ width: 200 }}>
