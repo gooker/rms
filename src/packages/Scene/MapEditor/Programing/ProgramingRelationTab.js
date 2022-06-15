@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
@@ -10,6 +9,7 @@ import ProgramingRelationModal from './ProgramingRelationModal';
 import { ProgramingItemType } from '@/config/config';
 import { convertMapToArrayMap } from '@/utils/util';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const ProgramingRelationTab = (props) => {
   const { dispatch, selections, mapContext, relationPrograming } = props;
@@ -67,6 +67,7 @@ const ProgramingRelationTab = (props) => {
   }
 
   function terminateConfiguration() {
+    setEditing(null);
     setConfigurationVisible(false);
   }
 
@@ -93,12 +94,12 @@ const ProgramingRelationTab = (props) => {
         </Col>
       </Row>
       <Button
-        type="primary"
+        type='primary'
         onClick={startConfiguration}
         disabled={configRoutes.length === 0}
         style={{ marginTop: 10 }}
       >
-        <SettingOutlined /> 开始配置
+        <SettingOutlined /> <FormattedMessage id={'app.button.config'} />
       </Button>
 
       {/* 搜索部分 */}

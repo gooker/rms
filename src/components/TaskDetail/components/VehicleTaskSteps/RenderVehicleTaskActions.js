@@ -4,7 +4,7 @@ import TaskStepNode from './TaskStepNode';
 import TaskStepEdge from './TaskStepEdge';
 
 const RenderVehicleTaskActions = (props) => {
-  const { subTask, translation } = props;
+  const { subTask } = props;
   const { orderNodes, orderEdges } = subTask;
 
   function renderActionStepItems() {
@@ -14,21 +14,17 @@ const RenderVehicleTaskActions = (props) => {
           return (
             <>
               <Col key={index}>
-                <TaskStepEdge edge={orderEdges[index - 1]} translation={translation} />
+                <TaskStepEdge edge={orderEdges[index - 1]} />
               </Col>
               <Col key={index}>
-                <TaskStepNode node={stepItem} translation={translation} />
+                <TaskStepNode node={stepItem} />
               </Col>
             </>
           );
         }
         return (
           <Col key={index}>
-            <TaskStepNode
-              node={stepItem}
-              edge={index === 0 ? null : orderEdges[index - 1]}
-              translation={translation}
-            />
+            <TaskStepNode node={stepItem} />
           </Col>
         );
       });

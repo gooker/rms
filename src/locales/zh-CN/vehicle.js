@@ -44,9 +44,14 @@ export default {
   'vehicle.manualMode': '手动状态',
   'vehicle.manualMode.true': '手动',
   'vehicle.manualMode.false': '自动',
+  'vehicle.manualMode.switchToAuto': '切换为自动',
+  'vehicle.manualMode.switchToAutoManual': '切换为手动',
 
   'vehicle.maintenanceState': '维护状态',
-  'vehicle.underMaintenance': '维护中',
+  'vehicle.maintenanceState.true': '维护中',
+  'vehicle.maintenanceState.enter': '开始维护',
+  'vehicle.maintenanceState.terminate': '退出维护',
+  'vehicle.turnOnMaintain.tip': '进入维护状态后, 小车将不再被分配新的任务',
 
   'vehicle.onlineState': '在线状态',
   'vehicle.onlineState.online': '在线',
@@ -82,7 +87,4 @@ export default {
   'batteryType.enumeration3': '保留',
   'batteryType.enumeration4': '分拣车(磷酸铁锂)',
   'batteryType.enumeration5': '潜伏车1.2吨和料箱机器人(磷酸铁锂)',
-
-  // 小车操作
-  'vehicle.turnOnMaintain.tip': '进入维护状态后, 小车将不再被分配新的任务',
 };

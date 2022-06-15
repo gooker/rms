@@ -3,18 +3,13 @@ import { Button, Checkbox, Col, Form, Input, InputNumber, Row, Select, Space, Sw
 import { DeleteOutlined, SettingOutlined } from '@ant-design/icons';
 import { find, groupBy } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import {
-  extractRoutes,
-  fillFormValueToAction,
-  formatMessage,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { extractRoutes, fillFormValueToAction, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import TargetSelector from '../components/TargetSelector';
 import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
 import TitleCard from '@/components/TitleCard';
+import { OperateType } from '@/components/ProgramingConfiguer/ProgramingConst';
 
 const SubTaskForm = (props) => {
   const { hidden, form, code, type, updateTab, routes, programing, preTasks } = props;
@@ -346,39 +341,51 @@ const SubTaskForm = (props) => {
         title={<FormattedMessage id={'customTask.form.pathProgramming'} />}
       >
         <Fragment>
-          {/* 替换动作 */}
+          {/* 新增动作 */}
           <Form.Item
             hidden={hidden}
-            name={[code, 'pathProgramming', 'actionDelete']}
+            name={[code, 'pathProgramming', OperateType.ADD]}
             initialValue={null}
-            label={<FormattedMessage id={'customTasks.operationType.delete'} />}
+            label={<FormattedMessage id={'customTasks.operationType.add'} />}
           >
-            {renderActionConfigButton([code, 'pathProgramming', 'actionDelete'], () => {
-              setOperationType('delete');
+            {renderActionConfigButton([code, 'pathProgramming', OperateType.ADD], () => {
+              setOperationType(OperateType.ADD);
             })}
           </Form.Item>
 
           {/* 替换动作 */}
           <Form.Item
             hidden={hidden}
-            name={[code, 'pathProgramming', 'actionReplace']}
+            name={[code, 'pathProgramming', OperateType.DELETE]}
+            initialValue={null}
+            label={<FormattedMessage id={'customTasks.operationType.delete'} />}
+          >
+            {renderActionConfigButton([code, 'pathProgramming', OperateType.DELETE], () => {
+              setOperationType(OperateType.DELETE);
+            })}
+          </Form.Item>
+
+          {/* 替换动作 */}
+          <Form.Item
+            hidden={hidden}
+            name={[code, 'pathProgramming', OperateType.UPDATE]}
             initialValue={null}
             label={<FormattedMessage id={'customTasks.operationType.update'} />}
           >
-            {renderActionConfigButton([code, 'pathProgramming', 'actionReplace'], () => {
-              setOperationType('update');
+            {renderActionConfigButton([code, 'pathProgramming', OperateType.UPDATE], () => {
+              setOperationType(OperateType.UPDATE);
             })}
           </Form.Item>
 
           {/* 替换动作参数 */}
           <Form.Item
             hidden={hidden}
-            name={[code, 'pathProgramming', 'paramReplace']}
+            name={[code, 'pathProgramming', OperateType.PARAM]}
             initialValue={null}
             label={<FormattedMessage id={'customTasks.operationType.param'} />}
           >
-            {renderActionConfigButton([code, 'pathProgramming', 'paramReplace'], () => {
-              setOperationType('param');
+            {renderActionConfigButton([code, 'pathProgramming', OperateType.PARAM], () => {
+              setOperationType(OperateType.PARAM);
             })}
           </Form.Item>
         </Fragment>

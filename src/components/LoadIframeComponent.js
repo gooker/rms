@@ -1,10 +1,9 @@
 import React, { memo, useEffect, useState } from 'react';
-import { useMount } from 'ahooks';
+import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
 import { parseUrlParams } from '@/utils/util';
 import commonStyle from '@/common.module.less';
-import { find } from 'lodash';
+import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
 
 const LoadIframeComponent = (props) => {
   const [currentData, setCurrentData] = useState({});
@@ -15,6 +14,7 @@ const LoadIframeComponent = (props) => {
     userName: currentUser.username,
     token: window.sessionStorage.getItem('token'),
   };
+
   useEffect(() => {
     if (location && location?.pathname) {
       let newMockData = [];
@@ -38,25 +38,6 @@ const LoadIframeComponent = (props) => {
     }
   }, []);
 
-  useMount(() => {
-    document.body.addEventListener('message', receiver);
-    return () => {
-      document.body.removeEventListener('message', receiver);
-    };
-  });
-
-  function receiver(e) {
-    e.source.postMessage('received', e.origin); //向原网页返回信息
-  }
-  const iframeLoaded = () => {
-    const iframeDOM = document.getElementById(`${currentData.name}${currentData.key}newTestLog`);
-    if (iframeDOM) {
-      const iframeMessage = {
-        type: 'init',
-      };
-      iframeDOM.contentWindow.postMessage(iframeMessage, '*');
-    }
-  };
   return (
     <div className={commonStyle.commonPageStyle}>
       <iframe
@@ -67,10 +48,6 @@ const LoadIframeComponent = (props) => {
         id={`${currentData.name}${currentData.key}newTestLog`}
         width="100%"
         height="100%"
-        frameBorder="0"
-        marginWidth="0"
-        marginHeight="0"
-        onLoad={iframeLoaded}
         style={{ width: '100%', border: 'medium none', margin: 0, padding: 0 }}
       />
     </div>

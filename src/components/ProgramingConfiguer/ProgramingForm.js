@@ -5,12 +5,13 @@ import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { convertPrograming2Cascader, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { OperateType } from '@/components/ProgramingConfiguer/ProgramingConst';
 
 const ProgramingForm = (props) => {
   const { programing, operationType, onAdd } = props;
 
   const [formRef] = Form.useForm();
-  const [operateType, setOperateType] = useState('add');
+  const [operateType, setOperateType] = useState(OperateType.ADD);
   const [actionType, setActionType] = useState(null); // 已选择动作类型
   const cascaderOption = convertPrograming2Cascader(programing);
 
@@ -37,28 +38,29 @@ const ProgramingForm = (props) => {
     if (Array.isArray(actionType) && actionType.length > 1) {
       const [p1, p2] = actionType;
       const { actionParameters } = find(programing[p1], { actionId: p2 });
-      return actionParameters.map(
-        ({ code, name, value, valueDataType, isOptional, isReadOnly }, index) => {
-          const valuePropName = valueDataType === 'BOOL' ? 'checked' : 'value';
-          const defaultValue = valueDataType === 'BOOL' ? JSON.parse(value) ?? false : value;
-          return (
-            <Col key={index} span={8}>
-              <Form.Item
-                name={code}
-                label={name}
-                rules={[{ required: isOptional === false }]}
-                initialValue={defaultValue}
-                valuePropName={valuePropName}
-              >
-                {renderItemInput(valueDataType, isReadOnly)}
-              </Form.Item>
-            </Col>
-          );
-        },
-      );
-    } else {
-      return [];
+      if (Array.isArray(actionParameters)) {
+        return actionParameters.map(
+          ({ code, name, value, valueDataType, isOptional, isReadOnly }, index) => {
+            const valuePropName = valueDataType === 'BOOL' ? 'checked' : 'value';
+            const defaultValue = valueDataType === 'BOOL' ? JSON.parse(value) ?? false : value;
+            return (
+              <Col key={index} span={8}>
+                <Form.Item
+                  name={code}
+                  label={name}
+                  rules={[{ required: isOptional === false }]}
+                  initialValue={defaultValue}
+                  valuePropName={valuePropName}
+                >
+                  {renderItemInput(valueDataType, isReadOnly)}
+                </Form.Item>
+              </Col>
+            );
+          },
+        );
+      }
     }
+    return null;
   }
 
   function add() {
@@ -79,16 +81,16 @@ const ProgramingForm = (props) => {
         style={{ marginRight: 16, width: 150 }}
         disabled={!isNull(operationType)}
       >
-        <Select.Option value={'add'}>
+        <Select.Option value={OperateType.ADD}>
           <FormattedMessage id={'customTasks.operationType.add'} />
         </Select.Option>
-        <Select.Option value={'update'}>
+        <Select.Option value={OperateType.UPDATE}>
           <FormattedMessage id={'customTasks.operationType.update'} />
         </Select.Option>
-        <Select.Option value={'delete'}>
+        <Select.Option value={OperateType.DELETE}>
           <FormattedMessage id={'customTasks.operationType.delete'} />
         </Select.Option>
-        <Select.Option value={'param'}>
+        <Select.Option value={OperateType.PARAM}>
           <FormattedMessage id={'customTasks.operationType.param'} />
         </Select.Option>
       </Select>

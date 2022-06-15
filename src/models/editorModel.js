@@ -211,7 +211,7 @@ export default {
     },
 
     // 导入牧星地图
-    *importMushinyMap({ payload }, { call, put, select }) {
+    * importMap({ payload }, { call, put, select }) {
       const { mapList } = yield select(({ editor }) => editor);
       const response = yield call(saveMap, payload);
       const newMapList = [...mapList];
@@ -231,63 +231,25 @@ export default {
       return true;
     },
 
-    // 导入导航点
-    *importMap({ payload }, { put, call, select }) {
-      const { mapList, currentMap, currentLogicArea } = yield select(({ editor }) => editor);
-      const {
-        addMap,
-        mapName,
-        transform,
-        mapData: { cells, relations },
-      } = payload;
-      if (cells.length === 0 || relations.length === 0) {
+    // 增量导入地图数据
+    * incrementalImportMap({ payload }, { put, call, select }) {
+      const { currentMap } = yield select(({ editor }) => editor);
+      const { cells, relations, transform } = payload;
+      if (cells.length === 0) {
         message.error('提取的数据为空');
         return;
       }
 
-      // 判断是否新增为一个新地图
-      if (addMap) {
-        const { version } = packageJSON;
-        const newMap = new MapEntity({
-          name: mapName,
-          sectionId: currentLogicArea,
-          logicAreaList: [new LogicArea()],
-          version,
-        });
-
-        // 合并地图数据
-        const navigationType = cells[0].navigationType;
-        newMap.transform = { [navigationType]: transform };
-        // 合并点位和线条
-        cells.forEach((cell) => {
-          newMap.cellMap[cell.id] = { ...cell };
-        });
-        newMap.logicAreaList[0].routeMap.DEFAULT.relations = relations;
-
-        // 保存并缓存新的地图ID
-        const response = yield call(saveMap, newMap);
-        if (dealResponse(response)) {
-          return;
-        }
-        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-        newMap.id = response.id;
-        yield put({ type: 'saveCurrentMap', payload: newMap });
-
-        // 更新地图列表
-        const newMapList = [...mapList, newMap];
-        yield put({ type: 'saveMapList', payload: newMapList });
-      } else {
-        const navigationType = cells[0].navigationType;
-        // 将地图转换的参数合并到地图数据
-        currentMap.transform = { [navigationType]: transform };
-        // 合并点位和线条
-        cells.forEach((cell) => {
-          currentMap.cellMap[cell.id] = { ...cell };
-        });
-        const currentRouteMap = getCurrentRouteMapData();
-        currentRouteMap.relations = currentRouteMap.relations.concat(relations);
-        yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
-      }
+      const navigationType = cells[0].navigationType;
+      // 将地图转换的参数合并到地图数据
+      currentMap.transform = { [navigationType]: transform };
+      // 合并点位和线条
+      cells.forEach((cell) => {
+        currentMap.cellMap[cell.id] = { ...cell };
+      });
+      const currentRouteMap = getCurrentRouteMapData();
+      currentRouteMap.relations = currentRouteMap.relations.concat(relations);
+      yield put({ type: 'saveCurrentMapOnly', payload: { ...currentMap } });
       return true;
     },
 
@@ -528,14 +490,14 @@ export default {
     // 新增单个导航点
     *addNavigation({ payload }, { select }) {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
-      const { navigationCellType, code, x, y } = payload;
+      const { navigationCellType: navigationType, code, x, y } = payload;
 
       const cells = Object.values(currentMap.cellMap);
       let findResult;
 
       // 判断该车型下是否有相同导航点ID
-      if (navigationCellType !== NavigationType.M_QRCODE) {
-        findResult = find(cells, { naviId: code, navigationType: navigationCellType });
+      if (navigationType !== NavigationType.M_QRCODE) {
+        findResult = find(cells, { naviId: code, navigationType: navigationType });
         if (findResult) {
           message.error('导航点编码已存在');
           return null;
@@ -543,7 +505,7 @@ export default {
       }
 
       // 判断该车型下是否有相同的导航点坐标
-      findResult = find(cells, { x, y, navigationType: navigationCellType });
+      findResult = find(cells, { x, y, navigationType: navigationType });
       if (findResult) {
         message.error('导航点坐标已存在');
         return null;
@@ -556,14 +518,14 @@ export default {
         id,
         x,
         y,
-        naviId: navigationCellType === NavigationType.M_QRCODE ? id : code,
-        navigationType: navigationCellType,
+        naviId: navigationType === NavigationType.M_QRCODE ? id : code,
+        navigationType: navigationType,
         logicId: currentLogicArea,
       });
       currentMap.cellMap[id] = reverseCoordinateTransformer(
         cell,
-        navigationCellType,
-        currentMap?.transform?.[navigationCellType],
+        navigationType,
+        currentMap?.transform?.[navigationType],
       );
       return cell;
     },

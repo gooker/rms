@@ -1,10 +1,10 @@
 import React, { memo, useState } from 'react';
-import { Form, InputNumber, Button, Input, Select } from 'antd';
+import { Button, Form, Input, InputNumber, Select } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import { connect } from '@/utils/RmsDva';
-import { NavigationTypeView, NavigationType } from '@/config/config';
+import { NavigationType, NavigationTypeView } from '@/config/config';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const AddNavigation = (props) => {
@@ -28,7 +28,7 @@ const AddNavigation = (props) => {
       <Form labelWrap form={formRef} {...formItemLayout}>
         <Form.Item
           name={'navigationCellType'}
-          label={formatMessage({ id: 'editor.navigationCellType' })}
+          label={formatMessage({ id: 'editor.navigationType' })}
           initialValue={type}
           getValueFromEvent={(value) => {
             setType(value);

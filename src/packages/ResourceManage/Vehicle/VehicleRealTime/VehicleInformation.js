@@ -1,58 +1,48 @@
 import React, { memo } from 'react';
-import { Col, Form, Row } from 'antd';
+import { Card, Descriptions } from 'antd';
 import { formatMessage } from '@/utils/util';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const VehicleInformation = (props) => {
   const { data } = props;
 
   return (
-    <Row>
-      {/************ 唯一ID ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'vehicle.uniqueId' })}>{data.vehicle?.id}</Form.Item>
-      </Col>
-
-      {/************ 小车ID ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'vehicle.id' })}>{data.vehicle?.vehicleId}</Form.Item>
-      </Col>
-
-      {/************ 品牌 ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'vehicle.brand' })}>{data.vehicle?.brand}</Form.Item>
-      </Col>
-
-      {/************ 车辆类型 ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'app.vehicleType' })}>
-          {data.vehicle?.vehicleType}
-        </Form.Item>
-      </Col>
-
-      {/************ 适配器类型 ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'app.adapterType' })}>
+    <Card title={<FormattedMessage id={'vehicle.info'} />} extra={data.vehicle?.id}>
+      <Descriptions>
+        {/************ 适配器类型 ************/}
+        <Descriptions.Item label={formatMessage({ id: 'app.adapterType' })} span={2}>
           {data.vehicle?.adapterType}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 服务器标识 ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'vehicle.serverIdentity' })}>
+        {/************ 车辆类型 ************/}
+        <Descriptions.Item label={formatMessage({ id: 'app.vehicleType' })} span={1}>
+          {data.vehicle?.vehicleType}
+        </Descriptions.Item>
+
+        {/************ 小车ID ************/}
+        <Descriptions.Item label={formatMessage({ id: 'vehicle.id' })}>
+          {data.vehicle?.vehicleId}
+        </Descriptions.Item>
+
+        {/************ 品牌 ************/}
+        <Descriptions.Item label={formatMessage({ id: 'vehicle.brand' })}>
+          {data.vehicle?.brand}
+        </Descriptions.Item>
+
+        {/************ 服务器标识 ************/}
+        <Descriptions.Item label={formatMessage({ id: 'vehicle.serverIdentity' })}>
           {data.vehicle?.clusterIndex}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ IP ************/}
-      <Col span={6}>
-        <Form.Item label={'IP'}>{data.vehicle?.ip}</Form.Item>
-      </Col>
+        {/************ IP ************/}
+        <Descriptions.Item label={'IP'}>{data.vehicle?.ip}</Descriptions.Item>
 
-      {/************ 端口号 ************/}
-      <Col span={6}>
-        <Form.Item label={formatMessage({ id: 'vehicle.port' })}>{data.vehicle?.port}</Form.Item>
-      </Col>
-    </Row>
+        {/************ 端口号 ************/}
+        <Descriptions.Item label={formatMessage({ id: 'vehicle.port' })}>
+          {data.vehicle?.port}
+        </Descriptions.Item>
+      </Descriptions>
+    </Card>
   );
 };
 export default memo(VehicleInformation);

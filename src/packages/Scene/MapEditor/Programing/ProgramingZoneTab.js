@@ -1,6 +1,6 @@
 /* TODO: I18N */
 import React, { memo, useState } from 'react';
-import { Button, Select, Divider, Empty, Col, Row } from 'antd';
+import { Button, Col, Divider, Empty, Row, Select } from 'antd';
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { ZoneMarkerType } from '@/config/consts';
@@ -9,6 +9,7 @@ import { ProgramingItemType } from '@/config/config';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { convertMapToArrayMap } from '@/utils/util';
 import ProgramingConfiguerModal from '@/components/ProgramingConfiguer';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const ProgramingZoneTab = (props) => {
   const { dispatch, selections, zonePrograming, programing } = props;
@@ -77,12 +78,12 @@ const ProgramingZoneTab = (props) => {
         </Col>
       </Row>
       <Button
-        type="primary"
+        type='primary'
         onClick={startConfiguration}
         disabled={configZone.length === 0}
         style={{ marginTop: 10 }}
       >
-        <SettingOutlined /> 开始配置
+        <SettingOutlined /> <FormattedMessage id={'app.button.config'} />
       </Button>
 
       {/* 区域配置列表 */}

@@ -1,11 +1,19 @@
 import React, { memo } from 'react';
-import { Col, Form, Radio, Row, Tag } from 'antd';
-import { convertToUserTimezone, getVehicleStatusTag, isNull, isStrictNull } from '@/utils/util';
-import FormattedMessage from '@/components/FormattedMessage';
+import { Card, Col, Descriptions, Popconfirm, Row, Tag } from 'antd';
+import { ToolOutlined } from '@ant-design/icons';
+import {
+  convertToUserTimezone,
+  formatMessage,
+  getSuffix,
+  getVehicleStatusTag,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
+import FormattedMessage from '@/components/FormattedMessage';
 
-const { red, green } = Dictionary().color;
+const { red, green, orange, blue } = Dictionary().color;
 
 const VehicleRealTime = (props) => {
   const { data } = props;
@@ -24,33 +32,82 @@ const VehicleRealTime = (props) => {
     return null;
   }
 
-  // vehicle.turnOnMaintain.tip
   function renderMaintenanceState(maintain) {
     if (isStrictNull(maintain)) return null;
-    return (
-      <Radio.Group defaultValue={maintain} buttonStyle="solid">
-        <Radio.Button value={false}>
-          <FormattedMessage id={'app.common.normal'} />
-        </Radio.Button>
-        <Radio.Button value={true}>
-          <FormattedMessage id={'vehicle.underMaintenance'} />
-        </Radio.Button>
-      </Radio.Group>
-    );
+    if (maintain) {
+      return (
+        <Row>
+          <Col>
+            <Tag color={orange} style={{ fontWeight: 700 }}>
+              <ToolOutlined /> <FormattedMessage id={'vehicle.maintenanceState.true'} />
+            </Tag>
+          </Col>
+          <Col>
+            <Popconfirm title={formatMessage({ id: 'app.message.doubleConfirm' })}>
+              <span style={{ color: blue, cursor: 'pointer' }}>
+                <FormattedMessage id={'vehicle.maintenanceState.terminate'} />
+              </span>
+            </Popconfirm>
+          </Col>
+        </Row>
+      );
+    } else {
+      return (
+        <Row>
+          <Col>
+            <Tag color={green}>
+              <FormattedMessage id={'app.common.normal'} />
+            </Tag>
+          </Col>
+          <Col>
+            <Popconfirm title={formatMessage({ id: 'vehicle.turnOnMaintain.tip' })}>
+              <span style={{ color: blue, cursor: 'pointer' }}>
+                <FormattedMessage id={'vehicle.maintenanceState.enter'} />
+              </span>
+            </Popconfirm>
+          </Col>
+        </Row>
+      );
+    }
   }
 
   function renderManualMode(inManualMod) {
     if (isNull(inManualMod)) return null;
-    return (
-      <Radio.Group defaultValue={inManualMod} buttonStyle="solid">
-        <Radio.Button value={false}>
-          <FormattedMessage id={'vehicle.manualMode.false'} />
-        </Radio.Button>
-        <Radio.Button value={true}>
-          <FormattedMessage id={'vehicle.manualMode.true'} />
-        </Radio.Button>
-      </Radio.Group>
-    );
+    if (inManualMod) {
+      return (
+        <Row>
+          <Col>
+            <Tag>
+              <FormattedMessage id={'vehicle.manualMode.true'} />
+            </Tag>
+          </Col>
+          <Col style={{ display: 'flex', alignItems: 'center' }}>
+            <Popconfirm title={formatMessage({ id: 'app.message.doubleConfirm' })}>
+              <span style={{ color: blue, cursor: 'pointer' }}>
+                <FormattedMessage id={'vehicle.manualMode.switchToAuto'} />
+              </span>
+            </Popconfirm>
+          </Col>
+        </Row>
+      );
+    } else {
+      return (
+        <Row>
+          <Col>
+            <Tag>
+              <FormattedMessage id={'vehicle.manualMode.false'} />
+            </Tag>
+          </Col>
+          <Col style={{ display: 'flex', alignItems: 'center' }}>
+            <Popconfirm title={formatMessage({ id: 'app.message.doubleConfirm' })}>
+              <span style={{ color: blue, cursor: 'pointer' }}>
+                <FormattedMessage id={'vehicle.manualMode.switchToAutoManual'} />
+              </span>
+            </Popconfirm>
+          </Col>
+        </Row>
+      );
+    }
   }
 
   function renderCoordinator(x, y) {
@@ -109,105 +166,98 @@ const VehicleRealTime = (props) => {
     return null;
   }
 
+  function renderRunningState(state) {
+    if (isStrictNull(state)) return null;
+    return state;
+  }
+
+  function renderVehicleStorageStatue(state) {
+    if (isStrictNull(state)) return null;
+    return state;
+  }
+
   return (
-    <Row gutter={24}>
-      {/************ 当前位置 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.currentPosition'} />}>
+    <Card title={<FormattedMessage id={'vehicle.realTime'} />}>
+      <Descriptions>
+        {/************ 当前位置 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.currentPosition'} />}>
           {data.vehicleInfo?.currentNaviId}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 当前坐标 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.currentCoordinator'} />}>
+        {/************ 当前坐标 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.currentCoordinator'} />}>
           {renderCoordinator(data.vehicleInfo?.x, data.vehicleInfo?.y)}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 到点时间 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'app.arriveTime'} />}>
-          {renderArriveTime(data.vehicleInfo?.arriveTime)}
-        </Form.Item>
-      </Col>
+        {/************ 车辆方向 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.direction'} />}>
+          {data.vehicleInfo?.direction && getSuffix(data.vehicleInfo.direction, '°')}
+        </Descriptions.Item>
 
-      {/************ 小车速度 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.speed'} />}>
+        {/************ 到点时间 ************/}
+        {/*<Descriptions.Item label={<FormattedMessage id={'app.arriveTime'} />}>*/}
+        {/*  {renderArriveTime(data.vehicleInfo?.arriveTime)}*/}
+        {/*</Descriptions.Item>*/}
+
+        {/************ 小车速度 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.speed'} />}>
           {data.vehicleInfo?.speed}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 在线状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.onlineState'} />}>
+        {/************ 在线状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.onlineState'} />}>
           {renderOnlineState(data.vehicleWorkStatusDTO?.onlineStatus)}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 车辆任务状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.workingState'} />}>
+        {/************ 车辆任务状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.workingState'} />}>
           {renderVehicleWorkingState(
             data.vehicleWorkStatusDTO?.vehicleStatus,
             data.vehicle?.disabled,
           )}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 异常状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.abnormalState'} />}>
+        {/************ 异常状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.abnormalState'} />}>
           {renderAbnormalState()}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 行驶状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.runningState'} />}>111</Form.Item>
-      </Col>
+        {/************ 行驶状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.runningState'} />}>
+          {renderRunningState()}
+        </Descriptions.Item>
 
-      {/************ 维护状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.maintenanceState'} />}>
+        {/************ 维护状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.maintenanceState'} />}>
           {renderMaintenanceState(data.vehicle?.maintain)}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 手动模式 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.manualMode'} />}>
+        {/************ 手动模式 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.manualMode'} />}>
           {renderManualMode(data.vehicle?.manualMode)}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 车内储位状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.vehicleStorageStatue'} />}>111</Form.Item>
-      </Col>
+        {/************ 车内储位状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.vehicleStorageStatue'} />}>
+          {renderVehicleStorageStatue()}
+        </Descriptions.Item>
 
-      {/************ 分动作状态 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'vehicle.subActionState'} />}>
+        {/************ 分动作状态 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'vehicle.subActionState'} />}>
           {renderSubActionState()}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 载具 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'object.load'} />}>
+        {/************ 载具 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'object.load'} />}>
           {data.vehicleInfo?.loads}
-        </Form.Item>
-      </Col>
+        </Descriptions.Item>
 
-      {/************ 载具方向 ************/}
-      <Col span={6}>
-        <Form.Item label={<FormattedMessage id={'object.load.direction'} />}>
+        {/************ 载具方向 ************/}
+        <Descriptions.Item label={<FormattedMessage id={'object.load.direction'} />}>
           {data.vehicleInfo?.loadAngle}
-        </Form.Item>
-      </Col>
-    </Row>
+        </Descriptions.Item>
+      </Descriptions>
+    </Card>
   );
 };
 export default connect(({ global }) => ({

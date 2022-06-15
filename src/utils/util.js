@@ -1,16 +1,13 @@
 import React from 'react';
 import { Button, Form, Input, InputNumber, message, Row, Select, Switch, Tag, Tooltip } from 'antd';
-import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { cloneDeep, find, groupBy, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
 import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import {
-  CustomNodeType,
-  CustomNodeTypeFieldMap,
-} from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -60,8 +57,8 @@ export function isEmptyPlainObject(obj) {
   return isPlainObject(obj) && isEmpty(obj);
 }
 
-export function isEmptyArray(arr) {
-  return Array.isArray(arr) && arr.length === 0;
+export function isArray(value) {
+  return Array.isArray(value);
 }
 
 export function getBase64(file) {
@@ -1247,14 +1244,14 @@ const targetProgramingKeys = [
 ];
 
 // 将表单数据转化为后台数据结构
-export function generateCustomTaskForm(value, taskCode, taskSteps, programing, preTasksCode) {
+export function generateCustomTaskForm(value, taskSteps, programing, preTasksCode) {
   const customTaskData = {
+    code: value.code,
     name: value.name,
     desc: value.desc,
     priority: value.priority,
 
     type: 'CUSTOM_TASK',
-    code: taskCode,
     codes: taskSteps.map(({ code }) => code),
     sectionId: window.localStorage.getItem('sectionId'),
   };
@@ -1287,14 +1284,14 @@ export function generateCustomTaskForm(value, taskCode, taskSteps, programing, p
           configValue.lockTime = lockTimeMapValue;
         }
 
-        // 检查路径函数配置
-        const _pathProgramming = { ...configValue.pathProgramming };
-        Object.keys(_pathProgramming).forEach((type) => {
-          if (!isNull(_pathProgramming[type])) {
-            _pathProgramming[type] = fillFormValueToAction(_pathProgramming[type], programing);
+        // 检查路径函数配置，扁平化处理
+        const _pathProgramming = [];
+        Object.values(configValue.pathProgramming).forEach((configLoad) => {
+          if (!isNull(configLoad)) {
+            _pathProgramming.push(fillFormValueToAction(configLoad, programing));
           }
         });
-        configValue.pathProgramming = _pathProgramming;
+        configValue.pathProgramming = _pathProgramming.flat();
 
         // 检查关键点动作配置
         const _targetAction = { ...configValue.targetAction };
@@ -1341,6 +1338,7 @@ export function restoreCustomTaskForm(customTask) {
 
   // 提取基本信息
   result.fieldsValue.name = customTask.name;
+  result.fieldsValue.code = customTask.code;
   result.fieldsValue.desc = customTask.desc;
   result.fieldsValue.priority = customTask.priority;
 
@@ -1393,14 +1391,17 @@ export function restoreCustomTaskForm(customTask) {
         }
         subTaskConfig.lockTime = lockTimeFormValue;
 
-        // 处理路径函数配置
-        const _pathProgramming = { ...subTaskConfig.pathProgramming };
-        Object.keys(_pathProgramming).forEach((type) => {
-          if (!isNull(_pathProgramming[type])) {
-            _pathProgramming[type] = extractActionToFormValue(_pathProgramming[type]);
-          }
-        });
-        subTaskConfig.pathProgramming = _pathProgramming;
+        // 处理路径函数配置，根据operateType分组处理
+        if (isArray(subTaskConfig.pathProgramming)) {
+          let _pathProgramming = [...subTaskConfig.pathProgramming];
+          _pathProgramming = groupBy(_pathProgramming, 'operateType');
+          Object.keys(_pathProgramming).forEach((type) => {
+            if (!isNull(_pathProgramming[type])) {
+              _pathProgramming[type] = extractActionToFormValue(_pathProgramming[type]);
+            }
+          });
+          subTaskConfig.pathProgramming = _pathProgramming;
+        }
 
         // 处理关键点动作配置
         const _targetAction = { ...subTaskConfig.targetAction };
@@ -1464,35 +1465,73 @@ export function extractActionToFormValue(actions) {
 }
 
 // 提取sample数据
-export function generateSample({ customStart, customActions, customPreActions }) {
+export function generateSample({ customStart, customActions, customPreActions }, taskNodes) {
   const result = [];
-  // 任务开始
+  // 任务开始(step1)
   if (isNull(customStart.robot)) {
-    result.push({ code: 'START-AGV', param: [] });
+    result.push({ code: 'step1-AGV', param: [] });
   } else {
-    result.push({ code: `START-${customStart.robot.type}`, param: customStart.robot.code });
+    result.push({ code: `step1-${customStart.robot.type}`, param: customStart.robot.code });
   }
-
   result.push({
-    code: 'START-isLimitStandBy',
+    code: 'step1-isLimitStandBy',
     param: customStart.isLimitStandBy,
   });
 
+  // 转换前置任务
+  const preTaskParams = {};
+  if (isPlainObject(customPreActions)) {
+    Object.values(customPreActions).forEach((subTask) => {
+      const {
+        code,
+        targetAction: { loadAngle, target },
+      } = subTask;
+      preTaskParams[code] = [];
+      preTaskParams[code].push({
+        code: 'loadAngle',
+        param: isNull(loadAngle) ? null : loadAngle,
+      });
+      preTaskParams[code].push({
+        code: target.type,
+        param: target?.code ?? [],
+      });
+    });
+  }
+
   // 子任务
-  Object.values({ ...customActions, ...customPreActions }).forEach((subTask) => {
-    const {
-      code,
-      targetAction: { loadAngle, target },
-    } = subTask;
-    result.push({
-      code: `${code}-loadAngle`,
-      param: isNull(loadAngle) ? null : loadAngle,
+  if (isPlainObject(customActions)) {
+    Object.values(customActions).forEach((subTask) => {
+      const {
+        code,
+        preActionCodes,
+        targetAction: { loadAngle, target },
+      } = subTask;
+      const { index } = find(taskNodes, { code });
+      result.push({
+        code: `step${index}-loadAngle`,
+        param: isNull(loadAngle) ? null : loadAngle,
+      });
+      result.push({
+        code: `step${index}-${target.type}`,
+        param: target?.code ?? [],
+      });
+
+      // 合并前置任务的参数
+      if (Array.isArray(preActionCodes)) {
+        preActionCodes.forEach((subTaskCode) => {
+          if (!isNull(preTaskParams[subTaskCode])) {
+            preTaskParams[subTaskCode].forEach(({ code, param }) => {
+              result.push({
+                code: `step${index}-${code}`,
+                param,
+              });
+            });
+          }
+        });
+      }
     });
-    result.push({
-      code: `${code}-${target.type}`,
-      param: target?.code ?? [],
-    });
-  });
+  }
+
   return result;
 }
 

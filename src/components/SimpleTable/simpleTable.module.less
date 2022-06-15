@@ -1,0 +1,51 @@
+@border: 1px solid rgba(0, 0, 0, .06);
+@header-background: #fafafa;
+
+.simpleTableHeader {
+  display: flex;
+
+  & > div {
+    padding: 12px;
+    color: #000000d9;
+    font-weight: 500;
+    background: @header-background;
+    border-top: @border;
+    border-bottom: @border;
+    border-left: @border;
+  }
+
+  & > div:last-child {
+    border-right: @border;
+  }
+}
+
+.simpleTableRow {
+  display: flex;
+
+  & > div {
+    padding: 12px;
+    border-bottom: @border;
+    border-left: @border;
+  }
+
+  & > div:last-child {
+    border-right: @border;
+  }
+}
+
+.simpleTableRowColumn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.simpleTableMarker {
+  .simpleTableRowColumn();
+  width: 30px;
+
+  & > div {
+    width: 18px;
+    height: 18px;
+    border-radius: 9px;
+  }
+}

@@ -164,6 +164,7 @@ export default {
   'app.button.execute': '执行',
   'app.button.upload': '上传',
   'app.button.download': '下载',
+  'app.button.config': '配置',
 
   // 时间相关
   'app.time': '时间',

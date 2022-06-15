@@ -126,7 +126,6 @@ export default {
   'monitor.view.heat.isTransparent': '是否透明',
   'monitor.view.heat.autoRefresh': '自动刷新',
 
-  'monitor.simulator.config': '配置',
   'monitor.simulator.action.batchAddPods': '批量添加货架',
   'monitor.simulator.action.remove': '移除',
   'monitor.simulator.action.beatStop': '拍急停',
