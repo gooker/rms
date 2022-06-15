@@ -1,17 +1,21 @@
+/*TODO: I18N*/
 import React, { memo, useState, useEffect } from 'react';
 import { Form, Row, Col, Spin, Button } from 'antd';
-import { SearchOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
+import { GroupOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, getFormLayout, formatMessage } from '@/utils/util';
 import commonStyles from '@/common.module.less';
 import { deleteChargingStrategyById } from '@/services/resourceService';
 import RmsConfirm from '@/components/RmsConfirm';
+import ResourceGroupModal from '@/packages/ResourceManage/component/ResourceGroupModal';
 const { formItemLayout } = getFormLayout(5, 18);
 
 const SearchComponent = (props) => {
   const { searchData, selectedRowKeys, addStrage, data, getData } = props;
 
   const [formRef] = Form.useForm();
+
+  const [visible, setVisible] = useState(false);
 
   function search() {
     formRef.validateFields().then((value) => {
@@ -61,11 +65,31 @@ const SearchComponent = (props) => {
             <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
           </Button>
 
+          <Button
+            disabled={selectedRowKeys.length === 0}
+            onClick={() => {
+              setVisible(true);
+            }}
+          >
+            <GroupOutlined /> 策略分组
+          </Button>
+
           <Button onClick={getData}>
             <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
       </Row>
+
+      <ResourceGroupModal
+        visible={visible}
+        title={'策略分组'}
+        members={selectedRowKeys}
+        groupType={'CHARGESTRATEGY'}
+        onOk={getData}
+        onCancel={() => {
+          setVisible(false);
+        }}
+      />
     </>
   );
 };

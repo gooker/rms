@@ -1,5 +1,5 @@
 /* TODO: I18N */
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Modal, Form, Select, Input } from 'antd';
 import { isNull, formatMessage, getFormLayout, dealResponse } from '@/utils/util';
 import { saveLoadSpecification } from '@/services/resourceService';
@@ -11,12 +11,18 @@ function LoadSpecificationModal(props) {
   const { visible, onCancel, onOk, updateRecord, allLoadType } = props;
   const [formRef] = Form.useForm();
 
+  useEffect(() => {
+    if (!visible) {
+      formRef.resetFields();
+    }
+  }, [visible]);
+
   function onSave() {
     formRef
       .validateFields()
       .then(async (values) => {
         let id = null;
-        if (isNull()) {
+        if (!isNull(updateRecord)) {
           id = updateRecord.id;
         }
         const response = await saveLoadSpecification({ ...values, id });

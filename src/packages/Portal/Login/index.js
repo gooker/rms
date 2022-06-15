@@ -18,6 +18,7 @@ import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
 import AddEnvironmentModal from '@/packages/SSO/EnvironmentManger/components/AddEnvironmentModal';
 import { fetchLogin } from '@/services/SSOService';
+import { initI18nInstance } from '@/utils/init';
 
 const Login = (props) => {
   const { history } = props;
@@ -75,6 +76,7 @@ const Login = (props) => {
       if (!dealResponse(response)) {
         window.sessionStorage.setItem('token', response.authorization);
         setLoading(false);
+        await initI18nInstance();
         history.push('/');
       } else {
         setLoading(false);

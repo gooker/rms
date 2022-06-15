@@ -372,9 +372,10 @@ export async function fetchLoadSpecificationByType(param) {
 }
 
 // 获取所有载具
-export async function fetchAllLoad() {
+export async function fetchAllLoad(param) {
   return request(`/${NameSpace.Platform}/load/getAllLoad`, {
-    method: 'GET',
+    method: 'POST',
+    data: param,
   });
 }
 
@@ -394,4 +395,66 @@ export async function saveLoad(param) {
   });
 }
 
+// 模拟生成载具
+export async function simulationLoad(param) {
+  return request(`/${NameSpace.Platform}/load/addSimulationLoads`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 载具流转记录
+export async function fetchLoadCirculationRecord(param) {
+  return request(`/${NameSpace.Platform}/load/getLoadCirculationRecords`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
 /***载具 end**/
+
+// 新增储位
+export async function saveStorage(param) {
+  return request(`/${NameSpace.Platform}/storage/saveStorage`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 储位列表
+export async function fetchAllStorage(param) {
+  return request(`/${NameSpace.Platform}/storage/getStorage`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
+// 删除储位
+export async function deleteSelectedStorage(param) {
+  return request(`/${NameSpace.Platform}/storage/deleteStorage`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 初始化储位
+export async function initStorage(param) {
+  return request(`/${NameSpace.Platform}/storage/initStorage`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+
+
+// 保存分组
+export async function saveResourceGroup(param) {
+  return request(`/${NameSpace.Platform}/resource/saveOneResourceGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+

@@ -2,8 +2,6 @@
 import React, { memo } from 'react';
 import { Form, Row, Col, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getFormLayout } from '@/utils/util';
-const { formItemLayout } = getFormLayout(5, 18);
 
 const SearchSpecComponent = (props) => {
   const { setLoadType, allLoadType } = props;
@@ -16,7 +14,7 @@ const SearchSpecComponent = (props) => {
 
   return (
     <>
-      <Form {...formItemLayout} form={formRef} onValuesChange={handleLoadType}>
+      <Form form={formRef} onValuesChange={handleLoadType}>
         <Row>
           <Col span={6}>
             <Form.Item label={<FormattedMessage id="app.common.type" />} name="loadTypeCode">
