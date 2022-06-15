@@ -10,6 +10,7 @@ export default class CostArrow extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
+    this.cullable = true;
     this.angle = props.angle;
     this.cost = props.cost;
     this.selected = false; // 标记是否被选中

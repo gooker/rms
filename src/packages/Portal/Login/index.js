@@ -10,6 +10,7 @@ import {
   getAllEnvironments,
   getCustomEnvironments,
   getRandomString,
+  isEmptyPlainObject,
   isNull,
 } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -38,15 +39,17 @@ const Login = (props) => {
 
   function addEnvironment() {
     modalRef.validateFields().then((value) => {
-      const _options = [...options];
-      _options.push({ ...value, id: getRandomString(10) });
-      window.localStorage.setItem(
-        'customEnvs',
-        JSON.stringify(_options.filter((item) => item.id !== 'default')),
-      );
-      setOptions(_options);
-      setVisible(false);
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+      if (!isEmptyPlainObject(value)) {
+        const _options = [...options];
+        _options.push({ ...value, id: getRandomString(10) });
+        window.localStorage.setItem(
+          'customEnvs',
+          JSON.stringify(_options.filter((item) => item.id !== 'default')),
+        );
+        setOptions(_options);
+        setVisible(false);
+        message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+      }
     });
   }
 

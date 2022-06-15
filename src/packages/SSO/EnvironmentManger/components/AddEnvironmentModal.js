@@ -10,9 +10,8 @@ const ApiNameSpace = [NameSpace.Platform, NameSpace.WS];
 class AddEnvironmentModal extends PureComponent {
   componentDidMount() {
     const { formRef, updateRow } = this.props;
-    const { setFieldsValue } = formRef.current;
     if (updateRow) {
-      setFieldsValue({
+      formRef.setFieldsValue({
         envName: updateRow.envName,
         additionalInfos: updateRow.additionalInfos,
       });
@@ -36,10 +35,10 @@ class AddEnvironmentModal extends PureComponent {
   render() {
     const { formRef } = this.props;
     return (
-      <Form ref={formRef} {...formItemLayout}>
+      <Form form={formRef} {...formItemLayout}>
         <Form.Item
           label={formatMessage({ id: 'environmentManager.envName' })}
-          name="envName"
+          name='envName'
           rules={[{ required: true }]}
         >
           <Input />

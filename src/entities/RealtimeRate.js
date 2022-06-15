@@ -11,6 +11,7 @@ export default class RealtimeRate extends PIXI.Container {
     this.zIndex = 0.5;
     this.direction = 0;
     this.alpha = 0.4;
+    this.cullable = true;
     this.$visible = props.showRealTimeRate;
     this.$commonNum = 380;
     this.$commonNumY = 250;

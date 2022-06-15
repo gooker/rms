@@ -21,6 +21,7 @@ export default class ForkLiftVehicle extends PIXI.Container {
     this.width = ForkLiftVehicleSize.width;
     this.height = ForkLiftVehicleSize.height;
     this.currentCellId = props.currentCellId;
+    this.cullable = true;
     this.angle = props.angle;
     this.state = props.state;
     this.battery = props.battery;

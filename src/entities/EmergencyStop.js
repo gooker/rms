@@ -1,11 +1,5 @@
 import * as PIXI from 'pixi.js';
-import {
-  zIndex,
-  SelectionType,
-  ZoneMarkerType,
-  EStopStateColor,
-  MapSelectableSpriteType,
-} from '@/config/consts';
+import { EStopStateColor, MapSelectableSpriteType, SelectionType, zIndex, ZoneMarkerType } from '@/config/consts';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import Text from '@/entities/Text';
 import { isNull } from '@/utils/util';
@@ -20,6 +14,7 @@ class EmergencyStop extends PIXI.Container {
     this.x = props.x + props.xlength / 2;
     this.y = props.y + props.ylength / 2;
     this.angle = props.angle || 0;
+    this.cullable = true;
     this.zIndex = zIndex.emergencyStop;
     this.alpha = 0.75;
 

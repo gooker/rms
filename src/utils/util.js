@@ -57,10 +57,6 @@ export function isEmptyPlainObject(obj) {
   return isPlainObject(obj) && isEmpty(obj);
 }
 
-export function isArray(value) {
-  return Array.isArray(value);
-}
-
 export function getBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -1392,7 +1388,7 @@ export function restoreCustomTaskForm(customTask) {
         subTaskConfig.lockTime = lockTimeFormValue;
 
         // 处理路径函数配置，根据operateType分组处理
-        if (isArray(subTaskConfig.pathProgramming)) {
+        if (Array.isArray(subTaskConfig.pathProgramming)) {
           let _pathProgramming = [...subTaskConfig.pathProgramming];
           _pathProgramming = groupBy(_pathProgramming, 'operateType');
           Object.keys(_pathProgramming).forEach((type) => {

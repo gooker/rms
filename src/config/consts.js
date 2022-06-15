@@ -138,22 +138,23 @@ export const CellTypeSize = {
 };
 
 export const TaskPathColor = {
-  passed: '0x808080', // 灰色
-  locked: '0x34bf49', // 暗绿色
-  future: '0xfbb034', // 黄色
+  passed: '0x808080',
+  locked: '0x34bf49',
+  future: '0xfbb034',
 };
 
 export const CellTypeColor = {
-  storeType: '0x49a942', // 绿色
-  blockType: '0x6d6e70', // 灰色
-  normal: '0xffdd00', // 黄色
+  storeType: '0x49a942',
+  blockType: '0x6d6e70',
+  normal: '0xffdd00',
+  blank: '0xffffff',
 };
 
 export const GeoLockColor = {
-  PATH: '0x00FFFF', // 亮蓝色
-  ROTATION: '0xFFFF00', // 黄色
-  SPECIAL: '0xFF0000', // 红色
-  WillLocked: '0xF6830F', // 橙色
+  PATH: '0x00FFFF',
+  ROTATION: '0xFFFF00',
+  SPECIAL: '0xFF0000',
+  WillLocked: '0xF6830F',
 };
 
 // 急停区状态颜色

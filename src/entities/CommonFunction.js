@@ -1,12 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import {
-  zIndex,
-  SelectionType,
-  CommonFunctionSize,
-  MapSelectableSpriteType,
-} from '@/config/consts';
+import { CommonFunctionSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 import Text from '@/entities/Text';
 import { isStrictNull } from '@/utils/util';
 
@@ -18,6 +13,7 @@ export default class CommonFunction extends PIXI.Container {
     this.x = props.x;
     this.y = props.y;
     this.name = props.name;
+    this.cullable = true;
     this.angle = props.iconAngle || 0;
     this.zIndex = zIndex.functionIcon;
     this.$angle = props.angle || 0; // 仅用于纠正名称角度

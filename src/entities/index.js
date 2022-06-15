@@ -32,6 +32,7 @@ import LogicArea from './LogicArea';
 import MapEntity from './MapEntity';
 import RelationEntity from './RelationEntity';
 import RouteMap from './RouteMap';
+import PixiBuilder from './PixiBuilder';
 
 export {
   Text,
@@ -68,4 +69,5 @@ export {
   MapEntity,
   RelationEntity,
   RouteMap,
+  PixiBuilder,
 };

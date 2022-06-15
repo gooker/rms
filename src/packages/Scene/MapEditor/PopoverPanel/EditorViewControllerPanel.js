@@ -12,15 +12,6 @@ const { formItemLayout } = getFormLayout(7, 17);
 const EditorViewControllerPanel = (props) => {
   const { dispatch, height, mapContext, shownPriority, mapRotation } = props;
 
-  // function radioGroupChange(ev) {
-  //   const changedMapMode = ev.target.value;
-  //   dispatch({
-  //     type: 'editorView/saveState',
-  //     payload: { mapMode: changedMapMode },
-  //   });
-  //   mapContext.changeMapMode(changedMapMode);
-  // }
-
   function switchShowBlock(hideBlock) {
     dispatch({
       type: 'editorView/saveState',
@@ -43,6 +34,14 @@ const EditorViewControllerPanel = (props) => {
       payload: { showDistance: value },
     });
     mapContext.switchDistanceShown(value, false);
+  }
+
+  function switchCellsLineShown(value) {
+    dispatch({
+      type: 'editorView/saveState',
+      payload: { showCellsLine: value },
+    });
+    mapContext.switchCellsLineShown(value);
   }
 
   function switchBackImgShown(value) {
@@ -89,27 +88,6 @@ const EditorViewControllerPanel = (props) => {
       <div>
         <div className={styles.panelBlock}>
           <Form labelWrap>
-            {/* 模式切换 */}
-            {/*<Form.Item*/}
-            {/*  {...formItemLayout}*/}
-            {/*  label={<FormattedMessage id={'editor.view.mapViewMode'} />}*/}
-            {/*>*/}
-            {/*  <Radio.Group*/}
-            {/*    buttonStyle="solid"*/}
-            {/*    value={props.mapMode}*/}
-            {/*    onChange={(ev) => radioGroupChange(ev)}*/}
-            {/*  >*/}
-            {/*    <Radio.Button value="standard">*/}
-            {/*      <FormattedMessage id="editor.view.mapViewMode.standard" />*/}
-            {/*      /!* 标准 *!/*/}
-            {/*    </Radio.Button>*/}
-            {/*    <Radio.Button value="scaled">*/}
-            {/*      <FormattedMessage id="editor.view.mapViewMode.scaled" />*/}
-            {/*      /!* 大图 *!/*/}
-            {/*    </Radio.Button>*/}
-            {/*  </Radio.Group>*/}
-            {/*</Form.Item>*/}
-
             {/* 隐藏不可走点 */}
             <Form.Item
               {...formItemLayout}
@@ -162,6 +140,20 @@ const EditorViewControllerPanel = (props) => {
 
         <div className={styles.panelBlock} style={{ marginTop: 5 }}>
           <Form labelWrap>
+            {/* 点关系线显示 */}
+            <Form.Item
+              {...formItemLayout}
+              label={<FormattedMessage id={'editor.view.cellsLineDisplay'} />}
+            >
+              <Switch
+                disabled={shownPriority.length === 0}
+                checked={props.showCellsLine}
+                onChange={(value) => {
+                  switchCellsLineShown(value);
+                }}
+              />
+            </Form.Item>
+
             {/* 优先级显示 */}
             <Form.Item
               {...formItemLayout}
@@ -255,10 +247,10 @@ const EditorViewControllerPanel = (props) => {
   );
 };
 export default connect(({ editor, editorView }) => ({
-  mapMode: editorView.mapMode,
   hideBlock: editorView.hideBlock,
   showBackImg: editorView.showBackImg,
   showDistance: editorView.showDistance,
+  showCellsLine: editorView.showCellsLine,
   shownPriority: editorView.shownPriority,
   showCoordinate: editorView.showCoordinate,
   showRelationsDir: editorView.showRelationsDir,

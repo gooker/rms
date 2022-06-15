@@ -126,6 +126,7 @@ export default {
   'editor.view.coordinateDisplay': '坐标显示',
   'editor.view.distanceDisplay': '距离显示',
   'editor.view.backImgDisplay': '背景显示',
+  'editor.view.cellsLineDisplay': '点关系显示',
   'editor.view.priorityDisplay': '优先级显示',
   'editor.view.directionShown': '方向显示',
   'editor.view.showOnlyRelevantPoints': '仅显示相关点',

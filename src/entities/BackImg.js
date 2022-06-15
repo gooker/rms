@@ -8,6 +8,7 @@ export default class BackImg extends PIXI.Container {
     this.y = props.y;
     this.zIndex = 0.5;
     // this.alpha = 0.7;
+    this.cullable = true;
     this.code = props.code;
     this.angle = props.angle || 0;
     this.$visible = props.showBackImg;

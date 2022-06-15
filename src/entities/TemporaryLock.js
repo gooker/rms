@@ -1,11 +1,12 @@
 import * as PIXI from 'pixi.js';
-import { GlobalAlpha, CellSize, zIndex } from '@/config/consts';
+import { CellSize, GlobalAlpha, zIndex } from '@/config/consts';
 
 export default class TemporaryLock extends PIXI.Sprite {
   constructor(texture, x, y) {
     super(texture);
     this.x = x;
     this.y = y + CellSize.height / 2;
+    this.cullable = true;
     this.height = 3 * CellSize.height;
     this.width = 3 * CellSize.width;
     this.alpha = GlobalAlpha;

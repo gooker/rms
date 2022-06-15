@@ -15,6 +15,7 @@ export default class OpenLock extends PIXI.Container {
     this.radius = props.radius;
     this.boxType = props.boxType;
     this.boxAction = props.boxAction;
+    this.cullable = true;
     this.alpha = GlobalAlpha;
     this.$width = props.width;
     this.$height = props.height;

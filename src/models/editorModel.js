@@ -80,9 +80,6 @@ export default {
 
   effects: {
     *editorInitial(_, { put, call }) {
-      // yield put({ type: 'saveCurrentMap', payload: MockMapWithProgram });
-      // yield put({ type: 'saveMapList', payload: [] });
-
       const mapList = yield call(fetchSectionMaps);
       if (!dealResponse(mapList, null, formatMessage({ id: 'app.message.fetchMapFail' }))) {
         // 检查是否有地图数据

@@ -8,6 +8,7 @@ const offset = 100;
 export default class StraightPath extends PIXI.Container {
   constructor(props) {
     super();
+    this.cullable = true;
     this.distance = props.distance;
     this.sourceCell = props.sourceCell;
     this.targetCell = props.targetCell;

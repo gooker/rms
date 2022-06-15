@@ -23,7 +23,6 @@ import {
   getLockCellBounds,
   getTextureFromResources,
   hasLatentPod,
-  loadMonitorExtraTextures,
   unifyVehicleState,
 } from '@/utils/mapUtil';
 import {
@@ -44,6 +43,7 @@ import {
 import BaseMap from '@/components/BaseMap';
 import { fetchVehicleInfo } from '@/services/commonService';
 import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { loadMonitorExtraTextures } from '@/utils/textures';
 
 class MonitorMapView extends BaseMap {
   constructor() {
@@ -213,7 +213,8 @@ class MonitorMapView extends BaseMap {
     this.refresh();
   }
 
-  getPipeShownValue = () => {};
+  getArrowShownValue = () => {
+  };
 
   // ************************ 点位相关 **********************
   renderCells = (cells) => {

@@ -12,6 +12,7 @@ export default class Dump extends PIXI.Container {
     this.x = props.x;
     this.y = props.y;
     this.name = props.name;
+    this.cullable = true;
     this.zIndex = zIndex.temporaryLock;
     this.selected = false; // 标记是否被选中
     this.select = props.select;

@@ -213,6 +213,7 @@ export default class BaseMap extends React.PureComponent {
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
           const relationLine = new StraightPath({ sourceCell, targetCell, distance });
+          relationLine.visible = this.states.showCellRelation;
           relationLine.textVisible = this.states.showDistance;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
@@ -237,7 +238,7 @@ export default class BaseMap extends React.PureComponent {
           angle: convertAngleToPixiAngle(angle),
           select: this.select,
         });
-        arrow.visible = this.getPipeShownValue(arrow);
+        arrow.visible = this.getArrowShownValue(arrow);
         this.pixiUtils.viewportAddChild(arrow);
         this.idArrowMap.set(arrowMapKey, arrow);
       }
