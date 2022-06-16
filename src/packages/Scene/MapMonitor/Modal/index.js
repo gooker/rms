@@ -13,7 +13,7 @@ import CustomComponent from './CustomComponent';
 import Parabolic from './SorterThrow';
 import PickCargo from './SorterPick';
 import PathLock from './PathLock';
-import ViewControlComponent from './ViewControlComponent';
+import ViewControlComponent from './MonitorViewControlModal';
 import ToteViewControlComponent from './ToteViewControlComponent';
 import HotHeatControlComponent from './HotHeatControlComponent';
 import SetupLatentPod from './SetupLatentPod/SetupLatentPod';

@@ -1,30 +1,41 @@
 import { VehiclePollingTaskPathManager } from '@/workers/WebWorkerManager';
-import { NavigationType, CoordinateType } from '@/config/config';
+import { CoordinateType, NavigationType } from '@/config/config';
 
 const MonitorViewModelState = {
-  selectVehicle: [], // 小车的uniqueId
+  // ************************* 路径锁格 ************************* //
+  // 小车的uniqueId
+  selectVehicle: [],
+  // 点位锁格
+  showCellLock: true,
+  // 逻辑区路径锁格
+  showLogicLockedCell: false,
+  // 小车锁
   vehicleLockView: {
     showLockCellPolling: false,
   },
+  // 显示路径
   routeView: {
     showRoute: true,
     showFullPath: false,
-    showTagetLine: false,
+    showTargetLine: false,
   },
-  showCellLock: true,
 
-  showLogicLockedCell: false, // 逻辑区路径锁格
+  // ************************* 地图显示 ************************* //
+  showCellPoint: true, // 显示地图点位
+  showDistance: false, // 是否显示距离
+  showCoordinate: false, // 是否显示点位坐标
+  showCellsLine: false, // 是否显示点位之间的连线
+  shownPriority: [], // 可见的箭头(cost)
+  showBackImage: false, // 背景
+  emergencyAreaShown: true, // 紧急区域
 
-  shownPriority: [],
-  distanceShow: false,
-  cellPointShow: true,
-  coordinationShow: false,
-  stationRealTimeRateView: false, // 站点实时速率显示
-  backImgeView: false, // 背景
-  emergencyAreaShow: true, // 紧急区域
+  // ************************* 其他 ************************* //
+  // 站点实时速率显示
+  stationRealTimeRateView: false,
 
   // 自动轮询成本热度
   showCostPolling: false,
+
   // 热度类型
   hotType: null,
   costHeatOpacity: true,
@@ -63,6 +74,7 @@ const MonitorViewModelState = {
 
   // 小车告警异常
   vehicleAlarmList: [],
+
   // 小车运行信息
   vehicleRunningInfoList: [],
 
@@ -72,18 +84,21 @@ const MonitorViewModelState = {
   shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
   shownCellCoordinateType: CoordinateType.LAND, // land 表示物理点位、navi表示导航点位
 };
+
 export default {
   namespace: 'monitorView',
+
   state: {
     ...MonitorViewModelState,
   },
+
   reducers: {
     unmount(state) {
       return {
         ...MonitorViewModelState,
       };
     },
-    saveViewState(state, action) {
+    saveState(state, action) {
       return { ...state, ...action.payload };
     },
 
@@ -143,6 +158,7 @@ export default {
       };
     },
   },
+
   effects: {
     *routePolling({ payload }, { select }) {
       const { flag, ids } = payload;

@@ -9,8 +9,6 @@ import { MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { defaultEditorViewConfig } from '@/models/editorViewModel';
 
-const ThresholdValue = 20;
-
 class EditorMapView extends BaseMap {
   constructor(props) {
     super(props);
@@ -53,6 +51,7 @@ class EditorMapView extends BaseMap {
    * 6. Pixel转世界长度: viewport.worldScreenWidth / viewport.screenWidth * [Pixel]
    */
   adaptiveMapItem = () => {
+    const ThresholdValue = 20;
     const { viewport } = this.pixiUtils;
     const { children, screenWidth, worldScreenWidth } = viewport;
     // 获取当前点圆的尺寸

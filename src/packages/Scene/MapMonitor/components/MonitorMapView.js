@@ -51,18 +51,18 @@ class MonitorMapView extends BaseMap {
 
     // 记录显示控制的参数
     this.states = {
-      showTote: true,
-      showCoordinate: false,
-      showCellPoint: true,
-      shownPriority: [10, 20, 100, 1000],
-      showDistance: false,
-      showRealTimeRate: false,
+      showCellPoint: true, // 显示地图点位
+      showDistance: false, // 是否显示距离
+      showCoordinate: false, // 是否显示点位坐标
+      showCellsLine: false, // 是否显示点位之间的连线
+      shownPriority: [], // 可见的箭头(cost)
       showBackImg: false,
       emergencyAreaShown: true, // 紧急区域
+
+      showTote: true,
+      showRealTimeRate: false,
     };
 
-    // 料箱货架数据 (用来处理 重载地图 时候多个逻辑区的料箱货架渲染问题)
-    this.totePodsData = {};
     // 选中的元素数据
     this.selections = [];
 
@@ -102,7 +102,7 @@ class MonitorMapView extends BaseMap {
   async componentDidMount() {
     const htmlDOM = document.getElementById('monitorPixi');
     const { width, height } = htmlDOM.getBoundingClientRect();
-    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, () => {});
+    this.pixiUtils = new PixiBuilder(width, height, htmlDOM, this.adaptiveMapItem);
     window.MonitorPixiUtils = window.PixiUtils = this.pixiUtils;
     window.$$dispatch({ type: 'monitor/saveMapContext', payload: this });
     await loadMonitorExtraTextures(this.pixiUtils.renderer);
@@ -116,6 +116,22 @@ class MonitorMapView extends BaseMap {
     this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
 
+  adaptiveMapItem = () => {
+    const ThresholdValue = 20;
+    const { viewport } = this.pixiUtils;
+    const { children, screenWidth, worldScreenWidth } = viewport;
+    // 获取当前点圆的尺寸
+    const currentCellCircleWidth = (screenWidth / worldScreenWidth) * 140;
+    // 根据navigationCircleWidth判断是否需要自适应
+    if (currentCellCircleWidth < ThresholdValue) {
+      children.forEach((child) => {
+        if (child instanceof Cell) {
+          child.scale.set(ThresholdValue / currentCellCircleWidth);
+        }
+      });
+    }
+  };
+
   // 清除监控有关的地图数据
   clearMonitorLoad = () => {
     this.emergencyAreaMap.clear();
@@ -126,22 +142,25 @@ class MonitorMapView extends BaseMap {
   switchCellShown = (flag) => {
     this.states.showCellPoint = flag;
     this.idCellMap.forEach((cell) => {
-      cell.switchShown(flag);
+      cell.visible = flag;
     });
+    this.refresh();
   };
 
   // 地图料箱显示
   switchToteShown = (flag) => {
     this.states.showTote = flag;
     this.idTotePodMap.forEach((tote) => tote.switchShown(flag));
+    this.refresh();
   };
 
   // 站点实时速率显示
   switchStationRealTimeRateShown = (flag) => {
     this.states.showRealTimeRate = flag;
-    this.stationRealTimeRateMap.forEach(function (value) {
+    this.stationRealTimeRateMap.forEach(function(value) {
       value.switchStationRateEntityShown(flag);
     });
+    this.refresh();
   };
 
   // 紧急区域
@@ -150,6 +169,7 @@ class MonitorMapView extends BaseMap {
     this.emergencyAreaMap.forEach((eStop) => {
       eStop.switchEStopsVisible(flag);
     });
+    this.refresh();
   };
 
   // 追踪小车
@@ -207,13 +227,44 @@ class MonitorMapView extends BaseMap {
     }
   };
 
+  // 切换显示点关系线
+  switchCellsLineShown = (flag) => {
+    this.states.showCellsLine = flag;
+    this.pipeSwitchLinesShown();
+    this.refresh();
+  };
+
+  // 筛选优先级箭头
   filterRelations(uiFilterData) {
     this.states.shownPriority = uiFilterData;
-    this.pipeSwitchLinesShown();
+    this.pipeSwitchArrowsShown();
     this.refresh();
   }
 
-  getArrowShownValue = () => {
+  pipeSwitchArrowsShown = () => {
+    this.idArrowMap.forEach((arrow) => {
+      arrow.visible = this.getArrowShownValue(arrow);
+    });
+    this.pipeSwitchLinesShown();
+  };
+
+  pipeSwitchLinesShown = () => {
+    const { showCellsLine } = this.states;
+    const lineKeys = [...this.idLineMap.keys()];
+    lineKeys.forEach((lineKey) => {
+      const reverseLineKey = lineKey.split('-').reverse().join('-');
+      const arrow1 = this.idArrowMap.get(lineKey);
+      const arrow2 = this.idArrowMap.get(reverseLineKey);
+      const line = this.idLineMap.get(lineKey);
+      if (line) {
+        line.visible = (arrow1?.visible || arrow2?.visible) && showCellsLine;
+      }
+    });
+  };
+
+  getArrowShownValue = (arrow) => {
+    const { shownPriority } = this.states;
+    return shownPriority.includes(arrow.cost);
   };
 
   // ************************ 点位相关 **********************
@@ -1286,7 +1337,7 @@ class MonitorMapView extends BaseMap {
   };
 
   renderTaskPaths = (uniqueId) => {
-    const { showFullPath, showTagetLine } = window.$$state().monitorView.routeView;
+    const { showFullPath, showTargetLine } = window.$$state().monitorView.routeView;
     const { allVehicles } = window.$$state().monitor;
     // 渲染新的路径
     const _this = this;
@@ -1338,7 +1389,7 @@ class MonitorMapView extends BaseMap {
       });
 
       // 渲染小车到目标点的连线
-      if (showTagetLine) {
+      if (showTargetLine) {
         const { vehicleId } = find(allVehicles, { uniqueId });
         const vehicleData = this.idVehicleMap.get(vehicleId);
         let lineEnd = pathCellIds[pathCellIds.length - 1];
