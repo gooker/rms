@@ -1,7 +1,7 @@
 /* TODO: I18N */
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Modal, Form, Select, Input } from 'antd';
-import { isNull, formatMessage, getFormLayout, dealResponse } from '@/utils/util';
+import { isNull, formatMessage, getFormLayout, dealResponse, isStrictNull } from '@/utils/util';
 import { saveLoad } from '@/services/resourceService';
 import AngleSelector from '@/components/AngleSelector';
 
@@ -15,18 +15,20 @@ const storageSpace = [
 const { formItemLayout } = getFormLayout(5, 16);
 
 function AddLoadModal(props) {
-  const { visible, onCancel, onOk, updateRecord, allLoadSpec } = props;
+  const { visible, onCancel, onOk, updateRecord, allLoadSpec, allData } = props;
   const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    if (!visible) {
+      formRef.resetFields();
+    }
+  }, [visible]);
 
   function onSave() {
     formRef
       .validateFields()
       .then(async (values) => {
-        let id = null;
-        if (isNull()) {
-          id = updateRecord.id;
-        }
-        const response = await saveLoad({ ...values, id });
+        const response = await saveLoad({ ...values });
         if (!dealResponse(response)) {
           onCancel();
           onOk();
@@ -34,6 +36,15 @@ function AddLoadModal(props) {
       })
       .catch(() => {});
   }
+
+  function validateDuplicate(_, value) {
+    const ids = allData?.map(({ loadId }) => loadId);
+    if (!value || !ids.includes(value) || !isStrictNull(updateRecord)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error('ID重复'));
+  }
+
   return (
     <Modal
       destroyOnClose
@@ -48,23 +59,24 @@ function AddLoadModal(props) {
       onOk={onSave}
     >
       <Form {...formItemLayout} form={formRef}>
+        <Form.Item hidden name={'id'} initialValue={updateRecord?.id} />
         <Form.Item
           label={'ID'}
           name="loadId"
-          rules={[{ required: true }]}
+          rules={[{ required: true }, { validator: validateDuplicate }]}
           initialValue={updateRecord?.loadId}
         >
-          <Input allowClear />
+          <Input allowClear disabled={!isNull(updateRecord)} />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label={formatMessage({ id: 'app.common.name' })}
           name="name"
           rules={[{ required: true }]}
           initialValue={updateRecord?.name}
         >
           <Input allowClear />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item
           label={formatMessage({ id: 'app.common.angle' })}
           name="angle"
@@ -90,22 +102,15 @@ function AddLoadModal(props) {
           initialValue={updateRecord?.loadSpecificationCode}
         >
           <Select allowClear style={{ width: '100%' }}>
-            {allLoadSpec?.map(({ id, code, name }) => (
-              <Select.Option key={id} value={code}>
-                {name}
+            {allLoadSpec?.map((item) => (
+              <Select.Option key={item?.id} value={item?.code}>
+                {`${item.length}*${item.width}*${item.height}`}
               </Select.Option>
             ))}
           </Select>
         </Form.Item>
-        <Form.Item
-          label={formatMessage({ id: 'app.map.cell' })}
-          name="cellId"
-          initialValue={updateRecord?.cellId}
-        >
-          <Input allowClear />
-        </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label={'位置'}
           name="cargoStorageSpace"
           initialValue={updateRecord?.cargoStorageSpace}
@@ -117,6 +122,14 @@ function AddLoadModal(props) {
               </Select.Option>
             ))}
           </Select>
+        </Form.Item> */}
+
+        <Form.Item
+          label={formatMessage({ id: 'app.map.cell' })}
+          name="cellId"
+          initialValue={updateRecord?.cellId}
+        >
+          <Input allowClear />
         </Form.Item>
       </Form>
     </Modal>

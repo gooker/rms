@@ -1,7 +1,7 @@
 /* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Modal, Form, Select, Input } from 'antd';
-import { isNull, formatMessage, getFormLayout, dealResponse } from '@/utils/util';
+import { isNull, formatMessage, getFormLayout, dealResponse, getRandomString } from '@/utils/util';
 import { saveLoadSpecification } from '@/services/resourceService';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -21,11 +21,7 @@ function LoadSpecificationModal(props) {
     formRef
       .validateFields()
       .then(async (values) => {
-        let id = null;
-        if (!isNull(updateRecord)) {
-          id = updateRecord.id;
-        }
-        const response = await saveLoadSpecification({ ...values, id });
+        const response = await saveLoadSpecification({ ...values });
         if (!dealResponse(response)) {
           onCancel();
           onOk();
@@ -47,6 +43,12 @@ function LoadSpecificationModal(props) {
       onOk={onSave}
     >
       <Form {...formItemLayout} form={formRef}>
+        <Form.Item hidden name={'id'} initialValue={updateRecord?.id} />
+        <Form.Item
+          hidden
+          name="code"
+          initialValue={updateRecord?.code ?? `Specification_Code_${getRandomString(6)}`}
+        />
         <Form.Item
           label={<FormattedMessage id="app.common.type" />}
           name="loadTypeCode"

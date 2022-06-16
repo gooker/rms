@@ -1,7 +1,14 @@
 /* TODO: I18N */
 import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Button } from 'antd';
-import { EditOutlined, DeleteOutlined, RedoOutlined, PlusOutlined,DiffOutlined } from '@ant-design/icons';
+import { Row, Col, Button, Switch } from 'antd';
+import {
+  EditOutlined,
+  DeleteOutlined,
+  RedoOutlined,
+  PlusOutlined,
+  DiffOutlined,
+  GroupOutlined,
+} from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -9,12 +16,16 @@ import {
   deleteSelectedLoad,
   fetchAllLoad,
   fetchAllLoadSpecification,
+  saveLoad,
 } from '@/services/resourceService';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import AddLoadModal from './component/AddLoadModal';
 import SearchLoadComponent from './component/SearchLoadComponent';
+import ResourceGroupModal from '../component/ResourceGroupModal';
 import commonStyles from '@/common.module.less';
 import SimulateLoadModal from './component/SimulateLoadModal';
+import { find } from 'lodash';
+import RmsConfirm from '@/components/RmsConfirm';
 
 const ContainerManage = () => {
   const [allLoadSpec, setAllLoadSpec] = useState([]);
@@ -23,6 +34,8 @@ const ContainerManage = () => {
   const [visible, setVisible] = useState(false);
 
   const [simulateVisible, setSimulateVisible] = useState(false);
+
+  const [groupVisible, setGroupVisible] = useState(false);
 
   const [searchParam, setSearchParam] = useState(null);
   const [page, setPage] = useState({
@@ -39,19 +52,26 @@ const ContainerManage = () => {
 
   const columns = [
     { title: 'ID', dataIndex: 'loadId', align: 'center' },
+    // {
+    //   title: <FormattedMessage id="app.common.name" />,
+    //   dataIndex: 'name',
+    //   align: 'center',
+    // },
+
     {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'name',
+      title: '载具规格',
+      dataIndex: 'loadSpecificationCode',
       align: 'center',
+      render: (text) => {
+        const currentSpec = find(allLoadSpec, { code: text });
+        if (currentSpec) {
+          return `${currentSpec?.length} * ${currentSpec?.width}*${currentSpec?.height}`;
+        }
+      },
     },
     {
       title: <FormattedMessage id="app.common.angle" />,
       dataIndex: 'angle',
-      align: 'center',
-    },
-    {
-      title: '载具规格',
-      dataIndex: 'loadSpecificationCode',
       align: 'center',
     },
     {
@@ -64,10 +84,19 @@ const ContainerManage = () => {
       align: 'center',
       dataIndex: 'disabled',
       render: (text, record) => {
-        if (text) {
-          return <FormattedMessage id="app.common.disable" />;
-        }
-        return <FormattedMessage id="app.common.enable" />;
+        return (
+          <Switch
+            checked={!isNull(text) && !text}
+            onClick={() => {
+              statusChange({
+                ...record,
+                disabled: !text,
+              });
+            }}
+            checkedChildren={formatMessage({ id: 'app.common.enable' })}
+            unCheckedChildren={formatMessage({ id: 'app.common.disable' })}
+          />
+        );
       },
     },
     {
@@ -98,16 +127,29 @@ const ContainerManage = () => {
 
   function onCancel() {
     setVisible(false);
-    setSimulateVisible(false)
+    setSimulateVisible(false);
     setUpdateRecord(null);
+  }
+
+  // 更新状态
+  async function statusChange(record) {
+    const response = await saveLoad(record);
+    if (!dealResponse(response, 1)) {
+      getData();
+    }
   }
 
   // 删除载具
   async function deleteSpec() {
-    const response = await deleteSelectedLoad(selectedRowKeys);
-    if (!dealResponse(response, 1)) {
-      getData();
-    }
+    RmsConfirm({
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
+      onOk: async () => {
+        const response = await deleteSelectedLoad(selectedRowKeys);
+        if (!dealResponse(response, 1)) {
+          getData();
+        }
+      },
+    });
   }
 
   /*
@@ -177,15 +219,25 @@ const ContainerManage = () => {
                 setSimulateVisible(true);
               }}
             >
-             <DiffOutlined /> 模拟生成
+              <DiffOutlined /> 模拟生成
             </Button>
+
+            <Button
+              disabled={selectedRowKeys.length === 0}
+              onClick={() => {
+                setGroupVisible(true);
+              }}
+            >
+              <GroupOutlined /> 载具分组
+            </Button>
+
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteSpec}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
             <Button
               onClick={() => {
-                getData;
+                getData();
               }}
             >
               <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
@@ -217,6 +269,7 @@ const ContainerManage = () => {
         onCancel={onCancel}
         onOk={getData}
         updateRecord={updateRecord}
+        allData={dataSource}
         allLoadSpec={allLoadSpec}
       />
 
@@ -227,6 +280,17 @@ const ContainerManage = () => {
         onOk={getData}
         updateRecord={updateRecord}
         allLoadSpec={allLoadSpec}
+      />
+
+      <ResourceGroupModal
+        visible={groupVisible}
+        title={'载具分组'}
+        members={selectedRowKeys}
+        groupType={'LOAD'}
+        onOk={getData}
+        onCancel={() => {
+          setGroupVisible(false);
+        }}
       />
     </TablePageWrapper>
   );

@@ -19,6 +19,7 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import { allStorageType } from './component/storage';
 import RmsConfirm from '@/components/RmsConfirm';
 import ResourceGroupModal from '../component/ResourceGroupModal';
+import DropDownGroupComponent from '../component/DropDownGroupComponent';
 import InitStorageModal from './component/InitStorageModal';
 
 const StorageManagement = () => {
@@ -48,7 +49,8 @@ const StorageManagement = () => {
       dataIndex: 'id',
       align: 'center',
     },
-    { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
+
+    // { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
     {
       title: '编码',
       dataIndex: 'code',
@@ -63,6 +65,7 @@ const StorageManagement = () => {
         return currentType?.label;
       },
     },
+    { title: '组名编码', dataIndex: 'groups', align: 'center' },
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',
@@ -170,14 +173,12 @@ const StorageManagement = () => {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
-            <Button
+            <DropDownGroupComponent
               disabled={selectedRowKeys.length === 0}
-              onClick={() => {
+              onAdd={() => {
                 setGroupVisible(true);
               }}
-            >
-              <GroupOutlined /> 储位分组
-            </Button>
+            />
 
             <Button
               onClick={() => {

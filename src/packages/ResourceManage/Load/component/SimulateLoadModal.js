@@ -22,11 +22,7 @@ function SimulateLoadModal(props) {
     formRef
       .validateFields()
       .then(async (values) => {
-        let id = null;
-        if (isNull(updateRecord)) {
-          id = updateRecord.id;
-        }
-        const response = await simulationLoad({ ...values, id });
+        const response = await simulationLoad({ ...values });
         if (!dealResponse(response)) {
           onCancel();
           onOk();
@@ -48,7 +44,8 @@ function SimulateLoadModal(props) {
       onOk={onSave}
     >
       <Form {...formItemLayout} form={formRef}>
-        <Form.Item
+        <Form.Item hidden name={'id'} initialValue={updateRecord?.id} />
+        {/* <Form.Item
           label={'载具数'}
           name="loadNum"
           rules={[{ required: true }]}
@@ -61,7 +58,7 @@ function SimulateLoadModal(props) {
               textAlign: 'center',
             }}
           />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item label={'载具码'} required={true}>
           <Input.Group compact className={styles['site-input-group-wrapper']}>
@@ -114,13 +111,13 @@ function SimulateLoadModal(props) {
         <Form.Item
           label={'载具规格'}
           name="loadSpecificationCode"
-          // rules={[{ required: true }]}
+          rules={[{ required: true }]}
           initialValue={updateRecord?.loadSpecificationCode}
         >
           <Select allowClear style={{ width: '100%' }}>
-            {allLoadSpec?.map(({ id, code, name }) => (
-              <Select.Option key={id} value={code}>
-                {name}
+            {allLoadSpec?.map((item) => (
+              <Select.Option key={item?.id} value={item?.code}>
+                {`${item.length}*${item.width}*${item.height}`}
               </Select.Option>
             ))}
           </Select>

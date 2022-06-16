@@ -4,7 +4,7 @@ import { Form, Row, Col, Select } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const SearchSpecComponent = (props) => {
-  const { setLoadType, allLoadType } = props;
+  const { setLoadType, allLoadSpecType } = props;
 
   const [formRef] = Form.useForm();
 
@@ -19,8 +19,8 @@ const SearchSpecComponent = (props) => {
           <Col span={6}>
             <Form.Item label={<FormattedMessage id="app.common.type" />} name="loadTypeCode">
               <Select allowClear style={{ width: '100%' }}>
-                {allLoadType?.map(({ id, code, name }) => (
-                  <Select.Option key={id} value={code}>
+                {allLoadSpecType?.map(({ id, code, name }) => (
+                  <Select.Option key={code} value={code}>
                     {name}
                   </Select.Option>
                 ))}

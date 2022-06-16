@@ -1,6 +1,6 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
-import { Form, Row, Col, Select, Input, DatePicker, Button } from 'antd';
+import { Form, Row, Col, Input, DatePicker, Button } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone } from '@/utils/util';
@@ -11,8 +11,8 @@ const page = {
   size: 10,
 };
 
-const SearchLoadComponent = (props) => {
-  const { allLoadSpec, onSearch } = props;
+const SearchCirculationComponent = (props) => {
+  const { onSearch } = props;
   const [formRef] = Form.useForm();
 
   function search() {
@@ -35,22 +35,28 @@ const SearchLoadComponent = (props) => {
     <>
       <Form form={formRef}>
         <Row gutter={24}>
-          <Col span={4}>
-            <Form.Item label={'ID'} name={'loadId'}>
+          <Col span={6}>
+            <Form.Item label={'小车ID'} name={'vehicleId'}>
               <Input allowClear />
             </Form.Item>
           </Col>
-          <Col span={5}>
-            <Form.Item label={'载具规格'} name="loadSpecificationCode">
-              <Select allowClear style={{ width: '100%' }}>
-                {allLoadSpec?.map((item) => (
-                  <Select.Option key={item?.id} value={item?.code}>
-                    {`${item.length}*${item.width}*${item.height}`}
-                  </Select.Option>
-                ))}
-              </Select>
+
+          <Col span={6}>
+            <Form.Item label={'来源货位'} name={'fromCargoStorage'}>
+              <Input allowClear />
             </Form.Item>
           </Col>
+          <Col span={6}>
+            <Form.Item label={'目标货位'} name={'toCargoStorage'}>
+              <Input allowClear />
+            </Form.Item>
+          </Col>
+          <Col span={6}>
+            <Form.Item label={<FormattedMessage id="app.task.id" />} name={'taskId'}>
+              <Input allowClear />
+            </Form.Item>
+          </Col>
+
           {/* 日期 */}
           <Col span={8}>
             <Form.Item name={'createDate'} label={<FormattedMessage id="app.form.dateRange" />}>
@@ -78,4 +84,4 @@ const SearchLoadComponent = (props) => {
     </>
   );
 };
-export default memo(SearchLoadComponent);
+export default memo(SearchCirculationComponent);
