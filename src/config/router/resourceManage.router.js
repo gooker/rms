@@ -33,12 +33,12 @@ export default [
     icon: 'storage',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
     routes: [
-      {
-        path: `/${AppCode.ResourceManage}/storage/group`,
-        name: 'customType',
-        component: '/ResourceManage/Storage/CustomStorageType',
-        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
-      },
+      // {
+      //   path: `/${AppCode.ResourceManage}/storage/group`,
+      //   name: 'customType',
+      //   component: '/ResourceManage/Storage/CustomStorageType',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      // },
       {
         path: `/${AppCode.ResourceManage}/storage/management`,
         name: 'management',

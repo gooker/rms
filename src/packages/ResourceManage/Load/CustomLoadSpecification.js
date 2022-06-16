@@ -30,7 +30,9 @@ const CustomLoadType = (props) => {
   }, []);
 
   useEffect(() => {
-    getDataByType();
+    if (!isStrictNull(loadTypeCode)) {
+      getDataByType();
+    }
   }, [loadTypeCode]);
 
   const columns = [
@@ -120,7 +122,7 @@ const CustomLoadType = (props) => {
   }
 
   function onRefresh() {
-    if (isStrictNull(loadTypeCode)) {
+    if (!isStrictNull(loadTypeCode)) {
       getDataByType();
     } else {
       getData();

@@ -5,10 +5,17 @@ import { getTranslationByCode } from '@/services/translationService';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
 import { find } from 'lodash';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
+import { getCurrentUser } from '@/services/SSOService';
 
 export async function initI18nInstance() {
   return new Promise(async (resolve) => {
-    const language = getLanguage();
+    let language = getLanguage();
+
+    // 用远程merge数据进行二次初始化
+    const user = await getCurrentUser();
+    if (!dealResponse(user)) {
+      language = user.language;
+    }
 
     // 1. 读取本地国际化数据
     const locales = {};
@@ -41,6 +48,7 @@ export async function initI18nInstance() {
 
       //  远程覆盖本地
       await intl.init({ currentLocale: language, locales });
+      window.localStorage.setItem('currentLocale', language);
     } else {
       // 用本地国际化数据先初始化
       console.warn('Failed to fetch remote I18N Data, will use local I18n Data');
@@ -210,7 +218,10 @@ export function convertAllMenu(adminType, allModuleMenuData, permissionMap) {
 
 export function getLanguage() {
   const cachedLocale = window.localStorage.getItem('currentLocale');
-  const browserLocale = navigator.language;
+  let browserLocale = navigator.language;
+  if (browserLocale === 'en') {
+    browserLocale = 'en-US';
+  }
   return cachedLocale || browserLocale;
 }
 
