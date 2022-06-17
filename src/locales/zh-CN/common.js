@@ -59,6 +59,7 @@ export default {
   'app.message.fileCorrupted': '文件已损坏',
   'app.message.upload.tip': '单击或拖动文件到该区域进行上传',
   'app.message.gotIt': '知道了',
+  'app.message.dataFormatError': '数据格式错误',
 
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',

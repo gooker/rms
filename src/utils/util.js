@@ -11,6 +11,7 @@ import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/Cus
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
+import { selectAllDB } from '@/utils/IndexDBUtil';
 
 const Colors = Dictionary().color;
 
@@ -1538,30 +1539,18 @@ export function dropWhile(array, predicate) {
   return result;
 }
 
-// 自定义环境
-export function getCustomEnvironments() {
-  let customEnvs = window.localStorage.getItem('customEnvs');
-  if (isStrictNull(customEnvs)) {
-    return [];
+export async function getAllEnvironments(db) {
+  const customEnvs = await selectAllDB(db);
+  let activeEnv;
+  const activeCustomEnv = find(customEnvs, { active: true });
+  if (activeCustomEnv) {
+    activeEnv = activeCustomEnv.id;
   } else {
-    try {
-      customEnvs = JSON.parse(customEnvs);
-    } catch (e) {
-      customEnvs = [];
-    }
-    return customEnvs;
+    activeEnv = 'default';
   }
-}
-
-export function getAllEnvironments() {
-  const customEnvs = getCustomEnvironments();
-  const allEnvs = [{ envName: 'default', id: 'default' }].concat(customEnvs);
-  const activeAPI = allEnvs.filter((item) => item.flag === '1')[0];
-  let activeEnv = 'default';
-  if (activeAPI) {
-    activeEnv = activeAPI.id;
-  }
-  return { allEnvs, activeEnv };
+  const defaultEnv = { envName: 'default', id: 'default', active: activeEnv === 'default' };
+  const allEnvs = [defaultEnv, ...customEnvs];
+  return { customEnvs, allEnvs, activeEnv };
 }
 
 export function generateVehicleTypeOptions(vehicles) {
@@ -1571,8 +1560,4 @@ export function generateVehicleTypeOptions(vehicles) {
       {item}
     </Select.Option>
   ));
-}
-
-export function generateVehicleOptions(vehicles) {
-  return;
 }

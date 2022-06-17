@@ -106,7 +106,7 @@ export default {
           window.localStorage.setItem('customEnvs', customEnvs);
         }
         window.sessionStorage.clear();
-        window.history.$$push('/login');
+        window.RMS.push('/login');
       }
     },
 

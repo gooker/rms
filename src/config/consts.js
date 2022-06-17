@@ -311,8 +311,8 @@ export const GridResponsive = {
   sm: 24,
   md: 12,
   lg: 12,
-  xl: 6,
-  xxl: 4,
+  xl: 8,
+  xxl: 6,
 };
 
 // 潜伏料箱任务类型

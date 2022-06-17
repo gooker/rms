@@ -31,14 +31,14 @@ class MainLayout extends React.Component {
   };
 
   async componentDidMount() {
-    if (!window.$$isProduction) {
+    if (!window.isProductionEnv) {
       window.localStorage.setItem('dev', 'true');
     }
 
     const _this = this;
     const { dispatch, history, textureLoaded } = this.props;
     // 挂载push函数
-    window.history.$$push = history.push;
+    window.RMS.push = history.push;
 
     // 首先验证token的有效性
     const token = window.sessionStorage.getItem('token');

@@ -44,13 +44,6 @@ export default [
     authority: ['ADMIN'],
   },
   {
-    path: `/${AppCode.SSO}/environmentManager`, // 自定义环境
-    name: 'environmentManger',
-    icon: 'ie',
-    component: '/SSO/EnvironmentManger',
-    hooks: ['dev'],
-  },
-  {
     path: `/${AppCode.SSO}/customMenuManager`, // 自定义菜单
     name: 'customMenuManager',
     icon: 'menu',

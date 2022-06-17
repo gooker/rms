@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Tooltip } from 'antd';
 import { IeOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
@@ -6,16 +6,20 @@ import { getAllEnvironments } from '@/utils/util';
 import styles from './Header.module.less';
 
 const SelectEnvironment = () => {
-  const { allEnvs, activeEnv } = getAllEnvironments();
-  const env = find(allEnvs, { id: activeEnv });
+  const [envName, setEnvName] = useState(null);
+
+  useEffect(() => {
+    async function getActiveEnvName() {
+      const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
+      const env = find(allEnvs, { id: activeEnv });
+      setEnvName(env?.envName);
+    }
+
+    getActiveEnvName();
+  }, []);
+
   return (
-    <Tooltip
-      title={env?.envName}
-      color={'#fff'}
-      overlayInnerStyle={{
-        color: '#000',
-      }}
-    >
+    <Tooltip title={envName} color={'#ffffff'} overlayInnerStyle={{ color: '#000000' }}>
       <span className={styles.action}>
         <IeOutlined />
       </span>

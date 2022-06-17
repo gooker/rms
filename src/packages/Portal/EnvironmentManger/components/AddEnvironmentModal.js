@@ -11,7 +11,7 @@ class AddEnvironmentModal extends PureComponent {
   componentDidMount() {
     const { formRef, updateRow } = this.props;
     if (updateRow) {
-      formRef.setFieldsValue({
+      formRef.current.setFieldsValue({
         envName: updateRow.envName,
         additionalInfos: updateRow.additionalInfos,
       });
@@ -35,7 +35,7 @@ class AddEnvironmentModal extends PureComponent {
   render() {
     const { formRef } = this.props;
     return (
-      <Form form={formRef} {...formItemLayout}>
+      <Form ref={formRef} {...formItemLayout}>
         <Form.Item
           label={formatMessage({ id: 'environmentManager.envName' })}
           name='envName'

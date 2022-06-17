@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { Button, Card, Col, Empty, Form, message, Modal, Row } from 'antd';
 import { BgColorsOutlined, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
 import { addToClipBoard, adjustModalWidth, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
+import { deleteDB, insertDB, selectAllDB, updateDB } from '@/utils/IndexDBUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import PasteModal from './components/PasteModal';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
 import { GridResponsive } from '@/config/consts';
 import commonStyles from '@/common.module.less';
+import { Input } from '_antd@4.18.3@antd';
 
-const StorageKey = 'customEnvs';
-export default class index extends Component {
+export default class EnvironmentManger extends Component {
   formRef = React.createRef();
 
   state = {
@@ -19,62 +19,62 @@ export default class index extends Component {
     pasteVisible: false,
     addEnvironVisible: false,
     updateFlag: false,
+    textAreaValue: null,
   };
 
-  componentDidMount() {
-    let dataList = window.localStorage.getItem(StorageKey);
-    if (isStrictNull(dataList)) {
-      dataList = [];
-    } else {
-      dataList = JSON.parse(dataList);
-    }
+  async componentDidMount() {
+    const dataList = await selectAllDB(window.dbContext);
     this.setState({ dataList });
   }
 
-  onAddEnvironment = (values) => {
+  onAddEnvironment = async (values) => {
     const { dataList, editingRow } = this.state;
     let _dataList = [...dataList];
     if (editingRow) {
       values.id = editingRow.id;
+      await updateDB(window.dbContext, values);
       _dataList = dataList.filter((item) => item.id !== editingRow.id);
       _dataList.unshift(values);
     } else {
-      values.id = getRandomString(10);
+      const dbLoad = { ...values, id: getRandomString(10), active: false };
+      await insertDB(window.dbContext, dbLoad);
       _dataList.push(values);
     }
+    this.setState({ dataList: _dataList, addEnvironVisible: false, editingRow: null });
     message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-    this.setState({
-      dataList: _dataList,
-      addEnvironVisible: false,
-      editingRow: null,
-    });
-    window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
-  };
-
-  copyJson = (record) => {
-    const str = JSON.stringify([record]);
-    addToClipBoard(str);
-  };
-
-  pasteEnvironment = (envs) => {
-    const { dataList } = this.state;
-    const _dataList = dataList.concat(envs);
-    this.setState({ dataList: _dataList, pasteVisible: false });
-    window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
   };
 
   deleteEnvironment = (record) => {
     const _this = this;
+
     const { dataList } = this.state;
     RmsConfirm({
       content: formatMessage({ id: 'environmentManager.deleteConfirmContent' }),
       onOk: async () => {
+        await deleteDB(window.dbContext, record.id);
         const _dataList = dataList.filter((item) => item.id !== record.id);
         _this.setState({ dataList: _dataList });
-        window.localStorage.setItem(StorageKey, JSON.stringify(_dataList));
         message.success(formatMessage({ id: 'app.message.operateSuccess' }));
       },
     });
+  };
+
+  copyJson = async (record) => {
+    await addToClipBoard(JSON.stringify(record));
+  };
+
+  pasteEnvironment = async () => {
+    const { dataList, textAreaValue } = this.state;
+    if (!isStrictNull(textAreaValue)) {
+      try {
+        const dbLoad = { ...JSON.parse(textAreaValue), id: getRandomString(10) };
+        await insertDB(window.dbContext, dbLoad);
+        const _dataList = dataList.concat([dbLoad]);
+        this.setState({ dataList: _dataList, pasteVisible: false });
+      } catch (e) {
+        message.error(formatMessage({ id: 'app.message.dataFormatError' }));
+      }
+    }
   };
 
   submit = () => {
@@ -83,47 +83,48 @@ export default class index extends Component {
       .then((allValues) => {
         this.onAddEnvironment(allValues);
       })
-      .catch(() => {});
+      .catch(() => {
+      });
   };
 
   render() {
     const { editingRow, dataList, pasteVisible, addEnvironVisible } = this.state;
     return (
-      <div className={commonStyles.commonPageStyle}>
+      <div>
         <div className={commonStyles.tableToolLeft}>
           <Button
-            type="primary"
+            type='primary'
             onClick={() => {
               this.setState({
                 addEnvironVisible: true,
               });
             }}
           >
-            <PlusOutlined /> <FormattedMessage id="app.button.add" />
+            <PlusOutlined /> <FormattedMessage id='app.button.add' />
           </Button>
           <Button
             onClick={() => {
               this.setState({ pasteVisible: true });
             }}
           >
-            <BgColorsOutlined /> <FormattedMessage id="app.button.past" />
+            <BgColorsOutlined /> <FormattedMessage id='app.button.past' />
           </Button>
         </div>
 
         {dataList.length === 0 ? (
           <Empty />
         ) : (
-          <Row gutter={32}>
-            {dataList.map((record, index) => {
-              const { envName, additionalInfos } = record;
+          <Row gutter={[20, 20]}>
+            {dataList.map((record) => {
+              const { id, envName, additionalInfos } = record;
               return (
-                <Col key={index} {...GridResponsive}>
+                <Col key={id} {...GridResponsive}>
                   <Card
                     hoverable
                     title={envName}
                     actions={[
                       <EditOutlined
-                        key="edit"
+                        key='edit'
                         onClick={() => {
                           this.setState({
                             addEnvironVisible: true,
@@ -185,15 +186,20 @@ export default class index extends Component {
           width={adjustModalWidth() * 0.7}
           visible={pasteVisible}
           maskClosable={false}
-          footer={null}
-          title={<FormattedMessage id="environmentManager.tip.pasteTip" />}
+          closable={false}
+          title={<FormattedMessage id='environmentManager.tip.pasteTip' />}
+          onOk={this.pasteEnvironment}
           onCancel={() => {
-            this.setState({
-              pasteVisible: false,
-            });
+            this.setState({ pasteVisible: false });
           }}
         >
-          <PasteModal onPaste={this.pasteEnvironment} />
+          <Input.TextArea
+            allowClear
+            style={{ height: 200 }}
+            onChange={({ target: { value } }) => {
+              this.setState({ textAreaValue: value });
+            }}
+          />
         </Modal>
       </div>
     );

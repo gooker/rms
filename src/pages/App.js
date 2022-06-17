@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { ConfigProvider, message } from 'antd';
-import { isEmpty } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
 import requestAPI from '@/utils/requestAPI';
 import { initI18nInstance } from '@/utils/init';
-import { extractNameSpaceInfoFromEnvs, formatMessage, getCustomEnvironments } from '@/utils/util';
+import { openDB, selectAllDB } from '@/utils/IndexDBUtil';
+import { extractNameSpaceInfoFromEnvs, formatMessage, isNull } from '@/utils/util';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {
@@ -17,18 +17,25 @@ class App extends Component {
 
   async componentDidMount() {
     try {
+      window.dbContext = await openDB();
       const defaultAPI = requestAPI();
-      const customEnvironments = getCustomEnvironments();
-      const activeAPI = customEnvironments.filter((item) => item.flag === '1');
-      window.nameSpacesInfo = isEmpty(activeAPI)
+      const customEnvironments = await selectAllDB(window.dbContext);
+      const activeAPI = customEnvironments.filter((item) => item.active)[0];
+      window.nameSpacesInfo = isNull(activeAPI)
         ? defaultAPI
-        : extractNameSpaceInfoFromEnvs(activeAPI[0]);
+        : extractNameSpaceInfoFromEnvs(activeAPI);
 
       await initI18nInstance();
       this.setState({ initDone: true });
     } catch (e) {
+      console.log(e);
       message.error(formatMessage({ id: 'app.message.initFailed' }, { reason: 'I18N' }));
     }
+  }
+
+  componentWillUnmount() {
+    window.dbContext.close();
+    window.dbContext = null;
   }
 
   render() {
