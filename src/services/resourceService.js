@@ -411,7 +411,6 @@ export async function fetchLoadCirculationRecord(param) {
   });
 }
 
-
 /***载具 end**/
 
 // 新增储位
@@ -430,7 +429,6 @@ export async function fetchAllStorage(param) {
   });
 }
 
-
 // 删除储位
 export async function deleteSelectedStorage(param) {
   return request(`/${NameSpace.Platform}/storage/deleteStorage`, {
@@ -446,8 +444,6 @@ export async function initStorage(param) {
     data: param,
   });
 }
-
-
 
 // 保存分组
 export async function saveResourceGroup(param) {
@@ -466,6 +462,3 @@ export async function fetchResourceGroup(param) {
 }
 
 //
-
-
-
