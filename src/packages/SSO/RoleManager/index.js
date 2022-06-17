@@ -206,17 +206,17 @@ export default class index extends Component {
                 this.setState({ authAssignVisible: true });
               }}
             >
-              <IconFont type="icon-assign" /> <FormattedMessage id="sso.role.permissionAssign" />
+              <IconFont type='icon-assign' /> <FormattedMessage id='sso.role.permissionAssign' />
             </Button>
             <Button disabled={roleList.length === 0} onClick={this.export}>
-              <ExportOutlined /> <FormattedMessage id="app.button.export" />
+              <ExportOutlined /> <FormattedMessage id='app.button.download' />
             </Button>
             <Button
               onClick={() => {
                 this.setState({ uploadModal: true });
               }}
             >
-              <ImportOutlined /> <FormattedMessage id="app.button.import" />
+              <ImportOutlined /> <FormattedMessage id='app.button.upload' />
             </Button>
           </Col>
           <Col>

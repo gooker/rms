@@ -1465,14 +1465,10 @@ export function generateSample({ customStart, customActions, customPreActions },
   const result = [];
   // 任务开始(step1)
   if (isNull(customStart.robot)) {
-    result.push({ code: 'step1-AGV', param: [] });
+    result.push({ code: 'step1-VEHICLE', param: [] });
   } else {
     result.push({ code: `step1-${customStart.robot.type}`, param: customStart.robot.code });
   }
-  result.push({
-    code: 'step1-isLimitStandBy',
-    param: customStart.isLimitStandBy,
-  });
 
   // 转换前置任务
   const preTaskParams = {};

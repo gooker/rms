@@ -3,7 +3,7 @@ import Dictionary from '@/utils/Dictionary';
 const Colors = Dictionary().color;
 
 export const GlobalAlpha = 0.6;
-export const MapScaleRatio = 1.1;
+export const MapScaleRatio = 1.08;
 
 export const SelectionType = {
   SINGLE: 'SINGLE',

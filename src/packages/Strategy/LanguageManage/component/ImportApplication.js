@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Form, Radio, Modal } from 'antd';
+import { Form, Modal, Radio } from 'antd';
 import { getFormLayout } from '@/utils/util';
 import ImportI18nLanguage from './ImportI18nLanguage';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -23,7 +23,7 @@ const ImportApplication = (props) => {
   return (
     <Modal
       destroyOnClose
-      title={<FormattedMessage id="app.button.import" />}
+      title={<FormattedMessage id='app.button.upload' />}
       maskClosable={false}
       closable={false}
       width={600}

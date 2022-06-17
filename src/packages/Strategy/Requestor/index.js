@@ -295,11 +295,11 @@ class Index extends React.Component {
 
     const menu = (
       <Menu onClick={this.onMenuClick}>
-        <Menu.Item key="export" disabled={apiList.length === 0}>
-          <ExportOutlined /> <FormattedMessage id="app.button.export" />
+        <Menu.Item key='export' disabled={apiList.length === 0}>
+          <ExportOutlined /> <FormattedMessage id='app.button.download' />
         </Menu.Item>
-        <Menu.Item key="import">
-          <ImportOutlined /> <FormattedMessage id="app.button.import" />
+        <Menu.Item key='import'>
+          <ImportOutlined /> <FormattedMessage id='app.button.upload' />
         </Menu.Item>
       </Menu>
     );

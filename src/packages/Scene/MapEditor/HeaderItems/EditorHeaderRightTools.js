@@ -2,15 +2,15 @@ import React, { memo, useState } from 'react';
 import { Divider, message, Modal, Tooltip } from 'antd';
 import {
   AimOutlined,
-  SaveOutlined,
+  FullscreenExitOutlined,
+  FullscreenOutlined,
+  LoadingOutlined,
   LockOutlined,
   ReloadOutlined,
-  LoadingOutlined,
-  FullscreenOutlined,
-  FullscreenExitOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { formatMessage, adjustModalWidth } from '@/utils/util';
+import { adjustModalWidth, formatMessage } from '@/utils/util';
 import { IconFont } from '@/components/IconFont';
 import PositionCell from '../components/PositionCell';
 import ConstructionInfoModal from '../components/ConstructionDraw/ConstructionInfoModal';
@@ -125,7 +125,7 @@ const EditorHeaderRightTools = (props) => {
       <Divider type="vertical" />
 
       {/* 导出地图 */}
-      <Tooltip title={formatMessage({ id: 'app.button.export' })}>
+      <Tooltip title={formatMessage({ id: 'app.button.download' })}>
         <span
           style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}
           onClick={() => {
@@ -135,10 +135,10 @@ const EditorHeaderRightTools = (props) => {
           <IconFont type={'icon-download'} />
         </span>
       </Tooltip>
-      <Divider type="vertical" />
+      <Divider type='vertical' />
 
       {/* 导入地图 */}
-      <Tooltip title={formatMessage({ id: 'app.button.import' })}>
+      <Tooltip title={formatMessage({ id: 'app.button.upload' })}>
         <span
           style={{ cursor: 'pointer' }}
           onClick={() => {
@@ -148,7 +148,7 @@ const EditorHeaderRightTools = (props) => {
           <IconFont type={'icon-upload'} />
         </span>
       </Tooltip>
-      <Divider type="vertical" />
+      <Divider type='vertical' />
 
       {/* 保存地图 */}
       <span style={{ cursor: mapId ? 'pointer' : 'not-allowed' }}>

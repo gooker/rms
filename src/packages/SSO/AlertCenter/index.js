@@ -1,16 +1,13 @@
 import React, { Component } from 'react';
 import { Button, Divider, Row, Table, Tag } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import QuestionSearch from './QuestionSearch';
+import AlertCenterSearch from './AlertCenterSearch';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
-import {
-  allUpdateProblemHandling,
-  batchUpdateAlertCenter,
-  fetchAlertCenterList,
-} from '@/services/XIHEService';
+import { allUpdateProblemHandling, batchUpdateAlertCenter, fetchAlertCenterList } from '@/services/XIHEService';
 import commonStyles from '@/common.module.less';
 import TablePageWrapper from '@/components/TablePageWrapper';
+import { DisconnectOutlined, ReloadOutlined } from '@ant-design/icons';
 
 const alertType = { TASK_ALERT: 'magenta', Vehicle_ALERT: 'red', SYSTEM_ALERT: 'volcano' };
 const alertLevel = { ERROR: 'red', WARN: '#f5df19', INFO: 'blue' };
@@ -209,7 +206,7 @@ class QuestionCenter extends Component {
     return (
       <TablePageWrapper>
         <div>
-          <QuestionSearch
+          <AlertCenterSearch
             search={this.search}
             resetValues={() => {
               this.setState({ formValue: {} });
@@ -223,7 +220,7 @@ class QuestionCenter extends Component {
                 this.onAllHandle();
               }}
             >
-              <FormattedMessage id={'app.alarmCenter.dismissedAll'} />
+              <DisconnectOutlined /> <FormattedMessage id={'app.alarmCenter.dismissedAll'} />
             </Button>
             <Button
               onClick={() => {
@@ -231,30 +228,29 @@ class QuestionCenter extends Component {
               }}
               disabled={selectedRowKeys.length === 0}
             >
-              <FormattedMessage id={'app.alarmCenter.dismissedSelected'} />
+              <DisconnectOutlined /> <FormattedMessage id={'app.alarmCenter.dismissedSelected'} />
             </Button>
-            <Button type="primary" onClick={this.getData}>
-              <FormattedMessage id="app.button.refresh" />
+            <Button type='primary' onClick={this.getData}>
+              <ReloadOutlined /> <FormattedMessage id='app.button.refresh' />
             </Button>
           </Row>
         </div>
         <Table
+          loading={loading}
+          rowKey={({ id }) => id}
+          columns={this.column}
+          dataSource={questionList}
+          rowSelection={rowSelection}
+          onChange={this.handleTableChange}
+          expandable={{
+            expandedRowRender: (record) => this.expandedRowRender(record?.alertItemList),
+          }}
           pagination={{
             ...pagination,
             showSizeChanger: true,
             showTotal: (total) =>
               `${formatMessage({ id: 'app.common.tableRecord' }, { count: total })}`,
           }}
-          columns={this.column}
-          dataSource={questionList}
-          rowSelection={rowSelection}
-          onChange={this.handleTableChange}
-          loading={loading}
-          rowKey={({ id }) => id}
-          expandable={{
-            expandedRowRender: (record) => this.expandedRowRender(record?.alertItemList),
-          }}
-          scroll={{ x: 'max-content' }}
         />
       </TablePageWrapper>
     );

@@ -37,20 +37,6 @@ export default [
     component: '/SSO/OperationLog/index',
   },
   {
-    path: `/${AppCode.SSO}/accountCenter`, // 个人中心
-    name: 'accountCenter',
-    icon: 'home',
-    component: '/SSO/AccountCenter',
-    authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
-  },
-  {
-    path: `/${AppCode.SSO}/authorizationCenter`, // 授权中心
-    name: 'authorizationCenter',
-    icon: 'authorize',
-    component: '/SSO/AuthorizationCenter',
-    authority: ['ADMIN', 'SUPERMANAGER'],
-  },
-  {
     path: `/${AppCode.SSO}/customConfiguration`, // 定制化配置
     name: 'customConfiguration',
     icon: 'customConfig',
@@ -70,6 +56,20 @@ export default [
     icon: 'menu',
     component: '/SSO/CustomMenuManager',
     authority: ['ADMIN', 'SUPERMANAGER'],
+  },
+  {
+    path: `/${AppCode.SSO}/authorizationCenter`, // 授权中心
+    name: 'authorizationCenter',
+    icon: 'authorize',
+    component: '/SSO/AuthorizationCenter',
+    authority: ['ADMIN', 'SUPERMANAGER'],
+  },
+  {
+    path: `/${AppCode.SSO}/accountCenter`, // 个人中心
+    name: 'accountCenter',
+    icon: 'home',
+    component: '/SSO/AccountCenter',
+    authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
   },
   {
     path: `/${AppCode.SSO}/notificationCenter`,

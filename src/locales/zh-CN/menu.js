@@ -60,13 +60,14 @@ export default {
   'menu.resourceLock.stationLock': '站点锁',
   'menu.resourceLock.containerLock': '载具锁',
   'menu.resourceLock.storageLock': '储位锁',
-  'menu.resourceBind': '资源绑定',
+  'menu.resourceGroupMapping': '资源分组绑定',
 
   // 智能任务
   'menu.standardOrderPool': '标准排程池',
   'menu.executingQueue': '执行队列',
   'menu.taskManagement': '任务查询',
   'menu.customTask': '自定义任务',
+  'menu.quickTask': '快捷任务',
   'menu.limitEqualizer': '限流均衡器',
   'menu.trigger': '触发器',
   'menu.taskRouteBind': '任务路线绑定',

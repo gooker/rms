@@ -72,8 +72,8 @@ const MetaDataComponent = (props) => {
         style={{ width: 600, border: '1px solid #e8e8e8' }}
         title={<FormattedMessage id={'app.metaData.vehicleOffsetData'} />}
         actions={[
-          <Button key="a" type={'link'} onClick={exportData} loading={loading} disabled={loading}>
-            <DownloadOutlined /> <FormattedMessage id="app.button.export" />
+          <Button key='a' type={'link'} onClick={exportData} loading={loading} disabled={loading}>
+            <DownloadOutlined /> <FormattedMessage id='app.button.download' />
           </Button>,
         ]}
         bordered={false}

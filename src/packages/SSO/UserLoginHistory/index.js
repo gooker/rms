@@ -141,7 +141,7 @@ export default class UserLoginHistory extends Component {
             <FormattedMessage id="app.button.search" />
           </Button>
           <Button onClick={this.exportHistory}>
-            <FormattedMessage id="app.button.export" />
+            <FormattedMessage id='app.button.download' />
           </Button>
         </div>
         <TableWithPages

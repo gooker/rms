@@ -6,7 +6,11 @@ export default {
   'app.programing.noParam': '无参数',
   'app.button.bind': '绑定',
   'app.button.unbind': '解绑',
+  'app.button.logout': '注销',
   'app.common.batchOperate': '批量操作',
+
+  // 固件
+  'firmware.upgrade': '固件升级',
 
   // 故障相关
   'app.fault.code': '故障码',
@@ -35,6 +39,7 @@ export default {
   'app.trigger.timeInterval': '时间间隔',
 
   // 日志下载
+  'app.logDownload': '日志下载',
   'app.logDownload.fileName': '文件名称',
   'app.logDownload.generateLog': '生成日志',
   'app.logDownload.inGenerating': '生成中',

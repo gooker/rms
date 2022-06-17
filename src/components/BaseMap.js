@@ -89,17 +89,14 @@ export default class BaseMap extends React.PureComponent {
   clampZoom = (viewport, storageKey) => {
     const { x, y, width, height } = viewport.getLocalBounds();
     let minMapRatio;
-    if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
-      viewport.clampZoom({
-        minWidth: viewport.worldScreenWidth * viewport.scale.x,
-        minHeight: viewport.worldScreenHeight * viewport.scale.y,
-        maxWidth: viewport.worldScreenWidth,
-        maxHeight: viewport.worldScreenHeight,
-      });
-
-      // 返回最小缩小比例
-      minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
-    }
+    viewport.clampZoom({
+      minWidth: viewport.worldScreenWidth * viewport.scale.x,
+      minHeight: viewport.worldScreenHeight * viewport.scale.y,
+      maxWidth: viewport.worldScreenWidth,
+      maxHeight: viewport.worldScreenHeight,
+    });
+    // 返回最小缩小比例
+    minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
     // 记录当前地图世界宽度
     window.sessionStorage.setItem(storageKey, JSON.stringify({ x, y, width, height }));
     return minMapRatio;

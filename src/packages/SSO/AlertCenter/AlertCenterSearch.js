@@ -35,41 +35,41 @@ const TargetLockSearch = (props) => {
   return (
     <Form form={form}>
       <Row style={{ width: '100%' }} gutter={24}>
-        <Col span={4}>
+        <Col span={8}>
           {/* 小车id */}
           <Form.Item name={'vehicleId'} label={formatMessage({ id: 'vehicle.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col span={8}>
           {/* 小车类型 */}
           <Form.Item name={'vehicleType'} label={formatMessage({ id: 'app.common.type' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
         {/* 任务id */}
-        <Col span={4}>
-          <Form.Item name="taskId" label={formatMessage({ id: 'app.task.id' })}>
+        <Col span={8}>
+          <Form.Item name='taskId' label={formatMessage({ id: 'app.task.id' })}>
             <Input allowClear />
           </Form.Item>
         </Col>
         {/* 查询日期 */}
-        <Col span={8}>
+        <Col span={16}>
           <Form.Item name={'createDate'} label={formatMessage({ id: 'app.taskDetail.firstTime' })}>
             <RangePicker showTime style={{ width: '100%' }} />
           </Form.Item>
         </Col>
-        <Col>
+        <Col span={8}>
           <Form.Item>
             <Row gutter={24}>
               <Col>
-                <Button type="primary" onClick={onFinish}>
-                  <SearchOutlined /> <FormattedMessage id="app.button.search" />
+                <Button type='primary' onClick={onFinish}>
+                  <SearchOutlined /> <FormattedMessage id='app.button.search' />
                 </Button>
               </Col>
               <Col>
                 <Button onClick={onClear}>
-                  <ReloadOutlined /> <FormattedMessage id="app.button.reset" />
+                  <ReloadOutlined /> <FormattedMessage id='app.button.reset' />
                 </Button>
               </Col>
             </Row>

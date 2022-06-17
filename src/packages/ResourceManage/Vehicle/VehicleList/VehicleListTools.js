@@ -1,9 +1,16 @@
 /* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { DisconnectOutlined, GroupOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
+import {
+  DisconnectOutlined,
+  DownloadOutlined,
+  GroupOutlined,
+  RedoOutlined,
+  RiseOutlined,
+  ScanOutlined,
+} from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { logOutVehicle, saveResourceGroup } from '@/services/resourceService';
+import { logOutVehicle } from '@/services/resourceService';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -11,6 +18,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import ResourceGroupModal from '../../component/ResourceGroupModal';
 import commonStyles from '@/common.module.less';
 
+const Colors = Dictionary().color;
 const VehicleListTools = (props) => {
   const { dispatch, allVehicles, selectedRows, allAdaptors, searchParams } = props;
 
@@ -139,10 +147,10 @@ const VehicleListTools = (props) => {
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button disabled={selectedRows.length === 0} onClick={vehicleGroup}>
-            <GroupOutlined /> 车辆分组
+            <GroupOutlined /> <FormattedMessage id={'app.vehicleGroup'} />
           </Button>
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
-            <DisconnectOutlined /> 注销
+            <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
           {/*<Button disabled={selectedRows.length === 0} onClick={moveOutVehicle}>*/}
           {/*  <ToTopOutlined /> <FormattedMessage id='app.vehicle.moveout' />*/}
@@ -171,12 +179,18 @@ const VehicleListTools = (props) => {
           {/*    <FormattedMessage id={'app.vehicle.infoExport'} /> <DownOutlined />*/}
           {/*  </Button>*/}
           {/*</Dropdown>*/}
+          <Button>
+            <RiseOutlined /> <FormattedMessage id='firmware.upgrade' />
+          </Button>
+          <Button>
+            <DownloadOutlined /> <FormattedMessage id='app.logDownload' />
+          </Button>
           <Button
             onClick={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>
@@ -188,7 +202,7 @@ const VehicleListTools = (props) => {
           >
             <ScanOutlined /> <FormattedMessage id="app.vehicle.found" />
             {unregisterVehicles.length > 0 && (
-              <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
+              <span style={{ marginLeft: 5, color: Colors.red, fontWeight: 600 }}>
                 [{unregisterVehicles.length}]
               </span>
             )}
@@ -197,7 +211,7 @@ const VehicleListTools = (props) => {
       </Row>
       <ResourceGroupModal
         visible={visible}
-        title={'车辆分组'}
+        title={<FormattedMessage id={'app.vehicleGroup'} />}
         members={selectedRows.map(({ id }) => id)}
         groupType={'VEHICLE'}
         onOk={() => {
