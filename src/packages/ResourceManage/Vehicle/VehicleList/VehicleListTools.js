@@ -147,7 +147,7 @@ const VehicleListTools = (props) => {
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button disabled={selectedRows.length === 0} onClick={vehicleGroup}>
-            <GroupOutlined /> <FormattedMessage id={'app.vehicleGroup'} />
+            <GroupOutlined /> <FormattedMessage id={'app.common.groupMange'} />
           </Button>
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />

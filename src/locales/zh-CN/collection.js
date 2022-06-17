@@ -8,6 +8,7 @@ export default {
   'app.button.unbind': '解绑',
   'app.button.logout': '注销',
   'app.common.batchOperate': '批量操作',
+  'app.common.groupMange': '分组管理',
 
   // 自定义环境管理
   'environmentManager.envName': '环境名称',

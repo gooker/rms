@@ -113,7 +113,9 @@ const CustomTaskForm = (props) => {
     const step = {
       type: CustomNodeType.ACTION,
       code: `${CustomNodeType.ACTION}_${getRandomString(6)}`,
-      label: formatMessage({ id: `customTask.type.${CustomNodeType.ACTION}` }),
+      label:
+        formatMessage({ id: `customTask.type.${CustomNodeType.ACTION}` }) +
+        ` ${preTasks.length + 1}`,
       pre: true,
     };
     const newPreTasks = preTasks.concat([step]);
@@ -311,7 +313,14 @@ const CustomTaskForm = (props) => {
   function attachNodeIndex() {
     let index = 0;
     return taskSteps.map((taskStep) => {
-      if (![CustomNodeType.BASE, CustomNodeType.PLUS].includes(taskStep.type)) {
+      if (
+        ![
+          CustomNodeType.BASE,
+          CustomNodeType.PLUS,
+          CustomNodeType.START,
+          CustomNodeType.END,
+        ].includes(taskStep.type)
+      ) {
         index += 1;
         return { ...taskStep, index };
       }
