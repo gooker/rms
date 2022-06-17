@@ -1,17 +1,16 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Form, Input, Modal, Row, Select, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import requestAPI from '@/utils/requestAPI';
+import { find } from 'lodash';
 import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage, getAllEnvironments } from '@/utils/util';
+import requestAPI from '@/utils/requestAPI';
 import { selectAllDB, updateDB } from '@/utils/IndexDBUtil';
-import { initI18nInstance } from '@/utils/init';
 import { fetchLogin } from '@/services/SSOService';
 import FormattedMessage from '@/components/FormattedMessage';
 import EnvironmentManager from '@/packages/Portal/EnvironmentManger';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
-import { find } from 'lodash';
 
 const Login = (props) => {
   const { history } = props;
@@ -63,8 +62,6 @@ const Login = (props) => {
       const response = await fetchLogin({ ...values, type: 'admin' });
       if (!dealResponse(response)) {
         window.sessionStorage.setItem('token', response.authorization);
-        setLoading(false);
-        await initI18nInstance();
         history.push('/');
       } else {
         setLoading(false);

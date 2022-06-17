@@ -10,12 +10,13 @@ import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
 import { loadTexturesForMap } from '@/utils/textures';
-import { dealResponse, formatMessage, getPlateFormType, isNull, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
 import { fetchAllPrograming } from '@/services/XIHEService';
 import { fetchAllAdaptor } from '@/services/resourceService';
 import { fetchGetProblemDetail } from '@/services/commonService';
 import { fetchTaskTypes } from '@/services/taskService';
+import { initI18n } from '@/utils/init';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -50,7 +51,10 @@ class MainLayout extends React.Component {
       if (validateResult && !dealResponse(validateResult)) {
         try {
           const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
-          const { currentSection, username } = userInfo;
+          const { currentSection, username, language } = userInfo;
+
+          // 初始化国际化信息
+          await initI18n(language);
 
           // 先验证授权
           // const granted = await this.validateAuthority();
@@ -58,26 +62,14 @@ class MainLayout extends React.Component {
           if (!granted) {
             history.push('/login');
           } else {
-            // 判断当前平台类型
-            window.currentPlatForm = getPlateFormType();
-            if (!window.currentPlatForm.isChrome) {
-              Modal.warning({
-                title: formatMessage({ id: 'app.message.systemHint' }),
-                content: formatMessage({ id: 'app.global.chrome.suggested' }),
-              });
-            }
-
             // 初始化应用基础信息
             await dispatch({ type: 'global/initPlatformState' });
 
             // 初始化页面长链接、告警相关功能
             if (username !== 'admin') {
               // 初始化Socket客户端
-              const { name, password } = currentSection;
-              this.socketClient = new SocketClient({
-                login: name,
-                passcode: password,
-              });
+              const { name: login, password: passcode } = currentSection;
+              this.socketClient = new SocketClient({ login, passcode });
               this.socketClient.connect();
               this.socketClient.registerNotificationQuestion((message) => {
                 // 如果关闭提示，就直接不拉取接口
@@ -141,11 +133,7 @@ class MainLayout extends React.Component {
 
   logout = () => {
     const { history } = this.props;
-    const customEnvs = window.localStorage.getItem('customEnvs');
     window.localStorage.clear();
-    if (!isStrictNull(customEnvs)) {
-      window.localStorage.setItem('customEnvs', customEnvs);
-    }
     window.sessionStorage.clear();
     history.push('/login');
   };

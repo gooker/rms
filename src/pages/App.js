@@ -5,9 +5,10 @@ import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
 import requestAPI from '@/utils/requestAPI';
-import { initI18nInstance } from '@/utils/init';
+import { initI18NWithoutRemote } from '@/utils/init';
 import { openDB, selectAllDB } from '@/utils/IndexDBUtil';
-import { extractNameSpaceInfoFromEnvs, formatMessage, isNull } from '@/utils/util';
+import { extractNameSpaceInfoFromEnvs, formatMessage, getPlateFormType, isNull } from '@/utils/util';
+import { Modal } from '_antd@4.18.3@antd';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {
@@ -24,8 +25,17 @@ class App extends Component {
       window.nameSpacesInfo = isNull(activeAPI)
         ? defaultAPI
         : extractNameSpaceInfoFromEnvs(activeAPI);
+      await initI18NWithoutRemote();
 
-      await initI18nInstance();
+      // 判断当前平台类型
+      window.currentPlatForm = getPlateFormType();
+      if (!window.currentPlatForm.isChrome) {
+        Modal.warning({
+          title: formatMessage({ id: 'app.message.systemHint' }),
+          content: formatMessage({ id: 'app.global.chrome.suggested' }),
+        });
+      }
+
       this.setState({ initDone: true });
     } catch (e) {
       console.log(e);

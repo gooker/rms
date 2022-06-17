@@ -6,7 +6,7 @@ import {
   fetchUserAssignedRoleList,
   getCurrentUser,
 } from '@/services/SSOService';
-import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {
   namespace: 'user',
@@ -100,11 +100,7 @@ export default {
         token: window.sessionStorage.getItem('token'),
       });
       if (!dealResponse(response)) {
-        const customEnvs = window.localStorage.getItem('customEnvs');
         window.localStorage.clear();
-        if (!isStrictNull(customEnvs)) {
-          window.localStorage.setItem('customEnvs', customEnvs);
-        }
         window.sessionStorage.clear();
         window.RMS.push('/login');
       }

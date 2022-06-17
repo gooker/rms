@@ -1,21 +1,29 @@
+import { find } from 'lodash';
 import intl from 'react-intl-universal';
-import { dealResponse, isStrictNull } from '@/utils/util';
 import { AppCode } from '@/config/config';
+import { dealResponse, isStrictNull } from '@/utils/util';
 import { getTranslationByCode } from '@/services/translationService';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
-import { find } from 'lodash';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
-import { getCurrentUser } from '@/services/SSOService';
 
-export async function initI18nInstance() {
+export function initI18NWithoutRemote() {
   return new Promise(async (resolve) => {
     let language = getLanguage();
-
-    // 用远程merge数据进行二次初始化
-    const user = await getCurrentUser();
-    if (!dealResponse(user)) {
-      language = user.language;
+    const locales = {};
+    try {
+      locales[language] = require(`@/locales/${language}`).default;
+    } catch (e) {
+      locales[language] = {};
     }
+    await intl.init({ currentLocale: language, locales });
+    window.localStorage.setItem('currentLocale', language);
+    resolve();
+  });
+}
+
+export function initI18n(userLanguage) {
+  return new Promise(async (resolve) => {
+    let language = userLanguage || getLanguage();
 
     // 1. 读取本地国际化数据
     const locales = {};
