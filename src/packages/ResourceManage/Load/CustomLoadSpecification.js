@@ -6,7 +6,6 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
-  fetchLoadSpecificationByType,
   fetchAllLoadSpecification,
   fetchAllLoadType,
   deleteLoadSpecification,
@@ -14,7 +13,7 @@ import {
 import SearchSpecComponent from './component/SearchSpecComponent';
 import LoadSpecificationModal from './component/LoadSpecificationModal';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isStrictNull } from '@/utils/util';
+import { dealResponse, isStrictNull, formatMessage } from '@/utils/util';
 
 const CustomLoadType = (props) => {
   const [allLoadType, setAllLoadType] = useState([]);
@@ -31,11 +30,12 @@ const CustomLoadType = (props) => {
 
   useEffect(() => {
     if (!isStrictNull(loadTypeCode)) {
-      getDataByType();
+      filterData(dataSource, loadTypeCode);
     }
   }, [loadTypeCode]);
 
   const columns = [
+    { title: formatMessage({ id: 'app.common.name' }), dataIndex: 'name', align: 'center' },
     { title: '长', dataIndex: 'length', align: 'center' },
     {
       title: '宽',
@@ -68,9 +68,9 @@ const CustomLoadType = (props) => {
   ];
 
   const expandColumns = [
-    { title: '类型Code', dataIndex: 'code', align: 'center' },
-    { title: '名称', dataIndex: 'name', align: 'center' },
-    { title: '描述', dataIndex: 'desc', align: 'center' },
+    { title: '类型编码', dataIndex: 'code', align: 'center' },
+    { title: '类型名称', dataIndex: 'name', align: 'center' },
+    { title: '类型描述', dataIndex: 'desc', align: 'center' },
   ];
 
   function addSpec() {
@@ -108,25 +108,25 @@ const CustomLoadType = (props) => {
     }
     if (!dealResponse(allSpec)) {
       setDataSource(allSpec);
+      filterData(allSpec);
     }
+    setSelectedRowKeys([]);
     setLoading(false);
   }
 
-  async function getDataByType() {
-    setLoading(true);
-    const data = await fetchLoadSpecificationByType({ loadTypeCode });
-    if (!dealResponse(data)) {
-      setDataSource(data);
+  async function filterData(list, values) {
+    let currentList = [...list];
+    if (isStrictNull(values)) {
+      setDataSource(currentList);
+      return;
     }
-    setLoading(false);
+
+    currentList = currentList?.filter(({ loadType }) => loadType?.code === loadTypeCode);
+    setDataSource(currentList);
   }
 
   function onRefresh() {
-    if (!isStrictNull(loadTypeCode)) {
-      getDataByType();
-    } else {
-      getData();
-    }
+    getData();
   }
 
   function rowSelectChange(selectedRowKeys) {
@@ -136,7 +136,7 @@ const CustomLoadType = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <SearchSpecComponent setLoadType={setLoadTypeCode} />
+        <SearchSpecComponent setLoadType={setLoadTypeCode} allLoadSpecType={allLoadType} />
         <Row justify={'space-between'} style={{ userSelect: 'none' }}>
           <Col className={commonStyles.tableToolLeft} flex="auto">
             <Button type="primary" onClick={addSpec}>
@@ -171,6 +171,7 @@ const CustomLoadType = (props) => {
         onOk={onRefresh}
         updateRecord={updateRecord}
         allLoadType={allLoadType}
+        allData={dataSource}
       />
     </TablePageWrapper>
   );

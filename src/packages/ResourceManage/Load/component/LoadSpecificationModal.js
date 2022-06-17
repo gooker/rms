@@ -1,14 +1,21 @@
 /* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Modal, Form, Select, Input } from 'antd';
-import { isNull, formatMessage, getFormLayout, dealResponse } from '@/utils/util';
+import {
+  isNull,
+  formatMessage,
+  getFormLayout,
+  dealResponse,
+  getRandomString,
+  isStrictNull,
+} from '@/utils/util';
 import { saveLoadSpecification } from '@/services/resourceService';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout } = getFormLayout(5, 16);
 
 function LoadSpecificationModal(props) {
-  const { visible, onCancel, onOk, updateRecord, allLoadType } = props;
+  const { visible, onCancel, onOk, updateRecord, allLoadType, allData } = props;
   const [formRef] = Form.useForm();
 
   useEffect(() => {
@@ -17,15 +24,19 @@ function LoadSpecificationModal(props) {
     }
   }, [visible]);
 
+  function validateDuplicateName(_, value) {
+    const existNames = allData?.map(({ name }) => name);
+    if (!value || !existNames.includes(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
+  }
+
   function onSave() {
     formRef
       .validateFields()
       .then(async (values) => {
-        let id = null;
-        if (!isNull(updateRecord)) {
-          id = updateRecord.id;
-        }
-        const response = await saveLoadSpecification({ ...values, id });
+        const response = await saveLoadSpecification({ ...values });
         if (!dealResponse(response)) {
           onCancel();
           onOk();
@@ -47,6 +58,21 @@ function LoadSpecificationModal(props) {
       onOk={onSave}
     >
       <Form {...formItemLayout} form={formRef}>
+        <Form.Item hidden name={'id'} initialValue={updateRecord?.id} />
+        <Form.Item
+          hidden
+          name="code"
+          initialValue={updateRecord?.code ?? `Specification_Code_${getRandomString(6)}`}
+        />
+
+        <Form.Item
+          label={formatMessage({ id: 'app.common.name' })}
+          name="name"
+          initialValue={updateRecord?.name}
+          rules={[{ required: true }, { validator: validateDuplicateName }]}
+        >
+          <Input disabled={!isStrictNull(updateRecord)} />
+        </Form.Item>
         <Form.Item
           label={<FormattedMessage id="app.common.type" />}
           name="loadTypeCode"

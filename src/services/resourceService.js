@@ -411,6 +411,7 @@ export async function fetchLoadCirculationRecord(param) {
   });
 }
 
+
 /***载具 end**/
 
 // 新增储位
@@ -429,6 +430,7 @@ export async function fetchAllStorage(param) {
   });
 }
 
+
 // 删除储位
 export async function deleteSelectedStorage(param) {
   return request(`/${NameSpace.Platform}/storage/deleteStorage`, {
@@ -445,6 +447,8 @@ export async function initStorage(param) {
   });
 }
 
+
+
 // 保存分组
 export async function saveResourceGroup(param) {
   return request(`/${NameSpace.Platform}/resource/saveOneResourceGroup`, {
@@ -452,3 +456,16 @@ export async function saveResourceGroup(param) {
     data: param,
   });
 }
+
+//根据mapId查询所有自定义任务资源组
+export async function fetchResourceGroup(param) {
+  return request(`/${NameSpace.Platform}/resource/getResourceGroup`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
+//
+
+
+

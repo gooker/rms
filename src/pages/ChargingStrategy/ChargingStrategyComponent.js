@@ -73,11 +73,11 @@ const ChargingStrategyComponent = (props) => {
   // 锂电池推荐配置
   function configRecommendValue() {
     const currentData = { ...chargeStrategy };
-    currentData.strategyValue.Normal.vehicleChargingVoltageMinValue = parseInt(46.5 * 1000); // 起始电压
-    currentData.strategyValue.Normal.vehicleFullChargingVoltageMaxValue = parseInt(53.5 * 1000); // 满充电压
+    currentData.strategyValue.Normal.vehicleChargingVoltageMinValue = parseInt(46.5 * 1); // 起始电压
+    currentData.strategyValue.Normal.vehicleFullChargingVoltageMaxValue = parseInt(53.5 * 1); // 满充电压
     currentData.strategyValue.Normal.vehicleFullChargingBatteryMaxValue = 99; // 满充电量
 
-    currentData.strategyValue.IdleHours.vehicleChargingVoltageMinValue = parseInt(46.5 * 1000); // 起始电压
+    currentData.strategyValue.IdleHours.vehicleChargingVoltageMinValue = parseInt(46.5 * 1); // 起始电压
 
     setChargeStrategy(currentData);
   }

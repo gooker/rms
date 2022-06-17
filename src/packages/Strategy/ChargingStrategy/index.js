@@ -124,10 +124,16 @@ const ChargingStrategy = () => {
       <TableWithPages
         dataSource={dataSource}
         columns={columns}
-        expandColumns={expandColumns}
-        expandColumnsKey={'abc'}
+        // expandColumns={expandColumns}
+        // expandColumnsKey={'abc'}
         loading={loading}
-        rowSelection={{ selectedRowKeys, onChange: rowSelectChange }}
+        rowSelection={{
+          selectedRowKeys,
+          onChange: rowSelectChange,
+          getCheckboxProps: (record) => ({
+              disabled:record.isGlobal,
+          }),
+        }}
         rowKey={(record) => {
           return record.id;
         }}

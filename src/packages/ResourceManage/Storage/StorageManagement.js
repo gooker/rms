@@ -19,6 +19,7 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import { allStorageType } from './component/storage';
 import RmsConfirm from '@/components/RmsConfirm';
 import ResourceGroupModal from '../component/ResourceGroupModal';
+import DropDownGroupComponent from '../component/DropDownGroupComponent';
 import InitStorageModal from './component/InitStorageModal';
 
 const StorageManagement = () => {
@@ -48,12 +49,11 @@ const StorageManagement = () => {
       dataIndex: 'id',
       align: 'center',
     },
-    { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
-    {
-      title: '编码',
-      dataIndex: 'code',
-      align: 'center',
-    },
+
+    { title: '点位', dataIndex: 'cellId', align: 'center' },
+
+    // { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
+
     {
       title: <FormattedMessage id="app.common.type" />,
       dataIndex: 'storageType',
@@ -63,6 +63,7 @@ const StorageManagement = () => {
         return currentType?.label;
       },
     },
+    { title: '组名编码', dataIndex: 'groups', align: 'center' },
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',
@@ -80,7 +81,7 @@ const StorageManagement = () => {
 
   const expandColumns = [
     { title: '载具ID', dataIndex: 'loadId', align: 'center' },
-    { title: '点位', dataIndex: 'cellId', align: 'center' },
+    { title: '储位编码', dataIndex: 'code', align: 'center' },
   ];
 
   function addStorage() {
@@ -170,14 +171,12 @@ const StorageManagement = () => {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
-            <Button
+            <DropDownGroupComponent
               disabled={selectedRowKeys.length === 0}
-              onClick={() => {
+              onAdd={() => {
                 setGroupVisible(true);
               }}
-            >
-              <GroupOutlined /> 储位分组
-            </Button>
+            />
 
             <Button
               onClick={() => {

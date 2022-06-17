@@ -5,7 +5,6 @@ import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { getFormLayout, convertToUserTimezone } from '@/utils/util';
 import { allStorageType } from './storage';
-import commonStyles from '@/common.module.less';
 const { formItemLayout } = getFormLayout(5, 18);
 
 const { RangePicker } = DatePicker;
@@ -36,7 +35,7 @@ const SearchStorageComponent = (props) => {
 
   return (
     <Form form={form}>
-      <Row className={commonStyles.tableToolLeft}>
+      <Row gutter={24}>
         <Col span={10}>
           <Form.Item label={<FormattedMessage id="app.common.type" />} name="storageType">
             <Select allowClear style={{ width: '100%' }}>
@@ -62,7 +61,7 @@ const SearchStorageComponent = (props) => {
           </Form.Item>
         </Col>
 
-        <Col span={10} offset={1}>
+        <Col>
           <Form.Item>
             <Button type="primary" onClick={search}>
               <SearchOutlined /> <FormattedMessage id="app.button.search" />
