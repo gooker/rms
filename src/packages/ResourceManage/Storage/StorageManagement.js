@@ -50,12 +50,10 @@ const StorageManagement = () => {
       align: 'center',
     },
 
+    { title: '点位', dataIndex: 'cellId', align: 'center' },
+
     // { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
-    {
-      title: '编码',
-      dataIndex: 'code',
-      align: 'center',
-    },
+
     {
       title: <FormattedMessage id="app.common.type" />,
       dataIndex: 'storageType',
@@ -83,7 +81,7 @@ const StorageManagement = () => {
 
   const expandColumns = [
     { title: '载具ID', dataIndex: 'loadId', align: 'center' },
-    { title: '点位', dataIndex: 'cellId', align: 'center' },
+    { title: '储位编码', dataIndex: 'code', align: 'center' },
   ];
 
   function addStorage() {

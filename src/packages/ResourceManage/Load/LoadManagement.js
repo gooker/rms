@@ -52,11 +52,11 @@ const ContainerManage = () => {
 
   const columns = [
     { title: 'ID', dataIndex: 'loadId', align: 'center' },
-    // {
-    //   title: <FormattedMessage id="app.common.name" />,
-    //   dataIndex: 'name',
-    //   align: 'center',
-    // },
+    {
+      title: <FormattedMessage id="app.common.name" />,
+      dataIndex: 'name',
+      align: 'center',
+    },
 
     {
       title: '载具规格',
@@ -65,7 +65,7 @@ const ContainerManage = () => {
       render: (text) => {
         const currentSpec = find(allLoadSpec, { code: text });
         if (currentSpec) {
-          return `${currentSpec?.length} * ${currentSpec?.width}*${currentSpec?.height}`;
+          return `${currentSpec?.length} * ${currentSpec?.width} * ${currentSpec?.height}`;
         }
       },
     },

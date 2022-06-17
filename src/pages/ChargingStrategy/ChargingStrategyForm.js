@@ -60,9 +60,9 @@ const ChargingStrategyForm = (props) => {
                         tip: formatMessage({
                           id: 'app.chargeStrategy.startingVoltageTip',
                         }),
-                        value: data ? parseFloat(data.vehicleChargingVoltageMinValue / 1000) : 35,
+                        value: data ? parseFloat(data.vehicleChargingVoltageMinValue / 1) : 35,
                         onChange: (v) => {
-                          const curentData = parseInt(v * 1000);
+                          const curentData = parseInt(v * 1);
                           handleChanged(curentData, 'vehicleChargingVoltageMinValue');
                         },
                       }}
@@ -86,9 +86,9 @@ const ChargingStrategyForm = (props) => {
                         tip: formatMessage({
                           id: 'app.chargeStrategy.terminationVoltageTip',
                         }),
-                        value: data ? parseFloat(data.vehicleChargingVoltageMaxValue / 1000) : 35,
+                        value: data ? parseFloat(data.vehicleChargingVoltageMaxValue / 1) : 35,
                         onChange: (v) => {
-                          const value = parseInt(v * 1000);
+                          const value = parseInt(v * 1);
                           handleChanged(value, 'vehicleChargingVoltageMaxValue');
                         },
                       }}
@@ -166,10 +166,10 @@ const ChargingStrategyForm = (props) => {
                               id: 'app.chargeStrategy.fullChargeVoltageTip',
                             }),
                             value: data
-                              ? parseFloat(data.vehicleFullChargingVoltageMaxValue / 1000)
+                              ? parseFloat(data.vehicleFullChargingVoltageMaxValue / 1)
                               : 35,
                             onChange: (v) => {
-                              const value = parseInt(v * 1000);
+                              const value = parseInt(v * 1);
                               handleChanged(value, 'vehicleFullChargingVoltageMaxValue');
                             },
                           }}
@@ -245,10 +245,10 @@ const ChargingStrategyForm = (props) => {
                               id: 'app.chargeStrategy.minimumVoltageTip',
                             }),
                             value: data
-                              ? parseFloat(data.vehicleTaskAcceptableVoltageMinValue / 1000)
+                              ? parseFloat(data.vehicleTaskAcceptableVoltageMinValue / 1)
                               : 35,
                             onChange: (v) => {
-                              const value = parseInt(v * 1000);
+                              const value = parseInt(v * 1);
                               handleChanged(value, 'vehicleTaskAcceptableVoltageMinValue');
                             },
                           }}

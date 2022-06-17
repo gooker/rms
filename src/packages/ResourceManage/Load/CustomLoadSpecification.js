@@ -13,7 +13,7 @@ import {
 import SearchSpecComponent from './component/SearchSpecComponent';
 import LoadSpecificationModal from './component/LoadSpecificationModal';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isStrictNull } from '@/utils/util';
+import { dealResponse, isStrictNull, formatMessage } from '@/utils/util';
 
 const CustomLoadType = (props) => {
   const [allLoadType, setAllLoadType] = useState([]);
@@ -35,6 +35,7 @@ const CustomLoadType = (props) => {
   }, [loadTypeCode]);
 
   const columns = [
+    { title: formatMessage({ id: 'app.common.name' }), dataIndex: 'name', align: 'center' },
     { title: '长', dataIndex: 'length', align: 'center' },
     {
       title: '宽',
@@ -109,6 +110,7 @@ const CustomLoadType = (props) => {
       setDataSource(allSpec);
       filterData(allSpec);
     }
+    setSelectedRowKeys([]);
     setLoading(false);
   }
 
@@ -119,7 +121,7 @@ const CustomLoadType = (props) => {
       return;
     }
 
-    currentList = currentList?.filter(({ code }) => code === loadTypeCode);
+    currentList = currentList?.filter(({ loadType }) => loadType?.code === loadTypeCode);
     setDataSource(currentList);
   }
 
@@ -169,6 +171,7 @@ const CustomLoadType = (props) => {
         onOk={onRefresh}
         updateRecord={updateRecord}
         allLoadType={allLoadType}
+        allData={dataSource}
       />
     </TablePageWrapper>
   );
