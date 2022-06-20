@@ -17,7 +17,14 @@ const SearchSpecComponent = (props) => {
     <>
       <Form form={formRef} onValuesChange={handleLoadType}>
         <Row gutter={24}>
-          <Col style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <Col
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              lineHeight: 30,
+            }}
+          >
             <FunnelPlotOutlined />
           </Col>
           <Col span={6}>

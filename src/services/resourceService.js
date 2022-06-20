@@ -363,8 +363,6 @@ export async function deleteLoadSpecification(param) {
   });
 }
 
-
-
 // 获取所有载具
 export async function fetchAllLoad(param) {
   return request(`/${NameSpace.Platform}/load/getAllLoad`, {
@@ -405,7 +403,6 @@ export async function fetchLoadCirculationRecord(param) {
   });
 }
 
-
 /***载具 end**/
 
 // 新增储位
@@ -424,7 +421,6 @@ export async function fetchAllStorage(param) {
   });
 }
 
-
 // 删除储位
 export async function deleteSelectedStorage(param) {
   return request(`/${NameSpace.Platform}/storage/deleteStorage`, {
@@ -441,11 +437,25 @@ export async function initStorage(param) {
   });
 }
 
-
-
 // 保存分组
 export async function saveResourceGroup(param) {
   return request(`/${NameSpace.Platform}/resource/saveOneResourceGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 删除组内成员
+export async function deleteResourceGroupMembers(param) {
+  return request(`/${NameSpace.Platform}/resource/addGroupMembers`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 删除分组
+export async function deleteResourceGroup(param) {
+  return request(`/${NameSpace.Platform}/resource/batchDeleteResourceGroup`, {
     method: 'POST',
     data: param,
   });
@@ -458,8 +468,3 @@ export async function fetchResourceGroup(param) {
     data: param,
   });
 }
-
-// 
-
-
-

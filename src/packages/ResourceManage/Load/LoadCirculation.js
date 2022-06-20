@@ -12,8 +12,6 @@ const LoadCirculation = () => {
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [visible, setVisible] = useState(false);
-  const [detailInfo, setDetailInfo] = useState(null);
 
   const [formValues, setFormValues] = useState({});
   const [page, setPage] = useState({ currentPage: 1, size: 10, totalElements: 0 });

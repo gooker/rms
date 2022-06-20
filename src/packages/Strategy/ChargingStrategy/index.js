@@ -16,6 +16,7 @@ const ChargingStrategy = () => {
   const [visible, setVisible] = useState(false);
   const [updateRecord, setUpdateRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     async function init() {
@@ -31,6 +32,7 @@ const ChargingStrategy = () => {
       dataIndex: 'name',
       align: 'center',
     },
+    { title: '分组', dataIndex: 'groups', align: 'center' },
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',
@@ -70,6 +72,8 @@ const ChargingStrategy = () => {
       setAllData(response);
       filterData(response);
     }
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
     setLoading(false);
   }
 
@@ -108,8 +112,9 @@ const ChargingStrategy = () => {
     getData();
   }
 
-  function rowSelectChange(selectedRowKeys) {
+  function rowSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
   }
 
   return (
@@ -118,6 +123,7 @@ const ChargingStrategy = () => {
         searchData={filterData}
         data={allData}
         selectedRowKeys={selectedRowKeys}
+        selectedRows={selectedRows}
         addStrage={addStrage}
         getData={getData}
       />
@@ -131,7 +137,7 @@ const ChargingStrategy = () => {
           selectedRowKeys,
           onChange: rowSelectChange,
           getCheckboxProps: (record) => ({
-              disabled:record.isGlobal,
+            disabled: record.isGlobal,
           }),
         }}
         rowKey={(record) => {

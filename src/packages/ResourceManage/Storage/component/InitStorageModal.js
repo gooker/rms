@@ -6,7 +6,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { allStorageType } from './storage';
 const { formItemLayout } = getFormLayout(5, 15);
 
-function ResourceGroupModal(props) {
+function InitStorageModal(props) {
   const { visible, title, onCancel, onOk, record } = props;
 
   const [form] = Form.useForm();
@@ -54,4 +54,4 @@ function ResourceGroupModal(props) {
     </Modal>
   );
 }
-export default memo(ResourceGroupModal);
+export default memo(InitStorageModal);

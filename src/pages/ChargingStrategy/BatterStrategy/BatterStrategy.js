@@ -19,6 +19,15 @@ const BatteryStrategy = (props) => {
           <Battery value={electricity.value || 0} onChange={electricity.onChange} />
         </div>
         <div className={styles.electricityButton}>
+          <Slider
+            style={{ height: '80%' }}
+            vertical
+            min={0}
+            max={100}
+            value={electricity.value || 0}
+            onChange={electricity.onChange}
+            tooltipVisible={false}
+          />
           <ButtonGroup>
             <Button
               size="small"

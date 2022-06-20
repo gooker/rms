@@ -1,23 +1,22 @@
 /* TODO: I18N */
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { DisconnectOutlined, GroupOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { logOutVehicle, saveResourceGroup } from '@/services/resourceService';
+import { logOutVehicle } from '@/services/resourceService';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
-import ResourceGroupModal from '../../component/ResourceGroupModal';
+import ResourceGroupOperateComponent from '../../component/ResourceGroupOperateComponent';
 import commonStyles from '@/common.module.less';
+
 
 const VehicleListTools = (props) => {
   const { dispatch, allVehicles, selectedRows, allAdaptors, searchParams } = props;
 
   const registerVehicles = allVehicles.filter((item) => item.register);
   const unregisterVehicles = allVehicles.filter((item) => !item.register);
-
-  const [visible, setVisible] = useState(false);
 
   function renderVehicleIdFilter() {
     return registerVehicles.map(({ vehicleId, vehicleType, id }) => (
@@ -68,10 +67,6 @@ const VehicleListTools = (props) => {
         }
       },
     });
-  }
-
-  async function vehicleGroup() {
-    setVisible(true);
   }
 
   async function exportVehicleHardwareInfo() {
@@ -138,12 +133,19 @@ const VehicleListTools = (props) => {
       </Row>
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
-          <Button disabled={selectedRows.length === 0} onClick={vehicleGroup}>
-            <GroupOutlined /> 车辆分组
-          </Button>
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 注销
           </Button>
+
+          <ResourceGroupOperateComponent
+            selectedRows={selectedRows}
+            selectedRowKeys={selectedRows.map(({ id }) => id)}
+            groupType={'VEHICLE'}
+            onRefresh={() => {
+              dispatch({ type: 'vehicleList/fetchInitialData' });
+            }}
+          />
+
           {/*<Button disabled={selectedRows.length === 0} onClick={moveOutVehicle}>*/}
           {/*  <ToTopOutlined /> <FormattedMessage id='app.vehicle.moveout' />*/}
           {/*</Button>*/}
@@ -195,18 +197,6 @@ const VehicleListTools = (props) => {
           </Button>
         </Col>
       </Row>
-      <ResourceGroupModal
-        visible={visible}
-        title={'车辆分组'}
-        members={selectedRows.map(({ id }) => id)}
-        groupType={'VEHICLE'}
-        onOk={() => {
-          dispatch({ type: 'vehicleList/fetchInitialData' });
-        }}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
     </div>
   );
 };

@@ -99,6 +99,11 @@ const VehicleList = (props) => {
       align: 'center',
     },
     {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groups',
+      align: 'center',
+    },
+    {
       title: <FormattedMessage id="app.common.operation" />,
       align: 'center',
       render: (text, record) => {
