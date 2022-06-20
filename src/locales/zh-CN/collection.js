@@ -6,7 +6,26 @@ export default {
   'app.programing.noParam': '无参数',
   'app.button.bind': '绑定',
   'app.button.unbind': '解绑',
+  'app.button.logout': '注销',
   'app.common.batchOperate': '批量操作',
+  'app.common.groupMange': '分组管理',
+
+  // 自定义环境管理
+  'environmentManager.envName': '环境名称',
+  'environmentManager.tip.pasteTip': '请填入序列化字符串',
+  'environmentManager.deleteConfirmContent': '是否删除所选择的自定义环境',
+  'environmentManager.management': '自定义环境管理',
+  'environmentManager.add': '添加环境',
+  'environmentManager.update': '修改环境',
+  'environmentManager.apis': '接口信息',
+  'environmentManager.url.invalid': 'URL格式不合法',
+  'environmentManager.api.invalid': '接口信息不完整',
+
+  // 快接任务
+  'quickTask.share': '分享',
+
+  // 固件
+  'firmware.upgrade': '固件升级',
 
   // 故障相关
   'app.fault.code': '故障码',
@@ -35,6 +54,7 @@ export default {
   'app.trigger.timeInterval': '时间间隔',
 
   // 日志下载
+  'app.logDownload': '日志下载',
   'app.logDownload.fileName': '文件名称',
   'app.logDownload.generateLog': '生成日志',
   'app.logDownload.inGenerating': '生成中',

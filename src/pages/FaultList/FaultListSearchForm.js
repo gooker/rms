@@ -96,7 +96,7 @@ const FaultListSearchForm = (props) => {
             <ReloadOutlined /> <FormattedMessage id={'app.button.reset'} />
           </Button>
           <Button style={{ marginLeft: 15 }}>
-            <ExportOutlined /> <FormattedMessage id={'app.button.export'} />
+            <ExportOutlined /> <FormattedMessage id={'app.button.download'} />
           </Button>
         </Col>
       </Row>

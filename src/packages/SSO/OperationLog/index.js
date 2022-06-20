@@ -31,7 +31,7 @@ const OperationLogComponent = (props) => {
       fixed: 'left',
     },
     {
-      title: <FormattedMessage id="app.activity.modelName" />,
+      title: <FormattedMessage id='app.configInfo.header.moduleName' />,
       dataIndex: 'module',
       width: 200,
       align: 'center',

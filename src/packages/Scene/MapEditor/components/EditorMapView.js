@@ -1,13 +1,13 @@
 import React from 'react';
 import { reverse } from 'lodash';
-import { isItemOfArray, isNull } from '@/utils/util';
 import BaseMap from '@/components/BaseMap';
-import PixiBuilder from '@/entities/PixiBuilder';
-import { Cell, ResizeableEmergencyStop } from '@/entities';
-import { getCurrentRouteMapData, loadEditorExtraTextures } from '@/utils/mapUtil';
-import { CellSize, MapSelectableSpriteType, SelectionType } from '@/config/consts';
+import { isItemOfArray, isNull } from '@/utils/util';
+import { Cell, PixiBuilder, ResizeableEmergencyStop } from '@/entities';
+import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { loadEditorExtraTextures } from '@/utils/textures';
+import { MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
-import { NavigationTypeView } from '@/config/config';
+import { defaultEditorViewConfig } from '@/models/editorViewModel';
 
 class EditorMapView extends BaseMap {
   constructor(props) {
@@ -15,22 +15,12 @@ class EditorMapView extends BaseMap {
 
     // 记录显示控制的参数
     this.states = {
-      // 与 editorViewModel 中的同名变量需要保持一样的初始值
-      mapMode: 'standard',
-      shownPriority: [10, 20, 100, 1000],
-      shownRelationDir: [0, 90, 180, 270],
-      shownRelationCell: [],
-      hideBlock: false,
-      showCoordinate: false,
-      showDistance: false,
-      showBackImg: false,
-      showEmergencyStop: true,
+      ...defaultEditorViewConfig,
     };
 
     // 核心业务逻辑参数
     this.fixedEStopMap = new Map(); // 固定紧急避让区
     this.selectedCells = []; // 缓存选中的点位ID, 用于shift选择
-    this.naviCellTypeColor = null; // 不同导航点类型颜色
   }
 
   async componentDidMount() {
@@ -48,43 +38,29 @@ class EditorMapView extends BaseMap {
   }
 
   /**
-   * 自适应(scale=0.4为分界线，低于0.4需要做自适应，大于0.4情况下viewport已经可以看清全貌，可以不用自适应)
+   * 自适应(scale=0.15为分界线，低于0.15需要做自适应，大于0.15情况下viewport已经可以看清全貌，可以不用自适应)
    * 基准参数: 看清楚点位情况下的pixel值
-   * 1. const CellHeight = 217.2;
-   *    -- window.EditorPixiUtils.viewport.scale.set(0.4)
-   *    -- window.EditorPixiUtils.viewport.options.screenWidth/window.EditorPixiUtils.viewport.worldScreenWidth * 267
-   *    -- window.EditorPixiUtils.viewport.children.at(-1).height
-   * 2. const navCircleWorldWidth = 140; // 0.4 -- 56px
+   * 1. 在scale=0.15的情况下, 点圆的世界宽高是21
+   * 2. 点圆的自身尺寸为140
    *
-   *  世界长度转Pixel: viewport.screenWidth / viewport.worldScreenWidth * [世界长度]
-   *  Pixel转世界长度: viewport.worldScreenWidth / viewport.screenWidth * [Pixel]
+   *    var viewport = window.EditorPixiUtils.viewport
+   * 3. viewport.scale.set(0.15)
+   * 4. viewport.children.at(-1).navigation.getBounds()
+   *
+   * 5. 世界长度转Pixel: viewport.screenWidth / viewport.worldScreenWidth * [世界长度]
+   * 6. Pixel转世界长度: viewport.worldScreenWidth / viewport.screenWidth * [Pixel]
    */
   adaptiveMapItem = () => {
+    const ThresholdValue = 20;
     const { viewport } = this.pixiUtils;
-    const { children, screenWidth, worldScreenWidth, scale } = viewport;
-    const navCirclePixelWidth = (screenWidth / worldScreenWidth) * 140;
-
-    // 取样
-    let worldVisibleBaseSize;
-    for (const child of children) {
-      if (child instanceof Cell) {
-        worldVisibleBaseSize = child.$$size;
-        break;
-      }
-    }
-    let cellVisibleBasePixel = (screenWidth / worldScreenWidth) * worldVisibleBaseSize;
-    cellVisibleBasePixel = (0.4 / scale.x) * cellVisibleBasePixel;
-    const visibleWorldWidth = (worldScreenWidth / screenWidth) * cellVisibleBasePixel;
-
+    const { children, screenWidth, worldScreenWidth } = viewport;
+    // 获取当前点圆的尺寸
+    const currentCellCircleWidth = (screenWidth / worldScreenWidth) * 140;
     // 根据navigationCircleWidth判断是否需要自适应
-    if (navCirclePixelWidth < 56) {
+    if (currentCellCircleWidth < ThresholdValue) {
       children.forEach((child) => {
         if (child instanceof Cell) {
-          // 根据 width和height确定该点位的长宽比
-          const { width, height } = child.getBounds();
-          const visibleWorldHeight = (visibleWorldWidth * height) / width;
-          child.width = visibleWorldWidth;
-          child.height = visibleWorldHeight;
+          child.scale.set(ThresholdValue / currentCellCircleWidth);
         }
       });
     }
@@ -99,47 +75,11 @@ class EditorMapView extends BaseMap {
     //
   };
 
-  // 切换地图编辑地图显示模式
-  changeMapMode = (mode) => {
-    this.states.mapMode = mode;
-
-    if (mode === 'standard') {
-      CellSize.height = 100;
-      CellSize.width = 100;
-    } else {
-      CellSize.height = 800;
-      CellSize.width = 800;
-    }
-
-    // 处理点位
-    this.idCellMap.forEach((cell) => {
-      cell.switchMode(mode);
-      cell.switchCoordinationShown(this.states.showCoordinate);
-    });
-
-    // 处理Cost线条
-    // this.destroyAllLines();
-    // const relations = getCurrentRouteMapData()?.relations ?? [];
-    // this.renderCostLines(relations, relations, true, mode, this.states.shownPriority);
-
-    // 保证是否显示不可走点 状态一致
-    this.switchShowBlock(this.states.hideBlock);
-    this.refresh();
-  };
-
   // ************************ 点位相关 **********************
   renderCells = (payload) => {
-    if (isNull(this.naviCellTypeColor)) {
-      this.naviCellTypeColor = {};
-      NavigationTypeView.forEach(({ code, color }) => {
-        this.naviCellTypeColor[code] = color;
-      });
-    }
-
     payload.forEach((item) => {
       const cell = new Cell({
         ...item,
-        color: this.naviCellTypeColor[item.navigationType], // 导航点背景色
         interactive: true,
         select: this.select,
         showCoordinate: this.states.showCoordinate,
@@ -234,20 +174,6 @@ class EditorMapView extends BaseMap {
     }
 
     this.refresh();
-  };
-
-  // ************************ 地图部分元素显示切换 **********************
-  switchShowBlock = (flag) => {
-    this.states.hideBlock = flag;
-    const { blockCellIds } = getCurrentRouteMapData();
-    if (blockCellIds?.length > 0) {
-      blockCellIds.forEach((cellId) => {
-        const cellEntity = this.idCellMap.get(cellId);
-        if (cellEntity) cellEntity.switchShown(!flag);
-      });
-      this.pipeSwitchLinesShown();
-      this.refresh();
-    }
   };
 
   // ************************ 点位 & 线条选择 **********************
@@ -400,16 +326,58 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 地图元素可见性设置 **********************
-  getPipeShownValue = (arrow) => {
+  // 切换显示不可走点
+  switchShowBlock = (flag) => {
+    this.states.hideBlock = flag;
+    const { blockCellIds } = getCurrentRouteMapData();
+    if (blockCellIds?.length > 0) {
+      blockCellIds.forEach((cellId) => {
+        const cellEntity = this.idCellMap.get(cellId);
+        if (cellEntity) cellEntity.switchShown(!flag);
+      });
+      this.pipeSwitchArrowsShown();
+      this.refresh();
+    }
+  };
+
+  // 切换显示点关系线
+  switchCellsLineShown = (flag) => {
+    this.states.showCellsLine = flag;
+    this.pipeSwitchLinesShown();
+    this.refresh();
+  };
+
+  pipeSwitchArrowsShown = () => {
+    this.idArrowMap.forEach((arrow) => {
+      arrow.visible = this.getArrowShownValue(arrow);
+    });
+    this.pipeSwitchLinesShown();
+  };
+
+  pipeSwitchLinesShown = () => {
+    const { showCellsLine } = this.states;
+    const lineKeys = [...this.idLineMap.keys()];
+    lineKeys.forEach((lineKey) => {
+      const reverseLineKey = lineKey.split('-').reverse().join('-');
+      const arrow1 = this.idArrowMap.get(lineKey);
+      const arrow2 = this.idArrowMap.get(reverseLineKey);
+      const line = this.idLineMap.get(lineKey);
+      if (line) {
+        line.visible = (arrow1?.visible || arrow2?.visible) && showCellsLine;
+      }
+    });
+  };
+
+  getArrowShownValue = (arrow) => {
     const { blockCellIds } = getCurrentRouteMapData('editor');
-    const { hideBlock, shownPriority, shownRelationDir, shownRelationCell } = this.states;
+    const { hideBlock, shownPriority, showRelationsDir, showRelationsCells } = this.states;
 
     const { id, cost, angle } = arrow;
     const [source, target] = id.split('-');
-    // 是否在显示的优先级Cost范围内L
+    // 是否在显示的优先级Cost范围内
     const priorityCostFlag = shownPriority.includes(cost);
     // 是否在显示的优先级方向范围内
-    const priorityDirFlag = shownRelationDir.includes(angle);
+    const priorityDirFlag = showRelationsDir.includes(angle);
     // 是否是不可走点的线条 & 没有隐藏显示不可走点
     const isBlockLines = isItemOfArray(
       blockCellIds ?? [],
@@ -418,48 +386,31 @@ class EditorMapView extends BaseMap {
     const blockCellFlag = isBlockLines ? !hideBlock : true;
     // 是否是相关点的线条
     let cellRelevantFlag = true;
-    if (shownRelationCell.length > 0) {
-      cellRelevantFlag = isItemOfArray(shownRelationCell, [source, target]);
+    if (showRelationsCells.length > 0) {
+      cellRelevantFlag = isItemOfArray(showRelationsCells, [source, target]);
     }
     // 切换显示
     return priorityCostFlag && priorityDirFlag && cellRelevantFlag && blockCellFlag;
   };
 
-  pipeSwitchLinesShown = () => {
-    this.idArrowMap.forEach((arrow) => {
-      arrow.visible = this.getPipeShownValue(arrow);
-    });
-    // 处理下线条隐藏, 基于this.idLineMap处理
-    const lineKeys = [...this.idLineMap.keys()];
-    lineKeys.forEach((lineKey) => {
-      const reverseLineKey = lineKey.split('-').reverse().join('-');
-      const arrow1 = this.idArrowMap.get(lineKey);
-      const arrow2 = this.idArrowMap.get(reverseLineKey);
-      const line = this.idLineMap.get(lineKey);
-      if (line) {
-        line.visible = arrow1?.visible || arrow2?.visible;
-      }
-    });
-
-    this.refresh();
-  };
-
   filterRelations(uiFilterData) {
     this.states.shownPriority = uiFilterData;
-    this.pipeSwitchLinesShown();
+    this.pipeSwitchArrowsShown();
     this.refresh();
   }
 
   // 根据方向过滤地图上的优先级线条
   filterRelationDir = (dirs) => {
-    this.states.shownRelationDir = [...dirs];
-    this.pipeSwitchLinesShown();
+    this.states.showRelationsDir = [...dirs];
+    this.pipeSwitchArrowsShown();
+    this.refresh();
   };
 
   // 根据点位过滤地图上的优先级线条
   filterRelationCell = (cells) => {
-    this.states.shownRelationCell = cells;
-    this.pipeSwitchLinesShown();
+    this.states.showRelationsCells = cells;
+    this.pipeSwitchArrowsShown();
+    this.refresh();
   };
 
   // ************************ 框选相关 **********************
@@ -504,10 +455,10 @@ class EditorMapView extends BaseMap {
   // ************************ 急停区 **********************
   // 渲染固定紧急避让区
   renderFixedEStopFunction = (data) => {
-    const showEmergency = this.states.showEmergencyStop;
+    const { showEmergencyStop } = this.states;
     const eData = {
       ...data,
-      showEmergency,
+      showEmergency: showEmergencyStop,
       refresh: this.refresh,
       select: this.select,
     };

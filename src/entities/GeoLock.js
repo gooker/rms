@@ -13,6 +13,7 @@ export default class GeoLock extends PIXI.Sprite {
     this.$height = props.height;
     this.angle = props.angle;
     this.color = props.color;
+    this.cullable = true;
     this.radius = props.radius;
     this.boxType = props.boxType;
     this.boxAction = props.boxAction;

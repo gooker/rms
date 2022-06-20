@@ -2,7 +2,7 @@ import React, { memo, useState } from 'react';
 import { Badge, Button, Descriptions, Modal, Tag } from 'antd';
 import { saveAs } from 'file-saver';
 import UploadCert from './UploadCert';
-import { formatMessage } from '@/utils/util';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const AuthorityInformation = (props) => {
@@ -12,10 +12,13 @@ const AuthorityInformation = (props) => {
   const isExpired = data.lastDay * 1000 <= new Date().valueOf();
 
   function subString(content) {
+    if (isStrictNull(content)) {
+      return null;
+    }
     return (
       <span>
         {`${content.substring(0, 100)}.....`}
-        <Button type="link" onClick={() => downloadApplyToken(content)}>
+        <Button type='link' onClick={() => downloadApplyToken(content)}>
           <FormattedMessage id={'app.authCenter.download'} />
         </Button>
       </span>
@@ -119,8 +122,8 @@ const AuthorityInformation = (props) => {
           {formatMessage({ id: `app.authCenter.field.adminType.${data.adminType}` })}
         </Descriptions.Item>
         <Descriptions.Item label={formatMessage({ id: 'app.authCenter.field.supportScenes' })}>
-          {data.supportScenes.map((type) => (
-            <Tag color="#1890FF" key={type}>
+          {data.supportScenes?.map((type) => (
+            <Tag color='#1890FF' key={type}>
               {formatMessage({ id: `app.vehicleType.${type}` })}
             </Tag>
           ))}

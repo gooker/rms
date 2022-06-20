@@ -363,6 +363,15 @@ export async function deleteLoadSpecification(param) {
   });
 }
 
+
+// 根据载具类型查询所有的载具规格
+export async function fetchLoadSpecificationByType(param) {
+  return request(`/${NameSpace.Platform}/load/getLoadSpecificationByLoadType`, {
+    method: 'GET',
+    data: param,
+  });
+}
+
 // 获取所有载具
 export async function fetchAllLoad(param) {
   return request(`/${NameSpace.Platform}/load/getAllLoad`, {
@@ -468,3 +477,4 @@ export async function fetchResourceGroup(param) {
     data: param,
   });
 }
+

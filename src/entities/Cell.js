@@ -2,21 +2,11 @@ import * as PIXI from 'pixi.js';
 import { find, isPlainObject } from 'lodash';
 import { BitText } from '@/entities';
 import { isNull, isStrictNull, radToAngle } from '@/utils/util';
-import {
-  CellSize,
-  CellTypeColor,
-  CellTypeSize,
-  MapSelectableSpriteType,
-  SelectionType,
-  zIndex,
-} from '@/config/consts';
+import { CellSize, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 import { NavigationTypeView } from '@/config/config';
+import { getTextureFromResources } from '@/utils/mapUtil';
 
-const ScaledCellSize = 800;
-const ScaledTypeIconSize = 120;
 const HitAreaSize = 280;
-const ClearCellTint = '0xFFFFFF';
-const NormalScaledCellTint = '0xD8BFD8';
 const InnerIndex = { direction: 1, navigation: 2, type: 3, text: 3, bg: 4 };
 
 export default class Cell extends PIXI.Container {
@@ -24,7 +14,14 @@ export default class Cell extends PIXI.Container {
     super(props);
     this.type = MapSelectableSpriteType.CELL;
     this.navigationType = props.navigationType; // 导航点类型
-    this.brandColor = props.color.replace('#', '0x');
+
+    const targetData = find(NavigationTypeView, { code: this.navigationType });
+    if (!isNull(targetData)) {
+      this.brandColor = targetData.color.replace('#', '0x');
+    } else {
+      this.brandColor = '0xffffff';
+      console.error(`Cell: 未识别的导航类型 > ${this.navigationType}`);
+    }
 
     this.id = props.id; // Integer ID
     this.naviId = props.naviId; // 车型导航点的原始ID
@@ -38,6 +35,7 @@ export default class Cell extends PIXI.Container {
     this.width = CellSize.width;
     this.height = CellSize.height;
     this.zIndex = zIndex.cell;
+    this.cullable = true;
     this.sortableChildren = true;
     this.interactiveChildren = false;
     this.hitArea = new PIXI.Rectangle(
@@ -54,7 +52,6 @@ export default class Cell extends PIXI.Container {
     };
 
     this.states = {
-      mode: 'standard',
       shown: true,
       coordinatorVisible: false,
     };
@@ -64,14 +61,6 @@ export default class Cell extends PIXI.Container {
     this.addCoordination();
     this.addSelectedBackGround(HitAreaSize, HitAreaSize);
     this.interact(props.interactive);
-  }
-
-  get mode() {
-    return this.states.mode;
-  }
-
-  get $$size() {
-    return this.states.coordinatorVisible ? 218 : 90;
   }
 
   // 导航点标记（实心圆）
@@ -91,12 +80,11 @@ export default class Cell extends PIXI.Container {
     // this.addChild(this.qrId);
   }
 
-  renderNavigation(flagColor = 0xffffff) {
-    this.navigation = new PIXI.Graphics();
-    this.navigation.lineStyle(CellSize.width * 0.4, flagColor, 1);
-    this.navigation.beginFill(this.brandColor);
-    this.navigation.drawCircle(0, 0, CellSize.width / 2);
-    this.navigation.endFill();
+  renderNavigation(cellType = 'blank') {
+    this.navigation = new PIXI.Sprite(
+      getTextureFromResources(`${this.navigationType}_${cellType}`),
+    );
+    this.navigation.anchor.set(0.5);
     this.navigation.zIndex = InnerIndex.navigation;
     this.addChild(this.navigation);
   }
@@ -215,16 +203,16 @@ export default class Cell extends PIXI.Container {
     if (this.data.types.has(type)) return;
     if (this.data.types.has('store_cell')) return;
 
-    let flagColor = CellTypeColor.normal;
+    let cellType = 'normal';
     if (type === 'store_cell') {
-      flagColor = CellTypeColor.storeType;
+      cellType = 'storeType';
     }
     if (type === 'block_cell') {
-      flagColor = CellTypeColor.blockType;
+      cellType = 'blockType';
     }
     this.removeChild(this.navigation);
     this.navigation.destroy();
-    this.renderNavigation(flagColor);
+    this.renderNavigation(cellType);
     this.data.types.add(type);
   }
 
@@ -232,25 +220,25 @@ export default class Cell extends PIXI.Container {
     if (isStrictNull(type)) return;
     this.data.types.delete(type);
 
-    let flagColor;
+    let cellType;
     if (type === 'block_cell') {
-      flagColor = 0xffffff;
+      cellType = 'blank';
     } else if (type === 'store_cell') {
       if (this.data.types.size === 0) {
-        flagColor = 0xffffff;
+        cellType = 'blank';
       } else {
-        flagColor = CellTypeColor.normal;
+        cellType = 'normal';
       }
     } else {
       if (this.data.types.size === 0) {
-        flagColor = 0xffffff;
+        cellType = 'blank';
       }
     }
 
-    if (!isNull(flagColor)) {
+    if (!isNull(cellType)) {
       this.removeChild(this.navigation);
       this.navigation.destroy();
-      this.renderNavigation(flagColor);
+      this.renderNavigation(cellType);
     }
   }
 
@@ -303,139 +291,11 @@ export default class Cell extends PIXI.Container {
     }
   }
 
-  // 重新计算点位类型图标位置
-  reCalculatePosition() {
-    const isStandard = this.states.mode === 'standard';
-    // 图标在水平方向的间隔距离
-    const offset = isStandard ? 30 : 50;
-    // 重算每一个类型图标的位置，逻辑是把所有的类型Sprite水平拼接成一个矩形，该矩形的锚点的和二维码的锚点在同一条垂直线。然后所有的Sprite就可以以此为基准分布开来
-    const spriteCount = this.data.types.size;
-    let beginX;
-    if (isStandard) {
-      beginX =
-        -(spriteCount * CellTypeSize.width + (spriteCount - 1) * offset) / 2 +
-        CellTypeSize.width / 2;
-    } else {
-      beginX =
-        CellSize.width / 2 -
-        (spriteCount * ScaledTypeIconSize + (spriteCount - 1) * offset) +
-        ScaledTypeIconSize / 2 -
-        20;
-    }
-    const typeIconWidth = isStandard ? CellTypeSize.width : ScaledTypeIconSize;
-    this.data.types.forEach((sprite) => {
-      sprite.x = beginX;
-      beginX = beginX + typeIconWidth + offset;
-    });
-  }
-
   // ************ 模式切换  ************ //
-  switchMode(mode = 'standard') {
-    let cellWidth;
-    let cellHeight;
-    let cellIdX;
-    let cellIdY;
-    let textColor;
-    let coordXx;
-    let coordXy;
-    let coordYx;
-    let coordYy;
-    let coordFontSize;
-    let cellIdFontSize;
-
-    if (mode === 'standard') {
-      this.states.mode = 'standard';
-      textColor = 0xffffff;
-      cellWidth = CellSize.width;
-      cellHeight = CellSize.height;
-      cellIdFontSize = 70;
-      cellIdX = 0;
-      cellIdY = CellSize.height / 2 + 5;
-      coordFontSize = 40;
-      coordXx = -CellSize.width / 2;
-      coordXy = -CellSize.height / 2;
-      coordYx = CellSize.width / 2;
-      coordYy = -CellSize.height / 2;
-    } else {
-      this.states.mode = 'scaled';
-      textColor = 0x000000;
-      cellWidth = ScaledCellSize;
-      cellHeight = ScaledCellSize;
-      cellIdFontSize = 140;
-      cellIdX = -ScaledCellSize / 2 + 20;
-      cellIdY = ScaledCellSize / 2;
-      coordFontSize = 80;
-      coordXx = -ScaledCellSize / 2 + 20;
-      coordXy = -ScaledCellSize / 2;
-      coordYx = ScaledCellSize / 2 - 20;
-      coordYy = -ScaledCellSize / 2;
-    }
-
-    // 更新tint
-    if (!this.data.types.has('store_cell') && !this.data.types.has('block_cell')) {
-      if (this.states.mode === 'scaled') {
-        this.QR.tint = NormalScaledCellTint;
-      } else {
-        this.QR.tint = ClearCellTint;
-      }
-    }
-
-    // 更新点位尺寸
-    this.QR.width = cellWidth;
-    this.QR.height = cellHeight;
-
-    // 交互区域 和 选中效果
-    if (mode === 'standard') {
-      this.hitArea = new PIXI.Rectangle(-225, -160, 450, 400);
-      this.addSelectedBackGround(450, 400);
-    } else {
-      this.hitArea = new PIXI.Rectangle(-400, -400, 800, 800);
-      this.addSelectedBackGround(800, 800, false);
-    }
-
-    // 更新点位ID文本位置和样式
-    this.removeChild(this.idText);
-    this.idText.destroy({ children: true });
-    this.idText = new BitText(this.id, cellIdX, cellIdY, textColor, cellIdFontSize);
-    mode === 'standard' ? this.idText.anchor.set(0.5, 0) : this.idText.anchor.set(0, 1);
-    this.idText.zIndex = InnerIndex.text;
-    this.addChild(this.idText);
-
-    // 更新坐标
-    this.removeChild(this.coordX);
-    this.coordX.destroy({ children: true });
-    this.coordX = new BitText(this.x, coordXx, coordXy, textColor, coordFontSize);
-    mode === 'standard' ? this.coordX.anchor.set(1, 1) : this.coordX.anchor.set(0, 0);
-    this.coordX.zIndex = InnerIndex.text;
-    this.addChild(this.coordX);
-
-    this.removeChild(this.coordY);
-    this.coordY.destroy({ children: true });
-    this.coordY = new BitText(this.y, coordYx, coordYy, textColor, coordFontSize);
-    mode === 'standard' ? this.coordY.anchor.set(0, 1) : this.coordY.anchor.set(1, 0);
-    this.coordY.zIndex = InnerIndex.text;
-    this.addChild(this.coordY);
-
-    // 更新点位类型图标
-    this.data.types.forEach((sprite) => {
-      sprite.width = mode === 'standard' ? CellTypeSize.width : ScaledTypeIconSize;
-      sprite.height = mode === 'standard' ? CellTypeSize.height : ScaledTypeIconSize;
-      sprite.y =
-        mode === 'standard'
-          ? CellSize.height * 1.9
-          : CellSize.height / 2 - ScaledTypeIconSize / 2 - 40;
-    });
-    this.reCalculatePosition();
-  }
-
   switchShown(selected) {
     this.states.shown = selected; // 用来标记当前Cell是否显示
-    if (this.QR) this.QR.visible = selected;
-    if (this.idText) this.idText.visible = selected;
-    this.data.types.forEach((type) => {
-      type.visible = selected;
-    });
-
+    if (this.navigation) this.navigation.visible = selected;
+    if (this.navigationId) this.navigationId.visible = selected;
     if (selected) {
       if (this.coordX) this.coordX.visible = this.states.coordinatorVisible;
       if (this.coordY) this.coordY.visible = this.states.coordinatorVisible;

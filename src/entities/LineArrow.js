@@ -1,19 +1,14 @@
 import * as PIXI from 'pixi.js';
 import { BitText } from '@/entities';
 import { getDirByAngle } from '@/utils/util';
-import {
-  zIndex,
-  CostColor,
-  CellSize,
-  MapSelectableSpriteType,
-  SelectionType,
-} from '@/config/consts';
+import { CellSize, CostColor, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 import { getCostArrow, getRelationSelectionBG } from '@/utils/mapUtil';
 
 export default class LineArrow extends PIXI.Container {
   constructor(props) {
     super();
     this.alpha = 0.8;
+    this.cullable = true;
     this.zIndex = props.isClassic ? zIndex.line : 100;
 
     this.type = MapSelectableSpriteType.ROUTE;

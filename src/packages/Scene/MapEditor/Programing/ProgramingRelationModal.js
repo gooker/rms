@@ -7,6 +7,7 @@ import { RelationTiming } from '@/config/config';
 import FormattedMessage from '@/components/FormattedMessage';
 import ProgramingConfigure from '@/components/ProgramingConfiguer/ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
+import { isArray } from 'lodash';
 
 const ProgramingRelationModal = (props) => {
   const { editing, relations, visible, onCancel, onConfirm, programing } = props;
@@ -29,11 +30,13 @@ const ProgramingRelationModal = (props) => {
         end = [];
 
       actions.forEach((item) => {
-        const { timing, adapterType, actionId, actionParameters } = item;
-        const addedItem = { actionType: [adapterType, actionId] };
-        actionParameters.forEach(({ code, value }) => {
-          addedItem[code] = value;
-        });
+        const { timing, adapterType, actionId, actionParameters, operateType } = item;
+        const addedItem = { actionType: [adapterType, actionId], operateType };
+        if (isArray(actionParameters)) {
+          actionParameters.forEach(({ code, value }) => {
+            addedItem[code] = value;
+          });
+        }
         timing === RelationTiming.begin && begin.push(addedItem);
         timing === RelationTiming.onRoad && onRoad.push(addedItem);
         timing === RelationTiming.end && end.push(addedItem);

@@ -34,7 +34,7 @@ export function exportVehicleModuleInfo(nameSpace, vehicleList) {
     nameArray.forEach((record) => {
       fields.push({
         value: record,
-        label: formatMessage({ id: 'app.activity.modelName' }),
+        label: formatMessage({ id: 'app.configInfo.header.moduleName' }),
       });
       fields.push({
         value: `${record}.type`,

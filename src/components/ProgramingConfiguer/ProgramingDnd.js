@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { Container } from 'react-smooth-dnd';
 import { find, isEmpty } from 'lodash';
-import { customTaskApplyDrag, formatMessage } from '@/utils/util';
+import { customTaskApplyDrag, formatMessage, isNull } from '@/utils/util';
 import ProgramingDndCard from './ProgramingDndCard';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './programing.module.less';
@@ -34,8 +34,12 @@ const ProgramingDnd = (props) => {
       const { actionType, operateType, ...rest } = item;
       const [p1, p2] = actionType;
       const { actionParameters, actionDescription } = find(programing[p1], { actionId: p2 });
+      let title = `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`;
+      if (!isNull(operateType)) {
+        title = `${formatMessage({ id: `customTasks.operationType.${operateType}` })} / ` + title;
+      }
       return {
-        title: `${formatMessage({ id: `editor.program.${p1}` })} / ${actionDescription}`,
+        title,
         subTitle: Array.isArray(actionParameters)
           ? renderSubTitle(rest, actionParameters)
           : formatMessage({ id: 'app.programing.noParam' }),

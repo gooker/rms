@@ -6,6 +6,7 @@ export default class WorkState extends PIXI.Sprite {
     super();
     this.state = props.state;
     this.color = props.color;
+    this.cullable = true;
     const graphics = this.createGraphics();
     this.texture = window.PixiUtils.renderer.generateTexture(graphics);
     this.anchor = 0.5;

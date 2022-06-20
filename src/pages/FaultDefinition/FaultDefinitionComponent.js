@@ -198,7 +198,7 @@ const FaultDefinitionComponent = (props) => {
             <SettingOutlined /> <FormattedMessage id={'app.fault.init'} />
           </Button>
           <Button onClick={exportFaultDefinition}>
-            <ExportOutlined /> <FormattedMessage id={'app.button.export'} />
+            <ExportOutlined /> <FormattedMessage id={'app.button.download'} />
           </Button>
         </div>
       </div>

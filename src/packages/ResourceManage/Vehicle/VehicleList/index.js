@@ -12,11 +12,14 @@ import {
   isNull,
 } from '@/utils/util';
 import dictionary from '@/utils/Dictionary';
+import Dictionary from '@/utils/Dictionary';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import VehicleListTools from './VehicleListTools';
 import { connect } from '@/utils/RmsDva';
 import RegisterPanel from '@/packages/ResourceManage/Vehicle/VehicleList/RegisterPanel';
+
+const Colors = Dictionary().color;
 
 const VehicleList = (props) => {
   const { dispatch, allVehicles, searchParams, loading, showRegisterPanel, history } = props;
@@ -74,14 +77,14 @@ const VehicleList = (props) => {
         return (
           <span>
             {text ? (
-              <Tag color="red">
+              <Tag color={Colors.red}>
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id="vehicle.underMaintenance" />
+                  <FormattedMessage id='vehicle.underMaintenance' />
                 </span>
               </Tag>
             ) : (
-              <Tag color="green">{<FormattedMessage id="app.common.normal" />}</Tag>
+              <Tag color={Colors.green}>{<FormattedMessage id='app.common.normal' />}</Tag>
             )}
           </span>
         );
@@ -202,24 +205,24 @@ const VehicleList = (props) => {
   }, [allVehicles, searchParams]);
 
   function filterDatasource() {
-    let nowAllVehicels = [...allVehicles].filter((item) => item.register);
+    let nowAllVehicles = [...allVehicles].filter((item) => item.register);
     const { id: uniqueIds, state, vehicleType } = searchParams;
     if (uniqueIds?.length > 0) {
-      nowAllVehicels = nowAllVehicels.filter(({ id }) => uniqueIds.includes(id));
+      nowAllVehicles = nowAllVehicles.filter(({ id }) => uniqueIds.includes(id));
     }
 
     if (state?.length > 0) {
-      nowAllVehicels = nowAllVehicels.filter((item) => state.includes(item.vehicleStatus));
+      nowAllVehicles = nowAllVehicles.filter((item) => state.includes(item.vehicleStatus));
     }
 
     if (!isNull(vehicleType)) {
       const currentType = vehicleType.split('@'); // adapterType@vehicleType
-      nowAllVehicels = nowAllVehicels.filter(
+      nowAllVehicles = nowAllVehicles.filter(
         (item) => item.adapterType === currentType[0] && item.vehicleType === currentType[1],
       );
     }
 
-    setDatasource(nowAllVehicels);
+    setDatasource(nowAllVehicles);
   }
 
   function fetchRegisteredVehicle() {

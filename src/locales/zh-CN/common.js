@@ -59,6 +59,7 @@ export default {
   'app.message.fileCorrupted': '文件已损坏',
   'app.message.upload.tip': '单击或拖动文件到该区域进行上传',
   'app.message.gotIt': '知道了',
+  'app.message.dataFormatError': '数据格式错误',
 
   // 通用页面标识内容
   'app.common.fullScreen': '进入全屏',
@@ -146,8 +147,8 @@ export default {
   'app.button.save': '保存',
   'app.button.copy': '复制',
   'app.button.past': '粘贴',
-  'app.button.export': '导出',
-  'app.button.import': '导入',
+  'app.button.upload': '上传',
+  'app.button.download': '下载',
   'app.button.turnOn': '开启',
   'app.button.turnOff': '关闭',
   'app.button.check': '查看',
@@ -162,8 +163,7 @@ export default {
   'app.button.confirm': '确定',
   'app.button.refresh': '刷新',
   'app.button.execute': '执行',
-  'app.button.upload': '上传',
-  'app.button.download': '下载',
+
   'app.button.config': '配置',
 
   // 时间相关

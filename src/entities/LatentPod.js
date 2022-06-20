@@ -2,7 +2,7 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import BitText from './BitText';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { zIndex, GlobalAlpha, MonitorSelectableSpriteType, SelectionType } from '@/config/consts';
+import { GlobalAlpha, MonitorSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
 
 export default class LatentPod extends PIXI.Container {
   constructor(props) {
@@ -16,6 +16,7 @@ export default class LatentPod extends PIXI.Container {
     this.$height = props.height;
     this.angle = props.angle || 0;
     this.zIndex = zIndex.pod;
+    this.cullable = true;
     this.create();
     this.addPodId();
 

@@ -4,14 +4,7 @@ import * as XLSX from 'xlsx';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { LineArrow, LogicArea } from '@/entities';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import { CellSize, MapSelectableSpriteType, TaskPathColor, VehicleState } from '@/config/consts';
-import {
-  getCellHeatTexture,
-  getIntersectionDirectionTexture,
-  getQrCodeSelectBorderTexture,
-  getTaskPathTexture,
-  getVehicleSelectBorderTexture,
-} from '@/utils/textures';
+import { CellSize, MapSelectableSpriteType, VehicleState } from '@/config/consts';
 import json from '../../package.json';
 import CellEntity from '@/entities/CellEntity';
 import RelationEntity from '@/entities/RelationEntity';
@@ -1425,50 +1418,6 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
   // 潜伏车任务暂停事件
   socketClient.registerLatentLiftingPauseTaskEvent(() => {
     dispatch({ type: 'monitor/fetchLatentStopMessageList' });
-  });
-}
-
-// 加载编辑器额外的自定义Texture
-export function loadEditorExtraTextures(renderer) {
-  return new Promise((resolve) => {
-    // 点位选中的Texture
-    PIXI.Texture.addToCache(
-      getQrCodeSelectBorderTexture(renderer, true),
-      'cellSelectBorderTexture',
-    );
-
-    // 交汇点
-    PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
-    resolve();
-  });
-}
-
-// 加载监控额外的自定义Texture
-export function loadMonitorExtraTextures(renderer) {
-  return new Promise((resolve) => {
-    // 背景
-    PIXI.Texture.addToCache(getVehicleSelectBorderTexture(), 'vehicleSelectBorderTexture');
-
-    // 交汇点
-    PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
-
-    // 任务路径
-    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed), '_passedTaskPath');
-    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.locked), '_lockedTaskPath');
-    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.future), '_futureTaskPath');
-
-    // 点位成本热度
-    PIXI.Texture.addToCache(getCellHeatTexture('0x3366FF'), '_cellHeat1');
-    PIXI.Texture.addToCache(getCellHeatTexture('0x5984C3'), '_cellHeat2');
-    PIXI.Texture.addToCache(getCellHeatTexture('0x7FA387'), '_cellHeat3');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xA5C14B'), '_cellHeat4');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xC9D04B'), '_cellHeat5');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xEEE04B'), '_cellHeat6');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xF4B042'), '_cellHeat7');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xF87636'), '_cellHeat8');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xF03C2B'), '_cellHeat9');
-    PIXI.Texture.addToCache(getCellHeatTexture('0xCF2723'), '_cellHeat10');
-    resolve();
   });
 }
 

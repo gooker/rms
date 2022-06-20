@@ -89,17 +89,14 @@ export default class BaseMap extends React.PureComponent {
   clampZoom = (viewport, storageKey) => {
     const { x, y, width, height } = viewport.getLocalBounds();
     let minMapRatio;
-    if (viewport.worldWidth !== 0 && viewport.worldHeight !== 0) {
-      viewport.clampZoom({
-        minWidth: viewport.worldScreenWidth * viewport.scale.x,
-        minHeight: viewport.worldScreenHeight * viewport.scale.y,
-        maxWidth: viewport.worldScreenWidth,
-        maxHeight: viewport.worldScreenHeight,
-      });
-
-      // 返回最小缩小比例
-      minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
-    }
+    viewport.clampZoom({
+      minWidth: viewport.worldScreenWidth * viewport.scale.x,
+      minHeight: viewport.worldScreenHeight * viewport.scale.y,
+      maxWidth: viewport.worldScreenWidth,
+      maxHeight: viewport.worldScreenHeight,
+    });
+    // 返回最小缩小比例
+    minMapRatio = viewport.screenWidth / viewport.worldScreenWidth;
     // 记录当前地图世界宽度
     window.sessionStorage.setItem(storageKey, JSON.stringify({ x, y, width, height }));
     return minMapRatio;
@@ -213,6 +210,7 @@ export default class BaseMap extends React.PureComponent {
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
           const relationLine = new StraightPath({ sourceCell, targetCell, distance });
+          relationLine.visible = this.states.showCellRelation;
           relationLine.textVisible = this.states.showDistance;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
@@ -237,7 +235,7 @@ export default class BaseMap extends React.PureComponent {
           angle: convertAngleToPixiAngle(angle),
           select: this.select,
         });
-        arrow.visible = this.getPipeShownValue(arrow);
+        arrow.visible = this.getArrowShownValue(arrow);
         this.pixiUtils.viewportAddChild(arrow);
         this.idArrowMap.set(arrowMapKey, arrow);
       }

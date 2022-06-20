@@ -14,6 +14,7 @@ export default class Intersection extends PIXI.Container {
     this.directions = props.directions;
     this.isTrafficCell = props.isTrafficCell;
     this.alpha = GlobalAlpha;
+    this.cullable = true;
     this.zIndex = zIndex.temporaryLock;
 
     this.select = props.select;

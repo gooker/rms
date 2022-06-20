@@ -51,10 +51,10 @@ nt11-dev-build-staging:
     - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
     - cp version.txt dist/
     - date_time_string=`date "+%Y%m%d%H%M%S"`
-    - tar -zcv -f RMS-GUI-${mybuild_version}.tar.gz dist/
+    - tar -zcv -f middle-platform-ui-${mybuild_version}.tar.gz dist/
     - sudo -u mushiny rm -rf /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
     - sudo -u mushiny mkdir -p /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
-    - sudo cp RMS-GUI-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+    - sudo cp middle-platform-ui-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
     - sudo cp version.txt /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
     - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui"
   only:

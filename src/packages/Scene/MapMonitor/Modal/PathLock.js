@@ -33,7 +33,7 @@ const PathLock = (props) => {
   function onValuesChange(changedValues) {
     const currentkey = Object.keys(changedValues)[0];
     const currentValue = Object.values(changedValues)[0];
-    if (['showRoute', 'showFullPath', 'showTagetLine'].includes(currentkey)) {
+    if (['showRoute', 'showFullPath', 'showTargetLine'].includes(currentkey)) {
       dispatch({
         type: 'monitorView/saveRouteView',
         payload: {
@@ -274,8 +274,8 @@ const PathLock = (props) => {
                   initialValue={routeView?.showRoute}
                 >
                   <Switch
-                    checkedChildren={formatMessage({ id: 'app.notification.on' })}
-                    unCheckedChildren={formatMessage({ id: 'app.notification.off' })}
+                    checkedChildren={formatMessage({ id: 'app.common.on' })}
+                    unCheckedChildren={formatMessage({ id: 'app.common.off' })}
                   />
                 </Form.Item>
               </Col>
@@ -296,9 +296,9 @@ const PathLock = (props) => {
                 <Form.Item
                   noStyle
                   {...formItemLayout}
-                  name={'showTagetLine'}
+                  name={'showTargetLine'}
                   valuePropName={'checked'}
-                  initialValue={routeView?.showTagetLine || false}
+                  initialValue={routeView?.showTargetLine || false}
                 >
                   <Checkbox>
                     <FormattedMessage id="monitor.view.path.targetLine" />

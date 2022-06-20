@@ -1,8 +1,10 @@
 import * as PIXI from 'pixi.js';
-import { CellSize, HeatCircleRadius } from '@/config/consts';
+import { CellSize, CellTypeColor, HeatCircleRadius, TaskPathColor } from '@/config/consts';
+import { NavigationTypeView } from '@/config/config';
 
 const graphics = new PIXI.Graphics();
-export function getQrCodeSelectBorderTexture(renderer, hasBorder) {
+
+function getQrCodeSelectBorderTexture(renderer, hasBorder) {
   graphics.clear();
   hasBorder && graphics.lineStyle(1, 0xff5722, 1);
   graphics.beginFill(0xff5722, 0.5);
@@ -10,7 +12,7 @@ export function getQrCodeSelectBorderTexture(renderer, hasBorder) {
   return renderer.generateTexture(graphics);
 }
 
-export function getIntersectionDirectionTexture(renderer) {
+function getIntersectionDirectionTexture(renderer) {
   graphics.clear();
 
   const length = 250;
@@ -39,34 +41,110 @@ export function getIntersectionDirectionTexture(renderer) {
   return renderer.generateTexture(graphics);
 }
 
-export function getTaskPathTexture(color) {
+function getTaskPathTexture(color, renderer) {
   const distance = 100; // 默认长度是100
   const lineWidth = CellSize.width / 3;
   graphics.clear();
   graphics.lineStyle(lineWidth, color, 1);
   graphics.moveTo(0, 0);
   graphics.lineTo(0, distance);
-  return window.PixiUtils.renderer.generateTexture(graphics, {
+  return renderer.generateTexture(graphics, {
     scaleMode: 1,
     resolution: 2,
     region: new PIXI.Rectangle(-25, 0, 50, distance),
   });
 }
 
-export function getCellHeatTexture(color) {
+function getCellHeatTexture(color, renderer) {
   graphics.clear();
   graphics.lineStyle(1, color, 1);
   graphics.beginFill(color, 1);
   graphics.drawCircle(0, 0, HeatCircleRadius);
-  return window.PixiUtils.renderer.generateTexture(graphics);
+  return renderer.generateTexture(graphics);
 }
 
-export function getVehicleSelectBorderTexture() {
+function getVehicleSelectBorderTexture(renderer) {
   graphics.clear();
   graphics.lineStyle(1, 0xffffff, 1);
   graphics.beginFill(0xffffff, 0.5);
   graphics.drawCircle(0, 0, 500);
-  return window.PixiUtils.renderer.generateTexture(graphics);
+  return renderer.generateTexture(graphics);
+}
+
+// 点圆材质
+export function getCellCircleBodyTexture(brandColor, typeColor, renderer) {
+  graphics.clear();
+  graphics.lineStyle(CellSize.width * 0.4, typeColor, 1);
+  graphics.beginFill(brandColor);
+  graphics.drawCircle(0, 0, CellSize.width / 2);
+  graphics.endFill();
+  return renderer.generateTexture(graphics);
+}
+
+// 加载编辑器额外的自定义Texture
+export function loadEditorExtraTextures(renderer) {
+  return new Promise((resolve) => {
+    // 点位选中的Texture
+    PIXI.Texture.addToCache(
+      getQrCodeSelectBorderTexture(renderer, true),
+      'cellSelectBorderTexture',
+    );
+
+    // 生成点圆素材
+    NavigationTypeView.forEach(({ code, color }) => {
+      Object.keys(CellTypeColor).forEach((type) => {
+        PIXI.Texture.addToCache(
+          getCellCircleBodyTexture(color.replace('#', '0x'), CellTypeColor[type], renderer),
+          `${code}_${type}`,
+        );
+      });
+    });
+
+    // 交汇点
+    // PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
+
+    resolve();
+  });
+}
+
+// 加载监控额外的自定义Texture
+export function loadMonitorExtraTextures(renderer) {
+  return new Promise((resolve) => {
+    // 背景
+    PIXI.Texture.addToCache(getVehicleSelectBorderTexture(renderer), 'vehicleSelectBorderTexture');
+
+    // 生成点圆素材
+    NavigationTypeView.forEach(({ code, color }) => {
+      Object.keys(CellTypeColor).forEach((type) => {
+        PIXI.Texture.addToCache(
+          getCellCircleBodyTexture(color.replace('#', '0x'), CellTypeColor[type], renderer),
+          `${code}_${type}`,
+        );
+      });
+    });
+
+    // 任务路径
+    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.passed, renderer), '_passedTaskPath');
+    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.locked, renderer), '_lockedTaskPath');
+    PIXI.Texture.addToCache(getTaskPathTexture(TaskPathColor.future, renderer), '_futureTaskPath');
+
+    // 点位成本热度
+    PIXI.Texture.addToCache(getCellHeatTexture('0x3366FF', renderer), '_cellHeat1');
+    PIXI.Texture.addToCache(getCellHeatTexture('0x5984C3', renderer), '_cellHeat2');
+    PIXI.Texture.addToCache(getCellHeatTexture('0x7FA387', renderer), '_cellHeat3');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xA5C14B', renderer), '_cellHeat4');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xC9D04B', renderer), '_cellHeat5');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xEEE04B', renderer), '_cellHeat6');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xF4B042', renderer), '_cellHeat7');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xF87636', renderer), '_cellHeat8');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xF03C2B', renderer), '_cellHeat9');
+    PIXI.Texture.addToCache(getCellHeatTexture('0xCF2723', renderer), '_cellHeat10');
+
+    // 交汇点
+    // PIXI.Texture.addToCache(getIntersectionDirectionTexture(renderer), 'intersectionDirection');
+
+    resolve();
+  });
 }
 
 export function loadTexturesForMap() {

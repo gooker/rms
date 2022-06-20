@@ -14,6 +14,7 @@ export default class Charger extends PIXI.Container {
     this.y = props.y;
     this.name = props.name;
     this.angle = props.angle;
+    this.cullable = true;
     this.zIndex = zIndex.functionIcon;
     this.state = props.state;
     this.chargerId = props.chargerId;

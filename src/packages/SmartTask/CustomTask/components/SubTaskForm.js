@@ -9,7 +9,6 @@ import TaskResourceLock from '../FormComponent/TaskResourceLock';
 import ProgramingConfiguer from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
 import TitleCard from '@/components/TitleCard';
-import { OperateType } from '@/components/ProgramingConfiguer/ProgramingConst';
 
 const SubTaskForm = (props) => {
   const { hidden, form, code, type, updateTab, routes, programing, preTasks } = props;
@@ -99,14 +98,13 @@ const SubTaskForm = (props) => {
     form.setFieldsValue(setter);
   }
 
-  function renderActionConfigButton(_namePath, cb) {
+  function renderActionConfigButton(_namePath) {
     const existConfigs = getActionConfig(_namePath);
     if (existConfigs.length === 0) {
       return (
         <Button
           onClick={() => {
             configKeyPointAction(_namePath);
-            typeof cb === 'function' && cb();
           }}
         >
           <Space>
@@ -121,7 +119,6 @@ const SubTaskForm = (props) => {
           <Button
             onClick={() => {
               configKeyPointAction(_namePath);
-              typeof cb === 'function' && cb();
             }}
           >
             <Space>
@@ -335,61 +332,13 @@ const SubTaskForm = (props) => {
       </TitleCard>
 
       {/* 路径函数配置 */}
-      <TitleCard
+      <Form.Item
         hidden={hidden}
-        width={746}
-        title={<FormattedMessage id={'customTask.form.pathProgramming'} />}
+        name={[code, 'pathProgramming']}
+        label={formatMessage({ id: 'customTask.form.pathProgramming' })}
       >
-        <Fragment>
-          {/* 新增动作 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'pathProgramming', OperateType.ADD]}
-            initialValue={null}
-            label={<FormattedMessage id={'customTasks.operationType.add'} />}
-          >
-            {renderActionConfigButton([code, 'pathProgramming', OperateType.ADD], () => {
-              setOperationType(OperateType.ADD);
-            })}
-          </Form.Item>
-
-          {/* 替换动作 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'pathProgramming', OperateType.DELETE]}
-            initialValue={null}
-            label={<FormattedMessage id={'customTasks.operationType.delete'} />}
-          >
-            {renderActionConfigButton([code, 'pathProgramming', OperateType.DELETE], () => {
-              setOperationType(OperateType.DELETE);
-            })}
-          </Form.Item>
-
-          {/* 替换动作 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'pathProgramming', OperateType.UPDATE]}
-            initialValue={null}
-            label={<FormattedMessage id={'customTasks.operationType.update'} />}
-          >
-            {renderActionConfigButton([code, 'pathProgramming', OperateType.UPDATE], () => {
-              setOperationType(OperateType.UPDATE);
-            })}
-          </Form.Item>
-
-          {/* 替换动作参数 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'pathProgramming', OperateType.PARAM]}
-            initialValue={null}
-            label={<FormattedMessage id={'customTasks.operationType.param'} />}
-          >
-            {renderActionConfigButton([code, 'pathProgramming', OperateType.PARAM], () => {
-              setOperationType(OperateType.PARAM);
-            })}
-          </Form.Item>
-        </Fragment>
-      </TitleCard>
+        {renderActionConfigButton([code, 'pathProgramming'])}
+      </Form.Item>
 
       {/* 关键点动作配置 */}
       <TitleCard

@@ -12,6 +12,7 @@ export default class TotePod extends PIXI.Container {
     this.angle = props.angle;
     this.side = props.side;
     this.code = props.code;
+    this.cullable = true;
     this._width = props.width;
     this.depth = props.depth;
     this.disable = props.disable;

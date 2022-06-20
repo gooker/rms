@@ -1,7 +1,13 @@
 /* TODO: I18N */
 import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
+import {
+  DisconnectOutlined,
+  DownloadOutlined,
+  RedoOutlined,
+  RiseOutlined,
+  ScanOutlined,
+} from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { logOutVehicle } from '@/services/resourceService';
 import Dictionary from '@/utils/Dictionary';
@@ -11,7 +17,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import ResourceGroupOperateComponent from '../../component/ResourceGroupOperateComponent';
 import commonStyles from '@/common.module.less';
 
-
+const Colors = Dictionary().color;
 const VehicleListTools = (props) => {
   const { dispatch, allVehicles, selectedRows, allAdaptors, searchParams } = props;
 
@@ -134,7 +140,7 @@ const VehicleListTools = (props) => {
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
-            <DisconnectOutlined /> 注销
+            <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
 
           <ResourceGroupOperateComponent
@@ -173,6 +179,12 @@ const VehicleListTools = (props) => {
           {/*    <FormattedMessage id={'app.vehicle.infoExport'} /> <DownOutlined />*/}
           {/*  </Button>*/}
           {/*</Dropdown>*/}
+          <Button>
+            <RiseOutlined /> <FormattedMessage id="firmware.upgrade" />
+          </Button>
+          <Button>
+            <DownloadOutlined /> <FormattedMessage id="app.logDownload" />
+          </Button>
           <Button
             onClick={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });
@@ -190,7 +202,7 @@ const VehicleListTools = (props) => {
           >
             <ScanOutlined /> <FormattedMessage id="app.vehicle.found" />
             {unregisterVehicles.length > 0 && (
-              <span style={{ marginLeft: 5, color: 'red', fontWeight: 600 }}>
+              <span style={{ marginLeft: 5, color: Colors.red, fontWeight: 600 }}>
                 [{unregisterVehicles.length}]
               </span>
             )}

@@ -1,82 +1,67 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, message, Modal, Row, Select, Spin } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Select, Spin } from 'antd';
 import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { find } from 'lodash';
+import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage, getAllEnvironments } from '@/utils/util';
 import requestAPI from '@/utils/requestAPI';
-import {
-  adjustModalWidth,
-  dealResponse,
-  extractNameSpaceInfoFromEnvs,
-  formatMessage,
-  getAllEnvironments,
-  getCustomEnvironments,
-  getRandomString,
-  isNull,
-} from '@/utils/util';
+import { selectAllDB, updateDB } from '@/utils/IndexDBUtil';
+import { fetchLogin } from '@/services/SSOService';
 import FormattedMessage from '@/components/FormattedMessage';
+import EnvironmentManager from '@/packages/Portal/EnvironmentManger';
 import LoginBackPicture from '@/../public/images/login_pic.png';
 import Logo from '@/../public/images/logoMain.png';
 import styles from './Login.module.less';
-import AddEnvironmentModal from '@/packages/SSO/EnvironmentManger/components/AddEnvironmentModal';
-import { fetchLogin } from '@/services/SSOService';
-import { initI18nInstance } from '@/utils/init';
 
 const Login = (props) => {
   const { history } = props;
 
   const [formRef] = Form.useForm();
-  const [modalRef] = Form.useForm();
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     // 挂载push函数
-    window.history.$$push = history.push;
-    const { allEnvs, activeEnv } = getAllEnvironments();
-    setOptions(allEnvs);
-    formRef.setFieldsValue({ environment: activeEnv });
+    window.RMS.push = history.push;
+    init();
+
+    async function init() {
+      const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
+      setOptions(allEnvs);
+      formRef.setFieldsValue({ environment: activeEnv });
+    }
   }, []);
 
-  function addEnvironment() {
-    modalRef.validateFields().then((value) => {
-      const _options = [...options];
-      _options.push({ ...value, id: getRandomString(10) });
-      window.localStorage.setItem(
-        'customEnvs',
-        JSON.stringify(_options.filter((item) => item.id !== 'default')),
-      );
-      setOptions(_options);
-      setVisible(false);
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
-    });
+  async function updateSelectOptions() {
+    const _options = await selectAllDB(window.dbContext);
+    setOptions(_options);
+    setVisible(false);
   }
 
   async function goLogin() {
     formRef.validateFields().then(async (values) => {
       setLoading(true);
-      if (!isNull(values.environment)) {
-        let active;
-        const customEnvs = getCustomEnvironments().map((item) => {
-          if (item.id === values.environment) {
-            active = { ...item, flag: '1' };
-            return active;
-          } else {
-            return { ...item, flag: '0' };
+      let activeEnv = find(options, { active: true });
+      if (activeEnv.id !== values.environment) {
+        options.forEach((item) => {
+          if (item.id !== 'default') {
+            const dbLoad = { ...item, active: item.id === values.environment };
+            updateDB(window.dbContext, dbLoad);
+            if (dbLoad.active) {
+              activeEnv = dbLoad;
+            }
           }
         });
-        window.localStorage.setItem('customEnvs', JSON.stringify(customEnvs));
-        if (values.environment === 'default') {
-          window.nameSpacesInfo = requestAPI();
-        } else {
-          window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(active);
-        }
+      }
+      if (values.environment === 'default') {
+        window.nameSpacesInfo = requestAPI();
+      } else {
+        window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(activeEnv);
       }
 
       const response = await fetchLogin({ ...values, type: 'admin' });
       if (!dealResponse(response)) {
         window.sessionStorage.setItem('token', response.authorization);
-        setLoading(false);
-        await initI18nInstance();
         history.push('/');
       } else {
         setLoading(false);
@@ -147,7 +132,7 @@ const Login = (props) => {
             <Form.Item>
               {loading ? (
                 <div style={{ width: '100%', textAlign: 'center' }}>
-                  <Spin indicator={<LoadingOutlined spin style={{ color: '#fff' }} />} />
+                  <Spin indicator={<LoadingOutlined spin style={{ color: '#ffffff' }} />} />
                 </div>
               ) : (
                 <Button type="primary" onClick={goLogin} style={{ width: '100%' }}>
@@ -159,18 +144,21 @@ const Login = (props) => {
         </div>
       </div>
 
-      {/*  新增环境配置 */}
+      {/*  环境配置 */}
       <Modal
         destroyOnClose
-        width={adjustModalWidth() * 0.7}
+        width={'60vw'}
         visible={visible}
-        title={<FormattedMessage id="environmentManager.add" />}
-        onOk={addEnvironment}
+        style={{ top: 30 }}
+        maskClosable={false}
+        closable={false}
+        title={<FormattedMessage id='environmentManager.management' />}
+        onOk={updateSelectOptions}
         onCancel={() => {
           setVisible(false);
         }}
       >
-        <AddEnvironmentModal formRef={modalRef} />
+        <EnvironmentManager />
       </Modal>
     </div>
   );

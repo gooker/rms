@@ -3,13 +3,7 @@ import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { isStrictNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import Text from './Text';
-import {
-  zIndex,
-  SelectionType,
-  WorkStationSize,
-  CommonFunctionSize,
-  MapSelectableSpriteType,
-} from '@/config/consts';
+import { CommonFunctionSize, MapSelectableSpriteType, SelectionType, WorkStationSize, zIndex } from '@/config/consts';
 
 export default class WorkStation extends PIXI.Container {
   constructor(props) {
@@ -18,6 +12,7 @@ export default class WorkStation extends PIXI.Container {
     this.$$formData = props.$$formData;
     this.x = props.x;
     this.y = props.y;
+    this.cullable = true;
     this.code = props.station;
     this.icon = props.icon || 'work_station';
     this.name = props.name;

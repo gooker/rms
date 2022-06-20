@@ -40,8 +40,15 @@ export default [
   {
     path: `/${AppCode.SmartTask}/customTask`,
     name: 'customTask',
-    icon: 'customConfig',
+    icon: 'customTask',
     component: '/SmartTask/CustomTask/index',
+    authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+  },
+  {
+    path: `/${AppCode.SmartTask}/quickTask`,
+    name: 'quickTask',
+    icon: 'quickTask',
+    component: '/SmartTask/QuickTask/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
   // {

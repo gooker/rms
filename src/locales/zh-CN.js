@@ -13,7 +13,6 @@ import translator from './zh-CN/Strategy/translator';
 import userManager from './zh-CN/SSO/userManager';
 import sectionManager from './zh-CN/SSO/sectionManager';
 import userLoginHistory from './zh-CN/SSO/userHistory';
-import environmentManager from './zh-CN/SSO/environmentManager';
 import authorizationCenter from './zh-CN/SSO/authorizationCenter';
 import customConfiguration from './zh-CN/SSO/customConfiguration';
 import customTasks from './zh-CN/customTasks';
@@ -43,7 +42,6 @@ export default {
   ...userManager,
   ...sectionManager,
   ...userLoginHistory,
-  ...environmentManager,
   ...authorizationCenter,
   ...customConfiguration,
   ...customTasks,

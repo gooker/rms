@@ -181,8 +181,12 @@ function getWebPackBaseConfig(webpackEnv) {
           {},
           {
             inject: true,
+            hash: true,
             template: paths.appHtml,
             favicon: paths.appFavicon,
+            templateParameters: {
+              isEnvProduction,
+            },
           },
           isEnvProduction
             ? {
@@ -198,8 +202,8 @@ function getWebPackBaseConfig(webpackEnv) {
                   minifyCSS: true,
                   minifyURLs: true,
                 },
-              }
-            : undefined,
+            }
+            : {},
         ),
       ),
     ],

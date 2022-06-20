@@ -464,7 +464,7 @@ class LanguageManage extends React.Component {
                 });
               }}
             >
-              <ImportOutlined /> <FormattedMessage id="app.button.import" />
+              <ImportOutlined /> <FormattedMessage id='app.button.upload' />
             </Button>
 
             <Dropdown
@@ -485,7 +485,7 @@ class LanguageManage extends React.Component {
             >
               <Button icon={<ExportOutlined />}>
                 {' '}
-                <FormattedMessage id="app.button.export" />
+                <FormattedMessage id='app.button.download' />
                 <DownOutlined />
               </Button>
             </Dropdown>

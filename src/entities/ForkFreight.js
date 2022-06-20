@@ -9,6 +9,7 @@ export default class ForkFreight extends PIXI.Container {
     this.y = props.y;
     this.$height = props.height;
     this.$width = props.width;
+    this.cullable = true;
     this.create();
   }
 

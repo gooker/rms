@@ -4,7 +4,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import { CostOptions } from '@/packages/Scene/MapEditor/editorEnums';
 
 const CostCheckBox = (props) => {
-  const { value, onChange, style = {} } = props;
+  const { value, onChange, style = {}, disabled } = props;
   const plainOptions = [10, 20, 100, 1000];
 
   const onCheckAllChange = (e) => {
@@ -19,6 +19,7 @@ const CostCheckBox = (props) => {
     <Row gutter={[0, 14]} style={style}>
       <Col span={24}>
         <Checkbox
+          disabled={disabled}
           indeterminate={value.length !== 4}
           onChange={onCheckAllChange}
           checked={value.length === 4}
@@ -27,7 +28,12 @@ const CostCheckBox = (props) => {
         </Checkbox>
       </Col>
       <Col span={24}>
-        <Checkbox.Group style={{ width: '100%' }} value={value} onChange={onCheckBoxChange}>
+        <Checkbox.Group
+          disabled={disabled}
+          style={{ width: '100%' }}
+          value={value}
+          onChange={onCheckBoxChange}
+        >
           <Row gutter={8}>
             {CostOptions.map(({ value, label }, index) => (
               <Col key={index} span={6}>

@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { getTextureFromResources } from '@/utils/mapUtil';
 import BitText from './BitText';
-import { zIndex, GlobalAlpha } from '@/config/consts';
+import { GlobalAlpha, zIndex } from '@/config/consts';
 
 export default class GroundStorage extends PIXI.Container {
   constructor(props) {
@@ -12,6 +12,7 @@ export default class GroundStorage extends PIXI.Container {
     this.code = props.code;
     this.$height = props.height;
     this.$width = props.width;
+    this.cullable = true;
     this.angle = props.angle || 0;
     this.zIndex = zIndex.functionIcon;
     this.create();

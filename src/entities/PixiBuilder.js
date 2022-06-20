@@ -1,12 +1,13 @@
 import * as PIXI from 'pixi.js';
 import { Viewport } from 'pixi-viewport';
-import { Simple } from 'pixi-cull';
 
 export default class PixiBuilder {
   constructor(width, height, htmlDOM, adaptiveCB) {
     this.width = width;
     this.height = height;
     this.adaptiveCB = adaptiveCB;
+    // 渲染标记
+    this.isNeedRender = true;
 
     // 初始化渲染器
     this.renderer = new PIXI.Renderer({
@@ -34,21 +35,13 @@ export default class PixiBuilder {
 
     const _this = this;
     this.viewport.on('zoomed-end', function () {
-      if (this.scale.x <= 0.4) {
+      if (typeof _this.adaptiveCB === 'function') {
         _this.adaptiveCB();
-      } else {
-        _this.resetZoom();
+        _this.renderer.render(_this.viewport);
       }
-      _this.renderer.render(_this.viewport);
     });
 
-    // 创建cull组件
-    this.cull = new Simple();
-    this.cull.addList(this.viewport.children);
-    this.cull.cull(this.viewport.getVisibleBounds());
-
-    // 渲染标记
-    this.isNeedRender = true;
+    // 配置Ticker
     this.ticker = PIXI.Ticker.shared;
     this.ticker.maxFPS = 24;
     this.ticker.add(this.tickerHandler);
@@ -56,20 +49,10 @@ export default class PixiBuilder {
 
   tickerHandler = () => {
     if (this.isNeedRender || this.viewport.dirty) {
-      if (this.viewport.dirty) {
-        this.cull.cull(this.viewport.getVisibleBounds());
-      }
       this.isNeedRender = false;
       this.viewport.dirty = false;
       this.renderer.render(this.viewport);
     }
-  };
-
-  resetZoom = () => {
-    const { children } = this.viewport;
-    children.forEach((child) => {
-      child.scale.set(1, 1);
-    });
   };
 
   // 手动触发渲染，只更改渲染标记

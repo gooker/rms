@@ -1,19 +1,23 @@
 // 用于保存显示与全局loading标识符
 import { CoordinateType, NavigationType } from '@/config/config';
 
+export const defaultEditorViewConfig = {
+  hideBlock: false, // 是否隐藏不可走点
+  showDistance: false, // 是否显示距离
+  showCoordinate: false, // 是否显示点位坐标
+  showCellsLine: false, // 是否显示点位之间的连线
+  showRelationsDir: [0, 90, 180, 270], // 可见的箭头(方向)
+  shownPriority: [10, 20, 100, 1000], // 可见的箭头(cost)
+  showRelationsCells: [], // 可见的箭头(与点相关)
+  showBackImg: false, // 是否显示背景，包括：线框、Label、图片
+  showEmergencyStop: true, // 是否显示急停区
+};
+
 export default {
   namespace: 'editorView',
 
   state: {
-    mapMode: 'standard',
-    hideBlock: false,
-    showDistance: false,
-    showCoordinate: false,
-    showRelationsDir: [0, 90, 180, 270],
-    shownPriority: [10, 20, 100, 1000],
-    showRelationsCells: [],
-    forceUpdate: {}, // 部分组件需要手动渲染
-    showBackImg: false, // 是否显示背景，包括：线框、Label、图片
+    ...defaultEditorViewConfig,
     mapHistoryVisible: false, // 地图修改历史
     positionVisible: false, // 定位功能弹窗
     shortcutToolVisible: false, // 是否显示便捷操作工具
@@ -22,6 +26,7 @@ export default {
     settingEStop: false, // 绘制区域用于配置地图功能
     saveMapLoading: false, // 保存地图
     activeMapLoading: false, // 激活地图
+    forceUpdate: {}, // 部分组件需要手动渲染
 
     // 地图控制
     mapRotation: 0, // 手动旋转地图

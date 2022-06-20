@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { GlobalAlpha, ElevatorSize, SelectionType, MapSelectableSpriteType } from '@/config/consts';
+import { ElevatorSize, GlobalAlpha, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 
 export default class Elevator extends PIXI.Container {
   constructor(props) {
@@ -11,6 +11,7 @@ export default class Elevator extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
+    this.cullable = true;
 
     this.select = props.select;
     this.selected = false; // 标记是否被选中

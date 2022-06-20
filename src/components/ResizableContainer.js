@@ -16,6 +16,7 @@ export default class ResizableContainer extends PIXI.Container {
   constructor() {
     super();
     this.sortableChildren = true;
+    this.cullable = true;
 
     // 边框线条宽度
     this.borderWidth = 40;

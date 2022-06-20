@@ -12,6 +12,7 @@ export default class DumpBasket extends PIXI.Sprite {
     this.name = name;
     this.height = 100 * 4;
     this.width = 100 * 4;
+    this.cullable = true;
     this.zIndex = zIndex.temporaryLock;
     this.anchor.set(0.5);
     this.addName();

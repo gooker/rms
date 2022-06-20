@@ -6,6 +6,7 @@ export default class TaskPath extends PIXI.Container {
     super();
     this.x = props.startPoint.x;
     this.y = props.startPoint.y;
+    this.cullable = true;
     this.end = props.endPoint;
     this.zIndex = zIndex.line;
     this.$type = props.type;

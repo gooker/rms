@@ -1,11 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Form, Input, DatePicker, Button, Select } from 'antd';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { dealResponse, convertToUserTimezone, isNull, formatMessage } from '@/utils/util';
-import { fetchAppModules } from '@/services/commonService';
-import FormattedMessage from '@/components/FormattedMessage';
 import { saveAs } from 'file-saver';
 import { Parser } from 'json2csv';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { fetchAppModules } from '@/services/commonService';
+import FormattedMessage from '@/components/FormattedMessage';
+import commonStyle from '@/common.module.less';
 
 const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm';
@@ -62,7 +63,7 @@ const LogSearchForm = (props) => {
         value: 'username',
       },
       {
-        label: formatMessage({ id: 'app.activity.modelName' }),
+        label: formatMessage({ id: 'app.configInfo.header.moduleName' }),
         value: 'module',
       },
       {
@@ -111,10 +112,13 @@ const LogSearchForm = (props) => {
   }
 
   return (
-    <Form form={formRef}>
+    <Form form={formRef} className={commonStyle.tableToolLeft}>
       <Row gutter={24}>
-        <Col span={6}>
-          <Form.Item name={'module'} label={<FormattedMessage id="app.activity.modelName" />}>
+        <Col span={8}>
+          <Form.Item
+            name={'module'}
+            label={<FormattedMessage id='app.configInfo.header.moduleName' />}
+          >
             <Select allowClear showSearch>
               {allModules.map((v) => (
                 <Select.Option key={v} value={v}>
@@ -124,32 +128,32 @@ const LogSearchForm = (props) => {
             </Select>
           </Form.Item>
         </Col>
-        <Col span={6}>
-          <Form.Item name={'username'} label={<FormattedMessage id="sso.user" />}>
+        <Col span={8}>
+          <Form.Item name={'username'} label={<FormattedMessage id='sso.user' />}>
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col span={6}>
-          <Form.Item name={'status'} label={<FormattedMessage id="app.common.status" />}>
+        <Col span={8}>
+          <Form.Item name={'status'} label={<FormattedMessage id='app.common.status' />}>
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col span={6}>
-          <Form.Item name={'url'} label={<FormattedMessage id="operation.log.requestURl" />}>
+        <Col span={8}>
+          <Form.Item name={'url'} label={<FormattedMessage id='operation.log.requestURl' />}>
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col span={6}>
-          <Form.Item name={'date'} label={<FormattedMessage id="app.common.creationTime" />}>
+        <Col span={8}>
+          <Form.Item name={'date'} label={<FormattedMessage id='app.common.creationTime' />}>
             <RangePicker format={dateFormat} style={{ width: '100%' }} />
           </Form.Item>
         </Col>
-        <Col span={6}>
-          <Form.Item name={'trackId'} label={<FormattedMessage id="operation.log.trackId" />}>
+        <Col span={8}>
+          <Form.Item name={'trackId'} label={<FormattedMessage id='operation.log.trackId' />}>
             <Input allowClear />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col span={8}>
           <Button type={'primary'} onClick={searchSubmit}>
             <SearchOutlined /> <FormattedMessage id={'app.button.search'} />
           </Button>
@@ -162,7 +166,7 @@ const LogSearchForm = (props) => {
             <ReloadOutlined /> <FormattedMessage id={'app.button.reset'} />
           </Button>
           <Button style={{ marginLeft: 15 }} onClick={exportLogs} disabled={data.length === 0}>
-            <ExportOutlined /> <FormattedMessage id={'app.button.export'} />
+            <ExportOutlined /> <FormattedMessage id={'app.button.download'} />
           </Button>
         </Col>
       </Row>

@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { message, Modal, Result } from 'antd';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo } from '@/services/SSOService';
 import AuthorityPanel from './AuthorityPanel';
 import AuthorityInformation from './AuthorityInformation';
@@ -24,7 +24,7 @@ const AuthorizationCenter = () => {
   async function getAuthorityInformation() {
     setAutoDownloadToken(false);
     const response = await getAuthorityInfo();
-    if (!dealResponse(response)) {
+    if (!isStrictNull(response) && !dealResponse(response)) {
       setAuthorityInfo(response);
     }
   }

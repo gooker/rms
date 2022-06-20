@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { isPlainObject } from 'lodash';
-import { getDomainNameByUrl, isNull, isStandardApiResponse, formatMessage } from '@/utils/util';
+import { formatMessage, getDomainNameByUrl, isNull, isStandardApiResponse } from '@/utils/util';
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
@@ -57,7 +57,7 @@ const errorHandler = (error) => {
     if (netStateMessage) {
       if (status === 401) {
         setTimeout(() => {
-          window.history.$$push('/login');
+          window.RMS.push('/login');
         }, 1500);
       }
       return { code: '-1', data: null, message: netStateMessage };

@@ -37,11 +37,18 @@ export default [
     component: '/SSO/OperationLog/index',
   },
   {
-    path: `/${AppCode.SSO}/accountCenter`, // 个人中心
-    name: 'accountCenter',
-    icon: 'home',
-    component: '/SSO/AccountCenter',
-    authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
+    path: `/${AppCode.SSO}/customConfiguration`, // 定制化配置
+    name: 'customConfiguration',
+    icon: 'customConfig',
+    component: '/SSO/CustomConfiguration',
+    authority: ['ADMIN'],
+  },
+  {
+    path: `/${AppCode.SSO}/customMenuManager`, // 自定义菜单
+    name: 'customMenuManager',
+    icon: 'menu',
+    component: '/SSO/CustomMenuManager',
+    authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
     path: `/${AppCode.SSO}/authorizationCenter`, // 授权中心
@@ -51,25 +58,11 @@ export default [
     authority: ['ADMIN', 'SUPERMANAGER'],
   },
   {
-    path: `/${AppCode.SSO}/customConfiguration`, // 定制化配置
-    name: 'customConfiguration',
-    icon: 'customConfig',
-    component: '/SSO/CustomConfiguration',
-    authority: ['ADMIN'],
-  },
-  {
-    path: `/${AppCode.SSO}/environmentManager`, // 自定义环境
-    name: 'environmentManger',
-    icon: 'ie',
-    component: '/SSO/EnvironmentManger',
-    hooks: ['dev'],
-  },
-  {
-    path: `/${AppCode.SSO}/customMenuManager`, // 自定义菜单
-    name: 'customMenuManager',
-    icon: 'menu',
-    component: '/SSO/CustomMenuManager',
-    authority: ['ADMIN', 'SUPERMANAGER'],
+    path: `/${AppCode.SSO}/accountCenter`, // 个人中心
+    name: 'accountCenter',
+    icon: 'home',
+    component: '/SSO/AccountCenter',
+    authority: ['SUPERMANAGER', 'MANAGER', 'USER'],
   },
   {
     path: `/${AppCode.SSO}/notificationCenter`,
