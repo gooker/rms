@@ -31,6 +31,40 @@ stages:
   - release
   - deploy
 
+# 在南通17服务器打包
+nt17-dev-staging:
+  stage: build
+  tags:
+    - prod_group_nt_node7
+  script:
+    - node -v
+    - npm -v
+    - cnpm install
+    - npm run build
+    - mybuild_date=`date "+%m%d"`
+    - 'mybuild_version="$(cat package.json | grep version | grep -v versions | awk -F: ''{ print $2 }'' | sed ''s/[ ",]//g'')"'
+    # 取版本号的前两位，如 2.7.2 取出后为 2.7
+    - version_prefix=`echo ${mybuild_version}|awk -F. '{print $1"."$2}'`
+    - echo $mybuild_date $mybuild_version ${version_prefix}
+    - mkdir tmp_build
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n" >> version.txt
+    - echo -e "version:$mybuild_version \ngit_sha1:$CI_COMMIT_SHA \ndate:$mybuild_date \n"
+    - cp version.txt dist/
+    - date_time_string=`date "+%Y%m%d%H%M%S"`
+    - tar -zcv -f middle-platform-ui-${mybuild_version}.tar.gz dist/
+#    - sudo -u mushiny rm -rf /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
+#    - sudo -u mushiny mkdir -p /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui
+#    - sudo cp middle-platform-ui-${mybuild_version}.tar.gz /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+#    - sudo cp version.txt /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui/
+#    - sudo sh -c "chown -R mushiny:mushiny /home/mushiny/deployment/${version_prefix}/rms_installation_package/rms3_ui"
+    - sudo cp middle-platform-ui-${mybuild_version}.tar.gz /home/mushiny_middleplatform/middle_platform_ui/
+    - sudo touch /home/mushiny_middleplatform/middle_platform_ui/middle_platform_ui_updated.ok
+    - chmod +x send_message_to_dingdion.sh
+    - ./send_message_to_dingdion.sh
+  only:
+    - /^nt17-dev.*$/
+
+
 # 在南通11服务器打包
 nt11-dev-build-staging:
   stage: build
