@@ -1,20 +1,16 @@
-/*TODO: I18N*/
+
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, AutoComplete, message, Select } from 'antd';
-import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
-import { fetchActiveMap } from '@/services/commonService';
-import {
-  saveResourceGroup,
-  fetchResourceGroup,
-  deleteResourceGroup,
-} from '@/services/resourceService';
-import ResourceGroupPriorityModal from './ResourceGroupPriorityModal';
+import { Modal, Form, AutoComplete, Select } from 'antd';
 import { find } from 'lodash';
+import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
+import { saveResourceGroup, deleteResourceGroup } from '@/services/resourceService';
+import ResourceGroupPriorityModal from './ResourceGroupPriorityModal';
 const { formItemLayout } = getFormLayout(5, 18);
 
 export default function ResourceGroupModal(props) {
-  const { visible, title, groupType, currentType, members, onCancel, onOk } = props;
+  const { visible, title, groupType, currentType, members,allRows, onCancel, onOk } = props;
   const { mapId, groupData } = props;
+  console.log(mapId);
 
   const [groupPriority, setGroupPriority] = useState([]);
   const [updateMembers, setUpdateMembers] = useState([]);
@@ -40,7 +36,7 @@ export default function ResourceGroupModal(props) {
   }
 
   function getMembersFromGroup(groupId) {
-    const { members, priority } = find(groupData, { id: groupId });
+    const { members, priority, code, groupName } = find(groupData, { id: groupId });
     const newPriority = [];
     for (let key in priority) {
       newPriority.push({
@@ -48,6 +44,8 @@ export default function ResourceGroupModal(props) {
         priority: priority[key],
       });
     }
+
+    form.setFieldsValue({ code, groupName });
     setUpdateMembers(members);
     setGroupPriority(newPriority);
   }
@@ -72,13 +70,12 @@ export default function ResourceGroupModal(props) {
   }
 
   async function onEdit(values) {
-    const { ids } = values;
     let newAllPriorityObj = {};
     groupPriority.map(({ id, priority }) => (newAllPriorityObj[id] = priority));
     const params = {
+      ...values,
       mapId,
       groupType,
-      groupId: ids,
       members: updateMembers,
       priority: newAllPriorityObj,
     };
@@ -109,7 +106,7 @@ export default function ResourceGroupModal(props) {
       newAllPriorityObj = { ...group.priority };
     }
     groupPriority.map(({ id, priority }) => (newAllPriorityObj[id] = priority));
-    
+
     const params = {
       ...values,
       mapId,
@@ -144,18 +141,36 @@ export default function ResourceGroupModal(props) {
             />
           </Form.Item>
         )}
+        {currentType === 'edit' && (
+          <>
+            <Form.Item hidden name={'groupName'} />
+            <Form.Item
+              name={'id'}
+              label={formatMessage({ id: 'app.common.groupName' })}
+              rules={[{ required: true }]}
+              getValueFromEvent={(e) => {
+                getMembersFromGroup(e);
+                return e;
+              }}
+            >
+              <Select>
+                {groupData?.map(({ groupName, id }) => (
+                  <Select.Option key={id} value={id}>
+                    {groupName}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          </>
+        )}
 
-        {['deleteGroup', 'edit'].includes(currentType) && (
+        {['deleteGroup'].includes(currentType) && (
           <Form.Item
             name={'ids'}
             label={formatMessage({ id: 'app.common.groupName' })}
             rules={[{ required: true }]}
-            getValueFromEvent={(e) => {
-              getMembersFromGroup(e);
-              return e;
-            }}
           >
-            <Select mode={currentType === 'deleteGroup' ? 'multiple' : ''}>
+            <Select mode={'multiple'}>
               {groupData?.map(({ groupName, id }) => (
                 <Select.Option key={id} value={id}>
                   {groupName}
@@ -166,7 +181,7 @@ export default function ResourceGroupModal(props) {
         )}
       </Form>
       {['add', 'edit'].includes(currentType) && (
-        <ResourceGroupPriorityModal data={groupPriority} onChange={setGroupPriority} />
+        <ResourceGroupPriorityModal data={groupPriority} onChange={setGroupPriority} allRows={allRows} groupType={groupType} />
       )}
     </Modal>
   );

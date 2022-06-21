@@ -11,6 +11,8 @@ export default {
   'resourceGroup.delete':'删除分组',
   'resourceGroup.editPriority':'编辑优先级',
   'resourceGroup.deleteMember':'从组中删除',
+  'resourceGroup.deleteMember.confirm':'是否确定从组中删除?',
+  'resourceGroup.nogrouping':'不存在分组',
 
 
 };

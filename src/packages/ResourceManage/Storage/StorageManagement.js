@@ -9,7 +9,7 @@ import { fetchAllStorage, deleteSelectedStorage } from '@/services/resourceServi
 import SearchStorageComponent from './component/SearchStorageComponent';
 import AddStorageModal from './component/AddStorageModal';
 import commonStyles from '@/common.module.less';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, generateResourceGroups } from '@/utils/util';
 import { allStorageType } from './component/storage';
 import RmsConfirm from '@/components/RmsConfirm';
 import ResourceGroupOperateComponent from '../component/ResourceGroupOperateComponent';
@@ -56,7 +56,14 @@ const StorageManagement = () => {
         return currentType?.label;
       },
     },
-    { title: '分组', dataIndex: 'groups', align: 'center' },
+    {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groupName',
+      align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
+      },
+    },
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',

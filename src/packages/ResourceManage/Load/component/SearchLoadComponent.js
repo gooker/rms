@@ -36,7 +36,7 @@ const SearchLoadComponent = (props) => {
       <Form form={formRef}>
         <Row gutter={24}>
           <Col span={4}>
-            <Form.Item label={'ID'} name={'loadId'}>
+            <Form.Item label={<FormattedMessage id="object.load" />} name={'loadId'}>
               <Input allowClear />
             </Form.Item>
           </Col>

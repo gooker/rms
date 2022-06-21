@@ -19,7 +19,7 @@ import {
   fetchAllLoadSpecification,
   saveLoad,
 } from '@/services/resourceService';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, generateResourceGroups } from '@/utils/util';
 import AddLoadModal from './component/AddLoadModal';
 import SearchLoadComponent from './component/SearchLoadComponent';
 import commonStyles from '@/common.module.less';
@@ -34,7 +34,6 @@ const ContainerManage = () => {
 
   const [simulateVisible, setSimulateVisible] = useState(false);
 
-  const [groupVisible, setGroupVisible] = useState(false);
 
   const [searchParam, setSearchParam] = useState(null);
   const [page, setPage] = useState({
@@ -51,7 +50,7 @@ const ContainerManage = () => {
   }, []);
 
   const columns = [
-    { title: 'ID', dataIndex: 'loadId', align: 'center' },
+    { title: <FormattedMessage id="object.load" />, dataIndex: 'loadId', align: 'center' },
     {
       title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'name',
@@ -79,7 +78,14 @@ const ContainerManage = () => {
       dataIndex: 'cargoStorageSpace',
       align: 'center',
     },
-    { title: '分组', dataIndex: 'groups', align: 'center' },
+    {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groupName',
+      align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
+      },
+    },
     {
       title: <FormattedMessage id="app.common.status" />,
       align: 'center',

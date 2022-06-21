@@ -6,6 +6,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import {
   convertToUserTimezone,
   formatMessage,
+  generateResourceGroups,
   getDirectionLocale,
   getSuffix,
   getVehicleStatusTag,
@@ -103,8 +104,11 @@ const VehicleList = (props) => {
     },
     {
       title: <FormattedMessage id="resourceGroup.grouping" />,
-      dataIndex: 'groups',
+      dataIndex: 'groupName',
       align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
+      },
     },
     {
       title: <FormattedMessage id="app.common.operation" />,

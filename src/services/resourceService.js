@@ -456,7 +456,7 @@ export async function saveResourceGroup(param) {
 
 // 删除组内成员
 export async function deleteResourceGroupMembers(param) {
-  return request(`/${NameSpace.Platform}/resource/addGroupMembers`, {
+  return request(`/${NameSpace.Platform}/resource/deleteGroupMembers`, {
     method: 'POST',
     data: param,
   });

@@ -5,7 +5,7 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAllStrategyList } from '@/services/resourceService';
 import SearchComponent from './SearchComponent';
-import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, generateResourceGroups, isStrictNull } from '@/utils/util';
 import { isNull } from 'lodash';
 import ChargingStrategyComponent from '@/pages/ChargingStrategy/ChargingStrategyComponent';
 
@@ -32,7 +32,14 @@ const ChargingStrategy = () => {
       dataIndex: 'name',
       align: 'center',
     },
-    { title: '分组', dataIndex: 'groups', align: 'center' },
+    {
+        title: <FormattedMessage id="resourceGroup.grouping" />,
+        dataIndex: 'groupName',
+        align: 'center',
+        render: (text, record) => {
+          return generateResourceGroups(record);
+        },
+      },
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',

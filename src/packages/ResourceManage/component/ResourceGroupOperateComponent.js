@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Dropdown, Menu, Row, Col } from 'antd';
+import { Dropdown, Menu, Row, Col, message } from 'antd';
 import { find } from 'lodash';
 import { fetchActiveMap } from '@/services/commonService';
 import { dealResponse, formatMessage } from '@/utils/util';
@@ -20,20 +20,20 @@ function ResourceGroupOperateComponent(props) {
   const [groupData, setGroupData] = useState([]);
 
   useEffect(() => {
-    async function init() {
-      const data = await fetchActiveMap();
-      if (!dealResponse(data)) {
-        setMapId(data?.id);
-        const response = await fetchResourceGroup({ mapId: data?.id });
-        if (!dealResponse(response)) {
-          const currentTypeData = response?.filter((item) => item?.groupType === groupType);
-          setGroupData(currentTypeData);
-        }
-      }
-    }
-
     init();
   }, []);
+
+  async function init() {
+    const data = await fetchActiveMap();
+    if (!dealResponse(data)) {
+      setMapId(data?.id);
+      const response = await fetchResourceGroup({ mapId: data?.id });
+      if (!dealResponse(response)) {
+        const currentTypeData = response?.filter((item) => item?.groupType === groupType);
+        setGroupData(currentTypeData);
+      }
+    }
+  }
 
   function onContextMenu({ key }) {
     let title = '';
@@ -61,13 +61,22 @@ function ResourceGroupOperateComponent(props) {
 
   function onDeleteMember() {
     let allSelectedIds = selectedRows.map(({ id }) => id);
-    let allGroups = selectedRows.map(({ groups }) => groups).flat();
-    allGroups = [...new Set(allGroups)];
+    let allGroups = selectedRows
+      .map(({ resourceGroups }) => resourceGroups)
+      .flat()
+      .filter(Boolean);
+
+    let allGroupIds = [...new Set(allGroups.map(({ id }) => id))];
+
+    if (allGroupIds.length === 0) {
+      message.info(formatMessage({ id: 'resourceGroup.nogrouping' }));
+      return;
+    }
 
     const params = [];
     const _data = [];
-    allGroups.map((name) => {
-      const { id, members } = find(groupData, { groupName: name });
+    allGroupIds.map((item) => {
+      const { id, members, groupName } = find(groupData, { id: item });
       const currentIds = members?.filter((mem) => allSelectedIds.includes(mem));
       params.push({
         groupId: id,
@@ -75,8 +84,8 @@ function ResourceGroupOperateComponent(props) {
       });
       _data.push(
         <Row>
-          <Col>{name}</Col>
-          <Col>{currentIds}</Col>
+          <Col style={{ fontWeight: 700 }}>{groupName} :</Col>
+          <Col>{currentIds?.join(' ,')}</Col>
         </Row>,
       );
     });
@@ -84,14 +93,15 @@ function ResourceGroupOperateComponent(props) {
     RmsConfirm({
       content: (
         <div>
-          <Row>{formatMessage({ id: 'app.message.batchDelete.confirm' })}</Row>
+          <Row>{formatMessage({ id: 'resourceGroup.deleteMember.confirm' })}</Row>
           {_data}
         </div>
       ),
-      onOK: async () => {
-        const response = await deleteResourceGroupMembers();
+      onOk: async () => {
+        const response = await deleteResourceGroupMembers(params);
         if (!dealResponse(response, 1)) {
           onRefresh();
+          init();
         }
       },
     });
@@ -126,8 +136,12 @@ function ResourceGroupOperateComponent(props) {
         mapId={mapId}
         groupData={groupData}
         members={selectedRowKeys}
+        allRows={selectedRows}
         groupType={groupType}
-        onOk={onRefresh}
+        onOk={() => {
+          onRefresh();
+          init();
+        }}
         onCancel={() => {
           setGroupVisible(false);
         }}

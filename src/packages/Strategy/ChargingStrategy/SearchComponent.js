@@ -68,7 +68,7 @@ const SearchComponent = (props) => {
           <ResourceGroupOperateComponent
             selectedRows={selectedRows}
             selectedRowKeys={selectedRowKeys}
-            groupType={'CHARGESTRATEGY'}
+            groupType={'CHARGE_STRATEGY'}
             onRefresh={getData}
           />
 

@@ -7,7 +7,10 @@ import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import {
+  CustomNodeType,
+  CustomNodeTypeFieldMap,
+} from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -1553,4 +1556,10 @@ export function generateVehicleTypeOptions(vehicles) {
       {item}
     </Select.Option>
   ));
+}
+
+export function generateResourceGroups(record) {
+  const resourceGroups = record?.resourceGroups ?? [];
+  const allNames = resourceGroups.map(({ groupName }) => groupName).filter(Boolean);
+  return allNames?.join(' ,');
 }

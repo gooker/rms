@@ -5,7 +5,7 @@ import { Badge, Button, Drawer, Switch, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { dealResponse, formatMessage, getSuffix, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, generateResourceGroups, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
 import { handleleChargers } from '@/services/resourceService';
@@ -73,6 +73,14 @@ const ChargerList = (props) => {
             </Tag>
           );
         }
+      },
+    },
+    {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groupName',
+      align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
       },
     },
     {
