@@ -1,12 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Row, Col, Button } from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  RedoOutlined,
-  PlusOutlined,
-  GroupOutlined,
-} from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
@@ -15,11 +9,10 @@ import { fetchAllStorage, deleteSelectedStorage } from '@/services/resourceServi
 import SearchStorageComponent from './component/SearchStorageComponent';
 import AddStorageModal from './component/AddStorageModal';
 import commonStyles from '@/common.module.less';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, generateResourceGroups } from '@/utils/util';
 import { allStorageType } from './component/storage';
 import RmsConfirm from '@/components/RmsConfirm';
-import ResourceGroupModal from '../component/ResourceGroupModal';
-import DropDownGroupComponent from '../component/DropDownGroupComponent';
+import ResourceGroupOperateComponent from '../component/ResourceGroupOperateComponent';
 import InitStorageModal from './component/InitStorageModal';
 
 const StorageManagement = () => {
@@ -34,10 +27,10 @@ const StorageManagement = () => {
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
   const [updateRecord, setUpdateRecord] = useState(null);
-  const [groupVisible, setGroupVisible] = useState(false);
   const [initVisible, setInitVisible] = useState(false);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     getData();
@@ -63,7 +56,14 @@ const StorageManagement = () => {
         return currentType?.label;
       },
     },
-    { title: '组名编码', dataIndex: 'groups', align: 'center' },
+    {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groupName',
+      align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
+      },
+    },
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',
@@ -138,6 +138,7 @@ const StorageManagement = () => {
       setPage(page);
     }
     setSelectedRowKeys([]);
+    setSelectedRows([]);
     setLoading(false);
   }
 
@@ -150,8 +151,9 @@ const StorageManagement = () => {
     getData(null, pages);
   }
 
-  function rowSelectChange(selectedRowKeys) {
+  function rowSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
   }
 
   return (
@@ -171,11 +173,11 @@ const StorageManagement = () => {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
 
-            <DropDownGroupComponent
-              disabled={selectedRowKeys.length === 0}
-              onAdd={() => {
-                setGroupVisible(true);
-              }}
+            <ResourceGroupOperateComponent
+              selectedRows={selectedRows}
+              selectedRowKeys={selectedRowKeys}
+              groupType={'STORE'}
+              onRefresh={getData}
             />
 
             <Button
@@ -200,7 +202,7 @@ const StorageManagement = () => {
         pagination={{
           current: page.current,
           pageSize: page.size,
-          total: page.total || 0,
+          total: page.totalElements || 0,
         }}
         onChange={handleTableChange}
       />
@@ -211,17 +213,6 @@ const StorageManagement = () => {
         onCancel={onCancel}
         onOk={getData}
         updateRecord={updateRecord}
-      />
-
-      <ResourceGroupModal
-        visible={groupVisible}
-        title={'储位分组'}
-        members={selectedRowKeys}
-        groupType={'STORE'}
-        onOk={getData}
-        onCancel={() => {
-          setGroupVisible(false);
-        }}
       />
 
       {/* 初始化储位 */}

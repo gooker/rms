@@ -1,10 +1,13 @@
 /* TODO: I18N */
-import React, { memo, useEffect } from 'react';
-import { Modal, Form, Select, Input, InputNumber } from 'antd';
-import { isNull, formatMessage, getFormLayout, dealResponse } from '@/utils/util';
-import { simulationLoad } from '@/services/resourceService';
+import React, { memo, useEffect, useState } from 'react';
+import { Modal, Form, Select, Input, InputNumber, AutoComplete } from 'antd';
+import { isNull, formatMessage, getFormLayout, dealResponse, getRandomString } from '@/utils/util';
+import { fetchResourceGroup, simulationLoad } from '@/services/resourceService';
 import AngleSelector from '@/components/AngleSelector';
 import styles from '../load.module.less';
+import FormattedMessage from '@/components/FormattedMessage';
+import { fetchActiveMap } from '@/services/commonService';
+import { find } from 'lodash';
 
 const { formItemLayout } = getFormLayout(5, 16);
 
@@ -12,18 +15,50 @@ function SimulateLoadModal(props) {
   const { visible, onCancel, onOk, updateRecord, allLoadSpec } = props;
   const [formRef] = Form.useForm();
 
+  const [allGroups, setAllGroups] = useState([]);
+
   useEffect(() => {
     if (!visible) {
       formRef.resetFields();
+    } else {
+      init();
     }
   }, [visible]);
+
+  async function init() {
+    const data = await fetchActiveMap();
+    if (!dealResponse(data)) {
+      const response = await fetchResourceGroup({ mapId: data?.id });
+      if (!dealResponse(response)) {
+        setAllGroups(response ?? []);
+      }
+    }
+  }
 
   function onSave() {
     formRef
       .validateFields()
       .then(async (values) => {
-        const response = await simulationLoad({ ...values });
-        if (!dealResponse(response)) {
+        // 处理bindLoadGroupCode/bindStorageGroupCode
+        const { bindLoadGroupName, bindStorageGroupName } = values;
+        const params = { ...values };
+        const loadGroups = allGroups?.filter(({ groupType }) => groupType === 'LOAD');
+        const storageGroups = allGroups?.filter(({ groupType }) => groupType === 'STORE');
+
+        const loadgroup = find(loadGroups, { groupName: bindLoadGroupName });
+        const storagegroup = find(storageGroups, { groupName: bindStorageGroupName });
+
+        params.bindLoadGroupCode = !isNull(loadgroup)
+          ? loadgroup.code
+          : `${bindLoadGroupName}_${getRandomString(6)}`;
+
+        params.bindStorageGroupCode = !isNull(storagegroup)
+          ? storagegroup.code
+          : `${bindStorageGroupName}_${getRandomString(6)}`;
+
+        const response = await simulationLoad({ ...params });
+        if (!dealResponse(response, 1)) {
+          init();
           onCancel();
           onOk();
         }
@@ -139,6 +174,37 @@ function SimulateLoadModal(props) {
               270: formatMessage({ id: 'app.direction.bottomSide' }),
             }}
           />
+        </Form.Item>
+
+        <Form.Item
+          name={'bindLoadGroupName'}
+          label={formatMessage({ id: 'load.group' })}
+          rules={[{ required: true }]}
+        >
+          <AutoComplete
+            options={allGroups
+              ?.filter(({ groupType }) => groupType === 'LOAD')
+              ?.map(({ groupName }) => {
+                return { value: groupName };
+              })}
+            allowClear
+          />
+        </Form.Item>
+
+        <Form.Item
+          name={'bindStorageGroupName'}
+          label={formatMessage({ id: 'storage.group' })}
+          rules={[{ required: true }]}
+        >
+          <Select>
+            {allGroups
+              ?.filter(({ groupType }) => groupType === 'STORE')
+              ?.map(({ groupName, id }) => (
+                <Select.Option key={id} value={groupName}>
+                  {groupName}
+                </Select.Option>
+              ))}
+          </Select>
         </Form.Item>
       </Form>
     </Modal>

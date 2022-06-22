@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState, useEffect } from 'react';
 import { Tabs, Modal, Button, Row, Input, message } from 'antd';
 import ChargingStrategyForm from './ChargingStrategyForm';
@@ -99,7 +98,7 @@ const ChargingStrategyComponent = (props) => {
 
   async function saveChargerStrategy() {
     if (isStrictNull(name)) {
-      message.error('请输入名称');
+      message.error(formatMessage({ id: 'app.requestor.form.name.required' }));
       return;
     }
     const normalData = chargeStrategy.strategyValue?.Normal;

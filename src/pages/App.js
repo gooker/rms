@@ -8,7 +8,7 @@ import requestAPI from '@/utils/requestAPI';
 import { initI18NWithoutRemote } from '@/utils/init';
 import { openDB, selectAllDB } from '@/utils/IndexDBUtil';
 import { extractNameSpaceInfoFromEnvs, formatMessage, getPlateFormType, isNull } from '@/utils/util';
-import { Modal } from '_antd@4.18.3@antd';
+import { Modal } from 'antd';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {

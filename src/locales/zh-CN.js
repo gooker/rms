@@ -23,7 +23,7 @@ import mapMonitor from './zh-CN/Scene/monitor';
 import notification from './zh-CN/SSO/notification';
 import alert from './zh-CN/alarm';
 import latentTotStorage from './zh-CN/Resource/latentToteStorage';
-import containerLock from './zh-CN/Resource/containLock';
+import resource from './zh-CN/Resource/resource';
 import vehicle from './zh-CN/vehicle';
 
 export default {
@@ -52,6 +52,6 @@ export default {
   ...notification,
   ...alert,
   ...latentTotStorage,
-  ...containerLock,
+  ...resource,
   ...vehicle,
 };

@@ -1,7 +1,7 @@
 /* TODO: I18N */
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { DisconnectOutlined, RedoOutlined, ScanOutlined, GroupOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { handleleChargers } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
@@ -9,14 +9,12 @@ import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ChargerStatus } from './chargeConfig';
 import commonStyles from '@/common.module.less';
-import ResourceGroupModal from '../../component/ResourceGroupModal';
+import ResourceGroupOperateComponent from '../../component/ResourceGroupOperateComponent';
 
 const ChargerListTools = (props) => {
   const { onRefresh, dispatch, allChargers, selectedRows, searchParams } = props;
   const unregisterCharges = allChargers.filter((item) => !item.register);
   const registerCharges = allChargers.filter((item) => item.register);
-
-  const [visible, setVisible] = useState(false);
 
   function renderIdFilter() {
     return registerCharges.map(({ chargerId }) => (
@@ -90,18 +88,18 @@ const ChargerListTools = (props) => {
       </Row>
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
-          <Button
-            disabled={selectedRows.length === 0}
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            <GroupOutlined /> 充电桩分组
-          </Button>
-
           <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> 注销
           </Button>
+
+          <ResourceGroupOperateComponent
+            selectedRows={selectedRows}
+            selectedRowKeys={selectedRows.map(({ id }) => id)}
+            groupType={'CHARGER'}
+            onRefresh={() => {
+              dispatch({ type: 'chargerList/fetchInitialData' });
+            }}
+          />
 
           <Button onClick={onRefresh}>
             <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
@@ -124,18 +122,6 @@ const ChargerListTools = (props) => {
           </Button>
         </Col>
       </Row>
-      <ResourceGroupModal
-        visible={visible}
-        title={'充电桩分组'}
-        members={selectedRows.map(({ id }) => id)}
-        groupType={'CHARGER'}
-        onOk={() => {
-          dispatch({ type: 'chargerList/fetchInitialData' });
-        }}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
     </div>
   );
 };

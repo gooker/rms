@@ -7,25 +7,24 @@ import {
   RedoOutlined,
   PlusOutlined,
   DiffOutlined,
-  GroupOutlined,
 } from '@ant-design/icons';
+import { find } from 'lodash';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
+import RmsConfirm from '@/components/RmsConfirm';
 import {
   deleteSelectedLoad,
   fetchAllLoad,
   fetchAllLoadSpecification,
   saveLoad,
 } from '@/services/resourceService';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, generateResourceGroups } from '@/utils/util';
 import AddLoadModal from './component/AddLoadModal';
 import SearchLoadComponent from './component/SearchLoadComponent';
-import ResourceGroupModal from '../component/ResourceGroupModal';
 import commonStyles from '@/common.module.less';
 import SimulateLoadModal from './component/SimulateLoadModal';
-import { find } from 'lodash';
-import RmsConfirm from '@/components/RmsConfirm';
+import ResourceGroupOperateComponent from '../component/ResourceGroupOperateComponent';
 
 const ContainerManage = () => {
   const [allLoadSpec, setAllLoadSpec] = useState([]);
@@ -35,8 +34,6 @@ const ContainerManage = () => {
 
   const [simulateVisible, setSimulateVisible] = useState(false);
 
-  const [groupVisible, setGroupVisible] = useState(false);
-
   const [searchParam, setSearchParam] = useState(null);
   const [page, setPage] = useState({
     currentPage: 1,
@@ -45,18 +42,19 @@ const ContainerManage = () => {
 
   const [updateRecord, setUpdateRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     getData();
   }, []);
 
   const columns = [
-    { title: 'ID', dataIndex: 'loadId', align: 'center' },
-    {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'name',
-      align: 'center',
-    },
+    { title: <FormattedMessage id="object.load" />, dataIndex: 'loadId', align: 'center' },
+    // {
+    //   title: <FormattedMessage id="app.common.name" />,
+    //   dataIndex: 'name',
+    //   align: 'center',
+    // },
 
     {
       title: '载具规格',
@@ -78,6 +76,14 @@ const ContainerManage = () => {
       title: '位置',
       dataIndex: 'cargoStorageSpace',
       align: 'center',
+    },
+    {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groupName',
+      align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
+      },
     },
     {
       title: <FormattedMessage id="app.common.status" />,
@@ -114,7 +120,14 @@ const ContainerManage = () => {
     },
   ];
 
-  const expandColumns = [{ title: '组名', dataIndex: 'groups', align: 'center' }];
+  const expandColumns = [
+    {
+      title: '类型名称',
+      dataIndex: 'loadType_name',
+      align: 'center',
+      render: (text, rec) => rec?.name,
+    },
+  ];
 
   function addSpec() {
     setVisible(true);
@@ -188,6 +201,7 @@ const ContainerManage = () => {
       setAllLoadSpec(specResponse);
     }
     setSelectedRowKeys([]);
+    setSelectedRows([]);
     setLoading(false);
   }
 
@@ -200,8 +214,9 @@ const ContainerManage = () => {
     getData(null, pages);
   }
 
-  function rowSelectChange(selectedRowKeys) {
+  function rowSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
   }
 
   return (
@@ -222,14 +237,12 @@ const ContainerManage = () => {
               <DiffOutlined /> 模拟生成
             </Button>
 
-            <Button
-              disabled={selectedRowKeys.length === 0}
-              onClick={() => {
-                setGroupVisible(true);
-              }}
-            >
-              <GroupOutlined /> 载具分组
-            </Button>
+            <ResourceGroupOperateComponent
+              selectedRows={selectedRows}
+              selectedRowKeys={selectedRowKeys}
+              groupType={'LOAD'}
+              onRefresh={getData}
+            />
 
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteSpec}>
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
@@ -249,7 +262,7 @@ const ContainerManage = () => {
         columns={columns}
         dataSource={dataSource}
         expandColumns={expandColumns}
-        expandColumnsKey={'loadType'}
+        expandColumnsKey={'loadSpecification'}
         loading={loading}
         rowSelection={{ selectedRowKeys, onChange: rowSelectChange }}
         rowKey={(record) => {
@@ -258,7 +271,7 @@ const ContainerManage = () => {
         pagination={{
           current: page.current,
           pageSize: page.size,
-          total: page.total || 0,
+          total: page.totalElements || 0,
         }}
         onChange={handleTableChange}
       />
@@ -280,17 +293,6 @@ const ContainerManage = () => {
         onOk={getData}
         updateRecord={updateRecord}
         allLoadSpec={allLoadSpec}
-      />
-
-      <ResourceGroupModal
-        visible={groupVisible}
-        title={'载具分组'}
-        members={selectedRowKeys}
-        groupType={'LOAD'}
-        onOk={getData}
-        onCancel={() => {
-          setGroupVisible(false);
-        }}
       />
     </TablePageWrapper>
   );

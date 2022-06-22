@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Form, Row, Col, Select, Input, DatePicker, Button } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -36,12 +35,15 @@ const SearchLoadComponent = (props) => {
       <Form form={formRef}>
         <Row gutter={24}>
           <Col span={4}>
-            <Form.Item label={'ID'} name={'loadId'}>
+            <Form.Item label={<FormattedMessage id="object.load" />} name={'loadId'}>
               <Input allowClear />
             </Form.Item>
           </Col>
           <Col span={5}>
-            <Form.Item label={'载具规格'} name="loadSpecificationCode">
+            <Form.Item
+              label={<FormattedMessage id="load.specification" />}
+              name="loadSpecificationCode"
+            >
               <Select allowClear style={{ width: '100%' }}>
                 {allLoadSpec?.map((item) => (
                   <Select.Option key={item?.id} value={item?.code}>

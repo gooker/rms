@@ -363,6 +363,7 @@ export async function deleteLoadSpecification(param) {
   });
 }
 
+
 // 根据载具类型查询所有的载具规格
 export async function fetchLoadSpecificationByType(param) {
   return request(`/${NameSpace.Platform}/load/getLoadSpecificationByLoadType`, {
@@ -453,6 +454,22 @@ export async function saveResourceGroup(param) {
   });
 }
 
+// 删除组内成员
+export async function deleteResourceGroupMembers(param) {
+  return request(`/${NameSpace.Platform}/resource/deleteGroupMembers`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 删除分组
+export async function deleteResourceGroup(param) {
+  return request(`/${NameSpace.Platform}/resource/batchDeleteResourceGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
 //根据mapId查询所有自定义任务资源组
 export async function fetchResourceGroup(param) {
   return request(`/${NameSpace.Platform}/resource/getResourceGroup`, {
@@ -461,4 +478,3 @@ export async function fetchResourceGroup(param) {
   });
 }
 
-//

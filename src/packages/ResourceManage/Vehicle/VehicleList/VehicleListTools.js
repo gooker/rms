@@ -1,10 +1,9 @@
 /* TODO: I18N */
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import {
   DisconnectOutlined,
   DownloadOutlined,
-  GroupOutlined,
   RedoOutlined,
   RiseOutlined,
   ScanOutlined,
@@ -15,7 +14,7 @@ import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
-import ResourceGroupModal from '../../component/ResourceGroupModal';
+import ResourceGroupOperateComponent from '../../component/ResourceGroupOperateComponent';
 import commonStyles from '@/common.module.less';
 
 const Colors = Dictionary().color;
@@ -24,8 +23,6 @@ const VehicleListTools = (props) => {
 
   const registerVehicles = allVehicles.filter((item) => item.register);
   const unregisterVehicles = allVehicles.filter((item) => !item.register);
-
-  const [visible, setVisible] = useState(false);
 
   function renderVehicleIdFilter() {
     return registerVehicles.map(({ vehicleId, vehicleType, id }) => (
@@ -76,10 +73,6 @@ const VehicleListTools = (props) => {
         }
       },
     });
-  }
-
-  async function vehicleGroup() {
-    setVisible(true);
   }
 
   async function exportVehicleHardwareInfo() {
@@ -146,12 +139,19 @@ const VehicleListTools = (props) => {
       </Row>
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
-          <Button disabled={selectedRows.length === 0} onClick={vehicleGroup}>
-            <GroupOutlined /> <FormattedMessage id={'app.common.groupMange'} />
-          </Button>
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
+
+          <ResourceGroupOperateComponent
+            selectedRows={selectedRows}
+            selectedRowKeys={selectedRows.map(({ id }) => id)}
+            groupType={'VEHICLE'}
+            onRefresh={() => {
+              dispatch({ type: 'vehicleList/fetchInitialData' });
+            }}
+          />
+
           {/*<Button disabled={selectedRows.length === 0} onClick={moveOutVehicle}>*/}
           {/*  <ToTopOutlined /> <FormattedMessage id='app.vehicle.moveout' />*/}
           {/*</Button>*/}
@@ -180,17 +180,17 @@ const VehicleListTools = (props) => {
           {/*  </Button>*/}
           {/*</Dropdown>*/}
           <Button>
-            <RiseOutlined /> <FormattedMessage id='firmware.upgrade' />
+            <RiseOutlined /> <FormattedMessage id="firmware.upgrade" />
           </Button>
           <Button>
-            <DownloadOutlined /> <FormattedMessage id='app.logDownload' />
+            <DownloadOutlined /> <FormattedMessage id="app.logDownload" />
           </Button>
           <Button
             onClick={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
         <Col>
@@ -209,18 +209,6 @@ const VehicleListTools = (props) => {
           </Button>
         </Col>
       </Row>
-      <ResourceGroupModal
-        visible={visible}
-        title={<FormattedMessage id={'app.vehicleGroup'} />}
-        members={selectedRows.map(({ id }) => id)}
-        groupType={'VEHICLE'}
-        onOk={() => {
-          dispatch({ type: 'vehicleList/fetchInitialData' });
-        }}
-        onCancel={() => {
-          setVisible(false);
-        }}
-      />
     </div>
   );
 };

@@ -8,7 +8,7 @@ import RmsConfirm from '@/components/RmsConfirm';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
 import { GridResponsive } from '@/config/consts';
 import commonStyles from '@/common.module.less';
-import { Input } from '_antd@4.18.3@antd';
+import { Input } from 'antd';
 
 export default class EnvironmentManger extends Component {
   formRef = React.createRef();

@@ -5,8 +5,13 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAllStrategyList } from '@/services/resourceService';
 import SearchComponent from './SearchComponent';
-import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
-import { isNull } from 'lodash';
+import {
+  dealResponse,
+  formatMessage,
+  generateResourceGroups,
+  isStrictNull,
+  isNull,
+} from '@/utils/util';
 import ChargingStrategyComponent from '@/pages/ChargingStrategy/ChargingStrategyComponent';
 
 const ChargingStrategy = () => {
@@ -16,6 +21,7 @@ const ChargingStrategy = () => {
   const [visible, setVisible] = useState(false);
   const [updateRecord, setUpdateRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     async function init() {
@@ -30,6 +36,14 @@ const ChargingStrategy = () => {
       title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'name',
       align: 'center',
+    },
+    {
+      title: <FormattedMessage id="resourceGroup.grouping" />,
+      dataIndex: 'groupName',
+      align: 'center',
+      render: (text, record) => {
+        return generateResourceGroups(record);
+      },
     },
     {
       title: <FormattedMessage id="app.button.edit" />,
@@ -70,6 +84,8 @@ const ChargingStrategy = () => {
       setAllData(response);
       filterData(response);
     }
+    setSelectedRowKeys([]);
+    setSelectedRows([]);
     setLoading(false);
   }
 
@@ -108,8 +124,9 @@ const ChargingStrategy = () => {
     getData();
   }
 
-  function rowSelectChange(selectedRowKeys) {
+  function rowSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRowKeys(selectedRowKeys);
+    setSelectedRows(selectedRows);
   }
 
   return (
@@ -118,6 +135,7 @@ const ChargingStrategy = () => {
         searchData={filterData}
         data={allData}
         selectedRowKeys={selectedRowKeys}
+        selectedRows={selectedRows}
         addStrage={addStrage}
         getData={getData}
       />
@@ -131,7 +149,7 @@ const ChargingStrategy = () => {
           selectedRowKeys,
           onChange: rowSelectChange,
           getCheckboxProps: (record) => ({
-              disabled:record.isGlobal,
+            disabled: record.isGlobal,
           }),
         }}
         rowKey={(record) => {

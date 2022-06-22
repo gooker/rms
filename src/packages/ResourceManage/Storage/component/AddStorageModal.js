@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Modal, Form, Select, Input } from 'antd';
 import { isNull, formatMessage, getFormLayout, dealResponse, getRandomString } from '@/utils/util';
@@ -57,7 +56,7 @@ function AddStorageModal(props) {
           <Input allowClear />
         </Form.Item>
         <Form.Item
-          label={'储位模版'}
+          label={formatMessage({ id: 'storage.template' })}
           name="storageTempCode"
           rules={[{ required: true }]}
           initialValue={updateRecord?.storageTempCode}
