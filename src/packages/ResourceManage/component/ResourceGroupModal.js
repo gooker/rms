@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Modal, Form, AutoComplete, Select } from 'antd';
 import { find } from 'lodash';
@@ -7,8 +6,16 @@ import { saveResourceGroup, deleteResourceGroup } from '@/services/resourceServi
 import ResourceGroupPriorityModal from './ResourceGroupPriorityModal';
 const { formItemLayout } = getFormLayout(5, 18);
 
+const rowIdMap = {
+  STORE: 'id',
+  LOAD: 'loadId',
+  VEHICLE: 'vehicleId',
+  CHARGER: 'chargerId',
+  CHARGE_STRATEGY: 'code',
+};
+
 export default function ResourceGroupModal(props) {
-  const { visible, title, groupType, currentType, members,allRows, onCancel, onOk } = props;
+  const { visible, title, groupType, currentType, members, allRows, onCancel, onOk } = props;
   const { mapId, groupData } = props;
   console.log(mapId);
 
@@ -26,22 +33,27 @@ export default function ResourceGroupModal(props) {
 
   function getPriority() {
     const newSource = [];
+
     if (currentType === 'add') {
       members?.map((item) => {
-        newSource.push({ id: item, priority: 5 });
+        const currentRow = find(allRows, { item });
+        const memberId = rowIdMap[groupType] && currentRow ? currentRow[rowIdMap[groupType]] : item;
+        newSource.push({ id: item, memberId, priority: 5 });
       });
     }
 
     setGroupPriority(newSource);
   }
 
+  // 编辑
   function getMembersFromGroup(groupId) {
-    const { members, priority, code, groupName } = find(groupData, { id: groupId });
+    const { members, priority = [], code, groupName } = find(groupData, { id: groupId });
     const newPriority = [];
     for (let key in priority) {
       newPriority.push({
         id: key,
-        priority: priority[key],
+        memberId: priority[key].memberId,
+        priority: priority[key].priority,
       });
     }
 
@@ -71,7 +83,13 @@ export default function ResourceGroupModal(props) {
 
   async function onEdit(values) {
     let newAllPriorityObj = {};
-    groupPriority.map(({ id, priority }) => (newAllPriorityObj[id] = priority));
+    groupPriority.map(
+      ({ id, memberId, priority }) =>
+        (newAllPriorityObj[id] = {
+          memberId,
+          priority,
+        }),
+    );
     const params = {
       ...values,
       mapId,
@@ -105,7 +123,13 @@ export default function ResourceGroupModal(props) {
       newMembers = [...new Set([...group.members, ...members])];
       newAllPriorityObj = { ...group.priority };
     }
-    groupPriority.map(({ id, priority }) => (newAllPriorityObj[id] = priority));
+    groupPriority.map(
+      ({ id, memberId, priority }) =>
+        (newAllPriorityObj[id] = {
+          memberId,
+          priority,
+        }),
+    );
 
     const params = {
       ...values,
@@ -181,7 +205,7 @@ export default function ResourceGroupModal(props) {
         )}
       </Form>
       {['add', 'edit'].includes(currentType) && (
-        <ResourceGroupPriorityModal data={groupPriority} onChange={setGroupPriority} allRows={allRows} groupType={groupType} />
+        <ResourceGroupPriorityModal data={groupPriority} onChange={setGroupPriority} />
       )}
     </Modal>
   );

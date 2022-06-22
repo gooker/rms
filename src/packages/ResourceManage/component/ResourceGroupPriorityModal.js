@@ -2,18 +2,9 @@ import React from 'react';
 import { Row, Col, InputNumber } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from './priority.module.less';
-import { find } from 'lodash';
-
-const rowIdMap = {
-  STORE: 'id',
-  LOAD: 'loadId',
-  VEHICLE: 'vehicleId',
-  CHARGER: 'chargerId',
-  CHARGE_STRATEGY: 'code',
-};
 
 export default function ResourceGroupPriorityModal(props) {
-  const { onChange, data, allRows, groupType } = props;
+  const { onChange, data } = props;
   const currentValue = Array.isArray(data) ? [...data] : [];
 
   function onPriorityChange(index, fieldIndex, value) {
@@ -22,11 +13,10 @@ export default function ResourceGroupPriorityModal(props) {
   }
 
   function renderBody() {
-    return currentValue.map(({ id, priority }, index) => {
-      const currentRow = find(allRows, { id });
+    return currentValue.map(({ priority, memberId }, index) => {
       return (
         <Row key={index} className={styles.resourceBodyRow} gutter={10}>
-          <Col span={12}>{rowIdMap[groupType] ? currentRow[rowIdMap[groupType]] : id}</Col>
+          <Col span={12}>{memberId}</Col>
           <Col span={12}>
             <InputNumber
               style={{ width: 130 }}

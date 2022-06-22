@@ -23,6 +23,7 @@ const SearchSpecComponent = (props) => {
               alignItems: 'center',
               justifyContent: 'center',
               lineHeight: 30,
+              height:30,
             }}
           >
             <FunnelPlotOutlined />

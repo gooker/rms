@@ -1,4 +1,3 @@
-/*TODO: I18N*/
 import React, { memo } from 'react';
 import { Form, Row, Col, Button } from 'antd';
 import { DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -14,7 +13,6 @@ const SearchComponent = (props) => {
   const { searchData, selectedRowKeys, selectedRows, addStrage, data, getData } = props;
 
   const [formRef] = Form.useForm();
-
 
   function search() {
     formRef.validateFields().then((value) => {
@@ -64,7 +62,6 @@ const SearchComponent = (props) => {
             <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
           </Button>
 
-
           <ResourceGroupOperateComponent
             selectedRows={selectedRows}
             selectedRowKeys={selectedRowKeys}
@@ -77,7 +74,6 @@ const SearchComponent = (props) => {
           </Button>
         </Col>
       </Row>
-
     </>
   );
 };

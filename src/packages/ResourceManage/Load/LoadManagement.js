@@ -34,7 +34,6 @@ const ContainerManage = () => {
 
   const [simulateVisible, setSimulateVisible] = useState(false);
 
-
   const [searchParam, setSearchParam] = useState(null);
   const [page, setPage] = useState({
     currentPage: 1,
@@ -51,11 +50,11 @@ const ContainerManage = () => {
 
   const columns = [
     { title: <FormattedMessage id="object.load" />, dataIndex: 'loadId', align: 'center' },
-    {
-      title: <FormattedMessage id="app.common.name" />,
-      dataIndex: 'name',
-      align: 'center',
-    },
+    // {
+    //   title: <FormattedMessage id="app.common.name" />,
+    //   dataIndex: 'name',
+    //   align: 'center',
+    // },
 
     {
       title: '载具规格',
@@ -272,7 +271,7 @@ const ContainerManage = () => {
         pagination={{
           current: page.current,
           pageSize: page.size,
-          total: page.total || 0,
+          total: page.totalElements || 0,
         }}
         onChange={handleTableChange}
       />

@@ -202,7 +202,7 @@ const StorageManagement = () => {
         pagination={{
           current: page.current,
           pageSize: page.size,
-          total: page.total || 0,
+          total: page.totalElements || 0,
         }}
         onChange={handleTableChange}
       />

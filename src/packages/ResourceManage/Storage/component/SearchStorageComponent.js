@@ -1,11 +1,9 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Form, Row, Col, Select, Button, Input, DatePicker } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
-import { getFormLayout, convertToUserTimezone } from '@/utils/util';
+import { convertToUserTimezone } from '@/utils/util';
 import { allStorageType } from './storage';
-const { formItemLayout } = getFormLayout(5, 18);
 
 const { RangePicker } = DatePicker;
 const page = {
@@ -49,7 +47,13 @@ const SearchStorageComponent = (props) => {
         </Col>
 
         <Col span={10}>
-          <Form.Item name={'storageTempCode'} label={'储位模版编码'}>
+          <Form.Item name={'id'} label={'ID'}>
+            <Input />
+          </Form.Item>
+        </Col>
+
+        <Col span={10}>
+          <Form.Item name={'storageTempCode'} label={<FormattedMessage id="storage.template" />}>
             <Input />
           </Form.Item>
         </Col>

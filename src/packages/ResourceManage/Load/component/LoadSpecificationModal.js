@@ -62,7 +62,7 @@ function LoadSpecificationModal(props) {
         <Form.Item
           hidden
           name="code"
-          initialValue={updateRecord?.code ?? `Specification_Code_${getRandomString(6)}`}
+          initialValue={updateRecord?.code ?? `Specification_Code_${getRandomString(8)}`}
         />
 
         <Form.Item
