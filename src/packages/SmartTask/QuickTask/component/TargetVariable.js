@@ -4,8 +4,8 @@ import { isSubArray } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 
-const TargetSelector = (props) => {
-  const { form, dataSource, value, onChange } = props;
+const TargetVariable = (props) => {
+  const { dataSource, vehicleSelection, value, onChange } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
   function onTypeChange(_value) {
@@ -24,7 +24,6 @@ const TargetSelector = (props) => {
     if (currentValue.type) {
       // 如果选择的载具，需要与对应的车型进行筛选
       if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type)) {
-        const vehicleSelection = form.getFieldValue(['START', 'robot']);
         // 自动分车或者使用了变量，则不需要筛选
         if (vehicleSelection.type !== 'AUTO') {
           // 获取分车所支持的所有的载具类型
@@ -84,7 +83,7 @@ const TargetSelector = (props) => {
 
   return (
     <div>
-      <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
+      <Select disabled value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
         <Select.Option value={'CELL'}>
           <FormattedMessage id={'app.map.cell'} />
         </Select.Option>
@@ -134,6 +133,6 @@ const TargetSelector = (props) => {
     </div>
   );
 };
-export default connect(({ customTask }) => ({
-  dataSource: customTask.modelParams || {},
-}))(memo(TargetSelector));
+export default connect(({ quickTask }) => ({
+  dataSource: quickTask.modelParam || {},
+}))(memo(TargetVariable));

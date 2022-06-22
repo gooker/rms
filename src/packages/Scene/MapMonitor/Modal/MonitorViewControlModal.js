@@ -44,7 +44,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示地图点位
   function switchCellShown(visible) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { showCellPoint: visible },
     });
     mapContext.switchCellShown(visible, true);
@@ -53,7 +53,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示点位坐标
   function switchCoordinatorShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { showCoordinate: value },
     });
     mapContext.switchCoordinationShown(value, true);
@@ -62,7 +62,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示点的关系线
   function switchCellsLineShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { showCellsLine: value },
     });
     mapContext.switchCellsLineShown(value);
@@ -71,7 +71,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示优先级箭头
   function filterPriorityShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { shownPriority: value },
     });
     mapContext.filterRelations(value);
@@ -80,7 +80,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示距离
   function switchDistanceShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { showDistance: value },
     });
     mapContext.switchDistanceShown(value, false);
@@ -89,7 +89,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示站点实时速率
   function switchStationRealTimeRateShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { stationRealTimeRateView: value },
     });
     switchRatePolling(value);
@@ -99,7 +99,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示地图背景
   function switchBackImageShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { showBackImage: value },
     });
     mapContext.switchBackImgShown(value);
@@ -108,7 +108,7 @@ const MonitorViewControlModal = (props) => {
   // 切换显示急停区
   function switchEmergencyStopShown(value) {
     dispatch({
-      type: 'monitorView/saveState',
+      type: 'monitorView/saveViewState',
       payload: { emergencyAreaShown: value },
     });
     mapContext.emergencyAreaShown(value);

@@ -10,6 +10,8 @@ import './global.less';
 
 window.RMS = {};
 
+// Error boundary: https://github.com/bvaughn/react-error-boundary
+
 // https://github.com/pixijs/graphics-smooth
 settings.LINE_SCALE_MODE = LINE_SCALE_MODE.NONE;
 

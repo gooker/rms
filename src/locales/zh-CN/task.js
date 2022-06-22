@@ -83,7 +83,7 @@ export default {
   'app.taskDetail.chargerId': '充电ID',
   'app.taskDetail.chargingRecord': '充电记录',
   'app.taskDetail.common': '共',
-  'app.taskDetail.createUser': '创建人',
+  'app.taskDetail.createUser': '创建用户',
   'app.taskDetail.endCondition': '结束条件',
   'app.taskDetail.endPower': '结束电量',
   'app.taskDetail.endTime': '结束时间',

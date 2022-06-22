@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, Input, InputNumber, message, Row, Select, Switch, Tag, Tooltip } from 'antd';
-import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { cloneDeep, find, findIndex, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
 import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
@@ -1473,10 +1473,14 @@ export function generateSample({ customStart, customActions, customPreActions },
         targetAction: { loadAngle, target },
       } = subTask;
       preTaskParams[code] = [];
-      preTaskParams[code].push({
-        code: 'loadAngle',
-        param: isNull(loadAngle) ? null : loadAngle,
-      });
+
+      if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
+        preTaskParams[code].push({
+          code: 'loadAngle',
+          param: isNull(loadAngle) ? null : loadAngle,
+        });
+      }
+
       preTaskParams[code].push({
         code: target.type,
         param: target?.code ?? [],
@@ -1493,10 +1497,12 @@ export function generateSample({ customStart, customActions, customPreActions },
         targetAction: { loadAngle, target },
       } = subTask;
       const { index } = find(taskNodes, { code });
-      result.push({
-        code: `step${index}-loadAngle`,
-        param: isNull(loadAngle) ? null : loadAngle,
-      });
+      if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
+        preTaskParams[code]?.push({
+          code: 'loadAngle',
+          param: isNull(loadAngle) ? null : loadAngle,
+        });
+      }
       result.push({
         code: `step${index}-${target.type}`,
         param: target?.code ?? [],
@@ -1506,11 +1512,13 @@ export function generateSample({ customStart, customActions, customPreActions },
       if (Array.isArray(preActionCodes)) {
         preActionCodes.forEach((subTaskCode) => {
           if (!isNull(preTaskParams[subTaskCode])) {
-            preTaskParams[subTaskCode].forEach(({ code, param }) => {
-              result.push({
-                code: `step${index}-${code}`,
-                param,
-              });
+            preTaskParams[subTaskCode].forEach((item) => {
+              const code = `step${index}-${item.code}`;
+              // 注意去重
+              const index2 = findIndex(result, { code });
+              if (index2 === -1) {
+                result.push({ code, param: item.param });
+              }
             });
           }
         });

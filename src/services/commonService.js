@@ -231,7 +231,6 @@ export async function fetchRestoreTask(vehicleType, params) {
   });
 }
 
-
 //// 获取参数模版
 export async function fetchSystemParamFormData(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/formTemplate/getFormTemplate`, {
@@ -506,6 +505,7 @@ export async function saveCustomTask(param) {
     data: param,
   });
 }
+
 // 删除自定义任务
 export async function deleteCustomTasksById(param) {
   return request(`/${NameSpace.Platform}/custom-task/deleteAllCustomTaskByIds`, {
@@ -513,6 +513,15 @@ export async function deleteCustomTasksById(param) {
     data: param,
   });
 }
+
+// 执行自定义任务
+export async function executeCustomTask(param) {
+  return request(`/${NameSpace.Platform}/custom-task/runCustomTask`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
 // 获取业务模型数据
 export async function fetchCustomParamType(param) {
   return request(`/${NameSpace.Platform}/custom-task/getCustomParamType`, {
@@ -520,6 +529,7 @@ export async function fetchCustomParamType(param) {
     data: param,
   });
 }
+
 // 获取业务模型可锁资源
 export async function getFormModelLockResource() {
   return request(`/${NameSpace.Platform}/custom-task/getLockResource`, {

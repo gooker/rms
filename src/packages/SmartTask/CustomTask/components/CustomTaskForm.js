@@ -369,7 +369,7 @@ const CustomTaskForm = (props) => {
             {attachNodeIndex().map((item, index) => {
               if (item.type === CustomNodeType.PLUS) {
                 return (
-                  <div style={{ textAlign: 'center' }}>
+                  <div style={{ textAlign: 'center' }} key={item.code}>
                     <Dropdown arrow overlay={plusMenu} trigger={['click']}>
                       <Button type={'dashed'} style={{ width: '90%', marginTop: 8 }}>
                         <PlusOutlined />

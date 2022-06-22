@@ -13,6 +13,7 @@ import groupManageModel from './groupManageModel';
 import vehicleListModel from './vehicleListModel';
 import equipmentListModel from './equipmentListModel';
 import chargerListModel from './chargerListModel';
+import quickTask from './quickTaskModel';
 
 export default [
   globalModel,
@@ -30,4 +31,5 @@ export default [
   vehicleListModel,
   equipmentListModel,
   chargerListModel,
+  quickTask,
 ];

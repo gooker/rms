@@ -212,7 +212,7 @@ const SubTaskForm = (props) => {
       </Form.Item>
 
       {/* 载具方向 */}
-      {['ROTATION', 'ROTATION_GROUP'].includes(target) ? (
+      {['ROTATE', 'ROTATE_GROUP'].includes(target) ? (
         <Form.Item
           hidden={hidden}
           label={formatMessage({

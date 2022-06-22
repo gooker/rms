@@ -98,10 +98,9 @@ export default {
         ...MonitorViewModelState,
       };
     },
-    saveState(state, action) {
+    saveViewState(state, action) {
       return { ...state, ...action.payload };
     },
-
     savePollingCost(state, action) {
       return {
         ...state,

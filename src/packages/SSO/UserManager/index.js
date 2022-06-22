@@ -306,10 +306,7 @@ class UserManager extends Component {
       userId: selectRow[0].id,
     });
     if (!dealResponse(selectionRes, true)) {
-      this.setState(
-        { sectionAssignVisible: false, selectRow: [], selectRowKey: [] },
-        this.getUserDataList,
-      );
+      this.setState({ sectionAssignVisible: false }, this.getUserDataList);
     }
   };
 
@@ -321,10 +318,7 @@ class UserManager extends Component {
       userId: selectRow[0].id,
     });
     if (!dealResponse(rolesRes, true)) {
-      this.setState(
-        { roleAssignVisible: false, selectRow: [], selectRowKey: [] },
-        this.getUserDataList,
-      );
+      this.setState({ roleAssignVisible: false }, this.getUserDataList);
     }
   };
 

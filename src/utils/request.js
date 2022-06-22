@@ -76,6 +76,10 @@ const errorHandler = (error) => {
   }
 };
 
+/**
+ * @param requestUrl
+ * @param payload {{method:POST|GET,data}}
+ */
 const request = async (requestUrl, payload) => {
   const { data, body, method, headers = {} } = payload;
 

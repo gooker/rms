@@ -1,12 +1,12 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Select, Space } from 'antd';
+import { Col, Row, Select } from 'antd';
 import { find } from 'lodash';
 import { isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 
-const VehicleSelector = (props) => {
+const VehicleVariable = (props) => {
   const { dataSource, value, onChange } = props;
   const currentValue = { ...value }; // {type:xxx, code:[]}
 
@@ -78,63 +78,78 @@ const VehicleSelector = (props) => {
   function renderSecondComponent() {
     switch (currentValue.type) {
       case 'VEHICLE':
-        return (
-          <Space style={{ marginLeft: 10 }}>
-            <Select
-              value={vehicleType}
-              onChange={cascadeFirstChange}
-              style={{ width: 160 }}
-              placeholder={'请选择小车类型'}
-            >
-              {renderCascadeFirstOption()}
-            </Select>
-            <Select
-              mode={'multiple'}
-              onChange={onCodeChange}
-              style={{ width: 300 }}
-              placeholder={'请选择小车'}
-              value={currentValue.code}
-            >
-              {renderCascadeSecondOption()}
-            </Select>
-          </Space>
-        );
-      default:
-        return (
+        return [
           <Select
-            mode="multiple"
+            key={'type'}
+            value={vehicleType}
+            onChange={cascadeFirstChange}
+            style={{ width: 160 }}
+            placeholder={'请选择小车类型'}
+          >
+            {renderCascadeFirstOption()}
+          </Select>,
+          <Select
+            key={'vehicle'}
+            mode={'multiple'}
+            onChange={onCodeChange}
+            placeholder={'请选择小车'}
+            value={currentValue.code}
+          >
+            {renderCascadeSecondOption()}
+          </Select>,
+        ];
+      default:
+        return [
+          <Select
+            key={'vehicleGroup'}
+            mode='multiple'
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ marginLeft: 10, width: 360 }}
           >
             {renderVehicleGroupOptions()}
-          </Select>
-        );
+          </Select>,
+        ];
     }
   }
 
+  const secondComponent = renderSecondComponent();
+  const firstComponent = (
+    <Select disabled value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
+      <Select.Option value={'AUTO'}>
+        <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
+      </Select.Option>
+      <Select.Option value={'VEHICLE'}>
+        <FormattedMessage id={'customTask.form.SPECIFY_Vehicle'} />
+      </Select.Option>
+      <Select.Option value={'VEHICLE_GROUP'}>
+        <FormattedMessage id={'customTask.form.SPECIFY_GROUP'} />
+      </Select.Option>
+    </Select>
+  );
+
+  if (secondComponent.length === 1) {
+    return (
+      <Row gutter={10}>
+        <Col>{firstComponent}</Col>
+        <Col>{secondaryVisible && renderSecondComponent()}</Col>
+      </Row>
+    );
+  }
   return (
     <div>
-      <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
-        <Select.Option value={'AUTO'}>
-          <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
-        </Select.Option>
-        <Select.Option value={'VEHICLE'}>
-          <FormattedMessage id={'customTask.form.SPECIFY_Vehicle'} />
-        </Select.Option>
-        <Select.Option value={'VEHICLE_GROUP'}>
-          <FormattedMessage id={'customTask.form.SPECIFY_GROUP'} />
-        </Select.Option>
-      </Select>
-      {secondaryVisible && renderSecondComponent()}
+      <Row gutter={10}>
+        <Col>{firstComponent}</Col>
+        <Col>{secondComponent[0]}</Col>
+      </Row>
+      <Row style={{ marginTop: 10 }}>{secondComponent[1]}</Row>
     </div>
   );
 };
-export default connect(({ customTask }) => {
+export default connect(({ quickTask }) => {
   const dataSource = { vehicle: [], vehicleGroup: [] };
-  if (customTask.modelParams) {
-    dataSource.vehicle = customTask.modelParams?.VEHICLE ?? [];
-    dataSource.vehicleGroup = customTask.modelParams?.VEHICLE_GROUP ?? [];
+  if (quickTask.modelParam) {
+    dataSource.vehicle = quickTask.modelParam?.VEHICLE ?? [];
+    dataSource.vehicleGroup = quickTask.modelParam?.VEHICLE_GROUP ?? [];
   }
   return { dataSource };
-})(memo(VehicleSelector));
+})(memo(VehicleVariable));

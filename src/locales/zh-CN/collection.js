@@ -21,9 +21,6 @@ export default {
   'environmentManager.url.invalid': 'URL格式不合法',
   'environmentManager.api.invalid': '接口信息不完整',
 
-  // 快接任务
-  'quickTask.share': '分享',
-
   // 固件
   'firmware.upgrade': '固件升级',
 
