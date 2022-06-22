@@ -1,6 +1,7 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
+// ************************* 车辆 ************************* //
 // 获取所有的适配器
 export function fetchAllAdaptor() {
   return request(`/${NameSpace.Platform}/vehicle/findAllAdapter`, {
@@ -36,7 +37,6 @@ export function registerVehicle(param) {
  *1.注册小车:添加发现
  *2.模拟器新增小车
  */
-
 export function findVehicle(param) {
   return request(`/${NameSpace.Platform}/vehicle/findVehicle`, {
     method: 'POST',
@@ -52,8 +52,7 @@ export function logOutVehicle(param) {
   });
 }
 
-/***设备相关接口***/
-
+// ************************* 设备 ************************* //
 // 添加扫描到的设备到系统
 export function addDevice(param) {
   return request(`/${NameSpace.Platform}/device/addToScanList`, {
@@ -205,6 +204,7 @@ export function handleDevice(param) {
   });
 }
 
+// ************************* 充电桩 ************************* //
 // 充电桩适配器类型列表
 export function findChargerAdapter() {
   return request(`/${NameSpace.Platform}/charger/adapterTypes`, {
@@ -243,38 +243,22 @@ export function findCharger(param) {
 }
 
 // 充电桩批量修改（注册/注销/启用禁用）
-export function handleleChargers(param) {
+export function handleChargers(param) {
   return request(`/${NameSpace.Platform}/chargers`, {
     method: 'PUT',
     data: param,
   });
 }
 
-// 资源绑定
-// 保存绑定关系
-export async function fechSaveUnBind(param) {
-  return request(`/${NameSpace.Platform}/custom/saveUnBindGroup`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 删除绑定关系
-export async function deleteUnBindGroup(param) {
-  return request(`/${NameSpace.Platform}/custom/deleteUnBindGroupById`, {
+// ************************* 资源绑定 ************************* //
+// 查询所有的绑定资源
+export async function fetchAllBindableResource() {
+  return request(`/${NameSpace.Platform}/bind/getAllResourceGroupBind`, {
     method: 'GET',
-    data: param,
   });
 }
 
-// 根据mapId查询绑定关系
-export async function getUnBindGroupData(param) {
-  return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
-    method: 'GET',
-    data: param,
-  });
-}
-
+// ************************* 充电策略 ************************* //
 // 充电策略-列表
 export async function fetchAllStrategyList() {
   return request(`/${NameSpace.Platform}/getAllChargingStrategy`, {

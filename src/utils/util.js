@@ -7,10 +7,7 @@ import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import {
-  CustomNodeType,
-  CustomNodeTypeFieldMap,
-} from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
@@ -372,36 +369,12 @@ export function extractNameSpaceInfoFromEnvs(env) {
   return nameSpaceInfoMap;
 }
 
+// 只针对pixi坐标系
 export function getDirByAngle(angle) {
-  if (angle > 315 || angle <= 45) return '0';
-  if (angle > 45 && angle <= 135) return '1';
-  if (angle > 135 && angle <= 225) return '2';
-  if (angle > 225 && angle <= 315) return '3';
-}
-
-/**
- * 将角度数据转化为方向数据
- * @param {*} angle
- * @returns
- */
-export function covertAngle2Direction(angle) {
-  let direction;
-  switch (true) {
-    case (angle >= 0 && angle < 90) || angle === 360:
-      direction = 0;
-      break;
-    case angle >= 90 && angle < 180:
-      direction = 1;
-      break;
-    case angle >= 180 && angle < 270:
-      direction = 2;
-      break;
-    case angle >= 270 && angle < 360:
-      direction = 3;
-      break;
-    default:
-  }
-  return direction;
+  if (angle > 315 || angle <= 45) return 0;
+  if (angle > 45 && angle <= 135) return 1;
+  if (angle > 135 && angle <= 225) return 2;
+  if (angle > 225 && angle <= 315) return 3;
 }
 
 export function isEqual(obj1, obj2) {
@@ -793,14 +766,6 @@ export function getToteLayoutBaseParam(vehicleDirection, side) {
       break;
   }
   return { angle, XBase, YBase, offset, adapte };
-}
-
-export function getURLSearchParam(key) {
-  const vars = {};
-  window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, (m, key, value) => {
-    vars[key] = value;
-  });
-  return vars[key];
 }
 
 // 统一定义故障展示颜色
