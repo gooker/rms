@@ -716,7 +716,7 @@ export default {
           }
         }
         const { x, y } = moveCell(cell, distance, dir);
-        result.cell[cellId] = { ...cell, x, y };
+        result.cell[cellId] = { ...cell, x, y, nx: x, ny: y };
         newCellMap[cellId] = { ...cell, x, y };
       });
       currentMap.cellMap = newCellMap;

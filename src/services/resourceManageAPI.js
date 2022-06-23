@@ -251,10 +251,41 @@ export function handleChargers(param) {
 }
 
 // ************************* 资源绑定 ************************* //
+// 保存绑定关系
+export async function saveBindRelationship(param) {
+  return request(`/${NameSpace.Platform}/bind/saveBindResourceGroup`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 根据绑定的Id删除绑定关系
+export async function deleteBindRelationshipById(id) {
+  return request(`/${NameSpace.Platform}/bind/deleteBindResourceById`, {
+    method: 'GET',
+    data: { id },
+  });
+}
+
 // 查询所有的绑定资源
 export async function fetchAllBindableResource() {
   return request(`/${NameSpace.Platform}/bind/getAllResourceGroupBind`, {
     method: 'GET',
+  });
+}
+
+// 获取绑定组与被绑定组的关系
+export async function fetchBindableResourceMapping() {
+  return request(`/${NameSpace.Platform}/bind/getResourceBindMapping`, {
+    method: 'GET',
+  });
+}
+
+// 根据组获取组资源
+export async function fetchResourceGroupByType(groupType) {
+  return request(`/${NameSpace.Platform}/resource/getResourceGroupByType`, {
+    method: 'GET',
+    data: { groupType },
   });
 }
 

@@ -839,7 +839,6 @@ export const AllAdapters = {
   },
 };
 
-// VEHICLE, SYSTEM, EQUIPMENT
 export const ProgramingConfigurationList = {
   SYSTEM: [
     {
@@ -1508,5 +1507,54 @@ export const VehicleList = [
       lastFullChargeTime: null,
       chargeTimesSinceLastFullCharge: 0,
     },
+  },
+];
+
+// 资源绑定
+export const ChargerGroupResource = [
+  {
+    groupName: '充电桩1',
+    code: 'charger_group1',
+  },
+  {
+    groupName: '充电桩2',
+    code: 'charger_group2',
+  },
+  {
+    groupName: '充电桩3',
+    code: 'charger_group3',
+  },
+];
+
+export const ResourceBindData = [
+  {
+    bindType: 'VEHICLE_TYPE',
+    bindTypeName: '车类型',
+    bindName: '分拣类型',
+    bindCode: 'S_55_D_MUSHINY_SORTER_ADAPTER_T_sorter',
+    resourceTypeName: '充电桩',
+    resourceType: 'CHARGER_GROUP',
+    resourceName: '充电桩1',
+    resourceCode: 'charger_group1',
+  },
+  {
+    bindType: 'VEHICLE_TYPE',
+    bindTypeName: '车类型',
+    bindName: '分拣类型',
+    bindCode: 'S_55_D_MUSHINY_SORTER_ADAPTER_T_sorter',
+    resourceTypeName: '充电桩',
+    resourceType: 'CHARGER_GROUP',
+    resourceName: '充电桩2',
+    resourceCode: 'charger_group2',
+  },
+  {
+    bindType: 'VEHICLE_TYPE',
+    bindTypeName: '车类型',
+    bindName: '分拣类型',
+    bindCode: 'S_55_D_MUSHINY_SORTER_ADAPTER_T_sorter',
+    resourceTypeName: '充电桩',
+    resourceType: 'CHARGER_GROUP',
+    resourceName: '充电桩3',
+    resourceCode: 'charger_group3',
   },
 ];

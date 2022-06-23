@@ -102,8 +102,8 @@ export default {
       if (!dealResponse(response)) {
         window.localStorage.clear();
         window.sessionStorage.clear();
-        window.RMS.push('/login');
       }
+      window.RMS.push('/login');
     },
 
     *fetchUpdateUserCurrentSection({ payload }, { call, put, select }) {
