@@ -9,7 +9,6 @@ export default {
     activeMap: null,
     customTaskList: [],
     modelTypes: null, // 业务模型数据
-    customTypes: {}, // 任务节点类型
   },
 
   effects: {
@@ -59,12 +58,6 @@ export default {
       return {
         ...state,
         modelTypes: payload,
-      };
-    },
-    saveCustomTypes(state, { payload }) {
-      return {
-        ...state,
-        customTypes: payload,
       };
     },
   },
