@@ -2,10 +2,9 @@ import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
 import moment from 'moment';
 import { Button, DatePicker, Form, Input, InputNumber, message, Modal, Radio, Select } from 'antd';
-import { dealResponse, formatMessage, isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
-import { fetchActiveMap } from '@/services/commonService';
 
 const FormItem = Form.Item;
 const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };
@@ -23,7 +22,7 @@ const TaskTriggerModal = (props) => {
   // 编辑变量弹窗
   const [editVaribleVisible, setEditVaribleVisible] = useState(false);
   // 触发器变量(中间值)
-  const [variables, setVariables] = useState(null);
+  const [variables, setVariables] = useState(null); // {code:{}}
   // 是否修改了变量
   const [variablesChanged, setVariablesChanged] = useState(null);
   // 获取变量loading
@@ -33,6 +32,9 @@ const TaskTriggerModal = (props) => {
   useEffect(() => {
     if (isNull(updateItem)) return;
     setEditVariableDisabled(updateItem.variable !== 'fixed');
+    if (updateItem.variable !== 'fixed') {
+      generateVariable(updateItem);
+    }
 
     // 表单绑定数据
     const formItemValues = {};
@@ -61,6 +63,18 @@ const TaskTriggerModal = (props) => {
     form.setFieldsValue(formItemValues);
   }, [updateItem]);
 
+  function generateVariable(record) {
+    const { fixedVariable } = record;
+    const dataMap = {};
+    Object.keys(fixedVariable)?.map((code) => {
+      dataMap[code] = {
+        code,
+        customParams: fixedVariable[code],
+      };
+    });
+    setVariables(dataMap);
+  }
+
   // 点击”编辑变量“时候如果variablesChanged是true就直接使用”variables“数据，否则会手动拉取变量信息
   function editVariable() {
     const param = form.getFieldValue('codes');
@@ -68,7 +82,11 @@ const TaskTriggerModal = (props) => {
     setLoading(true);
     const currentDataBycode = customTaskList?.filter(({ code }) => param.includes(code));
     if (!variablesChanged) {
-      setVariables(currentDataBycode);
+      const dataMap = {};
+      currentDataBycode?.map(({ code, sample }) => {
+        dataMap[code] = sample;
+      });
+      setVariables(dataMap);
     }
     setEditVaribleVisible(true);
     setLoading(false);
@@ -83,7 +101,7 @@ const TaskTriggerModal = (props) => {
     form.validateFields().then(async (values) => {
       // 总下发次数 结束时间 要填一个
       if (isNull(values.endTime) && isNull(values.totalCount)) {
-        message.error(formatMessage({ id: 'taskTrigger.taskTrigger.totaTimes.required' }));
+        message.error(formatMessage({ id: 'taskTrigger.totaTimes.required' }));
         return;
       }
       values.endTime = values.endTime ? values.endTime.format('YYYY-MM-DD HH:mm:ss') : null;
@@ -94,23 +112,32 @@ const TaskTriggerModal = (props) => {
         values.status = 'end'; // 新增默认结束状态 前端or后端默认
       }
 
-      // 判断下 variables 值是否存在，不存在的话要获取下变量信息
-      if (isNull(variables)) {
-        // TODO: 默认的
-        const { codes } = values;
-        const currentDataBycode = customTaskList?.filter(({ code }) => codes.includes(code));
-        values.fixedVariable = currentDataBycode;
-      }
-
-      // 只有变量被编辑了再重新赋值
-      if (variablesChanged) {
-        values.fixedVariable = variables;
-      }
-
       // 如果是随机变量，fixedVariable就为null
       if (values.variable === 'random') {
         values.fixedVariable = null;
+      } else {
+        let dataMap = {};
+        // 判断下 variables 值是否存在，不存在的话要获取下变量信息
+        if (isNull(variables)) {
+          const { codes } = values;
+          const currentDataBycode = customTaskList?.filter(({ code }) => codes.includes(code));
+
+          currentDataBycode?.map(({ code, sample }) => {
+            dataMap[code] = sample?.customParams;
+          });
+        }
+
+        // 只有变量被编辑了再重新赋值
+        if (variablesChanged) {
+          Object.keys(variables)?.map((code) => {
+            dataMap[code] = variables[code]?.customParams;
+          });
+          values.fixedVariable = variables;
+        }
+
+        values.fixedVariable = dataMap;
       }
+
       onSubmit(values);
     });
   }
@@ -241,6 +268,7 @@ const TaskTriggerModal = (props) => {
 
       {/* 编辑变量 */}
       <EditVaribleModal
+        customTaskList={customTaskList}
         data={variables}
         visible={editVaribleVisible}
         onCancel={() => {

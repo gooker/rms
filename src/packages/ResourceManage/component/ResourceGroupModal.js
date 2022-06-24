@@ -17,7 +17,6 @@ const rowIdMap = {
 export default function ResourceGroupModal(props) {
   const { visible, title, groupType, currentType, members, allRows, onCancel, onOk } = props;
   const { mapId, groupData } = props;
-  console.log(mapId);
 
   const [groupPriority, setGroupPriority] = useState([]);
   const [updateMembers, setUpdateMembers] = useState([]);
@@ -136,6 +135,7 @@ export default function ResourceGroupModal(props) {
       mapId,
       groupType,
       id: group?.id,
+      code: group?.code ?? values.code,
       members: newMembers,
       priority: { ...newAllPriorityObj },
     };
