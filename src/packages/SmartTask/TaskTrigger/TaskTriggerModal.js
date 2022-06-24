@@ -5,7 +5,7 @@ import { Button, DatePicker, Form, Input, InputNumber, message, Modal, Radio, Se
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
-import { fetchActiveMap, fetchCstParams, getBackZone } from '@/services/commonService';
+import { fetchActiveMap } from '@/services/commonService';
 
 const FormItem = Form.Item;
 const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };
@@ -28,8 +28,6 @@ const TaskTriggerModal = (props) => {
   const [variablesChanged, setVariablesChanged] = useState(null);
   // 获取变量loading
   const [loading, setLoading] = useState(false);
-  // 获取backzones 结束--返回指定区域
-  const [backZones, setBackZones] = useState([]);
 
   // 该Hook只处理编辑的case
   useEffect(() => {
@@ -63,35 +61,17 @@ const TaskTriggerModal = (props) => {
     form.setFieldsValue(formItemValues);
   }, [updateItem]);
 
-  //
-  useEffect(() => {
-    getBackzones();
-  }, []);
-  async function getBackzones() {
-    const originalMapData = await fetchActiveMap();
-    if (!dealResponse(originalMapData)) {
-      getBackZone({ mapId: originalMapData?.id }).then((response) => {
-        if (!dealResponse(response)) {
-          setBackZones(response);
-        }
-      });
-    }
-  }
-
   // 点击”编辑变量“时候如果variablesChanged是true就直接使用”variables“数据，否则会手动拉取变量信息
   function editVariable() {
     const param = form.getFieldValue('codes');
     if (!Array.isArray(param)) return;
     setLoading(true);
-    fetchCstParams({ id: updateItem?.id || null, codes: param }).then((response) => {
-      if (!dealResponse(response)) {
-        setVariables(response);
-        setEditVaribleVisible(true);
-      } else {
-        message.error(formatMessage({ id: 'app.taskTrigger.fetchCstParamFailed' }));
-      }
-      setLoading(false);
-    });
+    const currentDataBycode = customTaskList?.filter(({ code }) => param.includes(code));
+    if (!variablesChanged) {
+      setVariables(currentDataBycode);
+    }
+    setEditVaribleVisible(true);
+    setLoading(false);
   }
 
   function updateVariable(outVariables) {
@@ -103,7 +83,7 @@ const TaskTriggerModal = (props) => {
     form.validateFields().then(async (values) => {
       // 总下发次数 结束时间 要填一个
       if (isNull(values.endTime) && isNull(values.totalCount)) {
-        message.error(formatMessage({ id: 'app.taskTrigger.totalCountOrendTimeIsNeed' }));
+        message.error(formatMessage({ id: 'taskTrigger.taskTrigger.totaTimes.required' }));
         return;
       }
       values.endTime = values.endTime ? values.endTime.format('YYYY-MM-DD HH:mm:ss') : null;
@@ -116,8 +96,10 @@ const TaskTriggerModal = (props) => {
 
       // 判断下 variables 值是否存在，不存在的话要获取下变量信息
       if (isNull(variables)) {
-        const _variables = await fetchCstParams({ id: null, codes: values.codes });
-        values.fixedVariable = _variables;
+        // TODO: 默认的
+        const { codes } = values;
+        const currentDataBycode = customTaskList?.filter(({ code }) => codes.includes(code));
+        values.fixedVariable = currentDataBycode;
       }
 
       // 只有变量被编辑了再重新赋值
@@ -186,6 +168,7 @@ const TaskTriggerModal = (props) => {
           rules={[{ required: true }]}
           getValueFromEvent={(value) => {
             setVariables(null); // 触发任务变了就清空变量信息
+            setVariablesChanged(null);
             return value;
           }}
         >
@@ -259,7 +242,6 @@ const TaskTriggerModal = (props) => {
       {/* 编辑变量 */}
       <EditVaribleModal
         data={variables}
-        backZones={backZones}
         visible={editVaribleVisible}
         onCancel={() => {
           setEditVaribleVisible(false);

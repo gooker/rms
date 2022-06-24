@@ -537,21 +537,8 @@ export async function getFormModelLockResource() {
   });
 }
 
-// 获取小车返回指定的区域集合
-export async function getBackZone(param) {
-  return request(`/${NameSpace.Platform}/vehicle-custom-task/getBackZone`, {
-    method: 'GET',
-    data: param,
-  });
-}
 
-// 获取自定义任务可配置参数
-export async function fetchCstParams(param) {
-  return request(`/${NameSpace.Platform}/custom-task/getFixedVariable`, {
-    method: 'POST',
-    data: param,
-  });
-}
+
 
 // ********************** 任务限流器  ********************** //
 // 任务类型限流

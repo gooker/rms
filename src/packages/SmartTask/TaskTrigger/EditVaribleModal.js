@@ -3,16 +3,36 @@ import { connect } from '@/utils/RmsDva';
 import find from 'lodash/find';
 import groupBy from 'lodash/groupBy';
 import cloneDeep from 'lodash/cloneDeep';
-import isPlainObject from 'lodash/isPlainObject';
-import { Button, Card, Col, Divider, Form, Modal, Row, Select } from 'antd';
-import { ClearOutlined, DeleteOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import {
+  Button,
+  Card,
+  Checkbox,
+  Col,
+  Divider,
+  Form,
+  InputNumber,
+  Modal,
+  Row,
+  Select,
+  Switch,
+} from 'antd';
+import {
+  ClearOutlined,
+  DeleteOutlined,
+  MinusCircleOutlined,
+  MinusOutlined,
+  PlusOutlined,
+} from '@ant-design/icons';
 import VehicleSelector from '../CustomTask/components/VehicleSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
-import ModelSelection from '../CustomTask/FormComponent/ModelSelection';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import VehicleVariable from '../QuickTask/component/VehicleVariable';
+import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
+import { getInitialTaskSteps } from '../CustomTask/customTaskUtil';
 import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../CustomTask/customTask.module.less';
+import { forIn } from 'lodash';
 
 const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
 const NoLabelFormLayout = { wrapperCol: { offset: 4, span: 20 } };
@@ -31,198 +51,235 @@ Object.keys(CustomNodeTypeFieldMap).forEach((key) => {
 });
 
 const EditVaribleModal = (props) => {
-  const { data, customTaskList, modelTypes, customTypes, visible, onCancel, onSubmit, backZones } =
-    props;
+  const { data, modelTypes, customTypes, visible, onCancel, onSubmit } = props;
 
   const [form] = Form.useForm();
 
-  function validateTarget(_, value) {
-    if (!value || !isNull(value.type)) {
+  function validateVehicle(_, value) {
+    if (value.type === 'AUTO') {
       return Promise.resolve();
+    } else {
+      if (value.code.length > 0) {
+        return Promise.resolve();
+      }
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.vehicle' })));
     }
-    return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
+  }
+
+  function validateTarget(_, value) {
+    if (isNull(value)) {
+      return Promise.reject(new Error(formatMessage({ id: 'customTask.require.target' })));
+    }
+    return Promise.resolve();
   }
 
   function renderPanelContent(taskCode, content) {
+    const initialTaskSteps = getInitialTaskSteps();
     const body = [];
     // 目标点(target)一定存在, 分车和货架角度可能不存在
     // 数据转换: 因为目标点和货架角度都属于同一个子任务类型
-    let customStart = null;
-    let customEnd = null;
-    const customActions = [];
-    content.forEach((item) => {
-      if (item.taskType === 'customStart') {
-        customStart = item;
-      } else if (item.taskType === 'customEnd') {
-        customEnd = item;
-      } else {
-        customActions.push(item);
-      }
-    });
-    const groupCustomActions = groupBy(customActions, 'index');
+    let { customStart, customActions, customEnd } = content;
 
     // 渲染"任务开始"
     if (customStart) {
-      const { type, code } = customStart.resources[0];
+      const field = 'robot';
+      const { customType, robot } = customStart;
+
+      const currentSteps = find(initialTaskSteps, { type: customType });
       body.push(
         <Divider key={'customStart'} orientation="left">
-          {customTypes[reversedModelTypeFieldMap[customStart.taskType]]}
+          {currentSteps?.label ?? customType}
         </Divider>,
       );
       body.push(
         // 分车
         <Form.Item
           {...formItemLayout}
-          key={`${taskCode}@@${customStart.field}`}
-          name={`${taskCode}@@${customStart.field}`}
-          initialValue={{ type, code }}
-          label={<FormattedMessage id="customTasks.form.vehicle" />}
+          key={`${taskCode}@@${field}`}
+          name={`${taskCode}@@${field}`}
+          initialValue={{ type: robot?.type ?? 'AUTO', code: robot?.code ?? [] }}
+          label={<FormattedMessage id="customTask.form.vehicle" />}
+          rules={[{ validator: validateVehicle }]}
         >
-          <VehicleSelector form={form} subTaskCode={code} />
+          <VehicleVariable />
+          {/* <VehicleSelector /> */}
         </Form.Item>,
       );
     }
 
-    // 渲染"动作与路径"
-    Object.keys(groupCustomActions).forEach((order, index, list) => {
-      const groupValue = groupCustomActions[order];
-      const showIndex = list.length > 1;
+    // 渲染"子任务“
+    Object.keys(customActions).forEach((task, index) => {
+      const { code, name, targetAction = {} } = customActions[task];
+
+      let specifyLoadAngle = isNull(targetAction?.operatorAngle);
+      const field = 'targetAction';
+      const order = 'target';
+      const order1 = 'loadAngle';
+
       body.push(
-        <Divider orientation="left" key={order}>
-          {`${customTypes[reversedModelTypeFieldMap.customActions]}${
-            showIndex ? `[${order}]` : ''
-          }`}
+        <Divider orientation="left" key={index}>
+          {name ?? formatMessage({ id: 'customTask.type.ACTION' })}
         </Divider>,
       );
-      groupValue.forEach((groupItem) => {
-        if (groupItem.field === 'target') {
-          const { type, code } = groupItem.resources[0];
-          body.push(
+      body.push(
+        <>
+          <Form.Item
+            {...formItemLayout}
+            key={`${taskCode}@@${code}@@${field}@@${order}`}
+            name={`${taskCode}@@${code}@@${field}@@${order}`}
+            // initialValue={{
+            //   type: targetAction?.target?.type,
+            //   code: targetAction?.target?.code ?? [],
+            // }}
+            initialValue={targetAction?.target}
+            label={formatMessage({ id: 'customTask.form.target' })}
+            rules={[{ validator: validateTarget }]}
+            getValueFromEvent={(value) => {
+              // return value.type;
+            }}
+          >
+            <TargetSelector form={form} />
+          </Form.Item>
+          {['ROTATE', 'ROTATE_GROUP'].includes(targetAction?.target?.type) && (
             <Form.Item
               {...formItemLayout}
-              key={`${taskCode}@@${groupItem.field}@@${order}`}
-              name={`${taskCode}@@${groupItem.field}@@${order}`}
-              label={formatMessage({ id: 'app.form.target' })}
-              initialValue={{ type, code }}
-              rules={[{ validator: validateTarget }]}
+              label={formatMessage({
+                id: specifyLoadAngle ? 'customTask.form.podAngle' : 'customTask.form.podSide',
+              })}
             >
-              <ModelSelection
-                modelTypes={modelTypes}
-                exclude={['VEHICLE', 'VEHICLE_GROUP']}
-                disabled={false}
-              />
-            </Form.Item>,
-          );
-        }
-        if (groupItem.field === 'podAngle') {
-          // pod特殊 没有resources
-          body.push(
-            <Form.Item
-              {...formItemLayout}
-              key={`${taskCode}@@${groupItem.field}@@${order}`}
-              name={`${taskCode}@@${groupItem.field}@@${order}`}
-              initialValue={groupItem.value}
-              label={formatMessage({ id: 'app.pod.direction' })}
-            >
-              {/* <AngleSelector
-                getAngle
-                width={220}
-                addonLabel={{
-                  0: formatMessage({ id: 'app.pod.side.A' }),
-                  90: formatMessage({ id: 'app.pod.side.B' }),
-                  180: formatMessage({ id: 'app.pod.side.C' }),
-                  270: formatMessage({ id: 'app.pod.side.D' }),
-                }}
-              /> */}
-              <Select style={{ width: 220 }} mode="multiple" allowClear>
-                <Option value={'0'}>
-                  <FormattedMessage id="app.pod.side.A" />
-                </Option>
-                <Option value={'90'}>
-                  <FormattedMessage id="app.pod.side.B" />
-                </Option>
-                <Option value={'180'}>
-                  <FormattedMessage id="app.pod.side.C" />
-                </Option>
-                <Option value={'270'}>
-                  <FormattedMessage id="app.pod.side.D" />
-                </Option>
-              </Select>
-            </Form.Item>,
-          );
-        }
-      });
+              <Row gutter={16}>
+                <Col>
+                  <Form.Item
+                    noStyle
+                    name={`${taskCode}@@${code}@@${field}@@${order1}`}
+                    initialValue={targetAction?.loadAngle}
+                  >
+                    {specifyLoadAngle ? (
+                      <InputNumber addonAfter="°" />
+                    ) : (
+                      <Select style={{ width: 207 }}>
+                        <Select.Option value={0}>
+                          <FormattedMessage id={'app.pod.side.A'} />
+                        </Select.Option>
+                        <Select.Option value={90}>
+                          <FormattedMessage id={'app.pod.side.B'} />
+                        </Select.Option>
+                        <Select.Option value={180}>
+                          <FormattedMessage id={'app.pod.side.C'} />
+                        </Select.Option>
+                        <Select.Option value={270}>
+                          <FormattedMessage id={'app.pod.side.D'} />
+                        </Select.Option>
+                      </Select>
+                    )}
+                  </Form.Item>
+                </Col>
+                <Col style={{ display: 'flex', alignItems: 'center' }}>
+                  <Checkbox
+                    checked={specifyLoadAngle}
+                    disabled
+                    // onChange={(evt) => {
+                    //   setSpecifyLoadAngle(evt.target.checked)
+                    // }}
+                  >
+                    指定角度
+                  </Checkbox>
+                </Col>
+              </Row>
+            </Form.Item>
+          )}
+        </>,
+      );
     });
 
-    // 渲染 结束
     // 渲染任务结束
     if (customEnd) {
+      const { backZone, heavyBackZone, vehicleNeedCharge, customType, code } = customEnd;
+
+      const field = 'heavyBackZone';
+      const field1 = 'backZone';
+      const field2 = 'vehicleNeedCharge';
+      const currentSteps = find(initialTaskSteps, { type: customType });
+
       body.push(
         <Divider key={'customEnd'} orientation="left">
-          {customTypes[reversedModelTypeFieldMap[customEnd.taskType]]}
+          {currentSteps?.label ?? customType}
         </Divider>,
       );
       body.push(
-        // 无任务返回区域
-        <Form.List
-          name={[`${taskCode}@@${customEnd.field}`, 'resources']}
-          initialValue={customEnd.resources}
-        >
-          {(fields, { add, remove }) => (
-            <>
-              {fields.map((field, index) => (
-                <div
-                  key={field.key}
-                  className={index !== 0 ? styles.editVaribleNoLabel : undefined}
-                >
-                  <Form.Item
-                    {...(index === 0 ? formItemLayout : NoLabelFormLayout)}
-                    label={index === 0 ? formatMessage({ id: 'customTasks.form.backZone' }) : null}
-                  >
-                    <Row gutter={10}>
-                      <Col>
+        <>
+          {/* 重车返回区域 */}
+          <Form.Item
+            {...formItemLayout}
+            label={formatMessage({ id: 'customTask.form.heavyBackZone' })}
+          >
+            <Form.List
+              name={[`${taskCode}@@${field}`, 'heavyBackZone']}
+              initialValue={heavyBackZone}
+            >
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map((field, index) => (
+                    <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
+                      <Col span={22}>
                         <Form.Item noStyle {...field}>
-                          <BackZoneSelector />
+                          <BackZoneSelector divstyle={{ display: 'flex' }} />
                         </Form.Item>
                       </Col>
-                      <Col style={{ display: 'flex', alignItems: 'center' }}>
-                        {fields.length > 1 ? (
-                          // <Button  style={DynamicButton}>
-                          <MinusCircleOutlined onClick={() => remove(field.name)} />
-                        ) : // </Button>
-                        null}
+                      {/* style={{ display: 'flex', alignItems: 'center' }} */}
+                      <Col span={2}>
+                        <Button onClick={() => remove(field.name)} style={DynamicButton}>
+                          <MinusOutlined />
+                        </Button>
                       </Col>
-                      {index === 0 && (
-                        <Col style={{ display: 'flex', alignItems: 'center' }}>
-                          <ClearOutlined
-                            style={{ fontSize: 16 }}
-                            onClick={(ev) => {
-                              if (!ev.target.checked) {
-                                for (let loopIndex = fields.length; loopIndex > 0; loopIndex--) {
-                                  remove(loopIndex);
-                                }
-                              }
-                            }}
-                          />
-                        </Col>
-                      )}
                     </Row>
-                  </Form.Item>
-                </div>
-              ))}
-              <Form.Item style={{ paddingLeft: 100 }}>
-                <Button
-                  type="dashed"
-                  onClick={() => add()}
-                  className={DynamicButton}
-                  style={{ width: 460 }}
-                >
-                  <DeleteOutlined />
-                </Button>
-              </Form.Item>
-            </>
-          )}
-        </Form.List>,
+                  ))}
+                  <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
+                    <PlusOutlined />
+                  </Button>
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
+
+          {/* 返回区域 */}
+          <Form.Item {...formItemLayout} label={formatMessage({ id: 'customTask.form.backZone' })}>
+            <Form.List name={[`${taskCode}@@${field1}`, 'backZone']} initialValue={backZone}>
+              {(fields, { add, remove }) => (
+                <>
+                  {fields.map((field, index) => (
+                    <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
+                      <Col span={22}>
+                        <Form.Item noStyle {...field}>
+                          <BackZoneSelector divstyle={{ display: 'flex' }} />
+                        </Form.Item>
+                      </Col>
+                      <Col span={2}>
+                        <Button onClick={() => remove(field.name)} style={DynamicButton}>
+                          <MinusOutlined />
+                        </Button>
+                      </Col>
+                    </Row>
+                  ))}
+                  <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
+                    <PlusOutlined />
+                  </Button>
+                </>
+              )}
+            </Form.List>
+          </Form.Item>
+
+          {/* 自动充电 */}
+          <Form.Item
+            {...formItemLayout}
+            name={[`${taskCode}@@${field2}`, 'heavyBackZone']}
+            initialValue={vehicleNeedCharge}
+            valuePropName={'checked'}
+            label={formatMessage({ id: 'customTask.form.vehicleNeedCharge' })}
+          >
+            <Switch />
+          </Form.Item>
+        </>,
       );
     }
 
@@ -233,34 +290,32 @@ const EditVaribleModal = (props) => {
     form.validateFields().then((values) => {
       // 用value的值替换data对应的值并返回
       const response = cloneDeep(data); // 深度克隆
-      Object.keys(response).forEach((taskCode) => {
-        const variables = response[taskCode];
-        variables.forEach((variable) => {
-          const fieldValue =
-            values[
-              `${taskCode}@@${variable.field}${isNull(variable.index) ? '' : `@@${variable.index}`}`
-            ];
+      response?.forEach((customTask) => {
+        const { code, ...variables } = customTask;
 
-          // 货架方向是一个简单的数字 多选
-          if (variable.field === 'podAngle') {
-            variable.type = 'podAngle';
-            variable.value = fieldValue;
-          } else if (variable.field === 'customEnd') {
-            variable.type = null;
-            variable.value = null;
-            variable.resources = fieldValue.resources;
-          } else {
-            variable.type = null;
-            variable.value = null;
-            variable.resources = [
-              {
-                type: fieldValue?.type,
-                code: fieldValue?.code,
-              },
-            ];
+        // start
+        const customStartValue = values[`${code}@@robot`];
+        if (customStartValue.type !== 'AUTO') {
+          variables.customStart.robot = customStartValue;
+        }
+
+        //end
+        variables.customStart.backZone = values[`${code}@@backZone`];
+        variables.customStart.heavyBackZone = values[`${code}@@heavyBackZone`];
+
+        //action
+        const { customActions } = variables;
+        forIn(values, (value, key) => {
+          if (key.indexOf(code) > -1 && key.indexOf('targetAction') > -1) {
+            const actionCode = key.split('@@')[1];
+            customActions[actionCode].targetAction.loadAngle =
+              values[`${code}@@${actionCode}@@targetAction@@loadAngle`];
+            customActions[actionCode].targetAction.target =
+              values[`${code}@@${actionCode}@@targetAction@@target`];
           }
         });
       });
+      console.log(response);
       onSubmit(response);
     });
   }
@@ -275,15 +330,15 @@ const EditVaribleModal = (props) => {
       onCancel={onCancel}
       onOk={submit}
       okText={formatMessage({ id: 'app.button.update' })}
-      title={formatMessage({ id: 'app.taskTrigger.editVariable' })}
+      title={formatMessage({ id: 'taskTrigger.editVariable' })}
     >
-      <Form form={form}>
-        {isPlainObject(data) &&
-          Object.keys(data).map((code) => {
-            const customTask = find(customTaskList, { code });
+      <Form form={form} labelWrap>
+        {Array.isArray(data) &&
+          data.map(({ code, ...customTask }) => {
             return (
               <Card hoverable key={code} title={customTask.name} style={{ marginTop: 13 }}>
-                {renderPanelContent(code, data[code])}
+                {renderPanelContent(code, customTask)}
+                {/* <Form.Item hidden key={`${code}`} name={`customCode`} initialValue={code} /> */}
               </Card>
             );
           })}
@@ -294,5 +349,4 @@ const EditVaribleModal = (props) => {
 export default connect(({ taskTriger }) => ({
   modelTypes: taskTriger.modelTypes,
   customTypes: taskTriger.customTypes,
-  customTaskList: taskTriger.customTaskList,
 }))(memo(EditVaribleModal));

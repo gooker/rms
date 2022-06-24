@@ -25,7 +25,12 @@ function LoadSpecificationModal(props) {
   }, [visible]);
 
   function validateDuplicateName(_, value) {
-    const existNames = allData?.map(({ name }) => name);
+    let currentAllData = [...allData];
+
+    if (!isNull(updateRecord)) {
+      currentAllData = currentAllData.filter(({ id }) => id !== updateRecord.id);
+    }
+    const existNames = currentAllData?.map(({ name }) => name);
     if (!value || !existNames.includes(value)) {
       return Promise.resolve();
     }
