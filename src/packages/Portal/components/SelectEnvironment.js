@@ -7,17 +7,20 @@ import styles from './Header.module.less';
 
 const SelectEnvironment = () => {
   const [envName, setEnvName] = useState(null);
+  const [allEnvironments, setAllEnvironments] = useState([]);
 
   useEffect(() => {
     async function getActiveEnvName() {
       const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
       const env = find(allEnvs, { id: activeEnv });
       setEnvName(env?.envName);
+      setAllEnvironments(allEnvs);
     }
 
     getActiveEnvName();
   }, []);
 
+  if (allEnvironments.length <= 1) return null;
   return (
     <Tooltip title={envName} color={'#ffffff'} overlayInnerStyle={{ color: '#000000' }}>
       <span className={styles.action}>
