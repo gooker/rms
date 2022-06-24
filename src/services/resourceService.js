@@ -363,7 +363,6 @@ export async function deleteLoadSpecification(param) {
   });
 }
 
-
 // 根据载具类型查询所有的载具规格
 export async function fetchLoadSpecificationByType(param) {
   return request(`/${NameSpace.Platform}/load/getLoadSpecificationByLoadType`, {
@@ -372,11 +371,18 @@ export async function fetchLoadSpecificationByType(param) {
   });
 }
 
-// 获取所有载具
+// 获取所有载具（分页）
 export async function fetchAllLoad(param) {
   return request(`/${NameSpace.Platform}/load/getAllLoad`, {
     method: 'POST',
     data: param,
+  });
+}
+
+// 获取所有载具 地图加载用 不分页
+export async function fetchLoadList() {
+  return request(`/${NameSpace.Platform}/load/getAllLoadForMap`, {
+    method: 'GET',
   });
 }
 
@@ -477,4 +483,3 @@ export async function fetchResourceGroup(param) {
     data: param,
   });
 }
-

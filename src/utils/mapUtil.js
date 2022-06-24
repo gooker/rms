@@ -1379,6 +1379,21 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
     });
   });
 
+  // 货架状态更新
+
+  socketClient.registerLoadStatus((data) => {
+    [data]?.map((item) => {
+      // 潜伏式车状态
+      if (item.lt === 'LOAD_TYPE_LatentJackingLoadType') {
+        mapContext.refreshLatentPod(item);
+      }
+      // 料箱车状态
+      if (item.lt === 'tote') {
+        mapContext.updateToteState(item);
+      }
+    });
+  });
+
   // 潜伏式货架状态
   socketClient.registerLatentPodStatus((podStatus) => {
     mapContext.refreshLatentPod(podStatus);
