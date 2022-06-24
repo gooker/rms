@@ -4,7 +4,7 @@ import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
 import { fetchEmergencyStopList, fetchMapVehicleLocks, saveEmergencyStop } from '@/services/XIHEService';
-import { fetchChargerList } from '@/services/resourceService';
+import { fetchChargerList, fetchLoadList } from '@/services/resourceService';
 import {
   addTemporaryBlockCell,
   autoCallLatentPodToWorkstation,
@@ -344,6 +344,11 @@ export default {
       //   promises.push(fetchToteRackLayout());
       //   promiseFields.push('toteRack');
       // }
+
+      // 载具
+      promises.push(fetchLoadList());
+      promiseFields.push('loadList');
+
 
       // 地图充电桩与硬件绑定关系
       promises.push(fetchChargerList());

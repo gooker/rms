@@ -5,7 +5,14 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -67,9 +74,10 @@ class MonitorMapView extends BaseMap {
     this.selections = [];
 
     // 监控相关
-    this.idVehicleMap = new Map(); // {carID: [VehicleEntity]}
-    this.idLatentPodMap = new Map(); // {cellId: [PodEntity]}
-    this.idLatentPodInCar = new Map(); // {podId:null} // 用来标识有哪些货架在小车身上
+    this.idVehicleMap = new Map(); // {uniqueId: [VehicleEntity]}
+
+    this.idLatentPodMap = new Map(); // {loadId: [PodEntity]}
+    this.idLatentPodInCar = new Map(); // {loadId:null} // 用来标识有哪些货架在小车身上
     this.idTotePodMap = new Map(); // {cellId_L: [PodEntity]} ||  {cellId_R: [PodEntity]}
     this.emergencyAreaMap = new Map(); // 紧急区域
 
@@ -157,7 +165,7 @@ class MonitorMapView extends BaseMap {
   // 站点实时速率显示
   switchStationRealTimeRateShown = (flag) => {
     this.states.showRealTimeRate = flag;
-    this.stationRealTimeRateMap.forEach(function(value) {
+    this.stationRealTimeRateMap.forEach(function (value) {
       value.switchStationRateEntityShown(flag);
     });
     this.refresh();
@@ -173,8 +181,8 @@ class MonitorMapView extends BaseMap {
   };
 
   // 追踪小车
-  trackVehicle = (vehicleId) => {
-    this.trackVehicleId = vehicleId;
+  trackVehicle = (vId) => {
+    this.trackVehicleId = vId;
   };
 
   // 定位:type --> 小车、点位、货架
@@ -209,9 +217,9 @@ class MonitorMapView extends BaseMap {
           scaled = 0.3;
         } else {
           // 如果地上的潜伏货架没有符合条件的就查看潜伏车身上的货架
-          const vehicleId = this.idLatentPodInCar.get(id);
-          if (isNull(vehicleId)) return;
-          const vehicleEntity = this.idVehicleMap.get(`${vehicleId}`);
+          const uniqueId = this.idLatentPodInCar.get(id);
+          if (isNull(uniqueId)) return;
+          const vehicleEntity = this.idVehicleMap.get(`${uniqueId}`);
           x = vehicleEntity.x;
           y = vehicleEntity.y;
           scaled = 0.3;
@@ -490,7 +498,7 @@ class MonitorMapView extends BaseMap {
     }
 
     // 执行跟踪
-    vehicleId === `${this.trackVehicleId}` && this.moveTo(vehicleEntity.x, vehicleEntity.y, 0.1);
+    uniqueId === `${this.trackVehicleId}` && this.moveTo(vehicleEntity.x, vehicleEntity.y, 0.1);
   };
 
   // ********** 潜伏车 ********** //
@@ -499,7 +507,7 @@ class MonitorMapView extends BaseMap {
     if (this.idCellMap.size === 0) return;
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
-    let latentVehicle = this.idVehicleMap.get(`${latentVehicleData.vehicleId}`);
+    let latentVehicle = this.idVehicleMap.get(`${latentVehicleData.uniqueId}`);
     const cellEntity = this.idCellMap.get(latentVehicleData.currentCellId);
     if (latentVehicle) {
       this.updateLatentVehicle([latentVehicleData]);
@@ -522,14 +530,14 @@ class MonitorMapView extends BaseMap {
       select: this.select,
     });
     cellEntity && this.pixiUtils.viewportAddChild(latentVehicle);
-    this.idVehicleMap.set(`${latentVehicleData.vehicleId}`, latentVehicle);
+    this.idVehicleMap.set(`${latentVehicleData.uniqueId}`, latentVehicle);
     return latentVehicle;
   };
 
   renderLatentVehicle = (latentVehicleList) => {
     if (Array.isArray(latentVehicleList)) {
       latentVehicleList.forEach((latentVehicleData) => {
-        const latentVehicle = this.idVehicleMap.get(`${latentVehicleData.vehicleId}`);
+        const latentVehicle = this.idVehicleMap.get(`${latentVehicleData.uniqueId}`);
         if (isNull(latentVehicle)) {
           this.addLatentVehicle(latentVehicleData);
         }
@@ -561,12 +569,12 @@ class MonitorMapView extends BaseMap {
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeLatentVehicle(vehicleId);
+        this.removeLatentVehicle(uniqueId);
         this.refresh();
         return;
       }
 
-      let latentVehicle = this.idVehicleMap.get(`${vehicleId}`);
+      let latentVehicle = this.idVehicleMap.get(`${uniqueId}`);
       // 如果小车不存在
       if (isNull(latentVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
@@ -618,8 +626,8 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  removeLatentVehicle = (vehicleId) => {
-    const latentVehicle = this.idVehicleMap.get(`${vehicleId}`);
+  removeLatentVehicle = (vId) => {
+    const latentVehicle = this.idVehicleMap.get(`${vId}`);
     if (latentVehicle) {
       // 如果现在身上驮着货架就要放下
       if (latentVehicle.podId) {
@@ -633,21 +641,21 @@ class MonitorMapView extends BaseMap {
       }
       this.pixiUtils.viewportRemoveChild(latentVehicle);
       latentVehicle.destroy({ children: true });
-      this.idVehicleMap.delete(`${vehicleId}`);
+      this.idVehicleMap.delete(`${vId}`);
     }
   };
 
   // ********** 潜伏货架 ********** //
   addLatentPod = (latentPodData) => {
     if (this.idCellMap.size === 0) return;
-    const { podId, cellId, angle, width, length: height } = latentPodData;
+    const { loadId, cellId, angle, width, height } = latentPodData;
     const cellEntity = this.idCellMap.get(cellId);
     // 这里需要做一次检查: 因为小车的状态信息可能比货架信息来的早, 一旦某货架和小车已经存在绑定关系
     // 就会在渲染的小车上渲染出该货架, 但后到的货架信息会在该点重新渲染正常状态的货架从而造成一个地图上存在两个相同的货架
-    const exist = this.idLatentPodInCar.has(podId);
+    const exist = this.idLatentPodInCar.has(loadId);
     if (!exist) {
       const latentPod = new LatentPod({
-        id: podId,
+        id: loadId,
         cellId,
         width,
         height,
@@ -658,14 +666,19 @@ class MonitorMapView extends BaseMap {
       });
       latentPod.dirty = true;
       cellEntity && this.pixiUtils.viewportAddChild(latentPod);
-      this.idLatentPodMap.set(`${podId}`, latentPod);
+      this.idLatentPodMap.set(`${loadId}`, latentPod);
     }
   };
 
   renderLatentPod = (latentPodList) => {
     if (Array.isArray(latentPodList)) {
       latentPodList.forEach((latentPod) => {
-        this.addLatentPod(latentPod);
+        this.addLatentPod({
+          ...latentPod,
+          width: latentPod.w,
+          height: latentPod.h,
+          angle: convertAngleToPixiAngle(latentPod.angle ?? 90),
+        });
       });
       this.refresh();
     }
@@ -673,18 +686,19 @@ class MonitorMapView extends BaseMap {
 
   refreshLatentPod = (podStatus) => {
     // {"podId":"22","direction":0,"cellId":22,"h":1050,"w":1050}
-    const { podId, vehicleId, cellId: currentCellId } = podStatus;
-    const podDirection = convertAngleToPixiAngle(podStatus.direction ?? 90);
-    const width = podStatus.w || LatentPodSize.width;
-    const height = podStatus.h || LatentPodSize.height;
+    // {"loadId":"22","angle":0,"cellId":22,"h":1050,"w":1050,"v":9,'vId':'X34566666',lT:'LOAD_TYPE_LatentJackingLoadType',}
+    const { loadId, v: vehicleId, vId: uniqueId, cellId: currentCellId, w, h } = podStatus;
+    const podDirection = convertAngleToPixiAngle(podStatus.angle ?? 90);
+    const width = w || LatentPodSize.width;
+    const height = h || LatentPodSize.height;
 
     if (currentCellId === -1) {
       // 删除Pod
-      const latentPod = this.idLatentPodMap.get(`${podId}`);
+      const latentPod = this.idLatentPodMap.get(`${loadId}`);
       if (latentPod) {
         this.pixiUtils.viewportRemoveChild(latentPod);
         latentPod.destroy({ children: true });
-        this.idLatentPodMap.delete(`${podId}`);
+        this.idLatentPodMap.delete(`${loadId}`);
         this.refresh();
       }
       return;
@@ -694,9 +708,9 @@ class MonitorMapView extends BaseMap {
     const cellEntity = this.idCellMap.get(currentCellId);
     if (!cellEntity) return;
 
-    if (vehicleId) {
+    if (uniqueId) {
       // 如果有货架绑定在车上，那么此时货架要么在点位上要么在车上
-      const latentVehicle = this.idVehicleMap.get(`${vehicleId}`);
+      const latentVehicle = this.idVehicleMap.get(`${uniqueId}`);
       if (latentVehicle) {
         let latentPod;
         if (latentVehicle.pod) {
@@ -704,11 +718,11 @@ class MonitorMapView extends BaseMap {
           latentPod = latentVehicle.pod;
         } else {
           // 地上的货架和新建的货架都需要更新大量的数据，所以这里放在一起无差别处理
-          latentPod = this.idLatentPodMap.get(`${podId}`);
+          latentPod = this.idLatentPodMap.get(`${loadId}`);
           if (!latentPod) {
             if (cellEntity) {
               latentPod = new LatentPod({
-                id: podId,
+                id: loadId,
                 angle: podDirection,
                 cellId: currentCellId,
                 x: cellEntity.x,
@@ -726,9 +740,9 @@ class MonitorMapView extends BaseMap {
           latentPod.width = LatentPodSize.width / 2;
           latentPod.height = LatentPodSize.height / 2;
           // 标记该潜伏货架正在小车身上
-          this.idLatentPodInCar.set(`${podId}`, vehicleId);
+          this.idLatentPodInCar.set(`${loadId}`, vehicleId);
           latentVehicle.upPod(latentPod);
-          this.idLatentPodMap.delete(`${podId}`);
+          this.idLatentPodMap.delete(`${loadId}`);
         }
         latentPod.visible = true;
         latentPod.cellId = currentCellId;
@@ -736,7 +750,7 @@ class MonitorMapView extends BaseMap {
       }
     } else {
       // 首先看这个pod是否已经存在, 不存在的话再添加, 存在的话可能是更新位置
-      const latentPod = this.idLatentPodMap.get(`${podId}`);
+      const latentPod = this.idLatentPodMap.get(`${loadId}`);
       if (latentPod) {
         latentPod.x = cellEntity.x;
         latentPod.y = cellEntity.y;
@@ -744,11 +758,11 @@ class MonitorMapView extends BaseMap {
         latentPod.setAngle(podDirection);
       } else {
         this.addLatentPod({
-          podId,
+          loadId,
           cellId: currentCellId,
           angle: podDirection,
           width,
-          length: height,
+          height,
         });
       }
     }
@@ -761,7 +775,7 @@ class MonitorMapView extends BaseMap {
     if (this.idCellMap.size === 0) return;
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
-    let toteVehicle = this.idVehicleMap.get(`${toteVehicleData.vehicleId}`);
+    let toteVehicle = this.idVehicleMap.get(`${toteVehicleData.uniqueId}`);
     const cellEntity = this.idCellMap.get(toteVehicleData.currentCellId);
     if (toteVehicle) {
       this.updateToteVehicle([toteVehicleData]);
@@ -788,7 +802,7 @@ class MonitorMapView extends BaseMap {
       simpleCheckVehicle,
     });
     cellEntity && this.pixiUtils.viewportAddChild(toteVehicle);
-    this.idVehicleMap.set(`${toteVehicleData.vehicleId}`, toteVehicle);
+    this.idVehicleMap.set(`${toteVehicleData.uniqueId}`, toteVehicle);
 
     return toteVehicle;
   };
@@ -796,7 +810,7 @@ class MonitorMapView extends BaseMap {
   renderToteVehicle = (toteVehicleList) => {
     if (Array.isArray(toteVehicleList)) {
       toteVehicleList.forEach((toteVehicleData) => {
-        const toteVehicle = this.idVehicleMap.get(`${toteVehicleData.vehicleId}`);
+        const toteVehicle = this.idVehicleMap.get(`${toteVehicleData.uniqueId}`);
         if (isNull(toteVehicle)) {
           this.addToteVehicle(toteVehicleData);
         }
@@ -804,12 +818,12 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  removeToteVehicle = (vehicleId) => {
-    const toteVehicle = this.idVehicleMap.get(`${vehicleId}`);
+  removeToteVehicle = (vId) => {
+    const toteVehicle = this.idVehicleMap.get(`${vId}`);
     if (toteVehicle) {
       this.pixiUtils.viewportRemoveChild(toteVehicle);
       toteVehicle.destroy({ children: true });
-      this.idVehicleMap.delete(`${vehicleId}`);
+      this.idVehicleMap.delete(`${vId}`);
     }
   };
 
@@ -838,12 +852,12 @@ class MonitorMapView extends BaseMap {
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeToteVehicle(vehicleId);
+        this.removeToteVehicle(uniqueId);
         this.refresh();
         return;
       }
 
-      let toteVehicle = this.idVehicleMap.get(`${vehicleId}`);
+      let toteVehicle = this.idVehicleMap.get(`${uniqueId}`);
       // 如果小车不存在
       if (isNull(toteVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
@@ -895,8 +909,8 @@ class MonitorMapView extends BaseMap {
 
   // 更新料箱车车上货架显示效果和抱夹显示效果
   updateToteState = (toteState) => {
-    const { vehicleId, toteCodes, holdingTote } = toteState;
-    const toteVehicle = this.idVehicleMap.get(`${vehicleId}`);
+    const { vId: uniqueId, toteCodes, holdingTote } = toteState;
+    const toteVehicle = this.idVehicleMap.get(`${uniqueId}`);
     if (toteVehicle) {
       toteVehicle.updateTotes(toteCodes);
       toteVehicle.updateHolding(holdingTote);
@@ -1000,7 +1014,7 @@ class MonitorMapView extends BaseMap {
     if (this.idCellMap.size === 0) return;
     // 这里需要一个检查，因为在页面存在车的情况下刷新页面，socket信息可能比小车列表数据来得快，所以update**Vehicle就会创建一台车[offline]
     // 但是一旦小车列表数据到了后会再次渲染出相同的小车, 所以这里需要检查当前id的车是否存在。如果小车存在就更新，如果小车不存在且点位存在就新建小车
-    let sorterVehicle = this.idVehicleMap.get(`${sorterVehicleData.vehicleId}`);
+    let sorterVehicle = this.idVehicleMap.get(`${sorterVehicleData.uniqueId}`);
     const cellEntity = this.idCellMap.get(sorterVehicleData.currentCellId);
     if (sorterVehicle) {
       this.updateSorterVehicle([sorterVehicleData]);
@@ -1027,14 +1041,14 @@ class MonitorMapView extends BaseMap {
       simpleCheckVehicle,
     });
     cellEntity && this.pixiUtils.viewportAddChild(sorterVehicle);
-    this.idVehicleMap.set(`${sorterVehicleData.vehicleId}`, sorterVehicle);
+    this.idVehicleMap.set(`${sorterVehicleData.uniqueId}`, sorterVehicle);
     return sorterVehicle;
   };
 
   renderSorterVehicle = (sorterVehicleList) => {
     if (Array.isArray(sorterVehicleList)) {
       sorterVehicleList.forEach((sorterVehicleData) => {
-        const sorterVehicle = this.idVehicleMap.get(`${sorterVehicleData.vehicleId}`);
+        const sorterVehicle = this.idVehicleMap.get(`${sorterVehicleData.uniqueId}`);
         if (isNull(sorterVehicle)) {
           this.addSorterVehicle(sorterVehicleData);
         }
@@ -1065,12 +1079,12 @@ class MonitorMapView extends BaseMap {
 
       // 首先处理删除小车的情况
       if (currentCellId === -1) {
-        this.removeSorterVehicle(vehicleId);
+        this.removeSorterVehicle(uniqueId);
         this.refresh();
         return;
       }
 
-      let sorterVehicle = this.idVehicleMap.get(`${vehicleId}`);
+      let sorterVehicle = this.idVehicleMap.get(`${uniqueId}`);
       // 如果小车不存在
       if (isNull(sorterVehicle)) {
         // 新增小车: 登陆小车的第一条信息没有【状态】值, 就默认【离线】
@@ -1107,12 +1121,12 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  removeSorterVehicle = (vehicleId) => {
-    const sorterVehicle = this.idVehicleMap.get(`${vehicleId}`);
+  removeSorterVehicle = (vId) => {
+    const sorterVehicle = this.idVehicleMap.get(`${vId}`);
     if (sorterVehicle) {
       this.pixiUtils.viewportRemoveChild(sorterVehicle);
       sorterVehicle.destroy({ children: true });
-      this.idVehicleMap.delete(`${vehicleId}`);
+      this.idVehicleMap.delete(`${vId}`);
     }
   };
 
@@ -1391,7 +1405,7 @@ class MonitorMapView extends BaseMap {
       // 渲染小车到目标点的连线
       if (showTargetLine) {
         const { vehicleId } = find(allVehicles, { uniqueId });
-        const vehicleData = this.idVehicleMap.get(vehicleId);
+        const vehicleData = this.idVehicleMap.get(uniqueId);
         let lineEnd = pathCellIds[pathCellIds.length - 1];
         lineEnd = getElevatorMapCellId(lineEnd);
         const targetCell = this.idCellMap.get(lineEnd);
@@ -1646,8 +1660,8 @@ class MonitorMapView extends BaseMap {
     const commonPoint = this.commonFunctionMap.get(commonPointId);
     const renderColor = color ?? commonPoint.employeeColor; // 边缘Case: 请求发送完成到请求返回中间时间工作站被取消显示小车
     if (isShown && renderColor) {
-      vehicles.forEach((vehicleId) => {
-        const vehicle = this.idVehicleMap.get(vehicleId);
+      vehicles.forEach((vId) => {
+        const vehicle = this.idVehicleMap.get(vId);
         if (vehicle && commonPoint) {
           // 这里 color有可能是null, 是因为该方法是轮询机制调用的
           vehicle.switchMarkerShown(true, commonPointId, renderColor);

@@ -37,7 +37,7 @@ const LocationTracking = (props) => {
               <Form.Item name={'trackingCar'} initialValue={trackingCar} noStyle>
                 <Select size="small" optionLabelProp="value">
                   {allVehicles?.map((record) => (
-                    <Select.Option value={record.vehicleId} key={record.vehicleId}>
+                    <Select.Option value={record.uniqueId} key={record.uniqueId}>
                       <Row>
                         <Col span={12}>{record.vehicleId}</Col>
                         <Col span={12} style={{ textAlign: 'end' }}>
@@ -110,7 +110,25 @@ const LocationTracking = (props) => {
             </Col>
             <Col span={8} offset={1}>
               <Form.Item noStyle name={'locationValue'} initialValue={locationValue}>
-                <Input size="small" />
+                {form.getFieldValue('locationType') === 'vehicle' ? (
+                  <Select
+                    allowClear
+                    showSearch
+                    size="small"
+                    maxTagCount={5}
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                    }
+                  >
+                    {allVehicles.map((element) => (
+                      <Select.Option key={element.vehicleId} value={element.uniqueId}>
+                        {`${element.vehicleType}-${element.vehicleId}`}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                ) : (
+                  <Input size="small" />
+                )}
               </Form.Item>
             </Col>
             <Col span={6} style={{ textAlign: 'right' }}>

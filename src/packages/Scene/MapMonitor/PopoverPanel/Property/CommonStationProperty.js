@@ -133,7 +133,7 @@ const CommonStationProperty = (props) => {
         if (!dealResponse(data)) {
           const stopCellId = data?.stopCellId; // 轮询返回结果 前端加上的
           const TaskCountData = { ...data };
-          const vehicleIdMap = transitionVehicles(TaskCountData);
+          const vehicleIdMap = transitionVehicles(TaskCountData); // TODO:vehicleId 要是唯一Id 
           const taskHistoryData = transformCommonTrafficData(TaskCountData);
           _commonPointTaskHistoryData[stopCellId] = {
             vehicleIdMap,

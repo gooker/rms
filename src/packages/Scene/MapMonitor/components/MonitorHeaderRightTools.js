@@ -93,7 +93,7 @@ const MonitorHeaderRightTools = (props) => {
       <Modal
         destroyOnClose
         visible={positionVisible}
-        width={400}
+        width={500}
         onCancel={() => {
           switchPositionModal(false);
         }}
