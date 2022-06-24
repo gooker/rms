@@ -9,19 +9,27 @@ import { saveQuickTask } from '@/services/smartTaskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import VariableModificationModal from './component/VariableModificationModal';
+import VariableModificationModal from '../../../components/VariableModification/VariableModificationModal';
+import ExecuteQuickTaskModal from '@/packages/SmartTask/QuickTask/component/ExecuteQuickTaskModal';
 import QuickTaskTool from './component/QuickTaskTool';
 import ShardDrawer from './component/ShardDrawer';
 import RmsConfirm from '@/components/RmsConfirm';
 import styles from './quickTask.module.less';
-import ExecuteQuickTaskModal from '@/packages/SmartTask/QuickTask/component/ExecuteQuickTaskModal';
 
 const Colors = Dictionary().color;
 const drawerWidth = 378;
 
 const QuickTask = (props) => {
-  const { dispatch, loading, customTasks, userTasks, quickTaskGroups, shardTaskModalVisible } =
-    props;
+  const {
+    editing,
+    dispatch,
+    loading,
+    customTasks,
+    userTasks,
+    quickTaskGroups,
+    variableModalVisible,
+    shardTaskModalVisible,
+  } = props;
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
@@ -170,6 +178,34 @@ const QuickTask = (props) => {
     }
   }
 
+  async function onSaveVariable(customParams) {
+    const quickTask = { ...editing };
+    quickTask.variable = { ...quickTask.variable, customParams };
+    const response = await saveQuickTask(quickTask);
+    if (!dealResponse(response, true)) {
+      dispatch({ type: 'quickTask/getVisibleQuickTasks' });
+      dispatch({ type: 'quickTask/updateVariableModalVisible', payload: false });
+    }
+  }
+
+  function onCancelEditingVariable() {
+    dispatch({
+      type: 'quickTask/updateState',
+      payload: {
+        editing: null,
+        variableModalVisible: false,
+      },
+    });
+  }
+
+  function getCustomTask() {
+    if (editing) {
+      const { taskCode } = editing;
+      return find(customTasks, { code: taskCode });
+    }
+    return null;
+  }
+
   return (
     <>
       <TablePageWrapper style={{ position: 'relative' }}>
@@ -203,17 +239,25 @@ const QuickTask = (props) => {
       </TablePageWrapper>
 
       {/* 编辑任务变量 */}
-      <VariableModificationModal />
+      <VariableModificationModal
+        visible={variableModalVisible}
+        quickTask={editing}
+        customTask={getCustomTask()}
+        onOk={onSaveVariable}
+        onCancel={onCancelEditingVariable}
+      />
 
       {/*  执行快捷任务 */}
-      <ExecuteQuickTaskModal />
+      <ExecuteQuickTaskModal customTask={getCustomTask()} />
     </>
   );
 };
 export default connect(({ quickTask, loading }) => ({
+  editing: quickTask.editing,
   userTasks: quickTask.userTasks,
   customTasks: quickTask.customTasks,
   quickTaskGroups: quickTask.quickTaskGroups,
+  variableModalVisible: quickTask.variableModalVisible,
   shardTaskModalVisible: quickTask.shardTaskModalVisible,
   loading: loading.effects['quickTask/initQuickTaskPage'],
 }))(memo(QuickTask));

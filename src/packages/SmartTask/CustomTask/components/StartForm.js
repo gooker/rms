@@ -83,16 +83,18 @@ const StartForm = (props) => {
             hidden={hidden}
             name={[code, 'customLimit', 'canUseContainerLimit']}
             label={formatMessage({ id: 'customTask.form.resourceLimit.containerTypeLimit' })}
+            initialValue={[]}
           >
-            <Select allowClear></Select>
+            <Select allowClear mode={'multiple'}></Select>
           </Form.Item>
           {/* 载具规格约束 */}
           <Form.Item
             hidden={hidden}
             name={[code, 'customLimit', 'canUseLoadTypeLimit']}
             label={formatMessage({ id: 'customTask.form.resourceLimit.loadTypeLimit' })}
+            initialValue={[]}
           >
-            <Select allowClear></Select>
+            <Select allowClear mode={'multiple'}></Select>
           </Form.Item>
           {/* 是否要求的载具ID必须有待命车辆持有 */}
           <Form.Item

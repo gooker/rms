@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Form, Input, InputNumber, message, Row, Select, Switch, Tag, Tooltip } from 'antd';
-import { cloneDeep, find, findIndex, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
+import { cloneDeep, find, isEmpty, isEqual as deepEqual, isPlainObject } from 'lodash';
 import { InfoOutlined, PlusOutlined, ReadOutlined } from '@ant-design/icons';
 import moment from 'moment-timezone';
 import intl from 'react-intl-universal';
@@ -1423,16 +1423,22 @@ export function extractActionToFormValue(actions) {
 }
 
 // 提取sample数据
-export function generateSample({ customStart, customActions, customPreActions }, taskNodes) {
-  const result = [];
-  // 任务开始(step1)
-  if (isNull(customStart.robot)) {
-    result.push({ code: 'START-VEHICLE', param: [] });
+export function generateSample(
+  { customStart, customActions, customPreActions, customEnd },
+  taskNodes,
+) {
+  const result = { START: {} };
+  // 任务开始
+  if (customStart.robot) {
+    const { type, code } = customStart.robot;
+    result.START[type] = code;
   } else {
-    result.push({ code: `START-${customStart.robot.type}`, param: customStart.robot.code });
+    result.START.VEHICLE = [];
   }
+  result.START.customLimit = customStart.customLimit;
 
-  // 转换前置任务
+  // 子任务
+  // 1. 转换前置任务
   const preTaskParams = {};
   if (isPlainObject(customPreActions)) {
     Object.values(customPreActions).forEach((subTask) => {
@@ -1440,23 +1446,14 @@ export function generateSample({ customStart, customActions, customPreActions },
         code,
         targetAction: { loadAngle, target },
       } = subTask;
-      preTaskParams[code] = [];
-
+      preTaskParams[code] = {};
       if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
-        preTaskParams[code].push({
-          code: 'loadAngle',
-          param: isNull(loadAngle) ? null : loadAngle,
-        });
+        preTaskParams[code]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
       }
-
-      preTaskParams[code].push({
-        code: target.type,
-        param: target?.code ?? [],
-      });
+      preTaskParams[code][target.type] = target?.code ?? [];
     });
   }
-
-  // 子任务
+  // 2. 子任务
   if (isPlainObject(customActions)) {
     Object.values(customActions).forEach((subTask) => {
       const {
@@ -1465,35 +1462,29 @@ export function generateSample({ customStart, customActions, customPreActions },
         targetAction: { loadAngle, target },
       } = subTask;
       const { index } = find(taskNodes, { code });
+      const stepCode = `step${index}`;
+      result[stepCode] = {};
       if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
-        preTaskParams[code]?.push({
-          code: 'loadAngle',
-          param: isNull(loadAngle) ? null : loadAngle,
-        });
+        result[stepCode]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
       }
-      result.push({
-        code: `step${index}-${target.type}`,
-        param: target?.code ?? [],
-      });
+      result[stepCode][target.type] = target?.code ?? [];
 
       // 合并前置任务的参数
       if (Array.isArray(preActionCodes)) {
         preActionCodes.forEach((subTaskCode) => {
           if (!isNull(preTaskParams[subTaskCode])) {
-            preTaskParams[subTaskCode].forEach((item) => {
-              const code = `step${index}-${item.code}`;
-              // 注意去重
-              const index2 = findIndex(result, { code });
-              if (index2 === -1) {
-                result.push({ code, param: item.param });
-              }
-            });
+            result[`step${index}`] = { ...result[`step${index}`], ...preTaskParams[subTaskCode] };
           }
         });
       }
     });
   }
 
+  // 任务结束
+  result.END = {};
+  result.END.vehicleNeedCharge = customEnd.vehicleNeedCharge ?? false;
+  result.END.backZone = customEnd.backZone ?? [];
+  result.END.heavyBackZone = customEnd.heavyBackZone ?? [];
   return result;
 }
 

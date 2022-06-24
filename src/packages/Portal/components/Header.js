@@ -103,14 +103,7 @@ class Header extends React.Component {
     return (
       <div className={styles.header}>
         <div className={styles.leftContent}>
-          <img
-            className={styles.logo}
-            src={logo || '/images/logoMain.png'}
-            alt={'logo'}
-            onClick={() => {
-              history.push('/');
-            }}
-          />
+          <img src={logo || '/images/logoMain.png'} alt={'logo'} />
           <div className={styles.version}>{mainVersion && `v${mainVersion}`}</div>
         </div>
         <div className={styles.rightContent}>

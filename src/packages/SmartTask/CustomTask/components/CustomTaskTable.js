@@ -58,7 +58,7 @@ const CustomTaskTable = (props) => {
         <span className={styles.tableIcon}>
           <EyeOutlined
             onClick={() => {
-              setExampleStructure(JSON.parse(record.sample));
+              setExampleStructure(record.sample);
             }}
           />
         </span>
@@ -193,7 +193,7 @@ const CustomTaskTable = (props) => {
         onCancel={() => {
           setExampleStructure(null);
         }}
-        bodyStyle={{ maxHeight: '90vh' }}
+        bodyStyle={{ maxHeight: '80vh', overflow: 'auto' }}
         style={{ top: 30 }}
         footer={[
           <Button
