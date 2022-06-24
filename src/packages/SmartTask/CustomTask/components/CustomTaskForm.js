@@ -263,13 +263,12 @@ const CustomTaskForm = (props) => {
     }
 
     // 生成sample数据
-    const sample = {
+    requestBody.sample = {
       sectionId: window.localStorage.getItem('sectionId'),
       code: requestBody.code,
       createCode: null,
       customParams: generateSample(requestBody, attachNodeIndex()),
     };
-    requestBody.sample = JSON.stringify(sample);
 
     // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
     if (editingRow) {

@@ -188,7 +188,7 @@ export default class BaseMap extends React.PureComponent {
 
   // ************************ 线条相关 **********************
   /**
-   * 绘制线条核心逻辑, 线条只与xy产生绑定关系
+   * 绘制线条核心逻辑
    * @param {Array} relationsToRender 即将渲染的线条数据
    * @param { 'land'| 'navi'} renderType 渲染物理坐标的线条还是导航坐标的线条
    * @param {{}} transform 各个地图的转换参数
@@ -204,13 +204,13 @@ export default class BaseMap extends React.PureComponent {
       if (renderType === CoordinateType.LAND || type === LineType.StraightPath) {
         const distance = getDistance(sourceCell, targetCell);
         // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
-        const lineMapKey = `${sourceCell.id}-${targetCell.id}`;
+        const lineMapKey = `${source}-${target}`;
         const lineEntity = this.idLineMap.get(lineMapKey);
         const reverseLineMapKey = `${targetCell.id}-${sourceCell.id}`;
         const reverseLineEntity = this.idLineMap.get(reverseLineMapKey);
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
           const relationLine = new StraightPath({ sourceCell, targetCell, distance });
-          relationLine.visible = this.states.showCellRelation;
+          relationLine.visible = this.states.showCellsLine;
           relationLine.textVisible = this.states.showDistance;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
@@ -219,7 +219,7 @@ export default class BaseMap extends React.PureComponent {
         }
 
         // 绘制箭头(箭头位置在起始点和终点的连线上，靠近起始点，箭头指向终点)
-        const arrowMapKey = `${sourceCell.id}-${targetCell.id}`;
+        const arrowMapKey = lineMapKey;
         const arrowExist = this.idArrowMap.get(arrowMapKey);
         if (!isNull(arrowExist)) {
           this.pixiUtils.viewportRemoveChild(arrowExist);

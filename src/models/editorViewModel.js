@@ -6,7 +6,7 @@ export const defaultEditorViewConfig = {
   showDistance: false, // 是否显示距离
   showCoordinate: false, // 是否显示点位坐标
   showCellsLine: false, // 是否显示点位之间的连线
-  showRelationsDir: [0, 90, 180, 270], // 可见的箭头(方向)
+  showRelationsDir: [0, 1, 2, 3], // 可见的箭头(方向)
   shownPriority: [10, 20, 100, 1000], // 可见的箭头(cost)
   showRelationsCells: [], // 可见的箭头(与点相关)
   showBackImg: false, // 是否显示背景，包括：线框、Label、图片

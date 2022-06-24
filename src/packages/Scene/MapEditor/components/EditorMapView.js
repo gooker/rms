@@ -1,7 +1,7 @@
 import React from 'react';
 import { reverse } from 'lodash';
 import BaseMap from '@/components/BaseMap';
-import { isItemOfArray, isNull } from '@/utils/util';
+import { getDirByAngle, isItemOfArray, isNull } from '@/utils/util';
 import { Cell, PixiBuilder, ResizeableEmergencyStop } from '@/entities';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { loadEditorExtraTextures } from '@/utils/textures';
@@ -144,18 +144,16 @@ class EditorMapView extends BaseMap {
       });
     }
 
-    // *************** 以下待调整 *************** //
     // 移动点位
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {
         const { id, x, y } = cellPayload;
         const cellEntity = this.idCellMap.get(id);
-        if (cellEntity) {
-          cellEntity.updateCoordination(x, y);
-        }
+        cellEntity && cellEntity.updateCoordination(x, y);
       });
     }
 
+    // *************** 以下待调整 *************** //
     // 调整码间距
     if (type === 'adjustSpace') {
       Object.keys(payload)
@@ -291,7 +289,12 @@ class EditorMapView extends BaseMap {
   updateLines = ({ type, payload }) => {
     // 新增
     if (type === 'add') {
-      this.renderCostLines(payload);
+      const { editor, editorView } = window.$$state();
+      this.renderCostLines(
+        payload,
+        editorView.shownCellCoordinateType,
+        editor.currentMap?.transform ?? {},
+      );
     }
     // 删除
     if (type === 'remove') {
@@ -377,7 +380,7 @@ class EditorMapView extends BaseMap {
     // 是否在显示的优先级Cost范围内
     const priorityCostFlag = shownPriority.includes(cost);
     // 是否在显示的优先级方向范围内
-    const priorityDirFlag = showRelationsDir.includes(angle);
+    const priorityDirFlag = showRelationsDir.includes(getDirByAngle(angle));
     // 是否是不可走点的线条 & 没有隐藏显示不可走点
     const isBlockLines = isItemOfArray(
       blockCellIds ?? [],

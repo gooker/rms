@@ -33,23 +33,29 @@ const QuickTaskFormModal = (props) => {
   }, [taskModalVisible]);
 
   function onOk() {
-    formRef.validateFields().then(async (value) => {
-      setLoading(true);
-      const targetCustomTask = find(customTasks, { code: value.taskCode });
-      let requestParam = {
-        ...value,
-        variable: JSON.parse(targetCustomTask.sample),
-      };
-      if (!isNull(editing)) {
-        requestParam = { ...editing, ...requestParam };
-      }
-      const response = await saveQuickTask(requestParam);
-      if (!dealResponse(response, true)) {
-        dispatch({ type: 'quickTask/getVisibleQuickTasks' });
-        onCancel();
-      }
-      setLoading(false);
-    });
+    formRef
+      .validateFields()
+      .then(async (value) => {
+        setLoading(true);
+        const targetCustomTask = find(customTasks, { code: value.taskCode });
+        let requestParam = {
+          ...value,
+          variable: targetCustomTask.sample,
+        };
+        if (!isNull(editing)) {
+          requestParam = { ...editing, ...requestParam };
+        }
+        const response = await saveQuickTask(requestParam);
+        if (!dealResponse(response, true)) {
+          dispatch({ type: 'quickTask/getVisibleQuickTasks' });
+          onCancel();
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoading(false);
+      });
   }
 
   function onCancel() {

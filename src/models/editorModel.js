@@ -693,26 +693,30 @@ export default {
       return [key];
     },
 
-    // ********************************* 待调整 ********************************* //
     // 移动点位
     *moveCells({ payload }, { select, put }) {
-      const { cellIds, distance, dir } = payload;
+      const { cellIds, distance } = payload;
       const { currentMap } = yield select((state) => state.editor);
 
       const result = {
         cell: {},
-        line: {
-          add: [],
-          delete: [],
-        },
+        line: { add: [], delete: [] },
       };
 
       // 处理点位位置
       const newCellMap = { ...currentMap.cellMap };
       cellIds.map((cellId) => {
         const cell = newCellMap[cellId];
+        // 判断点位类型
+        let dir = payload.dir;
+        const navigation = find(NavigationTypeView, { code: cell.navigationType });
+        if (navigation) {
+          if ([0, 2].includes(dir) && navigation.coordinationType === 'R') {
+            dir = dir === 0 ? 2 : 0;
+          }
+        }
         const { x, y } = moveCell(cell, distance, dir);
-        result.cell[cellId] = { ...cell, x, y }; // 点位 ID 和 该ID点位的新数据
+        result.cell[cellId] = { ...cell, x, y, nx: x, ny: y };
         newCellMap[cellId] = { ...cell, x, y };
       });
       currentMap.cellMap = newCellMap;
@@ -723,6 +727,7 @@ export default {
       return result;
     },
 
+    // ********************************* 待调整 ********************************* //
     // 调整码间距
     *adjustSpace({ payload }, { select, put }) {
       const { currentMap, currentCells } = yield select((state) => state.editor);

@@ -199,7 +199,7 @@ export default [
     path: `/${AppCode.ResourceManage}/resourceBind`,
     name: 'resourceGroupMapping',
     icon: 'binding',
-    component: '/ResourceManage/ResourceBind',
+    component: '/ResourceManage/ResourceBind/index',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
   },
 ];

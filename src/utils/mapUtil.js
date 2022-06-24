@@ -35,7 +35,7 @@ export function generateCellMapByRowsAndCols(
 }
 
 export function getDistance(pos, pos2) {
-  return Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2);
+  return Math.round(Math.sqrt((pos.x - pos2.x) ** 2 + (pos.y - pos2.y) ** 2));
 }
 
 // 以数学坐标系为基准的角度
@@ -891,9 +891,9 @@ export function syncLineState(cellIds, newCellMap, result) {
   let relations = [...(currentRouteMapData.relations || [])];
   // 1. 删除相关曲线
   relations = relations.filter((item) => {
-    if (item.type === 'line') return true;
-    if (item.type === 'curve') {
-      if (cellIds.includes(`${item.source}`) || cellIds.includes(`${item.target}`)) {
+    if (item.type === LineType.StraightPath) return true;
+    if ([LineType.ArcPath, LineType.BezierPath].includes(item.type)) {
+      if (cellIds.includes(item.source) || cellIds.includes(item.target)) {
         result.line.delete.push(item);
         return false;
       }
@@ -905,7 +905,7 @@ export function syncLineState(cellIds, newCellMap, result) {
   let newRelations = [];
   let relationsWillUpdate = [];
   relations.forEach((item) => {
-    if (cellIds.includes(`${item.source}`) || cellIds.includes(`${item.target}`)) {
+    if (cellIds.includes(item.source) || cellIds.includes(item.target)) {
       result.line.delete.push(item);
       relationsWillUpdate.push(item);
     } else {
@@ -916,7 +916,7 @@ export function syncLineState(cellIds, newCellMap, result) {
   // 重新计算 Distance
   relationsWillUpdate = relationsWillUpdate.map((relation) => {
     const { source, target } = relation;
-    const newDistance = calculateCellDistance(newCellMap[source], newCellMap[target]);
+    const newDistance = getDistance(newCellMap[source], newCellMap[target]);
     const angle = getAngle(newCellMap[source], newCellMap[target]);
     return { ...relation, angle, distance: newDistance };
   });

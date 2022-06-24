@@ -116,13 +116,13 @@ const VehicleSelector = (props) => {
   return (
     <div>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
-        <Select.Option value={'AUTO'}>
+        <Select.Option value={VehicleOptionType.AUTO}>
           <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
         </Select.Option>
-        <Select.Option value={'VEHICLE'}>
+        <Select.Option value={VehicleOptionType.VEHICLE}>
           <FormattedMessage id={'customTask.form.SPECIFY_Vehicle'} />
         </Select.Option>
-        <Select.Option value={'VEHICLE_GROUP'}>
+        <Select.Option value={VehicleOptionType.VEHICLE_GROUP}>
           <FormattedMessage id={'customTask.form.SPECIFY_GROUP'} />
         </Select.Option>
       </Select>
@@ -138,3 +138,9 @@ export default connect(({ customTask }) => {
   }
   return { dataSource };
 })(memo(VehicleSelector));
+
+export const VehicleOptionType = {
+  AUTO: 'AUTO',
+  VEHICLE: 'VEHICLE',
+  VEHICLE_GROUP: 'VEHICLE_GROUP',
+};

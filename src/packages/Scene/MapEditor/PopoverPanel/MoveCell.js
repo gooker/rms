@@ -1,19 +1,21 @@
 import React, { memo, useEffect } from 'react';
-import { Form, Select, InputNumber, Button } from 'antd';
+import { Button, Form, InputNumber } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../popoverPanel.module.less';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
+import ButtonInput from '@/components/ButtonInput';
+import { MapSelectableSpriteType } from '@/config/consts';
 
 const MoveCell = (props) => {
-  const { dispatch, selectCells, mapContext } = props;
+  const { dispatch, selectCellIds, mapContext } = props;
 
   const [formRef] = Form.useForm();
 
   useEffect(() => {
-    formRef.setFieldsValue({ cellIds: selectCells });
-  }, [selectCells]);
+    formRef.setFieldsValue({ cellIds: selectCellIds });
+  }, [selectCellIds]);
 
   function submit() {
     formRef.validateFields().then((value) => {
@@ -27,7 +29,17 @@ const MoveCell = (props) => {
       }).then((result) => {
         const { cell, line } = result;
         mapContext.updateCells({ type: 'move', payload: cell });
-        mapContext.updateLines({ type: 'remove', payload: line.delete });
+
+        const removePayload = { lines: [], arrows: [] };
+        line.delete.forEach(({ source, target }) => {
+          // line 正反都要删
+          removePayload.lines.push(`${source}-${target}`);
+          removePayload.lines.push(`${target}-${source}`);
+
+          removePayload.arrows.push(`${source}-${target}`);
+          removePayload.arrows.push(`${target}-${source}`);
+        });
+        mapContext.updateLines({ type: 'remove', payload: removePayload });
         mapContext.updateLines({ type: 'add', payload: line.add });
       });
     });
@@ -39,11 +51,16 @@ const MoveCell = (props) => {
         {/* 操作点位 */}
         <Form.Item
           name={'cellIds'}
-          initialValue={selectCells}
+          initialValue={selectCellIds}
           rules={[{ required: true }]}
           label={formatMessage({ id: 'app.map.cell' })}
         >
-          <Select mode="multiple" style={{ width: 250 }} />
+          <ButtonInput
+            maxTagCount={100}
+            multi={true}
+            data={selectCellIds}
+            btnDisabled={selectCellIds.length === 0}
+          />
         </Form.Item>
 
         {/* 偏移方向 */}
@@ -76,7 +93,11 @@ const MoveCell = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => ({
-  mapContext: editor.mapContext,
-  selectCells: editor.selectCells,
-}))(memo(MoveCell));
+export default connect(({ editor, editorView }) => {
+  const { selections, mapContext } = editor;
+  const selectCellIds = selections
+    .filter((item) => item.type === MapSelectableSpriteType.CELL)
+    .map(({ id }) => id);
+
+  return { selectCellIds, mapContext };
+})(memo(MoveCell));

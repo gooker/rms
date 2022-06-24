@@ -1,37 +1,16 @@
 import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import find from 'lodash/find';
-import groupBy from 'lodash/groupBy';
 import cloneDeep from 'lodash/cloneDeep';
-import {
-  Button,
-  Card,
-  Checkbox,
-  Col,
-  Divider,
-  Form,
-  InputNumber,
-  Modal,
-  Row,
-  Select,
-  Switch,
-} from 'antd';
-import {
-  ClearOutlined,
-  DeleteOutlined,
-  MinusCircleOutlined,
-  MinusOutlined,
-  PlusOutlined,
-} from '@ant-design/icons';
-import VehicleSelector from '../CustomTask/components/VehicleSelector';
+import { Button, Card, Checkbox, Col, Divider, Form, InputNumber, Modal, Row, Select, Switch } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
-import VehicleVariable from '../QuickTask/component/VehicleVariable';
+// import VehicleVariable from '../QuickTask/component/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import { getInitialTaskSteps } from '../CustomTask/customTaskUtil';
 import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import styles from '../CustomTask/customTask.module.less';
 import { forIn } from 'lodash';
 
 const formItemLayout = { labelCol: { span: 4 }, wrapperCol: { span: 20 } };
@@ -101,7 +80,7 @@ const EditVaribleModal = (props) => {
           label={<FormattedMessage id="customTask.form.vehicle" />}
           rules={[{ validator: validateVehicle }]}
         >
-          <VehicleVariable />
+          {/*<VehicleVariable />*/}
           {/* <VehicleSelector /> */}
         </Form.Item>,
       );

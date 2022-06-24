@@ -17,6 +17,7 @@ export default class Cell extends PIXI.Container {
 
     const targetData = find(NavigationTypeView, { code: this.navigationType });
     if (!isNull(targetData)) {
+      this.coordinationType = targetData.coordinationType;
       this.brandColor = targetData.color.replace('#', '0x');
     } else {
       this.brandColor = '0xffffff';
@@ -144,6 +145,11 @@ export default class Cell extends PIXI.Container {
 
   // 坐标
   addCoordination() {
+    if (this.coordX) {
+      this.removeChild(this.coordX);
+      this.coordX.destroy(true);
+      this.coordX = null;
+    }
     this.coordX = new BitText(
       this.xLabel,
       -CellSize.width / 2,
@@ -156,6 +162,11 @@ export default class Cell extends PIXI.Container {
     this.coordX.visible = false;
     this.addChild(this.coordX);
 
+    if (this.coordY) {
+      this.removeChild(this.coordY);
+      this.coordY.destroy(true);
+      this.coordY = null;
+    }
     this.coordY = new BitText(
       this.yLabel,
       CellSize.width / 2,
@@ -167,6 +178,28 @@ export default class Cell extends PIXI.Container {
     this.coordY.zIndex = InnerIndex.text;
     this.coordY.visible = false;
     this.addChild(this.coordY);
+  }
+
+  // 坐标切换为左手坐标系; 坐标Label切换为有事坐标系
+  updateCoordination(x, y) {
+    // 替换坐标
+    if (this.coordinationType !== 'L') {
+      this.x = x;
+      this.y = -y;
+    } else {
+      this.x = x;
+      this.y = y;
+    }
+
+    // 替换坐标文本
+    if (this.coordinationType !== 'R') {
+      this.xLabel = x;
+      this.yLabel = -y;
+    } else {
+      this.x = x;
+      this.y = y;
+    }
+    this.addCoordination();
   }
 
   switchCoordinationShown(visible) {
