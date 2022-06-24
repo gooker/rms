@@ -1,13 +1,13 @@
 import React, { Fragment, memo } from 'react';
+import { Button, Col, Divider, Form, InputNumber, Row, Select, Switch } from 'antd';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
 import { formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { Button, Col, Divider, Form, InputNumber, Row, Select, Switch } from 'antd';
 import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetVariable from '@/components/VariableModification/TargetVariable';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
-import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 
 const VariableModification = (props) => {
   const { prefix, form, variable, customTask } = props;

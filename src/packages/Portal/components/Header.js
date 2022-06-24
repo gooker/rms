@@ -94,7 +94,7 @@ class Header extends React.Component {
 
   render() {
     const { showErrorNotification, isHA, sysAuthInfo } = this.state;
-    const { history, alertCount, backendVersion } = this.props;
+    const { alertCount, backendVersion } = this.props;
     const { logo, isFullscreen, currentUser } = this.props;
     if (isNull(currentUser)) return null;
 
