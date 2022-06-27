@@ -1,5 +1,8 @@
 export default {
   'menu.home': '首页',
+  'menu.waitingQueue': '等待队列',
+  'menu.executingQueue': '执行队列',
+  'menu.taskManagement': '任务查询',
 
   // SSO
   'menu.userManager': '用户管理',
@@ -64,8 +67,6 @@ export default {
 
   // 智能任务
   'menu.standardOrderPool': '标准排程池',
-  'menu.executingQueue': '执行队列',
-  'menu.taskManagement': '任务查询',
   'menu.customTask': '自定义任务',
   'menu.quickTask': '快捷任务',
   'menu.limitEqualizer': '限流均衡器',
@@ -79,19 +80,13 @@ export default {
   'menu.carryTaskManagement': '任务查询',
 
   // 场景
-  'menu.map': '地图',
-  'menu.map.editor': '地图编辑',
-  'menu.map.monitor': '地图监控',
-  'menu.map.recorder': '地图回放',
+  'menu.editor': '地图编辑',
+  'menu.monitor': '地图监控',
+  'menu.recorder': '地图回放',
   'menu.customDashboard': '自定义大屏',
 
   // 料箱存取 && 潜伏货架存取
-  'menu.task': '任务',
-  'menu.task.toteTaskPool': '料箱任务排程池',
-  'menu.task.waitingQueue': '等待队列',
-  'menu.task.executingQueue': '执行队列',
-  'menu.task.taskManagement': '任务查询',
-  'menu.task.systemParameters': '参数配置',
+  'menu.toteTaskPool': '料箱任务排程池',
 
   // 柔性分拣
   'menu.sortTaskQueue': '任务队列',
@@ -140,9 +135,8 @@ export default {
   // 潜伏料箱
   'menu.latentToteTaskManagement': '任务管理',
   'menu.mockTask': '模拟任务',
-  'menu.scoringAlgorithm': '打分算法',
   'menu.pod': '货架',
   'menu.pod.podManagement': '货架管理',
-
+  'menu.scoringAlgorithm': '打分算法',
   'menu.latentToteStationList': '工作站列表',
 };
