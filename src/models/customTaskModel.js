@@ -1,6 +1,11 @@
 import { message } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import { fetchActiveMap, getCustomTaskList, getFormModelLockResource } from '@/services/commonService';
+import {
+  fetchActiveMap,
+  fetchCustomParamType,
+  getCustomTaskList,
+  getFormModelLockResource,
+} from '@/services/commonService';
 import { fetchAllLoadSpecification } from '@/services/resourceService';
 
 export default {
@@ -65,16 +70,21 @@ export default {
         return;
       }
       try {
-        const [modelLocks, loadSpecification] = yield Promise.all([
+        const [modelLocks, loadSpecification, targetDatasource] = yield Promise.all([
           getFormModelLockResource(),
           fetchAllLoadSpecification(),
+          fetchCustomParamType(),
         ]);
         const state = { mapData };
         if (!dealResponse(modelLocks)) {
           state.modelLocks = modelLocks;
         }
+
         if (!dealResponse(loadSpecification)) {
           state.loadSpecification = loadSpecification;
+        }
+        if (!dealResponse(targetDatasource)) {
+          yield put({ type: 'global/updateStateInBatch', payload: { targetDatasource } });
         }
         yield put({ type: 'saveState', payload: state });
       } catch (error) {
