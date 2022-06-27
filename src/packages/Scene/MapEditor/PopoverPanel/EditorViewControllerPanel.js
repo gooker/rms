@@ -28,14 +28,6 @@ const EditorViewControllerPanel = (props) => {
     mapContext.switchCoordinationShown(value, false);
   }
 
-  function switchDistanceShown(value) {
-    dispatch({
-      type: 'editorView/saveState',
-      payload: { showDistance: value },
-    });
-    mapContext.switchDistanceShown(value, false);
-  }
-
   function switchCellsLineShown(value) {
     dispatch({
       type: 'editorView/saveState',
@@ -57,7 +49,7 @@ const EditorViewControllerPanel = (props) => {
       type: 'editorView/saveState',
       payload: { shownPriority: value },
     });
-    mapContext.filterRelations(value);
+    mapContext.filterArrows(value);
   }
 
   function filterRelationDir(value) {
@@ -109,20 +101,6 @@ const EditorViewControllerPanel = (props) => {
               />
             </Form.Item>
 
-            {/* 距离显示 */}
-            <Form.Item
-              {...formItemLayout}
-              label={<FormattedMessage id={'editor.view.distanceDisplay'} />}
-            >
-              <Switch
-                disabled={shownPriority.length === 0}
-                checked={props.showDistance}
-                onChange={(value) => {
-                  switchDistanceShown(value);
-                }}
-              />
-            </Form.Item>
-
             {/* 背景显示 */}
             <Form.Item
               {...formItemLayout}
@@ -135,25 +113,25 @@ const EditorViewControllerPanel = (props) => {
                 }}
               />
             </Form.Item>
-          </Form>
-        </div>
 
-        <div className={styles.panelBlock} style={{ marginTop: 5 }}>
-          <Form labelWrap>
             {/* 点关系线显示 */}
             <Form.Item
               {...formItemLayout}
               label={<FormattedMessage id={'editor.view.cellsLineDisplay'} />}
             >
               <Switch
-                disabled={shownPriority.length === 0}
+                // disabled={shownPriority.length === 0}
                 checked={props.showCellsLine}
                 onChange={(value) => {
                   switchCellsLineShown(value);
                 }}
               />
             </Form.Item>
+          </Form>
+        </div>
 
+        <div className={styles.panelBlock} style={{ marginTop: 5 }}>
+          <Form labelWrap>
             {/* 优先级显示 */}
             <Form.Item
               {...formItemLayout}

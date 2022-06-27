@@ -3,7 +3,6 @@ import { CoordinateType, NavigationType } from '@/config/config';
 
 export const defaultEditorViewConfig = {
   hideBlock: false, // 是否隐藏不可走点
-  showDistance: false, // 是否显示距离
   showCoordinate: false, // 是否显示点位坐标
   showCellsLine: false, // 是否显示点位之间的连线
   showRelationsDir: [0, 1, 2, 3], // 可见的箭头(方向)

@@ -346,28 +346,15 @@ class EditorMapView extends BaseMap {
   // 切换显示点关系线
   switchCellsLineShown = (flag) => {
     this.states.showCellsLine = flag;
-    this.pipeSwitchLinesShown();
+    this.idLineMap.forEach((line) => {
+      line.visible = flag;
+    });
     this.refresh();
   };
 
   pipeSwitchArrowsShown = () => {
     this.idArrowMap.forEach((arrow) => {
       arrow.visible = this.getArrowShownValue(arrow);
-    });
-    this.pipeSwitchLinesShown();
-  };
-
-  pipeSwitchLinesShown = () => {
-    const { showCellsLine } = this.states;
-    const lineKeys = [...this.idLineMap.keys()];
-    lineKeys.forEach((lineKey) => {
-      const reverseLineKey = lineKey.split('-').reverse().join('-');
-      const arrow1 = this.idArrowMap.get(lineKey);
-      const arrow2 = this.idArrowMap.get(reverseLineKey);
-      const line = this.idLineMap.get(lineKey);
-      if (line) {
-        line.visible = (arrow1?.visible || arrow2?.visible) && showCellsLine;
-      }
     });
   };
 
@@ -396,7 +383,7 @@ class EditorMapView extends BaseMap {
     return priorityCostFlag && priorityDirFlag && cellRelevantFlag && blockCellFlag;
   };
 
-  filterRelations(uiFilterData) {
+  filterArrows(uiFilterData) {
     this.states.shownPriority = uiFilterData;
     this.pipeSwitchArrowsShown();
     this.refresh();

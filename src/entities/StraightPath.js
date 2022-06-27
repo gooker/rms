@@ -17,10 +17,6 @@ export default class StraightPath extends PIXI.Container {
     this.drawDistanceText();
   }
 
-  set textVisible(visible) {
-    this.distanceText.visible = visible;
-  }
-
   drawGraphic() {
     const relationLine = new SmoothGraphics();
     relationLine.lineStyle(2, 0xffffff);
@@ -30,13 +26,23 @@ export default class StraightPath extends PIXI.Container {
   }
 
   drawDistanceText() {
-    const angle = getAngle(this.sourceCell, this.targetCell);
+    let angle = getAngle(this.sourceCell, this.targetCell);
+    if (angle >= 180) {
+      angle = angle - 180;
+    }
     const x =
       (this.sourceCell.x + this.targetCell.x) / 2 + Math.cos(angleToRad(angle - 90)) * offset;
     const y =
       (this.sourceCell.y + this.targetCell.y) / 2 + Math.sin(angleToRad(angle - 90)) * offset;
     this.distanceText = new BitText(this.distance, x, y, 0xffffff, 100);
-    this.distanceText.angle = angle === 180 ? 0 : angle; // 防止距离文档倒过来
+
+    // 保证距离文本始终顺着线条方向
+    if (angle >= 90) {
+      angle = 180 - angle;
+    } else {
+      angle = -angle;
+    }
+    this.distanceText.angle = angle;
     this.distanceText.anchor.set(0.5);
     this.addChild(this.distanceText);
   }

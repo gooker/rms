@@ -118,15 +118,6 @@ export default class BaseMap extends React.PureComponent {
     this.refresh();
   };
 
-  // 切换是否显示优先级距离
-  switchDistanceShown = (flag) => {
-    this.states.showDistance = flag;
-    this.idLineMap.forEach((line) => {
-      line.textVisible = flag;
-    });
-    this.refresh();
-  };
-
   // 背景图片显示
   switchBackImgShown = (flag) => {
     this.states.showBackImg = flag;
@@ -211,7 +202,6 @@ export default class BaseMap extends React.PureComponent {
         if (isNull(lineEntity) && isNull(reverseLineEntity)) {
           const relationLine = new StraightPath({ sourceCell, targetCell, distance });
           relationLine.visible = this.states.showCellsLine;
-          relationLine.textVisible = this.states.showDistance;
           this.pixiUtils.viewportAddChild(relationLine);
           this.idLineMap.set(lineMapKey, relationLine);
         } else {
