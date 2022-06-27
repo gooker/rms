@@ -22,7 +22,6 @@ const MonitorViewModelState = {
 
   // ************************* 地图显示 ************************* //
   showCellPoint: true, // 显示地图点位
-  showDistance: false, // 是否显示距离
   showCoordinate: false, // 是否显示点位坐标
   showCellsLine: false, // 是否显示点位之间的连线
   shownPriority: [], // 可见的箭头(cost)

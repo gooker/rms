@@ -124,7 +124,6 @@ export default {
   'editor.view.mapViewMode.scaled': '大图',
   'editor.view.hideBlock': '隐藏不可走点',
   'editor.view.coordinateDisplay': '坐标显示',
-  'editor.view.distanceDisplay': '距离显示',
   'editor.view.backImgDisplay': '背景显示',
   'editor.view.cellsLineDisplay': '点关系显示',
   'editor.view.priorityDisplay': '优先级显示',

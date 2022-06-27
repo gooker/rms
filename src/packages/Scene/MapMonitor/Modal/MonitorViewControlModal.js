@@ -20,7 +20,6 @@ const MonitorViewControlModal = (props) => {
     showCoordinate,
     showCellsLine,
     shownPriority,
-    showDistance,
     showBackImage,
     stationRealTimeRateView,
     emergencyAreaShown,
@@ -75,15 +74,6 @@ const MonitorViewControlModal = (props) => {
       payload: { shownPriority: value },
     });
     mapContext.filterRelations(value);
-  }
-
-  // 切换显示距离
-  function switchDistanceShown(value) {
-    dispatch({
-      type: 'monitorView/saveViewState',
-      payload: { showDistance: value },
-    });
-    mapContext.switchDistanceShown(value, false);
   }
 
   // 切换显示站点实时速率
@@ -159,6 +149,20 @@ const MonitorViewControlModal = (props) => {
             />
           </Form.Item>
 
+          {/* 点位坐标 */}
+          <Form.Item
+            {...formItemLayout}
+            label={formatMessage({ id: 'monitor.view.coordinateDisplay' })}
+          >
+            <Switch
+              disabled={!showCellPoint}
+              checked={showCoordinate}
+              onChange={switchCoordinatorShown}
+              checkedChildren={formatMessage({ id: 'app.common.visible' })}
+              unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
+            />
+          </Form.Item>
+
           {/* 优先级显示 */}
           <Form.Item
             {...formItemLayout}
@@ -178,37 +182,9 @@ const MonitorViewControlModal = (props) => {
             label={<FormattedMessage id={'editor.view.cellsLineDisplay'} />}
           >
             <Switch
-              disabled={shownPriority.length === 0 || !showCellPoint}
+              disabled={!showCellPoint}
               checked={showCellsLine}
               onChange={switchCellsLineShown}
-            />
-          </Form.Item>
-
-          {/* 点位坐标 */}
-          <Form.Item
-            {...formItemLayout}
-            label={formatMessage({ id: 'monitor.view.coordinateDisplay' })}
-          >
-            <Switch
-              disabled={!showCellPoint}
-              checked={showCoordinate}
-              onChange={switchCoordinatorShown}
-              checkedChildren={formatMessage({ id: 'app.common.visible' })}
-              unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
-            />
-          </Form.Item>
-
-          {/* 距离显示 */}
-          <Form.Item
-            {...formItemLayout}
-            label={formatMessage({ id: 'editor.view.distanceDisplay' })}
-          >
-            <Switch
-              disabled={!showCellsLine}
-              checked={showDistance}
-              onChange={switchDistanceShown}
-              checkedChildren={formatMessage({ id: 'app.common.visible' })}
-              unCheckedChildren={formatMessage({ id: 'app.common.hidden' })}
             />
           </Form.Item>
 
@@ -265,7 +241,6 @@ export default connect(({ monitor, monitorView }) => ({
   mapContext: monitor.mapContext,
   shownPriority: monitorView.shownPriority,
   showCellsLine: monitorView.showCellsLine,
-  showDistance: monitorView.showDistance,
   showCellPoint: monitorView.showCellPoint,
   showCoordinate: monitorView.showCoordinate,
   showBackImage: monitorView.showBackImage,
