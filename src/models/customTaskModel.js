@@ -1,11 +1,6 @@
 import { message } from 'antd';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
-import {
-  fetchActiveMap,
-  fetchCustomParamType,
-  getCustomTaskList,
-  getFormModelLockResource,
-} from '@/services/commonService';
+import { fetchActiveMap, getCustomTaskList, getFormModelLockResource } from '@/services/commonService';
 import { fetchAllLoadSpecification } from '@/services/resourceService';
 
 export default {
@@ -24,7 +19,6 @@ export default {
     storageSpecification: [], // 车辆容器规格
     loadSpecification: [], // 载具规格
     modelLocks: null, // 业务可锁资源
-    modelParams: null, // 配置参数数据
   },
 
   reducers: {
@@ -71,17 +65,13 @@ export default {
         return;
       }
       try {
-        const [modelLocks, modelParams, loadSpecification] = yield Promise.all([
+        const [modelLocks, loadSpecification] = yield Promise.all([
           getFormModelLockResource(),
-          fetchCustomParamType(),
           fetchAllLoadSpecification(),
         ]);
         const state = { mapData };
         if (!dealResponse(modelLocks)) {
           state.modelLocks = modelLocks;
-        }
-        if (!dealResponse(modelParams)) {
-          state.modelParams = modelParams;
         }
         if (!dealResponse(loadSpecification)) {
           state.loadSpecification = loadSpecification;

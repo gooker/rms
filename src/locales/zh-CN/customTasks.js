@@ -30,6 +30,7 @@ export default {
   'customTask.customTypes': '任务节点',
   'customTasks.button.updateModel': '更新关联信息',
   'customTasks.form.delete.confirm': '即将删除该节点并清空表单数据, 是否确定?',
+  'customTasks.form.submit.error': '表单数据采集失败',
   'customTask.form.name': '自定义任务名称',
   'customTask.form.subTaskName': '子任务名称',
   'customTask.form.specify': '指定',

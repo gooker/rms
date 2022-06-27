@@ -71,7 +71,6 @@ export default {
   'app.executionQ.notAvailable': '暂无', //@有重复
   'app.executionQ.released': '已释放',
   'app.executionQ.retrieval': '全属性检索',
-  'app.executionQ.target': '目标点',
   'app.executionQ.triedTimes': '累计次数',
 
   // 任务详情
@@ -120,7 +119,6 @@ export default {
   'app.taskDetail.superCarryPodToSpot': '高级搬运任务',
   'app.taskDetail.systemHint': '系统提示',
   'app.taskDetail.targetSpotDirection': '目标点方位',
-  'app.taskDetail.targetSpotId': '目标点',
   'app.taskDetail.targetStopSpotId': '目标停止点',
   'app.taskDetail.timeout': '超时',
   'app.taskDetail.updateUser': '更新人',

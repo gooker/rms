@@ -14,7 +14,7 @@ import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util'
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
 import { fetchAllPrograming } from '@/services/XIHEService';
 import { fetchAllAdaptor } from '@/services/resourceService';
-import { fetchGetProblemDetail } from '@/services/commonService';
+import { fetchCustomParamType, fetchGetProblemDetail } from '@/services/commonService';
 import { fetchTaskTypes } from '@/services/taskService';
 import { initI18n } from '@/utils/init';
 
@@ -213,8 +213,9 @@ class MainLayout extends React.Component {
 
   fetchAdditionalData = () => {
     const { dispatch } = this.props;
-    Promise.all([fetchTaskTypes(), fetchAllPrograming(), fetchAllAdaptor()])
-      .then(([allTaskTypes, allPrograming, allAdaptors]) => {
+    // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据
+    Promise.all([fetchTaskTypes(), fetchAllPrograming(), fetchAllAdaptor(), fetchCustomParamType()])
+      .then(([allTaskTypes, allPrograming, allAdaptors, targetDatasource]) => {
         const states = {};
 
         // 小车类型
@@ -253,6 +254,17 @@ class MainLayout extends React.Component {
           );
         }
 
+        // 适配器
+        if (!dealResponse(targetDatasource)) {
+          states.targetDatasource = targetDatasource;
+        } else {
+          message.error(
+            `${formatMessage(
+              { id: 'app.message.fetchFailTemplate' },
+              { type: formatMessage({ id: 'app.common.targetCell' }) },
+            )}`,
+          );
+        }
         dispatch({ type: 'global/updateStateInBatch', payload: states });
       })
       .catch((err) => {

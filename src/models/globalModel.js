@@ -48,6 +48,7 @@ export default {
 
     allAdaptors: {}, // 所有的适配器
     programing: [], // 所有地图编程元数据
+    targetDatasource: {}, // 目标点
   },
 
   reducers: {

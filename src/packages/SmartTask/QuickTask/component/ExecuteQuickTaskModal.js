@@ -7,10 +7,10 @@ import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
 import { executeCustomTask } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
-import TargetVariable from '@/components/VariableModification/TargetVariable';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
-import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
+import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
+import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const ExecuteQuickTaskModal = (props) => {
   const { dispatch, customTask, quickTask, executeModalVisible } = props;
@@ -145,7 +145,7 @@ const ExecuteQuickTaskModal = (props) => {
                       label={<FormattedMessage id={'app.common.targetCell'} />}
                       initialValue={{ type: variableKey, code: variableValue }}
                     >
-                      <TargetVariable vehicleSelection={vehicleSelection} />
+                      <TargetSelector vehicleSelection={vehicleSelection} />
                     </Form.Item>
                   );
                 }
