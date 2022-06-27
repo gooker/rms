@@ -182,7 +182,7 @@ const VariableModification = (props) => {
                       label={formatMessage({ id: 'object.load.direction' })}
                       initialValue={variables[variableKey]}
                     >
-                      <InputNumber addonAfter='°' />
+                      <InputNumber addonAfter="°" />
                     </Form.Item>
                   );
                 } else {
@@ -246,7 +246,7 @@ const VariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
@@ -284,7 +284,7 @@ const VariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
