@@ -57,13 +57,13 @@ const ContainerManage = () => {
     // },
 
     {
-      title: '载具规格',
+      title: <FormattedMessage id='load.specification' />,
       dataIndex: 'loadSpecificationCode',
       align: 'center',
       render: (text) => {
         const currentSpec = find(allLoadSpec, { code: text });
         if (currentSpec) {
-          return `${currentSpec?.length} * ${currentSpec?.width} * ${currentSpec?.height}`;
+          return `${currentSpec?.name} (${currentSpec?.length} * ${currentSpec?.width} * ${currentSpec?.height} )`;
         }
       },
     },
@@ -261,8 +261,8 @@ const ContainerManage = () => {
       <TableWithPages
         columns={columns}
         dataSource={dataSource}
-        expandColumns={expandColumns}
-        expandColumnsKey={'loadSpecification'}
+        // expandColumns={expandColumns}
+        // expandColumnsKey={'loadSpecification'}
         loading={loading}
         rowSelection={{ selectedRowKeys, onChange: rowSelectChange }}
         rowKey={(record) => {

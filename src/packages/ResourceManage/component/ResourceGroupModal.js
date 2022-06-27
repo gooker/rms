@@ -35,7 +35,7 @@ export default function ResourceGroupModal(props) {
 
     if (currentType === 'add') {
       members?.map((item) => {
-        const currentRow = find(allRows, { item });
+        const currentRow = find(allRows, { id:item });
         const memberId = rowIdMap[groupType] && currentRow ? currentRow[rowIdMap[groupType]] : item;
         newSource.push({ id: item, memberId, priority: 5 });
       });

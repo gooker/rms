@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import find from 'lodash/find';
-import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, message, Row, Select, Spin, Tag } from 'antd';
+import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Select, Spin, Tag } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import TaskTriggerModal from './TaskTriggerModal';
-import { deleteTaskTrigger, getAllTaskTriggers, saveTaskTrigger, switchTriggerState } from '@/services/commonService';
+import { find } from 'lodash';
+import {
+  deleteTaskTrigger,
+  getAllTaskTriggers,
+  saveTaskTrigger,
+  switchTriggerState,
+} from '@/services/commonService';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -22,8 +27,9 @@ const DescriptionItem = ({ title, content }) => (
     </Row>
   </div>
 );
-@connect(({ taskTriger }) => ({
+@connect(({ taskTriger, quickTask }) => ({
   customTaskList: taskTriger.customTaskList,
+  sharedTasks: quickTask.sharedTasks,
 }))
 class TaskTrigger extends Component {
   state = {
@@ -39,6 +45,7 @@ class TaskTrigger extends Component {
     const { dispatch } = this.props;
     await dispatch({ type: 'taskTriger/fetchActiveMap' });
     dispatch({ type: 'taskTriger/fetchModelTypes' });
+    dispatch({ type: 'quickTask/initQuickTaskPage' });
     this.initData();
   }
 
@@ -46,12 +53,11 @@ class TaskTrigger extends Component {
     const { dispatch } = this.props;
     this.setState({ loading: true });
     await dispatch({ type: 'taskTriger/fetchCustomTaskList' });
-    let taskTriggerList = null;
+    let params = {};
     if (type) {
-      taskTriggerList = await getAllTaskTriggers({ status: type });
-    } else {
-      taskTriggerList = await getAllTaskTriggers();
+      params = { status: type };
     }
+    const taskTriggerList = await getAllTaskTriggers(params);
     if (!dealResponse(taskTriggerList)) {
       this.setState({ taskTriggerList });
     }
@@ -85,25 +91,22 @@ class TaskTrigger extends Component {
     return selectedTrigerIds.includes(id);
   };
 
-  // 单个 批量 confirm
+  // 单个/批量 confirm
   confirmModal = (status, isBatch, record) => {
     const _this = this;
-    const triggerStatus = (type) => {
+    const content = (type) => {
       let statusText;
-      switch (type) {
-        case 'start':
-          statusText = formatMessage({ id: 'taskTrigger.startTaskTrigger.tip' });
-          break;
-        case 'pause':
-          statusText = formatMessage({ id: 'taskTrigger.pauseTaskTrigger.tip' });
-          break;
-        default:
-          statusText = formatMessage({ id: 'taskTrigger.endTaskrigger.tip' });
+      if (type === 'start') {
+        statusText = formatMessage({ id: 'taskTrigger.startTaskTrigger.tip' });
+      } else if (type === 'pause') {
+        statusText = formatMessage({ id: 'taskTrigger.pauseTaskTrigger.tip' });
+      } else {
+        statusText = formatMessage({ id: 'taskTrigger.endTaskrigger.tip' });
       }
       return statusText;
     };
     RmsConfirm({
-      content: triggerStatus(status),
+      content: content(status),
       onOk: () => {
         if (isBatch) {
           // 批量多个状态更改
@@ -130,12 +133,9 @@ class TaskTrigger extends Component {
   // 单个状态更改
   statusConfirm = async (record, type) => {
     const responseResult = await switchTriggerState({ [record.id]: type });
-    if (!dealResponse(responseResult)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    if (!dealResponse(responseResult, 1)) {
       this.setState({ triggerModalVisible: false, updateTrigger: null });
       this.initData();
-    } else {
-      message.error(formatMessage({ id: 'app.taskTrigger.operate.failed' }));
     }
     this.setState({ checked: [] });
   };
@@ -148,12 +148,9 @@ class TaskTrigger extends Component {
       requestBody[id] = type;
     });
     const responseResult = await switchTriggerState(requestBody);
-    if (!dealResponse(responseResult)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    if (!dealResponse(responseResult, 1)) {
       this.setState({ checkedOperateList: [] });
       this.initData();
-    } else {
-      message.error(formatMessage({ id: 'app.taskTrigger.operate.failed' }));
     }
   };
 
@@ -171,10 +168,8 @@ class TaskTrigger extends Component {
       RmsConfirm({
         content: formatMessage({ id: 'taskTrigger.deleteTaskrigger.tip' }),
         onOk: async () => {
-          // delete 调接口
           const deleteResult = await deleteTaskTrigger({ id: record.id });
-          if (!dealResponse(deleteResult)) {
-            message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+          if (!dealResponse(deleteResult, 1)) {
             _this.setState({
               taskTriggerList: [...newTask],
             });
@@ -188,41 +183,46 @@ class TaskTrigger extends Component {
   taskTriggerSubmit = async (data) => {
     const { selectSearchItem } = this.state;
     const saveResult = await saveTaskTrigger([data]);
-    if (!dealResponse(saveResult)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    if (!dealResponse(saveResult, 1)) {
       this.setState({ triggerModalVisible: false, updateTrigger: null });
-      if (!data.id) {
+      if (!data?.id) {
         this.setState({ selectSearchItem: null });
         this.initData(selectSearchItem);
       } else {
         this.initData(selectSearchItem);
       }
-    } else {
-      message.error(formatMessage({ id: 'app.message.operateFailed' }));
     }
   };
 
   // 开始结束暂停 状态显示
   triggerStatus = (status) => {
     let statusText;
-    switch (status) {
-      case 'start':
-        statusText = formatMessage({ id: 'app.triggerState.start' });
-        break;
-      case 'pause':
-        statusText = formatMessage({ id: 'app.triggerState.pause' });
-        break;
-      default:
-        statusText = formatMessage({ id: 'app.triggerState.end' });
+    if (['start', 'pause'].includes(status)) {
+      statusText = formatMessage({ id: `app.triggerAction.${status}` });
+    } else {
+      statusText = formatMessage({ id: 'app.triggerState.end' });
     }
     return statusText;
   };
 
   renderTrigerTasks = (taskCodes) => {
-    const { customTaskList } = this.props;
-    return taskCodes.map((code) => {
-      const customTask = find(customTaskList, { code });
-      return <Tag key={code}>{customTask.name}</Tag>;
+    const { customTaskList, sharedTasks } = this.props;
+    let currentAllTask = [];
+    customTaskList?.map(({ id, name }) => {
+      currentAllTask.push({ id, name });
+    });
+
+    sharedTasks?.map(({ id, name }) => {
+      currentAllTask.push({ id, name });
+    });
+    const paramIds = taskCodes?.map((idcode) => idcode.split('-')[0]);
+    return paramIds.map((id) => {
+      const customTask = find(currentAllTask, { id });
+      return (
+        <Tag key={id} color="blue">
+          {customTask?.name}
+        </Tag>
+      );
     });
   };
 
@@ -241,7 +241,7 @@ class TaskTrigger extends Component {
               this.handleSingleOperate(record, 'start');
             }}
           >
-            {<FormattedMessage id="app.triggerState.start" />}
+            {<FormattedMessage id="app.triggerAction.start" />}
           </Button>
         </div>
         <div
@@ -254,7 +254,7 @@ class TaskTrigger extends Component {
               this.handleSingleOperate(record, 'pause');
             }}
           >
-            {<FormattedMessage id="app.triggerState.pause" />}
+            {<FormattedMessage id="app.triggerAction.pause" />}
           </Button>
         </div>
         <div
@@ -350,12 +350,6 @@ class TaskTrigger extends Component {
               content={<span>{record.endTime}</span>}
             />
           </Col>
-          {/* <Col span={24}>
-            <DescriptionItem
-              title={<FormattedMessage id="app.taskTrigger.basedOnEvents" />}
-              content={<span>{record.basedOnEvents && record.basedOnEvents.toString()}</span>}
-            />
-          </Col> */}
         </Row>
       </Card>
     );

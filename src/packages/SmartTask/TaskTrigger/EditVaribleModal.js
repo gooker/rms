@@ -15,7 +15,7 @@ Object.keys(CustomNodeTypeFieldMap).forEach((key) => {
 });
 
 const EditVaribleModal = (props) => {
-  const { data, customTaskList, visible, onCancel, onSubmit } = props;
+  const { data, customTaskList, allTaskList, visible, onCancel, onSubmit } = props;
 
   const [form] = Form.useForm();
 
@@ -47,13 +47,15 @@ const EditVaribleModal = (props) => {
     >
       <Form form={form} labelWrap>
         {data &&
-          Object.keys(data)?.map((code) => {
+          Object.keys(data)?.map((idcode) => {
+            const [id, code] = idcode.split('-');
             const customTask = find(customTaskList, { code });
-            const sample = data[code];
+            const { name } = find(allTaskList, { id });
+            const sample = data[idcode];
             return (
-              <Card hoverable key={code} title={customTask?.name} style={{ marginTop: 13 }}>
+              <Card hoverable key={id} title={name} style={{ marginTop: 13 }}>
                 <VariableModification
-                  prefix={code}
+                  prefix={`${id}-${code}`}
                   form={form}
                   variable={sample}
                   customTask={customTask}
@@ -65,7 +67,4 @@ const EditVaribleModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ taskTriger }) => ({
-  modelTypes: taskTriger.modelTypes,
-  customTypes: taskTriger.customTypes,
-}))(memo(EditVaribleModal));
+export default memo(EditVaribleModal);
