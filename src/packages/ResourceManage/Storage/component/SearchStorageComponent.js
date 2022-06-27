@@ -25,7 +25,6 @@ const SearchStorageComponent = (props) => {
         params.createTimeEnd = convertToUserTimezone(values.createDate[1]).format(
           'YYYY-MM-DD HH:mm:ss',
         );
-        params.createDate = null;
       }
       onSearch({ ...values, ...params }, page);
     });
@@ -34,8 +33,8 @@ const SearchStorageComponent = (props) => {
   return (
     <Form form={form}>
       <Row gutter={24}>
-        <Col span={10}>
-          <Form.Item label={<FormattedMessage id="app.common.type" />} name="storageType">
+        <Col span={8}>
+          <Form.Item label={<FormattedMessage id='app.common.type' />} name='storageType'>
             <Select allowClear style={{ width: '100%' }}>
               {allStorageType?.map(({ label, code }) => (
                 <Select.Option key={code} value={code}>
@@ -45,30 +44,28 @@ const SearchStorageComponent = (props) => {
             </Select>
           </Form.Item>
         </Col>
-
-        <Col span={10}>
+        <Col span={8}>
           <Form.Item name={'id'} label={'ID'}>
             <Input />
           </Form.Item>
         </Col>
-
-        <Col span={10}>
-          <Form.Item name={'storageTempCode'} label={<FormattedMessage id='resource.storage.template' />}>
+        <Col span={8}>
+          <Form.Item
+            name={'storageTempCode'}
+            label={<FormattedMessage id='resource.storage.template' />}
+          >
             <Input />
           </Form.Item>
         </Col>
-
-        {/* 日期 */}
-        <Col span={10}>
-          <Form.Item name={'createDate'} label={<FormattedMessage id="app.form.dateRange" />}>
+        <Col span={8}>
+          <Form.Item name={'createDate'} label={<FormattedMessage id='app.form.dateRange' />}>
             <RangePicker showTime style={{ width: '100%' }} />
           </Form.Item>
         </Col>
-
-        <Col>
+        <Col span={8}>
           <Form.Item>
-            <Button type="primary" onClick={search}>
-              <SearchOutlined /> <FormattedMessage id="app.button.search" />
+            <Button type='primary' onClick={search}>
+              <SearchOutlined /> <FormattedMessage id='app.button.search' />
             </Button>
             <Button
               style={{ marginLeft: 24 }}
