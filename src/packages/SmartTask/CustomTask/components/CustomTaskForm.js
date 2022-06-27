@@ -232,43 +232,38 @@ const CustomTaskForm = (props) => {
     });
   }
 
-  async function generateTaskData() {
-    return new Promise((resolve) => {
-      // 去掉两个没用的任务节点
-      const _taskSteps = [...taskSteps].filter(
-        (item) => ![CustomNodeType.BASE, -1].includes(item.code),
-      );
-      form
-        .validateFields()
-        .then((value) => {
-          const formValue = generateCustomTaskForm(
-            value,
-            _taskSteps,
-            programing,
-            preTasks.map(({ code }) => code),
-          );
-          resolve(formValue);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
-  }
-
   async function submit() {
-    let requestBody = await generateTaskData();
-    if (requestBody === null) {
-      message.error(formatMessage({ id: 'customTask.form.invalid' }));
+    // 去掉两个没用的任务节点
+    const _taskSteps = [...taskSteps].filter(
+      (item) => ![CustomNodeType.BASE, -1].includes(item.code),
+    );
+
+    let requestBody;
+    try {
+      const formValues = await form.validateFields();
+      requestBody = generateCustomTaskForm(
+        formValues,
+        _taskSteps,
+        programing,
+        preTasks.map(({ code }) => code),
+      );
+      if (requestBody === null) {
+        message.error(formatMessage({ id: 'customTask.form.invalid' }));
+        return;
+      }
+
+      // 生成sample数据
+      requestBody.sample = {
+        sectionId: window.localStorage.getItem('sectionId'),
+        code: requestBody.code,
+        createCode: null,
+        customParams: generateSample(requestBody, attachNodeIndex()),
+      };
+    } catch (e) {
+      console.log(e);
+      message.error(formatMessage({ id: 'customTasks.form.submit.error' }));
       return;
     }
-
-    // 生成sample数据
-    requestBody.sample = {
-      sectionId: window.localStorage.getItem('sectionId'),
-      code: requestBody.code,
-      createCode: null,
-      customParams: generateSample(requestBody, attachNodeIndex()),
-    };
 
     // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
     if (editingRow) {
@@ -277,10 +272,7 @@ const CustomTaskForm = (props) => {
       requestBody.createdByUser = editingRow.createdByUser;
     }
     const response = await saveCustomTask(requestBody);
-    if (dealResponse(response)) {
-      message.error(formatMessage({ id: 'app.message.operateFailed' }));
-    } else {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    if (!dealResponse(response, true)) {
       dispatch({ type: 'customTask/saveState', payload: { listVisible: !listVisible } });
     }
   }

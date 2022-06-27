@@ -4,9 +4,9 @@ import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
 import { formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
-import TargetVariable from '@/components/VariableModification/TargetVariable';
+import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
+import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 
 const VariableModification = (props) => {
@@ -196,7 +196,7 @@ const VariableModification = (props) => {
                         code: variables[variableKey],
                       }}
                     >
-                      <TargetVariable vehicleSelection={vehicleSelection} />
+                      <TargetSelector vehicleSelection={vehicleSelection} />
                     </Form.Item>
                   );
                 }

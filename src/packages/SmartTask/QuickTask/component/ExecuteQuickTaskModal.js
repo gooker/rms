@@ -7,10 +7,10 @@ import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
 import { executeCustomTask } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
-import TargetVariable from '@/components/VariableModification/TargetVariable';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
-import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
+import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
+import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const ExecuteQuickTaskModal = (props) => {
   const { dispatch, customTask, quickTask, executeModalVisible } = props;
@@ -21,17 +21,17 @@ const ExecuteQuickTaskModal = (props) => {
   function onOk() {
     formRef.validateFields().then(async (value) => {
       setLoading(true);
-      const variable = cloneDeep(quickTask.variable);
-      const newParams = {};
-      Object.entries(value).forEach(([code, param]) => {
-        newParams[code] = param;
+      const { variable } = quickTask;
+      const variableCopy = cloneDeep(variable);
+      Object.entries(value).forEach(([key, keyValue]) => {
+        const originalConfig = variableCopy['customParams'][key];
+        const newConfig = {};
+        Object.keys(keyValue).forEach((field) => {
+          newConfig[field] = keyValue[field].code;
+        });
+        variableCopy['customParams'][key] = { ...originalConfig, ...newConfig };
       });
-      variable.customParams.forEach((item) => {
-        if (newParams[item.code]) {
-          item.param = newParams[item.code].code;
-        }
-      });
-      const response = await executeCustomTask(variable);
+      const response = await executeCustomTask(variableCopy);
       if (!dealResponse(response, true)) {
         dispatch({ type: 'quickTask/updateExecuteModalVisible', payload: false });
       }
@@ -145,7 +145,7 @@ const ExecuteQuickTaskModal = (props) => {
                       label={<FormattedMessage id={'app.common.targetCell'} />}
                       initialValue={{ type: variableKey, code: variableValue }}
                     >
-                      <TargetVariable vehicleSelection={vehicleSelection} />
+                      <TargetSelector vehicleSelection={vehicleSelection} />
                     </Form.Item>
                   );
                 }
@@ -188,7 +188,7 @@ const ExecuteQuickTaskModal = (props) => {
                 >
                   {(fields, { add, remove }) => (
                     <>
-                      {fields.map((field, index) => (
+                      {fields.map((field) => (
                         <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
                           <Col>
                             <Form.Item noStyle {...field}>
@@ -225,7 +225,7 @@ const ExecuteQuickTaskModal = (props) => {
                 <Form.List name={['END', 'backZone']} initialValue={variables.backZone ?? []}>
                   {(fields, { add, remove }) => (
                     <>
-                      {fields.map((field, index) => (
+                      {fields.map((field) => (
                         <Row key={field.key} gutter={10} style={{ marginBottom: 16 }}>
                           <Col>
                             <Form.Item noStyle {...field}>

@@ -173,6 +173,7 @@ const SubTaskForm = (props) => {
           hidden={hidden}
           name={[code, 'preActionCodes']}
           label={formatMessage({ id: 'app.task.pre' })}
+          initialValue={[]}
         >
           <Select mode={'multiple'} style={{ width: 300 }}>
             {renderPreTaskOptions()}
@@ -208,7 +209,7 @@ const SubTaskForm = (props) => {
           return value;
         }}
       >
-        <TargetSelector form={form} />
+        <TargetSelector vehicleSelection={form.getFieldValue(['START', 'robot'])} />
       </Form.Item>
 
       {/* 载具方向 */}

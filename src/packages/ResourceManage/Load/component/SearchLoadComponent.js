@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Select, Input, DatePicker, Button } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone } from '@/utils/util';
 
@@ -41,8 +41,8 @@ const SearchLoadComponent = (props) => {
           </Col>
           <Col span={5}>
             <Form.Item
-              label={<FormattedMessage id="load.specification" />}
-              name="loadSpecificationCode"
+              label={<FormattedMessage id='resource.load.specification' />}
+              name='loadSpecificationCode'
             >
               <Select allowClear style={{ width: '100%' }}>
                 {allLoadSpec?.map((item) => (

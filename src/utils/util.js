@@ -1233,6 +1233,10 @@ export function generateCustomTaskForm(value, taskSteps, programing, preTasksCod
       }
       if (CustomNodeType.ACTION === taskNodeType) {
         let configValue = { ...value[key] };
+        // 防止前置任务选择框出现奇怪的东西
+        if (isNull(configValue.preActionCodes)) {
+          configValue.preActionCodes = [];
+        }
         // 检查资源锁
         if (isEmpty(configValue.lockTime)) {
           configValue.lockTime = null;

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Select, Button, Input, DatePicker } from 'antd';
-import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
+import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { convertToUserTimezone } from '@/utils/util';
 import { allStorageType } from './storage';
@@ -53,7 +53,7 @@ const SearchStorageComponent = (props) => {
         </Col>
 
         <Col span={10}>
-          <Form.Item name={'storageTempCode'} label={<FormattedMessage id="storage.template" />}>
+          <Form.Item name={'storageTempCode'} label={<FormattedMessage id='resource.storage.template' />}>
             <Input />
           </Form.Item>
         </Col>

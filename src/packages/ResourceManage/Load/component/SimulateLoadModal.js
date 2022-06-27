@@ -1,11 +1,10 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Modal, Form, Select, Input, InputNumber, AutoComplete } from 'antd';
-import { isNull, formatMessage, getFormLayout, dealResponse, getRandomString } from '@/utils/util';
+import { AutoComplete, Form, Input, InputNumber, Modal, Select } from 'antd';
+import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
 import { fetchResourceGroup, simulationLoad } from '@/services/resourceService';
 import AngleSelector from '@/components/AngleSelector';
 import styles from '../load.module.less';
-import FormattedMessage from '@/components/FormattedMessage';
 import { fetchActiveMap } from '@/services/commonService';
 import { find } from 'lodash';
 
@@ -178,7 +177,7 @@ function SimulateLoadModal(props) {
 
         <Form.Item
           name={'bindLoadGroupName'}
-          label={formatMessage({ id: 'load.group' })}
+          label={formatMessage({ id: 'resource.load.group' })}
           rules={[{ required: true }]}
         >
           <AutoComplete
@@ -193,7 +192,7 @@ function SimulateLoadModal(props) {
 
         <Form.Item
           name={'bindStorageGroupName'}
-          label={formatMessage({ id: 'storage.group' })}
+          label={formatMessage({ id: 'resource.storage.group' })}
           rules={[{ required: true }]}
         >
           <Select>
