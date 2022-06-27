@@ -1,6 +1,6 @@
 /* TODO: I18N */
 import React, { memo, useEffect } from 'react';
-import { Modal, Form, Select, Input } from 'antd';
+import { Modal, Form, Select, Input, InputNumber } from 'antd';
 import {
   isNull,
   formatMessage,
@@ -99,7 +99,7 @@ function LoadSpecificationModal(props) {
           rules={[{ required: true }]}
           initialValue={updateRecord?.length}
         >
-          <Input allowClear />
+          <InputNumber allowClear addonAfter="mm" />
         </Form.Item>
         <Form.Item
           label={'宽'}
@@ -107,7 +107,7 @@ function LoadSpecificationModal(props) {
           rules={[{ required: true }]}
           initialValue={updateRecord?.width}
         >
-          <Input allowClear />
+          <InputNumber allowClear addonAfter="mm" />
         </Form.Item>
         <Form.Item
           label={'高'}
@@ -115,7 +115,7 @@ function LoadSpecificationModal(props) {
           rules={[{ required: true }]}
           initialValue={updateRecord?.height}
         >
-          <Input allowClear />
+          <InputNumber allowClear addonAfter="mm" />
         </Form.Item>
         <Form.Item label={'颜色'} name="color" initialValue={updateRecord?.color}>
           <Input allowClear />

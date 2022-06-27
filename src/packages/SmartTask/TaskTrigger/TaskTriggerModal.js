@@ -13,7 +13,8 @@ const TaskTriggerModal = (props) => {
   /**
    * updateItem 当前在编辑的触发器, 为null时表示当前是新建
    */
-  const { title, visible, updateItem, customTaskList, onCancel, onSubmit } = props;
+  const { title, visible, updateItem, customTaskList, sharedTasks, onCancel, onSubmit, dispatch } =
+    props;
 
   const [form] = Form.useForm();
 
@@ -27,12 +28,28 @@ const TaskTriggerModal = (props) => {
   const [variablesChanged, setVariablesChanged] = useState(null);
   // 获取变量loading
   const [loading, setLoading] = useState(false);
+  const [allTaskList, setAllTaskList] = useState([]); // 自定义任务和sharedTasks合并
+
+  useEffect(() => {
+    let currentAllTask = [];
+    customTaskList?.map(({ code, id, name, sample }) => {
+      currentAllTask.push({ code, id, name, sample });
+    });
+
+    sharedTasks?.map(({ taskCode, id, name, variable }) => {
+      if (variable) {
+        currentAllTask.push({ code: taskCode, id, name, sample: variable });
+      }
+    });
+    setAllTaskList(currentAllTask);
+  }, [customTaskList, sharedTasks]);
 
   // 该Hook只处理编辑的case
   useEffect(() => {
+    dispatch({ type: 'quickTask/initQuickTaskPage' });
     if (isNull(updateItem)) return;
     setEditVariableDisabled(updateItem.variable !== 'fixed');
-    if (updateItem.variable !== 'fixed') {
+    if (updateItem.variable === 'fixed') {
       generateVariable(updateItem);
     }
 
@@ -66,10 +83,12 @@ const TaskTriggerModal = (props) => {
   function generateVariable(record) {
     const { fixedVariable } = record;
     const dataMap = {};
-    Object.keys(fixedVariable)?.map((code) => {
-      dataMap[code] = {
+    Object.keys(fixedVariable)?.map((idcode) => {
+      const [id, code] = idcode.split('-');
+      dataMap[idcode] = {
+        id,
         code,
-        customParams: fixedVariable[code],
+        customParams: fixedVariable[idcode],
       };
     });
     setVariables(dataMap);
@@ -80,11 +99,12 @@ const TaskTriggerModal = (props) => {
     const param = form.getFieldValue('codes');
     if (!Array.isArray(param)) return;
     setLoading(true);
-    const currentDataBycode = customTaskList?.filter(({ code }) => param.includes(code));
+    const paramIds = param?.map((idcode) => idcode.split('-')[0]);
+    const currentDataById = allTaskList?.filter(({ id }) => paramIds.includes(id));
     if (!variablesChanged) {
       const dataMap = {};
-      currentDataBycode?.map(({ code, sample }) => {
-        dataMap[code] = sample;
+      currentDataById?.map(({ id, code, sample }) => {
+        dataMap[`${id}-${code}`] = sample;
       });
       setVariables(dataMap);
     }
@@ -120,10 +140,10 @@ const TaskTriggerModal = (props) => {
         // 判断下 variables 值是否存在，不存在的话要获取下变量信息
         if (isNull(variables)) {
           const { codes } = values;
-          const currentDataBycode = customTaskList?.filter(({ code }) => codes.includes(code));
-
-          currentDataBycode?.map(({ code, sample }) => {
-            dataMap[code] = sample?.customParams;
+          const paramIds = codes?.map((idcode) => idcode.split('-')[0]);
+          const currentDataById = allTaskList?.filter(({ id }) => paramIds.includes(id));
+          currentDataById?.map(({ id, code, sample }) => {
+            dataMap[`${id}-${code}`] = sample?.customParams;
           });
         }
 
@@ -200,8 +220,8 @@ const TaskTriggerModal = (props) => {
           }}
         >
           <Select allowClear mode="multiple" maxTagCount={4}>
-            {customTaskList.map((element) => (
-              <Select.Option key={element.code} value={element.code}>
+            {allTaskList.map((element) => (
+              <Select.Option key={element.id} value={`${element.id}-${element.code}`}>
                 {element.name}
               </Select.Option>
             ))}
@@ -269,6 +289,7 @@ const TaskTriggerModal = (props) => {
       {/* 编辑变量 */}
       <EditVaribleModal
         customTaskList={customTaskList}
+        allTaskList={allTaskList}
         data={variables}
         visible={editVaribleVisible}
         onCancel={() => {
@@ -282,6 +303,7 @@ const TaskTriggerModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ taskTriger }) => ({
+export default connect(({ taskTriger, quickTask }) => ({
+  sharedTasks: quickTask.sharedTasks,
   customTaskList: taskTriger.customTaskList,
 }))(memo(TaskTriggerModal));
