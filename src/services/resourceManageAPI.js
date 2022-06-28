@@ -250,6 +250,14 @@ export function handleChargers(param) {
   });
 }
 
+// ************************* 资源分组 ************************* //
+// 获取资源组类型
+export async function fetchResourceGroupType() {
+  return request(`/${NameSpace.Platform}/resource/getResourceType`, {
+    method: 'GET',
+  });
+}
+
 // ************************* 资源绑定 ************************* //
 // 保存绑定关系
 export async function saveBindRelationship(param) {

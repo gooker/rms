@@ -5,9 +5,10 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-d
 import { find } from 'lodash';
 import RmsConfirm from '@/components/RmsConfirm';
 import { allStorageType } from './component/storage';
-import InitStorageModal from './component/InitStorageModal';
 import TableWithPages from '@/components/TableWithPages';
+import { GroupManager } from '@/components/ResourceGroup';
 import AddStorageModal from './component/AddStorageModal';
+import InitStorageModal from './component/InitStorageModal';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import SearchStorageComponent from './component/SearchStorageComponent';
@@ -22,9 +23,10 @@ const StorageManagement = () => {
   const [initVisible, setInitVisible] = useState(false);
 
   const [dataSource, setDataSource] = useState([]);
-  const [page, setPage] = useState({ currentPage: 1, size: 10 });
   const [searchParam, setSearchParam] = useState(null);
   const [updateRecord, setUpdateRecord] = useState(null);
+  const [page, setPage] = useState({ currentPage: 1, size: 10 });
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -155,14 +157,13 @@ const StorageManagement = () => {
           <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteStorage}>
             <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
           </Button>
-
           <ResourceGroupOperateComponent
             selectedRows={selectedRows}
             selectedRowKeys={selectedRowKeys}
             groupType={'STORE'}
             onRefresh={getData}
           />
-
+          <GroupManager type={'STORE'} />
           <Button
             onClick={() => {
               getData();

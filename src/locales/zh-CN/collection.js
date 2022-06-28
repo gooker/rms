@@ -7,8 +7,13 @@ export default {
   'app.button.bind': '绑定',
   'app.button.unbind': '解绑',
   'app.button.logout': '注销',
-  'app.common.batchOperate': '批量操作',
-  'app.common.groupMange': '分组管理',
+  'app.button.batchOperate': '批量操作',
+
+  // 资源分组相关
+  'group.groupType': '资源组类型',
+  'group.groupMange': '组管理',
+  'group.resourceGroupMange': '分组管理',
+  'group.addToGroup': '添加到组',
 
   // 自定义环境管理
   'environmentManager.envName': '环境名称',
@@ -21,7 +26,7 @@ export default {
   'environmentManager.url.invalid': 'URL格式不合法',
   'environmentManager.api.invalid': '接口信息不完整',
 
-  // 固件
+  // 固件相关
   'firmware.upgrade': '固件升级',
 
   // 故障相关
