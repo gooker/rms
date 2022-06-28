@@ -139,7 +139,7 @@ const ChargeProperty = (props) => {
           >
             <Row>
               <Col span={4}>
-                <FormattedMessage id={'chargeManager.fault. chargerId'} />
+                <FormattedMessage id={'charger.id'} />
               </Col>
               <Col span={15}>
                 <Select

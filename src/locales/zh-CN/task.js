@@ -111,7 +111,6 @@ export default {
   'app.taskDetail.vehicleStatus': '的小车状态',
   'app.taskDetail.searchDate': '查询时间',
   'app.taskDetail.sectionId': '区域ID',
-  'app.taskDetail.selectVehiclePlaceholder': '请选择小车',
   'app.taskDetail.startTime': '开始时间',
   'app.taskDetail.startingPower': '开始电量',
   'app.taskDetail.stepId': '步骤',

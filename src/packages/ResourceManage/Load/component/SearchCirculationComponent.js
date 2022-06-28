@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Form, Row, Col, Input, DatePicker, Button } from 'antd';
 import { SearchOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -36,18 +35,24 @@ const SearchCirculationComponent = (props) => {
       <Form form={formRef}>
         <Row gutter={24}>
           <Col span={6}>
-            <Form.Item label={'小车ID'} name={'vehicleId'}>
+            <Form.Item label={<FormattedMessage id="app.vehicle" />} name={'vehicleId'}>
               <Input allowClear />
             </Form.Item>
           </Col>
 
           <Col span={6}>
-            <Form.Item label={'来源货位'} name={'fromCargoStorage'}>
+            <Form.Item
+              label={<FormattedMessage id="load.source.storage" />}
+              name={'fromCargoStorage'}
+            >
               <Input allowClear />
             </Form.Item>
           </Col>
           <Col span={6}>
-            <Form.Item label={'目标货位'} name={'toCargoStorage'}>
+            <Form.Item
+              label={<FormattedMessage id="load.target.storage" />}
+              name={'toCargoStorage'}
+            >
               <Input allowClear />
             </Form.Item>
           </Col>

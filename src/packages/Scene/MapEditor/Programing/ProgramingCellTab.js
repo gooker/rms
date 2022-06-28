@@ -1,11 +1,14 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, InputNumber, Row, Select } from 'antd';
 import { PlusOutlined, SearchOutlined, SettingOutlined } from '@ant-design/icons';
 import { debounce } from 'lodash';
-import { getCurrentRouteMapData, getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
+import {
+  getCurrentRouteMapData,
+  getSelectionNaviCells,
+  getSelectionNaviCellTypes,
+} from '@/utils/mapUtil';
 import { connect } from '@/utils/RmsDva';
-import { convertMapToArrayMap } from '@/utils/util';
+import { convertMapToArrayMap, formatMessage } from '@/utils/util';
 import { ProgramingItemType } from '@/config/config';
 import { MapSelectableSpriteType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
@@ -121,7 +124,7 @@ const ProgramingCellTab = (props) => {
         </Col>
       </Row>
       <Button
-        type='primary'
+        type="primary"
         onClick={startConfiguration}
         disabled={configCells.length === 0}
         style={{ marginTop: 10 }}
@@ -148,7 +151,7 @@ const ProgramingCellTab = (props) => {
 
       {/* 配置弹窗 */}
       <ProgramingConfiguerModal
-        title={`编辑点位编程: [ ${configCells.join()} ]`}
+        title={`${formatMessage({ id: 'programming.editCell' })}: [ ${configCells.join()} ]`}
         editing={editing}
         programing={programing}
         visible={configVisible}
@@ -158,7 +161,7 @@ const ProgramingCellTab = (props) => {
 
       {/* 选择具体配置点位类型 */}
       <StackCellConfirmModal
-        title={'选择需要进行配置的点位类型'}
+        title={formatMessage({ id: 'programming.selectType.configured' })}
         types={naviTypeOption}
         visible={naviTypeOption.length > 0}
         onConfirm={(types) => {

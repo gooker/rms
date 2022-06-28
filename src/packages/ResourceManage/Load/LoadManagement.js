@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState, useEffect } from 'react';
 import { Row, Col, Button, Switch } from 'antd';
 import {
@@ -57,7 +56,7 @@ const ContainerManage = () => {
     // },
 
     {
-      title: <FormattedMessage id='load.specification' />,
+      title: <FormattedMessage id="resource.load.specification" />,
       dataIndex: 'loadSpecificationCode',
       align: 'center',
       render: (text) => {
@@ -73,7 +72,7 @@ const ContainerManage = () => {
       align: 'center',
     },
     {
-      title: '位置',
+      title: <FormattedMessage id="load.location" />,
       dataIndex: 'cargoStorageSpace',
       align: 'center',
     },
@@ -117,15 +116,6 @@ const ContainerManage = () => {
           }}
         />
       ),
-    },
-  ];
-
-  const expandColumns = [
-    {
-      title: '类型名称',
-      dataIndex: 'loadType_name',
-      align: 'center',
-      render: (text, rec) => rec?.name,
     },
   ];
 
@@ -234,7 +224,7 @@ const ContainerManage = () => {
                 setSimulateVisible(true);
               }}
             >
-              <DiffOutlined /> 模拟生成
+              <DiffOutlined /> <FormattedMessage id="load.simulation.generate" />
             </Button>
 
             <ResourceGroupOperateComponent
@@ -261,8 +251,6 @@ const ContainerManage = () => {
       <TableWithPages
         columns={columns}
         dataSource={dataSource}
-        // expandColumns={expandColumns}
-        // expandColumnsKey={'loadSpecification'}
         loading={loading}
         rowSelection={{ selectedRowKeys, onChange: rowSelectChange }}
         rowKey={(record) => {

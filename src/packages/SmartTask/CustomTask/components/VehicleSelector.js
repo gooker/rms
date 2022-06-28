@@ -1,8 +1,7 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Select, Space } from 'antd';
 import { find } from 'lodash';
-import { isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -84,7 +83,7 @@ const VehicleSelector = (props) => {
               value={vehicleType}
               onChange={cascadeFirstChange}
               style={{ width: 160 }}
-              placeholder={'请选择小车类型'}
+              placeholder={formatMessage({ id: 'customTask.form.vehicle.selectType' })}
             >
               {renderCascadeFirstOption()}
             </Select>
@@ -92,7 +91,7 @@ const VehicleSelector = (props) => {
               mode={'multiple'}
               onChange={onCodeChange}
               style={{ width: 300 }}
-              placeholder={'请选择小车'}
+              placeholder={formatMessage({ id: 'customTask.form.vehicle.select' })}
               value={currentValue.code}
             >
               {renderCascadeSecondOption()}

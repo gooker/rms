@@ -1,9 +1,8 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Cascader, Col, Form, Input, Row, Select, Switch } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
-import { convertPrograming2Cascader, isNull } from '@/utils/util';
+import { convertPrograming2Cascader, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { OperateType } from '@/components/ProgramingConfiguer/ProgramingConst';
 
@@ -99,7 +98,7 @@ const ProgramingForm = (props) => {
         value={actionType}
         options={cascaderOption}
         onChange={setActionType}
-        placeholder={'选择具体配置项'}
+        placeholder={formatMessage({ id: 'configure.select.specificItems' })}
         style={{ width: '30%' }}
       />
 
@@ -109,7 +108,7 @@ const ProgramingForm = (props) => {
           {Array.isArray(actionType) && actionType.length > 0 && (
             <Col span={6}>
               <Button onClick={add}>
-                <PlusOutlined /> 添加配置
+                <PlusOutlined /> <FormattedMessage id="configure.add" />
               </Button>
             </Col>
           )}

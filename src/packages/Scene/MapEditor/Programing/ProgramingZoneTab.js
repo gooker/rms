@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Button, Col, Divider, Empty, Row, Select } from 'antd';
 import { PlusOutlined, SettingOutlined } from '@ant-design/icons';
@@ -7,7 +6,7 @@ import { ZoneMarkerType } from '@/config/consts';
 import ScopeProgramList from './ScopeProgramList';
 import { ProgramingItemType } from '@/config/config';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
-import { convertMapToArrayMap } from '@/utils/util';
+import { convertMapToArrayMap, formatMessage } from '@/utils/util';
 import ProgramingConfiguerModal from '@/components/ProgramingConfiguer';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -78,7 +77,7 @@ const ProgramingZoneTab = (props) => {
         </Col>
       </Row>
       <Button
-        type='primary'
+        type="primary"
         onClick={startConfiguration}
         disabled={configZone.length === 0}
         style={{ marginTop: 10 }}
@@ -95,7 +94,7 @@ const ProgramingZoneTab = (props) => {
       )}
 
       <ProgramingConfiguerModal
-        title={'编辑区域编程'}
+        title={formatMessage({ id: 'programming.editZone' })}
         editing={editing}
         programing={programing}
         visible={configVisible}

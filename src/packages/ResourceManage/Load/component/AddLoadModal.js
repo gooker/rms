@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Modal, Form, Select, Input } from 'antd';
 import { isNull, formatMessage, getFormLayout, dealResponse, isStrictNull } from '@/utils/util';
@@ -42,7 +41,7 @@ function AddLoadModal(props) {
     if (!value || !ids.includes(value) || !isStrictNull(updateRecord)) {
       return Promise.resolve();
     }
-    return Promise.reject(new Error('ID重复'));
+    return Promise.reject(new Error(formatMessage({ id: 'app.form.id.duplicate' })));
   }
 
   return (
@@ -96,7 +95,7 @@ function AddLoadModal(props) {
         </Form.Item>
 
         <Form.Item
-          label={'载具规格'}
+          label={formatMessage({ id: 'resource.load.specification' })}
           name="loadSpecificationCode"
           rules={[{ required: true }]}
           initialValue={updateRecord?.loadSpecificationCode}
@@ -104,7 +103,7 @@ function AddLoadModal(props) {
           <Select allowClear style={{ width: '100%' }}>
             {allLoadSpec?.map((item) => (
               <Select.Option key={item?.id} value={item?.code}>
-                {`${item.length}*${item.width}*${item.height}`}
+                {`${item.name} (${item.length} * ${item.width} * ${item.height})`}
               </Select.Option>
             ))}
           </Select>

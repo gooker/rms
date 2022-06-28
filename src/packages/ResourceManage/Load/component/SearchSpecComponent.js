@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Form, Row, Col, Select } from 'antd';
 import { FunnelPlotOutlined } from '@ant-design/icons';
@@ -23,7 +22,7 @@ const SearchSpecComponent = (props) => {
               alignItems: 'center',
               justifyContent: 'center',
               lineHeight: 30,
-              height:30,
+              height: 30,
             }}
           >
             <FunnelPlotOutlined />

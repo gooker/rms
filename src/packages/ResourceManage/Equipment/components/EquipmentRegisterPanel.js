@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, SwapOutlined } from '@ant-design/icons';
@@ -38,7 +37,7 @@ const EquipmentRegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: '信号强度',
+      title: <FormattedMessage id="device.signalStrength" />,
       dataIndex: 'signalStrength',
       align: 'center',
     },
@@ -75,14 +74,14 @@ const EquipmentRegisterPanel = (props) => {
           }}
           disabled={selectedRowKeys.length !== 1}
         >
-          <SwapOutlined /> 注册
+          <SwapOutlined /> <FormattedMessage id="app.button.register" />
         </Button>
         <Button
           onClick={() => {
             dispatch({ type: 'equipList/updateAddRegistrationModalShown', payload: true });
           }}
         >
-          <PlusOutlined /> 添加发现
+          <PlusOutlined /> <FormattedMessage id="app.button.addFound" />
         </Button>
       </div>
       <TableWithPages

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, Col, Empty, Row, Spin } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { findChargerAdapter } from '@/services/resourceService';
 import styles from '../Vehicle/vehicle.module.less';
@@ -39,33 +39,37 @@ const CustomChargerType = (props) => {
         )}
         {datasource.length > 0 &&
           datasource.map((adapter, index) => (
-            <Card key={index} title={`适配器: ${adapter.name}`}>
+            <Card
+              key={index}
+              title={`${formatMessage({ id: 'app.configInfo.header.adapter' })}: ${adapter.name}`}
+            >
               {adapter.chargerAdapterTypes?.map((item, innerIndex) => (
                 <Card
                   key={innerIndex}
                   type="inner"
-                  title={`充电桩类型: ${item.name}`}
+                  title={`${formatMessage({ id: 'app.common.name' })}: ${item.name}`}
                   style={innerIndex > 0 ? { marginTop: 16 } : {}}
                 >
                   <Row>
                     <Col span={12}>
                       <span>
-                        {'类型'}: {item?.type}
+                        <FormattedMessage id="app.common.type" /> : {item?.type}
                       </span>
                     </Col>
                     <Col span={12}>
                       <span>
-                        {'厂商'}: {item?.manufacturer}
+                        <FormattedMessage id="charger.manufacturer" /> : {item?.manufacturer}
                       </span>
                     </Col>
                     <Col span={12}>
                       <span>
-                        最大电流: {item?.maxElectricity} {'A'}
+                        <FormattedMessage id="charger.maximumCurrent" /> : {item?.maxElectricity}{' '}
+                        {'A'}
                       </span>
                     </Col>
                     <Col span={12}>
                       <span>
-                        {'最大电压'}: {item?.maxVoltage}
+                        <FormattedMessage id="charger.maximumVoltage" /> : {item?.maxVoltage}
                         {'V'}
                       </span>
                     </Col>

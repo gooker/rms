@@ -43,7 +43,7 @@ const AddRegistrationModal = (props) => {
   return (
     <Modal
       visible={visible}
-      title={'添加发现'}
+      title={formatMessage({id:'app.button.addFound'})}
       maskClosable={false}
       onCancel={() => {
         dispatch({ type: 'vehicleList/updateAddRegistrationModalShown', payload: false });

@@ -55,7 +55,7 @@ const FaultSearchForm = (props) => {
         <Col span={6}>
           <Form.Item
             name={'hardwareId'}
-            label={<FormattedMessage id="chargeManager.fault. chargerId" />}
+            label={<FormattedMessage id="charger.id" />}
           >
             <Input allowClear />
           </Form.Item>

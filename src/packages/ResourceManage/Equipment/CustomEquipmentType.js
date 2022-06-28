@@ -1,9 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Card, Col, Empty, Row, Space, Spin, Tooltip } from 'antd';
 import { FormOutlined, ReloadOutlined, SnippetsOutlined } from '@ant-design/icons';
-import { dealResponse, isNull } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { findAllDeviceTypes, saveDeviceTypeActions, saveDeviceTypeConfigs } from '@/services/resourceService';
+import {
+  findAllDeviceTypes,
+  saveDeviceTypeActions,
+  saveDeviceTypeConfigs,
+} from '@/services/resourceService';
 import EquipmentTypeConfigsModal from './components/EquipmentTypeConfigsModal';
 import EquipmentTypeActionsModal from './components/EquipmentTypeActionsModal';
 import commonStyle from '@/common.module.less';
@@ -71,7 +75,7 @@ const CustomEquipmentType = () => {
               title={deviceType?.name}
               extra={
                 <Space>
-                  <Tooltip title={'配置信息'}>
+                  <Tooltip title={formatMessage({ id: 'app.configInfo' })}>
                     <FormOutlined
                       className={styles.toolItem}
                       onClick={() => {
@@ -80,7 +84,7 @@ const CustomEquipmentType = () => {
                     />
                   </Tooltip>
                   {deviceType?.hasCustomAction && (
-                    <Tooltip title={'配置动作'}>
+                    <Tooltip title={formatMessage({ id: 'device.configureActions' })}>
                       <SnippetsOutlined
                         className={styles.toolItem}
                         onClick={() => {
@@ -105,12 +109,13 @@ const CustomEquipmentType = () => {
                 </Col>
                 <Col span={12}>
                   <span>
-                    {'描述'}: {deviceType?.desc}
+                    <FormattedMessage id="app.common.description" /> : {deviceType?.desc}
                   </span>
                 </Col>
                 <Col span={12}>
                   <span>
-                    {'适配器'}: {deviceType?.deviceAdapterTypeCode}
+                    <FormattedMessage id="app.configInfo.header.adapter" /> :{' '}
+                    {deviceType?.deviceAdapterTypeCode}
                   </span>
                 </Col>
               </Row>

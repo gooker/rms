@@ -1,7 +1,6 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Modal, Row, Col, Divider } from 'antd';
-import { getFormLayout, adaptModalHeight } from '@/utils/util';
+import { getFormLayout, adaptModalHeight, formatMessage } from '@/utils/util';
 import { forIn, find } from 'lodash';
 import { renderFormItemContent } from './equipUtils';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -67,7 +66,7 @@ const DeviceActionsModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'设备动作'}
+      title={formatMessage({ id: 'device.action' })}
       maskClosable={false}
       onCancel={onCancelModal}
       okText={

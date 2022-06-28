@@ -1,7 +1,6 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Form, message, Modal } from 'antd';
-import { isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import VariableModification, {
   formatVariableFormValues,
 } from '@/components/VariableModification/VariableModification';
@@ -13,7 +12,7 @@ const VariableModificationModal = (props) => {
 
   useEffect(() => {
     if (visible && isNull(customTask)) {
-      message.error('自定义任务数据丢失');
+      message.error(formatMessage({ id: 'variable.customTaskData.missing' }));
     }
   }, [visible]);
 
@@ -30,7 +29,7 @@ const VariableModificationModal = (props) => {
 
   return (
     <Modal
-      title={'编辑任务变量'}
+      title={formatMessage({ id: 'variable.task.edit' })}
       visible={visible}
       width={800}
       maskClosable={false}

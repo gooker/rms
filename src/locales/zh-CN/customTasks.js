@@ -60,6 +60,9 @@ export default {
   'customTask.form.NO_SPECIFY': '自动分车',
   'customTask.form.SPECIFY_Vehicle': '指定小车',
   'customTask.form.SPECIFY_GROUP': '指定小车组',
+  'customTask.form.vehicle.selectType': '请选择小车类型',
+  'customTask.form.vehicle.select': '请选择小车',
+
   'customTask.form.resourceLimit': '资源约束',
   'customTask.form.resourceLimit.vehicleBattery': '车辆电量',
   'customTask.form.resourceLimit.availableContainerCountLimit': '车辆容器可用数量',
@@ -139,6 +142,10 @@ export default {
   // 事件
   'customTask.form.payLoad': '消息体',
   'customTask.form.topic': '广播主题',
+
+  // 变量组件 相关
+  'variable.customTaskData.missing': '自定义任务数据丢失',
+  'variable.task.edit': '编辑任务变量',
 
   // **********  分组管理 ********** //
   'groupManage.management': '分组配置',

@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, SwapOutlined } from '@ant-design/icons';
@@ -14,13 +13,13 @@ import commonStyle from '@/common.module.less';
 import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 
 const ChargeRegisterPanel = (props) => {
-  const { dispatch, showRegisterPanel, onRefresh } = props;
+  const { dispatch, showRegisterPanel } = props;
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [unregisterChargers, setUnregisterChargers] = useState([]);
   const [loading, setLoading] = useState(false);
   const columns = [
     {
-      title: '充电桩ID',
+      title: <FormattedMessage id="charger.id" />,
       dataIndex: 'chargerId',
       align: 'center',
     },
@@ -91,14 +90,14 @@ const ChargeRegisterPanel = (props) => {
           }}
           disabled={selectedRowKeys.length !== 1}
         >
-          <SwapOutlined /> 注册
+          <SwapOutlined /> <FormattedMessage id="app.button.register" />
         </Button>
         <Button
           onClick={() => {
             dispatch({ type: 'chargerList/updateAddRegistrationModalShown', payload: true });
           }}
         >
-          <PlusOutlined /> 添加发现
+          <PlusOutlined /> <FormattedMessage id="app.button.addFound" />
         </Button>
       </div>
       <TableWithPages

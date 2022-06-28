@@ -1,9 +1,8 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Select, Space } from 'antd';
 import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
-import { isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 
 /**
  * vehicle: {code: '车类型', ids: '该类型下的小车id', types: '支持的载具类型'}
@@ -71,7 +70,7 @@ const VehicleComponent = (props) => {
               value={vehicleType}
               onChange={cascadeFirstChange}
               style={{ width: 160 }}
-              placeholder={'请选择小车类型'}
+              placeholder={formatMessage({ id: 'customTask.form.vehicle.selectType' })}
             >
               {renderCascadeFirstOption()}
             </Select>
@@ -79,7 +78,7 @@ const VehicleComponent = (props) => {
               mode={'multiple'}
               onChange={onCodeChange}
               style={{ width: 360 }}
-              placeholder={'请选择小车'}
+              placeholder={formatMessage({ id: 'customTask.form.vehicle.select' })}
               value={currentValue.code}
             >
               {renderCascadeSecondOption()}
