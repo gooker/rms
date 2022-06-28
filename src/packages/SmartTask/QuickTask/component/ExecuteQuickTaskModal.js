@@ -11,6 +11,7 @@ import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
+import { convertBackZoneToFormValue } from '@/components/VariableModification/VariableModification';
 
 const ExecuteQuickTaskModal = (props) => {
   const { dispatch, customTask, quickTask, executeModalVisible } = props;
@@ -78,7 +79,7 @@ const ExecuteQuickTaskModal = (props) => {
       const variables = customParams.START;
       const dom = Object.entries(variables)
         .map(([fieldKey, fieldValue]) => {
-          if (VehicleOptionType[fieldKey] && fieldKey !== 'AUTO') {
+          if (VehicleOptionType[fieldKey] && fieldValue.length > 0) {
             return (
               <Form.Item
                 key={getRandomString(6)}
@@ -184,7 +185,7 @@ const ExecuteQuickTaskModal = (props) => {
               <Form.Item label={formatMessage({ id: 'customTask.form.heavyBackZone' })}>
                 <Form.List
                   name={['END', 'heavyBackZone']}
-                  initialValue={variables.heavyBackZone ?? []}
+                  initialValue={convertBackZoneToFormValue(variables.heavyBackZone)}
                 >
                   {(fields, { add, remove }) => (
                     <>
@@ -222,7 +223,10 @@ const ExecuteQuickTaskModal = (props) => {
             {/* 返回区域 */}
             {backZoneVisible && (
               <Form.Item label={formatMessage({ id: 'customTask.form.backZone' })}>
-                <Form.List name={['END', 'backZone']} initialValue={variables.backZone ?? []}>
+                <Form.List
+                  name={['END', 'backZone']}
+                  initialValue={convertBackZoneToFormValue(variables.backZone)}
+                >
                   {(fields, { add, remove }) => (
                     <>
                       {fields.map((field) => (

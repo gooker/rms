@@ -2,7 +2,7 @@ import React, { Fragment, memo } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Row, Select, Switch } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { isPlainObject } from 'lodash';
-import { formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
+import { convertMapToArrayMap, formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
@@ -39,6 +39,7 @@ const VariableModification = (props) => {
     const customParams = variable?.customParams;
     if (customParams && !isEmptyPlainObject(customParams)) {
       const variables = customParams.START;
+      const hidden = variables.VEHICLE && variables.VEHICLE.length === 0;
       return (
         <>
           <Divider orientation={'left'}>{renderPartTitle('START')}</Divider>
@@ -46,7 +47,7 @@ const VariableModification = (props) => {
             if (VehicleOptionType[variableKey]) {
               return (
                 <Form.Item
-                  hidden={variableKey === 'AUTO'}
+                  hidden={hidden}
                   key={getRandomString(6)}
                   name={prefix ? [prefix, 'START', variableKey] : ['START', variableKey]}
                   label={variableKey}
@@ -213,6 +214,9 @@ const VariableModification = (props) => {
     const customParams = variable?.customParams;
     if (customParams && !isEmptyPlainObject(customParams)) {
       const variables = customParams.END;
+      const { heavyBackZone, backZone } = variables;
+      const heavyBackZoneInitValue = convertBackZoneToFormValue(heavyBackZone);
+      const backZoneInitValue = convertBackZoneToFormValue(backZone);
       return (
         <>
           <Divider orientation={'left'}>{renderPartTitle('END')}</Divider>
@@ -220,7 +224,7 @@ const VariableModification = (props) => {
             <Form.Item label={formatMessage({ id: 'customTask.form.heavyBackZone' })}>
               <Form.List
                 name={prefix ? [prefix, 'END', 'heavyBackZone'] : ['END', 'heavyBackZone']}
-                initialValue={variables.heavyBackZone ?? []}
+                initialValue={heavyBackZoneInitValue}
               >
                 {(fields, { add, remove }) => (
                   <>
@@ -258,7 +262,7 @@ const VariableModification = (props) => {
             <Form.Item label={formatMessage({ id: 'customTask.form.backZone' })}>
               <Form.List
                 name={prefix ? [prefix, 'END', 'backZone'] : ['END', 'backZone']}
-                initialValue={variables.backZone ?? []}
+                initialValue={backZoneInitValue}
               >
                 {(fields, { add, remove }) => (
                   <>
@@ -343,4 +347,11 @@ export function formatVariableFormValues(values, hasPrefix = false) {
     return result;
   }
   return format(values);
+}
+
+export function convertBackZoneToFormValue(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => convertMapToArrayMap(item, 'type', 'code')[0]);
+  }
+  return [];
 }

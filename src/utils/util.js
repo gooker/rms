@@ -1354,8 +1354,12 @@ export function restoreCustomTaskForm(customTask) {
     // 收集表单数据
     if (taskNodeType === CustomNodeType.START) {
       const startValues = { ...customTask[customTaskKey] };
-      if (isNull(startValues.vehicle)) {
-        delete startValues.vehicle;
+      const { vehicle } = startValues;
+      if (
+        isNull(vehicle) ||
+        (vehicle.type === VehicleOptionType.VEHICLE && vehicle.code.length === 0)
+      ) {
+        startValues.vehicle = { type: VehicleOptionType.AUTO, code: [] };
       }
       result.fieldsValue[taskNodeType] = startValues;
     } else if (taskNodeType === CustomNodeType.END) {
@@ -1448,10 +1452,8 @@ export function generateSample(
 ) {
   const result = { START: {} };
   // 任务开始
-  if (customStart.vehicle) {
-    const { type, code } = customStart.vehicle;
-    result.START[type] = code;
-  }
+  const { type, code } = customStart.vehicle;
+  result.START[type] = code;
   result.START.customLimit = customStart.customLimit;
 
   // 子任务
@@ -1499,13 +1501,13 @@ export function generateSample(
 
   // 任务结束
   result.END = {};
-  result.END.vehicleNeedCharge = customEnd.vehicleNeedCharge ?? false;
   result.END.backZone = customEnd.backZone
     ? extractMapValueToMap(customEnd.backZone, 'type', 'code')
     : [];
   result.END.heavyBackZone = customEnd.heavyBackZone
     ? extractMapValueToMap(customEnd.heavyBackZone, 'type', 'code')
     : [];
+  result.END.vehicleNeedCharge = customEnd.vehicleNeedCharge ?? false;
   return result;
 }
 
