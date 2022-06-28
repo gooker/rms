@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import {

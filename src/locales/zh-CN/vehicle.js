@@ -3,6 +3,7 @@ export default {
   'app.vehicle.found': '发现',
   'app.vehicleState': '车辆状态',
   'app.vehicleGroup': '车辆分组',
+  'app.vehicle.register': '车辆注册',
 
   // 车辆类型
   'app.vehicleType': '车辆类型',

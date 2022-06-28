@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { AutoComplete, Form, Input, InputNumber, Modal, Select } from 'antd';
 import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull } from '@/utils/util';
@@ -94,11 +93,11 @@ function SimulateLoadModal(props) {
           />
         </Form.Item> */}
 
-        <Form.Item label={'载具码'} required={true}>
+        <Form.Item label={formatMessage({ id: 'load.code' })} required={true}>
           <Input.Group compact className={styles['site-input-group-wrapper']}>
             <Form.Item
               noStyle
-              label={'开始载具码'}
+              label={formatMessage({ id: 'load.startCode' })}
               name="startLoadId"
               initialValue={updateRecord?.startLoadId}
               rules={[{ required: true }]}
@@ -108,7 +107,7 @@ function SimulateLoadModal(props) {
                   width: 100,
                   textAlign: 'center',
                 }}
-                placeholder="开始载具码"
+                placeholder={formatMessage({ id: 'load.startCode' })}
               />
             </Form.Item>
 
@@ -125,7 +124,7 @@ function SimulateLoadModal(props) {
             />
             <Form.Item
               noStyle
-              label={'结束载具码'}
+              label={formatMessage({ id: 'load.endCode' })}
               name="endLoadId"
               initialValue={updateRecord?.endLoadId}
               rules={[{ required: true }]}
@@ -136,14 +135,14 @@ function SimulateLoadModal(props) {
                   width: 120,
                   textAlign: 'center',
                 }}
-                placeholder="结束载具码"
+                placeholder={formatMessage({ id: 'load.endCode' })}
               />
             </Form.Item>
           </Input.Group>
         </Form.Item>
 
         <Form.Item
-          label={'载具规格'}
+          label={formatMessage({ id: 'resource.load.specification' })}
           name="loadSpecificationCode"
           rules={[{ required: true }]}
           initialValue={updateRecord?.loadSpecificationCode}

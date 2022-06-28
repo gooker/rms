@@ -19,12 +19,16 @@ export default {
   'resource.load.group': '载具组',
   'resource.storage.template': '储位模版',
   'resource.storage.group': '储位组',
+  'resource.signalStrength': '信号强度',
+  'resource.mode': '方式',
+  'resource.bonjour': '查找',
+  'resource.scan': '扫描网段',
+  'resource.bonjourInfo': '查找信息',
 
   // 适配器
   'adapter.register': '适配器注册',
 
   // 设备
-  'device.signalStrength': '信号强度',
   'device.type': '设备类型',
   'device.name': '设备名称',
   'device.id': '设备Id',
@@ -45,10 +49,12 @@ export default {
 
   'app.configInfo': '配置信息',
 
-
   // 载具
-  'load.location':'位置',
-  'load.simulation.generate':'模拟生成',
-  'load.target.storage':'目标货位',
-  'load.source.storage':'来源货位',
+  'load.location': '位置',
+  'load.simulation.generate': '模拟生成',
+  'load.target.storage': '目标货位',
+  'load.source.storage': '来源货位',
+  'load.code': '载具码',
+  'load.startCode': '开始载具码',
+  'load.endCode': '结束载具码',
 };

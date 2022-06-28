@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Badge, Button, Drawer, Tag } from 'antd';
 import { CloseOutlined, InfoOutlined, ToolOutlined } from '@ant-design/icons';
@@ -81,11 +80,11 @@ const VehicleList = (props) => {
               <Tag color={Colors.red}>
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id='vehicle.underMaintenance' />
+                  <FormattedMessage id="vehicle.underMaintenance" />
                 </span>
               </Tag>
             ) : (
-              <Tag color={Colors.green}>{<FormattedMessage id='app.common.normal' />}</Tag>
+              <Tag color={Colors.green}>{<FormattedMessage id="app.common.normal" />}</Tag>
             )}
           </span>
         );
@@ -264,7 +263,7 @@ const VehicleList = (props) => {
 
       {/* 注册小车 */}
       <Drawer
-        title="车辆注册"
+        title={formatMessage({ id: 'app.vehicle.register' })}
         placement="top"
         height="50%"
         closable={false}
