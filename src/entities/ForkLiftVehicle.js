@@ -195,7 +195,7 @@ export default class ForkLiftVehicle extends PIXI.Container {
   }
   // -----     手动模式   ------ //
 
-  upPod(pod) {
+  upLoad(pod) {
     if (this.data.pod) {
       return this.data.pod;
     }
@@ -209,7 +209,7 @@ export default class ForkLiftVehicle extends PIXI.Container {
     this.addChild(this.data.pod);
   }
 
-  downPod() {
+  downLoad() {
     if (this.data.pod) {
       this.removeChild(this.data.pod);
       this.data.pod.destroy({ children: true });

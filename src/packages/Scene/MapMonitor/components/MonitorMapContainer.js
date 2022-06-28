@@ -299,7 +299,6 @@ const MonitorMapContainer = (props) => {
           ({ lt }) => lt === 'LOAD_TYPE_LatentJackingLoadType',
         );
         const currentToteLoad = loadList?.filter(({ lt }) => lt === 'tote');
-
         mapContext.renderLatentPod(currentlatentLoad);
         // mapContext.renderTotePod(currentToteLoad);
       }

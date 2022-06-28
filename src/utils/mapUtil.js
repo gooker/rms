@@ -1304,6 +1304,21 @@ export function explainVehicleStatus(value) {
   return mapping[value];
 }
 
+export function getCurrentload(data) {
+  let currentLoad = {
+    loadId: null,
+    loadDirection: 0,
+    loadUniId: null,
+  };
+  // 先一个   出现多个的时候再改 王日锋 说就是会有多个载具的情况
+  if (data) {
+    currentLoad.loadId = data[0]?.l;
+    currentLoad.loadDirection = data[0]?.lA;
+    currentLoad.loadUniId = data[0]?.lUniId;
+  }
+  return currentLoad;
+}
+
 export function unifyVehicleState(vehicle) {
   // 对小车点位进行转换，如果接受到的电梯替换点就转换成地图原始点位
   let currentCellId = vehicle.c ?? vehicle.currentCellId;
@@ -1323,9 +1338,8 @@ export function unifyVehicleState(vehicle) {
     manualMode: vehicle.mly ?? vehicle.manualMode,
     vehicleStatus: explainVehicleStatus(vehicle.s) ?? vehicle.vehicleStatus,
     currentDirection: vehicle.rD ?? vehicle.currentDirection,
-    podId: vehicle.p ?? vehicle.podId,
-    podDirection: vehicle.pD ?? vehicle.podDirection,
-    hasPod: vehicle.hp,
+    loadId: vehicle.l ? getCurrentload(vehicle.l)?.loadId : vehicle.loadId,
+    loadDirection: vehicle.l ? getCurrentload(vehicle.l)?.loadDirection : vehicle.loadDirection,
     longSide: vehicle.lS,
     shortSide: vehicle.sS,
     shelfs: vehicle.sf ?? vehicle.shelfs,
