@@ -1,6 +1,17 @@
 /* TODO: I18N */
 import React, { memo, useState } from 'react';
-import { AutoComplete, Button, Col, Form, Input, InputNumber, Modal, Radio, Row, Select } from 'antd';
+import {
+  AutoComplete,
+  Button,
+  Col,
+  Form,
+  Input,
+  InputNumber,
+  Modal,
+  Radio,
+  Row,
+  Select,
+} from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -43,7 +54,7 @@ const AddRegistrationModal = (props) => {
   return (
     <Modal
       visible={visible}
-      title={formatMessage({id:'app.button.addFound'})}
+      title={formatMessage({ id: 'app.button.addFound' })}
       maskClosable={false}
       onCancel={() => {
         dispatch({ type: 'vehicleList/updateAddRegistrationModalShown', payload: false });
@@ -53,7 +64,7 @@ const AddRegistrationModal = (props) => {
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
           name={'type'}
-          label={'方式'}
+          label={formatMessage({ id: 'resource.mode' })}
           rules={[{ required: true }]}
           initialValue={findType}
           getValueFromEvent={(e) => {
@@ -62,8 +73,12 @@ const AddRegistrationModal = (props) => {
           }}
         >
           <Radio.Group optionType="button" buttonStyle="solid">
-            <Radio.Button value={'bonjour'}>查找</Radio.Button>
-            <Radio.Button value={'ip'}>扫描网段</Radio.Button>
+            <Radio.Button value={'bonjour'}>
+              <FormattedMessage id="resource.bonjour" />
+            </Radio.Button>
+            <Radio.Button value={'ip'}>
+              <FormattedMessage id="resource.scan" />
+            </Radio.Button>
           </Radio.Group>
         </Form.Item>
 
@@ -105,7 +120,7 @@ const AddRegistrationModal = (props) => {
                 {fields.map((field, index) => (
                   <Form.Item
                     {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                    label={index === 0 ? '查找信息' : ''}
+                    label={index === 0 ? formatMessage({ id: 'resource.bonjourInfo' }) : ''}
                     required={true}
                     key={field.key}
                   >

@@ -1,8 +1,7 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Form, Modal, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { getFormLayout } from '@/utils/util';
+import { formatMessage, getFormLayout } from '@/utils/util';
 
 const { formItemLayout } = getFormLayout(5, 17);
 const RegisterVehicleModal = (props) => {
@@ -28,7 +27,7 @@ const RegisterVehicleModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'车辆注册'}
+      title={formatMessage({ id: 'app.vehicle.register' })}
       maskClosable={false}
       onCancel={() => {
         dispatch({ type: 'vehicleList/updateRegisterVehicleModalShown', payload: false });
@@ -36,7 +35,11 @@ const RegisterVehicleModal = (props) => {
       onOk={submit}
     >
       <Form form={formRef} {...formItemLayout}>
-        <Form.Item name={'vehicleType'} label={'车辆类型'} rules={[{ required: true }]}>
+        <Form.Item
+          name={'vehicleType'}
+          label={formatMessage({ id: 'app.vehicleType' })}
+          rules={[{ required: true }]}
+        >
           <Select>
             {Object.values(allAdaptors).map(({ adapterType }) => {
               const { id, name, vehicleTypes } = adapterType;

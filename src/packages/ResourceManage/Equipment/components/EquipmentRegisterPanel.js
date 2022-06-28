@@ -37,7 +37,7 @@ const EquipmentRegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="device.signalStrength" />,
+      title: <FormattedMessage id="resource.signalStrength" />,
       dataIndex: 'signalStrength',
       align: 'center',
     },

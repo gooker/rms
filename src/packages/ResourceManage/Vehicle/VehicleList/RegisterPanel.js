@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { PlusOutlined, SwapOutlined } from '@ant-design/icons';
@@ -42,12 +41,12 @@ const RegisterPanel = (props) => {
       align: 'center',
     },
     {
-      title: '品牌',
+      title: <FormattedMessage id="vehicle.brand" />,
       dataIndex: 'navigationType',
       align: 'center',
     },
     {
-      title: '信号强度',
+      title: <FormattedMessage id="resource.signalStrength" />,
       dataIndex: 'signalStrength',
       align: 'center',
     },
@@ -84,7 +83,7 @@ const RegisterPanel = (props) => {
           }}
           disabled={selectedRowKeys.length === 0}
         >
-          <SwapOutlined /> 注册
+          <SwapOutlined /> <FormattedMessage id="app.button.register" />
         </Button>
         <Button
           onClick={() => {
