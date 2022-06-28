@@ -4,7 +4,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getRandomString } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditableCell from '@/packages/SmartTask/QuickTask/component/EditableCell';
-import { saveResourceGroup } from '@/services/resourceService';
+import { deleteResourceGroup, saveResourceGroup } from '@/services/resourceService';
 
 const GroupModal = (props) => {
   const { type, mapId, visible, onCancel, groups, onChange } = props;
@@ -34,7 +34,7 @@ const GroupModal = (props) => {
         const editable = isEditing(record);
         return editable ? (
           <>
-            <Typography.Link onClick={() => save(record.code)}>
+            <Typography.Link onClick={() => save(record)}>
               <FormattedMessage id={'app.button.confirm'} />
             </Typography.Link>
             <Divider type={'vertical'} />
@@ -91,9 +91,12 @@ const GroupModal = (props) => {
     edit(record);
   }
 
-  function deleteRow({ code }) {
-    const newData = [...groups].filter((item) => item.code !== code);
-    onChange(newData);
+  async function deleteRow({ id, code }) {
+    const response = await deleteResourceGroup([id]);
+    if (!dealResponse(response)) {
+      const newData = [...groups].filter((item) => item.code !== code);
+      onChange(newData);
+    }
   }
 
   function edit(record) {
@@ -107,7 +110,7 @@ const GroupModal = (props) => {
 
   const cancel = () => {
     if (isAdding) {
-      const newData = [...groups].filter((item) => item.id !== editingKey);
+      const newData = [...groups].filter((item) => item.code !== editingKey);
       onChange(newData);
     } else {
       setEditingKey('');
@@ -115,21 +118,20 @@ const GroupModal = (props) => {
     setIsAdding(false);
   };
 
-  const save = async (code) => {
+  const save = async ({ id, code }) => {
     try {
-      const row = await formRef.validateFields();
-      const newData = [...groups];
-      const index = newData.findIndex((item) => code === item.code);
-      const item = newData[index];
+      const formValues = await formRef.validateFields();
+      const newData = [...groups].filter((item) => item.code !== code);
       const response = await saveResourceGroup({
         mapId,
         code,
+        id,
         groupType: type,
-        groupName: row.name,
-        desc: row.desc,
+        groupName: formValues.groupName,
+        desc: formValues.desc,
       });
       if (!dealResponse(response, true)) {
-        newData.splice(index, 1, { ...item, ...row, id: response });
+        newData.push({ ...response });
         onChange(newData);
       } else {
         return;
