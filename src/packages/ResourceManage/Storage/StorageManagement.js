@@ -6,13 +6,12 @@ import { find } from 'lodash';
 import RmsConfirm from '@/components/RmsConfirm';
 import { allStorageType } from './component/storage';
 import TableWithPages from '@/components/TableWithPages';
-import { GroupManager } from '@/components/ResourceGroup';
+import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 import AddStorageModal from './component/AddStorageModal';
 import InitStorageModal from './component/InitStorageModal';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import SearchStorageComponent from './component/SearchStorageComponent';
-import ResourceGroupOperateComponent from '../component/ResourceGroupOperateComponent';
 import { deleteSelectedStorage, fetchAllStorage } from '@/services/resourceService';
 import { dealResponse, formatMessage, generateResourceGroups } from '@/utils/util';
 import commonStyles from '@/common.module.less';
@@ -26,7 +25,6 @@ const StorageManagement = () => {
   const [searchParam, setSearchParam] = useState(null);
   const [updateRecord, setUpdateRecord] = useState(null);
   const [page, setPage] = useState({ currentPage: 1, size: 10 });
-
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -157,13 +155,16 @@ const StorageManagement = () => {
           <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteStorage}>
             <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
           </Button>
-          <ResourceGroupOperateComponent
-            selectedRows={selectedRows}
-            selectedRowKeys={selectedRowKeys}
-            groupType={'STORE'}
-            onRefresh={getData}
+          <GroupManager
+            type={'STORE'}
+            memberIdKey={GroupResourceMemberId.STORE}
+            selections={selectedRows}
+            refresh={() => getData()}
+            cancelSelection={() => {
+              setSelectedRows([]);
+              setSelectedRowKeys([]);
+            }}
           />
-          <GroupManager type={'STORE'} />
           <Button
             onClick={() => {
               getData();
@@ -179,9 +180,7 @@ const StorageManagement = () => {
         expandColumns={expandColumns}
         loading={loading}
         rowSelection={{ selectedRowKeys, onChange: rowSelectChange }}
-        rowKey={(record) => {
-          return record.id;
-        }}
+        rowKey={({ id }) => id}
         pagination={{
           current: page.current,
           pageSize: page.size,
