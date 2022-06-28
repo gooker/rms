@@ -5,7 +5,14 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -69,8 +76,8 @@ class MonitorMapView extends BaseMap {
     // 监控相关
     this.idVehicleMap = new Map(); // {uniqueId: [VehicleEntity]}
 
-    this.idLatentPodMap = new Map(); // {loadId: [PodEntity]}
-    this.idLatentPodInCar = new Map(); // {loadId:null} // 用来标识有哪些货架在小车身上
+    this.idLoadMap = new Map(); // {loadId: [PodEntity]}
+    this.idLoadInVehicle = new Map(); // {loadId:null} // 用来标识有哪些货架在小车身上
     this.idTotePodMap = new Map(); // {cellId_L: [PodEntity]} ||  {cellId_R: [PodEntity]}
     this.emergencyAreaMap = new Map(); // 紧急区域
 
@@ -113,7 +120,7 @@ class MonitorMapView extends BaseMap {
     this.clearMapStage();
     this.idCellMap.clear();
     this.idVehicleMap.clear();
-    this.idLatentPodMap.clear();
+    this.idLoadMap.clear();
     this.idLineMap = { 10: new Map(), 20: new Map(), 100: new Map(), 1000: new Map() };
   }
 
@@ -203,14 +210,14 @@ class MonitorMapView extends BaseMap {
         break;
       }
       case 'pod': {
-        const pod = this.idLatentPodMap.get(`${id}`);
+        const pod = this.idLoadMap.get(`${id}`);
         if (pod) {
           x = pod.x;
           y = pod.y;
           scaled = 0.3;
         } else {
           // 如果地上的潜伏货架没有符合条件的就查看潜伏车身上的货架
-          const uniqueId = this.idLatentPodInCar.get(id);
+          const uniqueId = this.idLoadInVehicle.get(id);
           if (isNull(uniqueId)) return;
           const vehicleEntity = this.idVehicleMap.get(`${uniqueId}`);
           x = vehicleEntity.x;
@@ -531,12 +538,12 @@ class MonitorMapView extends BaseMap {
       const {
         x,
         y,
-        podId,
+        loadId,
+        loadDirection,
         vehicleId,
         battery,
         mainTain,
         vehicleStatus,
-        podDirection,
         currentCellId,
         currentDirection,
         errorLevel,
@@ -583,19 +590,20 @@ class MonitorMapView extends BaseMap {
         VehicleType.LatentLifting,
       );
 
-      // 卸货: podId不存在但是小车还有货物的时候需要卸货 --> {vehicleId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, podId: 0}
-      if (!hasLatentPod(podId) && latentVehicle && latentVehicle.pod) {
-        this.idLatentPodInCar.delete(latentVehicle.pod.id);
-        latentVehicle.downPod();
+      // 卸货: loadId不存在但是小车还有货物的时候需要卸货 --> {vehicleId: "x", currentCellId: 46, currentDirection: 0, mainTain: false, battery: 54, loadId: 0}
+      if (!hasLatentPod(loadId) && latentVehicle && latentVehicle.pod) {
+        this.idLoadInVehicle.delete(latentVehicle.pod.id);
+        latentVehicle.downLoad();
       }
 
       // 刷新小车上货架的状态
-      if (hasLatentPod(podId)) {
+      if (hasLatentPod(loadId)) {
         this.refreshLatentPod({
-          podId,
+          vId: uniqueId,
+          loadId,
           vehicleId,
           cellId: currentCellId,
-          direction: podDirection,
+          direction: loadDirection,
           h: 1050, // 下车身上的货架不需要展示尺寸，所以随便给个数值
           w: 1050,
         });
@@ -610,14 +618,14 @@ class MonitorMapView extends BaseMap {
     const latentVehicle = this.idVehicleMap.get(`${vId}`);
     if (latentVehicle) {
       // 如果现在身上驮着货架就要放下
-      if (latentVehicle.podId) {
-        const podId = latentVehicle.podId;
+      if (latentVehicle.loadId) {
+        const loadId = latentVehicle.loadId;
         const podAngle = latentVehicle.pod.angle;
-        latentVehicle.downPod();
+        latentVehicle.downLoad();
         // 删除该货架在车身的标记
-        this.idLatentPodInCar.delete(podId);
+        this.idLoadInVehicle.delete(loadId);
         // 将该货架刷新到地上
-        this.refreshLatentPod({ podId, cellId: latentVehicle.currentCellId, direction: podAngle });
+        this.refreshLatentPod({ loadId, cellId: latentVehicle.currentCellId, direction: podAngle });
       }
       this.pixiUtils.viewportRemoveChild(latentVehicle);
       latentVehicle.destroy({ children: true });
@@ -630,24 +638,20 @@ class MonitorMapView extends BaseMap {
     if (this.idCellMap.size === 0) return;
     const { loadId, cellId, angle, width, height } = latentPodData;
     const cellEntity = this.idCellMap.get(cellId);
-    // 这里需要做一次检查: 因为小车的状态信息可能比货架信息来的早, 一旦某货架和小车已经存在绑定关系
-    // 就会在渲染的小车上渲染出该货架, 但后到的货架信息会在该点重新渲染正常状态的货架从而造成一个地图上存在两个相同的货架
-    const exist = this.idLatentPodInCar.has(loadId);
-    if (!exist) {
-      const latentPod = new LatentPod({
-        id: loadId,
-        cellId,
-        width,
-        height,
-        angle: angle || 0,
-        x: cellEntity ? cellEntity.x : null,
-        y: cellEntity ? cellEntity.y : null,
-        select: this.select,
-      });
-      latentPod.dirty = true;
-      cellEntity && this.pixiUtils.viewportAddChild(latentPod);
-      this.idLatentPodMap.set(`${loadId}`, latentPod);
-    }
+
+    const latentPod = new LatentPod({
+      id: loadId,
+      cellId,
+      width,
+      height,
+      angle: angle || 0,
+      x: cellEntity ? cellEntity.x : null,
+      y: cellEntity ? cellEntity.y : null,
+      select: this.select,
+    });
+    latentPod.dirty = true;
+    cellEntity && this.pixiUtils.viewportAddChild(latentPod);
+    this.idLoadMap.set(`${loadId}`, latentPod);
   };
 
   renderLatentPod = (latentPodList) => {
@@ -664,21 +668,20 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  refreshLatentPod = (podStatus) => {
-    // {"podId":"22","direction":0,"cellId":22,"h":1050,"w":1050}
+  refreshLatentPod = (loadStatus) => {
     // {"loadId":"22","angle":0,"cellId":22,"h":1050,"w":1050,"v":9,'vId':'X34566666',lT:'LOAD_TYPE_LatentJackingLoadType',}
-    const { loadId, v: vehicleId, vId: uniqueId, cellId: currentCellId, w, h } = podStatus;
-    const podDirection = convertAngleToPixiAngle(podStatus.angle ?? 90);
+    const { loadId, v: vehicleId, vId: uniqueId, cellId: currentCellId, w, h } = loadStatus;
+    const loadDirection = convertAngleToPixiAngle(loadStatus.angle ?? 90);
     const width = w || LatentPodSize.width;
     const height = h || LatentPodSize.height;
 
     if (currentCellId === -1) {
       // 删除Pod
-      const latentPod = this.idLatentPodMap.get(`${loadId}`);
+      const latentPod = this.idLoadMap.get(`${loadId}`);
       if (latentPod) {
         this.pixiUtils.viewportRemoveChild(latentPod);
         latentPod.destroy({ children: true });
-        this.idLatentPodMap.delete(`${loadId}`);
+        this.idLoadMap.delete(`${loadId}`);
         this.refresh();
       }
       return;
@@ -698,12 +701,12 @@ class MonitorMapView extends BaseMap {
           latentPod = latentVehicle.pod;
         } else {
           // 地上的货架和新建的货架都需要更新大量的数据，所以这里放在一起无差别处理
-          latentPod = this.idLatentPodMap.get(`${loadId}`);
+          latentPod = this.idLoadMap.get(`${loadId}`);
           if (!latentPod) {
             if (cellEntity) {
               latentPod = new LatentPod({
                 id: loadId,
-                angle: podDirection,
+                angle: loadDirection,
                 cellId: currentCellId,
                 x: cellEntity.x,
                 y: cellEntity.y,
@@ -720,27 +723,27 @@ class MonitorMapView extends BaseMap {
           latentPod.width = LatentPodSize.width / 2;
           latentPod.height = LatentPodSize.height / 2;
           // 标记该潜伏货架正在小车身上
-          this.idLatentPodInCar.set(`${loadId}`, vehicleId);
-          latentVehicle.upPod(latentPod);
-          this.idLatentPodMap.delete(`${loadId}`);
+          this.idLoadInVehicle.set(`${loadId}`, uniqueId);
+          latentVehicle.upLoad(latentPod);
+          this.idLoadMap.delete(`${loadId}`);
         }
         latentPod.visible = true;
         latentPod.cellId = currentCellId;
-        latentPod.setAngle(podDirection);
+        latentPod.setAngle(loadDirection);
       }
     } else {
-      // 首先看这个pod是否已经存在, 不存在的话再添加, 存在的话可能是更新位置
-      const latentPod = this.idLatentPodMap.get(`${loadId}`);
+      // 首先看这个load是否已经存在, 不存在的话再添加, 存在的话可能是更新位置
+      const latentPod = this.idLoadMap.get(`${loadId}`);
       if (latentPod) {
         latentPod.x = cellEntity.x;
         latentPod.y = cellEntity.y;
         latentPod.resize(width, height);
-        latentPod.setAngle(podDirection);
+        latentPod.setAngle(loadDirection);
       } else {
         this.addLatentPod({
           loadId,
           cellId: currentCellId,
-          angle: podDirection,
+          angle: loadDirection,
           width,
           height,
         });

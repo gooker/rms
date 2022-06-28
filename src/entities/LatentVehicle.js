@@ -253,7 +253,7 @@ export default class LatentVehicle extends PIXI.Container {
     this.spannerSprite.visible = mainTain;
   }
 
-  upPod(pod) {
+  upLoad(pod) {
     // 已经驮着就直接返回此Pod的id
     if (this.data.pod && this.data.pod.id) {
       return this.data.pod.id;
@@ -263,7 +263,7 @@ export default class LatentVehicle extends PIXI.Container {
     return this.data.pod.id;
   }
 
-  downPod() {
+  downLoad() {
     if (this.data.pod) {
       const podId = this.data.pod.id;
       this.removeChild(this.data.pod);
