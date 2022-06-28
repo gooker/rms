@@ -1450,11 +1450,12 @@ export function generateSample(
   { customStart, customActions, customPreActions, customEnd },
   taskNodes,
 ) {
-  const result = { START: {} };
+  const customParams = { START: {}, END: {} };
+
   // 任务开始
   const { type, code } = customStart.vehicle;
-  result.START[type] = code;
-  result.START.customLimit = customStart.customLimit;
+  customParams.START[type] = code;
+  const vehicleLimit = Object.assign({}, customStart.customLimit);
 
   // 子任务
   // 1. 转换前置任务
@@ -1482,17 +1483,20 @@ export function generateSample(
       } = subTask;
       const { index } = find(taskNodes, { code });
       const stepCode = `step${index}`;
-      result[stepCode] = {};
+      customParams[stepCode] = {};
       if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
-        result[stepCode]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+        customParams[stepCode]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
       }
-      result[stepCode][target.type] = target?.code ?? [];
+      customParams[stepCode][target.type] = target?.code ?? [];
 
       // 合并前置任务的参数
       if (Array.isArray(preActionCodes)) {
         preActionCodes.forEach((subTaskCode) => {
           if (!isNull(preTaskParams[subTaskCode])) {
-            result[`step${index}`] = { ...result[`step${index}`], ...preTaskParams[subTaskCode] };
+            customParams[`step${index}`] = {
+              ...customParams[`step${index}`],
+              ...preTaskParams[subTaskCode],
+            };
           }
         });
       }
@@ -1500,15 +1504,14 @@ export function generateSample(
   }
 
   // 任务结束
-  result.END = {};
-  result.END.backZone = customEnd.backZone
+  customParams.END.backZone = customEnd.backZone
     ? extractMapValueToMap(customEnd.backZone, 'type', 'code')
     : [];
-  result.END.heavyBackZone = customEnd.heavyBackZone
+  customParams.END.heavyBackZone = customEnd.heavyBackZone
     ? extractMapValueToMap(customEnd.heavyBackZone, 'type', 'code')
     : [];
-  result.END.vehicleNeedCharge = customEnd.vehicleNeedCharge ?? false;
-  return result;
+
+  return { customParams, vehicleLimit };
 }
 
 // 将数组中符合条件的元素删掉， Lodash中同名方法有问题-->遇到第一个不符合条件的会直接break

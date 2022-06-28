@@ -253,11 +253,13 @@ const CustomTaskForm = (props) => {
       }
 
       // 生成sample数据
+      const { customParams, vehicleLimit } = generateSample(requestBody, attachNodeIndex());
       requestBody.sample = {
         sectionId: window.localStorage.getItem('sectionId'),
         code: requestBody.code,
         createCode: null,
-        customParams: generateSample(requestBody, attachNodeIndex()),
+        customParams,
+        vehicleLimit,
       };
     } catch (e) {
       console.log(e);

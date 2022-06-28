@@ -11,10 +11,10 @@ export default {
   'app.button.register': '注册',
   'app.button.addFound': '添加发现',
   'app.common.groupMange': '分组管理',
-
   'app.button.batchOperate': '批量操作',
 
   // 资源分组相关
+  'group.resourceGroup': '资源组',
   'group.groupType': '资源组类型',
   'group.groupMange': '组管理',
   'group.resourceGroupMange': '分组管理',

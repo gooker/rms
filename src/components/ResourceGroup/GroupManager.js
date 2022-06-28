@@ -8,6 +8,7 @@ import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchResourceGroup, saveResourceGroup } from '@/services/resourceService';
 import AddToGroupModal from '@/components/ResourceGroup/AddToGroupModal';
 import { isPlainObject, uniq } from 'lodash';
+import GroupResourceModal from '@/components/ResourceGroup/GroupResourceModal';
 
 const GroupManager = (props) => {
   const { type, memberIdKey, selections, refresh, cancelSelection } = props;
@@ -28,15 +29,19 @@ const GroupManager = (props) => {
       const activeMap = sectionMaps.filter((item) => item.activeFlag)[0];
       if (activeMap) {
         setMapId(activeMap.id);
-        const allResourceGroups = await fetchResourceGroup({ mapId: activeMap.id });
-        const _groups = allResourceGroups.filter((item) => item.groupType === type);
-        setGroups(_groups);
+        await refreshResourceGroup(activeMap.id);
       } else {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
       }
     } else {
       message.error(formatMessage({ id: 'app.message.fetchMapFail' }));
     }
+  }
+
+  async function refreshResourceGroup(mapId) {
+    const allResourceGroups = await fetchResourceGroup({ mapId });
+    const _groups = allResourceGroups.filter((item) => item.groupType === type);
+    setGroups(_groups);
   }
 
   const menu = (
@@ -55,7 +60,7 @@ const GroupManager = (props) => {
       setGroupModalVisible(true);
     }
     if (key === 'resource_group_manage') {
-      //
+      setResourceModalVisible(true);
     }
   }
 
@@ -66,7 +71,7 @@ const GroupManager = (props) => {
       if (!Array.isArray(loopResult.members)) {
         loopResult.members = [];
       }
-      if (!isPlainObject(loopResult.members)) {
+      if (!isPlainObject(loopResult.priority)) {
         loopResult.priority = {};
       }
       const { members, priority } = loopResult;
@@ -87,6 +92,7 @@ const GroupManager = (props) => {
     if (!dealResponse(response, true)) {
       setAddingModalVisible(false);
       refresh();
+      refreshResourceGroup();
       cancelSelection();
     }
   }
@@ -114,11 +120,12 @@ const GroupManager = (props) => {
         onChange={setGroups}
         visible={groupModalVisible}
         onCancel={() => {
+          refresh();
           setGroupModalVisible(false);
         }}
       />
 
-      {/*  添加到组 */}
+      {/* 添加到组 */}
       <AddToGroupModal
         visible={addingModalVisible}
         groups={groups}
@@ -126,6 +133,15 @@ const GroupManager = (props) => {
           setAddingModalVisible(false);
         }}
         onOk={addToGroup}
+      />
+
+      {/* 资源组管理 */}
+      <GroupResourceModal
+        visible={resourceModalVisible}
+        groups={groups}
+        onCancel={() => {
+          setResourceModalVisible(false);
+        }}
       />
     </>
   );
