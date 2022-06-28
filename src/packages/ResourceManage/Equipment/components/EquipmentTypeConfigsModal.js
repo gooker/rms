@@ -1,8 +1,7 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Form, Modal, Row, Col, AutoComplete, Input, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
-import { getFormLayout, adaptModalHeight } from '@/utils/util';
+import { getFormLayout, adaptModalHeight, formatMessage } from '@/utils/util';
 import { forIn } from 'lodash';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
@@ -49,7 +48,7 @@ const EquipmentTypeConfigsModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'配置信息'}
+      title={formatMessage({ id: 'app.configInfo' })}
       maskClosable={false}
       onCancel={cancelModal}
       onOk={submit}
@@ -62,7 +61,7 @@ const EquipmentTypeConfigsModal = (props) => {
               {fields.map((field, index) => (
                 <Form.Item
                   {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                  label={index === 0 ? '设备配置信息' : ''}
+                  label={index === 0 ? formatMessage({ id: 'device.configInfo' }) : ''}
                   key={field.key}
                 >
                   <Row gutter={10}>

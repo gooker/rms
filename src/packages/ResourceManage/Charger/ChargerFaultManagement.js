@@ -31,7 +31,7 @@ const ChargerFaultManagement = () => {
 
   const columns = [
     {
-      title: <FormattedMessage id="chargeManager.fault. chargerId" />,
+      title: <FormattedMessage id="charger.id" />,
       dataIndex: 'hardwareId',
       align: 'center',
       fixed: 'left',

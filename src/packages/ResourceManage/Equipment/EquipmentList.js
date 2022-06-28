@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Drawer, message } from 'antd';
 import { CloseOutlined, EditOutlined } from '@ant-design/icons';
@@ -10,7 +9,7 @@ import {
   saveDeviceActions,
   saveDeviceMonitors,
 } from '@/services/resourceService';
-import { convertToUserTimezone, dealResponse, isNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import EquipmentListTools from './components/EquipmentListTools';
@@ -33,12 +32,12 @@ const EquipmentList = (props) => {
 
   const columns = [
     {
-      title: '设备ID',
+      title: <FormattedMessage id="device.id" />,
       dataIndex: 'deviceID',
       align: 'center',
     },
     {
-      title: '设备名称',
+      title: <FormattedMessage id="device.name" />,
       dataIndex: 'deviceName',
       align: 'center',
     },
@@ -53,7 +52,7 @@ const EquipmentList = (props) => {
       align: 'center',
     },
     {
-      title: '连接方式',
+      title: <FormattedMessage id="device.connectionType" />,
       dataIndex: 'connectionType',
       align: 'center',
     },
@@ -70,8 +69,7 @@ const EquipmentList = (props) => {
                 showDeviceActionModal(record);
               }}
             >
-              {' '}
-              设备动作
+              <FormattedMessage id="device.action" />
             </Button>
 
             <Button
@@ -81,8 +79,7 @@ const EquipmentList = (props) => {
                 showDeviceConfigModal(record);
               }}
             >
-              {' '}
-              设备状态
+              <FormattedMessage id="device.status" />
             </Button>
           </>
         );
@@ -103,23 +100,23 @@ const EquipmentList = (props) => {
       },
     },
     {
-      title: '信号强度',
+      title: <FormattedMessage id="device.signalStrength" />,
       dataIndex: 'signalStrength',
       align: 'center',
     },
     {
-      title: '设备描述',
+      title: <FormattedMessage id="device.description" />,
       align: 'center',
       dataIndex: 'deviceDescription',
     },
     {
-      title: '在线状态',
+      title: <FormattedMessage id="vehicle.onlineState" />,
       align: 'center',
       dataIndex: 'onlineStatus',
     },
 
     {
-      title: '是否忽略',
+      title: <FormattedMessage id="device.ignored" />,
       dataIndex: 'ignored',
       align: 'center',
       render: (text) => {
@@ -171,7 +168,7 @@ const EquipmentList = (props) => {
         setDeviceActions(response);
         setVisible(true);
       } else {
-        message.info('暂无设备动作');
+        message.info(formatMessage({ id: 'device.deviceAction.tips' }));
       }
     }
   }
@@ -201,7 +198,7 @@ const EquipmentList = (props) => {
         setConfigVisible(true);
         setDeviceConfig(data);
       } else {
-        message.info('暂无设备状态');
+        message.info(formatMessage({ id: 'device.statusAction.tips' }));
       }
     }
   }
@@ -244,7 +241,7 @@ const EquipmentList = (props) => {
 
       {/* 注册小车 */}
       <Drawer
-        title="适配器注册"
+        title={formatMessage({ id: 'adapter.register' })}
         placement="top"
         height="50%"
         closable={false}

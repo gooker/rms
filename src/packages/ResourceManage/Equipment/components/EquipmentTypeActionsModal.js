@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Modal, Row, Col, Select, Input, Button, Switch } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -54,7 +53,7 @@ const EquipmentTypeActionsModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'配置动作'}
+      title={formatMessage({ id: 'device.configureActions' })}
       maskClosable={false}
       onCancel={onCancel}
       onOk={submit}
@@ -132,7 +131,7 @@ const EquipmentTypeActionsModal = (props) => {
                       <Col {...ColResponsive}>
                         <Form.Item
                           {...formItemLayout}
-                          label={'自动完成'}
+                          label={formatMessage({ id: 'device.autocomplete' })}
                           {...field}
                           name={[field.name, 'isAutoFinish']}
                           rules={[{ required: true }]}
@@ -155,7 +154,7 @@ const EquipmentTypeActionsModal = (props) => {
                       </Col>
                       <Col {...ColResponsive}>
                         <Form.Item
-                          label={'动作执行模式'}
+                          label={formatMessage({ id: 'device.action.executionMode' })}
                           {...field}
                           name={[field.name, 'blockingType']}
                           rules={[{ required: true }]}

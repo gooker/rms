@@ -1,10 +1,9 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { unRegisterDevice } from '@/services/resourceService';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
@@ -44,7 +43,7 @@ const EquipmentListTools = (props) => {
   function cancelRegister() {
     const ids = selectedRows.map(({ deviceID }) => deviceID);
     RmsConfirm({
-      content: '确定注销该设备吗',
+      content: formatMessage({ id: 'app.message.doubleConfirm' }),
       onOk: async () => {
         const response = await unRegisterDevice(ids);
         if (!dealResponse(response, 1)) {
@@ -57,7 +56,7 @@ const EquipmentListTools = (props) => {
   return (
     <div>
       <Row className={commonStyles.tableToolLeft}>
-        <Form.Item label={'设备ID'}>
+        <Form.Item label={<FormattedMessage id="device.id" />}>
           <Select
             allowClear
             mode="multiple"
@@ -70,7 +69,7 @@ const EquipmentListTools = (props) => {
             {renderIdFilter()}
           </Select>
         </Form.Item>
-        <Form.Item label={'连接方式'}>
+        <Form.Item label={<FormattedMessage id="device.connectionType" />}>
           <Select
             allowClear
             mode="multiple"
@@ -87,7 +86,7 @@ const EquipmentListTools = (props) => {
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
-            <DisconnectOutlined /> 注销
+            <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
           {/*<Button>*/}
           {/*  <ExportOutlined /> <FormattedMessage id={'app.vehicle.infoExport'} />*/}

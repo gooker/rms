@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Button } from 'antd';
 import { EditOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
@@ -13,7 +12,7 @@ import {
 import SearchSpecComponent from './component/SearchSpecComponent';
 import LoadSpecificationModal from './component/LoadSpecificationModal';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isStrictNull, formatMessage } from '@/utils/util';
+import { dealResponse, isStrictNull } from '@/utils/util';
 
 const CustomLoadType = (props) => {
   const [allLoadType, setAllLoadType] = useState([]);
@@ -35,23 +34,25 @@ const CustomLoadType = (props) => {
   }, [loadTypeCode]);
 
   const columns = [
-    { title: formatMessage({ id: 'app.common.name' }), dataIndex: 'name', align: 'center' },
-    { title: '长', dataIndex: 'length', align: 'center' },
+    { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
     {
-      title: '宽',
+      title: <FormattedMessage id="app.common.type" />,
+      dataIndex: 'loadType_name',
+      align: 'center',
+      render: (text, record) => <span>{record?.loadType?.name}</span>,
+    },
+    { title: <FormattedMessage id="load.length" />, dataIndex: 'length', align: 'center' },
+    {
+      title: <FormattedMessage id="load.width" />,
       dataIndex: 'width',
       align: 'center',
     },
     {
-      title: '高',
+      title: <FormattedMessage id="load.height" />,
       dataIndex: 'height',
       align: 'center',
     },
-    {
-      title: '颜色',
-      dataIndex: 'color',
-      align: 'center',
-    },
+
     {
       title: <FormattedMessage id="app.button.edit" />,
       align: 'center',
@@ -68,9 +69,7 @@ const CustomLoadType = (props) => {
   ];
 
   const expandColumns = [
-    { title: '类型编码', dataIndex: 'code', align: 'center' },
-    { title: '类型名称', dataIndex: 'name', align: 'center' },
-    { title: '类型描述', dataIndex: 'desc', align: 'center' },
+    { title: <FormattedMessage id="app.common.description" />, dataIndex: 'desc', align: 'center' },
   ];
 
   function addSpec() {
@@ -85,11 +84,6 @@ const CustomLoadType = (props) => {
   function onCancel() {
     setVisible(false);
     setUpdateRecord(null);
-  }
-
-  function onSubmit() {
-    onCancel();
-    onRefresh();
   }
 
   // 删除规格

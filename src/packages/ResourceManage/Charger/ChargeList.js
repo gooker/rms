@@ -1,11 +1,16 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import { Badge, Button, Drawer, Switch, Tag } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { dealResponse, formatMessage, generateResourceGroups, getSuffix, isNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  generateResourceGroups,
+  getSuffix,
+  isNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
 import { handleleChargers } from '@/services/resourceService';
@@ -47,7 +52,7 @@ const ChargerList = (props) => {
 
   const columns = [
     {
-      title: '充电桩ID',
+      title: <FormattedMessage id="charger.id" />,
       dataIndex: 'chargerId',
       align: 'center',
     },
@@ -125,7 +130,7 @@ const ChargerList = (props) => {
 
   const expandColumns = [
     {
-      title: '地图充电桩code',
+      title: <FormattedMessage id="charger.map.code" />,
       align: 'center',
       dataIndex: 'mapChargerCode',
     },
@@ -238,7 +243,7 @@ const ChargerList = (props) => {
 
       {/* 注册充电桩 */}
       <Drawer
-        title="适配器注册"
+        title={formatMessage({ id: 'adapter.register' })}
         placement="top"
         height="50%"
         closable={false}

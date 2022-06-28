@@ -1,9 +1,9 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Divider, Empty, Modal } from 'antd';
 import { extractActionToFormValue, isNull } from '@/utils/util';
 import ProgramingConfigure from './ProgramingForm';
 import ProgramingDnd from '@/components/ProgramingConfiguer/ProgramingDnd';
+import FormattedMessage from '../FormattedMessage';
 
 /**
  * 默认导出一个弹窗组件
@@ -64,7 +64,9 @@ const ProgramingConfiguerModal = (props) => {
       )}
 
       {/*  点位编程配置面板 */}
-      <Divider orientation={'left'}>配置工具</Divider>
+      <Divider orientation={'left'}>
+        <FormattedMessage id="configure.tools" />
+      </Divider>
       <ProgramingConfigure
         programing={programing}
         operationType={operationType}

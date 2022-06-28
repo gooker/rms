@@ -91,7 +91,7 @@ const RegisterPanel = (props) => {
             dispatch({ type: 'vehicleList/updateAddRegistrationModalShown', payload: true });
           }}
         >
-          <PlusOutlined /> 添加发现
+          <PlusOutlined /> <FormattedMessage id="app.button.addFound" />
         </Button>
       </div>
       <TableWithPages

@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Modal, Select, Row, Col, AutoComplete, Input, Button } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -11,6 +10,7 @@ import {
 } from '@/services/resourceService';
 import DeviceActionsModal from './DeviceActionsModal';
 import DeviceStateConfigsModal from './DeviceStateConfigsModal';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const connectTypes = {
   MODBUS_TCP: 'MODBUS_TCP',
@@ -90,14 +90,14 @@ const RegisterDeviceModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'设备注册'}
+      title={formatMessage({ id: 'device.register' })}
       maskClosable={false}
       onCancel={cancelModal}
       onOk={submit}
       bodyStyle={{ maxHeight: adaptModalHeight() * 0.9, overflow: 'auto' }}
       footer={[
         <Button key="back" onClick={cancelModal}>
-          取消
+          <FormattedMessage id="app.button.cancel" />
         </Button>,
         <Button
           key="setAction"
@@ -106,7 +106,7 @@ const RegisterDeviceModal = (props) => {
             setConfigStateVisible(true);
           }}
         >
-          配置状态动作
+          <FormattedMessage id="device.config.statusAction" />
         </Button>,
         <Button
           key="setConfig"
@@ -115,17 +115,17 @@ const RegisterDeviceModal = (props) => {
             setActionVisible(true);
           }}
         >
-          配置设备动作
+          <FormattedMessage id="device.config.deviceAction" />
         </Button>,
         <Button key="submit" type="primary" onClick={submit}>
-          注册
+          <FormattedMessage id="app.common,register" />
         </Button>,
       ]}
     >
       <Form form={formRef} {...formItemLayout} labelWrap>
         <Form.Item
           name={'deviceTypeCode'}
-          label={'设备类型'}
+          label={formatMessage({ id: 'device.type' })}
           rules={[{ required: true }]}
           getValueFromEvent={(e) => {
             onDeviceTypeChange(e);
@@ -145,16 +145,24 @@ const RegisterDeviceModal = (props) => {
 
         <Form.Item
           name={'deviceID'}
-          label={'设备Id'}
+          label={formatMessage({ id: 'device.id' })}
           rules={[{ required: true }, { validator: duplicateId }]}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item name={'deviceName'} label={'设备名称'} rules={[{ required: true }]}>
+        <Form.Item
+          name={'deviceName'}
+          label={formatMessage({ id: 'device.name' })}
+          rules={[{ required: true }]}
+        >
           <Input />
         </Form.Item>
-        <Form.Item name={'connectionType'} label={'连接方式'} rules={[{ required: true }]}>
+        <Form.Item
+          name={'connectionType'}
+          label={formatMessage({ id: 'device.connectionType' })}
+          rules={[{ required: true }]}
+        >
           <Select>
             {Object.keys(connectTypes)?.map((item) => (
               <Select.Option key={item} value={item}>
@@ -164,7 +172,7 @@ const RegisterDeviceModal = (props) => {
           </Select>
         </Form.Item>
 
-        <Form.Item name={'deviceDescription'} label={'设备描述'}>
+        <Form.Item name={'deviceDescription'} label={formatMessage({ id: 'device.description' })}>
           <Input />
         </Form.Item>
 
@@ -174,7 +182,7 @@ const RegisterDeviceModal = (props) => {
               {fields.map((field, index) => (
                 <Form.Item
                   {...(index === 0 ? formItemLayout : formItemLayoutNoLabel)}
-                  label={index === 0 ? '设备配置信息' : ''}
+                  label={index === 0 ? formatMessage({ id: 'device.configInfo' }) : ''}
                   key={field.key}
                 >
                   <Row gutter={10}>

@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Modal, Form, Select, Input, InputNumber } from 'antd';
 import {
@@ -94,7 +93,7 @@ function LoadSpecificationModal(props) {
         </Form.Item>
 
         <Form.Item
-          label={'长'}
+          label={formatMessage({ id: 'load.length' })}
           name="length"
           rules={[{ required: true }]}
           initialValue={updateRecord?.length}
@@ -102,7 +101,7 @@ function LoadSpecificationModal(props) {
           <InputNumber allowClear addonAfter="mm" />
         </Form.Item>
         <Form.Item
-          label={'宽'}
+          label={formatMessage({ id: 'load.width' })}
           name="width"
           rules={[{ required: true }]}
           initialValue={updateRecord?.width}
@@ -110,16 +109,16 @@ function LoadSpecificationModal(props) {
           <InputNumber allowClear addonAfter="mm" />
         </Form.Item>
         <Form.Item
-          label={'高'}
+          label={formatMessage({ id: 'load.height' })}
           name="height"
           rules={[{ required: true }]}
           initialValue={updateRecord?.height}
         >
           <InputNumber allowClear addonAfter="mm" />
         </Form.Item>
-        <Form.Item label={'颜色'} name="color" initialValue={updateRecord?.color}>
+        {/* <Form.Item label={'颜色'} name="color" initialValue={updateRecord?.color}>
           <Input allowClear />
-        </Form.Item>
+        </Form.Item> */}
       </Form>
     </Modal>
   );

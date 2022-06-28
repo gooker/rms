@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Button, Drawer } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -6,12 +5,11 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import { formatMessage } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import AllMenuModal from './components/AllMenuModal';
 import AddCustomMenuModal from './components/AddCustomMenuModal';
 import { mockData } from './components/mockData';
 import commonStyle from '@/common.module.less';
-import { isNull } from 'lodash';
 
 const CustomMenuManager = () => {
   const [loading, setLoading] = useState(false);
@@ -20,7 +18,7 @@ const CustomMenuManager = () => {
   const [edit, setEdit] = useState(null);
   const columns = [
     {
-      title: '应用',
+      title: <FormattedMessage id="app.module" />,
       dataIndex: 'appCode',
       align: 'center',
       //   render: (text, record) => {
@@ -28,17 +26,17 @@ const CustomMenuManager = () => {
       //   },
     },
     {
-      title: '父节点',
+      title: <FormattedMessage id="customMenuManager.parentNode" />,
       dataIndex: 'parentPath',
       align: 'center',
     },
     {
-      title: '名称',
+      title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'name',
       align: 'center',
     },
     {
-      title: '操作',
+      title: <FormattedMessage id="app.common.operation" />,
       dataIndex: 'id',
       align: 'center',
       render: (text, record) => {
@@ -62,7 +60,6 @@ const CustomMenuManager = () => {
   ];
 
   function onSubmit(values) {
-    console.log(values);
     const newSource = [...dataSource];
     newSource.push(values);
     setDataSource(newSource);
@@ -109,7 +106,7 @@ const CustomMenuManager = () => {
         width={'35%'}
         visible={visiblePanel}
         style={{ overflow: 'auto' }}
-        title={'菜单'}
+        title={formatMessage({ id: 'customMenuManager.menu' })}
         onClose={() => {
           setVisiblePanel(false);
         }}

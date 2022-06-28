@@ -1,8 +1,7 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Form, Input, InputNumber, Modal, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { addDevice } from '@/services/resourceService';
 
@@ -42,7 +41,7 @@ const AddRegistrationModal = (props) => {
     <Modal
       destroyOnClose
       visible={visible}
-      title={'添加发现'}
+      title={formatMessage({ id: 'app.button.addFound' })}
       maskClosable={false}
       onCancel={closeModal}
       onOk={onSubmit}
