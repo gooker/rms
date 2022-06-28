@@ -17,6 +17,7 @@ import { fetchAllAdaptor } from '@/services/resourceService';
 import { fetchCustomParamType, fetchGetProblemDetail } from '@/services/commonService';
 import { fetchTaskTypes } from '@/services/taskService';
 import { initI18n } from '@/utils/init';
+import { fetchResourceGroupType } from '@/services/resourceManageAPI';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -213,9 +214,15 @@ class MainLayout extends React.Component {
 
   fetchAdditionalData = () => {
     const { dispatch } = this.props;
-    // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据
-    Promise.all([fetchTaskTypes(), fetchAllPrograming(), fetchAllAdaptor(), fetchCustomParamType()])
-      .then(([allTaskTypes, allPrograming, allAdaptors, targetDatasource]) => {
+    // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据、资源组类型
+    Promise.all([
+      fetchTaskTypes(),
+      fetchAllPrograming(),
+      fetchAllAdaptor(),
+      fetchCustomParamType(),
+      fetchResourceGroupType(),
+    ])
+      .then(([allTaskTypes, allPrograming, allAdaptors, targetDatasource, resourceGroupTypes]) => {
         const states = {};
 
         // 小车类型
@@ -262,6 +269,18 @@ class MainLayout extends React.Component {
             `${formatMessage(
               { id: 'app.message.fetchFailTemplate' },
               { type: formatMessage({ id: 'app.common.targetCell' }) },
+            )}`,
+          );
+        }
+
+        // 资源组类型
+        if (!dealResponse(resourceGroupTypes)) {
+          states.resourceGroupTypes = resourceGroupTypes;
+        } else {
+          message.error(
+            `${formatMessage(
+              { id: 'app.message.fetchFailTemplate' },
+              { type: formatMessage({ id: 'group.groupType' }) },
             )}`,
           );
         }

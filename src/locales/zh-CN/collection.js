@@ -7,10 +7,18 @@ export default {
   'app.button.bind': '绑定',
   'app.button.unbind': '解绑',
   'app.button.logout': '注销',
+
   'app.button.register': '注册',
   'app.button.addFound': '添加发现',
-  'app.common.batchOperate': '批量操作',
   'app.common.groupMange': '分组管理',
+
+  'app.button.batchOperate': '批量操作',
+
+  // 资源分组相关
+  'group.groupType': '资源组类型',
+  'group.groupMange': '组管理',
+  'group.resourceGroupMange': '分组管理',
+  'group.addToGroup': '添加到组',
 
   // 自定义环境管理
   'environmentManager.envName': '环境名称',
@@ -23,7 +31,7 @@ export default {
   'environmentManager.url.invalid': 'URL格式不合法',
   'environmentManager.api.invalid': '接口信息不完整',
 
-  // 固件
+  // 固件相关
   'firmware.upgrade': '固件升级',
 
   // 故障相关
@@ -99,13 +107,13 @@ export default {
   // 配置相关
   'configure.tools': '配置工具',
   'configure.select.specificItems': '选择具体配置项',
-  'configure.add':'添加配置',
+  'configure.add': '添加配置',
 
-  'programming.editCell':'编辑点位编程',
-  'programming.editZone':'编辑区域编程',
-  'programming.selectType.configured':'选择需要进行配置的点位类型',
+  'programming.editCell': '编辑点位编程',
+  'programming.editZone': '编辑区域编程',
+  'programming.selectType.configured': '选择需要进行配置的点位类型',
 
   // 自定义菜单
-  'customMenuManager.parentNode':'父节点',
-  'customMenuManager.menu':'菜单',
+  'customMenuManager.parentNode': '父节点',
+  'customMenuManager.menu': '菜单',
 };

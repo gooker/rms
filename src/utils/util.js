@@ -7,14 +7,12 @@ import intl from 'react-intl-universal';
 import requestAPI, { getApiURL } from '@/utils/requestAPI';
 import Dictionary from '@/utils/Dictionary';
 import { ToteOffset, VehicleStateColor } from '@/config/consts';
-import {
-  CustomNodeType,
-  CustomNodeTypeFieldMap,
-} from '@/packages/SmartTask/CustomTask/customTaskConfig';
+import { CustomNodeType, CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import requestorStyles from '@/packages/Strategy/Requestor/requestor.module.less';
 import FormattedMessage from '@/components/FormattedMessage';
 import Loadable from '@/components/Loadable';
 import { selectAllDB } from '@/utils/IndexDBUtil';
+import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const Colors = Dictionary().color;
 
@@ -901,6 +899,20 @@ export function convertMapToArrayMap(data, keyLabel = 'key', valueLabel = 'value
 }
 
 /**
+ * convertMapToArrayMap 的逆运算
+ * @param input [{type:'xxx', code:[1,2,3]},{type:'xxx',code:[2,3,4]}]
+ * @param keyLabel 自定义key的标识
+ * @param valueLabel 自定义value的标识
+ *
+ */
+export function extractMapValueToMap(input, keyLabel = 'key', valueLabel = 'value') {
+  if (Array.isArray(input)) {
+    return input.map((item) => ({ [item[keyLabel]]: item[valueLabel] }));
+  }
+  return [];
+}
+
+/**
  * 将数组元素整合为对象
  * @param data {Array}
  * @param labels {Array}
@@ -1277,11 +1289,11 @@ export function generateCustomTaskForm(value, taskSteps, programing, preTasksCod
       }
     } else {
       if (!isNull(CustomNodeTypeFieldMap[key])) {
-        if (key === 'START') {
-          const startConfig = { ...value[key] };
-          const startConfigVehicle = { ...startConfig.vehicle };
-          if (startConfigVehicle.type === 'AUTO') {
-            startConfig.vehicle = null;
+        if (key === CustomNodeType.START) {
+          const startConfig = { ...value[CustomNodeType.START] };
+          if (startConfig.vehicle.type === VehicleOptionType.AUTO) {
+            startConfig.vehicle.type = VehicleOptionType.VEHICLE;
+            startConfig.vehicle.code = [];
           }
           customTaskData[CustomNodeTypeFieldMap[key]] = startConfig;
         } else {
@@ -1342,8 +1354,12 @@ export function restoreCustomTaskForm(customTask) {
     // 收集表单数据
     if (taskNodeType === CustomNodeType.START) {
       const startValues = { ...customTask[customTaskKey] };
-      if (isNull(startValues.vehicle)) {
-        delete startValues.vehicle;
+      const { vehicle } = startValues;
+      if (
+        isNull(vehicle) ||
+        (vehicle.type === VehicleOptionType.VEHICLE && vehicle.code.length === 0)
+      ) {
+        startValues.vehicle = { type: VehicleOptionType.AUTO, code: [] };
       }
       result.fieldsValue[taskNodeType] = startValues;
     } else if (taskNodeType === CustomNodeType.END) {
@@ -1436,12 +1452,8 @@ export function generateSample(
 ) {
   const result = { START: {} };
   // 任务开始
-  if (customStart.robot) {
-    const { type, code } = customStart.robot;
-    result.START[type] = code;
-  } else {
-    result.START.VEHICLE = [];
-  }
+  const { type, code } = customStart.vehicle;
+  result.START[type] = code;
   result.START.customLimit = customStart.customLimit;
 
   // 子任务
@@ -1489,9 +1501,13 @@ export function generateSample(
 
   // 任务结束
   result.END = {};
+  result.END.backZone = customEnd.backZone
+    ? extractMapValueToMap(customEnd.backZone, 'type', 'code')
+    : [];
+  result.END.heavyBackZone = customEnd.heavyBackZone
+    ? extractMapValueToMap(customEnd.heavyBackZone, 'type', 'code')
+    : [];
   result.END.vehicleNeedCharge = customEnd.vehicleNeedCharge ?? false;
-  result.END.backZone = customEnd.backZone ?? [];
-  result.END.heavyBackZone = customEnd.heavyBackZone ?? [];
   return result;
 }
 
