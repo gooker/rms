@@ -426,7 +426,7 @@ class TaskTrigger extends Component {
                 }
               >
                 <Button>
-                  <FormattedMessage id="app.common.batchOperate" /> <DownOutlined />
+                  <FormattedMessage id="app.button.batchOperate" /> <DownOutlined />
                 </Button>
               </Dropdown>
             </Col>

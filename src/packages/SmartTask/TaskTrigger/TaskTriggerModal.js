@@ -124,7 +124,7 @@ const TaskTriggerModal = (props) => {
         message.error(formatMessage({ id: 'taskTrigger.totaTimes.required' }));
         return;
       }
-      values.endTime = values.endTime ? values.endTime.format('YYYY-MM-DD HH:mm:ss') : null;
+      values.endTime = values?.endTime?.format('YYYY-MM-DD HH:mm:ss');
       if (updateItem) {
         values.id = updateItem.id;
         values.status = updateItem.status;
@@ -138,7 +138,7 @@ const TaskTriggerModal = (props) => {
       } else {
         let dataMap = {};
         // 判断下 variables 值是否存在，不存在的话要获取下变量信息
-        if (isNull(variables)) {
+        if (isNull(variables) || Object.keys(variables)?.length === 0) {
           const { codes } = values;
           const paramIds = codes?.map((idcode) => idcode.split('-')[0]);
           const currentDataById = allTaskList?.filter(({ id }) => paramIds.includes(id));
@@ -152,7 +152,6 @@ const TaskTriggerModal = (props) => {
           Object.keys(variables)?.map((code) => {
             dataMap[code] = variables[code]?.customParams;
           });
-          values.fixedVariable = variables;
         }
 
         values.fixedVariable = dataMap;
@@ -215,7 +214,6 @@ const TaskTriggerModal = (props) => {
           rules={[{ required: true }]}
           getValueFromEvent={(value) => {
             setVariables(null); // 触发任务变了就清空变量信息
-            setVariablesChanged(null);
             return value;
           }}
         >
