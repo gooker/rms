@@ -127,7 +127,6 @@ export default {
   'monitor.view.heat.autoRefresh': '自动刷新',
 
   'monitor.simulator.action.batchAddPods': '批量添加货架',
-  'monitor.simulator.action.remove': '移除',
   'monitor.simulator.action.beatStop': '拍急停',
   'monitor.simulator.action.loosenStop': '松急停',
   'monitor.simulator.action.shutDown': '关机',
