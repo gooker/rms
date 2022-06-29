@@ -32,8 +32,8 @@ const VehicleCategory = {
 };
 
 const VehicleElementProp = (props) => {
-  const { data, dispatch, history, selectVehicle, showRoute, allVehicles } = props;
-  const [vehicleInfo, setVehicleInfo] = useState({});
+  const { data, dispatch, history, selectVehicle, showRoute } = props;
+  const [currentVehicleInfo, setCurrentVehicleInfo] = useState({});
   const [vehicleId, setVehicleId] = useState(null);
   const [mainTain, setMainTain] = useState(false);
   const [manualMode, setManualMode] = useState(false);
@@ -61,16 +61,12 @@ const VehicleElementProp = (props) => {
       getAlertCentersByTaskIdOrVehicleId({ vehicleId: JSON.parse(data.id) }),
     ]);
 
-    const filterVehicleInfo = find(
-      allVehicles,
-      (item) => item.vehicleId === data.id && item?.vehicle?.id === data.uniqueId,
-    );
     if (!dealResponse(response)) {
-      const { vehicle = {}, vehicleInfo = {}, vehicleWorkStatusDTO = {} } = filterVehicleInfo;
-
-      setVehicleInfo({ ...vehicleInfo, ...vehicleWorkStatusDTO });
+      const { vehicle = {} } = response;
+      setCurrentVehicleInfo({ ...response });
       setMainTain(vehicle?.maintain); // 维护
       setManualMode(vehicle?.manualMode); // 是否手动
+      setType(vehicle?.vehicleType);
     }
 
     if (alertResponse && !dealResponse(alertResponse)) {
@@ -88,7 +84,7 @@ const VehicleElementProp = (props) => {
   }
 
   function goToVehicleDetail() {
-    const route = `/ResourceManage/Vehicle/VehicleRealTime`;
+    const route = `/ResourceManage/vehicle/realTime`;
     history.push({ pathname: route, search: `uniqueId=${data.uniqueId}` });
   }
 
@@ -252,14 +248,14 @@ const VehicleElementProp = (props) => {
               <img
                 alt={'vehicle'}
                 style={{ width: 45, height: 'auto' }}
-                src={require(`../../category/${VehicleCategory[type]}_category.svg`).default}
+                // src={require(`../../category/${VehicleCategory[type]}_category.svg`).default}
               />
               <span>
                 <FormattedMessage id={'app.vehicle'} />
               </span>
             </div>
             <div className={style.rightSideline} onClick={goToVehicleDetail}>
-              {vehicleInfo?.vehicleId}
+              {currentVehicleInfo?.vehicleId}
             </div>
           </div>
 
@@ -275,7 +271,10 @@ const VehicleElementProp = (props) => {
                 <FormattedMessage id={'vehicle.electricity'} />
               </span>
             </div>
-            <div>{vehicleInfo?.battery && renderBattery(vehicleInfo?.battery)}</div>
+            <div>
+              {currentVehicleInfo?.vehicleInfo?.battery &&
+                renderBattery(currentVehicleInfo.vehicleInfo.battery)}
+            </div>
           </div>
 
           {/* 小车状态 */}
@@ -290,10 +289,10 @@ const VehicleElementProp = (props) => {
                 <FormattedMessage id={'app.common.status'} />
               </span>
             </div>
-            <div>{renderVehicleState(vehicleInfo?.vehicleStatus)}</div>
+            <div>{renderVehicleState(currentVehicleInfo?.vehicleWorkStatusDTO?.vehicleStatus)}</div>
           </div>
 
-          {/* 潜伏货架 */}
+          {/* 载具 */}
           <div className={styles.rightSideContentDetail}>
             <div>
               <img
@@ -302,10 +301,10 @@ const VehicleElementProp = (props) => {
                 src={require('@/packages/Scene/icons/pod.png').default}
               />
               <span>
-                <FormattedMessage id={'app.pod'} />
+                <FormattedMessage id={'object.load'} />
               </span>
             </div>
-            <div>{vehicleInfo?.upliftPodId}</div>
+            <div>{currentVehicleInfo?.vehicleInfo?.loadUniqueIds}</div>
           </div>
 
           {/* 任务 */}
@@ -324,11 +323,11 @@ const VehicleElementProp = (props) => {
               style={{ cursor: 'pointer', color: '#fff' }}
               className={style.rightSideline}
               onClick={() => {
-                checkTaskDetail(vehicleInfo?.currentTaskId, type);
+                checkTaskDetail(currentVehicleInfo?.taskId, type);
               }}
             >
-              {!isStrictNull(vehicleInfo?.currentTaskId)
-                ? `*${vehicleInfo?.currentTaskId.substr(vehicleInfo?.currentTaskId.length - 6, 6)}`
+              {!isStrictNull(currentVehicleInfo?.taskId)
+                ? `*${currentVehicleInfo.taskId.substr(currentVehicleInfo.taskId.length - 6, 6)}`
                 : null}
               {}
             </div>
@@ -343,7 +342,7 @@ const VehicleElementProp = (props) => {
                 src={require('@/packages/Scene/icons/error.png').default}
               />
               <span>
-                <FormattedMessage id={'app.vehicle.exception'} />
+                <FormattedMessage id={'app.common.abnormal'} />
               </span>
             </div>
             <div
@@ -391,11 +390,7 @@ const VehicleElementProp = (props) => {
 
             {/* 维护 */}
             <Popconfirm
-              title={
-                mainTain
-                  ? formatMessage({ id: 'monitor.controller.Vehicle.tip.cancelMaintain' })
-                  : formatMessage({ id: 'monitor.controller.Vehicle.tip.confirmMaintain' })
-              }
+              title={formatMessage({ id: 'app.message.doubleConfirm' })}
               onConfirm={mainTainVehicle}
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
@@ -415,11 +410,7 @@ const VehicleElementProp = (props) => {
 
             {/* 手动*/}
             <Popconfirm
-              title={
-                manualMode
-                  ? formatMessage({ id: 'monitor.controller.Vehicle.tip.turnOffManualMode' })
-                  : formatMessage({ id: 'monitor.controller.Vehicle.tip.turnOnManualMode' })
-              }
+              title={formatMessage({ id: 'app.message.doubleConfirm' })}
               onConfirm={switchManualMode}
               okText={formatMessage({ id: 'app.button.confirm' })}
               cancelText={formatMessage({ id: 'app.button.cancel' })}
@@ -438,7 +429,7 @@ const VehicleElementProp = (props) => {
           {/* 重置、重启、运行时 */}
           <div className={styles.rightSideVehicleContentOperation}>
             <Popconfirm
-              title={formatMessage({ id: 'monitor.controller.Vehicle.tip.resetAMR' })}
+              title={formatMessage({ id: 'app.message.doubleConfirm' })}
               onConfirm={() =>
                 sendVehicleHexCommand(
                   type === AppCode.ForkLifting ? '02' : '80',
@@ -457,7 +448,7 @@ const VehicleElementProp = (props) => {
             </Popconfirm>
 
             <Popconfirm
-              title={formatMessage({ id: 'monitor.controller.Vehicle.tip.rebootAMR' })}
+              title={formatMessage({ id: 'app.message.doubleConfirm' })}
               onConfirm={() =>
                 sendVehicleHexCommand('02 60 00 00', formatMessage({ id: 'monitor.reboot' }))
               }
@@ -487,5 +478,4 @@ const VehicleElementProp = (props) => {
 export default connect(({ monitorView, monitor }) => ({
   selectVehicle: monitorView.selectVehicle ?? [],
   showRoute: monitorView.routeView?.showRoute,
-  allVehicles: monitor?.allVehicles,
 }))(withRouter(memo(VehicleElementProp)));

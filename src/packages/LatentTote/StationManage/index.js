@@ -64,7 +64,7 @@ const ChargerList = () => {
       render: (text) => {
         if (!isNull(text)) {
           if (text === 'NORMAL') {
-            return <Badge color={'red'} text={formatMessage({ id: 'app.vehicle.exception' })} />;
+            return <Badge color={'red'} text={formatMessage({ id: 'app.common.abnormal' })} />;
           }
           return <Badge color={'green'} text={formatMessage({ id: 'app.vehicle.normal' })} />;
         }

@@ -44,7 +44,7 @@ const CarryPod = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <VehicleFormComponent />
+          <VehicleFormComponent form={formRef} />
           <Form.Item
             {...formItemLayout}
             name={'podId'}

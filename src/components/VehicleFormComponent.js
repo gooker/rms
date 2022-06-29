@@ -1,27 +1,40 @@
-import React, { memo, useState } from 'react';
-import { Form, Input, Select } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Form, Input, message, Select } from 'antd';
 import { formatMessage } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 
 const VehicleFormComponent = (props) => {
-  const { value, onChange, allVehicles } = props;
+  const { allVehicles, form, dispatch } = props;
   const [typeOption, setTypeOption] = useState([]);
+  const [vehicleList, setVehicleList] = useState([]);
+  useEffect(() => {
+    dispatch({ type: 'monitor/refreshAllVehicleList' });
+  }, []);
+
+  useEffect(() => {
+    setVehicleList(allVehicles);
+  }, [allVehicles]);
 
   function getVehicleType(ev) {
     const vehicleId = ev.target.value;
-    const allVehicleType = allVehicles.filter((item) => item.vehicleId === vehicleId);
+    const currentVehicleInfo = vehicleList.filter((item) => item.vehicleId === vehicleId);
+    if (currentVehicleInfo?.length === 0) {
+      message.info(formatMessage({ id: 'vehicle.noExist.tip' }));
+      return;
+    }
 
-    const newValue = { ...value };
-    newValue['vehicleId'] = vehicleId;
-    newValue['vehicleType'] = '';
-    setTypeOption(allVehicleType);
-    onChange && onChange(newValue);
+    form.setFieldsValue({
+      vehicleType: null,
+      vehicleId,
+    });
+
+    setTypeOption(currentVehicleInfo);
   }
 
   function onInputChange(ev, key) {
-    const newValue = { ...value };
-    newValue[key] = ev;
-    onChange && onChange(newValue);
+    form.setFieldsValue({
+      vehicleType: ev,
+    });
   }
 
   return (
@@ -30,7 +43,6 @@ const VehicleFormComponent = (props) => {
         label={formatMessage({ id: 'vehicle.id' })}
         name={'vehicleId'}
         rules={[{ required: true }]}
-        initialValue={value?.vehicleId}
       >
         <Input onChange={getVehicleType} style={{ width: '100%' }} />
       </Form.Item>
@@ -38,7 +50,6 @@ const VehicleFormComponent = (props) => {
       <Form.Item
         label={formatMessage({ id: 'app.vehicleType' })}
         name="vehicleType"
-        initialValue={value?.vehicleType}
         rules={[{ required: true }]}
       >
         <Select
