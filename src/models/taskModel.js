@@ -80,8 +80,7 @@ export default {
     },
 
     *fetchCancelTask({ payload }, { call }) {
-      const { vehicleType, ...rest } = payload;
-      const response = yield call(fetchCancelTask, vehicleType, rest);
+      const response = yield call(fetchCancelTask, payload);
       dealResponse(response, true);
     },
 

@@ -153,7 +153,7 @@ class TaskInformation extends PureComponent {
   };
 
   // 取消任务
-  cancelTask = (sectionId, taskId) => {
+  cancelTask = (taskId) => {
     const { dispatch } = this.props;
     Modal.confirm({
       title: (
@@ -174,7 +174,7 @@ class TaskInformation extends PureComponent {
       onOk() {
         dispatch({
           type: 'task/fetchCancelTask',
-          payload: { vehicleType: VehicleType.Sorter, sectionId, taskId },
+          payload: { taskIdList: [taskId] },
         });
       },
       okText: formatMessage({ id: 'app.button.confirm' }),
@@ -248,7 +248,7 @@ class TaskInformation extends PureComponent {
             disabled={detailInfo.sectionId == null || detailInfo.taskId == null}
             style={{ marginLeft: 15 }}
             onClick={() => {
-              this.cancelTask(detailInfo.sectionId, detailInfo.taskId);
+              this.cancelTask(detailInfo.taskId);
             }}
           >
             <FormattedMessage id="app.button.cancel" />

@@ -11,7 +11,7 @@ import styles from '../monitorLayout.module.less';
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 17);
 
 const EmptyRun = (props) => {
-  const { dispatch, allVehicles } = props;
+  const { dispatch } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
 
@@ -45,7 +45,7 @@ const EmptyRun = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form labelWrap form={formRef} {...formItemLayout}>
-          <VehicleFormComponent />
+          <VehicleFormComponent form={formRef} />
           <Form.Item
             name={'targetCellId'}
             label={formatMessage({ id: 'app.common.targetCell' })}

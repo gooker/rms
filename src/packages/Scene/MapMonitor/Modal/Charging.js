@@ -46,7 +46,7 @@ const Charging = (props) => {
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
-          <VehicleFormComponent />
+          <VehicleFormComponent form={formRef} />
           <Form.Item {...formItemLayoutNoLabel}>
             <Button onClick={charge} loading={executing} disabled={executing} type="primary">
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />

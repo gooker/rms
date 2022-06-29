@@ -216,9 +216,9 @@ export async function fetchResetTask(vehicleType, params) {
 }
 
 // 请求取消任务
-export async function fetchCancelTask(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle-task/action/cancelTask`, {
-    method: `GET`,
+export async function fetchCancelTask(params) {
+  return request(`/${NameSpace.Platform}/task/cancelTask`, {
+    method: `POST`,
     data: params,
   });
 }
@@ -536,9 +536,6 @@ export async function getFormModelLockResource() {
     method: 'GET',
   });
 }
-
-
-
 
 // ********************** 任务限流器  ********************** //
 // 任务类型限流
