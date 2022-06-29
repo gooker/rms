@@ -1224,7 +1224,8 @@ const targetProgramingKeys = [
 ];
 
 // 将表单数据转化为后台数据结构
-export function generateCustomTaskForm(value, taskSteps, programing, preTasksCode) {
+export function generateCustomTaskForm(_value, taskSteps, programing, preTasksCode) {
+  const value = cloneDeep(_value);
   const customTaskData = {
     code: value.code,
     name: value.name,
@@ -1450,12 +1451,16 @@ export function generateSample(
   { customStart, customActions, customPreActions, customEnd },
   taskNodes,
 ) {
-  const customParams = { START: {}, END: {} };
+  const result = {
+    customStart: { vehicle: {}, vehicleLimit: {} },
+    customAction: {},
+    customEnd: { loadBackZone: [], backZone: [] },
+  };
 
   // 任务开始
   const { type, code } = customStart.vehicle;
-  customParams.START[type] = code;
-  const vehicleLimit = Object.assign({}, customStart.customLimit);
+  result.customStart.vehicle[type] = code;
+  result.customStart.vehicleLimit = Object.assign({}, customStart.customLimit);
 
   // 子任务
   // 1. 转换前置任务
@@ -1464,13 +1469,19 @@ export function generateSample(
     Object.values(customPreActions).forEach((subTask) => {
       const {
         code,
-        targetAction: { loadAngle, target },
+        targetAction: { operatorAngle, loadAngle, target },
       } = subTask;
       preTaskParams[code] = {};
       if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
-        preTaskParams[code]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+        if (!isNull(operatorAngle)) {
+          preTaskParams[code]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+          preTaskParams[code]['operateAngle'] = operatorAngle;
+        } else {
+          preTaskParams[code]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+        }
       }
-      preTaskParams[code][target.type] = target?.code ?? [];
+      preTaskParams[code]['params'] = {};
+      preTaskParams[code]['params'][target.type] = target?.code ?? [];
     });
   }
   // 2. 子任务
@@ -1479,23 +1490,33 @@ export function generateSample(
       const {
         code,
         preActionCodes,
-        targetAction: { loadAngle, target },
+        targetAction: { operatorAngle, loadAngle, target },
       } = subTask;
       const { index } = find(taskNodes, { code });
       const stepCode = `step${index}`;
-      customParams[stepCode] = {};
+      result['customAction'][stepCode] = {};
       if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
-        customParams[stepCode]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+        // 如果操作者位置 (operatorAngle) 存在值，那么loadAngle指的是载具面
+        if (!isNull(operatorAngle)) {
+          result['customAction'][stepCode]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+          result['customAction'][stepCode]['operateAngle'] = operatorAngle;
+        } else {
+          result['customAction'][stepCode]['loadAngle'] = isNull(loadAngle) ? null : loadAngle;
+        }
       }
-      customParams[stepCode][target.type] = target?.code ?? [];
+      result['customAction'][stepCode]['params'] = {};
+      result['customAction'][stepCode]['params'][target.type] = target?.code ?? [];
 
       // 合并前置任务的参数
       if (Array.isArray(preActionCodes)) {
         preActionCodes.forEach((subTaskCode) => {
           if (!isNull(preTaskParams[subTaskCode])) {
-            customParams[`step${index}`] = {
-              ...customParams[`step${index}`],
-              ...preTaskParams[subTaskCode],
+            const { params: params1, ...rest1 } = result['customAction'][`step${index}`];
+            const { params: params2, ...rest2 } = preTaskParams[subTaskCode];
+            result['customAction'][`step${index}`] = {
+              ...rest1,
+              ...rest2,
+              params: { ...params1, ...params2 },
             };
           }
         });
@@ -1504,14 +1525,14 @@ export function generateSample(
   }
 
   // 任务结束
-  customParams.END.backZone = customEnd.backZone
+  result.customEnd.backZone = customEnd.backZone
     ? extractMapValueToMap(customEnd.backZone, 'type', 'code')
     : [];
-  customParams.END.heavyBackZone = customEnd.heavyBackZone
+  result.customEnd.loadBackZone = customEnd.heavyBackZone
     ? extractMapValueToMap(customEnd.heavyBackZone, 'type', 'code')
     : [];
 
-  return { customParams, vehicleLimit };
+  return result;
 }
 
 // 将数组中符合条件的元素删掉， Lodash中同名方法有问题-->遇到第一个不符合条件的会直接break

@@ -261,7 +261,7 @@ const SubTaskForm = (props) => {
       ) : null}
 
       {/* 操作者方向 */}
-      {['ROTATION', 'ROTATION_GROUP'].includes(target) && !specifyLoadAngle ? (
+      {['ROTATE', 'ROTATE_GROUP'].includes(target) && !specifyLoadAngle ? (
         <Form.Item
           hidden={hidden}
           name={[code, 'targetAction', 'operatorAngle']}

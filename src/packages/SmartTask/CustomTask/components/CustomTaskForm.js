@@ -253,20 +253,19 @@ const CustomTaskForm = (props) => {
       }
 
       // 生成sample数据
-      const { customParams, vehicleLimit } = generateSample(requestBody, attachNodeIndex());
+      const result = generateSample(requestBody, attachNodeIndex());
       requestBody.sample = {
         sectionId: window.localStorage.getItem('sectionId'),
         code: requestBody.code,
         createCode: null,
-        customParams,
-        vehicleLimit,
+        ...result,
       };
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log(e);
       message.error(formatMessage({ id: 'customTasks.form.submit.error' }));
       return;
     }
-
     // 如果是更新，那么 code 不需要更新; 同时附上部分原始数据
     if (editingRow) {
       requestBody.id = editingRow.id;
