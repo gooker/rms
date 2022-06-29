@@ -3,7 +3,11 @@ import { findIndex } from 'lodash';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
 import { dealResponse, formatMessage, getRandomString, isNull } from '@/utils/util';
 import { Category, MonitorOperationType } from '@/packages/Scene/MapMonitor/enums';
-import { fetchEmergencyStopList, fetchMapVehicleLocks, saveEmergencyStop } from '@/services/XIHEService';
+import {
+  fetchEmergencyStopList,
+  fetchMapVehicleLocks,
+  saveEmergencyStop,
+} from '@/services/XIHEService';
 import { fetchChargerList, fetchLoadList } from '@/services/resourceService';
 import {
   addTemporaryBlockCell,
@@ -269,9 +273,9 @@ export default {
       const selections = action.payload;
       const newState = { ...state, selections };
       if (selections.length === 1) {
-        if (state.categoryPanel === null) {
-          newState.categoryPanel = Category.Prop;
-        }
+        // if (state.categoryPanel === null) {
+        newState.categoryPanel = Category.Prop;
+        // }
       } else {
         if (state.categoryPanel === Category.Prop) {
           newState.categoryPanel = null;
@@ -348,7 +352,6 @@ export default {
       // 载具
       promises.push(fetchLoadList());
       promiseFields.push('loadList');
-
 
       // 地图充电桩与硬件绑定关系
       promises.push(fetchChargerList());

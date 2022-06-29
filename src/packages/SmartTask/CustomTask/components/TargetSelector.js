@@ -33,7 +33,7 @@ const TargetSelector = (props) => {
           vehicleSelection.type === VehicleOptionType.VEHICLE &&
           vehicleSelection.code.length > 0
         ) {
-          const vehicleType = dataSource.Vehicle?.filter((item) =>
+          const vehicleType = dataSource.VEHICLE?.filter((item) =>
             item.ids.includes(vehicleSelection.code[0]),
           );
           validLoadTypes = validLoadTypes.concat(vehicleType[0]?.types || []);

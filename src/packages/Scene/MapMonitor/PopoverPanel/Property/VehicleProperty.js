@@ -32,13 +32,14 @@ const VehicleCategory = {
 };
 
 const VehicleElementProp = (props) => {
-  const { data, type, dispatch, history, selectVehicle, showRoute, allVehicles } = props;
+  const { data, dispatch, history, selectVehicle, showRoute, allVehicles } = props;
   const [vehicleInfo, setVehicleInfo] = useState({});
   const [vehicleId, setVehicleId] = useState(null);
   const [mainTain, setMainTain] = useState(false);
   const [manualMode, setManualMode] = useState(false);
   const [pathChecked, setPathChecked] = useState(false);
   const [vehicleAlarmList, setVehicleAlarmList] = useState([]);
+  const [type, setType] = useState('');
 
   useEffect(() => {
     async function init() {
