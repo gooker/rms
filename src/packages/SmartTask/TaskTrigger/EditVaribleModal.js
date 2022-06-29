@@ -23,12 +23,14 @@ const EditVaribleModal = (props) => {
     form.validateFields().then((values) => {
       const currentValues = formatVariableFormValues(values, true);
       const newParams = {};
-      Object.keys(data)?.map((code) => {
-        newParams[code] = {
+      Object.keys(data)?.map((idcode) => {
+        const [id, code] = idcode.split('-');
+        newParams[idcode] = {
           code,
-          customParams: currentValues[code],
+          ...currentValues[idcode],
         };
       });
+
       onSubmit(newParams);
     });
   }

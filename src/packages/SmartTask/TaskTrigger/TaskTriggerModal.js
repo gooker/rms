@@ -31,6 +31,12 @@ const TaskTriggerModal = (props) => {
   const [allTaskList, setAllTaskList] = useState([]); // 自定义任务和sharedTasks合并
 
   useEffect(() => {
+    if (!visible) {
+      form.resetFields();
+    }
+  }, [visible]);
+
+  useEffect(() => {
     let currentAllTask = [];
     customTaskList?.map(({ code, id, name, sample }) => {
       currentAllTask.push({ code, id, name, sample });
@@ -88,7 +94,7 @@ const TaskTriggerModal = (props) => {
       dataMap[idcode] = {
         id,
         code,
-        customParams: fixedVariable[idcode],
+        ...fixedVariable[idcode],
       };
     });
     setVariables(dataMap);
@@ -143,15 +149,13 @@ const TaskTriggerModal = (props) => {
           const paramIds = codes?.map((idcode) => idcode.split('-')[0]);
           const currentDataById = allTaskList?.filter(({ id }) => paramIds.includes(id));
           currentDataById?.map(({ id, code, sample }) => {
-            dataMap[`${id}-${code}`] = sample?.customParams;
+            dataMap[`${id}-${code}`] = sample;
           });
         }
 
         // 只有变量被编辑了再重新赋值
         if (variablesChanged) {
-          Object.keys(variables)?.map((code) => {
-            dataMap[code] = variables[code]?.customParams;
-          });
+          dataMap = { ...variables };
         }
 
         values.fixedVariable = dataMap;
@@ -214,6 +218,7 @@ const TaskTriggerModal = (props) => {
           rules={[{ required: true }]}
           getValueFromEvent={(value) => {
             setVariables(null); // 触发任务变了就清空变量信息
+            setVariablesChanged(null);
             return value;
           }}
         >
