@@ -1511,13 +1511,9 @@ export function generateSample(
       if (Array.isArray(preActionCodes)) {
         preActionCodes.forEach((subTaskCode) => {
           if (!isNull(preTaskParams[subTaskCode])) {
-            const { params: params1, ...rest1 } = result['customAction'][`step${index}`];
-            const { params: params2, ...rest2 } = preTaskParams[subTaskCode];
-            result['customAction'][`step${index}`] = {
-              ...rest1,
-              ...rest2,
-              params: { ...params1, ...params2 },
-            };
+            const { params, ...rest1 } = result['customAction'][`step${index}`];
+            const { params: preParams, ...rest2 } = preTaskParams[subTaskCode];
+            result['customAction'][`step${index}`] = { ...rest1, ...rest2, params, preParams };
           }
         });
       }
