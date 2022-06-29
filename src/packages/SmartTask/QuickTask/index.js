@@ -9,6 +9,7 @@ import { saveQuickTask } from '@/services/smartTaskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
+import ExecuteQuickTaskModal from './component/ExecuteQuickTaskModal';
 import VariableModificationModal from '@/components/VariableModification/VariableModificationModal';
 import QuickTaskTool from './component/QuickTaskTool';
 import ShardDrawer from './component/ShardDrawer';
@@ -247,7 +248,7 @@ const QuickTask = (props) => {
       />
 
       {/*  执行快捷任务 */}
-      {/*<ExecuteQuickTaskModal customTask={getCustomTask()} />*/}
+      <ExecuteQuickTaskModal customTask={getCustomTask()} />
     </>
   );
 };

@@ -96,7 +96,11 @@ const TargetSelector = (props) => {
   function renderSelectOptions() {
     let data = TargetSelectorOptions;
     if (!isStrictNull(limit)) {
-      data = data.filter((item) => item.value.startsWith(limit));
+      let _limit = limit;
+      if (_limit.endsWith('_GROUP')) {
+        _limit.replace('_GROUP', '');
+      }
+      data = data.filter((item) => item.value.startsWith(_limit));
     }
     return data.map(({ value, label }) => (
       <Select.Option key={value} value={value}>

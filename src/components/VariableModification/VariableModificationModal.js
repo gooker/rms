@@ -14,6 +14,9 @@ const VariableModificationModal = (props) => {
     if (visible && isNull(customTask)) {
       message.error(formatMessage({ id: 'variable.customTaskData.missing' }));
     }
+    if (!visible) {
+      formRef.resetFields();
+    }
   }, [visible]);
 
   function confirm() {

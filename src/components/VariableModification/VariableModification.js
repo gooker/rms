@@ -286,7 +286,7 @@ const VariableModification = (props) => {
 
   function renderEndVariable() {
     const variables = variable.customEnd;
-    if (variables?.loadBackZone && variables?.loadBackZone) {
+    if (variables?.backZone && variables?.loadBackZone) {
       const { loadBackZone, backZone } = variables;
       const loadBackZoneInitValue = convertBackZoneToFormValue(loadBackZone);
       const backZoneInitValue = convertBackZoneToFormValue(backZone);
