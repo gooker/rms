@@ -9,7 +9,7 @@ import { saveQuickTask } from '@/services/smartTaskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
-import VariableModificationModal from '../../../components/VariableModification/VariableModificationModal';
+import VariableModificationModal from '@/components/VariableModification/VariableModificationModal';
 import QuickTaskTool from './component/QuickTaskTool';
 import ShardDrawer from './component/ShardDrawer';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -179,7 +179,7 @@ const QuickTask = (props) => {
 
   async function onSaveVariable(customParams) {
     const quickTask = { ...editing };
-    quickTask.variable = { ...quickTask.variable, customParams };
+    quickTask.variable = { ...quickTask.variable, ...customParams };
     const response = await saveQuickTask(quickTask);
     if (!dealResponse(response, true)) {
       dispatch({ type: 'quickTask/getVisibleQuickTasks' });

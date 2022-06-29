@@ -1,12 +1,12 @@
 import React, { Fragment, memo } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Row, Select, Switch } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { isPlainObject } from 'lodash';
 import { convertMapToArrayMap, formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
+import { isPlainObject } from 'lodash';
 
 const VariableModification = (props) => {
   const { prefix, form, variable, customTask } = props;
@@ -45,11 +45,7 @@ const VariableModification = (props) => {
             return (
               <Form.Item
                 key={getRandomString(6)}
-                name={
-                  prefix
-                    ? [prefix, 'customStart', 'vehicle', variableKey]
-                    : ['customStart', 'vehicle', variableKey]
-                }
+                name={prefix ? [prefix, 'customStart', 'vehicle'] : ['customStart', 'vehicle']}
                 label={<FormattedMessage id='customTask.form.vehicle' />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
@@ -156,20 +152,45 @@ const VariableModification = (props) => {
     if (customAction && !isEmptyPlainObject(customAction)) {
       return Object.entries(customAction)
         .map(([nodeType, variables]) => {
-          const { params, loadAngle, operateAngle, speed } = variables;
+          const { params, preParams, loadAngle, operateAngle, speed } = variables;
           const doms = [
             <Divider key={getRandomString(6)} orientation={'left'}>
               {renderPartTitle(nodeType)}
             </Divider>,
           ];
-          Object.entries(params)?.forEach(([variableKey, variableValue]) =>
+
+          // 前置任务目标点
+          Object.entries(preParams).forEach(([variableKey, variableValue]) =>
             doms.push(
               <Form.Item
                 key={getRandomString(6)}
                 name={
                   prefix
-                    ? [prefix, 'customAction', nodeType, variableKey]
-                    : ['customAction', nodeType, variableKey]
+                    ? [prefix, 'customAction', nodeType, 'preParams', variableKey]
+                    : ['customAction', nodeType, 'preParams', variableKey]
+                }
+                label={
+                  <>
+                    <FormattedMessage id={'app.common.targetCell'} />
+                    (<FormattedMessage id={'app.task.pre'} />)
+                  </>
+                }
+                initialValue={{ type: variableKey, code: variableValue }}
+              >
+                <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+              </Form.Item>,
+            ),
+          );
+
+          // 子任务目标点
+          Object.entries(params).forEach(([variableKey, variableValue]) =>
+            doms.push(
+              <Form.Item
+                key={getRandomString(6)}
+                name={
+                  prefix
+                    ? [prefix, 'customAction', nodeType, 'params', variableKey]
+                    : ['customAction', nodeType, 'params', variableKey]
                 }
                 label={<FormattedMessage id={'app.common.targetCell'} />}
                 initialValue={{ type: variableKey, code: variableValue }}
@@ -178,6 +199,7 @@ const VariableModification = (props) => {
               </Form.Item>,
             ),
           );
+
           if (isNull(operateAngle)) {
             doms.push(
               <Form.Item
@@ -185,7 +207,7 @@ const VariableModification = (props) => {
                 name={
                   prefix
                     ? [prefix, 'customAction', nodeType, 'loadAngle']
-                    : [nodeType, 'customAction', 'loadAngle']
+                    : ['customAction', nodeType, 'loadAngle']
                 }
                 label={formatMessage({ id: 'object.load.direction' })}
                 initialValue={loadAngle}
@@ -364,19 +386,40 @@ export default memo(VariableModification);
 
 export function formatVariableFormValues(values, hasPrefix = false) {
   function format(inputValue) {
-    const result = { START: inputValue.START, END: inputValue.END };
-    const _values = { ...inputValue };
-    delete _values.END;
-    Object.entries(_values).forEach(([stepKey, stepValue]) => {
-      result[stepKey] = {};
-      Object.entries(stepValue).forEach(([field, value]) => {
-        if (isPlainObject(value) && !isNull(value.code)) {
-          result[stepKey][field] = value.code;
+    const result = {};
+    const { customStart, customAction, customEnd } = inputValue;
+
+    // 任务开始
+    result.customStart = { vehicle: {}, vehicleLimit: {} };
+    const { vehicle, vehicleLimit } = customStart;
+    result.customStart['vehicle'][vehicle.type] = vehicle.code;
+    result.customStart.vehicleLimit = vehicleLimit;
+
+    // 子任务
+    result.customAction = {};
+    Object.entries(customAction).forEach(([step, stepLoad]) => {
+      if (result.customAction[step] === undefined) {
+        result.customAction[step] = {};
+      }
+      Object.entries(stepLoad).forEach(([fieldKey, fieldValue]) => {
+        if (result.customAction[step][fieldKey] === undefined) {
+          result.customAction[step][fieldKey] = {};
+        }
+        if (isPlainObject(fieldValue)) {
+          // 目标点只会有一种
+          const key = Object.keys(fieldValue)[0];
+          result.customAction[step][fieldKey][key] = fieldValue[key]['code'];
         } else {
-          result[stepKey][field] = value;
+          result.customAction[step][fieldKey] = fieldValue;
         }
       });
     });
+
+    // 任务结束
+    result.customEnd = {};
+    const { backZone, loadBackZone } = customEnd;
+    result.customEnd.backZone = backZone.map(({ type, code }) => ({ [type]: code }));
+    result.customEnd.loadBackZone = loadBackZone.map(({ type, code }) => ({ [type]: code }));
     return result;
   }
 

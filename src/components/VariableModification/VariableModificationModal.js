@@ -22,9 +22,7 @@ const VariableModificationModal = (props) => {
       .then((values) => {
         onOk(formatVariableFormValues(values));
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch(console.log);
   }
 
   return (
