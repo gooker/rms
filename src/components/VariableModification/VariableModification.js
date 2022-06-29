@@ -160,27 +160,29 @@ const VariableModification = (props) => {
           ];
 
           // 前置任务目标点
-          Object.entries(preParams).forEach(([variableKey, variableValue]) =>
-            doms.push(
-              <Form.Item
-                key={getRandomString(6)}
-                name={
-                  prefix
-                    ? [prefix, 'customAction', nodeType, 'preParams', variableKey]
-                    : ['customAction', nodeType, 'preParams', variableKey]
-                }
-                label={
-                  <>
-                    <FormattedMessage id={'app.common.targetCell'} />
-                    (<FormattedMessage id={'app.task.pre'} />)
-                  </>
-                }
-                initialValue={{ type: variableKey, code: variableValue }}
-              >
-                <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
-              </Form.Item>,
-            ),
-          );
+          if (preParams) {
+            Object.entries(preParams).forEach(([variableKey, variableValue]) =>
+              doms.push(
+                <Form.Item
+                  key={getRandomString(6)}
+                  name={
+                    prefix
+                      ? [prefix, 'customAction', nodeType, 'preParams', variableKey]
+                      : ['customAction', nodeType, 'preParams', variableKey]
+                  }
+                  label={
+                    <>
+                      <FormattedMessage id={'app.common.targetCell'} />
+                      (<FormattedMessage id={'app.task.pre'} />)
+                    </>
+                  }
+                  initialValue={{ type: variableKey, code: variableValue }}
+                >
+                  <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+                </Form.Item>,
+              ),
+            );
+          }
 
           // 子任务目标点
           Object.entries(params).forEach(([variableKey, variableValue]) =>
