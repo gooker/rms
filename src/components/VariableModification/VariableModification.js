@@ -6,7 +6,6 @@ import { convertMapToArrayMap, formatMessage, getRandomString, isEmptyPlainObjec
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
-import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 
 const VariableModification = (props) => {
@@ -36,195 +35,247 @@ const VariableModification = (props) => {
   }
 
   function renderStartVariable() {
-    const customParams = variable?.customParams;
-    if (customParams && !isEmptyPlainObject(customParams)) {
-      const variables = customParams.START;
-      const hidden = variables.VEHICLE && variables.VEHICLE.length === 0;
+    const variables = variable.customStart;
+    if (variables?.vehicle && variables?.vehicleLimit) {
+      const { vehicle, vehicleLimit } = variables;
       return (
         <>
           <Divider orientation={'left'}>{renderPartTitle('START')}</Divider>
-          {Object.entries(variables).map(([variableKey, variableValue]) => {
-            if (VehicleOptionType[variableKey]) {
-              return (
-                <Form.Item
-                  hidden={hidden}
-                  key={getRandomString(6)}
-                  name={prefix ? [prefix, 'START', variableKey] : ['START', variableKey]}
-                  label={variableKey}
-                  initialValue={{ type: variableKey, code: variables[variableKey] }}
-                >
-                  <VehicleVariable />
-                </Form.Item>
-              );
-            } else {
-              // 资源限制
-              return (
-                <Fragment>
-                  {/* 可接小车电量约束 */}
-                  <Form.Item
-                    name={
-                      prefix
-                        ? [prefix, 'START', 'customLimit', 'vehicleBatteryLimit']
-                        : ['START', 'customLimit', 'vehicleBatteryLimit']
-                    }
-                    label={formatMessage({
-                      id: 'customTask.form.resourceLimit.vehicleBattery',
-                    })}
-                    initialValue={variableValue.vehicleBatteryLimit}
-                  >
-                    <InputNumber allowClear style={{ width: 90 }} />
-                  </Form.Item>
-                  {/* 车身可用容器数量约束 */}
-                  <Form.Item
-                    name={
-                      prefix
-                        ? [prefix, 'START', 'customLimit', 'canUseContainerCountLimit']
-                        : ['START', 'customLimit', 'canUseContainerCountLimit']
-                    }
-                    label={formatMessage({
-                      id: 'customTask.form.resourceLimit.availableContainerCountLimit',
-                    })}
-                    initialValue={variableValue.canUseContainerCountLimit}
-                  >
-                    <InputNumber allowClear style={{ width: 90 }} />
-                  </Form.Item>
-                  {/* 容器规格约束 */}
-                  <Form.Item
-                    name={
-                      prefix
-                        ? [prefix, 'START', 'customLimit', 'canUseContainerLimit']
-                        : ['START', 'customLimit', 'canUseContainerLimit']
-                    }
-                    label={formatMessage({
-                      id: 'customTask.form.resourceLimit.containerTypeLimit',
-                    })}
-                    initialValue={variableValue.canUseContainerLimit ?? []}
-                  >
-                    <Select allowClear mode={'multiple'}></Select>
-                  </Form.Item>
-                  {/* 载具规格约束 */}
-                  <Form.Item
-                    name={
-                      prefix
-                        ? [prefix, 'START', 'customLimit', 'canUseLoadTypeLimit']
-                        : ['START', 'customLimit', 'canUseLoadTypeLimit']
-                    }
-                    label={formatMessage({
-                      id: 'customTask.form.resourceLimit.loadTypeLimit',
-                    })}
-                    initialValue={variableValue.canUseLoadTypeLimit ?? []}
-                  >
-                    <Select allowClear mode={'multiple'}></Select>
-                  </Form.Item>
-                  {/* 是否要求的载具ID必须有待命车辆持有 */}
-                  <Form.Item
-                    name={
-                      prefix
-                        ? [prefix, 'START', 'customLimit', 'isLimitStandBy']
-                        : ['START', 'customLimit', 'isLimitStandBy']
-                    }
-                    label={formatMessage({
-                      id: 'customTask.form.resourceLimit.isLimitStandBy',
-                    })}
-                    initialValue={variableValue.isLimitStandBy ?? false}
-                    valuePropName={'checked'}
-                  >
-                    <Switch />
-                  </Form.Item>
-                  {/* 是否可以使用工作中的载具 */}
-                  <Form.Item
-                    name={
-                      prefix
-                        ? [prefix, 'START', 'customLimit', 'canUseWorkLimit']
-                        : ['START', 'customLimit', 'canUseWorkLimit']
-                    }
-                    label={formatMessage({
-                      id: 'customTask.form.resourceLimit.loadWorkLimit',
-                    })}
-                    initialValue={variableValue.canUseWorkLimit ?? false}
-                    valuePropName={'checked'}
-                  >
-                    <Switch />
-                  </Form.Item>
-                </Fragment>
-              );
-            }
+          {Object.entries(vehicle).map(([variableKey, variableValue]) => {
+            return (
+              <Form.Item
+                key={getRandomString(6)}
+                name={
+                  prefix
+                    ? [prefix, 'customStart', 'vehicle', variableKey]
+                    : ['customStart', 'vehicle', variableKey]
+                }
+                label={<FormattedMessage id='customTask.form.vehicle' />}
+                initialValue={{ type: variableKey, code: variableValue }}
+              >
+                <VehicleVariable />
+              </Form.Item>
+            );
           })}
+
+          {/****************** 资源限制 ****************/}
+          {/* 可接小车电量约束 */}
+          <Form.Item
+            name={
+              prefix
+                ? [prefix, 'customStart', 'vehicleLimit', 'vehicleBatteryLimit']
+                : ['customStart', 'vehicleLimit', 'vehicleBatteryLimit']
+            }
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.vehicleBattery',
+            })}
+            initialValue={vehicleLimit.vehicleBatteryLimit}
+          >
+            <InputNumber allowClear style={{ width: 90 }} />
+          </Form.Item>
+          {/* 车身可用容器数量约束 */}
+          <Form.Item
+            name={
+              prefix
+                ? [prefix, 'customStart', 'vehicleLimit', 'canUseContainerCountLimit']
+                : ['customStart', 'vehicleLimit', 'canUseContainerCountLimit']
+            }
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.availableContainerCountLimit',
+            })}
+            initialValue={vehicleLimit.canUseContainerCountLimit}
+          >
+            <InputNumber allowClear style={{ width: 90 }} />
+          </Form.Item>
+          {/* 容器规格约束 */}
+          <Form.Item
+            name={
+              prefix
+                ? [prefix, 'customStart', 'vehicleLimit', 'canUseContainerLimit']
+                : ['customStart', 'vehicleLimit', 'canUseContainerLimit']
+            }
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.containerTypeLimit',
+            })}
+            initialValue={vehicleLimit.canUseContainerLimit ?? []}
+          >
+            <Select allowClear mode={'multiple'}></Select>
+          </Form.Item>
+          {/* 载具规格约束 */}
+          <Form.Item
+            name={
+              prefix
+                ? [prefix, 'customStart', 'vehicleLimit', 'canUseLoadTypeLimit']
+                : ['customStart', 'vehicleLimit', 'canUseLoadTypeLimit']
+            }
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.loadTypeLimit',
+            })}
+            initialValue={vehicleLimit.canUseLoadTypeLimit ?? []}
+          >
+            <Select allowClear mode={'multiple'}></Select>
+          </Form.Item>
+          {/* 是否要求的载具ID必须有待命车辆持有 */}
+          <Form.Item
+            name={
+              prefix
+                ? [prefix, 'customStart', 'vehicleLimit', 'isLimitStandBy']
+                : ['customStart', 'vehicleLimit', 'isLimitStandBy']
+            }
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.isLimitStandBy',
+            })}
+            initialValue={vehicleLimit.isLimitStandBy ?? false}
+            valuePropName={'checked'}
+          >
+            <Switch />
+          </Form.Item>
+          {/* 是否可以使用工作中的载具 */}
+          <Form.Item
+            name={
+              prefix
+                ? [prefix, 'customStart', 'vehicleLimit', 'canUseWorkLimit']
+                : ['customStart', 'vehicleLimit', 'canUseWorkLimit']
+            }
+            label={formatMessage({
+              id: 'customTask.form.resourceLimit.loadWorkLimit',
+            })}
+            initialValue={vehicleLimit.canUseWorkLimit ?? false}
+            valuePropName={'checked'}
+          >
+            <Switch />
+          </Form.Item>
         </>
       );
     }
   }
 
   function renderSubTaskVariable() {
-    let vehicleSelection;
-    let customParams = variable?.customParams;
-    if (customParams && !isEmptyPlainObject(customParams)) {
-      customParams = { ...customParams };
-      // 从START中获取当前选择的小车
-      for (const [type, code] of Object.entries(customParams.START)) {
-        if (VehicleOptionType[type]) {
-          vehicleSelection = { type, code };
-          break;
-        }
-      }
-      delete customParams.START;
-      delete customParams.END;
-      return Object.entries(customParams)
+    let { customStart, customAction } = variable;
+    let vehicleSelection = convertMapToArrayMap(customStart.vehicle, 'type', 'code')[0];
+    if (customAction && !isEmptyPlainObject(customAction)) {
+      return Object.entries(customAction)
         .map(([nodeType, variables]) => {
-          return (
-            <>
-              <Divider orientation={'left'}>{renderPartTitle(nodeType)}</Divider>
-              {Object.keys(variables).map((variableKey) => {
-                if (variableKey === 'loadAngle') {
-                  return (
-                    <Form.Item
-                      key={getRandomString(6)}
-                      name={prefix ? [prefix, nodeType, 'loadAngle'] : [nodeType, 'loadAngle']}
-                      label={formatMessage({ id: 'object.load.direction' })}
-                      initialValue={variables[variableKey]}
-                    >
-                      <InputNumber addonAfter="°" />
-                    </Form.Item>
-                  );
-                } else {
-                  return (
-                    <Form.Item
-                      key={getRandomString(6)}
-                      name={prefix ? [prefix, nodeType, variableKey] : [nodeType, variableKey]}
-                      label={<FormattedMessage id={'app.common.targetCell'} />}
-                      initialValue={{
-                        type: variableKey,
-                        code: variables[variableKey],
-                      }}
-                    >
-                      <TargetSelector vehicleSelection={vehicleSelection} />
-                    </Form.Item>
-                  );
+          const { params, loadAngle, operateAngle, speed } = variables;
+          const doms = [
+            <Divider key={getRandomString(6)} orientation={'left'}>
+              {renderPartTitle(nodeType)}
+            </Divider>,
+          ];
+          Object.entries(params).forEach(([variableKey, variableValue]) =>
+            doms.push(
+              <Form.Item
+                key={getRandomString(6)}
+                name={
+                  prefix
+                    ? [prefix, 'customAction', nodeType, variableKey]
+                    : ['customAction', nodeType, variableKey]
                 }
-              })}
-            </>
+                label={<FormattedMessage id={'app.common.targetCell'} />}
+                initialValue={{ type: variableKey, code: variableValue }}
+              >
+                <TargetSelector vehicleSelection={vehicleSelection} limit={variableKey} />
+              </Form.Item>,
+            ),
           );
+          if (isNull(operateAngle)) {
+            doms.push(
+              <Form.Item
+                key={getRandomString(6)}
+                name={
+                  prefix
+                    ? [prefix, 'customAction', nodeType, 'loadAngle']
+                    : [nodeType, 'customAction', 'loadAngle']
+                }
+                label={formatMessage({ id: 'object.load.direction' })}
+                initialValue={loadAngle}
+              >
+                <InputNumber addonAfter='°' />
+              </Form.Item>,
+            );
+          } else {
+            doms.push(
+              <Form.Item
+                key={getRandomString(6)}
+                name={
+                  prefix
+                    ? [prefix, 'customAction', nodeType, 'loadAngle']
+                    : ['customAction', nodeType, 'loadAngle']
+                }
+                initialValue={loadAngle}
+                label={formatMessage({ id: 'customTask.form.podSide' })}
+              >
+                <Select style={{ width: 207 }}>
+                  <Select.Option value={0}>
+                    <FormattedMessage id={'app.pod.side.A'} />
+                  </Select.Option>
+                  <Select.Option value={90}>
+                    <FormattedMessage id={'app.pod.side.B'} />
+                  </Select.Option>
+                  <Select.Option value={180}>
+                    <FormattedMessage id={'app.pod.side.C'} />
+                  </Select.Option>
+                  <Select.Option value={270}>
+                    <FormattedMessage id={'app.pod.side.D'} />
+                  </Select.Option>
+                </Select>
+              </Form.Item>,
+            );
+            doms.push(
+              <Form.Item
+                key={getRandomString(6)}
+                name={
+                  prefix
+                    ? [prefix, 'customAction', nodeType, 'operateAngle']
+                    : ['customAction', nodeType, 'operateAngle']
+                }
+                initialValue={operateAngle}
+                label={formatMessage({ id: 'customTask.form.operatorDirection' })}
+              >
+                <Select style={{ width: 207 }}>
+                  <Select.Option value={0}>
+                    <FormattedMessage id={'app.common.targetCell'} />
+                    <FormattedMessage id={'app.direction.topSide'} />
+                  </Select.Option>
+                  <Select.Option value={90}>
+                    <FormattedMessage id={'app.common.targetCell'} />
+                    <FormattedMessage id={'app.direction.rightSide'} />
+                  </Select.Option>
+                  <Select.Option value={180}>
+                    <FormattedMessage id={'app.common.targetCell'} />
+                    <FormattedMessage id={'app.direction.bottomSide'} />
+                  </Select.Option>
+                  <Select.Option value={270}>
+                    <FormattedMessage id={'app.common.targetCell'} />
+                    <FormattedMessage id={'app.direction.leftSide'} />
+                  </Select.Option>
+                </Select>
+              </Form.Item>,
+            );
+          }
+          return doms;
         })
-        .filter(Boolean);
+        .flat();
     }
     return null;
   }
 
   function renderEndVariable() {
-    const customParams = variable?.customParams;
-    if (customParams && !isEmptyPlainObject(customParams)) {
-      const variables = customParams.END;
-      const { heavyBackZone, backZone } = variables;
-      const heavyBackZoneInitValue = convertBackZoneToFormValue(heavyBackZone);
+    const variables = variable.customEnd;
+    if (variables?.loadBackZone && variables?.loadBackZone) {
+      const { loadBackZone, backZone } = variables;
+      const loadBackZoneInitValue = convertBackZoneToFormValue(loadBackZone);
       const backZoneInitValue = convertBackZoneToFormValue(backZone);
       return (
         <>
           <Divider orientation={'left'}>{renderPartTitle('END')}</Divider>
           <Fragment>
-            <Form.Item label={formatMessage({ id: 'customTask.form.heavyBackZone' })}>
+            <Form.Item label={formatMessage({ id: 'customTask.form.loadBackZone' })}>
               <Form.List
-                name={prefix ? [prefix, 'END', 'heavyBackZone'] : ['END', 'heavyBackZone']}
-                initialValue={heavyBackZoneInitValue}
+                name={
+                  prefix ? [prefix, 'customEnd', 'loadBackZone'] : ['customEnd', 'loadBackZone']
+                }
+                initialValue={loadBackZoneInitValue}
               >
                 {(fields, { add, remove }) => (
                   <>
@@ -261,7 +312,7 @@ const VariableModification = (props) => {
             {/* 返回区域 */}
             <Form.Item label={formatMessage({ id: 'customTask.form.backZone' })}>
               <Form.List
-                name={prefix ? [prefix, 'END', 'backZone'] : ['END', 'backZone']}
+                name={prefix ? [prefix, 'customEnd', 'backZone'] : ['customEnd', 'backZone']}
                 initialValue={backZoneInitValue}
               >
                 {(fields, { add, remove }) => (
@@ -294,16 +345,6 @@ const VariableModification = (props) => {
                   </>
                 )}
               </Form.List>
-            </Form.Item>
-
-            {/* 自动充电 */}
-            <Form.Item
-              name={prefix ? [prefix, 'END', 'vehicleNeedCharge'] : ['END', 'vehicleNeedCharge']}
-              initialValue={variables.vehicleNeedCharge ?? true}
-              valuePropName={'checked'}
-              label={formatMessage({ id: 'customTask.form.vehicleNeedCharge' })}
-            >
-              <Switch />
             </Form.Item>
           </Fragment>
         </>

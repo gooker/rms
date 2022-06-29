@@ -77,7 +77,7 @@ export default {
   'customTask.form.appointResources': '可接资源任务',
   'customTask.form.vehicleAutoCharge': '可自动退出待命去充电',
   'customTask.form.backZone': '自动找停车点',
-  'customTask.form.heavyBackZone': '载具自动放回储位',
+  'customTask.form.loadBackZone': '载具自动放回储位',
   'customTask.form.vehicleNeedCharge': '自动充电',
 
   // 子任务

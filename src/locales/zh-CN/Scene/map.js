@@ -37,19 +37,4 @@ export default {
   'map.cost.blue': '蓝',
   'map.cost.yellow': '黄',
   'map.cost.red': '红',
-
-  // 场景元素
-  'object.load': '载具',
-  'object.load.id': '载具ID',
-  'object.load.direction': '载具方向',
-  'object.loadGroup': '载具组',
-
-  // 潜伏货架
-  'app.pod': '货架',
-  'app.pod.id': '货架ID',
-  'app.pod.direction': '货架面',
-  'app.pod.side.A': 'A',
-  'app.pod.side.B': 'B',
-  'app.pod.side.C': 'C',
-  'app.pod.side.D': 'D',
 };

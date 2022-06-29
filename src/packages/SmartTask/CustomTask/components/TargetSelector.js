@@ -1,11 +1,12 @@
 import React, { memo } from 'react';
 import { Select, Space } from 'antd';
 import { connect } from '@/utils/RmsDva';
-import { isSubArray } from '@/utils/util';
+import { isStrictNull, isSubArray } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
+import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const TargetSelector = (props) => {
-  const { dataSource, vehicleSelection, value, onChange } = props;
+  const { dataSource, vehicleSelection, value, onChange, limit } = props;
   const currentValue = value || { type: null, code: [] }; // {type:xxx, code:[]}
 
   function onTypeChange(_value) {
@@ -23,16 +24,24 @@ const TargetSelector = (props) => {
   function renderSecondaryOptions() {
     if (currentValue.type) {
       // 如果选择的载具, 则需要与对应的车型进行筛选
-      if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type) && vehicleSelection.type !== 'AUTO') {
+      const isAuto =
+        vehicleSelection.type === VehicleOptionType.VEHICLE && vehicleSelection.code.length === 0;
+      if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type) && !isAuto) {
         // 获取分车所支持的所有的载具类型
         let validLoadTypes = [];
-        if (vehicleSelection.type === 'VEHICLE' && vehicleSelection.code.length > 0) {
+        if (
+          vehicleSelection.type === VehicleOptionType.VEHICLE &&
+          vehicleSelection.code.length > 0
+        ) {
           const vehicleType = dataSource.Vehicle?.filter((item) =>
             item.ids.includes(vehicleSelection.code[0]),
           );
           validLoadTypes = validLoadTypes.concat(vehicleType[0]?.types || []);
         }
-        if (vehicleSelection.type === 'VEHICLE_GROUP' && vehicleSelection.code.length > 0) {
+        if (
+          vehicleSelection.type === VehicleOptionType.VEHICLE_GROUP &&
+          vehicleSelection.code.length > 0
+        ) {
           if (Array.isArray(dataSource.Vehicle_GROUP)) {
             for (const item of dataSource.Vehicle_GROUP) {
               if (vehicleSelection.code.includes(item.code)) {
@@ -84,39 +93,22 @@ const TargetSelector = (props) => {
     return [];
   }
 
+  function renderSelectOptions() {
+    let data = TargetSelectorOptions;
+    if (!isStrictNull(limit)) {
+      data = data.filter((item) => item.value.startsWith(limit));
+    }
+    return data.map(({ value, label }) => (
+      <Select.Option key={value} value={value}>
+        <FormattedMessage id={label} />
+      </Select.Option>
+    ));
+  }
+
   return (
     <div>
       <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
-        <Select.Option value={'CELL'}>
-          <FormattedMessage id={'app.map.cell'} />
-        </Select.Option>
-        <Select.Option value={'CELL_GROUP'}>
-          <FormattedMessage id={'app.map.cellGroup'} />
-        </Select.Option>
-        <Select.Option value={'LOAD'}>
-          <FormattedMessage id={'object.load'} />
-        </Select.Option>
-        <Select.Option value={'LOAD_GROUP'}>
-          <FormattedMessage id={'object.loadGroup'} />
-        </Select.Option>
-        <Select.Option value={'ROTATE'}>
-          <FormattedMessage id={'editor.cellType.rotation'} />
-        </Select.Option>
-        <Select.Option value={'ROTATE_GROUP'}>
-          <FormattedMessage id={'editor.cellType.rotationGroup'} />
-        </Select.Option>
-        <Select.Option value={'STORE'}>
-          <FormattedMessage id={'menu.storage'} />
-        </Select.Option>
-        <Select.Option value={'STORE_GROUP'}>
-          <FormattedMessage id={'resource.storage.group'} />
-        </Select.Option>
-        <Select.Option value={'STATION'}>
-          <FormattedMessage id={'app.map.station'} />
-        </Select.Option>
-        <Select.Option value={'STATION_GROUP'}>
-          <FormattedMessage id={'app.map.stationGroup'} />
-        </Select.Option>
+        {renderSelectOptions()}
       </Select>
 
       <Space>
@@ -145,3 +137,46 @@ const TargetSelector = (props) => {
 export default connect(({ global }) => ({
   dataSource: global.targetDatasource || {},
 }))(memo(TargetSelector));
+
+export const TargetSelectorOptions = [
+  {
+    value: 'CELL',
+    label: 'app.map.cellGroup',
+  },
+  {
+    value: 'CELL_GROUP',
+    label: 'app.map.cellGroup',
+  },
+  {
+    value: 'LOAD',
+    label: 'object.load',
+  },
+  {
+    value: 'LOAD_GROUP',
+    label: 'object.loadGroup',
+  },
+  {
+    value: 'ROTATE',
+    label: 'editor.cellType.rotation',
+  },
+  {
+    value: 'ROTATE_GROUP',
+    label: 'editor.cellType.rotationGroup',
+  },
+  {
+    value: 'STORE',
+    label: 'menu.storage',
+  },
+  {
+    value: 'STORE_GROUP',
+    label: 'resource.storage.group',
+  },
+  {
+    value: 'STATION',
+    label: 'app.map.station',
+  },
+  {
+    value: 'STATION_GROUP',
+    label: 'app.map.stationGroup',
+  },
+];

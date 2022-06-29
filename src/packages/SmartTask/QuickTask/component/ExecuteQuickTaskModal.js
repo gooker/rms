@@ -182,7 +182,7 @@ const ExecuteQuickTaskModal = (props) => {
           )}
           <Fragment>
             {heavyBackZoneVisible && (
-              <Form.Item label={formatMessage({ id: 'customTask.form.heavyBackZone' })}>
+              <Form.Item label={formatMessage({ id: 'customTask.form.loadBackZone' })}>
                 <Form.List
                   name={['END', 'heavyBackZone']}
                   initialValue={convertBackZoneToFormValue(variables.heavyBackZone)}

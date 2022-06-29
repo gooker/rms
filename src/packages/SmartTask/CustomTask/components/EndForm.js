@@ -37,7 +37,7 @@ const EndForm = (props) => {
 
       {/* --------------------------------------------------------------- */}
       {/* 重车返回区域 */}
-      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.heavyBackZone' })}>
+      <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.loadBackZone' })}>
         <Form.List name={[code, 'heavyBackZone']} initialValue={[]}>
           {(fields, { add, remove }) => (
             <>

@@ -10,7 +10,6 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import VariableModificationModal from '../../../components/VariableModification/VariableModificationModal';
-import ExecuteQuickTaskModal from '@/packages/SmartTask/QuickTask/component/ExecuteQuickTaskModal';
 import QuickTaskTool from './component/QuickTaskTool';
 import ShardDrawer from './component/ShardDrawer';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -248,7 +247,7 @@ const QuickTask = (props) => {
       />
 
       {/*  执行快捷任务 */}
-      <ExecuteQuickTaskModal customTask={getCustomTask()} />
+      {/*<ExecuteQuickTaskModal customTask={getCustomTask()} />*/}
     </>
   );
 };

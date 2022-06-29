@@ -1,13 +1,12 @@
-import { fetchAllQuickTaskGroups, fetchVisibleQuickTasks } from '@/services/smartTaskService';
 import { dealResponse, formatMessage } from '@/utils/util';
-import { fetchCustomParamType, getCustomTaskList } from '@/services/commonService';
+import { getCustomTaskList } from '@/services/commonService';
+import { fetchAllQuickTaskGroups, fetchVisibleQuickTasks } from '@/services/smartTaskService';
 
 const initState = {
   userTasks: [],
   sharedTasks: [],
   quickTaskGroups: [],
   customTasks: [],
-  modelParam: null,
 
   taskModalVisible: false,
   groupModalVisible: false,
@@ -41,17 +40,16 @@ export default {
       }
     },
     * initQuickTaskPage(_, { call, put }) {
-      const [quickTasks, quickTaskGroups, customTasks, modelParam] = yield Promise.all([
+      const [quickTasks, quickTaskGroups, customTasks] = yield Promise.all([
         fetchVisibleQuickTasks(),
         fetchAllQuickTaskGroups(),
         getCustomTaskList(),
-        fetchCustomParamType(),
       ]);
-      if (!dealResponse([quickTasks, quickTaskGroups, customTasks, modelParam])) {
+      if (!dealResponse([quickTasks, quickTaskGroups, customTasks])) {
         yield put({ type: 'updateQuickTasks', payload: quickTasks });
         yield put({
           type: 'updateState',
-          payload: { quickTaskGroups, customTasks, modelParam },
+          payload: { quickTaskGroups, customTasks },
         });
       }
     },

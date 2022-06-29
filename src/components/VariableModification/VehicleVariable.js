@@ -4,6 +4,7 @@ import { find } from 'lodash';
 import { formatMessage, isNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
+import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
 
 const VehicleVariable = (props) => {
   const { dataSource, value, onChange } = props;
@@ -13,13 +14,19 @@ const VehicleVariable = (props) => {
   const [secondaryVisible, setSecondaryVisible] = useState(false);
 
   useEffect(() => {
-    setSecondaryVisible(currentValue.type !== 'AUTO');
-    const vehicle = value.code[0];
-    if (vehicle) {
-      for (const dataSourceElement of dataSource.vehicle) {
-        if (dataSourceElement.ids.includes(vehicle)) {
-          setVehicleType(dataSourceElement.code);
-          break;
+    const isAuto =
+      currentValue.type === VehicleOptionType.VEHICLE && currentValue.code.length === 0;
+    if (isAuto) {
+      setSecondaryVisible(false);
+    } else {
+      setSecondaryVisible(true);
+      const vehicle = value.code[0];
+      if (vehicle) {
+        for (const dataSourceElement of dataSource.vehicle) {
+          if (dataSourceElement.ids.includes(vehicle)) {
+            setVehicleType(dataSourceElement.code);
+            break;
+          }
         }
       }
     }
@@ -113,14 +120,14 @@ const VehicleVariable = (props) => {
 
   const secondComponent = renderSecondComponent();
   const firstComponent = (
-    <Select disabled value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
-      <Select.Option value={'AUTO'}>
+    <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 130 }}>
+      <Select.Option value={VehicleOptionType.AUTO}>
         <FormattedMessage id={'customTask.form.NO_SPECIFY'} />
       </Select.Option>
-      <Select.Option value={'VEHICLE'}>
+      <Select.Option value={VehicleOptionType.VEHICLE}>
         <FormattedMessage id={'customTask.form.SPECIFY_Vehicle'} />
       </Select.Option>
-      <Select.Option value={'VEHICLE_GROUP'}>
+      <Select.Option value={VehicleOptionType.VEHICLE_GROUP}>
         <FormattedMessage id={'customTask.form.SPECIFY_GROUP'} />
       </Select.Option>
     </Select>
@@ -130,7 +137,7 @@ const VehicleVariable = (props) => {
     return (
       <Row gutter={10}>
         <Col>{firstComponent}</Col>
-        <Col>{secondaryVisible && renderSecondComponent()}</Col>
+        <Col flex={1}>{secondaryVisible && renderSecondComponent()}</Col>
       </Row>
     );
   }
@@ -144,11 +151,10 @@ const VehicleVariable = (props) => {
     </div>
   );
 };
-export default connect(({ quickTask }) => {
-  const dataSource = { vehicle: [], vehicleGroup: [] };
-  if (quickTask.modelParam) {
-    dataSource.vehicle = quickTask.modelParam?.VEHICLE ?? [];
-    dataSource.vehicleGroup = quickTask.modelParam?.VEHICLE_GROUP ?? [];
-  }
+export default connect(({ global }) => {
+  const dataSource = {
+    vehicle: global.targetDatasource?.VEHICLE ?? [],
+    vehicleGroup: global.targetDatasource?.VEHICLE_GROUP ?? [],
+  };
   return { dataSource };
 })(memo(VehicleVariable));
