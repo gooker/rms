@@ -162,7 +162,7 @@ const VariableModification = (props) => {
               {renderPartTitle(nodeType)}
             </Divider>,
           ];
-          Object.entries(params).forEach(([variableKey, variableValue]) =>
+          Object.entries(params)?.forEach(([variableKey, variableValue]) =>
             doms.push(
               <Form.Item
                 key={getRandomString(6)}
