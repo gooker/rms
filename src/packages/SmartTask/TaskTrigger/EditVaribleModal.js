@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { connect } from '@/utils/RmsDva';
 import find from 'lodash/find';
 import { Card, Form, Modal } from 'antd';
@@ -18,6 +18,12 @@ const EditVaribleModal = (props) => {
   const { data, customTaskList, allTaskList, visible, onCancel, onSubmit } = props;
 
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (!visible) {
+      form.resetFields();
+    }
+  }, [visible]);
 
   function submit() {
     form.validateFields().then((values) => {

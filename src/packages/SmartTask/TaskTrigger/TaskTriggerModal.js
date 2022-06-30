@@ -98,6 +98,7 @@ const TaskTriggerModal = (props) => {
       };
     });
     setVariables(dataMap);
+    setVariablesChanged(true);
   }
 
   // 点击”编辑变量“时候如果variablesChanged是true就直接使用”variables“数据，否则会手动拉取变量信息
@@ -290,19 +291,21 @@ const TaskTriggerModal = (props) => {
       </Form>
 
       {/* 编辑变量 */}
-      <EditVaribleModal
-        customTaskList={customTaskList}
-        allTaskList={allTaskList}
-        data={variables}
-        visible={editVaribleVisible}
-        onCancel={() => {
-          setEditVaribleVisible(false);
-        }}
-        onSubmit={(output) => {
-          updateVariable(output);
-          setEditVaribleVisible(false);
-        }}
-      />
+      {editVaribleVisible && (
+        <EditVaribleModal
+          customTaskList={customTaskList}
+          allTaskList={allTaskList}
+          data={variables}
+          visible={editVaribleVisible}
+          onCancel={() => {
+            setEditVaribleVisible(false);
+          }}
+          onSubmit={(output) => {
+            updateVariable(output);
+            setEditVaribleVisible(false);
+          }}
+        />
+      )}
     </Modal>
   );
 };
