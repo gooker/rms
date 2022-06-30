@@ -1,14 +1,53 @@
 /* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Form, Modal, Select, Space, Table, Tag } from 'antd';
+import { Button, Form, InputNumber, Modal, Popover, Select, Space, Table, Tag } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 import { find, isEmpty } from 'lodash';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { saveResourceGroup } from '@/services/resourceService';
 
+const EditPriority = (props) => {
+  const { record, confirm } = props;
+
+  const [value, setValue] = useState(null);
+
+  useEffect(() => {
+    if (record) {
+      setValue(record.priority);
+    }
+  }, [record]);
+
+  function submit() {
+    let hasEdit = true;
+    let priority = value;
+    if (isStrictNull(priority)) {
+      hasEdit = false;
+      priority = record.priority;
+    }
+    confirm(record, priority, hasEdit);
+    // 操作完需要隐藏Popover，这里模拟一下窗口点击事件: mousedown
+    setTimeout(() => {
+      const event = document.createEvent('HTMLEvents');
+      event.initEvent('mousedown');
+      document.dispatchEvent(event);
+    }, 0);
+  }
+
+  return (
+    <Space>
+      <InputNumber size={'small'} value={value} onChange={setValue} />
+      <Button size={'small'} onClick={submit}>
+        <FormattedMessage id={'app.button.confirm'} />
+      </Button>
+    </Space>
+  );
+};
+
 const GroupResourceModal = (props) => {
   const { visible, groups, onCancel } = props;
+
+  const [editing, setEditing] = useState(null);
 
   const columns = [
     {
@@ -27,15 +66,21 @@ const GroupResourceModal = (props) => {
       align: 'center',
       render: (text, record) => {
         return (
-          <Space>
-            <Tag color={'blue'}>{text}</Tag>
-            <EditOutlined
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                editPriority(record);
-              }}
-            />
-          </Space>
+          <Popover
+            trigger='click'
+            title='修改优先级'
+            content={<EditPriority record={editing} confirm={editPriority} />}
+          >
+            <Space style={{ cursor: 'pointer' }}>
+              <Tag color={'blue'}>{text}</Tag>
+              <EditOutlined
+                style={{ cursor: 'pointer' }}
+                onClick={() => {
+                  setEditing(record);
+                }}
+              />
+            </Space>
+          </Popover>
         );
       },
     },
@@ -84,15 +129,17 @@ const GroupResourceModal = (props) => {
     deletionRef.current = [];
   }
 
-  function editPriority(record, priority) {
-    const _dataSource = dataSource.map((item) => {
-      if (item.id === record.id) {
-        return { ...item, priority };
-      }
-      return item;
-    });
-    setDataSource(_dataSource);
-    updateRef.current.push({ id: [record.id], priority });
+  function editPriority(record, priority, hasEdit) {
+    if (hasEdit) {
+      const _dataSource = dataSource.map((item) => {
+        if (item.id === record.id) {
+          return { ...item, priority };
+        }
+        return item;
+      });
+      setDataSource(_dataSource);
+      updateRef.current.push({ id: record.id, priority });
+    }
   }
 
   function removeFromGroup(record) {
@@ -116,7 +163,7 @@ const GroupResourceModal = (props) => {
 
       if (!isEmpty(updateRef.current)) {
         updateRef.current.forEach(({ id, priority }) => {
-          group['priority'][id] = priority;
+          group['priority'][id]['priority'] = priority;
         });
       }
 

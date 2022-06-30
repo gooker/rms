@@ -143,10 +143,6 @@ const GroupModal = (props) => {
     }
   };
 
-  function submit() {
-    //
-  }
-
   function generateUniqueCode() {
     let code = getRandomString(10);
     const existCodes = groups.map(({ code }) => code);
@@ -163,7 +159,6 @@ const GroupModal = (props) => {
       width={750}
       maskClosable={false}
       footer={null}
-      onOk={submit}
       onCancel={onCancel}
     >
       <Button type={'primary'} style={{ marginBottom: 8 }} onClick={addRow}>

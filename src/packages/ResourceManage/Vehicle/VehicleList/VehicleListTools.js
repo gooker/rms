@@ -1,24 +1,18 @@
 import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import {
-  DisconnectOutlined,
-  DownloadOutlined,
-  RedoOutlined,
-  RiseOutlined,
-  ScanOutlined,
-} from '@ant-design/icons';
+import { DisconnectOutlined, DownloadOutlined, RedoOutlined, RiseOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { logOutVehicle } from '@/services/resourceService';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
-import ResourceGroupOperateComponent from '../../component/ResourceGroupOperateComponent';
 import commonStyles from '@/common.module.less';
+import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 
 const Colors = Dictionary().color;
 const VehicleListTools = (props) => {
-  const { dispatch, allVehicles, selectedRows, allAdaptors, searchParams } = props;
+  const { dispatch, allVehicles, selectedRows, cancelSelection, allAdaptors, searchParams } = props;
 
   const registerVehicles = allVehicles.filter((item) => item.register);
   const unregisterVehicles = allVehicles.filter((item) => !item.register);
@@ -88,7 +82,7 @@ const VehicleListTools = (props) => {
         <Form.Item label={formatMessage({ id: 'vehicle.id' })}>
           <Select
             allowClear
-            mode="multiple"
+            mode='multiple'
             style={{ width: 300 }}
             value={searchParams.id}
             onChange={(value) => {
@@ -98,21 +92,7 @@ const VehicleListTools = (props) => {
             {renderVehicleIdFilter()}
           </Select>
         </Form.Item>
-        <Form.Item label={formatMessage({ id: 'app.vehicleState' })}>
-          <Select
-            allowClear
-            mode="multiple"
-            style={{ width: 300 }}
-            value={searchParams.state}
-            onChange={(value) => {
-              updateSearchParam('state', value);
-            }}
-          >
-            {renderVehicleStateFilter()}
-          </Select>
-        </Form.Item>
-
-        <Form.Item label={<FormattedMessage id={'app.common.type'} />}>
+        <Form.Item label={<FormattedMessage id={'app.vehicleType'} />}>
           <Select
             allowClear
             style={{ width: 300 }}
@@ -135,6 +115,19 @@ const VehicleListTools = (props) => {
             })}
           </Select>
         </Form.Item>
+        <Form.Item label={formatMessage({ id: 'app.vehicleState' })}>
+          <Select
+            allowClear
+            mode='multiple'
+            style={{ width: 300 }}
+            value={searchParams.state}
+            onChange={(value) => {
+              updateSearchParam('state', value);
+            }}
+          >
+            {renderVehicleStateFilter()}
+          </Select>
+        </Form.Item>
       </Row>
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
@@ -142,13 +135,14 @@ const VehicleListTools = (props) => {
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
 
-          <ResourceGroupOperateComponent
-            selectedRows={selectedRows}
-            selectedRowKeys={selectedRows.map(({ id }) => id)}
-            groupType={'VEHICLE'}
-            onRefresh={() => {
+          <GroupManager
+            type={'VEHICLE'}
+            memberIdKey={GroupResourceMemberId.VEHICLE}
+            selections={selectedRows}
+            refresh={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });
             }}
+            cancelSelection={cancelSelection}
           />
 
           {/*<Button disabled={selectedRows.length === 0} onClick={moveOutVehicle}>*/}

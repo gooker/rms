@@ -1,4 +1,11 @@
 export default {
+  // 资源分组相关
+  'group.resourceGroup': '资源组',
+  'group.groupType': '资源组类型',
+  'group.groupMange': '组管理',
+  'group.resourceGroupMange': '分组管理',
+  'group.addToGroup': '添加到组',
+
   // 分组操作
   'resourceGroup.grouping': '分组',
   'resourceGroup.operate': '组操作',
@@ -7,31 +14,35 @@ export default {
   'resourceGroup.editPriority': '编辑优先级',
   'resourceGroup.deleteMember': '从组中删除',
   'resourceGroup.deleteMember.confirm': '是否确定从组中删除?',
-  'resourceGroup.nogrouping': '不存在分组',
+  'resourceGroup.noGroup': '不存在分组',
 
-  // 载具规格
-  'load.length': '长',
-  'load.width': '宽',
-  'load.height': '高',
-
-  'object.load': '载具',
-  'object.load.id': '载具ID',
-  'object.load.direction': '载具方向',
-  'object.loadGroup': '载具组',
-
-  // 资源
-  'resource.load.specification': '载具规格',
+  // 载具
+  'resource.load': '载具',
+  'resource.load.id': '载具ID',
+  'resource.load.length': '长',
+  'resource.load.width': '宽',
+  'resource.load.height': '高',
   'resource.load.group': '载具组',
+  'resource.load.direction': '载具方向',
+  'resource.load.specification': '载具规格',
+  'resource.load.location': '位置',
+  'resource.load.simulation.generate': '模拟生成',
+  'resource.load.target.storage': '目标货位',
+  'resource.load.source.storage': '来源货位',
+  'resource.load.code': '载具码',
+  'resource.load.startCode': '开始载具码',
+  'resource.load.endCode': '结束载具码',
+
+  // 储位
   'resource.storage.template': '储位模版',
   'resource.storage.group': '储位组',
+
+  // 机器管理, 包括: 车辆、充电桩、设备
   'resource.signalStrength': '信号强度',
   'resource.mode': '方式',
   'resource.bonjour': '查找',
   'resource.scan': '扫描网段',
   'resource.bonjourInfo': '查找信息',
-
-  // 适配器
-  'adapter.register': '适配器注册',
 
   // 潜伏货架
   'app.pod': '货架',
@@ -60,15 +71,4 @@ export default {
   'device.configureActions': '配置动作',
   'device.autocomplete': '自动完成',
   'device.action.executionMode': '动作执行模式',
-
-  'app.configInfo': '配置信息',
-
-  // 载具
-  'load.location': '位置',
-  'load.simulation.generate': '模拟生成',
-  'load.target.storage': '目标货位',
-  'load.source.storage': '来源货位',
-  'load.code': '载具码',
-  'load.startCode': '开始载具码',
-  'load.endCode': '结束载具码',
 };

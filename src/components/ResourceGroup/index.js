@@ -10,4 +10,5 @@ export const GroupResourceMemberId = {
   VEHICLE: 'vehicleId',
   CHARGER: 'chargerId',
   CHARGE_STRATEGY: 'code',
+  DEVICE: 'id',
 };

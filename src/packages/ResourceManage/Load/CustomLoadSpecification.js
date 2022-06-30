@@ -1,14 +1,10 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Row, Col, Button } from 'antd';
-import { EditOutlined, DeleteOutlined, RedoOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
+import { DeleteOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import {
-  fetchAllLoadSpecification,
-  fetchAllLoadType,
-  deleteLoadSpecification,
-} from '@/services/resourceService';
+import { deleteLoadSpecification, fetchAllLoadSpecification, fetchAllLoadType } from '@/services/resourceService';
 import SearchSpecComponent from './component/SearchSpecComponent';
 import LoadSpecificationModal from './component/LoadSpecificationModal';
 import commonStyles from '@/common.module.less';
@@ -34,21 +30,21 @@ const CustomLoadType = (props) => {
   }, [loadTypeCode]);
 
   const columns = [
-    { title: <FormattedMessage id="app.common.name" />, dataIndex: 'name', align: 'center' },
+    { title: <FormattedMessage id='app.common.name' />, dataIndex: 'name', align: 'center' },
     {
-      title: <FormattedMessage id="app.common.type" />,
+      title: <FormattedMessage id='app.common.type' />,
       dataIndex: 'loadType_name',
       align: 'center',
       render: (text, record) => <span>{record?.loadType?.name}</span>,
     },
-    { title: <FormattedMessage id="load.length" />, dataIndex: 'length', align: 'center' },
+    { title: <FormattedMessage id='resource.load.length' />, dataIndex: 'length', align: 'center' },
     {
-      title: <FormattedMessage id="load.width" />,
+      title: <FormattedMessage id='resource.load.width' />,
       dataIndex: 'width',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="load.height" />,
+      title: <FormattedMessage id='resource.load.height' />,
       dataIndex: 'height',
       align: 'center',
     },
@@ -131,20 +127,18 @@ const CustomLoadType = (props) => {
     <TablePageWrapper>
       <div>
         <SearchSpecComponent setLoadType={setLoadTypeCode} allLoadSpecType={allLoadType} />
-        <Row justify={'space-between'} style={{ userSelect: 'none' }}>
-          <Col className={commonStyles.tableToolLeft} flex="auto">
-            <Button type="primary" onClick={addSpec}>
-              <PlusOutlined /> <FormattedMessage id="app.button.add" />
-            </Button>
-            <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteSpec}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
-            </Button>
+        <div className={commonStyles.tableToolLeft}>
+          <Button type='primary' onClick={addSpec}>
+            <PlusOutlined /> <FormattedMessage id='app.button.add' />
+          </Button>
+          <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteSpec}>
+            <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+          </Button>
 
-            <Button onClick={onRefresh}>
-              <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
-            </Button>
-          </Col>
-        </Row>
+          <Button onClick={onRefresh}>
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+          </Button>
+        </div>
       </div>
       <TableWithPages
         columns={columns}

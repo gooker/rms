@@ -233,8 +233,8 @@ const VehicleList = (props) => {
   }
 
   function checkVehicleDetail(uniqueId) {
-    const route = `/ResourceManage/Vehicle/VehicleRealTime`;
-    history.push({ pathname: route, search: `uniqueId=${uniqueId}` });
+    // const route = `/ResourceManage/Vehicle/VehicleRealTime`;
+    // history.push({ pathname: route, search: `uniqueId=${uniqueId}` });
   }
 
   function onSelectChange(selectedRowKeys, selectedRows) {
@@ -247,7 +247,10 @@ const VehicleList = (props) => {
       <VehicleListTools
         selectedRows={selectedRows}
         onFilter={filterDatasource}
-        onRefresh={fetchRegisteredVehicle}
+        cancelSelection={() => {
+          setSelectedRows([]);
+          setSelectedRowKeys([]);
+        }}
       />
       <TableWithPages
         loading={loading}

@@ -8,10 +8,10 @@ import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ChargerStatus } from './chargeConfig';
 import commonStyles from '@/common.module.less';
-import ResourceGroupOperateComponent from '../../component/ResourceGroupOperateComponent';
+import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 
 const ChargerListTools = (props) => {
-  const { onRefresh, dispatch, allChargers, selectedRows, searchParams } = props;
+  const { onRefresh, cancelSelection, dispatch, allChargers, selectedRows, searchParams } = props;
   const unregisterCharges = allChargers.filter((item) => !item.register);
   const registerCharges = allChargers.filter((item) => item.register);
 
@@ -88,25 +88,24 @@ const ChargerListTools = (props) => {
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
-            <DisconnectOutlined /> <FormattedMessage id="app.button.logout" />
+            <DisconnectOutlined /> <FormattedMessage id='app.button.logout' />
           </Button>
 
-          <ResourceGroupOperateComponent
-            selectedRows={selectedRows}
-            selectedRowKeys={selectedRows.map(({ id }) => id)}
-            groupType={'CHARGER'}
-            onRefresh={() => {
-              dispatch({ type: 'chargerList/fetchInitialData' });
-            }}
+          <GroupManager
+            type={'CHARGER'}
+            memberIdKey={GroupResourceMemberId.CHARGER}
+            selections={selectedRows}
+            refresh={onRefresh}
+            cancelSelection={cancelSelection}
           />
 
           <Button onClick={onRefresh}>
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>
           <Button
-            type="dashed"
+            type='dashed'
             onClick={() => {
               dispatch({ type: 'chargerList/fetchInitialData' });
               dispatch({ type: 'chargerList/updateShowRegisterPanel', payload: true });

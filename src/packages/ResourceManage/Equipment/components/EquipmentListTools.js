@@ -7,9 +7,11 @@ import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import commonStyles from '@/common.module.less';
+import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 
 const EquipmentListTools = (props) => {
-  const { dispatch, allDevices, selectedRows, searchParams } = props;
+  const { dispatch, allDevices, selectedRows, searchParams, onRefresh, cancelSelection } = props;
+
   const unregisterDevices = allDevices.filter((item) => !item.hasRegistered);
   const registerDevices = allDevices.filter((item) => item.hasRegistered);
 
@@ -21,7 +23,7 @@ const EquipmentListTools = (props) => {
     ));
   }
 
-  function rendeConnectTypeFilter() {
+  function renderConnectTypeFilter() {
     const connectTypes = {
       MODBUS_TCP: 'MODBUS_TCP',
       MODBUS_RTU: 'MODBUS_RTU',
@@ -55,48 +57,56 @@ const EquipmentListTools = (props) => {
 
   return (
     <div>
-      <Row className={commonStyles.tableToolLeft}>
-        <Form.Item label={<FormattedMessage id="device.id" />}>
-          <Select
-            allowClear
-            mode="multiple"
-            style={{ width: 300 }}
-            value={searchParams.id}
-            onChange={(value) => {
-              updateSearchParam('id', value);
-            }}
-          >
-            {renderIdFilter()}
-          </Select>
-        </Form.Item>
-        <Form.Item label={<FormattedMessage id="device.connectionType" />}>
-          <Select
-            allowClear
-            mode="multiple"
-            style={{ width: 300 }}
-            value={searchParams.connectionType}
-            onChange={(value) => {
-              updateSearchParam('connectionType', value);
-            }}
-          >
-            {rendeConnectTypeFilter()}
-          </Select>
-        </Form.Item>
+      <Row gutter={24}>
+        <Col>
+          <Form.Item label={<FormattedMessage id='device.id' />}>
+            <Select
+              allowClear
+              mode='multiple'
+              style={{ width: 300 }}
+              value={searchParams.id}
+              onChange={(value) => {
+                updateSearchParam('id', value);
+              }}
+            >
+              {renderIdFilter()}
+            </Select>
+          </Form.Item>
+        </Col>
+        <Col>
+          <Form.Item label={<FormattedMessage id='device.connectionType' />}>
+            <Select
+              allowClear
+              mode='multiple'
+              style={{ width: 300 }}
+              value={searchParams.connectionType}
+              onChange={(value) => {
+                updateSearchParam('connectionType', value);
+              }}
+            >
+              {renderConnectTypeFilter()}
+            </Select>
+          </Form.Item>
+        </Col>
       </Row>
       <Row justify={'space-between'}>
         <Col className={commonStyles.tableToolLeft}>
           <Button danger disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
-          {/*<Button>*/}
-          {/*  <ExportOutlined /> <FormattedMessage id={'app.vehicle.infoExport'} />*/}
-          {/*</Button>*/}
+          <GroupManager
+            type={'DEVICE'}
+            memberIdKey={GroupResourceMemberId.DEVICE}
+            selections={selectedRows}
+            refresh={onRefresh}
+            cancelSelection={cancelSelection}
+          />
           <Button
             onClick={() => {
               dispatch({ type: 'equipList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>

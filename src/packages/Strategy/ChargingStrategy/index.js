@@ -5,17 +5,10 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAllStrategyList } from '@/services/resourceService';
 import SearchComponent from './SearchComponent';
-import {
-  dealResponse,
-  formatMessage,
-  generateResourceGroups,
-  isStrictNull,
-  isNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, generateResourceGroups, isNull, isStrictNull } from '@/utils/util';
 import ChargingStrategyComponent from '@/pages/ChargingStrategy/ChargingStrategyComponent';
 
 const ChargingStrategy = () => {
-  const [allData, setAllData] = useState([]);
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -24,10 +17,7 @@ const ChargingStrategy = () => {
   const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
-    async function init() {
-      getData();
-    }
-    init();
+    getData();
   }, []);
 
   const columns = [
@@ -81,7 +71,6 @@ const ChargingStrategy = () => {
     setLoading(true);
     const response = await fetchAllStrategyList();
     if (!dealResponse(response)) {
-      setAllData(response);
       filterData(response);
     }
     setSelectedRowKeys([]);
@@ -102,10 +91,9 @@ const ChargingStrategy = () => {
       });
     }
     setDataSource(result);
-    return;
   }
 
-  function addStrage() {
+  function addStrategy() {
     setVisible(true);
   }
 
@@ -132,12 +120,14 @@ const ChargingStrategy = () => {
   return (
     <TablePageWrapper>
       <SearchComponent
-        searchData={filterData}
-        data={allData}
         selectedRowKeys={selectedRowKeys}
         selectedRows={selectedRows}
-        addStrage={addStrage}
+        addStrategy={addStrategy}
         getData={getData}
+        cancelSelection={() => {
+          setSelectedRows([]);
+          setSelectedRowKeys([]);
+        }}
       />
       <TableWithPages
         dataSource={dataSource}

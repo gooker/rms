@@ -1,13 +1,6 @@
 import React, { memo, useEffect } from 'react';
-import { Modal, Form, Select, Input, InputNumber } from 'antd';
-import {
-  isNull,
-  formatMessage,
-  getFormLayout,
-  dealResponse,
-  getRandomString,
-  isStrictNull,
-} from '@/utils/util';
+import { Form, Input, InputNumber, Modal, Select } from 'antd';
+import { dealResponse, formatMessage, getFormLayout, getRandomString, isNull, isStrictNull } from '@/utils/util';
 import { saveLoadSpecification } from '@/services/resourceService';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -93,28 +86,28 @@ function LoadSpecificationModal(props) {
         </Form.Item>
 
         <Form.Item
-          label={formatMessage({ id: 'load.length' })}
-          name="length"
+          label={formatMessage({ id: 'resource.load.length' })}
+          name='length'
           rules={[{ required: true }]}
           initialValue={updateRecord?.length}
         >
-          <InputNumber allowClear addonAfter="mm" />
+          <InputNumber allowClear addonAfter='mm' />
         </Form.Item>
         <Form.Item
-          label={formatMessage({ id: 'load.width' })}
-          name="width"
+          label={formatMessage({ id: 'resource.load.width' })}
+          name='width'
           rules={[{ required: true }]}
           initialValue={updateRecord?.width}
         >
-          <InputNumber allowClear addonAfter="mm" />
+          <InputNumber allowClear addonAfter='mm' />
         </Form.Item>
         <Form.Item
-          label={formatMessage({ id: 'load.height' })}
-          name="height"
+          label={formatMessage({ id: 'resource.load.height' })}
+          name='height'
           rules={[{ required: true }]}
           initialValue={updateRecord?.height}
         >
-          <InputNumber allowClear addonAfter="mm" />
+          <InputNumber allowClear addonAfter='mm' />
         </Form.Item>
         {/* <Form.Item label={'颜色'} name="color" initialValue={updateRecord?.color}>
           <Input allowClear />
