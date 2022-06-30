@@ -10,7 +10,7 @@ import styles from '../../monitorLayout.module.less';
 
 const { formItemLayoutNoLabel } = getFormLayout(5, 19);
 const AdvancedCarry = (props) => {
-  const { dispatch } = props;
+  const { dispatch, allVehicles } = props;
   const [type, setType] = useState('carry');
   const [functionArea, setFunctionArea] = useState([]);
 
@@ -19,6 +19,7 @@ const AdvancedCarry = (props) => {
   }, []);
 
   async function getArea() {
+    setFunctionArea([]);
     return [];
   }
 
@@ -53,12 +54,14 @@ const AdvancedCarry = (props) => {
           </Radio.Group>
         </Form.Item>
         {type === 'carry' ? (
-          <AdvancedCarryComponent functionArea={functionArea} />
+          <AdvancedCarryComponent functionArea={functionArea} vehicleList={allVehicles} />
         ) : (
-          <AdvancedReleaseComponent functionArea={functionArea} />
+          <AdvancedReleaseComponent functionArea={functionArea} vehicleList={allVehicles} />
         )}
       </div>
     </div>
   );
 };
-export default connect()(memo(AdvancedCarry));
+export default connect(({ monitor }) => ({
+  allVehicles: monitor.allVehicles,
+}))(memo(AdvancedCarry));

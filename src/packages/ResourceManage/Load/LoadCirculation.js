@@ -1,17 +1,18 @@
 import React, { memo, useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, dealResponse, isNull } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchLoadCirculationRecord } from '@/services/resourceService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import SearchCirculationComponent from './component/SearchCirculationComponent';
 import commonStyles from '@/common.module.less';
 
-const LoadCirculation = () => {
+const LoadCirculation = (props) => {
+  const { dispatch } = props;
   const [dataSource, setDataSource] = useState([]);
   const [loading, setLoading] = useState(false);
-
 
   const [formValues, setFormValues] = useState({});
   const [page, setPage] = useState({ currentPage: 1, size: 10, totalElements: 0 });
@@ -46,6 +47,13 @@ const LoadCirculation = () => {
     setLoading(false);
   }
 
+  function checkTaskDetail(taskId) {
+    dispatch({
+      type: 'task/fetchTaskDetailByTaskId',
+      payload: { taskId },
+    });
+  }
+
   const columns = [
     {
       title: <FormattedMessage id="app.task.id" />,
@@ -55,7 +63,12 @@ const LoadCirculation = () => {
         if (!isNull(text)) {
           return (
             <Tooltip title={text}>
-              <span className={commonStyles.textLinks}>
+              <span
+                className={commonStyles.textLinks}
+                onClick={() => {
+                  checkTaskDetail(text);
+                }}
+              >
                 {text ? '*' + text.substr(text.length - 6, 6) : null}
               </span>
             </Tooltip>
@@ -64,17 +77,22 @@ const LoadCirculation = () => {
       },
     },
     {
-      title: '小车ID',
+      title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
     },
     {
-      title: '来源货位',
+      title: <FormattedMessage id="object.load.id" />,
+      dataIndex: 'loadId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id="load.source.storage" />,
       dataIndex: 'fromCargoStorage',
       align: 'center',
     },
     {
-      title: '目标货位',
+      title: <FormattedMessage id="load.target.storage" />,
       dataIndex: 'toCargoStorage',
       align: 'center',
     },
@@ -91,18 +109,10 @@ const LoadCirculation = () => {
       dataIndex: 'createdByUser',
       align: 'center',
     },
-    {
-      title: '修改时间',
-      dataIndex: 'updateTime',
-      align: 'center',
-      render: (text) => {
-        return convertToUserTimezone(text)?.format('YYYY-MM-DD HH:mm:ss');
-      },
-    },
   ];
 
   function handleTableChange(pagination) {
-    const page = { ...page, currentPage: pagination.current, size: pagination.pageSize };
+    const page = { currentPage: pagination.current, size: pagination.pageSize };
     setPage(page);
     getData(null, page);
   }
@@ -121,10 +131,12 @@ const LoadCirculation = () => {
           current: page.currentPage,
           pageSize: page.size,
           total: page.totalElements || 0,
+          showTotal: (total) => formatMessage({ id: 'app.common.tableRecord' }, { count: total }),
         }}
         onChange={handleTableChange}
       />
     </TablePageWrapper>
   );
 };
-export default memo(LoadCirculation);
+
+export default connect()(memo(LoadCirculation));

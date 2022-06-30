@@ -54,7 +54,7 @@ export default {
   'vehicle.maintenanceState.enter': '开始维护',
   'vehicle.maintenanceState.terminate': '退出维护',
   'vehicle.turnOnMaintain.tip': '进入维护状态后, 小车将不再被分配新的任务',
-  'vehicle.noExist.tip': '不存在该小车',
+  'vehicle.noExist.tip': '不存在{vehicle}号小车',
 
   'vehicle.onlineState': '在线状态',
   'vehicle.onlineState.online': '在线',

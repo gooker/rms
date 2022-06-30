@@ -79,7 +79,7 @@ const TemporaryForbidcel = (props) => {
       className={styles.monitorModal}
     >
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'app.activity.lockedTemporarySpots'} />
+        <FormattedMessage id={'monitor.emergency.temporaryBlock'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>

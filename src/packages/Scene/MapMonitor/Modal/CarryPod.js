@@ -47,8 +47,8 @@ const CarryPod = (props) => {
           <VehicleFormComponent form={formRef} />
           <Form.Item
             {...formItemLayout}
-            name={'podId'}
-            label={formatMessage({ id: 'app.pod' })}
+            name={'loadId'}
+            label={formatMessage({ id: 'object.load' })}
             rules={[{ required: true }]}
           >
             <InputNumber style={{ width: '80%' }} />

@@ -19,10 +19,8 @@ const VehicleFormComponent = (props) => {
     const vehicleId = ev.target.value;
     const currentVehicleInfo = vehicleList.filter((item) => item.vehicleId === vehicleId);
     if (currentVehicleInfo?.length === 0) {
-      message.info(formatMessage({ id: 'vehicle.noExist.tip' }));
-      return;
+      message.info(formatMessage({ id: 'vehicle.noExist.tip' }, { vehicle: vehicleId }));
     }
-
     form.setFieldsValue({
       vehicleType: null,
       vehicleId,

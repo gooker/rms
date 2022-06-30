@@ -348,7 +348,7 @@ const SimulatorPanel = (props) => {
                 }}
                 size={size}
               >
-                <FormattedMessage id="monitor.simulator.action.remove" />
+                <FormattedMessage id="app.button.remove" />
               </Button>
               <Button
                 size={size}

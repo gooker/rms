@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Button, Form, Input, InputNumber, message, Select } from 'antd';
 import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { vehicleRemoteControl } from '@/services/monitorService';
@@ -11,14 +11,15 @@ import {
   isStrictNull,
 } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
-import { Category } from '../enums';
 import styles from '../monitorLayout.module.less';
+import { find } from 'lodash';
 
 const { formItemLayout } = getFormLayout(4, 20);
 
 const RemoteControl = (props) => {
-  const { dispatch, allVehicles, categoryPanel } = props;
+  const { dispatch, allVehicles } = props;
   const [formRef] = Form.useForm();
+  const [vehicleType, setVehicleType] = useState(null);
 
   function close() {
     dispatch({ type: 'monitor/saveCategoryModal', payload: null });
@@ -123,13 +124,17 @@ const RemoteControl = (props) => {
             name={'uniqueIds'}
             label={formatMessage({ id: 'vehicle.id' })}
             rules={[{ required: true }]}
+            getValueFromEvent={(e) => {
+              const { vehicleType } = find(allVehicles, { uniqueId: e });
+              setVehicleType(vehicleType);
+              return e;
+            }}
           >
             <Select
               allowClear
               showSearch
-              size="small"
-              maxTagCount={5}
-              mode="multiple"
+              // maxTagCount={5}
+              // mode="multiple"
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
@@ -150,7 +155,7 @@ const RemoteControl = (props) => {
                   prefabricatedCommand(0x02);
                 }}
               >
-                <FormattedMessage id={'app.hardWareStatus.straightLine'} />
+                <FormattedMessage id={'monitor.remoteControl.vehicleStraight'} />
               </Button>
               <Button
                 style={{ marginLeft: 15 }}
@@ -205,7 +210,7 @@ const RemoteControl = (props) => {
               </Button>
             </div>
           </Form.Item>
-          {categoryPanel !== Category.SorterVehicle ? (
+          {vehicleType !== 'sorter' ? (
             <>
               {/* 托盘旋转 */}
               <Form.Item label={formatMessage({ id: 'monitor.remoteControl.palletRotation' })}>
@@ -251,7 +256,7 @@ const RemoteControl = (props) => {
                       prefabricatedCommand(0x20);
                     }}
                   >
-                    <FormattedMessage id={'app.activity.jackingUp'} />
+                    <FormattedMessage id={'customTask.form.lift'} />
                   </Button>
                   <Button
                     style={{ marginLeft: 15 }}
@@ -259,7 +264,7 @@ const RemoteControl = (props) => {
                       prefabricatedCommand(0x21);
                     }}
                   >
-                    <FormattedMessage id={'app.hardWareStatus.decline'} />
+                    <FormattedMessage id={'customTask.form.down'} />
                   </Button>
                 </div>
                 <Form.Item noStyle name={'podId'}>
@@ -273,12 +278,12 @@ const RemoteControl = (props) => {
           ) : null}
 
           {/* 自定义命令 */}
-          <Form.Item label={formatMessage({ id: 'app.vehicle.batchCommand.Modal.Title' })}>
+          <Form.Item label={'HEX'}>
             <Form.Item name={'hexCommand'}>
               <Input.TextArea style={{ width: 400, height: 95 }} />
             </Form.Item>
             <Button onClick={sendCustomCommand}>
-              <SendOutlined /> <FormattedMessage id={'app.vehicle.batchCommand.Modal.confirm'} />
+              <SendOutlined /> <FormattedMessage id={'app.requestor.action.sendRequest'} />
             </Button>
           </Form.Item>
         </Form>
@@ -288,5 +293,4 @@ const RemoteControl = (props) => {
 };
 export default connect(({ monitor }) => ({
   allVehicles: monitor.allVehicles,
-  categoryPanel: monitor.categoryPanel,
 }))(memo(RemoteControl));
