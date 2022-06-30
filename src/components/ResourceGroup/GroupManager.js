@@ -1,15 +1,23 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Dropdown, Menu, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import FormattedMessage from '@/components/FormattedMessage';
+import { isPlainObject, uniq } from 'lodash';
 import GroupModal from './GroupModal';
+import FormattedMessage from '@/components/FormattedMessage';
 import { fetchSectionMaps } from '@/services/XIHEService';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import { fetchResourceGroup, saveResourceGroup } from '@/services/resourceService';
 import AddToGroupModal from '@/components/ResourceGroup/AddToGroupModal';
-import { isPlainObject, uniq } from 'lodash';
 import GroupResourceModal from '@/components/ResourceGroup/GroupResourceModal';
 
+/**
+ * @param props
+ * @param type 组类型
+ * @param memberIdKey
+ * @param selections 列表页面Table的 selectedRows 对象
+ * @param cancelSelection 取消Table选择的回调方法
+ * @param refresh 刷新列表页面数据的回调方法
+ */
 const GroupManager = (props) => {
   const { type, memberIdKey, selections, refresh, cancelSelection } = props;
 
