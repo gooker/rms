@@ -130,7 +130,7 @@ const VehicleList = (props) => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id="app.vehicle.addingTime" />,
+      title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createDate',
       align: 'center',
       render: (text, record, index, flag) => {
@@ -141,7 +141,7 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.vehicle.battery" />,
+      title: <FormattedMessage id="vehicle.battery" />,
       align: 'center',
       dataIndex: 'battery',
       render: (text) => {
@@ -157,7 +157,7 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.vehicle.battery.voltage" />,
+      title: <FormattedMessage id="vehicle.battery.voltage" />,
       align: 'center',
       dataIndex: 'batteryVoltage',
       render: (text) => {
@@ -173,7 +173,7 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.vehicle.version" />,
+      title: <FormattedMessage id="vehicle.version" />,
       align: 'center',
       dataIndex: 'version',
     },
@@ -188,7 +188,7 @@ const VehicleList = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.vehicle.maxChargeCurrent" />,
+      title: <FormattedMessage id="vehicle.battery.maxCurrent" />,
       align: 'center',
       dataIndex: 'maxChargingCurrent',
       render: (text) => {

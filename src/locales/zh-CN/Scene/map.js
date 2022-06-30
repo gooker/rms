@@ -32,6 +32,10 @@ export default {
   'app.map.landCoordinator': '物理坐标',
   'app.map.naviCoordinator': '导航坐标',
 
+  'app.map.landCell': '物理点位',
+  'app.map.naviCell': '导航点位',
+  'app.map.navigation.unrecognizedType': '未识别的导航类型', 
+
   // 线条
   'map.cost.green': '绿',
   'map.cost.blue': '蓝',

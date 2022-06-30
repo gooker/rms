@@ -85,7 +85,7 @@ class ExecutingQueue extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.executionQ.target" />,
+      title: <FormattedMessage id="app.form.target" />,
       dataIndex: 'appointedTargetCellId',
       align: 'center',
     },

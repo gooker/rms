@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Button } from 'antd';
 import { DeleteOutlined, GroupOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
@@ -45,7 +44,7 @@ const QuickTaskTool = (props) => {
           dispatch({ type: 'quickTask/updateGroupModalVisible', payload: true });
         }}
       >
-        <GroupOutlined /> 任务组管理
+        <GroupOutlined /> <FormattedMessage id="quickTask.groupManage" />
       </Button>
       <Button
         onClick={() => {

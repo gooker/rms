@@ -1,10 +1,9 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Divider, Switch, Tag, Typography } from 'antd';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { dealResponse, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -42,27 +41,35 @@ const QuickTask = (props) => {
 
   const columns = [
     {
-      title: '所属组',
+      title: <FormattedMessage id="quickTask.group.belongs" />,
       dataIndex: 'groupId',
       align: 'center',
       render: (text) => {
         if (isStrictNull(text)) {
-          return <span style={{ color: Colors.red }}>暂无分组</span>;
+          return (
+            <span style={{ color: Colors.red }}>
+              <FormattedMessage id="quickTask.group.noExist" />
+            </span>
+          );
         }
         const group = find(quickTaskGroups, { id: text });
         if (group) {
           return group.name;
         }
-        return <span style={{ color: Colors.red }}>组丢失</span>;
+        return (
+          <span style={{ color: Colors.red }}>
+            <FormattedMessage id="quickTask.group.ismissing" />
+          </span>
+        );
       },
     },
     {
-      title: '名称',
+      title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'name',
       align: 'center',
     },
     {
-      title: '自定义任务',
+      title: <FormattedMessage id="menu.customTask" />,
       dataIndex: 'taskCode',
       align: 'center',
       render: (text) => {
@@ -71,23 +78,23 @@ const QuickTask = (props) => {
       },
     },
     {
-      title: '确认操作',
+      title: <FormattedMessage id="quickTask.operate.isConfirm" />,
       dataIndex: 'isNeedConfirm',
       align: 'center',
       render: (text) => (
-        <Tag color='blue'>
+        <Tag color="blue">
           <FormattedMessage id={`app.common.${text}`} />
         </Tag>
       ),
     },
     {
-      title: '分享',
+      title: <FormattedMessage id="quickTask.share" />,
       dataIndex: 'isShared',
       align: 'center',
       render: (text, record) => <Switch checked={text} onClick={() => share(record, text)} />,
     },
     {
-      title: '操作',
+      title: <FormattedMessage id="app.common.operation" />,
       align: 'center',
       render: (text, record) => (
         <>
@@ -104,7 +111,7 @@ const QuickTask = (props) => {
               editVariable(record);
             }}
           >
-            修改变量
+            <FormattedMessage id="quickTask.button.modifyVariable" />
           </Typography.Link>
           <Divider type={'vertical'} />
           <Typography.Link
@@ -112,7 +119,7 @@ const QuickTask = (props) => {
               execute(record);
             }}
           >
-            执行
+            <FormattedMessage id="app.button.execute" />
           </Typography.Link>
         </>
       ),
@@ -157,7 +164,7 @@ const QuickTask = (props) => {
     // 如果还没有分享
     if (!currentState) {
       RmsConfirm({
-        content: '分享该快捷任务后, 其他用户会浏览到该记录并且可以进行复制操作, 是否确定分享?',
+        content: formatMessage({ id: 'quickTask.share.message' }),
         onOk: async () => {
           const response = await saveQuickTask({ ...record, isShared: true });
           if (!dealResponse(response)) {
@@ -167,7 +174,7 @@ const QuickTask = (props) => {
       });
     } else {
       RmsConfirm({
-        content: '取消分享该快捷任务后, 其他用户将无法浏览到该条记录, 是否确定取消分享?',
+        content: formatMessage({ id: 'quickTask.share.cancel.message' }),
         onOk: async () => {
           const response = await saveQuickTask({ ...record, isShared: false });
           if (!dealResponse(response)) {
@@ -234,7 +241,7 @@ const QuickTask = (props) => {
             });
           }}
         >
-          已分享
+          <FormattedMessage id="quickTask.shared" />
         </div>
       </TablePageWrapper>
 

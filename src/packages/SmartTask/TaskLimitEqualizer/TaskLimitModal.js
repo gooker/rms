@@ -80,7 +80,7 @@ class TaskTriggerModal extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'taskLimit.num' }),
+      title: formatMessage({ id: 'taskLimit.quantity' }),
       dataIndex: 'limitNum',
       render: (text, record) => (
         <InputNumber
@@ -326,13 +326,13 @@ class TaskTriggerModal extends Component {
         >
           {/* 类型选择 */}
           <Form.Item
-            label={formatMessage({ id: 'taskLimit.currentlimiting' })}
+            label={formatMessage({ id: 'taskLimit.currentLimiting' })}
             name="type"
             initialValue={keyType}
           >
             <Radio.Group disabled={!!updateItem} onChange={this.onTypeChange}>
-              <Radio value="sourceLimit">{formatMessage({ id: 'taskLimit.sourcelimitng' })}</Radio>
-              <Radio value="taskLimit">{formatMessage({ id: 'taskLimit.tasklimiting' })}</Radio>
+              <Radio value="sourceLimit">{formatMessage({ id: 'taskLimit.resourceLimiting' })}</Radio>
+              <Radio value="taskLimit">{formatMessage({ id: 'taskLimit.limiting' })}</Radio>
             </Radio.Group>
           </Form.Item>
 
@@ -340,7 +340,7 @@ class TaskTriggerModal extends Component {
             <>
               <FormItem
                 name="sourcegroup"
-                label={formatMessage({ id: 'taskLimit.sourcelimitng' })}
+                label={formatMessage({ id: 'taskLimit.resourceLimiting' })}
                 rules={[{ required: true }]}
                 initialValue={this.state.treeSelectValue}
               >
@@ -360,7 +360,7 @@ class TaskTriggerModal extends Component {
             </>
           ) : (
             <Form.Item
-              label={formatMessage({ id: 'taskLimit.tasklimiting' })}
+              label={formatMessage({ id: 'taskLimit.limiting' })}
               name="sourceType"
               rules={[{ required: true }]}
             >

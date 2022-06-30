@@ -42,7 +42,7 @@ const SearchCirculationComponent = (props) => {
 
           <Col span={6}>
             <Form.Item
-              label={<FormattedMessage id="load.source.storage" />}
+              label={<FormattedMessage id="resource.load.source.storage" />}
               name={'fromCargoStorage'}
             >
               <Input allowClear />
@@ -50,7 +50,7 @@ const SearchCirculationComponent = (props) => {
           </Col>
           <Col span={6}>
             <Form.Item
-              label={<FormattedMessage id="load.target.storage" />}
+              label={<FormattedMessage id="resource.load.target.storage" />}
               name={'toCargoStorage'}
             >
               <Input allowClear />

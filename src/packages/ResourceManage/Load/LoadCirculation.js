@@ -82,17 +82,17 @@ const LoadCirculation = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="object.load.id" />,
+      title: <FormattedMessage id="resource.load.id" />,
       dataIndex: 'loadId',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="load.source.storage" />,
+      title: <FormattedMessage id="resource.load.source.storage" />,
       dataIndex: 'fromCargoStorage',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="load.target.storage" />,
+      title: <FormattedMessage id="resource.load.target.storage" />,
       dataIndex: 'toCargoStorage',
       align: 'center',
     },

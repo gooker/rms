@@ -4,6 +4,7 @@ export default {
   'app.vehicleState': '车辆状态',
   'app.vehicleGroup': '车辆分组',
   'app.vehicle.register': '车辆注册',
+  'app.vehicle.register.status': '注册状态',
 
   // 车辆类型
   'app.vehicleType': '车辆类型',
@@ -42,6 +43,7 @@ export default {
   'vehicle.runningState': '行驶状态',
   'vehicle.vehicleStorageStatue': '车内储位状态',
   'vehicle.subActionState': '分动作状态',
+  'vehicle.version': '版本',
 
   'vehicle.manualMode': '手动状态',
   'vehicle.manualMode.true': '手动',

@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo } from 'react';
 import { Dropdown, Menu } from 'antd';
 import { CheckOutlined, UpOutlined } from '@ant-design/icons';
@@ -23,8 +22,12 @@ const MapShownModeSelector = (props) => {
 
   const cellCoordinateTypeMenu = (
     <Menu selectedKeys={[shownCellCoordinateType]} onClick={updateShownCellCoordinateType}>
-      <Menu.Item key={'land'}>物理点位</Menu.Item>
-      <Menu.Item key={'navi'}>导航点位</Menu.Item>
+      <Menu.Item key={'land'}>
+        <FormattedMessage id="app.map.landCell" />
+      </Menu.Item>
+      <Menu.Item key={'navi'}>
+        <FormattedMessage id="app.map.naviCell" />
+      </Menu.Item>
     </Menu>
   );
 
@@ -49,7 +52,11 @@ const MapShownModeSelector = (props) => {
     <div className={styles.navigationCellTypeSelector}>
       <Dropdown overlay={cellCoordinateTypeMenu} trigger={['click']}>
         <span className={styles.navigationCellTypeSelectorContent}>
-          {shownCellCoordinateType === CoordinateType.LAND ? '物理点位' : '导航点位'}
+          {shownCellCoordinateType === CoordinateType.LAND ? (
+            <FormattedMessage id="app.map.landCell" />
+          ) : (
+            <FormattedMessage id="app.map.naviCell" />
+          )}
           <UpOutlined style={{ marginLeft: 5 }} />
         </span>
       </Dropdown>
@@ -66,7 +73,7 @@ const MapShownModeSelector = (props) => {
     </div>
   );
 };
-export default connect(({ global, editorView }) => ({
+export default connect(({ editorView }) => ({
   shownNavigationCellType: editorView.shownNavigationCellType,
   shownCellCoordinateType: editorView.shownCellCoordinateType,
 }))(memo(MapShownModeSelector));
