@@ -64,8 +64,8 @@ const GroupManager = (props) => {
     }
   }
 
-  async function addToGroup(selectGroups) {
-    let groupsDetail = groups.filter((item) => selectGroups.includes(item.code));
+  async function addToGroup(payload) {
+    let groupsDetail = groups.filter((item) => payload.groups.includes(item.code));
     groupsDetail = groupsDetail.map((item) => {
       const loopResult = { ...item };
       if (!Array.isArray(loopResult.members)) {
@@ -81,7 +81,7 @@ const GroupManager = (props) => {
         if (isNull(priority[selection.id])) {
           priority[selection.id] = {
             memberId,
-            priority: 5,
+            priority: payload.priority,
           };
         }
       }
@@ -139,7 +139,8 @@ const GroupManager = (props) => {
       <GroupResourceModal
         visible={resourceModalVisible}
         groups={groups}
-        onCancel={() => {
+        onCancel={(needRefresh) => {
+          needRefresh === true && refresh();
           setResourceModalVisible(false);
         }}
       />

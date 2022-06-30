@@ -156,6 +156,7 @@ export default {
   'app.button.update': '更新',
   'app.button.generate': '生成',
   'app.button.delete': '删除',
+  'app.button.remove': '移除',
   'app.button.cancel': '取消',
   'app.button.submit': '提交',
   'app.button.return': '返回',
