@@ -211,7 +211,7 @@ const VariableModification = (props) => {
                     ? [prefix, 'customAction', nodeType, 'loadAngle']
                     : ['customAction', nodeType, 'loadAngle']
                 }
-                label={formatMessage({ id: 'object.load.direction' })}
+                label={formatMessage({ id: 'resource.load.direction' })}
                 initialValue={loadAngle}
               >
                 <InputNumber addonAfter='°' />

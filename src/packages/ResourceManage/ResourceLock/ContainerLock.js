@@ -19,7 +19,7 @@ const ContainerLock = (props) => {
 
   const columns = [
     {
-      title: <FormattedMessage id="object.load.id" />,
+      title: <FormattedMessage id='resource.load.id' />,
       dataIndex: 'loadId	',
       align: 'center',
     },

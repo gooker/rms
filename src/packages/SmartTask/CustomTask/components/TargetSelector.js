@@ -153,11 +153,11 @@ export const TargetSelectorOptions = [
   },
   {
     value: 'LOAD',
-    label: 'object.load',
+    label: 'resource.load',
   },
   {
     value: 'LOAD_GROUP',
-    label: 'object.loadGroup',
+    label: 'resource.load.group',
   },
   {
     value: 'ROTATE',

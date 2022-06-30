@@ -1,24 +1,18 @@
 // 部分页面翻译条目很少，所以在这里集中管理
 export default {
+  'app.configInfo': '配置信息',
   'app.adapterType': '适配器类型',
+  'adapter.register': '适配器注册',
   'app.isSimulator': '是否模拟',
   'app.arriveTime': '到达时间',
   'app.programing.noParam': '无参数',
   'app.button.bind': '绑定',
   'app.button.unbind': '解绑',
   'app.button.logout': '注销',
-
   'app.button.register': '注册',
   'app.button.addFound': '添加发现',
   'app.common.groupMange': '分组管理',
   'app.button.batchOperate': '批量操作',
-
-  // 资源分组相关
-  'group.resourceGroup': '资源组',
-  'group.groupType': '资源组类型',
-  'group.groupMange': '组管理',
-  'group.resourceGroupMange': '分组管理',
-  'group.addToGroup': '添加到组',
 
   // 自定义环境管理
   'environmentManager.envName': '环境名称',
@@ -95,7 +89,6 @@ export default {
   // 富文本编辑
   'richEditor.richText': '富文本',
   'richEditor.content': '内容',
-  'richEditor.code.duplicate': '编码已经存在,请重新命名',
   'richEditor.text.detail': '富文本详情',
 
   // 用户中心

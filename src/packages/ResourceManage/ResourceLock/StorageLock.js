@@ -1,12 +1,12 @@
-import React, { useState, memo, useEffect } from 'react';
-import { Tooltip, Button, Row, Col, message } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Col, Row, Tooltip } from 'antd';
 import { DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
-import { fetchStorageLockList, batchDeleteStorageLock } from '@/services/commonService';
+import { batchDeleteStorageLock, fetchStorageLockList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import commonStyles from '@/common.module.less';
-import { dealResponse, isNull, isStrictNull, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import SearchTargetLock from './components/SearchTargetLock';
 
@@ -24,7 +24,7 @@ const StorageLock = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="object.load.id" />,
+      title: <FormattedMessage id='resource.load.id' />,
       dataIndex: 'loadId',
       align: 'center',
     },

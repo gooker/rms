@@ -2,7 +2,6 @@ import React, { memo, useEffect, useState } from 'react';
 import { message, Popconfirm } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { withRouter } from 'react-router-dom';
-import { find } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
 import {
   fetchMaintain,
@@ -13,13 +12,7 @@ import {
 } from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import {
-  dealResponse,
-  formatMessage,
-  isStrictNull,
-  renderBattery,
-  renderVehicleState,
-} from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
@@ -301,7 +294,7 @@ const VehicleElementProp = (props) => {
                 src={require('@/packages/Scene/icons/pod.png').default}
               />
               <span>
-                <FormattedMessage id={'object.load'} />
+                <FormattedMessage id={'resource.load'} />
               </span>
             </div>
             <div>{currentVehicleInfo?.vehicleInfo?.loadUniqueIds}</div>

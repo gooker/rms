@@ -226,7 +226,14 @@ const EquipmentList = (props) => {
 
   return (
     <TablePageWrapper style={{ position: 'relative' }}>
-      <EquipmentListTools selectedRows={selectedRows} onRefresh={fetchRegisteredDevice} />
+      <EquipmentListTools
+        selectedRows={selectedRows}
+        onRefresh={fetchRegisteredDevice}
+        cancelSelection={() => {
+          setSelectedRows([]);
+          setSelectedRowKeys([]);
+        }}
+      />
       <TableWithPages
         loading={loading}
         columns={columns}

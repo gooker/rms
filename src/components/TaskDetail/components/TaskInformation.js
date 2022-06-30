@@ -338,13 +338,13 @@ class TaskInformation extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="object.load" />}
+                    title={<FormattedMessage id='resource.load' />}
                     content={detailInfo.loads?.join()}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="object.load.direction" />}
+                    title={<FormattedMessage id='resource.load.direction' />}
                     content={detailInfo.loadAngle}
                   />
                 </Col>

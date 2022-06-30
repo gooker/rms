@@ -21,7 +21,7 @@ import GroupResourceModal from '@/components/ResourceGroup/GroupResourceModal';
 const GroupManager = (props) => {
   const { type, memberIdKey, selections, refresh, cancelSelection } = props;
 
-  const [mapId, setMapId] = useState(null);
+  const [activeMapId, setActiveMapId] = useState(null);
   const [groups, setGroups] = useState([]);
   const [groupModalVisible, setGroupModalVisible] = useState(false); // 组CRUD
   const [addingModalVisible, setAddingModalVisible] = useState(false); // 添加到组
@@ -36,7 +36,7 @@ const GroupManager = (props) => {
     if (!dealResponse(sectionMaps)) {
       const activeMap = sectionMaps.filter((item) => item.activeFlag)[0];
       if (activeMap) {
-        setMapId(activeMap.id);
+        setActiveMapId(activeMap.id);
         await refreshResourceGroup(activeMap.id);
       } else {
         message.error(formatMessage({ id: 'app.message.noActiveMap' }));
@@ -48,8 +48,10 @@ const GroupManager = (props) => {
 
   async function refreshResourceGroup(mapId) {
     const allResourceGroups = await fetchResourceGroup({ mapId });
-    const _groups = allResourceGroups.filter((item) => item.groupType === type);
-    setGroups(_groups);
+    if (!dealResponse(allResourceGroups)) {
+      const _groups = allResourceGroups.filter((item) => item.groupType === type);
+      setGroups(_groups);
+    }
   }
 
   const menu = (
@@ -100,7 +102,7 @@ const GroupManager = (props) => {
     if (!dealResponse(response, true)) {
       setAddingModalVisible(false);
       refresh();
-      refreshResourceGroup();
+      refreshResourceGroup(activeMapId);
       cancelSelection();
     }
   }
@@ -123,7 +125,7 @@ const GroupManager = (props) => {
       {/* 资源组管理 */}
       <GroupModal
         type={type}
-        mapId={mapId}
+        mapId={activeMapId}
         groups={groups}
         onChange={setGroups}
         visible={groupModalVisible}

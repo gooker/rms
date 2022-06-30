@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Form, Row, Col, Select } from 'antd';
+import { Form, Select, Space } from 'antd';
 import { FunnelPlotOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -13,34 +13,25 @@ const SearchSpecComponent = (props) => {
   }
 
   return (
-    <>
-      <Form form={formRef} onValuesChange={handleLoadType}>
-        <Row gutter={24}>
-          <Col
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              lineHeight: 30,
-              height: 30,
-            }}
-          >
+    <Form form={formRef} onValuesChange={handleLoadType}>
+      <Form.Item
+        label={
+          <Space>
             <FunnelPlotOutlined />
-          </Col>
-          <Col span={6}>
-            <Form.Item label={<FormattedMessage id="app.common.type" />} name="loadTypeCode">
-              <Select allowClear style={{ width: '100%' }}>
-                {allLoadSpecType?.map(({ id, code, name }) => (
-                  <Select.Option key={code} value={code}>
-                    {name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Col>
-        </Row>
-      </Form>
-    </>
+            <FormattedMessage id='app.common.type' />
+          </Space>
+        }
+        name='loadTypeCode'
+      >
+        <Select allowClear style={{ width: 240 }}>
+          {allLoadSpecType?.map(({ code, name }) => (
+            <Select.Option key={code} value={code}>
+              {name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+    </Form>
   );
 };
 export default memo(SearchSpecComponent);

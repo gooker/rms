@@ -248,12 +248,12 @@ const VehicleRealTime = (props) => {
         </Descriptions.Item>
 
         {/************ 载具 ************/}
-        <Descriptions.Item label={<FormattedMessage id={'object.load'} />}>
+        <Descriptions.Item label={<FormattedMessage id={'resource.load'} />}>
           {data.vehicleInfo?.loads}
         </Descriptions.Item>
 
         {/************ 载具方向 ************/}
-        <Descriptions.Item label={<FormattedMessage id={'object.load.direction'} />}>
+        <Descriptions.Item label={<FormattedMessage id={'resource.load.direction'} />}>
           {data.vehicleInfo?.loadAngle}
         </Descriptions.Item>
       </Descriptions>

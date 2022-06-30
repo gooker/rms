@@ -1,29 +1,17 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Row, Col, Button, Switch } from 'antd';
-import {
-  EditOutlined,
-  DeleteOutlined,
-  RedoOutlined,
-  PlusOutlined,
-  DiffOutlined,
-} from '@ant-design/icons';
-import { find } from 'lodash';
+import React, { memo, useEffect, useState } from 'react';
+import { Button, Col, Row, Switch } from 'antd';
+import { DeleteOutlined, DiffOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
-import {
-  deleteSelectedLoad,
-  fetchAllLoad,
-  fetchAllLoadSpecification,
-  saveLoad,
-} from '@/services/resourceService';
-import { dealResponse, formatMessage, isNull, generateResourceGroups } from '@/utils/util';
+import { deleteSelectedLoad, fetchAllLoad, fetchAllLoadSpecification, saveLoad } from '@/services/resourceService';
+import { dealResponse, formatMessage, generateResourceGroups, isNull } from '@/utils/util';
 import AddLoadModal from './component/AddLoadModal';
 import SearchLoadComponent from './component/SearchLoadComponent';
 import commonStyles from '@/common.module.less';
 import SimulateLoadModal from './component/SimulateLoadModal';
-import ResourceGroupOperateComponent from '../component/ResourceGroupOperateComponent';
+import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
 
 const ContainerManage = () => {
   const [allLoadSpec, setAllLoadSpec] = useState([]);
@@ -48,32 +36,20 @@ const ContainerManage = () => {
   }, []);
 
   const columns = [
-    { title: <FormattedMessage id="object.load" />, dataIndex: 'loadId', align: 'center' },
-    // {
-    //   title: <FormattedMessage id="app.common.name" />,
-    //   dataIndex: 'name',
-    //   align: 'center',
-    // },
-
+    { title: <FormattedMessage id='resource.load.id' />, dataIndex: 'loadId', align: 'center' },
     {
-      title: <FormattedMessage id="resource.load.specification" />,
-      dataIndex: 'loadSpecificationCode',
+      title: <FormattedMessage id='app.common.name' />,
+      dataIndex: 'loadSpecification',
       align: 'center',
-      render: (text) => {
-        const currentSpec = find(allLoadSpec, { code: text });
-        if (currentSpec) {
-          return `${currentSpec?.name} (${currentSpec?.length} * ${currentSpec?.width} * ${currentSpec?.height} )`;
-        }
-      },
     },
     {
-      title: <FormattedMessage id="app.common.angle" />,
+      title: <FormattedMessage id='app.common.angle' />,
       dataIndex: 'angle',
       align: 'center',
     },
     {
-      title: <FormattedMessage id="load.location" />,
-      dataIndex: 'cargoStorageSpace',
+      title: <FormattedMessage id='resource.load.location' />,
+      dataIndex: 'cellId',
       align: 'center',
     },
     {
@@ -224,18 +200,22 @@ const ContainerManage = () => {
                 setSimulateVisible(true);
               }}
             >
-              <DiffOutlined /> <FormattedMessage id="load.simulation.generate" />
+              <DiffOutlined /> <FormattedMessage id='resource.load.simulation.generate' />
             </Button>
 
-            <ResourceGroupOperateComponent
-              selectedRows={selectedRows}
-              selectedRowKeys={selectedRowKeys}
-              groupType={'LOAD'}
-              onRefresh={getData}
+            <GroupManager
+              type={'LOAD'}
+              memberIdKey={GroupResourceMemberId.LOAD}
+              selections={selectedRows}
+              refresh={() => getData()}
+              cancelSelection={() => {
+                setSelectedRows([]);
+                setSelectedRowKeys([]);
+              }}
             />
 
             <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteSpec}>
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
             </Button>
 
             <Button
