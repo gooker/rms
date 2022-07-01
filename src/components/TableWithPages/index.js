@@ -8,16 +8,16 @@ const TableWithPages = (props) => {
   const newProps = { ...props };
   const expandColumns = newProps.expandColumns;
   const expandColumnsKey = newProps.expandColumnsKey;
-  const colspan = newProps.expandColumnsSpan;
+  const colspan = newProps.expandColumnSpan;
   delete newProps.expandColumns;
   delete newProps.expandColumnsKey;
-  delete newProps.expandColumnsSpan;
+  delete newProps.expandColumnSpan;
 
   if (Array.isArray(expandColumns) && expandColumns.length > 0) {
     newProps.expandable = {
       expandedRowRender: (record) => (
         <ExpandPanel
-          record={isNull(expandColumnsKey) ? record : record[expandColumnsKey]?? {}}
+          record={isNull(expandColumnsKey) ? record : record[expandColumnsKey] ?? {}}
           columns={expandColumns}
           span={colspan}
         />

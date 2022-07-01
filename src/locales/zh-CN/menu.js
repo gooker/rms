@@ -54,7 +54,7 @@ export default {
   // 系统集成
   'menu.integration': '系统集成',
   'menu.integration.webHook': 'Webhook',
-  'menu.integration.logManagement': '日志查询',
+  'menu.integration.systemLogWarehouse': '系统日志',
 
   // 资源锁
   'menu.resourceLock': '资源锁',

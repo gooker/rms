@@ -1,21 +1,25 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DisconnectOutlined, DownloadOutlined, RedoOutlined, RiseOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { logOutVehicle } from '@/services/resourceService';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
+import { logOutVehicle } from '@/services/resourceService';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
-import commonStyles from '@/common.module.less';
 import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
+import UpgradeVehicleModal from '../components/UpgradeVehicleModal';
+import commonStyles from '@/common.module.less';
 
 const Colors = Dictionary().color;
+
 const VehicleListTools = (props) => {
-  const { dispatch, allVehicles, selectedRows, cancelSelection, allAdaptors, searchParams } = props;
+  const { dispatch, allVehicles, allAdaptors, searchParams, selectedRows, cancelSelection } = props;
 
   const registerVehicles = allVehicles.filter((item) => item.register);
   const unregisterVehicles = allVehicles.filter((item) => !item.register);
+
+  const [upgradeVisible, setUpgradeVisible] = useState(false);
 
   function renderVehicleIdFilter() {
     return registerVehicles.map(({ vehicleId, vehicleType, id }) => (
@@ -32,16 +36,6 @@ const VehicleListTools = (props) => {
         <FormattedMessage id={vehicleStates[item]} />
       </Select.Option>
     ));
-  }
-
-  function moveOutVehicle() {
-    const vehicleIds = selectedRows.map(({ vehicleId }) => vehicleId);
-    RmsConfirm({
-      content: formatMessage({ id: 'app.vehicle.moveOut.confirm' }),
-      onOk: async () => {
-        //
-      },
-    });
   }
 
   function updateSearchParam(key, value) {
@@ -68,12 +62,8 @@ const VehicleListTools = (props) => {
     });
   }
 
-  async function exportVehicleHardwareInfo() {
-    //
-  }
-
-  async function exportVehicleInfo() {
-    //
+  function upgradeVehicle() {
+    setUpgradeVisible(true);
   }
 
   return (
@@ -134,7 +124,6 @@ const VehicleListTools = (props) => {
           <Button disabled={selectedRows.length === 0} onClick={cancelRegister}>
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
-
           <GroupManager
             type={'VEHICLE'}
             memberIdKey={GroupResourceMemberId.VEHICLE}
@@ -144,46 +133,18 @@ const VehicleListTools = (props) => {
             }}
             cancelSelection={cancelSelection}
           />
-
-          {/*<Button disabled={selectedRows.length === 0} onClick={moveOutVehicle}>*/}
-          {/*  <ToTopOutlined /> <FormattedMessage id='app.vehicle.moveout' />*/}
-          {/*</Button>*/}
-          {/*<Dropdown*/}
-          {/*  overlay={*/}
-          {/*    <Menu*/}
-          {/*      onClick={({ key }) => {*/}
-          {/*        if (key === 'hardware') {*/}
-          {/*          exportVehicleHardwareInfo();*/}
-          {/*        } else {*/}
-          {/*          exportVehicleInfo();*/}
-          {/*        }*/}
-          {/*      }}*/}
-          {/*    >*/}
-          {/*      <Menu.Item key="hardware">*/}
-          {/*        <FormattedMessage id={'app.vehicle.exportHardwareInfo'} />*/}
-          {/*      </Menu.Item>*/}
-          {/*      <Menu.Item key="carInfo">*/}
-          {/*        <FormattedMessage id={'app.vehicle.exportVehicleInfo'} />*/}
-          {/*      </Menu.Item>*/}
-          {/*    </Menu>*/}
-          {/*  }*/}
-          {/*>*/}
-          {/*  <Button>*/}
-          {/*    <FormattedMessage id={'app.vehicle.infoExport'} /> <DownOutlined />*/}
-          {/*  </Button>*/}
-          {/*</Dropdown>*/}
-          <Button>
-            <RiseOutlined /> <FormattedMessage id="firmware.upgrade" />
+          <Button onClick={upgradeVehicle}>
+            <RiseOutlined /> <FormattedMessage id='hardware.upgrading' />
           </Button>
           <Button>
-            <DownloadOutlined /> <FormattedMessage id="app.logDownload" />
+            <DownloadOutlined /> <FormattedMessage id='app.logDownload' />
           </Button>
           <Button
             onClick={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
           </Button>
         </Col>
         <Col>
@@ -193,7 +154,7 @@ const VehicleListTools = (props) => {
               dispatch({ type: 'vehicleList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id="app.vehicle.found" />
+            <ScanOutlined /> <FormattedMessage id='app.vehicle.found' />
             {unregisterVehicles.length > 0 && (
               <span style={{ marginLeft: 5, color: Colors.red, fontWeight: 600 }}>
                 [{unregisterVehicles.length}]
@@ -202,6 +163,14 @@ const VehicleListTools = (props) => {
           </Button>
         </Col>
       </Row>
+
+      {/* 固件升级 */}
+      <UpgradeVehicleModal
+        visible={upgradeVisible}
+        onCancel={() => {
+          setUpgradeVisible(false);
+        }}
+      />
     </div>
   );
 };

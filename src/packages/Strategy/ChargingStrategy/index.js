@@ -121,13 +121,8 @@ const ChargingStrategy = () => {
     <TablePageWrapper>
       <SearchComponent
         selectedRowKeys={selectedRowKeys}
-        selectedRows={selectedRows}
         addStrategy={addStrategy}
         getData={getData}
-        cancelSelection={() => {
-          setSelectedRows([]);
-          setSelectedRowKeys([]);
-        }}
       />
       <TableWithPages
         dataSource={dataSource}

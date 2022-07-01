@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { isNull } from '@/utils/util';
 import { GlobalAlpha } from '@/config/consts';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class OpenLock extends PIXI.Container {
   constructor(props) {
@@ -87,7 +86,7 @@ export default class OpenLock extends PIXI.Container {
     outRadius = Number.parseFloat(outRadius.toFixed(3));
 
     // 画内矩形
-    const reactPainter = new SmoothGraphics();
+    const reactPainter = new PIXI.Graphics();
     reactPainter.lineStyle(30, this.color, 1);
     const rect = reactPainter.drawRect(0, 0, this.$width, this.$height);
     rect.position.x = this.width / 2 - rect.width / 2 + 15;
@@ -97,7 +96,7 @@ export default class OpenLock extends PIXI.Container {
     // 画外圆
     const { startX, startY, endX, endY } = this.getStartAndEnd();
     if (startX && startY && endX && endY) {
-      const circlePainter = new SmoothGraphics();
+      const circlePainter = new PIXI.Graphics();
       circlePainter.lineStyle(30, this.color, 1);
       const openCircle = circlePainter.arc(
         0,
