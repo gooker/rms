@@ -273,9 +273,9 @@ export default {
       const selections = action.payload;
       const newState = { ...state, selections };
       if (selections.length === 1) {
-        // if (state.categoryPanel === null) {
-        newState.categoryPanel = Category.Prop;
-        // }
+        if (state.categoryPanel === null) {
+          newState.categoryPanel = Category.Prop;
+        }
       } else {
         if (state.categoryPanel === Category.Prop) {
           newState.categoryPanel = null;

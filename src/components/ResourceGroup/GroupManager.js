@@ -60,7 +60,7 @@ const GroupManager = (props) => {
         <FormattedMessage id={'group.groupMange'} />
       </Menu.Item>
       <Menu.Item key={'resource_group_manage'}>
-        <FormattedMessage id={'group.resourceGroupMange'} />
+        <FormattedMessage id={'group.sourceManage'} />
       </Menu.Item>
     </Menu>
   );
@@ -112,7 +112,7 @@ const GroupManager = (props) => {
       <Dropdown.Button
         onClick={() => {
           if (selections.length === 0) {
-            message.warn('请先选择资源');
+            message.warn(formatMessage({ id: 'group.sourceManage.message' }));
           } else {
             setAddingModalVisible(true);
           }

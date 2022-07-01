@@ -55,7 +55,7 @@ const SimulatorPanel = (props) => {
   function init() {
     dispatch({ type: 'simulator/fetchAllAdaptors' });
     dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
-    dispatch({ type: 'simulator/fetchSimulatorHistory' });
+    // dispatch({ type: 'simulator/fetchSimulatorHistory' });
   }
 
   const columns = [

@@ -155,7 +155,7 @@ const GroupModal = (props) => {
   return (
     <Modal
       visible={visible}
-      title={'创建资源组'}
+      title={formatMessage({ id: 'group.sourceManag.add' })}
       width={750}
       maskClosable={false}
       footer={null}

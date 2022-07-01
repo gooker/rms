@@ -2,7 +2,6 @@ import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
 import { MonitorSelectableSpriteType, SelectionType, SorterVehicleSize, zIndex } from '@/config/consts';
-import { VehicleType } from '@/config/config';
 import { isNull } from '@/utils/util';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 
@@ -20,7 +19,6 @@ export default class SorterVehicle extends PIXI.Container {
     this.cullable = true;
     this.vehicleType = props.vehicleType;
     this.vehicleIcon = props.vehicleIcon;
-    this.type = VehicleType.Sorter;
     this.vehicleType = 'sorter';
     this.alpha = 0.8;
     this.$angle = props.angle; // 不作用于container, 所以不赋值到直接的angle属性
