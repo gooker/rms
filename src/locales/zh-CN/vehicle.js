@@ -5,6 +5,7 @@ export default {
   'app.vehicleGroup': '车辆分组',
   'app.vehicle.register': '车辆注册',
   'app.vehicle.register.status': '注册状态',
+  'app.vehicle.simulator': '模拟车辆',
 
   // 车辆类型
   'app.vehicleType': '车辆类型',

@@ -1,5 +1,6 @@
 import { fetchAllAdaptor, fetchAllVehicle } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
+import { UpgradeOrderDatasource } from '@/mockData';
 
 export default {
   namespace: 'vehicleList',
@@ -8,10 +9,11 @@ export default {
     showRegisterPanel: false,
     addRegistrationModalShown: false,
     registerVehicleModalShown: false,
+    searchParams: { id: [], state: [], vehicleType: null },
 
     allAdaptors: {},
     allVehicles: [],
-    searchParams: { id: [], state: [], vehicleType: null },
+    upgradeOrder: [...UpgradeOrderDatasource],
   },
 
   effects: {

@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
 import { GlobalAlpha } from '@/config/consts';
-import { SmoothGraphics } from '@pixi/graphics-smooth';
 
 export default class GeoLock extends PIXI.Sprite {
   constructor(props) {
@@ -63,7 +62,7 @@ export default class GeoLock extends PIXI.Sprite {
   }
 
   drawRectLock() {
-    const rect = new SmoothGraphics();
+    const rect = new PIXI.Graphics();
     rect.clear();
     this.width = this.$width + 10;
     this.height = this.$height;
@@ -72,14 +71,14 @@ export default class GeoLock extends PIXI.Sprite {
     rect.beginFill('0xffffff', 0.1);
     rect.drawRect(0, 0, this.width, this.height);
     rect.endFill();
-    this.texture = window.PixiUtils.renderer.generateTexture(rect);
+    this.texture = window.MonitorPixiUtils.renderer.generateTexture(rect);
   }
 
   drawCircleLock() {
-    const circle = new SmoothGraphics();
+    const circle = new PIXI.Graphics();
     circle.clear();
     circle.lineStyle(30, this.color, 1);
     circle.drawCircle(0, 0, this.radius);
-    this.texture = window.PixiUtils.renderer.generateTexture(circle);
+    this.texture = window.MonitorPixiUtils.renderer.generateTexture(circle);
   }
 }

@@ -194,8 +194,8 @@ export default [
         authority: ['ADMIN', 'SUPERMANAGER'],
       },
       {
-        path: `/${AppCode.ResourceManage}/integration/logManagement`,
-        name: 'logManagement',
+        path: `/${AppCode.ResourceManage}/integration/systemLogWarehouse`,
+        name: 'systemLogWarehouse',
         component: '/ResourceManage/Integration/IntegrationLogManagement',
         authority: ['ADMIN', 'SUPERMANAGER'],
       },

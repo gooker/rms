@@ -5,14 +5,7 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import {
-  dealResponse,
-  formatMessage,
-  getToteLayoutBaseParam,
-  isEqual,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -1309,7 +1302,7 @@ class MonitorMapView extends BaseMap {
   };
 
   updateTaskPath = (uniqueId) => {
-    // 清除路径线
+    /*************** 清除路径线 *************/
     const paths = this.vehiclePathMap.get(uniqueId);
     if (paths && paths.length > 0) {
       paths.forEach((path) => {
@@ -1319,7 +1312,7 @@ class MonitorMapView extends BaseMap {
     }
     this.vehiclePathMap.delete(uniqueId);
 
-    // 清除目标线
+    /*************** 清除目标线 *************/
     const targetLineSprite = this.vehicleTargetLineMap.get(uniqueId);
     if (targetLineSprite) {
       this.pixiUtils.viewportRemoveChild(targetLineSprite);
@@ -1327,7 +1320,7 @@ class MonitorMapView extends BaseMap {
       this.vehicleTargetLineMap.delete(uniqueId);
     }
 
-    // 渲染新的路线
+    /*************** 渲染新的路线和目标线 *************/
     if (!this.filteredVehicle.includes(uniqueId)) return;
     this.renderTaskPaths(uniqueId);
     this.refresh();
@@ -1335,8 +1328,7 @@ class MonitorMapView extends BaseMap {
 
   renderTaskPaths = (uniqueId) => {
     const { showFullPath, showTargetLine } = window.$$state().monitorView.routeView;
-    const { allVehicles } = window.$$state().monitor;
-    // 渲染新的路径
+    /*************** 渲染任务路径 *************/
     const _this = this;
     const vehicleTaskMessage = this.vehicleTaskMap.get(uniqueId);
     if (vehicleTaskMessage) {
@@ -1385,9 +1377,8 @@ class MonitorMapView extends BaseMap {
         });
       });
 
-      // 渲染小车到目标点的连线
+      /*************** 渲染目标线 *************/
       if (showTargetLine) {
-        const { vehicleId } = find(allVehicles, { uniqueId });
         const vehicleData = this.idVehicleMap.get(uniqueId);
         let lineEnd = pathCellIds[pathCellIds.length - 1];
         lineEnd = getElevatorMapCellId(lineEnd);

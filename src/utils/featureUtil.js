@@ -147,9 +147,9 @@ export function exportVehicleInfo(vehicleList) {
         label: formatMessage({ id: 'app.vehicleType' }),
         align: 'center',
         value: (row) => {
-          if (row.isDummy) {
+          if (row.isSimulator) {
             return formatMessage({
-              id: 'app.vehicle.threeGenerationsOfVehicles(Virtual)',
+              id: 'app.vehicle.simulator',
             });
           } else if (row.vehicleType === 3) {
             return formatMessage({

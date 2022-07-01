@@ -26,7 +26,10 @@ export default {
   'environmentManager.api.invalid': '接口信息不完整',
 
   // 固件相关
-  'firmware.upgrade': '固件升级',
+  'hardware.upgrading': '固件升级',
+  'hardware.upload': '上传固件',
+  'hardware.uploadToServer': '上传车辆固件',
+  'hardware.downloadToVehicle': '下载固件到车辆',
 
   // 故障相关
   'app.fault.code': '故障码',

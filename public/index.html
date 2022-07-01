@@ -6,11 +6,11 @@
   <meta http-equiv='Cache-Control' content='no-store must-revalidate' />
   <meta name='viewport' content='width=device-width, initial-scale=1' />
 </head>
-<!--  这个变量对应 HtmlWebpackPlugin->templateParameters中的值 -->
+<!--  HtmlWebpackPlugin->templateParameters -->
 <% if (isEnvProduction) { %>
 <script>
   window.isProductionEnv = true;
-  window.appId = 1;
+  window.appId = 2;
 </script>
 <% } %>
 <script src='/config.js'></script>
