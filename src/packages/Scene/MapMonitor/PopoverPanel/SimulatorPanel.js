@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Divider, message, Select, Switch } from 'antd';
+import { Button, Divider, message, Select, Switch, Tag } from 'antd';
 import { LeftOutlined, ReloadOutlined, RightOutlined, SettingOutlined } from '@ant-design/icons';
 import {
   closeSimulator,
@@ -35,7 +35,7 @@ const SimulatorPanel = (props) => {
     allAdaptors,
   } = props;
 
-  const [currentVehicleType, setCurrentVehicleType] = useState(VehicleType.LatentLifting);
+  const [currentVehicleType, setCurrentVehicleType] = useState(null);
   const [vehicleAdapter, setVehicleAdapter] = useState(null); // 适配器
   const [simulatorConfiguration, setSimulatorConfiguration] = useState(null); // 模拟器配置信息
   const [configurationVisible, setConfigurationVisible] = useState(false); // 配置
@@ -68,21 +68,39 @@ const SimulatorPanel = (props) => {
       title: formatMessage({ id: 'app.common.type' }),
       dataIndex: 'vehicleType',
       align: 'center',
-      render: (text) => formatMessage({ id: `app.vehicleType.${text}` }),
     },
     {
-      title: formatMessage({ id: 'monitor.simulator.list.movable' }),
-      dataIndex: 'canMove',
+      title: formatMessage({ id: 'app.vehicle.register.status' }),
+      dataIndex: 'register',
       align: 'center',
-      render: (text, record) => (
-        <Switch
-          checked={text || false}
-          onChange={(checked) => {
-            changeVehicleRunTask(record.vehicleId, checked);
-          }}
-        />
-      ),
+      render: (text) => {
+        if (text) {
+          return (
+            <Tag color="#87d068">
+              <FormattedMessage id="app.common.true" />
+            </Tag>
+          );
+        }
+        return (
+          <Tag>
+            <FormattedMessage id="app.common.false" />
+          </Tag>
+        );
+      },
     },
+    // {
+    //   title: formatMessage({ id: 'monitor.simulator.list.movable' }),
+    //   dataIndex: 'canMove',
+    //   align: 'center',
+    //   render: (text, record) => (
+    //     <Switch
+    //       checked={text || false}
+    //       onChange={(checked) => {
+    //         changeVehicleRunTask(record.vehicleId, checked);
+    //       }}
+    //     />
+    //   ),
+    // },
   ];
 
   const expandColumns = [
@@ -94,7 +112,7 @@ const SimulatorPanel = (props) => {
         if (text) {
           return formatMessage({ id: 'monitor.simulator.list.snapStop' });
         }
-        return formatMessage({ id: 'app.vehicle.normal' });
+        return formatMessage({ id: 'app.common.normal' });
       },
     },
     {
@@ -162,7 +180,6 @@ const SimulatorPanel = (props) => {
     if (configurationVisible) {
       return (
         <SimulatorConfigPanel
-          vehicleType={currentVehicleType}
           simulatorConfig={simulatorConfiguration}
           submit={(obj) => {
             dispatch({
@@ -215,7 +232,6 @@ const SimulatorPanel = (props) => {
           <div style={{ marginTop: 20 }}>
             {addVisit && (
               <AddSimulatorVehicle
-                vehicleType={currentVehicleType}
                 vehicleTypes={vehicleTypes}
                 vehicleAdapter={vehicleAdapter}
                 submit={(value) => {
@@ -223,7 +239,10 @@ const SimulatorPanel = (props) => {
                     type: 'simulator/fetchAddSimulatorVehicle',
                     payload: { ...value },
                   }).then(() => {
-                    dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
+                    dispatch({
+                      type: 'simulator/fetchSimulatorLoginVehicle',
+                      payload: { ...value },
+                    });
                     setAddVisit(false);
                   });
                 }}
@@ -348,7 +367,7 @@ const SimulatorPanel = (props) => {
                 }}
                 size={size}
               >
-                <FormattedMessage id="monitor.simulator.action.remove" />
+                <FormattedMessage id="app.button.remove" />
               </Button>
               <Button
                 size={size}
@@ -430,7 +449,7 @@ const SimulatorPanel = (props) => {
                   setSelectedRowKeys(value);
                 }}
               >
-                {simulatorVehicleList.map(({ vehicleId }) => {
+                {simulatorVehicleList?.filter(({register})=>register).map(({ vehicleId }) => {
                   return (
                     <Select.Option value={vehicleId} key={vehicleId}>
                       {vehicleId}
@@ -442,11 +461,14 @@ const SimulatorPanel = (props) => {
                 bordered
                 size={size}
                 columns={columns}
-                expandColumns={expandColumns}
+                // expandColumns={expandColumns}
                 dataSource={simulatorVehicleList}
                 rowKey={(record) => record.vehicleId}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
+                  getCheckboxProps: (record) => ({
+                    disabled: !record.register,
+                  }),
                   onChange: (selectRowKey) => {
                     setSelectedRowKeys(selectRowKey);
                   },

@@ -1,10 +1,10 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Input, Modal, Select, Switch } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, isNull } from '@/utils/util';
 import { saveQuickTask } from '@/services/smartTaskService';
 import { find } from 'lodash';
+import FormattedMessage from '@/components/FormattedMessage';
 
 const { formItemLayout } = getFormLayout(4, 18);
 
@@ -71,7 +71,7 @@ const QuickTaskFormModal = (props) => {
   return (
     <Modal
       visible={taskModalVisible}
-      title={'创建快捷任务'}
+      title={formatMessage({ id: 'quickTask.create' })}
       width={600}
       maskClosable={false}
       closable={false}
@@ -90,7 +90,7 @@ const QuickTaskFormModal = (props) => {
         <Form.Item label={formatMessage({ id: 'app.common.description' })} name={'desc'}>
           <Input />
         </Form.Item>
-        <Form.Item label={'所属组别'} name={'groupId'}>
+        <Form.Item label={<FormattedMessage id="quickTask.group.belongs" />} name={'groupId'}>
           <Select>
             {quickTaskGroups.map(({ id, name }) => (
               <Select.Option key={id} value={id}>
@@ -99,7 +99,11 @@ const QuickTaskFormModal = (props) => {
             ))}
           </Select>
         </Form.Item>
-        <Form.Item name={'taskCode'} label={'关联自定义任务'} rules={[{ required: true }]}>
+        <Form.Item
+          name={'taskCode'}
+          label={formatMessage({ id: 'quickTask.customtask.associated' })}
+          rules={[{ required: true }]}
+        >
           <Select>
             {customTasks.map(({ code, name }) => (
               <Select.Option key={code} value={code}>
@@ -109,7 +113,7 @@ const QuickTaskFormModal = (props) => {
           </Select>
         </Form.Item>
         <Form.Item
-          label={'确认操作'}
+          label={<FormattedMessage id="quickTask.operate.isConfirm" />}
           name={'isNeedConfirm'}
           valuePropName={'checked'}
           initialValue={false}

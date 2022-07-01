@@ -56,8 +56,8 @@ const EStopOperation = (props) => {
         >
           <Switch
             checked={globalActive}
-            checkedChildren={formatMessage({ id: 'app.vehicle.on' })}
-            unCheckedChildren={formatMessage({ id: 'app.vehicle.off' })}
+            checkedChildren={formatMessage({ id: 'app.common.on' })}
+            unCheckedChildren={formatMessage({ id: 'app.common.off' })}
           />
         </Popconfirm>
       </Form.Item>

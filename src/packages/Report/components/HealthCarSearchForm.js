@@ -54,7 +54,7 @@ const HealthCarSearchForm = (props) => {
         <Form.Item hidden name={'endTime'} />
 
         {/* 日期 */}
-        <Col span={12}>
+        <Col span={10}>
           <Form.Item
             name="timeRange"
             label={<FormattedMessage id="app.form.dateRange" />}
@@ -70,7 +70,7 @@ const HealthCarSearchForm = (props) => {
         </Col>
 
         {/* 小车 */}
-        <Col span={12}>
+        <Col span={14}>
           <Form.Item
             name={'vehicleSearch'}
             label={<FormattedMessage id="app.vehicle" />}

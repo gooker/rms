@@ -11,7 +11,7 @@ const inputWidth = { width: '100%' };
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(5, 18);
 
 const AdvancedCarryComponent = (props) => {
-  const { dispatch, functionArea } = props;
+  const { dispatch, functionArea, vehicleList } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
   const [currentVehicleAction, setCurrentVehicleAction] = useState(null);
@@ -49,8 +49,8 @@ const AdvancedCarryComponent = (props) => {
     <>
       <Form form={formRef} labelWrap className={styles.advancedForm} {...formItemLayout}>
         <Form.Item
-          name={'podId'}
-          label={formatMessage({ id: 'app.pod' })}
+          name={'loadId'}
+          label={formatMessage({ id: 'object.load' })}
           rules={[{ required: true }]}
         >
           <InputNumber />
@@ -67,7 +67,13 @@ const AdvancedCarryComponent = (props) => {
           label={formatMessage({ id: 'vehicle.id' })}
           rules={[{ required: true }]}
         >
-          <InputNumber />
+          <Select allowClear showSearch style={{ width: 200 }}>
+            {vehicleList.map(({ vehicleId, vehicleType, uniqueId }) => (
+              <Select.Option key={`${vehicleId}-${vehicleType}`} value={uniqueId}>
+                {`${vehicleId}-${vehicleType}`}
+              </Select.Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item name={'targetDirection'} label={formatMessage({ id: 'app.pod.direction' })}>

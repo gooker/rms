@@ -3,18 +3,13 @@ export default {
   'group.resourceGroup': '资源组',
   'group.groupType': '资源组类型',
   'group.groupMange': '组管理',
-  'group.resourceGroupMange': '分组管理',
+  'group.resourcGroupMange': '分组管理',
   'group.addToGroup': '添加到组',
+  'group.modifyPriority': '修改优先级',
+  'group.addResourceToGroup': '添加资源到组',
+  'group.sourceManage': '资源组管理',
 
-  // 分组操作
   'resourceGroup.grouping': '分组',
-  'resourceGroup.operate': '组操作',
-  'resourceGroup.add': '添加到组',
-  'resourceGroup.delete': '删除分组',
-  'resourceGroup.editPriority': '编辑优先级',
-  'resourceGroup.deleteMember': '从组中删除',
-  'resourceGroup.deleteMember.confirm': '是否确定从组中删除?',
-  'resourceGroup.noGroup': '不存在分组',
 
   // 载具
   'resource.load': '载具',
@@ -36,6 +31,7 @@ export default {
   // 储位
   'resource.storage.template': '储位模版',
   'resource.storage.group': '储位组',
+  'resource.storage.init': '初始化储位',
 
   // 机器管理, 包括: 车辆、充电桩、设备
   'resource.signalStrength': '信号强度',

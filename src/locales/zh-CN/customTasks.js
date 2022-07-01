@@ -147,6 +147,27 @@ export default {
   'variable.customTaskData.missing': '自定义任务数据丢失',
   'variable.task.edit': '编辑任务变量',
 
+  // 快捷任务
+  'quickTask.execute': '执行快捷任务',
+  'quickTask.create': '创建快捷任务',
+  'quickTask.groupManage': '任务组管理',
+
+  'quickTask.button.modifyVariable': '修改变量',
+
+  'quickTask.group.belongs': '所属组',
+  'quickTask.group.noExist': '暂无分组',
+  'quickTask.group.ismissing': '组丢失',
+
+  'quickTask.customtask.associated': '关联自定义任务',
+  'quickTask.operate.isConfirm': '确认操作',
+
+  'quickTask.share': '分享',
+  'quickTask.shared': '已分享',
+  'quickTask.share.message':
+    '分享该快捷任务后, 其他用户会浏览到该记录并且可以进行复制操作, 是否确定分享?',
+  'quickTask.share.cancel.message':
+    '取消分享该快捷任务后, 其他用户将无法浏览到该条记录, 是否确定取消分享?',
+
   // **********  分组管理 ********** //
   'groupManage.management': '分组配置',
   'groupManage.detail': '分组配置信息',

@@ -4,7 +4,10 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchCommonPointInstrument } from '@/services/monitorService';
 import { CommonStationStatePolling } from '@/workers/WebWorkerManager';
-import { transformCommonTrafficData, transitionVehicles } from '../../Modal/CommonStationReport/commonStationEchart';
+import {
+  transformCommonTrafficData,
+  transitionVehicles,
+} from '../../Modal/CommonStationReport/commonStationEchart';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { StationStateColor } from '@/config/consts';
 import styles from '../../monitorLayout.module.less';
@@ -133,7 +136,7 @@ const CommonStationProperty = (props) => {
         if (!dealResponse(data)) {
           const stopCellId = data?.stopCellId; // 轮询返回结果 前端加上的
           const TaskCountData = { ...data };
-          const vehicleIdMap = transitionVehicles(TaskCountData); // TODO:vehicleId 要是唯一Id 
+          const vehicleIdMap = transitionVehicles(TaskCountData); // TODO:vehicleId 要是唯一Id
           const taskHistoryData = transformCommonTrafficData(TaskCountData);
           _commonPointTaskHistoryData[stopCellId] = {
             vehicleIdMap,
@@ -265,7 +268,11 @@ const CommonStationProperty = (props) => {
 
           {/* 分车数 */}
           <div className={styles.rightSideContentDetail}>
-            <CarOutlined /> <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
+            <div>
+              <CarOutlined style={{ fontSize: 20 }} />{' '}
+              <FormattedMessage id={'monitor.workstation.allocateAMRnum'} />
+            </div>
+
             <Popover
               content={
                 <Row style={{ maxWidth: 250, wordBreak: 'break-all' }}>
@@ -395,7 +402,7 @@ const CommonStationProperty = (props) => {
                 />
               </div>
               <div>
-                <FormattedMessage id={'app.triggerState.pause'} />
+                <FormattedMessage id={'app.triggerAction.pause'} />
               </div>
             </div>
             <div className={styles.rightSideVehicleContentOperationItem2}>

@@ -88,7 +88,7 @@ class TaskLibraryComponent extends Component {
       },
     },
     {
-      title: formatMessage({ id: 'app.taskDetail.targetSpotId' }),
+      title: formatMessage({ id: 'app.common.targetCell' }),
       dataIndex: 'targetCellId',
       align: 'center',
       width: 100,

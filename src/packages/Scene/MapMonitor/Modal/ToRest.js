@@ -4,7 +4,7 @@ import { CloseOutlined, SendOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { dealResponse, formatMessage, getFormLayout, getMapModalPosition } from '@/utils/util';
-import { goToCharge } from '@/services/taskService';
+import { goToRest } from '@/services/taskService';
 import VehicleFormComponent from '@/components/VehicleFormComponent';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../monitorLayout.module.less';
@@ -27,7 +27,7 @@ const ToRest = (props) => {
         setExecuting(true);
         const vehicle = find(allVehicles, { vehicleId: values.vehicleId });
         if (vehicle) {
-          goToCharge({ ...values }).then((response) => {
+          goToRest({ ...values }).then((response) => {
             if (!dealResponse(response, formatMessage({ id: 'app.message.sendCommandSuccess' }))) {
               close();
             }

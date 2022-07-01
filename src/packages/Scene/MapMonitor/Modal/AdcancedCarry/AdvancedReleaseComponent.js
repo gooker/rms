@@ -36,8 +36,8 @@ const AdvancedReleaseComponent = (props) => {
     <>
       <Form form={formRef} labelWrap className={styles.advancedForm} {...formItemLayout}>
         <Form.Item
-          name={'podId'}
-          label={formatMessage({ id: 'app.pod' })}
+          name={'loadId'}
+          label={formatMessage({ id: 'object.load' })}
           rules={[{ required: true }]}
         >
           <InputNumber />

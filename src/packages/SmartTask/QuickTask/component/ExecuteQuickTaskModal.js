@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Modal, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
@@ -92,7 +91,7 @@ const ExecuteQuickTaskModal = (props) => {
             <Form.Item
               key={getRandomString(6)}
               name={['customStart', 'vehicle']}
-              label={<FormattedMessage id='customTask.form.vehicle' />}
+              label={<FormattedMessage id="customTask.form.vehicle" />}
               initialValue={{ type: vehicleKey, code: vehicleConfig[vehicleKey] }}
             >
               <VehicleVariable />
@@ -167,7 +166,7 @@ const ExecuteQuickTaskModal = (props) => {
                   label={formatMessage({ id: 'resource.load.direction' })}
                   initialValue={loadAngle}
                 >
-                  <InputNumber addonAfter='°' />
+                  <InputNumber addonAfter="°" />
                 </Form.Item>,
               );
             }
@@ -286,7 +285,7 @@ const ExecuteQuickTaskModal = (props) => {
                       </Col>
                     </Row>
                   ))}
-                  <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                  <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                     <PlusOutlined />
                   </Button>
                 </>
@@ -325,7 +324,7 @@ const ExecuteQuickTaskModal = (props) => {
                       </Col>
                     </Row>
                   ))}
-                  <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                  <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                     <PlusOutlined />
                   </Button>
                 </>
@@ -345,12 +344,12 @@ const ExecuteQuickTaskModal = (props) => {
   return (
     <Modal
       visible={executeModalVisible}
-      title={'执行快捷任务'}
+      title={formatMessage({ id: 'quickTask.execute' })}
       width={800}
       maskClosable={false}
       closable={false}
       onOk={onOk}
-      okText={'执行'}
+      okText={formatMessage({ id: 'app.button.execute' })}
       onCancel={onCancel}
       okButtonProps={{ loading }}
     >

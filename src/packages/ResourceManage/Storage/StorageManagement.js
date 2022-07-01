@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
@@ -40,7 +39,7 @@ const StorageManagement = () => {
     },
     { title: <FormattedMessage id={'app.map.cell'} />, dataIndex: 'cellId', align: 'center' },
     {
-      title: <FormattedMessage id='app.common.type' />,
+      title: <FormattedMessage id="app.common.type" />,
       dataIndex: 'storageType',
       align: 'center',
       render: (text) => {
@@ -72,8 +71,8 @@ const StorageManagement = () => {
   ];
 
   const expandColumns = [
-    { title: '载具ID', dataIndex: 'loadId', align: 'center' },
-    { title: '储位编码', dataIndex: 'code', align: 'center' },
+    { title: <FormattedMessage id="resource.load.id" />, dataIndex: 'loadId', align: 'center' },
+    // { title: '储位编码', dataIndex: 'code', align: 'center' },
   ];
 
   function initStorage() {
@@ -149,11 +148,11 @@ const StorageManagement = () => {
       <div>
         <SearchStorageComponent onSearch={getData} />
         <div className={commonStyles.tableToolLeft}>
-          <Button type='primary' onClick={initStorage}>
-            <PlusOutlined /> 初始化储位
+          <Button type="primary" onClick={initStorage}>
+            <PlusOutlined /> <FormattedMessage id="resource.storage.init" />
           </Button>
           <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteStorage}>
-            <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+            <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
           </Button>
           <GroupManager
             type={'STORE'}
@@ -170,7 +169,7 @@ const StorageManagement = () => {
               getData();
             }}
           >
-            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </div>
       </div>
@@ -200,7 +199,7 @@ const StorageManagement = () => {
       {/* 初始化储位 */}
       <InitStorageModal
         visible={initVisible}
-        title={'初始化储位'}
+        title={formatMessage({ id: 'resource.storage.init' })}
         onOk={getData}
         onCancel={() => {
           setInitVisible(false);

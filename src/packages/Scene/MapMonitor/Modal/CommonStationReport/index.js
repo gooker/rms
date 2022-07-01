@@ -12,7 +12,7 @@ import {
   trafficHistoryLineOption,
 } from './commonStationEchart';
 import { commonStationCallback } from './stationUtil';
-import { formatMessage, isStrictNull } from '@/utils/util';
+import { formatMessage, isNull, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../../monitorLayout.module.less';
 
@@ -150,7 +150,7 @@ const CommonStationReport = (props) => {
       <div className={styles.monitorModalHeader}>
         <div>
           <span>{name ? `[${name}]` : formatMessage({ id: 'app.map.station' })}</span>
-          <span>{`-${stopCellId}-${angle}`}</span>
+          {!isNull(stopCellId) && <span>{`-${stopCellId}-${angle}`}</span>}
 
           <Button
             onClick={() => {

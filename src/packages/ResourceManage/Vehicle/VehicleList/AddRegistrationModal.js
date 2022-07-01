@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import {
   AutoComplete,

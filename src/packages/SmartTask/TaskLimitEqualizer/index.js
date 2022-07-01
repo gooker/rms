@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, message, Modal, Row, Spin, Table } from 'antd';
+import { Button, Modal, Row, Spin, Table } from 'antd';
 import FormattedMessage from '@/components/FormattedMessage';
 import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -20,7 +20,7 @@ class TaskTrigger extends Component {
     getTasksByType: {}, // 任务类型限流
     getTasksByCustomGroup: [], // 资源组限流
     taskLimitings: [],
-    spinningFlag: false,
+    loading: false,
     selectedRows: [],
     selectedRowKeys: [],
     updateLimitRecord: null,
@@ -36,10 +36,9 @@ class TaskTrigger extends Component {
 
   columns = [
     {
-      title: <FormattedMessage id="taskLimit" />,
+      title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'groupName',
       width: '25%',
-      // render: (text,record) => <a>{text}</a>,
     },
     {
       title: <FormattedMessage id="app.common.description" />,
@@ -47,7 +46,7 @@ class TaskTrigger extends Component {
       render: (text, record) => <>{record && record.children ? record.children[0].describe : ''}</>,
     },
     {
-      title: <FormattedMessage id="taskLimit.num" />,
+      title: <FormattedMessage id="taskLimit.quantity" />,
       dataIndex: 'limitNum',
     },
     {
@@ -79,24 +78,20 @@ class TaskTrigger extends Component {
   }
 
   getVehicleTasks = async () => {
-    this.setState({ spinningFlag: true });
+    this.setState({ loading: true });
     const originalMapData = await fetchActiveMap();
-    if (originalMapData) {
+    if (dealResponse(dealResponse, 1)) {
       const payload = { mapId: originalMapData.id };
       this.getVehicleTaskLists(originalMapData.id);
       // 根据mapId 获取资源组限流
       const response = await getVehicleTasksByCustomGroup(payload);
-      if (!dealResponse(response)) {
+      if (!dealResponse(response, 1)) {
         this.setState({
           getTasksByCustomGroup: response,
         });
-      } else {
-        message.error(formatMessage({ id: 'app.taskLimiting.getCustomTaskFailed' }));
       }
-    } else {
-      message.error(formatMessage({ id: 'app.storageManage.map.fetchFailed' }));
     }
-    this.setState({ spinningFlag: false });
+    this.setState({ loading: false });
     const getTasksByType = await getVehicleTasksByType(); // 类型限流
     if (!dealResponse(getTasksByType)) {
       this.setState({
@@ -116,21 +111,19 @@ class TaskTrigger extends Component {
     if (!dealResponse(responseLists)) {
       const currentLists = [...responseLists];
       currentLists.map((item) => {
-        if (isNull(item.name) && item.limitDatas) {
-          const sourceItem = {
+        let sourceItem = { children: [...item.limitDatas] };
+        if (isNull(item.name) && item?.limitDatas) {
+          sourceItem = {
             groupName: formatMessage({ id: 'app.common.type' }),
             type: 'taskLimit',
-            children: [...item.limitDatas],
           };
-          taskLists = [...taskLists, sourceItem];
         } else {
-          const sourceItem = {
+          sourceItem = {
             groupName: item.name,
             type: 'sourceLimit',
-            children: [...item.limitDatas],
           };
-          taskLists = [...taskLists, sourceItem];
         }
+        taskLists = [...taskLists, sourceItem];
       });
 
       this.setState({
@@ -150,14 +143,11 @@ class TaskTrigger extends Component {
 
   // 保存
   taskLimitSubmit = async (values) => {
-    // 调保存接口
-    // 刷新当前页面
     const { mapId } = this.state;
     const currentValues = { ...values };
     currentValues.mapId = mapId;
     const response = await saveTaskLimit(currentValues);
-    if (!dealResponse(response)) {
-      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    if (!dealResponse(response, 1)) {
       this.setState({
         limitModalVisible: false,
         updateLimitRecord: null,
@@ -190,20 +180,17 @@ class TaskTrigger extends Component {
     const _this = this;
 
     RmsConfirm({
-      content: formatMessage({ id: 'taskLimit.delete.confirm' }),
+      content: formatMessage({ id: 'app.message.doubleConfirm' }),
       onOk: async () => {
         // delete 调接口
         const deleteIds = currentseleteRows.map(({ id }) => id);
         const deleteResult = await deleteTaskLimit([...deleteIds]);
-        if (!dealResponse(deleteResult)) {
-          message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+        if (!dealResponse(deleteResult, 1)) {
           _this.setState({
             selectedRowKeys: [],
             selectedRows: [],
           });
           _this.search();
-        } else {
-          message.error(formatMessage({ id: deleteResult.message }));
         }
       },
       onCancel() {
@@ -218,7 +205,7 @@ class TaskTrigger extends Component {
   render() {
     const {
       taskLimitings,
-      spinningFlag,
+      loading,
       selectedRowKeys,
       limitModalVisible,
       updateLimitRecord,
@@ -235,7 +222,7 @@ class TaskTrigger extends Component {
 
     return (
       <div className={commonStyles.commonPageStyle}>
-        <Spin spinning={spinningFlag}>
+        <Spin spinning={loading}>
           <Row style={{ marginBottom: 20 }}>
             <Button
               disabled={selectedRowKeys.length === 0}

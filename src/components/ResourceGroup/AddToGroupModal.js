@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Form, InputNumber, Modal, Select } from 'antd';
 import { formatMessage, getFormLayout } from '@/utils/util';
@@ -20,14 +19,13 @@ const AddToGroupModal = (props) => {
       .then((value) => {
         onOk(value);
       })
-      .catch(() => {
-      });
+      .catch(() => {});
   }
 
   return (
     <Modal
       visible={visible}
-      title={'添加资源到组'}
+      title={formatMessage({ id: 'group.addResourceToGroup' })}
       maskClosable={false}
       onOk={submit}
       onCancel={onCancel}

@@ -67,7 +67,11 @@ const UploadMapModal = (props) => {
                     transform: transform,
                   });
                 } else {
-                  message.error(`未识别的导航类型: ${navigationType}`);
+                  message.error(
+                    `${formatMessage({
+                      id: 'app.map.navigation.unrecognizedType',
+                    })}: ${navigationType}`,
+                  );
                 }
               }
               if (!isNull(mapData)) {
@@ -89,7 +93,11 @@ const UploadMapModal = (props) => {
                   currentLogicArea,
                 });
               } else {
-                message.error(`未识别的导航类型: ${navigationType}`);
+                message.error(
+                  `${formatMessage({
+                    id: 'app.map.navigation.unrecognizedType',
+                  })}: ${navigationType}`,
+                );
               }
               if (!isNull(payload)) {
                 const result = await dispatch({
@@ -121,21 +129,21 @@ const UploadMapModal = (props) => {
       <Form form={formRef} {...formItemLayout}>
         <Form.Item
           noStyle
-          name='file'
-          valuePropName='fileList'
+          name="file"
+          valuePropName="fileList"
           getValueFromEvent={normFile}
           rules={[{ required: true }]}
         >
           <Upload.Dragger
-            name='files'
+            name="files"
             maxCount={1}
             beforeUpload={() => false}
             onRemove={() => true}
           >
-            <p className='ant-upload-drag-icon'>
+            <p className="ant-upload-drag-icon">
               <InboxOutlined />
             </p>
-            <p className='ant-upload-text'>
+            <p className="ant-upload-text">
               <FormattedMessage id={'app.message.upload.tip'} />
             </p>
           </Upload.Dragger>
@@ -197,9 +205,9 @@ const UploadMapModal = (props) => {
           <InputNumber addonAfter={'°'} />
         </Form.Item>
         <Form.Item
-          name='addMap'
+          name="addMap"
           initialValue={true}
-          valuePropName='checked'
+          valuePropName="checked"
           {...formItemLayoutNoLabel}
         >
           <Checkbox>保存为新地图</Checkbox>

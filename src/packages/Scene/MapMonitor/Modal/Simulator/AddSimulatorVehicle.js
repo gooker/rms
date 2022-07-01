@@ -13,7 +13,7 @@ const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 18);
 const { formItemLayout: formItemLayout2 } = getFormLayout(8, 16);
 
 function AddSimulatorVehicle(props) {
-  const { vehicleType, vehicleTypes, submit, logicId, onCancel, vehicleAdapter } = props;
+  const { vehicleType, submit, logicId, onCancel, vehicleAdapter } = props;
   const [executing, setExecuting] = useState(false);
   const [isIncrement, setIsIncrement] = useState(false); // 用于标记批量添加小车时候是否是增量添加
   const [selectedSubType, setSelectedSubType] = useState('Normal');

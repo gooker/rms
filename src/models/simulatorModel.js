@@ -5,9 +5,10 @@ import {
   fetchSimulatorLoginVehicleControlState,
   fetchUpdateVehicleConfig,
 } from '@/services/monitorService';
-import { fetchAllAdaptor, findVehicle } from '@/services/resourceService';
+import { fetchAllAdaptor, fetchAllVehicle, findVehicle } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
+import { find, isNull } from 'lodash';
 
 export default {
   namespace: 'simulator',
@@ -58,22 +59,24 @@ export default {
       }
     },
 
-    *fetchSimulatorLoginVehicle(_, { call, put }) {
-      const allVehicles = yield put.resolve({ type: 'monitor/refreshAllVehicleList' });
-      if (allVehicles !== null) {
-        // 获取Coordinator所有的小车控制状态信息
-        const allVehicleControlState = yield call(fetchSimulatorLoginVehicleControlState);
-        if (dealResponse(allVehicleControlState)) {
-          return false;
-        }
+    *fetchSimulatorLoginVehicle({ payLoad }, { call, put }) {
+      // const allVehicles = yield put.resolve({ type: 'monitor/refreshAllVehicleList' });
+      const allVehicles = yield call(fetchAllVehicle);
+      // 获取Coordinator所有的小车控制状态信息
+      const allVehicleControlState = yield call(fetchSimulatorLoginVehicleControlState);
+      if (!dealResponse(allVehicles)) {
+        const simulatorVehiclelist = allVehicles
+          ?.filter(({ isSimulator }) => isSimulator === true)
+          .map((item) => ({ ...item, canMove: allVehicleControlState?.[item.vehicleId] }));
 
-        // 将小车控制状态信息Map到小车数据中
-        const allSimulatorVehicleList = allVehicles.map((item) => ({
-          ...item,
-          canMove: allVehicleControlState[item.vehicleId],
-        }));
+          const currentAddVehicle= find(simulatorVehiclelist,{vehicleId:payLoad?.vehicleStatusDTO?.vehicleId});
+          if(isNull(currentAddVehicle)){
+            simulatorVehiclelist.push({
+              ...payLoad,
+            })
+          }
 
-        yield put({ type: 'saveSimulatorVehicleList', payload: allSimulatorVehicleList });
+        yield put({ type: 'saveSimulatorVehicleList', payload: simulatorVehiclelist });
       }
     },
 

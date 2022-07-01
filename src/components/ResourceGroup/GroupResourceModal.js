@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useEffect, useState } from 'react';
 import { Button, Form, InputNumber, Modal, Popover, Select, Space, Table, Tag } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
@@ -67,8 +66,8 @@ const GroupResourceModal = (props) => {
       render: (text, record) => {
         return (
           <Popover
-            trigger='click'
-            title='修改优先级'
+            trigger="click"
+            title={formatMessage({ id: 'group.modifyPriority' })}
             content={<EditPriority record={editing} confirm={editPriority} />}
           >
             <Space style={{ cursor: 'pointer' }}>
@@ -181,7 +180,7 @@ const GroupResourceModal = (props) => {
   return (
     <Modal
       visible={visible}
-      title={'资源组管理'}
+      title={formatMessage({ id: 'group.sourceManage' })}
       width={750}
       bodyStyle={{ maxHeight: '80vh', overflow: 'auto' }}
       maskClosable={false}
