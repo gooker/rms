@@ -12,16 +12,23 @@ import {
 } from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  isStrictNull,
+  renderBattery,
+  renderVehicleState,
+} from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
 
 const checkedColor = '#ff8400';
-const VehicleCategory = {
-  LatentLifting: 'latent',
-  Tote: 'tote',
-  Sorter: 'sorter',
+
+const VehicleImg = {
+  latent: 'latente.png',
+  fork: 'fork.png',
+  sorter: 'sorter.png',
 };
 
 const VehicleElementProp = (props) => {
@@ -240,8 +247,11 @@ const VehicleElementProp = (props) => {
             <div>
               <img
                 alt={'vehicle'}
-                style={{ width: 45, height: 'auto' }}
-                // src={require(`../../category/${VehicleCategory[type]}_category.svg`).default}
+                style={{ width: 30, height: 'auto' }}
+                src={
+                  VehicleImg[data?.vehicleType] &&
+                  require(`../../category/${VehicleImg[data?.vehicleType]}`)?.default
+                }
               />
               <span>
                 <FormattedMessage id={'app.vehicle'} />
