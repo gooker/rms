@@ -182,7 +182,8 @@ const GroupResourceModal = (props) => {
       visible={visible}
       title={formatMessage({ id: 'group.sourceManage' })}
       width={750}
-      bodyStyle={{ maxHeight: '80vh', overflow: 'auto' }}
+      style={{ top: 30 }}
+      bodyStyle={{ maxHeight: '75vh', overflow: 'auto' }}
       maskClosable={false}
       onOk={confirm}
       okButtonProps={{
