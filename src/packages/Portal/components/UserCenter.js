@@ -16,8 +16,6 @@ const UserCenter = (props) => {
 
   function handleUserMenuClick({ key }) {
     if (key === 'logout') {
-      // 只有在手动退出的情况下才清空 global/environments 对象
-      dispatch({ type: 'global/clearEnvironments' });
       dispatch({ type: 'user/logout', payload: history });
     }
     if (key === 'apiList') {

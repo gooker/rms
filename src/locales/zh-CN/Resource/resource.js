@@ -3,7 +3,7 @@ export default {
   'group.resourceGroup': '资源组',
   'group.groupType': '资源组类型',
   'group.groupMange': '组管理',
-  'group.resourcGroupMange': '分组管理',
+  'group.resourceGroupMange': '分组管理',
   'group.addToGroup': '添加到组',
   'group.modifyPriority': '修改优先级',
   'group.addResourceToGroup': '添加资源到组',

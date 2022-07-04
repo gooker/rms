@@ -11,7 +11,6 @@ export default {
   'app.button.logout': '注销',
   'app.button.register': '注册',
   'app.button.addFound': '添加发现',
-  'app.common.groupMange': '分组管理',
   'app.button.batchOperate': '批量操作',
 
   // 自定义环境管理

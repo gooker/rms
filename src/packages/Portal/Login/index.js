@@ -15,21 +15,70 @@ import styles from './Login.module.less';
 const Login = (props) => {
   const { history } = props;
 
+  /**
+   * @type {React.MutableRefObject<HTMLImageElement>}
+   */
+  const eggRef = React.useRef(null);
+  const eggValue = React.useRef({}); // mousedown时记录的clientX
+
   const [formRef] = Form.useForm();
   const [options, setOptions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    if (!window.isProductionEnv) {
+      window.localStorage.setItem('dev', 'true');
+    }
+
     // 挂载push函数
     window.RMS.push = history.push;
-    init();
 
+    // 获取所有自定义环境
     async function init() {
       const { allEnvs, activeEnv } = await getAllEnvironments(window.dbContext);
       setOptions(allEnvs);
       formRef.setFieldsValue({ environment: activeEnv });
     }
+
+    init();
+
+    // 一个彩蛋
+    function mousedownCb(ev) {
+      eggValue.current.clientX = ev.clientX;
+    }
+
+    function dragendCb(ev) {
+      const { left, right } = eggRef.current.getBoundingClientRect();
+      if (
+        eggValue.current.clientX > ev.clientX &&
+        eggValue.current.clientX - ev.clientX > left * 0.5
+      ) {
+        window.localStorage.setItem('dev', 'true');
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      }
+      if (
+        ev.clientX > eggValue.current.clientX &&
+        ev.clientX - eggValue.current.clientX > right * 0.5
+      ) {
+        window.localStorage.removeItem('dev');
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+      }
+      eggValue.current = {};
+    }
+
+    const targetNode = eggRef.current;
+    targetNode.addEventListener('pointerdown', mousedownCb);
+    targetNode.addEventListener('dragend', dragendCb);
+
+    return () => {
+      targetNode.removeEventListener('pointerdown', mousedownCb);
+      targetNode.removeEventListener('dragend', dragendCb);
+    };
   }, []);
 
   async function updateSelectOptions() {
@@ -41,24 +90,27 @@ const Login = (props) => {
   async function goLogin() {
     formRef.validateFields().then(async (values) => {
       setLoading(true);
-      let activeEnv = find(options, { active: true });
-      if (activeEnv.id !== values.environment) {
-        options.forEach((item) => {
-          if (item.id !== 'default') {
-            const dbLoad = { ...item, active: item.id === values.environment };
-            updateDB(window.dbContext, dbLoad);
-            if (dbLoad.active) {
-              activeEnv = dbLoad;
-            }
-          }
-        });
-      }
-      if (values.environment === 'default') {
+      if (values.environment === undefined) {
         window.nameSpacesInfo = requestAPI();
       } else {
-        window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(activeEnv);
+        let activeEnv = find(options, { active: true });
+        if (activeEnv.id !== values.environment) {
+          options.forEach((item) => {
+            if (item.id !== 'default') {
+              const dbLoad = { ...item, active: item.id === values.environment };
+              updateDB(window.dbContext, dbLoad);
+              if (dbLoad.active) {
+                activeEnv = dbLoad;
+              }
+            }
+          });
+        }
+        if (values.environment === 'default') {
+          window.nameSpacesInfo = requestAPI();
+        } else {
+          window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(activeEnv);
+        }
       }
-
       const response = await fetchLogin({ ...values, type: 'admin' });
       if (!dealResponse(response)) {
         window.sessionStorage.setItem('token', response.authorization);
@@ -74,7 +126,7 @@ const Login = (props) => {
       <img src={LoginBackPicture} alt={'login_picture'} className={styles.loginBackPicture} />
       <div className={styles.loginPanel}>
         <div className={styles.logo}>
-          <img src={Logo} alt={'logo'} className={styles.logoPicture} />
+          <img src={Logo} alt={'logo'} className={styles.logoPicture} ref={eggRef} />
         </div>
         <div className={styles.loginForm}>
           <Form form={formRef}>
@@ -90,7 +142,7 @@ const Login = (props) => {
               <Input prefix={<UserOutlined />} />
             </Form.Item>
             <Form.Item
-              name="password"
+              name='password'
               rules={[
                 {
                   required: true,
@@ -100,42 +152,46 @@ const Login = (props) => {
             >
               <Input.Password prefix={<LockOutlined />} />
             </Form.Item>
-            <Row gutter={10}>
-              <Col flex={1}>
-                <Form.Item
-                  name="environment"
-                  rules={[
-                    {
-                      required: true,
-                      message: formatMessage({ id: 'app.login.password.environment' }),
-                    },
-                  ]}
-                >
-                  <Select>
-                    {options.map(({ envName, id }) => (
-                      <Select.Option key={id} value={id}>
-                        {envName}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col>
-                <Button
-                  icon={<SettingOutlined style={{ color: '#7d7d7d' }} />}
-                  onClick={() => {
-                    setVisible(true);
-                  }}
-                />
-              </Col>
-            </Row>
+
+            {window.localStorage.getItem('dev') === 'true' && (
+              <Row gutter={10}>
+                <Col flex={1}>
+                  <Form.Item
+                    name='environment'
+                    rules={[
+                      {
+                        required: true,
+                        message: formatMessage({ id: 'app.login.password.environment' }),
+                      },
+                    ]}
+                  >
+                    <Select>
+                      {options.map(({ envName, id }) => (
+                        <Select.Option key={id} value={id}>
+                          {envName}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </Form.Item>
+                </Col>
+                <Col>
+                  <Button
+                    icon={<SettingOutlined style={{ color: '#7d7d7d' }} />}
+                    onClick={() => {
+                      setVisible(true);
+                    }}
+                  />
+                </Col>
+              </Row>
+            )}
+
             <Form.Item>
               {loading ? (
                 <div style={{ width: '100%', textAlign: 'center' }}>
                   <Spin indicator={<LoadingOutlined spin style={{ color: '#ffffff' }} />} />
                 </div>
               ) : (
-                <Button type="primary" onClick={goLogin} style={{ width: '100%' }}>
+                <Button type='primary' onClick={goLogin} style={{ width: '100%' }}>
                   <FormattedMessage id={'app.login.button'} />
                 </Button>
               )}

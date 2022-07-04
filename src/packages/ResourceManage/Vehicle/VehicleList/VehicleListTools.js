@@ -149,7 +149,7 @@ const VehicleListTools = (props) => {
         </Col>
         <Col>
           <Button
-            type="dashed"
+            type='dashed'
             onClick={() => {
               dispatch({ type: 'vehicleList/updateShowRegisterPanel', payload: true });
             }}
