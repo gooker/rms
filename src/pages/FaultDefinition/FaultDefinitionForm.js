@@ -73,14 +73,14 @@ const FaultDefinitionForm = (props) => {
       </Form.Item>
       <Form.Item
         name={'preDataDefinition'}
-        label={formatMessage({ id: 'app.fault.preDataDefinition' })}
+        label={formatMessage({ id: 'app.fault.extraData1' })}
         initialValue={data?.preDataDefinition}
       >
         <Input />
       </Form.Item>
       <Form.Item
         name={'curDataDefinition'}
-        label={formatMessage({ id: 'app.fault.curDataDefinition' })}
+        label={formatMessage({ id: 'app.fault.extraData2' })}
         initialValue={data?.curDataDefinition}
       >
         <Input />

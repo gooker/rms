@@ -23,6 +23,7 @@ import {
 import AddDefinition from './components/AddDefinition';
 import commonStyles from '@/common.module.less';
 import RmsConfirm from '@/components/RmsConfirm';
+import App from '@/pages/App';
 
 const VehicleFaultDefinition = (props) => {
   const {} = props;
@@ -82,19 +83,19 @@ const VehicleFaultDefinition = (props) => {
       },
     },
     {
-      title: '故障附加数据1',
+      title: <FormattedMessage id="app.fault.extraData1" />,
       dataIndex: 'preDataDefinition',
       align: 'center',
       width: 150,
     },
     {
-      title: '故障附加数据2',
+      title: <FormattedMessage id="app.fault.extraData2" />,
       dataIndex: 'curDataDefinition',
       align: 'center',
       width: 150,
     },
     {
-      title: '自动恢复',
+      title: <FormattedMessage id="app.fault.autoRecover" />,
       dataIndex: 'autoRecover',
       align: 'center',
       width: 100,
@@ -129,7 +130,7 @@ const VehicleFaultDefinition = (props) => {
       },
     },
     {
-      title: '额外信息',
+      title: <FormattedMessage id="app.fault.additionalData" />,
       dataIndex: 'additionalContent',
       align: 'center',
       width: 200,
@@ -217,7 +218,7 @@ const VehicleFaultDefinition = (props) => {
 
   function initialization() {
     RmsConfirm({
-      content: formatMessage({ id: 'app.message.doubleConfirm' }),
+      content: formatMessage({ id: 'app.fault.init.confirm' }),
       onOk: async () => {
         //  TODO: 接口
       },
@@ -230,10 +231,10 @@ const VehicleFaultDefinition = (props) => {
     let currentData = [];
     if (selectedRows?.length > 0) {
       currentData = [...selectedRows];
-      fileName = '故障信息数据(部分).txt';
+      fileName = `${formatMessage({ id: 'app.fault.exportFileNameWithParts' })}.txt`;
     } else {
       currentData = [...dataSource];
-      fileName = '故障信息数据(全部).txt';
+      fileName = `${formatMessage({ id: 'app.fault.exportFileName' })}.txt`;
     }
     const currentJson = JSON.stringify(
       currentData.map((record) => {
@@ -274,10 +275,10 @@ const VehicleFaultDefinition = (props) => {
               <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
             </Button>
             <Button onClick={initialization}>
-              <SettingOutlined /> 一键初始化
+              <SettingOutlined /> <FormattedMessage id="app.fault.init" />
             </Button>
             <Button disabled={selectedRowKeys.length === 0} onClick={exportDefault}>
-              <ExportOutlined /> 导出
+              <ExportOutlined /> <FormattedMessage id="app.button.download" />
             </Button>
             <Button onClick={getData}>
               <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
@@ -298,7 +299,7 @@ const VehicleFaultDefinition = (props) => {
         }}
       />
       {visible && (
-        <AddDefinition visible={visible} onCancel={onCancel} allData={dataSource} onOk={geData} />
+        <AddDefinition visible={visible} onCancel={onCancel} allData={dataSource} onOk={getData} />
       )}
     </TablePageWrapper>
   );

@@ -138,12 +138,12 @@ const FaultDefinitionComponent = (props) => {
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'app.fault.preDataDefinition' }),
+      title: formatMessage({ id: 'app.fault.extraData1' }),
       dataIndex: 'preDataDefinition',
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'app.fault.curDataDefinition' }),
+      title: formatMessage({ id: 'app.fault.extraData2' }),
       dataIndex: 'curDataDefinition',
       align: 'center',
     },

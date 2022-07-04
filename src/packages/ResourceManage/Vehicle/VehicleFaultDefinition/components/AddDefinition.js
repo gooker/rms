@@ -1,4 +1,3 @@
-/*TODO: I18N*/
 import React, { memo, useEffect } from 'react';
 import { Modal, Form, Input, Switch } from 'antd';
 import { isNull, formatMessage, getFormLayout, dealResponse, isStrictNull } from '@/utils/util';
@@ -92,7 +91,7 @@ function AddDefinition(props) {
           <Input allowClear />
         </Form.Item>
         <Form.Item
-          label={'自动恢复'}
+          label={<FormattedMessage id="app.fault.autoRecover" />}
           name="autoRecover"
           initialValue={updateRecord?.autoRecover ?? false}
           valuePropName={'checked'}
@@ -100,7 +99,7 @@ function AddDefinition(props) {
           <Switch allowClear />
         </Form.Item>
         <Form.Item
-          label={'故障附加数据1'}
+          label={<FormattedMessage id="app.fault.extraData1" />}
           name="preDataDefinition"
           initialValue={updateRecord?.preDataDefinition}
         >
@@ -108,7 +107,7 @@ function AddDefinition(props) {
         </Form.Item>
 
         <Form.Item
-          label={'故障附加数据2'}
+          label={<FormattedMessage id="app.fault.extraData2" />}
           name="curDataDefinition"
           initialValue={updateRecord?.curDataDefinition}
         >
@@ -120,15 +119,15 @@ function AddDefinition(props) {
           name="description"
           initialValue={updateRecord?.description}
         >
-          <Input allowClear />
+          <Input.TextArea allowClear />
         </Form.Item>
 
         <Form.Item
-          label={'额外信息'}
+          label={<FormattedMessage id="app.fault.additionalData" />}
           name="additionalContent"
           initialValue={updateRecord?.additionalContent}
         >
-          <Input allowClear />
+          <Input.TextArea allowClear />
         </Form.Item>
       </Form>
     </Modal>

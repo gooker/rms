@@ -93,4 +93,5 @@ export default {
   'batteryType.enumeration3': '保留',
   'batteryType.enumeration4': '分拣车(磷酸铁锂)',
   'batteryType.enumeration5': '潜伏车1.2吨和料箱机器人(磷酸铁锂)',
+
 };
