@@ -146,7 +146,7 @@ export default connect(({ global }) => ({
 export const TargetSelectorOptions = [
   {
     value: 'CELL',
-    label: 'app.map.cellGroup',
+    label: 'app.map.cell',
   },
   {
     value: 'CELL_GROUP',

@@ -26,7 +26,7 @@ import style from './index.module.less';
 const checkedColor = '#ff8400';
 
 const VehicleImg = {
-  latent: 'latente.png',
+  latent: 'latent.png',
   fork: 'fork.png',
   sorter: 'sorter.png',
 };

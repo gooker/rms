@@ -42,9 +42,7 @@ export default {
   'app.fault.lastReport': '最近上报',
   'app.fault.autoRecover': '自动恢复',
   'app.fault.additionalData': '额外信息',
-  'app.fault.preDataDefinition': '附加数据1',
   'app.fault.extraData1': '附加数据1',
-  'app.fault.curDataDefinition': '附加数据2',
   'app.fault.extraData2': '附加数据2',
 
   // 触发器
