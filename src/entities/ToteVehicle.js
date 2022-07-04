@@ -4,7 +4,6 @@ import BitText from './BitText';
 import { isNull, isStrictNull } from '@/utils/util';
 import { getTextureFromResources, switchVehicleBatteryState, switchVehicleState } from '@/utils/mapUtil';
 import { GlobalAlpha, MonitorSelectableSpriteType, ToteVehicleSize, zIndex } from '@/config/consts';
-import { VehicleType } from '@/config/config';
 
 export default class ToteVehicle extends PIXI.Container {
   constructor(props) {
@@ -13,7 +12,6 @@ export default class ToteVehicle extends PIXI.Container {
     this.id = props.id;
     this.x = props.x;
     this.y = props.y;
-    this.type = VehicleType.Tote;
     this.uniqueId = props.uniqueId;
     this.cullable = true;
     this.vehicleType = props.vehicleType;

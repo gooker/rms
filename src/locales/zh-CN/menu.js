@@ -36,6 +36,7 @@ export default {
   'menu.vehicle.customType': '车辆类型',
   'menu.vehicle.list': '车辆列表',
   'menu.vehicle.faultManagement': '车辆故障查询',
+  'menu.vehicle.faultDefinition': '车辆故障定义',
   'menu.vehicle.realTime': '车辆详情',
   'menu.vehicle.OTA': 'OTA',
 

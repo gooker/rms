@@ -8,6 +8,8 @@ export default {
   'group.modifyPriority': '修改优先级',
   'group.addResourceToGroup': '添加资源到组',
   'group.sourceManage': '资源组管理',
+  'group.sourceManag.add': '创建资源组',
+  'group.sourceManage.message':'请先选择资源',
 
   'resourceGroup.grouping': '分组',
 

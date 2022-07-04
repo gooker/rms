@@ -77,6 +77,18 @@ export default [
         component: '/ResourceManage/Vehicle/VehicleFaultManagement',
         authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
       },
+      {
+        path: `/${AppCode.ResourceManage}/vehicle/faultDefinition`,
+        name: 'faultDefinition',
+        component: '/ResourceManage/Vehicle/VehicleFaultDefinition',
+        authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      },
+      // {
+      //   path: `/${AppCode.ResourceManage}/vehicle/OTA`,
+      //   name: 'OTA',
+      //   component: '/ResourceManage/Vehicle/OTA',
+      //   authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
+      // },
     ],
   },
   {

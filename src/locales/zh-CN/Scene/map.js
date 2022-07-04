@@ -34,7 +34,14 @@ export default {
 
   'app.map.landCell': '物理点位',
   'app.map.naviCell': '导航点位',
-  'app.map.navigation.unrecognizedType': '未识别的导航类型', 
+  'app.map.navigation.unrecognizedType': '未识别的导航类型',
+  'app.map.coordinationType': '坐标系类型',
+  'app.map.coordination.lefthand': '左手坐标系',
+  'app.map.coordination.righthand': '右手坐标系',
+  'app.map.scalingFactor': '缩放系数',
+  'app.map.offsetCompensation': '补偿偏移',
+  'app.map.angleCompensation': '补偿角度',
+  'app.map.save.newMap': '保存为新地图',
 
   // 线条
   'map.cost.green': '绿',

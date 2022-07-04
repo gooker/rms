@@ -1,4 +1,3 @@
-/* TODO: I18N */
 import React, { memo, useState } from 'react';
 import { Checkbox, Col, Form, Input, InputNumber, message, Modal, Row, Select, Upload } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
@@ -174,18 +173,30 @@ const UploadMapModal = (props) => {
 
         {/* 选择牧星地图时候就不需要选择坐标系类型了 */}
         {navigationType !== NavigationType.M_QRCODE && (
-          <Form.Item name={'coordinationType'} label={'坐标系类型'} rules={[{ required: true }]}>
+          <Form.Item
+            name={'coordinationType'}
+            label={formatMessage({ id: 'app.map.coordinationType' })}
+            rules={[{ required: true }]}
+          >
             <Select style={{ width: 200 }}>
-              <Select.Option value={'L'}>左手坐标系</Select.Option>
-              <Select.Option value={'R'}>右手坐标系</Select.Option>
+              <Select.Option value={'L'}>
+                <FormattedMessage id="app.map.coordination.lefthand" />
+              </Select.Option>
+              <Select.Option value={'R'}>
+                <FormattedMessage id="app.map.coordination.righthand" />
+              </Select.Option>
             </Select>
           </Form.Item>
         )}
 
-        <Form.Item name={'zoom'} initialValue={1} label={'缩放系数'}>
+        <Form.Item
+          name={'zoom'}
+          initialValue={1}
+          label={<FormattedMessage id="app.map.scalingFactor" />}
+        >
           <InputNumber />
         </Form.Item>
-        <Form.Item label={'补偿偏移'}>
+        <Form.Item label={<FormattedMessage id="app.map.offsetCompensation" />}>
           <Input.Group>
             <Row gutter={10} style={{ width: '90%' }}>
               <Col span={12}>
@@ -201,7 +212,11 @@ const UploadMapModal = (props) => {
             </Row>
           </Input.Group>
         </Form.Item>
-        <Form.Item name={'compensationAngle'} initialValue={0} label={'补偿角度'}>
+        <Form.Item
+          name={'compensationAngle'}
+          initialValue={0}
+          label={<FormattedMessage id="app.map.angleCompensation" />}
+        >
           <InputNumber addonAfter={'°'} />
         </Form.Item>
         <Form.Item
@@ -210,7 +225,9 @@ const UploadMapModal = (props) => {
           valuePropName="checked"
           {...formItemLayoutNoLabel}
         >
-          <Checkbox>保存为新地图</Checkbox>
+          <Checkbox>
+            <FormattedMessage id="app.map.save.newMap" />
+          </Checkbox>
         </Form.Item>
       </Form>
     </Modal>

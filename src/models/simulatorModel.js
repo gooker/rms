@@ -69,12 +69,16 @@ export default {
           ?.filter(({ isSimulator }) => isSimulator === true)
           .map((item) => ({ ...item, canMove: allVehicleControlState?.[item.vehicleId] }));
 
-          const currentAddVehicle= find(simulatorVehiclelist,{vehicleId:payLoad?.vehicleStatusDTO?.vehicleId});
-          if(isNull(currentAddVehicle)){
-            simulatorVehiclelist.push({
-              ...payLoad,
-            })
-          }
+        const currentAddVehicle = find(simulatorVehiclelist, {
+          vehicleId: payLoad?.vehicleStatusDTO?.vehicleId,
+        });
+        if (isNull(currentAddVehicle)) {
+          simulatorVehiclelist.push({
+            ...payLoad,
+            vehicleId: payLoad?.vehicleStatusDTO?.vehicleId,
+            register: false,
+          });
+        }
 
         yield put({ type: 'saveSimulatorVehicleList', payload: simulatorVehiclelist });
       }
