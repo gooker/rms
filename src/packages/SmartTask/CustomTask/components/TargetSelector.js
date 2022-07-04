@@ -24,8 +24,9 @@ const TargetSelector = (props) => {
   function renderSecondaryOptions() {
     if (currentValue.type) {
       // 如果选择的载具, 则需要与对应的车型进行筛选
-      const isAuto =
+      let isAuto =
         vehicleSelection.type === VehicleOptionType.VEHICLE && vehicleSelection.code.length === 0;
+      isAuto = isAuto || vehicleSelection.type === VehicleOptionType.AUTO;
       if (['LOAD', 'LOAD_GROUP'].includes(currentValue.type) && !isAuto) {
         // 获取分车所支持的所有的载具类型
         let validLoadTypes = [];
@@ -118,7 +119,7 @@ const TargetSelector = (props) => {
       <Space>
         {['CELL', 'ROTATE'].includes(currentValue.type) ? (
           <Select
-            mode='tags'
+            mode="tags"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 300 }}
@@ -126,7 +127,7 @@ const TargetSelector = (props) => {
           />
         ) : (
           <Select
-            mode='multiple'
+            mode="multiple"
             value={currentValue?.code || []}
             onChange={onCodeChange}
             style={{ marginLeft: 10, width: 300 }}

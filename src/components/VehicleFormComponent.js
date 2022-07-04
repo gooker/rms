@@ -1,6 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Form, Input, message, Select } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { debounce } from 'lodash';
+import { formatMessage, isStrictNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 
 const VehicleFormComponent = (props) => {
@@ -18,7 +19,7 @@ const VehicleFormComponent = (props) => {
   function getVehicleType(ev) {
     const vehicleId = ev.target.value;
     const currentVehicleInfo = vehicleList.filter((item) => item.vehicleId === vehicleId);
-    if (currentVehicleInfo?.length === 0) {
+    if (!isStrictNull(vehicleId) && currentVehicleInfo?.length === 0) {
       message.info(formatMessage({ id: 'vehicle.noExist.tip' }, { vehicle: vehicleId }));
     }
     form.setFieldsValue({
@@ -42,7 +43,14 @@ const VehicleFormComponent = (props) => {
         name={'vehicleId'}
         rules={[{ required: true }]}
       >
-        <Input onChange={getVehicleType} style={{ width: '100%' }} />
+        <Input
+          onChange={
+            debounce((value) => {
+            getVehicleType(value);
+          }, 400)
+        }
+          style={{ width: '100%' }}
+        />
       </Form.Item>
 
       <Form.Item

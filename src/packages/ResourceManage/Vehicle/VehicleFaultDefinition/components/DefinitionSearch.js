@@ -5,18 +5,23 @@ import { ReloadOutlined, SearchOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 
 const FaultDefinitionSearch = (props) => {
-  const { onSearch } = props;
+  const { onSearch, data } = props;
   const [form] = Form.useForm();
+  function currentSearch() {
+    form.validateFields().then((values) => {
+      onSearch(data, { ...values });
+    });
+  }
   return (
     <Form form={form}>
       <Row gutter={24}>
         <Col span={6}>
-          <Form.Item label={formatMessage({ id: 'app.fault.name' })} name="name">
+          <Form.Item label={formatMessage({ id: 'app.fault.name' })} name="errorName">
             <Input allowClear />
           </Form.Item>
         </Col>
         <Col span={6}>
-          <Form.Item label={formatMessage({ id: 'app.fault.code' })} name="code">
+          <Form.Item label={formatMessage({ id: 'app.fault.code' })} name="errorCode">
             <Input allowClear />
           </Form.Item>
         </Col>
@@ -27,7 +32,7 @@ const FaultDefinitionSearch = (props) => {
         </Col>
         <Col>
           <Form.Item>
-            <Button type="primary" onClick={onSearch}>
+            <Button type="primary" onClick={currentSearch}>
               <SearchOutlined /> <FormattedMessage id="app.button.search" />
             </Button>
             <Button
