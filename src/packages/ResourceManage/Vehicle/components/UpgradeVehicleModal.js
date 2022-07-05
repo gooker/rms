@@ -1,26 +1,12 @@
-/* TODO: I18N */
-import React, { memo, useState } from 'react';
-import { Button, Form, Modal, Progress, Row, Table, Tag, Typography } from 'antd';
-import {
-  CheckCircleOutlined,
-  CloseCircleOutlined,
-  PlusOutlined,
-  SyncOutlined,
-  UploadOutlined,
-} from '@ant-design/icons';
+import React, { memo } from 'react';
+import { Modal, Progress, Table, Tag, Typography } from 'antd';
+import { CheckCircleOutlined, CloseCircleOutlined, SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
-import UploadHardwareModal from './UploadHardwareModal';
-import CreateUpgradeOrderModal from './CreateUpgradeOrderModal';
-import commonStyle from '@/common.module.less';
 import { VehicleUpgradeState } from '@/packages/ResourceManage/Vehicle/upgradeConst';
 
 const UpgradeVehicleModal = (props) => {
   const { visible, onCancel, upgradeOrder } = props;
-
-  const [formRef] = Form.useForm();
-  const [uploadVisible, setUploadVisible] = useState(false);
-  const [creationVisible, setCreationVisible] = useState(false);
 
   const columns = [
     {
@@ -59,7 +45,7 @@ const UpgradeVehicleModal = (props) => {
       align: 'center',
       render: (text, record) => {
         if (text === VehicleUpgradeState.downloading) {
-          return <Progress type='circle' width={40} percent={getOrderProgress(record)} />;
+          return <Progress type="circle" width={40} percent={getOrderProgress(record)} />;
         } else {
           return <Typography.Link>开始升级</Typography.Link>;
         }
@@ -82,35 +68,35 @@ const UpgradeVehicleModal = (props) => {
           {record.vehicles.map((item) => {
             if (item.state === VehicleUpgradeState.downloading) {
               return (
-                <Tag icon={<SyncOutlined spin />} color='processing'>
+                <Tag icon={<SyncOutlined spin />} color="processing">
                   [{item.id}]: 下载中
                 </Tag>
               );
             }
             if (item.state === VehicleUpgradeState.ready) {
               return (
-                <Tag icon={<CheckCircleOutlined />} color='success'>
+                <Tag icon={<CheckCircleOutlined />} color="success">
                   [{item.id}]: 下载完成
                 </Tag>
               );
             }
             if (item.state === VehicleUpgradeState.downloadFail) {
               return (
-                <Tag icon={<CloseCircleOutlined />} color='error'>
+                <Tag icon={<CloseCircleOutlined />} color="error">
                   [{item.id}]: 下载失败
                 </Tag>
               );
             }
             if (item.state === VehicleUpgradeState.upgradeSuccess) {
               return (
-                <Tag icon={<CheckCircleOutlined />} color='success'>
+                <Tag icon={<CheckCircleOutlined />} color="success">
                   [{item.id}]: 升级成功
                 </Tag>
               );
             }
             if (item.state === VehicleUpgradeState.upgradeFail) {
               return (
-                <Tag icon={<CloseCircleOutlined />} color='error'>
+                <Tag icon={<CloseCircleOutlined />} color="error">
                   [{item.id}]: 升级失败
                 </Tag>
               );
@@ -133,23 +119,6 @@ const UpgradeVehicleModal = (props) => {
         footer={null}
         onCancel={onCancel}
       >
-        <Row className={commonStyle.tableToolLeft} justify={'end'}>
-          <Button
-            onClick={() => {
-              setUploadVisible(true);
-            }}
-          >
-            <UploadOutlined /> 上传固件
-          </Button>
-          <Button
-            type={'primary'}
-            onClick={() => {
-              setCreationVisible(true);
-            }}
-          >
-            <PlusOutlined /> 新建升级批次
-          </Button>
-        </Row>
         <Table
           columns={columns}
           dataSource={upgradeOrder}
@@ -160,23 +129,6 @@ const UpgradeVehicleModal = (props) => {
           }}
         />
       </Modal>
-
-      {/* 上传固件弹窗 */}
-      <UploadHardwareModal
-        visible={uploadVisible}
-        onCancel={() => {
-          setUploadVisible(false);
-        }}
-      />
-
-      {/* 新建升级*/}
-      <CreateUpgradeOrderModal
-        form={formRef}
-        visible={creationVisible}
-        onCancel={() => {
-          setCreationVisible(false);
-        }}
-      />
     </>
   );
 };

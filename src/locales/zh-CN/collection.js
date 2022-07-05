@@ -26,9 +26,16 @@ export default {
 
   // 固件相关
   'hardware.upgrading': '固件升级',
-  'hardware.upload': '上传固件',
+
   'hardware.uploadToServer': '上传车辆固件',
   'hardware.downloadToVehicle': '下载固件到车辆',
+
+  'firmdware.downloadProgress': '下载进度',
+  'firmdware.fileName': '固件',
+  'firmdware.upload': '上传固件',
+  'firmdware.downloadFail': '下载失败',
+  'firmdware.startUpgrade': '开始升级',
+  'firmdware.upgradeTask.add': '新建升级任务',
 
   // 故障相关
   'app.fault.code': '故障码',

@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { DisconnectOutlined, DownloadOutlined, RedoOutlined, RiseOutlined, ScanOutlined } from '@ant-design/icons';
+import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage } from '@/utils/util';
@@ -8,7 +8,6 @@ import { logOutVehicle } from '@/services/resourceService';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
 import { GroupManager, GroupResourceMemberId } from '@/components/ResourceGroup';
-import UpgradeVehicleModal from '../components/UpgradeVehicleModal';
 import commonStyles from '@/common.module.less';
 
 const Colors = Dictionary().color;
@@ -18,8 +17,6 @@ const VehicleListTools = (props) => {
 
   const registerVehicles = allVehicles.filter((item) => item.register);
   const unregisterVehicles = allVehicles.filter((item) => !item.register);
-
-  const [upgradeVisible, setUpgradeVisible] = useState(false);
 
   function renderVehicleIdFilter() {
     return registerVehicles.map(({ vehicleId, vehicleType, id }) => (
@@ -62,17 +59,13 @@ const VehicleListTools = (props) => {
     });
   }
 
-  function upgradeVehicle() {
-    setUpgradeVisible(true);
-  }
-
   return (
     <div>
       <Row className={commonStyles.tableToolLeft} style={{ marginBottom: 0 }}>
         <Form.Item label={formatMessage({ id: 'vehicle.id' })}>
           <Select
             allowClear
-            mode='multiple'
+            mode="multiple"
             style={{ width: 300 }}
             value={searchParams.id}
             onChange={(value) => {
@@ -108,7 +101,7 @@ const VehicleListTools = (props) => {
         <Form.Item label={formatMessage({ id: 'app.vehicleState' })}>
           <Select
             allowClear
-            mode='multiple'
+            mode="multiple"
             style={{ width: 300 }}
             value={searchParams.state}
             onChange={(value) => {
@@ -133,25 +126,23 @@ const VehicleListTools = (props) => {
             }}
             cancelSelection={cancelSelection}
           />
-          <Button onClick={upgradeVehicle}>
-            <RiseOutlined /> <FormattedMessage id='hardware.upgrading' />
-          </Button>
+
           <Button
             onClick={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });
             }}
           >
-            <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
           </Button>
         </Col>
         <Col>
           <Button
-            type='dashed'
+            type="dashed"
             onClick={() => {
               dispatch({ type: 'vehicleList/updateShowRegisterPanel', payload: true });
             }}
           >
-            <ScanOutlined /> <FormattedMessage id='app.vehicle.found' />
+            <ScanOutlined /> <FormattedMessage id="app.vehicle.found" />
             {unregisterVehicles.length > 0 && (
               <span style={{ marginLeft: 5, color: Colors.red, fontWeight: 600 }}>
                 [{unregisterVehicles.length}]
@@ -160,14 +151,6 @@ const VehicleListTools = (props) => {
           </Button>
         </Col>
       </Row>
-
-      {/* 固件升级 */}
-      <UpgradeVehicleModal
-        visible={upgradeVisible}
-        onCancel={() => {
-          setUpgradeVisible(false);
-        }}
-      />
     </div>
   );
 };

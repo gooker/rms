@@ -1,8 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Progress, Tag } from 'antd';
 import { dealResponse, getVehicleStatusTag, isNull } from '@/utils/util';
-import { connect } from '@/utils/RmsDva';
-
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
@@ -10,15 +8,15 @@ import VehicleLogSearch from './component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
 import { fetchAllAdaptor } from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
+// import ViewVehicleLog from './component/ViewVehicleLog';
 
-const VehicleLog = (props) => {
-  const { dispatch, allVehicles, loading } = props;
-
+const VehicleLog = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [dataSource, setDatasource] = useState([]);
   const [allAdaptors, setAllAdaptors] = useState({});
-  const [visible, setVisible] = useState(false);
+  // const [viewing, setViewing] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const columns = [
     {
@@ -38,8 +36,20 @@ const VehicleLog = (props) => {
       render: getVehicleStatusTag,
     },
     {
+      title: <FormattedMessage id="app.vehicleType" />,
+      dataIndex: 'vehicleType',
+      align: 'center',
+      render: (text, record) => {
+        if (text === 3) {
+          return <FormattedMessage id="app.vehicle.threeGenerationOfTianma" />;
+        } else {
+          return <span>{text}</span>;
+        }
+      },
+    },
+    {
       title: <FormattedMessage id="app.logDownload.generateStatus" />,
-      dataIndex: 'generateStatus',
+      dataIndex: 'id',
       align: 'center',
       render: (text, record) => {
         if (text === 1) {
@@ -55,26 +65,12 @@ const VehicleLog = (props) => {
             <span
               className={commonStyles.textLinks}
               onClick={() => {
-                setVisible(true);
+                // setViewing(text);
               }}
             >
               <FormattedMessage id="app.logDownload.generated" />
             </span>
           );
-        }
-      },
-    },
-    {
-      title: <FormattedMessage id="app.vehicleType" />,
-      dataIndex: 'vehicleType',
-      align: 'center',
-      render: (text, record) => {
-        if (record.isSimulator) {
-          return <FormattedMessage id="app.vehicle.simulator" />;
-        } else if (text === 3) {
-          return <FormattedMessage id="app.vehicle.threeGenerationOfTianma" />;
-        } else {
-          return <span>{text}</span>;
         }
       },
     },
@@ -85,15 +81,25 @@ const VehicleLog = (props) => {
   }, []);
 
   async function init() {
+    setLoading(true);
     const [allVehicles, allAdaptors] = await Promise.all([
       fetchAllVehicleList(),
       fetchAllAdaptor(),
     ]);
     if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
-      setDatasource(allVehicles);
+      const newData = []; //TODO: 要返回下载状态
+      allVehicles?.map(({ vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
+        if (vehicle?.register) {
+          newData.push({ ...vehicle, ...vehicleInfo, ...vehicleWorkStatusDTO });
+        }
+      });
+      setDatasource(newData);
       setAllAdaptors(allAdaptors);
-      filterData(allVehicles);
+      filterData(newData);
     }
+    setLoading(false);
+    setSelectedRows([]);
+    setSelectedRowKeys([]);
   }
 
   function filterData(data, searchParams) {
@@ -131,8 +137,10 @@ const VehicleLog = (props) => {
       <VehicleLogSearch
         allData={dataSource}
         onSearch={filterData}
-        refreshLog={init}
+        refreshData={init}
         selectedRows={selectedRows}
+        allAdaptors={allAdaptors}
+        type={'log'}
       />
       <TableWithPages
         loading={loading}
@@ -145,7 +153,16 @@ const VehicleLog = (props) => {
           onChange: onSelectChange,
         }}
       />
+      {/* {!isNull(viewing) && (
+        <ViewVehicleLog
+          visible={!isNull(viewing)}
+          id={viewing}
+          onCancel={() => {
+            setViewing(null);
+          }}
+        />
+      )} */}
     </TablePageWrapper>
   );
 };
-export default connect(() => ({}))(memo(VehicleLog));
+export default memo(VehicleLog);

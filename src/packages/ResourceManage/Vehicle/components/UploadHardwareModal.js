@@ -1,13 +1,15 @@
 import React, { memo } from 'react';
-import { Modal, Upload } from 'antd';
-import { formatMessage } from '@/utils/util';
+import { Form, Modal, Upload } from 'antd';
+import { dealResponse, formatMessage } from '@/utils/util';
 import { InboxOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
+import { uploadVehicleFile } from '@/services/resourceService';
 
 const { Dragger } = Upload;
 
 const UploadHardwareModal = (props) => {
-  const { visible, onCancel } = props;
+  const { visible, onCancel,refreshHardWare } = props;
+  const [formRef] = Form.useForm();
 
   const uploadProps = {
     name: 'file',
@@ -15,23 +17,59 @@ const UploadHardwareModal = (props) => {
     beforeUpload(file) {
       return false;
     },
+    onRemove() {
+      return true;
+    },
   };
+
+  function onSave() {
+    formRef.validateFields().then((values) => {
+      const { file } = values;
+      const reader = new FileReader();
+      reader.readAsText(file[0].originFileObj, 'UTF-8');
+      reader.onload = async (evt) => {
+        try {
+          const fileData = JSON.parse(evt.target.result);
+          const response = await uploadVehicleFile({ file: fileData });
+          if (!dealResponse(response, 1)) {
+            onCancel();
+            refreshHardWare();
+          }
+        } catch (err) {
+          console.log(err);
+        }
+      };
+    });
+  }
 
   return (
     <Modal
-      title={formatMessage({ id: 'hardware.upload' })}
+      title={formatMessage({ id: 'firmdware.upload' })}
       visible={visible}
       closable={false}
       onCancel={onCancel}
+      onOk={onSave}
     >
-      <Dragger {...uploadProps}>
-        <p className='ant-upload-drag-icon'>
-          <InboxOutlined />
-        </p>
-        <p className='ant-upload-text'>
-          <FormattedMessage id='app.message.upload.tip' />
-        </p>
-      </Dragger>
+      <Form form={formRef}>
+        <Form.Item
+          noStyle
+          name="file"
+          valuePropName="fileList"
+          getValueFromEvent={(e) => {
+            return e && e.fileList;
+          }}
+          rules={[{ required: true }]}
+        >
+          <Dragger {...uploadProps}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined />
+            </p>
+            <p className="ant-upload-text">
+              <FormattedMessage id="app.message.upload.tip" />
+            </p>
+          </Dragger>
+        </Form.Item>
+      </Form>
     </Modal>
   );
 };

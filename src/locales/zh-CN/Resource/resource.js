@@ -54,7 +54,7 @@ export default {
   // 设备
   'device.type': '设备类型',
   'device.name': '设备名称',
-  'device.id': '设备Id',
+  'device.id': '设备ID',
   'device.description': '设备描述',
   'device.configInfo': '设备配置信息',
   'device.connectionType': '连接方式',

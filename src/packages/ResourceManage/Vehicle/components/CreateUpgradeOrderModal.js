@@ -1,12 +1,25 @@
-/* TODO: I18N */
 import React, { memo, useEffect } from 'react';
 import { Form, Modal, Select } from 'antd';
-import { connect } from '@/utils/RmsDva';
-import { formatMessage, getFormLayout } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
+import { updateVehicleFirmWareFile } from '@/services/resourceService';
 
 const { formItemLayout } = getFormLayout(4, 18);
 const CreateUpgradeOrderModal = (props) => {
-  const { form, visible, onCancel, allVehicles, upgradeOrder } = props;
+  const { visible, onCancel, upgradeOrder, selectedRows, hardWareData, onRefresh } = props;
+  const [form] = Form.useForm();
+
+  // 取出正在下载固件的小车，不传
+  const vehicleInProgress = [];
+  upgradeOrder?.forEach(({ vehicles }) => {
+    vehicles.forEach((vehicle) => {
+      if (vehicle.state === 'downloading') {
+        vehicleInProgress.push(vehicle.uniqueId);
+      }
+    });
+  });
+  const availableVehicle = selectedRows.filter(
+    (vehicle) => !vehicleInProgress.includes(vehicle.id),
+  );
 
   useEffect(() => {
     if (!visible) {
@@ -14,53 +27,47 @@ const CreateUpgradeOrderModal = (props) => {
     }
   }, [visible]);
 
-  function getAvailableVehicleOptions() {
-    // 取出正在下载固件的小车，不显示在下拉框
-    const vehicleInProgress = [];
-    upgradeOrder.forEach(({ vehicles }) => {
-      vehicles.forEach((vehicle) => {
-        if (vehicle.state === 'downloading') {
-          vehicleInProgress.push(vehicle.uniqueId);
-        }
+  function onSubmit() {
+    form.validateFields().then(async (values) => {
+      const { fileName } = values;
+      const params = [];
+      availableVehicle?.map(({ vehicleId, adapterType }) => {
+        params.push({ vehicleId, adapterType, fileName });
       });
-    });
 
-    const availableVehicle = allVehicles.filter(
-      (vehicle) => !vehicleInProgress.includes(vehicle.id),
-    );
-    return availableVehicle.map(({ id, vehicleId }) => (
-      <Select.Option key={id} value={id}>
-        {vehicleId}
-      </Select.Option>
-    ));
+      const response = await updateVehicleFirmWareFile(params);
+      if (!dealResponse(response, 1)) {
+        onCancel();
+        onRefresh();
+      }
+    });
   }
 
   return (
     <Modal
-      title={formatMessage({ id: 'hardware.upload' })}
+      title={formatMessage({ id: 'firmdware.upload' })}
       visible={visible}
       closable={false}
       maskClosable={false}
       onCancel={onCancel}
+      onOk={onSubmit}
     >
       <Form form={form} {...formItemLayout}>
-        <Form.Item name={'hardware'} label={'固件'} rules={[{ required: true }]}>
+        <Form.Item
+          name={'fileName'}
+          label={formatMessage({ id: 'firmdware.upload' })}
+          rules={[{ required: true }]}
+        >
           <Select>
-            <Select.Option value={'AAA_5.1.1_pom'}>AAA_5.1.1_pom</Select.Option>
-            <Select.Option value={'BBB_5.1.1_pom'}>BBB_5.1.1_pom</Select.Option>
-            <Select.Option value={'CCC_5.1.1_pom'}>CCC_5.1.1_pom</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item name={'vehicles'} label={'车辆'} rules={[{ required: true }]}>
-          <Select mode={'multiple'} maxTagCount={6}>
-            {getAvailableVehicleOptions()}
+            {hardWareData?.map((hardware) => (
+              <Select.Option value={hardware} key={hardware}>
+                {hardware}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
       </Form>
     </Modal>
   );
 };
-export default connect(({ vehicleList }) => ({
-  upgradeOrder: vehicleList.upgradeOrder,
-  allVehicles: vehicleList.allVehicles,
-}))(memo(CreateUpgradeOrderModal));
+export default memo(CreateUpgradeOrderModal);

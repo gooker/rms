@@ -506,3 +506,26 @@ export async function fetchVehicleLogs(param) {
   });
 }
 
+// 上传固件到SFTP
+export async function uploadVehicleFile(param) {
+  return request(`/${NameSpace.Platform}/vehicle/file/upload`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 上传升级固件到小车
+export async function updateVehicleFirmWareFile(param) {
+  return request(`/${NameSpace.Platform}/vehicle/file/uploadFirmwareFile`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 发送升级
+export async function upgradeVehicle(param) {
+  return request(`/${NameSpace.Platform}/vehicle/file/upgradeVehicle`, {
+    method: 'POST',
+    data: param,
+  });
+}

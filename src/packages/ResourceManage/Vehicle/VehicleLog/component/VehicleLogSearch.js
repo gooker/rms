@@ -1,18 +1,18 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DownloadOutlined, RedoOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
-import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
-import { formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleLogDownload from './VehicleLogDownload';
 import commonStyles from '@/common.module.less';
+import { fetchVehicleLogs } from '@/services/resourceService';
 
 const VehicleLogSearch = (props) => {
-  const { onSearch, allData, allAdaptors, refreshLog } = props;
+  const { onSearch, allData, allAdaptors, refreshData, selectedRows, type } = props;
 
   const [form] = Form.useForm();
-  const [visible, setVisible] = useState(false);
+  const [visible, setVisible] = useState(false); // 下载日志
 
   function logSearch() {
     form.validateFields().then((values) => {
@@ -39,6 +39,21 @@ const VehicleLogSearch = (props) => {
 
   function onCancel() {
     setVisible(false);
+  }
+
+  // 日志下载
+  async function onSave(values) {
+    const params = [];
+    const { fileName } = values;
+    selectedRows?.map(({ vehicleId, adapterType }) => {
+      params.push({ vehicleId, adapterType, fileName });
+    });
+
+    const response = await fetchVehicleLogs(params);
+    if (!dealResponse(response, 1)) {
+      onCancel();
+      refreshData();
+    }
   }
 
   return (
@@ -85,25 +100,28 @@ const VehicleLogSearch = (props) => {
           </Button>
         </Form.Item>
       </Row>
-      <Row justify={'space-between'}>
-        <Col className={commonStyles.tableToolLeft}>
-          <Button
-            type="primary"
-            onClick={() => {
-              setVisible(true);
-            }}
-          >
-            <DownloadOutlined /> <FormattedMessage id="app.logDownload" />
-          </Button>
-          <Button onClick={refreshLog}>
-            <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
-          </Button>
-        </Col>
-      </Row>
-      <VehicleLogDownload onCancel={onCancel} visible={visible}/>
+      {type === 'log' && (
+        <Row justify={'space-between'}>
+          <Col className={commonStyles.tableToolLeft}>
+            <Button
+              type="primary"
+              onClick={() => {
+                setVisible(true);
+              }}
+            >
+              <DownloadOutlined /> <FormattedMessage id="app.logDownload" />
+            </Button>
+
+            <Button onClick={refreshData}>
+              <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
+            </Button>
+          </Col>
+        </Row>
+      )}
+
+      {/* 日志下载 */}
+      <VehicleLogDownload onCancel={onCancel} visible={visible} onSubmit={onSave} />
     </Form>
   );
 };
-export default connect(({ vehicleList }) => ({
-  allAdaptors: vehicleList.allAdaptors,
-}))(memo(VehicleLogSearch));
+export default memo(VehicleLogSearch);
