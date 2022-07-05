@@ -7,7 +7,6 @@ import {
   fetchCloseVehicle,
   fetchOpenVehicle,
   fetchRunVehicle,
-  fetchSimulatorErrorMessage,
   fetchStopVehicle,
   openSimulator,
 } from '@/services/monitorService';
@@ -18,7 +17,6 @@ import AddSimulatorVehicle from '../Modal/Simulator/AddSimulatorVehicle';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
 import SimulatorError from '../Modal/Simulator/SimulatorError';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
-import { VehicleType } from '@/config/config';
 import styles from '@/packages/Scene/popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 import simulatorStyle from './simulator.module.less';
@@ -45,18 +43,8 @@ const SimulatorPanel = (props) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(() => {
-    init();
-  }, []);
-
-  useEffect(() => {
     setVehicleAdapter(Object.values(allAdaptors)?.[0]?.adapterType?.id);
-  }, [allAdaptors]);
-
-  function init() {
-    dispatch({ type: 'simulator/fetchAllAdaptors' });
-    dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
-    // dispatch({ type: 'simulator/fetchSimulatorHistory' });
-  }
+  }, []);
 
   const columns = [
     {
@@ -83,51 +71,18 @@ const SimulatorPanel = (props) => {
         }
         return (
           <Tag>
-            <FormattedMessage id="app.common.false" />
+            <FormattedMessage id='app.common.false' />
           </Tag>
         );
       },
     },
-    // {
-    //   title: formatMessage({ id: 'monitor.simulator.list.movable' }),
-    //   dataIndex: 'canMove',
-    //   align: 'center',
-    //   render: (text, record) => (
-    //     <Switch
-    //       checked={text || false}
-    //       onChange={(checked) => {
-    //         changeVehicleRunTask(record.vehicleId, checked);
-    //       }}
-    //     />
-    //   ),
-    // },
   ];
 
-  const expandColumns = [
-    {
-      title: formatMessage({ id: 'monitor.simulator.list.snapStop' }),
-      dataIndex: 'isStop',
-      align: 'center',
-      render: (text) => {
-        if (text) {
-          return formatMessage({ id: 'monitor.simulator.list.snapStop' });
-        }
-        return formatMessage({ id: 'app.common.normal' });
-      },
-    },
-    {
-      title: formatMessage({ id: 'app.common.status' }),
-      dataIndex: 'isOpen',
-      align: 'center',
-      render: (text, record) => {
-        const { isOpen } = record;
-        if (isOpen) {
-          return formatMessage({ id: 'monitor.simulator.action.bootUp' });
-        }
-        return formatMessage({ id: 'monitor.simulator.action.shutDown' });
-      },
-    },
-  ];
+  function refresh() {
+    // 刷新模拟器开启状态
+    // 刷新adapter数据
+    // 刷新小车列表数据
+  }
 
   // 开启 & 关闭模拟器
   async function changeSimulatorStatus(status) {
@@ -142,19 +97,6 @@ const SimulatorPanel = (props) => {
         return false;
       }
     }
-
-    init();
-  }
-
-  function changeVehicleRunTask(vehicleId, checked) {
-    const params = {
-      vehicleId: `${vehicleId}`,
-      logicId: currentLogicArea,
-      runTask: checked,
-    };
-    fetchSimulatorErrorMessage(params).then(() => {
-      dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
-    });
   }
 
   function vehicleOperate(api, successMes, failedMes) {
@@ -169,7 +111,6 @@ const SimulatorPanel = (props) => {
       .then(() => {
         message.success(currentMessage);
         setSelectedRowKeys([]);
-        dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
       })
       .catch(() => {
         message.error(failMessage);
@@ -239,10 +180,6 @@ const SimulatorPanel = (props) => {
                     type: 'simulator/fetchAddSimulatorVehicle',
                     payload: { ...value },
                   }).then(() => {
-                    dispatch({
-                      type: 'simulator/fetchSimulatorLoginVehicle',
-                      payload: { ...value },
-                    });
                     setAddVisit(false);
                   });
                 }}
@@ -277,7 +214,7 @@ const SimulatorPanel = (props) => {
                   <span style={{ marginLeft: 10 }}>{simulatorHistory.updatedByUser}</span>
                 </span>
                 <span style={{ margin: '3px 0 0 15px', color: '#fff', cursor: 'pointer' }}>
-                  <ReloadOutlined onClick={init} />
+                  <ReloadOutlined onClick={refresh} />
                 </span>
               </div>
             </div>
@@ -361,7 +298,6 @@ const SimulatorPanel = (props) => {
                   }).then((result) => {
                     if (result) {
                       setSelectedRowKeys([]);
-                      dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
                     }
                   });
                 }}
@@ -441,7 +377,7 @@ const SimulatorPanel = (props) => {
                 size={size}
                 allowClear
                 showSearch
-                mode="multiple"
+                mode='multiple'
                 maxTagCount={4}
                 style={{ width: '100%', marginBottom: 10 }}
                 value={selectedRowKeys}
@@ -449,19 +385,20 @@ const SimulatorPanel = (props) => {
                   setSelectedRowKeys(value);
                 }}
               >
-                {simulatorVehicleList?.filter(({register})=>register).map(({ vehicleId }) => {
-                  return (
-                    <Select.Option value={vehicleId} key={vehicleId}>
-                      {vehicleId}
-                    </Select.Option>
-                  );
-                })}
+                {simulatorVehicleList
+                  ?.filter(({ register }) => register)
+                  .map(({ vehicleId }) => {
+                    return (
+                      <Select.Option value={vehicleId} key={vehicleId}>
+                        {vehicleId}
+                      </Select.Option>
+                    );
+                  })}
               </Select>
               <TableWithPages
                 bordered
                 size={size}
                 columns={columns}
-                // expandColumns={expandColumns}
                 dataSource={simulatorVehicleList}
                 rowKey={(record) => record.vehicleId}
                 rowSelection={{
@@ -483,9 +420,9 @@ const SimulatorPanel = (props) => {
   );
 };
 export default connect(({ global, simulator, loading, monitor }) => ({
+  allAdaptors: global.allAdaptors,
   vehicleTypes: global.allVehicleTypes,
   currentLogicArea: monitor.currentLogicArea,
   simulatorVehicleList: simulator.simulatorVehicleList,
   simulatorHistory: simulator.simulatorHistory,
-  allAdaptors: simulator.allAdaptors,
 }))(memo(SimulatorPanel));

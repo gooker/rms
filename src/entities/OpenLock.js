@@ -1,121 +1,88 @@
 import * as PIXI from 'pixi.js';
 import BitText from './BitText';
-import { isNull } from '@/utils/util';
+import { angleToRad, isNull, radToAngle } from '@/utils/util';
 import { GlobalAlpha } from '@/config/consts';
+import { convertAngleToPixiAngle } from '@/utils/mapUtil';
 
 export default class OpenLock extends PIXI.Container {
   constructor(props) {
     super();
     this.x = props.x;
     this.y = props.y;
-    this.vehicleId = props.vehicleId;
-    this.openAngle = props.openAngle;
-    this.color = props.color;
-    this.radius = props.radius;
-    this.boxType = props.boxType;
-    this.boxAction = props.boxAction;
-    this.cullable = true;
-    this.alpha = GlobalAlpha;
     this.$width = props.width;
     this.$height = props.height;
+    this.alpha = GlobalAlpha;
+    this.vehicleId = props.vehicleId;
+    this.mathOpenAngle = props.openAngle;
+    this.openAngle = convertAngleToPixiAngle(props.openAngle);
+    this.color = props.color;
+    this.radius = props.radius;
+    this.boxAction = props.boxAction;
+    this.cullable = true;
+
+    // 开口圆的张角弧度
+    this.sectorRad = Math.PI / 2 - Math.acos(this.$width / (2 * this.radius));
 
     this.drawShape();
     !isNull(this.vehicleId) && this.addVehicleId();
   }
 
-  getRadBase(dx, dy) {
-    // 标准坐标系,顺时针方向累计角度
-    const dz = Math.sqrt(Math.abs(dx) ** 2 + Math.abs(dy) ** 2);
-
-    // 第四象限
-    let angle = Math.floor(180 / (Math.PI / Math.acos(Math.abs(dx) / dz)));
-
-    // 第一象限
-    if (dx > 0 && dy > 0) {
-      angle = 360 - angle;
+  getPoint(angle) {
+    // 因为cos和sin的值正负是基于数学坐标系，不能直接用到pixi坐标系中
+    const x = Math.abs(Math.cos(angleToRad(angle)) * this.radius);
+    const y = Math.abs(Math.sin(angleToRad(angle)) * this.radius);
+    if (angle >= 0 && angle < 90) {
+      return { x, y: -y };
+    } else if (angle >= 90 && angle < 180) {
+      return { x, y };
+    } else if (angle >= 180 && angle < 270) {
+      return { x: -x, y };
+    } else {
+      return { x: -x, y: -y };
     }
-
-    // 第二象限
-    if (dx < 0 && dy > 0) {
-      angle = 180 + angle;
-    }
-
-    // 第三象限
-    if (dx < 0 && dy < 0) {
-      angle = 180 - angle;
-    }
-
-    return angle / 180;
   }
 
-  getStartAndEnd() {
-    const result = {};
-    switch (parseInt(this.openAngle, 10)) {
-      case 0:
-        result.startX = this.$width / 2;
-        result.startY = this.$height / 2;
-        result.endX = -this.$width / 2;
-        result.endY = this.$height / 2;
-        break;
-      case 90:
-        result.startX = this.$width / 2;
-        result.startY = -this.$height / 2;
-        result.endX = this.$width / 2;
-        result.endY = this.$height / 2;
-        break;
-      case 180:
-        result.startX = -this.$width / 2;
-        result.startY = -this.$height / 2;
-        result.endX = this.$width / 2;
-        result.endY = -this.$height / 2;
-        break;
-      case 270:
-        result.startX = -this.$width / 2;
-        result.startY = this.$height / 2;
-        result.endX = -this.$width / 2;
-        result.endY = -this.$height / 2;
-        break;
-      default:
-        break;
+  getStartAndEndPoint() {
+    const sectorAngle = Math.round(radToAngle(this.sectorRad));
+    const startPoint = this.getPoint(this.openAngle + sectorAngle);
+    const endPoint = this.getPoint(this.openAngle - sectorAngle);
+    return { startPoint, endPoint };
+  }
+
+  getStartAndEndRad() {
+    const start = angleToRad(this.mathOpenAngle) + this.sectorRad;
+    let end = angleToRad(this.mathOpenAngle) - this.sectorRad;
+    if (end < 0) {
+      end = 2 * Math.PI + end;
+    }
+    return { start, end };
+  }
+
+  radFlipX(rad) {
+    let result = Math.PI * 2 - rad;
+    if (result === 360) {
+      return 0;
     }
     return result;
   }
 
   drawShape() {
-    let outRadius = Math.sqrt(this.$width * this.$width + this.$height * this.$height) / 2 + 6;
-    outRadius = Number.parseFloat(outRadius.toFixed(3));
+    const { start, end } = this.getStartAndEndRad();
+    const circlePainter = new PIXI.Graphics();
+    circlePainter.lineStyle(30, this.color, 1);
+    // true -> 逆时针绘制。实际上标准坐标系里弧度的增长方向就是逆时针，所以这里使用true
+    // 但是蛋疼的是，pixi标系里弧度的增长方向是顺时针，所以需要转换一下
+    circlePainter.arc(0, 0, this.radius, this.radFlipX(start), this.radFlipX(end), true);
 
-    // 画内矩形
-    const reactPainter = new PIXI.Graphics();
-    reactPainter.lineStyle(30, this.color, 1);
-    const rect = reactPainter.drawRect(0, 0, this.$width, this.$height);
-    rect.position.x = this.width / 2 - rect.width / 2 + 15;
-    rect.position.y = this.height / 2 - rect.height / 2 + 15;
-    this.addChild(rect);
-
-    // 画外圆
-    const { startX, startY, endX, endY } = this.getStartAndEnd();
-    if (startX && startY && endX && endY) {
-      const circlePainter = new PIXI.Graphics();
-      circlePainter.lineStyle(30, this.color, 1);
-      const openCircle = circlePainter.arc(
-        0,
-        0,
-        outRadius,
-        this.getRadBase(startX, startY) * Math.PI,
-        this.getRadBase(endX, endY) * Math.PI,
-      );
-      this.addChild(openCircle);
-    } else {
-      // eslint-disable-next-line no-console
-      console.warn(`Open Angle invaliable: ${this.openAngle}`);
-    }
+    // 开口圆封口线
+    const { startPoint, endPoint } = this.getStartAndEndPoint();
+    circlePainter.moveTo(startPoint.x, startPoint.y);
+    circlePainter.lineTo(endPoint.x, endPoint.y);
+    this.addChild(circlePainter);
   }
 
   addVehicleId() {
-    const width = -this.$width / 2 + 30;
-    const height = this.$height / 2 - 20;
-    this.vehicleIdText = new BitText(this.vehicleId, width + 20, height - 40, this.color, 70);
+    this.vehicleIdText = new BitText(this.vehicleId, -this.$width / 3, 0, this.color, 70);
     this.vehicleIdText.anchor.set(0.5);
     this.vehicleIdText.angle = -this.angle;
     this.addChild(this.vehicleIdText);

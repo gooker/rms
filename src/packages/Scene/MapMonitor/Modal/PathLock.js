@@ -31,16 +31,16 @@ const PathLock = (props) => {
   }
 
   function onValuesChange(changedValues) {
-    const currentkey = Object.keys(changedValues)[0];
+    const currentKey = Object.keys(changedValues)[0];
     const currentValue = Object.values(changedValues)[0];
-    if (['showRoute', 'showFullPath', 'showTargetLine'].includes(currentkey)) {
+    if (['showRoute', 'showFullPath', 'showTargetLine'].includes(currentKey)) {
       dispatch({
         type: 'monitorView/saveRouteView',
         payload: {
-          [currentkey]: currentValue,
+          [currentKey]: currentValue,
         },
       });
-      if (currentkey === 'showRoute') {
+      if (currentKey === 'showRoute') {
         showRoutePollingCallback(false);
         if (currentValue) {
           showRoutePollingCallback(true);
@@ -57,11 +57,11 @@ const PathLock = (props) => {
       payload: { selectVehicle: changedIdList },
     });
     // 更新地图锁格显示
-    lockcellPollingCallback(false);
+    vehicleLockPollingCallback(false);
     showRoutePollingCallback(false);
 
     if (changedIdList.length > 0) {
-      lockcellPollingCallback(vehicleLockView.showLockCellPolling, changedIdList);
+      vehicleLockPollingCallback(vehicleLockView.showLockCellPolling, changedIdList);
       showRoutePollingCallback(routeView.showRoute, changedIdList);
     } else {
       mapContext.clearAllLocks(); // 清理锁格
@@ -80,7 +80,7 @@ const PathLock = (props) => {
     });
   }
 
-  // 显示锁格-刷新
+  /********************** 显示小车锁格  ********************/
   function refreshMapVehicleLock() {
     const selectedIds = form.getFieldValue('selectVehicle');
     if (selectedIds.length === 0) {
@@ -93,7 +93,7 @@ const PathLock = (props) => {
         payload: selectedIds,
       }).then((response) => {
         if (!dealResponse(response, null, formatMessage({ id: 'monitor.tip.fetchLockFail' }))) {
-          mapContext.renderLockCell(response);
+          mapContext.renderVehicleLocks(response);
         }
       });
     } else {
@@ -101,53 +101,54 @@ const PathLock = (props) => {
     }
   }
 
-  // 点位锁格-自动刷新
   function switchLockCellPolling(checked) {
-    lockcellPollingCallback(checked);
+    vehicleLockPollingCallback(checked);
     dispatch({
       type: 'monitorView/saveVehicleLockView',
       payload: { showLockCellPolling: checked },
     });
   }
 
-  // start 轮询显示锁格
-  function lockcellPollingCallback(flag, vehicles) {
+  function vehicleLockPollingCallback(flag, vehicles) {
     const allVehicles = vehicles || selectVehicle;
     if (flag && allVehicles?.length > 0) {
-      openLockcellPolling(allVehicles);
+      openVehicleLockPolling(allVehicles);
     } else {
-      closeLockcellPolling();
+      closeVehicleLockPolling();
     }
   }
 
-  function openLockcellPolling(ids) {
+  function openVehicleLockPolling(ids) {
     LockCellPolling.start({ logicId: currentLogicAreaId, ids }, (response) => {
-      props?.mapContext?.renderLockCell(response);
+      props?.mapContext?.renderVehicleLocks(response);
     });
   }
 
-  function closeLockcellPolling() {
+  function closeVehicleLockPolling() {
     mapContext.clearAllLocks(); // 清理锁格
     LockCellPolling.terminate();
   }
-  //end 显示锁格
 
-  /*****start 显示路径**/
+  /********************** END: 显示小车锁格  ********************/
+
+  /********************** 显示小车路径  ********************/
   function showRoutePollingCallback(flag, ids) {
     dispatch({
       type: 'monitorView/routePolling',
       payload: { flag, ids },
     });
   }
-  /*****end*****/
 
+  /********************** END: 显示小车路径  ********************/
+
+  /********************** 显示点位锁格  ********************/
   function switchCellLock(checked) {
     dispatch({
       type: 'monitorView/saveViewState',
       payload: { showCellLock: checked },
     });
   }
-  // 点位锁格-点击刷新
+
   async function viewCellLocker() {
     const cellId = form.getFieldValue('cellIdForLock');
     if (!isNull(cellId)) {
@@ -162,6 +163,8 @@ const PathLock = (props) => {
     }
   }
 
+  /********************** END: 显示点位锁格  ********************/
+
   // 逻辑区路径锁格
   function switchLogicLockedCells(checked) {
     dispatch({
@@ -174,7 +177,7 @@ const PathLock = (props) => {
   async function viewLogicLocked() {
     const response = await fetchLogicAllVehicleLocks(currentLogicAreaId);
     if (!dealResponse(response)) {
-      mapContext?.renderLockCell(response);
+      mapContext?.renderVehicleLocks(response);
     }
   }
 

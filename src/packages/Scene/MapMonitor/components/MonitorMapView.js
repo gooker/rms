@@ -1107,23 +1107,26 @@ class MonitorMapView extends BaseMap {
   };
 
   // ************************ 渲染小车锁格 ********************** //
-  renderLockCell = (inputData) => {
+  renderVehicleLocks = (inputData) => {
     const { allVehicles } = window.$$state().monitor;
     // 清除所有的几何锁
     this.clearAllLocks();
 
-    // 渲染新的所有指定类型的锁
+    /**
+     * 渲染新的所有指定类型的锁
+     * lockLevel 为 BODY 表示是车锁
+     */
     inputData.forEach((lockData) => {
       const {
-        geoModel: {
-          angle,
-          dimension,
-          position: { x, y },
-        },
+        vehicleId,
+        boxType,
+        lockLevel,
+        openAngle,
+        geoModel: { angle, dimension, position },
       } = lockData;
-      // 更新位置
+      // TODO: 锁格数据需要包含小车的导航类型
       const navigationType = NavigationType.M_QRCODE;
-      const currentPosition = coordinateTransformer({ x, y }, navigationType);
+      const currentPosition = coordinateTransformer(position, navigationType);
       const { width, height } = getLockCellBounds(dimension);
       // 校验锁格数据，尤其是宽高
       if (!height || !width) {
@@ -1137,19 +1140,20 @@ class MonitorMapView extends BaseMap {
         );
       }
 
-      const color = GeoLockColor['PATH'];
-      let geoLock;
       const currentLockData = {
-        ...lockData,
         ...currentPosition,
-        ...dimension,
+        boxType,
         width,
         height,
+        openAngle,
         angle: convertAngleToPixiAngle(angle),
-        uniqueId: lockData.vehicleId,
+        radius: dimension.radius,
         vehicleId: find(allVehicles, { uniqueId: lockData.vehicleId })?.vehicleId,
+        uniqueId: vehicleId,
       };
-      if (lockData.boxType === 'GOTO_ROTATING') {
+      let geoLock;
+      const color = GeoLockColor['PATH'];
+      if (boxType === 'GOTO_ROTATING') {
         geoLock = new OpenLock({ ...currentLockData, color });
       } else {
         geoLock = new GeoLock({ ...currentLockData, color });
@@ -1195,8 +1199,8 @@ class MonitorMapView extends BaseMap {
 
     const navigationType = NavigationType['M_QRCODE'];
     const currentPosition = coordinateTransformer({ x, y }, navigationType);
-
     const { width, height } = getLockCellBounds(dimension);
+
     // 渲染新的所有指定类型的锁
     // 校验锁格数据，尤其是宽高
     if (!height || !width) {
@@ -1563,8 +1567,9 @@ class MonitorMapView extends BaseMap {
     data.forEach((item) => {
       const { cellId, x, y, heat } = item;
       const textureName = PIXI.utils.TextureCache[`_cellHeat${heat}`];
-      const exsitCellHeat = this.cellHeatMap.get(`${cellId}`);
-      if (exsitCellHeat) {
+      const existCellHeat = this.cellHeatMap.get(`${cellId}`);
+      if (existCellHeat) {
+        // eslint-disable-next-line no-console
         console.log(`本次刷新出现重复数据: Cell: ${cellId}, Cost: ${heat}, X: ${x}, Y:${y}`);
       }
       if (textureName) {

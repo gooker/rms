@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { ConfigProvider, message } from 'antd';
+import { ConfigProvider, message, Modal } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import MainLayout from '@/layout/MainLayout';
 import Loadable from '@/components/Loadable';
@@ -8,7 +8,6 @@ import requestAPI from '@/utils/requestAPI';
 import { initI18NWithoutRemote } from '@/utils/init';
 import { openDB, selectAllDB } from '@/utils/IndexDBUtil';
 import { extractNameSpaceInfoFromEnvs, formatMessage, getPlateFormType, isNull } from '@/utils/util';
-import { Modal } from 'antd';
 
 @connect(({ global }) => ({ antdLocale: global.antdLocale }))
 class App extends Component {

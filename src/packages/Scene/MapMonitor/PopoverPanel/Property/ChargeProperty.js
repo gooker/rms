@@ -6,7 +6,7 @@ import { withRouter } from 'react-router-dom';
 import FormattedMessage from '@/components/FormattedMessage';
 import { IconFont } from '@/components/IconFont';
 import { clearChargerFault, resetCharger } from '@/services/XIHEService';
-import { fetchChargeByCode, fetchChargerList, handleleChargers } from '@/services/resourceService';
+import { fetchChargeByCode, fetchChargerList, operateChargers } from '@/services/resourceService';
 import { dealResponse, formatMessage, getSuffix, isNull, isStrictNull } from '@/utils/util';
 import LabelColComponent from '@/components/LabelColComponent';
 import { ChargerStatus } from '@/packages/ResourceManage/Charger/components/chargeConfig';
@@ -53,7 +53,7 @@ const ChargeProperty = (props) => {
       ids: [currentId],
     };
 
-    const response = await handleleChargers(requestParam);
+    const response = await operateChargers(requestParam);
     if (!dealResponse(response)) {
       mapContext.updateChargerHardware(data.name, chargerInfo.chargerId, chargerInfo.id);
       await fetchgChargeInfo();
@@ -62,7 +62,7 @@ const ChargeProperty = (props) => {
 
   // 启用/禁用
   async function switchChargerEnable() {
-    const response = await handleleChargers({
+    const response = await operateChargers({
       updateType: !chargerInfo.disabled ? 'DISABLE' : 'ENABLE',
       ids: [chargerInfo?.id],
     });

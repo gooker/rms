@@ -9,15 +9,14 @@ import { AlertCountPolling } from '@/workers/WebWorkerManager';
 import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
+import { initI18n } from '@/utils/init';
 import { loadTexturesForMap } from '@/utils/textures';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
 import { fetchAllPrograming } from '@/services/XIHEService';
-import { fetchAllAdaptor } from '@/services/resourceService';
+import { fetchAllAdaptor, fetchResourceGroupType } from '@/services/resourceService';
 import { fetchCustomParamType, fetchGetProblemDetail } from '@/services/commonService';
 import { fetchTaskTypes } from '@/services/taskService';
-import { initI18n } from '@/utils/init';
-import { fetchResourceGroupType } from '@/services/resourceManageAPI';
 
 @withRouter
 @connect(({ global, user }) => ({

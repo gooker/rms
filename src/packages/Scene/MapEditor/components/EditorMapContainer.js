@@ -121,13 +121,16 @@ const EditorMapContainer = (props) => {
   }, [mapRatio]);
 
   const doClampZoom = useCallback(
-    function () {
+    function() {
       const { viewport } = mapContext.pixiUtils;
       const minMapRatio = mapContext.clampZoom(viewport, 'EDITOR_MAP');
       dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
     },
     [mapContext],
   );
+
+  function avoidOffClient() {
+  }
 
   /**
    * 点位定位基于左手坐标系

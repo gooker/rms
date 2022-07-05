@@ -1,6 +1,6 @@
-import { fetchAllAdaptor, fetchAllVehicle } from '@/services/resourceService';
+import { fetchAllAdaptor } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
-import { UpgradeOrderDatasource } from '@/mockData';
+import { fetchAllVehicleList } from '@/services/commonService';
 
 export default {
   namespace: 'vehicleList',
@@ -13,12 +13,15 @@ export default {
 
     allAdaptors: {},
     allVehicles: [],
-    upgradeOrder: [...UpgradeOrderDatasource],
+    upgradeOrder: [],
   },
 
   effects: {
     *fetchInitialData(_, { put }) {
-      const [allVehicles, allAdaptors] = yield Promise.all([fetchAllVehicle(), fetchAllAdaptor()]);
+      const [allVehicles, allAdaptors] = yield Promise.all([
+        fetchAllVehicleList(),
+        fetchAllAdaptor(),
+      ]);
       if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
         yield put({ type: 'saveState', payload: { allVehicles, allAdaptors } });
       }

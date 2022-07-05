@@ -5,18 +5,19 @@ import { GlobalAlpha } from '@/config/consts';
 export default class GeoLock extends PIXI.Sprite {
   constructor(props) {
     super();
+    this.cullable = true;
+    this.alpha = GlobalAlpha;
+
     this.x = props.x;
     this.y = props.y;
+    this.angle = props.angle;
     this.vehicleId = props.vehicleId;
     this.$width = props.width;
     this.$height = props.height;
-    this.angle = props.angle;
     this.color = props.color;
-    this.cullable = true;
     this.radius = props.radius;
     this.boxType = props.boxType;
     this.boxAction = props.boxAction;
-    this.alpha = GlobalAlpha;
     this.anchor.set(0.5);
 
     this.drawShape();

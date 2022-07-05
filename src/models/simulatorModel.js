@@ -1,14 +1,12 @@
 import {
   fetchBatchDeleteSimulatorVehicle,
-  fetchSimulatorVehicleConfig,
   fetchSimulatorHistory,
-  fetchSimulatorLoginVehicleControlState,
+  fetchSimulatorVehicleConfig,
   fetchUpdateVehicleConfig,
 } from '@/services/monitorService';
-import { fetchAllAdaptor, fetchAllVehicle, findVehicle } from '@/services/resourceService';
+import { fetchAllAdaptor, findVehicle } from '@/services/resourceService';
 import { dealResponse } from '@/utils/util';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { find, isNull } from 'lodash';
 
 export default {
   namespace: 'simulator',
@@ -56,31 +54,6 @@ export default {
           type: 'saveSimulatorHistory',
           payload: response,
         });
-      }
-    },
-
-    *fetchSimulatorLoginVehicle({ payLoad }, { call, put }) {
-      // const allVehicles = yield put.resolve({ type: 'monitor/refreshAllVehicleList' });
-      const allVehicles = yield call(fetchAllVehicle);
-      // 获取Coordinator所有的小车控制状态信息
-      const allVehicleControlState = yield call(fetchSimulatorLoginVehicleControlState);
-      if (!dealResponse(allVehicles)) {
-        const simulatorVehiclelist = allVehicles
-          ?.filter(({ isSimulator }) => isSimulator === true)
-          .map((item) => ({ ...item, canMove: allVehicleControlState?.[item.vehicleId] }));
-
-        const currentAddVehicle = find(simulatorVehiclelist, {
-          vehicleId: payLoad?.vehicleStatusDTO?.vehicleId,
-        });
-        if (isNull(currentAddVehicle)) {
-          simulatorVehiclelist.push({
-            ...payLoad,
-            vehicleId: payLoad?.vehicleStatusDTO?.vehicleId,
-            register: false,
-          });
-        }
-
-        yield put({ type: 'saveSimulatorVehicleList', payload: simulatorVehiclelist });
       }
     },
 

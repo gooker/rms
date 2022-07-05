@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { handleleChargers } from '@/services/resourceService';
+import { operateChargers } from '@/services/resourceService';
 import { dealResponse, formatMessage } from '@/utils/util';
 import RmsConfirm from '@/components/RmsConfirm';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -47,7 +47,7 @@ const ChargerListTools = (props) => {
     RmsConfirm({
       content: formatMessage({ id: 'app.message.doubleConfirm' }),
       onOk: async () => {
-        const response = await handleleChargers(params);
+        const response = await operateChargers(params);
         if (!dealResponse(response, 1)) {
           dispatch({ type: 'chargerList/fetchInitialData' });
         }
