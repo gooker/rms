@@ -24,20 +24,27 @@ const CarryPod = (props) => {
       .validateFields()
       .then((values) => {
         setExecuting(true);
-        fetchPodToCell({ ...values }).then((response) => {
-          if (
-            !dealResponse(response, true, formatMessage({ id: 'app.message.sendCommandSuccess' }))
-          ) {
-            close();
-          }
-        });
-        setExecuting(false);
+        fetchPodToCell({ ...values })
+          .then((response) => {
+            if (
+              !dealResponse(
+                response,
+                formatMessage({ id: 'app.message.sendCommandSuccess' }),
+                formatMessage({ id: 'app.message.sendCommandFailed' }),
+              )
+            ) {
+              close();
+            }
+          })
+          .finally(() => {
+            setExecuting(false);
+          });
       })
       .catch(() => {});
   }
 
   return (
-    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.carry'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -48,7 +55,7 @@ const CarryPod = (props) => {
           <Form.Item
             {...formItemLayout}
             name={'loadId'}
-            label={formatMessage({ id: 'object.load' })}
+            label={formatMessage({ id: 'resource.load.id' })}
             rules={[{ required: true }]}
           >
             <InputNumber style={{ width: '80%' }} />

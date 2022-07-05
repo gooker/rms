@@ -11,7 +11,7 @@ import styles from '../monitorLayout.module.less';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(6, 16);
 
-const ToRest = (props) => {
+const GoParking = (props) => {
   const { dispatch, allVehicles } = props;
   const [formRef] = Form.useForm();
   const [executing, setExecuting] = useState(false);
@@ -39,16 +39,16 @@ const ToRest = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(400, 240)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id={'monitor.goRest.toRestArea'} />
+        <FormattedMessage id={'monitor.right.goPark'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>
         <Form form={formRef} {...formItemLayout}>
           <VehicleFormComponent form={formRef} />
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button onClick={charge} loading={executing} disabled={executing} type="primary">
+            <Button onClick={charge} loading={executing} disabled={executing} type='primary'>
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>
@@ -59,4 +59,4 @@ const ToRest = (props) => {
 };
 export default connect(({ monitor }) => ({
   allVehicles: monitor.allVehicles,
-}))(memo(ToRest));
+}))(memo(GoParking));

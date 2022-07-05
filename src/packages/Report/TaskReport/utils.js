@@ -2,14 +2,14 @@ import sortBy from 'lodash/sortBy';
 import Enum from './enum';
 
 export const TaskTyps = [
-  { label: '所有类型', value: 'ALL' },
-  { label: '空跑', value: 'EMPTY_RUN' },
-  { label: '充电', value: 'CHARGE_RUN' },
-  { label: '回休息区', value: 'REST_UNDER_POD' },
-  { label: '搬运货架', value: 'CARRY_POD_TO_CELL' },
-  { label: '工作站任务', value: 'CARRY_POD_TO_STATION' },
-  { label: '高级搬运任务', value: 'SUPER_CARRY_POD_TO_CELL' },
-  { label: '重车回存储区', value: 'HEARVY_CARRY_POD_TO_STORE' },
+  // { label: '所有类型', value: 'ALL' },
+  // { label: '空跑', value: 'EMPTY_RUN' },
+  // { label: '充电', value: 'CHARGE_RUN' },
+  // { label: '回休息区', value: 'REST_UNDER_POD' },
+  // { label: '搬运货架', value: 'CARRY_POD_TO_CELL' },
+  // { label: '工作站任务', value: 'CARRY_POD_TO_STATION' },
+  // { label: '高级搬运任务', value: 'SUPER_CARRY_POD_TO_CELL' },
+  // { label: '重车回存储区', value: 'HEARVY_CARRY_POD_TO_STORE' },
 ];
 
 export const getLabelByValue = (value) => {

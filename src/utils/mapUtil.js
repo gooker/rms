@@ -53,16 +53,19 @@ export function getAngle(source, target) {
  * 比如: 地图数据里线条朝右是0度，那么地图显示就必须是90度
  */
 export function convertAngleToPixiAngle(mathAngle) {
-  let pixi;
-  if (mathAngle >= 360) {
-    mathAngle = mathAngle - 360;
+  if (!isStrictNull(mathAngle) && typeof mathAngle === 'number') {
+    let pixi;
+    if (mathAngle >= 360) {
+      mathAngle = mathAngle - 360;
+    }
+    if (mathAngle >= 0 && mathAngle <= 90) {
+      pixi = 90 - mathAngle;
+    } else {
+      pixi = 450 - mathAngle;
+    }
+    return pixi;
   }
-  if (mathAngle >= 0 && mathAngle <= 90) {
-    pixi = 90 - mathAngle;
-  } else {
-    pixi = 450 - mathAngle;
-  }
-  return pixi;
+  return null;
 }
 
 export function getCoordinator(source, angle, r) {
@@ -1407,7 +1410,6 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
       }
     });
   });
-
 
   // 料箱车身上的货架状态
   socketClient.registerToteStatusCallback((toteStatus) => {

@@ -42,9 +42,9 @@ const Dashboard = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(400, 550)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(400)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
-        <FormattedMessage id="monitor.dashboard" />
+        <FormattedMessage id='monitor.dashboard' />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
       </div>
       <div className={styles.monitorModalBody} style={{ paddingTop: 20 }}>

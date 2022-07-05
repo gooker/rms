@@ -122,7 +122,6 @@ class SocketClient {
 
     /// /////////////////////////////// 潜伏式  //////////////////////////////////
 
-
     // 潜伏车工作站状态
     unsubscription = this.client.subscribe(
       `/topic/latent_lifting_monitor_pod_to_workstation.s${sectionId}`,
@@ -211,7 +210,6 @@ class SocketClient {
   registerLoadStatus(cb) {
     this.loadStatusCallback = cb;
   }
-
 
   registerLatentLiftingPauseTaskEvent(cb) {
     this.latentLiftingPauseTaskEvent = cb;
