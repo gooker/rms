@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Button, Input } from 'antd';
+import { Button, Form, Input } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { fetchSimulatorErrorMessage } from '@/services/monitorService';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -20,7 +20,6 @@ export default function SimulatorError(props) {
         setExecuting(true);
         fetchSimulatorErrorMessage(params).then((res) => {
           if (!dealResponse(res, 1, formatMessage({ id: 'monitor.simulator.errorCode.success' }))) {
-            dispatch({ type: 'simulator/fetchSimulatorLoginVehicle' });
             onCancel(false);
           }
         });

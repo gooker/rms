@@ -1,13 +1,6 @@
 import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 
-// 获取所有的适配器
-export function fetchAllAdaptor() {
-  return request(`/${NameSpace.Platform}/vehicle/findAllAdapter`, {
-    method: 'GET',
-  });
-}
-
 // 获取所有小车类型(如果传适配器参数就给适配器对应的小车类型，如果不传就给所有) 但是只给非预定义的类型
 export function fetchAllVehicleType(vehicleAdapter) {
   return request(`/${NameSpace.Platform}/vehicle/findAllVehicleType`, {
@@ -16,19 +9,10 @@ export function fetchAllVehicleType(vehicleAdapter) {
   });
 }
 
-// 获取所有小车(如果传适配器参数就给适配器对应的小车，如果不传就给所有)
-export function fetchAllVehicle(vehicleAdapter) {
-  return request(`/${NameSpace.Platform}/vehicle/getVehicle`, {
+// 获取所有的适配器
+export function fetchAllAdaptor() {
+  return request(`/${NameSpace.Platform}/vehicle/findAllAdapter`, {
     method: 'GET',
-    data: { vehicleAdapter },
-  });
-}
-
-// 注册小车
-export function registerVehicle(param) {
-  return request(`/${NameSpace.Platform}/vehicle/vehicleRegister`, {
-    method: 'POST',
-    data: param,
   });
 }
 
@@ -36,9 +20,16 @@ export function registerVehicle(param) {
  *1.注册小车:添加发现
  *2.模拟器新增小车
  */
-
 export function findVehicle(param) {
   return request(`/${NameSpace.Platform}/vehicle/findVehicle`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 注册小车
+export function registerVehicle(param) {
+  return request(`/${NameSpace.Platform}/vehicle/vehicleRegister`, {
     method: 'POST',
     data: param,
   });
@@ -53,7 +44,6 @@ export function logOutVehicle(param) {
 }
 
 /***设备相关接口***/
-
 // 添加扫描到的设备到系统
 export function addDevice(param) {
   return request(`/${NameSpace.Platform}/device/addToScanList`, {
@@ -243,10 +233,33 @@ export function findCharger(param) {
 }
 
 // 充电桩批量修改（注册/注销/启用禁用）
-export function handleleChargers(param) {
+export function operateChargers(param) {
   return request(`/${NameSpace.Platform}/chargers`, {
     method: 'PUT',
     data: param,
+  });
+}
+
+// ************************* 资源分组 ************************* //
+// 获取资源组类型
+export async function fetchResourceGroupType() {
+  return request(`/${NameSpace.Platform}/resource/getResourceType`, {
+    method: 'GET',
+  });
+}
+
+// 获取绑定组与被绑定组的关系
+export async function fetchBindableResourceMapping() {
+  return request(`/${NameSpace.Platform}/bind/getResourceBindMapping`, {
+    method: 'GET',
+  });
+}
+
+// 根据组获取组资源
+export async function fetchResourceGroupByType(groupType) {
+  return request(`/${NameSpace.Platform}/resource/getResourceGroupByType`, {
+    method: 'GET',
+    data: { groupType },
   });
 }
 

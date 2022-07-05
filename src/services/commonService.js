@@ -2,13 +2,6 @@ import request from '@/utils/request';
 import { NameSpace } from '@/config/config';
 import { isStrictNull } from '@/utils/util';
 
-export async function fetchAppVersion() {
-  return request(`/${NameSpace.Platform}/api/getAppVersion`, {
-    method: 'GET',
-    attachSection: false,
-  });
-}
-
 export async function fetchAlertCount() {
   return request(`/${NameSpace.Platform}/alertCenter/getAlertCenterCount`, {
     method: 'GET',
@@ -32,33 +25,14 @@ export async function activeMap(mapId) {
 
 // 获取当前已激活的地图
 export async function fetchActiveMap() {
-  return request(`/${NameSpace.Platform}/map/getActiveMap`, { method: 'GET' });
-}
-
-// 获取存储区组
-export async function fetchStoreCellGroup(mapId) {
-  return request(`/${NameSpace.Platform}/map/getStoreCellGroup/${mapId}`, {
-    method: 'GET',
-  });
-}
-
-// 获取料箱货架布局
-export async function fetchToteRackLayout() {
-  return request(`/${NameSpace.Platform}/rack/getRackLayoutDetail`, {
-    method: 'GET',
-  });
-}
-
-// 获取叉车货架布局
-export async function fetchForkLiftPodLayout() {
-  return request(`/${NameSpace.Platform}/rack/rackLayout/getRackLayout`, {
+  return request(`/${NameSpace.Platform}/map/getActiveMap`, {
     method: 'GET',
   });
 }
 
 // ************************************** 小车相关  ************************************** //
 export async function fetchAllVehicleList() {
-  return request(`/${NameSpace.Platform}/traffic/getAllVehicles`, {
+  return request(`/${NameSpace.Platform}/vehicle/getAllVehicles`, {
     method: 'GET',
   });
 }
@@ -78,22 +52,6 @@ export async function fetchVehicleHardwareInfo(vehicleType, params) {
       method: `GET`,
     },
   );
-}
-
-// 请求删除小车(批量)
-export async function fetchDeleteVehicleList(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/deleteVehicle`, {
-    method: `POST`,
-    data: params,
-  });
-}
-
-// 小车移出地图
-export async function fetchMoveoutVehicles(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/vehicle/vehicleRemoveFromMap`, {
-    method: 'POST',
-    data: params,
-  });
 }
 
 // 获取当前小车实时运行信息

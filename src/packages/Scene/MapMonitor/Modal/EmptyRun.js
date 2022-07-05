@@ -38,7 +38,7 @@ const EmptyRun = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(550, 330)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.emptyRun'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />

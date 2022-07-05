@@ -37,7 +37,6 @@ const VehicleRunninInfo = (props) => {
     <div
       style={{
         width: `${width}px`,
-        height: `${height}px`,
         left: `calc(50% - ${width / 2}px)`,
       }}
       className={modalStyles.monitorModal}

@@ -7,8 +7,7 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import AddFindInfoModal from './AddFindInfoModal';
 import RegisterChargeModal from './RegisterChargeModal';
-import { fetchChargerList } from '@/services/resourceService';
-import { handleleChargers } from '@/services/resourceService';
+import { fetchChargerList, operateChargers } from '@/services/resourceService';
 import commonStyle from '@/common.module.less';
 import styles from '@/packages/ResourceManage/Vehicle/vehicle.module.less';
 
@@ -63,7 +62,7 @@ const ChargeRegisterPanel = (props) => {
 
   // 注册
   async function onRegister(values) {
-    const response = await handleleChargers({
+    const response = await operateChargers({
       updateType: 'REGISTER',
       ...values,
       ids: [selectedRowKeys[0]],

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Collapse } from 'antd';
 import { dealResponse } from '@/utils/util';
-import { fetchBindableResourceMapping } from '@/services/resourceManageAPI';
+import { fetchBindableResourceMapping } from '@/services/resourceService';
 import CascadeBindSelector from './component/CascadeBindSelector';
 import commonStyle from '@/common.module.less';
 import { ResourceBindData } from '@/mockData';

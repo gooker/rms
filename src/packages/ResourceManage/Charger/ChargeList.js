@@ -7,7 +7,7 @@ import Dictionary from '@/utils/Dictionary';
 import { dealResponse, formatMessage, generateResourceGroups, getSuffix, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import TableWithPages from '@/components/TableWithPages';
-import { handleleChargers } from '@/services/resourceService';
+import { operateChargers } from '@/services/resourceService';
 import ChargerListTools from './components/ChargerListTools';
 import ChargeRegisterPanel from './components/ChargeRegisterPanel';
 import { ChargerStatus, StatusColor } from './components/chargeConfig';
@@ -208,7 +208,7 @@ const ChargerList = (props) => {
   }
 
   async function statusSwitch(params) {
-    const response = await handleleChargers(params);
+    const response = await operateChargers(params);
     if (!dealResponse(response, 1)) {
       fetchRegisteredCharge();
     }

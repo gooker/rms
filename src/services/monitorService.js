@@ -328,13 +328,6 @@ export async function fetchSimulatorVehicleConfig(vehicleType) {
   });
 }
 
-// 获取模拟器小车相关状态
-export async function fetchSimulatorLoginVehicleControlState() {
-  return request(`/${NameSpace.Platform}/simulator/getVehicleControl`, {
-    method: 'GET',
-  });
-}
-
 // 模拟小车松急停
 export async function fetchRunVehicle(vehicleId) {
   return request(`/${NameSpace.Platform}/simulator/runVehicle/${vehicleId}`, {

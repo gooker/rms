@@ -790,10 +790,9 @@ export function getFormLayout(label, content) {
 }
 
 // 地图弹窗相对位置
-export function getMapModalPosition(width, height) {
+export function getMapModalPosition(width) {
   return {
     width: `${width}px`,
-    height: `${height}px`,
     left: `calc(50% - ${width / 2}px)`,
   };
 }

@@ -3,7 +3,7 @@ import { Button, Col, Form, Row, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import MenuIcon from '@/utils/MenuIcon';
-import { fetchAllVehicleType, fetchResourceGroupByType } from '@/services/resourceManageAPI';
+import { fetchAllVehicleType, fetchResourceGroupByType } from '@/services/resourceService';
 import style from '../resourceBind.module.less';
 import { ChargerGroupResource } from '@/mockData';
 
