@@ -9,14 +9,11 @@ import { AlertCountPolling } from '@/workers/WebWorkerManager';
 import SocketClient from '@/entities/SocketClient';
 import { AppCode } from '@/config/config';
 import notice from '@/utils/notice';
-import { initI18n } from '@/utils/init';
+import { fetchGlobalExtraData, initI18n } from '@/utils/init';
 import { loadTexturesForMap } from '@/utils/textures';
 import { dealResponse, formatMessage, isNull, isStrictNull } from '@/utils/util';
 import { getAuthorityInfo, queryUserByToken } from '@/services/SSOService';
-import { fetchAllPrograming } from '@/services/XIHEService';
-import { fetchAllAdaptor, fetchResourceGroupType } from '@/services/resourceService';
-import { fetchCustomParamType, fetchGetProblemDetail } from '@/services/commonService';
-import { fetchTaskTypes } from '@/services/taskService';
+import { fetchGetProblemDetail } from '@/services/commonService';
 
 @withRouter
 @connect(({ global, user }) => ({
@@ -97,11 +94,11 @@ class MainLayout extends React.Component {
               // 加载地图Texture
               if (!textureLoaded) {
                 await loadTexturesForMap();
-                await dispatch({ type: 'global/updateTextureLoaded', payload: true });
+                dispatch({ type: 'global/updateTextureLoaded', payload: true });
               }
 
               // 获取一些非立即需要的系统数据
-              this.fetchAdditionalData();
+              fetchGlobalExtraData(dispatch);
 
               // FIXME:轮询告警数量(这个会引发一个问题: connect/mapStateToProps/selections)
               AlertCountPolling.start((value) => {
@@ -209,85 +206,6 @@ class MainLayout extends React.Component {
         }
       }
     }
-  };
-
-  fetchAdditionalData = () => {
-    const { dispatch } = this.props;
-    // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据、资源组类型
-    Promise.all([
-      fetchTaskTypes(),
-      fetchAllPrograming(),
-      fetchAllAdaptor(),
-      fetchCustomParamType(),
-      fetchResourceGroupType(),
-    ])
-      .then(([allTaskTypes, allPrograming, allAdaptors, targetDatasource, resourceGroupTypes]) => {
-        const states = {};
-
-        // 小车类型
-        if (!dealResponse(allTaskTypes)) {
-          states.allTaskTypes = allTaskTypes;
-        } else {
-          message.error(
-            `${formatMessage(
-              { id: 'app.message.fetchFailTemplate' },
-              { type: formatMessage({ id: 'app.task.type' }) },
-            )}`,
-          );
-        }
-
-        // 编程元数据
-        if (!dealResponse(allPrograming)) {
-          states.programing = allPrograming;
-        } else {
-          message.error(
-            `${formatMessage(
-              { id: 'app.message.fetchFailTemplate' },
-              { type: formatMessage({ id: 'app.map.programing' }) },
-            )}`,
-          );
-        }
-
-        // 适配器
-        if (!dealResponse(allAdaptors)) {
-          states.allAdaptors = allAdaptors;
-        } else {
-          message.error(
-            `${formatMessage(
-              { id: 'app.message.fetchFailTemplate' },
-              { type: formatMessage({ id: 'app.configInfo.header.adapter' }) },
-            )}`,
-          );
-        }
-
-        // 适配器
-        if (!dealResponse(targetDatasource)) {
-          states.targetDatasource = targetDatasource;
-        } else {
-          message.error(
-            `${formatMessage(
-              { id: 'app.message.fetchFailTemplate' },
-              { type: formatMessage({ id: 'app.common.targetCell' }) },
-            )}`,
-          );
-        }
-
-        // 资源组类型
-        if (!dealResponse(resourceGroupTypes)) {
-          states.resourceGroupTypes = resourceGroupTypes;
-        } else {
-          message.error(
-            `${formatMessage(
-              { id: 'app.message.fetchFailTemplate' },
-              { type: formatMessage({ id: 'group.groupType' }) },
-            )}`,
-          );
-        }
-        dispatch({ type: 'global/updateStateInBatch', payload: states });
-      })
-      .catch((err) => {
-        console.error(err);
-      });
   };
 
   render() {

@@ -12,19 +12,20 @@ import {
 } from '@/services/monitorService';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
-import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';
+import SimulatorError from '../Modal/Simulator/SimulatorError';
 import AddSimulatorVehicle from '../Modal/Simulator/AddSimulatorVehicle';
 import ClearPodsAndBatchAdd from '../Modal/Simulator/ClearPodsAndBatchAdd';
-import SimulatorError from '../Modal/Simulator/SimulatorError';
+import SimulatorConfigPanel from '../Modal/Simulator/SimulatorConfigPanel';
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import styles from '@/packages/Scene/popoverPanel.module.less';
-import commonStyles from '@/common.module.less';
 import simulatorStyle from './simulator.module.less';
+import commonStyles from '@/common.module.less';
 
 const size = 'small';
 
 const SimulatorPanel = (props) => {
   const {
+    loading,
     dispatch,
     simulatorHistory,
     simulatorVehicleList,
@@ -45,6 +46,12 @@ const SimulatorPanel = (props) => {
   useEffect(() => {
     setVehicleAdapter(Object.values(allAdaptors)?.[0]?.adapterType?.id);
   }, []);
+
+  useEffect(() => {
+    if (!addVisit) {
+      refresh();
+    }
+  }, [addVisit]);
 
   const columns = [
     {
@@ -79,9 +86,7 @@ const SimulatorPanel = (props) => {
   ];
 
   function refresh() {
-    // 刷新模拟器开启状态
-    // 刷新adapter数据
-    // 刷新小车列表数据
+    dispatch({ type: 'simulator/init' });
   }
 
   // 开启 & 关闭模拟器
@@ -214,7 +219,7 @@ const SimulatorPanel = (props) => {
                   <span style={{ marginLeft: 10 }}>{simulatorHistory.updatedByUser}</span>
                 </span>
                 <span style={{ margin: '3px 0 0 15px', color: '#fff', cursor: 'pointer' }}>
-                  <ReloadOutlined onClick={refresh} />
+                  <ReloadOutlined spin={loading} onClick={refresh} />
                 </span>
               </div>
             </div>
@@ -400,7 +405,8 @@ const SimulatorPanel = (props) => {
                 size={size}
                 columns={columns}
                 dataSource={simulatorVehicleList}
-                rowKey={(record) => record.vehicleId}
+                pagination={false}
+                rowKey={({ vehicleId }) => vehicleId}
                 rowSelection={{
                   selectedRowKeys: selectedRowKeys,
                   getCheckboxProps: (record) => ({
@@ -410,7 +416,6 @@ const SimulatorPanel = (props) => {
                     setSelectedRowKeys(selectRowKey);
                   },
                 }}
-                pagination={false}
               />
             </div>
           </>
@@ -420,9 +425,10 @@ const SimulatorPanel = (props) => {
   );
 };
 export default connect(({ global, simulator, loading, monitor }) => ({
+  loading: loading.effects['simulator/init'],
   allAdaptors: global.allAdaptors,
   vehicleTypes: global.allVehicleTypes,
   currentLogicArea: monitor.currentLogicArea,
-  simulatorVehicleList: simulator.simulatorVehicleList,
   simulatorHistory: simulator.simulatorHistory,
+  simulatorVehicleList: simulator.simulatorVehicleList,
 }))(memo(SimulatorPanel));

@@ -1,16 +1,5 @@
 import React, { memo, useState } from 'react';
-import {
-  AutoComplete,
-  Button,
-  Col,
-  Form,
-  Input,
-  InputNumber,
-  Modal,
-  Radio,
-  Row,
-  Select,
-} from 'antd';
+import { AutoComplete, Button, Col, Form, Input, InputNumber, Modal, Radio, Row, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -177,7 +166,7 @@ const AddRegistrationModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ vehicleList }) => ({
-  allAdaptors: vehicleList.allAdaptors,
+export default connect(({ vehicleList, global }) => ({
+  allAdaptors: global.allAdaptors,
   visible: vehicleList.addRegistrationModalShown,
 }))(memo(AddRegistrationModal));

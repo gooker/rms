@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Card, Button, Transfer, Modal, message } from 'antd';
+import { Button, Card, message, Transfer } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { fetchAllUserRoleList, fetchUserAssignedRoleList } from '@/services/SSOService';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -42,39 +42,8 @@ export default class RoleAssign extends Component {
   };
 
   submit = () => {
-    const { rightSource, allSource } = this.state;
-    const { onSubmit, selectRow } = this.props;
-    const level = selectRow[0].level;
-
-    // 校验已选的角色中是否存在level比user的level高
-    const selectRoles = allSource.filter((item) => rightSource.includes(item.id));
-
-    const invalidRoles = [];
-    selectRoles.map((item) => {
-      if (item.level > level) {
-        invalidRoles.push(item);
-      }
-    });
-
-    if (invalidRoles.length === 0) {
-      if (onSubmit) {
-        onSubmit(rightSource);
-      }
-    } else {
-      const ModalErrorConfig = {
-        title: formatMessage({ id: 'sso.user.tip.roleLevelGreater', format: false }),
-        content: (
-          <>
-            <ul style={{ listStyle: 'disc' }}>
-              {invalidRoles.map((item) => (
-                <li key={item.key}>{item.code}</li>
-              ))}
-            </ul>
-          </>
-        ),
-      };
-      Modal.error(ModalErrorConfig);
-    }
+    const { rightSource } = this.state;
+    this.props.onSubmit(rightSource);
   };
 
   render() {

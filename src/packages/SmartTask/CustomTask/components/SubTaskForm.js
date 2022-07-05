@@ -269,19 +269,19 @@ const SubTaskForm = (props) => {
           label={formatMessage({ id: 'customTask.form.operatorDirection' })}
         >
           <Select style={{ width: 207 }}>
-            <Select.Option value={0}>
+            <Select.Option value={90}>
               <FormattedMessage id={'app.common.targetCell'} />
               <FormattedMessage id={'app.direction.topSide'} />
             </Select.Option>
-            <Select.Option value={90}>
+            <Select.Option value={0}>
               <FormattedMessage id={'app.common.targetCell'} />
               <FormattedMessage id={'app.direction.rightSide'} />
             </Select.Option>
-            <Select.Option value={180}>
+            <Select.Option value={270}>
               <FormattedMessage id={'app.common.targetCell'} />
               <FormattedMessage id={'app.direction.bottomSide'} />
             </Select.Option>
-            <Select.Option value={270}>
+            <Select.Option value={180}>
               <FormattedMessage id={'app.common.targetCell'} />
               <FormattedMessage id={'app.direction.leftSide'} />
             </Select.Option>

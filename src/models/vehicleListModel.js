@@ -1,5 +1,4 @@
-import { fetchAllAdaptor } from '@/services/resourceService';
-import { dealResponse } from '@/utils/util';
+import { dealResponse, transformVehicleList } from '@/utils/util';
 import { fetchAllVehicleList } from '@/services/commonService';
 
 export default {
@@ -11,19 +10,16 @@ export default {
     registerVehicleModalShown: false,
     searchParams: { id: [], state: [], vehicleType: null },
 
-    allAdaptors: {},
     allVehicles: [],
     upgradeOrder: [],
   },
 
   effects: {
-    *fetchInitialData(_, { put }) {
-      const [allVehicles, allAdaptors] = yield Promise.all([
-        fetchAllVehicleList(),
-        fetchAllAdaptor(),
-      ]);
-      if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
-        yield put({ type: 'saveState', payload: { allVehicles, allAdaptors } });
+    * fetchInitialData(_, { put, call }) {
+      const allVehicles = yield call(fetchAllVehicleList);
+      if (!dealResponse(allVehicles)) {
+        const _allVehicles = transformVehicleList(allVehicles);
+        yield put({ type: 'saveAllVehicles', payload: _allVehicles });
       }
     },
   },

@@ -174,8 +174,8 @@ const VehicleListTools = (props) => {
     </div>
   );
 };
-export default connect(({ vehicleList }) => ({
-  allAdaptors: vehicleList.allAdaptors,
+export default connect(({ vehicleList, global }) => ({
+  allAdaptors: global.allAdaptors,
   allVehicles: vehicleList.allVehicles,
   searchParams: vehicleList.searchParams,
 }))(memo(VehicleListTools));

@@ -59,7 +59,7 @@ const RegisterVehicleModal = (props) => {
     </Modal>
   );
 };
-export default connect(({ vehicleList }) => ({
-  allAdaptors: vehicleList.allAdaptors,
+export default connect(({ vehicleList, global }) => ({
+  allAdaptors: global.allAdaptors,
   visible: vehicleList.registerVehicleModalShown,
 }))(memo(RegisterVehicleModal));
