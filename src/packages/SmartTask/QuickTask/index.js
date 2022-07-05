@@ -246,13 +246,15 @@ const QuickTask = (props) => {
       </TablePageWrapper>
 
       {/* 编辑任务变量 */}
-      <VariableModificationModal
-        visible={variableModalVisible}
-        quickTask={editing}
-        customTask={getCustomTask()}
-        onOk={onSaveVariable}
-        onCancel={onCancelEditingVariable}
-      />
+      {variableModalVisible && (
+        <VariableModificationModal
+          visible={variableModalVisible}
+          quickTask={editing}
+          customTask={getCustomTask()}
+          onOk={onSaveVariable}
+          onCancel={onCancelEditingVariable}
+        />
+      )}
 
       {/*  执行快捷任务 */}
       <ExecuteQuickTaskModal customTask={getCustomTask()} />

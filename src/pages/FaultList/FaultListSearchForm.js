@@ -1,6 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, DatePicker, Form, Input, Row, Select } from 'antd';
-import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { Button, Col, DatePicker, Form, Input, message, Row, Select } from 'antd';
+import {
+  convertToUserTimezone,
+  dealResponse,
+  formatMessage,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import { fetchAllVehicleList } from '@/services/commonService';
 import FormattedMessage from '@/components/FormattedMessage';
 import { ExportOutlined, ReloadOutlined, SearchOutlined } from '@ant-design/icons';
@@ -9,7 +15,7 @@ const { RangePicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD HH:mm';
 
 const FaultListSearchForm = (props) => {
-  const { vehicleType, search, faults } = props;
+  const { search } = props;
 
   const [formRef] = Form.useForm();
   const [vehicleList, setVehicleList] = useState([]);
@@ -24,7 +30,7 @@ const FaultListSearchForm = (props) => {
     getVehicleList();
   }, []);
 
-  function fetchFaultList() {
+  function searchFaultList() {
     formRef.validateFields().then((values) => {
       const formValues = {};
       Object.keys(values).forEach((formKey) => {
@@ -47,6 +53,15 @@ const FaultListSearchForm = (props) => {
       });
       search(formValues);
     });
+  }
+
+  function exportFault() {
+    const formValue = formRef.getFieldsValue();
+    if (isStrictNull(formValue.taskId) && isStrictNull(formValue.step)) {
+      message.warn(formatMessage({ id: 'app.faultInfo.require.taskId' }));
+      return;
+    }
+    searchFaultList();
   }
 
   return (
@@ -84,18 +99,19 @@ const FaultListSearchForm = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Button type={'primary'} onClick={fetchFaultList}>
+          <Button type={'primary'} onClick={searchFaultList}>
             <SearchOutlined /> <FormattedMessage id={'app.button.search'} />
           </Button>
           <Button
             style={{ marginLeft: 15 }}
             onClick={() => {
               formRef.resetFields();
+              search({});
             }}
           >
             <ReloadOutlined /> <FormattedMessage id={'app.button.reset'} />
           </Button>
-          <Button style={{ marginLeft: 15 }}>
+          <Button style={{ marginLeft: 15 }} onClick={exportFault}>
             <ExportOutlined /> <FormattedMessage id={'app.button.download'} />
           </Button>
         </Col>

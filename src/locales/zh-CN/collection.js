@@ -60,6 +60,7 @@ export default {
   'app.logDownload.generateLog': '生成日志',
   'app.logDownload.inGenerating': '生成中',
   'app.logDownload.generated': '已生成',
+  'app.logDownload.generateStatus': '生成状态',
   'app.logDownload.forceResetConfirm': '该操作会强制中断日志生成进度, 是否继续该操作?',
 
   // 故障信息

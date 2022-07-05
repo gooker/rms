@@ -136,9 +136,6 @@ const VehicleListTools = (props) => {
           <Button onClick={upgradeVehicle}>
             <RiseOutlined /> <FormattedMessage id='hardware.upgrading' />
           </Button>
-          <Button>
-            <DownloadOutlined /> <FormattedMessage id='app.logDownload' />
-          </Button>
           <Button
             onClick={() => {
               dispatch({ type: 'vehicleList/fetchInitialData' });

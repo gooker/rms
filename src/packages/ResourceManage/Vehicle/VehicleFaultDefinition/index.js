@@ -1,8 +1,8 @@
-/*TODO: I18N*/
 import React, { memo, useEffect, useState } from 'react';
 import { Row, Col, Button, Popover } from 'antd';
 import {
   DeleteOutlined,
+  EditOutlined,
   ExportOutlined,
   PlusOutlined,
   RedoOutlined,
@@ -23,7 +23,6 @@ import {
 import AddDefinition from './components/AddDefinition';
 import commonStyles from '@/common.module.less';
 import RmsConfirm from '@/components/RmsConfirm';
-import App from '@/pages/App';
 
 const VehicleFaultDefinition = (props) => {
   const {} = props;
@@ -43,7 +42,6 @@ const VehicleFaultDefinition = (props) => {
       title: <FormattedMessage id="app.fault.name" />,
       dataIndex: 'errorName',
       align: 'center',
-      width: 200,
       render: (text) => {
         if (text) {
           if (text.length > 10) {
@@ -65,19 +63,16 @@ const VehicleFaultDefinition = (props) => {
       title: <FormattedMessage id="app.fault.level" />,
       dataIndex: 'level',
       align: 'center',
-      width: 100,
     },
     {
       title: <FormattedMessage id="app.fault.code" />,
       dataIndex: 'errorCode',
       align: 'center',
-      width: 100,
     },
     {
       title: <FormattedMessage id="app.fault.type" />,
       dataIndex: 'errorType',
       align: 'center',
-      width: 140,
       render: (text) => {
         return text;
       },
@@ -86,19 +81,16 @@ const VehicleFaultDefinition = (props) => {
       title: <FormattedMessage id="app.fault.extraData1" />,
       dataIndex: 'preDataDefinition',
       align: 'center',
-      width: 150,
     },
     {
       title: <FormattedMessage id="app.fault.extraData2" />,
       dataIndex: 'curDataDefinition',
       align: 'center',
-      width: 150,
     },
     {
       title: <FormattedMessage id="app.fault.autoRecover" />,
       dataIndex: 'autoRecover',
       align: 'center',
-      width: 100,
       render: (text) => {
         if (text) {
           return <FormattedMessage id="app.faultDefinition.yes" />;
@@ -111,7 +103,6 @@ const VehicleFaultDefinition = (props) => {
       title: <FormattedMessage id="app.common.description" />,
       dataIndex: 'description',
       align: 'center',
-      width: 200,
       render: (text) => {
         if (text) {
           if (text.length > 10) {
@@ -133,7 +124,6 @@ const VehicleFaultDefinition = (props) => {
       title: <FormattedMessage id="app.fault.additionalData" />,
       dataIndex: 'additionalContent',
       align: 'center',
-      width: 200,
       render: (text) => {
         if (text) {
           if (text.length > 10) {
@@ -155,11 +145,24 @@ const VehicleFaultDefinition = (props) => {
       title: <FormattedMessage id="app.common.creationTime" />,
       dataIndex: 'createTime',
       align: 'center',
-      width: 200,
       fixed: 'right',
       render: (text) => {
         return convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss');
       },
+    },
+    {
+      title: <FormattedMessage id="app.button.edit" />,
+      dataIndex: 'id',
+      align: 'center',
+      render: (text, record) => (
+        <EditOutlined
+          style={{ color: '#1890FF', fontSize: 18 }}
+          onClick={() => {
+            setVisible(true);
+            setEditing(record);
+          }}
+        />
+      ),
     },
   ];
 
@@ -299,7 +302,13 @@ const VehicleFaultDefinition = (props) => {
         }}
       />
       {visible && (
-        <AddDefinition visible={visible} onCancel={onCancel} allData={dataSource} onOk={getData} />
+        <AddDefinition
+          visible={visible}
+          updateRecord={editing}
+          onCancel={onCancel}
+          allData={dataSource}
+          onOk={getData}
+        />
       )}
     </TablePageWrapper>
   );

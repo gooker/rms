@@ -38,6 +38,7 @@ export default {
   'menu.vehicle.faultManagement': '车辆故障查询',
   'menu.vehicle.faultDefinition': '车辆故障定义',
   'menu.vehicle.realTime': '车辆详情',
+  'menu.vehicle.vehicleLog': '车辆日志',
   'menu.vehicle.OTA': 'OTA',
 
   // 充电桩
