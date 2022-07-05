@@ -129,15 +129,6 @@ class SocketClient {
 
     /// /////////////////////////////// 潜伏式  //////////////////////////////////
 
-    // 潜伏货架状态
-    unsubscription = this.client.subscribe(
-      `/topic/latent_lifting_monitor_pod.s${sectionId}`,
-      (response) => {
-        const p = JSON.parse(response.body);
-        if (this.podStatusCallback) this.podStatusCallback(p);
-      },
-    );
-    this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
     // 潜伏车工作站状态
     unsubscription = this.client.subscribe(
@@ -222,16 +213,12 @@ class SocketClient {
     this.vehicleStatusCallback = cb;
   }
 
-  // TODO 要删除:podStatusCallback  toteStatusCallback
+  // TODO 要删除:  toteStatusCallback
   // 载具Load
   registerLoadStatus(cb) {
     this.loadStatusCallback = cb;
   }
 
-
-  registerLatentPodStatus(cb) {
-    this.podStatusCallback = cb;
-  }
 
   registerLatentLiftingPauseTaskEvent(cb) {
     this.latentLiftingPauseTaskEvent = cb;

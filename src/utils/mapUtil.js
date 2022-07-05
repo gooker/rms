@@ -1408,10 +1408,6 @@ export function setMonitorSocketCallback(socketClient, mapContext, dispatch) {
     });
   });
 
-  // 潜伏式货架状态
-  socketClient.registerLatentPodStatus((podStatus) => {
-    mapContext.refreshLatentPod(podStatus);
-  });
 
   // 料箱车身上的货架状态
   socketClient.registerToteStatusCallback((toteStatus) => {

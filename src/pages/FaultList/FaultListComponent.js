@@ -5,9 +5,10 @@ import { fetchDefinedFaults, fetchVehicleErrorRecord } from '@/services/commonSe
 import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
 import FaultListSearchForm from '@/pages/FaultList/FaultListSearchForm';
 import FaultCodeContent from '@/components/FaultCodeContent';
+import { connect } from '@/utils/RmsDva';
 
 const FaultListComponent = (props) => {
-  const { vehicleType } = props;
+  const { type, dispatch } = props;
 
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({ pageSize: 10, current: 1, total: 0 });
@@ -28,13 +29,11 @@ const FaultListComponent = (props) => {
       title: formatMessage({ id: 'vehicle.id' }),
       dataIndex: 'vehicleId',
       align: 'center',
-      width: 100,
     },
     {
       title: formatMessage({ id: 'app.fault.name' }),
       dataIndex: 'errorCode',
       align: 'center',
-      width: 150,
       render: (errorCode) => (
         <FaultCodeContent code={errorCode} faultContent={definedFaults[errorCode]} />
       ),
@@ -43,26 +42,23 @@ const FaultListComponent = (props) => {
       title: formatMessage({ id: 'app.fault.firstReport' }),
       dataIndex: 'createTime',
       align: 'center',
-      width: 230,
       render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: formatMessage({ id: 'app.fault.lastReport' }),
       dataIndex: 'updateTime',
       align: 'center',
-      width: 230,
       render: (text) => convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss'),
     },
     {
       title: formatMessage({ id: 'app.task.id' }),
       dataIndex: 'taskId',
       align: 'center',
-      width: 220,
       render: (text) => {
         return (
           <span
             onClick={() => {
-              this.onDetail(text);
+              onDetail(text);
             }}
             style={{ color: '#1890ff' }}
           >
@@ -75,21 +71,25 @@ const FaultListComponent = (props) => {
       title: formatMessage({ id: 'app.fault.step' }),
       dataIndex: 'step',
       align: 'center',
-      width: 120,
     },
     {
       title: formatMessage({ id: 'app.fault.extraData1' }),
       dataIndex: 'preData',
       align: 'center',
-      width: 150,
     },
     {
       title: formatMessage({ id: 'app.fault.extraData2' }),
       dataIndex: 'curData',
       align: 'center',
-      width: 150,
     },
   ];
+
+  function onDetail(taskId) {
+    dispatch({
+      type: 'task/fetchTaskDetailByTaskId',
+      payload: { taskId },
+    });
+  }
 
   // 获取所有错误信息
   async function fetchFaultList(formValues) {
@@ -101,7 +101,7 @@ const FaultListComponent = (props) => {
       type: 'All',
       vehicleErrorTypes: ['HARDWARE_ERROR'],
     };
-    const response = await fetchVehicleErrorRecord(vehicleType, requestParam);
+    const response = await fetchVehicleErrorRecord(type, requestParam);
     if (!dealResponse(response)) {
       const { list, page } = response;
       setFaultList(list);
@@ -112,7 +112,7 @@ const FaultListComponent = (props) => {
 
   // 获取已定义的故障数据
   async function fetchDefinedFaultList() {
-    const response = await fetchDefinedFaults(vehicleType);
+    const response = await fetchDefinedFaults(type);
     if (!dealResponse(response)) {
       const _definedFaults = {};
       if (Array.isArray(response)) {
@@ -138,11 +138,7 @@ const FaultListComponent = (props) => {
   return (
     <TablePageWrapper>
       <div>
-        <FaultListSearchForm
-          vehicleType={vehicleType}
-          search={fetchFaultList}
-          faults={definedFaults}
-        />
+        <FaultListSearchForm search={fetchFaultList} faults={definedFaults} />
       </div>
       <Table
         bordered
@@ -156,4 +152,4 @@ const FaultListComponent = (props) => {
     </TablePageWrapper>
   );
 };
-export default memo(FaultListComponent);
+export default connect()(memo(FaultListComponent));

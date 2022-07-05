@@ -483,3 +483,13 @@ export async function fetchResourceGroup(param) {
     data: param,
   });
 }
+
+// 车辆日志
+// 从小车上下载日志
+export async function fetchVehicleLogs(param) {
+  return request(`/${NameSpace.Platform}/vehicle/file/downloadLog`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
