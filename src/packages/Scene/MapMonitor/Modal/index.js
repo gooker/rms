@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { connect } from '@/utils/RmsDva';
 import EmptyRun from './EmptyRun';
 import Charging from './Charging';
-import ToRest from './ToRest';
+import ToRest from './GoParking';
 import CarryPod from './CarryPod';
 import AdvancedCarry from './AdcancedCarry';
 import LatentWorkStationTask from './LatentWorkStationTask';

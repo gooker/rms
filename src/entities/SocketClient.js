@@ -113,22 +113,14 @@ class SocketClient {
     // 将返回的"取消订阅"的函数缓存起来
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
-
-
     // 载具状态
-    unsubscription = this.client.subscribe(
-      `/topic/ui_monitor_load.s${sectionId}`,
-      (response) => {
-        const p = JSON.parse(response.body);
-        if (this.loadStatusCallback) this.loadStatusCallback(p);
-      },
-    );
+    unsubscription = this.client.subscribe(`/topic/ui_monitor_load.s${sectionId}`, (response) => {
+      const p = JSON.parse(response.body);
+      if (this.loadStatusCallback) this.loadStatusCallback(p);
+    });
     this.unsubscribeueueQueue.push(unsubscription.unsubscribe);
 
-
-
     /// /////////////////////////////// 潜伏式  //////////////////////////////////
-
 
     // 潜伏车工作站状态
     unsubscription = this.client.subscribe(
@@ -218,7 +210,6 @@ class SocketClient {
   registerLoadStatus(cb) {
     this.loadStatusCallback = cb;
   }
-
 
   registerLatentLiftingPauseTaskEvent(cb) {
     this.latentLiftingPauseTaskEvent = cb;

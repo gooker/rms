@@ -163,24 +163,23 @@ const VehicleList = (props) => {
   }, [allVehicles, searchParams]);
 
   function filterDatasource() {
-    let nowAllVehicles = [...allVehicles].filter((item) => item.register);
+    let registeredVehicles = allVehicles.filter((item) => item.register);
     const { id: uniqueIds, state, vehicleType } = searchParams;
     if (uniqueIds?.length > 0) {
-      nowAllVehicles = nowAllVehicles.filter(({ id }) => uniqueIds.includes(id));
+      registeredVehicles = registeredVehicles.filter(({ id }) => uniqueIds.includes(id));
     }
 
     if (state?.length > 0) {
-      nowAllVehicles = nowAllVehicles.filter((item) => state.includes(item.vehicleStatus));
+      registeredVehicles = registeredVehicles.filter((item) => state.includes(item.vehicleStatus));
     }
 
     if (!isNull(vehicleType)) {
       const currentType = vehicleType.split('@'); // adapterType@vehicleType
-      nowAllVehicles = nowAllVehicles.filter(
+      registeredVehicles = registeredVehicles.filter(
         (item) => item.adapterType === currentType[0] && item.vehicleType === currentType[1],
       );
     }
-
-    setDatasource(nowAllVehicles);
+    setDatasource(registeredVehicles);
   }
 
   function onSelectChange(selectedRowKeys, selectedRows) {

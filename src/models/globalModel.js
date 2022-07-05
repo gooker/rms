@@ -19,6 +19,7 @@ export default {
     socketClient: null,
 
     // 标识符
+    globalFetching: false, // 获取全局数据
     menuCollapsed: false,
     isFullscreen: false,
     isInnerFullscreen: false,
@@ -109,6 +110,12 @@ export default {
       return {
         ...state,
         menuCollapsed: payload,
+      };
+    },
+    updateGlobalFetching(state, { payload }) {
+      return {
+        ...state,
+        globalFetching: payload,
       };
     },
     updateTextureLoaded(state, { payload }) {

@@ -21,7 +21,7 @@ export default {
   'monitor.right.message': '消息',
   'monitor.right.emptyRun': '空跑',
   'monitor.right.charge': '充电',
-  'monitor.right.goRest': '休息',
+  'monitor.right.goPark': '停车',
   'monitor.right.carry': '搬运',
   'monitor.right.advancedCarry': '高级搬运',
   'monitor.right.workStationTask': '工作站任务',
@@ -46,7 +46,6 @@ export default {
   'monitor.tip.fetchCellLockFail': '获取点位锁格信息失败',
 
   // modal title
-  'monitor.goRest.toRestArea': '回休息区',
   'monitor.advancedCarry.released': '释放',
   'monitor.pod.noRotation': '不旋转',
   'monitor.direction.topSide': '目标点上方',

@@ -8,9 +8,10 @@ import { AppCode } from '@/config/config';
 import { dealResponse, isNull } from '@/utils/util';
 import { getHAInfo } from '@/services/XIHEService';
 import { IconFont } from '@/components/IconFont';
-import HA from '@/packages/Portal/components/HA';
-import ExpiredTip from '@/packages/Portal/components/ExpiredTip';
 import FormattedMessage from '@/components/FormattedMessage';
+import HA from './HA';
+import ExpiredTip from './ExpiredTip';
+import ReloadGlobalResource from './ReloadGlobalResource';
 import SelectEnvironment from './SelectEnvironment';
 import UserCenter from './UserCenter';
 import SelectSection from './SelectSection';
@@ -109,6 +110,9 @@ class Header extends React.Component {
         <div className={styles.rightContent}>
           {isHA && <HA />}
           {sysAuthInfo <= 30 && <ExpiredTip days={sysAuthInfo} />}
+
+          {/* 刷新基础数据 */}
+          <ReloadGlobalResource />
 
           {/* 环境切换 */}
           <SelectEnvironment />

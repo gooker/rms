@@ -39,7 +39,7 @@ const Charging = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(400, 240)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(550)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.charge'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />
@@ -48,7 +48,7 @@ const Charging = (props) => {
         <Form form={formRef} {...formItemLayout}>
           <VehicleFormComponent form={formRef} />
           <Form.Item {...formItemLayoutNoLabel}>
-            <Button onClick={charge} loading={executing} disabled={executing} type="primary">
+            <Button onClick={charge} loading={executing} disabled={executing} type='primary'>
               <SendOutlined /> <FormattedMessage id={'app.button.execute'} />
             </Button>
           </Form.Item>

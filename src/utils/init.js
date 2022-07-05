@@ -1,10 +1,97 @@
+import { message } from 'antd';
 import { find } from 'lodash';
 import intl from 'react-intl-universal';
 import { AppCode } from '@/config/config';
-import { dealResponse, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { getTranslationByCode } from '@/services/translationService';
 import { getSystemLanguage } from '@/packages/Strategy/LanguageManage/translateUtils';
+import { fetchTaskTypes } from '@/services/taskService';
+import { fetchAllPrograming } from '@/services/XIHEService';
+import { fetchCustomParamType } from '@/services/commonService';
+import { fetchAllAdaptor, fetchResourceGroupType } from '@/services/resourceService';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
+
+export async function fetchGlobalExtraData(dispatch) {
+  try {
+    dispatch({ type: 'global/updateGlobalFetching', payload: true });
+    // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据、资源组类型
+    const response = await Promise.all([
+      fetchTaskTypes(),
+      fetchAllPrograming(),
+      fetchAllAdaptor(),
+      fetchCustomParamType(),
+      fetchResourceGroupType(),
+    ]);
+    const [allTaskTypes, allPrograming, allAdaptors, targetDatasource, resourceGroupTypes] =
+      response;
+    const states = { globalFetching: false };
+
+    // 小车类型
+    if (!dealResponse(allTaskTypes)) {
+      states.allTaskTypes = allTaskTypes;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'app.task.type' }) },
+        )}`,
+      );
+    }
+
+    // 编程元数据
+    if (!dealResponse(allPrograming)) {
+      states.programing = allPrograming;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'app.map.programing' }) },
+        )}`,
+      );
+    }
+
+    // 适配器
+    if (!dealResponse(allAdaptors)) {
+      states.allAdaptors = allAdaptors;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'app.configInfo.header.adapter' }) },
+        )}`,
+      );
+    }
+
+    // 适配器
+    if (!dealResponse(targetDatasource)) {
+      states.targetDatasource = targetDatasource;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'app.common.targetCell' }) },
+        )}`,
+      );
+    }
+
+    // 资源组类型
+    if (!dealResponse(resourceGroupTypes)) {
+      states.resourceGroupTypes = resourceGroupTypes;
+    } else {
+      message.error(
+        `${formatMessage(
+          { id: 'app.message.fetchFailTemplate' },
+          { type: formatMessage({ id: 'group.groupType' }) },
+        )}`,
+      );
+    }
+    dispatch({ type: 'global/updateStateInBatch', payload: states });
+  } catch (e) {
+    console.error(e);
+    message.error(formatMessage({ id: 'app.global.fetchGlobalDataFailed' }));
+    dispatch({ type: 'global/updateGlobalFetching', payload: false });
+  }
+}
 
 export function initI18NWithoutRemote() {
   return new Promise(async (resolve) => {

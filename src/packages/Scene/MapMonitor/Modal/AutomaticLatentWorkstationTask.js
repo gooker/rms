@@ -284,7 +284,7 @@ const AutomaticLatentWorkstationTask = (props) => {
   }
 
   return (
-    <div style={getMapModalPosition(600, 650)} className={styles.monitorModal}>
+    <div style={getMapModalPosition(600)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.autoCall'} />
         <CloseOutlined onClick={close} style={{ cursor: 'pointer' }} />

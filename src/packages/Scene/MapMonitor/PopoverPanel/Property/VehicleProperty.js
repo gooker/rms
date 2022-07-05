@@ -12,13 +12,7 @@ import {
 } from '@/services/commonService';
 import { goToCharge, goToRest } from '@/services/taskService';
 import { vehicleRemoteControl } from '@/services/monitorService';
-import {
-  dealResponse,
-  formatMessage,
-  isStrictNull,
-  renderBattery,
-  renderVehicleState,
-} from '@/utils/util';
+import { dealResponse, formatMessage, isStrictNull, renderBattery, renderVehicleState } from '@/utils/util';
 import { AppCode } from '@/config/config';
 import styles from '../../monitorLayout.module.less';
 import style from './index.module.less';
@@ -371,7 +365,7 @@ const VehicleElementProp = (props) => {
             <div className={styles.rightSideVehicleContentOperationItem} onClick={toRest}>
               <img alt={'vehicle'} src={require('@/packages/Scene/icons/rest.png').default} />
               <div>
-                <FormattedMessage id={'monitor.right.goRest'} />
+                <FormattedMessage id={'monitor.right.goPark'} />
               </div>
             </div>
             <div style={{ width: 65 }} />

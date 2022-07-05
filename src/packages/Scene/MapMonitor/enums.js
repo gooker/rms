@@ -103,7 +103,7 @@ export const VehicleCategoryTools = [
     value: 'charge',
   },
   {
-    label: <FormattedMessage id={'monitor.right.goRest'} />,
+    label: <FormattedMessage id={'monitor.right.goPark'} />,
     icon: 'goRest_category.png',
     style: { width: '33px', height: 'auto' },
     value: 'goRest',

@@ -11,15 +11,8 @@ import {
   PlusOutlined,
   ReloadOutlined,
 } from '@ant-design/icons';
-import {
-  adaptModalHeight,
-  dealResponse,
-  formatMessage,
-  getRequestorURLParams,
-  getURL,
-  isNull,
-  renderRequestBodyForm,
-} from '@/utils/util';
+import { adaptModalHeight, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { getRequestorURLParams, getURL, renderRequestBodyForm } from './requestorUtil';
 import { fetchDeleteAPI, fetchRequestorList, fetchSaveAPI, fetchUpdateAPI } from '@/services/commonService';
 import RequestorForm from './components/RequestorForm';
 import RequestConfig from './components/RequestConfig';

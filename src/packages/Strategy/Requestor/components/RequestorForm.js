@@ -1,13 +1,14 @@
 import React from 'react';
-import { Form, Input, Button, Row, Col, Select } from 'antd';
+import { Button, Col, Form, Input, Row, Select } from 'antd';
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { debounce, isPlainObject } from 'lodash';
-import { isStrictNull, getRequestorURLParams, formatMessage, getFormLayout } from '@/utils/util';
+import { formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
 import { connect } from '@/utils/RmsDva';
 import HeaderInput from './HeaderInput';
 import JSONEditor from './JSONEditor';
 import FormattedMessage from '@/components/FormattedMessage';
 import styles from '../requestor.module.less';
+import { getRequestorURLParams } from '@/packages/Strategy/Requestor/requestorUtil';
 
 const { Option } = Select;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(3, 21);

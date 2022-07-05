@@ -8,6 +8,7 @@ const VehicleFormComponent = (props) => {
   const { allVehicles, form, dispatch } = props;
   const [typeOption, setTypeOption] = useState([]);
   const [vehicleList, setVehicleList] = useState([]);
+
   useEffect(() => {
     dispatch({ type: 'monitor/refreshAllVehicleList' });
   }, []);
@@ -22,18 +23,11 @@ const VehicleFormComponent = (props) => {
     if (!isStrictNull(vehicleId) && currentVehicleInfo?.length === 0) {
       message.info(formatMessage({ id: 'vehicle.noExist.tip' }, { vehicle: vehicleId }));
     }
-    form.setFieldsValue({
-      vehicleType: null,
-      vehicleId,
-    });
 
+    const formVehicleType =
+      currentVehicleInfo.length === 1 ? currentVehicleInfo[0]?.vehicleType : null;
+    form.setFieldsValue({ vehicleType: formVehicleType, vehicleId });
     setTypeOption(currentVehicleInfo);
-  }
-
-  function onInputChange(ev, key) {
-    form.setFieldsValue({
-      vehicleType: ev,
-    });
   }
 
   return (
@@ -44,11 +38,9 @@ const VehicleFormComponent = (props) => {
         rules={[{ required: true }]}
       >
         <Input
-          onChange={
-            debounce((value) => {
+          onChange={debounce((value) => {
             getVehicleType(value);
-          }, 400)
-        }
+          }, 400)}
           style={{ width: '100%' }}
         />
       </Form.Item>
@@ -58,12 +50,7 @@ const VehicleFormComponent = (props) => {
         name="vehicleType"
         rules={[{ required: true }]}
       >
-        <Select
-          onChange={(ev) => {
-            onInputChange(ev, 'vehicleType');
-          }}
-          style={{ width: '100%' }}
-        >
+        <Select style={{ width: '100%' }}>
           {typeOption.map((record) => (
             <Select.Option key={record.vehicleType} value={record.vehicleType}>
               {record.vehicleType}
