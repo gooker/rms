@@ -8,7 +8,8 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import VehicleLogSearch from './component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
-import { fetchAllAdaptor, fetchAllVehicle } from '@/services/resourceService';
+import { fetchAllAdaptor } from '@/services/resourceService';
+import { fetchAllVehicleList } from '@/services/commonService';
 
 const VehicleLog = (props) => {
   const { dispatch, allVehicles, loading } = props;
@@ -84,7 +85,10 @@ const VehicleLog = (props) => {
   }, []);
 
   async function init() {
-    const [allVehicles, allAdaptors] = await Promise.all([fetchAllVehicle(), fetchAllAdaptor()]);
+    const [allVehicles, allAdaptors] = await Promise.all([
+      fetchAllVehicleList(),
+      fetchAllAdaptor(),
+    ]);
     if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
       setDatasource(allVehicles);
       setAllAdaptors(allAdaptors);
