@@ -5,7 +5,14 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  getToteLayoutBaseParam,
+  isEqual,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -62,9 +69,6 @@ class MonitorMapView extends BaseMap {
       showTote: true,
       showRealTimeRate: false,
     };
-
-    // 选中的元素数据
-    this.selections = [];
 
     // 监控相关
     this.idVehicleMap = new Map(); // {uniqueId: [VehicleEntity]}
@@ -284,30 +288,30 @@ class MonitorMapView extends BaseMap {
   select = (entity, mode) => {
     // Chrome调试会误将this指向Cell, 为了便于调试所以使用_this
     const _this = this;
-
+    let selections = [...window.$$state().monitor.selections];
     // 先判断是否是取消选择
-    const isCull = _this.selections.includes(entity);
+    const isCull = selections.includes(entity);
     if (isCull) {
-      _this.selections = this.selections.filter((item) => item !== entity);
+      selections = selections.filter((item) => item !== entity);
     } else {
       if (mode === SelectionType.SINGLE) {
         if (entity instanceof Cell) {
           _this.currentClickedCell = entity;
         }
-        _this.selections.forEach((entity) => entity.onUnSelect());
-        _this.selections.length = 0;
-        _this.selections.push(entity);
+        selections.forEach((entity) => entity.onUnSelect());
+        selections.length = 0;
+        selections.push(entity);
       } else if (mode === SelectionType.CTRL) {
         if (entity instanceof Cell) {
           _this.currentClickedCell = entity;
         }
-        _this.selections.push(entity);
+        selections.push(entity);
       } else {
         _this.shiftSelectCell(entity);
       }
     }
     _this.refresh();
-    window.$$dispatch({ type: 'monitor/updateSelections', payload: [..._this.selections] });
+    window.$$dispatch({ type: 'monitor/updateSelections', payload: [...selections] });
   };
 
   // ************************ 临时不可走点锁 **********************
