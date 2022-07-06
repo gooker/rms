@@ -30,7 +30,7 @@ const ViewVehicleLog = (props) => {
   };
   const iframeLoaded = () => {
     const iframeDOM = document.getElementById(
-      `${currentData.name}${currentData.key}VehiclelogView`,
+      `${currentData.key}VehiclelogView`,
     );
     if (iframeDOM) {
       const iframeMessage = {
@@ -55,8 +55,8 @@ const ViewVehicleLog = (props) => {
           seamless
           src={currentData.url}
           title={currentData.name}
-          name={`${currentData.name}?${new Date().getTime()}`}
-          id={`${currentData.name}${currentData.key}VehiclelogView`}
+          name={`${currentData.key}?${new Date().getTime()}`}
+          id={`${currentData.key}VehiclelogView`}
           width="100%"
           height="100%"
           frameBorder="0"
