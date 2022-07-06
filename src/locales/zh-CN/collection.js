@@ -90,9 +90,10 @@ export default {
   'webHook.queue': '队列',
   'webHook.headerItem.empty': '请求头配置不完整',
   'webHook.headerItem.keyDuplicate': '请求头存在重复Key',
-  'webHook.queue.name': 'topic名称',
-  'webHook.queue.desc': 'topic描述',
   'webHook.queue.subscribe': '订阅方',
+  'webHook.queue.subscribeInfo': '订阅信息',
+  'webHook.queue.required': '请选择队列',
+  'webHook.queue.subscribe.required': '请输入订阅方',
 
   // 富文本编辑
   'richEditor.richText': '富文本',

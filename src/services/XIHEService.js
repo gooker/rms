@@ -190,21 +190,6 @@ export async function resetCharger(hardwareId) {
   });
 }
 
-// 保存topic和webhook的注册关系
-export async function registerWebhooksTopic(param) {
-  return request(`/${NameSpace.Platform}/registerTopic/saveRegisterTopic`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 解绑topic 绑定
-export async function unBoundRegisterTopic(param) {
-  return request(`/${NameSpace.Platform}/registerTopic/UnboundRegisterTopic`, {
-    method: 'POST',
-    data: param,
-  });
-}
 
 // 根据sectionId获取所有的绑定关系
 export async function fetchAllRegisterData() {

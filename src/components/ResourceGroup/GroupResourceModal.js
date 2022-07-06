@@ -44,7 +44,7 @@ const EditPriority = (props) => {
 };
 
 const GroupResourceModal = (props) => {
-  const { visible, groups, onCancel } = props;
+  const { visible, groups, onCancel, onRefresh } = props;
 
   const [editing, setEditing] = useState(null);
 
@@ -169,7 +169,7 @@ const GroupResourceModal = (props) => {
       const response = await saveResourceGroup(group);
       if (!dealResponse(response, true)) {
         resetRef();
-        onCancel(true);
+        onRefresh(); // 刷新
       }
       setLoading(false);
     } else {

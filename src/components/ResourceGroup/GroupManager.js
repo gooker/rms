@@ -122,7 +122,7 @@ const GroupManager = (props) => {
         <PlusOutlined /> <FormattedMessage id={'group.addToGroup'} />
       </Dropdown.Button>
 
-      {/* 资源组管理 */}
+      {/* 组管理 */}
       <GroupModal
         type={type}
         mapId={activeMapId}
@@ -149,6 +149,9 @@ const GroupManager = (props) => {
       <GroupResourceModal
         visible={resourceModalVisible}
         groups={groups}
+        onRefresh={() => {
+          refresh();
+        }}
         onCancel={(needRefresh) => {
           needRefresh === true && refresh();
           setResourceModalVisible(false);

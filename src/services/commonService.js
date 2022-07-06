@@ -564,13 +564,6 @@ export async function fetchSystemParamByKey(key) {
   });
 }
 
-// Web Hook
-// 查询所有已创建的Web Hook类型
-export async function getAllWebHookTypes() {
-  return request(`/${NameSpace.Platform}/webHook/getType`, {
-    method: 'GET',
-  });
-}
 
 // 查询所有MQ Queue
 export async function getAllQueues() {

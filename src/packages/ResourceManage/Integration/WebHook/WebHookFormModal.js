@@ -14,12 +14,10 @@ import { saveWebHook } from '@/services/commonService';
 import RequestHeaderForm from '@/components/RequestHeaderForm';
 import commonStyle from '@/common.module.less';
 
-const { Option } = Select;
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(4, 18);
 
 const WebHookFormModal = (props) => {
-  const { editing, webHooksType, onClose } = props;
-  const options = Object.entries(webHooksType).map(([type, label]) => ({ type, label }));
+  const { editing, onClose, mqQueue } = props;
 
   const [formRef] = Form.useForm();
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -92,20 +90,6 @@ const WebHookFormModal = (props) => {
       >
         <Input />
       </Form.Item>
-      <Form.Item
-        name="webHookType"
-        initialValue={editing?.webHookType}
-        label={<FormattedMessage id="app.common.type" />}
-        rules={[{ required: true }]}
-      >
-        <Select style={{ width: 200 }}>
-          {options.map(({ type, label }) => (
-            <Option key={type} value={type}>
-              {label}
-            </Option>
-          ))}
-        </Select>
-      </Form.Item>
 
       <Form.Item
         name="url"
@@ -122,6 +106,82 @@ const WebHookFormModal = (props) => {
         rules={[{ required: true }]}
       >
         <Input.TextArea />
+      </Form.Item>
+
+      {/* 队列 urlMappingRelation */}
+
+      <Form.Item label={formatMessage({ id: 'webHook.queue.subscribeInfo' })}>
+        <Form.List
+          name="urlMappingRelation"
+          initialValue={editing?.urlMappingRelation ?? [{}]}
+          required={true}
+        >
+          {(fields, { add, remove }, { errors }) => (
+            <>
+              {fields.map((field, index) => (
+                <Form.Item key={field.key}>
+                  <Row gutter={10}>
+                    <Col span={22}>
+                      <Row gutter={24}>
+                        <Col span={15}>
+                          <Form.Item
+                            noStyle
+                            {...field}
+                            name={[field.name, 'messageType']}
+                            rules={[
+                              {
+                                required: true,
+                                message: formatMessage({ id: 'webHook.queue.required' }),
+                              },
+                            ]}
+                          >
+                            <Select placeholder={formatMessage({ id: 'webHook.queue' })}>
+                              {mqQueue?.map((type) => (
+                                <Select.Option key={type} value={type}>
+                                  {type}
+                                </Select.Option>
+                              ))}
+                            </Select>
+                          </Form.Item>
+                        </Col>
+
+                        <Col span={9}>
+                          <Form.Item
+                            noStyle
+                            {...field}
+                            name={[field.name, 'nameSpace']}
+                            rules={[
+                              {
+                                required: true,
+                                message: formatMessage({ id: 'webHook.queue.subscribe.required' }),
+                              },
+                            ]}
+                          >
+                            <Input placeholder={formatMessage({ id: 'webHook.queue.subscribe' })} />
+                          </Form.Item>
+                        </Col>
+                      </Row>
+                    </Col>
+                    <Col span={2} className={commonStyle.flexCenter}>
+                      {fields.length > 1 ? (
+                        <MinusCircleOutlined
+                          onClick={() => remove(field.name)}
+                          style={{ fontSize: 16 }}
+                        />
+                      ) : null}
+                    </Col>
+                  </Row>
+                </Form.Item>
+              ))}
+              <Form.Item noStyle>
+                <Button block type="dashed" onClick={() => add()}>
+                  <PlusOutlined />
+                </Button>
+                <Form.ErrorList errors={errors} />
+              </Form.Item>
+            </>
+          )}
+        </Form.List>
       </Form.Item>
 
       {/* 请求头 */}
@@ -168,6 +228,7 @@ const WebHookFormModal = (props) => {
       >
         <Input />
       </Form.Item>
+
       <Form.Item label={<FormattedMessage id="app.common.timeout" />}>
         <Row>
           <Col>
