@@ -6,7 +6,7 @@ import commonStyle from '@/common.module.less';
 
 const IntegrationLogManagement = (props) => {
   const { currentUser } = props;
-  let currentUrl = `/${NameSpace.Platform}/log-explorer/file-explorer?dir=/Users/${currentUser.username}/logs`;
+  let currentUrl = `/${NameSpace.Platform}/log-explorer/file-explorer`;
   currentUrl = getDomainNameByUrl(currentUrl);
   let params = {
     sectionId: window.localStorage.getItem('sectionId'),
@@ -17,10 +17,10 @@ const IntegrationLogManagement = (props) => {
   const currentData = {
     name: '日志浏览',
     url: parseUrlParams(currentUrl, params),
-    key: 'logView',
+    key: 'integrationLog',
   };
   const iframeLoaded = () => {
-    const iframeDOM = document.getElementById(`${currentData.name}${currentData.key}newTestLog`);
+    const iframeDOM = document.getElementById(`${currentData.key}newTestLog`);
     if (iframeDOM) {
       const iframeMessage = {
         type: 'init',
@@ -47,7 +47,7 @@ const IntegrationLogManagement = (props) => {
         src={currentData.url}
         title={currentData.name}
         name={`${currentData.name}?${new Date().getTime()}`}
-        id={`${currentData.name}${currentData.key}newTestLog`}
+        id={`${currentData.key}newTestLog`}
         width="100%"
         height="100%"
         frameBorder="0"
