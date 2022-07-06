@@ -98,7 +98,7 @@ class MainLayout extends React.Component {
               }
 
               // 获取一些非立即需要的系统数据
-              fetchGlobalExtraData(dispatch);
+              fetchGlobalExtraData();
 
               // FIXME:轮询告警数量(这个会引发一个问题: connect/mapStateToProps/selections)
               AlertCountPolling.start((value) => {

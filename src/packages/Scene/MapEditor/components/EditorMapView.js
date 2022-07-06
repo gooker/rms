@@ -1,11 +1,11 @@
 import React from 'react';
 import { reverse } from 'lodash';
 import BaseMap from '@/components/BaseMap';
-import { getDirByAngle, isItemOfArray, isNull } from '@/utils/util';
+import { getDirByAngle, isItemOfArray, isNull, isStrictNull } from '@/utils/util';
 import { Cell, PixiBuilder, ResizeableEmergencyStop } from '@/entities';
 import { getCurrentRouteMapData } from '@/utils/mapUtil';
 import { loadEditorExtraTextures } from '@/utils/textures';
-import { MapSelectableSpriteType, SelectionType } from '@/config/consts';
+import { EditorAdaptStorageKey, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
 import { defaultEditorViewConfig } from '@/models/editorViewModel';
 
@@ -51,19 +51,26 @@ class EditorMapView extends BaseMap {
    * 6. Pixel转世界长度: viewport.worldScreenWidth / viewport.screenWidth * [Pixel]
    */
   adaptiveMapItem = () => {
-    const ThresholdValue = 20;
+    // 开始自适应的上限值
+    let thresholdValue = window.localStorage.getItem(EditorAdaptStorageKey);
+    if (isStrictNull(thresholdValue)) {
+      thresholdValue = 20;
+    } else {
+      thresholdValue = parseInt(thresholdValue);
+    }
     const { viewport } = this.pixiUtils;
     const { children, screenWidth, worldScreenWidth } = viewport;
     // 获取当前点圆的尺寸
     const currentCellCircleWidth = (screenWidth / worldScreenWidth) * 140;
     // 根据navigationCircleWidth判断是否需要自适应
-    if (currentCellCircleWidth < ThresholdValue) {
+    if (currentCellCircleWidth < thresholdValue) {
       children.forEach((child) => {
         if (child instanceof Cell) {
-          child.scale.set(ThresholdValue / currentCellCircleWidth);
+          child.scale.set(thresholdValue / currentCellCircleWidth);
         }
       });
     }
+    this.refresh();
   };
 
   // 数据清理
@@ -93,6 +100,7 @@ class EditorMapView extends BaseMap {
       this.idCellMap.set(item.id, cell);
       this.pixiUtils.viewportAddChild(cell);
     });
+    this.adaptiveMapItem();
   };
 
   removeCells = (cellIds) => {

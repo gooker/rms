@@ -1,16 +1,16 @@
 import React, { memo, useCallback, useEffect } from 'react';
 import { debounce, throttle } from 'lodash';
 import { connect } from '@/utils/RmsDva';
-import { getRandomString, isNull } from '@/utils/util';
-import MonitorMapView from './MonitorMapView';
-import { FooterHeight, HeaderHeight, RightToolBarWidth } from '../enums';
-import { renderWorkStationList } from '@/utils/mapUtil';
-import { ZoneMarkerType } from '@/config/consts';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
-import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import EventManager from '@/utils/EventManager';
-import commonStyles from '@/common.module.less';
+import { getRandomString, isNull } from '@/utils/util';
+import { renderWorkStationList } from '@/utils/mapUtil';
+import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
+import MonitorMapView from './MonitorMapView';
+import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
 import MonitorFooter from '@/packages/Scene/MapMonitor/components/MonitorFooter';
+import { FooterHeight, HeaderHeight, RightToolBarWidth } from '../enums';
+import commonStyles from '@/common.module.less';
 
 const CLAMP_VALUE = 500;
 const MonitorMapContainer = (props) => {
@@ -71,7 +71,9 @@ const MonitorMapContainer = (props) => {
       viewport.on(
         'moved',
         throttle(function () {
-          const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('MONITOR_MAP'));
+          const { x, y, width, height } = JSON.parse(
+            window.sessionStorage.getItem(MonitorMapSizeKey),
+          );
           const topLimit = y + (height - CLAMP_VALUE);
           if (this.top >= topLimit) {
             this.top = topLimit;
@@ -118,7 +120,7 @@ const MonitorMapContainer = (props) => {
   const doClampZoom = useCallback(
     function () {
       const { viewport } = mapContext.pixiUtils;
-      const minMapRatio = mapContext.clampZoom(viewport, 'MONITOR_MAP');
+      const minMapRatio = mapContext.clampZoom(viewport, MonitorMapSizeKey);
       dispatch({ type: 'monitor/saveMapMinRatio', payload: minMapRatio });
     },
     [mapContext],

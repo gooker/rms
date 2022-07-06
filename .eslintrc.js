@@ -26,5 +26,6 @@ module.exports = {
     'no-unused-vars': 1,
     'no-debugger': 1,
     'no-console': 1,
+    'react-hooks/exhaustive-deps': 0,
   },
 };

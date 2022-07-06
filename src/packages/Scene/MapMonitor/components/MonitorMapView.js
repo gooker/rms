@@ -18,6 +18,7 @@ import {
   EStopStateColor,
   GeoLockColor,
   LatentPodSize,
+  MonitorAdaptStorageKey,
   SelectionType,
   ToteVehicleSize,
   VehicleState,
@@ -122,19 +123,26 @@ class MonitorMapView extends BaseMap {
   }
 
   adaptiveMapItem = () => {
-    const ThresholdValue = 20;
+    // 开始自适应的上限值
+    let thresholdValue = window.localStorage.getItem(MonitorAdaptStorageKey);
+    if (isStrictNull(thresholdValue)) {
+      thresholdValue = 20;
+    } else {
+      thresholdValue = parseInt(thresholdValue);
+    }
     const { viewport } = this.pixiUtils;
     const { children, screenWidth, worldScreenWidth } = viewport;
     // 获取当前点圆的尺寸
     const currentCellCircleWidth = (screenWidth / worldScreenWidth) * 140;
     // 根据navigationCircleWidth判断是否需要自适应
-    if (currentCellCircleWidth < ThresholdValue) {
+    if (currentCellCircleWidth < thresholdValue) {
       children.forEach((child) => {
         if (child instanceof Cell) {
-          child.scale.set(ThresholdValue / currentCellCircleWidth);
+          child.scale.set(thresholdValue / currentCellCircleWidth);
         }
       });
     }
+    this.refresh();
   };
 
   // 清除监控有关的地图数据
@@ -476,7 +484,7 @@ class MonitorMapView extends BaseMap {
     uniqueId === `${this.trackVehicleId}` && this.moveTo(vehicleEntity.x, vehicleEntity.y, 0.1);
   };
 
-  // ********** 潜伏车 ********** //
+  /************************ 潜伏车 **********************/
   addLatentVehicle = (latentVehicleData) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
@@ -617,7 +625,7 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ********** 潜伏货架 ********** //
+  /************************ 潜伏货架 **********************/
   addLatentPod = (latentPodData) => {
     if (this.idCellMap.size === 0) return;
     const { loadId, cellId, angle, width, height } = latentPodData;
@@ -743,7 +751,7 @@ class MonitorMapView extends BaseMap {
     this.refresh();
   };
 
-  // ********** 料箱车 ********** //
+  /************************ 料箱车 **********************/
   addToteVehicle = (toteVehicleData) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
@@ -890,7 +898,7 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ********** 料箱货架 ********** //
+  /************************ 料箱货架 **********************/
   addTotePod = (totePodData) => {
     /**
      * @Update 更新方法使其支持四个方向: 2020年07月28日
@@ -980,7 +988,7 @@ class MonitorMapView extends BaseMap {
     this.addTotePod(newTotePodData);
   };
 
-  // ********** 分拣车 ********** //
+  /************************ 分拣车 **********************/
   addSorterVehicle = (sorterVehicleData, callback) => {
     // 如果点位未渲染好直接退出
     if (this.idCellMap.size === 0) return;
@@ -1100,7 +1108,7 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ************************ 渲染小车锁格 ********************** //
+  /************************ 渲染小车锁格 **********************/
   renderVehicleLocks = (inputData) => {
     const { allVehicles } = window.$$state().monitor;
     // 清除所有的几何锁
@@ -1176,7 +1184,7 @@ class MonitorMapView extends BaseMap {
     this.vehicleLocksMap.clear();
   };
 
-  // ************************ 渲染点位锁格 ********************** //
+  /************************ 渲染点位锁格 **********************/
   renderCellLocks = (lockData) => {
     const { allVehicles } = window.$$state().monitor;
     // 清除所有的几何锁
@@ -1415,7 +1423,7 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ************************ 料箱任务目标线 ********************** //
+  /************************ 料箱任务目标线 **********************/
   recordToteTaskRealtimeData = (realtime) => {
     this.toteTaskRealtimeData = realtime;
     this.clearToteTaskRealtimePaths();
@@ -1461,7 +1469,7 @@ class MonitorMapView extends BaseMap {
     });
   };
 
-  // ************************ 料箱任务实时分布 ********************** //
+  /************************ 料箱任务实时分布 **********************/
   renderToteRealtimeState = (type, data) => {
     // 清理
     this.toteTaskRealtimeState.forEach((sprite) => {
@@ -1552,7 +1560,7 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ************************ 点位热度 ********************** //
+  /************************ 点位热度 **********************/
   renderCellHeat = (data) => {
     if (!data) return;
     const { costHeatOpacity } = window.$$state().monitorView;
@@ -1588,13 +1596,13 @@ class MonitorMapView extends BaseMap {
     this.cellHeatMap.clear();
   };
 
-  // ************************ 工作站标记 ********************** //
+  /************************ 工作站标记 **********************/
   markWorkStation = (workStationId, isShown, color) => {
     const workStation = this.workStationMap.get(workStationId);
     workStation && workStation.switchMarkerShown(isShown, color);
   };
 
-  // ************************ 小车标记 ********************** //
+  /************************ 小车标记 **********************/
   markWorkStationVehicle = (vehicles, isShown, color, workStationId) => {
     // 先做清理操作, 只重置正在为该工作站服务的小车
     this.idVehicleMap.forEach((vehicle) => {
@@ -1615,13 +1623,13 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ************************ 通用站点标记 start ********************** //
+  /************************ 通用站点标记 start **********************/
   markCommonPoint = (commonPointId, isShown, color) => {
     const commonPoint = this.commonFunctionMap.get(commonPointId);
     commonPoint && commonPoint.switchCommonMarkerShown(isShown, color);
   };
 
-  // ************************ 通用站点标记 小车标记 ********************** //
+  /************************ 通用站点标记 小车标记 **********************/
   markCommonPointVehicle = (vehicles, isShown, color, commonPointId) => {
     // 先做清理操作, 只重置正在为该工作站服务的小车
     this.idVehicleMap.forEach((vehicle) => {
@@ -1643,19 +1651,19 @@ class MonitorMapView extends BaseMap {
     }
   };
 
-  // ************************ 充电桩状态更新 ********************** //
+  /************************ 充电桩状态更新 **********************/
   updateChargerState = ({ n: name, s: state }) => {
     const chargerEntity = this.chargerMap.get(name);
     chargerEntity && chargerEntity.updateChargerState(state);
   };
 
-  // ************************ 充电桩chargeId更新 ********************** //
+  /************************ 充电桩chargeId属性更新 **********************/
   updateChargerHardware = (name, chargerId, id) => {
     const chargerEntity = this.chargerMap.get(name);
     chargerEntity && chargerEntity.updateHardwareId(chargerId, id);
   };
 
-  // ************************ 渲染 清除 紧急停止区域 ********************** //
+  /************************ 渲染、清除紧急停止区域 **********************/
   renderEmergencyStopArea = (allData) => {
     const { globalActive, logicActive, currentLogicArea } = window.$$state().monitor;
     const logicEStopData = allData.filter((item) => item.logicId === currentLogicArea);
