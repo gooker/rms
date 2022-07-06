@@ -125,8 +125,8 @@ export default {
   'editor.view.hideBlock': '隐藏不可走点',
   'editor.view.coordinateDisplay': '坐标显示',
   'editor.view.backImgDisplay': '背景显示',
-  'editor.view.cellsLineDisplay': '点关系显示',
-  'editor.view.priorityDisplay': '优先级显示',
+  'editor.view.cellsLineDisplay': '线条显示',
+  'editor.view.priorityDisplay': '箭头显示',
   'editor.view.directionShown': '方向显示',
   'editor.view.showOnlyRelevantPoints': '仅显示相关点',
 

@@ -37,7 +37,6 @@ export default class PixiBuilder {
     this.viewport.on('zoomed-end', function () {
       if (typeof _this.adaptiveCB === 'function') {
         _this.adaptiveCB();
-        _this.renderer.render(_this.viewport);
       }
     });
 

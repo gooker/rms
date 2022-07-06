@@ -1,16 +1,16 @@
 import React, { memo } from 'react';
-import { Button, Form, Row, Switch } from 'antd';
+import { Button, Form, Row, Slider, Switch } from 'antd';
 import { CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
-import { dealResponse, formatMessage, getFormLayout, isStrictNull } from '@/utils/util';
+import { dealResponse, formatMessage, getFormLayout, getMapModalPosition, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import { StationRatePolling } from '@/workers/WebWorkerManager';
 import CostCheckBox from '@/packages/Scene/components/CostCheckBox';
 import styles from '../monitorLayout.module.less';
+import { MonitorAdaptStorageKey } from '@/config/consts';
 
-const width = 600;
-const height = 520;
 const { formItemLayout } = getFormLayout(6, 10);
+const { formItemLayout: formItemLayout2 } = getFormLayout(6, 13);
 
 const MonitorViewControlModal = (props) => {
   const {
@@ -119,15 +119,23 @@ const MonitorViewControlModal = (props) => {
     });
   }
 
+  function getAdaptSliderValue() {
+    let thresholdValue = window.localStorage.getItem(MonitorAdaptStorageKey);
+    if (isStrictNull(thresholdValue)) {
+      thresholdValue = 20;
+    } else {
+      thresholdValue = parseInt(thresholdValue);
+    }
+    return thresholdValue;
+  }
+
+  function adaptiveMapCellManual(value) {
+    window.localStorage.setItem(MonitorAdaptStorageKey, value);
+    mapContext.adaptiveMapItem();
+  }
+
   return (
-    <div
-      style={{
-        width: `${width}px`,
-        height: `${height}px`,
-        left: `calc(50% - ${width / 2}px)`,
-      }}
-      className={styles.monitorModal}
-    >
+    <div style={getMapModalPosition(600)} className={styles.monitorModal}>
       <div className={styles.monitorModalHeader}>
         <FormattedMessage id={'monitor.right.mapView'} />
         <CloseOutlined
@@ -216,8 +224,8 @@ const MonitorViewControlModal = (props) => {
 
           {/* 急停区 */}
           <Form.Item {...formItemLayout} label={formatMessage({ id: 'app.map.emergencyStop' })}>
-            <Row style={{ width: '100%' }}>
-              <Form.Item>
+            <Row style={{ width: '100%' }} align={'middle'}>
+              <Form.Item noStyle>
                 <Switch
                   checked={emergencyAreaShown}
                   onChange={switchEmergencyStopShown}
@@ -231,6 +239,16 @@ const MonitorViewControlModal = (props) => {
                 </Button>
               </div>
             </Row>
+          </Form.Item>
+
+          {/* 点位大小手动调整 */}
+          <Form.Item {...formItemLayout2} label={'点位调整'}>
+            <Slider
+              min={2}
+              max={20}
+              onChange={adaptiveMapCellManual}
+              defaultValue={getAdaptSliderValue()}
+            />
           </Form.Item>
         </Form>
       </div>

@@ -11,7 +11,8 @@ import { fetchCustomParamType } from '@/services/commonService';
 import { fetchAllAdaptor, fetchResourceGroupType } from '@/services/resourceService';
 import { mockData } from '@/packages/SSO/CustomMenuManager/components/mockData';
 
-export async function fetchGlobalExtraData(dispatch) {
+export async function fetchGlobalExtraData() {
+  const dispatch = window.$$dispatch;
   try {
     dispatch({ type: 'global/updateGlobalFetching', payload: true });
     // 所有的任务类型、地图编程元数据、所有适配器数据、目标点源数据、资源组类型

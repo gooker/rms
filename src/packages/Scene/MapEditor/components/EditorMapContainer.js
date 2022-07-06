@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import EditorMask from './EditorMask';
 import EditorMapView from './EditorMapView';
 import EditorShortcutTool from './EditorShortcutTool';
-import { ZoneMarkerType } from '@/config/consts';
+import { EditorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
 import { renderWorkStationList } from '@/utils/mapUtil';
@@ -74,7 +74,9 @@ const EditorMapContainer = (props) => {
       viewport.on(
         'moved',
         throttle(function () {
-          const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem('EDITOR_MAP'));
+          const { x, y, width, height } = JSON.parse(
+            window.sessionStorage.getItem(EditorMapSizeKey),
+          );
           const topLimit = y + (height - CLAMP_VALUE);
           if (this.top >= topLimit) {
             this.top = topLimit;
@@ -123,7 +125,7 @@ const EditorMapContainer = (props) => {
   const doClampZoom = useCallback(
     function() {
       const { viewport } = mapContext.pixiUtils;
-      const minMapRatio = mapContext.clampZoom(viewport, 'EDITOR_MAP');
+      const minMapRatio = mapContext.clampZoom(viewport, EditorMapSizeKey);
       dispatch({ type: 'editor/saveMapMinRatio', payload: minMapRatio });
     },
     [mapContext],

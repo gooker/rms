@@ -2,8 +2,13 @@ import Dictionary from '@/utils/Dictionary';
 
 const Colors = Dictionary().color;
 
+// 地图相关
 export const GlobalAlpha = 0.6;
 export const MapScaleRatio = 1.08;
+export const MonitorAdaptStorageKey = 'MONITOR_CELL_ADAPT_THRESHOLD';
+export const MonitorMapSizeKey = 'MONITOR_MAP_SIZE';
+export const EditorAdaptStorageKey = 'EDITOR_CELL_ADAPT_THRESHOLD';
+export const EditorMapSizeKey = 'EDITOR_MAP_SIZE';
 
 export const SelectionType = {
   SINGLE: 'SINGLE',

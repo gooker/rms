@@ -25,7 +25,7 @@ const MapMonitor = (props) => {
       socketClient.cancelMonitorRegistration();
       dispatch({ type: 'monitor/unmount' });
       dispatch({ type: 'monitorView/unmount' });
-      window.sessionStorage.removeItem('MONITOR_MAP');
+      window.sessionStorage.removeItem('MonitorMapSizeKey');
       VehiclePollingTaskPathManager.terminate();
       LockCellPolling.terminate();
     };
