@@ -1128,7 +1128,10 @@ export function extractActionToFormValue(actions) {
   return configurations;
 }
 
-// 提取sample数据
+/**
+ * 提取sample数据
+ * http://192.168.0.12:3000/project/52/interface/api/1573
+ */
 export function generateSample(
   { customStart, customActions, customPreActions, customEnd },
   taskNodes,
@@ -1171,12 +1174,13 @@ export function generateSample(
     Object.values(customActions).forEach((subTask) => {
       const {
         code,
+        speed,
         preActionCodes,
         targetAction: { operatorAngle, loadAngle, target },
       } = subTask;
       const { index } = find(taskNodes, { code });
       const stepCode = `step${index}`;
-      result['customAction'][stepCode] = {};
+      result['customAction'][stepCode] = { speed };
       if (['ROTATE', 'ROTATE_GROUP'].includes(target.type)) {
         // 如果操作者位置 (operatorAngle) 存在值，那么loadAngle指的是载具面
         if (!isNull(operatorAngle)) {

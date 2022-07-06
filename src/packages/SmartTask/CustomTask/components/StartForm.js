@@ -1,10 +1,11 @@
-import React, { Fragment, memo } from 'react';
-import { Form, Input, InputNumber, Select, Switch } from 'antd';
+import React, { memo } from 'react';
+import { Form, Input } from 'antd';
+import { connect } from '@/utils/RmsDva';
 import { formatMessage } from '@/utils/util';
+import TitleCard from '@/components/TitleCard';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleSelector from '../components/VehicleSelector';
-import TitleCard from '@/components/TitleCard';
-import { connect } from '@/utils/RmsDva';
+import ResourceLimit from './ResourceLimit';
 
 const StartForm = (props) => {
   const { code, type, hidden, loadSpecification, storageSpecification } = props;
@@ -59,64 +60,11 @@ const StartForm = (props) => {
         width={640}
         title={<FormattedMessage id={'customTask.form.resourceLimit'} />}
       >
-        <Fragment>
-          {/* 可接小车电量约束 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'customLimit', 'vehicleBatteryLimit']}
-            label={formatMessage({ id: 'customTask.form.resourceLimit.vehicleBattery' })}
-          >
-            <InputNumber allowClear style={{ width: 90 }} />
-          </Form.Item>
-          {/* 车身可用容器数量约束 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'customLimit', 'canUseContainerCountLimit']}
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.availableContainerCountLimit',
-            })}
-          >
-            <InputNumber allowClear style={{ width: 90 }} />
-          </Form.Item>
-          {/* 容器规格约束 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'customLimit', 'canUseContainerLimit']}
-            label={formatMessage({ id: 'customTask.form.resourceLimit.containerTypeLimit' })}
-            initialValue={[]}
-          >
-            <Select allowClear mode={'multiple'}></Select>
-          </Form.Item>
-          {/* 载具规格约束 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'customLimit', 'canUseLoadTypeLimit']}
-            label={formatMessage({ id: 'customTask.form.resourceLimit.loadTypeLimit' })}
-            initialValue={[]}
-          >
-            <Select allowClear mode={'multiple'}></Select>
-          </Form.Item>
-          {/* 是否要求的载具ID必须有待命车辆持有 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'customLimit', 'isLimitStandBy']}
-            label={formatMessage({ id: 'customTask.form.resourceLimit.isLimitStandBy' })}
-            initialValue={false}
-            valuePropName={'checked'}
-          >
-            <Switch />
-          </Form.Item>
-          {/* 是否可以使用工作中的载具 */}
-          <Form.Item
-            hidden={hidden}
-            name={[code, 'customLimit', 'canUseWorkLimit']}
-            label={formatMessage({ id: 'customTask.form.resourceLimit.loadWorkLimit' })}
-            initialValue={false}
-            valuePropName={'checked'}
-          >
-            <Switch />
-          </Form.Item>
-        </Fragment>
+        <ResourceLimit
+          hidden={hidden}
+          prefix={[code, 'customLimit']}
+          loadSpecification={loadSpecification}
+        />
       </TitleCard>
 
       {/* 备注 */}

@@ -1,12 +1,15 @@
-import { dealResponse, formatMessage } from '@/utils/util';
-import { getCustomTaskList } from '@/services/commonService';
+import { dealResponse } from '@/utils/util';
+import { fetchCustomTaskList } from '@/services/commonService';
 import { fetchAllQuickTaskGroups, fetchVisibleQuickTasks } from '@/services/smartTaskService';
+import { fetchAllLoadSpecification } from '@/services/resourceService';
 
 const initState = {
   userTasks: [],
   sharedTasks: [],
   quickTaskGroups: [],
   customTasks: [],
+  loadSpecification: [], // 载具规格
+  storageSpecification: [], // 车辆容器规格
 
   taskModalVisible: false,
   groupModalVisible: false,
@@ -25,32 +28,41 @@ export default {
   effects: {
     * getVisibleQuickTasks(_, { call, put }) {
       const response = yield call(fetchVisibleQuickTasks);
-      // TODO: 需要检查快捷任务绑定的自定义任务是否被删除或者替换
-      if (
-        !dealResponse(
-          response,
-          false,
-          formatMessage(
-            { id: 'app.message.fetchFailTemplate' },
-            { type: formatMessage({ id: 'menu.quickTask' }) },
-          ),
-        )
-      ) {
+      if (!dealResponse(response)) {
         yield put({ type: 'updateQuickTasks', payload: response });
       }
     },
+
     * initQuickTaskPage(_, { call, put }) {
-      const [quickTasks, quickTaskGroups, customTasks] = yield Promise.all([
-        fetchVisibleQuickTasks(),
-        fetchAllQuickTaskGroups(),
-        getCustomTaskList(),
-      ]);
-      if (!dealResponse([quickTasks, quickTaskGroups, customTasks])) {
-        yield put({ type: 'updateQuickTasks', payload: quickTasks });
-        yield put({
-          type: 'updateState',
-          payload: { quickTaskGroups, customTasks },
-        });
+      const validateBindCustomTask = { own: false, customTask: false };
+      const [quickTasks, quickTaskGroups, customTasks, loadSpecification] =
+        yield Promise.allSettled([
+          fetchVisibleQuickTasks(),
+          fetchAllQuickTaskGroups(),
+          fetchCustomTaskList(),
+          fetchAllLoadSpecification(),
+        ]);
+      if (quickTasks.status === 'fulfilled' && !dealResponse(quickTasks.value)) {
+        validateBindCustomTask.own = true;
+        yield put({ type: 'updateQuickTasks', payload: quickTasks.value });
+      }
+
+      const payload = {};
+      if (quickTaskGroups.status === 'fulfilled' && !dealResponse(quickTaskGroups.value)) {
+        payload.quickTaskGroups = quickTaskGroups.value;
+      }
+      if (customTasks.status === 'fulfilled' && !dealResponse(customTasks.value)) {
+        validateBindCustomTask.customTask = true;
+        payload.customTasks = customTasks.value;
+      }
+      if (loadSpecification.status === 'fulfilled' && !dealResponse(loadSpecification.value)) {
+        payload.loadSpecification = loadSpecification.value;
+      }
+      yield put({ type: 'updateState', payload });
+
+      if (validateBindCustomTask.own && validateBindCustomTask.customTask) {
+        // TODO: 检查own的快捷任务所绑定的自定义任务是否被删除
+        // message.error(formatMessage({ id: 'variable.customTaskData.missing' }));
       }
     },
   },

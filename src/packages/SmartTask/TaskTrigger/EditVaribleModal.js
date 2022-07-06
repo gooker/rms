@@ -1,12 +1,11 @@
 import React, { memo, useEffect } from 'react';
-import { connect } from '@/utils/RmsDva';
 import find from 'lodash/find';
 import { Card, Form, Modal } from 'antd';
 import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTaskConfig';
 import { formatMessage } from '@/utils/util';
 import VariableModification, {
   formatVariableFormValues,
-} from '@/components/VariableModification/VariableModification';
+} from '@/components/VariableModification/CommonVariableModification';
 
 const reversedModelTypeFieldMap = {};
 Object.keys(CustomNodeTypeFieldMap).forEach((key) => {

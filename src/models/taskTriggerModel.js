@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { fetchActiveMap, fetchCustomParamType, getCustomTaskList } from '@/services/commonService';
+import { fetchActiveMap, fetchCustomParamType, fetchCustomTaskList } from '@/services/commonService';
 import { dealResponse, formatMessage } from '@/utils/util';
 
 export default {
@@ -22,7 +22,7 @@ export default {
     },
 
     *fetchCustomTaskList(_, { call, put }) {
-      const customTaskList = yield call(getCustomTaskList);
+      const customTaskList = yield call(fetchCustomTaskList);
       if (!dealResponse(customTaskList)) {
         yield put({ type: 'saveCustomTaskList', payload: customTaskList });
       } else {

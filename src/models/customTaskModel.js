@@ -3,7 +3,7 @@ import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
   fetchActiveMap,
   fetchCustomParamType,
-  getCustomTaskList,
+  fetchCustomTaskList,
   getFormModelLockResource,
 } from '@/services/commonService';
 import { fetchAllLoadSpecification } from '@/services/resourceService';
@@ -93,7 +93,7 @@ export default {
     },
 
     *getCustomTaskList(_, { call, put }) {
-      const response = yield call(getCustomTaskList);
+      const response = yield call(fetchCustomTaskList);
       if (dealResponse(response)) {
         message.error(
           formatMessage(

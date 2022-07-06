@@ -1,19 +1,16 @@
 import React, { memo, useEffect } from 'react';
-import { Form, message, Modal } from 'antd';
-import { formatMessage, isNull } from '@/utils/util';
-import VariableModification, {
-  formatVariableFormValues,
-} from '@/components/VariableModification/VariableModification';
+import { Form } from 'antd';
+import { connect } from '@/utils/RmsDva';
+import { formatMessage } from '@/utils/util';
+import FormModal from '@/components/FormModal';
+import VariableModification, { formatVariableFormValues } from './QuickTaskVariableModification';
 
 const VariableModificationModal = (props) => {
-  const { quickTask, customTask, visible, onOk, onCancel } = props;
+  const { quickTask, visible, customTask, onOk, onCancel, loadSpecification } = props;
 
   const [formRef] = Form.useForm();
 
   useEffect(() => {
-    if (visible && isNull(customTask)) {
-      message.error(formatMessage({ id: 'variable.customTaskData.missing' }));
-    }
     if (!visible) {
       formRef.resetFields();
     }
@@ -29,18 +26,22 @@ const VariableModificationModal = (props) => {
   }
 
   return (
-    <Modal
+    <FormModal
       title={formatMessage({ id: 'variable.task.edit' })}
       visible={visible}
-      width={800}
-      maskClosable={false}
-      closable={false}
+      width={900}
       onOk={confirm}
       onCancel={onCancel}
-      bodyStyle={{ maxHeight: '80vh', overflow: 'auto' }}
     >
-      <VariableModification form={formRef} variable={quickTask?.variable} customTask={customTask} />
-    </Modal>
+      <VariableModification
+        form={formRef}
+        variable={quickTask?.variable}
+        customTask={customTask}
+        loadSpecification={loadSpecification}
+      />
+    </FormModal>
   );
 };
-export default memo(VariableModificationModal);
+export default connect(({ quickTask }) => ({
+  loadSpecification: quickTask.loadSpecification,
+}))(memo(VariableModificationModal));

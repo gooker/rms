@@ -294,33 +294,33 @@ class TaskInformation extends PureComponent {
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.common.updater" />}
+                    title={<FormattedMessage id='app.common.updater' />}
                     content={detailInfo.updatedByUser}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.form.sectionId" />}
+                    title={<FormattedMessage id='app.form.sectionId' />}
                     content={detailInfo.sectionId}
                   />
                 </Col>
+                {/*<Col {...colProps}>*/}
+                {/*  <DescriptionItem*/}
+                {/*    title={<FormattedMessage id="app.task.type" />}*/}
+                {/*    content={*/}
+                {/*      allTaskTypes?.[detailInfo.vehicleTaskType] || detailInfo.vehicleTaskType*/}
+                {/*    }*/}
+                {/*  />*/}
+                {/*</Col>*/}
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.task.type" />}
-                    content={
-                      allTaskTypes?.[detailInfo.vehicleTaskType] || detailInfo.vehicleTaskType
-                    }
-                  />
-                </Col>
-                <Col {...colProps}>
-                  <DescriptionItem
-                    title={<FormattedMessage id="app.task.state" />}
+                    title={<FormattedMessage id='app.task.state' />}
                     content={this.renderStatus(detailInfo.taskStatus)}
                   />
                 </Col>
                 <Col {...colProps}>
                   <DescriptionItem
-                    title={<FormattedMessage id="app.common.targetCell" />}
+                    title={<FormattedMessage id='app.common.targetCell' />}
                     content={detailInfo.targetCellId}
                   />
                 </Col>

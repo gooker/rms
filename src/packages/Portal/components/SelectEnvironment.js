@@ -1,8 +1,8 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Tooltip } from 'antd';
+import { Modal, Tooltip } from 'antd';
 import { IeOutlined } from '@ant-design/icons';
-import { find } from 'lodash';
-import { getAllEnvironments } from '@/utils/util';
+import { find, isPlainObject } from 'lodash';
+import { formatMessage, getAllEnvironments } from '@/utils/util';
 import styles from './Header.module.less';
 
 const SelectEnvironment = () => {
@@ -20,11 +20,28 @@ const SelectEnvironment = () => {
     getActiveEnvName();
   }, []);
 
+  function showCurrentNamespace() {
+    const nameSpacesInfo = window.nameSpacesInfo;
+    if (isPlainObject(nameSpacesInfo)) {
+      const list = Object.entries(nameSpacesInfo);
+      Modal.info({
+        title: formatMessage({ id: 'environmentManager.apis' }),
+        content: (
+          <ul>
+            {list.map(([key, value], index) => (
+              <li key={index}>{`${key}: ${value}`}</li>
+            ))}
+          </ul>
+        ),
+      });
+    }
+  }
+
   if (allEnvironments.length <= 1) return null;
   return (
     <Tooltip title={envName} color={'#ffffff'} overlayInnerStyle={{ color: '#000000' }}>
       <span className={styles.action}>
-        <IeOutlined />
+        <IeOutlined onClick={showCurrentNamespace} />
       </span>
     </Tooltip>
   );

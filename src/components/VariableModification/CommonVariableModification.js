@@ -1,15 +1,24 @@
 import React, { Fragment, memo } from 'react';
-import { Button, Col, Divider, Form, InputNumber, Row, Select, Switch } from 'antd';
+import { Button, Col, Divider, Form, InputNumber, Row, Select } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { convertMapToArrayMap, formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
+import { isPlainObject } from 'lodash';
+import {
+  convertMapToArrayMap,
+  formatMessage,
+  getFormLayout,
+  getRandomString,
+  isEmptyPlainObject,
+  isNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
+import ResourceLimit from '@/packages/SmartTask/CustomTask/components/ResourceLimit';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
-import { isPlainObject } from 'lodash';
 
-const VariableModification = (props) => {
-  const { prefix, form, variable, customTask } = props;
+const { formItemLayout } = getFormLayout(4, 18);
+const CommonVariableModification = (props) => {
+  const { prefix, form, variable, customTask, loadSpecification } = props;
 
   function renderPartTitle(nodeType) {
     if (nodeType.startsWith('step')) {
@@ -55,92 +64,14 @@ const VariableModification = (props) => {
           })}
 
           {/****************** 资源限制 ****************/}
-          {/* 可接小车电量约束 */}
-          <Form.Item
-            name={
-              prefix
-                ? [prefix, 'customStart', 'vehicleLimit', 'vehicleBatteryLimit']
-                : ['customStart', 'vehicleLimit', 'vehicleBatteryLimit']
+          <ResourceLimit
+            hidden={false}
+            prefix={
+              prefix ? [prefix, 'customStart', 'vehicleLimit'] : ['customStart', 'vehicleLimit']
             }
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.vehicleBattery',
-            })}
-            initialValue={vehicleLimit.vehicleBatteryLimit}
-          >
-            <InputNumber allowClear style={{ width: 90 }} />
-          </Form.Item>
-          {/* 车身可用容器数量约束 */}
-          <Form.Item
-            name={
-              prefix
-                ? [prefix, 'customStart', 'vehicleLimit', 'canUseContainerCountLimit']
-                : ['customStart', 'vehicleLimit', 'canUseContainerCountLimit']
-            }
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.availableContainerCountLimit',
-            })}
-            initialValue={vehicleLimit.canUseContainerCountLimit}
-          >
-            <InputNumber allowClear style={{ width: 90 }} />
-          </Form.Item>
-          {/* 容器规格约束 */}
-          <Form.Item
-            name={
-              prefix
-                ? [prefix, 'customStart', 'vehicleLimit', 'canUseContainerLimit']
-                : ['customStart', 'vehicleLimit', 'canUseContainerLimit']
-            }
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.containerTypeLimit',
-            })}
-            initialValue={vehicleLimit.canUseContainerLimit ?? []}
-          >
-            <Select allowClear mode={'multiple'}></Select>
-          </Form.Item>
-          {/* 载具规格约束 */}
-          <Form.Item
-            name={
-              prefix
-                ? [prefix, 'customStart', 'vehicleLimit', 'canUseLoadTypeLimit']
-                : ['customStart', 'vehicleLimit', 'canUseLoadTypeLimit']
-            }
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.loadTypeLimit',
-            })}
-            initialValue={vehicleLimit.canUseLoadTypeLimit ?? []}
-          >
-            <Select allowClear mode={'multiple'}></Select>
-          </Form.Item>
-          {/* 是否要求的载具ID必须有待命车辆持有 */}
-          <Form.Item
-            name={
-              prefix
-                ? [prefix, 'customStart', 'vehicleLimit', 'isLimitStandBy']
-                : ['customStart', 'vehicleLimit', 'isLimitStandBy']
-            }
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.isLimitStandBy',
-            })}
-            initialValue={vehicleLimit.isLimitStandBy ?? false}
-            valuePropName={'checked'}
-          >
-            <Switch />
-          </Form.Item>
-          {/* 是否可以使用工作中的载具 */}
-          <Form.Item
-            name={
-              prefix
-                ? [prefix, 'customStart', 'vehicleLimit', 'canUseWorkLimit']
-                : ['customStart', 'vehicleLimit', 'canUseWorkLimit']
-            }
-            label={formatMessage({
-              id: 'customTask.form.resourceLimit.loadWorkLimit',
-            })}
-            initialValue={vehicleLimit.canUseWorkLimit ?? false}
-            valuePropName={'checked'}
-          >
-            <Switch />
-          </Form.Item>
+            loadSpecification={loadSpecification}
+            data={vehicleLimit}
+          />
         </>
       );
     }
@@ -219,64 +150,80 @@ const VariableModification = (props) => {
             );
           } else {
             doms.push(
-              <Form.Item
-                key={getRandomString(6)}
-                name={
-                  prefix
-                    ? [prefix, 'customAction', nodeType, 'loadAngle']
-                    : ['customAction', nodeType, 'loadAngle']
-                }
-                initialValue={loadAngle}
-                label={formatMessage({ id: 'customTask.form.podSide' })}
-              >
-                <Select style={{ width: 207 }}>
-                  <Select.Option value={0}>
-                    <FormattedMessage id={'app.pod.side.A'} />
-                  </Select.Option>
-                  <Select.Option value={90}>
-                    <FormattedMessage id={'app.pod.side.B'} />
-                  </Select.Option>
-                  <Select.Option value={180}>
-                    <FormattedMessage id={'app.pod.side.C'} />
-                  </Select.Option>
-                  <Select.Option value={270}>
-                    <FormattedMessage id={'app.pod.side.D'} />
-                  </Select.Option>
-                </Select>
-              </Form.Item>,
-            );
-            doms.push(
-              <Form.Item
-                key={getRandomString(6)}
-                name={
-                  prefix
-                    ? [prefix, 'customAction', nodeType, 'operateAngle']
-                    : ['customAction', nodeType, 'operateAngle']
-                }
-                initialValue={operateAngle}
-                label={formatMessage({ id: 'customTask.form.operatorDirection' })}
-              >
-                <Select style={{ width: 207 }}>
-                  <Select.Option value={90}>
-                    <FormattedMessage id={'app.common.targetCell'} />
-                    <FormattedMessage id={'app.direction.topSide'} />
-                  </Select.Option>
-                  <Select.Option value={0}>
-                    <FormattedMessage id={'app.common.targetCell'} />
-                    <FormattedMessage id={'app.direction.rightSide'} />
-                  </Select.Option>
-                  <Select.Option value={270}>
-                    <FormattedMessage id={'app.common.targetCell'} />
-                    <FormattedMessage id={'app.direction.bottomSide'} />
-                  </Select.Option>
-                  <Select.Option value={180}>
-                    <FormattedMessage id={'app.common.targetCell'} />
-                    <FormattedMessage id={'app.direction.leftSide'} />
-                  </Select.Option>
-                </Select>
-              </Form.Item>,
+              <>
+                <Form.Item
+                  key={getRandomString(6)}
+                  name={
+                    prefix
+                      ? [prefix, 'customAction', nodeType, 'loadAngle']
+                      : ['customAction', nodeType, 'loadAngle']
+                  }
+                  initialValue={loadAngle}
+                  label={formatMessage({ id: 'customTask.form.podSide' })}
+                >
+                  <Select style={{ width: 207 }}>
+                    <Select.Option value={0}>
+                      <FormattedMessage id={'app.pod.side.A'} />
+                    </Select.Option>
+                    <Select.Option value={90}>
+                      <FormattedMessage id={'app.pod.side.B'} />
+                    </Select.Option>
+                    <Select.Option value={180}>
+                      <FormattedMessage id={'app.pod.side.C'} />
+                    </Select.Option>
+                    <Select.Option value={270}>
+                      <FormattedMessage id={'app.pod.side.D'} />
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  key={getRandomString(6)}
+                  name={
+                    prefix
+                      ? [prefix, 'customAction', nodeType, 'operateAngle']
+                      : ['customAction', nodeType, 'operateAngle']
+                  }
+                  initialValue={operateAngle}
+                  label={formatMessage({ id: 'customTask.form.operatorDirection' })}
+                >
+                  <Select style={{ width: 207 }}>
+                    <Select.Option value={90}>
+                      <FormattedMessage id={'app.common.targetCell'} />
+                      <FormattedMessage id={'app.direction.topSide'} />
+                    </Select.Option>
+                    <Select.Option value={0}>
+                      <FormattedMessage id={'app.common.targetCell'} />
+                      <FormattedMessage id={'app.direction.rightSide'} />
+                    </Select.Option>
+                    <Select.Option value={270}>
+                      <FormattedMessage id={'app.common.targetCell'} />
+                      <FormattedMessage id={'app.direction.bottomSide'} />
+                    </Select.Option>
+                    <Select.Option value={180}>
+                      <FormattedMessage id={'app.common.targetCell'} />
+                      <FormattedMessage id={'app.direction.leftSide'} />
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+              </>,
             );
           }
+
+          // 行驶速度
+          doms.push(
+            <Form.Item
+              key={getRandomString(6)}
+              name={
+                prefix
+                  ? [prefix, 'customAction', nodeType, 'speed']
+                  : ['customAction', nodeType, 'speed']
+              }
+              label={formatMessage({ id: 'customTask.form.speed' })}
+              initialValue={speed}
+            >
+              <InputNumber />
+            </Form.Item>,
+          );
           return doms;
         })
         .flat();
@@ -325,7 +272,7 @@ const VariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
+                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
@@ -363,7 +310,7 @@ const VariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
+                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
@@ -377,14 +324,14 @@ const VariableModification = (props) => {
   }
 
   return (
-    <Form layout={'vertical'} form={form}>
+    <Form labelWrap form={form} {...formItemLayout}>
       {renderStartVariable()}
       {renderSubTaskVariable()}
       {renderEndVariable()}
     </Form>
   );
 };
-export default memo(VariableModification);
+export default memo(CommonVariableModification);
 
 export function formatVariableFormValues(values, hasPrefix = false) {
   function format(inputValue) {
