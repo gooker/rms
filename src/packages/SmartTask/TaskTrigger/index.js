@@ -61,7 +61,7 @@ class TaskTrigger extends Component {
     if (!dealResponse(taskTriggerList)) {
       this.setState({ taskTriggerList });
     }
-    this.setState({ loading: false });
+    this.setState({ loading: false, selectSearchItem: null, checkedOperateList: [] });
   };
 
   // 状态查询
@@ -382,15 +382,32 @@ class TaskTrigger extends Component {
               <Button
                 style={{ marginLeft: 13 }}
                 onClick={() => {
-                  this.setState({ selectSearchItem: null }, () => {
-                    this.initData();
-                  });
+                  this.initData();
                 }}
               >
                 <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
               </Button>
             </Col>
             <Col>
+              <Select
+                allowClear
+                mode="multiple"
+                maxTagCount={2}
+                value={checkedOperateList?.map(({ id }) => id)}
+                onChange={(e) => {
+                  const newChecked = taskTriggerList?.filter(({ id }) => e.includes(id));
+                  this.setState({ checkedOperateList: newChecked });
+                  return e;
+                }}
+                style={{ marginRight: 13, width: 350 }}
+                placeholder={formatMessage({ id: 'app.common.select' })}
+              >
+                {taskTriggerList?.map((record) => (
+                  <Select.Option key={record.id} value={record.id}>
+                    {record.name}
+                  </Select.Option>
+                ))}
+              </Select>
               <Select
                 allowClear
                 value={selectSearchItem}
