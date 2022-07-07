@@ -3,7 +3,7 @@ import { Form, InputNumber, Select, Switch } from 'antd';
 import { formatMessage } from '@/utils/util';
 
 const ResourceLimit = (props) => {
-  const { data, hidden, prefix, loadSpecification } = props;
+  const { data, hidden, prefix, loadSpecification = [] } = props;
 
   function getFormItemName(name) {
     if (Array.isArray(prefix)) {
@@ -58,7 +58,7 @@ const ResourceLimit = (props) => {
         initialValue={data ? data.canUseLoadTypeLimit : []}
       >
         <Select allowClear mode={'multiple'}>
-          {loadSpecification.map(({ id, name }) => (
+          {loadSpecification?.map(({ id, name }) => (
             <Select.Option key={id} value={id}>
               {name}
             </Select.Option>

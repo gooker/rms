@@ -42,9 +42,15 @@ const CommonVariableModification = (props) => {
     } else {
       if (customTask) {
         const { customActions } = customTask;
-        const taskNode = customActions[nodeType];
+        const taskNode = customActions?.[nodeType];
         if (taskNode && taskNode.name) {
           return taskNode.name;
+        } else {
+          return (
+            <>
+              <FormattedMessage id={`customTask.type.${nodeType}`} />
+            </>
+          );
         }
       }
     }
@@ -280,7 +286,7 @@ const CommonVariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
@@ -318,7 +324,7 @@ const CommonVariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
