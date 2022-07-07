@@ -3,7 +3,13 @@ import { SmoothGraphics } from '@pixi/graphics-smooth';
 import Text from './Text';
 import { isNull, isStrictNull } from '@/utils/util';
 import { getTextureFromResources } from '@/utils/mapUtil';
-import { ChargerSize, ChargerStateColor, MapSelectableSpriteType, SelectionType, zIndex } from '@/config/consts';
+import {
+  ChargerSize,
+  ChargerStateColor,
+  MapSelectableSpriteType,
+  SelectionType,
+  zIndex,
+} from '@/config/consts';
 
 export default class Charger extends PIXI.Container {
   constructor(props) {

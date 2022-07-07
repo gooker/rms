@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Modal } from 'antd';
+import { Button, Modal, Tag, Tooltip } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
 import { find, findIndex } from 'lodash';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -90,16 +90,30 @@ const WebHook = () => {
       fixed: 'left',
     },
     { title: 'URL', dataIndex: 'url', align: 'center' },
-    { title: 'Token', dataIndex: 'token', align: 'center' },
+    {
+      title: 'Token',
+      dataIndex: 'token',
+      align: 'center',
+      render: (text) => {
+        if (!isNull(text)) {
+          return (
+            <Tooltip title={text}>
+              <span className={commonStyles.textLinks}>{`${text.substr(0, 6)}...`}</span>
+            </Tooltip>
+          );
+        }
+      },
+    },
     {
       title: <FormattedMessage id="webHook.queue" />,
-      dataIndex: 'topic',
-      render: (_, record) => {
-        const { topicData } = record;
-        const topicNameSpace =
-          find(topicData?.urlMappingRelation ?? [], { id: record.id })?.messageType || [];
-        const content = topicNameSpace.join(',');
-        return content || '';
+      dataIndex: 'urlMappingRelation',
+      render: (text, record) => {
+        if (isStrictNull(text)) return;
+        const allTopic = [];
+        text?.map(({ topic }) => {
+          allTopic.push(<Tag color="blue">{topic}</Tag>);
+        });
+        return allTopic;
       },
     },
     { title: <FormattedMessage id="app.common.description" />, dataIndex: 'desc', align: 'center' },

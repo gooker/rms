@@ -93,11 +93,11 @@ function SimulateLoadModal(props) {
           />
         </Form.Item> */}
 
-        <Form.Item label={formatMessage({ id: 'load.code' })} required={true}>
+        <Form.Item label={formatMessage({ id: 'resource.load.code' })} required={true}>
           <Input.Group compact className={styles['site-input-group-wrapper']}>
             <Form.Item
               noStyle
-              label={formatMessage({ id: 'load.startCode' })}
+              label={formatMessage({ id: 'resource.load.startCode' })}
               name="startLoadId"
               initialValue={updateRecord?.startLoadId}
               rules={[{ required: true }]}
@@ -107,7 +107,7 @@ function SimulateLoadModal(props) {
                   width: 100,
                   textAlign: 'center',
                 }}
-                placeholder={formatMessage({ id: 'load.startCode' })}
+                placeholder={formatMessage({ id: 'resource.load.startCode' })}
               />
             </Form.Item>
 
@@ -124,7 +124,7 @@ function SimulateLoadModal(props) {
             />
             <Form.Item
               noStyle
-              label={formatMessage({ id: 'load.endCode' })}
+              label={formatMessage({ id: 'resource.load.endCode' })}
               name="endLoadId"
               initialValue={updateRecord?.endLoadId}
               rules={[{ required: true }]}
@@ -135,7 +135,7 @@ function SimulateLoadModal(props) {
                   width: 120,
                   textAlign: 'center',
                 }}
-                placeholder={formatMessage({ id: 'load.endCode' })}
+                placeholder={formatMessage({ id: 'resource.load.endCode' })}
               />
             </Form.Item>
           </Input.Group>

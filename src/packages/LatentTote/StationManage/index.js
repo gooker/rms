@@ -178,7 +178,7 @@ const ChargerList = () => {
 
   const expandColumns = [
     {
-      title: <FormattedMessage id="app.vehicle.ip" />,
+      title: 'ip',
       dataIndex: 'ip',
     },
 

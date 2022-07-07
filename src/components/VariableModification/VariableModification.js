@@ -1,7 +1,13 @@
 import React, { Fragment, memo } from 'react';
 import { Button, Col, Divider, Form, InputNumber, Row, Select, Switch } from 'antd';
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
-import { convertMapToArrayMap, formatMessage, getRandomString, isEmptyPlainObject, isNull } from '@/utils/util';
+import {
+  convertMapToArrayMap,
+  formatMessage,
+  getRandomString,
+  isEmptyPlainObject,
+  isNull,
+} from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
@@ -30,8 +36,16 @@ const VariableModification = (props) => {
         }
       }
       return nodeType;
+    } else {
+      if (customTask) {
+        const { customActions } = customTask;
+        const taskNode = customActions[nodeType];
+        if (taskNode && taskNode.name) {
+          return taskNode.name;
+        }
+      }
     }
-    return <FormattedMessage id={`customTask.type.${nodeType}`} />;
+    // return <FormattedMessage id={`customTask.type.${nodeType}`} />;
   }
 
   function renderStartVariable() {
@@ -46,7 +60,7 @@ const VariableModification = (props) => {
               <Form.Item
                 key={getRandomString(6)}
                 name={prefix ? [prefix, 'customStart', 'vehicle'] : ['customStart', 'vehicle']}
-                label={<FormattedMessage id='customTask.form.vehicle' />}
+                label={<FormattedMessage id="customTask.form.vehicle" />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
                 <VehicleVariable />
@@ -214,7 +228,7 @@ const VariableModification = (props) => {
                 label={formatMessage({ id: 'resource.load.direction' })}
                 initialValue={loadAngle}
               >
-                <InputNumber addonAfter='°' />
+                <InputNumber addonAfter="°" />
               </Form.Item>,
             );
           } else {

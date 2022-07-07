@@ -52,20 +52,21 @@ const WebHookFormModal = (props) => {
   }
 
   function validateHeaders(_, headers) {
-    if (headers.filter(Boolean).length === 0) {
+    const currentHeader = headers.filter(Boolean);
+    if (currentHeader.filter(Boolean).length === 0) {
       return Promise.resolve();
     }
 
     // 判断key或者value有没有空白
-    for (let i = 0; i < headers.length; i++) {
-      const headerItem = headers[i];
+    for (let i = 0; i < currentHeader.length; i++) {
+      const headerItem = currentHeader[i];
       if (isStrictNull(headerItem.key) || isStrictNull(headerItem.value)) {
         return Promise.reject(new Error(formatMessage({ id: 'webHook.headerItem.empty' })));
       }
     }
 
     // 判断key有没有重复
-    const keys = headers.map(({ key }) => key);
+    const keys = currentHeader.map(({ key }) => key);
     if (keys.length !== new Set(keys).size) {
       return Promise.reject(new Error(formatMessage({ id: 'webHook.headerItem.keyDuplicate' })));
     }
@@ -127,7 +128,7 @@ const WebHookFormModal = (props) => {
                           <Form.Item
                             noStyle
                             {...field}
-                            name={[field.name, 'messageType']}
+                            name={[field.name, 'topic']}
                             rules={[
                               {
                                 required: true,
@@ -149,7 +150,7 @@ const WebHookFormModal = (props) => {
                           <Form.Item
                             noStyle
                             {...field}
-                            name={[field.name, 'nameSpace']}
+                            name={[field.name, 'address']}
                             rules={[
                               {
                                 required: true,

@@ -78,7 +78,7 @@ const OperationLogComponent = (props) => {
     },
 
     {
-      title: <FormattedMessage id="app.vehicle.ip" />,
+      title: 'ip',
       align: 'center',
       width: 200,
       dataIndex: 'ip',

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
 import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Select, Spin, Tag } from 'antd';
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import TaskTriggerModal from './TaskTriggerModal';
 import { find } from 'lodash';
 import {
@@ -377,7 +377,7 @@ class TaskTrigger extends Component {
                   this.setState({ triggerModalVisible: true, updateTrigger: null });
                 }}
               >
-                <FormattedMessage id="app.button.add" />
+                <PlusOutlined /> <FormattedMessage id="app.button.add" />
               </Button>
               <Button
                 style={{ marginLeft: 13 }}
@@ -387,7 +387,7 @@ class TaskTrigger extends Component {
                   });
                 }}
               >
-                <FormattedMessage id="app.button.refresh" />
+                <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
               </Button>
             </Col>
             <Col>
