@@ -1,4 +1,4 @@
-import { isNull } from '@/utils/util';
+import { formatMessage, isNull } from '@/utils/util';
 import { find } from 'lodash';
 
 /**通过自定义任务的id 拿到sample**/
@@ -71,4 +71,17 @@ export function transformCurrentVariable(allTaskList, fixedVariable) {
     }
   });
   return dataMap;
+}
+
+// 开始结束暂停 状态显示
+export function triggerStatus(status) {
+  let statusText;
+  if (['start'].includes(status)) {
+    statusText = formatMessage({ id: `app.triggerState.executing` });
+  } else if (status === 'pause') {
+    statusText = formatMessage({ id: `app.triggerState.paused` });
+  } else {
+    statusText = formatMessage({ id: 'app.triggerState.end' });
+  }
+  return statusText;
 }

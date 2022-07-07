@@ -14,8 +14,17 @@ const TaskTriggerModal = (props) => {
   /**
    * updateItem 当前在编辑的触发器, 为null时表示当前是新建
    */
-  const { title, visible, updateItem, customTaskList, sharedTasks, onCancel, onSubmit, dispatch } =
-    props;
+  const {
+    title,
+    visible,
+    updateItem,
+    customTaskList,
+    sharedTasks,
+    onCancel,
+    onSubmit,
+    triggerList,
+    dispatch,
+  } = props;
 
   const [form] = Form.useForm();
 
@@ -113,6 +122,19 @@ const TaskTriggerModal = (props) => {
     setVariables(outVariables);
   }
 
+  function validateDuplicateName(_, value) {
+    let currentAllData = [...triggerList];
+
+    if (!isNull(updateItem)) {
+      currentAllData = currentAllData.filter(({ id }) => id !== updateItem.id);
+    }
+    const existNames = currentAllData?.map(({ name }) => name);
+    if (!value || !existNames.includes(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
+  }
+
   function submit() {
     form.validateFields().then(async (values) => {
       // 总下发次数 结束时间 要填一个
@@ -189,7 +211,7 @@ const TaskTriggerModal = (props) => {
         <FormItem
           name="name"
           label={formatMessage({ id: 'app.common.name' })}
-          rules={[{ required: true }]}
+          rules={[{ required: true }, { validator: validateDuplicateName }]}
         >
           <Input />
         </FormItem>
@@ -266,13 +288,6 @@ const TaskTriggerModal = (props) => {
         <FormItem name="endTime" label={formatMessage({ id: 'app.common.endTime' })}>
           <DatePicker format="YYYY-MM-DD HH:mm" showTime={{ format: 'HH:mm' }} />
         </FormItem>
-        {/* 基于事件触发 */}
-        {/* <FormItem
-          name="basedOnEvents"
-          label={formatMessage({ id: 'app.taskTrigger.basedOnEvents' })}
-        >
-          <Select mode="tags" options={eventModel} maxTagCount={4} allowClear />
-        </FormItem> */}
       </Form>
 
       {/* 编辑变量 */}

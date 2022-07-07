@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from '@/utils/RmsDva';
-import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Select, Spin, Tag } from 'antd';
-import { DownOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import { Button, Card, Checkbox, Col, Dropdown, Empty, Menu, Row, Spin, Tag } from 'antd';
 import TaskTriggerModal from './TaskTriggerModal';
 import { find } from 'lodash';
 import {
@@ -13,6 +12,8 @@ import {
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
+import TriggerSearchComponent from './TriggerSearchComponent';
+import { triggerStatus } from './triggerUtil';
 import commonStyles from '@/common.module.less';
 import styles from '@/common.module.less';
 import style from './TaskTrigger.module.less';
@@ -61,7 +62,7 @@ class TaskTrigger extends Component {
     if (!dealResponse(taskTriggerList)) {
       this.setState({ taskTriggerList });
     }
-    this.setState({ loading: false, selectSearchItem: null, checkedOperateList: [] });
+    this.setState({ loading: false, checkedOperateList: [] });
   };
 
   // 状态查询
@@ -194,17 +195,6 @@ class TaskTrigger extends Component {
     }
   };
 
-  // 开始结束暂停 状态显示
-  triggerStatus = (status) => {
-    let statusText;
-    if (['start', 'pause'].includes(status)) {
-      statusText = formatMessage({ id: `app.triggerAction.${status}` });
-    } else {
-      statusText = formatMessage({ id: 'app.triggerState.end' });
-    }
-    return statusText;
-  };
-
   renderTrigerTasks = (taskCodes) => {
     const { customTaskList, sharedTasks } = this.props;
     let currentAllTask = [];
@@ -224,6 +214,14 @@ class TaskTrigger extends Component {
         </Tag>
       );
     });
+  };
+
+  onAdd = () => {
+    this.setState({ triggerModalVisible: true, updateTrigger: null });
+  };
+
+  onSelectedTrigger = (newChecked) => {
+    this.setState({ checkedOperateList: newChecked });
   };
 
   // 渲染card
@@ -307,7 +305,7 @@ class TaskTrigger extends Component {
           <Col span={24}>
             <DescriptionItem
               title={<FormattedMessage id="app.common.status" />}
-              content={this.triggerStatus(record.status)}
+              content={triggerStatus(record.status)}
             />
           </Col>
           <Col span={24}>
@@ -369,85 +367,21 @@ class TaskTrigger extends Component {
       <div className={commonStyles.commonPageStyle}>
         <Spin spinning={loading}>
           {/* 操作栏 */}
-          <Row justify="space-between">
-            <Col>
-              <Button
-                type="primary"
-                onClick={() => {
-                  this.setState({ triggerModalVisible: true, updateTrigger: null });
-                }}
-              >
-                <PlusOutlined /> <FormattedMessage id="app.button.add" />
-              </Button>
-              <Button
-                style={{ marginLeft: 13 }}
-                onClick={() => {
-                  this.initData();
-                }}
-              >
-                <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
-              </Button>
-            </Col>
-            <Col>
-              <Select
-                allowClear
-                mode="multiple"
-                maxTagCount={2}
-                value={checkedOperateList?.map(({ id }) => id)}
-                onChange={(e) => {
-                  const newChecked = taskTriggerList?.filter(({ id }) => e.includes(id));
-                  this.setState({ checkedOperateList: newChecked });
-                  return e;
-                }}
-                style={{ marginRight: 13, width: 350 }}
-                placeholder={formatMessage({ id: 'app.common.select' })}
-              >
-                {taskTriggerList?.map((record) => (
-                  <Select.Option key={record.id} value={record.id}>
-                    {record.name}
-                  </Select.Option>
-                ))}
-              </Select>
-              <Select
-                allowClear
-                value={selectSearchItem}
-                onChange={this.handleStatusSearch}
-                style={{ marginRight: 13, width: 150 }}
-                placeholder={formatMessage({ id: 'taskTrigger.stateQuery' })}
-              >
-                <Select.Option value="start">
-                  {<FormattedMessage id="app.triggerState.executing" />}
-                </Select.Option>
-                <Select.Option value="pause">
-                  {<FormattedMessage id="app.triggerState.paused" />}
-                </Select.Option>
-                <Select.Option value="end">
-                  {<FormattedMessage id="app.triggerState.end" />}
-                </Select.Option>
-              </Select>
-              <Dropdown
-                disabled={checkedOperateList.length === 0}
-                trigger={['click']}
-                overlay={
-                  <Menu onClick={this.handleBatchOperate}>
-                    <Menu.Item key="start">
-                      {<FormattedMessage id="app.triggerAction.start" />}
-                    </Menu.Item>
-                    <Menu.Item key="pause">
-                      {<FormattedMessage id="app.triggerAction.pause" />}
-                    </Menu.Item>
-                    <Menu.Item key="end">
-                      {<FormattedMessage id="app.triggerAction.terminate" />}
-                    </Menu.Item>
-                  </Menu>
-                }
-              >
-                <Button>
-                  <FormattedMessage id="app.button.batchOperate" /> <DownOutlined />
-                </Button>
-              </Dropdown>
-            </Col>
-          </Row>
+          <TriggerSearchComponent
+            checkedList={checkedOperateList}
+            dataList={taskTriggerList}
+            selectedSearchValue={selectSearchItem}
+            onAdd={this.onAdd}
+            onRefresh={() => {
+              this.setState({ selectSearchItem: null }, () => {
+                this.initData();
+              });
+            }}
+            onSelected={this.onSelectedTrigger}
+            onStatusChange={this.handleStatusSearch}
+            onBatchChange={this.handleBatchOperate}
+          />
+
           {/* 列表栏 */}
           <Row style={{ marginTop: 20 }} gutter={[10, 10]}>
             {taskTriggerList && taskTriggerList.length > 0 ? (
@@ -471,6 +405,7 @@ class TaskTrigger extends Component {
             visible={triggerModalVisible}
             updateItem={updateTrigger}
             onSubmit={this.taskTriggerSubmit}
+            triggerList={taskTriggerList}
             onCancel={() => {
               this.setState({ triggerModalVisible: false, updateTrigger: null });
             }}
