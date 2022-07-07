@@ -17,7 +17,7 @@ import VehicleVariable from '@/components/VariableModification/VehicleVariable';
 import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSelector';
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 import { VehicleOptionType } from '@/packages/SmartTask/CustomTask/components/VehicleSelector';
-import { convertBackZoneToFormValue } from '@/components/VariableModification/VariableModification';
+import { convertBackZoneToFormValue } from '@/components/VariableModification/CommonVariableModification';
 
 const ExecuteQuickTaskModal = (props) => {
   const { dispatch, customTask, quickTask, executeModalVisible } = props;
@@ -89,7 +89,6 @@ const ExecuteQuickTaskModal = (props) => {
           <>
             <Divider orientation={'left'}>{renderPartTitle('START')}</Divider>
             <Form.Item
-              key={getRandomString(6)}
               name={['customStart', 'vehicle']}
               label={<FormattedMessage id="customTask.form.vehicle" />}
               initialValue={{ type: vehicleKey, code: vehicleConfig[vehicleKey] }}
@@ -298,7 +297,10 @@ const ExecuteQuickTaskModal = (props) => {
       if (!Array.isArray(backZone) || (Array.isArray(backZone) && backZone.length === 0)) {
         const backZoneInitValue = convertBackZoneToFormValue(backZone);
         doms.push(
-          <Form.Item label={formatMessage({ id: 'customTask.form.backZone' })}>
+          <Form.Item
+            key={getRandomString(10)}
+            label={formatMessage({ id: 'customTask.form.backZone' })}
+          >
             <Form.List name={['customEnd', 'backZone']} initialValue={backZoneInitValue}>
               {(fields, { add, remove }) => (
                 <>

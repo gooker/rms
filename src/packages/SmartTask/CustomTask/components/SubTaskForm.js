@@ -289,7 +289,7 @@ const SubTaskForm = (props) => {
         </Form.Item>
       ) : null}
 
-      {/* 资源锁: 前置任务不需要配置资源锁 */}
+      {/* 资源锁: 前置任务不需要配置 */}
       {!isPre && (
         <Form.Item
           hidden={hidden}
@@ -297,6 +297,18 @@ const SubTaskForm = (props) => {
           label={formatMessage({ id: 'customTask.lock.resourceLock' })}
         >
           <TaskResourceLock />
+        </Form.Item>
+      )}
+
+      {/* 行驶速度: 前置任务不需要配置 */}
+      {!isPre && (
+        <Form.Item
+          hidden={hidden}
+          name={[code, 'speed']}
+          label={formatMessage({ id: 'customTask.form.speed' })}
+          initialValue={4}
+        >
+          <InputNumber />
         </Form.Item>
       )}
 

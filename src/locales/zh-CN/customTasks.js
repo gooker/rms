@@ -64,12 +64,12 @@ export default {
   'customTask.form.vehicle.select': '请选择小车',
 
   'customTask.form.resourceLimit': '资源约束',
-  'customTask.form.resourceLimit.vehicleBattery': '车辆电量',
-  'customTask.form.resourceLimit.availableContainerCountLimit': '车辆容器可用数量',
-  'customTask.form.resourceLimit.containerTypeLimit': '车辆容器规格',
-  'customTask.form.resourceLimit.loadTypeLimit': '可用载具规格',
-  'customTask.form.resourceLimit.isLimitStandBy': '载具ID必须由待命车辆持有',
-  'customTask.form.resourceLimit.loadWorkLimit': '使用工作中的载具',
+  'customTask.form.resourceLimit.vehicleBattery': '车辆电量必须>=',
+  'customTask.form.resourceLimit.availableContainerCountLimit': '车辆可用容器可用数量必须>=',
+  'customTask.form.resourceLimit.containerTypeLimit': '车辆容器规格必须为',
+  'customTask.form.resourceLimit.loadTypeLimit': '载具规格必须为',
+  'customTask.form.resourceLimit.isLimitStandBy': '拥有指定载具的待命车辆才可接',
+  'customTask.form.resourceLimit.loadWorkLimit': '只使用工作中的载具',
 
   // 结束
   'customTask.form.vehicleWaitTask': '小车待命',

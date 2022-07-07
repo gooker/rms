@@ -451,7 +451,7 @@ export async function switchTriggerState(param) {
 
 // ********************** 自定义任务  ********************** //
 // 获取自定义任务-用于选择任务触发
-export async function getCustomTaskList() {
+export async function fetchCustomTaskList() {
   return request(`/${NameSpace.Platform}/custom-task/getAllCustomTaskBySectionId`, {
     method: 'GET',
   });
@@ -563,7 +563,6 @@ export async function fetchSystemParamByKey(key) {
     method: 'GET',
   });
 }
-
 
 // 查询所有MQ Queue
 export async function getAllQueues() {

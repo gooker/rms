@@ -25,21 +25,7 @@ const TaskStatusIcon = {
 };
 
 const VehicleTaskSteps = (props) => {
-  const { vehicleTask, nowPath, allTaskTypes } = props;
-
-  /**
-   * @param taskType 任务类型
-   * @param subCustomCode 如果是自定义任务，那么就是任务节点的code
-   */
-  function renderTaskTypeTitle(taskType, subCustomCode) {
-    if (!isNull(subCustomCode)) {
-      return subCustomCode;
-    }
-    if (allTaskTypes[taskType]) {
-      return allTaskTypes[taskType];
-    }
-    return taskType;
-  }
+  const { vehicleTask, nowPath } = props;
 
   function renderSteps() {
     if (Array.isArray(vehicleTask.vehicleStepTaskList)) {
@@ -50,7 +36,7 @@ const VehicleTaskSteps = (props) => {
           icon={TaskStatusIcon[subTask.taskStatus]}
           title={
             <span className={styles.taskStepTitle}>
-              {renderTaskTypeTitle(subTask.taskType, subTask.customCode)}
+              {`${subTask.customName} (${subTask.customCode})`}
             </span>
           }
           description={
@@ -149,7 +135,7 @@ const VehicleTaskSteps = (props) => {
         <Row gutter={24}>
           <Col span={8}>
             <Form.Item label={formatMessage({ id: 'menu.customTask' })}>
-              {vehicleTask.customCode}
+              {`${vehicleTask.customName} (${vehicleTask.customCode})`}
             </Form.Item>
           </Col>
           <Col span={8}>
@@ -164,7 +150,6 @@ const VehicleTaskSteps = (props) => {
   );
 };
 export default connect(({ global, task }) => ({
-  allTaskTypes: global.allTaskTypes,
   vehicleTask: task.detailInfo?.vehicleTask ?? {},
   nowPath: task.detailInfo?.nowPath ?? {},
 }))(memo(VehicleTaskSteps));

@@ -21,10 +21,10 @@ class TaskDetail extends PureComponent {
       <Modal
         destroyOnClose
         style={{ top: 30 }}
+        bodyStyle={{ maxHeight: '90vh', overflow: 'auto' }}
         width={adjustTaskDetailModalWidth()}
         onCancel={this.resetTaskDetailModal}
         visible={taskDetailVisible}
-        bodyStyle={{ maxHeight: '95vh', overflow: 'auto' }}
         footer={null}
       >
         <Spin spinning={loadingTaskDetail}>

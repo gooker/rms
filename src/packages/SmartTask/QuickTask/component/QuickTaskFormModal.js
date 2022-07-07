@@ -40,7 +40,7 @@ const QuickTaskFormModal = (props) => {
         const targetCustomTask = find(customTasks, { code: value.taskCode });
         let requestParam = {
           ...value,
-          variable: targetCustomTask.sample,
+          variable: generateVariable(targetCustomTask.sample),
         };
         if (!isNull(editing)) {
           requestParam = { ...editing, ...requestParam };
@@ -131,3 +131,41 @@ export default connect(({ quickTask }) => ({
   quickTaskGroups: quickTask.quickTaskGroups,
   taskModalVisible: quickTask.taskModalVisible,
 }))(memo(QuickTaskFormModal));
+
+function generateVariable(sample) {
+  const { sectionId, code, createCode, customStart, customAction, customEnd } = sample;
+  const result = { sectionId, code, createCode, customStart: {}, customAction: {}, customEnd: {} };
+
+  // 任务开始
+  const { vehicle, vehicleLimit } = customStart;
+  result.customStart.vehicle = {
+    config: { visible: true, isRequired: true },
+    value: vehicle,
+  };
+  result.customStart.vehicleLimit = {
+    config: { visible: true, isRequired: false },
+    value: vehicleLimit,
+  };
+  // 任务结束
+  const { backZone, loadBackZone } = customEnd;
+  result.customEnd.backZone = {
+    config: { visible: true, isRequired: false },
+    value: backZone,
+  };
+  result.customEnd.loadBackZone = {
+    config: { visible: true, isRequired: false },
+    value: loadBackZone,
+  };
+  // 子任务
+  Object.entries(customAction).forEach(([step, stepConfig]) => {
+    result['customAction'][step] = {};
+    Object.entries(stepConfig).forEach(([field, value]) => {
+      result['customAction'][step][field] = {
+        config: { visible: true, isRequired: false },
+        value: value,
+      };
+    });
+  });
+
+  return result;
+}
