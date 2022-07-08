@@ -39,8 +39,22 @@ const VariableModification = (props) => {
         }
       }
       return nodeType;
+    } else {
+      if (customTask) {
+        const { customActions } = customTask;
+        const taskNode = customActions?.[nodeType];
+        if (taskNode && taskNode.name) {
+          return taskNode.name;
+        } else {
+          return (
+            <>
+              <FormattedMessage id={`customTask.type.${nodeType}`} />
+            </>
+          );
+        }
+      }
     }
-    return <FormattedMessage id={`customTask.type.${nodeType}`} />;
+    // return <FormattedMessage id={`customTask.type.${nodeType}`} />;
   }
 
   function renderStartVariable() {
@@ -55,7 +69,7 @@ const VariableModification = (props) => {
               <Form.Item
                 key={getRandomString(6)}
                 name={prefix ? [prefix, 'customStart', 'vehicle'] : ['customStart', 'vehicle']}
-                label={<FormattedMessage id='customTask.form.vehicle' />}
+                label={<FormattedMessage id="customTask.form.vehicle" />}
                 initialValue={{ type: variableKey, code: variableValue }}
               >
                 <VehicleVariable />
@@ -145,7 +159,7 @@ const VariableModification = (props) => {
                 label={formatMessage({ id: 'resource.load.direction' })}
                 initialValue={loadAngle}
               >
-                <InputNumber addonAfter='°' />
+                <InputNumber addonAfter="°" />
               </Form.Item>,
             );
           } else {
@@ -272,7 +286,7 @@ const VariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>
@@ -310,7 +324,7 @@ const VariableModification = (props) => {
                         </Col>
                       </Row>
                     ))}
-                    <Button type='dashed' onClick={() => add()} style={{ width: 460 }}>
+                    <Button type="dashed" onClick={() => add()} style={{ width: 460 }}>
                       <PlusOutlined />
                     </Button>
                   </>

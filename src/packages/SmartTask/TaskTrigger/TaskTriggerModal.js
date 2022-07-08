@@ -5,6 +5,7 @@ import { Button, DatePicker, Form, Input, InputNumber, message, Modal, Radio, Se
 import { formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import EditVaribleModal from './EditVaribleModal';
+import { getDefaultVariableById, transformCurrentVariable } from './triggerUtil';
 
 const FormItem = Form.Item;
 const formItemLayout = { labelCol: { span: 5 }, wrapperCol: { span: 18 } };
@@ -13,8 +14,17 @@ const TaskTriggerModal = (props) => {
   /**
    * updateItem 当前在编辑的触发器, 为null时表示当前是新建
    */
-  const { title, visible, updateItem, customTaskList, sharedTasks, onCancel, onSubmit, dispatch } =
-    props;
+  const {
+    title,
+    visible,
+    updateItem,
+    customTaskList,
+    sharedTasks,
+    onCancel,
+    onSubmit,
+    triggerList,
+    dispatch,
+  } = props;
 
   const [form] = Form.useForm();
 
@@ -38,13 +48,14 @@ const TaskTriggerModal = (props) => {
 
   useEffect(() => {
     let currentAllTask = [];
-    customTaskList?.map(({ code, id, name, sample }) => {
-      currentAllTask.push({ code, id, name, sample });
+    customTaskList?.map(({ code, codes, id, name, sample }) => {
+      currentAllTask.push({ code, codes, id, name, sample });
     });
 
     sharedTasks?.map(({ taskCode, id, name, variable }) => {
+      const { codes } = allTaskList?.filter(({ code }) => code === taskCode);
       if (variable) {
-        currentAllTask.push({ code: taskCode, id, name, sample: variable });
+        currentAllTask.push({ code: taskCode, codes, id, name, sample: variable, type: 'quick' });
       }
     });
     setAllTaskList(currentAllTask);
@@ -88,31 +99,18 @@ const TaskTriggerModal = (props) => {
 
   function generateVariable(record) {
     const { fixedVariable } = record;
-    const dataMap = {};
-    Object.keys(fixedVariable)?.map((idcode) => {
-      const [id, code] = idcode.split('-');
-      dataMap[idcode] = {
-        id,
-        code,
-        ...fixedVariable[idcode],
-      };
-    });
+    const dataMap = transformCurrentVariable(allTaskList, fixedVariable);
     setVariables(dataMap);
     setVariablesChanged(true);
   }
 
   // 点击”编辑变量“时候如果variablesChanged是true就直接使用”variables“数据，否则会手动拉取变量信息
   function editVariable() {
-    const param = form.getFieldValue('codes');
-    if (!Array.isArray(param)) return;
+    const paramIds = form.getFieldValue('codes');
+    if (!Array.isArray(paramIds)) return;
     setLoading(true);
-    const paramIds = param?.map((idcode) => idcode.split('-')[0]);
-    const currentDataById = allTaskList?.filter(({ id }) => paramIds.includes(id));
     if (!variablesChanged) {
-      const dataMap = {};
-      currentDataById?.map(({ id, code, sample }) => {
-        dataMap[`${id}-${code}`] = sample;
-      });
+      const dataMap = getDefaultVariableById(paramIds, allTaskList);
       setVariables(dataMap);
     }
     setEditVaribleVisible(true);
@@ -122,6 +120,19 @@ const TaskTriggerModal = (props) => {
   function updateVariable(outVariables) {
     setVariablesChanged(true);
     setVariables(outVariables);
+  }
+
+  function validateDuplicateName(_, value) {
+    let currentAllData = [...triggerList];
+
+    if (!isNull(updateItem)) {
+      currentAllData = currentAllData.filter(({ id }) => id !== updateItem.id);
+    }
+    const existNames = currentAllData?.map(({ name }) => name);
+    if (!value || !existNames.includes(value)) {
+      return Promise.resolve();
+    }
+    return Promise.reject(new Error(formatMessage({ id: 'app.form.name.duplicate' })));
   }
 
   function submit() {
@@ -147,11 +158,7 @@ const TaskTriggerModal = (props) => {
         // 判断下 variables 值是否存在，不存在的话要获取下变量信息
         if (isNull(variables) || Object.keys(variables)?.length === 0) {
           const { codes } = values;
-          const paramIds = codes?.map((idcode) => idcode.split('-')[0]);
-          const currentDataById = allTaskList?.filter(({ id }) => paramIds.includes(id));
-          currentDataById?.map(({ id, code, sample }) => {
-            dataMap[`${id}-${code}`] = sample;
-          });
+          dataMap = getDefaultVariableById(codes, allTaskList);
         }
 
         // 只有变量被编辑了再重新赋值
@@ -204,7 +211,7 @@ const TaskTriggerModal = (props) => {
         <FormItem
           name="name"
           label={formatMessage({ id: 'app.common.name' })}
-          rules={[{ required: true }]}
+          rules={[{ required: true }, { validator: validateDuplicateName }]}
         >
           <Input />
         </FormItem>
@@ -281,13 +288,6 @@ const TaskTriggerModal = (props) => {
         <FormItem name="endTime" label={formatMessage({ id: 'app.common.endTime' })}>
           <DatePicker format="YYYY-MM-DD HH:mm" showTime={{ format: 'HH:mm' }} />
         </FormItem>
-        {/* 基于事件触发 */}
-        {/* <FormItem
-          name="basedOnEvents"
-          label={formatMessage({ id: 'app.taskTrigger.basedOnEvents' })}
-        >
-          <Select mode="tags" options={eventModel} maxTagCount={4} allowClear />
-        </FormItem> */}
       </Form>
 
       {/* 编辑变量 */}

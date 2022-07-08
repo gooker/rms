@@ -91,7 +91,7 @@ const LogSearchForm = (props) => {
         value: 'responseTx',
       },
       {
-        label: formatMessage({ id: 'app.vehicle.ip' }),
+        label: 'ip',
         value: 'ip',
       },
       {
@@ -113,11 +113,11 @@ const LogSearchForm = (props) => {
 
   return (
     <Form form={formRef} className={commonStyle.tableToolLeft}>
-      <Row gutter={24}>
+      <Row gutter={24} style={{marginBottom:15}}>
         <Col span={8}>
           <Form.Item
             name={'module'}
-            label={<FormattedMessage id='app.configInfo.header.moduleName' />}
+            label={<FormattedMessage id="app.configInfo.header.moduleName" />}
           >
             <Select allowClear showSearch>
               {allModules.map((v) => (
@@ -129,27 +129,27 @@ const LogSearchForm = (props) => {
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'username'} label={<FormattedMessage id='sso.user' />}>
+          <Form.Item name={'username'} label={<FormattedMessage id="sso.user" />}>
             <Input allowClear />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'status'} label={<FormattedMessage id='app.common.status' />}>
+          <Form.Item name={'status'} label={<FormattedMessage id="app.common.status" />}>
             <Input allowClear />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'url'} label={<FormattedMessage id='operation.log.requestURl' />}>
+          <Form.Item name={'url'} label={<FormattedMessage id="operation.log.requestURl" />}>
             <Input allowClear />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'date'} label={<FormattedMessage id='app.common.creationTime' />}>
+          <Form.Item name={'date'} label={<FormattedMessage id="app.common.creationTime" />}>
             <RangePicker format={dateFormat} style={{ width: '100%' }} />
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item name={'trackId'} label={<FormattedMessage id='operation.log.trackId' />}>
+          <Form.Item name={'trackId'} label={<FormattedMessage id="operation.log.trackId" />}>
             <Input allowClear />
           </Form.Item>
         </Col>

@@ -297,6 +297,7 @@ class MonitorMapView extends BaseMap {
     // Chrome调试会误将this指向Cell, 为了便于调试所以使用_this
     const _this = this;
     let selections = [...window.$$state().monitor.selections];
+    const selectable = [...window.$$state().monitor.selectableType];
     // 先判断是否是取消选择
     const isCull = selections.includes(entity);
     if (isCull) {
@@ -318,6 +319,10 @@ class MonitorMapView extends BaseMap {
         _this.shiftSelectCell(entity);
       }
     }
+
+    // 且是可选择的元素?
+    selections = selections?.filter((item) => selectable.includes(item.type));
+
     _this.refresh();
     window.$$dispatch({ type: 'monitor/updateSelections', payload: [...selections] });
   };

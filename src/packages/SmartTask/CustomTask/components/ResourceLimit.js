@@ -3,7 +3,7 @@ import { Form, InputNumber, Select, Switch } from 'antd';
 import { formatMessage } from '@/utils/util';
 
 const ResourceLimit = (props) => {
-  const { data, hidden, prefix, suffix, loadSpecification, isRequired } = props;
+  const { data, hidden, prefix, suffix, loadSpecification=[], isRequired } = props;
 
   function getFormItemName(name) {
     const namePath = [];
@@ -65,7 +65,7 @@ const ResourceLimit = (props) => {
         rules={[{ required: isRequired }]}
       >
         <Select allowClear mode={'multiple'}>
-          {loadSpecification.map(({ id, name }) => (
+          {loadSpecification?.map(({ id, name }) => (
             <Select.Option key={id} value={id}>
               {name}
             </Select.Option>

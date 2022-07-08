@@ -5,7 +5,13 @@ import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import { fetchAllStrategyList } from '@/services/resourceService';
 import SearchComponent from './SearchComponent';
-import { dealResponse, formatMessage, generateResourceGroups, isNull, isStrictNull } from '@/utils/util';
+import {
+  dealResponse,
+  formatMessage,
+  generateResourceGroups,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import ChargingStrategyComponent from '@/pages/ChargingStrategy/ChargingStrategyComponent';
 
 const ChargingStrategy = () => {
@@ -14,7 +20,6 @@ const ChargingStrategy = () => {
   const [visible, setVisible] = useState(false);
   const [updateRecord, setUpdateRecord] = useState(null);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
     getData();
@@ -26,14 +31,6 @@ const ChargingStrategy = () => {
       title: <FormattedMessage id="app.common.name" />,
       dataIndex: 'name',
       align: 'center',
-    },
-    {
-      title: <FormattedMessage id="resourceGroup.grouping" />,
-      dataIndex: 'groupName',
-      align: 'center',
-      render: (text, record) => {
-        return generateResourceGroups(record);
-      },
     },
     {
       title: <FormattedMessage id="app.button.edit" />,
@@ -74,7 +71,6 @@ const ChargingStrategy = () => {
       filterData(response);
     }
     setSelectedRowKeys([]);
-    setSelectedRows([]);
     setLoading(false);
   }
 
@@ -112,9 +108,8 @@ const ChargingStrategy = () => {
     getData();
   }
 
-  function rowSelectChange(selectedRowKeys, selectedRows) {
+  function rowSelectChange(selectedRowKeys) {
     setSelectedRowKeys(selectedRowKeys);
-    setSelectedRows(selectedRows);
   }
 
   return (

@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import { Form, Modal, Upload } from 'antd';
 import { dealResponse, formatMessage } from '@/utils/util';
 import { InboxOutlined } from '@ant-design/icons';
@@ -8,8 +8,14 @@ import { uploadVehicleFile } from '@/services/resourceService';
 const { Dragger } = Upload;
 
 const UploadHardwareModal = (props) => {
-  const { visible, onCancel,refreshHardWare } = props;
+  const { visible, onCancel, refreshHardWare } = props;
   const [formRef] = Form.useForm();
+
+  useEffect(() => {
+    if (!visible) {
+      formRef.resetFields();
+    }
+  }, [visible]);
 
   const uploadProps = {
     name: 'file',
@@ -23,14 +29,15 @@ const UploadHardwareModal = (props) => {
   };
 
   function onSave() {
-    formRef.validateFields().then((values) => {
+    formRef.validateFields().then(async (values) => {
       const { file } = values;
       const reader = new FileReader();
       reader.readAsText(file[0].originFileObj, 'UTF-8');
       reader.onload = async (evt) => {
         try {
-          const fileData = JSON.parse(evt.target.result);
-          const response = await uploadVehicleFile({ file: fileData });
+          let formData = new FormData();
+          formData.append('file', file[0].originFileObj);
+          const response = await uploadVehicleFile(formData);
           if (!dealResponse(response, 1)) {
             onCancel();
             refreshHardWare();
@@ -56,6 +63,9 @@ const UploadHardwareModal = (props) => {
           name="file"
           valuePropName="fileList"
           getValueFromEvent={(e) => {
+            if (Array.isArray(e)) {
+              return e;
+            }
             return e && e.fileList;
           }}
           rules={[{ required: true }]}
