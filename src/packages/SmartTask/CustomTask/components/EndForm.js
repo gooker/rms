@@ -14,7 +14,7 @@ const DynamicButton = {
 };
 
 const EndForm = (props) => {
-  const { code, type, hidden, backZones } = props;
+  const { code, type, hidden } = props;
 
   return (
     <>
@@ -38,7 +38,7 @@ const EndForm = (props) => {
       {/* --------------------------------------------------------------- */}
       {/* 重车返回区域 */}
       <Form.Item hidden={hidden} label={formatMessage({ id: 'customTask.form.loadBackZone' })}>
-        <Form.List name={[code, 'heavyBackZone']} initialValue={[]}>
+        <Form.List name={[code, 'loadBackZone']} initialValue={[]}>
           {(fields, { add, remove }) => (
             <>
               {fields.map((field, index) => (

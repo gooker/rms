@@ -42,6 +42,27 @@ export const LineType = {
   ArcPath: 'ArcPath',
 };
 
+// 地图编程的对象
+export const ProgramingItemType = {
+  cell: 'cell',
+  relation: 'relation',
+  zone: 'zone',
+};
+
+// 地图编程-线条的timing枚举
+export const RelationTiming = {
+  begin: 'BEGIN',
+  onRoad: 'ONROAD',
+  end: 'END',
+};
+
+/***************************** 地图转换相关 *****************************/
+// 坐标类型: land 表示物理坐标、navi表示导航坐标
+export const CoordinateType = {
+  LAND: 'land',
+  NAVI: 'navi',
+};
+
 // 导航类型枚举
 export const NavigationType = {
   M_QRCODE: 'mqrcode',
@@ -63,23 +84,3 @@ export const NavigationTypeView = [
     coordinationType: 'R',
   },
 ];
-
-// 坐标类型
-export const CoordinateType = {
-  LAND: 'land',
-  NAVI: 'navi',
-};
-
-// 地图编程的对象
-export const ProgramingItemType = {
-  cell: 'cell',
-  relation: 'relation',
-  zone: 'zone',
-};
-
-// 地图编程-线条的timing枚举
-export const RelationTiming = {
-  begin: 'BEGIN',
-  onRoad: 'ONROAD',
-  end: 'END',
-};

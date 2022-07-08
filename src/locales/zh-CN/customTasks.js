@@ -86,6 +86,7 @@ export default {
   'customTask.form.pathStrategy': '路线策略',
   'customTask.form.keyPointActionConfig': '关键点动作配置',
   'customTask.form.pathProgramming': '路径函数配置',
+  'customTask.form.specifyAngle': '指定角度',
 
   'customTask.form.heavy': '重车',
   'customTask.form.empty': '空车',
