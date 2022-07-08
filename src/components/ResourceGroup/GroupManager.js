@@ -60,7 +60,7 @@ const GroupManager = (props) => {
         <FormattedMessage id={'group.groupMange'} />
       </Menu.Item>
       <Menu.Item key={'resource_group_manage'}>
-        <FormattedMessage id={'group.sourceManage'} />
+        <FormattedMessage id={'group.resourceGroupMange'} />
       </Menu.Item>
     </Menu>
   );

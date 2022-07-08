@@ -69,7 +69,7 @@ export default {
   'menu.resourceGroupMapping': '资源分组绑定',
 
   // 智能任务
-  'menu.standardOrderPool': '标准排程池',
+  'menu.standardTaskPool': '标准任务池',
   'menu.customTask': '自定义任务',
   'menu.quickTask': '快捷任务',
   'menu.limitEqualizer': '限流均衡器',

@@ -10,7 +10,7 @@ export default [
   // },
   {
     path: `/${AppCode.SmartTask}/standardOrderPool`,
-    name: 'standardOrderPool',
+    name: 'standardTaskPool',
     icon: 'taskQueue',
     component: '/SmartTask/StandardTaskPool',
     authority: ['ADMIN', 'SUPERMANAGER', 'MANAGER'],
