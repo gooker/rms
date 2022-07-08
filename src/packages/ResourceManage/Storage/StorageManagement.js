@@ -155,7 +155,7 @@ const StorageManagement = () => {
             <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
           </Button>
           <GroupManager
-            type={'STORE'}
+            type={'STORE_GROUP'}
             memberIdKey={GroupResourceMemberId.STORE}
             selections={selectedRows}
             refresh={() => getData()}

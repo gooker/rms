@@ -95,7 +95,7 @@ const EquipmentListTools = (props) => {
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
           <GroupManager
-            type={'DEVICE'}
+            type={'DEVICE_GROUP'}
             memberIdKey={GroupResourceMemberId.DEVICE}
             selections={selectedRows}
             refresh={onRefresh}

@@ -48,6 +48,9 @@ class MainLayout extends React.Component {
       if (validateResult && !dealResponse(validateResult)) {
         try {
           const userInfo = await dispatch({ type: 'user/fetchCurrentUser' });
+          if (isNull(userInfo)) {
+            throw new Error(formatMessage({ id: 'app.section.not.exist' }));
+          }
           const { currentSection, username, language } = userInfo;
 
           // 初始化国际化信息
@@ -98,7 +101,7 @@ class MainLayout extends React.Component {
               }
 
               // 获取一些非立即需要的系统数据
-              fetchGlobalExtraData();
+              requestAnimationFrame(fetchGlobalExtraData);
 
               // FIXME:轮询告警数量(这个会引发一个问题: connect/mapStateToProps/selections)
               AlertCountPolling.start((value) => {
@@ -110,7 +113,7 @@ class MainLayout extends React.Component {
         } catch (error) {
           Modal.error({
             title: formatMessage({ id: 'app.global.initFailed' }),
-            content: error.toString(),
+            content: error.message,
             onOk() {
               dispatch({ type: 'user/logout' });
             },

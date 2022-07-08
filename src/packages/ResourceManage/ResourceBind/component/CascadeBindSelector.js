@@ -3,7 +3,7 @@ import { Button, Col, Form, Row, Select } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import MenuIcon from '@/utils/MenuIcon';
-import { fetchAllVehicleType, fetchResourceGroupByType } from '@/services/resourceService';
+import { fetchAllLoadType, fetchAllVehicleType, fetchResourceGroupByType } from '@/services/resourceService';
 import style from '../resourceBind.module.less';
 import { ChargerGroupResource } from '@/mockData';
 
@@ -64,7 +64,10 @@ const CascadeBindSelector = (props) => {
       });
     }
     if (value === 'LOAD_TYPE') {
-      //
+      fetchAllLoadType().then((response) => {
+        const _primaryResource = response.map(({ id, name }) => ({ id, name }));
+        setPrimaryResource(_primaryResource);
+      });
     }
   }
 

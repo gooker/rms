@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Col, Form, message, Modal, Popover, Row, Select, Switch, Tag } from 'antd';
+import { Button, Col, Form, message, Modal, Row, Select, Switch, Tag } from 'antd';
 import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
-import { adjustModalWidth, copyToBoard, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { addToClipBoard, adjustModalWidth, dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
   addUserManager,
   fetchDeleteUser,
@@ -85,43 +85,26 @@ class UserManager extends Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="sso.user.email" />,
+      title: <FormattedMessage id='sso.user.email' />,
       dataIndex: 'email',
       align: 'center',
       width: '15%',
     },
     {
-      title: 'Token',
-      dataIndex: 'token',
+      title: <FormattedMessage id='translator.languageManage.language' />,
+      dataIndex: 'language',
       align: 'center',
       with: '150',
-      render: (text, record) => {
-        if (record.userType === 'APP') {
-          return (
-            <div>
-              <Popover content={text} trigger="click">
-                <Button type="link">
-                  <FormattedMessage id="app.map.view" />
-                </Button>
-              </Popover>
-              <Button
-                type="link"
-                onClick={() => {
-                  this.addToClipBoard(text);
-                }}
-              >
-                <FormattedMessage id="app.button.copy" />
-              </Button>
-            </div>
-          );
-        } else {
-          return <span />;
-        }
-      },
     },
     {
-      title: <FormattedMessage id="translator.languageManage.language" />,
-      dataIndex: 'language',
+      title: <FormattedMessage id='sso.assignedRoles' />,
+      dataIndex: 'assignedRoles',
+      align: 'center',
+      with: '150',
+    },
+    {
+      title: <FormattedMessage id='sso.assignedSections' />,
+      dataIndex: 'assignedSections',
       align: 'center',
       with: '150',
     },
@@ -146,13 +129,35 @@ class UserManager extends Component {
 
   expandColumns = [
     {
-      title: <FormattedMessage id="app.common.creationTime" />,
+      title: 'Token',
+      dataIndex: 'token',
+      align: 'center',
+      with: '150',
+      render: (text, record) => {
+        if (record.userType === 'APP') {
+          return (
+            <Button
+              type='link'
+              onClick={() => {
+                addToClipBoard(text);
+              }}
+            >
+              <FormattedMessage id='app.button.copy' />
+            </Button>
+          );
+        } else {
+          return null;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id='app.common.creationTime' />,
       dataIndex: 'createDate',
       align: 'center',
       fixed: 'right',
     },
     {
-      title: <FormattedMessage id="app.common.remark" />,
+      title: <FormattedMessage id='app.common.remark' />,
       dataIndex: 'description',
       ellipsis: true,
       align: 'center',
@@ -322,10 +327,6 @@ class UserManager extends Component {
     }
   };
 
-  addToClipBoard = (content) => {
-    copyToBoard(content);
-  };
-
   render() {
     const {
       loading,
@@ -443,6 +444,7 @@ class UserManager extends Component {
           bordered
           columns={this.columns}
           expandColumns={this.expandColumns}
+          expandColumnSpan={8}
           rowKey={(record) => record.id}
           dataSource={showUsersList}
           loading={loading}

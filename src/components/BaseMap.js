@@ -189,7 +189,7 @@ export default class BaseMap extends React.PureComponent {
       const { type, cost, source, target, angle } = lineData;
       const sourceCell = this.idCellMap.get(source);
       const targetCell = this.idCellMap.get(target);
-      if (isNull(sourceCell) && isNull(targetCell)) return;
+      if (isNull(sourceCell) || isNull(targetCell)) return;
 
       // 只有显示物理坐标和直线类型线条才会显示直线
       if (renderType === CoordinateType.LAND || type === LineType.StraightPath) {

@@ -70,7 +70,7 @@ class WaitingQueueComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.appointedTarget" />,
+      title: <FormattedMessage id='app.common.targetCell' />,
       dataIndex: 'appointedTargetCellId',
       align: 'center',
       width: 150,
@@ -86,7 +86,7 @@ class WaitingQueueComponent extends Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.appointedVehicle" />,
+      title: <FormattedMessage id='vehicle.id' />,
       dataIndex: 'appointedVehicleId',
       align: 'center',
       width: 150,

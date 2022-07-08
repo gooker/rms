@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
 import { DisconnectOutlined, RedoOutlined, ScanOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
@@ -118,7 +118,7 @@ const VehicleListTools = (props) => {
             <DisconnectOutlined /> <FormattedMessage id={'app.button.logout'} />
           </Button>
           <GroupManager
-            type={'VEHICLE'}
+            type={'VEHICLE_GROUP'}
             memberIdKey={GroupResourceMemberId.VEHICLE}
             selections={selectedRows}
             refresh={() => {

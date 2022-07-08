@@ -22,8 +22,18 @@ const VehicleList = (props) => {
   const columns = [
     {
       title: <FormattedMessage id='resourceGroup.grouping' />,
-      dataIndex: 'groupName',
+      dataIndex: 'resourceGroups',
       align: 'center',
+      render: (text) => {
+        if (Array.from(text)) {
+          return text.map(({ groupName }, index) => <Tag key={index}>{groupName}</Tag>);
+        }
+        return (
+          <span style={{ color: Colors.red }}>
+            <FormattedMessage id='quickTask.group.noExist' />
+          </span>
+        );
+      },
     },
     {
       title: <FormattedMessage id='vehicle.id' />,

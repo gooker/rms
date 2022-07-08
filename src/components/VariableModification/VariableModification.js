@@ -17,7 +17,7 @@ import TargetSelector from '@/packages/SmartTask/CustomTask/components/TargetSel
 import BackZoneSelector from '@/packages/SmartTask/CustomTask/components/BackZoneSelector';
 
 const { formItemLayout } = getFormLayout(4, 18);
-const CommonVariableModification = (props) => {
+const VariableModification = (props) => {
   const { prefix, form, variable, customTask, loadSpecification } = props;
 
   function renderPartTitle(nodeType) {
@@ -345,8 +345,9 @@ const CommonVariableModification = (props) => {
     </Form>
   );
 };
-export default memo(CommonVariableModification);
+export default memo(VariableModification);
 
+// 提取变量表单数据并转换成合适的结构
 export function formatVariableFormValues(values, hasPrefix = false) {
   function format(inputValue) {
     const result = {};

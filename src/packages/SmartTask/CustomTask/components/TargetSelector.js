@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Select, Space } from 'antd';
+import { Col, Row, Select } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import { isStrictNull, isSubArray } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -111,32 +111,33 @@ const TargetSelector = (props) => {
   }
 
   return (
-    <div>
-      <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
-        {renderSelectOptions()}
-      </Select>
-
-      <Space>
+    <Row gutter={16}>
+      <Col>
+        <Select value={currentValue?.type} onChange={onTypeChange} style={{ width: 150 }}>
+          {renderSelectOptions()}
+        </Select>
+      </Col>
+      <Col flex={1}>
         {['CELL', 'ROTATE'].includes(currentValue.type) ? (
           <Select
-            mode="tags"
+            mode='tags'
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ marginLeft: 10, width: 300 }}
+            style={{ width: '100%' }}
             notFoundContent={null}
           />
         ) : (
           <Select
-            mode="multiple"
+            mode='multiple'
             value={currentValue?.code || []}
             onChange={onCodeChange}
-            style={{ marginLeft: 10, width: 300 }}
+            style={{ width: '100%' }}
           >
             {renderSecondaryOptions()}
           </Select>
         )}
-      </Space>
-    </div>
+      </Col>
+    </Row>
   );
 };
 export default connect(({ global }) => ({

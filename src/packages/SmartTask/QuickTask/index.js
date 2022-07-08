@@ -241,20 +241,17 @@ const QuickTask = (props) => {
             });
           }}
         >
-          <FormattedMessage id="quickTask.shared" />
+          <FormattedMessage id='quickTask.shared' />
         </div>
       </TablePageWrapper>
 
       {/* 编辑任务变量 */}
-      {variableModalVisible && (
-        <VariableModificationModal
-          visible={variableModalVisible}
-          quickTask={editing}
-          customTask={getCustomTask()}
-          onOk={onSaveVariable}
-          onCancel={onCancelEditingVariable}
-        />
-      )}
+      <VariableModificationModal
+        quickTask={editing}
+        customTask={getCustomTask()}
+        onOk={onSaveVariable}
+        onCancel={onCancelEditingVariable}
+      />
 
       {/*  执行快捷任务 */}
       <ExecuteQuickTaskModal customTask={getCustomTask()} />
@@ -266,7 +263,6 @@ export default connect(({ quickTask, loading }) => ({
   userTasks: quickTask.userTasks,
   customTasks: quickTask.customTasks,
   quickTaskGroups: quickTask.quickTaskGroups,
-  variableModalVisible: quickTask.variableModalVisible,
   shardTaskModalVisible: quickTask.shardTaskModalVisible,
   loading: loading.effects['quickTask/initQuickTaskPage'],
 }))(memo(QuickTask));

@@ -261,7 +261,6 @@ const CustomTaskForm = (props) => {
         ...result,
       };
     } catch (e) {
-      // eslint-disable-next-line no-console
       console.log(e);
       message.error(formatMessage({ id: 'customTasks.form.submit.error' }));
       return;

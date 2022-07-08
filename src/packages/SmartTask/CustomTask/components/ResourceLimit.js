@@ -3,13 +3,16 @@ import { Form, InputNumber, Select, Switch } from 'antd';
 import { formatMessage } from '@/utils/util';
 
 const ResourceLimit = (props) => {
-  const { data, hidden, prefix, loadSpecification = [] } = props;
+  const { data, hidden, prefix, suffix, loadSpecification = [], isRequired } = props;
 
   function getFormItemName(name) {
-    if (Array.isArray(prefix)) {
-      return [...prefix, name];
-    }
-    return name;
+    const namePath = [];
+    const _prefix = Array.isArray(prefix) ? prefix : [];
+    const _suffix = Array.isArray(suffix) ? suffix : [];
+    namePath.push(..._prefix);
+    namePath.push(name);
+    namePath.push(..._suffix);
+    return namePath;
   }
 
   return (
@@ -21,6 +24,7 @@ const ResourceLimit = (props) => {
         name={getFormItemName('vehicleBatteryLimit')}
         label={formatMessage({ id: 'customTask.form.resourceLimit.vehicleBattery' })}
         initialValue={data ? data.vehicleBatteryLimit : null}
+        rules={[{ required: isRequired }]}
       >
         <InputNumber allowClear style={{ width: 90 }} />
       </Form.Item>
@@ -34,6 +38,7 @@ const ResourceLimit = (props) => {
           id: 'customTask.form.resourceLimit.availableContainerCountLimit',
         })}
         initialValue={data ? data.canUseContainerCountLimit : null}
+        rules={[{ required: isRequired }]}
       >
         <InputNumber allowClear style={{ width: 90 }} />
       </Form.Item>
@@ -45,6 +50,7 @@ const ResourceLimit = (props) => {
         name={getFormItemName('canUseContainerLimit')}
         label={formatMessage({ id: 'customTask.form.resourceLimit.containerTypeLimit' })}
         initialValue={data ? data.canUseContainerLimit : []}
+        rules={[{ required: isRequired }]}
       >
         <Select allowClear mode={'multiple'}></Select>
       </Form.Item>
@@ -56,6 +62,7 @@ const ResourceLimit = (props) => {
         name={getFormItemName('canUseLoadTypeLimit')}
         label={formatMessage({ id: 'customTask.form.resourceLimit.loadTypeLimit' })}
         initialValue={data ? data.canUseLoadTypeLimit : []}
+        rules={[{ required: isRequired }]}
       >
         <Select allowClear mode={'multiple'}>
           {loadSpecification?.map(({ id, name }) => (
@@ -74,6 +81,7 @@ const ResourceLimit = (props) => {
         label={formatMessage({ id: 'customTask.form.resourceLimit.isLimitStandBy' })}
         initialValue={data ? data.isLimitStandBy : false}
         valuePropName={'checked'}
+        rules={[{ required: isRequired }]}
       >
         <Switch />
       </Form.Item>
@@ -86,6 +94,7 @@ const ResourceLimit = (props) => {
         label={formatMessage({ id: 'customTask.form.resourceLimit.loadWorkLimit' })}
         initialValue={data ? data.canUseWorkLimit : false}
         valuePropName={'checked'}
+        rules={[{ required: isRequired }]}
       >
         <Switch />
       </Form.Item>

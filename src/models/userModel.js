@@ -1,4 +1,3 @@
-import { message } from 'antd';
 import { find } from 'lodash';
 import {
   fetchLogout,
@@ -69,8 +68,7 @@ export default {
         if (username !== 'admin') {
           // 3. 保存当前Section
           if (!currentSection) {
-            message.error(formatMessage({ id: 'app.section.not.exist' }));
-            return false;
+            return null;
           }
           window.localStorage.setItem('sectionId', currentSection.sectionId);
           yield put({ type: 'saveCurrentSectionEffect', payload: currentSection });

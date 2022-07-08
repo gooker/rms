@@ -253,7 +253,7 @@ const SubTaskForm = (props) => {
                 checked={specifyLoadAngle}
                 onChange={(evt) => setSpecifyLoadAngle(evt.target.checked)}
               >
-                指定角度
+                <FormattedMessage id={'customTask.form.specifyAngle'} />
               </Checkbox>
             </Col>
           </Row>

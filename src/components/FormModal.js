@@ -5,8 +5,10 @@ const FormModal = (props) => {
   const { children, ...rest } = props;
   return (
     <Modal
+      destroyOnClose
       closable={false}
       maskClosable={false}
+      keyboard={false}
       style={{ top: 30 }}
       bodyStyle={{ maxHeight: '80vh', overflow: 'auto' }}
       {...rest}

@@ -204,7 +204,7 @@ const ContainerManage = () => {
             </Button>
 
             <GroupManager
-              type={'LOAD'}
+              type={'LOAD_GROUP'}
               memberIdKey={GroupResourceMemberId.LOAD}
               selections={selectedRows}
               refresh={() => getData()}
