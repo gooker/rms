@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { Button, Col, Dropdown, Menu, Row, Select } from 'antd';
-import { DownOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
+import { BgColorsOutlined, DownOutlined, PlusOutlined, RedoOutlined } from '@ant-design/icons';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage } from '@/utils/util';
 import commonStyles from '@/common.module.less';
@@ -11,6 +11,7 @@ const TriggerSearchComponent = (props) => {
     dataList,
     selectedSearchValue,
     onAdd,
+    onPaste,
     onRefresh,
     onSelected,
     onStatusChange,
@@ -24,7 +25,13 @@ const TriggerSearchComponent = (props) => {
             <PlusOutlined /> <FormattedMessage id="app.button.add" />
           </Button>
           <Button
-            style={{ marginLeft: 13 }}
+            style={{ margin: '0 15px' }}
+            disabled={checkedList?.length !== 1}
+            onClick={onPaste}
+          >
+            <BgColorsOutlined /> <FormattedMessage id="app.button.past" />
+          </Button>
+          <Button
             onClick={() => {
               onRefresh();
             }}

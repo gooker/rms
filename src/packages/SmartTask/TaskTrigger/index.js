@@ -9,7 +9,7 @@ import {
   saveTaskTrigger,
   switchTriggerState,
 } from '@/services/commonService';
-import { dealResponse, formatMessage } from '@/utils/util';
+import { dealResponse, formatMessage, isNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import TriggerSearchComponent from './TriggerSearchComponent';
@@ -35,6 +35,7 @@ const DescriptionItem = ({ title, content }) => (
 class TaskTrigger extends Component {
   state = {
     loading: false,
+    pasteFlag: false, // 是否是粘贴
     selectSearchItem: null,
     checkedOperateList: [], // 批量操作用到的数据
     updateTrigger: null, // 更新带过去的数据
@@ -185,7 +186,7 @@ class TaskTrigger extends Component {
     const { selectSearchItem } = this.state;
     const saveResult = await saveTaskTrigger([data]);
     if (!dealResponse(saveResult, 1)) {
-      this.setState({ triggerModalVisible: false, updateTrigger: null });
+      this.setState({ triggerModalVisible: false, updateTrigger: null, pasteFlag: false });
       if (!data?.id) {
         this.setState({ selectSearchItem: null });
         this.initData(selectSearchItem);
@@ -220,8 +221,33 @@ class TaskTrigger extends Component {
     this.setState({ triggerModalVisible: true, updateTrigger: null });
   };
 
+  onPaste = () => {
+    const { checkedOperateList } = this.state;
+    let currentUpdateRecord = { ...checkedOperateList[0], id: null, name: null, status: 'end' };
+    this.setState({
+      triggerModalVisible: true,
+      updateTrigger: currentUpdateRecord,
+      pasteFlag: true,
+    });
+  };
+
   onSelectedTrigger = (newChecked) => {
     this.setState({ checkedOperateList: newChecked });
+  };
+
+  getTitle = () => {
+    const { pasteFlag, updateTrigger } = this.state;
+    let title = null;
+    if (pasteFlag) {
+      title = formatMessage({ id: 'app.button.past' });
+    } else {
+      if (isNull(updateTrigger)) {
+        title = formatMessage({ id: 'app.button.add' });
+      } else {
+        title = formatMessage({ id: 'app.button.update' });
+      }
+    }
+    return title;
   };
 
   // 渲染card
@@ -372,6 +398,7 @@ class TaskTrigger extends Component {
             dataList={taskTriggerList}
             selectedSearchValue={selectSearchItem}
             onAdd={this.onAdd}
+            onPaste={this.onPaste}
             onRefresh={() => {
               this.setState({ selectSearchItem: null }, () => {
                 this.initData();
@@ -397,17 +424,13 @@ class TaskTrigger extends Component {
 
           {/*  新增 & 编辑触发器弹窗 */}
           <TaskTriggerModal
-            title={`${
-              !updateTrigger
-                ? formatMessage({ id: 'app.button.add' })
-                : formatMessage({ id: 'app.button.update' })
-            }`}
+            title={this.getTitle()}
             visible={triggerModalVisible}
             updateItem={updateTrigger}
             onSubmit={this.taskTriggerSubmit}
             triggerList={taskTriggerList}
             onCancel={() => {
-              this.setState({ triggerModalVisible: false, updateTrigger: null });
+              this.setState({ triggerModalVisible: false, updateTrigger: null, pasteFlag: false });
             }}
           />
         </Spin>

@@ -7,7 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import VehicleLogSearch from './VehicleLog/component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
-import { fetchAllAdaptor, upgradeVehicle } from '@/services/resourceService';
+import { fetchAllAdaptor, fetchFireWareList, upgradeVehicle } from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
 import UploadHardwareModal from './components/UploadHardwareModal';
 import CreateUpgradeOrderModal from './components/CreateUpgradeOrderModal';
@@ -19,10 +19,10 @@ const VehicleUpgrade = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const [dataSource, setDatasource] = useState([]);
-  const [hardWareData, setHardWareData] = useState([]); // 固件
   const [upgradeOrder, setUpgradeOrder] = useState([]); // 升级的任务
 
   const [allAdaptors, setAllAdaptors] = useState({});
+  const [allFireWares, setAllFireWares] = useState([]); // 固件
 
   const [uploadVisible, setUploadVisible] = useState(false);
   const [creationVisible, setCreationVisible] = useState(false);
@@ -98,9 +98,10 @@ const VehicleUpgrade = () => {
   async function init() {
     setLoading(true);
     getAllHardWare();
-    const [allVehicles, allAdaptors] = await Promise.all([
+    const [allVehicles, allAdaptors, allFireWares] = await Promise.all([
       fetchAllVehicleList(),
       fetchAllAdaptor(),
+      fetchFireWareList(),
     ]);
     if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
       const newData = [];
@@ -112,6 +113,9 @@ const VehicleUpgrade = () => {
       setDatasource(newData);
       setAllAdaptors(allAdaptors);
       filterData(newData);
+    }
+    if (!dealResponse(allFireWares)) {
+      setAllFireWares(allFireWares);
     }
     setLoading(false);
     setSelectedRows([]);
@@ -145,7 +149,6 @@ const VehicleUpgrade = () => {
 
   // 获取所有上传到SFTP的固件
   function getAllHardWare() {
-    setHardWareData([]);
     setUpgradeOrder([]);
   }
 
@@ -185,7 +188,7 @@ const VehicleUpgrade = () => {
             </Button>
             <Button
               type={'primary'}
-              disabled={selectedRowKeys.length === 0 || hardWareData?.length === 0}
+              disabled={selectedRowKeys.length === 0 || allFireWares?.length === 0}
               onClick={() => {
                 setCreationVisible(true);
               }}
@@ -223,7 +226,7 @@ const VehicleUpgrade = () => {
       {/* 新建升级任务*/}
       <CreateUpgradeOrderModal
         visible={creationVisible}
-        hardWareData={hardWareData}
+        hardWareData={allFireWares}
         onCancel={() => {
           setCreationVisible(false);
         }}
