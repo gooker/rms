@@ -36,8 +36,8 @@ const TaskTriggerModal = (props) => {
   const [variables, setVariables] = useState(null); // {code:{}}
   // 是否修改了变量
   const [variablesChanged, setVariablesChanged] = useState(null);
-  // 获取变量loading
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // 获取变量loading
+  const [saveLoading, setSaveLoading] = useState(false); // loading
   const [allTaskList, setAllTaskList] = useState([]); // 自定义任务和sharedTasks合并
 
   useEffect(() => {
@@ -168,8 +168,9 @@ const TaskTriggerModal = (props) => {
 
         values.fixedVariable = dataMap;
       }
-
+      setSaveLoading(true);
       onSubmit(values);
+      setSaveLoading(false);
     });
   }
 
@@ -182,6 +183,7 @@ const TaskTriggerModal = (props) => {
       maskClosable={false}
       width={600}
       style={{ top: 30 }}
+      okButtonProps={{ loading }}
       footer={
         <div>
           <Button
@@ -200,7 +202,7 @@ const TaskTriggerModal = (props) => {
           >
             <FormattedMessage id={'taskTrigger.editVariable'} />
           </Button>
-          <Button type="primary" onClick={submit} style={{ marginLeft: 13 }}>
+          <Button type="primary" onClick={submit} loading={saveLoading} style={{ marginLeft: 13 }}>
             <FormattedMessage id={'app.button.save'} />
           </Button>
         </div>

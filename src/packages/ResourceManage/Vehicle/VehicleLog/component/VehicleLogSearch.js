@@ -7,6 +7,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import VehicleLogDownload from './VehicleLogDownload';
 import commonStyles from '@/common.module.less';
 import { fetchVehicleLogs } from '@/services/resourceService';
+import { VehicleUpgradeState } from '../../upgradeConst';
 
 const VehicleLogSearch = (props) => {
   const { onSearch, allData, allAdaptors, refreshData, selectedRows, type } = props;
@@ -64,6 +65,7 @@ const VehicleLogSearch = (props) => {
             {renderVehicleIdFilter()}
           </Select>
         </Form.Item>
+
         <Form.Item label={<FormattedMessage id={'app.vehicleType'} />} name="vehicleType">
           <Select allowClear style={{ width: 300 }}>
             {Object.values(allAdaptors).map(({ adapterType }) => {
@@ -85,6 +87,17 @@ const VehicleLogSearch = (props) => {
             {renderVehicleStateFilter()}
           </Select>
         </Form.Item>
+        {type === 'fireware' && (
+          <Form.Item label={formatMessage({ id: 'firmdware.progress' })} name="progress">
+            <Select allowClear style={{ width: 300 }}>
+              {Object.keys(VehicleUpgradeState)?.map((key) => (
+                <Select.Option key={key} value={key}>
+                  {formatMessage({ id: `${VehicleUpgradeState[key]}` })}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
         <Form.Item>
           <Button type="primary" onClick={logSearch}>
             <SearchOutlined /> <FormattedMessage id="app.button.search" />
@@ -105,6 +118,7 @@ const VehicleLogSearch = (props) => {
           <Col className={commonStyles.tableToolLeft}>
             <Button
               type="primary"
+              disabled={selectedRows?.length === 0}
               onClick={() => {
                 setVisible(true);
               }}

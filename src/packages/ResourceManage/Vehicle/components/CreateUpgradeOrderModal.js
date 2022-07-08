@@ -8,17 +8,18 @@ const CreateUpgradeOrderModal = (props) => {
   const { visible, onCancel, upgradeOrder, selectedRows, hardWareData, onRefresh } = props;
   const [form] = Form.useForm();
 
-  // 取出正在下载固件的小车，不传
+  // 取出 正在下载固件/正在升级的/下载成功的 小车，不传
   const vehicleInProgress = [];
-  upgradeOrder?.forEach(({ vehicles }) => {
-    vehicles.forEach((vehicle) => {
-      if (vehicle.state === 'downloading') {
-        vehicleInProgress.push(vehicle.uniqueId);
-      }
-    });
+  upgradeOrder?.forEach(({ vehicleId, vehicleType, vehicleFileTaskType, fileStatus }) => {
+    if (
+      (['1', '0'].includes(fileStatus) && vehicleFileTaskType === 'DOWNLOAD') ||
+      (['1'].includes(fileStatus) && vehicleFileTaskType === 'UPGRADE')
+    ) {
+      vehicleInProgress.push(`${vehicleId}@${vehicleType}`);
+    }
   });
   const availableVehicle = selectedRows.filter(
-    (vehicle) => !vehicleInProgress.includes(vehicle.id),
+    ({ vehicleId, vehicleType }) => !vehicleInProgress.includes(`${vehicleId}@${vehicleType}`),
   );
 
   useEffect(() => {
@@ -45,7 +46,7 @@ const CreateUpgradeOrderModal = (props) => {
 
   return (
     <Modal
-      title={formatMessage({ id: 'firmdware.upload' })}
+      title={formatMessage({ id: 'firmdware.upgradeTask.add' })}
       visible={visible}
       closable={false}
       maskClosable={false}

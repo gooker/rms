@@ -30,12 +30,19 @@ export default {
   'hardware.uploadToServer': '上传车辆固件',
   'hardware.downloadToVehicle': '下载固件到车辆',
 
-  'firmdware.downloadProgress': '下载进度',
+  'firmdware.progress': '进度',
   'firmdware.fileName': '固件',
   'firmdware.upload': '上传固件',
-  'firmdware.downloadFail': '下载失败',
-  'firmdware.startUpgrade': '开始升级',
+  'firmdware.button.mainten': '维护/取消维护',
   'firmdware.upgradeTask.add': '新建升级任务',
+  'firmdware.inDownloading': '下载中',
+  'firmdware.downloadFail': '下载失败',
+  'firmdware.download.success': '下载成功',
+
+  'firmdware.upgradeFail': '升级失败',
+  'firmdware.startUpgrade': '开始升级',
+  'firmdware.inUpgradeing': '升级中',
+  'firmdware.upgrade.success': '升级成功',
 
   // 故障相关
   'app.fault.code': '故障码',
