@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Modal, Form, Input, Switch } from 'antd';
 import { isNull, formatMessage, getFormLayout, dealResponse, isStrictNull } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -8,6 +8,7 @@ const { formItemLayout } = getFormLayout(6, 17);
 function AddDefinition(props) {
   const { visible, onCancel, onOk, updateRecord, allData } = props;
   const [formRef] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!visible) {
@@ -19,11 +20,13 @@ function AddDefinition(props) {
     formRef
       .validateFields()
       .then(async (values) => {
+        setLoading(true);
         const response = await savexxxx({ ...values });
         if (!dealResponse(response)) {
           onCancel();
           onOk();
         }
+        setLoading(false);
       })
       .catch(() => {});
   }
@@ -56,6 +59,7 @@ function AddDefinition(props) {
       }
       onCancel={onCancel}
       onOk={onSave}
+      okButtonProps={{ disabled: loading, loading }}
     >
       <Form {...formItemLayout} form={formRef}>
         <Form.Item hidden name={'id'} initialValue={updateRecord?.id} />

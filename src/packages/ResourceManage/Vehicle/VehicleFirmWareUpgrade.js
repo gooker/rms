@@ -1,33 +1,44 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Progress, Tag, Row, Button, Col, Typography } from 'antd';
-import { CloseCircleOutlined, PlusOutlined, RedoOutlined, UploadOutlined } from '@ant-design/icons';
-import { dealResponse, getVehicleStatusTag, isNull } from '@/utils/util';
+import { PlusOutlined, RedoOutlined, ToolOutlined, UploadOutlined } from '@ant-design/icons';
+import { dealResponse, formatMessage, getVehicleStatusTag, isNull } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import VehicleLogSearch from './VehicleLog/component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
-import { fetchAllAdaptor, fetchFireWareList, upgradeVehicle } from '@/services/resourceService';
+import {
+  fetchAllAdaptor,
+  fetchFireWareFileList,
+  fetchFireWareList,
+  upgradeVehicle,
+} from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
 import UploadHardwareModal from './components/UploadHardwareModal';
 import CreateUpgradeOrderModal from './components/CreateUpgradeOrderModal';
-import { VehicleUpgradeState } from './upgradeConst';
+import { transformFireProgress } from './upgradeConst';
+import RmsConfirm from '@/components/RmsConfirm';
+
+const StatusLabelStyle = { marginLeft: 15, fontSize: 15, fontWeight: 600 };
 
 const VehicleUpgrade = () => {
   const [loading, setLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-
-  const [dataSource, setDatasource] = useState([]);
-  const [upgradeOrder, setUpgradeOrder] = useState([]); // 升级的任务
-
   const [allAdaptors, setAllAdaptors] = useState({});
-  const [allFireWares, setAllFireWares] = useState([]); // 固件
+  const [dataSource, setDatasource] = useState([]);
+  const [upgradeOrder, setUpgradeOrder] = useState([]); // 升级或下载的任务
+  const [allFireWareFiles, setAllFireWareFiles] = useState([]); // 固件
 
   const [uploadVisible, setUploadVisible] = useState(false);
   const [creationVisible, setCreationVisible] = useState(false);
 
   const columns = [
+    {
+      title: <FormattedMessage id="firmdware.fileName" />,
+      dataIndex: 'fileName',
+      align: 'center',
+    },
     {
       title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
@@ -38,6 +49,27 @@ const VehicleUpgrade = () => {
       dataIndex: 'vehicleStatus',
       align: 'center',
       render: getVehicleStatusTag,
+    },
+    {
+      title: <FormattedMessage id="vehicle.maintenanceState" />,
+      dataIndex: 'disabled',
+      align: 'center',
+      render: (text) => {
+        return (
+          <span>
+            {text ? (
+              <Tag color={'#f50'}>
+                <ToolOutlined />
+                <span style={{ marginLeft: 3 }}>
+                  <FormattedMessage id="vehicle.maintenanceState" />
+                </span>
+              </Tag>
+            ) : (
+              <Tag color={'#2FC25B'}>{<FormattedMessage id="app.common.normal" />}</Tag>
+            )}
+          </span>
+        );
+      },
     },
     {
       title: <FormattedMessage id="app.vehicleType" />,
@@ -52,42 +84,58 @@ const VehicleUpgrade = () => {
       },
     },
     {
-      title: <FormattedMessage id="firmdware.downloadProgress" />,
-      dataIndex: 'state',
+      title: <FormattedMessage id="firmdware.progress" />,
+      dataIndex: 'fileStatus',
       align: 'center',
       render: (text, record) => {
-        if (text === VehicleUpgradeState.downloading || text === VehicleUpgradeState.ready) {
-          return <Progress type="circle" width={35} percent={record.percent} />;
-        }
-        if (text === VehicleUpgradeState.downloadFail) {
-          return (
-            <Tag icon={<CloseCircleOutlined />} color="error">
-              <FormattedMessage id="firmdware.downloadFail" />
-            </Tag>
-          );
-        } else {
-          return (
-            <Typography.Link
-              onClick={() => {
-                upgrade(record);
-              }}
-            >
-              <FormattedMessage id="firmdware.startUpgrade" />
-            </Typography.Link>
-          );
+        if (!isNull(text)) {
+          const { vehicleFileTaskType } = record;
+          const nexText = Number(text);
+          if (nexText === 1) {
+            return (
+              <>
+                <Progress
+                  type="circle"
+                  percent={!isNull(record.fileProgress) ? parseInt(record.fileProgress) : 0}
+                  width={35}
+                />
+                <span style={{ color: 'orange', ...StatusLabelStyle }}>
+                  {vehicleFileTaskType === 'DOWNLOAD' ? (
+                    <FormattedMessage id={'firmdware.inDownloading'} />
+                  ) : (
+                    <FormattedMessage id={'firmdware.inUpgradeing'} />
+                  )}
+                </span>
+              </>
+            );
+          } else if (nexText === 2) {
+            return (
+              <Tag color="error">
+                {vehicleFileTaskType === 'DOWNLOAD' ? (
+                  <FormattedMessage id={'firmdware.downloadFail'} />
+                ) : (
+                  <FormattedMessage id={'firmdware.upgradeFail'} />
+                )}
+              </Tag>
+            );
+          } else if (nexText === 0) {
+            if (record.vehicleFileTaskType === 'DOWNLOAD') {
+              <Typography.Link
+                onClick={() => {
+                  upgrade(record);
+                }}
+              >
+                <FormattedMessage id="firmdware.startUpgrade" />
+              </Typography.Link>;
+            }
+            if (record.vehicleFileTaskType === 'UPGRADE') {
+              <Tag color="#87d068">
+                <FormattedMessage id="firmdware.upgrade.success" />
+              </Tag>;
+            }
+          }
         }
       },
-    },
-
-    {
-      title: <FormattedMessage id="firmdware.fileName" />,
-      dataIndex: 'fileName',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="app.common.creationTime" />,
-      dataIndex: 'creatTime',
-      align: 'center',
     },
   ];
 
@@ -97,25 +145,43 @@ const VehicleUpgrade = () => {
 
   async function init() {
     setLoading(true);
-    getAllHardWare();
-    const [allVehicles, allAdaptors, allFireWares] = await Promise.all([
+    const [allVehicles, allAdaptors, allFireWaresFile, taskProgressOrder] = await Promise.all([
       fetchAllVehicleList(),
       fetchAllAdaptor(),
+      fetchFireWareFileList(),
       fetchFireWareList(),
     ]);
-    if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
+    if (
+      !dealResponse(allVehicles) &&
+      !dealResponse(allAdaptors) &&
+      !dealResponse(taskProgressOrder)
+    ) {
       const newData = [];
-      allVehicles?.map(({ vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
+      allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
         if (vehicle?.register) {
-          newData.push({ ...vehicle, ...vehicleInfo, ...vehicleWorkStatusDTO });
+          const currentTask = taskProgressOrder?.filter(
+            (item) =>
+              item.vehicleId === vehicleId &&
+              vehicleType === item.vehicleType &&
+              ['DOWNLOAD', 'UPGRADE'].includes(item.vehicleFileTaskType),
+          );
+          newData.push({
+            vehicleId,
+            vehicleType,
+            ...vehicle,
+            ...vehicleInfo,
+            ...vehicleWorkStatusDTO,
+            ...currentTask,
+          });
         }
       });
       setDatasource(newData);
       setAllAdaptors(allAdaptors);
       filterData(newData);
     }
-    if (!dealResponse(allFireWares)) {
-      setAllFireWares(allFireWares);
+    if (!dealResponse(allFireWaresFile)) {
+      setAllFireWareFiles(allFireWaresFile);
+      setUpgradeOrder([taskProgressOrder]);
     }
     setLoading(false);
     setSelectedRows([]);
@@ -128,7 +194,7 @@ const VehicleUpgrade = () => {
       setDatasource(nowAllVehicles);
       return;
     }
-    const { ids, vehicleStatus, vehicleType } = searchParams;
+    const { ids, vehicleStatus, vehicleType, progress } = searchParams;
     if (ids?.length > 0) {
       nowAllVehicles = nowAllVehicles.filter(({ id }) => ids.includes(id));
     }
@@ -144,12 +210,15 @@ const VehicleUpgrade = () => {
       );
     }
 
-    setDatasource(nowAllVehicles);
-  }
+    if (isNull(progress)) {
+      const currentStatus = transformFireProgress(progress); // ['1','UPGRADE']
+      nowAllVehicles = nowAllVehicles.filter(
+        ({ fileStatus, vehicleFileTaskType }) =>
+          fileStatus === currentStatus[0] && vehicleFileTaskType === currentStatus[1],
+      );
+    }
 
-  // 获取所有上传到SFTP的固件
-  function getAllHardWare() {
-    setUpgradeOrder([]);
+    setDatasource(nowAllVehicles);
   }
 
   // 开始升级
@@ -159,6 +228,15 @@ const VehicleUpgrade = () => {
     if (!dealResponse(response, 1)) {
       init();
     }
+  }
+
+  function handleMainten() {
+    RmsConfirm({
+      content: formatMessage({ id: 'app.message.doubleConfirm' }),
+      onOk: () => {
+        //TODO: 缺接口
+      },
+    });
   }
 
   function onSelectChange(selectedRowKeys, selectedRows) {
@@ -175,6 +253,7 @@ const VehicleUpgrade = () => {
           refreshLog={init}
           selectedRows={selectedRows}
           allAdaptors={allAdaptors}
+          type="fireware"
         />
 
         <Row justify={'space-between'}>
@@ -188,12 +267,15 @@ const VehicleUpgrade = () => {
             </Button>
             <Button
               type={'primary'}
-              disabled={selectedRowKeys.length === 0 || allFireWares?.length === 0}
+              disabled={selectedRowKeys.length === 0 || allFireWareFiles?.length === 0}
               onClick={() => {
                 setCreationVisible(true);
               }}
             >
               <PlusOutlined /> <FormattedMessage id="firmdware.upgradeTask.add" />
+            </Button>
+            <Button onClick={handleMainten} disabled={selectedRowKeys.length === 0}>
+              <ToolOutlined /> <FormattedMessage id="firmdware.button.mainten" />
             </Button>
 
             <Button onClick={init}>
@@ -220,13 +302,13 @@ const VehicleUpgrade = () => {
         onCancel={() => {
           setUploadVisible(false);
         }}
-        refreshHardWare={getAllHardWare}
+        refreshHardWare={init}
       />
 
       {/* 新建升级任务*/}
       <CreateUpgradeOrderModal
         visible={creationVisible}
-        hardWareData={allFireWares}
+        hardWareData={allFireWareFiles}
         onCancel={() => {
           setCreationVisible(false);
         }}

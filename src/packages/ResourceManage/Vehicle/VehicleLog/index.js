@@ -6,9 +6,11 @@ import FormattedMessage from '@/components/FormattedMessage';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import VehicleLogSearch from './component/VehicleLogSearch';
 import commonStyles from '@/common.module.less';
-import { fetchAllAdaptor } from '@/services/resourceService';
+import { fetchAllAdaptor, fetchVehicleLogsList } from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
+import { find } from 'lodash';
 // import ViewVehicleLog from './component/ViewVehicleLog';
+////0：成功，1：升级中或下载中或上传中，2：失败
 
 const VehicleLog = () => {
   const [selectedRows, setSelectedRows] = useState([]);
@@ -49,28 +51,32 @@ const VehicleLog = () => {
     },
     {
       title: <FormattedMessage id="app.logDownload.generateStatus" />,
-      dataIndex: 'id',
+      dataIndex: 'fileStatus',
       align: 'center',
       render: (text, record) => {
-        if (text === 1) {
-          return <Progress type="circle" percent={parseInt(record.fileProgress)} width={35} />;
-        } else if (text === 2) {
-          return (
-            <Tag color="error">
-              <FormattedMessage id="app.common.failed" />
-            </Tag>
-          );
-        } else if (text === 0) {
-          return (
-            <span
-              className={commonStyles.textLinks}
-              onClick={() => {
-                // setViewing(text);
-              }}
-            >
-              <FormattedMessage id="app.logDownload.generated" />
-            </span>
-          );
+        if (!isNull(text)) {
+          const nexText = Number(text);
+          if (nexText === 1) {
+            return (
+              <Progress
+                type="circle"
+                percent={!isNull(record.fileProgress) ? parseInt(record.fileProgress) : 0}
+                width={35}
+              />
+            );
+          } else if (nexText === 2) {
+            return (
+              <Tag color="error">
+                <FormattedMessage id="app.common.failed" />
+              </Tag>
+            );
+          } else if (nexText === 0) {
+            return (
+              <span className={commonStyles.textLinks}>
+                <FormattedMessage id="app.logDownload.generated" />
+              </span>
+            );
+          }
         }
       },
     },
@@ -82,15 +88,24 @@ const VehicleLog = () => {
 
   async function init() {
     setLoading(true);
-    const [allVehicles, allAdaptors] = await Promise.all([
+    const [allVehicles, allAdaptors, logList] = await Promise.all([
       fetchAllVehicleList(),
       fetchAllAdaptor(),
+      fetchVehicleLogsList(),
     ]);
-    if (!dealResponse(allVehicles) && !dealResponse(allAdaptors)) {
-      const newData = []; //TODO: 要返回下载状态
-      allVehicles?.map(({ vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
+    if (!dealResponse(allVehicles) && !dealResponse(allAdaptors) && !dealResponse(logList)) {
+      const newData = [];
+      allVehicles?.map(({ vehicleId, vehicleType, vehicle, vehicleInfo, vehicleWorkStatusDTO }) => {
         if (vehicle?.register) {
-          newData.push({ ...vehicle, ...vehicleInfo, ...vehicleWorkStatusDTO });
+          const currentLog = find(logList ?? [], { vehicleId, vehicleType });
+          newData.push({
+            vehicleId,
+            vehicleType,
+            ...vehicle,
+            ...vehicleInfo,
+            ...vehicleWorkStatusDTO,
+            ...currentLog,
+          });
         }
       });
       setDatasource(newData);

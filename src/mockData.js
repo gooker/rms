@@ -1,5 +1,3 @@
-import { getRandomString } from '@/utils/util';
-import { VehicleUpgradeState } from '@/packages/ResourceManage/Vehicle/upgradeConst';
 
 export const ProgramingConfigurationList = {
   SYSTEM: [
@@ -1665,66 +1663,6 @@ export const VehicleList = [
   },
 ];
 
-// 固件升级
-export const UpgradeOrderDatasource = [
-  {
-    id: getRandomString(15),
-    vehicles: [
-      {
-        uniqueId: 'T_MUSHINY_LATENT_ADAPTER_A_15',
-        id: 15,
-        state: VehicleUpgradeState.downloading,
-      },
-      {
-        uniqueId: '2_latent',
-        id: 2,
-        state: VehicleUpgradeState.downloading,
-      },
-      {
-        uniqueId: '3_latent',
-        id: 3,
-        state: VehicleUpgradeState.ready,
-      },
-      {
-        uniqueId: '4_latent',
-        id: 4,
-        state: VehicleUpgradeState.ready,
-      },
-      {
-        uniqueId: '5_latent',
-        id: 5,
-        state: VehicleUpgradeState.downloadFail,
-      },
-    ],
-    hardware: 'AAA_5.1.1_pom',
-    state: 'downloading',
-    creatTime: '2022 10:11:11',
-    creatUser: 'chengcheng.zhou',
-    updateTime: '2022 12:11:11',
-    updateUser: 'chengcheng.zhou',
-  },
-  {
-    id: getRandomString(15),
-    vehicles: [
-      {
-        uniqueId: '6_latent',
-        id: 6,
-        state: VehicleUpgradeState.ready,
-      },
-      {
-        uniqueId: '7_latent',
-        id: 7,
-        state: VehicleUpgradeState.downloadFail,
-      },
-    ],
-    hardware: 'BBB_5.1.1_pom',
-    state: 'finished',
-    creatTime: '2022 10:11:11',
-    creatUser: 'chengcheng.zhou',
-    updateTime: '2022 12:11:11',
-    updateUser: 'chengcheng.zhou',
-  },
-];
 
 // 资源绑定
 export const ChargerGroupResource = [

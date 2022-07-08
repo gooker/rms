@@ -507,13 +507,11 @@ export async function fetchVehicleLogs(param) {
 }
 
 // 查询下载的日志
-export async function fetchVehicleLogsList(param) {
+export async function fetchVehicleLogsList() {
   return request(`/${NameSpace.Platform}/vehicle/file/getLogList`, {
-    method: 'POST',
-    data: param,
+    method: 'GET',
   });
 }
-
 
 // 上传固件到SFTP
 export async function uploadVehicleFile(param) {
@@ -523,8 +521,15 @@ export async function uploadVehicleFile(param) {
   });
 }
 
-// 查询上传的固件
-export async function fetchFireWareList(){
+//查询固件list
+export async function fetchFireWareFileList() {
+  return request(`/${NameSpace.Platform}/vehicle/file/selectUploadFileNameList`, {
+    method: 'GET',
+  });
+}
+
+// 查询下载和升级固件进度
+export async function fetchFireWareList() {
   return request(`/${NameSpace.Platform}/vehicle/file/getFirmwareList`, {
     method: 'GET',
   });
@@ -545,7 +550,6 @@ export async function fetchVehicleFileTaskList(param) {
     data: param,
   });
 }
-
 
 // 发送升级
 export async function upgradeVehicle(param) {

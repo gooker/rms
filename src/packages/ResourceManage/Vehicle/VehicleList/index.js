@@ -68,7 +68,7 @@ const VehicleList = (props) => {
               <Tag color={Colors.red}>
                 <ToolOutlined />
                 <span style={{ marginLeft: 3 }}>
-                  <FormattedMessage id="vehicle.underMaintenance" />
+                  <FormattedMessage id="vehicle.maintenanceState" />
                 </span>
               </Tag>
             ) : (

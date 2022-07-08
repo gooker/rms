@@ -137,7 +137,7 @@ export function exportVehicleInfo(vehicleList) {
         label: formatMessage({ id: 'vehicle.maintenanceState' }),
         value: (row) => {
           if (row.disabled) {
-            return formatMessage({ id: 'vehicle.underMaintenance' });
+            return formatMessage({ id: 'vehicle.maintenanceState' });
           } else {
             return formatMessage({ id: 'app.vehicle.normal' });
           }
