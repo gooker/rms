@@ -347,10 +347,13 @@ export default {
             yield put({ type: 'saveMapList', payload: newMapList });
           }
         }
+        yield put({ type: 'editorView/saveMapLoading', payload: false });
+        return true;
       } else {
         message.error(formatMessage({ id: 'app.model.mapEdit.mapDataError' }));
+        yield put({ type: 'editorView/saveMapLoading', payload: false });
+        return false;
       }
-      yield put({ type: 'editorView/saveMapLoading', payload: false });
     },
 
     // 激活地图

@@ -107,7 +107,6 @@ const UploadMapModal = (props) => {
               }
             }
           } catch (err) {
-            // eslint-disable-next-line no-console
             console.log(err);
             message.error(err.message);
           }

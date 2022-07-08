@@ -5,14 +5,7 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import { NavigationType, NavigationTypeView, VehicleType } from '@/config/config';
 import PixiBuilder from '@/entities/PixiBuilder';
-import {
-  dealResponse,
-  formatMessage,
-  getToteLayoutBaseParam,
-  isEqual,
-  isNull,
-  isStrictNull,
-} from '@/utils/util';
+import { dealResponse, formatMessage, getToteLayoutBaseParam, isEqual, isNull, isStrictNull } from '@/utils/util';
 import {
   ElementType,
   EStopStateColor,
@@ -1576,7 +1569,6 @@ class MonitorMapView extends BaseMap {
       const textureName = PIXI.utils.TextureCache[`_cellHeat${heat}`];
       const existCellHeat = this.cellHeatMap.get(`${cellId}`);
       if (existCellHeat) {
-        // eslint-disable-next-line no-console
         console.log(`本次刷新出现重复数据: Cell: ${cellId}, Cost: ${heat}, X: ${x}, Y:${y}`);
       }
       if (textureName) {

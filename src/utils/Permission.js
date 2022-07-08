@@ -8,7 +8,6 @@ function getAuthorityKeys() {
     try {
       AuthorityKeys = JSON.parse(AuthorityKeys);
     } catch (error) {
-      // eslint-disable-next-line no-console
       console.warn('当前用户未配置任何权限');
       AuthorityKeys = {};
     }

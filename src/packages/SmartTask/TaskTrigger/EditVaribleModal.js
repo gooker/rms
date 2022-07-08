@@ -5,7 +5,7 @@ import { CustomNodeTypeFieldMap } from '@/packages/SmartTask/CustomTask/customTa
 import { formatMessage } from '@/utils/util';
 import VariableModification, {
   formatVariableFormValues,
-} from '@/components/VariableModification/CommonVariableModification';
+} from '@/components/VariableModification/VariableModification';
 
 const reversedModelTypeFieldMap = {};
 Object.keys(CustomNodeTypeFieldMap).forEach((key) => {
