@@ -36,4 +36,6 @@ export default {
   'sso.user.tip.sectionAssigned': '已分配区域',
   'sso.user.tip.sectionUnassigned': '未分配区域',
   'sso.customMenu.key.tips': '只能是英文',
+  'sso.assignedRoles': '已分配角色',
+  'sso.assignedSections': '已分配区域',
 };

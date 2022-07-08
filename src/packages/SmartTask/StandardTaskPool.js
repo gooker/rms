@@ -1,35 +1,38 @@
 import React from 'react';
-import { Badge, Button, message, Row, Tooltip } from 'antd';
-import { DeleteOutlined, OrderedListOutlined, RedoOutlined } from '@ant-design/icons';
+import { Badge, Button, Divider, message, Row, Tooltip } from 'antd';
+import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import { VehicleType } from '@/config/config';
 import { VehicleStateColor } from '@/config/consts';
-import { convertToUserTimezone, dealResponse, formatMessage } from '@/utils/util';
+import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
+import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
 import { deleteTaskQueueItems, fetchUpdateTaskPriority } from '@/services/commonService';
 import RmsConfirm from '@/components/RmsConfirm';
 import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
+import ExecutionQueueSearch from './components/ExecutionQueueSearch';
 import taskQueueStyles from '@/packages/SmartTask/task.module.less';
 import commonStyles from '@/common.module.less';
-import { fetchPipeLineTasks } from '@/services/taskService';
 
 const { red, green } = Dictionary('color');
 
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
 }))
-class StandardOrderPool extends React.Component {
+class StandardTaskPool extends React.Component {
   state = {
     dataSource: [],
+    vehicleOverallStatus: {},
+
     selectedRow: [],
     selectedRowKeys: [],
+
     loading: false,
     deleteLoading: false,
     priorityVisible: false,
-    vehicleOverallStatus: {},
   };
 
   columns = [
@@ -37,7 +40,6 @@ class StandardOrderPool extends React.Component {
       title: <FormattedMessage id="app.task.id" />,
       dataIndex: 'taskId',
       align: 'center',
-      width: 200,
       render: (text) => {
         return (
           <Tooltip title={text}>
@@ -54,20 +56,35 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id="app.task.type" />,
+      title: <FormattedMessage id='app.task.type' />,
       dataIndex: 'vehicleTaskType',
       align: 'center',
-      width: 150,
       render: (text) => {
         const { allTaskTypes } = this.props;
         return allTaskTypes?.[VehicleType.LatentLifting]?.[text] || text;
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.appointedTarget" />,
-      dataIndex: 'appointedTargetCellId',
+      title: <FormattedMessage id='vehicle.id' />,
+      dataIndex: 'appointedVehicleId',
       align: 'center',
-      width: 150,
+      render: (text, record) => {
+        if (record.isLockVehicle) {
+          return <span style={{ color: green }}>{text}</span>;
+        } else {
+          return <span style={{ color: red }}>{text}</span>;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id='app.vehicleType' />,
+      dataIndex: 'vehicleType',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.common.targetCell' />,
+      dataIndex: 'targetCellId',
+      align: 'center',
       render: (text, record) => {
         if (record.isLockTargetCell == null) {
           return <span>{text}</span>;
@@ -80,32 +97,60 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.appointedVehicle" />,
-      dataIndex: 'appointedVehicleId',
-      align: 'center',
-      width: 150,
-      render: (text, record) => {
-        if (record.isLockVehicle) {
-          return <span style={{ color: green }}>{text}</span>;
-        } else {
-          return <span style={{ color: red }}>{text}</span>;
-        }
-      },
-    },
-    {
-      title: <FormattedMessage id="app.common.priority" />,
+      title: <FormattedMessage id='app.common.priority' />,
       dataIndex: 'priority',
       align: 'center',
-      width: 150,
-      sorter: (a, b) => a.priority - b.priority,
       render: (text) => <span>{text}</span>,
     },
+  ];
+
+  expandColumns = [
     {
-      title: <FormattedMessage id="app.common.creationTime" />,
+      title: <FormattedMessage id='app.executionQ.isReleased' />,
+      dataIndex: 'isReleased',
+      align: 'center',
+      render: (text) => {
+        if (text) {
+          return (
+            <span style={{ color: green }}>
+              <FormattedMessage id='app.executionQ.released' />
+            </span>
+          );
+        } else {
+          return (
+            <span style={{ color: red }}>
+              <FormattedMessage id='app.executionQ.unreleased' />
+            </span>
+          );
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id='app.executionQ.chargerHardwareId' />,
+      dataIndex: 'chargerHardwareId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.executionQ.chargerDirection' />,
+      dataIndex: 'chargerDirection',
+      align: 'center',
+      render: (text) => {
+        if (text != null) {
+          return formatMessage({ id: Dictionary('chargerDirection', text) });
+        } else {
+          return null;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id='app.executionQ.chargerSpotId' />,
+      dataIndex: 'chargerCellId',
+      align: 'center',
+    },
+    {
+      title: <FormattedMessage id='app.common.creationTime' />,
       dataIndex: 'createTimeMilliseconds',
       align: 'center',
-      width: 200,
-      sorter: (a, b) => a.createTimeMilliseconds - b.createTimeMilliseconds,
       render: (text) => {
         if (!text) {
           return '--';
@@ -114,11 +159,9 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.lastExecutedTimestamp" />,
+      title: <FormattedMessage id='app.taskQueue.lastExecutedTimestamp' />,
       dataIndex: 'lastExecutedTimestamp',
       align: 'center',
-      width: 150,
-      sorter: (a, b) => a.lastExecutedTimestamp - b.lastExecutedTimestamp,
       render: (text) => {
         if (!text) {
           return '--';
@@ -127,57 +170,72 @@ class StandardOrderPool extends React.Component {
       },
     },
     {
-      title: <FormattedMessage id="app.taskQueue.triedTimes" />,
+      title: <FormattedMessage id='app.taskQueue.triedTimes' />,
       dataIndex: 'triedTimes',
       align: 'center',
-      width: 150,
-      sorter: (a, b) => a.triedTimes - b.triedTimes,
     },
   ];
 
   componentDidMount() {
-    this.getData();
+    this.filterTableList();
   }
 
-  getData = async () => {
-    const { vehicleType } = this.props;
-    this.setState({ loading: true });
-
-    try {
-      const [taskQueueResponse, vehicleOverallStatusResponse = {}] = await Promise.all([
-        fetchPipeLineTasks(),
-        // fetchVehicleOverallStatus(vehicleType),
-      ]);
-      if (!dealResponse(taskQueueResponse) && !dealResponse(vehicleOverallStatusResponse)) {
-        const dataSource = taskQueueResponse.map((record) => {
-          const { redisTaskDTO, isLockVehicle, isLockPod, isLockTargetCell } = record;
-          return {
-            key: redisTaskDTO.taskId,
-            ...redisTaskDTO,
-            isLockVehicle,
-            isLockPod,
-            isLockTargetCell,
-          };
-        });
-        this.setState({
-          dataSource,
-          loading: false,
-          vehicleOverallStatus: vehicleOverallStatusResponse,
-        });
-      }
-    } catch (err) {
-      message.error(formatMessage({ id: 'app.message.networkError' }));
+  getCombinedDatasource = async () => {
+    const [waiting, executing] = await Promise.all([
+      fetchPipeLineTasks(),
+      fetchExecutingTasks(),
+      // fetchVehicleOverallStatus(),
+    ]);
+    let dataSource = [];
+    if (!dealResponse(waiting)) {
+      const data = waiting.map((record) => {
+        const { redisTaskDTO, isLockVehicle, isLockPod, isLockTargetCell } = record;
+        return {
+          ...redisTaskDTO,
+          isLockVehicle,
+          isLockPod,
+          isLockTargetCell,
+        };
+      });
+      dataSource = dataSource.concat(data);
     }
-    this.setState({ loading: false });
+    if (!dealResponse(executing)) {
+      const data = executing.map((item) => ({
+        ...item,
+        appointedVehicleId: item.appointedVehicleId.vehicleId,
+      }));
+      dataSource = dataSource.concat(data);
+    }
+    return dataSource;
+  };
+
+  filterTableList = async (filterValue = {}) => {
+    this.setState({ loading: true });
+    let dataSource = await this.getCombinedDatasource();
+    const { vehicleType, vehicleId, taskId, vehicleTaskType } = filterValue;
+    if (!isStrictNull(vehicleType)) {
+      dataSource = dataSource.filter(
+        (item) => item.vehicleStepTaskList[0]?.vehicleType === vehicleType,
+      );
+    }
+    if (Array.isArray(vehicleId)) {
+      dataSource = dataSource.filter((item) => vehicleId.includes(item.vehicle.id));
+    }
+    if (!isStrictNull(taskId)) {
+      dataSource = dataSource.filter((item) => item.taskId === taskId);
+    }
+    if (Array.isArray(vehicleTaskType)) {
+      dataSource = dataSource.filter((item) => vehicleTaskType.includes(item.vehicleTaskType));
+    }
+    this.setState({ dataSource, loading: false });
   };
 
   deleteQueueTasks = () => {
     const _this = this;
-    const { selectedRow, dataSource } = this.state;
+    const { selectedRowKeys, dataSource } = this.state;
     const { vehicleType } = this.props;
     const sectionId = window.localStorage.getItem('sectionId');
-    const taskIdList = selectedRow.map((record) => record.taskId);
-    const requestParam = { sectionId, taskIdList };
+    const requestParam = { sectionId, taskIdList: selectedRowKeys };
 
     RmsConfirm({
       content: formatMessage({ id: 'app.executionQ.deleteTaskSure' }),
@@ -192,7 +250,7 @@ class StandardOrderPool extends React.Component {
           )
         ) {
           // 这里不重复请求后台，手动对原数据进行处理
-          const newDataSource = dataSource.filter((item) => !taskIdList.includes(item.taskId));
+          const newDataSource = dataSource.filter((item) => !selectedRowKeys.includes(item.taskId));
           _this.setState({
             deleteLoading: false,
             dataSource: newDataSource,
@@ -222,11 +280,9 @@ class StandardOrderPool extends React.Component {
 
   submitTaskPriority = async () => {
     const { vehicleType } = this.props;
-    const { selectedRow, priorityValue } = this.state;
-    const taskIdList = selectedRow.map((record) => record.taskId);
-
+    const { selectedRowKeys, priorityValue } = this.state;
     const response = await fetchUpdateTaskPriority(vehicleType, {
-      taskIdList,
+      taskIdList: selectedRowKeys,
       value: priorityValue,
       sectionId: window.localStorage.getItem('sectionId'),
     });
@@ -235,15 +291,15 @@ class StandardOrderPool extends React.Component {
       message.error(formatMessage({ id: 'app.taskQueue.updateTaskPriority.failed' }));
     } else {
       message.success(formatMessage({ id: 'app.taskQueue.updateTaskPriority' }));
-      this.setState(
-        { visibleForPriority: false, selectedRowKeys: [], selectedKeys: [] },
-        this.getData,
-      );
+      this.setState({ visibleForPriority: false, selectedRowKeys: [], selectedKeys: [] }, () => {
+        this.filterTableList();
+      });
     }
   };
 
   render() {
     const { dataSource, deleteLoading, selectedRowKeys, vehicleOverallStatus } = this.state;
+    const { allTaskTypes } = this.props;
     return (
       <TablePageWrapper>
         <div>
@@ -321,6 +377,8 @@ class StandardOrderPool extends React.Component {
               </span>
             </Badge>
           </Row>
+          <ExecutionQueueSearch allTaskTypes={allTaskTypes || {}} search={this.filterTableList} />
+          <Divider style={{ margin: '0 0 24px 0' }} />
           <Row className={commonStyles.tableToolLeft}>
             <Button
               danger
@@ -328,7 +386,7 @@ class StandardOrderPool extends React.Component {
               onClick={this.deleteQueueTasks}
               disabled={selectedRowKeys.length === 0}
             >
-              <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
+              <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
             </Button>
             <Button
               disabled={selectedRowKeys.length === 0}
@@ -338,14 +396,12 @@ class StandardOrderPool extends React.Component {
             >
               <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.reorderPriority" />
             </Button>
-            <Button onClick={this.getData}>
-              <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
-            </Button>
           </Row>
         </div>
         <TableWithPages
           loading={this.state.loading}
           columns={this.columns}
+          expandColumns={this.expandColumns}
           dataSource={dataSource}
           rowKey={({ taskId }) => taskId}
           rowSelection={{
@@ -368,4 +424,4 @@ class StandardOrderPool extends React.Component {
   }
 }
 
-export default StandardOrderPool;
+export default StandardTaskPool;
