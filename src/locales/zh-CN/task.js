@@ -48,6 +48,7 @@ export default {
   'app.taskQueue.updateTaskPriority': '修改任务优先级操作成功',
   'app.taskQueue.updateTaskPriority.failed': '修改任务优先级操作失败',
   'app.taskQueue.reorderPriority': '调整优先级',
+  'app.taskQueue.reason': '原因',
 
   // 执行队列
   'app.executionQ.chargerSpotId': '充电点',
@@ -96,7 +97,6 @@ export default {
   'app.taskDetail.makeSureVehicleNotLoadedPodBeforeRedoing': '重做前，请先确保当前小车没有驮着货架',
   'app.taskDetail.operationComplete': '操作完成',
   'app.taskDetail.notAvailable': '暂无',
-  'app.taskDetail.reason': '原因',
   'app.taskDetail.reset': '重做',
   'app.taskDetail.resetTaskSubmit': '重做任务请求已提交',
   'app.taskDetail.relevantBusinessStopped': '请保证相关的业务功能已经停止',

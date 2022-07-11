@@ -13,9 +13,10 @@ import TableWithPages from '@/components/TableWithPages';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import FormattedMessage from '@/components/FormattedMessage';
 import UpdateTaskPriority from './components/UpdateTaskPriority';
-import ExecutionQueueSearch from './components/ExecutionQueueSearch';
 import taskQueueStyles from '@/packages/SmartTask/task.module.less';
 import commonStyles from '@/common.module.less';
+import StandardTaskPoolSearch from '@/packages/SmartTask/components/StandardTaskPoolSearch';
+import intl from 'react-intl-universal';
 
 const { red, green } = Dictionary('color');
 
@@ -68,13 +69,6 @@ class StandardTaskPool extends React.Component {
       title: <FormattedMessage id='vehicle.id' />,
       dataIndex: 'appointedVehicleId',
       align: 'center',
-      render: (text, record) => {
-        if (record.isLockVehicle) {
-          return <span style={{ color: green }}>{text}</span>;
-        } else {
-          return <span style={{ color: red }}>{text}</span>;
-        }
-      },
     },
     {
       title: <FormattedMessage id='app.vehicleType' />,
@@ -98,9 +92,34 @@ class StandardTaskPool extends React.Component {
     },
     {
       title: <FormattedMessage id='app.common.priority' />,
-      dataIndex: 'priority',
+      dataIndex: 'jobPriority',
       align: 'center',
-      render: (text) => <span>{text}</span>,
+    },
+    {
+      title: <FormattedMessage id='app.task.state' />,
+      dataIndex: 'taskStatus',
+      align: 'center',
+      render: (text) => {
+        const content = intl.get(`app.task.state.${text}`);
+        if (!isStrictNull(content)) {
+          return content;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id='app.common.creationTime' />,
+      dataIndex: 'createTimeMilliseconds',
+      align: 'center',
+      render: (text) => {
+        if (!isStrictNull(text)) {
+          return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
+        }
+      },
+    },
+    {
+      title: <FormattedMessage id='app.taskQueue.reason' />,
+      dataIndex: 'prepareFailedReason',
+      align: 'center',
     },
   ];
 
@@ -148,17 +167,6 @@ class StandardTaskPool extends React.Component {
       align: 'center',
     },
     {
-      title: <FormattedMessage id='app.common.creationTime' />,
-      dataIndex: 'createTimeMilliseconds',
-      align: 'center',
-      render: (text) => {
-        if (!text) {
-          return '--';
-        }
-        return <span>{convertToUserTimezone(text).format('YYYY-MM-DD HH:mm:ss')}</span>;
-      },
-    },
-    {
       title: <FormattedMessage id='app.taskQueue.lastExecutedTimestamp' />,
       dataIndex: 'lastExecutedTimestamp',
       align: 'center',
@@ -188,21 +196,16 @@ class StandardTaskPool extends React.Component {
     ]);
     let dataSource = [];
     if (!dealResponse(waiting)) {
-      const data = waiting.map((record) => {
-        const { redisTaskDTO, isLockVehicle, isLockPod, isLockTargetCell } = record;
-        return {
-          ...redisTaskDTO,
-          isLockVehicle,
-          isLockPod,
-          isLockTargetCell,
-        };
-      });
+      const data = waiting.map((item) => ({
+        ...item,
+        appointedVehicleId: item.currentVehicleId,
+      }));
       dataSource = dataSource.concat(data);
     }
     if (!dealResponse(executing)) {
       const data = executing.map((item) => ({
         ...item,
-        appointedVehicleId: item.appointedVehicleId.vehicleId,
+        appointedVehicleId: item.currentVehicleId,
       }));
       dataSource = dataSource.concat(data);
     }
@@ -212,11 +215,9 @@ class StandardTaskPool extends React.Component {
   filterTableList = async (filterValue = {}) => {
     this.setState({ loading: true });
     let dataSource = await this.getCombinedDatasource();
-    const { vehicleType, vehicleId, taskId, vehicleTaskType } = filterValue;
+    const { vehicleType, vehicleId, taskId, vehicleTaskType, taskStatus } = filterValue;
     if (!isStrictNull(vehicleType)) {
-      dataSource = dataSource.filter(
-        (item) => item.vehicleStepTaskList[0]?.vehicleType === vehicleType,
-      );
+      dataSource = dataSource.filter((item) => item.vehicleType === vehicleType);
     }
     if (Array.isArray(vehicleId)) {
       dataSource = dataSource.filter((item) => vehicleId.includes(item.vehicle.id));
@@ -226,6 +227,9 @@ class StandardTaskPool extends React.Component {
     }
     if (Array.isArray(vehicleTaskType)) {
       dataSource = dataSource.filter((item) => vehicleTaskType.includes(item.vehicleTaskType));
+    }
+    if (!isStrictNull(taskStatus)) {
+      dataSource = dataSource.filter((item) => item.taskStatus === taskStatus);
     }
     this.setState({ dataSource, loading: false });
   };
@@ -377,7 +381,7 @@ class StandardTaskPool extends React.Component {
               </span>
             </Badge>
           </Row>
-          <ExecutionQueueSearch allTaskTypes={allTaskTypes || {}} search={this.filterTableList} />
+          <StandardTaskPoolSearch allTaskTypes={allTaskTypes || {}} search={this.filterTableList} />
           <Divider style={{ margin: '0 0 24px 0' }} />
           <Row className={commonStyles.tableToolLeft}>
             <Button
@@ -394,7 +398,7 @@ class StandardTaskPool extends React.Component {
                 this.switchTaskPriorityModal(true);
               }}
             >
-              <OrderedListOutlined /> <FormattedMessage id="app.taskQueue.reorderPriority" />
+              <OrderedListOutlined /> <FormattedMessage id='app.taskQueue.reorderPriority' />
             </Button>
           </Row>
         </div>
