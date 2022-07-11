@@ -255,6 +255,21 @@ export async function fetchBindableResourceMapping() {
   });
 }
 
+// 获取所有的绑定数据
+export async function fetchAllResourceBindMapping() {
+  return request(`/${NameSpace.Platform}/bind/getAllResourceGroupBind`, {
+    method: 'GET',
+  });
+}
+
+// 获取绑定组与被绑定组的关系
+export async function saveResourceBindMapping(body) {
+  return request(`/${NameSpace.Platform}/bind/saveBindResourceGroup`, {
+    method: 'POST',
+    data: body,
+  });
+}
+
 // 根据组获取组资源
 export async function fetchResourceGroupByType(groupType) {
   return request(`/${NameSpace.Platform}/resource/getResourceGroupByType`, {

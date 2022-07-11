@@ -1,39 +1,49 @@
 import React, { memo, useState } from 'react';
 import { Button, Col, Form, Row, Select } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import MenuIcon from '@/utils/MenuIcon';
-import { fetchAllLoadType, fetchAllVehicleType, fetchResourceGroupByType } from '@/services/resourceService';
+import {
+  fetchAllLoadType,
+  fetchAllVehicleType,
+  fetchResourceGroupByType,
+  saveResourceBindMapping,
+} from '@/services/resourceService';
 import style from '../resourceBind.module.less';
-import { ChargerGroupResource } from '@/mockData';
+import { dealResponse } from '@/utils/util';
 
 const CascadeBindSelector = (props) => {
-  const { datasource, onAdd } = props;
+  const { datasource, refresh } = props;
 
   const [formRef] = Form.useForm();
+
+  const [loading, setLoading] = useState(false);
   const [primary, setPrimary] = useState(null);
+  const [primaryResource, setPrimaryResource] = useState([]); // [{code:xxx, name:xxx, }]
   const [secondary, setSecondary] = useState(null);
-  const [primaryResource, setPrimaryResource] = useState([]); // [{id:xxx, name:xxx, }]
-  const [secondaryResource, setSecondaryResource] = useState([]); // [{code:xxx, groupName:xxx, }]
+  const [secondaryResource, setSecondaryResource] = useState([]); // [{code:xxx, name:xxx, }]
 
   async function add() {
+    setLoading(true);
     try {
       const { bindType, bindCodes, resourceType, resourceCodes } = await formRef.validateFields();
       const result = [];
       for (const bindCode of bindCodes) {
         for (const resourceCode of resourceCodes) {
           // 类型名称
-          const dataSourceItem = find(datasource, { resourceType: bindType });
-          const { name: resourceTypeName } = find(dataSourceItem.needBindResource ?? [], {
+          const { name: bindTypeName, needBindResource } = find(datasource, {
+            resourceType: bindType,
+          });
+          const { name: resourceTypeName } = find(needBindResource ?? [], {
             resourceType,
           });
-          // 元素名称
-          const { name: bindName } = find(primaryResource, { id: bindCode });
-          const { groupName: resourceName } = find(secondaryResource, { code: resourceCode });
+          // 类型元素名称
+          const { name: bindName } = find(primaryResource, { code: bindCode });
+          const { name: resourceName } = find(secondaryResource, { code: resourceCode });
 
           result.push({
             bindType,
-            bindTypeName: dataSourceItem.name,
+            bindTypeName,
             bindName,
             bindCode,
             resourceTypeName,
@@ -43,29 +53,35 @@ const CascadeBindSelector = (props) => {
           });
         }
       }
-      onAdd(result);
+
+      const response = await saveResourceBindMapping(result);
+      if (!dealResponse(response, true)) {
+        refresh();
+      }
       formRef.resetFields();
     } catch (err) {
       console.log(err);
     }
+    setLoading(false);
   }
 
   function onPrimaryChange(value) {
     setPrimary(value);
-    if (['VEHICLE_GROUP', 'LOAD_GROUP'].includes(value)) {
-      fetchResourceGroupByType(value).then((response) => {
-        console.log(response);
-      });
-    }
     if (value === 'VEHICLE_TYPE') {
       fetchAllVehicleType().then((response) => {
-        const _primaryResource = response.map(({ id, name }) => ({ id, name }));
+        const _primaryResource = response.map(({ id, name }) => ({ code: id, name }));
         setPrimaryResource(_primaryResource);
       });
     }
     if (value === 'LOAD_TYPE') {
       fetchAllLoadType().then((response) => {
-        const _primaryResource = response.map(({ id, name }) => ({ id, name }));
+        const _primaryResource = response.map(({ id, name }) => ({ code: id, name }));
+        setPrimaryResource(_primaryResource);
+      });
+    }
+    if (['VEHICLE_GROUP', 'LOAD_GROUP'].includes(value)) {
+      fetchResourceGroupByType(value).then((response) => {
+        const _primaryResource = response.map(({ code, groupName: name }) => ({ code, name }));
         setPrimaryResource(_primaryResource);
       });
     }
@@ -73,10 +89,12 @@ const CascadeBindSelector = (props) => {
 
   function onSecondaryChange(value) {
     setSecondary(value);
-    setSecondaryResource(ChargerGroupResource);
-    // fetchResourceGroupByType(value).then((response) => {
-    //   console.log(response);
-    // });
+    fetchResourceGroupByType(value).then((response) => {
+      if (['LOAD_GROUP'].includes(value)) {
+        const _primaryResource = response.map(({ code, groupName: name }) => ({ code, name }));
+        setSecondaryResource(_primaryResource);
+      }
+    });
   }
 
   function getSecondaryOptions() {
@@ -116,8 +134,8 @@ const CascadeBindSelector = (props) => {
             <Col span={18}>
               <Form.Item noStyle name={'bindCodes'}>
                 <Select mode={'multiple'} style={{ width: '100%' }}>
-                  {primaryResource.map(({ id, name }) => (
-                    <Select.Option key={id} value={id}>
+                  {primaryResource.map(({ code, name }) => (
+                    <Select.Option key={code} value={code}>
                       {name}
                     </Select.Option>
                   ))}
@@ -146,9 +164,9 @@ const CascadeBindSelector = (props) => {
             <Col span={18}>
               <Form.Item noStyle name={'resourceCodes'}>
                 <Select mode={'multiple'} style={{ width: '100%' }}>
-                  {secondaryResource.map(({ code, groupName }) => (
+                  {secondaryResource.map(({ code, name }) => (
                     <Select.Option key={code} value={code}>
-                      {groupName}
+                      {name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -157,7 +175,7 @@ const CascadeBindSelector = (props) => {
           </Row>
         </div>
         <div>
-          <Button icon={<PlusOutlined />} onClick={add} />
+          <Button icon={loading ? <LoadingOutlined /> : <PlusOutlined />} onClick={add} />
         </div>
       </div>
     </Form>

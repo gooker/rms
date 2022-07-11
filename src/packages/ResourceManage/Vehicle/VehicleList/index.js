@@ -25,7 +25,7 @@ const VehicleList = (props) => {
       dataIndex: 'resourceGroups',
       align: 'center',
       render: (text) => {
-        if (Array.from(text)) {
+        if (Array.isArray(text)) {
           return text.map(({ groupName }, index) => <Tag key={index}>{groupName}</Tag>);
         }
         return (
