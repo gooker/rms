@@ -128,7 +128,12 @@ class MainLayout extends React.Component {
   componentWillUnmount() {
     // 关闭所有 Web Worker
     AlertCountPolling.terminate();
-    this.socketClient?.disconnect();
+
+    try {
+      this.socketClient?.disconnect();
+    } catch (e) {
+      console.warn(`[Socket Disconnect Error] -> You can ignore this error: ${e.message}`);
+    }
   }
 
   logout = () => {

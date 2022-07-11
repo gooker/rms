@@ -21,19 +21,6 @@ const MonitorBodyRight = (props) => {
   const [offsetTop, setOffsetTop] = useState(0);
 
   useEffect(() => {
-    // TODO: 获取潜伏车到站信息和暂停消息
-    // if (hasAppPermission(AppCode.LatentPod)) {
-    //   dispatch({ type: 'monitor/fetchLatentStopMessageList' });
-    //   fetchWorkStationPods().then((res) => {
-    //     if (!dealResponse(res)) {
-    //       dispatch({
-    //         type: 'monitor/savePodToWorkStation',
-    //         payload: res,
-    //       });
-    //     }
-    //   });
-    // }
-
     // 初始化高度
     const { height } = document.getElementById('monitorPixi').getBoundingClientRect();
     setPixHeight(height);

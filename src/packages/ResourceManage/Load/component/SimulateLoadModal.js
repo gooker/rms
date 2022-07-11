@@ -104,7 +104,7 @@ function SimulateLoadModal(props) {
             >
               <InputNumber
                 style={{
-                  width: 100,
+                  width: 140,
                   textAlign: 'center',
                 }}
                 placeholder={formatMessage({ id: 'resource.load.startCode' })}
@@ -132,7 +132,7 @@ function SimulateLoadModal(props) {
               <InputNumber
                 className={styles['site-input-right']}
                 style={{
-                  width: 120,
+                  width: 140,
                   textAlign: 'center',
                 }}
                 placeholder={formatMessage({ id: 'resource.load.endCode' })}

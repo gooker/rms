@@ -1,29 +1,37 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Collapse } from 'antd';
-import { dealResponse } from '@/utils/util';
-import { fetchBindableResourceMapping } from '@/services/resourceService';
-import CascadeBindSelector from './component/CascadeBindSelector';
-import commonStyle from '@/common.module.less';
-import { ResourceBindData } from '@/mockData';
-import CollapsePanel from '@/packages/ResourceManage/ResourceBind/component/CollapsePanel';
 import { groupBy } from 'lodash';
+import { dealResponse } from '@/utils/util';
+import { fetchAllResourceBindMapping, fetchBindableResourceMapping } from '@/services/resourceService';
+import CascadeBindSelector from './component/CascadeBindSelector';
+import CollapsePanel from '@/packages/ResourceManage/ResourceBind/component/CollapsePanel';
+import commonStyle from '@/common.module.less';
 
 const ResourceBind = () => {
-  const [dataSource, setDataSource] = useState([...ResourceBindData]);
   const [resource, setResource] = useState([]);
+  const [dataSource, setDataSource] = useState([]);
+
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetchBindableResourceMapping().then((response) => {
-      if (!dealResponse(response)) {
-        setResource(response);
-      }
-    });
+    Promise.all([fetchAllResourceBindMapping(), fetchBindableResourceMapping()]).then(
+      ([allBindMapping, bindableResource]) => {
+        if (!dealResponse(allBindMapping)) {
+          setDataSource(allBindMapping);
+        }
+        if (!dealResponse(bindableResource)) {
+          setResource(bindableResource);
+        }
+      },
+    );
   }, []);
 
-  function onAdd(result) {
-    const _dataSource = [...dataSource];
-    _dataSource.push(...result);
-    setDataSource(_dataSource);
+  function refreshList() {
+    fetchAllResourceBindMapping().then((response) => {
+      if (!dealResponse(response)) {
+        setDataSource(response);
+      }
+    });
   }
 
   function getListData(type) {
@@ -36,7 +44,7 @@ const ResourceBind = () => {
 
   return (
     <div className={commonStyle.commonPageStyle}>
-      <CascadeBindSelector datasource={resource} onAdd={onAdd} />
+      <CascadeBindSelector datasource={resource} refresh={refreshList} />
       <Collapse accordion style={{ marginTop: 24 }}>
         {resource.map(({ name, resourceType }) => {
           const data = getListData(resourceType);

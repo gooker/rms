@@ -92,7 +92,7 @@ const ChargerListTools = (props) => {
           </Button>
 
           <GroupManager
-            type={'CHARGER_GROUP'}
+            type={'CHARGER'}
             memberIdKey={GroupResourceMemberId.CHARGER}
             selections={selectedRows}
             refresh={onRefresh}
