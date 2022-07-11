@@ -51,7 +51,7 @@ const ResourceBind = () => {
           const length = getTypePayloadLength(data);
           return (
             <Collapse.Panel header={`${name} (${length})`} key={resourceType}>
-              <CollapsePanel dataSource={data} />
+              <CollapsePanel dataSource={data} refresh={refreshList} />
             </Collapse.Panel>
           );
         })}

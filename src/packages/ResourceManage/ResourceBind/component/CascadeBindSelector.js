@@ -3,6 +3,7 @@ import { Button, Col, Form, Row, Select } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import MenuIcon from '@/utils/MenuIcon';
+import { dealResponse } from '@/utils/util';
 import {
   fetchAllLoadType,
   fetchAllVehicleType,
@@ -10,7 +11,6 @@ import {
   saveResourceBindMapping,
 } from '@/services/resourceService';
 import style from '../resourceBind.module.less';
-import { dealResponse } from '@/utils/util';
 
 const CascadeBindSelector = (props) => {
   const { datasource, refresh } = props;
@@ -58,7 +58,7 @@ const CascadeBindSelector = (props) => {
       if (!dealResponse(response, true)) {
         refresh();
       }
-      formRef.resetFields();
+      formRef.setFieldsValue({ resourceCodes: [] });
     } catch (err) {
       console.log(err);
     }
@@ -79,7 +79,7 @@ const CascadeBindSelector = (props) => {
         setPrimaryResource(_primaryResource);
       });
     }
-    if (['VEHICLE_GROUP', 'LOAD_GROUP'].includes(value)) {
+    if (['VEHICLE', 'LOAD'].includes(value)) {
       fetchResourceGroupByType(value).then((response) => {
         const _primaryResource = response.map(({ code, groupName: name }) => ({ code, name }));
         setPrimaryResource(_primaryResource);
@@ -90,7 +90,7 @@ const CascadeBindSelector = (props) => {
   function onSecondaryChange(value) {
     setSecondary(value);
     fetchResourceGroupByType(value).then((response) => {
-      if (['LOAD_GROUP'].includes(value)) {
+      if (['LOAD'].includes(value)) {
         const _primaryResource = response.map(({ code, groupName: name }) => ({ code, name }));
         setSecondaryResource(_primaryResource);
       }
@@ -118,6 +118,7 @@ const CascadeBindSelector = (props) => {
                 noStyle
                 name={'bindType'}
                 getValueFromEvent={(value) => {
+                  formRef.setFieldsValue({ bindCodes: [] });
                   onPrimaryChange(value);
                   return value;
                 }}
@@ -152,6 +153,7 @@ const CascadeBindSelector = (props) => {
                 noStyle
                 name={'resourceType'}
                 getValueFromEvent={(value) => {
+                  formRef.setFieldsValue({ resourceCodes: [] });
                   onSecondaryChange(value);
                   return value;
                 }}
@@ -175,7 +177,11 @@ const CascadeBindSelector = (props) => {
           </Row>
         </div>
         <div>
-          <Button icon={loading ? <LoadingOutlined /> : <PlusOutlined />} onClick={add} />
+          <Button
+            disabled={loading}
+            icon={loading ? <LoadingOutlined /> : <PlusOutlined />}
+            onClick={add}
+          />
         </div>
       </div>
     </Form>

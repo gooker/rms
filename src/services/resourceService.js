@@ -270,6 +270,14 @@ export async function saveResourceBindMapping(body) {
   });
 }
 
+// 删除一条绑定
+export async function deleteResourceBindMapping(id) {
+  return request(`/${NameSpace.Platform}/bind/deleteBindResourceById`, {
+    method: 'GET',
+    data: { id },
+  });
+}
+
 // 根据组获取组资源
 export async function fetchResourceGroupByType(groupType) {
   return request(`/${NameSpace.Platform}/resource/getResourceGroupByType`, {
@@ -278,32 +286,8 @@ export async function fetchResourceGroupByType(groupType) {
   });
 }
 
-// 资源绑定
-// 保存绑定关系
-export async function fechSaveUnBind(param) {
-  return request(`/${NameSpace.Platform}/custom/saveUnBindGroup`, {
-    method: 'POST',
-    data: param,
-  });
-}
-
-// 删除绑定关系
-export async function deleteUnBindGroup(param) {
-  return request(`/${NameSpace.Platform}/custom/deleteUnBindGroupById`, {
-    method: 'GET',
-    data: param,
-  });
-}
-
-// 根据mapId查询绑定关系
-export async function getUnBindGroupData(param) {
-  return request(`/${NameSpace.Platform}/custom/getUnBindGroupByMapId`, {
-    method: 'GET',
-    data: param,
-  });
-}
-
-// 充电策略-列表
+// ************************* 充电策略 ************************* //
+// 充电策略列表
 export async function fetchAllStrategyList() {
   return request(`/${NameSpace.Platform}/getAllChargingStrategy`, {
     method: 'GET',
