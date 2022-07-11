@@ -53,6 +53,7 @@ export const VehicleStateColor = {
 // 任务状态(Bage组件)
 export const TaskStateBageType = {
   New: 'warning',
+  Wait: 'warning',
   Executing: 'processing',
   Finished: 'success',
   Error: 'error',

@@ -23,6 +23,7 @@ export default {
   'app.task.state.Finished': '已完成',
   'app.task.state.Cancel': '已取消',
   'app.task.state.Error': '失败',
+  'app.task.state.Wait': '等待',
 
   // 料箱池任务
   'app.taskPool.code': '料箱码',

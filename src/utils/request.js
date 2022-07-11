@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { isPlainObject } from 'lodash';
-import { formatMessage, getDomainNameByUrl, isNull, isStandardApiResponse } from '@/utils/util';
+import { formatMessage, getDomainNameByUrl, isNull, isStandardApiResponse, isStrictNull } from '@/utils/util';
 
 // 请求拦截器
 axios.interceptors.request.use((config) => {
   config.headers.Authorization = `Bearer ${window.sessionStorage.getItem('token')}`;
   config.headers['Content-Type'] = 'application/json; charset=utf-8';
   const sectionId = window.localStorage.getItem('sectionId');
-  if (config.attachSection && isNull(config.headers.sectionId) && !isNull(sectionId)) {
+  if (config.attachSection && isStrictNull(config.headers.sectionId) && !isStrictNull(sectionId)) {
     config.headers.sectionId = sectionId;
   }
   return config;
@@ -76,16 +76,13 @@ const errorHandler = (error) => {
   }
 };
 
-/**
- * @param requestUrl
- * @param payload {{method:POST|GET,data}}
- */
 const request = async (requestUrl, payload) => {
-  const { data, body, method, headers = {} } = payload;
+  const { method, data, headers, attachSection, ...restConfig } = payload;
 
-  let attachSection = isNull(payload.attachSection) ? true : payload.attachSection;
+  let _headers = isPlainObject(headers) ? headers : {};
+  let _attachSection = isNull(attachSection) ? true : attachSection;
   if (requestUrl.startsWith('/sso/')) {
-    attachSection = false;
+    _attachSection = false;
   }
 
   const url = getDomainNameByUrl(requestUrl);
@@ -93,18 +90,18 @@ const request = async (requestUrl, payload) => {
   if (isPlainObject(url)) {
     return url;
   }
-  const option = { url, method, headers, attachSection };
+  const option = { method, headers: _headers, url, attachSection: _attachSection, ...restConfig };
 
   // 针对文件下载
-  if (headers.responseType === 'blob') {
+  if (_headers.responseType === 'blob') {
     option.responseType = 'arraybuffer';
   }
 
   // 目前后端不是 RestFul API, 所以只需要关注 GET 和 POST
   if (method.toUpperCase() === 'GET') {
-    option.params = data ?? body;
+    option.params = data;
   } else {
-    option.data = data ?? body;
+    option.data = data;
   }
 
   // 请求返回实体
@@ -112,7 +109,15 @@ const request = async (requestUrl, payload) => {
   try {
     responseEntity = await axios(option);
   } catch (error) {
-    responseEntity = errorHandler(error);
+    if (axios.isCancel(error)) {
+      responseEntity = {
+        code: '0',
+        data: null,
+        message: formatMessage({ id: 'app.global.requestCancelled' }),
+      };
+    } else {
+      responseEntity = errorHandler(error);
+    }
   }
 
   // 如果走这个分支则说明catch到错误了，这里是常规的HTTP错误

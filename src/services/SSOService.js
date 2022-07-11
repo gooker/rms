@@ -3,10 +3,11 @@ import { NameSpace } from '@/config/config';
 
 const { Platform } = NameSpace;
 
-export async function fetchLogin(params) {
+export async function fetchLogin(params, config) {
   return request(`/${Platform}/sso/user/login`, {
     method: 'POST',
     data: params,
+    ...config,
   });
 }
 
@@ -266,7 +267,7 @@ export async function getApplyToken() {
 export async function uploadCertification(param) {
   return request(`/${Platform}/certificate/active`, {
     method: 'POST',
-    body: param,
+    data: param,
     attachSection: false,
   });
 }

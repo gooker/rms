@@ -45,6 +45,7 @@ const DictionaryDataSource = {
     Finished: 'app.task.state.Finished',
     Error: 'app.task.state.Error',
     Cancel: 'app.task.state.Cancel',
+    Wait: 'app.task.state.Wait',
   },
 
   // 小车方向

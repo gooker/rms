@@ -4,7 +4,7 @@ import { DeleteOutlined, OrderedListOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import Dictionary from '@/utils/Dictionary';
 import { VehicleType } from '@/config/config';
-import { VehicleStateColor } from '@/config/consts';
+import { TaskStateBageType, VehicleStateColor } from '@/config/consts';
 import { convertToUserTimezone, dealResponse, formatMessage, isStrictNull } from '@/utils/util';
 import { fetchExecutingTasks, fetchPipeLineTasks } from '@/services/taskService';
 import { deleteTaskQueueItems, fetchUpdateTaskPriority } from '@/services/commonService';
@@ -16,7 +16,6 @@ import UpdateTaskPriority from './components/UpdateTaskPriority';
 import taskQueueStyles from '@/packages/SmartTask/task.module.less';
 import commonStyles from '@/common.module.less';
 import StandardTaskPoolSearch from '@/packages/SmartTask/components/StandardTaskPoolSearch';
-import intl from 'react-intl-universal';
 
 const { red, green } = Dictionary('color');
 
@@ -100,9 +99,13 @@ class StandardTaskPool extends React.Component {
       dataIndex: 'taskStatus',
       align: 'center',
       render: (text) => {
-        const content = intl.get(`app.task.state.${text}`);
-        if (!isStrictNull(content)) {
-          return content;
+        if (!isStrictNull(text)) {
+          return (
+            <Badge
+              status={TaskStateBageType[text]}
+              text={formatMessage({ id: `app.task.state.${text}` })}
+            />
+          );
         }
       },
     },

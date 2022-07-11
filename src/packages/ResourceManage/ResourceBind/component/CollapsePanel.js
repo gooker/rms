@@ -50,7 +50,7 @@ const CollapsePanel = (props) => {
             const { id, resourceType, resourceTypeName } = item2[0];
             return (
               <Col key={resourceType}>
-                <Card type={'inner'} title={resourceTypeName}>
+                <Card size={'small'} type={'inner'} title={resourceTypeName}>
                   {item2.map(({ resourceName }, index) => (
                     <Tag
                       key={index}

@@ -33,6 +33,7 @@ export default {
   'app.message.initFailed': '系统初始化失败: {reason}',
   'app.message.systemHint': '系统提示',
   'app.message.errorOccurs': '页面发生异常错误',
+  'app.message.formIncomplete': '表单数据不完整',
   'app.message.fetchDataFailed': '获取数据失败',
   'app.message.fetchDataEmpty': '获取的数据为空',
   'app.message.noMap': '当前不存在地图数据',

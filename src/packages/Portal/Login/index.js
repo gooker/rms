@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useState } from 'react';
-import { Button, Col, Form, Input, Modal, Row, Select, Spin } from 'antd';
+import { Button, Col, Form, Input, Modal, Row, Select } from 'antd';
 import { LoadingOutlined, LockOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { find } from 'lodash';
 import { dealResponse, extractNameSpaceInfoFromEnvs, formatMessage, getAllEnvironments } from '@/utils/util';
@@ -20,6 +20,7 @@ const Login = (props) => {
    */
   const eggRef = React.useRef(null);
   const eggValue = React.useRef({}); // mousedown时记录的clientX
+  const controllerRef = React.useRef(null); // axios 取消请求控制器
 
   const [formRef] = Form.useForm();
   const [options, setOptions] = useState([]);
@@ -89,6 +90,7 @@ const Login = (props) => {
 
   async function goLogin() {
     formRef.validateFields().then(async (values) => {
+      controllerRef.current = new AbortController();
       setLoading(true);
       if (values.environment === undefined) {
         window.nameSpacesInfo = requestAPI();
@@ -111,7 +113,9 @@ const Login = (props) => {
           window.nameSpacesInfo = extractNameSpaceInfoFromEnvs(activeEnv);
         }
       }
-      const response = await fetchLogin({ ...values, type: 'admin' });
+      const response = await fetchLogin(values, {
+        signal: controllerRef.current.signal,
+      });
       if (!dealResponse(response)) {
         window.sessionStorage.setItem('token', response.authorization);
         history.push('/');
@@ -119,6 +123,12 @@ const Login = (props) => {
         setLoading(false);
       }
     });
+  }
+
+  function cancelLogin() {
+    if (controllerRef.current instanceof AbortController) {
+      controllerRef.current.controller.abort();
+    }
   }
 
   return (
@@ -187,12 +197,12 @@ const Login = (props) => {
 
             <Form.Item>
               {loading ? (
-                <div style={{ width: '100%', textAlign: 'center' }}>
-                  <Spin indicator={<LoadingOutlined spin style={{ color: '#ffffff' }} />} />
-                </div>
+                <Button onClick={cancelLogin} style={{ width: '100%' }}>
+                  <LoadingOutlined /> <FormattedMessage id={'app.login.cancelLogin'} />
+                </Button>
               ) : (
                 <Button type='primary' onClick={goLogin} style={{ width: '100%' }}>
-                  <FormattedMessage id={'app.login.button'} />
+                  <FormattedMessage id={'app.login.login'} />
                 </Button>
               )}
             </Form.Item>

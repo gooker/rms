@@ -33,7 +33,7 @@ export async function deleteSearchSeek(id) {
 export async function fetchWaitingKpiView(params) {
   return request(`/${NameSpace.Platform}/api/getTargetWaitKpiDTO`, {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 
@@ -47,14 +47,14 @@ export async function getAllMonitorRegion() {
 export async function getRegionRealtimeReport(param) {
   return request(`/${NameSpace.Platform}/monitor/realtimeStationTaskReport`, {
     method: 'POST',
-    body: param,
+    data: param,
   });
 }
 
 export async function getRegionReport(param) {
   return request(`/${NameSpace.Platform}/monitor/stationTaskReport`, {
     method: 'POST',
-    body: param,
+    data: param,
   });
 }
 
@@ -62,14 +62,14 @@ export async function getRegionReport(param) {
 export async function saveReportGroup(vehicleType, params) {
   return request(`/${NameSpace[vehicleType]}/reportForm/saveFormTemplate`, {
     method: 'POST',
-    body: { ...params, sectionId: window.localStorage.getItem('sectionId') },
+    data: { ...params, sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
 export async function deleteReportGroup(vehicleType, id) {
   return request(`/${NameSpace[vehicleType]}/reportForm/deleteFormTemplateById`, {
     method: 'GET',
-    body: { id, sectionId: window.localStorage.getItem('sectionId') },
+    data: { id, sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 
@@ -105,7 +105,7 @@ export async function fetchReportSourceURL(vehicleType) {
 export async function fetchReportSourceDetail(vehicleType, id) {
   return request(`/${NameSpace[vehicleType]}/reportForm/getSourceDescribe`, {
     method: `GET`,
-    body: { id, sectionId: window.localStorage.getItem('sectionId') },
+    data: { id, sectionId: window.localStorage.getItem('sectionId') },
   });
 }
 

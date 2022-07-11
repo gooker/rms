@@ -741,7 +741,7 @@ export async function saveCleanLatentStrategy(params, id) {
   }
   return request(`/${NameSpace.Platform}/cleanLatent/saveStrategy${_urlStitching}`, {
     method: 'PUT',
-    body: params,
+    data: params,
   });
 }
 
@@ -756,7 +756,7 @@ export async function getCleanStrategy() {
 export async function fetchCleaningTaskHistory(params) {
   return request(`/${NameSpace.Platform}/cleanLatent/cleaningTaskHistory`, {
     method: 'POST',
-    body: params,
+    data: params,
   });
 }
 

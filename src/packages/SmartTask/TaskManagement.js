@@ -123,7 +123,7 @@ class TaskManagement extends Component {
       searchParam,
       pagination: { currentPage, size },
     } = this.state;
-    this.setState({ loading: false, selectedRowKeys: [] });
+    this.setState({ loading: true, selectedRowKeys: [] });
 
     let requestValues;
     if (values) {
