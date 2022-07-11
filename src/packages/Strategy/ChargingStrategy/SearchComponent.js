@@ -11,11 +11,10 @@ const SearchComponent = (props) => {
   const { selectedRowKeys, addStrategy, getData } = props;
 
   async function deleteStrategy() {
-    const id = selectedRowKeys[0];
     RmsConfirm({
-      content: formatMessage({ id: 'app.message.delete.confirm' }),
+      content: formatMessage({ id: 'app.message.batchDelete.confirm' }),
       onOk: async () => {
-        const response = await deleteChargingStrategyById({ Id: id });
+        const response = await deleteChargingStrategyById(selectedRowKeys);
         if (!dealResponse(response, 1)) {
           getData();
         }
@@ -25,14 +24,14 @@ const SearchComponent = (props) => {
 
   return (
     <div className={commonStyles.tableToolLeft}>
-      <Button type='primary' onClick={addStrategy}>
-        <PlusOutlined /> <FormattedMessage id='app.button.add' />
+      <Button type="primary" onClick={addStrategy}>
+        <PlusOutlined /> <FormattedMessage id="app.button.add" />
       </Button>
-      <Button danger disabled={selectedRowKeys.length !== 1} onClick={deleteStrategy}>
-        <DeleteOutlined /> <FormattedMessage id='app.button.delete' />
+      <Button danger disabled={selectedRowKeys.length === 0} onClick={deleteStrategy}>
+        <DeleteOutlined /> <FormattedMessage id="app.button.delete" />
       </Button>
       <Button onClick={getData}>
-        <RedoOutlined /> <FormattedMessage id='app.button.refresh' />
+        <RedoOutlined /> <FormattedMessage id="app.button.refresh" />
       </Button>
     </div>
   );

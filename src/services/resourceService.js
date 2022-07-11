@@ -314,7 +314,7 @@ export async function fetchChargingStrategyById(param) {
 // 删除充电策略
 export async function deleteChargingStrategyById(param) {
   return request(`/${NameSpace.Platform}/deleteChargeStrategy`, {
-    method: 'GET',
+    method: 'POST',
     data: param,
   });
 }
@@ -554,6 +554,14 @@ export async function fetchVehicleFileTaskList(param) {
 // 发送升级
 export async function upgradeVehicle(param) {
   return request(`/${NameSpace.Platform}/vehicle/file/upgradeVehicle`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 维护/取消维护
+export async function updateVehicleMaintain(param) {
+  return request(`/${NameSpace.Platform}/vehicle/maintain`, {
     method: 'POST',
     data: param,
   });

@@ -1,6 +1,13 @@
 import React, { memo, useEffect, useState } from 'react';
 import { Progress, Tag, Row, Button, Col, Typography } from 'antd';
-import { PlusOutlined, RedoOutlined, ToolOutlined, UploadOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  RedoOutlined,
+  ToolOutlined,
+  CloseOutlined,
+  UnorderedListOutlined,
+  HistoryOutlined,
+} from '@ant-design/icons';
 import { dealResponse, formatMessage, getVehicleStatusTag, isNull } from '@/utils/util';
 import TableWithPages from '@/components/TableWithPages';
 import FormattedMessage from '@/components/FormattedMessage';
@@ -12,9 +19,10 @@ import {
   fetchFireWareFileList,
   fetchFireWareList,
   upgradeVehicle,
+  updateVehicleMaintain,
 } from '@/services/resourceService';
 import { fetchAllVehicleList } from '@/services/commonService';
-import UploadHardwareModal from './components/UploadHardwareModal';
+import FireWareFileListModal from './components/FireWareFileListModal';
 import CreateUpgradeOrderModal from './components/CreateUpgradeOrderModal';
 import { transformFireProgress } from './upgradeConst';
 import RmsConfirm from '@/components/RmsConfirm';
@@ -30,8 +38,10 @@ const VehicleUpgrade = () => {
   const [upgradeOrder, setUpgradeOrder] = useState([]); // 升级或下载的任务
   const [allFireWareFiles, setAllFireWareFiles] = useState([]); // 固件
 
-  const [uploadVisible, setUploadVisible] = useState(false);
+  const [fileManageVisible, setFileManageVisible] = useState(false);
   const [creationVisible, setCreationVisible] = useState(false);
+
+  const [historyVisible, setHistoryVisible] = useState(false);
 
   const columns = [
     {
@@ -103,7 +113,7 @@ const VehicleUpgrade = () => {
                   {vehicleFileTaskType === 'DOWNLOAD' ? (
                     <FormattedMessage id={'firmdware.inDownloading'} />
                   ) : (
-                    <FormattedMessage id={'firmdware.inUpgradeing'} />
+                    <FormattedMessage id={'firmdware.restarting'} />
                   )}
                 </span>
               </>
@@ -125,7 +135,7 @@ const VehicleUpgrade = () => {
                   upgrade(record);
                 }}
               >
-                <FormattedMessage id="firmdware.startUpgrade" />
+                <FormattedMessage id="firmdware.download.restartEffective" />
               </Typography.Link>;
             }
             if (record.vehicleFileTaskType === 'UPGRADE') {
@@ -210,7 +220,7 @@ const VehicleUpgrade = () => {
       );
     }
 
-    if (isNull(progress)) {
+    if (!isNull(progress)) {
       const currentStatus = transformFireProgress(progress); // ['1','UPGRADE']
       nowAllVehicles = nowAllVehicles.filter(
         ({ fileStatus, vehicleFileTaskType }) =>
@@ -230,11 +240,27 @@ const VehicleUpgrade = () => {
     }
   }
 
-  function handleMainten() {
+  /*
+   *维护/取消维护
+   *@para {Boolean} flag 维护:true 取消维护：false
+   * **/
+  function handleMainten(flag) {
+    const params = [];
+    selectedRows?.map(({ adapterType, vehicleId }) => {
+      params.push({
+        adapterType,
+        vehicleId,
+        disable: flag,
+      });
+    });
     RmsConfirm({
       content: formatMessage({ id: 'app.message.doubleConfirm' }),
-      onOk: () => {
+      onOk: async () => {
         //TODO: 缺接口
+        const response = await updateVehicleMaintain(params);
+        if (!dealResponse(response, 1)) {
+          init();
+        }
       },
     });
   }
@@ -260,10 +286,10 @@ const VehicleUpgrade = () => {
           <Col className={commonStyles.tableToolLeft}>
             <Button
               onClick={() => {
-                setUploadVisible(true);
+                setFileManageVisible(true);
               }}
             >
-              <UploadOutlined /> <FormattedMessage id="firmdware.upload" />
+              <UnorderedListOutlined /> <FormattedMessage id="firmdware.managerment" />
             </Button>
             <Button
               type={'primary'}
@@ -274,8 +300,30 @@ const VehicleUpgrade = () => {
             >
               <PlusOutlined /> <FormattedMessage id="firmdware.upgradeTask.add" />
             </Button>
-            <Button onClick={handleMainten} disabled={selectedRowKeys.length === 0}>
+            <Button
+              onClick={() => {
+                handleMainten(true);
+              }}
+              disabled={selectedRowKeys.length === 0}
+            >
               <ToolOutlined /> <FormattedMessage id="firmdware.button.mainten" />
+            </Button>
+
+            <Button
+              onClick={() => {
+                handleMainten(false);
+              }}
+              disabled={selectedRowKeys.length === 0}
+            >
+              <CloseOutlined /> <FormattedMessage id="firmdware.button.cancelMainten" />
+            </Button>
+
+            <Button
+              onClick={() => {
+                setHistoryVisible(true);
+              }}
+            >
+              <HistoryOutlined /> <FormattedMessage id="firmdware.upgrade.history" />
             </Button>
 
             <Button onClick={init}>
@@ -296,13 +344,13 @@ const VehicleUpgrade = () => {
         }}
       />
 
-      {/* 上传固件弹窗 */}
-      <UploadHardwareModal
-        visible={uploadVisible}
+      {/* 固件列表 */}
+      <FireWareFileListModal
+        visible={fileManageVisible}
         onCancel={() => {
-          setUploadVisible(false);
+          setFileManageVisible(false);
         }}
-        refreshHardWare={init}
+        onRefresh={init}
       />
 
       {/* 新建升级任务*/}

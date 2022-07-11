@@ -77,8 +77,12 @@ const WebHookFormModal = (props) => {
   function convertHeaders() {
     if (editing) {
       return convertMapToArrayMap(editing.headers);
+    } else {
+      return [
+        { key: 'sectionId', value: '' },
+        { key: 'token', value: '' },
+      ];
     }
-    return [];
   }
 
   return (
@@ -100,18 +104,10 @@ const WebHookFormModal = (props) => {
       >
         <Input.TextArea />
       </Form.Item>
-      <Form.Item
-        name="token"
-        label={'Token'}
-        initialValue={editing?.token}
-        rules={[{ required: true }]}
-      >
-        <Input.TextArea />
-      </Form.Item>
 
       {/* 队列 urlMappingRelation */}
 
-      <Form.Item label={formatMessage({ id: 'webHook.queue.subscribeInfo' })}>
+      <Form.Item label={formatMessage({ id: 'webHook.subscribe' })}>
         <Form.List
           name="urlMappingRelation"
           initialValue={editing?.urlMappingRelation ?? [{}]}
@@ -132,11 +128,11 @@ const WebHookFormModal = (props) => {
                             rules={[
                               {
                                 required: true,
-                                message: formatMessage({ id: 'webHook.queue.required' }),
+                                message: formatMessage({ id: 'webHook.subscribe.event.required' }),
                               },
                             ]}
                           >
-                            <Select placeholder={formatMessage({ id: 'webHook.queue' })}>
+                            <Select placeholder={formatMessage({ id: 'webHook.subscribe.event' })}>
                               {mqQueue?.map((type) => (
                                 <Select.Option key={type} value={type}>
                                   {type}
@@ -154,11 +150,15 @@ const WebHookFormModal = (props) => {
                             rules={[
                               {
                                 required: true,
-                                message: formatMessage({ id: 'webHook.queue.subscribe.required' }),
+                                message: formatMessage({
+                                  id: 'webHook.subscribe.address.required',
+                                }),
                               },
                             ]}
                           >
-                            <Input placeholder={formatMessage({ id: 'webHook.queue.subscribe' })} />
+                            <Input
+                              placeholder={formatMessage({ id: 'webHook.subscribe.address' })}
+                            />
                           </Form.Item>
                         </Col>
                       </Row>

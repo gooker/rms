@@ -91,21 +91,7 @@ const WebHook = () => {
     },
     { title: 'URL', dataIndex: 'url', align: 'center' },
     {
-      title: 'Token',
-      dataIndex: 'token',
-      align: 'center',
-      render: (text) => {
-        if (!isNull(text)) {
-          return (
-            <Tooltip title={text}>
-              <span className={commonStyles.textLinks}>{`${text.substr(0, 6)}...`}</span>
-            </Tooltip>
-          );
-        }
-      },
-    },
-    {
-      title: <FormattedMessage id="webHook.queue" />,
+      title: <FormattedMessage id="webHook.subscribe.event" />,
       dataIndex: 'urlMappingRelation',
       render: (text, record) => {
         if (isStrictNull(text)) return;
