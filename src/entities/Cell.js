@@ -155,7 +155,7 @@ export default class Cell extends PIXI.Container {
       -CellSize.width / 2,
       -CellSize.height / 2,
       this.brandColor,
-      70,
+      35,
     );
     this.coordX.anchor.set(1, 1);
     this.coordX.zIndex = InnerIndex.text;
@@ -172,7 +172,7 @@ export default class Cell extends PIXI.Container {
       CellSize.width / 2,
       -CellSize.height / 2,
       this.brandColor,
-      70,
+      35,
     );
     this.coordY.anchor.set(0, 1);
     this.coordY.zIndex = InnerIndex.text;

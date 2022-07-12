@@ -21,7 +21,7 @@ import {
   syncLineState,
   validateMapData,
 } from '@/utils/mapUtil';
-import { Elevator, LogicArea, MapEntity } from '@/entities';
+import { CellEntity, Elevator, LogicArea, MapEntity } from '@/entities';
 import packageJSON from '@/../package.json';
 import {
   deleteMapById,
@@ -34,7 +34,6 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import CellEntity from '@/entities/CellEntity';
 import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
 
@@ -530,7 +529,7 @@ export default {
       return cell;
     },
 
-    // 批量新增导航点（一般只针对二维码导航点）
+    // 批量新增导航点（只针对牧星点位）
     *batchAddCells({ payload }, { select }) {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
       const { cellMap } = currentMap;
@@ -539,16 +538,14 @@ export default {
       let additionalCells = [];
       if (addWay === 'absolute') {
         const { rows, cols, autoGenCellIdStart, x, y, distanceX, distanceY } = payload;
-        if (rows != null && cols != null) {
-          additionalCells = generateCellMapByRowsAndCols(
-            rows,
-            cols,
-            autoGenCellIdStart,
-            { x, y },
-            distanceX,
-            distanceY,
-          );
-        }
+        additionalCells = generateCellMapByRowsAndCols(
+          rows,
+          cols,
+          autoGenCellIdStart,
+          { x, y },
+          distanceX,
+          distanceY,
+        );
       } else {
         /**
          * 偏移功能需要注意:

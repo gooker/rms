@@ -348,48 +348,50 @@ const PathLock = (props) => {
               </Col>
 
               <Col span={5} style={{ paddingTop: 4 }}>
-                <Button size="small" disabled={!showCellLock} onClick={viewCellLocker}>
-                  <FormattedMessage id="app.button.refresh" />
+                <Button size='small' disabled={!showCellLock} onClick={viewCellLocker}>
+                  <FormattedMessage id='app.button.refresh' />
                 </Button>
               </Col>
             </Row>
           </Form.Item>
 
           {/* 逻辑区的路径锁格信息  */}
-          <Form.Item
-            {...formItemLayout}
-            label={<FormattedMessage id="monitor.view.logicLocked" />}
-            labelWrap
-          >
-            <Row>
-              <Col span={8}>
-                <Form.Item noStyle>
-                  <Switch
-                    checkedChildren={formatMessage({
-                      id: 'app.common.visible',
-                    })}
-                    unCheckedChildren={formatMessage({
-                      id: 'app.common.hidden',
-                    })}
-                    onChange={(value) => {
-                      switchLogicLockedCells(value);
-                      form.setFieldsValue({ showLockCellPolling: null });
-                      if (!value) {
-                        mapContext.clearAllLocks(); // 清理锁格
-                      }
-                    }}
-                    checked={showLogicLockedCell}
-                  />
-                </Form.Item>
-              </Col>
+          {window.localStorage.getItem('dev') === 'true' && (
+            <Form.Item
+              {...formItemLayout}
+              label={<FormattedMessage id='monitor.view.logicLocked' />}
+              labelWrap
+            >
+              <Row>
+                <Col span={8}>
+                  <Form.Item noStyle>
+                    <Switch
+                      checkedChildren={formatMessage({
+                        id: 'app.common.visible',
+                      })}
+                      unCheckedChildren={formatMessage({
+                        id: 'app.common.hidden',
+                      })}
+                      onChange={(value) => {
+                        switchLogicLockedCells(value);
+                        form.setFieldsValue({ showLockCellPolling: null });
+                        if (!value) {
+                          mapContext.clearAllLocks(); // 清理锁格
+                        }
+                      }}
+                      checked={showLogicLockedCell}
+                    />
+                  </Form.Item>
+                </Col>
 
-              <Col span={7}>
-                <Button size="small" disabled={!showLogicLockedCell} onClick={viewLogicLocked}>
-                  <FormattedMessage id="app.button.refresh" />
-                </Button>
-              </Col>
-            </Row>
-          </Form.Item>
+                <Col span={7}>
+                  <Button size='small' disabled={!showLogicLockedCell} onClick={viewLogicLocked}>
+                    <FormattedMessage id='app.button.refresh' />
+                  </Button>
+                </Col>
+              </Row>
+            </Form.Item>
+          )}
         </Form>
       </div>
     </div>

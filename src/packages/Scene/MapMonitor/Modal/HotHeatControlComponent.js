@@ -124,8 +124,8 @@ const HotheatControlComponent = (props) => {
               <Switch
                 checked={showCostPolling}
                 onChange={(ev) => switchPolling(ev)}
-                checkedChildren={formatMessage({ id: 'app.common.true' })}
-                unCheckedChildren={formatMessage({ id: 'app.common.false' })}
+                checkedChildren={formatMessage({ id: 'app.common.on' })}
+                unCheckedChildren={formatMessage({ id: 'app.common.off' })}
               />
             </Form.Item>
           </Col>
