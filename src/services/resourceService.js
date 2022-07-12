@@ -482,7 +482,7 @@ export async function deleteResourceGroupMembers(param) {
 
 // 删除分组
 export async function deleteResourceGroup(param) {
-  return request(`/${NameSpace.Platform}/resource/batchDeleteResourceGroup`, {
+  return request(`/${NameSpace.Platform}/resource/resourceGroupCodes`, {
     method: 'POST',
     data: param,
   });
@@ -527,7 +527,15 @@ export async function fetchFireWareFileList() {
   });
 }
 
-// 查询下载和升级固件进度
+// 删除固件
+export async function batchDeleteFireWareFile(param) {
+  return request(`/${NameSpace.Platform}/vehicle/file/batchDeleteFile`, {
+    method: 'POST',
+    data: param,
+  });
+}
+
+// 查询固件到小车/小车升级任务 进度
 export async function fetchFireWareList() {
   return request(`/${NameSpace.Platform}/vehicle/file/getFirmwareList`, {
     method: 'GET',
@@ -562,6 +570,14 @@ export async function upgradeVehicle(param) {
 export async function updateVehicleMaintain(param) {
   return request(`/${NameSpace.Platform}/vehicle/maintain`, {
     method: 'POST',
+    data: param,
+  });
+}
+
+// 查询固件升级历史任务
+export async function fetchVehicleUpgradeList(param) {
+  return request(`/${NameSpace.Platform}/vehicle/file/getUpgradeList`, {
+    method: 'GET',
     data: param,
   });
 }

@@ -92,7 +92,7 @@ const GroupModal = (props) => {
   }
 
   async function deleteRow({ id, code }) {
-    const response = await deleteResourceGroup([id]);
+    const response = await deleteResourceGroup([code]);
     if (!dealResponse(response)) {
       const newData = [...groups].filter((item) => item.code !== code);
       onChange(newData);

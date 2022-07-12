@@ -9,6 +9,8 @@ import TablePageWrapper from '@/components/TablePageWrapper';
 import TaskSearch from './components/TaskManagementSearch';
 import styles from './task.module.less';
 import commonStyles from '@/common.module.less';
+import RmsConfirm from '@/components/RmsConfirm';
+import { fetchCancelTask } from '@/services/commonService';
 
 @connect(({ global }) => ({
   allTaskTypes: global.allTaskTypes,
@@ -157,7 +159,18 @@ class TaskManagement extends Component {
   };
 
   cancelTask = () => {
-    //
+    RmsConfirm({
+      content: formatMessage({ id: 'app.message.cancelTask.confirm' }),
+      onOk: this.cancelTaskConfirm,
+    });
+  };
+
+  cancelTaskConfirm = async () => {
+    const { selectedRowKeys } = this.state;
+    const response = await fetchCancelTask({ taskIdList: selectedRowKeys });
+    if (!dealResponse(response, 1)) {
+      this.setState({ selectedRowKeys: [] }, this.getTaskRecord);
+    }
   };
 
   checkDetail = (taskId) => {

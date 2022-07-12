@@ -24,6 +24,7 @@ import {
 import { fetchAllVehicleList } from '@/services/commonService';
 import FireWareFileListModal from './components/FireWareFileListModal';
 import CreateUpgradeOrderModal from './components/CreateUpgradeOrderModal';
+import UpgradeHistoryModal from './components/UpgradeHistoryModal';
 import { transformFireProgress } from './upgradeConst';
 import RmsConfirm from '@/components/RmsConfirm';
 
@@ -245,19 +246,17 @@ const VehicleUpgrade = () => {
    *@para {Boolean} flag 维护:true 取消维护：false
    * **/
   function handleMainten(flag) {
-    const params = [];
+    const vehicleInfos = [];
     selectedRows?.map(({ adapterType, vehicleId }) => {
-      params.push({
+      vehicleInfos.push({
         adapterType,
         vehicleId,
-        disable: flag,
       });
     });
     RmsConfirm({
       content: formatMessage({ id: 'app.message.doubleConfirm' }),
       onOk: async () => {
-        //TODO: 缺接口
-        const response = await updateVehicleMaintain(params);
+        const response = await updateVehicleMaintain({ disable: flag, vehicleInfos });
         if (!dealResponse(response, 1)) {
           init();
         }
@@ -319,6 +318,7 @@ const VehicleUpgrade = () => {
             </Button>
 
             <Button
+              disabled={selectedRowKeys.length !== 1}
               onClick={() => {
                 setHistoryVisible(true);
               }}
@@ -347,6 +347,7 @@ const VehicleUpgrade = () => {
       {/* 固件列表 */}
       <FireWareFileListModal
         visible={fileManageVisible}
+        fireWareFiles={allFireWareFiles}
         onCancel={() => {
           setFileManageVisible(false);
         }}
@@ -363,6 +364,15 @@ const VehicleUpgrade = () => {
         selectedRows={selectedRows}
         upgradeOrder={upgradeOrder}
         onRefresh={init}
+      />
+
+      {/* 升级历史 */}
+      <UpgradeHistoryModal
+        visible={historyVisible}
+        selectedRows={selectedRows}
+        onCancel={() => {
+          setHistoryVisible(false);
+        }}
       />
     </TablePageWrapper>
   );
