@@ -29,7 +29,7 @@ const TriggerSearchComponent = (props) => {
             disabled={checkedList?.length !== 1}
             onClick={onPaste}
           >
-            <BgColorsOutlined /> <FormattedMessage id="app.button.past" />
+            <BgColorsOutlined /> <FormattedMessage id="app.button.copy" />
           </Button>
           <Button
             onClick={() => {
