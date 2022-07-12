@@ -56,7 +56,7 @@ const CreateUpgradeOrderModal = (props) => {
       <Form form={form} {...formItemLayout}>
         <Form.Item
           name={'fileName'}
-          label={formatMessage({ id: 'firmdware.upload' })}
+          label={formatMessage({ id: 'firmdware.fileName' })}
           rules={[{ required: true }]}
         >
           <Select>

@@ -32,17 +32,19 @@ export default {
 
   'firmdware.progress': '进度',
   'firmdware.fileName': '固件',
+  'firmdware.managerment': '固件管理',
   'firmdware.upload': '上传固件',
-  'firmdware.button.mainten': '维护/取消维护',
-  'firmdware.upgradeTask.add': '新建升级任务',
+
+  'firmdware.button.mainten': '维护',
+  'firmdware.button.cancelMainten': '取消维护',
+  'firmdware.upgradeTask.add': '升级',
   'firmdware.inDownloading': '下载中',
   'firmdware.downloadFail': '下载失败',
-  'firmdware.download.success': '下载成功',
-
+  'firmdware.download.restartEffective': '重启生效',
   'firmdware.upgradeFail': '升级失败',
-  'firmdware.startUpgrade': '开始升级',
-  'firmdware.inUpgradeing': '升级中',
+  'firmdware.restarting': '重启中',
   'firmdware.upgrade.success': '升级成功',
+  'firmdware.upgrade.history': '升级历史',
 
   // 故障相关
   'app.fault.code': '故障码',
@@ -94,13 +96,13 @@ export default {
 
   // Web Hook
   'webHook.retryTimes': '重试次数',
-  'webHook.queue': '队列',
   'webHook.headerItem.empty': '请求头配置不完整',
   'webHook.headerItem.keyDuplicate': '请求头存在重复Key',
-  'webHook.queue.subscribe': '订阅方',
-  'webHook.queue.subscribeInfo': '订阅信息',
-  'webHook.queue.required': '请选择队列',
-  'webHook.queue.subscribe.required': '请输入订阅方',
+  'webHook.subscribe': '订阅',
+  'webHook.subscribe.event': '订阅事件',
+  'webHook.subscribe.event.required': '请选择订阅事件',
+  'webHook.subscribe.address': '接收地址',
+  'webHook.subscribe.address.required': '请输入接收地址',
 
   // 富文本编辑
   'richEditor.richText': '富文本',
