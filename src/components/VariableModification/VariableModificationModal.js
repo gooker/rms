@@ -37,19 +37,18 @@ const VariableModificationModal = (props) => {
   }
 
   function renderPartTitle(nodeType) {
-    if (nodeType.startsWith('step')) {
+    if (nodeType.startsWith('ACTION_')) {
       if (customTask) {
         const { codes, customActions } = customTask;
-        const stepIndex = Number.parseInt(nodeType.replace('step', ''));
-        const taskNodeCode = codes[stepIndex];
-        const taskNode = customActions[taskNodeCode];
+        const stepIndex = codes.indexOf(nodeType);
+        const taskNode = customActions[nodeType];
         if (taskNode && taskNode.name) {
           return taskNode.name;
         } else {
-          const [nodeType] = taskNodeCode.split('_');
+          const [taskNodeType] = nodeType.split('_');
           return (
             <>
-              <FormattedMessage id={`customTask.type.${nodeType}`} /> {stepIndex}
+              <FormattedMessage id={`customTask.type.${taskNodeType}`} /> {stepIndex}
             </>
           );
         }
@@ -80,7 +79,7 @@ const VariableModificationModal = (props) => {
                     initialValue={vehicle.config.visible}
                     valuePropName={'checked'}
                   >
-                    <Checkbox>执行可见</Checkbox>
+                    <Checkbox>可见</Checkbox>
                   </Form.Item>
                 </Col>
                 <Col>
@@ -90,7 +89,7 @@ const VariableModificationModal = (props) => {
                     initialValue={vehicle.config.isRequired}
                     valuePropName={'checked'}
                   >
-                    <Checkbox>执行必填</Checkbox>
+                    <Checkbox>必填</Checkbox>
                   </Form.Item>
                 </Col>
               </Row>
@@ -125,7 +124,7 @@ const VariableModificationModal = (props) => {
                     initialValue={vehicleLimit.config.visible}
                     valuePropName={'checked'}
                   >
-                    <Checkbox>执行可见</Checkbox>
+                    <Checkbox>可见</Checkbox>
                   </Form.Item>
                 </Col>
                 <Col>
@@ -135,7 +134,7 @@ const VariableModificationModal = (props) => {
                     initialValue={vehicleLimit.config.isRequired}
                     valuePropName={'checked'}
                   >
-                    <Checkbox>执行必填</Checkbox>
+                    <Checkbox>必填</Checkbox>
                   </Form.Item>
                 </Col>
               </Row>
@@ -184,7 +183,7 @@ const VariableModificationModal = (props) => {
                           initialValue={preParams.config.visible}
                           valuePropName={'checked'}
                         >
-                          <Checkbox>执行可见</Checkbox>
+                          <Checkbox>可见</Checkbox>
                         </Form.Item>
                       </Col>
                       <Col>
@@ -194,7 +193,7 @@ const VariableModificationModal = (props) => {
                           initialValue={preParams.config.isRequired}
                           valuePropName={'checked'}
                         >
-                          <Checkbox>执行必填</Checkbox>
+                          <Checkbox>必填</Checkbox>
                         </Form.Item>
                       </Col>
                     </Row>
@@ -235,7 +234,7 @@ const VariableModificationModal = (props) => {
                         initialValue={params.config.visible}
                         valuePropName={'checked'}
                       >
-                        <Checkbox>执行可见</Checkbox>
+                        <Checkbox>可见</Checkbox>
                       </Form.Item>
                     </Col>
                     <Col>
@@ -245,7 +244,7 @@ const VariableModificationModal = (props) => {
                         initialValue={params.config.isRequired}
                         valuePropName={'checked'}
                       >
-                        <Checkbox>执行必填</Checkbox>
+                        <Checkbox>必填</Checkbox>
                       </Form.Item>
                     </Col>
                   </Row>
@@ -263,155 +262,161 @@ const VariableModificationModal = (props) => {
             ),
           );
 
-          if (isNull(operateAngle.value)) {
-            doms.push(
-              <Card
-                hoverable
-                {...cardStyle}
-                key={getRandomString(12)}
-                extra={
-                  <Row gutter={24}>
-                    <Col>
-                      <Form.Item
-                        noStyle
-                        name={['customAction', nodeType, 'loadAngle', 'config', 'visible']}
-                        initialValue={loadAngle.config.visible}
-                        valuePropName={'checked'}
-                      >
-                        <Checkbox>执行可见</Checkbox>
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        noStyle
-                        name={['customAction', nodeType, 'loadAngle', 'config', 'isRequired']}
-                        initialValue={loadAngle.config.isRequired}
-                        valuePropName={'checked'}
-                      >
-                        <Checkbox>执行必填</Checkbox>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                }
-              >
-                <Form.Item
-                  name={['customAction', nodeType, 'loadAngle', 'value']}
-                  label={formatMessage({ id: 'resource.load.direction' })}
-                  initialValue={loadAngle.value}
+          // 与载具角度有关的，loadAngle存在的情况下才会有operateAngle数据；如果连loadAngle都没有，那么就不需要配置载具角度相关的了
+          if (!isNull(loadAngle)) {
+            if (isNull(operateAngle)) {
+              // 载具角度
+              doms.push(
+                <Card
+                  hoverable
+                  {...cardStyle}
+                  key={getRandomString(12)}
+                  extra={
+                    <Row gutter={24}>
+                      <Col>
+                        <Form.Item
+                          noStyle
+                          name={['customAction', nodeType, 'loadAngle', 'config', 'visible']}
+                          initialValue={loadAngle.config.visible}
+                          valuePropName={'checked'}
+                        >
+                          <Checkbox>可见</Checkbox>
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          noStyle
+                          name={['customAction', nodeType, 'loadAngle', 'config', 'isRequired']}
+                          initialValue={loadAngle.config.isRequired}
+                          valuePropName={'checked'}
+                        >
+                          <Checkbox>必填</Checkbox>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  }
                 >
-                  <InputNumber addonAfter='°' />
-                </Form.Item>
-              </Card>,
-            );
-          } else {
-            doms.push(
-              <Card
-                hoverable
-                {...cardStyle}
-                key={getRandomString(12)}
-                extra={
-                  <Row gutter={24}>
-                    <Col>
-                      <Form.Item
-                        noStyle
-                        name={['customAction', nodeType, 'loadAngle', 'config', 'visible']}
-                        initialValue={loadAngle.config.visible}
-                        valuePropName={'checked'}
-                      >
-                        <Checkbox>执行可见</Checkbox>
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        noStyle
-                        name={['customAction', nodeType, 'loadAngle', 'config', 'isRequired']}
-                        initialValue={loadAngle.config.isRequired}
-                        valuePropName={'checked'}
-                      >
-                        <Checkbox>执行必填</Checkbox>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                }
-              >
-                <Form.Item
-                  name={['customAction', nodeType, 'loadAngle', 'value']}
-                  initialValue={loadAngle.value}
-                  label={formatMessage({ id: 'customTask.form.podSide' })}
+                  <Form.Item
+                    name={['customAction', nodeType, 'loadAngle', 'value']}
+                    label={formatMessage({ id: 'resource.load.direction' })}
+                    initialValue={loadAngle.value}
+                  >
+                    <InputNumber addonAfter='°' />
+                  </Form.Item>
+                </Card>,
+              );
+            } else {
+              // 载具面
+              doms.push(
+                <Card
+                  hoverable
+                  {...cardStyle}
+                  key={getRandomString(12)}
+                  extra={
+                    <Row gutter={24}>
+                      <Col>
+                        <Form.Item
+                          noStyle
+                          name={['customAction', nodeType, 'loadAngle', 'config', 'visible']}
+                          initialValue={loadAngle.config.visible}
+                          valuePropName={'checked'}
+                        >
+                          <Checkbox>可见</Checkbox>
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          noStyle
+                          name={['customAction', nodeType, 'loadAngle', 'config', 'isRequired']}
+                          initialValue={loadAngle.config.isRequired}
+                          valuePropName={'checked'}
+                        >
+                          <Checkbox>必填</Checkbox>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  }
                 >
-                  <Select style={{ width: 207 }}>
-                    <Select.Option value={0}>
-                      <FormattedMessage id={'app.pod.side.A'} />
-                    </Select.Option>
-                    <Select.Option value={90}>
-                      <FormattedMessage id={'app.pod.side.B'} />
-                    </Select.Option>
-                    <Select.Option value={180}>
-                      <FormattedMessage id={'app.pod.side.C'} />
-                    </Select.Option>
-                    <Select.Option value={270}>
-                      <FormattedMessage id={'app.pod.side.D'} />
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-              </Card>,
-            );
-            doms.push(
-              <Card
-                hoverable
-                {...cardStyle}
-                key={getRandomString(12)}
-                extra={
-                  <Row gutter={24}>
-                    <Col>
-                      <Form.Item
-                        noStyle
-                        name={['customAction', nodeType, 'operateAngle', 'config', 'visible']}
-                        initialValue={operateAngle.config.visible}
-                        valuePropName={'checked'}
-                      >
-                        <Checkbox>执行可见</Checkbox>
-                      </Form.Item>
-                    </Col>
-                    <Col>
-                      <Form.Item
-                        noStyle
-                        name={['customAction', nodeType, 'operateAngle', 'config', 'isRequired']}
-                        initialValue={operateAngle.config.isRequired}
-                        valuePropName={'checked'}
-                      >
-                        <Checkbox>执行必填</Checkbox>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                }
-              >
-                <Form.Item
-                  name={['customAction', nodeType, 'operateAngle', 'value']}
-                  initialValue={operateAngle.value}
-                  label={formatMessage({ id: 'customTask.form.operatorDirection' })}
+                  <Form.Item
+                    name={['customAction', nodeType, 'loadAngle', 'value']}
+                    initialValue={loadAngle.value}
+                    label={formatMessage({ id: 'customTask.form.podSide' })}
+                  >
+                    <Select style={{ width: 207 }}>
+                      <Select.Option value={0}>
+                        <FormattedMessage id={'app.pod.side.A'} />
+                      </Select.Option>
+                      <Select.Option value={90}>
+                        <FormattedMessage id={'app.pod.side.B'} />
+                      </Select.Option>
+                      <Select.Option value={180}>
+                        <FormattedMessage id={'app.pod.side.C'} />
+                      </Select.Option>
+                      <Select.Option value={270}>
+                        <FormattedMessage id={'app.pod.side.D'} />
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Card>,
+              );
+              // 操作者位置
+              doms.push(
+                <Card
+                  hoverable
+                  {...cardStyle}
+                  key={getRandomString(12)}
+                  extra={
+                    <Row gutter={24}>
+                      <Col>
+                        <Form.Item
+                          noStyle
+                          name={['customAction', nodeType, 'operateAngle', 'config', 'visible']}
+                          initialValue={operateAngle.config.visible}
+                          valuePropName={'checked'}
+                        >
+                          <Checkbox>可见</Checkbox>
+                        </Form.Item>
+                      </Col>
+                      <Col>
+                        <Form.Item
+                          noStyle
+                          name={['customAction', nodeType, 'operateAngle', 'config', 'isRequired']}
+                          initialValue={operateAngle.config.isRequired}
+                          valuePropName={'checked'}
+                        >
+                          <Checkbox>必填</Checkbox>
+                        </Form.Item>
+                      </Col>
+                    </Row>
+                  }
                 >
-                  <Select style={{ width: 207 }}>
-                    <Select.Option value={90}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.topSide'} />
-                    </Select.Option>
-                    <Select.Option value={0}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.rightSide'} />
-                    </Select.Option>
-                    <Select.Option value={270}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.bottomSide'} />
-                    </Select.Option>
-                    <Select.Option value={180}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.leftSide'} />
-                    </Select.Option>
-                  </Select>
-                </Form.Item>
-              </Card>,
-            );
+                  <Form.Item
+                    name={['customAction', nodeType, 'operateAngle', 'value']}
+                    initialValue={operateAngle.value}
+                    label={formatMessage({ id: 'customTask.form.operatorDirection' })}
+                  >
+                    <Select style={{ width: 207 }}>
+                      <Select.Option value={90}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.topSide'} />
+                      </Select.Option>
+                      <Select.Option value={0}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.rightSide'} />
+                      </Select.Option>
+                      <Select.Option value={270}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.bottomSide'} />
+                      </Select.Option>
+                      <Select.Option value={180}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.leftSide'} />
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>
+                </Card>,
+              );
+            }
           }
 
           // 行驶速度
@@ -429,7 +434,7 @@ const VariableModificationModal = (props) => {
                       initialValue={speed.config.visible}
                       valuePropName={'checked'}
                     >
-                      <Checkbox>执行可见</Checkbox>
+                      <Checkbox>可见</Checkbox>
                     </Form.Item>
                   </Col>
                   <Col>
@@ -439,7 +444,7 @@ const VariableModificationModal = (props) => {
                       initialValue={speed.config.isRequired}
                       valuePropName={'checked'}
                     >
-                      <Checkbox>执行必填</Checkbox>
+                      <Checkbox>必填</Checkbox>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -484,7 +489,7 @@ const VariableModificationModal = (props) => {
                       initialValue={loadBackZone.config.visible}
                       valuePropName={'checked'}
                     >
-                      <Checkbox>执行可见</Checkbox>
+                      <Checkbox>可见</Checkbox>
                     </Form.Item>
                   </Col>
                   <Col>
@@ -494,7 +499,7 @@ const VariableModificationModal = (props) => {
                       initialValue={loadBackZone.config.isRequired}
                       valuePropName={'checked'}
                     >
-                      <Checkbox>执行必填</Checkbox>
+                      <Checkbox>必填</Checkbox>
                     </Form.Item>
                   </Col>
                 </Row>
@@ -552,7 +557,7 @@ const VariableModificationModal = (props) => {
                       initialValue={backZone.config.visible}
                       valuePropName={'checked'}
                     >
-                      <Checkbox>执行可见</Checkbox>
+                      <Checkbox>可见</Checkbox>
                     </Form.Item>
                   </Col>
                   <Col>
@@ -562,7 +567,7 @@ const VariableModificationModal = (props) => {
                       initialValue={backZone.config.isRequired}
                       valuePropName={'checked'}
                     >
-                      <Checkbox>执行必填</Checkbox>
+                      <Checkbox>必填</Checkbox>
                     </Form.Item>
                   </Col>
                 </Row>
