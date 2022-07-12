@@ -63,6 +63,6 @@ const BackZoneSelector = (props) => {
     </div>
   );
 };
-export default connect(({ customTask }) => ({
-  cellGroup: customTask?.modelParams?.CELL_GROUP ?? [],
+export default connect(({ global }) => ({
+  cellGroup: global?.targetDatasource?.CELL_GROUP ?? [],
 }))(memo(BackZoneSelector));

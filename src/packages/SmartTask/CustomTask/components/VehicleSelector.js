@@ -129,11 +129,11 @@ const VehicleSelector = (props) => {
     </div>
   );
 };
-export default connect(({ customTask }) => {
+export default connect(({ global }) => {
   const dataSource = { vehicle: [], vehicleGroup: [] };
-  if (customTask.modelParams) {
-    dataSource.vehicle = customTask.modelParams?.VEHICLE ?? [];
-    dataSource.vehicleGroup = customTask.modelParams?.VEHICLE_GROUP ?? [];
+  if (global.targetDatasource) {
+    dataSource.vehicle = global.targetDatasource?.VEHICLE ?? [];
+    dataSource.vehicleGroup = global.targetDatasource?.VEHICLE_GROUP ?? [];
   }
   return { dataSource };
 })(memo(VehicleSelector));

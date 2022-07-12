@@ -50,7 +50,7 @@ export function transformCurrentVariable(allTaskList, fixedVariable) {
           ...fixedVariable[idcode],
         };
       } else {
-        const newSample = transformActionStepToCode(currentTask.sample, currentTask.codes);
+        let newSample = transformActionStepToCode(currentTask.sample, currentTask.codes);
         const { customAction } = newSample;
         let currentCustomAction = {};
         Object.keys(customAction)?.forEach((nodeType) => {
@@ -60,7 +60,9 @@ export function transformCurrentVariable(allTaskList, fixedVariable) {
             currentCustomAction[nodeType] = customAction[nodeType];
           }
         });
-        newSample.customAction = { ...currentCustomAction };
+
+        // newSample.customAction = { ...currentCustomAction };
+        newSample = { ...fixedVariable[idcode], customAction: { ...currentCustomAction } };
 
         dataMap[idcode] = {
           id,
