@@ -83,8 +83,8 @@ export const CostColor = {
 
 // Size
 export const CellSize = {
-  width: 100,
-  height: 100,
+  width: 50,
+  height: 50,
 };
 
 export const LatentVehicleSize = {

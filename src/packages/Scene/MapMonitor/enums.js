@@ -1,5 +1,5 @@
 import React from 'react';
-import { SendOutlined, SettingOutlined } from '@ant-design/icons';
+import { FireOutlined, FunctionOutlined, SendOutlined, SettingOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
 
@@ -12,6 +12,7 @@ export const MonitorOperationType = {
   Drag: 'DRAG',
 };
 
+// 右侧主菜单类型
 export const Category = {
   Prop: 'Prop',
   Control: 'Control',
@@ -115,22 +116,22 @@ export const VehicleCategoryTools = [
     value: 'carry',
   },
   {
-    label: <FormattedMessage id={'monitor.right.advancedCarry'} />,
-    icon: 'advancedCarry_category.png',
-    style: { width: '37px', height: 'auto' },
-    value: 'advancedCarry',
+    label: <FormattedMessage id={'menu.quickTask'} />,
+    icon: <FireOutlined />,
+    style: { color: '#ffffff', fontSize: 29 },
+    value: 'quickTask',
   },
   {
-    label: <FormattedMessage id={'monitor.right.stationTask'} />,
-    icon: 'workStationTask_category.png',
-    style: { width: '35px', height: 'auto' },
-    value: 'workStationTask',
+    label: <FormattedMessage id={'menu.customTask'} />,
+    icon: <FunctionOutlined />,
+    style: { color: '#ffffff', fontSize: 29 },
+    value: 'customTask',
   },
   {
-    label: <FormattedMessage id={'monitor.right.autoCall'} />,
-    icon: 'autoCall_category.png',
-    style: { width: '37px', height: 'auto' },
-    value: 'autoCall',
+    label: <FormattedMessage id={'menu.trigger'} />,
+    icon: <ThunderboltOutlined />,
+    style: { color: '#ffffff', fontSize: 29 },
+    value: 'trigger',
   },
   {
     label: <FormattedMessage id={'monitor.right.remoteControl'} />,

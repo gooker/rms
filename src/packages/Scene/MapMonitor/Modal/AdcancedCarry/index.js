@@ -1,9 +1,9 @@
-import React, { memo, useState, useEffect } from 'react';
-import { Radio, message, Form } from 'antd';
+import React, { memo, useEffect, useState } from 'react';
+import { Form, Radio } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { dealResponse, getFormLayout, getMapModalPosition } from '@/utils/util';
+import { getFormLayout, getMapModalPosition } from '@/utils/util';
 import AdvancedCarryComponent from './AdvancedCarryComponent';
 import AdvancedReleaseComponent from './AdvancedReleaseComponent';
 import styles from '../../monitorLayout.module.less';
