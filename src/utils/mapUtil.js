@@ -5,7 +5,7 @@ import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
 import { CoordinateType, LineType, NavigationType } from '@/config/config';
 import { CellSize, MapSelectableSpriteType, VehicleState } from '@/config/consts';
 import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
-import { CellEntity, LineArrow, LogicArea, RelationEntity } from '@/entities';
+import { CellEntity, LineArrow, LogicArea } from '@/entities';
 import json from '../../package.json';
 
 // 根据行列数批量生成点位
@@ -300,8 +300,8 @@ export function createRelation(
  */
 export function batchGenerateLine(cells, dir, value) {
   const result = {};
-  let source, target;
   if (cells.length === 2) {
+    let source, target;
     if (dir === 90) {
       [target, source] = orderBy(cells, 'y');
     } else if (dir === 0) {
@@ -315,36 +315,14 @@ export function batchGenerateLine(cells, dir, value) {
     result[key] = getLineJson(source, target, value);
   }
   if (cells.length > 2) {
-    for (let index = 0; index < cells.length; index++) {
-      const element = cells[index];
-      for (let j = 0; j < cells.length; j++) {
-        const point = cells[j];
-        const key = `${element.id}_${dir}`; // 标记key值
-        if (element.id === point.id) {
+    for (let source of cells) {
+      for (let target of cells) {
+        if (source.id === target.id) {
           continue;
         }
-        if (getAngle(element, point) === dir) {
-          if (result[key]) {
-            const newDistance = getDistance(element, point);
-            if (result[key].distance > newDistance) {
-              result[key] = new RelationEntity({
-                source: element.id,
-                target: point.id,
-                angle: getAngle(element, point),
-                cost: value,
-                distance: newDistance,
-              });
-            }
-          } else {
-            const newDistance = getDistance(element, point);
-            result[key] = new RelationEntity({
-              source: element.id,
-              target: point.id,
-              angle: getAngle(element, point),
-              cost: value,
-              distance: newDistance,
-            });
-          }
+        const key = `${source.id}_${dir}`;
+        if (getAngle(source, target) === dir) {
+          result[key] = getLineJson(source, target, value);
         }
       }
     }

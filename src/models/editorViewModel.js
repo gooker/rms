@@ -33,6 +33,8 @@ export default {
     shownNavigationCellType: [NavigationType.M_QRCODE, NavigationType.SEER_SLAM], // 显示的导航点类型
   },
 
+  effects: {},
+
   reducers: {
     saveState(state, action) {
       return {
