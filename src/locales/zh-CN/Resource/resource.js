@@ -9,7 +9,7 @@ export default {
   'group.addResourceToGroup': '添加资源到组',
   'group.sourceManage': '资源组管理',
   'group.sourceManag.add': '创建资源组',
-  'group.sourceManage.message':'请先选择资源',
+  'group.sourceManage.message': '请先选择资源',
 
   'resourceGroup.grouping': '分组',
 
@@ -24,8 +24,10 @@ export default {
   'resource.load.specification': '载具规格',
   'resource.load.location': '位置',
   'resource.load.simulation.generate': '模拟生成',
-  'resource.load.target.storage': '目标货位',
-  'resource.load.source.storage': '来源货位',
+  'resource.load.target.storage': '之后位置',
+  'resource.load.source.storage': '之前位置',
+  'resource.load.changeTime': '变更时间',
+  'resource.load.triggeror': '触发人',
   'resource.load.code': '载具码',
   'resource.load.startCode': '开始载具码',
   'resource.load.endCode': '结束载具码',

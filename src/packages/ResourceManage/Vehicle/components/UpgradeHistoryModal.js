@@ -30,11 +30,6 @@ const UpgradeHistoryModal = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="firmdware.file.version" />,
-      dataIndex: 'versionNumber',
-      align: 'center',
-    },
-    {
       title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
@@ -64,8 +59,8 @@ const UpgradeHistoryModal = (props) => {
           );
         }
         return (
-          <Tag color="#108ee9">
-            {record.vehicleFileTaskType === 'DOWNLOAD' ? (
+          <Tag color="orange">
+            {record.vehicleFileTaskType === 'UPLOAD' ? (
               <FormattedMessage id={'firmdware.inDownloading'} />
             ) : (
               <FormattedMessage id={'firmdware.restarting'} />
