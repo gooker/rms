@@ -32,6 +32,7 @@ export default {
 
   'firmdware.progress': '进度',
   'firmdware.fileName': '固件',
+  'firmdware.file.version': '固件版本号',
   'firmdware.managerment': '固件管理',
   'firmdware.upload': '上传固件',
 

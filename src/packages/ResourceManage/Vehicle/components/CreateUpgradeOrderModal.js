@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import { Form, Modal, Select } from 'antd';
 import { dealResponse, formatMessage, getFormLayout } from '@/utils/util';
 import { updateVehicleFirmWareFile } from '@/services/resourceService';
@@ -7,6 +7,7 @@ const { formItemLayout } = getFormLayout(4, 18);
 const CreateUpgradeOrderModal = (props) => {
   const { visible, onCancel, upgradeOrder, selectedRows, hardWareData, onRefresh } = props;
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
   // 取出 正在下载固件/正在升级的/下载成功的 小车，不传
   const vehicleInProgress = [];
@@ -30,6 +31,7 @@ const CreateUpgradeOrderModal = (props) => {
 
   function onSubmit() {
     form.validateFields().then(async (values) => {
+      setLoading(true);
       const { fileName } = values;
       const params = [];
       availableVehicle?.map(({ vehicleId, adapterType }) => {
@@ -41,6 +43,7 @@ const CreateUpgradeOrderModal = (props) => {
         onCancel();
         onRefresh();
       }
+      setLoading(false);
     });
   }
 
@@ -52,6 +55,7 @@ const CreateUpgradeOrderModal = (props) => {
       maskClosable={false}
       onCancel={onCancel}
       onOk={onSubmit}
+      okButtonProps={{ loading }}
     >
       <Form form={form} {...formItemLayout}>
         <Form.Item

@@ -5,6 +5,7 @@ import { PlusOutlined } from '@ant-design/icons';
 import { dealResponse, formatMessage } from '@/utils/util';
 import FormattedMessage from '@/components/FormattedMessage';
 import UploadHardwareModal from './UploadHardwareModal';
+import { batchDeleteFireWareFile } from '@/services/resourceService';
 
 const FireWareFileListModal = (props) => {
   const { visible, onCancel, fireWareFiles, onRefresh } = props;
@@ -14,18 +15,18 @@ const FireWareFileListModal = (props) => {
 
   const columns = [
     {
-      title: '固件名',
-      dataIndex: 'groupName',
+      title: <FormattedMessage id="firmdware.fileName" />,
+      dataIndex: 'fileName',
       align: 'center',
     },
     {
-      title: formatMessage({ id: 'app.common.operation' }),
+      title: <FormattedMessage id="app.common.operation" />,
       align: 'center',
       width: 200,
       render: (_, record) => (
         <Popconfirm
           title={formatMessage({ id: 'app.message.delete.confirm' })}
-          onConfirm={() => deleteRow(record)}
+          onConfirm={() => deleteRow([record.fileName])}
         >
           <Typography.Link>
             <FormattedMessage id={'app.button.delete'} />
@@ -35,9 +36,9 @@ const FireWareFileListModal = (props) => {
     },
   ];
 
-  async function deleteRow({ id }) {
-    const response = await xxx([id]);
-    if (!dealResponse(response)) {
+  async function deleteRow(params) {
+    const response = await batchDeleteFireWareFile(params);
+    if (!dealResponse(response, 1)) {
       onRefresh();
     }
   }
@@ -45,7 +46,7 @@ const FireWareFileListModal = (props) => {
   return (
     <Modal
       visible={visible}
-      title={'固件管理'}
+      title={formatMessage({ id: 'firmdware.managerment' })}
       width={750}
       maskClosable={false}
       footer={null}
@@ -65,7 +66,7 @@ const FireWareFileListModal = (props) => {
           bordered
           rowKey={(record, index) => index}
           columns={columns}
-          dataSource={fireWareFiles}
+          dataSource={fireWareFiles?.map((item) => ({ fileName: item }))}
           pagination={false}
         />
       </Form>

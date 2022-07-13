@@ -276,13 +276,6 @@ export async function fetchManualMode(vehicleType, params) {
   });
 }
 
-// 下载固件--固件 查询SFTP上上传的文件名称
-export async function fetchFirmWarList(vehicleType, params) {
-  return request(`/${NameSpace[vehicleType]}/file/selectUploadFileNameList`, {
-    method: 'GET',
-    data: params,
-  });
-}
 
 // 下载固件--提交
 export async function fetchUpgradeFirmwareFile(vehicleType, params) {
