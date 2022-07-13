@@ -116,7 +116,7 @@ export default {
   'editor.cost.noPass': '不可走',
   'editor.cost.straightLineType': '直线',
   'editor.cost.curveType': '曲线',
-  'editor.cost.delete': '删除线路',
+  'editor.cost.delete': '删除箭头',
 
   // 显示
   'editor.view.mapViewMode': '模式切换',

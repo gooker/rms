@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 import { SmoothGraphics } from '@pixi/graphics-smooth';
 import {
   convertAngleToPixiAngle,
+  getAngle,
   getArrowDistance,
   getCoordinator,
   getDistance,
@@ -10,7 +11,7 @@ import {
 } from '@/utils/mapUtil';
 import { BitText, Charger, CommonFunction, Dump, DumpBasket, Elevator, Intersection, WorkStation } from '@/entities';
 import { isNull } from '@/utils/util';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { transformXYByParams } from '@/utils/mapTransformer';
 import MapZoneMarker from '@/entities/MapZoneMarker';
 import MapLabelMarker from '@/entities/MapLabelMarker';
 import CostArrow from '@/entities/CostArrow';
@@ -181,18 +182,18 @@ export default class BaseMap extends React.PureComponent {
   /**
    * 绘制线条核心逻辑
    * @param {Array} relationsToRender 即将渲染的线条数据
-   * @param { 'land'| 'navi'} renderType 渲染物理坐标的线条还是导航坐标的线条
+   * @param { 'land'| 'navi'} coordinateType 渲染物理坐标的线条还是导航坐标的线条
    * @param {{}} transform 各个地图的转换参数
    */
-  renderCostLines(relationsToRender, renderType, transform) {
+  renderCostLines(relationsToRender, coordinateType, transform) {
     relationsToRender.forEach((lineData) => {
-      const { type, cost, source, target, angle } = lineData;
+      const { type, cost, source, target } = lineData;
       const sourceCell = this.idCellMap.get(source);
       const targetCell = this.idCellMap.get(target);
       if (isNull(sourceCell) || isNull(targetCell)) return;
 
       // 只有显示物理坐标和直线类型线条才会显示直线
-      if (renderType === CoordinateType.LAND || type === LineType.StraightPath) {
+      if (coordinateType === CoordinateType.LAND || type === LineType.StraightPath) {
         const distance = getDistance(sourceCell, targetCell);
         // 因为关系线只是连接两个点位，所以无论正向还是反向都可以共用一条线。所以绘制线条时优先检测reverse
         const lineMapKey = `${source}-${target}`;
@@ -217,6 +218,8 @@ export default class BaseMap extends React.PureComponent {
           this.idArrowMap.delete(arrowMapKey);
         }
         const offset = getArrowDistance(distance);
+        // 重新计算角度: 地图数据保存的nAngle角度是基于原始导航点位计算的，对于地图显示而言可能不准确
+        const angle = getAngle(sourceCell, targetCell);
         const arrowPosition = getCoordinator(sourceCell, angle, offset);
         const arrow = new CostArrow({
           ...arrowPosition,
@@ -232,15 +235,15 @@ export default class BaseMap extends React.PureComponent {
 
       // 绘制曲线(贝塞尔和圆弧)
       const navigationType = sourceCell.navigationType;
-      if (renderType === CoordinateType.NAVI && type === LineType.BezierPath) {
+      if (coordinateType === CoordinateType.NAVI && type === LineType.BezierPath) {
         const { control1, control2 } = lineData;
         const lineMapKey = `${source}-${target}`;
-        const transformedCP1 = coordinateTransformer(
+        const transformedCP1 = transformXYByParams(
           control1,
           navigationType,
           transform[navigationType],
         );
-        const transformedCP2 = coordinateTransformer(
+        const transformedCP2 = transformXYByParams(
           control2,
           navigationType,
           transform[navigationType],
@@ -264,7 +267,7 @@ export default class BaseMap extends React.PureComponent {
       }
 
       // TODO: 绘制圆弧
-      if (renderType === CoordinateType.NAVI && type === LineType.ArcPath) {
+      if (coordinateType === CoordinateType.NAVI && type === LineType.ArcPath) {
         //
       }
     });

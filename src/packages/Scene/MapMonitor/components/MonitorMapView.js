@@ -43,7 +43,7 @@ import {
 } from '@/entities';
 import BaseMap from '@/components/BaseMap';
 import { fetchVehicleInfo } from '@/services/commonService';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { transformXYByParams } from '@/utils/mapTransformer';
 import { loadMonitorExtraTextures } from '@/utils/textures';
 
 class MonitorMapView extends BaseMap {
@@ -440,7 +440,7 @@ class MonitorMapView extends BaseMap {
     }
 
     // 更新位置
-    const pixiCoordinate = coordinateTransformer({ x, y }, navigationType);
+    const pixiCoordinate = transformXYByParams({ x, y }, navigationType);
     vehicleEntity.x = pixiCoordinate.x;
     vehicleEntity.y = pixiCoordinate.y;
     vehicleEntity.currentCellId = currentCellId;
@@ -1126,7 +1126,7 @@ class MonitorMapView extends BaseMap {
       } = lockData;
       // TODO: 锁格数据需要包含小车的导航类型
       const navigationType = NavigationType.M_QRCODE;
-      const currentPosition = coordinateTransformer(position, navigationType);
+      const currentPosition = transformXYByParams(position, navigationType);
       const { width, height } = getLockCellBounds(dimension);
       // 校验锁格数据，尤其是宽高
       if (!height || !width) {
@@ -1198,7 +1198,7 @@ class MonitorMapView extends BaseMap {
     } = lockData;
 
     const navigationType = NavigationType['M_QRCODE'];
-    const currentPosition = coordinateTransformer({ x, y }, navigationType);
+    const currentPosition = transformXYByParams({ x, y }, navigationType);
     const { width, height } = getLockCellBounds(dimension);
 
     // 渲染新的所有指定类型的锁

@@ -174,7 +174,7 @@ const UploadMapModal = (props) => {
         {navigationType !== NavigationType.M_QRCODE && (
           <Form.Item
             name={'coordinationType'}
-            label={formatMessage({ id: 'app.map.coordinationType' })}
+            label={formatMessage({ id: 'app.map.coordinateSystemType' })}
             rules={[{ required: true }]}
           >
             <Select style={{ width: 200 }}>

@@ -34,7 +34,7 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { coordinateTransformer, reverseCoordinateTransformer } from '@/utils/coordinateTransformer';
+import { reverseCoordinateTransformer, transformXYByParams } from '@/utils/mapTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
@@ -534,6 +534,8 @@ export default {
       const { currentMap, currentLogicArea } = yield select(({ editor }) => editor);
       const { cellMap } = currentMap;
       const { addWay, navigationCellType } = payload;
+      const configNavigationCellType = find(NavigationTypeView, { code: navigationCellType });
+      const coordinateSystemType = configNavigationCellType.coordinateSystemType;
 
       let additionalCells = [];
       if (addWay === 'absolute') {
@@ -552,12 +554,10 @@ export default {
          * 因为地图显示方式的左手坐标系
          * 所以如果点位所对应的地图是右手坐标系, 那么左右偏移没有影响， 但是上下偏移则在计算的时候是相反的
          */
-        const configNavigationCellType = find(NavigationTypeView, { code: navigationCellType });
         if (isNull(configNavigationCellType)) {
           message.error(`无法识别的导航点类型: ${navigationCellType}`);
           return;
         }
-        const coordinateSystemType = configNavigationCellType.coordinationType;
         const { cellIds, count, distance } = payload;
         let dir = payload.dir;
         if ([0, 2].includes(dir) && coordinateSystemType === 'R') {
@@ -592,13 +592,16 @@ export default {
       const result = [];
       const newCellMap = { ...cellMap };
       additionalCells.forEach((cell) => {
-        newCellMap[cell.id] = { ...cell };
-        const transformedXY = coordinateTransformer(
-          cell,
-          navigationCellType,
-          currentMap.transform?.[navigationCellType],
-        );
-        result.push({ ...cell, ...transformedXY });
+        const { x, y } = transformXYByParams({ x: cell.x, y: cell.y }, navigationCellType);
+        if (coordinateSystemType === 'L') {
+          const newCellData = { ...cell, x: x, y: -y, nx: cell.x, ny: cell.y };
+          newCellMap[cell.id] = newCellData;
+          result.push(newCellData);
+        } else {
+          const newCellData = { ...cell, x, y, nx: x, ny: -y };
+          newCellMap[cell.id] = newCellData;
+          result.push(newCellData);
+        }
       });
       currentMap.cellMap = newCellMap;
       return { centerMap, additionalCells: result };
@@ -711,7 +714,7 @@ export default {
         let dir = payload.dir;
         const navigation = find(NavigationTypeView, { code: cell.navigationType });
         if (navigation) {
-          if ([0, 2].includes(dir) && navigation.coordinationType === 'R') {
+          if ([0, 2].includes(dir) && navigation.coordinateSystemType === 'R') {
             dir = dir === 0 ? 2 : 0;
           }
         }
@@ -896,7 +899,7 @@ export default {
     },
 
     // ********************************* 线条操作 ********************************* //
-    generateCostLines({ payload }) {
+    * generateCostLines({ payload }, { select }) {
       const {
         cells,
         params: { dir, value },

@@ -2,13 +2,11 @@ import * as PIXI from 'pixi.js';
 import { LINE_SCALE_MODE, SmoothGraphics } from '@pixi/graphics-smooth';
 import * as XLSX from 'xlsx';
 import { cloneDeep, find, groupBy, orderBy, pickBy, sortBy } from 'lodash';
-import { LineArrow, LogicArea } from '@/entities';
-import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
+import { CoordinateType, LineType, NavigationType } from '@/config/config';
 import { CellSize, MapSelectableSpriteType, VehicleState } from '@/config/consts';
+import { formatMessage, isNull, isStrictNull, offsetByDirection } from '@/utils/util';
+import { CellEntity, LineArrow, LogicArea, RelationEntity } from '@/entities';
 import json from '../../package.json';
-import CellEntity from '@/entities/CellEntity';
-import RelationEntity from '@/entities/RelationEntity';
-import { LineType, NavigationType } from '@/config/config';
 
 // 根据行列数批量生成点位
 export function generateCellMapByRowsAndCols(
@@ -75,13 +73,31 @@ export function getCoordinator(source, angle, r) {
   return { x, y };
 }
 
+export function getKeyByCoordinateType(coordinateType) {
+  if (coordinateType === CoordinateType.LAND) {
+    return ['x', 'y'];
+  }
+  return ['nx', 'ny'];
+}
+
 export function getLineJson(source, target, cost, type) {
+  // 计算基于物理坐标的angle
+  const angle = getAngle(
+    { x: source.coordinate.x, y: source.coordinate.y },
+    { x: target.coordinate.x, y: target.coordinate.y },
+  );
+  // 计算基于导航坐标的nAngle
+  const nAngle = getAngle(
+    { x: source.coordinate.nx, y: source.coordinate.ny },
+    { x: target.coordinate.nx, y: target.coordinate.ny },
+  );
   return {
+    type: type || LineType.StraightPath,
+    cost,
+    nAngle,
+    angle,
     source: source.id,
     target: target.id,
-    type: type || LineType.StraightPath,
-    angle: getAngle(source, target),
-    cost,
     distance: getDistance(source, target),
   };
 }
@@ -277,18 +293,32 @@ export function createRelation(
 
 /**
  * 根据所选的点位，和方向，优先级生成线
- * @param {*} targetPoints cellIds
+ * @param {*} cells cellIds
  * @param {*} dir  方向
  * @param {*} value 优先级
  * @returns
  */
-export function batchGenerateLine(targetPoints, dir, value) {
+export function batchGenerateLine(cells, dir, value) {
   const result = {};
-  if (targetPoints.length > 2) {
-    for (let index = 0; index < targetPoints.length; index++) {
-      const element = targetPoints[index];
-      for (let j = 0; j < targetPoints.length; j++) {
-        const point = targetPoints[j];
+  let source, target;
+  if (cells.length === 2) {
+    if (dir === 90) {
+      [target, source] = orderBy(cells, 'y');
+    } else if (dir === 0) {
+      [source, target] = orderBy(cells, 'x');
+    } else if (dir === 270) {
+      [source, target] = orderBy(cells, 'y');
+    } else {
+      [target, source] = orderBy(cells, 'x');
+    }
+    const key = `${source.id}-${target.id}`;
+    result[key] = getLineJson(source, target, value);
+  }
+  if (cells.length > 2) {
+    for (let index = 0; index < cells.length; index++) {
+      const element = cells[index];
+      for (let j = 0; j < cells.length; j++) {
+        const point = cells[j];
         const key = `${element.id}_${dir}`; // 标记key值
         if (element.id === point.id) {
           continue;
@@ -318,49 +348,10 @@ export function batchGenerateLine(targetPoints, dir, value) {
         }
       }
     }
-    const endResult = {};
     Object.keys(result).map((key) => {
       const { source, target } = result[key];
-      endResult[`${source}-${target}`] = result[key];
+      result[`${source}-${target}`] = result[key];
     });
-    return endResult;
-  }
-  if (targetPoints.length === 2) {
-    if (dir === 90) {
-      if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      }
-    } else if (dir === 0) {
-      if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      } else if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      }
-    } else if (dir === 270) {
-      if (targetPoints[0].y > targetPoints[1].y) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      } else if (targetPoints[0].y < targetPoints[1].y) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      }
-    } else {
-      if (targetPoints[0].x < targetPoints[1].x) {
-        const key = `${targetPoints[1].id}-${targetPoints[0].id}`;
-        result[key] = getLineJson(targetPoints[1], targetPoints[0], value);
-      } else if (targetPoints[0].x > targetPoints[1].x) {
-        const key = `${targetPoints[0].id}-${targetPoints[1].id}`;
-        result[key] = getLineJson(targetPoints[0], targetPoints[1], value);
-      }
-    }
-  } else {
-    return {};
   }
   return result;
 }

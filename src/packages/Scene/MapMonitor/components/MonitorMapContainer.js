@@ -4,7 +4,7 @@ import { connect } from '@/utils/RmsDva';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
 import { renderWorkStationList } from '@/utils/mapUtil';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { transformXYByParams } from '@/utils/mapTransformer';
 import { MonitorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import MonitorMapView from './MonitorMapView';
 import MonitorMask from '@/packages/Scene/MapMonitor/components/MonitorMask';
@@ -108,11 +108,7 @@ const MonitorMapContainer = (props) => {
     const cellsToRender = Object.values(currentMap.cellMap)
       .filter((item) => shownNavigationCellType.includes(item.navigationType))
       .map((item) =>
-        coordinateTransformer(
-          item,
-          item.navigationType,
-          currentMap.transform?.[item.navigationType],
-        ),
+        transformXYByParams(item, item.navigationType, currentMap.transform?.[item.navigationType]),
       );
     mapContext.renderCells(cellsToRender);
   }

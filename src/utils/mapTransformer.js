@@ -12,7 +12,6 @@ import { NavigationTypeView } from '@/config/config';
  * 2. 角度转换
  * 2. 缩放转换
  * 4. 偏移转换
- * 5. 坐标转换(转换为左手坐标系坐标)
  * @tip 页面操作输入的补偿角度和旋转角度，默认顺时针为正，此时需要取反
  * @3rd-util https://github.com/chrvadala/transformation-matrix#readme
  */
@@ -20,38 +19,35 @@ import { NavigationTypeView } from '@/config/config';
 function getDefaultTransformParams(navigationType) {
   return {
     coordinationType: NavigationTypeView.filter((item) => item.code === navigationType)[0]
-      .coordinationType,
+      .coordinateSystemType,
     zoom: 1,
     compensationOffset: { x: 0, y: 0 },
     compensationAngle: 0,
   };
 }
 
-export function coordinateTransformer(coordinate, navigationCellType, transformParams) {
-  const { coordinationType, zoom, compensationOffset, compensationAngle } =
-    transformParams || getDefaultTransformParams(navigationCellType);
-  let xLabel = coordinate.x;
-  let yLabel = coordinate.y;
-
-  // 这里保证任何类型的地图都会被转换成右手坐标系
-  if (coordinationType === 'L') {
-    const matrix = compose(flipX());
-    const { x, y } = applyToPoint(matrix, coordinate);
-    xLabel = x;
-    yLabel = y;
-  }
+export function transformXYByParams(coordinate, navigationCellType, inputTransformParams) {
+  const transformParams = inputTransformParams || getDefaultTransformParams(navigationCellType);
+  const { coordinationType, zoom, compensationOffset, compensationAngle } = transformParams;
 
   const matrixParams = [];
-  matrixParams.push(flipX());
-  matrixParams.push(rotateDEG(-compensationAngle));
-  matrixParams.push(scale(zoom));
-  matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
-  matrixParams.push(flipX()); // 页面显示为左手坐标系
+  if (coordinationType === 'L') {
+    matrixParams.push(flipX());
+    matrixParams.push(rotateDEG(compensationAngle));
+    matrixParams.push(scale(zoom));
+    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
+    matrixParams.push(flipX());
+  } else {
+    matrixParams.push(rotateDEG(-compensationAngle));
+    matrixParams.push(scale(zoom));
+    matrixParams.push(translate(compensationOffset.x, compensationOffset.y));
+  }
+
   const matrix = compose(...matrixParams);
   const matrixResult = applyToPoint(matrix, coordinate);
   const x = Math.round(matrixResult.x);
   const y = Math.round(matrixResult.y);
-  return { ...coordinate, x, y, nx: x, ny: y, xLabel, yLabel };
+  return { x, y };
 }
 
 // coordinateTransformer的逆运算

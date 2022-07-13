@@ -8,10 +8,11 @@ import { EditorMapSizeKey, ZoneMarkerType } from '@/config/consts';
 import EventManager from '@/utils/EventManager';
 import { getRandomString, isNull } from '@/utils/util';
 import { renderWorkStationList } from '@/utils/mapUtil';
-import { coordinateTransformer } from '@/utils/coordinateTransformer';
+import { transformXYByParams } from '@/utils/mapTransformer';
 import EditorFooter from '@/packages/Scene/MapEditor/components/EditorFooter';
 import { FooterHeight, HeaderHeight, LeftCategory, LeftToolBarWidth, RightToolBarWidth } from '../editorEnums';
 import styles from '../editorLayout.module.less';
+import { CoordinateType } from '@/config/config';
 
 const CLAMP_VALUE = 500;
 const EditorMapContainer = (props) => {
@@ -53,7 +54,9 @@ const EditorMapContainer = (props) => {
     mapContext.clearMapStage();
     mapContext.clearEditorMapData();
 
-    if (currentMap) {
+    if (currentMap && shownCellCoordinateType && shownNavigationCellType.length > 0) {
+      // 先记录当前点位使用的坐标类型(物理还是导航)
+      mapContext.cellCoordinateType = shownCellCoordinateType;
       renderMap();
       renderLogicArea();
       renderRouteMap();
@@ -62,50 +65,19 @@ const EditorMapContainer = (props) => {
 
       // 监听地图缩放比例
       viewport.off('zoomed');
-      viewport.on(
-        'zoomed',
-        debounce(function () {
-          dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
-        }, 100),
-      );
+      viewport.on('zoomed', zoomedCallback());
 
       // 添加事件处理地图跑出Screen
       viewport.off('moved');
-      viewport.on(
-        'moved',
-        throttle(function () {
-          const { x, y, width, height } = JSON.parse(
-            window.sessionStorage.getItem(EditorMapSizeKey),
-          );
-          const topLimit = y + (height - CLAMP_VALUE);
-          if (this.top >= topLimit) {
-            this.top = topLimit;
-          }
-
-          const bottomLimit = y + CLAMP_VALUE;
-          if (this.bottom <= bottomLimit) {
-            this.bottom = bottomLimit;
-          }
-
-          const leftLimit = x + (width - CLAMP_VALUE);
-          if (this.left >= leftLimit) {
-            this.left = leftLimit;
-          }
-
-          const rightLimit = x + CLAMP_VALUE;
-          if (this.right <= rightLimit) {
-            this.right = rightLimit;
-          }
-        }, 200),
-      );
+      viewport.on('moved', avoidOffScreen());
     }
   }, [
     currentMap,
     mapContext,
     mapRotation,
     currentLogicArea,
-    shownNavigationCellType,
     shownCellCoordinateType,
+    shownNavigationCellType,
   ]);
 
   useEffect(() => {
@@ -131,26 +103,64 @@ const EditorMapContainer = (props) => {
     [mapContext],
   );
 
-  function avoidOffClient() {
+  function avoidOffScreen() {
+    return throttle(function() {
+      const { x, y, width, height } = JSON.parse(window.sessionStorage.getItem(EditorMapSizeKey));
+      const topLimit = y + (height - CLAMP_VALUE);
+      if (this.top >= topLimit) {
+        this.top = topLimit;
+      }
+
+      const bottomLimit = y + CLAMP_VALUE;
+      if (this.bottom <= bottomLimit) {
+        this.bottom = bottomLimit;
+      }
+
+      const leftLimit = x + (width - CLAMP_VALUE);
+      if (this.left >= leftLimit) {
+        this.left = leftLimit;
+      }
+
+      const rightLimit = x + CLAMP_VALUE;
+      if (this.right <= rightLimit) {
+        this.right = rightLimit;
+      }
+    }, 200);
   }
 
-  /**
-   * 点位定位基于左手坐标系
-   * 点位坐标显示基于右手坐标系
-   */
+  function zoomedCallback() {
+    return debounce(function() {
+      dispatch({ type: 'editor/saveMapRatio', payload: this.scale.x });
+    }, 100);
+  }
+
   function renderMap() {
+    // 无论显示导航坐标还是物理坐标，最终结果都是要转换到左手
     const cellsToRender = Object.values(currentMap.cellMap)
       .filter((item) => shownNavigationCellType.includes(item.navigationType))
-      .map((item) =>
-        coordinateTransformer(
-          item,
-          item.navigationType,
-          currentMap?.transform?.[item.navigationType],
-        ),
-      );
+      .map((item) => {
+        if (shownCellCoordinateType === CoordinateType.NAVI) {
+          const { x, y } = transformXYByParams({ x: item.nx, y: item.ny }, item.navigationType);
+          return {
+            ...item,
+            x,
+            y,
+            coordinateType: shownCellCoordinateType,
+            coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
+          };
+        } else {
+          // 显示物理坐标只需要转成左手就行
+          return {
+            ...item,
+            y: -item.y,
+            coordinateType: shownCellCoordinateType,
+            coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
+          };
+        }
+      });
     mapContext.renderCells(cellsToRender);
 
-    // TODO: 画原点坐标系
+    //TODO: 画原点坐标系
   }
 
   function renderLogicArea() {
@@ -363,25 +373,16 @@ const EditorMapContainer = (props) => {
   );
 };
 export default connect(({ editor, editorView }) => {
-  const {
-    mapRatio,
-    currentMap,
-    currentLogicArea,
-    currentRouteMap,
-    preRouteMap,
-    mapContext,
-    leftActiveCategory,
-    selections,
-  } = editor;
   return {
-    mapRatio,
-    currentMap,
-    currentLogicArea,
-    currentRouteMap,
-    preRouteMap,
-    mapContext,
-    leftActiveCategory,
-    selections,
+    mapRatio: editor.mapRatio,
+    selections: editor.selections,
+    currentMap: editor.currentMap,
+    mapContext: editor.mapContext,
+    preRouteMap: editor.preRouteMap,
+    currentRouteMap: editor.currentRouteMap,
+    currentLogicArea: editor.currentLogicArea,
+    leftActiveCategory: editor.leftActiveCategory,
+
     mapRotation: editorView.mapRotation,
     shortcutToolVisible: editorView.shortcutToolVisible,
     shownCellCoordinateType: editorView.shownCellCoordinateType,

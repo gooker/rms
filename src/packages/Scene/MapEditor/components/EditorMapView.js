@@ -19,6 +19,7 @@ class EditorMapView extends BaseMap {
     };
 
     // 核心业务逻辑参数
+    this.cellCoordinateType = null; // 当前点位使用的坐标类型
     this.fixedEStopMap = new Map(); // 固定紧急避让区
     this.selectedCells = []; // 缓存选中的点位ID, 用于shift选择
   }
@@ -40,7 +41,7 @@ class EditorMapView extends BaseMap {
   /**
    * 自适应(scale=0.15为分界线，低于0.15需要做自适应，大于0.15情况下viewport已经可以看清全貌，可以不用自适应)
    * 基准参数: 看清楚点位情况下的pixel值
-   * 1. 在scale=0.15的情况下, 点圆的世界宽高是21
+   * 1. 在scale=0.15的情况下, 点圆的世界宽高是15
    * 2. 点圆的自身尺寸为140
    *
    *    var viewport = window.EditorPixiUtils.viewport
@@ -54,7 +55,7 @@ class EditorMapView extends BaseMap {
     // 开始自适应的上限值
     let thresholdValue = window.localStorage.getItem(EditorAdaptStorageKey);
     if (isStrictNull(thresholdValue)) {
-      thresholdValue = 20;
+      thresholdValue = 15;
     } else {
       thresholdValue = parseInt(thresholdValue);
     }
@@ -83,6 +84,7 @@ class EditorMapView extends BaseMap {
   };
 
   // ************************ 点位相关 **********************
+  // 该方法不会进行任何转换，所以传进来的数据必须包含已转换好的xy
   renderCells = (payload) => {
     payload.forEach((item) => {
       const cell = new Cell({
@@ -91,6 +93,12 @@ class EditorMapView extends BaseMap {
         select: this.select,
         showCoordinate: this.states.showCoordinate,
       });
+
+      // 检查显示相关的配置
+      const { showCoordinate } = this.states;
+      cell.switchCoordinationShown(showCoordinate);
+
+      // 记录数据
       const xyCellMapKey = `${item.x}_${item.y}`;
       if (!Array.isArray(this.xyCellMap.get(xyCellMapKey))) {
         this.xyCellMap.set(xyCellMapKey, [cell]);

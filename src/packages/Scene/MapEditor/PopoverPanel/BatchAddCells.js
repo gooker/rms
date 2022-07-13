@@ -5,13 +5,15 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { NavigationTypeView } from '@/config/config';
+import { CoordinateType, NavigationType, NavigationTypeView } from '@/config/config';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import styles from '../../popoverPanel.module.less';
+import { transformXYByParams } from '@/utils/mapTransformer';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(9, 15);
+
 const BatchAddCells = (props) => {
-  const { dispatch, mapContext } = props;
+  const { dispatch, mapContext, shownCellCoordinateType } = props;
   const [formRef] = Form.useForm();
 
   const [addWay, setAddWay] = useState('absolute');
@@ -24,10 +26,18 @@ const BatchAddCells = (props) => {
       }).then((result) => {
         if (isPlainObject(result)) {
           const { centerMap, additionalCells } = result;
-          mapContext.updateCells({
-            type: 'add',
-            payload: additionalCells,
+          const payload = additionalCells.map((item) => {
+            // 导航坐标每次都要转化，物理坐标因为生成时候就提前转化好了就不用处理
+            if (CoordinateType.NAVI === shownCellCoordinateType) {
+              const transformXY = transformXYByParams(
+                { x: item.nx, y: item.ny },
+                item.navigationType,
+              );
+              return { ...item, ...transformXY };
+            }
+            return item;
           });
+          mapContext.updateCells({ type: 'add', payload });
           centerMap && mapContext.centerView();
         }
       });
@@ -62,7 +72,7 @@ const BatchAddCells = (props) => {
         >
           <Select style={{ width: 133 }}>
             {NavigationTypeView.map(({ code, name }, index) => (
-              <Select.Option key={index} value={code}>
+              <Select.Option key={index} value={code} disabled={code === NavigationType.SEER_SLAM}>
                 {name}
               </Select.Option>
             ))}
@@ -78,9 +88,11 @@ const BatchAddCells = (props) => {
     </div>
   );
 };
-export default connect(({ editor }) => {
-  const { mapContext } = editor;
-  return { mapContext };
+export default connect(({ editor, editorView }) => {
+  return {
+    mapContext: editor.mapContext,
+    shownCellCoordinateType: editorView.shownCellCoordinateType,
+  };
 })(memo(BatchAddCells));
 
 const BatchAddCellWithAbsolut = (props) => {
