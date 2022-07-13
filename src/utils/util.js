@@ -316,31 +316,30 @@ export function getDay(second) {
  * @param {String} value
  * @returns null
  */
-export function copyToBoard(value) {
-  const input = document.createElement('input');
-  input.setAttribute('readonly', 'readonly');
-  input.setAttribute('value', value);
-  document.body.appendChild(input);
-  input.setSelectionRange(0, 9999);
-  input.select();
-  if (document.execCommand('copy')) {
-    document.execCommand('copy');
-    document.body.removeChild(input);
-    message.info(formatMessage({ id: 'app.copyboard.success' }));
-  } else {
-    document.body.removeChild(input);
-    message.warn(formatMessage({ id: 'app.copyboard.unsupportCopyAPI' }));
-    return false;
-  }
-}
+export function copyToClipBoard(value) {
+  const textArea = document.createElement('textarea');
+  textArea.value = value;
 
-export async function addToClipBoard(value) {
+  textArea.style.top = '0';
+  textArea.style.left = '0';
+  textArea.style.position = 'fixed';
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
   try {
-    await navigator.clipboard.writeText(value);
-    message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    const successful = document.execCommand('copy');
+    if (successful) {
+      message.success(formatMessage({ id: 'app.message.operateSuccess' }));
+    } else {
+      message.error(formatMessage({ id: 'app.message.operateFailed' }));
+    }
   } catch (err) {
-    message.success(formatMessage({ id: 'app.message.operateFailed' }));
+    console.error('Copy Error Stack: ', err);
+    message.error(formatMessage({ id: 'app.message.operateFailed' }));
   }
+  document.body.removeChild(textArea);
 }
 
 /**

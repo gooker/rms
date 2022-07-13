@@ -4,7 +4,7 @@ import { DeleteOutlined, EditOutlined, PlusOutlined, ReloadOutlined, SyncOutline
 import { connect } from '@/utils/RmsDva';
 import { IconFont } from '@/components/IconFont';
 import FormattedMessage from '@/components/FormattedMessage';
-import { addToClipBoard, adjustModalWidth, dealResponse, formatMessage, isNull } from '@/utils/util';
+import { adjustModalWidth, copyToClipBoard, dealResponse, formatMessage, isNull } from '@/utils/util';
 import {
   addUserManager,
   fetchDeleteUser,
@@ -139,7 +139,7 @@ class UserManager extends Component {
             <Button
               type='link'
               onClick={() => {
-                addToClipBoard(text);
+                copyToClipBoard(text);
               }}
             >
               <FormattedMessage id='app.button.copy' />

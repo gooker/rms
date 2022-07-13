@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { Button, Card, Col, Empty, Form, message, Modal, Row } from 'antd';
+import { Button, Card, Col, Empty, Form, Input, message, Modal, Row } from 'antd';
 import { BgColorsOutlined, CopyOutlined, DeleteOutlined, EditOutlined, PlusOutlined } from '@ant-design/icons';
-import { addToClipBoard, adjustModalWidth, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
+import { adjustModalWidth, copyToClipBoard, formatMessage, getRandomString, isStrictNull } from '@/utils/util';
 import { deleteDB, insertDB, selectAllDB, updateDB } from '@/utils/IndexDBUtil';
 import FormattedMessage from '@/components/FormattedMessage';
 import RmsConfirm from '@/components/RmsConfirm';
 import AddEnvironmentModal from './components/AddEnvironmentModal';
 import { GridResponsive } from '@/config/consts';
 import commonStyles from '@/common.module.less';
-import { Input } from 'antd';
 
 export default class EnvironmentManger extends Component {
   formRef = React.createRef();
@@ -59,8 +58,8 @@ export default class EnvironmentManger extends Component {
     });
   };
 
-  copyJson = async (record) => {
-    await addToClipBoard(JSON.stringify(record));
+  copyJson = (record) => {
+    copyToClipBoard(JSON.stringify(record));
   };
 
   pasteEnvironment = async () => {
