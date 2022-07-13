@@ -190,77 +190,79 @@ const ExecuteQuickTaskModal = (props) => {
             }
           });
 
-          if (isNull(operateAngle.value)) {
-            if (loadAngle.config.isRequired || loadAngle.config.visible) {
-              doms.push(
-                <Form.Item
-                  key={getRandomString(6)}
-                  name={['customAction', nodeType, 'loadAngle']}
-                  label={formatMessage({ id: 'resource.load.direction' })}
-                  initialValue={loadAngle.value}
-                  rules={[{ required: preParams.config.isRequired }]}
-                >
-                  <InputNumber addonAfter='°' />
-                </Form.Item>,
-              );
-            }
-          } else {
-            if (loadAngle.config.isRequired || loadAngle.config.visible) {
-              doms.push(
-                <Form.Item
-                  key={getRandomString(6)}
-                  name={['customAction', nodeType, 'loadAngle']}
-                  initialValue={loadAngle.value}
-                  label={formatMessage({ id: 'customTask.form.podSide' })}
-                  rules={[{ required: loadAngle.config.isRequired }]}
-                >
-                  <Select style={{ width: 207 }}>
-                    <Select.Option value={0}>
-                      <FormattedMessage id={'app.pod.side.A'} />
-                    </Select.Option>
-                    <Select.Option value={90}>
-                      <FormattedMessage id={'app.pod.side.B'} />
-                    </Select.Option>
-                    <Select.Option value={180}>
-                      <FormattedMessage id={'app.pod.side.C'} />
-                    </Select.Option>
-                    <Select.Option value={270}>
-                      <FormattedMessage id={'app.pod.side.D'} />
-                    </Select.Option>
-                  </Select>
-                </Form.Item>,
-              );
-            }
+          if (!isNull(loadAngle)) {
+            if (isNull(operateAngle)) {
+              if (loadAngle.config.isRequired || loadAngle.config.visible) {
+                doms.push(
+                  <Form.Item
+                    key={getRandomString(6)}
+                    name={['customAction', nodeType, 'loadAngle']}
+                    label={formatMessage({ id: 'resource.load.direction' })}
+                    initialValue={loadAngle.value}
+                    rules={[{ required: preParams.config.isRequired }]}
+                  >
+                    <InputNumber addonAfter='°' />
+                  </Form.Item>,
+                );
+              }
+            } else {
+              if (loadAngle.config.isRequired || loadAngle.config.visible) {
+                doms.push(
+                  <Form.Item
+                    key={getRandomString(6)}
+                    name={['customAction', nodeType, 'loadAngle']}
+                    initialValue={loadAngle.value}
+                    label={formatMessage({ id: 'customTask.form.podSide' })}
+                    rules={[{ required: loadAngle.config.isRequired }]}
+                  >
+                    <Select style={{ width: 207 }}>
+                      <Select.Option value={0}>
+                        <FormattedMessage id={'app.pod.side.A'} />
+                      </Select.Option>
+                      <Select.Option value={90}>
+                        <FormattedMessage id={'app.pod.side.B'} />
+                      </Select.Option>
+                      <Select.Option value={180}>
+                        <FormattedMessage id={'app.pod.side.C'} />
+                      </Select.Option>
+                      <Select.Option value={270}>
+                        <FormattedMessage id={'app.pod.side.D'} />
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>,
+                );
+              }
 
-            if (operateAngle.config.isRequired || operateAngle.config.visible) {
-              doms.push(
-                <Form.Item
-                  key={getRandomString(6)}
-                  name={['customAction', nodeType, 'operateAngle']}
-                  label={formatMessage({ id: 'customTask.form.operatorDirection' })}
-                  initialValue={operateAngle.value}
-                  rules={[{ required: operateAngle.config.isRequired }]}
-                >
-                  <Select style={{ width: 207 }}>
-                    <Select.Option value={90}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.topSide'} />
-                    </Select.Option>
-                    <Select.Option value={0}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.rightSide'} />
-                    </Select.Option>
-                    <Select.Option value={270}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.bottomSide'} />
-                    </Select.Option>
-                    <Select.Option value={180}>
-                      <FormattedMessage id={'app.common.targetCell'} />
-                      <FormattedMessage id={'app.direction.leftSide'} />
-                    </Select.Option>
-                  </Select>
-                </Form.Item>,
-              );
+              if (operateAngle.config.isRequired || operateAngle.config.visible) {
+                doms.push(
+                  <Form.Item
+                    key={getRandomString(6)}
+                    name={['customAction', nodeType, 'operateAngle']}
+                    label={formatMessage({ id: 'customTask.form.operatorDirection' })}
+                    initialValue={operateAngle.value}
+                    rules={[{ required: operateAngle.config.isRequired }]}
+                  >
+                    <Select style={{ width: 207 }}>
+                      <Select.Option value={90}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.topSide'} />
+                      </Select.Option>
+                      <Select.Option value={0}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.rightSide'} />
+                      </Select.Option>
+                      <Select.Option value={270}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.bottomSide'} />
+                      </Select.Option>
+                      <Select.Option value={180}>
+                        <FormattedMessage id={'app.common.targetCell'} />
+                        <FormattedMessage id={'app.direction.leftSide'} />
+                      </Select.Option>
+                    </Select>
+                  </Form.Item>,
+                );
+              }
             }
           }
 

@@ -107,6 +107,7 @@ export default {
   //// 资源锁 ////
   'customTask.lock.resourceLock': '资源锁',
   'customTask.lock.resourceType': '资源类型',
+  'customTask.lock.LOAD': '载具',
   'customTask.lock.STORE': '存储点',
   'customTask.lock.TARGET': '目标',
   'customTask.lock.LOCK': '锁定时机',
