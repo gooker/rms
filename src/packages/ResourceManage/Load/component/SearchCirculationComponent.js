@@ -68,6 +68,14 @@ const SearchCirculationComponent = (props) => {
               <RangePicker showTime style={{ width: '100%' }} />
             </Form.Item>
           </Col>
+          <Col span={6}>
+            <Form.Item
+              name={'createdByUser'}
+              label={<FormattedMessage id="resource.load.triggeror" />}
+            >
+              <Input allowClear />
+            </Form.Item>
+          </Col>
           <Col>
             <Form.Item>
               <Button type="primary" onClick={search}>

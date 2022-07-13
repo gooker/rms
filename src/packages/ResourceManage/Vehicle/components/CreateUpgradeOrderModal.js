@@ -5,23 +5,9 @@ import { updateVehicleFirmWareFile } from '@/services/resourceService';
 
 const { formItemLayout } = getFormLayout(4, 18);
 const CreateUpgradeOrderModal = (props) => {
-  const { visible, onCancel, upgradeOrder, selectedRows, hardWareData, onRefresh } = props;
+  const { visible, onCancel, upgradeRows, hardWareData, onRefresh } = props;
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-
-  // 取出 正在下载固件/正在升级的/下载成功的 小车，不传
-  const vehicleInProgress = [];
-  upgradeOrder?.forEach(({ vehicleId, vehicleType, vehicleFileTaskType, fileStatus }) => {
-    if (
-      (['1', '0'].includes(fileStatus) && vehicleFileTaskType === 'DOWNLOAD') ||
-      (['1'].includes(fileStatus) && vehicleFileTaskType === 'UPGRADE')
-    ) {
-      vehicleInProgress.push(`${vehicleId}@${vehicleType}`);
-    }
-  });
-  const availableVehicle = selectedRows.filter(
-    ({ vehicleId, vehicleType }) => !vehicleInProgress.includes(`${vehicleId}@${vehicleType}`),
-  );
 
   useEffect(() => {
     if (!visible) {
@@ -34,7 +20,7 @@ const CreateUpgradeOrderModal = (props) => {
       setLoading(true);
       const { fileName } = values;
       const params = [];
-      availableVehicle?.map(({ vehicleId, adapterType }) => {
+      upgradeRows?.map(({ vehicleId, adapterType }) => {
         params.push({ vehicleId, adapterType, fileName });
       });
 

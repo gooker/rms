@@ -482,7 +482,7 @@ export async function deleteResourceGroupMembers(param) {
 
 // 删除分组
 export async function deleteResourceGroup(param) {
-  return request(`/${NameSpace.Platform}/resource/resourceGroupCodes`, {
+  return request(`/${NameSpace.Platform}/resource/batchDeleteResourceGroup`, {
     method: 'POST',
     data: param,
   });

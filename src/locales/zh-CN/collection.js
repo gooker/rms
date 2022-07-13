@@ -32,19 +32,18 @@ export default {
 
   'firmdware.progress': '进度',
   'firmdware.fileName': '固件',
-  'firmdware.file.version': '固件版本号',
   'firmdware.managerment': '固件管理',
   'firmdware.upload': '上传固件',
 
   'firmdware.button.mainten': '维护',
   'firmdware.button.cancelMainten': '取消维护',
   'firmdware.upgradeTask.add': '升级',
-  'firmdware.inDownloading': '下载中',
-  'firmdware.downloadFail': '下载失败',
+  'firmdware.inDownloading': '升级中',
+  'firmdware.downloadFail': '升级失败',
   'firmdware.download.restartEffective': '重启生效',
-  'firmdware.upgradeFail': '升级失败',
+  'firmdware.upgradeFail': '重启失败',
   'firmdware.restarting': '重启中',
-  'firmdware.upgrade.success': '升级成功',
+  'firmdware.upgrade.success': '重启成功',
   'firmdware.upgrade.history': '升级历史',
 
   // 故障相关

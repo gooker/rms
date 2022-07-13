@@ -148,7 +148,7 @@ const LogDownLoadComponent = (props) => {
 
     const fileListRes = await fetchVehicleLog(vehicleType, {
       ...requestParam,
-      fileTaskTypes: 'DOWNLOAD',
+      fileTaskTypes: 'UPLOAD',
     });
     if (!dealResponse(fileListRes)) {
       const { list, page } = fileListRes;

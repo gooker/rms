@@ -2,7 +2,13 @@ import React, { memo, useState, useEffect } from 'react';
 import { Tooltip } from 'antd';
 import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
-import { convertToUserTimezone, dealResponse, formatMessage, isNull } from '@/utils/util';
+import {
+  convertToUserTimezone,
+  dealResponse,
+  formatMessage,
+  isNull,
+  isStrictNull,
+} from '@/utils/util';
 import { fetchLoadCirculationRecord } from '@/services/resourceService';
 import TablePageWrapper from '@/components/TablePageWrapper';
 import TableWithPages from '@/components/TableWithPages';
@@ -76,15 +82,17 @@ const LoadCirculation = (props) => {
         }
       },
     },
+
     {
-      title: <FormattedMessage id="vehicle.id" />,
-      dataIndex: 'vehicleId',
-      align: 'center',
-    },
-    {
-      title: <FormattedMessage id="resource.load.id" />,
+      title: <FormattedMessage id="resource.load" />,
       dataIndex: 'loadId',
       align: 'center',
+      render: (text, record) => {
+        if (isStrictNull(record.loadType)) {
+          return text;
+        }
+        return `${record.loadType}: ${text}`;
+      },
     },
     {
       title: <FormattedMessage id="resource.load.source.storage" />,
@@ -97,7 +105,7 @@ const LoadCirculation = (props) => {
       align: 'center',
     },
     {
-      title: <FormattedMessage id="app.common.creationTime" />,
+      title: <FormattedMessage id="resource.load.changeTime" />,
       dataIndex: 'createTime',
       align: 'center',
       render: (text) => {
@@ -105,7 +113,7 @@ const LoadCirculation = (props) => {
       },
     },
     {
-      title: <FormattedMessage id="app.common.creator" />,
+      title: <FormattedMessage id="resource.load.triggeror" />,
       dataIndex: 'createdByUser',
       align: 'center',
     },

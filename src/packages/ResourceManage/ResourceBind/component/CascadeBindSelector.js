@@ -101,12 +101,10 @@ const CascadeBindSelector = (props) => {
         const { bindData } = find(needBindResource, { resourceType: value });
         if (Array.isArray(bindData)) {
           // 统一一下数据格式: code, name
-          if (
-            [BindableResourceType.LOAD_TYPE, BindableResourceType.CHARGE_STRATEGY].includes(value)
-          ) {
+          if ([BindableResourceType.LOAD_TYPE].includes(value)) {
             return bindData;
           }
-          if ([BindableResourceType.LOAD].includes(value)) {
+          if ([BindableResourceType.LOAD, BindableResourceType.CHARGE_STRATEGY].includes(value)) {
             return bindData.map(({ groupName, ...rest }) => ({ ...rest, name: groupName }));
           }
         }

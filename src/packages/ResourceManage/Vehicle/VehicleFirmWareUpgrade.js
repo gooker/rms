@@ -36,13 +36,13 @@ const VehicleUpgrade = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [allAdaptors, setAllAdaptors] = useState({});
   const [dataSource, setDatasource] = useState([]);
-  const [upgradeOrder, setUpgradeOrder] = useState([]); // 升级或下载的任务
   const [allFireWareFiles, setAllFireWareFiles] = useState([]); // 固件
 
   const [fileManageVisible, setFileManageVisible] = useState(false);
   const [creationVisible, setCreationVisible] = useState(false);
 
   const [historyVisible, setHistoryVisible] = useState(false);
+  const [upgradeRows, setUpgradeRows] = useState([]); // 升级的
 
   const columns = [
     {
@@ -54,6 +54,18 @@ const VehicleUpgrade = () => {
       title: <FormattedMessage id="vehicle.id" />,
       dataIndex: 'vehicleId',
       align: 'center',
+    },
+    {
+      title: <FormattedMessage id="app.vehicleType" />,
+      dataIndex: 'vehicleType',
+      align: 'center',
+      render: (text, record) => {
+        if (text === 3) {
+          return <FormattedMessage id="app.vehicle.threeGenerationOfTianma" />;
+        } else {
+          return <span>{text}</span>;
+        }
+      },
     },
     {
       title: <FormattedMessage id="app.vehicleState" />,
@@ -82,18 +94,7 @@ const VehicleUpgrade = () => {
         );
       },
     },
-    {
-      title: <FormattedMessage id="app.vehicleType" />,
-      dataIndex: 'vehicleType',
-      align: 'center',
-      render: (text, record) => {
-        if (text === 3) {
-          return <FormattedMessage id="app.vehicle.threeGenerationOfTianma" />;
-        } else {
-          return <span>{text}</span>;
-        }
-      },
-    },
+
     {
       title: <FormattedMessage id="firmdware.progress" />,
       dataIndex: 'fileStatus',
@@ -111,7 +112,7 @@ const VehicleUpgrade = () => {
                   width={35}
                 />
                 <span style={{ color: 'orange', ...StatusLabelStyle }}>
-                  {vehicleFileTaskType === 'DOWNLOAD' ? (
+                  {vehicleFileTaskType === 'UPLOAD' ? (
                     <FormattedMessage id={'firmdware.inDownloading'} />
                   ) : (
                     <FormattedMessage id={'firmdware.restarting'} />
@@ -122,7 +123,7 @@ const VehicleUpgrade = () => {
           } else if (nexText === 2) {
             return (
               <Tag color="error">
-                {vehicleFileTaskType === 'DOWNLOAD' ? (
+                {vehicleFileTaskType === 'UPLOAD' ? (
                   <FormattedMessage id={'firmdware.downloadFail'} />
                 ) : (
                   <FormattedMessage id={'firmdware.upgradeFail'} />
@@ -130,19 +131,23 @@ const VehicleUpgrade = () => {
               </Tag>
             );
           } else if (nexText === 0) {
-            if (record.vehicleFileTaskType === 'DOWNLOAD') {
-              <Typography.Link
-                onClick={() => {
-                  upgrade(record);
-                }}
-              >
-                <FormattedMessage id="firmdware.download.restartEffective" />
-              </Typography.Link>;
+            if (record.vehicleFileTaskType === 'UPLOAD') {
+              return (
+                <Typography.Link
+                  onClick={() => {
+                    upgrade(record);
+                  }}
+                >
+                  <FormattedMessage id="firmdware.download.restartEffective" />
+                </Typography.Link>
+              );
             }
             if (record.vehicleFileTaskType === 'UPGRADE') {
-              <Tag color="#87d068">
-                <FormattedMessage id="firmdware.upgrade.success" />
-              </Tag>;
+              return (
+                <Tag color="#87d068">
+                  <FormattedMessage id="firmdware.upgrade.success" />
+                </Tag>
+              );
             }
           }
         }
@@ -174,7 +179,7 @@ const VehicleUpgrade = () => {
             (item) =>
               item.vehicleId === vehicleId &&
               vehicleType === item.vehicleType &&
-              ['DOWNLOAD', 'UPGRADE'].includes(item.vehicleFileTaskType),
+              ['UPLOAD', 'UPGRADE'].includes(item.vehicleFileTaskType),
           );
           newData.push({
             vehicleId,
@@ -182,7 +187,7 @@ const VehicleUpgrade = () => {
             ...vehicle,
             ...vehicleInfo,
             ...vehicleWorkStatusDTO,
-            ...currentTask,
+            ...currentTask[0],
           });
         }
       });
@@ -192,11 +197,11 @@ const VehicleUpgrade = () => {
     }
     if (!dealResponse(allFireWaresFile)) {
       setAllFireWareFiles(allFireWaresFile);
-      setUpgradeOrder([taskProgressOrder]);
     }
     setLoading(false);
     setSelectedRows([]);
     setSelectedRowKeys([]);
+    setUpgradeRows([]);
   }
 
   function filterData(data, searchParams) {
@@ -234,8 +239,8 @@ const VehicleUpgrade = () => {
 
   // 开始升级
   async function upgrade(record) {
-    const { vehicleId, adapterType } = record;
-    const response = await upgradeVehicle({ vehicleId, adapterType });
+    const { vehicleId, adapterType, fileName } = record;
+    const response = await upgradeVehicle({ vehicleId, adapterType, fileName });
     if (!dealResponse(response, 1)) {
       init();
     }
@@ -267,6 +272,10 @@ const VehicleUpgrade = () => {
   function onSelectChange(selectedRowKeys, selectedRows) {
     setSelectedRows(selectedRows);
     setSelectedRowKeys(selectedRowKeys);
+
+    // 取出 正在下载固件/正在升级的/的 小车，不传
+    const availableVehicle = selectedRows.filter(({ fileStatus }) => fileStatus !== '1');
+    setUpgradeRows(availableVehicle);
   }
 
   return (
@@ -292,7 +301,7 @@ const VehicleUpgrade = () => {
             </Button>
             <Button
               type={'primary'}
-              disabled={selectedRowKeys.length === 0 || allFireWareFiles?.length === 0}
+              disabled={upgradeRows.length === 0 || allFireWareFiles?.length === 0}
               onClick={() => {
                 setCreationVisible(true);
               }}
@@ -361,8 +370,7 @@ const VehicleUpgrade = () => {
         onCancel={() => {
           setCreationVisible(false);
         }}
-        selectedRows={selectedRows}
-        upgradeOrder={upgradeOrder}
+        upgradeRows={upgradeRows}
         onRefresh={init}
       />
 
