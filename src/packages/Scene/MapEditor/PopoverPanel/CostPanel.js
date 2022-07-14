@@ -8,7 +8,7 @@ import CostConfigure from '../components/CostConfigure';
 import CreateDefaultRoute from '../components/CreateDefaultRoute';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import FormattedMessage from '@/components/FormattedMessage';
-import { MapSelectableSpriteType } from '@/config/consts';
+import { CostColor, MapSelectableSpriteType } from '@/config/consts';
 import styles from '../../popoverPanel.module.less';
 import commonStyles from '@/common.module.less';
 
@@ -64,34 +64,31 @@ const CostPanel = (props) => {
         <div className={styles.panelBlock}>
           {/* 优先级图例 */}
           <Row gutter={[10, 10]}>
+            {/* 最优先级 */}
             <Col span={12}>
-              {/* 低优先级 */}
-              <ColorExample color="#e64a19">
-                <FormattedMessage id={'editor.cost.lowPriority'} />
-              </ColorExample>
-            </Col>
-            <Col span={12}>
-              {/* 一般优先级 */}
-              <ColorExample color="#ffca28">
-                <FormattedMessage id={'editor.cost.normalPriority'} />
-              </ColorExample>
-            </Col>
-            <Col span={12}>
-              {/* 高优先级 */}
-              <ColorExample color="#1976d2">
-                <FormattedMessage id={'editor.cost.highPriority'} />
-              </ColorExample>
-            </Col>
-            <Col span={12}>
-              {/* 最优先级 */}
-              <ColorExample color="#388e3c">
+              <ColorExample color={CostColor['10'].replace('0x', '#')}>
                 <FormattedMessage id={'editor.cost.topPriority'} />
               </ColorExample>
             </Col>
+
+            {/* 高优先级 */}
             <Col span={12}>
-              {/* 不可走 */}
-              <ColorExample color="#aaaeb1a1">
-                <FormattedMessage id={'editor.cost.noPass'} />
+              <ColorExample color={CostColor['20'].replace('0x', '#')}>
+                <FormattedMessage id={'editor.cost.highPriority'} />
+              </ColorExample>
+            </Col>
+
+            {/* 一般优先级 */}
+            <Col span={12}>
+              <ColorExample color={CostColor['100'].replace('0x', '#')}>
+                <FormattedMessage id={'editor.cost.normalPriority'} />
+              </ColorExample>
+            </Col>
+
+            {/* 低优先级 */}
+            <Col span={12}>
+              <ColorExample color={CostColor['1000'].replace('0x', '#')}>
+                <FormattedMessage id={'editor.cost.lowPriority'} />
               </ColorExample>
             </Col>
           </Row>

@@ -5,10 +5,10 @@ import { connect } from '@/utils/RmsDva';
 import FormattedMessage from '@/components/FormattedMessage';
 import { formatMessage, getFormLayout } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { CoordinateType, NavigationType, NavigationTypeView } from '@/config/config';
+import { NavigationType, NavigationTypeView } from '@/config/config';
 import DirectionSelector from '@/packages/Scene/components/DirectionSelector';
 import styles from '../../popoverPanel.module.less';
-import { transformXYByParams } from '@/utils/mapTransformer';
+import { getKeyByCoordinateType } from '@/utils/mapUtil';
 
 const { formItemLayout, formItemLayoutNoLabel } = getFormLayout(9, 15);
 
@@ -27,15 +27,14 @@ const BatchAddCells = (props) => {
         if (isPlainObject(result)) {
           const { centerMap, additionalCells } = result;
           const payload = additionalCells.map((item) => {
-            // 导航坐标每次都要转化，物理坐标因为生成时候就提前转化好了就不用处理
-            if (CoordinateType.NAVI === shownCellCoordinateType) {
-              const transformXY = transformXYByParams(
-                { x: item.nx, y: item.ny },
-                item.navigationType,
-              );
-              return { ...item, ...transformXY };
-            }
-            return item;
+            const [xKey, yKey] = getKeyByCoordinateType(shownCellCoordinateType);
+            return {
+              ...item,
+              x: item[xKey],
+              y: item[yKey],
+              coordinateType: shownCellCoordinateType,
+              coordinate: { x: item.x, y: item.y, nx: item.nx, ny: item.ny },
+            };
           });
           mapContext.updateCells({ type: 'add', payload });
           centerMap && mapContext.centerView();

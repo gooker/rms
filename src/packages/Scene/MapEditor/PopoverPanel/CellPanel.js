@@ -18,7 +18,7 @@ import FormattedMessage from '@/components/FormattedMessage';
 import StackCellConfirmModal from '../components/StackCellConfirmModal';
 import { connect } from '@/utils/RmsDva';
 import { formatMessage, isNull } from '@/utils/util';
-import { getSelectionNaviCells, getSelectionNaviCellTypes } from '@/utils/mapUtil';
+import { getCellsWithPosition, getNavigationTypes } from '@/utils/mapUtil';
 import commonStyles from '@/common.module.less';
 import styles from '../../popoverPanel.module.less';
 
@@ -53,7 +53,7 @@ const CellPanel = (props) => {
    * 2. 如果只要一个导航点，那么导航点和管控点一并删除
    */
   function deleteNavigations() {
-    const selectionsTypes = getSelectionNaviCellTypes();
+    const selectionsTypes = getNavigationTypes();
     if (selectionsTypes.length === 0) return;
     if (selectionsTypes.length === 1) {
       executeDeleteNavi(selectionsTypes);
@@ -64,7 +64,7 @@ const CellPanel = (props) => {
   }
 
   function executeDeleteNavi(types) {
-    const naviCells = getSelectionNaviCells();
+    const naviCells = getCellsWithPosition();
     dispatch({
       type: 'editor/deleteNavigations',
       payload: { types, naviCells },

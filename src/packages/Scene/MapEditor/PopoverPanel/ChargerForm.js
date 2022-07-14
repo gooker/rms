@@ -1,11 +1,11 @@
 import React, { memo } from 'react';
 import { Button, Form, Input, InputNumber, Select } from 'antd';
 import { DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { debounce } from 'lodash';
 import { connect } from '@/utils/RmsDva';
 import { getCurrentLogicAreaData } from '@/utils/mapUtil';
-import { formatMessage, getFormLayout, getRandomString, isEmptyPlainObject, isNull, isStrictNull } from '@/utils/util';
+import { formatMessage, getFormLayout, getRandomString } from '@/utils/util';
 import { MapSelectableSpriteType } from '@/config/consts';
-import FormattedMessage from '@/components/FormattedMessage';
 import AngleSelector from '@/components/AngleSelector';
 import ButtonInput from '@/components/ButtonInput';
 import styles from '../../popoverPanel.module.less';
@@ -14,47 +14,33 @@ const { formItemLayout } = getFormLayout(4, 20);
 const { formItemLayout: formItemLayout2 } = getFormLayout(6, 18);
 
 const ChargerForm = (props) => {
-  const { flag, dispatch, charger, mapContext, selectCellIds, allChargers, allAdaptors } = props;
+  const { dispatch, flag, charger, mapContext, selectCellIds, allChargers, allAdaptors } = props;
   const [formRef] = Form.useForm();
 
-  function onValueChange(changedValues, allValues) {
-    if (
-      !checkNameDuplicate(allValues.name) &&
-      !isNull(allValues.angle) &&
-      validateChargingCells(allValues.chargingCells)
-    ) {
-      dispatch({
-        type: 'editor/updateFunction',
-        payload: { scope: 'logic', type: 'chargerList', data: allValues },
-      }).then((result) => {
-        const currentLogicAreaData = getCurrentLogicAreaData();
-        if (result.type === 'add') {
-          mapContext.renderChargers([result.payload], null);
-        }
-        if (result.type === 'update') {
-          const { pre, current } = result;
-          mapContext.removeCharger(pre, currentLogicAreaData.id);
-          mapContext.renderChargers([current]);
-        }
-        mapContext.refresh();
+  function onValueChange() {
+    formRef
+      .validateFields()
+      .then((values) => {
+        console.log(values);
+        dispatch({
+          type: 'editor/updateFunction',
+          payload: { scope: 'logic', type: 'chargerList', data: values },
+        }).then((result) => {
+          const currentLogicAreaData = getCurrentLogicAreaData();
+          if (result.type === 'add') {
+            mapContext.renderChargers([result.payload], null);
+          }
+          if (result.type === 'update') {
+            const { pre, current } = result;
+            mapContext.removeCharger(pre, currentLogicAreaData.id);
+            mapContext.renderChargers([current]);
+          }
+          mapContext.refresh();
+        });
+      })
+      .catch((err) => {
+        //
       });
-    }
-  }
-
-  function validateChargingCells(chargingCells) {
-    if (!Array.isArray(chargingCells)) return false;
-    if (chargingCells.includes(undefined)) return false;
-
-    for (const chargingCell of chargingCells) {
-      if (isEmptyPlainObject(chargingCell)) return;
-      if (isStrictNull(chargingCell.cellId)) return;
-      if (!Array.isArray(chargingCell.supportTypes) || chargingCell.supportTypes.length === 0) {
-        return;
-      }
-    }
-
-    // TODO: 校验多个充电点与图标必须在一条直线
-    return true;
   }
 
   function checkNameDuplicate(name) {
@@ -100,7 +86,7 @@ const ChargerForm = (props) => {
   return (
     <Form
       form={formRef}
-      onValuesChange={onValueChange}
+      onValuesChange={debounce(onValueChange, 100)}
       style={{ width: '100%' }}
       {...formItemLayout}
     >
@@ -109,8 +95,10 @@ const ChargerForm = (props) => {
       <Form.Item
         hidden
         name={'code'}
-        initialValue={charger?.code || `charger_${getRandomString(6)}`}
+        initialValue={charger?.code || `charger_${getRandomString(10)}`}
       />
+
+      {/* ----------------------------------------------------------------------------------------- */}
 
       {/* 名称 */}
       <Form.Item
@@ -137,7 +125,7 @@ const ChargerForm = (props) => {
       <Form.Item
         name={'angle'}
         initialValue={charger?.angle}
-        label={<FormattedMessage id="app.common.angle" />}
+        label={formatMessage({ id: 'app.common.angle' })}
         rules={[{ required: true }]}
       >
         <AngleSelector
@@ -181,6 +169,7 @@ const ChargerForm = (props) => {
                     {...formItemLayout2}
                     name={[name, 'cellId']}
                     label={formatMessage({ id: 'editor.cellType.charging' })}
+                    rules={[{ required: true }]}
                   >
                     <ButtonInput
                       type={'number'}
@@ -195,6 +184,7 @@ const ChargerForm = (props) => {
                     {...formItemLayout2}
                     name={[name, 'supportTypes']}
                     label={formatMessage({ id: 'app.vehicleType' })}
+                    rules={[{ required: true }]}
                   >
                     <Select mode="multiple">{renderSupportTypesOptions()}</Select>
                   </Form.Item>

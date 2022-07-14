@@ -37,7 +37,7 @@ const AddNavigation = (props) => {
         >
           <Select style={{ width: 133 }}>
             {NavigationTypeView.map(({ code, name }, index) => (
-              <Select.Option key={index} value={code}>
+              <Select.Option key={index} value={code} disabled={code !== NavigationType.M_QRCODE}>
                 {name}
               </Select.Option>
             ))}

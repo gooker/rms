@@ -34,7 +34,7 @@ import {
 import { activeMap } from '@/services/commonService';
 import { LeftCategory, RightCategory } from '@/packages/Scene/MapEditor/editorEnums';
 import { MapSelectableSpriteType } from '@/config/consts';
-import { reverseCoordinateTransformer, transformXYByParams } from '@/utils/mapTransformer';
+import { reverseCoordinateTransformer } from '@/utils/mapTransformer';
 import { LineType, NavigationType, NavigationTypeView, ProgramingItemType } from '@/config/config';
 
 const { CELL, ROUTE } = MapSelectableSpriteType;
@@ -535,7 +535,6 @@ export default {
       const { cellMap } = currentMap;
       const { addWay, navigationCellType } = payload;
       const configNavigationCellType = find(NavigationTypeView, { code: navigationCellType });
-      const coordinateSystemType = configNavigationCellType.coordinateSystemType;
 
       let additionalCells = [];
       if (addWay === 'absolute') {
@@ -558,11 +557,7 @@ export default {
           message.error(`无法识别的导航点类型: ${navigationCellType}`);
           return;
         }
-        const { cellIds, count, distance } = payload;
-        let dir = payload.dir;
-        if ([0, 2].includes(dir) && coordinateSystemType === 'R') {
-          dir = dir === 0 ? 2 : 0;
-        }
+        const { cellIds, count, distance, dir } = payload;
         const selectedCellsData = cellIds.map((cellId) => cellMap[cellId]);
         selectedCellsData.forEach((cellData) => {
           for (let index = 1; index < count + 1; index++) {
@@ -592,16 +587,10 @@ export default {
       const result = [];
       const newCellMap = { ...cellMap };
       additionalCells.forEach((cell) => {
-        const { x, y } = transformXYByParams({ x: cell.x, y: cell.y }, navigationCellType);
-        if (coordinateSystemType === 'L') {
-          const newCellData = { ...cell, x: x, y: -y, nx: cell.x, ny: cell.y };
-          newCellMap[cell.id] = newCellData;
-          result.push(newCellData);
-        } else {
-          const newCellData = { ...cell, x, y, nx: x, ny: -y };
-          newCellMap[cell.id] = newCellData;
-          result.push(newCellData);
-        }
+        const { x, y } = cell;
+        const newCellData = { ...cell, x: x, y: -y, nx: x, ny: y };
+        newCellMap[cell.id] = newCellData;
+        result.push(newCellData);
       });
       currentMap.cellMap = newCellMap;
       return { centerMap, additionalCells: result };
@@ -696,31 +685,26 @@ export default {
       return [key];
     },
 
-    // 移动点位
-    *moveCells({ payload }, { select, put }) {
-      const { cellIds, distance } = payload;
-      const { currentMap } = yield select((state) => state.editor);
+    /**
+     * 通常情况下移动点位的功能只会应用到牧星点(点位融合不会调用该方法)
+     * 第一版本只做牧星二维码，即：左手地图、没有任何旋转、缩放等转换系数
+     */
+    * moveCells({ payload }, { select }) {
+      const { cellIds, angle, distance } = payload;
+      const { currentMap } = yield select(({ editor }) => editor);
+      const newCellMap = { ...currentMap.cellMap };
 
       const result = {
         cell: {},
         line: { add: [], delete: [] },
       };
 
-      // 处理点位位置
-      const newCellMap = { ...currentMap.cellMap };
       cellIds.map((cellId) => {
         const cell = newCellMap[cellId];
-        // 判断点位类型
-        let dir = payload.dir;
-        const navigation = find(NavigationTypeView, { code: cell.navigationType });
-        if (navigation) {
-          if ([0, 2].includes(dir) && navigation.coordinateSystemType === 'R') {
-            dir = dir === 0 ? 2 : 0;
-          }
-        }
-        const { x, y } = moveCell(cell, distance, dir);
-        result.cell[cellId] = { ...cell, x, y, nx: x, ny: y };
-        newCellMap[cellId] = { ...cell, x, y };
+        const { x, y } = moveCell({ x: cell.nx, y: cell.ny }, angle, distance);
+        const newCellData = { ...cell, x, y: -y, nx: x, ny: y };
+        result.cell[cellId] = newCellData;
+        newCellMap[cellId] = newCellData;
       });
       currentMap.cellMap = newCellMap;
 
@@ -899,7 +883,7 @@ export default {
     },
 
     // ********************************* 线条操作 ********************************* //
-    * generateCostLines({ payload }, { select }) {
+    generateCostLines({ payload }) {
       const {
         cells,
         params: { dir, value },
@@ -1282,9 +1266,7 @@ export default {
         });
       }
 
-      const newState = {
-        selections: _selections,
-      };
+      const newState = { selections: _selections };
       if (_selections.length === 1) {
         if (categoryPanel === null) {
           newState.categoryPanel = RightCategory.Prop;

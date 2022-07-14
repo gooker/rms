@@ -26,7 +26,7 @@ const Property = (props) => {
       const propCategory = lockedProps || selection.type;
       switch (propCategory) {
         case MapSelectableSpriteType.CELL:
-          return <CellProperty data={selection} />;
+          return <CellProperty />;
         case MapSelectableSpriteType.ROUTE:
           return <CostProperty data={selection} />;
         case MapSelectableSpriteType.WORKSTATION: {

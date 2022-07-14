@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { Select, Button, Divider } from 'antd';
+import { Button, Divider, Select } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import { connect } from '@/utils/RmsDva';
 import { getRandomString } from '@/utils/util';
@@ -22,7 +22,7 @@ const ElevatorForm = (props) => {
   return (
     <div>
       <LabelComponent
-        style={{ marginBottom: 30 }}
+        bodyStyle={{ marginBottom: 30 }}
         label={<FormattedMessage id={'editor.elevator.location'} />}
       >
         <Select

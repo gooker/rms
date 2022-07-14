@@ -3,7 +3,7 @@ import { reverse } from 'lodash';
 import BaseMap from '@/components/BaseMap';
 import { getDirByAngle, isItemOfArray, isNull, isStrictNull } from '@/utils/util';
 import { Cell, PixiBuilder, ResizeableEmergencyStop } from '@/entities';
-import { getCurrentRouteMapData } from '@/utils/mapUtil';
+import { getCurrentRouteMapData, getKeyByCoordinateType } from '@/utils/mapUtil';
 import { loadEditorExtraTextures } from '@/utils/textures';
 import { EditorAdaptStorageKey, MapSelectableSpriteType, SelectionType } from '@/config/consts';
 import { FooterHeight } from '@/packages/Scene/MapEditor/editorEnums';
@@ -163,9 +163,17 @@ class EditorMapView extends BaseMap {
     // 移动点位
     if (type === 'move') {
       Object.values(payload).forEach((cellPayload) => {
-        const { id, x, y } = cellPayload;
-        const cellEntity = this.idCellMap.get(id);
-        cellEntity && cellEntity.updateCoordination(x, y);
+        const [xKey, yKey] = getKeyByCoordinateType(this.cellCoordinateType);
+        const cellEntity = this.idCellMap.get(cellPayload.id);
+        if (cellEntity) {
+          const cellCoordinate = {
+            x: cellPayload.x,
+            y: cellPayload.y,
+            nx: cellPayload.nx,
+            ny: cellPayload.ny,
+          };
+          cellEntity.updateCoordination(cellPayload[xKey], cellPayload[yKey], cellCoordinate);
+        }
       });
     }
 

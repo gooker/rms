@@ -183,24 +183,10 @@ export default class Cell extends PIXI.Container {
   }
 
   // 坐标切换为左手坐标系; 坐标Label切换为有事坐标系
-  updateCoordination(x, y) {
-    // 替换坐标
-    if (this.coordinateSystemType !== 'L') {
-      this.x = x;
-      this.y = -y;
-    } else {
-      this.x = x;
-      this.y = y;
-    }
-
-    // 替换坐标文本
-    if (this.coordinateSystemType !== 'R') {
-      this.xLabel = x;
-      this.yLabel = -y;
-    } else {
-      this.x = x;
-      this.y = y;
-    }
+  updateCoordination(posX, poxY, coordinate) {
+    this.x = posX;
+    this.y = poxY;
+    this.coordinate = coordinate;
     this.addCoordination();
   }
 

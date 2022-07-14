@@ -94,8 +94,8 @@ export function getLineJson(source, target, cost, type) {
   return {
     type: type || LineType.StraightPath,
     cost,
-    nAngle,
-    angle,
+    nangle: Math.trunc(nAngle),
+    angle: Math.trunc(angle),
     source: source.id,
     target: target.id,
     distance: getDistance(source, target),
@@ -296,7 +296,7 @@ export function createRelation(
  * @param {*} cells cellIds
  * @param {*} dir  方向
  * @param {*} value 优先级
- * @returns
+ * TIPS: 这个方法最低效，采用枚举法；实际上可以根据dir对点位进行分组，随后按组进行reduce操作
  */
 export function batchGenerateLine(cells, dir, value) {
   const result = {};
@@ -322,7 +322,15 @@ export function batchGenerateLine(cells, dir, value) {
         }
         const key = `${source.id}_${dir}`;
         if (getAngle(source, target) === dir) {
-          result[key] = getLineJson(source, target, value);
+          // 同一个方向可能有多个连接点，但是只取最近的那个点
+          if (result[key]) {
+            const distance = getDistance(source, target);
+            if (result[key].distance > distance) {
+              result[key] = getLineJson(source, target, value);
+            }
+          } else {
+            result[key] = getLineJson(source, target, value);
+          }
         }
       }
     }
@@ -334,26 +342,18 @@ export function batchGenerateLine(cells, dir, value) {
   return result;
 }
 
-/**
- * 移动点位位置
- * @param {*} target 点位JSON数据
- * @param {*} distance 移动距离
- * @param {*} dir 移动方向
- */
-export function moveCell(target, distance, dir) {
-  const result = { ...target };
+export function moveCell(cell, angle, distance) {
+  let { x, y } = cell;
   let flag = 1;
-  if ([0, 3].includes(dir)) {
+  if ([90, 180].includes(angle)) {
     flag = -1;
   }
-  if ([0, 2].includes(dir)) {
-    result.y = target.y + flag * distance;
+  if ([90, 270].includes(angle)) {
+    y = y + flag * distance;
   } else {
-    result.x = target.x + flag * distance;
+    x = x + flag * distance;
   }
-  result.nx = result.x;
-  result.ny = result.y;
-  return result;
+  return { x, y };
 }
 
 /**
@@ -497,15 +497,12 @@ export function renderWorkStationList(workstationList, cellMap) {
  **/
 export function generateChargerXY(charger, cellMap) {
   const { angle, chargingCells } = charger;
-  const stopCellCollection = chargingCells
-    .map(({ cellId }) => cellId)
-    .map((cellId) => cellMap[cellId]);
+  const stopCellCollection = chargingCells.map(({ cellId }) => cellMap[cellId]);
   if (stopCellCollection.length === 1) {
     const stopCell = stopCellCollection[0];
-    if (!isNull(stopCell)) {
-      const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, 1000);
-      return { x, y, ...charger };
-    }
+    // 充电桩坐标数据不用于后台业务处理，所以这里定位使用pixi定位的坐标，仅供显示用
+    const { x, y } = getCoordinator({ x: stopCell.x, y: stopCell.y }, angle, 1000);
+    return { x, y, ...charger };
   } else {
     // 如果存在多个充电点，那么充电桩和充电点应该在一条直线，且充电桩距离最近的充电点是1000
     let stopCell;
@@ -859,12 +856,15 @@ export function getCurrentRouteMapData(namespace = 'editor') {
 }
 
 export function syncLineState(cellIds, newCellMap, result) {
+  const { shownCellCoordinateType } = window.$$state().editorView;
   const currentRouteMapData = getCurrentRouteMapData();
   let relations = [...(currentRouteMapData.relations || [])];
+
   // 1. 删除相关曲线
+  const { StraightPath, BezierPath, ArcPath } = LineType;
   relations = relations.filter((item) => {
-    if (item.type === LineType.StraightPath) return true;
-    if ([LineType.ArcPath, LineType.BezierPath].includes(item.type)) {
+    if (item.type === StraightPath) return true;
+    if ([ArcPath, BezierPath].includes(item.type)) {
       if (cellIds.includes(item.source) || cellIds.includes(item.target)) {
         result.line.delete.push(item);
         return false;
@@ -885,12 +885,22 @@ export function syncLineState(cellIds, newCellMap, result) {
     }
   });
 
+  // 将点位数据转化成getLineJson可用的数据结构
+  function convert(_cell) {
+    const cell = { ..._cell };
+    const [xKey, yKey] = getKeyByCoordinateType(shownCellCoordinateType);
+    cell.coordinate = { x: cell.x, y: cell.y, nx: cell.nx, ny: cell.ny };
+    cell.x = cell[xKey];
+    cell.y = cell[yKey];
+    return cell;
+  }
+
   // 重新计算 Distance
   relationsWillUpdate = relationsWillUpdate.map((relation) => {
-    const { source, target } = relation;
-    const newDistance = getDistance(newCellMap[source], newCellMap[target]);
-    const angle = getAngle(newCellMap[source], newCellMap[target]);
-    return { ...relation, angle, distance: newDistance };
+    const { source, target, cost, type } = relation;
+    const sourceCell = convert(newCellMap[source]);
+    const targetCell = convert(newCellMap[target]);
+    return getLineJson(sourceCell, targetCell, cost, type);
   });
 
   result.line.add = relationsWillUpdate;
@@ -1538,7 +1548,7 @@ export function getCellMapId(cellIds) {
 
 ///// ******************* 地图点位选择 ********************* /////
 export function getCellSelections(namespace = 'editor') {
-  const allCells = getSelectionNaviCells(namespace);
+  const allCells = getCellsWithPosition(namespace);
   const types = allCells.map(({ brand }) => brand);
   return {
     cells: allCells,
@@ -1547,7 +1557,7 @@ export function getCellSelections(namespace = 'editor') {
 }
 
 // 获取选中的所有点位，包括重合的点位
-export function getSelectionNaviCells(namespace = 'editor') {
+export function getCellsWithPosition(namespace = 'editor') {
   const { mapContext, selections } = window.$$state()[namespace];
   const selectedCells = selections.filter((item) => item.type === MapSelectableSpriteType.CELL);
   const { xyCellMap } = mapContext;
@@ -1563,8 +1573,8 @@ export function getSelectionNaviCells(namespace = 'editor') {
   return Object.values(allNaviCells);
 }
 
-export function getSelectionNaviCellTypes(namespace = 'editor') {
-  const types = getSelectionNaviCells(namespace).map(({ navigationType }) => navigationType);
+export function getNavigationTypes(namespace = 'editor') {
+  const types = getCellsWithPosition(namespace).map(({ navigationType }) => navigationType);
   return [...new Set(types)];
 }
 
